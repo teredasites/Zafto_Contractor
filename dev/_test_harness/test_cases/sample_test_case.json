@@ -1,0 +1,71 @@
+{
+  "id": "electrical_voltage_drop_suite",
+  "name": "Voltage Drop Calculator Tests",
+  "trade": "electrical",
+  "last_updated": "2026-01-31T00:00:00Z",
+  "test_cases": [
+    {
+      "id": "vd-001",
+      "calculator_id": "voltage_drop",
+      "description": "Basic 120V single-phase voltage drop calculation",
+      "inputs": {
+        "voltage": 120,
+        "current": 16,
+        "distance_ft": 150,
+        "wire_size_awg": 12,
+        "conductor_material": "copper",
+        "phase": "single"
+      },
+      "expected_result": {
+        "voltage_drop_volts": 5.16,
+        "voltage_drop_percent": 4.30,
+        "ending_voltage": 114.84
+      },
+      "code_reference": "NEC Chapter 9 Notes",
+      "source": "Mike Holt Illustrated Guide",
+      "difficulty": "easy"
+    },
+    {
+      "id": "vd-002",
+      "calculator_id": "voltage_drop",
+      "description": "240V single-phase long run",
+      "inputs": {
+        "voltage": 240,
+        "current": 40,
+        "distance_ft": 200,
+        "wire_size_awg": 6,
+        "conductor_material": "copper",
+        "phase": "single"
+      },
+      "expected_result": {
+        "voltage_drop_volts": 7.89,
+        "voltage_drop_percent": 3.29,
+        "ending_voltage": 232.11
+      },
+      "code_reference": "NEC Chapter 9 Notes",
+      "source": "Calculated",
+      "difficulty": "medium"
+    },
+    {
+      "id": "vd-003",
+      "calculator_id": "voltage_drop",
+      "description": "480V three-phase motor circuit",
+      "inputs": {
+        "voltage": 480,
+        "current": 65,
+        "distance_ft": 300,
+        "wire_size_awg": 3,
+        "conductor_material": "copper",
+        "phase": "three"
+      },
+      "expected_result": {
+        "voltage_drop_volts": 9.77,
+        "voltage_drop_percent": 2.04,
+        "ending_voltage": 470.23
+      },
+      "code_reference": "NEC Chapter 9 Notes",
+      "source": "Calculated",
+      "difficulty": "hard"
+    }
+  ]
+}

@@ -1,0 +1,572 @@
+{
+  "category": "Low Voltage",
+  "subcategory": "Access Control Systems",
+  "description": "Electronic access control installation and configuration",
+  "difficulty_distribution": {
+    "beginner": 12,
+    "intermediate": 18,
+    "advanced": 10
+  },
+  "questions": [
+    {
+      "id": "lv_ac_001",
+      "difficulty": "beginner",
+      "question": "What is the primary function of an access control system?",
+      "options": [
+        "Fire detection",
+        "Controlling who can enter secured areas",
+        "Climate control",
+        "Lighting control"
+      ],
+      "correct_answer": 1,
+      "explanation": "Access control systems manage and restrict entry to secured areas by requiring valid credentials before allowing passage through controlled doors or gates.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ac_002",
+      "difficulty": "beginner",
+      "question": "What is a credential in access control?",
+      "options": [
+        "The door lock",
+        "A card, key fob, PIN, or biometric used for identification",
+        "The control panel",
+        "The power supply"
+      ],
+      "correct_answer": 1,
+      "explanation": "Credentials are items or data used to identify and authenticate users - including proximity cards, smart cards, key fobs, PINs, and biometric data.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ac_003",
+      "difficulty": "beginner",
+      "question": "What is a proximity card reader?",
+      "options": [
+        "A device that reads magnetic stripe cards",
+        "A device that reads RFID cards without physical contact",
+        "A fingerprint scanner",
+        "A keypad"
+      ],
+      "correct_answer": 1,
+      "explanation": "Proximity readers use radio frequency to read credentials without physical contact. The card is held near (in proximity to) the reader for access.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ac_004",
+      "difficulty": "beginner",
+      "question": "What frequency do most proximity cards operate at?",
+      "options": [
+        "13.56 MHz (smart cards)",
+        "125 kHz (traditional prox)",
+        "2.4 GHz",
+        "900 MHz"
+      ],
+      "correct_answer": 1,
+      "explanation": "Traditional proximity cards operate at 125 kHz. Smart cards (with more security) operate at 13.56 MHz. Both are common in access control.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ac_005",
+      "difficulty": "beginner",
+      "question": "What is an electric strike?",
+      "options": [
+        "A lightning protection device",
+        "An electrically controlled door locking device that replaces a standard strike",
+        "A power surge device",
+        "An electric meter"
+      ],
+      "correct_answer": 1,
+      "explanation": "An electric strike replaces the standard door strike plate and can be electrically released to allow the door to open without retracting the latch.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ac_006",
+      "difficulty": "beginner",
+      "question": "What is a magnetic lock (maglock)?",
+      "options": [
+        "A lock operated by magnets",
+        "An electromagnetic lock that holds the door closed with magnetic force",
+        "A card reader using magnets",
+        "A magnetic stripe reader"
+      ],
+      "correct_answer": 1,
+      "explanation": "Maglocks use an electromagnet mounted on the door frame that holds an armature plate on the door. When energized, the magnetic force holds the door closed.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ac_007",
+      "difficulty": "beginner",
+      "question": "What is 'fail-safe' in access control locking?",
+      "options": [
+        "The lock is very reliable",
+        "The lock releases/unlocks when power is removed",
+        "The lock requires backup power",
+        "The lock has two modes"
+      ],
+      "correct_answer": 1,
+      "explanation": "Fail-safe locks unlock when power is removed (for fire egress safety). Maglocks are fail-safe. Fail-secure locks remain locked when power is lost.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ac_008",
+      "difficulty": "beginner",
+      "question": "What is 'fail-secure' in access control locking?",
+      "options": [
+        "The lock is highly secure",
+        "The lock remains locked when power is removed",
+        "The lock has backup batteries",
+        "The lock is weather-resistant"
+      ],
+      "correct_answer": 1,
+      "explanation": "Fail-secure locks remain locked when power is lost, maintaining security. Electric strikes are typically fail-secure. Mechanical key bypass is required for egress.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ac_009",
+      "difficulty": "beginner",
+      "question": "What is a REX (Request to Exit) device?",
+      "options": [
+        "A card reader",
+        "A device that detects someone exiting and releases the door",
+        "A remote control",
+        "An emergency switch"
+      ],
+      "correct_answer": 1,
+      "explanation": "REX devices (motion sensors, push buttons) detect when someone wants to exit and send a signal to release the door lock without requiring credentials.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ac_010",
+      "difficulty": "beginner",
+      "question": "What is Wiegand in access control?",
+      "options": [
+        "A brand of locks",
+        "A common communication protocol between readers and controllers",
+        "A type of credential",
+        "A power supply rating"
+      ],
+      "correct_answer": 1,
+      "explanation": "Wiegand is a widely used communication protocol between card readers and access control panels. Common formats are 26-bit and 37-bit.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ac_011",
+      "difficulty": "beginner",
+      "question": "What is a door contact in access control?",
+      "options": [
+        "A business card holder",
+        "A magnetic sensor that detects door open/closed status",
+        "A doorbell",
+        "A door handle"
+      ],
+      "correct_answer": 1,
+      "explanation": "Door contacts (magnetic switches) monitor whether a door is open or closed, providing status to the access control system.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ac_012",
+      "difficulty": "beginner",
+      "question": "What voltage is commonly used for access control devices?",
+      "options": [
+        "120V AC",
+        "12V DC or 24V DC",
+        "240V AC",
+        "48V DC"
+      ],
+      "correct_answer": 1,
+      "explanation": "Most access control devices (readers, locks, controllers) operate on 12V DC or 24V DC power supplied from access control power supplies.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ac_013",
+      "difficulty": "intermediate",
+      "question": "What is the typical holding force for a standard maglock?",
+      "options": [
+        "300 lbs",
+        "600-1200 lbs",
+        "2000 lbs",
+        "100 lbs"
+      ],
+      "correct_answer": 1,
+      "explanation": "Standard maglocks have holding forces of 600, 1000, or 1200 lbs. Selection depends on door size, traffic, and security requirements.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ac_014",
+      "difficulty": "intermediate",
+      "question": "What is anti-passback in access control?",
+      "options": [
+        "Preventing card sharing",
+        "A feature preventing a credential from being used to re-enter without first exiting",
+        "Blocking unauthorized cards",
+        "Encryption method"
+      ],
+      "correct_answer": 1,
+      "explanation": "Anti-passback prevents a user from passing their credential back to another person. The system tracks entries and exits and requires proper sequence.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ac_015",
+      "difficulty": "intermediate",
+      "question": "What is two-factor authentication in access control?",
+      "options": [
+        "Two doors in sequence",
+        "Requiring two different types of credentials (e.g., card + PIN)",
+        "Two card readers",
+        "Two users required"
+      ],
+      "correct_answer": 1,
+      "explanation": "Two-factor authentication requires two different credential types - something you have (card) plus something you know (PIN) or something you are (biometric).",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ac_016",
+      "difficulty": "intermediate",
+      "question": "What is a mantrap or airlock entry?",
+      "options": [
+        "A weather-sealed door",
+        "A controlled vestibule with two doors where only one can be open at a time",
+        "An emergency exit",
+        "A service entrance"
+      ],
+      "correct_answer": 1,
+      "explanation": "Mantraps use interlocked doors - one must close before the other can open, preventing tailgating and ensuring credential verification before entry.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ac_017",
+      "difficulty": "intermediate",
+      "question": "What wire type is typically used for Wiegand readers?",
+      "options": [
+        "Coaxial cable",
+        "Multi-conductor (typically 6-8 conductor) cable",
+        "Single conductor",
+        "Fiber optic"
+      ],
+      "correct_answer": 1,
+      "explanation": "Wiegand readers typically require 6-8 conductor cable for data, power, LED control, and other signals. Shielded cable reduces interference.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ac_018",
+      "difficulty": "intermediate",
+      "question": "What is the maximum recommended cable run for Wiegand readers?",
+      "options": [
+        "100 feet",
+        "500 feet maximum recommended",
+        "1000 feet",
+        "2500 feet"
+      ],
+      "correct_answer": 1,
+      "explanation": "Standard Wiegand protocol is limited to approximately 500 feet due to signal integrity. OSDP or RS-485 allows longer runs.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ac_019",
+      "difficulty": "intermediate",
+      "question": "What is OSDP in access control?",
+      "options": [
+        "A card format",
+        "Open Supervised Device Protocol - a secure reader communication standard",
+        "A lock type",
+        "A credential type"
+      ],
+      "correct_answer": 1,
+      "explanation": "OSDP is a modern, secure bidirectional communication protocol between readers and controllers, offering encryption and supervision over RS-485.",
+      "code_reference": "SIA OSDP Standard"
+    },
+    {
+      "id": "lv_ac_020",
+      "difficulty": "intermediate",
+      "question": "What fire alarm integration is required for maglocks on exit doors?",
+      "options": [
+        "None required",
+        "Maglocks must release upon fire alarm activation",
+        "Only smoke detection required",
+        "Manual release only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Fire codes require maglocks on exit doors to release upon fire alarm activation to ensure safe egress during emergencies.",
+      "code_reference": "NFPA 101, IBC"
+    },
+    {
+      "id": "lv_ac_021",
+      "difficulty": "intermediate",
+      "question": "What is a door position switch (DPS)?",
+      "options": [
+        "An electric strike",
+        "A switch that monitors whether the door is open or closed",
+        "A lock relay",
+        "A card reader"
+      ],
+      "correct_answer": 1,
+      "explanation": "Door position switches (contacts) report door status to the access control system, enabling forced door alarms and door held open alarms.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ac_022",
+      "difficulty": "intermediate",
+      "question": "What is a 'forced door' alarm?",
+      "options": [
+        "An alarm when too much force is used",
+        "An alarm when a door is opened without valid access credential",
+        "A door weight alarm",
+        "A lock failure alarm"
+      ],
+      "correct_answer": 1,
+      "explanation": "Forced door alarms trigger when the door position switch indicates the door opened without the system granting access or detecting valid egress.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ac_023",
+      "difficulty": "intermediate",
+      "question": "What is 'door held open' monitoring?",
+      "options": [
+        "A mechanical door holder",
+        "An alarm triggered when door remains open beyond a set time",
+        "A door closer adjustment",
+        "An automatic door feature"
+      ],
+      "correct_answer": 1,
+      "explanation": "Door held open monitoring alerts when a door remains open beyond the programmed timeout, indicating potential security concern or propped door.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ac_024",
+      "difficulty": "intermediate",
+      "question": "What power supply backup is recommended for access control systems?",
+      "options": [
+        "None required",
+        "Battery backup for at least 4 hours operation",
+        "Generator only",
+        "Solar backup"
+      ],
+      "correct_answer": 1,
+      "explanation": "Access control power supplies should include battery backup to maintain security during power outages, typically 4-24 hours depending on requirements.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ac_025",
+      "difficulty": "intermediate",
+      "question": "What is smart card technology in access control?",
+      "options": [
+        "WiFi enabled cards",
+        "13.56 MHz cards with encrypted data and microprocessor",
+        "Standard proximity cards",
+        "Magnetic stripe cards"
+      ],
+      "correct_answer": 1,
+      "explanation": "Smart cards (iCLASS, MIFARE, DESFire) operate at 13.56 MHz with on-board processors and encrypted data storage for enhanced security over 125 kHz prox cards.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ac_026",
+      "difficulty": "intermediate",
+      "question": "What is mobile credentialing?",
+      "options": [
+        "Portable card readers",
+        "Using smartphones as access credentials via Bluetooth or NFC",
+        "Mobile access control vehicles",
+        "Wireless locks"
+      ],
+      "correct_answer": 1,
+      "explanation": "Mobile credentials allow smartphones to be used as access cards using Bluetooth Low Energy (BLE) or NFC communication with readers.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ac_027",
+      "difficulty": "advanced",
+      "question": "What is end-of-line (EOL) supervision for door contacts?",
+      "options": [
+        "Contact at the end of a hallway",
+        "Resistors at the contact to detect tampering or wire faults",
+        "Last door in a system",
+        "Termination panel"
+      ],
+      "correct_answer": 1,
+      "explanation": "EOL supervision uses resistors at the door contact. Any tampering or wire fault changes the resistance, triggering a trouble or tamper alarm.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ac_028",
+      "difficulty": "advanced",
+      "question": "What is reader tamper supervision?",
+      "options": [
+        "Card fraud detection",
+        "Detection of physical tampering with the reader",
+        "Password protection",
+        "Encryption"
+      ],
+      "correct_answer": 1,
+      "explanation": "Reader tamper switches detect when a reader is removed from the wall or opened, alerting the system to potential security compromise.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ac_029",
+      "difficulty": "advanced",
+      "question": "What is credential encryption importance?",
+      "options": [
+        "Faster reading",
+        "Prevents cloning and unauthorized credential duplication",
+        "Longer range",
+        "Lower cost"
+      ],
+      "correct_answer": 1,
+      "explanation": "Encrypted credentials (like DESFire) use cryptographic keys to prevent cloning, which is possible with unencrypted 125 kHz proximity cards.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ac_030",
+      "difficulty": "advanced",
+      "question": "What is the difference between online and offline access control?",
+      "options": [
+        "Internet connected vs. not",
+        "Real-time controlled by panel vs. standalone decision-making at the lock",
+        "Wired vs. wireless",
+        "Cloud vs. local"
+      ],
+      "correct_answer": 1,
+      "explanation": "Online systems have locks controlled in real-time by access control panels. Offline locks make access decisions locally using stored credentials.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ac_031",
+      "difficulty": "advanced",
+      "question": "What ADA considerations apply to access control?",
+      "options": [
+        "None",
+        "Reader height, operation force, timing, and accessibility requirements",
+        "Color requirements",
+        "Sound levels only"
+      ],
+      "correct_answer": 1,
+      "explanation": "ADA requires accessible mounting heights (48 inches max), adequate door opening time, and operation without tight grasping or excessive force.",
+      "code_reference": "ADA Standards"
+    },
+    {
+      "id": "lv_ac_032",
+      "difficulty": "advanced",
+      "question": "What is a card format in access control?",
+      "options": [
+        "Physical card size",
+        "The bit structure defining facility code and card number encoding",
+        "Card color",
+        "Card material"
+      ],
+      "correct_answer": 1,
+      "explanation": "Card format defines how data is organized on the credential - bit length, facility code position, card number position, and parity bits.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ac_033",
+      "difficulty": "advanced",
+      "question": "What is the 26-bit Wiegand format structure?",
+      "options": [
+        "26 cards per reader",
+        "Even parity + 8-bit facility code + 16-bit card number + odd parity",
+        "26 readers per system",
+        "26 doors maximum"
+      ],
+      "correct_answer": 1,
+      "explanation": "The 26-bit format uses 1 even parity bit, 8 facility code bits, 16 card number bits, and 1 odd parity bit for error checking.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ac_034",
+      "difficulty": "advanced",
+      "question": "What is facility code in access control?",
+      "options": [
+        "Building address",
+        "A number identifying the organization/site to prevent cross-site card use",
+        "Equipment serial number",
+        "Zone number"
+      ],
+      "correct_answer": 1,
+      "explanation": "Facility code is programmed into credentials to identify the organization. Cards with wrong facility codes are rejected even if card numbers exist in the database.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ac_035",
+      "difficulty": "intermediate",
+      "question": "What is a BLE (Bluetooth Low Energy) reader?",
+      "options": [
+        "A low-power card reader",
+        "A reader that accepts mobile credentials via Bluetooth",
+        "A battery-powered reader",
+        "A low-range reader"
+      ],
+      "correct_answer": 1,
+      "explanation": "BLE readers communicate with smartphones using Bluetooth Low Energy, enabling mobile credential access without traditional cards.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ac_036",
+      "difficulty": "advanced",
+      "question": "What is elevator access control integration?",
+      "options": [
+        "Controlling elevator doors",
+        "Restricting floor access based on credential authorization",
+        "Emergency recall",
+        "Speed control"
+      ],
+      "correct_answer": 1,
+      "explanation": "Elevator access control restricts which floors users can access based on their credential privileges, often using floor selection control panels.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ac_037",
+      "difficulty": "intermediate",
+      "question": "What cable is required for electric strike installation?",
+      "options": [
+        "Cat 6 cable",
+        "18 AWG minimum, typically 2-conductor for power",
+        "Coax cable",
+        "Fiber optic"
+      ],
+      "correct_answer": 1,
+      "explanation": "Electric strikes typically require 18 AWG or larger 2-conductor cable for power. Voltage drop must be considered for long runs.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ac_038",
+      "difficulty": "advanced",
+      "question": "What is reader OSDP v2 security feature?",
+      "options": [
+        "Faster read speed",
+        "AES-128 encrypted communication channel",
+        "Longer range",
+        "Multiple card formats"
+      ],
+      "correct_answer": 1,
+      "explanation": "OSDP v2 includes AES-128 encryption for the communication channel between reader and panel, preventing eavesdropping and replay attacks.",
+      "code_reference": "SIA OSDP Standard"
+    },
+    {
+      "id": "lv_ac_039",
+      "difficulty": "advanced",
+      "question": "What is time zone/schedule-based access?",
+      "options": [
+        "Clock display on reader",
+        "Restricting access to specific days/times based on schedules",
+        "Daylight saving adjustment",
+        "Time-stamped logs only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Access control systems can limit when credentials are valid based on programmed schedules - e.g., office workers access M-F 7am-7pm only.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ac_040",
+      "difficulty": "intermediate",
+      "question": "What is a lockdown feature in access control?",
+      "options": [
+        "Locking the control panel",
+        "Emergency feature to lock all or selected doors immediately",
+        "Disabling all readers",
+        "Password reset"
+      ],
+      "correct_answer": 1,
+      "explanation": "Lockdown immediately locks specified doors regardless of schedule, typically triggered by emergency button, alarm, or software command.",
+      "code_reference": "Industry Standard"
+    }
+  ]
+}

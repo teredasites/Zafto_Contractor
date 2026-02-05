@@ -1,0 +1,2402 @@
+{
+  "topic_id": "RE",
+  "topic_name": "Renewable Energy",
+  "nec_version": "2026",
+  "questions": [
+    {
+      "id": "RE-001",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["690"],
+      "nec_tables": [],
+      "type": "calculation",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Solar PV circuit conductors must be sized to carry at least what percentage of the maximum circuit current?",
+      "choices": [
+        {"id": "A", "text": "100%"},
+        {"id": "B", "text": "115%"},
+        {"id": "C", "text": "125%"},
+        {"id": "D", "text": "150%"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "PV source and output circuit conductors must have ampacity of at least 125% of maximum current.",
+        "detailed": "Section 690.8(A)(1) requires PV system circuit conductors to have an ampacity not less than 125% of the maximum circuit current as calculated in 690.8(A). This accounts for continuous operation of solar systems.",
+        "how_to_find": "Go to 690.8(A)(1) for PV conductor sizing."
+      },
+      "nec_reference": {"article": "690", "section": "690.8(A)(1)"},
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "primary", "description": "Solar PV calculator"}],
+      "tags": ["solar PV", "125%", "conductor sizing"],
+      "verified": true
+    },
+    {
+      "id": "RE-002",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["690"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A rapid shutdown system for rooftop solar PV must reduce voltage to 80V or less within what time after initiation?",
+      "choices": [
+        {"id": "A", "text": "10 seconds"},
+        {"id": "B", "text": "30 seconds"},
+        {"id": "C", "text": "60 seconds"},
+        {"id": "D", "text": "5 minutes"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "PV rapid shutdown must reduce array conductor voltage to 80V or less within 30 seconds.",
+        "detailed": "Section 690.12(B)(2) requires that controlled conductors outside the array boundary be limited to not more than 80 volts within 30 seconds of rapid shutdown initiation. This protects firefighters working on rooftops.",
+        "how_to_find": "Go to 690.12(B)(2) for rapid shutdown requirements."
+      },
+      "nec_reference": {"article": "690", "section": "690.12(B)(2)"},
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "primary", "description": "Rapid shutdown requirements"}],
+      "tags": ["solar PV", "rapid shutdown", "firefighter safety"],
+      "verified": true
+    },
+    {
+      "id": "RE-003",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["625"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "A Level 2 electric vehicle charging station typically operates at what voltage?",
+      "choices": [
+        {"id": "A", "text": "120V"},
+        {"id": "B", "text": "208V or 240V"},
+        {"id": "C", "text": "480V"},
+        {"id": "D", "text": "600V"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Level 2 EV charging operates at 208V or 240V single-phase.",
+        "detailed": "Article 625 covers Electric Vehicle Power Transfer Systems. Level 1 charging uses standard 120V/15A or 20A circuits. Level 2 charging operates at 208V or 240V, typically at 30A to 80A. Level 3 (DC fast charging) uses higher voltages up to 1000V DC.",
+        "how_to_find": "See Article 625 for EV charging equipment."
+      },
+      "nec_reference": {"article": "625", "section": "625.2"},
+      "zafto_links": [{"screen_id": "ev_charger", "relevance": "primary", "description": "EV charger calculator"}],
+      "tags": ["EV charging", "Level 2", "240V"],
+      "verified": true
+    },
+    {
+      "id": "RE-004",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["625"],
+      "nec_tables": [],
+      "type": "calculation",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "EV charging equipment is considered a continuous load. What minimum ampacity must conductors have for a 40A EV charger?",
+      "choices": [
+        {"id": "A", "text": "40 amperes"},
+        {"id": "B", "text": "46 amperes"},
+        {"id": "C", "text": "50 amperes"},
+        {"id": "D", "text": "56 amperes"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "EV charging is continuous - conductors need 125% capacity: 40A × 1.25 = 50A.",
+        "detailed": "Section 625.41 requires branch circuit conductors and overcurrent devices supplying EV charging equipment to be sized for continuous duty. This means 125% of the maximum load: 40A × 1.25 = 50 amperes minimum conductor ampacity.",
+        "how_to_find": "Go to 625.41 for EV equipment supply conductor sizing."
+      },
+      "nec_reference": {"article": "625", "section": "625.41"},
+      "calculation": {
+        "formula": "Conductor Ampacity = EV Charger Rating × 125%",
+        "steps": [
+          {"step": 1, "description": "Identify charger rating", "result": "40 amperes"},
+          {"step": 2, "description": "Apply 125% for continuous", "calculation": "40 × 1.25", "result": "50 amperes"}
+        ],
+        "final_answer": "50 amperes minimum",
+        "common_mistakes": ["Forgetting 125% continuous load factor"]
+      },
+      "zafto_links": [{"screen_id": "ev_charger", "relevance": "primary", "description": "EV circuit sizing"}],
+      "tags": ["EV charging", "continuous load", "125%"],
+      "verified": true
+    },
+    {
+      "id": "RE-005",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["690"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "When calculating solar PV system maximum voltage, the temperature correction must be based on:",
+      "choices": [
+        {"id": "A", "text": "25°C (77°F) standard test conditions"},
+        {"id": "B", "text": "The lowest expected ambient temperature at the site"},
+        {"id": "C", "text": "The highest expected ambient temperature"},
+        {"id": "D", "text": "40°C (104°F)"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "PV maximum voltage calculations use lowest expected temperature because voltage increases as temperature decreases.",
+        "detailed": "Section 690.7(A) requires the maximum photovoltaic system voltage to be calculated using the lowest expected ambient temperature. PV modules produce higher voltage at lower temperatures, so cold weather produces maximum voltage that conductors and equipment must withstand.",
+        "how_to_find": "Go to 690.7(A) for PV maximum voltage calculations."
+      },
+      "nec_reference": {"article": "690", "section": "690.7(A)"},
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "primary", "description": "PV voltage calculations"}],
+      "tags": ["solar PV", "temperature correction", "maximum voltage"],
+      "verified": true
+    },
+    {
+      "id": "RE-006",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["690"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "PV systems must have a disconnecting means that disconnects all:",
+      "choices": [
+        {"id": "A", "text": "Hot conductors only"},
+        {"id": "B", "text": "Grounded and ungrounded conductors"},
+        {"id": "C", "text": "All ungrounded conductors of the PV system"},
+        {"id": "D", "text": "Only the inverter output"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "PV disconnects must open all ungrounded conductors simultaneously per 690.13.",
+        "detailed": "Section 690.13(A) requires means to disconnect all ungrounded conductors of all PV system sources. The disconnect must be readily accessible, capable of being locked in the open position, and indicate whether in open or closed position.",
+        "how_to_find": "Go to 690.13 for PV disconnecting means requirements."
+      },
+      "nec_reference": {"article": "690", "section": "690.13"},
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "secondary", "description": "PV disconnect requirements"}],
+      "tags": ["solar PV", "disconnect", "all conductors"],
+      "verified": true
+    },
+    {
+      "id": "RE-007",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["706"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Energy storage systems (ESS) covered by Article 706 include:",
+      "choices": [
+        {"id": "A", "text": "Only lithium-ion batteries"},
+        {"id": "B", "text": "Only lead-acid batteries"},
+        {"id": "C", "text": "Batteries, capacitors, and other electrochemical storage systems"},
+        {"id": "D", "text": "Only systems over 100 kWh"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Article 706 covers all energy storage systems including batteries, capacitors, and electrochemical systems.",
+        "detailed": "Article 706 applies to all permanently installed energy storage systems (ESS) operating over 50V AC or 60V DC that may be stand-alone or interactive. This includes battery systems, capacitors, and other electrochemical technologies regardless of chemistry or capacity.",
+        "how_to_find": "Go to 706.1 Scope for ESS coverage."
+      },
+      "nec_reference": {"article": "706", "section": "706.1"},
+      "zafto_links": [],
+      "tags": ["ESS", "battery storage", "Article 706"],
+      "verified": true
+    },
+    {
+      "id": "RE-008",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["690"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What color must PV system DC grounded conductors be if present?",
+      "choices": [
+        {"id": "A", "text": "Black"},
+        {"id": "B", "text": "Red"},
+        {"id": "C", "text": "White or gray"},
+        {"id": "D", "text": "Any color with white tape"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Grounded DC conductors in PV systems must be white or gray per 690.31(B).",
+        "detailed": "Section 690.31(B) requires PV system conductors to comply with Article 200 identification requirements. The grounded conductor (if present) must be identified by white or gray color or three continuous white stripes along its entire length on other than green insulation.",
+        "how_to_find": "Go to 690.31(B) for PV conductor identification."
+      },
+      "nec_reference": {"article": "690", "section": "690.31(B)"},
+      "zafto_links": [{"screen_id": "wire_color_code", "relevance": "secondary", "description": "Wire color codes"}],
+      "tags": ["solar PV", "wire colors", "grounded conductor"],
+      "verified": true
+    },
+    {
+      "id": "RE-009",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["625"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "An EV charging outlet installed outdoors at a dwelling must have what protection?",
+      "choices": [
+        {"id": "A", "text": "Weatherproof cover only"},
+        {"id": "B", "text": "GFCI protection"},
+        {"id": "C", "text": "AFCI protection"},
+        {"id": "D", "text": "Surge protection"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Outdoor EV charging requires GFCI protection per 210.8 and 625.54.",
+        "detailed": "Section 625.54 and 210.8(A)(3) require GFCI protection for EV charging equipment installed outdoors at dwelling units. All 125V-250V, 50A or less outdoor receptacles require GFCI. Additionally, 625.54 requires EVSE to have listed ground-fault protection.",
+        "how_to_find": "See 625.54 and 210.8(A)(3) for outdoor GFCI requirements."
+      },
+      "nec_reference": {"article": "625", "section": "625.54"},
+      "zafto_links": [{"screen_id": "ev_charger", "relevance": "primary", "description": "EV installation requirements"}],
+      "tags": ["EV charging", "GFCI", "outdoor"],
+      "verified": true
+    },
+    {
+      "id": "RE-010",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["690"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "The maximum voltage for most residential PV systems in the US is:",
+      "choices": [
+        {"id": "A", "text": "150 volts"},
+        {"id": "B", "text": "300 volts"},
+        {"id": "C", "text": "600 volts"},
+        {"id": "D", "text": "1000 volts"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Most US PV systems are limited to 600V DC maximum; 1000V permitted in some commercial applications.",
+        "detailed": "Section 690.7 addresses maximum PV system voltage. While NEC 2017+ permits 1000V DC for certain installations, most residential and commercial systems are designed for 600V DC maximum. The voltage depends on string configuration and module Voc ratings adjusted for lowest expected temperature.",
+        "how_to_find": "Go to 690.7 for PV system voltage limits."
+      },
+      "nec_reference": {"article": "690", "section": "690.7"},
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "primary", "description": "PV system voltage"}],
+      "tags": ["solar PV", "600V", "system voltage"],
+      "verified": true
+    },
+    {
+      "id": "RE-011",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["690"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "PV system DC arc-fault circuit protection is required for:",
+      "choices": [
+        {"id": "A", "text": "Only ground-mounted systems"},
+        {"id": "B", "text": "PV systems on or in buildings"},
+        {"id": "C", "text": "Only systems over 10 kW"},
+        {"id": "D", "text": "All PV systems regardless of location"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "DC arc-fault protection is required for PV systems on or in buildings per 690.11.",
+        "detailed": "Section 690.11 requires PV system DC circuits on or penetrating a building to be protected by a listed PV arc-fault circuit interrupter (AFCI) or other listed system components that provide equivalent protection. This addresses fire hazards from DC arcs.",
+        "how_to_find": "Go to 690.11 for PV arc-fault protection requirements."
+      },
+      "nec_reference": {"article": "690", "section": "690.11"},
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "primary", "description": "PV arc-fault protection"}],
+      "tags": ["solar PV", "arc-fault", "AFCI"],
+      "verified": true
+    },
+    {
+      "id": "RE-012",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["690"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "The PV system AC disconnect must be located:",
+      "choices": [
+        {"id": "A", "text": "Inside the building only"},
+        {"id": "B", "text": "At a readily accessible location"},
+        {"id": "C", "text": "On the roof near the array"},
+        {"id": "D", "text": "At the utility meter only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "PV AC disconnects must be readily accessible per 690.13(A).",
+        "detailed": "Section 690.13(A) requires PV system disconnecting means to be installed at a readily accessible location. The disconnect must be capable of being locked in the open position and clearly indicate whether in the open or closed position.",
+        "how_to_find": "Go to 690.13(A) for disconnect accessibility."
+      },
+      "nec_reference": {"article": "690", "section": "690.13(A)"},
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "primary", "description": "PV disconnect location"}],
+      "tags": ["solar PV", "disconnect", "readily accessible"],
+      "verified": true
+    },
+    {
+      "id": "RE-013",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["690"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "PV system ground-fault protection must limit ground-fault current to:",
+      "choices": [
+        {"id": "A", "text": "5 mA"},
+        {"id": "B", "text": "30 mA"},
+        {"id": "C", "text": "1 ampere or less and interrupt the circuit"},
+        {"id": "D", "text": "No specific limit"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "PV ground-fault protection must detect faults of 1A or less and interrupt per 690.41(B).",
+        "detailed": "Section 690.41(B) requires ground-fault protection for grounded PV arrays to detect a ground fault, interrupt the fault current, and isolate the faulted portion of the array. For systems with ground-fault protection, the detection must sense current of 1 ampere or less.",
+        "how_to_find": "Go to 690.41(B) for PV ground-fault protection."
+      },
+      "nec_reference": {"article": "690", "section": "690.41(B)"},
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "primary", "description": "PV ground-fault protection"}],
+      "tags": ["solar PV", "ground-fault", "1 ampere"],
+      "verified": true
+    },
+    {
+      "id": "RE-014",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["690"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "PV source circuit conductors installed in readily accessible locations must be protected from physical damage if they are:",
+      "choices": [
+        {"id": "A", "text": "In conduit"},
+        {"id": "B", "text": "Single-conductor type"},
+        {"id": "C", "text": "Over 10 AWG"},
+        {"id": "D", "text": "Less than 8 feet above grade"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Single-conductor PV cables in accessible locations need physical protection per 690.31(A).",
+        "detailed": "Section 690.31(A) requires single-conductor cable type PV wire to be installed in a raceway or have physical damage protection where installed in readily accessible locations. This protects exposed conductors from accidental contact or damage.",
+        "how_to_find": "Go to 690.31(A) for PV wiring protection requirements."
+      },
+      "nec_reference": {"article": "690", "section": "690.31(A)"},
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "secondary", "description": "PV wire protection"}],
+      "tags": ["solar PV", "wiring", "physical protection"],
+      "verified": true
+    },
+    {
+      "id": "RE-015",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["690"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A PV combiner box must be marked with:",
+      "choices": [
+        {"id": "A", "text": "Manufacturer name only"},
+        {"id": "B", "text": "Maximum voltage and current ratings"},
+        {"id": "C", "text": "Installation date"},
+        {"id": "D", "text": "Installer license number"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "PV combiner boxes must be marked with voltage and current ratings per 690.53.",
+        "detailed": "Section 690.53 requires DC PV source circuit and output circuit combiner boxes to be marked with maximum voltage rating, maximum current rating, and operating current for each circuit. This labeling enables safe servicing and system verification.",
+        "how_to_find": "Go to 690.53 for combiner box marking requirements."
+      },
+      "nec_reference": {"article": "690", "section": "690.53"},
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "secondary", "description": "Combiner box labeling"}],
+      "tags": ["solar PV", "combiner box", "marking"],
+      "verified": true
+    },
+    {
+      "id": "RE-016",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["690"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "The PV system directory label at the main service must include:",
+      "choices": [
+        {"id": "A", "text": "Installer contact information"},
+        {"id": "B", "text": "Location of PV disconnects and rated AC output current"},
+        {"id": "C", "text": "Module manufacturer warranty"},
+        {"id": "D", "text": "Annual energy production estimate"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "PV directory label must show disconnect locations and rated output per 690.56(C).",
+        "detailed": "Section 690.56(C) requires a permanent plaque or directory at each service disconnecting means indicating the location of all PV system disconnecting means, rated AC output current, and nominal operating AC voltage. This helps emergency responders and service personnel.",
+        "how_to_find": "Go to 690.56(C) for PV directory requirements."
+      },
+      "nec_reference": {"article": "690", "section": "690.56(C)"},
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "primary", "description": "PV system labeling"}],
+      "tags": ["solar PV", "directory", "labeling"],
+      "verified": true
+    },
+    {
+      "id": "RE-017",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["690"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "An interactive PV inverter must:",
+      "choices": [
+        {"id": "A", "text": "Always provide backup power during outages"},
+        {"id": "B", "text": "Automatically disconnect from utility upon grid failure"},
+        {"id": "C", "text": "Operate only during daylight hours"},
+        {"id": "D", "text": "Include battery storage"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Interactive inverters must have anti-islanding protection to disconnect upon grid failure per 690.61.",
+        "detailed": "Section 690.61 requires interactive inverters to automatically de-energize their output upon loss of utility voltage. This anti-islanding protection prevents backfeeding a de-energized utility grid, which could endanger utility workers. Listed interactive inverters include this protection.",
+        "how_to_find": "Go to 690.61 for interactive inverter requirements."
+      },
+      "nec_reference": {"article": "690", "section": "690.61"},
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "primary", "description": "Interactive inverters"}],
+      "tags": ["solar PV", "inverter", "anti-islanding"],
+      "verified": true
+    },
+    {
+      "id": "RE-018",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["690"],
+      "nec_tables": [],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "A PV string has 10 modules with Voc of 40V each. At the lowest expected temperature (-20°C), the temperature coefficient is 1.14. What is the maximum string voltage?",
+      "choices": [
+        {"id": "A", "text": "400 volts"},
+        {"id": "B", "text": "456 volts"},
+        {"id": "C", "text": "500 volts"},
+        {"id": "D", "text": "520 volts"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Maximum voltage = modules × Voc × temp coefficient: 10 × 40V × 1.14 = 456V.",
+        "detailed": "Section 690.7(A) requires calculating maximum voltage using lowest expected temperature. The temperature coefficient from Table 690.7(A) or manufacturer data increases Voc at cold temperatures. 10 modules × 40V × 1.14 coefficient = 456 volts maximum string voltage.",
+        "how_to_find": "Use 690.7(A) and Table 690.7(A) for voltage calculation."
+      },
+      "nec_reference": {"article": "690", "section": "690.7(A)"},
+      "calculation": {
+        "formula": "Vmax = Number of Modules × Voc × Temperature Coefficient",
+        "steps": [
+          {"step": 1, "description": "Count modules in string", "result": "10 modules"},
+          {"step": 2, "description": "Note module Voc", "result": "40V"},
+          {"step": 3, "description": "Apply temperature coefficient", "calculation": "10 × 40 × 1.14", "result": "456V"}
+        ],
+        "final_answer": "456 volts",
+        "common_mistakes": ["Forgetting temperature correction", "Using Vmp instead of Voc"]
+      },
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "primary", "description": "PV voltage calculation"}],
+      "tags": ["solar PV", "voltage calculation", "temperature"],
+      "verified": true
+    },
+    {
+      "id": "RE-019",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["690"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "PV modules on a building must maintain what minimum setback from roof edges for firefighter access?",
+      "choices": [
+        {"id": "A", "text": "No setback required"},
+        {"id": "B", "text": "18 inches"},
+        {"id": "C", "text": "3 feet"},
+        {"id": "D", "text": "As required by the AHJ"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "PV array setbacks are determined by AHJ per 690.12(E) to provide firefighter roof access.",
+        "detailed": "Section 690.12(E) requires PV system installations to comply with the requirements of the local AHJ for access and spacing. Many jurisdictions adopt fire code requirements specifying 3-foot setbacks from ridges and edges and pathways. The specific requirements vary by jurisdiction.",
+        "how_to_find": "Go to 690.12(E) and check local fire codes for setback requirements."
+      },
+      "nec_reference": {"article": "690", "section": "690.12(E)"},
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "secondary", "description": "Roof setbacks"}],
+      "tags": ["solar PV", "setback", "fire access"],
+      "verified": true
+    },
+    {
+      "id": "RE-020",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["625"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Bidirectional EVSE (Vehicle-to-Grid) equipment must:",
+      "choices": [
+        {"id": "A", "text": "Only charge the vehicle"},
+        {"id": "B", "text": "Include anti-islanding protection when backfeeding"},
+        {"id": "C", "text": "Always operate at Level 3"},
+        {"id": "D", "text": "Only work with DC fast charging"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Bidirectional EVSE must have anti-islanding protection when exporting power per 625.48(C).",
+        "detailed": "Section 625.48(C) requires bidirectional EVSE that exports power to the premises wiring to comply with 705.6 for anti-islanding. The equipment must automatically disconnect from the utility grid upon loss of grid voltage to protect utility workers, similar to interactive PV inverters.",
+        "how_to_find": "Go to 625.48(C) for bidirectional EVSE requirements."
+      },
+      "nec_reference": {"article": "625", "section": "625.48(C)"},
+      "zafto_links": [{"screen_id": "ev_charger", "relevance": "primary", "description": "V2G systems"}],
+      "tags": ["EV charging", "bidirectional", "V2G"],
+      "verified": true
+    },
+    {
+      "id": "RE-021",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["625"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "EV charging equipment ventilation is required when:",
+      "choices": [
+        {"id": "A", "text": "All EV charging installations"},
+        {"id": "B", "text": "When charging equipment is not listed as suitable for the location"},
+        {"id": "C", "text": "Only for DC fast chargers"},
+        {"id": "D", "text": "Only for indoor commercial installations"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Ventilation is required for EV charging when equipment is not listed for the location per 625.52.",
+        "detailed": "Section 625.52 addresses ventilation for EV charging. Indoor locations require ventilation where batteries being charged may emit hydrogen or other hazardous gases and the equipment is not listed as suitable for the location without ventilation.",
+        "how_to_find": "Go to 625.52 for EV charging ventilation requirements."
+      },
+      "nec_reference": {"article": "625", "section": "625.52"},
+      "zafto_links": [{"screen_id": "ev_charger", "relevance": "secondary", "description": "EV ventilation"}],
+      "tags": ["EV charging", "ventilation", "indoor"],
+      "verified": true
+    },
+    {
+      "id": "RE-022",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["625"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "EV supply equipment cord sets are limited to what maximum length?",
+      "choices": [
+        {"id": "A", "text": "15 feet"},
+        {"id": "B", "text": "20 feet"},
+        {"id": "C", "text": "25 feet"},
+        {"id": "D", "text": "No maximum length specified"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "EVSE cord sets are limited to 25 feet maximum per 625.17(B).",
+        "detailed": "Section 625.17(B) limits EV supply equipment cords used with cord-and-plug connected equipment to not more than 7.5 m (25 ft) in length. This prevents voltage drop issues and tripping hazards from excessively long charging cables.",
+        "how_to_find": "Go to 625.17(B) for EVSE cord length limits."
+      },
+      "nec_reference": {"article": "625", "section": "625.17(B)"},
+      "zafto_links": [{"screen_id": "ev_charger", "relevance": "secondary", "description": "EVSE cord length"}],
+      "tags": ["EV charging", "cord length", "25 feet"],
+      "verified": true
+    },
+    {
+      "id": "RE-023",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["625"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Electric Vehicle Power Export Equipment (EVPE) is used to:",
+      "choices": [
+        {"id": "A", "text": "Charge the vehicle faster"},
+        {"id": "B", "text": "Export power from the vehicle to serve loads"},
+        {"id": "C", "text": "Convert AC to DC for charging"},
+        {"id": "D", "text": "Monitor charging status only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "EVPE allows vehicles to export stored energy to power loads or the grid per 625.2.",
+        "detailed": "Section 625.2 defines Electric Vehicle Power Export Equipment (EVPE) as equipment for transferring energy from an electric vehicle to premises wiring or an electric power production source. This enables vehicle-to-home (V2H) or vehicle-to-grid (V2G) applications.",
+        "how_to_find": "Go to 625.2 for EVPE definition."
+      },
+      "nec_reference": {"article": "625", "section": "625.2"},
+      "zafto_links": [{"screen_id": "ev_charger", "relevance": "primary", "description": "Power export equipment"}],
+      "tags": ["EV charging", "EVPE", "V2H"],
+      "verified": true
+    },
+    {
+      "id": "RE-024",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["706"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Energy storage system (ESS) disconnecting means must disconnect:",
+      "choices": [
+        {"id": "A", "text": "The grounded conductor only"},
+        {"id": "B", "text": "All ungrounded conductors"},
+        {"id": "C", "text": "Only the DC side"},
+        {"id": "D", "text": "Only the AC side"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "ESS disconnects must open all ungrounded conductors per 706.15.",
+        "detailed": "Section 706.15 requires a disconnecting means to disconnect the ESS from all ungrounded conductors of all sources. The disconnect must be accessible, lockable in the open position, and clearly indicate whether open or closed. Both DC and AC disconnecting means may be required.",
+        "how_to_find": "Go to 706.15 for ESS disconnecting means requirements."
+      },
+      "nec_reference": {"article": "706", "section": "706.15"},
+      "zafto_links": [],
+      "tags": ["ESS", "disconnect", "ungrounded conductors"],
+      "verified": true
+    },
+    {
+      "id": "RE-025",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["706"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "ESS installations using lithium-ion batteries must have provisions for:",
+      "choices": [
+        {"id": "A", "text": "Weekly testing"},
+        {"id": "B", "text": "Thermal runaway mitigation"},
+        {"id": "C", "text": "24-hour monitoring"},
+        {"id": "D", "text": "Outdoor installation only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Lithium-ion ESS must have thermal runaway mitigation per 706.30(B).",
+        "detailed": "Section 706.30(B) requires ESS to be listed and include provisions for thermal runaway mitigation where applicable. Lithium-ion batteries are susceptible to thermal runaway, and listed equipment includes monitoring, ventilation, and fire suppression features to address this hazard.",
+        "how_to_find": "Go to 706.30(B) for ESS safety requirements."
+      },
+      "nec_reference": {"article": "706", "section": "706.30(B)"},
+      "zafto_links": [],
+      "tags": ["ESS", "lithium-ion", "thermal runaway"],
+      "verified": true
+    },
+    {
+      "id": "RE-026",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["706"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "ESS circuit conductors must be sized at minimum:",
+      "choices": [
+        {"id": "A", "text": "100% of maximum current"},
+        {"id": "B", "text": "125% of maximum current"},
+        {"id": "C", "text": "150% of maximum current"},
+        {"id": "D", "text": "80% of conductor ampacity"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "ESS conductors must have ampacity of at least 125% of maximum current per 706.20.",
+        "detailed": "Section 706.20 requires ESS circuit conductors to have an ampacity not less than 125% of the maximum current. This accounts for the continuous nature of battery charging and discharging operations and is consistent with other continuous load requirements.",
+        "how_to_find": "Go to 706.20 for ESS conductor sizing."
+      },
+      "nec_reference": {"article": "706", "section": "706.20"},
+      "zafto_links": [],
+      "tags": ["ESS", "conductor sizing", "125%"],
+      "verified": true
+    },
+    {
+      "id": "RE-027",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["694"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Article 694 covers electrical installations for:",
+      "choices": [
+        {"id": "A", "text": "Solar PV systems"},
+        {"id": "B", "text": "Wind electric systems"},
+        {"id": "C", "text": "Fuel cells"},
+        {"id": "D", "text": "Hydroelectric systems"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Article 694 covers small wind electric systems.",
+        "detailed": "Article 694 applies to small wind (turbine) electric systems that produce power from wind. It covers systems with production voltage not exceeding 1000V AC or 1500V DC, including the turbine, tower, generator, charge controllers, and interconnection equipment.",
+        "how_to_find": "Go to 694.1 for wind electric system scope."
+      },
+      "nec_reference": {"article": "694", "section": "694.1"},
+      "zafto_links": [],
+      "tags": ["wind", "turbine", "Article 694"],
+      "verified": true
+    },
+    {
+      "id": "RE-028",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["694"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Wind turbine circuit conductors must be sized at minimum:",
+      "choices": [
+        {"id": "A", "text": "100% of rated current"},
+        {"id": "B", "text": "125% of rated current"},
+        {"id": "C", "text": "150% of rated current"},
+        {"id": "D", "text": "200% of rated current"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Wind turbine conductors must have ampacity of at least 125% of rated current per 694.12(A).",
+        "detailed": "Section 694.12(A) requires wind turbine output circuit conductors to have an ampacity of not less than 125% of the rated current of the wind turbine. This addresses continuous operation and potential current variations with wind speed.",
+        "how_to_find": "Go to 694.12(A) for wind turbine conductor sizing."
+      },
+      "nec_reference": {"article": "694", "section": "694.12(A)"},
+      "zafto_links": [],
+      "tags": ["wind", "conductor sizing", "125%"],
+      "verified": true
+    },
+    {
+      "id": "RE-029",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["692"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Article 692 covers electrical installations for:",
+      "choices": [
+        {"id": "A", "text": "Solar PV systems"},
+        {"id": "B", "text": "Wind turbines"},
+        {"id": "C", "text": "Fuel cell systems"},
+        {"id": "D", "text": "Battery storage only"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Article 692 covers fuel cell systems that produce electricity from fuel.",
+        "detailed": "Article 692 applies to fuel cell systems that convert chemical energy directly into electrical energy. This includes proton exchange membrane (PEM), solid oxide, and other fuel cell technologies used for stationary power generation in residential and commercial applications.",
+        "how_to_find": "Go to 692.1 for fuel cell system scope."
+      },
+      "nec_reference": {"article": "692", "section": "692.1"},
+      "zafto_links": [],
+      "tags": ["fuel cell", "Article 692", "power generation"],
+      "verified": true
+    },
+    {
+      "id": "RE-030",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["705"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Article 705 covers:",
+      "choices": [
+        {"id": "A", "text": "Only solar PV systems"},
+        {"id": "B", "text": "Interconnected electric power production sources"},
+        {"id": "C", "text": "Standby generators only"},
+        {"id": "D", "text": "Utility metering"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Article 705 covers all interconnected electric power production sources.",
+        "detailed": "Article 705 applies to all sources of electric power production, such as PV systems, fuel cells, wind electric systems, and other power sources interconnected to supply power to premises wiring or to a utility. It addresses interconnection, synchronization, and backfeed requirements.",
+        "how_to_find": "Go to 705.1 for interconnection scope."
+      },
+      "nec_reference": {"article": "705", "section": "705.1"},
+      "zafto_links": [],
+      "tags": ["interconnection", "Article 705", "power production"],
+      "verified": true
+    },
+    {
+      "id": "RE-031",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["705"],
+      "nec_tables": [],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "A 200A busbar can have what maximum PV inverter backfeed using the 120% rule?",
+      "choices": [
+        {"id": "A", "text": "20 amperes"},
+        {"id": "B", "text": "40 amperes"},
+        {"id": "C", "text": "60 amperes"},
+        {"id": "D", "text": "80 amperes"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "120% rule: 200A × 120% = 240A total; 240A - 200A main = 40A max inverter.",
+        "detailed": "Section 705.12(B)(2) permits the sum of the main breaker and inverter output breaker ratings to exceed the busbar rating by up to 120%. For a 200A bus: 200A × 1.20 = 240A maximum. If the main breaker is 200A, the inverter breaker can be 240A - 200A = 40A maximum.",
+        "how_to_find": "Go to 705.12(B)(2) for the 120% rule calculation."
+      },
+      "nec_reference": {"article": "705", "section": "705.12(B)(2)"},
+      "calculation": {
+        "formula": "Max Inverter = (Busbar × 120%) - Main Breaker",
+        "steps": [
+          {"step": 1, "description": "Calculate 120% of busbar", "calculation": "200A × 1.20", "result": "240A"},
+          {"step": 2, "description": "Subtract main breaker", "calculation": "240A - 200A", "result": "40A"}
+        ],
+        "final_answer": "40 amperes maximum",
+        "common_mistakes": ["Using 125% instead of 120%", "Forgetting to subtract main breaker"]
+      },
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "primary", "description": "120% rule"}],
+      "tags": ["solar PV", "120% rule", "interconnection"],
+      "verified": true
+    },
+    {
+      "id": "RE-032",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["705"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "When using the 120% rule, the inverter OCPD must be located:",
+      "choices": [
+        {"id": "A", "text": "Anywhere in the panel"},
+        {"id": "B", "text": "At the opposite end of the busbar from the main breaker"},
+        {"id": "C", "text": "Adjacent to the main breaker"},
+        {"id": "D", "text": "In a separate subpanel"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "The inverter OCPD must be at the opposite end of the busbar from the main per 705.12(B)(2)(3)(b).",
+        "detailed": "Section 705.12(B)(2)(3)(b) requires the connection of the inverter output breaker to be at the opposite end of the busbar from the utility source connection (main breaker). This ensures the busbar isn't overloaded at any point since power enters from opposite ends.",
+        "how_to_find": "Go to 705.12(B)(2)(3)(b) for breaker placement."
+      },
+      "nec_reference": {"article": "705", "section": "705.12(B)(2)(3)(b)"},
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "primary", "description": "Breaker location"}],
+      "tags": ["solar PV", "120% rule", "breaker placement"],
+      "verified": true
+    },
+    {
+      "id": "RE-033",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["705"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A supply-side connection for PV allows connection:",
+      "choices": [
+        {"id": "A", "text": "Only at the load side of the main breaker"},
+        {"id": "B", "text": "Between the utility meter and the main panel"},
+        {"id": "C", "text": "At any point in the system"},
+        {"id": "D", "text": "Only through a separate service"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Supply-side connections are made between the meter and main panel per 705.12(A).",
+        "detailed": "Section 705.12(A) permits supply-side connections for power production sources on the supply side of the service disconnecting means. This allows larger systems without being limited by panel busbar ratings and is common for larger commercial PV installations.",
+        "how_to_find": "Go to 705.12(A) for supply-side connection requirements."
+      },
+      "nec_reference": {"article": "705", "section": "705.12(A)"},
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "secondary", "description": "Supply-side connection"}],
+      "tags": ["solar PV", "supply-side", "interconnection"],
+      "verified": true
+    },
+    {
+      "id": "RE-034",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["690"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "PV system equipment grounding conductors must be sized based on:",
+      "choices": [
+        {"id": "A", "text": "Module wattage"},
+        {"id": "B", "text": "The overcurrent protection device rating"},
+        {"id": "C", "text": "Wire length only"},
+        {"id": "D", "text": "Inverter efficiency"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "PV equipment grounding conductors are sized per the OCPD rating per 690.45.",
+        "detailed": "Section 690.45 requires equipment grounding conductors for PV systems to be sized in accordance with 250.122 based on the rating of the circuit overcurrent protective device. For circuits without overcurrent protection, EGC is sized based on the maximum circuit current.",
+        "how_to_find": "Go to 690.45 and Table 250.122 for EGC sizing."
+      },
+      "nec_reference": {"article": "690", "section": "690.45"},
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "secondary", "description": "PV grounding"}],
+      "tags": ["solar PV", "grounding", "EGC sizing"],
+      "verified": true
+    },
+    {
+      "id": "RE-035",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["690"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "PV source circuit OCPD must be rated at minimum:",
+      "choices": [
+        {"id": "A", "text": "100% of circuit current"},
+        {"id": "B", "text": "125% of circuit current"},
+        {"id": "C", "text": "156% of circuit current (125% × 125%)"},
+        {"id": "D", "text": "150% of circuit current"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "PV OCPD must be rated 125% of conductor ampacity which is 125% of Isc = 156% of Isc.",
+        "detailed": "Section 690.9(B) requires PV source circuit OCPD to be rated at not less than 125% of the conductor ampacity. Since conductors must be 125% of Isc per 690.8, the OCPD ends up at 125% × 125% = 156% of the maximum circuit current (Isc).",
+        "how_to_find": "Go to 690.9(B) for PV overcurrent protection sizing."
+      },
+      "nec_reference": {"article": "690", "section": "690.9(B)"},
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "primary", "description": "PV OCPD sizing"}],
+      "tags": ["solar PV", "OCPD", "156%"],
+      "verified": true
+    },
+    {
+      "id": "RE-036",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["625"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "EV energy management systems can:",
+      "choices": [
+        {"id": "A", "text": "Only increase charging speed"},
+        {"id": "B", "text": "Automatically adjust charging current to prevent overload"},
+        {"id": "C", "text": "Override GFCI protection"},
+        {"id": "D", "text": "Bypass the utility meter"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "EV energy management systems adjust charging current to prevent circuit overload per 625.42.",
+        "detailed": "Section 625.42 permits EV energy management systems that monitor and automatically adjust EV charging load to prevent overloading of circuits. The system can reduce charging current when other loads increase, allowing installation on circuits that might otherwise be undersized for full charging current.",
+        "how_to_find": "Go to 625.42 for EV energy management systems."
+      },
+      "nec_reference": {"article": "625", "section": "625.42"},
+      "zafto_links": [{"screen_id": "ev_charger", "relevance": "primary", "description": "Load management"}],
+      "tags": ["EV charging", "load management", "energy management"],
+      "verified": true
+    },
+    {
+      "id": "RE-037",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["690"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Microinverters and DC-to-DC converters that provide module-level shutdown are required for:",
+      "choices": [
+        {"id": "A", "text": "All PV systems"},
+        {"id": "B", "text": "PV systems on buildings to meet rapid shutdown"},
+        {"id": "C", "text": "Only ground-mounted systems"},
+        {"id": "D", "text": "Only systems over 50 kW"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Module-level power electronics satisfy rapid shutdown requirements for rooftop PV per 690.12(B)(2).",
+        "detailed": "Section 690.12(B)(2) requires PV systems on buildings to limit voltage to 80V within 30 seconds within the array boundary. Module-level power electronics (microinverters, DC optimizers with rapid shutdown) enable compliance by shutting down each module individually upon rapid shutdown activation.",
+        "how_to_find": "Go to 690.12(B)(2) for rapid shutdown compliance methods."
+      },
+      "nec_reference": {"article": "690", "section": "690.12(B)(2)"},
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "primary", "description": "Microinverters"}],
+      "tags": ["solar PV", "microinverter", "rapid shutdown"],
+      "verified": true
+    },
+    {
+      "id": "RE-038",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["706"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "ESS installations must include signage indicating:",
+      "choices": [
+        {"id": "A", "text": "Energy capacity only"},
+        {"id": "B", "text": "Type of energy storage technology and location of disconnects"},
+        {"id": "C", "text": "Installation date"},
+        {"id": "D", "text": "Manufacturer warranty period"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "ESS must have signage showing technology type and disconnect locations per 706.10.",
+        "detailed": "Section 706.10 requires ESS installations to have permanent signs at the service disconnecting means indicating the presence of an ESS, the type of technology (e.g., lithium-ion), the location of disconnecting means, and maximum energy storage capacity.",
+        "how_to_find": "Go to 706.10 for ESS signage requirements."
+      },
+      "nec_reference": {"article": "706", "section": "706.10"},
+      "zafto_links": [],
+      "tags": ["ESS", "signage", "labeling"],
+      "verified": true
+    },
+    {
+      "id": "RE-039",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["690"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Bipolar PV systems have a reference voltage to ground that is:",
+      "choices": [
+        {"id": "A", "text": "Zero volts"},
+        {"id": "B", "text": "Equal to the positive conductor voltage"},
+        {"id": "C", "text": "Greater than the monopole system voltage"},
+        {"id": "D", "text": "Half of the total system voltage"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Bipolar PV systems have a center tap grounded, so each pole is half the total voltage to ground.",
+        "detailed": "Section 690.7(B) addresses bipolar PV systems where a center conductor serves as a functional ground reference. In these systems, the maximum voltage to ground from either pole is half the total bipolar voltage, allowing higher total system voltages while limiting voltage to ground.",
+        "how_to_find": "Go to 690.7(B) for bipolar system voltage."
+      },
+      "nec_reference": {"article": "690", "section": "690.7(B)"},
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "secondary", "description": "Bipolar systems"}],
+      "tags": ["solar PV", "bipolar", "voltage to ground"],
+      "verified": true
+    },
+    {
+      "id": "RE-040",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["625"],
+      "nec_tables": [],
+      "type": "calculation",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A 48-ampere EV charger requires a circuit breaker rated at minimum:",
+      "choices": [
+        {"id": "A", "text": "50 amperes"},
+        {"id": "B", "text": "60 amperes"},
+        {"id": "C", "text": "70 amperes"},
+        {"id": "D", "text": "80 amperes"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "EV continuous load × 125% = 48A × 1.25 = 60A breaker minimum.",
+        "detailed": "Section 625.41 requires EV charging equipment branch circuit conductors and overcurrent devices to be sized at 125% for continuous loads. A 48A charger requires: 48A × 1.25 = 60 amperes minimum circuit breaker rating.",
+        "how_to_find": "Go to 625.41 for EV circuit sizing."
+      },
+      "nec_reference": {"article": "625", "section": "625.41"},
+      "calculation": {
+        "formula": "Breaker = EV Charger Rating × 125%",
+        "steps": [
+          {"step": 1, "description": "Identify charger rating", "result": "48 amperes"},
+          {"step": 2, "description": "Apply 125% continuous factor", "calculation": "48 × 1.25", "result": "60 amperes"}
+        ],
+        "final_answer": "60 amperes",
+        "common_mistakes": ["Forgetting 125% for continuous load"]
+      },
+      "zafto_links": [{"screen_id": "ev_charger", "relevance": "primary", "description": "EV circuit sizing"}],
+      "tags": ["EV charging", "circuit sizing", "125%"],
+      "verified": true
+    },
+    {
+      "id": "RE-041",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["690"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "PV system wiring inside buildings must be installed in:",
+      "choices": [
+        {"id": "A", "text": "Any wiring method"},
+        {"id": "B", "text": "Metal raceways or enclosures"},
+        {"id": "C", "text": "Type NM cable only"},
+        {"id": "D", "text": "Direct burial cable"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "PV wiring inside buildings must be in metallic raceways or enclosures per 690.31(G).",
+        "detailed": "Section 690.31(G) requires PV source and output circuits installed inside a building to be installed in metal raceways, Type MC cable, or other metal enclosures from the point of entry to the first readily accessible disconnecting means. This provides fire protection for DC circuits in buildings.",
+        "how_to_find": "Go to 690.31(G) for PV wiring in buildings."
+      },
+      "nec_reference": {"article": "690", "section": "690.31(G)"},
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "primary", "description": "PV wiring methods"}],
+      "tags": ["solar PV", "wiring", "metal raceway"],
+      "verified": true
+    },
+    {
+      "id": "RE-042",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["706"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "ESS systems with voltages exceeding 100V DC must have:",
+      "choices": [
+        {"id": "A", "text": "Outdoor installation only"},
+        {"id": "B", "text": "Ground-fault protection"},
+        {"id": "C", "text": "50 kWh minimum capacity"},
+        {"id": "D", "text": "Water cooling systems"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "ESS over 100V DC requires ground-fault protection per 706.30(D).",
+        "detailed": "Section 706.30(D) requires ground-fault detection and interruption for ESS circuits with voltage exceeding 100V DC. This protects against undetected ground faults that could cause fires or shock hazards in high-voltage battery systems.",
+        "how_to_find": "Go to 706.30(D) for ESS ground-fault protection."
+      },
+      "nec_reference": {"article": "706", "section": "706.30(D)"},
+      "zafto_links": [],
+      "tags": ["ESS", "ground-fault", "100V DC"],
+      "verified": true
+    },
+    {
+      "id": "RE-043",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["694"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Wind turbine systems must have a disconnecting means that can be:",
+      "choices": [
+        {"id": "A", "text": "Only manually operated"},
+        {"id": "B", "text": "Locked in the open position"},
+        {"id": "C", "text": "Automatic only"},
+        {"id": "D", "text": "Inside the nacelle only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Wind turbine disconnects must be lockable in open position per 694.22(C).",
+        "detailed": "Section 694.22(C) requires wind turbine disconnecting means to be capable of being locked in the open position. This ensures turbines can be safely de-energized for maintenance. The disconnect must be readily accessible and indicate open/closed status.",
+        "how_to_find": "Go to 694.22(C) for wind turbine disconnect requirements."
+      },
+      "nec_reference": {"article": "694", "section": "694.22(C)"},
+      "zafto_links": [],
+      "tags": ["wind", "disconnect", "lockable"],
+      "verified": true
+    },
+    {
+      "id": "RE-044",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["690"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A PV system with module-level power electronics but no battery is classified as:",
+      "choices": [
+        {"id": "A", "text": "Standalone system"},
+        {"id": "B", "text": "Interactive system"},
+        {"id": "C", "text": "Hybrid system"},
+        {"id": "D", "text": "Backup system"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Grid-tied PV without batteries is an interactive system per 690.2.",
+        "detailed": "Section 690.2 defines interactive systems as PV systems that operate in parallel with and can deliver power to the electric utility distribution system. Systems with microinverters or string inverters connected to the grid are interactive regardless of whether module-level power electronics are used.",
+        "how_to_find": "Go to 690.2 for PV system definitions."
+      },
+      "nec_reference": {"article": "690", "section": "690.2"},
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "primary", "description": "PV system types"}],
+      "tags": ["solar PV", "interactive", "grid-tied"],
+      "verified": true
+    },
+    {
+      "id": "RE-045",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["625"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "The height of EV charging equipment outlets above the floor must be:",
+      "choices": [
+        {"id": "A", "text": "12 inches minimum"},
+        {"id": "B", "text": "18 to 48 inches"},
+        {"id": "C", "text": "No height requirement specified"},
+        {"id": "D", "text": "36 inches exactly"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "EVSE outlets must be 18 to 48 inches above the floor per 625.50.",
+        "detailed": "Section 625.50 requires EV charging equipment outlets to be installed at a height of not less than 18 inches (450 mm) and not more than 48 inches (1.2 m) above the floor or parking surface. This ensures accessible connection height for vehicle charging ports.",
+        "how_to_find": "Go to 625.50 for EVSE mounting height."
+      },
+      "nec_reference": {"article": "625", "section": "625.50"},
+      "zafto_links": [{"screen_id": "ev_charger", "relevance": "secondary", "description": "EVSE mounting height"}],
+      "tags": ["EV charging", "mounting height", "installation"],
+      "verified": true
+    },
+    {
+      "id": "RE-046",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["690"],
+      "nec_tables": ["Table 690.7(A)"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "At -40°C, the voltage correction factor for crystalline silicon PV modules from Table 690.7(A) is approximately:",
+      "choices": [
+        {"id": "A", "text": "1.00"},
+        {"id": "B", "text": "1.14"},
+        {"id": "C", "text": "1.25"},
+        {"id": "D", "text": "1.35"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "At -40°C, crystalline silicon modules have a voltage factor of approximately 1.25 per Table 690.7(A).",
+        "detailed": "Table 690.7(A) provides voltage correction factors for crystalline and multicrystalline silicon modules based on lowest expected ambient temperature. At -40°C, the factor is 1.25, meaning Voc increases by 25% compared to standard test conditions at 25°C.",
+        "how_to_find": "Go to Table 690.7(A) for PV temperature correction factors."
+      },
+      "nec_reference": {"article": "690", "section": "Table 690.7(A)"},
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "primary", "description": "Temperature factors"}],
+      "tags": ["solar PV", "temperature", "voltage factor"],
+      "verified": true
+    },
+    {
+      "id": "RE-047",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["690"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "PV system ungrounded DC conductors must be identified by what color?",
+      "choices": [
+        {"id": "A", "text": "White or gray"},
+        {"id": "B", "text": "Green"},
+        {"id": "C", "text": "Red for positive, black for negative (or labeled)"},
+        {"id": "D", "text": "Any color except green"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "PV DC conductors are typically red (positive) and black (negative), or marked per 690.31(B).",
+        "detailed": "Section 690.31(B) requires PV system DC circuit conductors to be color-coded, marked, or tagged. Common practice uses red for positive and black for negative ungrounded conductors. The grounded conductor (if any) must be white or gray per Article 200 requirements.",
+        "how_to_find": "Go to 690.31(B) for PV conductor identification."
+      },
+      "nec_reference": {"article": "690", "section": "690.31(B)"},
+      "zafto_links": [{"screen_id": "wire_color_code", "relevance": "secondary", "description": "DC wire colors"}],
+      "tags": ["solar PV", "wire colors", "DC conductors"],
+      "verified": true
+    },
+    {
+      "id": "RE-048",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["690"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A standalone PV system is one that:",
+      "choices": [
+        {"id": "A", "text": "Connects to the utility grid"},
+        {"id": "B", "text": "Operates independent of the utility grid"},
+        {"id": "C", "text": "Has microinverters"},
+        {"id": "D", "text": "Exports power to neighbors"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Standalone systems operate independent of the utility grid per 690.2.",
+        "detailed": "Section 690.2 defines a standalone system as a PV system that supplies power independently of an electrical production and distribution network. These systems typically include battery storage and are used in off-grid applications where utility power is unavailable.",
+        "how_to_find": "Go to 690.2 for standalone system definition."
+      },
+      "nec_reference": {"article": "690", "section": "690.2"},
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "primary", "description": "System types"}],
+      "tags": ["solar PV", "standalone", "off-grid"],
+      "verified": true
+    },
+    {
+      "id": "RE-049",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["690"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "When PV modules are connected in series, the maximum system voltage equals:",
+      "choices": [
+        {"id": "A", "text": "Voc of one module"},
+        {"id": "B", "text": "Sum of all module Voc values adjusted for temperature"},
+        {"id": "C", "text": "Sum of module Vmp values"},
+        {"id": "D", "text": "Voc divided by number of modules"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Series-connected module voltages add; use temperature-corrected Voc for maximum per 690.7(A).",
+        "detailed": "Section 690.7(A) requires maximum PV system voltage to be calculated as the sum of the open-circuit voltages (Voc) of all series-connected modules, corrected for the lowest expected ambient temperature. This determines conductor and equipment voltage ratings.",
+        "how_to_find": "Go to 690.7(A) for series string voltage calculation."
+      },
+      "nec_reference": {"article": "690", "section": "690.7(A)"},
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "primary", "description": "String voltage"}],
+      "tags": ["solar PV", "series", "Voc"],
+      "verified": true
+    },
+    {
+      "id": "RE-050",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["690"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "When PV strings are connected in parallel, the system current:",
+      "choices": [
+        {"id": "A", "text": "Remains equal to one string"},
+        {"id": "B", "text": "Increases by sum of string currents"},
+        {"id": "C", "text": "Decreases"},
+        {"id": "D", "text": "Doubles the voltage"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Parallel-connected string currents add together per 690.8(A).",
+        "detailed": "Section 690.8(A) addresses maximum circuit current calculations. When PV source circuits (strings) are connected in parallel, the currents add. The maximum current is the sum of parallel-connected module or string short-circuit currents (Isc), used for conductor and OCPD sizing.",
+        "how_to_find": "Go to 690.8(A) for parallel string current calculation."
+      },
+      "nec_reference": {"article": "690", "section": "690.8(A)"},
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "primary", "description": "Parallel current"}],
+      "tags": ["solar PV", "parallel", "current"],
+      "verified": true
+    },
+    {
+      "id": "RE-051",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["625"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Wireless EV charging equipment (WEVC) is covered under:",
+      "choices": [
+        {"id": "A", "text": "Article 625 Part IV"},
+        {"id": "B", "text": "Article 690"},
+        {"id": "C", "text": "Article 706"},
+        {"id": "D", "text": "Article 480"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Wireless EV charging is covered in Article 625 Part IV per 625.101.",
+        "detailed": "Article 625 Part IV covers Wireless Power Transfer Equipment for electric vehicles. Section 625.101 through 625.106 address installation requirements for wireless (inductive) charging systems including ground assembly and vehicle assembly requirements.",
+        "how_to_find": "Go to Article 625 Part IV for wireless EV charging."
+      },
+      "nec_reference": {"article": "625", "section": "625.101"},
+      "zafto_links": [{"screen_id": "ev_charger", "relevance": "secondary", "description": "Wireless charging"}],
+      "tags": ["EV charging", "wireless", "inductive"],
+      "verified": true
+    },
+    {
+      "id": "RE-052",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["706"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "ESS installations in dwelling units are limited to:",
+      "choices": [
+        {"id": "A", "text": "5 kWh maximum"},
+        {"id": "B", "text": "20 kWh nominal energy capacity in one room"},
+        {"id": "C", "text": "100 kWh maximum"},
+        {"id": "D", "text": "No capacity limit"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "ESS in dwellings is limited to 20 kWh in one room with specific spacing per 706.31(C).",
+        "detailed": "Section 706.31(C) limits ESS in dwelling units to a maximum of 20 kWh nominal energy capacity in attached garages and other areas. Systems exceeding 20 kWh require additional separation or outdoor installation. This addresses fire load concerns in residential spaces.",
+        "how_to_find": "Go to 706.31(C) for dwelling ESS limitations."
+      },
+      "nec_reference": {"article": "706", "section": "706.31(C)"},
+      "zafto_links": [],
+      "tags": ["ESS", "dwelling", "20 kWh"],
+      "verified": true
+    },
+    {
+      "id": "RE-053",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["690"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "PV systems must have a permanent warning label indicating:",
+      "choices": [
+        {"id": "A", "text": "Installer name"},
+        {"id": "B", "text": "ELECTRIC SHOCK HAZARD warning"},
+        {"id": "C", "text": "Module efficiency rating"},
+        {"id": "D", "text": "System cost"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "PV systems require shock hazard warning labels at various locations per 690.56(B).",
+        "detailed": "Section 690.56(B) requires PV system labeling including warning signs at disconnects indicating that PV system conductors are energized by sunlight during daylight hours. Labels reading 'WARNING: ELECTRIC SHOCK HAZARD' and similar warnings are required at specific locations.",
+        "how_to_find": "Go to 690.56(B) for PV warning label requirements."
+      },
+      "nec_reference": {"article": "690", "section": "690.56(B)"},
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "secondary", "description": "PV labels"}],
+      "tags": ["solar PV", "warning label", "shock hazard"],
+      "verified": true
+    },
+    {
+      "id": "RE-054",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["694"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Wind turbine tower grounding electrode conductor must be minimum:",
+      "choices": [
+        {"id": "A", "text": "6 AWG copper"},
+        {"id": "B", "text": "8 AWG copper"},
+        {"id": "C", "text": "4 AWG copper"},
+        {"id": "D", "text": "Based on turbine output current"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Wind turbine tower GEC must be minimum 6 AWG copper per 694.40(C).",
+        "detailed": "Section 694.40(C) requires the grounding electrode conductor for the turbine tower to be not smaller than 6 AWG copper or 4 AWG aluminum. The tower must be grounded to a grounding electrode system to safely conduct lightning strikes to earth.",
+        "how_to_find": "Go to 694.40(C) for wind turbine tower grounding."
+      },
+      "nec_reference": {"article": "694", "section": "694.40(C)"},
+      "zafto_links": [],
+      "tags": ["wind", "grounding", "6 AWG"],
+      "verified": true
+    },
+    {
+      "id": "RE-055",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["705"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Anti-islanding protection in interactive inverters prevents:",
+      "choices": [
+        {"id": "A", "text": "Battery discharge"},
+        {"id": "B", "text": "Backfeeding a de-energized utility grid"},
+        {"id": "C", "text": "Overcharging modules"},
+        {"id": "D", "text": "Voltage drop"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Anti-islanding prevents backfeeding when the grid is de-energized, protecting utility workers per 705.6.",
+        "detailed": "Section 705.6 requires interconnected power sources to automatically disconnect from the utility upon loss of grid voltage. This anti-islanding protection ensures the PV system doesn't energize utility lines being worked on by line crews, preventing electrocution of utility workers.",
+        "how_to_find": "Go to 705.6 for anti-islanding requirements."
+      },
+      "nec_reference": {"article": "705", "section": "705.6"},
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "primary", "description": "Anti-islanding"}],
+      "tags": ["solar PV", "anti-islanding", "utility safety"],
+      "verified": true
+    },
+    {
+      "id": "RE-056",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["690"],
+      "nec_tables": [],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "A PV array has 3 strings in parallel, each with Isc of 10A. What is the minimum output circuit conductor ampacity?",
+      "choices": [
+        {"id": "A", "text": "30 amperes"},
+        {"id": "B", "text": "37.5 amperes"},
+        {"id": "C", "text": "45 amperes"},
+        {"id": "D", "text": "56.25 amperes"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Output circuit: 3 strings × 10A × 125% = 37.5A minimum conductor ampacity.",
+        "detailed": "Section 690.8(A) requires conductor ampacity of 125% of maximum current. Three parallel strings at 10A Isc each = 30A total. 30A × 1.25 = 37.5 amperes minimum conductor ampacity. OCPD would need to be 125% of that (46.9A, round to standard 50A).",
+        "how_to_find": "Use 690.8(A) for PV output circuit conductor sizing."
+      },
+      "nec_reference": {"article": "690", "section": "690.8(A)"},
+      "calculation": {
+        "formula": "Conductor Ampacity = (Strings × Isc) × 125%",
+        "steps": [
+          {"step": 1, "description": "Calculate total string current", "calculation": "3 × 10A", "result": "30A"},
+          {"step": 2, "description": "Apply 125% factor", "calculation": "30A × 1.25", "result": "37.5A"}
+        ],
+        "final_answer": "37.5 amperes minimum",
+        "common_mistakes": ["Forgetting 125% factor", "Using Imp instead of Isc"]
+      },
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "primary", "description": "Output circuit sizing"}],
+      "tags": ["solar PV", "conductor sizing", "parallel strings"],
+      "verified": true
+    },
+    {
+      "id": "RE-057",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["625"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "EVSE interactive functionality allows the equipment to:",
+      "choices": [
+        {"id": "A", "text": "Only charge during peak hours"},
+        {"id": "B", "text": "Respond to external signals to manage load"},
+        {"id": "C", "text": "Charge multiple vehicles simultaneously"},
+        {"id": "D", "text": "Convert AC to DC only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Interactive EVSE responds to external signals for load management per 625.18.",
+        "detailed": "Section 625.18 addresses EVSE interactive functionality allowing equipment to receive and respond to external control signals. This enables smart charging, demand response, and utility load management programs to adjust charging times and rates.",
+        "how_to_find": "Go to 625.18 for interactive EVSE functionality."
+      },
+      "nec_reference": {"article": "625", "section": "625.18"},
+      "zafto_links": [{"screen_id": "ev_charger", "relevance": "primary", "description": "Smart charging"}],
+      "tags": ["EV charging", "interactive", "demand response"],
+      "verified": true
+    },
+    {
+      "id": "RE-058",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["706"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "ESS in one- and two-family dwellings must be installed:",
+      "choices": [
+        {"id": "A", "text": "Only outdoors"},
+        {"id": "B", "text": "Only in garages"},
+        {"id": "C", "text": "Per listing and manufacturer instructions"},
+        {"id": "D", "text": "Only in basements"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Dwelling ESS must be installed per listing and manufacturer instructions per 706.31.",
+        "detailed": "Section 706.31 requires ESS installations in dwellings to comply with the equipment listing and manufacturer's installation instructions. Listed ESS equipment includes specific requirements for spacing, ventilation, and location that must be followed.",
+        "how_to_find": "Go to 706.31 for dwelling ESS installation requirements."
+      },
+      "nec_reference": {"article": "706", "section": "706.31"},
+      "zafto_links": [],
+      "tags": ["ESS", "dwelling", "installation"],
+      "verified": true
+    },
+    {
+      "id": "RE-059",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["690"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "The minimum conductor size for PV source circuits is:",
+      "choices": [
+        {"id": "A", "text": "18 AWG"},
+        {"id": "B", "text": "14 AWG"},
+        {"id": "C", "text": "12 AWG"},
+        {"id": "D", "text": "10 AWG"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "PV source circuit conductors must be minimum 14 AWG per 690.31(A).",
+        "detailed": "Section 690.31(A) requires PV source circuit conductors to be not smaller than 14 AWG. This minimum size ensures adequate mechanical strength for rooftop installations and connections. Larger sizes may be required based on ampacity and voltage drop calculations.",
+        "how_to_find": "Go to 690.31(A) for minimum PV conductor size."
+      },
+      "nec_reference": {"article": "690", "section": "690.31(A)"},
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "secondary", "description": "Minimum wire size"}],
+      "tags": ["solar PV", "14 AWG", "minimum size"],
+      "verified": true
+    },
+    {
+      "id": "RE-060",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["692"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Fuel cell system conductors must have ampacity of at least:",
+      "choices": [
+        {"id": "A", "text": "100% of output current"},
+        {"id": "B", "text": "125% of output current"},
+        {"id": "C", "text": "150% of output current"},
+        {"id": "D", "text": "80% of output current"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Fuel cell conductors must have ampacity of 125% of output current per 692.8(A).",
+        "detailed": "Section 692.8(A) requires fuel cell system circuit conductors to have an ampacity of not less than 125% of the maximum circuit current. This accounts for the continuous nature of fuel cell operation, similar to PV and other power production sources.",
+        "how_to_find": "Go to 692.8(A) for fuel cell conductor sizing."
+      },
+      "nec_reference": {"article": "692", "section": "692.8(A)"},
+      "zafto_links": [],
+      "tags": ["fuel cell", "conductor sizing", "125%"],
+      "verified": true
+    },
+    {
+      "id": "RE-061",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["690"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "String inverters for PV systems must be listed to:",
+      "choices": [
+        {"id": "A", "text": "UL 1703"},
+        {"id": "B", "text": "UL 1741"},
+        {"id": "C", "text": "UL 489"},
+        {"id": "D", "text": "UL 98"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "PV inverters must be listed to UL 1741 per 690.4(B).",
+        "detailed": "Section 690.4(B) requires inverters and other equipment for PV systems to be listed and labeled for the application. UL 1741 is the standard for inverters, converters, controllers, and interconnection system equipment used in independent power systems including PV.",
+        "how_to_find": "Go to 690.4(B) for PV equipment listing requirements."
+      },
+      "nec_reference": {"article": "690", "section": "690.4(B)"},
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "secondary", "description": "Inverter listing"}],
+      "tags": ["solar PV", "inverter", "UL 1741"],
+      "verified": true
+    },
+    {
+      "id": "RE-062",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["625"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "The maximum rating for a single EV charging load when using automatic load management is:",
+      "choices": [
+        {"id": "A", "text": "Equal to branch circuit rating"},
+        {"id": "B", "text": "Limited by the load management system maximum"},
+        {"id": "C", "text": "50 amperes always"},
+        {"id": "D", "text": "80% of feeder rating"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "With automatic load management, EV load is limited by the system's monitored maximum per 625.42.",
+        "detailed": "Section 625.42 permits automatic load management systems to control EV charging current based on available capacity. The maximum charging load is determined by the load management system's programming, allowing larger chargers on smaller circuits with automatic curtailment when needed.",
+        "how_to_find": "Go to 625.42 for EV load management sizing."
+      },
+      "nec_reference": {"article": "625", "section": "625.42"},
+      "zafto_links": [{"screen_id": "ev_charger", "relevance": "primary", "description": "Load management"}],
+      "tags": ["EV charging", "load management", "automatic"],
+      "verified": true
+    },
+    {
+      "id": "RE-063",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["690"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A multimode inverter can operate:",
+      "choices": [
+        {"id": "A", "text": "Only grid-tied"},
+        {"id": "B", "text": "Only standalone"},
+        {"id": "C", "text": "Both grid-tied and standalone"},
+        {"id": "D", "text": "Only during emergencies"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Multimode inverters operate both grid-tied and standalone per 690.2.",
+        "detailed": "Section 690.2 defines a multimode inverter as having the capability to operate in both interactive and standalone modes. These inverters can export to the grid when available and provide backup power during outages when paired with battery storage.",
+        "how_to_find": "Go to 690.2 for multimode inverter definition."
+      },
+      "nec_reference": {"article": "690", "section": "690.2"},
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "primary", "description": "Multimode inverters"}],
+      "tags": ["solar PV", "multimode", "hybrid"],
+      "verified": true
+    },
+    {
+      "id": "RE-064",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["706"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "ESS installed outdoors must be protected from:",
+      "choices": [
+        {"id": "A", "text": "Sunlight only"},
+        {"id": "B", "text": "Physical damage per manufacturer requirements"},
+        {"id": "C", "text": "Wind only"},
+        {"id": "D", "text": "No protection required outdoors"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Outdoor ESS must be protected from physical damage per manufacturer instructions per 706.31.",
+        "detailed": "Section 706.31 requires ESS equipment installed outdoors to be protected from physical damage and installed according to manufacturer's instructions. This includes appropriate enclosure ratings (NEMA type) for the environmental conditions and protection from vehicle impact where applicable.",
+        "how_to_find": "Go to 706.31 for outdoor ESS installation."
+      },
+      "nec_reference": {"article": "706", "section": "706.31"},
+      "zafto_links": [],
+      "tags": ["ESS", "outdoor", "physical protection"],
+      "verified": true
+    },
+    {
+      "id": "RE-065",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["690"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Ungrounded PV systems (non-isolated) require:",
+      "choices": [
+        {"id": "A", "text": "Standard GFCI protection"},
+        {"id": "B", "text": "Listed equipment designed for ungrounded arrays"},
+        {"id": "C", "text": "No special requirements"},
+        {"id": "D", "text": "Additional grounding electrodes"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Ungrounded PV arrays require equipment listed for use with ungrounded systems per 690.35.",
+        "detailed": "Section 690.35 covers ungrounded PV systems where neither DC conductor is referenced to ground. These systems require disconnects, inverters, and other equipment specifically listed and marked for use on ungrounded PV arrays, plus ground-fault protection per 690.35(C).",
+        "how_to_find": "Go to 690.35 for ungrounded PV system requirements."
+      },
+      "nec_reference": {"article": "690", "section": "690.35"},
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "secondary", "description": "Ungrounded systems"}],
+      "tags": ["solar PV", "ungrounded", "non-isolated"],
+      "verified": true
+    },
+    {
+      "id": "RE-066",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["625"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "EVSE cable management systems must:",
+      "choices": [
+        {"id": "A", "text": "Be permanently attached"},
+        {"id": "B", "text": "Support and protect the cable from damage"},
+        {"id": "C", "text": "Be installed indoors only"},
+        {"id": "D", "text": "Include cable heating"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "EVSE cable management systems must support cables and protect from damage per 625.17(D).",
+        "detailed": "Section 625.17(D) requires cable management systems for EVSE to properly support charging cables and protect them from physical damage. This includes retractors, hooks, and other devices that keep cables off the ground and out of traffic paths.",
+        "how_to_find": "Go to 625.17(D) for EVSE cable management."
+      },
+      "nec_reference": {"article": "625", "section": "625.17(D)"},
+      "zafto_links": [{"screen_id": "ev_charger", "relevance": "secondary", "description": "Cable management"}],
+      "tags": ["EV charging", "cable management", "protection"],
+      "verified": true
+    },
+    {
+      "id": "RE-067",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["694"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A wind turbine nacelle houses:",
+      "choices": [
+        {"id": "A", "text": "Only the blades"},
+        {"id": "B", "text": "The generator and gearbox"},
+        {"id": "C", "text": "The tower base"},
+        {"id": "D", "text": "The inverter only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "The nacelle is the housing at the top of the tower containing the generator, gearbox, and controls.",
+        "detailed": "The nacelle per wind turbine terminology is the enclosure at the top of the tower containing the generator, gearbox, drivetrain, and control systems. Article 694 addresses wiring to and within the nacelle, which must be suitable for the environmental conditions and vibration.",
+        "how_to_find": "See 694.2 for wind turbine definitions."
+      },
+      "nec_reference": {"article": "694", "section": "694.2"},
+      "zafto_links": [],
+      "tags": ["wind", "nacelle", "generator"],
+      "verified": true
+    },
+    {
+      "id": "RE-068",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["705"],
+      "nec_tables": [],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Using the 120% rule on a 225A panel with a 225A main breaker, the maximum PV breaker is:",
+      "choices": [
+        {"id": "A", "text": "25 amperes"},
+        {"id": "B", "text": "45 amperes"},
+        {"id": "C", "text": "56 amperes"},
+        {"id": "D", "text": "0 amperes (not permitted)"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "225A × 120% = 270A total; 270A - 225A main = 45A max PV breaker.",
+        "detailed": "Section 705.12(B)(2) permits 120% of busbar rating for combined breakers. 225A bus × 1.20 = 270A maximum. With a 225A main breaker, the maximum inverter breaker is 270A - 225A = 45 amperes, installed at the opposite end of the busbar.",
+        "how_to_find": "Use 705.12(B)(2) for 120% rule calculation."
+      },
+      "nec_reference": {"article": "705", "section": "705.12(B)(2)"},
+      "calculation": {
+        "formula": "Max PV Breaker = (Busbar × 120%) - Main Breaker",
+        "steps": [
+          {"step": 1, "description": "Calculate 120% of busbar", "calculation": "225A × 1.20", "result": "270A"},
+          {"step": 2, "description": "Subtract main breaker", "calculation": "270A - 225A", "result": "45A"}
+        ],
+        "final_answer": "45 amperes",
+        "common_mistakes": ["Using panel amperage instead of busbar rating"]
+      },
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "primary", "description": "120% rule"}],
+      "tags": ["solar PV", "120% rule", "225A panel"],
+      "verified": true
+    },
+    {
+      "id": "RE-069",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["690"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Building-integrated PV (BIPV) products must be listed to:",
+      "choices": [
+        {"id": "A", "text": "UL 1703 only"},
+        {"id": "B", "text": "UL 1741 only"},
+        {"id": "C", "text": "Both the PV standard and the appropriate building material standard"},
+        {"id": "D", "text": "No listing required"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "BIPV must be listed to both PV and building material standards per 690.4(C).",
+        "detailed": "Section 690.4(C) requires building-integrated PV modules to be listed to the appropriate test standards for the building material application (e.g., roofing, siding, glazing) in addition to being listed as PV modules per UL 1703. This dual listing ensures both electrical and building code compliance.",
+        "how_to_find": "Go to 690.4(C) for BIPV listing requirements."
+      },
+      "nec_reference": {"article": "690", "section": "690.4(C)"},
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "secondary", "description": "BIPV products"}],
+      "tags": ["solar PV", "BIPV", "listing"],
+      "verified": true
+    },
+    {
+      "id": "RE-070",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["706"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "ESS with self-contained batteries must have what type of protection?",
+      "choices": [
+        {"id": "A", "text": "Only overcurrent protection"},
+        {"id": "B", "text": "Battery management system (BMS) with required safety functions"},
+        {"id": "C", "text": "External fire suppression only"},
+        {"id": "D", "text": "Ground-fault protection only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Self-contained ESS requires BMS with overcharge, over-discharge, and thermal protection per 706.30(A).",
+        "detailed": "Section 706.30(A) requires ESS to include a battery management system providing overcharge protection, over-discharge protection, and over-temperature protection. Listed ESS equipment integrates these functions to prevent unsafe battery conditions.",
+        "how_to_find": "Go to 706.30(A) for ESS battery management requirements."
+      },
+      "nec_reference": {"article": "706", "section": "706.30(A)"},
+      "zafto_links": [],
+      "tags": ["ESS", "BMS", "protection"],
+      "verified": true
+    },
+    {
+      "id": "RE-071",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["625"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "An EV ready electrical outlet is:",
+      "choices": [
+        {"id": "A", "text": "Any 120V receptacle"},
+        {"id": "B", "text": "A dedicated branch circuit and outlet for future EV charging"},
+        {"id": "C", "text": "A completed EVSE installation"},
+        {"id": "D", "text": "Any 240V outlet"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "EV ready means a dedicated circuit and outlet installed for future EVSE connection.",
+        "detailed": "An EV ready installation provides the branch circuit, outlet, and infrastructure (conduit, panel space) needed for future EV charger installation without requiring electrical modifications. Many building codes now require EV ready parking spaces in new construction.",
+        "how_to_find": "See local building codes and 625.40 for EV circuit requirements."
+      },
+      "nec_reference": {"article": "625", "section": "625.40"},
+      "zafto_links": [{"screen_id": "ev_charger", "relevance": "primary", "description": "EV ready"}],
+      "tags": ["EV charging", "EV ready", "future installation"],
+      "verified": true
+    },
+    {
+      "id": "RE-072",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["690"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Flexible wiring methods for PV tracking systems are permitted where:",
+      "choices": [
+        {"id": "A", "text": "Never permitted"},
+        {"id": "B", "text": "Necessary to accommodate movement"},
+        {"id": "C", "text": "Only for temporary installations"},
+        {"id": "D", "text": "Only on ground mounts"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Flexible wiring is permitted for PV tracking systems to accommodate movement per 690.31(C).",
+        "detailed": "Section 690.31(C) permits flexible wiring methods for PV source circuits where necessary to accommodate movement for tracking systems. Listed flexible wiring, liquidtight flexible conduit, or other approved flexible methods enable array movement while maintaining safe connections.",
+        "how_to_find": "Go to 690.31(C) for flexible wiring on trackers."
+      },
+      "nec_reference": {"article": "690", "section": "690.31(C)"},
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "secondary", "description": "Tracker wiring"}],
+      "tags": ["solar PV", "tracking", "flexible wiring"],
+      "verified": true
+    },
+    {
+      "id": "RE-073",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["694"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Wind turbine systems require what protection for electronic components?",
+      "choices": [
+        {"id": "A", "text": "GFCI protection"},
+        {"id": "B", "text": "Surge protective devices"},
+        {"id": "C", "text": "Arc-fault protection"},
+        {"id": "D", "text": "No specific protection"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Wind turbine systems require surge protection for sensitive electronics per 694.7(E).",
+        "detailed": "Section 694.7(E) requires surge protective devices for wind turbine systems to protect sensitive electronic components. Tall towers are susceptible to lightning strikes, and SPDs at the turbine and at the building entry point help prevent damage from induced surges.",
+        "how_to_find": "Go to 694.7(E) for wind turbine surge protection."
+      },
+      "nec_reference": {"article": "694", "section": "694.7(E)"},
+      "zafto_links": [],
+      "tags": ["wind", "surge protection", "lightning"],
+      "verified": true
+    },
+    {
+      "id": "RE-074",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["705"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "When using a center-fed panel with the 120% rule, the PV breaker must be:",
+      "choices": [
+        {"id": "A", "text": "Adjacent to the main"},
+        {"id": "B", "text": "Installed in either end position"},
+        {"id": "C", "text": "Not permitted with center-fed panels"},
+        {"id": "D", "text": "In the center only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Center-fed panels allow PV breakers at either end position per 705.12(B)(2)(3)(c).",
+        "detailed": "Section 705.12(B)(2)(3)(c) addresses center-fed panelboards where the main breaker is in the center. The PV connection breaker can be installed at either end of the busbar since both ends are equidistant from the center supply point.",
+        "how_to_find": "Go to 705.12(B)(2)(3)(c) for center-fed panel rules."
+      },
+      "nec_reference": {"article": "705", "section": "705.12(B)(2)(3)(c)"},
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "primary", "description": "Center-fed panels"}],
+      "tags": ["solar PV", "center-fed", "120% rule"],
+      "verified": true
+    },
+    {
+      "id": "RE-075",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["690"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "DC-to-DC converters used with PV modules must be:",
+      "choices": [
+        {"id": "A", "text": "UL listed for any application"},
+        {"id": "B", "text": "Listed and identified for PV use"},
+        {"id": "C", "text": "Any general-purpose converter"},
+        {"id": "D", "text": "Only used with microinverters"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "PV DC-to-DC converters must be listed and identified for the PV application per 690.4(B).",
+        "detailed": "Section 690.4(B) requires all PV system equipment including DC-to-DC converters (power optimizers) to be listed and identified for the application. These devices must be suitable for PV source circuit voltage and current, and meet rapid shutdown requirements where applicable.",
+        "how_to_find": "Go to 690.4(B) for converter listing requirements."
+      },
+      "nec_reference": {"article": "690", "section": "690.4(B)"},
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "primary", "description": "Power optimizers"}],
+      "tags": ["solar PV", "DC-DC converter", "optimizer"],
+      "verified": true
+    },
+    {
+      "id": "RE-076",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["625"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "EVSE that is cord-and-plug connected is limited to:",
+      "choices": [
+        {"id": "A", "text": "Level 1 only"},
+        {"id": "B", "text": "50A maximum receptacle rating"},
+        {"id": "C", "text": "80A maximum"},
+        {"id": "D", "text": "No current limit"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Cord-and-plug EVSE is limited to receptacles rated 50A maximum per 625.44(B).",
+        "detailed": "Section 625.44(B) permits cord-and-plug connection for EVSE where the receptacle does not exceed 50 amperes. Larger chargers must be permanently connected (hardwired). The 50A limit ensures reliable connection at standard receptacle ratings.",
+        "how_to_find": "Go to 625.44(B) for cord-and-plug EVSE limits."
+      },
+      "nec_reference": {"article": "625", "section": "625.44(B)"},
+      "zafto_links": [{"screen_id": "ev_charger", "relevance": "primary", "description": "Cord-and-plug EVSE"}],
+      "tags": ["EV charging", "cord-and-plug", "50A"],
+      "verified": true
+    },
+    {
+      "id": "RE-077",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["706"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "ESS multiple disconnecting means must be:",
+      "choices": [
+        {"id": "A", "text": "Grouped at a single location"},
+        {"id": "B", "text": "Installed at each battery string"},
+        {"id": "C", "text": "In separate buildings"},
+        {"id": "D", "text": "No grouping required"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Multiple ESS disconnects must be grouped at a single location per 706.15(D).",
+        "detailed": "Section 706.15(D) requires all disconnecting means for ESS to be grouped at a single location. This ensures all energy sources can be quickly de-energized during emergencies without searching for multiple disconnects throughout the facility.",
+        "how_to_find": "Go to 706.15(D) for ESS disconnect grouping."
+      },
+      "nec_reference": {"article": "706", "section": "706.15(D)"},
+      "zafto_links": [],
+      "tags": ["ESS", "disconnect", "grouping"],
+      "verified": true
+    },
+    {
+      "id": "RE-078",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["690"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "AC modules are PV modules with:",
+      "choices": [
+        {"id": "A", "text": "AC input connections"},
+        {"id": "B", "text": "Integrated microinverter producing AC output"},
+        {"id": "C", "text": "AC cooling fans"},
+        {"id": "D", "text": "Alternating current cells"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "AC modules have an integrated microinverter that outputs AC directly per 690.2.",
+        "detailed": "Section 690.2 defines an AC module as a PV module with an inverter integral to or supplied as a package with the module. The output is AC power, eliminating DC wiring. AC modules automatically comply with rapid shutdown by de-energizing when AC grid reference is lost.",
+        "how_to_find": "Go to 690.2 for AC module definition."
+      },
+      "nec_reference": {"article": "690", "section": "690.2"},
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "primary", "description": "AC modules"}],
+      "tags": ["solar PV", "AC module", "microinverter"],
+      "verified": true
+    },
+    {
+      "id": "RE-079",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["625"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "DC fast charging equipment operating above 1000V DC must comply with:",
+      "choices": [
+        {"id": "A", "text": "Standard Article 625 requirements only"},
+        {"id": "B", "text": "Article 625 plus additional high-voltage requirements"},
+        {"id": "C", "text": "Article 480 only"},
+        {"id": "D", "text": "Not addressed in the NEC"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "DC fast chargers over 1000V must comply with Article 625 including Part III high-voltage provisions per 625.60.",
+        "detailed": "Section 625.60 addresses DC supply equipment operating over 1000V DC. These systems require additional safety measures including ground-fault protection, cable strain relief, and specific marking requirements beyond standard EVSE installations.",
+        "how_to_find": "Go to 625.60 for high-voltage DC charging requirements."
+      },
+      "nec_reference": {"article": "625", "section": "625.60"},
+      "zafto_links": [{"screen_id": "ev_charger", "relevance": "secondary", "description": "DC fast charging"}],
+      "tags": ["EV charging", "DC fast charging", "high voltage"],
+      "verified": true
+    },
+    {
+      "id": "RE-080",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "RE",
+      "topic_name": "Renewable Energy",
+      "nec_articles": ["690"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "PV systems require equipment grounding conductors sized per:",
+      "choices": [
+        {"id": "A", "text": "Table 250.66"},
+        {"id": "B", "text": "Table 250.122"},
+        {"id": "C", "text": "Table 310.16"},
+        {"id": "D", "text": "Table 250.102(C)"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "PV equipment grounding conductors are sized per Table 250.122 per 690.45.",
+        "detailed": "Section 690.45 requires PV system equipment grounding conductors to be sized in accordance with 250.122, which sizes the EGC based on the overcurrent protective device rating. For circuits without overcurrent protection, the EGC is sized based on maximum circuit current.",
+        "how_to_find": "Go to 690.45 and Table 250.122 for PV EGC sizing."
+      },
+      "nec_reference": {"article": "690", "section": "690.45"},
+      "zafto_links": [{"screen_id": "solar_pv", "relevance": "secondary", "description": "EGC sizing"}],
+      "tags": ["solar PV", "grounding", "Table 250.122"],
+      "verified": true
+    },
+    {"id":"RE-081","version":"1.0","exam_types":["journeyman","master"],"topic_id":"RE","topic_name":"Renewable Energy","nec_articles":["706"],"nec_tables":[],"type":"concept","difficulty":"hard","time_estimate_seconds":120,"question":"Energy storage systems (ESS) require a disconnecting means that is lockable in the open position for:","choices":[{"id":"A","text":"Systems over 1 kWh only"},{"id":"B","text":"Systems over 5 kWh only"},{"id":"C","text":"Systems over 10 kWh only"},{"id":"D","text":"All ESS regardless of capacity"}],"correct_answer":"D","explanation":{"short":"All ESS require a lockable disconnecting means per 706.15.","detailed":"Section 706.15 requires energy storage systems to have a disconnecting means that is lockable in the open position, regardless of system capacity. This allows service personnel to safely de-energize the system during maintenance or emergencies.","how_to_find":"Go to 706.15 for ESS disconnecting means requirements."},"nec_reference":{"article":"706","section":"706.15"},"zafto_links":[],"tags":["energy storage","ESS","disconnecting means","lockable"],"verified":true},
+    {"id":"RE-082","version":"1.0","exam_types":["journeyman","master"],"topic_id":"RE","topic_name":"Renewable Energy","nec_articles":["706"],"nec_tables":[],"type":"concept","difficulty":"hard","time_estimate_seconds":120,"question":"ESS battery rooms containing more than _____ gallons of electrolyte in vented cells require ventilation:","choices":[{"id":"A","text":"10 gallons"},{"id":"B","text":"25 gallons"},{"id":"C","text":"50 gallons"},{"id":"D","text":"100 gallons"}],"correct_answer":"C","explanation":{"short":"Battery rooms with more than 50 gallons of electrolyte require ventilation per 706.20.","detailed":"Section 706.20 requires ventilation for battery rooms containing more than 50 gallons (189 L) of electrolyte in vented lead-acid or other batteries producing hydrogen gas during charging. Ventilation prevents the accumulation of explosive hydrogen gas.","how_to_find":"Go to 706.20 for ESS ventilation requirements."},"nec_reference":{"article":"706","section":"706.20"},"zafto_links":[],"tags":["energy storage","battery room","ventilation","hydrogen"],"verified":true},
+    {"id":"RE-083","version":"1.0","exam_types":["journeyman","master"],"topic_id":"RE","topic_name":"Renewable Energy","nec_articles":["705"],"nec_tables":[],"type":"calculation","difficulty":"hard","time_estimate_seconds":120,"question":"For the 120% rule, the sum of the overcurrent device ratings supplying a busbar shall not exceed:","choices":[{"id":"A","text":"100% of the busbar rating"},{"id":"B","text":"115% of the busbar rating"},{"id":"C","text":"120% of the busbar rating"},{"id":"D","text":"125% of the busbar rating"}],"correct_answer":"C","explanation":{"short":"The 120% rule limits the sum of OCPD ratings to 120% of the busbar rating.","detailed":"Section 705.12(B)(2)(3)(b) allows the sum of ampere ratings of all overcurrent devices supplying a busbar or conductor to not exceed 120 percent of the busbar or conductor ampacity. This permits adding a PV or ESS breaker to an existing panel within limits.","how_to_find":"Go to 705.12(B)(2)(3)(b) for the 120% supply-side connection rule."},"nec_reference":{"article":"705","section":"705.12(B)(2)(3)(b)"},"zafto_links":[{"screen_id":"solar_pv","relevance":"primary","description":"120% rule calculation"}],"tags":["120% rule","interconnection","busbar rating"],"verified":true},
+    {"id":"RE-084","version":"1.0","exam_types":["journeyman","master"],"topic_id":"RE","topic_name":"Renewable Energy","nec_articles":["690"],"nec_tables":[],"type":"concept","difficulty":"hard","time_estimate_seconds":120,"question":"Rapid shutdown of PV systems is required to reduce voltages within the array boundary to not more than _____ within 30 seconds of initiation:","choices":[{"id":"A","text":"30 volts"},{"id":"B","text":"60 volts"},{"id":"C","text":"80 volts"},{"id":"D","text":"120 volts"}],"correct_answer":"C","explanation":{"short":"Rapid shutdown must reduce array voltage to 80V or less within 30 seconds per 690.12.","detailed":"Section 690.12(B)(2) requires that PV circuits within the array boundary be limited to not more than 80 volts within 30 seconds of rapid shutdown initiation. This protects firefighters and emergency responders from shock hazards.","how_to_find":"Go to 690.12(B)(2) for rapid shutdown voltage limits."},"nec_reference":{"article":"690","section":"690.12(B)(2)"},"zafto_links":[{"screen_id":"solar_pv","relevance":"primary","description":"Rapid shutdown requirements"}],"tags":["rapid shutdown","80 volts","firefighter safety"],"verified":true},
+    {"id":"RE-085","version":"1.0","exam_types":["journeyman","master"],"topic_id":"RE","topic_name":"Renewable Energy","nec_articles":["690"],"nec_tables":[],"type":"concept","difficulty":"medium","time_estimate_seconds":90,"question":"A PV system disconnecting means must be installed at a readily accessible location and:","choices":[{"id":"A","text":"At the PV array only"},{"id":"B","text":"At the inverter only"},{"id":"C","text":"Within sight of the PV system or inside the building"},{"id":"D","text":"At the building electrical service only"}],"correct_answer":"C","explanation":{"short":"PV disconnects must be readily accessible and at the array or within the building per 690.13.","detailed":"Section 690.13(A) requires that PV system disconnecting means be installed at a readily accessible location either within sight of the PV array or inside the building. This ensures quick access for emergency shutdown.","how_to_find":"Go to 690.13 for PV disconnecting means location."},"nec_reference":{"article":"690","section":"690.13"},"zafto_links":[{"screen_id":"solar_pv","relevance":"secondary","description":"Disconnect location"}],"tags":["PV disconnect","readily accessible","within sight"],"verified":true},
+    {"id":"RE-086","version":"1.0","exam_types":["journeyman","master"],"topic_id":"RE","topic_name":"Renewable Energy","nec_articles":["625"],"nec_tables":[],"type":"concept","difficulty":"medium","time_estimate_seconds":90,"question":"EVSE installed outdoors at one- and two-family dwellings shall have the disconnect located:","choices":[{"id":"A","text":"At the service panel only"},{"id":"B","text":"At or within sight of the EVSE"},{"id":"C","text":"Inside the dwelling unit"},{"id":"D","text":"At the meter base"}],"correct_answer":"B","explanation":{"short":"Outdoor dwelling EVSE disconnects must be at or within sight of the equipment per 625.43(D).","detailed":"Section 625.43(D) requires that electric vehicle supply equipment installed outdoors at one- and two-family dwellings have a disconnecting means located at or within sight of the equipment. This allows safe shutdown during emergencies or maintenance.","how_to_find":"Go to 625.43(D) for dwelling EVSE disconnect location."},"nec_reference":{"article":"625","section":"625.43(D)"},"zafto_links":[{"screen_id":"ev_charger","relevance":"primary","description":"EVSE disconnect requirements"}],"tags":["EVSE","disconnect","dwelling","outdoor"],"verified":true},
+    {"id":"RE-087","version":"1.0","exam_types":["journeyman","master"],"topic_id":"RE","topic_name":"Renewable Energy","nec_articles":["694"],"nec_tables":[],"type":"concept","difficulty":"hard","time_estimate_seconds":120,"question":"Small wind electric systems covered by Article 694 have a maximum system voltage of:","choices":[{"id":"A","text":"600 volts AC"},{"id":"B","text":"1000 volts AC or 1500 volts DC"},{"id":"C","text":"1500 volts AC"},{"id":"D","text":"2000 volts DC"}],"correct_answer":"B","explanation":{"short":"Article 694 covers small wind systems up to 1000V AC or 1500V DC per 694.1.","detailed":"Section 694.1 specifies that Article 694 applies to small wind electric systems with production voltages not exceeding 1000 volts AC or 1500 volts DC. Systems operating at higher voltages must comply with additional requirements.","how_to_find":"Go to 694.1 for Article 694 scope and voltage limits."},"nec_reference":{"article":"694","section":"694.1"},"zafto_links":[],"tags":["wind electric","voltage limit","small wind"],"verified":true},
+    {"id":"RE-088","version":"1.0","exam_types":["journeyman","master"],"topic_id":"RE","topic_name":"Renewable Energy","nec_articles":["694"],"nec_tables":[],"type":"concept","difficulty":"hard","time_estimate_seconds":120,"question":"Diversion charge controllers used in small wind systems must be rated for:","choices":[{"id":"A","text":"100% of the maximum circuit current"},{"id":"B","text":"125% of the maximum circuit current"},{"id":"C","text":"150% of the maximum circuit current"},{"id":"D","text":"200% of the maximum circuit current"}],"correct_answer":"C","explanation":{"short":"Diversion charge controllers must be rated at 150% of maximum current per 694.30(B).","detailed":"Section 694.30(B) requires diversion charge controllers used in small wind electric systems to have a continuous current rating of not less than 150 percent of the maximum circuit current. This accounts for the variable nature of wind generation.","how_to_find":"Go to 694.30(B) for diversion controller rating."},"nec_reference":{"article":"694","section":"694.30(B)"},"zafto_links":[],"tags":["wind electric","diversion controller","150 percent"],"verified":true},
+    {"id":"RE-089","version":"1.0","exam_types":["journeyman","master"],"topic_id":"RE","topic_name":"Renewable Energy","nec_articles":["706"],"nec_tables":[],"type":"concept","difficulty":"hard","time_estimate_seconds":120,"question":"Lithium-ion battery energy storage systems shall be:","choices":[{"id":"A","text":"Installed only outdoors"},{"id":"B","text":"Listed to UL 1973 or UL 9540"},{"id":"C","text":"Limited to 48V systems in dwellings"},{"id":"D","text":"No listing required for residential"}],"correct_answer":"B","explanation":{"short":"Li-ion ESS must be listed to UL 1973 or UL 9540 per 706.10(A).","detailed":"Section 706.10(A) requires energy storage systems to be listed. For lithium-ion battery systems, this typically means listing to UL 1973 (Batteries for Use in Stationary, Vehicle Auxiliary Power and Light Electric Rail Applications) or UL 9540 (Energy Storage Systems and Equipment).","how_to_find":"Go to 706.10(A) for ESS listing requirements."},"nec_reference":{"article":"706","section":"706.10(A)"},"zafto_links":[],"tags":["lithium-ion","ESS","UL 1973","UL 9540"],"verified":true},
+    {"id":"RE-090","version":"1.0","exam_types":["journeyman","master"],"topic_id":"RE","topic_name":"Renewable Energy","nec_articles":["690"],"nec_tables":[],"type":"calculation","difficulty":"hard","time_estimate_seconds":120,"question":"PV source circuit conductors shall be sized based on _____ of the PV module short-circuit current (Isc):","choices":[{"id":"A","text":"100%"},{"id":"B","text":"125%"},{"id":"C","text":"150%"},{"id":"D","text":"156%"}],"correct_answer":"D","explanation":{"short":"PV source conductors are sized at 156% of Isc (125% x 1.25) per 690.8.","detailed":"Section 690.8(A)(1) requires PV source and output circuit currents to be calculated as 125% of Isc. Then per 690.8(B), conductors must be sized for 125% of this calculated current for continuous loads. 125% x 125% = 156.25% of Isc.","how_to_find":"Go to 690.8(A) and 690.8(B) for PV conductor sizing."},"nec_reference":{"article":"690","section":"690.8"},"zafto_links":[{"screen_id":"solar_pv","relevance":"primary","description":"Conductor sizing"}],"tags":["PV conductor","156 percent","Isc"],"verified":true},
+    {"id":"RE-091","version":"1.0","exam_types":["journeyman","master"],"topic_id":"RE","topic_name":"Renewable Energy","nec_articles":["705"],"nec_tables":[],"type":"concept","difficulty":"hard","time_estimate_seconds":120,"question":"For supply-side interconnections, the point of connection shall be on the:","choices":[{"id":"A","text":"Load side of the service disconnect"},{"id":"B","text":"Line side of the service disconnecting means"},{"id":"C","text":"Subpanel only"},{"id":"D","text":"Meter socket only"}],"correct_answer":"B","explanation":{"short":"Supply-side connections are made on the line side of the service disconnect per 705.12(A).","detailed":"Section 705.12(A) permits interconnection of power production sources on the supply (line) side of the service disconnecting means. This method avoids the busbar rating limitations of load-side connections but requires additional considerations for fault current.","how_to_find":"Go to 705.12(A) for supply-side connection rules."},"nec_reference":{"article":"705","section":"705.12(A)"},"zafto_links":[{"screen_id":"solar_pv","relevance":"secondary","description":"Supply-side connection"}],"tags":["supply-side","line side","interconnection"],"verified":true},
+    {"id":"RE-092","version":"1.0","exam_types":["journeyman","master"],"topic_id":"RE","topic_name":"Renewable Energy","nec_articles":["625"],"nec_tables":[],"type":"concept","difficulty":"medium","time_estimate_seconds":90,"question":"An EVSE with automatic de-energization of the cable is permitted to have a cord length up to:","choices":[{"id":"A","text":"15 feet"},{"id":"B","text":"20 feet"},{"id":"C","text":"25 feet"},{"id":"D","text":"Any length"}],"correct_answer":"C","explanation":{"short":"EVSE with automatic de-energization can have cords up to 25 feet per 625.17(B).","detailed":"Section 625.17(B)(1) permits EV cable assemblies up to 25 feet in length when equipped with automatic de-energization of the cable when not engaged with the vehicle or when unattended for a specified time. This longer length improves vehicle access.","how_to_find":"Go to 625.17(B) for EV cable length with auto de-energization."},"nec_reference":{"article":"625","section":"625.17(B)"},"zafto_links":[{"screen_id":"ev_charger","relevance":"secondary","description":"Cable length rules"}],"tags":["EVSE","cable length","25 feet","de-energization"],"verified":true},
+    {"id":"RE-093","version":"1.0","exam_types":["journeyman","master"],"topic_id":"RE","topic_name":"Renewable Energy","nec_articles":["690"],"nec_tables":[],"type":"concept","difficulty":"hard","time_estimate_seconds":120,"question":"Ground-mounted PV arrays with exposed live parts operating over 150V to ground require restricted access with a minimum fence height of:","choices":[{"id":"A","text":"5 feet"},{"id":"B","text":"6 feet"},{"id":"C","text":"7 feet"},{"id":"D","text":"8 feet"}],"correct_answer":"B","explanation":{"short":"PV arrays over 150V require minimum 6-foot fencing per 690.40(D).","detailed":"Section 690.40(D) requires that ground-mounted PV systems with exposed live parts operating over 150 volts to ground be installed in a restricted area accessible only to qualified persons. The restricted area typically requires a minimum 6-foot fence with appropriate warning signs.","how_to_find":"Go to 690.40(D) for PV array restricted access requirements."},"nec_reference":{"article":"690","section":"690.40(D)"},"zafto_links":[],"tags":["ground-mounted PV","fence","6 feet","restricted access"],"verified":true},
+    {"id":"RE-094","version":"1.0","exam_types":["journeyman","master"],"topic_id":"RE","topic_name":"Renewable Energy","nec_articles":["706"],"nec_tables":[],"type":"concept","difficulty":"hard","time_estimate_seconds":120,"question":"Listed prepackaged ESS units installed in one- and two-family dwellings:","choices":[{"id":"A","text":"Are limited to 48 volts nominal"},{"id":"B","text":"Must be installed in dedicated rooms only"},{"id":"C","text":"Have no specific voltage limit when installed per manufacturer instructions"},{"id":"D","text":"Require separate utility disconnects"}],"correct_answer":"C","explanation":{"short":"Listed ESS have no voltage limit in dwellings when installed per instructions per 706.10.","detailed":"Section 706.10(A) requires ESS to be listed. For listed prepackaged systems installed per manufacturer instructions, there is no specific voltage limit in one- and two-family dwellings. Common residential systems range from 48V to 400V+ depending on chemistry and design.","how_to_find":"Go to 706.10 for residential ESS requirements."},"nec_reference":{"article":"706","section":"706.10"},"zafto_links":[],"tags":["ESS","dwelling","voltage","listed"],"verified":true},
+    {"id":"RE-095","version":"1.0","exam_types":["journeyman","master"],"topic_id":"RE","topic_name":"Renewable Energy","nec_articles":["690"],"nec_tables":[],"type":"concept","difficulty":"medium","time_estimate_seconds":90,"question":"PV system DC arc-fault circuit protection is required for systems with DC source or output circuit voltages greater than:","choices":[{"id":"A","text":"30 volts"},{"id":"B","text":"60 volts"},{"id":"C","text":"80 volts"},{"id":"D","text":"120 volts"}],"correct_answer":"C","explanation":{"short":"DC arc-fault protection is required for PV circuits over 80V per 690.11.","detailed":"Section 690.11 requires PV systems with DC source circuits, DC output circuits, or both, operating at voltages greater than 80 volts to be protected by a listed DC arc-fault circuit interrupter (AFCI). This reduces fire risk from arcing faults.","how_to_find":"Go to 690.11 for PV DC arc-fault protection requirements."},"nec_reference":{"article":"690","section":"690.11"},"zafto_links":[{"screen_id":"solar_pv","relevance":"secondary","description":"DC arc-fault protection"}],"tags":["DC AFCI","80 volts","arc-fault","PV"],"verified":true},
+    {"id":"RE-096","version":"1.0","exam_types":["journeyman","master"],"topic_id":"RE","topic_name":"Renewable Energy","nec_articles":["625"],"nec_tables":[],"type":"calculation","difficulty":"hard","time_estimate_seconds":120,"question":"A 40A Level 2 EVSE requires a branch circuit rated at minimum:","choices":[{"id":"A","text":"40 amperes"},{"id":"B","text":"45 amperes"},{"id":"C","text":"50 amperes"},{"id":"D","text":"60 amperes"}],"correct_answer":"C","explanation":{"short":"40A EVSE requires 50A circuit minimum (40A x 125% = 50A) per 625.41.","detailed":"Section 625.41 requires EVSE to be considered a continuous load. Conductors and overcurrent protection must be sized at 125% of the maximum load. 40A x 125% = 50A minimum circuit rating.","how_to_find":"Go to 625.41 for EVSE continuous load calculation."},"nec_reference":{"article":"625","section":"625.41"},"zafto_links":[{"screen_id":"ev_charger","relevance":"primary","description":"Circuit sizing"}],"tags":["EVSE","continuous load","50 ampere","125 percent"],"verified":true},
+    {"id":"RE-097","version":"1.0","exam_types":["journeyman","master"],"topic_id":"RE","topic_name":"Renewable Energy","nec_articles":["705"],"nec_tables":[],"type":"concept","difficulty":"hard","time_estimate_seconds":120,"question":"When using the load-side connection method, the PV or ESS breaker should be located:","choices":[{"id":"A","text":"At the top of the panel"},{"id":"B","text":"At the opposite end of the busbar from the main breaker"},{"id":"C","text":"Adjacent to the main breaker"},{"id":"D","text":"In a separate enclosure only"}],"correct_answer":"B","explanation":{"short":"Load-side breakers should be at the opposite end from the main per 705.12(B)(2)(3)(c).","detailed":"Section 705.12(B)(2)(3)(c) requires that where a load-side connection is made, the interconnecting device be located at the opposite end of the busbar from the input supply connection (main breaker). This ensures proper distribution of current on the busbar.","how_to_find":"Go to 705.12(B)(2)(3)(c) for load-side connection breaker location."},"nec_reference":{"article":"705","section":"705.12(B)(2)(3)(c)"},"zafto_links":[{"screen_id":"solar_pv","relevance":"primary","description":"Breaker location"}],"tags":["load-side","breaker location","opposite end"],"verified":true},
+    {"id":"RE-098","version":"1.0","exam_types":["journeyman","master"],"topic_id":"RE","topic_name":"Renewable Energy","nec_articles":["690"],"nec_tables":[],"type":"concept","difficulty":"medium","time_estimate_seconds":90,"question":"Bipolar PV systems are permitted when:","choices":[{"id":"A","text":"Never permitted in the NEC"},{"id":"B","text":"The system voltage is under 600V"},{"id":"C","text":"Each monopole subarray is isolated from ground"},{"id":"D","text":"Only with microinverters"}],"correct_answer":"C","explanation":{"short":"Bipolar PV systems require monopole subarrays isolated from ground per 690.7(E).","detailed":"Section 690.7(E) permits bipolar PV systems where each monopole subarray is isolated from ground and has an independent means of disconnecting. This configuration doubles system voltage while maintaining safety through isolation.","how_to_find":"Go to 690.7(E) for bipolar PV system requirements."},"nec_reference":{"article":"690","section":"690.7(E)"},"zafto_links":[],"tags":["bipolar","PV system","isolated","monopole"],"verified":true},
+    {"id":"RE-099","version":"1.0","exam_types":["journeyman","master"],"topic_id":"RE","topic_name":"Renewable Energy","nec_articles":["706"],"nec_tables":[],"type":"concept","difficulty":"hard","time_estimate_seconds":120,"question":"Prepackaged ESS units installed in dwellings must maintain clearances from combustible materials as specified by:","choices":[{"id":"A","text":"12 inches minimum per NEC"},{"id":"B","text":"18 inches minimum per NEC"},{"id":"C","text":"36 inches minimum per NEC"},{"id":"D","text":"Manufacturer's instructions"}],"correct_answer":"D","explanation":{"short":"ESS clearances are determined by manufacturer instructions and listing per 706.11.","detailed":"Section 706.11 requires ESS to be installed per manufacturer's instructions and the equipment listing. Clearances from combustible materials vary by product and are specified in the installation manual. Listed prepackaged units include thermal runaway protections.","how_to_find":"Go to 706.11 and manufacturer's installation instructions."},"nec_reference":{"article":"706","section":"706.11"},"zafto_links":[],"tags":["ESS","clearances","combustible","manufacturer instructions"],"verified":true},
+    {"id":"RE-100","version":"1.0","exam_types":["journeyman","master"],"topic_id":"RE","topic_name":"Renewable Energy","nec_articles":["690"],"nec_tables":[],"type":"concept","difficulty":"hard","time_estimate_seconds":120,"question":"Building-integrated photovoltaics (BIPV) that serve as roofing must comply with:","choices":[{"id":"A","text":"Article 690 only"},{"id":"B","text":"Article 690 and applicable building codes"},{"id":"C","text":"Building codes only"},{"id":"D","text":"Article 705 only"}],"correct_answer":"B","explanation":{"short":"BIPV roofing must comply with Article 690 and building codes per 690.4.","detailed":"Section 690.4 requires that building-integrated photovoltaics comply with Article 690 requirements. When BIPV serves as the building's roofing material, it must also comply with applicable building codes for fire rating, wind resistance, and waterproofing as specified by the authority having jurisdiction.","how_to_find":"Go to 690.4 and coordinate with building codes for BIPV installations."},"nec_reference":{"article":"690","section":"690.4"},"zafto_links":[{"screen_id":"solar_pv","relevance":"secondary","description":"BIPV requirements"}],"tags":["BIPV","building-integrated","roofing","building codes"],"verified":true}
+  ]
+}

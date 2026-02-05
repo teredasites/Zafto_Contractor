@@ -1,0 +1,572 @@
+{
+  "category": "Fire Sprinkler",
+  "subcategory": "NFPA 14 Standpipe Systems",
+  "description": "Standpipe and hose system installation requirements",
+  "difficulty_distribution": {
+    "beginner": 12,
+    "intermediate": 18,
+    "advanced": 10
+  },
+  "questions": [
+    {
+      "id": "fs_sp_001",
+      "difficulty": "beginner",
+      "question": "What is a Class I standpipe system?",
+      "options": [
+        "System with 1-1/2 inch hose connections for trained personnel",
+        "System with 2-1/2 inch hose connections for fire department use",
+        "Combined system with both hose sizes",
+        "System for residential buildings only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Class I standpipe systems provide 2-1/2 inch hose connections for fire department use. They are designed for full-scale firefighting operations.",
+      "code_reference": "NFPA 14, Section 4.3"
+    },
+    {
+      "id": "fs_sp_002",
+      "difficulty": "beginner",
+      "question": "What is a Class II standpipe system?",
+      "options": [
+        "System with 2-1/2 inch connections only",
+        "System with 1-1/2 inch hose connections for building occupants",
+        "Dry standpipe system",
+        "Automatic standpipe system"
+      ],
+      "correct_answer": 1,
+      "explanation": "Class II standpipe systems provide 1-1/2 inch hose connections intended for use by trained building occupants or fire brigade members until the fire department arrives.",
+      "code_reference": "NFPA 14, Section 4.4"
+    },
+    {
+      "id": "fs_sp_003",
+      "difficulty": "beginner",
+      "question": "What is a Class III standpipe system?",
+      "options": [
+        "A system with only 1-inch connections",
+        "A combined system with both 2-1/2 inch and 1-1/2 inch connections",
+        "A system for high-rise buildings only",
+        "A wet chemical system"
+      ],
+      "correct_answer": 1,
+      "explanation": "Class III standpipe systems provide both 2-1/2 inch connections for fire department use and 1-1/2 inch connections for building occupant use.",
+      "code_reference": "NFPA 14, Section 4.5"
+    },
+    {
+      "id": "fs_sp_004",
+      "difficulty": "beginner",
+      "question": "At what building height are standpipes typically required?",
+      "options": [
+        "Over 30 feet",
+        "Over 50 feet or 4 stories",
+        "Over 75 feet",
+        "Over 100 feet"
+      ],
+      "correct_answer": 1,
+      "explanation": "Standpipes are generally required in buildings exceeding 50 feet in height or more than 4 stories, though requirements vary by building code.",
+      "code_reference": "IBC 905.3"
+    },
+    {
+      "id": "fs_sp_005",
+      "difficulty": "beginner",
+      "question": "What is the minimum flow rate for a Class I standpipe system?",
+      "options": [
+        "100 gpm",
+        "250 gpm for first standpipe",
+        "500 gpm total",
+        "750 gpm"
+      ],
+      "correct_answer": 1,
+      "explanation": "Class I and III systems require a minimum of 500 gpm for the first standpipe, with 250 gpm for each additional standpipe up to a maximum of 1000-1250 gpm.",
+      "code_reference": "NFPA 14, Section 7.10"
+    },
+    {
+      "id": "fs_sp_006",
+      "difficulty": "beginner",
+      "question": "What is the minimum pressure required at the topmost outlet of a Class I standpipe?",
+      "options": [
+        "65 psi",
+        "100 psi",
+        "125 psi",
+        "150 psi"
+      ],
+      "correct_answer": 1,
+      "explanation": "Class I standpipes require a minimum of 100 psi residual pressure at the topmost outlet when flowing 500 gpm from the most remote standpipe.",
+      "code_reference": "NFPA 14, Section 7.8"
+    },
+    {
+      "id": "fs_sp_007",
+      "difficulty": "beginner",
+      "question": "What is the maximum pressure allowed at a standpipe hose connection?",
+      "options": [
+        "100 psi",
+        "125 psi",
+        "150 psi",
+        "175 psi"
+      ],
+      "correct_answer": 3,
+      "explanation": "Maximum pressure at hose connections shall not exceed 175 psi. Pressure-reducing devices may be required at lower levels in tall buildings.",
+      "code_reference": "NFPA 14, Section 7.2.3"
+    },
+    {
+      "id": "fs_sp_008",
+      "difficulty": "beginner",
+      "question": "What is an automatic standpipe system?",
+      "options": [
+        "A system that opens valves automatically",
+        "A system connected to a water supply capable of supplying demand automatically",
+        "A system with electric pumps only",
+        "A system that detects fires"
+      ],
+      "correct_answer": 1,
+      "explanation": "An automatic standpipe is connected to a water supply capable of supplying the system demand automatically. It may be wet or dry but has permanent water supply.",
+      "code_reference": "NFPA 14, Section 4.6"
+    },
+    {
+      "id": "fs_sp_009",
+      "difficulty": "beginner",
+      "question": "What is a manual standpipe system?",
+      "options": [
+        "A system with hand-operated valves",
+        "A system without permanent water supply, relying on FDC",
+        "A system with manual fire pumps",
+        "A portable standpipe"
+      ],
+      "correct_answer": 1,
+      "explanation": "A manual standpipe has no permanent water supply. It relies entirely on the fire department connection (FDC) to supply water during operations.",
+      "code_reference": "NFPA 14, Section 4.8"
+    },
+    {
+      "id": "fs_sp_010",
+      "difficulty": "beginner",
+      "question": "What thread type is standard for 2-1/2 inch fire hose connections?",
+      "options": [
+        "NPT (National Pipe Thread)",
+        "NH (National Hose) or local standard",
+        "BSP (British Standard Pipe)",
+        "Metric thread"
+      ],
+      "correct_answer": 1,
+      "explanation": "2-1/2 inch hose connections use NH (National Hose) thread, also called NST (National Standard Thread), unless local requirements specify different threads.",
+      "code_reference": "NFPA 14, Section 6.3"
+    },
+    {
+      "id": "fs_sp_011",
+      "difficulty": "beginner",
+      "question": "How high above the floor should standpipe hose connections be mounted?",
+      "options": [
+        "2 to 3 feet",
+        "3 to 5 feet",
+        "4 to 6 feet",
+        "5 to 7 feet"
+      ],
+      "correct_answer": 1,
+      "explanation": "Hose connections shall be located so the center is between 3 and 5 feet above the floor for accessibility.",
+      "code_reference": "NFPA 14, Section 6.3.8"
+    },
+    {
+      "id": "fs_sp_012",
+      "difficulty": "beginner",
+      "question": "What is the maximum horizontal distance from any point in a building to a Class I or III standpipe?",
+      "options": [
+        "100 feet",
+        "150 feet",
+        "200 feet plus 100 feet of hose",
+        "250 feet"
+      ],
+      "correct_answer": 2,
+      "explanation": "Standpipes must be located so all portions of the building are within 200 feet of a hose connection, considering 100 feet of hose length plus 100 feet of water stream.",
+      "code_reference": "NFPA 14, Section 5.3"
+    },
+    {
+      "id": "fs_sp_013",
+      "difficulty": "intermediate",
+      "question": "What is the minimum pipe size for a Class I standpipe riser?",
+      "options": [
+        "3 inches",
+        "4 inches",
+        "5 inches",
+        "6 inches"
+      ],
+      "correct_answer": 1,
+      "explanation": "Class I and Class III standpipe risers must be at least 4 inches in diameter. Class II risers may be smaller based on hydraulic calculations.",
+      "code_reference": "NFPA 14, Section 7.6"
+    },
+    {
+      "id": "fs_sp_014",
+      "difficulty": "intermediate",
+      "question": "How many fire department connections (FDCs) are required for a standpipe system?",
+      "options": [
+        "One per building",
+        "One per standpipe zone",
+        "Based on total flow demand",
+        "Per AHJ requirements"
+      ],
+      "correct_answer": 2,
+      "explanation": "FDCs are sized for total system demand. Multiple FDCs may be required based on flow requirements and fire department access.",
+      "code_reference": "NFPA 14, Section 6.4"
+    },
+    {
+      "id": "fs_sp_015",
+      "difficulty": "intermediate",
+      "question": "What flow rate is required for Class II standpipe systems?",
+      "options": [
+        "50 gpm",
+        "100 gpm from most remote connection",
+        "250 gpm",
+        "500 gpm"
+      ],
+      "correct_answer": 1,
+      "explanation": "Class II standpipes require a minimum of 100 gpm at 65 psi from the most hydraulically remote hose connection.",
+      "code_reference": "NFPA 14, Section 7.10"
+    },
+    {
+      "id": "fs_sp_016",
+      "difficulty": "intermediate",
+      "question": "When are pressure-reducing valves required on standpipe hose connections?",
+      "options": [
+        "Never required",
+        "When pressure exceeds 100 psi",
+        "When pressure exceeds 175 psi",
+        "At ground level only"
+      ],
+      "correct_answer": 2,
+      "explanation": "Pressure-reducing devices are required when the pressure at hose connections exceeds 175 psi to protect firefighters and equipment.",
+      "code_reference": "NFPA 14, Section 7.2.3"
+    },
+    {
+      "id": "fs_sp_017",
+      "difficulty": "intermediate",
+      "question": "What is required when a standpipe system is combined with a sprinkler system?",
+      "options": [
+        "Separate risers always required",
+        "Combined system meets requirements of both NFPA 13 and NFPA 14",
+        "Only standpipe requirements apply",
+        "Only sprinkler requirements apply"
+      ],
+      "correct_answer": 1,
+      "explanation": "Combined systems must meet the requirements of both NFPA 13 for sprinklers and NFPA 14 for standpipes, including water supply calculations.",
+      "code_reference": "NFPA 14, Section 7.4"
+    },
+    {
+      "id": "fs_sp_018",
+      "difficulty": "intermediate",
+      "question": "What is a semi-automatic dry standpipe?",
+      "options": [
+        "A system that is partially filled with water",
+        "A dry system with automatic water supply upon activation of remote device",
+        "A system with half manual operation",
+        "A seasonal standpipe"
+      ],
+      "correct_answer": 1,
+      "explanation": "Semi-automatic dry standpipes are normally dry but have a deluge valve that opens automatically when a remote activation device is operated, admitting water.",
+      "code_reference": "NFPA 14, Section 4.7"
+    },
+    {
+      "id": "fs_sp_019",
+      "difficulty": "intermediate",
+      "question": "Where are horizontal standpipe runs permitted?",
+      "options": [
+        "Never permitted",
+        "In buildings of unlimited area per floor",
+        "As needed to reach remote areas within coverage distance",
+        "Only below ground"
+      ],
+      "correct_answer": 2,
+      "explanation": "Horizontal runs may extend from risers to provide hose connections within the required coverage distance. They must be hydraulically calculated.",
+      "code_reference": "NFPA 14, Section 5.4"
+    },
+    {
+      "id": "fs_sp_020",
+      "difficulty": "intermediate",
+      "question": "What valve type is required at standpipe hose connections?",
+      "options": [
+        "Gate valve",
+        "Globe valve",
+        "Hose valve (angle or straight pattern)",
+        "Butterfly valve"
+      ],
+      "correct_answer": 2,
+      "explanation": "Hose valves (hose connection valves) must be listed and are typically angle or straight pattern valves designed for fire hose service.",
+      "code_reference": "NFPA 14, Section 6.3"
+    },
+    {
+      "id": "fs_sp_021",
+      "difficulty": "intermediate",
+      "question": "What is the water supply duration requirement for standpipe systems?",
+      "options": [
+        "15 minutes",
+        "30 minutes",
+        "60 minutes",
+        "Per AHJ, typically 30 minutes minimum"
+      ],
+      "correct_answer": 1,
+      "explanation": "Standpipe water supplies must provide the required flow for a minimum of 30 minutes. Some jurisdictions require longer durations.",
+      "code_reference": "NFPA 14, Section 7.9"
+    },
+    {
+      "id": "fs_sp_022",
+      "difficulty": "intermediate",
+      "question": "What test is required for standpipe systems after installation?",
+      "options": [
+        "Pressure test only",
+        "Hydrostatic test at 200 psi or 50 psi above working pressure",
+        "Flow test only",
+        "No testing required"
+      ],
+      "correct_answer": 1,
+      "explanation": "Standpipe systems require a hydrostatic test at 200 psi for 2 hours, or 50 psi above the maximum system pressure, whichever is greater.",
+      "code_reference": "NFPA 14, Section 10.2"
+    },
+    {
+      "id": "fs_sp_023",
+      "difficulty": "intermediate",
+      "question": "Where must standpipe hose connections be located in stairways?",
+      "options": [
+        "At the top landing only",
+        "At an intermediate floor level landing or main floor level",
+        "At the bottom of each flight",
+        "Outside the stairway only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Hose connections in stairways must be at the main floor level landing or the intermediate landing between floor levels, accessible without entering the floor.",
+      "code_reference": "NFPA 14, Section 6.3.5"
+    },
+    {
+      "id": "fs_sp_024",
+      "difficulty": "intermediate",
+      "question": "What is required when standpipes serve multiple zones in high-rise buildings?",
+      "options": [
+        "Single riser serves all zones",
+        "Separate risers or zone control valves with pressure regulation",
+        "Only manual standpipes allowed",
+        "No special requirements"
+      ],
+      "correct_answer": 1,
+      "explanation": "Tall buildings may require pressure zones to maintain pressure limits at hose connections. Each zone may have separate risers or pressure-regulating devices.",
+      "code_reference": "NFPA 14, Section 7.2"
+    },
+    {
+      "id": "fs_sp_025",
+      "difficulty": "intermediate",
+      "question": "What marking is required on pressure-reducing hose valves?",
+      "options": [
+        "No marking required",
+        "Flow rate only",
+        "Factory set pressure and flow characteristics",
+        "Installation date only"
+      ],
+      "correct_answer": 2,
+      "explanation": "Pressure-reducing hose valves must be marked with their factory-set pressure and flow characteristics for identification during use and maintenance.",
+      "code_reference": "NFPA 14, Section 6.3.3"
+    },
+    {
+      "id": "fs_sp_026",
+      "difficulty": "advanced",
+      "question": "For a building with 3 standpipes, what is the total flow requirement?",
+      "options": [
+        "500 gpm",
+        "750 gpm",
+        "1000 gpm",
+        "1250 gpm"
+      ],
+      "correct_answer": 2,
+      "explanation": "First standpipe = 500 gpm, second = 250 gpm, third = 250 gpm. Total = 1000 gpm. Maximum requirement is typically 1000-1250 gpm regardless of additional standpipes.",
+      "code_reference": "NFPA 14, Section 7.10"
+    },
+    {
+      "id": "fs_sp_027",
+      "difficulty": "advanced",
+      "question": "What is the hydraulic calculation requirement for express standpipe risers?",
+      "options": [
+        "No calculation needed",
+        "Must account for friction loss in entire riser height",
+        "Only static pressure calculated",
+        "Same as standard risers"
+      ],
+      "correct_answer": 1,
+      "explanation": "Express risers (risers passing through floors without connections) must account for full friction loss while providing required pressure at the first connection.",
+      "code_reference": "NFPA 14, Section 7.8"
+    },
+    {
+      "id": "fs_sp_028",
+      "difficulty": "advanced",
+      "question": "When calculating combined sprinkler/standpipe demand, how is the demand determined?",
+      "options": [
+        "Add both demands together",
+        "Use larger of the two demands",
+        "Sprinkler demand plus standpipe at reduced rate",
+        "Use standpipe demand plus sprinkler design area demand simultaneously"
+      ],
+      "correct_answer": 3,
+      "explanation": "Combined systems calculate the greater of: standpipe demand alone, or sprinkler demand plus the standpipe demand calculated per NFPA 14.",
+      "code_reference": "NFPA 14, Section 7.10"
+    },
+    {
+      "id": "fs_sp_029",
+      "difficulty": "advanced",
+      "question": "What is the K-factor requirement for 2-1/2 inch hose valves in hydraulic calculations?",
+      "options": [
+        "K = 5.6",
+        "K = 8.0",
+        "Use outlet coefficient based on valve type",
+        "K = 11.2"
+      ],
+      "correct_answer": 2,
+      "explanation": "Hydraulic calculations must use the appropriate outlet coefficient (K-factor) based on the hose valve type. This varies by manufacturer and valve design.",
+      "code_reference": "NFPA 14, Section 7.8"
+    },
+    {
+      "id": "fs_sp_030",
+      "difficulty": "advanced",
+      "question": "What pressure-regulating device setting is required for hose connections?",
+      "options": [
+        "Fixed at 100 psi",
+        "Field adjustable to deliver 100 psi residual at rated flow",
+        "Fixed at 175 psi",
+        "Not field adjustable"
+      ],
+      "correct_answer": 1,
+      "explanation": "Pressure-regulating devices must be field-adjustable to deliver the required residual pressure (100 psi for Class I/III) at the rated flow.",
+      "code_reference": "NFPA 14, Section 7.2.3"
+    },
+    {
+      "id": "fs_sp_031",
+      "difficulty": "advanced",
+      "question": "For roof manifold standpipe systems, what is required?",
+      "options": [
+        "Manifold not permitted",
+        "Two or more risers connected at the roof with hose connections",
+        "Single riser with increased size",
+        "Manual dry standpipe only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Roof manifolds connect multiple risers at the roof level, providing redundancy and flexibility for firefighting operations. They require careful hydraulic design.",
+      "code_reference": "NFPA 14, Section 5.5"
+    },
+    {
+      "id": "fs_sp_032",
+      "difficulty": "advanced",
+      "question": "What is the inspection frequency for standpipe hose connections per NFPA 25?",
+      "options": [
+        "Monthly",
+        "Quarterly",
+        "Annually",
+        "Every 5 years"
+      ],
+      "correct_answer": 2,
+      "explanation": "Standpipe hose connections must be inspected annually. This includes checking caps, gaskets, valve operation, and signage.",
+      "code_reference": "NFPA 25, Section 6.3"
+    },
+    {
+      "id": "fs_sp_033",
+      "difficulty": "advanced",
+      "question": "What flow test is required for automatic standpipes per NFPA 25?",
+      "options": [
+        "No flow test required",
+        "Annual flow test at most remote connection",
+        "5-year flow test at system demand",
+        "Quarterly flow test"
+      ],
+      "correct_answer": 2,
+      "explanation": "Automatic standpipes require a flow test every 5 years at the system demand to verify pressure and flow meet design requirements.",
+      "code_reference": "NFPA 25, Section 6.3.1"
+    },
+    {
+      "id": "fs_sp_034",
+      "difficulty": "advanced",
+      "question": "What is required for horizontal exits in standpipe coverage?",
+      "options": [
+        "No coverage required at horizontal exits",
+        "Hose connections on both sides of the horizontal exit",
+        "Single connection within 100 feet",
+        "Only fire department connection required"
+      ],
+      "correct_answer": 1,
+      "explanation": "Buildings with horizontal exits require standpipe coverage such that hose connections are available on both sides of the horizontal exit barrier.",
+      "code_reference": "NFPA 14, Section 5.3"
+    },
+    {
+      "id": "fs_sp_035",
+      "difficulty": "advanced",
+      "question": "When retrofitting an existing building with standpipes, what pressure is acceptable?",
+      "options": [
+        "Must meet current code",
+        "65 psi minimum for existing Class I systems",
+        "50 psi allowed if approved",
+        "No minimum for existing buildings"
+      ],
+      "correct_answer": 1,
+      "explanation": "Existing systems may be permitted to operate at 65 psi rather than 100 psi in some circumstances, subject to AHJ approval and NFPA 14 provisions.",
+      "code_reference": "NFPA 14, Section 7.8"
+    },
+    {
+      "id": "fs_sp_036",
+      "difficulty": "advanced",
+      "question": "What is the FDC inlet size requirement for standpipe systems?",
+      "options": [
+        "One 2-1/2 inch inlet per standpipe",
+        "Sized for system demand, minimum two 2-1/2 inch inlets",
+        "Single 4-inch inlet",
+        "Based on fire department apparatus"
+      ],
+      "correct_answer": 1,
+      "explanation": "FDC must be sized for system demand. For systems requiring 500+ gpm, minimum two 2-1/2 inch inlets (or equivalent) are required.",
+      "code_reference": "NFPA 14, Section 6.4"
+    },
+    {
+      "id": "fs_sp_037",
+      "difficulty": "advanced",
+      "question": "In seismic areas, what additional requirements apply to standpipe systems?",
+      "options": [
+        "No additional requirements",
+        "Flexible connections and seismic bracing per NFPA 13",
+        "Only manual standpipes permitted",
+        "Double wall thickness pipe"
+      ],
+      "correct_answer": 1,
+      "explanation": "Standpipe systems in seismic areas must include flexible couplings at building movement joints and seismic bracing per NFPA 13 requirements.",
+      "code_reference": "NFPA 14, Section 6.7"
+    },
+    {
+      "id": "fs_sp_038",
+      "difficulty": "intermediate",
+      "question": "What is required for standpipe systems during construction?",
+      "options": [
+        "No standpipe until building is complete",
+        "Temporary standpipe as building rises above specified height",
+        "Only FDC required",
+        "Portable extinguishers only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Standpipes must be installed as construction progresses and be operational when the building reaches heights requiring standpipe protection.",
+      "code_reference": "NFPA 241, IBC"
+    },
+    {
+      "id": "fs_sp_039",
+      "difficulty": "intermediate",
+      "question": "What identification is required at standpipe system control valves?",
+      "options": [
+        "No identification required",
+        "Sign indicating area served and open position",
+        "Valve number only",
+        "Color coding only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Control valves must be identified with signs indicating the portion of the system served and must indicate whether the valve is open or closed.",
+      "code_reference": "NFPA 14, Section 6.1"
+    },
+    {
+      "id": "fs_sp_040",
+      "difficulty": "intermediate",
+      "question": "Where are cabinet-type hose stations permitted?",
+      "options": [
+        "Class I systems only",
+        "Class II systems with 1-1/2 inch connections",
+        "Never permitted",
+        "All standpipe classes"
+      ],
+      "correct_answer": 1,
+      "explanation": "Hose cabinets with pre-connected hose are typical for Class II systems. They provide 1-1/2 inch hose for occupant use.",
+      "code_reference": "NFPA 14, Section 6.3"
+    }
+  ]
+}

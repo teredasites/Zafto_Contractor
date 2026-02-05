@@ -1,0 +1,2813 @@
+{
+  "metadata": {
+    "trade": "hvac",
+    "category": "general",
+    "description": "General HVAC knowledge - IMC code, safety, combustion air, fundamentals",
+    "question_count": 100,
+    "version": "1.0.0",
+    "last_updated": "2026-01-31",
+    "code_references": ["IMC", "ASHRAE", "NFPA"]
+  },
+  "questions": [
+    {
+      "id": "GEN-001",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "imc_scope",
+      "code_articles": ["IMC Chapter 1"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 30,
+      "question": "What does the International Mechanical Code (IMC) regulate?",
+      "choices": {
+        "a": "Only residential heating",
+        "b": "Design, installation, maintenance of mechanical systems including HVAC",
+        "c": "Electrical systems only",
+        "d": "Plumbing systems"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "The IMC covers design, installation, maintenance, alteration, and inspection of mechanical systems.",
+        "detailed": "IMC scope includes: heating systems; cooling systems; ventilation; exhaust systems; duct systems; combustion air; chimneys and vents; hydronic piping; refrigeration. The code establishes minimum standards for safety and health. It's adopted by most US states with or without amendments. Used alongside IRC for residential and IBC for commercial construction.",
+        "how_to_find": "Reference IMC Chapter 1 Scope"
+      },
+      "code_reference": "IMC 101.2",
+      "zafto_links": [],
+      "tags": ["imc", "scope", "mechanical_code", "regulation"],
+      "verified": true
+    },
+    {
+      "id": "GEN-002",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "permit_requirements",
+      "code_articles": ["IMC Chapter 1"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 30,
+      "question": "When is a mechanical permit typically required?",
+      "choices": {
+        "a": "Never",
+        "b": "For installation, alteration, or replacement of mechanical equipment",
+        "c": "Only for commercial work",
+        "d": "Only for new construction"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Permits are required for installing, altering, replacing, or repairing mechanical systems and equipment.",
+        "detailed": "Permit requirements: new installations; equipment replacements (even like-for-like); alterations to existing systems; extensions of ductwork or piping. Exemptions may include: portable equipment; minor repairs; maintenance. Always verify local requirements - jurisdictions may have stricter rules. Working without required permits can result in fines and required removal of work.",
+        "how_to_find": "Reference IMC Chapter 1 Permits"
+      },
+      "code_reference": "IMC 106.1",
+      "zafto_links": [],
+      "tags": ["permit", "requirements", "installation", "code"],
+      "verified": true
+    },
+    {
+      "id": "GEN-003",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "combustion_air",
+      "code_articles": ["IMC Chapter 7"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "Why is adequate combustion air required for fuel-burning appliances?",
+      "choices": {
+        "a": "For cooling only",
+        "b": "To provide oxygen for complete combustion and prevent CO production",
+        "c": "To increase noise",
+        "d": "For refrigerant purposes"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Combustion air provides oxygen for complete fuel burning; insufficient air causes incomplete combustion and deadly CO.",
+        "detailed": "Combustion air requirements: fuel needs oxygen to burn completely; insufficient oxygen = incomplete combustion; incomplete combustion produces carbon monoxide (CO); CO is colorless, odorless, and deadly. IMC Chapter 7 specifies: minimum air opening sizes; indoor vs outdoor air sources; calculation methods. Critical for: furnaces, boilers, water heaters, fireplaces. Tightly sealed homes require mechanical air supply.",
+        "how_to_find": "Reference IMC Chapter 7"
+      },
+      "code_reference": "IMC Chapter 7",
+      "zafto_links": [],
+      "tags": ["combustion_air", "oxygen", "carbon_monoxide", "safety"],
+      "verified": true
+    },
+    {
+      "id": "GEN-004",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "combustion_air_sizing",
+      "code_articles": ["IMC 701"],
+      "code_tables": [],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 90,
+      "question": "For indoor combustion air from adjacent spaces, what is the minimum free area required per 1,000 BTU/hr input?",
+      "choices": {
+        "a": "1 sq in per 1,000 BTU/hr",
+        "b": "2 sq in per 1,000 BTU/hr for each opening (two openings required)",
+        "c": "5 sq in per 1,000 BTU/hr",
+        "d": "No minimum specified"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Indoor combustion air requires two openings at 1 sq in per 1,000 BTU/hr each, totaling 2 sq in per 1,000 BTU/hr.",
+        "detailed": "Indoor air method: requires TWO openings; one within 12 inches of ceiling, one within 12 inches of floor; each opening = 1 sq in per 1,000 BTU/hr; minimum 100 sq in each. Total room volume must also be adequate. Example: 100,000 BTU furnace needs 100 sq in upper and 100 sq in lower opening (minimum). Communicating spaces must have adequate volume.",
+        "how_to_find": "Reference IMC 701.2"
+      },
+      "code_reference": "IMC 701.2",
+      "zafto_links": [],
+      "tags": ["combustion_air", "sizing", "openings", "calculation"],
+      "verified": true
+    },
+    {
+      "id": "GEN-005",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "direct_vent",
+      "code_articles": ["IMC"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What is a direct-vent appliance?",
+      "choices": {
+        "a": "Uses indoor air for combustion",
+        "b": "Sealed combustion - draws air from outside and vents to outside",
+        "c": "Vents into the room",
+        "d": "Uses a chimney"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Direct-vent appliances are sealed combustion units that draw combustion air from outdoors and vent exhaust outdoors.",
+        "detailed": "Direct-vent (sealed combustion): combustion chamber isolated from indoor air; intake pipe brings outdoor air for combustion; exhaust pipe vents products outside; often concentric (pipe within pipe) or side-by-side. Benefits: doesn't deplete indoor oxygen; not affected by house pressure; higher efficiency; safer in tight homes. Required or preferred in many modern installations.",
+        "how_to_find": "Reference direct-vent appliance definition"
+      },
+      "code_reference": "IMC 202",
+      "zafto_links": [],
+      "tags": ["direct_vent", "sealed_combustion", "outdoor_air", "safety"],
+      "verified": true
+    },
+    {
+      "id": "GEN-006",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "carbon_monoxide",
+      "code_articles": ["Safety"],
+      "code_tables": [],
+      "type": "safety",
+      "difficulty": "easy",
+      "time_estimate_seconds": 30,
+      "question": "What are symptoms of carbon monoxide exposure?",
+      "choices": {
+        "a": "Skin rash",
+        "b": "Headache, dizziness, nausea, confusion (flu-like symptoms)",
+        "c": "Improved alertness",
+        "d": "Hunger"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "CO poisoning symptoms mimic the flu: headache, dizziness, weakness, nausea, confusion, and can progress to unconsciousness and death.",
+        "detailed": "Carbon monoxide poisoning: CO binds to hemoglobin 200x stronger than oxygen; reduces blood's oxygen-carrying capacity; symptoms: headache, dizziness, weakness, nausea, vomiting, confusion, blurred vision; high levels cause unconsciousness and death. Often mistaken for flu. Multiple occupants with same symptoms = CO alert. CO detectors are critical. Technicians should carry personal CO monitors.",
+        "how_to_find": "Reference CO poisoning symptoms"
+      },
+      "code_reference": "Safety Practice",
+      "zafto_links": [],
+      "tags": ["carbon_monoxide", "symptoms", "poisoning", "safety"],
+      "verified": true
+    },
+    {
+      "id": "GEN-007",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "co_limits",
+      "code_articles": ["Safety"],
+      "code_tables": [],
+      "type": "safety",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What is the maximum acceptable CO level in flue gases for a properly operating gas furnace?",
+      "choices": {
+        "a": "0 ppm",
+        "b": "Under 100 ppm air-free",
+        "c": "400 ppm air-free is acceptable",
+        "d": "No limit"
+      },
+      "correct_answer": "c",
+      "explanation": {
+        "short": "Gas furnaces should produce under 400 ppm CO air-free in flue gases; levels above indicate combustion problems.",
+        "detailed": "Flue gas CO levels (air-free measurement): Under 100 ppm = good combustion; 100-400 ppm = acceptable but monitor; Over 400 ppm = needs service/adjustment. Air-free measurement accounts for dilution air. Ambient CO in occupied space: OSHA limit 50 ppm (8-hr TWA); CO alarm typically triggers at 70 ppm. Causes of high CO: insufficient air, flame impingement, cracked heat exchanger, dirty burners.",
+        "how_to_find": "Reference combustion analysis standards"
+      },
+      "code_reference": "ASHRAE/AGA",
+      "zafto_links": [],
+      "tags": ["carbon_monoxide", "flue_gas", "limits", "combustion"],
+      "verified": true
+    },
+    {
+      "id": "GEN-008",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "heat_exchanger",
+      "code_articles": ["Safety"],
+      "code_tables": [],
+      "type": "safety",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What is the danger of a cracked heat exchanger in a gas furnace?",
+      "choices": {
+        "a": "Reduced efficiency only",
+        "b": "Combustion gases including CO can enter the supply air stream",
+        "c": "Louder operation",
+        "d": "Higher gas bills only"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "A cracked heat exchanger allows combustion products including deadly CO to mix with heated air distributed to the home.",
+        "detailed": "Cracked heat exchanger hazards: normally, combustion gases are isolated in heat exchanger; crack allows gases to enter supply airstream; CO distributed throughout building; potentially fatal. Detection: visual inspection (difficult); combustion analysis; elevated CO in supply air; flame disturbance when blower starts. If suspected: shut down furnace immediately; do not operate until repaired or replaced.",
+        "how_to_find": "Reference heat exchanger safety"
+      },
+      "code_reference": "Safety Practice",
+      "zafto_links": [],
+      "tags": ["heat_exchanger", "crack", "carbon_monoxide", "danger"],
+      "verified": true
+    },
+    {
+      "id": "GEN-009",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "gas_leak_detection",
+      "code_articles": ["Safety"],
+      "code_tables": [],
+      "type": "safety",
+      "difficulty": "easy",
+      "time_estimate_seconds": 30,
+      "question": "How should natural gas leaks be detected?",
+      "choices": {
+        "a": "Open flame test",
+        "b": "Electronic combustible gas detector or soap bubbles",
+        "c": "Pressure increase",
+        "d": "Temperature measurement"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Use electronic combustible gas detectors or soap bubble solution - NEVER use open flames to check for gas leaks.",
+        "detailed": "Gas leak detection methods: electronic combustible gas detector (safest, most sensitive); soap bubble solution on joints/connections; gas company odorant (mercaptan) smell. NEVER use: open flame; matches; lighters. If major leak suspected: don't operate electrical switches; evacuate; call gas company from outside. Technicians should carry combustible gas detectors and use routinely.",
+        "how_to_find": "Reference gas leak detection safety"
+      },
+      "code_reference": "Safety Practice",
+      "zafto_links": [],
+      "tags": ["gas_leak", "detection", "safety", "never_flame"],
+      "verified": true
+    },
+    {
+      "id": "GEN-010",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "gas_shutoff",
+      "code_articles": ["IMC"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 30,
+      "question": "Where must a manual gas shutoff valve be located for HVAC equipment?",
+      "choices": {
+        "a": "At the meter only",
+        "b": "Within 6 feet of the appliance and in the same room",
+        "c": "In the basement only",
+        "d": "Outside the building"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "A manual shutoff valve must be within 6 feet of the appliance and accessible in the same room.",
+        "detailed": "Gas shutoff requirements: within 6 feet of appliance; same room or space as appliance; upstream of union or connector; accessible without tools; in addition to any appliance valve. Purpose: allows quick shutoff during emergency or service without going to meter. Sediment trap (drip leg) also required before appliance. These requirements are consistent across most codes.",
+        "how_to_find": "Reference IMC gas shutoff requirements"
+      },
+      "code_reference": "IMC 1212.4",
+      "zafto_links": [],
+      "tags": ["gas_shutoff", "valve", "6_feet", "accessible"],
+      "verified": true
+    },
+    {
+      "id": "GEN-011",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "sediment_trap",
+      "code_articles": ["IMC"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What is the purpose of a sediment trap (drip leg) on a gas line?",
+      "choices": {
+        "a": "To regulate pressure",
+        "b": "To collect moisture and debris before it enters the appliance",
+        "c": "To reduce noise",
+        "d": "To increase gas flow"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Sediment traps collect moisture and debris from the gas supply to prevent blockage or damage to appliance controls.",
+        "detailed": "Sediment trap (drip leg) purpose: gas lines can contain moisture, pipe scale, dirt; these contaminants can block orifices and damage valves; sediment trap collects debris by gravity; located at low point before appliance; typically 3-inch minimum length. Installation: tee fitting with capped nipple pointing down; installed after shutoff valve, before appliance connection. Required by code for most gas appliances.",
+        "how_to_find": "Reference IMC sediment trap requirements"
+      },
+      "code_reference": "IMC 1212.7",
+      "zafto_links": [],
+      "tags": ["sediment_trap", "drip_leg", "gas_line", "debris"],
+      "verified": true
+    },
+    {
+      "id": "GEN-012",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "venting_categories",
+      "code_articles": ["IMC Chapter 8"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What determines the venting category of a gas appliance?",
+      "choices": {
+        "a": "Appliance color",
+        "b": "Flue gas temperature and pressure (positive or negative)",
+        "c": "BTU input only",
+        "d": "Manufacturer preference"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Venting categories (I-IV) are based on flue gas temperature (above/below 140°F dew point) and pressure (positive/negative).",
+        "detailed": "Venting categories: Category I - negative pressure, non-condensing (traditional); Category II - negative pressure, condensing (rare); Category III - positive pressure, non-condensing; Category IV - positive pressure, condensing (high-efficiency). Determines vent material requirements: Cat I can use B-vent; Cat IV needs plastic or stainless. High-efficiency condensing appliances (90%+) are typically Category IV.",
+        "how_to_find": "Reference venting categories"
+      },
+      "code_reference": "IMC Chapter 8",
+      "zafto_links": [],
+      "tags": ["venting_category", "flue_gas", "temperature", "pressure"],
+      "verified": true
+    },
+    {
+      "id": "GEN-013",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "category_iv",
+      "code_articles": ["IMC Chapter 8"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What vent material is typically required for Category IV appliances?",
+      "choices": {
+        "a": "Single-wall metal",
+        "b": "B-vent",
+        "c": "PVC, CPVC, or stainless steel per manufacturer",
+        "d": "Brick chimney"
+      },
+      "correct_answer": "c",
+      "explanation": {
+        "short": "Category IV appliances use PVC, CPVC, polypropylene, or stainless steel venting as specified by the manufacturer.",
+        "detailed": "Category IV venting: produces acidic condensate; positive pressure pushes flue gases; requires: sealed joints, corrosion-resistant material. Common materials: PVC (up to 149°F), CPVC (up to 194°F), polypropylene, AL29-4C stainless steel. MUST follow manufacturer specifications - they've tested specific materials. Improper venting can cause: flue gas leakage, material degradation, CO poisoning. Slope to drain condensate.",
+        "how_to_find": "Reference Category IV vent requirements"
+      },
+      "code_reference": "IMC 802",
+      "zafto_links": [],
+      "tags": ["category_iv", "pvc", "condensing", "vent_material"],
+      "verified": true
+    },
+    {
+      "id": "GEN-014",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "condensate_disposal",
+      "code_articles": ["IMC"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "Where should condensate from high-efficiency furnaces be drained?",
+      "choices": {
+        "a": "Onto the ground",
+        "b": "To an approved drain, neutralizer may be required",
+        "c": "Into the return air",
+        "d": "Evaporated by the furnace"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Condensate must drain to an approved location; some jurisdictions require neutralization due to acidity.",
+        "detailed": "Condensate disposal requirements: drain to floor drain, laundry sink, condensate pump, or approved point; condensate is acidic (pH 3-5) due to carbonic acid; some codes require neutralizer before drain; cannot discharge where it causes damage or hazard. Drain line: proper slope, trapped if required, sized adequately. Check local requirements - neutralization requirements vary by jurisdiction.",
+        "how_to_find": "Reference condensate disposal requirements"
+      },
+      "code_reference": "IMC 307",
+      "zafto_links": [],
+      "tags": ["condensate", "disposal", "drain", "neutralizer"],
+      "verified": true
+    },
+    {
+      "id": "GEN-015",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "clearance_combustibles",
+      "code_articles": ["IMC"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What determines required clearances from combustible materials for HVAC equipment?",
+      "choices": {
+        "a": "Installer preference",
+        "b": "Equipment listing, manufacturer instructions, and code minimums",
+        "c": "Customer request",
+        "d": "Building size"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Clearances are determined by equipment listing/labeling, manufacturer's instructions, and code minimum requirements.",
+        "detailed": "Clearance determination hierarchy: manufacturer's listing takes precedence (they've tested the equipment); code provides minimums if not listed; never reduce below listed clearance without approved shield. Typical furnace clearances: 1 inch sides, 6 inches front for service. Vent clearances: B-vent = 1 inch; single-wall = 6 inches. Check equipment label and installation manual for specific requirements.",
+        "how_to_find": "Reference clearance requirements"
+      },
+      "code_reference": "IMC 306",
+      "zafto_links": [],
+      "tags": ["clearance", "combustibles", "listing", "manufacturer"],
+      "verified": true
+    },
+    {
+      "id": "GEN-016",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "equipment_access",
+      "code_articles": ["IMC"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 30,
+      "question": "What access is required for HVAC equipment per code?",
+      "choices": {
+        "a": "None required",
+        "b": "Sufficient access for inspection, service, repair, and replacement",
+        "c": "Visual access only",
+        "d": "Only for commercial"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Equipment must have clear access for inspection, servicing, repair, and replacement.",
+        "detailed": "Access requirements: equipment cannot be installed where access is impaired; minimum clear working space required (varies by equipment); access opening to attic/crawlspace minimum 22x30 inches; passageway minimum 22 inches wide; light and receptacle at indoor equipment. Purpose: safety, maintenance, emergency service. Installing equipment without proper access is a code violation and makes service difficult/expensive.",
+        "how_to_find": "Reference IMC access requirements"
+      },
+      "code_reference": "IMC 306",
+      "zafto_links": [],
+      "tags": ["access", "service", "clearance", "working_space"],
+      "verified": true
+    },
+    {
+      "id": "GEN-017",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "attic_requirements",
+      "code_articles": ["IMC"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What additional requirements apply to equipment installed in attics?",
+      "choices": {
+        "a": "No additional requirements",
+        "b": "Access opening, passageway, lighting, service platform, and receptacle",
+        "c": "Only insulation",
+        "d": "Ventilation only"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Attic installations require adequate access opening, passageway, lighting, solid service platform, and electrical receptacle.",
+        "detailed": "Attic installation requirements: access opening minimum 22x30 inches; passageway minimum 22 inches wide with solid flooring; light fixture with switch; electrical receptacle within 25 feet; level service platform at equipment (minimum 30x30 inches). If equipment in attic: drain pan with drain required for cooling equipment. These requirements ensure safe service access.",
+        "how_to_find": "Reference IMC attic installation requirements"
+      },
+      "code_reference": "IMC 306.5",
+      "zafto_links": [],
+      "tags": ["attic", "access", "platform", "lighting"],
+      "verified": true
+    },
+    {
+      "id": "GEN-018",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "drain_pan",
+      "code_articles": ["IMC"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "When is an auxiliary drain pan required under cooling equipment?",
+      "choices": {
+        "a": "Always",
+        "b": "When equipment is installed where condensate overflow would cause damage",
+        "c": "Never required",
+        "d": "Only for commercial"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "An auxiliary drain pan is required when equipment is above spaces where condensate overflow would cause property damage.",
+        "detailed": "Auxiliary drain pan requirements: required in attics, over finished spaces, or where overflow causes damage; minimum 1.5 inches deep; extend 3 inches beyond equipment; drain to conspicuous location OR connect secondary drain with separate termination. Purpose: protect building from condensate overflow if primary drain clogs. Many systems also use float switches to shut down equipment if pan fills.",
+        "how_to_find": "Reference IMC auxiliary drain pan requirements"
+      },
+      "code_reference": "IMC 307.2.3",
+      "zafto_links": [],
+      "tags": ["drain_pan", "auxiliary", "condensate", "overflow"],
+      "verified": true
+    },
+    {
+      "id": "GEN-019",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "electrical_disconnect",
+      "code_articles": ["NEC", "IMC"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 30,
+      "question": "What electrical disconnecting means is required for HVAC equipment?",
+      "choices": {
+        "a": "None required",
+        "b": "A disconnect within sight and readily accessible from equipment",
+        "c": "Only at main panel",
+        "d": "Voice-activated"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "A disconnecting means must be within sight and readily accessible from the equipment for safe service.",
+        "detailed": "Electrical disconnect requirements: within sight of equipment (visible and within 50 feet); readily accessible (no tools needed); lockable in open position for service safety; typically a fused disconnect or non-fused switch. For indoor equipment, breaker may serve if within sight. Purpose: technician can verify power is off while at equipment. Never service energized equipment unless specifically required.",
+        "how_to_find": "Reference NEC 440 disconnect requirements"
+      },
+      "code_reference": "NEC 440.14",
+      "zafto_links": [],
+      "tags": ["disconnect", "electrical", "within_sight", "safety"],
+      "verified": true
+    },
+    {
+      "id": "GEN-020",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "btu_definition",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 30,
+      "question": "What is a BTU (British Thermal Unit)?",
+      "choices": {
+        "a": "Measure of pressure",
+        "b": "Amount of heat to raise 1 pound of water by 1°F",
+        "c": "Measure of airflow",
+        "d": "Electrical measurement"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "A BTU is the amount of heat energy required to raise the temperature of one pound of water by one degree Fahrenheit.",
+        "detailed": "BTU (British Thermal Unit): standard unit of heat energy in US; 1 BTU = heat to raise 1 lb water 1°F; equipment rated in BTU/hr (input or output); 1 ton cooling = 12,000 BTU/hr; 1 therm natural gas = 100,000 BTU. Understanding BTUs essential for: load calculations, equipment sizing, efficiency calculations, fuel consumption estimates.",
+        "how_to_find": "Reference BTU definition"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["btu", "heat", "definition", "unit"],
+      "verified": true
+    },
+    {
+      "id": "GEN-021",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "ton_refrigeration",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 30,
+      "question": "How many BTU/hr equals one ton of refrigeration?",
+      "choices": {
+        "a": "1,000 BTU/hr",
+        "b": "6,000 BTU/hr",
+        "c": "12,000 BTU/hr",
+        "d": "24,000 BTU/hr"
+      },
+      "correct_answer": "c",
+      "explanation": {
+        "short": "One ton of refrigeration equals 12,000 BTU/hr of cooling capacity.",
+        "detailed": "Ton of refrigeration: historically based on ice making - heat absorbed melting 1 ton of ice in 24 hours; 1 ton ice × 144 BTU/lb latent heat = 288,000 BTU/day; 288,000 ÷ 24 hours = 12,000 BTU/hr. Common AC sizes: 1.5 ton (18,000 BTU), 2 ton (24,000 BTU), 3 ton (36,000 BTU), 5 ton (60,000 BTU). Residential typically 1.5-5 tons; commercial can be much larger.",
+        "how_to_find": "Reference ton of refrigeration"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["ton", "refrigeration", "12000_btu", "cooling"],
+      "verified": true
+    },
+    {
+      "id": "GEN-022",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "sensible_heat",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What is sensible heat?",
+      "choices": {
+        "a": "Heat that changes phase",
+        "b": "Heat that changes temperature without phase change (can be 'sensed')",
+        "c": "Heat from the sun only",
+        "d": "Electrical heat"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Sensible heat changes temperature without changing phase - it can be 'sensed' or measured with a thermometer.",
+        "detailed": "Sensible heat: causes temperature change; can be measured (sensed) with thermometer; examples: heating air from 70°F to 90°F, heating water from 50°F to 100°F. Contrasts with latent heat (phase change at constant temperature). HVAC systems handle both: cooling removes sensible heat (lowers temperature) and latent heat (removes humidity). Sensible Heat Ratio (SHR) = sensible ÷ total heat.",
+        "how_to_find": "Reference sensible heat definition"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["sensible_heat", "temperature", "thermometer", "no_phase_change"],
+      "verified": true
+    },
+    {
+      "id": "GEN-023",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "latent_heat",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What is latent heat?",
+      "choices": {
+        "a": "Heat measured by thermometer",
+        "b": "Heat absorbed or released during phase change without temperature change",
+        "c": "Heat from lights",
+        "d": "Radiant heat only"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Latent heat is absorbed or released during phase change (solid↔liquid↔vapor) without changing temperature.",
+        "detailed": "Latent heat: 'hidden' heat - doesn't change temperature; occurs during phase change; water: 144 BTU/lb to melt/freeze (fusion), 970 BTU/lb to vaporize/condense (vaporization). In HVAC: evaporator absorbs latent heat to evaporate refrigerant; condenser releases latent heat to condense refrigerant; dehumidification removes latent heat from air (condensing moisture).",
+        "how_to_find": "Reference latent heat definition"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["latent_heat", "phase_change", "hidden", "humidity"],
+      "verified": true
+    },
+    {
+      "id": "GEN-024",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "specific_heat",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What is the specific heat of water?",
+      "choices": {
+        "a": "0.24 BTU/lb·°F",
+        "b": "1.0 BTU/lb·°F",
+        "c": "0.5 BTU/lb·°F",
+        "d": "2.0 BTU/lb·°F"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Water has a specific heat of 1.0 BTU/lb·°F - the standard by which other materials are compared.",
+        "detailed": "Specific heat: amount of heat to raise 1 lb of substance by 1°F. Water = 1.0 BTU/lb·°F (by definition of BTU). Air = 0.24 BTU/lb·°F (much easier to heat than water). Water's high specific heat makes it excellent for: hydronic heating, thermal storage, heat transfer. Used in calculations: Q = m × c × ΔT where c = specific heat.",
+        "how_to_find": "Reference specific heat values"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["specific_heat", "water", "1.0", "calculation"],
+      "verified": true
+    },
+    {
+      "id": "GEN-025",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "humidity_terms",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What does 50% relative humidity mean?",
+      "choices": {
+        "a": "Air is half water",
+        "b": "Air holds half the water vapor it could hold at that temperature",
+        "c": "50°F dew point",
+        "d": "50% of air is moisture"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "50% RH means air contains half the maximum water vapor it could hold at that temperature before condensation.",
+        "detailed": "Relative humidity: ratio of actual moisture to maximum possible at that temperature; expressed as percentage; warm air can hold more moisture than cold air. At 50% RH: air is half saturated; if cooled, RH increases (same moisture, less capacity); at 100% RH, condensation begins. Comfort range typically 30-60% RH. Low RH: dry skin, static; High RH: sticky, mold risk.",
+        "how_to_find": "Reference relative humidity definition"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["relative_humidity", "moisture", "percentage", "saturation"],
+      "verified": true
+    },
+    {
+      "id": "GEN-026",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "dew_point",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What is the dew point temperature?",
+      "choices": {
+        "a": "Outdoor temperature",
+        "b": "Temperature at which air becomes saturated and condensation begins",
+        "c": "Room set temperature",
+        "d": "Refrigerant temperature"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Dew point is the temperature at which air becomes saturated (100% RH) and water vapor begins condensing.",
+        "detailed": "Dew point: temperature where relative humidity reaches 100%; further cooling causes condensation; determined by moisture content of air (not temperature alone); same moisture = same dew point regardless of air temperature. HVAC applications: coil must be below dew point to dehumidify; duct surfaces below dew point will sweat; higher dew point = more humid air. Dew point is better indicator of comfort than RH alone.",
+        "how_to_find": "Reference dew point definition"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["dew_point", "condensation", "saturation", "humidity"],
+      "verified": true
+    },
+    {
+      "id": "GEN-027",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "psychrometric",
+      "code_articles": ["ASHRAE"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 60,
+      "question": "What does a psychrometric chart show?",
+      "choices": {
+        "a": "Refrigerant pressures",
+        "b": "Relationships between air temperature, humidity, and energy content",
+        "c": "Duct sizing",
+        "d": "Electrical loads"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "A psychrometric chart graphically shows the relationships between dry-bulb, wet-bulb, dew point, humidity, and enthalpy of air.",
+        "detailed": "Psychrometric chart shows: dry-bulb temperature (horizontal axis); humidity ratio (vertical axis); relative humidity (curved lines); wet-bulb temperature (diagonal lines); dew point (horizontal from saturation curve); enthalpy (diagonal lines). Uses: determine air conditions from two known properties; track air through HVAC processes; calculate heating/cooling loads; design dehumidification. Essential tool for HVAC engineers.",
+        "how_to_find": "Reference psychrometric chart use"
+      },
+      "code_reference": "ASHRAE Fundamentals",
+      "zafto_links": [],
+      "tags": ["psychrometric", "chart", "humidity", "temperature"],
+      "verified": true
+    },
+    {
+      "id": "GEN-028",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "heat_transfer_modes",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 30,
+      "question": "What are the three modes of heat transfer?",
+      "choices": {
+        "a": "Hot, cold, and warm",
+        "b": "Conduction, convection, and radiation",
+        "c": "Fast, slow, and medium",
+        "d": "Heating, cooling, and ventilation"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Heat transfers by conduction (direct contact), convection (fluid movement), and radiation (electromagnetic waves).",
+        "detailed": "Heat transfer modes: Conduction - through solid materials, molecule to molecule contact; Convection - through fluid (air/water) movement, natural or forced; Radiation - electromagnetic waves, no medium required. HVAC examples: conduction through walls, convection in ducts and coils, radiation from sun or warm surfaces. Heat exchangers use all three. Understanding helps troubleshoot and design systems.",
+        "how_to_find": "Reference heat transfer modes"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["heat_transfer", "conduction", "convection", "radiation"],
+      "verified": true
+    },
+    {
+      "id": "GEN-029",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "r_value",
+      "code_articles": ["Building Science"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What does R-value measure?",
+      "choices": {
+        "a": "Refrigerant amount",
+        "b": "Thermal resistance - ability to resist heat flow",
+        "c": "Air flow rate",
+        "d": "Duct diameter"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "R-value measures thermal resistance - how well a material resists heat flow. Higher R = better insulation.",
+        "detailed": "R-value: thermal resistance in hr·ft²·°F/BTU; higher R-value = better insulation = less heat transfer; additive - R-13 wall + R-5 sheathing = R-18 total. U-value is the inverse (1/R) - rate of heat transfer. Required R-values depend on climate zone and building element. Understanding R-values essential for: load calculations, energy codes, insulation selection.",
+        "how_to_find": "Reference R-value definition"
+      },
+      "code_reference": "Building Science",
+      "zafto_links": [],
+      "tags": ["r_value", "insulation", "thermal_resistance", "heat_flow"],
+      "verified": true
+    },
+    {
+      "id": "GEN-030",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "afue",
+      "code_articles": ["DOE"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What does AFUE measure for furnaces?",
+      "choices": {
+        "a": "Airflow",
+        "b": "Annual Fuel Utilization Efficiency - percentage of fuel converted to heat",
+        "c": "Noise level",
+        "d": "Size"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "AFUE (Annual Fuel Utilization Efficiency) shows what percentage of fuel energy becomes usable heat over a heating season.",
+        "detailed": "AFUE: standardized efficiency rating for furnaces/boilers; 80% AFUE = 80% of fuel energy becomes heat, 20% lost up flue; minimum efficiency: 80% AFUE for non-weatherized furnaces; 90%+ AFUE = high-efficiency (condensing). Higher AFUE = lower fuel bills. Doesn't account for: distribution losses, cycling losses, electricity use. Used for comparing equipment and energy code compliance.",
+        "how_to_find": "Reference AFUE definition"
+      },
+      "code_reference": "DOE",
+      "zafto_links": [],
+      "tags": ["afue", "efficiency", "furnace", "fuel_utilization"],
+      "verified": true
+    },
+    {
+      "id": "GEN-031",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "seer",
+      "code_articles": ["DOE"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What does SEER measure for air conditioners?",
+      "choices": {
+        "a": "Sound level",
+        "b": "Seasonal Energy Efficiency Ratio - cooling output per energy input over a season",
+        "c": "Size in tons",
+        "d": "Refrigerant type"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "SEER (Seasonal Energy Efficiency Ratio) is cooling BTU output divided by electrical watt-hours input over a cooling season.",
+        "detailed": "SEER: total cooling BTU ÷ total electrical Wh over typical season; higher SEER = more efficient = lower electricity bills; minimum varies by region (currently 14-15 SEER for split systems in most areas); SEER2 is newer test method reflecting real-world conditions. SEER 16 uses about 20% less energy than SEER 13. Compare SEER when selecting equipment, but also consider initial cost payback.",
+        "how_to_find": "Reference SEER definition"
+      },
+      "code_reference": "DOE",
+      "zafto_links": [],
+      "tags": ["seer", "efficiency", "air_conditioner", "seasonal"],
+      "verified": true
+    },
+    {
+      "id": "GEN-032",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "hspf",
+      "code_articles": ["DOE"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What does HSPF measure for heat pumps?",
+      "choices": {
+        "a": "Cooling efficiency",
+        "b": "Heating Seasonal Performance Factor - heating efficiency over a season",
+        "c": "Refrigerant pressure",
+        "d": "Duct size"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "HSPF (Heating Seasonal Performance Factor) measures heat pump heating efficiency - BTU output per watt-hour input over a heating season.",
+        "detailed": "HSPF: total heating BTU ÷ total electrical Wh over heating season; higher HSPF = more efficient heating; includes: defrost cycles, supplemental heat effect, varying outdoor conditions. Minimum HSPF varies (currently 8.2-8.8 depending on region); HSPF2 is newer test standard. Higher HSPF especially valuable in moderate climates where heat pump runs more hours.",
+        "how_to_find": "Reference HSPF definition"
+      },
+      "code_reference": "DOE",
+      "zafto_links": [],
+      "tags": ["hspf", "heat_pump", "heating_efficiency", "seasonal"],
+      "verified": true
+    },
+    {
+      "id": "GEN-033",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "cop",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What is COP (Coefficient of Performance)?",
+      "choices": {
+        "a": "Sound measurement",
+        "b": "Ratio of useful heating/cooling output to energy input",
+        "c": "Pressure ratio",
+        "d": "Temperature difference"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "COP is the ratio of useful thermal energy output to electrical energy input - how many units of heat per unit of electricity.",
+        "detailed": "COP = useful output ÷ energy input (same units); COP of 3.0 means 3 units of heat per 1 unit of electricity; higher COP = more efficient; varies with conditions (higher at moderate temps). EER ÷ 3.412 = COP (converting BTU to watts). Heat pumps: COP 2-4 typical; Resistance heat: COP = 1.0 (all electricity becomes heat). COP is instantaneous; SEER/HSPF are seasonal averages.",
+        "how_to_find": "Reference COP calculation"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["cop", "efficiency", "ratio", "heat_pump"],
+      "verified": true
+    },
+    {
+      "id": "GEN-034",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "static_pressure",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What is static pressure in a duct system?",
+      "choices": {
+        "a": "Velocity of air",
+        "b": "Pressure exerted equally in all directions, measured in inches water column",
+        "c": "Weight of ductwork",
+        "d": "Fan speed"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Static pressure is the outward pressure air exerts in all directions within a duct, measured in inches of water column (in. w.c.).",
+        "detailed": "Static pressure: pressure exerted perpendicular to airflow; measured with manometer in inches water column (in. w.c.); typical residential: 0.5 in. w.c. external static; high static = restricted airflow (dirty filter, undersized duct); low static = possible duct leak. Total pressure = static + velocity pressure. Static pressure measurement critical for system commissioning and troubleshooting.",
+        "how_to_find": "Reference static pressure definition"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["static_pressure", "duct", "inches_wc", "measurement"],
+      "verified": true
+    },
+    {
+      "id": "GEN-035",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "cfm",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 30,
+      "question": "What does CFM stand for in HVAC?",
+      "choices": {
+        "a": "Certified Facility Manager",
+        "b": "Cubic Feet per Minute - airflow rate",
+        "c": "Central Fan Motor",
+        "d": "Cool Filter Method"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "CFM (Cubic Feet per Minute) is the standard unit for measuring airflow rate in HVAC systems.",
+        "detailed": "CFM: volume of air moving past a point per minute; typical residential: 400 CFM per ton of cooling; measured with: anemometer, flow hood, duct traverse. Proper CFM critical for: comfort, humidity control, equipment performance. Too little CFM: poor cooling, frozen coil; Too much CFM: poor dehumidification, noise. Balance CFM to match equipment requirements.",
+        "how_to_find": "Reference CFM definition"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["cfm", "airflow", "cubic_feet", "measurement"],
+      "verified": true
+    },
+    {
+      "id": "GEN-036",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "cfm_per_ton",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What is the typical airflow requirement per ton of cooling?",
+      "choices": {
+        "a": "200 CFM per ton",
+        "b": "400 CFM per ton",
+        "c": "600 CFM per ton",
+        "d": "1000 CFM per ton"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Standard airflow is approximately 400 CFM per ton of cooling capacity.",
+        "detailed": "400 CFM per ton rule: provides proper heat transfer at evaporator; maintains coil above freezing; allows adequate dehumidification. Ranges: 350-450 CFM/ton typical; lower CFM (350) = better dehumidification, colder coil; higher CFM (450) = more sensible cooling, warmer coil. 3-ton system needs approximately 1200 CFM. Manufacturer specifications may vary - always check installation manual.",
+        "how_to_find": "Reference CFM per ton requirement"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["cfm", "per_ton", "400", "airflow"],
+      "verified": true
+    },
+    {
+      "id": "GEN-037",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "filter_merv",
+      "code_articles": ["ASHRAE"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What does the MERV rating indicate for air filters?",
+      "choices": {
+        "a": "Filter size",
+        "b": "Minimum Efficiency Reporting Value - particle capture efficiency",
+        "c": "Filter cost",
+        "d": "Airflow rate"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "MERV (Minimum Efficiency Reporting Value) rates how effectively a filter captures particles of different sizes.",
+        "detailed": "MERV scale: 1-20, higher = better filtration; MERV 1-4: basic fiberglass; MERV 8: good residential; MERV 11-13: better allergen capture; MERV 14+: hospital/cleanroom. Trade-off: higher MERV = higher pressure drop = needs larger filter area or more fan power. Don't exceed system's filter rating without verifying airflow. Change filters regularly - dirty filters restrict airflow significantly.",
+        "how_to_find": "Reference MERV rating scale"
+      },
+      "code_reference": "ASHRAE 52.2",
+      "zafto_links": [],
+      "tags": ["merv", "filter", "efficiency", "particles"],
+      "verified": true
+    },
+    {
+      "id": "GEN-038",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "dirty_filter_effects",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What problems can a dirty air filter cause?",
+      "choices": {
+        "a": "Improved efficiency",
+        "b": "Reduced airflow, frozen coil, equipment damage, poor comfort",
+        "c": "Lower electricity bills",
+        "d": "Better humidity control"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Dirty filters restrict airflow causing frozen coils, reduced efficiency, equipment damage, and poor comfort.",
+        "detailed": "Dirty filter consequences: reduced airflow across evaporator; coil temperature drops below freezing; ice forms on coil (frozen evaporator); compressor can slug liquid; blower motor overheats from restricted flow; higher energy bills; poor heating/cooling. Prevention: regular filter changes (monthly during heavy use); proper filter size; customer education. First troubleshooting step: check filter.",
+        "how_to_find": "Reference dirty filter effects"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["dirty_filter", "restricted_airflow", "frozen_coil", "maintenance"],
+      "verified": true
+    },
+    {
+      "id": "GEN-039",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "ventilation_purpose",
+      "code_articles": ["IMC", "ASHRAE 62"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What is the purpose of mechanical ventilation?",
+      "choices": {
+        "a": "Heating only",
+        "b": "Provide fresh outdoor air and remove indoor pollutants",
+        "c": "Increase humidity",
+        "d": "Reduce equipment size"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Mechanical ventilation brings in fresh outdoor air and removes stale indoor air to maintain air quality.",
+        "detailed": "Ventilation purposes: dilute indoor pollutants (CO2, VOCs, odors); provide oxygen for occupants; remove moisture; meet code requirements. Sources of pollutants: occupants (CO2, bioeffluents); building materials (VOCs); activities (cooking, cleaning). ASHRAE 62.1/62.2 specifies ventilation rates. Tight buildings need mechanical ventilation - can't rely on infiltration. Balance: enough ventilation for air quality, not so much it wastes energy.",
+        "how_to_find": "Reference ventilation requirements"
+      },
+      "code_reference": "ASHRAE 62",
+      "zafto_links": [],
+      "tags": ["ventilation", "fresh_air", "indoor_air_quality", "pollutants"],
+      "verified": true
+    },
+    {
+      "id": "GEN-040",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "exhaust_requirements",
+      "code_articles": ["IMC Chapter 5"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What rooms typically require mechanical exhaust per code?",
+      "choices": {
+        "a": "Living rooms only",
+        "b": "Bathrooms, kitchens, and utility rooms",
+        "c": "Bedrooms only",
+        "d": "Garages only"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Bathrooms, kitchens, laundry rooms, and similar spaces require mechanical exhaust to remove moisture and pollutants.",
+        "detailed": "Exhaust requirements: Bathrooms - minimum 50 CFM intermittent or 20 CFM continuous; Kitchens - range hood minimum 100 CFM; Laundry - may require exhaust. Purpose: remove moisture (prevents mold); remove odors; remove combustion products (if applicable). Exhaust must terminate outdoors - not into attic or wall cavity. Makeup air needed for tight homes with large exhaust.",
+        "how_to_find": "Reference IMC exhaust requirements"
+      },
+      "code_reference": "IMC Chapter 5",
+      "zafto_links": [],
+      "tags": ["exhaust", "bathroom", "kitchen", "ventilation"],
+      "verified": true
+    },
+    {
+      "id": "GEN-041",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "makeup_air",
+      "code_articles": ["IMC"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 60,
+      "question": "When is makeup air required for exhaust systems?",
+      "choices": {
+        "a": "Never",
+        "b": "When exhaust rate exceeds natural infiltration, creating negative pressure issues",
+        "c": "Only for commercial",
+        "d": "Only in summer"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Makeup air is required when exhaust fans create enough negative pressure to cause backdrafting or operational problems.",
+        "detailed": "Makeup air needs: tight buildings with large exhaust; prevents negative pressure problems: backdrafting combustion appliances (dangerous); doors hard to open; fan inefficiency. Kitchen exhaust over 400 CFM often requires makeup air per code. Options: passive air inlets, powered makeup air units, interlocked with exhaust. Calculate: total exhaust - infiltration = makeup air needed.",
+        "how_to_find": "Reference makeup air requirements"
+      },
+      "code_reference": "IMC 505",
+      "zafto_links": [],
+      "tags": ["makeup_air", "exhaust", "negative_pressure", "backdraft"],
+      "verified": true
+    },
+    {
+      "id": "GEN-042",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "return_air_path",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "Why is an adequate return air path important?",
+      "choices": {
+        "a": "For appearance only",
+        "b": "Allows air to circulate back to equipment without pressure imbalances",
+        "c": "Reduces noise",
+        "d": "Not important"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Return air paths allow conditioned air to flow back to the air handler without creating pressure imbalances between rooms.",
+        "detailed": "Return air path importance: supply air needs path back to return; closed doors without path create pressure imbalance; room pressurizes positive, reducing supply airflow; hallway depressurizes, drawing unconditioned air. Solutions: door undercuts, transfer grilles, jump ducts, return in each room. ACCA Manual D addresses return path sizing. Common complaint: rooms with closed doors don't condition well.",
+        "how_to_find": "Reference return air path design"
+      },
+      "code_reference": "ACCA Manual D",
+      "zafto_links": [],
+      "tags": ["return_air", "pressure_balance", "airflow", "path"],
+      "verified": true
+    },
+    {
+      "id": "GEN-043",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "garage_separation",
+      "code_articles": ["IMC"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "Why must return air not be taken from a garage?",
+      "choices": {
+        "a": "Code preference",
+        "b": "Prevents drawing car exhaust and contaminants into living space",
+        "c": "Reduces cooling load",
+        "d": "Garage air is too cold"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Return air from garages is prohibited because it could draw carbon monoxide and other contaminants into occupied spaces.",
+        "detailed": "Garage air prohibition: vehicles produce CO during starting/running; gasoline vapors present; other stored chemicals. Duct system could distribute contaminants throughout home. Requirements: no return air from garage; supply ducts through garage must be sealed/insulated; HVAC equipment in garage requires separation from living space. Fire separation also required between garage and living space.",
+        "how_to_find": "Reference garage air separation"
+      },
+      "code_reference": "IMC 601.2",
+      "zafto_links": [],
+      "tags": ["garage", "return_air", "prohibited", "carbon_monoxide"],
+      "verified": true
+    },
+    {
+      "id": "GEN-044",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "duct_insulation",
+      "code_articles": ["IMC", "IECC"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "When is duct insulation required?",
+      "choices": {
+        "a": "Never",
+        "b": "When ducts pass through unconditioned spaces",
+        "c": "Only for metal ducts",
+        "d": "Only in commercial buildings"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Ducts passing through unconditioned spaces (attics, crawlspaces, garages) require insulation to prevent energy loss.",
+        "detailed": "Duct insulation requirements: supply ducts in unconditioned spaces: R-6 to R-8 typical (varies by climate); return ducts in unconditioned spaces: similar requirements; ducts in conditioned space: may not require insulation. Also prevents: condensation on cold supply ducts; heat gain/loss affecting delivery temperature. Seal duct joints before insulating. Insulation also provides vapor barrier for cold ducts.",
+        "how_to_find": "Reference duct insulation requirements"
+      },
+      "code_reference": "IECC",
+      "zafto_links": [],
+      "tags": ["duct_insulation", "unconditioned_space", "energy", "r_value"],
+      "verified": true
+    },
+    {
+      "id": "GEN-045",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "duct_sealing",
+      "code_articles": ["IMC", "IECC"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "Why is duct sealing important?",
+      "choices": {
+        "a": "Appearance only",
+        "b": "Prevents conditioned air loss and prevents drawing in unconditioned/contaminated air",
+        "c": "Reduces noise only",
+        "d": "Not important"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Duct sealing prevents energy waste from conditioned air leaking out and unconditioned air being drawn in.",
+        "detailed": "Duct sealing importance: supply leaks lose conditioned air to unconditioned space (energy waste); return leaks draw unconditioned air (efficiency loss, potential contaminants); leaks can be 20-30% of airflow in older systems. Sealing methods: mastic (best), foil tape (UL 181), mechanical fasteners. Focus on: connections, joints, boots, plenums. Modern codes require testing: duct blaster test or total leakage limits.",
+        "how_to_find": "Reference duct sealing requirements"
+      },
+      "code_reference": "IECC",
+      "zafto_links": [],
+      "tags": ["duct_sealing", "leakage", "energy", "mastic"],
+      "verified": true
+    },
+    {
+      "id": "GEN-046",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "thermostat_location",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 30,
+      "question": "Where should a thermostat be located for best performance?",
+      "choices": {
+        "a": "Near exterior door",
+        "b": "Interior wall, away from heat sources, at breathing height, central location",
+        "c": "Near window",
+        "d": "In return duct"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Thermostats should be on interior walls, away from heat sources, at 5 feet height, in a central location for accurate sensing.",
+        "detailed": "Thermostat placement: interior wall (stable temperature); approximately 5 feet height (breathing zone); away from: direct sunlight, supply registers, heat sources (lamps, TV, appliances), exterior walls, drafts. Central location senses average home temperature. Poor placement causes: short cycling, temperature swings, comfort complaints. Wireless sensors can compensate for suboptimal thermostat location.",
+        "how_to_find": "Reference thermostat placement guidelines"
+      },
+      "code_reference": "HVAC Best Practice",
+      "zafto_links": [],
+      "tags": ["thermostat", "location", "interior_wall", "placement"],
+      "verified": true
+    },
+    {
+      "id": "GEN-047",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "commissioning",
+      "code_articles": ["ACCA"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What is HVAC commissioning?",
+      "choices": {
+        "a": "Installing equipment",
+        "b": "Systematic process of verifying system performs per design intent",
+        "c": "Selling equipment",
+        "d": "Removing old equipment"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Commissioning verifies that HVAC systems are installed correctly and perform according to design specifications.",
+        "detailed": "Commissioning includes: verify airflow (CFM per room and total); verify refrigerant charge (superheat/subcooling); check static pressures; verify temperatures (supply, return, delta-T); test controls sequence; verify safety devices operate; document all measurements. ACCA Standard 5 covers commissioning. Benefits: optimal performance, energy efficiency, fewer callbacks, customer satisfaction. Should be done on every installation.",
+        "how_to_find": "Reference ACCA commissioning standards"
+      },
+      "code_reference": "ACCA Standard 5",
+      "zafto_links": [],
+      "tags": ["commissioning", "verification", "performance", "testing"],
+      "verified": true
+    },
+    {
+      "id": "GEN-048",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "manufacturer_instructions",
+      "code_articles": ["IMC"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 30,
+      "question": "When do manufacturer's installation instructions take precedence?",
+      "choices": {
+        "a": "Never",
+        "b": "When they are more restrictive than code requirements",
+        "c": "Only for warranty",
+        "d": "Only for commercial"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Manufacturer's instructions take precedence when more restrictive than code because equipment is listed based on those instructions.",
+        "detailed": "Manufacturer instruction hierarchy: equipment is tested and listed under specific conditions; listing requires installation per manufacturer; code is minimum requirement; if manufacturer requires MORE than code (greater clearance, specific venting, etc.), manufacturer wins. Violating manufacturer instructions: may void listing; can void warranty; is code violation. Always read and follow installation manual.",
+        "how_to_find": "Reference IMC manufacturer instruction requirements"
+      },
+      "code_reference": "IMC 304",
+      "zafto_links": [],
+      "tags": ["manufacturer", "instructions", "listing", "precedence"],
+      "verified": true
+    },
+    {
+      "id": "GEN-049",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "equipment_sizing",
+      "code_articles": ["ACCA Manual J"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "Why is proper HVAC equipment sizing important?",
+      "choices": {
+        "a": "Not important",
+        "b": "Ensures comfort, efficiency, humidity control, and equipment longevity",
+        "c": "Only affects initial cost",
+        "d": "Only matters in commercial"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Proper sizing ensures comfort, efficiency, humidity control, and prevents equipment damage from short-cycling.",
+        "detailed": "Sizing importance: Oversized equipment: short cycles, poor humidity control, temperature swings, increased wear, higher cost; Undersized equipment: can't meet load on design days, runs continuously, comfort complaints. Proper sizing: uses load calculation (Manual J); matches equipment to calculated load; considers local climate design conditions. Industry standard is ACCA Manual J residential, Manual N commercial.",
+        "how_to_find": "Reference equipment sizing importance"
+      },
+      "code_reference": "ACCA Manual J",
+      "zafto_links": [],
+      "tags": ["sizing", "load_calculation", "oversized", "comfort"],
+      "verified": true
+    },
+    {
+      "id": "GEN-050",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "documentation",
+      "code_articles": ["Professional Practice"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 30,
+      "question": "What documentation should be left with the customer after HVAC installation?",
+      "choices": {
+        "a": "Nothing",
+        "b": "Equipment manuals, warranty info, filter size, maintenance instructions",
+        "c": "Invoice only",
+        "d": "Business card only"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Customers should receive equipment manuals, warranty registration, filter size/type, and maintenance instructions.",
+        "detailed": "Installation documentation: equipment manuals (installation and operation); warranty registration information; filter size and replacement schedule; thermostat programming instructions; emergency contact information; maintenance recommendations; commissioning data (optional but professional). Some jurisdictions require leaving manuals. Good documentation: reduces callbacks, ensures warranty compliance, demonstrates professionalism.",
+        "how_to_find": "Reference documentation best practices"
+      },
+      "code_reference": "Professional Practice",
+      "zafto_links": [],
+      "tags": ["documentation", "customer", "manuals", "warranty"],
+      "verified": true
+    },
+    {
+      "id": "GEN-051",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "lockout_tagout",
+      "code_articles": ["OSHA"],
+      "code_tables": [],
+      "type": "safety",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What is the purpose of lockout/tagout procedures?",
+      "choices": {
+        "a": "To secure tools",
+        "b": "To prevent unexpected equipment startup during service",
+        "c": "To track inventory",
+        "d": "To schedule maintenance"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Lockout/tagout prevents unexpected energization of equipment during service, protecting workers from injury.",
+        "detailed": "Lockout/tagout (LOTO): de-energize equipment; apply lock to disconnect preventing re-energization; apply tag identifying who locked it out; verify energy is isolated (try to start). Applies to: electrical, mechanical, pneumatic, hydraulic energy. OSHA 29 CFR 1910.147 requires LOTO program. Each worker applies their own lock. Never remove another person's lock.",
+        "how_to_find": "Reference OSHA lockout/tagout requirements"
+      },
+      "code_reference": "OSHA 1910.147",
+      "zafto_links": [],
+      "tags": ["lockout_tagout", "safety", "osha", "energization"],
+      "verified": true
+    },
+    {
+      "id": "GEN-052",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "ppe",
+      "code_articles": ["OSHA"],
+      "code_tables": [],
+      "type": "safety",
+      "difficulty": "easy",
+      "time_estimate_seconds": 30,
+      "question": "What PPE is typically required for HVAC service work?",
+      "choices": {
+        "a": "None required",
+        "b": "Safety glasses, gloves, appropriate footwear at minimum",
+        "c": "Hard hat only",
+        "d": "Respirator always"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Basic PPE includes safety glasses, work gloves, and appropriate footwear; additional PPE based on specific hazards.",
+        "detailed": "Minimum PPE: safety glasses (flying debris, refrigerant); work gloves (sharp edges, chemicals, temperature); closed-toe shoes/boots. Additional based on task: hearing protection (loud equipment); respirator (insulation, chemicals); hard hat (overhead hazards); electrical gloves (live work). Employer must provide PPE and train on use. PPE is last line of defense - eliminate hazards first.",
+        "how_to_find": "Reference OSHA PPE requirements"
+      },
+      "code_reference": "OSHA 1910.132",
+      "zafto_links": [],
+      "tags": ["ppe", "safety_glasses", "gloves", "protection"],
+      "verified": true
+    },
+    {
+      "id": "GEN-053",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "ladder_safety",
+      "code_articles": ["OSHA"],
+      "code_tables": [],
+      "type": "safety",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What is the proper angle for setting up an extension ladder?",
+      "choices": {
+        "a": "Vertical against wall",
+        "b": "4:1 ratio - base 1 foot out for every 4 feet of height",
+        "c": "45 degrees",
+        "d": "As flat as possible"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Extension ladders should be set at a 4:1 ratio - the base positioned 1 foot out for every 4 feet of working height.",
+        "detailed": "Ladder safety 4:1 rule: prevents tipping backward (too steep) or sliding out (too shallow). Additional rules: extend 3 feet above landing; secure top and/or bottom; face ladder when climbing; maintain 3-point contact; don't overreach; inspect before use. Weight rating must exceed user plus tools/materials. Many HVAC injuries involve ladder falls.",
+        "how_to_find": "Reference OSHA ladder safety"
+      },
+      "code_reference": "OSHA 1910.23",
+      "zafto_links": [],
+      "tags": ["ladder", "safety", "4_to_1", "extension"],
+      "verified": true
+    },
+    {
+      "id": "GEN-054",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "heat_illness",
+      "code_articles": ["OSHA"],
+      "code_tables": [],
+      "type": "safety",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What are signs of heat exhaustion?",
+      "choices": {
+        "a": "Shivering",
+        "b": "Heavy sweating, weakness, cool/pale/clammy skin, nausea",
+        "c": "Dry skin, high temperature",
+        "d": "Blue lips"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Heat exhaustion symptoms include heavy sweating, weakness, cool and clammy skin, nausea, and possible fainting.",
+        "detailed": "Heat exhaustion: body overheating but still sweating; symptoms: heavy sweating, weakness, cold/pale/clammy skin, fast/weak pulse, nausea/vomiting, fainting. Treatment: move to cool place, loosen clothing, cool wet cloths, sip water. If untreated, can progress to heat stroke (medical emergency - hot/dry skin, confusion, loss of consciousness). Prevention: hydrate, take breaks, acclimatize, recognize early signs.",
+        "how_to_find": "Reference heat illness prevention"
+      },
+      "code_reference": "OSHA Heat Safety",
+      "zafto_links": [],
+      "tags": ["heat_exhaustion", "safety", "symptoms", "prevention"],
+      "verified": true
+    },
+    {
+      "id": "GEN-055",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "electrical_safety",
+      "code_articles": ["OSHA", "NFPA 70E"],
+      "code_tables": [],
+      "type": "safety",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What should be assumed about electrical circuits until verified?",
+      "choices": {
+        "a": "They are safe",
+        "b": "They are energized and dangerous",
+        "c": "They are grounded",
+        "d": "They are low voltage"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Always assume electrical circuits are energized until verified de-energized with a properly working meter.",
+        "detailed": "Electrical safety principle: assume energized until proven otherwise; verify with tested meter (test meter on known live source first); lock out before working; even 'low voltage' can be dangerous. Common HVAC voltages: 24V control, 120V, 240V, 208V, 480V. Arc flash hazard at higher voltages. NFPA 70E covers electrical safety. More electricians die from 120V than higher voltages (complacency).",
+        "how_to_find": "Reference electrical safety practices"
+      },
+      "code_reference": "NFPA 70E",
+      "zafto_links": [],
+      "tags": ["electrical", "safety", "assume_energized", "verify"],
+      "verified": true
+    },
+    {
+      "id": "GEN-056",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "confined_space",
+      "code_articles": ["OSHA"],
+      "code_tables": [],
+      "type": "safety",
+      "difficulty": "hard",
+      "time_estimate_seconds": 60,
+      "question": "What defines a permit-required confined space?",
+      "choices": {
+        "a": "Any small room",
+        "b": "Space with limited entry/exit and potential for hazardous atmosphere or engulfment",
+        "c": "Mechanical room",
+        "d": "Attic space"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Permit-required confined spaces have limited entry/exit and contain or potentially contain hazardous atmospheres, engulfment hazards, or other serious dangers.",
+        "detailed": "Confined space criteria: large enough to enter and work; limited means of entry/exit; not designed for continuous occupancy. Permit-required if: hazardous atmosphere (toxic, oxygen-deficient, flammable); engulfment hazard; converging walls; other serious hazard. Examples: tanks, vessels, some crawlspaces, manholes. Requires: entry permit, attendant, rescue plan, atmospheric testing, ventilation.",
+        "how_to_find": "Reference OSHA confined space requirements"
+      },
+      "code_reference": "OSHA 1910.146",
+      "zafto_links": [],
+      "tags": ["confined_space", "permit", "hazardous_atmosphere", "entry"],
+      "verified": true
+    },
+    {
+      "id": "GEN-057",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "fire_extinguisher",
+      "code_articles": ["NFPA"],
+      "code_tables": [],
+      "type": "safety",
+      "difficulty": "easy",
+      "time_estimate_seconds": 30,
+      "question": "What class of fire extinguisher is appropriate for electrical fires?",
+      "choices": {
+        "a": "Class A only",
+        "b": "Class B only",
+        "c": "Class C or ABC rated",
+        "d": "Water only"
+      },
+      "correct_answer": "c",
+      "explanation": {
+        "short": "Class C fire extinguishers are rated for electrical fires; ABC extinguishers cover ordinary, flammable liquid, and electrical fires.",
+        "detailed": "Fire extinguisher classes: A = ordinary combustibles (wood, paper); B = flammable liquids; C = electrical; D = combustible metals; K = cooking oils. For HVAC work: ABC extinguisher is versatile; Class C important for electrical fires. NEVER use water on electrical fire. PASS technique: Pull pin, Aim low, Squeeze handle, Sweep side to side. Know extinguisher locations on job sites.",
+        "how_to_find": "Reference fire extinguisher classes"
+      },
+      "code_reference": "NFPA 10",
+      "zafto_links": [],
+      "tags": ["fire_extinguisher", "class_c", "electrical", "safety"],
+      "verified": true
+    },
+    {
+      "id": "GEN-058",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "code_purpose",
+      "code_articles": ["IMC"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 30,
+      "question": "What is the primary purpose of mechanical codes?",
+      "choices": {
+        "a": "To increase costs",
+        "b": "To establish minimum standards for public health and safety",
+        "c": "To limit competition",
+        "d": "To standardize equipment"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Mechanical codes establish minimum standards to protect public health, safety, and welfare.",
+        "detailed": "Code purpose: protect occupants from hazards; ensure minimum acceptable performance; provide consistent standards across jurisdictions; codes are MINIMUM requirements - can exceed but not reduce. Hazards addressed: fire, explosion, toxic gases, structural failure, electrical shock. Code compliance is legal requirement. Codes are updated on 3-year cycle to incorporate new technology and lessons learned.",
+        "how_to_find": "Reference IMC purpose statement"
+      },
+      "code_reference": "IMC 101.3",
+      "zafto_links": [],
+      "tags": ["code_purpose", "safety", "minimum_standards", "health"],
+      "verified": true
+    },
+    {
+      "id": "GEN-059",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "inspection",
+      "code_articles": ["IMC"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "When should mechanical work be inspected?",
+      "choices": {
+        "a": "Only after project completion",
+        "b": "At required stages before concealment and upon completion",
+        "c": "Never",
+        "d": "Only for commercial"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Inspections are required at specified stages before work is concealed and upon final completion.",
+        "detailed": "Inspection requirements: rough-in inspection before concealment (ductwork, piping, venting); final inspection after completion; additional inspections as required by permit. Purpose: verify code compliance; catch problems before they're hidden; ensure safety. Never conceal work before required inspection. Inspector has authority to require corrections. Good relationship with inspectors benefits everyone.",
+        "how_to_find": "Reference IMC inspection requirements"
+      },
+      "code_reference": "IMC 107",
+      "zafto_links": [],
+      "tags": ["inspection", "rough_in", "final", "concealment"],
+      "verified": true
+    },
+    {
+      "id": "GEN-060",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "gas_pipe_sizing",
+      "code_articles": ["IFGC"],
+      "code_tables": ["IFGC 402.4"],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 90,
+      "question": "What factors determine gas pipe sizing?",
+      "choices": {
+        "a": "Pipe color only",
+        "b": "BTU load, pipe length, allowable pressure drop, specific gravity",
+        "c": "Equipment brand",
+        "d": "Installation date"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Gas pipe sizing depends on total BTU demand, developed length, allowable pressure drop, and gas specific gravity.",
+        "detailed": "Gas pipe sizing factors: total connected load (BTU/hr); developed length (longest run to farthest appliance); allowable pressure drop (typically 0.5 in. w.c.); gas specific gravity (natural gas = 0.60, propane = 1.50). Use sizing tables in IFGC or NFPA 54. Undersized pipe: appliances starved for gas, poor combustion, CO production. Always size for total possible load, not just current equipment.",
+        "how_to_find": "Reference IFGC pipe sizing tables"
+      },
+      "code_reference": "IFGC 402.4",
+      "zafto_links": [],
+      "tags": ["gas_pipe", "sizing", "btu", "pressure_drop"],
+      "verified": true
+    },
+    {
+      "id": "GEN-061",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "gas_pressure",
+      "code_articles": ["IFGC"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What is the typical delivery pressure for natural gas at residential appliances?",
+      "choices": {
+        "a": "1 psi",
+        "b": "7 inches water column (about 0.25 psi)",
+        "c": "14.7 psi",
+        "d": "100 psi"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Natural gas is typically delivered at 7 inches water column (in. w.c.) pressure at residential appliances.",
+        "detailed": "Natural gas pressures: utility delivers at higher pressure; regulator at meter reduces to 7 in. w.c. typical; some appliances have additional regulator for specific pressure. LP gas: typically 11 in. w.c. at appliance. Measure with manometer at appliance while operating. Low pressure: incomplete combustion, insufficient heat. High pressure: overfiring, damage, safety hazard. Always verify correct pressure.",
+        "how_to_find": "Reference gas delivery pressure"
+      },
+      "code_reference": "IFGC",
+      "zafto_links": [],
+      "tags": ["gas_pressure", "7_inches_wc", "natural_gas", "delivery"],
+      "verified": true
+    },
+    {
+      "id": "GEN-062",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "manifold_pressure",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What is manifold pressure on a gas furnace?",
+      "choices": {
+        "a": "Inlet pressure",
+        "b": "Pressure at the burner orifices, after the gas valve",
+        "c": "Static pressure in ductwork",
+        "d": "Refrigerant pressure"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Manifold pressure is the gas pressure at the burner manifold/orifices, measured at the pressure tap after the gas valve.",
+        "detailed": "Manifold pressure: measured at test port on gas valve outlet; determines gas flow rate through orifices; typical natural gas: 3.5 in. w.c.; LP gas: 10-11 in. w.c. Adjustment: high manifold = overfiring, flame lifting; low manifold = underfiring, CO. Verify against manufacturer specifications for specific equipment. Always measure and adjust at commissioning.",
+        "how_to_find": "Reference manifold pressure measurement"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["manifold_pressure", "gas_valve", "orifice", "adjustment"],
+      "verified": true
+    },
+    {
+      "id": "GEN-063",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "flame_color",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 30,
+      "question": "What color should a properly adjusted natural gas flame be?",
+      "choices": {
+        "a": "Solid yellow",
+        "b": "Blue with possible small yellow tips",
+        "c": "Green",
+        "d": "Red"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "A properly adjusted natural gas flame is mostly blue with possible small yellow tips; solid yellow indicates incomplete combustion.",
+        "detailed": "Flame color indicates combustion quality: Blue flame = complete combustion, good air/fuel mix; Yellow/orange = incomplete combustion, insufficient air, produces CO; Lifting flame = too much primary air; Floating/lazy flame = draft problem. Check flame through sight glass while operating. Dirty burners, blocked air openings, or improper gas pressure affect flame quality.",
+        "how_to_find": "Reference flame characteristics"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["flame_color", "blue", "combustion", "adjustment"],
+      "verified": true
+    },
+    {
+      "id": "GEN-064",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "flue_draft",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What causes natural draft in a flue or chimney?",
+      "choices": {
+        "a": "Fans only",
+        "b": "Hot gases rising due to density difference from surrounding air",
+        "c": "Wind only",
+        "d": "Gravity pulling gases down"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Natural draft occurs because hot flue gases are less dense than surrounding air and rise, creating negative pressure that draws combustion products up.",
+        "detailed": "Natural draft principles: hot gas is less dense than cold; lighter gas rises (buoyancy); creates negative pressure in appliance; draws combustion air in and products up. Factors affecting draft: flue gas temperature, flue height, outdoor temperature, wind, obstructions. Draft problems: spillage, CO in building, poor combustion. Test with smoke pencil at draft hood. Category I appliances rely on natural draft.",
+        "how_to_find": "Reference natural draft principles"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["draft", "natural", "flue", "buoyancy"],
+      "verified": true
+    },
+    {
+      "id": "GEN-065",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "draft_hood",
+      "code_articles": ["IMC"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What is the purpose of a draft hood (diverter) on a Category I appliance?",
+      "choices": {
+        "a": "Increase efficiency",
+        "b": "Prevent downdrafts from affecting burner and allow dilution air",
+        "c": "Filter combustion products",
+        "d": "Reduce noise"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Draft hoods prevent downdrafts from extinguishing the burner and allow dilution air to mix with flue gases.",
+        "detailed": "Draft hood functions: isolates burner from chimney draft fluctuations; allows dilution air to enter, reducing flue gas dew point; provides relief path if chimney is blocked; allows spillage inspection point. Located between appliance and vent connector. If spillage occurs (smoke/CO at draft hood), indicates draft problem. Only on Category I (natural draft) appliances.",
+        "how_to_find": "Reference draft hood purpose"
+      },
+      "code_reference": "IMC",
+      "zafto_links": [],
+      "tags": ["draft_hood", "diverter", "category_i", "spillage"],
+      "verified": true
+    },
+    {
+      "id": "GEN-066",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "induced_draft",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "How does an induced draft furnace differ from natural draft?",
+      "choices": {
+        "a": "No difference",
+        "b": "Uses a fan to pull combustion products through heat exchanger",
+        "c": "Uses gravity only",
+        "d": "Has no vent"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Induced draft furnaces use a fan (inducer motor) to pull combustion gases through the heat exchanger and up the flue.",
+        "detailed": "Induced draft: fan located at outlet of heat exchanger; creates negative pressure through heat exchanger; doesn't rely solely on buoyancy; more consistent draft regardless of conditions; allows smaller vent sizes; proves venting before gas valve opens. Sequence: inducer starts, pressure switch proves draft, ignition sequence begins. Most 80% AFUE furnaces are induced draft.",
+        "how_to_find": "Reference induced draft operation"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["induced_draft", "fan", "inducer_motor", "furnace"],
+      "verified": true
+    },
+    {
+      "id": "GEN-067",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "pressure_switch",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What does the pressure switch prove in an induced draft furnace?",
+      "choices": {
+        "a": "Gas pressure",
+        "b": "That the inducer is running and vent path is clear",
+        "c": "Refrigerant pressure",
+        "d": "Water pressure"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "The pressure switch verifies the inducer motor is creating proper draft and the vent path is not blocked.",
+        "detailed": "Pressure switch function: senses negative pressure created by inducer; closes when adequate draft is achieved; control board won't proceed to ignition until switch closes. If switch doesn't close: inducer problem, blocked vent, switch failure, tubing issue. Diagnostic: measure pressure at switch; compare to switch rating; check tubing for blockage/moisture. Critical safety device - never bypass.",
+        "how_to_find": "Reference pressure switch operation"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["pressure_switch", "inducer", "draft", "safety"],
+      "verified": true
+    },
+    {
+      "id": "GEN-068",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "limit_switch",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What causes a furnace high limit switch to open?",
+      "choices": {
+        "a": "Low gas pressure",
+        "b": "Excessive heat exchanger temperature, typically from restricted airflow",
+        "c": "Low refrigerant",
+        "d": "Thermostat setting"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "The high limit opens when heat exchanger temperature exceeds safe limits, usually due to restricted airflow from dirty filters or blocked ducts.",
+        "detailed": "High limit function: monitors heat exchanger temperature; opens to stop gas flow if overheating; protects heat exchanger from damage; resets when temperature drops. Common causes: dirty filter (most common); blocked return; closed registers; failed blower motor; wrong blower speed. Limit cycling indicates problem - don't just reset. Fix root cause to prevent heat exchanger damage.",
+        "how_to_find": "Reference high limit switch operation"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["limit_switch", "high_limit", "overheat", "airflow"],
+      "verified": true
+    },
+    {
+      "id": "GEN-069",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "flame_sensor",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "How does a flame rectification sensor work?",
+      "choices": {
+        "a": "Measures temperature",
+        "b": "Detects electrical current flow through flame (flame conducts DC)",
+        "c": "Sees light",
+        "d": "Detects sound"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Flame rectification sensors detect the small DC current that flows when flame is present between sensor rod and ground.",
+        "detailed": "Flame rectification: flame conducts electricity; AC applied to sensor; flame allows current in one direction (rectifies to DC); control board detects microamp current (1-6 µA typical). No flame = no current = gas valve closes. Common problem: dirty sensor (carbon buildup insulates). Cleaning: fine abrasive pad, not sandpaper. If current is low, furnace may light then lockout.",
+        "how_to_find": "Reference flame sensing operation"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["flame_sensor", "rectification", "microamps", "safety"],
+      "verified": true
+    },
+    {
+      "id": "GEN-070",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "ignition_types",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What are common ignition methods in modern gas furnaces?",
+      "choices": {
+        "a": "Standing pilot only",
+        "b": "Hot surface ignition (HSI) and direct spark ignition (DSI)",
+        "c": "Matches",
+        "d": "Piezo only"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Modern furnaces use hot surface ignition (HSI) with silicon carbide or nitride igniters, or direct spark ignition (DSI).",
+        "detailed": "Modern ignition systems: HSI (hot surface ignition) - silicon carbide or silicon nitride element glows hot (1800°F+); DSI (direct spark) - spark electrode ignites gas directly. Both eliminate standing pilot waste. HSI more common in residential; igniters are fragile, handle carefully. Sequence: inducer starts, igniter energizes, gas valve opens, flame established, igniter de-energizes. Standing pilots now rare.",
+        "how_to_find": "Reference ignition system types"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["ignition", "hsi", "dsi", "hot_surface"],
+      "verified": true
+    },
+    {
+      "id": "GEN-071",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "blower_delay",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 30,
+      "question": "Why is there a delay before the blower starts in a gas furnace heating cycle?",
+      "choices": {
+        "a": "Save electricity",
+        "b": "Allow heat exchanger to warm up before circulating air",
+        "c": "Reduce noise",
+        "d": "No reason"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "The blower delay allows the heat exchanger to warm up, preventing cold air from being blown initially.",
+        "detailed": "Blower on-delay: typically 30-90 seconds after burner lights; allows heat exchanger to reach operating temperature; prevents cold air blast at cycle start; improves comfort. Blower off-delay: blower continues 90-180 seconds after burner stops; extracts remaining heat from exchanger; improves efficiency. Controlled by fan timer on board or thermostat. Delays are adjustable on many systems.",
+        "how_to_find": "Reference blower delay operation"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["blower_delay", "fan_on", "heat_exchanger", "comfort"],
+      "verified": true
+    },
+    {
+      "id": "GEN-072",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "rollout_switch",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "safety",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What does a flame rollout switch protect against?",
+      "choices": {
+        "a": "Low gas pressure",
+        "b": "Flames burning outside the combustion chamber due to blocked heat exchanger",
+        "c": "High refrigerant pressure",
+        "d": "Motor overload"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Flame rollout switches detect flames escaping the combustion chamber, indicating a blocked heat exchanger or cracked heat exchanger.",
+        "detailed": "Rollout switch function: located near burner opening; opens if flame extends beyond normal area; indicates serious problem: blocked flue, cracked heat exchanger, excessive gas pressure. Usually manual reset - requires service. Don't simply reset without finding cause. Rolled-out flames can ignite wiring, damage components, cause fire. Critical safety device protecting against fire and CO.",
+        "how_to_find": "Reference rollout switch operation"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["rollout_switch", "flame", "safety", "blockage"],
+      "verified": true
+    },
+    {
+      "id": "GEN-073",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "condensate_trap",
+      "code_articles": ["IMC"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "Why do high-efficiency furnaces require condensate traps?",
+      "choices": {
+        "a": "For appearance",
+        "b": "To maintain pressure differential and prevent flue gases from escaping through drain",
+        "c": "To filter water",
+        "d": "Not required"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Condensate traps maintain the pressure seal, preventing positive flue gas pressure from pushing CO out through the drain line.",
+        "detailed": "High-efficiency trap requirements: 90%+ furnaces operate under positive pressure; without trap, flue gases would exit through condensate drain; trap water column seals against pressure. Trap depth must exceed operating pressure. Common issues: dry trap (seal lost), blocked trap, improper trap installation. Trap must remain filled with water during operation. Some furnaces have integral traps.",
+        "how_to_find": "Reference condensate trap requirements"
+      },
+      "code_reference": "IMC 307.2",
+      "zafto_links": [],
+      "tags": ["condensate_trap", "high_efficiency", "pressure_seal", "drain"],
+      "verified": true
+    },
+    {
+      "id": "GEN-074",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "two_stage",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What is the benefit of a two-stage furnace?",
+      "choices": {
+        "a": "Lower cost",
+        "b": "Runs at lower output most of the time for improved comfort and efficiency",
+        "c": "Simpler controls",
+        "d": "Louder operation"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Two-stage furnaces run at lower output (60-70%) most of the time, providing longer run cycles, better comfort, and improved efficiency.",
+        "detailed": "Two-stage operation: low fire (60-70% capacity) handles most heating needs; high fire for coldest conditions or recovery; longer run times = more even temperature; better air mixing; improved filtration time; quieter at low stage. Controlled by: thermostat demand, outdoor temperature, or timed staging. Higher efficiency at low fire due to better heat transfer. More comfortable than single-stage.",
+        "how_to_find": "Reference two-stage furnace benefits"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["two_stage", "modulating", "comfort", "efficiency"],
+      "verified": true
+    },
+    {
+      "id": "GEN-075",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "variable_speed",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What technology do variable-speed blower motors use?",
+      "choices": {
+        "a": "Single-phase AC only",
+        "b": "ECM (Electronically Commutated Motor) or brushless DC",
+        "c": "Steam powered",
+        "d": "Hydraulic"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Variable-speed blowers use ECM (Electronically Commutated Motors), which are brushless DC motors with electronic controls.",
+        "detailed": "ECM technology: converts AC to DC internally; electronic commutation (no brushes); can vary speed infinitely; maintains CFM despite static pressure changes; very efficient (70%+ vs 60% for PSC). Benefits: constant airflow, quiet operation, lower electric bills, better dehumidification. Can be programmed for specific CFM or torque. Standard in high-efficiency systems, increasingly common overall.",
+        "how_to_find": "Reference ECM motor technology"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["variable_speed", "ecm", "blower", "motor"],
+      "verified": true
+    },
+    {
+      "id": "GEN-076",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "heat_pump_vs_ac",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "How does a heat pump differ from a standard air conditioner?",
+      "choices": {
+        "a": "No difference",
+        "b": "Heat pump can reverse refrigerant flow to provide both heating and cooling",
+        "c": "Heat pumps only cool",
+        "d": "Heat pumps use different refrigerant"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Heat pumps include a reversing valve that allows the refrigerant flow to reverse, enabling both heating and cooling from one system.",
+        "detailed": "Heat pump operation: contains reversing valve (4-way valve); cooling mode: indoor coil is evaporator (absorbs heat); heating mode: indoor coil is condenser (releases heat). Same refrigeration cycle, reversed direction. Advantages: efficient heating (COP 2-4), single system for both modes. Limitations: capacity and efficiency decrease in very cold weather; may need supplemental heat.",
+        "how_to_find": "Reference heat pump operation"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["heat_pump", "reversing_valve", "heating", "cooling"],
+      "verified": true
+    },
+    {
+      "id": "GEN-077",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "defrost_cycle",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "Why do heat pumps need a defrost cycle?",
+      "choices": {
+        "a": "To cool faster",
+        "b": "To melt ice that forms on outdoor coil during heating mode",
+        "c": "To save energy",
+        "d": "Only in summer"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "In heating mode, the outdoor coil operates below freezing and can accumulate ice; defrost cycle reverses to melt it.",
+        "detailed": "Defrost necessity: outdoor coil absorbs heat from cold air; coil temperature below 32°F; moisture in air frosts on coil; ice buildup blocks airflow, reduces efficiency. Defrost cycle: reverses to cooling mode temporarily; hot refrigerant melts ice; takes 1-10 minutes; backup heat may run to temper supply air. Initiated by: time/temperature, demand (pressure or temperature differential).",
+        "how_to_find": "Reference heat pump defrost"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["defrost", "heat_pump", "ice", "outdoor_coil"],
+      "verified": true
+    },
+    {
+      "id": "GEN-078",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "auxiliary_heat",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What is auxiliary/emergency heat in a heat pump system?",
+      "choices": {
+        "a": "Solar heating",
+        "b": "Supplemental electric or gas heat for cold weather or backup",
+        "c": "Extra insulation",
+        "d": "Larger outdoor unit"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Auxiliary heat supplements the heat pump during cold weather or provides emergency backup if the heat pump fails.",
+        "detailed": "Auxiliary/emergency heat: supplements heat pump when capacity insufficient; typically electric resistance strips (expensive to run) or gas furnace (dual fuel); auxiliary = supplements compressor; emergency = compressor off, backup only. Control: thermostat activates based on temperature differential or outdoor temperature lockout. Dual fuel systems: heat pump above 35-40°F, gas furnace below. Minimize auxiliary use for efficiency.",
+        "how_to_find": "Reference auxiliary heat operation"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["auxiliary_heat", "emergency_heat", "heat_pump", "backup"],
+      "verified": true
+    },
+    {
+      "id": "GEN-079",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "mini_split",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What is a ductless mini-split system?",
+      "choices": {
+        "a": "Small furnace",
+        "b": "Split system with wall-mounted indoor unit(s) connected to outdoor unit without ductwork",
+        "c": "Window unit",
+        "d": "Portable AC"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Ductless mini-splits have indoor wall/ceiling units connected to an outdoor unit by refrigerant lines, without ductwork.",
+        "detailed": "Mini-split features: indoor unit(s) mounted on wall or ceiling; outdoor compressor/condenser unit; connected by refrigerant lines, power, and control wiring; no ductwork required. Benefits: zone control, high efficiency (often inverter-driven), easy retrofit, no duct losses. Multi-zone: one outdoor unit serves multiple indoor units. Common for additions, older homes, or room-by-room control.",
+        "how_to_find": "Reference mini-split systems"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["mini_split", "ductless", "wall_mount", "zone"],
+      "verified": true
+    },
+    {
+      "id": "GEN-080",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "inverter_compressor",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 60,
+      "question": "How does an inverter-driven compressor improve efficiency?",
+      "choices": {
+        "a": "Runs faster",
+        "b": "Varies speed to match load, avoiding on/off cycling losses",
+        "c": "Uses more refrigerant",
+        "d": "No improvement"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Inverter compressors vary speed to match the actual load, running continuously at lower speeds rather than cycling on and off.",
+        "detailed": "Inverter technology: variable frequency drive controls compressor speed; matches output to load in real-time; runs continuously at partial load; avoids startup surge (highest energy draw); maintains more consistent temperature. Benefits: 30%+ energy savings, better comfort, quieter operation, longer compressor life. Standard on mini-splits, increasingly common in ducted systems.",
+        "how_to_find": "Reference inverter compressor operation"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["inverter", "variable_speed", "compressor", "efficiency"],
+      "verified": true
+    },
+    {
+      "id": "GEN-081",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "geothermal",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What is the heat source/sink for a ground-source (geothermal) heat pump?",
+      "choices": {
+        "a": "Outdoor air",
+        "b": "Earth or groundwater at stable temperature",
+        "c": "Sun only",
+        "d": "Natural gas"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Ground-source heat pumps exchange heat with the earth or groundwater, which maintains a stable temperature year-round.",
+        "detailed": "Ground-source heat pumps: ground loop circulates water/antifreeze through buried pipes; earth temperature stable (50-60°F in most US); heating: extracts heat from ground; cooling: rejects heat to ground. Types: horizontal loops, vertical boreholes, open loop (well water). Benefits: highest efficiency (COP 4-5), no outdoor unit, quiet. Higher installation cost but lower operating cost than air-source.",
+        "how_to_find": "Reference geothermal heat pumps"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["geothermal", "ground_source", "heat_pump", "earth"],
+      "verified": true
+    },
+    {
+      "id": "GEN-082",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "zoning",
+      "code_articles": ["ACCA Manual Zr"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What is HVAC zoning?",
+      "choices": {
+        "a": "Building codes by area",
+        "b": "Dividing a building into separately controlled temperature areas",
+        "c": "Equipment placement",
+        "d": "Ductwork color coding"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Zoning divides a building into separate areas with independent temperature control using dampers or multiple systems.",
+        "detailed": "Zoning methods: motorized dampers in ductwork with zone thermostats; bypass damper for pressure relief; zone control panel coordinates operation. Benefits: different temperatures in different areas; compensates for varying loads (sun exposure, occupancy); improved comfort. Challenges: proper damper sizing, equipment compatibility, bypass or dump zone needs. ACCA Manual Zr covers residential zoning design.",
+        "how_to_find": "Reference HVAC zoning principles"
+      },
+      "code_reference": "ACCA Manual Zr",
+      "zafto_links": [],
+      "tags": ["zoning", "dampers", "temperature_control", "comfort"],
+      "verified": true
+    },
+    {
+      "id": "GEN-083",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "iaq",
+      "code_articles": ["ASHRAE", "EPA"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What does IAQ stand for in HVAC?",
+      "choices": {
+        "a": "Internal Air Quantity",
+        "b": "Indoor Air Quality",
+        "c": "Integrated Air Quotient",
+        "d": "Industrial Air Qualification"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "IAQ (Indoor Air Quality) refers to the quality of air inside buildings as it relates to health and comfort.",
+        "detailed": "IAQ factors: pollutant concentrations (CO2, VOCs, particulates, CO, mold); temperature and humidity; ventilation adequacy; odors. Sources of poor IAQ: inadequate ventilation, combustion products, building materials off-gassing, occupant activities, outdoor air pollution. HVAC role: provide ventilation, filter particles, control humidity. Growing importance with tighter buildings. ASHRAE 62 sets ventilation standards for acceptable IAQ.",
+        "how_to_find": "Reference indoor air quality"
+      },
+      "code_reference": "ASHRAE 62",
+      "zafto_links": [],
+      "tags": ["iaq", "indoor_air_quality", "ventilation", "health"],
+      "verified": true
+    },
+    {
+      "id": "GEN-084",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "co2_levels",
+      "code_articles": ["ASHRAE 62"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 60,
+      "question": "What indoor CO2 level indicates inadequate ventilation?",
+      "choices": {
+        "a": "400 ppm",
+        "b": "Above 1000 ppm",
+        "c": "50 ppm",
+        "d": "10,000 ppm"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Indoor CO2 above 1000 ppm typically indicates inadequate ventilation; outdoor air is about 400 ppm.",
+        "detailed": "CO2 as ventilation indicator: outdoor air ~400 ppm; occupants exhale CO2; level rises without adequate ventilation; ASHRAE 62 uses 700 ppm above outdoor (1100 ppm total) as ventilation adequacy benchmark; above 1000 ppm suggests stuffiness; 2000+ ppm indicates serious ventilation problem. CO2 sensors used for demand-controlled ventilation. Note: CO2 not toxic at these levels but indicates other pollutant buildup.",
+        "how_to_find": "Reference CO2 ventilation indicators"
+      },
+      "code_reference": "ASHRAE 62",
+      "zafto_links": [],
+      "tags": ["co2", "ventilation", "1000_ppm", "indicator"],
+      "verified": true
+    },
+    {
+      "id": "GEN-085",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "humidifier",
+      "code_articles": ["IMC"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "Why might humidification be needed in heating climates?",
+      "choices": {
+        "a": "To cool the air",
+        "b": "Cold air holds less moisture; heating it drops relative humidity uncomfortably low",
+        "c": "To increase energy use",
+        "d": "For equipment protection only"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Cold outdoor air has low moisture content; heating it without adding moisture results in very low relative humidity indoors.",
+        "detailed": "Winter humidity problem: cold air holds little moisture (low absolute humidity); heated to 70°F, relative humidity drops to 10-20%; causes: dry skin, static, respiratory irritation, wood damage. Solution: humidifiers add moisture - types include bypass, fan-powered, steam. Target 30-50% RH. IMC requires backflow prevention on water supply. Over-humidification causes condensation on windows, mold risk.",
+        "how_to_find": "Reference humidification needs"
+      },
+      "code_reference": "IMC 312",
+      "zafto_links": [],
+      "tags": ["humidifier", "relative_humidity", "winter", "comfort"],
+      "verified": true
+    },
+    {
+      "id": "GEN-086",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "dehumidification",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "How do air conditioning systems dehumidify?",
+      "choices": {
+        "a": "Chemical absorption only",
+        "b": "By cooling air below dew point, condensing moisture on evaporator coil",
+        "c": "By heating air",
+        "d": "By increasing air velocity"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "AC systems cool air below its dew point, causing water vapor to condense on the evaporator coil and drain away.",
+        "detailed": "Dehumidification process: air passes over cold evaporator coil; coil temperature below dew point; moisture condenses on coil fins; water drains to condensate pan and out. Factors affecting dehumidification: coil temperature (colder = more moisture removed); airflow (slower = more contact time = more moisture removed); entering air conditions. Oversized equipment short-cycles, reducing dehumidification effectiveness.",
+        "how_to_find": "Reference AC dehumidification"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["dehumidification", "dew_point", "evaporator", "condensate"],
+      "verified": true
+    },
+    {
+      "id": "GEN-087",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "energy_recovery",
+      "code_articles": ["IMC", "ASHRAE"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 60,
+      "question": "What does an ERV (Energy Recovery Ventilator) do?",
+      "choices": {
+        "a": "Generate electricity",
+        "b": "Transfer heat AND moisture between exhaust and supply air streams",
+        "c": "Only filter air",
+        "d": "Only circulate air"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "ERVs transfer both heat and moisture (enthalpy) between outgoing exhaust air and incoming fresh air, reducing ventilation energy costs.",
+        "detailed": "ERV operation: two separate air streams (exhaust and supply) pass through heat exchanger; heat and moisture transfer through membrane or wheel; winter: warms and humidifies incoming cold dry air; summer: pre-cools and dehumidifies incoming hot humid air. Differs from HRV (Heat Recovery Ventilator) which transfers only heat, not moisture. Best for climates with humidity extremes. Required by some energy codes.",
+        "how_to_find": "Reference ERV operation"
+      },
+      "code_reference": "ASHRAE 90.1",
+      "zafto_links": [],
+      "tags": ["erv", "energy_recovery", "ventilation", "humidity"],
+      "verified": true
+    },
+    {
+      "id": "GEN-088",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "uv_air",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "How do UV lights improve indoor air quality in HVAC systems?",
+      "choices": {
+        "a": "They heat the air",
+        "b": "UV-C light kills/inactivates mold, bacteria, and some viruses on surfaces and in air",
+        "c": "They add humidity",
+        "d": "They filter particles"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "UV-C germicidal lights kill or inactivate microorganisms including mold on coils and bacteria/viruses in the air stream.",
+        "detailed": "UV germicidal irradiation (UVGI): UV-C wavelength (254nm) damages DNA/RNA of microorganisms; coil irradiation: continuous exposure keeps coil free of biofilm; air disinfection: UV in air stream, requires adequate exposure time. Benefits: cleaner coil, reduced mold/odors, potential pathogen reduction. Limitations: doesn't filter particles, bulb replacement needed annually, safety precautions required (don't look at UV).",
+        "how_to_find": "Reference UV germicidal lights"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["uv_light", "germicidal", "mold", "iaq"],
+      "verified": true
+    },
+    {
+      "id": "GEN-089",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "refrigerant_line_sizing",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 60,
+      "question": "Why is proper refrigerant line sizing critical?",
+      "choices": {
+        "a": "Appearance only",
+        "b": "Ensures proper oil return, capacity, and prevents excessive pressure drop",
+        "c": "Only affects cost",
+        "d": "Not important"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Proper line sizing ensures adequate refrigerant velocity for oil return, maintains capacity, and prevents excessive pressure drop.",
+        "detailed": "Line sizing considerations: suction line - large enough for low pressure drop, small enough for oil return velocity; liquid line - sized for pressure drop; vertical lift affects sizing (oil must return uphill). Undersized: excessive pressure drop, capacity loss, noise. Oversized suction: oil logging (especially at part load). Manufacturer line sizing charts consider: capacity, refrigerant, line length, lift. Critical for long line sets.",
+        "how_to_find": "Reference refrigerant line sizing"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["line_sizing", "oil_return", "pressure_drop", "refrigerant"],
+      "verified": true
+    },
+    {
+      "id": "GEN-090",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "oil_trap",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 60,
+      "question": "When are suction line traps required?",
+      "choices": {
+        "a": "Never",
+        "b": "When suction line rises vertically, to assist oil return at low loads",
+        "c": "On all systems",
+        "d": "Only for heat pumps"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Suction line traps are installed at the base of vertical risers to collect oil and ensure it returns to the compressor.",
+        "detailed": "Suction line trap purpose: oil travels with refrigerant; at low velocities, oil may not climb vertical sections; trap at bottom of riser collects oil; slug of refrigerant/oil periodically pushed up when trap fills. Installation: trap at bottom of each riser; trap every 20-25 feet of rise. Not always required with variable-speed systems (velocity maintained). Check manufacturer recommendations for specific equipment.",
+        "how_to_find": "Reference suction line trap installation"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["oil_trap", "suction_line", "vertical_rise", "oil_return"],
+      "verified": true
+    },
+    {
+      "id": "GEN-091",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "brazing",
+      "code_articles": ["Safety"],
+      "code_tables": [],
+      "type": "safety",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What safety precaution is essential when brazing refrigerant lines?",
+      "choices": {
+        "a": "None needed",
+        "b": "Flow nitrogen through the line to prevent oxidation and never braze with refrigerant present",
+        "c": "Use water cooling",
+        "d": "Braze as fast as possible"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Always flow nitrogen through lines when brazing to prevent internal oxidation, and NEVER braze with refrigerant in the system.",
+        "detailed": "Brazing safety and quality: nitrogen purge prevents internal oxide formation (scale blocks TXV, damages compressor); flow nitrogen before, during, and after brazing. NEVER braze with refrigerant present - creates toxic phosgene gas. Have fire extinguisher ready; protect combustibles; use heat shield. Proper technique: heat tube not fitting, capillary action draws alloy. Good joint requires proper cleaning, flux (on copper-brass), correct alloy.",
+        "how_to_find": "Reference brazing best practices"
+      },
+      "code_reference": "Safety Practice",
+      "zafto_links": [],
+      "tags": ["brazing", "nitrogen_purge", "oxidation", "safety"],
+      "verified": true
+    },
+    {
+      "id": "GEN-092",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "troubleshooting_approach",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What is the first step in HVAC troubleshooting?",
+      "choices": {
+        "a": "Replace parts",
+        "b": "Gather information - customer complaint, history, observation",
+        "c": "Add refrigerant",
+        "d": "Replace thermostat"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Effective troubleshooting starts with gathering information: understand the complaint, history, and make observations.",
+        "detailed": "Troubleshooting process: (1) Gather info - what's the complaint, when did it start, what changed, system history; (2) Verify - confirm the problem exists; (3) Analyze - use logical approach based on symptoms; (4) Test - measure relevant parameters; (5) Diagnose - identify root cause; (6) Repair - fix the actual problem; (7) Verify - confirm repair resolved issue. Avoid parts-changing approach - expensive and often ineffective.",
+        "how_to_find": "Reference troubleshooting methodology"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["troubleshooting", "diagnosis", "systematic", "approach"],
+      "verified": true
+    },
+    {
+      "id": "GEN-093",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "delta_t",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What is a normal temperature difference (Delta-T) across an air conditioning evaporator?",
+      "choices": {
+        "a": "5-10°F",
+        "b": "15-22°F",
+        "c": "30-40°F",
+        "d": "50-60°F"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Normal Delta-T across the evaporator is 15-22°F (supply air 15-22°F cooler than return air).",
+        "detailed": "Delta-T diagnosis: measure return air and supply air temperatures; difference should be 15-22°F (varies with humidity). Low Delta-T (<15°F): low refrigerant, restricted airflow, dirty coil, low load. High Delta-T (>22°F): low airflow (dirty filter, closed registers), oversized equipment. Quick check for proper operation. Must consider actual conditions - high humidity can increase Delta-T.",
+        "how_to_find": "Reference temperature differential"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["delta_t", "temperature_difference", "evaporator", "diagnosis"],
+      "verified": true
+    },
+    {
+      "id": "GEN-094",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "amp_draw",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What does high compressor amp draw typically indicate?",
+      "choices": {
+        "a": "Normal operation",
+        "b": "Possible mechanical problems, high head pressure, or electrical issues",
+        "c": "Low refrigerant",
+        "d": "Clean filter"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "High amp draw can indicate mechanical problems, high head pressure (dirty condenser, overcharge), or electrical issues.",
+        "detailed": "High amp diagnosis: compare to RLA (Rated Load Amps) on nameplate; causes: high head pressure (dirty condenser, airflow restriction, overcharge, non-condensables); mechanical problem (worn bearings, tight compressor); low voltage (amps rise to compensate); single-phasing (3-phase). Low amps can indicate: low charge, low load, failing compressor (not pumping). Amp reading is quick diagnostic tool.",
+        "how_to_find": "Reference amperage diagnosis"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["amp_draw", "compressor", "diagnosis", "overload"],
+      "verified": true
+    },
+    {
+      "id": "GEN-095",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "capacitor_test",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "How is a motor run capacitor tested?",
+      "choices": {
+        "a": "Visual inspection only",
+        "b": "Measure capacitance with meter; compare to rated value (within 6%)",
+        "c": "Measure resistance only",
+        "d": "Weight comparison"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Test capacitors with a capacitance meter; the reading should be within ±6% of the rated microfarad value.",
+        "detailed": "Capacitor testing: SAFETY - discharge capacitor first (resistor between terminals); measure microfarads with capacitor function on meter; compare to rating on capacitor. Good: within ±6% of rated value; Weak: below range, may work but cause problems; Failed: far out of range or open/shorted. Symptoms of bad capacitor: motor won't start, hums, overheats, runs slow. Common failure in hot equipment compartments.",
+        "how_to_find": "Reference capacitor testing"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["capacitor", "microfarads", "testing", "motor"],
+      "verified": true
+    },
+    {
+      "id": "GEN-096",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "contactor",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What causes contactor contacts to become pitted or burned?",
+      "choices": {
+        "a": "Normal wear from repeated cycling and electrical arcing",
+        "b": "Low refrigerant",
+        "c": "High humidity",
+        "d": "Clean filters"
+      },
+      "correct_answer": "a",
+      "explanation": {
+        "short": "Contactor contacts wear from normal cycling - electrical arcing each time contacts open/close gradually pits and burns the surfaces.",
+        "detailed": "Contactor wear: electrical arc occurs when contacts open; arc erodes contact material over time; pitted contacts increase resistance; increased resistance causes heating, voltage drop; eventually contacts weld closed or won't conduct. Inspection: look for pitting, discoloration, carbon buildup; check for chattering (weak coil); measure voltage drop across closed contacts. Replace when worn - cheap part prevents expensive failures.",
+        "how_to_find": "Reference contactor inspection"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["contactor", "contacts", "pitting", "wear"],
+      "verified": true
+    },
+    {
+      "id": "GEN-097",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "refrigerant_leak_signs",
+      "code_articles": ["HVAC Fundamentals"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 45,
+      "question": "What are signs of a refrigerant leak in a cooling system?",
+      "choices": {
+        "a": "Higher than normal pressures",
+        "b": "Reduced cooling, ice on lines, oil stains, low subcooling/high superheat",
+        "c": "Increased humidity control",
+        "d": "Lower electric bills"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Leak signs include reduced cooling capacity, ice on suction line or coil, oil stains at leak points, and abnormal superheat/subcooling.",
+        "detailed": "Refrigerant leak indicators: gradual capacity loss; suction pressure drops over time; high superheat (not enough refrigerant); low subcooling; icing on suction line (starving evaporator); oil stains at joints (oil travels with refrigerant); bubbles in sight glass. If low charge suspected: find and fix leak before adding refrigerant. Simply recharging doesn't fix problem - it will leak out again.",
+        "how_to_find": "Reference leak diagnosis"
+      },
+      "code_reference": "HVAC Fundamentals",
+      "zafto_links": [],
+      "tags": ["refrigerant_leak", "symptoms", "oil_stain", "diagnosis"],
+      "verified": true
+    },
+    {
+      "id": "GEN-098",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "warranty",
+      "code_articles": ["Professional Practice"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 30,
+      "question": "What documentation is typically required to maintain equipment warranty?",
+      "choices": {
+        "a": "Nothing",
+        "b": "Proof of proper installation, registration, and regular maintenance records",
+        "c": "Only purchase receipt",
+        "d": "Social media post"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Warranties typically require proof of proper installation, timely registration, and evidence of regular maintenance.",
+        "detailed": "Warranty requirements vary but commonly include: installation by qualified contractor; permit and inspection (some manufacturers); warranty registration (often within 60-90 days); regular maintenance documentation (filter changes, annual tune-ups). Failure to meet requirements can void warranty. Help customers: register equipment; explain maintenance requirements; provide maintenance records. Document installation thoroughly.",
+        "how_to_find": "Reference warranty requirements"
+      },
+      "code_reference": "Professional Practice",
+      "zafto_links": [],
+      "tags": ["warranty", "documentation", "registration", "maintenance"],
+      "verified": true
+    },
+    {
+      "id": "GEN-099",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "maintenance_importance",
+      "code_articles": ["Professional Practice"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 30,
+      "question": "Why is regular HVAC maintenance important?",
+      "choices": {
+        "a": "Not important",
+        "b": "Maintains efficiency, prevents breakdowns, extends equipment life, ensures safety",
+        "c": "Only for appearance",
+        "d": "Required by law only"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Regular maintenance keeps equipment efficient, prevents costly breakdowns, extends service life, and ensures safe operation.",
+        "detailed": "Maintenance benefits: efficiency - dirty equipment works harder, uses more energy; reliability - catch problems before failures; longevity - properly maintained equipment lasts longer; safety - verify combustion, electrical, refrigerant integrity; comfort - consistent performance. Typical maintenance: filter changes, coil cleaning, electrical checks, refrigerant charge verification, safety testing. Pays for itself in efficiency and avoided repairs.",
+        "how_to_find": "Reference maintenance importance"
+      },
+      "code_reference": "Professional Practice",
+      "zafto_links": [],
+      "tags": ["maintenance", "efficiency", "reliability", "safety"],
+      "verified": true
+    },
+    {
+      "id": "GEN-100",
+      "version": "1.0.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "professionalism",
+      "code_articles": ["Professional Practice"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 30,
+      "question": "What defines a professional HVAC technician?",
+      "choices": {
+        "a": "Only speed of work",
+        "b": "Technical competence, ethical conduct, continuous learning, and customer service",
+        "c": "Expensive tools",
+        "d": "Large company"
+      },
+      "correct_answer": "b",
+      "explanation": {
+        "short": "Professional technicians combine technical competence with ethical conduct, ongoing education, and quality customer service.",
+        "detailed": "Professionalism includes: technical competence - proper training, certifications, skills; ethical conduct - honest diagnosis, fair pricing, doing the right thing; continuous learning - technology changes, codes update, stay current; customer service - communication, cleanliness, respect for property; safety - protect yourself, coworkers, customers, and property. Reputation and career built on professionalism. Industry needs skilled, ethical professionals.",
+        "how_to_find": "Reference professional standards"
+      },
+      "code_reference": "Professional Practice",
+      "zafto_links": [],
+      "tags": ["professionalism", "ethics", "competence", "service"],
+      "verified": true
+    }
+  ]
+}

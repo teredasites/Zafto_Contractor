@@ -1,0 +1,2907 @@
+{
+  "topic_id": "WM",
+  "topic_name": "Wiring Methods",
+  "nec_version": "2026",
+  "questions": [
+    {
+      "id": "WM-001",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["310"],
+      "nec_tables": ["Table 310.16"],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the ampacity of 12 AWG THHN copper conductor at 30°C ambient temperature?",
+      "choices": [
+        {"id": "A", "text": "20 amperes"},
+        {"id": "B", "text": "25 amperes"},
+        {"id": "C", "text": "30 amperes"},
+        {"id": "D", "text": "35 amperes"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Table 310.16 shows 12 AWG THHN (90°C column) has an ampacity of 30 amperes.",
+        "detailed": "Table 310.16 lists ampacities for insulated conductors. THHN has a 90°C temperature rating. For 12 AWG copper in the 90°C column, the ampacity is 30 amperes. Note: When used with 60°C rated terminals (most devices), ampacity is limited to the 60°C column value of 25A per 110.14(C).",
+        "how_to_find": "Go to Table 310.16, find 12 AWG row, 90°C copper column."
+      },
+      "nec_reference": {"article": "310", "section": "310.16", "table": "Table 310.16"},
+      "zafto_links": [{"screen_id": "ampacity", "relevance": "primary", "description": "Ampacity calculator"}],
+      "tags": ["ampacity", "THHN", "wire sizing"],
+      "verified": true
+    },
+    {
+      "id": "WM-002",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["300"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum cover required for direct burial UF cable under a residential driveway?",
+      "choices": [
+        {"id": "A", "text": "6 inches"},
+        {"id": "B", "text": "12 inches"},
+        {"id": "C", "text": "18 inches"},
+        {"id": "D", "text": "24 inches"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Table 300.5 requires 24 inches of cover for direct burial cables under driveways.",
+        "detailed": "Table 300.5 Column 4 (Residential Branch Circuits rated 120V or less with GFCI and max 20A) shows 12 inches for normal locations, but under a one- or two-family dwelling driveway, the general requirement of 24 inches applies for UF cable. Always check the specific column and location notes.",
+        "how_to_find": "Go to Table 300.5, find direct burial cable row and driveway location."
+      },
+      "nec_reference": {"article": "300", "section": "300.5", "table": "Table 300.5"},
+      "zafto_links": [],
+      "tags": ["burial depth", "UF cable", "direct burial"],
+      "verified": true
+    },
+    {
+      "id": "WM-003",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["334"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "NM cable (Romex) is permitted in which of the following locations?",
+      "choices": [
+        {"id": "A", "text": "Embedded in poured concrete"},
+        {"id": "B", "text": "Exposed in a commercial warehouse"},
+        {"id": "C", "text": "Concealed in walls of a dwelling unit"},
+        {"id": "D", "text": "Wet locations"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "NM cable is permitted concealed in walls, floors, or ceilings of dwelling units and similar structures.",
+        "detailed": "Section 334.10 permits NM cable in one- and two-family dwellings, multifamily dwellings, and other structures not exceeding three floors above grade. It must be concealed within walls, floors, or ceilings. NM cable is not permitted in wet locations, embedded in concrete, or exposed in commercial buildings.",
+        "how_to_find": "Go to 334.10 Uses Permitted and 334.12 Uses Not Permitted."
+      },
+      "nec_reference": {"article": "334", "section": "334.10"},
+      "zafto_links": [],
+      "tags": ["NM cable", "Romex", "permitted uses"],
+      "verified": true
+    },
+    {
+      "id": "WM-004",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["358"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum number of quarter bends (90°) permitted in a single run of EMT between pull points?",
+      "choices": [
+        {"id": "A", "text": "Two"},
+        {"id": "B", "text": "Three"},
+        {"id": "C", "text": "Four"},
+        {"id": "D", "text": "No limit"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "A maximum of 360° total bends (equivalent to four 90° bends) is permitted between pull points.",
+        "detailed": "Section 358.26 states that there shall not be more than the equivalent of four quarter bends (360° total) between pull points, for example, conduit bodies and boxes. This applies to EMT and most other raceway types. The limit prevents excessive friction during wire pulling.",
+        "how_to_find": "Go to 358.26 Bends - Number in One Run."
+      },
+      "nec_reference": {"article": "358", "section": "358.26"},
+      "zafto_links": [{"screen_id": "conduit_bending", "relevance": "primary", "description": "Conduit bending calculator"}],
+      "tags": ["EMT", "bends", "conduit"],
+      "verified": true
+    },
+    {
+      "id": "WM-005",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["310"],
+      "nec_tables": ["Table 310.15(C)(1)"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "When 6 current-carrying conductors are installed in a single conduit, what is the ampacity adjustment factor?",
+      "choices": [
+        {"id": "A", "text": "100%"},
+        {"id": "B", "text": "80%"},
+        {"id": "C", "text": "70%"},
+        {"id": "D", "text": "50%"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Table 310.15(C)(1) requires 80% adjustment for 4-6 current-carrying conductors.",
+        "detailed": "Table 310.15(C)(1) provides ampacity adjustment factors based on the number of current-carrying conductors in a raceway. For 4-6 conductors, the factor is 80%. For 7-9 conductors it's 70%, and for 10-20 conductors it's 50%. Equipment grounding conductors are not counted.",
+        "how_to_find": "Go to Table 310.15(C)(1), find 4-6 conductors row."
+      },
+      "nec_reference": {"article": "310", "section": "310.15(C)(1)", "table": "Table 310.15(C)(1)"},
+      "zafto_links": [{"screen_id": "ampacity", "relevance": "primary", "description": "Derating calculator"}, {"screen_id": "derating_table", "relevance": "primary", "description": "Derating factors table"}],
+      "tags": ["derating", "conduit fill", "ampacity adjustment"],
+      "verified": true
+    },
+    {
+      "id": "WM-006",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["Chapter 9"],
+      "nec_tables": ["Chapter 9 Table 1"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum conduit fill percentage for three or more conductors in a raceway?",
+      "choices": [
+        {"id": "A", "text": "31%"},
+        {"id": "B", "text": "40%"},
+        {"id": "C", "text": "53%"},
+        {"id": "D", "text": "60%"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Chapter 9 Table 1 limits conduit fill to 40% for three or more conductors.",
+        "detailed": "Chapter 9 Table 1 sets maximum fill percentages: 1 conductor = 53%, 2 conductors = 31%, 3 or more conductors = 40%. These percentages allow for heat dissipation and ease of pulling conductors. The 40% fill is the most commonly applied rule.",
+        "how_to_find": "Go to Chapter 9 Table 1 for conduit fill percentages."
+      },
+      "nec_reference": {"article": "Chapter 9", "section": "Table 1", "table": "Chapter 9 Table 1"},
+      "zafto_links": [{"screen_id": "conduit_fill", "relevance": "primary", "description": "Conduit fill calculator"}],
+      "tags": ["conduit fill", "raceway", "Chapter 9"],
+      "verified": true
+    },
+    {
+      "id": "WM-007",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["300"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum cover required for rigid metal conduit (RMC) buried under a building?",
+      "choices": [
+        {"id": "A", "text": "0 inches (no minimum)"},
+        {"id": "B", "text": "6 inches"},
+        {"id": "C", "text": "12 inches"},
+        {"id": "D", "text": "18 inches"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "RMC under a building has no minimum cover requirement per Table 300.5.",
+        "detailed": "Table 300.5 Column 2 shows that rigid metal conduit under a building has a minimum cover of 0 (zero). The building itself provides protection. In other locations, RMC requires 6 inches minimum cover.",
+        "how_to_find": "Go to Table 300.5, find RMC row and 'Under a Building' column."
+      },
+      "nec_reference": {"article": "300", "section": "300.5", "table": "Table 300.5"},
+      "zafto_links": [],
+      "tags": ["burial depth", "RMC", "underground"],
+      "verified": true
+    },
+    {
+      "id": "WM-008",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["310"],
+      "nec_tables": ["Table 310.16"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the ampacity of 6 AWG THWN copper conductor at 30°C?",
+      "choices": [
+        {"id": "A", "text": "55 amperes"},
+        {"id": "B", "text": "65 amperes"},
+        {"id": "C", "text": "75 amperes"},
+        {"id": "D", "text": "85 amperes"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Table 310.16 shows 6 AWG copper in the 75°C column has an ampacity of 65 amperes.",
+        "detailed": "THWN has a 75°C temperature rating. Looking at Table 310.16, 6 AWG copper in the 75°C column shows 65 amperes. The 60°C column shows 55A and the 90°C column shows 75A. Always match the insulation temperature rating to the correct column.",
+        "how_to_find": "Go to Table 310.16, find 6 AWG row, 75°C copper column."
+      },
+      "nec_reference": {"article": "310", "section": "310.16", "table": "Table 310.16"},
+      "zafto_links": [{"screen_id": "ampacity", "relevance": "primary", "description": "Ampacity lookup"}, {"screen_id": "ampacity_table", "relevance": "primary", "description": "Table 310.16"}],
+      "tags": ["ampacity", "THWN", "wire sizing"],
+      "verified": true
+    },
+    {
+      "id": "WM-009",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["334"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "NM cable must be secured within what distance of a single-gang nonmetallic box without cable clamps?",
+      "choices": [
+        {"id": "A", "text": "6 inches"},
+        {"id": "B", "text": "8 inches"},
+        {"id": "C", "text": "12 inches"},
+        {"id": "D", "text": "18 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "NM cable must be secured within 8 inches of a single-gang box without internal clamps.",
+        "detailed": "Section 334.30(C) permits NM cable to enter a single-gang nonmetallic box without a cable clamp if the cable is secured within 200 mm (8 in.) of the box. For boxes with internal clamps or all other boxes, the cable must be secured within 12 inches per 334.30(A).",
+        "how_to_find": "Go to 334.30(C) for securing and supporting requirements."
+      },
+      "nec_reference": {"article": "334", "section": "334.30(C)"},
+      "zafto_links": [],
+      "tags": ["NM cable", "securing", "boxes"],
+      "verified": true
+    },
+    {
+      "id": "WM-010",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["300"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Conductors of different systems rated 600V or less may occupy the same raceway if:",
+      "choices": [
+        {"id": "A", "text": "Never permitted"},
+        {"id": "B", "text": "All conductors have insulation rated for the maximum voltage present"},
+        {"id": "C", "text": "Only if separated by a barrier"},
+        {"id": "D", "text": "Only in industrial occupancies"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Different systems may share a raceway if all conductors are insulated for the highest voltage present.",
+        "detailed": "Section 300.3(C)(1) permits conductors of different systems rated 600V or less to occupy the same raceway, cable, or enclosure if all conductors have an insulation rating equal to at least the maximum circuit voltage applied to any conductor. For example, 120V and 277V circuits can share a raceway if all conductors are rated 300V or higher.",
+        "how_to_find": "Go to 300.3(C)(1) for conductors of different systems."
+      },
+      "nec_reference": {"article": "300", "section": "300.3(C)(1)"},
+      "zafto_links": [],
+      "tags": ["mixed voltages", "raceway", "insulation rating"],
+      "verified": true
+    },
+    {
+      "id": "WM-011",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["314"],
+      "nec_tables": ["Table 314.16(A)"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the volume allowance in cubic inches for a 12 AWG conductor when calculating box fill?",
+      "choices": [
+        {"id": "A", "text": "1.75 cu. in."},
+        {"id": "B", "text": "2.00 cu. in."},
+        {"id": "C", "text": "2.25 cu. in."},
+        {"id": "D", "text": "2.50 cu. in."}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Table 314.16(B) assigns 2.25 cubic inches per 12 AWG conductor.",
+        "detailed": "Table 314.16(B) provides volume allowances for conductors in boxes: 14 AWG = 2.00 cu. in., 12 AWG = 2.25 cu. in., 10 AWG = 2.50 cu. in., 8 AWG = 3.00 cu. in., 6 AWG = 5.00 cu. in. These values are used when calculating whether conductors will fit in a box.",
+        "how_to_find": "Go to Table 314.16(B) for conductor volume allowances."
+      },
+      "nec_reference": {"article": "314", "section": "314.16(B)", "table": "Table 314.16(B)"},
+      "zafto_links": [{"screen_id": "box_fill", "relevance": "primary", "description": "Box fill calculator"}],
+      "tags": ["box fill", "conductor volume", "junction box"],
+      "verified": true
+    },
+    {
+      "id": "WM-012",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["314"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "How many volume allowances must be counted for each yoke or strap containing one or more devices in a box?",
+      "choices": [
+        {"id": "A", "text": "Single volume based on largest conductor"},
+        {"id": "B", "text": "Double volume based on largest conductor"},
+        {"id": "C", "text": "One volume per device on the yoke"},
+        {"id": "D", "text": "No additional volume required"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Each device yoke counts as two volume allowances based on the largest conductor connected to it.",
+        "detailed": "Per 314.16(B)(4), for each yoke or strap containing one or more devices, a double volume allowance shall be made based on the largest conductor connected to a device on that yoke. This applies whether the device is a receptacle, switch, or combination device.",
+        "how_to_find": "Go to 314.16(B)(4) for device fill calculation."
+      },
+      "nec_reference": {"article": "314", "section": "314.16(B)(4)"},
+      "zafto_links": [{"screen_id": "box_fill", "relevance": "primary", "description": "Box fill calculator"}],
+      "tags": ["box fill", "device volume", "yoke"],
+      "verified": true
+    },
+    {
+      "id": "WM-013",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["320"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum radius of a bend in Type AC cable?",
+      "choices": [
+        {"id": "A", "text": "3 times the cable diameter"},
+        {"id": "B", "text": "5 times the cable diameter"},
+        {"id": "C", "text": "7 times the cable diameter"},
+        {"id": "D", "text": "10 times the cable diameter"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "AC cable bends must have an inside radius of at least 5 times the cable diameter.",
+        "detailed": "Section 320.24 requires that bends in Type AC cable be made so that the cable will not be damaged. The radius of the curve of the inner edge of any bend shall not be less than 5 times the diameter of the cable.",
+        "how_to_find": "Go to 320.24 Bending Radius."
+      },
+      "nec_reference": {"article": "320", "section": "320.24"},
+      "zafto_links": [],
+      "tags": ["AC cable", "bending radius", "armored cable"],
+      "verified": true
+    },
+    {
+      "id": "WM-014",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["330"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Type MC cable with an interlocking metal tape-type outer sheath requires what type of fitting?",
+      "choices": [
+        {"id": "A", "text": "Any standard connector"},
+        {"id": "B", "text": "Listed connector for the specific MC cable type"},
+        {"id": "C", "text": "No fitting required if properly terminated"},
+        {"id": "D", "text": "Standard EMT connector"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "MC cable must use fittings listed and identified for use with the specific type of MC cable.",
+        "detailed": "Section 330.40 requires fittings used for connecting MC cable to boxes, cabinets, or other equipment to be listed and identified for such use with the specific type of MC cable being installed. Different MC cable constructions (smooth, corrugated, interlocking) require appropriate fittings.",
+        "how_to_find": "Go to 330.40 Boxes and Fittings."
+      },
+      "nec_reference": {"article": "330", "section": "330.40"},
+      "zafto_links": [],
+      "tags": ["MC cable", "fittings", "connectors"],
+      "verified": true
+    },
+    {
+      "id": "WM-015",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["334"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "NM cable must be secured at intervals not exceeding:",
+      "choices": [
+        {"id": "A", "text": "3 feet"},
+        {"id": "B", "text": "4 feet"},
+        {"id": "C", "text": "4.5 feet"},
+        {"id": "D", "text": "6 feet"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "NM cable must be secured at intervals not exceeding 1.4 m (4.5 ft).",
+        "detailed": "Section 334.30(A) requires NM cable to be secured at intervals not exceeding 1.4 m (4 ft 6 in.) and within 300 mm (12 in.) of every box, cabinet, or fitting. Staples, cable ties listed for securing, or straps are acceptable methods.",
+        "how_to_find": "Go to 334.30(A) Secured."
+      },
+      "nec_reference": {"article": "334", "section": "334.30(A)"},
+      "zafto_links": [],
+      "tags": ["NM cable", "securing", "support"],
+      "verified": true
+    },
+    {
+      "id": "WM-016",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["334"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the maximum height of a building where NM cable is permitted?",
+      "choices": [
+        {"id": "A", "text": "One floor above grade"},
+        {"id": "B", "text": "Two floors above grade"},
+        {"id": "C", "text": "Three floors above grade"},
+        {"id": "D", "text": "No height limitation"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "NM cable is permitted in buildings not exceeding 3 floors above grade.",
+        "detailed": "Section 334.10(3) permits NM cable in other structures not exceeding three floors above grade. This limitation is based on fire safety concerns in taller buildings. Note that some jurisdictions have more restrictive requirements.",
+        "how_to_find": "Go to 334.10(3) Uses Permitted."
+      },
+      "nec_reference": {"article": "334", "section": "334.10(3)"},
+      "zafto_links": [],
+      "tags": ["NM cable", "building height", "permitted uses"],
+      "verified": true
+    },
+    {
+      "id": "WM-017",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["338"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Type SE cable used for interior wiring must comply with the installation requirements of which article?",
+      "choices": [
+        {"id": "A", "text": "Article 320 (AC Cable)"},
+        {"id": "B", "text": "Article 330 (MC Cable)"},
+        {"id": "C", "text": "Article 334 (NM Cable)"},
+        {"id": "D", "text": "Article 340 (UF Cable)"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "SE cable used for interior branch circuits must follow NM cable installation requirements.",
+        "detailed": "Section 338.10(B)(4)(a) states that Type SE cable used for interior wiring shall comply with the installation requirements of Part II of Article 334 (NM Cable) excluding 334.80. This includes securing, support, and protection requirements similar to NM cable.",
+        "how_to_find": "Go to 338.10(B)(4)(a) for SE cable interior wiring rules."
+      },
+      "nec_reference": {"article": "338", "section": "338.10(B)(4)(a)"},
+      "zafto_links": [],
+      "tags": ["SE cable", "interior wiring", "installation"],
+      "verified": true
+    },
+    {
+      "id": "WM-018",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["340"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum burial depth for UF cable installed under a dwelling without additional protection?",
+      "choices": [
+        {"id": "A", "text": "6 inches"},
+        {"id": "B", "text": "12 inches"},
+        {"id": "C", "text": "18 inches"},
+        {"id": "D", "text": "24 inches"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "UF cable requires 24 inches minimum cover for direct burial without additional protection.",
+        "detailed": "Per Table 300.5, direct burial cables (including UF) require a minimum cover of 24 inches (600 mm) in general locations. This depth may be reduced to 12 inches if GFCI protection is provided and the circuit is 120V, 20A or less for residential branch circuits.",
+        "how_to_find": "Go to Table 300.5, Column 4 for direct burial cable requirements."
+      },
+      "nec_reference": {"article": "300", "section": "300.5", "table": "Table 300.5"},
+      "zafto_links": [],
+      "tags": ["UF cable", "burial depth", "direct burial"],
+      "verified": true
+    },
+    {
+      "id": "WM-019",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["342"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum trade size for IMC (Intermediate Metal Conduit)?",
+      "choices": [
+        {"id": "A", "text": "1/2 inch"},
+        {"id": "B", "text": "3/4 inch"},
+        {"id": "C", "text": "1 inch"},
+        {"id": "D", "text": "1-1/4 inch"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "IMC is available in trade sizes from 1/2 inch (16 metric designator) and larger.",
+        "detailed": "Section 342.20 permits IMC to be installed in trade sizes 16 (1/2 in.) through 103 (4 in.). The minimum size is 1/2 inch. IMC has a thinner wall than RMC but is approved for the same uses.",
+        "how_to_find": "Go to 342.20 Size."
+      },
+      "nec_reference": {"article": "342", "section": "342.20"},
+      "zafto_links": [{"screen_id": "conduit_dimensions", "relevance": "secondary", "description": "Conduit size reference"}],
+      "tags": ["IMC", "conduit size", "trade size"],
+      "verified": true
+    },
+    {
+      "id": "WM-020",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["344"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "RMC must be supported at intervals not exceeding:",
+      "choices": [
+        {"id": "A", "text": "6 feet"},
+        {"id": "B", "text": "8 feet"},
+        {"id": "C", "text": "10 feet"},
+        {"id": "D", "text": "12 feet"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "RMC must be supported at intervals not exceeding 3 m (10 ft).",
+        "detailed": "Section 344.30(A) requires RMC to be installed as a complete system and to be securely fastened in place and supported at intervals not to exceed 3 m (10 ft). It must also be secured within 900 mm (3 ft) of each outlet box, junction box, device box, cabinet, conduit body, or other termination.",
+        "how_to_find": "Go to 344.30(A) Securely Fastened."
+      },
+      "nec_reference": {"article": "344", "section": "344.30(A)"},
+      "zafto_links": [],
+      "tags": ["RMC", "support", "securing"],
+      "verified": true
+    },
+    {
+      "id": "WM-021",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["348"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum length of flexible metal conduit (FMC) permitted for equipment grounding when used to connect equipment?",
+      "choices": [
+        {"id": "A", "text": "3 feet"},
+        {"id": "B", "text": "4 feet"},
+        {"id": "C", "text": "6 feet"},
+        {"id": "D", "text": "No maximum"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "FMC can serve as equipment grounding conductor if not exceeding 6 feet in length.",
+        "detailed": "Section 348.60 permits FMC to serve as an equipment grounding conductor where the length does not exceed 1.8 m (6 ft), the fittings are listed for grounding, and the circuit is protected by overcurrent devices rated 20A or less. Otherwise, a separate EGC is required.",
+        "how_to_find": "Go to 348.60 Grounding and Bonding."
+      },
+      "nec_reference": {"article": "348", "section": "348.60"},
+      "zafto_links": [],
+      "tags": ["FMC", "grounding", "flexible conduit"],
+      "verified": true
+    },
+    {
+      "id": "WM-022",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["350"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Liquidtight flexible metal conduit (LFMC) is specifically designed for use in which type of location?",
+      "choices": [
+        {"id": "A", "text": "Dry locations only"},
+        {"id": "B", "text": "Concealed in walls only"},
+        {"id": "C", "text": "Wet locations and where exposed to oils or other liquids"},
+        {"id": "D", "text": "Hazardous locations only"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "LFMC is designed for wet locations and where exposed to oil or other corrosive conditions.",
+        "detailed": "Section 350.10 permits LFMC in exposed or concealed locations where conditions of installation, operation, or maintenance require flexibility or protection from liquids, vapors, or solids. The liquidtight jacket protects the metal core from moisture and corrosive substances.",
+        "how_to_find": "Go to 350.10 Uses Permitted."
+      },
+      "nec_reference": {"article": "350", "section": "350.10"},
+      "zafto_links": [],
+      "tags": ["LFMC", "wet location", "liquidtight"],
+      "verified": true
+    },
+    {
+      "id": "WM-023",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["352"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "PVC conduit must be supported at intervals not exceeding how many feet for trade size 1 inch?",
+      "choices": [
+        {"id": "A", "text": "3 feet"},
+        {"id": "B", "text": "4 feet"},
+        {"id": "C", "text": "5 feet"},
+        {"id": "D", "text": "6 feet"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "PVC conduit trade size 1 inch requires support every 5 feet per Table 352.30.",
+        "detailed": "Table 352.30 specifies support intervals for PVC conduit: 1/2-1 inch = 3 ft, 1-1/4-2 inch = 5 ft, 2-1/2-3 inch = 6 ft, 3-1/2-5 inch = 7 ft, 6 inch = 8 ft. Trade size 1 inch falls in the 1-1/4 to 2 inch category requiring 5-foot support intervals.",
+        "how_to_find": "Go to Table 352.30 for PVC support spacing."
+      },
+      "nec_reference": {"article": "352", "section": "352.30", "table": "Table 352.30"},
+      "zafto_links": [],
+      "tags": ["PVC", "support", "conduit"],
+      "verified": true
+    },
+    {
+      "id": "WM-024",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["352"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "PVC conduit is NOT permitted to be used:",
+      "choices": [
+        {"id": "A", "text": "Underground"},
+        {"id": "B", "text": "In cinder fill"},
+        {"id": "C", "text": "Where subject to physical damage unless identified for the purpose"},
+        {"id": "D", "text": "In wet locations"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "PVC is not permitted where subject to physical damage unless identified for such use.",
+        "detailed": "Section 352.12(D) prohibits PVC conduit where subject to physical damage unless identified for such use. Schedule 80 PVC is rated for areas subject to physical damage. Schedule 40 is not and requires additional protection in such areas. PVC is permitted underground, in cinder fill (if encased), and in wet locations.",
+        "how_to_find": "Go to 352.12 Uses Not Permitted."
+      },
+      "nec_reference": {"article": "352", "section": "352.12(D)"},
+      "zafto_links": [],
+      "tags": ["PVC", "physical damage", "prohibited uses"],
+      "verified": true
+    },
+    {
+      "id": "WM-025",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["358"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "EMT must be supported at intervals not exceeding:",
+      "choices": [
+        {"id": "A", "text": "6 feet"},
+        {"id": "B", "text": "8 feet"},
+        {"id": "C", "text": "10 feet"},
+        {"id": "D", "text": "12 feet"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "EMT must be supported at intervals not exceeding 3 m (10 ft).",
+        "detailed": "Section 358.30(A) requires EMT to be securely fastened in place at least every 3 m (10 ft). EMT must also be secured within 900 mm (3 ft) of each outlet box, junction box, device box, cabinet, conduit body, or other termination.",
+        "how_to_find": "Go to 358.30(A) Securely Fastened."
+      },
+      "nec_reference": {"article": "358", "section": "358.30(A)"},
+      "zafto_links": [],
+      "tags": ["EMT", "support", "securing"],
+      "verified": true
+    },
+    {
+      "id": "WM-026",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["358"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "EMT is NOT permitted in which of the following locations?",
+      "choices": [
+        {"id": "A", "text": "Concealed in walls"},
+        {"id": "B", "text": "Embedded in concrete"},
+        {"id": "C", "text": "Where subject to severe physical damage"},
+        {"id": "D", "text": "Exposed work"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "EMT is not permitted where subject to severe physical damage.",
+        "detailed": "Section 358.12(1) prohibits EMT where subject to severe physical damage. Due to its thin wall construction, EMT can be easily crushed or dented. EMT is permitted concealed, embedded in concrete, and for exposed work where not subject to severe physical damage.",
+        "how_to_find": "Go to 358.12 Uses Not Permitted."
+      },
+      "nec_reference": {"article": "358", "section": "358.12(1)"},
+      "zafto_links": [],
+      "tags": ["EMT", "physical damage", "prohibited uses"],
+      "verified": true
+    },
+    {
+      "id": "WM-027",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["362"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the maximum voltage permitted for ENT (Electrical Nonmetallic Tubing)?",
+      "choices": [
+        {"id": "A", "text": "300 volts"},
+        {"id": "B", "text": "600 volts"},
+        {"id": "C", "text": "1000 volts"},
+        {"id": "D", "text": "No voltage limitation"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "ENT is limited to circuits of 600 volts nominal or less.",
+        "detailed": "Section 362.10 permits ENT for circuits operating at not more than 600 volts nominal. ENT is a pliable corrugated raceway made of plastic and is commonly used in concealed locations within walls, floors, and ceilings of fire-resistant construction.",
+        "how_to_find": "Go to 362.10 Uses Permitted."
+      },
+      "nec_reference": {"article": "362", "section": "362.10"},
+      "zafto_links": [],
+      "tags": ["ENT", "voltage rating", "nonmetallic"],
+      "verified": true
+    },
+    {
+      "id": "WM-028",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["Chapter 9"],
+      "nec_tables": ["Chapter 9 Table 4"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the total area in square inches for trade size 1 inch EMT?",
+      "choices": [
+        {"id": "A", "text": "0.346 sq. in."},
+        {"id": "B", "text": "0.533 sq. in."},
+        {"id": "C", "text": "0.864 sq. in."},
+        {"id": "D", "text": "1.049 sq. in."}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Chapter 9 Table 4 shows 1 inch EMT has a total area of 0.864 square inches.",
+        "detailed": "Chapter 9 Table 4 provides dimensions and percent area of conduit and tubing. For trade size 1 inch EMT: total area = 0.864 sq. in. For 40% fill (3+ conductors), the usable area is 0.346 sq. in. These values are essential for conduit fill calculations.",
+        "how_to_find": "Go to Chapter 9 Table 4 for EMT dimensions."
+      },
+      "nec_reference": {"article": "Chapter 9", "section": "Table 4", "table": "Chapter 9 Table 4"},
+      "zafto_links": [{"screen_id": "conduit_fill", "relevance": "primary", "description": "Conduit fill calculator"}],
+      "tags": ["conduit dimensions", "EMT", "Chapter 9"],
+      "verified": true
+    },
+    {
+      "id": "WM-029",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["Chapter 9"],
+      "nec_tables": ["Chapter 9 Table 5"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the approximate area in square inches for 10 AWG THHN conductor?",
+      "choices": [
+        {"id": "A", "text": "0.0117 sq. in."},
+        {"id": "B", "text": "0.0211 sq. in."},
+        {"id": "C", "text": "0.0243 sq. in."},
+        {"id": "D", "text": "0.0333 sq. in."}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Chapter 9 Table 5 shows 10 AWG THHN has an area of 0.0211 square inches.",
+        "detailed": "Chapter 9 Table 5 provides dimensions for insulated conductors and fixture wires. For 10 AWG THHN/THWN/THWN-2: approximate diameter = 0.164 in., approximate area = 0.0211 sq. in. These values are used for conduit fill calculations.",
+        "how_to_find": "Go to Chapter 9 Table 5 for conductor dimensions."
+      },
+      "nec_reference": {"article": "Chapter 9", "section": "Table 5", "table": "Chapter 9 Table 5"},
+      "zafto_links": [{"screen_id": "conduit_fill", "relevance": "primary", "description": "Conduit fill calculator"}],
+      "tags": ["conductor area", "THHN", "Chapter 9"],
+      "verified": true
+    },
+    {
+      "id": "WM-030",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["310"],
+      "nec_tables": ["Table 310.15(C)(1)"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the ampacity adjustment factor when 12 current-carrying conductors are in a single raceway?",
+      "choices": [
+        {"id": "A", "text": "80%"},
+        {"id": "B", "text": "70%"},
+        {"id": "C", "text": "50%"},
+        {"id": "D", "text": "45%"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Table 310.15(C)(1) requires 50% adjustment for 10-20 current-carrying conductors.",
+        "detailed": "Table 310.15(C)(1) lists ampacity adjustment factors: 4-6 conductors = 80%, 7-9 = 70%, 10-20 = 50%, 21-30 = 45%, 31-40 = 40%, 41+ = 35%. With 12 conductors, the 10-20 range applies, requiring a 50% adjustment factor. This accounts for heat buildup.",
+        "how_to_find": "Go to Table 310.15(C)(1), find 10-20 conductors row."
+      },
+      "nec_reference": {"article": "310", "section": "310.15(C)(1)", "table": "Table 310.15(C)(1)"},
+      "zafto_links": [{"screen_id": "derating_table", "relevance": "primary", "description": "Derating factors"}],
+      "tags": ["derating", "ampacity adjustment", "conduit fill"],
+      "verified": true
+    },
+    {
+      "id": "WM-031",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["310"],
+      "nec_tables": ["Table 310.15(B)(1)"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the ambient temperature correction factor for conductors in an area with 45°C ambient temperature, using 75°C rated insulation?",
+      "choices": [
+        {"id": "A", "text": "0.75"},
+        {"id": "B", "text": "0.82"},
+        {"id": "C", "text": "0.87"},
+        {"id": "D", "text": "0.91"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Table 310.15(B)(1) shows 0.82 correction factor for 75°C insulation at 45°C ambient.",
+        "detailed": "Table 310.15(B)(1) provides temperature correction factors. For 75°C rated insulation at ambient temperatures 41-45°C, the correction factor is 0.82. The conductor ampacity from Table 310.16 must be multiplied by this factor. Higher ambient temperatures require more derating.",
+        "how_to_find": "Go to Table 310.15(B)(1), find 41-45°C row and 75°C column."
+      },
+      "nec_reference": {"article": "310", "section": "310.15(B)(1)", "table": "Table 310.15(B)(1)"},
+      "zafto_links": [{"screen_id": "ampacity", "relevance": "primary", "description": "Ampacity correction"}],
+      "tags": ["temperature correction", "ambient temperature", "derating"],
+      "verified": true
+    },
+    {
+      "id": "WM-032",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["300"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Nonmetallic raceways exposed to sunlight must be:",
+      "choices": [
+        {"id": "A", "text": "Painted white"},
+        {"id": "B", "text": "Listed as sunlight resistant or covered with sunlight-resistant tape"},
+        {"id": "C", "text": "Installed in conduit"},
+        {"id": "D", "text": "Installed underground only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Raceways and cables exposed to sunlight must be listed as sunlight resistant or protected.",
+        "detailed": "Section 310.15(A)(4) requires that where raceways or cables are exposed to direct sunlight, the equipment or conductors must be sunlight resistant, or the raceway or cable shall be covered with material that is sunlight resistant. UV exposure can degrade nonmetallic materials.",
+        "how_to_find": "Go to 310.15(A)(4) for sunlight exposure requirements."
+      },
+      "nec_reference": {"article": "310", "section": "310.15(A)(4)"},
+      "zafto_links": [],
+      "tags": ["sunlight resistant", "raceway", "outdoor"],
+      "verified": true
+    },
+    {
+      "id": "WM-033",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["300"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Where raceways enter boxes, the raceway must:",
+      "choices": [
+        {"id": "A", "text": "Be welded to the box"},
+        {"id": "B", "text": "Be secured with locknuts on both sides"},
+        {"id": "C", "text": "Be mechanically coupled to the box"},
+        {"id": "D", "text": "Extend 1/4 inch into the box"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Raceways must be mechanically coupled to boxes and fittings to ensure continuity.",
+        "detailed": "Section 300.10 requires that electrical continuity of metal raceways and cables be maintained. Where raceways or cables enter boxes, they must be mechanically coupled to provide a secure and continuous path. This ensures the raceway can serve as an effective equipment grounding path.",
+        "how_to_find": "Go to 300.10 Electrical Continuity."
+      },
+      "nec_reference": {"article": "300", "section": "300.10"},
+      "zafto_links": [],
+      "tags": ["raceway", "continuity", "boxes"],
+      "verified": true
+    },
+    {
+      "id": "WM-034",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["312"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the minimum bending space required for 1 AWG conductors entering an enclosure opposite a removable cover?",
+      "choices": [
+        {"id": "A", "text": "3 inches"},
+        {"id": "B", "text": "4 inches"},
+        {"id": "C", "text": "4.5 inches"},
+        {"id": "D", "text": "5 inches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Table 312.6(A) requires 4.5 inches for 1 AWG conductors with wires opposite a removable cover.",
+        "detailed": "Table 312.6(A) provides minimum wire bending space at terminals. For 1 AWG conductors not leaving the enclosure opposite their entry (wires opposite a removable cover), the minimum is 4.5 inches. This allows conductors to be bent without damage to the insulation.",
+        "how_to_find": "Go to Table 312.6(A) for wire bending space requirements."
+      },
+      "nec_reference": {"article": "312", "section": "312.6(A)", "table": "Table 312.6(A)"},
+      "zafto_links": [],
+      "tags": ["bending space", "enclosures", "terminals"],
+      "verified": true
+    },
+    {
+      "id": "WM-035",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["314"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum depth of outlet boxes intended to hold receptacles?",
+      "choices": [
+        {"id": "A", "text": "1 inch"},
+        {"id": "B", "text": "1-1/4 inches"},
+        {"id": "C", "text": "1-1/2 inches"},
+        {"id": "D", "text": "2 inches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Boxes intended to hold a receptacle must have a minimum depth of 1-1/2 inches.",
+        "detailed": "Section 314.24(A) requires that boxes intended to hold a receptacle must have a minimum internal depth of 1-1/2 inches. This depth accommodates the receptacle body and provides adequate space for conductor terminations and bending.",
+        "how_to_find": "Go to 314.24(A) Boxes Enclosing Flush Devices."
+      },
+      "nec_reference": {"article": "314", "section": "314.24(A)"},
+      "zafto_links": [{"screen_id": "box_fill", "relevance": "secondary", "description": "Box sizing"}],
+      "tags": ["outlet box", "depth", "receptacle"],
+      "verified": true
+    },
+    {
+      "id": "WM-036",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["314"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Equipment grounding conductors are counted in box fill calculations at what rate?",
+      "choices": [
+        {"id": "A", "text": "One volume each based on their size"},
+        {"id": "B", "text": "One volume total for all EGCs based on largest EGC"},
+        {"id": "C", "text": "Double volume each based on their size"},
+        {"id": "D", "text": "Not counted in box fill"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "All EGCs count as a single volume allowance based on the largest EGC present.",
+        "detailed": "Per 314.16(B)(5), all equipment grounding conductors in a box count as a single volume allowance based on the largest equipment grounding conductor. For example, if a box has three 14 AWG EGCs and one 12 AWG EGC, they count as one 12 AWG conductor volume (2.25 cu. in.).",
+        "how_to_find": "Go to 314.16(B)(5) for EGC volume calculation."
+      },
+      "nec_reference": {"article": "314", "section": "314.16(B)(5)"},
+      "zafto_links": [{"screen_id": "box_fill", "relevance": "primary", "description": "Box fill calculator"}],
+      "tags": ["box fill", "EGC", "volume allowance"],
+      "verified": true
+    },
+    {
+      "id": "WM-037",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["314"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Internal cable clamps in a box count for how much volume?",
+      "choices": [
+        {"id": "A", "text": "No volume required"},
+        {"id": "B", "text": "Single volume based on largest conductor"},
+        {"id": "C", "text": "Double volume based on largest conductor"},
+        {"id": "D", "text": "Single volume for each clamp"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "One or more internal cable clamps count as a single volume based on the largest conductor.",
+        "detailed": "Per 314.16(B)(2), one or more internal cable clamps, whether factory or field supplied, count as a single volume allowance based on the largest conductor present in the box. This applies regardless of the number of clamps. External clamps do not require a volume allowance.",
+        "how_to_find": "Go to 314.16(B)(2) for clamp fill calculation."
+      },
+      "nec_reference": {"article": "314", "section": "314.16(B)(2)"},
+      "zafto_links": [{"screen_id": "box_fill", "relevance": "primary", "description": "Box fill calculator"}],
+      "tags": ["box fill", "cable clamps", "volume allowance"],
+      "verified": true
+    },
+    {
+      "id": "WM-038",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["334"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum bending radius for 14-2 NM cable?",
+      "choices": [
+        {"id": "A", "text": "3 times the cable diameter"},
+        {"id": "B", "text": "5 times the cable diameter"},
+        {"id": "C", "text": "7 times the cable diameter"},
+        {"id": "D", "text": "No minimum specified"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "NM cable bends must have a radius at least 5 times the cable diameter.",
+        "detailed": "Section 334.24 requires that bends in NM cable be made so the cable will not be damaged. The radius of the curve of the inner edge of any bend shall not be less than 5 times the diameter of the cable. Sharp bends can damage the conductors and insulation.",
+        "how_to_find": "Go to 334.24 Bending Radius."
+      },
+      "nec_reference": {"article": "334", "section": "334.24"},
+      "zafto_links": [],
+      "tags": ["NM cable", "bending radius", "installation"],
+      "verified": true
+    },
+    {
+      "id": "WM-039",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["334"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Type NM-B cable has a temperature rating of:",
+      "choices": [
+        {"id": "A", "text": "60°C"},
+        {"id": "B", "text": "75°C"},
+        {"id": "C", "text": "90°C"},
+        {"id": "D", "text": "105°C"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "NM-B cable conductors have a 90°C temperature rating.",
+        "detailed": "Section 334.80 indicates that NM-B and NMC-B cables have conductors with a 90°C insulation rating. However, the ampacity must be based on the 60°C column of Table 310.16 for ampacity purposes. The 90°C rating is for short-circuit conditions and derating calculations only.",
+        "how_to_find": "Go to 334.80 for NM cable ampacity requirements."
+      },
+      "nec_reference": {"article": "334", "section": "334.80"},
+      "zafto_links": [],
+      "tags": ["NM cable", "temperature rating", "ampacity"],
+      "verified": true
+    },
+    {
+      "id": "WM-040",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["330"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum bending radius for MC cable with a smooth sheath?",
+      "choices": [
+        {"id": "A", "text": "5 times the external diameter"},
+        {"id": "B", "text": "7 times the external diameter"},
+        {"id": "C", "text": "10 times the external diameter"},
+        {"id": "D", "text": "12 times the external diameter"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "MC cable with smooth sheath requires a minimum bend radius of 10 times the external diameter.",
+        "detailed": "Section 330.24(A) requires different bend radii based on MC cable construction: interlocking-type or corrugated sheath = 7x diameter, smooth sheath = 10x diameter, shielded conductors = 12x diameter. The smooth sheath type requires larger bend radius to prevent kinking.",
+        "how_to_find": "Go to 330.24(A) for MC cable bending radius."
+      },
+      "nec_reference": {"article": "330", "section": "330.24(A)"},
+      "zafto_links": [],
+      "tags": ["MC cable", "bending radius", "smooth sheath"],
+      "verified": true
+    },
+    {
+      "id": "WM-041",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["300"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "Conductors entering a raceway must be protected by:",
+      "choices": [
+        {"id": "A", "text": "Electrical tape only"},
+        {"id": "B", "text": "A bushing or fitting providing equivalent protection"},
+        {"id": "C", "text": "Heat shrink tubing"},
+        {"id": "D", "text": "No protection required"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A bushing or fitting must protect conductors from abrasion where they enter raceways.",
+        "detailed": "Section 300.4(G) requires that where raceways contain insulated conductors 4 AWG or larger, the conductors shall be protected from abrasion during and after installation by a fitting providing a smooth, rounded insulating surface. A bushing or fitting providing equivalent protection is required.",
+        "how_to_find": "Go to 300.4(G) Insulated Fittings."
+      },
+      "nec_reference": {"article": "300", "section": "300.4(G)"},
+      "zafto_links": [],
+      "tags": ["bushings", "conductor protection", "raceway"],
+      "verified": true
+    },
+    {
+      "id": "WM-042",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["300"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What minimum distance must underground cables be separated from other utilities not installed by the electric utility?",
+      "choices": [
+        {"id": "A", "text": "6 inches"},
+        {"id": "B", "text": "12 inches"},
+        {"id": "C", "text": "18 inches"},
+        {"id": "D", "text": "24 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Underground conductors must be separated by at least 12 inches from other systems.",
+        "detailed": "Section 300.5(E)(1) requires that direct-buried conductors or cables be separated by at least 300 mm (12 in.) from other direct-buried conductors, cables, or systems not covered in this section. This separation prevents interference and damage during excavation.",
+        "how_to_find": "Go to 300.5(E)(1) for underground separation requirements."
+      },
+      "nec_reference": {"article": "300", "section": "300.5(E)(1)"},
+      "zafto_links": [],
+      "tags": ["underground", "separation", "direct burial"],
+      "verified": true
+    },
+    {
+      "id": "WM-043",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["300"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "When NM cable passes through metal framing members, what protection is required?",
+      "choices": [
+        {"id": "A", "text": "No protection required"},
+        {"id": "B", "text": "Listed bushing or grommet"},
+        {"id": "C", "text": "Metal conduit sleeve"},
+        {"id": "D", "text": "Plastic conduit sleeve"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Cables through metal framing must be protected by listed bushings or grommets.",
+        "detailed": "Section 300.4(B)(1) requires that where cables or raceways are installed through bored holes in metal framing members, the cables shall be protected by listed bushings or listed grommets that cover all metal edges and are securely fastened in the opening before cable installation.",
+        "how_to_find": "Go to 300.4(B)(1) for protection through metal framing."
+      },
+      "nec_reference": {"article": "300", "section": "300.4(B)(1)"},
+      "zafto_links": [],
+      "tags": ["cable protection", "metal framing", "bushings"],
+      "verified": true
+    },
+    {
+      "id": "WM-044",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["300"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "Where NM cable runs parallel to framing members within 1-1/4 inches from the edge, what protection is required?",
+      "choices": [
+        {"id": "A", "text": "No protection required"},
+        {"id": "B", "text": "Steel plate at least 1/16 inch thick"},
+        {"id": "C", "text": "Plastic bushing"},
+        {"id": "D", "text": "Conduit sleeve"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Cables within 1-1/4 inches from edge must be protected by 1/16 inch steel plate.",
+        "detailed": "Section 300.4(A)(1) requires protection where cables are run through bored holes or notches in wood framing members, and the edge of the hole or notch is less than 32 mm (1-1/4 in.) from the nearest edge of the wood member. Protection must be a steel plate at least 1.6 mm (1/16 in.) thick.",
+        "how_to_find": "Go to 300.4(A)(1) for cable protection in framing."
+      },
+      "nec_reference": {"article": "300", "section": "300.4(A)(1)"},
+      "zafto_links": [],
+      "tags": ["cable protection", "nail plate", "framing"],
+      "verified": true
+    },
+    {
+      "id": "WM-045",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["310"],
+      "nec_tables": ["Table 310.16"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the ampacity of 4 AWG copper THWN conductor at 30°C ambient temperature?",
+      "choices": [
+        {"id": "A", "text": "70 amperes"},
+        {"id": "B", "text": "85 amperes"},
+        {"id": "C", "text": "95 amperes"},
+        {"id": "D", "text": "105 amperes"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Table 310.16 shows 4 AWG copper THWN (75°C column) has 85 amperes ampacity.",
+        "detailed": "Looking at Table 310.16, 4 AWG copper conductor in the 75°C column (THWN insulation) has an ampacity of 85 amperes at 30°C ambient. The 60°C column shows 70A and the 90°C column shows 95A. Always match the conductor insulation temperature rating to the correct column.",
+        "how_to_find": "Go to Table 310.16, find 4 AWG row, 75°C copper column."
+      },
+      "nec_reference": {"article": "310", "section": "310.16", "table": "Table 310.16"},
+      "zafto_links": [{"screen_id": "ampacity", "relevance": "primary", "description": "Ampacity lookup"}, {"screen_id": "ampacity_table", "relevance": "primary", "description": "Table 310.16"}],
+      "tags": ["ampacity", "THWN", "wire sizing"],
+      "verified": true
+    },
+    {
+      "id": "WM-046",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["314"],
+      "nec_tables": ["Table 314.16(A)"],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 180,
+      "question": "A 4-inch square metal box is 1-1/2 inches deep. How many 12 AWG conductors can be installed?",
+      "choices": [
+        {"id": "A", "text": "9"},
+        {"id": "B", "text": "10"},
+        {"id": "C", "text": "11"},
+        {"id": "D", "text": "12"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Table 314.16(A) shows a 4x1-1/2 square box has 25.5 cu. in. ÷ 2.25 cu. in. per 12 AWG = 11 conductors.",
+        "detailed": "Table 314.16(A) lists a 4 x 1-1/2 inch square box with 25.5 cubic inches of volume. Per Table 314.16(B), each 12 AWG conductor requires 2.25 cubic inches. 25.5 ÷ 2.25 = 11.33, so maximum 11 conductors. This assumes only conductors, no devices, clamps, or EGCs.",
+        "how_to_find": "Go to Table 314.16(A) for box volume, Table 314.16(B) for conductor volume."
+      },
+      "nec_reference": {"article": "314", "section": "314.16", "table": "Table 314.16(A)"},
+      "zafto_links": [{"screen_id": "box_fill", "relevance": "primary", "description": "Box fill calculator"}],
+      "tags": ["box fill", "calculation", "square box"],
+      "verified": true
+    },
+    {
+      "id": "WM-047",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["348"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum trade size permitted for FMC (Flexible Metal Conduit)?",
+      "choices": [
+        {"id": "A", "text": "3/8 inch"},
+        {"id": "B", "text": "1/2 inch"},
+        {"id": "C", "text": "3/4 inch"},
+        {"id": "D", "text": "1 inch"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "The minimum trade size for FMC is 1/2 inch (metric designator 16).",
+        "detailed": "Section 348.20(A) states that FMC smaller than metric designator 16 (trade size 1/2) shall not be used unless permitted in 348.20(A)(1) through (A)(5) for specific applications like manufactured wiring systems, listed assemblies, motors, or luminaires with lengths not exceeding 6 feet.",
+        "how_to_find": "Go to 348.20(A) Size."
+      },
+      "nec_reference": {"article": "348", "section": "348.20(A)"},
+      "zafto_links": [],
+      "tags": ["FMC", "trade size", "flexible conduit"],
+      "verified": true
+    },
+    {
+      "id": "WM-048",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["348"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "FMC must be secured at intervals not exceeding:",
+      "choices": [
+        {"id": "A", "text": "3 feet"},
+        {"id": "B", "text": "4 feet"},
+        {"id": "C", "text": "4.5 feet"},
+        {"id": "D", "text": "6 feet"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "FMC must be secured at intervals not exceeding 1.4 m (4 ft 6 in.).",
+        "detailed": "Section 348.30(A) requires FMC to be securely fastened in place by an approved means within 300 mm (12 in.) of each box, cabinet, conduit body, or other termination and at intervals not to exceed 1.4 m (4 ft 6 in.). This is the same interval as NM cable.",
+        "how_to_find": "Go to 348.30(A) Securely Fastened."
+      },
+      "nec_reference": {"article": "348", "section": "348.30(A)"},
+      "zafto_links": [],
+      "tags": ["FMC", "support", "securing"],
+      "verified": true
+    },
+    {
+      "id": "WM-049",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["350"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum length of LFMC permitted to serve as an equipment grounding conductor?",
+      "choices": [
+        {"id": "A", "text": "3 feet"},
+        {"id": "B", "text": "4 feet"},
+        {"id": "C", "text": "6 feet"},
+        {"id": "D", "text": "No length limit"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "LFMC can serve as EGC if not exceeding 6 feet in length.",
+        "detailed": "Section 350.60 permits LFMC to serve as an equipment grounding conductor when the length does not exceed 1.8 m (6 ft), the fittings are listed for grounding, and the circuit is protected at 60A or less (or 20A or less for trade sizes 3/8 and 1/2 inch). Otherwise, a separate EGC is required.",
+        "how_to_find": "Go to 350.60 Grounding and Bonding."
+      },
+      "nec_reference": {"article": "350", "section": "350.60"},
+      "zafto_links": [],
+      "tags": ["LFMC", "grounding", "EGC"],
+      "verified": true
+    },
+    {
+      "id": "WM-050",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["356"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "LFNC (Liquidtight Flexible Nonmetallic Conduit) is permitted in which location?",
+      "choices": [
+        {"id": "A", "text": "Direct burial without encasement"},
+        {"id": "B", "text": "Where subject to physical damage"},
+        {"id": "C", "text": "Outdoors exposed to sunlight where listed"},
+        {"id": "D", "text": "Lengths exceeding 6 feet in any application"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "LFNC is permitted outdoors exposed to sunlight if listed and marked as sunlight resistant.",
+        "detailed": "Section 356.10(5) permits LFNC for direct sunlight exposure where listed and marked as sunlight resistant. LFNC is not permitted for direct burial unless listed, where subject to physical damage, or in lengths exceeding 1.8 m (6 ft) except at terminals or for equipment requiring flexibility.",
+        "how_to_find": "Go to 356.10 Uses Permitted and 356.12 Uses Not Permitted."
+      },
+      "nec_reference": {"article": "356", "section": "356.10(5)"},
+      "zafto_links": [],
+      "tags": ["LFNC", "sunlight resistant", "permitted uses"],
+      "verified": true
+    },
+    {
+      "id": "WM-051",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["358"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "EMT must be secured within what distance of each box or termination?",
+      "choices": [
+        {"id": "A", "text": "12 inches"},
+        {"id": "B", "text": "24 inches"},
+        {"id": "C", "text": "36 inches"},
+        {"id": "D", "text": "48 inches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "EMT must be secured within 900 mm (3 ft) of each termination.",
+        "detailed": "Section 358.30(A) requires EMT to be securely fastened within 900 mm (3 ft) of each outlet box, junction box, device box, cabinet, conduit body, or other termination. Additionally, it must be supported at intervals not exceeding 3 m (10 ft).",
+        "how_to_find": "Go to 358.30(A) Securely Fastened."
+      },
+      "nec_reference": {"article": "358", "section": "358.30(A)"},
+      "zafto_links": [],
+      "tags": ["EMT", "securing", "termination"],
+      "verified": true
+    },
+    {
+      "id": "WM-052",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["310"],
+      "nec_tables": ["Table 310.16"],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the ampacity of 8 AWG copper THHN conductor at 30°C?",
+      "choices": [
+        {"id": "A", "text": "40 amperes"},
+        {"id": "B", "text": "50 amperes"},
+        {"id": "C", "text": "55 amperes"},
+        {"id": "D", "text": "65 amperes"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Table 310.16 shows 8 AWG copper THHN (90°C column) has 55 amperes ampacity.",
+        "detailed": "THHN has a 90°C temperature rating. Looking at Table 310.16, 8 AWG copper in the 90°C column shows 55 amperes. The 60°C column shows 40A and 75°C shows 50A. Remember terminal temperature limitations may require using a lower column value.",
+        "how_to_find": "Go to Table 310.16, find 8 AWG row, 90°C copper column."
+      },
+      "nec_reference": {"article": "310", "section": "310.16", "table": "Table 310.16"},
+      "zafto_links": [{"screen_id": "ampacity", "relevance": "primary", "description": "Ampacity lookup"}],
+      "tags": ["ampacity", "THHN", "wire sizing"],
+      "verified": true
+    },
+    {
+      "id": "WM-053",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["300"],
+      "nec_tables": ["Table 300.5"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum burial depth for RMC (Rigid Metal Conduit) in a one-family dwelling driveway?",
+      "choices": [
+        {"id": "A", "text": "6 inches"},
+        {"id": "B", "text": "12 inches"},
+        {"id": "C", "text": "18 inches"},
+        {"id": "D", "text": "24 inches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "RMC under a one- or two-family dwelling driveway requires 18 inches of cover.",
+        "detailed": "Table 300.5 shows that RMC requires 6 inches minimum cover in general locations. However, Note 5 to the table requires 18 inches minimum under streets, highways, roads, alleys, driveways, and parking lots. This includes residential driveways.",
+        "how_to_find": "Go to Table 300.5 and Note 5 for driveway requirements."
+      },
+      "nec_reference": {"article": "300", "section": "300.5", "table": "Table 300.5"},
+      "zafto_links": [],
+      "tags": ["RMC", "burial depth", "driveway"],
+      "verified": true
+    },
+    {
+      "id": "WM-054",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["300"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Underground service conductors that are not encased in concrete and are buried 18 inches or more below grade are NOT required to have:",
+      "choices": [
+        {"id": "A", "text": "Protection at the point of emergence"},
+        {"id": "B", "text": "A grounding electrode conductor"},
+        {"id": "C", "text": "Supplemental mechanical protection"},
+        {"id": "D", "text": "Listed direct burial insulation"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Cables buried 18 inches or more are not required to have supplemental mechanical protection.",
+        "detailed": "Per 300.5(D), direct-buried conductors and cables emerging from grade shall be protected by enclosures or raceways from the minimum cover distance required to a point at least 8 feet above finished grade. However, supplemental mechanical protection (like concrete pads) is not required if cables are at the required burial depth.",
+        "how_to_find": "Go to 300.5(D) Protection from Damage."
+      },
+      "nec_reference": {"article": "300", "section": "300.5(D)"},
+      "zafto_links": [],
+      "tags": ["underground", "burial depth", "protection"],
+      "verified": true
+    },
+    {
+      "id": "WM-055",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["314"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "How far must the front edge of a box be set back from a combustible wall surface?",
+      "choices": [
+        {"id": "A", "text": "Flush or projecting"},
+        {"id": "B", "text": "Not more than 1/8 inch"},
+        {"id": "C", "text": "Not more than 1/4 inch"},
+        {"id": "D", "text": "Not more than 1/2 inch"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Boxes in combustible walls must be set back not more than 1/4 inch from the surface.",
+        "detailed": "Section 314.20 requires that boxes in walls or ceilings of concrete, tile, or other noncombustible material be installed so the front edge is not set back more than 1/4 inch. In combustible walls, boxes must be flush with the finished surface or project from it.",
+        "how_to_find": "Go to 314.20 Boxes in Walls."
+      },
+      "nec_reference": {"article": "314", "section": "314.20"},
+      "zafto_links": [],
+      "tags": ["boxes", "setback", "combustible"],
+      "verified": true
+    },
+    {
+      "id": "WM-056",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["314"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum length of free conductor required at outlet and junction boxes?",
+      "choices": [
+        {"id": "A", "text": "3 inches"},
+        {"id": "B", "text": "6 inches"},
+        {"id": "C", "text": "8 inches"},
+        {"id": "D", "text": "12 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "At least 6 inches of free conductor must extend from the box.",
+        "detailed": "Section 314.16(B)(1) requires that at each outlet, junction, or switch point, at least 150 mm (6 in.) of free conductor, measured from the point in the box where it emerges from its raceway or cable sheath, shall be left for the making of connections to devices or luminaires.",
+        "how_to_find": "Go to 314.16(B)(1) for conductor length requirements."
+      },
+      "nec_reference": {"article": "314", "section": "314.16(B)(1)"},
+      "zafto_links": [],
+      "tags": ["conductor length", "boxes", "termination"],
+      "verified": true
+    },
+    {
+      "id": "WM-057",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["314"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Where the box opening is less than 8 inches in any dimension, the minimum conductor length must extend at least how far outside the box?",
+      "choices": [
+        {"id": "A", "text": "2 inches"},
+        {"id": "B", "text": "3 inches"},
+        {"id": "C", "text": "4 inches"},
+        {"id": "D", "text": "6 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Conductors must extend at least 3 inches outside the box opening.",
+        "detailed": "Section 314.16(B)(1) requires that where the box opening is less than 200 mm (8 in.) in any dimension, each conductor shall extend at least 75 mm (3 in.) outside the box opening. This ensures adequate length for making connections.",
+        "how_to_find": "Go to 314.16(B)(1) for conductor length outside box."
+      },
+      "nec_reference": {"article": "314", "section": "314.16(B)(1)"},
+      "zafto_links": [],
+      "tags": ["conductor length", "boxes", "termination"],
+      "verified": true
+    },
+    {
+      "id": "WM-058",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["352"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "PVC conduit must be secured within what distance of each box or termination?",
+      "choices": [
+        {"id": "A", "text": "12 inches"},
+        {"id": "B", "text": "24 inches"},
+        {"id": "C", "text": "36 inches"},
+        {"id": "D", "text": "48 inches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "PVC conduit must be secured within 900 mm (3 ft) of each termination.",
+        "detailed": "Section 352.30(A) requires PVC conduit to be securely fastened within 900 mm (3 ft) of each outlet box, junction box, device box, conduit body, or other termination. Support intervals vary by conduit size as specified in Table 352.30.",
+        "how_to_find": "Go to 352.30(A) Securing and Supporting."
+      },
+      "nec_reference": {"article": "352", "section": "352.30(A)"},
+      "zafto_links": [],
+      "tags": ["PVC", "securing", "termination"],
+      "verified": true
+    },
+    {
+      "id": "WM-059",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["352"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Expansion fittings for PVC conduit are required where the expected length change is:",
+      "choices": [
+        {"id": "A", "text": "1/8 inch or more"},
+        {"id": "B", "text": "1/4 inch or more"},
+        {"id": "C", "text": "1/2 inch or more"},
+        {"id": "D", "text": "1 inch or more"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Expansion fittings are required where length change exceeds 1/4 inch.",
+        "detailed": "Section 352.44 requires that expansion fittings be provided to compensate for thermal expansion and contraction where the length change is expected to be 6 mm (1/4 in.) or greater. PVC expands approximately 4 inches per 100 feet for a 50°F temperature change.",
+        "how_to_find": "Go to 352.44 Expansion Fittings."
+      },
+      "nec_reference": {"article": "352", "section": "352.44"},
+      "zafto_links": [],
+      "tags": ["PVC", "expansion fittings", "thermal expansion"],
+      "verified": true
+    },
+    {
+      "id": "WM-060",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["344"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "RMC must be secured within what distance of each box or termination?",
+      "choices": [
+        {"id": "A", "text": "12 inches"},
+        {"id": "B", "text": "24 inches"},
+        {"id": "C", "text": "36 inches"},
+        {"id": "D", "text": "48 inches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "RMC must be secured within 900 mm (3 ft) of each termination.",
+        "detailed": "Section 344.30(A) requires RMC to be securely fastened within 900 mm (3 ft) of each outlet box, junction box, device box, cabinet, conduit body, or other termination. This is consistent with EMT and PVC requirements.",
+        "how_to_find": "Go to 344.30(A) Securely Fastened."
+      },
+      "nec_reference": {"article": "344", "section": "344.30(A)"},
+      "zafto_links": [],
+      "tags": ["RMC", "securing", "termination"],
+      "verified": true
+    },
+    {
+      "id": "WM-061",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["330"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "MC cable must be supported at intervals not exceeding:",
+      "choices": [
+        {"id": "A", "text": "4 feet"},
+        {"id": "B", "text": "5 feet"},
+        {"id": "C", "text": "6 feet"},
+        {"id": "D", "text": "8 feet"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "MC cable must be supported at intervals not exceeding 1.8 m (6 ft).",
+        "detailed": "Section 330.30(B) requires MC cable to be secured at intervals not exceeding 1.8 m (6 ft). It must also be secured within 300 mm (12 in.) of every box, cabinet, fitting, or other termination. Horizontal runs through framing members are considered supported.",
+        "how_to_find": "Go to 330.30(B) Securing."
+      },
+      "nec_reference": {"article": "330", "section": "330.30(B)"},
+      "zafto_links": [],
+      "tags": ["MC cable", "support", "securing"],
+      "verified": true
+    },
+    {
+      "id": "WM-062",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["320"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "AC cable must be secured within what distance of each box or termination?",
+      "choices": [
+        {"id": "A", "text": "8 inches"},
+        {"id": "B", "text": "12 inches"},
+        {"id": "C", "text": "18 inches"},
+        {"id": "D", "text": "24 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "AC cable must be secured within 300 mm (12 in.) of each termination.",
+        "detailed": "Section 320.30(B) requires AC cable to be secured within 300 mm (12 in.) of every box, cabinet, fitting, or other cable termination. The cable must also be supported at intervals not exceeding 1.4 m (4 ft 6 in.).",
+        "how_to_find": "Go to 320.30(B) Securing."
+      },
+      "nec_reference": {"article": "320", "section": "320.30(B)"},
+      "zafto_links": [],
+      "tags": ["AC cable", "securing", "termination"],
+      "verified": true
+    },
+    {
+      "id": "WM-063",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["320"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "AC cable must be supported at intervals not exceeding:",
+      "choices": [
+        {"id": "A", "text": "3 feet"},
+        {"id": "B", "text": "4 feet 6 inches"},
+        {"id": "C", "text": "6 feet"},
+        {"id": "D", "text": "8 feet"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "AC cable must be supported at intervals not exceeding 1.4 m (4 ft 6 in.).",
+        "detailed": "Section 320.30(B) requires AC cable to be supported at intervals not exceeding 1.4 m (4 ft 6 in.). This is the same support interval as NM cable (Article 334) and FMC (Article 348).",
+        "how_to_find": "Go to 320.30(B) Supported."
+      },
+      "nec_reference": {"article": "320", "section": "320.30(B)"},
+      "zafto_links": [],
+      "tags": ["AC cable", "support", "intervals"],
+      "verified": true
+    },
+    {
+      "id": "WM-064",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["Chapter 9"],
+      "nec_tables": ["Chapter 9 Table 4"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the internal diameter of trade size 3/4 inch EMT?",
+      "choices": [
+        {"id": "A", "text": "0.622 inches"},
+        {"id": "B", "text": "0.824 inches"},
+        {"id": "C", "text": "1.049 inches"},
+        {"id": "D", "text": "1.380 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Chapter 9 Table 4 shows 3/4 inch EMT has an internal diameter of 0.824 inches.",
+        "detailed": "Chapter 9 Table 4 provides dimensions for conduit and tubing. For trade size 3/4 (21) EMT: internal diameter = 0.824 in. (20.9 mm), total area = 0.533 sq. in. This information is used for conduit fill calculations.",
+        "how_to_find": "Go to Chapter 9 Table 4 for EMT dimensions."
+      },
+      "nec_reference": {"article": "Chapter 9", "section": "Table 4", "table": "Chapter 9 Table 4"},
+      "zafto_links": [{"screen_id": "conduit_dimensions", "relevance": "primary", "description": "Conduit dimensions"}],
+      "tags": ["EMT", "dimensions", "Chapter 9"],
+      "verified": true
+    },
+    {
+      "id": "WM-065",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["Chapter 9"],
+      "nec_tables": ["Chapter 9 Table 5"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the approximate area of 14 AWG THHN conductor?",
+      "choices": [
+        {"id": "A", "text": "0.0097 sq. in."},
+        {"id": "B", "text": "0.0117 sq. in."},
+        {"id": "C", "text": "0.0139 sq. in."},
+        {"id": "D", "text": "0.0172 sq. in."}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Chapter 9 Table 5 shows 14 AWG THHN has an area of 0.0139 square inches.",
+        "detailed": "Chapter 9 Table 5 provides dimensions for insulated conductors. For 14 AWG THHN/THWN/THWN-2: approximate diameter = 0.133 in., approximate area = 0.0139 sq. in. These values are essential for conduit fill calculations.",
+        "how_to_find": "Go to Chapter 9 Table 5 for conductor dimensions."
+      },
+      "nec_reference": {"article": "Chapter 9", "section": "Table 5", "table": "Chapter 9 Table 5"},
+      "zafto_links": [{"screen_id": "conduit_fill", "relevance": "primary", "description": "Conduit fill calculator"}],
+      "tags": ["conductor area", "THHN", "Chapter 9"],
+      "verified": true
+    },
+    {
+      "id": "WM-066",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["300"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Raceways on exteriors of buildings must be arranged to drain. Where raceways are subject to moisture accumulation, what is required?",
+      "choices": [
+        {"id": "A", "text": "Weatherproof fittings only"},
+        {"id": "B", "text": "Raceways and equipment must be listed as suitable for wet locations"},
+        {"id": "C", "text": "Underground rated cable only"},
+        {"id": "D", "text": "Double-wall conduit"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Raceways subject to moisture must be listed as suitable for wet locations.",
+        "detailed": "Section 300.9 requires that where raceways are installed in wet locations above grade, the interior be considered a wet location. Insulated conductors and cables must comply with 310.10(C), and equipment must be listed for wet locations. This includes vertical raceways exposed to weather.",
+        "how_to_find": "Go to 300.9 Raceways in Wet Locations Above Grade."
+      },
+      "nec_reference": {"article": "300", "section": "300.9"},
+      "zafto_links": [],
+      "tags": ["wet locations", "raceways", "outdoor"],
+      "verified": true
+    },
+    {
+      "id": "WM-067",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["300"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Conductors entering an enclosure from a cable or raceway must be protected from abrasion by a fitting that provides a smooth, rounded insulating surface if the conductors are what size or larger?",
+      "choices": [
+        {"id": "A", "text": "10 AWG"},
+        {"id": "B", "text": "8 AWG"},
+        {"id": "C", "text": "6 AWG"},
+        {"id": "D", "text": "4 AWG"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Conductors 4 AWG and larger require insulated fittings for abrasion protection.",
+        "detailed": "Section 300.4(G) requires that where conductors 4 AWG or larger enter a raceway in a cabinet, box, enclosure, or raceway, the conductors shall be protected by a fitting providing a smoothly rounded insulating surface. This bushing prevents damage to the conductor insulation.",
+        "how_to_find": "Go to 300.4(G) Insulated Fittings."
+      },
+      "nec_reference": {"article": "300", "section": "300.4(G)"},
+      "zafto_links": [],
+      "tags": ["bushings", "conductor protection", "insulated fittings"],
+      "verified": true
+    },
+    {
+      "id": "WM-068",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["310"],
+      "nec_tables": ["Table 310.16"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the ampacity of 2 AWG aluminum THWN conductor at 30°C?",
+      "choices": [
+        {"id": "A", "text": "75 amperes"},
+        {"id": "B", "text": "90 amperes"},
+        {"id": "C", "text": "100 amperes"},
+        {"id": "D", "text": "115 amperes"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Table 310.16 shows 2 AWG aluminum THWN (75°C column) has 90 amperes ampacity.",
+        "detailed": "Looking at Table 310.16, 2 AWG aluminum in the 75°C column (THWN insulation) shows 90 amperes. The 60°C column shows 75A and the 90°C column shows 100A. Always use the appropriate column based on conductor insulation rating and terminal temperature.",
+        "how_to_find": "Go to Table 310.16, find 2 AWG row, 75°C aluminum column."
+      },
+      "nec_reference": {"article": "310", "section": "310.16", "table": "Table 310.16"},
+      "zafto_links": [{"screen_id": "ampacity", "relevance": "primary", "description": "Ampacity lookup"}],
+      "tags": ["ampacity", "aluminum", "THWN"],
+      "verified": true
+    },
+    {
+      "id": "WM-069",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["300"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Parallel conductors in separate raceways must have:",
+      "choices": [
+        {"id": "A", "text": "Different insulation types for identification"},
+        {"id": "B", "text": "The same physical characteristics and equivalent length"},
+        {"id": "C", "text": "Separate overcurrent protection"},
+        {"id": "D", "text": "Different wire sizes to balance load"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Parallel conductors must have the same characteristics and equivalent length.",
+        "detailed": "Section 310.10(G) requires that parallel conductors be the same length, have the same material (copper or aluminum), the same circular mil area, the same insulation type, and be terminated in the same manner. This ensures equal current division between parallel conductors.",
+        "how_to_find": "Go to 310.10(G) Conductors in Parallel."
+      },
+      "nec_reference": {"article": "310", "section": "310.10(G)"},
+      "zafto_links": [{"screen_id": "parallel_conductor", "relevance": "primary", "description": "Parallel conductor rules"}],
+      "tags": ["parallel conductors", "sizing", "installation"],
+      "verified": true
+    },
+    {
+      "id": "WM-070",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["310"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum size conductor permitted to be run in parallel?",
+      "choices": [
+        {"id": "A", "text": "8 AWG"},
+        {"id": "B", "text": "4 AWG"},
+        {"id": "C", "text": "1/0 AWG"},
+        {"id": "D", "text": "250 kcmil"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "The minimum size for parallel conductors is 1/0 AWG.",
+        "detailed": "Section 310.10(G)(1) permits conductors to be connected in parallel only in sizes 1/0 AWG or larger. This limitation exists because smaller conductors have higher resistance variations that could cause unequal current sharing. Equipment grounding conductors may be smaller per 250.122.",
+        "how_to_find": "Go to 310.10(G)(1) Size."
+      },
+      "nec_reference": {"article": "310", "section": "310.10(G)(1)"},
+      "zafto_links": [{"screen_id": "parallel_conductor", "relevance": "primary", "description": "Parallel conductor rules"}],
+      "tags": ["parallel conductors", "minimum size", "sizing"],
+      "verified": true
+    },
+    {
+      "id": "WM-071",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["314"],
+      "nec_tables": ["Table 314.16(A)"],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the volume of a standard 4-inch octagon box that is 1-1/2 inches deep?",
+      "choices": [
+        {"id": "A", "text": "15.5 cu. in."},
+        {"id": "B", "text": "18.0 cu. in."},
+        {"id": "C", "text": "21.5 cu. in."},
+        {"id": "D", "text": "25.5 cu. in."}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Table 314.16(A) shows a 4 x 1-1/2 octagon box has 21.5 cubic inches.",
+        "detailed": "Table 314.16(A) lists standard metal box dimensions and volumes. A 4-inch octagon box with 1-1/2 inch depth has 21.5 cubic inches. The 4 x 2-1/8 deep octagon box has 30.3 cubic inches. These values are used for box fill calculations.",
+        "how_to_find": "Go to Table 314.16(A) for metal box volumes."
+      },
+      "nec_reference": {"article": "314", "section": "314.16(A)", "table": "Table 314.16(A)"},
+      "zafto_links": [{"screen_id": "box_fill", "relevance": "primary", "description": "Box fill calculator"}],
+      "tags": ["box fill", "octagon box", "volume"],
+      "verified": true
+    },
+    {
+      "id": "WM-072",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["314"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Conductors that pass through a box without splice or termination count as how many conductor volumes?",
+      "choices": [
+        {"id": "A", "text": "Zero - they are not counted"},
+        {"id": "B", "text": "One conductor"},
+        {"id": "C", "text": "Two conductors"},
+        {"id": "D", "text": "One-half conductor each"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Each conductor passing through without splice counts as one conductor volume.",
+        "detailed": "Per 314.16(B)(1), a conductor running through a box without splice or termination is counted as one conductor. This includes conductors looped through a box unbroken. Conductors that originate in the box (such as pigtails) are also counted as one conductor each.",
+        "how_to_find": "Go to 314.16(B)(1) for conductor fill calculation."
+      },
+      "nec_reference": {"article": "314", "section": "314.16(B)(1)"},
+      "zafto_links": [{"screen_id": "box_fill", "relevance": "primary", "description": "Box fill calculator"}],
+      "tags": ["box fill", "conductor count", "pass-through"],
+      "verified": true
+    },
+    {
+      "id": "WM-073",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["312"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Cabinets and cutout boxes must have a minimum of how much airspace between the enclosure walls and uninsulated live parts?",
+      "choices": [
+        {"id": "A", "text": "0 inches - grounded enclosure is sufficient"},
+        {"id": "B", "text": "1/8 inch"},
+        {"id": "C", "text": "1/4 inch"},
+        {"id": "D", "text": "1/2 inch"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "A minimum of 1/4 inch airspace is required between enclosure walls and live parts.",
+        "detailed": "Section 312.3 requires that cabinets and cutout boxes have a minimum of 1/4 inch (6.4 mm) airspace between the back and sides of the enclosure and any uninsulated live parts mounted within. This spacing provides insulation and prevents accidental contact.",
+        "how_to_find": "Go to 312.3 Position in Wall."
+      },
+      "nec_reference": {"article": "312", "section": "312.3"},
+      "zafto_links": [],
+      "tags": ["cabinets", "airspace", "live parts"],
+      "verified": true
+    },
+    {
+      "id": "WM-074",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["312"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Cables entering the top of a surface-mounted cabinet must be protected by:",
+      "choices": [
+        {"id": "A", "text": "Rigid conduit for full length"},
+        {"id": "B", "text": "Bushing at entry point only"},
+        {"id": "C", "text": "Conduit or tubing extending down inside cabinet"},
+        {"id": "D", "text": "No protection required if cabinet is grounded"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Cables through the top must have conduit extending down inside to protect from physical damage.",
+        "detailed": "Section 312.5(C) requires that cables passing through the top of surface-mounted cabinets or cutout boxes be protected by rigid metal conduit, IMC, EMT, or other approved means extending from the fitting inside the cabinet to a point outside that is not less than 1/8 inch above the top.",
+        "how_to_find": "Go to 312.5(C) Cables Through Top."
+      },
+      "nec_reference": {"article": "312", "section": "312.5(C)"},
+      "zafto_links": [],
+      "tags": ["cabinets", "cable protection", "surface mount"],
+      "verified": true
+    },
+    {
+      "id": "WM-075",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["334"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "NM cable is NOT permitted:",
+      "choices": [
+        {"id": "A", "text": "In one-family dwellings"},
+        {"id": "B", "text": "Concealed in walls"},
+        {"id": "C", "text": "As service-entrance conductors"},
+        {"id": "D", "text": "In attics"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "NM cable cannot be used as service-entrance conductors.",
+        "detailed": "Section 334.12 lists uses not permitted for NM cable, including as service-entrance cable, in commercial garages, in theaters, in hazardous locations, embedded in concrete, exposed in dropped ceilings, and where exposed to corrosive conditions. Service-entrance conductors must comply with Article 230.",
+        "how_to_find": "Go to 334.12 Uses Not Permitted."
+      },
+      "nec_reference": {"article": "334", "section": "334.12"},
+      "zafto_links": [],
+      "tags": ["NM cable", "prohibited uses", "service entrance"],
+      "verified": true
+    },
+    {
+      "id": "WM-076",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["330"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Where is MC cable NOT permitted to be installed?",
+      "choices": [
+        {"id": "A", "text": "Wet locations where listed for the purpose"},
+        {"id": "B", "text": "In cable tray"},
+        {"id": "C", "text": "Direct burial unless identified for such use"},
+        {"id": "D", "text": "Exposed or concealed"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "MC cable is not permitted for direct burial unless specifically identified for that use.",
+        "detailed": "Section 330.12 prohibits MC cable in direct burial unless identified for such use. MC cable is permitted in wet locations only when the metallic sheath is impervious to moisture or when the conductors are listed for wet locations. Standard MC cable jacket does not protect against underground moisture.",
+        "how_to_find": "Go to 330.12 Uses Not Permitted."
+      },
+      "nec_reference": {"article": "330", "section": "330.12"},
+      "zafto_links": [],
+      "tags": ["MC cable", "direct burial", "prohibited uses"],
+      "verified": true
+    },
+    {
+      "id": "WM-077",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["310"],
+      "nec_tables": ["Table 310.16"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the ampacity of 1/0 AWG copper THWN-2 conductor at 30°C?",
+      "choices": [
+        {"id": "A", "text": "125 amperes"},
+        {"id": "B", "text": "145 amperes"},
+        {"id": "C", "text": "150 amperes"},
+        {"id": "D", "text": "170 amperes"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Table 310.16 shows 1/0 AWG copper THWN-2 (75°C column) has 150 amperes ampacity.",
+        "detailed": "Although THWN-2 has a 90°C insulation rating, most equipment terminals are rated 75°C, so the 75°C column is typically used. Looking at Table 310.16, 1/0 AWG copper in the 75°C column shows 150 amperes. The 90°C column shows 170A.",
+        "how_to_find": "Go to Table 310.16, find 1/0 AWG row, 75°C copper column."
+      },
+      "nec_reference": {"article": "310", "section": "310.16", "table": "Table 310.16"},
+      "zafto_links": [{"screen_id": "ampacity", "relevance": "primary", "description": "Ampacity lookup"}],
+      "tags": ["ampacity", "THWN-2", "wire sizing"],
+      "verified": true
+    },
+    {
+      "id": "WM-078",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["110"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Per 110.14(C), equipment terminals rated at 100A or less are suitable for conductors with what temperature rating?",
+      "choices": [
+        {"id": "A", "text": "60°C only"},
+        {"id": "B", "text": "75°C only"},
+        {"id": "C", "text": "60°C or 75°C"},
+        {"id": "D", "text": "90°C"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Terminals rated 100A or less are suitable for 60°C or 75°C conductors.",
+        "detailed": "Section 110.14(C)(1)(a) states that equipment terminals rated 100A or less, or marked for 14 AWG through 1 AWG conductors, shall be used with conductors rated 60°C or 75°C. Unless the equipment is listed and identified for use with 90°C conductors, ampacity must be based on the lower temperature rating.",
+        "how_to_find": "Go to 110.14(C)(1)(a) for terminal temperature limitations."
+      },
+      "nec_reference": {"article": "110", "section": "110.14(C)(1)(a)"},
+      "zafto_links": [],
+      "tags": ["temperature rating", "terminals", "conductor sizing"],
+      "verified": true
+    },
+    {
+      "id": "WM-079",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["300"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum cover required for PVC conduit under a residential driveway?",
+      "choices": [
+        {"id": "A", "text": "12 inches"},
+        {"id": "B", "text": "18 inches"},
+        {"id": "C", "text": "24 inches"},
+        {"id": "D", "text": "30 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "PVC conduit under a driveway requires 18 inches minimum cover.",
+        "detailed": "Table 300.5 shows PVC conduit requires 18 inches minimum cover in general locations. Under one- or two-family dwelling driveways, this 18-inch requirement applies. Note 5 to the table requires 18 inches under streets, highways, roads, alleys, driveways, and parking lots.",
+        "how_to_find": "Go to Table 300.5, Column 3 for PVC conduit."
+      },
+      "nec_reference": {"article": "300", "section": "300.5", "table": "Table 300.5"},
+      "zafto_links": [],
+      "tags": ["PVC", "burial depth", "driveway"],
+      "verified": true
+    },
+    {
+      "id": "WM-080",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["300"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Underground conductors must be protected from damage by:",
+      "choices": [
+        {"id": "A", "text": "Encasement in concrete only"},
+        {"id": "B", "text": "Enclosures or raceways from required burial depth to 8 feet above grade"},
+        {"id": "C", "text": "Schedule 80 PVC at all points"},
+        {"id": "D", "text": "Warning tape only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Underground conductors emerging from grade must be protected to at least 8 feet above grade.",
+        "detailed": "Section 300.5(D) requires that direct-buried conductors and cables emerging from grade be protected by enclosures or raceways extending from below the minimum cover distance required to a point at least 2.5 m (8 ft) above finished grade. Conductors entering buildings must be protected to the point of entry.",
+        "how_to_find": "Go to 300.5(D) Protection from Damage."
+      },
+      "nec_reference": {"article": "300", "section": "300.5(D)"},
+      "zafto_links": [],
+      "tags": ["underground", "protection", "burial depth"],
+      "verified": true
+    },
+    {
+      "id": "WM-081",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["314"],
+      "nec_tables": ["Table 314.16(B)"],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the volume allowance for a 14 AWG conductor in box fill calculations?",
+      "choices": [
+        {"id": "A", "text": "1.75 cu. in."},
+        {"id": "B", "text": "2.00 cu. in."},
+        {"id": "C", "text": "2.25 cu. in."},
+        {"id": "D", "text": "2.50 cu. in."}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Table 314.16(B) assigns 2.00 cubic inches per 14 AWG conductor.",
+        "detailed": "Table 314.16(B) provides volume allowances: 18 AWG = 1.50 cu. in., 16 AWG = 1.75 cu. in., 14 AWG = 2.00 cu. in., 12 AWG = 2.25 cu. in., 10 AWG = 2.50 cu. in., 8 AWG = 3.00 cu. in., 6 AWG = 5.00 cu. in.",
+        "how_to_find": "Go to Table 314.16(B) for conductor volume allowances."
+      },
+      "nec_reference": {"article": "314", "section": "314.16(B)", "table": "Table 314.16(B)"},
+      "zafto_links": [{"screen_id": "box_fill", "relevance": "primary", "description": "Box fill calculator"}],
+      "tags": ["box fill", "conductor volume", "14 AWG"],
+      "verified": true
+    },
+    {
+      "id": "WM-082",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["344"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum number of quarter bends permitted between pull points in RMC?",
+      "choices": [
+        {"id": "A", "text": "Two"},
+        {"id": "B", "text": "Three"},
+        {"id": "C", "text": "Four"},
+        {"id": "D", "text": "Five"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "A maximum of four quarter bends (360° total) is permitted between pull points.",
+        "detailed": "Section 344.26 states there shall not be more than the equivalent of four quarter bends (360° total) between pull points, such as conduit bodies and boxes. This limitation applies to RMC, IMC, EMT, and most other raceway types to facilitate wire pulling.",
+        "how_to_find": "Go to 344.26 Bends - Number in One Run."
+      },
+      "nec_reference": {"article": "344", "section": "344.26"},
+      "zafto_links": [{"screen_id": "conduit_bending", "relevance": "primary", "description": "Conduit bending calculator"}],
+      "tags": ["RMC", "bends", "pull points"],
+      "verified": true
+    },
+    {
+      "id": "WM-083",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["376"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Metal wireways are limited to what percentage fill for conductors?",
+      "choices": [
+        {"id": "A", "text": "20%"},
+        {"id": "B", "text": "40%"},
+        {"id": "C", "text": "50%"},
+        {"id": "D", "text": "75%"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Metal wireways are limited to 20% conductor fill.",
+        "detailed": "Section 376.22(A) limits the sum of cross-sectional areas of all contained conductors at any cross-section of a metal wireway to not more than 20% of the interior cross-sectional area. This lower percentage than conduit allows for easier conductor access and heat dissipation.",
+        "how_to_find": "Go to 376.22(A) Number of Conductors and Ampacity."
+      },
+      "nec_reference": {"article": "376", "section": "376.22(A)"},
+      "zafto_links": [],
+      "tags": ["wireway", "fill percentage", "conductors"],
+      "verified": true
+    },
+    {
+      "id": "WM-084",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["376"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Metal wireways must be supported at intervals not exceeding:",
+      "choices": [
+        {"id": "A", "text": "3 feet"},
+        {"id": "B", "text": "5 feet"},
+        {"id": "C", "text": "8 feet"},
+        {"id": "D", "text": "10 feet"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Metal wireways must be supported at intervals not exceeding 1.5 m (5 ft).",
+        "detailed": "Section 376.30(A) requires metal wireways to be securely supported at intervals not exceeding 1.5 m (5 ft) unless listed for other support intervals. Wireways must also be supported within 900 mm (3 ft) of termination points.",
+        "how_to_find": "Go to 376.30(A) Securing and Supporting."
+      },
+      "nec_reference": {"article": "376", "section": "376.30(A)"},
+      "zafto_links": [],
+      "tags": ["wireway", "support", "securing"],
+      "verified": true
+    },
+    {
+      "id": "WM-085",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["392"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Cable tray systems are permitted to contain which of the following?",
+      "choices": [
+        {"id": "A", "text": "Only single conductors"},
+        {"id": "B", "text": "Only multiconductor cables"},
+        {"id": "C", "text": "Cables, raceways, and single conductors where permitted"},
+        {"id": "D", "text": "Only type MC cable"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Cable tray can contain cables, raceways, and single conductors where permitted by the NEC.",
+        "detailed": "Section 392.10 permits cable tray to be used as a support system for service, feeder, or branch-circuit conductors. It can contain various wiring methods including multiconductor cables, single conductors (1/0 AWG and larger), raceways, and equipment grounding conductors.",
+        "how_to_find": "Go to 392.10 Uses Permitted."
+      },
+      "nec_reference": {"article": "392", "section": "392.10"},
+      "zafto_links": [{"screen_id": "cable_tray", "relevance": "primary", "description": "Cable tray reference"}],
+      "tags": ["cable tray", "permitted uses", "conductors"],
+      "verified": true
+    },
+    {
+      "id": "WM-086",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["392"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum size for single conductors installed in ladder-type cable tray?",
+      "choices": [
+        {"id": "A", "text": "8 AWG"},
+        {"id": "B", "text": "4 AWG"},
+        {"id": "C", "text": "1/0 AWG"},
+        {"id": "D", "text": "250 kcmil"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Single conductors in cable tray must be 1/0 AWG or larger.",
+        "detailed": "Section 392.10(A) permits single conductors to be installed in ladder or ventilated trough cable tray only if they are 1/0 AWG or larger. This minimum size provides adequate mechanical strength for the unsupported spans between cable tray rungs.",
+        "how_to_find": "Go to 392.10(A) for single conductor requirements."
+      },
+      "nec_reference": {"article": "392", "section": "392.10(A)"},
+      "zafto_links": [{"screen_id": "cable_tray", "relevance": "primary", "description": "Cable tray reference"}],
+      "tags": ["cable tray", "single conductors", "minimum size"],
+      "verified": true
+    },
+    {
+      "id": "WM-087",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["300"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Conductors of circuits rated over 1000V shall not occupy the same equipment or raceway with conductors of circuits rated 1000V or less unless:",
+      "choices": [
+        {"id": "A", "text": "Never permitted"},
+        {"id": "B", "text": "Separated by a permanent barrier"},
+        {"id": "C", "text": "All conductors have insulation rated for maximum voltage"},
+        {"id": "D", "text": "Only in industrial occupancies"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Circuits over 1000V may share equipment with lower voltage if separated by a permanent barrier.",
+        "detailed": "Section 300.3(C)(2) requires that conductors of circuits rated over 1000V shall not occupy the same equipment or raceway with conductors rated 1000V or less unless the equipment or raceway is partitioned by a permanent barrier. This prevents accidental contact between high and low voltage conductors.",
+        "how_to_find": "Go to 300.3(C)(2) for over 1000V separation requirements."
+      },
+      "nec_reference": {"article": "300", "section": "300.3(C)(2)"},
+      "zafto_links": [],
+      "tags": ["high voltage", "separation", "barrier"],
+      "verified": true
+    },
+    {
+      "id": "WM-088",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["310"],
+      "nec_tables": ["Table 310.16"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the ampacity of 3 AWG copper THHN conductor at 30°C?",
+      "choices": [
+        {"id": "A", "text": "85 amperes"},
+        {"id": "B", "text": "100 amperes"},
+        {"id": "C", "text": "110 amperes"},
+        {"id": "D", "text": "115 amperes"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Table 310.16 shows 3 AWG copper THHN (90°C column) has 110 amperes ampacity.",
+        "detailed": "THHN has a 90°C insulation rating. Looking at Table 310.16, 3 AWG copper in the 90°C column shows 110 amperes. The 60°C column shows 85A and the 75°C column shows 100A. Terminal temperature limitations may require using a lower column value.",
+        "how_to_find": "Go to Table 310.16, find 3 AWG row, 90°C copper column."
+      },
+      "nec_reference": {"article": "310", "section": "310.16", "table": "Table 310.16"},
+      "zafto_links": [{"screen_id": "ampacity", "relevance": "primary", "description": "Ampacity lookup"}],
+      "tags": ["ampacity", "THHN", "3 AWG"],
+      "verified": true
+    },
+    {
+      "id": "WM-089",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["300"],
+      "nec_tables": ["Table 300.5"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum cover for a 120V, 20A GFCI-protected residential branch circuit using direct burial cable?",
+      "choices": [
+        {"id": "A", "text": "6 inches"},
+        {"id": "B", "text": "12 inches"},
+        {"id": "C", "text": "18 inches"},
+        {"id": "D", "text": "24 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "GFCI-protected 120V, 20A or less residential circuits require only 12 inches cover.",
+        "detailed": "Table 300.5 Column 5 permits a reduced burial depth of 12 inches for residential branch circuits rated 120V or less with GFCI protection and maximum 20A overcurrent protection. This applies to direct burial cables like UF. Without GFCI protection, 24 inches would be required.",
+        "how_to_find": "Go to Table 300.5, Column 5 for GFCI-protected residential circuits."
+      },
+      "nec_reference": {"article": "300", "section": "300.5", "table": "Table 300.5"},
+      "zafto_links": [],
+      "tags": ["burial depth", "GFCI", "residential"],
+      "verified": true
+    },
+    {
+      "id": "WM-090",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["334"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "In what type of building is NM cable generally prohibited from exposed installation?",
+      "choices": [
+        {"id": "A", "text": "Single-family dwelling"},
+        {"id": "B", "text": "Two-family dwelling"},
+        {"id": "C", "text": "Commercial building with dropped ceiling"},
+        {"id": "D", "text": "Residential attached garage"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "NM cable is not permitted exposed in dropped or suspended ceilings of commercial buildings.",
+        "detailed": "Section 334.12(A)(2) prohibits NM cable in dropped or suspended ceilings in other than one- and two-family and multifamily dwellings. Commercial occupancies cannot use exposed NM cable in dropped ceilings due to fire safety concerns in buildings with higher occupancy loads.",
+        "how_to_find": "Go to 334.12(A)(2) Uses Not Permitted."
+      },
+      "nec_reference": {"article": "334", "section": "334.12(A)(2)"},
+      "zafto_links": [],
+      "tags": ["NM cable", "dropped ceiling", "prohibited uses"],
+      "verified": true
+    },
+    {
+      "id": "WM-091",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["358"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum trade size for EMT?",
+      "choices": [
+        {"id": "A", "text": "3/8 inch"},
+        {"id": "B", "text": "1/2 inch"},
+        {"id": "C", "text": "3/4 inch"},
+        {"id": "D", "text": "1 inch"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "The minimum trade size for EMT is 1/2 inch (metric designator 16).",
+        "detailed": "Section 358.20(A) permits EMT in trade sizes from 16 (1/2 in.) through 103 (4 in.). Unlike FMC, there is no provision for smaller EMT sizes in special applications. EMT is available in 1/2, 3/4, 1, 1-1/4, 1-1/2, 2, 2-1/2, 3, 3-1/2, and 4 inch trade sizes.",
+        "how_to_find": "Go to 358.20 Size."
+      },
+      "nec_reference": {"article": "358", "section": "358.20(A)"},
+      "zafto_links": [{"screen_id": "conduit_dimensions", "relevance": "secondary", "description": "Conduit sizes"}],
+      "tags": ["EMT", "trade size", "minimum"],
+      "verified": true
+    },
+    {
+      "id": "WM-092",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["Chapter 9"],
+      "nec_tables": ["Chapter 9 Table 4"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the 40% fill area (for 3+ conductors) of trade size 1-1/4 inch EMT?",
+      "choices": [
+        {"id": "A", "text": "0.346 sq. in."},
+        {"id": "B", "text": "0.533 sq. in."},
+        {"id": "C", "text": "0.598 sq. in."},
+        {"id": "D", "text": "0.814 sq. in."}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Chapter 9 Table 4 shows 1-1/4 inch EMT has 0.598 sq. in. available for 40% fill.",
+        "detailed": "Chapter 9 Table 4 provides fill areas for conduit. Trade size 1-1/4 inch EMT has total area of 1.496 sq. in. For 40% fill (3 or more conductors), multiply by 0.40: 1.496 × 0.40 = 0.598 sq. in. This is the usable area for conductor fill calculations.",
+        "how_to_find": "Go to Chapter 9 Table 4 for EMT 40% fill values."
+      },
+      "nec_reference": {"article": "Chapter 9", "section": "Table 4", "table": "Chapter 9 Table 4"},
+      "zafto_links": [{"screen_id": "conduit_fill", "relevance": "primary", "description": "Conduit fill calculator"}],
+      "tags": ["conduit fill", "EMT", "40% fill"],
+      "verified": true
+    },
+    {
+      "id": "WM-093",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["Chapter 9"],
+      "nec_tables": ["Chapter 9 Table 5"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the approximate area of 6 AWG THHN conductor?",
+      "choices": [
+        {"id": "A", "text": "0.0333 sq. in."},
+        {"id": "B", "text": "0.0507 sq. in."},
+        {"id": "C", "text": "0.0726 sq. in."},
+        {"id": "D", "text": "0.0824 sq. in."}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Chapter 9 Table 5 shows 6 AWG THHN has an area of 0.0507 square inches.",
+        "detailed": "Chapter 9 Table 5 provides conductor dimensions including insulation. For 6 AWG THHN/THWN/THWN-2: approximate diameter = 0.254 in., approximate area = 0.0507 sq. in. These values are used for calculating conduit fill.",
+        "how_to_find": "Go to Chapter 9 Table 5 for conductor dimensions."
+      },
+      "nec_reference": {"article": "Chapter 9", "section": "Table 5", "table": "Chapter 9 Table 5"},
+      "zafto_links": [{"screen_id": "conduit_fill", "relevance": "primary", "description": "Conduit fill calculator"}],
+      "tags": ["conductor area", "THHN", "6 AWG"],
+      "verified": true
+    },
+    {
+      "id": "WM-094",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["300"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Wiring methods installed in ducts used for environmental air shall be:",
+      "choices": [
+        {"id": "A", "text": "Any wiring method is permitted"},
+        {"id": "B", "text": "Limited to EMT, RMC, IMC, and metal-jacketed cables without jackets"},
+        {"id": "C", "text": "Only Type MI cable"},
+        {"id": "D", "text": "Only wiring methods permitted by 300.22(B)"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Wiring in ducts for environmental air must comply with 300.22(B).",
+        "detailed": "Section 300.22(B) limits wiring methods in ducts or plenums used for environmental air to specific types that will not contribute to fire spread or produce toxic fumes. Permitted methods include MI cable, MC cable with smooth or corrugated impervious metal sheath without nonmetallic covering, and certain other listed assemblies.",
+        "how_to_find": "Go to 300.22(B) Ducts Used for Environmental Air."
+      },
+      "nec_reference": {"article": "300", "section": "300.22(B)"},
+      "zafto_links": [],
+      "tags": ["plenum", "environmental air", "wiring methods"],
+      "verified": true
+    },
+    {
+      "id": "WM-095",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["314"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Boxes supporting luminaires must be designed for the purpose and support a luminaire weighing at least:",
+      "choices": [
+        {"id": "A", "text": "6 pounds"},
+        {"id": "B", "text": "25 pounds"},
+        {"id": "C", "text": "50 pounds"},
+        {"id": "D", "text": "70 pounds"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Standard outlet boxes listed for luminaire support must support at least 50 pounds.",
+        "detailed": "Section 314.27(A)(1) requires boxes used for luminaire or lampholder support to be designed for the purpose and support a luminaire weighing a minimum of 23 kg (50 lb). Boxes supporting ceiling-suspended fans must be listed for that purpose and support the fan weight.",
+        "how_to_find": "Go to 314.27(A)(1) Boxes at Luminaire Outlets."
+      },
+      "nec_reference": {"article": "314", "section": "314.27(A)(1)"},
+      "zafto_links": [],
+      "tags": ["boxes", "luminaire support", "weight rating"],
+      "verified": true
+    },
+    {
+      "id": "WM-096",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["314"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Ceiling-suspended paddle fan boxes must be listed for the purpose and marked with:",
+      "choices": [
+        {"id": "A", "text": "The maximum fan weight only"},
+        {"id": "B", "text": "Acceptable for fan support"},
+        {"id": "C", "text": "The maximum weight to be supported"},
+        {"id": "D", "text": "The manufacturer's name only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Fan boxes must be listed and marked 'Acceptable for Fan Support.'",
+        "detailed": "Section 314.27(C) requires outlet boxes used solely for ceiling-suspended paddle fans to be listed and marked 'Acceptable for Fan Support.' Boxes used for fans and luminaires must be listed as acceptable for both uses and marked with maximum weight supported if over 16 kg (35 lb).",
+        "how_to_find": "Go to 314.27(C) Boxes at Ceiling-Suspended Fan Outlets."
+      },
+      "nec_reference": {"article": "314", "section": "314.27(C)"},
+      "zafto_links": [{"screen_id": "ceiling_fan", "relevance": "secondary", "description": "Ceiling fan wiring"}],
+      "tags": ["boxes", "ceiling fan", "listing"],
+      "verified": true
+    },
+    {
+      "id": "WM-097",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["310"],
+      "nec_tables": ["Table 310.15(C)(1)"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the ampacity adjustment factor when 25 current-carrying conductors are in a single raceway?",
+      "choices": [
+        {"id": "A", "text": "50%"},
+        {"id": "B", "text": "45%"},
+        {"id": "C", "text": "40%"},
+        {"id": "D", "text": "35%"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Table 310.15(C)(1) requires 45% adjustment for 21-30 current-carrying conductors.",
+        "detailed": "Table 310.15(C)(1) lists adjustment factors: 4-6 conductors = 80%, 7-9 = 70%, 10-20 = 50%, 21-30 = 45%, 31-40 = 40%, 41+ = 35%. With 25 conductors, the 21-30 range applies, requiring a 45% adjustment factor to account for heat buildup.",
+        "how_to_find": "Go to Table 310.15(C)(1), find 21-30 conductors row."
+      },
+      "nec_reference": {"article": "310", "section": "310.15(C)(1)", "table": "Table 310.15(C)(1)"},
+      "zafto_links": [{"screen_id": "derating_table", "relevance": "primary", "description": "Derating factors"}],
+      "tags": ["derating", "ampacity adjustment", "many conductors"],
+      "verified": true
+    },
+    {
+      "id": "WM-098",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["338"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Type USE cable is specifically designed for use:",
+      "choices": [
+        {"id": "A", "text": "In dry locations only"},
+        {"id": "B", "text": "As service-entrance conductors underground"},
+        {"id": "C", "text": "In hazardous locations"},
+        {"id": "D", "text": "Only above grade"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Type USE (Underground Service Entrance) cable is designed for underground service installations.",
+        "detailed": "Section 338.1 identifies Type USE cable as designed for underground service-entrance conductors, including underground feeder use. Type USE cable has moisture-resistant insulation suitable for direct burial. It is not flame retardant and generally cannot be used above grade unless dual-rated USE-2/RHW-2.",
+        "how_to_find": "Go to 338.1 Scope and 338.10 Uses Permitted."
+      },
+      "nec_reference": {"article": "338", "section": "338.1"},
+      "zafto_links": [],
+      "tags": ["USE cable", "underground", "service entrance"],
+      "verified": true
+    },
+    {
+      "id": "WM-099",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["300"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Where cables or raceways are installed through fire-rated walls, floors, or ceilings, the penetrations must be:",
+      "choices": [
+        {"id": "A", "text": "Sealed with standard caulk"},
+        {"id": "B", "text": "Firestopped using approved methods to maintain fire rating"},
+        {"id": "C", "text": "Left open for ventilation"},
+        {"id": "D", "text": "Protected with metal sleeves only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Penetrations through fire-rated assemblies must be firestopped to maintain the fire rating.",
+        "detailed": "Section 300.21 requires that electrical penetrations through fire-rated walls, partitions, floors, or ceilings be firestopped using approved methods to maintain the fire-resistance rating. Listed firestop systems, putty pads, or intumescent materials are commonly used to restore the fire barrier.",
+        "how_to_find": "Go to 300.21 Spread of Fire or Products of Combustion."
+      },
+      "nec_reference": {"article": "300", "section": "300.21"},
+      "zafto_links": [],
+      "tags": ["firestopping", "fire rating", "penetrations"],
+      "verified": true
+    },
+    {
+      "id": "WM-100",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WM",
+      "topic_name": "Wiring Methods",
+      "nec_articles": ["300"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Service raceways and service cables installed above accessible ceilings are permitted to be supported by:",
+      "choices": [
+        {"id": "A", "text": "Independent support wires only"},
+        {"id": "B", "text": "The ceiling grid if the grid is identified for the purpose"},
+        {"id": "C", "text": "Any convenient structural member"},
+        {"id": "D", "text": "Ceiling tiles"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Raceways above accessible ceilings must be supported by independent support wires or structural members.",
+        "detailed": "Section 300.11(A) requires that raceways, cables, boxes, and similar equipment be secured by independent support wires or other acceptable means. The ceiling support wires shall not be used to support raceways and cables unless the ceiling assembly is specifically designed and listed for the additional weight.",
+        "how_to_find": "Go to 300.11(A) Secured in Place."
+      },
+      "nec_reference": {"article": "300", "section": "300.11(A)"},
+      "zafto_links": [],
+      "tags": ["ceiling support", "raceways", "independent support"],
+      "verified": true
+    }
+  ]
+}

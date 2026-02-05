@@ -1,0 +1,502 @@
+{
+  "category": "Elevator Mechanic",
+  "subcategory": "Escalators and Moving Walks",
+  "description": "ASME A17.1 requirements for escalators and moving walks",
+  "difficulty_distribution": {
+    "beginner": 10,
+    "intermediate": 15,
+    "advanced": 10
+  },
+  "questions": [
+    {
+      "id": "esc_001",
+      "difficulty": "beginner",
+      "question": "What is the maximum speed for escalators per ASME A17.1?",
+      "options": [
+        "60 fpm",
+        "90 fpm",
+        "100 fpm",
+        "125 fpm"
+      ],
+      "correct_answer": 2,
+      "explanation": "The maximum speed for escalators is 100 feet per minute (fpm). Moving walks may operate at up to 180 fpm under certain conditions.",
+      "code_reference": "ASME A17.1, Section 6.1.3.4"
+    },
+    {
+      "id": "esc_002",
+      "difficulty": "beginner",
+      "question": "What drives an escalator?",
+      "options": [
+        "Hydraulic cylinder",
+        "Electric motor driving a chain loop",
+        "Cable and counterweight",
+        "Compressed air"
+      ],
+      "correct_answer": 1,
+      "explanation": "Escalators are driven by an electric motor connected to a drive gear that moves a continuous chain loop, which pulls the steps.",
+      "code_reference": "ASME A17.1, Section 6.1"
+    },
+    {
+      "id": "esc_003",
+      "difficulty": "beginner",
+      "question": "What is the standard step width for escalators?",
+      "options": [
+        "16 inches",
+        "24 inches",
+        "32 inches or 40 inches typical",
+        "48 inches"
+      ],
+      "correct_answer": 2,
+      "explanation": "Standard escalator step widths are 24 inches (single person), 32 inches, or 40 inches (two persons side by side).",
+      "code_reference": "ASME A17.1, Section 6.1.3"
+    },
+    {
+      "id": "esc_004",
+      "difficulty": "beginner",
+      "question": "What is the maximum angle of incline for escalators?",
+      "options": [
+        "25 degrees",
+        "30 degrees",
+        "35 degrees",
+        "45 degrees"
+      ],
+      "correct_answer": 1,
+      "explanation": "The maximum angle of incline for escalators is 30 degrees from horizontal. Steeper angles are unsafe for passengers.",
+      "code_reference": "ASME A17.1, Section 6.1.3.1"
+    },
+    {
+      "id": "esc_005",
+      "difficulty": "beginner",
+      "question": "What safety device stops an escalator if the handrail breaks or stops?",
+      "options": [
+        "Governor",
+        "Handrail speed monitoring device",
+        "Buffer",
+        "Leveling device"
+      ],
+      "correct_answer": 1,
+      "explanation": "Handrail speed monitoring devices stop the escalator if the handrail breaks, disconnects, or runs at significantly different speed than the steps.",
+      "code_reference": "ASME A17.1, Section 6.1.6.4"
+    },
+    {
+      "id": "esc_006",
+      "difficulty": "beginner",
+      "question": "What is the purpose of the comb plate on an escalator?",
+      "options": [
+        "Decoration",
+        "Transition from steps to landing with teeth that mesh with step grooves",
+        "Speed control",
+        "Direction indicator"
+      ],
+      "correct_answer": 1,
+      "explanation": "Comb plates have teeth that mesh with the step treads, providing a smooth transition and preventing items from being trapped at the landing.",
+      "code_reference": "ASME A17.1, Section 6.1.3.5"
+    },
+    {
+      "id": "esc_007",
+      "difficulty": "beginner",
+      "question": "What is a moving walk?",
+      "options": [
+        "An escalator without steps",
+        "A moving passenger conveyor for horizontal or low-incline travel",
+        "A moving staircase",
+        "An elevator platform"
+      ],
+      "correct_answer": 1,
+      "explanation": "Moving walks (moving walkways) are continuous belt or pallet conveyors for horizontal or slight incline passenger transport, typically in airports.",
+      "code_reference": "ASME A17.1, Section 6.2"
+    },
+    {
+      "id": "esc_008",
+      "difficulty": "beginner",
+      "question": "What is the maximum incline for a moving walk?",
+      "options": [
+        "5 degrees",
+        "12 degrees",
+        "30 degrees",
+        "No limit"
+      ],
+      "correct_answer": 1,
+      "explanation": "Moving walks are limited to 12 degrees incline. Beyond this, an escalator (with steps) is required for safe passenger transport.",
+      "code_reference": "ASME A17.1, Section 6.2.3"
+    },
+    {
+      "id": "esc_009",
+      "difficulty": "beginner",
+      "question": "What stop switch location is required on escalators?",
+      "options": [
+        "At top only",
+        "At bottom only",
+        "At top and bottom landings",
+        "In machine room only"
+      ],
+      "correct_answer": 2,
+      "explanation": "Emergency stop switches must be located at both the top and bottom landings of escalators for passenger and operator safety.",
+      "code_reference": "ASME A17.1, Section 6.1.6"
+    },
+    {
+      "id": "esc_010",
+      "difficulty": "beginner",
+      "question": "What is the function of step demarcation lights?",
+      "options": [
+        "Decoration",
+        "Highlight step edges for passenger safety",
+        "Speed indication",
+        "Direction indication"
+      ],
+      "correct_answer": 1,
+      "explanation": "Yellow demarcation lines or lights on step edges increase visibility, helping passengers safely step on and off the moving steps.",
+      "code_reference": "ASME A17.1, Section 6.1.3.5"
+    },
+    {
+      "id": "esc_011",
+      "difficulty": "intermediate",
+      "question": "What is the step roller track?",
+      "options": [
+        "The handrail guide",
+        "Tracks that guide the step wheels through the escalator path",
+        "The drive chain",
+        "The motor mount"
+      ],
+      "correct_answer": 1,
+      "explanation": "Step roller tracks (step tracks) guide the wheels on each step assembly through the correct path from top to bottom and back.",
+      "code_reference": "ASME A17.1, Section 6.1"
+    },
+    {
+      "id": "esc_012",
+      "difficulty": "intermediate",
+      "question": "What stops an escalator if a step breaks or is missing?",
+      "options": [
+        "Governor",
+        "Broken step device/missing step detection",
+        "Leveling sensor",
+        "Door interlock"
+      ],
+      "correct_answer": 1,
+      "explanation": "Missing or broken step devices detect when steps are damaged, missing, or not level, stopping the escalator to prevent passenger injury.",
+      "code_reference": "ASME A17.1, Section 6.1.6.2"
+    },
+    {
+      "id": "esc_013",
+      "difficulty": "intermediate",
+      "question": "What is the skirt panel on an escalator?",
+      "options": [
+        "The handrail cover",
+        "The vertical panel between steps and balustrade",
+        "The drive cover",
+        "The landing plate"
+      ],
+      "correct_answer": 1,
+      "explanation": "Skirt panels are the vertical surfaces on each side of the steps, between the moving steps and the balustrade. They must have low friction to prevent entrapment.",
+      "code_reference": "ASME A17.1, Section 6.1.3.4"
+    },
+    {
+      "id": "esc_014",
+      "difficulty": "intermediate",
+      "question": "What is the skirt deflector device?",
+      "options": [
+        "A cleaning brush",
+        "A device that deflects loose items away from the skirt gap",
+        "A speed controller",
+        "A handrail guide"
+      ],
+      "correct_answer": 1,
+      "explanation": "Skirt deflector devices help prevent soft items (clothing, soft shoes) from being drawn into the gap between steps and skirt panels.",
+      "code_reference": "ASME A17.1, Section 6.1.3.4"
+    },
+    {
+      "id": "esc_015",
+      "difficulty": "intermediate",
+      "question": "What is the purpose of the comb-step gap?",
+      "options": [
+        "Allow debris to fall through",
+        "Minimal clearance for step/comb interface",
+        "Drainage",
+        "Ventilation"
+      ],
+      "correct_answer": 1,
+      "explanation": "The comb-step gap is the minimal clearance between comb plate teeth and step treads, designed to prevent entrapment while allowing smooth operation.",
+      "code_reference": "ASME A17.1, Section 6.1.3.5"
+    },
+    {
+      "id": "esc_016",
+      "difficulty": "intermediate",
+      "question": "What action should occur if an escalator step sinks or rises abnormally?",
+      "options": [
+        "Continue operating",
+        "Speed reduction",
+        "Automatic stop via step level detection",
+        "Alarm only"
+      ],
+      "correct_answer": 2,
+      "explanation": "Step level sensors detect abnormal step positions and stop the escalator automatically to prevent injury from uneven steps.",
+      "code_reference": "ASME A17.1, Section 6.1.6"
+    },
+    {
+      "id": "esc_017",
+      "difficulty": "intermediate",
+      "question": "How is the handrail driven on most escalators?",
+      "options": [
+        "Separate motor",
+        "Friction drive from step chain or main drive",
+        "Gravity",
+        "Passenger pushing"
+      ],
+      "correct_answer": 1,
+      "explanation": "The handrail is typically driven by friction contact with the main drive system, maintaining synchronization with step movement.",
+      "code_reference": "ASME A17.1, Section 6.1.3.3"
+    },
+    {
+      "id": "esc_018",
+      "difficulty": "intermediate",
+      "question": "What is the handrail entry device?",
+      "options": [
+        "A switch to start the escalator",
+        "A device that stops the escalator if an object enters the handrail inlet",
+        "A handrail guide",
+        "A cleaning device"
+      ],
+      "correct_answer": 1,
+      "explanation": "Handrail entry devices stop the escalator if foreign objects or fingers are drawn into the handrail entry point at the newel.",
+      "code_reference": "ASME A17.1, Section 6.1.6.5"
+    },
+    {
+      "id": "esc_019",
+      "difficulty": "intermediate",
+      "question": "What is the combplate impact switch?",
+      "options": [
+        "An operating switch",
+        "A safety device that stops the unit if combplate is displaced",
+        "A speed control",
+        "A direction switch"
+      ],
+      "correct_answer": 1,
+      "explanation": "Combplate impact switches stop the escalator if the combplate is displaced, indicating a potential entrapment or obstruction.",
+      "code_reference": "ASME A17.1, Section 6.1.6.1"
+    },
+    {
+      "id": "esc_020",
+      "difficulty": "intermediate",
+      "question": "How often must escalators be inspected per ASME A17.1?",
+      "options": [
+        "Daily",
+        "Weekly",
+        "Per AHJ requirements, typically annually",
+        "Only after accidents"
+      ],
+      "correct_answer": 2,
+      "explanation": "Escalators must be inspected at intervals required by the authority having jurisdiction, typically annually, plus routine maintenance checks.",
+      "code_reference": "ASME A17.1, Section 8.6"
+    },
+    {
+      "id": "esc_021",
+      "difficulty": "intermediate",
+      "question": "What braking system is required on escalators?",
+      "options": [
+        "Dynamic braking only",
+        "Mechanical brake capable of stopping and holding at 125% load",
+        "Regenerative only",
+        "No brake required"
+      ],
+      "correct_answer": 1,
+      "explanation": "Escalators require mechanical brakes that can stop and hold the escalator at 125% of rated load in either direction.",
+      "code_reference": "ASME A17.1, Section 6.1.6.8"
+    },
+    {
+      "id": "esc_022",
+      "difficulty": "intermediate",
+      "question": "What is the minimum step depth (tread depth) for escalators?",
+      "options": [
+        "6 inches",
+        "8 inches",
+        "15.75 inches (400mm) minimum",
+        "18 inches"
+      ],
+      "correct_answer": 2,
+      "explanation": "Minimum step depth is specified to provide adequate standing room for passengers. Steps must be at least 15.75 inches (400mm) deep.",
+      "code_reference": "ASME A17.1, Section 6.1.3.5"
+    },
+    {
+      "id": "esc_023",
+      "difficulty": "intermediate",
+      "question": "What is the purpose of the drive chain on an escalator?",
+      "options": [
+        "To drive the handrail only",
+        "To connect steps and pull them through the track loop",
+        "To actuate the brake",
+        "To provide emergency power"
+      ],
+      "correct_answer": 1,
+      "explanation": "The step chain connects all steps together and is driven by the main gear, pulling the steps in a continuous loop through the escalator.",
+      "code_reference": "ASME A17.1, Section 6.1"
+    },
+    {
+      "id": "esc_024",
+      "difficulty": "advanced",
+      "question": "What is the stopping distance requirement for escalators?",
+      "options": [
+        "Immediate stop",
+        "Based on speed and loading per ASME tables",
+        "10 feet maximum",
+        "No specific requirement"
+      ],
+      "correct_answer": 1,
+      "explanation": "ASME A17.1 specifies maximum stopping distances based on escalator speed. The brake must stop the escalator within these limits.",
+      "code_reference": "ASME A17.1, Section 6.1.6.8"
+    },
+    {
+      "id": "esc_025",
+      "difficulty": "advanced",
+      "question": "What is the maximum gap between the step and skirt panel?",
+      "options": [
+        "0.25 inch",
+        "0.188 inch (3/16 inch) or less",
+        "0.5 inch",
+        "0.125 inch"
+      ],
+      "correct_answer": 1,
+      "explanation": "The step-to-skirt gap must not exceed 3/16 inch (4.76mm) to minimize the risk of entrapment.",
+      "code_reference": "ASME A17.1, Section 6.1.3.4"
+    },
+    {
+      "id": "esc_026",
+      "difficulty": "advanced",
+      "question": "What load calculation applies to escalator structural design?",
+      "options": [
+        "Dead load only",
+        "Based on passenger density of 1.4 persons per step",
+        "100 lbs per step",
+        "No specific load requirement"
+      ],
+      "correct_answer": 1,
+      "explanation": "Escalator structures are designed for full passenger loading based on density calculations considering step width and typical passenger weights.",
+      "code_reference": "ASME A17.1, Section 6.1.3"
+    },
+    {
+      "id": "esc_027",
+      "difficulty": "advanced",
+      "question": "What is the maximum deceleration rate for escalator stopping?",
+      "options": [
+        "0.1g",
+        "0.3g",
+        "3 ft/s² under normal stopping",
+        "0.5g"
+      ],
+      "correct_answer": 2,
+      "explanation": "Normal stopping deceleration should not exceed 3 ft/s² to prevent passenger falls. Emergency stopping may be faster but within safe limits.",
+      "code_reference": "ASME A17.1, Section 6.1.6.8"
+    },
+    {
+      "id": "esc_028",
+      "difficulty": "advanced",
+      "question": "What testing is required for escalator brakes?",
+      "options": [
+        "Visual inspection only",
+        "Periodic testing under load in both directions",
+        "Oil analysis",
+        "No testing required"
+      ],
+      "correct_answer": 1,
+      "explanation": "Escalator brakes must be tested periodically to verify they can stop and hold the escalator at rated capacity in both directions of travel.",
+      "code_reference": "ASME A17.1, Section 8.6"
+    },
+    {
+      "id": "esc_029",
+      "difficulty": "advanced",
+      "question": "What governs escalator electrical installations?",
+      "options": [
+        "ASME A17.1 only",
+        "NEC Article 620 for escalators and moving walks",
+        "NEC Article 430 only",
+        "No electrical code applies"
+      ],
+      "correct_answer": 1,
+      "explanation": "NEC Article 620 covers electrical requirements for escalators and moving walks, including wiring methods, disconnects, and grounding.",
+      "code_reference": "NEC Article 620"
+    },
+    {
+      "id": "esc_030",
+      "difficulty": "advanced",
+      "question": "How are escalator fire/smoke conditions addressed?",
+      "options": [
+        "No requirements",
+        "Automatic shutdown on fire alarm and/or smoke detection",
+        "Speed increase for evacuation",
+        "Reverse direction only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Building codes may require escalator shutdown upon fire alarm activation to prevent spreading smoke between floors through the escalator opening.",
+      "code_reference": "IBC, Local Fire Codes"
+    },
+    {
+      "id": "esc_031",
+      "difficulty": "advanced",
+      "question": "What is the requirement for escalator pit or truss access?",
+      "options": [
+        "No access required",
+        "Access for maintenance with proper clearances and safety provisions",
+        "External access only",
+        "Only from adjacent floor"
+      ],
+      "correct_answer": 1,
+      "explanation": "Adequate access must be provided to the escalator truss, drive machinery, and lower turn area for maintenance, with proper lighting and safety provisions.",
+      "code_reference": "ASME A17.1, Section 6.1.5"
+    },
+    {
+      "id": "esc_032",
+      "difficulty": "intermediate",
+      "question": "What is an inclined moving walk?",
+      "options": [
+        "A standard escalator",
+        "A moving walk with flat pallets designed for carts at inclines up to 12 degrees",
+        "A ramp",
+        "An elevator"
+      ],
+      "correct_answer": 1,
+      "explanation": "Inclined moving walks use flat pallets (no steps) at inclines up to 12 degrees, commonly used in airports and stores for passengers with luggage carts.",
+      "code_reference": "ASME A17.1, Section 6.2"
+    },
+    {
+      "id": "esc_033",
+      "difficulty": "intermediate",
+      "question": "What is the balustrade on an escalator?",
+      "options": [
+        "The steps",
+        "The side panels, handrails, and supporting structure",
+        "The drive system",
+        "The landing area"
+      ],
+      "correct_answer": 1,
+      "explanation": "The balustrade includes the newels, inner panels, deck boards, outer panels, skirt panels, and handrails on each side of the escalator.",
+      "code_reference": "ASME A17.1, Section 6.1.3"
+    },
+    {
+      "id": "esc_034",
+      "difficulty": "intermediate",
+      "question": "What is the newel?",
+      "options": [
+        "The step surface",
+        "The curved sections at top and bottom where handrail enters/exits",
+        "The drive motor",
+        "The brake assembly"
+      ],
+      "correct_answer": 1,
+      "explanation": "Newels are the curved sections at the top and bottom landings where the handrail enters and exits the balustrade.",
+      "code_reference": "ASME A17.1, Section 6.1"
+    },
+    {
+      "id": "esc_035",
+      "difficulty": "advanced",
+      "question": "What is the overspeed protection requirement for escalators?",
+      "options": [
+        "None required",
+        "Stop if speed exceeds 120% of rated speed",
+        "Alarm only",
+        "Speed governor required"
+      ],
+      "correct_answer": 1,
+      "explanation": "Escalators must have devices that stop the unit if speed exceeds a set limit above rated speed, typically implemented through the control system.",
+      "code_reference": "ASME A17.1, Section 6.1.6"
+    }
+  ]
+}

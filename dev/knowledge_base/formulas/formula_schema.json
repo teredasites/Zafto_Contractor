@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Formula Schema",
+  "description": "Schema for calculator formulas and equations",
+  "type": "object",
+  "required": ["id", "name", "formula", "variables", "trade"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier (e.g., 'voltage_drop')"
+    },
+    "name": {
+      "type": "string",
+      "description": "Display name (e.g., 'Voltage Drop Formula')"
+    },
+    "description": {
+      "type": "string",
+      "description": "What this formula calculates"
+    },
+    "formula": {
+      "type": "string",
+      "description": "LaTeX or text representation of formula"
+    },
+    "formula_code": {
+      "type": "string",
+      "description": "Dart code representation for calculation"
+    },
+    "variables": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["symbol", "name", "unit"],
+        "properties": {
+          "symbol": { "type": "string", "description": "Variable symbol (e.g., 'I')" },
+          "name": { "type": "string", "description": "Variable name (e.g., 'Current')" },
+          "unit": { "type": "string", "description": "Unit of measure (e.g., 'A')" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "result": {
+      "type": "object",
+      "properties": {
+        "symbol": { "type": "string" },
+        "name": { "type": "string" },
+        "unit": { "type": "string" }
+      }
+    },
+    "code_reference": {
+      "type": "string",
+      "description": "Code article this formula comes from"
+    },
+    "source": {
+      "type": "string",
+      "description": "Source of formula (e.g., 'NEC Chapter 9')"
+    },
+    "trade": {
+      "type": "string",
+      "enum": ["electrical", "plumbing", "hvac", "solar", "gc", "roofing", "remodeler", "landscaping"]
+    },
+    "category": {
+      "type": "string",
+      "description": "Calculator category"
+    },
+    "examples": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "description": { "type": "string" },
+          "inputs": { "type": "object" },
+          "result": { "type": "number" },
+          "steps": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "related_formulas": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

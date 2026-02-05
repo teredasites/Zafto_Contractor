@@ -1,0 +1,1708 @@
+{
+  "category": "Structural",
+  "trade": "gc",
+  "description": "Loads, spans, foundations, framing, structural engineering basics",
+  "question_count": 100,
+  "questions": [
+    {
+      "id": "gc-struct-001",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Loads",
+      "question": "What is a dead load?",
+      "options": [
+        {"id": "a", "text": "Load from occupants and furniture"},
+        {"id": "b", "text": "The permanent weight of the structure and fixed elements", "correct": true},
+        {"id": "c", "text": "Wind load"},
+        {"id": "d", "text": "Earthquake load"}
+      ],
+      "explanation": "Dead loads are permanent, stationary loads including the weight of the building structure, floors, walls, roofs, and fixed equipment. They don't change over time.",
+      "code_ref": "IBC 1606",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-002",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Loads",
+      "question": "What is a live load?",
+      "options": [
+        {"id": "a", "text": "The weight of the structure"},
+        {"id": "b", "text": "Temporary loads from occupants, furniture, and movable items", "correct": true},
+        {"id": "c", "text": "Snow load"},
+        {"id": "d", "text": "The weight of permanent fixtures"}
+      ],
+      "explanation": "Live loads are temporary and movable, including people, furniture, equipment, and stored materials. They vary based on occupancy and use.",
+      "code_ref": "IBC 1607",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-003",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Loads",
+      "question": "What is the minimum uniformly distributed live load for residential sleeping areas?",
+      "options": [
+        {"id": "a", "text": "20 psf"},
+        {"id": "b", "text": "30 psf", "correct": true},
+        {"id": "c", "text": "40 psf"},
+        {"id": "d", "text": "50 psf"}
+      ],
+      "explanation": "Per IBC Table 1607.1, residential sleeping areas require a minimum live load of 30 pounds per square foot (psf).",
+      "code_ref": "IBC Table 1607.1",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-004",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Loads",
+      "question": "What is the minimum uniformly distributed live load for residential living areas?",
+      "options": [
+        {"id": "a", "text": "30 psf"},
+        {"id": "b", "text": "40 psf", "correct": true},
+        {"id": "c", "text": "50 psf"},
+        {"id": "d", "text": "60 psf"}
+      ],
+      "explanation": "Per IBC Table 1607.1, residential living areas (other than sleeping areas) require a minimum live load of 40 psf.",
+      "code_ref": "IBC Table 1607.1",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-005",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Loads",
+      "question": "What is the minimum live load for a residential deck?",
+      "options": [
+        {"id": "a", "text": "30 psf"},
+        {"id": "b", "text": "40 psf", "correct": true},
+        {"id": "c", "text": "60 psf"},
+        {"id": "d", "text": "100 psf"}
+      ],
+      "explanation": "Per IBC Table 1607.1, exterior balconies and decks in residential occupancies require a minimum live load of 40 psf, same as interior living areas.",
+      "code_ref": "IBC Table 1607.1",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-006",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Loads",
+      "question": "What is the minimum live load for office areas?",
+      "options": [
+        {"id": "a", "text": "40 psf"},
+        {"id": "b", "text": "50 psf", "correct": true},
+        {"id": "c", "text": "75 psf"},
+        {"id": "d", "text": "100 psf"}
+      ],
+      "explanation": "Per IBC Table 1607.1, office space requires a minimum live load of 50 psf.",
+      "code_ref": "IBC Table 1607.1",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-007",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Loads",
+      "question": "What is a lateral load?",
+      "options": [
+        {"id": "a", "text": "Vertical gravity load"},
+        {"id": "b", "text": "Horizontal load such as wind or seismic", "correct": true},
+        {"id": "c", "text": "Snow load"},
+        {"id": "d", "text": "Dead load"}
+      ],
+      "explanation": "Lateral loads act horizontally on a structure, primarily from wind and seismic (earthquake) forces. Buildings must resist these loads to remain stable.",
+      "code_ref": "IBC 1609, 1613",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-008",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Loads",
+      "question": "What is uplift?",
+      "options": [
+        {"id": "a", "text": "Downward force from gravity"},
+        {"id": "b", "text": "Upward force that can lift the roof or structure", "correct": true},
+        {"id": "c", "text": "Horizontal sliding"},
+        {"id": "d", "text": "Rotation of the foundation"}
+      ],
+      "explanation": "Uplift is an upward force, typically from wind, that can lift the roof off the walls or the structure off its foundation. Proper connections resist uplift.",
+      "code_ref": "IBC 1609",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-009",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Loads",
+      "question": "What is the purpose of a load path?",
+      "options": [
+        {"id": "a", "text": "A delivery route for materials"},
+        {"id": "b", "text": "The continuous connection that transfers loads from roof to foundation", "correct": true},
+        {"id": "c", "text": "An electrical circuit"},
+        {"id": "d", "text": "A pedestrian walkway"}
+      ],
+      "explanation": "The load path is the continuous chain of structural members and connections that transfers all loads (gravity and lateral) from where they originate down to the foundation.",
+      "code_ref": "IBC 1604",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-010",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Loads",
+      "question": "What is a point load?",
+      "options": [
+        {"id": "a", "text": "A load spread over an area"},
+        {"id": "b", "text": "A concentrated load applied at a single location", "correct": true},
+        {"id": "c", "text": "A moving load"},
+        {"id": "d", "text": "A wind load"}
+      ],
+      "explanation": "A point load (concentrated load) is applied at a specific location rather than distributed over an area. Examples include columns bearing on beams or posts on footings.",
+      "code_ref": "Structural Engineering",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-011",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Loads",
+      "question": "What is a uniformly distributed load?",
+      "options": [
+        {"id": "a", "text": "A single point load"},
+        {"id": "b", "text": "A load spread evenly over an area or length", "correct": true},
+        {"id": "c", "text": "An uneven load"},
+        {"id": "d", "text": "An impact load"}
+      ],
+      "explanation": "A uniformly distributed load is spread evenly over an area (psf) or length (plf). Floor live loads are typically expressed as uniform loads.",
+      "code_ref": "Structural Engineering",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-012",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Loads",
+      "question": "What does 'psf' stand for in structural loading?",
+      "options": [
+        {"id": "a", "text": "Per square foot", "correct": true},
+        {"id": "b", "text": "Pounds supported fully"},
+        {"id": "c", "text": "Point stress factor"},
+        {"id": "d", "text": "Primary structural force"}
+      ],
+      "explanation": "PSF stands for pounds per square foot, a unit of pressure used to express uniformly distributed loads over an area.",
+      "code_ref": "Structural Engineering",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-013",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Loads",
+      "question": "What does 'plf' stand for in structural loading?",
+      "options": [
+        {"id": "a", "text": "Pressure load factor"},
+        {"id": "b", "text": "Pounds per linear foot", "correct": true},
+        {"id": "c", "text": "Point load force"},
+        {"id": "d", "text": "Primary load function"}
+      ],
+      "explanation": "PLF stands for pounds per linear foot, a unit of load used to express uniformly distributed loads along a length, such as on a beam.",
+      "code_ref": "Structural Engineering",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-014",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Loads",
+      "question": "How are snow loads determined?",
+      "options": [
+        {"id": "a", "text": "By the building height"},
+        {"id": "b", "text": "Based on ground snow load and roof factors", "correct": true},
+        {"id": "c", "text": "By the building age"},
+        {"id": "d", "text": "By occupancy type"}
+      ],
+      "explanation": "Per IBC 1608, snow loads are based on ground snow load (from maps), modified by factors for roof slope, exposure, thermal conditions, and importance.",
+      "code_ref": "IBC 1608",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-015",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Loads",
+      "question": "What is a tributary area?",
+      "options": [
+        {"id": "a", "text": "A tax district"},
+        {"id": "b", "text": "The floor area whose load is carried by a specific member", "correct": true},
+        {"id": "c", "text": "A drainage area"},
+        {"id": "d", "text": "A protected zone"}
+      ],
+      "explanation": "Tributary area is the portion of a floor or roof that loads a particular structural member. It's used to calculate the total load on beams, columns, and footings.",
+      "code_ref": "Structural Engineering",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-016",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Soil",
+      "question": "What is bearing capacity?",
+      "options": [
+        {"id": "a", "text": "The weight of the foundation"},
+        {"id": "b", "text": "The maximum pressure soil can support without failure", "correct": true},
+        {"id": "c", "text": "The depth of the footing"},
+        {"id": "d", "text": "The width of the footing"}
+      ],
+      "explanation": "Bearing capacity is the maximum pressure that soil can support without excessive settlement or shear failure. It's measured in pounds per square foot (psf).",
+      "code_ref": "IBC 1806",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-017",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Soil",
+      "question": "What is the presumptive bearing capacity for sandy gravel soil?",
+      "options": [
+        {"id": "a", "text": "1,500 psf"},
+        {"id": "b", "text": "2,000 psf"},
+        {"id": "c", "text": "3,000 psf", "correct": true},
+        {"id": "d", "text": "4,000 psf"}
+      ],
+      "explanation": "Per IBC Table 1806.2, sandy gravel and/or gravel (GW and GP) has a presumptive bearing capacity of 3,000 psf.",
+      "code_ref": "IBC Table 1806.2",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-018",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Soil",
+      "question": "What is the presumptive bearing capacity for clay soil?",
+      "options": [
+        {"id": "a", "text": "1,500 psf", "correct": true},
+        {"id": "b", "text": "2,000 psf"},
+        {"id": "c", "text": "3,000 psf"},
+        {"id": "d", "text": "4,000 psf"}
+      ],
+      "explanation": "Per IBC Table 1806.2, clay, sandy clay, silty clay, and clayey silt (CL, ML, MH, CH) has a presumptive bearing capacity of 1,500 psf.",
+      "code_ref": "IBC Table 1806.2",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-019",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Soil",
+      "question": "What is settlement?",
+      "options": [
+        {"id": "a", "text": "Horizontal movement of soil"},
+        {"id": "b", "text": "Vertical downward movement of a structure due to soil compression", "correct": true},
+        {"id": "c", "text": "Expansion of soil"},
+        {"id": "d", "text": "Erosion of soil"}
+      ],
+      "explanation": "Settlement is the vertical downward displacement of a foundation or structure as the soil beneath compresses under the applied load. Excessive or uneven settlement causes structural problems.",
+      "code_ref": "Geotechnical Engineering",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-020",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Soil",
+      "question": "What is differential settlement?",
+      "options": [
+        {"id": "a", "text": "Even settling of the entire building"},
+        {"id": "b", "text": "Unequal settling of different parts of a foundation", "correct": true},
+        {"id": "c", "text": "Upward movement"},
+        {"id": "d", "text": "Horizontal movement"}
+      ],
+      "explanation": "Differential settlement occurs when different parts of a foundation settle by different amounts. This causes structural distress, cracking, and can lead to failure.",
+      "code_ref": "Geotechnical Engineering",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-021",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Soil",
+      "question": "What is expansive soil?",
+      "options": [
+        {"id": "a", "text": "Soil that doesn't compress"},
+        {"id": "b", "text": "Soil that swells when wet and shrinks when dry", "correct": true},
+        {"id": "c", "text": "Sandy soil"},
+        {"id": "d", "text": "Gravel soil"}
+      ],
+      "explanation": "Expansive soils contain clay minerals that absorb water and swell significantly. When they dry, they shrink. This movement can damage foundations and structures.",
+      "code_ref": "IBC 1808.6",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-022",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Foundations",
+      "question": "What is a spread footing?",
+      "options": [
+        {"id": "a", "text": "A deep foundation"},
+        {"id": "b", "text": "A shallow foundation that spreads load over a larger soil area", "correct": true},
+        {"id": "c", "text": "A pile foundation"},
+        {"id": "d", "text": "A pier foundation"}
+      ],
+      "explanation": "A spread footing is a shallow foundation that widens at the base to distribute the building load over a larger area of soil, reducing bearing pressure.",
+      "code_ref": "IRC R403",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-023",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Foundations",
+      "question": "What is a continuous (strip) footing?",
+      "options": [
+        {"id": "a", "text": "An isolated pad footing"},
+        {"id": "b", "text": "A footing that runs continuously under a wall", "correct": true},
+        {"id": "c", "text": "A pile cap"},
+        {"id": "d", "text": "A mat foundation"}
+      ],
+      "explanation": "A continuous or strip footing runs along the length of a wall to support it, distributing the wall load to the soil below.",
+      "code_ref": "IRC R403.1",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-024",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Foundations",
+      "question": "What is the minimum footing thickness for residential construction?",
+      "options": [
+        {"id": "a", "text": "4 inches"},
+        {"id": "b", "text": "6 inches", "correct": true},
+        {"id": "c", "text": "8 inches"},
+        {"id": "d", "text": "12 inches"}
+      ],
+      "explanation": "Per IRC R403.1.1, continuous footings shall be a minimum of 6 inches thick.",
+      "code_ref": "IRC R403.1.1",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-025",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Foundations",
+      "question": "What is a pier foundation?",
+      "options": [
+        {"id": "a", "text": "A floating dock"},
+        {"id": "b", "text": "A column-like deep foundation that transfers loads to deeper soil or bedrock", "correct": true},
+        {"id": "c", "text": "A retaining wall"},
+        {"id": "d", "text": "A grade beam"}
+      ],
+      "explanation": "A pier foundation is a deep foundation consisting of a column-like element that extends down to competent soil or rock to support the structure above.",
+      "code_ref": "IBC 1810",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-026",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Foundations",
+      "question": "When are deep foundations typically required?",
+      "options": [
+        {"id": "a", "text": "For all buildings"},
+        {"id": "b", "text": "When surface soils cannot support the load or have low bearing capacity", "correct": true},
+        {"id": "c", "text": "Only for commercial buildings"},
+        {"id": "d", "text": "Only in cold climates"}
+      ],
+      "explanation": "Deep foundations (piles, piers, caissons) are used when shallow foundations aren't feasible due to poor surface soil, high loads, or other conditions requiring bearing on deeper strata.",
+      "code_ref": "IBC 1810",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-027",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Foundations",
+      "question": "What is frost heave?",
+      "options": [
+        {"id": "a", "text": "Ice forming on the roof"},
+        {"id": "b", "text": "Upward movement of soil caused by freezing water", "correct": true},
+        {"id": "c", "text": "Thawing of permafrost"},
+        {"id": "d", "text": "Settling during winter"}
+      ],
+      "explanation": "Frost heave occurs when water in soil freezes and expands, pushing the soil and any structures above it upward. Footings below frost depth prevent this.",
+      "code_ref": "IRC R403.1.4",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-028",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Foundations",
+      "question": "Why must footings extend below the frost line?",
+      "options": [
+        {"id": "a", "text": "To reach bedrock"},
+        {"id": "b", "text": "To prevent frost heave from lifting the foundation", "correct": true},
+        {"id": "c", "text": "To increase bearing capacity"},
+        {"id": "d", "text": "To allow for drainage"}
+      ],
+      "explanation": "Per IRC R403.1.4, footings must extend below the frost line to prevent damage from frost heave, which can lift and crack foundations.",
+      "code_ref": "IRC R403.1.4",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-029",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Concrete",
+      "question": "What is compressive strength of concrete measured in?",
+      "options": [
+        {"id": "a", "text": "Pounds per square foot (psf)"},
+        {"id": "b", "text": "Pounds per square inch (psi)", "correct": true},
+        {"id": "c", "text": "Pounds per linear foot (plf)"},
+        {"id": "d", "text": "Kips"}
+      ],
+      "explanation": "Concrete compressive strength is measured in pounds per square inch (psi). Standard residential concrete is typically 2,500 to 3,000 psi.",
+      "code_ref": "IRC R402.2",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-030",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Concrete",
+      "question": "What is the typical curing time for concrete to reach design strength?",
+      "options": [
+        {"id": "a", "text": "3 days"},
+        {"id": "b", "text": "7 days"},
+        {"id": "c", "text": "28 days", "correct": true},
+        {"id": "d", "text": "56 days"}
+      ],
+      "explanation": "Concrete typically reaches its design compressive strength at 28 days. At 7 days, it typically has about 70% of its 28-day strength.",
+      "code_ref": "ACI 318",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-031",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Concrete",
+      "question": "Why is reinforcing steel (rebar) used in concrete?",
+      "options": [
+        {"id": "a", "text": "To make it cheaper"},
+        {"id": "b", "text": "To provide tensile strength that concrete lacks", "correct": true},
+        {"id": "c", "text": "To make it lighter"},
+        {"id": "d", "text": "To add color"}
+      ],
+      "explanation": "Concrete is strong in compression but weak in tension. Steel reinforcement provides tensile strength, making reinforced concrete strong in both compression and tension.",
+      "code_ref": "ACI 318",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-032",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Concrete",
+      "question": "What does a #4 rebar designation mean?",
+      "options": [
+        {"id": "a", "text": "4-inch diameter"},
+        {"id": "b", "text": "4/8 inch (1/2 inch) diameter", "correct": true},
+        {"id": "c", "text": "4mm diameter"},
+        {"id": "d", "text": "Grade 4 steel"}
+      ],
+      "explanation": "Rebar sizes are designated by the number of eighths of an inch in diameter. A #4 bar is 4/8\" = 1/2\" (0.5\") in diameter.",
+      "code_ref": "ACI 318",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-033",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Concrete",
+      "question": "What is the purpose of concrete cover over rebar?",
+      "options": [
+        {"id": "a", "text": "To make the concrete thicker"},
+        {"id": "b", "text": "To protect rebar from corrosion and provide fire resistance", "correct": true},
+        {"id": "c", "text": "To reduce cost"},
+        {"id": "d", "text": "To improve appearance"}
+      ],
+      "explanation": "Concrete cover protects reinforcing steel from corrosion due to moisture, provides bond between concrete and steel, and provides fire resistance.",
+      "code_ref": "ACI 318",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-034",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Concrete",
+      "question": "What is the water-cement ratio?",
+      "options": [
+        {"id": "a", "text": "The ratio of water to aggregate"},
+        {"id": "b", "text": "The ratio of water weight to cement weight", "correct": true},
+        {"id": "c", "text": "The percentage of water in concrete"},
+        {"id": "d", "text": "The slump of concrete"}
+      ],
+      "explanation": "The water-cement ratio is the weight of water divided by the weight of cement in a concrete mix. Lower ratios produce stronger, more durable concrete.",
+      "code_ref": "ACI 318",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-035",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Concrete",
+      "question": "What is slump in concrete?",
+      "options": [
+        {"id": "a", "text": "The strength of concrete"},
+        {"id": "b", "text": "A measure of concrete workability/consistency", "correct": true},
+        {"id": "c", "text": "The curing time"},
+        {"id": "d", "text": "The mix design"}
+      ],
+      "explanation": "Slump measures concrete workability - how easily it flows. It's tested by filling a cone, removing it, and measuring how much the concrete settles. Higher slump = more fluid.",
+      "code_ref": "ASTM C143",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-036",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Wood",
+      "question": "What is the actual dimension of a 2x4 lumber?",
+      "options": [
+        {"id": "a", "text": "2\" x 4\""},
+        {"id": "b", "text": "1-1/2\" x 3-1/2\"", "correct": true},
+        {"id": "c", "text": "1-3/4\" x 3-3/4\""},
+        {"id": "d", "text": "2\" x 3-1/2\""}
+      ],
+      "explanation": "Nominal 2x4 lumber has actual dimensions of 1-1/2\" x 3-1/2\" after drying and surfacing. The nominal size refers to the rough-sawn dimension before processing.",
+      "code_ref": "AWC NDS",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-037",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Wood",
+      "question": "What is the actual dimension of a 2x10 lumber?",
+      "options": [
+        {"id": "a", "text": "2\" x 10\""},
+        {"id": "b", "text": "1-1/2\" x 9-1/4\"", "correct": true},
+        {"id": "c", "text": "1-3/4\" x 9-1/2\""},
+        {"id": "d", "text": "1-1/2\" x 9-1/2\""}
+      ],
+      "explanation": "Nominal 2x10 lumber has actual dimensions of 1-1/2\" x 9-1/4\" after drying and surfacing.",
+      "code_ref": "AWC NDS",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-038",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Wood",
+      "question": "What do lumber grade stamps indicate?",
+      "options": [
+        {"id": "a", "text": "Only the price"},
+        {"id": "b", "text": "Species, grade, moisture content, and grading agency", "correct": true},
+        {"id": "c", "text": "Only the length"},
+        {"id": "d", "text": "Only the color"}
+      ],
+      "explanation": "Grade stamps identify the wood species, structural grade (which affects allowable stresses), moisture content, and the grading agency certifying the lumber.",
+      "code_ref": "AWC NDS",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-039",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Wood",
+      "question": "What does SPF stand for in lumber?",
+      "options": [
+        {"id": "a", "text": "Special Performance Framing"},
+        {"id": "b", "text": "Spruce-Pine-Fir", "correct": true},
+        {"id": "c", "text": "Standard Professional Finish"},
+        {"id": "d", "text": "Structural Panel Flooring"}
+      ],
+      "explanation": "SPF stands for Spruce-Pine-Fir, a lumber species group commonly used for framing. It's a combination of these similar softwood species.",
+      "code_ref": "AWC NDS",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-040",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Wood",
+      "question": "What is pressure-treated lumber used for?",
+      "options": [
+        {"id": "a", "text": "Interior walls only"},
+        {"id": "b", "text": "Applications in contact with ground or exposed to moisture", "correct": true},
+        {"id": "c", "text": "Roof framing"},
+        {"id": "d", "text": "Interior trim"}
+      ],
+      "explanation": "Pressure-treated lumber has preservatives forced into the wood to resist decay and insects. It's required for sill plates, posts in contact with ground, and other moisture-exposed applications.",
+      "code_ref": "IRC R317",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-041",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Wood",
+      "question": "What is an engineered wood product?",
+      "options": [
+        {"id": "a", "text": "Solid sawn lumber"},
+        {"id": "b", "text": "Manufactured wood products like LVL, I-joists, and glulam", "correct": true},
+        {"id": "c", "text": "Pressure-treated lumber"},
+        {"id": "d", "text": "Rough-sawn lumber"}
+      ],
+      "explanation": "Engineered wood products are manufactured from wood strands, veneers, or lumber bonded with adhesives. They include LVL, glulam, I-joists, and wood structural panels with predictable properties.",
+      "code_ref": "IBC 2303",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-042",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Wood",
+      "question": "What is LVL?",
+      "options": [
+        {"id": "a", "text": "Low Volume Lumber"},
+        {"id": "b", "text": "Laminated Veneer Lumber", "correct": true},
+        {"id": "c", "text": "Light Value Loading"},
+        {"id": "d", "text": "Linear Vertical Laminate"}
+      ],
+      "explanation": "LVL (Laminated Veneer Lumber) is an engineered wood product made from thin wood veneers glued together with grain parallel. It's used for beams, headers, and rim boards.",
+      "code_ref": "AWC NDS",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-043",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Wood",
+      "question": "What is glulam?",
+      "options": [
+        {"id": "a", "text": "Plywood"},
+        {"id": "b", "text": "Glued laminated timber made from lumber layers", "correct": true},
+        {"id": "c", "text": "Particle board"},
+        {"id": "d", "text": "OSB"}
+      ],
+      "explanation": "Glulam (glued laminated timber) is made by bonding layers of dimensional lumber together with adhesives. It's used for long-span beams and curved members.",
+      "code_ref": "AWC NDS",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-044",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Wood",
+      "question": "What is an I-joist?",
+      "options": [
+        {"id": "a", "text": "A steel beam"},
+        {"id": "b", "text": "An engineered floor joist with flanges and web", "correct": true},
+        {"id": "c", "text": "A solid wood joist"},
+        {"id": "d", "text": "A concrete beam"}
+      ],
+      "explanation": "I-joists are engineered floor joists shaped like the letter \"I\" with LVL or solid wood flanges and OSB or plywood web. They're lightweight, strong, and span long distances.",
+      "code_ref": "IRC R502.1.7",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-045",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Beams",
+      "question": "What is deflection?",
+      "options": [
+        {"id": "a", "text": "Breaking of a member"},
+        {"id": "b", "text": "Bending or displacement under load", "correct": true},
+        {"id": "c", "text": "Rotation at a connection"},
+        {"id": "d", "text": "Lengthening of a member"}
+      ],
+      "explanation": "Deflection is the amount a beam or other structural member bends or moves from its original position when load is applied. Building codes limit deflection to prevent damage and discomfort.",
+      "code_ref": "IBC 1604.3",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-046",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Beams",
+      "question": "What is the typical deflection limit for floor joists under live load?",
+      "options": [
+        {"id": "a", "text": "L/180"},
+        {"id": "b", "text": "L/240"},
+        {"id": "c", "text": "L/360", "correct": true},
+        {"id": "d", "text": "L/480"}
+      ],
+      "explanation": "Per IBC Table 1604.3, the maximum deflection for floor members under live load is L/360, where L is the span length. This prevents bouncy or uncomfortable floors.",
+      "code_ref": "IBC Table 1604.3",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-047",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Beams",
+      "question": "What does L/360 deflection limit mean for a 15-foot span?",
+      "options": [
+        {"id": "a", "text": "Maximum deflection of 360 inches"},
+        {"id": "b", "text": "Maximum deflection of 0.5 inches", "correct": true},
+        {"id": "c", "text": "Maximum deflection of 15 inches"},
+        {"id": "d", "text": "Maximum deflection of 1 inch"}
+      ],
+      "explanation": "L/360 means span divided by 360. For a 15-foot (180\") span: 180\"/360 = 0.5\" maximum deflection. This fraction relates span to allowable movement.",
+      "code_ref": "IBC Table 1604.3",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-048",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Beams",
+      "question": "What is span in structural terms?",
+      "options": [
+        {"id": "a", "text": "The width of a beam"},
+        {"id": "b", "text": "The clear distance between supports", "correct": true},
+        {"id": "c", "text": "The depth of a beam"},
+        {"id": "d", "text": "The thickness of a beam"}
+      ],
+      "explanation": "Span is the clear distance between supports of a structural member. Longer spans require larger or stronger members to safely carry the load.",
+      "code_ref": "Structural Engineering",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-049",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Beams",
+      "question": "What is a cantilevered beam?",
+      "options": [
+        {"id": "a", "text": "A beam supported at both ends"},
+        {"id": "b", "text": "A beam supported at one end extending beyond the support", "correct": true},
+        {"id": "c", "text": "A beam with continuous supports"},
+        {"id": "d", "text": "A curved beam"}
+      ],
+      "explanation": "A cantilever is a beam or other member that extends beyond its support point and is loaded on the unsupported end. Balconies and deck overhangs are common examples.",
+      "code_ref": "Structural Engineering",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-050",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Beams",
+      "question": "What is the maximum cantilever for floor joists without engineering?",
+      "options": [
+        {"id": "a", "text": "1/4 of the joist span"},
+        {"id": "b", "text": "1/3 of the joist span"},
+        {"id": "c", "text": "Per the span tables (typically 1/4 to 1/3 of backspan)", "correct": true},
+        {"id": "d", "text": "Unlimited"}
+      ],
+      "explanation": "Per IRC R502.3.3, floor joists may cantilever per the span tables, typically limited to about 1/4 of the joist backspan, depending on species and size.",
+      "code_ref": "IRC R502.3.3",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-051",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Floor Framing",
+      "question": "What is the purpose of blocking between floor joists?",
+      "options": [
+        {"id": "a", "text": "To add insulation"},
+        {"id": "b", "text": "To prevent joist rotation and provide lateral support", "correct": true},
+        {"id": "c", "text": "To support plumbing"},
+        {"id": "d", "text": "To increase joist span"}
+      ],
+      "explanation": "Blocking (solid blocking or bridging) between joists prevents rotation, provides lateral support, helps distribute loads, and stiffens the floor system.",
+      "code_ref": "IRC R502.7",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-052",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Floor Framing",
+      "question": "What is a rim joist (band joist)?",
+      "options": [
+        {"id": "a", "text": "A joist in the middle of the floor"},
+        {"id": "b", "text": "The perimeter joist that closes off the floor cavity", "correct": true},
+        {"id": "c", "text": "A doubled joist"},
+        {"id": "d", "text": "A header"}
+      ],
+      "explanation": "The rim joist (or band joist) is the perimeter member that runs perpendicular to the floor joists and encloses the ends of the joist bays.",
+      "code_ref": "IRC R502",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-053",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Floor Framing",
+      "question": "What is a girder in floor framing?",
+      "options": [
+        {"id": "a", "text": "A floor joist"},
+        {"id": "b", "text": "A main beam that supports floor joists", "correct": true},
+        {"id": "c", "text": "A sill plate"},
+        {"id": "d", "text": "A subfloor panel"}
+      ],
+      "explanation": "A girder is a primary structural beam that spans between foundation walls or columns and supports floor joists. It carries concentrated loads to the foundation.",
+      "code_ref": "IRC R502.5",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-054",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Floor Framing",
+      "question": "What is a sill plate?",
+      "options": [
+        {"id": "a", "text": "A window component"},
+        {"id": "b", "text": "The wood member anchored to the foundation that supports the floor system", "correct": true},
+        {"id": "c", "text": "A door threshold"},
+        {"id": "d", "text": "A trim piece"}
+      ],
+      "explanation": "The sill plate (mudsill) is the horizontal wood member attached to the top of the foundation wall that supports floor joists and transfers loads to the foundation.",
+      "code_ref": "IRC R403.1.6",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-055",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Wall Framing",
+      "question": "What is a header in wall framing?",
+      "options": [
+        {"id": "a", "text": "The bottom plate"},
+        {"id": "b", "text": "A beam over an opening that supports loads above", "correct": true},
+        {"id": "c", "text": "A corner assembly"},
+        {"id": "d", "text": "The top plate"}
+      ],
+      "explanation": "A header is a horizontal beam placed over door, window, or other openings in load-bearing walls to transfer loads from above around the opening to the studs on each side.",
+      "code_ref": "IRC R602.7",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-056",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Wall Framing",
+      "question": "What is a king stud?",
+      "options": [
+        {"id": "a", "text": "A stud next to a corner"},
+        {"id": "b", "text": "The full-height stud on each side of an opening that supports the header", "correct": true},
+        {"id": "c", "text": "A doubled stud"},
+        {"id": "d", "text": "A cripple stud"}
+      ],
+      "explanation": "King studs are the full-height studs on each side of a door or window opening. They run from the bottom plate to the top plate and support the header.",
+      "code_ref": "IRC R602.7",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-057",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Wall Framing",
+      "question": "What is a jack stud (trimmer stud)?",
+      "options": [
+        {"id": "a", "text": "A stud above a header"},
+        {"id": "b", "text": "The shortened stud that supports the header from below", "correct": true},
+        {"id": "c", "text": "A stud at a corner"},
+        {"id": "d", "text": "A blocking piece"}
+      ],
+      "explanation": "Jack studs (trimmers) are the shortened studs next to king studs that run from the bottom plate to the underside of the header, directly supporting its ends.",
+      "code_ref": "IRC R602.7",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-058",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Wall Framing",
+      "question": "What is a cripple stud?",
+      "options": [
+        {"id": "a", "text": "A damaged stud"},
+        {"id": "b", "text": "A short stud above or below an opening", "correct": true},
+        {"id": "c", "text": "A bowed stud"},
+        {"id": "d", "text": "A corner stud"}
+      ],
+      "explanation": "Cripple studs are the short studs that fill in above headers or below window sills. They maintain stud spacing for sheathing attachment and load transfer.",
+      "code_ref": "IRC R602.9",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-059",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Wall Framing",
+      "question": "What is the purpose of a double top plate?",
+      "options": [
+        {"id": "a", "text": "To add insulation"},
+        {"id": "b", "text": "To tie walls together and support joists or rafters", "correct": true},
+        {"id": "c", "text": "To reduce wall height"},
+        {"id": "d", "text": "To provide attachment for trim"}
+      ],
+      "explanation": "The double top plate ties intersecting walls together, provides a continuous horizontal member, supports floor/ceiling joists or rafters, and allows joints to be offset between plates.",
+      "code_ref": "IRC R602.3.2",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-060",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Wall Framing",
+      "question": "What is a shear wall?",
+      "options": [
+        {"id": "a", "text": "A wall with windows"},
+        {"id": "b", "text": "A wall designed to resist lateral loads like wind and seismic", "correct": true},
+        {"id": "c", "text": "A non-load-bearing partition"},
+        {"id": "d", "text": "A sound-insulated wall"}
+      ],
+      "explanation": "A shear wall is a vertical element of the lateral force-resisting system that transfers lateral loads (wind, earthquake) from upper levels to the foundation through in-plane shear.",
+      "code_ref": "IRC R602.10",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-061",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Wall Framing",
+      "question": "What makes a wall a braced wall panel?",
+      "options": [
+        {"id": "a", "text": "Any wall with studs"},
+        {"id": "b", "text": "A wall section with structural sheathing or diagonal bracing that resists lateral loads", "correct": true},
+        {"id": "c", "text": "A wall with insulation"},
+        {"id": "d", "text": "A wall with drywall"}
+      ],
+      "explanation": "Per IRC R602.10, braced wall panels are wall sections constructed to resist lateral forces using prescribed bracing methods like structural sheathing, let-in bracing, or portal frames.",
+      "code_ref": "IRC R602.10",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-062",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Roof Framing",
+      "question": "What is a rafter?",
+      "options": [
+        {"id": "a", "text": "A horizontal beam"},
+        {"id": "b", "text": "A sloped framing member that supports the roof", "correct": true},
+        {"id": "c", "text": "A ceiling joist"},
+        {"id": "d", "text": "A purlin"}
+      ],
+      "explanation": "Rafters are the sloped structural members that extend from the ridge or hip to the wall plate and support the roof sheathing and covering.",
+      "code_ref": "IRC R802",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-063",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Roof Framing",
+      "question": "What is the ridge board?",
+      "options": [
+        {"id": "a", "text": "A structural beam"},
+        {"id": "b", "text": "A non-structural board at the roof peak connecting rafter ends", "correct": true},
+        {"id": "c", "text": "A fascia board"},
+        {"id": "d", "text": "A soffit"}
+      ],
+      "explanation": "A ridge board is a non-structural horizontal member at the peak of the roof where the upper ends of opposing rafters meet and attach. It provides alignment and connection.",
+      "code_ref": "IRC R802.3",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-064",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Roof Framing",
+      "question": "What is a ridge beam?",
+      "options": [
+        {"id": "a", "text": "Same as a ridge board"},
+        {"id": "b", "text": "A structural beam at the ridge that supports rafters", "correct": true},
+        {"id": "c", "text": "A non-structural member"},
+        {"id": "d", "text": "A ceiling joist"}
+      ],
+      "explanation": "A ridge beam is a structural member that actually supports the rafters from above, eliminating the need for ceiling joists to resist outward thrust. It requires posts for support.",
+      "code_ref": "IRC R802.3",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-065",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Roof Framing",
+      "question": "What is the purpose of ceiling joists in a conventional rafter roof?",
+      "options": [
+        {"id": "a", "text": "Only to support the ceiling"},
+        {"id": "b", "text": "To act as ties preventing rafters from pushing walls outward", "correct": true},
+        {"id": "c", "text": "To support the roof load"},
+        {"id": "d", "text": "To provide attic access"}
+      ],
+      "explanation": "In conventional framing with a ridge board (not beam), ceiling joists act as tension ties connecting opposing rafters. They prevent the outward thrust from pushing walls apart.",
+      "code_ref": "IRC R802.3.1",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-066",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Roof Framing",
+      "question": "What is rafter thrust?",
+      "options": [
+        {"id": "a", "text": "Upward pressure"},
+        {"id": "b", "text": "The outward horizontal force rafters exert on walls", "correct": true},
+        {"id": "c", "text": "Downward force only"},
+        {"id": "d", "text": "Wind pressure"}
+      ],
+      "explanation": "Rafter thrust is the outward horizontal force that sloped rafters exert on the walls when loaded. Ceiling joists, collar ties, or structural ridges resist this thrust.",
+      "code_ref": "IRC R802.3",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-067",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Roof Framing",
+      "question": "What is a collar tie?",
+      "options": [
+        {"id": "a", "text": "A decorative trim"},
+        {"id": "b", "text": "A horizontal member connecting opposing rafters in the upper third", "correct": true},
+        {"id": "c", "text": "A foundation strap"},
+        {"id": "d", "text": "A ridge connector"}
+      ],
+      "explanation": "Per IRC R802.4.1, collar ties are horizontal members connecting opposing rafters in the upper third of the roof. They help resist thrust and prevent rafter spread.",
+      "code_ref": "IRC R802.4.1",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-068",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Roof Framing",
+      "question": "What is roof pitch?",
+      "options": [
+        {"id": "a", "text": "The roof area"},
+        {"id": "b", "text": "The rise in inches per 12 inches of horizontal run", "correct": true},
+        {"id": "c", "text": "The roof height"},
+        {"id": "d", "text": "The rafter length"}
+      ],
+      "explanation": "Roof pitch is expressed as rise over run, typically as X:12, meaning the roof rises X inches for every 12 inches of horizontal run. A 6:12 pitch rises 6 inches per foot.",
+      "code_ref": "Building Practice",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-069",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Roof Framing",
+      "question": "What is a truss?",
+      "options": [
+        {"id": "a", "text": "A solid beam"},
+        {"id": "b", "text": "A pre-engineered structural frame using triangulated members", "correct": true},
+        {"id": "c", "text": "A rafter only"},
+        {"id": "d", "text": "A ceiling joist only"}
+      ],
+      "explanation": "A truss is a prefabricated structural component using triangulated members (chords and webs) that act together to span long distances. They're designed by engineers for specific loads.",
+      "code_ref": "IRC R802.10",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-070",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Roof Framing",
+      "question": "Can trusses be modified or cut in the field?",
+      "options": [
+        {"id": "a", "text": "Yes, as needed"},
+        {"id": "b", "text": "No, never without engineer approval", "correct": true},
+        {"id": "c", "text": "Only the webs"},
+        {"id": "d", "text": "Only minor modifications"}
+      ],
+      "explanation": "Trusses are engineered as complete systems. Cutting, notching, or modifying any member can cause failure. Any modification requires approval from a licensed engineer.",
+      "code_ref": "IRC R802.10.4",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-071",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Connections",
+      "question": "What is the purpose of a hurricane tie?",
+      "options": [
+        {"id": "a", "text": "To connect floor joists"},
+        {"id": "b", "text": "To connect rafters/trusses to wall plates to resist uplift", "correct": true},
+        {"id": "c", "text": "To connect studs to plates"},
+        {"id": "d", "text": "To connect headers to studs"}
+      ],
+      "explanation": "Hurricane ties (rafter ties) are metal connectors that strap rafters or trusses to the top plate, providing a continuous load path to resist wind uplift.",
+      "code_ref": "IRC R802.11",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-072",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Connections",
+      "question": "What is a joist hanger?",
+      "options": [
+        {"id": "a", "text": "A tool for hanging joists"},
+        {"id": "b", "text": "A metal connector that supports joist ends against a beam or header", "correct": true},
+        {"id": "c", "text": "A hanger for storage"},
+        {"id": "d", "text": "A temporary brace"}
+      ],
+      "explanation": "Joist hangers are manufactured metal connectors that attach floor joists to headers, beams, or ledgers. They transfer vertical loads and resist withdrawal.",
+      "code_ref": "IRC R502.6.1",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-073",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Connections",
+      "question": "What type of nail is required for joist hangers?",
+      "options": [
+        {"id": "a", "text": "Any common nail"},
+        {"id": "b", "text": "The specific nail type specified by the hanger manufacturer", "correct": true},
+        {"id": "c", "text": "Only screws"},
+        {"id": "d", "text": "Roofing nails"}
+      ],
+      "explanation": "Joist hangers must be installed with the specific nail type, length, and quantity specified by the manufacturer. Using wrong fasteners reduces capacity.",
+      "code_ref": "IRC R502.6.1",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-074",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Connections",
+      "question": "What is a post base connector?",
+      "options": [
+        {"id": "a", "text": "A decorative post cap"},
+        {"id": "b", "text": "A metal connector that anchors a post to concrete", "correct": true},
+        {"id": "c", "text": "A footing form"},
+        {"id": "d", "text": "A post leveler"}
+      ],
+      "explanation": "Post base connectors anchor wood posts to concrete foundations or piers, providing uplift resistance and keeping the post above the concrete to prevent moisture damage.",
+      "code_ref": "IRC R502.9",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-075",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Connections",
+      "question": "What is a holddown?",
+      "options": [
+        {"id": "a", "text": "A temporary clamp"},
+        {"id": "b", "text": "A connector that resists overturning of shear walls", "correct": true},
+        {"id": "c", "text": "A foundation anchor"},
+        {"id": "d", "text": "A truss brace"}
+      ],
+      "explanation": "Holddowns are heavy-duty metal connectors that resist overturning (rotation) of shear wall segments by anchoring studs to the foundation or floor below.",
+      "code_ref": "IRC R602.10.8",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-076",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Connections",
+      "question": "What is toe-nailing?",
+      "options": [
+        {"id": "a", "text": "Nailing through the face"},
+        {"id": "b", "text": "Driving nails at an angle through one member into another", "correct": true},
+        {"id": "c", "text": "Nailing into end grain"},
+        {"id": "d", "text": "Using special toed nails"}
+      ],
+      "explanation": "Toe-nailing drives nails at an angle through the side of one member into another, commonly used to attach studs to plates or rafters to plates.",
+      "code_ref": "IRC Table R602.3(1)",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-077",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Steel",
+      "question": "What is a W-shape in structural steel?",
+      "options": [
+        {"id": "a", "text": "A curved beam"},
+        {"id": "b", "text": "A wide-flange I-beam", "correct": true},
+        {"id": "c", "text": "A channel"},
+        {"id": "d", "text": "An angle"}
+      ],
+      "explanation": "W-shapes (wide-flange beams) are the most common structural steel shapes, with an I-shaped cross-section where the flanges are parallel and wider than S-shapes.",
+      "code_ref": "AISC Steel Manual",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-078",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Steel",
+      "question": "What does W12x26 mean?",
+      "options": [
+        {"id": "a", "text": "12 feet long, 26 inches wide"},
+        {"id": "b", "text": "Approximately 12 inches deep, weighing 26 pounds per foot", "correct": true},
+        {"id": "c", "text": "12 inch flange, 26 gauge"},
+        {"id": "d", "text": "12 x 26 inches overall"}
+      ],
+      "explanation": "Steel beam designations show the nominal depth and weight per linear foot. W12x26 is a wide-flange beam approximately 12\" deep weighing 26 pounds per foot.",
+      "code_ref": "AISC Steel Manual",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-079",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Steel",
+      "question": "Why must structural steel be fireproofed in many applications?",
+      "options": [
+        {"id": "a", "text": "To prevent rust"},
+        {"id": "b", "text": "Steel loses strength at elevated temperatures", "correct": true},
+        {"id": "c", "text": "For appearance"},
+        {"id": "d", "text": "To reduce noise"}
+      ],
+      "explanation": "Steel loses significant strength when heated. Fireproofing (spray-on, intumescent paint, or encasement) protects steel from reaching temperatures that cause structural failure in a fire.",
+      "code_ref": "IBC 704",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-080",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Steel",
+      "question": "What is cold-formed steel framing?",
+      "options": [
+        {"id": "a", "text": "Steel framing installed in cold weather"},
+        {"id": "b", "text": "Steel members formed from sheet steel at room temperature", "correct": true},
+        {"id": "c", "text": "Frozen steel beams"},
+        {"id": "d", "text": "Pre-heated steel"}
+      ],
+      "explanation": "Cold-formed steel (CFS) framing uses thin sheet steel bent into C-shapes and tracks at room temperature. It's an alternative to wood framing with consistent, non-combustible properties.",
+      "code_ref": "IBC 2211",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-081",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Masonry",
+      "question": "What is a standard concrete masonry unit (CMU) size?",
+      "options": [
+        {"id": "a", "text": "6\" x 6\" x 12\""},
+        {"id": "b", "text": "8\" x 8\" x 16\" (nominal)", "correct": true},
+        {"id": "c", "text": "10\" x 10\" x 20\""},
+        {"id": "d", "text": "4\" x 4\" x 8\""}
+      ],
+      "explanation": "Standard CMU has nominal dimensions of 8\" x 8\" x 16\". Actual dimensions are 7-5/8\" x 7-5/8\" x 15-5/8\" to allow for 3/8\" mortar joints.",
+      "code_ref": "TMS 402",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-082",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Masonry",
+      "question": "What is grout in masonry construction?",
+      "options": [
+        {"id": "a", "text": "Mortar for joints"},
+        {"id": "b", "text": "A fluid concrete mix used to fill CMU cells", "correct": true},
+        {"id": "c", "text": "A sealant"},
+        {"id": "d", "text": "A surface coating"}
+      ],
+      "explanation": "Grout is a fluid mixture of cite, aggregate, and water used to fill the cells (cores) of concrete masonry units, encasing reinforcing steel and creating a solid structural element.",
+      "code_ref": "TMS 402",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-083",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Masonry",
+      "question": "What is a bond beam?",
+      "options": [
+        {"id": "a", "text": "A decorative course"},
+        {"id": "b", "text": "A reinforced, grouted horizontal course that acts as a beam", "correct": true},
+        {"id": "c", "text": "The first course"},
+        {"id": "d", "text": "An expansion joint"}
+      ],
+      "explanation": "A bond beam is a horizontal grouted course with continuous reinforcing steel that distributes loads, resists lateral forces, and ties the wall together.",
+      "code_ref": "TMS 402",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-084",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Masonry",
+      "question": "What is a lintel in masonry construction?",
+      "options": [
+        {"id": "a", "text": "A foundation element"},
+        {"id": "b", "text": "A beam over an opening that supports masonry above", "correct": true},
+        {"id": "c", "text": "A corner block"},
+        {"id": "d", "text": "A pilaster"}
+      ],
+      "explanation": "A lintel is a horizontal member (steel angle, precast concrete, or reinforced masonry) that spans over doors, windows, or other openings to support the masonry above.",
+      "code_ref": "TMS 402",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-085",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Masonry",
+      "question": "What is mortar in masonry construction?",
+      "options": [
+        {"id": "a", "text": "The same as grout"},
+        {"id": "b", "text": "A mixture used to bond masonry units together at joints", "correct": true},
+        {"id": "c", "text": "A concrete mix"},
+        {"id": "d", "text": "A waterproofing compound"}
+      ],
+      "explanation": "Mortar is the material used in joints between masonry units. It bonds units together, fills gaps, and distributes stresses. Different types (M, S, N, O) have different strengths.",
+      "code_ref": "TMS 402",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-086",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Sheathing",
+      "question": "What is structural sheathing?",
+      "options": [
+        {"id": "a", "text": "Interior wall covering"},
+        {"id": "b", "text": "Panel material that provides lateral resistance to framing", "correct": true},
+        {"id": "c", "text": "Insulation board"},
+        {"id": "d", "text": "Vapor barrier"}
+      ],
+      "explanation": "Structural sheathing (plywood, OSB) is fastened to framing to resist lateral loads (wind, seismic) and distribute loads across the frame. It stiffens the structure.",
+      "code_ref": "IRC R602.10",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-087",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Sheathing",
+      "question": "What does the APA trademark on plywood indicate?",
+      "options": [
+        {"id": "a", "text": "The manufacturer's name"},
+        {"id": "b", "text": "The panel has been performance-tested and certified", "correct": true},
+        {"id": "c", "text": "It's made in America"},
+        {"id": "d", "text": "It's pressure-treated"}
+      ],
+      "explanation": "APA (The Engineered Wood Association) trademark indicates the panel has been manufactured by an APA member and meets quality standards for the specified grade and performance.",
+      "code_ref": "APA Standards",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-088",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Sheathing",
+      "question": "What does 'span rating' on structural panels mean?",
+      "options": [
+        {"id": "a", "text": "The panel thickness"},
+        {"id": "b", "text": "The maximum support spacing for floor/roof applications", "correct": true},
+        {"id": "c", "text": "The panel weight"},
+        {"id": "d", "text": "The panel grade"}
+      ],
+      "explanation": "The span rating (like 32/16) indicates the maximum support spacing: 32\" for roof and 16\" for floor applications. This ensures adequate support for the panel.",
+      "code_ref": "APA Standards",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-089",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Sheathing",
+      "question": "What is the minimum thickness for wall sheathing used for bracing?",
+      "options": [
+        {"id": "a", "text": "1/4 inch"},
+        {"id": "b", "text": "3/8 inch"},
+        {"id": "c", "text": "7/16 inch or per code tables", "correct": true},
+        {"id": "d", "text": "3/4 inch"}
+      ],
+      "explanation": "Per IRC R602.10, structural panel sheathing used for wall bracing typically requires minimum 7/16\" thickness for Method 3 bracing, with specific nailing patterns.",
+      "code_ref": "IRC R602.10.4",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-090",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Sheathing",
+      "question": "What is the edge nailing requirement for structural wall sheathing?",
+      "options": [
+        {"id": "a", "text": "12 inches on center"},
+        {"id": "b", "text": "6 inches on center", "correct": true},
+        {"id": "c", "text": "4 inches on center"},
+        {"id": "d", "text": "8 inches on center"}
+      ],
+      "explanation": "Per IRC Table R602.3(3), structural sheathing requires 6\" on center nailing at panel edges and 12\" on center at intermediate supports for standard braced wall panels.",
+      "code_ref": "IRC Table R602.3(3)",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-091",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Calculations",
+      "question": "What is the formula for calculating the load on a beam?",
+      "options": [
+        {"id": "a", "text": "Load = Area × Length"},
+        {"id": "b", "text": "Total Load = Load per Area × Tributary Area", "correct": true},
+        {"id": "c", "text": "Load = Weight × Height"},
+        {"id": "d", "text": "Load = Width × Depth"}
+      ],
+      "explanation": "Beam load is calculated by multiplying the unit load (psf) by the tributary area the beam supports. This gives the total load the beam must carry.",
+      "code_ref": "Structural Engineering",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-092",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Calculations",
+      "question": "How do you calculate footing size for a column?",
+      "options": [
+        {"id": "a", "text": "Guess based on column size"},
+        {"id": "b", "text": "Total load divided by soil bearing capacity", "correct": true},
+        {"id": "c", "text": "Column size times two"},
+        {"id": "d", "text": "Span times depth"}
+      ],
+      "explanation": "Footing area = Total column load ÷ Allowable soil bearing capacity. For example, 10,000 lbs ÷ 2,000 psf = 5 square feet minimum footing area.",
+      "code_ref": "IBC 1809",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-093",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Calculations",
+      "question": "If a floor carries 50 psf live load and a beam has 10-foot tributarywidth, what is the load per linear foot on the beam?",
+      "options": [
+        {"id": "a", "text": "50 plf"},
+        {"id": "b", "text": "100 plf"},
+        {"id": "c", "text": "500 plf", "correct": true},
+        {"id": "d", "text": "5,000 plf"}
+      ],
+      "explanation": "Load per linear foot = psf × tributary width = 50 psf × 10 ft = 500 plf. This converts area load to a linear load on the beam.",
+      "code_ref": "Structural Engineering",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-094",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Calculations",
+      "question": "What is the total load on a 12-foot square footing if the column load is 24,000 lbs?",
+      "options": [
+        {"id": "a", "text": "24,000 psf"},
+        {"id": "b", "text": "2,000 psf"},
+        {"id": "c", "text": "24,000 lbs (the load doesn't change)", "correct": true},
+        {"id": "d", "text": "288,000 lbs"}
+      ],
+      "explanation": "The total load on the footing is the column load: 24,000 lbs. The footing size affects soil pressure (24,000 ÷ 144 = 167 psf), not the total load.",
+      "code_ref": "Structural Engineering",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-095",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Diaphragms",
+      "question": "What is a floor or roof diaphragm?",
+      "options": [
+        {"id": "a", "text": "A type of insulation"},
+        {"id": "b", "text": "A horizontal structural element that transfers lateral loads to shear walls", "correct": true},
+        {"id": "c", "text": "A sound barrier"},
+        {"id": "d", "text": "A vapor barrier"}
+      ],
+      "explanation": "A diaphragm is the floor or roof system acting as a large horizontal beam, collecting lateral loads (wind, seismic) and transferring them to vertical shear walls or frames.",
+      "code_ref": "IBC 2305",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-096",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Diaphragms",
+      "question": "What makes a floor system act as a structural diaphragm?",
+      "options": [
+        {"id": "a", "text": "Carpet installation"},
+        {"id": "b", "text": "Proper sheathing and nailing of panels to joists", "correct": true},
+        {"id": "c", "text": "Underlayment only"},
+        {"id": "d", "text": "Insulation"}
+      ],
+      "explanation": "A diaphragm requires structural sheathing (plywood, OSB) properly nailed to joists and connected to shear walls. The nailing pattern determines diaphragm capacity.",
+      "code_ref": "IBC 2306",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-097",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Retaining Walls",
+      "question": "What is a retaining wall?",
+      "options": [
+        {"id": "a", "text": "A partition wall"},
+        {"id": "b", "text": "A wall that holds back soil or other materials", "correct": true},
+        {"id": "c", "text": "A load-bearing wall"},
+        {"id": "d", "text": "A fire wall"}
+      ],
+      "explanation": "A retaining wall resists lateral soil pressure, holding back earth at different elevations. It must resist overturning, sliding, and soil pressure.",
+      "code_ref": "IBC 1807",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-098",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Retaining Walls",
+      "question": "What is lateral earth pressure?",
+      "options": [
+        {"id": "a", "text": "Vertical soil weight"},
+        {"id": "b", "text": "The horizontal force soil exerts against a retaining wall", "correct": true},
+        {"id": "c", "text": "Water pressure only"},
+        {"id": "d", "text": "Seismic force"}
+      ],
+      "explanation": "Lateral earth pressure is the horizontal force exerted by soil against a retaining structure. It increases with depth and depends on soil type and conditions.",
+      "code_ref": "IBC 1807",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-099",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "Retaining Walls",
+      "question": "Why is drainage important behind retaining walls?",
+      "options": [
+        {"id": "a", "text": "For appearance"},
+        {"id": "b", "text": "To prevent hydrostatic pressure buildup that increases load", "correct": true},
+        {"id": "c", "text": "To grow plants"},
+        {"id": "d", "text": "To prevent frost"}
+      ],
+      "explanation": "Per IBC 1807.4.3, water behind a retaining wall adds hydrostatic pressure, significantly increasing the lateral load. Proper drainage prevents this pressure buildup.",
+      "code_ref": "IBC 1807.4.3",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-struct-100",
+      "trade": "gc",
+      "category": "Structural",
+      "subcategory": "General",
+      "question": "When is structural engineering required?",
+      "options": [
+        {"id": "a", "text": "Never for residential"},
+        {"id": "b", "text": "When the structure exceeds prescriptive code limits or has unusual conditions", "correct": true},
+        {"id": "c", "text": "Only for commercial buildings"},
+        {"id": "d", "text": "Only for steel structures"}
+      ],
+      "explanation": "Structural engineering is required when designs exceed prescriptive (cookbook) limits in the code, for unusual conditions, complex loading, or when specifically required by the building official.",
+      "code_ref": "IBC 1604",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    }
+  ]
+}

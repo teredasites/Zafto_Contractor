@@ -1,0 +1,502 @@
+{
+  "category": "Low Voltage",
+  "subcategory": "Sound and Paging Systems",
+  "description": "Commercial sound reinforcement, paging, and mass notification systems",
+  "difficulty_distribution": {
+    "beginner": 12,
+    "intermediate": 15,
+    "advanced": 8
+  },
+  "questions": [
+    {
+      "id": "lv_sound_001",
+      "difficulty": "beginner",
+      "question": "What is a 70V distributed audio system?",
+      "options": [
+        "Home stereo system",
+        "System using step-up transformers to distribute audio over long distances",
+        "Digital audio",
+        "Wireless audio"
+      ],
+      "correct_answer": 1,
+      "explanation": "70V (or 70.7V) distributed systems use transformers to step up amplifier output for efficient long-distance distribution.",
+      "code_reference": "Industry standard"
+    },
+    {
+      "id": "lv_sound_002",
+      "difficulty": "beginner",
+      "question": "What is the advantage of a 70V audio system over low-impedance?",
+      "options": [
+        "Better sound quality",
+        "Lower wire gauge required and less power loss over distance",
+        "Cheaper speakers",
+        "No amplifier needed"
+      ],
+      "correct_answer": 1,
+      "explanation": "70V systems allow use of smaller wire gauges and experience less power loss over long cable runs.",
+      "code_reference": "Audio engineering standards"
+    },
+    {
+      "id": "lv_sound_003",
+      "difficulty": "beginner",
+      "question": "What is a paging system?",
+      "options": [
+        "Background music",
+        "System for making voice announcements throughout a facility",
+        "Telephone system",
+        "Intercom"
+      ],
+      "correct_answer": 1,
+      "explanation": "Paging systems allow voice announcements to be made over loudspeakers throughout a building or facility.",
+      "code_reference": "Industry standard"
+    },
+    {
+      "id": "lv_sound_004",
+      "difficulty": "beginner",
+      "question": "What is a paging zone?",
+      "options": [
+        "Storage area",
+        "Group of speakers that can be addressed independently",
+        "Electrical panel",
+        "Building entrance"
+      ],
+      "correct_answer": 1,
+      "explanation": "A zone is a group of speakers that can be selected for paging independently from other areas.",
+      "code_reference": "Industry standard"
+    },
+    {
+      "id": "lv_sound_005",
+      "difficulty": "beginner",
+      "question": "What is the purpose of a mixer in a sound system?",
+      "options": [
+        "Power speakers directly",
+        "Combine and control multiple audio sources",
+        "Record audio",
+        "Amplify only"
+      ],
+      "correct_answer": 1,
+      "explanation": "A mixer combines multiple audio inputs (microphones, music sources) and controls levels before amplification.",
+      "code_reference": "Audio engineering"
+    },
+    {
+      "id": "lv_sound_006",
+      "difficulty": "beginner",
+      "question": "What wire type is commonly used for 70V speaker lines?",
+      "options": [
+        "Coaxial cable",
+        "Stranded two-conductor cable (16-18 AWG typical)",
+        "Fiber optic",
+        "Cat6"
+      ],
+      "correct_answer": 1,
+      "explanation": "Stranded two-conductor speaker wire, typically 16-18 AWG, is used for 70V distributed audio systems.",
+      "code_reference": "NEC Article 640"
+    },
+    {
+      "id": "lv_sound_007",
+      "difficulty": "beginner",
+      "question": "What is the tap setting on a 70V speaker?",
+      "options": [
+        "Color setting",
+        "Wattage selection determining speaker volume relative to others",
+        "Frequency setting",
+        "Phase setting"
+      ],
+      "correct_answer": 1,
+      "explanation": "Tap settings (wattage) on 70V speaker transformers determine how much power each speaker draws from the line.",
+      "code_reference": "Audio engineering"
+    },
+    {
+      "id": "lv_sound_008",
+      "difficulty": "beginner",
+      "question": "What happens if total speaker wattage exceeds amplifier rating?",
+      "options": [
+        "No effect",
+        "Amplifier overloads and may clip or shut down",
+        "Speakers get louder",
+        "Better sound quality"
+      ],
+      "correct_answer": 1,
+      "explanation": "Overloading an amplifier causes distortion (clipping), overheating, and possible shutdown or damage.",
+      "code_reference": "Audio engineering"
+    },
+    {
+      "id": "lv_sound_009",
+      "difficulty": "beginner",
+      "question": "What NEC article covers audio system wiring?",
+      "options": [
+        "Article 725",
+        "Article 640 Audio Signal Processing, Amplification, and Reproduction Equipment",
+        "Article 760",
+        "Article 800"
+      ],
+      "correct_answer": 1,
+      "explanation": "NEC Article 640 covers audio signal processing, amplification, and reproduction equipment including wiring.",
+      "code_reference": "NEC Article 640"
+    },
+    {
+      "id": "lv_sound_010",
+      "difficulty": "beginner",
+      "question": "What is an all-call in paging systems?",
+      "options": [
+        "Phone call",
+        "Announcement to all zones simultaneously",
+        "Emergency call",
+        "Private call"
+      ],
+      "correct_answer": 1,
+      "explanation": "All-call allows an announcement to be made to all paging zones at once throughout the facility.",
+      "code_reference": "Industry standard"
+    },
+    {
+      "id": "lv_sound_011",
+      "difficulty": "beginner",
+      "question": "What is speaker coverage pattern?",
+      "options": [
+        "Speaker color",
+        "Area where sound from a speaker is adequately audible",
+        "Speaker mounting",
+        "Speaker brand"
+      ],
+      "correct_answer": 1,
+      "explanation": "Coverage pattern describes the area where a speaker provides adequate sound level, determined by dispersion angle.",
+      "code_reference": "Audio engineering"
+    },
+    {
+      "id": "lv_sound_012",
+      "difficulty": "beginner",
+      "question": "What is a horn speaker typically used for?",
+      "options": [
+        "Music only",
+        "High-output paging in noisy or outdoor environments",
+        "Conference rooms",
+        "Offices"
+      ],
+      "correct_answer": 1,
+      "explanation": "Horn speakers provide high output and directional coverage for noisy industrial areas or outdoor paging.",
+      "code_reference": "Audio engineering"
+    },
+    {
+      "id": "lv_sound_013",
+      "difficulty": "intermediate",
+      "question": "How is speaker placement calculated for ceiling speakers?",
+      "options": [
+        "Random placement",
+        "Based on coverage angle and ceiling height for overlapping coverage",
+        "One per room",
+        "Along walls only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Speaker spacing is calculated using coverage angle and ceiling height to achieve overlapping coverage patterns.",
+      "code_reference": "Audio engineering design"
+    },
+    {
+      "id": "lv_sound_014",
+      "difficulty": "intermediate",
+      "question": "What is a line-level audio signal?",
+      "options": [
+        "Speaker output",
+        "Standardized signal level between audio components (typically -10dBV to +4dBu)",
+        "Microphone output",
+        "Amplifier output"
+      ],
+      "correct_answer": 1,
+      "explanation": "Line-level is a standardized signal level used between audio components like mixers, processors, and amplifiers.",
+      "code_reference": "Audio engineering"
+    },
+    {
+      "id": "lv_sound_015",
+      "difficulty": "intermediate",
+      "question": "What is the difference between balanced and unbalanced audio?",
+      "options": [
+        "Voltage level",
+        "Balanced uses three conductors with noise rejection; unbalanced uses two",
+        "Digital vs analog",
+        "Stereo vs mono"
+      ],
+      "correct_answer": 1,
+      "explanation": "Balanced audio uses three conductors (+, -, ground) with common-mode rejection for noise immunity.",
+      "code_reference": "Audio engineering"
+    },
+    {
+      "id": "lv_sound_016",
+      "difficulty": "intermediate",
+      "question": "What is priority override in paging systems?",
+      "options": [
+        "Volume control",
+        "Higher priority sources (emergency) automatically override lower priority audio",
+        "Zone selection",
+        "Time scheduling"
+      ],
+      "correct_answer": 1,
+      "explanation": "Priority override allows emergency or important announcements to interrupt background music or other audio.",
+      "code_reference": "Industry standard"
+    },
+    {
+      "id": "lv_sound_017",
+      "difficulty": "intermediate",
+      "question": "What is a DSP in audio systems?",
+      "options": [
+        "Speaker type",
+        "Digital Signal Processor for audio routing, EQ, and processing",
+        "Wire type",
+        "Amplifier rating"
+      ],
+      "correct_answer": 1,
+      "explanation": "DSP (Digital Signal Processor) provides digital audio routing, equalization, delay, and other processing.",
+      "code_reference": "Audio engineering"
+    },
+    {
+      "id": "lv_sound_018",
+      "difficulty": "intermediate",
+      "question": "What is AEC in audio conferencing?",
+      "options": [
+        "Audio engineering council",
+        "Acoustic Echo Cancellation - removes echo from speaker to microphone",
+        "Automatic equalization",
+        "Audio encoding"
+      ],
+      "correct_answer": 1,
+      "explanation": "AEC removes echo caused by audio from speakers being picked up by microphones in the same room.",
+      "code_reference": "Audio engineering"
+    },
+    {
+      "id": "lv_sound_019",
+      "difficulty": "intermediate",
+      "question": "What is the purpose of equalization (EQ) in sound systems?",
+      "options": [
+        "Increase volume",
+        "Adjust frequency response to compensate for room acoustics or preference",
+        "Add channels",
+        "Convert digital to analog"
+      ],
+      "correct_answer": 1,
+      "explanation": "EQ adjusts the frequency response to compensate for room acoustics, speaker characteristics, or tonal preference.",
+      "code_reference": "Audio engineering"
+    },
+    {
+      "id": "lv_sound_020",
+      "difficulty": "intermediate",
+      "question": "What is ambient noise compensation?",
+      "options": [
+        "Soundproofing",
+        "Automatic volume adjustment based on background noise level",
+        "Noise reduction",
+        "Echo cancellation"
+      ],
+      "correct_answer": 1,
+      "explanation": "Ambient noise compensation uses sensors to automatically adjust paging volume based on background noise.",
+      "code_reference": "Audio engineering"
+    },
+    {
+      "id": "lv_sound_021",
+      "difficulty": "intermediate",
+      "question": "What is Dante in audio systems?",
+      "options": [
+        "Speaker brand",
+        "Digital audio networking protocol over standard Ethernet",
+        "Amplifier type",
+        "Microphone technology"
+      ],
+      "correct_answer": 1,
+      "explanation": "Dante is a digital audio networking protocol that transmits uncompressed audio over standard Ethernet networks.",
+      "code_reference": "Audinate Dante standard"
+    },
+    {
+      "id": "lv_sound_022",
+      "difficulty": "intermediate",
+      "question": "What is an audio matrix?",
+      "options": [
+        "Speaker array",
+        "System allowing any input to be routed to any output or combination",
+        "Wire configuration",
+        "Amplifier bank"
+      ],
+      "correct_answer": 1,
+      "explanation": "An audio matrix allows flexible routing of any audio input to any output or combination of outputs.",
+      "code_reference": "Audio engineering"
+    },
+    {
+      "id": "lv_sound_023",
+      "difficulty": "intermediate",
+      "question": "What is feedback in sound systems?",
+      "options": [
+        "User opinion",
+        "Howling/squealing from microphone picking up its own amplified sound",
+        "Audio recording",
+        "Volume control"
+      ],
+      "correct_answer": 1,
+      "explanation": "Feedback occurs when amplified sound from speakers is picked up by a microphone, creating a loop.",
+      "code_reference": "Audio engineering"
+    },
+    {
+      "id": "lv_sound_024",
+      "difficulty": "intermediate",
+      "question": "What is a mass notification system (MNS)?",
+      "options": [
+        "Background music",
+        "System for emergency announcements reaching all building occupants",
+        "Telephone",
+        "Intercom"
+      ],
+      "correct_answer": 1,
+      "explanation": "MNS provides emergency notifications (voice, text, visual) to all occupants during emergencies.",
+      "code_reference": "NFPA 72 Chapter 24"
+    },
+    {
+      "id": "lv_sound_025",
+      "difficulty": "intermediate",
+      "question": "What is required for paging system intelligibility?",
+      "options": [
+        "Maximum volume",
+        "STI (Speech Transmission Index) of 0.50 or greater typical",
+        "Bass boost",
+        "Stereo sound"
+      ],
+      "correct_answer": 1,
+      "explanation": "Speech intelligibility requires adequate STI rating (0.50+ typical) ensuring announcements can be understood.",
+      "code_reference": "IEC 60268-16"
+    },
+    {
+      "id": "lv_sound_026",
+      "difficulty": "intermediate",
+      "question": "What is speaker impedance matching?",
+      "options": [
+        "Color matching",
+        "Ensuring amplifier output impedance works properly with speaker load",
+        "Volume matching",
+        "Cable matching"
+      ],
+      "correct_answer": 1,
+      "explanation": "Impedance matching ensures the amplifier output impedance is compatible with the total speaker load.",
+      "code_reference": "Audio engineering"
+    },
+    {
+      "id": "lv_sound_027",
+      "difficulty": "intermediate",
+      "question": "What is the function of a compressor/limiter in audio systems?",
+      "options": [
+        "Increase volume",
+        "Control dynamic range and prevent overloading/clipping",
+        "Add effects",
+        "Record audio"
+      ],
+      "correct_answer": 1,
+      "explanation": "Compressors/limiters control audio dynamic range and prevent speaker/amplifier damage from excessive levels.",
+      "code_reference": "Audio engineering"
+    },
+    {
+      "id": "lv_sound_028",
+      "difficulty": "advanced",
+      "question": "What is EASE or CATT-Acoustic?",
+      "options": [
+        "Speaker brands",
+        "Room acoustics modeling software for sound system design",
+        "Audio protocols",
+        "Cable types"
+      ],
+      "correct_answer": 1,
+      "explanation": "EASE and CATT-Acoustic are software tools for modeling room acoustics and predicting sound system performance.",
+      "code_reference": "Audio engineering design"
+    },
+    {
+      "id": "lv_sound_029",
+      "difficulty": "advanced",
+      "question": "What is beam steering in speaker arrays?",
+      "options": [
+        "Physical aiming",
+        "Electronic control of vertical coverage pattern using DSP and phased arrays",
+        "Volume control",
+        "Frequency adjustment"
+      ],
+      "correct_answer": 1,
+      "explanation": "Beam steering uses DSP to electronically control the vertical coverage pattern of column speakers.",
+      "code_reference": "Audio engineering"
+    },
+    {
+      "id": "lv_sound_030",
+      "difficulty": "advanced",
+      "question": "What is reverberation time (RT60)?",
+      "options": [
+        "Equipment startup time",
+        "Time for sound to decay 60dB after source stops",
+        "Delay time",
+        "Recording time"
+      ],
+      "correct_answer": 1,
+      "explanation": "RT60 is the time required for sound to decay 60dB after the source stops, indicating room reverberance.",
+      "code_reference": "ISO 3382"
+    },
+    {
+      "id": "lv_sound_031",
+      "difficulty": "advanced",
+      "question": "What is the relationship between RT60 and intelligibility?",
+      "options": [
+        "No relationship",
+        "Excessive RT60 (reverb) reduces speech intelligibility",
+        "Higher is better",
+        "Only affects music"
+      ],
+      "correct_answer": 1,
+      "explanation": "Excessive reverberation (high RT60) causes speech to blur and overlap, reducing intelligibility.",
+      "code_reference": "Audio engineering/acoustics"
+    },
+    {
+      "id": "lv_sound_032",
+      "difficulty": "advanced",
+      "question": "What is AES67 in audio networking?",
+      "options": [
+        "Speaker standard",
+        "Interoperability standard for audio-over-IP systems",
+        "Amplifier specification",
+        "Microphone type"
+      ],
+      "correct_answer": 1,
+      "explanation": "AES67 provides interoperability between different audio-over-IP protocols like Dante, Ravenna, and Livewire.",
+      "code_reference": "AES67 Standard"
+    },
+    {
+      "id": "lv_sound_033",
+      "difficulty": "advanced",
+      "question": "How do you calculate total power for a 70V speaker run?",
+      "options": [
+        "Add all speaker watts",
+        "Sum all tap settings; ensure total does not exceed amplifier rating",
+        "Multiply speakers by voltage",
+        "Divide by distance"
+      ],
+      "correct_answer": 1,
+      "explanation": "Total power draw is the sum of all speaker tap settings; amplifier must be rated at or above this total.",
+      "code_reference": "Audio engineering"
+    },
+    {
+      "id": "lv_sound_034",
+      "difficulty": "advanced",
+      "question": "What is required for mass notification audio intelligibility per NFPA 72?",
+      "options": [
+        "Any level",
+        "Minimum STI of 0.50 or CIS of 0.70 for emergency voice/alarm",
+        "Maximum volume",
+        "Low frequency response"
+      ],
+      "correct_answer": 1,
+      "explanation": "NFPA 72 requires STI of 0.50 minimum or CIS of 0.70 for emergency voice/alarm communication.",
+      "code_reference": "NFPA 72 Chapter 18"
+    },
+    {
+      "id": "lv_sound_035",
+      "difficulty": "advanced",
+      "question": "What is direct/reverberant field ratio and why does it matter?",
+      "options": [
+        "Stereo balance",
+        "Ratio of direct sound to reflected sound affecting intelligibility",
+        "Channel count",
+        "Power rating"
+      ],
+      "correct_answer": 1,
+      "explanation": "Higher direct-to-reverberant ratio improves intelligibility by ensuring direct sound dominates over reflections.",
+      "code_reference": "Audio engineering/acoustics"
+    }
+  ]
+}

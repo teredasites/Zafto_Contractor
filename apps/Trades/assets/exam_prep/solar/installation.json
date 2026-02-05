@@ -1,0 +1,2052 @@
+{
+  "metadata": {
+    "trade": "solar",
+    "category": "Installation",
+    "total_questions": 120,
+    "last_updated": "2026-01-31",
+    "code_references": ["OSHA 1926", "IBC 2021", "NABCEP PV Installation Professional", "Manufacturer Installation Manuals"],
+    "exam_sources": ["NABCEP PVIP", "State Solar Contractor Exams", "OSHA 10/30"]
+  },
+  "questions": [
+    {
+      "id": "solar-install-001",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Fall Protection",
+      "question": "Per OSHA 1926.501, fall protection is required when working at heights above:",
+      "options": [
+        { "id": "a", "text": "4 feet" },
+        { "id": "b", "text": "6 feet", "correct": true },
+        { "id": "c", "text": "10 feet" },
+        { "id": "d", "text": "15 feet" }
+      ],
+      "explanation": "OSHA 1926.501(b)(1) requires fall protection for construction workers at 6 feet or more above a lower level. This applies to most residential and commercial PV roof installations. Fall protection includes guardrails, safety nets, or personal fall arrest systems.",
+      "code_ref": "OSHA 1926.501(b)(1)",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "OSHA 10/30"]
+    },
+    {
+      "id": "solar-install-002",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Fall Protection",
+      "question": "A personal fall arrest system (PFAS) consists of:",
+      "options": [
+        { "id": "a", "text": "Hard hat and safety glasses" },
+        { "id": "b", "text": "Full body harness, lanyard/SRL, and anchor point", "correct": true },
+        { "id": "c", "text": "Safety vest only" },
+        { "id": "d", "text": "Steel-toed boots" }
+      ],
+      "explanation": "A complete PFAS includes a full-body harness worn by the worker, a connecting device (lanyard or self-retracting lifeline), and an anchor point rated for 5,000 lbs or designed by a qualified person for the intended load.",
+      "code_ref": "OSHA 1926.502(d)",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "OSHA 10/30"]
+    },
+    {
+      "id": "solar-install-003",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Fall Protection",
+      "question": "Per OSHA, anchor points for personal fall arrest systems must be capable of supporting:",
+      "options": [
+        { "id": "a", "text": "1,000 lbs per worker" },
+        { "id": "b", "text": "5,000 lbs per worker attached", "correct": true },
+        { "id": "c", "text": "500 lbs per worker" },
+        { "id": "d", "text": "Weight of the worker only" }
+      ],
+      "explanation": "OSHA 1926.502(d)(15) requires anchorages for personal fall arrest to support 5,000 lbs per employee attached, or be designed by a qualified person with a safety factor of 2. Roof anchors must be properly installed to structural members.",
+      "code_ref": "OSHA 1926.502(d)(15)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "OSHA 10/30"]
+    },
+    {
+      "id": "solar-install-004",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Ladder Safety",
+      "question": "When using an extension ladder to access a roof, the ladder should extend above the landing surface by at least:",
+      "options": [
+        { "id": "a", "text": "1 foot" },
+        { "id": "b", "text": "3 feet", "correct": true },
+        { "id": "c", "text": "5 feet" },
+        { "id": "d", "text": "No extension required" }
+      ],
+      "explanation": "OSHA 1926.1053(b)(1) requires ladders to extend at least 3 feet above the upper landing surface when used for roof access. This provides a handhold for safe transition on and off the ladder.",
+      "code_ref": "OSHA 1926.1053(b)(1)",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "OSHA 10/30"]
+    },
+    {
+      "id": "solar-install-005",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Ladder Safety",
+      "question": "The proper angle for setting up an extension ladder is approximately:",
+      "options": [
+        { "id": "a", "text": "90 degrees (vertical)" },
+        { "id": "b", "text": "75 degrees (4:1 ratio)", "correct": true },
+        { "id": "c", "text": "45 degrees" },
+        { "id": "d", "text": "60 degrees" }
+      ],
+      "explanation": "The 4-to-1 rule: for every 4 feet of height, the base should be 1 foot from the wall (approximately 75° angle). This provides optimal stability. Too steep risks tipping backward; too shallow risks sliding out.",
+      "code_ref": "OSHA Ladder Safety",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "OSHA 10/30"]
+    },
+    {
+      "id": "solar-install-006",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "PPE",
+      "question": "What PPE is required when working with PV systems?",
+      "options": [
+        { "id": "a", "text": "No PPE required" },
+        { "id": "b", "text": "Safety glasses, gloves, hard hat, and appropriate footwear at minimum", "correct": true },
+        { "id": "c", "text": "Only a hard hat" },
+        { "id": "d", "text": "Steel-toed boots only" }
+      ],
+      "explanation": "Basic PPE for PV installation includes safety glasses (debris/UV protection), work gloves (cuts, module edges), hard hat (overhead hazards), and sturdy footwear with good traction. Additional PPE depends on specific hazards present.",
+      "code_ref": "OSHA 1926.95, NABCEP Safety",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-007",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Electrical Safety",
+      "question": "Before working on DC PV circuits, what should be done first?",
+      "options": [
+        { "id": "a", "text": "Just wear gloves" },
+        { "id": "b", "text": "Open disconnects, verify zero energy, and cover modules if possible", "correct": true },
+        { "id": "c", "text": "Work only at night" },
+        { "id": "d", "text": "No precautions needed" }
+      ],
+      "explanation": "PV arrays produce power whenever exposed to light. Open all accessible disconnects, use a meter to verify zero voltage, and cover modules with opaque material if working on energized circuits is unavoidable. Use insulated tools and PPE.",
+      "code_ref": "NFPA 70E, OSHA Electrical Safety",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-008",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Electrical Safety",
+      "question": "Covering PV modules with opaque material reduces voltage to approximately:",
+      "options": [
+        { "id": "a", "text": "Zero volts immediately" },
+        { "id": "b", "text": "10-20% of full voltage", "correct": true },
+        { "id": "c", "text": "50% of full voltage" },
+        { "id": "d", "text": "No reduction" }
+      ],
+      "explanation": "Even covered modules produce some voltage from ambient light. Complete darkness reduces Voc to near zero, but opaque covers typically reduce to 10-20% of full sun voltage. Verify with meter before assuming de-energized.",
+      "code_ref": "PV Safety Practices",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-009",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Roof Types",
+      "question": "Which residential roof type is most common for PV installations in the US?",
+      "options": [
+        { "id": "a", "text": "Clay tile" },
+        { "id": "b", "text": "Asphalt shingle (composition)", "correct": true },
+        { "id": "c", "text": "Slate" },
+        { "id": "d", "text": "Thatch" }
+      ],
+      "explanation": "Asphalt shingle (composition) roofing is the most common residential roof type in the US. Standard roof attachments with flashing work well with this material. Other roof types require specialized mounting hardware.",
+      "code_ref": "Roofing Industry Standards",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-010",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Roof Types",
+      "question": "When installing on a standing seam metal roof, the preferred attachment method is:",
+      "options": [
+        { "id": "a", "text": "Lag bolts through the seam" },
+        { "id": "b", "text": "Non-penetrating clamps that grip the seam", "correct": true },
+        { "id": "c", "text": "Adhesive only" },
+        { "id": "d", "text": "Ballasted blocks" }
+      ],
+      "explanation": "Standing seam clamps grip the raised seams without penetrating the roof membrane, preserving waterproofing. Various clamp styles fit different seam profiles. This attachment method is faster and eliminates potential leak points.",
+      "code_ref": "Metal Roof Attachment Methods",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-011",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Roof Types",
+      "question": "Tile roofs require special care during PV installation because:",
+      "options": [
+        { "id": "a", "text": "Tiles are extremely strong" },
+        { "id": "b", "text": "Tiles are fragile and break easily under foot traffic", "correct": true },
+        { "id": "c", "text": "Tiles don't support any weight" },
+        { "id": "d", "text": "Tiles are already waterproof" }
+      ],
+      "explanation": "Clay and concrete tiles break easily when walked on. Use foam pads, walk on the lower third of tiles, and use tile hooks that replace or work with existing tiles. Broken tiles must be replaced to maintain waterproofing.",
+      "code_ref": "Tile Roof Installation",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-012",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Flashing",
+      "question": "The primary purpose of roof flashing at PV attachment points is to:",
+      "options": [
+        { "id": "a", "text": "Increase attachment strength" },
+        { "id": "b", "text": "Prevent water intrusion at penetrations", "correct": true },
+        { "id": "c", "text": "Improve appearance" },
+        { "id": "d", "text": "Ground the system" }
+      ],
+      "explanation": "Flashings are metal or composite plates installed under roofing material around lag bolt penetrations. They channel water away from the penetration, preventing leaks. Proper flashing installation is critical for long-term roof integrity.",
+      "code_ref": "Roofing Best Practices",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-013",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Flashing",
+      "question": "When installing flashings on an asphalt shingle roof, the flashing should be placed:",
+      "options": [
+        { "id": "a", "text": "On top of all shingles" },
+        { "id": "b", "text": "Under upper shingles and over lower shingles", "correct": true },
+        { "id": "c", "text": "Under all shingles" },
+        { "id": "d", "text": "Position doesn't matter" }
+      ],
+      "explanation": "Flashings are woven into the shingle pattern: the upper portion slides under the shingles above, while the lower portion overlaps the shingles below. This sheds water like fish scales and prevents water from reaching the penetration.",
+      "code_ref": "Roofing Installation Standards",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-014",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Lag Bolts",
+      "question": "Lag bolts for PV roof attachments should penetrate into the rafter by at least:",
+      "options": [
+        { "id": "a", "text": "1/2 inch" },
+        { "id": "b", "text": "1-1/2 inches to 2 inches", "correct": true },
+        { "id": "c", "text": "4 inches" },
+        { "id": "d", "text": "Through the entire rafter" }
+      ],
+      "explanation": "Most manufacturer specifications require 1.5-2 inches of thread engagement in solid wood. The total lag length must account for roofing material, sheathing, and required penetration. Longer lags may be needed for thick roofing assemblies.",
+      "code_ref": "Racking Manufacturer Specifications",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-015",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Lag Bolts",
+      "question": "Before installing a lag bolt, a pilot hole should be drilled that is:",
+      "options": [
+        { "id": "a", "text": "The same diameter as the lag" },
+        { "id": "b", "text": "Approximately 70% of the lag shank diameter", "correct": true },
+        { "id": "c", "text": "Larger than the lag" },
+        { "id": "d", "text": "No pilot hole needed" }
+      ],
+      "explanation": "Pilot holes prevent wood splitting and ensure proper thread engagement. The hole diameter should be about 70% of the lag shank (for the unthreaded portion) and 60-70% of root diameter for the threaded portion in dense wood.",
+      "code_ref": "Fastener Installation Standards",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-016",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Rafter Location",
+      "question": "What is the most reliable method to locate roof rafters for PV attachment?",
+      "options": [
+        { "id": "a", "text": "Assume 16 inches on center everywhere" },
+        { "id": "b", "text": "Attic inspection and measurement from reference points", "correct": true },
+        { "id": "c", "text": "Use a magnet on the roof surface" },
+        { "id": "d", "text": "Guess based on house age" }
+      ],
+      "explanation": "Attic inspection allows visual confirmation of rafter locations, size, spacing, and condition. Measurements from a reference point (vent pipe, roof edge) transfer to the roof surface. Stud finders often fail through multiple roof layers.",
+      "code_ref": "NABCEP Site Assessment",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-017",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Rafter Location",
+      "question": "If a lag bolt misses the rafter, what should be done?",
+      "options": [
+        { "id": "a", "text": "Leave it and add another nearby" },
+        { "id": "b", "text": "Fill the hole, seal properly, and install at correct location", "correct": true },
+        { "id": "c", "text": "Use a longer lag bolt" },
+        { "id": "d", "text": "Ignore it" }
+      ],
+      "explanation": "A missed rafter creates a leak point without structural attachment. Remove the lag, fill the hole with appropriate sealant, install flashing if needed, and drill a new hole at the correct rafter location. Don't leave orphan penetrations.",
+      "code_ref": "Installation Best Practices",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-018",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Rails",
+      "question": "Racking rails should be installed with what orientation relative to modules?",
+      "options": [
+        { "id": "a", "text": "Always perpendicular to module length" },
+        { "id": "b", "text": "Per manufacturer specifications, typically perpendicular to module long edge", "correct": true },
+        { "id": "c", "text": "Always parallel to rafters" },
+        { "id": "d", "text": "Orientation doesn't matter" }
+      ],
+      "explanation": "Most racking systems require rails perpendicular to the module's long edge (portrait orientation) to properly support the frame. Manufacturer specifications define rail spacing based on module dimensions and structural requirements.",
+      "code_ref": "Racking Installation Manuals",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-019",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Rails",
+      "question": "Rail splices connecting two rail sections should be:",
+      "options": [
+        { "id": "a", "text": "Between attachment points, unsupported" },
+        { "id": "b", "text": "At or near an attachment point for structural support", "correct": true },
+        { "id": "c", "text": "At the end of the array" },
+        { "id": "d", "text": "Splices are not allowed" }
+      ],
+      "explanation": "Rail splices should be located at or near roof attachment points to ensure the splice is structurally supported. Unsupported splices can flex under load, potentially causing equipment damage or array failure.",
+      "code_ref": "Racking Installation Manuals",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-020",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Module Clamps",
+      "question": "End clamps are used to secure:",
+      "options": [
+        { "id": "a", "text": "Rails to roof attachments" },
+        { "id": "b", "text": "Modules at the outside edges of the array", "correct": true },
+        { "id": "c", "text": "Modules in the middle of the array" },
+        { "id": "d", "text": "Wiring to the rails" }
+      ],
+      "explanation": "End clamps secure modules at the perimeter of the array where only one module frame is present. They grip the outer edge of the module frame and fasten to the rail. Mid clamps secure adjacent module frames together.",
+      "code_ref": "Racking Components",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-021",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Module Clamps",
+      "question": "Mid clamps are used to secure:",
+      "options": [
+        { "id": "a", "text": "Rails together" },
+        { "id": "b", "text": "Two adjacent module frames simultaneously", "correct": true },
+        { "id": "c", "text": "Modules at the edge only" },
+        { "id": "d", "text": "The inverter to the wall" }
+      ],
+      "explanation": "Mid clamps secure two adjacent module frames at their junction point with a single fastener. They grip both frames and mount to the rail. Using mid clamps between modules reduces hardware and installation time.",
+      "code_ref": "Racking Components",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-022",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Module Clamps",
+      "question": "Clamps must be positioned within the module manufacturer's specified:",
+      "options": [
+        { "id": "a", "text": "Color range" },
+        { "id": "b", "text": "Clamping zone on the frame", "correct": true },
+        { "id": "c", "text": "Warranty period" },
+        { "id": "d", "text": "Shipping box" }
+      ],
+      "explanation": "Module manufacturers specify clamping zones—typically 100-300mm from corners—where the frame is reinforced for mounting loads. Clamping outside this zone can void warranty and risk frame damage under wind/snow loads.",
+      "code_ref": "Module Installation Manuals",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-023",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Torque",
+      "question": "Why is proper torque important for PV mounting hardware?",
+      "options": [
+        { "id": "a", "text": "It doesn't matter" },
+        { "id": "b", "text": "Under-torque risks loosening; over-torque can damage components", "correct": true },
+        { "id": "c", "text": "Only for appearance" },
+        { "id": "d", "text": "To meet color requirements" }
+      ],
+      "explanation": "Proper torque ensures secure connections without damage. Under-torqued fasteners can loosen from vibration and thermal cycling. Over-torqued fasteners can strip threads, crack components, or damage module frames.",
+      "code_ref": "Fastener Specifications",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-024",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Torque",
+      "question": "A torque wrench should be used for:",
+      "options": [
+        { "id": "a", "text": "Only structural bolts" },
+        { "id": "b", "text": "All fasteners with specified torque values", "correct": true },
+        { "id": "c", "text": "Never on PV systems" },
+        { "id": "d", "text": "Only electrical connections" }
+      ],
+      "explanation": "Torque wrenches ensure consistent, correct tightening per manufacturer specifications. This includes lag bolts, module clamps, rail splices, grounding lugs, and electrical connections. Document torque verification for quality assurance.",
+      "code_ref": "Installation Quality Standards",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-025",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Grounding",
+      "question": "Module frame grounding can be accomplished using:",
+      "options": [
+        { "id": "a", "text": "Paint contact only" },
+        { "id": "b", "text": "Listed grounding washers, lugs, or WEEB clips", "correct": true },
+        { "id": "c", "text": "Tape" },
+        { "id": "d", "text": "No grounding required" }
+      ],
+      "explanation": "Listed grounding devices (WEEB, lay-in lugs, grounding washers) pierce anodized aluminum to create reliable electrical contact between module frames, racking, and the equipment grounding conductor. Self-tapping screws alone don't ensure proper grounding.",
+      "code_ref": "NEC 690.43, UL Grounding Devices",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-026",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Grounding",
+      "question": "When using grounding washers between module frame and clamp, the washer teeth must:",
+      "options": [
+        { "id": "a", "text": "Face away from both surfaces" },
+        { "id": "b", "text": "Penetrate anodizing on both the frame and clamp", "correct": true },
+        { "id": "c", "text": "Only contact the clamp" },
+        { "id": "d", "text": "Be covered with sealant" }
+      ],
+      "explanation": "Star washers or grounding washers have teeth that pierce the anodized coating on aluminum to create metal-to-metal contact. Both the module frame and the grounding clamp/rail must be penetrated for proper bonding continuity.",
+      "code_ref": "Equipment Grounding Methods",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-027",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Wire Management",
+      "question": "PV module cables (home runs) should be:",
+      "options": [
+        { "id": "a", "text": "Left hanging loose" },
+        { "id": "b", "text": "Secured to racking, protected from damage, with drip loops", "correct": true },
+        { "id": "c", "text": "Tied to the roof surface" },
+        { "id": "d", "text": "Run through the attic without support" }
+      ],
+      "explanation": "Cables must be secured to prevent wind damage, abrasion, and wildlife access. Use listed cable clips or ties. Create drip loops at junction boxes so water runs off rather than into connections. Maintain proper bend radius.",
+      "code_ref": "NEC 690.31, Installation Best Practices",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-028",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Wire Management",
+      "question": "The minimum bend radius for PV cables is typically:",
+      "options": [
+        { "id": "a", "text": "Sharp 90-degree bends are acceptable" },
+        { "id": "b", "text": "4-6 times the cable diameter", "correct": true },
+        { "id": "c", "text": "1 times the cable diameter" },
+        { "id": "d", "text": "No minimum" }
+      ],
+      "explanation": "Excessive bending damages conductor insulation and can create weak points. Most cable specifications require minimum bend radius of 4-6 times the outer cable diameter. Use gradual curves, not sharp bends, at all routing transitions.",
+      "code_ref": "Cable Installation Standards",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-029",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Connectors",
+      "question": "MC4-style PV connectors should be installed using:",
+      "options": [
+        { "id": "a", "text": "Pliers to crimp and insert" },
+        { "id": "b", "text": "Manufacturer-specified crimping and assembly tools", "correct": true },
+        { "id": "c", "text": "Soldering" },
+        { "id": "d", "text": "Tape to hold together" }
+      ],
+      "explanation": "MC4 connectors require specific crimping tools to achieve proper compression on the conductor. Assembly tools insert the crimped contact into the housing. Improper assembly causes high resistance, overheating, and potential arc faults.",
+      "code_ref": "Connector Manufacturer Instructions",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-030",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Connectors",
+      "question": "Mixing different brands of PV connectors (e.g., MC4-compatible) is:",
+      "options": [
+        { "id": "a", "text": "Always acceptable" },
+        { "id": "b", "text": "Not recommended—can cause poor connections and void warranties", "correct": true },
+        { "id": "c", "text": "Required by code" },
+        { "id": "d", "text": "Only acceptable indoors" }
+      ],
+      "explanation": "While connectors may appear compatible, slight dimensional differences between brands can cause poor contact, water ingress, and premature failure. Use matched connectors from the same manufacturer. Mismatched connectors may void equipment warranties.",
+      "code_ref": "Connector Compatibility",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-031",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Connectors",
+      "question": "PV connectors should be mated by:",
+      "options": [
+        { "id": "a", "text": "Pushing until they click" },
+        { "id": "b", "text": "Pushing firmly until the locking mechanism engages with an audible click", "correct": true },
+        { "id": "c", "text": "Using pliers to force together" },
+        { "id": "d", "text": "Twisting only" }
+      ],
+      "explanation": "Properly mated MC4 connectors produce an audible/tactile click when the internal locking mechanism engages. A firm push (not excessive force) is required. Pull back gently to verify the connection is locked.",
+      "code_ref": "Connector Installation",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-032",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Connectors",
+      "question": "To disconnect MC4 connectors safely:",
+      "options": [
+        { "id": "a", "text": "Pull hard on the cables" },
+        { "id": "b", "text": "Use the disconnect tool to release the locking mechanism", "correct": true },
+        { "id": "c", "text": "Cut the cables" },
+        { "id": "d", "text": "Use a screwdriver to pry apart" }
+      ],
+      "explanation": "MC4 connectors have internal locking tabs that require a specific disconnect tool to release. Pulling on cables damages the crimps and can cause future failures. The disconnect tool compresses the locking tabs allowing separation.",
+      "code_ref": "Connector Tools",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-033",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Structural",
+      "question": "The typical dead load of a flush-mounted residential PV system is:",
+      "options": [
+        { "id": "a", "text": "0.5-1 psf" },
+        { "id": "b", "text": "2-4 psf", "correct": true },
+        { "id": "c", "text": "10-15 psf" },
+        { "id": "d", "text": "20-25 psf" }
+      ],
+      "explanation": "Flush-mounted crystalline silicon systems typically add 2-4 pounds per square foot (psf) dead load including modules, racking, and hardware. Most code-compliant residential roofs can support this additional load without structural modifications.",
+      "code_ref": "IBC Structural Loads",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-034",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Structural",
+      "question": "When is a structural engineering analysis typically required for PV installation?",
+      "options": [
+        { "id": "a", "text": "Never" },
+        { "id": "b", "text": "When dead load exceeds prescriptive limits or roof is non-standard", "correct": true },
+        { "id": "c", "text": "For all residential systems" },
+        { "id": "d", "text": "Only for ground mounts" }
+      ],
+      "explanation": "Structural analysis is required when loads exceed prescriptive limits, for unusual roof framing, older buildings, ground-mounted systems, carports, or as required by AHJ. Many jurisdictions accept prescriptive compliance letters for standard residential roofs.",
+      "code_ref": "IBC, AHJ Requirements",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-035",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Structural",
+      "question": "Wind loads on PV arrays are highest at:",
+      "options": [
+        { "id": "a", "text": "The center of the array" },
+        { "id": "b", "text": "Corners and edges of the array and roof", "correct": true },
+        { "id": "c", "text": "The lowest point" },
+        { "id": "d", "text": "Wind loads are uniform" }
+      ],
+      "explanation": "Wind creates highest uplift and turbulence at roof edges, corners, and ridges (Zone 3 per ASCE 7). Arrays in these zones require additional attachments or setbacks. Interior zones (Zone 1) have lowest wind loads.",
+      "code_ref": "ASCE 7 Wind Zones",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-036",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Ballasted Systems",
+      "question": "Ballasted mounting systems use weight instead of penetrations and are typically used on:",
+      "options": [
+        { "id": "a", "text": "Steep residential roofs" },
+        { "id": "b", "text": "Flat or low-slope commercial roofs", "correct": true },
+        { "id": "c", "text": "Ground mounts only" },
+        { "id": "d", "text": "All roof types" }
+      ],
+      "explanation": "Ballasted systems use concrete blocks or integrated weight to hold panels against wind uplift without roof penetrations. Common on flat commercial membrane roofs (TPO, EPDM) where penetrations risk leaks. Roof must support the additional weight.",
+      "code_ref": "Commercial Mounting",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-037",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Ballasted Systems",
+      "question": "Ballasted systems require additional weight in roof zones with:",
+      "options": [
+        { "id": "a", "text": "Lower wind exposure" },
+        { "id": "b", "text": "Higher wind uplift (corners and edges)", "correct": true },
+        { "id": "c", "text": "Interior positions" },
+        { "id": "d", "text": "All zones require equal weight" }
+      ],
+      "explanation": "Wind maps show corners and edges experience higher uplift. Ballast layout calculations add more weight blocks in edge and corner zones, with less in interior zones. Software tools optimize ballast distribution while minimizing total weight.",
+      "code_ref": "ASCE 7, Ballast Calculations",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-038",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Ground Mount",
+      "question": "Common foundation types for ground-mounted PV include:",
+      "options": [
+        { "id": "a", "text": "Only poured concrete" },
+        { "id": "b", "text": "Driven piles, ground screws, concrete ballast, or poured footings", "correct": true },
+        { "id": "c", "text": "Only wooden posts" },
+        { "id": "d", "text": "No foundation needed" }
+      ],
+      "explanation": "Ground mount foundations vary by soil conditions and design. Driven steel piles work in most soils, ground screws provide easy installation, concrete ballast blocks work on hard surfaces, and poured footings provide maximum strength in challenging soils.",
+      "code_ref": "Ground Mount Engineering",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-039",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Ground Mount",
+      "question": "Before installing ground mount foundations, what should be verified?",
+      "options": [
+        { "id": "a", "text": "Only property boundaries" },
+        { "id": "b", "text": "Underground utilities (call 811), soil conditions, and setbacks", "correct": true },
+        { "id": "c", "text": "Nothing special required" },
+        { "id": "d", "text": "Only the soil color" }
+      ],
+      "explanation": "Call 811 before digging to locate underground utilities (gas, electric, water, telecom). Verify soil type for foundation design, confirm property setbacks, and check for easements or restricted areas. Hitting utilities is dangerous and costly.",
+      "code_ref": "OSHA Excavation, Utility Locate",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-040",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Ground Mount",
+      "question": "Row spacing in ground-mount arrays is determined primarily by:",
+      "options": [
+        { "id": "a", "text": "Module color" },
+        { "id": "b", "text": "Preventing inter-row shading during critical sun hours", "correct": true },
+        { "id": "c", "text": "Equipment brand" },
+        { "id": "d", "text": "Wire length only" }
+      ],
+      "explanation": "Row spacing prevents shading from one row onto the next during critical production hours (typically 9 AM - 3 PM) at winter solstice when sun is lowest. Spacing depends on latitude, tilt angle, and table height. Tighter spacing sacrifices some winter production.",
+      "code_ref": "Array Layout Design",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-041",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Inverter Mounting",
+      "question": "String inverters should be mounted in locations that:",
+      "options": [
+        { "id": "a", "text": "Receive direct sunlight for best operation" },
+        { "id": "b", "text": "Are shaded, ventilated, and protected from weather", "correct": true },
+        { "id": "c", "text": "Are inside the attic" },
+        { "id": "d", "text": "Are below flood level" }
+      ],
+      "explanation": "Inverters generate heat and derate at high temperatures. Mount in shaded, well-ventilated locations—north walls, under eaves, or indoors. Protect from direct rain and maintain manufacturer clearances for airflow. Avoid enclosed unventilated spaces.",
+      "code_ref": "Inverter Installation Manuals",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-042",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Inverter Mounting",
+      "question": "Inverter mounting height should allow:",
+      "options": [
+        { "id": "a", "text": "Installation above 10 feet for security" },
+        { "id": "b", "text": "Display visibility and access for maintenance", "correct": true },
+        { "id": "c", "text": "Only ground-level installation" },
+        { "id": "d", "text": "Hidden installation behind walls" }
+      ],
+      "explanation": "Mount inverters at accessible height for monitoring, maintenance, and disconnect operation. Display screens should be visible. Maintain working space per NEC 110.26. Consider future maintenance needs when selecting location.",
+      "code_ref": "NEC 110.26, Installation Practices",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-043",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Inverter Mounting",
+      "question": "Manufacturer-specified clearances around inverters are important for:",
+      "options": [
+        { "id": "a", "text": "Appearance only" },
+        { "id": "b", "text": "Heat dissipation and service access", "correct": true },
+        { "id": "c", "text": "Warranty registration" },
+        { "id": "d", "text": "They are just suggestions" }
+      ],
+      "explanation": "Inverters require airspace for heat dissipation—blocking vents causes overheating and derating. Service access requires space for DC/AC disconnects, display viewing, and potential replacement. Follow manufacturer specifications exactly.",
+      "code_ref": "Inverter Installation Manuals",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-044",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Microinverters",
+      "question": "Microinverters are typically mounted:",
+      "options": [
+        { "id": "a", "text": "On a garage wall" },
+        { "id": "b", "text": "Directly behind each PV module on the racking", "correct": true },
+        { "id": "c", "text": "In the attic" },
+        { "id": "d", "text": "At the main panel" }
+      ],
+      "explanation": "Microinverters mount behind each module, typically on the racking rail. They connect to the module's DC output and output AC to a trunk cable. This distributed approach eliminates DC home runs and simplifies string design.",
+      "code_ref": "Microinverter Installation",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-045",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Microinverters",
+      "question": "The AC trunk cable in a microinverter system connects:",
+      "options": [
+        { "id": "a", "text": "Modules in series for higher voltage" },
+        { "id": "b", "text": "All microinverters to a common AC circuit", "correct": true },
+        { "id": "c", "text": "The array to batteries" },
+        { "id": "d", "text": "Nothing—each micro has separate wiring" }
+      ],
+      "explanation": "The trunk cable is a continuous cable with connectors at intervals matching module spacing. Each microinverter plugs into the trunk, which carries combined AC power to the junction box and then to the electrical panel.",
+      "code_ref": "Microinverter Systems",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-046",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "DC Optimizers",
+      "question": "DC power optimizers are installed:",
+      "options": [
+        { "id": "a", "text": "At the main panel" },
+        { "id": "b", "text": "Behind each module, between module and string inverter", "correct": true },
+        { "id": "c", "text": "Inside the inverter" },
+        { "id": "d", "text": "Underground" }
+      ],
+      "explanation": "Optimizers mount behind each module on the racking. They connect to the module's DC output and output conditioned DC to the string wiring. The string inverter receives optimized DC from all modules in the string.",
+      "code_ref": "Optimizer Installation",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-047",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Conduit",
+      "question": "PV conduit exposed on rooftops should be:",
+      "options": [
+        { "id": "a", "text": "Any color" },
+        { "id": "b", "text": "UV-resistant and properly supported", "correct": true },
+        { "id": "c", "text": "Metal only" },
+        { "id": "d", "text": "Buried in the roof" }
+      ],
+      "explanation": "Rooftop conduit must withstand UV, temperature extremes, and physical exposure. EMT or rigid conduit is common; Schedule 80 PVC (gray) is rated for sunlight. Support conduit per NEC 358.30, 352.30. Consider rooftop temperature adder for conductors.",
+      "code_ref": "NEC 310.15(B)(2), 352.30",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-048",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Conduit",
+      "question": "When penetrating a roof for conduit, what is required?",
+      "options": [
+        { "id": "a", "text": "Just drill through and insert conduit" },
+        { "id": "b", "text": "Proper flashing and weatherproofing around the penetration", "correct": true },
+        { "id": "c", "text": "Only caulk the gap" },
+        { "id": "d", "text": "No weatherproofing needed" }
+      ],
+      "explanation": "Roof penetrations require proper flashing—roof jacks or pitch pockets—to prevent water intrusion. The flashing integrates with roofing material like any other penetration. Conduit must be properly sealed at the roof jack.",
+      "code_ref": "Roofing Standards",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-049",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Conduit Routing",
+      "question": "When routing conduit inside a building to the electrical panel, it should:",
+      "options": [
+        { "id": "a", "text": "Take the longest path for safety" },
+        { "id": "b", "text": "Take the shortest practical route in accessible locations", "correct": true },
+        { "id": "c", "text": "Pass through every room" },
+        { "id": "d", "text": "Route through the attic insulation" }
+      ],
+      "explanation": "Efficient conduit routing minimizes material cost, voltage drop, and labor. Keep runs accessible for future maintenance. Avoid inaccessible areas where possible. Plan routes during site assessment to account for obstacles.",
+      "code_ref": "NEC 690.31, Installation Practices",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-050",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Junction Boxes",
+      "question": "PV junction boxes on rooftops should be:",
+      "options": [
+        { "id": "a", "text": "Any interior-rated box" },
+        { "id": "b", "text": "Rated for wet locations (NEMA 3R or better)", "correct": true },
+        { "id": "c", "text": "Open for ventilation" },
+        { "id": "d", "text": "Plastic only" }
+      ],
+      "explanation": "Outdoor junction boxes must be suitable for wet locations to prevent water damage to connections. NEMA 3R or 4X ratings are appropriate. Proper knockouts with liquid-tight fittings maintain weatherproofing. Include drains if specified.",
+      "code_ref": "NEC 314.15",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-051",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Transitions",
+      "question": "When transitioning PV source circuit wiring from exposed (on roof) to inside conduit, what fitting is typically required?",
+      "options": [
+        { "id": "a", "text": "Standard coupling" },
+        { "id": "b", "text": "Weatherproof strain relief or weather head", "correct": true },
+        { "id": "c", "text": "No fitting needed" },
+        { "id": "d", "text": "Tape only" }
+      ],
+      "explanation": "Transition points where exposed PV cable enters conduit require weatherproof strain relief connectors or weather heads to prevent water entry and cable damage. The fitting must support the cable type and provide proper sealing.",
+      "code_ref": "NEC 690.31",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-052",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Labels",
+      "question": "Per NEC, PV system labels must be:",
+      "options": [
+        { "id": "a", "text": "Handwritten" },
+        { "id": "b", "text": "Permanent, weather-resistant, and legible", "correct": true },
+        { "id": "c", "text": "Temporary adhesive" },
+        { "id": "d", "text": "Only at the main panel" }
+      ],
+      "explanation": "NEC requires durable, permanent labels that remain legible over the system lifetime. Use UV-resistant materials for outdoor labels. Labels are required at disconnects, combiners, main panel, rapid shutdown controls, and as specified by 690.56.",
+      "code_ref": "NEC 690.56",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-053",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Labels",
+      "question": "What information is required on the label at a DC combiner box?",
+      "options": [
+        { "id": "a", "text": "Installer phone number only" },
+        { "id": "b", "text": "Maximum voltage, operating current, maximum current", "correct": true },
+        { "id": "c", "text": "Module brand only" },
+        { "id": "d", "text": "No label required" }
+      ],
+      "explanation": "Per NEC 690.53, DC junction/combiner boxes must be marked with: maximum system voltage, operating current, operating voltage, maximum circuit current. This helps maintenance personnel understand system parameters.",
+      "code_ref": "NEC 690.53",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-054",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Labels",
+      "question": "The label at the main service panel for a building with PV must indicate:",
+      "options": [
+        { "id": "a", "text": "System price" },
+        { "id": "b", "text": "Location of PV disconnect and presence of multiple power sources", "correct": true },
+        { "id": "c", "text": "Installation date only" },
+        { "id": "d", "text": "Module efficiency" }
+      ],
+      "explanation": "Per NEC 690.56(C), a permanent plaque at the service indicates the PV system disconnect location. Per 705.10, buildings with multiple power sources require directory showing all sources. This informs emergency responders.",
+      "code_ref": "NEC 690.56(C), 705.10",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-055",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Rapid Shutdown",
+      "question": "Rapid shutdown equipment installation requires:",
+      "options": [
+        { "id": "a", "text": "No special requirements" },
+        { "id": "b", "text": "Listed equipment and installation per manufacturer instructions", "correct": true },
+        { "id": "c", "text": "Only module-level electronics" },
+        { "id": "d", "text": "Battery backup" }
+      ],
+      "explanation": "Rapid shutdown equipment must be listed for the application. Installation follows manufacturer instructions for wiring, control connections, and integration. The system must function correctly when tested—verify by opening disconnect and measuring voltage decay.",
+      "code_ref": "NEC 690.12",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-056",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Rapid Shutdown",
+      "question": "The rapid shutdown initiation device should be located:",
+      "options": [
+        { "id": "a", "text": "On the roof near the array" },
+        { "id": "b", "text": "At a readily accessible location outside the building", "correct": true },
+        { "id": "c", "text": "Inside the attic" },
+        { "id": "d", "text": "Underground" }
+      ],
+      "explanation": "Per NEC 690.12(C), rapid shutdown initiators must be readily accessible. Often co-located with service disconnect or PV system disconnect. First responders must be able to quickly locate and operate rapid shutdown without special access.",
+      "code_ref": "NEC 690.12(C)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-057",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Fire Setbacks",
+      "question": "Per IFC and typical AHJ requirements, pathways for firefighter access on residential roofs must be at least:",
+      "options": [
+        { "id": "a", "text": "12 inches" },
+        { "id": "b", "text": "36 inches", "correct": true },
+        { "id": "c", "text": "6 feet" },
+        { "id": "d", "text": "No pathways required" }
+      ],
+      "explanation": "IFC 605.11 and most AHJs require 36-inch minimum pathways along roof ridges and from eave to ridge for firefighter access. Pathways allow roof ventilation during fire operations. Requirements vary—verify with local AHJ.",
+      "code_ref": "IFC 605.11",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-058",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Fire Setbacks",
+      "question": "Fire setbacks from roof edges are typically required at:",
+      "options": [
+        { "id": "a", "text": "Eaves only" },
+        { "id": "b", "text": "Eaves, ridges, hips, and valleys", "correct": true },
+        { "id": "c", "text": "Only the north side" },
+        { "id": "d", "text": "No setbacks required" }
+      ],
+      "explanation": "Fire codes typically require 18-36 inch setbacks from edges (eaves), 18-36 inches from ridges, and clear pathways at hips and valleys. These allow firefighter movement and ventilation access. Specific requirements vary by jurisdiction.",
+      "code_ref": "IFC 605.11, Local Amendments",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-059",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Panel Interconnection",
+      "question": "Per NEC 705.12(B)(2), where should the backfed PV breaker be positioned in the panelboard?",
+      "options": [
+        { "id": "a", "text": "Adjacent to the main breaker" },
+        { "id": "b", "text": "At the opposite end from the main breaker", "correct": true },
+        { "id": "c", "text": "In any available slot" },
+        { "id": "d", "text": "In a separate enclosure only" }
+      ],
+      "explanation": "Per NEC 705.12(B)(2)(3)(b), the backfed breaker must be at the opposite (load) end of the busbar from the main breaker. This ensures power flows across the entire busbar, preventing localized overheating.",
+      "code_ref": "NEC 705.12(B)(2)(3)(b)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-install-060",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Panel Interconnection",
+      "question": "When the 120% rule cannot be satisfied, what alternative exists?",
+      "options": [
+        { "id": "a", "text": "No alternatives available" },
+        { "id": "b", "text": "Reduce main breaker size or use supply-side connection", "correct": true },
+        { "id": "c", "text": "Use larger PV breaker" },
+        { "id": "d", "text": "Install without breaker" }
+      ],
+      "explanation": "If PV breaker + main exceeds 120% of busbar, options include: reducing main breaker size (e.g., 175A main allows 65A PV on 200A bus), or using supply-side connection per NEC 705.12(A) which bypasses the busbar limitation.",
+      "code_ref": "NEC 705.12(A), 705.12(B)(2)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-install-061",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Panel Interconnection",
+      "question": "A supply-side connection taps:",
+      "options": [
+        { "id": "a", "text": "After the main breaker" },
+        { "id": "b", "text": "Between the meter and main service disconnect", "correct": true },
+        { "id": "c", "text": "At a branch circuit breaker" },
+        { "id": "d", "text": "At the utility transformer" }
+      ],
+      "explanation": "Supply-side connections per NEC 705.12(A) tap between meter and main disconnect, on the line side of service protection. This bypasses busbar limitations but requires service-entrance rated equipment and coordination with utility.",
+      "code_ref": "NEC 705.12(A)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-install-062",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Breaker Installation",
+      "question": "Plug-in backfed breakers require what additional hardware?",
+      "options": [
+        { "id": "a", "text": "Nothing additional" },
+        { "id": "b", "text": "A retaining clip or listed fastener", "correct": true },
+        { "id": "c", "text": "Double-pole only" },
+        { "id": "d", "text": "A separate enclosure" }
+      ],
+      "explanation": "Per NEC 705.12(B)(7), plug-in type backfed breakers must be secured with an additional fastener to prevent inadvertent removal. Most panel manufacturers provide breaker retaining clips. Bolt-on breakers don't require additional fastening.",
+      "code_ref": "NEC 705.12(B)(7)",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-063",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Disconnect Installation",
+      "question": "The AC disconnect for a PV system should be installed:",
+      "options": [
+        { "id": "a", "text": "Inside a locked room" },
+        { "id": "b", "text": "Readily accessible, lockable, and grouped with other disconnects", "correct": true },
+        { "id": "c", "text": "On the roof only" },
+        { "id": "d", "text": "Underground" }
+      ],
+      "explanation": "Per NEC 690.13, the disconnect must be readily accessible (no climbing, removing obstacles) and lockable in the open position. Multiple disconnects should be grouped where practicable. Utility may have additional requirements for location.",
+      "code_ref": "NEC 690.13, 705.20",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-064",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Disconnect Installation",
+      "question": "How many AC disconnects can be grouped as the PV system disconnect per NEC?",
+      "options": [
+        { "id": "a", "text": "Only 1" },
+        { "id": "b", "text": "Up to 6", "correct": true },
+        { "id": "c", "text": "Unlimited" },
+        { "id": "d", "text": "3 maximum" }
+      ],
+      "explanation": "Per NEC 690.13(B), up to 6 switches or circuit breakers can serve as the PV system disconnecting means, similar to service equipment rules. They must be grouped and marked. Most residential systems use a single disconnect for simplicity.",
+      "code_ref": "NEC 690.13(B)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-065",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Commissioning",
+      "question": "Before energizing a new PV system, what tests should be performed?",
+      "options": [
+        { "id": "a", "text": "No testing required" },
+        { "id": "b", "text": "Visual inspection, polarity check, Voc, Isc, and insulation resistance", "correct": true },
+        { "id": "c", "text": "Only turn on and observe" },
+        { "id": "d", "text": "Module warranty check only" }
+      ],
+      "explanation": "Per IEC 62446 and industry practice: visual inspection for damage/installation errors, verify polarity and wiring, measure string Voc and compare to expected, measure Isc at known irradiance, test insulation resistance to ground. Document all results.",
+      "code_ref": "IEC 62446, NABCEP Commissioning",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-066",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Commissioning",
+      "question": "String Voc measurement at commissioning should be within what percentage of calculated value?",
+      "options": [
+        { "id": "a", "text": "±25%" },
+        { "id": "b", "text": "±5% (temperature adjusted)", "correct": true },
+        { "id": "c", "text": "Exact match required" },
+        { "id": "d", "text": "Any value is acceptable" }
+      ],
+      "explanation": "Measured Voc should be within ±5% of calculated Voc (number of modules × module Voc × temperature correction). Significant deviation indicates wiring error (wrong polarity, missing module), bad connection, or defective module.",
+      "code_ref": "IEC 62446",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-067",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Commissioning",
+      "question": "If two strings have Voc values that differ by one module's worth of voltage:",
+      "options": [
+        { "id": "a", "text": "This is normal" },
+        { "id": "b", "text": "One string likely has a bypass diode conducting or bad cell", "correct": true },
+        { "id": "c", "text": "Temperature difference only" },
+        { "id": "d", "text": "Inverter issue" }
+      ],
+      "explanation": "String Voc difference equal to one module's Voc (typically 40-50V) suggests one module has a conducting bypass diode (heavily shaded cells) or significant cell damage. The affected module needs inspection. Multiple missing 'steps' indicate multiple issues.",
+      "code_ref": "PV Troubleshooting",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-068",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Commissioning",
+      "question": "String Isc measurements at commissioning should compare strings under:",
+      "options": [
+        { "id": "a", "text": "Any conditions" },
+        { "id": "b", "text": "Similar irradiance conditions (same time, orientation)", "correct": true },
+        { "id": "c", "text": "Only at noon" },
+        { "id": "d", "text": "Overcast conditions only" }
+      ],
+      "explanation": "Compare string Isc values under consistent irradiance conditions. All strings with same orientation should produce similar Isc (within ±5%). Measure sequentially in stable sunlight. Lower Isc indicates shading, soiling, or module issues.",
+      "code_ref": "IEC 62446",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-069",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Commissioning",
+      "question": "Insulation resistance testing at commissioning should show:",
+      "options": [
+        { "id": "a", "text": "Less than 1 MΩ" },
+        { "id": "b", "text": "Greater than 1 MΩ between conductors and ground", "correct": true },
+        { "id": "c", "text": "Zero resistance" },
+        { "id": "d", "text": "Any value is acceptable" }
+      ],
+      "explanation": "Per IEC 62446, insulation resistance should exceed 1 MΩ at 500V or 1000V DC test voltage. Low readings indicate insulation damage, moisture ingress, or wiring faults. Test positive-to-ground and negative-to-ground separately.",
+      "code_ref": "IEC 62446",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-070",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Documentation",
+      "question": "What documentation should be provided to the system owner at completion?",
+      "options": [
+        { "id": "a", "text": "Nothing required" },
+        { "id": "b", "text": "As-built drawings, equipment manuals, warranties, and commissioning data", "correct": true },
+        { "id": "c", "text": "Only the invoice" },
+        { "id": "d", "text": "Permit number only" }
+      ],
+      "explanation": "Complete documentation includes: as-built drawings, equipment datasheets and manuals, warranty documentation, commissioning test results, permit sign-off, utility interconnection approval, monitoring setup, and maintenance recommendations.",
+      "code_ref": "NABCEP Documentation Standards",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-071",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Quality Control",
+      "question": "A pre-installation site visit should verify all EXCEPT:",
+      "options": [
+        { "id": "a", "text": "Roof condition and dimensions" },
+        { "id": "b", "text": "Electrical panel capacity" },
+        { "id": "c", "text": "The customer's credit score", "correct": true },
+        { "id": "d", "text": "Shading obstructions" }
+      ],
+      "explanation": "Technical site assessment verifies: roof type/condition/dimensions, structural adequacy, shading, azimuth/tilt, electrical panel make/model/ampacity, service size, rafter accessibility, conduit routes, and inverter location. Financial matters are separate.",
+      "code_ref": "NABCEP Site Assessment",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-072",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Quality Control",
+      "question": "Photo documentation during installation should capture:",
+      "options": [
+        { "id": "a", "text": "Only the finished system" },
+        { "id": "b", "text": "Key stages including roof attachments, wiring, and concealed work", "correct": true },
+        { "id": "c", "text": "Only worker portraits" },
+        { "id": "d", "text": "Photos are not needed" }
+      ],
+      "explanation": "Document: roof attachment details, flashing installation, rafter connections (before covering), wire routing, combiner wiring, grounding connections, labeling, and final appearance. Photos support warranty claims and quality verification.",
+      "code_ref": "Installation Documentation",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-073",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Weather",
+      "question": "PV installation should be postponed when:",
+      "options": [
+        { "id": "a", "text": "It's cloudy" },
+        { "id": "b", "text": "Lightning is nearby, winds are high, or rain makes surfaces slippery", "correct": true },
+        { "id": "c", "text": "Temperature is below 70°F" },
+        { "id": "d", "text": "It's early morning" }
+      ],
+      "explanation": "Lightning poses lethal danger on roofs. High winds (typically >25 mph) make module handling dangerous. Wet surfaces are slip hazards. Cold weather is acceptable with proper precautions. Extreme heat requires hydration and rest breaks.",
+      "code_ref": "OSHA Weather Guidelines",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-074",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Weather",
+      "question": "In hot weather, installers should:",
+      "options": [
+        { "id": "a", "text": "Work faster to finish early" },
+        { "id": "b", "text": "Take frequent breaks, hydrate, and watch for heat illness symptoms", "correct": true },
+        { "id": "c", "text": "Wear less protective equipment" },
+        { "id": "d", "text": "Only work at night" }
+      ],
+      "explanation": "Heat illness prevention per OSHA: hydrate frequently, take breaks in shade, wear appropriate clothing, recognize symptoms (cramps, exhaustion, stroke). Roofs are significantly hotter than ambient temperature. Use a buddy system.",
+      "code_ref": "OSHA Heat Illness Prevention",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-075",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Material Handling",
+      "question": "When hoisting PV modules to a roof:",
+      "options": [
+        { "id": "a", "text": "Throw them up one at a time" },
+        { "id": "b", "text": "Use proper lifting equipment and controlled methods", "correct": true },
+        { "id": "c", "text": "Stack as many as possible" },
+        { "id": "d", "text": "Only carry by the cables" }
+      ],
+      "explanation": "Use ladders with proper lifting attachments, hoists, or cranes for large installations. Never throw modules. Limit hand-carrying on ladders. Use edge protection and controlled placement. Module weight (50-70 lbs) requires safe handling practices.",
+      "code_ref": "Safe Lifting Practices",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-076",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Material Handling",
+      "question": "PV modules should be stored:",
+      "options": [
+        { "id": "a", "text": "Face up in direct sunlight" },
+        { "id": "b", "text": "Protected from weather, elevated, and not producing power", "correct": true },
+        { "id": "c", "text": "In any convenient location" },
+        { "id": "d", "text": "Submerged in water" }
+      ],
+      "explanation": "Store modules protected from rain/debris, elevated off ground on pallets, and covered to prevent power generation (shock hazard). Don't stack loose modules—use original packaging. Avoid mechanical stress. Keep connectors capped.",
+      "code_ref": "Module Handling Guidelines",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-077",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Material Handling",
+      "question": "Damaged module glass should be handled by:",
+      "options": [
+        { "id": "a", "text": "Picking up bare-handed" },
+        { "id": "b", "text": "Wearing protective gloves and covering the module immediately", "correct": true },
+        { "id": "c", "text": "Leaving it in place permanently" },
+        { "id": "d", "text": "Taping the glass together" }
+      ],
+      "explanation": "Broken module glass is sharp and the module may still produce voltage. Wear cut-resistant gloves, cover the module with opaque material to reduce voltage, and dispose properly. Document for warranty claim. Don't install damaged modules.",
+      "code_ref": "Module Damage Procedures",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-078",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Tool Safety",
+      "question": "When working on energized PV circuits, tools should be:",
+      "options": [
+        { "id": "a", "text": "Standard metal tools" },
+        { "id": "b", "text": "Insulated and rated for the voltage present", "correct": true },
+        { "id": "c", "text": "Any tools available" },
+        { "id": "d", "text": "Wooden only" }
+      ],
+      "explanation": "Use insulated tools rated for the voltage when working on energized circuits. Even with system 'off,' PV arrays produce voltage in daylight. Insulated screwdrivers, wrenches, and pliers prevent accidental shorts and shock.",
+      "code_ref": "NFPA 70E, Electrical Safety",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-079",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Tool Safety",
+      "question": "Power tools used on rooftops should be:",
+      "options": [
+        { "id": "a", "text": "Corded without GFCI" },
+        { "id": "b", "text": "Battery-powered or connected to GFCI-protected outlets", "correct": true },
+        { "id": "c", "text": "Any type" },
+        { "id": "d", "text": "Gasoline powered" }
+      ],
+      "explanation": "Rooftop conditions (moisture, conductive surfaces) increase shock risk. Use battery-powered tools for convenience and safety, or ensure corded tools connect to GFCI-protected circuits. Inspect cords for damage before use.",
+      "code_ref": "OSHA Electrical Safety",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-080",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Tool Safety",
+      "question": "A drill used for lag bolt pilot holes should be:",
+      "options": [
+        { "id": "a", "text": "Household cordless drill" },
+        { "id": "b", "text": "Professional-grade with clutch and appropriate power", "correct": true },
+        { "id": "c", "text": "Hand drill only" },
+        { "id": "d", "text": "Impact driver for all holes" }
+      ],
+      "explanation": "Use professional-grade drills with adjustable clutch to prevent overdriving and stripping. Pilot holes require consistent depth control. Impact drivers are useful for driving lags but not for pilot holes. Match drill to the work.",
+      "code_ref": "Tool Selection",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-081",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Tile Roof",
+      "question": "When installing on a tile roof, tiles that must be removed should be:",
+      "options": [
+        { "id": "a", "text": "Thrown away" },
+        { "id": "b", "text": "Carefully removed for reinstallation or replacement", "correct": true },
+        { "id": "c", "text": "Left in place and drilled through" },
+        { "id": "d", "text": "Painted to match" }
+      ],
+      "explanation": "Remove tiles carefully to avoid breakage. Use tile hooks that replace the tile with a flashed bracket, or cut/grind tiles to fit around brackets. Have replacement tiles available. Maintain waterproof underlayment integrity.",
+      "code_ref": "Tile Roof Installation",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-082",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Tile Roof",
+      "question": "Tile hooks for PV mounting work by:",
+      "options": [
+        { "id": "a", "text": "Gluing to the tile surface" },
+        { "id": "b", "text": "Attaching to the roof deck and extending up between or in place of tiles", "correct": true },
+        { "id": "c", "text": "Clamping to the tile edges" },
+        { "id": "d", "text": "Magnetic attachment" }
+      ],
+      "explanation": "Tile hooks bolt to roof rafters through the deck. The hook extends up through the tile coursing—either between tiles, in place of a removed tile, or through a cut-out. Proper flashing maintains waterproofing.",
+      "code_ref": "Tile Roof Mounting",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-083",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Flat Roof",
+      "question": "Flat roof PV systems often use tilted racking to:",
+      "options": [
+        { "id": "a", "text": "Look more attractive" },
+        { "id": "b", "text": "Improve energy production by orienting modules toward the sun", "correct": true },
+        { "id": "c", "text": "Reduce equipment cost" },
+        { "id": "d", "text": "Hide the modules from view" }
+      ],
+      "explanation": "Flat roofs receive less irradiance than tilted surfaces. Tilt frames angle modules toward the sun (typically 10-30° for optimal annual production vs. land use). Tilt direction affects shading from adjacent rows.",
+      "code_ref": "Flat Roof Design",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-084",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Flat Roof",
+      "question": "Penetrations in flat roof membranes (TPO, EPDM) require:",
+      "options": [
+        { "id": "a", "text": "Simple caulking" },
+        { "id": "b", "text": "Proper flashing, pitch pockets, or membrane-compatible sealant", "correct": true },
+        { "id": "c", "text": "No waterproofing" },
+        { "id": "d", "text": "Duct tape" }
+      ],
+      "explanation": "Flat roof penetrations require specialized treatment: membrane boots, pitch pockets, or compatible sealants. TPO requires heat-welded boots; EPDM uses compatible adhesives. Roofing contractor involvement ensures warranty compliance.",
+      "code_ref": "Flat Roofing Standards",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-085",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Roof Penetration",
+      "question": "The seal around a roof penetration should be tested by:",
+      "options": [
+        { "id": "a", "text": "Visual inspection only" },
+        { "id": "b", "text": "Visual inspection and water test if accessible", "correct": true },
+        { "id": "c", "text": "No testing required" },
+        { "id": "d", "text": "Waiting for rain" }
+      ],
+      "explanation": "Visually verify proper flashing installation and sealant application. For accessible areas, a water test (controlled water flow from above while observing below) confirms seal integrity. Document for quality assurance.",
+      "code_ref": "Quality Assurance",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-086",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Grounding Electrode",
+      "question": "The DC grounding electrode conductor for a PV system should connect to:",
+      "options": [
+        { "id": "a", "text": "A separate isolated ground rod" },
+        { "id": "b", "text": "The existing AC grounding electrode system or bonded supplemental electrode", "correct": true },
+        { "id": "c", "text": "The neutral bus only" },
+        { "id": "d", "text": "No grounding electrode required" }
+      ],
+      "explanation": "Per NEC 690.47, the DC grounding electrode must connect to the AC service grounding electrode system, or to a separate electrode that is bonded to the AC electrode. This maintains equipotential bonding and safety grounding.",
+      "code_ref": "NEC 690.47",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-087",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Grounding Electrode",
+      "question": "A supplemental ground rod for a PV system, if installed, must be bonded to the AC electrode using:",
+      "options": [
+        { "id": "a", "text": "Any wire" },
+        { "id": "b", "text": "Unspliced 6 AWG copper or larger bonding conductor", "correct": true },
+        { "id": "c", "text": "Conduit only" },
+        { "id": "d", "text": "No bonding required" }
+      ],
+      "explanation": "Per NEC 690.47(C), if a separate DC grounding electrode is installed, it must be bonded to the AC grounding electrode using a bonding jumper sized per 250.66 (typically 6 AWG copper minimum). No splices are permitted.",
+      "code_ref": "NEC 690.47(C)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-088",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Array Orientation",
+      "question": "If a roof faces east and west only, the installer should:",
+      "options": [
+        { "id": "a", "text": "Decline the installation" },
+        { "id": "b", "text": "Install on both slopes with proper string design and expect ~85% of south-facing production", "correct": true },
+        { "id": "c", "text": "Install on east only" },
+        { "id": "d", "text": "Tilt modules to face south" }
+      ],
+      "explanation": "East-west installations produce 10-20% less annually than south-facing but provide morning and afternoon peaks. Use separate MPPT inputs for each orientation. This split may better match consumption patterns than south-only arrays.",
+      "code_ref": "System Design",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-089",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Shading",
+      "question": "A small vent pipe casts a shadow on one module for 2 hours daily. The impact is:",
+      "options": [
+        { "id": "a", "text": "Negligible" },
+        { "id": "b", "text": "Reduces affected string output during shaded period, consider MLPE", "correct": true },
+        { "id": "c", "text": "Destroys the module" },
+        { "id": "d", "text": "Improves efficiency" }
+      ],
+      "explanation": "Partial shading on one module reduces the entire series string output. Impact depends on shading severity and duration. Module-level power electronics (optimizers, microinverters) minimize shade impact by allowing each module to operate independently.",
+      "code_ref": "Shading Effects",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-090",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Shading",
+      "question": "When possible, shading objects should be placed:",
+      "options": [
+        { "id": "a", "text": "On the north side of the array" },
+        { "id": "b", "text": "On the south side for aesthetics" },
+        { "id": "c", "text": "As far from modules as possible, or modules relocated to avoid shadow", "correct": true },
+        { "id": "d", "text": "Directly over the array" }
+      ],
+      "explanation": "Minimize shading by locating conduit, combiner boxes, and other equipment to avoid casting shadows on modules. Relocate small obstructions if possible. Design array layout to avoid existing shade sources like vents, chimneys, and trees.",
+      "code_ref": "Array Layout",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-091",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Series Connections",
+      "question": "When connecting modules in series, verify:",
+      "options": [
+        { "id": "a", "text": "All cables are the same color" },
+        { "id": "b", "text": "Positive of one module connects to negative of the next", "correct": true },
+        { "id": "c", "text": "All positives connect together" },
+        { "id": "d", "text": "Random connections are acceptable" }
+      ],
+      "explanation": "Series connections add voltage: positive output of one module to negative input of the next. The string has one positive and one negative end. Incorrect polarity can damage equipment. Verify with voltage measurement before connecting to inverter.",
+      "code_ref": "Series Wiring",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-092",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Parallel Connections",
+      "question": "When connecting strings in parallel at a combiner, verify:",
+      "options": [
+        { "id": "a", "text": "String voltages are significantly different" },
+        { "id": "b", "text": "String polarities and voltages match", "correct": true },
+        { "id": "c", "text": "Strings have different module counts" },
+        { "id": "d", "text": "No verification needed" }
+      ],
+      "explanation": "Parallel strings must have matching polarity (positive to positive bus, negative to negative bus) and similar voltage (same module count). Verify string Voc is within expected range before combining. Mismatched polarities create dangerous short circuits.",
+      "code_ref": "Parallel Wiring",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-093",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Module Handling",
+      "question": "Modules should never be carried by:",
+      "options": [
+        { "id": "a", "text": "The frame edges with two people" },
+        { "id": "b", "text": "The cables or junction box", "correct": true },
+        { "id": "c", "text": "Using proper lifting equipment" },
+        { "id": "d", "text": "The reinforced frame points" }
+      ],
+      "explanation": "Carrying by cables strains connections and can damage the junction box. Carry modules by the frame—at the short edges for two-person carry, or use proper carriers/straps for one-person handling. Keep modules face-up when possible.",
+      "code_ref": "Module Handling",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-094",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Module Handling",
+      "question": "Stepping or placing weight on PV modules:",
+      "options": [
+        { "id": "a", "text": "Is acceptable for any module" },
+        { "id": "b", "text": "Can cause micro-cracks that reduce performance and void warranty", "correct": true },
+        { "id": "c", "text": "Is required for installation" },
+        { "id": "d", "text": "Only affects glass, not cells" }
+      ],
+      "explanation": "Stepping on modules causes invisible micro-cracks in cells that degrade performance over time. Never place weight on the glass surface. Use proper racking as stepping surfaces. Module manufacturers explicitly prohibit walking on modules.",
+      "code_ref": "Module Handling Requirements",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-095",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Module Inspection",
+      "question": "Before installing a module, inspect for:",
+      "options": [
+        { "id": "a", "text": "Only the nameplate data" },
+        { "id": "b", "text": "Cracked glass, frame damage, junction box damage, cable damage", "correct": true },
+        { "id": "c", "text": "Serial number only" },
+        { "id": "d", "text": "No inspection needed" }
+      ],
+      "explanation": "Inspect every module for shipping damage: cracked glass, bent frames, damaged junction boxes, cut cables, and delamination. Document damage for warranty claims. Don't install damaged modules—they may fail or underperform.",
+      "code_ref": "Quality Control",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-096",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Snow/Ice",
+      "question": "In snowy climates, ground clearance for ground-mount arrays should account for:",
+      "options": [
+        { "id": "a", "text": "Only aesthetics" },
+        { "id": "b", "text": "Expected snow accumulation to prevent snow bridging to modules", "correct": true },
+        { "id": "c", "text": "Mowing height only" },
+        { "id": "d", "text": "Flood levels only" }
+      ],
+      "explanation": "Ground clearance must exceed expected snow accumulation to prevent snow from bridging to modules and causing shading, ice damage, or structural stress. Typical clearances range from 2-4 feet depending on snowfall.",
+      "code_ref": "Cold Climate Design",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-097",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Snow/Ice",
+      "question": "Snow guards near PV arrays may be installed to:",
+      "options": [
+        { "id": "a", "text": "Increase snow accumulation on modules" },
+        { "id": "b", "text": "Prevent sliding snow from damaging equipment below the array", "correct": true },
+        { "id": "c", "text": "Improve module efficiency" },
+        { "id": "d", "text": "Hold modules in place" }
+      ],
+      "explanation": "Snow guards below arrays prevent snow avalanches from damaging equipment, people, or property. PV modules with frames and glass are slippery—snow sheds quickly and can damage inverters, condensers, or landscaping below.",
+      "code_ref": "Snow Management",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-098",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "High Wind",
+      "question": "In high-wind zones (hurricane/coastal areas), PV installations require:",
+      "options": [
+        { "id": "a", "text": "Standard installation methods" },
+        { "id": "b", "text": "Enhanced attachments, engineering review, and wind-rated equipment", "correct": true },
+        { "id": "c", "text": "Ballasted mounting only" },
+        { "id": "d", "text": "No special requirements" }
+      ],
+      "explanation": "High-wind zones require racking engineered for local design wind speeds (often 150+ mph), additional roof attachments, specific edge zone treatment, and compliance with enhanced building codes (Florida Building Code, ASCE 7 requirements).",
+      "code_ref": "ASCE 7, High-Wind Design",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-099",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Critter Guard",
+      "question": "Critter guards around PV arrays are installed to:",
+      "options": [
+        { "id": "a", "text": "Improve airflow" },
+        { "id": "b", "text": "Prevent birds, squirrels, and pests from nesting under modules", "correct": true },
+        { "id": "c", "text": "Increase production" },
+        { "id": "d", "text": "Meet NEC requirements" }
+      ],
+      "explanation": "Wire mesh or clips around the array perimeter prevent animals from nesting under modules. Nesting materials are fire hazards and can damage wiring. Critter guards are especially important in areas with active wildlife.",
+      "code_ref": "Installation Best Practices",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-100",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Sealing",
+      "question": "Sealants used in PV installations should be:",
+      "options": [
+        { "id": "a", "text": "Any household caulk" },
+        { "id": "b", "text": "UV-stable, temperature-rated, and compatible with materials", "correct": true },
+        { "id": "c", "text": "Silicone only" },
+        { "id": "d", "text": "Not used at all" }
+      ],
+      "explanation": "Exterior sealants must withstand UV exposure, temperature cycling, and be compatible with roofing materials and flashings. Use manufacturer-recommended products. Polyurethane and appropriate silicones are common. Avoid incompatible sealant combinations.",
+      "code_ref": "Sealant Specifications",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-101",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Wire Pulling",
+      "question": "When pulling conductors through conduit, use:",
+      "options": [
+        { "id": "a", "text": "Maximum force" },
+        { "id": "b", "text": "Wire lubricant and controlled pulling to avoid insulation damage", "correct": true },
+        { "id": "c", "text": "No lubricant ever" },
+        { "id": "d", "text": "Tape to secure wires" }
+      ],
+      "explanation": "Use listed cable lubricant for long or complex pulls to reduce friction and pulling tension. Excessive force damages insulation. Calculate pulling tension limits. Fish tape or pulling rope facilitates long runs. Keep conductors organized.",
+      "code_ref": "NEC Chapter 9",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-102",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Wire Termination",
+      "question": "When terminating conductors at breakers and terminals, ensure:",
+      "options": [
+        { "id": "a", "text": "Wires are loosely inserted" },
+        { "id": "b", "text": "Proper strip length, torque to specification, and correct conductor type", "correct": true },
+        { "id": "c", "text": "Maximum compression" },
+        { "id": "d", "text": "Solder all connections" }
+      ],
+      "explanation": "Strip conductors to manufacturer-specified length (not too long or short). Torque to specifications using calibrated torque tool. Verify conductor is rated for the terminal (copper-only vs Cu/Al). Poor terminations cause overheating.",
+      "code_ref": "NEC 110.14",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-103",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Termination",
+      "question": "The maximum temperature rating on a terminal connection point determines:",
+      "options": [
+        { "id": "a", "text": "Nothing important" },
+        { "id": "b", "text": "Which column of the ampacity table to use for the connected conductor", "correct": true },
+        { "id": "c", "text": "Only the ambient temperature" },
+        { "id": "d", "text": "The wire color" }
+      ],
+      "explanation": "Per NEC 110.14(C), conductor ampacity at terminals is limited by the terminal temperature rating (typically 60°C or 75°C). Even if the conductor is rated 90°C, ampacity must be based on the lower terminal rating unless terminals are rated higher.",
+      "code_ref": "NEC 110.14(C)",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-install-104",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Mounting Hardware",
+      "question": "Stainless steel hardware is preferred for PV installations because:",
+      "options": [
+        { "id": "a", "text": "It's less expensive" },
+        { "id": "b", "text": "It resists corrosion from weather exposure", "correct": true },
+        { "id": "c", "text": "It's magnetic" },
+        { "id": "d", "text": "It's lighter" }
+      ],
+      "explanation": "Stainless steel resists corrosion from rain, humidity, salt air, and chemical exposure. Most quality racking uses stainless steel fasteners. Coastal installations especially require stainless to prevent premature failure from salt corrosion.",
+      "code_ref": "Hardware Specifications",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-105",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Mounting Hardware",
+      "question": "Galvanic corrosion between aluminum racking and steel bolts can be prevented by:",
+      "options": [
+        { "id": "a", "text": "Using bare steel" },
+        { "id": "b", "text": "Using stainless steel or proper isolation between dissimilar metals", "correct": true },
+        { "id": "c", "text": "Mixing metals freely" },
+        { "id": "d", "text": "Nothing—corrosion doesn't occur" }
+      ],
+      "explanation": "Dissimilar metals in contact with electrolyte (moisture) cause galvanic corrosion. Stainless steel is compatible with aluminum. If using other metals, isolate with compatible washers or coatings. Racking manufacturers specify compatible hardware.",
+      "code_ref": "Corrosion Prevention",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-106",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Battery Installation",
+      "question": "When installing lithium battery storage systems, follow:",
+      "options": [
+        { "id": "a", "text": "Only general guidelines" },
+        { "id": "b", "text": "Manufacturer instructions, NEC 706, and local fire codes", "correct": true },
+        { "id": "c", "text": "No specific requirements" },
+        { "id": "d", "text": "Only aesthetic preferences" }
+      ],
+      "explanation": "Battery installations require compliance with NEC Article 706, manufacturer requirements, and local fire codes. This includes proper ventilation, spacing, fire separation, disconnect requirements, and overcurrent protection. Location restrictions may apply.",
+      "code_ref": "NEC 706, Fire Codes",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-107",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Battery Installation",
+      "question": "Battery system disconnects must be:",
+      "options": [
+        { "id": "a", "text": "Inside the battery enclosure only" },
+        { "id": "b", "text": "Readily accessible, lockable, and properly rated", "correct": true },
+        { "id": "c", "text": "Hidden from view" },
+        { "id": "d", "text": "Manual reset type only" }
+      ],
+      "explanation": "Per NEC 706.15, ESS disconnects must be lockable in open position and readily accessible. They must simultaneously disconnect all ungrounded conductors and be rated for maximum ESS current and voltage. Location per manufacturer and code.",
+      "code_ref": "NEC 706.15",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-108",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Monitoring",
+      "question": "Production monitoring system installation typically requires:",
+      "options": [
+        { "id": "a", "text": "No special requirements" },
+        { "id": "b", "text": "Internet connection, CT sensors, and proper configuration", "correct": true },
+        { "id": "c", "text": "Monthly manual readings only" },
+        { "id": "d", "text": "Separate metering equipment" }
+      ],
+      "explanation": "Monitoring requires internet connectivity (WiFi or Ethernet), current transformers (CTs) to measure production/consumption, and configuration through manufacturer app or portal. Verify communication before leaving site. Train customer on monitoring access.",
+      "code_ref": "Monitoring Installation",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-109",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Final Inspection",
+      "question": "Before calling for final electrical inspection, verify:",
+      "options": [
+        { "id": "a", "text": "Only the inverter is installed" },
+        { "id": "b", "text": "All labels installed, disconnects operational, grounding complete, documentation ready", "correct": true },
+        { "id": "c", "text": "Permit is canceled" },
+        { "id": "d", "text": "System is producing power" }
+      ],
+      "explanation": "Pre-inspection checklist: all required labels in place, disconnects operational and accessible, grounding complete and tight, conductor terminations torqued, rapid shutdown functional, documentation available. System need not be energized for inspection.",
+      "code_ref": "Inspection Preparation",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-110",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Customer Handoff",
+      "question": "Customer orientation at project completion should cover:",
+      "options": [
+        { "id": "a", "text": "Only the invoice" },
+        { "id": "b", "text": "System operation, monitoring access, maintenance, warranties, and safety", "correct": true },
+        { "id": "c", "text": "Nothing—customers figure it out" },
+        { "id": "d", "text": "Only emergency contacts" }
+      ],
+      "explanation": "Walk customers through: disconnect locations and operation, monitoring system access, expected production, maintenance requirements (cleaning, inspections), warranty contacts, safety precautions, and what to do if issues occur. Provide written documentation.",
+      "code_ref": "Customer Service",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-111",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Utility Coordination",
+      "question": "Before energizing a new PV system, what utility coordination is typically required?",
+      "options": [
+        { "id": "a", "text": "None" },
+        { "id": "b", "text": "Interconnection agreement approval and possible meter change", "correct": true },
+        { "id": "c", "text": "Only a phone call" },
+        { "id": "d", "text": "Permission from neighbors" }
+      ],
+      "explanation": "Utility requires signed interconnection agreement before operation. Net metering requires bi-directional meter (utility installs or replaces). Some utilities require inspection. Never energize before utility approval—may void agreement.",
+      "code_ref": "Interconnection Process",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-112",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Code Compliance",
+      "question": "If an inspector cites a code violation, the installer should:",
+      "options": [
+        { "id": "a", "text": "Argue and ignore the citation" },
+        { "id": "b", "text": "Correct the violation, schedule re-inspection", "correct": true },
+        { "id": "c", "text": "Abandon the project" },
+        { "id": "d", "text": "Call the utility instead" }
+      ],
+      "explanation": "Correct cited violations per inspector requirements, document the correction, and schedule re-inspection. Discuss unclear requirements professionally. Appeal through proper channels if you believe the citation is incorrect. Don't energize until approved.",
+      "code_ref": "Inspection Process",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-113",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Trenching",
+      "question": "Underground conduit for PV wiring must be installed at minimum depth per:",
+      "options": [
+        { "id": "a", "text": "Installer preference" },
+        { "id": "b", "text": "NEC Table 300.5 based on conduit type and location", "correct": true },
+        { "id": "c", "text": "Always 6 inches" },
+        { "id": "d", "text": "No minimum depth" }
+      ],
+      "explanation": "NEC Table 300.5 specifies minimum burial depths: rigid metal conduit (6\"), intermediate metal conduit (6\"), rigid PVC (18\"), and direct burial cables (24\" typically). Depths vary by location (under driveways, etc.).",
+      "code_ref": "NEC Table 300.5",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-114",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Trenching",
+      "question": "Before excavating for underground PV conduit:",
+      "options": [
+        { "id": "a", "text": "Just start digging" },
+        { "id": "b", "text": "Call 811 to locate underground utilities", "correct": true },
+        { "id": "c", "text": "Only check for water lines" },
+        { "id": "d", "text": "Dig only 6 inches deep" }
+      ],
+      "explanation": "Always call 811 before digging. Utilities will mark gas, electric, water, sewer, and telecom lines. Hitting a utility line can cause injury, death, service disruption, and significant liability. Wait for all utilities to respond before excavating.",
+      "code_ref": "OSHA Excavation Safety",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-115",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Trenching",
+      "question": "Warning tape above underground electrical conduit should be installed:",
+      "options": [
+        { "id": "a", "text": "At the bottom of the trench" },
+        { "id": "b", "text": "12 inches above the conduit", "correct": true },
+        { "id": "c", "text": "At ground level only" },
+        { "id": "d", "text": "No warning tape required" }
+      ],
+      "explanation": "Detectable warning tape should be buried 12 inches above underground cables/conduit to warn future excavators before they reach the energized circuits. The tape should be detectable by metal detectors and brightly colored (typically red for electrical).",
+      "code_ref": "Underground Installation",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-116",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Pull Box",
+      "question": "Pull boxes in long conduit runs serve to:",
+      "options": [
+        { "id": "a", "text": "Store excess wire" },
+        { "id": "b", "text": "Facilitate wire pulling and provide access for future maintenance", "correct": true },
+        { "id": "c", "text": "Increase voltage drop" },
+        { "id": "d", "text": "Meet aesthetic requirements" }
+      ],
+      "explanation": "Pull boxes break long runs into manageable sections, provide splice points if needed, and allow access for future maintenance or modifications. They're required when conduit runs exceed pulling limits or have too many bends.",
+      "code_ref": "NEC 314.28",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-117",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "String Layout",
+      "question": "When designing string layout, modules in the same string should:",
+      "options": [
+        { "id": "a", "text": "Face different directions for diversity" },
+        { "id": "b", "text": "Have the same orientation, tilt, and shading conditions", "correct": true },
+        { "id": "c", "text": "Be different brands" },
+        { "id": "d", "text": "Alternate between rows" }
+      ],
+      "explanation": "Series-connected modules in a string should have matched conditions (orientation, tilt, shading) to operate at similar current. Mixing conditions reduces string output to the lowest-performing module. Use separate strings or MLPE for different orientations.",
+      "code_ref": "String Design",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-118",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Module Mapping",
+      "question": "Recording module serial numbers and locations during installation is important for:",
+      "options": [
+        { "id": "a", "text": "Nothing practical" },
+        { "id": "b", "text": "Warranty claims, troubleshooting, and monitoring system setup", "correct": true },
+        { "id": "c", "text": "Only appearance" },
+        { "id": "d", "text": "Increasing production" }
+      ],
+      "explanation": "Module mapping (serial numbers, positions) enables warranty claims for specific modules, troubleshooting of underperformers identified by monitoring, and accurate as-built documentation. Many monitoring systems require serial number entry during configuration.",
+      "code_ref": "Documentation Requirements",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-119",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "Shade Structure",
+      "question": "Solar carport and shade structure installations require additional consideration for:",
+      "options": [
+        { "id": "a", "text": "Only electrical requirements" },
+        { "id": "b", "text": "Structural engineering, vehicle clearance, and drainage", "correct": true },
+        { "id": "c", "text": "Module color only" },
+        { "id": "d", "text": "No special requirements" }
+      ],
+      "explanation": "Carports require structural engineering for self-supporting design, adequate vehicle clearance (typically 9-14 feet), proper drainage (gutters/scuppers), wind load analysis for open structures, and foundation design for the specific soil conditions.",
+      "code_ref": "Carport Design",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-install-120",
+      "trade": "solar",
+      "category": "Installation",
+      "subcategory": "System Commissioning",
+      "question": "The final step before leaving a completed PV installation is typically:",
+      "options": [
+        { "id": "a", "text": "Turn everything off and leave" },
+        { "id": "b", "text": "Verify system is producing power correctly and document", "correct": true },
+        { "id": "c", "text": "Remove all labels" },
+        { "id": "d", "text": "Take a photo for social media" }
+      ],
+      "explanation": "After utility approval, verify system is operational: check inverter display for normal production, verify monitoring communication, compare actual output to expected, confirm no error codes, and document commissioning readings. Clean up the site completely.",
+      "code_ref": "Commissioning Procedures",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    }
+  ]
+}

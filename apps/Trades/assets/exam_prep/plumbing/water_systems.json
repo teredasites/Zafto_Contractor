@@ -1,0 +1,3777 @@
+{
+  "topic_id": "WS",
+  "topic_name": "Water Systems",
+  "code_version": "IPC 2021",
+  "questions": [
+    {
+      "id": "WS-001",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["501"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the maximum water heater temperature setting for residential use?",
+      "choices": [
+        {"id": "A", "text": "110°F"},
+        {"id": "B", "text": "120°F"},
+        {"id": "C", "text": "140°F"},
+        {"id": "D", "text": "No maximum if safety devices installed"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "No maximum temperature if proper safety devices are installed.",
+        "detailed": "Per IPC Section 501.4, water heaters can be set above 120°F if point-of-use temperature limiting devices (mixing valves) are installed to prevent scalding at fixtures.",
+        "how_to_find": "Reference IPC Section 501.4 for water heater temperature."
+      },
+      "code_reference": {"code": "IPC", "section": "501.4"},
+      "zafto_links": [],
+      "tags": ["water heater", "temperature", "no maximum"],
+      "verified": true
+    },
+    {
+      "id": "WS-002",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["504"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What safety device is required on every water heater?",
+      "choices": [
+        {"id": "A", "text": "Check valve"},
+        {"id": "B", "text": "Temperature and pressure relief valve (T&P)"},
+        {"id": "C", "text": "Vacuum breaker"},
+        {"id": "D", "text": "Expansion tank only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "T&P relief valve required on all water heaters.",
+        "detailed": "Per IPC Section 504.1, all water heaters shall be provided with an approved, self-closing temperature and pressure relief valve to prevent tank rupture from excess temperature or pressure.",
+        "how_to_find": "Reference IPC Section 504.1 for relief valve requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "504.1"},
+      "zafto_links": [],
+      "tags": ["T&P valve", "water heater", "safety"],
+      "verified": true
+    },
+    {
+      "id": "WS-003",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["504"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "At what temperature must a T&P relief valve activate?",
+      "choices": [
+        {"id": "A", "text": "180°F"},
+        {"id": "B", "text": "200°F"},
+        {"id": "C", "text": "210°F"},
+        {"id": "D", "text": "250°F"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "T&P valve activates at 210°F maximum.",
+        "detailed": "Per IPC Section 504.1, the temperature relief valve shall have a maximum temperature setting of 210°F (99°C) to relieve before water reaches boiling point.",
+        "how_to_find": "Reference IPC Section 504.1 for relief valve temperature rating."
+      },
+      "code_reference": {"code": "IPC", "section": "504.1"},
+      "zafto_links": [],
+      "tags": ["T&P valve", "210°F", "temperature relief"],
+      "verified": true
+    },
+    {
+      "id": "WS-004",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["504"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "At what pressure must a T&P relief valve activate?",
+      "choices": [
+        {"id": "A", "text": "100 psi"},
+        {"id": "B", "text": "125 psi"},
+        {"id": "C", "text": "150 psi"},
+        {"id": "D", "text": "Per manufacturer rating"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "T&P valve activates at 150 psi maximum.",
+        "detailed": "Per IPC Section 504.1, the pressure relief setting shall not exceed 150 psi or the rated working pressure of the water heater, whichever is less.",
+        "how_to_find": "Reference IPC Section 504.1 for relief valve pressure rating."
+      },
+      "code_reference": {"code": "IPC", "section": "504.1"},
+      "zafto_links": [],
+      "tags": ["T&P valve", "150 psi", "pressure relief"],
+      "verified": true
+    },
+    {
+      "id": "WS-005",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["504"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Where must the T&P relief valve discharge terminate?",
+      "choices": [
+        {"id": "A", "text": "Into the drain pipe"},
+        {"id": "B", "text": "To floor drain or outside"},
+        {"id": "C", "text": "To an indirect waste receptor visible to occupants"},
+        {"id": "D", "text": "Anywhere convenient"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "T&P discharge to visible location, not connected to drain.",
+        "detailed": "Per IPC Section 504.6, relief valve discharge shall terminate at a visible location, discharging to the floor, pan, or outside. It cannot be directly connected to the drainage system.",
+        "how_to_find": "Reference IPC Section 504.6 for discharge termination."
+      },
+      "code_reference": {"code": "IPC", "section": "504.6"},
+      "zafto_links": [],
+      "tags": ["T&P discharge", "visible location", "not to drain"],
+      "verified": true
+    },
+    {
+      "id": "WS-006",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["504"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum height above the floor for T&P relief valve discharge termination?",
+      "choices": [
+        {"id": "A", "text": "2 inches"},
+        {"id": "B", "text": "6 inches"},
+        {"id": "C", "text": "12 inches"},
+        {"id": "D", "text": "18 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "T&P discharge must terminate 6 inches maximum above floor.",
+        "detailed": "Per IPC Section 504.6, the relief valve discharge pipe shall terminate not more than 6 inches above the floor or waste receptor to minimize splash and scalding hazard.",
+        "how_to_find": "Reference IPC Section 504.6 for discharge height."
+      },
+      "code_reference": {"code": "IPC", "section": "504.6"},
+      "zafto_links": [],
+      "tags": ["T&P discharge", "6 inches", "floor height"],
+      "verified": true
+    },
+    {
+      "id": "WS-007",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["504"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the minimum size for a T&P relief valve discharge pipe?",
+      "choices": [
+        {"id": "A", "text": "1/2 inch"},
+        {"id": "B", "text": "3/4 inch"},
+        {"id": "C", "text": "Same as valve outlet"},
+        {"id": "D", "text": "1 inch"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Discharge pipe same size as valve outlet, not reduced.",
+        "detailed": "Per IPC Section 504.6, the relief valve discharge pipe shall be the same size as the outlet of the valve being served and shall not be reduced in size.",
+        "how_to_find": "Reference IPC Section 504.6 for discharge pipe sizing."
+      },
+      "code_reference": {"code": "IPC", "section": "504.6"},
+      "zafto_links": [],
+      "tags": ["T&P discharge", "pipe size", "not reduced"],
+      "verified": true
+    },
+    {
+      "id": "WS-008",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["504"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Can a valve be installed on a T&P relief valve discharge pipe?",
+      "choices": [
+        {"id": "A", "text": "Yes, for flow control"},
+        {"id": "B", "text": "No, discharge must be unobstructed"},
+        {"id": "C", "text": "Only a check valve"},
+        {"id": "D", "text": "Only at the termination"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "No valves permitted on T&P discharge - must be unobstructed.",
+        "detailed": "Per IPC Section 504.6, no valves, caps, plugs, or other devices shall be installed on the relief valve discharge pipe that would obstruct relief discharge.",
+        "how_to_find": "Reference IPC Section 504.6 for discharge pipe restrictions."
+      },
+      "code_reference": {"code": "IPC", "section": "504.6"},
+      "zafto_links": [],
+      "tags": ["T&P discharge", "no valves", "unobstructed"],
+      "verified": true
+    },
+    {
+      "id": "WS-009",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["607"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the maximum water pressure allowed at fixtures?",
+      "choices": [
+        {"id": "A", "text": "60 psi"},
+        {"id": "B", "text": "80 psi"},
+        {"id": "C", "text": "100 psi"},
+        {"id": "D", "text": "125 psi"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Maximum static pressure at fixtures is 80 psi.",
+        "detailed": "Per IPC Section 604.8, the maximum static water pressure at fixtures shall not exceed 80 psi. A pressure reducing valve is required when supply exceeds this limit.",
+        "how_to_find": "Reference IPC Section 604.8 for maximum pressure."
+      },
+      "code_reference": {"code": "IPC", "section": "604.8"},
+      "zafto_links": [],
+      "tags": ["water pressure", "80 psi", "maximum"],
+      "verified": true
+    },
+    {
+      "id": "WS-010",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["607"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "When is a pressure reducing valve (PRV) required?",
+      "choices": [
+        {"id": "A", "text": "When supply exceeds 60 psi"},
+        {"id": "B", "text": "When supply exceeds 80 psi"},
+        {"id": "C", "text": "On all water services"},
+        {"id": "D", "text": "Only for commercial buildings"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "PRV required when supply pressure exceeds 80 psi.",
+        "detailed": "Per IPC Section 604.8, when the static water pressure exceeds 80 psi, an approved pressure reducing valve shall be installed to reduce pressure to 80 psi or less.",
+        "how_to_find": "Reference IPC Section 604.8 for PRV requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "604.8"},
+      "zafto_links": [],
+      "tags": ["PRV", "pressure reducing valve", "80 psi"],
+      "verified": true
+    },
+    {
+      "id": "WS-011",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["607"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum water supply pressure required at fixtures?",
+      "choices": [
+        {"id": "A", "text": "8 psi"},
+        {"id": "B", "text": "15 psi"},
+        {"id": "C", "text": "20 psi"},
+        {"id": "D", "text": "Per Table 604.3 by fixture type"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Minimum pressure varies by fixture per Table 604.3.",
+        "detailed": "Per IPC Table 604.3, minimum water supply pressure varies by fixture type: 8 psi for tank-type toilets, 15 psi for flushometer urinals, 25 psi for flushometer water closets.",
+        "how_to_find": "Reference IPC Table 604.3 for fixture pressure requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 604.3"},
+      "zafto_links": [],
+      "tags": ["minimum pressure", "fixture", "Table 604.3"],
+      "verified": true
+    },
+    {
+      "id": "WS-012",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["608"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is a cross-connection?",
+      "choices": [
+        {"id": "A", "text": "Connection between hot and cold water"},
+        {"id": "B", "text": "Connection between potable and non-potable systems"},
+        {"id": "C", "text": "Y-fitting connection"},
+        {"id": "D", "text": "Branch connection"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Cross-connection links potable water to non-potable source.",
+        "detailed": "Per IPC Section 608.1, a cross-connection is any physical connection between a potable water system and any source that could introduce contamination through backflow.",
+        "how_to_find": "Reference IPC Section 608.1 for cross-connection definition."
+      },
+      "code_reference": {"code": "IPC", "section": "608.1"},
+      "zafto_links": [],
+      "tags": ["cross-connection", "potable", "non-potable"],
+      "verified": true
+    },
+    {
+      "id": "WS-013",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["608"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is backflow?",
+      "choices": [
+        {"id": "A", "text": "Normal water flow direction"},
+        {"id": "B", "text": "Reverse flow from non-potable to potable system"},
+        {"id": "C", "text": "Increased flow rate"},
+        {"id": "D", "text": "Slow drainage"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Backflow is reverse flow that could contaminate potable water.",
+        "detailed": "Per IPC Section 608.1, backflow is the flow of water or other liquids from a non-potable source back into the potable water system, caused by backsiphonage or backpressure.",
+        "how_to_find": "Reference IPC Section 608.1 for backflow definition."
+      },
+      "code_reference": {"code": "IPC", "section": "608.1"},
+      "zafto_links": [],
+      "tags": ["backflow", "reverse flow", "contamination"],
+      "verified": true
+    },
+    {
+      "id": "WS-014",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["608"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What causes backsiphonage?",
+      "choices": [
+        {"id": "A", "text": "High downstream pressure"},
+        {"id": "B", "text": "Negative pressure in potable supply"},
+        {"id": "C", "text": "Pump failure"},
+        {"id": "D", "text": "Pipe blockage"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Backsiphonage caused by negative pressure in supply.",
+        "detailed": "Per IPC Section 608.1, backsiphonage occurs when negative pressure (vacuum) develops in the potable water supply, drawing contaminated water back through a cross-connection.",
+        "how_to_find": "Reference IPC Section 608.1 for backsiphonage cause."
+      },
+      "code_reference": {"code": "IPC", "section": "608.1"},
+      "zafto_links": [],
+      "tags": ["backsiphonage", "negative pressure", "vacuum"],
+      "verified": true
+    },
+    {
+      "id": "WS-015",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["608"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What causes backpressure?",
+      "choices": [
+        {"id": "A", "text": "Negative pressure in supply"},
+        {"id": "B", "text": "Downstream pressure exceeding supply pressure"},
+        {"id": "C", "text": "Normal water flow"},
+        {"id": "D", "text": "Pipe corrosion"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Backpressure caused by downstream pressure exceeding supply.",
+        "detailed": "Per IPC Section 608.1, backpressure occurs when pressure downstream of a cross-connection exceeds the supply pressure, forcing non-potable water back into the potable system.",
+        "how_to_find": "Reference IPC Section 608.1 for backpressure cause."
+      },
+      "code_reference": {"code": "IPC", "section": "608.1"},
+      "zafto_links": [],
+      "tags": ["backpressure", "downstream pressure", "exceeds supply"],
+      "verified": true
+    },
+    {
+      "id": "WS-016",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["608"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is an air gap?",
+      "choices": [
+        {"id": "A", "text": "Space between pipes"},
+        {"id": "B", "text": "Vertical separation between outlet and flood level rim"},
+        {"id": "C", "text": "Gap in pipe insulation"},
+        {"id": "D", "text": "Space between fixtures"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Air gap is vertical space between outlet and flood level.",
+        "detailed": "Per IPC Section 608.15.1, an air gap is the unobstructed vertical distance between the outlet of a potable water pipe and the flood level rim of a fixture or receptor.",
+        "how_to_find": "Reference IPC Section 608.15.1 for air gap definition."
+      },
+      "code_reference": {"code": "IPC", "section": "608.15.1"},
+      "zafto_links": [],
+      "tags": ["air gap", "vertical distance", "flood level"],
+      "verified": true
+    },
+    {
+      "id": "WS-017",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["608"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum air gap for a faucet with 1/2-inch outlet?",
+      "choices": [
+        {"id": "A", "text": "1/2 inch"},
+        {"id": "B", "text": "1 inch"},
+        {"id": "C", "text": "2 times outlet diameter"},
+        {"id": "D", "text": "2 inches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Minimum air gap is 2 times the outlet diameter.",
+        "detailed": "Per IPC Section 608.15.1, the minimum air gap shall be at least two times the diameter of the effective opening, but not less than 1 inch for outlets under 1 inch.",
+        "how_to_find": "Reference IPC Section 608.15.1 for air gap sizing."
+      },
+      "code_reference": {"code": "IPC", "section": "608.15.1"},
+      "zafto_links": [],
+      "tags": ["air gap", "2x diameter", "minimum"],
+      "verified": true
+    },
+    {
+      "id": "WS-018",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["608"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is an atmospheric vacuum breaker (AVB)?",
+      "choices": [
+        {"id": "A", "text": "Device that removes air from pipes"},
+        {"id": "B", "text": "Backflow preventer that opens to atmosphere when pressure drops"},
+        {"id": "C", "text": "Pressure regulator"},
+        {"id": "D", "text": "Air compressor fitting"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "AVB opens to atmosphere when pressure drops to prevent backsiphonage.",
+        "detailed": "Per IPC Section 608.15.4, an atmospheric vacuum breaker is a device that opens to atmosphere when water pressure drops, admitting air to break siphon and prevent backsiphonage.",
+        "how_to_find": "Reference IPC Section 608.15.4 for AVB definition."
+      },
+      "code_reference": {"code": "IPC", "section": "608.15.4"},
+      "zafto_links": [],
+      "tags": ["AVB", "vacuum breaker", "backsiphonage"],
+      "verified": true
+    },
+    {
+      "id": "WS-019",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["608"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "At what height above the flood level rim must an AVB be installed?",
+      "choices": [
+        {"id": "A", "text": "1 inch"},
+        {"id": "B", "text": "6 inches"},
+        {"id": "C", "text": "12 inches"},
+        {"id": "D", "text": "No height requirement"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "AVB must be 6 inches above flood level rim.",
+        "detailed": "Per IPC Section 608.15.4.1, atmospheric vacuum breakers shall be installed at least 6 inches above the flood level rim of the fixture or equipment served.",
+        "how_to_find": "Reference IPC Section 608.15.4.1 for AVB installation height."
+      },
+      "code_reference": {"code": "IPC", "section": "608.15.4.1"},
+      "zafto_links": [],
+      "tags": ["AVB", "6 inches", "flood level rim"],
+      "verified": true
+    },
+    {
+      "id": "WS-020",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["608"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Can a valve be installed downstream of an AVB?",
+      "choices": [
+        {"id": "A", "text": "Yes, any valve type"},
+        {"id": "B", "text": "No, no valve permitted downstream"},
+        {"id": "C", "text": "Only check valves"},
+        {"id": "D", "text": "Only ball valves"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "No valve permitted downstream of AVB.",
+        "detailed": "Per IPC Section 608.15.4.1, no valve shall be installed downstream of an atmospheric vacuum breaker because back pressure from a closed valve would prevent proper operation.",
+        "how_to_find": "Reference IPC Section 608.15.4.1 for AVB valve restriction."
+      },
+      "code_reference": {"code": "IPC", "section": "608.15.4.1"},
+      "zafto_links": [],
+      "tags": ["AVB", "no downstream valve", "restriction"],
+      "verified": true
+    },
+    {
+      "id": "WS-021",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["608"],
+      "code_tables": ["608.1"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is a reduced pressure zone (RPZ) backflow preventer?",
+      "choices": [
+        {"id": "A", "text": "Single check valve"},
+        {"id": "B", "text": "Device with two check valves and relief valve"},
+        {"id": "C", "text": "Air gap device"},
+        {"id": "D", "text": "Atmospheric vacuum breaker"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "RPZ has two check valves plus relief valve between them.",
+        "detailed": "Per IPC Section 608.13.5, a reduced pressure zone assembly contains two independently acting check valves with a differential pressure relief valve located between them.",
+        "how_to_find": "Reference IPC Section 608.13.5 for RPZ description."
+      },
+      "code_reference": {"code": "IPC", "section": "608.13.5"},
+      "zafto_links": [],
+      "tags": ["RPZ", "backflow preventer", "relief valve"],
+      "verified": true
+    },
+    {
+      "id": "WS-022",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["608"],
+      "code_tables": ["608.1"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is a double check valve assembly (DCVA)?",
+      "choices": [
+        {"id": "A", "text": "Two check valves in series"},
+        {"id": "B", "text": "Single check with backup"},
+        {"id": "C", "text": "Check valve with relief"},
+        {"id": "D", "text": "Ball valve combination"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "DCVA has two independently acting check valves in series.",
+        "detailed": "Per IPC Section 608.13.4, a double check valve assembly contains two independently acting check valves installed in series with test ports.",
+        "how_to_find": "Reference IPC Section 608.13.4 for DCVA description."
+      },
+      "code_reference": {"code": "IPC", "section": "608.13.4"},
+      "zafto_links": [],
+      "tags": ["DCVA", "double check", "series"],
+      "verified": true
+    },
+    {
+      "id": "WS-023",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["608"],
+      "code_tables": ["608.1"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What backflow device is required for high-hazard connections?",
+      "choices": [
+        {"id": "A", "text": "Single check valve"},
+        {"id": "B", "text": "DCVA"},
+        {"id": "C", "text": "Air gap or RPZ"},
+        {"id": "D", "text": "AVB"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "High-hazard requires air gap or RPZ protection.",
+        "detailed": "Per IPC Table 608.1, high-hazard connections (health hazard) require either an air gap or reduced pressure zone backflow preventer (RPZ) for adequate protection.",
+        "how_to_find": "Reference IPC Table 608.1 for backflow device selection."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 608.1"},
+      "zafto_links": [],
+      "tags": ["high-hazard", "air gap", "RPZ"],
+      "verified": true
+    },
+    {
+      "id": "WS-024",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["608"],
+      "code_tables": ["608.1"],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "A lawn irrigation system connects to potable water. What backflow prevention is required?",
+      "choices": [
+        {"id": "A", "text": "Single check valve"},
+        {"id": "B", "text": "DCVA minimum, RPZ if chemical injection used"},
+        {"id": "C", "text": "No protection needed"},
+        {"id": "D", "text": "Air gap only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Irrigation requires DCVA minimum; RPZ if chemicals used.",
+        "detailed": "Per IPC Section 608.16.5, lawn irrigation systems require at minimum a DCVA. If chemical injection (fertilizer) is used, the system becomes high-hazard requiring RPZ or air gap.",
+        "how_to_find": "Reference IPC Section 608.16.5 for irrigation backflow."
+      },
+      "code_reference": {"code": "IPC", "section": "608.16.5"},
+      "zafto_links": [],
+      "tags": ["irrigation", "backflow", "DCVA", "RPZ"],
+      "verified": true
+    },
+    {
+      "id": "WS-025",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["608"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "How often must testable backflow preventers be tested?",
+      "choices": [
+        {"id": "A", "text": "Monthly"},
+        {"id": "B", "text": "Annually"},
+        {"id": "C", "text": "Every 5 years"},
+        {"id": "D", "text": "At installation only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Testable backflow preventers require annual testing.",
+        "detailed": "Per IPC Section 608.17.2, testable backflow prevention assemblies (RPZ, DCVA, PVB) shall be tested at the time of installation and at least annually thereafter by certified testers.",
+        "how_to_find": "Reference IPC Section 608.17.2 for testing frequency."
+      },
+      "code_reference": {"code": "IPC", "section": "608.17.2"},
+      "zafto_links": [],
+      "tags": ["backflow testing", "annual", "certified"],
+      "verified": true
+    },
+    {
+      "id": "WS-026",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["604"],
+      "code_tables": ["604.3"],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "What is the minimum water supply pressure required at a flushometer water closet?",
+      "choices": [
+        {"id": "A", "text": "8 psi"},
+        {"id": "B", "text": "15 psi"},
+        {"id": "C", "text": "25 psi"},
+        {"id": "D", "text": "35 psi"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Flushometer WC requires minimum 25 psi.",
+        "detailed": "Per IPC Table 604.3, flushometer valves for water closets require a minimum water supply pressure of 25 psi flowing for proper operation.",
+        "how_to_find": "Reference IPC Table 604.3 for flushometer pressure."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 604.3"},
+      "zafto_links": [],
+      "tags": ["flushometer", "25 psi", "minimum pressure"],
+      "verified": true
+    },
+    {
+      "id": "WS-027",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["604"],
+      "code_tables": ["604.3"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum water supply pressure required at a showerhead?",
+      "choices": [
+        {"id": "A", "text": "8 psi"},
+        {"id": "B", "text": "15 psi"},
+        {"id": "C", "text": "20 psi"},
+        {"id": "D", "text": "25 psi"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Showerheads require minimum 20 psi flowing.",
+        "detailed": "Per IPC Table 604.3, showerheads require a minimum water supply pressure of 20 psi at flowing conditions for adequate spray performance.",
+        "how_to_find": "Reference IPC Table 604.3 for showerhead pressure."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 604.3"},
+      "zafto_links": [],
+      "tags": ["showerhead", "20 psi", "minimum pressure"],
+      "verified": true
+    },
+    {
+      "id": "WS-028",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["607"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the purpose of a water hammer arrestor?",
+      "choices": [
+        {"id": "A", "text": "Filter debris"},
+        {"id": "B", "text": "Reduce pressure"},
+        {"id": "C", "text": "Absorb pressure surge from quick-closing valves"},
+        {"id": "D", "text": "Prevent backflow"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Water hammer arrestors absorb pressure surge.",
+        "detailed": "Per IPC Section 604.9, water hammer arrestors absorb the pressure shock wave (water hammer) created when quick-closing valves suddenly stop water flow.",
+        "how_to_find": "Reference IPC Section 604.9 for water hammer protection."
+      },
+      "code_reference": {"code": "IPC", "section": "604.9"},
+      "zafto_links": [],
+      "tags": ["water hammer", "arrestor", "pressure surge"],
+      "verified": true
+    },
+    {
+      "id": "WS-029",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["607"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Where are water hammer arrestors required?",
+      "choices": [
+        {"id": "A", "text": "At every fixture"},
+        {"id": "B", "text": "At quick-closing valves per engineering design"},
+        {"id": "C", "text": "At water heater only"},
+        {"id": "D", "text": "At main shutoff only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Required at quick-closing valves as engineered.",
+        "detailed": "Per IPC Section 604.9, water hammer arrestors shall be installed where quick-closing valves are used. Location and sizing are per ASSE 1010 and engineering requirements.",
+        "how_to_find": "Reference IPC Section 604.9 for arrestor locations."
+      },
+      "code_reference": {"code": "IPC", "section": "604.9"},
+      "zafto_links": [],
+      "tags": ["water hammer arrestor", "quick-closing", "location"],
+      "verified": true
+    },
+    {
+      "id": "WS-030",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["607"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What causes water hammer?",
+      "choices": [
+        {"id": "A", "text": "Low water pressure"},
+        {"id": "B", "text": "Sudden valve closure stopping moving water"},
+        {"id": "C", "text": "High temperature"},
+        {"id": "D", "text": "Pipe corrosion"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Water hammer caused by sudden stop of moving water.",
+        "detailed": "Water hammer is a pressure surge caused when moving water is suddenly stopped by a quick-closing valve (solenoid, lever, or automatic), creating a shock wave in the piping.",
+        "how_to_find": "Reference IPC Section 604.9 for water hammer cause."
+      },
+      "code_reference": {"code": "IPC", "section": "604.9"},
+      "zafto_links": [],
+      "tags": ["water hammer", "cause", "sudden closure"],
+      "verified": true
+    },
+    {
+      "id": "WS-031",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["603"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum size for a building water service?",
+      "choices": [
+        {"id": "A", "text": "1/2 inch"},
+        {"id": "B", "text": "3/4 inch"},
+        {"id": "C", "text": "1 inch"},
+        {"id": "D", "text": "Based on demand calculation"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Minimum water service size is 3/4 inch.",
+        "detailed": "Per IPC Section 603.1, the minimum water service pipe size is 3/4 inch for buildings. Actual size may be larger based on demand calculations per Section 604.",
+        "how_to_find": "Reference IPC Section 603.1 for minimum service size."
+      },
+      "code_reference": {"code": "IPC", "section": "603.1"},
+      "zafto_links": [],
+      "tags": ["water service", "minimum size", "3/4 inch"],
+      "verified": true
+    },
+    {
+      "id": "WS-032",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["606"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What valve is required at the water service entrance?",
+      "choices": [
+        {"id": "A", "text": "Check valve"},
+        {"id": "B", "text": "Full-way shutoff valve"},
+        {"id": "C", "text": "Pressure reducing valve"},
+        {"id": "D", "text": "Backflow preventer"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Full-way shutoff valve required at service entrance.",
+        "detailed": "Per IPC Section 606.1, a full-way shutoff valve shall be installed on the building water service near the entrance to control water supply to the entire building.",
+        "how_to_find": "Reference IPC Section 606.1 for service shutoff valve."
+      },
+      "code_reference": {"code": "IPC", "section": "606.1"},
+      "zafto_links": [],
+      "tags": ["shutoff valve", "service entrance", "full-way"],
+      "verified": true
+    },
+    {
+      "id": "WS-033",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["606"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Where is a shutoff valve required in the water distribution system?",
+      "choices": [
+        {"id": "A", "text": "Only at service entrance"},
+        {"id": "B", "text": "At service entrance and water heater"},
+        {"id": "C", "text": "At service, heater, and each fixture supply"},
+        {"id": "D", "text": "At every branch and fixture"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Shutoffs at service, water heater, and each fixture.",
+        "detailed": "Per IPC Section 606.1, shutoff valves are required at the building service entrance, water heater inlet, and on the supply to each plumbing fixture.",
+        "how_to_find": "Reference IPC Section 606.1 for valve locations."
+      },
+      "code_reference": {"code": "IPC", "section": "606.1"},
+      "zafto_links": [],
+      "tags": ["shutoff valve", "locations", "fixture supply"],
+      "verified": true
+    },
+    {
+      "id": "WS-034",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["605"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the most common material for residential water supply piping?",
+      "choices": [
+        {"id": "A", "text": "Lead"},
+        {"id": "B", "text": "Copper or PEX"},
+        {"id": "C", "text": "Cast iron"},
+        {"id": "D", "text": "Clay"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Copper and PEX are common residential supply materials.",
+        "detailed": "Per IPC Section 605.3, approved water supply materials include copper tubing (Types K, L, M) and cross-linked polyethylene (PEX), which are most common in residential applications.",
+        "how_to_find": "Reference IPC Section 605.3 for approved materials."
+      },
+      "code_reference": {"code": "IPC", "section": "605.3"},
+      "zafto_links": [],
+      "tags": ["copper", "PEX", "water supply", "residential"],
+      "verified": true
+    },
+    {
+      "id": "WS-035",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["605"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Is CPVC approved for hot water distribution?",
+      "choices": [
+        {"id": "A", "text": "No, cold water only"},
+        {"id": "B", "text": "Yes, up to 180°F"},
+        {"id": "C", "text": "Only with insulation"},
+        {"id": "D", "text": "Only for drainage"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "CPVC approved for hot water up to 180°F.",
+        "detailed": "Per IPC Section 605.3 and Table 605.3, CPVC (chlorinated polyvinyl chloride) is approved for hot and cold water distribution with a maximum working temperature of 180°F.",
+        "how_to_find": "Reference IPC Section 605.3 for CPVC approval."
+      },
+      "code_reference": {"code": "IPC", "section": "605.3"},
+      "zafto_links": [],
+      "tags": ["CPVC", "hot water", "180°F"],
+      "verified": true
+    },
+    {
+      "id": "WS-036",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["605"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Is lead pipe permitted for potable water supply?",
+      "choices": [
+        {"id": "A", "text": "Yes, in all applications"},
+        {"id": "B", "text": "No, prohibited"},
+        {"id": "C", "text": "Only for underground service"},
+        {"id": "D", "text": "Only for repairs of existing systems"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Lead pipe is prohibited for potable water supply.",
+        "detailed": "Per IPC Section 605.2 and Safe Drinking Water Act requirements, lead pipe and fittings/solder with more than 0.2% lead are prohibited for potable water systems.",
+        "how_to_find": "Reference IPC Section 605.2 for lead prohibition."
+      },
+      "code_reference": {"code": "IPC", "section": "605.2"},
+      "zafto_links": [],
+      "tags": ["lead", "prohibited", "potable water"],
+      "verified": true
+    },
+    {
+      "id": "WS-037",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["501"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What clearance is required around a gas water heater for combustion air?",
+      "choices": [
+        {"id": "A", "text": "No clearance required"},
+        {"id": "B", "text": "Per manufacturer's instructions"},
+        {"id": "C", "text": "12 inches on all sides"},
+        {"id": "D", "text": "24 inches in front only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Clearances per manufacturer's instructions.",
+        "detailed": "Per IPC Section 501.2, water heater installation clearances shall be in accordance with the manufacturer's instructions to ensure adequate combustion air and serviceability.",
+        "how_to_find": "Reference IPC Section 501.2 for installation requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "501.2"},
+      "zafto_links": [],
+      "tags": ["water heater", "clearance", "manufacturer"],
+      "verified": true
+    },
+    {
+      "id": "WS-038",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["502"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "When is a water heater expansion tank required?",
+      "choices": [
+        {"id": "A", "text": "All water heaters"},
+        {"id": "B", "text": "When system is closed (has check valve/PRV)"},
+        {"id": "C", "text": "Electric heaters only"},
+        {"id": "D", "text": "Commercial buildings only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Expansion tank required in closed systems.",
+        "detailed": "Per IPC Section 607.3, when the water supply has a check valve, backflow preventer, or PRV creating a closed system, thermal expansion must be controlled with an expansion tank.",
+        "how_to_find": "Reference IPC Section 607.3 for thermal expansion."
+      },
+      "code_reference": {"code": "IPC", "section": "607.3"},
+      "zafto_links": [],
+      "tags": ["expansion tank", "closed system", "thermal expansion"],
+      "verified": true
+    },
+    {
+      "id": "WS-039",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["502"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What causes thermal expansion in water systems?",
+      "choices": [
+        {"id": "A", "text": "Cold water entering heater"},
+        {"id": "B", "text": "Water expanding as it heats with no place to go"},
+        {"id": "C", "text": "Pipe corrosion"},
+        {"id": "D", "text": "High flow rate"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Heated water expands; in closed system has no relief path.",
+        "detailed": "Thermal expansion occurs when water is heated and expands. In a closed system (with check valve/PRV), the expanded water cannot push back into the main, causing pressure buildup.",
+        "how_to_find": "Reference IPC Section 607.3 for thermal expansion cause."
+      },
+      "code_reference": {"code": "IPC", "section": "607.3"},
+      "zafto_links": [],
+      "tags": ["thermal expansion", "heating", "closed system"],
+      "verified": true
+    },
+    {
+      "id": "WS-040",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["501"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Where must a gas water heater be located in a garage?",
+      "choices": [
+        {"id": "A", "text": "Anywhere in garage"},
+        {"id": "B", "text": "Elevated with burner 18 inches minimum above floor"},
+        {"id": "C", "text": "Only in separate room"},
+        {"id": "D", "text": "Gas heaters prohibited in garage"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Garage gas water heater elevated 18 inches minimum.",
+        "detailed": "Per IPC Section 501.2 and fuel gas codes, gas-fired water heaters in garages shall have the burner or ignition source at least 18 inches above the floor to avoid igniting gasoline vapors.",
+        "how_to_find": "Reference IPC Section 501.2 and IFGC for garage installation."
+      },
+      "code_reference": {"code": "IPC", "section": "501.2"},
+      "zafto_links": [],
+      "tags": ["garage", "water heater", "18 inches elevated"],
+      "verified": true
+    },
+    {
+      "id": "WS-041",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["501"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is required under a water heater in an attic?",
+      "choices": [
+        {"id": "A", "text": "Nothing special"},
+        {"id": "B", "text": "Drain pan with drain to approved location"},
+        {"id": "C", "text": "Insulation only"},
+        {"id": "D", "text": "Fire-resistant barrier"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Attic water heater requires drain pan with drain line.",
+        "detailed": "Per IPC Section 504.7, water heaters in locations where leakage could cause damage (attics, above ceilings) shall have a drain pan with drain to an approved location.",
+        "how_to_find": "Reference IPC Section 504.7 for pan requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "504.7"},
+      "zafto_links": [],
+      "tags": ["attic", "water heater", "drain pan"],
+      "verified": true
+    },
+    {
+      "id": "WS-042",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["504"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum depth for a water heater drain pan?",
+      "choices": [
+        {"id": "A", "text": "1 inch"},
+        {"id": "B", "text": "1-1/2 inches"},
+        {"id": "C", "text": "2 inches"},
+        {"id": "D", "text": "3 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Water heater pan minimum 1-1/2 inches deep.",
+        "detailed": "Per IPC Section 504.7.1, water heater drain pans shall be minimum 1-1/2 inches deep with a 3/4-inch minimum diameter drain.",
+        "how_to_find": "Reference IPC Section 504.7.1 for pan depth."
+      },
+      "code_reference": {"code": "IPC", "section": "504.7.1"},
+      "zafto_links": [],
+      "tags": ["drain pan", "depth", "1-1/2 inches"],
+      "verified": true
+    },
+    {
+      "id": "WS-043",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["604"],
+      "code_tables": ["604.4"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is a Water Supply Fixture Unit (WSFU)?",
+      "choices": [
+        {"id": "A", "text": "Gallons per minute"},
+        {"id": "B", "text": "Unit measure of probable demand on water supply"},
+        {"id": "C", "text": "Fixture flow rate"},
+        {"id": "D", "text": "Pipe size rating"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "WSFU measures probable water demand for sizing.",
+        "detailed": "Per IPC Section 604.4, a water supply fixture unit (WSFU) is a unit value assigned to fixtures representing their probable load on the water supply system for pipe sizing.",
+        "how_to_find": "Reference IPC Section 604.4 for WSFU definition."
+      },
+      "code_reference": {"code": "IPC", "section": "604.4"},
+      "zafto_links": [],
+      "tags": ["WSFU", "fixture unit", "water sizing"],
+      "verified": true
+    },
+    {
+      "id": "WS-044",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["604"],
+      "code_tables": ["604.4"],
+      "type": "calculation",
+      "difficulty": "medium",
+      "time_estimate_seconds": 120,
+      "question": "What is the WSFU value for a residential tank-type toilet (private use)?",
+      "choices": [
+        {"id": "A", "text": "1.0"},
+        {"id": "B", "text": "2.2"},
+        {"id": "C", "text": "2.5"},
+        {"id": "D", "text": "4.0"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Private tank-type WC = 2.2 WSFU.",
+        "detailed": "Per IPC Table 604.4, a water closet with tank (private use) has a water supply fixture unit value of 2.2 for sizing water distribution piping.",
+        "how_to_find": "Reference IPC Table 604.4 for fixture WSFU values."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 604.4"},
+      "zafto_links": [],
+      "tags": ["WSFU", "toilet", "2.2"],
+      "verified": true
+    },
+    {
+      "id": "WS-045",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["604"],
+      "code_tables": ["604.4"],
+      "type": "calculation",
+      "difficulty": "medium",
+      "time_estimate_seconds": 120,
+      "question": "What is the WSFU value for a residential bathtub?",
+      "choices": [
+        {"id": "A", "text": "1.0"},
+        {"id": "B", "text": "2.0"},
+        {"id": "C", "text": "4.0"},
+        {"id": "D", "text": "6.0"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Bathtub with shower = 4.0 WSFU.",
+        "detailed": "Per IPC Table 604.4, a bathtub with or without shower (private use) has a water supply fixture unit value of 4.0.",
+        "how_to_find": "Reference IPC Table 604.4 for bathtub WSFU."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 604.4"},
+      "zafto_links": [],
+      "tags": ["WSFU", "bathtub", "4.0"],
+      "verified": true
+    },
+    {
+      "id": "WS-046",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["604"],
+      "code_tables": ["604.4"],
+      "type": "calculation",
+      "difficulty": "medium",
+      "time_estimate_seconds": 120,
+      "question": "What is the WSFU value for a residential lavatory?",
+      "choices": [
+        {"id": "A", "text": "0.5"},
+        {"id": "B", "text": "1.0"},
+        {"id": "C", "text": "1.5"},
+        {"id": "D", "text": "2.0"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Private lavatory = 1.0 WSFU.",
+        "detailed": "Per IPC Table 604.4, a lavatory (private use) has a water supply fixture unit value of 1.0.",
+        "how_to_find": "Reference IPC Table 604.4 for lavatory WSFU."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 604.4"},
+      "zafto_links": [],
+      "tags": ["WSFU", "lavatory", "1.0"],
+      "verified": true
+    },
+    {
+      "id": "WS-047",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["604"],
+      "code_tables": ["604.4"],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "A home has 1 WC (tank), 1 lav, 1 tub/shower, 1 kitchen sink. What is total WSFU?",
+      "choices": [
+        {"id": "A", "text": "7.2"},
+        {"id": "B", "text": "8.7"},
+        {"id": "C", "text": "9.2"},
+        {"id": "D", "text": "10.0"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "WC(2.2) + Lav(1.0) + Tub(4.0) + Kitchen sink(2.0) = 9.2 WSFU.",
+        "detailed": "Per IPC Table 604.4: Tank WC = 2.2, Lavatory = 1.0, Bathtub/shower = 4.0, Kitchen sink = 2.0. Total = 2.2 + 1.0 + 4.0 + 2.0 = 9.2 WSFU.",
+        "how_to_find": "Reference IPC Table 604.4 and sum fixture values."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 604.4"},
+      "zafto_links": [],
+      "tags": ["WSFU", "calculation", "total"],
+      "verified": true
+    },
+    {
+      "id": "WS-048",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["609"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What type of pipe support is required for horizontal copper piping?",
+      "choices": [
+        {"id": "A", "text": "Straps at any interval"},
+        {"id": "B", "text": "Hangers at intervals per Table 308.5"},
+        {"id": "C", "text": "Floor supports only"},
+        {"id": "D", "text": "No support required"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Pipe hangers at intervals per IPC Table 308.5.",
+        "detailed": "Per IPC Section 308.5 and Table 308.5, copper pipe requires support at specific intervals: 10 feet for horizontal 1-inch and larger, 6 feet for smaller sizes.",
+        "how_to_find": "Reference IPC Table 308.5 for support intervals."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 308.5"},
+      "zafto_links": [],
+      "tags": ["pipe support", "copper", "hangers"],
+      "verified": true
+    },
+    {
+      "id": "WS-049",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["609"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum horizontal support spacing for 3/4-inch copper tube?",
+      "choices": [
+        {"id": "A", "text": "4 feet"},
+        {"id": "B", "text": "6 feet"},
+        {"id": "C", "text": "10 feet"},
+        {"id": "D", "text": "12 feet"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "3/4-inch copper requires support every 6 feet horizontal.",
+        "detailed": "Per IPC Table 308.5, copper tubing 1 inch and smaller requires horizontal support at maximum 6-foot intervals.",
+        "how_to_find": "Reference IPC Table 308.5 for copper support spacing."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 308.5"},
+      "zafto_links": [],
+      "tags": ["copper", "support spacing", "6 feet"],
+      "verified": true
+    },
+    {
+      "id": "WS-050",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["609"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the vertical support spacing for 1/2-inch CPVC?",
+      "choices": [
+        {"id": "A", "text": "3 feet"},
+        {"id": "B", "text": "4 feet"},
+        {"id": "C", "text": "10 feet"},
+        {"id": "D", "text": "At each floor"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Vertical plastic pipe supported at each story.",
+        "detailed": "Per IPC Table 308.5, CPVC and other plastic piping requires vertical support at each story height (maximum 10 feet for 1-inch and larger, 4 feet for smaller).",
+        "how_to_find": "Reference IPC Table 308.5 for vertical support."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 308.5"},
+      "zafto_links": [],
+      "tags": ["CPVC", "vertical support", "each story"],
+      "verified": true
+    },
+    {
+      "id": "WS-051",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["605"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What type of copper tubing is recommended for underground water service?",
+      "choices": [
+        {"id": "A", "text": "Type M"},
+        {"id": "B", "text": "Type L"},
+        {"id": "C", "text": "Type K"},
+        {"id": "D", "text": "DWV copper"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Type K copper is thickest and best for underground.",
+        "detailed": "Per IPC Section 605.3, Type K copper has the thickest wall and is recommended for underground water service applications where durability and corrosion resistance are critical.",
+        "how_to_find": "Reference IPC Section 605.3 and copper tubing specifications."
+      },
+      "code_reference": {"code": "IPC", "section": "605.3"},
+      "zafto_links": [],
+      "tags": ["Type K copper", "underground", "water service"],
+      "verified": true
+    },
+    {
+      "id": "WS-052",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["605"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the color code for Type L copper tubing?",
+      "choices": [
+        {"id": "A", "text": "Green"},
+        {"id": "B", "text": "Blue"},
+        {"id": "C", "text": "Red"},
+        {"id": "D", "text": "Yellow"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Type L copper is marked with blue lettering/stripe.",
+        "detailed": "Copper tubing is color coded: Type K = green, Type L = blue, Type M = red. This helps identify wall thickness in the field.",
+        "how_to_find": "Reference ASTM B88 for copper identification."
+      },
+      "code_reference": {"code": "IPC", "section": "605.3"},
+      "zafto_links": [],
+      "tags": ["Type L copper", "blue", "color code"],
+      "verified": true
+    },
+    {
+      "id": "WS-053",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["605"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Which copper type has the thinnest wall?",
+      "choices": [
+        {"id": "A", "text": "Type K"},
+        {"id": "B", "text": "Type L"},
+        {"id": "C", "text": "Type M"},
+        {"id": "D", "text": "All are the same"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Type M has the thinnest wall, suitable for above-ground.",
+        "detailed": "Type M copper has the thinnest wall and is typically used for above-ground interior water distribution where maximum durability is not required.",
+        "how_to_find": "Reference ASTM B88 for copper wall thickness."
+      },
+      "code_reference": {"code": "IPC", "section": "605.3"},
+      "zafto_links": [],
+      "tags": ["Type M copper", "thinnest", "above-ground"],
+      "verified": true
+    },
+    {
+      "id": "WS-054",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["605"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is PEX tubing?",
+      "choices": [
+        {"id": "A", "text": "Polyvinyl chloride"},
+        {"id": "B", "text": "Cross-linked polyethylene"},
+        {"id": "C", "text": "Polypropylene"},
+        {"id": "D", "text": "Polybutylene"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "PEX is cross-linked polyethylene tubing.",
+        "detailed": "Per IPC Section 605.3, PEX (cross-linked polyethylene) is an approved flexible plastic tubing commonly used for water distribution in residential and commercial buildings.",
+        "how_to_find": "Reference IPC Section 605.3 for PEX definition."
+      },
+      "code_reference": {"code": "IPC", "section": "605.3"},
+      "zafto_links": [],
+      "tags": ["PEX", "cross-linked polyethylene", "tubing"],
+      "verified": true
+    },
+    {
+      "id": "WS-055",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["605"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum working temperature for PEX tubing?",
+      "choices": [
+        {"id": "A", "text": "140°F"},
+        {"id": "B", "text": "180°F"},
+        {"id": "C", "text": "200°F"},
+        {"id": "D", "text": "Per manufacturer rating"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "PEX temperature per manufacturer, typically 180°F.",
+        "detailed": "Per IPC Section 605.3, PEX temperature and pressure ratings are per manufacturer specifications. Most PEX is rated for 180°F at 80 psi, 100 psi at 73°F.",
+        "how_to_find": "Reference IPC Section 605.3 and manufacturer specifications."
+      },
+      "code_reference": {"code": "IPC", "section": "605.3"},
+      "zafto_links": [],
+      "tags": ["PEX", "temperature rating", "180°F"],
+      "verified": true
+    },
+    {
+      "id": "WS-056",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["605"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Can PEX be exposed to sunlight?",
+      "choices": [
+        {"id": "A", "text": "Yes, unlimited exposure"},
+        {"id": "B", "text": "No, must be protected from UV"},
+        {"id": "C", "text": "Only if painted"},
+        {"id": "D", "text": "Only indoors"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "PEX must be protected from UV exposure.",
+        "detailed": "Per manufacturer specifications and IPC Section 605.3, PEX tubing shall not be exposed to direct sunlight as UV radiation degrades the material over time.",
+        "how_to_find": "Reference PEX manufacturer guidelines and IPC Section 605.3."
+      },
+      "code_reference": {"code": "IPC", "section": "605.3"},
+      "zafto_links": [],
+      "tags": ["PEX", "UV protection", "sunlight"],
+      "verified": true
+    },
+    {
+      "id": "WS-057",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["605"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What fitting method is commonly used with PEX?",
+      "choices": [
+        {"id": "A", "text": "Soldering"},
+        {"id": "B", "text": "Compression, crimp, or expansion fittings"},
+        {"id": "C", "text": "Solvent cement"},
+        {"id": "D", "text": "Threaded fittings only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "PEX uses crimp, clamp, or expansion fittings.",
+        "detailed": "PEX connections are made with mechanical fittings: crimp rings, cinch clamps, push-fit connections, or expansion fittings. No heat or cement is used.",
+        "how_to_find": "Reference PEX installation standards."
+      },
+      "code_reference": {"code": "IPC", "section": "605.17"},
+      "zafto_links": [],
+      "tags": ["PEX", "fittings", "crimp", "expansion"],
+      "verified": true
+    },
+    {
+      "id": "WS-058",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["605"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum bend radius for 1/2-inch PEX?",
+      "choices": [
+        {"id": "A", "text": "1 inch"},
+        {"id": "B", "text": "4 inches (8 × outer diameter)"},
+        {"id": "C", "text": "6 inches"},
+        {"id": "D", "text": "No minimum - fully flexible"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "PEX bend radius is 8 × outer diameter minimum.",
+        "detailed": "Per manufacturer specifications, PEX minimum bend radius is typically 8 times the outside diameter. For 1/2-inch PEX (5/8\" OD), minimum radius is approximately 4-5 inches.",
+        "how_to_find": "Reference PEX manufacturer bend radius specifications."
+      },
+      "code_reference": {"code": "IPC", "section": "605.3"},
+      "zafto_links": [],
+      "tags": ["PEX", "bend radius", "8x diameter"],
+      "verified": true
+    },
+    {
+      "id": "WS-059",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["608"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is a pressure vacuum breaker (PVB)?",
+      "choices": [
+        {"id": "A", "text": "Same as atmospheric vacuum breaker"},
+        {"id": "B", "text": "Spring-loaded vacuum breaker for continuous pressure"},
+        {"id": "C", "text": "Check valve with air inlet"},
+        {"id": "D", "text": "Pressure regulator with vacuum port"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "PVB is spring-loaded, handles continuous pressure.",
+        "detailed": "Per IPC Section 608.15.4.2, a pressure vacuum breaker (PVB) contains a spring-loaded check valve and air inlet, allowing it to be installed under continuous pressure unlike an AVB.",
+        "how_to_find": "Reference IPC Section 608.15.4.2 for PVB definition."
+      },
+      "code_reference": {"code": "IPC", "section": "608.15.4.2"},
+      "zafto_links": [],
+      "tags": ["PVB", "pressure vacuum breaker", "spring-loaded"],
+      "verified": true
+    },
+    {
+      "id": "WS-060",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["608"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "At what height must a PVB be installed above the highest outlet?",
+      "choices": [
+        {"id": "A", "text": "6 inches"},
+        {"id": "B", "text": "12 inches"},
+        {"id": "C", "text": "24 inches"},
+        {"id": "D", "text": "No height requirement"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "PVB must be 12 inches above highest outlet.",
+        "detailed": "Per IPC Section 608.15.4.2, pressure vacuum breakers shall be installed at least 12 inches above the highest point of use downstream to prevent backpressure conditions.",
+        "how_to_find": "Reference IPC Section 608.15.4.2 for PVB installation height."
+      },
+      "code_reference": {"code": "IPC", "section": "608.15.4.2"},
+      "zafto_links": [],
+      "tags": ["PVB", "12 inches", "installation height"],
+      "verified": true
+    },
+    {
+      "id": "WS-061",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["608"],
+      "code_tables": ["608.1"],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "A boiler makeup water connection is classified as what hazard level?",
+      "choices": [
+        {"id": "A", "text": "No hazard"},
+        {"id": "B", "text": "Low hazard - pollutant"},
+        {"id": "C", "text": "High hazard - contaminant"},
+        {"id": "D", "text": "Depends on boiler type"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Boiler makeup is high hazard due to chemical treatment.",
+        "detailed": "Per IPC Table 608.1, boiler makeup water connections are typically high-hazard (health hazard) due to chemical additives in boiler water, requiring air gap or RPZ protection.",
+        "how_to_find": "Reference IPC Table 608.1 for boiler hazard classification."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 608.1"},
+      "zafto_links": [],
+      "tags": ["boiler makeup", "high hazard", "contaminant"],
+      "verified": true
+    },
+    {
+      "id": "WS-062",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["608"],
+      "code_tables": ["608.1"],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "A commercial dishwasher with detergent injection requires what backflow protection?",
+      "choices": [
+        {"id": "A", "text": "None"},
+        {"id": "B", "text": "AVB"},
+        {"id": "C", "text": "DCVA"},
+        {"id": "D", "text": "Air gap or RPZ"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Chemical injection = high hazard = air gap or RPZ.",
+        "detailed": "Per IPC Table 608.1, equipment with chemical injection (detergent) is classified as high-hazard, requiring an air gap or reduced pressure zone backflow preventer.",
+        "how_to_find": "Reference IPC Table 608.1 for chemical injection requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 608.1"},
+      "zafto_links": [],
+      "tags": ["dishwasher", "chemical injection", "high hazard"],
+      "verified": true
+    },
+    {
+      "id": "WS-063",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["608"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is a hose connection vacuum breaker (HCVB)?",
+      "choices": [
+        {"id": "A", "text": "Built into hose bibb"},
+        {"id": "B", "text": "Threaded device for hose connection protection"},
+        {"id": "C", "text": "Garden hose fitting"},
+        {"id": "D", "text": "Underground sprinkler device"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "HCVB threads onto hose bibb for backsiphonage protection.",
+        "detailed": "Per IPC Section 608.15.4.2, a hose connection vacuum breaker is a device that threads onto a hose bibb outlet, providing protection against backsiphonage through garden hoses.",
+        "how_to_find": "Reference IPC Section 608.15.4.2 for HCVB description."
+      },
+      "code_reference": {"code": "IPC", "section": "608.15.4.2"},
+      "zafto_links": [],
+      "tags": ["HCVB", "hose connection", "vacuum breaker"],
+      "verified": true
+    },
+    {
+      "id": "WS-064",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["608"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Can an HCVB be removed by the user?",
+      "choices": [
+        {"id": "A", "text": "Yes, any time"},
+        {"id": "B", "text": "No, must be non-removable"},
+        {"id": "C", "text": "Only with tools"},
+        {"id": "D", "text": "Only when hose disconnected"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "HCVB must be non-removable or integral to fixture.",
+        "detailed": "Per IPC Section 608.15.4.2, hose connection vacuum breakers shall be non-removable or the hose bibb shall have integral backflow protection to prevent removal.",
+        "how_to_find": "Reference IPC Section 608.15.4.2 for HCVB requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "608.15.4.2"},
+      "zafto_links": [],
+      "tags": ["HCVB", "non-removable", "integral"],
+      "verified": true
+    },
+    {
+      "id": "WS-065",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["502"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the standard for tankless (instantaneous) water heaters?",
+      "choices": [
+        {"id": "A", "text": "Same as tank type"},
+        {"id": "B", "text": "ANSI Z21.10.3/CSA 4.3"},
+        {"id": "C", "text": "No specific standard"},
+        {"id": "D", "text": "UL 174 only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Tankless gas heaters comply with ANSI Z21.10.3/CSA 4.3.",
+        "detailed": "Per IPC Section 502.1, gas-fired instantaneous water heaters shall comply with ANSI Z21.10.3/CSA 4.3 for gas water heaters.",
+        "how_to_find": "Reference IPC Section 502.1 for water heater standards."
+      },
+      "code_reference": {"code": "IPC", "section": "502.1"},
+      "zafto_links": [],
+      "tags": ["tankless", "instantaneous", "ANSI Z21.10.3"],
+      "verified": true
+    },
+    {
+      "id": "WS-066",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["505"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is required for water heater seismic restraint?",
+      "choices": [
+        {"id": "A", "text": "Not required"},
+        {"id": "B", "text": "Straps to prevent toppling in seismic zones"},
+        {"id": "C", "text": "Floor bolts only"},
+        {"id": "D", "text": "Per manufacturer only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Seismic straps required in earthquake-prone areas.",
+        "detailed": "Per IPC Section 505.1, water heaters in seismic design categories C through F shall be restrained with strapping or anchoring to prevent toppling during earthquakes.",
+        "how_to_find": "Reference IPC Section 505.1 for seismic restraint."
+      },
+      "code_reference": {"code": "IPC", "section": "505.1"},
+      "zafto_links": [],
+      "tags": ["seismic", "water heater", "straps"],
+      "verified": true
+    },
+    {
+      "id": "WS-067",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["501"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "How many seismic straps are required on a residential water heater?",
+      "choices": [
+        {"id": "A", "text": "One at top"},
+        {"id": "B", "text": "Two: upper third and lower third"},
+        {"id": "C", "text": "Three total"},
+        {"id": "D", "text": "Per local requirements"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Two straps: one in upper third, one in lower third.",
+        "detailed": "Per typical seismic bracing requirements, water heaters require two metal straps: one in the upper third and one in the lower third of the tank, secured to wall studs.",
+        "how_to_find": "Reference local seismic codes and IPC Section 505.1."
+      },
+      "code_reference": {"code": "IPC", "section": "505.1"},
+      "zafto_links": [],
+      "tags": ["seismic straps", "two straps", "upper lower"],
+      "verified": true
+    },
+    {
+      "id": "WS-068",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["501"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum access space required in front of a water heater?",
+      "choices": [
+        {"id": "A", "text": "18 inches"},
+        {"id": "B", "text": "24 inches"},
+        {"id": "C", "text": "30 inches"},
+        {"id": "D", "text": "Per manufacturer specifications"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Access per manufacturer specifications.",
+        "detailed": "Per IPC Section 501.2, water heater installation shall provide working space and access per manufacturer's instructions for service, maintenance, and replacement.",
+        "how_to_find": "Reference IPC Section 501.2 and manufacturer requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "501.2"},
+      "zafto_links": [],
+      "tags": ["water heater", "access space", "manufacturer"],
+      "verified": true
+    },
+    {
+      "id": "WS-069",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["502"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the minimum input rating for a residential water heater to be considered high efficiency?",
+      "choices": [
+        {"id": "A", "text": "40,000 BTU/hr"},
+        {"id": "B", "text": "Based on Energy Factor (EF) rating"},
+        {"id": "C", "text": "75,000 BTU/hr"},
+        {"id": "D", "text": "No minimum defined"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Efficiency based on Energy Factor, not input rating.",
+        "detailed": "Water heater efficiency is measured by Energy Factor (EF) or Uniform Energy Factor (UEF), not by BTU input. Higher EF/UEF values indicate better efficiency.",
+        "how_to_find": "Reference DOE energy standards for water heaters."
+      },
+      "code_reference": {"code": "IPC", "section": "502.1"},
+      "zafto_links": [],
+      "tags": ["energy factor", "efficiency", "water heater"],
+      "verified": true
+    },
+    {
+      "id": "WS-070",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["604"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the velocity limit for water in copper piping?",
+      "choices": [
+        {"id": "A", "text": "4 fps"},
+        {"id": "B", "text": "8 fps"},
+        {"id": "C", "text": "10 fps"},
+        {"id": "D", "text": "No limit specified"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Maximum velocity in copper typically limited to 8 fps.",
+        "detailed": "Per engineering practice and IPC sizing tables, water velocity in copper tubing should not exceed 8 fps to prevent erosion corrosion and water hammer.",
+        "how_to_find": "Reference IPC Section 604 and sizing methodology."
+      },
+      "code_reference": {"code": "IPC", "section": "604.6"},
+      "zafto_links": [],
+      "tags": ["velocity", "copper", "8 fps"],
+      "verified": true
+    },
+    {
+      "id": "WS-071",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["607"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum hot water temperature at a dwelling unit shower?",
+      "choices": [
+        {"id": "A", "text": "110°F"},
+        {"id": "B", "text": "120°F"},
+        {"id": "C", "text": "140°F"},
+        {"id": "D", "text": "No limit if mixing valve installed"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Shower maximum temperature is 120°F.",
+        "detailed": "Per IPC Section 424.3, the maximum hot water temperature delivered to showers and bathtubs shall not exceed 120°F to prevent scalding.",
+        "how_to_find": "Reference IPC Section 424.3 for shower temperature."
+      },
+      "code_reference": {"code": "IPC", "section": "424.3"},
+      "zafto_links": [],
+      "tags": ["shower", "maximum temperature", "120°F"],
+      "verified": true
+    },
+    {
+      "id": "WS-072",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["607"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What device limits hot water temperature at the fixture?",
+      "choices": [
+        {"id": "A", "text": "PRV"},
+        {"id": "B", "text": "Thermostatic mixing valve"},
+        {"id": "C", "text": "Check valve"},
+        {"id": "D", "text": "Water heater thermostat only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Thermostatic mixing valve limits delivery temperature.",
+        "detailed": "Per IPC Section 424.3, thermostatic mixing valves blend hot and cold water to limit delivery temperature to 120°F maximum at showers and other fixtures.",
+        "how_to_find": "Reference IPC Section 424.3 for mixing valve requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "424.3"},
+      "zafto_links": [],
+      "tags": ["thermostatic mixing valve", "temperature limit", "120°F"],
+      "verified": true
+    },
+    {
+      "id": "WS-073",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["607"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is a point-of-use water heater?",
+      "choices": [
+        {"id": "A", "text": "Central tank heater"},
+        {"id": "B", "text": "Small heater installed at or near fixture"},
+        {"id": "C", "text": "Outdoor water heater"},
+        {"id": "D", "text": "Heat pump water heater"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Point-of-use heater installed at or near fixture.",
+        "detailed": "A point-of-use water heater is a small capacity heater (typically tankless or 2-6 gallon) installed at or near a fixture for instant hot water without long pipe runs.",
+        "how_to_find": "Reference water heater industry terminology."
+      },
+      "code_reference": {"code": "IPC", "section": "501.1"},
+      "zafto_links": [],
+      "tags": ["point-of-use", "tankless", "instant hot water"],
+      "verified": true
+    },
+    {
+      "id": "WS-074",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["607"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is a recirculating hot water system?",
+      "choices": [
+        {"id": "A", "text": "System that drains unused hot water"},
+        {"id": "B", "text": "System that circulates hot water through return line"},
+        {"id": "C", "text": "Water recycling system"},
+        {"id": "D", "text": "Greywater system"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Recirculating system maintains hot water in pipes via return line.",
+        "detailed": "Per IPC Section 607.2.1, a recirculating hot water system uses a pump and return line to circulate hot water back to the heater, providing instant hot water at fixtures.",
+        "how_to_find": "Reference IPC Section 607.2.1 for recirculating systems."
+      },
+      "code_reference": {"code": "IPC", "section": "607.2.1"},
+      "zafto_links": [],
+      "tags": ["recirculating", "hot water", "return line"],
+      "verified": true
+    },
+    {
+      "id": "WS-075",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["607"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "At what temperature must recirculating hot water be maintained?",
+      "choices": [
+        {"id": "A", "text": "100°F minimum"},
+        {"id": "B", "text": "110°F minimum"},
+        {"id": "C", "text": "124°F minimum"},
+        {"id": "D", "text": "Per owner preference"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Recirculating water maintained at 124°F minimum.",
+        "detailed": "Per IPC Section 607.2.1, circulating hot water systems shall maintain temperature at 124°F minimum to control Legionella bacteria growth while delivering tempered water at fixtures.",
+        "how_to_find": "Reference IPC Section 607.2.1 for circulation temperature."
+      },
+      "code_reference": {"code": "IPC", "section": "607.2.1"},
+      "zafto_links": [],
+      "tags": ["recirculating", "124°F", "Legionella"],
+      "verified": true
+    },
+    {
+      "id": "WS-076",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["608"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is a spill-resistant vacuum breaker (SVB)?",
+      "choices": [
+        {"id": "A", "text": "Same as AVB"},
+        {"id": "B", "text": "Vacuum breaker that doesn't discharge during normal operation"},
+        {"id": "C", "text": "Commercial dishwasher device"},
+        {"id": "D", "text": "Pressure regulator"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "SVB doesn't discharge water during normal valve operation.",
+        "detailed": "Per IPC Section 608.15.4, a spill-resistant vacuum breaker (SVB) is designed to not discharge water when downstream valves close, unlike standard AVBs.",
+        "how_to_find": "Reference IPC Section 608.15.4 for SVB description."
+      },
+      "code_reference": {"code": "IPC", "section": "608.15.4"},
+      "zafto_links": [],
+      "tags": ["SVB", "spill-resistant", "vacuum breaker"],
+      "verified": true
+    },
+    {
+      "id": "WS-077",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["604"],
+      "code_tables": ["604.5"],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "What is the maximum equivalent length of 1/2-inch tubing allowed for a single fixture branch?",
+      "choices": [
+        {"id": "A", "text": "20 feet"},
+        {"id": "B", "text": "No maximum specified"},
+        {"id": "C", "text": "Per friction loss calculation"},
+        {"id": "D", "text": "50 feet"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Length limited by friction loss calculation.",
+        "detailed": "Per IPC Section 604.6, water distribution sizing accounts for friction loss through pipe length. There is no fixed maximum, but longer runs require larger pipe to maintain adequate pressure.",
+        "how_to_find": "Reference IPC Section 604.6 for friction loss sizing."
+      },
+      "code_reference": {"code": "IPC", "section": "604.6"},
+      "zafto_links": [],
+      "tags": ["equivalent length", "friction loss", "sizing"],
+      "verified": true
+    },
+    {
+      "id": "WS-078",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["603"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum depth of cover for water service pipe?",
+      "choices": [
+        {"id": "A", "text": "6 inches"},
+        {"id": "B", "text": "12 inches or below frost line"},
+        {"id": "C", "text": "24 inches"},
+        {"id": "D", "text": "36 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "12 inches minimum or below frost line, whichever deeper.",
+        "detailed": "Per IPC Section 603.2, water service pipe shall have minimum 12 inches of cover or be installed below the frost line for the locality, whichever is deeper.",
+        "how_to_find": "Reference IPC Section 603.2 for cover depth."
+      },
+      "code_reference": {"code": "IPC", "section": "603.2"},
+      "zafto_links": [],
+      "tags": ["cover depth", "frost line", "water service"],
+      "verified": true
+    },
+    {
+      "id": "WS-079",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["603"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What horizontal separation is required between water service and sewer?",
+      "choices": [
+        {"id": "A", "text": "5 feet"},
+        {"id": "B", "text": "10 feet"},
+        {"id": "C", "text": "Per local requirements"},
+        {"id": "D", "text": "No separation required"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Horizontal separation per local requirements, typically 10 feet.",
+        "detailed": "Per IPC Section 603.2, water service shall be separated from sewer per local requirements, typically 10 feet horizontal, or installed in approved sleeve if closer.",
+        "how_to_find": "Reference IPC Section 603.2 and local amendments."
+      },
+      "code_reference": {"code": "IPC", "section": "603.2"},
+      "zafto_links": [],
+      "tags": ["separation", "water", "sewer", "10 feet"],
+      "verified": true
+    },
+    {
+      "id": "WS-080",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["603"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "When water and sewer must cross, what is required?",
+      "choices": [
+        {"id": "A", "text": "No special requirement"},
+        {"id": "B", "text": "Water above sewer by 18 inches minimum"},
+        {"id": "C", "text": "Water in protective sleeve"},
+        {"id": "D", "text": "B or C per local requirements"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Water above sewer or in sleeve per local requirements.",
+        "detailed": "Per IPC Section 603.2, when water service crosses sewer, it shall be above the sewer (18 inches typical) or installed in a protective sleeve extending a specified distance each side of crossing.",
+        "how_to_find": "Reference IPC Section 603.2 for crossing requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "603.2"},
+      "zafto_links": [],
+      "tags": ["crossing", "water above sewer", "sleeve"],
+      "verified": true
+    },
+    {
+      "id": "WS-081",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["610"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What pressure test is required for water distribution piping?",
+      "choices": [
+        {"id": "A", "text": "No test required"},
+        {"id": "B", "text": "50 psi for 15 minutes"},
+        {"id": "C", "text": "Working pressure or 40 psi minimum"},
+        {"id": "D", "text": "150 psi for 2 hours"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Test at working pressure or 40 psi minimum.",
+        "detailed": "Per IPC Section 312.5, water distribution piping shall be tested at the greater of working pressure or 40 psi for a specified duration to verify no leaks.",
+        "how_to_find": "Reference IPC Section 312.5 for pressure testing."
+      },
+      "code_reference": {"code": "IPC", "section": "312.5"},
+      "zafto_links": [],
+      "tags": ["pressure test", "40 psi", "water piping"],
+      "verified": true
+    },
+    {
+      "id": "WS-082",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["605"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is required when transitioning between dissimilar piping materials?",
+      "choices": [
+        {"id": "A", "text": "Direct connection is fine"},
+        {"id": "B", "text": "Dielectric union or approved transition fitting"},
+        {"id": "C", "text": "Solder connection"},
+        {"id": "D", "text": "Threaded adapter only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Dielectric or approved transition fitting for dissimilar metals.",
+        "detailed": "Per IPC Section 605.23, when connecting dissimilar metals (like copper to steel), a dielectric fitting or approved transition is required to prevent galvanic corrosion.",
+        "how_to_find": "Reference IPC Section 605.23 for transition fittings."
+      },
+      "code_reference": {"code": "IPC", "section": "605.23"},
+      "zafto_links": [],
+      "tags": ["dielectric", "transition", "dissimilar metals"],
+      "verified": true
+    },
+    {
+      "id": "WS-083",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["605"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What causes galvanic corrosion?",
+      "choices": [
+        {"id": "A", "text": "High water temperature"},
+        {"id": "B", "text": "Contact between dissimilar metals in electrolyte"},
+        {"id": "C", "text": "Low pH water"},
+        {"id": "D", "text": "Excessive velocity"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Galvanic corrosion from dissimilar metals in contact with electrolyte.",
+        "detailed": "Galvanic corrosion occurs when dissimilar metals (like copper and steel) are in contact in the presence of water (electrolyte), causing the more active metal to corrode.",
+        "how_to_find": "Reference corrosion engineering principles."
+      },
+      "code_reference": {"code": "IPC", "section": "605.23"},
+      "zafto_links": [],
+      "tags": ["galvanic corrosion", "dissimilar metals", "electrolyte"],
+      "verified": true
+    },
+    {
+      "id": "WS-084",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["607"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is an expansion loop in piping?",
+      "choices": [
+        {"id": "A", "text": "Closed circuit for recirculation"},
+        {"id": "B", "text": "Offset or U-bend to absorb thermal expansion"},
+        {"id": "C", "text": "Pressure relief fitting"},
+        {"id": "D", "text": "Valve manifold"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Expansion loop absorbs thermal movement in piping.",
+        "detailed": "Per IPC Section 607.3.1, expansion loops or offsets in piping allow for thermal expansion and contraction, preventing stress on joints and fittings.",
+        "how_to_find": "Reference IPC Section 607.3.1 for thermal expansion."
+      },
+      "code_reference": {"code": "IPC", "section": "607.3.1"},
+      "zafto_links": [],
+      "tags": ["expansion loop", "thermal expansion", "offset"],
+      "verified": true
+    },
+    {
+      "id": "WS-085",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["607"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the approximate expansion rate for copper tubing per 100°F temperature change?",
+      "choices": [
+        {"id": "A", "text": "0.5 inch per 100 feet"},
+        {"id": "B", "text": "1.2 inches per 100 feet"},
+        {"id": "C", "text": "2.0 inches per 100 feet"},
+        {"id": "D", "text": "0.1 inch per 100 feet"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Copper expands approximately 1.2 inches per 100 feet per 100°F.",
+        "detailed": "Copper tubing has a coefficient of expansion that results in approximately 1.2 inches of linear expansion per 100 feet of pipe for each 100°F temperature change.",
+        "how_to_find": "Reference copper thermal expansion coefficients."
+      },
+      "code_reference": {"code": "IPC", "section": "607.3.1"},
+      "zafto_links": [],
+      "tags": ["thermal expansion", "copper", "1.2 inches"],
+      "verified": true
+    },
+    {
+      "id": "WS-086",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["607"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Which expands more per degree temperature change: copper or PEX?",
+      "choices": [
+        {"id": "A", "text": "Copper"},
+        {"id": "B", "text": "PEX"},
+        {"id": "C", "text": "Same expansion rate"},
+        {"id": "D", "text": "Depends on diameter"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "PEX has higher expansion rate than copper.",
+        "detailed": "PEX has approximately 10 times the thermal expansion rate of copper tubing. Long runs of PEX require adequate provisions for expansion and contraction.",
+        "how_to_find": "Reference PEX and copper thermal expansion data."
+      },
+      "code_reference": {"code": "IPC", "section": "607.3.1"},
+      "zafto_links": [],
+      "tags": ["PEX expansion", "copper expansion", "thermal"],
+      "verified": true
+    },
+    {
+      "id": "WS-087",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["604"],
+      "code_tables": ["604.5"],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "What is the WSFU value for a public use flushometer water closet?",
+      "choices": [
+        {"id": "A", "text": "2.5"},
+        {"id": "B", "text": "5.0"},
+        {"id": "C", "text": "10.0"},
+        {"id": "D", "text": "7.5"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Public flushometer WC = 10.0 WSFU.",
+        "detailed": "Per IPC Table 604.4, a water closet with flushometer valve (public use) has a water supply fixture unit value of 10.0, reflecting its high instantaneous demand.",
+        "how_to_find": "Reference IPC Table 604.4 for flushometer WSFU."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 604.4"},
+      "zafto_links": [],
+      "tags": ["WSFU", "flushometer", "10.0", "public"],
+      "verified": true
+    },
+    {
+      "id": "WS-088",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["604"],
+      "code_tables": ["604.5"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "How is pipe size determined from total WSFU?",
+      "choices": [
+        {"id": "A", "text": "Sum WSFU and look up in Table E103.3"},
+        {"id": "B", "text": "One size per 10 WSFU"},
+        {"id": "C", "text": "All branches same size"},
+        {"id": "D", "text": "Per fixture count only"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Total WSFU converted to pipe size via sizing table.",
+        "detailed": "Per IPC Appendix E, total WSFU on a branch or main is converted to required pipe size using Table E103.3, which accounts for available pressure and pipe length.",
+        "how_to_find": "Reference IPC Appendix E for water pipe sizing."
+      },
+      "code_reference": {"code": "IPC", "section": "Appendix E"},
+      "zafto_links": [],
+      "tags": ["pipe sizing", "WSFU", "Table E103.3"],
+      "verified": true
+    },
+    {
+      "id": "WS-089",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["608"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is a dual check valve?",
+      "choices": [
+        {"id": "A", "text": "Two separate check valves"},
+        {"id": "B", "text": "Single body with two spring-loaded checks"},
+        {"id": "C", "text": "Check valve for two pipes"},
+        {"id": "D", "text": "Backflow preventer with test ports"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Dual check has two spring-loaded checks in single body.",
+        "detailed": "Per IPC Section 608.13.3, a dual check valve is a single device containing two independently acting spring-loaded check valves in series, without test ports.",
+        "how_to_find": "Reference IPC Section 608.13.3 for dual check description."
+      },
+      "code_reference": {"code": "IPC", "section": "608.13.3"},
+      "zafto_links": [],
+      "tags": ["dual check", "spring-loaded", "no test ports"],
+      "verified": true
+    },
+    {
+      "id": "WS-090",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["608"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Where is a dual check valve typically used?",
+      "choices": [
+        {"id": "A", "text": "Commercial boilers"},
+        {"id": "B", "text": "Residential water service entrance"},
+        {"id": "C", "text": "Irrigation systems"},
+        {"id": "D", "text": "Laboratory sinks"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Dual check commonly used at residential service entrance.",
+        "detailed": "Per IPC Section 608.13.3, dual check valves provide low-level protection and are commonly installed at residential water service entrances where required by water utility.",
+        "how_to_find": "Reference IPC Section 608.13.3 for dual check applications."
+      },
+      "code_reference": {"code": "IPC", "section": "608.13.3"},
+      "zafto_links": [],
+      "tags": ["dual check", "residential", "service entrance"],
+      "verified": true
+    },
+    {
+      "id": "WS-091",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["609"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum insulation required for hot water piping?",
+      "choices": [
+        {"id": "A", "text": "None required"},
+        {"id": "B", "text": "Per energy code requirements"},
+        {"id": "C", "text": "1/2 inch always"},
+        {"id": "D", "text": "Same as pipe diameter"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Insulation per energy code requirements.",
+        "detailed": "Per energy codes (IECC) and IPC Section 609, hot water piping insulation requirements depend on pipe size, location, and whether recirculating. Typically R-3 to R-6 minimum.",
+        "how_to_find": "Reference IECC and IPC Section 609 for insulation requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "609.3"},
+      "zafto_links": [],
+      "tags": ["insulation", "hot water", "energy code"],
+      "verified": true
+    },
+    {
+      "id": "WS-092",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["501"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the purpose of a water heater anode rod?",
+      "choices": [
+        {"id": "A", "text": "Heat the water"},
+        {"id": "B", "text": "Protect tank from corrosion"},
+        {"id": "C", "text": "Filter sediment"},
+        {"id": "D", "text": "Control temperature"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Anode rod sacrificially corrodes to protect tank.",
+        "detailed": "The anode rod (sacrificial anode) is a magnesium or aluminum rod that corrodes instead of the steel tank, extending tank life. Should be inspected/replaced periodically.",
+        "how_to_find": "Reference water heater manufacturer maintenance guidelines."
+      },
+      "code_reference": {"code": "IPC", "section": "501.1"},
+      "zafto_links": [],
+      "tags": ["anode rod", "corrosion protection", "sacrificial"],
+      "verified": true
+    },
+    {
+      "id": "WS-093",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["501"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the dip tube in a water heater?",
+      "choices": [
+        {"id": "A", "text": "Hot water outlet"},
+        {"id": "B", "text": "Tube directing cold water to bottom of tank"},
+        {"id": "C", "text": "Drain valve tube"},
+        {"id": "D", "text": "Temperature sensor tube"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Dip tube delivers cold water to tank bottom.",
+        "detailed": "The dip tube is attached to the cold water inlet and extends to near the bottom of the tank, directing incoming cold water down so it doesn't mix with hot water at the top.",
+        "how_to_find": "Reference water heater component diagrams."
+      },
+      "code_reference": {"code": "IPC", "section": "501.1"},
+      "zafto_links": [],
+      "tags": ["dip tube", "cold inlet", "tank bottom"],
+      "verified": true
+    },
+    {
+      "id": "WS-094",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["604"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "A homeowner complains of low hot water pressure but good cold pressure. Most likely cause?",
+      "choices": [
+        {"id": "A", "text": "PRV failure"},
+        {"id": "B", "text": "Restricted water heater dip tube or inlet"},
+        {"id": "C", "text": "Main water supply issue"},
+        {"id": "D", "text": "Expansion tank failure"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Low hot pressure with good cold suggests water heater restriction.",
+        "detailed": "If cold pressure is normal but hot is low, the restriction is in the hot water system - likely a failed dip tube, restricted inlet valve, or sediment buildup in the water heater.",
+        "how_to_find": "Reference troubleshooting methodology for pressure complaints."
+      },
+      "code_reference": {"code": "IPC", "section": "604"},
+      "zafto_links": [],
+      "tags": ["troubleshooting", "low pressure", "hot water"],
+      "verified": true
+    },
+    {
+      "id": "WS-095",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["608"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "An RPZ backflow preventer is continuously discharging water. What is the likely cause?",
+      "choices": [
+        {"id": "A", "text": "Normal operation"},
+        {"id": "B", "text": "Failed first check valve"},
+        {"id": "C", "text": "Backpressure condition or failed relief valve"},
+        {"id": "D", "text": "Undersized device"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Continuous discharge indicates backpressure or relief valve issue.",
+        "detailed": "Per RPZ operation, the relief valve opens when differential between zone 1 and zone 2 drops below 2 psi, indicating backpressure, first check failure, or a stuck relief valve.",
+        "how_to_find": "Reference RPZ operating principles and troubleshooting."
+      },
+      "code_reference": {"code": "IPC", "section": "608.13.5"},
+      "zafto_links": [],
+      "tags": ["RPZ", "discharge", "troubleshooting"],
+      "verified": true
+    },
+    {
+      "id": "WS-096",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["608"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the purpose of test ports on a DCVA?",
+      "choices": [
+        {"id": "A", "text": "Drain the device"},
+        {"id": "B", "text": "Allow field testing of check valves"},
+        {"id": "C", "text": "Connect pressure gauge permanently"},
+        {"id": "D", "text": "Vent air from device"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Test ports allow annual field testing of check valves.",
+        "detailed": "Per IPC Section 608.17.2, testable backflow preventers have ports that allow certified testers to measure pressure differentials across check valves during annual testing.",
+        "how_to_find": "Reference IPC Section 608.17.2 for testing requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "608.17.2"},
+      "zafto_links": [],
+      "tags": ["test ports", "DCVA", "annual testing"],
+      "verified": true
+    },
+    {
+      "id": "WS-097",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["607"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum allowable pressure loss in a water distribution system?",
+      "choices": [
+        {"id": "A", "text": "10 psi"},
+        {"id": "B", "text": "20% of available pressure"},
+        {"id": "C", "text": "No maximum - depends on available pressure"},
+        {"id": "D", "text": "5 psi per 100 feet"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Pressure loss limited by minimum fixture pressure needs.",
+        "detailed": "Per IPC Section 604.6, pipe sizing must account for friction losses to maintain required minimum pressure (8-25 psi depending on fixture) at the most remote fixture.",
+        "how_to_find": "Reference IPC Section 604.6 for pressure loss limits."
+      },
+      "code_reference": {"code": "IPC", "section": "604.6"},
+      "zafto_links": [],
+      "tags": ["pressure loss", "friction", "available pressure"],
+      "verified": true
+    },
+    {
+      "id": "WS-098",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["502"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the first recovery rate for a water heater?",
+      "choices": [
+        {"id": "A", "text": "Tank capacity"},
+        {"id": "B", "text": "Gallons heated per hour from cold to setpoint"},
+        {"id": "C", "text": "Flow rate at outlet"},
+        {"id": "D", "text": "BTU input rating"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Recovery rate is gallons heated per hour.",
+        "detailed": "First hour recovery rate measures how many gallons of hot water a heater can deliver in one hour starting with a full tank, accounting for both stored and newly heated water.",
+        "how_to_find": "Reference water heater specifications and EnergyGuide labels."
+      },
+      "code_reference": {"code": "IPC", "section": "502.1"},
+      "zafto_links": [],
+      "tags": ["recovery rate", "gallons per hour", "capacity"],
+      "verified": true
+    },
+    {
+      "id": "WS-099",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["502"],
+      "code_tables": [],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "A family of 4 needs a water heater. What is a general sizing guideline?",
+      "choices": [
+        {"id": "A", "text": "10 gallons per person"},
+        {"id": "B", "text": "15-20 gallons per person"},
+        {"id": "C", "text": "30 gallons total"},
+        {"id": "D", "text": "Per first hour rating calculation"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Size based on first hour demand, not just occupants.",
+        "detailed": "Water heater sizing is best done by calculating first hour demand (peak use period), typically 10-15 gallons per person during peak hour, then matching to first hour rating.",
+        "how_to_find": "Reference DOE water heater sizing guidelines."
+      },
+      "code_reference": {"code": "IPC", "section": "502.1"},
+      "zafto_links": [],
+      "tags": ["water heater sizing", "first hour rating", "demand"],
+      "verified": true
+    },
+    {
+      "id": "WS-100",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["604"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "Water pressure drops significantly when multiple fixtures are used simultaneously. Most likely cause?",
+      "choices": [
+        {"id": "A", "text": "Failed PRV"},
+        {"id": "B", "text": "Undersized water supply piping"},
+        {"id": "C", "text": "Water heater failure"},
+        {"id": "D", "text": "Air in pipes"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Pressure drop with simultaneous use indicates undersized piping.",
+        "detailed": "Per IPC Section 604, when pressure drops during simultaneous use, the piping is likely undersized for the demand. Larger mains or branches may be needed to maintain adequate flow.",
+        "how_to_find": "Reference IPC Section 604 for sizing and pressure."
+      },
+      "code_reference": {"code": "IPC", "section": "604.6"},
+      "zafto_links": [],
+      "tags": ["pressure drop", "undersized", "simultaneous use"],
+      "verified": true
+    },
+    {
+      "id": "WS-101",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["501"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What type of water heater uses a heat pump to heat water?",
+      "choices": [
+        {"id": "A", "text": "Electric resistance"},
+        {"id": "B", "text": "Heat pump water heater (HPWH)"},
+        {"id": "C", "text": "Tankless electric"},
+        {"id": "D", "text": "Solar water heater"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "HPWH uses heat pump technology for high efficiency.",
+        "detailed": "Per IPC Section 501.1, heat pump water heaters (HPWH) extract heat from surrounding air using refrigeration cycle, achieving 2-3 times the efficiency of electric resistance heaters.",
+        "how_to_find": "Reference IPC Section 501.1 and DOE water heater types."
+      },
+      "code_reference": {"code": "IPC", "section": "501.1"},
+      "zafto_links": [],
+      "tags": ["heat pump", "HPWH", "high efficiency"],
+      "verified": true
+    },
+    {
+      "id": "WS-102",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["501"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is a condensing water heater?",
+      "choices": [
+        {"id": "A", "text": "Heater that removes moisture from air"},
+        {"id": "B", "text": "Gas heater that recovers heat from exhaust condensation"},
+        {"id": "C", "text": "Heat pump type"},
+        {"id": "D", "text": "Direct-vent heater"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Condensing heater recovers latent heat from flue gases.",
+        "detailed": "Condensing water heaters extract additional heat from flue gases by condensing water vapor, achieving efficiencies over 90%. They require condensate drains for acidic condensate.",
+        "how_to_find": "Reference high-efficiency water heater technology."
+      },
+      "code_reference": {"code": "IPC", "section": "501.1"},
+      "zafto_links": [],
+      "tags": ["condensing", "high efficiency", "condensate"],
+      "verified": true
+    },
+    {
+      "id": "WS-103",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["501"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What special requirement applies to condensing water heater installation?",
+      "choices": [
+        {"id": "A", "text": "No special requirements"},
+        {"id": "B", "text": "Condensate drain to approved location"},
+        {"id": "C", "text": "Outdoor installation only"},
+        {"id": "D", "text": "Special venting only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Condensing heaters require condensate drain.",
+        "detailed": "Per IPC Section 801.3, condensing water heaters produce acidic condensate that must be piped to an indirect waste receptor or floor drain with neutralizer if required.",
+        "how_to_find": "Reference IPC Section 801.3 for condensate disposal."
+      },
+      "code_reference": {"code": "IPC", "section": "801.3"},
+      "zafto_links": [],
+      "tags": ["condensate drain", "acidic", "neutralizer"],
+      "verified": true
+    },
+    {
+      "id": "WS-104",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["608"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is an interstitial space monitor?",
+      "choices": [
+        {"id": "A", "text": "Space between double-wall tank layers"},
+        {"id": "B", "text": "Pressure gauge"},
+        {"id": "C", "text": "Flow meter"},
+        {"id": "D", "text": "Temperature sensor"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Interstitial space is monitored area between double tank walls.",
+        "detailed": "Double-wall tanks and piping have an interstitial space between inner and outer walls that can be monitored for leaks, providing secondary containment protection.",
+        "how_to_find": "Reference underground storage tank and backflow protection terminology."
+      },
+      "code_reference": {"code": "IPC", "section": "608"},
+      "zafto_links": [],
+      "tags": ["interstitial", "double-wall", "leak detection"],
+      "verified": true
+    },
+    {
+      "id": "WS-105",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["605"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the purpose of a manifold (home-run) water distribution system?",
+      "choices": [
+        {"id": "A", "text": "Reduce material cost"},
+        {"id": "B", "text": "Provide individual shutoff for each fixture"},
+        {"id": "C", "text": "Increase pressure"},
+        {"id": "D", "text": "Simplify venting"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Manifold systems provide individual fixture control.",
+        "detailed": "A manifold (home-run) system uses a central distribution point with individual PEX runs to each fixture, allowing individual shutoff control without opening walls.",
+        "how_to_find": "Reference PEX manifold system design."
+      },
+      "code_reference": {"code": "IPC", "section": "605.3"},
+      "zafto_links": [],
+      "tags": ["manifold", "home-run", "individual shutoff"],
+      "verified": true
+    },
+    {
+      "id": "WS-106",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["608"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "A carbonated beverage dispenser connects to potable water. What protection is required?",
+      "choices": [
+        {"id": "A", "text": "None - food grade equipment"},
+        {"id": "B", "text": "AVB"},
+        {"id": "C", "text": "Air gap or RPZ"},
+        {"id": "D", "text": "DCVA"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Carbonated dispensers are high-hazard requiring air gap or RPZ.",
+        "detailed": "Per IPC Table 608.1, carbonated beverage dispensers create potential for CO2 backpressure and are classified high-hazard, requiring air gap or RPZ protection.",
+        "how_to_find": "Reference IPC Table 608.1 for beverage dispenser requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 608.1"},
+      "zafto_links": [],
+      "tags": ["carbonated beverage", "high-hazard", "CO2"],
+      "verified": true
+    },
+    {
+      "id": "WS-107",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["608"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "A swimming pool fill line connects to potable water. What minimum protection is required?",
+      "choices": [
+        {"id": "A", "text": "None"},
+        {"id": "B", "text": "Air gap"},
+        {"id": "C", "text": "AVB minimum"},
+        {"id": "D", "text": "DCVA or higher"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Pool fill typically requires air gap for high-hazard.",
+        "detailed": "Per IPC Section 608.16.9, swimming pool fill lines are high-hazard connections due to chemicals and biological contamination, typically requiring an air gap for fill.",
+        "how_to_find": "Reference IPC Section 608.16.9 for pool backflow."
+      },
+      "code_reference": {"code": "IPC", "section": "608.16.9"},
+      "zafto_links": [],
+      "tags": ["swimming pool", "fill line", "air gap"],
+      "verified": true
+    },
+    {
+      "id": "WS-108",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["608"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What protection is required for a fire sprinkler connection to potable water?",
+      "choices": [
+        {"id": "A", "text": "None for residential"},
+        {"id": "B", "text": "DCDA or DCVA minimum"},
+        {"id": "C", "text": "Air gap only"},
+        {"id": "D", "text": "Per local fire code"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Fire sprinkler backflow per local fire code requirements.",
+        "detailed": "Per IPC Section 608.16.4, fire sprinkler systems require backflow protection per NFPA 13 and local fire code, typically DCDA for residential and RPZ or DCDA for commercial.",
+        "how_to_find": "Reference IPC Section 608.16.4 and NFPA 13."
+      },
+      "code_reference": {"code": "IPC", "section": "608.16.4"},
+      "zafto_links": [],
+      "tags": ["fire sprinkler", "backflow", "NFPA 13"],
+      "verified": true
+    },
+    {
+      "id": "WS-109",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["604"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is static pressure?",
+      "choices": [
+        {"id": "A", "text": "Pressure with water flowing"},
+        {"id": "B", "text": "Pressure with no water flowing"},
+        {"id": "C", "text": "Pump discharge pressure"},
+        {"id": "D", "text": "Residual pressure"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Static pressure is measured with no flow.",
+        "detailed": "Static pressure is the water pressure measured with all outlets closed (no flow). It's typically higher than residual (flowing) pressure due to no friction loss occurring.",
+        "how_to_find": "Reference hydraulic engineering terminology."
+      },
+      "code_reference": {"code": "IPC", "section": "604.6"},
+      "zafto_links": [],
+      "tags": ["static pressure", "no flow", "measurement"],
+      "verified": true
+    },
+    {
+      "id": "WS-110",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["604"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is residual pressure?",
+      "choices": [
+        {"id": "A", "text": "Pressure with no flow"},
+        {"id": "B", "text": "Pressure remaining while water is flowing"},
+        {"id": "C", "text": "Minimum supply pressure"},
+        {"id": "D", "text": "Pump suction pressure"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Residual pressure is measured during flow.",
+        "detailed": "Residual pressure is the water pressure measured while a specified flow is occurring. It's lower than static pressure due to friction losses in the piping system.",
+        "how_to_find": "Reference hydraulic engineering terminology."
+      },
+      "code_reference": {"code": "IPC", "section": "604.6"},
+      "zafto_links": [],
+      "tags": ["residual pressure", "flowing", "friction loss"],
+      "verified": true
+    },
+    {
+      "id": "WS-111",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["604"],
+      "code_tables": [],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "How much pressure is lost per vertical foot of elevation?",
+      "choices": [
+        {"id": "A", "text": "0.234 psi per foot"},
+        {"id": "B", "text": "0.433 psi per foot"},
+        {"id": "C", "text": "0.5 psi per foot"},
+        {"id": "D", "text": "1.0 psi per foot"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Elevation pressure loss is 0.433 psi per foot.",
+        "detailed": "Per hydraulic principles, water loses 0.433 psi for every foot of elevation rise (or gains 0.433 psi per foot of drop). This equals 2.31 feet of head per psi.",
+        "how_to_find": "Reference hydraulic head and pressure calculations."
+      },
+      "code_reference": {"code": "IPC", "section": "604.6"},
+      "zafto_links": [],
+      "tags": ["elevation", "0.433 psi", "pressure loss"],
+      "verified": true
+    },
+    {
+      "id": "WS-112",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["604"],
+      "code_tables": [],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "A fixture is 25 feet above the water meter. How much pressure is lost to elevation?",
+      "choices": [
+        {"id": "A", "text": "5.8 psi"},
+        {"id": "B", "text": "10.8 psi"},
+        {"id": "C", "text": "12.5 psi"},
+        {"id": "D", "text": "25 psi"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "25 feet × 0.433 psi/ft = 10.8 psi loss.",
+        "detailed": "Elevation pressure loss = height × 0.433 psi/ft. For 25 feet: 25 × 0.433 = 10.825 psi (approximately 10.8 psi).",
+        "how_to_find": "Calculate: elevation (ft) × 0.433 psi/ft."
+      },
+      "code_reference": {"code": "IPC", "section": "604.6"},
+      "zafto_links": [],
+      "tags": ["elevation calculation", "10.8 psi", "25 feet"],
+      "verified": true
+    },
+    {
+      "id": "WS-113",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["605"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is a shock arrestor rated for?",
+      "choices": [
+        {"id": "A", "text": "psi only"},
+        {"id": "B", "text": "Fixture units"},
+        {"id": "C", "text": "Gallons per minute"},
+        {"id": "D", "text": "BTU"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Water hammer arrestors rated by fixture units.",
+        "detailed": "Per ASSE 1010, water hammer arrestors are sized and rated by fixture units to match the demand of the fixtures they protect.",
+        "how_to_find": "Reference ASSE 1010 for arrestor sizing."
+      },
+      "code_reference": {"code": "IPC", "section": "604.9"},
+      "zafto_links": [],
+      "tags": ["water hammer arrestor", "fixture units", "sizing"],
+      "verified": true
+    },
+    {
+      "id": "WS-114",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["607"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is Legionella and why is it a concern in water systems?",
+      "choices": [
+        {"id": "A", "text": "Mineral deposit"},
+        {"id": "B", "text": "Bacteria causing Legionnaires' disease"},
+        {"id": "C", "text": "Type of corrosion"},
+        {"id": "D", "text": "Pipe scale"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Legionella is bacteria causing severe pneumonia.",
+        "detailed": "Legionella bacteria grow in warm stagnant water (77-113°F) and can cause Legionnaires' disease when inhaled in aerosols. Water systems should maintain temps above 124°F to control growth.",
+        "how_to_find": "Reference ASHRAE 188 and water safety guidelines."
+      },
+      "code_reference": {"code": "IPC", "section": "607.2.1"},
+      "zafto_links": [],
+      "tags": ["Legionella", "bacteria", "124°F"],
+      "verified": true
+    },
+    {
+      "id": "WS-115",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["604"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is equivalent length of pipe?",
+      "choices": [
+        {"id": "A", "text": "Actual measured length"},
+        {"id": "B", "text": "Pipe length plus fitting friction losses expressed as length"},
+        {"id": "C", "text": "Horizontal run only"},
+        {"id": "D", "text": "Developed length"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Equivalent length includes fitting friction as pipe length.",
+        "detailed": "Equivalent length is the actual pipe length plus additional length added for friction through fittings. A 90° elbow may add 2-5 feet equivalent depending on size and type.",
+        "how_to_find": "Reference IPC Appendix E for equivalent length calculations."
+      },
+      "code_reference": {"code": "IPC", "section": "Appendix E"},
+      "zafto_links": [],
+      "tags": ["equivalent length", "fitting loss", "friction"],
+      "verified": true
+    },
+    {
+      "id": "WS-116",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["609"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is required when water piping passes through a foundation wall?",
+      "choices": [
+        {"id": "A", "text": "Nothing special"},
+        {"id": "B", "text": "Sleeve to protect pipe and allow movement"},
+        {"id": "C", "text": "Waterproofing only"},
+        {"id": "D", "text": "Insulation only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Sleeve protects pipe and allows movement at foundation.",
+        "detailed": "Per IPC Section 305.4, pipes passing through foundation walls shall be protected with sleeves to prevent damage from settlement and allow thermal expansion/contraction.",
+        "how_to_find": "Reference IPC Section 305.4 for foundation penetrations."
+      },
+      "code_reference": {"code": "IPC", "section": "305.4"},
+      "zafto_links": [],
+      "tags": ["foundation", "sleeve", "protection"],
+      "verified": true
+    },
+    {
+      "id": "WS-117",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["604"],
+      "code_tables": ["604.4"],
+      "type": "calculation",
+      "difficulty": "medium",
+      "time_estimate_seconds": 120,
+      "question": "What is the WSFU value for a clothes washer?",
+      "choices": [
+        {"id": "A", "text": "2.0"},
+        {"id": "B", "text": "4.0"},
+        {"id": "C", "text": "5.0"},
+        {"id": "D", "text": "2.5"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Clothes washer = 4.0 WSFU.",
+        "detailed": "Per IPC Table 604.4, an automatic clothes washer (private use) has a water supply fixture unit value of 4.0.",
+        "how_to_find": "Reference IPC Table 604.4 for clothes washer WSFU."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 604.4"},
+      "zafto_links": [],
+      "tags": ["WSFU", "clothes washer", "4.0"],
+      "verified": true
+    },
+    {
+      "id": "WS-118",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["604"],
+      "code_tables": ["604.4"],
+      "type": "calculation",
+      "difficulty": "medium",
+      "time_estimate_seconds": 120,
+      "question": "What is the WSFU value for a dishwasher?",
+      "choices": [
+        {"id": "A", "text": "1.0"},
+        {"id": "B", "text": "1.4"},
+        {"id": "C", "text": "2.0"},
+        {"id": "D", "text": "2.5"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Dishwasher = 1.4 WSFU.",
+        "detailed": "Per IPC Table 604.4, a domestic dishwasher (private use) has a water supply fixture unit value of 1.4.",
+        "how_to_find": "Reference IPC Table 604.4 for dishwasher WSFU."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 604.4"},
+      "zafto_links": [],
+      "tags": ["WSFU", "dishwasher", "1.4"],
+      "verified": true
+    },
+    {
+      "id": "WS-119",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["608"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is containment isolation?",
+      "choices": [
+        {"id": "A", "text": "Isolation at each fixture"},
+        {"id": "B", "text": "Backflow protection at building service entrance"},
+        {"id": "C", "text": "Shutoff valves on branches"},
+        {"id": "D", "text": "Pressure zone separation"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Containment isolation protects public water at service entrance.",
+        "detailed": "Containment (premises isolation) installs backflow prevention at the building service entrance to protect the public water supply from all hazards within the building.",
+        "how_to_find": "Reference cross-connection control program terminology."
+      },
+      "code_reference": {"code": "IPC", "section": "608.16"},
+      "zafto_links": [],
+      "tags": ["containment", "premises isolation", "service entrance"],
+      "verified": true
+    },
+    {
+      "id": "WS-120",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["608"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is point-of-use isolation?",
+      "choices": [
+        {"id": "A", "text": "Backflow protection at each cross-connection point"},
+        {"id": "B", "text": "Protection at service entrance only"},
+        {"id": "C", "text": "Zone isolation"},
+        {"id": "D", "text": "Fixture shutoff valves"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Point-of-use installs protection at each cross-connection.",
+        "detailed": "Point-of-use (fixture) isolation installs backflow prevention devices at each specific cross-connection point rather than at the building service entrance.",
+        "how_to_find": "Reference cross-connection control program terminology."
+      },
+      "code_reference": {"code": "IPC", "section": "608.15"},
+      "zafto_links": [],
+      "tags": ["point-of-use", "fixture isolation", "individual protection"],
+      "verified": true
+    },
+    {
+      "id": "WS-121",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["603"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What type of connection joins the water service to the water main?",
+      "choices": [
+        {"id": "A", "text": "Compression fitting"},
+        {"id": "B", "text": "Corporation stop"},
+        {"id": "C", "text": "Gate valve"},
+        {"id": "D", "text": "Union"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Corporation stop connects service to water main.",
+        "detailed": "A corporation stop (corp stop) is a valve fitting that connects the water service line to the water main, typically installed by the water utility using a wet tap.",
+        "how_to_find": "Reference water service installation terminology."
+      },
+      "code_reference": {"code": "IPC", "section": "603.1"},
+      "zafto_links": [],
+      "tags": ["corporation stop", "water main", "service connection"],
+      "verified": true
+    },
+    {
+      "id": "WS-122",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["603"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is a curb stop?",
+      "choices": [
+        {"id": "A", "text": "Valve at the curb for utility shutoff"},
+        {"id": "B", "text": "Valve at the building"},
+        {"id": "C", "text": "Pressure regulator"},
+        {"id": "D", "text": "Backflow preventer"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Curb stop is utility shutoff valve at property line/curb.",
+        "detailed": "A curb stop is a shutoff valve installed on the water service at or near the property line/curb, used by the water utility to shut off service without entering the building.",
+        "how_to_find": "Reference water service installation terminology."
+      },
+      "code_reference": {"code": "IPC", "section": "603.1"},
+      "zafto_links": [],
+      "tags": ["curb stop", "utility shutoff", "property line"],
+      "verified": true
+    },
+    {
+      "id": "WS-123",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["605"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What joining method is used for copper tubing fittings?",
+      "choices": [
+        {"id": "A", "text": "Soldering, brazing, or mechanical"},
+        {"id": "B", "text": "Solvent cement"},
+        {"id": "C", "text": "Threaded only"},
+        {"id": "D", "text": "Crimp rings only"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Copper uses solder, braze, or mechanical connections.",
+        "detailed": "Per IPC Section 605.11, copper tubing may be joined by soldering (sweat), brazing, flared fittings, compression fittings, or press-connect (mechanical) fittings.",
+        "how_to_find": "Reference IPC Section 605.11 for copper joining."
+      },
+      "code_reference": {"code": "IPC", "section": "605.11"},
+      "zafto_links": [],
+      "tags": ["copper joining", "solder", "braze", "mechanical"],
+      "verified": true
+    },
+    {
+      "id": "WS-124",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["605"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is lead-free solder?",
+      "choices": [
+        {"id": "A", "text": "Solder with less than 10% lead"},
+        {"id": "B", "text": "Solder with 0.2% or less lead"},
+        {"id": "C", "text": "Silver solder only"},
+        {"id": "D", "text": "Any solder without tin"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Lead-free solder contains 0.2% or less lead.",
+        "detailed": "Per Safe Drinking Water Act and IPC Section 605.2, lead-free means containing not more than 0.2% lead. Lead-free solder is required for all potable water applications.",
+        "how_to_find": "Reference IPC Section 605.2 and SDWA requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "605.2"},
+      "zafto_links": [],
+      "tags": ["lead-free", "0.2%", "solder"],
+      "verified": true
+    },
+    {
+      "id": "WS-125",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["609"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is pipe protection from freezing?",
+      "choices": [
+        {"id": "A", "text": "Heat tape only"},
+        {"id": "B", "text": "Insulation and/or location in heated space"},
+        {"id": "C", "text": "Antifreeze in pipes"},
+        {"id": "D", "text": "Continuous flow"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Protect pipes from freezing with insulation or heated location.",
+        "detailed": "Per IPC Section 305.6, water piping shall be protected from freezing by insulation, heat tape, or locating piping in heated spaces or below frost line.",
+        "how_to_find": "Reference IPC Section 305.6 for freeze protection."
+      },
+      "code_reference": {"code": "IPC", "section": "305.6"},
+      "zafto_links": [],
+      "tags": ["freeze protection", "insulation", "heated space"],
+      "verified": true
+    },
+    {
+      "id": "WS-126",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["603"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the purpose of a water meter?",
+      "choices": [
+        {"id": "A", "text": "Regulate pressure"},
+        {"id": "B", "text": "Measure water consumption for billing"},
+        {"id": "C", "text": "Filter water"},
+        {"id": "D", "text": "Prevent backflow"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Water meter measures consumption for utility billing.",
+        "detailed": "A water meter measures the volume of water passing through the service line, typically in gallons or cubic feet, for utility billing purposes.",
+        "how_to_find": "Reference water utility service requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "603.1"},
+      "zafto_links": [],
+      "tags": ["water meter", "consumption", "billing"],
+      "verified": true
+    },
+    {
+      "id": "WS-127",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["604"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What pressure loss does a typical water meter add to the system?",
+      "choices": [
+        {"id": "A", "text": "No pressure loss"},
+        {"id": "B", "text": "5-10 psi at design flow"},
+        {"id": "C", "text": "Per meter specifications"},
+        {"id": "D", "text": "25 psi"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Meter pressure loss per manufacturer specifications.",
+        "detailed": "Water meter pressure loss varies by meter size and flow rate, typically 2-15 psi at design flow. Meter specifications or curves must be used in pressure loss calculations.",
+        "how_to_find": "Reference water meter manufacturer specifications."
+      },
+      "code_reference": {"code": "IPC", "section": "604.6"},
+      "zafto_links": [],
+      "tags": ["meter pressure loss", "specifications", "flow rate"],
+      "verified": true
+    },
+    {
+      "id": "WS-128",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["608"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "An ASSE 1012 device is specified. What type of backflow preventer is this?",
+      "choices": [
+        {"id": "A", "text": "RPZ"},
+        {"id": "B", "text": "DCVA"},
+        {"id": "C", "text": "Dual check with atmospheric vent"},
+        {"id": "D", "text": "Hose connection vacuum breaker"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "ASSE 1012 is dual check with atmospheric vent.",
+        "detailed": "ASSE 1012 standard covers dual check valve backflow preventers with an atmospheric vent, used for residential supply protection against both backsiphonage and low head backpressure.",
+        "how_to_find": "Reference ASSE backflow preventer standards."
+      },
+      "code_reference": {"code": "IPC", "section": "608.13"},
+      "zafto_links": [],
+      "tags": ["ASSE 1012", "dual check", "atmospheric vent"],
+      "verified": true
+    },
+    {
+      "id": "WS-129",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["608"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What ASSE standard covers reduced pressure zone assemblies?",
+      "choices": [
+        {"id": "A", "text": "ASSE 1012"},
+        {"id": "B", "text": "ASSE 1013"},
+        {"id": "C", "text": "ASSE 1015"},
+        {"id": "D", "text": "ASSE 1020"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "ASSE 1013 covers RPZ assemblies.",
+        "detailed": "ASSE 1013 is the standard for reduced pressure principle backflow prevention assemblies (RPZ). ASSE 1015 covers double check valve backflow prevention assemblies.",
+        "how_to_find": "Reference ASSE backflow preventer standards."
+      },
+      "code_reference": {"code": "IPC", "section": "608.13.5"},
+      "zafto_links": [],
+      "tags": ["ASSE 1013", "RPZ", "standard"],
+      "verified": true
+    },
+    {
+      "id": "WS-130",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "WS",
+      "topic_name": "Water Systems",
+      "code_articles": ["501"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "A water heater T&P valve is weeping continuously. Most likely cause?",
+      "choices": [
+        {"id": "A", "text": "Thermal expansion with no expansion tank"},
+        {"id": "B", "text": "Normal operation"},
+        {"id": "C", "text": "Valve too small"},
+        {"id": "D", "text": "Water heater oversized"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Continuous weeping often indicates thermal expansion issue.",
+        "detailed": "Per IPC Section 607.3, in a closed system without expansion tank, thermal expansion causes pressure to rise above T&P valve setting (150 psi), causing it to weep. Install expansion tank.",
+        "how_to_find": "Reference IPC Section 607.3 and T&P troubleshooting."
+      },
+      "code_reference": {"code": "IPC", "section": "607.3"},
+      "zafto_links": [],
+      "tags": ["T&P weeping", "thermal expansion", "expansion tank"],
+      "verified": true
+    }
+  ]
+}

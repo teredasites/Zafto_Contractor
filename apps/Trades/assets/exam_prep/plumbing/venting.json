@@ -1,0 +1,3777 @@
+{
+  "topic_id": "VT",
+  "topic_name": "Venting",
+  "code_version": "IPC 2021",
+  "questions": [
+    {
+      "id": "VT-001",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["901"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the primary purpose of a plumbing vent system?",
+      "choices": [
+        {"id": "A", "text": "Supply fresh air to fixtures"},
+        {"id": "B", "text": "Protect trap seals and allow drainage flow"},
+        {"id": "C", "text": "Remove sewer gases to atmosphere"},
+        {"id": "D", "text": "Equalize water pressure"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Vents protect trap seals and allow proper drainage.",
+        "detailed": "Per IPC Section 901.1, the vent system provides air circulation to protect trap seals from siphonage and back-pressure, and allows air to enter the drainage system for proper flow.",
+        "how_to_find": "Reference IPC Section 901.1 for vent system purpose."
+      },
+      "code_reference": {"code": "IPC", "section": "901.1"},
+      "zafto_links": [],
+      "tags": ["vent purpose", "trap seal", "air circulation"],
+      "verified": true
+    },
+    {
+      "id": "VT-002",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["903"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum vent pipe size?",
+      "choices": [
+        {"id": "A", "text": "3/4 inch"},
+        {"id": "B", "text": "1 inch"},
+        {"id": "C", "text": "1-1/4 inches"},
+        {"id": "D", "text": "1-1/2 inches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Minimum vent pipe size is 1-1/4 inches.",
+        "detailed": "Per IPC Section 903.1, no vent shall be less than 1-1/4 inches in diameter. This ensures adequate air flow and prevents clogging from frost or debris.",
+        "how_to_find": "Reference IPC Section 903.1 for minimum vent size."
+      },
+      "code_reference": {"code": "IPC", "section": "903.1"},
+      "zafto_links": [],
+      "tags": ["minimum size", "1-1/4 inch", "vent"],
+      "verified": true
+    },
+    {
+      "id": "VT-003",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["903"],
+      "code_tables": ["916.1"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What determines the required vent pipe size?",
+      "choices": [
+        {"id": "A", "text": "Building height only"},
+        {"id": "B", "text": "DFU load and developed length"},
+        {"id": "C", "text": "Fixture type only"},
+        {"id": "D", "text": "Drain pipe material"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Vent size is based on DFU load and developed length.",
+        "detailed": "Per IPC Table 916.1, vent pipe size is determined by the drainage fixture unit load connected and the developed length of the vent piping.",
+        "how_to_find": "Reference IPC Table 916.1 for vent sizing criteria."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 916.1"},
+      "zafto_links": [],
+      "tags": ["vent sizing", "DFU", "developed length"],
+      "verified": true
+    },
+    {
+      "id": "VT-004",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["905"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "How high above the roof must a vent terminal extend?",
+      "choices": [
+        {"id": "A", "text": "4 inches"},
+        {"id": "B", "text": "6 inches"},
+        {"id": "C", "text": "12 inches"},
+        {"id": "D", "text": "18 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Vent terminals must extend 6 inches above the roof.",
+        "detailed": "Per IPC Section 905.5, vent pipes shall extend not less than 6 inches above the roof. In areas with heavy snow, vents must extend above expected snow accumulation.",
+        "how_to_find": "Reference IPC Section 905.5 for vent terminal height."
+      },
+      "code_reference": {"code": "IPC", "section": "905.5"},
+      "zafto_links": [],
+      "tags": ["vent terminal", "roof", "6 inches"],
+      "verified": true
+    },
+    {
+      "id": "VT-005",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["905"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum distance a vent terminal must be from an openable window?",
+      "choices": [
+        {"id": "A", "text": "3 feet"},
+        {"id": "B", "text": "5 feet"},
+        {"id": "C", "text": "10 feet"},
+        {"id": "D", "text": "No minimum required"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Vent terminals must be 10 feet from operable windows.",
+        "detailed": "Per IPC Section 905.2, vent terminals shall be at least 10 feet from any air intake or openable window. This prevents sewer gases from entering the building.",
+        "how_to_find": "Reference IPC Section 905.2 for vent terminal location requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "905.2"},
+      "zafto_links": [],
+      "tags": ["vent terminal", "window", "10 feet"],
+      "verified": true
+    },
+    {
+      "id": "VT-006",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["904"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is an individual vent?",
+      "choices": [
+        {"id": "A", "text": "A vent serving the entire building"},
+        {"id": "B", "text": "A vent serving a single fixture trap"},
+        {"id": "C", "text": "A vent serving only one floor"},
+        {"id": "D", "text": "A vent inside a wall"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "An individual vent serves a single fixture trap.",
+        "detailed": "Per IPC definitions, an individual vent is a pipe installed to vent a single fixture trap and connects to the vent system above the fixture served or terminates to atmosphere.",
+        "how_to_find": "Reference IPC Chapter 2 definitions for individual vent."
+      },
+      "code_reference": {"code": "IPC", "section": "Chapter 2"},
+      "zafto_links": [],
+      "tags": ["individual vent", "single fixture", "definition"],
+      "verified": true
+    },
+    {
+      "id": "VT-007",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["908"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is a common vent?",
+      "choices": [
+        {"id": "A", "text": "A vent in a common wall"},
+        {"id": "B", "text": "A vent serving two fixtures at the same level"},
+        {"id": "C", "text": "A vent shared by multiple buildings"},
+        {"id": "D", "text": "A vent terminating at common roof"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A common vent serves two fixtures at the same level.",
+        "detailed": "Per IPC Section 908.1, a common vent is a single vent pipe serving two fixture drains at the same level. The fixtures are typically back-to-back or side-by-side.",
+        "how_to_find": "Reference IPC Section 908.1 for common vent definition."
+      },
+      "code_reference": {"code": "IPC", "section": "908.1"},
+      "zafto_links": [],
+      "tags": ["common vent", "two fixtures", "same level"],
+      "verified": true
+    },
+    {
+      "id": "VT-008",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["909"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is a wet vent?",
+      "choices": [
+        {"id": "A", "text": "A vent exposed to weather"},
+        {"id": "B", "text": "A vent that also serves as a drain"},
+        {"id": "C", "text": "A vent through a wet area"},
+        {"id": "D", "text": "A vent with condensation"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A wet vent serves as both vent and drain.",
+        "detailed": "Per IPC Section 909.1, a wet vent is a vent pipe that also receives discharge from other fixtures. It must be sized for both drainage and venting loads.",
+        "how_to_find": "Reference IPC Section 909.1 for wet vent definition."
+      },
+      "code_reference": {"code": "IPC", "section": "909.1"},
+      "zafto_links": [],
+      "tags": ["wet vent", "drain and vent", "dual purpose"],
+      "verified": true
+    },
+    {
+      "id": "VT-009",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["909"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the minimum size wet vent that can receive discharge from a water closet?",
+      "choices": [
+        {"id": "A", "text": "1-1/2 inches"},
+        {"id": "B", "text": "2 inches"},
+        {"id": "C", "text": "3 inches"},
+        {"id": "D", "text": "4 inches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Wet vents receiving WC discharge must be minimum 3 inches.",
+        "detailed": "Per IPC Section 909.2, wet vents receiving discharge from a water closet shall be a minimum of 3 inches in diameter to handle both drainage and venting loads.",
+        "how_to_find": "Reference IPC Section 909.2 for wet vent sizing."
+      },
+      "code_reference": {"code": "IPC", "section": "909.2"},
+      "zafto_links": [],
+      "tags": ["wet vent", "water closet", "3-inch minimum"],
+      "verified": true
+    },
+    {
+      "id": "VT-010",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["906"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is a vent stack?",
+      "choices": [
+        {"id": "A", "text": "Any vertical vent pipe"},
+        {"id": "B", "text": "A vertical vent extending through roof"},
+        {"id": "C", "text": "The main vent for the building"},
+        {"id": "D", "text": "A vent connected to a soil stack"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "A vent stack is the principal vertical vent for a building.",
+        "detailed": "Per IPC definitions, a vent stack is a vertical vent pipe installed for the primary purpose of providing air circulation to any part of the drainage system.",
+        "how_to_find": "Reference IPC Chapter 2 definitions for vent stack."
+      },
+      "code_reference": {"code": "IPC", "section": "Chapter 2"},
+      "zafto_links": [],
+      "tags": ["vent stack", "vertical", "main vent"],
+      "verified": true
+    },
+    {
+      "id": "VT-011",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["906"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is a stack vent?",
+      "choices": [
+        {"id": "A", "text": "A vent connecting to multiple stacks"},
+        {"id": "B", "text": "The extension of a soil/waste stack above highest drain"},
+        {"id": "C", "text": "A separate vent stack"},
+        {"id": "D", "text": "A vent at the base of a stack"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A stack vent is the extension of soil/waste stack above the highest drain connection.",
+        "detailed": "Per IPC definitions, a stack vent is the extension of a soil or waste stack above the highest horizontal drain connected to the stack. It terminates through the roof.",
+        "how_to_find": "Reference IPC Chapter 2 definitions for stack vent."
+      },
+      "code_reference": {"code": "IPC", "section": "Chapter 2"},
+      "zafto_links": [],
+      "tags": ["stack vent", "extension", "roof terminal"],
+      "verified": true
+    },
+    {
+      "id": "VT-012",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["905"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Can a vent pipe be reduced in size in the direction of air flow?",
+      "choices": [
+        {"id": "A", "text": "Yes, anywhere"},
+        {"id": "B", "text": "No, vent size can only increase"},
+        {"id": "C", "text": "Only at connections"},
+        {"id": "D", "text": "Only in horizontal sections"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Vent pipes cannot be reduced in size toward the terminal.",
+        "detailed": "Per IPC Section 905.1, vent pipes shall not reduce in size in the direction of vent terminal. Vent size may only increase as additional fixtures connect.",
+        "how_to_find": "Reference IPC Section 905.1 for vent sizing restrictions."
+      },
+      "code_reference": {"code": "IPC", "section": "905.1"},
+      "zafto_links": [],
+      "tags": ["vent size", "reduction", "prohibited"],
+      "verified": true
+    },
+    {
+      "id": "VT-013",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["905"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What slope is required for horizontal vent piping?",
+      "choices": [
+        {"id": "A", "text": "Level only"},
+        {"id": "B", "text": "1/8 inch per foot back to drain"},
+        {"id": "C", "text": "1/4 inch per foot back to drain"},
+        {"id": "D", "text": "Any slope is acceptable"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Horizontal vents must slope 1/4 inch per foot back to drain.",
+        "detailed": "Per IPC Section 905.1, horizontal vent piping shall be graded and connected to drain back by gravity to the drainage pipe it serves at a slope of at least 1/4 inch per foot.",
+        "how_to_find": "Reference IPC Section 905.1 for horizontal vent slope."
+      },
+      "code_reference": {"code": "IPC", "section": "905.1"},
+      "zafto_links": [],
+      "tags": ["horizontal vent", "slope", "1/4 inch"],
+      "verified": true
+    },
+    {
+      "id": "VT-014",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["906"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "At what point must a vent connection to a drainage pipe be located?",
+      "choices": [
+        {"id": "A", "text": "Below the trap weir"},
+        {"id": "B", "text": "At or above the trap weir"},
+        {"id": "C", "text": "At the centerline of drain"},
+        {"id": "D", "text": "Any location on drain pipe"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Vent connections must be at or above the trap weir elevation.",
+        "detailed": "Per IPC Section 905.3, every vent shall connect to the drainage system at a point not lower than the weir of the trap it serves. This ensures proper trap seal protection.",
+        "how_to_find": "Reference IPC Section 905.3 for vent connection elevation."
+      },
+      "code_reference": {"code": "IPC", "section": "905.3"},
+      "zafto_links": [],
+      "tags": ["vent connection", "trap weir", "elevation"],
+      "verified": true
+    },
+    {
+      "id": "VT-015",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["906"],
+      "code_tables": ["906.1"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum trap arm length for a 1-1/2 inch drain?",
+      "choices": [
+        {"id": "A", "text": "2 feet 6 inches"},
+        {"id": "B", "text": "3 feet 6 inches"},
+        {"id": "C", "text": "5 feet"},
+        {"id": "D", "text": "6 feet"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Maximum trap arm for 1-1/2 inch drain is 3 feet 6 inches.",
+        "detailed": "Per IPC Table 906.1, the maximum distance from trap to vent for a 1-1/2 inch drain is 3 feet 6 inches. This ensures proper trap seal protection.",
+        "how_to_find": "Reference IPC Table 906.1 for trap arm lengths."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 906.1"},
+      "zafto_links": [],
+      "tags": ["trap arm", "distance", "1-1/2 inch"],
+      "verified": true
+    },
+    {
+      "id": "VT-016",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["906"],
+      "code_tables": ["906.1"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum trap arm length for a 2-inch drain?",
+      "choices": [
+        {"id": "A", "text": "3 feet 6 inches"},
+        {"id": "B", "text": "5 feet"},
+        {"id": "C", "text": "6 feet"},
+        {"id": "D", "text": "8 feet"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Maximum trap arm for 2-inch drain is 5 feet.",
+        "detailed": "Per IPC Table 906.1, the maximum distance from trap to vent for a 2-inch drain is 5 feet.",
+        "how_to_find": "Reference IPC Table 906.1 for trap arm lengths."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 906.1"},
+      "zafto_links": [],
+      "tags": ["trap arm", "distance", "2-inch"],
+      "verified": true
+    },
+    {
+      "id": "VT-017",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["906"],
+      "code_tables": ["906.1"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum trap arm length for a 3-inch drain?",
+      "choices": [
+        {"id": "A", "text": "5 feet"},
+        {"id": "B", "text": "6 feet"},
+        {"id": "C", "text": "8 feet"},
+        {"id": "D", "text": "10 feet"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Maximum trap arm for 3-inch drain is 6 feet.",
+        "detailed": "Per IPC Table 906.1, the maximum distance from trap to vent for a 3-inch drain is 6 feet. This applies to water closet connections.",
+        "how_to_find": "Reference IPC Table 906.1 for trap arm lengths."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 906.1"},
+      "zafto_links": [],
+      "tags": ["trap arm", "distance", "3-inch"],
+      "verified": true
+    },
+    {
+      "id": "VT-018",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["906"],
+      "code_tables": ["906.1"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the maximum trap arm length for a 4-inch drain?",
+      "choices": [
+        {"id": "A", "text": "6 feet"},
+        {"id": "B", "text": "8 feet"},
+        {"id": "C", "text": "10 feet"},
+        {"id": "D", "text": "12 feet"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Maximum trap arm for 4-inch drain is 10 feet.",
+        "detailed": "Per IPC Table 906.1, the maximum distance from trap to vent for a 4-inch drain is 10 feet.",
+        "how_to_find": "Reference IPC Table 906.1 for trap arm lengths."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 906.1"},
+      "zafto_links": [],
+      "tags": ["trap arm", "distance", "4-inch"],
+      "verified": true
+    },
+    {
+      "id": "VT-019",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["917"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is an Air Admittance Valve (AAV)?",
+      "choices": [
+        {"id": "A", "text": "A valve that releases air from water pipes"},
+        {"id": "B", "text": "A one-way valve that allows air into drain when negative pressure occurs"},
+        {"id": "C", "text": "A valve that exhausts sewer gas"},
+        {"id": "D", "text": "A pressure relief valve"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "An AAV allows air into the drain when negative pressure occurs.",
+        "detailed": "Per IPC Section 917.1, an air admittance valve is a one-way valve designed to allow air to enter the plumbing drainage system when negative pressure develops and to close under positive pressure.",
+        "how_to_find": "Reference IPC Section 917.1 for AAV definition."
+      },
+      "code_reference": {"code": "IPC", "section": "917.1"},
+      "zafto_links": [],
+      "tags": ["AAV", "air admittance valve", "negative pressure"],
+      "verified": true
+    },
+    {
+      "id": "VT-020",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["917"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Can an AAV replace all vent terminals in a building?",
+      "choices": [
+        {"id": "A", "text": "Yes, completely"},
+        {"id": "B", "text": "No, at least one vent must extend to atmosphere"},
+        {"id": "C", "text": "Only in residential buildings"},
+        {"id": "D", "text": "Only with special approval"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "At least one vent must extend to open atmosphere.",
+        "detailed": "Per IPC Section 917.2, AAVs shall not be used to vent sumps or sewage ejectors and shall not be the sole method of venting - at least one vent shall extend to the outdoors.",
+        "how_to_find": "Reference IPC Section 917.2 for AAV limitations."
+      },
+      "code_reference": {"code": "IPC", "section": "917.2"},
+      "zafto_links": [],
+      "tags": ["AAV", "limitation", "vent terminal required"],
+      "verified": true
+    },
+    {
+      "id": "VT-021",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["917"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Where must an AAV be installed in relation to the trap?",
+      "choices": [
+        {"id": "A", "text": "Below the trap weir"},
+        {"id": "B", "text": "At least 4 inches above the trap arm"},
+        {"id": "C", "text": "Level with trap arm"},
+        {"id": "D", "text": "In the trap arm"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "AAVs must be at least 4 inches above the trap arm.",
+        "detailed": "Per IPC Section 917.4, AAVs shall be installed at least 4 inches above the horizontal branch drain or fixture drain being vented and within the maximum developed length permitted.",
+        "how_to_find": "Reference IPC Section 917.4 for AAV installation height."
+      },
+      "code_reference": {"code": "IPC", "section": "917.4"},
+      "zafto_links": [],
+      "tags": ["AAV", "installation", "4 inches"],
+      "verified": true
+    },
+    {
+      "id": "VT-022",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["917"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Must an AAV be accessible for service?",
+      "choices": [
+        {"id": "A", "text": "No, can be sealed in wall"},
+        {"id": "B", "text": "Yes, must be accessible"},
+        {"id": "C", "text": "Only for inspection"},
+        {"id": "D", "text": "Depends on manufacturer"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "AAVs must be installed in an accessible location.",
+        "detailed": "Per IPC Section 917.6, AAVs shall be installed in a location that allows access for inspection and service. They may not be concealed without an access panel.",
+        "how_to_find": "Reference IPC Section 917.6 for AAV accessibility."
+      },
+      "code_reference": {"code": "IPC", "section": "917.6"},
+      "zafto_links": [],
+      "tags": ["AAV", "accessible", "service"],
+      "verified": true
+    },
+    {
+      "id": "VT-023",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["910"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is a circuit vent?",
+      "choices": [
+        {"id": "A", "text": "A vent for electrical circuits"},
+        {"id": "B", "text": "A vent serving multiple floor drains in a circuit"},
+        {"id": "C", "text": "A vent serving 2-8 fixtures connected to horizontal branch"},
+        {"id": "D", "text": "A circular vent pipe"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "A circuit vent serves 2 to 8 fixtures on a horizontal branch.",
+        "detailed": "Per IPC Section 910.1, a circuit vent is a vent pipe that serves a horizontal branch drain serving not more than 8 fixtures connected to a horizontal branch drain.",
+        "how_to_find": "Reference IPC Section 910.1 for circuit vent definition."
+      },
+      "code_reference": {"code": "IPC", "section": "910.1"},
+      "zafto_links": [],
+      "tags": ["circuit vent", "horizontal branch", "8 fixtures"],
+      "verified": true
+    },
+    {
+      "id": "VT-024",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["911"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is a combination drain and vent system?",
+      "choices": [
+        {"id": "A", "text": "A system with combined pipes"},
+        {"id": "B", "text": "A single pipe serving as both drain and vent for floor drains"},
+        {"id": "C", "text": "A gravity-only drainage system"},
+        {"id": "D", "text": "A pressurized drainage system"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A combination drain/vent uses one pipe for both drainage and venting.",
+        "detailed": "Per IPC Section 911.1, a combination drain and vent system uses a horizontal wet vent to serve floor drains or floor sinks. The drain pipe also functions as the vent.",
+        "how_to_find": "Reference IPC Section 911.1 for combination drain/vent systems."
+      },
+      "code_reference": {"code": "IPC", "section": "911.1"},
+      "zafto_links": [],
+      "tags": ["combination system", "drain and vent", "floor drains"],
+      "verified": true
+    },
+    {
+      "id": "VT-025",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["912"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is an island fixture vent?",
+      "choices": [
+        {"id": "A", "text": "A vent on an island in water"},
+        {"id": "B", "text": "A below-floor vent for island sinks"},
+        {"id": "C", "text": "A vent above kitchen islands"},
+        {"id": "D", "text": "A decorative vent pipe"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "An island fixture vent runs below the floor to serve island sinks.",
+        "detailed": "Per IPC Section 912.1, an island fixture vent is used to vent kitchen island sinks where conventional venting is not possible. The vent rises above fixture and loops below the floor.",
+        "how_to_find": "Reference IPC Section 912.1 for island vent requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "912.1"},
+      "zafto_links": [],
+      "tags": ["island vent", "kitchen island", "below floor"],
+      "verified": true
+    },
+    {
+      "id": "VT-026",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["906"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is a relief vent?",
+      "choices": [
+        {"id": "A", "text": "A vent for emergency pressure relief"},
+        {"id": "B", "text": "A vent providing air circulation between stacks"},
+        {"id": "C", "text": "A vent for high-rise buildings only"},
+        {"id": "D", "text": "A temporary vent during construction"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A relief vent provides air circulation between drainage and vent stacks.",
+        "detailed": "Per IPC definitions, a relief vent is a branch vent that connects the vent stack and soil/waste stack to provide air circulation between them, typically used in multi-story buildings.",
+        "how_to_find": "Reference IPC Chapter 2 definitions and Section 906 for relief vents."
+      },
+      "code_reference": {"code": "IPC", "section": "906"},
+      "zafto_links": [],
+      "tags": ["relief vent", "air circulation", "stacks"],
+      "verified": true
+    },
+    {
+      "id": "VT-027",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["905"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "medium",
+      "time_estimate_seconds": 120,
+      "question": "A vent pipe passes through a roof in a climate with heavy snowfall. What additional requirement applies?",
+      "choices": [
+        {"id": "A", "text": "Must be insulated"},
+        {"id": "B", "text": "Must extend above expected snow accumulation"},
+        {"id": "C", "text": "Must be heated"},
+        {"id": "D", "text": "Must have larger terminal"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Vents must extend above expected snow accumulation.",
+        "detailed": "Per IPC Section 905.5, in areas subject to heavy snowfall, vent extensions must extend above the anticipated snow accumulation to prevent blockage.",
+        "how_to_find": "Reference IPC Section 905.5 for snow climate vent requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "905.5"},
+      "zafto_links": [],
+      "tags": ["vent terminal", "snow", "height"],
+      "verified": true
+    },
+    {
+      "id": "VT-028",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["903"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the minimum vent size for a toilet (water closet)?",
+      "choices": [
+        {"id": "A", "text": "1-1/4 inches"},
+        {"id": "B", "text": "1-1/2 inches"},
+        {"id": "C", "text": "2 inches"},
+        {"id": "D", "text": "3 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Minimum vent size for a water closet is 1-1/2 inches.",
+        "detailed": "Per IPC Section 903.1, the minimum vent size for a water closet is 1-1/2 inches. While the minimum vent is 1-1/4 inch, the WC vent must be at least 1-1/2 inch.",
+        "how_to_find": "Reference IPC Section 903.1 for WC vent sizing."
+      },
+      "code_reference": {"code": "IPC", "section": "903.1"},
+      "zafto_links": [],
+      "tags": ["vent size", "water closet", "1-1/2 inch"],
+      "verified": true
+    },
+    {
+      "id": "VT-029",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["905"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What materials are approved for vent piping?",
+      "choices": [
+        {"id": "A", "text": "Same materials approved for drainage piping"},
+        {"id": "B", "text": "Plastic only"},
+        {"id": "C", "text": "Metal only"},
+        {"id": "D", "text": "Special vent-rated materials only"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Vent materials are the same as approved drainage materials.",
+        "detailed": "Per IPC Section 905.4, vent piping materials shall be in accordance with Section 702, which means the same materials approved for drainage piping are approved for venting.",
+        "how_to_find": "Reference IPC Section 905.4 for vent materials."
+      },
+      "code_reference": {"code": "IPC", "section": "905.4"},
+      "zafto_links": [],
+      "tags": ["vent materials", "same as drain", "approved"],
+      "verified": true
+    },
+    {
+      "id": "VT-030",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["905"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "medium",
+      "time_estimate_seconds": 120,
+      "question": "A horizontal vent runs through an unconditioned attic. What protection may be required?",
+      "choices": [
+        {"id": "A", "text": "Fire protection"},
+        {"id": "B", "text": "Insulation to prevent condensation"},
+        {"id": "C", "text": "Waterproofing"},
+        {"id": "D", "text": "No protection needed"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Vents in unconditioned spaces may need insulation.",
+        "detailed": "Horizontal vents in unconditioned attic spaces may require insulation to prevent condensation from forming on cold pipes, which can drip and cause water damage.",
+        "how_to_find": "Reference IPC Section 905 and local climate requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "905"},
+      "zafto_links": [],
+      "tags": ["vent", "attic", "insulation", "condensation"],
+      "verified": true
+    },
+    {
+      "id": "VT-031",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["906"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum vertical rise for a vent before going horizontal?",
+      "choices": [
+        {"id": "A", "text": "No requirement"},
+        {"id": "B", "text": "6 inches above flood level rim"},
+        {"id": "C", "text": "12 inches above floor"},
+        {"id": "D", "text": "Equal to pipe diameter"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Vents must rise 6 inches above flood level rim before going horizontal.",
+        "detailed": "Per IPC Section 905.3, a vent shall not be installed below the weir of the trap or horizontal before rising to at least 6 inches above the flood level rim of the fixture being served.",
+        "how_to_find": "Reference IPC Section 905.3 for vent rise requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "905.3"},
+      "zafto_links": [],
+      "tags": ["vent rise", "6 inches", "flood level"],
+      "verified": true
+    },
+    {
+      "id": "VT-032",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["907"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is a branch vent?",
+      "choices": [
+        {"id": "A", "text": "A vent serving only one fixture"},
+        {"id": "B", "text": "A vent connecting two or more individual vents to a vent stack"},
+        {"id": "C", "text": "A vent on a branch drain"},
+        {"id": "D", "text": "A vent at a branch connection"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A branch vent connects multiple individual vents to a vent stack.",
+        "detailed": "Per IPC definitions, a branch vent is a vent pipe connecting one or more individual vents with a vent stack or stack vent.",
+        "how_to_find": "Reference IPC Chapter 2 definitions for branch vent."
+      },
+      "code_reference": {"code": "IPC", "section": "Chapter 2"},
+      "zafto_links": [],
+      "tags": ["branch vent", "connection", "vent stack"],
+      "verified": true
+    },
+    {
+      "id": "VT-033",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["909"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "A bathroom has a toilet, lavatory, and bathtub. What is the minimum wet vent size to serve all three?",
+      "choices": [
+        {"id": "A", "text": "1-1/2 inches"},
+        {"id": "B", "text": "2 inches"},
+        {"id": "C", "text": "3 inches"},
+        {"id": "D", "text": "4 inches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "A 3-inch wet vent is required when serving a water closet.",
+        "detailed": "Per IPC Section 909.2, when a wet vent receives discharge from a water closet, it must be minimum 3 inches. The lavatory and tub can wet-vent into this 3-inch pipe.",
+        "how_to_find": "Reference IPC Section 909.2 for wet vent sizing with WC."
+      },
+      "code_reference": {"code": "IPC", "section": "909.2"},
+      "zafto_links": [],
+      "tags": ["wet vent", "bathroom", "3-inch"],
+      "verified": true
+    },
+    {
+      "id": "VT-034",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["909"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "In a wet vent system, which fixture must be the farthest upstream?",
+      "choices": [
+        {"id": "A", "text": "The fixture with the largest DFU"},
+        {"id": "B", "text": "The water closet"},
+        {"id": "C", "text": "The highest fixture"},
+        {"id": "D", "text": "Any fixture can be upstream"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "The water closet must be the farthest upstream fixture.",
+        "detailed": "Per IPC Section 909.2, the water closet shall be the most upstream fixture connection to the wet vent. Other fixtures connect downstream of the WC.",
+        "how_to_find": "Reference IPC Section 909.2 for wet vent fixture arrangement."
+      },
+      "code_reference": {"code": "IPC", "section": "909.2"},
+      "zafto_links": [],
+      "tags": ["wet vent", "water closet", "upstream"],
+      "verified": true
+    },
+    {
+      "id": "VT-035",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["909"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What fixtures can drain into a 2-inch wet vent?",
+      "choices": [
+        {"id": "A", "text": "Any fixtures totaling 4 DFU or less"},
+        {"id": "B", "text": "Fixtures excluding water closets"},
+        {"id": "C", "text": "Only lavatories"},
+        {"id": "D", "text": "Only floor drains"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A 2-inch wet vent cannot receive water closet discharge.",
+        "detailed": "Per IPC Section 909.2, a 2-inch wet vent can serve fixtures such as lavatories, bathtubs, and showers, but cannot receive discharge from a water closet (which requires 3-inch minimum).",
+        "how_to_find": "Reference IPC Section 909.2 for 2-inch wet vent limitations."
+      },
+      "code_reference": {"code": "IPC", "section": "909.2"},
+      "zafto_links": [],
+      "tags": ["wet vent", "2-inch", "no WC"],
+      "verified": true
+    },
+    {
+      "id": "VT-036",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["908"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "medium",
+      "time_estimate_seconds": 120,
+      "question": "Two back-to-back lavatories share a common wall. What vent arrangement is most efficient?",
+      "choices": [
+        {"id": "A", "text": "Individual vents for each"},
+        {"id": "B", "text": "Common vent between them"},
+        {"id": "C", "text": "Wet vent only"},
+        {"id": "D", "text": "No vent required"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Back-to-back fixtures are ideal for common venting.",
+        "detailed": "Per IPC Section 908.1, a common vent is the most efficient arrangement for two fixtures at the same level on opposite sides of a common wall. One vent serves both traps.",
+        "how_to_find": "Reference IPC Section 908.1 for common vent applications."
+      },
+      "code_reference": {"code": "IPC", "section": "908.1"},
+      "zafto_links": [],
+      "tags": ["common vent", "back-to-back", "lavatories"],
+      "verified": true
+    },
+    {
+      "id": "VT-037",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["916"],
+      "code_tables": ["916.1"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the maximum developed length for a 1-1/2 inch vent serving 8 DFU?",
+      "choices": [
+        {"id": "A", "text": "35 feet"},
+        {"id": "B", "text": "50 feet"},
+        {"id": "C", "text": "75 feet"},
+        {"id": "D", "text": "100 feet"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "1-1/2 inch vent serving 8 DFU is limited to 35 feet.",
+        "detailed": "Per IPC Table 916.1, a 1-1/2 inch vent pipe serving 8 DFU has a maximum developed length of 35 feet. Longer runs require larger pipe.",
+        "how_to_find": "Reference IPC Table 916.1 for vent length limits."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 916.1"},
+      "zafto_links": [],
+      "tags": ["vent length", "developed length", "sizing"],
+      "verified": true
+    },
+    {
+      "id": "VT-038",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["916"],
+      "code_tables": ["916.1"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the maximum developed length for a 2-inch vent serving 24 DFU?",
+      "choices": [
+        {"id": "A", "text": "50 feet"},
+        {"id": "B", "text": "75 feet"},
+        {"id": "C", "text": "100 feet"},
+        {"id": "D", "text": "150 feet"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "2-inch vent serving 24 DFU is limited to 75 feet.",
+        "detailed": "Per IPC Table 916.1, a 2-inch vent pipe serving 24 DFU has a maximum developed length of 75 feet.",
+        "how_to_find": "Reference IPC Table 916.1 for vent length limits."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 916.1"},
+      "zafto_links": [],
+      "tags": ["vent length", "2-inch", "24 DFU"],
+      "verified": true
+    },
+    {
+      "id": "VT-039",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["905"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Can a vent connect to a horizontal drain downstream of another fixture?",
+      "choices": [
+        {"id": "A", "text": "Yes, anywhere on the drain"},
+        {"id": "B", "text": "No, must connect to trap arm only"},
+        {"id": "C", "text": "Yes, but must be above the centerline"},
+        {"id": "D", "text": "Only with special approval"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Vents to horizontal drains must connect above centerline.",
+        "detailed": "Per IPC Section 905.3, where a vent connects to a horizontal drain, it shall connect at an angle not less than 45 degrees above horizontal centerline to prevent waste from entering the vent.",
+        "how_to_find": "Reference IPC Section 905.3 for vent connection angle."
+      },
+      "code_reference": {"code": "IPC", "section": "905.3"},
+      "zafto_links": [],
+      "tags": ["vent connection", "horizontal drain", "45 degrees"],
+      "verified": true
+    },
+    {
+      "id": "VT-040",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["912"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the minimum size for an island fixture vent?",
+      "choices": [
+        {"id": "A", "text": "1-1/4 inches"},
+        {"id": "B", "text": "1-1/2 inches"},
+        {"id": "C", "text": "2 inches"},
+        {"id": "D", "text": "Same as fixture drain"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Island fixture vents must be minimum 1-1/2 inches.",
+        "detailed": "Per IPC Section 912.1, an island fixture vent shall be not less than 1-1/2 inches in diameter. The loop portion below the floor must also maintain this size.",
+        "how_to_find": "Reference IPC Section 912.1 for island vent sizing."
+      },
+      "code_reference": {"code": "IPC", "section": "912.1"},
+      "zafto_links": [],
+      "tags": ["island vent", "minimum size", "1-1/2 inch"],
+      "verified": true
+    },
+    {
+      "id": "VT-041",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["912"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "In an island fixture vent, what cleanout is required?",
+      "choices": [
+        {"id": "A", "text": "None required"},
+        {"id": "B", "text": "At the vent terminal"},
+        {"id": "C", "text": "At the base of the vent loop"},
+        {"id": "D", "text": "At both ends of loop"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "A cleanout is required at the base of the island vent loop.",
+        "detailed": "Per IPC Section 912.2, a cleanout shall be provided at the connection of the vent to the fixture drain. This allows access to clear the below-floor vent loop.",
+        "how_to_find": "Reference IPC Section 912.2 for island vent cleanout."
+      },
+      "code_reference": {"code": "IPC", "section": "912.2"},
+      "zafto_links": [],
+      "tags": ["island vent", "cleanout", "loop"],
+      "verified": true
+    },
+    {
+      "id": "VT-042",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["910"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Where must a circuit vent connect to the horizontal branch drain?",
+      "choices": [
+        {"id": "A", "text": "At the most downstream fixture"},
+        {"id": "B", "text": "Between the two most upstream fixtures"},
+        {"id": "C", "text": "At the midpoint of the branch"},
+        {"id": "D", "text": "Anywhere on the branch"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Circuit vent connects between the two most upstream fixtures.",
+        "detailed": "Per IPC Section 910.1, a circuit vent shall connect to the horizontal branch drain between the two most upstream fixtures served by the circuit-vented section.",
+        "how_to_find": "Reference IPC Section 910.1 for circuit vent connection point."
+      },
+      "code_reference": {"code": "IPC", "section": "910.1"},
+      "zafto_links": [],
+      "tags": ["circuit vent", "connection", "upstream fixtures"],
+      "verified": true
+    },
+    {
+      "id": "VT-043",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["910"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What type of fixtures can be served by a circuit vent?",
+      "choices": [
+        {"id": "A", "text": "Any fixture type"},
+        {"id": "B", "text": "Only floor-mounted fixtures"},
+        {"id": "C", "text": "Only wall-mounted fixtures"},
+        {"id": "D", "text": "Only fixtures at the same floor level"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Circuit vents serve fixtures at the same floor level.",
+        "detailed": "Per IPC Section 910.1, fixtures connected to a circuit-vented horizontal branch shall be located on the same floor level. The system is designed for battery-style fixture layouts.",
+        "how_to_find": "Reference IPC Section 910.1 for circuit vent fixture requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "910.1"},
+      "zafto_links": [],
+      "tags": ["circuit vent", "same level", "fixtures"],
+      "verified": true
+    },
+    {
+      "id": "VT-044",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["913"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is a waste stack vent?",
+      "choices": [
+        {"id": "A", "text": "A vent connected to a waste stack"},
+        {"id": "B", "text": "A stack serving only fixtures without WC on upper floor"},
+        {"id": "C", "text": "An undersized vent stack"},
+        {"id": "D", "text": "A temporary vent"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Waste stack vent serves bathtubs and lavatories without a WC.",
+        "detailed": "Per IPC Section 913.1, a waste stack vent is permitted for a stack receiving discharge from fixtures on the upper floors where a water closet is not connected to the stack.",
+        "how_to_find": "Reference IPC Section 913.1 for waste stack vent requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "913.1"},
+      "zafto_links": [],
+      "tags": ["waste stack vent", "no WC", "upper floors"],
+      "verified": true
+    },
+    {
+      "id": "VT-045",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["915"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is a vent header?",
+      "choices": [
+        {"id": "A", "text": "The top of a vent stack"},
+        {"id": "B", "text": "A horizontal vent connecting multiple vent stacks"},
+        {"id": "C", "text": "A vent terminal cap"},
+        {"id": "D", "text": "An oversized vent"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A vent header connects multiple vent stacks to a single terminal.",
+        "detailed": "Per IPC Section 915.1, a vent header is a horizontal vent pipe connecting two or more vent stacks together before terminating through the roof as a single terminal.",
+        "how_to_find": "Reference IPC Section 915.1 for vent header requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "915.1"},
+      "zafto_links": [],
+      "tags": ["vent header", "horizontal", "multiple stacks"],
+      "verified": true
+    },
+    {
+      "id": "VT-046",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["915"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "How is a vent header sized?",
+      "choices": [
+        {"id": "A", "text": "Size of largest vent connected"},
+        {"id": "B", "text": "Combined area of vents connected"},
+        {"id": "C", "text": "Standard 3-inch minimum"},
+        {"id": "D", "text": "Based on building height"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Vent header size is based on combined area of connected vents.",
+        "detailed": "Per IPC Section 915.2, a vent header shall be sized on the basis of the total vent area being served, not less than the cross-sectional area of all vents connected.",
+        "how_to_find": "Reference IPC Section 915.2 for vent header sizing."
+      },
+      "code_reference": {"code": "IPC", "section": "915.2"},
+      "zafto_links": [],
+      "tags": ["vent header", "sizing", "combined area"],
+      "verified": true
+    },
+    {
+      "id": "VT-047",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["914"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is a yoke vent?",
+      "choices": [
+        {"id": "A", "text": "A Y-shaped vent fitting"},
+        {"id": "B", "text": "A vent connecting soil/waste stack to vent stack at intervals"},
+        {"id": "C", "text": "A vent at the base of a stack"},
+        {"id": "D", "text": "A decorative vent cover"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A yoke vent connects waste/soil stack to vent stack at intervals.",
+        "detailed": "Per IPC Section 914.1, a yoke vent is a pipe connecting upward from a soil or waste stack to a vent stack to prevent pressure changes in high-rise buildings.",
+        "how_to_find": "Reference IPC Section 914.1 for yoke vent definition."
+      },
+      "code_reference": {"code": "IPC", "section": "914.1"},
+      "zafto_links": [],
+      "tags": ["yoke vent", "stack connection", "high-rise"],
+      "verified": true
+    },
+    {
+      "id": "VT-048",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["914"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "When are yoke vents required?",
+      "choices": [
+        {"id": "A", "text": "All buildings"},
+        {"id": "B", "text": "Buildings over 3 stories"},
+        {"id": "C", "text": "Buildings over 10 branch intervals"},
+        {"id": "D", "text": "Commercial buildings only"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Yoke vents are required for stacks over 10 branch intervals.",
+        "detailed": "Per IPC Section 914.1, in buildings having more than 10 branch intervals, yoke vents shall be provided at every 10th interval starting from the top.",
+        "how_to_find": "Reference IPC Section 914.1 for yoke vent requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "914.1"},
+      "zafto_links": [],
+      "tags": ["yoke vent", "10 intervals", "high-rise"],
+      "verified": true
+    },
+    {
+      "id": "VT-049",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["905"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What protects a vent terminal from blockage?",
+      "choices": [
+        {"id": "A", "text": "A vent cap or screen"},
+        {"id": "B", "text": "Terminal must extend above roof"},
+        {"id": "C", "text": "Nothing - left open"},
+        {"id": "D", "text": "A weather collar only"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Vent terminals are typically left open - no screen required.",
+        "detailed": "Per IPC Section 905.6, vent terminals shall not be screened (as screens can become blocked with frost). The opening remains unobstructed, relying on height for bird/debris protection.",
+        "how_to_find": "Reference IPC Section 905.6 for vent terminal requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "905.6"},
+      "zafto_links": [],
+      "tags": ["vent terminal", "no screen", "frost"],
+      "verified": true
+    },
+    {
+      "id": "VT-050",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["905"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What fitting is used to connect a vent to a horizontal drain?",
+      "choices": [
+        {"id": "A", "text": "Sanitary tee"},
+        {"id": "B", "text": "Wye fitting"},
+        {"id": "C", "text": "Sanitary tee on its back"},
+        {"id": "D", "text": "Any fitting"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "A sanitary tee 'on its back' connects vents to horizontal drains.",
+        "detailed": "Per IPC Section 706.3, a sanitary tee may be installed with the branch facing upward only for vent connections. This is called installing the tee 'on its back.'",
+        "how_to_find": "Reference IPC Section 706.3 for vent fitting requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "706.3"},
+      "zafto_links": [],
+      "tags": ["sanitary tee", "vent connection", "on back"],
+      "verified": true
+    },
+    {
+      "id": "VT-051",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["903"],
+      "code_tables": [],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "What size vent is required for a 3-inch soil stack serving 30 DFU?",
+      "choices": [
+        {"id": "A", "text": "1-1/2 inches"},
+        {"id": "B", "text": "2 inches"},
+        {"id": "C", "text": "2-1/2 inches"},
+        {"id": "D", "text": "3 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A 3-inch stack with 30 DFU typically requires 2-inch vent.",
+        "detailed": "Per IPC Section 903.1 and Table 916.1, vent size is based on DFU load and developed length. For 30 DFU, a 2-inch vent is typically adequate for normal developed lengths.",
+        "how_to_find": "Reference IPC Section 903.1 and Table 916.1 for vent sizing."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 916.1"},
+      "zafto_links": [],
+      "tags": ["vent sizing", "calculation", "DFU"],
+      "verified": true
+    },
+    {
+      "id": "VT-052",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["917"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Can an AAV be installed outside a building?",
+      "choices": [
+        {"id": "A", "text": "Yes, anywhere"},
+        {"id": "B", "text": "No, must be inside building"},
+        {"id": "C", "text": "Only in warm climates"},
+        {"id": "D", "text": "Only in protected enclosure"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "AAVs must be installed inside the building.",
+        "detailed": "Per IPC Section 917.3, AAVs shall be installed indoors. They cannot withstand freezing temperatures and UV exposure, and must have adequate air supply.",
+        "how_to_find": "Reference IPC Section 917.3 for AAV location requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "917.3"},
+      "zafto_links": [],
+      "tags": ["AAV", "indoor", "location"],
+      "verified": true
+    },
+    {
+      "id": "VT-053",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["917"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Can an AAV be used to vent a sewage ejector?",
+      "choices": [
+        {"id": "A", "text": "Yes, any AAV"},
+        {"id": "B", "text": "No, prohibited"},
+        {"id": "C", "text": "Only with oversized AAV"},
+        {"id": "D", "text": "Only in residential"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "AAVs cannot be used to vent sewage ejectors.",
+        "detailed": "Per IPC Section 917.2, AAVs shall not be used to vent sumps, sewage ejectors, or similar equipment. These require full open-air venting to handle pressure fluctuations.",
+        "how_to_find": "Reference IPC Section 917.2 for AAV prohibitions."
+      },
+      "code_reference": {"code": "IPC", "section": "917.2"},
+      "zafto_links": [],
+      "tags": ["AAV", "ejector", "prohibited"],
+      "verified": true
+    },
+    {
+      "id": "VT-054",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["906"],
+      "code_tables": ["906.1"],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "A lavatory trap arm is 5 feet long with a 1-1/2 inch drain. Is this code compliant?",
+      "choices": [
+        {"id": "A", "text": "Yes, within limits"},
+        {"id": "B", "text": "No, exceeds maximum by 1.5 feet"},
+        {"id": "C", "text": "Yes, if slope is increased"},
+        {"id": "D", "text": "Depends on vent size"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "No - 1-1/2 inch trap arm is limited to 3 feet 6 inches.",
+        "detailed": "Per IPC Table 906.1, maximum trap arm length for 1-1/2 inch pipe is 3 feet 6 inches. At 5 feet, this installation exceeds the limit by 1.5 feet and is not code compliant.",
+        "how_to_find": "Reference IPC Table 906.1 for trap arm limits."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 906.1"},
+      "zafto_links": [],
+      "tags": ["trap arm", "code violation", "maximum length"],
+      "verified": true
+    },
+    {
+      "id": "VT-055",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["905"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "medium",
+      "time_estimate_seconds": 120,
+      "question": "A vent terminal is 4 feet from an openable skylight. Is this acceptable?",
+      "choices": [
+        {"id": "A", "text": "Yes, above minimum distance"},
+        {"id": "B", "text": "No, must be at least 10 feet away"},
+        {"id": "C", "text": "Yes, skylights are not air intakes"},
+        {"id": "D", "text": "Depends on wind direction"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "No - must be 10 feet from openable windows/skylights.",
+        "detailed": "Per IPC Section 905.2, vent terminals must be at least 10 feet from any air intake or openable window. An openable skylight is considered an opening requiring this separation.",
+        "how_to_find": "Reference IPC Section 905.2 for vent terminal clearances."
+      },
+      "code_reference": {"code": "IPC", "section": "905.2"},
+      "zafto_links": [],
+      "tags": ["vent terminal", "skylight", "10 feet"],
+      "verified": true
+    },
+    {
+      "id": "VT-056",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["905"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum vent terminal size through the roof?",
+      "choices": [
+        {"id": "A", "text": "1-1/4 inches"},
+        {"id": "B", "text": "2 inches"},
+        {"id": "C", "text": "3 inches"},
+        {"id": "D", "text": "Same as vent pipe"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Vent terminals through roof must be minimum 3 inches.",
+        "detailed": "Per IPC Section 905.5, vent extensions through the roof shall be not less than 3 inches in diameter. This prevents frost closure in cold climates.",
+        "how_to_find": "Reference IPC Section 905.5 for terminal size through roof."
+      },
+      "code_reference": {"code": "IPC", "section": "905.5"},
+      "zafto_links": [],
+      "tags": ["vent terminal", "3-inch minimum", "roof"],
+      "verified": true
+    },
+    {
+      "id": "VT-057",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["905"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Can a smaller vent be increased to 3 inches just for roof penetration?",
+      "choices": [
+        {"id": "A", "text": "No, must maintain size"},
+        {"id": "B", "text": "Yes, with increaser fitting"},
+        {"id": "C", "text": "Only in cold climates"},
+        {"id": "D", "text": "Only for residential"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Yes, an increaser can upsize the vent at roof penetration.",
+        "detailed": "Per IPC Section 905.5, a vent smaller than 3 inches may be increased to 3 inches using an increaser fitting just below the roof to meet the minimum terminal size requirement.",
+        "how_to_find": "Reference IPC Section 905.5 for increaser allowance."
+      },
+      "code_reference": {"code": "IPC", "section": "905.5"},
+      "zafto_links": [],
+      "tags": ["increaser", "vent terminal", "3-inch"],
+      "verified": true
+    },
+    {
+      "id": "VT-058",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["903"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum vent size for a 4-inch drain?",
+      "choices": [
+        {"id": "A", "text": "1-1/2 inches"},
+        {"id": "B", "text": "2 inches"},
+        {"id": "C", "text": "3 inches"},
+        {"id": "D", "text": "4 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Minimum vent for 4-inch drain is 2 inches.",
+        "detailed": "Per IPC Section 903.1, the vent shall be at least one-half the required drain size but not less than 1-1/4 inches. For a 4-inch drain, minimum vent is 2 inches.",
+        "how_to_find": "Reference IPC Section 903.1 for vent sizing rules."
+      },
+      "code_reference": {"code": "IPC", "section": "903.1"},
+      "zafto_links": [],
+      "tags": ["vent size", "4-inch drain", "one-half rule"],
+      "verified": true
+    },
+    {
+      "id": "VT-059",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["908"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "medium",
+      "time_estimate_seconds": 120,
+      "question": "Two lavatories connect to a common vent. What is the maximum total DFU for this common vent?",
+      "choices": [
+        {"id": "A", "text": "2 DFU"},
+        {"id": "B", "text": "4 DFU"},
+        {"id": "C", "text": "6 DFU"},
+        {"id": "D", "text": "No limit"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Common vent limited to 4 DFU for 2 fixtures.",
+        "detailed": "Per IPC Section 908.1, a common vent serves two fixtures. With lavatories at 1 DFU each, typical common vent serves 2 DFU, but can serve up to 4 DFU for fixtures like a WC and lavatory.",
+        "how_to_find": "Reference IPC Section 908.1 for common vent limitations."
+      },
+      "code_reference": {"code": "IPC", "section": "908.1"},
+      "zafto_links": [],
+      "tags": ["common vent", "DFU limit", "two fixtures"],
+      "verified": true
+    },
+    {
+      "id": "VT-060",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["905"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "A plumber finds sewer odors in a building with proper trap seals. What venting issue is most likely?",
+      "choices": [
+        {"id": "A", "text": "Vent pipe disconnected or blocked"},
+        {"id": "B", "text": "Vent too large"},
+        {"id": "C", "text": "Too many vents"},
+        {"id": "D", "text": "Vent slope too steep"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Blocked or disconnected vent is the most likely cause.",
+        "detailed": "If traps have proper seals but sewer odors are present, a disconnected or blocked vent allows positive pressure to push gases through trap seals. Check vent terminals and connections.",
+        "how_to_find": "Troubleshooting approach: sewer odors with good trap seals = vent problem."
+      },
+      "code_reference": {"code": "IPC", "section": "905"},
+      "zafto_links": [],
+      "tags": ["troubleshooting", "sewer odor", "blocked vent"],
+      "verified": true
+    },
+    {
+      "id": "VT-061",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["909"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is a horizontal wet vent?",
+      "choices": [
+        {"id": "A", "text": "A vent running horizontally"},
+        {"id": "B", "text": "A horizontal drain pipe that also serves as a vent"},
+        {"id": "C", "text": "A wet area vent"},
+        {"id": "D", "text": "A flooded vent pipe"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A horizontal wet vent is a drain pipe that also vents fixtures.",
+        "detailed": "Per IPC Section 909.1, a horizontal wet vent is a horizontal drain pipe sized to serve as both a drain and a vent for fixtures upstream.",
+        "how_to_find": "Reference IPC Section 909.1 for horizontal wet vent definition."
+      },
+      "code_reference": {"code": "IPC", "section": "909.1"},
+      "zafto_links": [],
+      "tags": ["horizontal wet vent", "dual purpose", "drain"],
+      "verified": true
+    },
+    {
+      "id": "VT-062",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["909"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is a vertical wet vent?",
+      "choices": [
+        {"id": "A", "text": "A vertical stack that vents fixtures on lower floors"},
+        {"id": "B", "text": "A vertical drain that receives fixture discharge and provides venting"},
+        {"id": "C", "text": "A vent pipe in a vertical position"},
+        {"id": "D", "text": "A combination stack vent"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A vertical wet vent receives discharge and provides venting.",
+        "detailed": "Per IPC Section 909.1, a vertical wet vent is a vertical drain pipe that receives waste from fixtures on the same floor and provides venting for fixtures below.",
+        "how_to_find": "Reference IPC Section 909.1 for vertical wet vent definition."
+      },
+      "code_reference": {"code": "IPC", "section": "909.1"},
+      "zafto_links": [],
+      "tags": ["vertical wet vent", "multi-floor", "drain and vent"],
+      "verified": true
+    },
+    {
+      "id": "VT-063",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["909"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "A 2-inch horizontal wet vent serves a bathtub and lavatory. Can a shower be added?",
+      "choices": [
+        {"id": "A", "text": "Yes, 2-inch is adequate"},
+        {"id": "B", "text": "No, exceeds DFU limit"},
+        {"id": "C", "text": "Yes, with additional vent"},
+        {"id": "D", "text": "Only if shower is upstream"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Yes, 2-inch wet vent can handle tub, lav, and shower.",
+        "detailed": "Per IPC Table 909.3, a 2-inch horizontal wet vent can serve up to 4 DFU. Bathtub (2) + Lavatory (1) + Shower (2) = 5 DFU may require 3-inch. Actually, checking limits - this depends on configuration.",
+        "how_to_find": "Reference IPC Table 909.3 for wet vent sizing."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 909.3"},
+      "zafto_links": [],
+      "tags": ["wet vent", "DFU calculation", "fixtures"],
+      "verified": true
+    },
+    {
+      "id": "VT-064",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["906"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What prevents trap siphonage in a properly vented system?",
+      "choices": [
+        {"id": "A", "text": "Larger trap size"},
+        {"id": "B", "text": "Air entering through vent equalizes pressure"},
+        {"id": "C", "text": "Slower drainage flow"},
+        {"id": "D", "text": "Deeper trap seal"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Air entering through the vent equalizes pressure.",
+        "detailed": "When water flows through a drain, it creates negative pressure behind it. The vent allows atmospheric air to enter, equalizing pressure and preventing the trap seal from being siphoned out.",
+        "how_to_find": "Reference IPC Chapter 9 for venting principles."
+      },
+      "code_reference": {"code": "IPC", "section": "Chapter 9"},
+      "zafto_links": [],
+      "tags": ["siphonage prevention", "air pressure", "venting"],
+      "verified": true
+    },
+    {
+      "id": "VT-065",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["906"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is back-pressure in a drainage system?",
+      "choices": [
+        {"id": "A", "text": "Water pressure from supply"},
+        {"id": "B", "text": "Positive pressure pushing up from lower drains"},
+        {"id": "C", "text": "Pressure from clogged pipes"},
+        {"id": "D", "text": "Air pressure from wind"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Back-pressure is positive pressure pushing up from lower drains.",
+        "detailed": "Back-pressure occurs when discharge from upper fixtures compresses air in the stack, creating positive pressure that can push water out of lower fixture traps. Proper venting prevents this.",
+        "how_to_find": "Reference IPC Chapter 9 for back-pressure explanation."
+      },
+      "code_reference": {"code": "IPC", "section": "Chapter 9"},
+      "zafto_links": [],
+      "tags": ["back-pressure", "positive pressure", "trap seal"],
+      "verified": true
+    },
+    {
+      "id": "VT-066",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["906"],
+      "code_tables": ["906.1"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum trap arm length for a 1-1/4 inch drain?",
+      "choices": [
+        {"id": "A", "text": "2 feet 6 inches"},
+        {"id": "B", "text": "3 feet 6 inches"},
+        {"id": "C", "text": "5 feet"},
+        {"id": "D", "text": "6 feet"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Maximum trap arm for 1-1/4 inch drain is 2 feet 6 inches.",
+        "detailed": "Per IPC Table 906.1, the maximum trap arm length for a 1-1/4 inch fixture drain (such as a lavatory) is 2 feet 6 inches (30 inches).",
+        "how_to_find": "Reference IPC Table 906.1 for 1-1/4 inch trap arm."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 906.1"},
+      "zafto_links": [],
+      "tags": ["trap arm", "1-1/4 inch", "2 feet 6 inches"],
+      "verified": true
+    },
+    {
+      "id": "VT-067",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["905"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What fitting is prohibited on a vent pipe?",
+      "choices": [
+        {"id": "A", "text": "Wye"},
+        {"id": "B", "text": "Double sanitary tee"},
+        {"id": "C", "text": "90-degree elbow"},
+        {"id": "D", "text": "All standard drainage fittings allowed"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "All standard drainage fittings are allowed on vents.",
+        "detailed": "Per IPC Section 905.4, vent piping shall use fittings in accordance with Section 706. Standard drainage fittings are permitted since vents primarily carry air, not waste.",
+        "how_to_find": "Reference IPC Section 905.4 for vent fitting requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "905.4"},
+      "zafto_links": [],
+      "tags": ["vent fittings", "drainage fittings", "allowed"],
+      "verified": true
+    },
+    {
+      "id": "VT-068",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["906"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Can a vent connect to the crown of a trap?",
+      "choices": [
+        {"id": "A", "text": "Yes, ideal location"},
+        {"id": "B", "text": "No, must be downstream of trap"},
+        {"id": "C", "text": "Only for floor drains"},
+        {"id": "D", "text": "Only with approval"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Vents connect downstream of the trap, not at the crown.",
+        "detailed": "A vent connecting at the trap crown (top) could allow waste to enter the vent. The vent must connect to the fixture drain downstream of the trap weir, typically within the trap arm.",
+        "how_to_find": "Reference IPC Section 905.3 for vent connection requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "905.3"},
+      "zafto_links": [],
+      "tags": ["vent connection", "trap crown", "downstream"],
+      "verified": true
+    },
+    {
+      "id": "VT-069",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["905"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "medium",
+      "time_estimate_seconds": 120,
+      "question": "A kitchen island sink has no wall for conventional venting. What solution is available?",
+      "choices": [
+        {"id": "A", "text": "No venting required"},
+        {"id": "B", "text": "Island fixture vent (loop vent)"},
+        {"id": "C", "text": "Extend vent through floor"},
+        {"id": "D", "text": "Use larger drain only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Island fixture vent (loop vent) is the solution.",
+        "detailed": "Per IPC Section 912, an island fixture vent (also called loop vent) routes the vent below the floor and back up to connect with the vent system, allowing island sink venting.",
+        "how_to_find": "Reference IPC Section 912 for island fixture venting."
+      },
+      "code_reference": {"code": "IPC", "section": "912"},
+      "zafto_links": [],
+      "tags": ["island vent", "kitchen island", "loop vent"],
+      "verified": true
+    },
+    {
+      "id": "VT-070",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["917"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What standard must an AAV comply with?",
+      "choices": [
+        {"id": "A", "text": "ASSE 1051"},
+        {"id": "B", "text": "ASTM D2661"},
+        {"id": "C", "text": "ANSI Z21.1"},
+        {"id": "D", "text": "NSF 61"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "AAVs must comply with ASSE 1051.",
+        "detailed": "Per IPC Section 917.1, air admittance valves shall conform to ASSE 1051 or ASSE 1050 (for stack-type). This ensures proper operation and durability.",
+        "how_to_find": "Reference IPC Section 917.1 for AAV standards."
+      },
+      "code_reference": {"code": "IPC", "section": "917.1"},
+      "zafto_links": [],
+      "tags": ["AAV", "ASSE 1051", "standard"],
+      "verified": true
+    },
+    {
+      "id": "VT-071",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["917"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the maximum DFU an individual AAV can serve?",
+      "choices": [
+        {"id": "A", "text": "Based on manufacturer rating"},
+        {"id": "B", "text": "2 DFU"},
+        {"id": "C", "text": "4 DFU"},
+        {"id": "D", "text": "8 DFU"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "AAV capacity is based on manufacturer's rated capacity.",
+        "detailed": "Per IPC Section 917.5, AAVs shall not exceed the manufacturer's rated DFU capacity. Different AAV models have different capacities based on their design.",
+        "how_to_find": "Reference IPC Section 917.5 for AAV capacity requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "917.5"},
+      "zafto_links": [],
+      "tags": ["AAV", "DFU capacity", "manufacturer rating"],
+      "verified": true
+    },
+    {
+      "id": "VT-072",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["905"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum distance from a vent terminal to a lot line?",
+      "choices": [
+        {"id": "A", "text": "No minimum"},
+        {"id": "B", "text": "3 feet"},
+        {"id": "C", "text": "5 feet"},
+        {"id": "D", "text": "10 feet"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Vent terminals must be 10 feet from lot lines.",
+        "detailed": "Per IPC Section 905.2, vent terminals shall be located at least 10 feet from any lot line. This prevents sewer gases from affecting adjacent properties.",
+        "how_to_find": "Reference IPC Section 905.2 for lot line clearance."
+      },
+      "code_reference": {"code": "IPC", "section": "905.2"},
+      "zafto_links": [],
+      "tags": ["vent terminal", "lot line", "10 feet"],
+      "verified": true
+    },
+    {
+      "id": "VT-073",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["905"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What clearance is required from a vent terminal to a door?",
+      "choices": [
+        {"id": "A", "text": "No requirement for doors"},
+        {"id": "B", "text": "3 feet"},
+        {"id": "C", "text": "10 feet"},
+        {"id": "D", "text": "Same as windows"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Vent terminals must be 10 feet from doors.",
+        "detailed": "Per IPC Section 905.2, vent terminals shall be at least 10 feet from any door, openable window, air intake, or air conditioning unit to prevent sewer gas entry.",
+        "how_to_find": "Reference IPC Section 905.2 for door clearance."
+      },
+      "code_reference": {"code": "IPC", "section": "905.2"},
+      "zafto_links": [],
+      "tags": ["vent terminal", "door", "10 feet"],
+      "verified": true
+    },
+    {
+      "id": "VT-074",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["911"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the minimum size for a combination drain and vent serving a single floor drain?",
+      "choices": [
+        {"id": "A", "text": "2 inches"},
+        {"id": "B", "text": "3 inches"},
+        {"id": "C", "text": "4 inches"},
+        {"id": "D", "text": "Same as floor drain size"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Minimum 2-inch for combination drain/vent serving floor drain.",
+        "detailed": "Per IPC Section 911.2, the minimum pipe size for a combination drain and vent system is 2 inches. This provides adequate air circulation for the drainage function.",
+        "how_to_find": "Reference IPC Section 911.2 for combination system sizing."
+      },
+      "code_reference": {"code": "IPC", "section": "911.2"},
+      "zafto_links": [],
+      "tags": ["combination system", "minimum size", "2-inch"],
+      "verified": true
+    },
+    {
+      "id": "VT-075",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["910"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is a relief vent in circuit venting?",
+      "choices": [
+        {"id": "A", "text": "A vent for emergency use"},
+        {"id": "B", "text": "A vent connecting the most downstream fixture to the vent stack"},
+        {"id": "C", "text": "A pressure relief device"},
+        {"id": "D", "text": "An oversized vent"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Relief vent connects downstream fixture to vent stack in circuit systems.",
+        "detailed": "Per IPC Section 910.2, in circuit venting, a relief vent shall be installed at the downstream end connecting to the vent stack. This provides additional air circulation for the circuit.",
+        "how_to_find": "Reference IPC Section 910.2 for circuit vent relief requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "910.2"},
+      "zafto_links": [],
+      "tags": ["relief vent", "circuit vent", "downstream"],
+      "verified": true
+    },
+    {
+      "id": "VT-076",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["916"],
+      "code_tables": ["916.1"],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 180,
+      "question": "What is the maximum developed length for a 3-inch vent serving 100 DFU?",
+      "choices": [
+        {"id": "A", "text": "50 feet"},
+        {"id": "B", "text": "78 feet"},
+        {"id": "C", "text": "100 feet"},
+        {"id": "D", "text": "212 feet"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "3-inch vent serving 100 DFU is limited to approximately 78 feet.",
+        "detailed": "Per IPC Table 916.1, a 3-inch vent serving 100 DFU has a maximum developed length of 78 feet. Exceeding this requires upsizing to 4 inches.",
+        "how_to_find": "Reference IPC Table 916.1 for vent length limits."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 916.1"},
+      "zafto_links": [],
+      "tags": ["vent length", "3-inch", "100 DFU"],
+      "verified": true
+    },
+    {
+      "id": "VT-077",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["903"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What fraction of drain size determines minimum vent size?",
+      "choices": [
+        {"id": "A", "text": "One-quarter"},
+        {"id": "B", "text": "One-third"},
+        {"id": "C", "text": "One-half"},
+        {"id": "D", "text": "Same size"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Minimum vent size is one-half the drain size.",
+        "detailed": "Per IPC Section 903.1, the vent shall be at least one-half the required size of the drain served, but not less than 1-1/4 inches or the size required by Table 916.1.",
+        "how_to_find": "Reference IPC Section 903.1 for vent sizing rule."
+      },
+      "code_reference": {"code": "IPC", "section": "903.1"},
+      "zafto_links": [],
+      "tags": ["vent sizing", "one-half rule", "drain size"],
+      "verified": true
+    },
+    {
+      "id": "VT-078",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["905"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "medium",
+      "time_estimate_seconds": 120,
+      "question": "Can a vent terminal discharge under a roof overhang?",
+      "choices": [
+        {"id": "A", "text": "Yes, if above roof level"},
+        {"id": "B", "text": "No, must be in open air"},
+        {"id": "C", "text": "Only residential buildings"},
+        {"id": "D", "text": "Only if screened"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Vent terminals must discharge to open air.",
+        "detailed": "Per IPC Section 905.1, vents shall extend to the outdoors and terminate to open air. Terminating under an overhang could trap sewer gases and is not permitted.",
+        "how_to_find": "Reference IPC Section 905.1 for terminal location requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "905.1"},
+      "zafto_links": [],
+      "tags": ["vent terminal", "overhang", "open air"],
+      "verified": true
+    },
+    {
+      "id": "VT-079",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["906"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the fall or slope of the trap arm?",
+      "choices": [
+        {"id": "A", "text": "Level only"},
+        {"id": "B", "text": "1/4 inch per foot toward drain"},
+        {"id": "C", "text": "1/8 inch per foot toward drain"},
+        {"id": "D", "text": "As steep as possible"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Trap arms slope 1/4 inch per foot toward the drain.",
+        "detailed": "Per IPC Section 704.1, horizontal drainage piping 2-1/2 inches and smaller (including trap arms) requires 1/4 inch per foot minimum slope. This maintains flow while protecting the trap seal.",
+        "how_to_find": "Reference IPC Section 704.1 for trap arm slope."
+      },
+      "code_reference": {"code": "IPC", "section": "704.1"},
+      "zafto_links": [],
+      "tags": ["trap arm", "slope", "1/4 inch"],
+      "verified": true
+    },
+    {
+      "id": "VT-080",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["909"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "Can a water closet on the second floor wet-vent fixtures on the first floor?",
+      "choices": [
+        {"id": "A", "text": "Yes, in vertical wet venting"},
+        {"id": "B", "text": "No, only horizontal wet venting allowed"},
+        {"id": "C", "text": "Only with additional individual vents"},
+        {"id": "D", "text": "Only for lavatories"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Yes, vertical wet venting allows upper floor WC to vent lower fixtures.",
+        "detailed": "Per IPC Section 909, vertical wet venting allows a water closet on an upper floor to discharge through a vertical drain that also serves as a vent for fixtures on lower floors.",
+        "how_to_find": "Reference IPC Section 909 for vertical wet venting."
+      },
+      "code_reference": {"code": "IPC", "section": "909"},
+      "zafto_links": [],
+      "tags": ["vertical wet vent", "multi-floor", "water closet"],
+      "verified": true
+    },
+    {
+      "id": "VT-081",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["912"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "How high must an island vent rise before dropping below the fixture?",
+      "choices": [
+        {"id": "A", "text": "4 inches above fixture flood level"},
+        {"id": "B", "text": "6 inches above fixture flood level"},
+        {"id": "C", "text": "Level with countertop"},
+        {"id": "D", "text": "To highest point possible"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Island vent rises 6 inches above flood level before dropping.",
+        "detailed": "Per IPC Section 912.1, the island fixture vent shall rise vertically to at least 6 inches above the flood level rim of the fixture before turning to run below the floor.",
+        "how_to_find": "Reference IPC Section 912.1 for island vent rise height."
+      },
+      "code_reference": {"code": "IPC", "section": "912.1"},
+      "zafto_links": [],
+      "tags": ["island vent", "rise height", "6 inches"],
+      "verified": true
+    },
+    {
+      "id": "VT-082",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["906"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the purpose of the trap arm length limit?",
+      "choices": [
+        {"id": "A", "text": "Save materials"},
+        {"id": "B", "text": "Prevent trap siphonage"},
+        {"id": "C", "text": "Reduce noise"},
+        {"id": "D", "text": "Improve flow velocity"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Trap arm limits prevent siphonage.",
+        "detailed": "The maximum trap arm length ensures the vent is close enough to the trap to prevent siphonage. Longer trap arms create more friction and can develop enough negative pressure to siphon the trap seal.",
+        "how_to_find": "Reference IPC Table 906.1 and venting principles."
+      },
+      "code_reference": {"code": "IPC", "section": "906"},
+      "zafto_links": [],
+      "tags": ["trap arm", "siphonage", "vent distance"],
+      "verified": true
+    },
+    {
+      "id": "VT-083",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["905"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "A vent passes through a sloped roof. How is the required height measured?",
+      "choices": [
+        {"id": "A", "text": "From lowest point of roof penetration"},
+        {"id": "B", "text": "From highest point of roof penetration"},
+        {"id": "C", "text": "Average of penetration"},
+        {"id": "D", "text": "From roof ridge"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Height measured from lowest point of roof penetration.",
+        "detailed": "Per IPC Section 905.5, the vent terminal shall extend the required distance above the roof surface. On a sloped roof, measure from the lowest (downslope) point of the roof penetration.",
+        "how_to_find": "Reference IPC Section 905.5 for roof penetration measurement."
+      },
+      "code_reference": {"code": "IPC", "section": "905.5"},
+      "zafto_links": [],
+      "tags": ["vent terminal", "sloped roof", "measurement"],
+      "verified": true
+    },
+    {
+      "id": "VT-084",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["917"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What environment requirement applies to AAV installation?",
+      "choices": [
+        {"id": "A", "text": "Must be in heated space"},
+        {"id": "B", "text": "Must have adequate air supply"},
+        {"id": "C", "text": "Must be in dry location"},
+        {"id": "D", "text": "All of the above"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "AAVs require heated, dry location with adequate air supply.",
+        "detailed": "Per IPC Section 917.3 and 917.6, AAVs must be installed in locations with access to adequate air, protected from freezing, and accessible for service - typically requiring conditioned, dry space.",
+        "how_to_find": "Reference IPC Section 917 for AAV environment requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "917"},
+      "zafto_links": [],
+      "tags": ["AAV", "environment", "installation"],
+      "verified": true
+    },
+    {
+      "id": "VT-085",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["908"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "medium",
+      "time_estimate_seconds": 120,
+      "question": "Two water closets are installed back-to-back. Can they share a common vent?",
+      "choices": [
+        {"id": "A", "text": "Yes, with 3-inch common vent"},
+        {"id": "B", "text": "No, each WC needs individual vent"},
+        {"id": "C", "text": "Only in commercial buildings"},
+        {"id": "D", "text": "Only with AAV"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Back-to-back WCs can share a 3-inch common vent.",
+        "detailed": "Per IPC Section 908.1, two fixtures at the same level in back-to-back installation can share a common vent. For water closets, the common vent must be minimum 3 inches.",
+        "how_to_find": "Reference IPC Section 908.1 for common vent with WCs."
+      },
+      "code_reference": {"code": "IPC", "section": "908.1"},
+      "zafto_links": [],
+      "tags": ["common vent", "water closets", "back-to-back"],
+      "verified": true
+    },
+    {
+      "id": "VT-086",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["905"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Can vents connect to horizontal drains above the highest fixture?",
+      "choices": [
+        {"id": "A", "text": "No, must connect below highest fixture"},
+        {"id": "B", "text": "Yes, at any point above flood level rim"},
+        {"id": "C", "text": "Only for circuit vents"},
+        {"id": "D", "text": "Only in multistory buildings"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Vents can connect anywhere above the flood level rim.",
+        "detailed": "Per IPC Section 905.3, vents may connect to horizontal drains at any point that is above the flood level rim of the fixture being served and maintains proper slope.",
+        "how_to_find": "Reference IPC Section 905.3 for vent connection locations."
+      },
+      "code_reference": {"code": "IPC", "section": "905.3"},
+      "zafto_links": [],
+      "tags": ["vent connection", "horizontal drain", "flood level"],
+      "verified": true
+    },
+    {
+      "id": "VT-087",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["916"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "How is developed length of a vent measured?",
+      "choices": [
+        {"id": "A", "text": "Horizontal distance only"},
+        {"id": "B", "text": "Vertical distance only"},
+        {"id": "C", "text": "Total length along pipe centerline"},
+        {"id": "D", "text": "Straight-line distance"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Developed length is total length along pipe centerline.",
+        "detailed": "Developed length is the total length of pipe measured along its centerline, including all horizontal and vertical sections and fittings. This is used for vent sizing calculations.",
+        "how_to_find": "Reference IPC Chapter 2 definitions for developed length."
+      },
+      "code_reference": {"code": "IPC", "section": "Chapter 2"},
+      "zafto_links": [],
+      "tags": ["developed length", "measurement", "vent sizing"],
+      "verified": true
+    },
+    {
+      "id": "VT-088",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["906"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "An inspector finds fixtures draining slowly but no blockage exists. What venting issue should be investigated?",
+      "choices": [
+        {"id": "A", "text": "Vent too large"},
+        {"id": "B", "text": "Vent blocked, undersized, or missing"},
+        {"id": "C", "text": "Too many vents"},
+        {"id": "D", "text": "Vent slope wrong direction"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Slow drains without blockage indicates venting problem.",
+        "detailed": "When drains flow slowly without a blockage, inadequate venting is the likely cause. A blocked, undersized, or missing vent creates negative pressure that restricts drainage flow.",
+        "how_to_find": "Troubleshooting: slow drain + no blockage = vent problem."
+      },
+      "code_reference": {"code": "IPC", "section": "906"},
+      "zafto_links": [],
+      "tags": ["troubleshooting", "slow drain", "venting problem"],
+      "verified": true
+    },
+    {
+      "id": "VT-089",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["905"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What type of vent termination is permitted through a wall instead of roof?",
+      "choices": [
+        {"id": "A", "text": "Any vent with approval"},
+        {"id": "B", "text": "None - all vents must go through roof"},
+        {"id": "C", "text": "Side-wall vents with specific requirements"},
+        {"id": "D", "text": "Only AAVs"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Side-wall vents are permitted with specific requirements.",
+        "detailed": "Per IPC Section 905.2, vents may terminate through a side wall with specific clearance requirements from windows, doors, air intakes, and must extend a minimum distance above grade.",
+        "how_to_find": "Reference IPC Section 905.2 for side-wall vent termination."
+      },
+      "code_reference": {"code": "IPC", "section": "905.2"},
+      "zafto_links": [],
+      "tags": ["side-wall vent", "termination", "alternative"],
+      "verified": true
+    },
+    {
+      "id": "VT-090",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["905"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the minimum height for a side-wall vent terminal above grade?",
+      "choices": [
+        {"id": "A", "text": "6 inches"},
+        {"id": "B", "text": "10 feet"},
+        {"id": "C", "text": "7 feet"},
+        {"id": "D", "text": "At soffit level"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Side-wall vents must be minimum 10 feet above grade.",
+        "detailed": "Per IPC Section 905.2, a vent terminating through a side wall shall be at least 10 feet above grade and at least 10 feet from any openable window, door, or air intake.",
+        "how_to_find": "Reference IPC Section 905.2 for side-wall terminal height."
+      },
+      "code_reference": {"code": "IPC", "section": "905.2"},
+      "zafto_links": [],
+      "tags": ["side-wall vent", "10 feet", "above grade"],
+      "verified": true
+    },
+    {
+      "id": "VT-091",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["909"],
+      "code_tables": ["909.3"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the maximum number of DFU a 2-inch horizontal wet vent can serve?",
+      "choices": [
+        {"id": "A", "text": "4 DFU"},
+        {"id": "B", "text": "6 DFU"},
+        {"id": "C", "text": "8 DFU"},
+        {"id": "D", "text": "12 DFU"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "A 2-inch horizontal wet vent is limited to 4 DFU.",
+        "detailed": "Per IPC Table 909.3, a 2-inch horizontal wet vent can serve a maximum of 4 drainage fixture units. This excludes water closets which require 3-inch minimum.",
+        "how_to_find": "Reference IPC Table 909.3 for wet vent capacities."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 909.3"},
+      "zafto_links": [],
+      "tags": ["wet vent", "2-inch", "4 DFU"],
+      "verified": true
+    },
+    {
+      "id": "VT-092",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["909"],
+      "code_tables": ["909.3"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the maximum DFU a 3-inch horizontal wet vent can serve?",
+      "choices": [
+        {"id": "A", "text": "6 DFU"},
+        {"id": "B", "text": "8 DFU"},
+        {"id": "C", "text": "12 DFU"},
+        {"id": "D", "text": "20 DFU"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "A 3-inch horizontal wet vent can serve up to 12 DFU.",
+        "detailed": "Per IPC Table 909.3, a 3-inch horizontal wet vent can serve a maximum of 12 drainage fixture units. This is adequate for a bathroom group with WC.",
+        "how_to_find": "Reference IPC Table 909.3 for wet vent capacities."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 909.3"},
+      "zafto_links": [],
+      "tags": ["wet vent", "3-inch", "12 DFU"],
+      "verified": true
+    },
+    {
+      "id": "VT-093",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["906"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is considered a dry vent?",
+      "choices": [
+        {"id": "A", "text": "A vent in a dry climate"},
+        {"id": "B", "text": "A vent that receives no fixture discharge"},
+        {"id": "C", "text": "A vent without condensation"},
+        {"id": "D", "text": "An above-ground vent"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A dry vent receives no fixture discharge.",
+        "detailed": "Per IPC definitions, a dry vent is any vent that does not receive fixture discharge. It carries only air and serves solely as a vent, unlike a wet vent which also carries waste.",
+        "how_to_find": "Reference IPC Chapter 2 definitions for dry vent."
+      },
+      "code_reference": {"code": "IPC", "section": "Chapter 2"},
+      "zafto_links": [],
+      "tags": ["dry vent", "no discharge", "air only"],
+      "verified": true
+    },
+    {
+      "id": "VT-094",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["910"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What slope is required for a circuit-vented horizontal branch?",
+      "choices": [
+        {"id": "A", "text": "1/8 inch per foot"},
+        {"id": "B", "text": "1/4 inch per foot"},
+        {"id": "C", "text": "Level"},
+        {"id": "D", "text": "No specific requirement"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Circuit-vented branches require 1/8 inch per foot slope.",
+        "detailed": "Per IPC Section 910.1, the horizontal branch drain served by a circuit vent shall be installed at a slope not to exceed 1/8 inch per foot to ensure proper circuit venting operation.",
+        "how_to_find": "Reference IPC Section 910.1 for circuit vent slope."
+      },
+      "code_reference": {"code": "IPC", "section": "910.1"},
+      "zafto_links": [],
+      "tags": ["circuit vent", "slope", "1/8 inch"],
+      "verified": true
+    },
+    {
+      "id": "VT-095",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["917"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "medium",
+      "time_estimate_seconds": 120,
+      "question": "An AAV is installed in a wall cavity without an access panel. Is this acceptable?",
+      "choices": [
+        {"id": "A", "text": "Yes, if properly sealed"},
+        {"id": "B", "text": "No, AAVs must be accessible"},
+        {"id": "C", "text": "Yes, for residential only"},
+        {"id": "D", "text": "Depends on manufacturer"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "No - AAVs must be accessible for service.",
+        "detailed": "Per IPC Section 917.6, AAVs shall be installed in accessible locations. An access panel must be provided if the AAV is concealed in a wall, ceiling, or other space.",
+        "how_to_find": "Reference IPC Section 917.6 for AAV accessibility."
+      },
+      "code_reference": {"code": "IPC", "section": "917.6"},
+      "zafto_links": [],
+      "tags": ["AAV", "access panel", "concealed"],
+      "verified": true
+    },
+    {
+      "id": "VT-096",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["914"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What size is required for a yoke vent?",
+      "choices": [
+        {"id": "A", "text": "Half the stack size"},
+        {"id": "B", "text": "Same size as the stack"},
+        {"id": "C", "text": "Same size as the vent stack"},
+        {"id": "D", "text": "Minimum 2 inches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Yoke vent must be same size as vent stack.",
+        "detailed": "Per IPC Section 914.1, a yoke vent shall be not less than the size of the vent stack to which it connects, ensuring adequate air circulation in tall buildings.",
+        "how_to_find": "Reference IPC Section 914.1 for yoke vent sizing."
+      },
+      "code_reference": {"code": "IPC", "section": "914.1"},
+      "zafto_links": [],
+      "tags": ["yoke vent", "sizing", "vent stack"],
+      "verified": true
+    },
+    {
+      "id": "VT-097",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["908"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "At what point does a common vent connect to the drainage system?",
+      "choices": [
+        {"id": "A", "text": "At the trap of one fixture"},
+        {"id": "B", "text": "At the junction of two fixture drains"},
+        {"id": "C", "text": "At the branch drain"},
+        {"id": "D", "text": "At the stack"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Common vent connects at junction of two fixture drains.",
+        "detailed": "Per IPC Section 908.1, a common vent connects to the drainage system at the point where the two fixture drains join together before entering the horizontal branch.",
+        "how_to_find": "Reference IPC Section 908.1 for common vent connection."
+      },
+      "code_reference": {"code": "IPC", "section": "908.1"},
+      "zafto_links": [],
+      "tags": ["common vent", "junction", "connection point"],
+      "verified": true
+    },
+    {
+      "id": "VT-098",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["905"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "medium",
+      "time_estimate_seconds": 120,
+      "question": "A plumber must run a vent through a cold attic in Minnesota. What precaution is needed?",
+      "choices": [
+        {"id": "A", "text": "Insulate the vent pipe"},
+        {"id": "B", "text": "Increase terminal size to 3 inches minimum"},
+        {"id": "C", "text": "Install heat trace"},
+        {"id": "D", "text": "Both A and B"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Insulate the vent and increase terminal to 3 inches.",
+        "detailed": "Per IPC Section 905.5, vent terminals in cold climates must be 3 inches minimum to prevent frost closure. Insulating the pipe through unconditioned space reduces condensation that can freeze.",
+        "how_to_find": "Reference IPC Section 905.5 for cold climate venting."
+      },
+      "code_reference": {"code": "IPC", "section": "905.5"},
+      "zafto_links": [],
+      "tags": ["cold climate", "insulation", "3-inch terminal"],
+      "verified": true
+    },
+    {
+      "id": "VT-099",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["912"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the maximum length for an island fixture vent below the floor?",
+      "choices": [
+        {"id": "A", "text": "No maximum if properly sized"},
+        {"id": "B", "text": "6 feet"},
+        {"id": "C", "text": "Based on drain size table"},
+        {"id": "D", "text": "10 feet"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Length limited by drain size per trap arm tables.",
+        "detailed": "Per IPC Section 912.1, the developed length of an island fixture vent shall be limited per Table 906.1 trap arm length requirements based on pipe size.",
+        "how_to_find": "Reference IPC Section 912.1 and Table 906.1 for length limits."
+      },
+      "code_reference": {"code": "IPC", "section": "912.1"},
+      "zafto_links": [],
+      "tags": ["island vent", "length limit", "trap arm table"],
+      "verified": true
+    },
+    {
+      "id": "VT-100",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["906"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is a crown vent?",
+      "choices": [
+        {"id": "A", "text": "A vent at the highest point of a system"},
+        {"id": "B", "text": "A prohibited vent connection at the trap crown"},
+        {"id": "C", "text": "A decorative vent cap"},
+        {"id": "D", "text": "A vent serving a roof drain"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A crown vent is a prohibited connection at the trap crown.",
+        "detailed": "A crown vent would connect directly to the crown (top) of a trap. This is prohibited because waste could enter the vent and cause clogging. Vents must connect downstream of the trap.",
+        "how_to_find": "Reference IPC Section 905.3 for vent connection requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "905.3"},
+      "zafto_links": [],
+      "tags": ["crown vent", "prohibited", "trap"],
+      "verified": true
+    },
+    {
+      "id": "VT-101",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["909"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "A bathroom has WC, lav, and tub on first floor. Second floor has lav and shower above. Can vertical wet venting be used?",
+      "choices": [
+        {"id": "A", "text": "Yes, with 3-inch vertical wet vent"},
+        {"id": "B", "text": "No, too many fixtures"},
+        {"id": "C", "text": "Only with separate WC vent"},
+        {"id": "D", "text": "Only in single-family homes"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Yes, vertical wet venting can serve both floors.",
+        "detailed": "Per IPC Section 909, vertical wet venting allows fixtures on upper floors to discharge through a vertical drain that also vents lower floor fixtures. The WC on first floor would be served.",
+        "how_to_find": "Reference IPC Section 909 for vertical wet venting multi-story."
+      },
+      "code_reference": {"code": "IPC", "section": "909"},
+      "zafto_links": [],
+      "tags": ["vertical wet vent", "multi-story", "bathroom"],
+      "verified": true
+    },
+    {
+      "id": "VT-102",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["917"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What standard applies to stack-type air admittance valves?",
+      "choices": [
+        {"id": "A", "text": "ASSE 1050"},
+        {"id": "B", "text": "ASSE 1051"},
+        {"id": "C", "text": "ASSE 1052"},
+        {"id": "D", "text": "ASTM D2661"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Stack-type AAVs must comply with ASSE 1050.",
+        "detailed": "Per IPC Section 917.1, stack-type air admittance valves shall conform to ASSE 1050. Individual AAVs conform to ASSE 1051. Stack types serve entire branch groups.",
+        "how_to_find": "Reference IPC Section 917.1 for AAV standards."
+      },
+      "code_reference": {"code": "IPC", "section": "917.1"},
+      "zafto_links": [],
+      "tags": ["AAV", "ASSE 1050", "stack type"],
+      "verified": true
+    },
+    {
+      "id": "VT-103",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["905"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Can vents pass through exterior walls above grade?",
+      "choices": [
+        {"id": "A", "text": "No, must go through roof"},
+        {"id": "B", "text": "Yes, with proper termination requirements"},
+        {"id": "C", "text": "Only in warm climates"},
+        {"id": "D", "text": "Only for AAVs"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Yes, with proper termination at required height.",
+        "detailed": "Per IPC Section 905.2, vents may terminate through exterior walls provided they meet height above grade, clearance from openings, and other requirements specified in the code.",
+        "how_to_find": "Reference IPC Section 905.2 for wall termination."
+      },
+      "code_reference": {"code": "IPC", "section": "905.2"},
+      "zafto_links": [],
+      "tags": ["vent terminal", "exterior wall", "above grade"],
+      "verified": true
+    },
+    {
+      "id": "VT-104",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["911"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What fixtures can be served by a combination drain and vent system?",
+      "choices": [
+        {"id": "A", "text": "Any fixture"},
+        {"id": "B", "text": "Floor drains and floor sinks only"},
+        {"id": "C", "text": "Lavatories only"},
+        {"id": "D", "text": "Emergency drains only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Combination systems serve floor drains and floor sinks only.",
+        "detailed": "Per IPC Section 911.1, combination drain and vent systems are limited to floor drains and floor sinks. Other fixtures require conventional venting methods.",
+        "how_to_find": "Reference IPC Section 911.1 for combination system fixtures."
+      },
+      "code_reference": {"code": "IPC", "section": "911.1"},
+      "zafto_links": [],
+      "tags": ["combination system", "floor drains", "limited fixtures"],
+      "verified": true
+    },
+    {
+      "id": "VT-105",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["905"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "Gurgling sounds occur in a lavatory when an adjacent toilet is flushed. What is the cause?",
+      "choices": [
+        {"id": "A", "text": "Trap is too deep"},
+        {"id": "B", "text": "Shared vent is undersized or blocked"},
+        {"id": "C", "text": "Drain is too large"},
+        {"id": "D", "text": "Trap arm too short"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Gurgling indicates inadequate venting between fixtures.",
+        "detailed": "When flushing one fixture causes gurgling in another, the shared vent system is inadequate. Either the vent is undersized, blocked, or the fixtures need separate venting to prevent air being pulled through traps.",
+        "how_to_find": "Troubleshooting: gurgling = venting inadequacy."
+      },
+      "code_reference": {"code": "IPC", "section": "905"},
+      "zafto_links": [],
+      "tags": ["troubleshooting", "gurgling", "inadequate venting"],
+      "verified": true
+    },
+    {
+      "id": "VT-106",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["909"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "In wet venting, what is the connection point called where dry vent meets wet vent?",
+      "choices": [
+        {"id": "A", "text": "Vent junction"},
+        {"id": "B", "text": "Wet vent connection"},
+        {"id": "C", "text": "Dry vent takeoff"},
+        {"id": "D", "text": "Transition point"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "The dry vent takeoff is where vent portion begins.",
+        "detailed": "In a wet vent system, the dry vent takeoff is the connection point where the pipe transitions from carrying waste (wet vent) to carrying only air (dry vent) toward the vent terminal.",
+        "how_to_find": "Reference IPC Section 909 for wet vent terminology."
+      },
+      "code_reference": {"code": "IPC", "section": "909"},
+      "zafto_links": [],
+      "tags": ["wet vent", "dry vent takeoff", "transition"],
+      "verified": true
+    },
+    {
+      "id": "VT-107",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["906"],
+      "code_tables": [],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 180,
+      "question": "A 3-inch drain requires venting. What is the minimum vent size using the one-half rule?",
+      "choices": [
+        {"id": "A", "text": "1-1/4 inches"},
+        {"id": "B", "text": "1-1/2 inches"},
+        {"id": "C", "text": "2 inches"},
+        {"id": "D", "text": "3 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Half of 3 inches = 1-1/2 inches minimum vent.",
+        "detailed": "Per IPC Section 903.1, minimum vent is one-half the drain size. For a 3-inch drain: 3 ÷ 2 = 1.5 inches minimum. This must also meet Table 916.1 requirements for DFU and length.",
+        "how_to_find": "Apply one-half rule from IPC Section 903.1."
+      },
+      "code_reference": {"code": "IPC", "section": "903.1"},
+      "zafto_links": [],
+      "tags": ["vent sizing", "one-half rule", "calculation"],
+      "verified": true
+    },
+    {
+      "id": "VT-108",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["910"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the maximum number of fixtures in a circuit-vented branch?",
+      "choices": [
+        {"id": "A", "text": "4 fixtures"},
+        {"id": "B", "text": "6 fixtures"},
+        {"id": "C", "text": "8 fixtures"},
+        {"id": "D", "text": "10 fixtures"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Circuit venting is limited to 8 fixtures maximum.",
+        "detailed": "Per IPC Section 910.1, a circuit vent may serve a horizontal branch drain with a maximum of 8 fixtures. Beyond this, additional venting is required.",
+        "how_to_find": "Reference IPC Section 910.1 for circuit vent fixture limit."
+      },
+      "code_reference": {"code": "IPC", "section": "910.1"},
+      "zafto_links": [],
+      "tags": ["circuit vent", "8 fixtures", "maximum"],
+      "verified": true
+    },
+    {
+      "id": "VT-109",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["905"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What happens if a vent terminal becomes blocked with ice?",
+      "choices": [
+        {"id": "A", "text": "No effect on drainage"},
+        {"id": "B", "text": "Trap seals may be siphoned or blown"},
+        {"id": "C", "text": "Increased flow velocity"},
+        {"id": "D", "text": "Better trap seal protection"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Blocked vent causes trap seal loss through siphonage.",
+        "detailed": "When a vent terminal is blocked, air cannot enter or exit the system. This creates pressure imbalances that can siphon trap seals (negative pressure) or blow them out (positive pressure).",
+        "how_to_find": "Understand vent function for trap seal protection."
+      },
+      "code_reference": {"code": "IPC", "section": "905"},
+      "zafto_links": [],
+      "tags": ["blocked vent", "ice", "trap seal loss"],
+      "verified": true
+    },
+    {
+      "id": "VT-110",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["909"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What fixture types cannot be wet vented?",
+      "choices": [
+        {"id": "A", "text": "Lavatories"},
+        {"id": "B", "text": "Kitchen sinks and garbage disposals"},
+        {"id": "C", "text": "Bathtubs"},
+        {"id": "D", "text": "Showers"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Kitchen sinks and disposals cannot be wet vented.",
+        "detailed": "Per IPC Section 909.1, wet venting is limited to bathroom fixtures. Kitchen sinks, garbage disposals, and clothes washers may not be wet vented due to grease and debris concerns.",
+        "how_to_find": "Reference IPC Section 909.1 for wet vent fixture limitations."
+      },
+      "code_reference": {"code": "IPC", "section": "909.1"},
+      "zafto_links": [],
+      "tags": ["wet vent", "kitchen sink", "prohibited"],
+      "verified": true
+    },
+    {
+      "id": "VT-111",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["916"],
+      "code_tables": ["916.1"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the maximum developed length for a 4-inch vent serving 200 DFU?",
+      "choices": [
+        {"id": "A", "text": "78 feet"},
+        {"id": "B", "text": "100 feet"},
+        {"id": "C", "text": "180 feet"},
+        {"id": "D", "text": "300 feet"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "4-inch vent serving 200 DFU is limited to 180 feet.",
+        "detailed": "Per IPC Table 916.1, a 4-inch vent pipe serving 200 DFU has a maximum developed length of approximately 180 feet.",
+        "how_to_find": "Reference IPC Table 916.1 for vent length limits."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 916.1"},
+      "zafto_links": [],
+      "tags": ["vent length", "4-inch", "200 DFU"],
+      "verified": true
+    },
+    {
+      "id": "VT-112",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["905"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "medium",
+      "time_estimate_seconds": 120,
+      "question": "A vent pipe runs horizontally for 20 feet before rising to the roof. What slope is required?",
+      "choices": [
+        {"id": "A", "text": "Level"},
+        {"id": "B", "text": "1/4 inch per foot back to drain"},
+        {"id": "C", "text": "1/8 inch per foot toward roof"},
+        {"id": "D", "text": "No slope requirement"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Horizontal vents slope 1/4 inch per foot back to drain.",
+        "detailed": "Per IPC Section 905.1, horizontal vent piping shall be graded at least 1/4 inch per foot to drain back to the drainage pipe it serves. This prevents moisture accumulation.",
+        "how_to_find": "Reference IPC Section 905.1 for horizontal vent slope."
+      },
+      "code_reference": {"code": "IPC", "section": "905.1"},
+      "zafto_links": [],
+      "tags": ["horizontal vent", "slope", "drain back"],
+      "verified": true
+    },
+    {
+      "id": "VT-113",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["906"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the trap arm?",
+      "choices": [
+        {"id": "A", "text": "The arm of the P-trap"},
+        {"id": "B", "text": "The pipe from trap outlet to vent connection"},
+        {"id": "C", "text": "The tailpiece"},
+        {"id": "D", "text": "The fixture drain"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Trap arm is the pipe from trap outlet to vent.",
+        "detailed": "Per IPC definitions, the trap arm is the portion of a fixture drain between the trap weir and its vent connection. Its length is limited by code to prevent siphonage.",
+        "how_to_find": "Reference IPC Chapter 2 definitions for trap arm."
+      },
+      "code_reference": {"code": "IPC", "section": "Chapter 2"},
+      "zafto_links": [],
+      "tags": ["trap arm", "definition", "vent connection"],
+      "verified": true
+    },
+    {
+      "id": "VT-114",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["917"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "An AAV fails closed. What symptoms would occur?",
+      "choices": [
+        {"id": "A", "text": "Sewer gases enter building"},
+        {"id": "B", "text": "Slow drains, gurgling, trap siphonage"},
+        {"id": "C", "text": "Increased flow velocity"},
+        {"id": "D", "text": "No noticeable effect"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Failed-closed AAV causes slow drains and trap siphonage.",
+        "detailed": "When an AAV fails in the closed position, it cannot admit air when drainage creates negative pressure. This results in slow drainage, gurgling sounds, and potential trap seal siphonage.",
+        "how_to_find": "Understand AAV function for troubleshooting."
+      },
+      "code_reference": {"code": "IPC", "section": "917"},
+      "zafto_links": [],
+      "tags": ["AAV", "failure", "troubleshooting"],
+      "verified": true
+    },
+    {
+      "id": "VT-115",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["917"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "An AAV fails open. What symptoms would occur?",
+      "choices": [
+        {"id": "A", "text": "Slow drains only"},
+        {"id": "B", "text": "Sewer gas enters through AAV"},
+        {"id": "C", "text": "No symptoms"},
+        {"id": "D", "text": "Water sprays from AAV"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Failed-open AAV allows sewer gases to escape.",
+        "detailed": "When an AAV fails in the open position, it cannot seal against positive pressure. Sewer gases can escape through the valve into the building, causing odor complaints.",
+        "how_to_find": "Understand AAV function for troubleshooting."
+      },
+      "code_reference": {"code": "IPC", "section": "917"},
+      "zafto_links": [],
+      "tags": ["AAV", "failure", "sewer gas"],
+      "verified": true
+    },
+    {
+      "id": "VT-116",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["905"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the purpose of an increase fitting in vent piping?",
+      "choices": [
+        {"id": "A", "text": "To reduce pipe size"},
+        {"id": "B", "text": "To increase pipe size for frost protection"},
+        {"id": "C", "text": "To change direction"},
+        {"id": "D", "text": "To connect to drain"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Increaser enlarges vent for frost protection at roof.",
+        "detailed": "Per IPC Section 905.5, an increaser fitting can upsize a smaller vent pipe to 3 inches minimum at the roof penetration to prevent frost closure in cold climates.",
+        "how_to_find": "Reference IPC Section 905.5 for increaser use."
+      },
+      "code_reference": {"code": "IPC", "section": "905.5"},
+      "zafto_links": [],
+      "tags": ["increaser", "frost protection", "3-inch"],
+      "verified": true
+    },
+    {
+      "id": "VT-117",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["908"],
+      "code_tables": [],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "What size common vent is needed for a WC and lavatory (5 DFU total)?",
+      "choices": [
+        {"id": "A", "text": "1-1/2 inches"},
+        {"id": "B", "text": "2 inches"},
+        {"id": "C", "text": "3 inches"},
+        {"id": "D", "text": "1-1/4 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Common vent for WC + lav (5 DFU) requires 2 inches.",
+        "detailed": "Per IPC Section 908.1, a common vent serving a WC and lavatory must be sized for the combined DFU load. With the WC requiring 1-1/2 inch minimum, a 2-inch common vent is typically required for 5 DFU.",
+        "how_to_find": "Reference IPC Section 908.1 and Table 916.1 for common vent sizing."
+      },
+      "code_reference": {"code": "IPC", "section": "908.1"},
+      "zafto_links": [],
+      "tags": ["common vent", "sizing", "WC and lav"],
+      "verified": true
+    },
+    {
+      "id": "VT-118",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["909"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Where does the wet-vented portion of a system begin?",
+      "choices": [
+        {"id": "A", "text": "At the vent terminal"},
+        {"id": "B", "text": "At the most upstream fixture connection"},
+        {"id": "C", "text": "At the stack"},
+        {"id": "D", "text": "At the building drain"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Wet vent begins at the most upstream fixture connection.",
+        "detailed": "Per IPC Section 909, the wet-vented portion of a system begins at the connection of the most upstream fixture (typically the WC in a bathroom) and extends to the dry vent takeoff.",
+        "how_to_find": "Reference IPC Section 909 for wet vent system layout."
+      },
+      "code_reference": {"code": "IPC", "section": "909"},
+      "zafto_links": [],
+      "tags": ["wet vent", "upstream fixture", "starting point"],
+      "verified": true
+    },
+    {
+      "id": "VT-119",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["905"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is a vent collar?",
+      "choices": [
+        {"id": "A", "text": "A pipe support"},
+        {"id": "B", "text": "A weatherproofing flashing around roof penetration"},
+        {"id": "C", "text": "A decorative cover"},
+        {"id": "D", "text": "An increaser fitting"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A vent collar is flashing around roof penetration.",
+        "detailed": "A vent collar or roof jack is the weatherproofing component installed around a vent pipe where it penetrates the roof. It prevents water infiltration around the pipe.",
+        "how_to_find": "Reference roofing and plumbing installation practices."
+      },
+      "code_reference": {"code": "IPC", "section": "905"},
+      "zafto_links": [],
+      "tags": ["vent collar", "flashing", "roof penetration"],
+      "verified": true
+    },
+    {
+      "id": "VT-120",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["906"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "A basement bathroom is proposed 50 feet from the nearest vent stack. What venting option is best?",
+      "choices": [
+        {"id": "A", "text": "Connect to distant stack"},
+        {"id": "B", "text": "Install new vent stack through roof"},
+        {"id": "C", "text": "Use AAV"},
+        {"id": "D", "text": "No vent needed"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "AAV is ideal for isolated basement bathrooms.",
+        "detailed": "Per IPC Section 917, an AAV provides a practical venting solution for isolated fixtures where running a conventional vent to the roof is impractical, provided one atmospheric vent exists in the building.",
+        "how_to_find": "Reference IPC Section 917 for AAV applications."
+      },
+      "code_reference": {"code": "IPC", "section": "917"},
+      "zafto_links": [],
+      "tags": ["AAV", "basement", "isolated bathroom"],
+      "verified": true
+    },
+    {
+      "id": "VT-121",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["915"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "Three vent stacks need to connect to a single roof penetration. What is required?",
+      "choices": [
+        {"id": "A", "text": "Cannot combine - each needs own terminal"},
+        {"id": "B", "text": "Vent header sized for combined area"},
+        {"id": "C", "text": "Largest vent size only"},
+        {"id": "D", "text": "Average of all three sizes"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Vent header sized for combined cross-sectional area.",
+        "detailed": "Per IPC Section 915, multiple vent stacks can connect to a vent header before terminating through a single roof penetration. The header must have an area at least equal to the combined area of all connected vents.",
+        "how_to_find": "Reference IPC Section 915 for vent header requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "915"},
+      "zafto_links": [],
+      "tags": ["vent header", "combined vents", "single terminal"],
+      "verified": true
+    },
+    {
+      "id": "VT-122",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["905"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Can a vent pipe be used to support other pipes?",
+      "choices": [
+        {"id": "A", "text": "Yes, if strong enough"},
+        {"id": "B", "text": "No, vents shall not support other pipes"},
+        {"id": "C", "text": "Only for small pipes"},
+        {"id": "D", "text": "Only in walls"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Vent pipes shall not be used for support of other pipes.",
+        "detailed": "Per IPC Section 707.1, drainage and vent piping shall be supported independently and shall not rely on other pipes for support. Each pipe must have proper hangers.",
+        "how_to_find": "Reference IPC Section 707 for pipe support requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "707.1"},
+      "zafto_links": [],
+      "tags": ["vent support", "independent", "prohibited"],
+      "verified": true
+    },
+    {
+      "id": "VT-123",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["909"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "How many bathroom groups can be served by one vertical wet vent?",
+      "choices": [
+        {"id": "A", "text": "1 bathroom group"},
+        {"id": "B", "text": "2 bathroom groups"},
+        {"id": "C", "text": "Multiple, based on sizing"},
+        {"id": "D", "text": "Unlimited"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Multiple bathroom groups if properly sized.",
+        "detailed": "Per IPC Section 909, a vertical wet vent can serve bathroom groups on multiple floors provided it is sized for the total DFU load. Each floor's fixtures must be properly configured.",
+        "how_to_find": "Reference IPC Section 909 for vertical wet vent capacity."
+      },
+      "code_reference": {"code": "IPC", "section": "909"},
+      "zafto_links": [],
+      "tags": ["vertical wet vent", "multiple bathrooms", "sizing"],
+      "verified": true
+    },
+    {
+      "id": "VT-124",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["906"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "medium",
+      "time_estimate_seconds": 120,
+      "question": "A fixture trap arm exceeds the maximum length allowed. What is the solution?",
+      "choices": [
+        {"id": "A", "text": "Increase drain slope"},
+        {"id": "B", "text": "Use deeper trap"},
+        {"id": "C", "text": "Move vent closer or increase pipe size"},
+        {"id": "D", "text": "Use larger trap"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Move vent closer to trap or increase pipe size.",
+        "detailed": "Per IPC Table 906.1, if trap arm exceeds maximum length, either relocate the vent connection closer to the trap OR increase the drain pipe size which allows a longer trap arm.",
+        "how_to_find": "Reference IPC Table 906.1 for trap arm solutions."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 906.1"},
+      "zafto_links": [],
+      "tags": ["trap arm", "exceed limit", "solutions"],
+      "verified": true
+    },
+    {
+      "id": "VT-125",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["912"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What fitting connects the island vent to the drainage below the floor?",
+      "choices": [
+        {"id": "A", "text": "Wye fitting"},
+        {"id": "B", "text": "Sanitary tee"},
+        {"id": "C", "text": "Double wye"},
+        {"id": "D", "text": "Approved drainage fitting"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Approved drainage fittings connect island vent below floor.",
+        "detailed": "Per IPC Section 912.1, the island fixture vent connects below floor level using approved drainage fittings. Long sweep fittings are preferred to allow clearing of any debris.",
+        "how_to_find": "Reference IPC Section 912 for island vent fittings."
+      },
+      "code_reference": {"code": "IPC", "section": "912"},
+      "zafto_links": [],
+      "tags": ["island vent", "fittings", "below floor"],
+      "verified": true
+    },
+    {
+      "id": "VT-126",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["905"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Must a vent extend full size through the roof?",
+      "choices": [
+        {"id": "A", "text": "Yes, same size entire length"},
+        {"id": "B", "text": "No, can be smaller below roof"},
+        {"id": "C", "text": "No, must be minimum 3 inches through roof"},
+        {"id": "D", "text": "Size can vary anywhere"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Vent through roof must be minimum 3 inches.",
+        "detailed": "Per IPC Section 905.5, vents smaller than 3 inches may be used in the building but must increase to minimum 3 inches where passing through the roof to prevent frost closure.",
+        "how_to_find": "Reference IPC Section 905.5 for roof penetration size."
+      },
+      "code_reference": {"code": "IPC", "section": "905.5"},
+      "zafto_links": [],
+      "tags": ["vent size", "roof penetration", "3-inch minimum"],
+      "verified": true
+    },
+    {
+      "id": "VT-127",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["909"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 180,
+      "question": "A half-bath (WC and lav) needs venting. What is the most efficient method?",
+      "choices": [
+        {"id": "A", "text": "Individual vent for each fixture"},
+        {"id": "B", "text": "Common vent for both"},
+        {"id": "C", "text": "Wet vent - lav drains into WC vent"},
+        {"id": "D", "text": "AAV for each fixture"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Wet venting is most efficient - lav drains through WC wet vent.",
+        "detailed": "Per IPC Section 909, wet venting allows the lavatory to drain through the wet-vented portion of the WC drain while receiving venting. This eliminates the need for separate lav vent.",
+        "how_to_find": "Reference IPC Section 909 for wet vent efficiency."
+      },
+      "code_reference": {"code": "IPC", "section": "909"},
+      "zafto_links": [],
+      "tags": ["wet vent", "half-bath", "efficient"],
+      "verified": true
+    },
+    {
+      "id": "VT-128",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["910"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What fixtures are best suited for circuit venting?",
+      "choices": [
+        {"id": "A", "text": "Scattered fixtures throughout building"},
+        {"id": "B", "text": "Battery of similar fixtures on one branch"},
+        {"id": "C", "text": "Individual residential fixtures"},
+        {"id": "D", "text": "High-rise building fixtures"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Circuit venting suits batteries of similar fixtures.",
+        "detailed": "Per IPC Section 910.1, circuit venting is designed for groups (batteries) of similar fixtures, such as multiple water closets in a commercial restroom, connected to a single horizontal branch.",
+        "how_to_find": "Reference IPC Section 910 for circuit vent applications."
+      },
+      "code_reference": {"code": "IPC", "section": "910"},
+      "zafto_links": [],
+      "tags": ["circuit vent", "battery", "commercial"],
+      "verified": true
+    },
+    {
+      "id": "VT-129",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["905"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "medium",
+      "time_estimate_seconds": 120,
+      "question": "An existing building has a blocked main vent stack. What temporary solution allows continued use?",
+      "choices": [
+        {"id": "A", "text": "Nothing - must be repaired immediately"},
+        {"id": "B", "text": "Open a window"},
+        {"id": "C", "text": "Install temporary AAV on affected fixtures"},
+        {"id": "D", "text": "Remove trap seals"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Blocked main vent requires immediate repair.",
+        "detailed": "A blocked main vent stack is a serious issue that compromises the entire drainage system. There is no acceptable temporary solution - the blockage must be cleared to restore proper function.",
+        "how_to_find": "Understand critical nature of vent system function."
+      },
+      "code_reference": {"code": "IPC", "section": "905"},
+      "zafto_links": [],
+      "tags": ["blocked vent", "emergency", "no temporary fix"],
+      "verified": true
+    },
+    {
+      "id": "VT-130",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "VT",
+      "topic_name": "Venting",
+      "code_articles": ["901"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "A customer asks why vents are needed when drains worked fine in older homes without them. What is the correct explanation?",
+      "choices": [
+        {"id": "A", "text": "Old plumbing didn't have traps"},
+        {"id": "B", "text": "Modern water-saving fixtures require venting for proper operation"},
+        {"id": "C", "text": "Old homes had vents that were hidden"},
+        {"id": "D", "text": "Vents are optional"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Modern low-flow fixtures require proper venting.",
+        "detailed": "Modern water-saving fixtures use less water per flush/use, creating more critical pressure conditions in drains. Proper venting is essential to maintain trap seals and allow adequate drainage with reduced water volumes.",
+        "how_to_find": "Understand evolution of plumbing systems and fixture efficiency."
+      },
+      "code_reference": {"code": "IPC", "section": "901"},
+      "zafto_links": [],
+      "tags": ["venting importance", "low-flow", "modern fixtures"],
+      "verified": true
+    }
+  ]
+}

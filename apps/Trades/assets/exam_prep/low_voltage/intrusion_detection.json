@@ -1,0 +1,502 @@
+{
+  "category": "Low Voltage",
+  "subcategory": "Intrusion Detection Systems",
+  "description": "Burglar alarm and intrusion detection installation",
+  "difficulty_distribution": {
+    "beginner": 10,
+    "intermediate": 15,
+    "advanced": 10
+  },
+  "questions": [
+    {
+      "id": "lv_ids_001",
+      "difficulty": "beginner",
+      "question": "What is the primary function of an intrusion detection system?",
+      "options": [
+        "Fire detection",
+        "Detecting unauthorized entry and alerting appropriate parties",
+        "Climate control",
+        "Lighting control"
+      ],
+      "correct_answer": 1,
+      "explanation": "Intrusion detection systems detect unauthorized entry attempts through sensors and alert occupants, monitoring stations, or authorities.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ids_002",
+      "difficulty": "beginner",
+      "question": "What is a door/window contact?",
+      "options": [
+        "A doorbell",
+        "A magnetic switch that detects when doors/windows open",
+        "A lock mechanism",
+        "A motion sensor"
+      ],
+      "correct_answer": 1,
+      "explanation": "Door/window contacts use a magnet on the door and a reed switch on the frame. Opening the door separates them, triggering the alarm.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ids_003",
+      "difficulty": "beginner",
+      "question": "What is a PIR motion detector?",
+      "options": [
+        "Pressure sensor",
+        "Passive Infrared detector sensing body heat movement",
+        "Photo sensor",
+        "Power indicator"
+      ],
+      "correct_answer": 1,
+      "explanation": "PIR (Passive Infrared) detectors sense changes in infrared energy (body heat) as people move through the detection zone.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ids_004",
+      "difficulty": "beginner",
+      "question": "What is a glass break detector?",
+      "options": [
+        "A glass container sensor",
+        "A sensor that detects the sound/vibration of breaking glass",
+        "A window frame sensor",
+        "A mirror sensor"
+      ],
+      "correct_answer": 1,
+      "explanation": "Glass break detectors listen for the specific acoustic signature of breaking glass (both low-frequency impact and high-frequency glass shattering).",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ids_005",
+      "difficulty": "beginner",
+      "question": "What is the control panel in an alarm system?",
+      "options": [
+        "The keypad only",
+        "The brain of the system that processes sensor inputs and controls outputs",
+        "The siren",
+        "The motion sensor"
+      ],
+      "correct_answer": 1,
+      "explanation": "The control panel processes all sensor inputs, controls sirens and dialers, manages arm/disarm states, and communicates with monitoring stations.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ids_006",
+      "difficulty": "beginner",
+      "question": "What is a keypad used for?",
+      "options": [
+        "Motion detection",
+        "User interface to arm, disarm, and program the alarm system",
+        "Glass break detection",
+        "Power supply"
+      ],
+      "correct_answer": 1,
+      "explanation": "Keypads allow users to arm/disarm the system with codes, view system status, program settings, and receive alerts.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ids_007",
+      "difficulty": "beginner",
+      "question": "What does 'armed' mean in an alarm system?",
+      "options": [
+        "System is off",
+        "System is active and will trigger alarm if sensors are violated",
+        "System is in test mode",
+        "System is being installed"
+      ],
+      "correct_answer": 1,
+      "explanation": "When armed, the system monitors all programmed sensors and will trigger an alarm condition if any protected zone is violated.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ids_008",
+      "difficulty": "beginner",
+      "question": "What is a zone in an alarm system?",
+      "options": [
+        "A room in the building",
+        "A circuit connecting one or more sensors to the panel",
+        "A geographic area",
+        "A time schedule"
+      ],
+      "correct_answer": 1,
+      "explanation": "A zone is an input circuit on the alarm panel connected to one or more sensors. Each zone can be individually programmed for different responses.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ids_009",
+      "difficulty": "beginner",
+      "question": "What is a monitoring station?",
+      "options": [
+        "A TV watching station",
+        "A central facility that receives alarms and dispatches response",
+        "A power monitoring location",
+        "A camera viewing station"
+      ],
+      "correct_answer": 1,
+      "explanation": "Central monitoring stations receive alarm signals 24/7, verify alarms, contact the customer, and dispatch police/fire as needed.",
+      "code_reference": "UL 827, Industry Standard"
+    },
+    {
+      "id": "lv_ids_010",
+      "difficulty": "beginner",
+      "question": "What is entry/exit delay?",
+      "options": [
+        "Installation time",
+        "Time allowed to enter/exit without triggering alarm after arming",
+        "Sensor response time",
+        "Monitoring delay"
+      ],
+      "correct_answer": 1,
+      "explanation": "Entry/exit delays give users time to disarm after entering or leave after arming without triggering the alarm.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ids_011",
+      "difficulty": "intermediate",
+      "question": "What is EOL (End of Line) supervision?",
+      "options": [
+        "Line termination for cable",
+        "Using resistors to detect wiring tampering or faults",
+        "End of installation",
+        "Final zone programming"
+      ],
+      "correct_answer": 1,
+      "explanation": "EOL resistors at the sensor create a specific resistance. Any change (cut wire, short, tamper) changes resistance and triggers trouble or alarm.",
+      "code_reference": "UL 681, Industry Standard"
+    },
+    {
+      "id": "lv_ids_012",
+      "difficulty": "intermediate",
+      "question": "What is DEOL (Double End of Line) supervision?",
+      "options": [
+        "Two resistors for three states: normal, alarm, and tamper",
+        "Double the cable length",
+        "Two sensors per zone",
+        "Backup supervision"
+      ],
+      "correct_answer": 0,
+      "explanation": "DEOL uses two resistors to distinguish between normal (one resistance), alarm (different resistance), and tamper/trouble (third resistance state).",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ids_013",
+      "difficulty": "intermediate",
+      "question": "What is a dual-technology motion detector?",
+      "options": [
+        "Motion and sound",
+        "Combines PIR and microwave/ultrasonic requiring both to trigger",
+        "Two PIR sensors",
+        "Wired and wireless"
+      ],
+      "correct_answer": 1,
+      "explanation": "Dual-tech detectors combine PIR with microwave or ultrasonic. Both must detect motion to trigger, reducing false alarms.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ids_014",
+      "difficulty": "intermediate",
+      "question": "What is pet immunity in motion detectors?",
+      "options": [
+        "Pets cannot set off the alarm",
+        "Design that ignores motion from animals up to certain weight",
+        "Pet tracking feature",
+        "Animal repellent"
+      ],
+      "correct_answer": 1,
+      "explanation": "Pet-immune detectors use lens design and signal processing to ignore motion from small animals (typically up to 40-80 lbs) while detecting humans.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ids_015",
+      "difficulty": "intermediate",
+      "question": "What is the difference between NC and NO contacts?",
+      "options": [
+        "North Carolina vs Northern Ontario",
+        "Normally Closed vs Normally Open sensor contacts",
+        "New Connection vs Old",
+        "No difference"
+      ],
+      "correct_answer": 1,
+      "explanation": "NC (Normally Closed) contacts are closed when secure (standard for intrusion). NO (Normally Open) contacts are open when secure.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ids_016",
+      "difficulty": "intermediate",
+      "question": "Why are NC contacts preferred for security?",
+      "options": [
+        "They use less power",
+        "A cut wire causes alarm (fail-secure) rather than staying normal",
+        "They are cheaper",
+        "They are faster"
+      ],
+      "correct_answer": 1,
+      "explanation": "NC circuits show alarm when wire is cut (circuit opens). NO circuits would not detect a cut wire, creating a security vulnerability.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ids_017",
+      "difficulty": "intermediate",
+      "question": "What is a siren driver?",
+      "options": [
+        "Installation technician",
+        "Device that generates siren tones and powers the speaker",
+        "Siren mounting bracket",
+        "Volume control"
+      ],
+      "correct_answer": 1,
+      "explanation": "Siren drivers generate the audio tones (yelp, steady, etc.) and provide power to drive siren speakers for local alarm notification.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ids_018",
+      "difficulty": "intermediate",
+      "question": "What is a strobe light in alarm systems?",
+      "options": [
+        "Decorative light",
+        "Flashing light for visible alarm notification",
+        "Camera flash",
+        "Test light"
+      ],
+      "correct_answer": 1,
+      "explanation": "Alarm strobes provide visible notification of alarm conditions, helpful for hearing-impaired persons and for locating alarming buildings.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ids_019",
+      "difficulty": "intermediate",
+      "question": "What is cellular alarm communication?",
+      "options": [
+        "Cell phone notifications",
+        "Using cellular network to transmit alarms to monitoring station",
+        "Battery-powered alarms",
+        "Wireless sensors"
+      ],
+      "correct_answer": 1,
+      "explanation": "Cellular communicators transmit alarm signals via cellular networks, eliminating dependence on phone lines that can be cut.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ids_020",
+      "difficulty": "intermediate",
+      "question": "What is IP alarm communication?",
+      "options": [
+        "Indoor-outdoor protection",
+        "Transmitting alarms over internet/network connection",
+        "Intrusion protection level",
+        "Individual programming"
+      ],
+      "correct_answer": 1,
+      "explanation": "IP communicators transmit alarm signals over internet connections, often faster and more reliable than traditional phone dialers.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ids_021",
+      "difficulty": "intermediate",
+      "question": "What is stay mode vs away mode?",
+      "options": [
+        "Same function, different names",
+        "Stay arms perimeter only; Away arms perimeter and interior motion",
+        "Day vs night",
+        "Test vs active"
+      ],
+      "correct_answer": 1,
+      "explanation": "Stay mode arms perimeter doors/windows but bypasses interior motion sensors so occupants can move inside. Away mode arms everything.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ids_022",
+      "difficulty": "intermediate",
+      "question": "What is a panic button/zone?",
+      "options": [
+        "Emergency test button",
+        "Manual alarm trigger for duress or emergency situations",
+        "System reset",
+        "Programming button"
+      ],
+      "correct_answer": 1,
+      "explanation": "Panic buttons allow immediate manual alarm activation for emergencies (medical, fire, police duress) regardless of system arm state.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ids_023",
+      "difficulty": "intermediate",
+      "question": "What backup power is required for alarm panels?",
+      "options": [
+        "None required",
+        "Battery backup for continued operation during power outages",
+        "Generator only",
+        "Solar only"
+      ],
+      "correct_answer": 1,
+      "explanation": "UL-listed alarm systems require battery backup to operate during power failures, typically 4-24 hours depending on requirements.",
+      "code_reference": "UL 681"
+    },
+    {
+      "id": "lv_ids_024",
+      "difficulty": "intermediate",
+      "question": "What is a trouble condition?",
+      "options": [
+        "An alarm condition",
+        "A fault requiring attention (low battery, communication failure, etc.)",
+        "A programming error",
+        "User error"
+      ],
+      "correct_answer": 1,
+      "explanation": "Trouble conditions indicate system faults that need attention - low battery, sensor trouble, communication failure, power loss, etc.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ids_025",
+      "difficulty": "advanced",
+      "question": "What is cross-zoning?",
+      "options": [
+        "Connecting zones together",
+        "Requiring two zones to alarm before triggering (reducing false alarms)",
+        "Zone bypass",
+        "Programming multiple zones"
+      ],
+      "correct_answer": 1,
+      "explanation": "Cross-zoning requires two different zones to alarm within a time window before triggering the main alarm, significantly reducing false alarms.",
+      "code_reference": "UL Standards, Industry Standard"
+    },
+    {
+      "id": "lv_ids_026",
+      "difficulty": "advanced",
+      "question": "What UL standard covers burglar alarm systems?",
+      "options": [
+        "UL 217",
+        "UL 681",
+        "UL 864",
+        "UL 1449"
+      ],
+      "correct_answer": 1,
+      "explanation": "UL 681 is the Standard for Installation and Classification of Burglar and Holdup Alarm Systems, covering installation requirements.",
+      "code_reference": "UL 681"
+    },
+    {
+      "id": "lv_ids_027",
+      "difficulty": "advanced",
+      "question": "What is UL certificate for alarm systems?",
+      "options": [
+        "Equipment listing only",
+        "Verification that the installed system meets UL standards",
+        "Installer certification",
+        "Building permit"
+      ],
+      "correct_answer": 1,
+      "explanation": "A UL certificate indicates the complete installation has been inspected and meets UL 681 or UL 827 requirements, often required by insurance.",
+      "code_reference": "UL 681"
+    },
+    {
+      "id": "lv_ids_028",
+      "difficulty": "advanced",
+      "question": "What is Grade A vs Grade AA alarm classification?",
+      "options": [
+        "Sound quality ratings",
+        "UL extent of protection classifications",
+        "Equipment grades",
+        "Cable grades"
+      ],
+      "correct_answer": 1,
+      "explanation": "UL classifications (Grade A, AA, B) indicate extent of protection - number of sensors, types, coverage, and monitoring requirements.",
+      "code_reference": "UL 681"
+    },
+    {
+      "id": "lv_ids_029",
+      "difficulty": "advanced",
+      "question": "What is encrypted wireless sensor communication?",
+      "options": [
+        "Coded installation",
+        "Secure transmission preventing interception or jamming",
+        "Password protected",
+        "Locked sensors"
+      ],
+      "correct_answer": 1,
+      "explanation": "Modern wireless sensors use encrypted communication (AES, rolling codes) to prevent capture/replay attacks and improve security.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ids_030",
+      "difficulty": "advanced",
+      "question": "What is alarm verification?",
+      "options": [
+        "Testing the alarm",
+        "Multiple sensor confirmation or audio/video verification before dispatch",
+        "User code verification",
+        "Installation verification"
+      ],
+      "correct_answer": 1,
+      "explanation": "Alarm verification requires additional confirmation (second sensor, audio, video) before dispatch, reducing false alarm dispatches.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ids_031",
+      "difficulty": "advanced",
+      "question": "What is SIA Contact ID format?",
+      "options": [
+        "A sensor type",
+        "A standard digital communication protocol for alarm signals",
+        "A contact sensor",
+        "An identification system"
+      ],
+      "correct_answer": 1,
+      "explanation": "SIA Contact ID is an industry-standard protocol for transmitting alarm signals from panels to monitoring stations, providing event codes and zone information.",
+      "code_reference": "SIA DC-03"
+    },
+    {
+      "id": "lv_ids_032",
+      "difficulty": "advanced",
+      "question": "What is zone swinger shutdown?",
+      "options": [
+        "Zone movement",
+        "Automatic bypass of zone after multiple false alarms in a period",
+        "Zone deletion",
+        "Zone reboot"
+      ],
+      "correct_answer": 1,
+      "explanation": "Swinger shutdown automatically bypasses zones that alarm multiple times without user reset, preventing continuous false alarm calls.",
+      "code_reference": "SIA Standards"
+    },
+    {
+      "id": "lv_ids_033",
+      "difficulty": "intermediate",
+      "question": "What is a recessed door contact?",
+      "options": [
+        "A surface-mounted contact",
+        "A contact installed inside the door frame for concealment",
+        "A hidden switch",
+        "A remote contact"
+      ],
+      "correct_answer": 1,
+      "explanation": "Recessed contacts are drilled into the door frame and door edge, making them hidden and more tamper-resistant than surface-mounted contacts.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ids_034",
+      "difficulty": "intermediate",
+      "question": "What is a shock sensor?",
+      "options": [
+        "Electric shock protection",
+        "Sensor detecting vibration/impact from break-in attempts",
+        "Power surge sensor",
+        "Sound sensor"
+      ],
+      "correct_answer": 1,
+      "explanation": "Shock (vibration) sensors detect impacts and vibrations from attempted forced entry on doors, windows, walls, or safes.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_ids_035",
+      "difficulty": "advanced",
+      "question": "What is takeover in alarm systems?",
+      "options": [
+        "System replacement",
+        "Using existing sensor wiring with a new panel/system",
+        "Business acquisition",
+        "Remote access"
+      ],
+      "correct_answer": 1,
+      "explanation": "Takeover involves installing a new alarm panel using existing sensor wiring and possibly sensors from a previous system, reducing installation cost.",
+      "code_reference": "Industry Standard"
+    }
+  ]
+}

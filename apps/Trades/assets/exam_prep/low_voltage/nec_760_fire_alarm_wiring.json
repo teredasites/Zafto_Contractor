@@ -1,0 +1,362 @@
+{
+  "category": "Low Voltage",
+  "subcategory": "NEC Article 760 - Fire Alarm Systems",
+  "description": "National Electrical Code requirements for fire alarm circuit wiring",
+  "difficulty_distribution": {
+    "beginner": 8,
+    "intermediate": 10,
+    "advanced": 7
+  },
+  "questions": [
+    {
+      "id": "lv_760_001",
+      "difficulty": "beginner",
+      "question": "What NEC article covers fire alarm system wiring?",
+      "options": [
+        "Article 700",
+        "Article 725",
+        "Article 760",
+        "Article 770"
+      ],
+      "correct_answer": 2,
+      "explanation": "NEC Article 760 covers the installation of wiring and equipment for fire alarm systems, including all circuits controlled and powered by the fire alarm system.",
+      "code_reference": "NEC Article 760"
+    },
+    {
+      "id": "lv_760_002",
+      "difficulty": "beginner",
+      "question": "What are the two main classifications of fire alarm circuits under NEC 760?",
+      "options": [
+        "Class A and Class B",
+        "Power-limited and non-power-limited",
+        "Primary and secondary",
+        "AC and DC"
+      ],
+      "correct_answer": 1,
+      "explanation": "NEC 760 divides fire alarm circuits into power-limited fire alarm (PLFA) circuits and non-power-limited fire alarm (NPLFA) circuits.",
+      "code_reference": "NEC 760.1"
+    },
+    {
+      "id": "lv_760_003",
+      "difficulty": "beginner",
+      "question": "What cable type designation is used for power-limited fire alarm cable?",
+      "options": [
+        "CL2",
+        "FPL",
+        "CM",
+        "NM"
+      ],
+      "correct_answer": 1,
+      "explanation": "FPL (Fire Power Limited) is the basic designation for power-limited fire alarm cable. FPLR is riser-rated, FPLP is plenum-rated.",
+      "code_reference": "NEC 760.179"
+    },
+    {
+      "id": "lv_760_004",
+      "difficulty": "beginner",
+      "question": "Can fire alarm cables be installed in the same raceway as power conductors?",
+      "options": [
+        "Yes, always",
+        "No, never",
+        "Only if separated by barriers",
+        "Depends on whether power-limited or non-power-limited"
+      ],
+      "correct_answer": 3,
+      "explanation": "Non-power-limited circuits can share raceways with power under certain conditions. Power-limited circuits generally cannot share raceways with power conductors.",
+      "code_reference": "NEC 760.136"
+    },
+    {
+      "id": "lv_760_005",
+      "difficulty": "beginner",
+      "question": "What color is commonly used for fire alarm circuit conductors?",
+      "options": [
+        "Black",
+        "White",
+        "Red",
+        "No specific requirement in NEC"
+      ],
+      "correct_answer": 3,
+      "explanation": "The NEC does not mandate a specific color for fire alarm wiring. Red is commonly used by convention, but this is not a code requirement.",
+      "code_reference": "NEC 760"
+    },
+    {
+      "id": "lv_760_006",
+      "difficulty": "beginner",
+      "question": "What is the minimum wire size for power-limited fire alarm circuits?",
+      "options": [
+        "22 AWG",
+        "18 AWG",
+        "16 AWG",
+        "14 AWG"
+      ],
+      "correct_answer": 1,
+      "explanation": "Power-limited fire alarm conductors must be at least 18 AWG for non-power-limited circuits. PLFA cables may use smaller conductors if rated for the application.",
+      "code_reference": "NEC 760.127"
+    },
+    {
+      "id": "lv_760_007",
+      "difficulty": "beginner",
+      "question": "What distinguishes NPLFA circuits from PLFA circuits?",
+      "options": [
+        "NPLFA uses AC, PLFA uses DC",
+        "NPLFA has no power source limitations; PLFA is power-limited",
+        "NPLFA is for residential only",
+        "NPLFA requires metal conduit"
+      ],
+      "correct_answer": 1,
+      "explanation": "Non-power-limited fire alarm (NPLFA) circuits have no inherent power limitations and must follow stricter wiring methods. PLFA circuits are power-limited for safety.",
+      "code_reference": "NEC 760.41, 760.121"
+    },
+    {
+      "id": "lv_760_008",
+      "difficulty": "beginner",
+      "question": "What is required for fire alarm cables passing through fire-rated walls?",
+      "options": [
+        "No special treatment",
+        "Firestopping to maintain fire rating",
+        "Metal sleeve only",
+        "Double insulation"
+      ],
+      "correct_answer": 1,
+      "explanation": "Fire alarm cables penetrating fire-rated walls must be firestopped to maintain the wall's fire rating. This is critical for fire containment.",
+      "code_reference": "NEC 760.3(A), 300.21"
+    },
+    {
+      "id": "lv_760_009",
+      "difficulty": "intermediate",
+      "question": "What cable type is required for fire alarm circuits in plenum spaces?",
+      "options": [
+        "FPL",
+        "FPLR",
+        "FPLP",
+        "Any FPL cable in conduit"
+      ],
+      "correct_answer": 2,
+      "explanation": "FPLP (Fire Power Limited Plenum) cables are required in plenum spaces. They have low smoke and flame-spread characteristics per UL 910.",
+      "code_reference": "NEC 760.154(A)"
+    },
+    {
+      "id": "lv_760_010",
+      "difficulty": "intermediate",
+      "question": "Can CI (circuit integrity) cable be used for fire alarm survivability?",
+      "options": [
+        "No, it's not suitable",
+        "Yes, it maintains circuit functionality during fire exposure",
+        "Only for voice systems",
+        "Only in hospitals"
+      ],
+      "correct_answer": 1,
+      "explanation": "CI (Circuit Integrity) cable is designed to maintain circuit operation during fire exposure (typically 2 hours), providing pathway survivability.",
+      "code_reference": "NEC 760.176"
+    },
+    {
+      "id": "lv_760_011",
+      "difficulty": "intermediate",
+      "question": "What is the maximum voltage for power-limited fire alarm circuits?",
+      "options": [
+        "30 volts",
+        "100 volts",
+        "150 volts",
+        "As specified in Chapter 9 Table 12(A)"
+      ],
+      "correct_answer": 3,
+      "explanation": "PLFA circuit voltage and power limits are specified in NEC Chapter 9 Table 12(A), similar to Class 2/3 circuits but with fire alarm-specific applications.",
+      "code_reference": "NEC 760.121"
+    },
+    {
+      "id": "lv_760_012",
+      "difficulty": "intermediate",
+      "question": "What wiring method is required for NPLFA circuits?",
+      "options": [
+        "Any wiring method",
+        "FPL cable only",
+        "Wiring methods per Chapter 3",
+        "Conduit only"
+      ],
+      "correct_answer": 2,
+      "explanation": "Non-power-limited fire alarm circuits must use wiring methods specified in Chapter 3 of the NEC, as they are not inherently power-limited for safety.",
+      "code_reference": "NEC 760.46"
+    },
+    {
+      "id": "lv_760_013",
+      "difficulty": "intermediate",
+      "question": "What is the overcurrent protection requirement for NPLFA circuits?",
+      "options": [
+        "No protection required",
+        "Maximum 7 amps",
+        "Per conductor ampacity",
+        "20 amps maximum"
+      ],
+      "correct_answer": 1,
+      "explanation": "NPLFA circuits require overcurrent protection not exceeding 7 amperes where circuit conductors are 18 AWG, or appropriate rating for larger conductors.",
+      "code_reference": "NEC 760.43"
+    },
+    {
+      "id": "lv_760_014",
+      "difficulty": "intermediate",
+      "question": "Can fire alarm cables share a cable tray with power conductors?",
+      "options": [
+        "Yes, without restriction",
+        "No, never",
+        "Yes, if separated by a barrier",
+        "Only NPLFA circuits"
+      ],
+      "correct_answer": 2,
+      "explanation": "Fire alarm cables may share cable trays with power conductors only if separated by a solid fixed barrier of compatible material.",
+      "code_reference": "NEC 760.136(G)"
+    },
+    {
+      "id": "lv_760_015",
+      "difficulty": "intermediate",
+      "question": "What is the support interval for fire alarm cables in accessible locations?",
+      "options": [
+        "Every 4 feet",
+        "Every 4.5 feet",
+        "Every 6 feet",
+        "No requirement"
+      ],
+      "correct_answer": 1,
+      "explanation": "Fire alarm cables must be supported at intervals not exceeding 4 feet 6 inches (4.5 feet) in accessible locations.",
+      "code_reference": "NEC 760.143"
+    },
+    {
+      "id": "lv_760_016",
+      "difficulty": "intermediate",
+      "question": "What grounding is required for fire alarm equipment?",
+      "options": [
+        "No grounding required",
+        "Per manufacturer instructions only",
+        "Per Article 250 requirements",
+        "Ground rods only"
+      ],
+      "correct_answer": 2,
+      "explanation": "Fire alarm equipment must be grounded per NEC Article 250 requirements. The fire alarm control panel requires an equipment grounding conductor.",
+      "code_reference": "NEC 760.3(F)"
+    },
+    {
+      "id": "lv_760_017",
+      "difficulty": "intermediate",
+      "question": "What is the minimum insulation temperature rating for fire alarm circuit conductors?",
+      "options": [
+        "60°C",
+        "75°C",
+        "90°C",
+        "As required by the listing"
+      ],
+      "correct_answer": 3,
+      "explanation": "Conductor temperature ratings must be appropriate for the installation environment and as required by the cable listing and manufacturer specifications.",
+      "code_reference": "NEC 760.49"
+    },
+    {
+      "id": "lv_760_018",
+      "difficulty": "intermediate",
+      "question": "When can fire alarm circuits share enclosures with other circuits?",
+      "options": [
+        "Never permitted",
+        "When separated by barriers",
+        "When functionally associated with the fire alarm system",
+        "Only in industrial occupancies"
+      ],
+      "correct_answer": 2,
+      "explanation": "Fire alarm circuits may share enclosures with other circuits only when they are functionally associated with the fire alarm system, with appropriate separation.",
+      "code_reference": "NEC 760.136"
+    },
+    {
+      "id": "lv_760_019",
+      "difficulty": "advanced",
+      "question": "What is pathway survivability Level 2?",
+      "options": [
+        "Standard raceway installation",
+        "1-hour fire-rated enclosure or assembly",
+        "2-hour fire-rated enclosure or assembly",
+        "Circuit integrity cable only"
+      ],
+      "correct_answer": 2,
+      "explanation": "Pathway Survivability Level 2 requires a 2-hour fire-rated cable system, enclosure, or protected by a 2-hour fire-rated construction.",
+      "code_reference": "NEC 760.176(C)"
+    },
+    {
+      "id": "lv_760_020",
+      "difficulty": "advanced",
+      "question": "For a fire alarm circuit requiring survivability, what determines the level required?",
+      "options": [
+        "NEC specifies all requirements",
+        "NFPA 72 and local building codes",
+        "Manufacturer preference",
+        "Always Level 3 required"
+      ],
+      "correct_answer": 1,
+      "explanation": "NFPA 72 and building codes (IBC) determine pathway survivability requirements. NEC 760 provides the installation methods to achieve those levels.",
+      "code_reference": "NEC 760.176, NFPA 72"
+    },
+    {
+      "id": "lv_760_021",
+      "difficulty": "advanced",
+      "question": "What substitution is permitted for FPLP cable?",
+      "options": [
+        "CL2P only",
+        "CMP communications cable",
+        "Type AC cable",
+        "No substitutions permitted"
+      ],
+      "correct_answer": 1,
+      "explanation": "CMP (Communications Plenum) cables may substitute for FPLP in some applications per the cable substitution hierarchy in NEC 760.154.",
+      "code_reference": "NEC 760.154(A)"
+    },
+    {
+      "id": "lv_760_022",
+      "difficulty": "advanced",
+      "question": "What is the clearance requirement between fire alarm cables and lightning protection conductors?",
+      "options": [
+        "No clearance required",
+        "6 inches minimum",
+        "6 feet minimum",
+        "Per NFPA 780"
+      ],
+      "correct_answer": 2,
+      "explanation": "Fire alarm cables must maintain at least 6 feet separation from lightning protection conductors unless specific bonding requirements are met.",
+      "code_reference": "NEC 760.3(D)"
+    },
+    {
+      "id": "lv_760_023",
+      "difficulty": "advanced",
+      "question": "What is the voltage drop consideration for fire alarm notification circuits?",
+      "options": [
+        "NEC specifies 3% maximum",
+        "NEC specifies 5% maximum",
+        "Per equipment manufacturer and NFPA 72",
+        "No limitation"
+      ],
+      "correct_answer": 2,
+      "explanation": "Voltage drop limits are determined by equipment manufacturers and NFPA 72 requirements to ensure notification appliances operate properly.",
+      "code_reference": "NEC 760, NFPA 72"
+    },
+    {
+      "id": "lv_760_024",
+      "difficulty": "advanced",
+      "question": "What is required when PLFA cables are installed in ducts used for environmental air?",
+      "options": [
+        "Any listed PLFA cable",
+        "FPLP cable in metallic raceway",
+        "Prohibited except specific exceptions",
+        "Must be shielded cable"
+      ],
+      "correct_answer": 2,
+      "explanation": "Fire alarm cables are prohibited in ducts used for environmental air, with limited exceptions for short distances and specific conditions.",
+      "code_reference": "NEC 760.154, 300.22"
+    },
+    {
+      "id": "lv_760_025",
+      "difficulty": "advanced",
+      "question": "What testing is required for fire alarm circuit installation per NEC?",
+      "options": [
+        "Continuity test only",
+        "Ground fault test only",
+        "Testing per manufacturer instructions and NFPA 72",
+        "No testing required by NEC"
+      ],
+      "correct_answer": 2,
+      "explanation": "While NEC requires proper installation, detailed testing requirements are specified by NFPA 72 and equipment manufacturers for acceptance and periodic testing.",
+      "code_reference": "NEC 760.3, NFPA 72"
+    }
+  ]
+}

@@ -1,0 +1,432 @@
+{
+  "category": "Elevator Mechanic",
+  "subcategory": "Safety and Electrical Devices",
+  "description": "Elevator safety circuits, interlocks, and protective devices",
+  "difficulty_distribution": {
+    "beginner": 8,
+    "intermediate": 12,
+    "advanced": 10
+  },
+  "questions": [
+    {
+      "id": "elev_safe_001",
+      "difficulty": "beginner",
+      "question": "What is the purpose of the elevator safety circuit?",
+      "options": [
+        "Control speed",
+        "Prevent operation when unsafe conditions exist",
+        "Provide lighting",
+        "Control doors"
+      ],
+      "correct_answer": 1,
+      "explanation": "The safety circuit is a series circuit that prevents elevator operation when any safety device detects an unsafe condition.",
+      "code_reference": "ASME A17.1 Section 2.26"
+    },
+    {
+      "id": "elev_safe_002",
+      "difficulty": "beginner",
+      "question": "How are safety devices typically wired?",
+      "options": [
+        "In parallel",
+        "In series so any open device stops operation",
+        "Individually to controller",
+        "Wirelessly"
+      ],
+      "correct_answer": 1,
+      "explanation": "Safety devices are wired in series so opening any device breaks the circuit and stops elevator operation.",
+      "code_reference": "ASME A17.1"
+    },
+    {
+      "id": "elev_safe_003",
+      "difficulty": "beginner",
+      "question": "What is an interlock in elevator systems?",
+      "options": [
+        "Key switch",
+        "Device preventing operation unless doors are closed and locked",
+        "Speed control",
+        "Emergency stop"
+      ],
+      "correct_answer": 1,
+      "explanation": "Interlocks are devices on hoistway doors that prevent elevator operation unless doors are properly closed and locked.",
+      "code_reference": "ASME A17.1 Section 2.12"
+    },
+    {
+      "id": "elev_safe_004",
+      "difficulty": "beginner",
+      "question": "What is the function of a pit stop switch?",
+      "options": [
+        "Start elevator",
+        "Remove power from safety circuit when personnel in pit",
+        "Control lighting",
+        "Test buffers"
+      ],
+      "correct_answer": 1,
+      "explanation": "The pit stop switch allows personnel to disconnect elevator power when working in the pit for safety.",
+      "code_reference": "ASME A17.1 Section 2.2"
+    },
+    {
+      "id": "elev_safe_005",
+      "difficulty": "beginner",
+      "question": "What is a governor?",
+      "options": [
+        "Door operator",
+        "Overspeed sensing device that triggers safeties",
+        "Motor controller",
+        "Position sensor"
+      ],
+      "correct_answer": 1,
+      "explanation": "The governor is a centrifugal device that senses overspeed and triggers the car safety device to stop descent.",
+      "code_reference": "ASME A17.1 Section 2.18"
+    },
+    {
+      "id": "elev_safe_006",
+      "difficulty": "beginner",
+      "question": "What happens when the governor trips?",
+      "options": [
+        "Car speeds up",
+        "Governor rope grips, activating car safety to stop the car",
+        "Doors open",
+        "Nothing"
+      ],
+      "correct_answer": 1,
+      "explanation": "When tripped, the governor grips its rope, which pulls the safety mechanism to engage the guide rails and stop the car.",
+      "code_reference": "ASME A17.1 Section 2.18"
+    },
+    {
+      "id": "elev_safe_007",
+      "difficulty": "beginner",
+      "question": "What is a buffer?",
+      "options": [
+        "Door damper",
+        "Device in pit to stop car or counterweight at terminal",
+        "Speed control",
+        "Noise reducer"
+      ],
+      "correct_answer": 1,
+      "explanation": "Buffers are devices at the bottom of the hoistway that stop the car or counterweight if they over-travel.",
+      "code_reference": "ASME A17.1 Section 2.22"
+    },
+    {
+      "id": "elev_safe_008",
+      "difficulty": "beginner",
+      "question": "What is the car top stop switch used for?",
+      "options": [
+        "Passenger use",
+        "Allows mechanics to stop car from car top during maintenance",
+        "Emergency use",
+        "Fire service"
+      ],
+      "correct_answer": 1,
+      "explanation": "The car top stop switch allows maintenance personnel to remove power for safety while working on the car top.",
+      "code_reference": "ASME A17.1 Section 2.26"
+    },
+    {
+      "id": "elev_safe_009",
+      "difficulty": "intermediate",
+      "question": "What is the typical governor overspeed tripping speed?",
+      "options": [
+        "Rated speed",
+        "115% of rated speed (maximum)",
+        "150% of rated speed",
+        "50% of rated speed"
+      ],
+      "correct_answer": 1,
+      "explanation": "Governor overspeed switches trip at 115% of rated speed maximum, before the safety device setting.",
+      "code_reference": "ASME A17.1 Section 2.18"
+    },
+    {
+      "id": "elev_safe_010",
+      "difficulty": "intermediate",
+      "question": "What is the difference between Type A and Type B safeties?",
+      "options": [
+        "Color",
+        "Type A has gradual stopping; Type B for instantaneous stopping",
+        "Size only",
+        "No difference"
+      ],
+      "correct_answer": 1,
+      "explanation": "Type A safeties provide gradual (flexible guide clamp) stopping; Type B provides instantaneous stopping.",
+      "code_reference": "ASME A17.1 Section 2.17"
+    },
+    {
+      "id": "elev_safe_011",
+      "difficulty": "intermediate",
+      "question": "What is unintended car movement (UCM) protection?",
+      "options": [
+        "Fire service",
+        "Device preventing car movement with doors open outside the landing zone",
+        "Speed control",
+        "Leveling"
+      ],
+      "correct_answer": 1,
+      "explanation": "UCM protection prevents dangerous car movement when hoistway doors are open and car is outside the door zone.",
+      "code_reference": "ASME A17.1 Section 2.19"
+    },
+    {
+      "id": "elev_safe_012",
+      "difficulty": "intermediate",
+      "question": "What electrical device prevents car movement until motor field is established?",
+      "options": [
+        "Interlock",
+        "Motor field relay or contactor",
+        "Governor switch",
+        "Limit switch"
+      ],
+      "correct_answer": 1,
+      "explanation": "The motor field relay prevents brake release until adequate motor field current is established for control.",
+      "code_reference": "ASME A17.1 Section 2.26"
+    },
+    {
+      "id": "elev_safe_013",
+      "difficulty": "intermediate",
+      "question": "What is the function of the final terminal stopping device?",
+      "options": [
+        "Normal stopping",
+        "Backup that stops car if normal terminal devices fail",
+        "Speed control",
+        "Door control"
+      ],
+      "correct_answer": 1,
+      "explanation": "Final terminal stopping devices are backup switches that stop the elevator if normal terminal devices fail.",
+      "code_reference": "ASME A17.1 Section 2.25"
+    },
+    {
+      "id": "elev_safe_014",
+      "difficulty": "intermediate",
+      "question": "What is a car door bypass device?",
+      "options": [
+        "Passenger override",
+        "Device allowing movement with car doors open under specific conditions",
+        "Emergency exit",
+        "Fire service"
+      ],
+      "correct_answer": 1,
+      "explanation": "Car door bypass allows limited movement with car doors open for releveling or inspection purposes.",
+      "code_reference": "ASME A17.1 Section 2.26"
+    },
+    {
+      "id": "elev_safe_015",
+      "difficulty": "intermediate",
+      "question": "What is the emergency stop switch in the car?",
+      "options": [
+        "Not required",
+        "Device that stops elevator and opens safety circuit when activated",
+        "Fire recall button",
+        "Door open button"
+      ],
+      "correct_answer": 1,
+      "explanation": "The emergency stop switch opens the safety circuit to immediately stop elevator travel when activated.",
+      "code_reference": "ASME A17.1 Section 2.26"
+    },
+    {
+      "id": "elev_safe_016",
+      "difficulty": "intermediate",
+      "question": "What is a broken rope or chain switch?",
+      "options": [
+        "Speed sensor",
+        "Device detecting slack or break in suspension members",
+        "Door switch",
+        "Position sensor"
+      ],
+      "correct_answer": 1,
+      "explanation": "This device detects abnormal slack or breakage in suspension ropes/chains and opens the safety circuit.",
+      "code_reference": "ASME A17.1 Section 2.20"
+    },
+    {
+      "id": "elev_safe_017",
+      "difficulty": "intermediate",
+      "question": "What is machine brake monitoring?",
+      "options": [
+        "Visual inspection",
+        "Electrical monitoring that brake is properly engaged before releasing power",
+        "Speed measurement",
+        "Temperature check"
+      ],
+      "correct_answer": 1,
+      "explanation": "Brake monitoring verifies the brake is properly engaged before elevator power is removed for parking.",
+      "code_reference": "ASME A17.1 Section 2.24"
+    },
+    {
+      "id": "elev_safe_018",
+      "difficulty": "intermediate",
+      "question": "What is ascending car overspeed protection (ACOP)?",
+      "options": [
+        "Governor only",
+        "Additional protection against overspeed in the up direction",
+        "Down direction only",
+        "Not required"
+      ],
+      "correct_answer": 1,
+      "explanation": "ACOP provides protection against overspeed during ascent, typically using counterweight safeties or rope brakes.",
+      "code_reference": "ASME A17.1 Section 2.19"
+    },
+    {
+      "id": "elev_safe_019",
+      "difficulty": "intermediate",
+      "question": "What is a compensating chain/rope switch?",
+      "options": [
+        "Speed sensor",
+        "Device detecting issues with compensating chains or ropes",
+        "Door sensor",
+        "Position indicator"
+      ],
+      "correct_answer": 1,
+      "explanation": "This switch detects problems with compensating chains or ropes (excessive sway, breakage) and stops the car.",
+      "code_reference": "ASME A17.1 Section 2.20"
+    },
+    {
+      "id": "elev_safe_020",
+      "difficulty": "intermediate",
+      "question": "What happens when safety circuit opens during operation?",
+      "options": [
+        "Car continues",
+        "Motor power removed and brake applied immediately",
+        "Car speeds up",
+        "Doors open"
+      ],
+      "correct_answer": 1,
+      "explanation": "Opening the safety circuit removes motor power and applies the brake to immediately stop the elevator.",
+      "code_reference": "ASME A17.1 Section 2.26"
+    },
+    {
+      "id": "elev_safe_021",
+      "difficulty": "advanced",
+      "question": "What is redundancy required for safety-related control functions?",
+      "options": [
+        "None required",
+        "Two independent means required (electrical AND mechanical)",
+        "Triple redundancy",
+        "Software only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Critical safety functions require two independent means of protection (typically electrical and mechanical).",
+      "code_reference": "ASME A17.1 Section 2.26"
+    },
+    {
+      "id": "elev_safe_022",
+      "difficulty": "advanced",
+      "question": "What is a monitored safety circuit?",
+      "options": [
+        "Visual monitoring",
+        "Circuit using two channels with cross-monitoring for fault detection",
+        "Camera system",
+        "Manual checking"
+      ],
+      "correct_answer": 1,
+      "explanation": "Monitored safety circuits use two channels that cross-check each other to detect failures or faults.",
+      "code_reference": "ASME A17.1 Section 2.26"
+    },
+    {
+      "id": "elev_safe_023",
+      "difficulty": "advanced",
+      "question": "What SIL (Safety Integrity Level) applies to elevator safety functions?",
+      "options": [
+        "SIL 1",
+        "SIL 3 for critical safety functions",
+        "SIL 4",
+        "Not applicable"
+      ],
+      "correct_answer": 1,
+      "explanation": "Critical elevator safety functions typically require SIL 3 rating per functional safety standards.",
+      "code_reference": "EN 81-20, IEC 62061"
+    },
+    {
+      "id": "elev_safe_024",
+      "difficulty": "advanced",
+      "question": "What is the principle of fail-safe design in elevator circuits?",
+      "options": [
+        "Components never fail",
+        "Failure of any component results in safe condition (stopped)",
+        "Automatic repair",
+        "Backup power"
+      ],
+      "correct_answer": 1,
+      "explanation": "Fail-safe design ensures that component failures result in the elevator stopping rather than dangerous operation.",
+      "code_reference": "ASME A17.1"
+    },
+    {
+      "id": "elev_safe_025",
+      "difficulty": "advanced",
+      "question": "What is contact monitoring in safety relays?",
+      "options": [
+        "Visual inspection",
+        "Verification that relay contacts have changed state as commanded",
+        "Temperature monitoring",
+        "Voltage monitoring"
+      ],
+      "correct_answer": 1,
+      "explanation": "Contact monitoring verifies relay contacts have properly opened or closed, detecting welded or stuck contacts.",
+      "code_reference": "ASME A17.1 Section 2.26"
+    },
+    {
+      "id": "elev_safe_026",
+      "difficulty": "advanced",
+      "question": "What is required for electronic safety circuits?",
+      "options": [
+        "Same as electromechanical",
+        "Type-tested and certified for safety-related applications",
+        "No special requirements",
+        "Software approval only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Electronic safety devices must be type-tested by an accredited lab and certified for safety-related use.",
+      "code_reference": "ASME A17.1 Section 2.26"
+    },
+    {
+      "id": "elev_safe_027",
+      "difficulty": "advanced",
+      "question": "What is PESSRAL?",
+      "options": [
+        "Motor type",
+        "Programmable Electronic System in Safety-Related Applications for Lifts",
+        "Safety test",
+        "Brake standard"
+      ],
+      "correct_answer": 1,
+      "explanation": "PESSRAL covers requirements for programmable electronic systems used in elevator safety applications.",
+      "code_reference": "ASME A17.7/CSA B44.7"
+    },
+    {
+      "id": "elev_safe_028",
+      "difficulty": "advanced",
+      "question": "What is the cross-checking requirement for dual-channel safety circuits?",
+      "options": [
+        "Monthly check",
+        "Automatic comparison of both channels at each operation cycle",
+        "Annual check",
+        "Visual only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Dual-channel systems must automatically compare both channels at each cycle to detect discrepancies.",
+      "code_reference": "ASME A17.1 Section 2.26"
+    },
+    {
+      "id": "elev_safe_029",
+      "difficulty": "advanced",
+      "question": "What protection is required against single ground faults?",
+      "options": [
+        "None",
+        "Single ground fault must not cause unsafe operation",
+        "Automatic power off",
+        "Alarm only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Safety circuits must be designed so a single ground fault cannot cause unsafe operation or bypass safety devices.",
+      "code_reference": "ASME A17.1"
+    },
+    {
+      "id": "elev_safe_030",
+      "difficulty": "advanced",
+      "question": "What is required when software controls safety functions?",
+      "options": [
+        "No requirements",
+        "Safety-rated software meeting functional safety standards with verification",
+        "Open source only",
+        "Backup hardware"
+      ],
+      "correct_answer": 1,
+      "explanation": "Safety-related software must meet functional safety standards (IEC 61508) with proper verification and validation.",
+      "code_reference": "ASME A17.7, IEC 61508"
+    }
+  ]
+}

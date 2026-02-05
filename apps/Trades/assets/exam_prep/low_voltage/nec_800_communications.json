@@ -1,0 +1,502 @@
+{
+  "category": "Low Voltage",
+  "subcategory": "NEC Article 800 Communications Circuits",
+  "description": "National Electrical Code requirements for communications systems wiring",
+  "difficulty_distribution": {
+    "beginner": 12,
+    "intermediate": 15,
+    "advanced": 8
+  },
+  "questions": [
+    {
+      "id": "lv_nec800_001",
+      "difficulty": "beginner",
+      "question": "What does NEC Article 800 cover?",
+      "options": [
+        "Power wiring",
+        "Communications circuits including telephone and data",
+        "Fire alarm only",
+        "HVAC controls"
+      ],
+      "correct_answer": 1,
+      "explanation": "NEC Article 800 covers communications circuits such as telephone, data, internet, and similar systems.",
+      "code_reference": "NEC Article 800"
+    },
+    {
+      "id": "lv_nec800_002",
+      "difficulty": "beginner",
+      "question": "What is the network interface device (NID)?",
+      "options": [
+        "Router",
+        "Demarcation point between service provider and premises wiring",
+        "Switch",
+        "Server"
+      ],
+      "correct_answer": 1,
+      "explanation": "The NID is the demarcation point where service provider wiring ends and premises wiring begins.",
+      "code_reference": "NEC 800.2"
+    },
+    {
+      "id": "lv_nec800_003",
+      "difficulty": "beginner",
+      "question": "What listing marking is required for communications cables in plenums?",
+      "options": [
+        "CM",
+        "CMP (Communications Plenum)",
+        "CMR",
+        "CMX"
+      ],
+      "correct_answer": 1,
+      "explanation": "CMP-rated cables are required for installation in plenums due to low smoke and flame spread characteristics.",
+      "code_reference": "NEC 800.179"
+    },
+    {
+      "id": "lv_nec800_004",
+      "difficulty": "beginner",
+      "question": "What does CMR cable designation mean?",
+      "options": [
+        "Communications Metallic Rated",
+        "Communications Riser",
+        "Communications Multipurpose Rated",
+        "Communications Metal Raceway"
+      ],
+      "correct_answer": 1,
+      "explanation": "CMR (Communications Riser) cable is rated for vertical runs between floors in riser shafts.",
+      "code_reference": "NEC 800.179"
+    },
+    {
+      "id": "lv_nec800_005",
+      "difficulty": "beginner",
+      "question": "What is the minimum separation between communications cables and power conductors in raceways?",
+      "options": [
+        "No separation required if listed",
+        "Separated by barrier or 2 inches minimum",
+        "6 inches",
+        "12 inches"
+      ],
+      "correct_answer": 1,
+      "explanation": "Communications cables must be separated from power conductors by a barrier or minimum 2-inch spacing unless listed for the application.",
+      "code_reference": "NEC 800.133"
+    },
+    {
+      "id": "lv_nec800_006",
+      "difficulty": "beginner",
+      "question": "What grounding is required for communications circuits?",
+      "options": [
+        "None required",
+        "Primary protector must be grounded to building grounding system",
+        "Separate ground rod only",
+        "Equipment ground only"
+      ],
+      "correct_answer": 1,
+      "explanation": "The primary protector must be grounded to the building's grounding electrode system.",
+      "code_reference": "NEC 800.100"
+    },
+    {
+      "id": "lv_nec800_007",
+      "difficulty": "beginner",
+      "question": "What is the purpose of a primary protector?",
+      "options": [
+        "Surge protection for equipment",
+        "Protect premises wiring from lightning and power contact",
+        "Fire protection",
+        "Security"
+      ],
+      "correct_answer": 1,
+      "explanation": "Primary protectors protect premises wiring and equipment from lightning surges and power line contact.",
+      "code_reference": "NEC 800.90"
+    },
+    {
+      "id": "lv_nec800_008",
+      "difficulty": "beginner",
+      "question": "What is CMG cable?",
+      "options": [
+        "Communications General Purpose",
+        "Communications General",
+        "Communications Multipurpose Ground",
+        "Communications Metal Ground"
+      ],
+      "correct_answer": 1,
+      "explanation": "CMG is Communications General Purpose cable, the same as CM cable, used interchangeably.",
+      "code_reference": "NEC 800.179"
+    },
+    {
+      "id": "lv_nec800_009",
+      "difficulty": "beginner",
+      "question": "Can CMX cable be used in risers?",
+      "options": [
+        "Yes, anywhere",
+        "No, CMX is limited to dwelling units and raceways",
+        "Only outdoors",
+        "Only underground"
+      ],
+      "correct_answer": 1,
+      "explanation": "CMX (Communications Limited) cable is restricted to dwelling units, raceways, and certain limited applications.",
+      "code_reference": "NEC 800.113"
+    },
+    {
+      "id": "lv_nec800_010",
+      "difficulty": "beginner",
+      "question": "What is hybrid cable in Article 800?",
+      "options": [
+        "Copper and fiber combined",
+        "Cable containing communications wires and power conductors",
+        "Indoor/outdoor cable",
+        "Shielded and unshielded combined"
+      ],
+      "correct_answer": 1,
+      "explanation": "Hybrid cable contains both communications circuits and current-carrying power conductors in one cable.",
+      "code_reference": "NEC 800.179(I)"
+    },
+    {
+      "id": "lv_nec800_011",
+      "difficulty": "beginner",
+      "question": "What is the maximum conductor size for communications circuits?",
+      "options": [
+        "No limit",
+        "Generally 24 AWG to 16 AWG depending on application",
+        "12 AWG",
+        "10 AWG"
+      ],
+      "correct_answer": 1,
+      "explanation": "Communications conductors are typically 24 AWG to 16 AWG, with specific requirements per cable type.",
+      "code_reference": "NEC 800"
+    },
+    {
+      "id": "lv_nec800_012",
+      "difficulty": "beginner",
+      "question": "What protection is required where communications cables enter buildings?",
+      "options": [
+        "None",
+        "Listed primary protector as close as practicable to entrance",
+        "Fire stopping only",
+        "Conduit only"
+      ],
+      "correct_answer": 1,
+      "explanation": "A listed primary protector must be installed as close as practicable to the cable entrance point.",
+      "code_reference": "NEC 800.90"
+    },
+    {
+      "id": "lv_nec800_013",
+      "difficulty": "intermediate",
+      "question": "What is the grounding electrode conductor size for communications?",
+      "options": [
+        "Same as service entrance",
+        "14 AWG minimum, bonded to building grounding electrode",
+        "6 AWG minimum",
+        "No minimum"
+      ],
+      "correct_answer": 1,
+      "explanation": "Grounding electrode conductor must be 14 AWG copper minimum, connected to building grounding electrode.",
+      "code_reference": "NEC 800.100"
+    },
+    {
+      "id": "lv_nec800_014",
+      "difficulty": "intermediate",
+      "question": "What is an intersystem bonding termination?",
+      "options": [
+        "Ground rod",
+        "Device providing terminals for bonding communications systems",
+        "Cable termination",
+        "Primary protector"
+      ],
+      "correct_answer": 1,
+      "explanation": "Intersystem bonding termination provides accessible terminals for bonding communications grounding conductors.",
+      "code_reference": "NEC 800.100(B)"
+    },
+    {
+      "id": "lv_nec800_015",
+      "difficulty": "intermediate",
+      "question": "Can communications cables share enclosures with power wiring?",
+      "options": [
+        "Never",
+        "Yes, if separated by barrier and both systems listed for the installation",
+        "Always allowed",
+        "Only in residential"
+      ],
+      "correct_answer": 1,
+      "explanation": "Communications cables can share enclosures with power if properly separated or listed for the application.",
+      "code_reference": "NEC 800.133"
+    },
+    {
+      "id": "lv_nec800_016",
+      "difficulty": "intermediate",
+      "question": "What is required for communications cables penetrating fire-rated assemblies?",
+      "options": [
+        "No requirements",
+        "Firestopping using listed methods to maintain fire rating",
+        "Metal conduit only",
+        "Fire alarm notification"
+      ],
+      "correct_answer": 1,
+      "explanation": "Penetrations through fire-rated assemblies must be firestopped using listed materials and methods.",
+      "code_reference": "NEC 800.26"
+    },
+    {
+      "id": "lv_nec800_017",
+      "difficulty": "intermediate",
+      "question": "What listing is required for communications cables in ducts?",
+      "options": [
+        "CM",
+        "CMP if in ducts used for environmental air",
+        "CMR",
+        "Any listing"
+      ],
+      "correct_answer": 1,
+      "explanation": "CMP-rated cables are required in ducts, plenums, and other spaces used for environmental air.",
+      "code_reference": "NEC 800.113"
+    },
+    {
+      "id": "lv_nec800_018",
+      "difficulty": "intermediate",
+      "question": "What is the cable substitution hierarchy for communications cables?",
+      "options": [
+        "No substitutions allowed",
+        "CMP can substitute for CMR and CM; CMR can substitute for CM",
+        "CM can substitute for all",
+        "CMX can substitute for all"
+      ],
+      "correct_answer": 1,
+      "explanation": "Higher-rated cables can substitute for lower ratings: CMP > CMR > CM > CMX.",
+      "code_reference": "NEC Table 800.154(G)"
+    },
+    {
+      "id": "lv_nec800_019",
+      "difficulty": "intermediate",
+      "question": "What is the maximum length of exposed communications wiring permitted?",
+      "options": [
+        "Unlimited",
+        "50 feet maximum for exposed wiring in non-concealed spaces",
+        "10 feet",
+        "25 feet"
+      ],
+      "correct_answer": 1,
+      "explanation": "Exposed communications wiring is limited to 50 feet in non-concealed spaces in commercial buildings.",
+      "code_reference": "NEC 800.113"
+    },
+    {
+      "id": "lv_nec800_020",
+      "difficulty": "intermediate",
+      "question": "What bonding is required between communications ground and power ground?",
+      "options": [
+        "Separate grounds only",
+        "Must be bonded together to prevent potential differences",
+        "No bonding required",
+        "6-foot separation"
+      ],
+      "correct_answer": 1,
+      "explanation": "Communications grounding must be bonded to the building power grounding to prevent dangerous potential differences.",
+      "code_reference": "NEC 800.100"
+    },
+    {
+      "id": "lv_nec800_021",
+      "difficulty": "intermediate",
+      "question": "What protection is required for communications cables in areas subject to physical damage?",
+      "options": [
+        "None",
+        "Protection by raceway, cable armor, or other physical means",
+        "Warning signs only",
+        "Height above floor"
+      ],
+      "correct_answer": 1,
+      "explanation": "Communications cables must be protected from physical damage by raceway, armor, or other means.",
+      "code_reference": "NEC 800.110"
+    },
+    {
+      "id": "lv_nec800_022",
+      "difficulty": "intermediate",
+      "question": "What is the minimum burial depth for direct-buried communications cables?",
+      "options": [
+        "No minimum",
+        "18 inches minimum (may vary by location/protection)",
+        "36 inches",
+        "6 inches"
+      ],
+      "correct_answer": 1,
+      "explanation": "Direct-buried communications cables typically require 18-inch minimum cover, varies by location.",
+      "code_reference": "NEC 800.47"
+    },
+    {
+      "id": "lv_nec800_023",
+      "difficulty": "intermediate",
+      "question": "Can unlisted communications wire be used?",
+      "options": [
+        "Yes, anywhere",
+        "Only under specific conditions (dwelling units, certain installations)",
+        "Never",
+        "Only outdoors"
+      ],
+      "correct_answer": 1,
+      "explanation": "Unlisted wire may be used in limited situations such as certain dwelling unit installations.",
+      "code_reference": "NEC 800.113"
+    },
+    {
+      "id": "lv_nec800_024",
+      "difficulty": "intermediate",
+      "question": "What labeling is required for communications cables?",
+      "options": [
+        "None",
+        "Listed and marked with cable type (CMP, CMR, CM, CMX)",
+        "Color only",
+        "Length only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Communications cables must be listed and marked with their type designation at intervals.",
+      "code_reference": "NEC 800.179"
+    },
+    {
+      "id": "lv_nec800_025",
+      "difficulty": "intermediate",
+      "question": "What is the requirement for metallic cable shields entering buildings?",
+      "options": [
+        "No grounding required",
+        "Shields must be grounded as close as practicable to entrance",
+        "Grounded at equipment only",
+        "Isolated"
+      ],
+      "correct_answer": 1,
+      "explanation": "Metallic shields on communications cables must be grounded as close as practicable to building entrance.",
+      "code_reference": "NEC 800.100"
+    },
+    {
+      "id": "lv_nec800_026",
+      "difficulty": "intermediate",
+      "question": "What is low-power network-powered broadband?",
+      "options": [
+        "Standard communications",
+        "Communications equipment powered through the communications cable",
+        "Battery backup",
+        "Solar powered"
+      ],
+      "correct_answer": 1,
+      "explanation": "Network-powered broadband delivers power through the communications cable to power customer equipment.",
+      "code_reference": "NEC 800.170"
+    },
+    {
+      "id": "lv_nec800_027",
+      "difficulty": "intermediate",
+      "question": "What article covers optical fiber cables?",
+      "options": [
+        "Article 800",
+        "Article 770 Optical Fiber Cables and Raceways",
+        "Article 725",
+        "Article 760"
+      ],
+      "correct_answer": 1,
+      "explanation": "NEC Article 770 specifically covers optical fiber cables and raceways.",
+      "code_reference": "NEC Article 770"
+    },
+    {
+      "id": "lv_nec800_028",
+      "difficulty": "advanced",
+      "question": "What special requirements apply to communications wiring in healthcare facilities?",
+      "options": [
+        "No special requirements",
+        "Additional grounding/bonding for patient safety areas",
+        "Metal conduit only",
+        "Fiber only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Healthcare facilities have additional requirements for grounding and bonding in patient care areas.",
+      "code_reference": "NEC 517, 800.100"
+    },
+    {
+      "id": "lv_nec800_029",
+      "difficulty": "advanced",
+      "question": "What is required for communications cables in hazardous locations?",
+      "options": [
+        "Standard cables permitted",
+        "Must comply with Articles 500-516 hazardous location requirements",
+        "No communications permitted",
+        "Wireless only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Communications wiring in hazardous locations must comply with specific requirements for those locations.",
+      "code_reference": "NEC 800.3"
+    },
+    {
+      "id": "lv_nec800_030",
+      "difficulty": "advanced",
+      "question": "What is the grounding electrode conductor maximum length for communications?",
+      "options": [
+        "Unlimited",
+        "20 feet to grounding electrode; if longer, use bonding conductor",
+        "50 feet",
+        "6 feet"
+      ],
+      "correct_answer": 1,
+      "explanation": "If grounding electrode conductor exceeds 20 feet, a bonding jumper to accessible power grounding is required.",
+      "code_reference": "NEC 800.100"
+    },
+    {
+      "id": "lv_nec800_031",
+      "difficulty": "advanced",
+      "question": "What coordination is required between communications and power grounding?",
+      "options": [
+        "None",
+        "Single grounding system with intersystem bonding for all building systems",
+        "Separate systems required",
+        "Power only"
+      ],
+      "correct_answer": 1,
+      "explanation": "All building grounding systems must be bonded together to form a unified grounding electrode system.",
+      "code_reference": "NEC 800.100, 250.94"
+    },
+    {
+      "id": "lv_nec800_032",
+      "difficulty": "advanced",
+      "question": "What is the requirement for communications cables in elevator hoistways?",
+      "options": [
+        "Not permitted",
+        "Permitted if essential to elevator operation and meeting Article 620",
+        "Any cable permitted",
+        "Fiber only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Communications cables in elevator hoistways must be essential to elevator operation and comply with Article 620.",
+      "code_reference": "NEC 800.110"
+    },
+    {
+      "id": "lv_nec800_033",
+      "difficulty": "advanced",
+      "question": "What special testing is required for listed communications cables?",
+      "options": [
+        "None",
+        "Testing per UL 444 for electrical/fire characteristics",
+        "Field testing only",
+        "Voltage testing"
+      ],
+      "correct_answer": 1,
+      "explanation": "Listed communications cables must pass testing per UL 444 for electrical and fire performance characteristics.",
+      "code_reference": "UL 444"
+    },
+    {
+      "id": "lv_nec800_034",
+      "difficulty": "advanced",
+      "question": "What is the maximum voltage permitted on communications circuits?",
+      "options": [
+        "48V",
+        "Limited by equipment listing and primary protector rating",
+        "120V",
+        "24V"
+      ],
+      "correct_answer": 1,
+      "explanation": "Communications circuit voltage is limited by equipment listings and primary protector ratings.",
+      "code_reference": "NEC 800"
+    },
+    {
+      "id": "lv_nec800_035",
+      "difficulty": "advanced",
+      "question": "What documentation is required for communications system installation?",
+      "options": [
+        "None",
+        "As-built drawings, labeling, and test documentation per specifications",
+        "Verbal report",
+        "Photos only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Complete documentation including drawings, cable labeling, and test results should be provided.",
+      "code_reference": "Industry standards"
+    }
+  ]
+}

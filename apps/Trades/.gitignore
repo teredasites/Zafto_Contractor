@@ -1,0 +1,58 @@
+# Flutter/Dart
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+*.log
+nul
+**/nul
+
+# ============================================
+# STRATEGIC IP — NEVER PUSH TO ANY REPO
+# ============================================
+# Build Documentation contains:
+# - Complete database schema + encryption architecture
+# - Pricing models + margin analysis
+# - Competitive positioning + business strategy
+# - Provider decisions (Telnyx, Supabase, Cloudflare)
+# - Full feature specs for 31+ systems
+# - Security architecture with key hierarchy details
+# These are backed up separately via encrypted cloud storage.
+Build Documentation/
+
+# Environment / Secrets
+.env
+.env.*
+*.env
+env.dart
+secrets.dart
+**/secrets/
+**/credentials/
+google-services.json
+GoogleService-Info.plist
+firebase_options.dart
+supabase_config.dart
+telnyx_config.dart
+
+# API Keys (catch-all patterns)
+**/api_keys*
+**/service_account*
+*.keystore
+*.jks
+key.properties
+
+# Node
+node_modules/
+**/node_modules/

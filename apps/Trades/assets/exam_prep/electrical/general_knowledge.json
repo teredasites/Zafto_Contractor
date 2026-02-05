@@ -1,0 +1,2907 @@
+{
+  "topic_id": "GK",
+  "topic_name": "General Knowledge",
+  "nec_version": "2026",
+  "questions": [
+    {
+      "id": "GK-001",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "According to Article 100, a device designed to open and close a circuit by non-automatic means and to open the circuit automatically on a predetermined overcurrent without damage to itself is called a:",
+      "choices": [
+        {"id": "A", "text": "Circuit breaker"},
+        {"id": "B", "text": "Disconnect switch"},
+        {"id": "C", "text": "Contactor"},
+        {"id": "D", "text": "Fuse"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "A circuit breaker can be manually operated AND automatically trips on overcurrent without being destroyed.",
+        "detailed": "Article 100 defines a circuit breaker as a device designed to open and close a circuit by non-automatic means AND to open the circuit automatically on a predetermined overcurrent without damage to itself. A fuse opens on overcurrent but is destroyed.",
+        "how_to_find": "Look up 'Circuit Breaker' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [{"screen_id": "breaker_sizing_table", "relevance": "primary", "description": "Breaker sizing reference"}],
+      "tags": ["definitions", "overcurrent", "protection"],
+      "verified": true
+    },
+    {
+      "id": "GK-002",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "Per Article 100, conductors between the service equipment and a separate building are called:",
+      "choices": [
+        {"id": "A", "text": "Branch circuit conductors"},
+        {"id": "B", "text": "Service conductors"},
+        {"id": "C", "text": "Feeder conductors"},
+        {"id": "D", "text": "Tap conductors"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Feeders run between service equipment and the final branch-circuit overcurrent device.",
+        "detailed": "Article 100 defines Feeder as all circuit conductors between the service equipment and the final branch-circuit overcurrent device. Conductors to an outbuilding from the main panel are feeders.",
+        "how_to_find": "Look up 'Feeder' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [{"screen_id": "dwelling_load", "relevance": "secondary", "description": "Feeder calculations"}],
+      "tags": ["definitions", "feeders", "conductors"],
+      "verified": true
+    },
+    {
+      "id": "GK-003",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["110"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum headroom required for working spaces about electrical equipment rated 1000 volts or less?",
+      "choices": [
+        {"id": "A", "text": "6 feet"},
+        {"id": "B", "text": "6 feet 3 inches"},
+        {"id": "C", "text": "6 feet 6 inches"},
+        {"id": "D", "text": "7 feet"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "NEC 110.26(E) requires minimum 6½ feet headroom or the height of the equipment, whichever is greater.",
+        "detailed": "Section 110.26(E) states the minimum headroom of working spaces about service equipment, switchboards, panelboards, or motor control centers shall be 2.0 m (6½ ft).",
+        "how_to_find": "Go to 110.26(E) Headroom."
+      },
+      "nec_reference": {"article": "110", "section": "110.26(E)"},
+      "zafto_links": [],
+      "tags": ["working space", "clearances", "installation"],
+      "verified": true
+    },
+    {
+      "id": "GK-004",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["110"],
+      "nec_tables": ["Table 110.26(A)(1)"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "For Condition 2, what is the minimum clear working space depth required in front of a 480V panelboard?",
+      "choices": [
+        {"id": "A", "text": "3 feet"},
+        {"id": "B", "text": "3 feet 6 inches"},
+        {"id": "C", "text": "4 feet"},
+        {"id": "D", "text": "4 feet 6 inches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Table 110.26(A)(1) requires 4 feet for 301-600V under Condition 2.",
+        "detailed": "Table 110.26(A)(1) shows working space depths based on voltage and conditions. For 301-600V (which includes 480V), Condition 2 requires 4 feet minimum depth.",
+        "how_to_find": "Go to Table 110.26(A)(1), find 301-600V row, Condition 2 column."
+      },
+      "nec_reference": {"article": "110", "section": "110.26(A)(1)", "table": "Table 110.26(A)(1)"},
+      "zafto_links": [],
+      "tags": ["working space", "clearances", "480V"],
+      "verified": true
+    },
+    {
+      "id": "GK-005",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["110"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum width of working space in front of electrical equipment?",
+      "choices": [
+        {"id": "A", "text": "24 inches"},
+        {"id": "B", "text": "30 inches or the width of the equipment, whichever is greater"},
+        {"id": "C", "text": "36 inches"},
+        {"id": "D", "text": "The width of the equipment only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "110.26(A)(2) requires minimum 30 inches wide or the width of the equipment, whichever is greater.",
+        "detailed": "Section 110.26(A)(2) states the width of the working space shall be the width of the equipment or 30 inches, whichever is greater.",
+        "how_to_find": "Go to 110.26(A)(2) Width of Working Space."
+      },
+      "nec_reference": {"article": "110", "section": "110.26(A)(2)"},
+      "zafto_links": [],
+      "tags": ["working space", "clearances", "installation"],
+      "verified": true
+    },
+    {
+      "id": "GK-006",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["90"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "According to 90.2, the NEC does NOT cover:",
+      "choices": [
+        {"id": "A", "text": "Residential dwellings"},
+        {"id": "B", "text": "Installations of electric utilities under their exclusive control"},
+        {"id": "C", "text": "Commercial buildings"},
+        {"id": "D", "text": "Industrial facilities"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "The NEC does not cover utility-owned installations under their exclusive control.",
+        "detailed": "Section 90.2(B)(5) specifically excludes installations of electric utilities where such installations are under their exclusive control.",
+        "how_to_find": "Go to 90.2(B) Not Covered."
+      },
+      "nec_reference": {"article": "90", "section": "90.2(B)"},
+      "zafto_links": [],
+      "tags": ["scope", "NEC coverage", "utilities"],
+      "verified": true
+    },
+    {
+      "id": "GK-007",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Per Article 100, a 'Qualified Person' is one who has:",
+      "choices": [
+        {"id": "A", "text": "At least 5 years of electrical experience"},
+        {"id": "B", "text": "A journeyman or master electrician license"},
+        {"id": "C", "text": "Skills and knowledge related to electrical equipment and has received safety training"},
+        {"id": "D", "text": "Completed an apprenticeship program"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "A qualified person has relevant skills, knowledge, AND safety training - not just credentials.",
+        "detailed": "Article 100 defines Qualified Person as one who has skills and knowledge related to the construction and operation of electrical equipment and has received safety training.",
+        "how_to_find": "Look up 'Qualified Person' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [{"screen_id": "electrical_safety", "relevance": "primary", "description": "Safety requirements"}],
+      "tags": ["definitions", "safety", "personnel"],
+      "verified": true
+    },
+    {
+      "id": "GK-008",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["110"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "When equipment is rated over 1200A and over 6 feet wide, what is required for working space access?",
+      "choices": [
+        {"id": "A", "text": "A minimum 30-inch wide entrance"},
+        {"id": "B", "text": "One entrance at each end of the working space"},
+        {"id": "C", "text": "Fire-rated walls around the equipment"},
+        {"id": "D", "text": "A panic door"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Large equipment over 1200A and over 6 feet wide requires two entrances, one at each end.",
+        "detailed": "Section 110.26(C)(2) requires equipment rated 1200A or more and over 6 ft wide to have one entrance at each end of the working space.",
+        "how_to_find": "Go to 110.26(C)(2) Large Equipment."
+      },
+      "nec_reference": {"article": "110", "section": "110.26(C)(2)"},
+      "zafto_links": [{"screen_id": "electrical_safety", "relevance": "secondary", "description": "Arc flash safety"}],
+      "tags": ["working space", "entrances", "large equipment"],
+      "verified": true
+    },
+    {
+      "id": "GK-009",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "According to Article 100, a location classified as 'Damp' would include:",
+      "choices": [
+        {"id": "A", "text": "Areas subject to saturation with water"},
+        {"id": "B", "text": "Areas protected from weather but subject to moderate moisture"},
+        {"id": "C", "text": "Underground installations"},
+        {"id": "D", "text": "Locations submerged in water"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Damp locations are protected from weather but subject to moderate moisture, like basements.",
+        "detailed": "Article 100 defines Damp Location as locations protected from weather and not subject to saturation but subject to moderate degrees of moisture.",
+        "how_to_find": "Look up 'Location, Damp' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["definitions", "locations", "environment"],
+      "verified": true
+    },
+    {
+      "id": "GK-010",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "Article 100 defines 'Accessible (as applied to wiring methods)' as:",
+      "choices": [
+        {"id": "A", "text": "Capable of being reached quickly"},
+        {"id": "B", "text": "Capable of being removed or exposed without damaging the building structure"},
+        {"id": "C", "text": "Located within arm's reach"},
+        {"id": "D", "text": "Visible from the floor"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Accessible wiring methods can be removed or exposed without damaging the building structure or finish.",
+        "detailed": "Article 100 defines Accessible (as applied to wiring methods) as capable of being removed or exposed without damaging the building structure or finish.",
+        "how_to_find": "Look up 'Accessible' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["definitions", "accessibility", "wiring methods"],
+      "verified": true
+    },
+    {
+      "id": "GK-011",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "According to Article 100, 'Readily Accessible' means:",
+      "choices": [
+        {"id": "A", "text": "Capable of being reached without climbing or removing obstacles"},
+        {"id": "B", "text": "Located within 6 feet of the floor"},
+        {"id": "C", "text": "Visible from the entrance"},
+        {"id": "D", "text": "Within 25 feet of the equipment"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Readily accessible means capable of being reached quickly without climbing, removing obstacles, or using tools.",
+        "detailed": "Article 100 defines Readily Accessible as capable of being reached quickly for operation, renewal, or inspections without requiring climbing over or removing obstacles or using portable ladders.",
+        "how_to_find": "Look up 'Accessible, Readily' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["definitions", "accessibility", "equipment"],
+      "verified": true
+    },
+    {
+      "id": "GK-012",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Per Article 100, a 'Branch Circuit' is defined as:",
+      "choices": [
+        {"id": "A", "text": "Conductors between the utility and service equipment"},
+        {"id": "B", "text": "Conductors between the final overcurrent device and the outlet(s)"},
+        {"id": "C", "text": "Conductors between service equipment and subpanels"},
+        {"id": "D", "text": "Any conductor carrying less than 20 amperes"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A branch circuit runs from the final overcurrent device protecting the circuit to the outlets.",
+        "detailed": "Article 100 defines Branch Circuit as the circuit conductors between the final overcurrent device protecting the circuit and the outlet(s).",
+        "how_to_find": "Look up 'Branch Circuit' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["definitions", "branch circuit", "conductors"],
+      "verified": true
+    },
+    {
+      "id": "GK-013",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "Article 100 defines a 'Dwelling Unit' as:",
+      "choices": [
+        {"id": "A", "text": "Any building with electrical service"},
+        {"id": "B", "text": "A single unit with living facilities including cooking, sleeping, and sanitation"},
+        {"id": "C", "text": "A residential building with more than two floors"},
+        {"id": "D", "text": "Any structure used for overnight occupancy"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A dwelling unit must have permanent provisions for living, sleeping, cooking, and sanitation.",
+        "detailed": "Article 100 defines Dwelling Unit as a single unit providing complete and independent living facilities for one or more persons, including permanent provisions for living, sleeping, cooking, and sanitation.",
+        "how_to_find": "Look up 'Dwelling Unit' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["definitions", "dwelling", "residential"],
+      "verified": true
+    },
+    {
+      "id": "GK-014",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "According to Article 100, 'Bonding' is defined as:",
+      "choices": [
+        {"id": "A", "text": "Connecting to the earth"},
+        {"id": "B", "text": "Connecting to establish electrical continuity and conductivity"},
+        {"id": "C", "text": "Installing equipment grounding conductors"},
+        {"id": "D", "text": "Connecting neutral and ground at subpanels"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Bonding connects metal parts to establish electrical continuity and conductivity.",
+        "detailed": "Article 100 defines Bonding (Bonded) as connected to establish electrical continuity and conductivity. This differs from grounding, which is connecting to earth.",
+        "how_to_find": "Look up 'Bonding' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [{"screen_id": "grounding_vs_bonding", "relevance": "primary", "description": "Bonding explained"}],
+      "tags": ["definitions", "bonding", "grounding"],
+      "verified": true
+    },
+    {
+      "id": "GK-015",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Per Article 100, 'Grounded' means:",
+      "choices": [
+        {"id": "A", "text": "Connected to a metal enclosure"},
+        {"id": "B", "text": "Connected to ground or a conductive body that extends the ground connection"},
+        {"id": "C", "text": "Bonded to the neutral conductor"},
+        {"id": "D", "text": "Protected by a GFCI"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Grounded means connected to ground or to a conductive body that extends the ground connection.",
+        "detailed": "Article 100 defines Grounded (Grounding) as connected to ground or to a conductive body that extends the ground connection. This is the connection to earth.",
+        "how_to_find": "Look up 'Grounded' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [{"screen_id": "grounding_vs_bonding", "relevance": "primary", "description": "Grounding explained"}],
+      "tags": ["definitions", "grounding", "earth"],
+      "verified": true
+    },
+    {
+      "id": "GK-016",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "The 'Grounded Conductor' is also commonly referred to as the:",
+      "choices": [
+        {"id": "A", "text": "Hot wire"},
+        {"id": "B", "text": "Equipment ground"},
+        {"id": "C", "text": "Neutral"},
+        {"id": "D", "text": "Bonding jumper"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "The grounded conductor is commonly called the neutral - it's intentionally grounded.",
+        "detailed": "Article 100 defines Grounded Conductor as a system or circuit conductor that is intentionally grounded. In most residential systems, this is the neutral conductor (white wire).",
+        "how_to_find": "Look up 'Conductor, Grounded' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [{"screen_id": "wire_color_code", "relevance": "primary", "description": "Wire identification"}],
+      "tags": ["definitions", "neutral", "grounded conductor"],
+      "verified": true
+    },
+    {
+      "id": "GK-017",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "The 'Ungrounded Conductor' is commonly referred to as the:",
+      "choices": [
+        {"id": "A", "text": "Neutral"},
+        {"id": "B", "text": "Hot wire"},
+        {"id": "C", "text": "Ground wire"},
+        {"id": "D", "text": "Bonding conductor"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "The ungrounded conductor is the 'hot' wire that carries current at voltage potential.",
+        "detailed": "The ungrounded conductor is the current-carrying conductor that is not intentionally grounded. It's commonly called the 'hot' wire and is typically black or red in residential installations.",
+        "how_to_find": "Look up 'Conductor, Ungrounded' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [{"screen_id": "wire_color_code", "relevance": "primary", "description": "Wire identification"}],
+      "tags": ["definitions", "hot wire", "ungrounded conductor"],
+      "verified": true
+    },
+    {
+      "id": "GK-018",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "According to Article 100, a 'Continuous Load' is one where:",
+      "choices": [
+        {"id": "A", "text": "The load operates 24 hours a day"},
+        {"id": "B", "text": "The maximum current is expected to continue for 3 hours or more"},
+        {"id": "C", "text": "The load never varies"},
+        {"id": "D", "text": "The circuit has no switch"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A continuous load is expected to operate at maximum current for 3 hours or more.",
+        "detailed": "Article 100 defines Continuous Load as a load where the maximum current is expected to continue for 3 hours or more. This affects conductor and OCPD sizing (125% rule).",
+        "how_to_find": "Look up 'Continuous Load' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [{"screen_id": "continuous_load", "relevance": "primary", "description": "Continuous load rules"}],
+      "tags": ["definitions", "continuous load", "sizing"],
+      "verified": true
+    },
+    {
+      "id": "GK-019",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "Per Article 100, a 'Device' is defined as:",
+      "choices": [
+        {"id": "A", "text": "Equipment that consumes electrical energy"},
+        {"id": "B", "text": "A unit that carries or controls electric energy but does not utilize it"},
+        {"id": "C", "text": "Any electrical component"},
+        {"id": "D", "text": "A circuit breaker or fuse"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A device carries or controls energy but doesn't utilize it (like switches and receptacles).",
+        "detailed": "Article 100 defines Device as a unit of an electrical system intended to carry or control but not utilize electric energy. Switches and receptacles are devices; lights and motors are utilization equipment.",
+        "how_to_find": "Look up 'Device' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["definitions", "device", "equipment"],
+      "verified": true
+    },
+    {
+      "id": "GK-020",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Article 100 defines 'Labeled' equipment as having:",
+      "choices": [
+        {"id": "A", "text": "A manufacturer's name on it"},
+        {"id": "B", "text": "A label from an organization acceptable to the AHJ"},
+        {"id": "C", "text": "Installation instructions"},
+        {"id": "D", "text": "A UPC barcode"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Labeled means having a label from an organization acceptable to the authority having jurisdiction.",
+        "detailed": "Article 100 defines Labeled as equipment having a label, symbol, or identifying mark of an organization acceptable to the AHJ, indicating evaluation for specific safety standards.",
+        "how_to_find": "Look up 'Labeled' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["definitions", "labeled", "listing"],
+      "verified": true
+    },
+    {
+      "id": "GK-021",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "According to Article 100, 'Listed' equipment has been:",
+      "choices": [
+        {"id": "A", "text": "Published in a manufacturer's catalog"},
+        {"id": "B", "text": "Evaluated by a testing lab and included in a published list"},
+        {"id": "C", "text": "Approved by the local inspector"},
+        {"id": "D", "text": "Registered with the NEC"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Listed means evaluated by a testing organization and included in their published list.",
+        "detailed": "Article 100 defines Listed as equipment included in a list published by a testing organization acceptable to the AHJ, indicating compliance with appropriate standards.",
+        "how_to_find": "Look up 'Listed' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["definitions", "listed", "testing"],
+      "verified": true
+    },
+    {
+      "id": "GK-022",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "Per Article 100, an 'Outlet' is:",
+      "choices": [
+        {"id": "A", "text": "Only a receptacle"},
+        {"id": "B", "text": "A point where current is taken to supply utilization equipment"},
+        {"id": "C", "text": "A junction box"},
+        {"id": "D", "text": "Any electrical connection point"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "An outlet is a point on the wiring system where current is taken to supply utilization equipment.",
+        "detailed": "Article 100 defines Outlet as a point on the wiring system at which current is taken to supply utilization equipment. This includes receptacle outlets, lighting outlets, and other connection points.",
+        "how_to_find": "Look up 'Outlet' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["definitions", "outlet", "utilization"],
+      "verified": true
+    },
+    {
+      "id": "GK-023",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "According to Article 100, 'Overcurrent' includes:",
+      "choices": [
+        {"id": "A", "text": "Overload current only"},
+        {"id": "B", "text": "Short-circuit current only"},
+        {"id": "C", "text": "Overload, short-circuit, or ground-fault current"},
+        {"id": "D", "text": "Any current above 15 amperes"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Overcurrent includes any current in excess of ratings - overload, short circuit, or ground fault.",
+        "detailed": "Article 100 defines Overcurrent as any current in excess of the rated current of equipment or the ampacity of a conductor, including overload current, short-circuit current, or ground-fault current.",
+        "how_to_find": "Look up 'Overcurrent' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["definitions", "overcurrent", "protection"],
+      "verified": true
+    },
+    {
+      "id": "GK-024",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Per Article 100, 'Overload' is defined as:",
+      "choices": [
+        {"id": "A", "text": "Any short circuit"},
+        {"id": "B", "text": "Operation in excess of normal rating that can cause damage over time"},
+        {"id": "C", "text": "A ground fault"},
+        {"id": "D", "text": "Current exceeding 100 amperes"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Overload is operation in excess of normal rating that, if it persists, may cause damage or overheating.",
+        "detailed": "Article 100 defines Overload as operation of equipment in excess of normal, full-load rating, or of a conductor in excess of rated ampacity that, when it persists for sufficient time, would cause damage or dangerous overheating.",
+        "how_to_find": "Look up 'Overload' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["definitions", "overload", "protection"],
+      "verified": true
+    },
+    {
+      "id": "GK-025",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "Article 100 defines a 'Raceway' as:",
+      "choices": [
+        {"id": "A", "text": "Any conduit"},
+        {"id": "B", "text": "An enclosed channel designed for holding wires or cables"},
+        {"id": "C", "text": "A cable tray only"},
+        {"id": "D", "text": "Underground duct bank"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A raceway is an enclosed channel of metal or nonmetallic materials designed for holding wires or cables.",
+        "detailed": "Article 100 defines Raceway as an enclosed channel of metal or nonmetallic materials designed expressly for holding wires, cables, or busbars. Conduit, EMT, wireways, and cable trays are all raceways.",
+        "how_to_find": "Look up 'Raceway' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["definitions", "raceway", "wiring methods"],
+      "verified": true
+    },
+    {
+      "id": "GK-026",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "Per Article 100, a 'Receptacle' is:",
+      "choices": [
+        {"id": "A", "text": "A contact device at an outlet for plugging in equipment"},
+        {"id": "B", "text": "Any junction box"},
+        {"id": "C", "text": "A lighting fixture"},
+        {"id": "D", "text": "A switch"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "A receptacle is a contact device installed at the outlet for connection of an attachment plug.",
+        "detailed": "Article 100 defines Receptacle as a contact device installed at the outlet for the connection of an attachment plug, or for the direct connection of electrical utilization equipment.",
+        "how_to_find": "Look up 'Receptacle' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["definitions", "receptacle", "outlet"],
+      "verified": true
+    },
+    {
+      "id": "GK-027",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A 'Separately Derived System' is a system that:",
+      "choices": [
+        {"id": "A", "text": "Has its own utility meter"},
+        {"id": "B", "text": "Has no direct electrical connection to conductors of another system"},
+        {"id": "C", "text": "Uses DC power only"},
+        {"id": "D", "text": "Is located in a separate building"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A separately derived system has no direct connection to supply conductors of another system.",
+        "detailed": "Article 100 defines Separately Derived System as an electrical source other than a service, having no direct connection to circuit conductors of any other electrical source (except grounding and bonding connections).",
+        "how_to_find": "Look up 'Separately Derived System' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["definitions", "separately derived", "transformer"],
+      "verified": true
+    },
+    {
+      "id": "GK-028",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "According to Article 100, the 'Service Point' is:",
+      "choices": [
+        {"id": "A", "text": "The main breaker"},
+        {"id": "B", "text": "The meter socket"},
+        {"id": "C", "text": "The point of connection between utility and premises wiring"},
+        {"id": "D", "text": "The weatherhead"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "The service point is where the utility's wiring connects to the premises wiring.",
+        "detailed": "Article 100 defines Service Point as the point of connection between the facilities of the serving utility and the premises wiring. This is typically defined by the utility.",
+        "how_to_find": "Look up 'Service Point' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [{"screen_id": "service_entrance_diagram", "relevance": "primary", "description": "Service point location"}],
+      "tags": ["definitions", "service point", "utility"],
+      "verified": true
+    },
+    {
+      "id": "GK-029",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "Per Article 100, 'Voltage (of a circuit)' is:",
+      "choices": [
+        {"id": "A", "text": "Always measured to ground"},
+        {"id": "B", "text": "The greatest root-mean-square difference of potential between any two conductors"},
+        {"id": "C", "text": "The nameplate rating of equipment"},
+        {"id": "D", "text": "The utility supply voltage"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Voltage of a circuit is the greatest RMS potential difference between any two conductors.",
+        "detailed": "Article 100 defines Voltage (of a circuit) as the greatest root-mean-square (rms) (effective) difference of potential between any two conductors of the circuit concerned.",
+        "how_to_find": "Look up 'Voltage (of a Circuit)' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["definitions", "voltage", "circuits"],
+      "verified": true
+    },
+    {
+      "id": "GK-030",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "According to Article 100, a location classified as 'Wet' would include:",
+      "choices": [
+        {"id": "A", "text": "A basement with occasional dampness"},
+        {"id": "B", "text": "Locations subject to saturation with water or in direct contact with the earth"},
+        {"id": "C", "text": "Any outdoor location"},
+        {"id": "D", "text": "A bathroom"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Wet locations are subject to saturation with water or in direct contact with earth.",
+        "detailed": "Article 100 defines Wet Location as installations underground or in concrete slabs in direct contact with earth, and locations subject to saturation with water or other liquids.",
+        "how_to_find": "Look up 'Location, Wet' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["definitions", "wet location", "environment"],
+      "verified": true
+    },
+    {
+      "id": "GK-031",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["110"],
+      "nec_tables": ["Table 110.26(A)(1)"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum working space depth for 120V equipment under Condition 1?",
+      "choices": [
+        {"id": "A", "text": "2 feet"},
+        {"id": "B", "text": "2 feet 6 inches"},
+        {"id": "C", "text": "3 feet"},
+        {"id": "D", "text": "3 feet 6 inches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Table 110.26(A)(1) requires 3 feet minimum for 0-150V under all conditions.",
+        "detailed": "Table 110.26(A)(1) shows that for voltage 0-150V (which includes 120V), the minimum depth is 3 feet for Condition 1, 2, or 3.",
+        "how_to_find": "Go to Table 110.26(A)(1), find 0-150V row."
+      },
+      "nec_reference": {"article": "110", "section": "110.26(A)(1)", "table": "Table 110.26(A)(1)"},
+      "zafto_links": [],
+      "tags": ["working space", "clearances", "120V"],
+      "verified": true
+    },
+    {
+      "id": "GK-032",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["110"],
+      "nec_tables": ["Table 110.26(A)(1)"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the minimum working space depth for 277V equipment under Condition 3?",
+      "choices": [
+        {"id": "A", "text": "3 feet"},
+        {"id": "B", "text": "3 feet 6 inches"},
+        {"id": "C", "text": "4 feet"},
+        {"id": "D", "text": "4 feet 6 inches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Table 110.26(A)(1) requires 4 feet for 151-600V under Condition 3.",
+        "detailed": "277V falls in the 151-600V range. Table 110.26(A)(1) Condition 3 (exposed live parts on both sides) requires 4 feet minimum.",
+        "how_to_find": "Go to Table 110.26(A)(1), find 151-600V row, Condition 3 column."
+      },
+      "nec_reference": {"article": "110", "section": "110.26(A)(1)", "table": "Table 110.26(A)(1)"},
+      "zafto_links": [],
+      "tags": ["working space", "clearances", "277V"],
+      "verified": true
+    },
+    {
+      "id": "GK-033",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["110"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Condition 1 working space applies when:",
+      "choices": [
+        {"id": "A", "text": "Exposed live parts on both sides"},
+        {"id": "B", "text": "Exposed live parts on one side and grounded parts on the other"},
+        {"id": "C", "text": "Exposed live parts on one side and no live or grounded parts on the other"},
+        {"id": "D", "text": "All parts are enclosed"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Condition 1: Exposed live parts on one side, no live or grounded parts on the other.",
+        "detailed": "Section 110.26(A)(1) Condition 1 applies where exposed live parts are on one side of the working space and no live or grounded parts are on the other side, or concrete, brick, or tile walls are on the other side.",
+        "how_to_find": "Go to 110.26(A)(1) and read Condition 1 description."
+      },
+      "nec_reference": {"article": "110", "section": "110.26(A)(1)"},
+      "zafto_links": [],
+      "tags": ["working space", "conditions", "clearances"],
+      "verified": true
+    },
+    {
+      "id": "GK-034",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["110"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Condition 2 working space applies when:",
+      "choices": [
+        {"id": "A", "text": "Exposed live parts on both sides"},
+        {"id": "B", "text": "Exposed live parts on one side and grounded parts on the other"},
+        {"id": "C", "text": "No exposed live parts"},
+        {"id": "D", "text": "Equipment is outdoors"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Condition 2: Exposed live parts on one side and grounded parts on the other.",
+        "detailed": "Section 110.26(A)(1) Condition 2 applies where there are exposed live parts on one side of the working space and grounded parts on the other side.",
+        "how_to_find": "Go to 110.26(A)(1) and read Condition 2 description."
+      },
+      "nec_reference": {"article": "110", "section": "110.26(A)(1)"},
+      "zafto_links": [],
+      "tags": ["working space", "conditions", "clearances"],
+      "verified": true
+    },
+    {
+      "id": "GK-035",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["110"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Condition 3 working space applies when:",
+      "choices": [
+        {"id": "A", "text": "No exposed live parts"},
+        {"id": "B", "text": "Exposed live parts on one side only"},
+        {"id": "C", "text": "Exposed live parts on both sides of the working space"},
+        {"id": "D", "text": "Equipment rated over 600V"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Condition 3: Exposed live parts on both sides of the working space.",
+        "detailed": "Section 110.26(A)(1) Condition 3 applies where there are exposed live parts on both sides of the working space. This is the most restrictive condition requiring the greatest depth.",
+        "how_to_find": "Go to 110.26(A)(1) and read Condition 3 description."
+      },
+      "nec_reference": {"article": "110", "section": "110.26(A)(1)"},
+      "zafto_links": [],
+      "tags": ["working space", "conditions", "clearances"],
+      "verified": true
+    },
+    {
+      "id": "GK-036",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["110"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "The minimum entrance/egress width for working space around electrical equipment is:",
+      "choices": [
+        {"id": "A", "text": "18 inches"},
+        {"id": "B", "text": "24 inches"},
+        {"id": "C", "text": "30 inches"},
+        {"id": "D", "text": "36 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "The minimum entrance width to working space is 24 inches per 110.26(C)(2).",
+        "detailed": "Section 110.26(C)(2) requires at least one entrance to the working space not less than 610 mm (24 in.) wide and 2.0 m (6½ ft) high.",
+        "how_to_find": "Go to 110.26(C)(2) for entrance requirements."
+      },
+      "nec_reference": {"article": "110", "section": "110.26(C)(2)"},
+      "zafto_links": [],
+      "tags": ["working space", "entrance", "clearances"],
+      "verified": true
+    },
+    {
+      "id": "GK-037",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["110"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Working space around electrical equipment shall not be used for:",
+      "choices": [
+        {"id": "A", "text": "Access to other equipment"},
+        {"id": "B", "text": "Storage"},
+        {"id": "C", "text": "Temporary work areas"},
+        {"id": "D", "text": "Equipment maintenance"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Working spaces shall not be used for storage per 110.26(B).",
+        "detailed": "Section 110.26(B) states working space required by this section shall not be used for storage. This ensures the space remains clear for safe access and egress.",
+        "how_to_find": "Go to 110.26(B) Clear Spaces."
+      },
+      "nec_reference": {"article": "110", "section": "110.26(B)"},
+      "zafto_links": [],
+      "tags": ["working space", "storage", "clearances"],
+      "verified": true
+    },
+    {
+      "id": "GK-038",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["110"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Dedicated equipment space above panelboards extends from the floor to:",
+      "choices": [
+        {"id": "A", "text": "The ceiling or 6 feet above the equipment, whichever is lower"},
+        {"id": "B", "text": "6 feet 6 inches above the floor"},
+        {"id": "C", "text": "The structural ceiling or 6 feet above the equipment"},
+        {"id": "D", "text": "25 feet above the equipment"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Dedicated space extends to structural ceiling or 6 feet above equipment, whichever is lower.",
+        "detailed": "Section 110.26(F)(1)(a) requires dedicated electrical space equal to width and depth of equipment extending from floor to 1.8 m (6 ft) above the equipment or to the structural ceiling, whichever is lower.",
+        "how_to_find": "Go to 110.26(F)(1)(a) for dedicated equipment space."
+      },
+      "nec_reference": {"article": "110", "section": "110.26(F)(1)(a)"},
+      "zafto_links": [],
+      "tags": ["dedicated space", "panelboard", "clearances"],
+      "verified": true
+    },
+    {
+      "id": "GK-039",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["110"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Foreign systems such as gas piping, water piping, or drainage are permitted in dedicated electrical space:",
+      "choices": [
+        {"id": "A", "text": "If protected against leaks"},
+        {"id": "B", "text": "Never permitted"},
+        {"id": "C", "text": "If passing directly through"},
+        {"id": "D", "text": "Only if serving the electrical equipment"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Foreign piping and systems are not permitted in dedicated electrical equipment space.",
+        "detailed": "Section 110.26(F)(1)(b) states the dedicated space shall contain no piping, ducts, leak protection apparatus, or other foreign systems unless they are for protection or functional use of the electrical equipment.",
+        "how_to_find": "Go to 110.26(F)(1)(b) for foreign systems prohibition."
+      },
+      "nec_reference": {"article": "110", "section": "110.26(F)(1)(b)"},
+      "zafto_links": [],
+      "tags": ["dedicated space", "foreign systems", "clearances"],
+      "verified": true
+    },
+    {
+      "id": "GK-040",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["90"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "The purpose of the NEC is the practical safeguarding of:",
+      "choices": [
+        {"id": "A", "text": "Electrical equipment only"},
+        {"id": "B", "text": "Persons and property from hazards arising from the use of electricity"},
+        {"id": "C", "text": "Electricians during installation"},
+        {"id": "D", "text": "Utility infrastructure"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "The NEC's purpose is practical safeguarding of persons and property from electrical hazards.",
+        "detailed": "Section 90.1(A) states the purpose of the NEC is the practical safeguarding of persons and property from hazards arising from the use of electricity.",
+        "how_to_find": "Go to 90.1(A) Purpose."
+      },
+      "nec_reference": {"article": "90", "section": "90.1(A)"},
+      "zafto_links": [],
+      "tags": ["purpose", "NEC scope", "safety"],
+      "verified": true
+    },
+    {
+      "id": "GK-041",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["90"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "The NEC is NOT intended as a:",
+      "choices": [
+        {"id": "A", "text": "Legal document"},
+        {"id": "B", "text": "Safety standard"},
+        {"id": "C", "text": "Design specification or instruction manual"},
+        {"id": "D", "text": "Code adopted by jurisdictions"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "The NEC is not intended as a design specification or instruction manual for untrained persons.",
+        "detailed": "Section 90.1(A) states the NEC is not intended as a design specification or an instruction manual for untrained persons. It establishes minimum requirements.",
+        "how_to_find": "Go to 90.1(A) and read the purpose statement."
+      },
+      "nec_reference": {"article": "90", "section": "90.1(A)"},
+      "zafto_links": [],
+      "tags": ["purpose", "NEC scope", "limitations"],
+      "verified": true
+    },
+    {
+      "id": "GK-042",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["90"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Compliance with the NEC will result in an installation that is:",
+      "choices": [
+        {"id": "A", "text": "The most efficient possible"},
+        {"id": "B", "text": "Essentially free from hazard but not necessarily efficient or convenient"},
+        {"id": "C", "text": "The least expensive"},
+        {"id": "D", "text": "Guaranteed to never fail"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "NEC compliance means essentially free from hazard but not necessarily efficient, convenient, or adequate for future expansion.",
+        "detailed": "Section 90.1(B) states compliance with the NEC will result in an installation essentially free from hazard but not necessarily efficient, convenient, or adequate for good service or future expansion.",
+        "how_to_find": "Go to 90.1(B) Adequacy."
+      },
+      "nec_reference": {"article": "90", "section": "90.1(B)"},
+      "zafto_links": [],
+      "tags": ["purpose", "adequacy", "minimum requirements"],
+      "verified": true
+    },
+    {
+      "id": "GK-043",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["90"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "Chapters 1 through 4 of the NEC apply:",
+      "choices": [
+        {"id": "A", "text": "Only to residential installations"},
+        {"id": "B", "text": "Generally to all electrical installations"},
+        {"id": "C", "text": "Only to commercial installations"},
+        {"id": "D", "text": "Only to industrial installations"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Chapters 1-4 apply generally to all electrical installations.",
+        "detailed": "Section 90.3 states Chapters 1-4 apply generally; Chapters 5-7 supplement or modify Chapters 1-4 for special occupancies, equipment, or conditions; Chapter 8 is independent; Chapter 9 consists of tables.",
+        "how_to_find": "Go to 90.3 Code Arrangement."
+      },
+      "nec_reference": {"article": "90", "section": "90.3"},
+      "zafto_links": [],
+      "tags": ["NEC arrangement", "chapters", "scope"],
+      "verified": true
+    },
+    {
+      "id": "GK-044",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["90"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Chapters 5, 6, and 7 of the NEC:",
+      "choices": [
+        {"id": "A", "text": "Apply to all installations"},
+        {"id": "B", "text": "Replace Chapters 1-4"},
+        {"id": "C", "text": "Supplement or modify Chapters 1-4 for special conditions"},
+        {"id": "D", "text": "Are optional guidelines"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Chapters 5-7 supplement or modify Chapters 1-4 for special occupancies, equipment, or conditions.",
+        "detailed": "Section 90.3 states Chapters 5, 6, and 7 apply to special occupancies, special equipment, or other special conditions. These chapters can supplement or modify the general rules in Chapters 1-4.",
+        "how_to_find": "Go to 90.3 Code Arrangement."
+      },
+      "nec_reference": {"article": "90", "section": "90.3"},
+      "zafto_links": [],
+      "tags": ["NEC arrangement", "special conditions", "scope"],
+      "verified": true
+    },
+    {
+      "id": "GK-045",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["90"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Chapter 8 of the NEC covers:",
+      "choices": [
+        {"id": "A", "text": "Hazardous locations"},
+        {"id": "B", "text": "Communications systems and is independent of other chapters"},
+        {"id": "C", "text": "Swimming pools"},
+        {"id": "D", "text": "Motor circuits"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Chapter 8 covers communications systems and is not subject to Chapters 1-7 except where specifically referenced.",
+        "detailed": "Section 90.3 states Chapter 8 covers communications systems and is not subject to the requirements of Chapters 1 through 7 except where the requirements are specifically referenced in Chapter 8.",
+        "how_to_find": "Go to 90.3 Code Arrangement."
+      },
+      "nec_reference": {"article": "90", "section": "90.3"},
+      "zafto_links": [],
+      "tags": ["NEC arrangement", "communications", "Chapter 8"],
+      "verified": true
+    },
+    {
+      "id": "GK-046",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["90"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "Chapter 9 of the NEC contains:",
+      "choices": [
+        {"id": "A", "text": "Special equipment rules"},
+        {"id": "B", "text": "Tables applicable as referenced"},
+        {"id": "C", "text": "Definitions only"},
+        {"id": "D", "text": "Administrative provisions"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Chapter 9 consists of tables that are applicable as referenced.",
+        "detailed": "Section 90.3 states Chapter 9 consists of tables that are applicable as referenced elsewhere in the NEC, including conduit fill tables, conductor properties, and more.",
+        "how_to_find": "Go to 90.3 Code Arrangement."
+      },
+      "nec_reference": {"article": "90", "section": "90.3"},
+      "zafto_links": [],
+      "tags": ["NEC arrangement", "tables", "Chapter 9"],
+      "verified": true
+    },
+    {
+      "id": "GK-047",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["90"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Informational notes in the NEC are:",
+      "choices": [
+        {"id": "A", "text": "Mandatory requirements"},
+        {"id": "B", "text": "Informational only and not enforceable"},
+        {"id": "C", "text": "Local amendments"},
+        {"id": "D", "text": "Manufacturer recommendations"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Informational notes are explanatory and are not enforceable as requirements.",
+        "detailed": "Section 90.5(C) states Informational Notes are explanatory material such as references to other standards, cross-references, or background information. They are not enforceable as requirements.",
+        "how_to_find": "Go to 90.5(C) Informational Notes."
+      },
+      "nec_reference": {"article": "90", "section": "90.5(C)"},
+      "zafto_links": [],
+      "tags": ["NEC format", "informational notes", "requirements"],
+      "verified": true
+    },
+    {
+      "id": "GK-048",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["90"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "The word 'shall' in the NEC indicates:",
+      "choices": [
+        {"id": "A", "text": "A recommendation"},
+        {"id": "B", "text": "A mandatory requirement"},
+        {"id": "C", "text": "An option"},
+        {"id": "D", "text": "A suggestion for best practice"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "'Shall' indicates a mandatory requirement in the NEC.",
+        "detailed": "Section 90.5(A) establishes that 'shall' indicates a mandatory rule. This is a critical distinction from advisory language like 'should' which indicates a recommendation.",
+        "how_to_find": "Go to 90.5(A) Mandatory Rules."
+      },
+      "nec_reference": {"article": "90", "section": "90.5(A)"},
+      "zafto_links": [],
+      "tags": ["NEC format", "mandatory", "language"],
+      "verified": true
+    },
+    {
+      "id": "GK-049",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["90"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "The word 'should' in the NEC indicates:",
+      "choices": [
+        {"id": "A", "text": "A mandatory requirement"},
+        {"id": "B", "text": "A recommendation or advisory"},
+        {"id": "C", "text": "A prohibition"},
+        {"id": "D", "text": "An exception"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "'Should' indicates a recommendation or advisory, not a mandatory requirement.",
+        "detailed": "Section 90.5(B) states that 'should' indicates a recommendation or that which is advised but not required. It suggests good practice but is not enforceable.",
+        "how_to_find": "Go to 90.5(B) Permissive Rules."
+      },
+      "nec_reference": {"article": "90", "section": "90.5(B)"},
+      "zafto_links": [],
+      "tags": ["NEC format", "permissive", "language"],
+      "verified": true
+    },
+    {
+      "id": "GK-050",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["110"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "According to 110.14(C)(1), conductors rated for 60°C must be used when the circuit is:",
+      "choices": [
+        {"id": "A", "text": "Over 200 amperes"},
+        {"id": "B", "text": "100 amperes or less, or 14 AWG through 1 AWG"},
+        {"id": "C", "text": "In wet locations"},
+        {"id": "D", "text": "For motor circuits"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "For circuits 100A or less, or conductors 14-1 AWG, use 60°C ampacity column.",
+        "detailed": "Section 110.14(C)(1)(a) requires that for termination provisions rated 100A or less, or marked for 14 AWG through 1 AWG conductors, conductor ampacity be determined using the 60°C column in Table 310.16.",
+        "how_to_find": "Go to 110.14(C)(1)(a) for temperature rating rules."
+      },
+      "nec_reference": {"article": "110", "section": "110.14(C)(1)"},
+      "zafto_links": [],
+      "tags": ["terminations", "temperature rating", "ampacity"],
+      "verified": true
+    },
+    {
+      "id": "GK-051",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["110"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "For circuits over 100A with terminations not marked for temperature, the conductor ampacity must be based on:",
+      "choices": [
+        {"id": "A", "text": "60°C"},
+        {"id": "B", "text": "75°C"},
+        {"id": "C", "text": "90°C"},
+        {"id": "D", "text": "The conductor insulation rating"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "For circuits over 100A with unmarked terminations, use the 75°C column.",
+        "detailed": "Section 110.14(C)(1)(b) states that for termination provisions rated over 100A, or marked for conductors larger than 1 AWG, conductor ampacity shall be determined using the 75°C column unless the termination is marked otherwise.",
+        "how_to_find": "Go to 110.14(C)(1)(b) for temperature rating rules."
+      },
+      "nec_reference": {"article": "110", "section": "110.14(C)(1)"},
+      "zafto_links": [],
+      "tags": ["terminations", "temperature rating", "ampacity"],
+      "verified": true
+    },
+    {
+      "id": "GK-052",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["110"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "All electrical equipment must be installed in accordance with:",
+      "choices": [
+        {"id": "A", "text": "Any installation method preferred by the installer"},
+        {"id": "B", "text": "Any instructions included in the listing or labeling"},
+        {"id": "C", "text": "Only the NEC"},
+        {"id": "D", "text": "Local customs"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Listed equipment must be installed per any instructions included in the listing or labeling.",
+        "detailed": "Section 110.3(B) requires listed or labeled equipment to be installed and used in accordance with any instructions included in the listing or labeling.",
+        "how_to_find": "Go to 110.3(B) Installation and Use."
+      },
+      "nec_reference": {"article": "110", "section": "110.3(B)"},
+      "zafto_links": [],
+      "tags": ["installation", "listing", "instructions"],
+      "verified": true
+    },
+    {
+      "id": "GK-053",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["110"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Electrical equipment must be installed in a manner that provides:",
+      "choices": [
+        {"id": "A", "text": "Maximum efficiency"},
+        {"id": "B", "text": "The lowest installation cost"},
+        {"id": "C", "text": "A neat and workmanlike manner"},
+        {"id": "D", "text": "Easy access for the utility"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Electrical equipment must be installed in a neat and workmanlike manner.",
+        "detailed": "Section 110.12 requires electrical equipment to be installed in a neat and workmanlike manner. This is an enforceable standard even though subjective.",
+        "how_to_find": "Go to 110.12 Mechanical Execution of Work."
+      },
+      "nec_reference": {"article": "110", "section": "110.12"},
+      "zafto_links": [],
+      "tags": ["installation", "workmanship", "quality"],
+      "verified": true
+    },
+    {
+      "id": "GK-054",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["110"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "Unused openings in boxes and equipment shall be:",
+      "choices": [
+        {"id": "A", "text": "Left open for ventilation"},
+        {"id": "B", "text": "Effectively closed"},
+        {"id": "C", "text": "Covered with tape"},
+        {"id": "D", "text": "Painted over"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Unused openings in boxes and enclosures must be effectively closed.",
+        "detailed": "Section 110.12(A) requires unused openings in boxes, raceways, auxiliary gutters, cabinets, cutout boxes, meter sockets, and enclosures to be effectively closed with appropriate plugs or covers.",
+        "how_to_find": "Go to 110.12(A) Unused Openings."
+      },
+      "nec_reference": {"article": "110", "section": "110.12(A)"},
+      "zafto_links": [],
+      "tags": ["boxes", "openings", "installation"],
+      "verified": true
+    },
+    {
+      "id": "GK-055",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["110"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Internal parts of electrical equipment damaged during installation:",
+      "choices": [
+        {"id": "A", "text": "Can be repaired and used"},
+        {"id": "B", "text": "Shall not be damaged during installation"},
+        {"id": "C", "text": "Must be documented"},
+        {"id": "D", "text": "Are acceptable if functional"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Internal parts of electrical equipment shall not be damaged during installation.",
+        "detailed": "Section 110.12(C) states that internal parts of electrical equipment, including busbars, wiring terminals, insulators, and other surfaces, shall not be damaged or contaminated by paint, plaster, cleaners, abrasives, or other foreign materials.",
+        "how_to_find": "Go to 110.12(C) Integrity of Equipment."
+      },
+      "nec_reference": {"article": "110", "section": "110.12(C)"},
+      "zafto_links": [],
+      "tags": ["equipment", "damage", "installation"],
+      "verified": true
+    },
+    {
+      "id": "GK-056",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["110"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "Conductors shall be spliced using:",
+      "choices": [
+        {"id": "A", "text": "Any convenient method"},
+        {"id": "B", "text": "Soldering only"},
+        {"id": "C", "text": "Splicing devices identified for the use or by brazing, welding, or soldering"},
+        {"id": "D", "text": "Wire nuts only"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Splices must use identified devices or brazing, welding, or soldering with insulation equivalent to conductor.",
+        "detailed": "Section 110.14(B) requires conductors to be spliced using splicing devices identified for the use or by brazing, welding, or soldering with a fusible metal or alloy. Splices must be covered with insulation equivalent to conductors.",
+        "how_to_find": "Go to 110.14(B) Splices."
+      },
+      "nec_reference": {"article": "110", "section": "110.14(B)"},
+      "zafto_links": [],
+      "tags": ["splices", "connections", "conductors"],
+      "verified": true
+    },
+    {
+      "id": "GK-057",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["110"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Connection of conductors to terminal parts shall ensure:",
+      "choices": [
+        {"id": "A", "text": "The connection can be easily undone"},
+        {"id": "B", "text": "A good connection without damaging the conductors"},
+        {"id": "C", "text": "Maximum conductor exposure"},
+        {"id": "D", "text": "Color coding is visible"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Connections must be made without damaging the conductors and ensure a good connection.",
+        "detailed": "Section 110.14(A) requires connection of conductors to terminal parts to ensure a good connection without damaging the conductors. Terminals for more than one conductor must be identified for that use.",
+        "how_to_find": "Go to 110.14(A) Terminals."
+      },
+      "nec_reference": {"article": "110", "section": "110.14(A)"},
+      "zafto_links": [],
+      "tags": ["connections", "terminals", "conductors"],
+      "verified": true
+    },
+    {
+      "id": "GK-058",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["110"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Illumination of working spaces containing service equipment rated 1200A or more shall be:",
+      "choices": [
+        {"id": "A", "text": "At least 1 foot-candle"},
+        {"id": "B", "text": "Provided and capable of being controlled from a point outside the working space"},
+        {"id": "C", "text": "Natural lighting only"},
+        {"id": "D", "text": "Battery-powered"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "For equipment 1200A or more, illumination must be provided and controlled from outside the working space.",
+        "detailed": "Section 110.26(D) requires illumination of working spaces containing service equipment, switchboards, switchgear, panelboards, or motor control centers rated 1200A or more. The illumination shall not be controlled by automatic means only.",
+        "how_to_find": "Go to 110.26(D) Illumination."
+      },
+      "nec_reference": {"article": "110", "section": "110.26(D)"},
+      "zafto_links": [],
+      "tags": ["illumination", "working space", "large equipment"],
+      "verified": true
+    },
+    {
+      "id": "GK-059",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "Per Article 100, 'Ampacity' is defined as:",
+      "choices": [
+        {"id": "A", "text": "The total current a circuit can carry"},
+        {"id": "B", "text": "The maximum current a conductor can carry under conditions of use without exceeding its temperature rating"},
+        {"id": "C", "text": "The circuit breaker rating"},
+        {"id": "D", "text": "The nameplate rating of equipment"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Ampacity is the maximum current a conductor can carry continuously under conditions of use without exceeding its temperature rating.",
+        "detailed": "Article 100 defines Ampacity as the maximum current, in amperes, that a conductor can carry continuously under the conditions of use without exceeding its temperature rating.",
+        "how_to_find": "Look up 'Ampacity' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["definitions", "ampacity", "conductors"],
+      "verified": true
+    },
+    {
+      "id": "GK-060",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "According to Article 100, 'Authority Having Jurisdiction' (AHJ) is:",
+      "choices": [
+        {"id": "A", "text": "Always the state electrical board"},
+        {"id": "B", "text": "The organization, office, or individual responsible for enforcing requirements"},
+        {"id": "C", "text": "The electrical contractor"},
+        {"id": "D", "text": "NFPA"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "The AHJ is the organization, office, or individual responsible for enforcing the requirements of a code.",
+        "detailed": "Article 100 defines Authority Having Jurisdiction as an organization, office, or individual responsible for enforcing the requirements of a code or standard, or for approving equipment, materials, an installation, or a procedure.",
+        "how_to_find": "Look up 'Authority Having Jurisdiction' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["definitions", "AHJ", "enforcement"],
+      "verified": true
+    },
+    {
+      "id": "GK-061",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Per Article 100, a 'Multiwire Branch Circuit' is:",
+      "choices": [
+        {"id": "A", "text": "Any circuit with more than two conductors"},
+        {"id": "B", "text": "A branch circuit with two or more ungrounded conductors sharing a common neutral"},
+        {"id": "C", "text": "A 240V circuit"},
+        {"id": "D", "text": "A three-phase circuit"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A multiwire branch circuit has two or more ungrounded conductors with a voltage between them and a grounded conductor (neutral) connected to the neutral point with equal voltage to each ungrounded conductor.",
+        "detailed": "Article 100 defines Multiwire Branch Circuit as a branch circuit with two or more ungrounded conductors with a voltage between them and a grounded conductor with equal voltage between it and each ungrounded conductor, connected to the neutral or grounded conductor of the system.",
+        "how_to_find": "Look up 'Branch Circuit, Multiwire' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["definitions", "multiwire", "branch circuit"],
+      "verified": true
+    },
+    {
+      "id": "GK-062",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "Per Article 100, a 'Fitting' is:",
+      "choices": [
+        {"id": "A", "text": "A receptacle or switch"},
+        {"id": "B", "text": "An accessory used to connect raceways or cables to boxes or equipment"},
+        {"id": "C", "text": "A circuit breaker"},
+        {"id": "D", "text": "A grounding electrode"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A fitting is an accessory such as a locknut, bushing, or connector used to connect raceways and cables.",
+        "detailed": "Article 100 defines Fitting as an accessory such as a locknut, bushing, or other part of a wiring system that is intended primarily to perform a mechanical rather than an electrical function.",
+        "how_to_find": "Look up 'Fitting' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["definitions", "fitting", "accessories"],
+      "verified": true
+    },
+    {
+      "id": "GK-063",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "According to Article 100, a 'Ground Fault' is:",
+      "choices": [
+        {"id": "A", "text": "A short circuit between two hot conductors"},
+        {"id": "B", "text": "An unintentional connection between an ungrounded conductor and normally non-current-carrying materials"},
+        {"id": "C", "text": "An overload condition"},
+        {"id": "D", "text": "A broken ground wire"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A ground fault is an unintentional connection between an ungrounded conductor and ground/grounded materials.",
+        "detailed": "Article 100 defines Ground Fault as an unintentional, electrically conducting connection between an ungrounded conductor of an electrical circuit and normally non-current-carrying conductors, metallic enclosures, equipment, or earth.",
+        "how_to_find": "Look up 'Ground Fault' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["definitions", "ground fault", "fault current"],
+      "verified": true
+    },
+    {
+      "id": "GK-064",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "Per Article 100, 'In Sight From' means visible and not more than:",
+      "choices": [
+        {"id": "A", "text": "25 feet away"},
+        {"id": "B", "text": "50 feet away"},
+        {"id": "C", "text": "75 feet away"},
+        {"id": "D", "text": "100 feet away"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "'In Sight From' means visible and not more than 50 feet from the equipment.",
+        "detailed": "Article 100 defines In Sight From (Within Sight From, Within Sight) as visible and not more than 15 m (50 ft) distant from the equipment.",
+        "how_to_find": "Look up 'In Sight From' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["definitions", "in sight", "distance"],
+      "verified": true
+    },
+    {
+      "id": "GK-065",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Article 100 defines 'Interrupting Rating' as:",
+      "choices": [
+        {"id": "A", "text": "The maximum continuous current a device can carry"},
+        {"id": "B", "text": "The highest current a device can safely interrupt under specified conditions"},
+        {"id": "C", "text": "The trip setting of a breaker"},
+        {"id": "D", "text": "The voltage rating of a device"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Interrupting rating is the highest current a device can safely interrupt under standard test conditions.",
+        "detailed": "Article 100 defines Interrupting Rating as the highest current at rated voltage that a device is identified to interrupt under standard test conditions.",
+        "how_to_find": "Look up 'Interrupting Rating' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["definitions", "interrupting rating", "fault current"],
+      "verified": true
+    },
+    {
+      "id": "GK-066",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["110"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Equipment intended to interrupt current at fault levels shall have an interrupting rating:",
+      "choices": [
+        {"id": "A", "text": "Equal to the circuit voltage"},
+        {"id": "B", "text": "At least equal to the nominal circuit voltage and available fault current"},
+        {"id": "C", "text": "Equal to the breaker size"},
+        {"id": "D", "text": "Determined by the utility"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Equipment must have interrupting rating at least equal to the circuit voltage and available fault current.",
+        "detailed": "Section 110.9 requires equipment intended to interrupt current at fault levels to have an interrupting rating at least equal to the nominal circuit voltage and the current that is available at the line terminals.",
+        "how_to_find": "Go to 110.9 Interrupting Rating."
+      },
+      "nec_reference": {"article": "110", "section": "110.9"},
+      "zafto_links": [],
+      "tags": ["interrupting rating", "fault current", "equipment"],
+      "verified": true
+    },
+    {
+      "id": "GK-067",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["110"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "The overcurrent protective device and circuit conductors must be protected against short-circuit current that:",
+      "choices": [
+        {"id": "A", "text": "Exceeds 1000 amperes"},
+        {"id": "B", "text": "Is available at the line terminals"},
+        {"id": "C", "text": "Exceeds the breaker rating"},
+        {"id": "D", "text": "Is calculated by the installer"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "The OCPD must be able to clear the available short-circuit current at its line terminals.",
+        "detailed": "Section 110.10 requires electrical equipment to be selected and coordinated to permit the circuit protective device to clear a fault without extensive damage to other components, considering available short-circuit current.",
+        "how_to_find": "Go to 110.10 Circuit Impedance, Short-Circuit Current Ratings."
+      },
+      "nec_reference": {"article": "110", "section": "110.10"},
+      "zafto_links": [],
+      "tags": ["short circuit", "fault current", "coordination"],
+      "verified": true
+    },
+    {
+      "id": "GK-068",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["110"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Electrical equipment shall be marked with the manufacturer's name, trademark, or other descriptive marking by which:",
+      "choices": [
+        {"id": "A", "text": "The warranty can be claimed"},
+        {"id": "B", "text": "The organization responsible for the product can be identified"},
+        {"id": "C", "text": "The price can be verified"},
+        {"id": "D", "text": "The distributor can be found"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Equipment marking must allow identification of the organization responsible for the product.",
+        "detailed": "Section 110.21(A)(1) requires electrical equipment to have the manufacturer's name, trademark, or other descriptive marking by which the organization responsible for the product can be identified.",
+        "how_to_find": "Go to 110.21(A)(1) Manufacturer's Markings."
+      },
+      "nec_reference": {"article": "110", "section": "110.21(A)(1)"},
+      "zafto_links": [],
+      "tags": ["marking", "manufacturer", "equipment"],
+      "verified": true
+    },
+    {
+      "id": "GK-069",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["110"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "Markings on electrical equipment shall be:",
+      "choices": [
+        {"id": "A", "text": "Removable for aesthetic purposes"},
+        {"id": "B", "text": "Durable and visible after installation"},
+        {"id": "C", "text": "On the back only"},
+        {"id": "D", "text": "In any language"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Equipment markings must be durable enough to withstand the environment and visible after installation.",
+        "detailed": "Section 110.21(A)(1) requires markings to be durability suitable for the environment involved and visible after installation.",
+        "how_to_find": "Go to 110.21(A)(1) Manufacturer's Markings."
+      },
+      "nec_reference": {"article": "110", "section": "110.21(A)(1)"},
+      "zafto_links": [],
+      "tags": ["marking", "durability", "equipment"],
+      "verified": true
+    },
+    {
+      "id": "GK-070",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["110"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Field-applied hazard markings for arc-flash and shock shall be:",
+      "choices": [
+        {"id": "A", "text": "Handwritten on the equipment"},
+        {"id": "B", "text": "Located so as to be clearly visible to qualified persons before examination or work"},
+        {"id": "C", "text": "Inside the enclosure only"},
+        {"id": "D", "text": "Applied by the manufacturer only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Arc-flash and shock hazard markings must be visible to qualified persons before they examine or work on equipment.",
+        "detailed": "Section 110.16(B) requires field-applied markings to be located so as to be clearly visible to qualified persons before examination, adjustment, servicing, or maintenance of the equipment.",
+        "how_to_find": "Go to 110.16(B) Field Markings."
+      },
+      "nec_reference": {"article": "110", "section": "110.16(B)"},
+      "zafto_links": [],
+      "tags": ["arc flash", "marking", "safety"],
+      "verified": true
+    },
+    {
+      "id": "GK-071",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["90"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "Explanatory material in the NEC appears in:",
+      "choices": [
+        {"id": "A", "text": "Bold text"},
+        {"id": "B", "text": "Informational Notes"},
+        {"id": "C", "text": "Italics throughout"},
+        {"id": "D", "text": "Red highlighted sections"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Explanatory material appears in Informational Notes, which are not enforceable requirements.",
+        "detailed": "Section 90.5(C) states that Informational Notes contain explanatory material such as references to other standards, information related to a Code rule, or cross-references. They are not requirements.",
+        "how_to_find": "Go to 90.5(C) Informational Notes."
+      },
+      "nec_reference": {"article": "90", "section": "90.5(C)"},
+      "zafto_links": [],
+      "tags": ["NEC format", "informational notes", "explanatory"],
+      "verified": true
+    },
+    {
+      "id": "GK-072",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["90"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "The NEC is updated and published on a cycle of:",
+      "choices": [
+        {"id": "A", "text": "Every year"},
+        {"id": "B", "text": "Every two years"},
+        {"id": "C", "text": "Every three years"},
+        {"id": "D", "text": "Every five years"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "The NEC is updated every three years (2020, 2023, 2026, etc.).",
+        "detailed": "The NEC follows a three-year revision cycle. Each edition is designated by its year of issue (2020, 2023, 2026, etc.). This allows time for proper review and updating of requirements.",
+        "how_to_find": "This is general NEC knowledge about the publication cycle."
+      },
+      "nec_reference": {"article": "90", "section": "General"},
+      "zafto_links": [],
+      "tags": ["NEC updates", "revision cycle", "publication"],
+      "verified": true
+    },
+    {
+      "id": "GK-073",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["90"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "The NEC is developed and published by:",
+      "choices": [
+        {"id": "A", "text": "The U.S. Department of Energy"},
+        {"id": "B", "text": "OSHA"},
+        {"id": "C", "text": "The National Fire Protection Association (NFPA)"},
+        {"id": "D", "text": "The Institute of Electrical and Electronics Engineers (IEEE)"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "The NEC is developed and published by the National Fire Protection Association (NFPA).",
+        "detailed": "The National Electrical Code (NEC) is NFPA 70 and is developed by the National Fire Protection Association through a consensus process involving electricians, engineers, manufacturers, inspectors, and others.",
+        "how_to_find": "See the title page of the NEC - NFPA 70."
+      },
+      "nec_reference": {"article": "90", "section": "General"},
+      "zafto_links": [],
+      "tags": ["NFPA", "NEC development", "standards"],
+      "verified": true
+    },
+    {
+      "id": "GK-074",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Per Article 100, 'Coordination (Selective)' is:",
+      "choices": [
+        {"id": "A", "text": "Matching colors of wire"},
+        {"id": "B", "text": "Localized overcurrent protection limiting an outage to the circuit affected"},
+        {"id": "C", "text": "Synchronizing generators"},
+        {"id": "D", "text": "Timing installation phases"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Selective coordination allows only the nearest upstream OCPD to open, limiting the outage to the affected circuit.",
+        "detailed": "Article 100 defines Coordination (Selective) as localization of an overcurrent condition to restrict outages to equipment affected, accomplished by the selection and installation of overcurrent protective devices.",
+        "how_to_find": "Look up 'Coordination (Selective)' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["definitions", "coordination", "overcurrent"],
+      "verified": true
+    },
+    {
+      "id": "GK-075",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "Per Article 100, 'Energized' means:",
+      "choices": [
+        {"id": "A", "text": "Connected to a circuit breaker"},
+        {"id": "B", "text": "Electrically connected to or having a source of voltage"},
+        {"id": "C", "text": "Having current flowing"},
+        {"id": "D", "text": "Switched on"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Energized means electrically connected to or is a source of voltage.",
+        "detailed": "Article 100 defines Energized as electrically connected to, or is, a source of voltage. This applies whether current is flowing or not.",
+        "how_to_find": "Look up 'Energized' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["definitions", "energized", "voltage"],
+      "verified": true
+    },
+    {
+      "id": "GK-076",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "According to Article 100, 'Equipment' is defined as:",
+      "choices": [
+        {"id": "A", "text": "Conductors only"},
+        {"id": "B", "text": "Devices only"},
+        {"id": "C", "text": "A general term including fittings, devices, appliances, luminaires, apparatus, machinery, and similar items"},
+        {"id": "D", "text": "Tools used for installation"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Equipment is a general term including devices, appliances, luminaires, apparatus, machinery, and similar items.",
+        "detailed": "Article 100 defines Equipment as a general term, including fittings, devices, appliances, luminaires, apparatus, machinery, and the like used as a part of, or in connection with, an electrical installation.",
+        "how_to_find": "Look up 'Equipment' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["definitions", "equipment", "general term"],
+      "verified": true
+    },
+    {
+      "id": "GK-077",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Per Article 100, 'Exposed' (as applied to live parts) means:",
+      "choices": [
+        {"id": "A", "text": "Located outdoors"},
+        {"id": "B", "text": "Capable of being inadvertently touched or approached closer than a safe distance"},
+        {"id": "C", "text": "Visible through a window"},
+        {"id": "D", "text": "Not covered by insulation"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Exposed live parts can be inadvertently touched or approached closer than a safe distance.",
+        "detailed": "Article 100 defines Exposed (as applied to live parts) as capable of being inadvertently touched or approached nearer than a safe distance by a person.",
+        "how_to_find": "Look up 'Exposed' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["definitions", "exposed", "live parts"],
+      "verified": true
+    },
+    {
+      "id": "GK-078",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "According to Article 100, 'Guarded' means:",
+      "choices": [
+        {"id": "A", "text": "Having a security guard nearby"},
+        {"id": "B", "text": "Covered, shielded, fenced, enclosed, or protected by barriers, covers, casings"},
+        {"id": "C", "text": "Behind a locked door"},
+        {"id": "D", "text": "Marked with warning signs"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Guarded means covered, shielded, fenced, enclosed, or otherwise protected by various means.",
+        "detailed": "Article 100 defines Guarded as covered, shielded, fenced, enclosed, or otherwise protected by means of suitable covers, casings, barriers, rails, screens, mats, or platforms to remove the likelihood of approach or contact.",
+        "how_to_find": "Look up 'Guarded' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["definitions", "guarded", "protection"],
+      "verified": true
+    },
+    {
+      "id": "GK-079",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "Per Article 100, a 'Luminaire' is:",
+      "choices": [
+        {"id": "A", "text": "A type of wire"},
+        {"id": "B", "text": "A complete lighting unit including components to distribute light"},
+        {"id": "C", "text": "A dimmer switch"},
+        {"id": "D", "text": "A light bulb only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A luminaire is a complete lighting unit with all components to position, connect, and distribute light.",
+        "detailed": "Article 100 defines Luminaire as a complete lighting unit consisting of a light source such as a lamp or lamps, together with the parts designed to position the light source and connect it to the power supply.",
+        "how_to_find": "Look up 'Luminaire' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["definitions", "luminaire", "lighting"],
+      "verified": true
+    },
+    {
+      "id": "GK-080",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "According to Article 100, 'Plenum' refers to:",
+      "choices": [
+        {"id": "A", "text": "A type of cable"},
+        {"id": "B", "text": "A compartment or chamber forming part of the air distribution system"},
+        {"id": "C", "text": "A junction box"},
+        {"id": "D", "text": "An outdoor enclosure"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A plenum is a compartment or chamber that forms part of the building air distribution system.",
+        "detailed": "Article 100 defines Plenum as a compartment or chamber to which one or more air ducts are connected and that forms part of the air distribution system.",
+        "how_to_find": "Look up 'Plenum' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["definitions", "plenum", "HVAC"],
+      "verified": true
+    },
+    {
+      "id": "GK-081",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "Per Article 100, 'Service' is defined as:",
+      "choices": [
+        {"id": "A", "text": "Work performed by an electrician"},
+        {"id": "B", "text": "The conductors and equipment connecting the serving utility to the premises wiring"},
+        {"id": "C", "text": "Monthly electrical billing"},
+        {"id": "D", "text": "Maintenance and repair"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Service is the conductors and equipment delivering electricity from the utility to the premises wiring.",
+        "detailed": "Article 100 defines Service as the conductors and equipment for delivering electric energy from the serving utility to the wiring system of the premises served.",
+        "how_to_find": "Look up 'Service' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [{"screen_id": "service_entrance_diagram", "relevance": "primary", "description": "Service components"}],
+      "tags": ["definitions", "service", "utility"],
+      "verified": true
+    },
+    {
+      "id": "GK-082",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "According to Article 100, 'Short-Circuit Current Rating' is:",
+      "choices": [
+        {"id": "A", "text": "The breaker trip setting"},
+        {"id": "B", "text": "The prospective current equipment can safely withstand at system voltage"},
+        {"id": "C", "text": "The maximum continuous current"},
+        {"id": "D", "text": "The wire ampacity"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "SCCR is the prospective fault current equipment can safely withstand under certain conditions.",
+        "detailed": "Article 100 defines Short-Circuit Current Rating (SCCR) as the prospective symmetrical fault current at a nominal voltage to which equipment can be connected without sustaining damage exceeding defined acceptance criteria.",
+        "how_to_find": "Look up 'Short-Circuit Current Rating' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["definitions", "SCCR", "fault current"],
+      "verified": true
+    },
+    {
+      "id": "GK-083",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "Per Article 100, a 'Switchboard' is:",
+      "choices": [
+        {"id": "A", "text": "A single circuit breaker"},
+        {"id": "B", "text": "A large single panel or assembly of panels with switches, buses, and instruments"},
+        {"id": "C", "text": "An outdoor disconnect"},
+        {"id": "D", "text": "A telephone control board"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A switchboard is a large single panel or assembly of panels with switches, overcurrent devices, buses, and instruments.",
+        "detailed": "Article 100 defines Switchboard as a large single panel, frame, or assembly of panels on which are mounted switches, overcurrent and other protective devices, buses, and usually instruments.",
+        "how_to_find": "Look up 'Switchboard' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["definitions", "switchboard", "equipment"],
+      "verified": true
+    },
+    {
+      "id": "GK-084",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "According to Article 100, 'Utilization Equipment' is:",
+      "choices": [
+        {"id": "A", "text": "Equipment that controls but doesn't use electricity"},
+        {"id": "B", "text": "Equipment that utilizes electric energy for mechanical, chemical, heating, lighting, or similar purposes"},
+        {"id": "C", "text": "Measurement devices"},
+        {"id": "D", "text": "Wiring methods"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Utilization equipment uses electric energy for mechanical, chemical, heating, lighting, or similar purposes.",
+        "detailed": "Article 100 defines Utilization Equipment as equipment that utilizes electric energy for electronic, electromechanical, chemical, heating, lighting, or similar purposes.",
+        "how_to_find": "Look up 'Utilization Equipment' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["definitions", "utilization equipment", "loads"],
+      "verified": true
+    },
+    {
+      "id": "GK-085",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Per Article 100, 'Weatherproof' means:",
+      "choices": [
+        {"id": "A", "text": "Completely watertight"},
+        {"id": "B", "text": "Constructed so that exposure to weather will not interfere with successful operation"},
+        {"id": "C", "text": "Painted with waterproof coating"},
+        {"id": "D", "text": "Made entirely of plastic"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Weatherproof equipment is constructed so exposure to weather won't interfere with successful operation.",
+        "detailed": "Article 100 defines Weatherproof as constructed or protected so that exposure to the weather will not interfere with successful operation. Weatherproof doesn't mean watertight.",
+        "how_to_find": "Look up 'Weatherproof' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["definitions", "weatherproof", "outdoor"],
+      "verified": true
+    },
+    {
+      "id": "GK-086",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["110"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Electrical equipment must be suitable for the:",
+      "choices": [
+        {"id": "A", "text": "Voltage rating only"},
+        {"id": "B", "text": "Future expected load"},
+        {"id": "C", "text": "Installation conditions and environment"},
+        {"id": "D", "text": "Electrician's preferences"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Equipment must be suitable for the conditions of installation and environmental conditions.",
+        "detailed": "Section 110.3(A) requires evaluation of equipment suitability for installation including voltage, current, current type, and conditions of use such as temperature, corrosive agents, and mechanical abuse.",
+        "how_to_find": "Go to 110.3(A) Examination, Identification, Installation, and Use."
+      },
+      "nec_reference": {"article": "110", "section": "110.3(A)"},
+      "zafto_links": [],
+      "tags": ["equipment", "suitability", "conditions"],
+      "verified": true
+    },
+    {
+      "id": "GK-087",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["110"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Conductors used in dry and damp locations shall have insulation rated for:",
+      "choices": [
+        {"id": "A", "text": "Wet locations"},
+        {"id": "B", "text": "At least dry locations"},
+        {"id": "C", "text": "Only the temperature expected"},
+        {"id": "D", "text": "Underground use"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Conductors in dry and damp locations need insulation rated for at least dry locations.",
+        "detailed": "Section 310.10(C) requires conductors used in dry and damp locations to be any type identified for such locations. Wet locations require wet-rated insulation.",
+        "how_to_find": "Go to 310.10(C) Wet Locations."
+      },
+      "nec_reference": {"article": "310", "section": "310.10(C)"},
+      "zafto_links": [],
+      "tags": ["conductor insulation", "locations", "wet dry damp"],
+      "verified": true
+    },
+    {
+      "id": "GK-088",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["90"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "The term 'approved' in the NEC means acceptable to the:",
+      "choices": [
+        {"id": "A", "text": "Manufacturer"},
+        {"id": "B", "text": "Authority Having Jurisdiction"},
+        {"id": "C", "text": "Property owner"},
+        {"id": "D", "text": "Installing electrician"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Approved means acceptable to the authority having jurisdiction (AHJ).",
+        "detailed": "Article 100 defines Approved as acceptable to the authority having jurisdiction. The AHJ has the responsibility for making interpretations and granting approval.",
+        "how_to_find": "Look up 'Approved' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["definitions", "approved", "AHJ"],
+      "verified": true
+    },
+    {
+      "id": "GK-089",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Per Article 100, a 'Panelboard' is:",
+      "choices": [
+        {"id": "A", "text": "A single circuit breaker"},
+        {"id": "B", "text": "A single panel with automatic overcurrent devices for light, heat, or power circuits"},
+        {"id": "C", "text": "The utility meter"},
+        {"id": "D", "text": "An outdoor disconnect"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A panelboard is a single panel with buses and automatic overcurrent devices for light, heat, or power circuits.",
+        "detailed": "Article 100 defines Panelboard as a single panel or group of panel units designed for assembly in a cabinet, including buses and automatic overcurrent devices, with or without switches.",
+        "how_to_find": "Look up 'Panelboard' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["definitions", "panelboard", "equipment"],
+      "verified": true
+    },
+    {
+      "id": "GK-090",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "According to Article 100, 'Premises Wiring' includes:",
+      "choices": [
+        {"id": "A", "text": "Only interior wiring"},
+        {"id": "B", "text": "Interior and exterior wiring from the service point or source of power"},
+        {"id": "C", "text": "Utility wiring"},
+        {"id": "D", "text": "Low-voltage wiring only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Premises wiring includes all interior and exterior wiring from the service point or power source.",
+        "detailed": "Article 100 defines Premises Wiring (System) as interior and exterior wiring, including power, lighting, control, and signal circuit wiring together with their hardware, fittings, and wiring devices.",
+        "how_to_find": "Look up 'Premises Wiring' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["definitions", "premises wiring", "system"],
+      "verified": true
+    },
+    {
+      "id": "GK-091",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["110"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Conductor connections shall be made using:",
+      "choices": [
+        {"id": "A", "text": "Any available method"},
+        {"id": "B", "text": "Pressure connectors, soldering, or other approved means"},
+        {"id": "C", "text": "Only wire nuts"},
+        {"id": "D", "text": "Tape only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Connections shall use pressure connectors, soldering/brazing/welding, or other approved means.",
+        "detailed": "Section 110.14(B) requires splices and joints to be made by approved methods such as pressure connectors, soldering, brazing, or welding with appropriate filler metals.",
+        "how_to_find": "Go to 110.14(B) Splices."
+      },
+      "nec_reference": {"article": "110", "section": "110.14(B)"},
+      "zafto_links": [],
+      "tags": ["connections", "splices", "methods"],
+      "verified": true
+    },
+    {
+      "id": "GK-092",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["110"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Arc-flash labeling is required on equipment in other than dwelling units likely to require:",
+      "choices": [
+        {"id": "A", "text": "Monthly maintenance"},
+        {"id": "B", "text": "Examination, adjustment, servicing, or maintenance while energized"},
+        {"id": "C", "text": "Annual inspection"},
+        {"id": "D", "text": "No labeling is required"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Arc-flash labels are required on equipment likely to be examined, adjusted, serviced, or maintained while energized.",
+        "detailed": "Section 110.16(A) requires service equipment, switchboards, switchgear, industrial control panels, and motor control centers in other than dwelling units to be field- or factory-marked with arc-flash labeling if likely to require maintenance while energized.",
+        "how_to_find": "Go to 110.16(A) Arc-Flash Hazard Warning."
+      },
+      "nec_reference": {"article": "110", "section": "110.16(A)"},
+      "zafto_links": [],
+      "tags": ["arc flash", "labeling", "safety"],
+      "verified": true
+    },
+    {
+      "id": "GK-093",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["90"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "Annex material in the NEC is:",
+      "choices": [
+        {"id": "A", "text": "Mandatory requirements"},
+        {"id": "B", "text": "Informational only and not part of requirements"},
+        {"id": "C", "text": "Local amendments"},
+        {"id": "D", "text": "OSHA regulations"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Annexes contain informational material that is not part of the enforceable requirements.",
+        "detailed": "Section 90.5 notes that material identified by the superscript letter 'x' includes text from another NFPA document. Annexes are informational only and not part of the requirements of the NEC.",
+        "how_to_find": "See 90.5 and the beginning of the Annexes."
+      },
+      "nec_reference": {"article": "90", "section": "90.5"},
+      "zafto_links": [],
+      "tags": ["NEC format", "annexes", "informational"],
+      "verified": true
+    },
+    {
+      "id": "GK-094",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["110"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Electrical equipment operating at over 1000V nominal must include what type of access?",
+      "choices": [
+        {"id": "A", "text": "Standard working clearances only"},
+        {"id": "B", "text": "Access limited to qualified persons only"},
+        {"id": "C", "text": "Open access for all"},
+        {"id": "D", "text": "Remote access only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "High-voltage equipment (over 1000V) must have access restricted to qualified persons.",
+        "detailed": "Section 110.34 covers working space requirements for over 1000V installations, requiring access to be limited to qualified persons by locked rooms, enclosed areas, or elevated platforms.",
+        "how_to_find": "Go to 110.34 Work Space and Guarding."
+      },
+      "nec_reference": {"article": "110", "section": "110.34"},
+      "zafto_links": [],
+      "tags": ["high voltage", "qualified persons", "access"],
+      "verified": true
+    },
+    {
+      "id": "GK-095",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["110"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Directory information identifying circuits in a panelboard shall be:",
+      "choices": [
+        {"id": "A", "text": "Written in pencil"},
+        {"id": "B", "text": "Legible and indicate the purpose or use of each circuit"},
+        {"id": "C", "text": "Color-coded only"},
+        {"id": "D", "text": "Kept in a separate location"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Circuit directories must be legible and identify the purpose or use of each circuit.",
+        "detailed": "Section 408.4 requires every circuit and modification to be legibly identified as to its clear, evident, and specific purpose or use. This identification shall be included in a circuit directory on the face or inside the panelboard door.",
+        "how_to_find": "Go to 408.4 Circuit Identification."
+      },
+      "nec_reference": {"article": "408", "section": "408.4"},
+      "zafto_links": [],
+      "tags": ["circuit directory", "identification", "panelboard"],
+      "verified": true
+    },
+    {
+      "id": "GK-096",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Per Article 100, 'Isolated' (as applied to location) means:",
+      "choices": [
+        {"id": "A", "text": "In a separate building"},
+        {"id": "B", "text": "Not readily accessible to persons unless special means of access are used"},
+        {"id": "C", "text": "Behind a locked door only"},
+        {"id": "D", "text": "Underground"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Isolated means not readily accessible to persons unless special means for access are used.",
+        "detailed": "Article 100 defines Isolated (as applied to location) as not readily accessible to persons unless special means for access are used.",
+        "how_to_find": "Look up 'Isolated' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["definitions", "isolated", "location"],
+      "verified": true
+    },
+    {
+      "id": "GK-097",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "According to Article 100, 'Conduit Body' is:",
+      "choices": [
+        {"id": "A", "text": "A straight section of conduit"},
+        {"id": "B", "text": "A separate portion of a conduit system providing access through removable covers"},
+        {"id": "C", "text": "A junction box"},
+        {"id": "D", "text": "A fitting"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A conduit body is a separate portion of a conduit system with removable covers for access to conductors.",
+        "detailed": "Article 100 defines Conduit Body as a separate portion of a conduit or tubing system that provides access through one or more removable covers to the interior of the system at a junction of two or more sections.",
+        "how_to_find": "Look up 'Conduit Body' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["definitions", "conduit body", "raceway"],
+      "verified": true
+    },
+    {
+      "id": "GK-098",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["100"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Per Article 100, a 'Controller' is:",
+      "choices": [
+        {"id": "A", "text": "A person who supervises electrical work"},
+        {"id": "B", "text": "A device or group of devices that serves to govern the electric power delivered to apparatus"},
+        {"id": "C", "text": "A testing meter"},
+        {"id": "D", "text": "A type of circuit breaker"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A controller governs the electric power delivered to the apparatus it controls.",
+        "detailed": "Article 100 defines Controller as a device or group of devices that serves to govern, in some predetermined manner, the electric power delivered to the apparatus to which it is connected.",
+        "how_to_find": "Look up 'Controller' in Article 100 Definitions."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["definitions", "controller", "control"],
+      "verified": true
+    },
+    {
+      "id": "GK-099",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["110"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "When more than one nominal voltage system exists in the same building, ungrounded conductors must be identified by:",
+      "choices": [
+        {"id": "A", "text": "Wire size only"},
+        {"id": "B", "text": "Phase or line and system designation at termination, connection, and splice points"},
+        {"id": "C", "text": "Manufacturer marking"},
+        {"id": "D", "text": "Nothing special is required"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "When multiple voltage systems exist, ungrounded conductors must be identified by system at termination points.",
+        "detailed": "Section 210.5(C) requires ungrounded conductors to be identified by phase or line and system at all termination, connection, and splice points when more than one nominal voltage system exists in the same building.",
+        "how_to_find": "Go to 210.5(C) Identification of Ungrounded Conductors."
+      },
+      "nec_reference": {"article": "210", "section": "210.5(C)"},
+      "zafto_links": [{"screen_id": "wire_color_code", "relevance": "primary", "description": "Wire identification"}],
+      "tags": ["conductor identification", "multiple voltages", "marking"],
+      "verified": true
+    },
+    {
+      "id": "GK-100",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "GK",
+      "topic_name": "General Knowledge",
+      "nec_articles": ["90"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "The NEC is intended to be suitable for mandatory adoption by governmental bodies exercising:",
+      "choices": [
+        {"id": "A", "text": "Federal authority only"},
+        {"id": "B", "text": "Legal jurisdiction over electrical installations"},
+        {"id": "C", "text": "State authority only"},
+        {"id": "D", "text": "Municipal authority only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "The NEC is intended for adoption by governmental bodies with legal jurisdiction over electrical installations.",
+        "detailed": "Section 90.4 states that the NEC is intended to be suitable for mandatory application by governmental bodies exercising legal jurisdiction over electrical installations and for use by insurance inspectors.",
+        "how_to_find": "Go to 90.4 Enforcement."
+      },
+      "nec_reference": {"article": "90", "section": "90.4"},
+      "zafto_links": [],
+      "tags": ["enforcement", "jurisdiction", "adoption"],
+      "verified": true
+    }
+  ]
+}

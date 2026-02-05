@@ -1,0 +1,362 @@
+{
+  "category": "Elevator Mechanic",
+  "subcategory": "Traction Elevator Systems",
+  "description": "Traction elevator components, operation, and maintenance",
+  "difficulty_distribution": {
+    "beginner": 8,
+    "intermediate": 10,
+    "advanced": 7
+  },
+  "questions": [
+    {
+      "id": "elev_trac_001",
+      "difficulty": "beginner",
+      "question": "What creates the driving force in a traction elevator?",
+      "options": [
+        "Hydraulic pressure",
+        "Friction between ropes and the drive sheave",
+        "Magnetic levitation",
+        "Chain drive"
+      ],
+      "correct_answer": 1,
+      "explanation": "Traction elevators work through friction (traction) between the hoisting ropes and grooves in the drive sheave. The motor turns the sheave to move the car and counterweight.",
+      "code_reference": "ASME A17.1, Section 2.15"
+    },
+    {
+      "id": "elev_trac_002",
+      "difficulty": "beginner",
+      "question": "What is the purpose of the counterweight in a traction elevator?",
+      "options": [
+        "To act as an emergency brake",
+        "To balance the car weight and reduce motor load",
+        "To control car speed",
+        "To provide backup power"
+      ],
+      "correct_answer": 1,
+      "explanation": "The counterweight balances the car weight plus approximately 40% of rated load, reducing the motor power needed and improving energy efficiency.",
+      "code_reference": "ASME A17.1, Section 2.16"
+    },
+    {
+      "id": "elev_trac_003",
+      "difficulty": "beginner",
+      "question": "What is the typical counterweight mass compared to the car?",
+      "options": [
+        "Equal to empty car weight",
+        "Car weight plus 40-50% of rated capacity",
+        "Double the car weight",
+        "Half the car weight"
+      ],
+      "correct_answer": 1,
+      "explanation": "Counterweight is typically set at car weight plus 40-50% of rated capacity. This minimizes motor power requirements across the range of loading conditions.",
+      "code_reference": "ASME A17.1, Section 2.16"
+    },
+    {
+      "id": "elev_trac_004",
+      "difficulty": "beginner",
+      "question": "What is the drive sheave?",
+      "options": [
+        "A safety device",
+        "A grooved wheel that hoisting ropes wrap around",
+        "An electrical component",
+        "A type of brake"
+      ],
+      "correct_answer": 1,
+      "explanation": "The drive sheave is the grooved wheel at the top of the hoistway connected to the motor. Rope friction in the grooves creates traction to move the car.",
+      "code_reference": "ASME A17.1, Section 2.15"
+    },
+    {
+      "id": "elev_trac_005",
+      "difficulty": "beginner",
+      "question": "In a 2:1 roping configuration, how does car travel relate to rope movement?",
+      "options": [
+        "Car moves same distance as rope",
+        "Car moves half the distance of rope at sheave",
+        "Car moves double the rope distance",
+        "No relationship"
+      ],
+      "correct_answer": 1,
+      "explanation": "In 2:1 roping, the car moves half the distance that the rope moves at the machine sheave. This doubles the lifting force but halves the speed.",
+      "code_reference": "ASME A17.1, Section 2.15"
+    },
+    {
+      "id": "elev_trac_006",
+      "difficulty": "beginner",
+      "question": "What is the purpose of the machine brake?",
+      "options": [
+        "To slow the car during normal operation",
+        "To hold the car when stopped and stop it in emergencies",
+        "To control door speed",
+        "To limit travel distance"
+      ],
+      "correct_answer": 1,
+      "explanation": "The machine brake holds the car stationary when stopped at floors and stops the car when power is removed. It's spring-applied, electrically released.",
+      "code_reference": "ASME A17.1, Section 2.24"
+    },
+    {
+      "id": "elev_trac_007",
+      "difficulty": "beginner",
+      "question": "What type of motor is commonly used in modern traction elevators?",
+      "options": [
+        "DC motor only",
+        "Single-phase induction motor",
+        "AC induction or permanent magnet motor with VFD",
+        "Universal motor"
+      ],
+      "correct_answer": 2,
+      "explanation": "Modern traction elevators typically use AC induction or permanent magnet motors controlled by variable frequency drives (VFDs) for smooth, efficient operation.",
+      "code_reference": "ASME A17.1, NEC 620"
+    },
+    {
+      "id": "elev_trac_008",
+      "difficulty": "beginner",
+      "question": "What guides the elevator car and counterweight in their travel?",
+      "options": [
+        "Cables",
+        "Guide rails",
+        "Hydraulic cylinders",
+        "Air pressure"
+      ],
+      "correct_answer": 1,
+      "explanation": "Steel guide rails run the full height of the hoistway. Guide shoes or rollers on the car and counterweight frames ride on these rails for smooth, controlled travel.",
+      "code_reference": "ASME A17.1, Section 2.4"
+    },
+    {
+      "id": "elev_trac_009",
+      "difficulty": "intermediate",
+      "question": "What is the purpose of compensation in high-rise traction elevators?",
+      "options": [
+        "To adjust motor speed",
+        "To compensate for varying rope weight at different positions",
+        "To balance door weight",
+        "To adjust lighting"
+      ],
+      "correct_answer": 1,
+      "explanation": "Compensation chains or ropes balance the varying weight of hoisting ropes as the car moves. Without compensation, the unbalanced rope weight affects system balance.",
+      "code_reference": "ASME A17.1, Section 2.15"
+    },
+    {
+      "id": "elev_trac_010",
+      "difficulty": "intermediate",
+      "question": "What is the minimum number of hoisting ropes required for traction elevators?",
+      "options": [
+        "2",
+        "3",
+        "4",
+        "6"
+      ],
+      "correct_answer": 1,
+      "explanation": "Traction elevators require a minimum of 3 hoisting ropes. Each rope must be capable of supporting 125% of the full load alone.",
+      "code_reference": "ASME A17.1, Section 2.20"
+    },
+    {
+      "id": "elev_trac_011",
+      "difficulty": "intermediate",
+      "question": "What is traction ratio and why is it important?",
+      "options": [
+        "Motor gear ratio",
+        "Ratio ensuring ropes grip sheave without slipping",
+        "Speed ratio between floors",
+        "Brake force ratio"
+      ],
+      "correct_answer": 1,
+      "explanation": "Traction ratio compares the tension on the car side vs. counterweight side of the ropes. It must be maintained to prevent rope slip on the drive sheave.",
+      "code_reference": "ASME A17.1, Section 2.15"
+    },
+    {
+      "id": "elev_trac_012",
+      "difficulty": "intermediate",
+      "question": "What happens if the hoisting ropes develop excessive slack on one side?",
+      "options": [
+        "Nothing, system continues normally",
+        "Slack rope device activates and stops the elevator",
+        "Motor speeds up",
+        "Doors lock"
+      ],
+      "correct_answer": 1,
+      "explanation": "A slack rope device (governor type) monitors rope tension and activates to stop the elevator if excessive slack develops, preventing unsafe operation.",
+      "code_reference": "ASME A17.1, Section 2.20"
+    },
+    {
+      "id": "elev_trac_013",
+      "difficulty": "intermediate",
+      "question": "What is the purpose of rope equalizers?",
+      "options": [
+        "To clean the ropes",
+        "To ensure equal tension in all hoisting ropes",
+        "To measure rope stretch",
+        "To connect ropes to the sheave"
+      ],
+      "correct_answer": 1,
+      "explanation": "Rope equalizers (hitches) at the car or counterweight allow individual rope adjustment to ensure all ropes carry equal load.",
+      "code_reference": "ASME A17.1, Section 2.20"
+    },
+    {
+      "id": "elev_trac_014",
+      "difficulty": "intermediate",
+      "question": "What is meant by 'machine room-less' (MRL) elevator?",
+      "options": [
+        "An elevator without a motor",
+        "An elevator with the machine located in the hoistway",
+        "A hydraulic elevator",
+        "An elevator without controls"
+      ],
+      "correct_answer": 1,
+      "explanation": "MRL elevators have compact machines mounted in the hoistway (typically at the top) instead of a separate machine room, saving building space.",
+      "code_reference": "ASME A17.1, Section 2.7"
+    },
+    {
+      "id": "elev_trac_015",
+      "difficulty": "intermediate",
+      "question": "What is regenerative braking in elevator systems?",
+      "options": [
+        "Using friction brakes more often",
+        "Converting kinetic energy back to electrical energy",
+        "Emergency braking system",
+        "Brake maintenance procedure"
+      ],
+      "correct_answer": 1,
+      "explanation": "Regenerative drives convert the car's kinetic energy back into electrical energy when the car is decelerating or when overhauling (light car going down, heavy car going up).",
+      "code_reference": "ASME A17.1, NEC 620"
+    },
+    {
+      "id": "elev_trac_016",
+      "difficulty": "intermediate",
+      "question": "What is the purpose of the deflector sheave?",
+      "options": [
+        "To provide emergency stopping",
+        "To redirect rope path from machine to car/counterweight",
+        "To measure rope speed",
+        "To tension the ropes"
+      ],
+      "correct_answer": 1,
+      "explanation": "Deflector (secondary) sheaves redirect the hoisting ropes from the drive sheave to the proper angles for the car and counterweight in the hoistway.",
+      "code_reference": "ASME A17.1, Section 2.15"
+    },
+    {
+      "id": "elev_trac_017",
+      "difficulty": "intermediate",
+      "question": "How often must hoisting ropes be inspected visually?",
+      "options": [
+        "Weekly",
+        "Monthly",
+        "Quarterly",
+        "Annually"
+      ],
+      "correct_answer": 1,
+      "explanation": "Hoisting ropes require monthly visual inspection for wear, broken wires, corrosion, and other damage. More frequent inspection may be needed based on usage.",
+      "code_reference": "ASME A17.1, Section 8.6"
+    },
+    {
+      "id": "elev_trac_018",
+      "difficulty": "intermediate",
+      "question": "What triggers rope replacement in traction elevators?",
+      "options": [
+        "After 5 years regardless of condition",
+        "When broken wire count or diameter reduction exceeds limits",
+        "When car speed decreases",
+        "When lubrication is needed"
+      ],
+      "correct_answer": 1,
+      "explanation": "Ropes must be replaced when broken wires per strand or per rope length exceed specified limits, or when rope diameter reduction indicates wear.",
+      "code_reference": "ASME A17.1, Section 8.6"
+    },
+    {
+      "id": "elev_trac_019",
+      "difficulty": "advanced",
+      "question": "How is rope traction calculated for a traction elevator?",
+      "options": [
+        "Motor horsepower divided by speed",
+        "Using rope tension ratios and coefficient of friction",
+        "Counterweight weight only",
+        "Car capacity only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Traction is calculated using the Euler formula: T1/T2 = e^(μα), where μ is friction coefficient and α is wrap angle. This determines if ropes will slip.",
+      "code_reference": "ASME A17.1, Engineering"
+    },
+    {
+      "id": "elev_trac_020",
+      "difficulty": "advanced",
+      "question": "What is the wrap angle on a traction drive sheave?",
+      "options": [
+        "90 degrees always",
+        "The angle of rope contact around the sheave",
+        "The angle of the grooves",
+        "Motor mounting angle"
+      ],
+      "correct_answer": 1,
+      "explanation": "Wrap angle is the total angle of rope contact around the drive sheave. Greater wrap angle increases traction but also increases rope bending stresses.",
+      "code_reference": "ASME A17.1, Engineering"
+    },
+    {
+      "id": "elev_trac_021",
+      "difficulty": "advanced",
+      "question": "What is the minimum rope safety factor for traction elevator hoisting ropes?",
+      "options": [
+        "3:1",
+        "5:1",
+        "7.6:1",
+        "10:1"
+      ],
+      "correct_answer": 2,
+      "explanation": "ASME A17.1 requires a minimum safety factor of 7.6 for hoisting ropes. This is calculated as rope breaking strength divided by maximum rope load.",
+      "code_reference": "ASME A17.1, Section 2.20"
+    },
+    {
+      "id": "elev_trac_022",
+      "difficulty": "advanced",
+      "question": "What is the effect of sheave groove undercutting on traction?",
+      "options": [
+        "No effect",
+        "Increases traction but reduces rope life",
+        "Decreases traction",
+        "Only affects noise"
+      ],
+      "correct_answer": 1,
+      "explanation": "Undercut grooves increase the effective friction coefficient and traction, but also increase rope pressure and wear rate. Groove profile must balance these factors.",
+      "code_reference": "ASME A17.1, Engineering"
+    },
+    {
+      "id": "elev_trac_023",
+      "difficulty": "advanced",
+      "question": "For a gearless traction machine, what is the typical motor speed relationship to car speed?",
+      "options": [
+        "Motor RPM equals car FPM",
+        "Direct drive - sheave speed equals motor speed",
+        "10:1 gear reduction",
+        "Variable based on load"
+      ],
+      "correct_answer": 1,
+      "explanation": "Gearless machines have the drive sheave directly coupled to the motor. Sheave RPM equals motor RPM, so motor speed controls car speed directly.",
+      "code_reference": "ASME A17.1, Section 2.15"
+    },
+    {
+      "id": "elev_trac_024",
+      "difficulty": "advanced",
+      "question": "What determines the rated speed of a traction elevator?",
+      "options": [
+        "Motor power only",
+        "Sheave diameter and motor RPM (for gearless) or gear ratio (for geared)",
+        "Rope diameter",
+        "Building height"
+      ],
+      "correct_answer": 1,
+      "explanation": "Car speed = (π × sheave diameter × motor RPM) / roping ratio. For geared machines, motor RPM is reduced by gear ratio. Larger sheaves increase speed.",
+      "code_reference": "ASME A17.1, Engineering"
+    },
+    {
+      "id": "elev_trac_025",
+      "difficulty": "advanced",
+      "question": "What is the purpose of rope data tagging?",
+      "options": [
+        "Aesthetic marking",
+        "To identify installation date and specifications for maintenance tracking",
+        "To color-code different elevators",
+        "Fire code requirement"
+      ],
+      "correct_answer": 1,
+      "explanation": "Rope data tags record installation date, rope specifications, and manufacturer. This information is essential for maintenance scheduling and replacement decisions.",
+      "code_reference": "ASME A17.1, Section 8.6"
+    }
+  ]
+}

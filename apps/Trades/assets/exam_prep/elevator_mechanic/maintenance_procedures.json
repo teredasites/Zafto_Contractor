@@ -1,0 +1,572 @@
+{
+  "category": "Elevator Mechanic",
+  "subcategory": "Maintenance Procedures",
+  "description": "Elevator maintenance, troubleshooting, and service procedures",
+  "difficulty_distribution": {
+    "beginner": 12,
+    "intermediate": 18,
+    "advanced": 10
+  },
+  "questions": [
+    {
+      "id": "elev_maint_001",
+      "difficulty": "beginner",
+      "question": "What is the first step before performing any elevator maintenance?",
+      "options": [
+        "Start testing immediately",
+        "Lock out/tag out the main disconnect and verify power is off",
+        "Open the controller",
+        "Go to the pit"
+      ],
+      "correct_answer": 1,
+      "explanation": "Lockout/tagout (LOTO) is required before maintenance to prevent unexpected energization. Always verify power is off before starting work.",
+      "code_reference": "OSHA 1910.147, ASME A17.1"
+    },
+    {
+      "id": "elev_maint_002",
+      "difficulty": "beginner",
+      "question": "What PPE is required for elevator maintenance?",
+      "options": [
+        "Hardhat only",
+        "Safety glasses, hard hat, safety shoes, and task-specific PPE",
+        "No PPE required",
+        "Gloves only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Basic PPE includes safety glasses, hard hat, safety-toe shoes. Additional PPE depends on specific tasks - gloves for oil, hearing protection for machine rooms.",
+      "code_reference": "OSHA Standards"
+    },
+    {
+      "id": "elev_maint_003",
+      "difficulty": "beginner",
+      "question": "How often should elevator machine room housekeeping be performed?",
+      "options": [
+        "Annually",
+        "Monthly or as needed to maintain cleanliness",
+        "Only during major repairs",
+        "Weekly"
+      ],
+      "correct_answer": 1,
+      "explanation": "Machine rooms should be kept clean and free of debris at all times. Housekeeping is part of regular maintenance visits.",
+      "code_reference": "ASME A17.1, Section 8.6"
+    },
+    {
+      "id": "elev_maint_004",
+      "difficulty": "beginner",
+      "question": "What is the purpose of a maintenance log?",
+      "options": [
+        "Legal requirement only",
+        "Document all maintenance, repairs, and tests performed",
+        "Track technician hours",
+        "Building security"
+      ],
+      "correct_answer": 1,
+      "explanation": "Maintenance logs document all work performed, findings, and test results. They're required by code and essential for tracking equipment history.",
+      "code_reference": "ASME A17.1, Section 8.6"
+    },
+    {
+      "id": "elev_maint_005",
+      "difficulty": "beginner",
+      "question": "What is preventive maintenance?",
+      "options": [
+        "Fixing things after they break",
+        "Scheduled maintenance to prevent failures before they occur",
+        "Emergency repairs",
+        "Modernization"
+      ],
+      "correct_answer": 1,
+      "explanation": "Preventive maintenance (PM) includes scheduled inspections, cleaning, lubrication, and adjustments to prevent breakdowns.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "elev_maint_006",
+      "difficulty": "beginner",
+      "question": "What should be checked during car top inspection?",
+      "options": [
+        "Only the car top rails",
+        "Ropes, sheaves, car top equipment, door operators, safety switches",
+        "Machine room only",
+        "Lobby buttons only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Car top inspection includes checking ropes, roller guides, door operators, car top switches, governor rope, and all accessible equipment.",
+      "code_reference": "ASME A17.1, Section 8.6"
+    },
+    {
+      "id": "elev_maint_007",
+      "difficulty": "beginner",
+      "question": "What is oil analysis for hydraulic elevators?",
+      "options": [
+        "Checking oil level only",
+        "Laboratory testing of oil for contamination, breakdown, and wear particles",
+        "Oil change",
+        "Visual inspection"
+      ],
+      "correct_answer": 1,
+      "explanation": "Oil analysis tests hydraulic oil for contamination, moisture, viscosity changes, and wear particles indicating component wear.",
+      "code_reference": "ASME A17.1, Section 8.6"
+    },
+    {
+      "id": "elev_maint_008",
+      "difficulty": "beginner",
+      "question": "How often should rope inspection be performed?",
+      "options": [
+        "Annually only",
+        "Monthly visual, with detailed inspection per schedule",
+        "Every 5 years",
+        "Only when problems occur"
+      ],
+      "correct_answer": 1,
+      "explanation": "Hoisting ropes require monthly visual inspection for broken wires, wear, and corrosion, with more detailed inspections per maintenance schedule.",
+      "code_reference": "ASME A17.1, Section 8.6"
+    },
+    {
+      "id": "elev_maint_009",
+      "difficulty": "beginner",
+      "question": "What is governor rope inspection?",
+      "options": [
+        "Checking the governor settings",
+        "Inspecting the rope connecting the car safety to the governor",
+        "Speed testing",
+        "Safety test"
+      ],
+      "correct_answer": 1,
+      "explanation": "Governor rope connects the car to the governor. It must be inspected for wear, broken wires, and proper tension.",
+      "code_reference": "ASME A17.1, Section 8.6"
+    },
+    {
+      "id": "elev_maint_010",
+      "difficulty": "beginner",
+      "question": "What pit inspection items are required?",
+      "options": [
+        "Cleanliness only",
+        "Buffers, switches, sump pump, lighting, ladder, and cleanliness",
+        "Counterweight only",
+        "Ropes only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Pit inspection includes buffers, safety switches, sump pump (if equipped), lighting, ladder condition, and general cleanliness/water intrusion.",
+      "code_reference": "ASME A17.1, Section 8.6"
+    },
+    {
+      "id": "elev_maint_011",
+      "difficulty": "beginner",
+      "question": "What is door operator maintenance?",
+      "options": [
+        "Adjusting only the speed",
+        "Inspection, lubrication, and adjustment of door operating mechanisms",
+        "Replacing motors only",
+        "Painting doors"
+      ],
+      "correct_answer": 1,
+      "explanation": "Door operator maintenance includes checking belts/chains, lubricating moving parts, adjusting speeds, checking door reopening devices.",
+      "code_reference": "ASME A17.1, Section 8.6"
+    },
+    {
+      "id": "elev_maint_012",
+      "difficulty": "beginner",
+      "question": "What is guide rail lubrication for?",
+      "options": [
+        "Preventing corrosion",
+        "Reducing friction for roller guides or providing safety contact for sliding guides",
+        "Cleaning",
+        "Painting"
+      ],
+      "correct_answer": 1,
+      "explanation": "Guide rails may need lubrication for sliding guide shoes. Roller guides generally don't require rail lubrication. Oilers maintain proper contact.",
+      "code_reference": "ASME A17.1, Section 8.6"
+    },
+    {
+      "id": "elev_maint_013",
+      "difficulty": "intermediate",
+      "question": "What is rope equalization?",
+      "options": [
+        "Making all ropes the same color",
+        "Adjusting rope tension so all ropes carry equal load",
+        "Replacing ropes evenly",
+        "Measuring rope diameter"
+      ],
+      "correct_answer": 1,
+      "explanation": "Rope equalization adjusts individual rope tensions at the hitch so all ropes share the load equally, preventing premature wear.",
+      "code_reference": "ASME A17.1, Section 8.6"
+    },
+    {
+      "id": "elev_maint_014",
+      "difficulty": "intermediate",
+      "question": "What causes premature rope wear?",
+      "options": [
+        "Only age",
+        "Unequal tension, sheave wear, poor alignment, lack of lubrication",
+        "Too much use",
+        "Passenger weight"
+      ],
+      "correct_answer": 1,
+      "explanation": "Rope wear is accelerated by unequal tension, worn sheave grooves, misalignment, inadequate lubrication, and environmental factors.",
+      "code_reference": "ASME A17.1, Section 8.6"
+    },
+    {
+      "id": "elev_maint_015",
+      "difficulty": "intermediate",
+      "question": "How is sheave groove wear measured?",
+      "options": [
+        "Visual inspection only",
+        "Using a groove gauge to measure depth and shape",
+        "Counting rope wraps",
+        "Measuring sheave diameter"
+      ],
+      "correct_answer": 1,
+      "explanation": "Sheave groove gauges measure groove depth and profile. Worn grooves accelerate rope wear and must be re-grooved or sheave replaced.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "elev_maint_016",
+      "difficulty": "intermediate",
+      "question": "What is the procedure when elevator is out of service?",
+      "options": [
+        "Leave door open",
+        "Place out of service sign, secure car, notify building management",
+        "Just turn off lights",
+        "Lock machine room only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Out of service procedures include signage, securing the car at a floor with doors closed, notifying management, and logging the status.",
+      "code_reference": "ASME A17.1"
+    },
+    {
+      "id": "elev_maint_017",
+      "difficulty": "intermediate",
+      "question": "What brake maintenance is required for traction elevators?",
+      "options": [
+        "Annual replacement",
+        "Regular adjustment, lining inspection, and testing",
+        "No maintenance needed",
+        "Lubrication only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Brakes require regular inspection of linings, adjustment for wear, testing of holding capability, and checking release clearance.",
+      "code_reference": "ASME A17.1, Section 8.6"
+    },
+    {
+      "id": "elev_maint_018",
+      "difficulty": "intermediate",
+      "question": "What is controller maintenance?",
+      "options": [
+        "Replacing the controller",
+        "Cleaning, checking connections, testing circuits, updating software",
+        "Programming only",
+        "Repainting"
+      ],
+      "correct_answer": 1,
+      "explanation": "Controller maintenance includes cleaning, tightening connections, checking contactors, testing safety circuits, and software updates.",
+      "code_reference": "ASME A17.1, Section 8.6"
+    },
+    {
+      "id": "elev_maint_019",
+      "difficulty": "intermediate",
+      "question": "How is door interlock operation verified?",
+      "options": [
+        "Visual check only",
+        "Testing that car cannot run unless door is closed and locked",
+        "Measuring gap",
+        "Checking paint"
+      ],
+      "correct_answer": 1,
+      "explanation": "Door interlock testing verifies the car cannot move unless hoistway doors are fully closed and electrically locked. Each door must be tested.",
+      "code_reference": "ASME A17.1, Section 8.6"
+    },
+    {
+      "id": "elev_maint_020",
+      "difficulty": "intermediate",
+      "question": "What is leveling adjustment?",
+      "options": [
+        "Making the building level",
+        "Adjusting control parameters so car stops at floor level",
+        "Adjusting rail alignment",
+        "Pit floor leveling"
+      ],
+      "correct_answer": 1,
+      "explanation": "Leveling adjustment ensures the car stops within the code-required tolerance of the landing sill (typically +/- 3/4 inch or better).",
+      "code_reference": "ASME A17.1, Section 8.6"
+    },
+    {
+      "id": "elev_maint_021",
+      "difficulty": "intermediate",
+      "question": "What causes elevator callbacks (shutdowns)?",
+      "options": [
+        "Normal operation",
+        "Safety device trips, component failures, or system faults",
+        "Too many passengers",
+        "Weather"
+      ],
+      "correct_answer": 1,
+      "explanation": "Callbacks occur when safety devices detect problems (door faults, leveling errors, safety chain opens) or components fail.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "elev_maint_022",
+      "difficulty": "intermediate",
+      "question": "What troubleshooting tool displays fault codes?",
+      "options": [
+        "Multimeter",
+        "Controller diagnostic display or diagnostic tool",
+        "Ammeter",
+        "Voltmeter"
+      ],
+      "correct_answer": 1,
+      "explanation": "Modern controllers have built-in diagnostics that display fault codes. Portable diagnostic tools can also connect to retrieve fault history.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "elev_maint_023",
+      "difficulty": "intermediate",
+      "question": "What is rope retirement criteria?",
+      "options": [
+        "Age only",
+        "Broken wire count, diameter reduction, and other damage criteria",
+        "Cost of replacement",
+        "Manufacturer recommendation only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Ropes are retired when broken wires exceed limits, diameter reduces beyond tolerance, or other damage (corrosion, distortion) is found.",
+      "code_reference": "ASME A17.1, Section 8.6"
+    },
+    {
+      "id": "elev_maint_024",
+      "difficulty": "intermediate",
+      "question": "How is hydraulic jack packing inspected?",
+      "options": [
+        "Pressure test",
+        "Checking for external oil leaks around the plunger",
+        "X-ray",
+        "Oil analysis"
+      ],
+      "correct_answer": 1,
+      "explanation": "Packing condition is assessed by checking for oil leaks around the plunger where it exits the cylinder. Leakage indicates packing wear.",
+      "code_reference": "ASME A17.1, Section 8.6"
+    },
+    {
+      "id": "elev_maint_025",
+      "difficulty": "advanced",
+      "question": "What is the Category 1 periodic test?",
+      "options": [
+        "Basic visual inspection",
+        "Annual test of car and counterweight safeties without tripping",
+        "Fire recall test",
+        "Door test"
+      ],
+      "correct_answer": 1,
+      "explanation": "Category 1 tests verify safety devices (governors, safeties) operate without actually engaging the safeties. Required annually.",
+      "code_reference": "ASME A17.1, Section 8.6.4"
+    },
+    {
+      "id": "elev_maint_026",
+      "difficulty": "advanced",
+      "question": "What is the Category 5 periodic test?",
+      "options": [
+        "Monthly inspection",
+        "Full-load safety test with safeties engaged on the rails",
+        "Hydraulic test",
+        "Electrical test"
+      ],
+      "correct_answer": 1,
+      "explanation": "Category 5 is a full-load safety test where safeties actually engage on the rails. Required every 5 years for traction elevators.",
+      "code_reference": "ASME A17.1, Section 8.6.4.20"
+    },
+    {
+      "id": "elev_maint_027",
+      "difficulty": "advanced",
+      "question": "How are firefighter's service features tested?",
+      "options": [
+        "Monthly test per building procedures",
+        "Simulating fire alarm and testing Phase I recall and Phase II operation",
+        "Only during inspections",
+        "Fire department tests only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Phase I (recall) and Phase II (manual operation) must be tested regularly by activating the fire alarm simulation and verifying proper operation.",
+      "code_reference": "ASME A17.1, Section 8.6"
+    },
+    {
+      "id": "elev_maint_028",
+      "difficulty": "advanced",
+      "question": "What is bearing inspection on traction machines?",
+      "options": [
+        "Visual check only",
+        "Checking for noise, vibration, temperature, and lubrication condition",
+        "Replacing bearings",
+        "Weighing bearings"
+      ],
+      "correct_answer": 1,
+      "explanation": "Bearing condition is assessed by checking for unusual noise, excessive vibration, elevated temperature, and proper lubrication.",
+      "code_reference": "ASME A17.1, Section 8.6"
+    },
+    {
+      "id": "elev_maint_029",
+      "difficulty": "advanced",
+      "question": "What is VFD maintenance?",
+      "options": [
+        "Replacement only",
+        "Filter cleaning, connection checking, parameter verification, cooling check",
+        "No maintenance needed",
+        "Software only"
+      ],
+      "correct_answer": 1,
+      "explanation": "VFD maintenance includes cleaning filters, checking connections, verifying parameters, checking cooling fans, and inspecting capacitors.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "elev_maint_030",
+      "difficulty": "advanced",
+      "question": "What is the purpose of emergency power testing?",
+      "options": [
+        "Testing the generator only",
+        "Verifying elevator operation on emergency power",
+        "Testing batteries",
+        "Testing lights"
+      ],
+      "correct_answer": 1,
+      "explanation": "Emergency power tests verify elevators designated for emergency operation actually function properly when running on generator power.",
+      "code_reference": "ASME A17.1, Section 8.6"
+    },
+    {
+      "id": "elev_maint_031",
+      "difficulty": "intermediate",
+      "question": "What is the traveling cable inspection?",
+      "options": [
+        "Checking for travel distance",
+        "Inspecting the flexible cable from car to hoistway for wear and damage",
+        "Speed cable check",
+        "Communication cable only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Traveling cables carry power and signals to the car. Inspection checks for wear, damage, proper support, and adequate length.",
+      "code_reference": "ASME A17.1, Section 8.6"
+    },
+    {
+      "id": "elev_maint_032",
+      "difficulty": "intermediate",
+      "question": "What are diagnostic codes used for?",
+      "options": [
+        "Programming elevators",
+        "Identifying faults and troubleshooting problems",
+        "Setting speeds",
+        "Testing only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Diagnostic codes identify specific faults (door issues, safety circuits, leveling problems) to help technicians troubleshoot efficiently.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "elev_maint_033",
+      "difficulty": "advanced",
+      "question": "What is condition-based maintenance?",
+      "options": [
+        "Scheduled maintenance",
+        "Maintenance based on actual equipment condition from monitoring data",
+        "Emergency repairs",
+        "Annual maintenance"
+      ],
+      "correct_answer": 1,
+      "explanation": "Condition-based maintenance uses monitoring data (vibration, temperature, usage) to schedule maintenance when actually needed.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "elev_maint_034",
+      "difficulty": "intermediate",
+      "question": "What buffer inspection is required?",
+      "options": [
+        "Painting only",
+        "Checking oil level (oil buffers), spring condition, and proper mounting",
+        "Replacement annually",
+        "No inspection needed"
+      ],
+      "correct_answer": 1,
+      "explanation": "Oil buffers require oil level and condition checks. Spring buffers need spring condition inspection. Both need mounting verification.",
+      "code_reference": "ASME A17.1, Section 8.6"
+    },
+    {
+      "id": "elev_maint_035",
+      "difficulty": "advanced",
+      "question": "What is the seismic switch test procedure?",
+      "options": [
+        "Shaking the building",
+        "Testing that the switch responds to specified G-force and shuts down elevator",
+        "Visual check only",
+        "No testing required"
+      ],
+      "correct_answer": 1,
+      "explanation": "Seismic switches are tested by inducing the trigger motion (or using test features) and verifying the elevator shuts down properly.",
+      "code_reference": "ASME A17.1, Section 8.6"
+    },
+    {
+      "id": "elev_maint_036",
+      "difficulty": "intermediate",
+      "question": "What is recall testing for?",
+      "options": [
+        "Memory testing",
+        "Verifying elevators return to designated floors on fire alarm or seismic event",
+        "Speed testing",
+        "Door testing"
+      ],
+      "correct_answer": 1,
+      "explanation": "Recall testing verifies that elevators properly return to the designated floor when fire alarm or seismic devices activate.",
+      "code_reference": "ASME A17.1, Section 8.6"
+    },
+    {
+      "id": "elev_maint_037",
+      "difficulty": "advanced",
+      "question": "What is the overspeed governor test?",
+      "options": [
+        "Running the elevator fast",
+        "Testing that governor trips at correct speed and activates safety",
+        "Governor oil change",
+        "Visual inspection"
+      ],
+      "correct_answer": 1,
+      "explanation": "Governor tests verify the governor trips at the correct overspeed and that it properly actuates the car safety device.",
+      "code_reference": "ASME A17.1, Section 8.6"
+    },
+    {
+      "id": "elev_maint_038",
+      "difficulty": "intermediate",
+      "question": "What is the emergency release test?",
+      "options": [
+        "Testing emergency stops",
+        "Verifying the ability to manually release brakes/operate elevator for rescue",
+        "Fire alarm test",
+        "Power test"
+      ],
+      "correct_answer": 1,
+      "explanation": "Emergency release tests verify that trained personnel can manually release brakes and move the car to rescue trapped passengers.",
+      "code_reference": "ASME A17.1, Section 8.6"
+    },
+    {
+      "id": "elev_maint_039",
+      "difficulty": "intermediate",
+      "question": "What documentation is required after completing tests?",
+      "options": [
+        "None",
+        "Test results, date, tester name, and any deficiencies in the maintenance log",
+        "Verbal report only",
+        "Email to building owner"
+      ],
+      "correct_answer": 1,
+      "explanation": "Test documentation must include date, test performed, results (pass/fail), tester identification, and corrective actions needed.",
+      "code_reference": "ASME A17.1, Section 8.6"
+    },
+    {
+      "id": "elev_maint_040",
+      "difficulty": "advanced",
+      "question": "What is modernization assessment?",
+      "options": [
+        "Replacing light fixtures",
+        "Evaluating equipment for upgrade or replacement to improve performance/safety",
+        "Painting the cab",
+        "Floor replacement"
+      ],
+      "correct_answer": 1,
+      "explanation": "Modernization assessment evaluates whether controllers, machines, doors, or fixtures should be upgraded for improved performance, reliability, or code compliance.",
+      "code_reference": "Industry Standard"
+    }
+  ]
+}

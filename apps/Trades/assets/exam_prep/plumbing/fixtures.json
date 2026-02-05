@@ -1,0 +1,3487 @@
+{
+  "topic_id": "FX",
+  "topic_name": "Fixtures",
+  "code_version": "IPC 2021",
+  "questions": [
+    {
+      "id": "FX-001",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["402"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the maximum water consumption for a toilet manufactured after January 1, 2014?",
+      "choices": [
+        {"id": "A", "text": "1.0 gallon per flush"},
+        {"id": "B", "text": "1.28 gallons per flush"},
+        {"id": "C", "text": "1.6 gallons per flush"},
+        {"id": "D", "text": "3.5 gallons per flush"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "WaterSense toilets are limited to 1.28 gpf maximum.",
+        "detailed": "Per IPC Section 402.4 and federal standards, water closets manufactured after 2014 shall have a maximum flush volume of 1.28 gallons per flush (WaterSense labeled).",
+        "how_to_find": "Reference IPC Section 402.4 and EPA WaterSense requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "402.4"},
+      "zafto_links": [],
+      "tags": ["water closet", "water consumption", "1.28 gpf"],
+      "verified": true
+    },
+    {
+      "id": "FX-002",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["402"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the maximum flow rate for a lavatory faucet?",
+      "choices": [
+        {"id": "A", "text": "1.5 gpm"},
+        {"id": "B", "text": "2.0 gpm"},
+        {"id": "C", "text": "2.2 gpm"},
+        {"id": "D", "text": "2.5 gpm"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Lavatory faucets are limited to 2.2 gpm maximum.",
+        "detailed": "Per IPC Section 402.4, lavatory faucets shall have a maximum flow rate of 2.2 gallons per minute at 60 psi.",
+        "how_to_find": "Reference IPC Section 402.4 for faucet flow rates."
+      },
+      "code_reference": {"code": "IPC", "section": "402.4"},
+      "zafto_links": [],
+      "tags": ["lavatory", "faucet", "flow rate", "2.2 gpm"],
+      "verified": true
+    },
+    {
+      "id": "FX-003",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["402"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the maximum flow rate for a showerhead?",
+      "choices": [
+        {"id": "A", "text": "2.0 gpm"},
+        {"id": "B", "text": "2.5 gpm"},
+        {"id": "C", "text": "3.0 gpm"},
+        {"id": "D", "text": "3.5 gpm"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Showerheads are limited to 2.5 gpm maximum.",
+        "detailed": "Per IPC Section 402.4, showerheads shall have a maximum flow rate of 2.5 gallons per minute at 80 psi.",
+        "how_to_find": "Reference IPC Section 402.4 for showerhead flow rates."
+      },
+      "code_reference": {"code": "IPC", "section": "402.4"},
+      "zafto_links": [],
+      "tags": ["showerhead", "flow rate", "2.5 gpm"],
+      "verified": true
+    },
+    {
+      "id": "FX-004",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["402"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the maximum flow rate for a kitchen faucet?",
+      "choices": [
+        {"id": "A", "text": "1.8 gpm"},
+        {"id": "B", "text": "2.0 gpm"},
+        {"id": "C", "text": "2.2 gpm"},
+        {"id": "D", "text": "2.5 gpm"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Kitchen faucets are limited to 2.2 gpm maximum.",
+        "detailed": "Per IPC Section 402.4, kitchen faucets shall have a maximum flow rate of 2.2 gallons per minute at 60 psi.",
+        "how_to_find": "Reference IPC Section 402.4 for kitchen faucet flow rates."
+      },
+      "code_reference": {"code": "IPC", "section": "402.4"},
+      "zafto_links": [],
+      "tags": ["kitchen faucet", "flow rate", "2.2 gpm"],
+      "verified": true
+    },
+    {
+      "id": "FX-005",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["402"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum water consumption for a urinal?",
+      "choices": [
+        {"id": "A", "text": "0.5 gallon per flush"},
+        {"id": "B", "text": "1.0 gallon per flush"},
+        {"id": "C", "text": "1.5 gallons per flush"},
+        {"id": "D", "text": "2.0 gallons per flush"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Urinals are limited to 0.5 gpf maximum.",
+        "detailed": "Per IPC Section 402.4, urinals shall have a maximum flush volume of 0.5 gallons per flush. Waterless urinals are also permitted.",
+        "how_to_find": "Reference IPC Section 402.4 for urinal water consumption."
+      },
+      "code_reference": {"code": "IPC", "section": "402.4"},
+      "zafto_links": [],
+      "tags": ["urinal", "water consumption", "0.5 gpf"],
+      "verified": true
+    },
+    {
+      "id": "FX-006",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["405"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum number of water closets required for a public assembly with 150 occupants (equal male/female)?",
+      "choices": [
+        {"id": "A", "text": "2 male, 2 female"},
+        {"id": "B", "text": "2 male, 4 female"},
+        {"id": "C", "text": "3 male, 3 female"},
+        {"id": "D", "text": "Based on IPC Table 403.1"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Fixture counts are determined by IPC Table 403.1.",
+        "detailed": "Per IPC Section 403.1, the minimum number of plumbing fixtures is determined by Table 403.1 based on occupancy type and occupant load. Assembly occupancies have specific ratios.",
+        "how_to_find": "Reference IPC Table 403.1 for minimum fixture requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 403.1"},
+      "zafto_links": [],
+      "tags": ["fixture count", "public assembly", "Table 403.1"],
+      "verified": true
+    },
+    {
+      "id": "FX-007",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["404"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum clear floor space required in front of a water closet for accessibility?",
+      "choices": [
+        {"id": "A", "text": "30 inches × 48 inches"},
+        {"id": "B", "text": "48 inches × 48 inches"},
+        {"id": "C", "text": "60 inches × 56 inches"},
+        {"id": "D", "text": "Per ICC A117.1"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Accessible fixture clearances are per ICC A117.1.",
+        "detailed": "Per IPC Section 404.1, accessible fixtures shall comply with ICC A117.1 Accessible and Usable Buildings and Facilities. This standard specifies required clearances.",
+        "how_to_find": "Reference IPC Section 404 and ICC A117.1 for accessibility."
+      },
+      "code_reference": {"code": "IPC", "section": "404.1"},
+      "zafto_links": [],
+      "tags": ["accessibility", "clearance", "ICC A117.1"],
+      "verified": true
+    },
+    {
+      "id": "FX-008",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["405"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the standard height for a residential water closet seat?",
+      "choices": [
+        {"id": "A", "text": "14 to 15 inches"},
+        {"id": "B", "text": "15 to 17 inches"},
+        {"id": "C", "text": "17 to 19 inches"},
+        {"id": "D", "text": "No standard requirement"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Standard residential WC seat height is 15-17 inches.",
+        "detailed": "Standard residential water closet seat height is typically 15 to 17 inches from floor to top of seat. Comfort height/ADA toilets are 17-19 inches.",
+        "how_to_find": "Reference fixture manufacturer specifications and accessibility standards."
+      },
+      "code_reference": {"code": "IPC", "section": "405"},
+      "zafto_links": [],
+      "tags": ["water closet", "seat height", "residential"],
+      "verified": true
+    },
+    {
+      "id": "FX-009",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["407"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum width for a residential shower compartment?",
+      "choices": [
+        {"id": "A", "text": "30 inches"},
+        {"id": "B", "text": "32 inches"},
+        {"id": "C", "text": "36 inches"},
+        {"id": "D", "text": "No minimum specified"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Minimum shower width is 30 inches.",
+        "detailed": "Per IPC Section 407.4, shower compartments shall have a minimum interior dimension of 30 inches in any direction.",
+        "how_to_find": "Reference IPC Section 407.4 for shower dimensions."
+      },
+      "code_reference": {"code": "IPC", "section": "407.4"},
+      "zafto_links": [],
+      "tags": ["shower", "minimum dimension", "30 inches"],
+      "verified": true
+    },
+    {
+      "id": "FX-010",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["407"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum floor area for a shower compartment?",
+      "choices": [
+        {"id": "A", "text": "900 square inches"},
+        {"id": "B", "text": "1024 square inches"},
+        {"id": "C", "text": "1296 square inches"},
+        {"id": "D", "text": "No minimum specified"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Minimum shower floor area is 900 square inches.",
+        "detailed": "Per IPC Section 407.4, shower compartments shall have a minimum finished interior floor area of 900 square inches (30\" × 30\" minimum).",
+        "how_to_find": "Reference IPC Section 407.4 for shower floor area."
+      },
+      "code_reference": {"code": "IPC", "section": "407.4"},
+      "zafto_links": [],
+      "tags": ["shower", "floor area", "900 sq in"],
+      "verified": true
+    },
+    {
+      "id": "FX-011",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["417"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum hot water temperature at a public lavatory?",
+      "choices": [
+        {"id": "A", "text": "100°F"},
+        {"id": "B", "text": "110°F"},
+        {"id": "C", "text": "120°F"},
+        {"id": "D", "text": "140°F"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Public lavatories limited to 110°F maximum.",
+        "detailed": "Per IPC Section 417.4, the hot water supplied to public lavatories shall be tempered to a maximum of 110°F to prevent scalding.",
+        "how_to_find": "Reference IPC Section 417.4 for tempered water requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "417.4"},
+      "zafto_links": [],
+      "tags": ["tempered water", "public lavatory", "110°F"],
+      "verified": true
+    },
+    {
+      "id": "FX-012",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["424"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What maximum temperature is allowed for shower/bathtub water in all occupancies?",
+      "choices": [
+        {"id": "A", "text": "110°F"},
+        {"id": "B", "text": "120°F"},
+        {"id": "C", "text": "140°F"},
+        {"id": "D", "text": "No limit with mixing valve"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Shower/tub outlets limited to 120°F maximum.",
+        "detailed": "Per IPC Section 424.3, the maximum hot water temperature at shower and bathtub outlets shall be 120°F. This requires thermostatic or pressure-balanced mixing valves.",
+        "how_to_find": "Reference IPC Section 424.3 for shower/tub temperature limits."
+      },
+      "code_reference": {"code": "IPC", "section": "424.3"},
+      "zafto_links": [],
+      "tags": ["shower", "bathtub", "temperature limit", "120°F"],
+      "verified": true
+    },
+    {
+      "id": "FX-013",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["424"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What type of valve is required for shower and bathtub faucets?",
+      "choices": [
+        {"id": "A", "text": "Gate valve"},
+        {"id": "B", "text": "Pressure-balanced or thermostatic mixing valve"},
+        {"id": "C", "text": "Ball valve"},
+        {"id": "D", "text": "Any approved valve"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Showers/tubs require pressure-balanced or thermostatic valves.",
+        "detailed": "Per IPC Section 424.3, shower and bathtub valves shall be pressure-balanced, thermostatic, or combination pressure-balanced/thermostatic to prevent scalding from pressure changes.",
+        "how_to_find": "Reference IPC Section 424.3 for shower valve requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "424.3"},
+      "zafto_links": [],
+      "tags": ["shower valve", "pressure-balanced", "thermostatic"],
+      "verified": true
+    },
+    {
+      "id": "FX-014",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["408"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum required depth for a bathtub?",
+      "choices": [
+        {"id": "A", "text": "12 inches"},
+        {"id": "B", "text": "14 inches"},
+        {"id": "C", "text": "No minimum specified"},
+        {"id": "D", "text": "15 inches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "No minimum bathtub depth is specified in IPC.",
+        "detailed": "The IPC does not specify a minimum bathtub depth. Bathtub dimensions are determined by manufacturer standards and accessibility requirements where applicable.",
+        "how_to_find": "Reference IPC Section 408 for bathtub requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "408"},
+      "zafto_links": [],
+      "tags": ["bathtub", "depth", "no minimum"],
+      "verified": true
+    },
+    {
+      "id": "FX-015",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["406"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum clearance required in front of a lavatory?",
+      "choices": [
+        {"id": "A", "text": "18 inches"},
+        {"id": "B", "text": "21 inches"},
+        {"id": "C", "text": "24 inches"},
+        {"id": "D", "text": "No minimum specified"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Minimum 21-inch clearance in front of lavatory.",
+        "detailed": "Per IPC Section 405.3.1, a minimum clearance of 21 inches shall be provided in front of a lavatory to the nearest obstruction.",
+        "how_to_find": "Reference IPC Section 405.3.1 for lavatory clearance."
+      },
+      "code_reference": {"code": "IPC", "section": "405.3.1"},
+      "zafto_links": [],
+      "tags": ["lavatory", "clearance", "21 inches"],
+      "verified": true
+    },
+    {
+      "id": "FX-016",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["405"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum clearance required in front of a water closet?",
+      "choices": [
+        {"id": "A", "text": "15 inches"},
+        {"id": "B", "text": "18 inches"},
+        {"id": "C", "text": "21 inches"},
+        {"id": "D", "text": "24 inches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Minimum 21-inch clearance in front of water closet.",
+        "detailed": "Per IPC Section 405.3.1, a minimum clearance of 21 inches shall be provided in front of a water closet to the nearest wall or fixture.",
+        "how_to_find": "Reference IPC Section 405.3.1 for WC clearance."
+      },
+      "code_reference": {"code": "IPC", "section": "405.3.1"},
+      "zafto_links": [],
+      "tags": ["water closet", "clearance", "21 inches"],
+      "verified": true
+    },
+    {
+      "id": "FX-017",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["405"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum distance from the center of a water closet to a side wall?",
+      "choices": [
+        {"id": "A", "text": "12 inches"},
+        {"id": "B", "text": "15 inches"},
+        {"id": "C", "text": "18 inches"},
+        {"id": "D", "text": "21 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Minimum 15 inches from WC centerline to side wall.",
+        "detailed": "Per IPC Section 405.3.1, the centerline of a water closet shall be a minimum of 15 inches from an adjacent wall or obstruction.",
+        "how_to_find": "Reference IPC Section 405.3.1 for WC side clearance."
+      },
+      "code_reference": {"code": "IPC", "section": "405.3.1"},
+      "zafto_links": [],
+      "tags": ["water closet", "side clearance", "15 inches"],
+      "verified": true
+    },
+    {
+      "id": "FX-018",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["410"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum height for a drinking fountain spout?",
+      "choices": [
+        {"id": "A", "text": "32 inches"},
+        {"id": "B", "text": "36 inches"},
+        {"id": "C", "text": "38 inches"},
+        {"id": "D", "text": "Per accessibility standards"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Drinking fountain height per accessibility standards.",
+        "detailed": "Per IPC Section 410.1, drinking fountains shall comply with accessibility requirements of ICC A117.1 which specifies maximum spout heights for accessible and standard fountains.",
+        "how_to_find": "Reference IPC Section 410 and ICC A117.1 for drinking fountain heights."
+      },
+      "code_reference": {"code": "IPC", "section": "410.1"},
+      "zafto_links": [],
+      "tags": ["drinking fountain", "height", "accessibility"],
+      "verified": true
+    },
+    {
+      "id": "FX-019",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["411"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Where must an emergency eyewash/shower be located?",
+      "choices": [
+        {"id": "A", "text": "Anywhere in the building"},
+        {"id": "B", "text": "Within 10 seconds travel time from hazard"},
+        {"id": "C", "text": "In the nearest restroom"},
+        {"id": "D", "text": "At building entrance"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Emergency fixtures within 10 seconds travel of hazard.",
+        "detailed": "Per ANSI Z358.1 and IPC Section 411, emergency eyewash and shower equipment shall be located within 10 seconds travel time (approximately 55 feet) from hazardous areas.",
+        "how_to_find": "Reference IPC Section 411 and ANSI Z358.1 for emergency fixture locations."
+      },
+      "code_reference": {"code": "IPC", "section": "411.1"},
+      "zafto_links": [],
+      "tags": ["emergency eyewash", "shower", "10 seconds"],
+      "verified": true
+    },
+    {
+      "id": "FX-020",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["411"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the required tepid water temperature range for emergency eyewash/shower?",
+      "choices": [
+        {"id": "A", "text": "60°F to 80°F"},
+        {"id": "B", "text": "60°F to 100°F"},
+        {"id": "C", "text": "70°F to 100°F"},
+        {"id": "D", "text": "Ambient temperature"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Emergency fixtures require 60°F to 100°F tepid water.",
+        "detailed": "Per ANSI Z358.1, tepid water for emergency eyewash and showers shall be between 60°F and 100°F (16°C to 38°C) to prevent hypothermia during the required 15-minute flush.",
+        "how_to_find": "Reference ANSI Z358.1 for emergency fixture water temperature."
+      },
+      "code_reference": {"code": "IPC", "section": "411.1"},
+      "zafto_links": [],
+      "tags": ["emergency eyewash", "tepid water", "60-100°F"],
+      "verified": true
+    },
+    {
+      "id": "FX-021",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["412"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum drain size for a floor drain?",
+      "choices": [
+        {"id": "A", "text": "1-1/2 inches"},
+        {"id": "B", "text": "2 inches"},
+        {"id": "C", "text": "3 inches"},
+        {"id": "D", "text": "4 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Floor drains require minimum 2-inch drain.",
+        "detailed": "Per IPC Table 709.1, floor drains require a minimum 2-inch drain size.",
+        "how_to_find": "Reference IPC Table 709.1 for floor drain sizing."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 709.1"},
+      "zafto_links": [],
+      "tags": ["floor drain", "drain size", "2-inch"],
+      "verified": true
+    },
+    {
+      "id": "FX-022",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["412"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Where are floor drains required by code?",
+      "choices": [
+        {"id": "A", "text": "All bathrooms"},
+        {"id": "B", "text": "Where fixtures discharge by indirect waste"},
+        {"id": "C", "text": "Commercial kitchens and mechanical rooms"},
+        {"id": "D", "text": "Based on occupancy type and local requirements"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Floor drain requirements vary by occupancy and local codes.",
+        "detailed": "Per IPC Section 412.1, floor drains are required in specific locations such as commercial kitchens, mechanical rooms, and where indirect waste is discharged. Local amendments may add requirements.",
+        "how_to_find": "Reference IPC Section 412 and local amendments for floor drain requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "412.1"},
+      "zafto_links": [],
+      "tags": ["floor drain", "required locations", "occupancy"],
+      "verified": true
+    },
+    {
+      "id": "FX-023",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["413"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What backflow prevention is required for a garbage disposal?",
+      "choices": [
+        {"id": "A", "text": "Air gap"},
+        {"id": "B", "text": "Vacuum breaker"},
+        {"id": "C", "text": "No specific requirement"},
+        {"id": "D", "text": "Check valve"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "No specific backflow device required for garbage disposal.",
+        "detailed": "Garbage disposals connect directly to the drainage system and do not require backflow prevention as they are not connected to potable water supply through a submerged inlet.",
+        "how_to_find": "Reference IPC Section 413 for food waste disposer requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "413"},
+      "zafto_links": [],
+      "tags": ["garbage disposal", "backflow", "no requirement"],
+      "verified": true
+    },
+    {
+      "id": "FX-024",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["416"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What backflow prevention is required for a handheld shower connected to a tub spout diverter?",
+      "choices": [
+        {"id": "A", "text": "None if above flood level rim"},
+        {"id": "B", "text": "Vacuum breaker"},
+        {"id": "C", "text": "Air gap"},
+        {"id": "D", "text": "Check valve"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Handheld showers require vacuum breaker protection.",
+        "detailed": "Per IPC Section 424.4, handheld showers shall have a vacuum breaker or other approved backflow prevention device because they can be submerged below the flood level rim.",
+        "how_to_find": "Reference IPC Section 424.4 for handheld shower backflow."
+      },
+      "code_reference": {"code": "IPC", "section": "424.4"},
+      "zafto_links": [],
+      "tags": ["handheld shower", "vacuum breaker", "backflow"],
+      "verified": true
+    },
+    {
+      "id": "FX-025",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["419"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum trap size for a residential kitchen sink?",
+      "choices": [
+        {"id": "A", "text": "1-1/4 inches"},
+        {"id": "B", "text": "1-1/2 inches"},
+        {"id": "C", "text": "2 inches"},
+        {"id": "D", "text": "Based on fixture outlet size"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Kitchen sinks require minimum 1-1/2 inch trap.",
+        "detailed": "Per IPC Table 709.1, residential kitchen sinks require a minimum 1-1/2 inch trap and drain size.",
+        "how_to_find": "Reference IPC Table 709.1 for kitchen sink trap size."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 709.1"},
+      "zafto_links": [],
+      "tags": ["kitchen sink", "trap size", "1-1/2 inch"],
+      "verified": true
+    },
+    {
+      "id": "FX-026",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["420"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the minimum drain size for a service/mop sink?",
+      "choices": [
+        {"id": "A", "text": "1-1/2 inches"},
+        {"id": "B", "text": "2 inches"},
+        {"id": "C", "text": "3 inches"},
+        {"id": "D", "text": "4 inches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Service/mop sinks require minimum 3-inch drain.",
+        "detailed": "Per IPC Table 709.1, service sinks and mop basins require a minimum 3-inch trap and drain size due to potential for debris.",
+        "how_to_find": "Reference IPC Table 709.1 for service sink sizing."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 709.1"},
+      "zafto_links": [],
+      "tags": ["service sink", "mop sink", "3-inch drain"],
+      "verified": true
+    },
+    {
+      "id": "FX-027",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["405"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum floor-to-rim height for a wall-hung urinal?",
+      "choices": [
+        {"id": "A", "text": "12 inches"},
+        {"id": "B", "text": "17 inches maximum"},
+        {"id": "C", "text": "24 inches"},
+        {"id": "D", "text": "No minimum for standard urinals"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "No minimum height for standard wall-hung urinals.",
+        "detailed": "The IPC does not specify a minimum mounting height for standard urinals. Accessible urinals must have elongated rim at maximum 17 inches per ICC A117.1.",
+        "how_to_find": "Reference IPC Section 405 and ICC A117.1 for urinal heights."
+      },
+      "code_reference": {"code": "IPC", "section": "405"},
+      "zafto_links": [],
+      "tags": ["urinal", "mounting height", "no minimum"],
+      "verified": true
+    },
+    {
+      "id": "FX-028",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["421"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Are waterless urinals permitted by code?",
+      "choices": [
+        {"id": "A", "text": "No, all urinals must flush"},
+        {"id": "B", "text": "Yes, with proper maintenance plan"},
+        {"id": "C", "text": "Only in non-public areas"},
+        {"id": "D", "text": "Only with special approval"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Waterless urinals are permitted with maintenance plan.",
+        "detailed": "Per IPC Section 421.1, waterless (nonwater) urinals are permitted and shall conform to ASME A112.19.19 and be maintained per manufacturer's instructions.",
+        "how_to_find": "Reference IPC Section 421 for waterless urinal requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "421.1"},
+      "zafto_links": [],
+      "tags": ["waterless urinal", "permitted", "maintenance"],
+      "verified": true
+    },
+    {
+      "id": "FX-029",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["422"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the minimum water supply flow rate for a flushometer valve water closet?",
+      "choices": [
+        {"id": "A", "text": "15 gpm"},
+        {"id": "B", "text": "25 gpm"},
+        {"id": "C", "text": "35 gpm"},
+        {"id": "D", "text": "Per manufacturer requirements"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Flushometer WC requires minimum 25 gpm flow rate.",
+        "detailed": "Per IPC Table 604.3, a flushometer valve for a water closet requires a minimum flow rate of 25 gpm at the required minimum pressure.",
+        "how_to_find": "Reference IPC Table 604.3 for fixture flow rates."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 604.3"},
+      "zafto_links": [],
+      "tags": ["flushometer", "flow rate", "25 gpm"],
+      "verified": true
+    },
+    {
+      "id": "FX-030",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["422"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the minimum water supply pressure for a flushometer valve water closet?",
+      "choices": [
+        {"id": "A", "text": "8 psi"},
+        {"id": "B", "text": "15 psi"},
+        {"id": "C", "text": "25 psi"},
+        {"id": "D", "text": "Per manufacturer specifications"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Flushometer WC requires minimum 25 psi pressure.",
+        "detailed": "Per IPC Table 604.3, flushometer valves for water closets require a minimum water supply pressure of 25 psi to operate properly.",
+        "how_to_find": "Reference IPC Table 604.3 for flushometer pressure requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 604.3"},
+      "zafto_links": [],
+      "tags": ["flushometer", "pressure", "25 psi"],
+      "verified": true
+    },
+    {
+      "id": "FX-031",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["403"],
+      "code_tables": ["403.1"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "How is occupant load calculated for determining minimum fixture requirements?",
+      "choices": [
+        {"id": "A", "text": "Building square footage only"},
+        {"id": "B", "text": "Per IBC Table 1004.5 based on occupancy type"},
+        {"id": "C", "text": "Number of employees"},
+        {"id": "D", "text": "Owner's estimate"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Occupant load from IBC Table 1004.5 based on occupancy.",
+        "detailed": "Per IPC Section 403.1, the number of occupants shall be computed per IBC Section 1004.5 using the floor area and occupant load factors for each occupancy type.",
+        "how_to_find": "Reference IPC Section 403.1 and IBC Table 1004.5."
+      },
+      "code_reference": {"code": "IPC", "section": "403.1"},
+      "zafto_links": [],
+      "tags": ["occupant load", "fixture calculation", "IBC"],
+      "verified": true
+    },
+    {
+      "id": "FX-032",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["403"],
+      "code_tables": ["403.1"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "In an office building with 100 occupants, how is the male/female split typically calculated?",
+      "choices": [
+        {"id": "A", "text": "100% male"},
+        {"id": "B", "text": "50% male, 50% female"},
+        {"id": "C", "text": "Based on actual employee gender ratio"},
+        {"id": "D", "text": "60% male, 40% female"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "50/50 male/female split unless actual data is known.",
+        "detailed": "Per IPC Section 403.1.1, where the occupant load is not based on gender, fixtures shall be provided assuming a 50/50 distribution unless actual usage data is available.",
+        "how_to_find": "Reference IPC Section 403.1.1 for gender calculation."
+      },
+      "code_reference": {"code": "IPC", "section": "403.1.1"},
+      "zafto_links": [],
+      "tags": ["occupant load", "gender split", "50/50"],
+      "verified": true
+    },
+    {
+      "id": "FX-033",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["403"],
+      "code_tables": ["403.1"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Can urinals substitute for water closets in male restrooms?",
+      "choices": [
+        {"id": "A", "text": "No, all must be water closets"},
+        {"id": "B", "text": "Yes, up to 67% of required WCs"},
+        {"id": "C", "text": "Yes, unlimited substitution"},
+        {"id": "D", "text": "Yes, up to 50% of required WCs"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Urinals may substitute for up to 50% of required WCs.",
+        "detailed": "Per IPC Section 403.2, urinals may be substituted for up to 50 percent of the required water closets in a male restroom. At least one WC must always be provided.",
+        "how_to_find": "Reference IPC Section 403.2 for urinal substitution."
+      },
+      "code_reference": {"code": "IPC", "section": "403.2"},
+      "zafto_links": [],
+      "tags": ["urinal", "substitution", "50 percent"],
+      "verified": true
+    },
+    {
+      "id": "FX-034",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["403"],
+      "code_tables": ["403.1"],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "A restaurant has 200 seats and 20 employees. How is the fixture count determined?",
+      "choices": [
+        {"id": "A", "text": "Based on seating only"},
+        {"id": "B", "text": "Based on employees only"},
+        {"id": "C", "text": "Customer fixtures + employee fixtures"},
+        {"id": "D", "text": "Whichever is greater"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Customer and employee fixtures are calculated separately.",
+        "detailed": "Per IPC Section 403.3, fixtures for customers (assembly) and employees are calculated separately using Table 403.1. Both requirements must be met.",
+        "how_to_find": "Reference IPC Section 403.3 for combined occupancy calculations."
+      },
+      "code_reference": {"code": "IPC", "section": "403.3"},
+      "zafto_links": [],
+      "tags": ["fixture calculation", "restaurant", "customers and employees"],
+      "verified": true
+    },
+    {
+      "id": "FX-035",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["404"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What percentage of public drinking fountains must be accessible?",
+      "choices": [
+        {"id": "A", "text": "25%"},
+        {"id": "B", "text": "50%"},
+        {"id": "C", "text": "100%"},
+        {"id": "D", "text": "Per ICC A117.1"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "50% of drinking fountains must be accessible.",
+        "detailed": "Per IPC Section 410.1, where drinking fountains are required, 50% shall be accessible (low) and 50% shall be for standing persons (high), unless a single hi-lo unit is used.",
+        "how_to_find": "Reference IPC Section 410.1 for drinking fountain accessibility."
+      },
+      "code_reference": {"code": "IPC", "section": "410.1"},
+      "zafto_links": [],
+      "tags": ["drinking fountain", "accessibility", "50 percent"],
+      "verified": true
+    },
+    {
+      "id": "FX-036",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["423"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What standard must all plumbing fixtures conform to?",
+      "choices": [
+        {"id": "A", "text": "ASME/ANSI standards"},
+        {"id": "B", "text": "CSA standards"},
+        {"id": "C", "text": "Applicable ASME, ANSI, or CSA standards"},
+        {"id": "D", "text": "Local standards only"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Fixtures must conform to applicable ASME, ANSI, or CSA standards.",
+        "detailed": "Per IPC Section 401.2, plumbing fixtures shall conform to the applicable standards referenced in Table 1401.1 including ASME, ANSI, and CSA standards.",
+        "how_to_find": "Reference IPC Section 401.2 and Table 1401.1 for fixture standards."
+      },
+      "code_reference": {"code": "IPC", "section": "401.2"},
+      "zafto_links": [],
+      "tags": ["fixture standards", "ASME", "ANSI", "CSA"],
+      "verified": true
+    },
+    {
+      "id": "FX-037",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["405"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum spacing between two adjacent water closets (center to center)?",
+      "choices": [
+        {"id": "A", "text": "24 inches"},
+        {"id": "B", "text": "28 inches"},
+        {"id": "C", "text": "30 inches"},
+        {"id": "D", "text": "32 inches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Minimum 30 inches center-to-center between water closets.",
+        "detailed": "Per IPC Section 405.3.1, water closets shall have a minimum of 15 inches from centerline to adjacent fixtures or walls, requiring 30 inches center-to-center between two WCs.",
+        "how_to_find": "Reference IPC Section 405.3.1 for WC spacing."
+      },
+      "code_reference": {"code": "IPC", "section": "405.3.1"},
+      "zafto_links": [],
+      "tags": ["water closet", "spacing", "30 inches"],
+      "verified": true
+    },
+    {
+      "id": "FX-038",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["407"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What waterproofing is required under a shower pan?",
+      "choices": [
+        {"id": "A", "text": "None for one-piece units"},
+        {"id": "B", "text": "Shower liner/membrane for site-built"},
+        {"id": "C", "text": "Only vapor barrier"},
+        {"id": "D", "text": "Depends on floor material"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Site-built showers require waterproof liner/membrane.",
+        "detailed": "Per IPC Section 417.5.2, shower receptors built on site shall have waterproof liner extending up walls at least 3 inches above the finished threshold. One-piece manufactured units are pre-waterproofed.",
+        "how_to_find": "Reference IPC Section 417.5.2 for shower liner requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "417.5.2"},
+      "zafto_links": [],
+      "tags": ["shower", "liner", "waterproofing"],
+      "verified": true
+    },
+    {
+      "id": "FX-039",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["417"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "How high must a shower liner extend above the finished dam?",
+      "choices": [
+        {"id": "A", "text": "2 inches"},
+        {"id": "B", "text": "3 inches"},
+        {"id": "C", "text": "6 inches"},
+        {"id": "D", "text": "To showerhead height"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Shower liner must extend 3 inches above threshold.",
+        "detailed": "Per IPC Section 417.5.2, the shower liner shall extend at least 3 inches above the finished threshold (dam) to prevent water from bypassing the waterproofing.",
+        "how_to_find": "Reference IPC Section 417.5.2 for liner height."
+      },
+      "code_reference": {"code": "IPC", "section": "417.5.2"},
+      "zafto_links": [],
+      "tags": ["shower liner", "height", "3 inches"],
+      "verified": true
+    },
+    {
+      "id": "FX-040",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["418"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What type of drain is required for a sink used for food preparation?",
+      "choices": [
+        {"id": "A", "text": "Direct connection to sanitary"},
+        {"id": "B", "text": "Indirect waste through air gap"},
+        {"id": "C", "text": "Either direct or indirect"},
+        {"id": "D", "text": "To grease interceptor"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Food prep sinks require indirect waste with air gap.",
+        "detailed": "Per IPC Section 802.1.1, sinks used for food preparation in commercial settings shall discharge through an indirect waste with an air gap to prevent contamination.",
+        "how_to_find": "Reference IPC Section 802.1.1 for food preparation sink drainage."
+      },
+      "code_reference": {"code": "IPC", "section": "802.1.1"},
+      "zafto_links": [],
+      "tags": ["food prep sink", "indirect waste", "air gap"],
+      "verified": true
+    },
+    {
+      "id": "FX-041",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["405"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the ADA-compliant height range for a water closet seat?",
+      "choices": [
+        {"id": "A", "text": "15 to 17 inches"},
+        {"id": "B", "text": "17 to 19 inches"},
+        {"id": "C", "text": "15 to 19 inches"},
+        {"id": "D", "text": "19 to 21 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Accessible WC seat height is 17 to 19 inches.",
+        "detailed": "Per ICC A117.1 and ADA standards, accessible water closet seats shall be 17 to 19 inches from the finished floor to the top of the seat.",
+        "how_to_find": "Reference ICC A117.1 for accessible fixture heights."
+      },
+      "code_reference": {"code": "IPC", "section": "404"},
+      "zafto_links": [],
+      "tags": ["accessible", "water closet", "seat height", "17-19 inches"],
+      "verified": true
+    },
+    {
+      "id": "FX-042",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["406"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the typical mounting height for a lavatory rim?",
+      "choices": [
+        {"id": "A", "text": "28 to 30 inches"},
+        {"id": "B", "text": "31 to 34 inches"},
+        {"id": "C", "text": "34 to 36 inches"},
+        {"id": "D", "text": "No standard height"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Standard lavatory height is 31 to 34 inches.",
+        "detailed": "Standard lavatory mounting height places the rim at 31 to 34 inches above the floor. Accessible lavatories have a maximum height of 34 inches per ICC A117.1.",
+        "how_to_find": "Reference manufacturer specifications and ICC A117.1."
+      },
+      "code_reference": {"code": "IPC", "section": "406"},
+      "zafto_links": [],
+      "tags": ["lavatory", "mounting height", "31-34 inches"],
+      "verified": true
+    },
+    {
+      "id": "FX-043",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["414"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is required for a clothes washer standpipe?",
+      "choices": [
+        {"id": "A", "text": "1-1/2 inch pipe only"},
+        {"id": "B", "text": "2-inch pipe, 18-42 inches above trap"},
+        {"id": "C", "text": "Floor drain connection"},
+        {"id": "D", "text": "Direct connection to drain"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Standpipe: 2-inch, 18 to 42 inches above trap weir.",
+        "detailed": "Per IPC Section 802.4, clothes washer standpipes shall be minimum 2 inches in diameter and extend between 18 and 42 inches above the trap weir.",
+        "how_to_find": "Reference IPC Section 802.4 for standpipe requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "802.4"},
+      "zafto_links": [],
+      "tags": ["standpipe", "clothes washer", "18-42 inches"],
+      "verified": true
+    },
+    {
+      "id": "FX-044",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["415"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is required for a whirlpool bathtub access panel?",
+      "choices": [
+        {"id": "A", "text": "No access required"},
+        {"id": "B", "text": "Access to pump and motor"},
+        {"id": "C", "text": "Access to all piping"},
+        {"id": "D", "text": "Full side panel removal"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Access panel required to reach pump and motor.",
+        "detailed": "Per IPC Section 415.1, whirlpool bathtubs shall have access to the pump and motor for repair or replacement. Access panel must allow service without removing the tub.",
+        "how_to_find": "Reference IPC Section 415.1 for whirlpool access requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "415.1"},
+      "zafto_links": [],
+      "tags": ["whirlpool", "access panel", "pump"],
+      "verified": true
+    },
+    {
+      "id": "FX-045",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["415"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What electrical protection is required for a whirlpool bathtub?",
+      "choices": [
+        {"id": "A", "text": "Standard circuit breaker"},
+        {"id": "B", "text": "GFCI protection"},
+        {"id": "C", "text": "Dedicated circuit only"},
+        {"id": "D", "text": "No special requirement"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Whirlpool tubs require GFCI protection.",
+        "detailed": "Per NEC Article 680 and IPC Section 415.1, whirlpool bathtubs shall have the pump motor circuit protected by a ground-fault circuit interrupter (GFCI).",
+        "how_to_find": "Reference IPC Section 415.1 and NEC Article 680."
+      },
+      "code_reference": {"code": "IPC", "section": "415.1"},
+      "zafto_links": [],
+      "tags": ["whirlpool", "GFCI", "electrical"],
+      "verified": true
+    },
+    {
+      "id": "FX-046",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["403"],
+      "code_tables": ["403.1"],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "An office building has 75 male and 75 female employees. Per IPC Table 403.1, how many water closets are required for females?",
+      "choices": [
+        {"id": "A", "text": "2"},
+        {"id": "B", "text": "3"},
+        {"id": "C", "text": "4"},
+        {"id": "D", "text": "Reference Table 403.1 for exact number"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Use IPC Table 403.1 for exact fixture count.",
+        "detailed": "Per IPC Table 403.1, business occupancy fixture requirements are based on occupant ranges. For 75 females in a business occupancy, refer to the table for the exact water closet requirement.",
+        "how_to_find": "Reference IPC Table 403.1 for business occupancy fixture counts."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 403.1"},
+      "zafto_links": [],
+      "tags": ["fixture calculation", "office", "Table 403.1"],
+      "verified": true
+    },
+    {
+      "id": "FX-047",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["424"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum temperature setting on a water heater serving a residence?",
+      "choices": [
+        {"id": "A", "text": "110°F"},
+        {"id": "B", "text": "120°F"},
+        {"id": "C", "text": "140°F"},
+        {"id": "D", "text": "No maximum if mixing valves used"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "No maximum if point-of-use protection is provided.",
+        "detailed": "Water heaters can be set higher than 120°F (recommended for legionella control) if point-of-use mixing valves limit delivery temperature to 120°F at showers/tubs per IPC Section 424.3.",
+        "how_to_find": "Reference IPC Section 424.3 for temperature requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "424.3"},
+      "zafto_links": [],
+      "tags": ["water heater", "temperature", "mixing valve"],
+      "verified": true
+    },
+    {
+      "id": "FX-048",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["407"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum threshold height for a shower?",
+      "choices": [
+        {"id": "A", "text": "2 inches"},
+        {"id": "B", "text": "6 inches"},
+        {"id": "C", "text": "9 inches"},
+        {"id": "D", "text": "No maximum specified"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Maximum shower threshold is 9 inches.",
+        "detailed": "Per IPC Section 417.4.2, shower compartment thresholds shall not exceed 9 inches in height. Accessible showers have lower or no threshold requirements.",
+        "how_to_find": "Reference IPC Section 417.4.2 for threshold height."
+      },
+      "code_reference": {"code": "IPC", "section": "417.4.2"},
+      "zafto_links": [],
+      "tags": ["shower", "threshold", "9 inches"],
+      "verified": true
+    },
+    {
+      "id": "FX-049",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["405"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "medium",
+      "time_estimate_seconds": 120,
+      "question": "A toilet rough-in is 12 inches from the wall. What does this measurement represent?",
+      "choices": [
+        {"id": "A", "text": "Outlet to wall"},
+        {"id": "B", "text": "Bolt holes to finished wall"},
+        {"id": "C", "text": "Tank to wall"},
+        {"id": "D", "text": "Seat to wall"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Rough-in is from bolt holes to finished wall.",
+        "detailed": "Water closet rough-in dimension (typically 10, 12, or 14 inches) measures from the center of the closet flange bolt holes to the finished wall surface behind the toilet.",
+        "how_to_find": "Reference fixture installation standards."
+      },
+      "code_reference": {"code": "IPC", "section": "405"},
+      "zafto_links": [],
+      "tags": ["rough-in", "water closet", "12 inches"],
+      "verified": true
+    },
+    {
+      "id": "FX-050",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["409"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is a bidet?",
+      "choices": [
+        {"id": "A", "text": "A type of toilet"},
+        {"id": "B", "text": "A personal hygiene fixture for washing"},
+        {"id": "C", "text": "A foot washing station"},
+        {"id": "D", "text": "A commercial sink"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A bidet is a personal hygiene washing fixture.",
+        "detailed": "Per IPC Section 409, a bidet is a plumbing fixture used for personal hygiene, designed for washing the perineal area. It requires backflow protection and hot/cold water supply.",
+        "how_to_find": "Reference IPC Section 409 for bidet requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "409"},
+      "zafto_links": [],
+      "tags": ["bidet", "personal hygiene", "fixture"],
+      "verified": true
+    },
+    {
+      "id": "FX-051",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["409"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What backflow prevention is required for a bidet?",
+      "choices": [
+        {"id": "A", "text": "None required"},
+        {"id": "B", "text": "Vacuum breaker or air gap"},
+        {"id": "C", "text": "Check valve only"},
+        {"id": "D", "text": "Double check valve assembly"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Bidets require vacuum breaker or air gap protection.",
+        "detailed": "Per IPC Section 409.2, the water supply to a bidet shall be protected against backflow by an air gap or atmospheric vacuum breaker because the outlet may be submerged.",
+        "how_to_find": "Reference IPC Section 409.2 for bidet backflow protection."
+      },
+      "code_reference": {"code": "IPC", "section": "409.2"},
+      "zafto_links": [],
+      "tags": ["bidet", "backflow", "vacuum breaker"],
+      "verified": true
+    },
+    {
+      "id": "FX-052",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["416"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum trap size for a laundry tray?",
+      "choices": [
+        {"id": "A", "text": "1-1/4 inches"},
+        {"id": "B", "text": "1-1/2 inches"},
+        {"id": "C", "text": "2 inches"},
+        {"id": "D", "text": "Based on compartment size"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Laundry trays require minimum 1-1/2 inch trap.",
+        "detailed": "Per IPC Table 709.1, laundry trays require a minimum 1-1/2 inch trap and drain size regardless of the tray size.",
+        "how_to_find": "Reference IPC Table 709.1 for laundry tray trap size."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 709.1"},
+      "zafto_links": [],
+      "tags": ["laundry tray", "trap size", "1-1/2 inch"],
+      "verified": true
+    },
+    {
+      "id": "FX-053",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["418"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum drain size for a bar sink?",
+      "choices": [
+        {"id": "A", "text": "1-1/4 inches"},
+        {"id": "B", "text": "1-1/2 inches"},
+        {"id": "C", "text": "2 inches"},
+        {"id": "D", "text": "3 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Bar sinks require minimum 1-1/2 inch drain.",
+        "detailed": "Per IPC Table 709.1, bar sinks require a minimum 1-1/2 inch trap and drain size.",
+        "how_to_find": "Reference IPC Table 709.1 for bar sink drain size."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 709.1"},
+      "zafto_links": [],
+      "tags": ["bar sink", "drain size", "1-1/2 inch"],
+      "verified": true
+    },
+    {
+      "id": "FX-054",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["401"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What material must plumbing fixtures be made of?",
+      "choices": [
+        {"id": "A", "text": "Porcelain only"},
+        {"id": "B", "text": "Non-absorbent, smooth, impervious material"},
+        {"id": "C", "text": "Metal or plastic"},
+        {"id": "D", "text": "Any waterproof material"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Fixtures must be non-absorbent, smooth, and impervious.",
+        "detailed": "Per IPC Section 401.1, plumbing fixtures shall be made of approved materials with smooth, impervious surfaces that are free from defects and concealed fouling surfaces.",
+        "how_to_find": "Reference IPC Section 401.1 for fixture material requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "401.1"},
+      "zafto_links": [],
+      "tags": ["fixture materials", "non-absorbent", "impervious"],
+      "verified": true
+    },
+    {
+      "id": "FX-055",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["401"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Where must fixture strainers be installed?",
+      "choices": [
+        {"id": "A", "text": "Only on kitchen sinks"},
+        {"id": "B", "text": "All fixture outlets except water closets and urinals"},
+        {"id": "C", "text": "All fixtures"},
+        {"id": "D", "text": "Only where required by manufacturer"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Strainers required on all outlets except WCs and urinals.",
+        "detailed": "Per IPC Section 401.3, fixture outlets shall be equipped with strainers to prevent debris from entering drainage, except water closets and urinals which have integrated traps.",
+        "how_to_find": "Reference IPC Section 401.3 for strainer requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "401.3"},
+      "zafto_links": [],
+      "tags": ["strainer", "fixture outlet", "debris prevention"],
+      "verified": true
+    },
+    {
+      "id": "FX-056",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["401"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is required for a fixture overflow?",
+      "choices": [
+        {"id": "A", "text": "Connection to floor drain"},
+        {"id": "B", "text": "Connection to fixture drain on inlet side of trap"},
+        {"id": "C", "text": "Separate trap required"},
+        {"id": "D", "text": "No specific requirement"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Overflow connects to fixture drain on inlet side of trap.",
+        "detailed": "Per IPC Section 401.4, fixture overflows shall connect to the inlet side of the fixture trap, preventing sewer gases from entering through the overflow.",
+        "how_to_find": "Reference IPC Section 401.4 for overflow connection."
+      },
+      "code_reference": {"code": "IPC", "section": "401.4"},
+      "zafto_links": [],
+      "tags": ["overflow", "trap inlet", "fixture connection"],
+      "verified": true
+    },
+    {
+      "id": "FX-057",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["405"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the minimum distance between a water closet and a bathtub (side to side)?",
+      "choices": [
+        {"id": "A", "text": "4 inches"},
+        {"id": "B", "text": "No minimum if WC has 15 inches to centerline"},
+        {"id": "C", "text": "12 inches"},
+        {"id": "D", "text": "6 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "No minimum gap if WC centerline spacing is met.",
+        "detailed": "Per IPC Section 405.3.1, as long as the water closet has 15 inches from centerline to any obstruction (including a tub), no additional spacing between fixtures is required.",
+        "how_to_find": "Reference IPC Section 405.3.1 for fixture spacing."
+      },
+      "code_reference": {"code": "IPC", "section": "405.3.1"},
+      "zafto_links": [],
+      "tags": ["spacing", "water closet", "bathtub"],
+      "verified": true
+    },
+    {
+      "id": "FX-058",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["712"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "When is a sewage ejector pump required?",
+      "choices": [
+        {"id": "A", "text": "When fixtures are above the sewer"},
+        {"id": "B", "text": "When fixtures are below the building sewer or septic tank"},
+        {"id": "C", "text": "For all basement plumbing"},
+        {"id": "D", "text": "Only for commercial buildings"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Ejector required when fixtures are below building sewer.",
+        "detailed": "Per IPC Section 712.1, when fixtures discharge below the level of the public sewer or private sewage disposal system, a sewage ejector or pump is required to lift waste.",
+        "how_to_find": "Reference IPC Section 712 for sewage ejector requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "712.1"},
+      "zafto_links": [],
+      "tags": ["sewage ejector", "pump", "below sewer"],
+      "verified": true
+    },
+    {
+      "id": "FX-059",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["712"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the minimum pump capacity for a sewage ejector serving one water closet?",
+      "choices": [
+        {"id": "A", "text": "10 gpm"},
+        {"id": "B", "text": "21 gpm"},
+        {"id": "C", "text": "42 gpm"},
+        {"id": "D", "text": "Based on DFU load"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Minimum 21 gpm capacity for ejector serving WC.",
+        "detailed": "Per IPC Table 712.4, a sewage ejector pump serving a water closet shall have a minimum capacity of 21 gpm to handle fixture discharge.",
+        "how_to_find": "Reference IPC Table 712.4 for ejector capacity."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 712.4"},
+      "zafto_links": [],
+      "tags": ["sewage ejector", "capacity", "21 gpm"],
+      "verified": true
+    },
+    {
+      "id": "FX-060",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["712"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What venting is required for a sewage ejector basin?",
+      "choices": [
+        {"id": "A", "text": "No vent required"},
+        {"id": "B", "text": "2-inch minimum vent to atmosphere"},
+        {"id": "C", "text": "Vent same size as discharge"},
+        {"id": "D", "text": "Mechanical vent only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Sewage ejector requires minimum 2-inch vent.",
+        "detailed": "Per IPC Section 712.3.3, sewage ejector basins shall have a minimum 2-inch diameter vent extended to the open air to prevent pressure build-up.",
+        "how_to_find": "Reference IPC Section 712.3.3 for ejector venting."
+      },
+      "code_reference": {"code": "IPC", "section": "712.3.3"},
+      "zafto_links": [],
+      "tags": ["sewage ejector", "vent", "2-inch"],
+      "verified": true
+    },
+    {
+      "id": "FX-061",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["413"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum drain size for a garbage disposal?",
+      "choices": [
+        {"id": "A", "text": "1-1/4 inches"},
+        {"id": "B", "text": "1-1/2 inches"},
+        {"id": "C", "text": "2 inches"},
+        {"id": "D", "text": "Same as connected sink"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Garbage disposal requires minimum 1-1/2 inch drain.",
+        "detailed": "Per IPC Section 413.1 and Table 709.1, food waste disposers shall have a minimum 1-1/2 inch drain connection, matching the kitchen sink requirement.",
+        "how_to_find": "Reference IPC Section 413.1 for garbage disposal drain size."
+      },
+      "code_reference": {"code": "IPC", "section": "413.1"},
+      "zafto_links": [],
+      "tags": ["garbage disposal", "drain size", "1-1/2 inch"],
+      "verified": true
+    },
+    {
+      "id": "FX-062",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["413"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Can a garbage disposal discharge to a septic system?",
+      "choices": [
+        {"id": "A", "text": "No, prohibited"},
+        {"id": "B", "text": "Yes, if septic tank is sized accordingly"},
+        {"id": "C", "text": "Only with grease interceptor"},
+        {"id": "D", "text": "Only in commercial applications"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Permitted if septic tank is properly sized.",
+        "detailed": "Per IPC Section 413.4, garbage disposals may discharge to private sewage disposal systems when the septic tank is sized to accommodate the additional load, typically 50% larger than normal sizing.",
+        "how_to_find": "Reference IPC Section 413.4 for septic disposal requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "413.4"},
+      "zafto_links": [],
+      "tags": ["garbage disposal", "septic system", "tank sizing"],
+      "verified": true
+    },
+    {
+      "id": "FX-063",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["419"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum trap size for a bathroom lavatory?",
+      "choices": [
+        {"id": "A", "text": "1-1/4 inches"},
+        {"id": "B", "text": "1-1/2 inches"},
+        {"id": "C", "text": "2 inches"},
+        {"id": "D", "text": "Based on faucet flow rate"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Bathroom lavatories require minimum 1-1/4 inch trap.",
+        "detailed": "Per IPC Table 709.1, bathroom lavatories require a minimum 1-1/4 inch trap and drain size.",
+        "how_to_find": "Reference IPC Table 709.1 for lavatory trap size."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 709.1"},
+      "zafto_links": [],
+      "tags": ["lavatory", "trap size", "1-1/4 inch"],
+      "verified": true
+    },
+    {
+      "id": "FX-064",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["405"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum trap size for a water closet?",
+      "choices": [
+        {"id": "A", "text": "2 inches"},
+        {"id": "B", "text": "3 inches"},
+        {"id": "C", "text": "4 inches"},
+        {"id": "D", "text": "Integral trap - no separate size"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Water closets have integral traps built in.",
+        "detailed": "Per IPC Section 405.5, water closets have an integral trap as part of the fixture design. No separate trap size is specified because the trap is part of the water closet body.",
+        "how_to_find": "Reference IPC Section 405.5 for water closet trap."
+      },
+      "code_reference": {"code": "IPC", "section": "405.5"},
+      "zafto_links": [],
+      "tags": ["water closet", "integral trap", "built-in"],
+      "verified": true
+    },
+    {
+      "id": "FX-065",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["405"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum trap size for a urinal?",
+      "choices": [
+        {"id": "A", "text": "1-1/2 inches"},
+        {"id": "B", "text": "2 inches"},
+        {"id": "C", "text": "3 inches"},
+        {"id": "D", "text": "Integral trap - size varies by manufacturer"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Urinals have integral traps with size varying by design.",
+        "detailed": "Per IPC Section 405.5, urinals have integral traps. The outlet size is typically 2 inches per Table 709.1, but the trap is part of the fixture.",
+        "how_to_find": "Reference IPC Section 405.5 and Table 709.1."
+      },
+      "code_reference": {"code": "IPC", "section": "405.5"},
+      "zafto_links": [],
+      "tags": ["urinal", "integral trap", "2-inch outlet"],
+      "verified": true
+    },
+    {
+      "id": "FX-066",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["407"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum trap size for a shower?",
+      "choices": [
+        {"id": "A", "text": "1-1/2 inches"},
+        {"id": "B", "text": "2 inches"},
+        {"id": "C", "text": "3 inches"},
+        {"id": "D", "text": "Based on shower size"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Showers require minimum 2-inch trap.",
+        "detailed": "Per IPC Table 709.1, shower stalls require a minimum 2-inch trap and drain size regardless of shower compartment dimensions.",
+        "how_to_find": "Reference IPC Table 709.1 for shower trap size."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 709.1"},
+      "zafto_links": [],
+      "tags": ["shower", "trap size", "2-inch"],
+      "verified": true
+    },
+    {
+      "id": "FX-067",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["408"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum trap size for a bathtub?",
+      "choices": [
+        {"id": "A", "text": "1-1/4 inches"},
+        {"id": "B", "text": "1-1/2 inches"},
+        {"id": "C", "text": "2 inches"},
+        {"id": "D", "text": "Based on tub capacity"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Bathtubs require minimum 1-1/2 inch trap.",
+        "detailed": "Per IPC Table 709.1, bathtubs require a minimum 1-1/2 inch trap and drain size.",
+        "how_to_find": "Reference IPC Table 709.1 for bathtub trap size."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 709.1"},
+      "zafto_links": [],
+      "tags": ["bathtub", "trap size", "1-1/2 inch"],
+      "verified": true
+    },
+    {
+      "id": "FX-068",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["424"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "A customer complains their shower temperature fluctuates wildly when someone flushes a toilet. What is the likely cause?",
+      "choices": [
+        {"id": "A", "text": "Undersized water heater"},
+        {"id": "B", "text": "Missing or failed pressure-balancing valve"},
+        {"id": "C", "text": "Low water pressure"},
+        {"id": "D", "text": "Cross connection"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Pressure-balancing valve failure causes temperature swings.",
+        "detailed": "Per IPC Section 424.3, pressure-balanced or thermostatic valves are required to compensate for pressure changes. A missing or failed valve causes temperature fluctuation when other fixtures activate.",
+        "how_to_find": "Reference IPC Section 424.3 for shower valve requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "424.3"},
+      "zafto_links": [],
+      "tags": ["pressure-balanced valve", "temperature fluctuation", "troubleshooting"],
+      "verified": true
+    },
+    {
+      "id": "FX-069",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["403"],
+      "code_tables": ["403.1"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Are separate restrooms required for men and women?",
+      "choices": [
+        {"id": "A", "text": "Always required"},
+        {"id": "B", "text": "Required when occupant load exceeds 15"},
+        {"id": "C", "text": "Never required"},
+        {"id": "D", "text": "Only in assembly occupancies"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Separate facilities required when occupant load exceeds 15.",
+        "detailed": "Per IPC Section 403.1.1, separate toilet facilities for each sex are required where the occupant load exceeds 15 persons in most occupancy types.",
+        "how_to_find": "Reference IPC Section 403.1.1 for separate facility requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "403.1.1"},
+      "zafto_links": [],
+      "tags": ["separate facilities", "occupant load", "15 persons"],
+      "verified": true
+    },
+    {
+      "id": "FX-070",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["403"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is a single-user toilet room?",
+      "choices": [
+        {"id": "A", "text": "Room with one water closet and lock"},
+        {"id": "B", "text": "Room with multiple WCs for one person"},
+        {"id": "C", "text": "Private residential bathroom"},
+        {"id": "D", "text": "Employee-only restroom"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Single-user toilet room has one WC with privacy lock.",
+        "detailed": "Per IPC Section 403.1.1, a single-user toilet room contains no more than one water closet and one lavatory with a lockable door, available for use by either sex.",
+        "how_to_find": "Reference IPC Section 403.1.1 for single-user toilet room definition."
+      },
+      "code_reference": {"code": "IPC", "section": "403.1.1"},
+      "zafto_links": [],
+      "tags": ["single-user", "toilet room", "privacy lock"],
+      "verified": true
+    },
+    {
+      "id": "FX-071",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["403"],
+      "code_tables": ["403.1"],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "A mercantile store has 5,000 sq ft of sales floor. Using IPC Table 1004.5 (30 sq ft per occupant), what is the occupant load?",
+      "choices": [
+        {"id": "A", "text": "100"},
+        {"id": "B", "text": "150"},
+        {"id": "C", "text": "167"},
+        {"id": "D", "text": "200"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "5,000 ÷ 30 = 167 occupants (round up).",
+        "detailed": "Per IBC Table 1004.5, mercantile uses 30 sq ft per occupant. 5,000 ÷ 30 = 166.67, rounded up to 167 occupants for fixture calculation purposes.",
+        "how_to_find": "Reference IBC Table 1004.5 and divide floor area by occupant load factor."
+      },
+      "code_reference": {"code": "IPC", "section": "403.1"},
+      "zafto_links": [],
+      "tags": ["occupant load", "calculation", "mercantile"],
+      "verified": true
+    },
+    {
+      "id": "FX-072",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["403"],
+      "code_tables": ["403.1"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "When are drinking fountains required?",
+      "choices": [
+        {"id": "A", "text": "All buildings"},
+        {"id": "B", "text": "When occupant load exceeds 15"},
+        {"id": "C", "text": "Per IPC Table 403.1 by occupancy"},
+        {"id": "D", "text": "Public buildings only"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Drinking fountain requirements per IPC Table 403.1.",
+        "detailed": "Per IPC Section 403.1 and Table 403.1, drinking fountain requirements are based on occupancy type. Some occupancies require one per 100 occupants, others have different requirements.",
+        "how_to_find": "Reference IPC Table 403.1 for drinking fountain requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 403.1"},
+      "zafto_links": [],
+      "tags": ["drinking fountain", "occupancy", "Table 403.1"],
+      "verified": true
+    },
+    {
+      "id": "FX-073",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["403"],
+      "code_tables": ["403.1"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What can substitute for required drinking fountains?",
+      "choices": [
+        {"id": "A", "text": "Nothing - fountains always required"},
+        {"id": "B", "text": "Bottled water dispenser"},
+        {"id": "C", "text": "Water cooler with cups"},
+        {"id": "D", "text": "Bottled water or plumbed water cooler"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Bottled water or water coolers can substitute for fountains.",
+        "detailed": "Per IPC Section 403.1, a drinking fountain may be substituted with a bottled water dispenser or a plumbed water cooler that provides an equivalent capacity and accessibility.",
+        "how_to_find": "Reference IPC Section 403.1 for drinking fountain substitution."
+      },
+      "code_reference": {"code": "IPC", "section": "403.1"},
+      "zafto_links": [],
+      "tags": ["drinking fountain", "substitution", "water cooler"],
+      "verified": true
+    },
+    {
+      "id": "FX-074",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["403"],
+      "code_tables": ["403.1"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "When are service sinks required?",
+      "choices": [
+        {"id": "A", "text": "All commercial buildings"},
+        {"id": "B", "text": "When total fixtures exceed 6"},
+        {"id": "C", "text": "Per IPC Table 403.1 by occupancy"},
+        {"id": "D", "text": "Only in manufacturing facilities"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Service sink requirements per IPC Table 403.1.",
+        "detailed": "Per IPC Table 403.1, service sinks (mop sinks) are required based on occupancy type. They are typically required where custodial activities occur.",
+        "how_to_find": "Reference IPC Table 403.1 for service sink requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 403.1"},
+      "zafto_links": [],
+      "tags": ["service sink", "mop sink", "Table 403.1"],
+      "verified": true
+    },
+    {
+      "id": "FX-075",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["420"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the minimum dimension for an accessible service sink?",
+      "choices": [
+        {"id": "A", "text": "22 inches wide"},
+        {"id": "B", "text": "Per ICC A117.1"},
+        {"id": "C", "text": "No accessibility requirement"},
+        {"id": "D", "text": "30 inches × 30 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Accessible service sinks must comply with ICC A117.1.",
+        "detailed": "Per IPC Section 404.1, accessible fixtures including service sinks shall comply with ICC A117.1 for clearances and approach requirements.",
+        "how_to_find": "Reference IPC Section 404 and ICC A117.1."
+      },
+      "code_reference": {"code": "IPC", "section": "404.1"},
+      "zafto_links": [],
+      "tags": ["service sink", "accessibility", "ICC A117.1"],
+      "verified": true
+    },
+    {
+      "id": "FX-076",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["417"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "How are multiple showerheads in one shower counted for water consumption?",
+      "choices": [
+        {"id": "A", "text": "As one fixture"},
+        {"id": "B", "text": "Each head counted separately"},
+        {"id": "C", "text": "Combined flow limited to 2.5 gpm total"},
+        {"id": "D", "text": "No limit if controlled by one valve"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Each showerhead counted separately at 2.5 gpm max each.",
+        "detailed": "Per IPC Section 402.4, each showerhead is limited to 2.5 gpm. Multiple heads must each comply, though some jurisdictions limit combined flow.",
+        "how_to_find": "Reference IPC Section 402.4 for showerhead flow limits."
+      },
+      "code_reference": {"code": "IPC", "section": "402.4"},
+      "zafto_links": [],
+      "tags": ["multiple showerheads", "flow rate", "water consumption"],
+      "verified": true
+    },
+    {
+      "id": "FX-077",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["403"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum distance from work areas to toilet facilities?",
+      "choices": [
+        {"id": "A", "text": "200 feet"},
+        {"id": "B", "text": "500 feet or one floor"},
+        {"id": "C", "text": "No maximum specified"},
+        {"id": "D", "text": "Within same building"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Toilet facilities within 500 feet or one floor of work areas.",
+        "detailed": "Per IPC Section 403.3, required toilet facilities shall be located within 500 feet and no more than one story from the regular work area of employees.",
+        "how_to_find": "Reference IPC Section 403.3 for toilet facility location."
+      },
+      "code_reference": {"code": "IPC", "section": "403.3"},
+      "zafto_links": [],
+      "tags": ["toilet location", "500 feet", "one floor"],
+      "verified": true
+    },
+    {
+      "id": "FX-078",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["403"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Can employees be required to use public toilet facilities?",
+      "choices": [
+        {"id": "A", "text": "Yes, in all cases"},
+        {"id": "B", "text": "No, always need dedicated employee facilities"},
+        {"id": "C", "text": "Yes, if within 500 feet and accessible"},
+        {"id": "D", "text": "Only in retail occupancies"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Employees may use public facilities if accessible within 500 feet.",
+        "detailed": "Per IPC Section 403.3, employee toilet facilities may be located in public areas if they are accessible to employees within the required distance (500 feet, one floor).",
+        "how_to_find": "Reference IPC Section 403.3 for employee facility sharing."
+      },
+      "code_reference": {"code": "IPC", "section": "403.3"},
+      "zafto_links": [],
+      "tags": ["employee facilities", "public toilets", "shared"],
+      "verified": true
+    },
+    {
+      "id": "FX-079",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["403"],
+      "code_tables": ["403.1"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What additional fixture is required in a residential daycare serving more than 5 children?",
+      "choices": [
+        {"id": "A", "text": "Child-height water closet"},
+        {"id": "B", "text": "Additional fixtures per Table 403.1"},
+        {"id": "C", "text": "Service sink"},
+        {"id": "D", "text": "Emergency eyewash"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Additional fixtures per Table 403.1 for daycare.",
+        "detailed": "Per IPC Section 403.1, when a residential building is used for daycare with more than 5 children, additional fixture requirements apply based on assembly or institutional occupancy ratios in Table 403.1.",
+        "how_to_find": "Reference IPC Section 403.1 and Table 403.1 for daycare."
+      },
+      "code_reference": {"code": "IPC", "section": "403.1"},
+      "zafto_links": [],
+      "tags": ["daycare", "additional fixtures", "children"],
+      "verified": true
+    },
+    {
+      "id": "FX-080",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["411"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the minimum flow rate for an emergency eyewash station?",
+      "choices": [
+        {"id": "A", "text": "0.4 gpm for 15 minutes"},
+        {"id": "B", "text": "1.0 gpm for 15 minutes"},
+        {"id": "C", "text": "3.0 gpm for 15 minutes"},
+        {"id": "D", "text": "Per ANSI Z358.1"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Emergency eyewash flow per ANSI Z358.1 (0.4 gpm).",
+        "detailed": "Per ANSI Z358.1 (referenced by IPC Section 411), emergency eyewash stations require a minimum of 0.4 gpm (1.5 lpm) flow to both eyes simultaneously for 15 minutes.",
+        "how_to_find": "Reference IPC Section 411 and ANSI Z358.1 for eyewash requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "411.1"},
+      "zafto_links": [],
+      "tags": ["emergency eyewash", "flow rate", "ANSI Z358.1"],
+      "verified": true
+    },
+    {
+      "id": "FX-081",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["411"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the minimum flow rate for an emergency shower?",
+      "choices": [
+        {"id": "A", "text": "10 gpm for 15 minutes"},
+        {"id": "B", "text": "20 gpm for 15 minutes"},
+        {"id": "C", "text": "30 gpm for 15 minutes"},
+        {"id": "D", "text": "Per ANSI Z358.1"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Emergency shower flow per ANSI Z358.1 (20 gpm).",
+        "detailed": "Per ANSI Z358.1 (referenced by IPC Section 411), emergency showers require a minimum of 20 gpm (75.7 lpm) flow for 15 minutes.",
+        "how_to_find": "Reference IPC Section 411 and ANSI Z358.1 for emergency shower requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "411.1"},
+      "zafto_links": [],
+      "tags": ["emergency shower", "flow rate", "20 gpm", "ANSI Z358.1"],
+      "verified": true
+    },
+    {
+      "id": "FX-082",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["414"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum height for a clothes washer standpipe?",
+      "choices": [
+        {"id": "A", "text": "30 inches"},
+        {"id": "B", "text": "36 inches"},
+        {"id": "C", "text": "42 inches"},
+        {"id": "D", "text": "48 inches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Standpipe maximum height is 42 inches above trap weir.",
+        "detailed": "Per IPC Section 802.4, clothes washer standpipes shall extend between 18 and 42 inches above the trap weir to prevent backflow and siphoning.",
+        "how_to_find": "Reference IPC Section 802.4 for standpipe height limits."
+      },
+      "code_reference": {"code": "IPC", "section": "802.4"},
+      "zafto_links": [],
+      "tags": ["standpipe", "maximum height", "42 inches"],
+      "verified": true
+    },
+    {
+      "id": "FX-083",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["407"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is required for a curbless (barrier-free) shower?",
+      "choices": [
+        {"id": "A", "text": "Floor sloped to trench drain"},
+        {"id": "B", "text": "Standard 900 sq in floor area"},
+        {"id": "C", "text": "Compliance with ICC A117.1"},
+        {"id": "D", "text": "All of the above"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Barrier-free showers must comply with ICC A117.1.",
+        "detailed": "Per IPC Section 404.1, accessible shower compartments including curbless designs shall comply with ICC A117.1 for dimensions, controls, and grab bar requirements.",
+        "how_to_find": "Reference IPC Section 404 and ICC A117.1 for accessible showers."
+      },
+      "code_reference": {"code": "IPC", "section": "404.1"},
+      "zafto_links": [],
+      "tags": ["curbless shower", "barrier-free", "accessibility"],
+      "verified": true
+    },
+    {
+      "id": "FX-084",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["419"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What type of drain connection is required for a three-compartment commercial sink?",
+      "choices": [
+        {"id": "A", "text": "Single 1-1/2 inch"},
+        {"id": "B", "text": "Single 2 inch"},
+        {"id": "C", "text": "Individual traps for each compartment"},
+        {"id": "D", "text": "One trap for all compartments"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "One trap serves all compartments of a multi-compartment sink.",
+        "detailed": "Per IPC Section 1002.2, sinks with multiple compartments may be served by a single trap, with all compartments connecting to a continuous waste before the trap.",
+        "how_to_find": "Reference IPC Section 1002.2 for multi-compartment sink trapping."
+      },
+      "code_reference": {"code": "IPC", "section": "1002.2"},
+      "zafto_links": [],
+      "tags": ["multi-compartment sink", "single trap", "continuous waste"],
+      "verified": true
+    },
+    {
+      "id": "FX-085",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["418"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum trap size for a clinical service sink (hopper)?",
+      "choices": [
+        {"id": "A", "text": "2 inches"},
+        {"id": "B", "text": "3 inches"},
+        {"id": "C", "text": "4 inches"},
+        {"id": "D", "text": "Per manufacturer specifications"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Clinical service sinks require minimum 3-inch trap.",
+        "detailed": "Per IPC Table 709.1, clinical service sinks (hoppers) require a minimum 3-inch trap and drain size to handle medical waste.",
+        "how_to_find": "Reference IPC Table 709.1 for clinical sink sizing."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 709.1"},
+      "zafto_links": [],
+      "tags": ["clinical sink", "hopper", "3-inch trap"],
+      "verified": true
+    },
+    {
+      "id": "FX-086",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["405"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is a floor-mounted water closet?",
+      "choices": [
+        {"id": "A", "text": "Bolted to floor flange"},
+        {"id": "B", "text": "Mounted to wall carrier"},
+        {"id": "C", "text": "Tank in wall"},
+        {"id": "D", "text": "Macerating toilet"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Floor-mounted WC bolts directly to floor flange.",
+        "detailed": "A floor-mounted water closet is secured to the floor by bolting through the base to a closet flange connected to the drain. The entire fixture weight rests on the floor.",
+        "how_to_find": "Reference IPC Section 405 for water closet mounting types."
+      },
+      "code_reference": {"code": "IPC", "section": "405"},
+      "zafto_links": [],
+      "tags": ["floor-mounted", "water closet", "closet flange"],
+      "verified": true
+    },
+    {
+      "id": "FX-087",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["405"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is a wall-hung water closet?",
+      "choices": [
+        {"id": "A", "text": "Bolted to floor"},
+        {"id": "B", "text": "Mounted to in-wall carrier system"},
+        {"id": "C", "text": "Tank mounted on wall"},
+        {"id": "D", "text": "Rear discharge only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Wall-hung WC mounts to in-wall carrier system.",
+        "detailed": "Per IPC Section 405.4.1, wall-hung water closets are supported by a concealed carrier mounted within the wall. The bowl hangs off the wall with no floor contact.",
+        "how_to_find": "Reference IPC Section 405.4.1 for wall-hung WC requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "405.4.1"},
+      "zafto_links": [],
+      "tags": ["wall-hung", "water closet", "carrier"],
+      "verified": true
+    },
+    {
+      "id": "FX-088",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["405"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the minimum support load for a wall-hung water closet carrier?",
+      "choices": [
+        {"id": "A", "text": "300 lbs"},
+        {"id": "B", "text": "500 lbs"},
+        {"id": "C", "text": "750 lbs"},
+        {"id": "D", "text": "Per ASME A112.6.1M"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Carrier load capacity per ASME A112.6.1M (500 lbs min).",
+        "detailed": "Per IPC Section 405.4.1 and ASME A112.6.1M, wall-hung fixture carriers must support a minimum 500 lb load to ensure structural safety.",
+        "how_to_find": "Reference IPC Section 405.4.1 and ASME A112.6.1M for carrier requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "405.4.1"},
+      "zafto_links": [],
+      "tags": ["wall-hung carrier", "load capacity", "500 lbs"],
+      "verified": true
+    },
+    {
+      "id": "FX-089",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["422"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is a tank-type water closet?",
+      "choices": [
+        {"id": "A", "text": "WC with gravity tank on bowl"},
+        {"id": "B", "text": "WC with flushometer valve"},
+        {"id": "C", "text": "WC with pressure-assist tank"},
+        {"id": "D", "text": "A and C"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Tank-type includes gravity and pressure-assist tanks.",
+        "detailed": "Tank-type water closets include both gravity tanks and pressure-assist tanks that mount on the bowl. They operate at lower supply pressure than flushometer valves.",
+        "how_to_find": "Reference IPC Section 422 for water closet types."
+      },
+      "code_reference": {"code": "IPC", "section": "422"},
+      "zafto_links": [],
+      "tags": ["tank-type", "water closet", "gravity", "pressure-assist"],
+      "verified": true
+    },
+    {
+      "id": "FX-090",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["422"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What minimum water supply pressure is required for a tank-type toilet?",
+      "choices": [
+        {"id": "A", "text": "8 psi"},
+        {"id": "B", "text": "15 psi"},
+        {"id": "C", "text": "25 psi"},
+        {"id": "D", "text": "No minimum - gravity operated"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Tank-type toilets require minimum 8 psi pressure.",
+        "detailed": "Per IPC Table 604.3, tank-type water closets (gravity) require only 8 psi minimum water supply pressure because the tank stores water before flushing.",
+        "how_to_find": "Reference IPC Table 604.3 for fixture pressure requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 604.3"},
+      "zafto_links": [],
+      "tags": ["tank-type", "water pressure", "8 psi"],
+      "verified": true
+    },
+    {
+      "id": "FX-091",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["417"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What test is required for a site-built shower pan?",
+      "choices": [
+        {"id": "A", "text": "Air pressure test"},
+        {"id": "B", "text": "Flood test with water"},
+        {"id": "C", "text": "Visual inspection only"},
+        {"id": "D", "text": "Dye test"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Site-built shower pans require flood testing.",
+        "detailed": "Per IPC Section 417.5.2, shower liners and pans must be tested by filling with water to the threshold height and allowing to stand to verify waterproof integrity.",
+        "how_to_find": "Reference IPC Section 417.5.2 for shower pan testing."
+      },
+      "code_reference": {"code": "IPC", "section": "417.5.2"},
+      "zafto_links": [],
+      "tags": ["shower pan", "flood test", "waterproof"],
+      "verified": true
+    },
+    {
+      "id": "FX-092",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["403"],
+      "code_tables": ["403.1"],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "A church has 300 seats. Per IPC Table 403.1, what occupancy type is used for fixture calculations?",
+      "choices": [
+        {"id": "A", "text": "Business"},
+        {"id": "B", "text": "Assembly - concentrated use"},
+        {"id": "C", "text": "Institutional"},
+        {"id": "D", "text": "Mercantile"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Churches are Assembly occupancy - concentrated use.",
+        "detailed": "Per IPC Table 403.1, churches are classified as Assembly occupancy with concentrated use (fixed seating). Fixture requirements are based on the seating capacity.",
+        "how_to_find": "Reference IPC Table 403.1 for assembly occupancy fixture counts."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 403.1"},
+      "zafto_links": [],
+      "tags": ["church", "assembly occupancy", "fixture count"],
+      "verified": true
+    },
+    {
+      "id": "FX-093",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["403"],
+      "code_tables": ["403.1"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the fixture count ratio for assembly occupancy per IPC Table 403.1?",
+      "choices": [
+        {"id": "A", "text": "1 WC per 50 males, 1 per 25 females"},
+        {"id": "B", "text": "1 WC per 75 males, 1 per 40 females"},
+        {"id": "C", "text": "1 WC per 125 males, 1 per 65 females"},
+        {"id": "D", "text": "Refer to Table 403.1 for exact ratios"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Refer to IPC Table 403.1 for exact assembly ratios.",
+        "detailed": "Per IPC Table 403.1, assembly occupancy fixture counts vary by type (theaters, stadiums, etc.). The table provides specific water closet ratios for each assembly subcategory.",
+        "how_to_find": "Reference IPC Table 403.1 for assembly fixture ratios."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 403.1"},
+      "zafto_links": [],
+      "tags": ["assembly", "fixture ratio", "Table 403.1"],
+      "verified": true
+    },
+    {
+      "id": "FX-094",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["410"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum drain size for a drinking fountain?",
+      "choices": [
+        {"id": "A", "text": "1 inch"},
+        {"id": "B", "text": "1-1/4 inches"},
+        {"id": "C", "text": "1-1/2 inches"},
+        {"id": "D", "text": "No drain required if waste collected"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Drinking fountains require minimum 1-1/4 inch drain.",
+        "detailed": "Per IPC Table 709.1, drinking fountains require a minimum 1-1/4 inch trap and drain size.",
+        "how_to_find": "Reference IPC Table 709.1 for drinking fountain drain size."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 709.1"},
+      "zafto_links": [],
+      "tags": ["drinking fountain", "drain size", "1-1/4 inch"],
+      "verified": true
+    },
+    {
+      "id": "FX-095",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["416"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is a deck-mounted faucet?",
+      "choices": [
+        {"id": "A", "text": "Mounted through sink/countertop"},
+        {"id": "B", "text": "Mounted to wall"},
+        {"id": "C", "text": "Floor-mounted"},
+        {"id": "D", "text": "Mounted to fixture rim"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Deck-mounted faucets install through horizontal surface.",
+        "detailed": "A deck-mounted faucet is installed through holes in a horizontal surface such as a sink ledge, countertop, or fixture rim, distinguishing it from wall-mounted faucets.",
+        "how_to_find": "Reference plumbing fixture installation practices."
+      },
+      "code_reference": {"code": "IPC", "section": "416"},
+      "zafto_links": [],
+      "tags": ["deck-mounted", "faucet", "installation"],
+      "verified": true
+    },
+    {
+      "id": "FX-096",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["417"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is required when a shower is installed over a bathtub?",
+      "choices": [
+        {"id": "A", "text": "Separate trap required"},
+        {"id": "B", "text": "Pressure-balanced or thermostatic valve"},
+        {"id": "C", "text": "Shower liner below tub"},
+        {"id": "D", "text": "Minimum 900 sq in floor area"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Shower over tub requires pressure-balanced/thermostatic valve.",
+        "detailed": "Per IPC Section 424.3, when a shower is installed over a bathtub, the valve must be pressure-balanced or thermostatic to limit temperature and prevent scalding.",
+        "how_to_find": "Reference IPC Section 424.3 for shower valve requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "424.3"},
+      "zafto_links": [],
+      "tags": ["shower-tub", "pressure-balanced", "thermostatic valve"],
+      "verified": true
+    },
+    {
+      "id": "FX-097",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["403"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "When can a single toilet room serve multiple tenants?",
+      "choices": [
+        {"id": "A", "text": "Never allowed"},
+        {"id": "B", "text": "Small tenant spaces with shared facilities per IPC"},
+        {"id": "C", "text": "Only in malls"},
+        {"id": "D", "text": "Only with landlord approval"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Small tenant spaces may share facilities per IPC Section 403.",
+        "detailed": "Per IPC Section 403.4, toilet facilities may be shared by more than one tenant in covered or open mall buildings or for small tenant spaces per specific conditions in the code.",
+        "how_to_find": "Reference IPC Section 403.4 for shared facility allowances."
+      },
+      "code_reference": {"code": "IPC", "section": "403.4"},
+      "zafto_links": [],
+      "tags": ["shared facilities", "tenant", "small spaces"],
+      "verified": true
+    },
+    {
+      "id": "FX-098",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["412"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What floor drain is required in a commercial kitchen?",
+      "choices": [
+        {"id": "A", "text": "2-inch minimum"},
+        {"id": "B", "text": "3-inch minimum with sediment bucket"},
+        {"id": "C", "text": "4-inch minimum"},
+        {"id": "D", "text": "Per local health department"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Commercial kitchen drains: 3-inch with sediment bucket.",
+        "detailed": "Per IPC Section 412.3, floor drains in commercial kitchens shall be minimum 3 inches and equipped with removable sediment buckets or strainers to catch food debris.",
+        "how_to_find": "Reference IPC Section 412.3 for commercial kitchen floor drains."
+      },
+      "code_reference": {"code": "IPC", "section": "412.3"},
+      "zafto_links": [],
+      "tags": ["floor drain", "commercial kitchen", "sediment bucket"],
+      "verified": true
+    },
+    {
+      "id": "FX-099",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["421"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What trap seal is required for a floor drain in a restroom?",
+      "choices": [
+        {"id": "A", "text": "1 inch"},
+        {"id": "B", "text": "2 inches"},
+        {"id": "C", "text": "3 inches"},
+        {"id": "D", "text": "4 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Floor drain trap seal minimum is 2 inches.",
+        "detailed": "Per IPC Section 1002.4, floor drain traps shall have a minimum 2-inch liquid seal depth to prevent sewer gas from entering the building.",
+        "how_to_find": "Reference IPC Section 1002.4 for trap seal depth."
+      },
+      "code_reference": {"code": "IPC", "section": "1002.4"},
+      "zafto_links": [],
+      "tags": ["floor drain", "trap seal", "2 inches"],
+      "verified": true
+    },
+    {
+      "id": "FX-100",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["412"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "A restroom floor drain rarely receives water and the trap seal evaporates. What is the solution?",
+      "choices": [
+        {"id": "A", "text": "Remove the drain"},
+        {"id": "B", "text": "Install trap primer"},
+        {"id": "C", "text": "Plug the drain"},
+        {"id": "D", "text": "Add water weekly"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Install trap primer to maintain seal in rarely-used drains.",
+        "detailed": "Per IPC Section 1002.4, floor drain traps subject to evaporation shall be provided with a trap primer or other approved means of maintaining the trap seal.",
+        "how_to_find": "Reference IPC Section 1002.4 for trap seal maintenance."
+      },
+      "code_reference": {"code": "IPC", "section": "1002.4"},
+      "zafto_links": [],
+      "tags": ["trap primer", "evaporation", "floor drain"],
+      "verified": true
+    },
+    {
+      "id": "FX-101",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["424"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What type of valve is prohibited for shower temperature control?",
+      "choices": [
+        {"id": "A", "text": "Thermostatic valve"},
+        {"id": "B", "text": "Pressure-balanced valve"},
+        {"id": "C", "text": "Manual two-handle valve without pressure balancing"},
+        {"id": "D", "text": "Combination valve"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Manual valves without pressure balancing are prohibited.",
+        "detailed": "Per IPC Section 424.3, shower and bathtub valves must be pressure-balanced, thermostatic, or combination type. Standard manual two-handle valves without pressure balancing are not permitted for shower temperature control.",
+        "how_to_find": "Reference IPC Section 424.3 for prohibited valve types."
+      },
+      "code_reference": {"code": "IPC", "section": "424.3"},
+      "zafto_links": [],
+      "tags": ["prohibited valve", "manual valve", "shower"],
+      "verified": true
+    },
+    {
+      "id": "FX-102",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["403"],
+      "code_tables": ["403.1"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What fixtures are required in a single-family dwelling?",
+      "choices": [
+        {"id": "A", "text": "WC, lavatory, bathtub or shower, kitchen sink"},
+        {"id": "B", "text": "WC and lavatory only"},
+        {"id": "C", "text": "Per IPC Table 403.1"},
+        {"id": "D", "text": "WC, lavatory, kitchen sink"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Dwelling requires WC, lavatory, tub/shower, kitchen sink.",
+        "detailed": "Per IPC Table 403.1, each dwelling unit shall have at minimum one water closet, one lavatory, one bathtub or shower, and one kitchen sink.",
+        "how_to_find": "Reference IPC Table 403.1 for dwelling unit fixture requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 403.1"},
+      "zafto_links": [],
+      "tags": ["dwelling unit", "minimum fixtures", "residential"],
+      "verified": true
+    },
+    {
+      "id": "FX-103",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["403"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Are automatic faucets permitted to meet fixture requirements?",
+      "choices": [
+        {"id": "A", "text": "No, manual operation required"},
+        {"id": "B", "text": "Yes, if metering or sensor operated"},
+        {"id": "C", "text": "Only in public restrooms"},
+        {"id": "D", "text": "Only with backup manual operation"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Automatic/sensor faucets are permitted.",
+        "detailed": "Per IPC Section 416.5, automatic metering faucets and sensor-operated faucets are permitted and count toward required fixture counts. They must comply with applicable standards.",
+        "how_to_find": "Reference IPC Section 416.5 for automatic faucet requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "416.5"},
+      "zafto_links": [],
+      "tags": ["automatic faucet", "sensor", "metering"],
+      "verified": true
+    },
+    {
+      "id": "FX-104",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["416"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the maximum cycle time for a metering faucet?",
+      "choices": [
+        {"id": "A", "text": "15 seconds"},
+        {"id": "B", "text": "25 seconds"},
+        {"id": "C", "text": "30 seconds"},
+        {"id": "D", "text": "No maximum specified"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Metering faucets limited to 25 seconds per cycle.",
+        "detailed": "Per IPC Section 416.5, self-closing (metering) faucets shall deliver no more than 0.25 gallons of water per cycle, with a maximum cycle time of 25 seconds.",
+        "how_to_find": "Reference IPC Section 416.5 for metering faucet limits."
+      },
+      "code_reference": {"code": "IPC", "section": "416.5"},
+      "zafto_links": [],
+      "tags": ["metering faucet", "cycle time", "25 seconds"],
+      "verified": true
+    },
+    {
+      "id": "FX-105",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["419"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum size for a dishwasher air gap?",
+      "choices": [
+        {"id": "A", "text": "1/2 inch"},
+        {"id": "B", "text": "5/8 inch inlet, 7/8 inch outlet"},
+        {"id": "C", "text": "1 inch"},
+        {"id": "D", "text": "Same as drain size"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Dishwasher air gap: 5/8\" inlet, 7/8\" outlet.",
+        "detailed": "Per IPC Section 807.4, dishwasher air gaps shall have a minimum 5/8-inch diameter inlet and 7/8-inch diameter outlet to provide adequate backflow protection.",
+        "how_to_find": "Reference IPC Section 807.4 for dishwasher air gap size."
+      },
+      "code_reference": {"code": "IPC", "section": "807.4"},
+      "zafto_links": [],
+      "tags": ["dishwasher", "air gap", "backflow"],
+      "verified": true
+    },
+    {
+      "id": "FX-106",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["807"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Where must a dishwasher air gap be located?",
+      "choices": [
+        {"id": "A", "text": "Under the counter"},
+        {"id": "B", "text": "Above the countertop or sink rim"},
+        {"id": "C", "text": "At floor level"},
+        {"id": "D", "text": "Inside dishwasher"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Air gap must be above countertop or sink rim.",
+        "detailed": "Per IPC Section 807.4, the dishwasher air gap shall be located above the flood level rim of the sink or countertop to provide visible indication of backflow.",
+        "how_to_find": "Reference IPC Section 807.4 for air gap location."
+      },
+      "code_reference": {"code": "IPC", "section": "807.4"},
+      "zafto_links": [],
+      "tags": ["dishwasher air gap", "location", "above counter"],
+      "verified": true
+    },
+    {
+      "id": "FX-107",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["807"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What alternative to an air gap is permitted for dishwasher drainage in some jurisdictions?",
+      "choices": [
+        {"id": "A", "text": "Direct connection only"},
+        {"id": "B", "text": "High loop installation"},
+        {"id": "C", "text": "Check valve"},
+        {"id": "D", "text": "No alternative permitted"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "High loop may substitute for air gap in some jurisdictions.",
+        "detailed": "Some jurisdictions allow a high loop (drain hose routed as high as possible under counter) as an alternative to an air gap. Check local amendments as this varies by jurisdiction.",
+        "how_to_find": "Reference local amendments to IPC Section 807.4."
+      },
+      "code_reference": {"code": "IPC", "section": "807.4"},
+      "zafto_links": [],
+      "tags": ["high loop", "dishwasher", "alternative"],
+      "verified": true
+    },
+    {
+      "id": "FX-108",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["420"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What backflow prevention is required for a hose bibb (sillcock)?",
+      "choices": [
+        {"id": "A", "text": "None if outside"},
+        {"id": "B", "text": "Vacuum breaker"},
+        {"id": "C", "text": "Air gap"},
+        {"id": "D", "text": "Check valve only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Hose bibbs require vacuum breaker protection.",
+        "detailed": "Per IPC Section 608.15.4.2, hose connections (sillcocks, hose bibbs) shall be protected by a non-removable hose connection vacuum breaker or an atmospheric vacuum breaker.",
+        "how_to_find": "Reference IPC Section 608.15.4.2 for hose bibb backflow."
+      },
+      "code_reference": {"code": "IPC", "section": "608.15.4.2"},
+      "zafto_links": [],
+      "tags": ["hose bibb", "vacuum breaker", "backflow"],
+      "verified": true
+    },
+    {
+      "id": "FX-109",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["408"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What access is required for a bathtub trap?",
+      "choices": [
+        {"id": "A", "text": "No access required"},
+        {"id": "B", "text": "Access panel required"},
+        {"id": "C", "text": "Only if trap is concealed"},
+        {"id": "D", "text": "Accessible waste and overflow"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Bathtub waste and overflow must be accessible.",
+        "detailed": "Per IPC Section 408.1, bathtub waste and overflow connections shall be accessible through an access panel or removable fixture for maintenance and clearing blockages.",
+        "how_to_find": "Reference IPC Section 408.1 for bathtub access requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "408.1"},
+      "zafto_links": [],
+      "tags": ["bathtub", "access panel", "waste overflow"],
+      "verified": true
+    },
+    {
+      "id": "FX-110",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["405"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is a water closet flange?",
+      "choices": [
+        {"id": "A", "text": "Tank lid"},
+        {"id": "B", "text": "Fitting connecting WC to drain pipe"},
+        {"id": "C", "text": "Wax ring"},
+        {"id": "D", "text": "Supply line connection"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Closet flange connects water closet to drain pipe.",
+        "detailed": "A water closet (closet) flange is a pipe fitting that connects the toilet outlet to the drain pipe and provides a mounting surface for bolting down the toilet.",
+        "how_to_find": "Reference plumbing installation practices."
+      },
+      "code_reference": {"code": "IPC", "section": "405.4"},
+      "zafto_links": [],
+      "tags": ["closet flange", "water closet", "connection"],
+      "verified": true
+    },
+    {
+      "id": "FX-111",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["405"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the required height for a closet flange above finished floor?",
+      "choices": [
+        {"id": "A", "text": "Flush with floor"},
+        {"id": "B", "text": "1/4 inch above floor"},
+        {"id": "C", "text": "Level with or above finished floor"},
+        {"id": "D", "text": "1/2 inch below floor"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Closet flange shall be level with or above finished floor.",
+        "detailed": "Per IPC Section 405.4, the closet flange shall be set on or secured to the floor at the correct height so that it is level with or above the finished floor.",
+        "how_to_find": "Reference IPC Section 405.4 for flange height."
+      },
+      "code_reference": {"code": "IPC", "section": "405.4"},
+      "zafto_links": [],
+      "tags": ["closet flange", "height", "finished floor"],
+      "verified": true
+    },
+    {
+      "id": "FX-112",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["402"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is a dual-flush toilet?",
+      "choices": [
+        {"id": "A", "text": "Toilet with two tanks"},
+        {"id": "B", "text": "Toilet with selectable 1.1 gpf or 1.6 gpf flush"},
+        {"id": "C", "text": "Toilet with two outlets"},
+        {"id": "D", "text": "Toilet with backup flush mechanism"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Dual-flush allows user to select flush volume.",
+        "detailed": "Per IPC Section 402.4, dual-flush toilets provide two flush options: typically 1.1 gpf for liquid waste and 1.6 gpf (or 1.28 gpf average) for solid waste, conserving water.",
+        "how_to_find": "Reference IPC Section 402.4 for dual-flush requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "402.4"},
+      "zafto_links": [],
+      "tags": ["dual-flush", "water conservation", "1.1 gpf"],
+      "verified": true
+    },
+    {
+      "id": "FX-113",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["423"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What standard governs vitreous china plumbing fixtures?",
+      "choices": [
+        {"id": "A", "text": "ASME A112.19.1"},
+        {"id": "B", "text": "ASME A112.19.2"},
+        {"id": "C", "text": "ANSI Z124.1"},
+        {"id": "D", "text": "CSA B45.1"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "ASME A112.19.2 covers vitreous china fixtures.",
+        "detailed": "Per IPC Table 1401.1, vitreous china plumbing fixtures (toilets, lavatories, bidets, urinals) shall conform to ASME A112.19.2/CSA B45.1.",
+        "how_to_find": "Reference IPC Table 1401.1 for fixture standards."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 1401.1"},
+      "zafto_links": [],
+      "tags": ["vitreous china", "ASME A112.19.2", "fixture standard"],
+      "verified": true
+    },
+    {
+      "id": "FX-114",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["423"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What standard governs plastic bathtub and shower units?",
+      "choices": [
+        {"id": "A", "text": "ASME A112.19.2"},
+        {"id": "B", "text": "ANSI Z124.1/CSA B45.5"},
+        {"id": "C", "text": "ASTM F409"},
+        {"id": "D", "text": "IAPMO Z124"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "ANSI Z124.1/CSA B45.5 covers plastic fixtures.",
+        "detailed": "Per IPC Table 1401.1, plastic bathtub and shower units shall conform to ANSI Z124.1/CSA B45.5 for plastic plumbing fixtures.",
+        "how_to_find": "Reference IPC Table 1401.1 for plastic fixture standards."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 1401.1"},
+      "zafto_links": [],
+      "tags": ["plastic fixtures", "ANSI Z124.1", "bathtub shower"],
+      "verified": true
+    },
+    {
+      "id": "FX-115",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["417"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum slope for a shower floor to the drain?",
+      "choices": [
+        {"id": "A", "text": "1/8 inch per foot"},
+        {"id": "B", "text": "1/4 inch per foot"},
+        {"id": "C", "text": "1/2 inch per foot"},
+        {"id": "D", "text": "No minimum specified"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Shower floor minimum slope is 1/4 inch per foot.",
+        "detailed": "Per IPC Section 417.5.2, shower floors shall slope uniformly toward the drain at a minimum of 1/4 inch per foot (2% slope) to ensure positive drainage.",
+        "how_to_find": "Reference IPC Section 417.5.2 for shower floor slope."
+      },
+      "code_reference": {"code": "IPC", "section": "417.5.2"},
+      "zafto_links": [],
+      "tags": ["shower floor", "slope", "1/4 inch per foot"],
+      "verified": true
+    },
+    {
+      "id": "FX-116",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["403"],
+      "code_tables": ["403.1"],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "A sports arena has 10,000 fixed seats. What fixture table entry is used?",
+      "choices": [
+        {"id": "A", "text": "Business occupancy"},
+        {"id": "B", "text": "Assembly - theaters/auditoriums"},
+        {"id": "C", "text": "Assembly - stadiums/arenas"},
+        {"id": "D", "text": "Educational"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Sports arenas use assembly - stadiums/arenas category.",
+        "detailed": "Per IPC Table 403.1, sports arenas and stadiums are listed as a separate assembly subcategory with specific fixture ratios designed for large crowd events.",
+        "how_to_find": "Reference IPC Table 403.1 for stadium/arena fixture requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 403.1"},
+      "zafto_links": [],
+      "tags": ["arena", "stadium", "assembly", "fixture count"],
+      "verified": true
+    },
+    {
+      "id": "FX-117",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["404"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What percentage of toilet compartments must be accessible?",
+      "choices": [
+        {"id": "A", "text": "At least one per restroom"},
+        {"id": "B", "text": "50%"},
+        {"id": "C", "text": "100%"},
+        {"id": "D", "text": "Per ICC A117.1 and IBC"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Accessible stall count per ICC A117.1 and IBC.",
+        "detailed": "Per IPC Section 404.1, accessible toilet compartments shall be provided per ICC A117.1 and IBC Chapter 11, which specify minimum counts based on total fixtures.",
+        "how_to_find": "Reference IPC Section 404.1 and IBC Chapter 11."
+      },
+      "code_reference": {"code": "IPC", "section": "404.1"},
+      "zafto_links": [],
+      "tags": ["accessible stall", "percentage", "IBC"],
+      "verified": true
+    },
+    {
+      "id": "FX-118",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["404"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is an ambulatory accessible toilet compartment?",
+      "choices": [
+        {"id": "A", "text": "Full wheelchair accessible stall"},
+        {"id": "B", "text": "Narrower stall with grab bars for ambulatory disabled"},
+        {"id": "C", "text": "Standard stall with no modifications"},
+        {"id": "D", "text": "Stall with urinal only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Ambulatory stall: narrower with grab bars for those who can walk.",
+        "detailed": "Per ICC A117.1, ambulatory accessible compartments are smaller than wheelchair stalls (35-37\" wide) with grab bars, designed for people who can walk but need grab bar support.",
+        "how_to_find": "Reference ICC A117.1 for ambulatory compartment dimensions."
+      },
+      "code_reference": {"code": "IPC", "section": "404.1"},
+      "zafto_links": [],
+      "tags": ["ambulatory accessible", "grab bars", "narrow stall"],
+      "verified": true
+    },
+    {
+      "id": "FX-119",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["410"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is a hi-lo drinking fountain?",
+      "choices": [
+        {"id": "A", "text": "Fountain with two temperatures"},
+        {"id": "B", "text": "Unit with two spouts at different heights"},
+        {"id": "C", "text": "Floor and wall mounted fountains"},
+        {"id": "D", "text": "Outdoor and indoor fountain pair"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Hi-lo fountain has accessible and standard height spouts.",
+        "detailed": "Per IPC Section 410.1, a hi-lo drinking fountain is a single unit with two spouts at different heights - one accessible height and one standing height - meeting both requirements.",
+        "how_to_find": "Reference IPC Section 410.1 for drinking fountain configurations."
+      },
+      "code_reference": {"code": "IPC", "section": "410.1"},
+      "zafto_links": [],
+      "tags": ["hi-lo fountain", "two heights", "accessibility"],
+      "verified": true
+    },
+    {
+      "id": "FX-120",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "FX",
+      "topic_name": "Fixtures",
+      "code_articles": ["403"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "A building undergoes a change of use from warehouse to office. What fixture requirement applies?",
+      "choices": [
+        {"id": "A", "text": "Original warehouse requirement"},
+        {"id": "B", "text": "New office occupancy requirement per Table 403.1"},
+        {"id": "C", "text": "Average of both requirements"},
+        {"id": "D", "text": "No change required for existing buildings"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Change of use requires fixtures for new occupancy type.",
+        "detailed": "Per IPC Section 403.1, when a building changes use, the new occupancy classification determines fixture requirements. Office occupancy has higher fixture counts than warehouse.",
+        "how_to_find": "Reference IPC Section 403.1 for change of use requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "403.1"},
+      "zafto_links": [],
+      "tags": ["change of use", "fixture requirement", "new occupancy"],
+      "verified": true
+    }
+  ]
+}

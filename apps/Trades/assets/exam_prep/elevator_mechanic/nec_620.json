@@ -1,0 +1,362 @@
+{
+  "category": "Elevator Mechanic",
+  "subcategory": "NEC Article 620",
+  "description": "National Electrical Code requirements for elevators, escalators, and moving walks",
+  "difficulty_distribution": {
+    "beginner": 8,
+    "intermediate": 10,
+    "advanced": 7
+  },
+  "questions": [
+    {
+      "id": "elev_nec_001",
+      "difficulty": "beginner",
+      "question": "What NEC article covers electrical requirements for elevators?",
+      "options": [
+        "Article 430",
+        "Article 480",
+        "Article 620",
+        "Article 680"
+      ],
+      "correct_answer": 2,
+      "explanation": "NEC Article 620 covers the electrical installation of elevators, dumbwaiters, escalators, moving walks, platform lifts, and stairway chairlifts.",
+      "code_reference": "NEC Article 620"
+    },
+    {
+      "id": "elev_nec_002",
+      "difficulty": "beginner",
+      "question": "What is the minimum size for elevator traveling cables?",
+      "options": [
+        "22 AWG",
+        "20 AWG",
+        "18 AWG",
+        "16 AWG"
+      ],
+      "correct_answer": 1,
+      "explanation": "Traveling cables must be rated at least 20 AWG for operating control and signal circuits. Power conductors have separate requirements based on load.",
+      "code_reference": "NEC 620.12(A)"
+    },
+    {
+      "id": "elev_nec_003",
+      "difficulty": "beginner",
+      "question": "What type of disconnecting means is required for each elevator?",
+      "options": [
+        "Fused switch only",
+        "Circuit breaker only",
+        "Enclosed externally operated fused switch or circuit breaker",
+        "Push-button disconnect"
+      ],
+      "correct_answer": 2,
+      "explanation": "Each elevator must have a disconnecting means that is an enclosed externally operable fused switch or circuit breaker lockable in the open position.",
+      "code_reference": "NEC 620.51(A)"
+    },
+    {
+      "id": "elev_nec_004",
+      "difficulty": "beginner",
+      "question": "Where must the main line disconnecting means for an elevator be located?",
+      "options": [
+        "In the main electrical room only",
+        "In the machine room or control room",
+        "On the roof",
+        "In the elevator pit"
+      ],
+      "correct_answer": 1,
+      "explanation": "The disconnecting means must be located in the machine room or control room where it is readily accessible to qualified persons.",
+      "code_reference": "NEC 620.51(C)"
+    },
+    {
+      "id": "elev_nec_005",
+      "difficulty": "beginner",
+      "question": "What is the purpose of the shunt trip on an elevator disconnecting means?",
+      "options": [
+        "To provide motor overload protection",
+        "To disconnect power during fire conditions",
+        "To regulate voltage",
+        "To protect against lightning"
+      ],
+      "correct_answer": 1,
+      "explanation": "Shunt trip disconnects (where required) automatically disconnect elevator power when fire alarm or sprinkler systems activate, per NEC and fire code requirements.",
+      "code_reference": "NEC 620.51(B)"
+    },
+    {
+      "id": "elev_nec_006",
+      "difficulty": "beginner",
+      "question": "What lighting is required in an elevator machine room?",
+      "options": [
+        "No specific requirement",
+        "Minimum one permanently installed light",
+        "Emergency lighting only",
+        "Natural lighting only"
+      ],
+      "correct_answer": 1,
+      "explanation": "At least one permanently installed lighting outlet must be provided in elevator machine rooms, with the switch located at the point of entry.",
+      "code_reference": "NEC 620.23"
+    },
+    {
+      "id": "elev_nec_007",
+      "difficulty": "beginner",
+      "question": "What is required for elevator pit lighting?",
+      "options": [
+        "Not required",
+        "At least one 125V 20A receptacle and lighting outlet",
+        "Only a receptacle",
+        "Only emergency lighting"
+      ],
+      "correct_answer": 1,
+      "explanation": "Elevator pits must have at least one 125V, 15A or 20A receptacle and a permanently installed lighting outlet with switch accessible from the pit access door.",
+      "code_reference": "NEC 620.24"
+    },
+    {
+      "id": "elev_nec_008",
+      "difficulty": "beginner",
+      "question": "Where must the elevator car lighting operating switch be located?",
+      "options": [
+        "In the machine room only",
+        "On the car top",
+        "Inside the car only",
+        "In the car or accessible from outside"
+      ],
+      "correct_answer": 3,
+      "explanation": "The car light switch must be accessible to persons in the car or from outside the car for maintenance access.",
+      "code_reference": "NEC 620.22"
+    },
+    {
+      "id": "elev_nec_009",
+      "difficulty": "intermediate",
+      "question": "What percentage of elevator feeder demand factor may be applied when there are multiple elevators?",
+      "options": [
+        "100% for all elevators",
+        "100% for largest + 50% for remaining",
+        "Based on diversified demand table",
+        "80% for all elevators"
+      ],
+      "correct_answer": 2,
+      "explanation": "NEC 620.14 provides a demand factor table based on the number of elevators. The percentage decreases as the number of elevators increases.",
+      "code_reference": "NEC 620.14"
+    },
+    {
+      "id": "elev_nec_010",
+      "difficulty": "intermediate",
+      "question": "What is the ampacity requirement for elevator feeder conductors?",
+      "options": [
+        "125% of full load current",
+        "100% of nameplate current",
+        "Based on motor starting current",
+        "Based on specific calculation method in Article 620"
+      ],
+      "correct_answer": 3,
+      "explanation": "Feeder ampacity must be calculated per NEC 620.13, which considers motor full-load current, demand factors, and other connected loads.",
+      "code_reference": "NEC 620.13"
+    },
+    {
+      "id": "elev_nec_011",
+      "difficulty": "intermediate",
+      "question": "What wiring method is required in the hoistway?",
+      "options": [
+        "NM cable",
+        "Rigid metal conduit or MI cable only",
+        "Wiring methods suitable for the environment",
+        "Open wiring permitted"
+      ],
+      "correct_answer": 2,
+      "explanation": "Wiring in hoistways must use wiring methods suitable for the environment and conditions. Hard-service cord is permitted for traveling cables.",
+      "code_reference": "NEC 620.21"
+    },
+    {
+      "id": "elev_nec_012",
+      "difficulty": "intermediate",
+      "question": "What is the minimum clear working space required at elevator controllers?",
+      "options": [
+        "24 inches",
+        "30 inches",
+        "36 inches",
+        "Per NEC 110.26"
+      ],
+      "correct_answer": 3,
+      "explanation": "Working space at elevator controllers must comply with NEC 110.26 requirements for electrical equipment, typically 36 inches clear in front.",
+      "code_reference": "NEC 620.5, 110.26"
+    },
+    {
+      "id": "elev_nec_013",
+      "difficulty": "intermediate",
+      "question": "When is selective coordination required for elevator circuits?",
+      "options": [
+        "Never required",
+        "Always required",
+        "When required by building code or AHJ",
+        "Only for high-rise buildings"
+      ],
+      "correct_answer": 2,
+      "explanation": "Selective coordination of elevator circuit protective devices may be required by the building code or authority having jurisdiction for critical operations.",
+      "code_reference": "NEC 620.62"
+    },
+    {
+      "id": "elev_nec_014",
+      "difficulty": "intermediate",
+      "question": "What type of emergency power system is required for elevators in high-rise buildings?",
+      "options": [
+        "None required by NEC",
+        "Battery backup on all elevators",
+        "Per IBC and local codes",
+        "Generator on every elevator"
+      ],
+      "correct_answer": 2,
+      "explanation": "Emergency power for elevators is typically required by building codes (IBC) rather than NEC. NEC addresses wiring but not the requirement for emergency power.",
+      "code_reference": "NEC 620.91, IBC 3003"
+    },
+    {
+      "id": "elev_nec_015",
+      "difficulty": "intermediate",
+      "question": "What is required for elevator motor branch circuit short-circuit protection?",
+      "options": [
+        "Standard motor protection rules",
+        "Up to 200% of motor FLC for fuses",
+        "Special rules allowing higher protection values",
+        "Only circuit breakers permitted"
+      ],
+      "correct_answer": 2,
+      "explanation": "NEC 620.62 allows elevator motor branch circuit protection up to 200% for fuses and 300% for breakers due to high inrush currents during motor starting.",
+      "code_reference": "NEC 620.62"
+    },
+    {
+      "id": "elev_nec_016",
+      "difficulty": "intermediate",
+      "question": "How must elevator car traveling cables be supported?",
+      "options": [
+        "No specific requirement",
+        "Must be supported to prevent strain on terminations",
+        "Must be in conduit",
+        "Only flexible cord permitted"
+      ],
+      "correct_answer": 1,
+      "explanation": "Traveling cables must be supported at the car and machine room ends to prevent mechanical strain on the conductors and terminations.",
+      "code_reference": "NEC 620.44"
+    },
+    {
+      "id": "elev_nec_017",
+      "difficulty": "intermediate",
+      "question": "What voltage limitation applies to elevator control circuits?",
+      "options": [
+        "No limitation",
+        "150V maximum",
+        "300V maximum for operating circuits in cars",
+        "480V maximum"
+      ],
+      "correct_answer": 2,
+      "explanation": "Operating control and signal circuits in elevator cars are limited to 300V or less for safety, with additional limitations in certain applications.",
+      "code_reference": "NEC 620.22"
+    },
+    {
+      "id": "elev_nec_018",
+      "difficulty": "intermediate",
+      "question": "What equipment grounding is required for elevator installations?",
+      "options": [
+        "None required",
+        "Only the machine room equipment",
+        "All metal raceways and equipment must be grounded",
+        "Only the car frame"
+      ],
+      "correct_answer": 2,
+      "explanation": "All metal raceways, cable armor, and equipment enclosures must be bonded and grounded per NEC Part VII of Article 620.",
+      "code_reference": "NEC 620.81"
+    },
+    {
+      "id": "elev_nec_019",
+      "difficulty": "advanced",
+      "question": "For regenerative drive elevators, how must regenerated power be handled?",
+      "options": [
+        "Must be dissipated as heat",
+        "Must be returned to the supply or absorbed by proper means",
+        "Must be stored in batteries",
+        "No specific requirement"
+      ],
+      "correct_answer": 1,
+      "explanation": "Regenerative drives must have means to absorb or redirect regenerated power. This may include resistor banks or connection back to the supply system.",
+      "code_reference": "NEC 620.91"
+    },
+    {
+      "id": "elev_nec_020",
+      "difficulty": "advanced",
+      "question": "What is required when elevator machine room contains more than one driving machine?",
+      "options": [
+        "Single disconnect permitted",
+        "Each driving machine must have its own disconnect",
+        "Master disconnect only",
+        "No disconnects required"
+      ],
+      "correct_answer": 1,
+      "explanation": "Where more than one driving machine is in a machine room, each driving machine must have an individual disconnecting means.",
+      "code_reference": "NEC 620.51"
+    },
+    {
+      "id": "elev_nec_021",
+      "difficulty": "advanced",
+      "question": "What is the requirement for GFCI protection in elevator pits?",
+      "options": [
+        "Not required",
+        "Required for all receptacles",
+        "Required for all 125V 15A and 20A receptacles",
+        "Only required if water is present"
+      ],
+      "correct_answer": 2,
+      "explanation": "All 125V, single-phase, 15A and 20A receptacles in elevator pits must have GFCI protection for personnel safety.",
+      "code_reference": "NEC 620.85"
+    },
+    {
+      "id": "elev_nec_022",
+      "difficulty": "advanced",
+      "question": "What fire recall sequence applies to elevator power disconnection?",
+      "options": [
+        "NEC specifies the complete sequence",
+        "ASME A17.1 and fire codes specify sequence, NEC addresses wiring",
+        "Power must be disconnected immediately",
+        "No specific sequence required"
+      ],
+      "correct_answer": 1,
+      "explanation": "Fire recall sequencing is specified by ASME A17.1 and fire codes (NFPA 72). NEC provides wiring requirements for the shunt trip and other devices.",
+      "code_reference": "NEC 620.51(B), ASME A17.1"
+    },
+    {
+      "id": "elev_nec_023",
+      "difficulty": "advanced",
+      "question": "What is the conductor ampacity calculation for an elevator motor rated 25 HP, 460V, 3-phase?",
+      "options": [
+        "Use NEC Table 430.250 for motor FLC",
+        "Use nameplate current only",
+        "Multiply by 125%",
+        "Per specific elevator calculation method"
+      ],
+      "correct_answer": 0,
+      "explanation": "Motor FLC from NEC Table 430.250 is used (34A for 25HP, 460V). Then apply Article 620 specific calculations for feeder sizing.",
+      "code_reference": "NEC 620.13, 430.250"
+    },
+    {
+      "id": "elev_nec_024",
+      "difficulty": "advanced",
+      "question": "What is required when elevator controllers contain Class 2 circuits?",
+      "options": [
+        "Must be in separate enclosure",
+        "Must be separated from power wiring per Article 725",
+        "No separation required",
+        "Must use shielded cable"
+      ],
+      "correct_answer": 1,
+      "explanation": "Class 2 circuits must be separated from power-limited and non-power-limited circuits per NEC Article 725 requirements to prevent interference and safety issues.",
+      "code_reference": "NEC 620.21, 725.136"
+    },
+    {
+      "id": "elev_nec_025",
+      "difficulty": "advanced",
+      "question": "What overcurrent protection is permitted for elevator motor control transformer secondaries?",
+      "options": [
+        "Primary protection only sufficient",
+        "Secondary protection always required at 125%",
+        "Secondary protection may be omitted per specific conditions",
+        "No overcurrent protection permitted"
+      ],
+      "correct_answer": 2,
+      "explanation": "NEC 620.62 permits omitting secondary overcurrent protection under specific conditions related to primary protection sizing and transformer impedance.",
+      "code_reference": "NEC 620.62"
+    }
+  ]
+}

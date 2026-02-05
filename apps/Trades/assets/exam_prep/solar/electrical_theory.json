@@ -1,0 +1,1712 @@
+{
+  "metadata": {
+    "trade": "solar",
+    "category": "Electrical Theory",
+    "total_questions": 100,
+    "last_updated": "2026-01-31",
+    "code_references": ["DC Electrical Theory", "PV System Fundamentals", "NABCEP Resource Guide"],
+    "exam_sources": ["NABCEP PVIP", "State Solar Contractor Exams", "Electrical Journeyman/Master Exams"]
+  },
+  "questions": [
+    {
+      "id": "solar-theory-001",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Ohm's Law",
+      "question": "According to Ohm's Law, if voltage is 48V and current is 6A, what is the resistance?",
+      "options": [
+        { "id": "a", "text": "288 ohms" },
+        { "id": "b", "text": "8 ohms", "correct": true },
+        { "id": "c", "text": "54 ohms" },
+        { "id": "d", "text": "42 ohms" }
+      ],
+      "explanation": "Ohm's Law: R = V/I = 48V ÷ 6A = 8 ohms. This fundamental relationship applies to all DC circuits including PV systems.",
+      "code_ref": "Electrical Theory Fundamentals",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-002",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Ohm's Law",
+      "question": "A PV module has a Vmp of 40V and Imp of 10A. What is the equivalent resistance at maximum power?",
+      "options": [
+        { "id": "a", "text": "400 ohms" },
+        { "id": "b", "text": "4 ohms", "correct": true },
+        { "id": "c", "text": "0.25 ohms" },
+        { "id": "d", "text": "50 ohms" }
+      ],
+      "explanation": "At maximum power point: R = Vmp/Imp = 40V ÷ 10A = 4 ohms. This is the equivalent load resistance seen by the module when operating at MPP.",
+      "code_ref": "PV Electrical Characteristics",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-003",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Power Equation",
+      "question": "Using P = I × V, what is the power of a module with Imp = 9.5A and Vmp = 42V?",
+      "options": [
+        { "id": "a", "text": "399W", "correct": true },
+        { "id": "b", "text": "51.5W" },
+        { "id": "c", "text": "4.42W" },
+        { "id": "d", "text": "450W" }
+      ],
+      "explanation": "Power = Current × Voltage = 9.5A × 42V = 399W. This is the maximum power (Pmax) the module produces under standard test conditions.",
+      "code_ref": "PV Electrical Characteristics",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-004",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Power Equation",
+      "question": "Using P = I²R, what is the power dissipated in a 0.5 ohm conductor carrying 10A?",
+      "options": [
+        { "id": "a", "text": "5W" },
+        { "id": "b", "text": "50W", "correct": true },
+        { "id": "c", "text": "100W" },
+        { "id": "d", "text": "20W" }
+      ],
+      "explanation": "Power = I²R = (10A)² × 0.5Ω = 100 × 0.5 = 50W. This represents conductor power loss (heat). Lower resistance conductors reduce these losses.",
+      "code_ref": "Conductor Power Loss",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-005",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Series Circuits",
+      "question": "Three 400W modules with Vmp = 40V each are connected in series. What is the string Vmp?",
+      "options": [
+        { "id": "a", "text": "40V" },
+        { "id": "b", "text": "80V" },
+        { "id": "c", "text": "120V", "correct": true },
+        { "id": "d", "text": "160V" }
+      ],
+      "explanation": "In series, voltages add: String Vmp = 40V + 40V + 40V = 120V. Current remains the same as a single module (Imp). This is how PV strings achieve higher voltage.",
+      "code_ref": "Series Circuit Theory",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-006",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Series Circuits",
+      "question": "In a series string of 10 modules, if one module's Isc is reduced due to shading, what happens to string current?",
+      "options": [
+        { "id": "a", "text": "Only the shaded module's current decreases" },
+        { "id": "b", "text": "The entire string current is limited by the shaded module", "correct": true },
+        { "id": "c", "text": "Other modules increase current to compensate" },
+        { "id": "d", "text": "Total current increases" }
+      ],
+      "explanation": "In series, current must be equal through all modules. The lowest-current module limits the entire string. This is why partial shading severely impacts series-connected PV strings without bypass diodes.",
+      "code_ref": "Series Circuit Behavior",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-007",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Parallel Circuits",
+      "question": "Two strings with Isc = 10A each are connected in parallel. What is the combined Isc?",
+      "options": [
+        { "id": "a", "text": "10A" },
+        { "id": "b", "text": "5A" },
+        { "id": "c", "text": "20A", "correct": true },
+        { "id": "d", "text": "100A" }
+      ],
+      "explanation": "In parallel, currents add: Combined Isc = 10A + 10A = 20A. Voltage remains the same as a single string. Parallel connection increases current capacity of the array.",
+      "code_ref": "Parallel Circuit Theory",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-008",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Parallel Circuits",
+      "question": "When connecting strings in parallel, what must be matched?",
+      "options": [
+        { "id": "a", "text": "Current only" },
+        { "id": "b", "text": "Voltage (equal module count per string)", "correct": true },
+        { "id": "c", "text": "Wire color only" },
+        { "id": "d", "text": "Module brand only" }
+      ],
+      "explanation": "Parallel-connected strings must have matched voltages. Mismatched voltages cause circulating currents and power losses. This means equal module count per string with matched module types.",
+      "code_ref": "Parallel Connection Requirements",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-009",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Array Calculations",
+      "question": "An array has 4 strings of 12 modules each. Module specs: Vmp=41V, Imp=10A. What is total array power?",
+      "options": [
+        { "id": "a", "text": "4,920W" },
+        { "id": "b", "text": "19,680W", "correct": true },
+        { "id": "c", "text": "9,840W" },
+        { "id": "d", "text": "1,640W" }
+      ],
+      "explanation": "String Vmp = 12 × 41V = 492V. String Imp = 10A. String power = 492V × 10A = 4,920W. Array power = 4 strings × 4,920W = 19,680W (19.68 kW DC).",
+      "code_ref": "Array Power Calculations",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-010",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Array Calculations",
+      "question": "Using the same array (4 strings × 12 modules, Vmp=41V, Imp=10A), what is the array Imp?",
+      "options": [
+        { "id": "a", "text": "10A" },
+        { "id": "b", "text": "40A", "correct": true },
+        { "id": "c", "text": "120A" },
+        { "id": "d", "text": "480A" }
+      ],
+      "explanation": "Array Imp = Number of parallel strings × Module Imp = 4 × 10A = 40A. The voltage remains 492V (from series modules), but current increases with parallel strings.",
+      "code_ref": "Array Current Calculations",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-011",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "DC vs AC",
+      "question": "What is the fundamental difference between DC and AC electricity?",
+      "options": [
+        { "id": "a", "text": "DC is more dangerous" },
+        { "id": "b", "text": "DC flows in one direction; AC alternates direction periodically", "correct": true },
+        { "id": "c", "text": "AC can only be used outdoors" },
+        { "id": "d", "text": "There is no difference" }
+      ],
+      "explanation": "Direct Current (DC) flows continuously in one direction from positive to negative. Alternating Current (AC) periodically reverses direction, typically at 60 Hz in North America. PV modules produce DC; inverters convert to AC.",
+      "code_ref": "Electrical Fundamentals",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-012",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Voltage Drop",
+      "question": "The voltage drop formula VD = 2 × I × R × L / 1000 gives voltage drop for:",
+      "options": [
+        { "id": "a", "text": "One-way conductor length" },
+        { "id": "b", "text": "Round-trip (both conductors) in a circuit", "correct": true },
+        { "id": "c", "text": "AC circuits only" },
+        { "id": "d", "text": "Three-phase circuits only" }
+      ],
+      "explanation": "The factor of 2 accounts for both positive and negative (or line and neutral) conductors in the circuit. Voltage drop occurs in both directions, so total drop is twice the one-way drop.",
+      "code_ref": "Voltage Drop Calculations",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-013",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Voltage Drop",
+      "question": "A 200-foot DC circuit with 10 AWG copper (1.02Ω/1000ft) carries 8A. What is the voltage drop?",
+      "options": [
+        { "id": "a", "text": "1.63V" },
+        { "id": "b", "text": "3.26V", "correct": true },
+        { "id": "c", "text": "6.52V" },
+        { "id": "d", "text": "0.82V" }
+      ],
+      "explanation": "VD = 2 × I × R × L / 1000 = 2 × 8A × 1.02Ω × 200ft / 1000 = 3.26V. At 300V DC system voltage, this is 1.09% voltage drop, within the 2% recommendation.",
+      "code_ref": "NEC Chapter 9 Table 8",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-theory-014",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Wire Resistance",
+      "question": "Which wire gauge has lower resistance per foot?",
+      "options": [
+        { "id": "a", "text": "14 AWG" },
+        { "id": "b", "text": "10 AWG", "correct": true },
+        { "id": "c", "text": "12 AWG" },
+        { "id": "d", "text": "They are equal" }
+      ],
+      "explanation": "Lower AWG numbers indicate larger wire diameter and lower resistance. 10 AWG has approximately 1.02Ω/1000ft, while 14 AWG has approximately 2.58Ω/1000ft. Larger wire reduces voltage drop.",
+      "code_ref": "NEC Chapter 9 Table 8",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-015",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Conductor Materials",
+      "question": "Compared to aluminum, copper conductors have:",
+      "options": [
+        { "id": "a", "text": "Higher resistance for same size" },
+        { "id": "b", "text": "Lower resistance for same size", "correct": true },
+        { "id": "c", "text": "Identical resistance" },
+        { "id": "d", "text": "Resistance depends on voltage only" }
+      ],
+      "explanation": "Copper has approximately 61% lower resistance than aluminum for the same wire size. Aluminum requires larger conductors to achieve equivalent ampacity and voltage drop performance.",
+      "code_ref": "NEC Chapter 9 Table 8",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-016",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "I-V Curve",
+      "question": "On a PV module I-V curve, the maximum power point (MPP) is located:",
+      "options": [
+        { "id": "a", "text": "At open-circuit voltage (Voc)" },
+        { "id": "b", "text": "At short-circuit current (Isc)" },
+        { "id": "c", "text": "At the 'knee' of the curve where P = V × I is maximum", "correct": true },
+        { "id": "d", "text": "At zero voltage and current" }
+      ],
+      "explanation": "The MPP is at the knee of the I-V curve where the product of voltage and current (power) is maximum. At Voc, current is zero (no power). At Isc, voltage is zero (no power). MPP is between these points.",
+      "code_ref": "PV I-V Characteristics",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-017",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "I-V Curve",
+      "question": "What happens to a PV module's I-V curve when irradiance increases?",
+      "options": [
+        { "id": "a", "text": "Isc decreases proportionally" },
+        { "id": "b", "text": "Isc increases proportionally, Voc increases slightly", "correct": true },
+        { "id": "c", "text": "Both Isc and Voc decrease" },
+        { "id": "d", "text": "The curve shifts left" }
+      ],
+      "explanation": "Current (Isc) increases nearly linearly with irradiance—double the sun means nearly double the current. Voltage (Voc) increases logarithmically (slightly). This is why high-irradiance conditions produce more power.",
+      "code_ref": "PV Irradiance Response",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-018",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Temperature Effects",
+      "question": "As PV cell temperature increases, what happens to module voltage?",
+      "options": [
+        { "id": "a", "text": "Voltage increases significantly" },
+        { "id": "b", "text": "Voltage decreases", "correct": true },
+        { "id": "c", "text": "Voltage is not affected by temperature" },
+        { "id": "d", "text": "Voltage doubles" }
+      ],
+      "explanation": "Crystalline silicon Voc decreases approximately -0.3% per °C temperature rise. A 40°C rise above STC (25°C) causes about 12% voltage drop. This is why cold weather produces higher voltages requiring proper string sizing.",
+      "code_ref": "Temperature Coefficients",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-019",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Temperature Effects",
+      "question": "A module with Voc temperature coefficient of -0.30%/°C has Voc = 50V at 25°C. What is Voc at 65°C?",
+      "options": [
+        { "id": "a", "text": "56V" },
+        { "id": "b", "text": "50V" },
+        { "id": "c", "text": "44V", "correct": true },
+        { "id": "d", "text": "38V" }
+      ],
+      "explanation": "Temperature change = 65°C - 25°C = 40°C. Voltage change = 40 × (-0.30%) = -12%. Voc at 65°C = 50V × (1 - 0.12) = 44V. Higher temperature means lower voltage and power output.",
+      "code_ref": "Temperature Coefficient Calculations",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-theory-020",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Temperature Effects",
+      "question": "A module with Voc temperature coefficient of -0.30%/°C has Voc = 50V at 25°C. What is Voc at -15°C?",
+      "options": [
+        { "id": "a", "text": "50V" },
+        { "id": "b", "text": "44V" },
+        { "id": "c", "text": "56V", "correct": true },
+        { "id": "d", "text": "62V" }
+      ],
+      "explanation": "Temperature change = -15°C - 25°C = -40°C. Voltage change = -40 × (-0.30%) = +12%. Voc at -15°C = 50V × (1 + 0.12) = 56V. Cold temperatures increase voltage—critical for maximum voltage calculations.",
+      "code_ref": "Temperature Coefficient Calculations, NEC 690.7(A)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-theory-021",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "MPPT",
+      "question": "What is the purpose of Maximum Power Point Tracking (MPPT)?",
+      "options": [
+        { "id": "a", "text": "Track the sun's position" },
+        { "id": "b", "text": "Continuously adjust operating point to extract maximum power from the array", "correct": true },
+        { "id": "c", "text": "Monitor module temperature" },
+        { "id": "d", "text": "Prevent arc faults" }
+      ],
+      "explanation": "MPPT algorithms continuously adjust the inverter's input impedance to find and track the array's maximum power point as conditions change (irradiance, temperature, shading). This maximizes energy harvest from the PV array.",
+      "code_ref": "Inverter MPPT Operation",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-022",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "MPPT",
+      "question": "An inverter's MPPT voltage range is 200-480V. A string with Vmp = 350V at STC will:",
+      "options": [
+        { "id": "a", "text": "Never work with this inverter" },
+        { "id": "b", "text": "Operate within MPPT range at STC but may fall below in hot weather", "correct": true },
+        { "id": "c", "text": "Always operate at maximum efficiency" },
+        { "id": "d", "text": "Exceed maximum voltage" }
+      ],
+      "explanation": "At STC (25°C), 350V is within 200-480V range. But at high temperatures, Vmp drops (e.g., -0.35%/°C × 40°C = -14%, giving 301V). String design must keep Vmp above 200V at highest expected temperature.",
+      "code_ref": "MPPT Voltage Range Design",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-theory-023",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Inverter Efficiency",
+      "question": "A typical grid-tied string inverter has peak efficiency of approximately:",
+      "options": [
+        { "id": "a", "text": "75-80%" },
+        { "id": "b", "text": "85-90%" },
+        { "id": "c", "text": "96-99%", "correct": true },
+        { "id": "d", "text": "100%" }
+      ],
+      "explanation": "Modern grid-tied inverters achieve peak efficiencies of 96-99%. Efficiency varies with input power level; peak efficiency typically occurs at 25-50% of rated power. CEC weighted efficiency accounts for real-world operating conditions.",
+      "code_ref": "Inverter Efficiency Ratings",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-024",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Inverter Types",
+      "question": "What distinguishes a transformerless inverter from an isolated inverter?",
+      "options": [
+        { "id": "a", "text": "Transformerless has no MPPT" },
+        { "id": "b", "text": "Transformerless has no galvanic isolation between DC and AC", "correct": true },
+        { "id": "c", "text": "Isolated inverters are more efficient" },
+        { "id": "d", "text": "There is no difference" }
+      ],
+      "explanation": "Transformerless (non-isolated) inverters connect DC and AC sides without transformer isolation, offering higher efficiency and lighter weight. They require functionally grounded arrays and ground-fault protection per NEC 690.41.",
+      "code_ref": "Inverter Topologies",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-025",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Power Factor",
+      "question": "A power factor of 1.0 (unity) means:",
+      "options": [
+        { "id": "a", "text": "The system is producing reactive power" },
+        { "id": "b", "text": "All power is real power (kW) with no reactive power (kVAR)", "correct": true },
+        { "id": "c", "text": "Voltage and current are 90° out of phase" },
+        { "id": "d", "text": "The inverter is offline" }
+      ],
+      "explanation": "Unity power factor means voltage and current are in phase—all apparent power is real power doing useful work. Most grid-tied inverters operate at or near unity power factor, though some can provide reactive power support.",
+      "code_ref": "Power Factor Theory",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-theory-026",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Power Relationships",
+      "question": "The relationship between apparent power (S), real power (P), and reactive power (Q) is:",
+      "options": [
+        { "id": "a", "text": "S = P + Q" },
+        { "id": "b", "text": "S² = P² + Q²", "correct": true },
+        { "id": "c", "text": "S = P - Q" },
+        { "id": "d", "text": "S = P × Q" }
+      ],
+      "explanation": "The power triangle shows S² = P² + Q² (Pythagorean relationship). S is measured in VA (or kVA), P in watts (or kW), and Q in VAR (or kVAR). Power factor = P/S = cos(θ) where θ is the phase angle.",
+      "code_ref": "AC Power Theory",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-theory-027",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Bypass Diodes",
+      "question": "Bypass diodes in a PV module serve to:",
+      "options": [
+        { "id": "a", "text": "Increase module voltage" },
+        { "id": "b", "text": "Provide current path around shaded or damaged cells", "correct": true },
+        { "id": "c", "text": "Convert DC to AC" },
+        { "id": "d", "text": "Connect the module to ground" }
+      ],
+      "explanation": "Bypass diodes conduct when cells become reverse-biased (shaded), allowing string current to bypass the affected cell group. This prevents hot spots and allows unshaded cells to continue producing power. Most modules have 3 bypass diodes.",
+      "code_ref": "Module Protection",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-028",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Bypass Diodes",
+      "question": "When a bypass diode conducts, what is the approximate voltage drop across it?",
+      "options": [
+        { "id": "a", "text": "0V" },
+        { "id": "b", "text": "0.5-0.7V", "correct": true },
+        { "id": "c", "text": "12V" },
+        { "id": "d", "text": "Module Vmp" }
+      ],
+      "explanation": "A conducting silicon bypass diode has approximately 0.5-0.7V forward voltage drop. This small voltage loss is preferable to the complete current blockage that would occur without the diode when cells are shaded.",
+      "code_ref": "Diode Characteristics",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-029",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Hot Spots",
+      "question": "A 'hot spot' in a PV module occurs when:",
+      "options": [
+        { "id": "a", "text": "The module is facing the sun" },
+        { "id": "b", "text": "A shaded cell dissipates power as heat from other cells", "correct": true },
+        { "id": "c", "text": "The inverter is at peak efficiency" },
+        { "id": "d", "text": "The module is new" }
+      ],
+      "explanation": "When a cell is shaded in a series string, it becomes reverse-biased and acts as a load, dissipating power from unshaded cells as heat. This localized heating can damage cells and encapsulants. Bypass diodes prevent this.",
+      "code_ref": "Module Thermal Effects",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-030",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Blocking Diodes",
+      "question": "Blocking diodes prevent:",
+      "options": [
+        { "id": "a", "text": "Current from flowing through the module" },
+        { "id": "b", "text": "Reverse current flow from parallel strings or batteries into a shaded string", "correct": true },
+        { "id": "c", "text": "Overvoltage conditions" },
+        { "id": "d", "text": "DC to AC conversion" }
+      ],
+      "explanation": "Blocking diodes in series with each string prevent reverse current from higher-voltage strings flowing into lower-voltage (shaded) strings. Less common now with MLPE and smart inverters, but still used in some battery systems.",
+      "code_ref": "String Protection",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-031",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Cell Technology",
+      "question": "Crystalline silicon solar cells are made from:",
+      "options": [
+        { "id": "a", "text": "Copper" },
+        { "id": "b", "text": "Purified silicon semiconductor material", "correct": true },
+        { "id": "c", "text": "Carbon fiber" },
+        { "id": "d", "text": "Aluminum" }
+      ],
+      "explanation": "Crystalline silicon cells are made from highly purified silicon formed into either single-crystal (monocrystalline) or multi-crystal (polycrystalline) wafers. Silicon's semiconductor properties enable the photovoltaic effect.",
+      "code_ref": "PV Cell Technology",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-032",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Cell Technology",
+      "question": "The photovoltaic effect occurs when:",
+      "options": [
+        { "id": "a", "text": "Heat is converted to electricity" },
+        { "id": "b", "text": "Light photons free electrons in a semiconductor, creating voltage and current", "correct": true },
+        { "id": "c", "text": "Electricity is converted to light" },
+        { "id": "d", "text": "Wind turns a turbine" }
+      ],
+      "explanation": "The photovoltaic effect converts light directly to electricity. Photons with sufficient energy (above the bandgap) free electrons in the semiconductor. The p-n junction creates an electric field that separates charges, producing voltage and current.",
+      "code_ref": "PV Fundamentals",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-033",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Cell Voltage",
+      "question": "A single crystalline silicon cell produces approximately what voltage?",
+      "options": [
+        { "id": "a", "text": "0.5-0.6V", "correct": true },
+        { "id": "b", "text": "1.5V" },
+        { "id": "c", "text": "12V" },
+        { "id": "d", "text": "120V" }
+      ],
+      "explanation": "A single crystalline silicon cell produces approximately 0.5-0.6V open-circuit voltage. Modules connect 60-72+ cells in series to achieve useful voltages (30-50V typical). Current depends on cell area and irradiance.",
+      "code_ref": "PV Cell Characteristics",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-034",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Irradiance",
+      "question": "Standard Test Conditions (STC) specify what irradiance level?",
+      "options": [
+        { "id": "a", "text": "500 W/m²" },
+        { "id": "b", "text": "800 W/m²" },
+        { "id": "c", "text": "1000 W/m²", "correct": true },
+        { "id": "d", "text": "1366 W/m²" }
+      ],
+      "explanation": "STC specifies 1000 W/m² irradiance, 25°C cell temperature, and AM 1.5 spectrum. All module nameplate ratings (Pmax, Voc, Isc, Vmp, Imp) are based on these standard conditions for consistent comparison.",
+      "code_ref": "IEC 61215, STC Definition",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-035",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Irradiance Response",
+      "question": "If irradiance drops from 1000 W/m² to 500 W/m², module Isc will approximately:",
+      "options": [
+        { "id": "a", "text": "Stay the same" },
+        { "id": "b", "text": "Drop by half", "correct": true },
+        { "id": "c", "text": "Double" },
+        { "id": "d", "text": "Drop by 25%" }
+      ],
+      "explanation": "Current (Isc) is nearly linearly proportional to irradiance. Half the irradiance produces approximately half the current. Voltage changes only slightly (logarithmically) with irradiance.",
+      "code_ref": "PV Irradiance Response",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-036",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Fill Factor",
+      "question": "The fill factor (FF) of a PV module is the ratio of:",
+      "options": [
+        { "id": "a", "text": "Voc to Vmp" },
+        { "id": "b", "text": "Pmax to (Voc × Isc)", "correct": true },
+        { "id": "c", "text": "Isc to Imp" },
+        { "id": "d", "text": "Module weight to area" }
+      ],
+      "explanation": "Fill Factor = Pmax / (Voc × Isc) = (Vmp × Imp) / (Voc × Isc). FF measures how 'square' the I-V curve is. Typical values are 0.75-0.85. Higher FF indicates better quality cells with lower resistive losses.",
+      "code_ref": "PV Performance Metrics",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-theory-037",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Module Efficiency",
+      "question": "A 400W module with dimensions 1.7m × 1.0m has what efficiency?",
+      "options": [
+        { "id": "a", "text": "20%" },
+        { "id": "b", "text": "23.5%", "correct": true },
+        { "id": "c", "text": "17%" },
+        { "id": "d", "text": "40%" }
+      ],
+      "explanation": "Module area = 1.7m × 1.0m = 1.7 m². At STC (1000 W/m²), incident power = 1.7 × 1000 = 1700W. Efficiency = Pmax / Incident power = 400W / 1700W = 23.5%.",
+      "code_ref": "Module Efficiency Calculation",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-038",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Degradation",
+      "question": "Light-Induced Degradation (LID) typically causes what power loss in crystalline silicon modules?",
+      "options": [
+        { "id": "a", "text": "0% - it doesn't exist" },
+        { "id": "b", "text": "1-3% in the first hours of exposure", "correct": true },
+        { "id": "c", "text": "10-15% annually" },
+        { "id": "d", "text": "50% over the module lifetime" }
+      ],
+      "explanation": "LID occurs in the first hours/days of light exposure due to boron-oxygen defects in p-type crystalline silicon. This initial 1-3% loss is permanent and occurs before ongoing degradation of ~0.5%/year begins.",
+      "code_ref": "Module Degradation",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-039",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Ground Fault",
+      "question": "A ground fault in a PV system occurs when:",
+      "options": [
+        { "id": "a", "text": "The system is properly grounded" },
+        { "id": "b", "text": "An unintended current path exists between a current-carrying conductor and ground", "correct": true },
+        { "id": "c", "text": "The inverter is producing power" },
+        { "id": "d", "text": "Modules are in sunlight" }
+      ],
+      "explanation": "Ground faults create unintended current paths through ground (damaged insulation, water ingress, wiring errors). The fault current bypasses normal load paths. Ground-fault protection per NEC 690.41 detects and interrupts these faults.",
+      "code_ref": "Ground Fault Detection",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-040",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Arc Fault",
+      "question": "Series arc faults in PV systems are caused by:",
+      "options": [
+        { "id": "a", "text": "Parallel connections" },
+        { "id": "b", "text": "Loose connections or damaged insulation creating gaps in the current path", "correct": true },
+        { "id": "c", "text": "Excessive sunlight" },
+        { "id": "d", "text": "Properly functioning bypass diodes" }
+      ],
+      "explanation": "Series arc faults occur when current jumps across a gap in the circuit path (loose connector, broken conductor, corroded terminal). The arc generates heat that can ignite nearby materials. AFCI per NEC 690.11 detects these faults.",
+      "code_ref": "Arc Fault Detection",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-041",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Grounding Types",
+      "question": "In a solidly grounded PV system, one conductor is:",
+      "options": [
+        { "id": "a", "text": "Not connected to anything" },
+        { "id": "b", "text": "Connected directly to the grounding electrode system", "correct": true },
+        { "id": "c", "text": "Connected through a high resistance" },
+        { "id": "d", "text": "Floating at mid-voltage" }
+      ],
+      "explanation": "Solidly grounded systems connect one current-carrying conductor (typically negative) directly to ground through a grounding electrode conductor. Less common now than functionally grounded (ungrounded with ground reference) systems.",
+      "code_ref": "System Grounding",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-042",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Grounding Types",
+      "question": "Modern transformerless inverters typically use what array grounding configuration?",
+      "options": [
+        { "id": "a", "text": "Solidly grounded positive" },
+        { "id": "b", "text": "Solidly grounded negative" },
+        { "id": "c", "text": "Functionally grounded (ungrounded with ground reference)", "correct": true },
+        { "id": "d", "text": "No ground connection" }
+      ],
+      "explanation": "Transformerless inverters use functionally grounded arrays where neither DC conductor is solidly grounded, but ground reference is maintained through high-impedance monitoring. This requires ground-fault detection per NEC 690.41.",
+      "code_ref": "NEC 690.41, Transformerless Inverters",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-043",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Harmonics",
+      "question": "Total Harmonic Distortion (THD) in inverter output should be below what percentage for grid connection?",
+      "options": [
+        { "id": "a", "text": "25%" },
+        { "id": "b", "text": "10%" },
+        { "id": "c", "text": "5%", "correct": true },
+        { "id": "d", "text": "50%" }
+      ],
+      "explanation": "IEEE 1547 limits total harmonic distortion to 5% for distributed generation. Harmonics are voltage/current components at frequencies that are multiples of the fundamental (60 Hz). Modern inverters achieve <3% THD through advanced filtering.",
+      "code_ref": "IEEE 1547, Power Quality",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-theory-044",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Frequency",
+      "question": "The standard AC frequency in North America is:",
+      "options": [
+        { "id": "a", "text": "50 Hz" },
+        { "id": "b", "text": "60 Hz", "correct": true },
+        { "id": "c", "text": "120 Hz" },
+        { "id": "d", "text": "DC has no frequency" }
+      ],
+      "explanation": "North American grids operate at 60 Hz (Europe and much of the world use 50 Hz). Grid-tied inverters must synchronize their output to grid frequency and disconnect if frequency deviates beyond acceptable limits per IEEE 1547.",
+      "code_ref": "AC Frequency Standards",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-045",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Single vs Three Phase",
+      "question": "A 240V single-phase residential service has what voltage between each hot leg and neutral?",
+      "options": [
+        { "id": "a", "text": "240V" },
+        { "id": "b", "text": "120V", "correct": true },
+        { "id": "c", "text": "208V" },
+        { "id": "d", "text": "480V" }
+      ],
+      "explanation": "Split-phase 240V service has two 120V legs (180° out of phase) referenced to a center-tapped neutral. Hot-to-neutral = 120V, hot-to-hot = 240V. Most residential PV inverters connect 240V across both legs or 120V to neutral.",
+      "code_ref": "Residential Electrical Service",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-046",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Three Phase",
+      "question": "In a 208Y/120V three-phase system, what is the voltage between two phases?",
+      "options": [
+        { "id": "a", "text": "120V" },
+        { "id": "b", "text": "208V", "correct": true },
+        { "id": "c", "text": "240V" },
+        { "id": "d", "text": "480V" }
+      ],
+      "explanation": "In a wye (Y) system, line-to-line voltage = line-to-neutral × √3. 120V × 1.732 = 208V. Three-phase inverters connect across all three phases for balanced loading and higher power capacity.",
+      "code_ref": "Three-Phase Electrical Theory",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-theory-047",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "kW vs kWh",
+      "question": "A 10 kW PV system producing power for 5 peak sun hours generates how much energy?",
+      "options": [
+        { "id": "a", "text": "10 kWh" },
+        { "id": "b", "text": "50 kWh", "correct": true },
+        { "id": "c", "text": "2 kWh" },
+        { "id": "d", "text": "15 kWh" }
+      ],
+      "explanation": "Energy = Power × Time. 10 kW × 5 hours = 50 kWh. kW is instantaneous power; kWh is energy (power integrated over time). This simplified calculation assumes full power for 5 hours; real production is affected by losses.",
+      "code_ref": "Energy Calculations",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-048",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Peak Sun Hours",
+      "question": "A location with 5.5 kWh/m²/day of insolation has how many peak sun hours?",
+      "options": [
+        { "id": "a", "text": "5.5 hours", "correct": true },
+        { "id": "b", "text": "8 hours" },
+        { "id": "c", "text": "12 hours" },
+        { "id": "d", "text": "Cannot be determined" }
+      ],
+      "explanation": "Peak sun hours equal daily insolation in kWh/m² numerically. 5.5 kWh/m²/day = 5.5 peak sun hours because one peak sun hour = 1 kWh/m² (1000 W/m² for 1 hour). This simplifies production calculations.",
+      "code_ref": "Solar Resource Assessment",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-049",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Specific Yield",
+      "question": "An 8 kW system produces 11,600 kWh/year. What is the specific yield?",
+      "options": [
+        { "id": "a", "text": "1,250 kWh/kW/year" },
+        { "id": "b", "text": "1,450 kWh/kW/year", "correct": true },
+        { "id": "c", "text": "1,600 kWh/kW/year" },
+        { "id": "d", "text": "925 kWh/kW/year" }
+      ],
+      "explanation": "Specific yield = Annual production / System size = 11,600 kWh / 8 kW = 1,450 kWh/kW/year. This metric normalizes production by system size, allowing comparison between different systems and locations.",
+      "code_ref": "Performance Metrics",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-050",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "DC/AC Ratio",
+      "question": "A system with 12 kW DC array and 10 kW AC inverter has what DC/AC ratio?",
+      "options": [
+        { "id": "a", "text": "0.83" },
+        { "id": "b", "text": "1.0" },
+        { "id": "c", "text": "1.2", "correct": true },
+        { "id": "d", "text": "2.2" }
+      ],
+      "explanation": "DC/AC ratio = DC array size / AC inverter rating = 12 kW / 10 kW = 1.2. Slight oversizing (1.1-1.3) captures more energy during non-peak hours while accepting minor clipping losses during peak sun.",
+      "code_ref": "System Design Ratios",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-051",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Clipping",
+      "question": "When does inverter clipping occur?",
+      "options": [
+        { "id": "a", "text": "At night" },
+        { "id": "b", "text": "When DC array power exceeds inverter AC capacity", "correct": true },
+        { "id": "c", "text": "During maintenance" },
+        { "id": "d", "text": "When batteries are full" }
+      ],
+      "explanation": "Clipping occurs when the DC array produces more power than the inverter can convert to AC. The inverter limits (clips) output at its rated capacity, discarding excess DC power. Higher DC/AC ratios increase clipping but can improve total energy harvest.",
+      "code_ref": "Inverter Operation",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-052",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Mismatch Losses",
+      "question": "Mismatch losses in a PV string occur because:",
+      "options": [
+        { "id": "a", "text": "Modules are installed upside down" },
+        { "id": "b", "text": "Modules have slightly different electrical parameters", "correct": true },
+        { "id": "c", "text": "The inverter is undersized" },
+        { "id": "d", "text": "Wiring is too long" }
+      ],
+      "explanation": "Even modules from the same batch have slight variations in Isc, Voc, and Pmax. When connected in series, the lowest-performing module limits string output. Typical mismatch losses are 1-2% and are reduced by MLPE.",
+      "code_ref": "System Losses",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-053",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Soiling",
+      "question": "Soiling losses in PV systems are caused by:",
+      "options": [
+        { "id": "a", "text": "Water damage" },
+        { "id": "b", "text": "Dust, pollen, bird droppings, and debris on module surface", "correct": true },
+        { "id": "c", "text": "Underground installation" },
+        { "id": "d", "text": "Inverter inefficiency" }
+      ],
+      "explanation": "Soiling reduces light reaching cells. Losses vary from 1-2% in areas with frequent rain to 5%+ in dusty/dry climates. Bird droppings can cause localized shading and hot spots. Regular cleaning can reduce soiling losses.",
+      "code_ref": "System Losses",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-054",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Wiring Losses",
+      "question": "Wiring losses (I²R losses) can be reduced by:",
+      "options": [
+        { "id": "a", "text": "Using longer cables" },
+        { "id": "b", "text": "Using larger conductors and shorter runs", "correct": true },
+        { "id": "c", "text": "Using higher voltage modules" },
+        { "id": "d", "text": "Operating at higher current" }
+      ],
+      "explanation": "Wiring losses = I²R. Reducing resistance (larger conductors, shorter runs) reduces losses. Higher system voltage for same power means lower current (P = V × I), also reducing I²R losses. Typical wiring losses are 1-2%.",
+      "code_ref": "Conductor Sizing",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-055",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Nameplate Rating",
+      "question": "Module nameplate power (Pmax) is measured under:",
+      "options": [
+        { "id": "a", "text": "Any conditions" },
+        { "id": "b", "text": "Standard Test Conditions (STC): 1000 W/m², 25°C, AM1.5", "correct": true },
+        { "id": "c", "text": "Average daily conditions" },
+        { "id": "d", "text": "Maximum expected temperature" }
+      ],
+      "explanation": "All module specifications (Pmax, Voc, Isc, Vmp, Imp) on the nameplate are measured at STC: 1000 W/m² irradiance, 25°C cell temperature, and AM1.5 spectrum. Real-world conditions typically produce less power.",
+      "code_ref": "IEC 61215, Module Rating",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-056",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "PTC Rating",
+      "question": "PTC (PVUSA Test Conditions) rating is typically what percentage of STC rating?",
+      "options": [
+        { "id": "a", "text": "100%" },
+        { "id": "b", "text": "88-92%", "correct": true },
+        { "id": "c", "text": "75-80%" },
+        { "id": "d", "text": "110-115%" }
+      ],
+      "explanation": "PTC uses more realistic conditions (1000 W/m², 20°C ambient, 1 m/s wind) resulting in ~45°C cell temperature. PTC ratings are typically 88-92% of STC, providing more realistic production estimates.",
+      "code_ref": "CEC Module Listing",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-057",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Bifacial Gain",
+      "question": "Bifacial modules capture additional energy from:",
+      "options": [
+        { "id": "a", "text": "Only direct sunlight" },
+        { "id": "b", "text": "Light reflected onto the rear side from ground or other surfaces", "correct": true },
+        { "id": "c", "text": "Heat from the roof" },
+        { "id": "d", "text": "Wind energy" }
+      ],
+      "explanation": "Bifacial modules have active cells on both surfaces. The rear side captures albedo (reflected light from ground, snow, or roofing). Bifacial gain of 5-30% depends on mounting height, ground reflectivity, and installation type.",
+      "code_ref": "Bifacial Module Technology",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-058",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Albedo",
+      "question": "Which surface has the highest albedo (reflectivity)?",
+      "options": [
+        { "id": "a", "text": "Dark asphalt (0.05-0.10)" },
+        { "id": "b", "text": "Green grass (0.15-0.25)" },
+        { "id": "c", "text": "Fresh snow (0.80-0.90)", "correct": true },
+        { "id": "d", "text": "Dark gravel (0.10-0.15)" }
+      ],
+      "explanation": "Albedo measures surface reflectivity from 0 (absorbs all) to 1 (reflects all). Fresh snow (0.80-0.90) reflects the most light. White roofing (0.60-0.80) is also high. Dark surfaces provide minimal bifacial gain.",
+      "code_ref": "Bifacial Design",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-059",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Half-Cut Cells",
+      "question": "Half-cut cell modules reduce what type of loss?",
+      "options": [
+        { "id": "a", "text": "Temperature losses" },
+        { "id": "b", "text": "Resistive (I²R) losses", "correct": true },
+        { "id": "c", "text": "Soiling losses" },
+        { "id": "d", "text": "LID losses" }
+      ],
+      "explanation": "Half-cut cells carry half the current of full cells (since half the cell area). Since power loss = I²R, halving current reduces resistive losses by 75%. The module is wired as two parallel half-strings, also improving shade tolerance.",
+      "code_ref": "Module Technology",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-060",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "PERC Cells",
+      "question": "PERC (Passivated Emitter Rear Cell) technology improves efficiency by:",
+      "options": [
+        { "id": "a", "text": "Making cells larger" },
+        { "id": "b", "text": "Adding a reflective layer on the cell rear to capture more light", "correct": true },
+        { "id": "c", "text": "Using thicker wafers" },
+        { "id": "d", "text": "Reducing cell count" }
+      ],
+      "explanation": "PERC adds a dielectric passivation layer and local contacts on the cell rear. This reflects unabsorbed light back into the cell for second-chance absorption and reduces rear surface recombination, improving efficiency by 1-2% absolute.",
+      "code_ref": "Cell Technology",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-theory-061",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "N-Type vs P-Type",
+      "question": "N-type silicon cells compared to p-type cells typically have:",
+      "options": [
+        { "id": "a", "text": "Lower efficiency" },
+        { "id": "b", "text": "Higher efficiency and less LID", "correct": true },
+        { "id": "c", "text": "Higher degradation" },
+        { "id": "d", "text": "Lower cost" }
+      ],
+      "explanation": "N-type silicon is doped with phosphorus instead of boron. N-type cells avoid boron-oxygen LID, have higher minority carrier lifetime, and typically achieve higher efficiency. They cost more but offer better long-term performance.",
+      "code_ref": "Cell Technology",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-theory-062",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Thin Film",
+      "question": "Compared to crystalline silicon, thin-film CdTe modules typically have:",
+      "options": [
+        { "id": "a", "text": "Higher efficiency" },
+        { "id": "b", "text": "Lower efficiency but better low-light and high-temp performance", "correct": true },
+        { "id": "c", "text": "No encapsulation" },
+        { "id": "d", "text": "Higher voltage per cell" }
+      ],
+      "explanation": "Thin-film CdTe (cadmium telluride) has lower efficiency (17-19%) than crystalline silicon (20-23%) but better temperature coefficient and low-light response. This can result in better energy yield in hot climates despite lower STC rating.",
+      "code_ref": "Module Technologies",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-063",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "String Inverter",
+      "question": "A string inverter with one MPPT input connected to multiple strings will:",
+      "options": [
+        { "id": "a", "text": "Optimize each string independently" },
+        { "id": "b", "text": "Find a common MPP for all connected strings", "correct": true },
+        { "id": "c", "text": "Not function" },
+        { "id": "d", "text": "Only power one string" }
+      ],
+      "explanation": "Strings on the same MPPT input are paralleled at the inverter. The MPPT finds a single operating point for the combined strings. If strings have different orientations or shading, they should connect to separate MPPT inputs.",
+      "code_ref": "Inverter MPPT Operation",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-064",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Microinverters",
+      "question": "Microinverters convert DC to AC at what location?",
+      "options": [
+        { "id": "a", "text": "In the main panel" },
+        { "id": "b", "text": "At each module", "correct": true },
+        { "id": "c", "text": "At the utility meter" },
+        { "id": "d", "text": "Underground" }
+      ],
+      "explanation": "Microinverters mount behind each PV module and convert DC to AC at the module level. Each module operates at its own MPP, eliminating string mismatch losses and shading impacts on unshaded modules.",
+      "code_ref": "Microinverter Systems",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-065",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "DC Optimizers",
+      "question": "DC power optimizers perform which function at the module level?",
+      "options": [
+        { "id": "a", "text": "DC to AC conversion" },
+        { "id": "b", "text": "MPPT and voltage/current optimization for a string inverter", "correct": true },
+        { "id": "c", "text": "Battery charging" },
+        { "id": "d", "text": "Ground fault detection" }
+      ],
+      "explanation": "DC optimizers perform module-level MPPT and condition DC output for a central string inverter. They provide monitoring and rapid shutdown while maintaining DC system efficiency. The string inverter handles DC-to-AC conversion.",
+      "code_ref": "DC Optimizer Systems",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-066",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Battery Chemistry",
+      "question": "Lithium-ion batteries used in residential solar+storage systems typically use what chemistry?",
+      "options": [
+        { "id": "a", "text": "Lead-acid" },
+        { "id": "b", "text": "LFP (lithium iron phosphate) or NMC (nickel manganese cobalt)", "correct": true },
+        { "id": "c", "text": "Nickel-cadmium" },
+        { "id": "d", "text": "Zinc-carbon" }
+      ],
+      "explanation": "Residential ESS commonly uses LFP (safer, longer cycle life) or NMC (higher energy density). LFP dominates due to safety, 10-15 year lifespan, and no thermal runaway risk. Both require battery management systems (BMS).",
+      "code_ref": "Energy Storage Technology",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-067",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Battery Capacity",
+      "question": "A 10 kWh battery with 80% depth of discharge (DoD) can provide how much usable energy?",
+      "options": [
+        { "id": "a", "text": "10 kWh" },
+        { "id": "b", "text": "8 kWh", "correct": true },
+        { "id": "c", "text": "12 kWh" },
+        { "id": "d", "text": "2 kWh" }
+      ],
+      "explanation": "Usable capacity = Total capacity × DoD = 10 kWh × 0.80 = 8 kWh. Manufacturers limit DoD to extend battery life. Never discharging below 20% SOC (state of charge) significantly increases cycle life.",
+      "code_ref": "Battery Specifications",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-068",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Battery Power vs Energy",
+      "question": "A battery rated 5 kW / 13.5 kWh can:",
+      "options": [
+        { "id": "a", "text": "Discharge at 13.5 kW for 5 hours" },
+        { "id": "b", "text": "Discharge at 5 kW for up to 2.7 hours", "correct": true },
+        { "id": "c", "text": "Only charge, not discharge" },
+        { "id": "d", "text": "Store 5 kWh of energy" }
+      ],
+      "explanation": "Power (kW) is the rate; energy (kWh) is total storage. At maximum 5 kW power, discharge time = 13.5 kWh ÷ 5 kW = 2.7 hours. Lower power discharge extends time; higher loads may exceed power rating.",
+      "code_ref": "Battery Ratings",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-069",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Round-Trip Efficiency",
+      "question": "Battery round-trip efficiency of 90% means:",
+      "options": [
+        { "id": "a", "text": "10% of stored energy is lost during charge/discharge cycle", "correct": true },
+        { "id": "b", "text": "The battery charges 90% faster" },
+        { "id": "c", "text": "90% of the battery is usable" },
+        { "id": "d", "text": "The battery weighs 90% less" }
+      ],
+      "explanation": "Round-trip efficiency = Energy out ÷ Energy in. At 90%, storing 10 kWh returns 9 kWh, with 1 kWh lost as heat during conversion. Li-ion batteries typically achieve 85-95% round-trip efficiency.",
+      "code_ref": "Battery Efficiency",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-070",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Charge Controller",
+      "question": "An MPPT charge controller for battery systems provides:",
+      "options": [
+        { "id": "a", "text": "DC to AC conversion" },
+        { "id": "b", "text": "Maximum power point tracking and voltage conversion for battery charging", "correct": true },
+        { "id": "c", "text": "Grid synchronization" },
+        { "id": "d", "text": "Arc fault protection only" }
+      ],
+      "explanation": "MPPT charge controllers track array MPP while converting voltage to appropriate battery charging voltage. They're more efficient than PWM controllers, especially when array voltage differs significantly from battery voltage.",
+      "code_ref": "Charge Controller Operation",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-071",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "DC-Coupled vs AC-Coupled",
+      "question": "In a DC-coupled PV+storage system, the battery charges from:",
+      "options": [
+        { "id": "a", "text": "AC power only" },
+        { "id": "b", "text": "DC power from the PV array through a shared DC bus", "correct": true },
+        { "id": "c", "text": "The utility grid only" },
+        { "id": "d", "text": "A generator" }
+      ],
+      "explanation": "DC-coupled systems connect batteries to the DC side of a hybrid inverter. PV charges batteries directly without DC→AC→DC conversion losses. This is more efficient for PV-to-battery charging than AC-coupled systems.",
+      "code_ref": "System Architecture",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-072",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Backup Power",
+      "question": "During a grid outage, a grid-tied PV system without batteries will:",
+      "options": [
+        { "id": "a", "text": "Continue powering the home" },
+        { "id": "b", "text": "Shut down due to anti-islanding protection", "correct": true },
+        { "id": "c", "text": "Store energy for later" },
+        { "id": "d", "text": "Power only the solar equipment" }
+      ],
+      "explanation": "Anti-islanding per IEEE 1547/NEC 705.40 requires grid-tied inverters to disconnect within 2 seconds of grid loss. This protects utility workers from backfed power. Battery backup or special island-capable inverters are needed for outage power.",
+      "code_ref": "Anti-Islanding Requirements",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-073",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Islanding",
+      "question": "An 'island-capable' or 'grid-forming' inverter can:",
+      "options": [
+        { "id": "a", "text": "Only work with the grid present" },
+        { "id": "b", "text": "Create its own AC voltage reference to power loads during outages", "correct": true },
+        { "id": "c", "text": "Only charge batteries" },
+        { "id": "d", "text": "Work without any power source" }
+      ],
+      "explanation": "Island-capable inverters can form their own grid (set voltage/frequency) to power loads during utility outages. They require battery storage and a transfer mechanism to isolate from the utility during islanding.",
+      "code_ref": "Backup Power Systems",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-074",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Impedance",
+      "question": "In AC circuits, impedance (Z) is the combination of:",
+      "options": [
+        { "id": "a", "text": "Voltage and current" },
+        { "id": "b", "text": "Resistance and reactance", "correct": true },
+        { "id": "c", "text": "Power and energy" },
+        { "id": "d", "text": "Frequency and phase" }
+      ],
+      "explanation": "Impedance Z = √(R² + X²) where R is resistance and X is reactance (inductive or capacitive). Impedance is measured in ohms and affects AC current flow. Inverter output circuits have both resistive and reactive components.",
+      "code_ref": "AC Circuit Theory",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-theory-075",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Capacitance",
+      "question": "Capacitors in inverter circuits are used for:",
+      "options": [
+        { "id": "a", "text": "Increasing resistance" },
+        { "id": "b", "text": "Filtering and smoothing DC voltage, energy storage", "correct": true },
+        { "id": "c", "text": "Generating DC from AC" },
+        { "id": "d", "text": "Measuring current" }
+      ],
+      "explanation": "Capacitors in inverters smooth DC bus voltage (bulk capacitors), filter high-frequency switching noise (film capacitors), and may provide reactive power support. They're critical components for power quality and efficiency.",
+      "code_ref": "Inverter Components",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-076",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Inductors",
+      "question": "Inductors in inverter output circuits serve to:",
+      "options": [
+        { "id": "a", "text": "Increase voltage" },
+        { "id": "b", "text": "Filter high-frequency switching harmonics", "correct": true },
+        { "id": "c", "text": "Store energy long-term" },
+        { "id": "d", "text": "Convert DC to AC" }
+      ],
+      "explanation": "Output inductors (and LC filters) smooth the inverter's PWM-switched output into a clean sine wave. They block high-frequency harmonics while passing the fundamental 60 Hz power. Proper filtering ensures grid power quality.",
+      "code_ref": "Inverter Components",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-077",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "PWM",
+      "question": "Pulse Width Modulation (PWM) in inverters is used to:",
+      "options": [
+        { "id": "a", "text": "Measure temperature" },
+        { "id": "b", "text": "Create AC output by rapidly switching DC on/off at varying duty cycles", "correct": true },
+        { "id": "c", "text": "Charge batteries" },
+        { "id": "d", "text": "Detect ground faults" }
+      ],
+      "explanation": "PWM switches DC voltage on/off thousands of times per second with varying pulse widths. When filtered, the average voltage follows a sine wave pattern. Higher PWM frequency allows smaller filters but increases switching losses.",
+      "code_ref": "Inverter Operation",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-theory-078",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "IGBTs",
+      "question": "IGBTs (Insulated Gate Bipolar Transistors) in inverters are used as:",
+      "options": [
+        { "id": "a", "text": "Temperature sensors" },
+        { "id": "b", "text": "High-speed electronic switches for DC-to-AC conversion", "correct": true },
+        { "id": "c", "text": "Fuses" },
+        { "id": "d", "text": "Capacitors" }
+      ],
+      "explanation": "IGBTs are semiconductor switches that handle high power with fast switching speeds. They're controlled by gate voltage and can switch DC current on/off thousands of times per second to synthesize AC output through PWM.",
+      "code_ref": "Power Electronics",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-theory-079",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Efficiency Curve",
+      "question": "Inverter efficiency typically peaks at what percentage of rated power?",
+      "options": [
+        { "id": "a", "text": "100%" },
+        { "id": "b", "text": "25-50%", "correct": true },
+        { "id": "c", "text": "5-10%" },
+        { "id": "d", "text": "150%" }
+      ],
+      "explanation": "Inverters have fixed losses (control power, cooling) and load-dependent losses. Efficiency peaks around 25-50% of rated power where the ratio of output to total losses is optimal. At very low or very high loads, efficiency decreases.",
+      "code_ref": "Inverter Efficiency",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-080",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "CEC Efficiency",
+      "question": "CEC weighted efficiency accounts for:",
+      "options": [
+        { "id": "a", "text": "Only peak efficiency" },
+        { "id": "b", "text": "Efficiency at various power levels weighted by typical operating time", "correct": true },
+        { "id": "c", "text": "Only nighttime losses" },
+        { "id": "d", "text": "Module efficiency only" }
+      ],
+      "explanation": "CEC weighted efficiency weights efficiency at 10%, 20%, 30%, 50%, 75%, and 100% power by typical operating hours at each level. This provides a more realistic annual efficiency estimate than peak efficiency alone.",
+      "code_ref": "CEC Inverter Testing",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-081",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Night Consumption",
+      "question": "Grid-tied inverters consume power at night for:",
+      "options": [
+        { "id": "a", "text": "Generating electricity" },
+        { "id": "b", "text": "Standby mode, monitoring, and anti-islanding detection", "correct": true },
+        { "id": "c", "text": "Heating the array" },
+        { "id": "d", "text": "They consume no power at night" }
+      ],
+      "explanation": "Inverters draw 1-10W at night for standby functions, monitoring, communication, and grid voltage sensing. This 'vampire' or 'tare' loss is small but continuous. Some inverters fully shut down at night to eliminate this loss.",
+      "code_ref": "Inverter Standby Power",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-082",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Transformer Losses",
+      "question": "Isolation transformers in inverters cause what type of loss?",
+      "options": [
+        { "id": "a", "text": "No losses" },
+        { "id": "b", "text": "Core and copper losses (typically 1-2%)", "correct": true },
+        { "id": "c", "text": "Only DC losses" },
+        { "id": "d", "text": "Increase efficiency" }
+      ],
+      "explanation": "Transformers have core losses (hysteresis, eddy currents) and copper losses (I²R in windings). Total transformer losses are typically 1-2%. Transformerless inverters avoid these losses, achieving higher efficiency.",
+      "code_ref": "Transformer Theory",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-083",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Ground Reference",
+      "question": "Why is a ground reference important in PV systems?",
+      "options": [
+        { "id": "a", "text": "To increase power output" },
+        { "id": "b", "text": "To establish a known voltage reference and enable ground fault detection", "correct": true },
+        { "id": "c", "text": "To reduce module temperature" },
+        { "id": "d", "text": "To communicate with the grid" }
+      ],
+      "explanation": "Ground reference establishes a known zero-voltage point for safety. Ground fault detection compares current in positive and negative conductors—any difference indicates current flowing to ground. Without ground reference, faults may go undetected.",
+      "code_ref": "System Grounding",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-084",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Leakage Current",
+      "question": "Leakage current to ground in PV systems can be caused by:",
+      "options": [
+        { "id": "a", "text": "High efficiency modules" },
+        { "id": "b", "text": "Capacitive coupling through module glass and frame to ground", "correct": true },
+        { "id": "c", "text": "Proper installation" },
+        { "id": "d", "text": "Low irradiance" }
+      ],
+      "explanation": "Capacitive coupling between cells (through glass and encapsulant) and grounded frames creates AC leakage paths. High system voltage and large arrays increase leakage current. GFPDs must distinguish leakage from actual ground faults.",
+      "code_ref": "Ground Fault Detection",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-theory-085",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "PID",
+      "question": "Potential Induced Degradation (PID) in PV modules is caused by:",
+      "options": [
+        { "id": "a", "text": "High temperatures only" },
+        { "id": "b", "text": "High voltage between cells and grounded frame causing ion migration", "correct": true },
+        { "id": "c", "text": "Low irradiance" },
+        { "id": "d", "text": "Proper grounding" }
+      ],
+      "explanation": "PID occurs when high negative voltage (relative to ground) drives sodium ions from the glass into cells, reducing performance. Factors include high system voltage, humidity, and temperature. PID-resistant modules and grounding strategies can prevent it.",
+      "code_ref": "Module Degradation",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-theory-086",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "String Voltage Window",
+      "question": "The inverter MPPT voltage window defines:",
+      "options": [
+        { "id": "a", "text": "Only the maximum allowable voltage" },
+        { "id": "b", "text": "The operating voltage range where the inverter can track maximum power", "correct": true },
+        { "id": "c", "text": "Only the minimum allowable voltage" },
+        { "id": "d", "text": "The AC output voltage" }
+      ],
+      "explanation": "The MPPT window (e.g., 200-480V) defines where the inverter can actively track MPP. String Vmp at all temperatures must stay within this range. Below minimum, the inverter can't track; above maximum, it may shut down or be damaged.",
+      "code_ref": "Inverter Specifications",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-087",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Start Voltage",
+      "question": "An inverter's 'start voltage' is the minimum:",
+      "options": [
+        { "id": "a", "text": "AC voltage required" },
+        { "id": "b", "text": "DC voltage needed for the inverter to begin operating", "correct": true },
+        { "id": "c", "text": "Current to start" },
+        { "id": "d", "text": "Power to start" }
+      ],
+      "explanation": "Start voltage is the minimum DC input voltage at which the inverter powers up and begins operation. It's typically higher than the MPPT minimum to ensure sufficient power for inverter electronics. Morning startup waits until array voltage exceeds this threshold.",
+      "code_ref": "Inverter Specifications",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-088",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Maximum Input Voltage",
+      "question": "Exceeding an inverter's maximum input voltage can result in:",
+      "options": [
+        { "id": "a", "text": "Increased efficiency" },
+        { "id": "b", "text": "Equipment damage or fire", "correct": true },
+        { "id": "c", "text": "Higher power output" },
+        { "id": "d", "text": "No effect" }
+      ],
+      "explanation": "Exceeding maximum input voltage (e.g., 600V) can damage inverter components, void warranty, and create fire/safety hazards. Cold temperatures increase Voc, so string sizing must account for lowest expected temperature per NEC 690.7(A).",
+      "code_ref": "NEC 690.7(A), Inverter Specifications",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-089",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Maximum Input Current",
+      "question": "An inverter with maximum input current of 20A per MPPT can accept:",
+      "options": [
+        { "id": "a", "text": "Any number of parallel strings" },
+        { "id": "b", "text": "Parallel strings whose total Isc ≤ 20A", "correct": true },
+        { "id": "c", "text": "Only one string" },
+        { "id": "d", "text": "Strings up to 40A Isc" }
+      ],
+      "explanation": "Maximum input current limits how many strings can parallel per MPPT. With 10A Isc modules, maximum 2 strings per MPPT (2 × 10A = 20A). Exceeding this may damage the inverter or cause nuisance tripping.",
+      "code_ref": "Inverter Specifications",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-090",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Derating",
+      "question": "Inverter power derating at high ambient temperatures means:",
+      "options": [
+        { "id": "a", "text": "The inverter produces more power" },
+        { "id": "b", "text": "The inverter reduces output to prevent overheating", "correct": true },
+        { "id": "c", "text": "The array produces more power" },
+        { "id": "d", "text": "Efficiency increases" }
+      ],
+      "explanation": "Inverters derate (reduce maximum power) above rated ambient temperature (typically 45-50°C) to prevent internal overheating. A 10 kW inverter might produce only 8 kW at 50°C ambient. Proper ventilation minimizes derating.",
+      "code_ref": "Inverter Thermal Management",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-091",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Current Flow",
+      "question": "Conventional current flow in a DC circuit is defined as flowing from:",
+      "options": [
+        { "id": "a", "text": "Negative to positive" },
+        { "id": "b", "text": "Positive to negative", "correct": true },
+        { "id": "c", "text": "Neither direction" },
+        { "id": "d", "text": "Ground to neutral" }
+      ],
+      "explanation": "Conventional current (used in circuit analysis) flows from positive to negative. Electron flow is actually opposite (negative to positive). PV systems follow conventional current notation for analysis and troubleshooting.",
+      "code_ref": "DC Circuit Theory",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-092",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Short Circuit",
+      "question": "When a PV module is short-circuited, what happens?",
+      "options": [
+        { "id": "a", "text": "The module is damaged" },
+        { "id": "b", "text": "Maximum current (Isc) flows at zero voltage", "correct": true },
+        { "id": "c", "text": "Maximum voltage appears" },
+        { "id": "d", "text": "No current flows" }
+      ],
+      "explanation": "Short-circuiting a PV module creates zero resistance path. Current equals Isc (maximum) while voltage drops to zero. No power is produced (P = V × I = 0 × Isc = 0). Modules can safely sustain short-circuit indefinitely.",
+      "code_ref": "PV Operating Points",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-093",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Open Circuit",
+      "question": "When a PV module is open-circuited (disconnected), what happens?",
+      "options": [
+        { "id": "a", "text": "Maximum current flows" },
+        { "id": "b", "text": "Maximum voltage (Voc) appears with zero current", "correct": true },
+        { "id": "c", "text": "The module overheats" },
+        { "id": "d", "text": "Maximum power is produced" }
+      ],
+      "explanation": "Open circuit creates infinite resistance—no current flows. Voltage equals Voc (maximum). No power is produced (P = Voc × 0 = 0). Safe operation, but shock hazard exists at full Voc. Used for testing and commissioning measurements.",
+      "code_ref": "PV Operating Points",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-094",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Kirchhoff's Laws",
+      "question": "Kirchhoff's Current Law states that:",
+      "options": [
+        { "id": "a", "text": "Voltage around a loop equals zero" },
+        { "id": "b", "text": "Current into a node equals current out of the node", "correct": true },
+        { "id": "c", "text": "Power equals voltage times current" },
+        { "id": "d", "text": "Resistance equals voltage over current" }
+      ],
+      "explanation": "Kirchhoff's Current Law (KCL): Sum of currents entering a node equals sum leaving. At a combiner where 3 strings (each 10A) connect, 30A exits toward the inverter. Essential for analyzing parallel connections.",
+      "code_ref": "Circuit Analysis",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-095",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Kirchhoff's Laws",
+      "question": "Kirchhoff's Voltage Law states that:",
+      "options": [
+        { "id": "a", "text": "Current into a node equals current out" },
+        { "id": "b", "text": "Sum of voltages around any closed loop equals zero", "correct": true },
+        { "id": "c", "text": "Power in equals power out" },
+        { "id": "d", "text": "Voltage is constant everywhere" }
+      ],
+      "explanation": "Kirchhoff's Voltage Law (KVL): Algebraic sum of voltages around any closed circuit loop equals zero. This is why series module voltages add (voltage rises) and conductor voltage drops subtract from available voltage.",
+      "code_ref": "Circuit Analysis",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-096",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Measurement",
+      "question": "To measure DC voltage in a PV circuit, a multimeter should be connected:",
+      "options": [
+        { "id": "a", "text": "In series with the load" },
+        { "id": "b", "text": "In parallel (across) the points being measured", "correct": true },
+        { "id": "c", "text": "With one lead to ground only" },
+        { "id": "d", "text": "In series with the source" }
+      ],
+      "explanation": "Voltmeters connect in parallel across the points being measured. The meter's high internal resistance draws negligible current. For PV, measure Voc with leads across positive and negative with string disconnected from inverter.",
+      "code_ref": "Electrical Measurements",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-097",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Measurement",
+      "question": "To measure DC current in a PV circuit, a clamp meter:",
+      "options": [
+        { "id": "a", "text": "Must be set to AC mode" },
+        { "id": "b", "text": "Must be DC-capable and clamp around one conductor only", "correct": true },
+        { "id": "c", "text": "Can clamp around both conductors together" },
+        { "id": "d", "text": "Cannot measure DC current" }
+      ],
+      "explanation": "DC clamp meters use Hall effect sensors (not AC transformers). Clamp around only one conductor—clamping both positive and negative cancels the fields. Most standard AC clamp meters cannot measure DC current.",
+      "code_ref": "Electrical Measurements",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-098",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "IV Curve Tracer",
+      "question": "An IV curve tracer is used to:",
+      "options": [
+        { "id": "a", "text": "Measure ground resistance" },
+        { "id": "b", "text": "Plot the current-voltage characteristic of a PV string or module", "correct": true },
+        { "id": "c", "text": "Test insulation resistance" },
+        { "id": "d", "text": "Calibrate inverters" }
+      ],
+      "explanation": "IV curve tracers sweep from short-circuit to open-circuit, measuring I and V at many points to plot the complete IV curve. Comparing to expected curve reveals problems: low current (soiling, shading), low voltage (bad cell), low fill factor (resistance).",
+      "code_ref": "PV Testing Equipment",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-099",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Safety",
+      "question": "What voltage level is generally considered the threshold for electric shock hazard?",
+      "options": [
+        { "id": "a", "text": "12V" },
+        { "id": "b", "text": "30V DC / 50V AC", "correct": true },
+        { "id": "c", "text": "120V" },
+        { "id": "d", "text": "Any voltage" }
+      ],
+      "explanation": "OSHA and IEC consider >50V AC or >60V DC hazardous. NEC rapid shutdown limits are based on 30V and 80V thresholds. Even a single PV module can produce hazardous voltage (40-50V Voc). Always treat PV circuits as energized.",
+      "code_ref": "Electrical Safety Standards",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-theory-100",
+      "trade": "solar",
+      "category": "Electrical Theory",
+      "subcategory": "Energy Conversion",
+      "question": "A PV system that produces 15,000 kWh annually with average grid rate of $0.15/kWh generates approximately what value?",
+      "options": [
+        { "id": "a", "text": "$1,500/year" },
+        { "id": "b", "text": "$2,250/year", "correct": true },
+        { "id": "c", "text": "$3,000/year" },
+        { "id": "d", "text": "$750/year" }
+      ],
+      "explanation": "Annual value = Production × Rate = 15,000 kWh × $0.15/kWh = $2,250/year. This simple calculation shows economic benefit, though actual savings depend on rate structure, net metering, and self-consumption patterns.",
+      "code_ref": "Economic Analysis",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    }
+  ]
+}

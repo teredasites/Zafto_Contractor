@@ -1,0 +1,572 @@
+{
+  "category": "Low Voltage",
+  "subcategory": "NICET Fire Alarm Advanced Topics",
+  "description": "Advanced fire alarm concepts for NICET Level II-IV certification",
+  "difficulty_distribution": {
+    "beginner": 5,
+    "intermediate": 20,
+    "advanced": 15
+  },
+  "questions": [
+    {
+      "id": "lv_nicet_001",
+      "difficulty": "intermediate",
+      "question": "What is the primary versus secondary power source capacity requirement?",
+      "options": [
+        "Equal capacity",
+        "24 hours standby + alarm period on secondary",
+        "48 hours secondary",
+        "No specific requirement"
+      ],
+      "correct_answer": 1,
+      "explanation": "Secondary power must operate the system for 24 hours in standby followed by 5 minutes of alarm (15 minutes for voice systems) minimum.",
+      "code_reference": "NFPA 72, Section 10.6.7"
+    },
+    {
+      "id": "lv_nicet_002",
+      "difficulty": "intermediate",
+      "question": "What is initiating device circuit (IDC) supervision?",
+      "options": [
+        "Watching devices",
+        "Electrical monitoring for opens, grounds, and shorts",
+        "Visual inspection",
+        "Personnel supervision"
+      ],
+      "correct_answer": 1,
+      "explanation": "IDC supervision uses electrical means (usually EOL resistors) to detect circuit faults (opens, grounds, shorts) and report them as trouble conditions.",
+      "code_reference": "NFPA 72, Chapter 12"
+    },
+    {
+      "id": "lv_nicet_003",
+      "difficulty": "intermediate",
+      "question": "What distinguishes Class A from Class B circuit wiring?",
+      "options": [
+        "Wire gauge",
+        "Class A provides path redundancy; Class B does not",
+        "Voltage level",
+        "Number of devices"
+      ],
+      "correct_answer": 1,
+      "explanation": "Class A circuits have return wiring creating redundant paths - a single open won't prevent device operation. Class B circuits have a single path.",
+      "code_reference": "NFPA 72, Section 12.3"
+    },
+    {
+      "id": "lv_nicet_004",
+      "difficulty": "intermediate",
+      "question": "What is the spacing rule for spot-type heat detectors?",
+      "options": [
+        "Same as smoke detectors",
+        "Based on listed spacing, typically 50 feet maximum",
+        "No spacing requirements",
+        "25 feet always"
+      ],
+      "correct_answer": 1,
+      "explanation": "Heat detectors are spaced based on their listed spacing, typically 50 feet on smooth ceilings, reduced based on ceiling height and construction.",
+      "code_reference": "NFPA 72, Section 17.6"
+    },
+    {
+      "id": "lv_nicet_005",
+      "difficulty": "intermediate",
+      "question": "What is the beam detector coverage formula?",
+      "options": [
+        "Same as spot detectors",
+        "Based on ceiling height and beam length with maximum separation",
+        "One per room",
+        "No formula"
+      ],
+      "correct_answer": 1,
+      "explanation": "Beam detector spacing is based on beam length, ceiling height, and maximum separation (typically 60 feet between beams or beam to wall).",
+      "code_reference": "NFPA 72, Section 17.7.6"
+    },
+    {
+      "id": "lv_nicet_006",
+      "difficulty": "intermediate",
+      "question": "What ceiling height adjustment applies to smoke detectors?",
+      "options": [
+        "No adjustment needed",
+        "Reduce spacing as height increases above 10 feet",
+        "Increase spacing for higher ceilings",
+        "Only affects heat detectors"
+      ],
+      "correct_answer": 1,
+      "explanation": "Smoke detector spacing must be reduced as ceiling height increases above 10 feet due to smoke stratification and dilution effects.",
+      "code_reference": "NFPA 72, Table 17.7.3.2.3(b)"
+    },
+    {
+      "id": "lv_nicet_007",
+      "difficulty": "intermediate",
+      "question": "What is the HVAC shutdown sequence on fire alarm?",
+      "options": [
+        "Immediate shutdown always",
+        "Controlled shutdown per code to prevent smoke spread",
+        "Increase ventilation",
+        "No shutdown required"
+      ],
+      "correct_answer": 1,
+      "explanation": "HVAC shutdown or mode change upon fire alarm must be coordinated to prevent smoke spread while potentially maintaining stairwell pressurization.",
+      "code_reference": "NFPA 72, IMC"
+    },
+    {
+      "id": "lv_nicet_008",
+      "difficulty": "intermediate",
+      "question": "What is mass notification integration with fire alarm?",
+      "options": [
+        "Separate systems only",
+        "Combined or interfaced systems for coordinated emergency communications",
+        "Fire alarm controls MNS",
+        "Not permitted"
+      ],
+      "correct_answer": 1,
+      "explanation": "Mass notification may be combined with or interfaced to fire alarm systems, with defined priorities and coordination requirements.",
+      "code_reference": "NFPA 72, Chapter 24"
+    },
+    {
+      "id": "lv_nicet_009",
+      "difficulty": "advanced",
+      "question": "What is the intelligibility requirement for voice systems?",
+      "options": [
+        "Any audible level",
+        "0.50 CIS/STI minimum in required areas",
+        "No requirement",
+        "Maximum volume"
+      ],
+      "correct_answer": 1,
+      "explanation": "Voice communication systems require minimum intelligibility of 0.50 CIS (Common Intelligibility Scale) or STI in required areas.",
+      "code_reference": "NFPA 72, Section 18.4.10"
+    },
+    {
+      "id": "lv_nicet_010",
+      "difficulty": "advanced",
+      "question": "What is acoustically distinguishable space (ADS)?",
+      "options": [
+        "Large auditoriums",
+        "Space requiring separate intelligibility verification",
+        "Sound-proof rooms",
+        "Echo chambers"
+      ],
+      "correct_answer": 1,
+      "explanation": "ADS are distinct acoustic environments requiring individual intelligibility verification due to different acoustic properties.",
+      "code_reference": "NFPA 72, Section 18.4.10"
+    },
+    {
+      "id": "lv_nicet_011",
+      "difficulty": "intermediate",
+      "question": "What is the detector spacing at peaked or sloped ceilings?",
+      "options": [
+        "Standard spacing",
+        "Within 3 feet of peak with additional units as needed",
+        "At lowest point only",
+        "No detectors needed"
+      ],
+      "correct_answer": 1,
+      "explanation": "On peaked/sloped ceilings, detectors must be within 3 feet of the peak where smoke collects, with spacing measured horizontally.",
+      "code_reference": "NFPA 72, Section 17.7.3.7"
+    },
+    {
+      "id": "lv_nicet_012",
+      "difficulty": "intermediate",
+      "question": "What are beam pocket considerations?",
+      "options": [
+        "Beams don't affect detection",
+        "Beam pockets may trap smoke requiring additional detectors",
+        "Beams help detection",
+        "Only structural concern"
+      ],
+      "correct_answer": 1,
+      "explanation": "Beams deeper than 10% of ceiling height create pockets that can trap smoke, requiring detectors within each beam pocket.",
+      "code_reference": "NFPA 72, Section 17.7.3.6"
+    },
+    {
+      "id": "lv_nicet_013",
+      "difficulty": "advanced",
+      "question": "What is the voltage drop calculation for notification circuits?",
+      "options": [
+        "No calculation needed",
+        "Must ensure devices receive minimum operating voltage at end of run",
+        "Use maximum wire size always",
+        "Fixed voltage everywhere"
+      ],
+      "correct_answer": 1,
+      "explanation": "Voltage drop calculations ensure notification appliances at the end of the circuit receive sufficient voltage (typically 85% of rated) for proper operation.",
+      "code_reference": "NFPA 72, Section 10.6"
+    },
+    {
+      "id": "lv_nicet_014",
+      "difficulty": "advanced",
+      "question": "What is the battery calculation method?",
+      "options": [
+        "Simple multiplication",
+        "(Standby current × hours) + (Alarm current × alarm duration) × safety factor",
+        "Manufacturer chart only",
+        "Based on building size"
+      ],
+      "correct_answer": 1,
+      "explanation": "Battery AH = (Supervisory current × 24 hrs) + (Alarm current × alarm duration in hours) × 1.2 safety factor.",
+      "code_reference": "NFPA 72, Section 10.6.7"
+    },
+    {
+      "id": "lv_nicet_015",
+      "difficulty": "intermediate",
+      "question": "What is waterflow switch delay timing?",
+      "options": [
+        "No delay",
+        "Maximum 90 seconds from waterflow to alarm signal",
+        "10 minutes",
+        "Adjustable by installer"
+      ],
+      "correct_answer": 1,
+      "explanation": "Waterflow switches must transmit alarm within 90 seconds of waterflow, typically with 10-90 second retard to prevent false alarms.",
+      "code_reference": "NFPA 72, NFPA 13"
+    },
+    {
+      "id": "lv_nicet_016",
+      "difficulty": "intermediate",
+      "question": "What is the tamper switch supervision requirement?",
+      "options": [
+        "Not supervised",
+        "Must transmit signal within 2 minutes of being tampered",
+        "Immediate alarm",
+        "Daily test only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Valve tamper switches must transmit a supervisory signal within 2 minutes of partial or complete valve closure.",
+      "code_reference": "NFPA 72, Section 17.12"
+    },
+    {
+      "id": "lv_nicet_017",
+      "difficulty": "advanced",
+      "question": "What is the elevator recall for alternate floor?",
+      "options": [
+        "No alternate",
+        "Secondary floor if primary has smoke or lobby conditions",
+        "Any floor",
+        "Top floor only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Elevators must have an alternate recall floor to use when smoke is detected at the primary recall floor or lobby areas.",
+      "code_reference": "NFPA 72, ASME A17.1"
+    },
+    {
+      "id": "lv_nicet_018",
+      "difficulty": "advanced",
+      "question": "What is elevator machine room detector function?",
+      "options": [
+        "General area detection",
+        "Shunt trip activation and power disconnection",
+        "Sprinkler only",
+        "No special function"
+      ],
+      "correct_answer": 1,
+      "explanation": "Machine room detectors may activate shunt trip to disconnect power before sprinkler water discharge to prevent electrical hazards.",
+      "code_reference": "NFPA 72, ASME A17.1"
+    },
+    {
+      "id": "lv_nicet_019",
+      "difficulty": "intermediate",
+      "question": "What is positive alarm sequence (PAS)?",
+      "options": [
+        "Always sounds alarm",
+        "Allows 15-180 second response before general alarm",
+        "Silent alarm",
+        "Not permitted"
+      ],
+      "correct_answer": 1,
+      "explanation": "PAS allows trained staff 15-180 seconds to investigate and acknowledge alarms before automatic general notification, reducing false alarms.",
+      "code_reference": "NFPA 72, Section 23.8.1"
+    },
+    {
+      "id": "lv_nicet_020",
+      "difficulty": "intermediate",
+      "question": "What is alarm verification for smoke detectors?",
+      "options": [
+        "Staff verification",
+        "Automatic resampling before confirming alarm condition",
+        "Manual reset",
+        "Video verification"
+      ],
+      "correct_answer": 1,
+      "explanation": "Alarm verification resets and resamples the detector within a set time. If confirmed, alarm transmits. Reduces false alarms from transient conditions.",
+      "code_reference": "NFPA 72, Section 23.8.5"
+    },
+    {
+      "id": "lv_nicet_021",
+      "difficulty": "advanced",
+      "question": "What is the smoke control interface requirement?",
+      "options": [
+        "No interface",
+        "Listed smoke control panel with specific control functions",
+        "Fire alarm controls directly",
+        "Building management only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Smoke control systems require listed dedicated control units that interface with the fire alarm for coordinated smoke management.",
+      "code_reference": "NFPA 72, IBC"
+    },
+    {
+      "id": "lv_nicet_022",
+      "difficulty": "advanced",
+      "question": "What is the stairwell pressurization interface?",
+      "options": [
+        "Separate from fire alarm",
+        "Fire alarm initiates pressurization in designated stairwells",
+        "Manual control only",
+        "Always running"
+      ],
+      "correct_answer": 1,
+      "explanation": "Fire alarm systems may interface with stairwell pressurization fans to maintain positive pressure keeping smoke out of exit stairwells.",
+      "code_reference": "NFPA 72, IBC"
+    },
+    {
+      "id": "lv_nicet_023",
+      "difficulty": "intermediate",
+      "question": "What is the door holder release requirement?",
+      "options": [
+        "Manual release only",
+        "Automatic release on fire alarm initiation",
+        "Time-based release",
+        "Security controls"
+      ],
+      "correct_answer": 1,
+      "explanation": "Magnetic door holders on fire doors must release upon fire alarm activation to allow doors to close and prevent smoke/fire spread.",
+      "code_reference": "NFPA 72, NFPA 80"
+    },
+    {
+      "id": "lv_nicet_024",
+      "difficulty": "intermediate",
+      "question": "What is the area of refuge communication requirement?",
+      "options": [
+        "No communication required",
+        "Two-way communication with central location",
+        "Visual signals only",
+        "Posted signage only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Areas of refuge (accessible areas of evacuation assistance) require two-way communication with a central point for assistance coordination.",
+      "code_reference": "NFPA 72, IBC"
+    },
+    {
+      "id": "lv_nicet_025",
+      "difficulty": "advanced",
+      "question": "What is the protected premises system record of completion?",
+      "options": [
+        "Verbal confirmation",
+        "NFPA 72 required form documenting complete system information",
+        "Invoice receipt",
+        "Building permit"
+      ],
+      "correct_answer": 1,
+      "explanation": "NFPA 72 requires a specific record of completion form documenting system components, quantities, and certifying proper installation.",
+      "code_reference": "NFPA 72, Section 7.8"
+    },
+    {
+      "id": "lv_nicet_026",
+      "difficulty": "beginner",
+      "question": "What must be posted at the fire alarm control unit?",
+      "options": [
+        "Nothing required",
+        "Emergency contact information and basic operating instructions",
+        "Installation date only",
+        "Permit number"
+      ],
+      "correct_answer": 1,
+      "explanation": "Signs at the FACU must indicate key information, emergency contacts, and basic instructions for fire department response.",
+      "code_reference": "NFPA 72, Section 10.18"
+    },
+    {
+      "id": "lv_nicet_027",
+      "difficulty": "advanced",
+      "question": "What is in-building fire emergency voice/alarm communication (EVAC)?",
+      "options": [
+        "Standard horn/strobe",
+        "System providing voice instructions during emergencies",
+        "Telephone system",
+        "Intercom only"
+      ],
+      "correct_answer": 1,
+      "explanation": "EVAC systems provide live or pre-recorded voice instructions directing occupants during fire emergencies, beyond simple alarm tones.",
+      "code_reference": "NFPA 72, Section 24.4"
+    },
+    {
+      "id": "lv_nicet_028",
+      "difficulty": "intermediate",
+      "question": "What is the fire command center requirement?",
+      "options": [
+        "All buildings",
+        "High-rise and complex buildings per building code",
+        "Residential only",
+        "Optional"
+      ],
+      "correct_answer": 1,
+      "explanation": "High-rise buildings and certain complex occupancies require fire command centers with consolidated fire safety system controls and displays.",
+      "code_reference": "IBC, NFPA 72"
+    },
+    {
+      "id": "lv_nicet_029",
+      "difficulty": "advanced",
+      "question": "What is the notification priority during combined fire alarm/mass notification events?",
+      "options": [
+        "Mass notification always first",
+        "Fire alarm takes priority unless specific conditions met",
+        "Equal priority",
+        "Security first"
+      ],
+      "correct_answer": 1,
+      "explanation": "Fire alarm notification generally takes priority, but systems must be designed for appropriate prioritization based on the specific emergency type.",
+      "code_reference": "NFPA 72, Section 24.3"
+    },
+    {
+      "id": "lv_nicet_030",
+      "difficulty": "intermediate",
+      "question": "What documentation must be provided to the building owner?",
+      "options": [
+        "Permit only",
+        "Operating instructions, as-built drawings, and maintenance schedule",
+        "Invoice only",
+        "Business card"
+      ],
+      "correct_answer": 1,
+      "explanation": "Owners must receive system operating instructions, as-built drawings, sequence of operation, and recommended maintenance schedules.",
+      "code_reference": "NFPA 72, Section 7.7"
+    },
+    {
+      "id": "lv_nicet_031",
+      "difficulty": "beginner",
+      "question": "What is the inspector's test connection?",
+      "options": [
+        "Electrical test point",
+        "Sprinkler system test valve simulating waterflow",
+        "Smoke test device",
+        "Panel test button"
+      ],
+      "correct_answer": 1,
+      "explanation": "The inspector's test connection is a valve on the sprinkler system that simulates a single sprinkler flow to test waterflow detection.",
+      "code_reference": "NFPA 72, NFPA 13"
+    },
+    {
+      "id": "lv_nicet_032",
+      "difficulty": "beginner",
+      "question": "What is the minimum visible notification appliance candela in sleeping areas?",
+      "options": [
+        "15 cd",
+        "110 cd wall-mounted or 177 cd ceiling",
+        "75 cd",
+        "30 cd"
+      ],
+      "correct_answer": 1,
+      "explanation": "Sleeping areas require minimum 110 cd wall-mounted or 177 cd ceiling-mounted visible notification for effective alerting.",
+      "code_reference": "NFPA 72, Section 18.5"
+    },
+    {
+      "id": "lv_nicet_033",
+      "difficulty": "intermediate",
+      "question": "What is the requirement for smoke detector spacing near HVAC supplies?",
+      "options": [
+        "No special requirement",
+        "Avoid locations where airflow prevents smoke entry",
+        "Place directly at supply",
+        "Double density"
+      ],
+      "correct_answer": 1,
+      "explanation": "Smoke detectors must not be located where high airflow from HVAC supplies prevents smoke from entering the detector chamber.",
+      "code_reference": "NFPA 72, Section 17.7.3.2"
+    },
+    {
+      "id": "lv_nicet_034",
+      "difficulty": "beginner",
+      "question": "What is the fire alarm system impairment procedure?",
+      "options": [
+        "No procedure needed",
+        "Notify AHJ and implement fire watch if required",
+        "Email to owner",
+        "Social media post"
+      ],
+      "correct_answer": 1,
+      "explanation": "System impairments require notification to appropriate parties and implementation of compensating measures such as fire watch.",
+      "code_reference": "NFPA 72, Section 10.20"
+    },
+    {
+      "id": "lv_nicet_035",
+      "difficulty": "advanced",
+      "question": "What is the emergency control function priority?",
+      "options": [
+        "Random order",
+        "Fire safety functions take priority over non-emergency operations",
+        "Security first",
+        "HVAC priority"
+      ],
+      "correct_answer": 1,
+      "explanation": "Fire alarm emergency control functions (door release, elevator recall, HVAC) must take priority over normal building automation operations.",
+      "code_reference": "NFPA 72, Section 21.3"
+    },
+    {
+      "id": "lv_nicet_036",
+      "difficulty": "advanced",
+      "question": "What is the performance-based design documentation requirement?",
+      "options": [
+        "No documentation",
+        "Design analysis, calculations, and specific approval by AHJ",
+        "Standard documents",
+        "Manufacturer approval"
+      ],
+      "correct_answer": 1,
+      "explanation": "Performance-based designs that vary from prescriptive requirements require engineering analysis documentation and specific AHJ approval.",
+      "code_reference": "NFPA 72, Chapter 17"
+    },
+    {
+      "id": "lv_nicet_037",
+      "difficulty": "intermediate",
+      "question": "What is the addressable device loop limitation?",
+      "options": [
+        "Unlimited devices",
+        "Per manufacturer specification, typically 99-250 devices",
+        "Always 100",
+        "10 devices"
+      ],
+      "correct_answer": 1,
+      "explanation": "Addressable loops have maximum device counts specified by the manufacturer, typically 99 to 250 devices depending on the system.",
+      "code_reference": "Manufacturer Specifications"
+    },
+    {
+      "id": "lv_nicet_038",
+      "difficulty": "intermediate",
+      "question": "What is the conventional zone size limitation?",
+      "options": [
+        "Unlimited",
+        "22,500 sq ft maximum unless specific conditions met",
+        "10,000 sq ft",
+        "No limit"
+      ],
+      "correct_answer": 1,
+      "explanation": "Conventional zones are limited to 22,500 sq ft to ensure reasonable search area when locating the activated device.",
+      "code_reference": "NFPA 72, Section 23.8.5.6"
+    },
+    {
+      "id": "lv_nicet_039",
+      "difficulty": "advanced",
+      "question": "What is the supervising station signal priority?",
+      "options": [
+        "All equal",
+        "Alarm > Supervisory > Trouble for processing and dispatch",
+        "Trouble highest",
+        "Random processing"
+      ],
+      "correct_answer": 1,
+      "explanation": "Central station processing prioritizes alarms (immediate dispatch), then supervisory signals, then trouble conditions.",
+      "code_reference": "NFPA 72, Chapter 26"
+    },
+    {
+      "id": "lv_nicet_040",
+      "difficulty": "advanced",
+      "question": "What is the maximum signal transmission time to supervising station?",
+      "options": [
+        "5 minutes",
+        "90 seconds for alarm signals",
+        "10 minutes",
+        "No limit"
+      ],
+      "correct_answer": 1,
+      "explanation": "Alarm signals must be transmitted to the supervising station within 90 seconds. Some high-security applications require faster times.",
+      "code_reference": "NFPA 72, Section 26.6"
+    }
+  ]
+}

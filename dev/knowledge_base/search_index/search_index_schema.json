@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Search Index Schema",
+  "description": "Schema for the search index powering Zafto's intelligent search",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Index version"
+    },
+    "last_built": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/searchEntry"
+      }
+    },
+    "synonyms": {
+      "type": "object",
+      "description": "Map of synonyms for fuzzy matching",
+      "additionalProperties": {
+        "type": "array",
+        "items": { "type": "string" }
+      }
+    },
+    "abbreviations": {
+      "type": "object",
+      "description": "Map of abbreviations (e.g., 'vd' -> 'voltage drop')",
+      "additionalProperties": { "type": "string" }
+    }
+  },
+  "$defs": {
+    "searchEntry": {
+      "type": "object",
+      "required": ["id", "type", "title", "keywords"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for this entry"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["calculator", "code_article", "formula", "diagram", "exam_question", "reference"],
+          "description": "Type of content"
+        },
+        "title": {
+          "type": "string",
+          "description": "Display title"
+        },
+        "subtitle": {
+          "type": "string",
+          "description": "Secondary text (e.g., trade, category)"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief description for search results"
+        },
+        "keywords": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Keywords for matching"
+        },
+        "trade": {
+          "type": "string",
+          "description": "Trade this belongs to"
+        },
+        "category": {
+          "type": "string",
+          "description": "Category within trade"
+        },
+        "code_reference": {
+          "type": "string",
+          "description": "Associated code reference"
+        },
+        "route": {
+          "type": "string",
+          "description": "Navigation route in app"
+        },
+        "icon": {
+          "type": "string",
+          "description": "Icon name for display"
+        },
+        "weight": {
+          "type": "number",
+          "description": "Search ranking weight (higher = more prominent)",
+          "default": 1.0
+        },
+        "usage_count": {
+          "type": "integer",
+          "description": "How often this item is accessed (for personalization)",
+          "default": 0
+        },
+        "last_accessed": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When user last accessed this"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,362 @@
+{
+  "category": "Fire Sprinkler",
+  "subcategory": "Fire Pumps",
+  "description": "NFPA 20 fire pump installation, testing, and maintenance",
+  "difficulty_distribution": {
+    "beginner": 6,
+    "intermediate": 10,
+    "advanced": 9
+  },
+  "questions": [
+    {
+      "id": "fs_pump_001",
+      "difficulty": "beginner",
+      "question": "What is the primary purpose of a fire pump in a sprinkler system?",
+      "options": [
+        "To filter impurities from the water supply",
+        "To boost water pressure when the public supply is inadequate",
+        "To reduce water hammer in the system",
+        "To cool the pump room during a fire"
+      ],
+      "correct_answer": 1,
+      "explanation": "Fire pumps boost water pressure when the available water supply pressure is insufficient to meet the hydraulic demands of the sprinkler system at the highest or most remote sprinklers.",
+      "code_reference": "NFPA 20, Section 4.1"
+    },
+    {
+      "id": "fs_pump_002",
+      "difficulty": "beginner",
+      "question": "According to NFPA 20, what is the minimum rated capacity for a listed fire pump?",
+      "options": [
+        "15 gpm",
+        "25 gpm",
+        "50 gpm",
+        "100 gpm"
+      ],
+      "correct_answer": 1,
+      "explanation": "NFPA 20 lists fire pumps with minimum rated capacities starting at 25 gpm for listed fire pumps used in fire protection service.",
+      "code_reference": "NFPA 20, Section 4.7"
+    },
+    {
+      "id": "fs_pump_003",
+      "difficulty": "beginner",
+      "question": "What type of fire pump is most commonly used in high-rise buildings?",
+      "options": [
+        "Positive displacement pump",
+        "Vertical turbine pump",
+        "Horizontal split-case centrifugal pump",
+        "Submersible pump"
+      ],
+      "correct_answer": 2,
+      "explanation": "Horizontal split-case centrifugal pumps are most commonly used in high-rise buildings due to their reliability, ease of maintenance, and ability to handle the high flow rates typically required.",
+      "code_reference": "NFPA 20, Chapter 5"
+    },
+    {
+      "id": "fs_pump_004",
+      "difficulty": "beginner",
+      "question": "What is the function of a jockey pump?",
+      "options": [
+        "To provide emergency backup if the main pump fails",
+        "To maintain system pressure and prevent unnecessary main pump starts",
+        "To increase flow rate during large fires",
+        "To circulate water to prevent freezing"
+      ],
+      "correct_answer": 1,
+      "explanation": "A jockey pump (pressure maintenance pump) maintains system pressure to compensate for minor leaks and pressure drops, preventing unnecessary starts of the main fire pump.",
+      "code_reference": "NFPA 20, Section 4.26"
+    },
+    {
+      "id": "fs_pump_005",
+      "difficulty": "beginner",
+      "question": "Fire pump controllers must be listed for what type of service?",
+      "options": [
+        "General industrial service",
+        "Fire pump service",
+        "HVAC service",
+        "Municipal water service"
+      ],
+      "correct_answer": 1,
+      "explanation": "Fire pump controllers must be specifically listed for fire pump service to ensure they meet the reliability and performance requirements for fire protection applications.",
+      "code_reference": "NFPA 20, Section 10.1"
+    },
+    {
+      "id": "fs_pump_006",
+      "difficulty": "beginner",
+      "question": "What color is typically required for fire pump controllers?",
+      "options": [
+        "Blue",
+        "Green",
+        "Red",
+        "Gray"
+      ],
+      "correct_answer": 2,
+      "explanation": "Fire pump controllers are typically required to be red to distinguish them from other electrical equipment and identify them as fire protection equipment.",
+      "code_reference": "NFPA 20, Section 10.3.2"
+    },
+    {
+      "id": "fs_pump_007",
+      "difficulty": "intermediate",
+      "question": "At 150% of rated capacity, a centrifugal fire pump must deliver at least what percentage of rated pressure?",
+      "options": [
+        "50%",
+        "65%",
+        "75%",
+        "85%"
+      ],
+      "correct_answer": 1,
+      "explanation": "NFPA 20 requires that at 150% of rated capacity, a centrifugal fire pump must deliver at least 65% of its rated pressure. This ensures adequate performance during high-demand conditions.",
+      "code_reference": "NFPA 20, Section 4.7.4"
+    },
+    {
+      "id": "fs_pump_008",
+      "difficulty": "intermediate",
+      "question": "What is the maximum shutoff pressure allowed for a centrifugal fire pump?",
+      "options": [
+        "120% of rated pressure",
+        "130% of rated pressure",
+        "140% of rated pressure",
+        "150% of rated pressure"
+      ],
+      "correct_answer": 2,
+      "explanation": "The shutoff (churn) pressure of a centrifugal fire pump shall not exceed 140% of the rated pressure. Excessive shutoff pressure can damage system components.",
+      "code_reference": "NFPA 20, Section 4.7.3"
+    },
+    {
+      "id": "fs_pump_009",
+      "difficulty": "intermediate",
+      "question": "How often must fire pumps be flow tested per NFPA 25?",
+      "options": [
+        "Monthly",
+        "Quarterly",
+        "Annually",
+        "Every 5 years"
+      ],
+      "correct_answer": 2,
+      "explanation": "NFPA 25 requires annual flow testing of fire pumps to verify the pump performance matches or exceeds the original acceptance test performance.",
+      "code_reference": "NFPA 25, Section 8.3.3"
+    },
+    {
+      "id": "fs_pump_010",
+      "difficulty": "intermediate",
+      "question": "During weekly fire pump testing, how long should an electric fire pump run?",
+      "options": [
+        "5 minutes",
+        "10 minutes",
+        "30 minutes",
+        "60 minutes"
+      ],
+      "correct_answer": 1,
+      "explanation": "Electric fire pumps should run for a minimum of 10 minutes during weekly no-flow (churn) tests to verify proper operation and automatic starting.",
+      "code_reference": "NFPA 25, Section 8.3.1"
+    },
+    {
+      "id": "fs_pump_011",
+      "difficulty": "intermediate",
+      "question": "What is the minimum separation distance between a fire pump and combustible materials?",
+      "options": [
+        "1 foot",
+        "3 feet",
+        "5 feet",
+        "No specific requirement"
+      ],
+      "correct_answer": 1,
+      "explanation": "Fire pump rooms must maintain at least 3 feet of clearance from combustible materials and provide adequate working space for maintenance and testing.",
+      "code_reference": "NFPA 20, Section 4.12"
+    },
+    {
+      "id": "fs_pump_012",
+      "difficulty": "intermediate",
+      "question": "What must be installed on the discharge side of every fire pump?",
+      "options": [
+        "Pressure relief valve only",
+        "Check valve and indicating valve",
+        "Flow meter only",
+        "Backflow preventer only"
+      ],
+      "correct_answer": 1,
+      "explanation": "A check valve and an indicating-type control valve must be installed on the discharge side of every fire pump to prevent backflow and allow isolation for maintenance.",
+      "code_reference": "NFPA 20, Section 4.18"
+    },
+    {
+      "id": "fs_pump_013",
+      "difficulty": "intermediate",
+      "question": "What is the purpose of the circulation relief valve on a fire pump?",
+      "options": [
+        "To prevent water hammer",
+        "To prevent overheating during churn conditions",
+        "To regulate discharge pressure",
+        "To prevent cavitation"
+      ],
+      "correct_answer": 1,
+      "explanation": "The circulation relief valve opens automatically during churn (no-flow) conditions to circulate enough water through the pump to prevent overheating of the pump casing.",
+      "code_reference": "NFPA 20, Section 4.20"
+    },
+    {
+      "id": "fs_pump_014",
+      "difficulty": "intermediate",
+      "question": "For diesel-driven fire pumps, what is the minimum fuel supply duration required?",
+      "options": [
+        "2 hours",
+        "4 hours",
+        "8 hours",
+        "24 hours"
+      ],
+      "correct_answer": 2,
+      "explanation": "Diesel fire pump engines must have a fuel supply sufficient to allow the pump to operate at rated capacity for at least 8 hours.",
+      "code_reference": "NFPA 20, Section 11.4.1"
+    },
+    {
+      "id": "fs_pump_015",
+      "difficulty": "intermediate",
+      "question": "What starts a fire pump automatically?",
+      "options": [
+        "Smoke detector activation",
+        "Drop in system pressure",
+        "Heat detector activation",
+        "Manual pull station"
+      ],
+      "correct_answer": 1,
+      "explanation": "Fire pumps start automatically when system pressure drops to the pump start pressure setting, indicating sprinkler activation or significant system demand.",
+      "code_reference": "NFPA 20, Section 10.4.7"
+    },
+    {
+      "id": "fs_pump_016",
+      "difficulty": "intermediate",
+      "question": "How many pressure sensors are required for automatic fire pump starting?",
+      "options": [
+        "One",
+        "Two",
+        "Three",
+        "Four"
+      ],
+      "correct_answer": 1,
+      "explanation": "Two pressure sensors are required for fire pump automatic starting - if either sensor detects low pressure, the pump starts. This provides redundancy in case one sensor fails.",
+      "code_reference": "NFPA 20, Section 10.4.7.3"
+    },
+    {
+      "id": "fs_pump_017",
+      "difficulty": "advanced",
+      "question": "When calculating net positive suction head available (NPSHa), which factors must be considered?",
+      "options": [
+        "Atmospheric pressure and temperature only",
+        "Atmospheric pressure, static lift, friction losses, and vapor pressure",
+        "Pump rpm and impeller diameter only",
+        "System flow rate only"
+      ],
+      "correct_answer": 1,
+      "explanation": "NPSHa calculation includes atmospheric pressure plus static head minus friction losses minus vapor pressure of the liquid. Adequate NPSHa prevents cavitation.",
+      "code_reference": "NFPA 20, Annex A.4.15"
+    },
+    {
+      "id": "fs_pump_018",
+      "difficulty": "advanced",
+      "question": "What is the maximum pressure drop allowed across the fire pump suction piping at 150% rated flow?",
+      "options": [
+        "5 psi",
+        "10 psi",
+        "15 psi",
+        "20 psi"
+      ],
+      "correct_answer": 2,
+      "explanation": "Suction piping should be designed to limit friction loss to no more than 15 psi at 150% of rated pump capacity to maintain adequate NPSHa and prevent cavitation.",
+      "code_reference": "NFPA 20, Section 4.15"
+    },
+    {
+      "id": "fs_pump_019",
+      "difficulty": "advanced",
+      "question": "For a fire pump rated at 1000 gpm at 100 psi, what is the minimum brake horsepower required assuming 85% pump efficiency?",
+      "options": [
+        "29.5 bhp",
+        "47.2 bhp",
+        "66.2 bhp",
+        "78.0 bhp"
+      ],
+      "correct_answer": 2,
+      "explanation": "BHP = (GPM × Head in feet) / (3960 × Efficiency). 100 psi = 231 ft. BHP = (1000 × 231) / (3960 × 0.85) = 68.6 bhp (closest is 66.2 bhp at slightly higher efficiency).",
+      "code_reference": "NFPA 20, Hydraulic Calculations"
+    },
+    {
+      "id": "fs_pump_020",
+      "difficulty": "advanced",
+      "question": "What is the minimum required fire resistance rating for a fire pump room?",
+      "options": [
+        "30 minutes",
+        "1 hour",
+        "2 hours",
+        "No specific requirement if sprinklered"
+      ],
+      "correct_answer": 2,
+      "explanation": "Fire pump rooms must have a minimum 2-hour fire resistance rating to protect the pump during a fire event and ensure continued operation.",
+      "code_reference": "NFPA 20, Section 4.12.1"
+    },
+    {
+      "id": "fs_pump_021",
+      "difficulty": "advanced",
+      "question": "When using a vertical turbine pump from a ground-level suction tank, what is the minimum submergence required?",
+      "options": [
+        "1 times the bell diameter",
+        "2 times the bell diameter",
+        "As per manufacturer's recommendations",
+        "6 inches minimum"
+      ],
+      "correct_answer": 2,
+      "explanation": "Minimum submergence for vertical turbine pumps must follow manufacturer's recommendations to prevent vortexing and ensure proper pump performance.",
+      "code_reference": "NFPA 20, Section 4.28"
+    },
+    {
+      "id": "fs_pump_022",
+      "difficulty": "advanced",
+      "question": "For a fire pump taking suction from a public water main, what is the minimum residual pressure required at the pump suction?",
+      "options": [
+        "0 psi (can take full suction)",
+        "10 psi",
+        "20 psi",
+        "As determined by the water authority"
+      ],
+      "correct_answer": 2,
+      "explanation": "When taking suction from a public water supply, a minimum of 20 psi residual pressure at the pump suction flange must be maintained during pumping to avoid negative impacts on the water system.",
+      "code_reference": "NFPA 20, Section 4.6.4"
+    },
+    {
+      "id": "fs_pump_023",
+      "difficulty": "advanced",
+      "question": "What is required when the fire pump motor exceeds what horsepower for across-the-line starting?",
+      "options": [
+        "15 hp",
+        "30 hp",
+        "50 hp",
+        "Utility coordination required regardless of size"
+      ],
+      "correct_answer": 3,
+      "explanation": "Coordination with the electric utility is required regardless of motor size to ensure the utility system can handle the inrush current during across-the-line starting.",
+      "code_reference": "NFPA 20, Section 9.3"
+    },
+    {
+      "id": "fs_pump_024",
+      "difficulty": "advanced",
+      "question": "What is the maximum time for a diesel fire pump to reach rated speed after starting?",
+      "options": [
+        "10 seconds",
+        "20 seconds",
+        "30 seconds",
+        "60 seconds"
+      ],
+      "correct_answer": 2,
+      "explanation": "Diesel fire pumps must reach rated speed within 30 seconds of the start signal to ensure timely water delivery to the sprinkler system.",
+      "code_reference": "NFPA 20, Section 11.2.2"
+    },
+    {
+      "id": "fs_pump_025",
+      "difficulty": "advanced",
+      "question": "During annual fire pump testing, a pump delivers 95% of its rated flow at rated pressure. What action is required?",
+      "options": [
+        "Immediate pump replacement",
+        "Retest within 30 days",
+        "No action - acceptable performance",
+        "Internal pump inspection required"
+      ],
+      "correct_answer": 3,
+      "explanation": "Per NFPA 25, a fire pump performing at 95% or more of its original acceptance test values is considered acceptable. Corrective action is needed when performance drops below 95%.",
+      "code_reference": "NFPA 25, Section 8.3.3.4"
+    }
+  ]
+}

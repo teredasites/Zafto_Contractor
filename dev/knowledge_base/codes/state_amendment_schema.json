@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "State Amendment Schema",
+  "description": "Schema for state-specific code amendments and adoptions",
+  "type": "object",
+  "required": ["state", "code", "base_edition", "amendments"],
+  "properties": {
+    "state": {
+      "type": "string",
+      "description": "Two-letter state code (e.g., 'CA', 'TX')",
+      "pattern": "^[A-Z]{2}$"
+    },
+    "state_name": {
+      "type": "string",
+      "description": "Full state name"
+    },
+    "code": {
+      "type": "string",
+      "description": "Base code type",
+      "enum": ["NEC", "IPC", "UPC", "IRC", "IBC", "IMC", "UMC"]
+    },
+    "base_edition": {
+      "type": "string",
+      "description": "Adopted edition year (e.g., '2023')"
+    },
+    "effective_date": {
+      "type": "string",
+      "format": "date",
+      "description": "When this edition became effective"
+    },
+    "state_code_name": {
+      "type": "string",
+      "description": "State-specific code name if different (e.g., 'CEC' for California Electrical Code)"
+    },
+    "amendments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["article", "type", "description"],
+        "properties": {
+          "article": {
+            "type": "string",
+            "description": "Code article affected"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["modified", "deleted", "added", "replaced"],
+            "description": "Type of amendment"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the change"
+          },
+          "original_text": {
+            "type": "string",
+            "description": "Original code text (if modified)"
+          },
+          "amended_text": {
+            "type": "string",
+            "description": "Amended text"
+          },
+          "rationale": {
+            "type": "string",
+            "description": "Reason for the amendment"
+          },
+          "source_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Link to official source"
+          }
+        }
+      }
+    },
+    "notes": {
+      "type": "string",
+      "description": "General notes about state adoption"
+    },
+    "source_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Link to official state code information"
+    },
+    "last_verified": {
+      "type": "string",
+      "format": "date",
+      "description": "When this data was last verified"
+    }
+  }
+}

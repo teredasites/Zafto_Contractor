@@ -1,0 +1,432 @@
+{
+  "category": "Elevator Mechanic",
+  "subcategory": "ASME A17.1 Safety Code",
+  "description": "Safety Code for Elevators and Escalators fundamentals",
+  "difficulty_distribution": {
+    "beginner": 10,
+    "intermediate": 12,
+    "advanced": 8
+  },
+  "questions": [
+    {
+      "id": "elev_safety_001",
+      "difficulty": "beginner",
+      "question": "What is the primary safety code governing elevator installation in the United States?",
+      "options": [
+        "OSHA 1926",
+        "ASME A17.1",
+        "NEC Article 620",
+        "IBC Chapter 30"
+      ],
+      "correct_answer": 1,
+      "explanation": "ASME A17.1 is the Safety Code for Elevators and Escalators, which provides minimum safety requirements for the design, construction, operation, inspection, testing, and maintenance of elevators.",
+      "code_reference": "ASME A17.1"
+    },
+    {
+      "id": "elev_safety_002",
+      "difficulty": "beginner",
+      "question": "What is the purpose of a door interlock on an elevator?",
+      "options": [
+        "To control door speed",
+        "To prevent the car from moving unless the hoistway door is locked",
+        "To illuminate the car interior",
+        "To activate the fire alarm"
+      ],
+      "correct_answer": 1,
+      "explanation": "Door interlocks prevent elevator operation unless the hoistway doors are fully closed and locked. This is a critical safety device preventing passenger falls into the hoistway.",
+      "code_reference": "ASME A17.1, Section 2.11"
+    },
+    {
+      "id": "elev_safety_003",
+      "difficulty": "beginner",
+      "question": "What is the purpose of the governor on a traction elevator?",
+      "options": [
+        "To control car speed during normal operation",
+        "To activate the safety device if the car overspeed occurs",
+        "To open and close doors",
+        "To level the car at floors"
+      ],
+      "correct_answer": 1,
+      "explanation": "The governor monitors car speed and activates the car safety device if the car exceeds a predetermined overspeed condition, stopping the car before a dangerous speed is reached.",
+      "code_reference": "ASME A17.1, Section 2.18"
+    },
+    {
+      "id": "elev_safety_004",
+      "difficulty": "beginner",
+      "question": "What is the function of the car safety device?",
+      "options": [
+        "To prevent door malfunctions",
+        "To stop and hold the car on the guide rails during overspeed or free-fall",
+        "To provide emergency lighting",
+        "To control ventilation"
+      ],
+      "correct_answer": 1,
+      "explanation": "The car safety device (safeties) mechanically grips the guide rails to stop and hold the car if overspeed or free-fall occurs, preventing the car from falling.",
+      "code_reference": "ASME A17.1, Section 2.17"
+    },
+    {
+      "id": "elev_safety_005",
+      "difficulty": "beginner",
+      "question": "What is required at the bottom of every elevator hoistway?",
+      "options": [
+        "A water pump",
+        "A pit with buffers",
+        "A generator room",
+        "A fire extinguisher"
+      ],
+      "correct_answer": 1,
+      "explanation": "Every elevator hoistway must have a pit at the bottom containing buffers (car and counterweight) to absorb impact energy if the car or counterweight travels past the lowest landing.",
+      "code_reference": "ASME A17.1, Section 2.2"
+    },
+    {
+      "id": "elev_safety_006",
+      "difficulty": "beginner",
+      "question": "What type of buffer absorbs energy through compression of a spring or oil?",
+      "options": [
+        "Gravity buffer",
+        "Compression buffer",
+        "Spring or oil buffer",
+        "Magnetic buffer"
+      ],
+      "correct_answer": 2,
+      "explanation": "Buffers are classified as spring-return oil buffers or spring buffers. Oil buffers absorb energy through compression of oil and are required for higher-speed elevators.",
+      "code_reference": "ASME A17.1, Section 2.22"
+    },
+    {
+      "id": "elev_safety_007",
+      "difficulty": "beginner",
+      "question": "What is the minimum pit depth requirement related to?",
+      "options": [
+        "Building height only",
+        "Elevator speed and buffer stroke requirements",
+        "Number of floors served",
+        "Machine room location"
+      ],
+      "correct_answer": 1,
+      "explanation": "Minimum pit depth is determined by elevator speed and the required buffer stroke to safely stop the car, plus clearance requirements below the car platform.",
+      "code_reference": "ASME A17.1, Section 2.2"
+    },
+    {
+      "id": "elev_safety_008",
+      "difficulty": "beginner",
+      "question": "What color must elevator hoistway doors be painted on the hoistway side?",
+      "options": [
+        "Red",
+        "No specific color requirement",
+        "White",
+        "Yellow"
+      ],
+      "correct_answer": 1,
+      "explanation": "ASME A17.1 does not specify a color requirement for the hoistway side of doors. Local codes or building requirements may vary.",
+      "code_reference": "ASME A17.1, Section 2.11"
+    },
+    {
+      "id": "elev_safety_009",
+      "difficulty": "beginner",
+      "question": "What is the purpose of the final limit switch?",
+      "options": [
+        "To control door operation",
+        "To cut power if the car travels past the normal limits",
+        "To regulate car speed",
+        "To test the alarm bell"
+      ],
+      "correct_answer": 1,
+      "explanation": "Final limit switches are safety devices that cut power to the drive motor and brake if the car travels past its normal travel limits, providing a secondary stopping means.",
+      "code_reference": "ASME A17.1, Section 2.25"
+    },
+    {
+      "id": "elev_safety_010",
+      "difficulty": "beginner",
+      "question": "What must be provided in every elevator car for emergencies?",
+      "options": [
+        "A fire extinguisher",
+        "An emergency alarm device and communication means",
+        "A first aid kit",
+        "An emergency exit ladder"
+      ],
+      "correct_answer": 1,
+      "explanation": "Every elevator car must have an emergency alarm device (bell or buzzer) that can summon help, and two-way communication means to allow trapped passengers to contact assistance.",
+      "code_reference": "ASME A17.1, Section 2.27"
+    },
+    {
+      "id": "elev_safety_011",
+      "difficulty": "intermediate",
+      "question": "At what percentage of governor tripping speed must the car safety device fully engage?",
+      "options": [
+        "75%",
+        "100%",
+        "115%",
+        "150%"
+      ],
+      "correct_answer": 1,
+      "explanation": "The car safety device must fully engage before the car attains governor tripping speed. Governor tripping speed is typically 115% of rated speed for higher speeds.",
+      "code_reference": "ASME A17.1, Section 2.18.4"
+    },
+    {
+      "id": "elev_safety_012",
+      "difficulty": "intermediate",
+      "question": "What is the maximum door opening time allowed for power-operated doors?",
+      "options": [
+        "3 seconds",
+        "5 seconds",
+        "8 seconds",
+        "No specific time, but minimum speed required"
+      ],
+      "correct_answer": 3,
+      "explanation": "ASME A17.1 specifies minimum door speeds rather than maximum times. Doors must achieve certain kinetic energy limits and reopening device requirements are specified.",
+      "code_reference": "ASME A17.1, Section 2.13"
+    },
+    {
+      "id": "elev_safety_013",
+      "difficulty": "intermediate",
+      "question": "What is the maximum permitted vertical distance between the car sill and the hoistway door sill during loading?",
+      "options": [
+        "1/2 inch",
+        "3/4 inch",
+        "1 inch",
+        "1-1/4 inch"
+      ],
+      "correct_answer": 1,
+      "explanation": "The car sill must be within 3/4 inch of the hoistway door sill during loading to prevent tripping hazards. Leveling accuracy is critical for passenger safety.",
+      "code_reference": "ASME A17.1, Section 2.26"
+    },
+    {
+      "id": "elev_safety_014",
+      "difficulty": "intermediate",
+      "question": "How often must car safety devices be tested per ASME A17.1?",
+      "options": [
+        "Monthly",
+        "Quarterly",
+        "Annually",
+        "Every 5 years"
+      ],
+      "correct_answer": 3,
+      "explanation": "Car safety devices must be tested annually as part of the Category 1 periodic test requirements under ASME A17.1. Category 5 full-load tests are required less frequently.",
+      "code_reference": "ASME A17.1, Section 8.6"
+    },
+    {
+      "id": "elev_safety_015",
+      "difficulty": "intermediate",
+      "question": "What is the minimum clear overhead (headroom) required in an elevator car?",
+      "options": [
+        "6 feet 8 inches",
+        "7 feet",
+        "7 feet 6 inches",
+        "8 feet"
+      ],
+      "correct_answer": 2,
+      "explanation": "The minimum clear height inside an elevator car is 7 feet 6 inches (90 inches) measured from the car floor to the lowest projection from the car ceiling.",
+      "code_reference": "ASME A17.1, Section 2.14"
+    },
+    {
+      "id": "elev_safety_016",
+      "difficulty": "intermediate",
+      "question": "What is the maximum horizontal gap allowed between the hoistway door and car door?",
+      "options": [
+        "4 inches",
+        "5 inches",
+        "6 inches",
+        "7 inches"
+      ],
+      "correct_answer": 1,
+      "explanation": "The horizontal clearance between the hoistway door and car door shall not exceed 5 inches to prevent passengers from reaching into the hoistway.",
+      "code_reference": "ASME A17.1, Section 2.11"
+    },
+    {
+      "id": "elev_safety_017",
+      "difficulty": "intermediate",
+      "question": "What is the purpose of releveling?",
+      "options": [
+        "To adjust rope tension",
+        "To correct floor positioning after load changes",
+        "To test safety devices",
+        "To balance the counterweight"
+      ],
+      "correct_answer": 1,
+      "explanation": "Releveling automatically corrects car position at a floor when the car drifts due to rope stretch, load changes, or brake slip, maintaining safe loading conditions.",
+      "code_reference": "ASME A17.1, Section 2.26.1"
+    },
+    {
+      "id": "elev_safety_018",
+      "difficulty": "intermediate",
+      "question": "What protection must be provided for counterweight runby space at the bottom of the hoistway?",
+      "options": [
+        "None required",
+        "Counterweight guard or screen",
+        "Fire sprinklers",
+        "Rubber mat"
+      ],
+      "correct_answer": 1,
+      "explanation": "A counterweight guard or screen must protect the counterweight runby space at the lowest landing to prevent personnel from being struck by the descending counterweight.",
+      "code_reference": "ASME A17.1, Section 2.16"
+    },
+    {
+      "id": "elev_safety_019",
+      "difficulty": "intermediate",
+      "question": "What type of elevator requires an oil buffer?",
+      "options": [
+        "All elevators",
+        "Elevators with rated speeds over 200 fpm",
+        "Only freight elevators",
+        "Only hydraulic elevators"
+      ],
+      "correct_answer": 1,
+      "explanation": "Oil buffers are required for elevators with rated speeds exceeding 200 fpm. Spring buffers may be used for speeds of 200 fpm or less.",
+      "code_reference": "ASME A17.1, Section 2.22"
+    },
+    {
+      "id": "elev_safety_020",
+      "difficulty": "intermediate",
+      "question": "What is the maximum closing force allowed for power-operated passenger elevator doors?",
+      "options": [
+        "20 foot-pounds",
+        "30 foot-pounds",
+        "40 foot-pounds",
+        "7.5 foot-pounds"
+      ],
+      "correct_answer": 1,
+      "explanation": "Horizontally sliding power-operated doors shall not have kinetic energy exceeding 30 foot-pounds when closing. This protects passengers from injury.",
+      "code_reference": "ASME A17.1, Section 2.13.3"
+    },
+    {
+      "id": "elev_safety_021",
+      "difficulty": "intermediate",
+      "question": "What must actuate if an elevator car door is opened with the car outside the landing zone?",
+      "options": [
+        "The alarm bell",
+        "The car safety device",
+        "The electrical protective device (switch)",
+        "The fire recall"
+      ],
+      "correct_answer": 2,
+      "explanation": "An electrical protective device (restrictor) must prevent car operation if car doors are opened while the car is outside the landing zone, protecting passengers from falling.",
+      "code_reference": "ASME A17.1, Section 2.12"
+    },
+    {
+      "id": "elev_safety_022",
+      "difficulty": "intermediate",
+      "question": "What is the minimum machine room temperature requirement?",
+      "options": [
+        "40°F",
+        "50°F",
+        "55°F",
+        "No specific requirement"
+      ],
+      "correct_answer": 2,
+      "explanation": "Machine rooms must maintain a minimum temperature of 55°F to ensure proper operation of elevator equipment and lubricants.",
+      "code_reference": "ASME A17.1, Section 2.7"
+    },
+    {
+      "id": "elev_safety_023",
+      "difficulty": "advanced",
+      "question": "For a Category 5 safety test, what percentage of rated load must be in the car?",
+      "options": [
+        "50%",
+        "100%",
+        "125%",
+        "150%"
+      ],
+      "correct_answer": 2,
+      "explanation": "Category 5 periodic tests (full-load safety test) require 125% of rated load in the car to verify the safety device can stop and hold an overloaded car.",
+      "code_reference": "ASME A17.1, Section 8.6.4.20"
+    },
+    {
+      "id": "elev_safety_024",
+      "difficulty": "advanced",
+      "question": "What is the governor tripping speed for an elevator with a rated speed of 500 fpm?",
+      "options": [
+        "500 fpm",
+        "525 fpm",
+        "575 fpm",
+        "Calculated per ASME A17.1 formula"
+      ],
+      "correct_answer": 3,
+      "explanation": "Governor tripping speed is calculated using formulas in ASME A17.1 based on rated speed. For speeds over 150 fpm, the formula produces approximately 115% of rated speed.",
+      "code_reference": "ASME A17.1, Section 2.18.4"
+    },
+    {
+      "id": "elev_safety_025",
+      "difficulty": "advanced",
+      "question": "What is the minimum stopping distance for a car safety device on a high-speed elevator?",
+      "options": [
+        "No minimum, only maximum specified",
+        "12 inches",
+        "24 inches",
+        "36 inches"
+      ],
+      "correct_answer": 0,
+      "explanation": "ASME A17.1 specifies maximum stopping distances based on governor tripping speed, but minimum is not specified except that acceleration must not exceed safe limits.",
+      "code_reference": "ASME A17.1, Section 2.17"
+    },
+    {
+      "id": "elev_safety_026",
+      "difficulty": "advanced",
+      "question": "In a roped hydraulic elevator, what happens if the rope breaks?",
+      "options": [
+        "The car free-falls",
+        "The car is held by the jack",
+        "The governor activates the safety",
+        "The broken rope safety switch stops the car"
+      ],
+      "correct_answer": 2,
+      "explanation": "Roped hydraulic elevators must have a governor and car safety device that activates if the ropes break or the car overspeeds in the down direction.",
+      "code_reference": "ASME A17.1, Section 3.19"
+    },
+    {
+      "id": "elev_safety_027",
+      "difficulty": "advanced",
+      "question": "What is the maximum deceleration rate allowed when a car safety device activates?",
+      "options": [
+        "0.5g",
+        "1.0g",
+        "1.5g",
+        "2.5g"
+      ],
+      "correct_answer": 1,
+      "explanation": "The average deceleration during safety application shall not exceed 1g to prevent passenger injury. The safety must stop the car within specified distances.",
+      "code_reference": "ASME A17.1, Section 2.17.3"
+    },
+    {
+      "id": "elev_safety_028",
+      "difficulty": "advanced",
+      "question": "For seismic protection, at what Modified Mercalli Intensity must elevator counterweight derail devices activate?",
+      "options": [
+        "III",
+        "V",
+        "VII",
+        "Per local seismic requirements"
+      ],
+      "correct_answer": 3,
+      "explanation": "Seismic protection requirements vary by jurisdiction. ASME A17.1 provides requirements for seismic risk zones, including counterweight guards and derail devices.",
+      "code_reference": "ASME A17.1, Section 8.4"
+    },
+    {
+      "id": "elev_safety_029",
+      "difficulty": "advanced",
+      "question": "What is the emergency power switching time requirement for elevators?",
+      "options": [
+        "10 seconds maximum",
+        "60 seconds maximum",
+        "Per NEC Article 620 and local codes",
+        "No specific requirement"
+      ],
+      "correct_answer": 2,
+      "explanation": "Emergency power transfer time depends on NEC requirements and local codes. Typically, automatic transfer must occur within 60 seconds for standby systems.",
+      "code_reference": "NEC Article 620, ASME A17.1, Section 2.27"
+    },
+    {
+      "id": "elev_safety_030",
+      "difficulty": "advanced",
+      "question": "What documentation must be maintained for every periodic test of an elevator?",
+      "options": [
+        "None required",
+        "A log book entry only",
+        "Written record signed by tester with specific data",
+        "Video recording"
+      ],
+      "correct_answer": 2,
+      "explanation": "Periodic test records must include date, test type, results, tester identification, and signature. Records must be maintained and available for inspection.",
+      "code_reference": "ASME A17.1, Section 8.6"
+    }
+  ]
+}

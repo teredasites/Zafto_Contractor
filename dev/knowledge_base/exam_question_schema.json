@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Exam Question Schema",
+  "description": "Schema for exam prep questions across all trades",
+  "type": "object",
+  "required": ["id", "trade", "category", "question", "options", "explanation", "code_ref"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier (e.g., 'elec-calc-001')",
+      "pattern": "^[a-z]+-[a-z]+-[0-9]+$"
+    },
+    "version": {
+      "type": "string",
+      "description": "Question version for tracking updates",
+      "default": "1.0"
+    },
+    "trade": {
+      "type": "string",
+      "enum": ["electrical", "plumbing", "hvac", "solar", "gc"],
+      "description": "Trade this question belongs to"
+    },
+    "category": {
+      "type": "string",
+      "description": "Category within the trade (e.g., 'Calculations', 'Grounding')"
+    },
+    "subcategory": {
+      "type": "string",
+      "description": "Subcategory for finer organization"
+    },
+    "question": {
+      "type": "string",
+      "description": "The question text"
+    },
+    "options": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "required": ["id", "text"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "enum": ["a", "b", "c", "d"]
+          },
+          "text": {
+            "type": "string",
+            "description": "Answer option text"
+          },
+          "correct": {
+            "type": "boolean",
+            "description": "Whether this is the correct answer",
+            "default": false
+          }
+        }
+      }
+    },
+    "explanation": {
+      "type": "string",
+      "description": "Explanation of why the answer is correct"
+    },
+    "code_ref": {
+      "type": "string",
+      "description": "Code reference (e.g., 'NEC 210.8(A)')"
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": ["easy", "medium", "hard"],
+      "description": "Difficulty level"
+    },
+    "exam_relevance": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["journeyman", "master", "contractor", "inspector", "epa_608", "nabcep"]
+      },
+      "description": "Which exam types this question applies to"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["calculation", "lookup", "scenario", "safety", "definition", "procedure"],
+      "description": "Type of question"
+    },
+    "calculation": {
+      "type": "object",
+      "description": "Calculation details for calculation-type questions",
+      "properties": {
+        "formula": { "type": "string" },
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "step": { "type": "integer" },
+              "description": { "type": "string" },
+              "calculation": { "type": "string" },
+              "result": { "type": "string" }
+            }
+          }
+        },
+        "final_answer": { "type": "string" },
+        "common_mistakes": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "image": {
+      "type": "string",
+      "description": "Path to associated image/diagram if any"
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Tags for categorization and search"
+    },
+    "related_calculators": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "IDs of related calculators in the app"
+    },
+    "verified": {
+      "type": "boolean",
+      "description": "Whether this question has been verified against current code",
+      "default": false
+    },
+    "last_updated": {
+      "type": "string",
+      "format": "date"
+    }
+  }
+}

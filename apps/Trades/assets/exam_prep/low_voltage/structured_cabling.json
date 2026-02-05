@@ -1,0 +1,362 @@
+{
+  "category": "Low Voltage",
+  "subcategory": "Structured Cabling Systems",
+  "description": "Data, voice, and network cabling installation standards",
+  "difficulty_distribution": {
+    "beginner": 8,
+    "intermediate": 10,
+    "advanced": 7
+  },
+  "questions": [
+    {
+      "id": "lv_cable_001",
+      "difficulty": "beginner",
+      "question": "What is the maximum cable length for a horizontal run in structured cabling per TIA-568?",
+      "options": [
+        "80 meters",
+        "90 meters",
+        "100 meters",
+        "120 meters"
+      ],
+      "correct_answer": 1,
+      "explanation": "TIA-568 specifies a maximum horizontal cable run of 90 meters (295 feet), with additional length for patch cords at each end totaling 100 meters maximum.",
+      "code_reference": "TIA-568.2-D"
+    },
+    {
+      "id": "lv_cable_002",
+      "difficulty": "beginner",
+      "question": "What does 'Cat 6' refer to in cabling?",
+      "options": [
+        "Cable thickness",
+        "Category rating for performance specifications",
+        "Number of conductors",
+        "Fire rating"
+      ],
+      "correct_answer": 1,
+      "explanation": "Cat 6 (Category 6) is a performance standard for twisted pair cabling, specified to handle frequencies up to 250 MHz and support Gigabit Ethernet.",
+      "code_reference": "TIA-568.2-D"
+    },
+    {
+      "id": "lv_cable_003",
+      "difficulty": "beginner",
+      "question": "What is the T568A wiring standard used for?",
+      "options": [
+        "Coaxial cable termination",
+        "One of two standard pin-out configurations for RJ45 connectors",
+        "Fiber optic connections",
+        "Power over Ethernet"
+      ],
+      "correct_answer": 1,
+      "explanation": "T568A is one of two standard pin/pair assignments for RJ45 connectors. T568B is the other. Consistency is required throughout an installation.",
+      "code_reference": "TIA-568.2-D"
+    },
+    {
+      "id": "lv_cable_004",
+      "difficulty": "beginner",
+      "question": "What is the minimum bend radius for 4-pair UTP cable during installation?",
+      "options": [
+        "2 times cable diameter",
+        "4 times cable diameter",
+        "6 times cable diameter",
+        "8 times cable diameter"
+      ],
+      "correct_answer": 1,
+      "explanation": "Minimum bend radius for 4-pair UTP cable is 4 times the cable diameter during installation. Tighter bends can damage conductors or affect performance.",
+      "code_reference": "TIA-568.2-D"
+    },
+    {
+      "id": "lv_cable_005",
+      "difficulty": "beginner",
+      "question": "What does 'UTP' stand for?",
+      "options": [
+        "Universal Transmission Protocol",
+        "Unshielded Twisted Pair",
+        "Utility Telephone Port",
+        "Underground Telephone Pathway"
+      ],
+      "correct_answer": 1,
+      "explanation": "UTP (Unshielded Twisted Pair) is the most common type of copper network cabling, consisting of pairs of insulated wires twisted together without overall shielding.",
+      "code_reference": "TIA-568.2-D"
+    },
+    {
+      "id": "lv_cable_006",
+      "difficulty": "beginner",
+      "question": "What is the purpose of a patch panel?",
+      "options": [
+        "To boost signal strength",
+        "To provide organized termination point for horizontal cables",
+        "To convert fiber to copper",
+        "To power network devices"
+      ],
+      "correct_answer": 1,
+      "explanation": "Patch panels provide organized termination points for horizontal cables, allowing easy connection management and changes via patch cords.",
+      "code_reference": "TIA-568.2-D"
+    },
+    {
+      "id": "lv_cable_007",
+      "difficulty": "beginner",
+      "question": "What type of cable is required in plenum spaces?",
+      "options": [
+        "CM (Communications Cable)",
+        "CMR (Riser Cable)",
+        "CMP (Plenum Cable)",
+        "CMX (Residential Cable)"
+      ],
+      "correct_answer": 2,
+      "explanation": "CMP (Communications Plenum) cable is required in air handling spaces. It has a special jacket that produces low smoke and flame spread.",
+      "code_reference": "NEC 800.179"
+    },
+    {
+      "id": "lv_cable_008",
+      "difficulty": "beginner",
+      "question": "What is an MDF in structured cabling?",
+      "options": [
+        "Main Distribution Frame - primary connection point",
+        "Mechanical Device Frame",
+        "Multi-Data Fiber",
+        "Module Distribution Format"
+      ],
+      "correct_answer": 0,
+      "explanation": "The Main Distribution Frame (MDF) or Main Cross-Connect (MC) is the primary equipment room where outside cables connect to the building's cabling infrastructure.",
+      "code_reference": "TIA-568.2-D"
+    },
+    {
+      "id": "lv_cable_009",
+      "difficulty": "intermediate",
+      "question": "What is the maximum untwist length for Cat 6 cable at the termination?",
+      "options": [
+        "0.25 inches",
+        "0.5 inches",
+        "1 inch",
+        "1.5 inches"
+      ],
+      "correct_answer": 1,
+      "explanation": "Category 6 cable requires a maximum of 0.5 inches (12.7mm) of untwisted conductor at terminations. Cat 6A may require even less.",
+      "code_reference": "TIA-568.2-D"
+    },
+    {
+      "id": "lv_cable_010",
+      "difficulty": "intermediate",
+      "question": "What is the purpose of the EIA/TIA color code for patch panels?",
+      "options": [
+        "Aesthetic purposes only",
+        "To identify circuit types (data, voice, etc.)",
+        "To indicate cable category",
+        "To show installation date"
+      ],
+      "correct_answer": 1,
+      "explanation": "TIA-606 specifies colors for different system types: blue for horizontal, white for backbone, gray for network, green for external, yellow for auxiliary, etc.",
+      "code_reference": "TIA-606-C"
+    },
+    {
+      "id": "lv_cable_011",
+      "difficulty": "intermediate",
+      "question": "What is the difference between Cat 6 and Cat 6A cable?",
+      "options": [
+        "Number of pairs",
+        "Cat 6A supports higher frequencies (500 MHz vs 250 MHz)",
+        "Cat 6A is thinner",
+        "Cat 6 supports PoE, Cat 6A does not"
+      ],
+      "correct_answer": 1,
+      "explanation": "Cat 6A is rated to 500 MHz (vs 250 MHz for Cat 6) and supports 10 Gigabit Ethernet over the full 100 meters. It also has stricter alien crosstalk requirements.",
+      "code_reference": "TIA-568.2-D"
+    },
+    {
+      "id": "lv_cable_012",
+      "difficulty": "intermediate",
+      "question": "What testing is required after installing structured cabling?",
+      "options": [
+        "Visual inspection only",
+        "Continuity test only",
+        "Certification testing per TIA standards",
+        "No testing required"
+      ],
+      "correct_answer": 2,
+      "explanation": "Certification testing using a cable certifier verifies that the installed cabling meets TIA performance standards including length, attenuation, NEXT, and return loss.",
+      "code_reference": "TIA-568.2-D"
+    },
+    {
+      "id": "lv_cable_013",
+      "difficulty": "intermediate",
+      "question": "What is NEXT in cable testing?",
+      "options": [
+        "Network External Testing",
+        "Near End Crosstalk",
+        "New Extended Topology",
+        "Neutral Exit Terminal"
+      ],
+      "correct_answer": 1,
+      "explanation": "NEXT (Near End Crosstalk) measures signal interference between wire pairs at the near end of the cable. Higher NEXT values indicate better performance.",
+      "code_reference": "TIA-568.2-D"
+    },
+    {
+      "id": "lv_cable_014",
+      "difficulty": "intermediate",
+      "question": "What is the maximum pulling tension for 4-pair UTP cable?",
+      "options": [
+        "10 lbf",
+        "25 lbf",
+        "50 lbf",
+        "75 lbf"
+      ],
+      "correct_answer": 1,
+      "explanation": "Maximum pulling tension for 4-pair UTP cable is 25 lbf (110 N). Exceeding this can stretch conductors and degrade performance.",
+      "code_reference": "BICSI TDMM"
+    },
+    {
+      "id": "lv_cable_015",
+      "difficulty": "intermediate",
+      "question": "What is the minimum clearance between data cables and unshielded power conductors in parallel runs?",
+      "options": [
+        "No separation required",
+        "2 inches",
+        "5 inches (minimum)",
+        "12 inches"
+      ],
+      "correct_answer": 2,
+      "explanation": "Per TIA-569, minimum separation between data cabling and power cabling ranges from 5-12 inches depending on voltage and whether power is shielded or in conduit.",
+      "code_reference": "TIA-569-D"
+    },
+    {
+      "id": "lv_cable_016",
+      "difficulty": "intermediate",
+      "question": "How many horizontal cables are recommended per work area outlet?",
+      "options": [
+        "1",
+        "2 (minimum per TIA-568)",
+        "4",
+        "6"
+      ],
+      "correct_answer": 1,
+      "explanation": "TIA-568 recommends a minimum of two horizontal cables to each work area outlet - typically one for voice and one for data, though both often carry data now.",
+      "code_reference": "TIA-568.2-D"
+    },
+    {
+      "id": "lv_cable_017",
+      "difficulty": "intermediate",
+      "question": "What is the function of a service loop in cable installation?",
+      "options": [
+        "To add resistance",
+        "To allow for future moves or re-terminations",
+        "To filter signals",
+        "To increase bandwidth"
+      ],
+      "correct_answer": 1,
+      "explanation": "Service loops provide extra cable length at termination points, allowing for future moves, repairs, or re-terminations without cable replacement.",
+      "code_reference": "BICSI TDMM"
+    },
+    {
+      "id": "lv_cable_018",
+      "difficulty": "intermediate",
+      "question": "What is PoE and what cable category minimum is required?",
+      "options": [
+        "Power over Ethernet, Cat 3 minimum",
+        "Power over Ethernet, Cat 5e minimum",
+        "Protocol of Ethernet, any cable",
+        "Power of Extension, Cat 6 only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Power over Ethernet (PoE) delivers DC power over twisted pair cables. Cat 5e minimum is required, though Cat 6 or higher is recommended for high-power applications.",
+      "code_reference": "IEEE 802.3"
+    },
+    {
+      "id": "lv_cable_019",
+      "difficulty": "advanced",
+      "question": "What is the attenuation limit for Cat 6 cable at 250 MHz per 100 meters?",
+      "options": [
+        "15.4 dB",
+        "21.3 dB",
+        "35.9 dB",
+        "38.0 dB"
+      ],
+      "correct_answer": 2,
+      "explanation": "Cat 6 cable has a maximum attenuation of approximately 35.9 dB at 250 MHz per 100 meters. Lower attenuation indicates better signal transmission.",
+      "code_reference": "TIA-568.2-D"
+    },
+    {
+      "id": "lv_cable_020",
+      "difficulty": "advanced",
+      "question": "What does 'Alien Crosstalk' (AXT) measure?",
+      "options": [
+        "Interference within a cable",
+        "Interference between adjacent cables",
+        "Signal loss at connectors",
+        "EMI from external sources"
+      ],
+      "correct_answer": 1,
+      "explanation": "Alien Crosstalk (AXT) measures electromagnetic interference between separate cables. This is particularly important for Cat 6A and higher categories.",
+      "code_reference": "TIA-568.2-D"
+    },
+    {
+      "id": "lv_cable_021",
+      "difficulty": "advanced",
+      "question": "What is the formula for calculating permanent link length?",
+      "options": [
+        "100 meters minus patch cord lengths",
+        "90 meters (fixed)",
+        "Channel length minus all cord lengths",
+        "Horizontal distance only"
+      ],
+      "correct_answer": 0,
+      "explanation": "Permanent link = 100 meters - equipment cord (at rack) - work area cord (at outlet). Maximum 90 meters for permanent link allows for 10 meters of patch cords.",
+      "code_reference": "TIA-568.2-D"
+    },
+    {
+      "id": "lv_cable_022",
+      "difficulty": "advanced",
+      "question": "What is return loss in cable testing?",
+      "options": [
+        "Signal reflected back due to impedance mismatches",
+        "Signal lost in the cable",
+        "Signal interference between pairs",
+        "Signal degradation over distance"
+      ],
+      "correct_answer": 0,
+      "explanation": "Return loss measures the amount of signal reflected back due to impedance mismatches at connections. Higher return loss values (in dB) indicate better performance.",
+      "code_reference": "TIA-568.2-D"
+    },
+    {
+      "id": "lv_cable_023",
+      "difficulty": "advanced",
+      "question": "What is the minimum size telecommunications room per TIA-569?",
+      "options": [
+        "50 sq ft",
+        "100 sq ft",
+        "150 sq ft",
+        "Based on calculation using work areas served"
+      ],
+      "correct_answer": 3,
+      "explanation": "TIA-569 provides formulas based on work areas served. Minimum room size is typically 150 sq ft for up to 500 work areas, with larger rooms for more work areas.",
+      "code_reference": "TIA-569-D"
+    },
+    {
+      "id": "lv_cable_024",
+      "difficulty": "advanced",
+      "question": "What is the propagation delay specification for Cat 6 cable?",
+      "options": [
+        "400 ns maximum per 100m",
+        "555 ns maximum per 100m",
+        "1000 ns maximum per 100m",
+        "No specification"
+      ],
+      "correct_answer": 1,
+      "explanation": "Cat 6 cable has a maximum propagation delay of 555 nanoseconds per 100 meters. This is important for time-sensitive network protocols.",
+      "code_reference": "TIA-568.2-D"
+    },
+    {
+      "id": "lv_cable_025",
+      "difficulty": "advanced",
+      "question": "What documentation standard covers telecommunications infrastructure administration?",
+      "options": [
+        "TIA-568",
+        "TIA-569",
+        "TIA-606",
+        "TIA-607"
+      ],
+      "correct_answer": 2,
+      "explanation": "TIA-606 is the Administration Standard for Telecommunications Infrastructure, covering labeling, documentation, and record keeping for cabling systems.",
+      "code_reference": "TIA-606-C"
+    }
+  ]
+}

@@ -1,0 +1,1198 @@
+{
+  "category": "Project Management",
+  "trade": "gc",
+  "description": "Scheduling, permits, inspections, estimating, project planning",
+  "question_count": 70,
+  "questions": [
+    {
+      "id": "gc-pm-001",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Scheduling",
+      "question": "What is a Gantt chart?",
+      "options": [
+        {"id": "a", "text": "A cost tracking chart"},
+        {"id": "b", "text": "A bar chart showing tasks and their duration over time", "correct": true},
+        {"id": "c", "text": "An organizational chart"},
+        {"id": "d", "text": "A resource allocation chart"}
+      ],
+      "explanation": "A Gantt chart is a bar chart that displays project tasks as horizontal bars across a timeline, showing start dates, durations, and relationships between activities.",
+      "code_ref": "Project Management",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-002",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Scheduling",
+      "question": "What is the critical path in scheduling?",
+      "options": [
+        {"id": "a", "text": "The shortest path through the project"},
+        {"id": "b", "text": "The longest sequence of dependent tasks determining minimum project duration", "correct": true},
+        {"id": "c", "text": "The most expensive path"},
+        {"id": "d", "text": "The safest route on site"}
+      ],
+      "explanation": "The critical path is the longest sequence of dependent activities that determines the minimum project duration. Delays on critical path activities delay the entire project.",
+      "code_ref": "Project Management",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-003",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Scheduling",
+      "question": "What is float (slack) in scheduling?",
+      "options": [
+        {"id": "a", "text": "Extra budget"},
+        {"id": "b", "text": "The amount of time an activity can be delayed without delaying the project", "correct": true},
+        {"id": "c", "text": "A contingency plan"},
+        {"id": "d", "text": "Overtime hours"}
+      ],
+      "explanation": "Float (or slack) is the amount of time an activity can be delayed without affecting the project completion date. Critical path activities have zero float.",
+      "code_ref": "Project Management",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-004",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Scheduling",
+      "question": "What is a predecessor activity?",
+      "options": [
+        {"id": "a", "text": "The most important activity"},
+        {"id": "b", "text": "An activity that must be completed before another can start", "correct": true},
+        {"id": "c", "text": "The first activity"},
+        {"id": "d", "text": "A critical activity"}
+      ],
+      "explanation": "A predecessor is an activity that must be completed (or started) before a dependent (successor) activity can begin. This creates the logical sequence of work.",
+      "code_ref": "Project Management",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-005",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Scheduling",
+      "question": "What is a milestone in a project schedule?",
+      "options": [
+        {"id": "a", "text": "A task that takes one day"},
+        {"id": "b", "text": "A significant event or achievement with zero duration", "correct": true},
+        {"id": "c", "text": "A delivery of materials"},
+        {"id": "d", "text": "A progress payment"}
+      ],
+      "explanation": "A milestone is a significant project event marking the completion of a phase or deliverable. Milestones have zero duration and serve as progress markers.",
+      "code_ref": "Project Management",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-006",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Scheduling",
+      "question": "What is a baseline schedule?",
+      "options": [
+        {"id": "a", "text": "The current schedule"},
+        {"id": "b", "text": "The approved original schedule used to measure progress", "correct": true},
+        {"id": "c", "text": "A preliminary schedule"},
+        {"id": "d", "text": "A recovery schedule"}
+      ],
+      "explanation": "The baseline schedule is the approved, frozen version of the schedule against which actual progress is compared. It provides the benchmark for measuring performance.",
+      "code_ref": "Project Management",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-007",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Scheduling",
+      "question": "What is schedule compression?",
+      "options": [
+        {"id": "a", "text": "Reducing the scope of work"},
+        {"id": "b", "text": "Shortening the project duration without reducing scope", "correct": true},
+        {"id": "c", "text": "Delaying non-critical activities"},
+        {"id": "d", "text": "Reducing the budget"}
+      ],
+      "explanation": "Schedule compression shortens project duration without changing scope through techniques like crashing (adding resources) or fast-tracking (overlapping activities).",
+      "code_ref": "Project Management",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-008",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Scheduling",
+      "question": "What is crashing a schedule?",
+      "options": [
+        {"id": "a", "text": "Missing deadlines"},
+        {"id": "b", "text": "Adding resources to critical activities to shorten duration", "correct": true},
+        {"id": "c", "text": "Eliminating activities"},
+        {"id": "d", "text": "Extending the schedule"}
+      ],
+      "explanation": "Crashing adds resources (labor, equipment, overtime) to critical path activities to reduce their duration. It increases cost but shortens the schedule.",
+      "code_ref": "Project Management",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-009",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Scheduling",
+      "question": "What is fast-tracking?",
+      "options": [
+        {"id": "a", "text": "Working overtime"},
+        {"id": "b", "text": "Overlapping activities that would normally be done sequentially", "correct": true},
+        {"id": "c", "text": "Eliminating inspections"},
+        {"id": "d", "text": "Increasing crew sizes"}
+      ],
+      "explanation": "Fast-tracking overlaps activities that would normally be performed in sequence. For example, starting framing before foundation is fully cured. It increases risk but saves time.",
+      "code_ref": "Project Management",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-010",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Scheduling",
+      "question": "What is a look-ahead schedule?",
+      "options": [
+        {"id": "a", "text": "The complete project schedule"},
+        {"id": "b", "text": "A short-term schedule showing the next few weeks of work", "correct": true},
+        {"id": "c", "text": "A schedule of past work"},
+        {"id": "d", "text": "The baseline schedule"}
+      ],
+      "explanation": "A look-ahead schedule (typically 2-4 weeks) details near-term activities, allowing coordination of resources, materials, and subcontractors for upcoming work.",
+      "code_ref": "Project Management",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-011",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Permits",
+      "question": "When must a building permit be obtained?",
+      "options": [
+        {"id": "a", "text": "After construction starts"},
+        {"id": "b", "text": "Before construction begins", "correct": true},
+        {"id": "c", "text": "At substantial completion"},
+        {"id": "d", "text": "When the owner requests it"}
+      ],
+      "explanation": "Per IRC R105.1, a building permit must be obtained before commencing work. Working without a permit is illegal and can result in fines and required demolition.",
+      "code_ref": "IRC R105.1",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-012",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Permits",
+      "question": "What information is typically required on a permit application?",
+      "options": [
+        {"id": "a", "text": "Only the owner's name"},
+        {"id": "b", "text": "Project description, location, contractor info, plans, and cost estimate", "correct": true},
+        {"id": "c", "text": "Only the project address"},
+        {"id": "d", "text": "Only the contractor's license"}
+      ],
+      "explanation": "Permit applications typically require detailed project descriptions, site location, licensed contractor information, construction documents, and estimated construction cost.",
+      "code_ref": "IRC R105.3",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-013",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Permits",
+      "question": "Where must the building permit be displayed?",
+      "options": [
+        {"id": "a", "text": "In the contractor's office"},
+        {"id": "b", "text": "On the job site, visible from the street", "correct": true},
+        {"id": "c", "text": "In the owner's home"},
+        {"id": "d", "text": "Filed with the permit office"}
+      ],
+      "explanation": "Per IRC R105.7, the permit must be posted on the premises, visible from the public way, until the final inspection is completed.",
+      "code_ref": "IRC R105.7",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-014",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Permits",
+      "question": "What happens if work doesn't start within the permit validity period?",
+      "options": [
+        {"id": "a", "text": "Nothing"},
+        {"id": "b", "text": "The permit expires and must be renewed or reapplied for", "correct": true},
+        {"id": "c", "text": "Automatic extension"},
+        {"id": "d", "text": "A refund is issued"}
+      ],
+      "explanation": "Per IRC R105.5, permits expire if work doesn't commence within 180 days or if work is suspended for 180 days. A new permit or extension may be required.",
+      "code_ref": "IRC R105.5",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-015",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Permits",
+      "question": "What separate permits might be required besides the building permit?",
+      "options": [
+        {"id": "a", "text": "None"},
+        {"id": "b", "text": "Electrical, plumbing, mechanical, and other trade permits", "correct": true},
+        {"id": "c", "text": "Only HVAC permit"},
+        {"id": "d", "text": "Only the fire department permit"}
+      ],
+      "explanation": "In addition to the building permit, separate permits are typically required for electrical, plumbing, HVAC, and sometimes demolition, grading, or other work.",
+      "code_ref": "IRC R105",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-016",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Inspections",
+      "question": "Who is responsible for calling for inspections?",
+      "options": [
+        {"id": "a", "text": "The owner"},
+        {"id": "b", "text": "The permit holder (typically the contractor)", "correct": true},
+        {"id": "c", "text": "The architect"},
+        {"id": "d", "text": "The inspector"}
+      ],
+      "explanation": "Per IRC R109.1, the permit holder is responsible for requesting inspections at required stages of construction.",
+      "code_ref": "IRC R109.1",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-017",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Inspections",
+      "question": "What is the typical inspection sequence for new construction?",
+      "options": [
+        {"id": "a", "text": "Final, then foundation, then framing"},
+        {"id": "b", "text": "Foundation, framing, rough-in, insulation, final", "correct": true},
+        {"id": "c", "text": "Only a final inspection is required"},
+        {"id": "d", "text": "Inspections are optional"}
+      ],
+      "explanation": "Per IRC R109, inspections typically follow construction sequence: foundation, framing, rough plumbing/electrical/mechanical, insulation, and final inspection.",
+      "code_ref": "IRC R109",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-018",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Inspections",
+      "question": "What should be done before an inspection?",
+      "options": [
+        {"id": "a", "text": "Cover up the work"},
+        {"id": "b", "text": "Ensure work is complete, accessible, and ready for review", "correct": true},
+        {"id": "c", "text": "Remove all workers"},
+        {"id": "d", "text": "Nothing special"}
+      ],
+      "explanation": "Before inspection, ensure the work stage is complete, accessible (ladders, lighting), plans are on site, and required tests have been performed.",
+      "code_ref": "IRC R109",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-019",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Inspections",
+      "question": "What happens if work fails inspection?",
+      "options": [
+        {"id": "a", "text": "The project is cancelled"},
+        {"id": "b", "text": "Corrections must be made and a re-inspection scheduled", "correct": true},
+        {"id": "c", "text": "Work continues as normal"},
+        {"id": "d", "text": "The permit is automatically renewed"}
+      ],
+      "explanation": "If inspection fails, the contractor must correct the deficiencies noted by the inspector and schedule a re-inspection. Work cannot proceed until approved.",
+      "code_ref": "IRC R109",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-020",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Inspections",
+      "question": "What is a Certificate of Occupancy (CO)?",
+      "options": [
+        {"id": "a", "text": "A building permit"},
+        {"id": "b", "text": "A document certifying the building is safe for occupancy", "correct": true},
+        {"id": "c", "text": "An insurance certificate"},
+        {"id": "d", "text": "A warranty document"}
+      ],
+      "explanation": "Per IRC R110, a Certificate of Occupancy is issued after final inspection, certifying the building complies with codes and is safe for occupancy.",
+      "code_ref": "IRC R110",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-021",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Estimating",
+      "question": "What is a quantity takeoff?",
+      "options": [
+        {"id": "a", "text": "A discount on materials"},
+        {"id": "b", "text": "Measuring and listing the quantities of materials from plans", "correct": true},
+        {"id": "c", "text": "Removing excess materials"},
+        {"id": "d", "text": "A delivery schedule"}
+      ],
+      "explanation": "A quantity takeoff involves reviewing plans and specifications to measure and list all materials, labor, and equipment needed for the project. It's the basis for the estimate.",
+      "code_ref": "Estimating Practice",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-022",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Estimating",
+      "question": "What is a square in roofing measurement?",
+      "options": [
+        {"id": "a", "text": "1 square foot"},
+        {"id": "b", "text": "100 square feet", "correct": true},
+        {"id": "c", "text": "10 square feet"},
+        {"id": "d", "text": "1,000 square feet"}
+      ],
+      "explanation": "A roofing square equals 100 square feet. Roofing materials (shingles, underlayment) are typically priced and sold per square.",
+      "code_ref": "Construction Practice",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-023",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Estimating",
+      "question": "What is a board foot?",
+      "options": [
+        {"id": "a", "text": "12 inches long"},
+        {"id": "b", "text": "A volume of lumber: 1\" × 12\" × 12\" (144 cubic inches)", "correct": true},
+        {"id": "c", "text": "A linear foot of 2x4"},
+        {"id": "d", "text": "A square foot of plywood"}
+      ],
+      "explanation": "A board foot is a unit of lumber volume equal to 1\" × 12\" × 12\" = 144 cubic inches. It's used to measure and price hardwoods and specialty lumber.",
+      "code_ref": "Construction Practice",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-024",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Estimating",
+      "question": "How many board feet are in a 2x6x8?",
+      "options": [
+        {"id": "a", "text": "4 board feet"},
+        {"id": "b", "text": "8 board feet", "correct": true},
+        {"id": "c", "text": "12 board feet"},
+        {"id": "d", "text": "16 board feet"}
+      ],
+      "explanation": "Board feet = (thickness × width × length) ÷ 12 using nominal dimensions. For a 2x6x8: (2 × 6 × 8) ÷ 12 = 8 board feet.",
+      "code_ref": "Construction Practice",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-025",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Estimating",
+      "question": "What is markup in construction estimating?",
+      "options": [
+        {"id": "a", "text": "The cost of materials"},
+        {"id": "b", "text": "The amount added to direct costs for overhead and profit", "correct": true},
+        {"id": "c", "text": "A price increase"},
+        {"id": "d", "text": "A discount"}
+      ],
+      "explanation": "Markup is the percentage added to direct costs (labor, materials, equipment) to cover overhead (indirect costs) and profit. Total bid = costs + markup.",
+      "code_ref": "Estimating Practice",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-026",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Estimating",
+      "question": "What is labor burden?",
+      "options": [
+        {"id": "a", "text": "Heavy lifting"},
+        {"id": "b", "text": "Employer costs beyond wages (taxes, insurance, benefits)", "correct": true},
+        {"id": "c", "text": "Overtime pay"},
+        {"id": "d", "text": "Travel time"}
+      ],
+      "explanation": "Labor burden includes employer costs beyond the base wage: payroll taxes, workers' compensation, health insurance, retirement, and other benefits. It's typically 25-40% of wages.",
+      "code_ref": "Estimating Practice",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-027",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Estimating",
+      "question": "What is labor productivity?",
+      "options": [
+        {"id": "a", "text": "The number of workers"},
+        {"id": "b", "text": "The amount of work accomplished per unit of labor time", "correct": true},
+        {"id": "c", "text": "The wage rate"},
+        {"id": "d", "text": "The work schedule"}
+      ],
+      "explanation": "Labor productivity measures output per labor hour (e.g., square feet of drywall installed per hour). It varies by worker skill, conditions, and complexity.",
+      "code_ref": "Estimating Practice",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-028",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Estimating",
+      "question": "What is waste factor in estimating?",
+      "options": [
+        {"id": "a", "text": "Defective products"},
+        {"id": "b", "text": "An allowance added for cutting, damage, and loss", "correct": true},
+        {"id": "c", "text": "Environmental costs"},
+        {"id": "d", "text": "Disposal fees"}
+      ],
+      "explanation": "Waste factor is a percentage added to material quantities to account for cutting waste, damage, theft, and overage. Typical waste is 5-15% depending on material and complexity.",
+      "code_ref": "Estimating Practice",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-029",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Estimating",
+      "question": "What is a unit price in estimating?",
+      "options": [
+        {"id": "a", "text": "The total project price"},
+        {"id": "b", "text": "The cost per unit of measure (per SF, LF, CY, etc.)", "correct": true},
+        {"id": "c", "text": "The smallest price"},
+        {"id": "d", "text": "A fixed price"}
+      ],
+      "explanation": "Unit prices express cost per unit of measurement ($/SF for flooring, $/LF for pipe, $/CY for concrete). They simplify estimating and comparison.",
+      "code_ref": "Estimating Practice",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-030",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Estimating",
+      "question": "How many cubic yards are in a typical concrete truck load?",
+      "options": [
+        {"id": "a", "text": "5 cubic yards"},
+        {"id": "b", "text": "8-10 cubic yards", "correct": true},
+        {"id": "c", "text": "15 cubic yards"},
+        {"id": "d", "text": "20 cubic yards"}
+      ],
+      "explanation": "A standard concrete mixer truck holds 8-10 cubic yards. This affects delivery scheduling and pour planning for projects.",
+      "code_ref": "Construction Practice",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-031",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Cost Control",
+      "question": "What is a cost code in construction accounting?",
+      "options": [
+        {"id": "a", "text": "A secret price"},
+        {"id": "b", "text": "A numbering system to track costs by category", "correct": true},
+        {"id": "c", "text": "A discount code"},
+        {"id": "d", "text": "A billing code"}
+      ],
+      "explanation": "Cost codes are a standardized numbering system that categorizes project costs by type of work (CSI divisions) or task, enabling tracking and comparison to budget.",
+      "code_ref": "Construction Accounting",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-032",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Cost Control",
+      "question": "What is job costing?",
+      "options": [
+        {"id": "a", "text": "Estimating before bidding"},
+        {"id": "b", "text": "Tracking actual costs against budget during construction", "correct": true},
+        {"id": "c", "text": "Billing the owner"},
+        {"id": "d", "text": "Paying subcontractors"}
+      ],
+      "explanation": "Job costing tracks actual labor, material, and equipment costs during construction and compares them to budgeted amounts. It identifies variances and supports future estimating.",
+      "code_ref": "Construction Accounting",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-033",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Cost Control",
+      "question": "What is a cost variance?",
+      "options": [
+        {"id": "a", "text": "The original budget"},
+        {"id": "b", "text": "The difference between budgeted and actual costs", "correct": true},
+        {"id": "c", "text": "A change order"},
+        {"id": "d", "text": "The profit margin"}
+      ],
+      "explanation": "Cost variance is the difference between the budgeted cost and actual cost for an activity or the project. Negative variance indicates over-budget; positive indicates under-budget.",
+      "code_ref": "Project Management",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-034",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Cost Control",
+      "question": "What is the purpose of a job cost report?",
+      "options": [
+        {"id": "a", "text": "To create the estimate"},
+        {"id": "b", "text": "To compare actual costs to budget and identify variances", "correct": true},
+        {"id": "c", "text": "To pay workers"},
+        {"id": "d", "text": "To order materials"}
+      ],
+      "explanation": "Job cost reports compare actual costs to the budget, showing committed costs, costs to date, and projected costs at completion. They identify problems early.",
+      "code_ref": "Construction Accounting",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-035",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Coordination",
+      "question": "What is a pre-construction meeting?",
+      "options": [
+        {"id": "a", "text": "A meeting after construction ends"},
+        {"id": "b", "text": "A meeting before construction starts to coordinate all parties", "correct": true},
+        {"id": "c", "text": "A design meeting"},
+        {"id": "d", "text": "An inspection"}
+      ],
+      "explanation": "A pre-construction meeting brings together the owner, contractor, architect, and key subcontractors before construction to review scope, schedule, procedures, and expectations.",
+      "code_ref": "Project Management",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-036",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Coordination",
+      "question": "What is the purpose of weekly job meetings?",
+      "options": [
+        {"id": "a", "text": "To socialize"},
+        {"id": "b", "text": "To coordinate work, review progress, and address issues", "correct": true},
+        {"id": "c", "text": "To negotiate contracts"},
+        {"id": "d", "text": "To conduct inspections"}
+      ],
+      "explanation": "Weekly job meetings review schedule progress, coordinate upcoming work between trades, address problems, review safety issues, and document decisions.",
+      "code_ref": "Project Management",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-037",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Coordination",
+      "question": "What is an RFI (Request for Information)?",
+      "options": [
+        {"id": "a", "text": "A change order"},
+        {"id": "b", "text": "A formal question to clarify design or contract documents", "correct": true},
+        {"id": "c", "text": "A bid request"},
+        {"id": "d", "text": "A payment request"}
+      ],
+      "explanation": "An RFI is a formal written request from the contractor seeking clarification about ambiguous, missing, or conflicting information in the contract documents.",
+      "code_ref": "Construction Administration",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-038",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Coordination",
+      "question": "Why is it important to document RFI responses?",
+      "options": [
+        {"id": "a", "text": "Only for filing"},
+        {"id": "b", "text": "To have written record of decisions affecting the work", "correct": true},
+        {"id": "c", "text": "It's not important"},
+        {"id": "d", "text": "For marketing purposes"}
+      ],
+      "explanation": "RFI responses become part of the project record, documenting clarifications and decisions that may affect cost, schedule, or quality. Written records prevent disputes.",
+      "code_ref": "Construction Administration",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-039",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Coordination",
+      "question": "What is a coordination drawing?",
+      "options": [
+        {"id": "a", "text": "The architect's design drawing"},
+        {"id": "b", "text": "A drawing showing how multiple systems fit together in the same space", "correct": true},
+        {"id": "c", "text": "A sketch"},
+        {"id": "d", "text": "An as-built drawing"}
+      ],
+      "explanation": "Coordination drawings overlay multiple trade drawings (structural, mechanical, electrical, plumbing) to identify and resolve conflicts before construction.",
+      "code_ref": "Construction Administration",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-040",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Quality",
+      "question": "What is a quality control program?",
+      "options": [
+        {"id": "a", "text": "A marketing program"},
+        {"id": "b", "text": "A systematic process to ensure work meets specified requirements", "correct": true},
+        {"id": "c", "text": "An inspection by the building department"},
+        {"id": "d", "text": "A warranty program"}
+      ],
+      "explanation": "A quality control (QC) program includes inspection procedures, testing requirements, and documentation to verify that materials and workmanship meet contract specifications.",
+      "code_ref": "Construction Management",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-041",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Quality",
+      "question": "What is a punch list walk-through?",
+      "options": [
+        {"id": "a", "text": "Initial site visit"},
+        {"id": "b", "text": "Inspection to identify items needing completion or correction", "correct": true},
+        {"id": "c", "text": "A fighting inspection"},
+        {"id": "d", "text": "Equipment demonstration"}
+      ],
+      "explanation": "A punch list walk-through at substantial completion identifies incomplete or deficient work items that must be corrected before final payment.",
+      "code_ref": "AIA A201",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-042",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Quality",
+      "question": "What is the difference between QC and QA?",
+      "options": [
+        {"id": "a", "text": "They are the same"},
+        {"id": "b", "text": "QC inspects the work; QA verifies the QC process is effective", "correct": true},
+        {"id": "c", "text": "QA is faster than QC"},
+        {"id": "d", "text": "QC is more expensive"}
+      ],
+      "explanation": "Quality Control (QC) involves inspecting and testing actual work. Quality Assurance (QA) verifies the QC system is working properly through audits and process review.",
+      "code_ref": "Quality Management",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-043",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Materials",
+      "question": "What is a submittal?",
+      "options": [
+        {"id": "a", "text": "A bid"},
+        {"id": "b", "text": "Documentation showing materials/equipment meet specifications", "correct": true},
+        {"id": "c", "text": "A progress report"},
+        {"id": "d", "text": "A change order"}
+      ],
+      "explanation": "Submittals are documents (shop drawings, product data, samples) submitted by the contractor for review to verify proposed materials and equipment meet specifications.",
+      "code_ref": "AIA A201",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-044",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Materials",
+      "question": "What is lead time in material procurement?",
+      "options": [
+        {"id": "a", "text": "Time to install materials"},
+        {"id": "b", "text": "Time from order to delivery", "correct": true},
+        {"id": "c", "text": "Time for payment"},
+        {"id": "d", "text": "Warranty period"}
+      ],
+      "explanation": "Lead time is the time between placing an order and receiving delivery. Long lead items (custom cabinets, structural steel) must be ordered early to avoid schedule delays.",
+      "code_ref": "Project Management",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-045",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Materials",
+      "question": "What is just-in-time delivery?",
+      "options": [
+        {"id": "a", "text": "Late delivery"},
+        {"id": "b", "text": "Delivering materials when needed to minimize on-site storage", "correct": true},
+        {"id": "c", "text": "Early delivery"},
+        {"id": "d", "text": "Emergency delivery"}
+      ],
+      "explanation": "Just-in-time delivery schedules materials to arrive when needed for installation, minimizing on-site storage, handling, damage, and theft.",
+      "code_ref": "Project Management",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-046",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Materials",
+      "question": "What should be done when materials arrive on site?",
+      "options": [
+        {"id": "a", "text": "Nothing"},
+        {"id": "b", "text": "Verify quantity, quality, and inspect for damage", "correct": true},
+        {"id": "c", "text": "Store immediately without inspection"},
+        {"id": "d", "text": "Sign the delivery ticket without checking"}
+      ],
+      "explanation": "Materials should be verified against the order/packing slip, inspected for damage, and properly stored. Discrepancies must be noted on delivery documents and reported.",
+      "code_ref": "Construction Practice",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-047",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Documentation",
+      "question": "What is a daily report (daily log)?",
+      "options": [
+        {"id": "a", "text": "A schedule"},
+        {"id": "b", "text": "A record of daily site activities, weather, manpower, and events", "correct": true},
+        {"id": "c", "text": "A cost report"},
+        {"id": "d", "text": "A time card"}
+      ],
+      "explanation": "Daily reports document weather, workforce, work performed, visitors, deliveries, delays, and notable events. They create a project record valuable for claims and disputes.",
+      "code_ref": "Construction Practice",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-048",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Documentation",
+      "question": "Why is construction photography important?",
+      "options": [
+        {"id": "a", "text": "For marketing only"},
+        {"id": "b", "text": "To document conditions, progress, and concealed work", "correct": true},
+        {"id": "c", "text": "For social media"},
+        {"id": "d", "text": "For decoration"}
+      ],
+      "explanation": "Photographs document existing conditions, construction progress, concealed work, and potential defects. They provide valuable evidence for disputes, claims, and maintenance.",
+      "code_ref": "Construction Practice",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-049",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Documentation",
+      "question": "What records should be kept for a construction project?",
+      "options": [
+        {"id": "a", "text": "Only financial records"},
+        {"id": "b", "text": "Contracts, correspondence, submittals, RFIs, change orders, and daily reports", "correct": true},
+        {"id": "c", "text": "Only permits"},
+        {"id": "d", "text": "Only photographs"}
+      ],
+      "explanation": "Complete project documentation includes contracts, change orders, RFIs, submittals, correspondence, meeting minutes, daily reports, photos, inspection records, and payment documents.",
+      "code_ref": "Construction Practice",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-050",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Safety Planning",
+      "question": "What is a site-specific safety plan?",
+      "options": [
+        {"id": "a", "text": "A generic safety manual"},
+        {"id": "b", "text": "A safety plan tailored to the specific hazards of a project", "correct": true},
+        {"id": "c", "text": "OSHA regulations"},
+        {"id": "d", "text": "An insurance requirement only"}
+      ],
+      "explanation": "A site-specific safety plan addresses the unique hazards, risks, and safety procedures for a particular project, including emergency procedures and responsible parties.",
+      "code_ref": "OSHA Construction",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-051",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Safety Planning",
+      "question": "What is a Job Hazard Analysis (JHA)?",
+      "options": [
+        {"id": "a", "text": "A workers' comp claim"},
+        {"id": "b", "text": "A systematic review identifying hazards in specific tasks", "correct": true},
+        {"id": "c", "text": "An OSHA inspection"},
+        {"id": "d", "text": "A safety violation report"}
+      ],
+      "explanation": "A JHA (Job Hazard Analysis) breaks down tasks into steps, identifies hazards associated with each step, and determines controls to eliminate or reduce risk.",
+      "code_ref": "OSHA Guidance",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-052",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Safety Planning",
+      "question": "What is a toolbox talk?",
+      "options": [
+        {"id": "a", "text": "A meeting about tool maintenance"},
+        {"id": "b", "text": "A brief safety meeting focusing on specific hazards", "correct": true},
+        {"id": "c", "text": "A equipment demonstration"},
+        {"id": "d", "text": "A union meeting"}
+      ],
+      "explanation": "Toolbox talks (safety tailgates) are brief, focused safety meetings discussing specific hazards relevant to the day's work. They reinforce safety awareness.",
+      "code_ref": "Safety Practice",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-053",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Closeout",
+      "question": "What is project closeout?",
+      "options": [
+        {"id": "a", "text": "Stopping work early"},
+        {"id": "b", "text": "The final phase completing all contractual and administrative requirements", "correct": true},
+        {"id": "c", "text": "Closing the job site"},
+        {"id": "d", "text": "Final inspection only"}
+      ],
+      "explanation": "Project closeout includes completing punch list items, submitting closeout documents (as-builts, warranties, manuals), obtaining final inspection, and receiving final payment.",
+      "code_ref": "AIA A201",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-054",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Closeout",
+      "question": "What documents are typically required for closeout?",
+      "options": [
+        {"id": "a", "text": "Only the final invoice"},
+        {"id": "b", "text": "As-builts, warranties, O&M manuals, lien waivers, and final inspection approval", "correct": true},
+        {"id": "c", "text": "Only the permit"},
+        {"id": "d", "text": "Only photographs"}
+      ],
+      "explanation": "Closeout documents typically include as-built drawings, equipment warranties, operation/maintenance manuals, final lien waivers, test reports, and certificates.",
+      "code_ref": "AIA A201",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-055",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Closeout",
+      "question": "What is owner training in closeout?",
+      "options": [
+        {"id": "a", "text": "Training the contractor"},
+        {"id": "b", "text": "Instructing the owner on building systems operation and maintenance", "correct": true},
+        {"id": "c", "text": "Safety training"},
+        {"id": "d", "text": "Design training"}
+      ],
+      "explanation": "Owner training involves demonstrating building systems (HVAC, security, fire alarm), explaining maintenance requirements, and providing operating instructions.",
+      "code_ref": "Construction Practice",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-056",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Communication",
+      "question": "Why should project communications be in writing?",
+      "options": [
+        {"id": "a", "text": "Only for legal reasons"},
+        {"id": "b", "text": "To create a clear record and prevent misunderstandings", "correct": true},
+        {"id": "c", "text": "To slow down the project"},
+        {"id": "d", "text": "Writing is not important"}
+      ],
+      "explanation": "Written communication creates a documented record of decisions, instructions, and agreements. It prevents misunderstandings and provides evidence if disputes arise.",
+      "code_ref": "Construction Practice",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-057",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Communication",
+      "question": "Who is the typical point of contact between the contractor and owner?",
+      "options": [
+        {"id": "a", "text": "Any worker on site"},
+        {"id": "b", "text": "The project manager or superintendent", "correct": true},
+        {"id": "c", "text": "The newest employee"},
+        {"id": "d", "text": "Subcontractors"}
+      ],
+      "explanation": "The project manager or superintendent is typically the designated contact for owner communications to ensure consistent, documented, and authorized information exchange.",
+      "code_ref": "Construction Practice",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-058",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Resource Management",
+      "question": "What is resource leveling?",
+      "options": [
+        {"id": "a", "text": "Firing workers"},
+        {"id": "b", "text": "Adjusting the schedule to balance resource demand over time", "correct": true},
+        {"id": "c", "text": "Hiring more workers"},
+        {"id": "d", "text": "Equipment maintenance"}
+      ],
+      "explanation": "Resource leveling adjusts the schedule to smooth out peaks and valleys in resource demand, avoiding days with too many or too few workers/equipment.",
+      "code_ref": "Project Management",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-059",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Resource Management",
+      "question": "What is a crew loading chart?",
+      "options": [
+        {"id": "a", "text": "A weight limit chart"},
+        {"id": "b", "text": "A chart showing labor requirements over time", "correct": true},
+        {"id": "c", "text": "A truck loading diagram"},
+        {"id": "d", "text": "A payroll chart"}
+      ],
+      "explanation": "A crew loading chart (labor histogram) shows the number of workers needed each day or week, helping plan hiring, layoffs, and identify resource conflicts.",
+      "code_ref": "Project Management",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-060",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Risk Management",
+      "question": "What is risk management in construction?",
+      "options": [
+        {"id": "a", "text": "Avoiding all risks"},
+        {"id": "b", "text": "Identifying, analyzing, and responding to project risks", "correct": true},
+        {"id": "c", "text": "Buying insurance only"},
+        {"id": "d", "text": "Ignoring potential problems"}
+      ],
+      "explanation": "Risk management involves identifying potential risks, assessing their likelihood and impact, and planning responses (avoid, mitigate, transfer, or accept).",
+      "code_ref": "Project Management",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-061",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Risk Management",
+      "question": "What is a risk register?",
+      "options": [
+        {"id": "a", "text": "A sign-in sheet"},
+        {"id": "b", "text": "A documented list of identified risks and planned responses", "correct": true},
+        {"id": "c", "text": "An insurance policy"},
+        {"id": "d", "text": "An accident report"}
+      ],
+      "explanation": "A risk register documents identified risks, their probability and impact, assigned owners, and planned response strategies. It's updated throughout the project.",
+      "code_ref": "Project Management",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-062",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Subcontractor Management",
+      "question": "What is a subcontractor default?",
+      "options": [
+        {"id": "a", "text": "Normal operation"},
+        {"id": "b", "text": "Failure to perform contractual obligations", "correct": true},
+        {"id": "c", "text": "Completing work early"},
+        {"id": "d", "text": "Requesting a change order"}
+      ],
+      "explanation": "Subcontractor default occurs when a sub fails to perform contractually required work - abandoning the job, poor workmanship, or failure to meet schedule.",
+      "code_ref": "Subcontract Law",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-063",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Subcontractor Management",
+      "question": "What should the GC do if a subcontractor abandons the job?",
+      "options": [
+        {"id": "a", "text": "Wait indefinitely"},
+        {"id": "b", "text": "Document the default, provide notice, and arrange replacement", "correct": true},
+        {"id": "c", "text": "Complete the work without documentation"},
+        {"id": "d", "text": "Abandon the project"}
+      ],
+      "explanation": "The GC should document the default, provide written notice per the subcontract, backcharge for additional costs, and hire a replacement sub to complete the work.",
+      "code_ref": "Subcontract Practice",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-064",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Subcontractor Management",
+      "question": "What is a backcharge?",
+      "options": [
+        {"id": "a", "text": "An extra payment"},
+        {"id": "b", "text": "A charge to a subcontractor for correcting deficient work or damage", "correct": true},
+        {"id": "c", "text": "A retainage"},
+        {"id": "d", "text": "A progress payment"}
+      ],
+      "explanation": "A backcharge is a cost charged to a subcontractor for work the GC performs to correct deficiencies, clean up, or repair damage caused by the sub.",
+      "code_ref": "Subcontract Practice",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-065",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Environmental",
+      "question": "What is a SWPPP?",
+      "options": [
+        {"id": "a", "text": "A safety plan"},
+        {"id": "b", "text": "A Stormwater Pollution Prevention Plan", "correct": true},
+        {"id": "c", "text": "A scheduling tool"},
+        {"id": "d", "text": "A welding procedure"}
+      ],
+      "explanation": "A SWPPP (Stormwater Pollution Prevention Plan) is required for construction sites disturbing 1+ acres. It describes measures to control erosion and prevent stormwater pollution.",
+      "code_ref": "EPA NPDES",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-066",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Environmental",
+      "question": "What is erosion control?",
+      "options": [
+        {"id": "a", "text": "Equipment maintenance"},
+        {"id": "b", "text": "Measures to prevent soil from washing away", "correct": true},
+        {"id": "c", "text": "Building foundations"},
+        {"id": "d", "text": "Rust prevention"}
+      ],
+      "explanation": "Erosion control uses practices like silt fences, sediment basins, and stabilized entrances to prevent soil from being washed off site by stormwater.",
+      "code_ref": "EPA Regulations",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-067",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Site Management",
+      "question": "What is site logistics planning?",
+      "options": [
+        {"id": "a", "text": "Advertising the project"},
+        {"id": "b", "text": "Planning layout of access, storage, staging, and temporary facilities", "correct": true},
+        {"id": "c", "text": "Designing the building"},
+        {"id": "d", "text": "Hiring workers"}
+      ],
+      "explanation": "Site logistics planning determines locations for material storage, equipment, temporary facilities, access routes, and work areas to maximize efficiency and safety.",
+      "code_ref": "Construction Management",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-068",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Site Management",
+      "question": "What is a site utilization plan?",
+      "options": [
+        {"id": "a", "text": "A building floor plan"},
+        {"id": "b", "text": "A drawing showing temporary facilities, access, and staging areas", "correct": true},
+        {"id": "c", "text": "A landscaping plan"},
+        {"id": "d", "text": "A parking plan only"}
+      ],
+      "explanation": "A site utilization plan shows the planned locations of temporary facilities (trailers, toilets), material storage, equipment staging, access roads, and perimeter fencing.",
+      "code_ref": "Construction Management",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-069",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Technology",
+      "question": "What is BIM in construction?",
+      "options": [
+        {"id": "a", "text": "A type of lumber"},
+        {"id": "b", "text": "Building Information Modeling - digital representation of a building", "correct": true},
+        {"id": "c", "text": "A building inspection method"},
+        {"id": "d", "text": "A bidding system"}
+      ],
+      "explanation": "BIM (Building Information Modeling) creates intelligent 3D digital models that contain building data, enabling clash detection, quantity takeoffs, and facility management.",
+      "code_ref": "Construction Technology",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-pm-070",
+      "trade": "gc",
+      "category": "Project Management",
+      "subcategory": "Technology",
+      "question": "What is clash detection in BIM?",
+      "options": [
+        {"id": "a", "text": "Finding personality conflicts"},
+        {"id": "b", "text": "Identifying conflicts between building systems before construction", "correct": true},
+        {"id": "c", "text": "Security monitoring"},
+        {"id": "d", "text": "Schedule conflicts"}
+      ],
+      "explanation": "Clash detection uses BIM software to find physical conflicts between building systems (duct running through a beam, pipes crossing) before construction, avoiding costly field changes.",
+      "code_ref": "Construction Technology",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    }
+  ]
+}

@@ -1,0 +1,2052 @@
+{
+  "metadata": {
+    "trade": "solar",
+    "category": "System Design",
+    "total_questions": 120,
+    "last_updated": "2026-01-31",
+    "code_references": ["NEC 2023", "NABCEP PV Installation Professional", "IBC 2021"],
+    "exam_sources": ["NABCEP PVIP", "State Solar Contractor Exams", "PSI Solar Endorsement"]
+  },
+  "questions": [
+    {
+      "id": "solar-design-001",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Array Orientation",
+      "question": "In the Northern Hemisphere, what is the optimal azimuth angle for a fixed-tilt PV array to maximize annual energy production?",
+      "options": [
+        { "id": "a", "text": "90° (East)" },
+        { "id": "b", "text": "180° (South)", "correct": true },
+        { "id": "c", "text": "270° (West)" },
+        { "id": "d", "text": "0° (North)" }
+      ],
+      "explanation": "In the Northern Hemisphere, a south-facing orientation (180° azimuth) maximizes solar exposure throughout the year. This allows the array to receive the most direct sunlight as the sun travels from east to west across the southern sky.",
+      "code_ref": "NABCEP PV Resource Guide Section 2.1",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-002",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Tilt Angle",
+      "question": "For a location at 40° latitude, what fixed tilt angle will generally maximize annual energy production?",
+      "options": [
+        { "id": "a", "text": "20°" },
+        { "id": "b", "text": "30°" },
+        { "id": "c", "text": "40°", "correct": true },
+        { "id": "d", "text": "55°" }
+      ],
+      "explanation": "The general rule for fixed-tilt systems is that optimal tilt angle equals the site latitude. At 40° latitude, a 40° tilt angle provides the best year-round compromise between summer and winter sun angles.",
+      "code_ref": "NABCEP PV Resource Guide Section 2.2",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-003",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Irradiance",
+      "question": "What is the standard test condition (STC) irradiance used to rate PV module power output?",
+      "options": [
+        { "id": "a", "text": "800 W/m²" },
+        { "id": "b", "text": "1000 W/m²", "correct": true },
+        { "id": "c", "text": "1200 W/m²" },
+        { "id": "d", "text": "1366 W/m²" }
+      ],
+      "explanation": "Standard Test Conditions (STC) specify 1000 W/m² irradiance, 25°C cell temperature, and AM 1.5 spectrum. All module nameplate ratings are based on these conditions for consistent comparison.",
+      "code_ref": "IEC 61215, NABCEP PV Resource Guide",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-design-004",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Temperature Effects",
+      "question": "A PV module has a temperature coefficient of -0.35%/°C for Pmax. If the STC rating is 400W and cell temperature rises to 65°C, what is the adjusted power output?",
+      "options": [
+        { "id": "a", "text": "344W" },
+        { "id": "b", "text": "356W" },
+        { "id": "c", "text": "372W" },
+        { "id": "d", "text": "344W", "correct": true }
+      ],
+      "explanation": "Temperature rise = 65°C - 25°C = 40°C. Power reduction = 40 × 0.35% = 14%. Adjusted power = 400W × (1 - 0.14) = 344W. Higher temperatures reduce crystalline silicon module output.",
+      "code_ref": "NABCEP PV Resource Guide Section 3.4",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-design-005",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "String Sizing",
+      "question": "When determining maximum modules per string, which module voltage specification must be used with the lowest expected ambient temperature?",
+      "options": [
+        { "id": "a", "text": "Vmp (maximum power voltage)" },
+        { "id": "b", "text": "Voc (open-circuit voltage)", "correct": true },
+        { "id": "c", "text": "Vmpp (voltage at MPP)" },
+        { "id": "d", "text": "Nominal voltage" }
+      ],
+      "explanation": "Open-circuit voltage (Voc) increases as temperature decreases. The coldest expected temperature produces the highest Voc, which must not exceed inverter maximum input voltage. NEC 690.7(A) requires temperature correction.",
+      "code_ref": "NEC 690.7(A)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-design-006",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "String Sizing",
+      "question": "A module has Voc of 49.5V. The inverter maximum input voltage is 600V. Using NEC Table 690.7(A), the temperature correction factor for -15°C lowest temp is 1.12. What is the maximum number of modules per string?",
+      "options": [
+        { "id": "a", "text": "12 modules" },
+        { "id": "b", "text": "10 modules", "correct": true },
+        { "id": "c", "text": "11 modules" },
+        { "id": "d", "text": "9 modules" }
+      ],
+      "explanation": "Corrected Voc = 49.5V × 1.12 = 55.44V per module. Maximum modules = 600V ÷ 55.44V = 10.82. Round DOWN to 10 modules to stay under inverter maximum voltage limit.",
+      "code_ref": "NEC 690.7(A), Table 690.7(A)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-design-007",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "String Sizing",
+      "question": "When calculating minimum modules per string for MPPT operation, which voltage specification is used with the highest expected temperature?",
+      "options": [
+        { "id": "a", "text": "Voc at STC" },
+        { "id": "b", "text": "Vmp at highest temperature", "correct": true },
+        { "id": "c", "text": "Voc at highest temperature" },
+        { "id": "d", "text": "Vmp at STC" }
+      ],
+      "explanation": "The minimum string voltage must stay above the inverter's minimum MPPT voltage. Since Vmp decreases with increasing temperature, the highest expected temperature produces the lowest Vmp, determining minimum modules needed.",
+      "code_ref": "NABCEP PV Resource Guide Section 4.2",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-design-008",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Inverter Sizing",
+      "question": "What is the typical recommended DC-to-AC ratio range for residential string inverter systems?",
+      "options": [
+        { "id": "a", "text": "0.8 to 0.95" },
+        { "id": "b", "text": "1.0 to 1.3", "correct": true },
+        { "id": "c", "text": "1.5 to 1.8" },
+        { "id": "d", "text": "2.0 to 2.5" }
+      ],
+      "explanation": "A DC/AC ratio of 1.0-1.3 is standard practice. Slight oversizing (1.1-1.25) improves production during non-peak hours with minimal clipping losses. Ratios above 1.3 increase clipping and may void warranties.",
+      "code_ref": "NABCEP PV Resource Guide Section 5.1",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-009",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Shading Analysis",
+      "question": "During a site assessment, what is the minimum recommended solar window for an unshaded PV installation?",
+      "options": [
+        { "id": "a", "text": "8 AM to 2 PM" },
+        { "id": "b", "text": "9 AM to 3 PM", "correct": true },
+        { "id": "c", "text": "10 AM to 2 PM" },
+        { "id": "d", "text": "7 AM to 5 PM" }
+      ],
+      "explanation": "The solar window of 9 AM to 3 PM captures approximately 80% of daily solar energy. Shade-free access during these peak hours is critical for system performance. Tools like Solar Pathfinder verify this window.",
+      "code_ref": "NABCEP Site Assessment Guidelines",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-010",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Shading Analysis",
+      "question": "What tool uses a reflective dome and sun path diagram to evaluate site shading throughout the year?",
+      "options": [
+        { "id": "a", "text": "Pyranometer" },
+        { "id": "b", "text": "Solar Pathfinder", "correct": true },
+        { "id": "c", "text": "Multimeter" },
+        { "id": "d", "text": "Irradiance meter" }
+      ],
+      "explanation": "The Solar Pathfinder uses a transparent dome that reflects the horizon and obstructions onto a sun path diagram. This shows shading patterns for every hour of every month, identifying optimal array placement.",
+      "code_ref": "NABCEP Site Assessment Guidelines",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-011",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Production Estimates",
+      "question": "Which factor is NOT typically included in PVWatts system loss calculations?",
+      "options": [
+        { "id": "a", "text": "Soiling losses" },
+        { "id": "b", "text": "Inverter efficiency" },
+        { "id": "c", "text": "Permit fees", "correct": true },
+        { "id": "d", "text": "Wiring losses" }
+      ],
+      "explanation": "PVWatts calculates energy production losses from soiling, shading, snow, mismatch, wiring, connections, light-induced degradation, nameplate rating, inverter efficiency, and availability. Permit fees are financial costs, not production losses.",
+      "code_ref": "NREL PVWatts Documentation",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-012",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Production Estimates",
+      "question": "A 10 kW-DC system in a location with 5.0 peak sun hours and 80% system efficiency will produce approximately how much energy daily?",
+      "options": [
+        { "id": "a", "text": "50 kWh" },
+        { "id": "b", "text": "40 kWh", "correct": true },
+        { "id": "c", "text": "32 kWh" },
+        { "id": "d", "text": "62.5 kWh" }
+      ],
+      "explanation": "Daily production = System size × Peak sun hours × System efficiency = 10 kW × 5.0 hours × 0.80 = 40 kWh. This simplified calculation helps verify production modeling software outputs.",
+      "code_ref": "NABCEP PV Resource Guide Section 2.5",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-013",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Module Selection",
+      "question": "What does the acronym NOCT stand for in PV module specifications?",
+      "options": [
+        { "id": "a", "text": "Normal Operating Cell Temperature", "correct": true },
+        { "id": "b", "text": "Nominal Output Current Test" },
+        { "id": "c", "text": "National Outdoor Certification Test" },
+        { "id": "d", "text": "Net Operating Capacity Threshold" }
+      ],
+      "explanation": "Normal Operating Cell Temperature (NOCT) is the cell temperature reached when the module operates at 800 W/m² irradiance, 20°C ambient, and 1 m/s wind speed. NOCT ratings provide more realistic field performance estimates than STC.",
+      "code_ref": "IEC 61215",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-014",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Module Selection",
+      "question": "Which PV cell technology typically has the highest efficiency rating?",
+      "options": [
+        { "id": "a", "text": "Polycrystalline silicon" },
+        { "id": "b", "text": "Monocrystalline silicon", "correct": true },
+        { "id": "c", "text": "Thin-film CdTe" },
+        { "id": "d", "text": "Amorphous silicon" }
+      ],
+      "explanation": "Monocrystalline silicon cells achieve the highest commercial efficiencies (20-23%+) due to their uniform crystal structure. Polycrystalline (15-18%) and thin-film technologies (10-15%) have lower efficiencies but different cost/application advantages.",
+      "code_ref": "NABCEP PV Resource Guide Section 1.3",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-015",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Module Selection",
+      "question": "What is the typical power output degradation rate per year for crystalline silicon PV modules?",
+      "options": [
+        { "id": "a", "text": "0.25-0.5%", "correct": true },
+        { "id": "b", "text": "1.0-1.5%" },
+        { "id": "c", "text": "2.0-2.5%" },
+        { "id": "d", "text": "3.0-4.0%" }
+      ],
+      "explanation": "Modern crystalline silicon modules typically degrade at 0.25-0.5% per year after initial light-induced degradation. Most manufacturers guarantee 80-85% output at 25 years, confirming this low degradation rate.",
+      "code_ref": "NREL Module Degradation Studies",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-016",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Roof Assessment",
+      "question": "What is the minimum recommended remaining roof life before installing a PV system?",
+      "options": [
+        { "id": "a", "text": "5 years" },
+        { "id": "b", "text": "10 years" },
+        { "id": "c", "text": "15-20 years", "correct": true },
+        { "id": "d", "text": "25 years" }
+      ],
+      "explanation": "Since PV systems have 25+ year lifespans, the roof should have at least 15-20 years of remaining life. Removing and reinstalling solar for roof replacement is costly. Roof condition is a critical site assessment factor.",
+      "code_ref": "NABCEP Site Assessment Guidelines",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-017",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Structural",
+      "question": "When evaluating roof structure for PV installation, what is the typical dead load of a flush-mounted residential system?",
+      "options": [
+        { "id": "a", "text": "1-2 psf" },
+        { "id": "b", "text": "2-4 psf", "correct": true },
+        { "id": "c", "text": "5-7 psf" },
+        { "id": "d", "text": "8-10 psf" }
+      ],
+      "explanation": "Flush-mounted crystalline silicon systems typically add 2-4 pounds per square foot (psf) dead load. This includes modules, racking, and hardware. Most residential roofs designed to code can support this additional load.",
+      "code_ref": "IBC 2021 Section 1607, ASCE 7",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-018",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Structural",
+      "question": "Per ASCE 7, what determines the wind speed design requirements for a PV racking system?",
+      "options": [
+        { "id": "a", "text": "System size in kW" },
+        { "id": "b", "text": "Geographic location and risk category", "correct": true },
+        { "id": "c", "text": "Module manufacturer specifications" },
+        { "id": "d", "text": "Inverter location" }
+      ],
+      "explanation": "ASCE 7 wind maps specify design wind speeds based on geographic location. Risk category (based on building occupancy) determines the appropriate map to use. Coastal and high-wind zones require more robust mounting.",
+      "code_ref": "ASCE 7-22, IBC 2021 Chapter 16",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-design-019",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Electrical Design",
+      "question": "According to NEC 690.8(A)(1), PV system circuit conductors must have an ampacity of not less than what percentage of the calculated maximum circuit current?",
+      "options": [
+        { "id": "a", "text": "100%" },
+        { "id": "b", "text": "115%" },
+        { "id": "c", "text": "125%", "correct": true },
+        { "id": "d", "text": "150%" }
+      ],
+      "explanation": "NEC 690.8(A)(1) requires conductor ampacity to be at least 125% of maximum circuit current. For PV source circuits, maximum current = Isc × number of parallel strings. This accounts for continuous duty operation.",
+      "code_ref": "NEC 690.8(A)(1)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-design-020",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Electrical Design",
+      "question": "What is the maximum voltage allowed for PV systems on one- and two-family dwellings per NEC 690.7(C)?",
+      "options": [
+        { "id": "a", "text": "480V" },
+        { "id": "b", "text": "600V", "correct": true },
+        { "id": "c", "text": "1000V" },
+        { "id": "d", "text": "1500V" }
+      ],
+      "explanation": "NEC 690.7(C) limits PV system voltage to 600V for one- and two-family dwellings. Higher voltages (up to 1000V or 1500V) are permitted for commercial and utility-scale installations with qualified personnel.",
+      "code_ref": "NEC 690.7(C)",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-design-021",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "System Types",
+      "question": "Which type of PV system requires battery storage as an essential component?",
+      "options": [
+        { "id": "a", "text": "Grid-tied without battery backup" },
+        { "id": "b", "text": "Grid-tied with battery backup" },
+        { "id": "c", "text": "Off-grid (standalone)", "correct": true },
+        { "id": "d", "text": "Utility-scale ground mount" }
+      ],
+      "explanation": "Off-grid (standalone) systems have no utility connection and must store energy in batteries for use when the sun isn't shining. Grid-tied systems can operate without batteries since the grid provides backup power.",
+      "code_ref": "NABCEP PV Resource Guide Section 1.1",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-022",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "System Types",
+      "question": "What is the primary function of an anti-islanding feature in a grid-tied inverter?",
+      "options": [
+        { "id": "a", "text": "Maximize power output" },
+        { "id": "b", "text": "Prevent backfeed during grid outage", "correct": true },
+        { "id": "c", "text": "Protect against lightning" },
+        { "id": "d", "text": "Convert DC to AC" }
+      ],
+      "explanation": "Anti-islanding protection automatically disconnects the inverter when grid power is lost. This prevents backfeeding power to the grid, protecting utility workers from energized lines during repairs. Required by IEEE 1547 and NEC 705.40.",
+      "code_ref": "NEC 705.40, IEEE 1547",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-design-023",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Inverter Types",
+      "question": "Which inverter type allows individual module-level MPPT and monitoring?",
+      "options": [
+        { "id": "a", "text": "Central inverter" },
+        { "id": "b", "text": "String inverter" },
+        { "id": "c", "text": "Microinverter", "correct": true },
+        { "id": "d", "text": "Charge controller" }
+      ],
+      "explanation": "Microinverters mount on each module and perform DC-to-AC conversion at the module level. This enables individual MPPT optimization and module-level monitoring, eliminating string mismatch losses and shading impacts on other modules.",
+      "code_ref": "NABCEP PV Resource Guide Section 5.3",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-024",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Inverter Types",
+      "question": "What is the main advantage of DC power optimizers paired with a string inverter?",
+      "options": [
+        { "id": "a", "text": "Lower equipment cost" },
+        { "id": "b", "text": "Module-level MPPT with centralized inversion", "correct": true },
+        { "id": "c", "text": "Eliminates need for rapid shutdown" },
+        { "id": "d", "text": "No DC wiring required" }
+      ],
+      "explanation": "DC power optimizers provide module-level MPPT (reducing mismatch and shading losses) while a central string inverter handles DC-to-AC conversion. This hybrid approach offers monitoring and optimization benefits at lower cost than full microinverter systems.",
+      "code_ref": "NABCEP PV Resource Guide Section 5.4",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-025",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Load Analysis",
+      "question": "When sizing a grid-tied PV system for a residence, what is the most useful data source for determining appropriate system size?",
+      "options": [
+        { "id": "a", "text": "Square footage of home" },
+        { "id": "b", "text": "12 months of utility bills", "correct": true },
+        { "id": "c", "text": "Number of occupants" },
+        { "id": "d", "text": "Age of electrical panel" }
+      ],
+      "explanation": "Twelve months of utility bills show actual consumption patterns including seasonal variations. This historical data allows accurate system sizing to offset the desired percentage of annual electricity use, accounting for real usage habits.",
+      "code_ref": "NABCEP Site Assessment Guidelines",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-026",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Load Analysis",
+      "question": "A customer uses 12,000 kWh annually. The location has a production factor of 1,200 kWh/kW/year. What system size is needed to offset 100% of usage?",
+      "options": [
+        { "id": "a", "text": "8 kW" },
+        { "id": "b", "text": "10 kW", "correct": true },
+        { "id": "c", "text": "12 kW" },
+        { "id": "d", "text": "14.4 kW" }
+      ],
+      "explanation": "System size = Annual usage ÷ Production factor = 12,000 kWh ÷ 1,200 kWh/kW = 10 kW. The production factor (specific yield) varies by location, orientation, and system losses.",
+      "code_ref": "NABCEP PV Resource Guide Section 2.6",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-027",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Site Assessment",
+      "question": "During a site assessment, what instrument is used to measure roof pitch?",
+      "options": [
+        { "id": "a", "text": "Compass" },
+        { "id": "b", "text": "Inclinometer or pitch gauge", "correct": true },
+        { "id": "c", "text": "Solar Pathfinder" },
+        { "id": "d", "text": "Pyranometer" }
+      ],
+      "explanation": "An inclinometer (angle finder) or pitch gauge measures roof slope in degrees or rise-over-run. Accurate pitch measurement is essential for production modeling, structural calculations, and determining optimal tilt angle adjustments.",
+      "code_ref": "NABCEP Site Assessment Guidelines",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-028",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Site Assessment",
+      "question": "What tool is used to determine true south orientation for array placement?",
+      "options": [
+        { "id": "a", "text": "Inclinometer" },
+        { "id": "b", "text": "Compass with magnetic declination correction", "correct": true },
+        { "id": "c", "text": "Pyranometer" },
+        { "id": "d", "text": "Multimeter" }
+      ],
+      "explanation": "A compass indicates magnetic south, which differs from true south by the magnetic declination angle (varies by location). Declination correction is required to find true south for optimal array orientation. GPS or sun position can also verify.",
+      "code_ref": "NABCEP Site Assessment Guidelines",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-029",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Array Configuration",
+      "question": "What happens when modules with different Isc values are connected in series?",
+      "options": [
+        { "id": "a", "text": "Voltages add, current equals highest Isc" },
+        { "id": "b", "text": "Voltages add, current limited by lowest Isc", "correct": true },
+        { "id": "c", "text": "Currents add, voltage limited by lowest Voc" },
+        { "id": "d", "text": "No effect on performance" }
+      ],
+      "explanation": "In a series string, current must be equal through all modules. The module with lowest Isc limits the entire string current. This is why module matching and avoiding partial shading are critical - one weak module limits the whole string.",
+      "code_ref": "NABCEP PV Resource Guide Section 4.1",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-design-030",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Array Configuration",
+      "question": "When connecting multiple strings in parallel, the string voltages should be:",
+      "options": [
+        { "id": "a", "text": "As different as possible for maximum output" },
+        { "id": "b", "text": "Within manufacturer specifications, typically matched", "correct": true },
+        { "id": "c", "text": "At least 20% different" },
+        { "id": "d", "text": "Voltage matching is not important" }
+      ],
+      "explanation": "Parallel-connected strings should have matched voltages. Mismatched voltages cause circulating currents and power losses. Strings should have equal module counts and matched modules to operate at optimal combined MPP.",
+      "code_ref": "NABCEP PV Resource Guide Section 4.3",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-031",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Module Specifications",
+      "question": "On a module nameplate, what does Imp represent?",
+      "options": [
+        { "id": "a", "text": "Maximum power current at STC", "correct": true },
+        { "id": "b", "text": "Short circuit current" },
+        { "id": "c", "text": "Impurity level of silicon" },
+        { "id": "d", "text": "Import current rating" }
+      ],
+      "explanation": "Imp (or Impp) is the current at maximum power point under Standard Test Conditions. At this operating point, the product of Imp × Vmp equals the module's rated power (Pmax). This is the expected operating current during peak conditions.",
+      "code_ref": "IEC 61215, Module Datasheet Standards",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-032",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Module Specifications",
+      "question": "A 400W module has Vmp of 40V. What is the Imp?",
+      "options": [
+        { "id": "a", "text": "8A" },
+        { "id": "b", "text": "10A", "correct": true },
+        { "id": "c", "text": "12A" },
+        { "id": "d", "text": "16A" }
+      ],
+      "explanation": "Power = Voltage × Current, so Imp = Pmax ÷ Vmp = 400W ÷ 40V = 10A. This fundamental relationship allows calculation of any module electrical parameter when two are known.",
+      "code_ref": "NABCEP PV Resource Guide Section 1.2",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-033",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Temperature Coefficients",
+      "question": "Which temperature coefficient is typically a positive value for crystalline silicon modules?",
+      "options": [
+        { "id": "a", "text": "Temperature coefficient of Pmax" },
+        { "id": "b", "text": "Temperature coefficient of Voc" },
+        { "id": "c", "text": "Temperature coefficient of Isc", "correct": true },
+        { "id": "d", "text": "Temperature coefficient of Vmp" }
+      ],
+      "explanation": "The temperature coefficient of Isc is slightly positive (+0.03 to +0.06%/°C) for crystalline silicon. Current increases marginally with temperature. However, Voc and Vmp decrease significantly (-0.25 to -0.35%/°C), causing net power loss at higher temperatures.",
+      "code_ref": "NABCEP PV Resource Guide Section 3.4",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-design-034",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Temperature Coefficients",
+      "question": "Why is low temperature coefficient of Pmax (%/°C) desirable in PV modules?",
+      "options": [
+        { "id": "a", "text": "Reduces manufacturing costs" },
+        { "id": "b", "text": "Less power loss in hot conditions", "correct": true },
+        { "id": "c", "text": "Improves cold weather starting" },
+        { "id": "d", "text": "Increases warranty period" }
+      ],
+      "explanation": "A lower (less negative) temperature coefficient means the module loses less power as temperature rises. In hot climates, modules can reach 65-75°C. A -0.30%/°C coefficient loses 12-15% power vs. -0.40%/°C losing 16-20% at these temperatures.",
+      "code_ref": "NABCEP PV Resource Guide Section 3.4",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-035",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Irradiance Data",
+      "question": "What database provides typical meteorological year (TMY) solar irradiance data for US locations?",
+      "options": [
+        { "id": "a", "text": "ASHRAE" },
+        { "id": "b", "text": "NREL NSRDB", "correct": true },
+        { "id": "c", "text": "IEEE" },
+        { "id": "d", "text": "OSHA" }
+      ],
+      "explanation": "NREL's National Solar Radiation Database (NSRDB) provides TMY data including GHI, DNI, and DHI for locations across the US. This data is used by PVWatts and other modeling tools for accurate production estimates.",
+      "code_ref": "NREL NSRDB Documentation",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-036",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Irradiance Data",
+      "question": "What does GHI stand for in solar resource assessment?",
+      "options": [
+        { "id": "a", "text": "Ground Horizontal Irradiance" },
+        { "id": "b", "text": "Global Horizontal Irradiance", "correct": true },
+        { "id": "c", "text": "General Heat Index" },
+        { "id": "d", "text": "Grid Harmonic Interference" }
+      ],
+      "explanation": "Global Horizontal Irradiance (GHI) is the total solar radiation received on a horizontal surface, including both direct (beam) and diffuse components. GHI data is fundamental for PV system production modeling.",
+      "code_ref": "NREL Solar Glossary",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-037",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Peak Sun Hours",
+      "question": "A location receives 5.5 kWh/m²/day of insolation. How many peak sun hours does this represent?",
+      "options": [
+        { "id": "a", "text": "4.5 hours" },
+        { "id": "b", "text": "5.0 hours" },
+        { "id": "c", "text": "5.5 hours", "correct": true },
+        { "id": "d", "text": "6.0 hours" }
+      ],
+      "explanation": "Peak sun hours equal the daily insolation in kWh/m² because one peak sun hour = 1 kWh/m² (1000 W/m² for 1 hour). So 5.5 kWh/m²/day = 5.5 peak sun hours. This simplifies production calculations.",
+      "code_ref": "NABCEP PV Resource Guide Section 2.3",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-038",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "System Losses",
+      "question": "What is typical annual soiling loss for a PV system in a dry, dusty climate?",
+      "options": [
+        { "id": "a", "text": "1-2%" },
+        { "id": "b", "text": "3-5%", "correct": true },
+        { "id": "c", "text": "10-15%" },
+        { "id": "d", "text": "20-25%" }
+      ],
+      "explanation": "Soiling losses from dust, pollen, and debris typically range 3-5% annually in dry climates without regular rainfall. Coastal salt spray, agricultural areas, or bird-heavy locations may see higher losses. Regular cleaning can mitigate this.",
+      "code_ref": "NREL Soiling Loss Studies",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-039",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "System Losses",
+      "question": "Module mismatch losses occur primarily because of differences in:",
+      "options": [
+        { "id": "a", "text": "Module dimensions" },
+        { "id": "b", "text": "Electrical parameters between modules", "correct": true },
+        { "id": "c", "text": "Frame colors" },
+        { "id": "d", "text": "Warranty periods" }
+      ],
+      "explanation": "Even modules from the same batch have slight variations in electrical parameters (Isc, Voc, Pmax). When connected in series, the lowest-performing module limits string output. Mismatch losses are typically 1-2% and are reduced by module-level power electronics.",
+      "code_ref": "NABCEP PV Resource Guide Section 6.2",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-040",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "System Losses",
+      "question": "Per NEC 690.8(A), what percentage is used to calculate minimum conductor ampacity for PV output circuits?",
+      "options": [
+        { "id": "a", "text": "100%" },
+        { "id": "b", "text": "115%" },
+        { "id": "c", "text": "125%", "correct": true },
+        { "id": "d", "text": "156%" }
+      ],
+      "explanation": "NEC 690.8(A)(1) requires conductors to have ampacity not less than 125% of maximum circuit current. This accounts for continuous operation where PV circuits can operate at maximum current for 3+ hours during peak sun.",
+      "code_ref": "NEC 690.8(A)(1)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-design-041",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Conductor Sizing",
+      "question": "A PV source circuit has Isc of 10A per module with 2 parallel strings. What is the maximum current for conductor sizing per NEC 690.8(A)?",
+      "options": [
+        { "id": "a", "text": "10A" },
+        { "id": "b", "text": "20A" },
+        { "id": "c", "text": "25A", "correct": true },
+        { "id": "d", "text": "12.5A" }
+      ],
+      "explanation": "Maximum circuit current for a PV output circuit = Isc × number of parallel strings = 10A × 2 = 20A. Then apply 125% factor: 20A × 1.25 = 25A minimum conductor ampacity required per NEC 690.8(A).",
+      "code_ref": "NEC 690.8(A)(1)(2)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-design-042",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Ground-Mount Design",
+      "question": "What is the primary advantage of single-axis tracking systems over fixed-tilt ground mounts?",
+      "options": [
+        { "id": "a", "text": "Lower installation cost" },
+        { "id": "b", "text": "15-25% higher annual energy production", "correct": true },
+        { "id": "c", "text": "Reduced maintenance requirements" },
+        { "id": "d", "text": "Smaller land footprint" }
+      ],
+      "explanation": "Single-axis trackers rotate to follow the sun's daily east-to-west path, increasing energy capture by 15-25% compared to fixed-tilt systems. The additional production often justifies the higher equipment and maintenance costs for utility-scale projects.",
+      "code_ref": "NREL Tracking vs. Fixed-Tilt Studies",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-043",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Ground-Mount Design",
+      "question": "When designing row spacing for ground-mount arrays, what factor primarily determines inter-row distance?",
+      "options": [
+        { "id": "a", "text": "Module warranty requirements" },
+        { "id": "b", "text": "Shading avoidance at winter solstice low sun angle", "correct": true },
+        { "id": "c", "text": "Inverter location" },
+        { "id": "d", "text": "Trenching equipment width" }
+      ],
+      "explanation": "Row spacing must prevent inter-row shading during critical production hours (typically 9 AM-3 PM) at winter solstice when sun angle is lowest. Spacing is calculated using latitude, tilt angle, and collector height to ensure adequate shade-free window.",
+      "code_ref": "NABCEP Ground-Mount Design Guidelines",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-044",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Permit Requirements",
+      "question": "Which document is typically required to show the electrical interconnection design for permit approval?",
+      "options": [
+        { "id": "a", "text": "Site plan only" },
+        { "id": "b", "text": "Single-line diagram", "correct": true },
+        { "id": "c", "text": "Module datasheet only" },
+        { "id": "d", "text": "Utility bill" }
+      ],
+      "explanation": "A single-line (one-line) diagram shows the electrical connection from modules through inverter to point of interconnection. It includes conductor sizes, overcurrent protection, disconnects, and grounding. Required by most AHJs for electrical permit approval.",
+      "code_ref": "NEC 690.4, AHJ Requirements",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-045",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Permit Requirements",
+      "question": "What NEC article specifically addresses PV system installation requirements?",
+      "options": [
+        { "id": "a", "text": "Article 480" },
+        { "id": "b", "text": "Article 690", "correct": true },
+        { "id": "c", "text": "Article 705" },
+        { "id": "d", "text": "Article 710" }
+      ],
+      "explanation": "NEC Article 690 covers solar photovoltaic (PV) systems including circuit requirements, disconnects, wiring methods, grounding, and marking. Article 705 covers interconnection with other power sources, and Article 706 covers energy storage.",
+      "code_ref": "NEC Article 690",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-design-046",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Utility Interconnection",
+      "question": "What IEEE standard governs the interconnection of distributed energy resources with the electric power system?",
+      "options": [
+        { "id": "a", "text": "IEEE 519" },
+        { "id": "b", "text": "IEEE 1547", "correct": true },
+        { "id": "c", "text": "IEEE 802.11" },
+        { "id": "d", "text": "IEEE 1584" }
+      ],
+      "explanation": "IEEE 1547 establishes criteria and requirements for interconnection of distributed energy resources (including PV) with electric power systems. It covers voltage regulation, frequency response, anti-islanding, and power quality requirements.",
+      "code_ref": "IEEE 1547-2018",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-design-047",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Utility Interconnection",
+      "question": "Per NEC 705.12(B)(2), the sum of PV system output circuit breaker and main breaker ratings cannot exceed what percentage of busbar rating for load-side connections?",
+      "options": [
+        { "id": "a", "text": "100%" },
+        { "id": "b", "text": "110%" },
+        { "id": "c", "text": "120%", "correct": true },
+        { "id": "d", "text": "125%" }
+      ],
+      "explanation": "The 120% rule (NEC 705.12(B)(2)) states: Main breaker + PV breaker ≤ 120% of busbar rating. For a 200A panel with 200A main, the maximum PV breaker is 40A (200 × 1.20 - 200 = 40A). This prevents busbar overloading.",
+      "code_ref": "NEC 705.12(B)(2)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-design-048",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Utility Interconnection",
+      "question": "A 200A panel has a 200A main breaker. Using the 120% rule, what is the maximum PV backfed breaker size allowed?",
+      "options": [
+        { "id": "a", "text": "20A" },
+        { "id": "b", "text": "30A" },
+        { "id": "c", "text": "40A", "correct": true },
+        { "id": "d", "text": "50A" }
+      ],
+      "explanation": "120% of 200A busbar = 240A total allowed. 240A - 200A main breaker = 40A maximum for PV backfed breaker. If larger PV breaker needed, main breaker must be reduced (e.g., 175A main allows 65A PV breaker).",
+      "code_ref": "NEC 705.12(B)(2)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-design-049",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Utility Interconnection",
+      "question": "Where must a backfed PV breaker be positioned in a panelboard per NEC 705.12(B)(2)(3)(b)?",
+      "options": [
+        { "id": "a", "text": "Adjacent to main breaker" },
+        { "id": "b", "text": "At the opposite end from main breaker", "correct": true },
+        { "id": "c", "text": "In the center of the panel" },
+        { "id": "d", "text": "Position does not matter" }
+      ],
+      "explanation": "NEC 705.12(B)(2)(3)(b) requires backfed breakers to be installed at the opposite (load) end of the busbar from the main breaker. This ensures current flows across the busbar, preventing localized overheating near the main breaker.",
+      "code_ref": "NEC 705.12(B)(2)(3)(b)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-design-050",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Net Metering",
+      "question": "What type of utility meter is required for net metering to properly credit solar production?",
+      "options": [
+        { "id": "a", "text": "Standard analog meter" },
+        { "id": "b", "text": "Bi-directional (net) meter", "correct": true },
+        { "id": "c", "text": "Demand meter" },
+        { "id": "d", "text": "Prepaid meter" }
+      ],
+      "explanation": "Net metering requires a bi-directional meter that measures both consumption (import) and production (export). When PV production exceeds usage, the meter records exported energy for bill credits. Standard meters only measure consumption.",
+      "code_ref": "State Net Metering Regulations",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-051",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Bifacial Modules",
+      "question": "What is the primary benefit of bifacial PV modules?",
+      "options": [
+        { "id": "a", "text": "Lower cost per watt" },
+        { "id": "b", "text": "Capture reflected light on rear side for additional energy", "correct": true },
+        { "id": "c", "text": "Better performance in cold weather only" },
+        { "id": "d", "text": "Thinner profile for easier installation" }
+      ],
+      "explanation": "Bifacial modules have active cells on both front and rear surfaces. The rear side captures light reflected from the ground (albedo), snow, or roofing material, producing 5-30% additional energy depending on installation height and ground surface.",
+      "code_ref": "NABCEP Bifacial Module Guidelines",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-052",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Bifacial Modules",
+      "question": "What ground surface characteristic most affects bifacial module rear-side gain?",
+      "options": [
+        { "id": "a", "text": "Ground temperature" },
+        { "id": "b", "text": "Albedo (reflectivity)", "correct": true },
+        { "id": "c", "text": "Soil moisture" },
+        { "id": "d", "text": "Vegetation height" }
+      ],
+      "explanation": "Albedo measures surface reflectivity. High-albedo surfaces (white roofing: 0.7-0.8, snow: 0.8-0.9, light gravel: 0.4) reflect more light to the module rear. Dark surfaces (asphalt: 0.1, grass: 0.2) provide minimal bifacial gain.",
+      "code_ref": "NREL Bifacial PV Studies",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-053",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Half-Cut Cells",
+      "question": "What is the primary electrical advantage of half-cut cell modules?",
+      "options": [
+        { "id": "a", "text": "Higher voltage per module" },
+        { "id": "b", "text": "Lower resistive losses due to reduced current per cell", "correct": true },
+        { "id": "c", "text": "Reduced weight" },
+        { "id": "d", "text": "Better low-light performance" }
+      ],
+      "explanation": "Half-cut cells carry half the current of full cells (I²R losses reduced by 75%). The module is wired in two parallel halves, so partial shading affects only half the module. This topology improves both efficiency and shade tolerance.",
+      "code_ref": "NABCEP PV Resource Guide",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-054",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Module-Level Electronics",
+      "question": "What NEC 2023 requirement can be met by using DC power optimizers or microinverters?",
+      "options": [
+        { "id": "a", "text": "Arc-fault protection" },
+        { "id": "b", "text": "Rapid shutdown", "correct": true },
+        { "id": "c", "text": "Ground fault detection" },
+        { "id": "d": "text": "Overcurrent protection" }
+      ],
+      "explanation": "NEC 690.12 rapid shutdown requirements (PV conductors within array boundary must be ≤80V within 30 seconds) are commonly met using module-level power electronics that shut down DC voltage at the module when AC power is removed.",
+      "code_ref": "NEC 690.12(B)(2)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-design-055",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Battery Integration",
+      "question": "When designing a DC-coupled battery storage system, the battery connects to which component?",
+      "options": [
+        { "id": "a", "text": "AC panel" },
+        { "id": "b", "text": "DC side of a hybrid inverter", "correct": true },
+        { "id": "c", "text": "Utility meter" },
+        { "id": "d", "text": "AC side of string inverter" }
+      ],
+      "explanation": "DC-coupled systems connect the battery to the DC bus of a hybrid (multi-mode) inverter. PV charges the battery directly through the DC bus without DC→AC→DC conversion losses. AC-coupled systems connect batteries via a separate battery inverter on the AC side.",
+      "code_ref": "NABCEP Energy Storage Design",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-design-056",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Battery Integration",
+      "question": "What NEC article covers energy storage systems including battery installations?",
+      "options": [
+        { "id": "a", "text": "Article 480" },
+        { "id": "b", "text": "Article 690" },
+        { "id": "c", "text": "Article 706", "correct": true },
+        { "id": "d", "text": "Article 710" }
+      ],
+      "explanation": "NEC Article 706 specifically covers Energy Storage Systems (ESS) including batteries, disconnects, overcurrent protection, and installation requirements. Article 480 covers stationary batteries generally, while 706 addresses ESS in distributed energy systems.",
+      "code_ref": "NEC Article 706",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-design-057",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Shading Impact",
+      "question": "In a series-connected string without bypass diodes, what happens when one cell is completely shaded?",
+      "options": [
+        { "id": "a", "text": "Only that cell stops producing" },
+        { "id": "b", "text": "The entire string output drops to near zero", "correct": true },
+        { "id": "c", "text": "Other cells increase output to compensate" },
+        { "id": "d", "text": "The inverter increases MPPT voltage" }
+      ],
+      "explanation": "In series, current must flow through all cells. A fully shaded cell becomes a high-resistance load, blocking current flow and potentially causing hot spots. Without bypass diodes, the entire string is effectively disabled by one shaded cell.",
+      "code_ref": "NABCEP PV Resource Guide Section 6.3",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-058",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Bypass Diodes",
+      "question": "What is the primary function of bypass diodes in a PV module?",
+      "options": [
+        { "id": "a", "text": "Increase module voltage" },
+        { "id": "b", "text": "Provide current path around shaded cells", "correct": true },
+        { "id": "c", "text": "Protect against overvoltage" },
+        { "id": "d", "text": "Convert DC to AC" }
+      ],
+      "explanation": "Bypass diodes allow current to flow around shaded or damaged cell groups. When cells become reverse-biased (consuming power), the bypass diode conducts, preventing hot spots and allowing unshaded portions to continue producing. Most modules have 3 bypass diodes.",
+      "code_ref": "NABCEP PV Resource Guide Section 6.3",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-059",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Blocking Diodes",
+      "question": "When are blocking diodes required in PV systems?",
+      "options": [
+        { "id": "a", "text": "All grid-tied systems" },
+        { "id": "b", "text": "Systems with parallel strings and no MLPE", "correct": true },
+        { "id": "c", "text": "All microinverter systems" },
+        { "id": "d", "text": "Single-string systems only" }
+      ],
+      "explanation": "Blocking diodes prevent reverse current flow from higher-voltage strings into lower-voltage (shaded) strings in parallel configurations. They're less common now with module-level power electronics and smart inverters but may be required for certain combiner box designs.",
+      "code_ref": "NABCEP PV Resource Guide Section 4.4",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-design-060",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "System Efficiency",
+      "question": "What is a typical total system derate factor (efficiency) for a well-designed residential PV system?",
+      "options": [
+        { "id": "a", "text": "65-70%" },
+        { "id": "b", "text": "77-85%", "correct": true },
+        { "id": "c", "text": "90-95%" },
+        { "id": "d", "text": "98-99%" }
+      ],
+      "explanation": "Total system derate accounts for all losses: inverter efficiency (96-98%), wiring (2%), soiling (2-5%), shading (0-5%), temperature (5-15%), mismatch (1-2%), and degradation. Combined, a typical well-designed system achieves 77-85% overall efficiency.",
+      "code_ref": "NREL PVWatts System Losses",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-061",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Performance Ratio",
+      "question": "What does Performance Ratio (PR) measure for a PV system?",
+      "options": [
+        { "id": "a", "text": "Percentage of roof covered by panels" },
+        { "id": "b", "text": "Actual energy output vs. theoretical maximum", "correct": true },
+        { "id": "c", "text": "Inverter efficiency only" },
+        { "id": "d", "text": "Module degradation rate" }
+      ],
+      "explanation": "Performance Ratio = Actual AC output ÷ Theoretical DC output (based on irradiance and STC rating). A PR of 0.80 means the system produces 80% of theoretical maximum. PR accounts for all system losses and is used for performance monitoring and guarantees.",
+      "code_ref": "IEC 61724",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-062",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Specific Yield",
+      "question": "A 10 kW system produces 14,500 kWh annually. What is the specific yield?",
+      "options": [
+        { "id": "a", "text": "1,250 kWh/kW/year" },
+        { "id": "b", "text": "1,350 kWh/kW/year" },
+        { "id": "c", "text": "1,450 kWh/kW/year", "correct": true },
+        { "id": "d", "text": "1,550 kWh/kW/year" }
+      ],
+      "explanation": "Specific yield = Annual production ÷ System size = 14,500 kWh ÷ 10 kW = 1,450 kWh/kW/year. This metric normalizes production to system size, enabling comparison between different systems and locations.",
+      "code_ref": "NABCEP PV Resource Guide",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-063",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Capacity Factor",
+      "question": "A 10 kW PV system could theoretically produce 87,600 kWh/year if operating at full power 24/7. It actually produces 15,000 kWh/year. What is the capacity factor?",
+      "options": [
+        { "id": "a", "text": "12%" },
+        { "id": "b", "text": "17%", "correct": true },
+        { "id": "c", "text": "22%" },
+        { "id": "d", "text": "27%" }
+      ],
+      "explanation": "Capacity Factor = Actual production ÷ Theoretical maximum = 15,000 ÷ 87,600 = 17.1%. PV capacity factors typically range 15-25% due to night, clouds, and temperature losses. (87,600 = 10 kW × 8,760 hours/year)",
+      "code_ref": "NREL Solar Metrics",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-064",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Design Software",
+      "question": "Which free NREL tool is commonly used for residential PV system production estimates?",
+      "options": [
+        { "id": "a", "text": "SAM (System Advisor Model)" },
+        { "id": "b", "text": "PVWatts", "correct": true },
+        { "id": "c", "text": "HOMER" },
+        { "id": "d", "text": "EnergyPlus" }
+      ],
+      "explanation": "PVWatts is NREL's free, web-based tool for estimating PV system production. Users input location, system size, tilt, azimuth, and losses to get hourly, monthly, and annual production estimates using TMY weather data.",
+      "code_ref": "NREL PVWatts",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-065",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Fire Setbacks",
+      "question": "Per 2021 IFC and common AHJ requirements, what is the minimum pathway width required along roof ridges for firefighter access?",
+      "options": [
+        { "id": "a", "text": "18 inches" },
+        { "id": "b", "text": "36 inches", "correct": true },
+        { "id": "c", "text": "48 inches" },
+        { "id": "d", "text": "72 inches" }
+      ],
+      "explanation": "The International Fire Code and most AHJs require 36-inch wide pathways along roof ridges and to roof perimeters for firefighter access. These setbacks affect usable roof area for PV installations, particularly on smaller roofs.",
+      "code_ref": "IFC 605.11, NEC 690.12",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-066",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Fire Setbacks",
+      "question": "Fire access pathways on a hip roof must typically provide access from eave to ridge on how many roof planes?",
+      "options": [
+        { "id": "a", "text": "One" },
+        { "id": "b", "text": "Two", "correct": true },
+        { "id": "c", "text": "Three" },
+        { "id": "d", "text": "All four" }
+      ],
+      "explanation": "IFC 605.11.1.2.1 requires hip roofs to have pathways from eave to ridge on at least two opposing roof planes. This allows firefighters to access the ridge from multiple directions for ventilation. Specific requirements vary by AHJ.",
+      "code_ref": "IFC 605.11.1.2.1",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-067",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Module Labeling",
+      "question": "Per NEC 690.4(D), what information must be marked on PV modules?",
+      "options": [
+        { "id": "a", "text": "Installer name and date" },
+        { "id": "b", "text": "Maximum system voltage rating", "correct": true },
+        { "id": "c", "text": "Warranty period" },
+        { "id": "d", "text": "Production estimate" }
+      ],
+      "explanation": "NEC 690.4(D) requires modules to be marked with maximum system voltage (600V or 1000V). Modules rated for only 600V systems cannot be used in 1000V or 1500V systems regardless of string calculation. This marking is on the module label.",
+      "code_ref": "NEC 690.4(D)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-design-068",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Voltage Classes",
+      "question": "What is the maximum PV system voltage allowed for systems with qualified personnel according to NEC 690.7?",
+      "options": [
+        { "id": "a", "text": "600V" },
+        { "id": "b", "text": "1000V" },
+        { "id": "c", "text": "1500V", "correct": true },
+        { "id": "d", "text": "2000V" }
+      ],
+      "explanation": "NEC 690.7(A) permits PV systems up to 1500V DC when installed by qualified persons and using equipment rated for that voltage. Residential systems are limited to 600V (690.7(C)), but commercial/utility systems can use higher voltages for reduced wiring costs.",
+      "code_ref": "NEC 690.7(A)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-design-069",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Wire Types",
+      "question": "What wire type is specifically listed for PV source circuits exposed to sunlight?",
+      "options": [
+        { "id": "a", "text": "THHN" },
+        { "id": "b", "text": "USE-2" },
+        { "id": "c", "text": "PV Wire", "correct": true },
+        { "id": "d", "text": "XHHW" }
+      ],
+      "explanation": "PV Wire (also called PV cable) is specifically listed for photovoltaic applications per UL 4703. It's sunlight resistant, rated for wet locations, and has high temperature ratings. USE-2 and other sunlight-resistant wires may also be permitted per NEC 690.31.",
+      "code_ref": "NEC 690.31(A), UL 4703",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-070",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Combiner Boxes",
+      "question": "What is the primary function of a PV combiner box?",
+      "options": [
+        { "id": "a", "text": "Convert DC to AC" },
+        { "id": "b", "text": "Combine multiple strings and provide overcurrent protection", "correct": true },
+        { "id": "c", "text": "Provide rapid shutdown" },
+        { "id": "d", "text": "Monitor individual module performance" }
+      ],
+      "explanation": "Combiner boxes aggregate multiple DC source circuits (strings) into fewer output circuits going to the inverter. They contain fuses or breakers for string overcurrent protection per NEC 690.9. Larger systems use combiners to simplify wiring and provide isolation points.",
+      "code_ref": "NEC 690.9",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-071",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "String Fusing",
+      "question": "According to NEC 690.9(A), when are overcurrent protective devices required for PV source circuits?",
+      "options": [
+        { "id": "a", "text": "Always, regardless of configuration" },
+        { "id": "b", "text": "When there are 3 or more strings in parallel", "correct": true },
+        { "id": "c", "text": "Only for systems over 10 kW" },
+        { "id": "d", "text": "Only for ground-mounted systems" }
+      ],
+      "explanation": "Per NEC 690.9(A) Exception, OCPDs aren't required for 2 or fewer parallel strings if conductor ampacity ≥ 2× Isc per 690.8(A). With 3+ strings, fault current from other strings can exceed conductor rating, requiring fuse protection.",
+      "code_ref": "NEC 690.9(A) Exception",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-design-072",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "String Fusing",
+      "question": "What is the maximum overcurrent device rating for a PV source circuit per NEC 690.9(B)?",
+      "options": [
+        { "id": "a", "text": "Module Isc × 1.25" },
+        { "id": "b", "text": "Module Isc × 1.56" },
+        { "id": "c", "text": "Module maximum series fuse rating", "correct": true },
+        { "id": "d", "text": "Conductor ampacity" }
+      ],
+      "explanation": "NEC 690.9(B) states OCPD rating cannot exceed the module maximum series fuse rating marked on the module. This rating appears on the module label and limits fuse size to prevent module damage from reverse current.",
+      "code_ref": "NEC 690.9(B)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-design-073",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Disconnect Requirements",
+      "question": "Per NEC 690.13, where must the PV system disconnect be located?",
+      "options": [
+        { "id": "a", "text": "On the roof near the array" },
+        { "id": "b", "text": "At a readily accessible location", "correct": true },
+        { "id": "c", "text": "Inside the main electrical panel" },
+        { "id": "d", "text": "At the utility meter" }
+      ],
+      "explanation": "NEC 690.13 requires PV disconnecting means to be installed at a readily accessible location, either outside or inside at the point of entry. The disconnect must be lockable per 690.13(A) and clearly marked as a PV system disconnect.",
+      "code_ref": "NEC 690.13",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-design-074",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Disconnect Requirements",
+      "question": "Per NEC 690.13(B), how many PV system disconnects are permitted for a single PV system?",
+      "options": [
+        { "id": "a", "text": "Exactly one" },
+        { "id": "b", "text": "Up to six", "correct": true },
+        { "id": "c", "text": "Unlimited" },
+        { "id": "d", "text": "One per string" }
+      ],
+      "explanation": "NEC 690.13(B) permits up to six switches or circuit breakers as the PV system disconnecting means, similar to service disconnect rules. They must be grouped and marked per 690.13(B). A single disconnect is more common for residential systems.",
+      "code_ref": "NEC 690.13(B)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-design-075",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Grounding",
+      "question": "What type of PV system grounding configuration uses a midpoint ground?",
+      "options": [
+        { "id": "a", "text": "Ungrounded system" },
+        { "id": "b", "text": "Positive-grounded system" },
+        { "id": "c", "text": "Bipolar system", "correct": true },
+        { "id": "d", "text": "Single-ended system" }
+      ],
+      "explanation": "Bipolar PV systems have two monopole arrays with the midpoint grounded. This creates positive and negative voltages relative to ground, doubling system voltage without exceeding voltage limits to ground. Used for some utility-scale applications.",
+      "code_ref": "NEC 690.7(E)",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-design-076",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Equipment Grounding",
+      "question": "Per NEC 690.43, what is the minimum size equipment grounding conductor for a PV source circuit protected by a 20A fuse?",
+      "options": [
+        { "id": "a", "text": "14 AWG copper" },
+        { "id": "b", "text": "12 AWG copper", "correct": true },
+        { "id": "c", "text": "10 AWG copper" },
+        { "id": "d", "text": "8 AWG copper" }
+      ],
+      "explanation": "Per NEC 690.45(B), equipment grounding conductor sizing follows Table 250.122. For 20A OCPD, minimum EGC is 12 AWG copper. The EGC must be sized based on the OCPD rating protecting the circuit per 690.43 and 250.122.",
+      "code_ref": "NEC 690.43, 690.45, Table 250.122",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-design-077",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Ungrounded Systems",
+      "question": "Most modern residential string inverters use which type of PV array grounding?",
+      "options": [
+        { "id": "a", "text": "Positive-grounded" },
+        { "id": "b", "text": "Negative-grounded" },
+        { "id": "c", "text": "Ungrounded (floating)", "correct": true },
+        { "id": "d", "text": "Bipolar" }
+      ],
+      "explanation": "Modern transformerless (non-isolated) inverters typically use ungrounded (functionally grounded) PV arrays. This eliminates the need for ground fault fuses but requires ground fault detection, interruption, and indication per NEC 690.41.",
+      "code_ref": "NEC 690.41, 690.42",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-078",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Ground Fault Protection",
+      "question": "Per NEC 690.41(B), ground-fault protection for PV systems must be capable of detecting ground faults down to what level?",
+      "options": [
+        { "id": "a", "text": "500 mA" },
+        { "id": "b", "text": "1.0 A" },
+        { "id": "c", "text": "Manufacturer's specification", "correct": true },
+        { "id": "d", "text": "5.0 A" }
+      ],
+      "explanation": "NEC 690.41(B) requires ground-fault protection to detect faults and interrupt or notify per manufacturer specifications. Listed inverters include integrated ground fault detection with sensitivity typically 1-5A. The specific threshold depends on the equipment.",
+      "code_ref": "NEC 690.41(B)",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-design-079",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Arc Fault Protection",
+      "question": "Per NEC 690.11, DC arc-fault circuit protection is required for PV systems with:",
+      "options": [
+        { "id": "a", "text": "DC source or output circuits of 80V or greater", "correct": true },
+        { "id": "b", "text": "All PV systems" },
+        { "id": "c", "text": "Only systems over 10 kW" },
+        { "id": "d", "text": "Only ground-mounted systems" }
+      ],
+      "explanation": "NEC 690.11 requires arc-fault protection for DC PV circuits operating at 80V or greater. The protection must detect and interrupt arcing faults, then notify the system. Most listed inverters include integrated arc-fault detection.",
+      "code_ref": "NEC 690.11",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-design-080",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "System Labeling",
+      "question": "Per NEC 690.56(C), where must the directory label be located for buildings with PV systems?",
+      "options": [
+        { "id": "a", "text": "On each PV module" },
+        { "id": "b", "text": "At the main service disconnect", "correct": true },
+        { "id": "c", "text": "On the inverter only" },
+        { "id": "d", "text": "On the roof near the array" }
+      ],
+      "explanation": "NEC 690.56(C) requires a permanent plaque or directory at the main service indicating PV system location, disconnecting means location, and other power sources. This informs first responders of all power sources in the building.",
+      "code_ref": "NEC 690.56(C)",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-081",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "System Labeling",
+      "question": "Per NEC 690.53, which of the following must be marked on a PV DC combiner or junction box?",
+      "options": [
+        { "id": "a", "text": "Installer license number" },
+        { "id": "b", "text": "Maximum rated operating current", "correct": true },
+        { "id": "c", "text": "Expected production (kWh)" },
+        { "id": "d", "text": "Module warranty period" }
+      ],
+      "explanation": "NEC 690.53 requires marking the maximum current, operating current, maximum voltage, and operating voltage at DC PV system disconnects and combiners. This information helps maintenance personnel verify system parameters and troubleshoot safely.",
+      "code_ref": "NEC 690.53",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-082",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Conduit Fill",
+      "question": "Per NEC Chapter 9 Table 1, what is the maximum conduit fill percentage for 3 or more conductors?",
+      "options": [
+        { "id": "a", "text": "31%" },
+        { "id": "b", "text": "40%", "correct": true },
+        { "id": "c", "text": "53%" },
+        { "id": "d", "text": "60%" }
+      ],
+      "explanation": "NEC Chapter 9 Table 1 limits conduit fill to 40% for 3 or more conductors. This prevents overheating and allows conductor pulling. For 1 conductor: 53%, for 2 conductors: 31%. PV circuits follow the same conduit fill rules.",
+      "code_ref": "NEC Chapter 9 Table 1",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-design-083",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Ampacity Derating",
+      "question": "Per NEC 310.15, conductors must be derated for temperature when ambient exceeds what temperature?",
+      "options": [
+        { "id": "a", "text": "20°C" },
+        { "id": "b", "text": "30°C", "correct": true },
+        { "id": "c", "text": "40°C" },
+        { "id": "d", "text": "50°C" }
+      ],
+      "explanation": "NEC Table 310.15(B)(1) ampacities are based on 30°C ambient. When ambient exceeds 30°C, conductors must be derated using correction factors from the table. Rooftop conduit can reach 70°C+, requiring significant ampacity correction for PV circuits.",
+      "code_ref": "NEC 310.15(B)(1)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-design-084",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Rooftop Conduit",
+      "question": "Per NEC 310.15(B)(2), conduit exposed on a rooftop in direct sunlight requires what additional temperature adder?",
+      "options": [
+        { "id": "a", "text": "17°C (30°F)" },
+        { "id": "b", "text": "33°C (60°F)", "correct": true },
+        { "id": "c", "text": "10°C (18°F)" },
+        { "id": "d", "text": "No adjustment required" }
+      ],
+      "explanation": "NEC Table 310.15(B)(2) requires adding 33°C (60°F) to ambient temperature for conduit on rooftops exposed to direct sunlight. At 40°C ambient, this means 73°C for derating purposes, often requiring larger conductors or different conduit placement.",
+      "code_ref": "NEC Table 310.15(B)(2)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-design-085",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Voltage Drop",
+      "question": "What is the maximum recommended voltage drop for PV DC source circuits per standard industry practice?",
+      "options": [
+        { "id": "a", "text": "1%" },
+        { "id": "b", "text": "2%", "correct": true },
+        { "id": "c", "text": "3%" },
+        { "id": "d", "text": "5%" }
+      ],
+      "explanation": "While NEC doesn't mandate voltage drop limits, industry practice recommends ≤2% for DC source/output circuits and ≤3% for AC circuits. Excessive voltage drop wastes energy and can push string voltage below inverter MPPT range.",
+      "code_ref": "NEC Informational Note 210.19(A)(1)",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-086",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Voltage Drop",
+      "question": "A 150-foot, 10 AWG copper circuit carries 8A at 300V DC. What is the approximate voltage drop?",
+      "options": [
+        { "id": "a", "text": "1.2V" },
+        { "id": "b", "text": "2.4V" },
+        { "id": "c", "text": "4.8V", "correct": true },
+        { "id": "d", "text": "6.0V" }
+      ],
+      "explanation": "Using VD = (2 × L × I × R) / 1000, where R = 1.02Ω/1000ft for 10 AWG copper: VD = (2 × 150 × 8 × 1.02) / 1000 = 2.448V one way × 2 for round trip ≈ 4.9V. This represents 1.6% voltage drop (4.9V ÷ 300V).",
+      "code_ref": "NEC Chapter 9 Table 8",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-design-087",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Commercial Design",
+      "question": "For commercial PV systems over 100 kW, which interconnection study is typically required by the utility?",
+      "options": [
+        { "id": "a", "text": "Level 1 Fast Track" },
+        { "id": "b", "text": "Supplemental Review or Impact Study", "correct": true },
+        { "id": "c", "text": "No study required" },
+        { "id": "d", "text": "Environmental Impact Report" }
+      ],
+      "explanation": "FERC Small Generator Interconnection Procedures define study levels. Systems exceeding Fast Track limits (typically 25 kW residential, 100 kW commercial) may require Supplemental Review or Impact Studies to assess grid impacts before utility approval.",
+      "code_ref": "FERC SGIP, State Interconnection Rules",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-design-088",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Commercial Design",
+      "question": "What type of inverter is most commonly used for utility-scale (multi-MW) PV installations?",
+      "options": [
+        { "id": "a", "text": "Microinverters" },
+        { "id": "b", "text": "Residential string inverters" },
+        { "id": "c", "text": "Central inverters", "correct": true },
+        { "id": "d", "text": "Battery inverters" }
+      ],
+      "explanation": "Central inverters (500 kW to 4+ MW capacity) are standard for utility-scale PV. They offer high efficiency, lower cost per watt, and simplified maintenance compared to distributed architectures. Medium-voltage output reduces transformer losses.",
+      "code_ref": "NABCEP Utility-Scale Design",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-089",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Carport Design",
+      "question": "When designing a solar carport, which additional structural consideration is critical compared to rooftop installations?",
+      "options": [
+        { "id": "a", "text": "Module efficiency" },
+        { "id": "b", "text": "Vehicle impact and clearance heights", "correct": true },
+        { "id": "c", "text": "Inverter brand selection" },
+        { "id": "d", "text": "Monitoring system type" }
+      ],
+      "explanation": "Solar carports must provide adequate vehicle clearance (typically 9-14 feet), withstand wind uplift without roof attachment, meet structural codes for open structures, and protect vehicles from module breakage. Canopy design differs significantly from rooftop.",
+      "code_ref": "IBC Chapter 16, ASCE 7",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-090",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Floating Solar",
+      "question": "What is a unique advantage of floating PV (FPV) systems installed on water bodies?",
+      "options": [
+        { "id": "a", "text": "Lower installation costs" },
+        { "id": "b", "text": "Improved module cooling and reduced water evaporation", "correct": true },
+        { "id": "c", "text": "Simplified permitting" },
+        { "id": "d", "text": "Standard residential racking" }
+      ],
+      "explanation": "Floating PV benefits from water cooling, reducing module temperatures and improving efficiency by 5-10%. FPV also reduces water evaporation from reservoirs by 70%+ and eliminates land-use conflicts. Anchoring and environmental permits are additional considerations.",
+      "code_ref": "NREL Floating Solar Studies",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-091",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "BIPV",
+      "question": "What does BIPV stand for in solar applications?",
+      "options": [
+        { "id": "a", "text": "Battery Integrated PV" },
+        { "id": "b", "text": "Building Integrated Photovoltaics", "correct": true },
+        { "id": "c", "text": "Bi-directional Inverter PV" },
+        { "id": "d", "text": "Bifacial Installed PV" }
+      ],
+      "explanation": "Building Integrated Photovoltaics (BIPV) replace conventional building materials with PV elements (solar shingles, facade panels, skylights). BIPV serves dual purposes as both building envelope and power generation, offsetting material costs.",
+      "code_ref": "NABCEP BIPV Design",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-092",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Agrivoltaics",
+      "question": "What is agrivoltaics?",
+      "options": [
+        { "id": "a", "text": "Agricultural equipment powered by solar" },
+        { "id": "b", "text": "Co-location of solar panels with crop production or grazing", "correct": true },
+        { "id": "c", "text": "Solar-powered irrigation systems" },
+        { "id": "d", "text": "Converting agricultural waste to energy" }
+      ],
+      "explanation": "Agrivoltaics combines solar energy production with agriculture on the same land. Elevated panels allow farming or grazing underneath, panels provide beneficial shade for some crops, and dual land use improves project economics and community acceptance.",
+      "code_ref": "NREL Agrivoltaics Studies",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-093",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Snow Loading",
+      "question": "When designing PV systems for areas with significant snow, what tilt angle consideration improves self-cleaning?",
+      "options": [
+        { "id": "a", "text": "Flat (0°) tilt for maximum coverage" },
+        { "id": "b", "text": "Steeper tilt (35°+) for snow shedding", "correct": true },
+        { "id": "c", "text": "Tilt doesn't affect snow" },
+        { "id": "d", "text": "East-facing orientation" }
+      ],
+      "explanation": "Steeper tilt angles (35°+) promote snow shedding due to gravity and module warming from any transmitted light. This reduces snow coverage duration compared to low-angle systems. Ground clearance must also accommodate snow accumulation below.",
+      "code_ref": "NABCEP Cold Climate Design",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-094",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Snow Loading",
+      "question": "Per ASCE 7, what is a typical ground snow load for northern US locations that must be considered in racking design?",
+      "options": [
+        { "id": "a", "text": "10-20 psf" },
+        { "id": "b", "text": "30-50 psf", "correct": true },
+        { "id": "c", "text": "5-10 psf" },
+        { "id": "d", "text": "100+ psf" }
+      ],
+      "explanation": "Ground snow loads vary by location per ASCE 7 maps. Northern states typically range 30-50 psf, with some mountain areas exceeding 100 psf. Roof snow loads are derived from ground loads using exposure and thermal factors.",
+      "code_ref": "ASCE 7 Chapter 7",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-095",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Hurricane Zones",
+      "question": "In high-wind coastal zones, what special PV mounting consideration is required?",
+      "options": [
+        { "id": "a", "text": "Lower tilt angles only" },
+        { "id": "b", "text": "Enhanced attachment, wind-rated racking, and reduced edge exposure", "correct": true },
+        { "id": "c", "text": "Microinverters only" },
+        { "id": "d", "text": "Higher voltage systems" }
+      ],
+      "explanation": "High-wind zones require racking engineered for design wind speeds (often 150+ mph), enhanced roof attachments, reduced module edge exposure where wind uplift is greatest, and compliance with Florida Building Code or similar enhanced standards.",
+      "code_ref": "ASCE 7, Florida Building Code",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-096",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Mounting Types",
+      "question": "Which roof mounting method requires no roof penetrations?",
+      "options": [
+        { "id": "a", "text": "Lag bolt attachment" },
+        { "id": "b", "text": "Ballasted mounting", "correct": true },
+        { "id": "c", "text": "Flashing-based attachment" },
+        { "id": "d", "text": "Through-bolt attachment" }
+      ],
+      "explanation": "Ballasted (weighted) mounting systems use concrete blocks or integrated weight to hold panels in place without roof penetrations. Common on flat commercial roofs, they eliminate leak potential but add significant dead load requiring structural verification.",
+      "code_ref": "NABCEP Commercial Mounting",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-097",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Attachment Hardware",
+      "question": "What is the purpose of a flashing in a roof-mounted PV attachment?",
+      "options": [
+        { "id": "a", "text": "Ground the racking system" },
+        { "id": "b", "text": "Waterproof the roof penetration", "correct": true },
+        { "id": "c", "text": "Connect rails together" },
+        { "id": "d", "text": "Support the inverter" }
+      ],
+      "explanation": "Flashings are waterproofing components installed under roofing material and around lag bolt penetrations. They channel water away from the penetration point, preventing leaks. Proper flashing installation is critical for maintaining roof warranty and preventing water damage.",
+      "code_ref": "Roofing Industry Standards",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-098",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Rafter Finding",
+      "question": "What is the most reliable method to locate roof rafters for PV attachment?",
+      "options": [
+        { "id": "a", "text": "Magnetic stud finder from top of roof" },
+        { "id": "b", "text": "Attic inspection and measurement", "correct": true },
+        { "id": "c", "text": "Standard 16\" spacing assumption" },
+        { "id": "d", "text": "Tapping the roof surface" }
+      ],
+      "explanation": "Attic inspection visually confirms rafter locations, sizes, spacing, and condition. Measurements from reference points transfer to roof surface. Stud finders work poorly through multiple roof layers, and spacing varies (16\", 24\", irregular in older homes).",
+      "code_ref": "NABCEP Site Assessment Guidelines",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-099",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Module Orientation",
+      "question": "For residential rooftops, what is the typical production difference between portrait and landscape module orientation?",
+      "options": [
+        { "id": "a", "text": "Landscape produces 15% more" },
+        { "id": "b", "text": "Portrait produces 10% more" },
+        { "id": "c", "text": "Negligible difference in production", "correct": true },
+        { "id": "d", "text": "Portrait produces 20% more" }
+      ],
+      "explanation": "Module orientation (portrait vs. landscape) has negligible effect on energy production since total module area exposed to sun is identical. Orientation choice is based on roof dimensions, racking compatibility, and aesthetic preferences.",
+      "code_ref": "NABCEP Design Guidelines",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-100",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "East-West Arrays",
+      "question": "What is a benefit of east-west facing (dual-tilt) arrays on flat roofs compared to south-facing?",
+      "options": [
+        { "id": "a", "text": "Higher peak production" },
+        { "id": "b", "text": "Higher module density and flatter production curve", "correct": true },
+        { "id": "c", "text": "Lower installation cost" },
+        { "id": "d", "text": "Better cold weather performance" }
+      ],
+      "explanation": "East-west dual-tilt systems fit more modules per area (reduced inter-row spacing), produce a flatter generation curve matching commercial load profiles, and reduce wind loading. Total annual production is slightly lower but better distributed throughout the day.",
+      "code_ref": "NABCEP Commercial Design",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-101",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Module Spacing",
+      "question": "What is the typical minimum gap between modules in a PV array for thermal expansion and maintenance?",
+      "options": [
+        { "id": "a", "text": "0 inches (butted together)" },
+        { "id": "b", "text": "0.25-0.5 inches", "correct": true },
+        { "id": "c", "text": "2-3 inches" },
+        { "id": "d", "text": "6 inches" }
+      ],
+      "explanation": "A 0.25-0.5 inch gap between modules allows for thermal expansion, prevents frame contact during temperature changes, and facilitates module replacement. Racking systems are designed with this spacing built into mid and end clamps.",
+      "code_ref": "Module Installation Manuals, NABCEP Guidelines",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-102",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Clipping Losses",
+      "question": "What is 'clipping' in a PV system?",
+      "options": [
+        { "id": "a", "text": "Physical damage to module edges" },
+        { "id": "b", "text": "Energy loss when DC power exceeds inverter AC capacity", "correct": true },
+        { "id": "c", "text": "Connector disconnection" },
+        { "id": "d", "text": "Shading from adjacent rows" }
+      ],
+      "explanation": "Clipping occurs when the DC array produces more power than the inverter can convert to AC. The inverter limits (clips) output at its rated AC capacity. With high DC/AC ratios, clipping increases during peak hours but overall energy capture improves.",
+      "code_ref": "NABCEP PV Resource Guide Section 5.2",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-103",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Transposition Models",
+      "question": "When converting horizontal irradiance (GHI) to plane-of-array (POA) irradiance, which model is commonly used?",
+      "options": [
+        { "id": "a", "text": "Ohm's Law" },
+        { "id": "b", "text": "Perez model", "correct": true },
+        { "id": "c", "text": "Kirchhoff's Law" },
+        { "id": "d", "text": "Thevenin model" }
+      ],
+      "explanation": "The Perez transposition model converts GHI (measured on horizontal surface) to POA irradiance (on tilted array surface). It accounts for direct beam, sky diffuse, and ground-reflected components. This model is used in SAM, PVsyst, and other simulation tools.",
+      "code_ref": "NREL SAM Documentation",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-design-104",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Power Purchase Agreements",
+      "question": "In a solar PPA (Power Purchase Agreement), who typically owns the PV system?",
+      "options": [
+        { "id": "a", "text": "The property owner" },
+        { "id": "b", "text": "The third-party developer/investor", "correct": true },
+        { "id": "c", "text": "The utility company" },
+        { "id": "d", "text": "The installer" }
+      ],
+      "explanation": "In a PPA, a third-party developer owns, operates, and maintains the system on the customer's property. The customer agrees to purchase the generated electricity at a fixed rate. The developer captures tax credits and depreciation benefits.",
+      "code_ref": "Solar Finance Models",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-105",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Commissioning",
+      "question": "During PV system commissioning, what is the purpose of an insulation resistance (megger) test?",
+      "options": [
+        { "id": "a", "text": "Verify module power output" },
+        { "id": "b", "text": "Detect insulation breakdown between conductors and ground", "correct": true },
+        { "id": "c", "text": "Measure irradiance levels" },
+        { "id": "d", "text": "Test inverter efficiency" }
+      ],
+      "explanation": "Insulation resistance testing applies high voltage (typically 500V or 1000V DC) between circuit conductors and ground to detect insulation degradation, moisture ingress, or installation damage. Resistance should exceed 1 MΩ. This test identifies latent ground faults.",
+      "code_ref": "IEC 62446, NABCEP Commissioning",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-106",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Commissioning",
+      "question": "What is the expected open-circuit voltage of a properly functioning 10-module string with Voc = 45V per module at 25°C?",
+      "options": [
+        { "id": "a", "text": "45V" },
+        { "id": "b", "text": "225V" },
+        { "id": "c", "text": "450V", "correct": true },
+        { "id": "d", "text": "4.5V" }
+      ],
+      "explanation": "String Voc = Number of modules × Module Voc = 10 × 45V = 450V. Measured Voc should be within ±5% of calculated value, adjusted for actual temperature. Significant deviation indicates module problems or wiring issues.",
+      "code_ref": "IEC 62446 Commissioning Tests",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-107",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Commissioning",
+      "question": "During commissioning, string short-circuit current (Isc) should be measured and compared to:",
+      "options": [
+        { "id": "a", "text": "Module Voc specifications" },
+        { "id": "b", "text": "Module Isc corrected for actual irradiance", "correct": true },
+        { "id": "c", "text": "Inverter output current" },
+        { "id": "d", "text": "Nameplate voltage rating" }
+      ],
+      "explanation": "Measured Isc should match module Isc (from datasheet) multiplied by actual irradiance ratio (e.g., at 800 W/m², expect 80% of STC Isc). All strings should measure within 5% of each other, accounting for orientation differences.",
+      "code_ref": "IEC 62446 Section 7",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-108",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Monitoring",
+      "question": "What key metric does a PV monitoring system typically track to detect underperformance?",
+      "options": [
+        { "id": "a", "text": "Roof temperature only" },
+        { "id": "b", "text": "Performance ratio comparing actual vs. expected output", "correct": true },
+        { "id": "c", "text": "Utility rate changes" },
+        { "id": "d", "text": "Wind direction" }
+      ],
+      "explanation": "Monitoring systems compare actual energy production to expected production based on irradiance data (from on-site sensor or satellite). Performance ratio trending identifies degradation, soiling, or equipment issues requiring maintenance.",
+      "code_ref": "IEC 61724 Monitoring Standard",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-109",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "String vs. Central",
+      "question": "What is a key advantage of string inverters over central inverters for commercial rooftop systems?",
+      "options": [
+        { "id": "a", "text": "Lower total equipment cost" },
+        { "id": "b", "text": "Flexibility for multiple roof orientations and independent MPPT", "correct": true },
+        { "id": "c", "text": "Higher maximum efficiency" },
+        { "id": "d", "text": "Simpler installation" }
+      ],
+      "explanation": "String inverters allow separate MPPT for different roof sections (varying orientation, tilt, or shading). This optimizes each sub-array independently. Central inverters combine all strings to single MPPT, losing production if arrays differ significantly.",
+      "code_ref": "NABCEP Commercial Design",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-110",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Transformer Requirements",
+      "question": "When is a step-up transformer typically required for a PV system interconnection?",
+      "options": [
+        { "id": "a", "text": "All residential systems" },
+        { "id": "b", "text": "When inverter output voltage differs from point of interconnection voltage", "correct": true },
+        { "id": "c", "text": "Only for battery systems" },
+        { "id": "d", "text": "Never required for PV" }
+      ],
+      "explanation": "Large PV systems often connect at medium voltage (4 kV-35 kV) to reduce conductor costs and losses. The inverter typically outputs 480V or 600V AC, requiring a step-up transformer to match interconnection voltage. Residential systems rarely need transformers.",
+      "code_ref": "NEC 705, IEEE 1547",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-design-111",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Power Factor",
+      "question": "What power factor do most grid-tied PV inverters operate at under normal conditions?",
+      "options": [
+        { "id": "a", "text": "0.85 lagging" },
+        { "id": "b", "text": "Unity (1.0)", "correct": true },
+        { "id": "c", "text": "0.90 leading" },
+        { "id": "d", "text": "Variable between 0.5-0.7" }
+      ],
+      "explanation": "Grid-tied inverters typically operate at unity power factor, producing only real power (kW) with no reactive power (kVAR). Some utilities require inverters capable of providing reactive power support per IEEE 1547-2018 grid support functions.",
+      "code_ref": "IEEE 1547-2018",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-design-112",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Reactive Power",
+      "question": "Per IEEE 1547-2018, what grid support function allows inverters to help regulate voltage?",
+      "options": [
+        { "id": "a", "text": "MPPT optimization" },
+        { "id": "b", "text": "Volt-VAR control", "correct": true },
+        { "id": "c", "text": "DC ground fault detection" },
+        { "id": "d", "text": "Arc fault protection" }
+      ],
+      "explanation": "Volt-VAR control allows inverters to inject or absorb reactive power (VARs) based on grid voltage. When voltage is high, the inverter absorbs VARs to lower it; when low, it injects VARs. This distributed voltage regulation benefits grid stability.",
+      "code_ref": "IEEE 1547-2018 Section 5.3",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-design-113",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Utility Requirements",
+      "question": "What document from the utility typically specifies technical requirements for PV interconnection?",
+      "options": [
+        { "id": "a", "text": "Rate schedule" },
+        { "id": "b", "text": "Interconnection agreement and technical specifications", "correct": true },
+        { "id": "c", "text": "Marketing brochure" },
+        { "id": "d", "text": "Annual report" }
+      ],
+      "explanation": "Utilities provide interconnection agreements specifying technical requirements including disconnect location, meter type, protection settings, insurance requirements, and operating procedures. State PUC rules often standardize these requirements for smaller systems.",
+      "code_ref": "State Interconnection Standards",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-114",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "AC Disconnect",
+      "question": "Per NEC 705.20, what type of AC disconnect is typically required for utility-interactive inverters?",
+      "options": [
+        { "id": "a", "text": "Fused disconnect only" },
+        { "id": "b", "text": "Load-break rated disconnect accessible to utility", "correct": true },
+        { "id": "c", "text": "Key-operated switch" },
+        { "id": "d", "text": "No disconnect required" }
+      ],
+      "explanation": "NEC 705.20 requires a disconnecting means for all AC interconnections. Utilities typically require this disconnect to be lockable and accessible (often on exterior near meter) for safe isolation during grid work. Load-break rating allows opening under load.",
+      "code_ref": "NEC 705.20",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-design-115",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Supply-Side Connection",
+      "question": "Per NEC 705.12(A), a supply-side connection for a PV system connects on the:",
+      "options": [
+        { "id": "a", "text": "Load side of service disconnect, subject to 120% rule" },
+        { "id": "b", "text": "Line side of service disconnect, before the main breaker", "correct": true },
+        { "id": "c", "text": "Secondary of the utility transformer" },
+        { "id": "d", "text": "Inverter DC input terminals" }
+      ],
+      "explanation": "Supply-side connections (NEC 705.12(A)) tap between the utility meter and main service disconnect, bypassing the 120% busbar rule. This allows larger PV systems but requires service entrance rated equipment and may require meter/CT changes.",
+      "code_ref": "NEC 705.12(A)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-design-116",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Line-Side Tap",
+      "question": "When using a line-side tap for PV interconnection, what minimum conductor size is required per NEC 705.12(A)?",
+      "options": [
+        { "id": "a", "text": "Same size as service entrance conductors" },
+        { "id": "b", "text": "Based on 125% of inverter output current", "correct": true },
+        { "id": "c", "text": "Always 4 AWG minimum" },
+        { "id": "d", "text": "Size doesn't matter for taps" }
+      ],
+      "explanation": "Line-side tap conductors must be sized per NEC 705.12(A) for 125% of inverter continuous output current. The tap connection hardware must be listed and suitable for the service conductor type. No specific length limitations apply as with load-side taps.",
+      "code_ref": "NEC 705.12(A), 690.8",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-design-117",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Revenue Grade Metering",
+      "question": "What accuracy class is typically required for revenue-grade production meters in commercial PV systems?",
+      "options": [
+        { "id": "a", "text": "Class 5 (±5%)" },
+        { "id": "b", "text": "Class 0.2 or 0.5 (±0.2% or ±0.5%)", "correct": true },
+        { "id": "c", "text": "Class 10 (±10%)" },
+        { "id": "d", "text": "No accuracy requirement" }
+      ],
+      "explanation": "Revenue-grade meters for PPA billing, RECs, or utility settlements require ANSI C12 Class 0.2 or 0.5 accuracy. These meters are certified, calibrated, and often utility-owned. Lower-accuracy monitoring meters don't meet revenue requirements.",
+      "code_ref": "ANSI C12 Metering Standards",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-design-118",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Warranties",
+      "question": "What is the typical product warranty period for Tier 1 PV modules?",
+      "options": [
+        { "id": "a", "text": "5 years" },
+        { "id": "b", "text": "10-12 years", "correct": true },
+        { "id": "c", "text": "25 years" },
+        { "id": "d", "text": "1 year" }
+      ],
+      "explanation": "Tier 1 modules typically offer 10-12 year product warranties (covering defects) plus 25-year performance warranties (guaranteeing 80-85% output). The product warranty covers manufacturing defects; performance warranty covers degradation beyond specified limits.",
+      "code_ref": "Industry Standard Warranties",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-119",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Environmental Considerations",
+      "question": "Before installing PV on a site with potential endangered species habitat, what type of review may be required?",
+      "options": [
+        { "id": "a", "text": "Only electrical inspection" },
+        { "id": "b", "text": "Biological or environmental impact assessment", "correct": true },
+        { "id": "c", "text": "Module efficiency testing" },
+        { "id": "d", "text": "Warranty review" }
+      ],
+      "explanation": "Large PV projects or sites with sensitive habitats may require NEPA review, state environmental review, or biological assessments. Endangered species, wetlands, cultural resources, and viewshed impacts can affect project permitting and design.",
+      "code_ref": "NEPA, State Environmental Regulations",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-design-120",
+      "trade": "solar",
+      "category": "System Design",
+      "subcategory": "Design Documentation",
+      "question": "Which document provides a comprehensive record of the as-built PV system for the owner?",
+      "options": [
+        { "id": "a", "text": "Sales proposal" },
+        { "id": "b", "text": "Operations and maintenance manual", "correct": true },
+        { "id": "c", "text": "Permit application" },
+        { "id": "d", "text": "Utility bill" }
+      ],
+      "explanation": "The O&M manual documents system specifications, equipment datasheets, warranties, as-built drawings, commissioning data, maintenance schedules, and troubleshooting procedures. This becomes the reference document for the system's operational lifetime.",
+      "code_ref": "IEC 62446, NABCEP Documentation",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    }
+  ]
+}

@@ -1,0 +1,502 @@
+{
+  "category": "Fire Sprinkler",
+  "subcategory": "Plans Review and Layout",
+  "description": "System design, drawings, and layout requirements",
+  "difficulty_distribution": {
+    "beginner": 10,
+    "intermediate": 15,
+    "advanced": 10
+  },
+  "questions": [
+    {
+      "id": "fs_plan_001",
+      "difficulty": "beginner",
+      "question": "What information must be included on sprinkler system working drawings?",
+      "options": [
+        "Only pipe sizes",
+        "Name of owner, building address, occupancy classification, and system design criteria",
+        "Only sprinkler locations",
+        "Cost estimates"
+      ],
+      "correct_answer": 1,
+      "explanation": "Working drawings must include owner, location, occupancy, design area and density, water supply data, equipment specifications, and all layout details.",
+      "code_reference": "NFPA 13, Section 27.1"
+    },
+    {
+      "id": "fs_plan_002",
+      "difficulty": "beginner",
+      "question": "What scale is commonly used for sprinkler system drawings?",
+      "options": [
+        "1/32 inch = 1 foot",
+        "1/8 inch = 1 foot or larger",
+        "1 inch = 100 feet",
+        "No scale required"
+      ],
+      "correct_answer": 1,
+      "explanation": "Sprinkler drawings are typically 1/8 inch = 1 foot or larger to show adequate detail. NFPA 13 requires drawings to be drawn to scale.",
+      "code_reference": "NFPA 13, Section 27.1"
+    },
+    {
+      "id": "fs_plan_003",
+      "difficulty": "beginner",
+      "question": "What is the maximum coverage area per sprinkler in Light Hazard occupancy?",
+      "options": [
+        "130 sq ft",
+        "168 sq ft",
+        "200 sq ft (225 sq ft with extended coverage)",
+        "400 sq ft"
+      ],
+      "correct_answer": 2,
+      "explanation": "Standard sprinklers in Light Hazard occupancies have maximum 200 sq ft coverage. Extended coverage sprinklers may cover up to 400 sq ft.",
+      "code_reference": "NFPA 13, Section 10.2.4"
+    },
+    {
+      "id": "fs_plan_004",
+      "difficulty": "beginner",
+      "question": "What is the maximum distance between sprinklers in Light Hazard?",
+      "options": [
+        "10 feet",
+        "12 feet",
+        "15 feet",
+        "20 feet"
+      ],
+      "correct_answer": 2,
+      "explanation": "Maximum spacing between sprinklers in Light Hazard is 15 feet. This can vary based on obstruction rules and sprinkler type.",
+      "code_reference": "NFPA 13, Section 10.2.4"
+    },
+    {
+      "id": "fs_plan_005",
+      "difficulty": "beginner",
+      "question": "What is the maximum distance from a sprinkler to a wall?",
+      "options": [
+        "Equal to half the maximum spacing",
+        "Always 4 feet",
+        "Equal to the maximum spacing",
+        "No limit"
+      ],
+      "correct_answer": 0,
+      "explanation": "Maximum distance from sprinklers to walls is half the allowable distance between sprinklers - typically 7.5 feet for Light Hazard.",
+      "code_reference": "NFPA 13, Section 10.2.4"
+    },
+    {
+      "id": "fs_plan_006",
+      "difficulty": "beginner",
+      "question": "What occupancy classification applies to offices and churches?",
+      "options": [
+        "Extra Hazard",
+        "Ordinary Hazard Group 2",
+        "Light Hazard",
+        "High Hazard"
+      ],
+      "correct_answer": 2,
+      "explanation": "Light Hazard occupancies include offices, churches, educational facilities, and similar occupancies with low quantities of combustibles.",
+      "code_reference": "NFPA 13, Section 5.2"
+    },
+    {
+      "id": "fs_plan_007",
+      "difficulty": "beginner",
+      "question": "What occupancy classification applies to machine shops and laundries?",
+      "options": [
+        "Light Hazard",
+        "Ordinary Hazard Group 1",
+        "Ordinary Hazard Group 2",
+        "Extra Hazard Group 1"
+      ],
+      "correct_answer": 2,
+      "explanation": "Ordinary Hazard Group 2 includes machine shops, laundries, printing plants, and similar occupancies with moderate combustibility and storage.",
+      "code_reference": "NFPA 13, Section 5.3"
+    },
+    {
+      "id": "fs_plan_008",
+      "difficulty": "beginner",
+      "question": "What is shown on a riser diagram?",
+      "options": [
+        "Floor plan only",
+        "Schematic elevation view of system risers, cross-mains, and valves",
+        "Electrical connections",
+        "Building elevation"
+      ],
+      "correct_answer": 1,
+      "explanation": "Riser diagrams show a schematic representation of the system from the water supply through risers, cross-mains, and branch lines with valve locations.",
+      "code_reference": "NFPA 13, Section 27.1"
+    },
+    {
+      "id": "fs_plan_009",
+      "difficulty": "beginner",
+      "question": "What symbol represents a pendant sprinkler on drawings?",
+      "options": [
+        "Triangle",
+        "Circle with a dot",
+        "Square",
+        "Varies by designer but must be in legend"
+      ],
+      "correct_answer": 3,
+      "explanation": "Sprinkler symbols vary but must be defined in the drawing legend. Common symbols distinguish pendant, upright, sidewall, and concealed heads.",
+      "code_reference": "NFPA 13, Section 27.1"
+    },
+    {
+      "id": "fs_plan_010",
+      "difficulty": "beginner",
+      "question": "What is the design area in hydraulic calculations?",
+      "options": [
+        "The entire building area",
+        "The most remote area requiring simultaneous sprinkler operation",
+        "The riser location",
+        "The mechanical room"
+      ],
+      "correct_answer": 1,
+      "explanation": "The design area is the calculated area (in sq ft) where sprinklers are assumed to operate simultaneously, based on hazard classification.",
+      "code_reference": "NFPA 13, Section 19.3"
+    },
+    {
+      "id": "fs_plan_011",
+      "difficulty": "intermediate",
+      "question": "What is the typical design area for Light Hazard occupancy?",
+      "options": [
+        "500 sq ft",
+        "1000 sq ft",
+        "1500 sq ft",
+        "3000 sq ft"
+      ],
+      "correct_answer": 2,
+      "explanation": "Light Hazard design area is typically 1500 sq ft. This can be reduced with quick-response sprinklers or increased based on ceiling height.",
+      "code_reference": "NFPA 13, Figure 19.3.3.1.1"
+    },
+    {
+      "id": "fs_plan_012",
+      "difficulty": "intermediate",
+      "question": "What is the density for Ordinary Hazard Group 2 at 1500 sq ft design area?",
+      "options": [
+        "0.10 gpm/sq ft",
+        "0.15 gpm/sq ft",
+        "0.20 gpm/sq ft",
+        "0.30 gpm/sq ft"
+      ],
+      "correct_answer": 2,
+      "explanation": "Using the NFPA 13 density/area curves, Ordinary Hazard Group 2 at 1500 sq ft design area requires approximately 0.20 gpm/sq ft density.",
+      "code_reference": "NFPA 13, Figure 19.3.3.1.1"
+    },
+    {
+      "id": "fs_plan_013",
+      "difficulty": "intermediate",
+      "question": "What is the formula for calculating number of sprinklers in the design area?",
+      "options": [
+        "Design area ÷ building area",
+        "Design area ÷ coverage per sprinkler",
+        "Number of floors × 10",
+        "Pipe length ÷ 10"
+      ],
+      "correct_answer": 1,
+      "explanation": "Number of sprinklers = Design Area (sq ft) ÷ Area per sprinkler (sq ft). Round up to whole number. Minimum per NFPA 13 rules apply.",
+      "code_reference": "NFPA 13, Section 27.2"
+    },
+    {
+      "id": "fs_plan_014",
+      "difficulty": "intermediate",
+      "question": "What is the hydraulic most remote area?",
+      "options": [
+        "Closest to the riser",
+        "The area requiring highest pressure due to elevation and friction losses",
+        "The lowest floor",
+        "The largest room"
+      ],
+      "correct_answer": 1,
+      "explanation": "The hydraulically most remote area is typically furthest from the riser where friction losses and elevation create the highest pressure demand.",
+      "code_reference": "NFPA 13, Section 27.2"
+    },
+    {
+      "id": "fs_plan_015",
+      "difficulty": "intermediate",
+      "question": "What pipe sizing method uses NFPA 13 pipe schedule tables?",
+      "options": [
+        "Hydraulic calculation",
+        "Pipe schedule method",
+        "Area/density method",
+        "Computer modeling"
+      ],
+      "correct_answer": 1,
+      "explanation": "Pipe schedule sizing uses tables specifying pipe sizes based on hazard and number of sprinklers. It's simpler but less efficient than hydraulic design.",
+      "code_reference": "NFPA 13, Section 26.1"
+    },
+    {
+      "id": "fs_plan_016",
+      "difficulty": "intermediate",
+      "question": "What is the hose stream allowance for Light Hazard occupancy?",
+      "options": [
+        "100 gpm",
+        "250 gpm",
+        "500 gpm",
+        "750 gpm"
+      ],
+      "correct_answer": 0,
+      "explanation": "Light Hazard occupancies require 100 gpm hose stream allowance in addition to the sprinkler demand for hydraulic calculations.",
+      "code_reference": "NFPA 13, Section 19.3.3"
+    },
+    {
+      "id": "fs_plan_017",
+      "difficulty": "intermediate",
+      "question": "What is the water supply duration requirement for Light Hazard systems?",
+      "options": [
+        "15 minutes",
+        "30 minutes",
+        "60 minutes",
+        "90 minutes"
+      ],
+      "correct_answer": 1,
+      "explanation": "Light and Ordinary Hazard occupancies require 30-60 minutes water supply duration. Extra Hazard requires 60-90 minutes.",
+      "code_reference": "NFPA 13, Section 19.3.3"
+    },
+    {
+      "id": "fs_plan_018",
+      "difficulty": "intermediate",
+      "question": "What must be shown on hydraulic calculation sheets?",
+      "options": [
+        "Cost only",
+        "Flow, pressure, pipe sizes, friction losses, and elevation changes",
+        "Schedule only",
+        "Material list only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Hydraulic calculation sheets must show each pipe segment with flow, length, C-factor, friction loss, fittings, elevation, and cumulative pressure.",
+      "code_reference": "NFPA 13, Section 27.2"
+    },
+    {
+      "id": "fs_plan_019",
+      "difficulty": "intermediate",
+      "question": "What obstruction rules apply to sprinkler layout?",
+      "options": [
+        "None exist",
+        "Sprinklers must be positioned to avoid discharge pattern obstructions",
+        "Only for storage areas",
+        "Only for upright sprinklers"
+      ],
+      "correct_answer": 1,
+      "explanation": "Obstructions (beams, ducts, lights) can block sprinkler discharge patterns. NFPA 13 provides rules for sprinkler positioning relative to obstructions.",
+      "code_reference": "NFPA 13, Section 10.3"
+    },
+    {
+      "id": "fs_plan_020",
+      "difficulty": "intermediate",
+      "question": "What is the rule of three for obstructions?",
+      "options": [
+        "Three sprinklers minimum",
+        "Positioning to avoid obstruction shadow based on distance and depth",
+        "Three feet from walls",
+        "Three inspections required"
+      ],
+      "correct_answer": 1,
+      "explanation": "The 'rule of three' describes the geometric relationship between sprinkler location, obstruction distance, and obstruction depth to avoid shadowing.",
+      "code_reference": "NFPA 13, Section 10.3"
+    },
+    {
+      "id": "fs_plan_021",
+      "difficulty": "intermediate",
+      "question": "What is the minimum distance from sprinkler deflector to ceiling?",
+      "options": [
+        "0 inches (flush mounted)",
+        "1-12 inches depending on sprinkler type",
+        "18 inches",
+        "24 inches"
+      ],
+      "correct_answer": 1,
+      "explanation": "Standard pendant and upright sprinklers require deflector positioning 1 to 12 inches below smooth flat ceilings. Requirements vary by sprinkler type.",
+      "code_reference": "NFPA 13, Section 10.2.5"
+    },
+    {
+      "id": "fs_plan_022",
+      "difficulty": "intermediate",
+      "question": "What branch line configuration places sprinklers along the same pipe?",
+      "options": [
+        "Grid system",
+        "Tree system (central feed or side feed)",
+        "Loop system",
+        "Combined system"
+      ],
+      "correct_answer": 1,
+      "explanation": "Tree systems have branch lines extending from cross-mains with sprinklers fed from one direction. They're simpler but less hydraulically efficient than grids.",
+      "code_reference": "NFPA 13, Section 27.2"
+    },
+    {
+      "id": "fs_plan_023",
+      "difficulty": "intermediate",
+      "question": "What is a gridded sprinkler system?",
+      "options": [
+        "Sprinklers in a grid pattern only",
+        "A system where branch lines connect at both ends allowing multi-directional flow",
+        "A system using grid ceiling",
+        "A computer-designed system"
+      ],
+      "correct_answer": 1,
+      "explanation": "Grid systems have branch lines connected at both ends to cross-mains, allowing water to flow from multiple directions, improving hydraulic efficiency.",
+      "code_reference": "NFPA 13, Section 27.2"
+    },
+    {
+      "id": "fs_plan_024",
+      "difficulty": "advanced",
+      "question": "In hydraulic calculations, what is the K-factor formula?",
+      "options": [
+        "K = Pressure × Flow",
+        "K = Q / √P (Flow divided by square root of pressure)",
+        "K = P × Q²",
+        "K = P / Q"
+      ],
+      "correct_answer": 1,
+      "explanation": "K-factor relates flow and pressure: Q = K × √P, so K = Q / √P. This is fundamental to all sprinkler hydraulic calculations.",
+      "code_reference": "NFPA 13, Section 27.2"
+    },
+    {
+      "id": "fs_plan_025",
+      "difficulty": "advanced",
+      "question": "For a sprinkler with K=5.6 flowing 25 gpm, what is the required pressure?",
+      "options": [
+        "7 psi",
+        "15 psi",
+        "20 psi",
+        "25 psi"
+      ],
+      "correct_answer": 2,
+      "explanation": "P = (Q/K)² = (25/5.6)² = 4.46² = 19.9 psi, approximately 20 psi. This calculation is fundamental to hydraulic design.",
+      "code_reference": "NFPA 13, Section 27.2"
+    },
+    {
+      "id": "fs_plan_026",
+      "difficulty": "advanced",
+      "question": "What is the Hazen-Williams formula for friction loss?",
+      "options": [
+        "p = 4.52Q/C/d",
+        "p = 4.52 × Q^1.85 / (C^1.85 × d^4.87)",
+        "p = Q × C × d",
+        "p = (Q × d) / C"
+      ],
+      "correct_answer": 1,
+      "explanation": "The Hazen-Williams formula calculates friction loss: p = 4.52Q^1.85 / (C^1.85 × d^4.87) where p is pressure loss per foot, Q is flow, C is roughness factor, d is internal diameter.",
+      "code_reference": "NFPA 13, Section 27.2.3"
+    },
+    {
+      "id": "fs_plan_027",
+      "difficulty": "advanced",
+      "question": "What C-factor is used for Schedule 40 steel pipe?",
+      "options": [
+        "100",
+        "120",
+        "140",
+        "150"
+      ],
+      "correct_answer": 1,
+      "explanation": "Steel pipe (black or galvanized) uses C=120 in Hazen-Williams calculations. CPVC uses C=150, cement-lined ductile iron uses C=140.",
+      "code_reference": "NFPA 13, Section 27.2.3"
+    },
+    {
+      "id": "fs_plan_028",
+      "difficulty": "advanced",
+      "question": "What is the equivalent pipe length method for fitting losses?",
+      "options": [
+        "Measuring fitting dimensions",
+        "Converting fittings to equivalent length of straight pipe",
+        "Ignoring fitting losses",
+        "Using fixed pressure loss values"
+      ],
+      "correct_answer": 1,
+      "explanation": "Fitting losses are calculated by converting each fitting to an equivalent length of straight pipe (from tables), then calculating friction loss on the total length.",
+      "code_reference": "NFPA 13, Table 27.2.3.2.1"
+    },
+    {
+      "id": "fs_plan_029",
+      "difficulty": "advanced",
+      "question": "For elevation changes, how is pressure adjusted?",
+      "options": [
+        "No adjustment needed",
+        "0.433 psi per foot of elevation",
+        "1 psi per foot",
+        "Depends on pipe size"
+      ],
+      "correct_answer": 1,
+      "explanation": "Elevation pressure change = 0.433 psi per foot. Add pressure when going up (pump must overcome), subtract when going down (gravity assists).",
+      "code_reference": "NFPA 13, Section 27.2"
+    },
+    {
+      "id": "fs_plan_030",
+      "difficulty": "advanced",
+      "question": "What is the balanced point in grid system calculations?",
+      "options": [
+        "Where pipes are equal size",
+        "Where flows from different directions meet with equal pressure",
+        "The system midpoint",
+        "The riser location"
+      ],
+      "correct_answer": 1,
+      "explanation": "In grid systems, the balanced point is where flows from different directions meet. Pressures must balance, which requires iterative calculations.",
+      "code_reference": "NFPA 13, Section 27.2"
+    },
+    {
+      "id": "fs_plan_031",
+      "difficulty": "advanced",
+      "question": "What is velocity pressure in hydraulic calculations?",
+      "options": [
+        "Ignored in most calculations",
+        "Pressure due to fluid velocity, usually only significant in large mains",
+        "Always added to friction loss",
+        "Pressure causing velocity"
+      ],
+      "correct_answer": 1,
+      "explanation": "Velocity pressure (Pv = 0.001123 × V²) is often negligible in branch lines but may be significant in large mains and should be considered.",
+      "code_reference": "NFPA 13, Section 27.2"
+    },
+    {
+      "id": "fs_plan_032",
+      "difficulty": "intermediate",
+      "question": "What is the water supply test?",
+      "options": [
+        "Testing sprinklers",
+        "Flow test measuring static and residual pressures to determine available supply",
+        "Pressure gauge calibration",
+        "Pump test"
+      ],
+      "correct_answer": 1,
+      "explanation": "Water supply tests measure static pressure (no flow) and residual pressure (at known flow) to plot the supply curve for hydraulic design.",
+      "code_reference": "NFPA 13, Section 27.2"
+    },
+    {
+      "id": "fs_plan_033",
+      "difficulty": "advanced",
+      "question": "How is water supply graphed against system demand?",
+      "options": [
+        "Bar chart",
+        "Supply curve and demand point on pressure vs. flow graph",
+        "Pie chart",
+        "Table only"
+      ],
+      "correct_answer": 1,
+      "explanation": "The water supply is graphed as a curve from static to residual points. System demand is plotted as a single point. Supply must exceed demand at that flow.",
+      "code_reference": "NFPA 13, Section 27.2"
+    },
+    {
+      "id": "fs_plan_034",
+      "difficulty": "intermediate",
+      "question": "What documentation must be submitted with system plans?",
+      "options": [
+        "Cost estimate only",
+        "Drawings, hydraulic calculations, equipment cut sheets, and installer information",
+        "Building permit only",
+        "Owner signature only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Submittal packages include scaled drawings, hydraulic calculations, manufacturers' data sheets, installer information, and applicable code editions.",
+      "code_reference": "NFPA 13, Section 27.1"
+    },
+    {
+      "id": "fs_plan_035",
+      "difficulty": "intermediate",
+      "question": "What must be included in the drawing legend?",
+      "options": [
+        "Only pipe sizes",
+        "Symbols for sprinklers, valves, fittings, and all plan elements",
+        "Scale only",
+        "North arrow only"
+      ],
+      "correct_answer": 1,
+      "explanation": "The legend must define all symbols used on the drawings including sprinkler types, valve types, pipe materials, and special annotations.",
+      "code_reference": "NFPA 13, Section 27.1"
+    }
+  ]
+}

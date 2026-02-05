@@ -1,0 +1,362 @@
+{
+  "category": "Elevator Mechanic",
+  "subcategory": "Hydraulic Systems",
+  "description": "Hydraulic elevator components, operation, and maintenance",
+  "difficulty_distribution": {
+    "beginner": 8,
+    "intermediate": 10,
+    "advanced": 7
+  },
+  "questions": [
+    {
+      "id": "elev_hyd_001",
+      "difficulty": "beginner",
+      "question": "What type of fluid is typically used in hydraulic elevators?",
+      "options": [
+        "Water",
+        "Petroleum-based hydraulic oil",
+        "Synthetic brake fluid",
+        "Transmission fluid"
+      ],
+      "correct_answer": 1,
+      "explanation": "Hydraulic elevators use petroleum-based hydraulic oil specifically formulated for elevator service, with proper viscosity and fire resistance characteristics.",
+      "code_reference": "ASME A17.1, Section 3.21"
+    },
+    {
+      "id": "elev_hyd_002",
+      "difficulty": "beginner",
+      "question": "What is the primary component that lifts a hydraulic elevator car?",
+      "options": [
+        "Counterweight",
+        "Hydraulic jack (cylinder)",
+        "Traction cables",
+        "Electric motor directly"
+      ],
+      "correct_answer": 1,
+      "explanation": "The hydraulic jack (cylinder) with its plunger directly lifts the elevator car. Oil is pumped into the cylinder, extending the plunger and raising the car.",
+      "code_reference": "ASME A17.1, Section 3.17"
+    },
+    {
+      "id": "elev_hyd_003",
+      "difficulty": "beginner",
+      "question": "How does a hydraulic elevator descend?",
+      "options": [
+        "Pump runs in reverse",
+        "Oil is released back to the tank through a valve",
+        "Counterweight pulls it down",
+        "Electric motor lowers it"
+      ],
+      "correct_answer": 1,
+      "explanation": "During descent, the control valve opens to allow oil to flow from the cylinder back to the tank. The car's weight forces oil out, and descent speed is controlled by the valve.",
+      "code_reference": "ASME A17.1, Section 3.17"
+    },
+    {
+      "id": "elev_hyd_004",
+      "difficulty": "beginner",
+      "question": "What is the purpose of the check valve in a hydraulic elevator?",
+      "options": [
+        "To regulate car speed",
+        "To prevent oil from flowing back when pump stops",
+        "To filter the oil",
+        "To cool the oil"
+      ],
+      "correct_answer": 1,
+      "explanation": "The check valve prevents oil from flowing back to the tank when the pump stops, holding the car at the floor level until descent is commanded.",
+      "code_reference": "ASME A17.1, Section 3.18"
+    },
+    {
+      "id": "elev_hyd_005",
+      "difficulty": "beginner",
+      "question": "What is the typical maximum travel height for a direct-plunger hydraulic elevator?",
+      "options": [
+        "20 feet",
+        "40-50 feet",
+        "100 feet",
+        "200 feet"
+      ],
+      "correct_answer": 1,
+      "explanation": "Direct-plunger hydraulic elevators are typically limited to 40-50 feet of travel due to the length of hole required for the plunger and practical limitations.",
+      "code_reference": "ASME A17.1, Section 3.17"
+    },
+    {
+      "id": "elev_hyd_006",
+      "difficulty": "beginner",
+      "question": "What is a holeless hydraulic elevator?",
+      "options": [
+        "An elevator without a pit",
+        "An elevator with above-ground cylinder mounting",
+        "An elevator without doors",
+        "A freight elevator"
+      ],
+      "correct_answer": 1,
+      "explanation": "Holeless hydraulic elevators have cylinders mounted above ground, eliminating the need for a drilled hole below the pit. They use telescoping or roped configurations.",
+      "code_reference": "ASME A17.1, Section 3.17"
+    },
+    {
+      "id": "elev_hyd_007",
+      "difficulty": "beginner",
+      "question": "What is the purpose of the relief valve in a hydraulic elevator?",
+      "options": [
+        "To relieve pressure when car is at top floor",
+        "To protect against excess pressure in the system",
+        "To release air from the oil",
+        "To control descent speed"
+      ],
+      "correct_answer": 1,
+      "explanation": "The relief valve protects the system by opening to bypass oil when system pressure exceeds a safe level, preventing damage to the pump, cylinder, or piping.",
+      "code_reference": "ASME A17.1, Section 3.18.3"
+    },
+    {
+      "id": "elev_hyd_008",
+      "difficulty": "beginner",
+      "question": "What happens if the hydraulic oil overheats?",
+      "options": [
+        "Nothing, operation continues normally",
+        "Oil viscosity decreases, causing potential operational issues",
+        "The oil freezes",
+        "The pump speeds up"
+      ],
+      "correct_answer": 1,
+      "explanation": "Overheated oil loses viscosity, which can cause internal leakage, reduced efficiency, accelerated wear, and potential seal damage. Proper temperature control is essential.",
+      "code_reference": "ASME A17.1, Section 3.21"
+    },
+    {
+      "id": "elev_hyd_009",
+      "difficulty": "intermediate",
+      "question": "What is the purpose of a PVC liner in a hydraulic elevator jack hole?",
+      "options": [
+        "To prevent ground water contamination",
+        "To protect the cylinder from soil conditions and water",
+        "To lubricate the plunger",
+        "To dampen vibration"
+      ],
+      "correct_answer": 1,
+      "explanation": "PVC liners protect in-ground cylinders from groundwater intrusion and corrosive soil conditions, extending cylinder life and preventing environmental contamination.",
+      "code_reference": "ASME A17.1, Section 3.17.2"
+    },
+    {
+      "id": "elev_hyd_010",
+      "difficulty": "intermediate",
+      "question": "What is the function of the lowering valve (down valve)?",
+      "options": [
+        "To drain the tank",
+        "To control the rate of car descent",
+        "To provide emergency power",
+        "To prevent overspeed going up"
+      ],
+      "correct_answer": 1,
+      "explanation": "The lowering valve (down valve) controls oil flow from the cylinder to the tank during descent, regulating car speed for smooth, controlled downward travel.",
+      "code_reference": "ASME A17.1, Section 3.17"
+    },
+    {
+      "id": "elev_hyd_011",
+      "difficulty": "intermediate",
+      "question": "What type of pump is most commonly used in hydraulic elevators?",
+      "options": [
+        "Centrifugal pump",
+        "Positive displacement (gear or vane) pump",
+        "Submersible pump",
+        "Jet pump"
+      ],
+      "correct_answer": 1,
+      "explanation": "Positive displacement pumps (gear or vane type) are used because they deliver constant flow regardless of pressure, which is essential for consistent elevator operation.",
+      "code_reference": "ASME A17.1, Section 3.18"
+    },
+    {
+      "id": "elev_hyd_012",
+      "difficulty": "intermediate",
+      "question": "What is a roped hydraulic elevator?",
+      "options": [
+        "An elevator with emergency ropes",
+        "An elevator using ropes and sheaves to multiply plunger movement",
+        "A traction elevator with hydraulic backup",
+        "An elevator with rope handrails"
+      ],
+      "correct_answer": 1,
+      "explanation": "Roped hydraulic elevators use ropes and sheaves to multiply the cylinder stroke, allowing greater travel height with shorter cylinders (typically 2:1 ratio).",
+      "code_reference": "ASME A17.1, Section 3.17"
+    },
+    {
+      "id": "elev_hyd_013",
+      "difficulty": "intermediate",
+      "question": "What safety device prevents uncontrolled descent if the hydraulic hose ruptures?",
+      "options": [
+        "Relief valve",
+        "Pipe rupture valve (velocity fuse)",
+        "Check valve",
+        "Lowering valve"
+      ],
+      "correct_answer": 1,
+      "explanation": "The pipe rupture valve (velocity fuse) automatically closes when flow exceeds normal descent rate, preventing uncontrolled descent if a line breaks.",
+      "code_reference": "ASME A17.1, Section 3.18.4"
+    },
+    {
+      "id": "elev_hyd_014",
+      "difficulty": "intermediate",
+      "question": "What is the typical operating pressure range for hydraulic elevators?",
+      "options": [
+        "50-100 psi",
+        "200-500 psi",
+        "500-1000 psi",
+        "2000-3000 psi"
+      ],
+      "correct_answer": 1,
+      "explanation": "Hydraulic elevators typically operate between 200-500 psi, depending on load, travel, and cylinder diameter. System design determines exact pressure.",
+      "code_reference": "ASME A17.1, Section 3.18"
+    },
+    {
+      "id": "elev_hyd_015",
+      "difficulty": "intermediate",
+      "question": "What causes 'settling' or 'creep' in a hydraulic elevator?",
+      "options": [
+        "Motor malfunction",
+        "Internal oil leakage in the control valve or cylinder",
+        "Broken cables",
+        "Governor malfunction"
+      ],
+      "correct_answer": 1,
+      "explanation": "Settling or creep occurs when oil leaks internally past worn seals in the cylinder packing or control valve, causing the car to slowly drop while at a floor.",
+      "code_reference": "ASME A17.1, Section 8.6"
+    },
+    {
+      "id": "elev_hyd_016",
+      "difficulty": "intermediate",
+      "question": "How often should hydraulic oil be analyzed for contamination?",
+      "options": [
+        "Weekly",
+        "Monthly",
+        "Annually or per maintenance schedule",
+        "Every 5 years"
+      ],
+      "correct_answer": 2,
+      "explanation": "Oil analysis should be performed annually or per the maintenance schedule to check for contamination, breakdown, water content, and viscosity changes.",
+      "code_reference": "ASME A17.1, Section 8.6"
+    },
+    {
+      "id": "elev_hyd_017",
+      "difficulty": "intermediate",
+      "question": "What is the function of a muffler in a hydraulic elevator power unit?",
+      "options": [
+        "To cool the oil",
+        "To reduce pump and flow noise",
+        "To filter the oil",
+        "To prevent backflow"
+      ],
+      "correct_answer": 1,
+      "explanation": "Mufflers reduce hydraulic noise from pump pulsation and oil flow, making elevator operation quieter for building occupants.",
+      "code_reference": "ASME A17.1, Section 3.18"
+    },
+    {
+      "id": "elev_hyd_018",
+      "difficulty": "intermediate",
+      "question": "What type of starting method is commonly used for hydraulic elevator pump motors?",
+      "options": [
+        "Direct-on-line only",
+        "Wye-delta starter or soft start",
+        "Variable frequency drive",
+        "Manual start"
+      ],
+      "correct_answer": 1,
+      "explanation": "Wye-delta starters or soft starters are commonly used to reduce inrush current and mechanical stress. VFDs are becoming more common for energy efficiency.",
+      "code_reference": "NEC 620, ASME A17.1"
+    },
+    {
+      "id": "elev_hyd_019",
+      "difficulty": "advanced",
+      "question": "What is the formula to calculate hydraulic elevator cylinder pressure?",
+      "options": [
+        "P = Force × Area",
+        "P = Force / Area",
+        "P = Area / Force",
+        "P = Force × Volume"
+      ],
+      "correct_answer": 1,
+      "explanation": "Pressure = Force / Area. For elevator calculation: P (psi) = Total load (lbs) / Cylinder area (sq in). This determines required system pressure.",
+      "code_reference": "Hydraulic Fundamentals"
+    },
+    {
+      "id": "elev_hyd_020",
+      "difficulty": "advanced",
+      "question": "For a hydraulic elevator with 5000 lb capacity and 6-inch diameter cylinder, what is the approximate required pressure?",
+      "options": [
+        "89 psi",
+        "177 psi",
+        "265 psi",
+        "354 psi"
+      ],
+      "correct_answer": 1,
+      "explanation": "Area = π × 3² = 28.27 sq in. P = 5000 / 28.27 = 177 psi. This is the minimum static pressure; actual system pressure includes car weight and friction.",
+      "code_reference": "Hydraulic Calculations"
+    },
+    {
+      "id": "elev_hyd_021",
+      "difficulty": "advanced",
+      "question": "What factor affects hydraulic elevator leveling accuracy at different temperatures?",
+      "options": [
+        "Motor speed only",
+        "Oil viscosity changes with temperature",
+        "Cable stretch",
+        "Counterweight position"
+      ],
+      "correct_answer": 1,
+      "explanation": "Oil viscosity changes with temperature affect valve response and flow rates, impacting leveling accuracy. Cold oil is thicker and flows slower; hot oil flows faster.",
+      "code_reference": "ASME A17.1, Section 3.21"
+    },
+    {
+      "id": "elev_hyd_022",
+      "difficulty": "advanced",
+      "question": "What is the purpose of a tank heater in a hydraulic elevator system?",
+      "options": [
+        "To prevent pump damage in cold conditions",
+        "To increase car speed",
+        "To reduce oil consumption",
+        "To improve lighting"
+      ],
+      "correct_answer": 0,
+      "explanation": "Tank heaters maintain minimum oil temperature in cold conditions, ensuring proper viscosity for pump operation and preventing cavitation or sluggish response.",
+      "code_reference": "ASME A17.1, Section 3.21"
+    },
+    {
+      "id": "elev_hyd_023",
+      "difficulty": "advanced",
+      "question": "In a 2:1 roped hydraulic system, if the cylinder stroke is 25 feet, what is the car travel?",
+      "options": [
+        "12.5 feet",
+        "25 feet",
+        "50 feet",
+        "75 feet"
+      ],
+      "correct_answer": 2,
+      "explanation": "In a 2:1 roping configuration, car travel is twice the cylinder stroke. 25 feet × 2 = 50 feet of car travel.",
+      "code_reference": "ASME A17.1, Section 3.17"
+    },
+    {
+      "id": "elev_hyd_024",
+      "difficulty": "advanced",
+      "question": "What test verifies proper operation of the pipe rupture valve?",
+      "options": [
+        "Annual flow test at maximum speed",
+        "Monthly visual inspection",
+        "Full-speed descent with valve disconnected",
+        "Test per manufacturer's instructions during periodic testing"
+      ],
+      "correct_answer": 3,
+      "explanation": "Pipe rupture valve testing must follow manufacturer's instructions as part of periodic testing, as improper testing could be dangerous. Never defeat safety devices for testing.",
+      "code_reference": "ASME A17.1, Section 8.6"
+    },
+    {
+      "id": "elev_hyd_025",
+      "difficulty": "advanced",
+      "question": "What is the minimum underground cylinder casing wall thickness typically required?",
+      "options": [
+        "1/8 inch",
+        "1/4 inch",
+        "3/8 inch",
+        "Per manufacturer and code requirements"
+      ],
+      "correct_answer": 3,
+      "explanation": "Cylinder wall thickness is determined by the manufacturer based on pressure, diameter, and material, and must meet ASME A17.1 requirements for the application.",
+      "code_reference": "ASME A17.1, Section 3.17"
+    }
+  ]
+}

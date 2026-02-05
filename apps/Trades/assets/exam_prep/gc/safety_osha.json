@@ -1,0 +1,1708 @@
+{
+  "category": "Safety and OSHA",
+  "trade": "gc",
+  "description": "OSHA regulations, fall protection, scaffolding, trenching, PPE, hazard communication",
+  "question_count": 100,
+  "questions": [
+    {
+      "id": "gc-safety-001",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Fall Protection",
+      "question": "At what height must fall protection be provided for workers in general construction?",
+      "options": [
+        {"id": "a", "text": "4 feet"},
+        {"id": "b", "text": "6 feet", "correct": true},
+        {"id": "c", "text": "10 feet"},
+        {"id": "d", "text": "15 feet"}
+      ],
+      "explanation": "Per OSHA 1926.501(b)(1), fall protection must be provided at 6 feet or more above a lower level in general construction. Different heights apply to specific situations.",
+      "code_ref": "OSHA 1926.501(b)(1)",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-002",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Fall Protection",
+      "question": "What are the three main types of fall protection systems?",
+      "options": [
+        {"id": "a", "text": "Helmets, gloves, boots"},
+        {"id": "b", "text": "Guardrails, safety nets, personal fall arrest systems", "correct": true},
+        {"id": "c", "text": "Ladders, scaffolds, lifts"},
+        {"id": "d", "text": "Warning lines, monitors, barricades"}
+      ],
+      "explanation": "Per OSHA 1926.502, the three conventional fall protection systems are guardrail systems, safety net systems, and personal fall arrest systems (PFAS).",
+      "code_ref": "OSHA 1926.502",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-003",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Fall Protection",
+      "question": "What is the required height for a top rail in a guardrail system?",
+      "options": [
+        {"id": "a", "text": "36 inches"},
+        {"id": "b", "text": "39 to 45 inches"},
+        {"id": "c", "text": "42 inches, plus or minus 3 inches", "correct": true},
+        {"id": "d", "text": "48 inches"}
+      ],
+      "explanation": "Per OSHA 1926.502(b)(1), guardrail top rails must be 42 inches high, plus or minus 3 inches, above the walking/working surface.",
+      "code_ref": "OSHA 1926.502(b)(1)",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-004",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Fall Protection",
+      "question": "What force must a guardrail top rail withstand?",
+      "options": [
+        {"id": "a", "text": "100 pounds"},
+        {"id": "b", "text": "150 pounds"},
+        {"id": "c", "text": "200 pounds", "correct": true},
+        {"id": "d", "text": "300 pounds"}
+      ],
+      "explanation": "Per OSHA 1926.502(b)(3), guardrail top rails must withstand at least 200 pounds of force applied in any outward or downward direction.",
+      "code_ref": "OSHA 1926.502(b)(3)",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-005",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Fall Protection",
+      "question": "What is the maximum free fall distance permitted with a personal fall arrest system?",
+      "options": [
+        {"id": "a", "text": "4 feet"},
+        {"id": "b", "text": "6 feet", "correct": true},
+        {"id": "c", "text": "10 feet"},
+        {"id": "d", "text": "12 feet"}
+      ],
+      "explanation": "Per OSHA 1926.502(d)(16), a personal fall arrest system must limit free fall to 6 feet or less and limit maximum arresting force to 1,800 pounds.",
+      "code_ref": "OSHA 1926.502(d)(16)",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-006",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Fall Protection",
+      "question": "What is the minimum tensile strength required for an anchor point in a personal fall arrest system?",
+      "options": [
+        {"id": "a", "text": "1,800 pounds"},
+        {"id": "b", "text": "3,000 pounds"},
+        {"id": "c", "text": "5,000 pounds", "correct": true},
+        {"id": "d", "text": "10,000 pounds"}
+      ],
+      "explanation": "Per OSHA 1926.502(d)(15), anchorages for personal fall arrest systems must be capable of supporting at least 5,000 pounds per worker attached.",
+      "code_ref": "OSHA 1926.502(d)(15)",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-007",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Fall Protection",
+      "question": "After a fall arrest, what must be done with the personal fall arrest equipment?",
+      "options": [
+        {"id": "a", "text": "Continue using it"},
+        {"id": "b", "text": "Remove from service and inspect before reuse", "correct": true},
+        {"id": "c", "text": "Return it to the manufacturer"},
+        {"id": "d", "text": "Use it for training only"}
+      ],
+      "explanation": "Per OSHA 1926.502(d)(21), personal fall arrest systems and components subjected to impact loading must be immediately removed from service and not used again until inspected and determined to be undamaged.",
+      "code_ref": "OSHA 1926.502(d)(21)",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-008",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Fall Protection",
+      "question": "What is a warning line system?",
+      "options": [
+        {"id": "a", "text": "Caution tape around the job site"},
+        {"id": "b", "text": "A barrier erected to warn workers they are approaching an unprotected edge", "correct": true},
+        {"id": "c", "text": "Verbal warnings from a supervisor"},
+        {"id": "d", "text": "Signs posted at entrances"}
+      ],
+      "explanation": "Per OSHA 1926.502(f), a warning line system is a barrier erected on a roof to warn workers they are approaching an unprotected edge. It's used with other controls on low-slope roofs.",
+      "code_ref": "OSHA 1926.502(f)",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-009",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Fall Protection",
+      "question": "How far from the roof edge must a warning line be erected?",
+      "options": [
+        {"id": "a", "text": "3 feet"},
+        {"id": "b", "text": "6 feet", "correct": true},
+        {"id": "c", "text": "10 feet"},
+        {"id": "d", "text": "15 feet"}
+      ],
+      "explanation": "Per OSHA 1926.502(f)(1), warning lines must be erected not less than 6 feet from the roof edge.",
+      "code_ref": "OSHA 1926.502(f)(1)",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-010",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Fall Protection",
+      "question": "What is the role of a safety monitor?",
+      "options": [
+        {"id": "a", "text": "To install guardrails"},
+        {"id": "b", "text": "To warn workers when they approach fall hazards", "correct": true},
+        {"id": "c", "text": "To repair equipment"},
+        {"id": "d", "text": "To conduct training"}
+      ],
+      "explanation": "Per OSHA 1926.502(h), a safety monitor is a competent person who warns workers when they appear to be unaware of a fall hazard or are acting unsafely.",
+      "code_ref": "OSHA 1926.502(h)",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-011",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Scaffolding",
+      "question": "Who must inspect scaffolds before each work shift?",
+      "options": [
+        {"id": "a", "text": "Any worker"},
+        {"id": "b", "text": "A competent person", "correct": true},
+        {"id": "c", "text": "OSHA inspector"},
+        {"id": "d", "text": "The project owner"}
+      ],
+      "explanation": "Per OSHA 1926.451(f)(3), scaffolds must be inspected by a competent person before each work shift and after any occurrence that could affect structural integrity.",
+      "code_ref": "OSHA 1926.451(f)(3)",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-012",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Scaffolding",
+      "question": "What is the maximum height-to-base ratio for a freestanding scaffold?",
+      "options": [
+        {"id": "a", "text": "2:1"},
+        {"id": "b", "text": "3:1"},
+        {"id": "c", "text": "4:1", "correct": true},
+        {"id": "d", "text": "5:1"}
+      ],
+      "explanation": "Per OSHA 1926.451(c)(1), freestanding scaffolds must have a height-to-base width ratio of no more than 4:1 unless guyed, tied, or braced.",
+      "code_ref": "OSHA 1926.451(c)(1)",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-013",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Scaffolding",
+      "question": "What is the minimum width for a scaffold platform?",
+      "options": [
+        {"id": "a", "text": "14 inches"},
+        {"id": "b", "text": "18 inches", "correct": true},
+        {"id": "c", "text": "24 inches"},
+        {"id": "d", "text": "30 inches"}
+      ],
+      "explanation": "Per OSHA 1926.451(b)(2), scaffold platforms must be at least 18 inches wide, unless the work area is too narrow for that width.",
+      "code_ref": "OSHA 1926.451(b)(2)",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-014",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Scaffolding",
+      "question": "What is the maximum gap permitted between scaffold planks and the structure being worked on?",
+      "options": [
+        {"id": "a", "text": "6 inches"},
+        {"id": "b", "text": "10 inches"},
+        {"id": "c", "text": "14 inches", "correct": true},
+        {"id": "d", "text": "18 inches"}
+      ],
+      "explanation": "Per OSHA 1926.451(b)(3), the front edge of scaffold platforms must be no more than 14 inches from the face of the work, unless guardrails are used.",
+      "code_ref": "OSHA 1926.451(b)(3)",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-015",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Scaffolding",
+      "question": "At what height is fall protection required on scaffolds?",
+      "options": [
+        {"id": "a", "text": "4 feet"},
+        {"id": "b", "text": "6 feet"},
+        {"id": "c", "text": "10 feet", "correct": true},
+        {"id": "d", "text": "15 feet"}
+      ],
+      "explanation": "Per OSHA 1926.451(g)(1), fall protection is required on scaffolds more than 10 feet above a lower level.",
+      "code_ref": "OSHA 1926.451(g)(1)",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-016",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Scaffolding",
+      "question": "What load must a scaffold platform be capable of supporting?",
+      "options": [
+        {"id": "a", "text": "2 times the intended load"},
+        {"id": "b", "text": "3 times the intended load"},
+        {"id": "c", "text": "4 times the intended load", "correct": true},
+        {"id": "d", "text": "5 times the intended load"}
+      ],
+      "explanation": "Per OSHA 1926.451(a)(1), scaffolds must be capable of supporting at least 4 times the maximum intended load without failure.",
+      "code_ref": "OSHA 1926.451(a)(1)",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-017",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Scaffolding",
+      "question": "What must be done before moving a rolling scaffold?",
+      "options": [
+        {"id": "a", "text": "Add more workers"},
+        {"id": "b", "text": "Remove all workers, materials, and equipment from the platform", "correct": true},
+        {"id": "c", "text": "Lower the platform"},
+        {"id": "d", "text": "Nothing special is required"}
+      ],
+      "explanation": "Per OSHA 1926.452(w)(6), workers must not ride on mobile scaffolds unless specific conditions are met, and loose materials must be secured before moving.",
+      "code_ref": "OSHA 1926.452(w)(6)",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-018",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Scaffolding",
+      "question": "What must happen to scaffold wheels when the scaffold is stationary?",
+      "options": [
+        {"id": "a", "text": "Remove them"},
+        {"id": "b", "text": "Lock them", "correct": true},
+        {"id": "c", "text": "Nothing"},
+        {"id": "d", "text": "Cover them"}
+      ],
+      "explanation": "Per OSHA 1926.452(w)(2), scaffold casters and wheels must be locked when the scaffold is stationary to prevent unintended movement.",
+      "code_ref": "OSHA 1926.452(w)(2)",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-019",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Ladders",
+      "question": "How far above the landing surface must a ladder extend?",
+      "options": [
+        {"id": "a", "text": "2 feet"},
+        {"id": "b", "text": "3 feet", "correct": true},
+        {"id": "c", "text": "4 feet"},
+        {"id": "d", "text": "5 feet"}
+      ],
+      "explanation": "Per OSHA 1926.1053(b)(1), the side rails of a ladder must extend at least 3 feet above the upper landing surface.",
+      "code_ref": "OSHA 1926.1053(b)(1)",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-020",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Ladders",
+      "question": "What is the proper angle for setting up a straight ladder?",
+      "options": [
+        {"id": "a", "text": "1:2 ratio (base to height)"},
+        {"id": "b", "text": "1:3 ratio (base to height)"},
+        {"id": "c", "text": "1:4 ratio (base to height)", "correct": true},
+        {"id": "d", "text": "1:5 ratio (base to height)"}
+      ],
+      "explanation": "Per OSHA 1926.1053(b)(5)(i), non-self-supporting ladders must be set at a 1:4 ratio - the base should be 1 foot out for every 4 feet of height.",
+      "code_ref": "OSHA 1926.1053(b)(5)(i)",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-021",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Ladders",
+      "question": "What is the minimum clear distance between ladder rungs?",
+      "options": [
+        {"id": "a", "text": "8 inches"},
+        {"id": "b", "text": "10 inches", "correct": true},
+        {"id": "c", "text": "12 inches"},
+        {"id": "d", "text": "14 inches"}
+      ],
+      "explanation": "Per OSHA 1926.1053(a)(3)(i), ladder rungs must be spaced uniformly, not less than 10 inches and not more than 14 inches apart.",
+      "code_ref": "OSHA 1926.1053(a)(3)(i)",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-022",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Ladders",
+      "question": "When climbing a ladder, a worker should maintain:",
+      "options": [
+        {"id": "a", "text": "One point of contact"},
+        {"id": "b", "text": "Two points of contact"},
+        {"id": "c", "text": "Three points of contact", "correct": true},
+        {"id": "d", "text": "Both hands free"}
+      ],
+      "explanation": "Per OSHA 1926.1053(b)(20), workers must maintain three points of contact (two hands and one foot, or two feet and one hand) when climbing ladders.",
+      "code_ref": "OSHA 1926.1053(b)(20)",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-023",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Ladders",
+      "question": "A defective ladder must be:",
+      "options": [
+        {"id": "a", "text": "Used with caution"},
+        {"id": "b", "text": "Tagged and removed from service", "correct": true},
+        {"id": "c", "text": "Used only by experienced workers"},
+        {"id": "d", "text": "Reported at the end of the day"}
+      ],
+      "explanation": "Per OSHA 1926.1053(b)(16), defective ladders must be immediately marked as defective or tagged \"Do Not Use\" and withdrawn from service until repaired.",
+      "code_ref": "OSHA 1926.1053(b)(16)",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-024",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Trenching",
+      "question": "At what depth must protective systems be used in excavations?",
+      "options": [
+        {"id": "a", "text": "3 feet"},
+        {"id": "b", "text": "4 feet"},
+        {"id": "c", "text": "5 feet", "correct": true},
+        {"id": "d", "text": "6 feet"}
+      ],
+      "explanation": "Per OSHA 1926.652(a)(1), protective systems (sloping, shoring, or shielding) are required for excavations 5 feet or more in depth, unless the excavation is in stable rock.",
+      "code_ref": "OSHA 1926.652(a)(1)",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-025",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Trenching",
+      "question": "What are the three main types of protective systems for excavations?",
+      "options": [
+        {"id": "a", "text": "Barriers, signs, fences"},
+        {"id": "b", "text": "Sloping, shoring, and shielding", "correct": true},
+        {"id": "c", "text": "Pumps, dewatering, drainage"},
+        {"id": "d", "text": "Bracing, cribbing, lagging"}
+      ],
+      "explanation": "Per OSHA 1926.652, the three primary protective systems are sloping/benching, shoring (hydraulic, timber, etc.), and shielding (trench boxes).",
+      "code_ref": "OSHA 1926.652",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-026",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Trenching",
+      "question": "What is Type A soil?",
+      "options": [
+        {"id": "a", "text": "The weakest soil"},
+        {"id": "b", "text": "Cohesive soil with unconfined compressive strength of 1.5 tsf or greater", "correct": true},
+        {"id": "c", "text": "Sandy soil"},
+        {"id": "d", "text": "Wet soil"}
+      ],
+      "explanation": "Per OSHA 1926.652 Appendix A, Type A soil is the most stable, with unconfined compressive strength of 1.5 tons per square foot (tsf) or greater. Examples include clay and hardpan.",
+      "code_ref": "OSHA 1926.652 Appendix A",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-027",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Trenching",
+      "question": "What is the maximum allowable slope for Type C soil?",
+      "options": [
+        {"id": "a", "text": "3/4:1 (53 degrees)"},
+        {"id": "b", "text": "1:1 (45 degrees)"},
+        {"id": "c", "text": "1-1/2:1 (34 degrees)", "correct": true},
+        {"id": "d", "text": "2:1 (27 degrees)"}
+      ],
+      "explanation": "Per OSHA 1926.652 Appendix B, Type C soil (the least stable) requires a maximum slope of 1-1/2:1 (1.5 horizontal to 1 vertical, or 34 degrees from horizontal).",
+      "code_ref": "OSHA 1926.652 Appendix B",
+      "difficulty": "hard",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-028",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Trenching",
+      "question": "Who must classify soil and inspect excavations?",
+      "options": [
+        {"id": "a", "text": "Any worker"},
+        {"id": "b", "text": "A competent person", "correct": true},
+        {"id": "c", "text": "An OSHA inspector"},
+        {"id": "d", "text": "The equipment operator"}
+      ],
+      "explanation": "Per OSHA 1926.651(k)(1), a competent person must inspect excavations daily before work begins, after rain, and as conditions change. They must also classify soil.",
+      "code_ref": "OSHA 1926.651(k)(1)",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-029",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Trenching",
+      "question": "How close to the edge of an excavation must spoil piles be kept?",
+      "options": [
+        {"id": "a", "text": "1 foot"},
+        {"id": "b", "text": "2 feet", "correct": true},
+        {"id": "c", "text": "4 feet"},
+        {"id": "d", "text": "6 feet"}
+      ],
+      "explanation": "Per OSHA 1926.651(j)(2), spoil piles must be kept at least 2 feet from the edge of the excavation to prevent material from falling back in.",
+      "code_ref": "OSHA 1926.651(j)(2)",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-030",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Trenching",
+      "question": "What is the maximum spacing for exits (ladders, ramps, stairs) in trenches?",
+      "options": [
+        {"id": "a", "text": "15 feet"},
+        {"id": "b", "text": "25 feet", "correct": true},
+        {"id": "c", "text": "50 feet"},
+        {"id": "d", "text": "100 feet"}
+      ],
+      "explanation": "Per OSHA 1926.651(c)(2), means of egress (ladders, ramps, stairs) must be located so that no worker has to travel more than 25 feet laterally to reach one.",
+      "code_ref": "OSHA 1926.651(c)(2)",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-031",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Trenching",
+      "question": "What must be done before excavation work begins?",
+      "options": [
+        {"id": "a", "text": "Start digging immediately"},
+        {"id": "b", "text": "Locate and protect underground utilities", "correct": true},
+        {"id": "c", "text": "Only mark the dig area"},
+        {"id": "d", "text": "Notify neighbors"}
+      ],
+      "explanation": "Per OSHA 1926.651(b)(1), the estimated location of underground utilities must be determined before excavation begins by contacting utility companies or using call-before-you-dig services.",
+      "code_ref": "OSHA 1926.651(b)(1)",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-032",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Trenching",
+      "question": "What is a trench box (shield)?",
+      "options": [
+        {"id": "a", "text": "A storage container"},
+        {"id": "b", "text": "A structure that protects workers from cave-ins", "correct": true},
+        {"id": "c", "text": "A tool box"},
+        {"id": "d", "text": "A ventilation system"}
+      ],
+      "explanation": "Per OSHA 1926.652(c), a trench shield (trench box) is a structure designed to withstand cave-in forces and protect workers inside the excavation.",
+      "code_ref": "OSHA 1926.652(c)",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-033",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "PPE",
+      "question": "When is head protection required on construction sites?",
+      "options": [
+        {"id": "a", "text": "Only in designated areas"},
+        {"id": "b", "text": "When there is danger of head injury from falling objects", "correct": true},
+        {"id": "c", "text": "Only underground"},
+        {"id": "d", "text": "Never required"}
+      ],
+      "explanation": "Per OSHA 1926.100(a), employees must wear protective helmets when there is possible danger of head injury from impact, falling objects, or electrical shock.",
+      "code_ref": "OSHA 1926.100(a)",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-034",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "PPE",
+      "question": "What standard must construction hard hats meet?",
+      "options": [
+        {"id": "a", "text": "OSHA 1910"},
+        {"id": "b", "text": "ANSI Z89.1", "correct": true},
+        {"id": "c", "text": "NFPA 70"},
+        {"id": "d", "text": "UL Listed"}
+      ],
+      "explanation": "Per OSHA 1926.100(b), protective helmets must comply with ANSI Z89.1 (American National Standard for Industrial Head Protection).",
+      "code_ref": "OSHA 1926.100(b)",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-035",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "PPE",
+      "question": "When is eye protection required?",
+      "options": [
+        {"id": "a", "text": "Only when welding"},
+        {"id": "b", "text": "When there is danger of eye injury from flying particles, chemicals, or radiation", "correct": true},
+        {"id": "c", "text": "Only outdoors"},
+        {"id": "d", "text": "Only in dusty conditions"}
+      ],
+      "explanation": "Per OSHA 1926.102(a)(1), eye protection is required when exposed to hazards such as flying particles, molten metal, chemicals, gases, or harmful light radiation.",
+      "code_ref": "OSHA 1926.102(a)(1)",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-036",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "PPE",
+      "question": "What is the minimum shade number for welding with SMAW (stick welding) at 100-150 amps?",
+      "options": [
+        {"id": "a", "text": "Shade 8"},
+        {"id": "b", "text": "Shade 10", "correct": true},
+        {"id": "c", "text": "Shade 12"},
+        {"id": "d", "text": "Shade 14"}
+      ],
+      "explanation": "Per OSHA 1926.102 Table E-2, shielded metal arc welding (SMAW) at 100-150 amps requires minimum shade 10 eye protection.",
+      "code_ref": "OSHA 1926.102 Table E-2",
+      "difficulty": "hard",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-037",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "PPE",
+      "question": "Who is responsible for providing personal protective equipment?",
+      "options": [
+        {"id": "a", "text": "Employees"},
+        {"id": "b", "text": "The employer", "correct": true},
+        {"id": "c", "text": "OSHA"},
+        {"id": "d", "text": "Insurance companies"}
+      ],
+      "explanation": "Per OSHA 1926.95(d), employers must provide required PPE at no cost to employees, with limited exceptions for safety footwear and prescription safety eyewear.",
+      "code_ref": "OSHA 1926.95(d)",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-038",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "PPE",
+      "question": "When is hearing protection required?",
+      "options": [
+        {"id": "a", "text": "Only when employees request it"},
+        {"id": "b", "text": "When noise exposure reaches 85 dBA over an 8-hour TWA", "correct": true},
+        {"id": "c", "text": "On all construction sites"},
+        {"id": "d", "text": "Only indoors"}
+      ],
+      "explanation": "Per OSHA 1926.52, hearing protection is required when employee noise exposure equals or exceeds an 8-hour time-weighted average of 85 decibels.",
+      "code_ref": "OSHA 1926.52",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-039",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "PPE",
+      "question": "What is the permissible noise exposure limit for an 8-hour workday?",
+      "options": [
+        {"id": "a", "text": "85 dBA"},
+        {"id": "b", "text": "90 dBA", "correct": true},
+        {"id": "c", "text": "95 dBA"},
+        {"id": "d", "text": "100 dBA"}
+      ],
+      "explanation": "Per OSHA 1926.52 Table D-2, the permissible noise exposure for an 8-hour duration is 90 dBA. Higher levels are permitted for shorter durations.",
+      "code_ref": "OSHA 1926.52 Table D-2",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-040",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "PPE",
+      "question": "What type of gloves should NOT be used when working with rotating machinery?",
+      "options": [
+        {"id": "a", "text": "Leather gloves"},
+        {"id": "b", "text": "Any loose-fitting gloves that can get caught", "correct": true},
+        {"id": "c", "text": "Rubber gloves"},
+        {"id": "d", "text": "Cotton gloves"}
+      ],
+      "explanation": "Loose-fitting gloves can be caught by rotating machinery and pull the worker's hand into the equipment. Proper selection of PPE considers the hazard type.",
+      "code_ref": "OSHA 1926.95(c)",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-041",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Hazard Communication",
+      "question": "What is the purpose of an SDS (Safety Data Sheet)?",
+      "options": [
+        {"id": "a", "text": "To list product prices"},
+        {"id": "b", "text": "To provide hazard information about chemicals", "correct": true},
+        {"id": "c", "text": "To track inventory"},
+        {"id": "d", "text": "To document training"}
+      ],
+      "explanation": "Per OSHA 1910.1200, Safety Data Sheets provide comprehensive information about chemical hazards, safe handling, storage, emergency procedures, and protective measures.",
+      "code_ref": "OSHA 1910.1200",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-042",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Hazard Communication",
+      "question": "How many sections are in a GHS-compliant Safety Data Sheet?",
+      "options": [
+        {"id": "a", "text": "8 sections"},
+        {"id": "b", "text": "12 sections"},
+        {"id": "c", "text": "16 sections", "correct": true},
+        {"id": "d", "text": "20 sections"}
+      ],
+      "explanation": "Per OSHA 1910.1200 Appendix D, GHS-compliant Safety Data Sheets have 16 standardized sections covering identification, hazards, composition, first aid, handling, exposure controls, and more.",
+      "code_ref": "OSHA 1910.1200 Appendix D",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-043",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Hazard Communication",
+      "question": "Where must Safety Data Sheets be kept?",
+      "options": [
+        {"id": "a", "text": "In the main office only"},
+        {"id": "b", "text": "Readily accessible to employees in the work area", "correct": true},
+        {"id": "c", "text": "Locked in a cabinet"},
+        {"id": "d", "text": "With the chemical manufacturer"}
+      ],
+      "explanation": "Per OSHA 1910.1200(g)(8), employers must ensure SDSs are readily accessible to employees during their work shift. Electronic access is permitted if no barriers exist.",
+      "code_ref": "OSHA 1910.1200(g)(8)",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-044",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Hazard Communication",
+      "question": "What information must be on a chemical container label?",
+      "options": [
+        {"id": "a", "text": "Only the product name"},
+        {"id": "b", "text": "Product identifier, signal word, hazard statements, and precautionary statements", "correct": true},
+        {"id": "c", "text": "Only the manufacturer name"},
+        {"id": "d", "text": "Only the date of manufacture"}
+      ],
+      "explanation": "Per OSHA 1910.1200(f), labels must include product identifier, signal word (Danger or Warning), hazard statements, precautionary statements, pictograms, and supplier information.",
+      "code_ref": "OSHA 1910.1200(f)",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-045",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Hazard Communication",
+      "question": "What does a skull and crossbones pictogram indicate?",
+      "options": [
+        {"id": "a", "text": "Flammable"},
+        {"id": "b", "text": "Acute toxicity (fatal or toxic)", "correct": true},
+        {"id": "c", "text": "Corrosive"},
+        {"id": "d", "text": "Environmental hazard"}
+      ],
+      "explanation": "Per GHS hazard communication standards, the skull and crossbones pictogram indicates acute toxicity - the substance can be fatal or toxic if inhaled, ingested, or absorbed through skin.",
+      "code_ref": "OSHA 1910.1200 Appendix C",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-046",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Electrical",
+      "question": "What is the minimum safe approach distance for qualified workers to energized 50kV lines?",
+      "options": [
+        {"id": "a", "text": "6 feet"},
+        {"id": "b", "text": "10 feet", "correct": true},
+        {"id": "c", "text": "15 feet"},
+        {"id": "d", "text": "20 feet"}
+      ],
+      "explanation": "Per OSHA 1926.97 Table V-1, the minimum approach distance for 50kV is 10 feet. Distances increase with voltage level.",
+      "code_ref": "OSHA 1926.97 Table V-1",
+      "difficulty": "hard",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-047",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Electrical",
+      "question": "What is GFCI protection?",
+      "options": [
+        {"id": "a", "text": "Overcurrent protection"},
+        {"id": "b", "text": "Protection that detects ground faults and shuts off power", "correct": true},
+        {"id": "c", "text": "Surge protection"},
+        {"id": "d", "text": "Arc flash protection"}
+      ],
+      "explanation": "Per OSHA 1926.405(a)(2)(ii), a Ground Fault Circuit Interrupter detects current leakage to ground and disconnects power to prevent electrocution.",
+      "code_ref": "OSHA 1926.405(a)(2)(ii)",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-048",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Electrical",
+      "question": "What protection is required for all 120-volt, single-phase, 15- and 20-ampere receptacles on construction sites?",
+      "options": [
+        {"id": "a", "text": "Standard breakers"},
+        {"id": "b", "text": "GFCI protection", "correct": true},
+        {"id": "c", "text": "Surge protection"},
+        {"id": "d", "text": "No special protection"}
+      ],
+      "explanation": "Per OSHA 1926.405(a)(2)(ii), all 120V, single-phase, 15- and 20-amp receptacles on construction sites must have GFCI protection.",
+      "code_ref": "OSHA 1926.405(a)(2)(ii)",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-049",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Electrical",
+      "question": "What must be done before working on electrical equipment?",
+      "options": [
+        {"id": "a", "text": "Work can proceed without precautions"},
+        {"id": "b", "text": "De-energize and lockout/tagout the circuit", "correct": true},
+        {"id": "c", "text": "Only wear rubber gloves"},
+        {"id": "d", "text": "Notify OSHA"}
+      ],
+      "explanation": "Per OSHA 1926.417, circuits must be de-energized before work begins, and lockout/tagout procedures must be followed to prevent accidental energization.",
+      "code_ref": "OSHA 1926.417",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-050",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Electrical",
+      "question": "What color are equipment grounding conductors?",
+      "options": [
+        {"id": "a", "text": "Black"},
+        {"id": "b", "text": "White"},
+        {"id": "c", "text": "Green or green with yellow stripes", "correct": true},
+        {"id": "d", "text": "Red"}
+      ],
+      "explanation": "Per OSHA 1926.405(g)(2)(iii) and NEC, equipment grounding conductors must be identified by a continuous green color or green with yellow stripes.",
+      "code_ref": "OSHA 1926.405(g)(2)(iii)",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-051",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Fire Protection",
+      "question": "What class of fire involves ordinary combustibles like wood and paper?",
+      "options": [
+        {"id": "a", "text": "Class A", "correct": true},
+        {"id": "b", "text": "Class B"},
+        {"id": "c", "text": "Class C"},
+        {"id": "d", "text": "Class D"}
+      ],
+      "explanation": "Per OSHA 1926.150, Class A fires involve ordinary combustibles such as wood, paper, cloth, and plastics.",
+      "code_ref": "OSHA 1926.150",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-052",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Fire Protection",
+      "question": "What class of fire involves flammable liquids?",
+      "options": [
+        {"id": "a", "text": "Class A"},
+        {"id": "b", "text": "Class B", "correct": true},
+        {"id": "c", "text": "Class C"},
+        {"id": "d", "text": "Class D"}
+      ],
+      "explanation": "Per OSHA 1926.150, Class B fires involve flammable liquids, gases, and greases such as gasoline, oil, and solvents.",
+      "code_ref": "OSHA 1926.150",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-053",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Fire Protection",
+      "question": "What class of fire involves energized electrical equipment?",
+      "options": [
+        {"id": "a", "text": "Class A"},
+        {"id": "b", "text": "Class B"},
+        {"id": "c", "text": "Class C", "correct": true},
+        {"id": "d", "text": "Class D"}
+      ],
+      "explanation": "Per OSHA 1926.150, Class C fires involve energized electrical equipment where the electrical non-conductivity of the extinguishing media is important.",
+      "code_ref": "OSHA 1926.150",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-054",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Fire Protection",
+      "question": "How far can the travel distance be to a fire extinguisher?",
+      "options": [
+        {"id": "a", "text": "50 feet"},
+        {"id": "b", "text": "75 feet"},
+        {"id": "c", "text": "100 feet", "correct": true},
+        {"id": "d", "text": "150 feet"}
+      ],
+      "explanation": "Per OSHA 1926.150(c)(1)(ii), fire extinguishers must be located so that the travel distance is no more than 100 feet.",
+      "code_ref": "OSHA 1926.150(c)(1)(ii)",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-055",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Fire Protection",
+      "question": "How often must fire extinguishers be inspected?",
+      "options": [
+        {"id": "a", "text": "Daily"},
+        {"id": "b", "text": "Weekly"},
+        {"id": "c", "text": "Monthly", "correct": true},
+        {"id": "d", "text": "Annually"}
+      ],
+      "explanation": "Per OSHA 1926.150(c)(1)(viii), portable fire extinguishers must be inspected periodically and maintained in operating condition. Monthly visual inspection is standard practice.",
+      "code_ref": "OSHA 1926.150(c)(1)(viii)",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-056",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Fire Protection",
+      "question": "What does PASS stand for when using a fire extinguisher?",
+      "options": [
+        {"id": "a", "text": "Push, Aim, Spray, Sweep"},
+        {"id": "b", "text": "Pull, Aim, Squeeze, Sweep", "correct": true},
+        {"id": "c", "text": "Point, Activate, Spray, Stop"},
+        {"id": "d", "text": "Prepare, Act, Spray, Secure"}
+      ],
+      "explanation": "PASS is the standard method: Pull the pin, Aim at the base of the fire, Squeeze the handle, and Sweep from side to side.",
+      "code_ref": "OSHA Fire Safety Training",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-057",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Confined Spaces",
+      "question": "What defines a confined space?",
+      "options": [
+        {"id": "a", "text": "Any small room"},
+        {"id": "b", "text": "A space large enough to enter with limited entry/exit and not designed for continuous occupancy", "correct": true},
+        {"id": "c", "text": "Any underground space"},
+        {"id": "d", "text": "A locked room"}
+      ],
+      "explanation": "Per OSHA 1926.1202, a confined space is large enough for a worker to enter and perform work, has limited or restricted means of entry/exit, and is not designed for continuous occupancy.",
+      "code_ref": "OSHA 1926.1202",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-058",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Confined Spaces",
+      "question": "What additional hazards make a confined space a permit-required confined space?",
+      "options": [
+        {"id": "a", "text": "Only size"},
+        {"id": "b", "text": "Atmospheric hazards, engulfment, entrapment, or other serious hazards", "correct": true},
+        {"id": "c", "text": "Only temperature"},
+        {"id": "d", "text": "Only lighting conditions"}
+      ],
+      "explanation": "Per OSHA 1926.1202, a permit-required confined space has hazardous atmosphere potential, engulfment hazard, configuration that could trap/asphyxiate, or other recognized serious safety hazards.",
+      "code_ref": "OSHA 1926.1202",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-059",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Confined Spaces",
+      "question": "What is the minimum oxygen level for a safe confined space atmosphere?",
+      "options": [
+        {"id": "a", "text": "16%"},
+        {"id": "b", "text": "19.5%", "correct": true},
+        {"id": "c", "text": "21%"},
+        {"id": "d", "text": "23%"}
+      ],
+      "explanation": "Per OSHA 1926.1203, a hazardous atmosphere includes oxygen deficiency below 19.5% or oxygen enrichment above 23.5%.",
+      "code_ref": "OSHA 1926.1203",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-060",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Confined Spaces",
+      "question": "Who must be stationed outside a permit-required confined space during entry?",
+      "options": [
+        {"id": "a", "text": "A supervisor"},
+        {"id": "b", "text": "An attendant", "correct": true},
+        {"id": "c", "text": "An OSHA inspector"},
+        {"id": "d", "text": "A rescue team member"}
+      ],
+      "explanation": "Per OSHA 1926.1209, an attendant must be stationed outside the permit space to monitor entrants, maintain communication, and summon rescue if needed.",
+      "code_ref": "OSHA 1926.1209",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-061",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Cranes",
+      "question": "Who must inspect cranes before each shift?",
+      "options": [
+        {"id": "a", "text": "Any worker"},
+        {"id": "b", "text": "A competent person", "correct": true},
+        {"id": "c", "text": "OSHA"},
+        {"id": "d", "text": "The crane manufacturer"}
+      ],
+      "explanation": "Per OSHA 1926.1412(d), a competent person must inspect cranes before each shift for deficiencies and ensure required repairs are made.",
+      "code_ref": "OSHA 1926.1412(d)",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-062",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Cranes",
+      "question": "What is the minimum safe distance from power lines up to 50kV for crane operations?",
+      "options": [
+        {"id": "a", "text": "5 feet"},
+        {"id": "b", "text": "10 feet", "correct": true},
+        {"id": "c", "text": "15 feet"},
+        {"id": "d", "text": "20 feet"}
+      ],
+      "explanation": "Per OSHA 1926.1408, the minimum clearance distance for cranes operating near power lines up to 50kV is 10 feet.",
+      "code_ref": "OSHA 1926.1408",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-063",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Cranes",
+      "question": "What must be done before lifting a load?",
+      "options": [
+        {"id": "a", "text": "Estimate the load weight"},
+        {"id": "b", "text": "Determine the load weight and verify it's within the crane's rated capacity", "correct": true},
+        {"id": "c", "text": "Nothing special"},
+        {"id": "d", "text": "Only check the weather"}
+      ],
+      "explanation": "Per OSHA 1926.1417, the weight of the load must be determined and verified to be within the crane's rated capacity for the configuration and radius.",
+      "code_ref": "OSHA 1926.1417",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-064",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Cranes",
+      "question": "What is the role of a signal person in crane operations?",
+      "options": [
+        {"id": "a", "text": "To operate the crane"},
+        {"id": "b", "text": "To direct crane movement when the operator cannot see the load", "correct": true},
+        {"id": "c", "text": "To inspect the crane"},
+        {"id": "d", "text": "To rig the loads"}
+      ],
+      "explanation": "Per OSHA 1926.1419, a signal person is required when the point of operation is not visible to the operator, directing the crane's movement through standardized signals.",
+      "code_ref": "OSHA 1926.1419",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-065",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Rigging",
+      "question": "What is the purpose of a load chart?",
+      "options": [
+        {"id": "a", "text": "To schedule deliveries"},
+        {"id": "b", "text": "To show the crane's lifting capacity at various radii and configurations", "correct": true},
+        {"id": "c", "text": "To track maintenance"},
+        {"id": "d", "text": "To list materials"}
+      ],
+      "explanation": "A load chart shows the crane's rated capacity at various boom lengths, radii, and configurations. It must be consulted before every lift.",
+      "code_ref": "OSHA 1926.1417",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-066",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Rigging",
+      "question": "What is the minimum safety factor for wire rope slings?",
+      "options": [
+        {"id": "a", "text": "3:1"},
+        {"id": "b", "text": "4:1"},
+        {"id": "c", "text": "5:1", "correct": true},
+        {"id": "d", "text": "6:1"}
+      ],
+      "explanation": "Per OSHA 1926.251, wire rope slings must have a design factor of 5:1, meaning the breaking strength is at least 5 times the rated capacity.",
+      "code_ref": "OSHA 1926.251",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-067",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Rigging",
+      "question": "When must slings be removed from service?",
+      "options": [
+        {"id": "a", "text": "After one year"},
+        {"id": "b", "text": "When damage such as broken wires, kinks, or corrosion is found", "correct": true},
+        {"id": "c", "text": "When convenient"},
+        {"id": "d", "text": "At the end of the project"}
+      ],
+      "explanation": "Per OSHA 1926.251(c)(4), wire rope slings must be removed from service when damage such as broken wires, severe corrosion, kinking, or other defects are present.",
+      "code_ref": "OSHA 1926.251(c)(4)",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-068",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Rigging",
+      "question": "What happens to sling capacity as the sling angle decreases from vertical?",
+      "options": [
+        {"id": "a", "text": "Capacity increases"},
+        {"id": "b", "text": "Capacity decreases", "correct": true},
+        {"id": "c", "text": "Capacity stays the same"},
+        {"id": "d", "text": "Capacity doubles"}
+      ],
+      "explanation": "As the sling angle from vertical decreases (becomes more horizontal), the stress on each leg increases and the rated capacity decreases significantly.",
+      "code_ref": "OSHA 1926.251",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-069",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Competent Person",
+      "question": "What is an OSHA 'competent person'?",
+      "options": [
+        {"id": "a", "text": "Any experienced worker"},
+        {"id": "b", "text": "One capable of identifying hazards and authorized to take corrective action", "correct": true},
+        {"id": "c", "text": "An OSHA inspector"},
+        {"id": "d", "text": "The project manager"}
+      ],
+      "explanation": "Per OSHA 1926.32(f), a competent person is capable of identifying existing and predictable hazards and has authority to take prompt corrective measures.",
+      "code_ref": "OSHA 1926.32(f)",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-070",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Competent Person",
+      "question": "What is an OSHA 'qualified person'?",
+      "options": [
+        {"id": "a", "text": "Any licensed contractor"},
+        {"id": "b", "text": "One who has demonstrated ability by education, training, or experience", "correct": true},
+        {"id": "c", "text": "An OSHA officer"},
+        {"id": "d", "text": "A union member"}
+      ],
+      "explanation": "Per OSHA 1926.32(m), a qualified person has demonstrated the ability to solve problems related to the subject matter by education, training, or experience.",
+      "code_ref": "OSHA 1926.32(m)",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-071",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Training",
+      "question": "When must safety training be provided?",
+      "options": [
+        {"id": "a", "text": "Only when requested"},
+        {"id": "b", "text": "Before workers are exposed to hazards", "correct": true},
+        {"id": "c", "text": "After an accident"},
+        {"id": "d", "text": "At the end of the project"}
+      ],
+      "explanation": "Per OSHA requirements, employers must train workers to recognize hazards before they are exposed to them. Training must be in a language workers understand.",
+      "code_ref": "OSHA 1926.21",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-072",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Training",
+      "question": "What documentation is required for safety training?",
+      "options": [
+        {"id": "a", "text": "None"},
+        {"id": "b", "text": "Records showing who was trained, topics covered, and date", "correct": true},
+        {"id": "c", "text": "Only sign-in sheets"},
+        {"id": "d", "text": "Only certificates"}
+      ],
+      "explanation": "Training records should document the employee's name, training date, topics covered, and trainer. This verifies compliance with training requirements.",
+      "code_ref": "OSHA 1926.21",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-073",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Housekeeping",
+      "question": "What is required regarding housekeeping on construction sites?",
+      "options": [
+        {"id": "a", "text": "Clean up at project end"},
+        {"id": "b", "text": "Keep work areas, passageways, and stairs clear of debris", "correct": true},
+        {"id": "c", "text": "Only clean offices"},
+        {"id": "d", "text": "No requirements exist"}
+      ],
+      "explanation": "Per OSHA 1926.25, work areas, passageways, stairs, and areas around buildings must be kept clear of debris and scrap. Materials must be stored safely.",
+      "code_ref": "OSHA 1926.25",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-074",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Housekeeping",
+      "question": "How must protruding nails in scrap lumber be handled?",
+      "options": [
+        {"id": "a", "text": "Leave them alone"},
+        {"id": "b", "text": "Remove, bend, or cover them", "correct": true},
+        {"id": "c", "text": "Mark with paint"},
+        {"id": "d", "text": "Stack the lumber"}
+      ],
+      "explanation": "Per OSHA 1926.25(a), all scrap lumber with protruding nails must have the nails removed, bent, or otherwise covered to prevent puncture injuries.",
+      "code_ref": "OSHA 1926.25(a)",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-075",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Material Storage",
+      "question": "What is the maximum height for storing lumber?",
+      "options": [
+        {"id": "a", "text": "10 feet"},
+        {"id": "b", "text": "16 feet"},
+        {"id": "c", "text": "20 feet", "correct": true},
+        {"id": "d", "text": "No limit"}
+      ],
+      "explanation": "Per OSHA 1926.250(b)(1), lumber stacks must not exceed 20 feet in height when handled manually or 16 feet when using mechanical equipment.",
+      "code_ref": "OSHA 1926.250(b)(1)",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-076",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Material Storage",
+      "question": "How must compressed gas cylinders be stored?",
+      "options": [
+        {"id": "a", "text": "Lying flat"},
+        {"id": "b", "text": "Upright and secured to prevent falling", "correct": true},
+        {"id": "c", "text": "In any position"},
+        {"id": "d", "text": "Stacked on top of each other"}
+      ],
+      "explanation": "Per OSHA 1926.350(a)(10), compressed gas cylinders must be stored upright and secured to prevent falling. Caps must be in place when not in use.",
+      "code_ref": "OSHA 1926.350(a)(10)",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-077",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Material Storage",
+      "question": "What is the minimum separation between oxygen and fuel gas cylinders?",
+      "options": [
+        {"id": "a", "text": "5 feet"},
+        {"id": "b", "text": "10 feet"},
+        {"id": "c", "text": "20 feet or fire-resistant barrier", "correct": true},
+        {"id": "d", "text": "No separation required"}
+      ],
+      "explanation": "Per OSHA 1926.350(a)(10), oxygen cylinders must be separated from fuel gas cylinders by at least 20 feet or by a 5-foot fire-resistant barrier.",
+      "code_ref": "OSHA 1926.350(a)(10)",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-078",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Tools",
+      "question": "What is the required inspection for power tools?",
+      "options": [
+        {"id": "a", "text": "Annual inspection only"},
+        {"id": "b", "text": "Inspect before each use", "correct": true},
+        {"id": "c", "text": "No inspection required"},
+        {"id": "d", "text": "Monthly inspection"}
+      ],
+      "explanation": "Per OSHA 1926.300(a), all hand and power tools must be maintained in safe condition. Workers should inspect tools before each use.",
+      "code_ref": "OSHA 1926.300(a)",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-079",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Tools",
+      "question": "What must be present on all power tools with exposed moving parts?",
+      "options": [
+        {"id": "a", "text": "Warning labels"},
+        {"id": "b", "text": "Guards", "correct": true},
+        {"id": "c", "text": "Handles"},
+        {"id": "d", "text": "Extension cords"}
+      ],
+      "explanation": "Per OSHA 1926.300(b)(1), guards must be provided to protect workers from point of operation, nip points, rotating parts, flying chips, and sparks.",
+      "code_ref": "OSHA 1926.300(b)(1)",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-080",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Tools",
+      "question": "What must be done with a power tool that is defective?",
+      "options": [
+        {"id": "a", "text": "Use with caution"},
+        {"id": "b", "text": "Remove from service until repaired", "correct": true},
+        {"id": "c", "text": "Use only for light work"},
+        {"id": "d", "text": "Continue using until convenient"}
+      ],
+      "explanation": "Per OSHA 1926.300(a), defective tools must be removed from service and tagged \"Do Not Use\" or taken out of the work area.",
+      "code_ref": "OSHA 1926.300(a)",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-081",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Motor Vehicles",
+      "question": "What is required when construction vehicles operate in reverse?",
+      "options": [
+        {"id": "a", "text": "Nothing special"},
+        {"id": "b", "text": "Backup alarms or a signalperson", "correct": true},
+        {"id": "c", "text": "Only during night work"},
+        {"id": "d", "text": "Only in congested areas"}
+      ],
+      "explanation": "Per OSHA 1926.601(b)(4), vehicles with an obstructed rear view must have backup alarms or an observer when backing.",
+      "code_ref": "OSHA 1926.601(b)(4)",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-082",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Motor Vehicles",
+      "question": "Are seatbelts required in construction vehicles?",
+      "options": [
+        {"id": "a", "text": "No"},
+        {"id": "b", "text": "Yes, when provided by the manufacturer", "correct": true},
+        {"id": "c", "text": "Only on highways"},
+        {"id": "d", "text": "Only for supervisors"}
+      ],
+      "explanation": "Per OSHA 1926.602(a)(2)(i), seatbelts must be installed and used in motor vehicles if the vehicle was equipped with ROPS and/or had a seatbelt installed by the manufacturer.",
+      "code_ref": "OSHA 1926.602(a)(2)(i)",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-083",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Concrete",
+      "question": "What PPE is required when working with wet concrete?",
+      "options": [
+        {"id": "a", "text": "No PPE required"},
+        {"id": "b", "text": "Waterproof gloves, boots, and eye protection", "correct": true},
+        {"id": "c", "text": "Only gloves"},
+        {"id": "d", "text": "Only boots"}
+      ],
+      "explanation": "Per OSHA 1926.702(a), workers must wear appropriate PPE when in contact with wet concrete including waterproof gloves, rubber boots, and eye protection due to alkaline burns.",
+      "code_ref": "OSHA 1926.702(a)",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-084",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Concrete",
+      "question": "What hazard does silica dust from concrete cutting pose?",
+      "options": [
+        {"id": "a", "text": "Hearing loss"},
+        {"id": "b", "text": "Silicosis and lung disease", "correct": true},
+        {"id": "c", "text": "Skin rash"},
+        {"id": "d", "text": "Eye strain"}
+      ],
+      "explanation": "Per OSHA's silica rule (1926.1153), crystalline silica dust from cutting, grinding, or drilling concrete can cause silicosis, lung cancer, and other respiratory diseases.",
+      "code_ref": "OSHA 1926.1153",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-085",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Concrete",
+      "question": "What is the permissible exposure limit (PEL) for respirable crystalline silica?",
+      "options": [
+        {"id": "a", "text": "100 µg/m³"},
+        {"id": "b", "text": "50 µg/m³", "correct": true},
+        {"id": "c", "text": "25 µg/m³"},
+        {"id": "d", "text": "10 µg/m³"}
+      ],
+      "explanation": "Per OSHA 1926.1153, the PEL for respirable crystalline silica is 50 micrograms per cubic meter of air, averaged over an 8-hour shift.",
+      "code_ref": "OSHA 1926.1153",
+      "difficulty": "hard",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-086",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Demolition",
+      "question": "What must be done before starting demolition work?",
+      "options": [
+        {"id": "a", "text": "Begin work immediately"},
+        {"id": "b", "text": "Complete an engineering survey and disconnect utilities", "correct": true},
+        {"id": "c", "text": "Only notify neighbors"},
+        {"id": "d", "text": "Only post warning signs"}
+      ],
+      "explanation": "Per OSHA 1926.850(a), an engineering survey must be made by a competent person before demolition starts, and all utilities must be shut off and capped.",
+      "code_ref": "OSHA 1926.850(a)",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-087",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Demolition",
+      "question": "When removing floor sections during demolition, what protection must remain?",
+      "options": [
+        {"id": "a", "text": "None"},
+        {"id": "b", "text": "Floor openings must be protected with covers or guardrails", "correct": true},
+        {"id": "c", "text": "Only warning tape"},
+        {"id": "d", "text": "Only verbal warnings"}
+      ],
+      "explanation": "Per OSHA 1926.501, floor openings created during demolition must be guarded with covers or guardrails to prevent falls.",
+      "code_ref": "OSHA 1926.501",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-088",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Lead",
+      "question": "What is the permissible exposure limit for lead in construction?",
+      "options": [
+        {"id": "a", "text": "25 µg/m³"},
+        {"id": "b", "text": "50 µg/m³", "correct": true},
+        {"id": "c", "text": "75 µg/m³"},
+        {"id": "d", "text": "100 µg/m³"}
+      ],
+      "explanation": "Per OSHA 1926.62, the PEL for lead is 50 micrograms per cubic meter of air averaged over an 8-hour period. Action level is 30 µg/m³.",
+      "code_ref": "OSHA 1926.62",
+      "difficulty": "hard",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-089",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Lead",
+      "question": "What year was lead banned in residential paint?",
+      "options": [
+        {"id": "a", "text": "1968"},
+        {"id": "b", "text": "1978", "correct": true},
+        {"id": "c", "text": "1988"},
+        {"id": "d", "text": "1998"}
+      ],
+      "explanation": "Lead-based paint was banned for residential use in 1978. Homes built before 1978 may contain lead paint, requiring specific precautions during renovation.",
+      "code_ref": "EPA RRP Rule",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-090",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Asbestos",
+      "question": "What is the permissible exposure limit for asbestos?",
+      "options": [
+        {"id": "a", "text": "0.1 fibers per cubic centimeter (f/cc)", "correct": true},
+        {"id": "b", "text": "0.5 f/cc"},
+        {"id": "c", "text": "1.0 f/cc"},
+        {"id": "d", "text": "2.0 f/cc"}
+      ],
+      "explanation": "Per OSHA 1926.1101, the PEL for asbestos is 0.1 fibers per cubic centimeter of air as an 8-hour TWA.",
+      "code_ref": "OSHA 1926.1101",
+      "difficulty": "hard",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-091",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Asbestos",
+      "question": "What diseases can asbestos exposure cause?",
+      "options": [
+        {"id": "a", "text": "Hearing loss"},
+        {"id": "b", "text": "Asbestosis, lung cancer, and mesothelioma", "correct": true},
+        {"id": "c", "text": "Skin cancer"},
+        {"id": "d", "text": "Diabetes"}
+      ],
+      "explanation": "Per OSHA 1926.1101, asbestos exposure can cause asbestosis (lung scarring), lung cancer, and mesothelioma (cancer of the chest and abdominal lining).",
+      "code_ref": "OSHA 1926.1101",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-092",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "First Aid",
+      "question": "When is first aid coverage required on a construction site?",
+      "options": [
+        {"id": "a", "text": "Only on large projects"},
+        {"id": "b", "text": "When a medical facility is not near or reasonably accessible", "correct": true},
+        {"id": "c", "text": "Only during night shifts"},
+        {"id": "d", "text": "Never required"}
+      ],
+      "explanation": "Per OSHA 1926.50(c), trained first aid providers must be available when a hospital, clinic, or infirmary is not reasonably accessible.",
+      "code_ref": "OSHA 1926.50(c)",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-093",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "First Aid",
+      "question": "What must be available for emergency washing of eyes or body?",
+      "options": [
+        {"id": "a", "text": "A hose"},
+        {"id": "b", "text": "Suitable facilities for quick drenching or flushing", "correct": true},
+        {"id": "c", "text": "Paper towels"},
+        {"id": "d", "text": "A first aid kit only"}
+      ],
+      "explanation": "Per OSHA 1926.50(g), where employees may be exposed to corrosive materials, suitable facilities for quick drenching or flushing of eyes and body must be provided.",
+      "code_ref": "OSHA 1926.50(g)",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-094",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Recordkeeping",
+      "question": "What OSHA form is used to record workplace injuries and illnesses?",
+      "options": [
+        {"id": "a", "text": "OSHA 100"},
+        {"id": "b", "text": "OSHA 300", "correct": true},
+        {"id": "c", "text": "OSHA 500"},
+        {"id": "d", "text": "OSHA 700"}
+      ],
+      "explanation": "Per OSHA 1904, the OSHA 300 Log is used to record work-related injuries and illnesses. The 300A Summary must be posted annually.",
+      "code_ref": "OSHA 1904",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-095",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Recordkeeping",
+      "question": "When must a fatality be reported to OSHA?",
+      "options": [
+        {"id": "a", "text": "Within 24 hours"},
+        {"id": "b", "text": "Within 8 hours", "correct": true},
+        {"id": "c", "text": "Within 48 hours"},
+        {"id": "d", "text": "Within one week"}
+      ],
+      "explanation": "Per OSHA 1904.39, employers must report any work-related fatality within 8 hours. Hospitalizations, amputations, and eye losses must be reported within 24 hours.",
+      "code_ref": "OSHA 1904.39",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-096",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Multi-Employer Sites",
+      "question": "On a multi-employer construction site, who is responsible for safety?",
+      "options": [
+        {"id": "a", "text": "Only the controlling contractor"},
+        {"id": "b", "text": "Multiple employers may share responsibility depending on their role", "correct": true},
+        {"id": "c", "text": "Only subcontractors"},
+        {"id": "d", "text": "Only the owner"}
+      ],
+      "explanation": "Per OSHA's multi-employer citation policy, creating, exposing, correcting, and controlling employers may all have responsibilities for hazards on multi-employer sites.",
+      "code_ref": "OSHA Multi-Employer Policy",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-097",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Violations",
+      "question": "What type of OSHA violation involves an immediate risk of death or serious harm?",
+      "options": [
+        {"id": "a", "text": "Serious"},
+        {"id": "b", "text": "Willful"},
+        {"id": "c", "text": "Imminent danger", "correct": true},
+        {"id": "d", "text": "Other-than-serious"}
+      ],
+      "explanation": "An imminent danger exists when there is reasonable certainty that a hazard exists that can cause death or serious physical harm immediately or before normal enforcement procedures.",
+      "code_ref": "OSHA Act Section 13",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-098",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Violations",
+      "question": "What are the maximum penalties for a willful OSHA violation?",
+      "options": [
+        {"id": "a", "text": "$15,625 per violation"},
+        {"id": "b", "text": "Up to $156,259 per violation", "correct": true},
+        {"id": "c", "text": "$1,000 per violation"},
+        {"id": "d", "text": "No monetary penalty"}
+      ],
+      "explanation": "Per OSHA, willful violations can result in penalties up to $156,259 per violation (2023 amount, adjusted annually). Repeat violations have similar maximum penalties.",
+      "code_ref": "OSHA Penalty Structure",
+      "difficulty": "hard",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-099",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Rights",
+      "question": "Do workers have the right to refuse unsafe work?",
+      "options": [
+        {"id": "a", "text": "No, never"},
+        {"id": "b", "text": "Yes, under certain conditions when facing imminent danger", "correct": true},
+        {"id": "c", "text": "Only supervisors can refuse"},
+        {"id": "d", "text": "Only with union approval"}
+      ],
+      "explanation": "Per OSHA, workers may refuse to do a job if they believe in good faith they face imminent danger, have asked the employer to correct the hazard, and normal enforcement would be too slow.",
+      "code_ref": "OSHA Act Section 11(c)",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor", "safety"]
+    },
+    {
+      "id": "gc-safety-100",
+      "trade": "gc",
+      "category": "Safety",
+      "subcategory": "Rights",
+      "question": "What protection do workers have against retaliation for reporting safety concerns?",
+      "options": [
+        {"id": "a", "text": "None"},
+        {"id": "b", "text": "Whistleblower protection under Section 11(c) of the OSH Act", "correct": true},
+        {"id": "c", "text": "Only if union members"},
+        {"id": "d", "text": "Only during OSHA inspections"}
+      ],
+      "explanation": "Per OSHA Section 11(c), workers are protected from retaliation (firing, demotion, transfer) for exercising safety rights, reporting hazards, or participating in OSHA activities.",
+      "code_ref": "OSHA Act Section 11(c)",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor", "safety"]
+    }
+  ]
+}

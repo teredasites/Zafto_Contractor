@@ -1,0 +1,46 @@
+# === STRATEGIC IP — NEVER COMMIT ===
+apps/Trades/Build Documentation/
+
+# === SECRETS & CREDENTIALS ===
+**/firebase_options.dart
+**/GoogleService-Info.plist
+**/google-services.json
+**/.env
+**/.env.*
+**/secrets/
+**/*.keystore
+**/*.jks
+
+# === FLUTTER / DART ===
+**/.dart_tool/
+**/.packages
+**/build/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.pub-cache/
+**/.pub/
+**/pubspec.lock
+
+# === NODE.JS ===
+**/node_modules/
+**/.next/
+**/out/
+**/.nuxt/
+**/.cache/
+
+# === IDE ===
+**/.idea/
+**/.vscode/
+**/*.swp
+**/*.swo
+*~
+
+# === OS ===
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# === MISC ===
+*.log
+*.tmp
+*.bak

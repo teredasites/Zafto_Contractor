@@ -1,0 +1,2562 @@
+{
+  "metadata": {
+    "trade": "solar",
+    "category": "NEC 690/705",
+    "total_questions": 150,
+    "last_updated": "2026-01-31",
+    "code_references": ["NEC 2023 Article 690", "NEC 2023 Article 705", "NEC 2023 Article 706"],
+    "exam_sources": ["NABCEP PVIP", "State Electrical Journeyman/Master Exams", "PSI Solar Endorsement"]
+  },
+  "questions": [
+    {
+      "id": "solar-nec-001",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Article 690 Scope",
+      "question": "NEC Article 690 applies to which of the following?",
+      "options": [
+        { "id": "a", "text": "Wind turbine systems only" },
+        { "id": "b", "text": "Solar photovoltaic electrical energy systems", "correct": true },
+        { "id": "c", "text": "Fuel cell systems only" },
+        { "id": "d", "text": "Hydroelectric generators" }
+      ],
+      "explanation": "NEC Article 690 covers the installation of solar photovoltaic (PV) electrical energy systems including the array, inverter(s), and all conductors and equipment. Other DER types are covered by different articles (705 for interconnection, 692 for fuel cells).",
+      "code_ref": "NEC 690.1",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-002",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Definitions",
+      "question": "Per NEC 690.2, what is the definition of a 'PV system DC circuit'?",
+      "options": [
+        { "id": "a", "text": "Any circuit carrying alternating current" },
+        { "id": "b", "text": "Conductors between PV system DC components", "correct": true },
+        { "id": "c", "text": "The utility service entrance" },
+        { "id": "d", "text": "Battery charging circuits only" }
+      ],
+      "explanation": "Per NEC 690.2, PV system DC circuit refers to the DC conductors and components that connect the PV modules to the DC input of the inverter or charge controller. This includes source circuits and output circuits.",
+      "code_ref": "NEC 690.2 Definitions",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-003",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Definitions",
+      "question": "Per NEC 690.2, a 'PV source circuit' connects:",
+      "options": [
+        { "id": "a", "text": "The inverter to the AC panel" },
+        { "id": "b", "text": "Modules in series to form a string up to the common connection point", "correct": true },
+        { "id": "c", "text": "The battery to the charge controller" },
+        { "id": "d", "text": "The utility meter to the service panel" }
+      ],
+      "explanation": "A PV source circuit is the circuit conductors between modules and from modules to the common connection point of the DC system. Each string of modules in series is a separate source circuit until they connect at a combiner or inverter input.",
+      "code_ref": "NEC 690.2",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-004",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Definitions",
+      "question": "Per NEC 690.2, a 'PV output circuit' connects:",
+      "options": [
+        { "id": "a", "text": "Individual modules together" },
+        { "id": "b", "text": "The PV source circuit combiner to the inverter DC input", "correct": true },
+        { "id": "c", "text": "The inverter AC output to the panelboard" },
+        { "id": "d", "text": "The array to the utility transformer" }
+      ],
+      "explanation": "The PV output circuit runs from the point where source circuits combine (combiner box output or direct to inverter) to the DC input of the inverter. This circuit carries the combined current from multiple strings.",
+      "code_ref": "NEC 690.2",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-005",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Definitions",
+      "question": "What does 'interactive system' mean per NEC 690.2?",
+      "options": [
+        { "id": "a", "text": "A system with a touchscreen interface" },
+        { "id": "b", "text": "A PV system operating in parallel with the utility grid", "correct": true },
+        { "id": "c", "text": "A system with battery backup" },
+        { "id": "d", "text": "A system that requires user input" }
+      ],
+      "explanation": "An interactive system (also called grid-tied or utility-interactive) operates in parallel with the electric utility and can deliver power to the utility grid. This is the most common residential and commercial PV system type.",
+      "code_ref": "NEC 690.2",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-006",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "General Requirements",
+      "question": "Per NEC 690.4(A), PV system installations must comply with Article 690 and what other applicable articles?",
+      "options": [
+        { "id": "a", "text": "Only Article 690" },
+        { "id": "b", "text": "All applicable articles in the NEC", "correct": true },
+        { "id": "c", "text": "Only Articles 690 and 705" },
+        { "id": "d", "text": "Only Articles 210 and 220" }
+      ],
+      "explanation": "NEC 690.4(A) states that PV systems shall comply with Article 690 and all other applicable articles in the Code. This includes wiring methods (Chapter 3), grounding (Article 250), disconnects (Article 404), and more.",
+      "code_ref": "NEC 690.4(A)",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-007",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Equipment",
+      "question": "Per NEC 690.4(B), all equipment must be identified and listed for the:",
+      "options": [
+        { "id": "a", "text": "Installer's preference" },
+        { "id": "b", "text": "Application and listed/identified for PV use", "correct": true },
+        { "id": "c", "text": "Lowest cost option" },
+        { "id": "d", "text": "Residential use only" }
+      ],
+      "explanation": "NEC 690.4(B) requires all PV system equipment to be identified and listed for the application. This means using equipment specifically tested and approved for PV systems, not general-purpose electrical equipment.",
+      "code_ref": "NEC 690.4(B)",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-008",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Multiple Inverters",
+      "question": "Per NEC 690.4(C), when multiple inverters are installed on a single structure, how must they be grouped?",
+      "options": [
+        { "id": "a", "text": "Spread throughout the building" },
+        { "id": "b", "text": "Grouped in the same location if practicable", "correct": true },
+        { "id": "c", "text": "On different floors" },
+        { "id": "d", "text": "In separate buildings" }
+      ],
+      "explanation": "NEC 690.4(C) requires inverters to be grouped together where practicable. When grouping isn't practicable, a permanent plaque or directory showing locations must be installed at each inverter and at the service disconnecting means.",
+      "code_ref": "NEC 690.4(C)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-009",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Qualified Persons",
+      "question": "Per NEC 690.4(E), when is a PV system permitted to be installed by other than a qualified person?",
+      "options": [
+        { "id": "a", "text": "For systems under 5 kW" },
+        { "id": "b", "text": "Never - all installations require qualified persons", "correct": true },
+        { "id": "c", "text": "For residential systems only" },
+        { "id": "d", "text": "When using plug-and-play equipment" }
+      ],
+      "explanation": "NEC 690.4(E) requires PV systems to be installed only by qualified persons. There are no exceptions based on system size. This ensures proper installation of electrical systems that can produce hazardous voltage and current.",
+      "code_ref": "NEC 690.4(E)",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-010",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Maximum Voltage",
+      "question": "Per NEC 690.7(A), how is maximum PV system voltage determined?",
+      "options": [
+        { "id": "a", "text": "Using STC voltage only" },
+        { "id": "b", "text": "Sum of module Voc corrected for lowest expected temperature", "correct": true },
+        { "id": "c", "text": "Using Vmp at 25°C" },
+        { "id": "d", "text": "Inverter maximum input voltage" }
+      ],
+      "explanation": "NEC 690.7(A) requires maximum voltage to be calculated using the sum of open-circuit voltages (Voc) of series-connected modules, corrected for the lowest expected ambient temperature using Table 690.7(A) or manufacturer's temperature coefficients.",
+      "code_ref": "NEC 690.7(A)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-011",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Maximum Voltage",
+      "question": "Per NEC Table 690.7(A), what temperature correction factor applies at -40°C for crystalline silicon modules?",
+      "options": [
+        { "id": "a", "text": "1.00" },
+        { "id": "b", "text": "1.12" },
+        { "id": "c", "text": "1.25", "correct": true },
+        { "id": "d", "text": "0.85" }
+      ],
+      "explanation": "NEC Table 690.7(A) provides temperature correction factors for crystalline silicon. At -40°C, the factor is 1.25, meaning Voc increases 25% above STC rating. This is critical for calculating maximum system voltage in cold climates.",
+      "code_ref": "NEC Table 690.7(A)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-012",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Voltage Limits",
+      "question": "Per NEC 690.7(C), what is the maximum PV system voltage for one- and two-family dwellings?",
+      "options": [
+        { "id": "a", "text": "480V" },
+        { "id": "b", "text": "600V", "correct": true },
+        { "id": "c", "text": "1000V" },
+        { "id": "d", "text": "1500V" }
+      ],
+      "explanation": "NEC 690.7(C) limits PV system voltage to 600V DC for one- and two-family dwellings. Higher voltages (up to 1000V or 1500V) are permitted for other occupancies where qualified persons service the installation.",
+      "code_ref": "NEC 690.7(C)",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-013",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Voltage Limits",
+      "question": "Per NEC 690.7(A), what is the maximum permitted PV system voltage for qualified person installations?",
+      "options": [
+        { "id": "a", "text": "600V" },
+        { "id": "b", "text": "1000V" },
+        { "id": "c", "text": "1500V", "correct": true },
+        { "id": "d", "text": "2000V" }
+      ],
+      "explanation": "NEC 690.7(A) permits maximum system voltages up to 1500V DC for PV systems where the equipment is listed for that voltage and installed in accordance with applicable Code requirements. This applies to commercial and utility-scale systems.",
+      "code_ref": "NEC 690.7(A)",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-nec-014",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Circuit Current",
+      "question": "Per NEC 690.8(A)(1), maximum current for a PV source circuit equals:",
+      "options": [
+        { "id": "a", "text": "Module Imp" },
+        { "id": "b", "text": "Module Isc", "correct": true },
+        { "id": "c", "text": "Module Imp × 1.25" },
+        { "id": "d", "text": "Inverter rated input current" }
+      ],
+      "explanation": "Per NEC 690.8(A)(1), the maximum current for a PV source circuit is the short-circuit current (Isc) of the parallel-connected modules. For a single string, this equals module Isc. PV modules can produce Isc under certain irradiance conditions.",
+      "code_ref": "NEC 690.8(A)(1)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-015",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Circuit Current",
+      "question": "Per NEC 690.8(A)(1)(b), maximum current for a PV output circuit with 4 parallel strings at 10A Isc each is:",
+      "options": [
+        { "id": "a", "text": "10A" },
+        { "id": "b", "text": "40A", "correct": true },
+        { "id": "c", "text": "50A" },
+        { "id": "d", "text": "12.5A" }
+      ],
+      "explanation": "Per NEC 690.8(A)(1)(b), maximum PV output circuit current is the sum of parallel source circuit currents. With 4 strings at 10A Isc each: 4 × 10A = 40A. Conductor sizing then uses 125% of this value per 690.8(A).",
+      "code_ref": "NEC 690.8(A)(1)(b)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-016",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Conductor Ampacity",
+      "question": "Per NEC 690.8(A)(1), conductor ampacity must be at least what percentage of maximum circuit current?",
+      "options": [
+        { "id": "a", "text": "100%" },
+        { "id": "b", "text": "115%" },
+        { "id": "c", "text": "125%", "correct": true },
+        { "id": "d", "text": "150%" }
+      ],
+      "explanation": "NEC 690.8(A)(1) requires conductor ampacity to be at least 125% of maximum circuit current. This accounts for the continuous duty nature of PV circuits, which can operate at maximum current for more than 3 hours during peak sun.",
+      "code_ref": "NEC 690.8(A)(1)",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-017",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "OCPD Sizing",
+      "question": "Per NEC 690.8(A)(2), overcurrent devices for PV circuits must be rated at least:",
+      "options": [
+        { "id": "a", "text": "100% of maximum circuit current" },
+        { "id": "b", "text": "125% of maximum circuit current", "correct": true },
+        { "id": "c", "text": "80% of maximum circuit current" },
+        { "id": "d", "text": "Equal to conductor ampacity" }
+      ],
+      "explanation": "NEC 690.8(A)(2) requires overcurrent devices to have a rating not less than 125% of maximum circuit current calculated per 690.8(A)(1). This ensures the OCPD can carry continuous PV current without nuisance tripping.",
+      "code_ref": "NEC 690.8(A)(2)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-018",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "OCPD Requirements",
+      "question": "Per NEC 690.9(A), overcurrent protection for PV source circuits is required when:",
+      "options": [
+        { "id": "a", "text": "Always required for all configurations" },
+        { "id": "b", "text": "When more than 2 strings are connected in parallel", "correct": true },
+        { "id": "c", "text": "Only for systems over 10 kW" },
+        { "id": "d", "text": "Never required for PV circuits" }
+      ],
+      "explanation": "Per NEC 690.9(A) Exception, OCPDs are not required for PV source circuits when there are 2 or fewer parallel strings and conductor ampacity is ≥ 2× module Isc. With 3+ strings, fault current from other strings can exceed conductor rating.",
+      "code_ref": "NEC 690.9(A)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-019",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "OCPD Rating",
+      "question": "Per NEC 690.9(B), what limits the maximum OCPD rating for a PV source circuit?",
+      "options": [
+        { "id": "a", "text": "Inverter input rating" },
+        { "id": "b", "text": "Module maximum series fuse rating on the label", "correct": true },
+        { "id": "c", "text": "Conductor ampacity only" },
+        { "id": "d", "text": "There is no maximum limit" }
+      ],
+      "explanation": "Per NEC 690.9(B), the OCPD rating cannot exceed the module's maximum series fuse rating marked on the module label. This rating is determined by the module manufacturer to protect against reverse current damage.",
+      "code_ref": "NEC 690.9(B)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-020",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "OCPD Location",
+      "question": "Per NEC 690.9(C), where must overcurrent devices for PV source circuits be located?",
+      "options": [
+        { "id": "a", "text": "Only at the main service panel" },
+        { "id": "b", "text": "On each end of the circuit where current can be backfed", "correct": true },
+        { "id": "c", "text": "Only at the inverter input" },
+        { "id": "d", "text": "Location is not specified" }
+      ],
+      "explanation": "NEC 690.9(C) requires overcurrent devices at all points where current can be backfed into a circuit. For parallel strings, this typically means fuses at both the source and load ends, or at each combiner connection point.",
+      "code_ref": "NEC 690.9(C)",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-nec-021",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Arc-Fault Protection",
+      "question": "Per NEC 690.11, arc-fault circuit protection is required for PV systems with DC source or output circuits operating at:",
+      "options": [
+        { "id": "a", "text": "Any voltage" },
+        { "id": "b", "text": "80V or greater", "correct": true },
+        { "id": "c", "text": "600V or greater" },
+        { "id": "d", "text": "1000V or greater" }
+      ],
+      "explanation": "NEC 690.11 requires DC arc-fault protection for PV systems with source or output circuits operating at 80V or greater. The protection must detect, interrupt, and indicate series arc faults in DC conductors.",
+      "code_ref": "NEC 690.11",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-022",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Arc-Fault Protection",
+      "question": "Per NEC 690.11, the arc-fault protection must be capable of:",
+      "options": [
+        { "id": "a", "text": "Detection only" },
+        { "id": "b", "text": "Detection, interruption, and indication of the fault", "correct": true },
+        { "id": "c", "text": "Preventing ground faults only" },
+        { "id": "d", "text": "Monitoring voltage only" }
+      ],
+      "explanation": "NEC 690.11 requires the arc-fault protection to detect arcing faults, disable or disconnect equipment to interrupt the fault, and provide a visual indication that the circuit has been interrupted. Most listed inverters integrate this function.",
+      "code_ref": "NEC 690.11",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-023",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Rapid Shutdown",
+      "question": "Per NEC 690.12, rapid shutdown of PV systems on buildings is required to reduce conductor voltages to:",
+      "options": [
+        { "id": "a", "text": "0V within 10 seconds" },
+        { "id": "b", "text": "80V or less within 30 seconds for array boundary", "correct": true },
+        { "id": "c", "text": "120V within 60 seconds" },
+        { "id": "d", "text": "Rapid shutdown is not required" }
+      ],
+      "explanation": "NEC 690.12(B)(2) requires PV conductors within the array boundary to be limited to 80V or less within 30 seconds of rapid shutdown initiation. This protects firefighters from shock hazards during roof operations.",
+      "code_ref": "NEC 690.12(B)(2)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-024",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Rapid Shutdown",
+      "question": "Per NEC 690.12(A), rapid shutdown requirements apply to PV systems on or in buildings with PV system DC circuits:",
+      "options": [
+        { "id": "a", "text": "Only on commercial buildings" },
+        { "id": "b", "text": "More than 1.5m (5 ft) from the array", "correct": true },
+        { "id": "c", "text": "Of any length" },
+        { "id": "d", "text": "Only for systems over 10 kW" }
+      ],
+      "explanation": "NEC 690.12(A) requires rapid shutdown for PV systems where DC conductors extend more than 1.5m (5 ft) from the array. Microinverter systems with no DC wiring beyond modules may be exempt from array-level rapid shutdown.",
+      "code_ref": "NEC 690.12(A)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-025",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Rapid Shutdown",
+      "question": "Per NEC 690.12(B)(1), conductors outside the array boundary must be reduced to what voltage within 30 seconds?",
+      "options": [
+        { "id": "a", "text": "80V or less" },
+        { "id": "b", "text": "30V or less", "correct": true },
+        { "id": "c", "text": "120V or less" },
+        { "id": "d", "text": "0V" }
+      ],
+      "explanation": "NEC 690.12(B)(1) requires conductors more than 1m from the array or more than 3m from the point of entry to be reduced to 30V or less within 30 seconds. The array boundary area has a higher limit of 80V per 690.12(B)(2).",
+      "code_ref": "NEC 690.12(B)(1)",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-nec-026",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Rapid Shutdown Initiation",
+      "question": "Per NEC 690.12(C), rapid shutdown initiation is typically controlled by:",
+      "options": [
+        { "id": "a", "text": "A button on each module" },
+        { "id": "b", "text": "The service disconnect, PV system disconnect, or readily accessible switch", "correct": true },
+        { "id": "c", "text": "Automatic timer only" },
+        { "id": "d", "text": "Wireless remote from utility" }
+      ],
+      "explanation": "NEC 690.12(C) allows rapid shutdown initiation by opening the service disconnect, PV system disconnect, or a dedicated PV system rapid shutdown switch that is readily accessible. Opening any of these triggers the rapid shutdown sequence.",
+      "code_ref": "NEC 690.12(C)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-027",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Disconnect Location",
+      "question": "Per NEC 690.13(A), where must the PV system disconnecting means be located?",
+      "options": [
+        { "id": "a", "text": "On the roof only" },
+        { "id": "b", "text": "Readily accessible location indoors or outside", "correct": true },
+        { "id": "c", "text": "Inside the main electrical panel only" },
+        { "id": "d", "text": "At the utility meter only" }
+      ],
+      "explanation": "NEC 690.13(A) requires the PV system disconnecting means to be installed at a readily accessible location, either outside or inside nearest the point of entry of system conductors. It must be lockable open per 690.13(F).",
+      "code_ref": "NEC 690.13(A)",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-028",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Number of Disconnects",
+      "question": "Per NEC 690.13(B), what is the maximum number of disconnects permitted for a PV system?",
+      "options": [
+        { "id": "a", "text": "One" },
+        { "id": "b", "text": "Three" },
+        { "id": "c", "text": "Six", "correct": true },
+        { "id": "d", "text": "Unlimited" }
+      ],
+      "explanation": "NEC 690.13(B) permits up to six switches or circuit breakers as the PV system disconnecting means, consistent with service disconnect rules. They must be grouped and marked per requirements. Single disconnects are most common for residential.",
+      "code_ref": "NEC 690.13(B)",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-029",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Disconnect Requirements",
+      "question": "Per NEC 690.13(F), the PV system disconnecting means must be capable of being:",
+      "options": [
+        { "id": "a", "text": "Operated only by utility personnel" },
+        { "id": "b", "text": "Locked in the open position", "correct": true },
+        { "id": "c", "text": "Key-operated only" },
+        { "id": "d", "text": "Automatic only" }
+      ],
+      "explanation": "NEC 690.13(F) requires the disconnecting means to be lockable in the open position with a portable lock. This allows maintenance personnel to lock out the system for safe work on de-energized circuits.",
+      "code_ref": "NEC 690.13(F)",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-030",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Disconnect Rating",
+      "question": "Per NEC 690.13(D), the PV system disconnecting means must have a rating of not less than:",
+      "options": [
+        { "id": "a", "text": "50% of maximum system current" },
+        { "id": "b", "text": "The maximum circuit current and voltage", "correct": true },
+        { "id": "c", "text": "100A minimum" },
+        { "id": "d", "text": "Inverter nameplate rating only" }
+      ],
+      "explanation": "NEC 690.13(D) requires the disconnecting means to be rated for the maximum circuit current and maximum system voltage. The rating must equal or exceed 125% of maximum current per 690.8 for continuous operation.",
+      "code_ref": "NEC 690.13(D)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-031",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Wiring Methods",
+      "question": "Per NEC 690.31(A), what type of wiring is required for exposed PV source circuit conductors?",
+      "options": [
+        { "id": "a", "text": "Any wire type" },
+        { "id": "b", "text": "Sunlight-resistant type or installed in raceways", "correct": true },
+        { "id": "c", "text": "Underground rated only" },
+        { "id": "d", "text": "High-temperature only" }
+      ],
+      "explanation": "NEC 690.31(A) requires conductors exposed to sunlight to be sunlight resistant (marked 'Sunlight Resistant' or 'SR') or installed in raceways. PV Wire per UL 4703 is specifically listed for this application.",
+      "code_ref": "NEC 690.31(A)",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-032",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Wiring Methods",
+      "question": "Per NEC 690.31(B), where must single-conductor cable type USE-2 or PV wire be installed?",
+      "options": [
+        { "id": "a", "text": "Only in rigid conduit" },
+        { "id": "b", "text": "In raceways, or where listed, as exposed wiring in accessible locations", "correct": true },
+        { "id": "c", "text": "Underground only" },
+        { "id": "d", "text": "Inside buildings only" }
+      ],
+      "explanation": "NEC 690.31(B) permits USE-2 and listed PV wire as exposed single-conductor cables in accessible areas for PV arrays. This allows flexible routing between modules. In inaccessible attics or interior spaces, raceways may be required.",
+      "code_ref": "NEC 690.31(B)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-033",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Conductor Identification",
+      "question": "Per NEC 690.31(G), how must DC PV circuit conductors be identified?",
+      "options": [
+        { "id": "a", "text": "All conductors must be red" },
+        { "id": "b", "text": "By color, tagging, or other approved means throughout their length", "correct": true },
+        { "id": "c", "text": "Only at termination points" },
+        { "id": "d", "text": "Identification is not required" }
+      ],
+      "explanation": "NEC 690.31(G)(1) requires positive and negative DC conductors to be identified by color, tagging, or other approved means. This identification must be consistent throughout the system for safe troubleshooting and maintenance.",
+      "code_ref": "NEC 690.31(G)(1)",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-034",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Connectors",
+      "question": "Per NEC 690.33(A), PV connectors must be:",
+      "options": [
+        { "id": "a", "text": "Standard household plug type" },
+        { "id": "b", "text": "Polarized and non-interchangeable with other electrical systems", "correct": true },
+        { "id": "c", "text": "Twist-lock only" },
+        { "id": "d", "text": "Weatherproof is optional" }
+      ],
+      "explanation": "NEC 690.33(A) requires PV connectors to be polarized (connecting only in correct polarity) and not interchangeable with receptacles in other electrical systems. This prevents accidental connection to incompatible circuits.",
+      "code_ref": "NEC 690.33(A)",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-035",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Connectors",
+      "question": "Per NEC 690.33(C), PV connectors must be rated for:",
+      "options": [
+        { "id": "a", "text": "AC circuits only" },
+        { "id": "b", "text": "Interrupting current at maximum system voltage", "correct": true },
+        { "id": "c", "text": "No specific current rating required" },
+        { "id": "d", "text": "Indoor use only" }
+      ],
+      "explanation": "NEC 690.33(C) requires connectors to be rated to interrupt the circuit current without hazard to the operator. If not rated for load-break, they can only be disconnected when the circuit is de-energized (e.g., using an inverter/disconnect).",
+      "code_ref": "NEC 690.33(C)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-036",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Ground-Fault Protection",
+      "question": "Per NEC 690.41, what is required for all PV systems?",
+      "options": [
+        { "id": "a", "text": "GFCI protection on all circuits" },
+        { "id": "b", "text": "Ground-fault protection that detects faults, interrupts or indicates fault, and is listed", "correct": true },
+        { "id": "c", "text": "Arc-fault protection only" },
+        { "id": "d", "text": "No ground-fault protection required" }
+      ],
+      "explanation": "NEC 690.41 requires ground-fault protection for all PV systems. The protection must detect ground faults, interrupt the fault or indicate and notify, and must be listed for the application. Most listed inverters integrate this function.",
+      "code_ref": "NEC 690.41",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-037",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Functional Grounding",
+      "question": "Per NEC 690.41(B), when is functional grounding of a PV array permitted?",
+      "options": [
+        { "id": "a", "text": "Never permitted" },
+        { "id": "b", "text": "When ground-fault protection detects, interrupts, and indicates faults", "correct": true },
+        { "id": "c", "text": "Only for residential systems" },
+        { "id": "d", "text": "When using transformer-isolated inverters" }
+      ],
+      "explanation": "NEC 690.41(B) permits functional grounding (ungrounded arrays with ground reference through high-impedance path) when the system includes ground-fault protection that detects, interrupts, and indicates faults. Most modern inverters use this configuration.",
+      "code_ref": "NEC 690.41(B)",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-nec-038",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Equipment Grounding",
+      "question": "Per NEC 690.43, equipment grounding conductors must be installed with all PV system:",
+      "options": [
+        { "id": "a", "text": "AC circuits only" },
+        { "id": "b", "text": "DC circuits and AC circuits", "correct": true },
+        { "id": "c", "text": "Source circuits only" },
+        { "id": "d", "text": "Equipment grounding not required" }
+      ],
+      "explanation": "NEC 690.43 requires equipment grounding conductors (EGC) to be installed in PV system circuits. All exposed metal parts of modules, frames, racking, enclosures must be grounded. This applies to both DC and AC portions of the system.",
+      "code_ref": "NEC 690.43",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-039",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "EGC Sizing",
+      "question": "Per NEC 690.45(A), equipment grounding conductors for PV circuits shall be sized per:",
+      "options": [
+        { "id": "a", "text": "Table 310.16" },
+        { "id": "b", "text": "Table 250.122 based on overcurrent protection rating", "correct": true },
+        { "id": "c", "text": "Always 6 AWG minimum" },
+        { "id": "d", "text": "Same size as circuit conductors" }
+      ],
+      "explanation": "NEC 690.45(A) requires EGC sizing per Table 250.122 based on the rating of the overcurrent device protecting the circuit. For a 20A fuse, the minimum EGC is 12 AWG copper. Larger EGCs may be needed for voltage drop on long runs.",
+      "code_ref": "NEC 690.45(A), Table 250.122",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-040",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Module Grounding",
+      "question": "Per NEC 690.43, what grounding method is acceptable for PV module frames?",
+      "options": [
+        { "id": "a", "text": "Only copper wire bonding jumpers" },
+        { "id": "b", "text": "Listed grounding/bonding devices or equipment grounding conductors", "correct": true },
+        { "id": "c", "text": "Self-tapping screws only" },
+        { "id": "d", "text": "No grounding required for modules" }
+      ],
+      "explanation": "NEC 690.43 permits listed grounding devices (like WEEB or lay-in lugs) that bond module frames to racking, plus EGC connection. These devices are specifically tested and listed for PV module frame grounding applications.",
+      "code_ref": "NEC 690.43",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-041",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Array Labeling",
+      "question": "Per NEC 690.53, what must be marked at the PV DC combiner or junction box?",
+      "options": [
+        { "id": "a", "text": "Module warranty information" },
+        { "id": "b", "text": "Maximum system voltage, operating current, and maximum current", "correct": true },
+        { "id": "c", "text": "Installer name only" },
+        { "id": "d", "text": "Module manufacturer only" }
+      ],
+      "explanation": "NEC 690.53 requires marking of maximum system voltage (Voc × modules), operating current (Imp × strings), operating voltage (Vmp × modules), maximum current (Isc × strings), and short-circuit current contribution if applicable.",
+      "code_ref": "NEC 690.53",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-042",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Disconnect Labeling",
+      "question": "Per NEC 690.54, what warning label is required on the PV system disconnecting means?",
+      "options": [
+        { "id": "a", "text": "Module count" },
+        { "id": "b", "text": "Warning that conductors may be energized when disconnect is open", "correct": true },
+        { "id": "c", "text": "System warranty period" },
+        { "id": "d", "text": "Inverter efficiency rating" }
+      ],
+      "explanation": "NEC 690.54 requires a warning label indicating that conductors may be energized when the disconnect is open because the PV array produces power whenever exposed to light. This warns maintenance personnel of shock hazards.",
+      "code_ref": "NEC 690.54",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-043",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Building Disconnect Labeling",
+      "question": "Per NEC 690.56(C), what must the plaque or directory at the service entrance indicate for PV systems?",
+      "options": [
+        { "id": "a", "text": "Monthly production estimates" },
+        { "id": "b", "text": "Location of PV system disconnect and AC/DC connection points", "correct": true },
+        { "id": "c", "text": "Module efficiency ratings" },
+        { "id": "d", "text": "Installation date only" }
+      ],
+      "explanation": "NEC 690.56(C) requires a permanent plaque at the main service indicating PV system disconnect location and whether AC or DC. This helps emergency responders identify all power sources and disconnects in the building.",
+      "code_ref": "NEC 690.56(C)",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-044",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Conductor Labeling",
+      "question": "Per NEC 690.31(G), how often must PV DC circuit conductors be marked?",
+      "options": [
+        { "id": "a", "text": "Only at junction boxes" },
+        { "id": "b", "text": "At intervals not exceeding 3m (10 ft) and at each termination", "correct": true },
+        { "id": "c", "text": "Once per circuit" },
+        { "id": "d", "text": "Marking not required" }
+      ],
+      "explanation": "NEC 690.31(G)(2) requires identification of positive and negative conductors at intervals not exceeding 3m (10 ft), at all termination points, and at connection/splice points. This ensures consistent identification throughout the system.",
+      "code_ref": "NEC 690.31(G)(2)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-045",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Article 705 Scope",
+      "question": "NEC Article 705 covers what aspect of PV systems?",
+      "options": [
+        { "id": "a", "text": "Module installation only" },
+        { "id": "b", "text": "Interconnection with other electric power production sources", "correct": true },
+        { "id": "c", "text": "Battery storage only" },
+        { "id": "d", "text": "Grounding only" }
+      ],
+      "explanation": "NEC Article 705 covers interconnection of electric power production sources operating in parallel with the utility grid or other power sources. This includes PV system AC interconnection requirements, not covered in Article 690.",
+      "code_ref": "NEC 705.1",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-046",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Utility Disconnect",
+      "question": "Per NEC 705.20, what must be provided for all power production sources interconnected with utility?",
+      "options": [
+        { "id": "a", "text": "No disconnect required" },
+        { "id": "b", "text": "Disconnecting means accessible to utility with load-break capability", "correct": true },
+        { "id": "c", "text": "Only a main breaker" },
+        { "id": "d", "text": "Remote disconnect only" }
+      ],
+      "explanation": "NEC 705.20 requires a disconnecting means for interconnected power sources. The disconnect must be accessible to utility personnel, lockable open, and rated for the power source output. This allows utility to isolate the DER for grid work.",
+      "code_ref": "NEC 705.20",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-047",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Load-Side Connection",
+      "question": "Per NEC 705.12(B)(2), the '120% rule' allows the sum of overcurrent devices supplying power to a busbar to be:",
+      "options": [
+        { "id": "a", "text": "100% of busbar rating" },
+        { "id": "b", "text": "120% of busbar rating", "correct": true },
+        { "id": "c", "text": "150% of busbar rating" },
+        { "id": "d", "text": "200% of busbar rating" }
+      ],
+      "explanation": "NEC 705.12(B)(2) permits the sum of ratings of all overcurrent devices supplying power to a busbar (main + PV breaker) to be up to 120% of the busbar ampere rating. This is the '120% rule' for load-side PV connections.",
+      "code_ref": "NEC 705.12(B)(2)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-048",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "120% Rule Example",
+      "question": "A 200A panel has a 200A main breaker. Per NEC 705.12(B)(2), what is the maximum PV backfed breaker?",
+      "options": [
+        { "id": "a", "text": "30A" },
+        { "id": "b", "text": "40A", "correct": true },
+        { "id": "c", "text": "50A" },
+        { "id": "d", "text": "60A" }
+      ],
+      "explanation": "120% of 200A busbar = 240A maximum. 240A - 200A main = 40A for PV breaker. The sum (200A + 40A = 240A) equals 120% of the 200A busbar. The breaker must be at the opposite end per 705.12(B)(2)(3)(b).",
+      "code_ref": "NEC 705.12(B)(2)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-049",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Breaker Position",
+      "question": "Per NEC 705.12(B)(2)(3)(b), where must a backfed PV breaker be located in a load center?",
+      "options": [
+        { "id": "a", "text": "Adjacent to the main breaker" },
+        { "id": "b", "text": "At the opposite (load) end from the main breaker", "correct": true },
+        { "id": "c", "text": "In any available slot" },
+        { "id": "d", "text": "Outside the panel" }
+      ],
+      "explanation": "NEC 705.12(B)(2)(3)(b) requires backfed breakers to be at the opposite end of the busbar from the main breaker. This ensures current flows across the full busbar length, preventing localized overheating near the main.",
+      "code_ref": "NEC 705.12(B)(2)(3)(b)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-050",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Breaker Retention",
+      "question": "Per NEC 705.12(B)(7), backfed circuit breakers for power production sources must be secured by:",
+      "options": [
+        { "id": "a", "text": "Tape only" },
+        { "id": "b", "text": "An additional fastener or listed means", "correct": true },
+        { "id": "c", "text": "No additional fastener required" },
+        { "id": "d", "text": "Wiring only" }
+      ],
+      "explanation": "NEC 705.12(B)(7) requires backfed breakers to be secured using an additional fastener or other listed means to prevent the breaker from being inadvertently disconnected. Most panels use a retaining clip or screw.",
+      "code_ref": "NEC 705.12(B)(7)",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-051",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Supply-Side Connection",
+      "question": "Per NEC 705.12(A), a supply-side connection connects on the:",
+      "options": [
+        { "id": "a", "text": "Load side of the main breaker" },
+        { "id": "b", "text": "Line (supply) side of the service disconnecting means", "correct": true },
+        { "id": "c", "text": "At any branch circuit" },
+        { "id": "d", "text": "At the utility transformer" }
+      ],
+      "explanation": "A supply-side connection per NEC 705.12(A) taps between the utility meter and main service disconnect, before the main breaker. This bypasses the 120% busbar limitation but requires service entrance rated equipment.",
+      "code_ref": "NEC 705.12(A)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-052",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Supply-Side Requirements",
+      "question": "Per NEC 705.12(A), supply-side connection conductors must be sized for at least:",
+      "options": [
+        { "id": "a", "text": "100% of power source output" },
+        { "id": "b", "text": "125% of power source maximum circuit current", "correct": true },
+        { "id": "c", "text": "Same as service entrance conductors" },
+        { "id": "d", "text": "50% of service rating" }
+      ],
+      "explanation": "NEC 705.12(A) requires supply-side connection conductors to be sized for at least 125% of the power source maximum output current (continuous operation). The connection must use listed hardware suitable for the service conductors.",
+      "code_ref": "NEC 705.12(A)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-053",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Anti-Islanding",
+      "question": "Per NEC 705.40, what must utility-interactive inverters do when the utility is de-energized?",
+      "options": [
+        { "id": "a", "text": "Continue operating normally" },
+        { "id": "b", "text": "Automatically disconnect from the utility within 2 seconds", "correct": true },
+        { "id": "c", "text": "Increase output power" },
+        { "id": "d", "text": "Switch to battery backup" }
+      ],
+      "explanation": "NEC 705.40 requires utility-interactive equipment to automatically de-energize output upon loss of utility voltage. This anti-islanding protection prevents backfeeding power to the grid, protecting utility workers from shock hazard.",
+      "code_ref": "NEC 705.40",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-054",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Loss of Utility",
+      "question": "The requirement for inverters to cease exporting upon loss of utility is commonly called:",
+      "options": [
+        { "id": "a", "text": "Ground fault protection" },
+        { "id": "b", "text": "Anti-islanding protection", "correct": true },
+        { "id": "c", "text": "Arc-fault protection" },
+        { "id": "d", "text": "Rapid shutdown" }
+      ],
+      "explanation": "Anti-islanding protection prevents the PV system from creating an 'island' of power when the grid is down. IEEE 1547 and UL 1741 certification testing ensures inverters detect loss of utility and disconnect within required time frames.",
+      "code_ref": "NEC 705.40, IEEE 1547",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-055",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Power Factor",
+      "question": "Per NEC 705.45, reactive power from inverters must be:",
+      "options": [
+        { "id": "a", "text": "Always maximum available" },
+        { "id": "b", "text": "Considered when sizing conductors and overcurrent devices", "correct": true },
+        { "id": "c", "text": "Not considered in calculations" },
+        { "id": "d", "text": "Zero at all times" }
+      ],
+      "explanation": "NEC 705.45 requires consideration of reactive power in sizing calculations. While most inverters operate at unity power factor, some grid codes require VAR support. Total apparent power (kVA) may exceed real power (kW) and affect conductor sizing.",
+      "code_ref": "NEC 705.45",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-nec-056",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Directory",
+      "question": "Per NEC 705.10, what must be posted at locations with multiple power sources?",
+      "options": [
+        { "id": "a", "text": "Equipment warranty information" },
+        { "id": "b", "text": "Permanent plaque or directory denoting all power sources", "correct": true },
+        { "id": "c", "text": "Only the utility meter number" },
+        { "id": "d", "text": "Nothing additional required" }
+      ],
+      "explanation": "NEC 705.10 requires a permanent plaque or directory at each service equipment location showing all electrical power sources on the premises. This alerts emergency responders and maintenance personnel to multiple power sources.",
+      "code_ref": "NEC 705.10",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-057",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Neutral Conductor",
+      "question": "Per NEC 705.100, when a neutral conductor exists in an interactive system, it must be:",
+      "options": [
+        { "id": "a", "text": "Always disconnected by the inverter" },
+        { "id": "b", "text": "Sized according to 220.61 for unbalanced loads", "correct": true },
+        { "id": "c", "text": "Smaller than phase conductors" },
+        { "id": "d", "text": "Connected to equipment ground" }
+      ],
+      "explanation": "NEC 705.100 requires neutral conductors in interactive systems to be sized for maximum unbalanced load current. For single-phase inverters on three-phase services, the neutral may carry significant current requiring proper sizing.",
+      "code_ref": "NEC 705.100",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-nec-058",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Grounding",
+      "question": "Per NEC 690.47, where must the DC grounding electrode conductor connect for a PV system?",
+      "options": [
+        { "id": "a", "text": "To a separate ground rod only" },
+        { "id": "b", "text": "To the AC grounding electrode system or separate electrode bonded to it", "correct": true },
+        { "id": "c", "text": "To the neutral conductor" },
+        { "id": "d", "text": "Grounding electrode not required" }
+      ],
+      "explanation": "NEC 690.47 requires the DC grounding electrode conductor to connect to the existing AC grounding electrode system, or to a separate electrode bonded to the AC system. This ensures all grounds are at the same potential.",
+      "code_ref": "NEC 690.47",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-059",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Grounding Electrode Conductor",
+      "question": "Per NEC 690.47, the DC GEC (grounding electrode conductor) for PV systems must be sized per:",
+      "options": [
+        { "id": "a", "text": "Table 250.66 based on PV source circuit conductors" },
+        { "id": "b", "text": "Table 250.166 and not smaller than 8 AWG copper", "correct": true },
+        { "id": "c", "text": "Always 4 AWG copper" },
+        { "id": "d", "text": "Same as circuit conductors" }
+      ],
+      "explanation": "Per NEC 690.47(B)(1), the DC grounding electrode conductor is sized per Table 250.166 based on the largest DC circuit conductor size, but not smaller than 8 AWG copper or 6 AWG aluminum.",
+      "code_ref": "NEC 690.47(B)(1), Table 250.166",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-060",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Bipolar Systems",
+      "question": "Per NEC 690.7(E), bipolar PV arrays have which grounding configuration?",
+      "options": [
+        { "id": "a", "text": "Positive conductor grounded" },
+        { "id": "b", "text": "A center tap or midpoint grounded", "correct": true },
+        { "id": "c", "text": "Negative conductor grounded" },
+        { "id": "d", "text": "Ungrounded" }
+      ],
+      "explanation": "NEC 690.7(E) permits bipolar arrays with center-tap grounding, creating positive and negative voltages relative to ground. This doubles system voltage without exceeding conductor-to-ground voltage limits. Used in some utility applications.",
+      "code_ref": "NEC 690.7(E)",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-nec-061",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Module Maximum Voltage",
+      "question": "Per NEC 690.4(D), modules used in a 1000V system must be marked as rated for:",
+      "options": [
+        { "id": "a", "text": "600V maximum" },
+        { "id": "b", "text": "1000V maximum or higher", "correct": true },
+        { "id": "c", "text": "Any voltage rating" },
+        { "id": "d", "text": "No voltage marking required" }
+      ],
+      "explanation": "NEC 690.4(D) requires modules to be marked with their maximum system voltage rating. Modules marked for 600V cannot be used in systems exceeding 600V. Using properly rated modules is essential for system safety.",
+      "code_ref": "NEC 690.4(D)",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-062",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Inverter Mounting",
+      "question": "Per NEC 690.4(C), where multiple inverters are grouped, what spacing is generally required?",
+      "options": [
+        { "id": "a", "text": "No spacing requirements" },
+        { "id": "b", "text": "Manufacturer's specified clearances for ventilation", "correct": true },
+        { "id": "c", "text": "Minimum 10 feet between units" },
+        { "id": "d", "text": "Units must touch each other" }
+      ],
+      "explanation": "When grouping multiple inverters per NEC 690.4(C), manufacturer-specified clearances for ventilation must be maintained. Inverters generate heat and require adequate airflow. Installation manuals specify minimum spacing requirements.",
+      "code_ref": "NEC 690.4(C), Manufacturer Instructions",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-063",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Circuit Routing",
+      "question": "Per NEC 690.31(C), DC circuits inside a building must be:",
+      "options": [
+        { "id": "a", "text": "Exposed on the surface" },
+        { "id": "b", "text": "In metal raceways, metal enclosures, or metal cable assemblies from entry point to first disconnect", "correct": true },
+        { "id": "c", "text": "In plastic conduit" },
+        { "id": "d", "text": "Routing not specified" }
+      ],
+      "explanation": "NEC 690.31(C) requires DC PV circuits inside buildings to be in metal raceways, metal enclosures, or Type MC metal-clad cable from the point of entry to the first readily accessible disconnect. This provides physical protection and fire containment.",
+      "code_ref": "NEC 690.31(C)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-064",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Accessible Locations",
+      "question": "Per NEC 690.31(D), in readily accessible locations, PV DC conductors must be:",
+      "options": [
+        { "id": "a", "text": "Exposed and unprotected" },
+        { "id": "b", "text": "Guarded, in raceways, or suitable cable types", "correct": true },
+        { "id": "c", "text": "Any wire type" },
+        { "id": "d", "text": "Protected by GFCI" }
+      ],
+      "explanation": "NEC 690.31(D) requires DC conductors in readily accessible locations to be guarded, installed in raceway, or be Type MC, AC, or other suitable cable assembly. This protects against physical damage and accidental contact.",
+      "code_ref": "NEC 690.31(D)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-065",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Circuit Separation",
+      "question": "Per NEC 690.31(E), PV source and output conductors must not be installed in the same:",
+      "options": [
+        { "id": "a", "text": "Conduit as each other" },
+        { "id": "b", "text": "Raceway or cable tray as other non-PV systems", "correct": true },
+        { "id": "c", "text": "Building as utility service" },
+        { "id": "d", "text": "Junction box as equipment grounds" }
+      ],
+      "explanation": "NEC 690.31(E) requires separation of PV conductors from other system wiring unless separated by a partition or unless the other conductors are from another PV system. This prevents voltage induction between systems.",
+      "code_ref": "NEC 690.31(E)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-066",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Flexible Conduit",
+      "question": "Per NEC 690.31(F), flexible metal conduit or LFNC can be used for PV module connections when:",
+      "options": [
+        { "id": "a", "text": "Never permitted" },
+        { "id": "b", "text": "For final connection to modules requiring movement for maintenance", "correct": true },
+        { "id": "c", "text": "For all wiring from inverter to panel" },
+        { "id": "d", "text": "Only underground" }
+      ],
+      "explanation": "NEC 690.31(F) permits flexible wiring methods for connection to tracking modules or equipment requiring movement. The length must be limited to that necessary for the required movement, with proper liquid-tight fittings where exposed.",
+      "code_ref": "NEC 690.31(F)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-067",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "DC Disconnect",
+      "question": "Per NEC 690.15, where is a DC PV disconnect required?",
+      "options": [
+        { "id": "a", "text": "Only at the inverter" },
+        { "id": "b", "text": "To disconnect all DC PV conductors from other conductors/equipment", "correct": true },
+        { "id": "c", "text": "Not required if using microinverters" },
+        { "id": "d", "text": "Only for commercial systems" }
+      ],
+      "explanation": "NEC 690.15 requires means to disconnect all DC PV source and output circuit conductors from all other conductors in the building. This may be at the inverter input, at a combiner, or other accessible location.",
+      "code_ref": "NEC 690.15",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-068",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Equipment Disconnect",
+      "question": "Per NEC 690.15(C), equipment such as charge controllers and inverters must have:",
+      "options": [
+        { "id": "a", "text": "No disconnect required" },
+        { "id": "b", "text": "Disconnect means for all ungrounded DC conductors", "correct": true },
+        { "id": "c", "text": "Only AC disconnect" },
+        { "id": "d", "text": "Ground fault protection only" }
+      ],
+      "explanation": "NEC 690.15(C) requires equipment like inverters and charge controllers to have a means to disconnect all ungrounded DC conductors. This allows safe maintenance and isolation of individual components.",
+      "code_ref": "NEC 690.15(C)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-069",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Fuses",
+      "question": "Per NEC 690.16, PV fuses must be listed and rated for:",
+      "options": [
+        { "id": "a", "text": "AC circuits" },
+        { "id": "b", "text": "DC circuit application with proper voltage/current ratings", "correct": true },
+        { "id": "c", "text": "Any voltage rating" },
+        { "id": "d", "text": "Fast-blow only" }
+      ],
+      "explanation": "NEC 690.16 requires fuses in PV systems to be listed for DC photovoltaic application. DC fuses differ from AC fuses in arc interruption capability. The fuse must be rated for the maximum voltage and available fault current.",
+      "code_ref": "NEC 690.16",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-070",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Fuse Disconnects",
+      "question": "Per NEC 690.16(B), where fuses are used in PV circuits, a disconnecting means is required to:",
+      "options": [
+        { "id": "a", "text": "Allow fuse replacement with circuits energized" },
+        { "id": "b", "text": "Independently disconnect the fuse from all sources of supply", "correct": true },
+        { "id": "c", "text": "Disconnect AC circuits only" },
+        { "id": "d", "text": "Not required with fuses" }
+      ],
+      "explanation": "NEC 690.16(B) requires a disconnecting means for each fuse to allow de-energizing from all sources before replacing. Touch-safe fuse holders provide this isolation, preventing arc-flash during fuse replacement.",
+      "code_ref": "NEC 690.16(B)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-071",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Combiner Boxes",
+      "question": "What is the purpose of a PV combiner box?",
+      "options": [
+        { "id": "a", "text": "Convert DC to AC" },
+        { "id": "b", "text": "Combine multiple source circuits with overcurrent protection", "correct": true },
+        { "id": "c", "text": "Store energy" },
+        { "id": "d", "text": "Provide rapid shutdown only" }
+      ],
+      "explanation": "Combiner boxes aggregate multiple PV source circuits (strings) into fewer output circuits. They typically include fuses or breakers for overcurrent protection, disconnects, and monitoring points. Required when multiple strings connect to a central inverter.",
+      "code_ref": "NEC 690.9, Industry Practice",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-072",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Battery Systems",
+      "question": "Per NEC 706.1, which article specifically covers energy storage systems including batteries?",
+      "options": [
+        { "id": "a", "text": "Article 480" },
+        { "id": "b", "text": "Article 690" },
+        { "id": "c", "text": "Article 706", "correct": true },
+        { "id": "d", "text": "Article 705" }
+      ],
+      "explanation": "NEC Article 706 covers Energy Storage Systems (ESS) including batteries used with PV systems. Article 480 covers stationary batteries generally, but 706 specifically addresses ESS in distributed energy applications.",
+      "code_ref": "NEC 706.1",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-073",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Inverter Output",
+      "question": "Per NEC 705.12, the inverter AC output circuit is considered a:",
+      "options": [
+        { "id": "a", "text": "DC circuit" },
+        { "id": "b", "text": "Power production source circuit requiring interconnection rules", "correct": true },
+        { "id": "c", "text": "Service conductor" },
+        { "id": "d": "text": "Branch circuit" }
+      ],
+      "explanation": "The inverter AC output circuit connects to the building electrical system per NEC 705.12. It's treated as a power production source requiring proper interconnection (load-side or supply-side) with overcurrent protection and labeling.",
+      "code_ref": "NEC 705.12",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-074",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Inverter Rating",
+      "question": "Per NEC 690.8(A)(3), inverter output circuit conductors must be sized for at least what percentage of inverter rated output?",
+      "options": [
+        { "id": "a", "text": "100%" },
+        { "id": "b", "text": "125%", "correct": true },
+        { "id": "c", "text": "80%" },
+        { "id": "d", "text": "150%" }
+      ],
+      "explanation": "NEC 690.8(A)(3) requires inverter output circuit conductors to have ampacity not less than 125% of the inverter continuous output current rating. This matches the continuous duty factor applied to PV DC circuits.",
+      "code_ref": "NEC 690.8(A)(3)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-075",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Surge Protection",
+      "question": "Per NEC 690.35(D), surge protective devices are required when:",
+      "options": [
+        { "id": "a", "text": "Always required on all PV systems" },
+        { "id": "b", "text": "When installed as part of the listed system or as required by manufacturer", "correct": true },
+        { "id": "c", "text": "Never required" },
+        { "id": "d", "text": "Only for systems over 100 kW" }
+      ],
+      "explanation": "While not universally required, NEC 690.35(D) references surge protection requirements when part of a listed system or required by manufacturer. Many installers add SPDs as best practice for lightning and switching transient protection.",
+      "code_ref": "NEC 690.35(D)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-076",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "DC Arc-Fault",
+      "question": "Which inverter safety feature detects series arcing in DC wiring?",
+      "options": [
+        { "id": "a", "text": "Ground-fault protection" },
+        { "id": "b", "text": "DC arc-fault circuit interrupter (AFCI)", "correct": true },
+        { "id": "c", "text": "Rapid shutdown" },
+        { "id": "d", "text": "Anti-islanding" }
+      ],
+      "explanation": "DC arc-fault circuit interrupter (AFCI) technology detects the high-frequency signature of series arc faults (loose connections, damaged insulation) per NEC 690.11. The inverter then interrupts the circuit and indicates the fault condition.",
+      "code_ref": "NEC 690.11",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-077",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Parallel Arc Faults",
+      "question": "Parallel arc faults (line-to-line or line-to-ground) in PV systems are primarily addressed by:",
+      "options": [
+        { "id": "a", "text": "Arc-fault detection" },
+        { "id": "b", "text": "Ground-fault protection and overcurrent devices", "correct": true },
+        { "id": "c", "text": "Rapid shutdown" },
+        { "id": "d", "text": "Anti-islanding" }
+      ],
+      "explanation": "Parallel arc faults create high current that's detected by ground-fault protection (line-to-ground) or overcurrent devices (line-to-line). Series arc-fault protection per NEC 690.11 specifically addresses lower-current series arcs that OCPDs can't detect.",
+      "code_ref": "NEC 690.11, 690.41",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-nec-078",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Fire Classifications",
+      "question": "Per NEC 690.12(A) and Fire Code, PV systems on buildings require rapid shutdown primarily for:",
+      "options": [
+        { "id": "a", "text": "Energy production optimization" },
+        { "id": "b", "text": "Firefighter safety during roof operations", "correct": true },
+        { "id": "c", "text": "Inverter protection" },
+        { "id": "d", "text": "Module warranty compliance" }
+      ],
+      "explanation": "Rapid shutdown reduces DC voltages to safe levels (≤80V within array, ≤30V outside) so firefighters can perform roof ventilation and suppression without electrocution risk. This requirement was driven by fire service concerns about solar hazards.",
+      "code_ref": "NEC 690.12, IFC 605.11",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-079",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Module-Level Shutdown",
+      "question": "Per NEC 690.12(B)(2), what type of device typically provides module-level rapid shutdown?",
+      "options": [
+        { "id": "a", "text": "Standard junction box" },
+        { "id": "b", "text": "Module-level power electronics (MLPE) like optimizers or microinverters", "correct": true },
+        { "id": "c", "text": "Fuses only" },
+        { "id": "d", "text": "Manual switches on each module" }
+      ],
+      "explanation": "Module-level power electronics (MLPE) including DC optimizers and microinverters reduce voltage at each module when AC power is removed. This meets the 80V limit within 30 seconds for the array boundary per NEC 690.12(B)(2).",
+      "code_ref": "NEC 690.12(B)(2)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-080",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Listed Equipment",
+      "question": "Per NEC 690.4(B), PV equipment must be listed and labeled by a:",
+      "options": [
+        { "id": "a", "text": "The installer" },
+        { "id": "b", "text": "Nationally Recognized Testing Laboratory (NRTL)", "correct": true },
+        { "id": "c", "text": "The utility company" },
+        { "id": "d": "text": "The manufacturer only" }
+      ],
+      "explanation": "NEC 690.4(B) requires PV equipment to be listed and labeled by an NRTL such as UL, CSA, ETL, or TUV. This ensures the equipment has been tested to appropriate standards (UL 1741 for inverters, UL 61730 for modules, etc.).",
+      "code_ref": "NEC 690.4(B), 110.2",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-081",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "UL Standards",
+      "question": "UL 1741 is the safety standard for which PV component?",
+      "options": [
+        { "id": "a", "text": "PV modules" },
+        { "id": "b", "text": "Inverters and charge controllers", "correct": true },
+        { "id": "c", "text": "Racking systems" },
+        { "id": "d", "text": "Conductors" }
+      ],
+      "explanation": "UL 1741 is the Standard for Inverters, Converters, Controllers and Interconnection System Equipment for Use With Distributed Energy Resources. All interactive inverters must be UL 1741 listed for NEC compliance.",
+      "code_ref": "UL 1741",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-082",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Module Standards",
+      "question": "The current UL standard for PV modules is:",
+      "options": [
+        { "id": "a", "text": "UL 1703 (legacy)" },
+        { "id": "b", "text": "UL 61730", "correct": true },
+        { "id": "c", "text": "UL 1741" },
+        { "id": "d", "text": "UL 489" }
+      ],
+      "explanation": "UL 61730 (based on IEC 61730) is the current standard for PV module safety. It replaced UL 1703. Modules must be listed to UL 61730 for NEC compliance, covering electrical safety, mechanical integrity, and fire resistance.",
+      "code_ref": "UL 61730",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-083",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Roof Fire Classification",
+      "question": "Per NEC 690.12, PV modules and systems must maintain what fire classification when installed on roofs?",
+      "options": [
+        { "id": "a", "text": "No fire rating required" },
+        { "id": "b", "text": "Same fire classification as the roof (Class A, B, or C)", "correct": true },
+        { "id": "c", "text": "Always Class A" },
+        { "id": "d", "text": "Fire classification is optional" }
+      ],
+      "explanation": "PV systems must not reduce the fire classification of the roof covering. Modules are tested for fire performance per UL 61730. The system installation (mounting, spacing, fire barriers) must maintain the roof's fire rating per local codes.",
+      "code_ref": "NEC 690.12, IBC, UL 61730",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-084",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Conduit Fill",
+      "question": "Per NEC Chapter 9 Table 1, maximum conduit fill for 3 or more PV conductors is:",
+      "options": [
+        { "id": "a", "text": "31%" },
+        { "id": "b", "text": "40%", "correct": true },
+        { "id": "c", "text": "53%" },
+        { "id": "d", "text": "60%" }
+      ],
+      "explanation": "NEC Chapter 9 Table 1 limits conduit fill to 40% for 3 or more conductors. This applies to PV circuits run in conduit. The EGC counts toward fill calculation. Proper fill prevents overheating and allows conductor pulling.",
+      "code_ref": "NEC Chapter 9 Table 1",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-085",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Rooftop Derating",
+      "question": "Per NEC 310.15(B)(2), conduit on a rooftop in direct sunlight requires adding what temperature to ambient?",
+      "options": [
+        { "id": "a", "text": "10°C" },
+        { "id": "b", "text": "17°C" },
+        { "id": "c", "text": "33°C", "correct": true },
+        { "id": "d", "text": "No adjustment needed" }
+      ],
+      "explanation": "NEC Table 310.15(B)(2) requires adding 33°C (60°F) to ambient temperature for conductors in conduit exposed to direct sunlight on rooftops. At 40°C ambient, this means 73°C for conductor derating calculations.",
+      "code_ref": "NEC Table 310.15(B)(2)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-086",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Conductor Derating",
+      "question": "Per NEC 310.15(C)(1), when more than 3 current-carrying conductors are in a raceway, ampacity must be adjusted using:",
+      "options": [
+        { "id": "a", "text": "No adjustment needed" },
+        { "id": "b", "text": "Adjustment factors from Table 310.15(C)(1)", "correct": true },
+        { "id": "c", "text": "Double the wire size" },
+        { "id": "d", "text": "Increase conduit size only" }
+      ],
+      "explanation": "NEC Table 310.15(C)(1) provides adjustment factors for conductor ampacity when more than 3 current-carrying conductors are bundled. 4-6 conductors = 80%, 7-9 = 70%, etc. EGCs don't count. This prevents overheating from mutual heating.",
+      "code_ref": "NEC Table 310.15(C)(1)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-087",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Temperature Rating",
+      "question": "Conductors used for PV source circuits should typically have what minimum temperature rating?",
+      "options": [
+        { "id": "a", "text": "60°C" },
+        { "id": "b", "text": "75°C" },
+        { "id": "c", "text": "90°C", "correct": true },
+        { "id": "d", "text": "105°C" }
+      ],
+      "explanation": "PV Wire per UL 4703 is rated 90°C. USE-2 is also 90°C rated. The higher temperature rating helps when applying rooftop temperature adders per NEC 310.15(B)(2). Module junction boxes also often specify 90°C minimum conductor ratings.",
+      "code_ref": "UL 4703, NEC 310.15",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-088",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Voltage Drop",
+      "question": "While NEC doesn't mandate specific voltage drop limits, recommended maximum voltage drop for DC circuits is:",
+      "options": [
+        { "id": "a", "text": "1%" },
+        { "id": "b", "text": "2%", "correct": true },
+        { "id": "c", "text": "5%" },
+        { "id": "d", "text": "10%" }
+      ],
+      "explanation": "Industry practice recommends ≤2% voltage drop for DC source/output circuits and ≤3% for AC circuits. Excessive voltage drop wastes energy and can push string voltage below inverter MPPT range. NEC Informational Notes suggest 3% for feeders, 5% total.",
+      "code_ref": "NEC 210.19(A)(1) Informational Note",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-089",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "NEC 2023 Changes",
+      "question": "The 2023 NEC reorganized Article 690. What is the purpose of the new Part I (General)?",
+      "options": [
+        { "id": "a", "text": "Only covers microinverters" },
+        { "id": "b", "text": "Contains scope, definitions, and general requirements for all PV systems", "correct": true },
+        { "id": "c", "text": "Covers battery storage only" },
+        { "id": "d", "text": "Eliminates all previous requirements" }
+      ],
+      "explanation": "NEC 2023 Article 690 Part I contains the scope (690.1), definitions (690.2), and general requirements (690.4) applying to all PV systems. The article is organized with Parts for specific topics like wiring (Part II), protection (Part III), etc.",
+      "code_ref": "NEC 2023 Article 690 Part I",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-090",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Inverter Input",
+      "question": "Per NEC 690.8(A)(1), the maximum input current for inverter sizing is based on:",
+      "options": [
+        { "id": "a", "text": "Module Imp only" },
+        { "id": "b", "text": "Sum of Isc for all parallel strings", "correct": true },
+        { "id": "c", "text": "Inverter nameplate rating" },
+        { "id": "d", "text": "Module maximum series fuse rating" }
+      ],
+      "explanation": "Maximum current to the inverter DC input equals the sum of Isc for all parallel-connected source circuits. The inverter must be rated to accept this maximum current, and input conductors sized accordingly with 125% multiplier.",
+      "code_ref": "NEC 690.8(A)(1)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-091",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Bus/Lug Connection",
+      "question": "Per NEC 705.12(B)(3), a PV system bus or lug connection to a panelboard is permitted when:",
+      "options": [
+        { "id": "a", "text": "Never permitted" },
+        { "id": "b", "text": "The bus/lugs are rated for the sum of all overcurrent device ratings", "correct": true },
+        { "id": "c", "text": "Only on commercial panels" },
+        { "id": "d", "text": "Always permitted without restrictions" }
+      ],
+      "explanation": "NEC 705.12(B)(3) permits bus or lug connections when the bus/lugs are rated for the sum of all OCPD ratings (main + PV + any other sources). This alternative to the 120% rule requires higher-rated busbars.",
+      "code_ref": "NEC 705.12(B)(3)",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-nec-092",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Center-Fed Panels",
+      "question": "Per NEC 705.12(B)(4), for center-fed panelboards with a PV breaker, the calculation is based on:",
+      "options": [
+        { "id": "a", "text": "Full busbar rating" },
+        { "id": "b", "text": "Rating of each busbar section from center to end", "correct": true },
+        { "id": "c", "text": "Main breaker only" },
+        { "id": "d", "text": "PV breaker only" }
+      ],
+      "explanation": "NEC 705.12(B)(4) addresses center-fed panels where the main breaker feeds the center. The 120% calculation applies to each busbar section from center to end, with PV breaker at one end and loads in between.",
+      "code_ref": "NEC 705.12(B)(4)",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-nec-093",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Multi-Wire Circuits",
+      "question": "Per NEC 690.8(A), PV system calculations do NOT require 125% continuous load factor when:",
+      "options": [
+        { "id": "a", "text": "Using premium conductors" },
+        { "id": "b", "text": "125% is always required for PV circuits", "correct": true },
+        { "id": "c", "text": "System is under 5 kW" },
+        { "id": "d", "text": "Using microinverters" }
+      ],
+      "explanation": "NEC 690.8(A) requires 125% multiplier for PV circuit conductors and overcurrent devices in all cases. Unlike some load calculations, there's no 80% OCPD exception. PV circuits are always considered continuous (>3 hours at maximum current).",
+      "code_ref": "NEC 690.8(A)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-094",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Stand-Alone Systems",
+      "question": "Per NEC 690.10, stand-alone (off-grid) PV systems must be installed per:",
+      "options": [
+        { "id": "a", "text": "Only manufacturer instructions" },
+        { "id": "b", "text": "All applicable NEC requirements including wiring methods and overcurrent protection", "correct": true },
+        { "id": "c", "text": "No NEC requirements apply" },
+        { "id": "d", "text": "Only Article 690" }
+      ],
+      "explanation": "NEC 690.10 requires stand-alone PV systems to comply with Article 690 and all other applicable NEC articles. Being off-grid doesn't exempt systems from proper wiring methods, overcurrent protection, and grounding requirements.",
+      "code_ref": "NEC 690.10",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-095",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Point of Connection",
+      "question": "The 'point of common coupling' (PCC) is where:",
+      "options": [
+        { "id": "a", "text": "Modules connect to each other" },
+        { "id": "b", "text": "The utility and customer facilities electrically connect", "correct": true },
+        { "id": "c", "text": "The inverter connects to combiner" },
+        { "id": "d", "text": "Strings connect in parallel" }
+      ],
+      "explanation": "The point of common coupling (PCC) is the electrical interconnection between utility and customer systems, typically at the service entrance or meter. IEEE 1547 requires DER to meet voltage and frequency limits at this point.",
+      "code_ref": "IEEE 1547, NEC 705",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-096",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "IEEE 1547",
+      "question": "IEEE 1547 establishes requirements for:",
+      "options": [
+        { "id": "a", "text": "Module manufacturing" },
+        { "id": "b", "text": "Interconnection of distributed energy resources with the grid", "correct": true },
+        { "id": "c", "text": "Battery chemistry" },
+        { "id": "d", "text": "Roofing materials" }
+      ],
+      "explanation": "IEEE 1547 Standard for Interconnection and Interoperability of Distributed Energy Resources establishes performance, operation, testing, and safety requirements for DER interconnection. NEC 705.40 references this for anti-islanding and grid support.",
+      "code_ref": "IEEE 1547-2018",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-097",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Smart Inverters",
+      "question": "IEEE 1547-2018 requires grid-tied inverters to have what capability?",
+      "options": [
+        { "id": "a", "text": "Battery charging only" },
+        { "id": "b", "text": "Grid support functions like voltage and frequency ride-through", "correct": true },
+        { "id": "c", "text": "Manual-only operation" },
+        { "id": "d", "text": "Zero power factor" }
+      ],
+      "explanation": "IEEE 1547-2018 requires 'smart inverter' functions including voltage/frequency ride-through, reactive power support, and communications capability. These grid support functions help maintain grid stability as DER penetration increases.",
+      "code_ref": "IEEE 1547-2018",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-nec-098",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Ride-Through",
+      "question": "Voltage ride-through means an inverter will:",
+      "options": [
+        { "id": "a", "text": "Immediately disconnect at any voltage variation" },
+        { "id": "b", "text": "Continue operating through temporary voltage excursions within defined limits", "correct": true },
+        { "id": "c", "text": "Always operate regardless of grid voltage" },
+        { "id": "d", "text": "Switch to battery backup" }
+      ],
+      "explanation": "Voltage ride-through requires inverters to remain connected during temporary voltage sags or swells within specified limits and durations per IEEE 1547-2018 Category I, II, or III. This prevents cascading disconnections during grid events.",
+      "code_ref": "IEEE 1547-2018 Section 6.4",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-nec-099",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Calculations",
+      "question": "For a string of 12 modules with Voc = 48V each, what is maximum voltage at -30°C using correction factor 1.17?",
+      "options": [
+        { "id": "a", "text": "576V" },
+        { "id": "b", "text": "673.9V", "correct": true },
+        { "id": "c", "text": "720V" },
+        { "id": "d", "text": "492V" }
+      ],
+      "explanation": "Maximum voltage = Modules × Voc × Temperature correction = 12 × 48V × 1.17 = 673.9V. This exceeds 600V residential limit (NEC 690.7(C)), so this configuration isn't permitted for one/two-family dwellings.",
+      "code_ref": "NEC 690.7(A)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-100",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Calculations",
+      "question": "A PV output circuit has 3 parallel strings with Isc = 11A each. What is minimum conductor ampacity?",
+      "options": [
+        { "id": "a", "text": "33A" },
+        { "id": "b", "text": "41.25A", "correct": true },
+        { "id": "c", "text": "27.5A" },
+        { "id": "d", "text": "36.3A" }
+      ],
+      "explanation": "Maximum current = 3 × 11A = 33A. Per NEC 690.8(A)(1), minimum conductor ampacity = 33A × 1.25 = 41.25A. A conductor with 45A or higher ampacity (before any derating) would be required.",
+      "code_ref": "NEC 690.8(A)(1)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-101",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Wire Sizing Example",
+      "question": "A PV source circuit with Isc = 10A requires minimum conductor ampacity of:",
+      "options": [
+        { "id": "a", "text": "10A" },
+        { "id": "b", "text": "12.5A", "correct": true },
+        { "id": "c", "text": "15A" },
+        { "id": "d", "text": "8A" }
+      ],
+      "explanation": "Minimum conductor ampacity = Isc × 1.25 = 10A × 1.25 = 12.5A per NEC 690.8(A)(1). Before applying any temperature or conduit fill derating, the conductor must have at least 12.5A ampacity.",
+      "code_ref": "NEC 690.8(A)(1)",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-102",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "OCPD Example",
+      "question": "A PV source circuit with Isc = 9.5A requires minimum OCPD rating of:",
+      "options": [
+        { "id": "a", "text": "10A" },
+        { "id": "b", "text": "12A" },
+        { "id": "c", "text": "15A", "correct": true },
+        { "id": "d", "text": "20A" }
+      ],
+      "explanation": "Minimum OCPD = Isc × 1.25 = 9.5A × 1.25 = 11.875A. Round up to next standard size = 15A per NEC 690.8(A)(2). The OCPD must also not exceed module maximum series fuse rating per 690.9(B).",
+      "code_ref": "NEC 690.8(A)(2), 240.6(A)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-103",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "120% Rule Example",
+      "question": "A 225A panel has a 200A main breaker. What is the maximum PV breaker per NEC 705.12(B)(2)?",
+      "options": [
+        { "id": "a", "text": "27A" },
+        { "id": "b", "text": "50A" },
+        { "id": "c", "text": "70A", "correct": true },
+        { "id": "d", "text": "90A" }
+      ],
+      "explanation": "120% of 225A busbar = 270A. 270A - 200A main = 70A maximum for PV breaker. The sum (200A + 70A = 270A) equals 120% of the busbar rating. Standard 70A breaker is acceptable.",
+      "code_ref": "NEC 705.12(B)(2)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-104",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Main Breaker Reduction",
+      "question": "A 200A panel with 200A main needs a 60A PV breaker. What main breaker replacement is needed?",
+      "options": [
+        { "id": "a", "text": "200A (no change needed)" },
+        { "id": "b", "text": "180A", "correct": true },
+        { "id": "c", "text": "150A" },
+        { "id": "d", "text": "125A" }
+      ],
+      "explanation": "120% of 200A = 240A maximum. 240A - 60A PV = 180A maximum main. Replace 200A main with 180A to accommodate 60A PV. Sum: 180A + 60A = 240A = 120% of 200A busbar.",
+      "code_ref": "NEC 705.12(B)(2)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-105",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "String Calculation",
+      "question": "Inverter maximum input = 550V. Module Voc = 48V. Temperature correction at -20°C = 1.14. Maximum modules per string?",
+      "options": [
+        { "id": "a", "text": "11 modules" },
+        { "id": "b", "text": "10 modules", "correct": true },
+        { "id": "c", "text": "12 modules" },
+        { "id": "d", "text": "9 modules" }
+      ],
+      "explanation": "Corrected Voc = 48V × 1.14 = 54.72V per module. Maximum modules = 550V ÷ 54.72V = 10.05. Round DOWN to 10 modules. 10 × 54.72V = 547.2V, which is under 550V limit.",
+      "code_ref": "NEC 690.7(A)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-106",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Minimum String",
+      "question": "Inverter MPPT minimum = 200V. Module Vmp = 38V. Temperature coefficient = -0.35%/°C. At 70°C module temp, minimum modules per string?",
+      "options": [
+        { "id": "a", "text": "5 modules" },
+        { "id": "b", "text": "6 modules" },
+        { "id": "c", "text": "7 modules", "correct": true },
+        { "id": "d", "text": "8 modules" }
+      ],
+      "explanation": "Temp rise = 70°C - 25°C = 45°C. Voltage reduction = 45 × 0.35% = 15.75%. Vmp at 70°C = 38V × (1-0.1575) = 32.015V. Minimum modules = 200V ÷ 32V = 6.25. Round UP to 7 modules.",
+      "code_ref": "NABCEP String Sizing, NEC 690.7",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-nec-107",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Disconnects",
+      "question": "Per NEC 690.13(E), the PV disconnect must simultaneously disconnect:",
+      "options": [
+        { "id": "a", "text": "Only the positive conductor" },
+        { "id": "b", "text": "All ungrounded conductors", "correct": true },
+        { "id": "c", "text": "Only the grounded conductor" },
+        { "id": "d", "text": "Equipment ground only" }
+      ],
+      "explanation": "NEC 690.13(E) requires the PV system disconnect to simultaneously disconnect all ungrounded conductors (both positive and negative for ungrounded systems, or just the ungrounded conductor for grounded systems).",
+      "code_ref": "NEC 690.13(E)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-108",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Disconnect Accessibility",
+      "question": "Per NEC 690.13(A), 'readily accessible' means the PV disconnect must be:",
+      "options": [
+        { "id": "a", "text": "On the roof near modules" },
+        { "id": "b", "text": "Capable of being reached quickly without climbing or removing obstacles", "correct": true },
+        { "id": "c", "text": "Inside a locked electrical room" },
+        { "id": "d", "text": "Only accessible to utility workers" }
+      ],
+      "explanation": "Per NEC Article 100 definition, 'readily accessible' means capable of being reached quickly without climbing, removing obstacles, or using portable ladders. The PV disconnect must be accessible without special access requirements.",
+      "code_ref": "NEC 690.13(A), Article 100",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-109",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Load Break",
+      "question": "Per NEC 690.17, AC and DC PV disconnect switches must be:",
+      "options": [
+        { "id": "a", "text": "Non-load-break rated" },
+        { "id": "b", "text": "Load-break rated or interlocked to de-energize before opening", "correct": true },
+        { "id": "c", "text": "Manual reset type" },
+        { "id": "d", "text": "Weather resistant only" }
+      ],
+      "explanation": "NEC 690.17 requires switches/circuit breakers used as PV disconnects to be load-break rated OR be interlocked with the inverter/controller to de-energize the circuit before opening. This prevents arc-flash during switching.",
+      "code_ref": "NEC 690.17",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-110",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Working Space",
+      "question": "Per NEC 110.26, equipment rated over 600V requires minimum working space depth of:",
+      "options": [
+        { "id": "a", "text": "3 feet" },
+        { "id": "b", "text": "4 feet" },
+        { "id": "c", "text": "Per Table 110.34(A) - typically 4-5 feet", "correct": true },
+        { "id": "d", "text": "No working space required" }
+      ],
+      "explanation": "Equipment over 600V (like 1000V PV systems) requires working space per NEC 110.34 and Table 110.34(A). For 601-2500V, minimum depth is 3-4 feet depending on conditions. Systems ≤600V use Table 110.26(A)(1).",
+      "code_ref": "NEC 110.34, Table 110.34(A)",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-nec-111",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Junction Boxes",
+      "question": "Per NEC 314.16, junction box fill calculations for PV circuits must account for:",
+      "options": [
+        { "id": "a", "text": "Only circuit conductors" },
+        { "id": "b", "text": "All conductors, clamps, devices, and equipment grounding conductors", "correct": true },
+        { "id": "c", "text": "Only the largest conductor" },
+        { "id": "d", "text": "Box fill doesn't apply to PV" }
+      ],
+      "explanation": "NEC 314.16 box fill requirements apply to PV junction boxes. All conductors, internal clamps, devices, and EGCs must be counted. Each conductor counts as one conductor volume, with adjustments for EGCs and device yokes.",
+      "code_ref": "NEC 314.16",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-112",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Wet Locations",
+      "question": "Per NEC 690.31, PV enclosures and junction boxes in outdoor locations must be rated for:",
+      "options": [
+        { "id": "a", "text": "Dry locations only" },
+        { "id": "b", "text": "Wet locations (NEMA 3R or better)", "correct": true },
+        { "id": "c", "text": "Indoor use only" },
+        { "id": "d", "text": "Damp locations only" }
+      ],
+      "explanation": "Outdoor PV equipment must be suitable for wet locations. NEMA 3R enclosures provide rain protection. All fittings, connectors, and junction boxes must maintain weather integrity to prevent water ingress and corrosion.",
+      "code_ref": "NEC 690.31, 314.15",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-113",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Marking Colors",
+      "question": "Per NEC 690.31(G), red is commonly used to identify which PV conductor?",
+      "options": [
+        { "id": "a", "text": "Negative (-)" },
+        { "id": "b", "text": "Positive (+)", "correct": true },
+        { "id": "c", "text": "Equipment ground" },
+        { "id": "d", "text": "Neutral" }
+      ],
+      "explanation": "While NEC doesn't mandate specific colors for DC polarity, industry convention uses red for positive (+) and black for negative (-) in ungrounded systems. NEC 690.31(G) requires consistent identification by color, tagging, or other means.",
+      "code_ref": "NEC 690.31(G), Industry Practice",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-114",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Warning Labels",
+      "question": "Per NEC 690.56(B), what warning must appear on the main service panel for buildings with PV?",
+      "options": [
+        { "id": "a", "text": "Module specifications" },
+        { "id": "b", "text": "Warning of multiple power sources", "correct": true },
+        { "id": "c", "text": "Installation date" },
+        { "id": "d", "text": "Installer contact information" }
+      ],
+      "explanation": "NEC 690.56(B) requires a permanent warning label at the service equipment indicating the presence of a PV system and that conductors may be energized by multiple power sources. This alerts service personnel to PV hazards.",
+      "code_ref": "NEC 690.56(B)",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-115",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Rapid Shutdown Label",
+      "question": "Per NEC 690.56(C)(2), rapid shutdown equipment must be identified with:",
+      "options": [
+        { "id": "a", "text": "Blue label" },
+        { "id": "b", "text": "Yellow and red 'SOLAR PV RAPID SHUTDOWN SWITCH' label", "correct": true },
+        { "id": "c", "text": "White label" },
+        { "id": "d", "text": "No specific label required" }
+      ],
+      "explanation": "NEC 690.56(C)(2) requires rapid shutdown initiation devices to be marked with a standardized label using yellow and red colors stating 'SOLAR PV RAPID SHUTDOWN SWITCH'. This ensures emergency responders can quickly locate the control.",
+      "code_ref": "NEC 690.56(C)(2)",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-116",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Array Boundary",
+      "question": "Per NEC 690.12(B)(2), the 'array boundary' is defined as:",
+      "options": [
+        { "id": "a", "text": "The property line" },
+        { "id": "b", "text": "Area within 1m of the PV array or point of entry", "correct": true },
+        { "id": "c", "text": "The entire roof" },
+        { "id": "d", "text": "Inside the inverter" }
+      ],
+      "explanation": "NEC 690.12(B)(2) defines the array boundary as the area 1m (3 ft) in any direction from the array. Within this boundary, conductors must reduce to 80V or less within 30 seconds. Outside this boundary, the limit is 30V.",
+      "code_ref": "NEC 690.12(B)(2)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-117",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "GFP Blind Spot",
+      "question": "In some PV system configurations, ground faults can occur without tripping protection. This is called:",
+      "options": [
+        { "id": "a", "text": "Arc fault" },
+        { "id": "b", "text": "Ground fault blind spot", "correct": true },
+        { "id": "c", "text": "Rapid shutdown failure" },
+        { "id": "d", "text": "String mismatch" }
+      ],
+      "explanation": "Ground fault blind spots can occur in grounded array configurations where the first ground fault may not produce enough current to trip protection. The NEC now requires functionally grounded systems with enhanced detection per 690.41.",
+      "code_ref": "NEC 690.41, NREL Ground Fault Studies",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-nec-118",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Microinverters",
+      "question": "Per NEC 690.6, listed PV AC module systems (microinverters) are exempt from which requirement?",
+      "options": [
+        { "id": "a", "text": "All NEC requirements" },
+        { "id": "b", "text": "DC source circuit conductor ampacity requirements", "correct": true },
+        { "id": "c", "text": "Equipment grounding" },
+        { "id": "d", "text": "Fire safety requirements" }
+      ],
+      "explanation": "NEC 690.6 permits listed AC module systems (microinverters) to use internal wiring as provided by the manufacturer without external DC circuit sizing requirements. The DC circuit is contained within the listed module-inverter assembly.",
+      "code_ref": "NEC 690.6",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-119",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Ground-Mount Requirements",
+      "question": "Per NEC 690.31, ground-mounted PV systems with underground wiring must use:",
+      "options": [
+        { "id": "a", "text": "Any wire type" },
+        { "id": "b", "text": "Wiring methods suitable for direct burial or in raceway", "correct": true },
+        { "id": "c", "text": "Surface-mounted wiring only" },
+        { "id": "d", "text": "Messenger-supported cable" }
+      ],
+      "explanation": "Underground wiring for ground-mount PV must comply with NEC Article 300.5 burial requirements. Direct burial cable (USE-2), or conductors in Schedule 80 PVC or other approved raceways, must be installed at appropriate depths.",
+      "code_ref": "NEC 690.31, 300.5",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-120",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Burial Depth",
+      "question": "Per NEC 300.5, minimum burial depth for rigid PVC conduit with PV cables under a driveway is:",
+      "options": [
+        { "id": "a", "text": "6 inches" },
+        { "id": "b", "text": "12 inches" },
+        { "id": "c", "text": "18 inches", "correct": true },
+        { "id": "d", "text": "24 inches" }
+      ],
+      "explanation": "Per NEC Table 300.5, rigid PVC requires 18 inches minimum cover under driveways and parking areas (concrete minimum 4 in thick). Without vehicle traffic, 18 inches is still minimum unless specific exceptions apply.",
+      "code_ref": "NEC Table 300.5",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-121",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Inspection Access",
+      "question": "All PV junction boxes, combiner boxes, and enclosures must be:",
+      "options": [
+        { "id": "a", "text": "Permanently sealed" },
+        { "id": "b", "text": "Accessible for inspection and maintenance", "correct": true },
+        { "id": "c", "text": "Painted to match the roof" },
+        { "id": "d", "text": "Above 10 feet height" }
+      ],
+      "explanation": "All PV electrical enclosures must remain accessible for inspection, maintenance, and troubleshooting per NEC 314.29. Installing enclosures in locations that become inaccessible after construction is prohibited.",
+      "code_ref": "NEC 314.29, 690.4",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-122",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Service Equipment",
+      "question": "Per NEC 705.12, where can PV systems NOT interconnect?",
+      "options": [
+        { "id": "a", "text": "At the service disconnect" },
+        { "id": "b", "text": "Downstream of the point of utility connection on customer premise", "correct": true },
+        { "id": "c", "text": "At a subpanel" },
+        { "id": "d", "text": "All locations are permitted" }
+      ],
+      "explanation": "NEC 705.12 requires interconnection at the service equipment, subpanel, or load-side of service. The PV system cannot connect on the utility side of the customer's metering/service point (that would require utility interconnection agreement for the utility network).",
+      "code_ref": "NEC 705.12",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-nec-123",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Multiple Inverters",
+      "question": "When multiple inverters connect to a single panelboard, the 120% rule calculation uses:",
+      "options": [
+        { "id": "a", "text": "Only the largest inverter breaker" },
+        { "id": "b", "text": "Sum of all inverter backfed breakers", "correct": true },
+        { "id": "c", "text": "Average of all breakers" },
+        { "id": "d", "text": "Each inverter calculated separately" }
+      ],
+      "explanation": "NEC 705.12(B)(2) requires the sum of all power source OCPD ratings (including multiple inverter breakers) plus main breaker to not exceed 120% of busbar rating. Multiple inverter breakers must be at the opposite end from main.",
+      "code_ref": "NEC 705.12(B)(2)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-124",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Subpanel Connection",
+      "question": "Per NEC 705.12(B)(2), when connecting PV to a subpanel fed by a 100A breaker:",
+      "options": [
+        { "id": "a", "text": "The 100A feeder breaker is treated as the main" },
+        { "id": "b", "text": "The subpanel busbar rating determines the calculation", "correct": true },
+        { "id": "c", "text": "No calculation required for subpanels" },
+        { "id": "d", "text": "PV cannot connect to subpanels" }
+      ],
+      "explanation": "For subpanel connections, NEC 705.12(B)(2) uses the subpanel's busbar ampere rating, not the feeder OCPD. Example: 125A subpanel allows 150A total (120%), so 100A feeder + 50A PV = 150A. PV breaker at opposite end from feeder input.",
+      "code_ref": "NEC 705.12(B)(2)",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-nec-125",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Backfed Breaker Types",
+      "question": "Per NEC 705.12(B)(7), plug-in backfed breakers require:",
+      "options": [
+        { "id": "a", "text": "No special requirements" },
+        { "id": "b", "text": "An additional fastener to prevent removal", "correct": true },
+        { "id": "c", "text": "Extra grounding" },
+        { "id": "d", "text": "A disconnect upstream" }
+      ],
+      "explanation": "NEC 705.12(B)(7) requires plug-in type backfed breakers to be secured with an additional fastener (retaining clip, screw, or listed means). This prevents the energized breaker from being inadvertently removed from the panel.",
+      "code_ref": "NEC 705.12(B)(7)",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-126",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Energy Storage Integration",
+      "question": "Per NEC 706.30, energy storage system (ESS) output circuit conductors must be sized for:",
+      "options": [
+        { "id": "a", "text": "100% of rated output" },
+        { "id": "b", "text": "125% of rated output for continuous operation", "correct": true },
+        { "id": "c", "text": "80% of rated output" },
+        { "id": "d", "text": "50% of rated output" }
+      ],
+      "explanation": "Per NEC 706.30, ESS circuit conductors must have ampacity not less than 125% of maximum current. Like PV circuits, ESS circuits are treated as continuous loads capable of operating at maximum current for 3+ hours.",
+      "code_ref": "NEC 706.30",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-127",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "ESS Disconnects",
+      "question": "Per NEC 706.15, the ESS disconnect must be:",
+      "options": [
+        { "id": "a", "text": "On the roof" },
+        { "id": "b", "text": "Lockable in the open position at a readily accessible location", "correct": true },
+        { "id": "c", "text": "Inside the battery enclosure only" },
+        { "id": "d", "text": "Automatic only" }
+      ],
+      "explanation": "NEC 706.15 requires ESS disconnecting means to be lockable open and readily accessible. The disconnect must simultaneously disconnect all ungrounded conductors and be rated for the maximum ESS current and voltage.",
+      "code_ref": "NEC 706.15",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-128",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "ESS Location",
+      "question": "Per NEC 706.10, energy storage systems installed in dwelling units have restrictions on:",
+      "options": [
+        { "id": "a", "text": "Color of enclosure" },
+        { "id": "b", "text": "Location based on battery chemistry and ventilation", "correct": true },
+        { "id": "c", "text": "System size only" },
+        { "id": "d", "text": "No restrictions" }
+      ],
+      "explanation": "NEC 706.10 requires ESS installations to follow manufacturer instructions and applicable codes for battery chemistry, ventilation, and fire separation. Li-ion systems have different requirements than lead-acid. Some locations may be prohibited.",
+      "code_ref": "NEC 706.10",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-129",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Hybrid Inverters",
+      "question": "A hybrid inverter that connects PV, battery, and grid is covered by which NEC articles?",
+      "options": [
+        { "id": "a", "text": "Only Article 690" },
+        { "id": "b", "text": "Articles 690 (PV), 705 (Interconnection), and 706 (ESS)", "correct": true },
+        { "id": "c", "text": "Only Article 706" },
+        { "id": "d", "text": "Only Article 705" }
+      ],
+      "explanation": "Hybrid inverters connecting PV arrays, batteries, and grid must comply with all applicable articles: 690 for PV circuits, 706 for battery/ESS circuits, and 705 for grid interconnection. All requirements apply to respective circuit portions.",
+      "code_ref": "NEC 690, 705, 706",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-130",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Backup Loads Panel",
+      "question": "When a PV+ESS system provides backup power, loads on the backup panel are called:",
+      "options": [
+        { "id": "a", "text": "Regular loads" },
+        { "id": "b", "text": "Critical or essential loads", "correct": true },
+        { "id": "c", "text": "Utility loads" },
+        { "id": "d", "text": "Optional loads" }
+      ],
+      "explanation": "Loads transferred to a backup (critical loads) panel receive power during outages. These typically include refrigerator, lighting, medical equipment, and communications. Proper load analysis ensures battery capacity matches critical load requirements.",
+      "code_ref": "NEC 706, 702 (Optional Standby)",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-131",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Transfer Switch",
+      "question": "Per NEC 705.12 and 702, what prevents simultaneous connection of utility and backup power?",
+      "options": [
+        { "id": "a", "text": "Fuses only" },
+        { "id": "b", "text": "Transfer switch or listed means of isolation", "correct": true },
+        { "id": "c", "text": "Circuit breakers only" },
+        { "id": "d", "text": "Nothing is required" }
+      ],
+      "explanation": "Transfer switches or listed isolating equipment prevent backfeeding utility during outages and ensure proper load transfer. Manual interlock kits, automatic transfer switches, or inverter-integrated transfer accomplish this per NEC 705 and 702.",
+      "code_ref": "NEC 705.40, 702.5",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-132",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Ground-Mount EGC",
+      "question": "For ground-mount PV arrays with metal racking over 10m (33 ft), the EGC must be sized per:",
+      "options": [
+        { "id": "a", "text": "Module Isc only" },
+        { "id": "b", "text": "Table 250.122 based on OCPD, but not smaller than 6 AWG for direct burial", "correct": true },
+        { "id": "c", "text": "Always 4 AWG" },
+        { "id": "d", "text": "No minimum size" }
+      ],
+      "explanation": "EGC sizing follows NEC 250.122. For direct burial applications, copper EGC must be 6 AWG minimum (8 AWG for aluminum). Long ground-mount runs may need larger EGC for voltage drop and impedance per 250.4(A)(5).",
+      "code_ref": "NEC 690.45, 250.122, 250.4(A)(5)",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-nec-133",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Combiner Location",
+      "question": "Per NEC 690, DC combiner boxes should be located:",
+      "options": [
+        { "id": "a", "text": "Inside the building only" },
+        { "id": "b", "text": "As close to the array as practicable", "correct": true },
+        { "id": "c", "text": "At the service entrance only" },
+        { "id": "d", "text": "Below grade" }
+      ],
+      "explanation": "Locating combiners near the array minimizes exposed DC wiring and simplifies rapid shutdown compliance. Combiners rated for outdoor use (NEMA 4X or similar) can be mounted on racking or adjacent structures.",
+      "code_ref": "NEC 690, Industry Best Practice",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-134",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Touch-Safe Fuse Holders",
+      "question": "Touch-safe fuse holders in PV systems provide what safety feature?",
+      "options": [
+        { "id": "a", "text": "Higher current rating" },
+        { "id": "b", "text": "Protection from contact with energized parts during fuse replacement", "correct": true },
+        { "id": "c", "text": "Weather resistance only" },
+        { "id": "d", "text": "Lower cost" }
+      ],
+      "explanation": "Touch-safe fuse holders isolate the fuse from both supply and load connections when the fuse carrier is removed, preventing shock hazard during replacement per NEC 690.16(B). This is critical since PV strings remain energized in sunlight.",
+      "code_ref": "NEC 690.16(B)",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-135",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Fuse Voltage Rating",
+      "question": "A fuse protecting a 600V DC PV circuit must be rated for:",
+      "options": [
+        { "id": "a", "text": "240V AC" },
+        { "id": "b", "text": "600V DC or higher", "correct": true },
+        { "id": "c", "text": "480V AC equivalent" },
+        { "id": "d", "text": "Any voltage" }
+      ],
+      "explanation": "DC fuses must be rated for the maximum system voltage per NEC 690.16. DC and AC voltage ratings aren't interchangeable—DC arcs are harder to extinguish. Using a 600VDC-rated fuse for a 600V DC system is mandatory.",
+      "code_ref": "NEC 690.16",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-136",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Interrupting Rating",
+      "question": "Per NEC 690.9(D), PV overcurrent devices must have interrupting rating sufficient for:",
+      "options": [
+        { "id": "a", "text": "Module Imp only" },
+        { "id": "b", "text": "Available fault current at the installation point", "correct": true },
+        { "id": "c", "text": "10,000A standard" },
+        { "id": "d", "text": "Interrupting rating not required" }
+      ],
+      "explanation": "NEC 690.9(D) requires overcurrent devices to have interrupting ratings not less than available fault current. While PV arrays have limited fault current, connections near inverter or battery may have higher available fault current.",
+      "code_ref": "NEC 690.9(D), 110.9",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-nec-137",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "GFCI AC Outlets",
+      "question": "Receptacle outlets for PV maintenance equipment installed outdoors must have:",
+      "options": [
+        { "id": "a", "text": "Standard outlets only" },
+        { "id": "b", "text": "GFCI protection", "correct": true },
+        { "id": "c", "text": "240V only" },
+        { "id": "d", "text": "No receptacles allowed" }
+      ],
+      "explanation": "Outdoor receptacles for maintenance tools must have GFCI protection per NEC 210.8. While not PV-specific, any 15A or 20A, 125V receptacles in outdoor locations serving PV equipment require GFCI protection.",
+      "code_ref": "NEC 210.8(A) and (B)",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-138",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Nameplate Data",
+      "question": "Per NEC 690.53, which of these is NOT required on PV system nameplates?",
+      "options": [
+        { "id": "a", "text": "Maximum system voltage" },
+        { "id": "b", "text": "Operating current" },
+        { "id": "c", "text": "Module manufacturer warranty period", "correct": true },
+        { "id": "d", "text": "Maximum circuit current" }
+      ],
+      "explanation": "NEC 690.53 requires marking maximum voltage, operating current, operating voltage, and maximum current. Warranty information is not an NEC marking requirement—that's found on module labels and installation documentation.",
+      "code_ref": "NEC 690.53",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-139",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Identification",
+      "question": "Per NEC 408.4(B), panelboards with backfed PV breakers must be marked with:",
+      "options": [
+        { "id": "a", "text": "Module brand" },
+        { "id": "b", "text": "Maximum number and location of backfed circuits", "correct": true },
+        { "id": "c", "text": "Installation date" },
+        { "id": "d", "text": "Installer license" }
+      ],
+      "explanation": "NEC 408.4(B) requires panelboard directories to identify circuits and show which are backfed from power production sources. The panel must be marked if it has been modified for PV interconnection (main breaker derated, etc.).",
+      "code_ref": "NEC 408.4(B)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-140",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Testing",
+      "question": "Per NEC 690.4(E), qualified persons installing PV systems should verify:",
+      "options": [
+        { "id": "a", "text": "Only module count" },
+        { "id": "b", "text": "Polarity, grounding, and proper operation before energizing", "correct": true },
+        { "id": "c", "text": "Only inverter display" },
+        { "id": "d", "text": "Only AC voltage" }
+      ],
+      "explanation": "Qualified persons per NEC 690.4(E) must verify correct polarity, equipment grounding continuity, and system parameters before energizing. This includes voltage, current, insulation resistance, and visual inspection per IEC 62446.",
+      "code_ref": "NEC 690.4(E), IEC 62446",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-141",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Insulation Resistance",
+      "question": "During commissioning, insulation resistance between PV positive/negative and ground should typically exceed:",
+      "options": [
+        { "id": "a", "text": "100 kΩ" },
+        { "id": "b", "text": "1 MΩ", "correct": true },
+        { "id": "c", "text": "10 Ω" },
+        { "id": "d", "text": "No minimum" }
+      ],
+      "explanation": "Per IEC 62446, insulation resistance should exceed 1 MΩ for systems ≤600V (2 MΩ for higher voltage). Testing at 500V or 1000V DC identifies insulation breakdown, moisture ingress, or installation damage before energizing.",
+      "code_ref": "IEC 62446",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-142",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Permit Requirements",
+      "question": "Most jurisdictions require what type of permit for PV installation?",
+      "options": [
+        { "id": "a", "text": "No permit required" },
+        { "id": "b", "text": "Electrical permit (building permit may also be required)", "correct": true },
+        { "id": "c", "text": "Fire permit only" },
+        { "id": "d", "text": "Utility permit only" }
+      ],
+      "explanation": "PV installations typically require electrical permits and inspections. Many jurisdictions also require building permits for structural attachments. Utility interconnection approval is separate from AHJ permits.",
+      "code_ref": "Local Jurisdiction Requirements",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-143",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Plan Review",
+      "question": "Electrical plan submittals for PV permits typically include:",
+      "options": [
+        { "id": "a", "text": "Only the contract" },
+        { "id": "b", "text": "Site plan, single-line diagram, and equipment specifications", "correct": true },
+        { "id": "c", "text": "Only module datasheets" },
+        { "id": "d", "text": "Only utility approval" }
+      ],
+      "explanation": "AHJ permit submittals typically require site plan showing array location, electrical single-line diagram, module/inverter specifications, conductor sizing calculations, and interconnection method (120% rule compliance, etc.).",
+      "code_ref": "AHJ Requirements",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-144",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Inspection Points",
+      "question": "PV electrical inspections typically verify all EXCEPT:",
+      "options": [
+        { "id": "a", "text": "Proper labeling and marking" },
+        { "id": "b", "text": "Correct conductor sizing" },
+        { "id": "c", "text": "Module efficiency rating", "correct": true },
+        { "id": "d", "text": "Grounding and bonding" }
+      ],
+      "explanation": "Electrical inspectors verify NEC compliance including labeling, conductor sizing, overcurrent protection, grounding, disconnect location, and rapid shutdown. Module efficiency is a performance specification, not a code compliance item.",
+      "code_ref": "NEC 690 Inspection Checklist",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-145",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Inspection Timing",
+      "question": "Per typical inspection protocols, a 'rough' electrical inspection occurs:",
+      "options": [
+        { "id": "a", "text": "After all work is complete" },
+        { "id": "b", "text": "Before wiring is concealed", "correct": true },
+        { "id": "c", "text": "Only at final" },
+        { "id": "d", "text": "Before permit application" }
+      ],
+      "explanation": "Rough inspections verify wiring before enclosures are closed or conduit covered. This allows inspection of connections, wire types, and routing. Final inspection occurs after all work is complete and system is ready for operation.",
+      "code_ref": "Inspection Procedures",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-146",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Code Adoption",
+      "question": "When determining which NEC edition applies to a PV installation, use:",
+      "options": [
+        { "id": "a", "text": "Always the latest published NEC" },
+        { "id": "b", "text": "The edition adopted by the local AHJ", "correct": true },
+        { "id": "c", "text": "The edition at time of equipment manufacture" },
+        { "id": "d", "text": "Any edition chosen by installer" }
+      ],
+      "explanation": "Local Authority Having Jurisdiction (AHJ) adopts a specific NEC edition. Installations must comply with the locally adopted code version, which may be older than the latest published NEC. Some jurisdictions have local amendments.",
+      "code_ref": "Local Code Adoption",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-147",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Utility Requirements",
+      "question": "Beyond NEC compliance, PV interconnection requires approval from:",
+      "options": [
+        { "id": "a", "text": "Only the homeowner" },
+        { "id": "b", "text": "The electric utility and/or interconnecting entity", "correct": true },
+        { "id": "c", "text": "Only the module manufacturer" },
+        { "id": "d", "text": "No additional approval needed" }
+      ],
+      "explanation": "Grid-tied PV systems require utility interconnection agreement per state regulations. The utility reviews system specifications, metering requirements, and may require inspections separate from AHJ electrical inspection.",
+      "code_ref": "State Interconnection Rules, IEEE 1547",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-148",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Grandfathering",
+      "question": "An existing PV system installed under NEC 2017 typically:",
+      "options": [
+        { "id": "a", "text": "Must immediately upgrade to current code" },
+        { "id": "b", "text": "Is grandfathered under the code in effect at installation", "correct": true },
+        { "id": "c", "text": "Is no longer legal" },
+        { "id": "d", "text": "Must be removed" }
+      ],
+      "explanation": "Existing installations are typically grandfathered under the NEC edition in effect when permitted. Modifications or expansions may trigger upgrades. Safety-critical retrofits (like rapid shutdown) may be required by some jurisdictions.",
+      "code_ref": "NEC 90.4",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-149",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Retrofit Requirements",
+      "question": "When adding modules to an existing PV system, the addition must:",
+      "options": [
+        { "id": "a", "text": "Match the original installation code only" },
+        { "id": "b", "text": "Comply with the currently adopted NEC", "correct": true },
+        { "id": "c", "text": "Use identical equipment only" },
+        { "id": "d", "text": "No permit required" }
+      ],
+      "explanation": "New work, including system additions, must comply with the currently adopted NEC. The existing system may remain under original code (grandfathered), but new circuits, equipment, and modifications must meet current requirements.",
+      "code_ref": "NEC 90.4",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-nec-150",
+      "trade": "solar",
+      "category": "NEC 690/705",
+      "subcategory": "Documentation",
+      "question": "Per industry standards, PV system documentation should be retained for:",
+      "options": [
+        { "id": "a", "text": "1 year" },
+        { "id": "b", "text": "The life of the system (25+ years)", "correct": true },
+        { "id": "c", "text": "Only until inspection" },
+        { "id": "d", "text": "Documentation not required" }
+      ],
+      "explanation": "System documentation including as-built drawings, equipment datasheets, commissioning reports, and O&M manuals should be retained for the system's operational life. This supports maintenance, troubleshooting, warranty claims, and future modifications.",
+      "code_ref": "IEC 62446, Industry Best Practice",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    }
+  ]
+}

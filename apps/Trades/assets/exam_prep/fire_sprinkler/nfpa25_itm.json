@@ -1,0 +1,547 @@
+{
+  "topic_id": "FS-ITM",
+  "topic_name": "NFPA 25 Inspection, Testing & Maintenance",
+  "code_version": "NFPA 25-2023",
+  "questions": [
+    {
+      "id": "FS-ITM-001",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-ITM",
+      "topic_name": "NFPA 25 ITM",
+      "code_articles": ["NFPA 25 5.2.1"],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "According to NFPA 25, how often must control valves be inspected?",
+      "choices": [
+        {"id": "A", "text": "Daily"},
+        {"id": "B", "text": "Weekly"},
+        {"id": "C", "text": "Monthly"},
+        {"id": "D", "text": "Quarterly"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Control valves must be inspected monthly.",
+        "detailed": "NFPA 25 Section 13.3.2 requires control valves to be inspected monthly when not locked or electrically supervised. Weekly inspection is required if not locked or supervised.",
+        "how_to_find": "NFPA 25, Section 13.3.2 - Valve Inspection"
+      },
+      "code_reference": {"standard": "NFPA 25", "section": "13.3.2"},
+      "tags": ["valves", "inspection", "frequency"],
+      "verified": true
+    },
+    {
+      "id": "FS-ITM-002",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-ITM",
+      "topic_name": "NFPA 25 ITM",
+      "code_articles": ["NFPA 25 5.2.5"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 75,
+      "question": "How often must a main drain test be conducted on a wet pipe sprinkler system?",
+      "choices": [
+        {"id": "A", "text": "Monthly"},
+        {"id": "B", "text": "Quarterly"},
+        {"id": "C", "text": "Semi-annually"},
+        {"id": "D", "text": "Annually"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Main drain test required annually and when system is reactivated.",
+        "detailed": "NFPA 25 requires the main drain test to be conducted annually. It should also be performed whenever the system is reactivated after being out of service to verify the water supply has not been impaired.",
+        "how_to_find": "NFPA 25, Table 5.1.1.2 - Summary of Wet Pipe System Tests"
+      },
+      "code_reference": {"standard": "NFPA 25", "section": "Table 5.1.1.2"},
+      "tags": ["main drain", "testing", "annual"],
+      "verified": true
+    },
+    {
+      "id": "FS-ITM-003",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-ITM",
+      "topic_name": "NFPA 25 ITM",
+      "code_articles": ["NFPA 25 5.3.3"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 75,
+      "question": "How often must the inspector's test be conducted?",
+      "choices": [
+        {"id": "A", "text": "Monthly"},
+        {"id": "B", "text": "Quarterly"},
+        {"id": "C", "text": "Semi-annually"},
+        {"id": "D", "text": "Annually"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Inspector's test required quarterly.",
+        "detailed": "NFPA 25 requires the inspector's test connection to be tested quarterly to verify waterflow alarm operation. The test should flow water until the alarm activates.",
+        "how_to_find": "NFPA 25, Table 5.1.1.2"
+      },
+      "code_reference": {"standard": "NFPA 25", "section": "5.3.3.2"},
+      "tags": ["inspector test", "alarm", "quarterly"],
+      "verified": true
+    },
+    {
+      "id": "FS-ITM-004",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-ITM",
+      "topic_name": "NFPA 25 ITM",
+      "code_articles": ["NFPA 25 13.4.3"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 90,
+      "question": "How often must a full flow trip test be performed on a dry pipe valve?",
+      "choices": [
+        {"id": "A", "text": "Quarterly"},
+        {"id": "B", "text": "Semi-annually"},
+        {"id": "C", "text": "Annually"},
+        {"id": "D", "text": "Every 3 years"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Dry pipe valve full flow trip test is required annually.",
+        "detailed": "NFPA 25 requires dry pipe valves to have a full flow trip test conducted annually during warm weather. The test verifies the valve trips properly and water reaches the inspector's test in the required time.",
+        "how_to_find": "NFPA 25, Section 13.4.3.2.2"
+      },
+      "code_reference": {"standard": "NFPA 25", "section": "13.4.3.2.2"},
+      "tags": ["dry valve", "trip test", "annual"],
+      "verified": true
+    },
+    {
+      "id": "FS-ITM-005",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-ITM",
+      "topic_name": "NFPA 25 ITM",
+      "code_articles": ["NFPA 25 5.2.4"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 75,
+      "question": "How often must sprinklers be inspected?",
+      "choices": [
+        {"id": "A", "text": "Weekly"},
+        {"id": "B", "text": "Monthly"},
+        {"id": "C", "text": "Quarterly"},
+        {"id": "D", "text": "Annually"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Sprinklers require annual visual inspection.",
+        "detailed": "NFPA 25 requires sprinklers to be inspected annually for physical damage, corrosion, paint, and loading. Sprinklers showing signs of leakage, corrosion, or damage must be replaced.",
+        "how_to_find": "NFPA 25, Section 5.2.1.1"
+      },
+      "code_reference": {"standard": "NFPA 25", "section": "5.2.1.1"},
+      "tags": ["sprinkler", "inspection", "annual"],
+      "verified": true
+    },
+    {
+      "id": "FS-ITM-006",
+      "version": "1.0",
+      "exam_types": ["nicet_3", "state"],
+      "topic_id": "FS-ITM",
+      "topic_name": "NFPA 25 ITM",
+      "code_articles": ["NFPA 25 5.3.1"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 90,
+      "question": "At what age must standard response sprinklers be tested or replaced?",
+      "choices": [
+        {"id": "A", "text": "20 years"},
+        {"id": "B", "text": "50 years"},
+        {"id": "C", "text": "75 years"},
+        {"id": "D", "text": "No age requirement"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Standard sprinklers must be tested or replaced at 50 years and every 10 years after.",
+        "detailed": "NFPA 25 Section 5.3.1.1.1 requires sprinklers manufactured using pre-1920 technology (slow response) to be replaced or lab tested at 50 years and every 10 years thereafter.",
+        "how_to_find": "NFPA 25, Section 5.3.1.1.1"
+      },
+      "code_reference": {"standard": "NFPA 25", "section": "5.3.1.1.1"},
+      "tags": ["sprinkler", "testing", "age"],
+      "verified": true
+    },
+    {
+      "id": "FS-ITM-007",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-ITM",
+      "topic_name": "NFPA 25 ITM",
+      "code_articles": ["NFPA 25 8.3.3"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 90,
+      "question": "How often must a fire pump be flow tested?",
+      "choices": [
+        {"id": "A", "text": "Monthly"},
+        {"id": "B", "text": "Quarterly"},
+        {"id": "C", "text": "Semi-annually"},
+        {"id": "D", "text": "Annually"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Fire pump flow test required annually.",
+        "detailed": "NFPA 25 Section 8.3.3 requires an annual flow test of the fire pump at various points on the pump curve including churn, rated flow, and 150% of rated flow.",
+        "how_to_find": "NFPA 25, Section 8.3.3 - Fire Pump Flow Test"
+      },
+      "code_reference": {"standard": "NFPA 25", "section": "8.3.3"},
+      "tags": ["fire pump", "flow test", "annual"],
+      "verified": true
+    },
+    {
+      "id": "FS-ITM-008",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-ITM",
+      "topic_name": "NFPA 25 ITM",
+      "code_articles": ["NFPA 25 8.3.1"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 75,
+      "question": "How often must a fire pump be operated under no-flow (churn) conditions?",
+      "choices": [
+        {"id": "A", "text": "Daily"},
+        {"id": "B", "text": "Weekly"},
+        {"id": "C", "text": "Monthly"},
+        {"id": "D", "text": "Quarterly"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Fire pump churn test required weekly.",
+        "detailed": "NFPA 25 requires fire pumps to be operated weekly under no-flow conditions for a minimum of 10 minutes to verify automatic or manual starting and proper operation.",
+        "how_to_find": "NFPA 25, Section 8.3.1 - No-Flow Tests"
+      },
+      "code_reference": {"standard": "NFPA 25", "section": "8.3.1"},
+      "tags": ["fire pump", "weekly", "churn"],
+      "verified": true
+    },
+    {
+      "id": "FS-ITM-009",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-ITM",
+      "topic_name": "NFPA 25 ITM",
+      "code_articles": ["NFPA 25 14.2.1"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 90,
+      "question": "How often must an internal obstruction investigation be conducted?",
+      "choices": [
+        {"id": "A", "text": "Annually"},
+        {"id": "B", "text": "Every 3 years"},
+        {"id": "C", "text": "Every 5 years"},
+        {"id": "D", "text": "As indicated by conditions"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Internal obstruction investigation required every 5 years.",
+        "detailed": "NFPA 25 Section 14.2.1 requires an assessment of internal piping conditions every 5 years. If conditions warrant, a full internal inspection and flushing may be required.",
+        "how_to_find": "NFPA 25, Section 14.2.1 - Internal Inspection"
+      },
+      "code_reference": {"standard": "NFPA 25", "section": "14.2.1"},
+      "tags": ["obstruction", "internal", "5-year"],
+      "verified": true
+    },
+    {
+      "id": "FS-ITM-010",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-ITM",
+      "topic_name": "NFPA 25 ITM",
+      "code_articles": ["NFPA 25 5.2.1"],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 75,
+      "question": "Which of the following would require a sprinkler to be replaced?",
+      "choices": [
+        {"id": "A", "text": "Light dust accumulation"},
+        {"id": "B", "text": "Minor scratches on frame"},
+        {"id": "C", "text": "Paint on the deflector"},
+        {"id": "D", "text": "Faded color identification"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Sprinklers with paint on any part except the frame must be replaced.",
+        "detailed": "NFPA 25 requires replacement of sprinklers that have been painted (other than factory paint) or have paint on the deflector, operating element, or orifice. Paint can delay operation or alter spray pattern.",
+        "how_to_find": "NFPA 25, Section 5.2.1.1.1"
+      },
+      "code_reference": {"standard": "NFPA 25", "section": "5.2.1.1.1"},
+      "tags": ["sprinkler", "replacement", "paint"],
+      "verified": true
+    },
+    {
+      "id": "FS-ITM-011",
+      "version": "1.0",
+      "exam_types": ["nicet_1", "nicet_2", "state"],
+      "topic_id": "FS-ITM",
+      "topic_name": "NFPA 25 ITM",
+      "code_articles": ["NFPA 25 5.4.1"],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum number of spare sprinklers required to be maintained on the premises?",
+      "choices": [
+        {"id": "A", "text": "2"},
+        {"id": "B", "text": "6"},
+        {"id": "C", "text": "12"},
+        {"id": "D", "text": "Based on system size"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Spare sprinkler quantity is based on the number of sprinklers in the system.",
+        "detailed": "NFPA 25 requires: Under 300 sprinklers = 6 spares; 300-1000 = 12 spares; Over 1000 = 24 spares. Spares must match type, temperature, and orifice of those installed.",
+        "how_to_find": "NFPA 25, Section 5.4.1.4 - Spare Sprinklers"
+      },
+      "code_reference": {"standard": "NFPA 25", "section": "5.4.1.4"},
+      "tags": ["spare sprinklers", "quantity", "maintenance"],
+      "verified": true
+    },
+    {
+      "id": "FS-ITM-012",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-ITM",
+      "topic_name": "NFPA 25 ITM",
+      "code_articles": ["NFPA 25 13.3.3"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 75,
+      "question": "How often must gauges on wet pipe systems be inspected?",
+      "choices": [
+        {"id": "A", "text": "Weekly"},
+        {"id": "B", "text": "Monthly"},
+        {"id": "C", "text": "Quarterly"},
+        {"id": "D", "text": "Annually"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Gauges must be inspected monthly.",
+        "detailed": "NFPA 25 requires monthly inspection of gauges to ensure they are in good condition and show normal readings. Gauges must be replaced or tested every 5 years.",
+        "how_to_find": "NFPA 25, Section 13.2.7"
+      },
+      "code_reference": {"standard": "NFPA 25", "section": "13.2.7"},
+      "tags": ["gauges", "inspection", "monthly"],
+      "verified": true
+    },
+    {
+      "id": "FS-ITM-013",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-ITM",
+      "topic_name": "NFPA 25 ITM",
+      "code_articles": ["NFPA 25 13.3.3"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 90,
+      "question": "How often must gauges be calibrated or replaced?",
+      "choices": [
+        {"id": "A", "text": "Annually"},
+        {"id": "B", "text": "Every 3 years"},
+        {"id": "C", "text": "Every 5 years"},
+        {"id": "D", "text": "Every 10 years"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Gauges must be replaced or tested every 5 years.",
+        "detailed": "NFPA 25 Section 13.2.7.2 requires gauges to be replaced or tested every 5 years. If tested, they must be accurate to within 3% of full scale.",
+        "how_to_find": "NFPA 25, Section 13.2.7.2"
+      },
+      "code_reference": {"standard": "NFPA 25", "section": "13.2.7.2"},
+      "tags": ["gauges", "calibration", "5-year"],
+      "verified": true
+    },
+    {
+      "id": "FS-ITM-014",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-ITM",
+      "topic_name": "NFPA 25 ITM",
+      "code_articles": ["NFPA 25 13.5"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 75,
+      "question": "How often must a fire department connection be inspected?",
+      "choices": [
+        {"id": "A", "text": "Weekly"},
+        {"id": "B", "text": "Monthly"},
+        {"id": "C", "text": "Quarterly"},
+        {"id": "D", "text": "Semi-annually"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "FDC must be inspected quarterly.",
+        "detailed": "NFPA 25 requires fire department connections to be inspected quarterly for accessibility, caps in place, gaskets, identification, clapper operation, and visible damage.",
+        "how_to_find": "NFPA 25, Section 13.7.1 - FDC Inspection"
+      },
+      "code_reference": {"standard": "NFPA 25", "section": "13.7.1"},
+      "tags": ["FDC", "inspection", "quarterly"],
+      "verified": true
+    },
+    {
+      "id": "FS-ITM-015",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-ITM",
+      "topic_name": "NFPA 25 ITM",
+      "code_articles": ["NFPA 25 5.1.2"],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 75,
+      "question": "During a main drain test, what constitutes an acceptable result?",
+      "choices": [
+        {"id": "A", "text": "Any flow from the drain"},
+        {"id": "B", "text": "Results similar to previous tests"},
+        {"id": "C", "text": "Pressure drop of exactly 10 psi"},
+        {"id": "D", "text": "Full static pressure recovery in 60 seconds"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Main drain results should be comparable to previous tests to indicate no supply impairment.",
+        "detailed": "The main drain test compares static and residual pressures to prior tests. A significant decrease in residual pressure (10+ psi) may indicate a partially closed valve or supply problem.",
+        "how_to_find": "NFPA 25, Section 13.2.5 - Main Drain Test"
+      },
+      "code_reference": {"standard": "NFPA 25", "section": "13.2.5"},
+      "tags": ["main drain", "test", "results"],
+      "verified": true
+    },
+    {
+      "id": "FS-ITM-016",
+      "version": "1.0",
+      "exam_types": ["nicet_3", "state"],
+      "topic_id": "FS-ITM",
+      "topic_name": "NFPA 25 ITM",
+      "code_articles": ["NFPA 25 5.3.1"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 90,
+      "question": "At what age must quick-response sprinklers first be tested or replaced?",
+      "choices": [
+        {"id": "A", "text": "10 years"},
+        {"id": "B", "text": "20 years"},
+        {"id": "C", "text": "35 years"},
+        {"id": "D", "text": "50 years"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Quick-response sprinklers must be tested or replaced at 20 years.",
+        "detailed": "NFPA 25 Section 5.3.1.1.1.2 requires quick-response sprinklers to be tested or replaced at 20 years from manufacture date, then every 10 years thereafter. This is earlier than standard-response sprinklers.",
+        "how_to_find": "NFPA 25, Section 5.3.1.1.1.2"
+      },
+      "code_reference": {"standard": "NFPA 25", "section": "5.3.1.1.1.2"},
+      "tags": ["quick response", "testing", "age"],
+      "verified": true
+    },
+    {
+      "id": "FS-ITM-017",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-ITM",
+      "topic_name": "NFPA 25 ITM",
+      "code_articles": ["NFPA 25 9.4"],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 75,
+      "question": "Who is qualified to perform sprinkler system inspections per NFPA 25?",
+      "choices": [
+        {"id": "A", "text": "Building owner only"},
+        {"id": "B", "text": "Any building maintenance personnel"},
+        {"id": "C", "text": "Qualified personnel trained in system inspection"},
+        {"id": "D", "text": "Only the original installing contractor"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Inspections must be performed by qualified personnel with proper training.",
+        "detailed": "NFPA 25 requires personnel performing inspection, testing, and maintenance to be qualified and properly trained. Many AHJs require specific certifications like NICET or state licensing.",
+        "how_to_find": "NFPA 25, Section 4.3 - Qualifications"
+      },
+      "code_reference": {"standard": "NFPA 25", "section": "4.3"},
+      "tags": ["qualifications", "personnel", "training"],
+      "verified": true
+    },
+    {
+      "id": "FS-ITM-018",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-ITM",
+      "topic_name": "NFPA 25 ITM",
+      "code_articles": ["NFPA 25 4.1"],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "Who is responsible for ensuring sprinkler systems are properly inspected, tested, and maintained?",
+      "choices": [
+        {"id": "A", "text": "The fire department"},
+        {"id": "B", "text": "The installing contractor"},
+        {"id": "C", "text": "The property owner or designated representative"},
+        {"id": "D", "text": "The insurance company"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "The property owner is responsible for ITM compliance.",
+        "detailed": "NFPA 25 Section 4.1 places responsibility for ITM on the property owner or designated representative. They may contract with qualified service providers but remain responsible.",
+        "how_to_find": "NFPA 25, Section 4.1 - Responsibility"
+      },
+      "code_reference": {"standard": "NFPA 25", "section": "4.1"},
+      "tags": ["responsibility", "owner", "ITM"],
+      "verified": true
+    },
+    {
+      "id": "FS-ITM-019",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-ITM",
+      "topic_name": "NFPA 25 ITM",
+      "code_articles": ["NFPA 25 4.3.1"],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 75,
+      "question": "How long must ITM records be retained?",
+      "choices": [
+        {"id": "A", "text": "1 year"},
+        {"id": "B", "text": "3 years"},
+        {"id": "C", "text": "5 years"},
+        {"id": "D", "text": "For the life of the system"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Records must be retained for at least 1 year or as required by AHJ.",
+        "detailed": "NFPA 25 Section 4.3.1 requires records to be maintained for a minimum of 1 year. However, the AHJ may require longer retention periods. Many recommend keeping records for the life of the system.",
+        "how_to_find": "NFPA 25, Section 4.3.1 - Records"
+      },
+      "code_reference": {"standard": "NFPA 25", "section": "4.3.1"},
+      "tags": ["records", "retention", "documentation"],
+      "verified": true
+    },
+    {
+      "id": "FS-ITM-020",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-ITM",
+      "topic_name": "NFPA 25 ITM",
+      "code_articles": ["NFPA 25 15.5"],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 75,
+      "question": "When a system is impaired, what must be done?",
+      "choices": [
+        {"id": "A", "text": "Nothing if less than 4 hours"},
+        {"id": "B", "text": "Notify the fire department only"},
+        {"id": "C", "text": "Implement an impairment management program"},
+        {"id": "D", "text": "Evacuate the building"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "An impairment management program must be implemented per NFPA 25 Chapter 15.",
+        "detailed": "NFPA 25 Chapter 15 requires an impairment coordinator, notification procedures, alternative protection measures, and expedited repair for impaired systems.",
+        "how_to_find": "NFPA 25, Chapter 15 - Impairments"
+      },
+      "code_reference": {"standard": "NFPA 25", "section": "Chapter 15"},
+      "tags": ["impairment", "management", "fire watch"],
+      "verified": true
+    }
+  ]
+}

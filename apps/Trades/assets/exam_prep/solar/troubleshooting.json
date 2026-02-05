@@ -1,0 +1,1882 @@
+{
+  "metadata": {
+    "trade": "solar",
+    "category": "Troubleshooting",
+    "total_questions": 110,
+    "last_updated": "2026-01-31",
+    "code_references": ["IEC 62446", "NABCEP Troubleshooting", "PV System Diagnostics"],
+    "exam_sources": ["NABCEP PVIP", "State Solar Contractor Exams", "O&M Certifications"]
+  },
+  "questions": [
+    {
+      "id": "solar-trouble-001",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Basic Diagnostics",
+      "question": "The first step in troubleshooting an underperforming PV system is:",
+      "options": [
+        { "id": "a", "text": "Replace the inverter" },
+        { "id": "b", "text": "Gather information: error codes, production history, recent changes", "correct": true },
+        { "id": "c", "text": "Replace all modules" },
+        { "id": "d", "text": "Call the utility" }
+      ],
+      "explanation": "Systematic troubleshooting starts with information gathering: check inverter error codes, review production history in monitoring, ask about recent events (weather, maintenance, outages), and compare current vs. expected performance.",
+      "code_ref": "Troubleshooting Methodology",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-002",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Safety",
+      "question": "Before troubleshooting DC PV circuits, what safety precautions are required?",
+      "options": [
+        { "id": "a", "text": "None—DC is safe" },
+        { "id": "b", "text": "PPE, open disconnects, verify zero energy or use LOTO procedures", "correct": true },
+        { "id": "c", "text": "Only wear gloves" },
+        { "id": "d", "text": "Work only at night" }
+      ],
+      "explanation": "DC circuits are energized in daylight. Wear appropriate PPE (insulated gloves, safety glasses), open all accessible disconnects, verify zero voltage with rated meter, or implement LOTO if work on energized circuits is unavoidable. Cover modules with opaque material.",
+      "code_ref": "NFPA 70E, OSHA",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-003",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Inverter Errors",
+      "question": "An inverter displays 'Ground Fault' error. The first troubleshooting step is:",
+      "options": [
+        { "id": "a", "text": "Replace the inverter" },
+        { "id": "b", "text": "Check for damaged wiring insulation, wet connections, or module damage", "correct": true },
+        { "id": "c", "text": "Ignore the error" },
+        { "id": "d", "text": "Call the fire department" }
+      ],
+      "explanation": "Ground faults indicate unintended current path to ground. Inspect for damaged wire insulation (especially at roof penetrations, junction boxes), water intrusion, rodent damage, or module glass/junction box damage. Use megger to locate affected circuit.",
+      "code_ref": "Ground Fault Diagnostics",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-004",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Inverter Errors",
+      "question": "An 'Arc Fault' error typically indicates:",
+      "options": [
+        { "id": "a", "text": "Normal operation" },
+        { "id": "b", "text": "Loose connection, damaged conductor, or corroded terminal", "correct": true },
+        { "id": "c", "text": "Overproduction" },
+        { "id": "d", "text": "Grid voltage too high" }
+      ],
+      "explanation": "Arc faults result from high-resistance connections creating sparks. Causes include loose MC4 connectors, corroded terminals, damaged conductors, or poor crimps. Inspect all connections, look for heat damage or discoloration, re-torque terminals.",
+      "code_ref": "Arc Fault Diagnostics",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-005",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Inverter Errors",
+      "question": "Inverter shows 'Overvoltage' or 'DC Input High' error. The likely cause is:",
+      "options": [
+        { "id": "a", "text": "Too few modules in the string" },
+        { "id": "b", "text": "String voltage exceeds inverter maximum, often due to cold temperature", "correct": true },
+        { "id": "c", "text": "Modules facing wrong direction" },
+        { "id": "d", "text": "Shading on the array" }
+      ],
+      "explanation": "Cold temperatures increase Voc above STC ratings. If string design didn't account for lowest expected temperature per NEC 690.7(A), voltage can exceed inverter limits. May require removing a module from affected strings or inverter replacement.",
+      "code_ref": "NEC 690.7(A)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-006",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Inverter Errors",
+      "question": "Inverter displays 'Grid Fault' or 'Utility Voltage Error'. This indicates:",
+      "options": [
+        { "id": "a", "text": "Module problem" },
+        { "id": "b", "text": "Grid voltage or frequency outside acceptable range", "correct": true },
+        { "id": "c", "text": "Low irradiance" },
+        { "id": "d", "text": "Internal inverter failure" }
+      ],
+      "explanation": "Grid fault errors indicate utility voltage or frequency outside inverter's operating window (typically ±10% voltage, 59.3-60.5 Hz). Check with voltmeter at service entrance. May be utility issue, loose service connection, or undersized conductors causing voltage rise.",
+      "code_ref": "IEEE 1547 Grid Limits",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-007",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Inverter Errors",
+      "question": "Inverter shows 'Isolation Fault' or 'ISO Error'. This typically means:",
+      "options": [
+        { "id": "a", "text": "The inverter is isolated from the grid" },
+        { "id": "b", "text": "DC circuit insulation resistance to ground is too low", "correct": true },
+        { "id": "c", "text": "AC wiring problem" },
+        { "id": "d", "text": "Normal startup message" }
+      ],
+      "explanation": "Isolation faults indicate low insulation resistance between DC conductors and ground. Caused by moisture, damaged insulation, or manufacturing defects. Use megger to test each string. May be intermittent with morning dew or rain.",
+      "code_ref": "Insulation Testing",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-008",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "String Diagnostics",
+      "question": "One string has significantly lower Voc than parallel strings with the same module count. This suggests:",
+      "options": [
+        { "id": "a", "text": "Normal operation" },
+        { "id": "b", "text": "One or more modules have bypass diodes conducting or open circuits", "correct": true },
+        { "id": "c", "text": "Higher irradiance on that string" },
+        { "id": "d", "text": "AC wiring problem" }
+      ],
+      "explanation": "Low string Voc indicates module-level voltage loss. Each conducting bypass diode drops ~0.5V but bypasses ~1/3 module voltage (15-20V). Count the voltage 'steps' missing to estimate affected modules. Check for severe shading, damaged cells, or poor connections.",
+      "code_ref": "Voc Diagnostics",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-009",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "String Diagnostics",
+      "question": "One string has significantly lower Isc than parallel strings. Possible causes include:",
+      "options": [
+        { "id": "a", "text": "Higher string voltage" },
+        { "id": "b", "text": "Shading, soiling, module damage, or high-resistance connection", "correct": true },
+        { "id": "c", "text": "Extra modules in the string" },
+        { "id": "d", "text": "Cold temperature" }
+      ],
+      "explanation": "Low Isc indicates current limitation. In series strings, the lowest-current module limits the entire string. Check for shading, soiling, cracked cells, damaged bypass diodes, or high-resistance connections that limit current flow.",
+      "code_ref": "Isc Diagnostics",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-010",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "String Diagnostics",
+      "question": "String Voc measures zero. The most likely cause is:",
+      "options": [
+        { "id": "a", "text": "Low irradiance" },
+        { "id": "b", "text": "Open circuit (disconnected cable, broken conductor, or blown fuse)", "correct": true },
+        { "id": "c", "text": "Shading" },
+        { "id": "d", "text": "Ground fault" }
+      ],
+      "explanation": "Zero Voc indicates complete open circuit—no current path. Check for disconnected MC4 connectors, broken conductors (especially at junction boxes or flexing points), or blown string fuses. Trace the circuit from module to inverter.",
+      "code_ref": "Open Circuit Diagnostics",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-011",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Measurement Techniques",
+      "question": "When measuring string Voc, the proper procedure is:",
+      "options": [
+        { "id": "a", "text": "Measure while connected to inverter" },
+        { "id": "b", "text": "Disconnect string from inverter/combiner and measure with calibrated DC voltmeter", "correct": true },
+        { "id": "c", "text": "Measure with AC voltmeter" },
+        { "id": "d", "text": "No specific procedure needed" }
+      ],
+      "explanation": "Disconnect the string from the inverter or combiner. Use a DC voltmeter rated for the expected voltage. Measure across positive and negative string conductors. Compare to calculated Voc (modules × Voc × temperature correction).",
+      "code_ref": "IEC 62446 Testing",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-012",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Measurement Techniques",
+      "question": "When measuring string Isc, special precautions are needed because:",
+      "options": [
+        { "id": "a", "text": "Current is always low" },
+        { "id": "b", "text": "High current can damage the meter if not properly rated and connected", "correct": true },
+        { "id": "c", "text": "AC meters work fine" },
+        { "id": "d", "text": "No precautions needed" }
+      ],
+      "explanation": "String Isc can exceed 10A. Use a DC clamp meter rated for the expected current, or a shunt with voltmeter. Never measure high current with a standard meter in voltage mode. Clamp around ONE conductor only (both cancels the reading).",
+      "code_ref": "Safe Measurement Practices",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-013",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Measurement Techniques",
+      "question": "Insulation resistance testing (megger test) should show:",
+      "options": [
+        { "id": "a", "text": "Less than 1 kΩ" },
+        { "id": "b", "text": "Greater than 1 MΩ between conductors and ground", "correct": true },
+        { "id": "c", "text": "Zero resistance" },
+        { "id": "d", "text": "Negative resistance" }
+      ],
+      "explanation": "Per IEC 62446, insulation resistance should exceed 1 MΩ at test voltage (typically 500V or 1000V DC). Low readings indicate insulation breakdown. Test positive-to-ground and negative-to-ground separately to identify the affected conductor.",
+      "code_ref": "IEC 62446",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-014",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Measurement Techniques",
+      "question": "A megger test shows low insulation resistance only when testing the positive conductor. This indicates:",
+      "options": [
+        { "id": "a", "text": "Problem with negative circuit" },
+        { "id": "b", "text": "Insulation fault on the positive conductor path", "correct": true },
+        { "id": "c", "text": "Normal condition" },
+        { "id": "d", "text": "Meter malfunction" }
+      ],
+      "explanation": "Low resistance on only one polarity narrows the fault to that conductor's path. Systematically isolate sections (disconnect at junction boxes, combiners) and retest to locate the specific segment with the fault.",
+      "code_ref": "Fault Isolation",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-015",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "IV Curve Analysis",
+      "question": "An IV curve tracer measures:",
+      "options": [
+        { "id": "a", "text": "Only temperature" },
+        { "id": "b", "text": "Current and voltage at many points from Isc to Voc", "correct": true },
+        { "id": "c", "text": "Only Voc" },
+        { "id": "d", "text": "Ground resistance" }
+      ],
+      "explanation": "IV curve tracers sweep from short-circuit (Isc) to open-circuit (Voc), recording I-V pairs throughout. The resulting curve shape reveals module/string health. Compare to expected curve to identify shading, soiling, mismatch, or resistance issues.",
+      "code_ref": "IV Curve Testing",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-016",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "IV Curve Analysis",
+      "question": "A 'stepped' or 'staircased' IV curve indicates:",
+      "options": [
+        { "id": "a", "text": "Normal operation" },
+        { "id": "b", "text": "Partial shading causing bypass diodes to conduct at different voltages", "correct": true },
+        { "id": "c", "text": "High temperature" },
+        { "id": "d", "text": "Inverter problem" }
+      ],
+      "explanation": "Steps in the IV curve appear when bypass diodes conduct due to shaded or damaged cells. Each step represents a bypassed cell group. The number and location of steps help identify affected modules and severity of shading.",
+      "code_ref": "IV Curve Interpretation",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-trouble-017",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "IV Curve Analysis",
+      "question": "An IV curve with reduced fill factor (more 'rounded' knee) suggests:",
+      "options": [
+        { "id": "a", "text": "Perfect operation" },
+        { "id": "b", "text": "Increased series resistance from poor connections or cell degradation", "correct": true },
+        { "id": "c", "text": "Short circuit" },
+        { "id": "d", "text": "Low temperature" }
+      ],
+      "explanation": "Reduced fill factor (FF) indicates resistive losses. Causes include corroded connections, high-resistance solder joints in cells, or degraded cells. The curve 'sags' away from the ideal rectangular shape, reducing power at MPP.",
+      "code_ref": "IV Curve Analysis",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-trouble-018",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "IV Curve Analysis",
+      "question": "An IV curve showing normal Voc but reduced Isc (curve shifted down) indicates:",
+      "options": [
+        { "id": "a", "text": "Cold temperature" },
+        { "id": "b", "text": "Uniform irradiance reduction from soiling or low sun", "correct": true },
+        { "id": "c", "text": "Open circuit" },
+        { "id": "d", "text": "Extra modules" }
+      ],
+      "explanation": "Current scales with irradiance while voltage is relatively stable. A downward shift with maintained Voc indicates uniform light reduction—soiling, haze, clouds, or low sun angle. Clean modules and retest to compare.",
+      "code_ref": "IV Curve Interpretation",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-019",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Thermal Imaging",
+      "question": "Thermal imaging of a PV array is used to detect:",
+      "options": [
+        { "id": "a", "text": "Wire colors" },
+        { "id": "b", "text": "Hot spots, defective cells, and poor connections", "correct": true },
+        { "id": "c", "text": "Module serial numbers" },
+        { "id": "d", "text": "Ground faults" }
+      ],
+      "explanation": "Thermal cameras reveal temperature differences. Hot cells indicate damage, reverse-biased operation, or poor bypass diodes. Hot connections indicate high resistance. Conduct thermal scans at ≥50% irradiance for best results.",
+      "code_ref": "Thermal Imaging Diagnostics",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-020",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Thermal Imaging",
+      "question": "A hot spot on a single cell in a thermal image typically indicates:",
+      "options": [
+        { "id": "a", "text": "Normal operation" },
+        { "id": "b", "text": "Damaged cell, shading, or soiling causing reverse-bias heating", "correct": true },
+        { "id": "c", "text": "Cold weather" },
+        { "id": "d", "text": "Inverter problem" }
+      ],
+      "explanation": "Hot cells are typically shaded, cracked, or have damaged contacts. When reverse-biased by the series string, they dissipate power as heat. Sustained hot spots can damage encapsulants and pose fire risk. The affected module may need replacement.",
+      "code_ref": "Hot Spot Analysis",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-021",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Thermal Imaging",
+      "question": "One entire module appears hotter than adjacent modules in a thermal scan. This could indicate:",
+      "options": [
+        { "id": "a", "text": "That module has more sunlight" },
+        { "id": "b", "text": "Faulty bypass diode or high-resistance connection", "correct": true },
+        { "id": "c", "text": "Normal module-to-module variation" },
+        { "id": "d", "text": "AC wiring issue" }
+      ],
+      "explanation": "A uniformly hotter module may have a faulty junction box, high-resistance connection, or failed bypass diode. The entire module is working harder to overcome the limitation, generating more heat. Check connections and test the module.",
+      "code_ref": "Thermal Diagnostics",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-022",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Production Analysis",
+      "question": "Production data shows gradual decline over months, not related to seasonal changes. Likely causes include:",
+      "options": [
+        { "id": "a", "text": "Instant failure" },
+        { "id": "b", "text": "Soiling accumulation, vegetation growth, or module degradation", "correct": true },
+        { "id": "c", "text": "Utility rate changes" },
+        { "id": "d", "text": "Monitoring error only" }
+      ],
+      "explanation": "Gradual production decline suggests progressive issues: soiling buildup, tree/vegetation growth causing new shading, or normal module degradation (~0.5%/year). Cleaning, trimming, and performance testing can identify and address the cause.",
+      "code_ref": "Performance Trending",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-023",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Production Analysis",
+      "question": "Production suddenly drops 25% on a specific date. First troubleshooting step:",
+      "options": [
+        { "id": "a", "text": "Replace all modules" },
+        { "id": "b", "text": "Check for new shading, failed equipment, or specific string offline", "correct": true },
+        { "id": "c", "text": "Wait and see" },
+        { "id": "d", "text": "Call utility" }
+      ],
+      "explanation": "Sudden production drops suggest discrete failures: string offline (fuse, connector, inverter MPPT), new shading (construction, tree), or equipment failure. 25% drop on a 4-string system = 1 string likely offline. Check inverter data and site conditions.",
+      "code_ref": "Performance Analysis",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-024",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Production Analysis",
+      "question": "Morning production is normal but afternoon production is low. Possible cause:",
+      "options": [
+        { "id": "a", "text": "Module degradation" },
+        { "id": "b", "text": "Afternoon shading from tree, building, or object", "correct": true },
+        { "id": "c", "text": "Inverter failure" },
+        { "id": "d", "text": "Ground fault" }
+      ],
+      "explanation": "Time-specific production loss indicates shading at that time. Visit the site during the affected hours to observe shade patterns. New construction, tree growth, or seasonal sun angle changes can create shading that wasn't present at installation.",
+      "code_ref": "Shading Analysis",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-025",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Production Analysis",
+      "question": "System produces less in summer than expected despite higher irradiance. Likely cause:",
+      "options": [
+        { "id": "a", "text": "Cold temperature losses" },
+        { "id": "b", "text": "High temperature reducing voltage and power", "correct": true },
+        { "id": "c", "text": "Less sunlight in summer" },
+        { "id": "d", "text": "Shorter days" }
+      ],
+      "explanation": "High summer temperatures reduce module voltage (and power) significantly. A module at 65°C produces 10-15% less than at 25°C. This is normal temperature derating. Compare to PVWatts or similar models that account for temperature.",
+      "code_ref": "Temperature Effects",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-026",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Shading Issues",
+      "question": "A chimney casts a shadow on 2 modules for 2 hours daily. With string inverter and no MLPE, the impact is:",
+      "options": [
+        { "id": "a", "text": "Only the 2 modules are affected" },
+        { "id": "b", "text": "The entire string output is reduced during shading", "correct": true },
+        { "id": "c", "text": "Zero impact" },
+        { "id": "d", "text": "Only AC production affected" }
+      ],
+      "explanation": "In series strings without MLPE, the shaded modules limit current for the entire string. Bypass diodes minimize losses but don't eliminate them. The whole string suffers reduced output during the shading period.",
+      "code_ref": "Shading Effects",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-027",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Shading Issues",
+      "question": "After tree trimming, production increased 15%. This confirms:",
+      "options": [
+        { "id": "a", "text": "Inverter was faulty" },
+        { "id": "b", "text": "Tree growth was causing significant shading losses", "correct": true },
+        { "id": "c", "text": "Modules were replaced" },
+        { "id": "d", "text": "Weather improved" }
+      ],
+      "explanation": "Production increase after tree trimming directly confirms shading was reducing output. Trees can grow several feet per year. Ongoing vegetation management should be part of the maintenance plan for sites with nearby trees.",
+      "code_ref": "Shading Mitigation",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-028",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Soiling",
+      "question": "After heavy dust storm, system production dropped 10%. The solution is:",
+      "options": [
+        { "id": "a", "text": "Replace modules" },
+        { "id": "b", "text": "Clean the modules with appropriate methods", "correct": true },
+        { "id": "c", "text": "Reset the inverter" },
+        { "id": "d", "text": "Wait for rain" }
+      ],
+      "explanation": "Dust and debris accumulation reduces light reaching cells. Clean modules with water (deionized if possible) and soft brush/squeegee. Avoid scratching glass. In dry climates, regular cleaning schedules improve production. Some areas lose 5%+ to soiling.",
+      "code_ref": "Module Cleaning",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-029",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Soiling",
+      "question": "Bird droppings on a single module cause what type of production impact?",
+      "options": [
+        { "id": "a", "text": "No impact" },
+        { "id": "b", "text": "Potential hot spot on affected cells and reduced string output", "correct": true },
+        { "id": "c", "text": "Increased production" },
+        { "id": "d", "text": "Only cosmetic concern" }
+      ],
+      "explanation": "Bird droppings create opaque shading on individual cells, potentially causing hot spots from reverse-biasing. In series strings, the shaded cells limit current for the entire string. Clean affected modules promptly to prevent damage and restore output.",
+      "code_ref": "Soiling Effects",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-030",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Connection Issues",
+      "question": "An MC4 connector feels warm/hot during system operation. This indicates:",
+      "options": [
+        { "id": "a", "text": "Normal operation" },
+        { "id": "b", "text": "High-resistance connection requiring immediate attention", "correct": true },
+        { "id": "c", "text": "Cold weather" },
+        { "id": "d", "text": "Low irradiance" }
+      ],
+      "explanation": "Hot connectors indicate high resistance (I²R heating) from poor crimps, corrosion, moisture, or mismatched connector brands. This is a fire hazard. De-energize and replace affected connectors immediately. Check for heat damage to insulation.",
+      "code_ref": "Connection Diagnostics",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-031",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Connection Issues",
+      "question": "Intermittent system faults that clear after connector manipulation suggest:",
+      "options": [
+        { "id": "a", "text": "Normal operation" },
+        { "id": "b", "text": "Loose connection or damaged connector requiring replacement", "correct": true },
+        { "id": "c", "text": "Inverter software bug" },
+        { "id": "d", "text": "Grid instability" }
+      ],
+      "explanation": "Intermittent faults from connector manipulation indicate a marginal connection that makes/breaks with movement. Don't leave it—replace the connector. Wind, thermal cycling, or vibration will cause future failures. Inspect for corrosion or damage.",
+      "code_ref": "Connector Diagnostics",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-032",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Connection Issues",
+      "question": "Corroded terminals on a combiner bus bar should be:",
+      "options": [
+        { "id": "a", "text": "Left as is" },
+        { "id": "b", "text": "Cleaned with appropriate methods or replaced if damaged", "correct": true },
+        { "id": "c", "text": "Painted over" },
+        { "id": "d", "text": "Tightened more" }
+      ],
+      "explanation": "Corrosion creates high resistance and intermittent connections. Clean with appropriate contact cleaner and wire brush if surface corrosion only. Replace terminals if significantly pitted or damaged. Apply anti-corrosion compound per manufacturer specs.",
+      "code_ref": "Terminal Maintenance",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-033",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Module Issues",
+      "question": "Brown or yellow discoloration on a module surface indicates:",
+      "options": [
+        { "id": "a", "text": "Normal aging" },
+        { "id": "b", "text": "Encapsulant degradation (browning/yellowing) reducing light transmission", "correct": true },
+        { "id": "c", "text": "Improved performance" },
+        { "id": "d", "text": "Reflection" }
+      ],
+      "explanation": "Encapsulant (EVA) browning/yellowing results from UV exposure and heat, especially in older or poor-quality modules. This reduces light reaching cells and indicates degradation. Affected modules typically underperform and may warrant warranty claim.",
+      "code_ref": "Module Degradation",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-034",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Module Issues",
+      "question": "Snail trails (dark lines following cell edges) on a module indicate:",
+      "options": [
+        { "id": "a", "text": "Actual snail damage" },
+        { "id": "b", "text": "Micro-cracks that allow moisture and silver migration", "correct": true },
+        { "id": "c", "text": "Normal appearance" },
+        { "id": "d", "text": "Wiring issue" }
+      ],
+      "explanation": "Snail trails are caused by moisture entering through micro-cracks in cells and reacting with silver from contacts. They indicate cell damage that may reduce output. Often result from handling damage or manufacturing defects. May be warrantable.",
+      "code_ref": "Module Defects",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-035",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Module Issues",
+      "question": "Delamination (bubbles, separated layers) in a module is caused by:",
+      "options": [
+        { "id": "a", "text": "Cold temperatures" },
+        { "id": "b", "text": "Moisture ingress, manufacturing defect, or thermal cycling", "correct": true },
+        { "id": "c", "text": "High production" },
+        { "id": "d", "text": "Proper installation" }
+      ],
+      "explanation": "Delamination indicates encapsulant separation from cells or glass due to moisture, manufacturing issues, or thermal stress. It reduces output, allows further moisture ingress, and poses safety concerns. Replace affected modules; document for warranty claim.",
+      "code_ref": "Module Defects",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-036",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Module Issues",
+      "question": "A cracked module glass should be:",
+      "options": [
+        { "id": "a", "text": "Taped and left in service" },
+        { "id": "b", "text": "Replaced—cracked glass compromises safety and performance", "correct": true },
+        { "id": "c", "text": "Ignored if production is normal" },
+        { "id": "d", "text": "Covered with film" }
+      ],
+      "explanation": "Cracked glass allows moisture ingress leading to cell damage, ground faults, and potential shock hazards. Even if producing now, degradation will accelerate. Replace the module. Document for warranty claim. Never leave cracked glass in service.",
+      "code_ref": "Module Safety",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-037",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Module Issues",
+      "question": "A module's junction box is melted or discolored. The appropriate action is:",
+      "options": [
+        { "id": "a", "text": "Continue using the module" },
+        { "id": "b", "text": "Immediately de-energize, document, and replace the module", "correct": true },
+        { "id": "c", "text": "Cool with water" },
+        { "id": "d", "text": "Tighten connections" }
+      ],
+      "explanation": "Melted junction boxes indicate severe overheating from internal connection failure—a fire hazard. Immediately de-energize (cover the module), document with photos for warranty/insurance, and replace. Inspect adjacent modules and wiring for damage.",
+      "code_ref": "Safety Response",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-038",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Inverter Issues",
+      "question": "Inverter won't start in the morning despite good sunlight. First check:",
+      "options": [
+        { "id": "a", "text": "Replace the inverter" },
+        { "id": "b", "text": "Verify DC disconnect is closed and string voltage exceeds start voltage", "correct": true },
+        { "id": "c", "text": "Call utility" },
+        { "id": "d", "text": "Wait until noon" }
+      ],
+      "explanation": "Check the basics: DC disconnect on, AC disconnect on, no lockouts. Measure string voltage—must exceed inverter start voltage (typically 100-200V). Low voltage in morning (dew, low sun) is normal until sufficient irradiance. Check for error codes.",
+      "code_ref": "Inverter Diagnostics",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-039",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Inverter Issues",
+      "question": "Inverter display is blank and LEDs are off despite being connected. Check:",
+      "options": [
+        { "id": "a", "text": "Only AC connection" },
+        { "id": "b", "text": "Both AC and DC supply—inverter needs one or both to power up", "correct": true },
+        { "id": "c", "text": "Only the display settings" },
+        { "id": "d", "text": "The weather forecast" }
+      ],
+      "explanation": "Most inverters power control electronics from DC input and/or AC grid. Check both: verify DC voltage at inverter terminals, verify AC voltage from panel. Blown fuses, open disconnects, or tripped breakers could prevent power-up.",
+      "code_ref": "Inverter Power Supply",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-040",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Inverter Issues",
+      "question": "Inverter internal fan runs constantly at high speed. This indicates:",
+      "options": [
+        { "id": "a", "text": "Normal operation" },
+        { "id": "b", "text": "Overheating—check ventilation, airflow, and ambient temperature", "correct": true },
+        { "id": "c", "text": "Fan failure" },
+        { "id": "d", "text": "Low production" }
+      ],
+      "explanation": "Constant high-speed fan operation indicates the inverter is working hard to dissipate heat. Check for blocked vents, direct sunlight, poor ventilation, or high ambient temperature. Overheating causes derating and premature failure.",
+      "code_ref": "Inverter Thermal Management",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-041",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Inverter Issues",
+      "question": "Inverter shows 'AC Disconnect Open' or similar when the breaker is clearly closed. This could indicate:",
+      "options": [
+        { "id": "a", "text": "Inverter software error" },
+        { "id": "b", "text": "Poor AC connection, wire fault, or voltage outside range", "correct": true },
+        { "id": "c", "text": "DC problem" },
+        { "id": "d", "text": "Normal operation" }
+      ],
+      "explanation": "The inverter senses AC presence through voltage measurement. If it doesn't detect proper AC despite breaker being on, check: AC voltage at inverter terminals, wire connections, neutral connection (if required), and tripped upstream breakers.",
+      "code_ref": "AC Connection Troubleshooting",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-042",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Inverter Issues",
+      "question": "One MPPT input on a dual-MPPT inverter shows much lower power than the other identical string. Check:",
+      "options": [
+        { "id": "a", "text": "AC connections" },
+        { "id": "b", "text": "String voltage, current, shading, and connection integrity", "correct": true },
+        { "id": "c", "text": "Inverter warranty" },
+        { "id": "d", "text": "Grid voltage" }
+      ],
+      "explanation": "Compare voltages and currents between MPPT inputs. Lower voltage = possible shading, bypass diode activation, or module count difference. Lower current = shading, soiling, or high-resistance connection. Physical inspection identifies the cause.",
+      "code_ref": "MPPT Troubleshooting",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-043",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Microinverter Issues",
+      "question": "Monitoring shows one microinverter is offline. The first troubleshooting step is:",
+      "options": [
+        { "id": "a", "text": "Replace it immediately" },
+        { "id": "b", "text": "Check AC trunk cable connection and DC connection from module", "correct": true },
+        { "id": "c", "text": "Replace the module" },
+        { "id": "d", "text": "Wait 24 hours" }
+      ],
+      "explanation": "Single micro offline could be: disconnected trunk cable, loose DC connection from module, failed microinverter, or communication issue. Check connections first—most 'failures' are connection issues. Reset/power cycle if connections are good.",
+      "code_ref": "Microinverter Diagnostics",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-044",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Microinverter Issues",
+      "question": "Multiple microinverters on one branch show offline. This suggests:",
+      "options": [
+        { "id": "a", "text": "All micros failed simultaneously" },
+        { "id": "b", "text": "Branch circuit breaker tripped or trunk cable issue", "correct": true },
+        { "id": "c", "text": "All modules are bad" },
+        { "id": "d", "text": "Monitoring system failure only" }
+      ],
+      "explanation": "Multiple offline micros on one branch indicate a common cause: tripped branch breaker, damaged trunk cable, or disconnected cable segment. Check the branch breaker first, then inspect the trunk cable from the affected section back to the junction box.",
+      "code_ref": "Branch Circuit Diagnostics",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-045",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Optimizer Issues",
+      "question": "One DC optimizer shows zero output while others produce normally. Check:",
+      "options": [
+        { "id": "a", "text": "AC connections" },
+        { "id": "b", "text": "DC input from module, optimizer connections, and the optimizer itself", "correct": true },
+        { "id": "c", "text": "The inverter" },
+        { "id": "d", "text": "The utility meter" }
+      ],
+      "explanation": "Single optimizer offline could be: disconnected DC input from module, failed optimizer, or damaged connection. Check module output Voc directly (bypass the optimizer), check optimizer connections. Replace optimizer if inputs are good but no output.",
+      "code_ref": "Optimizer Diagnostics",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-046",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Communication Issues",
+      "question": "Monitoring system shows no data despite inverter operating and producing power. Check:",
+      "options": [
+        { "id": "a", "text": "Module connections" },
+        { "id": "b", "text": "Internet connection, communication settings, and monitoring gateway", "correct": true },
+        { "id": "c", "text": "DC wiring" },
+        { "id": "d", "text": "Utility meter" }
+      ],
+      "explanation": "Production without monitoring data indicates communication failure, not production failure. Check internet connectivity, WiFi/Ethernet connections to inverter or gateway, router firewall settings, and monitoring portal configuration.",
+      "code_ref": "Monitoring Troubleshooting",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-047",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Grounding Issues",
+      "question": "System has repeated ground fault trips that clear when reset but recur. Possible cause:",
+      "options": [
+        { "id": "a", "text": "Permanent ground fault" },
+        { "id": "b", "text": "Intermittent fault from moisture, damaged insulation, or wildlife", "correct": true },
+        { "id": "c", "text": "Incorrect wiring" },
+        { "id": "d", "text": "Grid voltage issue" }
+      ],
+      "explanation": "Intermittent ground faults often correlate with conditions: morning dew, rain, or temperature. Moisture in compromised insulation or junction boxes causes temporary faults. Inspect for damage, cracked conduit, unsealed penetrations, or rodent damage.",
+      "code_ref": "Ground Fault Diagnostics",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-048",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Grounding Issues",
+      "question": "To locate an intermittent ground fault, an effective approach is:",
+      "options": [
+        { "id": "a", "text": "Replace everything" },
+        { "id": "b", "text": "Systematic isolation testing of each string/segment with megger during fault conditions", "correct": true },
+        { "id": "c", "text": "Ignore it" },
+        { "id": "d", "text": "Wait for permanent failure" }
+      ],
+      "explanation": "Test during conditions that trigger the fault (wet weather, morning). Disconnect strings and test each with megger. Isolate segments (combiner to inverter, junction box to combiner) to narrow location. Low insulation resistance indicates the affected section.",
+      "code_ref": "Fault Isolation",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-trouble-049",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Rapid Shutdown",
+      "question": "Rapid shutdown doesn't function when tested. First check:",
+      "options": [
+        { "id": "a", "text": "Module efficiency" },
+        { "id": "b", "text": "Control wiring, communication link, and equipment power", "correct": true },
+        { "id": "c", "text": "AC voltage only" },
+        { "id": "d", "text": "String fuses" }
+      ],
+      "explanation": "Rapid shutdown systems require proper control wiring/communication between the initiation device (disconnect) and the shutdown equipment (MLPE, separate controllers). Check control conductors, power supply to shutdown equipment, and equipment configuration.",
+      "code_ref": "Rapid Shutdown Testing",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-050",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Rapid Shutdown",
+      "question": "After rapid shutdown initiation, array voltage should reduce to 80V or less within:",
+      "options": [
+        { "id": "a", "text": "5 minutes" },
+        { "id": "b", "text": "30 seconds (within array boundary)", "correct": true },
+        { "id": "c", "text": "1 hour" },
+        { "id": "d", "text": "Immediately" }
+      ],
+      "explanation": "Per NEC 690.12(B)(2), PV conductors within the array boundary must reduce to 80V or less within 30 seconds of rapid shutdown initiation. Conductors outside the array boundary must reduce to 30V within the same time. Test with voltmeter during commissioning.",
+      "code_ref": "NEC 690.12(B)(2)",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman", "master"]
+    },
+    {
+      "id": "solar-trouble-051",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Battery Systems",
+      "question": "Battery system shows 'communication error' with inverter. Check:",
+      "options": [
+        { "id": "a", "text": "Module connections" },
+        { "id": "b", "text": "Data cables between battery BMS and inverter", "correct": true },
+        { "id": "c", "text": "AC grid voltage" },
+        { "id": "d", "text": "DC string fuses" }
+      ],
+      "explanation": "Battery communication errors indicate problems with the data link between battery management system (BMS) and inverter. Check communication cables (often CAN bus or RS485), connections, and proper termination. Verify settings match equipment.",
+      "code_ref": "ESS Communication",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-052",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Battery Systems",
+      "question": "Battery capacity has declined significantly over 2 years. Possible causes include:",
+      "options": [
+        { "id": "a", "text": "Cold weather only" },
+        { "id": "b", "text": "Calendar aging, excessive cycling, temperature extremes, or deep discharge", "correct": true },
+        { "id": "c", "text": "Too little use" },
+        { "id": "d", "text": "Grid instability" }
+      ],
+      "explanation": "Battery capacity naturally decreases with age and use. Accelerated degradation results from: frequent deep discharge, operation at temperature extremes (too hot or cold), high cycle count, or manufacturing defects. Compare to warranty degradation limits.",
+      "code_ref": "Battery Degradation",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-053",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Battery Systems",
+      "question": "Battery system won't provide backup during outage despite being charged. Check:",
+      "options": [
+        { "id": "a", "text": "Module orientation" },
+        { "id": "b", "text": "Backup mode settings, transfer switch operation, and critical loads panel", "correct": true },
+        { "id": "c", "text": "String voltage" },
+        { "id": "d", "text": "Ground fault protection" }
+      ],
+      "explanation": "Verify: backup mode is enabled in inverter settings, transfer switch/contactor operates correctly to isolate from grid, critical loads panel is properly connected, and battery has sufficient charge. Test backup function intentionally during commissioning.",
+      "code_ref": "Backup System Testing",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-054",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Structural",
+      "question": "After a windstorm, one module is askew on the roof. Check for:",
+      "options": [
+        { "id": "a", "text": "Inverter errors" },
+        { "id": "b", "text": "Loose clamps, bent rails, or failed roof attachments", "correct": true },
+        { "id": "c", "text": "Ground faults only" },
+        { "id": "d", "text": "AC wiring" }
+      ],
+      "explanation": "Displaced modules indicate mechanical failure. Inspect: module clamps (loose, broken), rails (bent, disconnected), and roof attachments (pulled out, failed). Check adjacent modules and entire array for hidden damage. Re-secure before energizing.",
+      "code_ref": "Structural Inspection",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-055",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Structural",
+      "question": "Roof shows water staining below a PV attachment point. The issue is likely:",
+      "options": [
+        { "id": "a", "text": "Condensation" },
+        { "id": "b", "text": "Failed flashing or sealant at the penetration", "correct": true },
+        { "id": "c", "text": "Inverter condensation" },
+        { "id": "d", "text": "Ice dam" }
+      ],
+      "explanation": "Water staining below attachment points indicates failed waterproofing. Inspect flashing condition (lifted, damaged), sealant integrity (cracked, missing), and proper integration with roofing. Repair the penetration to prevent structural damage.",
+      "code_ref": "Roof Leak Diagnostics",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-056",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Pest Issues",
+      "question": "Evidence of rodent activity under the array (nesting, chewed cables). Action required:",
+      "options": [
+        { "id": "a", "text": "Ignore if production is normal" },
+        { "id": "b", "text": "Remove nesting, inspect for wire damage, install critter guard", "correct": true },
+        { "id": "c", "text": "Only call an exterminator" },
+        { "id": "d", "text": "Increase voltage to deter pests" }
+      ],
+      "explanation": "Rodents chew wire insulation causing ground faults, arc faults, and fires. Remove all nesting material, thoroughly inspect all wiring for damage, repair/replace damaged cables, and install critter guards to prevent future access.",
+      "code_ref": "Pest Damage",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-057",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Lightning Damage",
+      "question": "After a lightning storm, the inverter is completely dead with burn marks. This indicates:",
+      "options": [
+        { "id": "a", "text": "Normal failure" },
+        { "id": "b", "text": "Lightning strike or surge damage requiring complete inspection", "correct": true },
+        { "id": "c", "text": "Cold weather failure" },
+        { "id": "d", "text": "Soiling issue" }
+      ],
+      "explanation": "Lightning surges can damage or destroy inverters even without direct strikes. Inspect all equipment for damage: inverter, disconnect, combiner, MLPE, and monitoring. Check surge protectors (if installed). Document for insurance claim before repairs.",
+      "code_ref": "Surge Damage",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-058",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Performance Ratio",
+      "question": "System performance ratio (PR) has dropped from 0.85 to 0.70 over one year. Investigation should focus on:",
+      "options": [
+        { "id": "a", "text": "Normal degradation" },
+        { "id": "b", "text": "All possible loss factors: shading, soiling, equipment, connections", "correct": true },
+        { "id": "c", "text": "Weather changes only" },
+        { "id": "d", "text": "Utility rate changes" }
+      ],
+      "explanation": "PR drop of 15 percentage points far exceeds normal degradation (<1%/year). Systematically check: new shading, soiling, equipment faults, string issues, inverter performance, and monitoring accuracy. This magnitude indicates real problems.",
+      "code_ref": "Performance Analysis",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-059",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Performance Ratio",
+      "question": "A 10 kW system should produce approximately 40 kWh on a 5 peak-sun-hour day with 80% PR. Actual production is 28 kWh. The system is producing:",
+      "options": [
+        { "id": "a", "text": "As expected" },
+        { "id": "b", "text": "30% less than expected, warranting investigation", "correct": true },
+        { "id": "c", "text": "Better than expected" },
+        { "id": "d", "text": "Cannot determine" }
+      ],
+      "explanation": "Expected: 10 kW × 5 hours × 0.80 = 40 kWh. Actual: 28 kWh = 70% of expected, or 30% underproduction. This significant shortfall requires troubleshooting. Compare multiple days to rule out weather, then investigate equipment.",
+      "code_ref": "Production Analysis",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-060",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Warranty Claims",
+      "question": "Before filing a module warranty claim for underperformance, document:",
+      "options": [
+        { "id": "a", "text": "Only the purchase date" },
+        { "id": "b", "text": "Serial number, installation date, test data, and photos of defects", "correct": true },
+        { "id": "c", "text": "Nothing—manufacturer will test" },
+        { "id": "d", "text": "Only the complaint" }
+      ],
+      "explanation": "Warranty claims require documentation: module serial number, installation date, operating conditions, test results (IV curve, Voc, Isc), photos of visible defects (hot spots, discoloration), and comparison to expected performance. Follow manufacturer's claim process.",
+      "code_ref": "Warranty Process",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-061",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "System Comparison",
+      "question": "When comparing a system's production to a nearby reference system, differences could be explained by:",
+      "options": [
+        { "id": "a", "text": "Distance alone" },
+        { "id": "b", "text": "Orientation, tilt, shading, equipment type, and system size differences", "correct": true },
+        { "id": "c", "text": "Only equipment brand" },
+        { "id": "d", "text": "Owner differences" }
+      ],
+      "explanation": "Valid comparison requires similar: orientation (azimuth), tilt angle, shading conditions, equipment efficiency, and normalized production (kWh/kW). Even nearby systems can have significantly different expected production based on these factors.",
+      "code_ref": "Performance Comparison",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-062",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Electrical Faults",
+      "question": "String fuse is blown. Before replacing, check:",
+      "options": [
+        { "id": "a", "text": "Nothing—just replace" },
+        { "id": "b", "text": "For short circuit, ground fault, or overcurrent cause in the string", "correct": true },
+        { "id": "c", "text": "Only fuse age" },
+        { "id": "d", "text": "AC voltage" }
+      ],
+      "explanation": "Blown fuses indicate overcurrent from short circuits, ground faults, or reverse current from other strings. Investigate before replacing—a new fuse will just blow again if the fault isn't corrected. Measure string insulation and check for damaged wiring.",
+      "code_ref": "Fuse Troubleshooting",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-063",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Electrical Faults",
+      "question": "Measuring continuity between positive and negative conductors of an isolated string shows very low resistance. This indicates:",
+      "options": [
+        { "id": "a", "text": "Normal operation" },
+        { "id": "b", "text": "Short circuit in the string", "correct": true },
+        { "id": "c", "text": "Open circuit" },
+        { "id": "d", "text": "High insulation quality" }
+      ],
+      "explanation": "Low resistance between positive and negative suggests a short circuit—conductors are touching or connected through a low-resistance path. Locate by isolating modules until resistance returns to normal. Often from damaged insulation or connector failure.",
+      "code_ref": "Short Circuit Diagnostics",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-064",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Electrical Faults",
+      "question": "Voltage measured across a connector shows a drop of 5V under load. This indicates:",
+      "options": [
+        { "id": "a", "text": "Normal connector operation" },
+        { "id": "b", "text": "High-resistance connection requiring replacement", "correct": true },
+        { "id": "c", "text": "Excellent connection" },
+        { "id": "d", "text": "Cold temperature" }
+      ],
+      "explanation": "Voltage drop across connectors should be negligible (<0.5V). A 5V drop indicates high resistance, which wastes power and generates heat. Replace the connector—high resistance will worsen over time and may cause arc faults.",
+      "code_ref": "Connection Resistance",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-065",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Meter Verification",
+      "question": "The utility meter shows different production than the inverter display. This could be due to:",
+      "options": [
+        { "id": "a", "text": "Meter and inverter should always match exactly" },
+        { "id": "b", "text": "Line losses between inverter and meter, measurement accuracy, or metering method", "correct": true },
+        { "id": "c", "text": "Inverter malfunction only" },
+        { "id": "d", "text": "Module issues" }
+      ],
+      "explanation": "Differences are normal: line losses between inverter and meter, different measurement accuracy (inverter ~±2%, revenue meter ~±0.5%), and different measurement points. Net meter shows export only, not total production. Compare similar metrics.",
+      "code_ref": "Metering Comparison",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-066",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Grid Issues",
+      "question": "Inverter repeatedly disconnects at the same time each day. Possible cause:",
+      "options": [
+        { "id": "a", "text": "Module issue" },
+        { "id": "b", "text": "Grid voltage or frequency excursion at that time from utility or local loads", "correct": true },
+        { "id": "c", "text": "Random failure" },
+        { "id": "d", "text": "Shading" }
+      ],
+      "explanation": "Time-correlated disconnections suggest external triggers: utility switching operations, large loads starting (industrial equipment), or voltage fluctuations from high PV penetration at solar noon. Monitor grid voltage during events. Contact utility if persistent.",
+      "code_ref": "Grid Interaction",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-067",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Grid Issues",
+      "question": "Inverter frequently shows 'High Grid Voltage' errors mid-day. The likely cause is:",
+      "options": [
+        { "id": "a", "text": "Low irradiance" },
+        { "id": "b", "text": "Grid voltage rise from PV export, possibly undersized conductors", "correct": true },
+        { "id": "c", "text": "Cold temperature" },
+        { "id": "d", "text": "Module failure" }
+      ],
+      "explanation": "Grid voltage rises when current flows 'backwards' to the grid. Causes: high PV export during peak production, undersized AC conductors (voltage drop in reverse), or stiff transformer. May require conductor upgrade, inverter settings adjustment, or utility coordination.",
+      "code_ref": "Voltage Rise",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-trouble-068",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Seasonal Issues",
+      "question": "System produces well in spring and fall but clipping occurs in summer. The likely cause is:",
+      "options": [
+        { "id": "a", "text": "Module failure" },
+        { "id": "b", "text": "DC/AC ratio exceeds 1.0, normal clipping in high-irradiance conditions", "correct": true },
+        { "id": "c", "text": "Ground fault" },
+        { "id": "d", "text": "Shading" }
+      ],
+      "explanation": "Clipping in summer peak indicates the DC array output exceeds inverter AC capacity during high-irradiance periods. This is normal with DC/AC ratios >1.0. Some clipping improves overall energy capture by boosting shoulder-hour production.",
+      "code_ref": "Clipping Analysis",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-069",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Seasonal Issues",
+      "question": "System produces less in winter than modeling predicted. Possible causes include:",
+      "options": [
+        { "id": "a", "text": "Module failure" },
+        { "id": "b", "text": "Snow coverage, shorter days, lower sun angle, or modeling inaccuracy", "correct": true },
+        { "id": "c", "text": "Inverter malfunction" },
+        { "id": "d", "text": "High temperature" }
+      ],
+      "explanation": "Winter production shortfall can result from: snow coverage (even partial), more clouds than modeled TMY data, lower sun angles causing more shading, or reflective losses at low angles. Compare to models accounting for actual weather.",
+      "code_ref": "Seasonal Analysis",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-070",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Snow",
+      "question": "After snowfall, production is zero despite sunny skies. The reason is:",
+      "options": [
+        { "id": "a", "text": "Cold temperature failure" },
+        { "id": "b", "text": "Snow covering modules blocks all light to cells", "correct": true },
+        { "id": "c", "text": "Grid outage" },
+        { "id": "d", "text": "Inverter hibernation" }
+      ],
+      "explanation": "Even partial snow coverage severely reduces production. Complete coverage blocks all light—even if sunny above, cells receive no irradiance. Production resumes as snow melts or slides off. Steep tilts shed snow faster.",
+      "code_ref": "Snow Effects",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-071",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Documentation",
+      "question": "A systematic troubleshooting approach includes documenting:",
+      "options": [
+        { "id": "a", "text": "Nothing—just fix the problem" },
+        { "id": "b", "text": "Symptoms, tests performed, results, and corrective actions taken", "correct": true },
+        { "id": "c", "text": "Only the final solution" },
+        { "id": "d", "text": "Only cost" }
+      ],
+      "explanation": "Document: initial symptoms, date/conditions, tests performed and results, diagnosis, corrective actions, and verification of repair. This creates a maintenance history, supports warranty claims, identifies recurring issues, and helps future troubleshooting.",
+      "code_ref": "Documentation Practices",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-072",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Test Equipment",
+      "question": "Essential test equipment for PV troubleshooting includes:",
+      "options": [
+        { "id": "a", "text": "Only a standard AC multimeter" },
+        { "id": "b", "text": "DC multimeter, clamp meter, megger, and thermal camera", "correct": true },
+        { "id": "c", "text": "Only visual inspection" },
+        { "id": "d", "text": "Only monitoring software" }
+      ],
+      "explanation": "Basic kit: DC multimeter (600V+ rating) for voltage, DC clamp meter for current, megohmmeter for insulation testing. Advanced: thermal camera for hot spots, IV curve tracer for detailed analysis. All equipment should be properly rated and calibrated.",
+      "code_ref": "Test Equipment",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-073",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Test Equipment",
+      "question": "Before using a multimeter on a PV system, verify:",
+      "options": [
+        { "id": "a", "text": "Only battery level" },
+        { "id": "b", "text": "Meter is rated for expected voltage/current, CAT rating, and calibration", "correct": true },
+        { "id": "c", "text": "Nothing special" },
+        { "id": "d", "text": "Only the color" }
+      ],
+      "explanation": "Verify: voltage rating exceeds maximum system voltage, current rating exceeds maximum circuit current, appropriate CAT rating for installation location (CAT III for distribution), and calibration is current. Using inadequate meters is hazardous.",
+      "code_ref": "Meter Safety",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-074",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Half-String Method",
+      "question": "The 'half-string' troubleshooting method involves:",
+      "options": [
+        { "id": "a", "text": "Cutting wires in half" },
+        { "id": "b", "text": "Systematically isolating half the modules at a time to locate faults", "correct": true },
+        { "id": "c", "text": "Replacing half the modules" },
+        { "id": "d", "text": "Only testing morning and afternoon" }
+      ],
+      "explanation": "Binary search for faults: disconnect the string midpoint. Test each half. The faulty half shows the problem. Subdivide that half again. Repeat until the faulty module or segment is isolated. Efficient for long strings.",
+      "code_ref": "Fault Isolation Technique",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-075",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "EL Imaging",
+      "question": "Electroluminescence (EL) imaging is used to detect:",
+      "options": [
+        { "id": "a", "text": "Hot spots only" },
+        { "id": "b", "text": "Micro-cracks, dead cells, and defects not visible externally", "correct": true },
+        { "id": "c", "text": "Wire damage" },
+        { "id": "d", "text": "Inverter faults" }
+      ],
+      "explanation": "EL imaging applies current to modules (reverse of normal operation) causing cells to emit light. Camera captures the image showing inactive areas (cracks, dead cells, poor contacts) as dark spots. Requires dark conditions and specialized equipment.",
+      "code_ref": "Advanced Diagnostics",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-trouble-076",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "False Faults",
+      "question": "An inverter shows intermittent 'low insulation' faults only on foggy mornings. This is likely caused by:",
+      "options": [
+        { "id": "a", "text": "Permanent insulation failure" },
+        { "id": "b", "text": "Moisture/condensation on surfaces temporarily reducing insulation resistance", "correct": true },
+        { "id": "c", "text": "Module failure" },
+        { "id": "d", "text": "Inverter malfunction" }
+      ],
+      "explanation": "Morning condensation can temporarily reduce insulation resistance below threshold, triggering faults that clear as surfaces dry. If consistent with weather patterns and no permanent faults are found, this may be normal. Severe or persistent faults require investigation.",
+      "code_ref": "Environmental Effects",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-077",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Software Updates",
+      "question": "After an inverter firmware update, the system behaves differently. The first step is:",
+      "options": [
+        { "id": "a", "text": "Immediately downgrade firmware" },
+        { "id": "b", "text": "Review update notes, verify settings, and monitor for issues", "correct": true },
+        { "id": "c", "text": "Replace the inverter" },
+        { "id": "d", "text": "Ignore changes" }
+      ],
+      "explanation": "Firmware updates can change settings or behavior. Review release notes for changes, verify critical settings (grid parameters, MPPT settings) remain correct, and monitor system for any issues. Contact manufacturer support if problems persist.",
+      "code_ref": "Software Troubleshooting",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-078",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Remote Diagnostics",
+      "question": "Before making a site visit for underperformance, remote diagnostics should include:",
+      "options": [
+        { "id": "a", "text": "Nothing—always visit first" },
+        { "id": "b", "text": "Reviewing monitoring data, error logs, weather data, and comparing to expected", "correct": true },
+        { "id": "c", "text": "Only calling the customer" },
+        { "id": "d", "text": "Ordering replacement parts" }
+      ],
+      "explanation": "Remote analysis often identifies causes or narrows possibilities: review production vs. irradiance, check error codes/history, compare string performance, and verify communication status. This preparation makes site visits more efficient and may avoid unnecessary trips.",
+      "code_ref": "Remote Monitoring",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-079",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Common Mistakes",
+      "question": "A common troubleshooting mistake is:",
+      "options": [
+        { "id": "a", "text": "Starting with the most likely cause" },
+        { "id": "b", "text": "Replacing components without testing or diagnosis", "correct": true },
+        { "id": "c", "text": "Documenting findings" },
+        { "id": "d", "text": "Verifying repairs" }
+      ],
+      "explanation": "Replacing parts without diagnosis wastes time and money, may not fix the problem, and obscures the real cause. Always: gather information, form hypothesis, test to confirm, then replace the confirmed faulty component, and verify the repair.",
+      "code_ref": "Troubleshooting Best Practices",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-080",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Verification",
+      "question": "After completing a repair, the final step is:",
+      "options": [
+        { "id": "a", "text": "Leave immediately" },
+        { "id": "b", "text": "Verify the repair resolved the issue and document the work", "correct": true },
+        { "id": "c", "text": "Order more parts" },
+        { "id": "d", "text": "Call the utility" }
+      ],
+      "explanation": "Always verify: system produces expected output, error codes cleared, and normal operation confirmed. Monitor for a period if possible. Document the repair, update maintenance records, and inform the customer of what was done.",
+      "code_ref": "Repair Verification",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-081",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Degradation Analysis",
+      "question": "Annual module degradation of 2% per year (vs. typical 0.5%) indicates:",
+      "options": [
+        { "id": "a", "text": "Normal performance" },
+        { "id": "b", "text": "Accelerated degradation requiring warranty investigation", "correct": true },
+        { "id": "c", "text": "Excellent performance" },
+        { "id": "d", "text": "Measurement error only" }
+      ],
+      "explanation": "2%/year degradation is 4× the typical rate and exceeds most warranty limits. Causes include: PID, LID, hot spots, delamination, or manufacturing defects. Document degradation with test data for warranty claims. Module replacement may be warranted.",
+      "code_ref": "Degradation Analysis",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-082",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Performance Testing",
+      "question": "To accurately assess module degradation, compare current output to:",
+      "options": [
+        { "id": "a", "text": "Neighbor's system" },
+        { "id": "b", "text": "Original specifications corrected for actual irradiance and temperature", "correct": true },
+        { "id": "c", "text": "Random expectations" },
+        { "id": "d", "text": "AC output only" }
+      ],
+      "explanation": "Compare measured power to STC rating corrected for actual conditions: Power_measured ÷ (Irradiance/1000) ÷ (1 + TempCoef × (Tcell-25)). IV curve tracers automate this correction. Difference from nameplate indicates degradation or defects.",
+      "code_ref": "Performance Testing",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-trouble-083",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Bypass Diode Failure",
+      "question": "A failed bypass diode can cause:",
+      "options": [
+        { "id": "a", "text": "Improved performance" },
+        { "id": "b", "text": "Hot spots, reduced output, or string failure depending on failure mode", "correct": true },
+        { "id": "c", "text": "No effect" },
+        { "id": "d", "text": "Increased voltage" }
+      ],
+      "explanation": "Bypass diode failures: short-circuit failure bypasses cells permanently (lost power but protects against hot spots); open-circuit failure allows hot spots under shading (fire risk). Test diodes with multimeter in diode mode or thermal imaging.",
+      "code_ref": "Bypass Diode Testing",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-084",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Bypass Diode Failure",
+      "question": "To test bypass diodes, measure forward voltage drop with multimeter in diode mode. Normal reading is:",
+      "options": [
+        { "id": "a", "text": "0V (shorted)" },
+        { "id": "b", "text": "0.3-0.7V depending on diode type", "correct": true },
+        { "id": "c", "text": ">5V" },
+        { "id": "d", "text": "OL (infinite) in both directions" }
+      ],
+      "explanation": "Normal diodes show 0.3-0.7V forward drop (Schottky ~0.3V, silicon ~0.6V) and OL (open) in reverse. Shorted diodes show 0V in both directions. Open diodes show OL in both directions. Access diodes through junction box.",
+      "code_ref": "Diode Testing",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-085",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Junction Box Issues",
+      "question": "Signs of junction box problems include:",
+      "options": [
+        { "id": "a", "text": "Clean appearance" },
+        { "id": "b", "text": "Discoloration, melting, corrosion, or water staining", "correct": true },
+        { "id": "c", "text": "Firm cable connections" },
+        { "id": "d", "text": "Proper potting" }
+      ],
+      "explanation": "Junction box issues show as: heat discoloration, melted plastic, corrosion from moisture ingress, water staining inside or around, failed potting compound, or loose/corroded terminals. These indicate connection problems requiring module replacement.",
+      "code_ref": "Junction Box Inspection",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-086",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "MPPT Issues",
+      "question": "Inverter MPPT is not tracking to maximum power (stays at low power point). Check for:",
+      "options": [
+        { "id": "a", "text": "AC wiring" },
+        { "id": "b", "text": "Partial shading causing multiple power peaks, or MPPT settings", "correct": true },
+        { "id": "c", "text": "Meter accuracy" },
+        { "id": "d", "text": "Customer loads" }
+      ],
+      "explanation": "Partial shading creates multiple MPPs; inverter may track a local (lower) peak instead of global maximum. Advanced MPPT algorithms (global MPPT) help. Also check MPPT configuration settings for voltage/current limits that might constrain operation.",
+      "code_ref": "MPPT Troubleshooting",
+      "difficulty": "hard",
+      "exam_relevance": ["NABCEP PVIP", "master"]
+    },
+    {
+      "id": "solar-trouble-087",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Efficiency Issues",
+      "question": "Inverter efficiency has dropped from 96% to 88%. Possible causes:",
+      "options": [
+        { "id": "a", "text": "Normal operation" },
+        { "id": "b", "text": "Internal component degradation, thermal problems, or MPPT issues", "correct": true },
+        { "id": "c", "text": "String problems only" },
+        { "id": "d", "text": "Improved performance" }
+      ],
+      "explanation": "Inverter efficiency decline indicates internal issues: capacitor degradation, thermal management problems (fan failure, blocked vents), or control issues. 8% efficiency loss is significant—the inverter may need service or replacement.",
+      "code_ref": "Inverter Performance",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-088",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Nighttime Consumption",
+      "question": "Monitoring shows small power consumption at night. This is likely:",
+      "options": [
+        { "id": "a", "text": "Module problem" },
+        { "id": "b", "text": "Normal inverter standby power consumption", "correct": true },
+        { "id": "c", "text": "Theft" },
+        { "id": "d", "text": "Faulty meter" }
+      ],
+      "explanation": "Inverters draw 1-10W at night for standby functions (monitoring, communication, grid sensing). This appears as small consumption on monitoring systems. It's normal unless significantly higher than manufacturer specs.",
+      "code_ref": "Standby Power",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-089",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Production Verification",
+      "question": "Customer disputes that system isn't producing what was promised. First verify:",
+      "options": [
+        { "id": "a", "text": "Customer's electric bill only" },
+        { "id": "b", "text": "Actual production vs. design estimate under actual weather conditions", "correct": true },
+        { "id": "c", "text": "Nothing—trust the customer" },
+        { "id": "d", "text": "Only inverter display" }
+      ],
+      "explanation": "Compare actual production (from monitoring) to design estimate. Account for actual vs. typical weather. Production guarantees typically compare to weather-normalized expectations, not fixed kWh values. If shortfall exists, investigate causes.",
+      "code_ref": "Production Analysis",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-090",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Customer Education",
+      "question": "Customer reports 'the solar isn't working because my electric bill increased.' First check:",
+      "options": [
+        { "id": "a", "text": "Immediately replace the inverter" },
+        { "id": "b", "text": "Verify production is normal—bill increase may be consumption increase", "correct": true },
+        { "id": "c", "text": "Replace all modules" },
+        { "id": "d", "text": "Call the utility" }
+      ],
+      "explanation": "Verify production first—if normal, the issue is likely increased consumption (new loads, weather, occupancy changes) or rate changes. Compare production data to past periods and to expectations. Educate customer about PV production vs. consumption.",
+      "code_ref": "Customer Communication",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-091",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Connector Mismatch",
+      "question": "Mixing MC4 connectors from different manufacturers often leads to:",
+      "options": [
+        { "id": "a", "text": "Improved performance" },
+        { "id": "b", "text": "Poor connections, water ingress, and premature failure", "correct": true },
+        { "id": "c", "text": "No effect" },
+        { "id": "d", "text": "Better warranties" }
+      ],
+      "explanation": "Despite appearing compatible, different MC4 brands have slight dimensional differences that cause poor sealing and contact. This leads to high resistance, arcing, moisture ingress, and failures. Always use matched connector pairs from same manufacturer.",
+      "code_ref": "Connector Compatibility",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-092",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Polarity",
+      "question": "Reversed polarity wiring at a combiner can cause:",
+      "options": [
+        { "id": "a", "text": "Higher output" },
+        { "id": "b", "text": "Damage to inverter, blown fuses, or fire", "correct": true },
+        { "id": "c", "text": "No effect" },
+        { "id": "d", "text": "Lower voltage" }
+      ],
+      "explanation": "Reversed polarity creates a short circuit when strings connect, resulting in high current that can damage equipment, blow fuses, or cause fires. Always verify polarity before connecting strings to inverter or combiner.",
+      "code_ref": "Polarity Verification",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-093",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Nuisance Tripping",
+      "question": "Nuisance arc-fault trips during rapid irradiance changes (cloud edges) can often be resolved by:",
+      "options": [
+        { "id": "a", "text": "Disabling protection" },
+        { "id": "b", "text": "Firmware updates, sensitivity adjustments, or manufacturer consultation", "correct": true },
+        { "id": "c", "text": "Ignoring the trips" },
+        { "id": "d", "text": "Removing modules" }
+      ],
+      "explanation": "Some inverters have sensitive AFCI that triggers on normal conditions like cloud transients. Manufacturer may offer firmware updates or sensitivity adjustments. Don't disable protection—work with manufacturer to balance sensitivity and nuisance trips.",
+      "code_ref": "AFCI Troubleshooting",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-094",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Intermittent Production",
+      "question": "System production drops to zero for random periods during sunny days, then resumes. Check:",
+      "options": [
+        { "id": "a", "text": "Module efficiency" },
+        { "id": "b", "text": "Grid voltage, inverter errors, and loose connections", "correct": true },
+        { "id": "c", "text": "Only shading" },
+        { "id": "d", "text": "Customer consumption" }
+      ],
+      "explanation": "Random production dropouts suggest: grid voltage excursions causing inverter disconnect, loose connections interrupting DC circuit, or intermittent inverter faults. Check error logs for timestamps, correlate with conditions, and inspect connections.",
+      "code_ref": "Intermittent Fault Diagnosis",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-095",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Monitoring Data",
+      "question": "Monitoring shows negative production values at night. This indicates:",
+      "options": [
+        { "id": "a", "text": "Modules producing backwards" },
+        { "id": "b", "text": "CT sensor installed backwards or measuring consumption", "correct": true },
+        { "id": "c", "text": "Inverter malfunction" },
+        { "id": "d", "text": "Normal operation" }
+      ],
+      "explanation": "Negative readings typically mean the current transformer (CT) is installed backwards, measuring current flow in the wrong direction. Or the CT is on a consumption circuit rather than production. Verify CT orientation and placement per installation guide.",
+      "code_ref": "CT Installation",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-096",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Monitoring Data",
+      "question": "Production data stops updating in monitoring app. First troubleshooting step:",
+      "options": [
+        { "id": "a", "text": "Replace the inverter" },
+        { "id": "b", "text": "Check internet connection and communication gateway", "correct": true },
+        { "id": "c", "text": "Replace modules" },
+        { "id": "d", "text": "Call utility" }
+      ],
+      "explanation": "Monitoring data loss is usually communication failure, not production failure. Check: internet connectivity, WiFi/Ethernet connections, gateway power, and cloud service status. Inverter may be producing normally but unable to report data.",
+      "code_ref": "Communication Troubleshooting",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-097",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Visual Inspection",
+      "question": "During visual inspection, which is NOT a sign of potential problems?",
+      "options": [
+        { "id": "a", "text": "Discolored connectors" },
+        { "id": "b", "text": "Clean, intact modules with secure mounting", "correct": true },
+        { "id": "c", "text": "Rodent droppings" },
+        { "id": "d", "text": "Loose cables" }
+      ],
+      "explanation": "Visual inspection looks for problems: discoloration (heat damage), loose components, damaged cables, pest activity, soiling, shading obstructions. Clean modules, intact frames, secure mounting, and proper cable management are normal/good conditions.",
+      "code_ref": "Visual Inspection",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-098",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Baseline Comparison",
+      "question": "A commissioning baseline helps troubleshooting by providing:",
+      "options": [
+        { "id": "a", "text": "Nothing useful" },
+        { "id": "b", "text": "Original measurements to compare against current performance", "correct": true },
+        { "id": "c", "text": "Only historical curiosity" },
+        { "id": "d", "text": "Insurance value" }
+      ],
+      "explanation": "Commissioning data (string Voc, Isc, insulation resistance, IV curves) establishes normal baseline. Comparing current measurements to baseline reveals degradation or changes. Without baseline, detecting subtle problems is difficult.",
+      "code_ref": "Baseline Documentation",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-099",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Root Cause Analysis",
+      "question": "True root cause analysis for a PV system failure investigates:",
+      "options": [
+        { "id": "a", "text": "Only the immediate symptom" },
+        { "id": "b", "text": "Why the failure occurred to prevent recurrence", "correct": true },
+        { "id": "c", "text": "Only cost of repair" },
+        { "id": "d", "text": "Who to blame" }
+      ],
+      "explanation": "Root cause analysis goes beyond 'what failed' to 'why it failed.' A burned connector's root cause might be: improper crimping, mismatched brands, or installation in high-temperature location. Addressing root cause prevents repeat failures.",
+      "code_ref": "Root Cause Analysis",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-100",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Manufacturer Support",
+      "question": "When should manufacturer technical support be contacted?",
+      "options": [
+        { "id": "a", "text": "Never—figure it out yourself" },
+        { "id": "b", "text": "When troubleshooting exceeds installer capability or for complex/recurring issues", "correct": true },
+        { "id": "c", "text": "For every service call" },
+        { "id": "d", "text": "Only for warranty claims" }
+      ],
+      "explanation": "Contact manufacturer support for: complex error codes, recurring issues after standard troubleshooting, firmware questions, warranty claims, and unusual behaviors. Have model number, serial number, and error details ready. Document their recommendations.",
+      "code_ref": "Technical Support",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-101",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Replacement Decisions",
+      "question": "When deciding between repairing and replacing a 10-year-old inverter, consider:",
+      "options": [
+        { "id": "a", "text": "Only repair cost" },
+        { "id": "b", "text": "Repair cost vs. replacement cost, remaining warranty, efficiency improvements", "correct": true },
+        { "id": "c", "text": "Only age" },
+        { "id": "d", "text": "Color matching" }
+      ],
+      "explanation": "Consider total economics: repair cost, remaining useful life post-repair, warranty status, efficiency of old vs. new models (newer may be 2-3% more efficient), and potential for additional failures. Sometimes replacement is more cost-effective.",
+      "code_ref": "Equipment Decisions",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-102",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Preventive Maintenance",
+      "question": "Regular preventive maintenance for PV systems should include:",
+      "options": [
+        { "id": "a", "text": "Only repairs when broken" },
+        { "id": "b", "text": "Visual inspection, cleaning, connection checks, and performance verification", "correct": true },
+        { "id": "c", "text": "Module replacement every year" },
+        { "id": "d", "text": "No maintenance required" }
+      ],
+      "explanation": "PM includes: visual inspection of all components, module cleaning as needed, checking connection tightness, reviewing production data, verifying grounding continuity, and testing safety systems. Frequency depends on environment and system size.",
+      "code_ref": "O&M Best Practices",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-103",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Maintenance Intervals",
+      "question": "Typical recommended maintenance inspection interval for residential PV is:",
+      "options": [
+        { "id": "a", "text": "Every week" },
+        { "id": "b", "text": "Annually or per manufacturer recommendation", "correct": true },
+        { "id": "c", "text": "Every 10 years" },
+        { "id": "d", "text": "Only when problems occur" }
+      ],
+      "explanation": "Annual inspections are typical for residential, more frequent for commercial. Check manufacturer recommendations. Environmental factors (dust, salt air, wildlife) may require more frequent attention. Monitoring reduces need for frequent site visits.",
+      "code_ref": "Maintenance Scheduling",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-104",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Problem Prioritization",
+      "question": "When multiple issues are found during inspection, prioritize by:",
+      "options": [
+        { "id": "a", "text": "Alphabetical order" },
+        { "id": "b", "text": "Safety first, then production impact, then cosmetic", "correct": true },
+        { "id": "c", "text": "Easiest first" },
+        { "id": "d", "text": "Random order" }
+      ],
+      "explanation": "Prioritize: safety issues first (fire hazards, shock hazards, structural risks), then production-impacting issues (failed equipment, shading), then minor issues (soiling, cosmetic damage). Document all issues even if not immediately addressed.",
+      "code_ref": "Issue Prioritization",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-105",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Testing After Repair",
+      "question": "After replacing a module, verify the repair by:",
+      "options": [
+        { "id": "a", "text": "Visual check only" },
+        { "id": "b", "text": "Measuring string Voc, comparing to other strings, and monitoring production", "correct": true },
+        { "id": "c", "text": "Trusting the replacement" },
+        { "id": "d", "text": "Leaving immediately" }
+      ],
+      "explanation": "Verify replacement: measure string Voc (should match other strings), check connections, verify production on monitoring after energizing. A failed 'new' module or connection error would be caught before leaving the site.",
+      "code_ref": "Repair Verification",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-106",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Module Replacement",
+      "question": "When replacing a module with a different model, ensure:",
+      "options": [
+        { "id": "a", "text": "Only physical dimensions match" },
+        { "id": "b", "text": "Electrical parameters (Vmp, Imp) are compatible with string and inverter", "correct": true },
+        { "id": "c", "text": "Only color matches" },
+        { "id": "d", "text": "Nothing special needed" }
+      ],
+      "explanation": "Replacement modules should have similar Vmp and Imp to maintain string compatibility. Higher Vmp could push string voltage over inverter limit; mismatched Imp causes mismatch losses. Check that string stays within inverter MPPT window.",
+      "code_ref": "Module Replacement",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-107",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Inverter Replacement",
+      "question": "When replacing an inverter with a different model, verify:",
+      "options": [
+        { "id": "a", "text": "Only physical size" },
+        { "id": "b", "text": "Voltage/current ratings, MPPT compatibility, and interconnection compliance", "correct": true },
+        { "id": "c", "text": "Only color" },
+        { "id": "d", "text": "Nothing—any inverter works" }
+      ],
+      "explanation": "New inverter must: handle string voltage range (Voc max, MPPT min/max), accept array current, provide required AC output, comply with utility interconnection requirements (UL 1741 listing, settings), and meet rapid shutdown needs.",
+      "code_ref": "Inverter Replacement",
+      "difficulty": "medium",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-108",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Emergency Response",
+      "question": "Upon discovering a fire hazard (melted components, burning smell), immediately:",
+      "options": [
+        { "id": "a", "text": "Continue troubleshooting to find root cause" },
+        { "id": "b", "text": "De-energize system, cover array if safe, and call fire department if needed", "correct": true },
+        { "id": "c", "text": "Take photos only" },
+        { "id": "d", "text": "Ignore if no flames visible" }
+      ],
+      "explanation": "Fire hazards require immediate response: de-energize by opening all disconnects, cover the array with opaque material if safely accessible, evacuate, and call fire department if fire is present or suspected. Document after the emergency is controlled.",
+      "code_ref": "Emergency Procedures",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-109",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Emergency Response",
+      "question": "If a fire is discovered in a PV system, first responders should know:",
+      "options": [
+        { "id": "a", "text": "Nothing special about PV" },
+        { "id": "b", "text": "PV arrays produce power in light even when disconnected", "correct": true },
+        { "id": "c", "text": "Water is always safe" },
+        { "id": "d", "text": "Turning off the inverter stops all power" }
+      ],
+      "explanation": "First responders must understand: PV arrays produce DC power whenever exposed to light—they can't be completely de-energized during daylight. Rapid shutdown reduces but may not eliminate voltage. Treat DC conductors as energized.",
+      "code_ref": "First Responder Safety",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    },
+    {
+      "id": "solar-trouble-110",
+      "trade": "solar",
+      "category": "Troubleshooting",
+      "subcategory": "Lessons Learned",
+      "question": "After resolving a significant system failure, best practice includes:",
+      "options": [
+        { "id": "a", "text": "Forget about it" },
+        { "id": "b", "text": "Documenting the failure, cause, solution, and preventive measures", "correct": true },
+        { "id": "c", "text": "Only invoicing" },
+        { "id": "d", "text": "Blaming the customer" }
+      ],
+      "explanation": "Document lessons learned: what failed, why, how it was diagnosed, what fixed it, and what could prevent recurrence. This builds knowledge base, improves future installations, and helps train other technicians on real-world issues.",
+      "code_ref": "Continuous Improvement",
+      "difficulty": "easy",
+      "exam_relevance": ["NABCEP PVIP", "journeyman"]
+    }
+  ]
+}

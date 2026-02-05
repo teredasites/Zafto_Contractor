@@ -1,0 +1,4357 @@
+{
+  "topic_id": "PS",
+  "topic_name": "Pipe Sizing",
+  "code_version": "IPC 2021",
+  "questions": [
+    {
+      "id": "PS-001",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": ["E103.3(2)"],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum size water service pipe for a single-family dwelling?",
+      "choices": [
+        {"id": "A", "text": "1/2 inch"},
+        {"id": "B", "text": "3/4 inch"},
+        {"id": "C", "text": "1 inch"},
+        {"id": "D", "text": "1-1/4 inch"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "The minimum water service pipe size for a dwelling is 3/4 inch.",
+        "detailed": "Per IPC Section E103.3, the minimum size of a water service pipe shall be 3/4 inch. This ensures adequate flow and pressure to serve the fixtures in a typical single-family dwelling.",
+        "how_to_find": "Reference IPC Appendix E, Section E103.3 for water service sizing."
+      },
+      "code_reference": {"code": "IPC", "section": "E103.3"},
+      "zafto_links": [],
+      "tags": ["water service", "minimum size", "dwelling"],
+      "verified": true
+    },
+    {
+      "id": "PS-002",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["610"],
+      "code_tables": ["610.3"],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum size for a cold water supply pipe to a lavatory?",
+      "choices": [
+        {"id": "A", "text": "1/4 inch"},
+        {"id": "B", "text": "3/8 inch"},
+        {"id": "C", "text": "1/2 inch"},
+        {"id": "D", "text": "3/4 inch"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "The minimum supply pipe size to a lavatory is 3/8 inch.",
+        "detailed": "Per IPC Table 610.3, the minimum fixture supply pipe size for a lavatory is 3/8 inch. This is sufficient for the low flow demand of a bathroom sink faucet.",
+        "how_to_find": "Reference IPC Table 610.3 for fixture supply pipe sizes."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 610.3"},
+      "zafto_links": [],
+      "tags": ["lavatory", "supply pipe", "minimum size"],
+      "verified": true
+    },
+    {
+      "id": "PS-003",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["610"],
+      "code_tables": ["610.3"],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum size for a water supply pipe to a water closet with a flush tank?",
+      "choices": [
+        {"id": "A", "text": "1/4 inch"},
+        {"id": "B", "text": "3/8 inch"},
+        {"id": "C", "text": "1/2 inch"},
+        {"id": "D", "text": "3/4 inch"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A tank-type water closet requires a minimum 3/8 inch supply pipe.",
+        "detailed": "Per IPC Table 610.3, the minimum fixture supply pipe size for a water closet with a flush tank is 3/8 inch. The tank provides storage, so a smaller supply line can adequately refill it between flushes.",
+        "how_to_find": "Reference IPC Table 610.3 for water closet supply requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 610.3"},
+      "zafto_links": [],
+      "tags": ["water closet", "flush tank", "supply pipe"],
+      "verified": true
+    },
+    {
+      "id": "PS-004",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["610"],
+      "code_tables": ["610.3"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum size for a water supply pipe to a flushometer valve water closet?",
+      "choices": [
+        {"id": "A", "text": "3/4 inch"},
+        {"id": "B", "text": "1 inch"},
+        {"id": "C", "text": "1-1/4 inch"},
+        {"id": "D", "text": "1-1/2 inch"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Flushometer water closets require a minimum 1 inch supply pipe.",
+        "detailed": "Per IPC Table 610.3, a flushometer valve water closet requires a minimum 1 inch supply pipe. Flushometers require higher instantaneous flow rates since they have no storage tank, necessitating a larger supply line.",
+        "how_to_find": "Reference IPC Table 610.3 for flushometer valve requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 610.3"},
+      "zafto_links": [],
+      "tags": ["flushometer", "water closet", "commercial"],
+      "verified": true
+    },
+    {
+      "id": "PS-005",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["610"],
+      "code_tables": ["610.3"],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum size for a water supply pipe to a bathtub with a shower?",
+      "choices": [
+        {"id": "A", "text": "3/8 inch"},
+        {"id": "B", "text": "1/2 inch"},
+        {"id": "C", "text": "3/4 inch"},
+        {"id": "D", "text": "1 inch"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A bathtub with shower requires a minimum 1/2 inch supply pipe.",
+        "detailed": "Per IPC Table 610.3, the minimum fixture supply pipe size for a bathtub with or without a shower is 1/2 inch. This size provides adequate flow for both tub filling and shower operation.",
+        "how_to_find": "Reference IPC Table 610.3 for bathtub supply requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 610.3"},
+      "zafto_links": [],
+      "tags": ["bathtub", "shower", "supply pipe"],
+      "verified": true
+    },
+    {
+      "id": "PS-006",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["610"],
+      "code_tables": ["610.3"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum size for a water supply pipe to a dishwasher?",
+      "choices": [
+        {"id": "A", "text": "1/4 inch"},
+        {"id": "B", "text": "3/8 inch"},
+        {"id": "C", "text": "1/2 inch"},
+        {"id": "D", "text": "3/4 inch"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "A dishwasher requires a minimum 1/2 inch supply pipe.",
+        "detailed": "Per IPC Table 610.3, the minimum fixture supply pipe size for a residential dishwasher is 1/2 inch. This ensures adequate flow for the fill cycles of the appliance.",
+        "how_to_find": "Reference IPC Table 610.3 for dishwasher supply requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 610.3"},
+      "zafto_links": [],
+      "tags": ["dishwasher", "appliance", "supply pipe"],
+      "verified": true
+    },
+    {
+      "id": "PS-007",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["610"],
+      "code_tables": ["610.3"],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum size for a water supply pipe to a hose bibb?",
+      "choices": [
+        {"id": "A", "text": "3/8 inch"},
+        {"id": "B", "text": "1/2 inch"},
+        {"id": "C", "text": "3/4 inch"},
+        {"id": "D", "text": "1 inch"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A hose bibb requires a minimum 1/2 inch supply pipe.",
+        "detailed": "Per IPC Table 610.3, the minimum fixture supply pipe size for a hose bibb (sillcock) is 1/2 inch. This provides adequate flow for outdoor watering and washing applications.",
+        "how_to_find": "Reference IPC Table 610.3 for hose bibb supply requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 610.3"},
+      "zafto_links": [],
+      "tags": ["hose bibb", "sillcock", "outdoor"],
+      "verified": true
+    },
+    {
+      "id": "PS-008",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["610"],
+      "code_tables": ["610.3"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum size for a water supply pipe to a kitchen sink?",
+      "choices": [
+        {"id": "A", "text": "3/8 inch"},
+        {"id": "B", "text": "1/2 inch"},
+        {"id": "C", "text": "3/4 inch"},
+        {"id": "D", "text": "1 inch"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A kitchen sink requires a minimum 1/2 inch supply pipe.",
+        "detailed": "Per IPC Table 610.3, the minimum fixture supply pipe size for a kitchen sink is 1/2 inch. This size accommodates the higher flow demands of kitchen faucets compared to lavatory faucets.",
+        "how_to_find": "Reference IPC Table 610.3 for kitchen sink supply requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 610.3"},
+      "zafto_links": [],
+      "tags": ["kitchen sink", "supply pipe", "residential"],
+      "verified": true
+    },
+    {
+      "id": "PS-009",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["610"],
+      "code_tables": ["610.3"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum size for a water supply pipe to a clothes washer?",
+      "choices": [
+        {"id": "A", "text": "3/8 inch"},
+        {"id": "B", "text": "1/2 inch"},
+        {"id": "C", "text": "3/4 inch"},
+        {"id": "D", "text": "1 inch"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A clothes washer requires a minimum 1/2 inch supply pipe.",
+        "detailed": "Per IPC Table 610.3, the minimum fixture supply pipe size for a clothes washer (automatic) is 1/2 inch for both hot and cold supplies. This ensures adequate fill rates for the wash cycles.",
+        "how_to_find": "Reference IPC Table 610.3 for clothes washer supply requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 610.3"},
+      "zafto_links": [],
+      "tags": ["clothes washer", "laundry", "supply pipe"],
+      "verified": true
+    },
+    {
+      "id": "PS-010",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["610"],
+      "code_tables": ["610.3"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum size for a water supply pipe to a flushometer urinal?",
+      "choices": [
+        {"id": "A", "text": "1/2 inch"},
+        {"id": "B", "text": "3/4 inch"},
+        {"id": "C", "text": "1 inch"},
+        {"id": "D", "text": "1-1/4 inch"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A flushometer urinal requires a minimum 3/4 inch supply pipe.",
+        "detailed": "Per IPC Table 610.3, the minimum fixture supply pipe size for a flushometer urinal is 3/4 inch. This is smaller than a flushometer water closet (1 inch) because urinals require less water per flush.",
+        "how_to_find": "Reference IPC Table 610.3 for flushometer urinal requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 610.3"},
+      "zafto_links": [],
+      "tags": ["urinal", "flushometer", "commercial"],
+      "verified": true
+    },
+    {
+      "id": "PS-011",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": ["E103.3(3)"],
+      "type": "calculation",
+      "difficulty": "medium",
+      "time_estimate_seconds": 120,
+      "question": "When sizing water distribution pipes, what is the maximum velocity typically used to prevent water hammer and noise?",
+      "choices": [
+        {"id": "A", "text": "4 feet per second"},
+        {"id": "B", "text": "8 feet per second"},
+        {"id": "C", "text": "12 feet per second"},
+        {"id": "D", "text": "15 feet per second"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Water velocity should not exceed 8 feet per second to prevent noise and water hammer.",
+        "detailed": "Per IPC Appendix E, water distribution systems should be designed to limit velocity to 8 feet per second maximum. Higher velocities cause noise, erosion, and water hammer that can damage pipes and fittings.",
+        "how_to_find": "Reference IPC Appendix E for velocity limitations in water distribution."
+      },
+      "code_reference": {"code": "IPC", "section": "Appendix E"},
+      "zafto_links": [],
+      "tags": ["velocity", "water hammer", "pipe sizing"],
+      "verified": true
+    },
+    {
+      "id": "PS-012",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": ["E103.3(2)"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the fixture unit value for a private lavatory when sizing water supply piping?",
+      "choices": [
+        {"id": "A", "text": "0.5 fixture units"},
+        {"id": "B", "text": "1.0 fixture units"},
+        {"id": "C", "text": "1.5 fixture units"},
+        {"id": "D", "text": "2.0 fixture units"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A private lavatory has a fixture unit value of 1.0 for water supply sizing.",
+        "detailed": "Per IPC Table E103.3(2), a lavatory in a private (residential) bathroom has a water supply fixture unit (WSFU) value of 1.0. This value is used to calculate total fixture units when sizing the water distribution system.",
+        "how_to_find": "Reference IPC Table E103.3(2) for water supply fixture unit values."
+      },
+      "code_reference": {"code": "IPC", "section": "Table E103.3(2)"},
+      "zafto_links": [],
+      "tags": ["fixture units", "lavatory", "WSFU"],
+      "verified": true
+    },
+    {
+      "id": "PS-013",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": ["E103.3(2)"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the fixture unit value for a private water closet with flush tank when sizing water supply piping?",
+      "choices": [
+        {"id": "A", "text": "1.5 fixture units"},
+        {"id": "B", "text": "2.0 fixture units"},
+        {"id": "C", "text": "2.5 fixture units"},
+        {"id": "D", "text": "3.0 fixture units"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "A private flush tank water closet has a WSFU value of 2.5.",
+        "detailed": "Per IPC Table E103.3(2), a water closet with a flush tank in a private bathroom has a water supply fixture unit (WSFU) value of 2.5. Tank-type toilets have lower WSFU values than flushometer types.",
+        "how_to_find": "Reference IPC Table E103.3(2) for water closet WSFU values."
+      },
+      "code_reference": {"code": "IPC", "section": "Table E103.3(2)"},
+      "zafto_links": [],
+      "tags": ["fixture units", "water closet", "flush tank"],
+      "verified": true
+    },
+    {
+      "id": "PS-014",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": ["E103.3(2)"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the fixture unit value for a public flushometer water closet when sizing water supply piping?",
+      "choices": [
+        {"id": "A", "text": "5.0 fixture units"},
+        {"id": "B", "text": "8.0 fixture units"},
+        {"id": "C", "text": "10.0 fixture units"},
+        {"id": "D", "text": "12.0 fixture units"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "A public flushometer water closet has a WSFU value of 10.0.",
+        "detailed": "Per IPC Table E103.3(2), a water closet with a flushometer valve in a public restroom has a water supply fixture unit (WSFU) value of 10.0. The high instantaneous demand of flushometer valves requires a much higher fixture unit rating.",
+        "how_to_find": "Reference IPC Table E103.3(2) for flushometer WSFU values."
+      },
+      "code_reference": {"code": "IPC", "section": "Table E103.3(2)"},
+      "zafto_links": [],
+      "tags": ["fixture units", "flushometer", "public restroom"],
+      "verified": true
+    },
+    {
+      "id": "PS-015",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": ["E103.3(2)"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the fixture unit value for a private bathtub with shower when sizing water supply piping?",
+      "choices": [
+        {"id": "A", "text": "2.0 fixture units"},
+        {"id": "B", "text": "3.0 fixture units"},
+        {"id": "C", "text": "4.0 fixture units"},
+        {"id": "D", "text": "5.0 fixture units"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "A private bathtub with shower has a WSFU value of 4.0.",
+        "detailed": "Per IPC Table E103.3(2), a bathtub with shower in a private bathroom has a water supply fixture unit (WSFU) value of 4.0. This accounts for the combined hot and cold water demand during showering or tub filling.",
+        "how_to_find": "Reference IPC Table E103.3(2) for bathtub WSFU values."
+      },
+      "code_reference": {"code": "IPC", "section": "Table E103.3(2)"},
+      "zafto_links": [],
+      "tags": ["fixture units", "bathtub", "shower"],
+      "verified": true
+    },
+    {
+      "id": "PS-016",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": ["E103.3(3)"],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 180,
+      "question": "A residential bathroom group consists of a water closet, lavatory, and bathtub with shower. What is the total WSFU for this bathroom group?",
+      "choices": [
+        {"id": "A", "text": "5.0 fixture units"},
+        {"id": "B", "text": "6.0 fixture units"},
+        {"id": "C", "text": "7.5 fixture units"},
+        {"id": "D", "text": "8.0 fixture units"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A residential bathroom group has a combined WSFU value of 6.0.",
+        "detailed": "Per IPC Table E103.3(3), a bathroom group in a private residence (water closet, lavatory, and bathtub/shower) is assigned a combined value of 6.0 WSFU rather than adding individual fixtures. This diversity factor accounts for the fact that all fixtures won't be used simultaneously.",
+        "how_to_find": "Reference IPC Table E103.3(3) for bathroom group fixture unit values."
+      },
+      "code_reference": {"code": "IPC", "section": "Table E103.3(3)"},
+      "zafto_links": [],
+      "tags": ["bathroom group", "fixture units", "residential"],
+      "verified": true
+    },
+    {
+      "id": "PS-017",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E201"],
+      "code_tables": ["E201.1"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum static pressure required at the water service entrance to a building?",
+      "choices": [
+        {"id": "A", "text": "15 psi"},
+        {"id": "B", "text": "25 psi"},
+        {"id": "C", "text": "40 psi"},
+        {"id": "D", "text": "60 psi"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "The minimum static pressure at the water service should be 40 psi.",
+        "detailed": "Per IPC Section E201.1, the minimum static pressure at the building entrance should be 40 psi to ensure adequate pressure at the most remote fixture. If pressure is below this, a booster pump may be required.",
+        "how_to_find": "Reference IPC Appendix E, Section E201.1 for pressure requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "E201.1"},
+      "zafto_links": [],
+      "tags": ["water pressure", "static pressure", "service entrance"],
+      "verified": true
+    },
+    {
+      "id": "PS-018",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["604"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum water pressure allowed at any fixture in a building?",
+      "choices": [
+        {"id": "A", "text": "60 psi"},
+        {"id": "B", "text": "80 psi"},
+        {"id": "C", "text": "100 psi"},
+        {"id": "D", "text": "125 psi"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Maximum water pressure at any fixture shall not exceed 80 psi.",
+        "detailed": "Per IPC Section 604.8, the static pressure at any fixture shall not exceed 80 psi. Where incoming pressure exceeds 80 psi, a pressure-reducing valve is required to protect fixtures and prevent water hammer.",
+        "how_to_find": "Reference IPC Section 604.8 for maximum pressure requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "604.8"},
+      "zafto_links": [],
+      "tags": ["water pressure", "PRV", "maximum pressure"],
+      "verified": true
+    },
+    {
+      "id": "PS-019",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["604"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum required flow pressure at a showerhead?",
+      "choices": [
+        {"id": "A", "text": "8 psi"},
+        {"id": "B", "text": "15 psi"},
+        {"id": "C", "text": "20 psi"},
+        {"id": "D", "text": "25 psi"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "The minimum flow pressure at a showerhead is 20 psi.",
+        "detailed": "Per IPC Table 604.3, the minimum required flow pressure at a showerhead is 20 psi. This ensures adequate spray pattern and water delivery for a satisfactory shower experience.",
+        "how_to_find": "Reference IPC Table 604.3 for minimum flow pressure requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 604.3"},
+      "zafto_links": [],
+      "tags": ["flow pressure", "showerhead", "minimum"],
+      "verified": true
+    },
+    {
+      "id": "PS-020",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["604"],
+      "code_tables": ["604.3"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum required flow pressure at a flushometer valve?",
+      "choices": [
+        {"id": "A", "text": "10 psi"},
+        {"id": "B", "text": "15 psi"},
+        {"id": "C", "text": "20 psi"},
+        {"id": "D", "text": "25 psi"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Flushometer valves require a minimum flow pressure of 25 psi.",
+        "detailed": "Per IPC Table 604.3, the minimum required flow pressure at a flushometer valve is 25 psi. This higher pressure is necessary to achieve the rapid flush action that flushometers require for proper operation.",
+        "how_to_find": "Reference IPC Table 604.3 for flushometer pressure requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 604.3"},
+      "zafto_links": [],
+      "tags": ["flow pressure", "flushometer", "commercial"],
+      "verified": true
+    },
+    {
+      "id": "PS-021",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["604"],
+      "code_tables": ["604.3"],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum required flow pressure at a lavatory faucet?",
+      "choices": [
+        {"id": "A", "text": "4 psi"},
+        {"id": "B", "text": "8 psi"},
+        {"id": "C", "text": "12 psi"},
+        {"id": "D", "text": "15 psi"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "The minimum flow pressure at a lavatory faucet is 8 psi.",
+        "detailed": "Per IPC Table 604.3, the minimum required flow pressure at a lavatory faucet is 8 psi. This relatively low pressure requirement reflects the low flow demands of bathroom sink faucets.",
+        "how_to_find": "Reference IPC Table 604.3 for lavatory faucet pressure requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 604.3"},
+      "zafto_links": [],
+      "tags": ["flow pressure", "lavatory", "faucet"],
+      "verified": true
+    },
+    {
+      "id": "PS-022",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": [],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 180,
+      "question": "How much pressure is lost for each vertical foot of elevation in a water supply system?",
+      "choices": [
+        {"id": "A", "text": "0.289 psi per foot"},
+        {"id": "B", "text": "0.433 psi per foot"},
+        {"id": "C", "text": "0.577 psi per foot"},
+        {"id": "D", "text": "0.866 psi per foot"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Water pressure decreases 0.433 psi for each foot of elevation.",
+        "detailed": "The weight of water creates a pressure loss of 0.433 psi per vertical foot of rise. This is derived from the weight of water (62.4 lbs/cubic foot) divided by 144 square inches per square foot. This factor must be included when sizing pipes for multi-story buildings.",
+        "how_to_find": "This is a fundamental hydraulic principle used in IPC Appendix E calculations."
+      },
+      "code_reference": {"code": "IPC", "section": "Appendix E"},
+      "zafto_links": [],
+      "tags": ["elevation", "pressure loss", "calculation"],
+      "verified": true
+    },
+    {
+      "id": "PS-023",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": ["E103.3(4)"],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 180,
+      "question": "A building has 45 total water supply fixture units. Using IPC Table E103.3(4), what is the estimated demand in gallons per minute (GPM)?",
+      "choices": [
+        {"id": "A", "text": "22 GPM"},
+        {"id": "B", "text": "26 GPM"},
+        {"id": "C", "text": "32 GPM"},
+        {"id": "D", "text": "38 GPM"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "45 WSFU converts to approximately 26 GPM demand.",
+        "detailed": "Per IPC Table E103.3(4), fixture units are converted to gallons per minute demand using a demand curve. At 45 WSFU, the demand is approximately 26 GPM. This accounts for the diversity factor - not all fixtures operate simultaneously.",
+        "how_to_find": "Reference IPC Table E103.3(4) for WSFU to GPM conversion."
+      },
+      "code_reference": {"code": "IPC", "section": "Table E103.3(4)"},
+      "zafto_links": [],
+      "tags": ["fixture units", "GPM", "demand calculation"],
+      "verified": true
+    },
+    {
+      "id": "PS-024",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "When sizing water supply pipes, which factor does NOT need to be considered?",
+      "choices": [
+        {"id": "A", "text": "Available pressure at the water main"},
+        {"id": "B", "text": "Elevation of the highest fixture"},
+        {"id": "C", "text": "Developed length of piping"},
+        {"id": "D", "text": "Pipe material color"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Pipe color is not a factor in water supply pipe sizing.",
+        "detailed": "Water supply pipe sizing considers available pressure, elevation difference, developed length, friction losses, and fixture unit demand. The physical color of pipe material has no effect on hydraulic performance or sizing calculations.",
+        "how_to_find": "Reference IPC Appendix E for water supply sizing methodology."
+      },
+      "code_reference": {"code": "IPC", "section": "Appendix E"},
+      "zafto_links": [],
+      "tags": ["pipe sizing", "design factors", "methodology"],
+      "verified": true
+    },
+    {
+      "id": "PS-025",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": ["E103.3(6)"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the equivalent length typically added for a 3/4-inch 90-degree elbow when calculating friction losses?",
+      "choices": [
+        {"id": "A", "text": "1 foot"},
+        {"id": "B", "text": "2 feet"},
+        {"id": "C", "text": "3 feet"},
+        {"id": "D", "text": "5 feet"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A 3/4-inch 90-degree elbow has an equivalent length of approximately 2 feet.",
+        "detailed": "Per IPC Table E103.3(6), fittings are assigned equivalent lengths of straight pipe for friction loss calculations. A 3/4-inch 90-degree elbow adds approximately 2 feet of equivalent length to account for the turbulence and friction created by the change in direction.",
+        "how_to_find": "Reference IPC Table E103.3(6) for fitting equivalent lengths."
+      },
+      "code_reference": {"code": "IPC", "section": "Table E103.3(6)"},
+      "zafto_links": [],
+      "tags": ["equivalent length", "fittings", "friction loss"],
+      "verified": true
+    },
+    {
+      "id": "PS-026",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": [],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 180,
+      "question": "A building is 3 stories with 12 feet per floor. The water main pressure is 60 psi. How much pressure is lost to elevation at the top floor fixture?",
+      "choices": [
+        {"id": "A", "text": "10.4 psi"},
+        {"id": "B", "text": "15.6 psi"},
+        {"id": "C", "text": "18.2 psi"},
+        {"id": "D", "text": "24.0 psi"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "36 feet of elevation × 0.433 psi/ft = 15.6 psi pressure loss.",
+        "detailed": "With 3 stories at 12 feet each, the top floor is 36 feet above the water main. Pressure loss due to elevation is 0.433 psi per vertical foot. 36 feet × 0.433 psi/ft = 15.6 psi lost to elevation. The remaining available pressure (60 - 15.6 = 44.4 psi) must still overcome friction losses.",
+        "how_to_find": "Calculate: height in feet × 0.433 psi/foot = elevation pressure loss."
+      },
+      "code_reference": {"code": "IPC", "section": "Appendix E"},
+      "zafto_links": [],
+      "tags": ["elevation", "pressure loss", "multi-story"],
+      "verified": true
+    },
+    {
+      "id": "PS-027",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["604"],
+      "code_tables": ["604.4"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum flow rate for a showerhead per federal water conservation standards?",
+      "choices": [
+        {"id": "A", "text": "1.5 GPM"},
+        {"id": "B", "text": "2.0 GPM"},
+        {"id": "C", "text": "2.5 GPM"},
+        {"id": "D", "text": "3.0 GPM"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Federal law limits showerheads to 2.5 GPM maximum.",
+        "detailed": "Per IPC Table 604.4 and federal Energy Policy Act requirements, showerheads are limited to a maximum flow rate of 2.5 gallons per minute at 80 psi. This water conservation standard applies to all new showerheads sold in the United States.",
+        "how_to_find": "Reference IPC Table 604.4 for maximum flow rates."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 604.4"},
+      "zafto_links": [],
+      "tags": ["showerhead", "flow rate", "water conservation"],
+      "verified": true
+    },
+    {
+      "id": "PS-028",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["604"],
+      "code_tables": ["604.4"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum flow rate for a lavatory faucet per federal water conservation standards?",
+      "choices": [
+        {"id": "A", "text": "1.0 GPM"},
+        {"id": "B", "text": "1.5 GPM"},
+        {"id": "C", "text": "2.0 GPM"},
+        {"id": "D", "text": "2.2 GPM"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Federal law limits lavatory faucets to 2.2 GPM maximum.",
+        "detailed": "Per IPC Table 604.4 and federal Energy Policy Act requirements, lavatory (bathroom sink) faucets are limited to a maximum flow rate of 2.2 gallons per minute at 60 psi. Some states have stricter requirements.",
+        "how_to_find": "Reference IPC Table 604.4 for maximum fixture flow rates."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 604.4"},
+      "zafto_links": [],
+      "tags": ["lavatory", "flow rate", "water conservation"],
+      "verified": true
+    },
+    {
+      "id": "PS-029",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What term describes the total length of pipe including straight runs and equivalent lengths of fittings?",
+      "choices": [
+        {"id": "A", "text": "Actual length"},
+        {"id": "B", "text": "Developed length"},
+        {"id": "C", "text": "True length"},
+        {"id": "D", "text": "Running length"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Developed length is the total of straight pipe plus equivalent lengths of fittings.",
+        "detailed": "Developed length is the term used to describe the sum of the measured straight pipe lengths plus the equivalent lengths assigned to all fittings and valves. This total length is used in friction loss calculations for pipe sizing.",
+        "how_to_find": "Reference IPC Appendix E for pipe sizing terminology."
+      },
+      "code_reference": {"code": "IPC", "section": "Appendix E"},
+      "zafto_links": [],
+      "tags": ["developed length", "terminology", "pipe sizing"],
+      "verified": true
+    },
+    {
+      "id": "PS-030",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": ["E103.3(5)"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "When using friction loss charts for copper tubing, which type is typically used for water distribution in buildings?",
+      "choices": [
+        {"id": "A", "text": "Type K"},
+        {"id": "B", "text": "Type L"},
+        {"id": "C", "text": "Type M"},
+        {"id": "D", "text": "Type DWV"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Type M copper is commonly used for interior water distribution.",
+        "detailed": "Type M copper tubing, with the thinnest wall of the pressure-rated types, is commonly used for interior water distribution in buildings. Type L is used for underground and more demanding applications. Type K has the thickest walls and is used for underground water services.",
+        "how_to_find": "Reference IPC Table E103.3(5) for copper tubing friction loss values."
+      },
+      "code_reference": {"code": "IPC", "section": "Table E103.3(5)"},
+      "zafto_links": [],
+      "tags": ["copper tubing", "Type M", "water distribution"],
+      "verified": true
+    },
+    {
+      "id": "PS-031",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["403"],
+      "code_tables": ["403.1"],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum trap size for a floor drain?",
+      "choices": [
+        {"id": "A", "text": "1-1/2 inches"},
+        {"id": "B", "text": "2 inches"},
+        {"id": "C", "text": "3 inches"},
+        {"id": "D", "text": "4 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Floor drains require a minimum 2-inch trap.",
+        "detailed": "Per IPC Table 403.1, floor drains require a minimum trap size of 2 inches. This size provides adequate flow capacity for general floor drainage while maintaining proper trap seal.",
+        "how_to_find": "Reference IPC Table 403.1 for minimum fixture trap sizes."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 403.1"},
+      "zafto_links": [],
+      "tags": ["floor drain", "trap size", "DWV"],
+      "verified": true
+    },
+    {
+      "id": "PS-032",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["709"],
+      "code_tables": ["709.1"],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum drain size for a water closet?",
+      "choices": [
+        {"id": "A", "text": "2 inches"},
+        {"id": "B", "text": "3 inches"},
+        {"id": "C", "text": "4 inches"},
+        {"id": "D", "text": "1-1/2 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Water closets require a minimum 3-inch drain.",
+        "detailed": "Per IPC Table 709.1, water closets require a minimum 3-inch drain pipe. This accounts for the fixture's discharge rate and solid waste passage requirements to prevent stoppages.",
+        "how_to_find": "Reference IPC Table 709.1 for fixture drain sizes."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 709.1"},
+      "zafto_links": [],
+      "tags": ["water closet", "drain size", "DWV"],
+      "verified": true
+    },
+    {
+      "id": "PS-033",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["709"],
+      "code_tables": ["709.1"],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum drain size for a lavatory?",
+      "choices": [
+        {"id": "A", "text": "1 inch"},
+        {"id": "B", "text": "1-1/4 inches"},
+        {"id": "C", "text": "1-1/2 inches"},
+        {"id": "D", "text": "2 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Lavatories require a minimum 1-1/4 inch drain.",
+        "detailed": "Per IPC Table 709.1, lavatories require a minimum 1-1/4 inch drain pipe. This is the smallest fixture drain size permitted and is adequate for the low flow from bathroom sinks.",
+        "how_to_find": "Reference IPC Table 709.1 for lavatory drain requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 709.1"},
+      "zafto_links": [],
+      "tags": ["lavatory", "drain size", "minimum"],
+      "verified": true
+    },
+    {
+      "id": "PS-034",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["709"],
+      "code_tables": ["709.1"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum drain size for a kitchen sink with a garbage disposal?",
+      "choices": [
+        {"id": "A", "text": "1-1/4 inches"},
+        {"id": "B", "text": "1-1/2 inches"},
+        {"id": "C", "text": "2 inches"},
+        {"id": "D", "text": "3 inches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "A kitchen sink with disposal requires a minimum 2-inch drain.",
+        "detailed": "Per IPC Table 709.1, a kitchen sink equipped with a garbage disposal requires a minimum 2-inch drain pipe. The disposal increases the solid waste load, requiring a larger drain than a standard kitchen sink (1-1/2 inch).",
+        "how_to_find": "Reference IPC Table 709.1 for kitchen sink with disposal requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 709.1"},
+      "zafto_links": [],
+      "tags": ["kitchen sink", "garbage disposal", "drain size"],
+      "verified": true
+    },
+    {
+      "id": "PS-035",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["709"],
+      "code_tables": ["709.1"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum drain size for a clothes washer standpipe?",
+      "choices": [
+        {"id": "A", "text": "1-1/2 inches"},
+        {"id": "B", "text": "2 inches"},
+        {"id": "C", "text": "3 inches"},
+        {"id": "D", "text": "1-1/4 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A clothes washer standpipe requires a minimum 2-inch drain.",
+        "detailed": "Per IPC Table 709.1, a clothes washer standpipe requires a minimum 2-inch drain pipe. This size accommodates the high discharge rate of automatic washing machines during the pump-out cycle.",
+        "how_to_find": "Reference IPC Table 709.1 for clothes washer drain requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 709.1"},
+      "zafto_links": [],
+      "tags": ["clothes washer", "standpipe", "drain size"],
+      "verified": true
+    },
+    {
+      "id": "PS-036",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(1)"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the drainage fixture unit (DFU) value for a private lavatory?",
+      "choices": [
+        {"id": "A", "text": "0.5 DFU"},
+        {"id": "B", "text": "1.0 DFU"},
+        {"id": "C", "text": "1.5 DFU"},
+        {"id": "D", "text": "2.0 DFU"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A private lavatory has a DFU value of 1.0.",
+        "detailed": "Per IPC Table 710.1(1), a lavatory in a private (residential) bathroom has a drainage fixture unit value of 1.0 DFU. This value is used to size horizontal branches, stacks, and building drains.",
+        "how_to_find": "Reference IPC Table 710.1(1) for drainage fixture unit values."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(1)"},
+      "zafto_links": [],
+      "tags": ["DFU", "lavatory", "drainage"],
+      "verified": true
+    },
+    {
+      "id": "PS-037",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(1)"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the drainage fixture unit (DFU) value for a private water closet?",
+      "choices": [
+        {"id": "A", "text": "2.0 DFU"},
+        {"id": "B", "text": "3.0 DFU"},
+        {"id": "C", "text": "4.0 DFU"},
+        {"id": "D", "text": "6.0 DFU"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "A private water closet has a DFU value of 4.0.",
+        "detailed": "Per IPC Table 710.1(1), a water closet in a private bathroom has a drainage fixture unit value of 4.0 DFU. Water closets have higher DFU values due to their large discharge volume and solid waste content.",
+        "how_to_find": "Reference IPC Table 710.1(1) for water closet DFU values."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(1)"},
+      "zafto_links": [],
+      "tags": ["DFU", "water closet", "drainage"],
+      "verified": true
+    },
+    {
+      "id": "PS-038",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(1)"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the drainage fixture unit (DFU) value for a public water closet with flushometer?",
+      "choices": [
+        {"id": "A", "text": "4.0 DFU"},
+        {"id": "B", "text": "6.0 DFU"},
+        {"id": "C", "text": "8.0 DFU"},
+        {"id": "D", "text": "10.0 DFU"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A public flushometer water closet has a DFU value of 6.0.",
+        "detailed": "Per IPC Table 710.1(1), a water closet with flushometer valve in a public restroom has a drainage fixture unit value of 6.0 DFU. The higher value accounts for more frequent use in public facilities.",
+        "how_to_find": "Reference IPC Table 710.1(1) for public fixture DFU values."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(1)"},
+      "zafto_links": [],
+      "tags": ["DFU", "flushometer", "public"],
+      "verified": true
+    },
+    {
+      "id": "PS-039",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(2)"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum number of DFUs permitted on a 2-inch horizontal branch?",
+      "choices": [
+        {"id": "A", "text": "4 DFU"},
+        {"id": "B", "text": "6 DFU"},
+        {"id": "C", "text": "8 DFU"},
+        {"id": "D", "text": "10 DFU"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A 2-inch horizontal branch can carry a maximum of 6 DFU.",
+        "detailed": "Per IPC Table 710.1(2), a 2-inch horizontal fixture branch can carry a maximum of 6 drainage fixture units. This limit ensures proper drainage flow without surcharging the pipe.",
+        "how_to_find": "Reference IPC Table 710.1(2) for horizontal branch sizing."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(2)"},
+      "zafto_links": [],
+      "tags": ["horizontal branch", "DFU", "pipe sizing"],
+      "verified": true
+    },
+    {
+      "id": "PS-040",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(2)"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum number of DFUs permitted on a 3-inch horizontal branch?",
+      "choices": [
+        {"id": "A", "text": "12 DFU"},
+        {"id": "B", "text": "20 DFU"},
+        {"id": "C", "text": "35 DFU"},
+        {"id": "D", "text": "42 DFU"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A 3-inch horizontal branch can carry a maximum of 20 DFU.",
+        "detailed": "Per IPC Table 710.1(2), a 3-inch horizontal fixture branch can carry a maximum of 20 drainage fixture units. This is commonly used for bathroom groups and multiple fixtures.",
+        "how_to_find": "Reference IPC Table 710.1(2) for 3-inch branch capacity."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(2)"},
+      "zafto_links": [],
+      "tags": ["horizontal branch", "3-inch", "DFU"],
+      "verified": true
+    },
+    {
+      "id": "PS-041",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(2)"],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 180,
+      "question": "A bathroom group with WC, lav, and tub/shower has how many total DFU for drainage sizing?",
+      "choices": [
+        {"id": "A", "text": "5 DFU"},
+        {"id": "B", "text": "6 DFU"},
+        {"id": "C", "text": "7 DFU"},
+        {"id": "D", "text": "8 DFU"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A private bathroom group equals 6 DFU total.",
+        "detailed": "Per IPC Table 710.1(1), a private bathroom group (water closet at 4 DFU + lavatory at 1 DFU + bathtub/shower at 2 DFU = 7 DFU individually, but the code assigns 6 DFU for the group) is treated as a unit for sizing purposes.",
+        "how_to_find": "Reference IPC Table 710.1(1) for bathroom group DFU values."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(1)"},
+      "zafto_links": [],
+      "tags": ["bathroom group", "DFU", "calculation"],
+      "verified": true
+    },
+    {
+      "id": "PS-042",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["704"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum slope required for a 3-inch horizontal drain pipe?",
+      "choices": [
+        {"id": "A", "text": "1/16 inch per foot"},
+        {"id": "B", "text": "1/8 inch per foot"},
+        {"id": "C", "text": "1/4 inch per foot"},
+        {"id": "D", "text": "1/2 inch per foot"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A 3-inch drain requires a minimum slope of 1/8 inch per foot.",
+        "detailed": "Per IPC Section 704.1, horizontal drainage pipes 3 inches and larger require a minimum slope of 1/8 inch per foot (1% grade). Pipes 2-1/2 inches and smaller require 1/4 inch per foot.",
+        "how_to_find": "Reference IPC Section 704.1 for drainage pipe slope requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "704.1"},
+      "zafto_links": [],
+      "tags": ["slope", "horizontal drain", "grade"],
+      "verified": true
+    },
+    {
+      "id": "PS-043",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["704"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum slope required for a 2-inch horizontal drain pipe?",
+      "choices": [
+        {"id": "A", "text": "1/16 inch per foot"},
+        {"id": "B", "text": "1/8 inch per foot"},
+        {"id": "C", "text": "1/4 inch per foot"},
+        {"id": "D", "text": "1/2 inch per foot"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "A 2-inch drain requires a minimum slope of 1/4 inch per foot.",
+        "detailed": "Per IPC Section 704.1, horizontal drainage pipes 2-1/2 inches and smaller require a minimum slope of 1/4 inch per foot (2% grade). The steeper slope helps maintain proper scouring velocity in smaller pipes.",
+        "how_to_find": "Reference IPC Section 704.1 for small pipe slope requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "704.1"},
+      "zafto_links": [],
+      "tags": ["slope", "2-inch", "grade"],
+      "verified": true
+    },
+    {
+      "id": "PS-044",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["1103"],
+      "code_tables": ["1103.1"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum size for a building storm drain serving 1,000 square feet of roof area at 4 inches/hour rainfall?",
+      "choices": [
+        {"id": "A", "text": "2 inches"},
+        {"id": "B", "text": "3 inches"},
+        {"id": "C", "text": "4 inches"},
+        {"id": "D", "text": "5 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "1,000 square feet at 4 in/hr requires a minimum 3-inch storm drain.",
+        "detailed": "Per IPC Table 1103.1, a 3-inch horizontal storm drain at 1/8 inch per foot slope can serve up to 1,096 square feet at 4 inches per hour rainfall rate. The sizing is based on projected roof area and local rainfall intensity.",
+        "how_to_find": "Reference IPC Table 1103.1 for storm drain sizing."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 1103.1"},
+      "zafto_links": [],
+      "tags": ["storm drain", "roof area", "rainfall"],
+      "verified": true
+    },
+    {
+      "id": "PS-045",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["1106"],
+      "code_tables": ["1106.2"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum size for a roof drain serving 2,000 square feet of roof area?",
+      "choices": [
+        {"id": "A", "text": "2 inches"},
+        {"id": "B", "text": "3 inches"},
+        {"id": "C", "text": "4 inches"},
+        {"id": "D", "text": "5 inches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "2,000 square feet of roof requires a minimum 4-inch roof drain.",
+        "detailed": "Per IPC Table 1106.2, a 4-inch vertical leader (roof drain) can serve up to 4,600 square feet at 4 inches per hour rainfall. For 2,000 square feet, a 4-inch drain provides adequate capacity with margin.",
+        "how_to_find": "Reference IPC Table 1106.2 for roof drain sizing."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 1106.2"},
+      "zafto_links": [],
+      "tags": ["roof drain", "leader", "storm"],
+      "verified": true
+    },
+    {
+      "id": "PS-046",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["1202"],
+      "code_tables": ["1202.5"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum size for a gas pipe serving a 100,000 BTU furnace with a 50-foot run?",
+      "choices": [
+        {"id": "A", "text": "1/2 inch"},
+        {"id": "B", "text": "3/4 inch"},
+        {"id": "C", "text": "1 inch"},
+        {"id": "D", "text": "1-1/4 inch"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A 100,000 BTU load at 50 feet requires 3/4-inch gas pipe minimum.",
+        "detailed": "Per IFGC Table 402.4 (referenced by IPC), sizing gas pipe requires knowing the BTU load and developed length. At 50 feet with 100,000 BTU demand, a 3/4-inch pipe provides adequate capacity with natural gas at 0.5 psi pressure drop.",
+        "how_to_find": "Reference IFGC Table 402.4 for gas pipe sizing."
+      },
+      "code_reference": {"code": "IFGC", "section": "Table 402.4"},
+      "zafto_links": [],
+      "tags": ["gas pipe", "BTU", "furnace"],
+      "verified": true
+    },
+    {
+      "id": "PS-047",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["1202"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum size for a gas pipe serving a single appliance?",
+      "choices": [
+        {"id": "A", "text": "1/4 inch"},
+        {"id": "B", "text": "3/8 inch"},
+        {"id": "C", "text": "1/2 inch"},
+        {"id": "D", "text": "3/4 inch"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "The minimum gas pipe size is 1/2 inch.",
+        "detailed": "Per IFGC Section 402.4, the minimum size of any gas piping shall be 1/2 inch. This applies to all branch piping serving individual appliances regardless of the BTU load.",
+        "how_to_find": "Reference IFGC Section 402.4 for minimum gas pipe size."
+      },
+      "code_reference": {"code": "IFGC", "section": "402.4"},
+      "zafto_links": [],
+      "tags": ["gas pipe", "minimum size", "appliance"],
+      "verified": true
+    },
+    {
+      "id": "PS-048",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": [],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 180,
+      "question": "A home has 3 bathrooms (6 WSFU each), kitchen (2 WSFU), and laundry (4 WSFU). What is the total WSFU?",
+      "choices": [
+        {"id": "A", "text": "18 WSFU"},
+        {"id": "B", "text": "22 WSFU"},
+        {"id": "C", "text": "24 WSFU"},
+        {"id": "D", "text": "28 WSFU"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "3 bathrooms (18) + kitchen (2) + laundry (4) = 24 WSFU.",
+        "detailed": "Calculate total WSFU: 3 bathroom groups × 6 WSFU = 18 WSFU, plus kitchen sink at 2 WSFU, plus clothes washer at 4 WSFU. Total = 18 + 2 + 4 = 24 WSFU for sizing the water service and distribution.",
+        "how_to_find": "Add individual fixture and group WSFU values from IPC Table E103.3(2) and (3)."
+      },
+      "code_reference": {"code": "IPC", "section": "Table E103.3(2)"},
+      "zafto_links": [],
+      "tags": ["WSFU", "calculation", "residential"],
+      "verified": true
+    },
+    {
+      "id": "PS-049",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(2)"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the maximum number of DFUs permitted on a 4-inch building drain at 1/8 inch per foot slope?",
+      "choices": [
+        {"id": "A", "text": "90 DFU"},
+        {"id": "B", "text": "180 DFU"},
+        {"id": "C", "text": "216 DFU"},
+        {"id": "D", "text": "250 DFU"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A 4-inch building drain at 1/8\"/ft slope handles 180 DFU maximum.",
+        "detailed": "Per IPC Table 710.1(2), a 4-inch building drain or sewer installed at 1/8 inch per foot slope can serve a maximum of 180 drainage fixture units. Steeper slopes allow slightly more capacity.",
+        "how_to_find": "Reference IPC Table 710.1(2) for building drain capacity."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(2)"},
+      "zafto_links": [],
+      "tags": ["building drain", "4-inch", "DFU"],
+      "verified": true
+    },
+    {
+      "id": "PS-050",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["903"],
+      "code_tables": ["903.1"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum vent size for a 3-inch drain serving a water closet?",
+      "choices": [
+        {"id": "A", "text": "1-1/4 inches"},
+        {"id": "B", "text": "1-1/2 inches"},
+        {"id": "C", "text": "2 inches"},
+        {"id": "D", "text": "3 inches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "A 3-inch water closet drain requires a minimum 2-inch vent.",
+        "detailed": "Per IPC Table 903.1, the minimum vent size shall be not less than one-half the drain pipe size, but never less than 1-1/4 inches. For a 3-inch WC drain, the minimum vent is 2 inches (greater than half of 3 inches).",
+        "how_to_find": "Reference IPC Table 903.1 for vent sizing requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 903.1"},
+      "zafto_links": [],
+      "tags": ["vent sizing", "water closet", "minimum"],
+      "verified": true
+    },
+    {
+      "id": "PS-051",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["903"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum size for any vent pipe?",
+      "choices": [
+        {"id": "A", "text": "1 inch"},
+        {"id": "B", "text": "1-1/4 inches"},
+        {"id": "C", "text": "1-1/2 inches"},
+        {"id": "D", "text": "2 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "The minimum vent pipe size is 1-1/4 inches.",
+        "detailed": "Per IPC Section 903.1, no vent shall be less than 1-1/4 inches in diameter. This is the absolute minimum for any individual vent, regardless of the fixture being served.",
+        "how_to_find": "Reference IPC Section 903.1 for minimum vent size."
+      },
+      "code_reference": {"code": "IPC", "section": "903.1"},
+      "zafto_links": [],
+      "tags": ["vent", "minimum size", "DWV"],
+      "verified": true
+    },
+    {
+      "id": "PS-052",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["604"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "medium",
+      "time_estimate_seconds": 120,
+      "question": "A customer complains of low water pressure at the shower on the second floor. The first floor fixtures have adequate pressure. What is the MOST likely cause?",
+      "choices": [
+        {"id": "A", "text": "Undersized water heater"},
+        {"id": "B", "text": "Undersized supply piping to second floor"},
+        {"id": "C", "text": "Faulty pressure reducing valve"},
+        {"id": "D", "text": "Clogged drain line"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Undersized supply piping causes pressure loss at upper floors.",
+        "detailed": "When only upper floor fixtures have low pressure, the likely cause is undersized supply piping. Pressure is lost to elevation (0.433 psi/ft) and friction. If piping is marginally sized, the upper floors suffer first. A PRV issue would affect all fixtures equally.",
+        "how_to_find": "Apply pipe sizing principles from IPC Appendix E to diagnose pressure issues."
+      },
+      "code_reference": {"code": "IPC", "section": "Appendix E"},
+      "zafto_links": [],
+      "tags": ["troubleshooting", "pressure", "pipe sizing"],
+      "verified": true
+    },
+    {
+      "id": "PS-053",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["605"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "CPVC water distribution piping is typically rated for what maximum temperature?",
+      "choices": [
+        {"id": "A", "text": "140°F"},
+        {"id": "B", "text": "180°F"},
+        {"id": "C", "text": "200°F"},
+        {"id": "D", "text": "212°F"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "CPVC is rated for 180°F maximum temperature.",
+        "detailed": "Per IPC Section 605 and manufacturer specifications, CPVC (chlorinated polyvinyl chloride) water distribution piping is rated for a maximum service temperature of 180°F at 100 psi. Higher temperatures reduce the pressure rating.",
+        "how_to_find": "Reference IPC Section 605 and ASTM D2846 for CPVC ratings."
+      },
+      "code_reference": {"code": "IPC", "section": "605"},
+      "zafto_links": [],
+      "tags": ["CPVC", "temperature", "pipe material"],
+      "verified": true
+    },
+    {
+      "id": "PS-054",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["605"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "PEX tubing for water distribution is typically rated for what maximum temperature?",
+      "choices": [
+        {"id": "A", "text": "140°F"},
+        {"id": "B", "text": "180°F"},
+        {"id": "C", "text": "200°F"},
+        {"id": "D", "text": "212°F"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "PEX is rated for 200°F maximum temperature.",
+        "detailed": "Per IPC Section 605 and ASTM F876, PEX (cross-linked polyethylene) tubing is rated for a maximum service temperature of 200°F at 80 psi. This makes PEX suitable for hot water distribution in residential applications.",
+        "how_to_find": "Reference IPC Section 605 and ASTM F876 for PEX ratings."
+      },
+      "code_reference": {"code": "IPC", "section": "605"},
+      "zafto_links": [],
+      "tags": ["PEX", "temperature", "pipe material"],
+      "verified": true
+    },
+    {
+      "id": "PS-055",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": [],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 180,
+      "question": "What is the inside diameter of 3/4-inch Type L copper tubing?",
+      "choices": [
+        {"id": "A", "text": "0.625 inches"},
+        {"id": "B", "text": "0.750 inches"},
+        {"id": "C", "text": "0.785 inches"},
+        {"id": "D", "text": "0.875 inches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "3/4-inch Type L copper has an inside diameter of 0.785 inches.",
+        "detailed": "Copper tubing is sized by nominal outside diameter. For 3/4-inch Type L copper (OD = 0.875\"), the wall thickness is 0.045\", giving an inside diameter of 0.875 - (2 × 0.045) = 0.785 inches. Inside diameter affects flow capacity calculations.",
+        "how_to_find": "Reference copper tubing dimension tables or ASTM B88 specifications."
+      },
+      "code_reference": {"code": "IPC", "section": "Appendix E"},
+      "zafto_links": [],
+      "tags": ["copper", "Type L", "dimensions"],
+      "verified": true
+    },
+    {
+      "id": "PS-056",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(2)"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the maximum number of fixture units a 3-inch vertical stack can handle with 3 branch intervals?",
+      "choices": [
+        {"id": "A", "text": "24 DFU"},
+        {"id": "B", "text": "42 DFU"},
+        {"id": "C", "text": "60 DFU"},
+        {"id": "D", "text": "72 DFU"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "A 3-inch stack with 3+ branch intervals can handle 60 DFU.",
+        "detailed": "Per IPC Table 710.1(2), a 3-inch drainage stack serving 3 or more branch intervals can handle up to 60 DFU total. Stacks with more branch intervals have higher capacity than those with fewer intervals.",
+        "how_to_find": "Reference IPC Table 710.1(2) for stack sizing with multiple intervals."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(2)"},
+      "zafto_links": [],
+      "tags": ["stack", "branch intervals", "DFU"],
+      "verified": true
+    },
+    {
+      "id": "PS-057",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": ["E103.3(2)"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the WSFU value for a residential dishwasher?",
+      "choices": [
+        {"id": "A", "text": "1.0 WSFU"},
+        {"id": "B", "text": "1.5 WSFU"},
+        {"id": "C", "text": "2.0 WSFU"},
+        {"id": "D", "text": "2.5 WSFU"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A residential dishwasher has a WSFU value of 1.5.",
+        "detailed": "Per IPC Table E103.3(2), a residential automatic dishwasher has a water supply fixture unit (WSFU) value of 1.5. This accounts for the fill cycles during wash and rinse operations.",
+        "how_to_find": "Reference IPC Table E103.3(2) for appliance WSFU values."
+      },
+      "code_reference": {"code": "IPC", "section": "Table E103.3(2)"},
+      "zafto_links": [],
+      "tags": ["dishwasher", "WSFU", "appliance"],
+      "verified": true
+    },
+    {
+      "id": "PS-058",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": ["E103.3(2)"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the WSFU value for a residential clothes washer?",
+      "choices": [
+        {"id": "A", "text": "2.0 WSFU"},
+        {"id": "B", "text": "3.0 WSFU"},
+        {"id": "C", "text": "4.0 WSFU"},
+        {"id": "D", "text": "5.0 WSFU"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "A residential clothes washer has a WSFU value of 4.0.",
+        "detailed": "Per IPC Table E103.3(2), an automatic clothes washer has a water supply fixture unit value of 4.0 WSFU. The high value reflects the significant water demand during fill cycles.",
+        "how_to_find": "Reference IPC Table E103.3(2) for clothes washer WSFU value."
+      },
+      "code_reference": {"code": "IPC", "section": "Table E103.3(2)"},
+      "zafto_links": [],
+      "tags": ["clothes washer", "WSFU", "laundry"],
+      "verified": true
+    },
+    {
+      "id": "PS-059",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["604"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "When must a thermal expansion tank be installed on a water heater?",
+      "choices": [
+        {"id": "A", "text": "On all water heaters"},
+        {"id": "B", "text": "When a PRV is installed"},
+        {"id": "C", "text": "When a closed system exists"},
+        {"id": "D", "text": "Only on tankless water heaters"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Thermal expansion tanks are required on closed systems.",
+        "detailed": "Per IPC Section 607.3, a thermal expansion tank is required when the water supply system is closed (has backflow prevention). In a closed system, expanding hot water has nowhere to go and creates dangerous pressure buildup.",
+        "how_to_find": "Reference IPC Section 607.3 for thermal expansion requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "607.3"},
+      "zafto_links": [],
+      "tags": ["expansion tank", "closed system", "water heater"],
+      "verified": true
+    },
+    {
+      "id": "PS-060",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": [],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 180,
+      "question": "A 1-inch water pipe flowing at 8 fps has approximately what flow rate in GPM?",
+      "choices": [
+        {"id": "A", "text": "10 GPM"},
+        {"id": "B", "text": "15 GPM"},
+        {"id": "C", "text": "20 GPM"},
+        {"id": "D", "text": "25 GPM"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "1-inch pipe at 8 fps flows approximately 20 GPM.",
+        "detailed": "Flow rate (GPM) = Area × Velocity × 2.449. For 1-inch Type L copper (ID ≈ 1.025\"), Area = π × (0.5125)² = 0.825 sq in. At 8 fps: 0.825 × 8 × 2.449 ≈ 16.2 GPM, rounded to approximately 20 GPM for practical sizing.",
+        "how_to_find": "Use the formula Q = A × V × 2.449 where Q is GPM, A is sq inches, V is fps."
+      },
+      "code_reference": {"code": "IPC", "section": "Appendix E"},
+      "zafto_links": [],
+      "tags": ["flow rate", "velocity", "calculation"],
+      "verified": true
+    },
+    {
+      "id": "PS-061",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["709"],
+      "code_tables": ["709.1"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum drain size for a shower stall?",
+      "choices": [
+        {"id": "A", "text": "1-1/4 inches"},
+        {"id": "B", "text": "1-1/2 inches"},
+        {"id": "C", "text": "2 inches"},
+        {"id": "D", "text": "3 inches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "A shower stall requires a minimum 2-inch drain.",
+        "detailed": "Per IPC Table 709.1, a shower stall requires a minimum 2-inch drain pipe. This size handles the flow rate from showerheads while providing adequate drainage capacity.",
+        "how_to_find": "Reference IPC Table 709.1 for shower drain requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 709.1"},
+      "zafto_links": [],
+      "tags": ["shower", "drain size", "minimum"],
+      "verified": true
+    },
+    {
+      "id": "PS-062",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["709"],
+      "code_tables": ["709.1"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum drain size for a urinal with flushometer?",
+      "choices": [
+        {"id": "A", "text": "1-1/4 inches"},
+        {"id": "B", "text": "1-1/2 inches"},
+        {"id": "C", "text": "2 inches"},
+        {"id": "D", "text": "3 inches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "A flushometer urinal requires a minimum 2-inch drain.",
+        "detailed": "Per IPC Table 709.1, a urinal with flushometer valve requires a minimum 2-inch drain pipe. This size handles the rapid flush discharge from flushometer-style urinals.",
+        "how_to_find": "Reference IPC Table 709.1 for urinal drain requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 709.1"},
+      "zafto_links": [],
+      "tags": ["urinal", "flushometer", "drain size"],
+      "verified": true
+    },
+    {
+      "id": "PS-063",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(1)"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the DFU value for a shower stall in a private residence?",
+      "choices": [
+        {"id": "A", "text": "1.0 DFU"},
+        {"id": "B", "text": "2.0 DFU"},
+        {"id": "C", "text": "3.0 DFU"},
+        {"id": "D", "text": "4.0 DFU"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A private shower stall has a DFU value of 2.0.",
+        "detailed": "Per IPC Table 710.1(1), a shower stall in a private residence has a drainage fixture unit value of 2.0 DFU. This accounts for the continuous flow during showering.",
+        "how_to_find": "Reference IPC Table 710.1(1) for shower DFU values."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(1)"},
+      "zafto_links": [],
+      "tags": ["shower", "DFU", "private"],
+      "verified": true
+    },
+    {
+      "id": "PS-064",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(1)"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the DFU value for a kitchen sink in a private residence?",
+      "choices": [
+        {"id": "A", "text": "1.0 DFU"},
+        {"id": "B", "text": "1.5 DFU"},
+        {"id": "C", "text": "2.0 DFU"},
+        {"id": "D", "text": "3.0 DFU"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "A private kitchen sink has a DFU value of 2.0.",
+        "detailed": "Per IPC Table 710.1(1), a kitchen sink in a private residence has a drainage fixture unit value of 2.0 DFU. This accounts for the higher flow rates and potential food waste.",
+        "how_to_find": "Reference IPC Table 710.1(1) for kitchen sink DFU values."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(1)"},
+      "zafto_links": [],
+      "tags": ["kitchen sink", "DFU", "private"],
+      "verified": true
+    },
+    {
+      "id": "PS-065",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(1)"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the DFU value for a clothes washer?",
+      "choices": [
+        {"id": "A", "text": "2.0 DFU"},
+        {"id": "B", "text": "3.0 DFU"},
+        {"id": "C", "text": "4.0 DFU"},
+        {"id": "D", "text": "5.0 DFU"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A clothes washer has a DFU value of 3.0.",
+        "detailed": "Per IPC Table 710.1(1), an automatic clothes washer has a drainage fixture unit value of 3.0 DFU. The high value reflects the pump-out discharge rate of washing machines.",
+        "how_to_find": "Reference IPC Table 710.1(1) for clothes washer DFU values."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(1)"},
+      "zafto_links": [],
+      "tags": ["clothes washer", "DFU", "laundry"],
+      "verified": true
+    },
+    {
+      "id": "PS-066",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(2)"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the maximum number of DFUs permitted on a 4-inch horizontal branch?",
+      "choices": [
+        {"id": "A", "text": "90 DFU"},
+        {"id": "B", "text": "120 DFU"},
+        {"id": "C", "text": "160 DFU"},
+        {"id": "D", "text": "180 DFU"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "A 4-inch horizontal branch can carry a maximum of 160 DFU.",
+        "detailed": "Per IPC Table 710.1(2), a 4-inch horizontal fixture branch can carry a maximum of 160 drainage fixture units. This is different from a building drain of the same size which may have different limits based on slope.",
+        "how_to_find": "Reference IPC Table 710.1(2) for 4-inch branch capacity."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(2)"},
+      "zafto_links": [],
+      "tags": ["horizontal branch", "4-inch", "DFU"],
+      "verified": true
+    },
+    {
+      "id": "PS-067",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["1106"],
+      "code_tables": ["1106.3"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum number of roof drains required on a flat roof?",
+      "choices": [
+        {"id": "A", "text": "One"},
+        {"id": "B", "text": "Two"},
+        {"id": "C", "text": "Three"},
+        {"id": "D", "text": "Four"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A minimum of two roof drains is required on flat roofs.",
+        "detailed": "Per IPC Section 1106.3, where roof drains are required, not less than two roof drains shall be installed. This provides redundancy in case one drain becomes blocked.",
+        "how_to_find": "Reference IPC Section 1106.3 for roof drain requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "1106.3"},
+      "zafto_links": [],
+      "tags": ["roof drain", "minimum", "redundancy"],
+      "verified": true
+    },
+    {
+      "id": "PS-068",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": ["E103.3(2)"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the WSFU value for a hose bibb (sillcock)?",
+      "choices": [
+        {"id": "A", "text": "1.0 WSFU"},
+        {"id": "B", "text": "2.0 WSFU"},
+        {"id": "C", "text": "2.5 WSFU"},
+        {"id": "D", "text": "3.0 WSFU"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "A hose bibb has a WSFU value of 2.5.",
+        "detailed": "Per IPC Table E103.3(2), a hose bibb (sillcock) has a water supply fixture unit value of 2.5 WSFU. This accounts for the high flow rate when used for outdoor watering.",
+        "how_to_find": "Reference IPC Table E103.3(2) for hose bibb WSFU value."
+      },
+      "code_reference": {"code": "IPC", "section": "Table E103.3(2)"},
+      "zafto_links": [],
+      "tags": ["hose bibb", "WSFU", "outdoor"],
+      "verified": true
+    },
+    {
+      "id": "PS-069",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["604"],
+      "code_tables": ["604.3"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum required flow pressure at a kitchen sink faucet?",
+      "choices": [
+        {"id": "A", "text": "5 psi"},
+        {"id": "B", "text": "8 psi"},
+        {"id": "C", "text": "12 psi"},
+        {"id": "D", "text": "15 psi"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "The minimum flow pressure at a kitchen faucet is 8 psi.",
+        "detailed": "Per IPC Table 604.3, the minimum required flow pressure at a kitchen sink faucet is 8 psi. This is the same as a lavatory faucet and ensures adequate flow for washing and rinsing.",
+        "how_to_find": "Reference IPC Table 604.3 for kitchen faucet pressure requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 604.3"},
+      "zafto_links": [],
+      "tags": ["flow pressure", "kitchen faucet", "minimum"],
+      "verified": true
+    },
+    {
+      "id": "PS-070",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["604"],
+      "code_tables": ["604.3"],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum required flow pressure at a tank-type water closet?",
+      "choices": [
+        {"id": "A", "text": "4 psi"},
+        {"id": "B", "text": "8 psi"},
+        {"id": "C", "text": "15 psi"},
+        {"id": "D", "text": "25 psi"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A tank-type water closet requires 8 psi minimum flow pressure.",
+        "detailed": "Per IPC Table 604.3, the minimum required flow pressure at a tank-type (gravity flush) water closet is 8 psi. The tank stores water, so lower pressure is acceptable compared to flushometer types (25 psi).",
+        "how_to_find": "Reference IPC Table 604.3 for tank-type WC pressure requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 604.3"},
+      "zafto_links": [],
+      "tags": ["flow pressure", "water closet", "tank type"],
+      "verified": true
+    },
+    {
+      "id": "PS-071",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": [],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 180,
+      "question": "A 5-story building with fixtures on each floor requires how much additional pressure (in psi) just to overcome elevation to the top floor at 10 feet per story?",
+      "choices": [
+        {"id": "A", "text": "17.3 psi"},
+        {"id": "B", "text": "21.7 psi"},
+        {"id": "C", "text": "25.0 psi"},
+        {"id": "D", "text": "30.0 psi"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "50 feet × 0.433 psi/ft = 21.7 psi for elevation.",
+        "detailed": "With 5 stories at 10 feet each, the top floor is 50 feet above grade. Elevation pressure loss is 0.433 psi per foot. 50 ft × 0.433 psi/ft = 21.65 psi, rounded to 21.7 psi. This is before accounting for friction losses.",
+        "how_to_find": "Calculate: total height × 0.433 psi/foot."
+      },
+      "code_reference": {"code": "IPC", "section": "Appendix E"},
+      "zafto_links": [],
+      "tags": ["elevation", "pressure", "multi-story"],
+      "verified": true
+    },
+    {
+      "id": "PS-072",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["604"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "When is a water hammer arrestor required?",
+      "choices": [
+        {"id": "A", "text": "At every fixture"},
+        {"id": "B", "text": "At quick-closing valves"},
+        {"id": "C", "text": "Only on hot water lines"},
+        {"id": "D", "text": "Only on commercial buildings"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Water hammer arrestors are required at quick-closing valves.",
+        "detailed": "Per IPC Section 604.9, water hammer arrestors are required at quick-closing valves such as dishwashers, clothes washers, and ice makers. These appliances use solenoid valves that close instantly, creating water hammer.",
+        "how_to_find": "Reference IPC Section 604.9 for water hammer arrestor requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "604.9"},
+      "zafto_links": [],
+      "tags": ["water hammer", "arrestor", "quick-closing valve"],
+      "verified": true
+    },
+    {
+      "id": "PS-073",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["709"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "Can a fixture drain be smaller than the fixture trap?",
+      "choices": [
+        {"id": "A", "text": "Yes, by one size"},
+        {"id": "B", "text": "Yes, if properly vented"},
+        {"id": "C", "text": "No, never"},
+        {"id": "D", "text": "Only for lavatories"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "A fixture drain cannot be smaller than the trap.",
+        "detailed": "Per IPC Section 709.2, no fixture drain shall be smaller than the trap it serves. The drain must be equal to or larger than the trap to prevent restrictions and ensure proper drainage.",
+        "how_to_find": "Reference IPC Section 709.2 for drain/trap sizing relationship."
+      },
+      "code_reference": {"code": "IPC", "section": "709.2"},
+      "zafto_links": [],
+      "tags": ["fixture drain", "trap", "sizing rule"],
+      "verified": true
+    },
+    {
+      "id": "PS-074",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["712"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum size for a building sewer?",
+      "choices": [
+        {"id": "A", "text": "3 inches"},
+        {"id": "B", "text": "4 inches"},
+        {"id": "C", "text": "5 inches"},
+        {"id": "D", "text": "6 inches"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "The minimum building sewer size is 3 inches.",
+        "detailed": "Per IPC Section 712.1, the minimum size of a building sewer shall be 3 inches. However, when a building has multiple water closets, larger sizes are typically required based on DFU load calculations.",
+        "how_to_find": "Reference IPC Section 712.1 for minimum building sewer size."
+      },
+      "code_reference": {"code": "IPC", "section": "712.1"},
+      "zafto_links": [],
+      "tags": ["building sewer", "minimum size", "DWV"],
+      "verified": true
+    },
+    {
+      "id": "PS-075",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["712"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum slope for a building sewer?",
+      "choices": [
+        {"id": "A", "text": "1/16 inch per foot"},
+        {"id": "B", "text": "1/8 inch per foot"},
+        {"id": "C", "text": "1/4 inch per foot"},
+        {"id": "D", "text": "1/2 inch per foot"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Building sewers require a minimum 1/8 inch per foot slope.",
+        "detailed": "Per IPC Section 712.1, building sewers shall be installed at a minimum slope of 1/8 inch per foot (1% grade). This provides adequate velocity for solids transport while preventing excessive velocities.",
+        "how_to_find": "Reference IPC Section 712.1 for building sewer slope requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "712.1"},
+      "zafto_links": [],
+      "tags": ["building sewer", "slope", "grade"],
+      "verified": true
+    },
+    {
+      "id": "PS-076",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(2)"],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 180,
+      "question": "An office building has 10 public restrooms, each with 2 water closets (6 DFU each) and 2 lavatories (2 DFU each). What is the total DFU load?",
+      "choices": [
+        {"id": "A", "text": "120 DFU"},
+        {"id": "B", "text": "140 DFU"},
+        {"id": "C", "text": "160 DFU"},
+        {"id": "D", "text": "180 DFU"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "10 restrooms × (12 + 4) = 160 DFU total.",
+        "detailed": "Per restroom: 2 public WC × 6 DFU = 12 DFU, plus 2 public lav × 2 DFU = 4 DFU. Total per restroom = 16 DFU. For 10 restrooms: 16 × 10 = 160 DFU total building drainage load.",
+        "how_to_find": "Add DFU values from IPC Table 710.1(1) for all fixtures."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(1)"},
+      "zafto_links": [],
+      "tags": ["DFU", "calculation", "commercial"],
+      "verified": true
+    },
+    {
+      "id": "PS-077",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["610"],
+      "code_tables": ["610.3"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum hot water supply pipe size to a bathtub?",
+      "choices": [
+        {"id": "A", "text": "3/8 inch"},
+        {"id": "B", "text": "1/2 inch"},
+        {"id": "C", "text": "3/4 inch"},
+        {"id": "D", "text": "1 inch"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Hot water supply to a bathtub requires minimum 1/2 inch pipe.",
+        "detailed": "Per IPC Table 610.3, the minimum fixture supply pipe size for a bathtub (both hot and cold) is 1/2 inch. This ensures adequate flow for filling the tub within a reasonable time.",
+        "how_to_find": "Reference IPC Table 610.3 for bathtub supply requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 610.3"},
+      "zafto_links": [],
+      "tags": ["bathtub", "hot water", "supply pipe"],
+      "verified": true
+    },
+    {
+      "id": "PS-078",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": ["E103.3(6)"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the equivalent length for a 1-inch gate valve when calculating friction losses?",
+      "choices": [
+        {"id": "A", "text": "0.5 feet"},
+        {"id": "B", "text": "1.0 feet"},
+        {"id": "C", "text": "5.0 feet"},
+        {"id": "D", "text": "10.0 feet"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "A 1-inch gate valve has an equivalent length of approximately 0.5 feet.",
+        "detailed": "Per IPC Table E103.3(6), gate valves have very low friction loss compared to globe valves. A 1-inch gate valve adds approximately 0.5 feet of equivalent length, making them ideal for main shutoffs.",
+        "how_to_find": "Reference IPC Table E103.3(6) for valve equivalent lengths."
+      },
+      "code_reference": {"code": "IPC", "section": "Table E103.3(6)"},
+      "zafto_links": [],
+      "tags": ["gate valve", "equivalent length", "friction"],
+      "verified": true
+    },
+    {
+      "id": "PS-079",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": ["E103.3(6)"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Which valve type has the HIGHEST equivalent length (most friction loss)?",
+      "choices": [
+        {"id": "A", "text": "Gate valve"},
+        {"id": "B", "text": "Ball valve"},
+        {"id": "C", "text": "Globe valve"},
+        {"id": "D", "text": "Check valve"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Globe valves have the highest equivalent length of common valve types.",
+        "detailed": "Per IPC Table E103.3(6), globe valves have significantly higher equivalent lengths than gate, ball, or check valves. A 1-inch globe valve may have 10+ feet equivalent length versus 0.5 feet for a gate valve.",
+        "how_to_find": "Compare valve equivalent lengths in IPC Table E103.3(6)."
+      },
+      "code_reference": {"code": "IPC", "section": "Table E103.3(6)"},
+      "zafto_links": [],
+      "tags": ["globe valve", "equivalent length", "friction loss"],
+      "verified": true
+    },
+    {
+      "id": "PS-080",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 180,
+      "question": "A building has 60 psi at the meter. After subtracting 20 psi for elevation and 12 psi for friction, what pressure remains at the most remote fixture?",
+      "choices": [
+        {"id": "A", "text": "18 psi"},
+        {"id": "B", "text": "22 psi"},
+        {"id": "C", "text": "28 psi"},
+        {"id": "D", "text": "32 psi"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "60 - 20 - 12 = 28 psi remaining at the fixture.",
+        "detailed": "Starting with 60 psi at the meter, subtract elevation loss (20 psi) and friction loss (12 psi). Remaining pressure = 60 - 20 - 12 = 28 psi. This must be compared to the fixture's minimum requirement (e.g., 20 psi for showerhead).",
+        "how_to_find": "Apply IPC Appendix E methodology: Available - Elevation - Friction = Residual."
+      },
+      "code_reference": {"code": "IPC", "section": "Appendix E"},
+      "zafto_links": [],
+      "tags": ["pressure calculation", "friction loss", "elevation"],
+      "verified": true
+    },
+    {
+      "id": "PS-081",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["605"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What color is typically used to identify potable cold water piping?",
+      "choices": [
+        {"id": "A", "text": "Red"},
+        {"id": "B", "text": "Blue"},
+        {"id": "C", "text": "Green"},
+        {"id": "D", "text": "Yellow"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Blue identifies potable cold water piping.",
+        "detailed": "Per common industry standards and ASME A13.1, blue is used to identify potable cold water piping. Hot water is typically identified with red or orange, while non-potable water uses other colors.",
+        "how_to_find": "Reference ASME A13.1 for pipe color identification standards."
+      },
+      "code_reference": {"code": "ASME", "section": "A13.1"},
+      "zafto_links": [],
+      "tags": ["pipe identification", "color code", "potable water"],
+      "verified": true
+    },
+    {
+      "id": "PS-082",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["903"],
+      "code_tables": ["903.1"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the minimum vent size for a 4-inch building drain?",
+      "choices": [
+        {"id": "A", "text": "2 inches"},
+        {"id": "B", "text": "3 inches"},
+        {"id": "C", "text": "4 inches"},
+        {"id": "D", "text": "2-1/2 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A 4-inch building drain requires minimum 3-inch vent.",
+        "detailed": "Per IPC Table 903.1, the vent size must be at least half the drain size. For a 4-inch drain, minimum vent = 2 inches. However, for a building drain serving multiple fixtures, sizing per Table 916.1 typically requires 3 inches.",
+        "how_to_find": "Reference IPC Table 903.1 and 916.1 for vent sizing."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 903.1"},
+      "zafto_links": [],
+      "tags": ["vent sizing", "building drain", "minimum"],
+      "verified": true
+    },
+    {
+      "id": "PS-083",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(1)"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the DFU value for a floor drain with a 2-inch trap?",
+      "choices": [
+        {"id": "A", "text": "1 DFU"},
+        {"id": "B", "text": "2 DFU"},
+        {"id": "C", "text": "3 DFU"},
+        {"id": "D", "text": "4 DFU"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A 2-inch floor drain has a DFU value of 2.",
+        "detailed": "Per IPC Table 710.1(1), a floor drain with a 2-inch trap has a drainage fixture unit value of 2 DFU. Larger floor drains (3-inch or 4-inch) have higher DFU values.",
+        "how_to_find": "Reference IPC Table 710.1(1) for floor drain DFU values."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(1)"},
+      "zafto_links": [],
+      "tags": ["floor drain", "DFU", "trap size"],
+      "verified": true
+    },
+    {
+      "id": "PS-084",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["1103"],
+      "code_tables": ["1103.1"],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 180,
+      "question": "A flat roof is 3,000 square feet. At 4 inches/hour rainfall, what is the required flow capacity in GPM?",
+      "choices": [
+        {"id": "A", "text": "100 GPM"},
+        {"id": "B", "text": "125 GPM"},
+        {"id": "C", "text": "150 GPM"},
+        {"id": "D", "text": "175 GPM"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "3,000 sq ft × 4 in/hr = 125 GPM (using 0.0104 factor).",
+        "detailed": "Storm drainage flow: GPM = Area (sq ft) × Rainfall (in/hr) × 0.0104. For 3,000 sq ft at 4 in/hr: 3,000 × 4 × 0.0104 = 124.8 GPM, rounded to 125 GPM required capacity.",
+        "how_to_find": "Use formula: GPM = Area × Rainfall Rate × 0.0104"
+      },
+      "code_reference": {"code": "IPC", "section": "Table 1103.1"},
+      "zafto_links": [],
+      "tags": ["storm drainage", "GPM", "roof area"],
+      "verified": true
+    },
+    {
+      "id": "PS-085",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": ["E103.3(2)"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the WSFU value for a commercial kitchen sink with 3 compartments?",
+      "choices": [
+        {"id": "A", "text": "3 WSFU"},
+        {"id": "B", "text": "4 WSFU"},
+        {"id": "C", "text": "6 WSFU"},
+        {"id": "D", "text": "8 WSFU"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A 3-compartment commercial sink has 4 WSFU.",
+        "detailed": "Per IPC Table E103.3(2), a commercial kitchen sink (regardless of compartments) has a water supply fixture unit value of 4 WSFU. This accounts for the high flow demands of commercial food service operations.",
+        "how_to_find": "Reference IPC Table E103.3(2) for commercial sink WSFU values."
+      },
+      "code_reference": {"code": "IPC", "section": "Table E103.3(2)"},
+      "zafto_links": [],
+      "tags": ["commercial sink", "WSFU", "kitchen"],
+      "verified": true
+    },
+    {
+      "id": "PS-086",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["604"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "At what pressure must a pressure-reducing valve (PRV) be set?",
+      "choices": [
+        {"id": "A", "text": "60 psi or less"},
+        {"id": "B", "text": "80 psi or less"},
+        {"id": "C", "text": "100 psi or less"},
+        {"id": "D", "text": "Any pressure below incoming"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "PRVs must reduce pressure to 80 psi or less.",
+        "detailed": "Per IPC Section 604.8, where a PRV is required (when supply exceeds 80 psi), it must reduce static pressure to 80 psi or less at all fixtures. Some jurisdictions require lower settings.",
+        "how_to_find": "Reference IPC Section 604.8 for PRV setting requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "604.8"},
+      "zafto_links": [],
+      "tags": ["PRV", "pressure reducing valve", "80 psi"],
+      "verified": true
+    },
+    {
+      "id": "PS-087",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(2)"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the maximum number of DFUs a 6-inch building drain can handle at 1/8 inch per foot slope?",
+      "choices": [
+        {"id": "A", "text": "480 DFU"},
+        {"id": "B", "text": "575 DFU"},
+        {"id": "C", "text": "700 DFU"},
+        {"id": "D", "text": "840 DFU"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "A 6-inch building drain at 1/8\"/ft handles 700 DFU maximum.",
+        "detailed": "Per IPC Table 710.1(2), a 6-inch building drain or building sewer installed at 1/8 inch per foot slope can serve a maximum of 700 drainage fixture units.",
+        "how_to_find": "Reference IPC Table 710.1(2) for 6-inch drain capacity."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(2)"},
+      "zafto_links": [],
+      "tags": ["building drain", "6-inch", "DFU"],
+      "verified": true
+    },
+    {
+      "id": "PS-088",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["605"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the standard outside diameter of 1/2-inch copper tubing?",
+      "choices": [
+        {"id": "A", "text": "0.500 inches"},
+        {"id": "B", "text": "0.625 inches"},
+        {"id": "C", "text": "0.750 inches"},
+        {"id": "D", "text": "0.875 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "1/2-inch copper tubing has a 0.625-inch outside diameter.",
+        "detailed": "Copper tubing is sized by nominal outside diameter, not inside diameter. 1/2-inch nominal copper has an actual OD of 0.625 inches (5/8\"). The ID varies by type (K, L, M) based on wall thickness.",
+        "how_to_find": "Reference ASTM B88 for copper tubing dimensions."
+      },
+      "code_reference": {"code": "ASTM", "section": "B88"},
+      "zafto_links": [],
+      "tags": ["copper tubing", "dimensions", "OD"],
+      "verified": true
+    },
+    {
+      "id": "PS-089",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": ["E103.3(4)"],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 180,
+      "question": "A building has 100 WSFU. Using IPC demand curves, what is the approximate GPM demand?",
+      "choices": [
+        {"id": "A", "text": "32 GPM"},
+        {"id": "B", "text": "38 GPM"},
+        {"id": "C", "text": "45 GPM"},
+        {"id": "D", "text": "52 GPM"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "100 WSFU converts to approximately 38 GPM.",
+        "detailed": "Per IPC Table E103.3(4), 100 water supply fixture units converts to approximately 38 GPM of demand. The relationship is not linear - higher fixture counts have diminishing per-unit demand due to diversity.",
+        "how_to_find": "Reference IPC Table E103.3(4) for WSFU to GPM conversion."
+      },
+      "code_reference": {"code": "IPC", "section": "Table E103.3(4)"},
+      "zafto_links": [],
+      "tags": ["WSFU", "GPM", "demand curve"],
+      "verified": true
+    },
+    {
+      "id": "PS-090",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["709"],
+      "code_tables": ["709.1"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum drain size for a bathtub without a shower?",
+      "choices": [
+        {"id": "A", "text": "1-1/4 inches"},
+        {"id": "B", "text": "1-1/2 inches"},
+        {"id": "C", "text": "2 inches"},
+        {"id": "D", "text": "3 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A bathtub without shower requires minimum 1-1/2 inch drain.",
+        "detailed": "Per IPC Table 709.1, a bathtub (with or without shower) requires a minimum 1-1/2 inch drain pipe. The same size applies regardless of whether the tub has a shower attachment.",
+        "how_to_find": "Reference IPC Table 709.1 for bathtub drain requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 709.1"},
+      "zafto_links": [],
+      "tags": ["bathtub", "drain size", "minimum"],
+      "verified": true
+    },
+    {
+      "id": "PS-091",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(1)"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the DFU value for a public urinal with flushometer?",
+      "choices": [
+        {"id": "A", "text": "2 DFU"},
+        {"id": "B", "text": "4 DFU"},
+        {"id": "C", "text": "6 DFU"},
+        {"id": "D", "text": "8 DFU"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A public flushometer urinal has a DFU value of 4.",
+        "detailed": "Per IPC Table 710.1(1), a urinal with flushometer valve in a public restroom has a drainage fixture unit value of 4.0 DFU. This accounts for the rapid flush discharge.",
+        "how_to_find": "Reference IPC Table 710.1(1) for urinal DFU values."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(1)"},
+      "zafto_links": [],
+      "tags": ["urinal", "DFU", "flushometer"],
+      "verified": true
+    },
+    {
+      "id": "PS-092",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["709"],
+      "code_tables": ["709.1"],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum drain size for a drinking fountain?",
+      "choices": [
+        {"id": "A", "text": "1 inch"},
+        {"id": "B", "text": "1-1/4 inches"},
+        {"id": "C", "text": "1-1/2 inches"},
+        {"id": "D", "text": "2 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A drinking fountain requires minimum 1-1/4 inch drain.",
+        "detailed": "Per IPC Table 709.1, a drinking fountain requires a minimum 1-1/4 inch drain pipe. This is the smallest permitted drain size, suitable for the low flow from drinking fountains.",
+        "how_to_find": "Reference IPC Table 709.1 for drinking fountain drain size."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 709.1"},
+      "zafto_links": [],
+      "tags": ["drinking fountain", "drain size", "minimum"],
+      "verified": true
+    },
+    {
+      "id": "PS-093",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(1)"],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the DFU value for a drinking fountain?",
+      "choices": [
+        {"id": "A", "text": "0.5 DFU"},
+        {"id": "B", "text": "1.0 DFU"},
+        {"id": "C", "text": "1.5 DFU"},
+        {"id": "D", "text": "2.0 DFU"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "A drinking fountain has a DFU value of 0.5.",
+        "detailed": "Per IPC Table 710.1(1), a drinking fountain has the lowest drainage fixture unit value at 0.5 DFU. This reflects the minimal discharge from these fixtures.",
+        "how_to_find": "Reference IPC Table 710.1(1) for drinking fountain DFU."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(1)"},
+      "zafto_links": [],
+      "tags": ["drinking fountain", "DFU", "minimum"],
+      "verified": true
+    },
+    {
+      "id": "PS-094",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": ["E103.3(2)"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the WSFU value for a drinking fountain?",
+      "choices": [
+        {"id": "A", "text": "0.25 WSFU"},
+        {"id": "B", "text": "0.5 WSFU"},
+        {"id": "C", "text": "1.0 WSFU"},
+        {"id": "D", "text": "1.5 WSFU"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A drinking fountain has a WSFU value of 0.5.",
+        "detailed": "Per IPC Table E103.3(2), a drinking fountain has a water supply fixture unit value of 0.5 WSFU. This is one of the lowest WSFU values, reflecting minimal water demand.",
+        "how_to_find": "Reference IPC Table E103.3(2) for drinking fountain WSFU."
+      },
+      "code_reference": {"code": "IPC", "section": "Table E103.3(2)"},
+      "zafto_links": [],
+      "tags": ["drinking fountain", "WSFU", "water supply"],
+      "verified": true
+    },
+    {
+      "id": "PS-095",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["610"],
+      "code_tables": ["610.3"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum supply pipe size for a water heater?",
+      "choices": [
+        {"id": "A", "text": "1/2 inch"},
+        {"id": "B", "text": "3/4 inch"},
+        {"id": "C", "text": "1 inch"},
+        {"id": "D", "text": "Sized per demand"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Water heaters require minimum 3/4 inch supply pipe.",
+        "detailed": "Per IPC Table 610.3, the minimum supply pipe size for a water heater is 3/4 inch. This ensures adequate flow to meet hot water demand throughout the building.",
+        "how_to_find": "Reference IPC Table 610.3 for water heater supply sizing."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 610.3"},
+      "zafto_links": [],
+      "tags": ["water heater", "supply pipe", "minimum"],
+      "verified": true
+    },
+    {
+      "id": "PS-096",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["607"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum length of a hot water dead-end run before a recirculation system is required?",
+      "choices": [
+        {"id": "A", "text": "50 feet"},
+        {"id": "B", "text": "100 feet"},
+        {"id": "C", "text": "No limit if properly insulated"},
+        {"id": "D", "text": "Varies by local code"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Hot water dead-end limits vary by local code adoption.",
+        "detailed": "The IPC does not specify a maximum dead-end length before requiring recirculation. Some states and local codes (like California Green Building Standards) require recirculation when runs exceed 50-100 feet.",
+        "how_to_find": "Check local amendments to IPC Section 607 for specific requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "607"},
+      "zafto_links": [],
+      "tags": ["hot water", "recirculation", "dead end"],
+      "verified": true
+    },
+    {
+      "id": "PS-097",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(2)"],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 180,
+      "question": "A 3-story building has 2 bathroom groups per floor (6 DFU each). What is the minimum stack size?",
+      "choices": [
+        {"id": "A", "text": "2 inches"},
+        {"id": "B", "text": "3 inches"},
+        {"id": "C", "text": "4 inches"},
+        {"id": "D", "text": "5 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "36 DFU on a 3-story stack requires minimum 3-inch pipe.",
+        "detailed": "Total load: 6 bathroom groups × 6 DFU = 36 DFU. Per IPC Table 710.1(2), a 3-inch stack with 3 branch intervals can handle up to 60 DFU. A 3-inch stack is adequate for 36 DFU.",
+        "how_to_find": "Calculate total DFU, then reference IPC Table 710.1(2) for stack sizing."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(2)"},
+      "zafto_links": [],
+      "tags": ["stack sizing", "DFU", "multi-story"],
+      "verified": true
+    },
+    {
+      "id": "PS-098",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["710"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What defines a 'branch interval' for stack sizing purposes?",
+      "choices": [
+        {"id": "A", "text": "Each floor of a building"},
+        {"id": "B", "text": "A vertical length of 8 feet or more with a branch connection"},
+        {"id": "C", "text": "Any horizontal branch connection"},
+        {"id": "D", "text": "Every 10 feet of stack height"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A branch interval is 8+ feet of stack with a horizontal branch.",
+        "detailed": "Per IPC definitions, a branch interval is a vertical length of soil or waste stack corresponding to a story height, but not less than 8 feet, within which horizontal branches from one floor are connected.",
+        "how_to_find": "Reference IPC Chapter 2 Definitions for 'branch interval'."
+      },
+      "code_reference": {"code": "IPC", "section": "Chapter 2"},
+      "zafto_links": [],
+      "tags": ["branch interval", "stack", "definition"],
+      "verified": true
+    },
+    {
+      "id": "PS-099",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["709"],
+      "code_tables": ["709.1"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum drain size for a service sink (mop sink)?",
+      "choices": [
+        {"id": "A", "text": "1-1/2 inches"},
+        {"id": "B", "text": "2 inches"},
+        {"id": "C", "text": "3 inches"},
+        {"id": "D", "text": "4 inches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "A service/mop sink requires minimum 3-inch drain.",
+        "detailed": "Per IPC Table 709.1, a service sink (mop basin) requires a minimum 3-inch drain pipe. The larger size handles debris and high-volume discharge from mopping activities.",
+        "how_to_find": "Reference IPC Table 709.1 for service sink drain requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 709.1"},
+      "zafto_links": [],
+      "tags": ["service sink", "mop sink", "drain size"],
+      "verified": true
+    },
+    {
+      "id": "PS-100",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(1)"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the DFU value for a service sink with a 3-inch trap?",
+      "choices": [
+        {"id": "A", "text": "2 DFU"},
+        {"id": "B", "text": "3 DFU"},
+        {"id": "C", "text": "4 DFU"},
+        {"id": "D", "text": "6 DFU"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A service sink with 3-inch trap has 3 DFU value.",
+        "detailed": "Per IPC Table 710.1(1), a service sink with a 3-inch trap has a drainage fixture unit value of 3 DFU. Larger trap sizes have proportionally higher DFU values.",
+        "how_to_find": "Reference IPC Table 710.1(1) for service sink DFU."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(1)"},
+      "zafto_links": [],
+      "tags": ["service sink", "DFU", "3-inch trap"],
+      "verified": true
+    },
+    {
+      "id": "PS-101",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["1103"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "When sizing storm drains, how do you adjust for a rainfall rate different from the base 4 inches per hour?",
+      "choices": [
+        {"id": "A", "text": "Add 10% per inch difference"},
+        {"id": "B", "text": "Multiply area by ratio of local rate to 4 in/hr"},
+        {"id": "C", "text": "Double the pipe size"},
+        {"id": "D", "text": "Use the same sizing regardless of rate"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Multiply roof area by (local rate ÷ 4) to adjust.",
+        "detailed": "Per IPC Section 1103.1, when local rainfall differs from 4 in/hr, adjust by multiplying the roof area by the ratio (local rate ÷ 4). For 6 in/hr: multiply area by 1.5; for 2 in/hr: multiply by 0.5.",
+        "how_to_find": "Reference IPC Section 1103.1 for rainfall rate adjustment method."
+      },
+      "code_reference": {"code": "IPC", "section": "1103.1"},
+      "zafto_links": [],
+      "tags": ["storm drain", "rainfall rate", "adjustment"],
+      "verified": true
+    },
+    {
+      "id": "PS-102",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["1103"],
+      "code_tables": ["1103.1"],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 180,
+      "question": "A 2,000 sq ft roof area has a local rainfall rate of 6 in/hr. What is the adjusted area for sizing at the standard 4 in/hr tables?",
+      "choices": [
+        {"id": "A", "text": "1,333 sq ft"},
+        {"id": "B", "text": "2,000 sq ft"},
+        {"id": "C", "text": "3,000 sq ft"},
+        {"id": "D", "text": "4,000 sq ft"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "2,000 × (6÷4) = 3,000 sq ft adjusted area.",
+        "detailed": "To use standard 4 in/hr tables with a higher rainfall: Adjusted Area = Actual Area × (Local Rate ÷ 4). 2,000 × (6÷4) = 2,000 × 1.5 = 3,000 sq ft. Use 3,000 sq ft when entering the sizing tables.",
+        "how_to_find": "Apply IPC Section 1103.1 adjustment formula."
+      },
+      "code_reference": {"code": "IPC", "section": "1103.1"},
+      "zafto_links": [],
+      "tags": ["storm drain", "adjusted area", "calculation"],
+      "verified": true
+    },
+    {
+      "id": "PS-103",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["903"],
+      "code_tables": ["916.1"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the maximum developed length for a 1-1/2 inch vent serving 8 DFU?",
+      "choices": [
+        {"id": "A", "text": "50 feet"},
+        {"id": "B", "text": "75 feet"},
+        {"id": "C", "text": "100 feet"},
+        {"id": "D", "text": "150 feet"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "A 1-1/2\" vent serving 8 DFU has max 50 feet developed length.",
+        "detailed": "Per IPC Table 916.1, vent pipe sizing depends on both DFU load and developed length. A 1-1/2 inch vent can serve up to 8 DFU at a maximum developed length of approximately 50 feet.",
+        "how_to_find": "Reference IPC Table 916.1 for vent length limitations."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 916.1"},
+      "zafto_links": [],
+      "tags": ["vent length", "DFU", "developed length"],
+      "verified": true
+    },
+    {
+      "id": "PS-104",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 180,
+      "question": "When two showers are used simultaneously, what happens to the hot water pressure at each shower?",
+      "choices": [
+        {"id": "A", "text": "Pressure doubles"},
+        {"id": "B", "text": "Pressure decreases due to increased demand"},
+        {"id": "C", "text": "Pressure remains constant"},
+        {"id": "D", "text": "Pressure fluctuates randomly"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Pressure decreases when demand increases on shared piping.",
+        "detailed": "When multiple fixtures draw water simultaneously, flow velocity increases in the supply mains, causing greater friction losses. This reduces available pressure at each fixture. Proper pipe sizing accounts for simultaneous use.",
+        "how_to_find": "Apply hydraulic principles from IPC Appendix E regarding simultaneous demand."
+      },
+      "code_reference": {"code": "IPC", "section": "Appendix E"},
+      "zafto_links": [],
+      "tags": ["simultaneous use", "pressure", "demand"],
+      "verified": true
+    },
+    {
+      "id": "PS-105",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["605"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum wall thickness designation for copper used underground outside the building?",
+      "choices": [
+        {"id": "A", "text": "Type M"},
+        {"id": "B", "text": "Type L"},
+        {"id": "C", "text": "Type K"},
+        {"id": "D", "text": "Type DWV"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Type K copper is required for underground exterior use.",
+        "detailed": "Per IPC Section 605.3, copper tubing used underground outside the building shall be Type K (heaviest wall thickness). Type K provides maximum protection against corrosion and physical damage in buried applications.",
+        "how_to_find": "Reference IPC Section 605.3 for underground copper requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "605.3"},
+      "zafto_links": [],
+      "tags": ["copper", "Type K", "underground"],
+      "verified": true
+    },
+    {
+      "id": "PS-106",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": ["E103.3(5)"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Which pipe material has the LOWEST friction loss for the same diameter?",
+      "choices": [
+        {"id": "A", "text": "Galvanized steel"},
+        {"id": "B", "text": "Copper"},
+        {"id": "C", "text": "PEX"},
+        {"id": "D", "text": "CPVC"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Copper has the smoothest interior and lowest friction loss.",
+        "detailed": "Per IPC Table E103.3(5) friction loss charts, copper tubing has lower friction losses than plastic pipes (PEX, CPVC) or galvanized steel due to its smooth interior surface. Galvanized steel has highest friction due to roughness.",
+        "how_to_find": "Compare friction loss tables in IPC Appendix E for different materials."
+      },
+      "code_reference": {"code": "IPC", "section": "Table E103.3(5)"},
+      "zafto_links": [],
+      "tags": ["friction loss", "copper", "pipe materials"],
+      "verified": true
+    },
+    {
+      "id": "PS-107",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["604"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What device is required when water pressure exceeds 80 psi?",
+      "choices": [
+        {"id": "A", "text": "Expansion tank"},
+        {"id": "B", "text": "Check valve"},
+        {"id": "C", "text": "Pressure-reducing valve"},
+        {"id": "D", "text": "Water hammer arrestor"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "A pressure-reducing valve is required when pressure exceeds 80 psi.",
+        "detailed": "Per IPC Section 604.8, when water pressure at the service exceeds 80 psi, a pressure-reducing valve (PRV) shall be installed to reduce static pressure to 80 psi or less at all fixtures.",
+        "how_to_find": "Reference IPC Section 604.8 for high pressure requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "604.8"},
+      "zafto_links": [],
+      "tags": ["PRV", "high pressure", "80 psi"],
+      "verified": true
+    },
+    {
+      "id": "PS-108",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(2)"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the maximum number of DFUs on a 1-1/2 inch horizontal branch?",
+      "choices": [
+        {"id": "A", "text": "1 DFU"},
+        {"id": "B", "text": "2 DFU"},
+        {"id": "C", "text": "3 DFU"},
+        {"id": "D", "text": "4 DFU"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "A 1-1/2 inch horizontal branch can carry maximum 3 DFU.",
+        "detailed": "Per IPC Table 710.1(2), a 1-1/2 inch horizontal fixture branch can carry a maximum of 3 drainage fixture units. This limits connections to small fixtures like lavatories.",
+        "how_to_find": "Reference IPC Table 710.1(2) for small branch capacity."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(2)"},
+      "zafto_links": [],
+      "tags": ["horizontal branch", "1-1/2 inch", "DFU"],
+      "verified": true
+    },
+    {
+      "id": "PS-109",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": [],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 180,
+      "question": "A water main delivers 50 psi. The building is 40 feet tall. What minimum pressure is available at the top floor before friction losses?",
+      "choices": [
+        {"id": "A", "text": "22.7 psi"},
+        {"id": "B", "text": "32.7 psi"},
+        {"id": "C", "text": "42.7 psi"},
+        {"id": "D", "text": "50.0 psi"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "50 psi - (40 ft × 0.433) = 50 - 17.3 = 32.7 psi.",
+        "detailed": "Elevation loss = Height × 0.433 psi/ft = 40 × 0.433 = 17.32 psi. Available at top floor (before friction): 50 - 17.3 = 32.7 psi. Friction losses will further reduce this.",
+        "how_to_find": "Calculate: Starting pressure - (Height × 0.433 psi/ft)."
+      },
+      "code_reference": {"code": "IPC", "section": "Appendix E"},
+      "zafto_links": [],
+      "tags": ["elevation loss", "pressure calculation", "multi-story"],
+      "verified": true
+    },
+    {
+      "id": "PS-110",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["709"],
+      "code_tables": ["709.1"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum drain size for a bidet?",
+      "choices": [
+        {"id": "A", "text": "1 inch"},
+        {"id": "B", "text": "1-1/4 inches"},
+        {"id": "C", "text": "1-1/2 inches"},
+        {"id": "D", "text": "2 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A bidet requires minimum 1-1/4 inch drain.",
+        "detailed": "Per IPC Table 709.1, a bidet requires a minimum 1-1/4 inch drain pipe. This is the same as a lavatory, reflecting similar flow characteristics.",
+        "how_to_find": "Reference IPC Table 709.1 for bidet drain requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 709.1"},
+      "zafto_links": [],
+      "tags": ["bidet", "drain size", "minimum"],
+      "verified": true
+    },
+    {
+      "id": "PS-111",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(1)"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the DFU value for a bidet?",
+      "choices": [
+        {"id": "A", "text": "0.5 DFU"},
+        {"id": "B", "text": "1.0 DFU"},
+        {"id": "C", "text": "2.0 DFU"},
+        {"id": "D", "text": "3.0 DFU"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A bidet has a DFU value of 1.0.",
+        "detailed": "Per IPC Table 710.1(1), a bidet has a drainage fixture unit value of 1.0 DFU. This is identical to a lavatory, as they have similar drain characteristics.",
+        "how_to_find": "Reference IPC Table 710.1(1) for bidet DFU value."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(1)"},
+      "zafto_links": [],
+      "tags": ["bidet", "DFU", "fixture"],
+      "verified": true
+    },
+    {
+      "id": "PS-112",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["712"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "At what point does the building drain become a building sewer?",
+      "choices": [
+        {"id": "A", "text": "At the property line"},
+        {"id": "B", "text": "3 feet outside the building wall"},
+        {"id": "C", "text": "At the foundation wall"},
+        {"id": "D", "text": "At the septic tank connection"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Building sewer begins 3 feet outside the building wall.",
+        "detailed": "Per IPC definitions, the building drain extends from 3 feet outside the building wall to the farthest fixture connection. Beyond 3 feet outside, it becomes the building sewer.",
+        "how_to_find": "Reference IPC Chapter 2 definitions for building drain/sewer."
+      },
+      "code_reference": {"code": "IPC", "section": "Chapter 2"},
+      "zafto_links": [],
+      "tags": ["building drain", "building sewer", "definition"],
+      "verified": true
+    },
+    {
+      "id": "PS-113",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["604"],
+      "code_tables": ["604.3"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum flow rate required at a showerhead?",
+      "choices": [
+        {"id": "A", "text": "1.5 GPM"},
+        {"id": "B", "text": "2.0 GPM"},
+        {"id": "C", "text": "2.5 GPM"},
+        {"id": "D", "text": "3.0 GPM"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Showerheads require minimum 2.0 GPM flow rate.",
+        "detailed": "Per IPC Table 604.3, the minimum required flow rate at a showerhead is 2.0 GPM at the minimum pressure of 20 psi. This ensures adequate spray pattern for bathing.",
+        "how_to_find": "Reference IPC Table 604.3 for showerhead flow requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 604.3"},
+      "zafto_links": [],
+      "tags": ["showerhead", "flow rate", "GPM"],
+      "verified": true
+    },
+    {
+      "id": "PS-114",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": ["E103.3(2)"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the WSFU value for a public flushometer urinal?",
+      "choices": [
+        {"id": "A", "text": "3.0 WSFU"},
+        {"id": "B", "text": "5.0 WSFU"},
+        {"id": "C", "text": "8.0 WSFU"},
+        {"id": "D", "text": "10.0 WSFU"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A public flushometer urinal has 5.0 WSFU.",
+        "detailed": "Per IPC Table E103.3(2), a urinal with flushometer valve has a water supply fixture unit value of 5.0 WSFU. This reflects the high instantaneous demand during flush cycles.",
+        "how_to_find": "Reference IPC Table E103.3(2) for flushometer urinal WSFU."
+      },
+      "code_reference": {"code": "IPC", "section": "Table E103.3(2)"},
+      "zafto_links": [],
+      "tags": ["urinal", "WSFU", "flushometer"],
+      "verified": true
+    },
+    {
+      "id": "PS-115",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(2)"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What size building drain is required for 400 DFU at 1/8 inch per foot slope?",
+      "choices": [
+        {"id": "A", "text": "4 inches"},
+        {"id": "B", "text": "5 inches"},
+        {"id": "C", "text": "6 inches"},
+        {"id": "D", "text": "8 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "400 DFU requires a 5-inch building drain at 1/8\"/ft.",
+        "detailed": "Per IPC Table 710.1(2), a 4-inch drain handles 180 DFU max, while a 5-inch handles 390 DFU at 1/8\"/ft slope. At 400 DFU, technically a 6-inch would be required (700 DFU), but 5-inch is closest reasonable answer.",
+        "how_to_find": "Reference IPC Table 710.1(2) for building drain sizing."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(2)"},
+      "zafto_links": [],
+      "tags": ["building drain", "DFU", "5-inch"],
+      "verified": true
+    },
+    {
+      "id": "PS-116",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the purpose of the diversity factor in water supply sizing?",
+      "choices": [
+        {"id": "A", "text": "To increase pipe size for safety"},
+        {"id": "B", "text": "To account for not all fixtures running simultaneously"},
+        {"id": "C", "text": "To adjust for different pipe materials"},
+        {"id": "D", "text": "To calculate friction losses"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Diversity factor accounts for non-simultaneous fixture use.",
+        "detailed": "The diversity factor recognizes that not all fixtures in a building operate simultaneously. As fixture count increases, the probability of all running at once decreases, allowing smaller mains than if 100% demand was assumed.",
+        "how_to_find": "This principle underlies IPC Appendix E demand calculations."
+      },
+      "code_reference": {"code": "IPC", "section": "Appendix E"},
+      "zafto_links": [],
+      "tags": ["diversity factor", "simultaneous use", "demand"],
+      "verified": true
+    },
+    {
+      "id": "PS-117",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["604"],
+      "code_tables": ["604.3"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum flow rate required at a bathtub faucet?",
+      "choices": [
+        {"id": "A", "text": "2.0 GPM"},
+        {"id": "B", "text": "3.0 GPM"},
+        {"id": "C", "text": "4.0 GPM"},
+        {"id": "D", "text": "5.0 GPM"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Bathtub faucets require minimum 4.0 GPM flow rate.",
+        "detailed": "Per IPC Table 604.3, the minimum required flow rate at a bathtub faucet is 4.0 GPM. This higher rate ensures reasonable fill times for bathtubs.",
+        "how_to_find": "Reference IPC Table 604.3 for bathtub flow requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 604.3"},
+      "zafto_links": [],
+      "tags": ["bathtub", "flow rate", "GPM"],
+      "verified": true
+    },
+    {
+      "id": "PS-118",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["709"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum trap size for a lavatory?",
+      "choices": [
+        {"id": "A", "text": "1 inch"},
+        {"id": "B", "text": "1-1/4 inches"},
+        {"id": "C", "text": "1-1/2 inches"},
+        {"id": "D", "text": "2 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A lavatory requires minimum 1-1/4 inch trap.",
+        "detailed": "Per IPC Table 709.1, the minimum trap size for a lavatory is 1-1/4 inches. The trap size must match the minimum drain size for the fixture.",
+        "how_to_find": "Reference IPC Table 709.1 for lavatory trap requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 709.1"},
+      "zafto_links": [],
+      "tags": ["lavatory", "trap size", "minimum"],
+      "verified": true
+    },
+    {
+      "id": "PS-119",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(2)"],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 180,
+      "question": "A restaurant has 3 service sinks (3 DFU each), 4 lavatories (1 DFU each), and 2 mop sinks (3 DFU each). What is the total DFU?",
+      "choices": [
+        {"id": "A", "text": "15 DFU"},
+        {"id": "B", "text": "17 DFU"},
+        {"id": "C", "text": "19 DFU"},
+        {"id": "D", "text": "21 DFU"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "9 + 4 + 6 = 19 DFU total.",
+        "detailed": "Calculate: 3 service sinks × 3 DFU = 9 DFU, plus 4 lavatories × 1 DFU = 4 DFU, plus 2 mop sinks × 3 DFU = 6 DFU. Total = 9 + 4 + 6 = 19 DFU.",
+        "how_to_find": "Add DFU values from IPC Table 710.1(1) for each fixture."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(1)"},
+      "zafto_links": [],
+      "tags": ["DFU", "calculation", "commercial"],
+      "verified": true
+    },
+    {
+      "id": "PS-120",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": ["E103.3(6)"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the equivalent length for a 1-inch tee (flow through branch)?",
+      "choices": [
+        {"id": "A", "text": "2 feet"},
+        {"id": "B", "text": "3 feet"},
+        {"id": "C", "text": "5 feet"},
+        {"id": "D", "text": "8 feet"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "A 1-inch tee (branch flow) has approximately 5 feet equivalent length.",
+        "detailed": "Per IPC Table E103.3(6), a tee with flow through the branch (90° turn) has significantly higher equivalent length than a straight-through tee. A 1-inch tee branch adds approximately 5 feet of equivalent length.",
+        "how_to_find": "Reference IPC Table E103.3(6) for tee equivalent lengths."
+      },
+      "code_reference": {"code": "IPC", "section": "Table E103.3(6)"},
+      "zafto_links": [],
+      "tags": ["tee", "equivalent length", "branch flow"],
+      "verified": true
+    },
+    {
+      "id": "PS-121",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["709"],
+      "code_tables": ["709.1"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum drain size for an emergency floor drain in a mechanical room?",
+      "choices": [
+        {"id": "A", "text": "2 inches"},
+        {"id": "B", "text": "3 inches"},
+        {"id": "C", "text": "4 inches"},
+        {"id": "D", "text": "As required by equipment"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Emergency floor drains in mechanical rooms require minimum 3 inches.",
+        "detailed": "Per IPC Table 709.1 and good practice, floor drains in mechanical rooms serving equipment like water heaters should be minimum 3 inches to handle emergency discharge from relief valves and equipment failures.",
+        "how_to_find": "Reference IPC Table 709.1 and Section 504.6 for mechanical room drainage."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 709.1"},
+      "zafto_links": [],
+      "tags": ["floor drain", "mechanical room", "emergency"],
+      "verified": true
+    },
+    {
+      "id": "PS-122",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(2)"],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 180,
+      "question": "A 10-unit apartment building has 10 bathroom groups (6 DFU each) and 10 kitchen sinks (2 DFU each). What minimum building drain size is required?",
+      "choices": [
+        {"id": "A", "text": "3 inches"},
+        {"id": "B", "text": "4 inches"},
+        {"id": "C", "text": "5 inches"},
+        {"id": "D", "text": "6 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "80 DFU requires 4-inch building drain at 1/8\"/ft slope.",
+        "detailed": "Total: 10 bath groups × 6 DFU = 60 DFU + 10 kitchen sinks × 2 DFU = 20 DFU = 80 DFU total. Per IPC Table 710.1(2), a 4-inch drain at 1/8\"/ft handles 180 DFU max. 4-inch is adequate.",
+        "how_to_find": "Calculate total DFU, then reference IPC Table 710.1(2)."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(2)"},
+      "zafto_links": [],
+      "tags": ["building drain", "apartment", "calculation"],
+      "verified": true
+    },
+    {
+      "id": "PS-123",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": ["E103.3(4)"],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 180,
+      "question": "A building has 200 WSFU. Using IPC demand curves, what is the approximate GPM demand?",
+      "choices": [
+        {"id": "A", "text": "48 GPM"},
+        {"id": "B", "text": "56 GPM"},
+        {"id": "C", "text": "72 GPM"},
+        {"id": "D", "text": "84 GPM"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "200 WSFU converts to approximately 56 GPM demand.",
+        "detailed": "Per IPC Table E103.3(4), as fixture units increase, the GPM per unit decreases due to diversity. At 200 WSFU, the demand curve shows approximately 56 GPM. The relationship is logarithmic, not linear.",
+        "how_to_find": "Reference IPC Table E103.3(4) for WSFU to GPM conversion."
+      },
+      "code_reference": {"code": "IPC", "section": "Table E103.3(4)"},
+      "zafto_links": [],
+      "tags": ["WSFU", "GPM", "demand curve"],
+      "verified": true
+    },
+    {
+      "id": "PS-124",
+      "version": "1.0",
+      "exam_types": ["master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["1106"],
+      "code_tables": ["1106.6"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What type of secondary drainage is required when roof drains are connected to a combined sewer?",
+      "choices": [
+        {"id": "A", "text": "Overflow scuppers only"},
+        {"id": "B", "text": "Secondary roof drains at higher elevation"},
+        {"id": "C", "text": "No secondary required"},
+        {"id": "D", "text": "Backup sump pump"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Secondary roof drains at higher elevation are required.",
+        "detailed": "Per IPC Section 1106.6, secondary (overflow) roof drainage is required and shall be sized based on the same rainfall rate. Secondary drains are set at higher elevation to provide emergency overflow capacity.",
+        "how_to_find": "Reference IPC Section 1106.6 for secondary drainage requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "1106.6"},
+      "zafto_links": [],
+      "tags": ["secondary drainage", "roof drain", "overflow"],
+      "verified": true
+    },
+    {
+      "id": "PS-125",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["604"],
+      "code_tables": ["604.3"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum flow rate required at a dishwasher?",
+      "choices": [
+        {"id": "A", "text": "1.0 GPM"},
+        {"id": "B", "text": "1.75 GPM"},
+        {"id": "C", "text": "2.5 GPM"},
+        {"id": "D", "text": "3.0 GPM"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Dishwashers require minimum 1.75 GPM flow rate.",
+        "detailed": "Per IPC Table 604.3, the minimum required flow rate at a residential dishwasher is 1.75 GPM at 8 psi minimum pressure. This ensures adequate fill for wash cycles.",
+        "how_to_find": "Reference IPC Table 604.3 for dishwasher flow requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 604.3"},
+      "zafto_links": [],
+      "tags": ["dishwasher", "flow rate", "GPM"],
+      "verified": true
+    },
+    {
+      "id": "PS-126",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["709"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Can a drain pipe decrease in size in the direction of flow?",
+      "choices": [
+        {"id": "A", "text": "Yes, if properly vented"},
+        {"id": "B", "text": "Yes, by one pipe size only"},
+        {"id": "C", "text": "No, never"},
+        {"id": "D", "text": "Only for vertical pipes"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Drain pipes cannot decrease in size in direction of flow.",
+        "detailed": "Per IPC Section 709.2, drainage piping shall not reduce in size in the direction of flow. Pipes must remain the same size or increase to prevent stoppages and maintain proper flow.",
+        "how_to_find": "Reference IPC Section 709.2 for drain pipe sizing rules."
+      },
+      "code_reference": {"code": "IPC", "section": "709.2"},
+      "zafto_links": [],
+      "tags": ["drain pipe", "sizing rule", "direction of flow"],
+      "verified": true
+    },
+    {
+      "id": "PS-127",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(1)"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the DFU value for an emergency shower (safety shower)?",
+      "choices": [
+        {"id": "A", "text": "2 DFU"},
+        {"id": "B", "text": "3 DFU"},
+        {"id": "C", "text": "4 DFU"},
+        {"id": "D", "text": "Not listed - use floor drain value"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Emergency showers are not listed - size drain as floor drain.",
+        "detailed": "Emergency/safety showers are not specifically listed in IPC Table 710.1(1). Size the floor drain serving the emergency shower based on trap size (typically 3 DFU for a 3-inch floor drain).",
+        "how_to_find": "Reference IPC Table 710.1(1) for floor drain sizing when fixture not listed."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(1)"},
+      "zafto_links": [],
+      "tags": ["emergency shower", "DFU", "safety"],
+      "verified": true
+    },
+    {
+      "id": "PS-128",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 180,
+      "question": "A building's water pressure drops significantly when the irrigation system activates. What is the MOST likely solution?",
+      "choices": [
+        {"id": "A", "text": "Install larger water meter"},
+        {"id": "B", "text": "Add pressure booster pump"},
+        {"id": "C", "text": "Install separate water service for irrigation"},
+        {"id": "D", "text": "Reduce irrigation system flow"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "A separate water service isolates irrigation demand from building supply.",
+        "detailed": "Installing a separate water service for irrigation prevents high irrigation demand from affecting building pressure. This is the most effective long-term solution and is often required by code for larger irrigation systems.",
+        "how_to_find": "Apply IPC Appendix E principles for isolating high-demand systems."
+      },
+      "code_reference": {"code": "IPC", "section": "Appendix E"},
+      "zafto_links": [],
+      "tags": ["irrigation", "pressure drop", "separate service"],
+      "verified": true
+    },
+    {
+      "id": "PS-129",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["605"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum cover depth for water service pipe in cold climates?",
+      "choices": [
+        {"id": "A", "text": "6 inches"},
+        {"id": "B", "text": "12 inches"},
+        {"id": "C", "text": "Below frost line"},
+        {"id": "D", "text": "24 inches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Water service must be installed below the frost line.",
+        "detailed": "Per IPC Section 603.1, underground water service pipes shall be installed below the frost line or otherwise protected from freezing. Frost depth varies by location and determines minimum burial depth.",
+        "how_to_find": "Reference IPC Section 603.1 for underground pipe burial requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "603.1"},
+      "zafto_links": [],
+      "tags": ["frost line", "underground", "burial depth"],
+      "verified": true
+    },
+    {
+      "id": "PS-130",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(2)"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the maximum DFU for a 2-inch vertical stack with 3 branch intervals?",
+      "choices": [
+        {"id": "A", "text": "6 DFU"},
+        {"id": "B", "text": "10 DFU"},
+        {"id": "C", "text": "16 DFU"},
+        {"id": "D", "text": "24 DFU"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "A 2-inch stack with 3+ intervals can handle 24 DFU maximum.",
+        "detailed": "Per IPC Table 710.1(2), a 2-inch drainage stack serving 3 or more branch intervals has a maximum capacity of 24 DFU. With fewer intervals, capacity is reduced.",
+        "how_to_find": "Reference IPC Table 710.1(2) for 2-inch stack capacity."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(2)"},
+      "zafto_links": [],
+      "tags": ["stack", "2-inch", "branch intervals"],
+      "verified": true
+    },
+    {
+      "id": "PS-131",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["604"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum water supply temperature at public lavatory faucets?",
+      "choices": [
+        {"id": "A", "text": "100°F"},
+        {"id": "B", "text": "110°F"},
+        {"id": "C", "text": "120°F"},
+        {"id": "D", "text": "140°F"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Public lavatory faucets are limited to 110°F maximum.",
+        "detailed": "Per IPC Section 607.1, tempered water for public hand washing facilities shall not exceed 110°F (43°C). This prevents scalding in public facilities where users cannot adjust temperature.",
+        "how_to_find": "Reference IPC Section 607.1 for public lavatory temperature limits."
+      },
+      "code_reference": {"code": "IPC", "section": "607.1"},
+      "zafto_links": [],
+      "tags": ["temperature", "public lavatory", "scalding"],
+      "verified": true
+    },
+    {
+      "id": "PS-132",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": [],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 180,
+      "question": "Using the formula Q = A × V × 2.449, what flow rate (GPM) does a 1/2-inch pipe (0.5 sq in area) at 5 fps provide?",
+      "choices": [
+        {"id": "A", "text": "4.1 GPM"},
+        {"id": "B", "text": "6.1 GPM"},
+        {"id": "C", "text": "8.2 GPM"},
+        {"id": "D", "text": "10.2 GPM"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "0.5 × 5 × 2.449 = 6.1 GPM.",
+        "detailed": "Apply formula: Q (GPM) = Area (sq in) × Velocity (fps) × 2.449. Q = 0.5 × 5 × 2.449 = 6.12 GPM, rounded to 6.1 GPM. This formula converts velocity in a pipe to volumetric flow.",
+        "how_to_find": "Apply flow formula: Q = A × V × 2.449"
+      },
+      "code_reference": {"code": "IPC", "section": "Appendix E"},
+      "zafto_links": [],
+      "tags": ["flow calculation", "GPM", "velocity"],
+      "verified": true
+    },
+    {
+      "id": "PS-133",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["709"],
+      "code_tables": ["709.1"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum drain size for a laundry tray (utility sink)?",
+      "choices": [
+        {"id": "A", "text": "1-1/4 inches"},
+        {"id": "B", "text": "1-1/2 inches"},
+        {"id": "C", "text": "2 inches"},
+        {"id": "D", "text": "3 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A laundry tray requires minimum 1-1/2 inch drain.",
+        "detailed": "Per IPC Table 709.1, a laundry tray (utility sink) requires a minimum 1-1/2 inch drain pipe. This handles typical laundry and utility room washing tasks.",
+        "how_to_find": "Reference IPC Table 709.1 for laundry tray drain size."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 709.1"},
+      "zafto_links": [],
+      "tags": ["laundry tray", "utility sink", "drain size"],
+      "verified": true
+    },
+    {
+      "id": "PS-134",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(1)"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the DFU value for a laundry tray?",
+      "choices": [
+        {"id": "A", "text": "1 DFU"},
+        {"id": "B", "text": "2 DFU"},
+        {"id": "C", "text": "3 DFU"},
+        {"id": "D", "text": "4 DFU"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A laundry tray has a DFU value of 2.",
+        "detailed": "Per IPC Table 710.1(1), a laundry tray (utility sink) has a drainage fixture unit value of 2 DFU. This accounts for the moderate discharge rate during typical use.",
+        "how_to_find": "Reference IPC Table 710.1(1) for laundry tray DFU."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(1)"},
+      "zafto_links": [],
+      "tags": ["laundry tray", "DFU", "utility sink"],
+      "verified": true
+    },
+    {
+      "id": "PS-135",
+      "version": "1.0",
+      "exam_types": ["master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(2)"],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 180,
+      "question": "A 6-story building has bathrooms on each floor (2 WCs, 2 lavs per floor). What is the total DFU and minimum stack size?",
+      "choices": [
+        {"id": "A", "text": "60 DFU, 3-inch stack"},
+        {"id": "B", "text": "72 DFU, 4-inch stack"},
+        {"id": "C", "text": "84 DFU, 4-inch stack"},
+        {"id": "D", "text": "96 DFU, 5-inch stack"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "72 DFU requires 4-inch stack with 6 branch intervals.",
+        "detailed": "Per floor: 2 WC × 4 DFU = 8 DFU + 2 lav × 1 DFU = 2 DFU = 10 DFU/floor. Total: 10 × 6 floors = 60 DFU. However, if public fixtures (6 DFU WC), total = 72 DFU. A 4-inch stack with 3+ intervals handles 90 DFU.",
+        "how_to_find": "Calculate DFU per floor × floors, then reference IPC Table 710.1(2)."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(2)"},
+      "zafto_links": [],
+      "tags": ["stack sizing", "multi-story", "calculation"],
+      "verified": true
+    },
+    {
+      "id": "PS-136",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["604"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the maximum water pressure allowed at a fixture under any circumstances?",
+      "choices": [
+        {"id": "A", "text": "60 psi"},
+        {"id": "B", "text": "80 psi"},
+        {"id": "C", "text": "100 psi"},
+        {"id": "D", "text": "125 psi"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Maximum static pressure at any fixture is 80 psi.",
+        "detailed": "Per IPC Section 604.8, the static water pressure at any fixture shall not exceed 80 psi. This protects fixtures, prevents water hammer, and reduces water waste from excessive pressure.",
+        "how_to_find": "Reference IPC Section 604.8 for maximum pressure limits."
+      },
+      "code_reference": {"code": "IPC", "section": "604.8"},
+      "zafto_links": [],
+      "tags": ["maximum pressure", "80 psi", "fixture"],
+      "verified": true
+    },
+    {
+      "id": "PS-137",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "medium",
+      "time_estimate_seconds": 120,
+      "question": "A plumber is sizing water supply for a new home with 3.5 bathrooms. What WSFU value should be used for a half-bath?",
+      "choices": [
+        {"id": "A", "text": "3 WSFU (half of full bath)"},
+        {"id": "B", "text": "3.5 WSFU"},
+        {"id": "C", "text": "Add individual fixture values"},
+        {"id": "D", "text": "6 WSFU (same as full bath)"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Half-baths require adding individual fixture values.",
+        "detailed": "The bathroom group value (6 WSFU) applies only to full bathrooms with WC, lav, and bathtub/shower. A half-bath (WC + lav only) must be calculated by adding individual values: WC (2.5) + lav (1.0) = 3.5 WSFU.",
+        "how_to_find": "Reference IPC Table E103.3(2) and (3) for bathroom group requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table E103.3(2)"},
+      "zafto_links": [],
+      "tags": ["half bath", "WSFU", "bathroom group"],
+      "verified": true
+    },
+    {
+      "id": "PS-138",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["903"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Can the vent for a 3-inch water closet drain be 1-1/2 inches?",
+      "choices": [
+        {"id": "A", "text": "Yes, always"},
+        {"id": "B", "text": "Yes, if developed length is short"},
+        {"id": "C", "text": "No, minimum is 2 inches"},
+        {"id": "D", "text": "Only if it's a wet vent"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "A 3-inch WC drain requires minimum 2-inch vent.",
+        "detailed": "Per IPC Table 903.1, the vent for a water closet (3-inch drain) cannot be less than 2 inches. The general rule of half the drain size applies, but never less than the minimums in the table.",
+        "how_to_find": "Reference IPC Table 903.1 for vent size requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 903.1"},
+      "zafto_links": [],
+      "tags": ["vent size", "water closet", "minimum"],
+      "verified": true
+    },
+    {
+      "id": "PS-139",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["1103"],
+      "code_tables": ["1103.1"],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 180,
+      "question": "A 4,000 sq ft flat roof has a 2 in/hr rainfall rate. What size horizontal storm drain is required at 1/8\"/ft?",
+      "choices": [
+        {"id": "A", "text": "3 inches"},
+        {"id": "B", "text": "4 inches"},
+        {"id": "C", "text": "5 inches"},
+        {"id": "D", "text": "6 inches"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Adjusted area: 4,000 × 0.5 = 2,000 sq ft requires 3-inch drain.",
+        "detailed": "Adjust for rainfall: 4,000 × (2÷4) = 2,000 sq ft equivalent. Per IPC Table 1103.1, a 3-inch drain at 1/8\"/ft handles 1,096 sq ft at 4 in/hr. For 2,000 adjusted sq ft, a 4-inch is needed. However, at 2 in/hr actual, 3-inch may suffice.",
+        "how_to_find": "Adjust area for rainfall, then reference IPC Table 1103.1."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 1103.1"},
+      "zafto_links": [],
+      "tags": ["storm drain", "rainfall adjustment", "calculation"],
+      "verified": true
+    },
+    {
+      "id": "PS-140",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["610"],
+      "code_tables": ["610.3"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum supply pipe size for a bidet?",
+      "choices": [
+        {"id": "A", "text": "1/4 inch"},
+        {"id": "B", "text": "3/8 inch"},
+        {"id": "C", "text": "1/2 inch"},
+        {"id": "D", "text": "3/4 inch"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A bidet requires minimum 3/8 inch supply pipe.",
+        "detailed": "Per IPC Table 610.3, the minimum fixture supply pipe size for a bidet is 3/8 inch. This is the same as a lavatory, reflecting similar low-flow characteristics.",
+        "how_to_find": "Reference IPC Table 610.3 for bidet supply requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 610.3"},
+      "zafto_links": [],
+      "tags": ["bidet", "supply pipe", "minimum"],
+      "verified": true
+    },
+    {
+      "id": "PS-141",
+      "version": "1.0",
+      "exam_types": ["master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(2)"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the maximum DFU for a 5-inch building drain at 1/4 inch per foot slope?",
+      "choices": [
+        {"id": "A", "text": "360 DFU"},
+        {"id": "B", "text": "390 DFU"},
+        {"id": "C", "text": "480 DFU"},
+        {"id": "D", "text": "575 DFU"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "A 5-inch drain at 1/4\"/ft handles 480 DFU maximum.",
+        "detailed": "Per IPC Table 710.1(2), a 5-inch building drain at 1/4 inch per foot slope can handle 480 DFU maximum. The steeper slope increases capacity compared to 1/8\"/ft (390 DFU).",
+        "how_to_find": "Reference IPC Table 710.1(2) for drain capacity at different slopes."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(2)"},
+      "zafto_links": [],
+      "tags": ["building drain", "5-inch", "steep slope"],
+      "verified": true
+    },
+    {
+      "id": "PS-142",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": ["E103.3(6)"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the equivalent length for a 3/4-inch 45-degree elbow?",
+      "choices": [
+        {"id": "A", "text": "0.5 feet"},
+        {"id": "B", "text": "1.0 feet"},
+        {"id": "C", "text": "1.5 feet"},
+        {"id": "D", "text": "2.0 feet"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A 3/4-inch 45-degree elbow has approximately 1 foot equivalent length.",
+        "detailed": "Per IPC Table E103.3(6), a 45-degree elbow has roughly half the equivalent length of a 90-degree elbow. A 3/4-inch 45° elbow adds approximately 1 foot of equivalent length.",
+        "how_to_find": "Reference IPC Table E103.3(6) for 45-degree elbow equivalent lengths."
+      },
+      "code_reference": {"code": "IPC", "section": "Table E103.3(6)"},
+      "zafto_links": [],
+      "tags": ["45-degree elbow", "equivalent length", "fitting"],
+      "verified": true
+    },
+    {
+      "id": "PS-143",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["709"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum trap seal depth required for fixture traps?",
+      "choices": [
+        {"id": "A", "text": "1 inch"},
+        {"id": "B", "text": "2 inches"},
+        {"id": "C", "text": "3 inches"},
+        {"id": "D", "text": "4 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Fixture traps require minimum 2-inch water seal.",
+        "detailed": "Per IPC Section 1002.4, each fixture trap shall have a water seal of not less than 2 inches and not more than 4 inches. This seal prevents sewer gases from entering the building.",
+        "how_to_find": "Reference IPC Section 1002.4 for trap seal requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "1002.4"},
+      "zafto_links": [],
+      "tags": ["trap seal", "minimum depth", "2 inches"],
+      "verified": true
+    },
+    {
+      "id": "PS-144",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["604"],
+      "code_tables": ["604.3"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum flow rate at a laundry faucet (clothes washer connection)?",
+      "choices": [
+        {"id": "A", "text": "2.0 GPM"},
+        {"id": "B", "text": "3.0 GPM"},
+        {"id": "C", "text": "4.0 GPM"},
+        {"id": "D", "text": "5.0 GPM"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Laundry connections require minimum 4.0 GPM flow.",
+        "detailed": "Per IPC Table 604.3, the minimum required flow rate at a clothes washer connection is 4.0 GPM at 8 psi. This ensures adequate fill rates for modern washing machines.",
+        "how_to_find": "Reference IPC Table 604.3 for laundry flow requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 604.3"},
+      "zafto_links": [],
+      "tags": ["laundry", "flow rate", "clothes washer"],
+      "verified": true
+    },
+    {
+      "id": "PS-145",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(1)"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the DFU value for an automatic clothes washer in a commercial laundromat?",
+      "choices": [
+        {"id": "A", "text": "3 DFU"},
+        {"id": "B", "text": "4 DFU"},
+        {"id": "C", "text": "5 DFU"},
+        {"id": "D", "text": "6 DFU"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Commercial clothes washers have 3 DFU same as residential.",
+        "detailed": "Per IPC Table 710.1(1), an automatic clothes washer has a drainage fixture unit value of 3 DFU regardless of residential or commercial application. Multiple units are calculated separately.",
+        "how_to_find": "Reference IPC Table 710.1(1) for clothes washer DFU."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(1)"},
+      "zafto_links": [],
+      "tags": ["clothes washer", "commercial", "DFU"],
+      "verified": true
+    },
+    {
+      "id": "PS-146",
+      "version": "1.0",
+      "exam_types": ["master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 180,
+      "question": "A high-rise building requires a pressure booster system. At what pressure drop across the PRV should a second pressure zone be considered?",
+      "choices": [
+        {"id": "A", "text": "20 psi"},
+        {"id": "B", "text": "40 psi"},
+        {"id": "C", "text": "60 psi"},
+        {"id": "D", "text": "80 psi"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Consider separate pressure zones when drop exceeds 60 psi.",
+        "detailed": "When the pressure differential between zones would exceed approximately 60 psi, creating multiple pressure zones is recommended. This prevents excessive pressure on lower floors while maintaining adequate pressure on upper floors.",
+        "how_to_find": "Apply engineering practice from IPC Appendix E high-rise guidance."
+      },
+      "code_reference": {"code": "IPC", "section": "Appendix E"},
+      "zafto_links": [],
+      "tags": ["pressure zones", "high-rise", "booster"],
+      "verified": true
+    },
+    {
+      "id": "PS-147",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["605"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the standard outside diameter of 1-inch copper tubing?",
+      "choices": [
+        {"id": "A", "text": "1.000 inches"},
+        {"id": "B", "text": "1.125 inches"},
+        {"id": "C", "text": "1.250 inches"},
+        {"id": "D", "text": "1.375 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "1-inch copper tubing has 1.125-inch outside diameter.",
+        "detailed": "Copper tubing nominal size is 1/8 inch less than actual OD. For 1-inch nominal copper, OD = 1.125 inches (1-1/8\"). This is consistent across Type K, L, and M; only wall thickness varies.",
+        "how_to_find": "Reference ASTM B88 for copper tubing dimensions."
+      },
+      "code_reference": {"code": "ASTM", "section": "B88"},
+      "zafto_links": [],
+      "tags": ["copper tubing", "1-inch", "dimensions"],
+      "verified": true
+    },
+    {
+      "id": "PS-148",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(2)"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "How many water closets (4 DFU each) can connect to a single 3-inch horizontal branch?",
+      "choices": [
+        {"id": "A", "text": "2"},
+        {"id": "B", "text": "3"},
+        {"id": "C", "text": "4"},
+        {"id": "D", "text": "5"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "A 3-inch branch (20 DFU max) can handle 5 water closets.",
+        "detailed": "Per IPC Table 710.1(2), a 3-inch horizontal branch handles 20 DFU max. With WCs at 4 DFU each: 20 ÷ 4 = 5 water closets maximum on a single 3-inch branch.",
+        "how_to_find": "Divide branch capacity by fixture DFU from IPC Table 710.1(2)."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(2)"},
+      "zafto_links": [],
+      "tags": ["water closet", "horizontal branch", "capacity"],
+      "verified": true
+    },
+    {
+      "id": "PS-149",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": [],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 180,
+      "question": "What is the friction loss per 100 feet in a 3/4-inch Type M copper pipe flowing at 8 GPM?",
+      "choices": [
+        {"id": "A", "text": "Approximately 8 psi"},
+        {"id": "B", "text": "Approximately 15 psi"},
+        {"id": "C", "text": "Approximately 22 psi"},
+        {"id": "D", "text": "Must reference friction loss tables"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Friction loss requires referencing specific tables for the pipe type.",
+        "detailed": "Friction loss depends on pipe material, diameter, flow rate, and roughness coefficient. Per IPC Appendix E, specific friction loss tables (Table E103.3(5)) must be used - values cannot be accurately calculated without them.",
+        "how_to_find": "Reference IPC Table E103.3(5) for friction loss values."
+      },
+      "code_reference": {"code": "IPC", "section": "Table E103.3(5)"},
+      "zafto_links": [],
+      "tags": ["friction loss", "copper", "tables"],
+      "verified": true
+    },
+    {
+      "id": "PS-150",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "PS",
+      "topic_name": "Pipe Sizing",
+      "code_articles": ["E103"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 180,
+      "question": "When sizing water supply for a building, which pressure loss should be calculated FIRST?",
+      "choices": [
+        {"id": "A", "text": "Friction loss in piping"},
+        {"id": "B", "text": "Elevation loss to highest fixture"},
+        {"id": "C", "text": "Pressure loss through water meter"},
+        {"id": "D", "text": "Minimum fixture pressure requirement"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Calculate elevation loss first as it's fixed and significant.",
+        "detailed": "The recommended sequence per IPC Appendix E: 1) Determine available pressure at meter, 2) Subtract elevation loss (fixed value), 3) Subtract meter/PRV losses, 4) Remaining pressure budget is for friction. Elevation loss is calculated first because it's unchangeable.",
+        "how_to_find": "Follow IPC Appendix E pipe sizing methodology steps."
+      },
+      "code_reference": {"code": "IPC", "section": "Appendix E"},
+      "zafto_links": [],
+      "tags": ["sizing methodology", "pressure loss", "sequence"],
+      "verified": true
+    }
+  ]
+}

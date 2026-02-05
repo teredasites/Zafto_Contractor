@@ -1,0 +1,1708 @@
+{
+  "category": "Contracts and Lien Law",
+  "trade": "gc",
+  "description": "Mechanics liens, contract types, licensing requirements, business law",
+  "question_count": 100,
+  "questions": [
+    {
+      "id": "gc-contract-001",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Contract Types",
+      "question": "Which type of contract establishes a fixed total price for the entire project?",
+      "options": [
+        {"id": "a", "text": "Cost-plus contract"},
+        {"id": "b", "text": "Lump sum (stipulated sum) contract", "correct": true},
+        {"id": "c", "text": "Time and materials contract"},
+        {"id": "d", "text": "Unit price contract"}
+      ],
+      "explanation": "A lump sum or stipulated sum contract establishes a fixed total price for the complete scope of work. The contractor assumes the risk for cost overruns.",
+      "code_ref": "AIA A101",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-002",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Contract Types",
+      "question": "In a cost-plus contract, the contractor is reimbursed for:",
+      "options": [
+        {"id": "a", "text": "A fixed fee only"},
+        {"id": "b", "text": "Actual costs plus an agreed fee or percentage", "correct": true},
+        {"id": "c", "text": "The original bid amount"},
+        {"id": "d", "text": "Unit prices for work completed"}
+      ],
+      "explanation": "A cost-plus contract reimburses the contractor for actual documented costs of labor, materials, and equipment, plus an agreed-upon fee or percentage for overhead and profit.",
+      "code_ref": "AIA A102",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-003",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Contract Types",
+      "question": "Which contract type is best suited for projects where the scope cannot be precisely defined?",
+      "options": [
+        {"id": "a", "text": "Lump sum contract"},
+        {"id": "b", "text": "Stipulated sum contract"},
+        {"id": "c", "text": "Time and materials contract", "correct": true},
+        {"id": "d", "text": "Fixed price contract"}
+      ],
+      "explanation": "Time and materials contracts are used when the scope of work is uncertain. The owner pays for actual labor hours and materials with an agreed markup.",
+      "code_ref": "Industry Standard",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-004",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Contract Types",
+      "question": "A unit price contract is most appropriate for:",
+      "options": [
+        {"id": "a", "text": "Interior renovations"},
+        {"id": "b", "text": "Projects with repetitive work and uncertain quantities", "correct": true},
+        {"id": "c", "text": "Design-build projects"},
+        {"id": "d", "text": "Emergency repairs"}
+      ],
+      "explanation": "Unit price contracts set prices per unit of work (cubic yard of concrete, linear foot of pipe). They're ideal when quantities are uncertain but unit costs can be established.",
+      "code_ref": "Industry Standard",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-005",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Contract Elements",
+      "question": "What are the four essential elements required to form a valid construction contract?",
+      "options": [
+        {"id": "a", "text": "Bid, acceptance, payment, completion"},
+        {"id": "b", "text": "Offer, acceptance, consideration, legal capacity", "correct": true},
+        {"id": "c", "text": "Plans, specifications, price, schedule"},
+        {"id": "d", "text": "License, bond, insurance, permit"}
+      ],
+      "explanation": "A valid contract requires: (1) an offer, (2) acceptance of that offer, (3) consideration (exchange of value), and (4) legal capacity of the parties to contract.",
+      "code_ref": "Contract Law",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-006",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Contract Elements",
+      "question": "What is 'consideration' in a construction contract?",
+      "options": [
+        {"id": "a", "text": "The time to consider the contract"},
+        {"id": "b", "text": "Something of value exchanged between parties", "correct": true},
+        {"id": "c", "text": "Special contract conditions"},
+        {"id": "d", "text": "The contract review period"}
+      ],
+      "explanation": "Consideration is the exchange of value that makes a contract legally binding. In construction, this is typically the promise to perform work in exchange for payment.",
+      "code_ref": "Contract Law",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-007",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Contract Documents",
+      "question": "In a typical construction contract, which document takes precedence when there is a conflict?",
+      "options": [
+        {"id": "a", "text": "The general conditions"},
+        {"id": "b", "text": "The drawings"},
+        {"id": "c", "text": "The specifications"},
+        {"id": "d", "text": "The agreement or supplementary conditions typically take precedence", "correct": true}
+      ],
+      "explanation": "Contract documents usually establish an order of precedence. Typically: agreement, supplementary conditions, general conditions, specifications, then drawings. This is stated in the contract.",
+      "code_ref": "AIA A201",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-008",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Contract Documents",
+      "question": "What document contains the general terms and conditions that apply to all bidders?",
+      "options": [
+        {"id": "a", "text": "Invitation to bid"},
+        {"id": "b", "text": "Instructions to bidders", "correct": true},
+        {"id": "c", "text": "Bid form"},
+        {"id": "d", "text": "Agreement form"}
+      ],
+      "explanation": "Instructions to Bidders outline requirements for preparing and submitting bids, including bid security, withdrawal procedures, and award criteria.",
+      "code_ref": "AIA A701",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-009",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Change Orders",
+      "question": "A change order is:",
+      "options": [
+        {"id": "a", "text": "An informal request for additional work"},
+        {"id": "b", "text": "A written order signed by owner and contractor changing the contract", "correct": true},
+        {"id": "c", "text": "A proposal from the contractor"},
+        {"id": "d", "text": "A notice of claim"}
+      ],
+      "explanation": "A change order is a written document signed by both owner and contractor authorizing changes to the work, contract price, or contract time.",
+      "code_ref": "AIA A201, Article 7",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-010",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Change Orders",
+      "question": "Who typically initiates a Construction Change Directive (CCD)?",
+      "options": [
+        {"id": "a", "text": "The contractor"},
+        {"id": "b", "text": "The subcontractor"},
+        {"id": "c", "text": "The owner or architect", "correct": true},
+        {"id": "d", "text": "The building inspector"}
+      ],
+      "explanation": "A Construction Change Directive is issued by the owner (often through the architect) directing changes before agreement on cost adjustment is reached. It allows work to proceed while costs are negotiated.",
+      "code_ref": "AIA A201, Section 7.3",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-011",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Change Orders",
+      "question": "What should a contractor do BEFORE performing extra work requested by the owner?",
+      "options": [
+        {"id": "a", "text": "Complete the work and invoice later"},
+        {"id": "b", "text": "Obtain a signed change order or written directive", "correct": true},
+        {"id": "c", "text": "Inform subcontractors verbally"},
+        {"id": "d", "text": "Add it to the final billing"}
+      ],
+      "explanation": "Contractors should always obtain written authorization before performing extra work to ensure payment and avoid disputes. This protects both parties.",
+      "code_ref": "Industry Best Practice",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-012",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Retainage",
+      "question": "What is retainage in construction?",
+      "options": [
+        {"id": "a", "text": "Money held by the contractor"},
+        {"id": "b", "text": "A percentage of payment withheld by the owner until completion", "correct": true},
+        {"id": "c", "text": "The contractor's profit margin"},
+        {"id": "d", "text": "Insurance premium payments"}
+      ],
+      "explanation": "Retainage is a percentage (typically 5-10%) of each progress payment withheld by the owner as security until the project is substantially complete.",
+      "code_ref": "Industry Standard",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-013",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Retainage",
+      "question": "At what point is retainage typically released?",
+      "options": [
+        {"id": "a", "text": "At 50% completion"},
+        {"id": "b", "text": "When all change orders are signed"},
+        {"id": "c", "text": "At substantial completion or final completion", "correct": true},
+        {"id": "d", "text": "When the owner moves in"}
+      ],
+      "explanation": "Retainage is typically released at substantial completion or final completion, after all punch list items are addressed and required documentation is submitted.",
+      "code_ref": "Industry Standard",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-014",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Substantial Completion",
+      "question": "What is 'substantial completion'?",
+      "options": [
+        {"id": "a", "text": "When all work is 100% finished"},
+        {"id": "b", "text": "When the work can be used for its intended purpose", "correct": true},
+        {"id": "c", "text": "When the final payment is made"},
+        {"id": "d", "text": "When the certificate of occupancy is issued"}
+      ],
+      "explanation": "Substantial completion is when the work is sufficiently complete that the owner can occupy or use it for its intended purpose. Minor punch list items may remain.",
+      "code_ref": "AIA A201, Section 9.8",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-015",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Substantial Completion",
+      "question": "What typically begins at substantial completion?",
+      "options": [
+        {"id": "a", "text": "Construction activities"},
+        {"id": "b", "text": "The warranty period", "correct": true},
+        {"id": "c", "text": "The bidding phase"},
+        {"id": "d", "text": "The design phase"}
+      ],
+      "explanation": "The warranty period typically begins at substantial completion, not at final completion. This is when the owner takes beneficial use of the project.",
+      "code_ref": "AIA A201",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-016",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Bonds",
+      "question": "What does a bid bond guarantee?",
+      "options": [
+        {"id": "a", "text": "The contractor will complete the work"},
+        {"id": "b", "text": "The contractor will enter into a contract if awarded the bid", "correct": true},
+        {"id": "c", "text": "Subcontractors will be paid"},
+        {"id": "d", "text": "The work will be free of defects"}
+      ],
+      "explanation": "A bid bond guarantees that the bidder will enter into a contract at the bid price if awarded. If the bidder refuses, the surety pays the difference to the owner.",
+      "code_ref": "Industry Standard",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-017",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Bonds",
+      "question": "What does a performance bond guarantee?",
+      "options": [
+        {"id": "a", "text": "The contractor will submit the lowest bid"},
+        {"id": "b", "text": "The contractor will complete the work per the contract", "correct": true},
+        {"id": "c", "text": "All workers will be paid"},
+        {"id": "d", "text": "The project will be completed on time"}
+      ],
+      "explanation": "A performance bond guarantees the contractor will complete the work according to the contract. If the contractor defaults, the surety arranges for completion.",
+      "code_ref": "Industry Standard",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-018",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Bonds",
+      "question": "What does a payment bond protect?",
+      "options": [
+        {"id": "a", "text": "The owner from contractor default"},
+        {"id": "b", "text": "Subcontractors and suppliers from non-payment", "correct": true},
+        {"id": "c", "text": "The contractor from owner non-payment"},
+        {"id": "d", "text": "Workers from injury"}
+      ],
+      "explanation": "A payment bond guarantees that subcontractors, suppliers, and laborers will be paid. This protects the owner from liens by ensuring lower-tier parties are paid.",
+      "code_ref": "Miller Act, State Lien Laws",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-019",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Bonds",
+      "question": "What are the three parties to a surety bond?",
+      "options": [
+        {"id": "a", "text": "Owner, contractor, architect"},
+        {"id": "b", "text": "Principal (contractor), obligee (owner), surety (bonding company)", "correct": true},
+        {"id": "c", "text": "Contractor, subcontractor, supplier"},
+        {"id": "d", "text": "Lender, owner, contractor"}
+      ],
+      "explanation": "A surety bond involves three parties: the principal (contractor) who is bonded, the obligee (owner) who is protected, and the surety (bonding company) that guarantees performance.",
+      "code_ref": "Surety Law",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-020",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Insurance",
+      "question": "What type of insurance protects against claims for bodily injury and property damage to third parties?",
+      "options": [
+        {"id": "a", "text": "Workers' compensation"},
+        {"id": "b", "text": "Commercial general liability (CGL)", "correct": true},
+        {"id": "c", "text": "Builder's risk"},
+        {"id": "d", "text": "Professional liability"}
+      ],
+      "explanation": "Commercial General Liability (CGL) insurance covers third-party bodily injury and property damage claims arising from construction operations.",
+      "code_ref": "ISO CGL Form",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-021",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Insurance",
+      "question": "What type of insurance covers damage to the project during construction?",
+      "options": [
+        {"id": "a", "text": "General liability"},
+        {"id": "b", "text": "Builder's risk", "correct": true},
+        {"id": "c", "text": "Workers' compensation"},
+        {"id": "d", "text": "Umbrella policy"}
+      ],
+      "explanation": "Builder's risk insurance covers damage to the building under construction from fire, theft, vandalism, and other covered perils.",
+      "code_ref": "Industry Standard",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-022",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Insurance",
+      "question": "Workers' compensation insurance is:",
+      "options": [
+        {"id": "a", "text": "Optional in most states"},
+        {"id": "b", "text": "Required by law in most states", "correct": true},
+        {"id": "c", "text": "Only required for large contractors"},
+        {"id": "d", "text": "Paid by employees"}
+      ],
+      "explanation": "Workers' compensation insurance is required by law in virtually all states. It covers medical expenses and lost wages for work-related injuries regardless of fault.",
+      "code_ref": "State Workers' Comp Laws",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-023",
+      "trade": "gc",
+      "category": "Liens",
+      "subcategory": "Mechanics Liens",
+      "question": "What is a mechanics lien?",
+      "options": [
+        {"id": "a", "text": "A loan for equipment purchase"},
+        {"id": "b", "text": "A legal claim against property for unpaid construction work", "correct": true},
+        {"id": "c", "text": "A license to perform mechanical work"},
+        {"id": "d", "text": "An insurance policy"}
+      ],
+      "explanation": "A mechanics lien (also called construction lien or materialman's lien) is a legal claim that can be placed against property when contractors, subcontractors, or suppliers are not paid.",
+      "code_ref": "State Lien Laws",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-024",
+      "trade": "gc",
+      "category": "Liens",
+      "subcategory": "Mechanics Liens",
+      "question": "What is the purpose of a preliminary notice (pre-lien notice)?",
+      "options": [
+        {"id": "a", "text": "To file a lien"},
+        {"id": "b", "text": "To preserve the right to file a lien later", "correct": true},
+        {"id": "c", "text": "To release a lien"},
+        {"id": "d", "text": "To start a lawsuit"}
+      ],
+      "explanation": "A preliminary notice notifies the property owner that a subcontractor or supplier is working on the project and preserves their right to file a lien if not paid.",
+      "code_ref": "State Lien Laws",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-025",
+      "trade": "gc",
+      "category": "Liens",
+      "subcategory": "Mechanics Liens",
+      "question": "What must typically happen before a mechanics lien can be filed?",
+      "options": [
+        {"id": "a", "text": "The owner must approve"},
+        {"id": "b", "text": "The claimant must provide labor, materials, or services that improve the property", "correct": true},
+        {"id": "c", "text": "A lawsuit must be filed"},
+        {"id": "d", "text": "The project must be complete"}
+      ],
+      "explanation": "To file a valid mechanics lien, the claimant must have provided labor, materials, or services that permanently improved the real property.",
+      "code_ref": "State Lien Laws",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-026",
+      "trade": "gc",
+      "category": "Liens",
+      "subcategory": "Mechanics Liens",
+      "question": "What is a lien waiver?",
+      "options": [
+        {"id": "a", "text": "A requirement to file a lien"},
+        {"id": "b", "text": "A document releasing lien rights in exchange for payment", "correct": true},
+        {"id": "c", "text": "A notice of intent to file a lien"},
+        {"id": "d", "text": "A government form"}
+      ],
+      "explanation": "A lien waiver is a document signed by a contractor, subcontractor, or supplier relinquishing their right to file a lien, usually in exchange for payment.",
+      "code_ref": "State Lien Laws",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-027",
+      "trade": "gc",
+      "category": "Liens",
+      "subcategory": "Mechanics Liens",
+      "question": "What are the two main types of lien waivers?",
+      "options": [
+        {"id": "a", "text": "Full and partial"},
+        {"id": "b", "text": "Conditional and unconditional", "correct": true},
+        {"id": "c", "text": "Temporary and permanent"},
+        {"id": "d", "text": "State and federal"}
+      ],
+      "explanation": "Lien waivers are either conditional (effective only when payment clears) or unconditional (effective immediately upon signing regardless of payment status).",
+      "code_ref": "State Lien Laws",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-028",
+      "trade": "gc",
+      "category": "Liens",
+      "subcategory": "Mechanics Liens",
+      "question": "Within what timeframe must a mechanics lien typically be filed after last providing labor or materials?",
+      "options": [
+        {"id": "a", "text": "30 days"},
+        {"id": "b", "text": "60-90 days, depending on state", "correct": true},
+        {"id": "c", "text": "One year"},
+        {"id": "d", "text": "No time limit"}
+      ],
+      "explanation": "Mechanics lien filing deadlines vary by state, typically ranging from 60-90 days after last furnishing labor or materials. Missing the deadline forfeits lien rights.",
+      "code_ref": "State Lien Laws",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-029",
+      "trade": "gc",
+      "category": "Liens",
+      "subcategory": "Mechanics Liens",
+      "question": "After filing a mechanics lien, what must typically be done to enforce it?",
+      "options": [
+        {"id": "a", "text": "Wait for automatic payment"},
+        {"id": "b", "text": "File a lawsuit to foreclose within the statutory period", "correct": true},
+        {"id": "c", "text": "Contact the police"},
+        {"id": "d", "text": "Notify the building department"}
+      ],
+      "explanation": "A mechanics lien must be enforced through a foreclosure lawsuit filed within the statutory period (typically 6-12 months). Failure to do so releases the lien.",
+      "code_ref": "State Lien Laws",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-030",
+      "trade": "gc",
+      "category": "Liens",
+      "subcategory": "Stop Notice",
+      "question": "What is a stop notice?",
+      "options": [
+        {"id": "a", "text": "A work stoppage order"},
+        {"id": "b", "text": "A notice to a lender or owner to withhold funds", "correct": true},
+        {"id": "c", "text": "A building permit cancellation"},
+        {"id": "d", "text": "A safety violation notice"}
+      ],
+      "explanation": "A stop notice (available in some states) notifies the construction lender or owner to withhold funds sufficient to satisfy the claimant's demand.",
+      "code_ref": "State Lien Laws (California, etc.)",
+      "difficulty": "hard",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-031",
+      "trade": "gc",
+      "category": "Licensing",
+      "subcategory": "Requirements",
+      "question": "What is the primary purpose of contractor licensing?",
+      "options": [
+        {"id": "a", "text": "To generate revenue for the state"},
+        {"id": "b", "text": "To protect the public from unqualified contractors", "correct": true},
+        {"id": "c", "text": "To limit competition"},
+        {"id": "d", "text": "To track income taxes"}
+      ],
+      "explanation": "Contractor licensing exists primarily to protect consumers by ensuring contractors meet minimum standards of competence, financial responsibility, and character.",
+      "code_ref": "State Licensing Laws",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-032",
+      "trade": "gc",
+      "category": "Licensing",
+      "subcategory": "Requirements",
+      "question": "Contracting without a license when one is required can result in:",
+      "options": [
+        {"id": "a", "text": "A small fine only"},
+        {"id": "b", "text": "Criminal penalties, fines, and inability to collect payment", "correct": true},
+        {"id": "c", "text": "A warning letter"},
+        {"id": "d", "text": "No consequences"}
+      ],
+      "explanation": "Unlicensed contracting can result in criminal misdemeanor or felony charges, substantial fines, and loss of the right to collect payment for work performed.",
+      "code_ref": "State Licensing Laws",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-033",
+      "trade": "gc",
+      "category": "Licensing",
+      "subcategory": "Requirements",
+      "question": "An unlicensed contractor typically:",
+      "options": [
+        {"id": "a", "text": "Can file a mechanics lien"},
+        {"id": "b", "text": "Cannot recover payment through the courts in most states", "correct": true},
+        {"id": "c", "text": "Has no restrictions"},
+        {"id": "d", "text": "Can sue but not be sued"}
+      ],
+      "explanation": "In most states, an unlicensed contractor cannot use the courts to collect payment for work requiring a license. This is a significant penalty for unlicensed work.",
+      "code_ref": "State Licensing Laws",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-034",
+      "trade": "gc",
+      "category": "Licensing",
+      "subcategory": "Exemptions",
+      "question": "Which work typically does NOT require a contractor's license?",
+      "options": [
+        {"id": "a", "text": "Building a new home"},
+        {"id": "b", "text": "A homeowner improving their own residence", "correct": true},
+        {"id": "c", "text": "Commercial renovation"},
+        {"id": "d", "text": "Electrical work for hire"}
+      ],
+      "explanation": "Most states exempt homeowners who perform work on their own primary residence. However, building codes and permit requirements still apply.",
+      "code_ref": "State Licensing Laws",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-035",
+      "trade": "gc",
+      "category": "Licensing",
+      "subcategory": "Qualifying",
+      "question": "What is a Responsible Managing Employee (RME)?",
+      "options": [
+        {"id": "a", "text": "The owner of the company"},
+        {"id": "b", "text": "A licensed individual who qualifies the contractor license for a company", "correct": true},
+        {"id": "c", "text": "A safety officer"},
+        {"id": "d", "text": "A project manager"}
+      ],
+      "explanation": "An RME is a qualified individual whose license and experience allow a company to hold a contractor's license. They are responsible for the company's compliance.",
+      "code_ref": "State Licensing Laws",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-036",
+      "trade": "gc",
+      "category": "Business",
+      "subcategory": "Entity Types",
+      "question": "Which business structure provides personal liability protection while allowing pass-through taxation?",
+      "options": [
+        {"id": "a", "text": "Sole proprietorship"},
+        {"id": "b", "text": "General partnership"},
+        {"id": "c", "text": "Limited Liability Company (LLC)", "correct": true},
+        {"id": "d", "text": "C Corporation"}
+      ],
+      "explanation": "An LLC provides limited liability protection for owners while typically allowing profits and losses to pass through to individual tax returns without corporate taxation.",
+      "code_ref": "Business Law",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-037",
+      "trade": "gc",
+      "category": "Business",
+      "subcategory": "Entity Types",
+      "question": "In a sole proprietorship, the owner is:",
+      "options": [
+        {"id": "a", "text": "Protected from personal liability"},
+        {"id": "b", "text": "Personally liable for all business debts and claims", "correct": true},
+        {"id": "c", "text": "Required to have partners"},
+        {"id": "d", "text": "Taxed at corporate rates"}
+      ],
+      "explanation": "A sole proprietor has unlimited personal liability. Business creditors can pursue the owner's personal assets to satisfy business debts.",
+      "code_ref": "Business Law",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-038",
+      "trade": "gc",
+      "category": "Business",
+      "subcategory": "Entity Types",
+      "question": "What document establishes the operating rules for an LLC?",
+      "options": [
+        {"id": "a", "text": "Articles of Organization"},
+        {"id": "b", "text": "Operating Agreement", "correct": true},
+        {"id": "c", "text": "Business License"},
+        {"id": "d", "text": "Partnership Agreement"}
+      ],
+      "explanation": "An Operating Agreement governs how an LLC is run, including member rights, profit distribution, and management responsibilities.",
+      "code_ref": "Business Law",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-039",
+      "trade": "gc",
+      "category": "Business",
+      "subcategory": "Taxes",
+      "question": "What is an employer's responsibility regarding employee payroll taxes?",
+      "options": [
+        {"id": "a", "text": "No responsibility for taxes"},
+        {"id": "b", "text": "Withhold taxes and submit to federal and state agencies", "correct": true},
+        {"id": "c", "text": "Pay all taxes for employees"},
+        {"id": "d", "text": "Only submit annual reports"}
+      ],
+      "explanation": "Employers must withhold federal income tax, Social Security, and Medicare from employee wages and submit these along with employer portions to tax agencies.",
+      "code_ref": "IRS, State Tax Laws",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-040",
+      "trade": "gc",
+      "category": "Business",
+      "subcategory": "Taxes",
+      "question": "What IRS form do independent contractors receive instead of a W-2?",
+      "options": [
+        {"id": "a", "text": "1099-NEC", "correct": true},
+        {"id": "b", "text": "W-4"},
+        {"id": "c", "text": "I-9"},
+        {"id": "d", "text": "940"}
+      ],
+      "explanation": "Independent contractors receiving $600 or more receive IRS Form 1099-NEC (Nonemployee Compensation) instead of Form W-2 used for employees.",
+      "code_ref": "IRS Requirements",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-041",
+      "trade": "gc",
+      "category": "Business",
+      "subcategory": "Employee vs Contractor",
+      "question": "Which factor indicates a worker is an employee rather than an independent contractor?",
+      "options": [
+        {"id": "a", "text": "Worker sets their own hours"},
+        {"id": "b", "text": "Worker provides their own tools"},
+        {"id": "c", "text": "Company controls how the work is performed", "correct": true},
+        {"id": "d", "text": "Worker has multiple clients"}
+      ],
+      "explanation": "IRS uses control tests to determine worker status. If the company controls how work is done (not just the result), the worker is likely an employee.",
+      "code_ref": "IRS Publication 15-A",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-042",
+      "trade": "gc",
+      "category": "Business",
+      "subcategory": "Employee vs Contractor",
+      "question": "Misclassifying employees as independent contractors can result in:",
+      "options": [
+        {"id": "a", "text": "Tax savings"},
+        {"id": "b", "text": "Penalties, back taxes, and legal liability", "correct": true},
+        {"id": "c", "text": "No consequences"},
+        {"id": "d", "text": "Lower insurance rates"}
+      ],
+      "explanation": "Misclassification can result in back payment of taxes, penalties, interest, and liability for benefits the worker should have received.",
+      "code_ref": "IRS, DOL, State Laws",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-043",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Termination",
+      "question": "What is termination for convenience?",
+      "options": [
+        {"id": "a", "text": "Termination for breach of contract"},
+        {"id": "b", "text": "Owner's right to terminate without cause if contract allows", "correct": true},
+        {"id": "c", "text": "Termination by mutual agreement only"},
+        {"id": "d", "text": "Automatic termination at completion"}
+      ],
+      "explanation": "Termination for convenience allows the owner to end the contract without the contractor being in default. The contractor is paid for work completed plus reasonable termination costs.",
+      "code_ref": "AIA A201, Section 14.4",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-044",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Termination",
+      "question": "What is termination for cause?",
+      "options": [
+        {"id": "a", "text": "Termination at the owner's convenience"},
+        {"id": "b", "text": "Termination due to the contractor's failure to perform", "correct": true},
+        {"id": "c", "text": "Termination by the contractor"},
+        {"id": "d", "text": "Automatic termination"}
+      ],
+      "explanation": "Termination for cause occurs when the contractor substantially fails to perform per the contract. The contractor may be liable for additional costs to complete the work.",
+      "code_ref": "AIA A201, Section 14.2",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-045",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Termination",
+      "question": "Before terminating a contractor for cause, the owner typically must:",
+      "options": [
+        {"id": "a", "text": "Immediately terminate"},
+        {"id": "b", "text": "Provide written notice and opportunity to cure", "correct": true},
+        {"id": "c", "text": "File a lawsuit first"},
+        {"id": "d", "text": "Obtain court approval"}
+      ],
+      "explanation": "Most contracts require written notice of default and a cure period (typically 7-14 days) before the owner can terminate for cause.",
+      "code_ref": "AIA A201, Section 14.2",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-046",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Disputes",
+      "question": "What is mediation?",
+      "options": [
+        {"id": "a", "text": "A binding court decision"},
+        {"id": "b", "text": "A non-binding process where a neutral third party helps resolve disputes", "correct": true},
+        {"id": "c", "text": "The same as arbitration"},
+        {"id": "d", "text": "A lawsuit"}
+      ],
+      "explanation": "Mediation is a voluntary, non-binding dispute resolution process where a neutral mediator helps parties reach a mutually acceptable agreement.",
+      "code_ref": "AIA A201, Section 15.3",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-047",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Disputes",
+      "question": "What is arbitration?",
+      "options": [
+        {"id": "a", "text": "A non-binding negotiation"},
+        {"id": "b", "text": "A binding decision by a neutral arbitrator or panel", "correct": true},
+        {"id": "c", "text": "A court trial"},
+        {"id": "d", "text": "The same as mediation"}
+      ],
+      "explanation": "Arbitration is a dispute resolution process where an arbitrator hears evidence and makes a binding decision. It's often faster and less formal than litigation.",
+      "code_ref": "AIA A201, Section 15.4",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-048",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Disputes",
+      "question": "What is a notice of claim?",
+      "options": [
+        {"id": "a", "text": "A final lawsuit"},
+        {"id": "b", "text": "Written notification that a party intends to seek additional time or compensation", "correct": true},
+        {"id": "c", "text": "A mechanics lien"},
+        {"id": "d", "text": "A project closeout document"}
+      ],
+      "explanation": "A notice of claim formally notifies the other party of circumstances that may result in a claim for additional time or money. Timely notice is usually required to preserve claim rights.",
+      "code_ref": "AIA A201, Section 15.1",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-049",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Delays",
+      "question": "What is an excusable delay?",
+      "options": [
+        {"id": "a", "text": "A delay caused by the contractor"},
+        {"id": "b", "text": "A delay outside the contractor's control that may extend the contract time", "correct": true},
+        {"id": "c", "text": "A delay that shortens the schedule"},
+        {"id": "d", "text": "A delay that has no effect"}
+      ],
+      "explanation": "An excusable delay is caused by events beyond the contractor's control (weather, owner changes, unforeseen conditions). It typically entitles the contractor to a time extension.",
+      "code_ref": "Contract Law",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-050",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Delays",
+      "question": "A compensable delay entitles the contractor to:",
+      "options": [
+        {"id": "a", "text": "Time extension only"},
+        {"id": "b", "text": "Both time extension and additional compensation", "correct": true},
+        {"id": "c", "text": "Additional compensation only"},
+        {"id": "d", "text": "Neither time nor money"}
+      ],
+      "explanation": "A compensable delay (usually caused by the owner) entitles the contractor to both a time extension AND additional compensation for extended general conditions.",
+      "code_ref": "Contract Law",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-051",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Delays",
+      "question": "What is liquidated damages?",
+      "options": [
+        {"id": "a", "text": "Actual damages calculated after completion"},
+        {"id": "b", "text": "A pre-agreed daily amount assessed for late completion", "correct": true},
+        {"id": "c", "text": "Payment for early completion"},
+        {"id": "d", "text": "The final contract amount"}
+      ],
+      "explanation": "Liquidated damages are a pre-determined amount (typically per day) that the contractor pays if the project is not completed on time. It must reasonably estimate actual damages.",
+      "code_ref": "Contract Law",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-052",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Warranties",
+      "question": "What is an express warranty in construction?",
+      "options": [
+        {"id": "a", "text": "An automatic warranty implied by law"},
+        {"id": "b", "text": "A specific warranty stated in the contract", "correct": true},
+        {"id": "c", "text": "A manufacturer's warranty"},
+        {"id": "d", "text": "A government warranty"}
+      ],
+      "explanation": "An express warranty is specifically stated in the contract documents, such as a one-year warranty on workmanship.",
+      "code_ref": "Contract Law",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-053",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Warranties",
+      "question": "What is an implied warranty?",
+      "options": [
+        {"id": "a", "text": "A warranty stated in writing"},
+        {"id": "b", "text": "A warranty that exists by law even if not stated", "correct": true},
+        {"id": "c", "text": "An extended warranty"},
+        {"id": "d", "text": "A voided warranty"}
+      ],
+      "explanation": "Implied warranties exist by operation of law, such as the implied warranty of habitability or the implied warranty of workmanlike construction.",
+      "code_ref": "Contract Law",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-054",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Indemnification",
+      "question": "What is an indemnification clause?",
+      "options": [
+        {"id": "a", "text": "A payment schedule"},
+        {"id": "b", "text": "A provision where one party agrees to protect another from liability", "correct": true},
+        {"id": "c", "text": "A termination provision"},
+        {"id": "d", "text": "An insurance requirement"}
+      ],
+      "explanation": "An indemnification clause requires one party to protect (hold harmless) another party from certain claims or losses, often related to the indemnitor's work.",
+      "code_ref": "Contract Law",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-055",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Subcontracts",
+      "question": "A 'pay-when-paid' clause means:",
+      "options": [
+        {"id": "a", "text": "Payment is due immediately"},
+        {"id": "b", "text": "The general contractor pays the sub within a reasonable time after receiving payment", "correct": true},
+        {"id": "c", "text": "The sub pays the general"},
+        {"id": "d", "text": "Payment is never due"}
+      ],
+      "explanation": "A pay-when-paid clause ties subcontractor payment to the GC receiving payment, but typically doesn't excuse payment indefinitely - a reasonable time limit applies.",
+      "code_ref": "Subcontract Law",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-056",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Subcontracts",
+      "question": "A 'pay-if-paid' clause means:",
+      "options": [
+        {"id": "a", "text": "Payment is always due"},
+        {"id": "b", "text": "The subcontractor is only paid if the GC receives payment from the owner", "correct": true},
+        {"id": "c", "text": "The same as pay-when-paid"},
+        {"id": "d", "text": "The sub pays first"}
+      ],
+      "explanation": "A pay-if-paid clause makes the GC's receipt of owner payment a condition precedent to paying the sub. It shifts the risk of owner non-payment to subcontractors.",
+      "code_ref": "Subcontract Law",
+      "difficulty": "hard",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-057",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Subcontracts",
+      "question": "What is a flow-down clause in a subcontract?",
+      "options": [
+        {"id": "a", "text": "A payment terms clause"},
+        {"id": "b", "text": "A clause that binds the sub to the same terms as the prime contract", "correct": true},
+        {"id": "c", "text": "A safety clause"},
+        {"id": "d", "text": "A scheduling clause"}
+      ],
+      "explanation": "A flow-down clause incorporates prime contract terms into the subcontract, binding the subcontractor to the same obligations as the general contractor.",
+      "code_ref": "Subcontract Law",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-058",
+      "trade": "gc",
+      "category": "Ethics",
+      "subcategory": "Standards",
+      "question": "What is bid shopping?",
+      "options": [
+        {"id": "a", "text": "Getting competitive bids before award"},
+        {"id": "b", "text": "Using one subcontractor's price to negotiate a lower price from another", "correct": true},
+        {"id": "c", "text": "Comparing material prices"},
+        {"id": "d", "text": "Reviewing bid documents"}
+      ],
+      "explanation": "Bid shopping is the unethical practice of disclosing a sub's bid to competitors to get a lower price. It undermines fair competition and trust.",
+      "code_ref": "Industry Ethics",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-059",
+      "trade": "gc",
+      "category": "Ethics",
+      "subcategory": "Standards",
+      "question": "What is bid peddling?",
+      "options": [
+        {"id": "a", "text": "Submitting multiple bids"},
+        {"id": "b", "text": "A subcontractor voluntarily lowering their price to beat competitors", "correct": true},
+        {"id": "c", "text": "Selling bid documents"},
+        {"id": "d", "text": "Reviewing bids publicly"}
+      ],
+      "explanation": "Bid peddling occurs when a subcontractor voluntarily approaches a GC to lower their price after learning they weren't the low bidder. Like bid shopping, it's considered unethical.",
+      "code_ref": "Industry Ethics",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-060",
+      "trade": "gc",
+      "category": "Ethics",
+      "subcategory": "Standards",
+      "question": "A contractor discovers a significant error in the architect's plans. What should they do?",
+      "options": [
+        {"id": "a", "text": "Ignore it and build as shown"},
+        {"id": "b", "text": "Notify the owner or architect immediately", "correct": true},
+        {"id": "c", "text": "Fix it and add a change order later"},
+        {"id": "d", "text": "Wait until the error causes problems"}
+      ],
+      "explanation": "Contractors have an obligation to promptly notify the owner/architect of discovered errors, inconsistencies, or omissions in the contract documents.",
+      "code_ref": "AIA A201, Section 3.2",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-061",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "AIA Documents",
+      "question": "What is AIA Document A201?",
+      "options": [
+        {"id": "a", "text": "The Owner-Contractor Agreement"},
+        {"id": "b", "text": "The General Conditions of the Contract for Construction", "correct": true},
+        {"id": "c", "text": "The Bid Form"},
+        {"id": "d", "text": "The Change Order form"}
+      ],
+      "explanation": "AIA A201 is the General Conditions document that establishes the rights, responsibilities, and relationships of the parties throughout construction.",
+      "code_ref": "AIA A201",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-062",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "AIA Documents",
+      "question": "What is AIA Document A101?",
+      "options": [
+        {"id": "a", "text": "The General Conditions"},
+        {"id": "b", "text": "The Standard Form of Agreement Between Owner and Contractor (Stipulated Sum)", "correct": true},
+        {"id": "c", "text": "The Subcontract Agreement"},
+        {"id": "d", "text": "The Application for Payment"}
+      ],
+      "explanation": "AIA A101 is the standard Owner-Contractor Agreement for projects where the contract sum is a stipulated (fixed) amount.",
+      "code_ref": "AIA A101",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-063",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "AIA Documents",
+      "question": "What is AIA Document G702?",
+      "options": [
+        {"id": "a", "text": "Change Order form"},
+        {"id": "b", "text": "Application and Certificate for Payment", "correct": true},
+        {"id": "c", "text": "General Conditions"},
+        {"id": "d", "text": "Bid Form"}
+      ],
+      "explanation": "AIA G702 is the Application and Certificate for Payment form used by contractors to request progress payments.",
+      "code_ref": "AIA G702",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-064",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Bidding",
+      "question": "What is an Invitation to Bid (ITB)?",
+      "options": [
+        {"id": "a", "text": "The contractor's bid"},
+        {"id": "b", "text": "A request for contractors to submit competitive bids", "correct": true},
+        {"id": "c", "text": "A notice of award"},
+        {"id": "d", "text": "A subcontractor listing"}
+      ],
+      "explanation": "An Invitation to Bid (ITB) is a solicitation by an owner seeking competitive bids from contractors for a defined scope of work.",
+      "code_ref": "Bidding Practice",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-065",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Bidding",
+      "question": "What is a Request for Proposal (RFP)?",
+      "options": [
+        {"id": "a", "text": "A request for a fixed price bid"},
+        {"id": "b", "text": "A request that allows consideration of factors beyond just price", "correct": true},
+        {"id": "c", "text": "A change order request"},
+        {"id": "d", "text": "A payment request"}
+      ],
+      "explanation": "An RFP allows the owner to evaluate proposals based on multiple factors (qualifications, approach, price) rather than just the lowest price.",
+      "code_ref": "Procurement Practice",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-066",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Bidding",
+      "question": "What is an addendum in the bidding process?",
+      "options": [
+        {"id": "a", "text": "A change order after award"},
+        {"id": "b", "text": "A written change to bid documents issued before bid opening", "correct": true},
+        {"id": "c", "text": "A bid withdrawal"},
+        {"id": "d", "text": "A bid protest"}
+      ],
+      "explanation": "An addendum is a written modification to the bidding documents issued before bid opening to clarify, correct, or change the original documents.",
+      "code_ref": "Bidding Practice",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-067",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Bidding",
+      "question": "What is a bid protest?",
+      "options": [
+        {"id": "a", "text": "A contractor refusing to bid"},
+        {"id": "b", "text": "A formal challenge to the bidding process or award decision", "correct": true},
+        {"id": "c", "text": "A request for more time"},
+        {"id": "d", "text": "A bid modification"}
+      ],
+      "explanation": "A bid protest is a formal written challenge to the conduct of a bidding process or the award decision, typically filed by an unsuccessful bidder.",
+      "code_ref": "Public Procurement Law",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-068",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Bidding",
+      "question": "What is a 'responsive' bid?",
+      "options": [
+        {"id": "a", "text": "A quick response"},
+        {"id": "b", "text": "A bid that meets all requirements of the bid documents", "correct": true},
+        {"id": "c", "text": "The lowest bid"},
+        {"id": "d", "text": "A verbal bid"}
+      ],
+      "explanation": "A responsive bid conforms to all material requirements of the bidding documents including forms, signatures, bond requirements, and acknowledgment of addenda.",
+      "code_ref": "Bidding Practice",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-069",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Bidding",
+      "question": "What is a 'responsible' bidder?",
+      "options": [
+        {"id": "a", "text": "The lowest bidder"},
+        {"id": "b", "text": "A bidder capable of performing the contract satisfactorily", "correct": true},
+        {"id": "c", "text": "Any bidder who submits on time"},
+        {"id": "d", "text": "A bidder with a local office"}
+      ],
+      "explanation": "A responsible bidder has the capability (experience, equipment, finances, personnel) to successfully perform the contract.",
+      "code_ref": "Bidding Practice",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-070",
+      "trade": "gc",
+      "category": "Liens",
+      "subcategory": "Joint Check",
+      "question": "What is a joint check agreement?",
+      "options": [
+        {"id": "a", "text": "Two contractors sharing payment"},
+        {"id": "b", "text": "A payment made jointly to the contractor and supplier/sub to ensure payment", "correct": true},
+        {"id": "c", "text": "A bounced check"},
+        {"id": "d", "text": "A final payment"}
+      ],
+      "explanation": "A joint check agreement requires payment checks to include both the contractor and the subcontractor/supplier, ensuring the lower-tier party receives payment.",
+      "code_ref": "Industry Practice",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-071",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Progress Payments",
+      "question": "What is a Schedule of Values?",
+      "options": [
+        {"id": "a", "text": "A project timeline"},
+        {"id": "b", "text": "A breakdown of the contract sum by work items for payment purposes", "correct": true},
+        {"id": "c", "text": "A list of subcontractors"},
+        {"id": "d", "text": "A material price list"}
+      ],
+      "explanation": "The Schedule of Values allocates the contract sum among work categories. It's the basis for calculating progress payments and must equal the total contract price.",
+      "code_ref": "AIA A201, Section 9.2",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-072",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Progress Payments",
+      "question": "Who certifies the contractor's application for payment?",
+      "options": [
+        {"id": "a", "text": "The contractor"},
+        {"id": "b", "text": "The architect", "correct": true},
+        {"id": "c", "text": "The owner"},
+        {"id": "d", "text": "The surety"}
+      ],
+      "explanation": "The architect reviews the contractor's application for payment and, if satisfied, certifies the amount due to the owner for payment.",
+      "code_ref": "AIA A201, Section 9.4",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-073",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Final Payment",
+      "question": "What must typically be submitted before final payment?",
+      "options": [
+        {"id": "a", "text": "Just the final invoice"},
+        {"id": "b", "text": "Lien waivers, warranties, as-builts, and closeout documents", "correct": true},
+        {"id": "c", "text": "Only insurance certificates"},
+        {"id": "d", "text": "Only the punch list"}
+      ],
+      "explanation": "Final payment requires submission of final lien waivers, warranties, as-built drawings, operation manuals, and other closeout documents.",
+      "code_ref": "AIA A201, Section 9.10",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-074",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Notice",
+      "question": "What is the purpose of a 'time is of the essence' clause?",
+      "options": [
+        {"id": "a", "text": "To require quick payment"},
+        {"id": "b", "text": "To make the completion date a material term subject to damages for delay", "correct": true},
+        {"id": "c", "text": "To allow unlimited time"},
+        {"id": "d", "text": "To waive time requirements"}
+      ],
+      "explanation": "A 'time is of the essence' clause makes timely performance a material contract term, allowing the non-breaching party to claim damages or terminate for delays.",
+      "code_ref": "Contract Law",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-075",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Notice",
+      "question": "Why is proper written notice important in construction contracts?",
+      "options": [
+        {"id": "a", "text": "It's not important"},
+        {"id": "b", "text": "Failure to give proper notice can waive rights to claims", "correct": true},
+        {"id": "c", "text": "Only for record-keeping"},
+        {"id": "d", "text": "Only for final payment"}
+      ],
+      "explanation": "Most contracts require written notice within specified timeframes to preserve rights. Failure to give proper notice can result in waiver of claims for time or money.",
+      "code_ref": "AIA A201, Section 15.1",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-076",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Differing Site Conditions",
+      "question": "What is a Type I differing site condition?",
+      "options": [
+        {"id": "a", "text": "Normal conditions"},
+        {"id": "b", "text": "Conditions different from those indicated in the contract documents", "correct": true},
+        {"id": "c", "text": "Weather conditions"},
+        {"id": "d", "text": "Market conditions"}
+      ],
+      "explanation": "Type I differing site conditions are physical conditions actually encountered that differ materially from those shown in the contract documents.",
+      "code_ref": "Federal Acquisition Regulation 52.236-2",
+      "difficulty": "hard",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-077",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Differing Site Conditions",
+      "question": "What is a Type II differing site condition?",
+      "options": [
+        {"id": "a", "text": "Conditions as expected"},
+        {"id": "b", "text": "Unusual conditions not reasonably anticipated by an experienced contractor", "correct": true},
+        {"id": "c", "text": "Surface conditions"},
+        {"id": "d", "text": "Typical underground utilities"}
+      ],
+      "explanation": "Type II differing site conditions are unknown physical conditions of an unusual nature that differ materially from those ordinarily encountered in the area.",
+      "code_ref": "Federal Acquisition Regulation 52.236-2",
+      "difficulty": "hard",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-078",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Force Majeure",
+      "question": "What is force majeure?",
+      "options": [
+        {"id": "a", "text": "A military requirement"},
+        {"id": "b", "text": "Unforeseeable circumstances that prevent contract fulfillment", "correct": true},
+        {"id": "c", "text": "A request for more workers"},
+        {"id": "d", "text": "A type of insurance"}
+      ],
+      "explanation": "Force majeure refers to extraordinary events (acts of God, war, natural disasters) beyond the parties' control that may excuse performance or extend time.",
+      "code_ref": "Contract Law",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-079",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Scope",
+      "question": "What is 'scope creep'?",
+      "options": [
+        {"id": "a", "text": "Working too slowly"},
+        {"id": "b", "text": "Gradual expansion of project scope without formal authorization", "correct": true},
+        {"id": "c", "text": "Reducing the scope"},
+        {"id": "d", "text": "Changing subcontractors"}
+      ],
+      "explanation": "Scope creep is the gradual, uncontrolled expansion of project requirements without corresponding adjustments to time, budget, or resources.",
+      "code_ref": "Project Management",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-080",
+      "trade": "gc",
+      "category": "Licensing",
+      "subcategory": "Reciprocity",
+      "question": "What is license reciprocity?",
+      "options": [
+        {"id": "a", "text": "Getting a license in multiple trades"},
+        {"id": "b", "text": "One state recognizing another state's contractor license", "correct": true},
+        {"id": "c", "text": "Sharing a license with a partner"},
+        {"id": "d", "text": "Renewing a license"}
+      ],
+      "explanation": "Reciprocity allows a contractor licensed in one state to obtain a license in another state without meeting all normal requirements, based on similar standards.",
+      "code_ref": "State Licensing Laws",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-081",
+      "trade": "gc",
+      "category": "Business",
+      "subcategory": "Estimating",
+      "question": "What is overhead in construction estimating?",
+      "options": [
+        {"id": "a", "text": "Direct labor costs"},
+        {"id": "b", "text": "Indirect costs not directly attributable to a specific project", "correct": true},
+        {"id": "c", "text": "Material costs"},
+        {"id": "d", "text": "Equipment costs"}
+      ],
+      "explanation": "Overhead includes indirect costs like office rent, utilities, administrative salaries, insurance, and other general business expenses not tied to specific jobs.",
+      "code_ref": "Construction Accounting",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-082",
+      "trade": "gc",
+      "category": "Business",
+      "subcategory": "Estimating",
+      "question": "What is the difference between direct and indirect costs?",
+      "options": [
+        {"id": "a", "text": "No difference"},
+        {"id": "b", "text": "Direct costs are specifically attributable to a project; indirect costs are not", "correct": true},
+        {"id": "c", "text": "Direct costs are fixed; indirect are variable"},
+        {"id": "d", "text": "Direct costs are paid first"}
+      ],
+      "explanation": "Direct costs (labor, materials, equipment) can be specifically assigned to a project. Indirect costs (overhead) benefit multiple projects and the business generally.",
+      "code_ref": "Construction Accounting",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-083",
+      "trade": "gc",
+      "category": "Business",
+      "subcategory": "Estimating",
+      "question": "What is a contingency in a construction estimate?",
+      "options": [
+        {"id": "a", "text": "The profit margin"},
+        {"id": "b", "text": "An allowance for unforeseen conditions or changes", "correct": true},
+        {"id": "c", "text": "The tax amount"},
+        {"id": "d", "text": "The labor cost"}
+      ],
+      "explanation": "A contingency is a percentage or dollar amount included in estimates to cover unforeseen costs, changes, or risks not specifically accounted for elsewhere.",
+      "code_ref": "Estimating Practice",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-084",
+      "trade": "gc",
+      "category": "Business",
+      "subcategory": "Estimating",
+      "question": "What is an allowance in a construction contract?",
+      "options": [
+        {"id": "a", "text": "A discount"},
+        {"id": "b", "text": "A sum included for items not yet selected or specified", "correct": true},
+        {"id": "c", "text": "The profit"},
+        {"id": "d", "text": "A penalty"}
+      ],
+      "explanation": "An allowance is a sum included in the contract for materials, equipment, or finishes that haven't been selected yet. Actual costs are reconciled against the allowance.",
+      "code_ref": "AIA A201",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-085",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Assignment",
+      "question": "What is assignment of a contract?",
+      "options": [
+        {"id": "a", "text": "Completing the contract"},
+        {"id": "b", "text": "Transferring contract rights or obligations to another party", "correct": true},
+        {"id": "c", "text": "Signing the contract"},
+        {"id": "d", "text": "Bidding on the contract"}
+      ],
+      "explanation": "Assignment is the transfer of contract rights or obligations to a third party. Most construction contracts prohibit assignment without written consent.",
+      "code_ref": "AIA A201, Section 13.1",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-086",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Privity",
+      "question": "What is privity of contract?",
+      "options": [
+        {"id": "a", "text": "A confidentiality requirement"},
+        {"id": "b", "text": "The legal relationship between parties who have entered into a contract", "correct": true},
+        {"id": "c", "text": "The bid process"},
+        {"id": "d", "text": "The payment process"}
+      ],
+      "explanation": "Privity of contract is the legal relationship between contracting parties. Generally, only parties with privity can sue each other on the contract.",
+      "code_ref": "Contract Law",
+      "difficulty": "hard",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-087",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Breach",
+      "question": "What is a material breach of contract?",
+      "options": [
+        {"id": "a", "text": "A minor violation"},
+        {"id": "b", "text": "A significant failure that defeats the purpose of the contract", "correct": true},
+        {"id": "c", "text": "Being one day late"},
+        {"id": "d", "text": "A clerical error"}
+      ],
+      "explanation": "A material breach is a substantial failure to perform that goes to the heart of the contract. It may excuse the other party's performance and allow termination.",
+      "code_ref": "Contract Law",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-088",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Breach",
+      "question": "What damages can typically be recovered for breach of contract?",
+      "options": [
+        {"id": "a", "text": "Only the contract price"},
+        {"id": "b", "text": "Compensatory damages to place the injured party in the position they would have been", "correct": true},
+        {"id": "c", "text": "Only punitive damages"},
+        {"id": "d", "text": "Triple damages"}
+      ],
+      "explanation": "Contract damages are generally compensatory, designed to give the injured party the benefit of the bargain. Punitive damages are rarely available for breach of contract.",
+      "code_ref": "Contract Law",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-089",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Statute of Limitations",
+      "question": "What is the statute of limitations?",
+      "options": [
+        {"id": "a", "text": "A contract term limit"},
+        {"id": "b", "text": "The time period within which a lawsuit must be filed", "correct": true},
+        {"id": "c", "text": "A license requirement"},
+        {"id": "d", "text": "A bonding limit"}
+      ],
+      "explanation": "The statute of limitations is the legally mandated timeframe within which a party must file a lawsuit. After expiration, the claim is typically barred.",
+      "code_ref": "State Civil Procedure Laws",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-090",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Statute of Repose",
+      "question": "What is the statute of repose?",
+      "options": [
+        {"id": "a", "text": "A rest requirement"},
+        {"id": "b", "text": "A time limit on construction defect claims measured from completion", "correct": true},
+        {"id": "c", "text": "A payment deadline"},
+        {"id": "d", "text": "A license term"}
+      ],
+      "explanation": "The statute of repose sets an absolute time limit (often 10 years) for bringing construction defect claims, measured from substantial completion regardless of when the defect is discovered.",
+      "code_ref": "State Construction Law",
+      "difficulty": "hard",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-091",
+      "trade": "gc",
+      "category": "Ethics",
+      "subcategory": "Conflicts",
+      "question": "What should a contractor do if they have a personal financial interest in a subcontractor being considered?",
+      "options": [
+        {"id": "a", "text": "Hire that subcontractor"},
+        {"id": "b", "text": "Disclose the conflict to the owner", "correct": true},
+        {"id": "c", "text": "Hide the relationship"},
+        {"id": "d", "text": "Charge more for the work"}
+      ],
+      "explanation": "Contractors should disclose any conflicts of interest, including financial relationships with subcontractors, to maintain trust and allow the owner to make informed decisions.",
+      "code_ref": "Industry Ethics",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-092",
+      "trade": "gc",
+      "category": "Business",
+      "subcategory": "Record Keeping",
+      "question": "How long should construction business records typically be retained?",
+      "options": [
+        {"id": "a", "text": "1 year"},
+        {"id": "b", "text": "3 years"},
+        {"id": "c", "text": "7 years or longer, depending on record type", "correct": true},
+        {"id": "d", "text": "Records don't need to be kept"}
+      ],
+      "explanation": "Tax records should be kept at least 7 years. Project records should be retained beyond the statute of repose period (often 10+ years) for potential claims.",
+      "code_ref": "IRS, Business Practice",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-093",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Specifications",
+      "question": "What is a performance specification?",
+      "options": [
+        {"id": "a", "text": "A specification naming a specific product"},
+        {"id": "b", "text": "A specification describing required results without dictating methods", "correct": true},
+        {"id": "c", "text": "A project schedule"},
+        {"id": "d", "text": "A payment schedule"}
+      ],
+      "explanation": "A performance specification describes the required outcome or performance criteria without specifying the exact product, method, or procedure to achieve it.",
+      "code_ref": "CSI MasterFormat",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-094",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Specifications",
+      "question": "What is a prescriptive specification?",
+      "options": [
+        {"id": "a", "text": "A specification describing required results"},
+        {"id": "b", "text": "A specification detailing exact materials and installation methods", "correct": true},
+        {"id": "c", "text": "A drug prescription"},
+        {"id": "d", "text": "A performance requirement"}
+      ],
+      "explanation": "A prescriptive (descriptive) specification defines the exact materials, products, and installation methods to be used, leaving little discretion to the contractor.",
+      "code_ref": "CSI MasterFormat",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-095",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Substitutions",
+      "question": "What is a 'basis of design' product in specifications?",
+      "options": [
+        {"id": "a", "text": "The cheapest option"},
+        {"id": "b", "text": "A specific product the design is based upon that sets the standard for substitutions", "correct": true},
+        {"id": "c", "text": "A rejected product"},
+        {"id": "d", "text": "A prototype"}
+      ],
+      "explanation": "The basis of design product is the specific product the designer used to develop the design. Substitutions must meet or exceed its performance characteristics.",
+      "code_ref": "Specification Practice",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-096",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Submittals",
+      "question": "What is a shop drawing?",
+      "options": [
+        {"id": "a", "text": "The architect's original drawings"},
+        {"id": "b", "text": "Detailed fabrication drawings prepared by the contractor or supplier", "correct": true},
+        {"id": "c", "text": "Sketches made in the field"},
+        {"id": "d", "text": "As-built drawings"}
+      ],
+      "explanation": "Shop drawings are detailed drawings, diagrams, and schedules prepared by the contractor, subcontractor, or supplier to show how components will be fabricated and installed.",
+      "code_ref": "AIA A201, Section 3.12",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-097",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Submittals",
+      "question": "Who is responsible for reviewing shop drawings for compliance with contract documents?",
+      "options": [
+        {"id": "a", "text": "The owner only"},
+        {"id": "b", "text": "The contractor before submitting, then the architect", "correct": true},
+        {"id": "c", "text": "The building inspector"},
+        {"id": "d", "text": "The surety"}
+      ],
+      "explanation": "The contractor must review submittals for compliance before forwarding to the architect. The architect's review checks general conformance with design intent.",
+      "code_ref": "AIA A201, Section 3.12",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-098",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Closeout",
+      "question": "What are 'as-built' drawings?",
+      "options": [
+        {"id": "a", "text": "The original bid drawings"},
+        {"id": "b", "text": "Drawings showing the actual constructed conditions including all changes", "correct": true},
+        {"id": "c", "text": "Shop drawings"},
+        {"id": "d", "text": "Design development drawings"}
+      ],
+      "explanation": "As-built (record) drawings document the actual constructed conditions, incorporating all changes, field modifications, and deviations from the original design.",
+      "code_ref": "Project Closeout Requirements",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-099",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Closeout",
+      "question": "What is a punch list?",
+      "options": [
+        {"id": "a", "text": "A list of change orders"},
+        {"id": "b", "text": "A list of minor items to be completed or corrected before final payment", "correct": true},
+        {"id": "c", "text": "A list of subcontractors"},
+        {"id": "d", "text": "A schedule of values"}
+      ],
+      "explanation": "A punch list is a list of minor items to be completed or corrected before the project can be considered finally complete. It's typically prepared at substantial completion.",
+      "code_ref": "AIA A201, Section 9.8",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-contract-100",
+      "trade": "gc",
+      "category": "Contracts",
+      "subcategory": "Closeout",
+      "question": "What is the contractor's responsibility for defective work discovered after final payment?",
+      "options": [
+        {"id": "a", "text": "No responsibility"},
+        {"id": "b", "text": "Correct defective work per the warranty provisions", "correct": true},
+        {"id": "c", "text": "Only cosmetic repairs"},
+        {"id": "d", "text": "Only if paid extra"}
+      ],
+      "explanation": "The contractor remains responsible for correcting defective work discovered within the warranty period even after final payment has been made.",
+      "code_ref": "AIA A201, Section 12.2",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    }
+  ]
+}

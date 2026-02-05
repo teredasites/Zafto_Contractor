@@ -1,0 +1,2218 @@
+{
+  "category": "Building Codes",
+  "trade": "gc",
+  "description": "IRC/IBC code requirements, egress, fire separation, occupancy classifications",
+  "question_count": 130,
+  "questions": [
+    {
+      "id": "gc-bldg-001",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "IRC Scope",
+      "question": "The International Residential Code (IRC) applies to which of the following?",
+      "options": [
+        {"id": "a", "text": "Detached one- and two-family dwellings and townhouses not more than three stories", "correct": true},
+        {"id": "b", "text": "All residential buildings regardless of height"},
+        {"id": "c", "text": "Commercial buildings with residential units"},
+        {"id": "d", "text": "Apartment buildings up to four stories"}
+      ],
+      "explanation": "Per IRC Section R101.2, the IRC applies to detached one- and two-family dwellings and townhouses not more than three stories above grade plane with a separate means of egress.",
+      "code_ref": "IRC R101.2",
+      "difficulty": "easy",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-002",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Egress",
+      "question": "What is the minimum width required for an egress door in a dwelling unit?",
+      "options": [
+        {"id": "a", "text": "30 inches"},
+        {"id": "b", "text": "32 inches", "correct": true},
+        {"id": "c", "text": "34 inches"},
+        {"id": "d", "text": "36 inches"}
+      ],
+      "explanation": "Per IRC R311.2, egress doors shall have a minimum width of 32 inches clear opening. The 36-inch door provides this clearance when accounting for door thickness and stop.",
+      "code_ref": "IRC R311.2",
+      "difficulty": "easy",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-003",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Egress",
+      "question": "What is the minimum height required for an egress door opening?",
+      "options": [
+        {"id": "a", "text": "6 feet 4 inches"},
+        {"id": "b", "text": "6 feet 6 inches"},
+        {"id": "c", "text": "6 feet 8 inches", "correct": true},
+        {"id": "d", "text": "7 feet"}
+      ],
+      "explanation": "Per IRC R311.2, the minimum height of egress doors shall not be less than 6 feet 8 inches (80 inches).",
+      "code_ref": "IRC R311.2",
+      "difficulty": "easy",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-004",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Stairs",
+      "question": "What is the maximum riser height permitted for residential stairs?",
+      "options": [
+        {"id": "a", "text": "7 inches"},
+        {"id": "b", "text": "7-1/2 inches"},
+        {"id": "c", "text": "7-3/4 inches", "correct": true},
+        {"id": "d", "text": "8 inches"}
+      ],
+      "explanation": "Per IRC R311.7.5.1, the maximum riser height shall be 7-3/4 inches (196 mm). Risers must also be uniform within 3/8 inch of the tallest riser.",
+      "code_ref": "IRC R311.7.5.1",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-005",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Stairs",
+      "question": "What is the minimum tread depth for residential stairs?",
+      "options": [
+        {"id": "a", "text": "9 inches"},
+        {"id": "b", "text": "10 inches", "correct": true},
+        {"id": "c", "text": "11 inches"},
+        {"id": "d", "text": "12 inches"}
+      ],
+      "explanation": "Per IRC R311.7.5.2, the minimum tread depth shall be 10 inches (254 mm). The tread depth is measured horizontally from the nosing of adjacent treads.",
+      "code_ref": "IRC R311.7.5.2",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-006",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Stairs",
+      "question": "What is the minimum headroom required over stairs?",
+      "options": [
+        {"id": "a", "text": "6 feet 4 inches"},
+        {"id": "b", "text": "6 feet 6 inches"},
+        {"id": "c", "text": "6 feet 8 inches", "correct": true},
+        {"id": "d", "text": "7 feet"}
+      ],
+      "explanation": "Per IRC R311.7.2, headroom shall be not less than 6 feet 8 inches (2032 mm) measured vertically from the sloped line adjoining the tread nosing.",
+      "code_ref": "IRC R311.7.2",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-007",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Stairs",
+      "question": "At what height above the walking surface are guards required?",
+      "options": [
+        {"id": "a", "text": "24 inches"},
+        {"id": "b", "text": "30 inches", "correct": true},
+        {"id": "c", "text": "36 inches"},
+        {"id": "d", "text": "42 inches"}
+      ],
+      "explanation": "Per IRC R312.1.1, guards shall be located along open-sided walking surfaces that are located more than 30 inches measured vertically from the floor or grade below.",
+      "code_ref": "IRC R312.1.1",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-008",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Guards",
+      "question": "What is the minimum height required for guards on residential porches and decks?",
+      "options": [
+        {"id": "a", "text": "30 inches"},
+        {"id": "b", "text": "34 inches"},
+        {"id": "c", "text": "36 inches", "correct": true},
+        {"id": "d", "text": "42 inches"}
+      ],
+      "explanation": "Per IRC R312.1.2, guards shall not be less than 36 inches in height measured vertically from the adjacent walking surface.",
+      "code_ref": "IRC R312.1.2",
+      "difficulty": "easy",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-009",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Guards",
+      "question": "What is the maximum opening permitted in guards that would allow passage of a 4-inch sphere?",
+      "options": [
+        {"id": "a", "text": "4 inches", "correct": true},
+        {"id": "b", "text": "4-3/8 inches"},
+        {"id": "c", "text": "6 inches"},
+        {"id": "d", "text": "No specific requirement"}
+      ],
+      "explanation": "Per IRC R312.1.3, required guards shall not have openings that allow passage of a sphere 4 inches in diameter. This prevents children from falling through or getting stuck.",
+      "code_ref": "IRC R312.1.3",
+      "difficulty": "easy",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-010",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Handrails",
+      "question": "What is the required handrail height measured from the stair nosing?",
+      "options": [
+        {"id": "a", "text": "30 to 34 inches"},
+        {"id": "b", "text": "34 to 38 inches", "correct": true},
+        {"id": "c", "text": "36 to 42 inches"},
+        {"id": "d", "text": "32 to 36 inches"}
+      ],
+      "explanation": "Per IRC R311.7.8.1, handrail height shall be not less than 34 inches and not more than 38 inches measured vertically from the stair tread nosing.",
+      "code_ref": "IRC R311.7.8.1",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-011",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Handrails",
+      "question": "At what number of risers are handrails required on stairs?",
+      "options": [
+        {"id": "a", "text": "Three risers"},
+        {"id": "b", "text": "Four risers", "correct": true},
+        {"id": "c", "text": "Five risers"},
+        {"id": "d", "text": "Six risers"}
+      ],
+      "explanation": "Per IRC R311.7.8, handrails shall be provided on at least one side of stairways with four or more risers.",
+      "code_ref": "IRC R311.7.8",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-012",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Egress Windows",
+      "question": "What is the minimum net clear opening required for an emergency escape and rescue opening?",
+      "options": [
+        {"id": "a", "text": "4.0 square feet"},
+        {"id": "b", "text": "5.0 square feet"},
+        {"id": "c", "text": "5.7 square feet", "correct": true},
+        {"id": "d", "text": "6.0 square feet"}
+      ],
+      "explanation": "Per IRC R310.2.1, emergency escape openings shall have a minimum net clear opening of 5.7 square feet (5.0 sq ft at grade floor). Minimum dimensions are 24 inches height and 20 inches width.",
+      "code_ref": "IRC R310.2.1",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-013",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Egress Windows",
+      "question": "What is the maximum sill height for an emergency escape window from the floor?",
+      "options": [
+        {"id": "a", "text": "36 inches"},
+        {"id": "b", "text": "42 inches"},
+        {"id": "c", "text": "44 inches", "correct": true},
+        {"id": "d", "text": "48 inches"}
+      ],
+      "explanation": "Per IRC R310.2.2, the sill height of emergency escape openings shall not be more than 44 inches above the floor.",
+      "code_ref": "IRC R310.2.2",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-014",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Egress Windows",
+      "question": "What is the minimum width required for an emergency escape window opening?",
+      "options": [
+        {"id": "a", "text": "18 inches"},
+        {"id": "b", "text": "20 inches", "correct": true},
+        {"id": "c", "text": "22 inches"},
+        {"id": "d", "text": "24 inches"}
+      ],
+      "explanation": "Per IRC R310.2.1, emergency escape openings shall have a minimum net clear width of 20 inches.",
+      "code_ref": "IRC R310.2.1",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-015",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Egress Windows",
+      "question": "What is the minimum height required for an emergency escape window opening?",
+      "options": [
+        {"id": "a", "text": "20 inches"},
+        {"id": "b", "text": "22 inches"},
+        {"id": "c", "text": "24 inches", "correct": true},
+        {"id": "d", "text": "30 inches"}
+      ],
+      "explanation": "Per IRC R310.2.1, emergency escape openings shall have a minimum net clear height of 24 inches.",
+      "code_ref": "IRC R310.2.1",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-016",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Smoke Alarms",
+      "question": "Where are smoke alarms required in new residential construction?",
+      "options": [
+        {"id": "a", "text": "In each sleeping room only"},
+        {"id": "b", "text": "In each sleeping room, outside each sleeping area, and on each story", "correct": true},
+        {"id": "c", "text": "On each story only"},
+        {"id": "d", "text": "In kitchens and sleeping rooms"}
+      ],
+      "explanation": "Per IRC R314.3, smoke alarms shall be installed in each sleeping room, outside each separate sleeping area, and on each additional story including basements.",
+      "code_ref": "IRC R314.3",
+      "difficulty": "easy",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-017",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Smoke Alarms",
+      "question": "In new construction, smoke alarms must be:",
+      "options": [
+        {"id": "a", "text": "Battery-powered only"},
+        {"id": "b", "text": "Hardwired with battery backup and interconnected", "correct": true},
+        {"id": "c", "text": "Either battery or hardwired"},
+        {"id": "d", "text": "Hardwired without backup required"}
+      ],
+      "explanation": "Per IRC R314.4, smoke alarms shall receive their primary power from the building wiring and have battery backup. When more than one is required, they shall be interconnected.",
+      "code_ref": "IRC R314.4",
+      "difficulty": "easy",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-018",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Carbon Monoxide",
+      "question": "Where are carbon monoxide alarms required?",
+      "options": [
+        {"id": "a", "text": "In garages only"},
+        {"id": "b", "text": "Outside each sleeping area in dwellings with fuel-burning appliances or attached garages", "correct": true},
+        {"id": "c", "text": "In basements only"},
+        {"id": "d", "text": "All rooms on every floor"}
+      ],
+      "explanation": "Per IRC R315.3, carbon monoxide alarms are required outside each separate sleeping area when the dwelling has fuel-burning appliances, attached garage, or fireplace.",
+      "code_ref": "IRC R315.3",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-019",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Ceiling Heights",
+      "question": "What is the minimum ceiling height required for habitable rooms?",
+      "options": [
+        {"id": "a", "text": "6 feet 8 inches"},
+        {"id": "b", "text": "7 feet", "correct": true},
+        {"id": "c", "text": "7 feet 6 inches"},
+        {"id": "d", "text": "8 feet"}
+      ],
+      "explanation": "Per IRC R305.1, habitable space, hallways, and portions of basements containing these spaces shall have a ceiling height of not less than 7 feet.",
+      "code_ref": "IRC R305.1",
+      "difficulty": "easy",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-020",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Ceiling Heights",
+      "question": "What is the minimum ceiling height required for bathrooms?",
+      "options": [
+        {"id": "a", "text": "6 feet"},
+        {"id": "b", "text": "6 feet 4 inches"},
+        {"id": "c", "text": "6 feet 8 inches", "correct": true},
+        {"id": "d", "text": "7 feet"}
+      ],
+      "explanation": "Per IRC R305.1, bathrooms, toilet rooms, and laundry rooms shall have a ceiling height of not less than 6 feet 8 inches.",
+      "code_ref": "IRC R305.1",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-021",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Room Dimensions",
+      "question": "What is the minimum floor area required for a habitable room?",
+      "options": [
+        {"id": "a", "text": "50 square feet"},
+        {"id": "b", "text": "70 square feet", "correct": true},
+        {"id": "c", "text": "80 square feet"},
+        {"id": "d", "text": "100 square feet"}
+      ],
+      "explanation": "Per IRC R304.1, habitable rooms shall have a floor area of not less than 70 square feet, with kitchens not required to meet this requirement.",
+      "code_ref": "IRC R304.1",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-022",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Room Dimensions",
+      "question": "What is the minimum horizontal dimension required for a habitable room?",
+      "options": [
+        {"id": "a", "text": "5 feet"},
+        {"id": "b", "text": "6 feet"},
+        {"id": "c", "text": "7 feet", "correct": true},
+        {"id": "d", "text": "8 feet"}
+      ],
+      "explanation": "Per IRC R304.2, habitable rooms shall be not less than 7 feet in any horizontal dimension.",
+      "code_ref": "IRC R304.2",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-023",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Glazing",
+      "question": "Safety glazing is required in glass adjacent to doors when the nearest vertical edge is within what distance of the door?",
+      "options": [
+        {"id": "a", "text": "12 inches"},
+        {"id": "b", "text": "18 inches"},
+        {"id": "c", "text": "24 inches", "correct": true},
+        {"id": "d", "text": "36 inches"}
+      ],
+      "explanation": "Per IRC R308.4.2, glazing adjacent to doors requires safety glazing when the nearest exposed edge of the glazing is within 24 inches of either vertical edge of the door.",
+      "code_ref": "IRC R308.4.2",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-024",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Glazing",
+      "question": "Safety glazing is required in shower and tub enclosures when the bottom edge of the glazing is less than what height above the drain inlet?",
+      "options": [
+        {"id": "a", "text": "48 inches"},
+        {"id": "b", "text": "60 inches", "correct": true},
+        {"id": "c", "text": "72 inches"},
+        {"id": "d", "text": "84 inches"}
+      ],
+      "explanation": "Per IRC R308.4.5, glazing in tub or shower enclosures requires safety glazing when the bottom exposed edge is less than 60 inches above the standing surface.",
+      "code_ref": "IRC R308.4.5",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-025",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Fire Separation",
+      "question": "What is the minimum fire-resistance rating required between a dwelling unit and an attached garage?",
+      "options": [
+        {"id": "a", "text": "No rating required"},
+        {"id": "b", "text": "1/2-hour", "correct": true},
+        {"id": "c", "text": "1-hour"},
+        {"id": "d", "text": "2-hour"}
+      ],
+      "explanation": "Per IRC R302.6, the garage shall be separated from the residence by not less than 1/2-inch gypsum board or equivalent applied to the garage side.",
+      "code_ref": "IRC R302.6",
+      "difficulty": "easy",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-026",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Fire Separation",
+      "question": "When a habitable room is above a garage, what ceiling protection is required?",
+      "options": [
+        {"id": "a", "text": "1/2-inch gypsum board"},
+        {"id": "b", "text": "5/8-inch Type X gypsum board", "correct": true},
+        {"id": "c", "text": "Two layers of 1/2-inch gypsum board"},
+        {"id": "d", "text": "Fire-rated ceiling assembly"}
+      ],
+      "explanation": "Per IRC R302.6, garages beneath habitable rooms shall have a ceiling of not less than 5/8-inch Type X gypsum board or equivalent.",
+      "code_ref": "IRC R302.6",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-027",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Fire Separation",
+      "question": "What is the minimum fire-separation distance required before exterior wall fire-resistance ratings apply?",
+      "options": [
+        {"id": "a", "text": "Less than 3 feet", "correct": true},
+        {"id": "b", "text": "Less than 5 feet"},
+        {"id": "c", "text": "Less than 10 feet"},
+        {"id": "d", "text": "Less than 15 feet"}
+      ],
+      "explanation": "Per IRC Table R302.1, exterior walls with fire-separation distances less than 3 feet require a 1-hour fire-resistance rating on both sides.",
+      "code_ref": "IRC Table R302.1",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-028",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Foundation",
+      "question": "What is the minimum footing depth below undisturbed ground surface in areas subject to freezing?",
+      "options": [
+        {"id": "a", "text": "6 inches"},
+        {"id": "b", "text": "12 inches", "correct": true},
+        {"id": "c", "text": "18 inches"},
+        {"id": "d", "text": "24 inches"}
+      ],
+      "explanation": "Per IRC R403.1.4, footings shall extend to a minimum of 12 inches below the undisturbed ground surface or below the frost line, whichever is deeper.",
+      "code_ref": "IRC R403.1.4",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-029",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Foundation",
+      "question": "What is the minimum compressive strength for concrete footings?",
+      "options": [
+        {"id": "a", "text": "2,000 psi"},
+        {"id": "b", "text": "2,500 psi", "correct": true},
+        {"id": "c", "text": "3,000 psi"},
+        {"id": "d", "text": "3,500 psi"}
+      ],
+      "explanation": "Per IRC Table R402.2, concrete for footings shall have a minimum compressive strength of 2,500 psi.",
+      "code_ref": "IRC Table R402.2",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-030",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Foundation",
+      "question": "What is the minimum thickness for a concrete slab-on-ground floor?",
+      "options": [
+        {"id": "a", "text": "2-1/2 inches"},
+        {"id": "b", "text": "3 inches"},
+        {"id": "c", "text": "3-1/2 inches", "correct": true},
+        {"id": "d", "text": "4 inches"}
+      ],
+      "explanation": "Per IRC R506.1, concrete slab-on-ground floors shall be a minimum of 3-1/2 inches thick.",
+      "code_ref": "IRC R506.1",
+      "difficulty": "easy",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-031",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Foundation",
+      "question": "What is the minimum width for a continuous footing supporting a 2x6 wood-frame wall?",
+      "options": [
+        {"id": "a", "text": "10 inches"},
+        {"id": "b", "text": "12 inches"},
+        {"id": "c", "text": "15 inches", "correct": true},
+        {"id": "d", "text": "18 inches"}
+      ],
+      "explanation": "Per IRC Table R403.1(1), a continuous footing for a conventional wood frame 2x6 exterior wall requires a minimum width of 15 inches for 1,500 psf soil.",
+      "code_ref": "IRC Table R403.1(1)",
+      "difficulty": "hard",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-032",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Floor Framing",
+      "question": "What is the minimum bearing length required for floor joists on wood or metal?",
+      "options": [
+        {"id": "a", "text": "1 inch"},
+        {"id": "b", "text": "1-1/2 inches", "correct": true},
+        {"id": "c", "text": "2 inches"},
+        {"id": "d", "text": "3 inches"}
+      ],
+      "explanation": "Per IRC R502.6, floor joists shall have a minimum bearing of 1-1/2 inches on wood or metal.",
+      "code_ref": "IRC R502.6",
+      "difficulty": "easy",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-033",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Floor Framing",
+      "question": "What is the minimum bearing length required for floor joists on masonry or concrete?",
+      "options": [
+        {"id": "a", "text": "1-1/2 inches"},
+        {"id": "b", "text": "2 inches"},
+        {"id": "c", "text": "3 inches", "correct": true},
+        {"id": "d", "text": "4 inches"}
+      ],
+      "explanation": "Per IRC R502.6, floor joists shall have a minimum bearing of 3 inches on masonry or concrete.",
+      "code_ref": "IRC R502.6",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-034",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Floor Framing",
+      "question": "What is the maximum allowable notch depth in the end of a floor joist?",
+      "options": [
+        {"id": "a", "text": "1/4 of the joist depth", "correct": true},
+        {"id": "b", "text": "1/3 of the joist depth"},
+        {"id": "c", "text": "1/2 of the joist depth"},
+        {"id": "d", "text": "2 inches"}
+      ],
+      "explanation": "Per IRC R502.8.1, notches at the ends of joists shall not exceed 1/4 the joist depth.",
+      "code_ref": "IRC R502.8.1",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-035",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Floor Framing",
+      "question": "What is the maximum diameter for a bored hole in a floor joist?",
+      "options": [
+        {"id": "a", "text": "1/4 of the joist depth"},
+        {"id": "b", "text": "1/3 of the joist depth", "correct": true},
+        {"id": "c", "text": "1/2 of the joist depth"},
+        {"id": "d", "text": "2-1/2 inches"}
+      ],
+      "explanation": "Per IRC R502.8.1, holes bored in joists shall not be larger than 1/3 the depth of the joist and shall be at least 2 inches from the top and bottom.",
+      "code_ref": "IRC R502.8.1",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-036",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Wall Framing",
+      "question": "What is the standard stud spacing for load-bearing walls?",
+      "options": [
+        {"id": "a", "text": "12 inches on center"},
+        {"id": "b", "text": "16 inches on center", "correct": true},
+        {"id": "c", "text": "19.2 inches on center"},
+        {"id": "d", "text": "24 inches on center"}
+      ],
+      "explanation": "Per IRC R602.3(5), studs in load-bearing walls shall be spaced not more than 16 inches on center for typical conditions.",
+      "code_ref": "IRC R602.3(5)",
+      "difficulty": "easy",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-037",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Wall Framing",
+      "question": "What is the minimum number of full-height studs required at each corner of an exterior wall?",
+      "options": [
+        {"id": "a", "text": "Two"},
+        {"id": "b", "text": "Three", "correct": true},
+        {"id": "c", "text": "Four"},
+        {"id": "d", "text": "One with blocking"}
+      ],
+      "explanation": "Per IRC R602.6.1, a minimum of three studs or the equivalent are required at exterior corners to provide adequate support and nailing surfaces.",
+      "code_ref": "IRC R602.6.1",
+      "difficulty": "easy",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-038",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Wall Framing",
+      "question": "What is the maximum allowable notch in a bearing stud?",
+      "options": [
+        {"id": "a", "text": "1/3 of the stud depth"},
+        {"id": "b", "text": "25% of the stud depth", "correct": true},
+        {"id": "c", "text": "40% of the stud depth"},
+        {"id": "d", "text": "2 inches"}
+      ],
+      "explanation": "Per IRC R602.6(1), notches in bearing wall studs shall not exceed 25% of the stud depth.",
+      "code_ref": "IRC R602.6(1)",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-039",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Wall Framing",
+      "question": "What is the maximum diameter for a bored hole in a bearing stud?",
+      "options": [
+        {"id": "a", "text": "25% of stud depth"},
+        {"id": "b", "text": "40% of stud depth", "correct": true},
+        {"id": "c", "text": "50% of stud depth"},
+        {"id": "d", "text": "60% of stud depth"}
+      ],
+      "explanation": "Per IRC R602.6(2), bored holes in bearing studs shall not exceed 40% of the stud depth.",
+      "code_ref": "IRC R602.6(2)",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-040",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Headers",
+      "question": "What is the required header size for a 4-foot opening in a load-bearing wall?",
+      "options": [
+        {"id": "a", "text": "Two 2x6s"},
+        {"id": "b", "text": "Two 2x8s", "correct": true},
+        {"id": "c", "text": "Two 2x10s"},
+        {"id": "d", "text": "Two 2x12s"}
+      ],
+      "explanation": "Per IRC Table R602.7(1), a 4-foot span header in a load-bearing wall typically requires doubled 2x8s for common loading conditions.",
+      "code_ref": "IRC Table R602.7(1)",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-041",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Roof Framing",
+      "question": "What is the minimum bearing length required for roof rafters on wood or metal?",
+      "options": [
+        {"id": "a", "text": "1 inch"},
+        {"id": "b", "text": "1-1/2 inches", "correct": true},
+        {"id": "c", "text": "2 inches"},
+        {"id": "d", "text": "3 inches"}
+      ],
+      "explanation": "Per IRC R802.6, rafters shall have a minimum bearing of 1-1/2 inches on wood or metal.",
+      "code_ref": "IRC R802.6",
+      "difficulty": "easy",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-042",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Roof Framing",
+      "question": "What is the maximum allowable notch in a rafter?",
+      "options": [
+        {"id": "a", "text": "1/4 of the rafter depth"},
+        {"id": "b", "text": "1/3 of the rafter depth", "correct": true},
+        {"id": "c", "text": "1/2 of the rafter depth"},
+        {"id": "d", "text": "2 inches"}
+      ],
+      "explanation": "Per IRC R802.7.1, notches at the ends of rafters shall not exceed 1/3 the rafter depth.",
+      "code_ref": "IRC R802.7.1",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-043",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Attic Access",
+      "question": "What is the minimum size for an attic access opening?",
+      "options": [
+        {"id": "a", "text": "18 x 18 inches"},
+        {"id": "b", "text": "20 x 24 inches"},
+        {"id": "c", "text": "22 x 30 inches", "correct": true},
+        {"id": "d", "text": "24 x 36 inches"}
+      ],
+      "explanation": "Per IRC R807.1, attic access openings shall have a minimum rough-framed opening of not less than 22 inches by 30 inches.",
+      "code_ref": "IRC R807.1",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-044",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Attic Access",
+      "question": "When is attic access required?",
+      "options": [
+        {"id": "a", "text": "In all attics"},
+        {"id": "b", "text": "When attic area exceeds 30 square feet with 30-inch headroom", "correct": true},
+        {"id": "c", "text": "Only in conditioned attics"},
+        {"id": "d", "text": "When attic contains mechanical equipment"}
+      ],
+      "explanation": "Per IRC R807.1, attic access is required where the attic area exceeds 30 square feet and has a vertical height of 30 inches or more.",
+      "code_ref": "IRC R807.1",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-045",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Ventilation",
+      "question": "What is the minimum net free ventilation area required for attic ventilation?",
+      "options": [
+        {"id": "a", "text": "1/100 of floor area"},
+        {"id": "b", "text": "1/150 of floor area", "correct": true},
+        {"id": "c", "text": "1/200 of floor area"},
+        {"id": "d", "text": "1/300 of floor area"}
+      ],
+      "explanation": "Per IRC R806.2, enclosed attics shall have cross ventilation with a minimum net free ventilation area of 1/150 of the space being ventilated.",
+      "code_ref": "IRC R806.2",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-046",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Ventilation",
+      "question": "Under what condition can attic ventilation be reduced to 1/300 of the floor area?",
+      "options": [
+        {"id": "a", "text": "When using ridge vents"},
+        {"id": "b", "text": "When a vapor barrier is installed on the warm side", "correct": true},
+        {"id": "c", "text": "In heating-only climates"},
+        {"id": "d", "text": "When using power ventilators"}
+      ],
+      "explanation": "Per IRC R806.2, the ratio can be reduced to 1/300 when a Class I or II vapor retarder is installed on the warm-in-winter side of the ceiling.",
+      "code_ref": "IRC R806.2",
+      "difficulty": "hard",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-047",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Crawl Space",
+      "question": "What is the minimum crawl space ventilation required?",
+      "options": [
+        {"id": "a", "text": "1/100 of floor area"},
+        {"id": "b", "text": "1/150 of floor area", "correct": true},
+        {"id": "c", "text": "1/200 of floor area"},
+        {"id": "d", "text": "1/500 of floor area"}
+      ],
+      "explanation": "Per IRC R408.2, ventilation openings for under-floor spaces shall have a net area of not less than 1/150 of the area of the space ventilated.",
+      "code_ref": "IRC R408.2",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-048",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Crawl Space",
+      "question": "What is the minimum clearance required from the ground to the bottom of floor joists in a crawl space?",
+      "options": [
+        {"id": "a", "text": "12 inches"},
+        {"id": "b", "text": "18 inches", "correct": true},
+        {"id": "c", "text": "24 inches"},
+        {"id": "d", "text": "30 inches"}
+      ],
+      "explanation": "Per IRC R408.5, the grade in under-floor spaces shall maintain a minimum of 18 inches clearance from the bottom of floor joists.",
+      "code_ref": "IRC R408.5",
+      "difficulty": "easy",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-049",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Crawl Space",
+      "question": "What is the minimum clearance from the ground to the bottom of girders in a crawl space?",
+      "options": [
+        {"id": "a", "text": "6 inches"},
+        {"id": "b", "text": "8 inches"},
+        {"id": "c", "text": "12 inches", "correct": true},
+        {"id": "d", "text": "18 inches"}
+      ],
+      "explanation": "Per IRC R408.5, crawl spaces shall have a minimum of 12 inches clearance from the ground to the bottom of girders and beams.",
+      "code_ref": "IRC R408.5",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-050",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Crawl Space Access",
+      "question": "What is the minimum size for a crawl space access opening?",
+      "options": [
+        {"id": "a", "text": "16 x 24 inches"},
+        {"id": "b", "text": "18 x 24 inches", "correct": true},
+        {"id": "c", "text": "20 x 30 inches"},
+        {"id": "d", "text": "22 x 30 inches"}
+      ],
+      "explanation": "Per IRC R408.4, access to under-floor spaces shall be through an opening not less than 18 inches by 24 inches.",
+      "code_ref": "IRC R408.4",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-051",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "IBC Occupancy",
+      "question": "Which occupancy group covers assembly uses with 50 or more occupants?",
+      "options": [
+        {"id": "a", "text": "Group A", "correct": true},
+        {"id": "b", "text": "Group B"},
+        {"id": "c", "text": "Group M"},
+        {"id": "d", "text": "Group S"}
+      ],
+      "explanation": "Per IBC Section 303, Group A occupancy includes assembly uses, except those classified as Group E, with an occupant load of 50 or more.",
+      "code_ref": "IBC 303",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-bldg-052",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "IBC Occupancy",
+      "question": "Which occupancy group covers business offices and professional services?",
+      "options": [
+        {"id": "a", "text": "Group A"},
+        {"id": "b", "text": "Group B", "correct": true},
+        {"id": "c", "text": "Group M"},
+        {"id": "d", "text": "Group S"}
+      ],
+      "explanation": "Per IBC Section 304, Group B occupancy includes office buildings, professional services, educational above 12th grade, and similar uses.",
+      "code_ref": "IBC 304",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-bldg-053",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "IBC Occupancy",
+      "question": "Which occupancy group covers retail stores and sales rooms?",
+      "options": [
+        {"id": "a", "text": "Group A"},
+        {"id": "b", "text": "Group B"},
+        {"id": "c", "text": "Group M", "correct": true},
+        {"id": "d", "text": "Group S"}
+      ],
+      "explanation": "Per IBC Section 309, Group M occupancy includes buildings for the display and sale of merchandise, such as retail stores, markets, and sales rooms.",
+      "code_ref": "IBC 309",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-bldg-054",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "IBC Occupancy",
+      "question": "Which occupancy group covers warehouses and storage buildings?",
+      "options": [
+        {"id": "a", "text": "Group F"},
+        {"id": "b", "text": "Group H"},
+        {"id": "c", "text": "Group S", "correct": true},
+        {"id": "d", "text": "Group U"}
+      ],
+      "explanation": "Per IBC Section 311, Group S occupancy includes buildings used for storage that are not classified as hazardous (H).",
+      "code_ref": "IBC 311",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-bldg-055",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "IBC Occupancy",
+      "question": "Which occupancy group covers factories and manufacturing?",
+      "options": [
+        {"id": "a", "text": "Group F", "correct": true},
+        {"id": "b", "text": "Group H"},
+        {"id": "c", "text": "Group S"},
+        {"id": "d", "text": "Group U"}
+      ],
+      "explanation": "Per IBC Section 306, Group F occupancy includes factory and industrial uses for manufacturing, assembling, and processing products.",
+      "code_ref": "IBC 306",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-bldg-056",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Construction Types",
+      "question": "Which construction type is the most fire-resistive?",
+      "options": [
+        {"id": "a", "text": "Type I", "correct": true},
+        {"id": "b", "text": "Type II"},
+        {"id": "c", "text": "Type III"},
+        {"id": "d", "text": "Type V"}
+      ],
+      "explanation": "Per IBC Section 602, Type I construction is the most fire-resistive with structural elements of noncombustible materials and the highest fire-resistance ratings.",
+      "code_ref": "IBC 602",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-bldg-057",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Construction Types",
+      "question": "Which construction type allows combustible materials?",
+      "options": [
+        {"id": "a", "text": "Type I"},
+        {"id": "b", "text": "Type II"},
+        {"id": "c", "text": "Type III"},
+        {"id": "d", "text": "Type V", "correct": true}
+      ],
+      "explanation": "Per IBC Section 602, Type V construction allows structural elements, exterior walls, and interior walls to be of any materials permitted by the code, including combustible.",
+      "code_ref": "IBC 602",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-bldg-058",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Fire Ratings",
+      "question": "What is the minimum fire-resistance rating for a 1-hour fire-rated wall assembly?",
+      "options": [
+        {"id": "a", "text": "45 minutes"},
+        {"id": "b", "text": "60 minutes", "correct": true},
+        {"id": "c", "text": "90 minutes"},
+        {"id": "d", "text": "120 minutes"}
+      ],
+      "explanation": "A 1-hour fire-rated assembly must maintain its structural integrity and prevent passage of flames for a minimum of 60 minutes when tested per ASTM E119.",
+      "code_ref": "IBC 703.2",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-bldg-059",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Egress",
+      "question": "What is the maximum travel distance to an exit in an unsprinklered Group B occupancy?",
+      "options": [
+        {"id": "a", "text": "200 feet", "correct": true},
+        {"id": "b", "text": "250 feet"},
+        {"id": "c", "text": "300 feet"},
+        {"id": "d", "text": "400 feet"}
+      ],
+      "explanation": "Per IBC Table 1017.2, the maximum exit access travel distance for an unsprinklered Group B (business) occupancy is 200 feet.",
+      "code_ref": "IBC Table 1017.2",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-bldg-060",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Egress",
+      "question": "What is the minimum width of an exit corridor?",
+      "options": [
+        {"id": "a", "text": "36 inches"},
+        {"id": "b", "text": "40 inches"},
+        {"id": "c", "text": "44 inches", "correct": true},
+        {"id": "d", "text": "48 inches"}
+      ],
+      "explanation": "Per IBC 1020.2, the minimum width of a corridor serving an occupant load of 50 or more shall not be less than 44 inches.",
+      "code_ref": "IBC 1020.2",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-bldg-061",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Egress",
+      "question": "At what occupant load are two exits required from a story?",
+      "options": [
+        {"id": "a", "text": "30"},
+        {"id": "b", "text": "50"},
+        {"id": "c", "text": "500"},
+        {"id": "d", "text": "It depends on occupancy type", "correct": true}
+      ],
+      "explanation": "Per IBC Table 1006.2.1, the threshold varies by occupancy. Group A requires 2 exits at 50 occupants, while Group B allows up to 49 for a single exit.",
+      "code_ref": "IBC Table 1006.2.1",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-bldg-062",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Egress",
+      "question": "What is the capacity per inch of stair width for egress calculation?",
+      "options": [
+        {"id": "a", "text": "0.1 inch per occupant"},
+        {"id": "b", "text": "0.2 inch per occupant"},
+        {"id": "c", "text": "0.3 inch per occupant", "correct": true},
+        {"id": "d", "text": "0.5 inch per occupant"}
+      ],
+      "explanation": "Per IBC Table 1005.1, stairways require 0.3 inch of width per occupant served (without sprinklers) for egress capacity calculations.",
+      "code_ref": "IBC Table 1005.1",
+      "difficulty": "hard",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-bldg-063",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Accessibility",
+      "question": "What is the maximum height for an accessible light switch above the finished floor?",
+      "options": [
+        {"id": "a", "text": "42 inches"},
+        {"id": "b", "text": "48 inches", "correct": true},
+        {"id": "c", "text": "52 inches"},
+        {"id": "d", "text": "54 inches"}
+      ],
+      "explanation": "Per ICC A117.1 and ADA guidelines, operable controls shall be placed at a maximum height of 48 inches above the finished floor for forward or side reach.",
+      "code_ref": "ICC A117.1",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-bldg-064",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Accessibility",
+      "question": "What is the minimum clear width for an accessible doorway?",
+      "options": [
+        {"id": "a", "text": "30 inches"},
+        {"id": "b", "text": "32 inches", "correct": true},
+        {"id": "c", "text": "34 inches"},
+        {"id": "d", "text": "36 inches"}
+      ],
+      "explanation": "Per ICC A117.1 Section 404.2.3, doorways shall provide a clear width of not less than 32 inches measured between the face of the door and the stop.",
+      "code_ref": "ICC A117.1, 404.2.3",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-bldg-065",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Accessibility",
+      "question": "What is the maximum slope for an accessible route that is not a ramp?",
+      "options": [
+        {"id": "a", "text": "1:12"},
+        {"id": "b", "text": "1:20", "correct": true},
+        {"id": "c", "text": "1:48"},
+        {"id": "d", "text": "1:50"}
+      ],
+      "explanation": "Per ICC A117.1 Section 402.2, the running slope of an accessible route shall not be steeper than 1:20 (5%). Slopes steeper than 1:20 are considered ramps.",
+      "code_ref": "ICC A117.1, 402.2",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-bldg-066",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Accessibility",
+      "question": "What is the maximum slope for an accessible ramp?",
+      "options": [
+        {"id": "a", "text": "1:8"},
+        {"id": "b", "text": "1:10"},
+        {"id": "c", "text": "1:12", "correct": true},
+        {"id": "d", "text": "1:20"}
+      ],
+      "explanation": "Per ICC A117.1 Section 405.2, the maximum slope of a ramp shall not exceed 1:12 (8.33%).",
+      "code_ref": "ICC A117.1, 405.2",
+      "difficulty": "easy",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-bldg-067",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Accessibility",
+      "question": "What is the maximum rise for a ramp run without an intermediate landing?",
+      "options": [
+        {"id": "a", "text": "24 inches"},
+        {"id": "b", "text": "30 inches", "correct": true},
+        {"id": "c", "text": "36 inches"},
+        {"id": "d", "text": "48 inches"}
+      ],
+      "explanation": "Per ICC A117.1 Section 405.6, the rise for any ramp run shall be 30 inches maximum.",
+      "code_ref": "ICC A117.1, 405.6",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-bldg-068",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Accessibility",
+      "question": "What is the minimum clear floor space required at an accessible toilet?",
+      "options": [
+        {"id": "a", "text": "30 x 48 inches"},
+        {"id": "b", "text": "48 x 48 inches"},
+        {"id": "c", "text": "60 x 56 inches", "correct": true},
+        {"id": "d", "text": "66 x 60 inches"}
+      ],
+      "explanation": "Per ICC A117.1 Section 604.3, clearance around a water closet shall be 60 inches minimum measured perpendicular from the side wall and 56 inches minimum perpendicular from the rear wall.",
+      "code_ref": "ICC A117.1, 604.3",
+      "difficulty": "hard",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-bldg-069",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Accessibility",
+      "question": "What is the required height for an accessible grab bar at a toilet?",
+      "options": [
+        {"id": "a", "text": "30 to 32 inches"},
+        {"id": "b", "text": "33 to 36 inches", "correct": true},
+        {"id": "c", "text": "36 to 42 inches"},
+        {"id": "d", "text": "42 to 48 inches"}
+      ],
+      "explanation": "Per ICC A117.1 Section 604.5, grab bars shall be installed 33 to 36 inches above the finished floor measured to the top of the gripping surface.",
+      "code_ref": "ICC A117.1, 604.5",
+      "difficulty": "medium",
+      "exam_relevance": ["general_contractor"]
+    },
+    {
+      "id": "gc-bldg-070",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Permits",
+      "question": "Which of the following work typically requires a building permit?",
+      "options": [
+        {"id": "a", "text": "Painting interior walls"},
+        {"id": "b", "text": "Installing kitchen cabinets"},
+        {"id": "c", "text": "Adding a new electrical circuit", "correct": true},
+        {"id": "d", "text": "Replacing a faucet"}
+      ],
+      "explanation": "Per IRC R105.2, electrical work beyond replacement of existing fixtures typically requires a permit. Painting, cabinets, and plumbing fixture replacement are generally exempt.",
+      "code_ref": "IRC R105.2",
+      "difficulty": "easy",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-071",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Permits",
+      "question": "What is the typical validity period of a building permit?",
+      "options": [
+        {"id": "a", "text": "90 days"},
+        {"id": "b", "text": "180 days", "correct": true},
+        {"id": "c", "text": "1 year"},
+        {"id": "d", "text": "2 years"}
+      ],
+      "explanation": "Per IRC R105.5, a permit becomes invalid if work is not commenced within 180 days or if work is suspended for 180 days, though jurisdictions may vary.",
+      "code_ref": "IRC R105.5",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-072",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Inspections",
+      "question": "Which inspection is typically required BEFORE concrete is placed for footings?",
+      "options": [
+        {"id": "a", "text": "Final inspection"},
+        {"id": "b", "text": "Footing inspection", "correct": true},
+        {"id": "c", "text": "Frame inspection"},
+        {"id": "d", "text": "Rough-in inspection"}
+      ],
+      "explanation": "Per IRC R109, footing inspection is required after excavation and before concrete placement to verify soil conditions, dimensions, and reinforcement.",
+      "code_ref": "IRC R109",
+      "difficulty": "easy",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-073",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Inspections",
+      "question": "What inspection must be completed before wall covering is applied?",
+      "options": [
+        {"id": "a", "text": "Final inspection"},
+        {"id": "b", "text": "Frame inspection", "correct": true},
+        {"id": "c", "text": "Foundation inspection"},
+        {"id": "d", "text": "Pre-cover inspection"}
+      ],
+      "explanation": "Per IRC R109, frame inspection verifies all framing, bracing, and fire blocking before being concealed by wall covering.",
+      "code_ref": "IRC R109",
+      "difficulty": "easy",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-074",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Energy Code",
+      "question": "What is the purpose of a blower door test?",
+      "options": [
+        {"id": "a", "text": "Test HVAC airflow"},
+        {"id": "b", "text": "Measure building air leakage", "correct": true},
+        {"id": "c", "text": "Test ventilation equipment"},
+        {"id": "d", "text": "Measure duct leakage"}
+      ],
+      "explanation": "Per IECC R402.4.1.2, the blower door test measures building envelope air leakage by pressurizing the building to 50 Pascals and measuring air changes per hour.",
+      "code_ref": "IECC R402.4.1.2",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-075",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Energy Code",
+      "question": "What is the maximum air leakage rate for new residential construction in most climate zones?",
+      "options": [
+        {"id": "a", "text": "3 ACH50", "correct": true},
+        {"id": "b", "text": "5 ACH50"},
+        {"id": "c", "text": "7 ACH50"},
+        {"id": "d", "text": "10 ACH50"}
+      ],
+      "explanation": "Per IECC Table R402.4.1.1, the maximum air leakage is 3 ACH50 (air changes per hour at 50 Pascals) for climate zones 3-8.",
+      "code_ref": "IECC Table R402.4.1.1",
+      "difficulty": "hard",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-076",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Roofing",
+      "question": "What is the minimum slope for asphalt shingles?",
+      "options": [
+        {"id": "a", "text": "1:12"},
+        {"id": "b", "text": "2:12", "correct": true},
+        {"id": "c", "text": "3:12"},
+        {"id": "d", "text": "4:12"}
+      ],
+      "explanation": "Per IRC R905.2.2, asphalt shingles shall be used only on roof slopes of 2:12 or greater. Between 2:12 and 4:12, double underlayment is required.",
+      "code_ref": "IRC R905.2.2",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-077",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Roofing",
+      "question": "At what slope is ice barrier required on roofs in cold climates?",
+      "options": [
+        {"id": "a", "text": "All slopes"},
+        {"id": "b", "text": "Slopes less than 4:12"},
+        {"id": "c", "text": "Where average January temperature is 25F or less", "correct": true},
+        {"id": "d", "text": "Only on flat roofs"}
+      ],
+      "explanation": "Per IRC R905.1.2, ice barriers are required in areas where the January daily average temperature is 25F or less.",
+      "code_ref": "IRC R905.1.2",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-078",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Roofing",
+      "question": "What is the minimum headlap for asphalt shingles?",
+      "options": [
+        {"id": "a", "text": "1 inch"},
+        {"id": "b", "text": "2 inches", "correct": true},
+        {"id": "c", "text": "4 inches"},
+        {"id": "d", "text": "6 inches"}
+      ],
+      "explanation": "Per IRC R905.2.6, asphalt shingles shall have a minimum headlap of 2 inches.",
+      "code_ref": "IRC R905.2.6",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-079",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Flashing",
+      "question": "Where is flashing required?",
+      "options": [
+        {"id": "a", "text": "Only at roof penetrations"},
+        {"id": "b", "text": "At all intersections of walls and roofs", "correct": true},
+        {"id": "c", "text": "Only at chimneys"},
+        {"id": "d", "text": "Only where visible"}
+      ],
+      "explanation": "Per IRC R903.2, flashing shall be installed at wall and roof intersections, around roof openings, at chimneys, and wherever there is a change in roof slope or direction.",
+      "code_ref": "IRC R903.2",
+      "difficulty": "easy",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-080",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Drainage",
+      "question": "What is the minimum slope for final grade away from a foundation?",
+      "options": [
+        {"id": "a", "text": "2 inches per foot"},
+        {"id": "b", "text": "1 inch per foot"},
+        {"id": "c", "text": "6 inches in 10 feet", "correct": true},
+        {"id": "d", "text": "3 inches in 10 feet"}
+      ],
+      "explanation": "Per IRC R401.3, the grade shall slope away from the foundation at a minimum of 6 inches within the first 10 feet.",
+      "code_ref": "IRC R401.3",
+      "difficulty": "easy",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-081",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Concrete",
+      "question": "What is the minimum concrete cover for reinforcement in concrete exposed to weather?",
+      "options": [
+        {"id": "a", "text": "3/4 inch"},
+        {"id": "b", "text": "1 inch"},
+        {"id": "c", "text": "1-1/2 inches", "correct": true},
+        {"id": "d", "text": "2 inches"}
+      ],
+      "explanation": "Per IRC R404.1.2.2, concrete cover for reinforcement exposed to weather shall be not less than 1-1/2 inches for #5 bars and smaller.",
+      "code_ref": "IRC R404.1.2.2",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-082",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Concrete",
+      "question": "What is the minimum concrete cover for reinforcement in concrete cast against earth?",
+      "options": [
+        {"id": "a", "text": "1-1/2 inches"},
+        {"id": "b", "text": "2 inches"},
+        {"id": "c", "text": "3 inches", "correct": true},
+        {"id": "d", "text": "4 inches"}
+      ],
+      "explanation": "Per IRC R404.1.2.2, concrete cast permanently against earth requires a minimum concrete cover of 3 inches.",
+      "code_ref": "IRC R404.1.2.2",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-083",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Masonry",
+      "question": "What is the minimum thickness for a single-wythe concrete masonry foundation wall?",
+      "options": [
+        {"id": "a", "text": "4 inches"},
+        {"id": "b", "text": "6 inches"},
+        {"id": "c", "text": "8 inches", "correct": true},
+        {"id": "d", "text": "10 inches"}
+      ],
+      "explanation": "Per IRC Table R404.1.1(1), the minimum thickness for a plain concrete masonry foundation wall is 8 inches.",
+      "code_ref": "IRC Table R404.1.1(1)",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-084",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Wood Protection",
+      "question": "What is the minimum clearance required between wood siding and grade?",
+      "options": [
+        {"id": "a", "text": "4 inches"},
+        {"id": "b", "text": "6 inches", "correct": true},
+        {"id": "c", "text": "8 inches"},
+        {"id": "d", "text": "12 inches"}
+      ],
+      "explanation": "Per IRC R317.1, wood siding shall have a minimum clearance of 6 inches from the ground.",
+      "code_ref": "IRC R317.1",
+      "difficulty": "easy",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-085",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Wood Protection",
+      "question": "What is the minimum clearance required between wood structural members and grade?",
+      "options": [
+        {"id": "a", "text": "4 inches"},
+        {"id": "b", "text": "6 inches"},
+        {"id": "c", "text": "8 inches", "correct": true},
+        {"id": "d", "text": "12 inches"}
+      ],
+      "explanation": "Per IRC R317.1, wood structural members shall have a minimum clearance of 8 inches from the ground unless approved preservative-treated wood is used.",
+      "code_ref": "IRC R317.1",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-086",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Termite Protection",
+      "question": "In areas where termite damage is very heavy, what protection is required?",
+      "options": [
+        {"id": "a", "text": "No special requirements"},
+        {"id": "b", "text": "Pressure-treated wood only"},
+        {"id": "c", "text": "Chemical treatment, physical barriers, or termite-resistant materials", "correct": true},
+        {"id": "d", "text": "Metal framing only"}
+      ],
+      "explanation": "Per IRC R318, areas with very heavy termite infestation probability require approved methods of protection including chemical barriers, physical barriers, or naturally resistant materials.",
+      "code_ref": "IRC R318",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-087",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Lateral Loads",
+      "question": "What is the purpose of wall bracing?",
+      "options": [
+        {"id": "a", "text": "Support vertical loads"},
+        {"id": "b", "text": "Resist lateral loads from wind and seismic forces", "correct": true},
+        {"id": "c", "text": "Provide fire resistance"},
+        {"id": "d", "text": "Prevent moisture intrusion"}
+      ],
+      "explanation": "Per IRC R602.10, wall bracing is required to resist lateral loads such as wind and seismic forces and transfer those loads to the foundation.",
+      "code_ref": "IRC R602.10",
+      "difficulty": "easy",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-088",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Lateral Loads",
+      "question": "What is the minimum length of braced wall panel when using structural wood panels?",
+      "options": [
+        {"id": "a", "text": "24 inches"},
+        {"id": "b", "text": "32 inches"},
+        {"id": "c", "text": "48 inches", "correct": true},
+        {"id": "d", "text": "96 inches"}
+      ],
+      "explanation": "Per IRC R602.10.2, the minimum length of a braced wall panel using wood structural panels (Method 3) is 48 inches.",
+      "code_ref": "IRC R602.10.2",
+      "difficulty": "hard",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-089",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Connectors",
+      "question": "What is the purpose of a hurricane tie or rafter tie?",
+      "options": [
+        {"id": "a", "text": "Support ceiling loads"},
+        {"id": "b", "text": "Connect rafters or trusses to wall plates to resist uplift", "correct": true},
+        {"id": "c", "text": "Prevent sagging"},
+        {"id": "d", "text": "Connect roof sheathing to rafters"}
+      ],
+      "explanation": "Per IRC R802.11, roof assemblies shall be designed to resist wind uplift forces. Hurricane ties provide the connection between rafters/trusses and wall plates.",
+      "code_ref": "IRC R802.11",
+      "difficulty": "easy",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-090",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Anchor Bolts",
+      "question": "What is the minimum diameter for anchor bolts securing the sill plate to the foundation?",
+      "options": [
+        {"id": "a", "text": "3/8 inch"},
+        {"id": "b", "text": "1/2 inch", "correct": true},
+        {"id": "c", "text": "5/8 inch"},
+        {"id": "d", "text": "3/4 inch"}
+      ],
+      "explanation": "Per IRC R403.1.6, anchor bolts shall be at least 1/2 inch in diameter and shall extend a minimum of 7 inches into the concrete or masonry.",
+      "code_ref": "IRC R403.1.6",
+      "difficulty": "easy",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-091",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Anchor Bolts",
+      "question": "What is the maximum spacing for anchor bolts?",
+      "options": [
+        {"id": "a", "text": "4 feet"},
+        {"id": "b", "text": "6 feet", "correct": true},
+        {"id": "c", "text": "8 feet"},
+        {"id": "d", "text": "10 feet"}
+      ],
+      "explanation": "Per IRC R403.1.6, anchor bolts shall be spaced not more than 6 feet on center.",
+      "code_ref": "IRC R403.1.6",
+      "difficulty": "easy",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-092",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Fireblocking",
+      "question": "What is the purpose of fireblocking?",
+      "options": [
+        {"id": "a", "text": "Provide structural support"},
+        {"id": "b", "text": "Cut off concealed draft openings to restrict spread of fire", "correct": true},
+        {"id": "c", "text": "Prevent moisture intrusion"},
+        {"id": "d", "text": "Provide backing for drywall"}
+      ],
+      "explanation": "Per IRC R302.11, fireblocking is required to cut off concealed draft openings both vertically and horizontally to prevent the movement of flame and gases.",
+      "code_ref": "IRC R302.11",
+      "difficulty": "easy",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-093",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Fireblocking",
+      "question": "Where is fireblocking required in concealed wall spaces?",
+      "options": [
+        {"id": "a", "text": "At each floor level"},
+        {"id": "b", "text": "At ceiling and floor levels and at 10-foot intervals", "correct": true},
+        {"id": "c", "text": "Only at the top of the wall"},
+        {"id": "d", "text": "At 4-foot intervals"}
+      ],
+      "explanation": "Per IRC R302.11.1, fireblocking is required in concealed stud spaces at ceiling and floor levels and at 10-foot intervals both vertically and horizontally.",
+      "code_ref": "IRC R302.11.1",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-094",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Draftstopping",
+      "question": "When is draftstopping required in floor-ceiling assemblies?",
+      "options": [
+        {"id": "a", "text": "Always"},
+        {"id": "b", "text": "When area exceeds 1,000 square feet", "correct": true},
+        {"id": "c", "text": "Only in two-story buildings"},
+        {"id": "d", "text": "Only with engineered lumber"}
+      ],
+      "explanation": "Per IRC R302.12.1, draftstopping shall divide concealed floor-ceiling spaces into areas not exceeding 1,000 square feet.",
+      "code_ref": "IRC R302.12.1",
+      "difficulty": "hard",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-095",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Insulation",
+      "question": "What type of insulation requires a thermal barrier when used in habitable spaces?",
+      "options": [
+        {"id": "a", "text": "Fiberglass batts"},
+        {"id": "b", "text": "Foam plastic insulation", "correct": true},
+        {"id": "c", "text": "Cellulose"},
+        {"id": "d", "text": "Mineral wool"}
+      ],
+      "explanation": "Per IRC R316.4, foam plastic insulation shall be separated from interior spaces by a thermal barrier of 1/2-inch gypsum board or equivalent.",
+      "code_ref": "IRC R316.4",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-096",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Weather Barrier",
+      "question": "What is the purpose of a water-resistive barrier (WRB)?",
+      "options": [
+        {"id": "a", "text": "Provide insulation"},
+        {"id": "b", "text": "Prevent bulk water intrusion while allowing vapor transmission", "correct": true},
+        {"id": "c", "text": "Provide structural support"},
+        {"id": "d", "text": "Block air infiltration only"}
+      ],
+      "explanation": "Per IRC R703.2, a water-resistive barrier must be installed behind exterior veneer to provide a secondary drainage plane and prevent water intrusion.",
+      "code_ref": "IRC R703.2",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-097",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Decks",
+      "question": "What is the maximum spacing for deck joists supporting a walking surface?",
+      "options": [
+        {"id": "a", "text": "12 inches on center"},
+        {"id": "b", "text": "16 inches on center", "correct": true},
+        {"id": "c", "text": "24 inches on center"},
+        {"id": "d", "text": "32 inches on center"}
+      ],
+      "explanation": "Per IRC R507.5, deck joists supporting nominal 2-inch thick decking shall be spaced not more than 16 inches on center.",
+      "code_ref": "IRC R507.5",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-098",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Decks",
+      "question": "What is the minimum footing size for a deck post?",
+      "options": [
+        {"id": "a", "text": "8 x 8 inches"},
+        {"id": "b", "text": "12 x 12 inches", "correct": true},
+        {"id": "c", "text": "16 x 16 inches"},
+        {"id": "d", "text": "24 x 24 inches"}
+      ],
+      "explanation": "Per IRC R507.3.1, deck footings shall have a minimum size based on tributary load area, with most requiring at least 12-inch diameter or 12 x 12 inch footings.",
+      "code_ref": "IRC R507.3.1",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-099",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Decks",
+      "question": "What is required when a deck is attached to a house?",
+      "options": [
+        {"id": "a", "text": "Nails only"},
+        {"id": "b", "text": "Lag screws or through-bolts with proper flashing", "correct": true},
+        {"id": "c", "text": "Construction adhesive"},
+        {"id": "d", "text": "No special requirements"}
+      ],
+      "explanation": "Per IRC R507.2, deck ledgers shall be attached to the band joist using lag screws or through-bolts, with proper flashing to prevent water intrusion.",
+      "code_ref": "IRC R507.2",
+      "difficulty": "easy",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-100",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Swimming Pools",
+      "question": "What is the minimum barrier height required around a residential swimming pool?",
+      "options": [
+        {"id": "a", "text": "36 inches"},
+        {"id": "b", "text": "42 inches"},
+        {"id": "c", "text": "48 inches", "correct": true},
+        {"id": "d", "text": "54 inches"}
+      ],
+      "explanation": "Per IRC R4109.13, barriers surrounding pools shall be not less than 48 inches in height measured on the exterior side.",
+      "code_ref": "IRC R4109.13",
+      "difficulty": "easy",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-101",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Swimming Pools",
+      "question": "What is the maximum spacing for openings in a pool barrier?",
+      "options": [
+        {"id": "a", "text": "2 inches"},
+        {"id": "b", "text": "4 inches", "correct": true},
+        {"id": "c", "text": "6 inches"},
+        {"id": "d", "text": "8 inches"}
+      ],
+      "explanation": "Per IRC R4109.13, openings in pool barriers shall not allow passage of a 4-inch diameter sphere.",
+      "code_ref": "IRC R4109.13",
+      "difficulty": "easy",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-102",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Vapor Retarders",
+      "question": "Where is a vapor retarder typically required in cold climates?",
+      "options": [
+        {"id": "a", "text": "On the exterior of walls"},
+        {"id": "b", "text": "On the warm-in-winter side of walls", "correct": true},
+        {"id": "c", "text": "In the middle of the wall cavity"},
+        {"id": "d", "text": "Vapor retarders are not required"}
+      ],
+      "explanation": "Per IRC R702.7, in climate zones 5-8 (cold climates), a Class I or II vapor retarder is required on the warm-in-winter side (interior) of frame walls.",
+      "code_ref": "IRC R702.7",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-103",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Gypsum Board",
+      "question": "What is the minimum thickness for gypsum board on walls?",
+      "options": [
+        {"id": "a", "text": "1/4 inch"},
+        {"id": "b", "text": "3/8 inch"},
+        {"id": "c", "text": "1/2 inch", "correct": true},
+        {"id": "d", "text": "5/8 inch"}
+      ],
+      "explanation": "Per IRC Table R702.3.5, gypsum board applied to walls with framing spaced 16 inches on center shall be minimum 1/2-inch thick.",
+      "code_ref": "IRC Table R702.3.5",
+      "difficulty": "easy",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-104",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Gypsum Board",
+      "question": "What is the minimum gypsum board thickness for ceilings with 24-inch joist spacing?",
+      "options": [
+        {"id": "a", "text": "3/8 inch"},
+        {"id": "b", "text": "1/2 inch"},
+        {"id": "c", "text": "5/8 inch", "correct": true},
+        {"id": "d", "text": "3/4 inch"}
+      ],
+      "explanation": "Per IRC Table R702.3.5, gypsum board applied perpendicular to ceiling framing at 24-inch spacing shall be minimum 5/8-inch thick.",
+      "code_ref": "IRC Table R702.3.5",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-105",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Light and Ventilation",
+      "question": "What is the minimum glazing area required for natural light in a habitable room?",
+      "options": [
+        {"id": "a", "text": "4% of floor area"},
+        {"id": "b", "text": "8% of floor area", "correct": true},
+        {"id": "c", "text": "10% of floor area"},
+        {"id": "d", "text": "12% of floor area"}
+      ],
+      "explanation": "Per IRC R303.1, habitable rooms shall have aggregate glazing area of not less than 8% of the floor area of such rooms.",
+      "code_ref": "IRC R303.1",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-106",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Light and Ventilation",
+      "question": "What is the minimum openable area for natural ventilation in a habitable room?",
+      "options": [
+        {"id": "a", "text": "2% of floor area"},
+        {"id": "b", "text": "4% of floor area", "correct": true},
+        {"id": "c", "text": "6% of floor area"},
+        {"id": "d", "text": "8% of floor area"}
+      ],
+      "explanation": "Per IRC R303.1, habitable rooms shall have openable area of not less than 4% of the floor area for natural ventilation.",
+      "code_ref": "IRC R303.1",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-107",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Bathrooms",
+      "question": "What exhaust rate is required for bathrooms without openable windows?",
+      "options": [
+        {"id": "a", "text": "25 CFM"},
+        {"id": "b", "text": "50 CFM", "correct": true},
+        {"id": "c", "text": "75 CFM"},
+        {"id": "d", "text": "100 CFM"}
+      ],
+      "explanation": "Per IRC M1507.4, bathrooms without openable windows shall be provided with mechanical ventilation of not less than 50 CFM intermittent or 20 CFM continuous.",
+      "code_ref": "IRC M1507.4",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-108",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Hallways",
+      "question": "What is the minimum width required for hallways in a dwelling?",
+      "options": [
+        {"id": "a", "text": "30 inches"},
+        {"id": "b", "text": "32 inches"},
+        {"id": "c", "text": "36 inches", "correct": true},
+        {"id": "d", "text": "42 inches"}
+      ],
+      "explanation": "Per IRC R311.6, hallways shall have a minimum width of 36 inches.",
+      "code_ref": "IRC R311.6",
+      "difficulty": "easy",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-109",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Landing",
+      "question": "What is the minimum depth required for a landing at an exterior door?",
+      "options": [
+        {"id": "a", "text": "30 inches"},
+        {"id": "b", "text": "36 inches", "correct": true},
+        {"id": "c", "text": "42 inches"},
+        {"id": "d", "text": "48 inches"}
+      ],
+      "explanation": "Per IRC R311.3.1, landings at exterior doors shall have a minimum dimension of 36 inches in the direction of travel.",
+      "code_ref": "IRC R311.3.1",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-110",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Landing",
+      "question": "What is the maximum vertical drop from the threshold of a required egress door?",
+      "options": [
+        {"id": "a", "text": "1-1/2 inches"},
+        {"id": "b", "text": "4 inches"},
+        {"id": "c", "text": "7-3/4 inches"},
+        {"id": "d", "text": "8 inches to a landing at least 36 inches wide", "correct": true}
+      ],
+      "explanation": "Per IRC R311.3.1 exception, where a landing is provided at an exterior door, the landing may be not more than 8 inches below the top of the threshold if the door does not swing over the landing.",
+      "code_ref": "IRC R311.3.1",
+      "difficulty": "hard",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-111",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Spiral Stairs",
+      "question": "What is the minimum tread depth at the walk line for spiral stairs?",
+      "options": [
+        {"id": "a", "text": "6-1/2 inches"},
+        {"id": "b", "text": "7-1/2 inches", "correct": true},
+        {"id": "c", "text": "10 inches"},
+        {"id": "d", "text": "11 inches"}
+      ],
+      "explanation": "Per IRC R311.7.10.1, spiral stairway treads shall have a minimum tread depth of 7-1/2 inches at a point 12 inches from the narrow edge.",
+      "code_ref": "IRC R311.7.10.1",
+      "difficulty": "hard",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-112",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Spiral Stairs",
+      "question": "What is the minimum headroom required for spiral stairs?",
+      "options": [
+        {"id": "a", "text": "6 feet"},
+        {"id": "b", "text": "6 feet 4 inches"},
+        {"id": "c", "text": "6 feet 6 inches", "correct": true},
+        {"id": "d", "text": "6 feet 8 inches"}
+      ],
+      "explanation": "Per IRC R311.7.10.1, spiral stairways shall have a minimum headroom of 6 feet 6 inches.",
+      "code_ref": "IRC R311.7.10.1",
+      "difficulty": "hard",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-113",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Stair Lighting",
+      "question": "Where is lighting required for interior stairs?",
+      "options": [
+        {"id": "a", "text": "Only at the top of the stairs"},
+        {"id": "b", "text": "At the top and bottom of each flight", "correct": true},
+        {"id": "c", "text": "On each tread"},
+        {"id": "d", "text": "Only at the bottom of the stairs"}
+      ],
+      "explanation": "Per IRC R303.7, interior stairways shall have an artificial light source capable of illuminating the treads, with switches at each floor level.",
+      "code_ref": "IRC R303.7",
+      "difficulty": "easy",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-114",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Winder Stairs",
+      "question": "What is the minimum tread depth for winder treads at the walk line?",
+      "options": [
+        {"id": "a", "text": "6 inches"},
+        {"id": "b", "text": "8 inches"},
+        {"id": "c", "text": "10 inches", "correct": true},
+        {"id": "d", "text": "12 inches"}
+      ],
+      "explanation": "Per IRC R311.7.5.2.1, winder treads shall have a minimum tread depth of 10 inches measured at a point 12 inches from the narrower edge.",
+      "code_ref": "IRC R311.7.5.2.1",
+      "difficulty": "hard",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-115",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Winder Stairs",
+      "question": "What is the minimum tread depth at the narrowest point for winder stairs?",
+      "options": [
+        {"id": "a", "text": "4 inches"},
+        {"id": "b", "text": "6 inches", "correct": true},
+        {"id": "c", "text": "8 inches"},
+        {"id": "d", "text": "10 inches"}
+      ],
+      "explanation": "Per IRC R311.7.5.2.1, winder treads shall have a minimum tread depth of 6 inches at any point.",
+      "code_ref": "IRC R311.7.5.2.1",
+      "difficulty": "hard",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-116",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Stair Width",
+      "question": "What is the minimum clear width for residential stairs?",
+      "options": [
+        {"id": "a", "text": "30 inches"},
+        {"id": "b", "text": "32 inches"},
+        {"id": "c", "text": "36 inches", "correct": true},
+        {"id": "d", "text": "44 inches"}
+      ],
+      "explanation": "Per IRC R311.7.1, stairways shall be not less than 36 inches in clear width above the handrail height.",
+      "code_ref": "IRC R311.7.1",
+      "difficulty": "easy",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-117",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Nosings",
+      "question": "What is the maximum nosing projection on stair treads?",
+      "options": [
+        {"id": "a", "text": "3/4 inch"},
+        {"id": "b", "text": "1 inch"},
+        {"id": "c", "text": "1-1/4 inches", "correct": true},
+        {"id": "d", "text": "1-1/2 inches"}
+      ],
+      "explanation": "Per IRC R311.7.5.3, nosings shall project not more than 1-1/4 inches beyond the tread below and not less than 3/4 inch.",
+      "code_ref": "IRC R311.7.5.3",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-118",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Riser Uniformity",
+      "question": "What is the maximum variation allowed between riser heights on the same flight?",
+      "options": [
+        {"id": "a", "text": "1/4 inch"},
+        {"id": "b", "text": "3/8 inch", "correct": true},
+        {"id": "c", "text": "1/2 inch"},
+        {"id": "d", "text": "3/4 inch"}
+      ],
+      "explanation": "Per IRC R311.7.5.1, the greatest riser height within any flight shall not exceed the smallest by more than 3/8 inch.",
+      "code_ref": "IRC R311.7.5.1",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-119",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Handrail Graspability",
+      "question": "What is the required diameter for circular cross-section handrails?",
+      "options": [
+        {"id": "a", "text": "1 inch to 1-1/4 inches"},
+        {"id": "b", "text": "1-1/4 inches to 2 inches", "correct": true},
+        {"id": "c", "text": "2 inches to 2-1/2 inches"},
+        {"id": "d", "text": "Any diameter if graspable"}
+      ],
+      "explanation": "Per IRC R311.7.8.3, circular cross-section handrails shall have an outside diameter between 1-1/4 inches and 2 inches.",
+      "code_ref": "IRC R311.7.8.3",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-120",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Handrail Clearance",
+      "question": "What is the minimum clearance required between the handrail and the wall?",
+      "options": [
+        {"id": "a", "text": "1 inch"},
+        {"id": "b", "text": "1-1/4 inches"},
+        {"id": "c", "text": "1-1/2 inches", "correct": true},
+        {"id": "d", "text": "2 inches"}
+      ],
+      "explanation": "Per IRC R311.7.8.4, the handgrip portion of handrails shall have a clearance of not less than 1-1/2 inches from the wall.",
+      "code_ref": "IRC R311.7.8.4",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-121",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Handrail Continuity",
+      "question": "Where are handrail extensions required?",
+      "options": [
+        {"id": "a", "text": "Only at the top of the flight"},
+        {"id": "b", "text": "At the top and bottom of the flight", "correct": true},
+        {"id": "c", "text": "Extensions are optional"},
+        {"id": "d", "text": "Only at the bottom of the flight"}
+      ],
+      "explanation": "Per IRC R311.7.8.2, handrails shall return to the wall or terminate in a newel post, with extensions required at the top and bottom of the stair flight.",
+      "code_ref": "IRC R311.7.8.2",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-122",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Guard Opening",
+      "question": "What is the maximum triangular opening at open risers per the guard opening limitation?",
+      "options": [
+        {"id": "a", "text": "4 inches"},
+        {"id": "b", "text": "6 inches", "correct": true},
+        {"id": "c", "text": "8 inches"},
+        {"id": "d", "text": "No limitation for triangular openings"}
+      ],
+      "explanation": "Per IRC R312.1.3, the triangular opening formed by the riser, tread, and bottom rail of a guard shall not allow passage of a sphere 6 inches in diameter.",
+      "code_ref": "IRC R312.1.3",
+      "difficulty": "hard",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-123",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Basement Egress",
+      "question": "When is an emergency escape opening required in a basement?",
+      "options": [
+        {"id": "a", "text": "All basements"},
+        {"id": "b", "text": "Basements with habitable space", "correct": true},
+        {"id": "c", "text": "Only finished basements"},
+        {"id": "d", "text": "Only basements with sleeping rooms"}
+      ],
+      "explanation": "Per IRC R310.1, basements with habitable space shall have at least one emergency escape and rescue opening that opens directly to the exterior.",
+      "code_ref": "IRC R310.1",
+      "difficulty": "easy",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-124",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Window Wells",
+      "question": "What is the minimum area for a window well serving an emergency escape opening?",
+      "options": [
+        {"id": "a", "text": "6 square feet"},
+        {"id": "b", "text": "9 square feet", "correct": true},
+        {"id": "c", "text": "12 square feet"},
+        {"id": "d", "text": "Same as the window opening"}
+      ],
+      "explanation": "Per IRC R310.2.3, window wells shall have a horizontal area of not less than 9 square feet, with a minimum dimension of 36 inches.",
+      "code_ref": "IRC R310.2.3",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-125",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Window Wells",
+      "question": "When is a ladder required in a window well?",
+      "options": [
+        {"id": "a", "text": "All window wells"},
+        {"id": "b", "text": "When well depth exceeds 44 inches", "correct": true},
+        {"id": "c", "text": "When well width exceeds 36 inches"},
+        {"id": "d", "text": "Ladders are never required"}
+      ],
+      "explanation": "Per IRC R310.2.3, window wells with a vertical depth greater than 44 inches shall be equipped with a ladder or steps.",
+      "code_ref": "IRC R310.2.3",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-126",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Garage Door",
+      "question": "What type of door is required between a dwelling and attached garage?",
+      "options": [
+        {"id": "a", "text": "Solid wood door only"},
+        {"id": "b", "text": "Self-closing, tight-fitting solid wood or steel door", "correct": true},
+        {"id": "c", "text": "Any door with weather stripping"},
+        {"id": "d", "text": "Fire-rated door assembly"}
+      ],
+      "explanation": "Per IRC R302.5.1, doors between the dwelling and garage shall be self-closing and tight-fitting. Solid wood doors not less than 1-3/8 inch thick or steel doors are acceptable.",
+      "code_ref": "IRC R302.5.1",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-127",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Opening Protection",
+      "question": "Are duct openings permitted through the fire separation between a dwelling and garage?",
+      "options": [
+        {"id": "a", "text": "Yes, with no restrictions"},
+        {"id": "b", "text": "No, ducts are not permitted", "correct": true},
+        {"id": "c", "text": "Yes, with fire dampers"},
+        {"id": "d", "text": "Only return air ducts"}
+      ],
+      "explanation": "Per IRC R302.5.2, ducts in the garage and ducts penetrating the walls or ceilings separating the dwelling from the garage shall be constructed of minimum 26-gauge steel with no openings into the garage.",
+      "code_ref": "IRC R302.5.2",
+      "difficulty": "hard",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-128",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Townhouse Separation",
+      "question": "What fire-resistance rating is required for townhouse separation walls?",
+      "options": [
+        {"id": "a", "text": "1/2-hour"},
+        {"id": "b", "text": "1-hour", "correct": true},
+        {"id": "c", "text": "2-hour"},
+        {"id": "d", "text": "No rating required"}
+      ],
+      "explanation": "Per IRC R302.2, each townhouse shall be separated by a fire-resistance-rated wall assembly meeting the requirements for a 1-hour fire-resistance rating.",
+      "code_ref": "IRC R302.2",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-129",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Townhouse Separation",
+      "question": "How must townhouse separation walls be constructed at the roof?",
+      "options": [
+        {"id": "a", "text": "Stop at the ceiling line"},
+        {"id": "b", "text": "Extend to the underside of the roof sheathing", "correct": true},
+        {"id": "c", "text": "Extend 2 feet above the roof"},
+        {"id": "d", "text": "May terminate at the attic floor"}
+      ],
+      "explanation": "Per IRC R302.2.2, fire-resistance-rated separation walls shall extend to and be tight against the underside of the roof sheathing, deck, or slab.",
+      "code_ref": "IRC R302.2.2",
+      "difficulty": "hard",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    },
+    {
+      "id": "gc-bldg-130",
+      "trade": "gc",
+      "category": "Building Codes",
+      "subcategory": "Fireplace Clearances",
+      "question": "What is the minimum clearance from combustible materials to a masonry fireplace opening?",
+      "options": [
+        {"id": "a", "text": "4 inches"},
+        {"id": "b", "text": "6 inches", "correct": true},
+        {"id": "c", "text": "12 inches"},
+        {"id": "d", "text": "18 inches"}
+      ],
+      "explanation": "Per IRC R1001.11, combustible materials shall not be placed within 6 inches of a fireplace opening. This increases to 12 inches for materials projecting more than 1-1/2 inches.",
+      "code_ref": "IRC R1001.11",
+      "difficulty": "medium",
+      "exam_relevance": ["residential_contractor", "general_contractor"]
+    }
+  ]
+}

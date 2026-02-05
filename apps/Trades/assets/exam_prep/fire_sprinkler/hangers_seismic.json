@@ -1,0 +1,502 @@
+{
+  "category": "Fire Sprinkler",
+  "subcategory": "Hangers and Seismic Protection",
+  "description": "Pipe supports and seismic bracing requirements",
+  "difficulty_distribution": {
+    "beginner": 10,
+    "intermediate": 15,
+    "advanced": 10
+  },
+  "questions": [
+    {
+      "id": "fs_hng_001",
+      "difficulty": "beginner",
+      "question": "What is the primary purpose of pipe hangers in sprinkler systems?",
+      "options": [
+        "To reduce noise",
+        "To support the weight of piping and maintain proper slope",
+        "To connect pipes together",
+        "To drain the system"
+      ],
+      "correct_answer": 1,
+      "explanation": "Hangers support the weight of pipe, water, and connected components while maintaining the designed slope for proper drainage.",
+      "code_reference": "NFPA 13, Section 9.1"
+    },
+    {
+      "id": "fs_hng_002",
+      "difficulty": "beginner",
+      "question": "What is the maximum spacing for hangers on 1-inch pipe?",
+      "options": [
+        "6 feet",
+        "8 feet",
+        "12 feet",
+        "15 feet"
+      ],
+      "correct_answer": 2,
+      "explanation": "Pipe 1-inch through 1-1/2 inch requires hangers at maximum 12-foot intervals. Larger pipe may have 15-foot spacing.",
+      "code_reference": "NFPA 13, Section 9.2.1"
+    },
+    {
+      "id": "fs_hng_003",
+      "difficulty": "beginner",
+      "question": "What is the maximum hanger spacing for 2-inch and larger pipe?",
+      "options": [
+        "8 feet",
+        "10 feet",
+        "12 feet",
+        "15 feet"
+      ],
+      "correct_answer": 3,
+      "explanation": "Pipe 2-inch and larger has a maximum hanger spacing of 15 feet under normal conditions.",
+      "code_reference": "NFPA 13, Section 9.2.1"
+    },
+    {
+      "id": "fs_hng_004",
+      "difficulty": "beginner",
+      "question": "What must hangers be attached to?",
+      "options": [
+        "Drywall",
+        "Building structure capable of supporting five times the weight",
+        "Other piping",
+        "Electrical conduit"
+      ],
+      "correct_answer": 1,
+      "explanation": "Hangers must be attached to the building structure with a safety factor of 5:1 to support the pipe, water, and system loads.",
+      "code_reference": "NFPA 13, Section 9.1"
+    },
+    {
+      "id": "fs_hng_005",
+      "difficulty": "beginner",
+      "question": "Can sprinkler piping hang from other sprinkler piping?",
+      "options": [
+        "Yes, any piping can support other piping",
+        "Only if specifically designed for the additional load",
+        "Never allowed",
+        "Only for temporary installations"
+      ],
+      "correct_answer": 1,
+      "explanation": "Piping may only support other piping if specifically designed for the combined loading, with properly sized hangers and attachments.",
+      "code_reference": "NFPA 13, Section 9.1"
+    },
+    {
+      "id": "fs_hng_006",
+      "difficulty": "beginner",
+      "question": "What type of hanger is commonly used for horizontal runs?",
+      "options": [
+        "Ring hanger",
+        "U-hook",
+        "Adjustable clevis hanger",
+        "All of the above are approved types"
+      ],
+      "correct_answer": 3,
+      "explanation": "Various hanger types are used including ring hangers, U-hooks, clevis hangers, and others. The type used depends on the application.",
+      "code_reference": "NFPA 13, Section 9.2"
+    },
+    {
+      "id": "fs_hng_007",
+      "difficulty": "beginner",
+      "question": "What is the maximum distance from the end of pipe to the last hanger?",
+      "options": [
+        "12 inches",
+        "36 inches",
+        "Half the maximum hanger spacing",
+        "Equal to hanger spacing"
+      ],
+      "correct_answer": 2,
+      "explanation": "The last hanger should be within half the maximum spacing distance from the end of the pipe to provide proper support.",
+      "code_reference": "NFPA 13, Section 9.2.1"
+    },
+    {
+      "id": "fs_hng_008",
+      "difficulty": "beginner",
+      "question": "What is seismic bracing?",
+      "options": [
+        "Earthquake-proof construction",
+        "Lateral restraint to prevent pipe movement during earthquakes",
+        "Extra strong pipe",
+        "Underground protection"
+      ],
+      "correct_answer": 1,
+      "explanation": "Seismic bracing provides lateral (sideways) restraint to prevent excessive pipe movement and damage during earthquake shaking.",
+      "code_reference": "NFPA 13, Section 9.3"
+    },
+    {
+      "id": "fs_hng_009",
+      "difficulty": "beginner",
+      "question": "Where is seismic bracing required?",
+      "options": [
+        "All buildings",
+        "In seismic design categories meeting code thresholds",
+        "Only high-rise buildings",
+        "Only California"
+      ],
+      "correct_answer": 1,
+      "explanation": "Seismic bracing is required in areas with significant seismic risk as defined by the building code (Seismic Design Categories C and higher).",
+      "code_reference": "NFPA 13, Section 9.3"
+    },
+    {
+      "id": "fs_hng_010",
+      "difficulty": "beginner",
+      "question": "What are the two types of seismic braces?",
+      "options": [
+        "Steel and aluminum",
+        "Longitudinal and transverse (lateral)",
+        "Fixed and flexible",
+        "Primary and secondary"
+      ],
+      "correct_answer": 1,
+      "explanation": "Seismic braces are installed in two directions: longitudinal (along the pipe) and transverse/lateral (perpendicular to the pipe).",
+      "code_reference": "NFPA 13, Section 9.3"
+    },
+    {
+      "id": "fs_hng_011",
+      "difficulty": "intermediate",
+      "question": "What is the maximum spacing for transverse (lateral) seismic braces?",
+      "options": [
+        "20 feet",
+        "40 feet",
+        "60 feet",
+        "Based on calculation, typically 40 feet maximum"
+      ],
+      "correct_answer": 3,
+      "explanation": "Transverse brace spacing is typically 40 feet maximum but varies based on pipe size, system configuration, and seismic zone.",
+      "code_reference": "NFPA 13, Section 9.3"
+    },
+    {
+      "id": "fs_hng_012",
+      "difficulty": "intermediate",
+      "question": "What is the maximum spacing for longitudinal seismic braces?",
+      "options": [
+        "40 feet",
+        "60 feet",
+        "80 feet",
+        "Based on calculation, typically 80 feet maximum"
+      ],
+      "correct_answer": 3,
+      "explanation": "Longitudinal brace spacing is typically 80 feet maximum, twice the transverse spacing, since longitudinal loads are generally less severe.",
+      "code_reference": "NFPA 13, Section 9.3"
+    },
+    {
+      "id": "fs_hng_013",
+      "difficulty": "intermediate",
+      "question": "What is a 4-way brace?",
+      "options": [
+        "Four separate braces",
+        "A single brace assembly providing both longitudinal and transverse restraint",
+        "Braces at four corners",
+        "Four-inch brace pipe"
+      ],
+      "correct_answer": 1,
+      "explanation": "A 4-way brace provides restraint in all horizontal directions (longitudinal and transverse) from a single location.",
+      "code_reference": "NFPA 13, Section 9.3"
+    },
+    {
+      "id": "fs_hng_014",
+      "difficulty": "intermediate",
+      "question": "What is a flexible coupling (seismic coupling)?",
+      "options": [
+        "A rubber coupling",
+        "A coupling allowing pipe movement without failure",
+        "A temporary coupling",
+        "A coupling for copper pipe"
+      ],
+      "correct_answer": 1,
+      "explanation": "Flexible couplings allow controlled pipe movement at joints during seismic events, preventing pipe breaks at connections.",
+      "code_reference": "NFPA 13, Section 9.3"
+    },
+    {
+      "id": "fs_hng_015",
+      "difficulty": "intermediate",
+      "question": "Where are seismic separation assemblies required?",
+      "options": [
+        "Between every floor",
+        "Where piping crosses building seismic joints",
+        "At all risers",
+        "At all valves"
+      ],
+      "correct_answer": 1,
+      "explanation": "Seismic separation assemblies (flexible connections) are required where piping crosses building movement/seismic joints.",
+      "code_reference": "NFPA 13, Section 9.3"
+    },
+    {
+      "id": "fs_hng_016",
+      "difficulty": "intermediate",
+      "question": "What clearance is required around piping passing through walls/floors?",
+      "options": [
+        "None, tight fit required",
+        "Clearance or flexible fitting to allow movement",
+        "6 inches minimum",
+        "12 inches minimum"
+      ],
+      "correct_answer": 1,
+      "explanation": "Piping through walls and floors needs clearance (typically 2 inches) or flexible fittings to allow for building movement during seismic events.",
+      "code_reference": "NFPA 13, Section 9.3"
+    },
+    {
+      "id": "fs_hng_017",
+      "difficulty": "intermediate",
+      "question": "What is the zone of influence for a seismic brace?",
+      "options": [
+        "The building zone",
+        "The length of pipe effectively restrained by one brace",
+        "The seismic zone",
+        "The pipe size"
+      ],
+      "correct_answer": 1,
+      "explanation": "Zone of influence is the pipe length that a single brace effectively restrains, determining spacing between braces.",
+      "code_reference": "NFPA 13, Section 9.3"
+    },
+    {
+      "id": "fs_hng_018",
+      "difficulty": "intermediate",
+      "question": "What must hangers and braces be made of?",
+      "options": [
+        "Any metal",
+        "Listed materials with appropriate load ratings",
+        "Only steel",
+        "Only factory-made"
+      ],
+      "correct_answer": 1,
+      "explanation": "Hangers and seismic braces must be listed and rated for the loads they will carry, with appropriate materials for the environment.",
+      "code_reference": "NFPA 13, Section 9.1"
+    },
+    {
+      "id": "fs_hng_019",
+      "difficulty": "intermediate",
+      "question": "Can wire hangers be used for sprinkler systems?",
+      "options": [
+        "Yes, for any pipe size",
+        "Only for armover pipes to individual sprinklers under certain conditions",
+        "Never allowed",
+        "Only in dry systems"
+      ],
+      "correct_answer": 1,
+      "explanation": "Wire can only be used for armover support to individual sprinklers meeting specific criteria - limited length, specific wire size, etc.",
+      "code_reference": "NFPA 13, Section 9.2.2"
+    },
+    {
+      "id": "fs_hng_020",
+      "difficulty": "intermediate",
+      "question": "What is the minimum rod size for hangers?",
+      "options": [
+        "1/4 inch",
+        "3/8 inch for pipes up to 4 inch",
+        "1/2 inch for all pipes",
+        "Based on pipe size per NFPA 13 tables"
+      ],
+      "correct_answer": 3,
+      "explanation": "Minimum hanger rod size is specified by NFPA 13 based on pipe size - typically 3/8\" for smaller pipe, larger for big pipe.",
+      "code_reference": "NFPA 13, Section 9.2.3"
+    },
+    {
+      "id": "fs_hng_021",
+      "difficulty": "intermediate",
+      "question": "What angle limitation applies to hanger rods?",
+      "options": [
+        "Must be vertical",
+        "Not to exceed 30 degrees from vertical",
+        "Any angle allowed",
+        "45 degrees maximum"
+      ],
+      "correct_answer": 1,
+      "explanation": "Hanger rods should be installed vertically or as close to vertical as possible, not exceeding 30 degrees from vertical.",
+      "code_reference": "NFPA 13, Section 9.2.4"
+    },
+    {
+      "id": "fs_hng_022",
+      "difficulty": "intermediate",
+      "question": "What is required at changes in pipe direction?",
+      "options": [
+        "No additional support",
+        "Support within specified distance of the direction change",
+        "Double the normal hangers",
+        "Seismic bracing only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Additional support is required near changes in direction to handle the additional stress at fittings and directional changes.",
+      "code_reference": "NFPA 13, Section 9.2.1"
+    },
+    {
+      "id": "fs_hng_023",
+      "difficulty": "advanced",
+      "question": "How is seismic load calculated for bracing?",
+      "options": [
+        "Same as gravity load",
+        "Based on pipe weight and seismic coefficient (Cp factor)",
+        "Fixed value per pipe size",
+        "Building weight divided by pipes"
+      ],
+      "correct_answer": 1,
+      "explanation": "Seismic loads are calculated using pipe/water weight multiplied by seismic coefficients (Cp) from building codes for the location.",
+      "code_reference": "NFPA 13, Section 9.3"
+    },
+    {
+      "id": "fs_hng_024",
+      "difficulty": "advanced",
+      "question": "What is the horizontal force coefficient (Cp) typically used for?",
+      "options": [
+        "Pipe sizing",
+        "Calculating seismic brace loads",
+        "Flow calculations",
+        "Pressure ratings"
+      ],
+      "correct_answer": 1,
+      "explanation": "Cp (horizontal force coefficient) is used to calculate the lateral seismic force the bracing must resist: F = Cp × Weight.",
+      "code_reference": "NFPA 13, Section 9.3"
+    },
+    {
+      "id": "fs_hng_025",
+      "difficulty": "advanced",
+      "question": "What is the typical angle for sway braces?",
+      "options": [
+        "Any angle",
+        "45 degrees maximum from vertical",
+        "90 degrees (horizontal)",
+        "30 degrees"
+      ],
+      "correct_answer": 1,
+      "explanation": "Sway braces should be installed at 45 degrees from vertical or less for effective lateral load resistance.",
+      "code_reference": "NFPA 13, Section 9.3"
+    },
+    {
+      "id": "fs_hng_026",
+      "difficulty": "advanced",
+      "question": "What is the uplift resistance requirement for hangers?",
+      "options": [
+        "None required",
+        "Must resist upward force during seismic events",
+        "Only for roof piping",
+        "Only in high seismic zones"
+      ],
+      "correct_answer": 1,
+      "explanation": "Hangers must resist both downward (gravity) and upward (seismic uplift) forces to prevent pipe separation during earthquakes.",
+      "code_reference": "NFPA 13, Section 9.3"
+    },
+    {
+      "id": "fs_hng_027",
+      "difficulty": "advanced",
+      "question": "What NFPA 13 appendix provides seismic calculation guidance?",
+      "options": [
+        "Appendix A",
+        "Appendix B",
+        "Appendix E",
+        "No appendix for seismic"
+      ],
+      "correct_answer": 2,
+      "explanation": "Appendix E of NFPA 13 provides detailed guidance and worksheets for seismic design of fire sprinkler systems.",
+      "code_reference": "NFPA 13, Appendix E"
+    },
+    {
+      "id": "fs_hng_028",
+      "difficulty": "advanced",
+      "question": "What is required when a brace fails load testing?",
+      "options": [
+        "Add another brace nearby",
+        "Brace must be replaced or reinforced to meet requirements",
+        "Note in records only",
+        "Reduce zone of influence"
+      ],
+      "correct_answer": 1,
+      "explanation": "Failed braces must be replaced or reinforced to achieve the required load resistance before system acceptance.",
+      "code_reference": "NFPA 13, Section 9.3"
+    },
+    {
+      "id": "fs_hng_029",
+      "difficulty": "advanced",
+      "question": "What is the C-clamp prohibition?",
+      "options": [
+        "C-clamps are always prohibited",
+        "C-clamps cannot be used for seismic bracing to the structure",
+        "C-clamps are the preferred method",
+        "C-clamps only for temporary use"
+      ],
+      "correct_answer": 1,
+      "explanation": "C-clamps generally cannot be used for seismic brace attachments as they may slip under dynamic loading. Welded or bolted connections are required.",
+      "code_reference": "NFPA 13, Section 9.3"
+    },
+    {
+      "id": "fs_hng_030",
+      "difficulty": "intermediate",
+      "question": "What is the restraint requirement for risers?",
+      "options": [
+        "No restraint needed",
+        "Must be restrained at top and intervals to prevent lateral movement",
+        "Only at bottom",
+        "Only seismic bracing"
+      ],
+      "correct_answer": 1,
+      "explanation": "Risers must be restrained at top, bottom, and intermediate locations as needed to prevent excessive lateral movement.",
+      "code_reference": "NFPA 13, Section 9.2"
+    },
+    {
+      "id": "fs_hng_031",
+      "difficulty": "intermediate",
+      "question": "Can powder-actuated fasteners be used for seismic bracing?",
+      "options": [
+        "Yes, for all applications",
+        "Only when listed and installed per manufacturer specifications",
+        "Never allowed",
+        "Only for light-duty applications"
+      ],
+      "correct_answer": 1,
+      "explanation": "Powder-actuated fasteners may be used when specifically listed for the application and installed per the manufacturer's instructions.",
+      "code_reference": "NFPA 13, Section 9.1"
+    },
+    {
+      "id": "fs_hng_032",
+      "difficulty": "intermediate",
+      "question": "What documentation is required for seismic bracing?",
+      "options": [
+        "None required",
+        "Locations shown on drawings with calculations supporting design",
+        "Verbal approval only",
+        "Manufacturer's letter only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Seismic bracing locations must be shown on system drawings with supporting calculations for loads and brace adequacy.",
+      "code_reference": "NFPA 13, Section 27.1"
+    },
+    {
+      "id": "fs_hng_033",
+      "difficulty": "advanced",
+      "question": "What is required for trapeze-type hangers?",
+      "options": [
+        "Not allowed",
+        "Must have lateral restraint in both directions",
+        "Only for main piping",
+        "Only for CPVC"
+      ],
+      "correct_answer": 1,
+      "explanation": "Trapeze hangers supporting multiple pipes need lateral restraint since they can swing. Proper bracing or rigid attachment is required.",
+      "code_reference": "NFPA 13, Section 9.2"
+    },
+    {
+      "id": "fs_hng_034",
+      "difficulty": "intermediate",
+      "question": "What is the hanger requirement near sprinklers?",
+      "options": [
+        "Hanger at every sprinkler",
+        "No specific requirement",
+        "Branch line supported to prevent sprinkler movement",
+        "One hanger per 4 sprinklers"
+      ],
+      "correct_answer": 2,
+      "explanation": "Branch lines must be adequately supported so that sprinklers don't move excessively, but a hanger isn't required at each sprinkler.",
+      "code_reference": "NFPA 13, Section 9.2"
+    },
+    {
+      "id": "fs_hng_035",
+      "difficulty": "advanced",
+      "question": "What material limitation applies to seismic brace components?",
+      "options": [
+        "Any metal",
+        "Only ferrous materials meeting specific standards",
+        "Only stainless steel",
+        "Only listed components"
+      ],
+      "correct_answer": 3,
+      "explanation": "Seismic brace components must be listed and meet specific material and load rating requirements for the application.",
+      "code_reference": "NFPA 13, Section 9.3"
+    }
+  ]
+}

@@ -1,0 +1,567 @@
+{
+  "topic_id": "FS-HYD",
+  "topic_name": "Hydraulic Calculations",
+  "code_version": "NFPA 13-2022",
+  "questions": [
+    {
+      "id": "FS-HYD-001",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-HYD",
+      "topic_name": "Hydraulic Calculations",
+      "code_articles": ["NFPA 13 Chapter 23"],
+      "code_tables": [],
+      "type": "calculation",
+      "difficulty": "medium",
+      "time_estimate_seconds": 120,
+      "question": "Using the K-factor formula Q = K√P, what is the flow from a K-5.6 sprinkler operating at 25 psi?",
+      "choices": [
+        {"id": "A", "text": "22.4 gpm"},
+        {"id": "B", "text": "25.0 gpm"},
+        {"id": "C", "text": "28.0 gpm"},
+        {"id": "D", "text": "31.3 gpm"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Q = K√P = 5.6 × √25 = 5.6 × 5 = 28.0 gpm",
+        "detailed": "The K-factor formula is Q = K√P where Q is flow in gpm, K is the K-factor, and P is pressure in psi. For a K-5.6 sprinkler at 25 psi: Q = 5.6 × √25 = 5.6 × 5 = 28.0 gpm.",
+        "how_to_find": "Apply the K-factor formula directly."
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "Chapter 23"},
+      "tags": ["k-factor", "flow", "hydraulics"],
+      "verified": true
+    },
+    {
+      "id": "FS-HYD-002",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-HYD",
+      "topic_name": "Hydraulic Calculations",
+      "code_articles": ["NFPA 13 Chapter 23"],
+      "code_tables": [],
+      "type": "calculation",
+      "difficulty": "medium",
+      "time_estimate_seconds": 120,
+      "question": "What pressure is required to achieve 20 gpm flow from a K-5.6 sprinkler?",
+      "choices": [
+        {"id": "A", "text": "10.2 psi"},
+        {"id": "B", "text": "12.8 psi"},
+        {"id": "C", "text": "15.3 psi"},
+        {"id": "D", "text": "18.0 psi"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "P = (Q/K)² = (20/5.6)² = 3.57² = 12.75 psi ≈ 12.8 psi",
+        "detailed": "Rearranging Q = K√P to solve for pressure: P = (Q/K)². For 20 gpm from a K-5.6: P = (20/5.6)² = (3.57)² = 12.75 psi.",
+        "how_to_find": "Rearrange the K-factor formula to solve for pressure."
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "Chapter 23"},
+      "tags": ["k-factor", "pressure", "hydraulics"],
+      "verified": true
+    },
+    {
+      "id": "FS-HYD-003",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-HYD",
+      "topic_name": "Hydraulic Calculations",
+      "code_articles": ["NFPA 13 23.4.4"],
+      "code_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What C-factor (Hazen-Williams coefficient) is used for black steel pipe in hydraulic calculations?",
+      "choices": [
+        {"id": "A", "text": "100"},
+        {"id": "B", "text": "120"},
+        {"id": "C", "text": "140"},
+        {"id": "D", "text": "150"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Black steel and galvanized steel pipe use C = 120.",
+        "detailed": "NFPA 13 specifies Hazen-Williams C-factors for different pipe materials. Black steel, galvanized steel, and cast iron use C = 120. Copper tube uses C = 150. CPVC uses C = 150.",
+        "how_to_find": "NFPA 13, Section 23.4.4.6 - Hazen-Williams C Values"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "23.4.4.6"},
+      "tags": ["c-factor", "hazen-williams", "pipe"],
+      "verified": true
+    },
+    {
+      "id": "FS-HYD-004",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-HYD",
+      "topic_name": "Hydraulic Calculations",
+      "code_articles": ["NFPA 13 23.4.4"],
+      "code_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What C-factor is used for CPVC and copper pipe?",
+      "choices": [
+        {"id": "A", "text": "100"},
+        {"id": "B", "text": "120"},
+        {"id": "C", "text": "140"},
+        {"id": "D", "text": "150"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "CPVC and copper use C = 150 due to smoother interior surface.",
+        "detailed": "CPVC, copper, and stainless steel pipe have smoother interior surfaces, resulting in less friction. They use a Hazen-Williams C-factor of 150.",
+        "how_to_find": "NFPA 13, Section 23.4.4.6"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "23.4.4.6"},
+      "tags": ["c-factor", "cpvc", "copper"],
+      "verified": true
+    },
+    {
+      "id": "FS-HYD-005",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-HYD",
+      "topic_name": "Hydraulic Calculations",
+      "code_articles": ["NFPA 13 23.4.4"],
+      "code_tables": [],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Elevation changes affect pressure at what rate?",
+      "choices": [
+        {"id": "A", "text": "0.289 psi per foot"},
+        {"id": "B", "text": "0.433 psi per foot"},
+        {"id": "C", "text": "0.577 psi per foot"},
+        {"id": "D", "text": "1.0 psi per foot"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Water pressure changes 0.433 psi for every foot of elevation change.",
+        "detailed": "The pressure exerted by a column of water is 0.433 psi per foot of height. Going up in elevation decreases pressure (subtract 0.433 psi/ft), going down increases it (add 0.433 psi/ft).",
+        "how_to_find": "Standard hydraulic principle: 1 ft of water = 0.433 psi"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "23.4.4.4"},
+      "tags": ["elevation", "pressure", "hydraulics"],
+      "verified": true
+    },
+    {
+      "id": "FS-HYD-006",
+      "version": "1.0",
+      "exam_types": ["nicet_3", "state"],
+      "topic_id": "FS-HYD",
+      "topic_name": "Hydraulic Calculations",
+      "code_articles": ["NFPA 13 23.4.4"],
+      "code_tables": [],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "A sprinkler is located 30 feet above the source. If the source pressure is 100 psi, what is the static pressure at the sprinkler (ignoring friction loss)?",
+      "choices": [
+        {"id": "A", "text": "74.0 psi"},
+        {"id": "B", "text": "82.3 psi"},
+        {"id": "C", "text": "87.0 psi"},
+        {"id": "D", "text": "91.5 psi"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "100 - (30 × 0.433) = 100 - 13 = 87 psi",
+        "detailed": "Elevation head loss = 30 ft × 0.433 psi/ft = 13.0 psi. Pressure at sprinkler = 100 - 13 = 87 psi. Pressure decreases when going up in elevation.",
+        "how_to_find": "Subtract 0.433 psi per foot of elevation above the source."
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "23.4.4.4"},
+      "tags": ["elevation", "pressure", "calculation"],
+      "verified": true
+    },
+    {
+      "id": "FS-HYD-007",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-HYD",
+      "topic_name": "Hydraulic Calculations",
+      "code_articles": ["NFPA 13 23.4.4"],
+      "code_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "In the Hazen-Williams formula, friction loss is proportional to flow rate raised to what power?",
+      "choices": [
+        {"id": "A", "text": "1.0"},
+        {"id": "B", "text": "1.5"},
+        {"id": "C", "text": "1.85"},
+        {"id": "D", "text": "2.0"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Friction loss is proportional to Q^1.85 in the Hazen-Williams formula.",
+        "detailed": "The Hazen-Williams formula for friction loss is: p = (4.52 × Q^1.85) / (C^1.85 × d^4.87). Flow is raised to the 1.85 power, meaning small changes in flow create significant friction loss changes.",
+        "how_to_find": "Review the Hazen-Williams formula structure."
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "23.4.4.5"},
+      "tags": ["hazen-williams", "friction loss", "formula"],
+      "verified": true
+    },
+    {
+      "id": "FS-HYD-008",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-HYD",
+      "topic_name": "Hydraulic Calculations",
+      "code_articles": ["NFPA 13 23.4.4"],
+      "code_tables": [],
+      "type": "concept",
+      "difficulty": "hard",
+      "time_estimate_seconds": 90,
+      "question": "What method is used to add flows at pipe junctions in hydraulic calculations?",
+      "choices": [
+        {"id": "A", "text": "Direct addition of flows"},
+        {"id": "B", "text": "Square root of sum of squares"},
+        {"id": "C", "text": "Average of flows"},
+        {"id": "D", "text": "Weighted average based on pipe size"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Flows are directly added at junction points.",
+        "detailed": "At any pipe junction, the total flow in equals the total flow out. When branch lines feed into a cross main, the flows are simply added together to determine the flow in the main.",
+        "how_to_find": "Basic hydraulic principle - conservation of mass."
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "23.4.4"},
+      "tags": ["junction", "flow", "hydraulics"],
+      "verified": true
+    },
+    {
+      "id": "FS-HYD-009",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-HYD",
+      "topic_name": "Hydraulic Calculations",
+      "code_articles": ["NFPA 13 11.2.3"],
+      "code_tables": [],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "For Light Hazard with a design density of 0.10 gpm/sq ft and a design area of 1500 sq ft, what is the minimum required sprinkler flow?",
+      "choices": [
+        {"id": "A", "text": "100 gpm"},
+        {"id": "B", "text": "125 gpm"},
+        {"id": "C", "text": "150 gpm"},
+        {"id": "D", "text": "200 gpm"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Minimum flow = Density × Area = 0.10 × 1500 = 150 gpm",
+        "detailed": "The minimum sprinkler demand is calculated by multiplying the design density by the design area. For Light Hazard: 0.10 gpm/sf × 1500 sf = 150 gpm minimum sprinkler demand.",
+        "how_to_find": "Density × Area calculation from NFPA 13 Figure 11.2.3.1.1"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "11.2.3.1.1"},
+      "tags": ["density", "design area", "demand"],
+      "verified": true
+    },
+    {
+      "id": "FS-HYD-010",
+      "version": "1.0",
+      "exam_types": ["nicet_3", "state"],
+      "topic_id": "FS-HYD",
+      "topic_name": "Hydraulic Calculations",
+      "code_articles": ["NFPA 13 23.4.4"],
+      "code_tables": [],
+      "type": "concept",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "When calculating friction loss through fittings, what method is typically used?",
+      "choices": [
+        {"id": "A", "text": "Direct pressure drop per fitting"},
+        {"id": "B", "text": "Equivalent length method"},
+        {"id": "C", "text": "K-factor method"},
+        {"id": "D", "text": "Percentage increase method"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Fittings are converted to equivalent lengths of straight pipe.",
+        "detailed": "The equivalent length method converts each fitting to an equivalent length of straight pipe that would produce the same friction loss. For example, a 2-inch 90° elbow equals approximately 5 feet of 2-inch pipe.",
+        "how_to_find": "NFPA 13, Section 23.4.4.7 - Equivalent Pipe Lengths"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "23.4.4.7"},
+      "tags": ["equivalent length", "fittings", "friction loss"],
+      "verified": true
+    },
+    {
+      "id": "FS-HYD-011",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-HYD",
+      "topic_name": "Hydraulic Calculations",
+      "code_articles": ["NFPA 13 11.2.3"],
+      "code_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "The remote design area should be positioned to:",
+      "choices": [
+        {"id": "A", "text": "Include the sprinklers closest to the riser"},
+        {"id": "B", "text": "Include the most hydraulically demanding area"},
+        {"id": "C", "text": "Be exactly square"},
+        {"id": "D", "text": "Include all sprinklers on one branch line only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "The remote area is the most hydraulically demanding location.",
+        "detailed": "NFPA 13 requires the design area to be the hydraulically most demanding area, typically the area most remote from the water supply. This ensures the system can deliver the required density throughout the building.",
+        "how_to_find": "NFPA 13, Section 11.2.3.2 - Design Area Location"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "11.2.3.2"},
+      "tags": ["design area", "remote area", "hydraulics"],
+      "verified": true
+    },
+    {
+      "id": "FS-HYD-012",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-HYD",
+      "topic_name": "Hydraulic Calculations",
+      "code_articles": ["NFPA 13 11.2.3"],
+      "code_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "The design area should have a dimension parallel to the branch lines of at least:",
+      "choices": [
+        {"id": "A", "text": "0.5 × √A"},
+        {"id": "B", "text": "0.75 × √A"},
+        {"id": "C", "text": "1.0 × √A"},
+        {"id": "D", "text": "1.2 × √A"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Dimension parallel to branch lines must be at least 1.2√A.",
+        "detailed": "NFPA 13 Section 11.2.3.2.3 requires the design area to have a dimension parallel to branch lines of at least 1.2 times the square root of the area. This ensures the design area isn't too narrow.",
+        "how_to_find": "NFPA 13, Section 11.2.3.2.3 - Design Area Shape"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "11.2.3.2.3"},
+      "tags": ["design area", "shape", "dimensions"],
+      "verified": true
+    },
+    {
+      "id": "FS-HYD-013",
+      "version": "1.0",
+      "exam_types": ["nicet_3", "state"],
+      "topic_id": "FS-HYD",
+      "topic_name": "Hydraulic Calculations",
+      "code_articles": ["NFPA 13 23.4.4"],
+      "code_tables": [],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "Two sprinklers on a branch line are flowing. The first sprinkler flows 20 gpm at 7.7 psi. If there is 2 psi friction loss between sprinklers, what is the pressure at the second sprinkler?",
+      "choices": [
+        {"id": "A", "text": "5.7 psi"},
+        {"id": "B", "text": "7.7 psi"},
+        {"id": "C", "text": "9.7 psi"},
+        {"id": "D", "text": "12.0 psi"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Second sprinkler pressure = First pressure + friction loss = 7.7 + 2 = 9.7 psi",
+        "detailed": "When calculating toward the source, you add friction losses. The second sprinkler (closer to the source) operates at a higher pressure: 7.7 psi + 2 psi friction loss = 9.7 psi.",
+        "how_to_find": "Add friction loss when moving toward source in hydraulic calculations."
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "23.4.4"},
+      "tags": ["friction loss", "pressure", "branch line"],
+      "verified": true
+    },
+    {
+      "id": "FS-HYD-014",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-HYD",
+      "topic_name": "Hydraulic Calculations",
+      "code_articles": ["NFPA 13 11.2.4"],
+      "code_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "The total water supply demand for a sprinkler system includes:",
+      "choices": [
+        {"id": "A", "text": "Sprinkler demand only"},
+        {"id": "B", "text": "Sprinkler demand plus hose stream allowance"},
+        {"id": "C", "text": "Sprinkler demand plus 25%"},
+        {"id": "D", "text": "Sprinkler demand times safety factor"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Total demand = Sprinkler system demand + Hose stream allowance.",
+        "detailed": "NFPA 13 Section 11.2.4 requires the water supply to meet the sprinkler system demand PLUS a hose stream allowance (100-500 gpm depending on hazard). Both must be added for total demand.",
+        "how_to_find": "NFPA 13, Section 11.2.4 - Water Supply Requirements"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "11.2.4"},
+      "tags": ["water supply", "hose stream", "demand"],
+      "verified": true
+    },
+    {
+      "id": "FS-HYD-015",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-HYD",
+      "topic_name": "Hydraulic Calculations",
+      "code_articles": ["NFPA 13 11.2.4"],
+      "code_tables": [],
+      "type": "calculation",
+      "difficulty": "medium",
+      "time_estimate_seconds": 120,
+      "question": "A Light Hazard system has a calculated sprinkler demand of 175 gpm at 55 psi. What is the total water supply demand?",
+      "choices": [
+        {"id": "A", "text": "175 gpm at 55 psi"},
+        {"id": "B", "text": "225 gpm at 55 psi"},
+        {"id": "C", "text": "275 gpm at 55 psi"},
+        {"id": "D", "text": "425 gpm at 55 psi"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "175 gpm sprinkler + 100 gpm hose stream = 275 gpm total.",
+        "detailed": "For Light Hazard, add 100 gpm hose stream allowance to the sprinkler demand. Total demand = 175 + 100 = 275 gpm at 55 psi (hose stream is added at the same pressure point).",
+        "how_to_find": "Add hose stream allowance per NFPA 13, Section 11.2.4.4"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "11.2.4.4"},
+      "tags": ["demand", "hose stream", "calculation"],
+      "verified": true
+    },
+    {
+      "id": "FS-HYD-016",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-HYD",
+      "topic_name": "Hydraulic Calculations",
+      "code_articles": ["NFPA 13 23.4.1"],
+      "code_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 75,
+      "question": "What is the minimum starting pressure for the most remote sprinkler in hydraulic calculations?",
+      "choices": [
+        {"id": "A", "text": "5 psi"},
+        {"id": "B", "text": "7 psi"},
+        {"id": "C", "text": "10 psi"},
+        {"id": "D", "text": "15 psi"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Minimum pressure at any sprinkler is 7 psi.",
+        "detailed": "NFPA 13 Section 23.4.1 requires a minimum operating pressure of 7 psi at any sprinkler to ensure proper spray pattern development. Some extended coverage and ESFR sprinklers require higher minimums per their listings.",
+        "how_to_find": "NFPA 13, Section 23.4.1 - Minimum Operating Pressure"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "23.4.1"},
+      "tags": ["minimum pressure", "sprinkler", "hydraulics"],
+      "verified": true
+    },
+    {
+      "id": "FS-HYD-017",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-HYD",
+      "topic_name": "Hydraulic Calculations",
+      "code_articles": ["NFPA 13 23.4.4"],
+      "code_tables": [],
+      "type": "concept",
+      "difficulty": "hard",
+      "time_estimate_seconds": 90,
+      "question": "In a gridded system, how is flow distributed through the grid?",
+      "choices": [
+        {"id": "A", "text": "Equally through all paths"},
+        {"id": "B", "text": "Based on pipe diameter only"},
+        {"id": "C", "text": "Inversely proportional to path resistance"},
+        {"id": "D", "text": "Through the shortest path only"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Flow divides inversely proportional to path resistance (takes path of least resistance).",
+        "detailed": "In gridded systems, water takes all available paths but more flow goes through paths with less resistance. The calculation must balance pressures at common junction points to determine actual flow splits.",
+        "how_to_find": "Hydraulic grid theory - flow seeks path of least resistance."
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "23.4.4"},
+      "tags": ["grid", "flow distribution", "hydraulics"],
+      "verified": true
+    },
+    {
+      "id": "FS-HYD-018",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-HYD",
+      "topic_name": "Hydraulic Calculations",
+      "code_articles": ["NFPA 13 23.4.4"],
+      "code_tables": [],
+      "type": "calculation",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the flow from a K-8.0 sprinkler operating at 16 psi?",
+      "choices": [
+        {"id": "A", "text": "24 gpm"},
+        {"id": "B", "text": "28 gpm"},
+        {"id": "C", "text": "32 gpm"},
+        {"id": "D", "text": "36 gpm"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Q = K√P = 8.0 × √16 = 8.0 × 4 = 32 gpm",
+        "detailed": "Using the K-factor formula: Q = K√P = 8.0 × √16 = 8.0 × 4 = 32 gpm. The K-8.0 (large orifice) sprinkler delivers more flow at the same pressure than a K-5.6.",
+        "how_to_find": "Apply K-factor formula directly."
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "Chapter 23"},
+      "tags": ["k-factor", "flow", "calculation"],
+      "verified": true
+    },
+    {
+      "id": "FS-HYD-019",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-HYD",
+      "topic_name": "Hydraulic Calculations",
+      "code_articles": ["NFPA 13 23.4.4"],
+      "code_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the purpose of velocity pressure (Pv) in hydraulic calculations?",
+      "choices": [
+        {"id": "A", "text": "To calculate friction loss"},
+        {"id": "B", "text": "To account for energy in flowing water"},
+        {"id": "C", "text": "To determine pipe size"},
+        {"id": "D", "text": "To set sprinkler spacing"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Velocity pressure accounts for kinetic energy in moving water.",
+        "detailed": "Velocity pressure (Pv = 0.001123Q²/d⁴) represents the kinetic energy of flowing water. In most sprinkler calculations it's small and often ignored, but it becomes significant in large mains with high velocities.",
+        "how_to_find": "NFPA 13, Section 23.4.4.2 - Velocity Pressure"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "23.4.4.2"},
+      "tags": ["velocity pressure", "energy", "hydraulics"],
+      "verified": true
+    },
+    {
+      "id": "FS-HYD-020",
+      "version": "1.0",
+      "exam_types": ["nicet_3", "state"],
+      "topic_id": "FS-HYD",
+      "topic_name": "Hydraulic Calculations",
+      "code_articles": ["NFPA 13 11.2.3"],
+      "code_tables": [],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "An Ordinary Hazard Group 1 system requires 0.15 gpm/sq ft over 1500 sq ft. How many sprinklers must be calculated if each sprinkler covers 130 sq ft?",
+      "choices": [
+        {"id": "A", "text": "9 sprinklers"},
+        {"id": "B", "text": "11 sprinklers"},
+        {"id": "C", "text": "12 sprinklers"},
+        {"id": "D", "text": "15 sprinklers"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Number of sprinklers = 1500 ÷ 130 = 11.5, round up to 12.",
+        "detailed": "Divide design area by coverage per sprinkler: 1500 sf ÷ 130 sf/sprinkler = 11.5 sprinklers. Always round up to the next whole sprinkler, so 12 sprinklers must be calculated.",
+        "how_to_find": "Design area ÷ coverage per sprinkler, round up."
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "11.2.3.2.4"},
+      "tags": ["sprinkler count", "design area", "calculation"],
+      "verified": true
+    }
+  ]
+}

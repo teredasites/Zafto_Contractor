@@ -1,0 +1,432 @@
+{
+  "category": "Elevator Mechanic",
+  "subcategory": "ADA Accessibility Requirements",
+  "description": "Americans with Disabilities Act elevator requirements",
+  "difficulty_distribution": {
+    "beginner": 10,
+    "intermediate": 12,
+    "advanced": 8
+  },
+  "questions": [
+    {
+      "id": "elev_ada_001",
+      "difficulty": "beginner",
+      "question": "What federal law requires accessible elevator design?",
+      "options": [
+        "OSHA",
+        "Americans with Disabilities Act (ADA)",
+        "Fair Housing Act only",
+        "Building code only"
+      ],
+      "correct_answer": 1,
+      "explanation": "The Americans with Disabilities Act (ADA) mandates accessibility requirements for elevators in public and commercial buildings.",
+      "code_reference": "ADA Standards"
+    },
+    {
+      "id": "elev_ada_002",
+      "difficulty": "beginner",
+      "question": "What is the minimum clear door opening width for accessible elevators?",
+      "options": [
+        "32 inches",
+        "36 inches",
+        "42 inches",
+        "48 inches"
+      ],
+      "correct_answer": 1,
+      "explanation": "Accessible elevator doors must provide at least 36 inches clear opening width to accommodate wheelchairs.",
+      "code_reference": "ADA Standards 407.4.1"
+    },
+    {
+      "id": "elev_ada_003",
+      "difficulty": "beginner",
+      "question": "What is the maximum height for elevator control buttons?",
+      "options": [
+        "42 inches",
+        "48 inches from floor (54 inches for side approach)",
+        "54 inches",
+        "60 inches"
+      ],
+      "correct_answer": 1,
+      "explanation": "Hall call buttons and car control buttons must be no higher than 48 inches for a forward reach or 54 inches for side reach approaches.",
+      "code_reference": "ADA Standards 407.4.6"
+    },
+    {
+      "id": "elev_ada_004",
+      "difficulty": "beginner",
+      "question": "What tactile markings are required on elevator buttons?",
+      "options": [
+        "None required",
+        "Raised characters and Braille adjacent to buttons",
+        "Only Braille",
+        "Only raised numbers"
+      ],
+      "correct_answer": 1,
+      "explanation": "Elevator floor buttons must have raised (tactile) characters and Braille, located to the left of the button, for visually impaired users.",
+      "code_reference": "ADA Standards 407.4.7"
+    },
+    {
+      "id": "elev_ada_005",
+      "difficulty": "beginner",
+      "question": "What audible signal is required when an elevator arrives at a floor?",
+      "options": [
+        "No signal required",
+        "One tone for up, two tones for down",
+        "Verbal announcement only",
+        "Bell only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Audible arrival signals must indicate direction of travel: one tone for up, two tones for down, helping visually impaired passengers.",
+      "code_reference": "ADA Standards 407.4.8"
+    },
+    {
+      "id": "elev_ada_006",
+      "difficulty": "beginner",
+      "question": "What is the door reopening device requirement?",
+      "options": [
+        "None required",
+        "Must detect objects and reopen for at least 20 seconds",
+        "Manual override only",
+        "Photoeye only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Elevator doors must have reopening devices and remain fully open for at least 20 seconds in response to the obstruction detection.",
+      "code_reference": "ADA Standards 407.3.3"
+    },
+    {
+      "id": "elev_ada_007",
+      "difficulty": "beginner",
+      "question": "What is the minimum elevator car size for accessible elevators?",
+      "options": [
+        "No minimum",
+        "68 inches deep × 51 inches wide (with center door)",
+        "48 inches × 48 inches",
+        "60 inches × 60 inches"
+      ],
+      "correct_answer": 1,
+      "explanation": "Minimum car dimensions depend on door location. For center-opening doors: 51\" wide × 68\" deep minimum to allow wheelchair maneuvering.",
+      "code_reference": "ADA Standards 407.4.1"
+    },
+    {
+      "id": "elev_ada_008",
+      "difficulty": "beginner",
+      "question": "What visual indicator is required for hall call registration?",
+      "options": [
+        "None required",
+        "Visible signal confirming hall call is registered",
+        "Audible only",
+        "Button color change"
+      ],
+      "correct_answer": 1,
+      "explanation": "Hall call buttons must have a visible signal that illuminates to indicate the call is registered and an elevator is responding.",
+      "code_reference": "ADA Standards 407.2.1"
+    },
+    {
+      "id": "elev_ada_009",
+      "difficulty": "beginner",
+      "question": "What is required for elevator car position indicators?",
+      "options": [
+        "None required",
+        "Visual display above car controls showing current floor",
+        "Audible only",
+        "Display at each landing only"
+      ],
+      "correct_answer": 1,
+      "explanation": "A visual car position indicator showing the floor number must be provided above the car control panel, visible from the car entrance.",
+      "code_reference": "ADA Standards 407.4.8"
+    },
+    {
+      "id": "elev_ada_010",
+      "difficulty": "beginner",
+      "question": "What floor designation must be on both hoistway door jambs?",
+      "options": [
+        "None required",
+        "Raised character and Braille floor designations on both jambs",
+        "Only on right side",
+        "Only numbers"
+      ],
+      "correct_answer": 1,
+      "explanation": "Each hoistway entrance must have tactile floor designations on both jambs, 60 inches above the floor, for visually impaired users.",
+      "code_reference": "ADA Standards 407.2.3"
+    },
+    {
+      "id": "elev_ada_011",
+      "difficulty": "intermediate",
+      "question": "What is the minimum door opening time for accessible elevators?",
+      "options": [
+        "3 seconds",
+        "Time calculated based on distance to call button",
+        "5 seconds fixed",
+        "No minimum"
+      ],
+      "correct_answer": 1,
+      "explanation": "Door open time must allow passengers to travel from the hall call button to the elevator. ADA provides a formula: T = D/1.5 ft/sec, minimum 5 seconds.",
+      "code_reference": "ADA Standards 407.3.4"
+    },
+    {
+      "id": "elev_ada_012",
+      "difficulty": "intermediate",
+      "question": "What is required for emergency communication in elevator cars?",
+      "options": [
+        "Phone only",
+        "Two-way communication with visual indication and accessible controls",
+        "Alarm button only",
+        "Intercom only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Emergency communication must include two-way voice communication and visual confirmation of connection, with controls meeting height requirements.",
+      "code_reference": "ADA Standards 407.4.9"
+    },
+    {
+      "id": "elev_ada_013",
+      "difficulty": "intermediate",
+      "question": "What is the maximum gap between elevator car and landing sill?",
+      "options": [
+        "1/2 inch",
+        "1-1/4 inches",
+        "2 inches",
+        "No limit if beveled"
+      ],
+      "correct_answer": 1,
+      "explanation": "The horizontal gap between the car sill and the landing sill must not exceed 1-1/4 inches for wheelchair accessibility.",
+      "code_reference": "ADA Standards 407.4.3"
+    },
+    {
+      "id": "elev_ada_014",
+      "difficulty": "intermediate",
+      "question": "What leveling accuracy is required for accessible elevators?",
+      "options": [
+        "Within 1 inch",
+        "Within 1/2 inch of landing",
+        "Within 2 inches",
+        "No requirement"
+      ],
+      "correct_answer": 1,
+      "explanation": "Elevators must maintain car floor level within 1/2 inch of the landing sill during loading and unloading for safe wheelchair access.",
+      "code_reference": "ADA Standards 407.4.2"
+    },
+    {
+      "id": "elev_ada_015",
+      "difficulty": "intermediate",
+      "question": "Where must the main car control panel be located?",
+      "options": [
+        "Center of the car",
+        "On a side wall accessible from the entrance",
+        "Rear wall only",
+        "Ceiling"
+      ],
+      "correct_answer": 1,
+      "explanation": "The main car control panel must be on a side wall, within reach of a person entering, with emergency controls on all panels.",
+      "code_reference": "ADA Standards 407.4.6"
+    },
+    {
+      "id": "elev_ada_016",
+      "difficulty": "intermediate",
+      "question": "What is required for car controls in new elevators?",
+      "options": [
+        "Any buttons allowed",
+        "Buttons must be raised or flush, minimum 3/4 inch diameter",
+        "Touch screens only",
+        "Voice activation required"
+      ],
+      "correct_answer": 1,
+      "explanation": "Elevator car control buttons must be at least 3/4 inch in the smallest dimension, with tactile indication of activation.",
+      "code_reference": "ADA Standards 407.4.6.3"
+    },
+    {
+      "id": "elev_ada_017",
+      "difficulty": "intermediate",
+      "question": "What verbal announcement is required in accessible elevators?",
+      "options": [
+        "None required",
+        "Automatic verbal announcement of floor stops",
+        "Only emergency announcements",
+        "Only lobby announcement"
+      ],
+      "correct_answer": 1,
+      "explanation": "Elevators must provide automatic verbal (spoken) announcement of floors at each stop to assist visually impaired passengers.",
+      "code_reference": "ADA Standards 407.4.8.2"
+    },
+    {
+      "id": "elev_ada_018",
+      "difficulty": "intermediate",
+      "question": "What is the required character height for floor designations on jambs?",
+      "options": [
+        "1/2 inch",
+        "2 inches minimum height",
+        "3 inches",
+        "No minimum"
+      ],
+      "correct_answer": 1,
+      "explanation": "Floor designation characters on hoistway jambs must be at least 2 inches high with raised lettering and Braille.",
+      "code_reference": "ADA Standards 407.2.3"
+    },
+    {
+      "id": "elev_ada_019",
+      "difficulty": "intermediate",
+      "question": "What illumination level is required on car controls?",
+      "options": [
+        "No requirement",
+        "5 footcandles minimum at the car controls",
+        "1 footcandle",
+        "50 footcandles"
+      ],
+      "correct_answer": 1,
+      "explanation": "Illumination at car controls and car threshold must be at least 5 footcandles to ensure visibility for all users.",
+      "code_reference": "ADA Standards 407.4.5"
+    },
+    {
+      "id": "elev_ada_020",
+      "difficulty": "intermediate",
+      "question": "What is the requirement for the emergency stop button?",
+      "options": [
+        "Must stop elevator immediately",
+        "Must be clearly identified and meet size/height requirements",
+        "Not required",
+        "Must be key-operated"
+      ],
+      "correct_answer": 1,
+      "explanation": "The emergency stop button must be clearly identified, meet height requirements, and if there's a keyswitch, a push button must also be provided.",
+      "code_reference": "ADA Standards 407.4.6"
+    },
+    {
+      "id": "elev_ada_021",
+      "difficulty": "advanced",
+      "question": "What are destination-oriented elevator requirements for accessibility?",
+      "options": [
+        "Same as conventional elevators",
+        "Additional visible and audible car assignment information required",
+        "Not permitted for accessible buildings",
+        "No specific requirements"
+      ],
+      "correct_answer": 1,
+      "explanation": "Destination-oriented (destination dispatch) elevators must provide clear visible and audible indication of which car to board after entering the destination.",
+      "code_reference": "ADA Standards 407.2.2"
+    },
+    {
+      "id": "elev_ada_022",
+      "difficulty": "advanced",
+      "question": "What is the door sensor detection height requirement?",
+      "options": [
+        "36 inches",
+        "5 inches and 29 inches minimum above floor",
+        "48 inches only",
+        "Floor level only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Door reopening devices must detect obstructions passing through at 5 inches and at 29 inches above the car floor.",
+      "code_reference": "ADA Standards 407.3.3.2"
+    },
+    {
+      "id": "elev_ada_023",
+      "difficulty": "advanced",
+      "question": "What are the requirements for elevator hall signals?",
+      "options": [
+        "Any location",
+        "Centered at 72 inches above floor, minimum 2-1/2 inch characters",
+        "Above the door frame only",
+        "No specific height"
+      ],
+      "correct_answer": 1,
+      "explanation": "Hall signals indicating car arrival and direction must be centered at 72 inches above the floor, with characters at least 2-1/2 inches high.",
+      "code_reference": "ADA Standards 407.2.2"
+    },
+    {
+      "id": "elev_ada_024",
+      "difficulty": "advanced",
+      "question": "What accessible features are required for LULA (Limited Use/Limited Application) elevators?",
+      "options": [
+        "Full ADA compliance",
+        "Modified requirements with smaller dimensions allowed",
+        "No accessibility required",
+        "Same as platform lifts"
+      ],
+      "correct_answer": 1,
+      "explanation": "LULA elevators have modified ADA requirements allowing smaller cars and different specifications but must still meet accessibility standards.",
+      "code_reference": "ADA Standards 408"
+    },
+    {
+      "id": "elev_ada_025",
+      "difficulty": "advanced",
+      "question": "What is required if the elevator serves only two stops?",
+      "options": [
+        "Full compliance still required",
+        "Modified requirements with automatic operation allowed",
+        "No accessibility requirements",
+        "Only stairs required"
+      ],
+      "correct_answer": 1,
+      "explanation": "Two-stop elevators still require accessibility features but may have automatic operation between floors and simplified controls.",
+      "code_reference": "ADA Standards 407.2"
+    },
+    {
+      "id": "elev_ada_026",
+      "difficulty": "advanced",
+      "question": "What existing elevator exemptions apply under ADA?",
+      "options": [
+        "All existing elevators exempt",
+        "Alterations must meet requirements to maximum extent feasible",
+        "No exemptions",
+        "Only historic buildings"
+      ],
+      "correct_answer": 1,
+      "explanation": "Existing elevators being altered must meet ADA requirements to the maximum extent technically feasible within the scope of the alteration.",
+      "code_reference": "ADA Standards 407"
+    },
+    {
+      "id": "elev_ada_027",
+      "difficulty": "intermediate",
+      "question": "What is required for the 'Door Open' and 'Door Close' buttons?",
+      "options": [
+        "Must be present",
+        "If present, must meet size, height, and tactile requirements",
+        "Not required",
+        "Voice activated"
+      ],
+      "correct_answer": 1,
+      "explanation": "If provided, door control buttons must have standard symbols, meet size requirements (3/4 inch minimum), and be within reach ranges.",
+      "code_reference": "ADA Standards 407.4.6.3"
+    },
+    {
+      "id": "elev_ada_028",
+      "difficulty": "intermediate",
+      "question": "What handrail requirement exists for elevator cars?",
+      "options": [
+        "All walls",
+        "Handrail required on at least one wall, returning to wall",
+        "No requirement",
+        "On door wall only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Elevator cars must have at least one handrail on one side, with ends returning to the wall to prevent catching on clothing or bags.",
+      "code_reference": "ADA Standards 407.4.4"
+    },
+    {
+      "id": "elev_ada_029",
+      "difficulty": "advanced",
+      "question": "What alternative to elevators may be permitted in small buildings?",
+      "options": [
+        "None, elevator always required",
+        "Platform lift in certain conditions, LULA in others",
+        "Only ramps",
+        "Only stairlifts"
+      ],
+      "correct_answer": 1,
+      "explanation": "In certain conditions (existing buildings, limited use), platform lifts or LULA elevators may be alternatives to standard passenger elevators.",
+      "code_reference": "ADA Standards 206.7"
+    },
+    {
+      "id": "elev_ada_030",
+      "difficulty": "advanced",
+      "question": "What is the audible signal volume requirement?",
+      "options": [
+        "No specific requirement",
+        "10 dB minimum above ambient, 80 dB maximum",
+        "As loud as possible",
+        "Adjustable only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Audible signals must be at least 10 dB above ambient sound level with a maximum of 80 dB to be heard without being dangerously loud.",
+      "code_reference": "ADA Standards 407.2.2"
+    }
+  ]
+}

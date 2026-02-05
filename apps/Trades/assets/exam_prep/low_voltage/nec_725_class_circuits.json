@@ -1,0 +1,432 @@
+{
+  "category": "Low Voltage",
+  "subcategory": "NEC Article 725 - Class 1, 2, and 3 Circuits",
+  "description": "Remote control, signaling, and power-limited circuits",
+  "difficulty_distribution": {
+    "beginner": 10,
+    "intermediate": 12,
+    "advanced": 8
+  },
+  "questions": [
+    {
+      "id": "lv_725_001",
+      "difficulty": "beginner",
+      "question": "What NEC article covers Class 1, Class 2, and Class 3 remote-control and signaling circuits?",
+      "options": [
+        "Article 690",
+        "Article 700",
+        "Article 725",
+        "Article 760"
+      ],
+      "correct_answer": 2,
+      "explanation": "NEC Article 725 covers remote-control, signaling, and power-limited circuits that are not an integral part of a device or appliance.",
+      "code_reference": "NEC Article 725"
+    },
+    {
+      "id": "lv_725_002",
+      "difficulty": "beginner",
+      "question": "What is the maximum voltage for Class 2 circuits?",
+      "options": [
+        "30 volts",
+        "42.4 volts peak",
+        "100 volts",
+        "150 volts"
+      ],
+      "correct_answer": 1,
+      "explanation": "Class 2 circuits are limited to 100 VA and voltages specified in NEC Chapter 9 Table 11(A). For most applications, this is 30V AC or 42.4V DC peak.",
+      "code_reference": "NEC 725.121, Chapter 9 Table 11(A)"
+    },
+    {
+      "id": "lv_725_003",
+      "difficulty": "beginner",
+      "question": "What makes a circuit 'power-limited'?",
+      "options": [
+        "It uses low voltage wire",
+        "The power source limits the available energy",
+        "It only powers small devices",
+        "It runs in conduit"
+      ],
+      "correct_answer": 1,
+      "explanation": "Power-limited circuits use a power source (transformer, power supply) specifically designed to limit the available power output to safe levels defined by the NEC.",
+      "code_reference": "NEC 725.121"
+    },
+    {
+      "id": "lv_725_004",
+      "difficulty": "beginner",
+      "question": "Class 1 power-limited circuits are limited to what maximum power?",
+      "options": [
+        "30 VA",
+        "100 VA",
+        "1000 VA",
+        "2500 VA"
+      ],
+      "correct_answer": 1,
+      "explanation": "Class 1 power-limited circuits are limited to 30V and 1000 VA. Beyond these limits, they must comply with general wiring requirements.",
+      "code_reference": "NEC 725.21"
+    },
+    {
+      "id": "lv_725_005",
+      "difficulty": "beginner",
+      "question": "What type of cable is designated CL2?",
+      "options": [
+        "Class 1 cable",
+        "Class 2 cable",
+        "Communications cable",
+        "Fire alarm cable"
+      ],
+      "correct_answer": 1,
+      "explanation": "CL2 is the cable designation for Class 2 circuits. CL2R is riser-rated, CL2P is plenum-rated, and CL2X is limited use.",
+      "code_reference": "NEC 725.179"
+    },
+    {
+      "id": "lv_725_006",
+      "difficulty": "beginner",
+      "question": "What is the main advantage of using Class 2 wiring?",
+      "options": [
+        "Higher voltage capacity",
+        "Reduced wiring method requirements due to power limitations",
+        "Lower cost wire",
+        "Faster installation"
+      ],
+      "correct_answer": 1,
+      "explanation": "Class 2 circuits have inherent power limitations that reduce shock and fire hazards, allowing less stringent wiring method requirements than general wiring.",
+      "code_reference": "NEC 725.1"
+    },
+    {
+      "id": "lv_725_007",
+      "difficulty": "beginner",
+      "question": "What marking must appear on a Class 2 power supply?",
+      "options": [
+        "UL listed only",
+        "'Class 2 transformer' or 'Class 2 power source'",
+        "Wattage only",
+        "Voltage only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Class 2 power sources must be marked as 'Class 2 transformer' or 'Class 2 power source' to identify them as power-limited for the installer.",
+      "code_reference": "NEC 725.121(A)"
+    },
+    {
+      "id": "lv_725_008",
+      "difficulty": "beginner",
+      "question": "Can Class 2 cables be installed in the same raceway as power conductors?",
+      "options": [
+        "Yes, always",
+        "No, never",
+        "Only if they are separated by a barrier",
+        "Only if the power is de-energized"
+      ],
+      "correct_answer": 1,
+      "explanation": "Class 2 cables cannot be installed in the same cable, raceway, or enclosure as power conductors unless separated by a barrier or other approved method.",
+      "code_reference": "NEC 725.136"
+    },
+    {
+      "id": "lv_725_009",
+      "difficulty": "beginner",
+      "question": "What happens to Class 2 status if the circuit is extended beyond the power source ratings?",
+      "options": [
+        "Nothing changes",
+        "The circuit loses its Class 2 classification",
+        "The wire size must increase",
+        "A fuse must be added"
+      ],
+      "correct_answer": 1,
+      "explanation": "If a Class 2 circuit is connected to a non-Class 2 power source or exceeds its ratings, it loses Class 2 status and must be wired per Chapter 3 requirements.",
+      "code_reference": "NEC 725.121"
+    },
+    {
+      "id": "lv_725_010",
+      "difficulty": "beginner",
+      "question": "What is the minimum conductor size for Class 2 circuits?",
+      "options": [
+        "18 AWG",
+        "22 AWG",
+        "26 AWG",
+        "No minimum specified for certain applications"
+      ],
+      "correct_answer": 3,
+      "explanation": "Class 2 cables have no minimum conductor size specified for most applications since power is inherently limited. Practical minimum is typically 22-24 AWG.",
+      "code_reference": "NEC 725.179"
+    },
+    {
+      "id": "lv_725_011",
+      "difficulty": "intermediate",
+      "question": "What is the separation requirement between Class 2 and power conductors at outlets?",
+      "options": [
+        "No separation required",
+        "2 inches minimum",
+        "Separate compartments or barrier required",
+        "6 inches minimum"
+      ],
+      "correct_answer": 2,
+      "explanation": "At outlet boxes, Class 2 conductors must be separated from power conductors by a barrier, installed in separate compartments, or enter through separate openings.",
+      "code_reference": "NEC 725.136(B)"
+    },
+    {
+      "id": "lv_725_012",
+      "difficulty": "intermediate",
+      "question": "Can Class 2 cables be installed in cable trays with power cables?",
+      "options": [
+        "Yes, without restriction",
+        "No, never",
+        "Yes, if separated by a solid fixed barrier",
+        "Only in industrial occupancies"
+      ],
+      "correct_answer": 2,
+      "explanation": "Class 2 cables may be installed in the same cable tray as power cables only if separated by a solid fixed barrier of a material compatible with the cable tray.",
+      "code_reference": "NEC 725.136(H)"
+    },
+    {
+      "id": "lv_725_013",
+      "difficulty": "intermediate",
+      "question": "What cable rating is required for installation in air handling spaces (plenums)?",
+      "options": [
+        "CL2",
+        "CL2R",
+        "CL2P",
+        "CL2X"
+      ],
+      "correct_answer": 2,
+      "explanation": "CL2P (plenum-rated) cables are required in air handling spaces. They have low smoke and flame-spread characteristics per UL 910.",
+      "code_reference": "NEC 725.154(A)"
+    },
+    {
+      "id": "lv_725_014",
+      "difficulty": "intermediate",
+      "question": "What distinguishes Class 3 circuits from Class 2 circuits?",
+      "options": [
+        "Class 3 uses AC only",
+        "Class 3 allows higher power but still has safety limitations",
+        "Class 3 is for outdoor use only",
+        "Class 3 requires conduit"
+      ],
+      "correct_answer": 1,
+      "explanation": "Class 3 circuits allow higher power levels than Class 2 (up to 100 VA) while still maintaining limits that reduce shock hazard. They require additional insulation requirements.",
+      "code_reference": "NEC 725.121, Chapter 9 Table 11(B)"
+    },
+    {
+      "id": "lv_725_015",
+      "difficulty": "intermediate",
+      "question": "What is the maximum run length consideration for Class 2 circuits?",
+      "options": [
+        "NEC specifies 100 feet maximum",
+        "NEC specifies 300 feet maximum",
+        "NEC does not specify; voltage drop is the consideration",
+        "Always unlimited"
+      ],
+      "correct_answer": 2,
+      "explanation": "NEC does not specify maximum length for Class 2 circuits. Length is limited by voltage drop calculations and manufacturer requirements for proper device operation.",
+      "code_reference": "NEC 725.1"
+    },
+    {
+      "id": "lv_725_016",
+      "difficulty": "intermediate",
+      "question": "What support interval is required for Class 2 cables run horizontally in accessible areas?",
+      "options": [
+        "4.5 feet",
+        "6 feet",
+        "10 feet",
+        "As required by the cable listing"
+      ],
+      "correct_answer": 0,
+      "explanation": "Class 2 cables must be supported at intervals not exceeding 4.5 feet (4 feet 6 inches) in accessible locations to prevent damage.",
+      "code_reference": "NEC 725.143"
+    },
+    {
+      "id": "lv_725_017",
+      "difficulty": "intermediate",
+      "question": "Can Class 2 cable be substituted with communications (CM) cable?",
+      "options": [
+        "Yes, CM cable can substitute for CL2",
+        "No, never",
+        "Only if same gauge",
+        "Only in residential applications"
+      ],
+      "correct_answer": 0,
+      "explanation": "NEC 725.154(A) permits substitutions. CMP, CMR, CMG, and CM cables can be substituted for CL2P, CL2R, and CL2 cables respectively.",
+      "code_reference": "NEC 725.154(A)"
+    },
+    {
+      "id": "lv_725_018",
+      "difficulty": "intermediate",
+      "question": "What is required when Class 2 circuits and power circuits terminate on the same equipment?",
+      "options": [
+        "No special requirements",
+        "Separate terminals or barrier required",
+        "Double insulation on Class 2",
+        "Fusing required"
+      ],
+      "correct_answer": 1,
+      "explanation": "When Class 2 and power circuits connect to the same equipment, they must use separate terminals or be separated by a barrier.",
+      "code_reference": "NEC 725.136(B)"
+    },
+    {
+      "id": "lv_725_019",
+      "difficulty": "intermediate",
+      "question": "What is the fire resistance requirement for CL2R (riser) cable?",
+      "options": [
+        "No fire resistance required",
+        "Must pass UL 1581 VW-1 flame test",
+        "Must pass UL 1666 riser flame test",
+        "Must pass UL 910 plenum test"
+      ],
+      "correct_answer": 2,
+      "explanation": "CL2R cables must pass the UL 1666 riser flame test, which evaluates flame propagation in vertical cable runs between floors.",
+      "code_reference": "NEC 725.179(B)"
+    },
+    {
+      "id": "lv_725_020",
+      "difficulty": "intermediate",
+      "question": "What Class 1 circuit requires overcurrent protection?",
+      "options": [
+        "All Class 1 circuits",
+        "Only Class 1 power-limited circuits",
+        "Only Class 1 remote control circuits",
+        "Class 1 circuits over 30V"
+      ],
+      "correct_answer": 0,
+      "explanation": "All Class 1 circuits require overcurrent protection at the supply end. Class 1 power-limited circuits also require current-limiting power sources.",
+      "code_reference": "NEC 725.43"
+    },
+    {
+      "id": "lv_725_021",
+      "difficulty": "intermediate",
+      "question": "What wiring method must be used for Class 1 circuits in wet locations?",
+      "options": [
+        "Any wiring method",
+        "Wiring methods suitable for wet locations per Chapter 3",
+        "Class 1 cable only",
+        "Rigid metal conduit only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Class 1 circuits must use wiring methods suitable for wet locations as specified in Chapter 3 of the NEC.",
+      "code_reference": "NEC 725.46"
+    },
+    {
+      "id": "lv_725_022",
+      "difficulty": "intermediate",
+      "question": "What happens when a Class 2 circuit interconnects with a non-power-limited circuit?",
+      "options": [
+        "Nothing special required",
+        "The entire circuit becomes Class 2",
+        "The entire circuit must be treated as non-power-limited",
+        "A fuse isolates them automatically"
+      ],
+      "correct_answer": 2,
+      "explanation": "When Class 2 interconnects with non-power-limited circuits, the Class 2 portion beyond the power source loses its classification and must meet Chapter 3 requirements.",
+      "code_reference": "NEC 725.121"
+    },
+    {
+      "id": "lv_725_023",
+      "difficulty": "advanced",
+      "question": "What is the maximum current available from a Class 2 power source before current limiting?",
+      "options": [
+        "1 amp",
+        "5 amps",
+        "8 amps",
+        "Varies per voltage per Chapter 9 Table 11(A)"
+      ],
+      "correct_answer": 3,
+      "explanation": "Class 2 current limits vary by voltage. Chapter 9 Table 11(A) specifies the maximum current at each voltage level that maintains power limitation for safety.",
+      "code_reference": "NEC Chapter 9, Table 11(A)"
+    },
+    {
+      "id": "lv_725_024",
+      "difficulty": "advanced",
+      "question": "Under what condition may Class 2 cables be installed in the same raceway as power conductors?",
+      "options": [
+        "Never permitted",
+        "When required functionally and using methods in 725.136(I)",
+        "When both are less than 50V",
+        "Only in industrial occupancies"
+      ],
+      "correct_answer": 1,
+      "explanation": "Class 2 cables may share raceways with power conductors only when functionally associated and using specific methods outlined in NEC 725.136(I).",
+      "code_reference": "NEC 725.136(I)"
+    },
+    {
+      "id": "lv_725_025",
+      "difficulty": "advanced",
+      "question": "What is required for Class 2 circuits installed in ducts used for environmental air?",
+      "options": [
+        "Any Class 2 cable permitted",
+        "Only CL2P cable in metal raceway",
+        "Prohibited except for specific exceptions",
+        "Only in plenum-rated raceway"
+      ],
+      "correct_answer": 2,
+      "explanation": "Class 2 cables are prohibited in ducts used for environmental air handling. Specific exceptions apply for short distances in junction boxes.",
+      "code_reference": "NEC 725.154, 300.22"
+    },
+    {
+      "id": "lv_725_026",
+      "difficulty": "advanced",
+      "question": "What is the listing requirement for Class 2 power sources used outdoors?",
+      "options": [
+        "Standard Class 2 listing sufficient",
+        "Must be listed for outdoor or wet location use",
+        "Must be in weatherproof enclosure only",
+        "No listing required outdoors"
+      ],
+      "correct_answer": 1,
+      "explanation": "Class 2 power sources for outdoor use must be listed for the environment (outdoor/wet location) in addition to their Class 2 listing.",
+      "code_reference": "NEC 725.121(A)"
+    },
+    {
+      "id": "lv_725_027",
+      "difficulty": "advanced",
+      "question": "For a Class 2 circuit operating at 24V DC, what is the maximum power permitted per NEC?",
+      "options": [
+        "50 VA",
+        "100 VA",
+        "150 VA",
+        "Per Chapter 9 Table 11(A) current limits"
+      ],
+      "correct_answer": 3,
+      "explanation": "Power limits are derived from voltage and current limits in Chapter 9 Table 11(A). At 24V DC, the current limit determines maximum power, typically resulting in 100 VA maximum.",
+      "code_reference": "NEC Chapter 9, Table 11(A)"
+    },
+    {
+      "id": "lv_725_028",
+      "difficulty": "advanced",
+      "question": "What grounding requirements apply to Class 2 circuit shielded cable?",
+      "options": [
+        "Must be grounded at both ends",
+        "Must be grounded at one end only",
+        "Grounding optional but recommended",
+        "Shield grounding per manufacturer instructions"
+      ],
+      "correct_answer": 3,
+      "explanation": "Shield grounding for Class 2 cables follows manufacturer recommendations and system requirements. Typically grounded at one end to prevent ground loops.",
+      "code_reference": "NEC 725.1, Manufacturer instructions"
+    },
+    {
+      "id": "lv_725_029",
+      "difficulty": "advanced",
+      "question": "When calculating Class 2 voltage drop, what formula applies?",
+      "options": [
+        "VD = I × R (basic Ohm's law)",
+        "VD = (2 × K × I × D) / CM",
+        "VD not applicable to Class 2",
+        "Both A and B can be used"
+      ],
+      "correct_answer": 3,
+      "explanation": "Voltage drop can be calculated using basic Ohm's law (VD = I × R) or the standard formula (2 × K × I × D / CM). Both methods work for Class 2 calculations.",
+      "code_reference": "NEC Chapter 9, Electrical Theory"
+    },
+    {
+      "id": "lv_725_030",
+      "difficulty": "advanced",
+      "question": "What is the proper installation when Class 2 cable passes through a fire-rated wall?",
+      "options": [
+        "No firestopping required for Class 2",
+        "Firestopping required to maintain fire rating",
+        "Only required above 50V",
+        "Only required in plenums"
+      ],
+      "correct_answer": 1,
+      "explanation": "All cable penetrations through fire-rated walls must be firestopped to maintain the fire rating, regardless of voltage classification.",
+      "code_reference": "NEC 300.21"
+    }
+  ]
+}

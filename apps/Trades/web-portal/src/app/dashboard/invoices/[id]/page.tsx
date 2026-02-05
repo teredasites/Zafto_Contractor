@@ -1,0 +1,498 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useRouter, useParams } from 'next/navigation';
+import {
+  ArrowLeft,
+  Receipt,
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  DollarSign,
+  Calendar,
+  Send,
+  Download,
+  CreditCard,
+  CheckCircle,
+  Clock,
+  Edit,
+  MoreHorizontal,
+  Trash2,
+  Copy,
+  Printer,
+  AlertCircle,
+} from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { StatusBadge, Badge } from '@/components/ui/badge';
+import { formatCurrency, formatDate, formatDateTime, cn } from '@/lib/utils';
+import { mockInvoices } from '@/lib/mock-data';
+import type { Invoice } from '@/types';
+
+export default function InvoiceDetailPage() {
+  const router = useRouter();
+  const params = useParams();
+  const invoiceId = params.id as string;
+
+  const [invoice, setInvoice] = useState<Invoice | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+
+  useEffect(() => {
+    // TODO: Replace with Firestore query
+    const found = mockInvoices.find((i) => i.id === invoiceId);
+    if (found) {
+      setInvoice(found);
+    }
+    setLoading(false);
+  }, [invoiceId]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent" />
+      </div>
+    );
+  }
+
+  if (!invoice) {
+    return (
+      <div className="text-center py-12">
+        <Receipt size={48} className="mx-auto text-muted mb-4" />
+        <h2 className="text-xl font-semibold text-main">Invoice not found</h2>
+        <p className="text-muted mt-2">The invoice you're looking for doesn't exist.</p>
+        <Button variant="secondary" className="mt-4" onClick={() => router.push('/dashboard/invoices')}>
+          Back to Invoices
+        </Button>
+      </div>
+    );
+  }
+
+  const isOverdue = invoice.status === 'overdue';
+  const isPaid = invoice.status === 'paid';
+
+  return (
+    <div className="space-y-6 pb-8">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => router.back()}
+            className="p-2 hover:bg-surface-hover rounded-lg transition-colors"
+          >
+            <ArrowLeft size={20} className="text-muted" />
+          </button>
+          <div>
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl font-semibold text-main">{invoice.invoiceNumber}</h1>
+              <StatusBadge status={invoice.status} />
+              {isOverdue && (
+                <Badge variant="error">
+                  <AlertCircle size={12} className="mr-1" />
+                  Overdue
+                </Badge>
+              )}
+            </div>
+            <p className="text-muted mt-1">
+              {invoice.customer?.firstName} {invoice.customer?.lastName}
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {invoice.status === 'draft' && (
+            <Button>
+              <Send size={16} />
+              Send Invoice
+            </Button>
+          )}
+          {(invoice.status === 'sent' || invoice.status === 'overdue') && (
+            <>
+              <Button variant="secondary">
+                <Mail size={16} />
+                Send Reminder
+              </Button>
+              <Button onClick={() => setShowPaymentModal(true)}>
+                <CreditCard size={16} />
+                Record Payment
+              </Button>
+            </>
+          )}
+          {isPaid && (
+            <Badge variant="success" className="text-base px-4 py-2">
+              <CheckCircle size={16} className="mr-2" />
+              Paid
+            </Badge>
+          )}
+          <div className="relative">
+            <Button variant="ghost" size="icon" onClick={() => setMenuOpen(!menuOpen)}>
+              <MoreHorizontal size={18} />
+            </Button>
+            {menuOpen && (
+              <>
+                <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />
+                <div className="absolute right-0 top-full mt-1 w-48 bg-surface border border-main rounded-lg shadow-lg py-1 z-50">
+                  <button className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
+                    <Edit size={16} />
+                    Edit Invoice
+                  </button>
+                  <button className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
+                    <Download size={16} />
+                    Download PDF
+                  </button>
+                  <button className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
+                    <Printer size={16} />
+                    Print
+                  </button>
+                  <button className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
+                    <Copy size={16} />
+                    Duplicate
+                  </button>
+                  <hr className="my-1 border-main" />
+                  <button className="w-full px-4 py-2 text-left text-sm hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 flex items-center gap-2">
+                    <Trash2 size={16} />
+                    Void Invoice
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Main Content */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Amount Summary */}
+          <Card className={cn(isOverdue && 'border-red-300 dark:border-red-800')}>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted">Amount Due</p>
+                  <p className={cn(
+                    'text-3xl font-semibold',
+                    isPaid ? 'text-emerald-600' : isOverdue ? 'text-red-600' : 'text-main'
+                  )}>
+                    {formatCurrency(invoice.amountDue)}
+                  </p>
+                  {invoice.amountPaid > 0 && invoice.amountDue > 0 && (
+                    <p className="text-sm text-muted mt-1">
+                      {formatCurrency(invoice.amountPaid)} paid of {formatCurrency(invoice.total)}
+                    </p>
+                  )}
+                </div>
+                <div className="text-right">
+                  <p className="text-sm text-muted">Due Date</p>
+                  <p className={cn(
+                    'font-medium',
+                    isOverdue ? 'text-red-600' : 'text-main'
+                  )}>
+                    {formatDate(invoice.dueDate)}
+                  </p>
+                  {isOverdue && (
+                    <p className="text-sm text-red-600 mt-1">
+                      {Math.floor((new Date().getTime() - new Date(invoice.dueDate).getTime()) / (1000 * 60 * 60 * 24))} days overdue
+                    </p>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Customer */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base flex items-center gap-2">
+                <User size={18} className="text-muted" />
+                Bill To
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="font-medium text-main">
+                {invoice.customer?.firstName} {invoice.customer?.lastName}
+              </div>
+              {invoice.customer?.email && (
+                <div className="flex items-center gap-2 text-sm text-muted">
+                  <Mail size={14} />
+                  <a href={`mailto:${invoice.customer.email}`} className="hover:text-accent">
+                    {invoice.customer.email}
+                  </a>
+                </div>
+              )}
+              {invoice.customer?.phone && (
+                <div className="flex items-center gap-2 text-sm text-muted">
+                  <Phone size={14} />
+                  <a href={`tel:${invoice.customer.phone}`} className="hover:text-accent">
+                    {invoice.customer.phone}
+                  </a>
+                </div>
+              )}
+              {invoice.customer?.address && (
+                <div className="flex items-center gap-2 text-sm text-muted">
+                  <MapPin size={14} />
+                  <span>
+                    {invoice.customer.address.street}, {invoice.customer.address.city},{' '}
+                    {invoice.customer.address.state} {invoice.customer.address.zip}
+                  </span>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Line Items */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base flex items-center gap-2">
+                <DollarSign size={18} className="text-muted" />
+                Line Items
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-main">
+                    <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">Description</th>
+                    <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Qty</th>
+                    <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Price</th>
+                    <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Total</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-main">
+                  {invoice.lineItems.map((item) => (
+                    <tr key={item.id}>
+                      <td className="px-6 py-4 font-medium text-main">{item.description}</td>
+                      <td className="px-6 py-4 text-right text-muted">{item.quantity}</td>
+                      <td className="px-6 py-4 text-right text-muted">{formatCurrency(item.unitPrice)}</td>
+                      <td className="px-6 py-4 text-right font-medium text-main">{formatCurrency(item.total)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+
+              {/* Totals */}
+              <div className="px-6 py-4 border-t border-main">
+                <div className="flex justify-end">
+                  <div className="w-64 space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted">Subtotal</span>
+                      <span className="text-main">{formatCurrency(invoice.subtotal)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted">Tax ({invoice.taxRate}%)</span>
+                      <span className="text-main">{formatCurrency(invoice.tax)}</span>
+                    </div>
+                    <div className="flex justify-between font-semibold text-lg pt-2 border-t border-main">
+                      <span>Total</span>
+                      <span>{formatCurrency(invoice.total)}</span>
+                    </div>
+                    {invoice.amountPaid > 0 && (
+                      <>
+                        <div className="flex justify-between text-sm text-emerald-600">
+                          <span>Paid</span>
+                          <span>-{formatCurrency(invoice.amountPaid)}</span>
+                        </div>
+                        <div className="flex justify-between font-semibold text-lg">
+                          <span>Balance Due</span>
+                          <span className={isOverdue ? 'text-red-600' : ''}>{formatCurrency(invoice.amountDue)}</span>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Notes */}
+          {invoice.notes && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Notes</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-main whitespace-pre-wrap">{invoice.notes}</p>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+
+        {/* Sidebar */}
+        <div className="space-y-6">
+          {/* Status */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Details</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="flex justify-between text-sm">
+                <span className="text-muted">Status</span>
+                <StatusBadge status={invoice.status} />
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted">Invoice #</span>
+                <span className="text-main font-mono">{invoice.invoiceNumber}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted">Created</span>
+                <span className="text-main">{formatDate(invoice.createdAt)}</span>
+              </div>
+              {invoice.sentAt && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted">Sent</span>
+                  <span className="text-main">{formatDate(invoice.sentAt)}</span>
+                </div>
+              )}
+              <div className="flex justify-between text-sm">
+                <span className="text-muted">Due</span>
+                <span className={cn('font-medium', isOverdue ? 'text-red-600' : 'text-main')}>
+                  {formatDate(invoice.dueDate)}
+                </span>
+              </div>
+              {invoice.paidAt && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted">Paid</span>
+                  <span className="text-emerald-600">{formatDate(invoice.paidAt)}</span>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Payment History */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Payment History</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {invoice.amountPaid > 0 ? (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <CheckCircle size={16} className="text-emerald-600" />
+                      <div>
+                        <p className="font-medium text-main text-sm">{formatCurrency(invoice.amountPaid)}</p>
+                        <p className="text-xs text-muted">
+                          {invoice.paymentMethod === 'card' ? 'Card payment' :
+                           invoice.paymentMethod === 'ach' ? 'Bank transfer' :
+                           invoice.paymentMethod || 'Payment'}
+                        </p>
+                      </div>
+                    </div>
+                    <span className="text-xs text-muted">
+                      {invoice.paidAt ? formatDate(invoice.paidAt) : ''}
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-sm text-muted text-center py-4">No payments recorded</p>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Related Job */}
+          {invoice.jobId && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Related Job</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Button
+                  variant="secondary"
+                  className="w-full"
+                  onClick={() => router.push(`/dashboard/jobs/${invoice.jobId}`)}
+                >
+                  View Job
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </div>
+
+      {/* Payment Modal */}
+      {showPaymentModal && (
+        <RecordPaymentModal
+          invoice={invoice}
+          onClose={() => setShowPaymentModal(false)}
+        />
+      )}
+    </div>
+  );
+}
+
+function RecordPaymentModal({ invoice, onClose }: { invoice: Invoice; onClose: () => void }) {
+  const [amount, setAmount] = useState(invoice.amountDue.toString());
+  const [method, setMethod] = useState('card');
+  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // TODO: Record payment to Firestore
+    console.log('Recording payment:', { amount, method, date });
+    onClose();
+  };
+
+  return (
+    <>
+      <div className="fixed inset-0 bg-black/50 z-50" onClick={onClose} />
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md z-50">
+        <Card>
+          <CardHeader>
+            <CardTitle>Record Payment</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-main mb-1.5">Amount</label>
+                <div className="relative">
+                  <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2.5 bg-secondary border border-main rounded-lg text-main focus:outline-none focus:ring-2 focus:ring-accent/50"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-main mb-1.5">Payment Method</label>
+                <select
+                  value={method}
+                  onChange={(e) => setMethod(e.target.value)}
+                  className="w-full px-4 py-2.5 bg-secondary border border-main rounded-lg text-main focus:outline-none focus:ring-2 focus:ring-accent/50"
+                >
+                  <option value="card">Credit Card</option>
+                  <option value="ach">Bank Transfer (ACH)</option>
+                  <option value="check">Check</option>
+                  <option value="cash">Cash</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-main mb-1.5">Date</label>
+                <input
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  className="w-full px-4 py-2.5 bg-secondary border border-main rounded-lg text-main focus:outline-none focus:ring-2 focus:ring-accent/50"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <Button type="button" variant="secondary" className="flex-1" onClick={onClose}>
+                  Cancel
+                </Button>
+                <Button type="submit" className="flex-1">
+                  Record Payment
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    </>
+  );
+}

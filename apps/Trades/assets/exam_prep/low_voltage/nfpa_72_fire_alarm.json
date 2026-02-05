@@ -1,0 +1,432 @@
+{
+  "category": "Low Voltage",
+  "subcategory": "NFPA 72 Fire Alarm Systems",
+  "description": "National Fire Alarm and Signaling Code requirements",
+  "difficulty_distribution": {
+    "beginner": 10,
+    "intermediate": 12,
+    "advanced": 8
+  },
+  "questions": [
+    {
+      "id": "lv_fa_001",
+      "difficulty": "beginner",
+      "question": "What NFPA standard is the National Fire Alarm and Signaling Code?",
+      "options": [
+        "NFPA 13",
+        "NFPA 25",
+        "NFPA 70",
+        "NFPA 72"
+      ],
+      "correct_answer": 3,
+      "explanation": "NFPA 72 is the National Fire Alarm and Signaling Code, covering installation, testing, and maintenance of fire alarm and emergency communication systems.",
+      "code_reference": "NFPA 72"
+    },
+    {
+      "id": "lv_fa_002",
+      "difficulty": "beginner",
+      "question": "What is the purpose of a fire alarm control panel (FACP)?",
+      "options": [
+        "To provide emergency lighting",
+        "To receive signals from initiating devices and activate notification appliances",
+        "To operate fire sprinklers",
+        "To provide backup power only"
+      ],
+      "correct_answer": 1,
+      "explanation": "The FACP is the brain of the fire alarm system. It receives signals from initiating devices, processes them, and activates notification appliances and other outputs.",
+      "code_reference": "NFPA 72, Chapter 23"
+    },
+    {
+      "id": "lv_fa_003",
+      "difficulty": "beginner",
+      "question": "What is an initiating device?",
+      "options": [
+        "A device that starts the fire alarm panel",
+        "A device that detects fire or manually activates an alarm",
+        "A device that notifies occupants",
+        "A device that charges batteries"
+      ],
+      "correct_answer": 1,
+      "explanation": "Initiating devices include smoke detectors, heat detectors, manual pull stations, and waterflow switches that detect fire conditions or allow manual alarm activation.",
+      "code_reference": "NFPA 72, Chapter 17"
+    },
+    {
+      "id": "lv_fa_004",
+      "difficulty": "beginner",
+      "question": "What is a notification appliance?",
+      "options": [
+        "A smoke detector",
+        "A device that alerts occupants (horns, strobes, speakers)",
+        "A manual pull station",
+        "A waterflow switch"
+      ],
+      "correct_answer": 1,
+      "explanation": "Notification appliances alert building occupants to fire conditions. They include audible devices (horns, bells, speakers) and visible devices (strobes).",
+      "code_reference": "NFPA 72, Chapter 18"
+    },
+    {
+      "id": "lv_fa_005",
+      "difficulty": "beginner",
+      "question": "How often must fire alarm systems be tested per NFPA 72?",
+      "options": [
+        "Monthly",
+        "Quarterly",
+        "Annually, with some devices more frequently",
+        "Every 5 years"
+      ],
+      "correct_answer": 2,
+      "explanation": "NFPA 72 Chapter 14 requires annual testing of most devices, with some components (batteries, generators) tested more frequently (monthly or semi-annually).",
+      "code_reference": "NFPA 72, Chapter 14"
+    },
+    {
+      "id": "lv_fa_006",
+      "difficulty": "beginner",
+      "question": "What is the minimum sound level for audible notification appliances in a sleeping area?",
+      "options": [
+        "60 dB",
+        "65 dB",
+        "75 dB",
+        "85 dB"
+      ],
+      "correct_answer": 2,
+      "explanation": "In sleeping areas, audible notification appliances must produce at least 75 dB at the pillow level or 15 dB above ambient sound, whichever is greater.",
+      "code_reference": "NFPA 72, Section 18.4.3"
+    },
+    {
+      "id": "lv_fa_007",
+      "difficulty": "beginner",
+      "question": "What color must manual fire alarm pull stations be?",
+      "options": [
+        "Blue",
+        "Yellow",
+        "Red",
+        "Green"
+      ],
+      "correct_answer": 2,
+      "explanation": "Manual fire alarm pull stations must be red to be readily identifiable as fire alarm devices.",
+      "code_reference": "NFPA 72, Section 17.14"
+    },
+    {
+      "id": "lv_fa_008",
+      "difficulty": "beginner",
+      "question": "What is the maximum mounting height for manual pull stations (ADA compliant)?",
+      "options": [
+        "42 inches",
+        "48 inches",
+        "54 inches",
+        "60 inches"
+      ],
+      "correct_answer": 1,
+      "explanation": "Manual pull stations must be mounted between 42 and 48 inches above the floor to be accessible per ADA requirements.",
+      "code_reference": "NFPA 72, Section 17.14"
+    },
+    {
+      "id": "lv_fa_009",
+      "difficulty": "beginner",
+      "question": "What is the standard temporal pattern for fire alarm signals?",
+      "options": [
+        "Continuous",
+        "Slow whoop",
+        "Three pulses, then pause (3-3-3)",
+        "Single pulse every 5 seconds"
+      ],
+      "correct_answer": 2,
+      "explanation": "The standard fire alarm evacuation signal is the temporal-3 pattern: three pulses ON, then OFF, repeated. This distinguishes fire alarms from other signals.",
+      "code_reference": "NFPA 72, Section 18.4.2"
+    },
+    {
+      "id": "lv_fa_010",
+      "difficulty": "beginner",
+      "question": "What secondary power source is required for fire alarm systems?",
+      "options": [
+        "Generator only",
+        "Batteries or generator",
+        "No secondary power required",
+        "Solar panels"
+      ],
+      "correct_answer": 1,
+      "explanation": "Fire alarm systems require secondary power (typically batteries) that can operate the system for 24 hours in standby plus 5 minutes of alarm (or 15 minutes for voice systems).",
+      "code_reference": "NFPA 72, Section 10.6.7"
+    },
+    {
+      "id": "lv_fa_011",
+      "difficulty": "intermediate",
+      "question": "What is the maximum spacing for spot-type smoke detectors on smooth ceilings?",
+      "options": [
+        "20 feet",
+        "30 feet",
+        "41 feet",
+        "50 feet"
+      ],
+      "correct_answer": 1,
+      "explanation": "Spot-type smoke detectors have a nominal spacing of 30 feet on smooth ceilings. This may be reduced based on ceiling height, beam depth, or other factors.",
+      "code_reference": "NFPA 72, Section 17.7.3"
+    },
+    {
+      "id": "lv_fa_012",
+      "difficulty": "intermediate",
+      "question": "How does ceiling height affect smoke detector spacing?",
+      "options": [
+        "No effect",
+        "Spacing increases with height",
+        "Spacing decreases as ceiling height increases beyond 10 feet",
+        "Spacing doubles above 20 feet"
+      ],
+      "correct_answer": 2,
+      "explanation": "As ceiling height increases beyond 10 feet, smoke detector spacing must be reduced per NFPA 72 tables to account for smoke stratification and dilution.",
+      "code_reference": "NFPA 72, Table 17.7.3.2.3(b)"
+    },
+    {
+      "id": "lv_fa_013",
+      "difficulty": "intermediate",
+      "question": "What is the supervision requirement for fire alarm circuit wiring?",
+      "options": [
+        "No supervision required",
+        "All circuits must be supervised for opens, grounds, and shorts",
+        "Only initiating circuits need supervision",
+        "Only notification circuits need supervision"
+      ],
+      "correct_answer": 1,
+      "explanation": "NFPA 72 requires that all fire alarm circuits be electrically supervised for opens, grounds, and shorts to ensure system integrity.",
+      "code_reference": "NFPA 72, Chapter 12"
+    },
+    {
+      "id": "lv_fa_014",
+      "difficulty": "intermediate",
+      "question": "What is a Class A circuit configuration?",
+      "options": [
+        "Single wire path",
+        "Two wire paths for redundancy",
+        "Loop configuration that survives a single open",
+        "Wireless configuration"
+      ],
+      "correct_answer": 2,
+      "explanation": "Class A circuits use a loop configuration where wiring returns to the panel. A single open will not prevent device operation since signals can reach from either direction.",
+      "code_reference": "NFPA 72, Section 12.3"
+    },
+    {
+      "id": "lv_fa_015",
+      "difficulty": "intermediate",
+      "question": "What is the difference between Class B and Class A notification circuits?",
+      "options": [
+        "Class A uses more power",
+        "Class B has no supervision",
+        "Class A provides circuit fault tolerance; Class B does not",
+        "Class A is for horns only"
+      ],
+      "correct_answer": 2,
+      "explanation": "Class A circuits continue operating devices on both sides of a single open fault. Class B circuits lose devices beyond the fault point.",
+      "code_reference": "NFPA 72, Section 12.3"
+    },
+    {
+      "id": "lv_fa_016",
+      "difficulty": "intermediate",
+      "question": "What is required when a fire alarm system is connected to a monitoring station?",
+      "options": [
+        "No additional requirements",
+        "Two communication paths or single path with specific reliability",
+        "Generator backup required",
+        "Supervision by building staff"
+      ],
+      "correct_answer": 1,
+      "explanation": "Monitoring station connections may require redundant communication paths or single paths meeting specific reliability criteria per NFPA 72 requirements.",
+      "code_reference": "NFPA 72, Chapter 26"
+    },
+    {
+      "id": "lv_fa_017",
+      "difficulty": "intermediate",
+      "question": "What is the minimum candela rating for visible notification appliances in corridors?",
+      "options": [
+        "15 cd",
+        "30 cd",
+        "60 cd",
+        "Based on room size"
+      ],
+      "correct_answer": 0,
+      "explanation": "Visible notification appliances in corridors (up to 20 feet wide) require minimum 15 cd. Larger spaces require higher intensities based on room dimensions.",
+      "code_reference": "NFPA 72, Table 18.5.4.3.1(a)"
+    },
+    {
+      "id": "lv_fa_018",
+      "difficulty": "intermediate",
+      "question": "How far from a wall corner must a smoke detector be mounted?",
+      "options": [
+        "2 feet",
+        "3 feet",
+        "4 feet (minimum)",
+        "No minimum distance"
+      ],
+      "correct_answer": 2,
+      "explanation": "Smoke detectors on ceilings must be at least 4 feet from walls in rooms with corners, as dead air spaces near walls can prevent smoke detection.",
+      "code_reference": "NFPA 72, Section 17.7.3"
+    },
+    {
+      "id": "lv_fa_019",
+      "difficulty": "intermediate",
+      "question": "What documentation must be provided upon completion of fire alarm installation?",
+      "options": [
+        "Invoice only",
+        "Record of completion (as-built drawings, equipment list, test records)",
+        "User manual only",
+        "Battery installation date only"
+      ],
+      "correct_answer": 1,
+      "explanation": "NFPA 72 requires a Record of Completion including as-built drawings, device list, sequence of operation, and acceptance test documentation.",
+      "code_reference": "NFPA 72, Chapter 7"
+    },
+    {
+      "id": "lv_fa_020",
+      "difficulty": "intermediate",
+      "question": "What type of detector is required in elevator machine rooms?",
+      "options": [
+        "Smoke detector only",
+        "Heat detector only",
+        "Both smoke and heat detectors typically",
+        "No detectors required"
+      ],
+      "correct_answer": 2,
+      "explanation": "Elevator machine rooms typically require both smoke detectors (for Phase I recall) and heat detectors (for shunt trip). Requirements vary by code.",
+      "code_reference": "NFPA 72, ASME A17.1"
+    },
+    {
+      "id": "lv_fa_021",
+      "difficulty": "intermediate",
+      "question": "What is the sensitivity range for smoke detectors?",
+      "options": [
+        "0.5% to 2.0% obscuration per foot",
+        "1.0% to 4.0% obscuration per foot",
+        "2.5% to 5.0% obscuration per foot",
+        "Fixed at 1.5% obscuration"
+      ],
+      "correct_answer": 1,
+      "explanation": "Listed smoke detectors must operate between approximately 0.5% and 4.0% per foot obscuration. Sensitivity testing ensures detectors remain in this range.",
+      "code_reference": "NFPA 72, Section 17.7.1"
+    },
+    {
+      "id": "lv_fa_022",
+      "difficulty": "intermediate",
+      "question": "What is the maximum distance from an exit to a manual pull station?",
+      "options": [
+        "3 feet",
+        "5 feet",
+        "10 feet",
+        "Within 5 feet of exit travel path"
+      ],
+      "correct_answer": 1,
+      "explanation": "Manual pull stations must be located within 5 feet of each exit doorway on the egress side to be accessible during evacuation.",
+      "code_reference": "NFPA 72, Section 17.14.8"
+    },
+    {
+      "id": "lv_fa_023",
+      "difficulty": "advanced",
+      "question": "What is the formula for calculating the number of notification appliances for visible coverage?",
+      "options": [
+        "Room square footage divided by 400",
+        "Based on manufacturer's polar distribution patterns",
+        "One device per 50 square feet",
+        "Per Table 18.5.4.3.1 using room dimensions"
+      ],
+      "correct_answer": 3,
+      "explanation": "NFPA 72 Table 18.5.4.3.1 provides candela ratings based on room dimensions. Placement is determined by the table and manufacturer polar distribution data.",
+      "code_reference": "NFPA 72, Section 18.5.4.3"
+    },
+    {
+      "id": "lv_fa_024",
+      "difficulty": "advanced",
+      "question": "For a 40 foot × 50 foot room, what candela rating is required for wall-mounted visible appliances?",
+      "options": [
+        "75 cd",
+        "110 cd",
+        "135 cd",
+        "185 cd"
+      ],
+      "correct_answer": 3,
+      "explanation": "Using NFPA 72 Table 18.5.4.3.1(a), a room 40' × 50' with one wall-mounted appliance requires 185 cd minimum.",
+      "code_reference": "NFPA 72, Table 18.5.4.3.1(a)"
+    },
+    {
+      "id": "lv_fa_025",
+      "difficulty": "advanced",
+      "question": "What is the smoke detector sensitivity test frequency per NFPA 72?",
+      "options": [
+        "Monthly",
+        "Semi-annually",
+        "Within 1 year of installation, then every other year",
+        "Every 5 years"
+      ],
+      "correct_answer": 2,
+      "explanation": "Smoke detector sensitivity must be tested within 1 year of installation, then every alternate year thereafter. Detectors outside the listed range must be replaced or cleaned/recalibrated.",
+      "code_reference": "NFPA 72, Table 14.4.2.2"
+    },
+    {
+      "id": "lv_fa_026",
+      "difficulty": "advanced",
+      "question": "What is the voltage drop limit for fire alarm notification appliance circuits?",
+      "options": [
+        "5%",
+        "10%",
+        "15%",
+        "Per manufacturer's specifications"
+      ],
+      "correct_answer": 3,
+      "explanation": "Voltage drop must be calculated to ensure notification appliances receive adequate voltage per manufacturer's specifications, typically ensuring 85% of rated voltage minimum.",
+      "code_reference": "NFPA 72, Section 10.6"
+    },
+    {
+      "id": "lv_fa_027",
+      "difficulty": "advanced",
+      "question": "When is duct smoke detection required?",
+      "options": [
+        "All HVAC systems",
+        "Systems over 2000 CFM per building/fire code",
+        "Systems over 15,000 CFM only",
+        "Never required by NFPA 72"
+      ],
+      "correct_answer": 1,
+      "explanation": "Duct smoke detection is required by mechanical and building codes (typically over 2000 CFM). NFPA 72 provides installation requirements when required by other codes.",
+      "code_reference": "NFPA 72, Section 17.7.5"
+    },
+    {
+      "id": "lv_fa_028",
+      "difficulty": "advanced",
+      "question": "What is the maximum resistance allowed for a single ground fault on a fire alarm circuit?",
+      "options": [
+        "0 ohms (no ground fault permitted)",
+        "10,000 ohms",
+        "Ground faults must be detected regardless of resistance",
+        "100 ohms"
+      ],
+      "correct_answer": 0,
+      "explanation": "Fire alarm circuits must be free of ground faults. Any ground fault must be indicated as a trouble condition. The detection sensitivity varies by system design.",
+      "code_reference": "NFPA 72, Chapter 12"
+    },
+    {
+      "id": "lv_fa_029",
+      "difficulty": "advanced",
+      "question": "What calculation method determines battery capacity for fire alarm systems?",
+      "options": [
+        "Total connected load × 24 hours",
+        "Standby load × hours + alarm load × alarm duration",
+        "Nameplate rating only",
+        "80% of battery rated capacity"
+      ],
+      "correct_answer": 1,
+      "explanation": "Battery sizing: (Standby current × standby hours) + (Alarm current × alarm duration in hours). Result is multiplied by 1.2 safety factor.",
+      "code_reference": "NFPA 72, Section 10.6.7"
+    },
+    {
+      "id": "lv_fa_030",
+      "difficulty": "advanced",
+      "question": "What is the pathway survivability requirement for emergency voice systems in high-rise buildings?",
+      "options": [
+        "No special requirement",
+        "Class A wiring only",
+        "Level 2 or 3 pathway survivability",
+        "Conduit required throughout"
+      ],
+      "correct_answer": 2,
+      "explanation": "High-rise buildings typically require Level 2 or Level 3 pathway survivability (2-hour rated enclosure or construction) for emergency voice/alarm communication systems.",
+      "code_reference": "NFPA 72, Section 24.3.5"
+    }
+  ]
+}

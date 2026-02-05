@@ -1,0 +1,502 @@
+{
+  "category": "Low Voltage",
+  "subcategory": "Nurse Call and Healthcare Systems",
+  "description": "Healthcare communication systems including nurse call, code blue, and wandering patient systems",
+  "difficulty_distribution": {
+    "beginner": 12,
+    "intermediate": 15,
+    "advanced": 8
+  },
+  "questions": [
+    {
+      "id": "lv_nurse_001",
+      "difficulty": "beginner",
+      "question": "What is the primary purpose of a nurse call system?",
+      "options": [
+        "Entertainment",
+        "Allow patients to request assistance from nursing staff",
+        "Fire alarm",
+        "HVAC control"
+      ],
+      "correct_answer": 1,
+      "explanation": "Nurse call systems allow patients to request assistance from nursing staff by pressing a button at their location.",
+      "code_reference": "UL 1069"
+    },
+    {
+      "id": "lv_nurse_002",
+      "difficulty": "beginner",
+      "question": "What UL standard covers nurse call systems?",
+      "options": [
+        "UL 864",
+        "UL 1069 Hospital Signaling and Nurse Call Equipment",
+        "UL 294",
+        "UL 1076"
+      ],
+      "correct_answer": 1,
+      "explanation": "UL 1069 is the standard for Hospital Signaling and Nurse Call Equipment.",
+      "code_reference": "UL 1069"
+    },
+    {
+      "id": "lv_nurse_003",
+      "difficulty": "beginner",
+      "question": "What is a patient station in a nurse call system?",
+      "options": [
+        "Master control",
+        "Device at bedside allowing patient to call for assistance",
+        "Emergency generator",
+        "Fire panel"
+      ],
+      "correct_answer": 1,
+      "explanation": "A patient station is the device at the bedside that allows patients to initiate calls for nursing assistance.",
+      "code_reference": "UL 1069"
+    },
+    {
+      "id": "lv_nurse_004",
+      "difficulty": "beginner",
+      "question": "What is a duty station in a nurse call system?",
+      "options": [
+        "Patient room",
+        "Location where staff monitor and respond to calls",
+        "Storage room",
+        "Parking area"
+      ],
+      "correct_answer": 1,
+      "explanation": "A duty station (master station) is where nursing staff monitor incoming calls and coordinate responses.",
+      "code_reference": "UL 1069"
+    },
+    {
+      "id": "lv_nurse_005",
+      "difficulty": "beginner",
+      "question": "What color is typically used for nurse call corridor lights indicating a normal call?",
+      "options": [
+        "Red",
+        "White or clear",
+        "Green",
+        "Blue"
+      ],
+      "correct_answer": 1,
+      "explanation": "White or clear dome lights typically indicate normal nurse call requests; red often indicates code/emergency.",
+      "code_reference": "Healthcare facility standards"
+    },
+    {
+      "id": "lv_nurse_006",
+      "difficulty": "beginner",
+      "question": "What is the purpose of a bathroom pull cord in nurse call systems?",
+      "options": [
+        "Light control",
+        "Emergency assistance request accessible from toilet or shower",
+        "Water control",
+        "HVAC control"
+      ],
+      "correct_answer": 1,
+      "explanation": "Bathroom pull cords allow patients to call for emergency assistance when in the bathroom, accessible even if fallen.",
+      "code_reference": "ADA/Healthcare codes"
+    },
+    {
+      "id": "lv_nurse_007",
+      "difficulty": "beginner",
+      "question": "What is a pillow speaker in nurse call systems?",
+      "options": [
+        "Public address device",
+        "Patient device combining call button, speaker, and entertainment controls",
+        "Staff pager",
+        "Fire alarm"
+      ],
+      "correct_answer": 1,
+      "explanation": "A pillow speaker is a handheld device combining nurse call button, speaker/microphone, and often TV/light controls.",
+      "code_reference": "UL 1069"
+    },
+    {
+      "id": "lv_nurse_008",
+      "difficulty": "beginner",
+      "question": "What indication must be provided when a nurse call is placed?",
+      "options": [
+        "No indication required",
+        "Visual and/or audible indication at patient location confirming call",
+        "Text message only",
+        "Email only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Patients must receive confirmation their call was registered, typically via indicator light at the patient station.",
+      "code_reference": "UL 1069"
+    },
+    {
+      "id": "lv_nurse_009",
+      "difficulty": "beginner",
+      "question": "What is a code blue system?",
+      "options": [
+        "Normal nurse call",
+        "Emergency system for cardiac arrest or medical emergency",
+        "Fire alarm",
+        "Security system"
+      ],
+      "correct_answer": 1,
+      "explanation": "Code blue systems provide immediate alerting when a patient experiences cardiac arrest or other life-threatening emergency.",
+      "code_reference": "Healthcare standards"
+    },
+    {
+      "id": "lv_nurse_010",
+      "difficulty": "beginner",
+      "question": "What voltage class are most nurse call systems?",
+      "options": [
+        "120V AC",
+        "Class 2 low voltage (typically 24V DC)",
+        "480V",
+        "12V DC"
+      ],
+      "correct_answer": 1,
+      "explanation": "Nurse call systems typically operate as Class 2 low voltage systems, commonly 24V DC for patient safety.",
+      "code_reference": "NEC Article 725"
+    },
+    {
+      "id": "lv_nurse_011",
+      "difficulty": "beginner",
+      "question": "What is the purpose of staff presence indication?",
+      "options": [
+        "Track visitor count",
+        "Show that a staff member is in the patient room",
+        "Count medications",
+        "Monitor equipment"
+      ],
+      "correct_answer": 1,
+      "explanation": "Staff presence switches indicate when nursing staff are in a patient room, showing call has been answered.",
+      "code_reference": "UL 1069"
+    },
+    {
+      "id": "lv_nurse_012",
+      "difficulty": "beginner",
+      "question": "What is an annunciator panel in nurse call systems?",
+      "options": [
+        "Patient device",
+        "Display showing status of calls from multiple rooms",
+        "Fire panel",
+        "Generator"
+      ],
+      "correct_answer": 1,
+      "explanation": "An annunciator panel displays the status of nurse calls from multiple patient rooms at a central location.",
+      "code_reference": "UL 1069"
+    },
+    {
+      "id": "lv_nurse_013",
+      "difficulty": "intermediate",
+      "question": "What is a wandering patient system (elopement system)?",
+      "options": [
+        "Entertainment system",
+        "System that monitors at-risk patients and alerts if they approach exits",
+        "Visitor tracking",
+        "Parking system"
+      ],
+      "correct_answer": 1,
+      "explanation": "Wandering/elopement systems monitor patients (dementia, Alzheimer's) and alert staff if they approach unauthorized exits.",
+      "code_reference": "Healthcare facility standards"
+    },
+    {
+      "id": "lv_nurse_014",
+      "difficulty": "intermediate",
+      "question": "What technology is commonly used for wandering patient tracking?",
+      "options": [
+        "Visual cameras only",
+        "RFID tags worn by patients with door-mounted readers",
+        "Motion sensors only",
+        "Sound detection"
+      ],
+      "correct_answer": 1,
+      "explanation": "RFID (Radio Frequency Identification) tags worn by at-risk patients trigger alerts when detected near exit readers.",
+      "code_reference": "Healthcare security standards"
+    },
+    {
+      "id": "lv_nurse_015",
+      "difficulty": "intermediate",
+      "question": "What is infant protection (infant abduction prevention) system?",
+      "options": [
+        "Nursery camera",
+        "System using tags on infants to prevent unauthorized removal",
+        "Visitor badge system",
+        "Intercom"
+      ],
+      "correct_answer": 1,
+      "explanation": "Infant protection systems use tags attached to newborns that trigger alarms and door locks if removal is attempted.",
+      "code_reference": "Healthcare security standards"
+    },
+    {
+      "id": "lv_nurse_016",
+      "difficulty": "intermediate",
+      "question": "What is the typical response time requirement for nurse call indication?",
+      "options": [
+        "10 seconds",
+        "Immediate (within 1-2 seconds of button press)",
+        "1 minute",
+        "5 minutes"
+      ],
+      "correct_answer": 1,
+      "explanation": "Nurse call systems must provide immediate indication (1-2 seconds) when a call is placed for patient safety.",
+      "code_reference": "UL 1069"
+    },
+    {
+      "id": "lv_nurse_017",
+      "difficulty": "intermediate",
+      "question": "What is a zone in nurse call terminology?",
+      "options": [
+        "Temperature area",
+        "Group of patient stations monitored by a common duty station",
+        "Parking area",
+        "Building wing"
+      ],
+      "correct_answer": 1,
+      "explanation": "A zone is a defined area of patient stations (rooms) monitored and responded to by specific nursing staff.",
+      "code_reference": "UL 1069"
+    },
+    {
+      "id": "lv_nurse_018",
+      "difficulty": "intermediate",
+      "question": "How should nurse call system wiring be identified?",
+      "options": [
+        "No identification needed",
+        "Labeled and distinguished from other low voltage wiring",
+        "Same as power wiring",
+        "Color coded only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Nurse call wiring must be labeled and distinguishable from other systems for maintenance and troubleshooting.",
+      "code_reference": "NEC Article 725"
+    },
+    {
+      "id": "lv_nurse_019",
+      "difficulty": "intermediate",
+      "question": "What integration is common between nurse call and hospital information systems?",
+      "options": [
+        "None allowed",
+        "ADT (Admit-Discharge-Transfer) integration for patient information",
+        "Billing only",
+        "Pharmacy only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Modern nurse call systems integrate with ADT systems to display current patient information and status.",
+      "code_reference": "Healthcare IT standards"
+    },
+    {
+      "id": "lv_nurse_020",
+      "difficulty": "intermediate",
+      "question": "What is the purpose of call escalation in nurse call systems?",
+      "options": [
+        "Increase volume",
+        "Automatically alert supervisors if calls go unanswered",
+        "Send to voicemail",
+        "Cancel call"
+      ],
+      "correct_answer": 1,
+      "explanation": "Escalation automatically notifies supervisors or additional staff when calls remain unanswered beyond set time thresholds.",
+      "code_reference": "Healthcare facility protocols"
+    },
+    {
+      "id": "lv_nurse_021",
+      "difficulty": "intermediate",
+      "question": "What is a wireless nurse call system?",
+      "options": [
+        "No wiring at all",
+        "System using wireless patient stations communicating to central receiver",
+        "Cell phone system",
+        "Radio dispatch"
+      ],
+      "correct_answer": 1,
+      "explanation": "Wireless nurse call uses radio-frequency patient stations communicating with receivers, reducing installation wiring.",
+      "code_reference": "FCC Part 15, UL 1069"
+    },
+    {
+      "id": "lv_nurse_022",
+      "difficulty": "intermediate",
+      "question": "What backup power is required for nurse call systems?",
+      "options": [
+        "None required",
+        "Battery backup or connection to emergency power",
+        "Solar only",
+        "Generator only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Nurse call systems require backup power (battery or emergency circuit) to function during power outages.",
+      "code_reference": "UL 1069, NEC 517"
+    },
+    {
+      "id": "lv_nurse_023",
+      "difficulty": "intermediate",
+      "question": "What is audio-visual nurse call?",
+      "options": [
+        "Television",
+        "System providing both audible tones and visual indicators for calls",
+        "Radio",
+        "Intercom only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Audio-visual systems provide both audible alerts (tones/voice) and visual indicators (lights/displays) for calls.",
+      "code_reference": "UL 1069"
+    },
+    {
+      "id": "lv_nurse_024",
+      "difficulty": "intermediate",
+      "question": "What testing is required for nurse call systems?",
+      "options": [
+        "None",
+        "Functional testing of all stations and proper indication",
+        "Visual only",
+        "Annual only"
+      ],
+      "correct_answer": 1,
+      "explanation": "All patient stations, pull cords, corridor lights, and duty stations must be functionally tested after installation.",
+      "code_reference": "UL 1069"
+    },
+    {
+      "id": "lv_nurse_025",
+      "difficulty": "intermediate",
+      "question": "What is RTLS in healthcare?",
+      "options": [
+        "Radio testing system",
+        "Real-Time Location System for tracking people and assets",
+        "Recording system",
+        "Remote testing"
+      ],
+      "correct_answer": 1,
+      "explanation": "RTLS (Real-Time Location System) tracks the location of staff, patients, and equipment throughout the facility.",
+      "code_reference": "Healthcare IT standards"
+    },
+    {
+      "id": "lv_nurse_026",
+      "difficulty": "intermediate",
+      "question": "What technology often provides RTLS functionality?",
+      "options": [
+        "Barcode only",
+        "RFID, infrared, ultrasound, or Wi-Fi based positioning",
+        "Magnetic stripe",
+        "Acoustic"
+      ],
+      "correct_answer": 1,
+      "explanation": "RTLS uses various technologies including RFID, infrared, ultrasound, UWB, or Wi-Fi to determine location.",
+      "code_reference": "Healthcare IT standards"
+    },
+    {
+      "id": "lv_nurse_027",
+      "difficulty": "intermediate",
+      "question": "What is workflow integration in nurse call systems?",
+      "options": [
+        "Construction scheduling",
+        "Routing calls to appropriate staff based on assignment and availability",
+        "Inventory management",
+        "Payroll"
+      ],
+      "correct_answer": 1,
+      "explanation": "Workflow integration routes calls to assigned caregivers based on patient assignments, staff location, and availability.",
+      "code_reference": "Healthcare facility standards"
+    },
+    {
+      "id": "lv_nurse_028",
+      "difficulty": "advanced",
+      "question": "What is middleware in healthcare communication systems?",
+      "options": [
+        "Physical mounting hardware",
+        "Software that integrates disparate systems and routes alerts",
+        "Cable management",
+        "Conduit"
+      ],
+      "correct_answer": 1,
+      "explanation": "Middleware software integrates nurse call, monitoring, and other systems to route alerts to appropriate devices/staff.",
+      "code_reference": "Healthcare IT standards"
+    },
+    {
+      "id": "lv_nurse_029",
+      "difficulty": "advanced",
+      "question": "What is HL7 in healthcare systems integration?",
+      "options": [
+        "Hospital level 7",
+        "Health Level Seven - standard for healthcare data exchange",
+        "High-level 7",
+        "Hospital link 7"
+      ],
+      "correct_answer": 1,
+      "explanation": "HL7 (Health Level Seven) is the standard protocol for exchanging healthcare information between systems.",
+      "code_reference": "HL7 Standards"
+    },
+    {
+      "id": "lv_nurse_030",
+      "difficulty": "advanced",
+      "question": "What alarm fatigue considerations affect nurse call design?",
+      "options": [
+        "None",
+        "System must minimize nuisance alarms while ensuring critical alerts reach staff",
+        "Maximum alarms",
+        "No prioritization"
+      ],
+      "correct_answer": 1,
+      "explanation": "Alarm fatigue occurs when excessive alarms cause staff to become desensitized; systems must prioritize and filter appropriately.",
+      "code_reference": "Joint Commission standards"
+    },
+    {
+      "id": "lv_nurse_031",
+      "difficulty": "advanced",
+      "question": "What is required for psychiatric/behavioral health nurse call stations?",
+      "options": [
+        "Standard stations",
+        "Ligature-resistant, tamper-proof designs",
+        "No call stations",
+        "Wireless only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Behavioral health areas require ligature-resistant stations that cannot be used for self-harm attempts.",
+      "code_reference": "The Joint Commission, CMS"
+    },
+    {
+      "id": "lv_nurse_032",
+      "difficulty": "advanced",
+      "question": "What documentation is required for nurse call system installation?",
+      "options": [
+        "None",
+        "As-built drawings, programming records, and test documentation",
+        "Photos only",
+        "Verbal approval"
+      ],
+      "correct_answer": 1,
+      "explanation": "Complete documentation including drawings, zone assignments, programming, and test results must be provided.",
+      "code_reference": "UL 1069, Healthcare standards"
+    },
+    {
+      "id": "lv_nurse_033",
+      "difficulty": "advanced",
+      "question": "What is the relationship between nurse call and physiological monitoring?",
+      "options": [
+        "Separate systems only",
+        "Integration allows patient monitor alarms to trigger nurse call alerts",
+        "Same system",
+        "No relationship"
+      ],
+      "correct_answer": 1,
+      "explanation": "Integration between systems allows critical physiological alarms to trigger nurse call notifications to appropriate staff.",
+      "code_reference": "Healthcare IT standards"
+    },
+    {
+      "id": "lv_nurse_034",
+      "difficulty": "advanced",
+      "question": "What cybersecurity considerations apply to networked nurse call systems?",
+      "options": [
+        "None needed",
+        "Network segmentation, encryption, access control, and monitoring",
+        "Password only",
+        "Physical security only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Networked healthcare systems require robust cybersecurity including segmentation, encryption, and access controls.",
+      "code_reference": "HIPAA, Healthcare cybersecurity standards"
+    },
+    {
+      "id": "lv_nurse_035",
+      "difficulty": "advanced",
+      "question": "What is required when nurse call integrates with electronic medical records (EMR)?",
+      "options": [
+        "No requirements",
+        "HIPAA compliance, secure data handling, and audit trails",
+        "Password protection only",
+        "Printed records"
+      ],
+      "correct_answer": 1,
+      "explanation": "EMR integration requires HIPAA-compliant data handling, secure transmission, and complete audit trails.",
+      "code_reference": "HIPAA, Healthcare IT standards"
+    }
+  ]
+}

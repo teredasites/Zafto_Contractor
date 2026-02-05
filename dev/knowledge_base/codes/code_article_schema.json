@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Code Article Schema",
+  "description": "Schema for code articles (NEC, IPC, IRC, IMC, etc.)",
+  "type": "object",
+  "required": ["id", "code", "article", "title", "content"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier (e.g., 'nec_210_8')",
+      "pattern": "^[a-z]+_[0-9_]+$"
+    },
+    "code": {
+      "type": "string",
+      "description": "Code name",
+      "enum": ["NEC", "IPC", "UPC", "IRC", "IBC", "IMC", "UMC", "OSHA"]
+    },
+    "edition": {
+      "type": "string",
+      "description": "Code edition year (e.g., '2023')"
+    },
+    "article": {
+      "type": "string",
+      "description": "Article number (e.g., '210.8')"
+    },
+    "title": {
+      "type": "string",
+      "description": "Article title"
+    },
+    "content": {
+      "type": "string",
+      "description": "Full article text or summary"
+    },
+    "subsections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "title": { "type": "string" },
+          "content": { "type": "string" }
+        }
+      }
+    },
+    "tables": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "title": { "type": "string" },
+          "headers": { "type": "array", "items": { "type": "string" } },
+          "rows": { "type": "array", "items": { "type": "array" } }
+        }
+      }
+    },
+    "related_articles": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "IDs of related code articles"
+    },
+    "related_calculators": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "IDs of calculators that use this article"
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "trade": {
+      "type": "string",
+      "enum": ["electrical", "plumbing", "hvac", "solar", "gc", "roofing", "remodeler", "landscaping"]
+    },
+    "last_updated": {
+      "type": "string",
+      "format": "date"
+    }
+  }
+}

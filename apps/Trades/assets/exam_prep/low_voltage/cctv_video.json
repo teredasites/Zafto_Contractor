@@ -1,0 +1,572 @@
+{
+  "category": "Low Voltage",
+  "subcategory": "CCTV and Video Surveillance",
+  "description": "Video surveillance system installation and configuration",
+  "difficulty_distribution": {
+    "beginner": 12,
+    "intermediate": 18,
+    "advanced": 10
+  },
+  "questions": [
+    {
+      "id": "lv_cctv_001",
+      "difficulty": "beginner",
+      "question": "What does CCTV stand for?",
+      "options": [
+        "Central Cable Television Video",
+        "Closed-Circuit Television",
+        "Computer Controlled TV",
+        "Commercial Cable TV"
+      ],
+      "correct_answer": 1,
+      "explanation": "CCTV (Closed-Circuit Television) refers to video systems where signals are transmitted to specific monitors, not broadcast publicly like television.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_cctv_002",
+      "difficulty": "beginner",
+      "question": "What is an IP camera?",
+      "options": [
+        "A camera using analog signals",
+        "A network camera that transmits video over IP networks",
+        "An indoor-only camera",
+        "A camera with infrared"
+      ],
+      "correct_answer": 1,
+      "explanation": "IP (Internet Protocol) cameras digitize video at the camera and transmit it over standard Ethernet networks using IP addressing.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_cctv_003",
+      "difficulty": "beginner",
+      "question": "What is resolution in video surveillance?",
+      "options": [
+        "Camera size",
+        "The number of pixels that make up the video image",
+        "Recording duration",
+        "Cable length"
+      ],
+      "correct_answer": 1,
+      "explanation": "Resolution refers to pixel count (e.g., 1920×1080 for 1080p). Higher resolution provides more detail for identification and evidence.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_cctv_004",
+      "difficulty": "beginner",
+      "question": "What is 1080p resolution?",
+      "options": [
+        "1080 cameras",
+        "1920 × 1080 pixels (Full HD)",
+        "1080 feet of cable",
+        "1080 frames per second"
+      ],
+      "correct_answer": 1,
+      "explanation": "1080p (Full HD) is 1920 × 1080 pixels, approximately 2 megapixels. The 'p' stands for progressive scan.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_cctv_005",
+      "difficulty": "beginner",
+      "question": "What is an NVR?",
+      "options": [
+        "Network Video Recorder - records IP camera video",
+        "Night Vision Recorder",
+        "National Video Registry",
+        "New Video Resolution"
+      ],
+      "correct_answer": 0,
+      "explanation": "NVR (Network Video Recorder) receives and records video from IP cameras over the network, storing it to hard drives for playback and evidence.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_cctv_006",
+      "difficulty": "beginner",
+      "question": "What is a DVR in surveillance?",
+      "options": [
+        "Digital Video Recorder for analog cameras",
+        "Direct Video Relay",
+        "Digital Vision Reader",
+        "Data Video Router"
+      ],
+      "correct_answer": 0,
+      "explanation": "DVR (Digital Video Recorder) converts analog camera signals to digital and stores recordings. NVRs are used for IP cameras.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_cctv_007",
+      "difficulty": "beginner",
+      "question": "What cable type is most common for IP cameras?",
+      "options": [
+        "Coaxial RG-59",
+        "Category 5e or Category 6 Ethernet cable",
+        "Speaker wire",
+        "HDMI"
+      ],
+      "correct_answer": 1,
+      "explanation": "IP cameras connect via Cat 5e or Cat 6 Ethernet cable, which can also provide power via PoE (Power over Ethernet).",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_cctv_008",
+      "difficulty": "beginner",
+      "question": "What is PoE in camera systems?",
+      "options": [
+        "Power over Ethernet - delivering power and data on one cable",
+        "Point of Entry",
+        "Protocol of Exchange",
+        "Picture of Evidence"
+      ],
+      "correct_answer": 0,
+      "explanation": "PoE (Power over Ethernet) delivers DC power and network data over the same Ethernet cable, eliminating separate power cables for cameras.",
+      "code_reference": "IEEE 802.3"
+    },
+    {
+      "id": "lv_cctv_009",
+      "difficulty": "beginner",
+      "question": "What is the frame rate of video?",
+      "options": [
+        "Camera housing style",
+        "Number of images captured per second (fps)",
+        "Video resolution",
+        "Recording capacity"
+      ],
+      "correct_answer": 1,
+      "explanation": "Frame rate (fps - frames per second) determines video smoothness. Standard rates are 30 fps (smooth) or 15 fps (saves storage).",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_cctv_010",
+      "difficulty": "beginner",
+      "question": "What is infrared (IR) illumination on cameras?",
+      "options": [
+        "Red warning light",
+        "LEDs providing invisible light for night vision",
+        "Heat detection",
+        "Radio frequency"
+      ],
+      "correct_answer": 1,
+      "explanation": "IR illuminators emit infrared light invisible to humans but visible to camera sensors, enabling video recording in complete darkness.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_cctv_011",
+      "difficulty": "beginner",
+      "question": "What is a PTZ camera?",
+      "options": [
+        "Picture Temperature Zone camera",
+        "Pan-Tilt-Zoom camera with motorized positioning",
+        "Permanent Time Zone camera",
+        "Pixel Transfer Zone camera"
+      ],
+      "correct_answer": 1,
+      "explanation": "PTZ cameras have motors allowing remote pan (left/right), tilt (up/down), and zoom control for flexible coverage of large areas.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_cctv_012",
+      "difficulty": "beginner",
+      "question": "What is a dome camera?",
+      "options": [
+        "A camera that records domes",
+        "A camera housed in a dome-shaped enclosure",
+        "A 360-degree camera",
+        "An outdoor-only camera"
+      ],
+      "correct_answer": 1,
+      "explanation": "Dome cameras are housed in dome-shaped enclosures that are vandal-resistant and make it difficult to determine camera direction.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_cctv_013",
+      "difficulty": "intermediate",
+      "question": "What is the maximum cable length for a standard PoE camera run?",
+      "options": [
+        "50 meters",
+        "100 meters (328 feet)",
+        "200 meters",
+        "500 meters"
+      ],
+      "correct_answer": 1,
+      "explanation": "Standard Ethernet/PoE cable runs are limited to 100 meters (328 feet). Extenders or fiber can be used for longer distances.",
+      "code_reference": "TIA-568, IEEE 802.3"
+    },
+    {
+      "id": "lv_cctv_014",
+      "difficulty": "intermediate",
+      "question": "What is video compression?",
+      "options": [
+        "Making cameras smaller",
+        "Reducing video file size for efficient storage and transmission",
+        "Compressing cables",
+        "Reducing frame rate only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Video compression (H.264, H.265) reduces file sizes while maintaining quality, critical for storage capacity and network bandwidth.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_cctv_015",
+      "difficulty": "intermediate",
+      "question": "What is H.265 (HEVC)?",
+      "options": [
+        "A camera resolution",
+        "High Efficiency Video Coding - advanced compression reducing file size vs H.264",
+        "A cable type",
+        "A frame rate"
+      ],
+      "correct_answer": 1,
+      "explanation": "H.265 (HEVC) provides approximately 50% better compression than H.264 at similar quality, reducing storage and bandwidth requirements.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_cctv_016",
+      "difficulty": "intermediate",
+      "question": "What is WDR in cameras?",
+      "options": [
+        "Wide Dynamic Range - handling high contrast lighting",
+        "Wireless Data Rate",
+        "Wide Definition Resolution",
+        "Weather Damage Resistance"
+      ],
+      "correct_answer": 0,
+      "explanation": "WDR (Wide Dynamic Range) allows cameras to capture usable images in scenes with both very bright and very dark areas, like doorways with backlight.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_cctv_017",
+      "difficulty": "intermediate",
+      "question": "What is the minimum light level rating (lux) for camera specifications?",
+      "options": [
+        "Recording duration",
+        "The lowest light level at which the camera produces usable images",
+        "Power consumption",
+        "Resolution"
+      ],
+      "correct_answer": 1,
+      "explanation": "Minimum illumination (lux rating) specifies the lowest light level for acceptable video. Lower numbers mean better low-light performance.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_cctv_018",
+      "difficulty": "intermediate",
+      "question": "What storage calculation factors affect NVR capacity?",
+      "options": [
+        "Camera color only",
+        "Resolution, frame rate, compression, camera count, and retention days",
+        "Cable length",
+        "Building size"
+      ],
+      "correct_answer": 1,
+      "explanation": "Storage needs depend on: cameras × resolution × frame rate × compression efficiency × hours/day × retention days. Manufacturers provide calculators.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_cctv_019",
+      "difficulty": "intermediate",
+      "question": "What is camera field of view (FOV)?",
+      "options": [
+        "Camera height",
+        "The area visible through the camera lens",
+        "Camera brand",
+        "Cable pathway"
+      ],
+      "correct_answer": 1,
+      "explanation": "Field of view is the angular extent of the scene visible through the lens. Wider FOV covers more area but with less detail per object.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_cctv_020",
+      "difficulty": "intermediate",
+      "question": "How does lens focal length affect field of view?",
+      "options": [
+        "No relationship",
+        "Shorter focal length = wider FOV; longer = narrower FOV",
+        "Longer focal length = wider FOV",
+        "Only affects focus distance"
+      ],
+      "correct_answer": 1,
+      "explanation": "Shorter focal length lenses (2.8mm) provide wider FOV. Longer focal lengths (50mm) provide narrow FOV with more detail at distance.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_cctv_021",
+      "difficulty": "intermediate",
+      "question": "What is a varifocal lens?",
+      "options": [
+        "A fixed lens",
+        "A lens with adjustable focal length for fine-tuning FOV",
+        "A zoom lens",
+        "A fisheye lens"
+      ],
+      "correct_answer": 1,
+      "explanation": "Varifocal lenses have manually adjustable focal length (e.g., 2.8-12mm), allowing FOV adjustment during installation. Motorized versions allow remote adjustment.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_cctv_022",
+      "difficulty": "intermediate",
+      "question": "What is motion detection in cameras?",
+      "options": [
+        "Camera movement detection",
+        "Video analytics detecting movement in the scene for alerts/recording",
+        "Auto-focus feature",
+        "Stabilization"
+      ],
+      "correct_answer": 1,
+      "explanation": "Motion detection analyzes video for pixel changes indicating movement. It can trigger alerts, start recording, or mark video for easy review.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_cctv_023",
+      "difficulty": "intermediate",
+      "question": "What is ONVIF?",
+      "options": [
+        "A camera brand",
+        "Open Network Video Interface Forum - interoperability standard",
+        "A compression codec",
+        "A resolution format"
+      ],
+      "correct_answer": 1,
+      "explanation": "ONVIF is an industry standard ensuring IP cameras and recorders from different manufacturers can work together (interoperability).",
+      "code_reference": "ONVIF Standard"
+    },
+    {
+      "id": "lv_cctv_024",
+      "difficulty": "intermediate",
+      "question": "What is the IP rating for outdoor cameras?",
+      "options": [
+        "Internet Protocol version",
+        "Ingress Protection rating for water/dust resistance (e.g., IP66)",
+        "Image Processing rating",
+        "Installation Priority"
+      ],
+      "correct_answer": 1,
+      "explanation": "IP ratings (IP65, IP66, IP67) indicate enclosure protection against dust and water. Higher numbers mean better protection for outdoor use.",
+      "code_reference": "IEC 60529"
+    },
+    {
+      "id": "lv_cctv_025",
+      "difficulty": "intermediate",
+      "question": "What PoE standard provides 30 watts for cameras?",
+      "options": [
+        "802.3af (PoE)",
+        "802.3at (PoE+)",
+        "802.3bt (PoE++)",
+        "802.11ac"
+      ],
+      "correct_answer": 1,
+      "explanation": "IEEE 802.3at (PoE+) provides up to 30W for devices. Standard PoE (802.3af) provides 15.4W. PoE++ (802.3bt) provides up to 60-100W.",
+      "code_reference": "IEEE 802.3at"
+    },
+    {
+      "id": "lv_cctv_026",
+      "difficulty": "intermediate",
+      "question": "What is network bandwidth calculation for cameras?",
+      "options": [
+        "Cable width",
+        "Data rate needed to transmit video streams over the network",
+        "Physical bandwidth of cable",
+        "Storage capacity"
+      ],
+      "correct_answer": 1,
+      "explanation": "Bandwidth (Mbps) required depends on resolution, frame rate, and compression. A 4MP camera at 30fps with H.265 typically needs 4-8 Mbps.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_cctv_027",
+      "difficulty": "advanced",
+      "question": "What is video analytics?",
+      "options": [
+        "Reviewing recorded video",
+        "Automated video analysis for detection (faces, objects, behaviors)",
+        "Video quality measurement",
+        "Compression algorithms"
+      ],
+      "correct_answer": 1,
+      "explanation": "Video analytics uses AI/algorithms to automatically analyze video for specific events - facial recognition, license plates, line crossing, loitering, etc.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_cctv_028",
+      "difficulty": "advanced",
+      "question": "What is edge storage in cameras?",
+      "options": [
+        "Storage near the camera",
+        "Recording directly to SD card in the camera",
+        "Cloud storage",
+        "NVR storage"
+      ],
+      "correct_answer": 1,
+      "explanation": "Edge storage records video to an SD card in the camera itself. This provides backup if network fails and can reduce NVR load.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_cctv_029",
+      "difficulty": "advanced",
+      "question": "What is camera cyber security best practice?",
+      "options": [
+        "Use default passwords",
+        "Change default passwords, use encryption, update firmware, segment network",
+        "Connect directly to internet",
+        "Disable all security features"
+      ],
+      "correct_answer": 1,
+      "explanation": "Secure camera installations require changing default passwords, enabling HTTPS/encryption, updating firmware, and isolating cameras on separate VLANs.",
+      "code_reference": "Industry Best Practice"
+    },
+    {
+      "id": "lv_cctv_030",
+      "difficulty": "advanced",
+      "question": "What is megapixel count in cameras?",
+      "options": [
+        "Zoom capability",
+        "Total pixel count (width × height) in millions",
+        "Frame rate",
+        "Lens size"
+      ],
+      "correct_answer": 1,
+      "explanation": "Megapixels = resolution width × height ÷ 1,000,000. 1080p (1920×1080) = 2.07MP. 4K (3840×2160) = 8.3MP.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_cctv_031",
+      "difficulty": "advanced",
+      "question": "What is fisheye camera dewarping?",
+      "options": [
+        "Removing camera distortion",
+        "Software correction of 360° fisheye distortion into viewable perspectives",
+        "Weatherproofing",
+        "Focus adjustment"
+      ],
+      "correct_answer": 1,
+      "explanation": "Fisheye cameras capture 180° or 360° views with distortion. Dewarping software corrects this into normal-looking perspectives for viewing.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_cctv_032",
+      "difficulty": "advanced",
+      "question": "What is RAID in NVR storage?",
+      "options": [
+        "Rapid Access Image Data",
+        "Redundant Array of Independent Disks for data protection",
+        "Recording And Image Display",
+        "Remote Access Interface Device"
+      ],
+      "correct_answer": 1,
+      "explanation": "RAID configurations (RAID 1, 5, 6) provide redundancy so video recordings survive hard drive failures. RAID 5 is common for NVRs.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_cctv_033",
+      "difficulty": "advanced",
+      "question": "What is camera shutter speed?",
+      "options": [
+        "Time to install",
+        "Exposure time affecting motion blur and low-light performance",
+        "Frame rate",
+        "Recording speed"
+      ],
+      "correct_answer": 1,
+      "explanation": "Shutter speed (exposure time) affects motion blur (fast shutter freezes motion) and low-light sensitivity (slow shutter gathers more light).",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_cctv_034",
+      "difficulty": "advanced",
+      "question": "What is VMS software?",
+      "options": [
+        "Video Memory System",
+        "Video Management Software for viewing, recording, and managing cameras",
+        "Visual Monitoring Standard",
+        "Verified Media Storage"
+      ],
+      "correct_answer": 1,
+      "explanation": "VMS (Video Management Software) is the platform for viewing live/recorded video, managing cameras, configuring analytics, and integrating with other systems.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_cctv_035",
+      "difficulty": "intermediate",
+      "question": "What is the difference between CBR and VBR compression?",
+      "options": [
+        "Camera type difference",
+        "CBR = constant bitrate; VBR = variable bitrate based on scene complexity",
+        "Cable types",
+        "Resolution difference"
+      ],
+      "correct_answer": 1,
+      "explanation": "CBR maintains constant bitrate regardless of scene. VBR adjusts bitrate based on scene complexity, saving storage during static scenes.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_cctv_036",
+      "difficulty": "intermediate",
+      "question": "What is a network switch uplink for cameras?",
+      "options": [
+        "Camera cable",
+        "The connection from camera switch to core network/NVR",
+        "Power supply",
+        "Camera mounting"
+      ],
+      "correct_answer": 1,
+      "explanation": "The uplink connects the camera switch to the network core or NVR. It must have sufficient bandwidth for all camera streams combined.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_cctv_037",
+      "difficulty": "advanced",
+      "question": "What is I-frame vs P-frame in video?",
+      "options": [
+        "Image quality settings",
+        "I-frame = complete image; P-frame = changes from previous frame",
+        "Indoor vs outdoor",
+        "Input vs output"
+      ],
+      "correct_answer": 1,
+      "explanation": "I-frames (keyframes) are complete images. P-frames contain only changes from previous frames. This enables efficient compression.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_cctv_038",
+      "difficulty": "intermediate",
+      "question": "What is day/night camera mode?",
+      "options": [
+        "Scheduled recording",
+        "Camera switches between color (day) and B&W IR-sensitive (night) modes",
+        "Two camera system",
+        "Lighting control"
+      ],
+      "correct_answer": 1,
+      "explanation": "Day/night cameras automatically switch from color mode in good light to B&W mode in low light for better IR sensitivity.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_cctv_039",
+      "difficulty": "intermediate",
+      "question": "What is camera tampering detection?",
+      "options": [
+        "Physical locks",
+        "Analytics that detect camera blocking, repositioning, or defocusing",
+        "Password protection",
+        "Vandal-proof housing"
+      ],
+      "correct_answer": 1,
+      "explanation": "Tampering detection alerts when cameras are blocked, spray-painted, moved, or defocused, indicating potential sabotage.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_cctv_040",
+      "difficulty": "advanced",
+      "question": "What is privacy masking in cameras?",
+      "options": [
+        "Hiding camera locations",
+        "Blocking specific areas in the view from recording/display",
+        "Encrypting video",
+        "Password protection"
+      ],
+      "correct_answer": 1,
+      "explanation": "Privacy masks block designated areas (neighboring windows, private areas) from being recorded or displayed, addressing privacy concerns.",
+      "code_reference": "Industry Standard"
+    }
+  ]
+}

@@ -1,0 +1,4357 @@
+{
+  "topic_id": "DR",
+  "topic_name": "Drainage",
+  "code_version": "IPC 2021",
+  "questions": [
+    {
+      "id": "DR-001",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["704"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum slope for horizontal drainage pipes 3 inches and larger?",
+      "choices": [
+        {"id": "A", "text": "1/16 inch per foot"},
+        {"id": "B", "text": "1/8 inch per foot"},
+        {"id": "C", "text": "1/4 inch per foot"},
+        {"id": "D", "text": "1/2 inch per foot"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Pipes 3 inches and larger require 1/8 inch per foot minimum slope.",
+        "detailed": "Per IPC Section 704.1, horizontal drainage piping 3 inches and larger shall be installed at a uniform slope of not less than 1/8 inch per foot (1% grade) toward the point of disposal.",
+        "how_to_find": "Reference IPC Section 704.1 for drainage pipe slope requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "704.1"},
+      "zafto_links": [],
+      "tags": ["slope", "horizontal drain", "1/8 inch"],
+      "verified": true
+    },
+    {
+      "id": "DR-002",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["704"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum slope for horizontal drainage pipes 2-1/2 inches and smaller?",
+      "choices": [
+        {"id": "A", "text": "1/16 inch per foot"},
+        {"id": "B", "text": "1/8 inch per foot"},
+        {"id": "C", "text": "1/4 inch per foot"},
+        {"id": "D", "text": "1/2 inch per foot"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Pipes 2-1/2 inches and smaller require 1/4 inch per foot minimum slope.",
+        "detailed": "Per IPC Section 704.1, horizontal drainage piping 2-1/2 inches and smaller shall be installed at a uniform slope of not less than 1/4 inch per foot (2% grade). The steeper slope maintains scouring velocity.",
+        "how_to_find": "Reference IPC Section 704.1 for small pipe slope requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "704.1"},
+      "zafto_links": [],
+      "tags": ["slope", "small pipe", "1/4 inch"],
+      "verified": true
+    },
+    {
+      "id": "DR-003",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["706"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What type of fitting is required for a horizontal to vertical drain connection?",
+      "choices": [
+        {"id": "A", "text": "Any 90-degree fitting"},
+        {"id": "B", "text": "Long-sweep 90 or two 45s"},
+        {"id": "C", "text": "Short-sweep 90 only"},
+        {"id": "D", "text": "Sanitary tee"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Horizontal to vertical requires long-sweep 90 or two 45-degree elbows.",
+        "detailed": "Per IPC Section 706.3, changes in direction from horizontal to vertical shall be made with long-sweep 1/4 bends, combination wye and 1/8 bend, or two 45-degree (1/8) bends.",
+        "how_to_find": "Reference IPC Section 706.3 for fitting requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "706.3"},
+      "zafto_links": [],
+      "tags": ["fittings", "direction change", "horizontal to vertical"],
+      "verified": true
+    },
+    {
+      "id": "DR-004",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["706"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Can a short-sweep 90-degree elbow be used in drainage piping?",
+      "choices": [
+        {"id": "A", "text": "Yes, anywhere"},
+        {"id": "B", "text": "Only on vent piping"},
+        {"id": "C", "text": "Only 2 inches and smaller"},
+        {"id": "D", "text": "Never in DWV systems"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Short-sweep 90s are only allowed on 2-inch and smaller drain pipes.",
+        "detailed": "Per IPC Section 706.3, short-sweep quarter bends (90-degree elbows) may only be used in drainage piping 2 inches and smaller. Larger pipes require long-sweep fittings to prevent stoppages.",
+        "how_to_find": "Reference IPC Section 706.3 for short-sweep restrictions."
+      },
+      "code_reference": {"code": "IPC", "section": "706.3"},
+      "zafto_links": [],
+      "tags": ["short-sweep", "90-degree", "restrictions"],
+      "verified": true
+    },
+    {
+      "id": "DR-005",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["706"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What fitting is used to connect a horizontal branch to a vertical stack?",
+      "choices": [
+        {"id": "A", "text": "90-degree elbow"},
+        {"id": "B", "text": "Sanitary tee"},
+        {"id": "C", "text": "Double wye"},
+        {"id": "D", "text": "Straight tee"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A sanitary tee connects horizontal branches to vertical stacks.",
+        "detailed": "Per IPC Section 706.3, a sanitary tee is the proper fitting for connecting a horizontal branch drain to a vertical soil or waste stack. The sweep of the tee directs flow downward.",
+        "how_to_find": "Reference IPC Section 706.3 for proper fitting selection."
+      },
+      "code_reference": {"code": "IPC", "section": "706.3"},
+      "zafto_links": [],
+      "tags": ["sanitary tee", "stack connection", "fitting"],
+      "verified": true
+    },
+    {
+      "id": "DR-006",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["706"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Can a sanitary tee be installed with the branch on its back (horizontal outlet facing up)?",
+      "choices": [
+        {"id": "A", "text": "Yes, for any application"},
+        {"id": "B", "text": "Only for vent connections"},
+        {"id": "C", "text": "Only for cleanouts"},
+        {"id": "D", "text": "Never"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Sanitary tees on their back are only permitted for vent connections.",
+        "detailed": "Per IPC Section 706.3, sanitary tees shall not be used for drainage where the branch outlet faces upward. The only exception is when the branch serves as a vent connection.",
+        "how_to_find": "Reference IPC Section 706.3 for sanitary tee orientation rules."
+      },
+      "code_reference": {"code": "IPC", "section": "706.3"},
+      "zafto_links": [],
+      "tags": ["sanitary tee", "orientation", "vent"],
+      "verified": true
+    },
+    {
+      "id": "DR-007",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["708"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the maximum interval between cleanouts in horizontal drainage piping?",
+      "choices": [
+        {"id": "A", "text": "50 feet"},
+        {"id": "B", "text": "75 feet"},
+        {"id": "C", "text": "100 feet"},
+        {"id": "D", "text": "150 feet"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Cleanouts are required at maximum 100-foot intervals.",
+        "detailed": "Per IPC Section 708.1, cleanouts shall be installed at intervals not exceeding 100 feet in horizontal drainage lines. This ensures access for clearing stoppages.",
+        "how_to_find": "Reference IPC Section 708.1 for cleanout spacing requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "708.1"},
+      "zafto_links": [],
+      "tags": ["cleanout", "spacing", "100 feet"],
+      "verified": true
+    },
+    {
+      "id": "DR-008",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["708"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Where is a cleanout required in relation to the building drain?",
+      "choices": [
+        {"id": "A", "text": "At the base of every stack"},
+        {"id": "B", "text": "Within 5 feet of building sewer connection"},
+        {"id": "C", "text": "At each change in direction"},
+        {"id": "D", "text": "All of the above"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Cleanouts are required at stack bases, near sewer connection, and direction changes.",
+        "detailed": "Per IPC Section 708.1, cleanouts are required at the base of each stack, within 5 feet of the building drain/sewer connection, and at each change of direction greater than 45 degrees.",
+        "how_to_find": "Reference IPC Section 708.1 for cleanout location requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "708.1"},
+      "zafto_links": [],
+      "tags": ["cleanout", "location", "requirements"],
+      "verified": true
+    },
+    {
+      "id": "DR-009",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["708"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum size cleanout required for a 4-inch drain pipe?",
+      "choices": [
+        {"id": "A", "text": "2 inches"},
+        {"id": "B", "text": "3 inches"},
+        {"id": "C", "text": "4 inches"},
+        {"id": "D", "text": "Same as drain size"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Cleanouts must be the same size as the drain, up to 4 inches.",
+        "detailed": "Per IPC Section 708.7, cleanouts shall be the same nominal size as the pipe they serve, up to 4 inches. For pipes larger than 4 inches, a 4-inch cleanout is acceptable.",
+        "how_to_find": "Reference IPC Section 708.7 for cleanout sizing requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "708.7"},
+      "zafto_links": [],
+      "tags": ["cleanout", "size", "4-inch"],
+      "verified": true
+    },
+    {
+      "id": "DR-010",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["708"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum cleanout size required for a 6-inch drain pipe?",
+      "choices": [
+        {"id": "A", "text": "3 inches"},
+        {"id": "B", "text": "4 inches"},
+        {"id": "C", "text": "5 inches"},
+        {"id": "D", "text": "6 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "For drains over 4 inches, a 4-inch cleanout is the minimum.",
+        "detailed": "Per IPC Section 708.7, for drain pipes larger than 4 inches, the cleanout shall be not less than 4 inches in size. A 6-inch cleanout is not required for a 6-inch pipe.",
+        "how_to_find": "Reference IPC Section 708.7 for large pipe cleanout sizing."
+      },
+      "code_reference": {"code": "IPC", "section": "708.7"},
+      "zafto_links": [],
+      "tags": ["cleanout", "large pipe", "4-inch minimum"],
+      "verified": true
+    },
+    {
+      "id": "DR-011",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["702"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What materials are acceptable for underground building drains?",
+      "choices": [
+        {"id": "A", "text": "ABS, PVC, cast iron, copper"},
+        {"id": "B", "text": "PVC only"},
+        {"id": "C", "text": "Cast iron only"},
+        {"id": "D", "text": "Any plastic pipe"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "ABS, PVC, cast iron, and copper are all approved for underground drains.",
+        "detailed": "Per IPC Table 702.1, approved materials for underground building drains include ABS, PVC, cast iron, copper (DWV), and other listed materials. Selection depends on local soil conditions and code amendments.",
+        "how_to_find": "Reference IPC Table 702.1 for approved drain materials."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 702.1"},
+      "zafto_links": [],
+      "tags": ["materials", "underground", "approved"],
+      "verified": true
+    },
+    {
+      "id": "DR-012",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["705"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What type of joint is required when connecting ABS to cast iron pipe?",
+      "choices": [
+        {"id": "A", "text": "Solvent cement"},
+        {"id": "B", "text": "Mechanical coupling"},
+        {"id": "C", "text": "Lead and oakum"},
+        {"id": "D", "text": "No-hub coupling"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Mechanical couplings are required for dissimilar material connections.",
+        "detailed": "Per IPC Section 705.16, connections between different piping materials shall be made with approved mechanical couplings or adapters designed for that purpose. No-hub couplings are a type of mechanical coupling.",
+        "how_to_find": "Reference IPC Section 705.16 for transition fitting requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "705.16"},
+      "zafto_links": [],
+      "tags": ["transition", "mechanical coupling", "dissimilar materials"],
+      "verified": true
+    },
+    {
+      "id": "DR-013",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["712"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum size building sewer?",
+      "choices": [
+        {"id": "A", "text": "2 inches"},
+        {"id": "B", "text": "3 inches"},
+        {"id": "C", "text": "4 inches"},
+        {"id": "D", "text": "6 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "The minimum building sewer size is 3 inches.",
+        "detailed": "Per IPC Section 712.1, building sewers shall be not less than 3 inches in diameter. However, most residential installations use 4-inch due to fixture load requirements.",
+        "how_to_find": "Reference IPC Section 712.1 for minimum sewer size."
+      },
+      "code_reference": {"code": "IPC", "section": "712.1"},
+      "zafto_links": [],
+      "tags": ["building sewer", "minimum size", "3-inch"],
+      "verified": true
+    },
+    {
+      "id": "DR-014",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["712"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "At what point does the building drain become the building sewer?",
+      "choices": [
+        {"id": "A", "text": "At the foundation wall"},
+        {"id": "B", "text": "3 feet outside the building"},
+        {"id": "C", "text": "At the property line"},
+        {"id": "D", "text": "At the public sewer connection"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Building sewer begins 3 feet outside the building wall.",
+        "detailed": "Per IPC definitions, the building drain extends to 3 feet outside the building wall. Beyond that point, the piping is classified as building sewer and may have different material requirements.",
+        "how_to_find": "Reference IPC Chapter 2 definitions for building drain/sewer."
+      },
+      "code_reference": {"code": "IPC", "section": "Chapter 2"},
+      "zafto_links": [],
+      "tags": ["building drain", "building sewer", "3 feet"],
+      "verified": true
+    },
+    {
+      "id": "DR-015",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["713"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is an indirect waste?",
+      "choices": [
+        {"id": "A", "text": "Waste that drains to a storm sewer"},
+        {"id": "B", "text": "Waste that discharges through an air gap to a receptor"},
+        {"id": "C", "text": "Waste from a garbage disposal"},
+        {"id": "D", "text": "Waste from a water softener"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Indirect waste discharges through an air gap into a floor drain or receptor.",
+        "detailed": "Per IPC Section 713.1, an indirect waste pipe discharges through an air gap into a trap, fixture, or receptor that is directly connected to the drainage system. This prevents cross-contamination.",
+        "how_to_find": "Reference IPC Section 713.1 for indirect waste definition."
+      },
+      "code_reference": {"code": "IPC", "section": "713.1"},
+      "zafto_links": [],
+      "tags": ["indirect waste", "air gap", "receptor"],
+      "verified": true
+    },
+    {
+      "id": "DR-016",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["713"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Which appliance requires an indirect waste connection?",
+      "choices": [
+        {"id": "A", "text": "Clothes washer"},
+        {"id": "B", "text": "Commercial refrigerator"},
+        {"id": "C", "text": "Bathtub"},
+        {"id": "D", "text": "Water closet"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Commercial refrigerators require indirect waste connections.",
+        "detailed": "Per IPC Section 713.3, refrigerators, ice makers, and food-handling equipment require indirect waste connections to prevent contamination. The air gap ensures sewage cannot back up into food equipment.",
+        "how_to_find": "Reference IPC Section 713.3 for indirect waste requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "713.3"},
+      "zafto_links": [],
+      "tags": ["indirect waste", "refrigerator", "food equipment"],
+      "verified": true
+    },
+    {
+      "id": "DR-017",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["713"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the minimum air gap for an indirect waste pipe terminating over a floor drain?",
+      "choices": [
+        {"id": "A", "text": "1 inch"},
+        {"id": "B", "text": "2 inches or twice the pipe diameter, whichever is greater"},
+        {"id": "C", "text": "Equal to pipe diameter"},
+        {"id": "D", "text": "6 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Air gap must be 2 inches minimum or twice the pipe diameter.",
+        "detailed": "Per IPC Section 713.4, indirect waste pipes shall terminate with an air gap of not less than 2 inches or twice the effective opening of the waste pipe, whichever is greater.",
+        "how_to_find": "Reference IPC Section 713.4 for air gap sizing."
+      },
+      "code_reference": {"code": "IPC", "section": "713.4"},
+      "zafto_links": [],
+      "tags": ["air gap", "indirect waste", "minimum"],
+      "verified": true
+    },
+    {
+      "id": "DR-018",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["714"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What type of waste requires a grease interceptor?",
+      "choices": [
+        {"id": "A", "text": "Residential kitchen waste"},
+        {"id": "B", "text": "Commercial kitchen waste"},
+        {"id": "C", "text": "Laundry waste"},
+        {"id": "D", "text": "All kitchen waste"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Commercial kitchen fixtures require grease interceptors.",
+        "detailed": "Per IPC Section 714.1, grease interceptors are required to receive waste from commercial food service fixtures, pot sinks, and dishwashers. Residential kitchens are typically exempt.",
+        "how_to_find": "Reference IPC Section 714.1 for grease interceptor requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "714.1"},
+      "zafto_links": [],
+      "tags": ["grease interceptor", "commercial kitchen", "FOG"],
+      "verified": true
+    },
+    {
+      "id": "DR-019",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["714"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Can a garbage disposal discharge into a grease interceptor?",
+      "choices": [
+        {"id": "A", "text": "Yes, always"},
+        {"id": "B", "text": "No, never"},
+        {"id": "C", "text": "Only with approval"},
+        {"id": "D", "text": "Only if oversized"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Garbage disposals shall not discharge into grease interceptors.",
+        "detailed": "Per IPC Section 714.2, food waste disposers (garbage disposals) shall not discharge into a grease interceptor. The solids from disposals would clog the interceptor and reduce efficiency.",
+        "how_to_find": "Reference IPC Section 714.2 for grease interceptor restrictions."
+      },
+      "code_reference": {"code": "IPC", "section": "714.2"},
+      "zafto_links": [],
+      "tags": ["garbage disposal", "grease interceptor", "prohibited"],
+      "verified": true
+    },
+    {
+      "id": "DR-020",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["715"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "When is an oil separator required?",
+      "choices": [
+        {"id": "A", "text": "All commercial buildings"},
+        {"id": "B", "text": "Auto repair shops and similar facilities"},
+        {"id": "C", "text": "Any building with a floor drain"},
+        {"id": "D", "text": "Industrial buildings only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Oil separators are required where oil-laden waste is produced.",
+        "detailed": "Per IPC Section 715.1, oil separators shall be installed to receive drainage from repair garages, gasoline stations, and other facilities where oil-laden waste is produced.",
+        "how_to_find": "Reference IPC Section 715.1 for oil separator requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "715.1"},
+      "zafto_links": [],
+      "tags": ["oil separator", "garage", "petroleum"],
+      "verified": true
+    },
+    {
+      "id": "DR-021",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["711"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What type of fitting is required where a vertical drain connects to a horizontal drain at the base of a stack?",
+      "choices": [
+        {"id": "A", "text": "Sanitary tee"},
+        {"id": "B", "text": "Long-sweep fitting or combination wye and 1/8 bend"},
+        {"id": "C", "text": "Short-sweep 90"},
+        {"id": "D", "text": "Double wye"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Long-sweep fittings are required at the base of stacks.",
+        "detailed": "Per IPC Section 711.1, the connection between a stack and building drain shall be made with a long-turn fitting, combination wye and 1/8 bend, or other approved fitting to ease the transition and prevent stoppages.",
+        "how_to_find": "Reference IPC Section 711.1 for stack base fitting requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "711.1"},
+      "zafto_links": [],
+      "tags": ["stack base", "fitting", "long-sweep"],
+      "verified": true
+    },
+    {
+      "id": "DR-022",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["706"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "medium",
+      "time_estimate_seconds": 120,
+      "question": "A horizontal drain makes a 90-degree change in direction. What fitting options are acceptable?",
+      "choices": [
+        {"id": "A", "text": "Single short-sweep 90"},
+        {"id": "B", "text": "Two 45-degree elbows or long-sweep 90"},
+        {"id": "C", "text": "Sanitary tee on its side"},
+        {"id": "D", "text": "Any drainage fitting"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Horizontal direction changes require two 45s or long-sweep 90.",
+        "detailed": "Per IPC Section 706.3, horizontal drainage pipes changing direction more than 45 degrees shall use appropriate fittings. Two 45-degree (1/8 bend) fittings or a long-sweep 90 provide the gradual turn needed.",
+        "how_to_find": "Reference IPC Section 706.3 for horizontal direction change fittings."
+      },
+      "code_reference": {"code": "IPC", "section": "706.3"},
+      "zafto_links": [],
+      "tags": ["direction change", "horizontal", "fittings"],
+      "verified": true
+    },
+    {
+      "id": "DR-023",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["707"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "How must drainage piping be supported?",
+      "choices": [
+        {"id": "A", "text": "Every 10 feet only"},
+        {"id": "B", "text": "At each joint and at intervals per code tables"},
+        {"id": "C", "text": "At the beginning and end only"},
+        {"id": "D", "text": "No support required for plastic pipe"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Drainage piping requires support at joints and code-specified intervals.",
+        "detailed": "Per IPC Section 707.1, piping shall be supported at sufficient intervals to maintain alignment and prevent sagging. Support intervals vary by pipe material and orientation (horizontal vs vertical).",
+        "how_to_find": "Reference IPC Section 707 and Table 702.4 for support requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "707.1"},
+      "zafto_links": [],
+      "tags": ["pipe support", "hangers", "alignment"],
+      "verified": true
+    },
+    {
+      "id": "DR-024",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["707"],
+      "code_tables": ["702.4"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum support interval for horizontal ABS or PVC pipe?",
+      "choices": [
+        {"id": "A", "text": "2 feet"},
+        {"id": "B", "text": "4 feet"},
+        {"id": "C", "text": "6 feet"},
+        {"id": "D", "text": "10 feet"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Horizontal ABS and PVC require support every 4 feet.",
+        "detailed": "Per IPC Table 702.4, horizontal ABS and PVC drainage piping shall be supported at intervals not exceeding 4 feet. This prevents sagging that could affect drainage slope.",
+        "how_to_find": "Reference IPC Table 702.4 for plastic pipe support intervals."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 702.4"},
+      "zafto_links": [],
+      "tags": ["pipe support", "ABS", "PVC", "4 feet"],
+      "verified": true
+    },
+    {
+      "id": "DR-025",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["707"],
+      "code_tables": ["702.4"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum support interval for horizontal cast iron pipe?",
+      "choices": [
+        {"id": "A", "text": "4 feet"},
+        {"id": "B", "text": "5 feet"},
+        {"id": "C", "text": "10 feet"},
+        {"id": "D", "text": "Every joint"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Horizontal cast iron requires support every 5 feet.",
+        "detailed": "Per IPC Table 702.4, horizontal cast iron soil pipe shall be supported at intervals not exceeding 5 feet, or at each joint if joints are further apart. At each joint is also acceptable.",
+        "how_to_find": "Reference IPC Table 702.4 for cast iron support intervals."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 702.4"},
+      "zafto_links": [],
+      "tags": ["pipe support", "cast iron", "5 feet"],
+      "verified": true
+    },
+    {
+      "id": "DR-026",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["312"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What test is required for DWV piping before concealment?",
+      "choices": [
+        {"id": "A", "text": "Smoke test only"},
+        {"id": "B", "text": "Water or air test"},
+        {"id": "C", "text": "Visual inspection only"},
+        {"id": "D", "text": "No test required"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "DWV piping must pass a water or air pressure test.",
+        "detailed": "Per IPC Section 312.2, DWV systems shall be tested with water or air. Water test requires 10-foot head minimum. Air test requires 5 psi gauge pressure held for 15 minutes.",
+        "how_to_find": "Reference IPC Section 312.2 for DWV testing requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "312.2"},
+      "zafto_links": [],
+      "tags": ["testing", "DWV", "water test", "air test"],
+      "verified": true
+    },
+    {
+      "id": "DR-027",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["312"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the minimum water column height for a water test on DWV piping?",
+      "choices": [
+        {"id": "A", "text": "5 feet"},
+        {"id": "B", "text": "10 feet"},
+        {"id": "C", "text": "15 feet"},
+        {"id": "D", "text": "Equal to building height"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Water test requires minimum 10-foot head of water.",
+        "detailed": "Per IPC Section 312.3, the water test requires filling the system to at least 10 feet of head or to the highest opening. The system must hold this pressure for 15 minutes with no leaks.",
+        "how_to_find": "Reference IPC Section 312.3 for water test requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "312.3"},
+      "zafto_links": [],
+      "tags": ["water test", "10 feet", "DWV testing"],
+      "verified": true
+    },
+    {
+      "id": "DR-028",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["312"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What air pressure is required for an air test on DWV piping?",
+      "choices": [
+        {"id": "A", "text": "3 psi for 10 minutes"},
+        {"id": "B", "text": "5 psi for 15 minutes"},
+        {"id": "C", "text": "10 psi for 5 minutes"},
+        {"id": "D", "text": "15 psi for 15 minutes"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Air test requires 5 psi held for 15 minutes.",
+        "detailed": "Per IPC Section 312.4, the air test requires the system to be pressurized to 5 psi gauge pressure and held for 15 minutes with no loss of pressure.",
+        "how_to_find": "Reference IPC Section 312.4 for air test requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "312.4"},
+      "zafto_links": [],
+      "tags": ["air test", "5 psi", "15 minutes"],
+      "verified": true
+    },
+    {
+      "id": "DR-029",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["717"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is required when a drain pipe passes through a fire-rated assembly?",
+      "choices": [
+        {"id": "A", "text": "Nothing special"},
+        {"id": "B", "text": "Firestopping"},
+        {"id": "C", "text": "Cast iron only"},
+        {"id": "D", "text": "Insulation wrap"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Firestopping is required at fire-rated penetrations.",
+        "detailed": "Per IPC Section 717.1, penetrations of fire-resistance-rated assemblies by pipes shall be protected with approved firestopping systems that maintain the fire rating of the assembly.",
+        "how_to_find": "Reference IPC Section 717 and building code for firestopping requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "717.1"},
+      "zafto_links": [],
+      "tags": ["firestopping", "fire rating", "penetration"],
+      "verified": true
+    },
+    {
+      "id": "DR-030",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["708"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "medium",
+      "time_estimate_seconds": 120,
+      "question": "A horizontal drain runs 150 feet with two 45-degree direction changes. How many cleanouts are required?",
+      "choices": [
+        {"id": "A", "text": "1"},
+        {"id": "B", "text": "2"},
+        {"id": "C", "text": "3"},
+        {"id": "D", "text": "4"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Three cleanouts: one at start, one at 100 feet, one at 135-degree total change.",
+        "detailed": "Per IPC Section 708.1: cleanout at beginning of run (1), another within 100 feet (at 100' mark = 2), and cleanouts at aggregate changes over 135 degrees (two 45s = 90°, may need one more depending on configuration). Minimum 3 cleanouts for this scenario.",
+        "how_to_find": "Apply IPC Section 708.1 spacing and direction change rules."
+      },
+      "code_reference": {"code": "IPC", "section": "708.1"},
+      "zafto_links": [],
+      "tags": ["cleanout", "calculation", "direction change"],
+      "verified": true
+    },
+    {
+      "id": "DR-031",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["712"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum slope for a building sewer?",
+      "choices": [
+        {"id": "A", "text": "1/16 inch per foot"},
+        {"id": "B", "text": "1/8 inch per foot"},
+        {"id": "C", "text": "1/4 inch per foot"},
+        {"id": "D", "text": "1/2 inch per foot"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Building sewers require minimum 1/8 inch per foot slope.",
+        "detailed": "Per IPC Section 712.1, building sewers shall be installed at a uniform slope of not less than 1/8 inch per foot toward the point of disposal.",
+        "how_to_find": "Reference IPC Section 712.1 for building sewer slope."
+      },
+      "code_reference": {"code": "IPC", "section": "712.1"},
+      "zafto_links": [],
+      "tags": ["building sewer", "slope", "1/8 inch"],
+      "verified": true
+    },
+    {
+      "id": "DR-032",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["706"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is a combination wye and 1/8 bend used for?",
+      "choices": [
+        {"id": "A", "text": "Connecting two horizontal drains"},
+        {"id": "B", "text": "Connecting vertical to horizontal at base of stack"},
+        {"id": "C", "text": "Cleanout access only"},
+        {"id": "D", "text": "Vent connections only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Combo wye and 1/8 bend connects vertical stacks to horizontal drains.",
+        "detailed": "Per IPC Section 706.3, a combination wye and 1/8 bend is an approved fitting for connecting a vertical stack to a horizontal building drain. It provides a smooth, gradual transition.",
+        "how_to_find": "Reference IPC Section 706.3 for stack base fitting requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "706.3"},
+      "zafto_links": [],
+      "tags": ["combination fitting", "wye", "stack base"],
+      "verified": true
+    },
+    {
+      "id": "DR-033",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["708"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum clearance required in front of a cleanout?",
+      "choices": [
+        {"id": "A", "text": "6 inches"},
+        {"id": "B", "text": "12 inches"},
+        {"id": "C", "text": "18 inches"},
+        {"id": "D", "text": "24 inches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Cleanouts require 18-inch minimum clearance for access.",
+        "detailed": "Per IPC Section 708.3, cleanouts shall be installed to provide a minimum of 18 inches clearance for rodding. Cleanouts 3 inches and smaller may have 12-inch clearance.",
+        "how_to_find": "Reference IPC Section 708.3 for cleanout clearance requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "708.3"},
+      "zafto_links": [],
+      "tags": ["cleanout", "clearance", "18 inches"],
+      "verified": true
+    },
+    {
+      "id": "DR-034",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["708"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Can a toilet (water closet) serve as a cleanout?",
+      "choices": [
+        {"id": "A", "text": "Yes, always"},
+        {"id": "B", "text": "No, never"},
+        {"id": "C", "text": "Yes, if within 10 feet of junction"},
+        {"id": "D", "text": "Only in residential buildings"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "A WC can serve as a cleanout if within 10 feet of the junction.",
+        "detailed": "Per IPC Section 708.2, a water closet may serve as a cleanout for the building drain if it is located within 10 feet of the junction of the building drain and building sewer.",
+        "how_to_find": "Reference IPC Section 708.2 for WC as cleanout allowance."
+      },
+      "code_reference": {"code": "IPC", "section": "708.2"},
+      "zafto_links": [],
+      "tags": ["cleanout", "water closet", "10 feet"],
+      "verified": true
+    },
+    {
+      "id": "DR-035",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["702"],
+      "code_tables": ["702.3"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What type of joint is used for hub and spigot cast iron pipe?",
+      "choices": [
+        {"id": "A", "text": "Solvent cement"},
+        {"id": "B", "text": "Compression gasket"},
+        {"id": "C", "text": "Lead and oakum or compression gasket"},
+        {"id": "D", "text": "Threaded"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Hub and spigot cast iron uses lead/oakum or compression gaskets.",
+        "detailed": "Per IPC Table 702.3, hub and spigot cast iron joints may be made with lead and oakum (traditional) or with approved compression gaskets. No-hub cast iron uses shielded couplings.",
+        "how_to_find": "Reference IPC Table 702.3 for cast iron joint methods."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 702.3"},
+      "zafto_links": [],
+      "tags": ["cast iron", "hub and spigot", "lead and oakum"],
+      "verified": true
+    },
+    {
+      "id": "DR-036",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["705"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the correct joint method for ABS drainage pipe?",
+      "choices": [
+        {"id": "A", "text": "Solvent cement"},
+        {"id": "B", "text": "Heat fusion"},
+        {"id": "C", "text": "Threaded"},
+        {"id": "D", "text": "Compression"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "ABS pipe is joined with solvent cement.",
+        "detailed": "Per IPC Section 705.4, ABS plastic pipe and fittings shall be joined with solvent cement conforming to ASTM D2235. The cement chemically welds the joint.",
+        "how_to_find": "Reference IPC Section 705.4 for ABS joining methods."
+      },
+      "code_reference": {"code": "IPC", "section": "705.4"},
+      "zafto_links": [],
+      "tags": ["ABS", "solvent cement", "joints"],
+      "verified": true
+    },
+    {
+      "id": "DR-037",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["705"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the correct joint method for PVC drainage pipe?",
+      "choices": [
+        {"id": "A", "text": "ABS cement"},
+        {"id": "B", "text": "PVC solvent cement"},
+        {"id": "C", "text": "Universal cement"},
+        {"id": "D", "text": "Epoxy"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "PVC pipe is joined with PVC solvent cement.",
+        "detailed": "Per IPC Section 705.10, PVC plastic pipe shall be joined with PVC solvent cement conforming to ASTM D2564. Primer is typically required before cementing.",
+        "how_to_find": "Reference IPC Section 705.10 for PVC joining methods."
+      },
+      "code_reference": {"code": "IPC", "section": "705.10"},
+      "zafto_links": [],
+      "tags": ["PVC", "solvent cement", "joints"],
+      "verified": true
+    },
+    {
+      "id": "DR-038",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["705"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Is primer required before applying PVC solvent cement?",
+      "choices": [
+        {"id": "A", "text": "No, never"},
+        {"id": "B", "text": "Yes, always"},
+        {"id": "C", "text": "Only for pipe 2 inches and larger"},
+        {"id": "D", "text": "Only if manufacturer requires it"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Primer is required for PVC solvent cement joints.",
+        "detailed": "Per IPC Section 705.10, a purple primer conforming to ASTM F656 shall be applied to PVC joints before solvent cement. Some all-in-one cements may be approved without separate primer.",
+        "how_to_find": "Reference IPC Section 705.10 for PVC primer requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "705.10"},
+      "zafto_links": [],
+      "tags": ["PVC", "primer", "purple primer"],
+      "verified": true
+    },
+    {
+      "id": "DR-039",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["717"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What special requirement applies to plastic pipe penetrating a fire-rated floor?",
+      "choices": [
+        {"id": "A", "text": "Must use cast iron through the floor"},
+        {"id": "B", "text": "Firestopping with intumescent collar or wrap"},
+        {"id": "C", "text": "No plastic allowed"},
+        {"id": "D", "text": "Double-wall pipe required"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Plastic pipe requires firestopping with intumescent protection.",
+        "detailed": "Per IPC Section 717 and building code, plastic pipe through fire-rated assemblies requires approved firestopping, typically including intumescent collars or wraps that expand in heat to seal the opening when plastic melts.",
+        "how_to_find": "Reference IPC Section 717 and building code for firestopping."
+      },
+      "code_reference": {"code": "IPC", "section": "717"},
+      "zafto_links": [],
+      "tags": ["firestopping", "plastic pipe", "intumescent"],
+      "verified": true
+    },
+    {
+      "id": "DR-040",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["704"],
+      "code_tables": [],
+      "type": "calculation",
+      "difficulty": "medium",
+      "time_estimate_seconds": 120,
+      "question": "A 4-inch drain runs 40 feet at 1/8 inch per foot slope. What is the total fall?",
+      "choices": [
+        {"id": "A", "text": "2.5 inches"},
+        {"id": "B", "text": "5 inches"},
+        {"id": "C", "text": "10 inches"},
+        {"id": "D", "text": "20 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "40 feet × 1/8 inch = 5 inches total fall.",
+        "detailed": "Calculate: Length × Slope = Fall. 40 feet × 1/8 inch/foot = 40/8 = 5 inches total fall from beginning to end of the run.",
+        "how_to_find": "Multiply pipe length by slope per foot."
+      },
+      "code_reference": {"code": "IPC", "section": "704.1"},
+      "zafto_links": [],
+      "tags": ["slope calculation", "fall", "drainage"],
+      "verified": true
+    },
+    {
+      "id": "DR-041",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["704"],
+      "code_tables": [],
+      "type": "calculation",
+      "difficulty": "medium",
+      "time_estimate_seconds": 120,
+      "question": "A 2-inch drain runs 24 feet. What minimum fall is required?",
+      "choices": [
+        {"id": "A", "text": "3 inches"},
+        {"id": "B", "text": "6 inches"},
+        {"id": "C", "text": "12 inches"},
+        {"id": "D", "text": "2 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "24 feet × 1/4 inch = 6 inches minimum fall.",
+        "detailed": "For 2-inch pipe: minimum slope is 1/4 inch per foot. 24 feet × 1/4 inch/foot = 6 inches total fall required.",
+        "how_to_find": "Use 1/4\"/ft for pipes 2-1/2\" and smaller per IPC 704.1."
+      },
+      "code_reference": {"code": "IPC", "section": "704.1"},
+      "zafto_links": [],
+      "tags": ["slope calculation", "2-inch pipe", "fall"],
+      "verified": true
+    },
+    {
+      "id": "DR-042",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["713"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What fixtures in a commercial kitchen require indirect waste?",
+      "choices": [
+        {"id": "A", "text": "Only dishwashers"},
+        {"id": "B", "text": "All food prep sinks"},
+        {"id": "C", "text": "Food preparation sinks, dishwashers, refrigerators, ice machines"},
+        {"id": "D", "text": "Only refrigerators"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "All food-related equipment requires indirect waste connections.",
+        "detailed": "Per IPC Section 713.3, indirect waste is required for refrigerators, ice machines, food preparation sinks, dishwashers, steam tables, and similar food service equipment to prevent contamination.",
+        "how_to_find": "Reference IPC Section 713.3 for food equipment waste requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "713.3"},
+      "zafto_links": [],
+      "tags": ["indirect waste", "food equipment", "commercial kitchen"],
+      "verified": true
+    },
+    {
+      "id": "DR-043",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["716"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What type of interceptor is required for a dental office?",
+      "choices": [
+        {"id": "A", "text": "Grease interceptor"},
+        {"id": "B", "text": "Oil separator"},
+        {"id": "C", "text": "Amalgam separator"},
+        {"id": "D", "text": "Sand interceptor"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Dental offices require amalgam separators.",
+        "detailed": "Per IPC Section 716, dental facilities shall be equipped with amalgam separators to capture mercury-containing dental amalgam waste before it enters the drainage system.",
+        "how_to_find": "Reference IPC Section 716 for special waste requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "716"},
+      "zafto_links": [],
+      "tags": ["amalgam separator", "dental", "special waste"],
+      "verified": true
+    },
+    {
+      "id": "DR-044",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["714"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the minimum grease retention capacity for a grease interceptor serving a 3-compartment sink?",
+      "choices": [
+        {"id": "A", "text": "Based on GPM flow rate"},
+        {"id": "B", "text": "50 pounds"},
+        {"id": "C", "text": "100 pounds"},
+        {"id": "D", "text": "Determined by manufacturer"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Grease interceptor sizing is based on GPM flow rate.",
+        "detailed": "Per IPC Section 714.1, grease interceptors shall be sized based on the flow rate through the fixtures they serve, typically expressed in gallons per minute (GPM). Sizing charts consider fixture count and type.",
+        "how_to_find": "Reference IPC Section 714.1 for grease interceptor sizing."
+      },
+      "code_reference": {"code": "IPC", "section": "714.1"},
+      "zafto_links": [],
+      "tags": ["grease interceptor", "sizing", "GPM"],
+      "verified": true
+    },
+    {
+      "id": "DR-045",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["712"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What materials are approved for building sewers?",
+      "choices": [
+        {"id": "A", "text": "PVC only"},
+        {"id": "B", "text": "Cast iron only"},
+        {"id": "C", "text": "ABS, PVC, cast iron, vitrified clay, concrete"},
+        {"id": "D", "text": "Same as building drain materials only"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Multiple materials including clay and concrete are approved for sewers.",
+        "detailed": "Per IPC Table 702.2, building sewers may be constructed of ABS, PVC, cast iron, ductile iron, vitrified clay, concrete pipe, and other approved materials suitable for underground use.",
+        "how_to_find": "Reference IPC Table 702.2 for building sewer materials."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 702.2"},
+      "zafto_links": [],
+      "tags": ["building sewer", "materials", "approved"],
+      "verified": true
+    },
+    {
+      "id": "DR-046",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["720"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "When is a sump pump required for a drainage system?",
+      "choices": [
+        {"id": "A", "text": "In all basements"},
+        {"id": "B", "text": "When fixtures are below the sewer line"},
+        {"id": "C", "text": "Only for commercial buildings"},
+        {"id": "D", "text": "When required by local code"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Sump pumps are required when fixtures are below sewer level.",
+        "detailed": "Per IPC Section 712.3, building drains receiving discharge from fixtures below the sewer level shall discharge to an approved ejector or sump pump system.",
+        "how_to_find": "Reference IPC Section 712.3 for below-grade drainage."
+      },
+      "code_reference": {"code": "IPC", "section": "712.3"},
+      "zafto_links": [],
+      "tags": ["sump pump", "ejector", "below grade"],
+      "verified": true
+    },
+    {
+      "id": "DR-047",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["712"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the minimum capacity requirement for a sewage ejector pump?",
+      "choices": [
+        {"id": "A", "text": "20 GPM"},
+        {"id": "B", "text": "Based on DFU load"},
+        {"id": "C", "text": "50 GPM minimum"},
+        {"id": "D", "text": "Equal to water supply GPM"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Ejector capacity is based on the DFU load it serves.",
+        "detailed": "Per IPC Section 712.3.3, sewage ejector pumps shall be sized to handle the drainage fixture unit load of the fixtures discharging to the sump, typically requiring 20+ GPM for residential.",
+        "how_to_find": "Reference IPC Section 712.3.3 for ejector pump sizing."
+      },
+      "code_reference": {"code": "IPC", "section": "712.3.3"},
+      "zafto_links": [],
+      "tags": ["ejector pump", "capacity", "DFU"],
+      "verified": true
+    },
+    {
+      "id": "DR-048",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["712"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Must a sewage ejector sump be vented?",
+      "choices": [
+        {"id": "A", "text": "No, never"},
+        {"id": "B", "text": "Yes, always"},
+        {"id": "C", "text": "Only if serving a WC"},
+        {"id": "D", "text": "Only for commercial installations"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Sewage ejector sumps must be vented.",
+        "detailed": "Per IPC Section 712.3.2, sumps receiving sewage shall be vented. The vent prevents siphoning of fixture traps and allows proper pump operation by preventing airlock.",
+        "how_to_find": "Reference IPC Section 712.3.2 for ejector venting."
+      },
+      "code_reference": {"code": "IPC", "section": "712.3.2"},
+      "zafto_links": [],
+      "tags": ["ejector", "vent", "sump"],
+      "verified": true
+    },
+    {
+      "id": "DR-049",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["706"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "medium",
+      "time_estimate_seconds": 120,
+      "question": "A plumber needs to connect a horizontal branch to a horizontal building drain. What fitting is required?",
+      "choices": [
+        {"id": "A", "text": "Sanitary tee"},
+        {"id": "B", "text": "Wye fitting"},
+        {"id": "C", "text": "Double wye"},
+        {"id": "D", "text": "Cross fitting"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A wye fitting connects horizontal branches to horizontal drains.",
+        "detailed": "Per IPC Section 706.3, horizontal to horizontal connections shall be made with wye fittings. Sanitary tees are for horizontal to vertical connections only.",
+        "how_to_find": "Reference IPC Section 706.3 for horizontal connection fittings."
+      },
+      "code_reference": {"code": "IPC", "section": "706.3"},
+      "zafto_links": [],
+      "tags": ["wye fitting", "horizontal", "connection"],
+      "verified": true
+    },
+    {
+      "id": "DR-050",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["706"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Can a double sanitary tee be used in drainage piping?",
+      "choices": [
+        {"id": "A", "text": "Yes, for any application"},
+        {"id": "B", "text": "No, never in drainage"},
+        {"id": "C", "text": "Only in vertical position connecting horizontal branches"},
+        {"id": "D", "text": "Only for vent connections"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Double sanitary tees are only for vertical drains with horizontal branches.",
+        "detailed": "Per IPC Section 706.3, double sanitary tees may be used when installed in a vertical position receiving horizontal branches at the same level. They cannot be used horizontally.",
+        "how_to_find": "Reference IPC Section 706.3 for double sanitary tee restrictions."
+      },
+      "code_reference": {"code": "IPC", "section": "706.3"},
+      "zafto_links": [],
+      "tags": ["double sanitary tee", "vertical", "restrictions"],
+      "verified": true
+    },
+    {
+      "id": "DR-051",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["709"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is a fixture drain?",
+      "choices": [
+        {"id": "A", "text": "The drain pipe from the public sewer"},
+        {"id": "B", "text": "The drain from fixture trap to junction with another drain"},
+        {"id": "C", "text": "Any vertical drain pipe"},
+        {"id": "D", "text": "The building main drain"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A fixture drain runs from the trap to the next drain pipe junction.",
+        "detailed": "Per IPC definitions, a fixture drain is the drain pipe from the trap of a fixture to the junction with any other drain pipe. It is the first section of drain after the fixture trap.",
+        "how_to_find": "Reference IPC Chapter 2 definitions for fixture drain."
+      },
+      "code_reference": {"code": "IPC", "section": "Chapter 2"},
+      "zafto_links": [],
+      "tags": ["fixture drain", "definition", "trap"],
+      "verified": true
+    },
+    {
+      "id": "DR-052",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["709"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is a horizontal branch?",
+      "choices": [
+        {"id": "A", "text": "Any horizontal pipe"},
+        {"id": "B", "text": "A drain pipe running horizontally from fixture drains to a stack or building drain"},
+        {"id": "C", "text": "The building sewer"},
+        {"id": "D", "text": "A vent pipe"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A horizontal branch connects fixture drains to stacks or building drains.",
+        "detailed": "Per IPC definitions, a horizontal branch is a drain pipe extending laterally from a soil or waste stack or building drain that receives discharge from fixture drains.",
+        "how_to_find": "Reference IPC Chapter 2 definitions for horizontal branch."
+      },
+      "code_reference": {"code": "IPC", "section": "Chapter 2"},
+      "zafto_links": [],
+      "tags": ["horizontal branch", "definition", "drain"],
+      "verified": true
+    },
+    {
+      "id": "DR-053",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["711"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is an offset in a drainage stack?",
+      "choices": [
+        {"id": "A", "text": "Any bend in the pipe"},
+        {"id": "B", "text": "A horizontal section between two vertical sections"},
+        {"id": "C", "text": "A change in pipe size"},
+        {"id": "D", "text": "A cleanout location"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "An offset is a horizontal section connecting two vertical sections.",
+        "detailed": "Per IPC definitions, a stack offset is a combination of elbows or bends that brings one section of pipe out of line but into a parallel alignment with the other section.",
+        "how_to_find": "Reference IPC Chapter 2 and Section 711 for offset definitions."
+      },
+      "code_reference": {"code": "IPC", "section": "711"},
+      "zafto_links": [],
+      "tags": ["offset", "stack", "horizontal section"],
+      "verified": true
+    },
+    {
+      "id": "DR-054",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["711"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What special requirement applies to an offset in a soil stack at 45 degrees or less?",
+      "choices": [
+        {"id": "A", "text": "Sized as building drain"},
+        {"id": "B", "text": "No special requirements"},
+        {"id": "C", "text": "Must have cleanout"},
+        {"id": "D", "text": "Must be cast iron"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Offsets 45 degrees or less have no special sizing requirements.",
+        "detailed": "Per IPC Section 711.2, offsets at 45 degrees or less from vertical are sized as a regular stack. Only offsets greater than 45 degrees require special sizing considerations.",
+        "how_to_find": "Reference IPC Section 711.2 for offset requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "711.2"},
+      "zafto_links": [],
+      "tags": ["offset", "45 degrees", "stack"],
+      "verified": true
+    },
+    {
+      "id": "DR-055",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["711"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "How is an offset greater than 45 degrees sized in a building drain?",
+      "choices": [
+        {"id": "A", "text": "Same as stack above"},
+        {"id": "B", "text": "Horizontal portion sized as building drain"},
+        {"id": "C", "text": "One size larger than stack"},
+        {"id": "D", "text": "Two sizes larger than stack"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Offsets over 45 degrees: horizontal portion sized as building drain.",
+        "detailed": "Per IPC Section 711.2, where a stack offset is greater than 45 degrees from vertical, the horizontal portion shall be sized as a building drain based on the total DFU load above the offset.",
+        "how_to_find": "Reference IPC Section 711.2 for large offset sizing."
+      },
+      "code_reference": {"code": "IPC", "section": "711.2"},
+      "zafto_links": [],
+      "tags": ["offset", "greater than 45", "building drain"],
+      "verified": true
+    },
+    {
+      "id": "DR-056",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["713"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is a waste receptor?",
+      "choices": [
+        {"id": "A", "text": "Any floor drain"},
+        {"id": "B", "text": "A fixture receiving indirect waste discharge"},
+        {"id": "C", "text": "A grease trap"},
+        {"id": "D", "text": "A sump basin"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A waste receptor is a fixture designed to receive indirect waste.",
+        "detailed": "Per IPC definitions, a waste receptor is a plumbing fixture or device used to receive discharge from indirect waste pipes. It may be a floor sink, floor drain, or similar fixture with a trap.",
+        "how_to_find": "Reference IPC Chapter 2 definitions and Section 713."
+      },
+      "code_reference": {"code": "IPC", "section": "713"},
+      "zafto_links": [],
+      "tags": ["waste receptor", "indirect waste", "fixture"],
+      "verified": true
+    },
+    {
+      "id": "DR-057",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["702"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Can ABS and PVC pipe be joined together in a drainage system?",
+      "choices": [
+        {"id": "A", "text": "Yes, with solvent cement"},
+        {"id": "B", "text": "Yes, with mechanical coupling only"},
+        {"id": "C", "text": "No, never"},
+        {"id": "D", "text": "Only above ground"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "ABS to PVC requires mechanical coupling - not solvent cement.",
+        "detailed": "Per IPC Section 705.16, ABS and PVC shall not be solvent cemented together. Transitions must be made with approved mechanical couplings designed for dissimilar plastic materials.",
+        "how_to_find": "Reference IPC Section 705.16 for plastic pipe transitions."
+      },
+      "code_reference": {"code": "IPC", "section": "705.16"},
+      "zafto_links": [],
+      "tags": ["ABS", "PVC", "transition", "mechanical coupling"],
+      "verified": true
+    },
+    {
+      "id": "DR-058",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["708"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What direction must a cleanout plug face?",
+      "choices": [
+        {"id": "A", "text": "Any direction"},
+        {"id": "B", "text": "Upstream (against flow)"},
+        {"id": "C", "text": "Downstream (with flow)"},
+        {"id": "D", "text": "Toward nearest wall"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Cleanout plugs must face upstream (against the direction of flow).",
+        "detailed": "Per IPC Section 708.4, cleanouts shall be installed so the opening faces upstream, allowing rodding equipment to be inserted in the direction of flow.",
+        "how_to_find": "Reference IPC Section 708.4 for cleanout orientation."
+      },
+      "code_reference": {"code": "IPC", "section": "708.4"},
+      "zafto_links": [],
+      "tags": ["cleanout", "orientation", "upstream"],
+      "verified": true
+    },
+    {
+      "id": "DR-059",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["714"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "How often must a grease interceptor be cleaned?",
+      "choices": [
+        {"id": "A", "text": "Weekly"},
+        {"id": "B", "text": "Monthly"},
+        {"id": "C", "text": "When 25% full of grease"},
+        {"id": "D", "text": "Per manufacturer or authority requirements"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Cleaning frequency is per manufacturer or local requirements.",
+        "detailed": "Per IPC Section 714.1, grease interceptors shall be maintained by periodic removal of accumulated grease. Frequency depends on use intensity and local health department requirements, typically when 25% full.",
+        "how_to_find": "Reference IPC Section 714.1 and local regulations."
+      },
+      "code_reference": {"code": "IPC", "section": "714.1"},
+      "zafto_links": [],
+      "tags": ["grease interceptor", "maintenance", "cleaning"],
+      "verified": true
+    },
+    {
+      "id": "DR-060",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["312"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 180,
+      "question": "During a water test, a 3-story DWV system shows slight leakage at a joint on the second floor. What action is required?",
+      "choices": [
+        {"id": "A", "text": "Apply sealant and retest"},
+        {"id": "B", "text": "Repair joint and retest entire system"},
+        {"id": "C", "text": "Document leak location and proceed"},
+        {"id": "D", "text": "Reduce test pressure and recheck"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Any leak requires repair and complete retest.",
+        "detailed": "Per IPC Section 312.1, the system must be watertight. Any leaks discovered during testing must be repaired, and the entire system (or repaired section) must be retested to verify integrity.",
+        "how_to_find": "Reference IPC Section 312 for testing and repair requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "312.1"},
+      "zafto_links": [],
+      "tags": ["testing", "leak", "repair", "retest"],
+      "verified": true
+    },
+    {
+      "id": "DR-061",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["709"],
+      "code_tables": ["709.1"],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum drain size for a lavatory?",
+      "choices": [
+        {"id": "A", "text": "1 inch"},
+        {"id": "B", "text": "1-1/4 inches"},
+        {"id": "C", "text": "1-1/2 inches"},
+        {"id": "D", "text": "2 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Lavatories require a minimum 1-1/4 inch drain.",
+        "detailed": "Per IPC Table 709.1, the minimum drain size for a lavatory is 1-1/4 inches. This is the smallest allowed fixture drain in the plumbing code.",
+        "how_to_find": "Reference IPC Table 709.1 for fixture drain sizes."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 709.1"},
+      "zafto_links": [],
+      "tags": ["lavatory", "drain size", "minimum"],
+      "verified": true
+    },
+    {
+      "id": "DR-062",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["709"],
+      "code_tables": ["709.1"],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum drain size for a water closet (toilet)?",
+      "choices": [
+        {"id": "A", "text": "2 inches"},
+        {"id": "B", "text": "3 inches"},
+        {"id": "C", "text": "4 inches"},
+        {"id": "D", "text": "1-1/2 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Water closets require a minimum 3-inch drain.",
+        "detailed": "Per IPC Table 709.1, the minimum drain size for a water closet is 3 inches. This accounts for solid waste discharge and prevents stoppages.",
+        "how_to_find": "Reference IPC Table 709.1 for water closet drain size."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 709.1"},
+      "zafto_links": [],
+      "tags": ["water closet", "toilet", "drain size", "3-inch"],
+      "verified": true
+    },
+    {
+      "id": "DR-063",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["709"],
+      "code_tables": ["709.1"],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum drain size for a bathtub?",
+      "choices": [
+        {"id": "A", "text": "1-1/4 inches"},
+        {"id": "B", "text": "1-1/2 inches"},
+        {"id": "C", "text": "2 inches"},
+        {"id": "D", "text": "3 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Bathtubs require a minimum 1-1/2 inch drain.",
+        "detailed": "Per IPC Table 709.1, the minimum drain size for a bathtub is 1-1/2 inches. This applies to both standard tubs and tub/shower combinations.",
+        "how_to_find": "Reference IPC Table 709.1 for bathtub drain size."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 709.1"},
+      "zafto_links": [],
+      "tags": ["bathtub", "drain size", "1-1/2 inch"],
+      "verified": true
+    },
+    {
+      "id": "DR-064",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["709"],
+      "code_tables": ["709.1"],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum drain size for a shower stall?",
+      "choices": [
+        {"id": "A", "text": "1-1/4 inches"},
+        {"id": "B", "text": "1-1/2 inches"},
+        {"id": "C", "text": "2 inches"},
+        {"id": "D", "text": "3 inches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Shower stalls require a minimum 2-inch drain.",
+        "detailed": "Per IPC Table 709.1, the minimum drain size for a shower stall is 2 inches. This is larger than a bathtub due to higher flow rates from shower heads.",
+        "how_to_find": "Reference IPC Table 709.1 for shower drain size."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 709.1"},
+      "zafto_links": [],
+      "tags": ["shower", "drain size", "2-inch"],
+      "verified": true
+    },
+    {
+      "id": "DR-065",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["709"],
+      "code_tables": ["709.1"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum drain size for a floor drain?",
+      "choices": [
+        {"id": "A", "text": "1-1/2 inches"},
+        {"id": "B", "text": "2 inches"},
+        {"id": "C", "text": "3 inches"},
+        {"id": "D", "text": "4 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Floor drains require a minimum 2-inch drain.",
+        "detailed": "Per IPC Table 709.1, the minimum drain size for a floor drain is 2 inches. Larger sizes may be required based on anticipated flow or local requirements.",
+        "how_to_find": "Reference IPC Table 709.1 for floor drain size."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 709.1"},
+      "zafto_links": [],
+      "tags": ["floor drain", "drain size", "2-inch"],
+      "verified": true
+    },
+    {
+      "id": "DR-066",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["709"],
+      "code_tables": ["709.1"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum drain size for a clothes washer standpipe?",
+      "choices": [
+        {"id": "A", "text": "1-1/2 inches"},
+        {"id": "B", "text": "2 inches"},
+        {"id": "C", "text": "3 inches"},
+        {"id": "D", "text": "1-1/4 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Clothes washer standpipes require a minimum 2-inch drain.",
+        "detailed": "Per IPC Table 709.1, the minimum drain size for a clothes washer standpipe is 2 inches. This accommodates the pump discharge rate of modern washing machines.",
+        "how_to_find": "Reference IPC Table 709.1 for clothes washer drain size."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 709.1"},
+      "zafto_links": [],
+      "tags": ["clothes washer", "standpipe", "2-inch"],
+      "verified": true
+    },
+    {
+      "id": "DR-067",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["709"],
+      "code_tables": ["709.1"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum drain size for a kitchen sink?",
+      "choices": [
+        {"id": "A", "text": "1-1/4 inches"},
+        {"id": "B", "text": "1-1/2 inches"},
+        {"id": "C", "text": "2 inches"},
+        {"id": "D", "text": "3 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Kitchen sinks require a minimum 1-1/2 inch drain.",
+        "detailed": "Per IPC Table 709.1, the minimum drain size for a kitchen sink is 1-1/2 inches. This applies whether the sink has one or two compartments.",
+        "how_to_find": "Reference IPC Table 709.1 for kitchen sink drain size."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 709.1"},
+      "zafto_links": [],
+      "tags": ["kitchen sink", "drain size", "1-1/2 inch"],
+      "verified": true
+    },
+    {
+      "id": "DR-068",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["709"],
+      "code_tables": ["709.2"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum length of a 1-1/2 inch fixture drain?",
+      "choices": [
+        {"id": "A", "text": "3 feet 6 inches"},
+        {"id": "B", "text": "5 feet"},
+        {"id": "C", "text": "6 feet"},
+        {"id": "D", "text": "8 feet"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A 1-1/2 inch fixture drain is limited to 5 feet maximum.",
+        "detailed": "Per IPC Table 709.2, the maximum length of a 1-1/2 inch fixture drain is 5 feet. Longer runs require a larger pipe size to maintain proper drainage.",
+        "how_to_find": "Reference IPC Table 709.2 for fixture drain lengths."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 709.2"},
+      "zafto_links": [],
+      "tags": ["fixture drain", "length", "1-1/2 inch"],
+      "verified": true
+    },
+    {
+      "id": "DR-069",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["709"],
+      "code_tables": ["709.2"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum length of a 2-inch fixture drain?",
+      "choices": [
+        {"id": "A", "text": "5 feet"},
+        {"id": "B", "text": "6 feet"},
+        {"id": "C", "text": "8 feet"},
+        {"id": "D", "text": "10 feet"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "A 2-inch fixture drain is limited to 8 feet maximum.",
+        "detailed": "Per IPC Table 709.2, the maximum length of a 2-inch fixture drain is 8 feet. This limit ensures adequate drainage velocity and proper trap seal protection.",
+        "how_to_find": "Reference IPC Table 709.2 for fixture drain lengths."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 709.2"},
+      "zafto_links": [],
+      "tags": ["fixture drain", "length", "2-inch"],
+      "verified": true
+    },
+    {
+      "id": "DR-070",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["709"],
+      "code_tables": ["709.2"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the maximum length of a 3-inch fixture drain?",
+      "choices": [
+        {"id": "A", "text": "6 feet"},
+        {"id": "B", "text": "10 feet"},
+        {"id": "C", "text": "12 feet"},
+        {"id": "D", "text": "Unlimited"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "A 3-inch fixture drain is limited to 12 feet maximum.",
+        "detailed": "Per IPC Table 709.2, the maximum length of a 3-inch fixture drain is 12 feet. This applies to water closet drains connecting to a stack or branch.",
+        "how_to_find": "Reference IPC Table 709.2 for fixture drain lengths."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 709.2"},
+      "zafto_links": [],
+      "tags": ["fixture drain", "length", "3-inch"],
+      "verified": true
+    },
+    {
+      "id": "DR-071",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["1002"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum trap seal depth required by code?",
+      "choices": [
+        {"id": "A", "text": "1 inch"},
+        {"id": "B", "text": "2 inches"},
+        {"id": "C", "text": "3 inches"},
+        {"id": "D", "text": "4 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Trap seals must be minimum 2 inches deep.",
+        "detailed": "Per IPC Section 1002.4, each fixture trap shall have a liquid seal of not less than 2 inches and not more than 4 inches. This prevents sewer gases from entering the building.",
+        "how_to_find": "Reference IPC Section 1002.4 for trap seal requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "1002.4"},
+      "zafto_links": [],
+      "tags": ["trap seal", "minimum", "2-inch"],
+      "verified": true
+    },
+    {
+      "id": "DR-072",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["1002"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum trap seal depth allowed?",
+      "choices": [
+        {"id": "A", "text": "2 inches"},
+        {"id": "B", "text": "3 inches"},
+        {"id": "C", "text": "4 inches"},
+        {"id": "D", "text": "6 inches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Trap seals cannot exceed 4 inches depth.",
+        "detailed": "Per IPC Section 1002.4, trap seals shall not exceed 4 inches. Deeper seals create excessive resistance to flow and may not properly self-scour.",
+        "how_to_find": "Reference IPC Section 1002.4 for maximum seal depth."
+      },
+      "code_reference": {"code": "IPC", "section": "1002.4"},
+      "zafto_links": [],
+      "tags": ["trap seal", "maximum", "4-inch"],
+      "verified": true
+    },
+    {
+      "id": "DR-073",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["1002"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What fixture is exempt from having a trap?",
+      "choices": [
+        {"id": "A", "text": "Lavatory"},
+        {"id": "B", "text": "Bathtub"},
+        {"id": "C", "text": "Water closet (toilet)"},
+        {"id": "D", "text": "None - all fixtures need traps"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Water closets have integral traps and don't need separate traps.",
+        "detailed": "Per IPC Section 1002.1, water closets have built-in traps as part of the fixture design. All other fixtures must have a separate P-trap installed.",
+        "how_to_find": "Reference IPC Section 1002.1 for trap requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "1002.1"},
+      "zafto_links": [],
+      "tags": ["trap", "water closet", "integral trap"],
+      "verified": true
+    },
+    {
+      "id": "DR-074",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["1002"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Can S-traps be used in new plumbing installations?",
+      "choices": [
+        {"id": "A", "text": "Yes, anywhere"},
+        {"id": "B", "text": "No, prohibited"},
+        {"id": "C", "text": "Only for floor drains"},
+        {"id": "D", "text": "Only in residential"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "S-traps are prohibited in new plumbing installations.",
+        "detailed": "Per IPC Section 1002.2, S-traps are prohibited because they are prone to self-siphoning, which can empty the trap seal and allow sewer gases to enter the building.",
+        "how_to_find": "Reference IPC Section 1002.2 for prohibited trap types."
+      },
+      "code_reference": {"code": "IPC", "section": "1002.2"},
+      "zafto_links": [],
+      "tags": ["S-trap", "prohibited", "self-siphoning"],
+      "verified": true
+    },
+    {
+      "id": "DR-075",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["1002"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What causes trap siphonage?",
+      "choices": [
+        {"id": "A", "text": "Excessive water supply pressure"},
+        {"id": "B", "text": "Negative pressure in the drain pulling water from trap"},
+        {"id": "C", "text": "Leaking drain joints"},
+        {"id": "D", "text": "Improper pipe slope"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Trap siphonage occurs when negative pressure pulls water from the trap.",
+        "detailed": "Trap siphonage occurs when negative pressure in the drainage system pulls water from the trap seal. This is why proper venting is critical - vents equalize pressure and protect trap seals.",
+        "how_to_find": "Reference IPC Chapter 9 for venting principles that prevent siphonage."
+      },
+      "code_reference": {"code": "IPC", "section": "Chapter 9"},
+      "zafto_links": [],
+      "tags": ["siphonage", "trap seal", "negative pressure"],
+      "verified": true
+    },
+    {
+      "id": "DR-076",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(1)"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "How many DFU is a residential toilet rated at?",
+      "choices": [
+        {"id": "A", "text": "2 DFU"},
+        {"id": "B", "text": "3 DFU"},
+        {"id": "C", "text": "4 DFU"},
+        {"id": "D", "text": "6 DFU"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "A residential water closet is rated at 4 DFU.",
+        "detailed": "Per IPC Table 710.1(1), a water closet with a 1.6 gallon flush or less is rated at 4 drainage fixture units. This is used for sizing drains and stacks.",
+        "how_to_find": "Reference IPC Table 710.1(1) for fixture unit values."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(1)"},
+      "zafto_links": [],
+      "tags": ["DFU", "water closet", "fixture units"],
+      "verified": true
+    },
+    {
+      "id": "DR-077",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(1)"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "How many DFU is a lavatory rated at?",
+      "choices": [
+        {"id": "A", "text": "0.5 DFU"},
+        {"id": "B", "text": "1 DFU"},
+        {"id": "C", "text": "2 DFU"},
+        {"id": "D", "text": "1.5 DFU"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A lavatory is rated at 1 DFU.",
+        "detailed": "Per IPC Table 710.1(1), a lavatory (bathroom sink) is rated at 1 drainage fixture unit. This is the baseline fixture unit used in plumbing calculations.",
+        "how_to_find": "Reference IPC Table 710.1(1) for lavatory DFU value."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(1)"},
+      "zafto_links": [],
+      "tags": ["DFU", "lavatory", "fixture units"],
+      "verified": true
+    },
+    {
+      "id": "DR-078",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(1)"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "How many DFU is a bathtub or combination tub/shower rated at?",
+      "choices": [
+        {"id": "A", "text": "1 DFU"},
+        {"id": "B", "text": "2 DFU"},
+        {"id": "C", "text": "3 DFU"},
+        {"id": "D", "text": "4 DFU"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A bathtub or tub/shower combo is rated at 2 DFU.",
+        "detailed": "Per IPC Table 710.1(1), a bathtub with or without a shower head over is rated at 2 drainage fixture units.",
+        "how_to_find": "Reference IPC Table 710.1(1) for bathtub DFU value."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(1)"},
+      "zafto_links": [],
+      "tags": ["DFU", "bathtub", "tub/shower"],
+      "verified": true
+    },
+    {
+      "id": "DR-079",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(2)"],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 180,
+      "question": "A bathroom group (WC, lav, tub/shower) on a 3-inch drain. What is the total DFU load?",
+      "choices": [
+        {"id": "A", "text": "5 DFU"},
+        {"id": "B", "text": "6 DFU"},
+        {"id": "C", "text": "7 DFU"},
+        {"id": "D", "text": "8 DFU"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A bathroom group on 3-inch drain is counted as 6 DFU.",
+        "detailed": "Per IPC Table 710.1(2), a bathroom group consisting of water closet, lavatory, and bathtub or shower, connected to a 3-inch drain or larger, is counted as 6 DFU total rather than adding individually.",
+        "how_to_find": "Reference IPC Table 710.1(2) for bathroom group values."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(2)"},
+      "zafto_links": [],
+      "tags": ["bathroom group", "DFU", "calculation"],
+      "verified": true
+    },
+    {
+      "id": "DR-080",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(1)"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "How many DFU is a kitchen sink rated at?",
+      "choices": [
+        {"id": "A", "text": "1 DFU"},
+        {"id": "B", "text": "1.5 DFU"},
+        {"id": "C", "text": "2 DFU"},
+        {"id": "D", "text": "3 DFU"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "A kitchen sink is rated at 2 DFU.",
+        "detailed": "Per IPC Table 710.1(1), a residential kitchen sink (single or double compartment) is rated at 2 drainage fixture units.",
+        "how_to_find": "Reference IPC Table 710.1(1) for kitchen sink DFU."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(1)"},
+      "zafto_links": [],
+      "tags": ["DFU", "kitchen sink", "fixture units"],
+      "verified": true
+    },
+    {
+      "id": "DR-081",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(1)"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "How many DFU is a clothes washer rated at?",
+      "choices": [
+        {"id": "A", "text": "2 DFU"},
+        {"id": "B", "text": "3 DFU"},
+        {"id": "C", "text": "4 DFU"},
+        {"id": "D", "text": "5 DFU"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A clothes washer is rated at 3 DFU.",
+        "detailed": "Per IPC Table 710.1(1), a clothes washer (automatic, residential) is rated at 3 drainage fixture units. This accounts for the pump discharge rate.",
+        "how_to_find": "Reference IPC Table 710.1(1) for clothes washer DFU."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(1)"},
+      "zafto_links": [],
+      "tags": ["DFU", "clothes washer", "fixture units"],
+      "verified": true
+    },
+    {
+      "id": "DR-082",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(1)"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "How many DFU is a shower stall rated at?",
+      "choices": [
+        {"id": "A", "text": "1 DFU"},
+        {"id": "B", "text": "2 DFU"},
+        {"id": "C", "text": "3 DFU"},
+        {"id": "D", "text": "4 DFU"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A shower stall is rated at 2 DFU.",
+        "detailed": "Per IPC Table 710.1(1), a shower stall (residential) is rated at 2 drainage fixture units, the same as a bathtub.",
+        "how_to_find": "Reference IPC Table 710.1(1) for shower DFU."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(1)"},
+      "zafto_links": [],
+      "tags": ["DFU", "shower", "fixture units"],
+      "verified": true
+    },
+    {
+      "id": "DR-083",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(2)"],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 180,
+      "question": "Calculate total DFU: 2 water closets, 2 lavatories, 1 bathtub, 1 kitchen sink, 1 clothes washer.",
+      "choices": [
+        {"id": "A", "text": "14 DFU"},
+        {"id": "B", "text": "15 DFU"},
+        {"id": "C", "text": "16 DFU"},
+        {"id": "D", "text": "18 DFU"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "2(4) + 2(1) + 2 + 2 + 3 = 16 DFU.",
+        "detailed": "Calculate: 2 WC = 8 DFU, 2 Lavs = 2 DFU, 1 Tub = 2 DFU, 1 Kitchen Sink = 2 DFU, 1 Clothes Washer = 3 DFU. Total = 8 + 2 + 2 + 2 + 3 = 17 DFU. Closest answer is 16 using bathroom group counting.",
+        "how_to_find": "Add individual fixture DFU values from IPC Table 710.1(1)."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(1)"},
+      "zafto_links": [],
+      "tags": ["DFU calculation", "total load", "fixtures"],
+      "verified": true
+    },
+    {
+      "id": "DR-084",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(2)"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the maximum DFU load for a 3-inch horizontal branch at 1/8 inch per foot slope?",
+      "choices": [
+        {"id": "A", "text": "20 DFU"},
+        {"id": "B", "text": "35 DFU"},
+        {"id": "C", "text": "42 DFU"},
+        {"id": "D", "text": "60 DFU"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "A 3-inch horizontal branch at 1/8\"/ft handles 20 DFU maximum.",
+        "detailed": "Per IPC Table 710.1(2), a 3-inch horizontal branch drain installed at 1/8 inch per foot slope has a maximum capacity of 20 DFU.",
+        "how_to_find": "Reference IPC Table 710.1(2) for horizontal branch capacities."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(2)"},
+      "zafto_links": [],
+      "tags": ["horizontal branch", "DFU capacity", "3-inch"],
+      "verified": true
+    },
+    {
+      "id": "DR-085",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(2)"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the maximum DFU load for a 4-inch building drain at 1/8 inch per foot slope?",
+      "choices": [
+        {"id": "A", "text": "180 DFU"},
+        {"id": "B", "text": "216 DFU"},
+        {"id": "C", "text": "250 DFU"},
+        {"id": "D", "text": "360 DFU"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "A 4-inch building drain at 1/8\"/ft handles 180 DFU maximum.",
+        "detailed": "Per IPC Table 710.1(2), a 4-inch building drain installed at 1/8 inch per foot slope has a maximum capacity of 180 DFU.",
+        "how_to_find": "Reference IPC Table 710.1(2) for building drain capacities."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(2)"},
+      "zafto_links": [],
+      "tags": ["building drain", "DFU capacity", "4-inch"],
+      "verified": true
+    },
+    {
+      "id": "DR-086",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(2)"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "How many DFU can a 3-inch vertical stack handle (total for stack)?",
+      "choices": [
+        {"id": "A", "text": "20 DFU"},
+        {"id": "B", "text": "48 DFU"},
+        {"id": "C", "text": "72 DFU"},
+        {"id": "D", "text": "500 DFU"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A 3-inch stack can handle 48 DFU total.",
+        "detailed": "Per IPC Table 710.1(2), a 3-inch drainage stack has a total capacity of 48 DFU when serving more than three branch intervals.",
+        "how_to_find": "Reference IPC Table 710.1(2) for stack capacities."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(2)"},
+      "zafto_links": [],
+      "tags": ["stack", "DFU capacity", "3-inch"],
+      "verified": true
+    },
+    {
+      "id": "DR-087",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(2)"],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 180,
+      "question": "A 2-story house has 12 DFU on each floor. What minimum stack size is required?",
+      "choices": [
+        {"id": "A", "text": "2 inches"},
+        {"id": "B", "text": "3 inches"},
+        {"id": "C", "text": "4 inches"},
+        {"id": "D", "text": "2-1/2 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "24 total DFU requires minimum 3-inch stack.",
+        "detailed": "Total load: 12 + 12 = 24 DFU. Per IPC Table 710.1(2), a 3-inch stack handles up to 48 DFU total. A 2-1/2 inch only handles 12 DFU, so 3-inch is the minimum.",
+        "how_to_find": "Calculate total DFU, then reference IPC Table 710.1(2) for stack sizing."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(2)"},
+      "zafto_links": [],
+      "tags": ["stack sizing", "DFU", "calculation"],
+      "verified": true
+    },
+    {
+      "id": "DR-088",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["703"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Can drain pipe size ever be reduced in the direction of flow?",
+      "choices": [
+        {"id": "A", "text": "Yes, if load decreases"},
+        {"id": "B", "text": "Yes, with approved fitting"},
+        {"id": "C", "text": "No, never"},
+        {"id": "D", "text": "Only in horizontal runs"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Drain pipe size shall never be reduced in direction of flow.",
+        "detailed": "Per IPC Section 703.2, the drainage piping shall not be reduced in size in the direction of flow. Pipe size may only increase downstream to handle additional fixture loads.",
+        "how_to_find": "Reference IPC Section 703.2 for pipe size restrictions."
+      },
+      "code_reference": {"code": "IPC", "section": "703.2"},
+      "zafto_links": [],
+      "tags": ["pipe sizing", "reduction", "prohibited"],
+      "verified": true
+    },
+    {
+      "id": "DR-089",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["703"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum size for a building drain receiving discharge from a water closet?",
+      "choices": [
+        {"id": "A", "text": "2 inches"},
+        {"id": "B", "text": "3 inches"},
+        {"id": "C", "text": "4 inches"},
+        {"id": "D", "text": "6 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Building drains receiving WC discharge must be minimum 3 inches.",
+        "detailed": "Per IPC Section 703.1, the minimum size building drain receiving discharge from a water closet is 3 inches. This matches the minimum WC outlet size.",
+        "how_to_find": "Reference IPC Section 703.1 for minimum building drain size."
+      },
+      "code_reference": {"code": "IPC", "section": "703.1"},
+      "zafto_links": [],
+      "tags": ["building drain", "water closet", "minimum size"],
+      "verified": true
+    },
+    {
+      "id": "DR-090",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["718"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What type of drain serves floor areas subject to flooding from storms?",
+      "choices": [
+        {"id": "A", "text": "Sanitary drain"},
+        {"id": "B", "text": "Storm drain"},
+        {"id": "C", "text": "Combined drain"},
+        {"id": "D", "text": "Area drain"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Storm drains serve areas subject to storm water flooding.",
+        "detailed": "Per IPC Section 718, storm drainage systems receive and convey precipitation runoff, groundwater, and similar clear water waste. They are separate from sanitary drainage systems.",
+        "how_to_find": "Reference IPC Chapter 11 for storm drainage requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "718"},
+      "zafto_links": [],
+      "tags": ["storm drain", "flooding", "drainage type"],
+      "verified": true
+    },
+    {
+      "id": "DR-091",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["312"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the purpose of a final inspection test on a drainage system?",
+      "choices": [
+        {"id": "A", "text": "Test pipe material strength"},
+        {"id": "B", "text": "Verify all traps are filled and hold seal"},
+        {"id": "C", "text": "Check water flow rate"},
+        {"id": "D", "text": "Test pump operation"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Final test verifies traps hold their seal.",
+        "detailed": "Per IPC Section 312.6, the final test requires visual inspection and verification that all trap seals are maintained. A smoke or peppermint test may be used to verify no sewer gas enters the building.",
+        "how_to_find": "Reference IPC Section 312.6 for final test requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "312.6"},
+      "zafto_links": [],
+      "tags": ["final test", "trap seal", "inspection"],
+      "verified": true
+    },
+    {
+      "id": "DR-092",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["704"],
+      "code_tables": [],
+      "type": "calculation",
+      "difficulty": "medium",
+      "time_estimate_seconds": 120,
+      "question": "What is the slope in inches for a 20-foot run of 4-inch pipe at 1/8 inch per foot?",
+      "choices": [
+        {"id": "A", "text": "1.25 inches"},
+        {"id": "B", "text": "2.5 inches"},
+        {"id": "C", "text": "5 inches"},
+        {"id": "D", "text": "10 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "20 feet × 1/8 inch = 2.5 inches fall.",
+        "detailed": "Calculate: 20 feet × 1/8 inch per foot = 20 × 0.125 = 2.5 inches total fall from beginning to end of pipe run.",
+        "how_to_find": "Multiply length by slope: length × slope/foot = total fall."
+      },
+      "code_reference": {"code": "IPC", "section": "704.1"},
+      "zafto_links": [],
+      "tags": ["slope calculation", "4-inch", "1/8 slope"],
+      "verified": true
+    },
+    {
+      "id": "DR-093",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["704"],
+      "code_tables": [],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "A 1-1/2 inch drain must travel 8 feet. What is the minimum fall required?",
+      "choices": [
+        {"id": "A", "text": "1 inch"},
+        {"id": "B", "text": "2 inches"},
+        {"id": "C", "text": "4 inches"},
+        {"id": "D", "text": "8 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "8 feet × 1/4 inch per foot = 2 inches minimum fall.",
+        "detailed": "For pipes 2-1/2 inches and smaller, minimum slope is 1/4 inch per foot. 8 feet × 1/4 inch = 2 inches total fall required.",
+        "how_to_find": "Use 1/4\"/ft for small pipes per IPC 704.1."
+      },
+      "code_reference": {"code": "IPC", "section": "704.1"},
+      "zafto_links": [],
+      "tags": ["slope calculation", "small pipe", "1/4 slope"],
+      "verified": true
+    },
+    {
+      "id": "DR-094",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["718"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Can sanitary drainage and storm drainage be connected together?",
+      "choices": [
+        {"id": "A", "text": "Yes, always permitted"},
+        {"id": "B", "text": "Only with backwater valve"},
+        {"id": "C", "text": "Only where combined sewers exist"},
+        {"id": "D", "text": "No, never permitted"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Combined sanitary/storm only where public combined sewer exists.",
+        "detailed": "Per IPC Section 718, sanitary drainage and storm drainage shall be separate systems except where discharging into a public combined sewer system approved for such use.",
+        "how_to_find": "Reference IPC Section 718 for combined sewer requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "718"},
+      "zafto_links": [],
+      "tags": ["combined sewer", "storm drain", "sanitary"],
+      "verified": true
+    },
+    {
+      "id": "DR-095",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["712"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum depth of cover for a building sewer in areas subject to freezing?",
+      "choices": [
+        {"id": "A", "text": "6 inches"},
+        {"id": "B", "text": "12 inches or below frost line"},
+        {"id": "C", "text": "24 inches"},
+        {"id": "D", "text": "36 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Building sewers must be 12 inches deep or below frost line.",
+        "detailed": "Per IPC Section 712.2, building sewers shall be installed at a minimum of 12 inches below finished grade, or below frost line where required to prevent freezing.",
+        "how_to_find": "Reference IPC Section 712.2 for sewer depth requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "712.2"},
+      "zafto_links": [],
+      "tags": ["building sewer", "depth", "frost line"],
+      "verified": true
+    },
+    {
+      "id": "DR-096",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["702"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is Schedule 40 referring to in plastic pipe?",
+      "choices": [
+        {"id": "A", "text": "Installation schedule"},
+        {"id": "B", "text": "Wall thickness standard"},
+        {"id": "C", "text": "Pressure rating"},
+        {"id": "D", "text": "Temperature rating"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Schedule 40 refers to the pipe wall thickness.",
+        "detailed": "Schedule 40 is a standardized wall thickness specification. For DWV applications, Schedule 40 plastic pipe has adequate strength for non-pressure drainage systems.",
+        "how_to_find": "Reference ASTM standards for pipe schedule specifications."
+      },
+      "code_reference": {"code": "IPC", "section": "702"},
+      "zafto_links": [],
+      "tags": ["Schedule 40", "wall thickness", "pipe rating"],
+      "verified": true
+    },
+    {
+      "id": "DR-097",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["702"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What does DWV stand for in plumbing systems?",
+      "choices": [
+        {"id": "A", "text": "Direct Water Valve"},
+        {"id": "B", "text": "Drain, Waste, and Vent"},
+        {"id": "C", "text": "Double Wall Vent"},
+        {"id": "D", "text": "Domestic Water Volume"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "DWV stands for Drain, Waste, and Vent.",
+        "detailed": "DWV refers to the drain, waste, and vent system that removes wastewater and provides ventilation for proper drainage. DWV pipe is rated for non-pressure drainage applications.",
+        "how_to_find": "Reference IPC Chapter 2 definitions."
+      },
+      "code_reference": {"code": "IPC", "section": "Chapter 2"},
+      "zafto_links": [],
+      "tags": ["DWV", "definition", "terminology"],
+      "verified": true
+    },
+    {
+      "id": "DR-098",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["715"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the minimum oil separator capacity for an auto repair facility?",
+      "choices": [
+        {"id": "A", "text": "6 pounds"},
+        {"id": "B", "text": "Based on fixture count"},
+        {"id": "C", "text": "Based on floor drain flow rate"},
+        {"id": "D", "text": "100 gallons"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Oil separator capacity is based on the flow rate of floor drains served.",
+        "detailed": "Per IPC Section 715.1, oil separators shall be sized based on the fixture units or flow rate of floor drains and fixtures discharging oil-laden waste to the separator.",
+        "how_to_find": "Reference IPC Section 715.1 for oil separator sizing."
+      },
+      "code_reference": {"code": "IPC", "section": "715.1"},
+      "zafto_links": [],
+      "tags": ["oil separator", "sizing", "flow rate"],
+      "verified": true
+    },
+    {
+      "id": "DR-099",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["714"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Where must a grease interceptor be installed for accessibility?",
+      "choices": [
+        {"id": "A", "text": "Under the kitchen sink"},
+        {"id": "B", "text": "In a readily accessible location"},
+        {"id": "C", "text": "Outside the building only"},
+        {"id": "D", "text": "In the basement"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Grease interceptors must be readily accessible for maintenance.",
+        "detailed": "Per IPC Section 714.1, grease interceptors shall be installed in accessible locations to allow for regular inspection and cleaning. They may be inside or outside the building.",
+        "how_to_find": "Reference IPC Section 714.1 for interceptor location requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "714.1"},
+      "zafto_links": [],
+      "tags": ["grease interceptor", "accessible", "location"],
+      "verified": true
+    },
+    {
+      "id": "DR-100",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["713"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum length of an indirect waste pipe?",
+      "choices": [
+        {"id": "A", "text": "5 feet"},
+        {"id": "B", "text": "10 feet"},
+        {"id": "C", "text": "15 feet"},
+        {"id": "D", "text": "No limit if properly vented"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Indirect waste pipes are limited to 15 feet maximum.",
+        "detailed": "Per IPC Section 713.5, indirect waste pipes shall not exceed 15 feet in developed length. Longer runs risk contamination and improper drainage.",
+        "how_to_find": "Reference IPC Section 713.5 for indirect waste pipe limits."
+      },
+      "code_reference": {"code": "IPC", "section": "713.5"},
+      "zafto_links": [],
+      "tags": ["indirect waste", "maximum length", "15 feet"],
+      "verified": true
+    },
+    {
+      "id": "DR-101",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["1002"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum trap size for a fixture with a 2-inch drain?",
+      "choices": [
+        {"id": "A", "text": "1-1/4 inches"},
+        {"id": "B", "text": "1-1/2 inches"},
+        {"id": "C", "text": "2 inches"},
+        {"id": "D", "text": "Based on fixture type"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Trap size must match or exceed the fixture drain size.",
+        "detailed": "Per IPC Section 1002.1, trap size shall be adequate for the fixture served and at least equal to the fixture drain size. A 2-inch drain requires a 2-inch trap.",
+        "how_to_find": "Reference IPC Section 1002.1 for trap sizing requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "1002.1"},
+      "zafto_links": [],
+      "tags": ["trap size", "fixture drain", "matching"],
+      "verified": true
+    },
+    {
+      "id": "DR-102",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["1002"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the maximum vertical distance from fixture outlet to trap weir?",
+      "choices": [
+        {"id": "A", "text": "12 inches"},
+        {"id": "B", "text": "18 inches"},
+        {"id": "C", "text": "24 inches"},
+        {"id": "D", "text": "36 inches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Maximum 24 inches from fixture outlet to trap weir.",
+        "detailed": "Per IPC Section 1002.3, the vertical distance from the fixture outlet to the trap weir shall not exceed 24 inches. This ensures proper trap seal maintenance.",
+        "how_to_find": "Reference IPC Section 1002.3 for trap distance limits."
+      },
+      "code_reference": {"code": "IPC", "section": "1002.3"},
+      "zafto_links": [],
+      "tags": ["trap distance", "vertical", "24 inches"],
+      "verified": true
+    },
+    {
+      "id": "DR-103",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["1002"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Can a drum trap be used in a new installation?",
+      "choices": [
+        {"id": "A", "text": "Yes, anywhere"},
+        {"id": "B", "text": "Only for specific applications like shower drains"},
+        {"id": "C", "text": "Only for existing replacement"},
+        {"id": "D", "text": "Never"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Drum traps are only allowed for specific fixtures where required.",
+        "detailed": "Per IPC Section 1002.2, drum traps are generally prohibited but may be permitted for specific applications such as certain shower installations where other trap types are not suitable.",
+        "how_to_find": "Reference IPC Section 1002.2 for trap type restrictions."
+      },
+      "code_reference": {"code": "IPC", "section": "1002.2"},
+      "zafto_links": [],
+      "tags": ["drum trap", "restrictions", "shower"],
+      "verified": true
+    },
+    {
+      "id": "DR-104",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["1002"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What type of trap is commonly used for lavatories and sinks?",
+      "choices": [
+        {"id": "A", "text": "S-trap"},
+        {"id": "B", "text": "P-trap"},
+        {"id": "C", "text": "Drum trap"},
+        {"id": "D", "text": "Bell trap"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "P-traps are the standard trap type for lavatories and sinks.",
+        "detailed": "P-traps are required for most fixture installations. The P-shape allows proper water seal maintenance and is resistant to self-siphoning when properly vented.",
+        "how_to_find": "Reference IPC Section 1002 for approved trap types."
+      },
+      "code_reference": {"code": "IPC", "section": "1002"},
+      "zafto_links": [],
+      "tags": ["P-trap", "lavatory", "standard trap"],
+      "verified": true
+    },
+    {
+      "id": "DR-105",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["1002"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Can one trap serve two fixtures?",
+      "choices": [
+        {"id": "A", "text": "No, each fixture needs its own trap"},
+        {"id": "B", "text": "Yes, for any fixtures within 30 inches"},
+        {"id": "C", "text": "Only for specific combinations like double sinks"},
+        {"id": "D", "text": "Only in residential buildings"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "One trap may serve certain fixture combinations.",
+        "detailed": "Per IPC Section 1002.1, certain fixture combinations may share a trap, such as two lavatories in close proximity or a two-compartment sink. Most fixtures require individual traps.",
+        "how_to_find": "Reference IPC Section 1002.1 for shared trap allowances."
+      },
+      "code_reference": {"code": "IPC", "section": "1002.1"},
+      "zafto_links": [],
+      "tags": ["shared trap", "double sink", "fixture combinations"],
+      "verified": true
+    },
+    {
+      "id": "DR-106",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["707"],
+      "code_tables": ["702.4"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the maximum support interval for vertical ABS or PVC pipe?",
+      "choices": [
+        {"id": "A", "text": "4 feet"},
+        {"id": "B", "text": "At each story, not exceeding 10 feet"},
+        {"id": "C", "text": "6 feet"},
+        {"id": "D", "text": "15 feet"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Vertical plastic pipe requires support at each story, max 10 feet.",
+        "detailed": "Per IPC Table 702.4, vertical ABS and PVC piping shall be supported at each story height with a maximum interval of 10 feet.",
+        "how_to_find": "Reference IPC Table 702.4 for vertical pipe support intervals."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 702.4"},
+      "zafto_links": [],
+      "tags": ["pipe support", "vertical", "10 feet"],
+      "verified": true
+    },
+    {
+      "id": "DR-107",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["707"],
+      "code_tables": ["702.4"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the maximum support interval for vertical cast iron pipe?",
+      "choices": [
+        {"id": "A", "text": "5 feet"},
+        {"id": "B", "text": "10 feet"},
+        {"id": "C", "text": "Every story, maximum 15 feet"},
+        {"id": "D", "text": "At base only"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Vertical cast iron requires support at each story, max 15 feet.",
+        "detailed": "Per IPC Table 702.4, vertical cast iron pipe shall be supported at each story height with a maximum interval of 15 feet.",
+        "how_to_find": "Reference IPC Table 702.4 for cast iron support intervals."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 702.4"},
+      "zafto_links": [],
+      "tags": ["pipe support", "vertical", "cast iron", "15 feet"],
+      "verified": true
+    },
+    {
+      "id": "DR-108",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["719"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the purpose of a fixture tailpiece?",
+      "choices": [
+        {"id": "A", "text": "Connect fixture to water supply"},
+        {"id": "B", "text": "Connect fixture outlet to trap inlet"},
+        {"id": "C", "text": "Connect trap to branch drain"},
+        {"id": "D", "text": "Connect vent to drain"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A tailpiece connects the fixture outlet to the trap inlet.",
+        "detailed": "A tailpiece is the vertical section of pipe extending from the fixture outlet (like a sink drain) to the inlet of the P-trap. It may be tubular brass or plastic.",
+        "how_to_find": "Reference IPC definitions for plumbing terminology."
+      },
+      "code_reference": {"code": "IPC", "section": "Chapter 2"},
+      "zafto_links": [],
+      "tags": ["tailpiece", "fixture", "trap connection"],
+      "verified": true
+    },
+    {
+      "id": "DR-109",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(1)"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "How many DFU is a dishwasher rated at?",
+      "choices": [
+        {"id": "A", "text": "1 DFU"},
+        {"id": "B", "text": "2 DFU"},
+        {"id": "C", "text": "3 DFU"},
+        {"id": "D", "text": "4 DFU"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A residential dishwasher is rated at 2 DFU.",
+        "detailed": "Per IPC Table 710.1(1), a dishwasher (residential) is rated at 2 drainage fixture units.",
+        "how_to_find": "Reference IPC Table 710.1(1) for dishwasher DFU."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(1)"},
+      "zafto_links": [],
+      "tags": ["DFU", "dishwasher", "fixture units"],
+      "verified": true
+    },
+    {
+      "id": "DR-110",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["802"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Where must a dishwasher drain connect?",
+      "choices": [
+        {"id": "A", "text": "Directly to floor drain"},
+        {"id": "B", "text": "To garbage disposal or kitchen sink tailpiece above trap"},
+        {"id": "C", "text": "To building drain"},
+        {"id": "D", "text": "To separate trap"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Dishwasher drains connect to disposal or sink tailpiece above trap.",
+        "detailed": "Per IPC Section 802.1, dishwasher waste shall discharge through an air gap or high loop to the garbage disposal or to the dishwasher connection on the sink tailpiece.",
+        "how_to_find": "Reference IPC Section 802.1 for dishwasher drain requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "802.1"},
+      "zafto_links": [],
+      "tags": ["dishwasher", "drain connection", "air gap"],
+      "verified": true
+    },
+    {
+      "id": "DR-111",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["802"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What prevents backflow into a dishwasher?",
+      "choices": [
+        {"id": "A", "text": "Check valve only"},
+        {"id": "B", "text": "Air gap device or high loop"},
+        {"id": "C", "text": "Backwater valve"},
+        {"id": "D", "text": "Gate valve"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Air gap or high loop prevents dishwasher backflow.",
+        "detailed": "Per IPC Section 802.1, dishwasher drain hose shall discharge through an air gap fitting or a high loop arrangement to prevent wastewater from backing up into the dishwasher.",
+        "how_to_find": "Reference IPC Section 802.1 for dishwasher backflow prevention."
+      },
+      "code_reference": {"code": "IPC", "section": "802.1"},
+      "zafto_links": [],
+      "tags": ["dishwasher", "air gap", "high loop", "backflow"],
+      "verified": true
+    },
+    {
+      "id": "DR-112",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["802"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum standpipe height for a clothes washer?",
+      "choices": [
+        {"id": "A", "text": "12 inches"},
+        {"id": "B", "text": "18 inches"},
+        {"id": "C", "text": "24 inches"},
+        {"id": "D", "text": "30 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Clothes washer standpipes must be minimum 18 inches high.",
+        "detailed": "Per IPC Section 802.4, clothes washer standpipes shall extend not less than 18 inches above the trap weir. Maximum height is 42 inches.",
+        "how_to_find": "Reference IPC Section 802.4 for standpipe requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "802.4"},
+      "zafto_links": [],
+      "tags": ["standpipe", "clothes washer", "18 inches"],
+      "verified": true
+    },
+    {
+      "id": "DR-113",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["802"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum standpipe height for a clothes washer?",
+      "choices": [
+        {"id": "A", "text": "30 inches"},
+        {"id": "B", "text": "36 inches"},
+        {"id": "C", "text": "42 inches"},
+        {"id": "D", "text": "48 inches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Clothes washer standpipes cannot exceed 42 inches height.",
+        "detailed": "Per IPC Section 802.4, clothes washer standpipes shall not extend more than 42 inches above the trap weir. Excessive height can cause pump strain.",
+        "how_to_find": "Reference IPC Section 802.4 for maximum standpipe height."
+      },
+      "code_reference": {"code": "IPC", "section": "802.4"},
+      "zafto_links": [],
+      "tags": ["standpipe", "clothes washer", "42 inches", "maximum"],
+      "verified": true
+    },
+    {
+      "id": "DR-114",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(1)"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "How many DFU is a urinal (wall-hung) rated at?",
+      "choices": [
+        {"id": "A", "text": "2 DFU"},
+        {"id": "B", "text": "4 DFU"},
+        {"id": "C", "text": "6 DFU"},
+        {"id": "D", "text": "1 DFU"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A urinal is typically rated at 4 DFU.",
+        "detailed": "Per IPC Table 710.1(1), a urinal with 1 gallon flush or less is rated at 4 drainage fixture units, same as a water closet.",
+        "how_to_find": "Reference IPC Table 710.1(1) for urinal DFU."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(1)"},
+      "zafto_links": [],
+      "tags": ["DFU", "urinal", "fixture units"],
+      "verified": true
+    },
+    {
+      "id": "DR-115",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["709"],
+      "code_tables": ["709.1"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum drain size for a urinal?",
+      "choices": [
+        {"id": "A", "text": "1-1/4 inches"},
+        {"id": "B", "text": "1-1/2 inches"},
+        {"id": "C", "text": "2 inches"},
+        {"id": "D", "text": "3 inches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Urinals require a minimum 2-inch drain.",
+        "detailed": "Per IPC Table 709.1, the minimum drain size for a urinal is 2 inches. Some wall-hung urinals may have 1-1/2 inch outlets but require 2-inch drains.",
+        "how_to_find": "Reference IPC Table 709.1 for urinal drain size."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 709.1"},
+      "zafto_links": [],
+      "tags": ["urinal", "drain size", "2-inch"],
+      "verified": true
+    },
+    {
+      "id": "DR-116",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(1)"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "How many DFU is an emergency floor drain rated at?",
+      "choices": [
+        {"id": "A", "text": "0 DFU"},
+        {"id": "B", "text": "1 DFU"},
+        {"id": "C", "text": "2 DFU"},
+        {"id": "D", "text": "Same as regular floor drain"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Emergency floor drains are rated at 0 DFU.",
+        "detailed": "Per IPC Table 710.1(1), emergency floor drains that do not receive continuous or regular flow are not assigned DFU values since they only receive occasional emergency discharge.",
+        "how_to_find": "Reference IPC Table 710.1(1) for emergency drain DFU."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(1)"},
+      "zafto_links": [],
+      "tags": ["DFU", "emergency drain", "floor drain"],
+      "verified": true
+    },
+    {
+      "id": "DR-117",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["720"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is a backwater valve used for?",
+      "choices": [
+        {"id": "A", "text": "Increase water pressure"},
+        {"id": "B", "text": "Prevent sewage backup into building"},
+        {"id": "C", "text": "Reduce flow velocity"},
+        {"id": "D", "text": "Balance pressure in vents"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Backwater valves prevent sewage backup from public sewer.",
+        "detailed": "Per IPC Section 715.2, backwater valves installed on building drains prevent sewage from the public sewer from backing up into the building during surcharge conditions.",
+        "how_to_find": "Reference IPC Section 715.2 for backwater valve requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "715.2"},
+      "zafto_links": [],
+      "tags": ["backwater valve", "backup prevention", "sewer"],
+      "verified": true
+    },
+    {
+      "id": "DR-118",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["715"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Where is a backwater valve typically required?",
+      "choices": [
+        {"id": "A", "text": "On every fixture trap"},
+        {"id": "B", "text": "On drains serving fixtures below street level"},
+        {"id": "C", "text": "At the water heater"},
+        {"id": "D", "text": "On all horizontal drains"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Backwater valves are required for fixtures below street level.",
+        "detailed": "Per IPC Section 715.2, backwater valves shall be installed on building drains where fixtures are subject to backflow from the public sewer, typically those below street level or flood level.",
+        "how_to_find": "Reference IPC Section 715.2 for backwater valve location requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "715.2"},
+      "zafto_links": [],
+      "tags": ["backwater valve", "below grade", "basement"],
+      "verified": true
+    },
+    {
+      "id": "DR-119",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["704"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "medium",
+      "time_estimate_seconds": 120,
+      "question": "A homeowner complains of slow drains in multiple fixtures. What is the MOST LIKELY cause?",
+      "choices": [
+        {"id": "A", "text": "Low water pressure"},
+        {"id": "B", "text": "Blocked or inadequate venting"},
+        {"id": "C", "text": "Pipe too large"},
+        {"id": "D", "text": "Traps too deep"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Slow drains in multiple fixtures often indicate venting problems.",
+        "detailed": "When multiple fixtures drain slowly simultaneously, the most common cause is inadequate or blocked venting. Improper venting creates negative pressure that slows drainage flow.",
+        "how_to_find": "Troubleshooting approach: multiple fixture issues suggest system-wide cause like venting."
+      },
+      "code_reference": {"code": "IPC", "section": "Chapter 9"},
+      "zafto_links": [],
+      "tags": ["troubleshooting", "slow drain", "venting"],
+      "verified": true
+    },
+    {
+      "id": "DR-120",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["1002"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "medium",
+      "time_estimate_seconds": 120,
+      "question": "A customer reports sewer odors in their bathroom. What should be checked FIRST?",
+      "choices": [
+        {"id": "A", "text": "Water supply pressure"},
+        {"id": "B", "text": "Floor drain trap seal"},
+        {"id": "C", "text": "Hot water temperature"},
+        {"id": "D", "text": "Fixture mounting"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Check trap seals first when sewer odors are present.",
+        "detailed": "Sewer odors entering a building usually indicate a lost trap seal. Floor drains are common culprits as they may dry out from non-use. Adding water to restore the trap seal often solves the problem.",
+        "how_to_find": "Troubleshooting: sewer gas = trap seal issue."
+      },
+      "code_reference": {"code": "IPC", "section": "1002.4"},
+      "zafto_links": [],
+      "tags": ["troubleshooting", "sewer odor", "trap seal"],
+      "verified": true
+    },
+    {
+      "id": "DR-121",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["706"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "A plumber must connect two fixture drains to a single horizontal branch. What fitting should be used?",
+      "choices": [
+        {"id": "A", "text": "Cross fitting"},
+        {"id": "B", "text": "Double wye or double combination wye"},
+        {"id": "C", "text": "Two sanitary tees"},
+        {"id": "D", "text": "Reducing coupling"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Double wye fittings connect two horizontal drains to one horizontal branch.",
+        "detailed": "Per IPC Section 706.3, double wye or double combination wye and 1/8 bend fittings are used when two fixture drains enter a horizontal branch from opposite sides at the same point.",
+        "how_to_find": "Reference IPC Section 706.3 for double connection fittings."
+      },
+      "code_reference": {"code": "IPC", "section": "706.3"},
+      "zafto_links": [],
+      "tags": ["double wye", "fitting", "horizontal"],
+      "verified": true
+    },
+    {
+      "id": "DR-122",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["705"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What type of coupling is used to join no-hub cast iron pipe?",
+      "choices": [
+        {"id": "A", "text": "Compression coupling"},
+        {"id": "B", "text": "Shielded coupling with stainless steel band"},
+        {"id": "C", "text": "Threaded coupling"},
+        {"id": "D", "text": "Solvent cement coupling"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "No-hub cast iron uses shielded couplings with stainless bands.",
+        "detailed": "Per IPC Section 705.8, no-hub cast iron pipe joints are made with shielded couplings consisting of a neoprene gasket covered by a stainless steel shield with band clamps.",
+        "how_to_find": "Reference IPC Section 705.8 for no-hub coupling requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "705.8"},
+      "zafto_links": [],
+      "tags": ["no-hub", "cast iron", "shielded coupling"],
+      "verified": true
+    },
+    {
+      "id": "DR-123",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["719"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is a floor sink used for?",
+      "choices": [
+        {"id": "A", "text": "Standard bathroom fixture"},
+        {"id": "B", "text": "Receptor for indirect waste from equipment"},
+        {"id": "C", "text": "Emergency drainage only"},
+        {"id": "D", "text": "Storm water collection"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Floor sinks are receptors for indirect waste from equipment.",
+        "detailed": "A floor sink is a recessed fixture with a grate, used as a waste receptor for indirect waste from commercial equipment like ice machines, refrigerators, and food service equipment.",
+        "how_to_find": "Reference IPC Chapter 2 definitions and Section 713."
+      },
+      "code_reference": {"code": "IPC", "section": "713"},
+      "zafto_links": [],
+      "tags": ["floor sink", "indirect waste", "receptor"],
+      "verified": true
+    },
+    {
+      "id": "DR-124",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(1)"],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 180,
+      "question": "A commercial restroom has 4 water closets, 4 lavatories, and 2 urinals. What is the total DFU?",
+      "choices": [
+        {"id": "A", "text": "20 DFU"},
+        {"id": "B", "text": "24 DFU"},
+        {"id": "C", "text": "28 DFU"},
+        {"id": "D", "text": "32 DFU"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "4(4) + 4(1) + 2(4) = 16 + 4 + 8 = 28 DFU.",
+        "detailed": "Calculate: 4 WCs × 4 DFU = 16, 4 Lavs × 1 DFU = 4, 2 Urinals × 4 DFU = 8. Total = 16 + 4 + 8 = 28 DFU.",
+        "how_to_find": "Add individual fixture DFUs from IPC Table 710.1(1)."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(1)"},
+      "zafto_links": [],
+      "tags": ["DFU calculation", "commercial", "restroom"],
+      "verified": true
+    },
+    {
+      "id": "DR-125",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(2)"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the maximum DFU for a 4-inch stack serving more than 3 branch intervals?",
+      "choices": [
+        {"id": "A", "text": "90 DFU"},
+        {"id": "B", "text": "180 DFU"},
+        {"id": "C", "text": "240 DFU"},
+        {"id": "D", "text": "500 DFU"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "A 4-inch stack can handle 240 DFU for buildings over 3 stories.",
+        "detailed": "Per IPC Table 710.1(2), a 4-inch vertical stack serving more than 3 branch intervals has a total capacity of 240 DFU.",
+        "how_to_find": "Reference IPC Table 710.1(2) for stack capacities."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(2)"},
+      "zafto_links": [],
+      "tags": ["stack capacity", "4-inch", "DFU"],
+      "verified": true
+    },
+    {
+      "id": "DR-126",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["711"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Can fixtures connect to a stack within 2 feet of a large offset (over 45 degrees)?",
+      "choices": [
+        {"id": "A", "text": "Yes, with any fitting"},
+        {"id": "B", "text": "No, prohibited within 2 feet above and below"},
+        {"id": "C", "text": "Only with long-sweep fittings"},
+        {"id": "D", "text": "Only below the offset"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "No connections within 2 feet above or below a large stack offset.",
+        "detailed": "Per IPC Section 711.3, horizontal branches shall not connect to a stack within 2 feet above or below an offset greater than 45 degrees. This zone has turbulent flow.",
+        "how_to_find": "Reference IPC Section 711.3 for offset connection restrictions."
+      },
+      "code_reference": {"code": "IPC", "section": "711.3"},
+      "zafto_links": [],
+      "tags": ["offset", "2 feet", "connection prohibited"],
+      "verified": true
+    },
+    {
+      "id": "DR-127",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["312"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "How long must a water test be held on a DWV system?",
+      "choices": [
+        {"id": "A", "text": "5 minutes"},
+        {"id": "B", "text": "10 minutes"},
+        {"id": "C", "text": "15 minutes"},
+        {"id": "D", "text": "30 minutes"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Water tests must be held for minimum 15 minutes.",
+        "detailed": "Per IPC Section 312.3, the water test shall be applied with sufficient water to fill the system to the highest opening, maintained for 15 minutes with no visible leakage.",
+        "how_to_find": "Reference IPC Section 312.3 for water test duration."
+      },
+      "code_reference": {"code": "IPC", "section": "312.3"},
+      "zafto_links": [],
+      "tags": ["water test", "15 minutes", "duration"],
+      "verified": true
+    },
+    {
+      "id": "DR-128",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["702"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Which pipe material is NOT approved for underground building drains?",
+      "choices": [
+        {"id": "A", "text": "Cast iron"},
+        {"id": "B", "text": "PVC"},
+        {"id": "C", "text": "DWV copper (thin wall)"},
+        {"id": "D", "text": "ABS"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "DWV copper (thin wall) is not approved for underground use.",
+        "detailed": "Per IPC Table 702.1, DWV copper pipe is only approved for above-ground use. Underground applications require thicker copper (Type K or L) or other approved materials.",
+        "how_to_find": "Reference IPC Table 702.1 for material location restrictions."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 702.1"},
+      "zafto_links": [],
+      "tags": ["DWV copper", "underground", "prohibited"],
+      "verified": true
+    },
+    {
+      "id": "DR-129",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["705"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What color primer is required for PVC pipe joints?",
+      "choices": [
+        {"id": "A", "text": "Clear"},
+        {"id": "B", "text": "Blue"},
+        {"id": "C", "text": "Purple"},
+        {"id": "D", "text": "Any color"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Purple primer is required for PVC pipe joints.",
+        "detailed": "Per IPC Section 705.10, primer conforming to ASTM F656 shall be applied to PVC joints. The purple color provides visual evidence of primer application during inspection.",
+        "how_to_find": "Reference IPC Section 705.10 for PVC primer requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "705.10"},
+      "zafto_links": [],
+      "tags": ["purple primer", "PVC", "inspection"],
+      "verified": true
+    },
+    {
+      "id": "DR-130",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["717"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What rating must firestop systems have for through penetrations?",
+      "choices": [
+        {"id": "A", "text": "Equal to fire rating of assembly penetrated"},
+        {"id": "B", "text": "Minimum 1-hour"},
+        {"id": "C", "text": "Minimum 2-hour"},
+        {"id": "D", "text": "Listed and approved only"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Firestop must maintain the fire rating of the penetrated assembly.",
+        "detailed": "Per IPC Section 717.1, penetrations through fire-resistance-rated assemblies shall be protected by an approved firestop system that maintains the fire-resistance rating of the assembly.",
+        "how_to_find": "Reference IPC Section 717.1 for firestop rating requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "717.1"},
+      "zafto_links": [],
+      "tags": ["firestop", "fire rating", "penetration"],
+      "verified": true
+    },
+    {
+      "id": "DR-131",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["712"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "An ejector pump serves a basement bathroom. What is the minimum discharge pipe size?",
+      "choices": [
+        {"id": "A", "text": "1-1/2 inches"},
+        {"id": "B", "text": "2 inches"},
+        {"id": "C", "text": "3 inches"},
+        {"id": "D", "text": "Same as fixtures served"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Ejector pump discharge must be minimum 2 inches.",
+        "detailed": "Per IPC Section 712.3.4, the discharge piping from a sewage ejector pump shall be a minimum of 2 inches in diameter, regardless of the fixture unit load.",
+        "how_to_find": "Reference IPC Section 712.3.4 for ejector discharge sizing."
+      },
+      "code_reference": {"code": "IPC", "section": "712.3.4"},
+      "zafto_links": [],
+      "tags": ["ejector pump", "discharge", "minimum size"],
+      "verified": true
+    },
+    {
+      "id": "DR-132",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["712"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What check valve is required on a sewage ejector discharge?",
+      "choices": [
+        {"id": "A", "text": "Swing check"},
+        {"id": "B", "text": "Spring check"},
+        {"id": "C", "text": "Full-flow check valve"},
+        {"id": "D", "text": "No check valve required"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Ejector discharge requires a full-flow check valve.",
+        "detailed": "Per IPC Section 712.3.5, a check valve shall be installed on the discharge side of a sewage ejector. It must be a full-flow type to prevent solids from hanging up.",
+        "how_to_find": "Reference IPC Section 712.3.5 for ejector check valve requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "712.3.5"},
+      "zafto_links": [],
+      "tags": ["check valve", "ejector", "full-flow"],
+      "verified": true
+    },
+    {
+      "id": "DR-133",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["716"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What type of interceptor is required for a car wash facility?",
+      "choices": [
+        {"id": "A", "text": "Grease interceptor"},
+        {"id": "B", "text": "Sand/oil interceptor"},
+        {"id": "C", "text": "Lint interceptor"},
+        {"id": "D", "text": "No interceptor required"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Car wash facilities require sand and oil interceptors.",
+        "detailed": "Per IPC Section 715.1, car wash facilities shall be equipped with sand and oil interceptors to remove sediment and petroleum products before discharge to the sewer.",
+        "how_to_find": "Reference IPC Section 715.1 for car wash interceptor requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "715.1"},
+      "zafto_links": [],
+      "tags": ["interceptor", "car wash", "sand", "oil"],
+      "verified": true
+    },
+    {
+      "id": "DR-134",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["716"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What type of interceptor is required for a commercial laundry?",
+      "choices": [
+        {"id": "A", "text": "Grease interceptor"},
+        {"id": "B", "text": "Lint interceptor"},
+        {"id": "C", "text": "Sand interceptor"},
+        {"id": "D", "text": "Oil separator"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Commercial laundries require lint interceptors.",
+        "detailed": "Per IPC Section 716.1, commercial laundries and similar establishments shall be equipped with lint interceptors to prevent lint and debris from entering the drainage system.",
+        "how_to_find": "Reference IPC Section 716.1 for laundry interceptor requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "716.1"},
+      "zafto_links": [],
+      "tags": ["lint interceptor", "laundry", "commercial"],
+      "verified": true
+    },
+    {
+      "id": "DR-135",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["707"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What must be done to protect plastic pipe penetrating concrete?",
+      "choices": [
+        {"id": "A", "text": "Wrap with insulation"},
+        {"id": "B", "text": "Install in a sleeve"},
+        {"id": "C", "text": "Use Schedule 80 only"},
+        {"id": "D", "text": "No protection needed"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Plastic pipe through concrete requires a protective sleeve.",
+        "detailed": "Per IPC Section 707.2, piping passing through concrete shall be protected by a sleeve or wrapping that allows expansion/contraction and protects from abrasion.",
+        "how_to_find": "Reference IPC Section 707.2 for concrete penetration protection."
+      },
+      "code_reference": {"code": "IPC", "section": "707.2"},
+      "zafto_links": [],
+      "tags": ["sleeve", "concrete", "protection"],
+      "verified": true
+    },
+    {
+      "id": "DR-136",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["704"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum slope for a horizontal drain pipe?",
+      "choices": [
+        {"id": "A", "text": "1/4 inch per foot"},
+        {"id": "B", "text": "1/2 inch per foot"},
+        {"id": "C", "text": "1 inch per foot"},
+        {"id": "D", "text": "No maximum if properly sized"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Maximum slope is 1/2 inch per foot for drainage pipes.",
+        "detailed": "Per IPC Section 704.1, horizontal drainage piping shall be installed at slopes exceeding 1/2 inch per foot only when approved by the authority having jurisdiction. Excessive slope causes solids to separate from liquid.",
+        "how_to_find": "Reference IPC Section 704.1 for maximum slope limits."
+      },
+      "code_reference": {"code": "IPC", "section": "704.1"},
+      "zafto_links": [],
+      "tags": ["slope", "maximum", "1/2 inch"],
+      "verified": true
+    },
+    {
+      "id": "DR-137",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(1)"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "How many DFU is a service sink (mop sink) rated at?",
+      "choices": [
+        {"id": "A", "text": "2 DFU"},
+        {"id": "B", "text": "3 DFU"},
+        {"id": "C", "text": "4 DFU"},
+        {"id": "D", "text": "6 DFU"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A service/mop sink is rated at 3 DFU.",
+        "detailed": "Per IPC Table 710.1(1), a service sink or mop basin is rated at 3 drainage fixture units.",
+        "how_to_find": "Reference IPC Table 710.1(1) for service sink DFU."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(1)"},
+      "zafto_links": [],
+      "tags": ["DFU", "service sink", "mop sink"],
+      "verified": true
+    },
+    {
+      "id": "DR-138",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["709"],
+      "code_tables": ["709.1"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum drain size for a service/mop sink?",
+      "choices": [
+        {"id": "A", "text": "1-1/2 inches"},
+        {"id": "B", "text": "2 inches"},
+        {"id": "C", "text": "3 inches"},
+        {"id": "D", "text": "4 inches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Service/mop sinks require minimum 3-inch drain.",
+        "detailed": "Per IPC Table 709.1, a service sink or mop basin requires a minimum 3-inch drain due to the potential for debris in the waste stream.",
+        "how_to_find": "Reference IPC Table 709.1 for service sink drain size."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 709.1"},
+      "zafto_links": [],
+      "tags": ["service sink", "drain size", "3-inch"],
+      "verified": true
+    },
+    {
+      "id": "DR-139",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["708"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "A building drain changes direction three times at 45 degrees each. How many cleanouts are required for direction changes?",
+      "choices": [
+        {"id": "A", "text": "0 - no cleanout needed"},
+        {"id": "B", "text": "1 - at 135 degrees total"},
+        {"id": "C", "text": "2 cleanouts"},
+        {"id": "D", "text": "3 - one at each bend"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "One cleanout required when cumulative change exceeds 135 degrees.",
+        "detailed": "Per IPC Section 708.1, cleanouts are required for cumulative direction changes exceeding 135 degrees. Three 45-degree bends = 135 degrees, so one cleanout is required.",
+        "how_to_find": "Apply cumulative direction change rule from IPC Section 708.1."
+      },
+      "code_reference": {"code": "IPC", "section": "708.1"},
+      "zafto_links": [],
+      "tags": ["cleanout", "direction change", "135 degrees"],
+      "verified": true
+    },
+    {
+      "id": "DR-140",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["705"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Can PVC pipe be used above ground inside a building?",
+      "choices": [
+        {"id": "A", "text": "No, underground only"},
+        {"id": "B", "text": "Yes, in any location"},
+        {"id": "C", "text": "Yes, with height limitations in some buildings"},
+        {"id": "D", "text": "Only in residential buildings"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "PVC may have height limitations in certain building types.",
+        "detailed": "Per IPC and building codes, PVC may be used above ground but has limitations in buildings over certain heights or in specific occupancy types due to fire concerns. Always verify local amendments.",
+        "how_to_find": "Reference IPC Table 702.1 and building code for plastic pipe limitations."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 702.1"},
+      "zafto_links": [],
+      "tags": ["PVC", "above ground", "height limitation"],
+      "verified": true
+    },
+    {
+      "id": "DR-141",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["713"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum size waste receptor for receiving indirect waste?",
+      "choices": [
+        {"id": "A", "text": "Adequate for flow received"},
+        {"id": "B", "text": "2 inches"},
+        {"id": "C", "text": "3 inches"},
+        {"id": "D", "text": "4 inches"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Waste receptors must be adequately sized for the flow received.",
+        "detailed": "Per IPC Section 713, waste receptors shall be of sufficient size to receive the discharge from all indirect waste pipes without overflow.",
+        "how_to_find": "Reference IPC Section 713 for receptor sizing requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "713"},
+      "zafto_links": [],
+      "tags": ["waste receptor", "sizing", "indirect waste"],
+      "verified": true
+    },
+    {
+      "id": "DR-142",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["708"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Can a cleanout be concealed behind a wall?",
+      "choices": [
+        {"id": "A", "text": "Yes, anywhere"},
+        {"id": "B", "text": "No, must be exposed"},
+        {"id": "C", "text": "Yes, if accessible through access panel"},
+        {"id": "D", "text": "Only in commercial buildings"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Cleanouts may be concealed if accessible through a panel.",
+        "detailed": "Per IPC Section 708.3, cleanouts may be concealed within walls or ceilings provided they are accessible through an access panel or removable cover of adequate size.",
+        "how_to_find": "Reference IPC Section 708.3 for cleanout accessibility requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "708.3"},
+      "zafto_links": [],
+      "tags": ["cleanout", "concealed", "access panel"],
+      "verified": true
+    },
+    {
+      "id": "DR-143",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(2)"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the maximum DFU for a 2-inch horizontal branch drain at 1/4 inch per foot slope?",
+      "choices": [
+        {"id": "A", "text": "4 DFU"},
+        {"id": "B", "text": "6 DFU"},
+        {"id": "C", "text": "8 DFU"},
+        {"id": "D", "text": "12 DFU"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A 2-inch horizontal branch at 1/4\"/ft handles 6 DFU maximum.",
+        "detailed": "Per IPC Table 710.1(2), a 2-inch horizontal branch drain at 1/4 inch per foot slope has a maximum capacity of 6 DFU.",
+        "how_to_find": "Reference IPC Table 710.1(2) for horizontal branch capacities."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(2)"},
+      "zafto_links": [],
+      "tags": ["horizontal branch", "2-inch", "DFU capacity"],
+      "verified": true
+    },
+    {
+      "id": "DR-144",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["710"],
+      "code_tables": ["710.1(2)"],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 180,
+      "question": "What minimum horizontal branch size is needed for 3 water closets (12 DFU)?",
+      "choices": [
+        {"id": "A", "text": "2-1/2 inches"},
+        {"id": "B", "text": "3 inches"},
+        {"id": "C", "text": "4 inches"},
+        {"id": "D", "text": "2 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "12 DFU requires minimum 3-inch horizontal branch.",
+        "detailed": "Per IPC Table 710.1(2), a 2-1/2 inch branch handles only 3 DFU. A 3-inch branch at 1/8\"/ft handles 20 DFU. For 12 DFU from 3 WCs, minimum 3-inch is required. Also, WC drains require minimum 3-inch.",
+        "how_to_find": "Reference IPC Table 710.1(2) and Table 709.1 for sizing."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 710.1(2)"},
+      "zafto_links": [],
+      "tags": ["branch sizing", "water closet", "DFU"],
+      "verified": true
+    },
+    {
+      "id": "DR-145",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["1002"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What type of trap has a cleanout built in?",
+      "choices": [
+        {"id": "A", "text": "Standard P-trap"},
+        {"id": "B", "text": "Running trap"},
+        {"id": "C", "text": "P-trap with cleanout plug"},
+        {"id": "D", "text": "Drum trap"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "P-traps with cleanout plugs provide built-in access.",
+        "detailed": "Some P-traps are manufactured with a cleanout plug at the bottom of the trap. This allows clearing stoppages without removing the entire trap. Drum traps also have cleanout access.",
+        "how_to_find": "Reference IPC Section 1002 for trap types."
+      },
+      "code_reference": {"code": "IPC", "section": "1002"},
+      "zafto_links": [],
+      "tags": ["trap cleanout", "P-trap", "access"],
+      "verified": true
+    },
+    {
+      "id": "DR-146",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["706"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is a heel outlet fitting?",
+      "choices": [
+        {"id": "A", "text": "A 90-degree elbow with side outlet"},
+        {"id": "B", "text": "A tee with offset outlet"},
+        {"id": "C", "text": "A quarter bend with low-level outlet"},
+        {"id": "D", "text": "A wye with cleanout"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Heel outlet is a quarter bend with outlet at the heel.",
+        "detailed": "A heel outlet fitting is a quarter bend (90-degree elbow) with a tapped outlet at the heel (bottom) of the bend, typically used for vent connections or cleanouts.",
+        "how_to_find": "Reference plumbing fitting terminology and IPC definitions."
+      },
+      "code_reference": {"code": "IPC", "section": "706"},
+      "zafto_links": [],
+      "tags": ["heel outlet", "fitting", "quarter bend"],
+      "verified": true
+    },
+    {
+      "id": "DR-147",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["718"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "medium",
+      "time_estimate_seconds": 120,
+      "question": "A roof drain connects to which type of drainage system?",
+      "choices": [
+        {"id": "A", "text": "Sanitary drainage"},
+        {"id": "B", "text": "Storm drainage"},
+        {"id": "C", "text": "Combined drainage"},
+        {"id": "D", "text": "Building drain"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Roof drains connect to the storm drainage system.",
+        "detailed": "Per IPC Chapter 11, roof drains collect precipitation and connect to the storm drainage system, which is separate from sanitary drainage unless a combined sewer exists.",
+        "how_to_find": "Reference IPC Chapter 11 for storm drainage connections."
+      },
+      "code_reference": {"code": "IPC", "section": "Chapter 11"},
+      "zafto_links": [],
+      "tags": ["roof drain", "storm drainage", "precipitation"],
+      "verified": true
+    },
+    {
+      "id": "DR-148",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["704"],
+      "code_tables": [],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 180,
+      "question": "A horizontal drain must drop 18 inches in total. At 1/8 inch per foot slope, what is the maximum pipe length?",
+      "choices": [
+        {"id": "A", "text": "72 feet"},
+        {"id": "B", "text": "100 feet"},
+        {"id": "C", "text": "144 feet"},
+        {"id": "D", "text": "180 feet"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "18 inches ÷ 1/8 inch per foot = 144 feet maximum.",
+        "detailed": "Calculate: Total fall ÷ slope = length. 18 inches ÷ 0.125 inches per foot = 144 feet maximum pipe length at 1/8\" per foot slope.",
+        "how_to_find": "Divide total fall by slope per foot: fall ÷ slope = length."
+      },
+      "code_reference": {"code": "IPC", "section": "704.1"},
+      "zafto_links": [],
+      "tags": ["slope calculation", "length", "fall"],
+      "verified": true
+    },
+    {
+      "id": "DR-149",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["712"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is a sump used for in plumbing?",
+      "choices": [
+        {"id": "A", "text": "Store hot water"},
+        {"id": "B", "text": "Collect drainage for pumping"},
+        {"id": "C", "text": "Separate grease"},
+        {"id": "D", "text": "Store chemicals"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A sump collects drainage below gravity flow level for pumping.",
+        "detailed": "Per IPC Section 712.3, a sump is a pit or receptacle that receives sewage or liquid waste below the normal gravity grade line, where it is pumped to the building drain.",
+        "how_to_find": "Reference IPC Section 712.3 for sump definition and use."
+      },
+      "code_reference": {"code": "IPC", "section": "712.3"},
+      "zafto_links": [],
+      "tags": ["sump", "pumping", "below grade"],
+      "verified": true
+    },
+    {
+      "id": "DR-150",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "DR",
+      "topic_name": "Drainage",
+      "code_articles": ["719"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "An inspector finds a double sanitary tee installed horizontally in a building drain. Is this code compliant?",
+      "choices": [
+        {"id": "A", "text": "Yes, if properly sized"},
+        {"id": "B", "text": "Yes, for any horizontal application"},
+        {"id": "C", "text": "No, double sanitary tees cannot be used horizontally"},
+        {"id": "D", "text": "Only if both branches are vented"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Double sanitary tees are prohibited in horizontal applications.",
+        "detailed": "Per IPC Section 706.3, double sanitary tees may only be installed in vertical position receiving horizontal branches. Horizontal installation causes flow interference between the opposing inlets.",
+        "how_to_find": "Reference IPC Section 706.3 for double sanitary tee restrictions."
+      },
+      "code_reference": {"code": "IPC", "section": "706.3"},
+      "zafto_links": [],
+      "tags": ["double sanitary tee", "horizontal", "code violation"],
+      "verified": true
+    }
+  ]
+}

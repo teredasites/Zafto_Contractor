@@ -1,0 +1,502 @@
+{
+  "category": "Low Voltage",
+  "subcategory": "Testing and Commissioning",
+  "description": "System testing, verification, and commissioning procedures",
+  "difficulty_distribution": {
+    "beginner": 10,
+    "intermediate": 15,
+    "advanced": 10
+  },
+  "questions": [
+    {
+      "id": "lv_test_001",
+      "difficulty": "beginner",
+      "question": "What is commissioning of a low voltage system?",
+      "options": [
+        "Ordering equipment",
+        "Systematic testing and verification that the system operates as designed",
+        "Paying for the system",
+        "Initial installation"
+      ],
+      "correct_answer": 1,
+      "explanation": "Commissioning is the systematic process of testing and verifying that all system components and functions operate correctly according to design specifications.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_test_002",
+      "difficulty": "beginner",
+      "question": "What is an acceptance test?",
+      "options": [
+        "User approval survey",
+        "Testing performed to verify system meets specifications before owner acceptance",
+        "Equipment receiving inspection",
+        "Final invoice approval"
+      ],
+      "correct_answer": 1,
+      "explanation": "Acceptance testing verifies the installed system meets all contract and code requirements before the owner accepts responsibility.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_test_003",
+      "difficulty": "beginner",
+      "question": "What continuity testing verifies?",
+      "options": [
+        "Power availability",
+        "That conductors are complete with no breaks in the circuit",
+        "Voltage levels",
+        "Current flow"
+      ],
+      "correct_answer": 1,
+      "explanation": "Continuity testing uses an ohmmeter to verify conductors are continuous from end to end without opens or breaks.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_test_004",
+      "difficulty": "beginner",
+      "question": "What is a ground fault test?",
+      "options": [
+        "Testing grounding electrodes",
+        "Testing for unintended connection between conductor and ground",
+        "Testing earth resistance",
+        "Lightning protection test"
+      ],
+      "correct_answer": 1,
+      "explanation": "Ground fault testing checks for unwanted connections (shorts) between circuit conductors and ground/building structure.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_test_005",
+      "difficulty": "beginner",
+      "question": "What is a loop resistance test?",
+      "options": [
+        "Measuring cable loops",
+        "Measuring total resistance of a signaling circuit loop",
+        "Counting loops",
+        "Loop installation"
+      ],
+      "correct_answer": 1,
+      "explanation": "Loop resistance tests measure total circuit resistance to ensure it's within acceptable limits for proper device operation.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_test_006",
+      "difficulty": "beginner",
+      "question": "What document records test results?",
+      "options": [
+        "Invoice",
+        "Test/inspection report or record of completion",
+        "Permit",
+        "Proposal"
+      ],
+      "correct_answer": 1,
+      "explanation": "Test results are documented on inspection/test reports, which become part of the record of completion for the system.",
+      "code_reference": "NFPA 72, Industry Standard"
+    },
+    {
+      "id": "lv_test_007",
+      "difficulty": "beginner",
+      "question": "What is functional testing?",
+      "options": [
+        "Testing that equipment powers on",
+        "Testing that each system function operates correctly",
+        "Testing appearance",
+        "Testing installation quality"
+      ],
+      "correct_answer": 1,
+      "explanation": "Functional testing verifies each system function (detection, notification, control outputs) operates as designed and programmed.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_test_008",
+      "difficulty": "beginner",
+      "question": "What is 100% device testing?",
+      "options": [
+        "Testing one of each device type",
+        "Testing every installed device for proper operation",
+        "Testing at full power",
+        "Testing perfect installation"
+      ],
+      "correct_answer": 1,
+      "explanation": "100% testing means testing every installed device (each detector, notification appliance, etc.) not just a sample.",
+      "code_reference": "NFPA 72, Industry Standard"
+    },
+    {
+      "id": "lv_test_009",
+      "difficulty": "beginner",
+      "question": "What is the wire map test for data cabling?",
+      "options": [
+        "Drawing wire routes",
+        "Verifying correct conductor connections at each end",
+        "Cable length measurement",
+        "Fiber test"
+      ],
+      "correct_answer": 1,
+      "explanation": "Wire map testing verifies each conductor is connected to the correct pin at both ends with no opens, shorts, or crossed pairs.",
+      "code_reference": "TIA-568"
+    },
+    {
+      "id": "lv_test_010",
+      "difficulty": "beginner",
+      "question": "What is cable certification?",
+      "options": [
+        "Paper certificate",
+        "Testing that installed cable meets performance standards",
+        "Manufacturer warranty",
+        "Training certificate"
+      ],
+      "correct_answer": 1,
+      "explanation": "Cable certification uses calibrated test equipment to verify installed cabling meets the specified performance category (Cat 5e, Cat 6, etc.).",
+      "code_reference": "TIA-568"
+    },
+    {
+      "id": "lv_test_011",
+      "difficulty": "intermediate",
+      "question": "What is secondary power test for fire alarm?",
+      "options": [
+        "Testing backup generator",
+        "Testing that system operates correctly on battery power",
+        "Testing power supply output",
+        "Testing primary power"
+      ],
+      "correct_answer": 1,
+      "explanation": "Secondary power testing disconnects primary power and verifies the system operates correctly on battery backup for the required duration.",
+      "code_reference": "NFPA 72, Section 14.4"
+    },
+    {
+      "id": "lv_test_012",
+      "difficulty": "intermediate",
+      "question": "What is the sensitivity test for smoke detectors?",
+      "options": [
+        "Testing response to touch",
+        "Testing that detector responds within its listed sensitivity range",
+        "Testing installation accuracy",
+        "Testing color sensitivity"
+      ],
+      "correct_answer": 1,
+      "explanation": "Sensitivity testing verifies smoke detectors respond within their listed sensitivity range (typically 0.5% to 4% obscuration per foot).",
+      "code_reference": "NFPA 72, Section 14.4"
+    },
+    {
+      "id": "lv_test_013",
+      "difficulty": "intermediate",
+      "question": "What is the ambient sound level measurement for?",
+      "options": [
+        "Noise complaints",
+        "Determining required notification appliance sound levels",
+        "Music system adjustment",
+        "HVAC balancing"
+      ],
+      "correct_answer": 1,
+      "explanation": "Ambient sound measurement determines background noise levels. Notification appliances must exceed ambient by 15 dB (or meet sleeping area requirements).",
+      "code_reference": "NFPA 72, Section 18.4"
+    },
+    {
+      "id": "lv_test_014",
+      "difficulty": "intermediate",
+      "question": "What verification is needed for monitoring station communication?",
+      "options": [
+        "Phone number verification",
+        "Testing signal transmission and acknowledgment from monitoring station",
+        "Contract verification",
+        "Payment verification"
+      ],
+      "correct_answer": 1,
+      "explanation": "Communication testing verifies alarm signals are received at the monitoring station and properly acknowledged and logged.",
+      "code_reference": "NFPA 72, Section 14.6"
+    },
+    {
+      "id": "lv_test_015",
+      "difficulty": "intermediate",
+      "question": "What is OTDR testing?",
+      "options": [
+        "Optical Time Domain Reflectometer - testing fiber optic cables",
+        "Outdoor testing",
+        "Over-temperature detection",
+        "Overtime documentation"
+      ],
+      "correct_answer": 0,
+      "explanation": "OTDR testing uses reflected light pulses to measure fiber optic cable length, attenuation, and locate faults or connections.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_test_016",
+      "difficulty": "intermediate",
+      "question": "What is insertion loss testing for fiber?",
+      "options": [
+        "Installing fiber",
+        "Measuring total light loss through the fiber link",
+        "Testing insertion speed",
+        "Connector inspection"
+      ],
+      "correct_answer": 1,
+      "explanation": "Insertion loss measures the total optical power loss through the installed fiber link, including connectors and splices.",
+      "code_reference": "TIA-568"
+    },
+    {
+      "id": "lv_test_017",
+      "difficulty": "intermediate",
+      "question": "What is camera focusing and FOV verification?",
+      "options": [
+        "Cleaning camera lens",
+        "Adjusting and confirming camera provides intended coverage",
+        "Checking camera color",
+        "Recording test"
+      ],
+      "correct_answer": 1,
+      "explanation": "Camera commissioning includes adjusting focus and verifying the field of view covers the intended area with required detail.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_test_018",
+      "difficulty": "intermediate",
+      "question": "What is access control enrollment testing?",
+      "options": [
+        "Staff registration",
+        "Verifying credentials are properly programmed and grant correct access",
+        "Training verification",
+        "Building enrollment"
+      ],
+      "correct_answer": 1,
+      "explanation": "Enrollment testing verifies credentials are entered correctly in the system and grant access to intended doors while denying unauthorized access.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_test_019",
+      "difficulty": "intermediate",
+      "question": "What is door hardware timing test?",
+      "options": [
+        "Installation speed",
+        "Verifying lock timing, unlock duration, and relock operation",
+        "Clock accuracy",
+        "Schedule programming"
+      ],
+      "correct_answer": 1,
+      "explanation": "Door timing tests verify unlock duration, REX time, door held open timing, and automatic relock operation meet specifications.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_test_020",
+      "difficulty": "intermediate",
+      "question": "What is end-to-end testing?",
+      "options": [
+        "Testing cable ends",
+        "Testing complete signal path from sensor/device to final output",
+        "First and last device only",
+        "Distance testing"
+      ],
+      "correct_answer": 1,
+      "explanation": "End-to-end testing verifies the complete signal path - from initiating device through panels to notification and monitoring outputs.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_test_021",
+      "difficulty": "intermediate",
+      "question": "What is integration testing?",
+      "options": [
+        "Installing systems together",
+        "Testing that interconnected systems work together correctly",
+        "Mathematical testing",
+        "Combining databases"
+      ],
+      "correct_answer": 1,
+      "explanation": "Integration testing verifies that different systems (fire alarm, access control, CCTV) communicate and operate together as designed.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_test_022",
+      "difficulty": "intermediate",
+      "question": "What is the punch list in commissioning?",
+      "options": [
+        "Installation sequence",
+        "List of items requiring correction or completion",
+        "Equipment list",
+        "Crew assignment"
+      ],
+      "correct_answer": 1,
+      "explanation": "The punch list identifies deficiencies, incomplete items, and corrections needed before final acceptance of the system.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_test_023",
+      "difficulty": "intermediate",
+      "question": "What documentation is required for fire alarm acceptance?",
+      "options": [
+        "Invoice only",
+        "Record of completion with as-builts, calculations, and test records",
+        "Permit only",
+        "Proposal only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Fire alarm acceptance requires a complete record of completion including as-built drawings, device list, battery calculations, and test documentation.",
+      "code_reference": "NFPA 72, Chapter 7"
+    },
+    {
+      "id": "lv_test_024",
+      "difficulty": "intermediate",
+      "question": "What is witnessed testing?",
+      "options": [
+        "Testing with observers",
+        "Testing observed by AHJ or owner's representative for verification",
+        "Video recording",
+        "Public testing"
+      ],
+      "correct_answer": 1,
+      "explanation": "Witnessed testing is performed with the authority having jurisdiction or owner's representative present to verify proper operation.",
+      "code_reference": "NFPA 72, Industry Standard"
+    },
+    {
+      "id": "lv_test_025",
+      "difficulty": "advanced",
+      "question": "What is NEXT loss testing in data cable certification?",
+      "options": [
+        "Testing next cable",
+        "Near End CrossTalk - measuring interference between pairs at the near end",
+        "Next generation testing",
+        "Future testing"
+      ],
+      "correct_answer": 1,
+      "explanation": "NEXT measures electromagnetic interference (crosstalk) between wire pairs at the transmitting end of the cable. Higher values are better.",
+      "code_reference": "TIA-568"
+    },
+    {
+      "id": "lv_test_026",
+      "difficulty": "advanced",
+      "question": "What is return loss in cable testing?",
+      "options": [
+        "Cable returned to supplier",
+        "Signal reflection due to impedance mismatches",
+        "Sending signals back",
+        "Reversing polarity"
+      ],
+      "correct_answer": 1,
+      "explanation": "Return loss measures signal reflections caused by impedance mismatches at connections and cable imperfections. Higher values indicate better performance.",
+      "code_reference": "TIA-568"
+    },
+    {
+      "id": "lv_test_027",
+      "difficulty": "advanced",
+      "question": "What is smoke detector functional test procedure?",
+      "options": [
+        "Visual inspection",
+        "Introducing smoke or listed test aerosol and verifying alarm response",
+        "Voltage measurement",
+        "Sensitivity measurement"
+      ],
+      "correct_answer": 1,
+      "explanation": "Functional testing uses actual smoke or listed aerosol products to verify the detector responds and initiates the proper system response.",
+      "code_reference": "NFPA 72, Section 14.4"
+    },
+    {
+      "id": "lv_test_028",
+      "difficulty": "advanced",
+      "question": "What is the fire alarm sequence of operation test?",
+      "options": [
+        "Testing alarm sequence",
+        "Verifying all programmed responses occur when devices activate",
+        "Programming sequence",
+        "Installation sequence"
+      ],
+      "correct_answer": 1,
+      "explanation": "Sequence of operation testing verifies all programmed responses (notification, HVAC shutdown, door release, elevator recall) occur for each alarm condition.",
+      "code_reference": "NFPA 72, Industry Standard"
+    },
+    {
+      "id": "lv_test_029",
+      "difficulty": "advanced",
+      "question": "What is ground fault impedance testing for fire alarm?",
+      "options": [
+        "Measuring grounding electrode",
+        "Testing the ability to detect ground faults on supervised circuits",
+        "Testing earth resistance",
+        "Lightning protection"
+      ],
+      "correct_answer": 1,
+      "explanation": "Ground fault impedance testing verifies the system can detect ground faults on supervised circuits and report them as trouble conditions.",
+      "code_reference": "NFPA 72, Section 14.4"
+    },
+    {
+      "id": "lv_test_030",
+      "difficulty": "advanced",
+      "question": "What is the video quality verification for CCTV?",
+      "options": [
+        "Resolution count",
+        "Verifying recorded video meets requirements for intended purpose",
+        "Color accuracy",
+        "Frame counting"
+      ],
+      "correct_answer": 1,
+      "explanation": "Video quality testing verifies recorded video provides sufficient detail for identification, evidence, or monitoring as required by the application.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_test_031",
+      "difficulty": "advanced",
+      "question": "What is network bandwidth verification for IP systems?",
+      "options": [
+        "Internet speed test",
+        "Confirming network capacity supports all devices at required quality",
+        "Cable width",
+        "WiFi test"
+      ],
+      "correct_answer": 1,
+      "explanation": "Bandwidth testing verifies network infrastructure can handle all IP device traffic (cameras, access control) without degradation.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_test_032",
+      "difficulty": "intermediate",
+      "question": "What is the battery load test?",
+      "options": [
+        "Weighing batteries",
+        "Testing battery capacity under load conditions",
+        "Counting batteries",
+        "Installing batteries"
+      ],
+      "correct_answer": 1,
+      "explanation": "Battery load testing verifies batteries can supply the required load for the specified duration under actual load conditions.",
+      "code_reference": "NFPA 72, Section 14.4"
+    },
+    {
+      "id": "lv_test_033",
+      "difficulty": "advanced",
+      "question": "What is the pathway survivability test?",
+      "options": [
+        "Testing cable pathways",
+        "Verifying fire-rated cable systems maintain circuit integrity during fire",
+        "Route testing",
+        "Conduit testing"
+      ],
+      "correct_answer": 1,
+      "explanation": "Pathway survivability testing verifies circuits using CI cable or protected pathways maintain function during fire exposure as required.",
+      "code_reference": "NFPA 72, Section 12.4"
+    },
+    {
+      "id": "lv_test_034",
+      "difficulty": "intermediate",
+      "question": "What training documentation is required at commissioning?",
+      "options": [
+        "None required",
+        "Proof that owner's staff received system operation training",
+        "Installer training only",
+        "Manufacturer training"
+      ],
+      "correct_answer": 1,
+      "explanation": "System acceptance should include documented training of owner's personnel on system operation, testing, and basic troubleshooting.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "lv_test_035",
+      "difficulty": "advanced",
+      "question": "What is pre-functional testing?",
+      "options": [
+        "Testing before installation",
+        "Preliminary testing to verify systems are ready for functional testing",
+        "First test",
+        "Equipment testing"
+      ],
+      "correct_answer": 1,
+      "explanation": "Pre-functional testing verifies installation is complete and equipment is powered and communicating before detailed functional testing begins.",
+      "code_reference": "Industry Standard"
+    }
+  ]
+}

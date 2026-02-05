@@ -1,0 +1,1694 @@
+{
+  "last_updated": "2026-01-31",
+  "sources": {
+    "nec": "mikeholt.com/necadoptionlist.php, jadelearning.com, iaei.org",
+    "plumbing": "iccsafe.org, iapmo.org, garynsmith.net",
+    "mechanical": "iccsafe.org, iapmo.org",
+    "building": "iccsafe.org, ibhs.org, nahb.org"
+  },
+  "states": {
+    "AL": {
+      "name": "Alabama",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2020",
+        "effective_date": "2022-07-01",
+        "amendments": [],
+        "notes": "State buildings, schools, hotels/motels, theaters"
+      },
+      "plumbing": {
+        "code": "IPC",
+        "edition": "2021",
+        "effective_date": "2022-10-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2021",
+        "effective_date": "2022-10-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2021",
+        "commercial_code": "IBC",
+        "commercial_edition": "2021",
+        "effective_date": "2022-10-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      }
+    },
+    "AK": {
+      "name": "Alaska",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2020",
+        "effective_date": "2020-04-16",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "plumbing": {
+        "code": "UPC",
+        "edition": "2021",
+        "effective_date": "2022-01-01",
+        "amendments": [],
+        "notes": "Some local jurisdictions use IPC"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2021",
+        "effective_date": "2022-01-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2021",
+        "commercial_code": "IBC",
+        "commercial_edition": "2021",
+        "effective_date": "2022-01-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      }
+    },
+    "AZ": {
+      "name": "Arizona",
+      "electrical": {
+        "code": "NEC",
+        "edition": "LOCAL",
+        "effective_date": "Varies",
+        "amendments": [],
+        "notes": "Each municipality adopts independently; most use 2017-2020"
+      },
+      "plumbing": {
+        "code": "UPC",
+        "edition": "2021",
+        "effective_date": "2022-07-01",
+        "amendments": [],
+        "notes": "Some local jurisdictions use IPC"
+      },
+      "mechanical": {
+        "code": "UMC",
+        "edition": "2021",
+        "effective_date": "2022-07-01",
+        "amendments": [],
+        "notes": "Some local jurisdictions use IMC"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2021",
+        "commercial_code": "IBC",
+        "commercial_edition": "2021",
+        "effective_date": "2022-07-01",
+        "amendments": [],
+        "notes": "Local adoption varies"
+      }
+    },
+    "AR": {
+      "name": "Arkansas",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2020",
+        "effective_date": "2022-08-01",
+        "amendments": ["AR amendments"],
+        "notes": "Statewide with amendments"
+      },
+      "plumbing": {
+        "code": "IPC",
+        "edition": "2021",
+        "effective_date": "2022-07-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2021",
+        "effective_date": "2022-07-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2021",
+        "commercial_code": "IBC",
+        "commercial_edition": "2021",
+        "effective_date": "2022-07-01",
+        "amendments": [],
+        "notes": "Arkansas Building Code"
+      }
+    },
+    "CA": {
+      "name": "California",
+      "electrical": {
+        "code": "CEC",
+        "edition": "2022",
+        "effective_date": "2023-01-01",
+        "amendments": ["Title 24 Part 3 amendments"],
+        "notes": "California Electrical Code based on NEC 2020; 2023 projected 1/1/26"
+      },
+      "plumbing": {
+        "code": "CPC",
+        "edition": "2022",
+        "effective_date": "2023-01-01",
+        "amendments": ["Title 24 Part 5 amendments"],
+        "notes": "California Plumbing Code based on UPC"
+      },
+      "mechanical": {
+        "code": "CMC",
+        "edition": "2022",
+        "effective_date": "2023-01-01",
+        "amendments": ["Title 24 Part 4 amendments"],
+        "notes": "California Mechanical Code based on UMC"
+      },
+      "building": {
+        "residential_code": "CBC",
+        "residential_edition": "2022",
+        "commercial_code": "CBC",
+        "commercial_edition": "2022",
+        "effective_date": "2023-01-01",
+        "amendments": ["Title 24 Part 2 amendments"],
+        "notes": "California Building Code"
+      }
+    },
+    "CO": {
+      "name": "Colorado",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2023",
+        "effective_date": "2023-08-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "plumbing": {
+        "code": "IPC",
+        "edition": "2021",
+        "effective_date": "2023-01-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2021",
+        "effective_date": "2023-01-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2021",
+        "commercial_code": "IBC",
+        "commercial_edition": "2021",
+        "effective_date": "2023-01-01",
+        "amendments": [],
+        "notes": "Local adoption; Denver uses 2024"
+      }
+    },
+    "CT": {
+      "name": "Connecticut",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2020",
+        "effective_date": "2022-10-01",
+        "amendments": ["CT amendments"],
+        "notes": "2023 update underway"
+      },
+      "plumbing": {
+        "code": "IPC",
+        "edition": "2021",
+        "effective_date": "2022-10-01",
+        "amendments": [],
+        "notes": "State Building Code incorporates IPC"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2021",
+        "effective_date": "2022-10-01",
+        "amendments": [],
+        "notes": "State Building Code incorporates IMC"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2021",
+        "commercial_code": "IBC",
+        "commercial_edition": "2021",
+        "effective_date": "2022-10-01",
+        "amendments": [],
+        "notes": "Connecticut State Building Code"
+      }
+    },
+    "DE": {
+      "name": "Delaware",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2020",
+        "effective_date": "2021-09-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "plumbing": {
+        "code": "IPC",
+        "edition": "2018",
+        "effective_date": "2019-12-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2018",
+        "effective_date": "2019-12-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2018",
+        "commercial_code": "IBC",
+        "commercial_edition": "2018",
+        "effective_date": "2019-12-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      }
+    },
+    "DC": {
+      "name": "Washington DC",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2014",
+        "effective_date": "2020-05-29",
+        "amendments": [],
+        "notes": "DC Construction Code"
+      },
+      "plumbing": {
+        "code": "IPC",
+        "edition": "2018",
+        "effective_date": "2020-05-29",
+        "amendments": [],
+        "notes": "DC Construction Code"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2018",
+        "effective_date": "2020-05-29",
+        "amendments": [],
+        "notes": "DC Construction Code"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2021",
+        "commercial_code": "IBC",
+        "commercial_edition": "2021",
+        "effective_date": "2022-06-01",
+        "amendments": [],
+        "notes": "DC Construction Code"
+      }
+    },
+    "FL": {
+      "name": "Florida",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2020",
+        "effective_date": "2023-12-31",
+        "amendments": [],
+        "notes": "Florida Building Code 8th Edition; 2023 update underway"
+      },
+      "plumbing": {
+        "code": "IPC",
+        "edition": "2021",
+        "effective_date": "2023-12-31",
+        "amendments": [],
+        "notes": "Florida Building Code 8th Edition"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2021",
+        "effective_date": "2023-12-31",
+        "amendments": [],
+        "notes": "Florida Building Code 8th Edition"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2021",
+        "commercial_code": "IBC",
+        "commercial_edition": "2021",
+        "effective_date": "2023-12-31",
+        "amendments": [],
+        "notes": "Florida Building Code 8th Edition"
+      }
+    },
+    "GA": {
+      "name": "Georgia",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2023",
+        "effective_date": "2025-01-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "plumbing": {
+        "code": "IPC",
+        "edition": "2021",
+        "effective_date": "2023-01-01",
+        "amendments": [],
+        "notes": "Georgia State Minimum Standard Codes"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2021",
+        "effective_date": "2023-01-01",
+        "amendments": [],
+        "notes": "Georgia State Minimum Standard Codes"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2021",
+        "commercial_code": "IBC",
+        "commercial_edition": "2021",
+        "effective_date": "2023-01-01",
+        "amendments": [],
+        "notes": "Georgia State Minimum Standard Codes"
+      }
+    },
+    "HI": {
+      "name": "Hawaii",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2020",
+        "effective_date": "2023-03-04",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "plumbing": {
+        "code": "UPC",
+        "edition": "2021",
+        "effective_date": "2022-01-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2018",
+        "effective_date": "2019-07-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2018",
+        "commercial_code": "IBC",
+        "commercial_edition": "2018",
+        "effective_date": "2019-07-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      }
+    },
+    "ID": {
+      "name": "Idaho",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2023",
+        "effective_date": "2024-07-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "plumbing": {
+        "code": "UPC",
+        "edition": "2021",
+        "effective_date": "2022-07-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2021",
+        "effective_date": "2022-07-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2018",
+        "commercial_code": "IBC",
+        "commercial_edition": "2018",
+        "effective_date": "2020-07-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      }
+    },
+    "IL": {
+      "name": "Illinois",
+      "electrical": {
+        "code": "NEC",
+        "edition": "LOCAL",
+        "effective_date": "Varies",
+        "amendments": [],
+        "notes": "No statewide adoption; municipalities use 2008-2020"
+      },
+      "plumbing": {
+        "code": "STATE",
+        "edition": "2014",
+        "effective_date": "2014-01-01",
+        "amendments": [],
+        "notes": "Illinois Plumbing Code (state-specific)"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2021",
+        "effective_date": "2022-01-01",
+        "amendments": [],
+        "notes": "Local adoption"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2021",
+        "commercial_code": "IBC",
+        "commercial_edition": "2021",
+        "effective_date": "2022-01-01",
+        "amendments": [],
+        "notes": "Local adoption; Chicago has separate code"
+      }
+    },
+    "IN": {
+      "name": "Indiana",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2008",
+        "effective_date": "2009-06-02",
+        "amendments": ["IN amendments"],
+        "notes": "Commercial with amendments; 2017 for dwellings; 2023 update underway"
+      },
+      "plumbing": {
+        "code": "IPC",
+        "edition": "2021",
+        "effective_date": "2022-07-01",
+        "amendments": ["IN amendments"],
+        "notes": "Indiana Plumbing Code based on IPC"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2021",
+        "effective_date": "2022-07-01",
+        "amendments": [],
+        "notes": "Indiana Mechanical Code based on IMC"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2021",
+        "commercial_code": "IBC",
+        "commercial_edition": "2021",
+        "effective_date": "2022-07-01",
+        "amendments": [],
+        "notes": "Indiana Building Code"
+      }
+    },
+    "IA": {
+      "name": "Iowa",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2023",
+        "effective_date": "2025-07-01",
+        "amendments": ["IA amendments"],
+        "notes": "Statewide with amendments"
+      },
+      "plumbing": {
+        "code": "UPC",
+        "edition": "2018",
+        "effective_date": "2019-07-01",
+        "amendments": [],
+        "notes": "Some local jurisdictions use IPC"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2021",
+        "effective_date": "2022-01-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2021",
+        "commercial_code": "IBC",
+        "commercial_edition": "2021",
+        "effective_date": "2022-01-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      }
+    },
+    "KS": {
+      "name": "Kansas",
+      "electrical": {
+        "code": "NEC",
+        "edition": "LOCAL",
+        "effective_date": "Varies",
+        "amendments": [],
+        "notes": "No statewide adoption; local jurisdictions adopt independently"
+      },
+      "plumbing": {
+        "code": "IPC",
+        "edition": "2018",
+        "effective_date": "2020-01-01",
+        "amendments": [],
+        "notes": "Local adoption"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2018",
+        "effective_date": "2020-01-01",
+        "amendments": [],
+        "notes": "Local adoption"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2018",
+        "commercial_code": "IBC",
+        "commercial_edition": "2018",
+        "effective_date": "2020-01-01",
+        "amendments": [],
+        "notes": "Local adoption only"
+      }
+    },
+    "KY": {
+      "name": "Kentucky",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2023",
+        "effective_date": "2025-01-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "plumbing": {
+        "code": "STATE",
+        "edition": "2017",
+        "effective_date": "2017-07-01",
+        "amendments": [],
+        "notes": "Kentucky State Plumbing Code"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2018",
+        "effective_date": "2019-07-01",
+        "amendments": [],
+        "notes": "Kentucky Building Code"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2018",
+        "commercial_code": "IBC",
+        "commercial_edition": "2018",
+        "effective_date": "2019-07-01",
+        "amendments": [],
+        "notes": "Kentucky Building Code"
+      }
+    },
+    "LA": {
+      "name": "Louisiana",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2020",
+        "effective_date": "2023-01-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "plumbing": {
+        "code": "IPC",
+        "edition": "2012",
+        "effective_date": "2013-01-01",
+        "amendments": [],
+        "notes": "Louisiana State Plumbing Code based on IPC 2012"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2018",
+        "effective_date": "2019-01-01",
+        "amendments": [],
+        "notes": "Louisiana State Mechanical Code"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2021",
+        "commercial_code": "IBC",
+        "commercial_edition": "2021",
+        "effective_date": "2022-01-01",
+        "amendments": [],
+        "notes": "Louisiana State Uniform Construction Code"
+      }
+    },
+    "ME": {
+      "name": "Maine",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2023",
+        "effective_date": "2024-07-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "plumbing": {
+        "code": "STATE",
+        "edition": "2020",
+        "effective_date": "2020-07-01",
+        "amendments": [],
+        "notes": "Maine Internal Plumbing Code"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2018",
+        "effective_date": "2019-07-01",
+        "amendments": [],
+        "notes": "Maine Uniform Building and Energy Code"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2021",
+        "commercial_code": "IBC",
+        "commercial_edition": "2021",
+        "effective_date": "2022-07-01",
+        "amendments": [],
+        "notes": "Maine Uniform Building and Energy Code"
+      }
+    },
+    "MD": {
+      "name": "Maryland",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2020",
+        "effective_date": "2023-05-29",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "plumbing": {
+        "code": "IPC",
+        "edition": "2021",
+        "effective_date": "2022-10-01",
+        "amendments": [],
+        "notes": "Maryland Building Performance Standards"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2021",
+        "effective_date": "2022-10-01",
+        "amendments": [],
+        "notes": "Maryland Building Performance Standards"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2021",
+        "commercial_code": "IBC",
+        "commercial_edition": "2021",
+        "effective_date": "2022-10-01",
+        "amendments": [],
+        "notes": "Maryland Building Performance Standards"
+      }
+    },
+    "MA": {
+      "name": "Massachusetts",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2023",
+        "effective_date": "2023-02-17",
+        "amendments": ["527 CMR amendments"],
+        "notes": "527 CMR with MA amendments"
+      },
+      "plumbing": {
+        "code": "STATE",
+        "edition": "2020",
+        "effective_date": "2020-10-01",
+        "amendments": [],
+        "notes": "248 CMR - Uniform State Plumbing Code"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2021",
+        "effective_date": "2022-10-01",
+        "amendments": [],
+        "notes": "780 CMR Massachusetts State Building Code"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2021",
+        "commercial_code": "IBC",
+        "commercial_edition": "2021",
+        "effective_date": "2024-10-11",
+        "amendments": [],
+        "notes": "780 CMR 10th Edition"
+      }
+    },
+    "MI": {
+      "name": "Michigan",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2023",
+        "effective_date": "2024-03-12",
+        "amendments": [],
+        "notes": "Commercial; residential 2023 effective 8/29/25"
+      },
+      "plumbing": {
+        "code": "IPC",
+        "edition": "2018",
+        "effective_date": "2021-09-15",
+        "amendments": [],
+        "notes": "Michigan Plumbing Code"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2018",
+        "effective_date": "2021-02-07",
+        "amendments": [],
+        "notes": "Michigan Mechanical Code"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2021",
+        "commercial_code": "IBC",
+        "commercial_edition": "2021",
+        "effective_date": "2024-02-09",
+        "amendments": [],
+        "notes": "Michigan Building Code"
+      }
+    },
+    "MN": {
+      "name": "Minnesota",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2023",
+        "effective_date": "2023-07-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "plumbing": {
+        "code": "UPC",
+        "edition": "2020",
+        "effective_date": "2020-03-31",
+        "amendments": ["Based on UPC 2012 with amendments"],
+        "notes": "Minnesota Plumbing Code"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2018",
+        "effective_date": "2020-03-31",
+        "amendments": [],
+        "notes": "Minnesota Mechanical Code"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2018",
+        "commercial_code": "IBC",
+        "commercial_edition": "2018",
+        "effective_date": "2020-03-31",
+        "amendments": [],
+        "notes": "Minnesota State Building Code"
+      }
+    },
+    "MS": {
+      "name": "Mississippi",
+      "electrical": {
+        "code": "NEC",
+        "edition": "LOCAL",
+        "effective_date": "Varies",
+        "amendments": [],
+        "notes": "Local adoption only"
+      },
+      "plumbing": {
+        "code": "IPC",
+        "edition": "2018",
+        "effective_date": "2020-01-01",
+        "amendments": [],
+        "notes": "Local adoption varies"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2018",
+        "effective_date": "2020-01-01",
+        "amendments": [],
+        "notes": "Local adoption varies"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2021",
+        "commercial_code": "IBC",
+        "commercial_edition": "2021",
+        "effective_date": "2022-07-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      }
+    },
+    "MO": {
+      "name": "Missouri",
+      "electrical": {
+        "code": "NEC",
+        "edition": "LOCAL",
+        "effective_date": "Varies",
+        "amendments": [],
+        "notes": "Local adoption only; varies by municipality"
+      },
+      "plumbing": {
+        "code": "UPC",
+        "edition": "2018",
+        "effective_date": "2019-07-01",
+        "amendments": [],
+        "notes": "Local adoption"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2018",
+        "effective_date": "2019-07-01",
+        "amendments": [],
+        "notes": "Local adoption"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2018",
+        "commercial_code": "IBC",
+        "commercial_edition": "2018",
+        "effective_date": "2019-07-01",
+        "amendments": [],
+        "notes": "Local adoption only"
+      }
+    },
+    "MT": {
+      "name": "Montana",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2020",
+        "effective_date": "2022-06-10",
+        "amendments": ["MT amendments"],
+        "notes": "Statewide with amendments"
+      },
+      "plumbing": {
+        "code": "UPC",
+        "edition": "2021",
+        "effective_date": "2022-07-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "mechanical": {
+        "code": "UMC",
+        "edition": "2021",
+        "effective_date": "2022-07-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2021",
+        "commercial_code": "IBC",
+        "commercial_edition": "2021",
+        "effective_date": "2022-07-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      }
+    },
+    "NE": {
+      "name": "Nebraska",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2023",
+        "effective_date": "2024-08-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "plumbing": {
+        "code": "IPC",
+        "edition": "2018",
+        "effective_date": "2019-09-01",
+        "amendments": [],
+        "notes": "Local municipalities adopt IPC"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2018",
+        "effective_date": "2019-09-01",
+        "amendments": [],
+        "notes": "Local adoption"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2018",
+        "commercial_code": "IBC",
+        "commercial_edition": "2018",
+        "effective_date": "2019-09-01",
+        "amendments": [],
+        "notes": "Local adoption"
+      }
+    },
+    "NV": {
+      "name": "Nevada",
+      "electrical": {
+        "code": "NEC",
+        "edition": "LOCAL",
+        "effective_date": "Varies",
+        "amendments": [],
+        "notes": "Adopted and enforced at local level"
+      },
+      "plumbing": {
+        "code": "IPC",
+        "edition": "2018",
+        "effective_date": "2019-07-01",
+        "amendments": [],
+        "notes": "Some jurisdictions use UPC"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2018",
+        "effective_date": "2019-07-01",
+        "amendments": [],
+        "notes": "Local adoption"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2021",
+        "commercial_code": "IBC",
+        "commercial_edition": "2024",
+        "effective_date": "2024-07-01",
+        "amendments": [],
+        "notes": "Las Vegas/Clark County use 2024"
+      }
+    },
+    "NH": {
+      "name": "New Hampshire",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2023",
+        "effective_date": "2025-07-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "plumbing": {
+        "code": "IPC",
+        "edition": "2018",
+        "effective_date": "2019-09-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2018",
+        "effective_date": "2019-09-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2018",
+        "commercial_code": "IBC",
+        "commercial_edition": "2018",
+        "effective_date": "2019-09-01",
+        "amendments": [],
+        "notes": "State Building Code"
+      }
+    },
+    "NJ": {
+      "name": "New Jersey",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2020",
+        "effective_date": "2022-09-06",
+        "amendments": ["NJ amendments"],
+        "notes": "Uniform Construction Code"
+      },
+      "plumbing": {
+        "code": "NSPC",
+        "edition": "2018",
+        "effective_date": "2019-09-05",
+        "amendments": [],
+        "notes": "National Standard Plumbing Code"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2018",
+        "effective_date": "2019-09-05",
+        "amendments": [],
+        "notes": "Uniform Construction Code"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2021",
+        "commercial_code": "IBC",
+        "commercial_edition": "2021",
+        "effective_date": "2024-03-01",
+        "amendments": [],
+        "notes": "Uniform Construction Code"
+      }
+    },
+    "NM": {
+      "name": "New Mexico",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2020",
+        "effective_date": "2023-03-28",
+        "amendments": [],
+        "notes": "No plans to update currently"
+      },
+      "plumbing": {
+        "code": "UPC",
+        "edition": "2018",
+        "effective_date": "2019-07-01",
+        "amendments": [],
+        "notes": "NM Plumbing Code based on UPC"
+      },
+      "mechanical": {
+        "code": "UMC",
+        "edition": "2018",
+        "effective_date": "2019-07-01",
+        "amendments": [],
+        "notes": "NM Mechanical Code based on UMC"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2018",
+        "commercial_code": "IBC",
+        "commercial_edition": "2018",
+        "effective_date": "2019-07-01",
+        "amendments": [],
+        "notes": "New Mexico Building Code"
+      }
+    },
+    "NY": {
+      "name": "New York",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2017",
+        "effective_date": "2020-05-12",
+        "amendments": [],
+        "notes": "NYS code; NYC has separate 2008 NEC-based code; 2023 update underway"
+      },
+      "plumbing": {
+        "code": "IPC",
+        "edition": "2020",
+        "effective_date": "2020-05-12",
+        "amendments": [],
+        "notes": "NYS Plumbing Code; NYC has separate code"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2020",
+        "effective_date": "2020-05-12",
+        "amendments": [],
+        "notes": "NYS Mechanical Code; NYC has separate code"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2020",
+        "commercial_code": "IBC",
+        "commercial_edition": "2020",
+        "effective_date": "2020-05-12",
+        "amendments": [],
+        "notes": "NYS Building Code; NYC has separate code"
+      }
+    },
+    "NC": {
+      "name": "North Carolina",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2020",
+        "effective_date": "2021-11-01",
+        "amendments": ["NC amendments"],
+        "notes": "NC State Building Code; 2023 update underway"
+      },
+      "plumbing": {
+        "code": "IPC",
+        "edition": "2018",
+        "effective_date": "2019-01-01",
+        "amendments": [],
+        "notes": "NC State Plumbing Code"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2018",
+        "effective_date": "2019-01-01",
+        "amendments": [],
+        "notes": "NC State Mechanical Code"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2018",
+        "commercial_code": "IBC",
+        "commercial_edition": "2018",
+        "effective_date": "2019-01-01",
+        "amendments": [],
+        "notes": "NC State Building Code"
+      }
+    },
+    "ND": {
+      "name": "North Dakota",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2023",
+        "effective_date": "2024-07-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "plumbing": {
+        "code": "IPC",
+        "edition": "2021",
+        "effective_date": "2022-07-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2021",
+        "effective_date": "2022-07-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2021",
+        "commercial_code": "IBC",
+        "commercial_edition": "2021",
+        "effective_date": "2022-07-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      }
+    },
+    "OH": {
+      "name": "Ohio",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2023",
+        "effective_date": "2024-03-01",
+        "amendments": [],
+        "notes": "Commercial 3/1/24; residential with amendments 4/15/24"
+      },
+      "plumbing": {
+        "code": "IPC",
+        "edition": "2021",
+        "effective_date": "2023-07-01",
+        "amendments": [],
+        "notes": "Ohio Plumbing Code"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2021",
+        "effective_date": "2023-07-01",
+        "amendments": [],
+        "notes": "Ohio Mechanical Code"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2021",
+        "commercial_code": "IBC",
+        "commercial_edition": "2021",
+        "effective_date": "2023-07-01",
+        "amendments": [],
+        "notes": "Ohio Building Code"
+      }
+    },
+    "OK": {
+      "name": "Oklahoma",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2023",
+        "effective_date": "2024-09-14",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "plumbing": {
+        "code": "IPC",
+        "edition": "2018",
+        "effective_date": "2020-01-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2018",
+        "effective_date": "2020-01-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2018",
+        "commercial_code": "IBC",
+        "commercial_edition": "2018",
+        "effective_date": "2020-01-01",
+        "amendments": [],
+        "notes": "Local adoption"
+      }
+    },
+    "OR": {
+      "name": "Oregon",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2023",
+        "effective_date": "2023-10-01",
+        "amendments": ["OR amendments"],
+        "notes": "Oregon Electrical Specialty Code"
+      },
+      "plumbing": {
+        "code": "UPC",
+        "edition": "2021",
+        "effective_date": "2022-10-01",
+        "amendments": [],
+        "notes": "Oregon Specialty Plumbing Code based on UPC"
+      },
+      "mechanical": {
+        "code": "UMC",
+        "edition": "2021",
+        "effective_date": "2022-10-01",
+        "amendments": [],
+        "notes": "Oregon Mechanical Specialty Code based on UMC"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2021",
+        "commercial_code": "IBC",
+        "commercial_edition": "2021",
+        "effective_date": "2022-10-01",
+        "amendments": [],
+        "notes": "Oregon Structural Specialty Code"
+      }
+    },
+    "PA": {
+      "name": "Pennsylvania",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2017",
+        "effective_date": "2022-02-14",
+        "amendments": [],
+        "notes": "UCC local enforcement; 2020 update underway"
+      },
+      "plumbing": {
+        "code": "IPC",
+        "edition": "2018",
+        "effective_date": "2019-02-14",
+        "amendments": [],
+        "notes": "UCC incorporates IPC"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2018",
+        "effective_date": "2019-02-14",
+        "amendments": [],
+        "notes": "UCC incorporates IMC"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2018",
+        "commercial_code": "IBC",
+        "commercial_edition": "2018",
+        "effective_date": "2019-02-14",
+        "amendments": [],
+        "notes": "Uniform Construction Code"
+      }
+    },
+    "RI": {
+      "name": "Rhode Island",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2020",
+        "effective_date": "2022-02-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "plumbing": {
+        "code": "IPC",
+        "edition": "2018",
+        "effective_date": "2019-07-01",
+        "amendments": [],
+        "notes": "State Building Code"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2018",
+        "effective_date": "2019-07-01",
+        "amendments": [],
+        "notes": "State Building Code"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2021",
+        "commercial_code": "IBC",
+        "commercial_edition": "2021",
+        "effective_date": "2022-07-01",
+        "amendments": [],
+        "notes": "State Building Code"
+      }
+    },
+    "SC": {
+      "name": "South Carolina",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2020",
+        "effective_date": "2023-01-01",
+        "amendments": ["SC amendments"],
+        "notes": "2023 update underway"
+      },
+      "plumbing": {
+        "code": "IPC",
+        "edition": "2018",
+        "effective_date": "2020-01-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2018",
+        "effective_date": "2020-01-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2018",
+        "commercial_code": "IBC",
+        "commercial_edition": "2018",
+        "effective_date": "2020-01-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      }
+    },
+    "SD": {
+      "name": "South Dakota",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2023",
+        "effective_date": "2024-11-12",
+        "amendments": ["SD amendments"],
+        "notes": "Statewide with amendments"
+      },
+      "plumbing": {
+        "code": "UPC",
+        "edition": "2018",
+        "effective_date": "2019-07-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2018",
+        "effective_date": "2019-07-01",
+        "amendments": [],
+        "notes": "Local adoption"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2018",
+        "commercial_code": "IBC",
+        "commercial_edition": "2018",
+        "effective_date": "2019-07-01",
+        "amendments": [],
+        "notes": "Local adoption"
+      }
+    },
+    "TN": {
+      "name": "Tennessee",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2017",
+        "effective_date": "2018-10-01",
+        "amendments": ["TN amendments"],
+        "notes": "Statewide with amendments"
+      },
+      "plumbing": {
+        "code": "IPC",
+        "edition": "2018",
+        "effective_date": "2019-03-01",
+        "amendments": [],
+        "notes": "Local adoption"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2018",
+        "effective_date": "2019-03-01",
+        "amendments": [],
+        "notes": "Local adoption"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2018",
+        "commercial_code": "IBC",
+        "commercial_edition": "2018",
+        "effective_date": "2019-03-01",
+        "amendments": [],
+        "notes": "Local adoption; Nashville uses 2024"
+      }
+    },
+    "TX": {
+      "name": "Texas",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2023",
+        "effective_date": "2023-09-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "plumbing": {
+        "code": "IPC",
+        "edition": "2021",
+        "effective_date": "2022-09-01",
+        "amendments": [],
+        "notes": "Texas State Plumbing Code"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2021",
+        "effective_date": "2022-09-01",
+        "amendments": [],
+        "notes": "Local adoption varies"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2021",
+        "commercial_code": "IBC",
+        "commercial_edition": "2021",
+        "effective_date": "2022-09-01",
+        "amendments": [],
+        "notes": "Local adoption; no state code"
+      }
+    },
+    "UT": {
+      "name": "Utah",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2023",
+        "effective_date": "2025-07-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "plumbing": {
+        "code": "IPC",
+        "edition": "2021",
+        "effective_date": "2022-07-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2021",
+        "effective_date": "2022-07-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2021",
+        "commercial_code": "IBC",
+        "commercial_edition": "2021",
+        "effective_date": "2022-07-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      }
+    },
+    "VT": {
+      "name": "Vermont",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2020",
+        "effective_date": "2022-04-15",
+        "amendments": ["VT amendments"],
+        "notes": "Statewide with amendments"
+      },
+      "plumbing": {
+        "code": "IPC",
+        "edition": "2018",
+        "effective_date": "2019-07-01",
+        "amendments": [],
+        "notes": "State Plumbing Code"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2018",
+        "effective_date": "2019-07-01",
+        "amendments": [],
+        "notes": "Commercial only; residential voluntary"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2018",
+        "commercial_code": "IBC",
+        "commercial_edition": "2018",
+        "effective_date": "2019-07-01",
+        "amendments": [],
+        "notes": "Commercial mandatory; residential voluntary"
+      }
+    },
+    "VA": {
+      "name": "Virginia",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2020",
+        "effective_date": "2024-01-18",
+        "amendments": [],
+        "notes": "Virginia Construction Code; 2023 update underway"
+      },
+      "plumbing": {
+        "code": "IPC",
+        "edition": "2018",
+        "effective_date": "2021-07-01",
+        "amendments": [],
+        "notes": "Virginia Construction Code"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2018",
+        "effective_date": "2021-07-01",
+        "amendments": [],
+        "notes": "Virginia Construction Code"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2018",
+        "commercial_code": "IBC",
+        "commercial_edition": "2018",
+        "effective_date": "2021-07-01",
+        "amendments": [],
+        "notes": "Virginia Construction Code"
+      }
+    },
+    "WA": {
+      "name": "Washington",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2023",
+        "effective_date": "2024-04-01",
+        "amendments": [],
+        "notes": "WAC 296-46B"
+      },
+      "plumbing": {
+        "code": "UPC",
+        "edition": "2021",
+        "effective_date": "2022-07-01",
+        "amendments": [],
+        "notes": "Washington State Plumbing Code"
+      },
+      "mechanical": {
+        "code": "UMC",
+        "edition": "2021",
+        "effective_date": "2022-07-01",
+        "amendments": [],
+        "notes": "Washington State Mechanical Code"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2021",
+        "commercial_code": "IBC",
+        "commercial_edition": "2021",
+        "effective_date": "2023-07-01",
+        "amendments": [],
+        "notes": "Washington State Building Code"
+      }
+    },
+    "WV": {
+      "name": "West Virginia",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2020",
+        "effective_date": "2022-08-01",
+        "amendments": ["WV amendments"],
+        "notes": "Statewide with amendments"
+      },
+      "plumbing": {
+        "code": "IPC",
+        "edition": "2018",
+        "effective_date": "2019-09-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2018",
+        "effective_date": "2019-09-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2018",
+        "commercial_code": "IBC",
+        "commercial_edition": "2018",
+        "effective_date": "2019-09-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      }
+    },
+    "WI": {
+      "name": "Wisconsin",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2017",
+        "effective_date": "2018-08-01",
+        "amendments": [],
+        "notes": "Commercial 8/1/18, residential 1/1/20 (SPS 316); 2023 underway"
+      },
+      "plumbing": {
+        "code": "STATE",
+        "edition": "2020",
+        "effective_date": "2020-07-01",
+        "amendments": [],
+        "notes": "Wisconsin Statutes Comm 81-87"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2018",
+        "effective_date": "2019-07-01",
+        "amendments": [],
+        "notes": "Wisconsin Comm 64"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2018",
+        "commercial_code": "IBC",
+        "commercial_edition": "2018",
+        "effective_date": "2019-07-01",
+        "amendments": [],
+        "notes": "Wisconsin Comm 62"
+      }
+    },
+    "WY": {
+      "name": "Wyoming",
+      "electrical": {
+        "code": "NEC",
+        "edition": "2023",
+        "effective_date": "2023-07-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "plumbing": {
+        "code": "IPC",
+        "edition": "2018",
+        "effective_date": "2019-07-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "mechanical": {
+        "code": "IMC",
+        "edition": "2021",
+        "effective_date": "2022-07-01",
+        "amendments": [],
+        "notes": "Statewide adoption"
+      },
+      "building": {
+        "residential_code": "IRC",
+        "residential_edition": "2021",
+        "commercial_code": "IBC",
+        "commercial_edition": "2021",
+        "effective_date": "2022-07-01",
+        "amendments": [],
+        "notes": "Local adoption"
+      }
+    }
+  }
+}

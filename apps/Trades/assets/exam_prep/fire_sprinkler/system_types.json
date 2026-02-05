@@ -1,0 +1,572 @@
+{
+  "category": "Fire Sprinkler",
+  "subcategory": "System Types",
+  "description": "Wet, dry, preaction, and deluge system requirements",
+  "difficulty_distribution": {
+    "beginner": 12,
+    "intermediate": 18,
+    "advanced": 10
+  },
+  "questions": [
+    {
+      "id": "fs_type_001",
+      "difficulty": "beginner",
+      "question": "What is a wet pipe sprinkler system?",
+      "options": [
+        "A system tested with water",
+        "A system with water in all piping at all times",
+        "A system in wet locations",
+        "A system that uses foam"
+      ],
+      "correct_answer": 1,
+      "explanation": "Wet pipe systems have water in all piping under pressure at all times. When a sprinkler activates, water discharges immediately. This is the most common and reliable type.",
+      "code_reference": "NFPA 13, Section 7.1"
+    },
+    {
+      "id": "fs_type_002",
+      "difficulty": "beginner",
+      "question": "What is the primary advantage of wet pipe systems?",
+      "options": [
+        "No water damage",
+        "Simple, reliable, and immediate water discharge",
+        "Lower cost than all other types",
+        "No maintenance required"
+      ],
+      "correct_answer": 1,
+      "explanation": "Wet pipe systems are the simplest, most reliable, and provide immediate water discharge. They have fewer components and lower maintenance than dry or preaction systems.",
+      "code_reference": "NFPA 13, Section 7.1"
+    },
+    {
+      "id": "fs_type_003",
+      "difficulty": "beginner",
+      "question": "When is a dry pipe system required?",
+      "options": [
+        "In all commercial buildings",
+        "When piping is in areas subject to freezing",
+        "Only in storage buildings",
+        "When water supply is limited"
+      ],
+      "correct_answer": 1,
+      "explanation": "Dry pipe systems are used when piping is in areas subject to freezing temperatures (below 40°F) where a wet system would freeze and rupture.",
+      "code_reference": "NFPA 13, Section 7.2"
+    },
+    {
+      "id": "fs_type_004",
+      "difficulty": "beginner",
+      "question": "What is in dry pipe system piping under normal conditions?",
+      "options": [
+        "Water",
+        "Air or nitrogen under pressure",
+        "Nothing (vacuum)",
+        "Antifreeze"
+      ],
+      "correct_answer": 1,
+      "explanation": "Dry pipe systems contain air or nitrogen under pressure. This air pressure holds the dry pipe valve closed, keeping water out of the piping.",
+      "code_reference": "NFPA 13, Section 7.2"
+    },
+    {
+      "id": "fs_type_005",
+      "difficulty": "beginner",
+      "question": "What is a preaction system?",
+      "options": [
+        "A system that sprays water before fires",
+        "A dry system that requires detection activation before water enters piping",
+        "A testing system",
+        "A pre-installed system"
+      ],
+      "correct_answer": 1,
+      "explanation": "Preaction systems are dry systems with a preaction valve that must be opened by a detection system before water enters the piping. This provides extra protection against accidental discharge.",
+      "code_reference": "NFPA 13, Section 7.3"
+    },
+    {
+      "id": "fs_type_006",
+      "difficulty": "beginner",
+      "question": "Where are preaction systems typically used?",
+      "options": [
+        "Parking garages",
+        "Computer rooms, museums, and areas sensitive to water damage",
+        "Warehouses",
+        "Residential buildings"
+      ],
+      "correct_answer": 1,
+      "explanation": "Preaction systems are used in areas where accidental water discharge would cause significant damage - data centers, museums, libraries, and similar sensitive occupancies.",
+      "code_reference": "NFPA 13, Section 7.3"
+    },
+    {
+      "id": "fs_type_007",
+      "difficulty": "beginner",
+      "question": "What is a deluge system?",
+      "options": [
+        "A system that floods the area",
+        "An open sprinkler system that discharges from all heads simultaneously",
+        "A high-pressure system",
+        "An underwater system"
+      ],
+      "correct_answer": 1,
+      "explanation": "Deluge systems have open sprinklers (no heat-activated elements). When the deluge valve opens, water discharges from all sprinklers in the system simultaneously.",
+      "code_reference": "NFPA 13, Section 7.4"
+    },
+    {
+      "id": "fs_type_008",
+      "difficulty": "beginner",
+      "question": "What activates a deluge valve?",
+      "options": [
+        "The first sprinkler",
+        "A separate fire detection system",
+        "Water pressure",
+        "Timer"
+      ],
+      "correct_answer": 1,
+      "explanation": "Deluge valves are activated by a separate fire detection system (heat or smoke detectors) or manually, since the sprinklers themselves have no thermal elements.",
+      "code_reference": "NFPA 13, Section 7.4"
+    },
+    {
+      "id": "fs_type_009",
+      "difficulty": "beginner",
+      "question": "Where are deluge systems commonly used?",
+      "options": [
+        "Offices",
+        "Aircraft hangars, transformer areas, and high-hazard areas",
+        "Residential buildings",
+        "Retail stores"
+      ],
+      "correct_answer": 1,
+      "explanation": "Deluge systems are used in high-hazard areas where rapid fire spread is expected - aircraft hangars, flammable liquid areas, transformers, and similar locations.",
+      "code_reference": "NFPA 13, Section 7.4"
+    },
+    {
+      "id": "fs_type_010",
+      "difficulty": "beginner",
+      "question": "What is an antifreeze system?",
+      "options": [
+        "A system using glycerin or glycol solution to prevent freezing",
+        "A system that prevents fires from starting",
+        "A cooling system",
+        "A system with heated pipes"
+      ],
+      "correct_answer": 0,
+      "explanation": "Antifreeze systems use a glycerin or propylene glycol solution in limited portions of a wet system to prevent freezing in unheated areas.",
+      "code_reference": "NFPA 13, Section 7.5"
+    },
+    {
+      "id": "fs_type_011",
+      "difficulty": "beginner",
+      "question": "What is the water delivery time limit for dry pipe systems?",
+      "options": [
+        "30 seconds",
+        "60 seconds for systems ≤500 gallons",
+        "5 minutes",
+        "No time limit"
+      ],
+      "correct_answer": 1,
+      "explanation": "Dry pipe systems must deliver water to the inspector's test connection within 60 seconds for systems of 500 gallons or less capacity.",
+      "code_reference": "NFPA 13, Section 7.2.3"
+    },
+    {
+      "id": "fs_type_012",
+      "difficulty": "beginner",
+      "question": "What is a dry pipe valve?",
+      "options": [
+        "Any valve in a dry system",
+        "A valve that uses air pressure to hold back water pressure",
+        "A drainage valve",
+        "A check valve"
+      ],
+      "correct_answer": 1,
+      "explanation": "A dry pipe valve is a specialized valve using a differential between air pressure and water pressure to hold back water until a sprinkler opens and releases air.",
+      "code_reference": "NFPA 13, Section 7.2"
+    },
+    {
+      "id": "fs_type_013",
+      "difficulty": "intermediate",
+      "question": "What is the differential ratio on a standard dry pipe valve?",
+      "options": [
+        "1:1",
+        "Approximately 1:5 to 1:6 (air to water pressure)",
+        "2:1",
+        "10:1"
+      ],
+      "correct_answer": 1,
+      "explanation": "Dry pipe valves typically have a 5:1 or 6:1 differential, meaning 1 psi of air pressure holds back 5-6 psi of water pressure due to the clapper area design.",
+      "code_reference": "NFPA 13, Section 7.2"
+    },
+    {
+      "id": "fs_type_014",
+      "difficulty": "intermediate",
+      "question": "What is a single interlock preaction system?",
+      "options": [
+        "A system with one sprinkler",
+        "A system where detection alone opens the preaction valve",
+        "A system with one valve",
+        "A manual-only system"
+      ],
+      "correct_answer": 1,
+      "explanation": "Single interlock preaction requires only the detection system to activate for the preaction valve to open. Sprinkler activation then discharges water.",
+      "code_reference": "NFPA 13, Section 7.3.2"
+    },
+    {
+      "id": "fs_type_015",
+      "difficulty": "intermediate",
+      "question": "What is a double interlock preaction system?",
+      "options": [
+        "A system with two valves",
+        "A system requiring both detection AND sprinkler activation to release water",
+        "A system with two detection zones",
+        "A redundant system"
+      ],
+      "correct_answer": 1,
+      "explanation": "Double interlock preaction requires both detection system activation AND sprinkler operation before water is released, providing maximum protection against accidental discharge.",
+      "code_reference": "NFPA 13, Section 7.3.2"
+    },
+    {
+      "id": "fs_type_016",
+      "difficulty": "intermediate",
+      "question": "What type of detection is required for preaction systems?",
+      "options": [
+        "Heat detection only",
+        "Smoke detection only",
+        "Detection covering the protected area, type based on hazard",
+        "No detection required"
+      ],
+      "correct_answer": 2,
+      "explanation": "Preaction systems require detection covering the protected area. Detection type (heat, smoke, or other) is selected based on the hazard and occupancy.",
+      "code_reference": "NFPA 13, Section 7.3"
+    },
+    {
+      "id": "fs_type_017",
+      "difficulty": "intermediate",
+      "question": "What happens if a dry pipe system trip occurs when the system has a small leak?",
+      "options": [
+        "Nothing happens",
+        "The system trips and water fills the piping",
+        "The leak automatically seals",
+        "The compressor maintains pressure"
+      ],
+      "correct_answer": 1,
+      "explanation": "If air leakage causes pressure to drop enough, the dry valve will trip and fill the system with water. This is called a false trip and requires investigation.",
+      "code_reference": "NFPA 13, Section 7.2"
+    },
+    {
+      "id": "fs_type_018",
+      "difficulty": "intermediate",
+      "question": "What is a quick-opening device on a dry pipe system?",
+      "options": [
+        "A type of sprinkler",
+        "An accelerator or exhauster that speeds water delivery",
+        "A fast-closing valve",
+        "Emergency release"
+      ],
+      "correct_answer": 1,
+      "explanation": "Quick-opening devices (accelerators or exhausters) speed up dry valve operation by faster air exhausting, reducing water delivery time.",
+      "code_reference": "NFPA 13, Section 7.2.3"
+    },
+    {
+      "id": "fs_type_019",
+      "difficulty": "intermediate",
+      "question": "When is a quick-opening device required?",
+      "options": [
+        "Always required",
+        "Systems over 500 gallons capacity",
+        "High-rise buildings only",
+        "Never required"
+      ],
+      "correct_answer": 1,
+      "explanation": "Quick-opening devices are required for dry pipe systems with capacity exceeding 500 gallons to meet the 60-second water delivery requirement.",
+      "code_reference": "NFPA 13, Section 7.2.3"
+    },
+    {
+      "id": "fs_type_020",
+      "difficulty": "intermediate",
+      "question": "What is the maximum system capacity for a dry pipe system?",
+      "options": [
+        "500 gallons",
+        "750 gallons",
+        "No fixed limit, based on water delivery time",
+        "1000 gallons"
+      ],
+      "correct_answer": 2,
+      "explanation": "There's no fixed gallon limit, but system size is limited by the ability to deliver water in required time. Large systems may need multiple dry valves.",
+      "code_reference": "NFPA 13, Section 7.2"
+    },
+    {
+      "id": "fs_type_021",
+      "difficulty": "intermediate",
+      "question": "What pressure supervision is required for dry pipe systems?",
+      "options": [
+        "None required",
+        "Low air pressure supervision with alarm",
+        "High pressure supervision only",
+        "Flow alarm only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Dry pipe systems require low air pressure supervision with an alarm that activates before the dry valve would trip due to air loss.",
+      "code_reference": "NFPA 13, Section 7.2"
+    },
+    {
+      "id": "fs_type_022",
+      "difficulty": "intermediate",
+      "question": "What is the low air pressure alarm set point for dry systems?",
+      "options": [
+        "Any pressure below water pressure",
+        "Typically set to alarm before the trip point pressure",
+        "15 psi fixed",
+        "50% of water pressure"
+      ],
+      "correct_answer": 1,
+      "explanation": "Low air alarm is set above the dry valve trip point so alarms indicate pressure loss before an unintended trip occurs.",
+      "code_reference": "NFPA 13, Section 7.2"
+    },
+    {
+      "id": "fs_type_023",
+      "difficulty": "intermediate",
+      "question": "How is dry pipe system pitch determined?",
+      "options": [
+        "All pipes level",
+        "Minimum pitch toward drain points to allow complete drainage",
+        "Random slopes acceptable",
+        "Pitch toward risers only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Dry pipe systems must have all piping pitched toward drain points to allow complete drainage of water after each trip or test.",
+      "code_reference": "NFPA 13, Section 7.2"
+    },
+    {
+      "id": "fs_type_024",
+      "difficulty": "intermediate",
+      "question": "What is a non-interlock preaction system?",
+      "options": [
+        "An outdated term for standard dry system",
+        "A preaction system that admits water upon detection OR sprinkler operation",
+        "A system without locks",
+        "A manually operated system"
+      ],
+      "correct_answer": 1,
+      "explanation": "Non-interlock preaction systems admit water if either the detection system operates OR if air pressure is lost (sprinkler opens). This is the least restrictive preaction type.",
+      "code_reference": "NFPA 13, Section 7.3.2"
+    },
+    {
+      "id": "fs_type_025",
+      "difficulty": "intermediate",
+      "question": "What design area increase is applied to dry pipe systems?",
+      "options": [
+        "No increase",
+        "25-30% increase over equivalent wet system",
+        "50% increase",
+        "100% increase"
+      ],
+      "correct_answer": 1,
+      "explanation": "Dry pipe systems require a 25-30% increase in design area compared to wet systems to account for the water delivery delay.",
+      "code_reference": "NFPA 13, Section 19.3"
+    },
+    {
+      "id": "fs_type_026",
+      "difficulty": "intermediate",
+      "question": "What testing is required for preaction system detection?",
+      "options": [
+        "No testing required",
+        "Detection devices tested per NFPA 72 schedules",
+        "Annual testing only",
+        "Testing at installation only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Preaction system detection devices must be tested per NFPA 72 (fire alarm code) requirements, which includes periodic sensitivity testing and functional testing.",
+      "code_reference": "NFPA 13, NFPA 72"
+    },
+    {
+      "id": "fs_type_027",
+      "difficulty": "advanced",
+      "question": "What is the purpose of a supervisory air pressure on preaction systems?",
+      "options": [
+        "Fire suppression",
+        "To supervise piping integrity and provide early warning of leaks",
+        "Boost water pressure",
+        "Prevent corrosion"
+      ],
+      "correct_answer": 1,
+      "explanation": "Supervisory air pressure in preaction systems detects pipe breaks or open sprinklers by monitoring for air loss, providing warning before a fire event.",
+      "code_reference": "NFPA 13, Section 7.3"
+    },
+    {
+      "id": "fs_type_028",
+      "difficulty": "advanced",
+      "question": "How does nitrogen compare to compressed air in dry pipe systems?",
+      "options": [
+        "No difference",
+        "Nitrogen reduces corrosion by eliminating oxygen",
+        "Nitrogen is less expensive",
+        "Air works better"
+      ],
+      "correct_answer": 1,
+      "explanation": "Nitrogen has lower oxygen content than compressed air, reducing internal pipe corrosion in dry and preaction systems. This extends system life.",
+      "code_reference": "NFPA 13, Section 7.2"
+    },
+    {
+      "id": "fs_type_029",
+      "difficulty": "advanced",
+      "question": "What is the antifreeze concentration limit per NFPA 13?",
+      "options": [
+        "Any concentration needed for climate",
+        "Maximum 40% for listed solutions",
+        "Maximum 30% glycerin or 38% propylene glycol per current requirements",
+        "No limit"
+      ],
+      "correct_answer": 2,
+      "explanation": "Due to flammability concerns, NFPA 13 limits antifreeze concentrations. Current requirements specify maximum concentrations for listed solutions only.",
+      "code_reference": "NFPA 13, Section 7.5"
+    },
+    {
+      "id": "fs_type_030",
+      "difficulty": "advanced",
+      "question": "What actuates a deluge valve electrically?",
+      "options": [
+        "Motor",
+        "Solenoid valve releasing pressure from diaphragm chamber",
+        "Pump",
+        "Relay"
+      ],
+      "correct_answer": 1,
+      "explanation": "Electric deluge valve actuation typically uses a solenoid that opens to release priming water/air from the valve diaphragm chamber, allowing water to open the valve.",
+      "code_reference": "NFPA 13, Section 7.4"
+    },
+    {
+      "id": "fs_type_031",
+      "difficulty": "advanced",
+      "question": "What is pneumatic release for deluge valves?",
+      "options": [
+        "Air-powered sprinklers",
+        "Detection using pilot sprinklers or thermostatic elements releasing air pressure",
+        "Wind-activated release",
+        "Compressed air discharge"
+      ],
+      "correct_answer": 1,
+      "explanation": "Pneumatic deluge release uses pilot sprinklers or thermostatic elements that release air pressure from a pilot line when heated, triggering the deluge valve.",
+      "code_reference": "NFPA 13, Section 7.4"
+    },
+    {
+      "id": "fs_type_032",
+      "difficulty": "advanced",
+      "question": "What is the dry pilot actuation method for deluge systems?",
+      "options": [
+        "Using dry chemicals",
+        "Pilot line charged with air; pilot sprinklers release air to trip valve",
+        "No pilot used",
+        "Pilot light ignition"
+      ],
+      "correct_answer": 1,
+      "explanation": "Dry pilot actuation uses pilot sprinklers on an air-charged line. When pilot sprinklers open, air releases from the pilot line, allowing the deluge valve to open.",
+      "code_reference": "NFPA 13, Section 7.4"
+    },
+    {
+      "id": "fs_type_033",
+      "difficulty": "advanced",
+      "question": "For combined dry pipe/preaction systems, what supervision is required?",
+      "options": [
+        "Air supervision only",
+        "Detection supervision only",
+        "Both air supervision and detection system supervision",
+        "No supervision required"
+      ],
+      "correct_answer": 2,
+      "explanation": "Combined systems require both low air pressure supervision and fire detection system monitoring to ensure both protective features are functional.",
+      "code_reference": "NFPA 13, Section 7.3"
+    },
+    {
+      "id": "fs_type_034",
+      "difficulty": "advanced",
+      "question": "What prevents accidental trip of dry valves during filling or testing?",
+      "options": [
+        "Nothing special",
+        "Priming water and proper procedures",
+        "Automatic locks",
+        "Timer controls"
+      ],
+      "correct_answer": 1,
+      "explanation": "Dry valves use priming water above the clapper and specific filling/testing procedures to prevent accidental trips. Bypass valves allow controlled testing.",
+      "code_reference": "NFPA 13, Section 7.2"
+    },
+    {
+      "id": "fs_type_035",
+      "difficulty": "intermediate",
+      "question": "What test simulates system operation without flowing water to main drain?",
+      "options": [
+        "Main drain test",
+        "Trip test using inspector's test connection",
+        "Alarm test",
+        "Flow test"
+      ],
+      "correct_answer": 1,
+      "explanation": "The inspector's test connection simulates one sprinkler flowing, testing the water motor gong or flow switch alarm without a full main drain test.",
+      "code_reference": "NFPA 13, Section 8.17.4"
+    },
+    {
+      "id": "fs_type_036",
+      "difficulty": "intermediate",
+      "question": "How are dry pipe systems reset after operation?",
+      "options": [
+        "Automatic reset",
+        "Drain, dry piping, reset valve, refill with air, return to service",
+        "Replace the valve",
+        "Call manufacturer"
+      ],
+      "correct_answer": 1,
+      "explanation": "Dry pipe systems must be drained, dried (potentially with compressed air), the valve reset manually, system refilled with supervisory air, and returned to service.",
+      "code_reference": "NFPA 13, NFPA 25"
+    },
+    {
+      "id": "fs_type_037",
+      "difficulty": "advanced",
+      "question": "What is the code requirement for antifreeze system loop length?",
+      "options": [
+        "Unlimited length",
+        "Limited to minimize antifreeze volume due to dilution and mixing concerns",
+        "Must be at least 100 feet",
+        "No specific limit"
+      ],
+      "correct_answer": 1,
+      "explanation": "Antifreeze loops are limited in length to minimize the volume of antifreeze, reduce dilution issues, and address fire department concerns about discharge.",
+      "code_reference": "NFPA 13, Section 7.5"
+    },
+    {
+      "id": "fs_type_038",
+      "difficulty": "intermediate",
+      "question": "What is the minimum air pressure for dry pipe systems?",
+      "options": [
+        "40 psi always",
+        "Enough to prevent trip, typically 15-20 psi above trip pressure",
+        "Equal to water pressure",
+        "As low as possible"
+      ],
+      "correct_answer": 1,
+      "explanation": "Air pressure is typically maintained 15-20 psi above the calculated trip point to provide a safety margin against inadvertent trips from minor leaks.",
+      "code_reference": "NFPA 13, Section 7.2"
+    },
+    {
+      "id": "fs_type_039",
+      "difficulty": "beginner",
+      "question": "Which system type has the fastest water delivery?",
+      "options": [
+        "Dry pipe",
+        "Preaction",
+        "Wet pipe",
+        "Deluge"
+      ],
+      "correct_answer": 2,
+      "explanation": "Wet pipe systems have immediate water delivery since water is already at the sprinkler. All other types have a delay for water to travel through piping.",
+      "code_reference": "NFPA 13, Section 7.1"
+    },
+    {
+      "id": "fs_type_040",
+      "difficulty": "intermediate",
+      "question": "What is the trim on a dry pipe valve?",
+      "options": [
+        "Decorative covering",
+        "Accessory piping, gauges, valves, and controls on the valve",
+        "Pipe insulation",
+        "Valve stem"
+      ],
+      "correct_answer": 1,
+      "explanation": "Valve trim includes the gauges, priming lines, drain valves, air supply connections, and other accessories mounted on or connected to the dry pipe valve.",
+      "code_reference": "NFPA 13, Section 7.2"
+    }
+  ]
+}

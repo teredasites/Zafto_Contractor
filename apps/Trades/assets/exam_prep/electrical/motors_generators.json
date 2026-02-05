@@ -1,0 +1,3039 @@
+{
+  "topic_id": "MG",
+  "topic_name": "Motors & Generators",
+  "nec_version": "2026",
+  "questions": [
+    {
+      "id": "MG-001",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": ["Table 430.248"],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the full-load current (FLA) of a 5 HP, 230V, single-phase motor?",
+      "choices": [
+        {"id": "A", "text": "15.2 amperes"},
+        {"id": "B", "text": "28 amperes"},
+        {"id": "C", "text": "40 amperes"},
+        {"id": "D", "text": "56 amperes"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Table 430.248 shows a 5 HP, 230V single-phase motor has an FLA of 28 amperes.",
+        "detailed": "Table 430.248 lists full-load currents for single-phase AC motors. For 5 HP at 230V, the FLA is 28 amperes. Always use NEC tables for motor calculations, not the nameplate FLA, per 430.6(A)(1).",
+        "how_to_find": "Go to Table 430.248, find 5 HP row, 230V column."
+      },
+      "nec_reference": {"article": "430", "section": "430.6(A)(1)", "table": "Table 430.248"},
+      "zafto_links": [{"screen_id": "motor_fla", "relevance": "primary", "description": "Motor FLA lookup"}, {"screen_id": "motor_fla_table", "relevance": "primary", "description": "FLA tables"}],
+      "tags": ["motor FLA", "single-phase", "Table 430.248"],
+      "verified": true
+    },
+    {
+      "id": "MG-002",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": ["Table 430.250"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the full-load current of a 10 HP, 460V, 3-phase motor?",
+      "choices": [
+        {"id": "A", "text": "11 amperes"},
+        {"id": "B", "text": "14 amperes"},
+        {"id": "C", "text": "21 amperes"},
+        {"id": "D", "text": "27 amperes"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Table 430.250 shows a 10 HP, 460V three-phase motor has an FLA of 14 amperes.",
+        "detailed": "Table 430.250 lists full-load currents for three-phase AC motors. For 10 HP at 460V, the FLA is 14 amperes. Note the 460V column is used for nominal 480V systems.",
+        "how_to_find": "Go to Table 430.250, find 10 HP row, 460V column."
+      },
+      "nec_reference": {"article": "430", "section": "430.6(A)(1)", "table": "Table 430.250"},
+      "zafto_links": [{"screen_id": "motor_fla", "relevance": "primary", "description": "Motor FLA lookup"}, {"screen_id": "motor_fla_table", "relevance": "primary", "description": "FLA tables"}],
+      "tags": ["motor FLA", "three-phase", "Table 430.250"],
+      "verified": true
+    },
+    {
+      "id": "MG-003",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "calculation",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum conductor ampacity required for a single motor with an FLA of 40 amperes?",
+      "choices": [
+        {"id": "A", "text": "40 amperes"},
+        {"id": "B", "text": "45 amperes"},
+        {"id": "C", "text": "50 amperes"},
+        {"id": "D", "text": "56 amperes"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Motor branch circuit conductors must be sized at 125% of motor FLA: 40A × 1.25 = 50A.",
+        "detailed": "Section 430.22(A) requires conductors supplying a single motor to have an ampacity not less than 125% of the motor full-load current. 40A × 1.25 = 50A minimum ampacity required.",
+        "how_to_find": "Go to 430.22(A) for motor conductor sizing."
+      },
+      "nec_reference": {"article": "430", "section": "430.22(A)"},
+      "calculation": {
+        "formula": "Conductor Ampacity = FLA × 125%",
+        "steps": [
+          {"step": 1, "description": "Identify motor FLA", "result": "40 amperes"},
+          {"step": 2, "description": "Multiply by 125%", "calculation": "40 × 1.25", "result": "50 amperes"}
+        ],
+        "final_answer": "50 amperes minimum conductor ampacity",
+        "common_mistakes": ["Using 100% instead of 125%", "Using nameplate amps instead of table FLA"]
+      },
+      "zafto_links": [{"screen_id": "motor_circuit", "relevance": "primary", "description": "Motor circuit calculator"}],
+      "tags": ["motor conductors", "125%", "sizing"],
+      "verified": true
+    },
+    {
+      "id": "MG-004",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": ["Table 430.52"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the maximum size inverse-time circuit breaker permitted for a single-phase AC motor with an FLA of 20 amperes?",
+      "choices": [
+        {"id": "A", "text": "25 amperes"},
+        {"id": "B", "text": "40 amperes"},
+        {"id": "C", "text": "50 amperes"},
+        {"id": "D", "text": "60 amperes"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Table 430.52 allows 250% for inverse-time breakers on single-phase motors: 20A × 2.5 = 50A.",
+        "detailed": "Table 430.52 shows maximum rating of motor branch-circuit short-circuit and ground-fault protective devices. For single-phase motors with inverse-time circuit breakers, the maximum is 250% of FLA. 20A × 2.5 = 50A. If 50A doesn't correspond to a standard size, 430.52(C)(1) allows the next standard size up.",
+        "how_to_find": "Go to Table 430.52, find single-phase motor row, inverse-time breaker column."
+      },
+      "nec_reference": {"article": "430", "section": "430.52", "table": "Table 430.52"},
+      "calculation": {
+        "formula": "Max OCPD = FLA × 250% (for inverse-time breaker)",
+        "steps": [
+          {"step": 1, "description": "Identify motor FLA", "result": "20 amperes"},
+          {"step": 2, "description": "Find multiplier from Table 430.52", "reference": "Table 430.52", "result": "250%"},
+          {"step": 3, "description": "Calculate maximum OCPD", "calculation": "20 × 2.5", "result": "50 amperes"}
+        ],
+        "final_answer": "50 ampere maximum breaker",
+        "common_mistakes": ["Using 125% (conductor sizing) instead of 250%", "Confusing with overload protection"]
+      },
+      "zafto_links": [{"screen_id": "motor_circuit", "relevance": "primary", "description": "Motor protection calculator"}],
+      "tags": ["motor protection", "OCPD", "Table 430.52"],
+      "verified": true
+    },
+    {
+      "id": "MG-005",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Motor overload protection for a motor with a service factor of 1.15 or greater shall not exceed what percentage of nameplate FLA?",
+      "choices": [
+        {"id": "A", "text": "115%"},
+        {"id": "B", "text": "125%"},
+        {"id": "C", "text": "130%"},
+        {"id": "D", "text": "140%"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Motors with SF 1.15 or greater can have overload protection up to 125% of nameplate FLA.",
+        "detailed": "Section 430.32(A)(1) states that overload devices shall be selected to trip at no more than 125% of the motor nameplate full-load current for motors with a service factor of 1.15 or greater, or with a temperature rise of 40°C or less. For all other motors, the limit is 115%.",
+        "how_to_find": "Go to 430.32(A)(1) for overload protection sizing."
+      },
+      "nec_reference": {"article": "430", "section": "430.32(A)(1)"},
+      "zafto_links": [{"screen_id": "motor_circuit", "relevance": "primary", "description": "Overload protection"}],
+      "tags": ["overload protection", "service factor", "motor protection"],
+      "verified": true
+    },
+    {
+      "id": "MG-006",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "When sizing motor branch circuit conductors, which current value should be used?",
+      "choices": [
+        {"id": "A", "text": "Motor nameplate FLA"},
+        {"id": "B", "text": "NEC table FLA"},
+        {"id": "C", "text": "Locked rotor current"},
+        {"id": "D", "text": "Service factor amps"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Use NEC table values (Tables 430.247-430.250), not nameplate FLA, for sizing conductors.",
+        "detailed": "Section 430.6(A)(1) requires that the values in Tables 430.247 through 430.250 be used instead of the actual motor nameplate current rating for determining conductor ampacity, switch ampere rating, and branch circuit overcurrent protection. This provides a standardized approach regardless of motor efficiency.",
+        "how_to_find": "Go to 430.6(A)(1) for ampere rating determination."
+      },
+      "nec_reference": {"article": "430", "section": "430.6(A)(1)"},
+      "zafto_links": [{"screen_id": "motor_circuit", "relevance": "primary", "description": "Motor circuit sizing"}],
+      "tags": ["motor FLA", "conductor sizing", "NEC tables"],
+      "verified": true
+    },
+    {
+      "id": "MG-007",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A motor disconnecting means must be located within sight of the motor and driven machinery. 'Within sight' means within what distance?",
+      "choices": [
+        {"id": "A", "text": "25 feet"},
+        {"id": "B", "text": "50 feet"},
+        {"id": "C", "text": "75 feet"},
+        {"id": "D", "text": "100 feet"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Within sight means visible and not more than 50 feet from the equipment.",
+        "detailed": "Article 100 defines 'Within Sight' as visible and not more than 15 m (50 ft) distant from the equipment. Section 430.102(B) requires a disconnecting means in sight from the motor location and driven machinery location. Exceptions exist for lockable disconnects.",
+        "how_to_find": "See Article 100 definition of 'Within Sight' and 430.102(B)."
+      },
+      "nec_reference": {"article": "430", "section": "430.102(B)"},
+      "zafto_links": [{"screen_id": "disconnect", "relevance": "primary", "description": "Disconnect requirements"}],
+      "tags": ["disconnect", "within sight", "motor location"],
+      "verified": true
+    },
+    {
+      "id": "MG-008",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the minimum feeder conductor ampacity for two motors: one 10 HP (FLA 14A) and one 5 HP (FLA 7.6A), both 460V 3-phase?",
+      "choices": [
+        {"id": "A", "text": "21.6 amperes"},
+        {"id": "B", "text": "24.1 amperes"},
+        {"id": "C", "text": "25.1 amperes"},
+        {"id": "D", "text": "27 amperes"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Feeder = 125% of largest motor FLA + 100% of all other motors: (14 × 1.25) + 7.6 = 25.1A.",
+        "detailed": "Section 430.24 requires feeder conductors supplying multiple motors to have an ampacity not less than 125% of the highest rated motor plus the sum of all other motor FLAs. Largest motor: 14A × 1.25 = 17.5A. Other motor: 7.6A. Total: 17.5 + 7.6 = 25.1 amperes.",
+        "how_to_find": "Go to 430.24 for multiple motor feeder sizing."
+      },
+      "nec_reference": {"article": "430", "section": "430.24"},
+      "calculation": {
+        "formula": "Feeder Ampacity = (Largest FLA × 125%) + Sum of other FLAs",
+        "steps": [
+          {"step": 1, "description": "Identify largest motor FLA", "result": "14 amperes (10 HP)"},
+          {"step": 2, "description": "Calculate 125% of largest", "calculation": "14 × 1.25", "result": "17.5 amperes"},
+          {"step": 3, "description": "Add other motor FLAs", "calculation": "17.5 + 7.6", "result": "25.1 amperes"}
+        ],
+        "final_answer": "25.1 amperes minimum feeder ampacity",
+        "common_mistakes": ["Using 125% for all motors", "Adding motors then multiplying by 125%"]
+      },
+      "zafto_links": [{"screen_id": "motor_circuit", "relevance": "primary", "description": "Multiple motor calculations"}],
+      "tags": ["feeder sizing", "multiple motors", "430.24"],
+      "verified": true
+    },
+    {
+      "id": "MG-009",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What are the three levels of motor protection required by Article 430?",
+      "choices": [
+        {"id": "A", "text": "Overload, short circuit, and arc fault"},
+        {"id": "B", "text": "Overload, short circuit/ground fault, and disconnect"},
+        {"id": "C", "text": "Undervoltage, overvoltage, and overload"},
+        {"id": "D", "text": "Thermal, magnetic, and electronic"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Motor circuits require overload protection, branch circuit short-circuit/ground-fault protection, and a disconnecting means.",
+        "detailed": "Article 430 organizes motor protection into three main components: Part III covers overload protection (protects motor from sustained overcurrent), Part IV covers branch-circuit short-circuit and ground-fault protection (protects conductors from faults), and Part IX covers disconnecting means (for safe maintenance).",
+        "how_to_find": "Review Article 430 Parts III, IV, and IX."
+      },
+      "nec_reference": {"article": "430", "section": "430.1"},
+      "zafto_links": [{"screen_id": "motor_circuit", "relevance": "primary", "description": "Motor protection overview"}],
+      "tags": ["motor protection", "overload", "OCPD", "disconnect"],
+      "verified": true
+    },
+    {
+      "id": "MG-010",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "The motor disconnect must have an ampere rating of at least what percentage of the motor FLA?",
+      "choices": [
+        {"id": "A", "text": "100%"},
+        {"id": "B", "text": "115%"},
+        {"id": "C", "text": "125%"},
+        {"id": "D", "text": "150%"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Motor disconnects must be rated at least 115% of motor FLA per 430.110(A).",
+        "detailed": "Section 430.110(A) requires the disconnecting means for motor circuits rated 1000V or less to have an ampere rating of at least 115% of the full-load current rating of the motor. For torque motors, it must be at least 115% of the nameplate current rating.",
+        "how_to_find": "Go to 430.110(A) for disconnect ampere rating."
+      },
+      "nec_reference": {"article": "430", "section": "430.110(A)"},
+      "zafto_links": [{"screen_id": "disconnect", "relevance": "primary", "description": "Disconnect sizing"}],
+      "tags": ["disconnect", "115%", "motor circuits"],
+      "verified": true
+    },
+    {
+      "id": "MG-011",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Motor nameplate 'Service Factor' (SF) indicates:",
+      "choices": [
+        {"id": "A", "text": "The maximum ambient temperature"},
+        {"id": "B", "text": "The overload capacity the motor can handle continuously"},
+        {"id": "C", "text": "The locked-rotor current multiplier"},
+        {"id": "D", "text": "The efficiency rating"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Service factor indicates the motor can operate continuously above nameplate HP.",
+        "detailed": "Service factor is a multiplier indicating the percentage of nameplate HP a motor can deliver continuously without damaging the motor. A 10 HP motor with SF 1.15 can deliver 10 × 1.15 = 11.5 HP continuously under specified conditions. Motors with SF 1.15 or greater get 125% overload protection sizing.",
+        "how_to_find": "Review motor nameplate data interpretation."
+      },
+      "nec_reference": {"article": "430", "section": "430.32(A)(1)"},
+      "zafto_links": [{"screen_id": "motor_nameplate", "relevance": "primary", "description": "Motor nameplate data"}],
+      "tags": ["service factor", "nameplate", "overload capacity"],
+      "verified": true
+    },
+    {
+      "id": "MG-012",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Motor 'Design B' designation refers to:",
+      "choices": [
+        {"id": "A", "text": "The physical frame size"},
+        {"id": "B", "text": "The torque and starting current characteristics"},
+        {"id": "C", "text": "The insulation class"},
+        {"id": "D", "text": "The enclosure type"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Motor design letters (A, B, C, D, E) indicate torque and starting current characteristics.",
+        "detailed": "NEMA motor design letters define torque and starting current characteristics. Design B is most common with normal starting torque (150% of FLT), normal starting current (600-700% of FLA), and normal slip (less than 5%). Design A has higher starting current, Design C has high starting torque, Design D has high slip.",
+        "how_to_find": "Review motor design letter classifications."
+      },
+      "nec_reference": {"article": "430", "section": "430.7(A)(9)"},
+      "zafto_links": [{"screen_id": "motor_nameplate", "relevance": "primary", "description": "Motor design letters"}],
+      "tags": ["Design B", "motor characteristics", "NEMA design"],
+      "verified": true
+    },
+    {
+      "id": "MG-013",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": ["Table 430.251(B)"],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Locked-rotor current (LRC) of a motor is approximately:",
+      "choices": [
+        {"id": "A", "text": "Equal to full-load current"},
+        {"id": "B", "text": "125% of full-load current"},
+        {"id": "C", "text": "5 to 6 times full-load current"},
+        {"id": "D", "text": "10 to 12 times full-load current"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Locked-rotor (starting) current is typically 5-6 times the full-load current.",
+        "detailed": "When a motor starts, the rotor is stationary (locked) and the motor draws maximum current. Table 430.251(B) provides locked-rotor current values. For typical Design B motors, LRC is approximately 5-6 times FLA. This high starting current is why motor branch circuit protection must be sized larger than conductor ampacity.",
+        "how_to_find": "Go to Table 430.251(B) for locked-rotor currents."
+      },
+      "nec_reference": {"article": "430", "section": "430.6(A)(2)", "table": "Table 430.251(B)"},
+      "zafto_links": [{"screen_id": "motor_inrush", "relevance": "primary", "description": "Motor starting current"}],
+      "tags": ["locked-rotor", "starting current", "inrush"],
+      "verified": true
+    },
+    {
+      "id": "MG-014",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "For overload protection sizing, which current value must be used?",
+      "choices": [
+        {"id": "A", "text": "NEC table FLA"},
+        {"id": "B", "text": "Motor nameplate full-load amperes"},
+        {"id": "C", "text": "Locked-rotor current"},
+        {"id": "D", "text": "125% of NEC table FLA"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Overload protection is based on motor nameplate FLA, not NEC table values.",
+        "detailed": "Section 430.6(A)(2) specifically requires that motor nameplate full-load current be used for determining overload protection, not the NEC table values. This is the opposite of conductor and OCPD sizing, which use table values. Each motor has unique efficiency affecting its actual current draw.",
+        "how_to_find": "Go to 430.6(A)(2) for overload selection criteria."
+      },
+      "nec_reference": {"article": "430", "section": "430.6(A)(2)"},
+      "zafto_links": [{"screen_id": "motor_circuit", "relevance": "primary", "description": "Overload sizing"}],
+      "tags": ["overload", "nameplate FLA", "430.6"],
+      "verified": true
+    },
+    {
+      "id": "MG-015",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": ["Table 430.250"],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "A 30 HP, 460V, 3-phase motor has Table 430.250 FLA of 40A. What is the minimum branch circuit conductor ampacity?",
+      "choices": [
+        {"id": "A", "text": "40 amperes"},
+        {"id": "B", "text": "46 amperes"},
+        {"id": "C", "text": "50 amperes"},
+        {"id": "D", "text": "56 amperes"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Motor conductors = 125% of FLA: 40A × 1.25 = 50A minimum ampacity.",
+        "detailed": "Section 430.22(A) requires motor branch circuit conductors to have an ampacity not less than 125% of the motor full-load current from NEC tables. 40A × 1.25 = 50 amperes. Select a conductor with at least 50A ampacity from Table 310.16.",
+        "how_to_find": "Calculate per 430.22(A): FLA × 125%."
+      },
+      "nec_reference": {"article": "430", "section": "430.22(A)"},
+      "calculation": {
+        "formula": "Conductor Ampacity = Table FLA × 125%",
+        "steps": [
+          {"step": 1, "description": "Find FLA from Table 430.250", "result": "40 amperes"},
+          {"step": 2, "description": "Multiply by 125%", "calculation": "40 × 1.25", "result": "50 amperes"}
+        ],
+        "final_answer": "50 amperes minimum",
+        "common_mistakes": ["Using nameplate FLA instead of table", "Forgetting 125% multiplier"]
+      },
+      "zafto_links": [{"screen_id": "motor_circuit", "relevance": "primary", "description": "Conductor sizing"}],
+      "tags": ["conductor sizing", "125%", "calculation"],
+      "verified": true
+    },
+    {
+      "id": "MG-016",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": ["Table 430.52"],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "A 20 HP, 460V, 3-phase Design B motor has FLA of 27A. What is the maximum non-time-delay fuse size?",
+      "choices": [
+        {"id": "A", "text": "70 amperes"},
+        {"id": "B", "text": "80 amperes"},
+        {"id": "C", "text": "81 amperes"},
+        {"id": "D", "text": "90 amperes"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Non-time-delay fuses: 300% × 27A = 81A maximum per Table 430.52.",
+        "detailed": "Table 430.52 shows maximum percentages for motor branch-circuit protection. For Design B motors with non-time-delay fuses, the maximum is 300% of FLA. 27A × 3.0 = 81 amperes. If 81A is not a standard size, 430.52(C)(1) permits the next standard size (90A).",
+        "how_to_find": "Table 430.52: Design B motor, non-time-delay fuse = 300%."
+      },
+      "nec_reference": {"article": "430", "section": "430.52", "table": "Table 430.52"},
+      "calculation": {
+        "formula": "Max Fuse = FLA × 300% (non-time-delay)",
+        "steps": [
+          {"step": 1, "description": "Find FLA from Table 430.250", "result": "27 amperes"},
+          {"step": 2, "description": "Apply 300% from Table 430.52", "calculation": "27 × 3.0", "result": "81 amperes"}
+        ],
+        "final_answer": "81 amperes maximum (or 90A standard size)",
+        "common_mistakes": ["Using 175% (time-delay)", "Using 250% (breaker)"]
+      },
+      "zafto_links": [{"screen_id": "motor_circuit", "relevance": "primary", "description": "Motor fuse sizing"}],
+      "tags": ["non-time-delay fuse", "300%", "Table 430.52"],
+      "verified": true
+    },
+    {
+      "id": "MG-017",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Motor terminal housings must be provided for motors larger than:",
+      "choices": [
+        {"id": "A", "text": "1/2 HP"},
+        {"id": "B", "text": "1 HP"},
+        {"id": "C", "text": "1-1/8 HP"},
+        {"id": "D", "text": "2 HP"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Motors over 1-1/8 HP must have terminal housings per 430.12(A).",
+        "detailed": "Section 430.12(A) requires motors rated over 1-1/8 HP to have separate terminal housings or equivalent wiring compartments. This provides a safe enclosure for making conductor connections to the motor leads and protects connections from the environment.",
+        "how_to_find": "Go to 430.12(A) for terminal housing requirements."
+      },
+      "nec_reference": {"article": "430", "section": "430.12(A)"},
+      "zafto_links": [],
+      "tags": ["terminal housing", "1-1/8 HP", "motor connections"],
+      "verified": true
+    },
+    {
+      "id": "MG-018",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Where must motor nameplate marking be visible?",
+      "choices": [
+        {"id": "A", "text": "Only when the motor is removed"},
+        {"id": "B", "text": "After installation with or without removing a cover"},
+        {"id": "C", "text": "Only before installation"},
+        {"id": "D", "text": "From 10 feet away"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Motor nameplate must be visible after installation, possibly requiring cover removal.",
+        "detailed": "Section 430.7(A) requires motor nameplate information to be marked and visible after installation. A removable cover may need to be removed to see the nameplate, but it must be accessible. Required markings include voltage, FLA, HP, code letter, design letter, and more.",
+        "how_to_find": "Go to 430.7(A) for motor marking requirements."
+      },
+      "nec_reference": {"article": "430", "section": "430.7(A)"},
+      "zafto_links": [{"screen_id": "motor_nameplate", "relevance": "primary", "description": "Nameplate visibility"}],
+      "tags": ["nameplate", "marking", "visibility"],
+      "verified": true
+    },
+    {
+      "id": "MG-019",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": ["Table 430.7(B)"],
+      "type": "concept",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Motor 'Code Letter' on the nameplate indicates:",
+      "choices": [
+        {"id": "A", "text": "The efficiency class"},
+        {"id": "B", "text": "The locked-rotor kVA per horsepower"},
+        {"id": "C", "text": "The design type"},
+        {"id": "D", "text": "The insulation class"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Code letter indicates locked-rotor kVA per HP, used to determine starting current.",
+        "detailed": "Table 430.7(B) shows code letters A through V, each representing a range of locked-rotor kVA per horsepower. Code letter 'A' has lowest starting current (0-3.14 kVA/HP), while higher letters indicate higher starting current. This helps determine starting impact on the electrical system.",
+        "how_to_find": "Go to 430.7(B) and Table 430.7(B) for code letter interpretation."
+      },
+      "nec_reference": {"article": "430", "section": "430.7(B)", "table": "Table 430.7(B)"},
+      "zafto_links": [{"screen_id": "motor_nameplate", "relevance": "primary", "description": "Code letter meaning"}],
+      "tags": ["code letter", "locked-rotor kVA", "starting current"],
+      "verified": true
+    },
+    {
+      "id": "MG-020",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A motor installed where it may be exposed to combustible material must be:",
+      "choices": [
+        {"id": "A", "text": "Open drip-proof type"},
+        {"id": "B", "text": "Totally enclosed type"},
+        {"id": "C", "text": "Any type with a guard"},
+        {"id": "D", "text": "Splash-proof type"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Motors exposed to combustible materials must be totally enclosed or designed for the location.",
+        "detailed": "Section 430.14(B) requires motors exposed to accumulations of combustible materials (dust, lint, flyings) to be totally enclosed nonventilated, totally enclosed fan-cooled, or dust-ignition-proof, depending on the nature and quantity of the material.",
+        "how_to_find": "Go to 430.14(B) for motor location requirements."
+      },
+      "nec_reference": {"article": "430", "section": "430.14(B)"},
+      "zafto_links": [],
+      "tags": ["motor enclosure", "combustible", "totally enclosed"],
+      "verified": true
+    },
+    {
+      "id": "MG-021",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What does 'TEFC' motor enclosure designation mean?",
+      "choices": [
+        {"id": "A", "text": "Temperature Enclosed Fan Controlled"},
+        {"id": "B", "text": "Totally Enclosed Fan Cooled"},
+        {"id": "C", "text": "Thermally Enhanced Full Capacity"},
+        {"id": "D", "text": "Type E Forced Cooling"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "TEFC means Totally Enclosed Fan Cooled - no ventilation openings, external fan.",
+        "detailed": "TEFC (Totally Enclosed Fan Cooled) motors have no ventilation openings in the frame but use an external shaft-mounted fan to blow air over the motor's exterior surface for cooling. They are suitable for dusty or dirty environments but not for hazardous locations unless specifically rated.",
+        "how_to_find": "Review motor enclosure types and designations."
+      },
+      "nec_reference": {"article": "430", "section": "430.14"},
+      "zafto_links": [{"screen_id": "motor_nameplate", "relevance": "secondary", "description": "Motor enclosure types"}],
+      "tags": ["TEFC", "enclosure type", "motor cooling"],
+      "verified": true
+    },
+    {
+      "id": "MG-022",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What does 'ODP' motor enclosure designation mean?",
+      "choices": [
+        {"id": "A", "text": "Outdoor Protected"},
+        {"id": "B", "text": "Open Drip-Proof"},
+        {"id": "C", "text": "Oil-Damped Protected"},
+        {"id": "D", "text": "Overload Duty Protection"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "ODP means Open Drip-Proof - ventilation openings that prevent dripping liquid entry.",
+        "detailed": "ODP (Open Drip-Proof) motors have ventilation openings that permit passage of cooling air but prevent drops of liquid or solid particles falling at an angle of 0-15 degrees from vertical from entering. They are suitable for clean, dry indoor environments but not for outdoor or dusty locations.",
+        "how_to_find": "Review motor enclosure types."
+      },
+      "nec_reference": {"article": "430", "section": "430.14"},
+      "zafto_links": [{"screen_id": "motor_nameplate", "relevance": "secondary", "description": "Motor enclosure types"}],
+      "tags": ["ODP", "enclosure type", "ventilated motor"],
+      "verified": true
+    },
+    {
+      "id": "MG-023",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["445"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Generator conductors from the terminals to the first OCPD must have ampacity of at least:",
+      "choices": [
+        {"id": "A", "text": "100% of generator nameplate current"},
+        {"id": "B", "text": "115% of generator nameplate current"},
+        {"id": "C", "text": "125% of generator nameplate current"},
+        {"id": "D", "text": "150% of generator nameplate current"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Generator conductors require minimum 115% of nameplate current rating.",
+        "detailed": "Section 445.13 requires conductors from generator terminals to the first distribution device(s) containing overcurrent protection to have an ampacity not less than 115% of the nameplate current rating of the generator. This allows for continuous operation under rated load.",
+        "how_to_find": "Go to 445.13 for generator conductor sizing."
+      },
+      "nec_reference": {"article": "445", "section": "445.13"},
+      "zafto_links": [{"screen_id": "generator_sizing", "relevance": "primary", "description": "Generator conductors"}],
+      "tags": ["generator", "conductor sizing", "115%"],
+      "verified": true
+    },
+    {
+      "id": "MG-024",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["445"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Generator overcurrent protection must not exceed what percentage of nameplate current?",
+      "choices": [
+        {"id": "A", "text": "100%"},
+        {"id": "B", "text": "115%"},
+        {"id": "C", "text": "125%"},
+        {"id": "D", "text": "150%"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Generator overcurrent protection shall not exceed 115% of nameplate current.",
+        "detailed": "Section 445.12(A) requires generator overcurrent protection, when required, to not exceed 115% of the nameplate current rating. Generators may be protected by inherent design, circuit breakers, fuses, or other overcurrent protective means as specified by the manufacturer.",
+        "how_to_find": "Go to 445.12(A) for generator overcurrent protection."
+      },
+      "nec_reference": {"article": "445", "section": "445.12(A)"},
+      "zafto_links": [{"screen_id": "generator_sizing", "relevance": "primary", "description": "Generator protection"}],
+      "tags": ["generator", "overcurrent", "115%"],
+      "verified": true
+    },
+    {
+      "id": "MG-025",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["445"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Portable generators used in dwelling units must have GFCI protection for:",
+      "choices": [
+        {"id": "A", "text": "All outlets"},
+        {"id": "B", "text": "Only 240V outlets"},
+        {"id": "C", "text": "125V, 15A and 20A receptacles"},
+        {"id": "D", "text": "No GFCI required"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Portable generator 125V, 15A and 20A receptacles require GFCI protection.",
+        "detailed": "Section 445.20(A) requires 15A and 20A, 125V receptacles on portable generators to have GFCI protection for personnel. This protection is typically built into the generator. Duplex receptacles count as one receptacle for this requirement.",
+        "how_to_find": "Go to 445.20(A) for portable generator GFCI."
+      },
+      "nec_reference": {"article": "445", "section": "445.20(A)"},
+      "zafto_links": [{"screen_id": "generator_sizing", "relevance": "secondary", "description": "Portable generator safety"}],
+      "tags": ["portable generator", "GFCI", "receptacles"],
+      "verified": true
+    },
+    {
+      "id": "MG-026",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "A feeder supplies three motors: 25 HP (34A), 15 HP (21A), and 10 HP (14A), all 460V 3-phase. What is the minimum feeder ampacity?",
+      "choices": [
+        {"id": "A", "text": "69 amperes"},
+        {"id": "B", "text": "77.5 amperes"},
+        {"id": "C", "text": "86.25 amperes"},
+        {"id": "D", "text": "92 amperes"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Feeder = (Largest × 125%) + others: (34 × 1.25) + 21 + 14 = 77.5A.",
+        "detailed": "Section 430.24 requires feeder ampacity to be at least 125% of the largest motor FLA plus the sum of all other motor FLAs. Largest: 34A × 1.25 = 42.5A. Others: 21 + 14 = 35A. Total: 42.5 + 35 = 77.5 amperes minimum feeder ampacity.",
+        "how_to_find": "Calculate per 430.24: (Largest × 125%) + sum of others."
+      },
+      "nec_reference": {"article": "430", "section": "430.24"},
+      "calculation": {
+        "formula": "Feeder = (Largest FLA × 125%) + Sum of other FLAs",
+        "steps": [
+          {"step": 1, "description": "Identify largest motor FLA", "result": "34A (25 HP)"},
+          {"step": 2, "description": "Calculate 125% of largest", "calculation": "34 × 1.25", "result": "42.5A"},
+          {"step": 3, "description": "Sum other motor FLAs", "calculation": "21 + 14", "result": "35A"},
+          {"step": 4, "description": "Add together", "calculation": "42.5 + 35", "result": "77.5A"}
+        ],
+        "final_answer": "77.5 amperes minimum",
+        "common_mistakes": ["Using 125% for all motors", "Forgetting to identify largest motor"]
+      },
+      "zafto_links": [{"screen_id": "motor_circuit", "relevance": "primary", "description": "Feeder calculation"}],
+      "tags": ["feeder sizing", "multiple motors", "430.24"],
+      "verified": true
+    },
+    {
+      "id": "MG-027",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the maximum feeder OCPD for the motors in the previous question (25 HP, 15 HP, 10 HP) using inverse-time breakers?",
+      "choices": [
+        {"id": "A", "text": "150 amperes"},
+        {"id": "B", "text": "175 amperes"},
+        {"id": "C", "text": "120 amperes"},
+        {"id": "D", "text": "200 amperes"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Feeder OCPD = Largest motor OCPD + other motor FLAs: 85 + 21 + 14 = 120A.",
+        "detailed": "Section 430.62(A) requires feeder OCPD rating to not exceed the largest motor branch-circuit OCPD plus the sum of FLAs of all other motors. Largest motor OCPD: 34A × 250% = 85A. Others: 21 + 14 = 35A. Total: 85 + 35 = 120 amperes maximum.",
+        "how_to_find": "Calculate per 430.62(A): Largest motor OCPD + other FLAs."
+      },
+      "nec_reference": {"article": "430", "section": "430.62(A)"},
+      "calculation": {
+        "formula": "Feeder OCPD = Largest Motor OCPD + Sum of other FLAs",
+        "steps": [
+          {"step": 1, "description": "Calculate largest motor OCPD (250% for breaker)", "calculation": "34 × 2.5", "result": "85A"},
+          {"step": 2, "description": "Sum other motor FLAs", "calculation": "21 + 14", "result": "35A"},
+          {"step": 3, "description": "Add together", "calculation": "85 + 35", "result": "120A"}
+        ],
+        "final_answer": "120 amperes maximum",
+        "common_mistakes": ["Using 125% instead of Table 430.52 values", "Adding branch OCPD for all motors"]
+      },
+      "zafto_links": [{"screen_id": "motor_circuit", "relevance": "primary", "description": "Feeder OCPD sizing"}],
+      "tags": ["feeder OCPD", "multiple motors", "430.62"],
+      "verified": true
+    },
+    {
+      "id": "MG-028",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["440"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Hermetic refrigerant motor-compressors are covered under which NEC article?",
+      "choices": [
+        {"id": "A", "text": "Article 430"},
+        {"id": "B", "text": "Article 440"},
+        {"id": "C", "text": "Article 422"},
+        {"id": "D", "text": "Article 424"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Article 440 covers air-conditioning and refrigerating equipment with hermetic motors.",
+        "detailed": "Article 440 applies to electric motor-driven air-conditioning and refrigerating equipment with sealed (hermetic-type) motor-compressors. These motors are unique because the motor operates in the refrigerant atmosphere. Article 440 modifies and supplements Article 430 requirements.",
+        "how_to_find": "Go to Article 440 for hermetic compressor requirements."
+      },
+      "nec_reference": {"article": "440", "section": "440.1"},
+      "zafto_links": [],
+      "tags": ["Article 440", "hermetic compressor", "refrigeration"],
+      "verified": true
+    },
+    {
+      "id": "MG-029",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["440"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "For hermetic compressor motors, conductor sizing is based on:",
+      "choices": [
+        {"id": "A", "text": "Motor FLA from NEC tables"},
+        {"id": "B", "text": "Rated-load current or branch-circuit selection current from nameplate"},
+        {"id": "C", "text": "Locked-rotor current"},
+        {"id": "D", "text": "125% of nameplate HP"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Hermetic compressors use nameplate rated-load current or branch-circuit selection current.",
+        "detailed": "Section 440.6(A) requires the rated-load current or branch-circuit selection current marked on the equipment nameplate to be used for sizing conductors, not NEC table values. This is different from regular motors because hermetic compressor characteristics vary significantly between manufacturers.",
+        "how_to_find": "Go to 440.6(A) for hermetic compressor current values."
+      },
+      "nec_reference": {"article": "440", "section": "440.6(A)"},
+      "zafto_links": [],
+      "tags": ["hermetic compressor", "rated-load current", "nameplate"],
+      "verified": true
+    },
+    {
+      "id": "MG-030",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A wound-rotor motor differs from a squirrel-cage motor in that it has:",
+      "choices": [
+        {"id": "A", "text": "No rotor windings"},
+        {"id": "B", "text": "Rotor windings connected to external resistors via slip rings"},
+        {"id": "C", "text": "Permanent magnets in the rotor"},
+        {"id": "D", "text": "A higher starting current"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Wound-rotor motors have rotor windings connected externally through slip rings.",
+        "detailed": "A wound-rotor (slip-ring) induction motor has insulated windings in the rotor connected to slip rings. External resistors can be connected to control starting current and torque. As the motor accelerates, resistance is reduced. This allows lower starting current and higher starting torque than squirrel-cage motors.",
+        "how_to_find": "Review wound-rotor motor operating principles."
+      },
+      "nec_reference": {"article": "430", "section": "430.23"},
+      "zafto_links": [],
+      "tags": ["wound-rotor", "slip rings", "motor type"],
+      "verified": true
+    },
+    {
+      "id": "MG-031",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Secondary conductors of a wound-rotor motor must have ampacity of at least:",
+      "choices": [
+        {"id": "A", "text": "100% of secondary FLA"},
+        {"id": "B", "text": "115% of secondary FLA"},
+        {"id": "C", "text": "125% of secondary FLA"},
+        {"id": "D", "text": "150% of secondary FLA"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Wound-rotor secondary conductors require 125% of secondary FLA ampacity.",
+        "detailed": "Section 430.23(A) requires conductors connecting the secondary of a wound-rotor motor to its controller to have ampacity not less than 125% of the full-load secondary current of the motor. This accounts for continuous duty operation similar to primary conductors.",
+        "how_to_find": "Go to 430.23(A) for wound-rotor secondary conductors."
+      },
+      "nec_reference": {"article": "430", "section": "430.23(A)"},
+      "zafto_links": [],
+      "tags": ["wound-rotor", "secondary conductors", "125%"],
+      "verified": true
+    },
+    {
+      "id": "MG-032",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": ["Table 430.247"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Table 430.247 provides full-load currents for which type of motors?",
+      "choices": [
+        {"id": "A", "text": "Single-phase AC motors"},
+        {"id": "B", "text": "Three-phase AC motors"},
+        {"id": "C", "text": "DC motors"},
+        {"id": "D", "text": "Synchronous motors"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Table 430.247 lists full-load currents for DC motors.",
+        "detailed": "Article 430 has separate tables for different motor types: Table 430.247 for DC motors, Table 430.248 for single-phase AC motors, Table 430.249 for two-phase AC motors, and Table 430.250 for three-phase AC motors. Each table is specific to that motor type.",
+        "how_to_find": "Go to Table 430.247 for DC motor FLA values."
+      },
+      "nec_reference": {"article": "430", "section": "430.247", "table": "Table 430.247"},
+      "zafto_links": [{"screen_id": "motor_fla_table", "relevance": "primary", "description": "Motor FLA tables"}],
+      "tags": ["DC motor", "Table 430.247", "FLA"],
+      "verified": true
+    },
+    {
+      "id": "MG-033",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A synchronous motor operates at:",
+      "choices": [
+        {"id": "A", "text": "Variable speed depending on load"},
+        {"id": "B", "text": "Exactly synchronous speed (locked to supply frequency)"},
+        {"id": "C", "text": "Slightly below synchronous speed (slip)"},
+        {"id": "D", "text": "Twice the supply frequency"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Synchronous motors run at exact synchronous speed, locked to the supply frequency.",
+        "detailed": "Synchronous motors have a rotor that locks to the rotating magnetic field and runs at exact synchronous speed (120 × frequency / poles). Unlike induction motors, there is no slip. They require DC excitation to the rotor and are used where constant speed is critical or for power factor correction.",
+        "how_to_find": "Review synchronous motor operating principles."
+      },
+      "nec_reference": {"article": "430", "section": "430.2"},
+      "zafto_links": [],
+      "tags": ["synchronous motor", "constant speed", "power factor"],
+      "verified": true
+    },
+    {
+      "id": "MG-034",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Motor 'slip' refers to:",
+      "choices": [
+        {"id": "A", "text": "The difference between synchronous and actual rotor speed"},
+        {"id": "B", "text": "Physical movement of the motor"},
+        {"id": "C", "text": "The starting torque characteristics"},
+        {"id": "D", "text": "Power factor at full load"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Slip is the percentage difference between synchronous speed and actual rotor speed.",
+        "detailed": "Slip = (Synchronous Speed - Rotor Speed) / Synchronous Speed × 100%. Induction motors require slip to induce rotor current. A typical Design B motor has 2-5% slip at full load. Higher slip means the rotor turns slower relative to the magnetic field. Design D motors have high slip (5-13%).",
+        "how_to_find": "Review induction motor slip calculations."
+      },
+      "nec_reference": {"article": "430", "section": "430.2"},
+      "zafto_links": [],
+      "tags": ["slip", "induction motor", "rotor speed"],
+      "verified": true
+    },
+    {
+      "id": "MG-035",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "calculation",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the synchronous speed of a 4-pole motor on a 60 Hz system?",
+      "choices": [
+        {"id": "A", "text": "1200 RPM"},
+        {"id": "B", "text": "1800 RPM"},
+        {"id": "C", "text": "3600 RPM"},
+        {"id": "D", "text": "900 RPM"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Synchronous speed = (120 × Frequency) / Poles = (120 × 60) / 4 = 1800 RPM.",
+        "detailed": "Synchronous speed is calculated as (120 × f) / P, where f is frequency in Hz and P is the number of poles. For a 4-pole motor at 60 Hz: (120 × 60) / 4 = 1800 RPM. Actual speed will be slightly less due to slip (typically 1725-1770 RPM at full load).",
+        "how_to_find": "Apply formula: Synchronous Speed = 120f/P."
+      },
+      "nec_reference": {"article": "430", "section": "430.2"},
+      "calculation": {
+        "formula": "Synchronous Speed = (120 × Frequency) / Poles",
+        "steps": [
+          {"step": 1, "description": "Identify frequency and poles", "result": "60 Hz, 4 poles"},
+          {"step": 2, "description": "Apply formula", "calculation": "(120 × 60) / 4", "result": "1800 RPM"}
+        ],
+        "final_answer": "1800 RPM",
+        "common_mistakes": ["Forgetting the 120 constant", "Using wrong pole count"]
+      },
+      "zafto_links": [],
+      "tags": ["synchronous speed", "poles", "RPM calculation"],
+      "verified": true
+    },
+    {
+      "id": "MG-036",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Motor branch circuit conductors shall be protected against physical damage by:",
+      "choices": [
+        {"id": "A", "text": "Tape only"},
+        {"id": "B", "text": "Raceway or other approved means where subject to damage"},
+        {"id": "C", "text": "No protection required"},
+        {"id": "D", "text": "Warning signs"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Motor conductors must be protected by raceway or approved means where exposed to damage.",
+        "detailed": "Section 430.22(G) requires motor branch circuit conductors to be protected where exposed to physical damage. This typically means installing conductors in rigid metal conduit, intermediate metal conduit, or other suitable raceway approved for the location.",
+        "how_to_find": "Go to 430.22(G) and 300.4 for physical protection."
+      },
+      "nec_reference": {"article": "430", "section": "430.22(G)"},
+      "zafto_links": [],
+      "tags": ["conductor protection", "physical damage", "raceway"],
+      "verified": true
+    },
+    {
+      "id": "MG-037",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "A torque motor's overload protection shall be based on:",
+      "choices": [
+        {"id": "A", "text": "Table FLA"},
+        {"id": "B", "text": "Nameplate current at locked-rotor condition"},
+        {"id": "C", "text": "Nameplate full-load current"},
+        {"id": "D", "text": "200% of nameplate current"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Torque motors have overload protection based on locked-rotor nameplate current.",
+        "detailed": "Section 430.33 covers torque motors, which are designed to operate at standstill or very low speeds for extended periods. Overload protection shall be based on the motor nameplate current rating, which represents the locked-rotor current since that is the operating condition.",
+        "how_to_find": "Go to 430.33 for torque motor requirements."
+      },
+      "nec_reference": {"article": "430", "section": "430.33"},
+      "zafto_links": [],
+      "tags": ["torque motor", "locked-rotor", "overload"],
+      "verified": true
+    },
+    {
+      "id": "MG-038",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "For intermittent duty motors, conductor sizing and protection may be based on:",
+      "choices": [
+        {"id": "A", "text": "Standard motor rules only"},
+        {"id": "B", "text": "The percentages in Table 430.22(E)"},
+        {"id": "C", "text": "50% of FLA"},
+        {"id": "D", "text": "200% of FLA"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Intermittent duty motors use reduced percentages from Table 430.22(E).",
+        "detailed": "Section 430.22(E) and Table 430.22(E) provide reduced conductor sizing percentages for motors with different duty cycles: 5-minute rated = 85%, 15-minute = 85%, 30 and 60-minute = 90%, continuous = 100%. This recognizes that non-continuous motors have time to cool between operations.",
+        "how_to_find": "Go to Table 430.22(E) for duty cycle percentages."
+      },
+      "nec_reference": {"article": "430", "section": "430.22(E)", "table": "Table 430.22(E)"},
+      "zafto_links": [],
+      "tags": ["intermittent duty", "Table 430.22(E)", "duty cycle"],
+      "verified": true
+    },
+    {
+      "id": "MG-039",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A motor control center (MCC) is:",
+      "choices": [
+        {"id": "A", "text": "A single motor starter"},
+        {"id": "B", "text": "An assembly of motor controllers with common power bus"},
+        {"id": "C", "text": "A VFD"},
+        {"id": "D", "text": "A motor capacitor bank"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "An MCC is an assembly of motor control sections with a common horizontal power bus.",
+        "detailed": "A motor control center (MCC) is a factory assembly of one or more enclosed sections with a common horizontal power bus. Each section contains motor control units (starters, disconnects, OCPDs) that plug into the bus. MCCs provide centralized control and are covered under Article 430 Part VIII.",
+        "how_to_find": "Go to 430.96 for motor control center requirements."
+      },
+      "nec_reference": {"article": "430", "section": "430.96"},
+      "zafto_links": [{"screen_id": "motor_starter", "relevance": "secondary", "description": "Motor control center"}],
+      "tags": ["MCC", "motor control center", "assembly"],
+      "verified": true
+    },
+    {
+      "id": "MG-040",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Motor control centers must be marked with:",
+      "choices": [
+        {"id": "A", "text": "Only manufacturer name"},
+        {"id": "B", "text": "Short-circuit current rating"},
+        {"id": "C", "text": "Weight only"},
+        {"id": "D", "text": "No marking required"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "MCCs must be marked with their short-circuit current rating.",
+        "detailed": "Section 430.98 requires motor control centers to be marked with the manufacturer's name, voltage, current, number of phases, and short-circuit current rating. The SCCR indicates the maximum fault current the MCC can safely withstand, which must meet or exceed available fault current.",
+        "how_to_find": "Go to 430.98 for MCC marking requirements."
+      },
+      "nec_reference": {"article": "430", "section": "430.98"},
+      "zafto_links": [],
+      "tags": ["MCC", "marking", "SCCR"],
+      "verified": true
+    },
+    {
+      "id": "MG-041",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "The overload protection for a motor used for short-time duty (operating for 2 minutes continuously) may be sized at:",
+      "choices": [
+        {"id": "A", "text": "125% of nameplate FLA"},
+        {"id": "B", "text": "150% of nameplate FLA"},
+        {"id": "C", "text": "Per Table 430.32(E) at reduced percentages"},
+        {"id": "D", "text": "Any size larger than FLA"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Short-time and intermittent duty motors use Table 430.32(E) reduced percentages.",
+        "detailed": "Section 430.32(E) and Table 430.32(E) provide overload protection for motors with different duty ratings. For short-time duty motors, the overload device trips at the percentages shown in the table based on the motor's classified duty. This allows appropriate protection for non-continuous applications.",
+        "how_to_find": "Go to 430.32(E) and Table 430.32(E) for duty-based overload."
+      },
+      "nec_reference": {"article": "430", "section": "430.32(E)"},
+      "zafto_links": [],
+      "tags": ["short-time duty", "overload", "Table 430.32"],
+      "verified": true
+    },
+    {
+      "id": "MG-042",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "A single-phase motor typically requires what additional component to start?",
+      "choices": [
+        {"id": "A", "text": "DC power supply"},
+        {"id": "B", "text": "Starting winding, capacitor, or centrifugal switch"},
+        {"id": "C", "text": "VFD"},
+        {"id": "D", "text": "External resistor"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Single-phase motors need auxiliary starting means like a capacitor or starting winding.",
+        "detailed": "Single-phase induction motors cannot self-start because a single-phase supply creates a pulsating, not rotating, magnetic field. Starting mechanisms include split-phase (starting winding), capacitor-start, capacitor-run, or shaded-pole designs. A centrifugal switch often disconnects the starting winding after the motor reaches speed.",
+        "how_to_find": "Review single-phase motor starting methods."
+      },
+      "nec_reference": {"article": "430", "section": "430.1"},
+      "zafto_links": [],
+      "tags": ["single-phase motor", "starting", "capacitor"],
+      "verified": true
+    },
+    {
+      "id": "MG-043",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Power factor correction capacitors for motors should be switched:",
+      "choices": [
+        {"id": "A", "text": "Always connected to the line"},
+        {"id": "B", "text": "On the line side of the motor overload"},
+        {"id": "C", "text": "On the load side of the motor overload to disconnect with the motor"},
+        {"id": "D", "text": "Separately from the motor"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "PF capacitors should be on the load side of overloads to disconnect with the motor.",
+        "detailed": "Section 460.9 requires capacitors connected on the load side of motor overload devices. When the motor is disconnected, the capacitor also disconnects, preventing the capacitor from feeding back into a de-energized motor (which could cause dangerous self-excitation or overvoltage).",
+        "how_to_find": "Go to 460.9 for motor capacitor switching."
+      },
+      "nec_reference": {"article": "460", "section": "460.9"},
+      "zafto_links": [],
+      "tags": ["power factor", "capacitor", "motor correction"],
+      "verified": true
+    },
+    {
+      "id": "MG-044",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["445"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A generator installed in a location accessible to unqualified persons must have:",
+      "choices": [
+        {"id": "A", "text": "No guards required"},
+        {"id": "B", "text": "Live parts guarded against accidental contact"},
+        {"id": "C", "text": "Only warning signs"},
+        {"id": "D", "text": "A fence around it"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Generator live parts must be guarded where accessible to unqualified persons.",
+        "detailed": "Section 445.14 requires generators to have live parts guarded to protect against accidental contact where accessible to unqualified persons. Guards may be located to allow safe access for replacement of lamps, adjustment, and routine maintenance.",
+        "how_to_find": "Go to 445.14 for generator guarding requirements."
+      },
+      "nec_reference": {"article": "445", "section": "445.14"},
+      "zafto_links": [{"screen_id": "generator_sizing", "relevance": "secondary", "description": "Generator safety"}],
+      "tags": ["generator", "guarding", "live parts"],
+      "verified": true
+    },
+    {
+      "id": "MG-045",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "When motor nameplate FLA differs from NEC Table 430.250 FLA, which value is used for conductor sizing?",
+      "choices": [
+        {"id": "A", "text": "Always use nameplate FLA"},
+        {"id": "B", "text": "Always use NEC table FLA"},
+        {"id": "C", "text": "Use the larger value"},
+        {"id": "D", "text": "Use the smaller value"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "NEC table values must be used for conductor sizing, regardless of nameplate FLA.",
+        "detailed": "Section 430.6(A)(1) is explicit: Tables 430.247-430.250 values 'shall be used' for determining conductor ampacity and switch ratings instead of the actual motor nameplate current. This standardizes sizing regardless of motor efficiency variations. Nameplate FLA is only used for overload protection per 430.6(A)(2).",
+        "how_to_find": "Go to 430.6(A)(1) - table values 'shall be used' for conductors."
+      },
+      "nec_reference": {"article": "430", "section": "430.6(A)(1)"},
+      "zafto_links": [{"screen_id": "motor_circuit", "relevance": "primary", "description": "FLA determination"}],
+      "tags": ["FLA", "table vs nameplate", "conductor sizing"],
+      "verified": true
+    },
+    {
+      "id": "MG-046",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A group of motors on a single branch circuit is permitted when:",
+      "choices": [
+        {"id": "A", "text": "Any motors can be grouped"},
+        {"id": "B", "text": "Specific conditions in 430.53 are met including individual overloads"},
+        {"id": "C", "text": "Motors are the same HP"},
+        {"id": "D", "text": "Only for 1/4 HP motors"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Multiple motors on one circuit are permitted when 430.53 conditions are met.",
+        "detailed": "Section 430.53 permits several motors or a motor and other loads on a single branch circuit under specific conditions: the circuit protection must not exceed the protective device rating of the smallest motor, each motor must have individual overload protection, and the OCPD must be adequate for the largest motor plus other loads.",
+        "how_to_find": "Go to 430.53 for multiple motor branch circuit rules."
+      },
+      "nec_reference": {"article": "430", "section": "430.53"},
+      "zafto_links": [{"screen_id": "motor_circuit", "relevance": "secondary", "description": "Multiple motor circuits"}],
+      "tags": ["multiple motors", "branch circuit", "430.53"],
+      "verified": true
+    },
+    {
+      "id": "MG-047",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Motors rated 1 HP or less that are manually started and within sight of the starter location:",
+      "choices": [
+        {"id": "A", "text": "Require separate overload protection"},
+        {"id": "B", "text": "May use branch circuit OCPD as overload protection if certain conditions are met"},
+        {"id": "C", "text": "Need no protection"},
+        {"id": "D", "text": "Must have dual-element fuses"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Small motors (1 HP or less) manually started within sight may use OCPD as overload.",
+        "detailed": "Section 430.32(B)(2) permits motors rated 1 HP or less that are manually started and within sight from the starter location to use the branch circuit short-circuit and ground-fault protective device as overload protection, provided the device is not larger than specified in 430.52.",
+        "how_to_find": "Go to 430.32(B)(2) for small motor overload exceptions."
+      },
+      "nec_reference": {"article": "430", "section": "430.32(B)(2)"},
+      "zafto_links": [],
+      "tags": ["1 HP motor", "overload exception", "manual start"],
+      "verified": true
+    },
+    {
+      "id": "MG-048",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Motor insulation class designations (A, B, F, H) indicate:",
+      "choices": [
+        {"id": "A", "text": "The motor efficiency rating"},
+        {"id": "B", "text": "The maximum temperature the insulation can withstand"},
+        {"id": "C", "text": "The starting torque class"},
+        {"id": "D", "text": "The enclosure type"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Insulation class indicates maximum temperature rating of motor windings.",
+        "detailed": "Motor insulation classes define temperature limits: Class A = 105°C, Class B = 130°C, Class F = 155°C, Class H = 180°C. Higher class insulation allows the motor to operate at higher temperatures without damage. Most modern motors use Class F or H insulation for longer life.",
+        "how_to_find": "Review motor insulation class temperature ratings."
+      },
+      "nec_reference": {"article": "430", "section": "430.7(A)"},
+      "zafto_links": [{"screen_id": "motor_nameplate", "relevance": "primary", "description": "Insulation class"}],
+      "tags": ["insulation class", "temperature rating", "Class F"],
+      "verified": true
+    },
+    {
+      "id": "MG-049",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "For motors over 1000V, the minimum spacing between live parts must be:",
+      "choices": [
+        {"id": "A", "text": "The same as low-voltage motors"},
+        {"id": "B", "text": "Per Table 430.97"},
+        {"id": "C", "text": "6 inches minimum"},
+        {"id": "D", "text": "No spacing requirement"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "High-voltage motor installations follow spacing requirements in Table 430.97.",
+        "detailed": "Section 430.97 and Table 430.97 specify minimum spacings between live parts and between live parts and grounded metal for controllers over 1000V. These spacings increase with voltage level to prevent arcing and ensure safe operation.",
+        "how_to_find": "Go to 430.97 and Table 430.97 for high-voltage spacing."
+      },
+      "nec_reference": {"article": "430", "section": "430.97", "table": "Table 430.97"},
+      "zafto_links": [],
+      "tags": ["high voltage", "spacing", "over 1000V"],
+      "verified": true
+    },
+    {
+      "id": "MG-050",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "A 50 HP, 460V, 3-phase motor has Table FLA of 65A. The nameplate shows 62A. What overload heater size is required for a motor with SF 1.15?",
+      "choices": [
+        {"id": "A", "text": "65A maximum"},
+        {"id": "B", "text": "77.5A maximum"},
+        {"id": "C", "text": "81.25A maximum"},
+        {"id": "D", "text": "62A maximum"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Overload uses nameplate FLA: 62A × 125% = 77.5A maximum for SF 1.15.",
+        "detailed": "Section 430.32(A)(1) requires overload protection based on nameplate FLA (not table FLA). For motors with SF 1.15 or greater, overloads must trip at not more than 125% of nameplate current. 62A × 1.25 = 77.5A maximum overload setting.",
+        "how_to_find": "Use nameplate FLA × 125% per 430.32(A)(1) for SF 1.15+."
+      },
+      "nec_reference": {"article": "430", "section": "430.32(A)(1)"},
+      "calculation": {
+        "formula": "Overload = Nameplate FLA × 125% (for SF 1.15+)",
+        "steps": [
+          {"step": 1, "description": "Use NAMEPLATE FLA (not table)", "result": "62 amperes"},
+          {"step": 2, "description": "Apply 125% for SF 1.15", "calculation": "62 × 1.25", "result": "77.5 amperes"}
+        ],
+        "final_answer": "77.5 amperes maximum",
+        "common_mistakes": ["Using table FLA instead of nameplate", "Using 115% instead of 125%"]
+      },
+      "zafto_links": [{"screen_id": "motor_circuit", "relevance": "primary", "description": "Overload sizing"}],
+      "tags": ["overload", "nameplate FLA", "SF 1.15"],
+      "verified": true
+    },
+    {
+      "id": "MG-051",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": ["Table 430.248"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A 3 HP, 115V single-phase motor has what full-load current per Table 430.248?",
+      "choices": [
+        {"id": "A", "text": "17 amperes"},
+        {"id": "B", "text": "24 amperes"},
+        {"id": "C", "text": "34 amperes"},
+        {"id": "D", "text": "40 amperes"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Table 430.248 shows 3 HP at 115V single-phase = 34 amperes.",
+        "detailed": "Table 430.248 provides full-load currents for single-phase AC motors. For a 3 HP motor at 115V, the FLA is 34 amperes. Note that single-phase motors draw significantly more current than equivalent three-phase motors due to lower efficiency.",
+        "how_to_find": "Go to Table 430.248, find 3 HP row, 115V column."
+      },
+      "nec_reference": {"article": "430", "section": "430.248", "table": "Table 430.248"},
+      "zafto_links": [{"screen_id": "motor_fla_table", "relevance": "primary", "description": "Single-phase FLA"}],
+      "tags": ["Table 430.248", "single-phase", "3 HP"],
+      "verified": true
+    },
+    {
+      "id": "MG-052",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": ["Table 430.250"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A 50 HP, 208V, 3-phase motor has what full-load current per Table 430.250?",
+      "choices": [
+        {"id": "A", "text": "65 amperes"},
+        {"id": "B", "text": "143 amperes"},
+        {"id": "C", "text": "150 amperes"},
+        {"id": "D", "text": "169 amperes"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Table 430.250 shows 50 HP at 208V three-phase = 150 amperes.",
+        "detailed": "Table 430.250 provides full-load currents for three-phase AC motors. For a 50 HP motor at 208V, the FLA is 150 amperes. Compare to 65A at 460V for the same HP - lower voltage means higher current for the same power.",
+        "how_to_find": "Go to Table 430.250, find 50 HP row, 208V column."
+      },
+      "nec_reference": {"article": "430", "section": "430.250", "table": "Table 430.250"},
+      "zafto_links": [{"screen_id": "motor_fla_table", "relevance": "primary", "description": "Three-phase FLA"}],
+      "tags": ["Table 430.250", "three-phase", "50 HP"],
+      "verified": true
+    },
+    {
+      "id": "MG-053",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "The purpose of motor short-circuit and ground-fault protection is to protect:",
+      "choices": [
+        {"id": "A", "text": "The motor windings from overheating"},
+        {"id": "B", "text": "The branch circuit conductors from fault damage"},
+        {"id": "C", "text": "Against low voltage"},
+        {"id": "D", "text": "The motor bearings"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Branch circuit protection protects conductors from short circuits and ground faults.",
+        "detailed": "Motor branch circuit short-circuit and ground-fault protection (Article 430 Part IV) protects the branch circuit conductors against damage from short circuits and ground faults, not the motor itself. Overload protection (Part III) protects the motor windings. These are separate protective functions.",
+        "how_to_find": "Review Article 430 Part IV scope and purpose."
+      },
+      "nec_reference": {"article": "430", "section": "430.51"},
+      "zafto_links": [{"screen_id": "motor_circuit", "relevance": "primary", "description": "Branch circuit protection"}],
+      "tags": ["SCGF protection", "conductor protection", "Part IV"],
+      "verified": true
+    },
+    {
+      "id": "MG-054",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "If the calculated motor OCPD size does not correspond to a standard size, you may:",
+      "choices": [
+        {"id": "A", "text": "Always round down"},
+        {"id": "B", "text": "Use the next higher standard size per 430.52(C)(1)"},
+        {"id": "C", "text": "Use any larger size"},
+        {"id": "D", "text": "Must use exact calculated value"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "When calculated OCPD isn't standard, use the next higher standard size per 430.52(C)(1).",
+        "detailed": "Section 430.52(C)(1) permits the next higher standard overcurrent device when the calculated value does not correspond to a standard fuse or breaker size from 240.6(A). However, the OCPD size is still limited to the maximum percentages in Table 430.52.",
+        "how_to_find": "Go to 430.52(C)(1) for OCPD rounding rules."
+      },
+      "nec_reference": {"article": "430", "section": "430.52(C)(1)"},
+      "zafto_links": [{"screen_id": "motor_circuit", "relevance": "primary", "description": "OCPD sizing"}],
+      "tags": ["OCPD sizing", "standard sizes", "rounding up"],
+      "verified": true
+    },
+    {
+      "id": "MG-055",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "If using maximum OCPD sizing from Table 430.52 does not permit motor starting, you may:",
+      "choices": [
+        {"id": "A", "text": "Not increase the OCPD under any circumstances"},
+        {"id": "B", "text": "Increase per 430.52(C)(1) Exception 1 up to specified maximums"},
+        {"id": "C", "text": "Use any size necessary"},
+        {"id": "D", "text": "Must use reduced voltage starting"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "If motor won't start, 430.52(C)(1) Exception 1 permits increased OCPD sizes.",
+        "detailed": "Section 430.52(C)(1) Exception 1 permits larger OCPD sizes if needed for motor starting. For non-time-delay fuses, up to 400%. For time-delay fuses, up to 225%. For inverse-time breakers, up to 400%. These are absolute maximums when standard sizing doesn't work.",
+        "how_to_find": "Go to 430.52(C)(1) Exception 1 for increased maximums."
+      },
+      "nec_reference": {"article": "430", "section": "430.52(C)(1) Exception 1"},
+      "zafto_links": [{"screen_id": "motor_circuit", "relevance": "primary", "description": "OCPD exceptions"}],
+      "tags": ["OCPD exception", "motor starting", "increased sizing"],
+      "verified": true
+    },
+    {
+      "id": "MG-056",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A multispeed motor has:",
+      "choices": [
+        {"id": "A", "text": "Variable frequency drive"},
+        {"id": "B", "text": "Multiple sets of windings or reconnectable windings for different speeds"},
+        {"id": "C", "text": "Adjustable slip"},
+        {"id": "D", "text": "External resistor control"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Multispeed motors have multiple windings or reconnectable windings for discrete speeds.",
+        "detailed": "A multispeed motor achieves different speeds by having multiple separate windings or windings that can be reconnected to change the number of poles. Common configurations are 2-speed (e.g., 1800/900 RPM) using consequent-pole or separate winding designs. Each speed may have different FLA values.",
+        "how_to_find": "Review multispeed motor designs and 430.22(B)."
+      },
+      "nec_reference": {"article": "430", "section": "430.22(B)"},
+      "zafto_links": [],
+      "tags": ["multispeed motor", "multiple windings", "pole changing"],
+      "verified": true
+    },
+    {
+      "id": "MG-057",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Conductors for a multispeed motor must be sized based on:",
+      "choices": [
+        {"id": "A", "text": "The lowest speed FLA"},
+        {"id": "B", "text": "The highest FLA of any winding"},
+        {"id": "C", "text": "Average of all speed FLAs"},
+        {"id": "D", "text": "The highest speed FLA"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Multispeed motor conductors must be sized for the highest FLA of any winding.",
+        "detailed": "Section 430.22(B) requires conductors supplying a multispeed motor to have ampacity not less than 125% of the highest of the full-load current ratings shown on the motor nameplate. Different speeds may have different current ratings.",
+        "how_to_find": "Go to 430.22(B) for multispeed motor conductor sizing."
+      },
+      "nec_reference": {"article": "430", "section": "430.22(B)"},
+      "zafto_links": [],
+      "tags": ["multispeed motor", "conductor sizing", "highest FLA"],
+      "verified": true
+    },
+    {
+      "id": "MG-058",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Motor circuits over 1000V must have overcurrent protection that:",
+      "choices": [
+        {"id": "A", "text": "Opens only one phase"},
+        {"id": "B", "text": "Opens all ungrounded conductors simultaneously"},
+        {"id": "C", "text": "Uses fuses only"},
+        {"id": "D", "text": "Is optional"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "High-voltage motor OCPDs must open all ungrounded conductors simultaneously.",
+        "detailed": "Section 430.95 requires that overcurrent protection for motors over 1000V be designed to simultaneously disconnect all ungrounded conductors during a fault. This prevents single-phasing, which is particularly damaging to high-voltage motors.",
+        "how_to_find": "Go to 430.95 for high-voltage motor protection."
+      },
+      "nec_reference": {"article": "430", "section": "430.95"},
+      "zafto_links": [],
+      "tags": ["high voltage motor", "simultaneous disconnect", "over 1000V"],
+      "verified": true
+    },
+    {
+      "id": "MG-059",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A motor's thermal protector built into the motor must be approved for:",
+      "choices": [
+        {"id": "A", "text": "Only single-phase use"},
+        {"id": "B", "text": "Use with the motor it protects"},
+        {"id": "C", "text": "Outdoor use only"},
+        {"id": "D", "text": "Continuous duty only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Integral thermal protectors must be approved for the specific motor they protect.",
+        "detailed": "Section 430.32(A)(2) requires thermal protectors integral with the motor to be approved for use with the motor they protect. The protective device must prevent dangerous overheating due to overload, failure to start, or locked rotor conditions.",
+        "how_to_find": "Go to 430.32(A)(2) for integral thermal protector requirements."
+      },
+      "nec_reference": {"article": "430", "section": "430.32(A)(2)"},
+      "zafto_links": [],
+      "tags": ["thermal protector", "integral protection", "motor approved"],
+      "verified": true
+    },
+    {
+      "id": "MG-060",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["445"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A generator rated over 15 kW must have:",
+      "choices": [
+        {"id": "A", "text": "No special requirements"},
+        {"id": "B", "text": "Fault current limiting capability"},
+        {"id": "C", "text": "Overcurrent protection per 445.12"},
+        {"id": "D", "text": "Automatic voltage regulation only"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Generators over 15 kW require overcurrent protection per 445.12.",
+        "detailed": "Section 445.12(A) requires constant-voltage generators, except AC generator exciters, to be protected from overload by inherent design, circuit breakers, fuses, or other acceptable overcurrent protective means. For generators over 15 kW, specific protection requirements apply.",
+        "how_to_find": "Go to 445.12 for generator overcurrent protection."
+      },
+      "nec_reference": {"article": "445", "section": "445.12"},
+      "zafto_links": [{"screen_id": "generator_sizing", "relevance": "primary", "description": "Generator protection"}],
+      "tags": ["generator", "15 kW", "overcurrent protection"],
+      "verified": true
+    },
+    {
+      "id": "MG-061",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["445"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Generator terminal housings must be large enough for:",
+      "choices": [
+        {"id": "A", "text": "Any size wire"},
+        {"id": "B", "text": "Conductors sized per 445.13"},
+        {"id": "C", "text": "Only 14 AWG wire"},
+        {"id": "D", "text": "Flexible cords only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Generator terminal housings must accommodate 115%-sized conductors per 445.13.",
+        "detailed": "Section 445.16 requires generator terminal housings to have sufficient wire-bending space for conductors sized per 445.13 (115% of generator nameplate current). Minimum bending space is specified in 312.6 based on conductor size.",
+        "how_to_find": "Go to 445.16 for generator terminal housing requirements."
+      },
+      "nec_reference": {"article": "445", "section": "445.16"},
+      "zafto_links": [{"screen_id": "generator_sizing", "relevance": "secondary", "description": "Terminal housings"}],
+      "tags": ["generator", "terminal housing", "wire bending"],
+      "verified": true
+    },
+    {
+      "id": "MG-062",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["445"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "A separately derived system from a generator requires:",
+      "choices": [
+        {"id": "A", "text": "No grounding"},
+        {"id": "B", "text": "Grounding and bonding per Article 250"},
+        {"id": "C", "text": "Double insulation only"},
+        {"id": "D", "text": "Ground rod only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Generator separately derived systems must be grounded per Article 250.",
+        "detailed": "Section 445.18 requires generators to be grounded in accordance with 250.30 when used as a separately derived system. This includes a grounding electrode conductor, bonding jumper, and system bonding. Non-separately derived systems have different grounding requirements.",
+        "how_to_find": "Go to 445.18 and 250.30 for generator grounding."
+      },
+      "nec_reference": {"article": "445", "section": "445.18"},
+      "zafto_links": [{"screen_id": "generator_sizing", "relevance": "secondary", "description": "Generator grounding"}],
+      "tags": ["generator", "separately derived", "grounding"],
+      "verified": true
+    },
+    {
+      "id": "MG-063",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Motor 'duty cycle' classifications include:",
+      "choices": [
+        {"id": "A", "text": "Light, medium, heavy"},
+        {"id": "B", "text": "Continuous, short-time, intermittent, periodic, varying"},
+        {"id": "C", "text": "Industrial, commercial, residential"},
+        {"id": "D", "text": "Class A, B, C, D"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Motor duty classifications are continuous, short-time, intermittent, periodic, and varying.",
+        "detailed": "NEC recognizes various motor duty classifications: continuous (3+ hours constant load), short-time (5, 15, 30, 60 minute ratings), intermittent (alternating load and no-load), periodic (intermittent with periodic load/speed changes), and varying (wide range varying loads). Each affects conductor and protection sizing.",
+        "how_to_find": "Review Article 430 duty cycle definitions and Table 430.22(E)."
+      },
+      "nec_reference": {"article": "430", "section": "430.22(E)"},
+      "zafto_links": [],
+      "tags": ["duty cycle", "continuous", "intermittent"],
+      "verified": true
+    },
+    {
+      "id": "MG-064",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Motor nameplate 'NEMA Design E' indicates:",
+      "choices": [
+        {"id": "A", "text": "High efficiency motor design"},
+        {"id": "B", "text": "High starting current, high efficiency"},
+        {"id": "C", "text": "Explosion-proof enclosure"},
+        {"id": "D", "text": "European standard motor"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Design E motors have higher starting current but better efficiency than Design B.",
+        "detailed": "NEMA Design E motors are high-efficiency motors with higher locked-rotor current than Design B. While more efficient at running, they may require larger branch circuit protection due to higher starting current. Table 430.52 provides specific percentages for Design E motors.",
+        "how_to_find": "Review NEMA motor design classifications and Table 430.52."
+      },
+      "nec_reference": {"article": "430", "section": "430.52", "table": "Table 430.52"},
+      "zafto_links": [{"screen_id": "motor_nameplate", "relevance": "secondary", "description": "Design E motors"}],
+      "tags": ["Design E", "high efficiency", "starting current"],
+      "verified": true
+    },
+    {
+      "id": "MG-065",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "Motor 'hp' (horsepower) is a unit of:",
+      "choices": [
+        {"id": "A", "text": "Current"},
+        {"id": "B", "text": "Voltage"},
+        {"id": "C", "text": "Mechanical power output"},
+        {"id": "D", "text": "Resistance"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Horsepower is a unit of mechanical power output from the motor.",
+        "detailed": "Horsepower (HP) measures the mechanical power a motor can produce at its shaft. One horsepower equals 746 watts. Motor electrical input is always higher than mechanical output due to efficiency losses. A motor's HP rating indicates its continuous mechanical output capacity.",
+        "how_to_find": "Review motor power fundamentals."
+      },
+      "nec_reference": {"article": "430", "section": "430.6"},
+      "zafto_links": [{"screen_id": "motor_fla", "relevance": "secondary", "description": "Motor power"}],
+      "tags": ["horsepower", "mechanical power", "motor rating"],
+      "verified": true
+    },
+    {
+      "id": "MG-066",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "calculation",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the approximate electrical input power (kW) of a 10 HP motor operating at 85% efficiency?",
+      "choices": [
+        {"id": "A", "text": "6.34 kW"},
+        {"id": "B", "text": "7.46 kW"},
+        {"id": "C", "text": "8.78 kW"},
+        {"id": "D", "text": "10.0 kW"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Input power = Output power / Efficiency: (10 × 0.746) / 0.85 = 8.78 kW.",
+        "detailed": "Motor electrical input = mechanical output / efficiency. Output = 10 HP × 0.746 kW/HP = 7.46 kW. At 85% efficiency: Input = 7.46 / 0.85 = 8.78 kW. The motor draws more electrical power than it produces mechanically due to losses.",
+        "how_to_find": "Apply power and efficiency formulas."
+      },
+      "nec_reference": {"article": "430", "section": "430.6"},
+      "calculation": {
+        "formula": "Input kW = (HP × 0.746) / Efficiency",
+        "steps": [
+          {"step": 1, "description": "Convert HP to kW", "calculation": "10 × 0.746", "result": "7.46 kW output"},
+          {"step": 2, "description": "Divide by efficiency", "calculation": "7.46 / 0.85", "result": "8.78 kW input"}
+        ],
+        "final_answer": "8.78 kW electrical input",
+        "common_mistakes": ["Multiplying by efficiency instead of dividing", "Forgetting HP to kW conversion"]
+      },
+      "zafto_links": [],
+      "tags": ["motor power", "efficiency", "kW calculation"],
+      "verified": true
+    },
+    {
+      "id": "MG-067",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A motor plug and receptacle used as the disconnecting means must be:",
+      "choices": [
+        {"id": "A", "text": "Any standard receptacle"},
+        {"id": "B", "text": "Horsepower rated"},
+        {"id": "C", "text": "GFCI protected"},
+        {"id": "D", "text": "Weatherproof only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A plug/receptacle used as motor disconnect must have a horsepower rating.",
+        "detailed": "Section 430.109(F) permits a horsepower-rated attachment plug and receptacle as a motor disconnecting means for portable motors rated up to 1/3 HP. The plug and receptacle combination must have a HP rating equal to or greater than the motor HP.",
+        "how_to_find": "Go to 430.109(F) for plug/receptacle as disconnect."
+      },
+      "nec_reference": {"article": "430", "section": "430.109(F)"},
+      "zafto_links": [{"screen_id": "disconnect", "relevance": "secondary", "description": "Cord-connected motors"}],
+      "tags": ["plug receptacle", "disconnect", "horsepower rated"],
+      "verified": true
+    },
+    {
+      "id": "MG-068",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Cord-and-plug connected motors must have the cord length limited to:",
+      "choices": [
+        {"id": "A", "text": "6 feet"},
+        {"id": "B", "text": "10 feet"},
+        {"id": "C", "text": "15 feet"},
+        {"id": "D", "text": "No specific limit, but must be suitable"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "NEC doesn't specify a cord length limit for motors, but cord must be suitable.",
+        "detailed": "The NEC does not specify a maximum cord length for portable motors. However, the cord must be suitable for the conditions of use, have appropriate ampacity, and be of a type approved for the application. Excessively long cords may cause voltage drop issues.",
+        "how_to_find": "Review Article 430 and Article 400 for flexible cord requirements."
+      },
+      "nec_reference": {"article": "430", "section": "430.109(F)"},
+      "zafto_links": [],
+      "tags": ["cord connected", "flexible cord", "portable motor"],
+      "verified": true
+    },
+    {
+      "id": "MG-069",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "A listed motor-circuit switch must be marked with:",
+      "choices": [
+        {"id": "A", "text": "Only ampere rating"},
+        {"id": "B", "text": "Ampere rating AND horsepower rating"},
+        {"id": "C", "text": "Voltage only"},
+        {"id": "D", "text": "Manufacturer name only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Motor-circuit switches must be marked with both ampere and horsepower ratings.",
+        "detailed": "Section 430.109(A)(1) requires motor-circuit switches to have an ampere rating not less than 115% of motor FLA AND a horsepower rating not less than the motor HP. The switch must be marked with both ratings to be used as a motor disconnect.",
+        "how_to_find": "Go to 430.109(A)(1) for motor-circuit switch marking."
+      },
+      "nec_reference": {"article": "430", "section": "430.109(A)(1)"},
+      "zafto_links": [{"screen_id": "disconnect", "relevance": "primary", "description": "Motor switch marking"}],
+      "tags": ["motor-circuit switch", "HP rating", "marking"],
+      "verified": true
+    },
+    {
+      "id": "MG-070",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A capacitor-start motor operates by:",
+      "choices": [
+        {"id": "A", "text": "Running on capacitor power continuously"},
+        {"id": "B", "text": "Using a capacitor in the starting circuit that disconnects after starting"},
+        {"id": "C", "text": "Storing energy in capacitors"},
+        {"id": "D", "text": "Reducing power factor"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Capacitor-start motors use a capacitor during starting, then disconnect it.",
+        "detailed": "A capacitor-start motor has a capacitor in series with the starting winding that creates a phase shift to produce starting torque. Once the motor reaches approximately 75% speed, a centrifugal switch disconnects the starting winding and capacitor. The motor then runs as a standard single-phase induction motor.",
+        "how_to_find": "Review single-phase motor starting methods."
+      },
+      "nec_reference": {"article": "430", "section": "430.1"},
+      "zafto_links": [],
+      "tags": ["capacitor-start", "single-phase", "starting method"],
+      "verified": true
+    },
+    {
+      "id": "MG-071",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A capacitor-start, capacitor-run motor differs from a capacitor-start motor by:",
+      "choices": [
+        {"id": "A", "text": "Having no capacitors"},
+        {"id": "B", "text": "Keeping a run capacitor in circuit during operation"},
+        {"id": "C", "text": "Using DC instead of AC"},
+        {"id": "D", "text": "Having higher starting current"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Capacitor-start, capacitor-run motors keep a run capacitor in circuit continuously.",
+        "detailed": "A capacitor-start, capacitor-run (CSCR) motor uses a larger starting capacitor (disconnected after starting) plus a smaller run capacitor that remains in circuit during operation. The run capacitor improves running efficiency, power factor, and reduces vibration compared to capacitor-start only motors.",
+        "how_to_find": "Review capacitor motor configurations."
+      },
+      "nec_reference": {"article": "430", "section": "430.1"},
+      "zafto_links": [],
+      "tags": ["capacitor-run", "CSCR", "single-phase motor"],
+      "verified": true
+    },
+    {
+      "id": "MG-072",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A motor rated for 'continuous duty' is designed to operate:",
+      "choices": [
+        {"id": "A", "text": "For 1 hour maximum"},
+        {"id": "B", "text": "At nameplate rating indefinitely without overheating"},
+        {"id": "C", "text": "Only intermittently"},
+        {"id": "D", "text": "At 50% load only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Continuous duty motors can run at nameplate load indefinitely.",
+        "detailed": "A continuous duty motor can operate at nameplate load for an indefinitely long time (defined as 3 hours or more) without exceeding temperature limits. This is the most common duty rating. Motors are sized at 125% of FLA because they are considered continuous loads per 430.22(A).",
+        "how_to_find": "Review motor duty definitions."
+      },
+      "nec_reference": {"article": "430", "section": "430.22(A)"},
+      "zafto_links": [],
+      "tags": ["continuous duty", "motor rating", "indefinite operation"],
+      "verified": true
+    },
+    {
+      "id": "MG-073",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "A motor with 40°C temperature rise marking operates in 50°C ambient. What is the maximum winding temperature?",
+      "choices": [
+        {"id": "A", "text": "40°C"},
+        {"id": "B", "text": "50°C"},
+        {"id": "C", "text": "90°C"},
+        {"id": "D", "text": "130°C"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Max winding temp = Ambient + Rise: 50°C + 40°C = 90°C.",
+        "detailed": "Motor temperature rise indicates how much the windings heat above ambient. Maximum winding temperature = ambient temperature + temperature rise. 50°C ambient + 40°C rise = 90°C maximum winding temperature. If ambient exceeds motor's rated ambient (usually 40°C), the motor must be derated.",
+        "how_to_find": "Add ambient temperature to rated temperature rise."
+      },
+      "nec_reference": {"article": "430", "section": "430.32(A)(1)"},
+      "calculation": {
+        "formula": "Max Temp = Ambient + Temperature Rise",
+        "steps": [
+          {"step": 1, "description": "Identify ambient temperature", "result": "50°C"},
+          {"step": 2, "description": "Add temperature rise", "calculation": "50 + 40", "result": "90°C"}
+        ],
+        "final_answer": "90°C maximum winding temperature",
+        "common_mistakes": ["Using only rise or only ambient", "Not accounting for elevated ambient"]
+      },
+      "zafto_links": [{"screen_id": "motor_nameplate", "relevance": "secondary", "description": "Temperature ratings"}],
+      "tags": ["temperature rise", "ambient", "winding temperature"],
+      "verified": true
+    },
+    {
+      "id": "MG-074",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A shaded-pole motor is typically used for:",
+      "choices": [
+        {"id": "A", "text": "High-torque industrial applications"},
+        {"id": "B", "text": "Small fans and low-torque applications"},
+        {"id": "C", "text": "Pump motors"},
+        {"id": "D", "text": "Compressor motors"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Shaded-pole motors are low-efficiency, low-torque motors for small fans.",
+        "detailed": "Shaded-pole motors are simple, inexpensive single-phase motors with low starting torque and low efficiency (typically 25-40%). They are used for small fans, blowers, and other light-duty applications where efficiency is not critical. Shading coils create the phase shift for starting.",
+        "how_to_find": "Review single-phase motor types and applications."
+      },
+      "nec_reference": {"article": "430", "section": "430.1"},
+      "zafto_links": [],
+      "tags": ["shaded-pole", "small motor", "fan motor"],
+      "verified": true
+    },
+    {
+      "id": "MG-075",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Motor branch circuit conductors can be installed without a raceway if:",
+      "choices": [
+        {"id": "A", "text": "Never permitted"},
+        {"id": "B", "text": "Protected by the motor's enclosure or building construction"},
+        {"id": "C", "text": "Always permitted"},
+        {"id": "D", "text": "Only for DC motors"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Motor conductors may be exposed where protected from physical damage.",
+        "detailed": "Section 430.22(G) permits motor branch circuit conductors to be installed without a raceway where protected from physical damage by the motor's location, the building structure, or other means. Where exposed to damage, raceway or other protection is required.",
+        "how_to_find": "Go to 430.22(G) for conductor protection requirements."
+      },
+      "nec_reference": {"article": "430", "section": "430.22(G)"},
+      "zafto_links": [],
+      "tags": ["conductor protection", "raceway", "physical damage"],
+      "verified": true
+    },
+    {
+      "id": "MG-076",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "For adjustable-speed drives (VFDs), the input (line side) conductor sizing is based on:",
+      "choices": [
+        {"id": "A", "text": "Motor nameplate FLA"},
+        {"id": "B", "text": "The drive's input current rating or 125% of motor FLA"},
+        {"id": "C", "text": "150% of motor FLA"},
+        {"id": "D", "text": "The drive output current"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "VFD input conductors sized per drive rating or 125% of motor FLA.",
+        "detailed": "Section 430.122(A) requires branch circuit conductors supplying adjustable-speed drives to have ampacity not less than 125% of the motor FLA or the rated input current of the drive, whichever is greater. This accounts for continuous operation.",
+        "how_to_find": "Go to 430.122(A) for ASD conductor sizing."
+      },
+      "nec_reference": {"article": "430", "section": "430.122(A)"},
+      "zafto_links": [{"screen_id": "vfd_wiring", "relevance": "primary", "description": "VFD conductors"}],
+      "tags": ["VFD", "adjustable-speed drive", "input conductors"],
+      "verified": true
+    },
+    {
+      "id": "MG-077",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "VFD output conductors to the motor must have ampacity of at least:",
+      "choices": [
+        {"id": "A", "text": "100% of motor nameplate FLA"},
+        {"id": "B", "text": "125% of motor nameplate FLA"},
+        {"id": "C", "text": "150% of motor nameplate FLA"},
+        {"id": "D", "text": "Equal to drive output rating"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "VFD output conductors require 125% of motor nameplate FLA minimum.",
+        "detailed": "Section 430.122(B) requires conductors between an adjustable-speed drive and the motor to have ampacity not less than 125% of the motor nameplate full-load current. This is the same percentage as standard motor circuits.",
+        "how_to_find": "Go to 430.122(B) for ASD output conductor sizing."
+      },
+      "nec_reference": {"article": "430", "section": "430.122(B)"},
+      "zafto_links": [{"screen_id": "vfd_wiring", "relevance": "primary", "description": "VFD to motor conductors"}],
+      "tags": ["VFD output", "motor conductors", "125%"],
+      "verified": true
+    },
+    {
+      "id": "MG-078",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A bypass contactor that connects motor directly to line during VFD fault requires:",
+      "choices": [
+        {"id": "A", "text": "No additional protection"},
+        {"id": "B", "text": "Separate overload protection for bypass mode"},
+        {"id": "C", "text": "Reduced voltage starting"},
+        {"id": "D", "text": "Manual operation only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "VFD bypass modes require separate motor overload protection.",
+        "detailed": "Section 430.128 requires that when an adjustable-speed drive has a bypass function that connects the motor directly across the line, motor overload protection must be provided. The drive's internal protection may not function in bypass mode, requiring separate overload devices.",
+        "how_to_find": "Go to 430.128 for ASD bypass protection."
+      },
+      "nec_reference": {"article": "430", "section": "430.128"},
+      "zafto_links": [{"screen_id": "vfd_wiring", "relevance": "secondary", "description": "VFD bypass"}],
+      "tags": ["VFD bypass", "overload protection", "line connection"],
+      "verified": true
+    },
+    {
+      "id": "MG-079",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Motor efficiency (%) is calculated as:",
+      "choices": [
+        {"id": "A", "text": "Input power / Output power × 100"},
+        {"id": "B", "text": "Output power / Input power × 100"},
+        {"id": "C", "text": "Voltage × Current"},
+        {"id": "D", "text": "HP / kVA × 100"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Efficiency = (Mechanical output power / Electrical input power) × 100%.",
+        "detailed": "Motor efficiency is the ratio of useful mechanical output power to electrical input power, expressed as a percentage. Efficiency = (Output / Input) × 100%. Losses include I²R heating, core losses, friction, and windage. Premium efficiency motors can exceed 95% efficiency.",
+        "how_to_find": "Review motor efficiency fundamentals."
+      },
+      "nec_reference": {"article": "430", "section": "430.6"},
+      "zafto_links": [],
+      "tags": ["motor efficiency", "power ratio", "losses"],
+      "verified": true
+    },
+    {
+      "id": "MG-080",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Motors installed in Class I, Division 1 hazardous locations must be:",
+      "choices": [
+        {"id": "A", "text": "Open drip-proof"},
+        {"id": "B", "text": "Approved for Class I, Division 1 locations"},
+        {"id": "C", "text": "TEFC standard"},
+        {"id": "D", "text": "Any enclosed motor"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Hazardous location motors must be approved for the specific class and division.",
+        "detailed": "Section 501.125 requires motors in Class I, Division 1 locations to be listed and marked for Class I, Division 1, or be totally enclosed and supplied with positive-pressure ventilation from a clean air source. Standard TEFC motors are NOT suitable for hazardous locations without specific listing.",
+        "how_to_find": "Go to 501.125 for Class I motor requirements."
+      },
+      "nec_reference": {"article": "501", "section": "501.125"},
+      "zafto_links": [{"screen_id": "hazardous_locations", "relevance": "primary", "description": "Hazardous location motors"}],
+      "tags": ["hazardous location", "Class I Division 1", "explosion-proof"],
+      "verified": true
+    },
+    {
+      "id": "MG-081",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Motors in Class II (dust) hazardous locations must be:",
+      "choices": [
+        {"id": "A", "text": "Open drip-proof type"},
+        {"id": "B", "text": "Dust-ignition-proof or approved for Class II locations"},
+        {"id": "C", "text": "Standard TEFC"},
+        {"id": "D", "text": "Weatherproof only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Class II locations require dust-ignition-proof motors or motors approved for the location.",
+        "detailed": "Section 502.125 requires motors in Class II, Division 1 locations to be dust-ignition-proof listed for Class II or totally enclosed pipe-ventilated. Class II, Division 2 permits totally enclosed motors. Standard TEFC motors are not dust-ignition-proof without specific listing.",
+        "how_to_find": "Go to 502.125 for Class II motor requirements."
+      },
+      "nec_reference": {"article": "502", "section": "502.125"},
+      "zafto_links": [{"screen_id": "hazardous_locations", "relevance": "primary", "description": "Class II motors"}],
+      "tags": ["Class II", "dust-ignition-proof", "hazardous location"],
+      "verified": true
+    },
+    {
+      "id": "MG-082",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "A 100 HP, 460V, 3-phase motor has Table FLA of 124A. What minimum size copper THHN conductor is required (75°C column)?",
+      "choices": [
+        {"id": "A", "text": "1 AWG"},
+        {"id": "B", "text": "1/0 AWG"},
+        {"id": "C", "text": "2/0 AWG"},
+        {"id": "D", "text": "3/0 AWG"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "124A × 125% = 155A; 2/0 AWG THHN (175A at 75°C) is required.",
+        "detailed": "Motor conductors require 125% of FLA: 124 × 1.25 = 155A minimum ampacity. From Table 310.16 at 75°C: 1/0 AWG = 150A (too small), 2/0 AWG = 175A (adequate). Select 2/0 AWG copper THHN.",
+        "how_to_find": "Calculate 125% FLA, then select from Table 310.16."
+      },
+      "nec_reference": {"article": "430", "section": "430.22(A)"},
+      "calculation": {
+        "formula": "Required Ampacity = FLA × 125%",
+        "steps": [
+          {"step": 1, "description": "Calculate minimum ampacity", "calculation": "124 × 1.25", "result": "155A"},
+          {"step": 2, "description": "Select conductor from Table 310.16 (75°C)", "result": "2/0 AWG = 175A"}
+        ],
+        "final_answer": "2/0 AWG copper THHN",
+        "common_mistakes": ["Using 100% instead of 125%", "Using wrong temperature column"]
+      },
+      "zafto_links": [{"screen_id": "motor_circuit", "relevance": "primary", "description": "Conductor sizing"}],
+      "tags": ["conductor sizing", "Table 310.16", "100 HP motor"],
+      "verified": true
+    },
+    {
+      "id": "MG-083",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A permanent-split capacitor (PSC) motor differs from a capacitor-start motor in that:",
+      "choices": [
+        {"id": "A", "text": "It has no capacitor"},
+        {"id": "B", "text": "The capacitor remains in circuit during running"},
+        {"id": "C", "text": "It has higher starting torque"},
+        {"id": "D", "text": "It uses a centrifugal switch"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "PSC motors keep a run capacitor in circuit continuously - no centrifugal switch.",
+        "detailed": "A permanent-split capacitor (PSC) motor has a capacitor that remains in the circuit during both starting and running. Unlike capacitor-start motors, there is no centrifugal switch. PSC motors have lower starting torque but better running efficiency and are common in HVAC fans and compressors.",
+        "how_to_find": "Review single-phase motor types."
+      },
+      "nec_reference": {"article": "430", "section": "430.1"},
+      "zafto_links": [],
+      "tags": ["PSC motor", "permanent-split capacitor", "run capacitor"],
+      "verified": true
+    },
+    {
+      "id": "MG-084",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "The maximum motor branch circuit OCPD for a Design B energy-efficient motor using an inverse time breaker is:",
+      "choices": [
+        {"id": "A", "text": "175% of FLA"},
+        {"id": "B", "text": "250% of FLA"},
+        {"id": "C", "text": "300% of FLA"},
+        {"id": "D", "text": "1100% of FLA"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Design B motors with inverse time breakers are limited to 250% of FLA.",
+        "detailed": "Table 430.52 specifies 250% maximum for Design B motors using inverse time circuit breakers. This is the same percentage as for single-phase motors. Design E motors (higher efficiency, higher starting current) have different percentages.",
+        "how_to_find": "Go to Table 430.52, Design B row, inverse time breaker column."
+      },
+      "nec_reference": {"article": "430", "section": "430.52", "table": "Table 430.52"},
+      "zafto_links": [{"screen_id": "motor_circuit", "relevance": "primary", "description": "OCPD sizing"}],
+      "tags": ["Design B", "inverse time", "250%"],
+      "verified": true
+    },
+    {
+      "id": "MG-085",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Motor power factor is typically:",
+      "choices": [
+        {"id": "A", "text": "Unity (1.0) for all motors"},
+        {"id": "B", "text": "Lagging, typically 0.80-0.90 at full load"},
+        {"id": "C", "text": "Leading at all loads"},
+        {"id": "D", "text": "Zero at full load"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Induction motors have lagging power factor, typically 0.80-0.90 at full load.",
+        "detailed": "Induction motors draw reactive (magnetizing) current to create the magnetic field, resulting in lagging power factor. At full load, PF is typically 0.80-0.90. At light loads, PF drops significantly (can be 0.30-0.50). Power factor correction capacitors can improve PF.",
+        "how_to_find": "Review motor power factor characteristics."
+      },
+      "nec_reference": {"article": "460", "section": "460.1"},
+      "zafto_links": [{"screen_id": "power_factor", "relevance": "primary", "description": "Power factor correction"}],
+      "tags": ["power factor", "lagging", "magnetizing current"],
+      "verified": true
+    },
+    {
+      "id": "MG-086",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A fire pump motor must have its power supply:",
+      "choices": [
+        {"id": "A", "text": "From the normal building service only"},
+        {"id": "B", "text": "Independent and reliable, often with backup"},
+        {"id": "C", "text": "From solar panels"},
+        {"id": "D", "text": "Battery-operated only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Fire pump motors require reliable, independent power supply per Article 695.",
+        "detailed": "Article 695 requires fire pump power supply to be reliable and arranged to prevent interruption. Supply can be from separate utility service, on-site power production, or dedicated feeder. Backup power is typically required. Fire pump circuits have special protection requirements.",
+        "how_to_find": "Go to Article 695 for fire pump supply requirements."
+      },
+      "nec_reference": {"article": "695", "section": "695.3"},
+      "zafto_links": [],
+      "tags": ["fire pump", "Article 695", "reliable supply"],
+      "verified": true
+    },
+    {
+      "id": "MG-087",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["695"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Fire pump motor branch circuit conductors must have ampacity of at least:",
+      "choices": [
+        {"id": "A", "text": "100% of motor FLA"},
+        {"id": "B", "text": "115% of motor FLA"},
+        {"id": "C", "text": "125% of motor FLA"},
+        {"id": "D", "text": "125% of locked-rotor current"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Fire pump motor conductors require 125% of motor FLA minimum.",
+        "detailed": "Section 695.6(C)(1) requires fire pump motor supply conductors to have ampacity not less than 125% of the motor full-load current. This is similar to standard motor requirements in 430.22. Fire pump overcurrent protection has specific limitations in 695.4.",
+        "how_to_find": "Go to 695.6(C)(1) for fire pump conductor sizing."
+      },
+      "nec_reference": {"article": "695", "section": "695.6(C)(1)"},
+      "zafto_links": [],
+      "tags": ["fire pump", "conductor sizing", "125%"],
+      "verified": true
+    },
+    {
+      "id": "MG-088",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Motor 'frame size' designation (like 56, 143T, 256T) indicates:",
+      "choices": [
+        {"id": "A", "text": "The motor horsepower"},
+        {"id": "B", "text": "The physical mounting dimensions"},
+        {"id": "C", "text": "The voltage rating"},
+        {"id": "D", "text": "The efficiency class"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Frame size indicates standardized physical mounting dimensions.",
+        "detailed": "NEMA frame sizes define standard mounting dimensions including shaft height, shaft diameter, and mounting hole patterns. A 256T motor from any manufacturer fits the same mounting. The 'T' suffix indicates NEMA T-frame (since 1964). This allows motor replacement without modifying mounting.",
+        "how_to_find": "Review NEMA motor frame size standards."
+      },
+      "nec_reference": {"article": "430", "section": "430.7"},
+      "zafto_links": [{"screen_id": "motor_nameplate", "relevance": "secondary", "description": "Frame sizes"}],
+      "tags": ["frame size", "NEMA", "mounting dimensions"],
+      "verified": true
+    },
+    {
+      "id": "MG-089",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "When a motor is marked for 'dual voltage' (e.g., 230/460V), the higher voltage typically results in:",
+      "choices": [
+        {"id": "A", "text": "Higher FLA"},
+        {"id": "B", "text": "Lower FLA"},
+        {"id": "C", "text": "Same FLA"},
+        {"id": "D", "text": "Higher starting torque"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Higher voltage = lower current for the same power (P = V × I × PF × √3).",
+        "detailed": "For the same horsepower output, increasing voltage decreases current proportionally. A 10 HP motor draws approximately 28A at 230V but only 14A at 460V. This is why higher voltage systems are preferred for larger motors - smaller conductors and lower voltage drop.",
+        "how_to_find": "Apply power formula: at constant HP, current varies inversely with voltage."
+      },
+      "nec_reference": {"article": "430", "section": "430.7(A)"},
+      "zafto_links": [{"screen_id": "motor_fla_table", "relevance": "primary", "description": "Dual voltage FLA"}],
+      "tags": ["dual voltage", "current relationship", "230/460V"],
+      "verified": true
+    },
+    {
+      "id": "MG-090",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A motor 'nameplate' must include all EXCEPT:",
+      "choices": [
+        {"id": "A", "text": "Rated voltage and full-load current"},
+        {"id": "B", "text": "Horsepower and RPM"},
+        {"id": "C", "text": "Purchase price"},
+        {"id": "D", "text": "Manufacturer name"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Motor nameplates show electrical and mechanical data, not commercial information.",
+        "detailed": "Section 430.7 lists required nameplate markings: manufacturer name, voltage, FLA, frequency, phase, HP, RPM, time rating, ambient temperature, insulation class, code letter, design letter, and more. Purchase price and other commercial data are not nameplate items.",
+        "how_to_find": "Go to 430.7 for complete nameplate marking requirements."
+      },
+      "nec_reference": {"article": "430", "section": "430.7"},
+      "zafto_links": [{"screen_id": "motor_nameplate", "relevance": "primary", "description": "Nameplate requirements"}],
+      "tags": ["nameplate", "required markings", "430.7"],
+      "verified": true
+    },
+    {
+      "id": "MG-091",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "For part-winding start motors, branch circuit protection shall not exceed:",
+      "choices": [
+        {"id": "A", "text": "The values for standard motors"},
+        {"id": "B", "text": "The largest circuit breaker size marked on the motor"},
+        {"id": "C", "text": "50% of standard motor values"},
+        {"id": "D", "text": "200% of FLA"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Part-winding motors must use the OCPD size marked on the motor.",
+        "detailed": "Section 430.52(C)(4) requires part-winding start motors to use overcurrent protection not exceeding the largest circuit breaker size marked on the motor. The motor manufacturer determines appropriate protection based on the motor's starting characteristics.",
+        "how_to_find": "Go to 430.52(C)(4) for part-winding start motor protection."
+      },
+      "nec_reference": {"article": "430", "section": "430.52(C)(4)"},
+      "zafto_links": [],
+      "tags": ["part-winding", "OCPD", "motor marked"],
+      "verified": true
+    },
+    {
+      "id": "MG-092",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["445"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Generator bushings must be protected from physical damage when located:",
+      "choices": [
+        {"id": "A", "text": "In any location"},
+        {"id": "B", "text": "Where exposed and less than 8 feet above the floor"},
+        {"id": "C", "text": "Outdoors only"},
+        {"id": "D", "text": "In wet locations only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Generator bushings require protection when exposed and under 8 feet high.",
+        "detailed": "Section 445.17 requires generator live parts, including bushings, that are exposed at less than 8 feet above the floor to be protected from physical damage. This can be accomplished by location, guards, or enclosures.",
+        "how_to_find": "Go to 445.17 for generator bushing protection."
+      },
+      "nec_reference": {"article": "445", "section": "445.17"},
+      "zafto_links": [{"screen_id": "generator_sizing", "relevance": "secondary", "description": "Generator protection"}],
+      "tags": ["generator", "bushings", "physical damage"],
+      "verified": true
+    },
+    {
+      "id": "MG-093",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the synchronous speed of a 6-pole motor on a 60 Hz system?",
+      "choices": [
+        {"id": "A", "text": "900 RPM"},
+        {"id": "B", "text": "1200 RPM"},
+        {"id": "C", "text": "1800 RPM"},
+        {"id": "D", "text": "3600 RPM"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Synchronous speed = 120 × f / P = 120 × 60 / 6 = 1200 RPM.",
+        "detailed": "Synchronous speed is calculated as (120 × frequency) / poles. For a 6-pole motor at 60 Hz: (120 × 60) / 6 = 1200 RPM. Actual running speed will be slightly less due to slip (typically 1140-1175 RPM at full load for standard induction motors).",
+        "how_to_find": "Apply formula: Ns = 120f/P."
+      },
+      "nec_reference": {"article": "430", "section": "430.2"},
+      "calculation": {
+        "formula": "Synchronous Speed = (120 × Frequency) / Poles",
+        "steps": [
+          {"step": 1, "description": "Identify values", "result": "60 Hz, 6 poles"},
+          {"step": 2, "description": "Apply formula", "calculation": "(120 × 60) / 6", "result": "1200 RPM"}
+        ],
+        "final_answer": "1200 RPM synchronous speed",
+        "common_mistakes": ["Dividing by frequency instead of multiplying", "Using wrong pole count"]
+      },
+      "zafto_links": [],
+      "tags": ["synchronous speed", "6-pole", "1200 RPM"],
+      "verified": true
+    },
+    {
+      "id": "MG-094",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A motor that can run on either 50 Hz or 60 Hz power is marked:",
+      "choices": [
+        {"id": "A", "text": "Universal motor"},
+        {"id": "B", "text": "Dual frequency (50/60 Hz)"},
+        {"id": "C", "text": "Variable speed"},
+        {"id": "D", "text": "Inverter duty"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Motors rated for both frequencies are marked 50/60 Hz.",
+        "detailed": "Motors designed to operate on either 50 Hz or 60 Hz power supplies are marked '50/60 Hz' on the nameplate. The motor will run at different speeds (60 Hz = faster) and may have different FLA at each frequency. This is common for equipment used internationally.",
+        "how_to_find": "Review motor nameplate frequency markings."
+      },
+      "nec_reference": {"article": "430", "section": "430.7(A)"},
+      "zafto_links": [{"screen_id": "motor_nameplate", "relevance": "secondary", "description": "Frequency rating"}],
+      "tags": ["dual frequency", "50/60 Hz", "international"],
+      "verified": true
+    },
+    {
+      "id": "MG-095",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "An 'inverter duty' motor is specifically designed for use with:",
+      "choices": [
+        {"id": "A", "text": "Single-phase power only"},
+        {"id": "B", "text": "Variable frequency drives (VFDs)"},
+        {"id": "C", "text": "Battery backup systems"},
+        {"id": "D", "text": "Soft starters only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Inverter duty motors are designed to handle VFD output characteristics.",
+        "detailed": "Inverter duty motors have enhanced insulation to withstand voltage spikes from VFD switching (dV/dt), better cooling at low speeds, and can handle the harmonic content of VFD output. Standard motors may overheat or experience insulation failure when used with VFDs without proper filtering.",
+        "how_to_find": "Review VFD and motor compatibility requirements."
+      },
+      "nec_reference": {"article": "430", "section": "430.2"},
+      "zafto_links": [{"screen_id": "vfd_wiring", "relevance": "primary", "description": "VFD motor selection"}],
+      "tags": ["inverter duty", "VFD", "motor insulation"],
+      "verified": true
+    },
+    {
+      "id": "MG-096",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Overload relays for motors must be reset:",
+      "choices": [
+        {"id": "A", "text": "Automatically in all cases"},
+        {"id": "B", "text": "Manually only"},
+        {"id": "C", "text": "Per manufacturer's instructions, auto-reset prohibited in some cases"},
+        {"id": "D", "text": "By replacing the relay"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Auto-reset overloads are restricted where unexpected restart could cause injury.",
+        "detailed": "Section 430.43 prohibits automatic restarting of motors where unexpected restart could cause injury. Overload relays may be self-resetting (automatic) or manual reset. Auto-reset relays are prohibited for applications like conveyors, escalators, or machinery where unexpected restart is hazardous.",
+        "how_to_find": "Go to 430.43 for overload reset requirements."
+      },
+      "nec_reference": {"article": "430", "section": "430.43"},
+      "zafto_links": [],
+      "tags": ["overload relay", "reset", "automatic restart"],
+      "verified": true
+    },
+    {
+      "id": "MG-097",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A motor used with a belt-driven load typically needs:",
+      "choices": [
+        {"id": "A", "text": "Lower HP than the driven load"},
+        {"id": "B", "text": "HP rating at least equal to driven equipment requirement"},
+        {"id": "C", "text": "Exactly 1.5 times the load HP"},
+        {"id": "D", "text": "A synchronous motor only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Motor HP must equal or exceed the driven equipment's requirement.",
+        "detailed": "The motor must be sized to handle the maximum mechanical load requirement plus losses in belt/sheave systems. Motors are typically selected with some margin above calculated load. Belt drives add friction losses (3-5%) that must be accounted for when selecting motor size.",
+        "how_to_find": "Review motor selection and load matching principles."
+      },
+      "nec_reference": {"article": "430", "section": "430.6"},
+      "zafto_links": [{"screen_id": "motor_fla", "relevance": "secondary", "description": "Motor selection"}],
+      "tags": ["motor sizing", "belt drive", "load matching"],
+      "verified": true
+    },
+    {
+      "id": "MG-098",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "The rotating magnetic field in a 3-phase motor rotates at:",
+      "choices": [
+        {"id": "A", "text": "Half the supply frequency"},
+        {"id": "B", "text": "Synchronous speed determined by poles and frequency"},
+        {"id": "C", "text": "Variable speed regardless of supply"},
+        {"id": "D", "text": "Double the supply frequency"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "The rotating magnetic field turns at synchronous speed (120f/P).",
+        "detailed": "In a three-phase motor, the stator windings create a rotating magnetic field that turns at synchronous speed = (120 × frequency) / number of poles. This rotating field induces current in the rotor, which then follows the field. The rotor always turns slightly slower (slip) in induction motors.",
+        "how_to_find": "Review three-phase motor operating principles."
+      },
+      "nec_reference": {"article": "430", "section": "430.2"},
+      "zafto_links": [{"screen_id": "three_phase_basics", "relevance": "primary", "description": "3-phase motor operation"}],
+      "tags": ["rotating field", "synchronous speed", "three-phase"],
+      "verified": true
+    },
+    {
+      "id": "MG-099",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Motor grounding requirements are found in:",
+      "choices": [
+        {"id": "A", "text": "Article 430 only"},
+        {"id": "B", "text": "Article 250"},
+        {"id": "C", "text": "Article 240"},
+        {"id": "D", "text": "Article 480"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Motor grounding follows Article 250 requirements for equipment grounding.",
+        "detailed": "Section 430.242 requires motor frames to be grounded in accordance with Article 250. The equipment grounding conductor must be sized per Table 250.122 based on the rating of the motor branch circuit overcurrent device. Motors over 1000V have additional grounding requirements in 430 Part XII.",
+        "how_to_find": "Go to 430.242 which references Article 250."
+      },
+      "nec_reference": {"article": "430", "section": "430.242"},
+      "zafto_links": [{"screen_id": "grounding_vs_bonding", "relevance": "primary", "description": "Motor grounding"}],
+      "tags": ["motor grounding", "Article 250", "EGC"],
+      "verified": true
+    },
+    {
+      "id": "MG-100",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "MG",
+      "topic_name": "Motors & Generators",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "A feeder supplies one 50 HP motor (65A) and one 25 HP motor (34A). What is the minimum feeder OCPD using inverse time breakers?",
+      "choices": [
+        {"id": "A", "text": "175 amperes"},
+        {"id": "B", "text": "197 amperes"},
+        {"id": "C", "text": "200 amperes"},
+        {"id": "D", "text": "250 amperes"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Feeder OCPD = Largest motor OCPD + other FLAs: (65 × 2.5) + 34 = 196.5A → 200A.",
+        "detailed": "Section 430.62(A) calculates feeder OCPD as the largest motor branch circuit OCPD plus sum of other motor FLAs. Largest motor OCPD: 65A × 250% = 162.5A. Other motor: 34A. Total: 162.5 + 34 = 196.5A. Next standard size is 200A.",
+        "how_to_find": "Calculate per 430.62(A): Largest OCPD + sum of others."
+      },
+      "nec_reference": {"article": "430", "section": "430.62(A)"},
+      "calculation": {
+        "formula": "Feeder OCPD = (Largest FLA × 250%) + Other FLAs",
+        "steps": [
+          {"step": 1, "description": "Calculate largest motor OCPD (250%)", "calculation": "65 × 2.5", "result": "162.5A"},
+          {"step": 2, "description": "Add other motor FLA", "calculation": "162.5 + 34", "result": "196.5A"},
+          {"step": 3, "description": "Select standard size", "result": "200A"}
+        ],
+        "final_answer": "200 amperes",
+        "common_mistakes": ["Using 125% instead of 250%", "Adding branch OCPDs for all motors"]
+      },
+      "zafto_links": [{"screen_id": "motor_circuit", "relevance": "primary", "description": "Feeder OCPD calculation"}],
+      "tags": ["feeder OCPD", "multiple motors", "430.62"],
+      "verified": true
+    }
+  ]
+}

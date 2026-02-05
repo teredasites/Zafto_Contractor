@@ -1,0 +1,80 @@
+# ZAFTO Platform - Monorepo Configuration
+# Managed with Melos: https://melos.invertase.dev/
+#
+# Commands:
+#   melos bootstrap    - Install dependencies for all packages
+#   melos analyze      - Run flutter analyze on all packages
+#   melos test         - Run tests on all packages
+#   melos clean        - Clean all packages
+#
+# Structure:
+#   packages/          - Shared code libraries
+#   apps/              - Individual trade apps
+#   web/               - Web portal (zafto.app)
+
+name: zafto
+repository: https://github.com/teredasoftware/Zafto
+
+packages:
+  - packages/**
+  - apps/**
+  - web/**
+
+ide:
+  intellij:
+    enabled: true
+
+command:
+  bootstrap:
+    usePubspecOverrides: true
+
+scripts:
+  # Run analysis on all packages
+  analyze:
+    run: melos exec -- flutter analyze --fatal-infos
+    description: Run flutter analyze on all packages
+    packageFilters:
+      flutter: true
+
+  # Run tests on all packages
+  test:
+    run: melos exec -- flutter test
+    description: Run flutter test on all packages
+    packageFilters:
+      flutter: true
+      dirExists: test
+
+  # Clean all packages
+  clean:
+    run: melos exec -- flutter clean
+    description: Clean all packages
+    packageFilters:
+      flutter: true
+
+  # Get dependencies for all packages
+  get:
+    run: melos exec -- flutter pub get
+    description: Get dependencies for all packages
+    packageFilters:
+      flutter: true
+
+  # Build all apps for web
+  build:web:
+    run: melos exec -- flutter build web
+    description: Build all apps for web
+    packageFilters:
+      flutter: true
+      scope: '*_app' # Only apps, not packages
+
+  # Run specific app
+  run:electrical:
+    run: cd apps/electrical && flutter run -d chrome --web-port=5000
+    description: Run electrical app in Chrome
+
+  run:plumbing:
+    run: cd apps/plumbing && flutter run -d chrome --web-port=5001
+    description: Run plumbing app in Chrome
+
+  run:hvac:
+    run: cd apps/hvac && flutter run -d chrome --web-port=5002
+    description: Run HVAC app in Chrome

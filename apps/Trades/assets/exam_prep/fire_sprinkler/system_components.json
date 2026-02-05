@@ -1,0 +1,432 @@
+{
+  "category": "Fire Sprinkler",
+  "subcategory": "System Components",
+  "description": "Sprinkler heads, valves, piping, and system accessories",
+  "difficulty_distribution": {
+    "beginner": 8,
+    "intermediate": 12,
+    "advanced": 10
+  },
+  "questions": [
+    {
+      "id": "fs_comp_001",
+      "difficulty": "beginner",
+      "question": "What is the standard orifice size designation for a 1/2 inch nominal orifice sprinkler?",
+      "options": [
+        "K-factor 2.8",
+        "K-factor 5.6",
+        "K-factor 8.0",
+        "K-factor 11.2"
+      ],
+      "correct_answer": 1,
+      "explanation": "A standard 1/2 inch orifice sprinkler has a K-factor of 5.6. The K-factor relates flow to pressure: Q = K × √P, where Q is in gpm and P is in psi.",
+      "code_reference": "NFPA 13, Section 6.2"
+    },
+    {
+      "id": "fs_comp_002",
+      "difficulty": "beginner",
+      "question": "What color code indicates a sprinkler rated at 155°F to 165°F?",
+      "options": [
+        "Orange",
+        "Red",
+        "Uncolored or black",
+        "Yellow"
+      ],
+      "correct_answer": 2,
+      "explanation": "Ordinary temperature rated sprinklers (135°F-170°F) are uncolored, black, or white. Higher temperature ratings have specific color codes per NFPA 13.",
+      "code_reference": "NFPA 13, Table 6.2.5.1"
+    },
+    {
+      "id": "fs_comp_003",
+      "difficulty": "beginner",
+      "question": "What is the purpose of an OS&Y (Outside Screw and Yoke) valve?",
+      "options": [
+        "To drain the system",
+        "To control water flow with visual position indication",
+        "To regulate pressure",
+        "To prevent backflow"
+      ],
+      "correct_answer": 1,
+      "explanation": "OS&Y valves are indicating-type control valves where the position of the stem shows whether the valve is open or closed, making visual inspection possible.",
+      "code_reference": "NFPA 13, Section 8.16"
+    },
+    {
+      "id": "fs_comp_004",
+      "difficulty": "beginner",
+      "question": "What component activates the alarm on a wet pipe sprinkler system?",
+      "options": [
+        "Smoke detector",
+        "Heat detector",
+        "Alarm check valve/water flow switch",
+        "Manual pull station"
+      ],
+      "correct_answer": 2,
+      "explanation": "Water flow through the system activates either a water motor gong on the alarm check valve or an electronic water flow switch (vane or paddle type) to signal alarm.",
+      "code_reference": "NFPA 13, Section 8.17"
+    },
+    {
+      "id": "fs_comp_005",
+      "difficulty": "beginner",
+      "question": "What is the function of a fire department connection (FDC)?",
+      "options": [
+        "To drain the system for maintenance",
+        "To allow firefighters to supplement the water supply",
+        "To test the system pressure",
+        "To connect to the fire alarm panel"
+      ],
+      "correct_answer": 1,
+      "explanation": "The FDC allows the fire department to connect pumper apparatus to boost pressure and supplement the building's water supply during firefighting operations.",
+      "code_reference": "NFPA 13, Section 8.17.2"
+    },
+    {
+      "id": "fs_comp_006",
+      "difficulty": "beginner",
+      "question": "What is an inspector's test connection used for?",
+      "options": [
+        "Testing fire pump performance",
+        "Simulating the flow of a single sprinkler to test alarm devices",
+        "Checking pipe corrosion",
+        "Measuring system pressure"
+      ],
+      "correct_answer": 1,
+      "explanation": "The inspector's test connection simulates the activation of a single sprinkler to verify that water flow alarms and associated devices operate properly.",
+      "code_reference": "NFPA 13, Section 8.17.4"
+    },
+    {
+      "id": "fs_comp_007",
+      "difficulty": "beginner",
+      "question": "What is the purpose of a main drain test?",
+      "options": [
+        "To remove air from the system",
+        "To verify adequate water supply and check for valve obstructions",
+        "To clean the pipes",
+        "To test individual sprinklers"
+      ],
+      "correct_answer": 1,
+      "explanation": "The main drain test compares static and residual pressures to verify the water supply is adequate and that control valves are fully open.",
+      "code_reference": "NFPA 25, Section 13.2.5"
+    },
+    {
+      "id": "fs_comp_008",
+      "difficulty": "beginner",
+      "question": "Sprinkler piping installed in areas subject to freezing must be protected or be part of what type of system?",
+      "options": [
+        "Wet pipe system",
+        "Dry pipe or antifreeze system",
+        "Deluge system",
+        "Pre-action system"
+      ],
+      "correct_answer": 1,
+      "explanation": "Areas subject to freezing require dry pipe systems, antifreeze systems, or heat tracing to prevent water from freezing and rupturing pipes.",
+      "code_reference": "NFPA 13, Section 7.1"
+    },
+    {
+      "id": "fs_comp_009",
+      "difficulty": "intermediate",
+      "question": "What is the maximum floor area coverage for a standard spray upright or pendent sprinkler in light hazard occupancy?",
+      "options": [
+        "130 sq ft",
+        "168 sq ft",
+        "200 sq ft",
+        "225 sq ft"
+      ],
+      "correct_answer": 2,
+      "explanation": "Standard spray sprinklers in light hazard occupancy have a maximum coverage area of 200 sq ft per sprinkler when using standard spacing rules.",
+      "code_reference": "NFPA 13, Section 10.2.4.1"
+    },
+    {
+      "id": "fs_comp_010",
+      "difficulty": "intermediate",
+      "question": "What is the minimum distance a standard sprinkler deflector must be positioned below a smooth, flat ceiling?",
+      "options": [
+        "1 inch",
+        "2 inches",
+        "3 inches",
+        "4 inches"
+      ],
+      "correct_answer": 0,
+      "explanation": "For standard pendent and upright sprinklers, the deflector must be positioned 1 to 12 inches below the ceiling for proper spray pattern development.",
+      "code_reference": "NFPA 13, Section 10.2.5"
+    },
+    {
+      "id": "fs_comp_011",
+      "difficulty": "intermediate",
+      "question": "What is the maximum time for water delivery to the inspector's test on a dry pipe system not exceeding 500 gallons?",
+      "options": [
+        "30 seconds",
+        "45 seconds",
+        "60 seconds",
+        "90 seconds"
+      ],
+      "correct_answer": 2,
+      "explanation": "Dry pipe systems with capacity of 500 gallons or less must deliver water to the inspector's test connection within 60 seconds of valve operation.",
+      "code_reference": "NFPA 13, Section 7.2.3"
+    },
+    {
+      "id": "fs_comp_012",
+      "difficulty": "intermediate",
+      "question": "What is the purpose of a quick-opening device on a dry pipe valve?",
+      "options": [
+        "To slow down water delivery",
+        "To accelerate system operation by faster air exhaustion",
+        "To prevent false trips",
+        "To regulate water pressure"
+      ],
+      "correct_answer": 1,
+      "explanation": "Quick-opening devices (exhausters or accelerators) speed up dry valve operation by exhausting air faster, reducing water delivery time to open sprinklers.",
+      "code_reference": "NFPA 13, Section 7.2.3"
+    },
+    {
+      "id": "fs_comp_013",
+      "difficulty": "intermediate",
+      "question": "What pipe material is commonly prohibited for underground fire service mains?",
+      "options": [
+        "Ductile iron",
+        "PVC (in certain conditions)",
+        "Copper",
+        "HDPE"
+      ],
+      "correct_answer": 1,
+      "explanation": "While PVC is permitted in many applications, some jurisdictions restrict its use for fire mains due to concerns about brittleness and potential for damage during earthquakes.",
+      "code_reference": "NFPA 24, Section 10.1"
+    },
+    {
+      "id": "fs_comp_014",
+      "difficulty": "intermediate",
+      "question": "What is the maximum allowable air pressure in a dry pipe system relative to the water supply?",
+      "options": [
+        "Equal to water supply pressure",
+        "20 psi above the trip pressure",
+        "40 psi maximum",
+        "Typically set to maintain proper differential"
+      ],
+      "correct_answer": 3,
+      "explanation": "Dry pipe valve air pressure is typically set to maintain the proper differential ratio (usually 1:5 or 1:6) relative to the water supply pressure to ensure proper operation.",
+      "code_reference": "NFPA 13, Section 7.2"
+    },
+    {
+      "id": "fs_comp_015",
+      "difficulty": "intermediate",
+      "question": "What is the minimum pipe size for a sprinkler branch line serving a single sprinkler?",
+      "options": [
+        "1/2 inch",
+        "3/4 inch",
+        "1 inch",
+        "1-1/4 inch"
+      ],
+      "correct_answer": 2,
+      "explanation": "The minimum pipe size for a single sprinkler on a branch line is 1 inch, though hydraulic calculations may permit smaller sizes in specific CPVC applications.",
+      "code_reference": "NFPA 13, Section 27.3"
+    },
+    {
+      "id": "fs_comp_016",
+      "difficulty": "intermediate",
+      "question": "Pre-action systems require what to occur before water enters the piping?",
+      "options": [
+        "Only sprinkler activation",
+        "Only detection system activation",
+        "Both detection system activation and typically valve manual operation",
+        "Detection system activation (single interlock) or both detection and sprinkler (double interlock)"
+      ],
+      "correct_answer": 3,
+      "explanation": "Single interlock pre-action requires detection device activation. Double interlock requires both detection AND sprinkler operation. This protects areas sensitive to water damage.",
+      "code_reference": "NFPA 13, Section 7.3"
+    },
+    {
+      "id": "fs_comp_017",
+      "difficulty": "intermediate",
+      "question": "What is the minimum clearance required below sprinkler deflectors to the top of storage?",
+      "options": [
+        "6 inches",
+        "12 inches",
+        "18 inches",
+        "24 inches"
+      ],
+      "correct_answer": 2,
+      "explanation": "A minimum of 18 inches clearance is required between sprinkler deflectors and the top of storage to allow proper spray pattern development and coverage.",
+      "code_reference": "NFPA 13, Section 10.2.6"
+    },
+    {
+      "id": "fs_comp_018",
+      "difficulty": "intermediate",
+      "question": "Concealed sprinklers are required to have what painted on them?",
+      "options": [
+        "The manufacturer's name",
+        "Nothing - the cover plate can be painted to match the ceiling",
+        "Temperature rating color",
+        "K-factor"
+      ],
+      "correct_answer": 1,
+      "explanation": "Concealed sprinklers have a decorative cover plate that can be factory-painted or field-painted to match the ceiling. The sprinkler itself is hidden until activated.",
+      "code_reference": "NFPA 13, Section 6.2.6"
+    },
+    {
+      "id": "fs_comp_019",
+      "difficulty": "intermediate",
+      "question": "What is the required pressure on a standpipe at the topmost outlet?",
+      "options": [
+        "65 psi residual",
+        "100 psi residual",
+        "100 psi static",
+        "150 psi static"
+      ],
+      "correct_answer": 1,
+      "explanation": "Class I and III standpipes must provide a minimum of 100 psi residual pressure at the topmost outlet (with some exceptions for fully sprinklered buildings).",
+      "code_reference": "NFPA 14, Section 7.8"
+    },
+    {
+      "id": "fs_comp_020",
+      "difficulty": "intermediate",
+      "question": "What type of sprinkler is best suited for protecting high-piled storage?",
+      "options": [
+        "Residential sprinklers",
+        "Standard spray sprinklers",
+        "ESFR (Early Suppression Fast Response) sprinklers",
+        "Sidewall sprinklers"
+      ],
+      "correct_answer": 2,
+      "explanation": "ESFR sprinklers are specifically designed for high-piled storage applications. They deliver large water droplets at high pressure to penetrate the fire plume and suppress the fire early.",
+      "code_reference": "NFPA 13, Section 11.2"
+    },
+    {
+      "id": "fs_comp_021",
+      "difficulty": "advanced",
+      "question": "What is the relationship between K-factor and flow at a given pressure?",
+      "options": [
+        "Q = K × P",
+        "Q = K × √P",
+        "Q = K / P",
+        "Q = K² × P"
+      ],
+      "correct_answer": 1,
+      "explanation": "The fundamental sprinkler hydraulic equation is Q = K × √P, where Q is flow in gpm, K is the K-factor, and P is pressure in psi. This allows calculation of flow at any pressure.",
+      "code_reference": "NFPA 13, Section 27.2"
+    },
+    {
+      "id": "fs_comp_022",
+      "difficulty": "advanced",
+      "question": "For CPVC sprinkler piping, what is the maximum ambient temperature rating?",
+      "options": [
+        "120°F",
+        "150°F",
+        "175°F",
+        "200°F"
+      ],
+      "correct_answer": 1,
+      "explanation": "CPVC pipe and fittings for fire sprinkler service are typically listed for a maximum ambient temperature of 150°F. Higher temperatures require other materials.",
+      "code_reference": "NFPA 13, Section 6.3"
+    },
+    {
+      "id": "fs_comp_023",
+      "difficulty": "advanced",
+      "question": "What is the RTI (Response Time Index) requirement for fast-response sprinklers?",
+      "options": [
+        "RTI ≤ 50 (ft·sec)^0.5",
+        "RTI ≤ 80 (ft·sec)^0.5",
+        "RTI > 80 (ft·sec)^0.5",
+        "RTI ≤ 100 (ft·sec)^0.5"
+      ],
+      "correct_answer": 0,
+      "explanation": "Fast-response sprinklers must have an RTI of 50 (meter-seconds)^0.5 or less, equivalent to approximately 50 (ft-sec)^0.5. Lower RTI means faster response to heat.",
+      "code_reference": "NFPA 13, Section 3.6"
+    },
+    {
+      "id": "fs_comp_024",
+      "difficulty": "advanced",
+      "question": "What is the maximum system capacity in gallons for a dry pipe system without a quick-opening device?",
+      "options": [
+        "200 gallons",
+        "350 gallons",
+        "500 gallons",
+        "750 gallons"
+      ],
+      "correct_answer": 2,
+      "explanation": "Dry pipe systems exceeding 500 gallons capacity must have a quick-opening device to meet the water delivery time requirements.",
+      "code_reference": "NFPA 13, Section 7.2.3"
+    },
+    {
+      "id": "fs_comp_025",
+      "difficulty": "advanced",
+      "question": "When calculating friction loss in sprinkler piping, which formula is used?",
+      "options": [
+        "Bernoulli's equation",
+        "Hazen-Williams formula",
+        "Manning's equation",
+        "Darcy-Weisbach equation"
+      ],
+      "correct_answer": 1,
+      "explanation": "The Hazen-Williams formula is the standard method for calculating friction loss in fire sprinkler systems: p = 4.52 × Q^1.85 / (C^1.85 × d^4.87) per foot of pipe.",
+      "code_reference": "NFPA 13, Section 27.2"
+    },
+    {
+      "id": "fs_comp_026",
+      "difficulty": "advanced",
+      "question": "What C-factor is typically used for Schedule 40 steel pipe in hydraulic calculations?",
+      "options": [
+        "100",
+        "120",
+        "140",
+        "150"
+      ],
+      "correct_answer": 1,
+      "explanation": "A Hazen-Williams C-factor of 120 is typically used for steel pipe (black or galvanized). Lower C values indicate rougher pipe interior and higher friction losses.",
+      "code_reference": "NFPA 13, Section 27.2.3"
+    },
+    {
+      "id": "fs_comp_027",
+      "difficulty": "advanced",
+      "question": "What is the equivalent pipe length for a 2-inch standard 90° elbow?",
+      "options": [
+        "3 feet",
+        "5 feet",
+        "6 feet",
+        "8 feet"
+      ],
+      "correct_answer": 2,
+      "explanation": "Standard 90° elbows have equivalent lengths that vary by pipe size. A 2-inch elbow is equivalent to approximately 6 feet of straight pipe for friction loss calculations.",
+      "code_reference": "NFPA 13, Table 27.2.3.2.1"
+    },
+    {
+      "id": "fs_comp_028",
+      "difficulty": "advanced",
+      "question": "For in-rack sprinkler protection, what is the maximum horizontal distance between sprinklers?",
+      "options": [
+        "6 feet",
+        "8 feet",
+        "10 feet",
+        "Varies by commodity classification"
+      ],
+      "correct_answer": 3,
+      "explanation": "In-rack sprinkler spacing varies based on commodity classification, rack configuration, and whether face sprinklers are provided. Design must follow specific NFPA 13 requirements.",
+      "code_reference": "NFPA 13, Chapter 25"
+    },
+    {
+      "id": "fs_comp_029",
+      "difficulty": "advanced",
+      "question": "What is the purpose of the area/density method in sprinkler design?",
+      "options": [
+        "To calculate pipe size only",
+        "To determine water supply requirements based on hazard classification",
+        "To calculate the number of sprinklers needed",
+        "To establish inspection frequency"
+      ],
+      "correct_answer": 1,
+      "explanation": "The area/density method uses design curves to determine the required water density (gpm/sq ft) over a specific design area based on occupancy hazard classification.",
+      "code_reference": "NFPA 13, Section 19.3"
+    },
+    {
+      "id": "fs_comp_030",
+      "difficulty": "advanced",
+      "question": "What is the minimum density requirement for Ordinary Hazard Group 2 occupancy over a 1500 sq ft design area?",
+      "options": [
+        "0.15 gpm/sq ft",
+        "0.20 gpm/sq ft",
+        "0.24 gpm/sq ft",
+        "0.30 gpm/sq ft"
+      ],
+      "correct_answer": 1,
+      "explanation": "Using the NFPA 13 density/area curve, Ordinary Hazard Group 2 requires approximately 0.20 gpm/sq ft over a 1500 sq ft design area.",
+      "code_reference": "NFPA 13, Figure 19.3.3.1.1"
+    }
+  ]
+}

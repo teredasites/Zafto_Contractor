@@ -1,0 +1,2925 @@
+{
+  "topic_id": "CD",
+  "topic_name": "Control Devices",
+  "nec_version": "2026",
+  "questions": [
+    {
+      "id": "CD-001",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["240"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "The primary purpose of an overcurrent device is to:",
+      "choices": [
+        {"id": "A", "text": "Regulate voltage"},
+        {"id": "B", "text": "Protect conductors from excessive current"},
+        {"id": "C", "text": "Provide switching capability"},
+        {"id": "D", "text": "Measure power consumption"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Overcurrent devices protect conductors by opening the circuit when current exceeds safe levels.",
+        "detailed": "Section 240.1 states that Article 240 provides requirements for overcurrent protection and overcurrent protective devices. The purpose is to open the circuit if current reaches a value that will cause excessive or dangerous temperatures in conductors or conductor insulation.",
+        "how_to_find": "See 240.1 Scope for purpose of overcurrent protection."
+      },
+      "nec_reference": {"article": "240", "section": "240.1"},
+      "zafto_links": [{"screen_id": "breaker_sizing_table", "relevance": "primary", "description": "OCPD sizing"}],
+      "tags": ["overcurrent", "protection", "conductors"],
+      "verified": true
+    },
+    {
+      "id": "CD-002",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["240"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "14 AWG copper conductors must be protected at not more than:",
+      "choices": [
+        {"id": "A", "text": "10 amperes"},
+        {"id": "B", "text": "15 amperes"},
+        {"id": "C", "text": "20 amperes"},
+        {"id": "D", "text": "25 amperes"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Section 240.4(D) limits 14 AWG copper to 15A overcurrent protection.",
+        "detailed": "Section 240.4(D)(3) states that 14 AWG copper shall be protected at not more than 15 amperes. Similarly, 12 AWG is limited to 20A and 10 AWG to 30A per this section.",
+        "how_to_find": "Go to 240.4(D) for small conductor protection."
+      },
+      "nec_reference": {"article": "240", "section": "240.4(D)"},
+      "zafto_links": [{"screen_id": "breaker_sizing_table", "relevance": "primary", "description": "Wire/breaker matching"}],
+      "tags": ["conductor protection", "14 AWG", "15 ampere"],
+      "verified": true
+    },
+    {
+      "id": "CD-003",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["240"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "12 AWG copper conductors must be protected at not more than:",
+      "choices": [
+        {"id": "A", "text": "15 amperes"},
+        {"id": "B", "text": "20 amperes"},
+        {"id": "C", "text": "25 amperes"},
+        {"id": "D", "text": "30 amperes"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Section 240.4(D) limits 12 AWG copper to 20A overcurrent protection.",
+        "detailed": "Section 240.4(D)(5) states that 12 AWG copper shall be protected at not more than 20 amperes. This is why 12 AWG is standard for 20A circuits.",
+        "how_to_find": "Go to 240.4(D)(5) for 12 AWG protection."
+      },
+      "nec_reference": {"article": "240", "section": "240.4(D)(5)"},
+      "zafto_links": [{"screen_id": "breaker_sizing_table", "relevance": "primary", "description": "Wire sizing"}],
+      "tags": ["conductor protection", "12 AWG", "20 ampere"],
+      "verified": true
+    },
+    {
+      "id": "CD-004",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["240"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Where must the overcurrent device be located in relation to the conductors it protects?",
+      "choices": [
+        {"id": "A", "text": "At the midpoint of the run"},
+        {"id": "B", "text": "At the point where conductors receive their supply"},
+        {"id": "C", "text": "At the load end"},
+        {"id": "D", "text": "Anywhere along the circuit"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Overcurrent protection must be at the point where conductors receive their supply per 240.21.",
+        "detailed": "Section 240.21 requires overcurrent protection to be provided at the point where conductors receive their supply. Exceptions allow tap rules (10-foot, 25-foot) where conductors can extend without protection.",
+        "how_to_find": "Go to 240.21 for OCPD location requirements."
+      },
+      "nec_reference": {"article": "240", "section": "240.21"},
+      "zafto_links": [{"screen_id": "tap_rule", "relevance": "secondary", "description": "Tap rule exceptions"}],
+      "tags": ["OCPD location", "conductor protection", "supply point"],
+      "verified": true
+    },
+    {
+      "id": "CD-005",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["240"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the difference between a fuse and a circuit breaker?",
+      "choices": [
+        {"id": "A", "text": "Fuses are faster acting"},
+        {"id": "B", "text": "Circuit breakers can be reset after tripping; fuses must be replaced"},
+        {"id": "C", "text": "Fuses are only for DC circuits"},
+        {"id": "D", "text": "Circuit breakers are only for residential use"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Circuit breakers can be reset and reused; fuses are destroyed when they operate and must be replaced.",
+        "detailed": "Per Article 100, a circuit breaker opens automatically on overcurrent 'without damage to itself when properly applied.' A fuse operates by melting its fusible element, which destroys the fuse. Circuit breakers are resettable; fuses are one-time devices.",
+        "how_to_find": "Compare Article 100 definitions of Circuit Breaker and Fuse."
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [{"screen_id": "breaker_sizing_table", "relevance": "secondary", "description": "OCPD types"}],
+      "tags": ["circuit breaker", "fuse", "OCPD"],
+      "verified": true
+    },
+    {
+      "id": "CD-006",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["240"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Supplementary overcurrent devices are permitted to be used as:",
+      "choices": [
+        {"id": "A", "text": "Branch circuit protection"},
+        {"id": "B", "text": "Service equipment protection"},
+        {"id": "C", "text": "Protection of specific equipment only, not branch circuits"},
+        {"id": "D", "text": "Feeder protection"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Supplementary OCPDs protect specific equipment only and cannot substitute for branch circuit protection.",
+        "detailed": "Section 240.10 states that supplementary overcurrent devices shall not be used as a substitute for required branch-circuit overcurrent devices or in place of required branch-circuit protection. They are for protection of specific equipment, appliances, or internal circuits.",
+        "how_to_find": "Go to 240.10 for supplementary overcurrent device rules."
+      },
+      "nec_reference": {"article": "240", "section": "240.10"},
+      "zafto_links": [],
+      "tags": ["supplementary OCPD", "branch circuit", "equipment protection"],
+      "verified": true
+    },
+    {
+      "id": "CD-007",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["240"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "The grounded conductor (neutral) of a circuit shall NOT have overcurrent protection UNLESS:",
+      "choices": [
+        {"id": "A", "text": "Never - neutral protection is always prohibited"},
+        {"id": "B", "text": "The OCPD opens all conductors simultaneously"},
+        {"id": "C", "text": "The circuit is over 200 amperes"},
+        {"id": "D", "text": "The circuit is 3-phase"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Neutral overcurrent protection is only permitted if it opens all circuit conductors simultaneously.",
+        "detailed": "Section 240.22 prohibits overcurrent devices in series with the grounded conductor unless the device simultaneously opens all conductors of the circuit. This prevents an open neutral while ungrounded conductors remain energized.",
+        "how_to_find": "Go to 240.22 for grounded conductor protection."
+      },
+      "nec_reference": {"article": "240", "section": "240.22"},
+      "zafto_links": [],
+      "tags": ["neutral", "overcurrent", "grounded conductor"],
+      "verified": true
+    },
+    {
+      "id": "CD-008",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["240"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "Overcurrent devices must be readily accessible and located where?",
+      "choices": [
+        {"id": "A", "text": "In any convenient location"},
+        {"id": "B", "text": "Where not exposed to physical damage"},
+        {"id": "C", "text": "Only outdoors"},
+        {"id": "D", "text": "Only in basements"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "OCPDs must be readily accessible and located where not exposed to physical damage.",
+        "detailed": "Section 240.24(A) requires overcurrent devices to be readily accessible. Section 240.24(C) prohibits OCPDs where they could be exposed to physical damage. They also cannot be in the vicinity of easily ignitible material like clothes closets.",
+        "how_to_find": "Go to 240.24 for OCPD location requirements."
+      },
+      "nec_reference": {"article": "240", "section": "240.24"},
+      "zafto_links": [],
+      "tags": ["OCPD location", "accessible", "physical damage"],
+      "verified": true
+    },
+    {
+      "id": "CD-009",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["240"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Overcurrent devices are NOT permitted to be located:",
+      "choices": [
+        {"id": "A", "text": "In garages"},
+        {"id": "B", "text": "In bathrooms"},
+        {"id": "C", "text": "In kitchens"},
+        {"id": "D", "text": "In utility rooms"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Overcurrent devices are prohibited in bathrooms per 240.24(E).",
+        "detailed": "Section 240.24(E) states that overcurrent devices shall not be located in the bathrooms of dwelling units, dormitories, or guest rooms or guest suites of hotels and motels. This is due to shock hazard concerns in wet locations.",
+        "how_to_find": "Go to 240.24(E) for bathroom prohibition."
+      },
+      "nec_reference": {"article": "240", "section": "240.24(E)"},
+      "zafto_links": [],
+      "tags": ["OCPD location", "bathroom", "prohibited locations"],
+      "verified": true
+    },
+    {
+      "id": "CD-010",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["240"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "For circuits over 800 amperes, the next standard overcurrent device size UP rule:",
+      "choices": [
+        {"id": "A", "text": "Still applies"},
+        {"id": "B", "text": "Does not apply - conductor ampacity must equal or exceed OCPD rating"},
+        {"id": "C", "text": "Allows two sizes up"},
+        {"id": "D", "text": "Requires a fuse, not a breaker"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Above 800A, the next size up rule doesn't apply - conductor ampacity must meet or exceed OCPD.",
+        "detailed": "Section 240.4(B) permits the next standard OCPD rating above conductor ampacity ONLY where that rating does not exceed 800A. For circuits over 800A, conductor ampacity must be equal to or greater than the OCPD rating.",
+        "how_to_find": "Go to 240.4(B) and (C) for the 800A threshold."
+      },
+      "nec_reference": {"article": "240", "section": "240.4(C)"},
+      "zafto_links": [],
+      "tags": ["800 ampere", "next size up", "conductor protection"],
+      "verified": true
+    },
+    {
+      "id": "CD-011",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["240"],
+      "nec_tables": ["240.6(A)"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Which of the following is a standard ampere rating for fuses and circuit breakers per 240.6(A)?",
+      "choices": [
+        {"id": "A", "text": "18 amperes"},
+        {"id": "B", "text": "22 amperes"},
+        {"id": "C", "text": "25 amperes"},
+        {"id": "D", "text": "28 amperes"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "25 amperes is a standard rating per 240.6(A); 18, 22, and 28 are not standard.",
+        "detailed": "Section 240.6(A) lists standard ampere ratings: 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 110, 125, 150, 175, 200, 225, 250, 300, 350, 400, 450, 500, 600, 700, 800, 1000, 1200, 1600, 2000, 2500, 3000, 4000, 5000, 6000 amperes.",
+        "how_to_find": "Go to 240.6(A) for standard ampere ratings."
+      },
+      "nec_reference": {"article": "240", "section": "240.6(A)"},
+      "zafto_links": [{"screen_id": "breaker_sizing_table", "relevance": "primary", "description": "Standard breaker sizes"}],
+      "tags": ["standard ratings", "fuses", "circuit breakers"],
+      "verified": true
+    },
+    {
+      "id": "CD-012",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["240"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "The 10-foot tap rule requires tap conductors to:",
+      "choices": [
+        {"id": "A", "text": "Have ampacity at least 1/10 of the OCPD protecting the feeder"},
+        {"id": "B", "text": "Terminate in a single circuit breaker or fused switch"},
+        {"id": "C", "text": "Be installed in conduit only"},
+        {"id": "D", "text": "Be minimum 6 AWG"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "10-foot tap conductors must terminate in a single OCPD that limits the load.",
+        "detailed": "Section 240.21(B)(1) permits tap conductors not over 10 feet long without overcurrent protection if they have ampacity not less than the combined computed loads, are enclosed in raceway, do not extend beyond the equipment they supply, and terminate in a single circuit breaker or set of fuses that limits the load.",
+        "how_to_find": "Go to 240.21(B)(1) for 10-foot tap rule requirements."
+      },
+      "nec_reference": {"article": "240", "section": "240.21(B)(1)"},
+      "zafto_links": [{"screen_id": "tap_rule", "relevance": "primary", "description": "Tap rule calculator"}],
+      "tags": ["tap rule", "10-foot", "overcurrent"],
+      "verified": true
+    },
+    {
+      "id": "CD-013",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["240"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "The 25-foot tap rule requires tap conductor ampacity to be at least what percentage of the feeder OCPD?",
+      "choices": [
+        {"id": "A", "text": "1/10 (10%)"},
+        {"id": "B", "text": "1/5 (20%)"},
+        {"id": "C", "text": "1/3 (33%)"},
+        {"id": "D", "text": "1/2 (50%)"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "25-foot tap conductors must have ampacity at least 1/3 of the feeder OCPD rating.",
+        "detailed": "Section 240.21(B)(2) permits tap conductors not over 25 feet if their ampacity is not less than 1/3 of the rating of the feeder OCPD, they are protected from physical damage, and they terminate in a single circuit breaker or set of fuses that limits the load.",
+        "how_to_find": "Go to 240.21(B)(2) for 25-foot tap rule requirements."
+      },
+      "nec_reference": {"article": "240", "section": "240.21(B)(2)"},
+      "zafto_links": [{"screen_id": "tap_rule", "relevance": "primary", "description": "Tap rule calculator"}],
+      "tags": ["tap rule", "25-foot", "1/3 rule"],
+      "verified": true
+    },
+    {
+      "id": "CD-014",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["240"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A Type S fuse adapter is used to:",
+      "choices": [
+        {"id": "A", "text": "Convert 240V to 120V"},
+        {"id": "B", "text": "Prevent installation of a higher-rated fuse than intended"},
+        {"id": "C", "text": "Allow fuses in wet locations"},
+        {"id": "D", "text": "Reduce short-circuit current"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Type S adapters prevent overfusing by only accepting fuses of the correct ampere rating.",
+        "detailed": "Section 240.54 requires Type S fuses, adapters, and fuseholders to be designed so that tampering or shunting is difficult and so that a fuse of a higher rating cannot be installed. The adapter is sized for a specific ampere rating and once installed, cannot be easily removed.",
+        "how_to_find": "Go to 240.54 for Type S fuse requirements."
+      },
+      "nec_reference": {"article": "240", "section": "240.54"},
+      "zafto_links": [],
+      "tags": ["Type S fuse", "overfusing", "adapter"],
+      "verified": true
+    },
+    {
+      "id": "CD-015",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["240"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Edison-base fuses are classified as:",
+      "choices": [
+        {"id": "A", "text": "Type S"},
+        {"id": "B", "text": "Plug fuses"},
+        {"id": "C", "text": "Cartridge fuses"},
+        {"id": "D", "text": "Time-delay fuses only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Edison-base fuses are a type of plug fuse with a screw-in base.",
+        "detailed": "Section 240.51 covers plug fuses, which include Edison-base and Type S. Edison-base plug fuses have a common screw base that accepts any ampere rating up to 30A. This is why Type S was developed - to prevent overfusing.",
+        "how_to_find": "Go to 240.51 for plug fuse classifications."
+      },
+      "nec_reference": {"article": "240", "section": "240.51"},
+      "zafto_links": [],
+      "tags": ["Edison-base", "plug fuse", "fuse types"],
+      "verified": true
+    },
+    {
+      "id": "CD-016",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["240"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "Plug fuses shall not be used in circuits exceeding what voltage to ground?",
+      "choices": [
+        {"id": "A", "text": "120 volts"},
+        {"id": "B", "text": "125 volts"},
+        {"id": "C", "text": "150 volts"},
+        {"id": "D", "text": "277 volts"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Plug fuses are limited to circuits not exceeding 125V between conductors or 150V to ground.",
+        "detailed": "Section 240.50(A) limits plug fuses to circuits not exceeding 125 volts between conductors and circuits supplied by a system having a grounded neutral with not over 150 volts to ground. They are also limited to 30 amperes.",
+        "how_to_find": "Go to 240.50(A) for plug fuse voltage limitations."
+      },
+      "nec_reference": {"article": "240", "section": "240.50(A)"},
+      "zafto_links": [],
+      "tags": ["plug fuse", "voltage", "limitations"],
+      "verified": true
+    },
+    {
+      "id": "CD-017",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["240"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Cartridge fuses and fuseholders for circuits over 600V are covered by:",
+      "choices": [
+        {"id": "A", "text": "Article 240 Part VII"},
+        {"id": "B", "text": "Article 240 Part VIII"},
+        {"id": "C", "text": "Article 240 Part IX"},
+        {"id": "D", "text": "Article 250"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Part IX of Article 240 covers overcurrent protection over 1000 volts, nominal.",
+        "detailed": "Article 240 Part IX covers overcurrent protection for circuits rated over 1000 volts, nominal. This includes requirements for fuse and fuseholder design, mounting, and accessibility for high-voltage applications.",
+        "how_to_find": "Go to Article 240 Part IX for high-voltage overcurrent protection."
+      },
+      "nec_reference": {"article": "240", "section": "240.100"},
+      "zafto_links": [],
+      "tags": ["high voltage", "cartridge fuse", "over 1000V"],
+      "verified": true
+    },
+    {
+      "id": "CD-018",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Motor overload protection is designed to protect against:",
+      "choices": [
+        {"id": "A", "text": "Short circuits"},
+        {"id": "B", "text": "Ground faults"},
+        {"id": "C", "text": "Overheating due to overload or failure to start"},
+        {"id": "D", "text": "Voltage surges"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Motor overload protection prevents overheating from excessive current during running conditions.",
+        "detailed": "Section 430.31 explains that overload protection for motors is intended to protect the motor, motor-control apparatus, and branch-circuit conductors against excessive heating due to motor overloads and failure to start. Short-circuit protection is separate.",
+        "how_to_find": "Go to 430.31 for motor overload protection purpose."
+      },
+      "nec_reference": {"article": "430", "section": "430.31"},
+      "zafto_links": [],
+      "tags": ["motor", "overload protection", "overheating"],
+      "verified": true
+    },
+    {
+      "id": "CD-019",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "For a motor with a service factor of 1.15 or greater, the overload relay must trip at not more than what percentage of FLA?",
+      "choices": [
+        {"id": "A", "text": "115%"},
+        {"id": "B", "text": "120%"},
+        {"id": "C", "text": "125%"},
+        {"id": "D", "text": "130%"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Motors with SF of 1.15+ require overload protection that trips at 125% of FLA.",
+        "detailed": "Section 430.32(A)(1) requires separate motor overload protection to trip at not more than 125% of FLA for motors with marked service factor of 1.15 or greater, or marked temperature rise of 40°C or less. Motors without these markings require 115% trip setting.",
+        "how_to_find": "Go to 430.32(A)(1) for motor overload sizing."
+      },
+      "nec_reference": {"article": "430", "section": "430.32(A)(1)"},
+      "zafto_links": [{"screen_id": "motor_circuit", "relevance": "primary", "description": "Motor circuit protection"}],
+      "tags": ["motor", "overload", "service factor"],
+      "verified": true
+    },
+    {
+      "id": "CD-020",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "For a motor with a service factor less than 1.15 and no temperature rise marked, the overload protection must trip at not more than:",
+      "choices": [
+        {"id": "A", "text": "110%"},
+        {"id": "B", "text": "115%"},
+        {"id": "C", "text": "120%"},
+        {"id": "D", "text": "125%"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Motors with SF less than 1.15 require overload protection at 115% of FLA.",
+        "detailed": "Section 430.32(A)(1) requires motors without a marked service factor of 1.15 or greater, and without a marked temperature rise of 40°C or less, to have separate overload protection that trips at not more than 115% of the motor nameplate full-load current.",
+        "how_to_find": "Go to 430.32(A)(1) for overload protection requirements."
+      },
+      "nec_reference": {"article": "430", "section": "430.32(A)(1)"},
+      "zafto_links": [{"screen_id": "motor_circuit", "relevance": "primary", "description": "Motor circuit protection"}],
+      "tags": ["motor", "overload", "115 percent"],
+      "verified": true
+    },
+    {
+      "id": "CD-021",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["430"],
+      "nec_tables": ["Table 430.52"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "The maximum short-circuit and ground-fault protection for a single-phase motor using an inverse time breaker is:",
+      "choices": [
+        {"id": "A", "text": "150% of FLA"},
+        {"id": "B", "text": "200% of FLA"},
+        {"id": "C", "text": "250% of FLA"},
+        {"id": "D", "text": "300% of FLA"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Table 430.52 shows 250% maximum for inverse time breakers with single-phase motors.",
+        "detailed": "Table 430.52 lists maximum ratings for motor short-circuit and ground-fault protection. For single-phase motors, inverse time breakers are limited to 250% of FLA. Dual element (time-delay) fuses are limited to 175%, and instantaneous trip breakers to 800%.",
+        "how_to_find": "Go to Table 430.52 for motor branch-circuit protection."
+      },
+      "nec_reference": {"article": "430", "section": "430.52", "table": "Table 430.52"},
+      "zafto_links": [{"screen_id": "motor_circuit", "relevance": "primary", "description": "Motor protection sizing"}],
+      "tags": ["motor", "short-circuit protection", "inverse time"],
+      "verified": true
+    },
+    {
+      "id": "CD-022",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A motor controller must be capable of:",
+      "choices": [
+        {"id": "A", "text": "Interrupting the stalled-rotor current of the motor"},
+        {"id": "B", "text": "Interrupting short-circuit current"},
+        {"id": "C", "text": "Providing overload protection"},
+        {"id": "D", "text": "Providing surge protection"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Motor controllers must be able to interrupt the stalled-rotor (locked-rotor) current.",
+        "detailed": "Section 430.82(B) requires motor controllers to have a horsepower rating not lower than the horsepower rating of the motor. Section 430.83 requires the controller to be capable of interrupting the stalled-rotor current of the motor. Short-circuit protection is provided separately.",
+        "how_to_find": "Go to 430.83 for motor controller requirements."
+      },
+      "nec_reference": {"article": "430", "section": "430.83"},
+      "zafto_links": [{"screen_id": "motor_starter", "relevance": "primary", "description": "Motor starters"}],
+      "tags": ["motor controller", "locked-rotor", "stalled"],
+      "verified": true
+    },
+    {
+      "id": "CD-023",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A general-use switch may be used as a motor controller if the motor FLA does not exceed what percentage of the switch ampere rating?",
+      "choices": [
+        {"id": "A", "text": "50%"},
+        {"id": "B", "text": "80%"},
+        {"id": "C", "text": "100%"},
+        {"id": "D", "text": "125%"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "General-use switches used as motor controllers must have 125% of motor FLA (motor at 80%).",
+        "detailed": "Section 430.83(C)(1) permits a general-use switch to be used as a motor controller if the motor FLA is not more than 80% of the ampere rating of the switch. This provides adequate margin for motor starting current and continuous operation.",
+        "how_to_find": "Go to 430.83(C)(1) for switch as motor controller."
+      },
+      "nec_reference": {"article": "430", "section": "430.83(C)(1)"},
+      "zafto_links": [],
+      "tags": ["motor controller", "general-use switch", "80 percent"],
+      "verified": true
+    },
+    {
+      "id": "CD-024",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["285"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A surge-protective device (SPD) is designed to:",
+      "choices": [
+        {"id": "A", "text": "Provide overcurrent protection"},
+        {"id": "B", "text": "Limit transient voltages by diverting surge current"},
+        {"id": "C", "text": "Filter harmonic distortion"},
+        {"id": "D", "text": "Regulate voltage to equipment"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "SPDs protect equipment by limiting transient voltages and diverting surge currents.",
+        "detailed": "Article 285 covers surge-protective devices (SPDs). Per 285.1, SPDs are intended to limit transient voltages on premises wiring by diverting or limiting surge current. They protect against voltage spikes from lightning, utility switching, and other sources.",
+        "how_to_find": "Go to 285.1 for SPD scope and purpose."
+      },
+      "nec_reference": {"article": "285", "section": "285.1"},
+      "zafto_links": [],
+      "tags": ["SPD", "surge protection", "transient voltage"],
+      "verified": true
+    },
+    {
+      "id": "CD-025",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["285"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "SPDs installed at services are classified as:",
+      "choices": [
+        {"id": "A", "text": "Type 1"},
+        {"id": "B", "text": "Type 2"},
+        {"id": "C", "text": "Type 3"},
+        {"id": "D", "text": "Type 4"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Type 1 SPDs are installed at the service entrance.",
+        "detailed": "Section 285.24(A) defines Type 1 SPDs as intended for installation on the line side of the service equipment. Type 2 SPDs are for load side of service or feeders. Type 3 SPDs are for point-of-use at outlets. Type 4 SPDs are component assemblies.",
+        "how_to_find": "Go to 285.24(A) for Type 1 SPD installation."
+      },
+      "nec_reference": {"article": "285", "section": "285.24(A)"},
+      "zafto_links": [],
+      "tags": ["SPD", "Type 1", "service entrance"],
+      "verified": true
+    },
+    {
+      "id": "CD-026",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["230"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Surge protection is required for dwelling unit services per NEC 2020 and later. The SPD must be:",
+      "choices": [
+        {"id": "A", "text": "Type 1 only"},
+        {"id": "B", "text": "Type 1 or Type 2"},
+        {"id": "C", "text": "Type 3 only"},
+        {"id": "D", "text": "Any listed SPD"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Dwelling unit services require a Type 1 or Type 2 SPD.",
+        "detailed": "Section 230.67(A) requires all services supplying dwelling units to have a surge-protective device (SPD) installed. The SPD must be an integral part of the service equipment or immediately adjacent, and must be a Type 1 or Type 2 SPD.",
+        "how_to_find": "Go to 230.67(A) for dwelling unit SPD requirements."
+      },
+      "nec_reference": {"article": "230", "section": "230.67(A)"},
+      "zafto_links": [],
+      "tags": ["SPD", "dwelling unit", "service"],
+      "verified": true
+    },
+    {
+      "id": "CD-027",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["725"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Class 1 control circuits are:",
+      "choices": [
+        {"id": "A", "text": "Limited to 30 volts"},
+        {"id": "B", "text": "Part of the power system and follow wiring method rules similar to power circuits"},
+        {"id": "C", "text": "Always supplied by batteries"},
+        {"id": "D", "text": "Limited to communication only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Class 1 circuits are functionally part of the power system with similar wiring rules.",
+        "detailed": "Section 725.1 explains that Class 1 circuits are power-limited circuits or remote-control and signaling circuits. Per 725.46, Class 1 circuit conductors follow the wiring methods of Chapters 1-4 (like power circuits). Class 2 and 3 circuits have reduced requirements.",
+        "how_to_find": "Go to Article 725 Part II for Class 1 circuit requirements."
+      },
+      "nec_reference": {"article": "725", "section": "725.46"},
+      "zafto_links": [],
+      "tags": ["Class 1 circuit", "control circuit", "wiring methods"],
+      "verified": true
+    },
+    {
+      "id": "CD-028",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["725"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Class 2 circuits are limited to a maximum of:",
+      "choices": [
+        {"id": "A", "text": "30 volts and 0.5 amperes"},
+        {"id": "B", "text": "100 volt-amperes"},
+        {"id": "C", "text": "Values specified in Chapter 9 Table 11(A) or (B)"},
+        {"id": "D", "text": "50 watts"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Class 2 circuits are limited by power source values in Chapter 9 Table 11(A) or (B).",
+        "detailed": "Section 725.121 states that Class 2 circuit power sources must be supplied from a listed Class 2 power source. The power limitations are defined in Chapter 9 Tables 11(A) and 11(B), which limit voltage and current to inherently safe levels.",
+        "how_to_find": "Go to 725.121 and Chapter 9 Table 11 for Class 2 limits."
+      },
+      "nec_reference": {"article": "725", "section": "725.121"},
+      "zafto_links": [],
+      "tags": ["Class 2 circuit", "power limited", "low voltage"],
+      "verified": true
+    },
+    {
+      "id": "CD-029",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A combination motor controller includes:",
+      "choices": [
+        {"id": "A", "text": "Only a contactor"},
+        {"id": "B", "text": "Motor controller and short-circuit/ground-fault protection in one unit"},
+        {"id": "C", "text": "Only overload relays"},
+        {"id": "D", "text": "A VFD and soft starter"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Combination controllers include both motor control and branch-circuit protection in one enclosure.",
+        "detailed": "A combination motor controller is an assembly that includes a motor controller (contactor) and short-circuit/ground-fault protective device (fuses or circuit breaker) in a single enclosure. This simplifies installation and ensures coordinated protection.",
+        "how_to_find": "Review 430.2 Definitions for combination motor controller."
+      },
+      "nec_reference": {"article": "430", "section": "430.2"},
+      "zafto_links": [{"screen_id": "motor_starter", "relevance": "primary", "description": "Motor starter types"}],
+      "tags": ["combination controller", "motor starter", "protection"],
+      "verified": true
+    },
+    {
+      "id": "CD-030",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["700"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Transfer switches for emergency systems must be:",
+      "choices": [
+        {"id": "A", "text": "Manual only"},
+        {"id": "B", "text": "Automatic only"},
+        {"id": "C", "text": "Identified for emergency use and transfer in 10 seconds or less"},
+        {"id": "D", "text": "Rated at 200% of connected load"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Emergency system transfer equipment must restore power within 10 seconds.",
+        "detailed": "Section 700.12 requires emergency power systems to provide power within 10 seconds after normal power failure. Transfer switches must be automatic for life safety loads unless manual operation is specifically permitted. The switch must be suitable for emergency service.",
+        "how_to_find": "Go to 700.12 for emergency system requirements."
+      },
+      "nec_reference": {"article": "700", "section": "700.12"},
+      "zafto_links": [{"screen_id": "transfer_switch", "relevance": "primary", "description": "Transfer switch wiring"}],
+      "tags": ["transfer switch", "emergency", "10 seconds"],
+      "verified": true
+    },
+    {
+      "id": "CD-031",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["240"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "An interrupting rating of a circuit breaker refers to:",
+      "choices": [
+        {"id": "A", "text": "The maximum continuous current it can carry"},
+        {"id": "B", "text": "The maximum fault current it can safely interrupt"},
+        {"id": "C", "text": "The voltage rating"},
+        {"id": "D", "text": "The trip time"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Interrupting rating is the maximum fault current the device can safely interrupt.",
+        "detailed": "Section 240.60(C) and 240.86 address interrupting rating. The interrupting rating is the highest current at rated voltage that a device can safely interrupt. Equipment must have an interrupting rating not less than the nominal circuit voltage and available fault current.",
+        "how_to_find": "Go to 240.60(C) and 110.9 for interrupting rating requirements."
+      },
+      "nec_reference": {"article": "110", "section": "110.9"},
+      "zafto_links": [{"screen_id": "fault_current", "relevance": "primary", "description": "Fault current calculations"}],
+      "tags": ["interrupting rating", "fault current", "AIC"],
+      "verified": true
+    },
+    {
+      "id": "CD-032",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["110"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Equipment intended to interrupt current at fault levels must have:",
+      "choices": [
+        {"id": "A", "text": "Any standard rating"},
+        {"id": "B", "text": "An interrupting rating sufficient for the available fault current"},
+        {"id": "C", "text": "A minimum rating of 10,000 AIC"},
+        {"id": "D", "text": "Series-rated components only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Equipment interrupting rating must equal or exceed the available fault current.",
+        "detailed": "Section 110.9 requires equipment intended to interrupt current at fault levels to have an interrupting rating at nominal circuit voltage at least equal to the current that is available at the line terminals of the equipment. This prevents catastrophic failure.",
+        "how_to_find": "Go to 110.9 for interrupting rating requirements."
+      },
+      "nec_reference": {"article": "110", "section": "110.9"},
+      "zafto_links": [{"screen_id": "fault_current", "relevance": "primary", "description": "Available fault current"}],
+      "tags": ["interrupting rating", "fault current", "equipment rating"],
+      "verified": true
+    },
+    {
+      "id": "CD-033",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["210"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Arc-fault circuit interrupters (AFCIs) protect against:",
+      "choices": [
+        {"id": "A", "text": "Ground faults only"},
+        {"id": "B", "text": "Overloads only"},
+        {"id": "C", "text": "Arcing faults that may cause fires"},
+        {"id": "D", "text": "Short circuits only"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "AFCIs detect and interrupt arcing faults that could ignite fires.",
+        "detailed": "AFCIs monitor the circuit for characteristics of dangerous arcing (series and parallel arcs) and de-energize the circuit when arcing is detected. This protects against fires caused by damaged cords, loose connections, and damaged wiring. Section 210.12 requires AFCI protection in dwelling unit rooms.",
+        "how_to_find": "Go to 210.12 for AFCI requirements."
+      },
+      "nec_reference": {"article": "210", "section": "210.12"},
+      "zafto_links": [{"screen_id": "gfci_afci", "relevance": "primary", "description": "AFCI requirements"}],
+      "tags": ["AFCI", "arc-fault", "fire protection"],
+      "verified": true
+    },
+    {
+      "id": "CD-034",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["210"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "AFCI protection is required in dwelling units for:",
+      "choices": [
+        {"id": "A", "text": "Bathrooms and kitchens only"},
+        {"id": "B", "text": "Kitchens, bedrooms, living rooms, hallways, closets, and similar areas"},
+        {"id": "C", "text": "Outdoor receptacles only"},
+        {"id": "D", "text": "240V circuits only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "AFCI protection is required in most habitable rooms of dwelling units.",
+        "detailed": "Section 210.12(A) requires AFCI protection for all 120V, 15A and 20A branch circuits supplying outlets in dwelling unit kitchens, family rooms, dining rooms, living rooms, parlors, libraries, dens, bedrooms, sunrooms, recreation rooms, closets, hallways, laundry areas, and similar areas.",
+        "how_to_find": "Go to 210.12(A) for AFCI location requirements."
+      },
+      "nec_reference": {"article": "210", "section": "210.12(A)"},
+      "zafto_links": [{"screen_id": "gfci_afci", "relevance": "primary", "description": "AFCI locations"}],
+      "tags": ["AFCI", "dwelling unit", "bedrooms"],
+      "verified": true
+    },
+    {
+      "id": "CD-035",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["210"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A GFCI operates by detecting:",
+      "choices": [
+        {"id": "A", "text": "Voltage fluctuations"},
+        {"id": "B", "text": "Current imbalance between hot and neutral conductors"},
+        {"id": "C", "text": "Temperature rise"},
+        {"id": "D", "text": "Frequency changes"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "GFCIs detect current imbalance indicating current is flowing through an unintended path.",
+        "detailed": "A GFCI monitors the current flowing in the hot conductor versus the neutral. If the currents are not equal (typically 4-6 mA difference), current is flowing through an alternate path (possibly through a person). The GFCI trips in about 1/40th of a second to prevent electrocution.",
+        "how_to_find": "Review GFCI operating principles in Article 100 and 210.8."
+      },
+      "nec_reference": {"article": "210", "section": "210.8"},
+      "zafto_links": [{"screen_id": "gfci_afci", "relevance": "primary", "description": "GFCI operation"}, {"screen_id": "gfci_wiring", "relevance": "primary", "description": "GFCI wiring"}],
+      "tags": ["GFCI", "ground fault", "current imbalance"],
+      "verified": true
+    },
+    {
+      "id": "CD-036",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["210"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "Class A GFCIs trip when ground-fault current exceeds:",
+      "choices": [
+        {"id": "A", "text": "4 milliamperes"},
+        {"id": "B", "text": "5 milliamperes"},
+        {"id": "C", "text": "6 milliamperes"},
+        {"id": "D", "text": "30 milliamperes"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Class A GFCIs trip at 4-6 mA ground-fault current.",
+        "detailed": "Class A GFCIs are personnel protection devices that trip when ground-fault current exceeds 6 milliamperes. This level is chosen because 6 mA is below the threshold where most people would be unable to let go of an energized conductor. Class B GFCIs (for underwater swimming pool lights) trip at 20 mA.",
+        "how_to_find": "Review GFCI classifications and UL standards."
+      },
+      "nec_reference": {"article": "210", "section": "210.8"},
+      "zafto_links": [{"screen_id": "gfci_afci", "relevance": "primary", "description": "GFCI specifications"}],
+      "tags": ["GFCI", "Class A", "6 milliamperes"],
+      "verified": true
+    },
+    {
+      "id": "CD-037",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["240"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Ground-fault protection of equipment (GFPE) is required for:",
+      "choices": [
+        {"id": "A", "text": "All 120V circuits"},
+        {"id": "B", "text": "Solidly grounded wye services of more than 150V to ground but not exceeding 1000V, 1000A or more"},
+        {"id": "C", "text": "All 3-phase circuits"},
+        {"id": "D", "text": "Dwelling unit services only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "GFPE is required for large 480Y/277V services rated 1000A or more.",
+        "detailed": "Section 230.95 requires ground-fault protection of equipment for solidly grounded wye electrical services of more than 150V to ground but not exceeding 1000V phase-to-phase for each service disconnect rated 1000A or more. This protects against arcing ground faults that standard OCPDs may not detect.",
+        "how_to_find": "Go to 230.95 for GFPE requirements."
+      },
+      "nec_reference": {"article": "230", "section": "230.95"},
+      "zafto_links": [],
+      "tags": ["GFPE", "ground fault", "equipment protection"],
+      "verified": true
+    },
+    {
+      "id": "CD-038",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A magnetic motor starter uses what to control the motor?",
+      "choices": [
+        {"id": "A", "text": "Manual lever mechanism"},
+        {"id": "B", "text": "Electromagnet to close contacts"},
+        {"id": "C", "text": "Solid-state switches only"},
+        {"id": "D", "text": "Direct mechanical coupling"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Magnetic starters use an electromagnet (coil) to pull in contacts and start the motor.",
+        "detailed": "A magnetic motor starter consists of a contactor with an electromagnetic coil. When the coil is energized (typically by a control circuit), it creates a magnetic field that pulls the contacts closed, connecting power to the motor. This allows remote control and automatic operation.",
+        "how_to_find": "Review motor starter operating principles."
+      },
+      "nec_reference": {"article": "430", "section": "430.81"},
+      "zafto_links": [{"screen_id": "motor_starter", "relevance": "primary", "description": "Motor starter operation"}],
+      "tags": ["motor starter", "magnetic", "contactor"],
+      "verified": true
+    },
+    {
+      "id": "CD-039",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A motor control circuit transformer must be protected at not more than:",
+      "choices": [
+        {"id": "A", "text": "The primary current rating"},
+        {"id": "B", "text": "125% of rated primary current"},
+        {"id": "C", "text": "The values in 430.72(C)"},
+        {"id": "D", "text": "200% of secondary current"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Motor control circuit transformers are protected per 430.72(C).",
+        "detailed": "Section 430.72(C) specifies overcurrent protection for control circuit transformers. For transformers rated less than 50VA, primary protection per 430.72(C)(1) may protect the secondary. Larger transformers require protection based on Table 430.72(C)(4) secondary fuse ratings.",
+        "how_to_find": "Go to 430.72(C) for control transformer protection."
+      },
+      "nec_reference": {"article": "430", "section": "430.72(C)"},
+      "zafto_links": [],
+      "tags": ["control transformer", "protection", "motor control"],
+      "verified": true
+    },
+    {
+      "id": "CD-040",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["240"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "An inverse time circuit breaker is characterized by:",
+      "choices": [
+        {"id": "A", "text": "Fixed trip time regardless of current"},
+        {"id": "B", "text": "Longer trip time for lower overcurrents, shorter for higher overcurrents"},
+        {"id": "C", "text": "Instantaneous trip only"},
+        {"id": "D", "text": "Manual reset only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Inverse time breakers trip slower for small overloads and faster for large overcurrents.",
+        "detailed": "An inverse time circuit breaker has a time-current characteristic where trip time decreases as current increases. This allows temporary overloads (like motor starting) while still providing rapid clearing of high-level faults. Standard thermal-magnetic breakers exhibit inverse time characteristics.",
+        "how_to_find": "Review circuit breaker time-current characteristics."
+      },
+      "nec_reference": {"article": "240", "section": "240.6"},
+      "zafto_links": [],
+      "tags": ["circuit breaker", "inverse time", "trip characteristic"],
+      "verified": true
+    },
+    {
+      "id": "CD-041",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["240"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Current-limiting overcurrent protective devices are required to:",
+      "choices": [
+        {"id": "A", "text": "Limit voltage drop"},
+        {"id": "B", "text": "Clear a fault in less than 1/2 cycle and limit peak let-through current"},
+        {"id": "C", "text": "Prevent voltage surges"},
+        {"id": "D", "text": "Provide ground fault protection"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Current-limiting devices clear faults within 1/2 cycle and limit let-through current.",
+        "detailed": "Section 240.2 defines current-limiting overcurrent protective device as one that reduces the current flowing in the faulted circuit to a magnitude substantially less than that obtainable in the same circuit without the device. It must clear within 1/2 cycle (1/120 second at 60Hz).",
+        "how_to_find": "Go to 240.2 for current-limiting device definition."
+      },
+      "nec_reference": {"article": "240", "section": "240.2"},
+      "zafto_links": [],
+      "tags": ["current-limiting", "let-through", "fault clearing"],
+      "verified": true
+    },
+    {
+      "id": "CD-042",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["445"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Generator conductors must be protected against overload by:",
+      "choices": [
+        {"id": "A", "text": "Overcurrent devices rated at 100% of nameplate current"},
+        {"id": "B", "text": "Overcurrent devices rated at 115% of nameplate current"},
+        {"id": "C", "text": "Inherent design of the generator or OCPD"},
+        {"id": "D", "text": "Ground fault protection only"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Generators can be protected by inherent design or overcurrent devices per 445.12.",
+        "detailed": "Section 445.12(A) requires generators to be protected against overload by inherent design, circuit breakers, fuses, or other overcurrent protective means. The generator manufacturer determines if inherent design (such as thermal limiting) provides adequate protection.",
+        "how_to_find": "Go to 445.12 for generator overload protection."
+      },
+      "nec_reference": {"article": "445", "section": "445.12"},
+      "zafto_links": [{"screen_id": "generator_sizing", "relevance": "secondary", "description": "Generator protection"}],
+      "tags": ["generator", "overload protection", "inherent design"],
+      "verified": true
+    },
+    {
+      "id": "CD-043",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["480"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Storage battery systems over 50 volts nominal require:",
+      "choices": [
+        {"id": "A", "text": "No special requirements"},
+        {"id": "B", "text": "Disconnecting means and overcurrent protection"},
+        {"id": "C", "text": "GFCI protection"},
+        {"id": "D", "text": "Outdoor installation only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Battery systems over 50V require disconnecting means and overcurrent protection.",
+        "detailed": "Section 480.5 requires a disconnecting means for ungrounded conductors from battery systems over 50V nominal. Section 480.6 requires overcurrent protection for ungrounded battery system conductors per Article 240. These protect against fault currents that batteries can produce.",
+        "how_to_find": "Go to 480.5 and 480.6 for battery system requirements."
+      },
+      "nec_reference": {"article": "480", "section": "480.5"},
+      "zafto_links": [],
+      "tags": ["battery", "disconnect", "overcurrent"],
+      "verified": true
+    },
+    {
+      "id": "CD-044",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["240"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Overcurrent devices in enclosures with hinged doors must:",
+      "choices": [
+        {"id": "A", "text": "Be de-energized before opening"},
+        {"id": "B", "text": "Have no exposed live parts when the door is open"},
+        {"id": "C", "text": "Open the door only with a tool"},
+        {"id": "D", "text": "Have warning labels only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Enclosures must be arranged so no live parts are exposed when doors are open.",
+        "detailed": "Section 240.35 requires that enclosures for overcurrent devices be so arranged that no live parts are exposed to persons who might inadvertently come in contact with them when the door is open. Dead-front construction is required.",
+        "how_to_find": "Go to 240.35 for enclosure requirements."
+      },
+      "nec_reference": {"article": "240", "section": "240.35"},
+      "zafto_links": [],
+      "tags": ["enclosure", "dead-front", "live parts"],
+      "verified": true
+    },
+    {
+      "id": "CD-045",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "A variable frequency drive (VFD) provides motor control by:",
+      "choices": [
+        {"id": "A", "text": "Varying the resistance in the motor circuit"},
+        {"id": "B", "text": "Converting AC to DC, then creating variable frequency AC output"},
+        {"id": "C", "text": "Changing the number of motor poles"},
+        {"id": "D", "text": "Using a mechanical clutch"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "VFDs convert AC to DC (rectifier), then synthesize variable frequency AC (inverter).",
+        "detailed": "A VFD (also called adjustable-speed drive) rectifies incoming AC to DC, filters it, then uses an inverter section to create AC output of variable voltage and frequency. By varying frequency, motor speed is controlled (speed = frequency × 120 / poles). This provides efficient motor speed control.",
+        "how_to_find": "Review VFD operating principles in 430.2 and drive manufacturer documentation."
+      },
+      "nec_reference": {"article": "430", "section": "430.2"},
+      "zafto_links": [{"screen_id": "vfd_wiring", "relevance": "primary", "description": "VFD wiring"}],
+      "tags": ["VFD", "variable frequency", "motor control"],
+      "verified": true
+    },
+    {
+      "id": "CD-046",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["700"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Emergency system circuits and equipment must be kept entirely independent of other wiring because:",
+      "choices": [
+        {"id": "A", "text": "To reduce installation costs"},
+        {"id": "B", "text": "To ensure availability during any fault on the normal system"},
+        {"id": "C", "text": "For color coding purposes"},
+        {"id": "D", "text": "To simplify maintenance"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Emergency circuits must be independent to remain available when normal wiring fails.",
+        "detailed": "Section 700.10(B)(1) requires emergency circuit wiring to be kept entirely independent of all other wiring and equipment. This ensures that any fault, fire, or damage affecting the normal system will not take out the emergency system that is needed during that emergency.",
+        "how_to_find": "Go to 700.10(B)(1) for emergency wiring separation."
+      },
+      "nec_reference": {"article": "700", "section": "700.10(B)(1)"},
+      "zafto_links": [{"screen_id": "transfer_switch", "relevance": "secondary", "description": "Emergency systems"}],
+      "tags": ["emergency system", "separation", "independence"],
+      "verified": true
+    },
+    {
+      "id": "CD-047",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["701"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Legally required standby systems must restore power within what time?",
+      "choices": [
+        {"id": "A", "text": "10 seconds"},
+        {"id": "B", "text": "30 seconds"},
+        {"id": "C", "text": "60 seconds"},
+        {"id": "D", "text": "2 minutes"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Legally required standby systems must restore power within 60 seconds.",
+        "detailed": "Section 701.12 requires legally required standby system power sources to supply standby power within 60 seconds of loss of normal power. This is different from emergency systems (Article 700) which require power within 10 seconds for life safety loads.",
+        "how_to_find": "Go to 701.12 for legally required standby timing."
+      },
+      "nec_reference": {"article": "701", "section": "701.12"},
+      "zafto_links": [{"screen_id": "transfer_switch", "relevance": "primary", "description": "Standby systems"}],
+      "tags": ["standby system", "60 seconds", "legally required"],
+      "verified": true
+    },
+    {
+      "id": "CD-048",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["702"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Optional standby systems (Article 702) are intended to supply:",
+      "choices": [
+        {"id": "A", "text": "Life safety loads only"},
+        {"id": "B", "text": "Loads whose failure would create hazards"},
+        {"id": "C", "text": "Non-critical loads where outage is inconvenient but not dangerous"},
+        {"id": "D", "text": "Hospital operating rooms"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Optional standby systems supply loads where interruption is inconvenient, not life-threatening.",
+        "detailed": "Section 702.2 defines optional standby systems as intended to supply power to public or private facilities where life safety does not depend on the system, and manual or automatic transfer is permitted. Examples include farms, residential, and commercial/industrial loads.",
+        "how_to_find": "Go to 702.2 for optional standby system definition."
+      },
+      "nec_reference": {"article": "702", "section": "702.2"},
+      "zafto_links": [{"screen_id": "transfer_switch", "relevance": "primary", "description": "Transfer switch types"}],
+      "tags": ["optional standby", "non-critical", "convenience"],
+      "verified": true
+    },
+    {
+      "id": "CD-049",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["700"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "The branch circuit overcurrent devices in emergency circuits must be:",
+      "choices": [
+        {"id": "A", "text": "The same type as normal circuits"},
+        {"id": "B", "text": "Accessible only to authorized persons"},
+        {"id": "C", "text": "Located outdoors"},
+        {"id": "D", "text": "Red in color"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Emergency system OCPDs must be accessible only to authorized persons.",
+        "detailed": "Section 700.10(A) requires branch circuit overcurrent devices in emergency circuits to be accessible only to authorized persons. This prevents unauthorized tampering with critical life safety circuits. The equipment must also be locked or located in spaces not accessible to unqualified persons.",
+        "how_to_find": "Go to 700.10(A) for emergency OCPD accessibility."
+      },
+      "nec_reference": {"article": "700", "section": "700.10(A)"},
+      "zafto_links": [],
+      "tags": ["emergency system", "OCPD", "authorized access"],
+      "verified": true
+    },
+    {
+      "id": "CD-050",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["725"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Class 2 and Class 3 circuits are permitted to occupy the same cable, enclosure, or raceway with:",
+      "choices": [
+        {"id": "A", "text": "Any power circuit"},
+        {"id": "B", "text": "Power circuits if separated by a barrier"},
+        {"id": "C", "text": "Other Class 2 and Class 3 circuits"},
+        {"id": "D", "text": "Conductors of any voltage"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Class 2 and 3 circuits can share enclosures with other Class 2 and 3 circuits.",
+        "detailed": "Section 725.136 permits Class 2 and Class 3 circuits to occupy the same cable, enclosure, or raceway without barrier with other Class 2 and Class 3 circuits. Mixing with power and lighting conductors requires separation or specific listed cables.",
+        "how_to_find": "Go to 725.136 for Class 2/3 circuit separation."
+      },
+      "nec_reference": {"article": "725", "section": "725.136"},
+      "zafto_links": [],
+      "tags": ["Class 2", "Class 3", "separation"],
+      "verified": true
+    },
+    {
+      "id": "CD-051",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Motor disconnecting means must be in sight from:",
+      "choices": [
+        {"id": "A", "text": "The service entrance"},
+        {"id": "B", "text": "The motor controller and motor location"},
+        {"id": "C", "text": "The main panel only"},
+        {"id": "D", "text": "Any location in the building"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Motor disconnects must be in sight from the controller and from the motor.",
+        "detailed": "Sections 430.102(A) and (B) require the motor disconnecting means to be in sight from the controller location and from the motor location. 'In sight' means visible and not more than 50 feet distant. Exceptions allow lockable disconnects in some cases.",
+        "how_to_find": "Go to 430.102 for motor disconnect location."
+      },
+      "nec_reference": {"article": "430", "section": "430.102"},
+      "zafto_links": [{"screen_id": "motor_circuit", "relevance": "primary", "description": "Motor disconnect location"}],
+      "tags": ["motor disconnect", "in sight", "controller"],
+      "verified": true
+    },
+    {
+      "id": "CD-052",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "'In sight from' as used in the NEC means visible and not more than:",
+      "choices": [
+        {"id": "A", "text": "25 feet distant"},
+        {"id": "B", "text": "35 feet distant"},
+        {"id": "C", "text": "50 feet distant"},
+        {"id": "D", "text": "100 feet distant"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "In sight from means visible and not more than 50 feet (15 m) distant.",
+        "detailed": "Article 100 defines 'In Sight From (Within Sight From, Within Sight)' as visible and not more than 15 m (50 ft) distant from the equipment. This applies to motor disconnects, sign disconnects, and other equipment requiring within-sight disconnecting means.",
+        "how_to_find": "Go to Article 100 Definitions for 'In Sight From.'"
+      },
+      "nec_reference": {"article": "100", "section": "Definitions"},
+      "zafto_links": [],
+      "tags": ["in sight", "50 feet", "definition"],
+      "verified": true
+    },
+    {
+      "id": "CD-053",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "When a motor disconnect is not in sight from the motor, it must be:",
+      "choices": [
+        {"id": "A", "text": "Red in color"},
+        {"id": "B", "text": "Capable of being locked in the open position"},
+        {"id": "C", "text": "Fused"},
+        {"id": "D", "text": "Automatic"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Out-of-sight motor disconnects must be capable of being locked in the open position.",
+        "detailed": "Section 430.102(B)(2) allows the disconnecting means to be out of sight from the motor if it is capable of being individually locked in the open position. The provision for adding a lock must remain in place whether the lock is installed or not.",
+        "how_to_find": "Go to 430.102(B)(2) for motor disconnect lockout."
+      },
+      "nec_reference": {"article": "430", "section": "430.102(B)(2)"},
+      "zafto_links": [],
+      "tags": ["motor disconnect", "lockout", "out of sight"],
+      "verified": true
+    },
+    {
+      "id": "CD-054",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A time-delay (dual-element) fuse is preferred for motor circuits because:",
+      "choices": [
+        {"id": "A", "text": "It costs less than standard fuses"},
+        {"id": "B", "text": "It allows motor starting current without nuisance tripping"},
+        {"id": "C", "text": "It provides better ground-fault protection"},
+        {"id": "D", "text": "It is smaller in size"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Time-delay fuses permit motor inrush current without blowing during starting.",
+        "detailed": "Motors draw 5-6 times full-load current during starting. Time-delay (dual-element) fuses have a thermal element that allows temporary overloads for motor starting while still providing short-circuit protection. Table 430.52 allows smaller time-delay fuse sizes (175%) versus non-time-delay (300%).",
+        "how_to_find": "See Table 430.52 for fuse sizing differences."
+      },
+      "nec_reference": {"article": "430", "section": "430.52", "table": "Table 430.52"},
+      "zafto_links": [{"screen_id": "motor_circuit", "relevance": "primary", "description": "Motor fuse sizing"}],
+      "tags": ["time-delay fuse", "motor starting", "inrush current"],
+      "verified": true
+    },
+    {
+      "id": "CD-055",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["430"],
+      "nec_tables": ["Table 430.52"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "The maximum size time-delay (dual element) fuse for motor branch-circuit protection for a Design B motor is:",
+      "choices": [
+        {"id": "A", "text": "125% of FLA"},
+        {"id": "B", "text": "150% of FLA"},
+        {"id": "C", "text": "175% of FLA"},
+        {"id": "D", "text": "225% of FLA"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Table 430.52 limits time-delay fuses to 175% of FLA for Design B motors.",
+        "detailed": "Table 430.52 specifies maximum ratings for motor branch-circuit short-circuit and ground-fault protection. For Design B, C, D, or E motors, dual element (time-delay) fuses are limited to 175% of FLA. Non-time-delay fuses can be up to 300%.",
+        "how_to_find": "Go to Table 430.52 for motor protection maximums."
+      },
+      "nec_reference": {"article": "430", "section": "430.52", "table": "Table 430.52"},
+      "zafto_links": [{"screen_id": "motor_circuit", "relevance": "primary", "description": "Motor fuse sizing"}],
+      "tags": ["time-delay fuse", "175%", "Design B motor"],
+      "verified": true
+    },
+    {
+      "id": "CD-056",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["240"],
+      "nec_tables": ["Table 240.6(A)"],
+      "type": "calculation",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A 50HP, 460V 3-phase motor has FLA of 65A. Using a time-delay fuse at maximum Table 430.52 value, the fuse size would be:",
+      "choices": [
+        {"id": "A", "text": "90 amperes"},
+        {"id": "B", "text": "100 amperes"},
+        {"id": "C", "text": "110 amperes"},
+        {"id": "D", "text": "125 amperes"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "65A × 175% = 113.75A; next standard size down is 110A.",
+        "detailed": "Per Table 430.52, time-delay fuses for Design B motors max at 175%. 65A × 1.75 = 113.75A. Section 240.6(A) lists standard fuse sizes. Since 113.75A is not standard, use the next standard size down (110A) or next size up if motor won't start.",
+        "how_to_find": "Calculate 175% and refer to 240.6(A) standard sizes."
+      },
+      "nec_reference": {"article": "430", "section": "430.52"},
+      "calculation": {
+        "formula": "Fuse Size = FLA × 175%",
+        "steps": [
+          {"step": 1, "description": "Multiply FLA by 175%", "calculation": "65 × 1.75", "result": "113.75A"},
+          {"step": 2, "description": "Select standard size", "result": "110A (standard size per 240.6(A))"}
+        ],
+        "final_answer": "110 amperes",
+        "common_mistakes": ["Using 125% instead of 175%", "Not using standard fuse sizes"]
+      },
+      "zafto_links": [{"screen_id": "motor_circuit", "relevance": "primary", "description": "Motor fuse calculation"}],
+      "tags": ["motor fuse", "calculation", "175%"],
+      "verified": true
+    },
+    {
+      "id": "CD-057",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["240"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A circuit breaker used as a switch must be marked:",
+      "choices": [
+        {"id": "A", "text": "HACR"},
+        {"id": "B", "text": "SWD or HID"},
+        {"id": "C", "text": "Type S"},
+        {"id": "D", "text": "Class H"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Circuit breakers used as switches must be marked SWD (switching duty) or HID.",
+        "detailed": "Section 240.83(D) requires a circuit breaker used as a switch in a 120V or 277V fluorescent lighting circuit to be listed and marked SWD (Switching Duty). For HID lighting, it must be marked HID. These breakers are designed for repeated switching operations.",
+        "how_to_find": "Go to 240.83(D) for switching duty breaker marking."
+      },
+      "nec_reference": {"article": "240", "section": "240.83(D)"},
+      "zafto_links": [],
+      "tags": ["circuit breaker", "SWD", "switching duty"],
+      "verified": true
+    },
+    {
+      "id": "CD-058",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["404"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A single-throw knife switch must be installed so that gravity:",
+      "choices": [
+        {"id": "A", "text": "Will close the switch"},
+        {"id": "B", "text": "Will not close the switch"},
+        {"id": "C", "text": "Has no effect"},
+        {"id": "D", "text": "Locks the switch open"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Knife switches must be mounted so gravity will not tend to close the switch.",
+        "detailed": "Section 404.6(A) requires single-throw knife switches to be installed so that gravity will not tend to close them. This prevents accidental energization. The switch blades should be dead when open, though exceptions exist for double-throw switches.",
+        "how_to_find": "Go to 404.6(A) for knife switch mounting."
+      },
+      "nec_reference": {"article": "404", "section": "404.6(A)"},
+      "zafto_links": [],
+      "tags": ["knife switch", "mounting", "gravity"],
+      "verified": true
+    },
+    {
+      "id": "CD-059",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["404"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "In dwelling units, a switch controlling lighting loads must have a grounding means for:",
+      "choices": [
+        {"id": "A", "text": "All installations"},
+        {"id": "B", "text": "Only wet locations"},
+        {"id": "C", "text": "Electronic switches that require grounding for operation"},
+        {"id": "D", "text": "Only 3-way switches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Switch boxes need grounding connection for electronic/dimmer switches.",
+        "detailed": "Section 404.22 requires snap switches, including dimmers, to be connected to an equipment grounding conductor and provide a means to connect such grounding conductor to the switch. This accommodates electronic switches that require grounding for proper operation.",
+        "how_to_find": "Go to 404.22 for switch grounding requirements."
+      },
+      "nec_reference": {"article": "404", "section": "404.22"},
+      "zafto_links": [{"screen_id": "dimmer_switch", "relevance": "primary", "description": "Dimmer grounding"}],
+      "tags": ["switch", "grounding", "dimmer"],
+      "verified": true
+    },
+    {
+      "id": "CD-060",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["240"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Series-rated systems use downstream breakers with lower interrupting ratings because:",
+      "choices": [
+        {"id": "A", "text": "The upstream device limits let-through current"},
+        {"id": "B", "text": "Lower cost components are acceptable"},
+        {"id": "C", "text": "The system voltage is reduced"},
+        {"id": "D", "text": "Ground faults are eliminated"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "In series-rated systems, upstream current-limiting devices protect downstream breakers.",
+        "detailed": "Section 240.86 permits series-rated systems where a main (upstream) current-limiting overcurrent device protects downstream devices that have lower interrupting ratings. The upstream device limits the let-through current to within the downstream device's capability.",
+        "how_to_find": "Go to 240.86 for series combination ratings."
+      },
+      "nec_reference": {"article": "240", "section": "240.86"},
+      "zafto_links": [],
+      "tags": ["series rated", "interrupting rating", "current limiting"],
+      "verified": true
+    },
+    {
+      "id": "CD-061",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["110"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "The available fault current at service equipment must be:",
+      "choices": [
+        {"id": "A", "text": "Calculated by the owner"},
+        {"id": "B", "text": "Marked on the service equipment"},
+        {"id": "C", "text": "Assumed to be 10,000 AIC"},
+        {"id": "D", "text": "Provided by the meter manufacturer"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Service equipment must be field-marked with the maximum available fault current.",
+        "detailed": "Section 110.24(A) requires service equipment in other than dwelling units to be legibly marked in the field with the maximum available fault current. This marking must be updated when modifications affect the available fault current, and the equipment's interrupting rating must meet or exceed this value.",
+        "how_to_find": "Go to 110.24(A) for fault current marking."
+      },
+      "nec_reference": {"article": "110", "section": "110.24(A)"},
+      "zafto_links": [{"screen_id": "fault_current", "relevance": "primary", "description": "Fault current labeling"}],
+      "tags": ["available fault current", "marking", "service equipment"],
+      "verified": true
+    },
+    {
+      "id": "CD-062",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["240"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "The maximum height to the center of the operating handle of a circuit breaker is:",
+      "choices": [
+        {"id": "A", "text": "5 feet 6 inches"},
+        {"id": "B", "text": "6 feet"},
+        {"id": "C", "text": "6 feet 7 inches"},
+        {"id": "D", "text": "7 feet"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Circuit breaker handles must not be more than 6 ft 7 in. above floor or working platform.",
+        "detailed": "Section 240.24(A) requires overcurrent devices to be readily accessible. Section 404.8(A) applies to switches and circuit breakers, requiring the center of the grip of the operating handle when in its highest position to be not more than 2.0 m (6 ft 7 in.) above the floor or working platform.",
+        "how_to_find": "Go to 404.8(A) for mounting height limits."
+      },
+      "nec_reference": {"article": "404", "section": "404.8(A)"},
+      "zafto_links": [],
+      "tags": ["breaker height", "mounting", "6 ft 7 in"],
+      "verified": true
+    },
+    {
+      "id": "CD-063",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["240"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Fusible plugs and other temperature-limiting devices are permitted to be used for:",
+      "choices": [
+        {"id": "A", "text": "Branch circuit protection"},
+        {"id": "B", "text": "Supplementary protection only"},
+        {"id": "C", "text": "Service protection"},
+        {"id": "D", "text": "Motor branch circuit protection"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Thermal devices like fusible plugs are only for supplementary protection.",
+        "detailed": "Section 240.9 states that thermal cutouts, thermal relays, and temperature-limiting devices shall not be used as substitutes for required overcurrent protection. They may only be used for supplementary overcurrent protection of equipment-specific circuits.",
+        "how_to_find": "Go to 240.9 for thermal device limitations."
+      },
+      "nec_reference": {"article": "240", "section": "240.9"},
+      "zafto_links": [],
+      "tags": ["thermal device", "supplementary", "overcurrent"],
+      "verified": true
+    },
+    {
+      "id": "CD-064",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["409"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Industrial control panels are covered under Article:",
+      "choices": [
+        {"id": "A", "text": "408"},
+        {"id": "B", "text": "409"},
+        {"id": "C", "text": "430"},
+        {"id": "D", "text": "440"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Article 409 covers Industrial Control Panels.",
+        "detailed": "Article 409 covers industrial control panels, which are assemblies of two or more power circuit components, control circuit components, or any combination, with associated wiring and terminals. This includes motor control centers and custom control panels.",
+        "how_to_find": "Go to Article 409 for industrial control panel requirements."
+      },
+      "nec_reference": {"article": "409", "section": "409.1"},
+      "zafto_links": [],
+      "tags": ["industrial control panel", "Article 409", "control assembly"],
+      "verified": true
+    },
+    {
+      "id": "CD-065",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["409"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "An industrial control panel must be marked with:",
+      "choices": [
+        {"id": "A", "text": "Only the manufacturer's name"},
+        {"id": "B", "text": "Short-circuit current rating (SCCR)"},
+        {"id": "C", "text": "Weight only"},
+        {"id": "D", "text": "Installation date"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Industrial control panels must be marked with short-circuit current rating (SCCR).",
+        "detailed": "Section 409.110 requires industrial control panels to be marked with supply voltage, number of phases, frequency, full-load current, short-circuit current rating, manufacturer name/trademark, electrical diagram number, and enclosure type. SCCR is critical for proper application.",
+        "how_to_find": "Go to 409.110 for control panel marking requirements."
+      },
+      "nec_reference": {"article": "409", "section": "409.110"},
+      "zafto_links": [],
+      "tags": ["control panel", "SCCR", "marking"],
+      "verified": true
+    },
+    {
+      "id": "CD-066",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["725"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Thermostat control wiring in a residence is typically classified as:",
+      "choices": [
+        {"id": "A", "text": "Class 1 circuit"},
+        {"id": "B", "text": "Class 2 circuit"},
+        {"id": "C", "text": "Power circuit"},
+        {"id": "D", "text": "Communication circuit"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Residential thermostat wiring is typically a Class 2 circuit at 24V.",
+        "detailed": "Most residential HVAC control wiring operates at 24V AC supplied by a Class 2 control transformer. This makes it a Class 2 circuit per Article 725, which has reduced wiring requirements due to the limited power levels that pose minimal shock or fire hazard.",
+        "how_to_find": "Review Article 725 for Class 2 circuit applications."
+      },
+      "nec_reference": {"article": "725", "section": "725.121"},
+      "zafto_links": [{"screen_id": "thermostat_wiring", "relevance": "primary", "description": "Thermostat wiring"}],
+      "tags": ["thermostat", "Class 2", "HVAC control"],
+      "verified": true
+    },
+    {
+      "id": "CD-067",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["725"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Class 2 cables installed through fire-rated walls must:",
+      "choices": [
+        {"id": "A", "text": "Be in rigid metal conduit"},
+        {"id": "B", "text": "Be firestopped to maintain the fire rating"},
+        {"id": "C", "text": "Be replaced with Class 1 wiring"},
+        {"id": "D", "text": "Be in flexible metal conduit"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Cable penetrations through fire-rated assemblies must be firestopped.",
+        "detailed": "Section 725.3(B) requires that penetrations of Class 2, Class 3, and PLTC cables through fire-rated walls, partitions, floors, or ceilings be firestopped using approved methods to maintain the fire-resistance rating. This prevents fire spread through cable penetrations.",
+        "how_to_find": "Go to 725.3(B) for firestopping requirements."
+      },
+      "nec_reference": {"article": "725", "section": "725.3(B)"},
+      "zafto_links": [],
+      "tags": ["Class 2 cable", "firestopping", "fire rating"],
+      "verified": true
+    },
+    {
+      "id": "CD-068",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A reversing motor starter contains:",
+      "choices": [
+        {"id": "A", "text": "One contactor"},
+        {"id": "B", "text": "Two contactors with mechanical and electrical interlocks"},
+        {"id": "C", "text": "A VFD"},
+        {"id": "D", "text": "Three contactors"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Reversing starters have two contactors interlocked to prevent simultaneous operation.",
+        "detailed": "A reversing motor starter uses two contactors - one for forward and one for reverse rotation. The contactors have mechanical interlocks (physical barriers) and electrical interlocks (auxiliary contacts) to prevent both contactors from closing simultaneously, which would cause a short circuit.",
+        "how_to_find": "Review motor starter configurations."
+      },
+      "nec_reference": {"article": "430", "section": "430.84"},
+      "zafto_links": [{"screen_id": "motor_starter", "relevance": "primary", "description": "Reversing starter"}],
+      "tags": ["reversing starter", "interlock", "two contactors"],
+      "verified": true
+    },
+    {
+      "id": "CD-069",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "The purpose of a holding contact (seal-in contact) on a motor starter is to:",
+      "choices": [
+        {"id": "A", "text": "Provide overload protection"},
+        {"id": "B", "text": "Maintain the starter coil energized after the start button is released"},
+        {"id": "C", "text": "Reverse the motor"},
+        {"id": "D", "text": "Connect the motor to ground"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Seal-in contacts keep the coil energized after momentary start button release.",
+        "detailed": "A seal-in or holding contact is an auxiliary contact that closes when the main contactor operates. This contact is in parallel with the start button, so when the start button is released, the seal-in contact maintains the control circuit. Opening the stop button breaks this circuit.",
+        "how_to_find": "Review motor starter control circuits."
+      },
+      "nec_reference": {"article": "430", "section": "430.71"},
+      "zafto_links": [{"screen_id": "motor_starter", "relevance": "primary", "description": "Starter control circuit"}],
+      "tags": ["seal-in contact", "holding contact", "motor control"],
+      "verified": true
+    },
+    {
+      "id": "CD-070",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Motor control circuit conductors tapped from motor branch circuit must be protected at:",
+      "choices": [
+        {"id": "A", "text": "The branch-circuit OCPD rating"},
+        {"id": "B", "text": "Not more than 500% of the control circuit conductor ampacity"},
+        {"id": "C", "text": "Based on Table 430.72(B)"},
+        {"id": "D", "text": "25 amperes maximum"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Control circuit conductor protection is determined by Table 430.72(B).",
+        "detailed": "Section 430.72(B) and Table 430.72(B) specify overcurrent protection for motor control circuits. The protection varies based on control conductor size and whether it extends beyond the enclosure. Conductors 18 AWG and 16 AWG have specific ampere limits.",
+        "how_to_find": "Go to 430.72(B) and Table 430.72(B) for control circuit protection."
+      },
+      "nec_reference": {"article": "430", "section": "430.72(B)"},
+      "zafto_links": [],
+      "tags": ["control circuit", "protection", "Table 430.72"],
+      "verified": true
+    },
+    {
+      "id": "CD-071",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["450"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A control transformer rated less than 50VA may have primary protection only if:",
+      "choices": [
+        {"id": "A", "text": "Never permitted"},
+        {"id": "B", "text": "The primary OCPD is rated not more than 167% of primary current"},
+        {"id": "C", "text": "The secondary is fused"},
+        {"id": "D", "text": "It is a Class 2 transformer"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Control transformers under 50VA may use primary-only protection at 167% max.",
+        "detailed": "Section 430.72(C)(1) permits transformers rated less than 50VA in control circuits of motor controllers to be protected by primary overcurrent protection not exceeding 167% of the rated primary current. This is an exception to requiring secondary protection.",
+        "how_to_find": "Go to 430.72(C)(1) for control transformer protection."
+      },
+      "nec_reference": {"article": "430", "section": "430.72(C)(1)"},
+      "zafto_links": [],
+      "tags": ["control transformer", "50VA", "primary protection"],
+      "verified": true
+    },
+    {
+      "id": "CD-072",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A soft starter reduces motor starting current by:",
+      "choices": [
+        {"id": "A", "text": "Adding resistance"},
+        {"id": "B", "text": "Gradually increasing voltage using solid-state devices"},
+        {"id": "C", "text": "Changing the motor poles"},
+        {"id": "D", "text": "Using a smaller motor"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Soft starters use SCRs to gradually ramp up voltage and limit inrush current.",
+        "detailed": "A soft starter uses solid-state devices (SCRs/thyristors) to control the voltage applied to the motor during starting. By ramping up voltage gradually, starting current is limited to typically 2-4 times FLA instead of 5-6 times. After starting, the solid-state devices bypass and full voltage is applied.",
+        "how_to_find": "Review soft starter operating principles."
+      },
+      "nec_reference": {"article": "430", "section": "430.2"},
+      "zafto_links": [{"screen_id": "motor_starter", "relevance": "secondary", "description": "Soft starter operation"}],
+      "tags": ["soft starter", "reduced voltage", "solid-state"],
+      "verified": true
+    },
+    {
+      "id": "CD-073",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Adjustable-speed drive systems must have output circuits protected by:",
+      "choices": [
+        {"id": "A", "text": "No protection required"},
+        {"id": "B", "text": "The drive's internal protection or external OCPDs"},
+        {"id": "C", "text": "Only GFCIs"},
+        {"id": "D", "text": "Fuses only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "ASD output circuits can be protected by internal protection or by separate OCPDs.",
+        "detailed": "Section 430.130 covers adjustable-speed drive systems. The output circuit of an ASD must have overcurrent protection, which can be provided by the drive manufacturer's integral protection, a disconnect with integral overcurrent protection, or a separate circuit breaker or fuses.",
+        "how_to_find": "Go to 430.130 for ASD protection requirements."
+      },
+      "nec_reference": {"article": "430", "section": "430.130"},
+      "zafto_links": [{"screen_id": "vfd_wiring", "relevance": "primary", "description": "VFD protection"}],
+      "tags": ["ASD", "VFD", "output protection"],
+      "verified": true
+    },
+    {
+      "id": "CD-074",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["240"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A ground-fault relay works by detecting:",
+      "choices": [
+        {"id": "A", "text": "Overvoltage conditions"},
+        {"id": "B", "text": "Current imbalance indicating current flow to ground"},
+        {"id": "C", "text": "Temperature rise"},
+        {"id": "D", "text": "Frequency variations"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Ground-fault relays detect current imbalance between phase conductors and neutral.",
+        "detailed": "A ground-fault relay monitors current flow by measuring the sum of currents in all circuit conductors. If current is flowing to ground (fault), the sum is not zero, triggering the relay. Zero-sequence CTs or residual connection schemes detect this imbalance to trip protective devices.",
+        "how_to_find": "Review ground-fault protection principles."
+      },
+      "nec_reference": {"article": "230", "section": "230.95"},
+      "zafto_links": [],
+      "tags": ["ground-fault relay", "current imbalance", "protection"],
+      "verified": true
+    },
+    {
+      "id": "CD-075",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "An across-the-line (full voltage) motor starter is also called:",
+      "choices": [
+        {"id": "A", "text": "Reduced voltage starter"},
+        {"id": "B", "text": "Direct-on-line (DOL) starter"},
+        {"id": "C", "text": "Wye-delta starter"},
+        {"id": "D", "text": "Autotransformer starter"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Full voltage starting is also called across-the-line or direct-on-line (DOL).",
+        "detailed": "An across-the-line or direct-on-line (DOL) starter applies full voltage to the motor terminals at start. This is the simplest and most common starting method but results in high inrush current (5-6× FLA). Reduced voltage methods (wye-delta, autotransformer, soft start) limit inrush.",
+        "how_to_find": "Review motor starting methods."
+      },
+      "nec_reference": {"article": "430", "section": "430.81"},
+      "zafto_links": [{"screen_id": "motor_starter", "relevance": "primary", "description": "DOL starter"}],
+      "tags": ["DOL", "across-the-line", "full voltage"],
+      "verified": true
+    },
+    {
+      "id": "CD-076",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "A wye-delta motor starter reduces starting current by:",
+      "choices": [
+        {"id": "A", "text": "Adding resistance to the circuit"},
+        {"id": "B", "text": "Starting in wye (star) then switching to delta for running"},
+        {"id": "C", "text": "Reducing the frequency"},
+        {"id": "D", "text": "Starting in delta then switching to wye"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Wye-delta starts the motor in wye for reduced voltage, then switches to delta for full voltage.",
+        "detailed": "A wye-delta starter connects motor windings in wye (star) configuration during starting, which applies 58% of line voltage to each winding. After the motor accelerates, the windings are switched to delta for normal running. This reduces starting current to about 1/3 of DOL starting current.",
+        "how_to_find": "Review reduced voltage starting methods."
+      },
+      "nec_reference": {"article": "430", "section": "430.81"},
+      "zafto_links": [{"screen_id": "motor_starter", "relevance": "secondary", "description": "Wye-delta starting"}],
+      "tags": ["wye-delta", "reduced voltage", "starting current"],
+      "verified": true
+    },
+    {
+      "id": "CD-077",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["110"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "When choosing overcurrent devices, the available fault current at the equipment must be:",
+      "choices": [
+        {"id": "A", "text": "Higher than the device rating"},
+        {"id": "B", "text": "Lower than or equal to the device interrupting rating"},
+        {"id": "C", "text": "Ignored for residential"},
+        {"id": "D", "text": "Doubled for safety factor"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Available fault current must not exceed the equipment's interrupting rating.",
+        "detailed": "Section 110.9 requires equipment intended to interrupt current at fault levels to have an interrupting rating not less than the nominal circuit voltage and current that is available at the line terminals of the equipment. The available fault current must be calculated or determined.",
+        "how_to_find": "Go to 110.9 for interrupting rating requirements."
+      },
+      "nec_reference": {"article": "110", "section": "110.9"},
+      "zafto_links": [{"screen_id": "fault_current", "relevance": "primary", "description": "Fault current ratings"}],
+      "tags": ["interrupting rating", "available fault current", "equipment selection"],
+      "verified": true
+    },
+    {
+      "id": "CD-078",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A motor controller that also provides overload protection is called a:",
+      "choices": [
+        {"id": "A", "text": "Contactor"},
+        {"id": "B", "text": "Manual motor starter"},
+        {"id": "C", "text": "VFD"},
+        {"id": "D", "text": "Transfer switch"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "A manual motor starter combines control with built-in overload protection.",
+        "detailed": "A manual motor starter is a controller that combines a manual switch (for starting and stopping) with overload relays in a single unit. It does not include a contactor or coil - the operator physically turns the switch. It provides both control and overload protection per 430.2.",
+        "how_to_find": "Review motor controller types in 430.2 Definitions."
+      },
+      "nec_reference": {"article": "430", "section": "430.2"},
+      "zafto_links": [{"screen_id": "motor_starter", "relevance": "primary", "description": "Manual motor starter"}],
+      "tags": ["manual starter", "overload protection", "motor control"],
+      "verified": true
+    },
+    {
+      "id": "CD-079",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["700"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Battery systems used for emergency power must be capable of maintaining power for at least:",
+      "choices": [
+        {"id": "A", "text": "30 minutes"},
+        {"id": "B", "text": "90 minutes"},
+        {"id": "C", "text": "2 hours"},
+        {"id": "D", "text": "4 hours"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Emergency system batteries must maintain load for at least 1.5 hours (90 minutes).",
+        "detailed": "Section 700.12(A) requires unit equipment and batteries for emergency systems to supply and maintain at not less than 87.5% of voltage for the total lamp load associated with the unit for a minimum of 1.5 hours (90 minutes). This ensures adequate egress lighting during emergencies.",
+        "how_to_find": "Go to 700.12(A) for battery duration requirements."
+      },
+      "nec_reference": {"article": "700", "section": "700.12(A)"},
+      "zafto_links": [],
+      "tags": ["emergency battery", "90 minutes", "backup power"],
+      "verified": true
+    },
+    {
+      "id": "CD-080",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["240"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "The primary difference between a relay and a contactor is:",
+      "choices": [
+        {"id": "A", "text": "Relays use magnets; contactors do not"},
+        {"id": "B", "text": "Contactors handle higher power loads; relays handle control/signal circuits"},
+        {"id": "C", "text": "Relays are larger than contactors"},
+        {"id": "D", "text": "Contactors are AC only; relays are DC only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Contactors are designed for power circuits; relays are for control and signal circuits.",
+        "detailed": "While both relays and contactors are electromagnetically operated switches, contactors are designed for switching power circuits (motors, lighting, heating) and can handle high currents. Relays are typically used for control circuits, logic functions, and lower-current signal switching.",
+        "how_to_find": "Review control device operating principles."
+      },
+      "nec_reference": {"article": "430", "section": "430.81"},
+      "zafto_links": [{"screen_id": "motor_starter", "relevance": "secondary", "description": "Contactors and relays"}],
+      "tags": ["relay", "contactor", "power vs control"],
+      "verified": true
+    },
+    {
+      "id": "CD-081",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A motor controller must have a horsepower rating:",
+      "choices": [
+        {"id": "A", "text": "Equal to exactly the motor horsepower"},
+        {"id": "B", "text": "Not lower than the horsepower rating of the motor"},
+        {"id": "C", "text": "At least 125% of the motor horsepower"},
+        {"id": "D", "text": "At least 200% of the motor horsepower"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Controller HP rating must be not lower than the motor HP rating.",
+        "detailed": "Section 430.83(A)(1) requires a controller to have a horsepower rating not lower than the horsepower rating of the motor. This ensures the controller contacts can handle the motor's locked-rotor current and continuous running current.",
+        "how_to_find": "Go to 430.83(A)(1) for controller rating requirements."
+      },
+      "nec_reference": {"article": "430", "section": "430.83(A)(1)"},
+      "zafto_links": [{"screen_id": "motor_circuit", "relevance": "primary", "description": "Controller sizing"}],
+      "tags": ["motor controller", "horsepower rating", "sizing"],
+      "verified": true
+    },
+    {
+      "id": "CD-082",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "For stationary motors rated 2 HP or less and 300V or less, the controller may be:",
+      "choices": [
+        {"id": "A", "text": "A general-use switch with ampere rating at least twice the motor FLA"},
+        {"id": "B", "text": "Any switch regardless of rating"},
+        {"id": "C", "text": "A dimmer switch"},
+        {"id": "D", "text": "A GFCI receptacle"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Small motors (2 HP or less) may use a general-use switch rated at 2× motor FLA.",
+        "detailed": "Section 430.83(C)(2) permits a general-use AC snap switch to serve as controller for stationary motors rated 2 HP or less and 300V or less, provided the switch has an ampere rating at least twice the full-load current rating of the motor.",
+        "how_to_find": "Go to 430.83(C)(2) for small motor controller options."
+      },
+      "nec_reference": {"article": "430", "section": "430.83(C)(2)"},
+      "zafto_links": [],
+      "tags": ["small motor", "2 HP", "general-use switch"],
+      "verified": true
+    },
+    {
+      "id": "CD-083",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["240"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Selective coordination of overcurrent devices means:",
+      "choices": [
+        {"id": "A", "text": "All devices trip simultaneously"},
+        {"id": "B", "text": "Only the device nearest the fault operates, leaving upstream devices closed"},
+        {"id": "C", "text": "Devices are color-coded"},
+        {"id": "D", "text": "Devices must be from the same manufacturer"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Selective coordination ensures only the nearest OCPD to the fault opens.",
+        "detailed": "Selective coordination means that when a fault occurs, only the overcurrent device immediately on the line side of the fault opens to clear the fault. Upstream devices remain closed, limiting the outage to the smallest portion of the system. This is required for emergency systems per 700.32.",
+        "how_to_find": "Go to Article 100 definition and 700.32 for selective coordination."
+      },
+      "nec_reference": {"article": "700", "section": "700.32"},
+      "zafto_links": [],
+      "tags": ["selective coordination", "fault isolation", "emergency systems"],
+      "verified": true
+    },
+    {
+      "id": "CD-084",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["700"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Selective coordination of overcurrent devices is required for:",
+      "choices": [
+        {"id": "A", "text": "All residential circuits"},
+        {"id": "B", "text": "Emergency system overcurrent devices"},
+        {"id": "C", "text": "Only circuits over 100 amperes"},
+        {"id": "D", "text": "Outdoor circuits only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Emergency system OCPDs must be selectively coordinated per 700.32.",
+        "detailed": "Section 700.32 requires emergency system overcurrent devices to be selectively coordinated with all supply-side overcurrent protective devices. This ensures that a fault on one emergency circuit does not cause loss of power to other emergency loads.",
+        "how_to_find": "Go to 700.32 for emergency system coordination."
+      },
+      "nec_reference": {"article": "700", "section": "700.32"},
+      "zafto_links": [{"screen_id": "transfer_switch", "relevance": "secondary", "description": "Emergency coordination"}],
+      "tags": ["selective coordination", "emergency system", "700.32"],
+      "verified": true
+    },
+    {
+      "id": "CD-085",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "An overload relay in a motor starter typically uses what sensing method?",
+      "choices": [
+        {"id": "A", "text": "Voltage sensing"},
+        {"id": "B", "text": "Thermal (heater) or electronic current sensing"},
+        {"id": "C", "text": "Frequency monitoring"},
+        {"id": "D", "text": "Power factor measurement"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Overload relays use thermal heaters or electronic sensors to detect overcurrent.",
+        "detailed": "Motor overload relays sense current to detect overload conditions. Thermal overload relays use heaters that cause a bimetallic strip to deflect and trip contacts. Electronic overload relays use current transformers and solid-state circuitry to measure current and trip based on programmable settings.",
+        "how_to_find": "Review overload relay operating principles."
+      },
+      "nec_reference": {"article": "430", "section": "430.32"},
+      "zafto_links": [{"screen_id": "motor_starter", "relevance": "primary", "description": "Overload relay types"}],
+      "tags": ["overload relay", "thermal", "current sensing"],
+      "verified": true
+    },
+    {
+      "id": "CD-086",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "If the selected overload protection does not permit the motor to start, the overload may be increased to a maximum of:",
+      "choices": [
+        {"id": "A", "text": "125% for motors with SF 1.15+"},
+        {"id": "B", "text": "130% for motors with SF 1.15+, 140% for others"},
+        {"id": "C", "text": "150% for all motors"},
+        {"id": "D", "text": "No increase is permitted"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Overloads may be increased to 130% (SF 1.15+) or 140% (others) if motor won't start.",
+        "detailed": "Section 430.32(C) permits modifying overload protection if the values specified don't allow the motor to start or carry the load. For motors with marked SF of 1.15+ or temp rise 40°C or less, overload may be increased to 130% of FLA. For all other motors, 140% is permitted.",
+        "how_to_find": "Go to 430.32(C) for overload modification."
+      },
+      "nec_reference": {"article": "430", "section": "430.32(C)"},
+      "zafto_links": [{"screen_id": "motor_circuit", "relevance": "primary", "description": "Overload adjustment"}],
+      "tags": ["overload", "130%", "140%", "motor starting"],
+      "verified": true
+    },
+    {
+      "id": "CD-087",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["240"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Circuit breakers used in circuits over 1000V shall:",
+      "choices": [
+        {"id": "A", "text": "Be the same as low-voltage breakers"},
+        {"id": "B", "text": "Be capable of being manually trip-free and have visible contacts or position indicator"},
+        {"id": "C", "text": "Be plug-in type only"},
+        {"id": "D", "text": "Have no specific requirements"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "High-voltage breakers must be trip-free and indicate open/closed position.",
+        "detailed": "Section 240.101(A) requires circuit breakers used for circuits over 1000V to be capable of being closed and opened manually, be trip-free, capable of being electrically tripped (if designed for it), and indicate whether in open or closed position. Many also require visible contacts or position indicators.",
+        "how_to_find": "Go to 240.101(A) for high-voltage breaker requirements."
+      },
+      "nec_reference": {"article": "240", "section": "240.101(A)"},
+      "zafto_links": [],
+      "tags": ["high voltage", "circuit breaker", "over 1000V"],
+      "verified": true
+    },
+    {
+      "id": "CD-088",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A part-winding motor starter reduces starting current by:",
+      "choices": [
+        {"id": "A", "text": "Adding resistors in series"},
+        {"id": "B", "text": "Energizing part of the motor windings first, then all windings"},
+        {"id": "C", "text": "Reducing the supply voltage"},
+        {"id": "D", "text": "Using capacitors"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Part-winding starters energize only part of the windings initially, then all windings.",
+        "detailed": "A part-winding starter energizes only half of the motor's parallel windings during starting. After a short time delay (typically 1-2 seconds), the second half of the windings is energized. This reduces starting current to approximately 65% of DOL current while providing about 50% of normal starting torque.",
+        "how_to_find": "Review reduced voltage starting methods."
+      },
+      "nec_reference": {"article": "430", "section": "430.81"},
+      "zafto_links": [{"screen_id": "motor_starter", "relevance": "secondary", "description": "Part-winding starting"}],
+      "tags": ["part-winding", "reduced current", "motor starting"],
+      "verified": true
+    },
+    {
+      "id": "CD-089",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "An autotransformer motor starter reduces starting current by:",
+      "choices": [
+        {"id": "A", "text": "Providing reduced voltage taps (typically 50%, 65%, 80%)"},
+        {"id": "B", "text": "Adding capacitors"},
+        {"id": "C", "text": "Changing motor connections"},
+        {"id": "D", "text": "Increasing frequency"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Autotransformer starters provide reduced voltage taps to limit starting current.",
+        "detailed": "An autotransformer starter uses tapped autotransformers to provide reduced voltage (typically 50%, 65%, or 80% of line voltage) during motor starting. This reduces starting current proportionally. After the motor accelerates, contactors switch to full voltage. Starting current is reduced by the square of the voltage ratio.",
+        "how_to_find": "Review autotransformer starting methods."
+      },
+      "nec_reference": {"article": "430", "section": "430.81"},
+      "zafto_links": [{"screen_id": "motor_starter", "relevance": "secondary", "description": "Autotransformer starting"}],
+      "tags": ["autotransformer", "reduced voltage", "starting taps"],
+      "verified": true
+    },
+    {
+      "id": "CD-090",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Motor branch-circuit short-circuit protection using an instantaneous trip circuit breaker is limited to:",
+      "choices": [
+        {"id": "A", "text": "250% of motor FLA"},
+        {"id": "B", "text": "800% of motor FLA for Design B motors"},
+        {"id": "C", "text": "1300% of motor FLA"},
+        {"id": "D", "text": "100% of motor FLA"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Instantaneous trip breakers for Design B motors may be up to 1300% of FLA.",
+        "detailed": "Table 430.52 permits instantaneous trip circuit breakers (magnetic-only) up to 1300% of motor FLA for Design B motors. These breakers must be used as part of a listed combination motor controller and are adjusted to trip at motor starting current. Section 430.52(C)(3) requires use in combination with overload protection.",
+        "how_to_find": "Go to Table 430.52 for instantaneous trip limits."
+      },
+      "nec_reference": {"article": "430", "section": "430.52", "table": "Table 430.52"},
+      "zafto_links": [{"screen_id": "motor_circuit", "relevance": "primary", "description": "Instantaneous trip sizing"}],
+      "tags": ["instantaneous trip", "1300%", "motor protection"],
+      "verified": true
+    },
+    {
+      "id": "CD-091",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["240"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A fuse rated Class R has what feature?",
+      "choices": [
+        {"id": "A", "text": "Red indicator window"},
+        {"id": "B", "text": "Rejection feature preventing installation of non-current-limiting fuses"},
+        {"id": "C", "text": "Renewable fuse links"},
+        {"id": "D", "text": "Remote indicating capability"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Class R fuses have a rejection feature preventing use of non-current-limiting fuses.",
+        "detailed": "Class R fuses are current-limiting fuses with a rejection feature (notch or groove) that prevents installation of non-current-limiting Class H or K fuses in Class R fuseholders. This ensures the intended level of current-limiting protection is maintained. Class RK1 and RK5 are common Class R categories.",
+        "how_to_find": "Review fuse classification standards."
+      },
+      "nec_reference": {"article": "240", "section": "240.60(B)"},
+      "zafto_links": [],
+      "tags": ["Class R fuse", "rejection feature", "current-limiting"],
+      "verified": true
+    },
+    {
+      "id": "CD-092",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["240"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "The term 'trip-free' for a circuit breaker means:",
+      "choices": [
+        {"id": "A", "text": "The breaker doesn't require payment"},
+        {"id": "B", "text": "The breaker will trip even if the handle is held in the ON position"},
+        {"id": "C", "text": "The breaker can be manually reset while energized"},
+        {"id": "D", "text": "The breaker has no trip mechanism"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Trip-free means the breaker trips on fault even if the handle is held closed.",
+        "detailed": "A trip-free circuit breaker will automatically trip and open during an overcurrent condition regardless of whether someone is holding the handle in the ON position. This safety feature prevents operators from defeating the protective function. All modern breakers are required to be trip-free.",
+        "how_to_find": "Review circuit breaker operating principles."
+      },
+      "nec_reference": {"article": "240", "section": "240.80"},
+      "zafto_links": [],
+      "tags": ["trip-free", "circuit breaker", "safety feature"],
+      "verified": true
+    },
+    {
+      "id": "CD-093",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A motor disconnecting means must open all:",
+      "choices": [
+        {"id": "A", "text": "Grounded and ungrounded conductors"},
+        {"id": "B", "text": "Ungrounded conductors simultaneously"},
+        {"id": "C", "text": "Only one phase conductor"},
+        {"id": "D", "text": "Only the neutral conductor"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Motor disconnects must simultaneously open all ungrounded supply conductors.",
+        "detailed": "Section 430.103 requires the motor disconnecting means to open all ungrounded supply conductors simultaneously. The switch or circuit breaker may also disconnect the grounded conductor if it opens simultaneously with the ungrounded conductors. Single-pole switches are not acceptable for motor disconnects.",
+        "how_to_find": "Go to 430.103 for motor disconnect requirements."
+      },
+      "nec_reference": {"article": "430", "section": "430.103"},
+      "zafto_links": [{"screen_id": "motor_circuit", "relevance": "primary", "description": "Motor disconnect"}],
+      "tags": ["motor disconnect", "ungrounded conductors", "simultaneous"],
+      "verified": true
+    },
+    {
+      "id": "CD-094",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "The motor disconnect switch ampere rating for a Design B motor must be at least:",
+      "choices": [
+        {"id": "A", "text": "100% of motor FLA"},
+        {"id": "B", "text": "115% of motor FLA"},
+        {"id": "C", "text": "125% of motor FLA"},
+        {"id": "D", "text": "150% of motor FLA"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Motor disconnect ampere rating must be at least 115% of the motor FLA.",
+        "detailed": "Section 430.110(A) requires the motor disconnecting means ampere rating to be at least 115% of the full-load current rating of the motor. This provides adequate margin for normal operation. The disconnect must also have a horsepower rating at least equal to the motor.",
+        "how_to_find": "Go to 430.110(A) for disconnect ampere rating."
+      },
+      "nec_reference": {"article": "430", "section": "430.110(A)"},
+      "zafto_links": [{"screen_id": "motor_circuit", "relevance": "primary", "description": "Disconnect sizing"}],
+      "tags": ["motor disconnect", "115%", "ampere rating"],
+      "verified": true
+    },
+    {
+      "id": "CD-095",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "calculation",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A 25 HP, 460V, 3-phase motor has a Table 430.250 FLA of 34A. What is the minimum disconnect switch ampere rating?",
+      "choices": [
+        {"id": "A", "text": "34 amperes"},
+        {"id": "B", "text": "39.1 amperes"},
+        {"id": "C", "text": "40 amperes"},
+        {"id": "D", "text": "50 amperes"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Disconnect must be at least 115% of FLA: 34A × 1.15 = 39.1A minimum.",
+        "detailed": "Section 430.110(A) requires the motor disconnecting means to have an ampere rating of at least 115% of the motor full-load current. For a 34A motor: 34 × 1.15 = 39.1 amperes minimum. In practice, the next standard size switch (40A or larger) would be selected.",
+        "how_to_find": "Calculate 115% of Table 430.250 FLA per 430.110(A)."
+      },
+      "nec_reference": {"article": "430", "section": "430.110(A)"},
+      "calculation": {
+        "formula": "Disconnect Rating = FLA × 115%",
+        "steps": [
+          {"step": 1, "description": "Find motor FLA from Table 430.250", "result": "34 amperes"},
+          {"step": 2, "description": "Multiply by 115%", "calculation": "34 × 1.15", "result": "39.1 amperes"}
+        ],
+        "final_answer": "39.1 amperes minimum",
+        "common_mistakes": ["Using nameplate current instead of Table 430.250", "Forgetting the 115% factor"]
+      },
+      "zafto_links": [{"screen_id": "motor_circuit", "relevance": "primary", "description": "Disconnect calculation"}],
+      "tags": ["motor disconnect", "calculation", "115%"],
+      "verified": true
+    },
+    {
+      "id": "CD-096",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["240"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A self-protected combination motor controller includes:",
+      "choices": [
+        {"id": "A", "text": "Only a contactor"},
+        {"id": "B", "text": "Motor control, overloads, and short-circuit protection in one unit"},
+        {"id": "C", "text": "Only overload protection"},
+        {"id": "D", "text": "A manual switch only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Self-protected controllers combine motor control, overloads, and short-circuit protection.",
+        "detailed": "A self-protected combination motor controller is a single device that provides motor starting/stopping (contactor), overload protection, and short-circuit/ground-fault protection. It eliminates the need for separate fuses or breakers. Common examples include motor circuit protectors (MCPs) with integral overloads.",
+        "how_to_find": "Review combination motor controller definitions."
+      },
+      "nec_reference": {"article": "430", "section": "430.52(C)(7)"},
+      "zafto_links": [{"screen_id": "motor_starter", "relevance": "primary", "description": "Self-protected controllers"}],
+      "tags": ["self-protected", "combination controller", "MCP"],
+      "verified": true
+    },
+    {
+      "id": "CD-097",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "When multiple motors are on one branch circuit, each motor must have:",
+      "choices": [
+        {"id": "A", "text": "Its own branch-circuit overcurrent device"},
+        {"id": "B", "text": "Individual overload protection"},
+        {"id": "C", "text": "A separate disconnect only"},
+        {"id": "D", "text": "No individual protection required"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Each motor on a multi-motor circuit must have individual overload protection.",
+        "detailed": "Section 430.53 permits multiple motors on a single branch circuit under specific conditions. Each motor must have individual overload protection per 430.32. The branch-circuit short-circuit protection is shared, but each motor's windings must be protected against overheating by its own overload device.",
+        "how_to_find": "Go to 430.53 for multiple motor circuits."
+      },
+      "nec_reference": {"article": "430", "section": "430.53"},
+      "zafto_links": [{"screen_id": "motor_circuit", "relevance": "secondary", "description": "Multiple motor circuits"}],
+      "tags": ["multiple motors", "individual overload", "branch circuit"],
+      "verified": true
+    },
+    {
+      "id": "CD-098",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A phase-loss relay protects a motor from damage by detecting:",
+      "choices": [
+        {"id": "A", "text": "Overvoltage"},
+        {"id": "B", "text": "Loss of one or more phase conductors"},
+        {"id": "C", "text": "High ambient temperature"},
+        {"id": "D", "text": "Bearing wear"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Phase-loss relays detect when one or more phases are lost and stop the motor.",
+        "detailed": "A phase-loss (phase-failure) relay monitors all three phases of a motor supply. If one phase is lost (single-phasing), the motor attempts to run on two phases, drawing excessive current and overheating rapidly. The phase-loss relay detects this condition and trips to protect the motor before damage occurs.",
+        "how_to_find": "Review motor protective device types."
+      },
+      "nec_reference": {"article": "430", "section": "430.32(C)"},
+      "zafto_links": [{"screen_id": "motor_circuit", "relevance": "secondary", "description": "Phase protection"}],
+      "tags": ["phase-loss relay", "single-phasing", "motor protection"],
+      "verified": true
+    },
+    {
+      "id": "CD-099",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A jogging (inching) circuit allows the motor to:",
+      "choices": [
+        {"id": "A", "text": "Run at half speed continuously"},
+        {"id": "B", "text": "Start momentarily for positioning without latching in"},
+        {"id": "C", "text": "Run in reverse only"},
+        {"id": "D", "text": "Operate at variable frequency"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Jogging allows momentary motor operation for positioning without seal-in.",
+        "detailed": "A jogging (inching) circuit allows the motor to be started momentarily for positioning or adjustment without the holding (seal-in) contact engaging. When the jog button is released, the motor stops immediately. This is used for precise positioning of machinery, conveyors, or other equipment.",
+        "how_to_find": "Review motor control circuit functions."
+      },
+      "nec_reference": {"article": "430", "section": "430.71"},
+      "zafto_links": [{"screen_id": "motor_starter", "relevance": "secondary", "description": "Jog circuits"}],
+      "tags": ["jogging", "inching", "motor positioning"],
+      "verified": true
+    },
+    {
+      "id": "CD-100",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CD",
+      "topic_name": "Control Devices",
+      "nec_articles": ["430"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Dynamic braking of a motor is achieved by:",
+      "choices": [
+        {"id": "A", "text": "Applying mechanical brake pads"},
+        {"id": "B", "text": "Disconnecting power and applying DC to the stator windings"},
+        {"id": "C", "text": "Increasing the supply frequency"},
+        {"id": "D", "text": "Adding capacitors to the circuit"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Dynamic braking applies DC to AC motor windings after AC is removed, creating braking torque.",
+        "detailed": "Dynamic braking stops an AC motor by disconnecting the AC supply and immediately applying DC voltage to the stator windings. The DC creates a stationary magnetic field that the rotating rotor must cut through, generating braking torque that quickly decelerates the motor. This is faster than coast-to-stop.",
+        "how_to_find": "Review motor braking methods."
+      },
+      "nec_reference": {"article": "430", "section": "430.2"},
+      "zafto_links": [{"screen_id": "motor_starter", "relevance": "secondary", "description": "Motor braking"}],
+      "tags": ["dynamic braking", "DC injection", "motor stopping"],
+      "verified": true
+    }
+  ]
+}

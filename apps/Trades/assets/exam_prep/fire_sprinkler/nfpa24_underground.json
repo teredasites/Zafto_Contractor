@@ -1,0 +1,432 @@
+{
+  "category": "Fire Sprinkler",
+  "subcategory": "NFPA 24 Underground Mains",
+  "description": "Private fire service main installation and testing",
+  "difficulty_distribution": {
+    "beginner": 10,
+    "intermediate": 12,
+    "advanced": 8
+  },
+  "questions": [
+    {
+      "id": "fs_ug_001",
+      "difficulty": "beginner",
+      "question": "What does NFPA 24 cover?",
+      "options": [
+        "Sprinkler installation",
+        "Private fire service mains and their appurtenances",
+        "Public water systems",
+        "Fire pump installation"
+      ],
+      "correct_answer": 1,
+      "explanation": "NFPA 24 covers the installation of private fire service mains and their appurtenances from the point of connection to the water supply to the base of the sprinkler riser.",
+      "code_reference": "NFPA 24, Section 1.1"
+    },
+    {
+      "id": "fs_ug_002",
+      "difficulty": "beginner",
+      "question": "What pipe material is most commonly used for underground fire mains?",
+      "options": [
+        "Copper",
+        "Ductile iron or cement-lined",
+        "Schedule 40 steel",
+        "Galvanized iron"
+      ],
+      "correct_answer": 1,
+      "explanation": "Ductile iron pipe with cement lining is the most common material for underground fire mains due to its strength, corrosion resistance, and longevity.",
+      "code_reference": "NFPA 24, Section 10.1"
+    },
+    {
+      "id": "fs_ug_003",
+      "difficulty": "beginner",
+      "question": "What is the minimum depth of cover for underground fire mains?",
+      "options": [
+        "12 inches",
+        "Below frost line and not less than code requirements",
+        "6 feet",
+        "No minimum"
+      ],
+      "correct_answer": 1,
+      "explanation": "Underground mains must be installed below the frost line to prevent freezing, and deep enough to protect against damage. Local codes specify minimums.",
+      "code_reference": "NFPA 24, Section 10.3"
+    },
+    {
+      "id": "fs_ug_004",
+      "difficulty": "beginner",
+      "question": "What is a post indicator valve (PIV)?",
+      "options": [
+        "A valve inside the building",
+        "An above-ground control valve with visual position indicator",
+        "A pressure gauge",
+        "A backflow preventer"
+      ],
+      "correct_answer": 1,
+      "explanation": "A post indicator valve is a gate valve with an above-ground post showing 'OPEN' or 'SHUT' to indicate valve position for fire protection water control.",
+      "code_reference": "NFPA 24, Section 6.3"
+    },
+    {
+      "id": "fs_ug_005",
+      "difficulty": "beginner",
+      "question": "What is an OS&Y valve?",
+      "options": [
+        "Outside Screw and Yoke indicating valve",
+        "Open/Shut Yoke valve",
+        "Over-Speed Yield valve",
+        "On-Site Yard valve"
+      ],
+      "correct_answer": 0,
+      "explanation": "OS&Y (Outside Screw and Yoke) valves have an externally visible stem that shows valve position - stem out means open, stem in means closed.",
+      "code_reference": "NFPA 24, Section 6.3"
+    },
+    {
+      "id": "fs_ug_006",
+      "difficulty": "beginner",
+      "question": "What is the purpose of a fire hydrant on private property?",
+      "options": [
+        "Public use only",
+        "Fire department access to private water supply",
+        "Landscape irrigation",
+        "Pressure testing only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Private fire hydrants provide fire department access to the property's water supply for firefighting operations, supplementing building fire protection systems.",
+      "code_reference": "NFPA 24, Section 7.1"
+    },
+    {
+      "id": "fs_ug_007",
+      "difficulty": "beginner",
+      "question": "What is the minimum diameter for underground fire mains serving hydrants?",
+      "options": [
+        "4 inches",
+        "6 inches",
+        "8 inches",
+        "Per hydraulic calculation"
+      ],
+      "correct_answer": 1,
+      "explanation": "Mains serving fire hydrants should generally be at least 6 inches in diameter, though larger sizes may be required based on demand calculations.",
+      "code_reference": "NFPA 24, Section 10.2"
+    },
+    {
+      "id": "fs_ug_008",
+      "difficulty": "beginner",
+      "question": "What type of joint is common for ductile iron underground pipe?",
+      "options": [
+        "Welded",
+        "Threaded",
+        "Mechanical joint or push-on (bell and spigot)",
+        "Flanged only"
+      ],
+      "correct_answer": 2,
+      "explanation": "Mechanical joints and push-on joints are common for ductile iron pipe. They allow for easy assembly and some flexibility for ground movement.",
+      "code_reference": "NFPA 24, Section 10.4"
+    },
+    {
+      "id": "fs_ug_009",
+      "difficulty": "beginner",
+      "question": "What testing is required for new underground fire mains?",
+      "options": [
+        "Visual inspection only",
+        "Hydrostatic pressure test and flushing",
+        "Flow test only",
+        "No testing required"
+      ],
+      "correct_answer": 1,
+      "explanation": "New underground mains require hydrostatic pressure testing at 200 psi for 2 hours (or higher pressure test) and thorough flushing before connection.",
+      "code_reference": "NFPA 24, Section 10.10"
+    },
+    {
+      "id": "fs_ug_010",
+      "difficulty": "beginner",
+      "question": "What is the purpose of thrust blocks?",
+      "options": [
+        "To support vertical pipes",
+        "To restrain pipe at fittings against pressure thrust",
+        "To filter water",
+        "To regulate pressure"
+      ],
+      "correct_answer": 1,
+      "explanation": "Thrust blocks are concrete supports placed at fittings (tees, bends, dead ends) to resist the thrust forces created by water pressure.",
+      "code_reference": "NFPA 24, Section 10.5"
+    },
+    {
+      "id": "fs_ug_011",
+      "difficulty": "intermediate",
+      "question": "What is a wall indicator valve (WIV)?",
+      "options": [
+        "A valve installed through a wall with position indicator visible outside",
+        "A wall-mounted pressure gauge",
+        "A fire department connection",
+        "An interior valve"
+      ],
+      "correct_answer": 0,
+      "explanation": "Wall indicator valves have a position indicator visible on the building exterior while the valve itself passes through the wall, controlling water to the system.",
+      "code_reference": "NFPA 24, Section 6.3"
+    },
+    {
+      "id": "fs_ug_012",
+      "difficulty": "intermediate",
+      "question": "What is the required flushing velocity for underground fire mains?",
+      "options": [
+        "2 fps",
+        "5 fps",
+        "10 fps minimum",
+        "No specific velocity"
+      ],
+      "correct_answer": 2,
+      "explanation": "Underground mains must be flushed at a minimum velocity of 10 fps to remove debris. Flow rate depends on pipe size to achieve this velocity.",
+      "code_reference": "NFPA 24, Section 10.10"
+    },
+    {
+      "id": "fs_ug_013",
+      "difficulty": "intermediate",
+      "question": "What is the significance of C-factor in underground pipe?",
+      "options": [
+        "Compression factor",
+        "Hazen-Williams roughness coefficient affecting friction loss",
+        "Cost factor",
+        "Circumference factor"
+      ],
+      "correct_answer": 1,
+      "explanation": "The C-factor in the Hazen-Williams formula represents pipe interior roughness. Lower C-values mean more friction loss. New cement-lined pipe is typically C=140.",
+      "code_reference": "NFPA 24, Section 10.8"
+    },
+    {
+      "id": "fs_ug_014",
+      "difficulty": "intermediate",
+      "question": "When are restrained joints required for underground pipe?",
+      "options": [
+        "Never required",
+        "At all joints",
+        "At fittings and locations of thrust where blocks are impractical",
+        "Only above ground"
+      ],
+      "correct_answer": 2,
+      "explanation": "Restrained joints mechanically connect pipe sections to resist thrust forces. They're required where thrust blocks cannot be installed or aren't practical.",
+      "code_reference": "NFPA 24, Section 10.5"
+    },
+    {
+      "id": "fs_ug_015",
+      "difficulty": "intermediate",
+      "question": "What is the spacing requirement for private fire hydrants?",
+      "options": [
+        "100 feet maximum",
+        "As determined by fire department and code requirements",
+        "One per building",
+        "500 feet maximum"
+      ],
+      "correct_answer": 1,
+      "explanation": "Hydrant spacing is determined by fire department requirements, building codes, and occupancy hazards. Typical ranges are 300-500 feet maximum spacing.",
+      "code_reference": "NFPA 24, Section 7.1"
+    },
+    {
+      "id": "fs_ug_016",
+      "difficulty": "intermediate",
+      "question": "What backflow prevention is required on fire service connections?",
+      "options": [
+        "None required",
+        "Check valve only",
+        "As required by local water authority - typically double check or RPBA",
+        "Pressure reducer"
+      ],
+      "correct_answer": 2,
+      "explanation": "Backflow prevention requirements are set by the water authority. Double check assemblies or reduced pressure backflow assemblies are commonly required.",
+      "code_reference": "NFPA 24, Section 6.5"
+    },
+    {
+      "id": "fs_ug_017",
+      "difficulty": "intermediate",
+      "question": "What is required at the connection between underground and above-ground piping?",
+      "options": [
+        "Nothing special",
+        "Support, wall seal, and protection from settlement and movement",
+        "Only a control valve",
+        "Firestopping only"
+      ],
+      "correct_answer": 1,
+      "explanation": "The underground to above-ground transition requires proper support, wall seals or sleeves, and provisions for differential settlement between pipe and structure.",
+      "code_reference": "NFPA 24, Section 10.6"
+    },
+    {
+      "id": "fs_ug_018",
+      "difficulty": "intermediate",
+      "question": "What is a looped water supply?",
+      "options": [
+        "A single dead-end main",
+        "Piping connected to supply at both ends for redundancy",
+        "A circular building footprint",
+        "Recycled water supply"
+      ],
+      "correct_answer": 1,
+      "explanation": "A looped supply provides water from two directions, improving reliability and flow capacity. If one section is shut down, water still reaches the system.",
+      "code_reference": "NFPA 24, Section 10.2"
+    },
+    {
+      "id": "fs_ug_019",
+      "difficulty": "intermediate",
+      "question": "What color are private fire hydrants typically painted?",
+      "options": [
+        "Yellow",
+        "Red or as required by AHJ",
+        "Blue",
+        "Unpainted"
+      ],
+      "correct_answer": 1,
+      "explanation": "Private fire hydrants are often painted red (traditional) or colors designated by the authority having jurisdiction. Some systems color-code by flow capacity.",
+      "code_reference": "NFPA 24, Section 7.2"
+    },
+    {
+      "id": "fs_ug_020",
+      "difficulty": "intermediate",
+      "question": "What valve arrangement is required on fire hydrant laterals?",
+      "options": [
+        "No valve required",
+        "Gate valve (PIV or underground) for isolation",
+        "Check valve only",
+        "Butterfly valve"
+      ],
+      "correct_answer": 1,
+      "explanation": "Each hydrant lateral typically requires an isolation valve (post indicator or underground indicator) to allow hydrant maintenance without shutting down the main.",
+      "code_reference": "NFPA 24, Section 7.1"
+    },
+    {
+      "id": "fs_ug_021",
+      "difficulty": "intermediate",
+      "question": "What is a dry barrel hydrant?",
+      "options": [
+        "A hydrant with no water connection",
+        "A hydrant where water is held below frost line until operated",
+        "A training hydrant",
+        "An out-of-service hydrant"
+      ],
+      "correct_answer": 1,
+      "explanation": "Dry barrel hydrants have the valve at the bottom below frost line. The barrel drains automatically when closed, preventing freezing.",
+      "code_reference": "NFPA 24, Section 7.1"
+    },
+    {
+      "id": "fs_ug_022",
+      "difficulty": "advanced",
+      "question": "What thrust force calculation is required for underground fittings?",
+      "options": [
+        "No calculation required",
+        "Thrust = Pressure × Area of fitting opening",
+        "Standard values for all fittings",
+        "Manufacturer provides all values"
+      ],
+      "correct_answer": 1,
+      "explanation": "Thrust force at fittings is calculated as pressure times the area of the pipe opening. This determines thrust block or restrained joint requirements.",
+      "code_reference": "NFPA 24, Section 10.5"
+    },
+    {
+      "id": "fs_ug_023",
+      "difficulty": "advanced",
+      "question": "What is the flow test procedure for fire hydrants?",
+      "options": [
+        "Visual inspection only",
+        "Static pressure, residual pressure at flow, and pitot readings",
+        "Pressure test at 200 psi",
+        "Fire department operation only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Hydrant flow tests measure static pressure, then flowing one or more hydrants to get residual pressure and flow using pitot gauges to calculate available supply.",
+      "code_reference": "NFPA 24, NFPA 291"
+    },
+    {
+      "id": "fs_ug_024",
+      "difficulty": "advanced",
+      "question": "What is cathodic protection for underground pipe?",
+      "options": [
+        "Physical barrier protection",
+        "Electrical protection against corrosion using sacrificial anodes or impressed current",
+        "Chemical treatment",
+        "Pressure protection"
+      ],
+      "correct_answer": 1,
+      "explanation": "Cathodic protection prevents pipe corrosion by making the pipe the cathode of an electrochemical cell using sacrificial anodes or impressed current systems.",
+      "code_reference": "NFPA 24, Section 10.7"
+    },
+    {
+      "id": "fs_ug_025",
+      "difficulty": "advanced",
+      "question": "When is polyethylene encasement required for ductile iron pipe?",
+      "options": [
+        "Always required",
+        "In corrosive soils or as specified by design",
+        "Never used",
+        "Only for small diameter pipe"
+      ],
+      "correct_answer": 1,
+      "explanation": "Polyethylene encasement (loose poly wrap) protects ductile iron pipe from corrosive soil conditions. Soil analysis determines the need.",
+      "code_reference": "NFPA 24, Section 10.7"
+    },
+    {
+      "id": "fs_ug_026",
+      "difficulty": "advanced",
+      "question": "What is the acceptance test pressure for underground fire mains?",
+      "options": [
+        "100 psi",
+        "150 psi",
+        "200 psi for 2 hours minimum",
+        "System working pressure"
+      ],
+      "correct_answer": 2,
+      "explanation": "New underground mains must be hydrostatically tested at 200 psi (or 50 psi above maximum system pressure if higher) for a minimum of 2 hours.",
+      "code_reference": "NFPA 24, Section 10.10"
+    },
+    {
+      "id": "fs_ug_027",
+      "difficulty": "advanced",
+      "question": "What leakage is acceptable during hydrostatic testing of underground mains?",
+      "options": [
+        "No leakage allowed",
+        "Allowance based on pipe size, length, and test pressure",
+        "Any visible leakage fails",
+        "5 gallons per hour"
+      ],
+      "correct_answer": 1,
+      "explanation": "Some leakage is allowed, calculated based on pipe diameter, length, and test pressure. Formulas in NFPA 24 specify allowable leakage rates.",
+      "code_reference": "NFPA 24, Section 10.10"
+    },
+    {
+      "id": "fs_ug_028",
+      "difficulty": "advanced",
+      "question": "What documentation is required for underground fire main installation?",
+      "options": [
+        "None required",
+        "Material certificates, test reports, as-built drawings",
+        "Invoice only",
+        "Permit only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Underground installations require material certifications, pressure test reports, flushing records, and accurate as-built drawings showing depths and locations.",
+      "code_reference": "NFPA 24, Section 10.10"
+    },
+    {
+      "id": "fs_ug_029",
+      "difficulty": "intermediate",
+      "question": "What is the minimum separation between fire mains and sanitary sewers?",
+      "options": [
+        "No separation required",
+        "10 feet horizontal and 18 inches vertical typically",
+        "1 foot",
+        "50 feet"
+      ],
+      "correct_answer": 1,
+      "explanation": "Water mains must maintain separation from sewer lines to prevent contamination. Typical requirements are 10 feet horizontal and 18 inches vertical with water above.",
+      "code_reference": "NFPA 24, Local plumbing codes"
+    },
+    {
+      "id": "fs_ug_030",
+      "difficulty": "intermediate",
+      "question": "What is a wet barrel hydrant?",
+      "options": [
+        "A hydrant that has failed",
+        "A hydrant with water always in the barrel (for warm climates)",
+        "A hydrant in a wet location",
+        "A temporary hydrant"
+      ],
+      "correct_answer": 1,
+      "explanation": "Wet barrel hydrants have water up to each outlet with individual valves at each outlet. They're used only in areas without freezing temperatures.",
+      "code_reference": "NFPA 24, Section 7.1"
+    }
+  ]
+}

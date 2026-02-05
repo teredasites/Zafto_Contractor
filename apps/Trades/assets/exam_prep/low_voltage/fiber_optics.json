@@ -1,0 +1,642 @@
+{
+  "category": "Low Voltage",
+  "subcategory": "Fiber Optic Systems",
+  "description": "Fiber optic cable installation, testing, and NEC Article 770 requirements",
+  "difficulty_distribution": {
+    "beginner": 15,
+    "intermediate": 18,
+    "advanced": 12
+  },
+  "questions": [
+    {
+      "id": "lv_fiber_001",
+      "difficulty": "beginner",
+      "question": "What NEC article covers optical fiber cables?",
+      "options": [
+        "Article 800",
+        "Article 770 Optical Fiber Cables and Raceways",
+        "Article 725",
+        "Article 760"
+      ],
+      "correct_answer": 1,
+      "explanation": "NEC Article 770 covers optical fiber cables and raceways used for communications and signaling.",
+      "code_reference": "NEC Article 770"
+    },
+    {
+      "id": "lv_fiber_002",
+      "difficulty": "beginner",
+      "question": "What are the two main types of optical fiber?",
+      "options": [
+        "Copper and aluminum",
+        "Single-mode and multimode",
+        "Shielded and unshielded",
+        "Indoor and outdoor"
+      ],
+      "correct_answer": 1,
+      "explanation": "Single-mode (SM) fiber has a small core for long distances; multimode (MM) has larger core for shorter distances.",
+      "code_reference": "Industry standard"
+    },
+    {
+      "id": "lv_fiber_003",
+      "difficulty": "beginner",
+      "question": "What is the typical core diameter of single-mode fiber?",
+      "options": [
+        "50 microns",
+        "8-10 microns (9 micron typical)",
+        "62.5 microns",
+        "125 microns"
+      ],
+      "correct_answer": 1,
+      "explanation": "Single-mode fiber has a core diameter of approximately 8-10 microns (typically 9 microns).",
+      "code_reference": "Industry standard"
+    },
+    {
+      "id": "lv_fiber_004",
+      "difficulty": "beginner",
+      "question": "What is the typical core diameter of OM3/OM4 multimode fiber?",
+      "options": [
+        "9 microns",
+        "50 microns",
+        "62.5 microns",
+        "125 microns"
+      ],
+      "correct_answer": 1,
+      "explanation": "OM3 and OM4 multimode fibers have 50-micron cores optimized for laser transmission.",
+      "code_reference": "TIA-568"
+    },
+    {
+      "id": "lv_fiber_005",
+      "difficulty": "beginner",
+      "question": "What color is single-mode fiber jacket typically?",
+      "options": [
+        "Orange",
+        "Yellow",
+        "Aqua",
+        "Gray"
+      ],
+      "correct_answer": 1,
+      "explanation": "Single-mode fiber cables typically have yellow outer jackets per TIA-568 color coding.",
+      "code_reference": "TIA-568"
+    },
+    {
+      "id": "lv_fiber_006",
+      "difficulty": "beginner",
+      "question": "What color is OM3/OM4 multimode fiber jacket typically?",
+      "options": [
+        "Yellow",
+        "Aqua",
+        "Orange",
+        "Green"
+      ],
+      "correct_answer": 1,
+      "explanation": "OM3 and OM4 laser-optimized multimode fibers have aqua jackets per TIA-568 color coding.",
+      "code_reference": "TIA-568"
+    },
+    {
+      "id": "lv_fiber_007",
+      "difficulty": "beginner",
+      "question": "What is a fusion splice?",
+      "options": [
+        "Mechanical connection",
+        "Permanent joint created by melting fiber ends together",
+        "Connector type",
+        "Temporary splice"
+      ],
+      "correct_answer": 1,
+      "explanation": "Fusion splicing permanently joins fibers by melting the glass ends together using an electric arc.",
+      "code_reference": "Industry standard"
+    },
+    {
+      "id": "lv_fiber_008",
+      "difficulty": "beginner",
+      "question": "What is OTDR testing?",
+      "options": [
+        "Continuity test",
+        "Optical Time Domain Reflectometer - measures loss and locates faults",
+        "Voltage test",
+        "Visual inspection"
+      ],
+      "correct_answer": 1,
+      "explanation": "OTDR sends light pulses and analyzes reflections to measure fiber length, loss, and locate faults.",
+      "code_reference": "Industry standard"
+    },
+    {
+      "id": "lv_fiber_009",
+      "difficulty": "beginner",
+      "question": "What is the minimum bend radius for fiber optic cable?",
+      "options": [
+        "No limit",
+        "Typically 10-15 times cable diameter (varies by cable type)",
+        "1 inch all cables",
+        "Same as copper"
+      ],
+      "correct_answer": 1,
+      "explanation": "Minimum bend radius is typically 10-15 times cable outer diameter; exceeding causes signal loss or breakage.",
+      "code_reference": "TIA-568"
+    },
+    {
+      "id": "lv_fiber_010",
+      "difficulty": "beginner",
+      "question": "What listing is required for fiber cables in plenums?",
+      "options": [
+        "OFN",
+        "OFNP (Optical Fiber Nonconductive Plenum)",
+        "OFNR",
+        "OFC"
+      ],
+      "correct_answer": 1,
+      "explanation": "OFNP or OFCP rated cables are required for plenum installations due to fire/smoke requirements.",
+      "code_reference": "NEC 770.113"
+    },
+    {
+      "id": "lv_fiber_011",
+      "difficulty": "beginner",
+      "question": "What is the purpose of cladding in optical fiber?",
+      "options": [
+        "Physical protection",
+        "Keeps light contained in core through total internal reflection",
+        "Color coding",
+        "Strength"
+      ],
+      "correct_answer": 1,
+      "explanation": "Cladding surrounds the core with lower refractive index material, causing total internal reflection to contain light.",
+      "code_reference": "Industry standard"
+    },
+    {
+      "id": "lv_fiber_012",
+      "difficulty": "beginner",
+      "question": "What tool is used to prepare fiber ends for connectorization?",
+      "options": [
+        "Wire strippers",
+        "Fiber cleaver",
+        "Crimping tool",
+        "Soldering iron"
+      ],
+      "correct_answer": 1,
+      "explanation": "A fiber cleaver cuts fiber at a precise angle (typically 90 degrees) for low-loss connections.",
+      "code_reference": "Industry standard"
+    },
+    {
+      "id": "lv_fiber_013",
+      "difficulty": "beginner",
+      "question": "What is attenuation in fiber optics?",
+      "options": [
+        "Speed increase",
+        "Signal loss measured in dB/km",
+        "Bandwidth",
+        "Connector type"
+      ],
+      "correct_answer": 1,
+      "explanation": "Attenuation is signal loss in the fiber, measured in decibels per kilometer (dB/km).",
+      "code_reference": "Industry standard"
+    },
+    {
+      "id": "lv_fiber_014",
+      "difficulty": "beginner",
+      "question": "What type of light source does single-mode fiber typically use?",
+      "options": [
+        "LED",
+        "Laser (1310nm or 1550nm typical)",
+        "Incandescent",
+        "Fluorescent"
+      ],
+      "correct_answer": 1,
+      "explanation": "Single-mode fiber uses laser light sources, typically at 1310nm or 1550nm wavelengths.",
+      "code_reference": "Industry standard"
+    },
+    {
+      "id": "lv_fiber_015",
+      "difficulty": "beginner",
+      "question": "What is a fiber patch panel?",
+      "options": [
+        "Splice tray",
+        "Enclosure organizing fiber connections and providing port access",
+        "Cable tray",
+        "Junction box"
+      ],
+      "correct_answer": 1,
+      "explanation": "Patch panels organize fiber terminations and provide accessible ports for connecting equipment.",
+      "code_reference": "Industry standard"
+    },
+    {
+      "id": "lv_fiber_016",
+      "difficulty": "intermediate",
+      "question": "What is the typical fusion splice loss for single-mode fiber?",
+      "options": [
+        "0.5 dB",
+        "0.02-0.05 dB",
+        "1.0 dB",
+        "0.3 dB"
+      ],
+      "correct_answer": 1,
+      "explanation": "Quality fusion splices achieve loss of 0.02-0.05 dB, lower than mechanical splices or connectors.",
+      "code_reference": "Industry standard"
+    },
+    {
+      "id": "lv_fiber_017",
+      "difficulty": "intermediate",
+      "question": "What is connector loss budget for SC connectors?",
+      "options": [
+        "0.5 dB or less per mated pair",
+        "0.75 dB per mated pair maximum",
+        "1.0 dB",
+        "0.1 dB"
+      ],
+      "correct_answer": 1,
+      "explanation": "SC connector pairs typically have 0.5 dB maximum loss per TIA-568 specifications.",
+      "code_reference": "TIA-568"
+    },
+    {
+      "id": "lv_fiber_018",
+      "difficulty": "intermediate",
+      "question": "What does OFNR cable designation mean?",
+      "options": [
+        "Optical Fiber Network Ready",
+        "Optical Fiber Nonconductive Riser",
+        "Optical Fiber Normal Rating",
+        "Optical Fiber Non-Rated"
+      ],
+      "correct_answer": 1,
+      "explanation": "OFNR is Optical Fiber Nonconductive Riser cable rated for vertical runs between floors.",
+      "code_reference": "NEC 770.179"
+    },
+    {
+      "id": "lv_fiber_019",
+      "difficulty": "intermediate",
+      "question": "What is the difference between OFN and OFC fiber cables?",
+      "options": [
+        "Color only",
+        "OFN is nonconductive; OFC is conductive (contains metal)",
+        "Speed rating",
+        "No difference"
+      ],
+      "correct_answer": 1,
+      "explanation": "OFN cables contain no metallic elements; OFC cables contain conductive elements (metal strength members).",
+      "code_reference": "NEC 770.179"
+    },
+    {
+      "id": "lv_fiber_020",
+      "difficulty": "intermediate",
+      "question": "What is modal dispersion?",
+      "options": [
+        "Color shift",
+        "Signal spreading in multimode fiber due to different light paths",
+        "Connector loss",
+        "Splice loss"
+      ],
+      "correct_answer": 1,
+      "explanation": "Modal dispersion occurs in multimode fiber when different light modes travel at slightly different speeds.",
+      "code_reference": "Industry standard"
+    },
+    {
+      "id": "lv_fiber_021",
+      "difficulty": "intermediate",
+      "question": "What is chromatic dispersion?",
+      "options": [
+        "Color of jacket",
+        "Signal spreading due to different wavelengths traveling at different speeds",
+        "Connector type",
+        "Loss measurement"
+      ],
+      "correct_answer": 1,
+      "explanation": "Chromatic dispersion causes signal spreading because different wavelengths of light travel at different velocities.",
+      "code_reference": "Industry standard"
+    },
+    {
+      "id": "lv_fiber_022",
+      "difficulty": "intermediate",
+      "question": "What is the purpose of a launch cable for OTDR testing?",
+      "options": [
+        "Signal boost",
+        "Allows measurement of first connector without dead zone masking",
+        "Color coding",
+        "Length extension"
+      ],
+      "correct_answer": 1,
+      "explanation": "Launch cables extend beyond the OTDR dead zone so the first connector can be properly measured.",
+      "code_reference": "Industry standard"
+    },
+    {
+      "id": "lv_fiber_023",
+      "difficulty": "intermediate",
+      "question": "What is optical return loss (ORL)?",
+      "options": [
+        "Signal attenuation",
+        "Ratio of reflected light to input light, measured in negative dB",
+        "Splice loss",
+        "Connector loss"
+      ],
+      "correct_answer": 1,
+      "explanation": "ORL measures light reflected back toward the source; high ORL (negative dB) indicates good connections.",
+      "code_reference": "Industry standard"
+    },
+    {
+      "id": "lv_fiber_024",
+      "difficulty": "intermediate",
+      "question": "What connector type uses a push-pull latching mechanism?",
+      "options": [
+        "ST",
+        "LC (Lucent Connector)",
+        "FC",
+        "SC"
+      ],
+      "correct_answer": 1,
+      "explanation": "LC connectors use a push-pull latch mechanism and are smaller than SC connectors.",
+      "code_reference": "Industry standard"
+    },
+    {
+      "id": "lv_fiber_025",
+      "difficulty": "intermediate",
+      "question": "What is the maximum channel length for OM3 fiber at 10 Gbps?",
+      "options": [
+        "100 meters",
+        "300 meters",
+        "550 meters",
+        "2000 meters"
+      ],
+      "correct_answer": 1,
+      "explanation": "OM3 multimode fiber supports 10 Gbps Ethernet up to 300 meters per TIA-568 standards.",
+      "code_reference": "TIA-568"
+    },
+    {
+      "id": "lv_fiber_026",
+      "difficulty": "intermediate",
+      "question": "What is the maximum channel length for OM4 fiber at 10 Gbps?",
+      "options": [
+        "300 meters",
+        "400-550 meters",
+        "100 meters",
+        "1000 meters"
+      ],
+      "correct_answer": 1,
+      "explanation": "OM4 fiber supports 10 Gbps up to 400-550 meters depending on transceiver type.",
+      "code_reference": "TIA-568"
+    },
+    {
+      "id": "lv_fiber_027",
+      "difficulty": "intermediate",
+      "question": "What wavelengths are commonly used for multimode fiber?",
+      "options": [
+        "1310nm and 1550nm",
+        "850nm and 1300nm",
+        "1490nm and 1550nm",
+        "400nm and 700nm"
+      ],
+      "correct_answer": 1,
+      "explanation": "Multimode fiber typically operates at 850nm (LED/VCSEL) and 1300nm wavelengths.",
+      "code_reference": "Industry standard"
+    },
+    {
+      "id": "lv_fiber_028",
+      "difficulty": "intermediate",
+      "question": "What is a mechanical splice?",
+      "options": [
+        "Fusion welding",
+        "Alignment device that holds fiber ends together without fusing",
+        "Connector",
+        "Cable tie"
+      ],
+      "correct_answer": 1,
+      "explanation": "Mechanical splices use an alignment mechanism to hold cleaved fiber ends in contact without heat fusion.",
+      "code_reference": "Industry standard"
+    },
+    {
+      "id": "lv_fiber_029",
+      "difficulty": "intermediate",
+      "question": "What is the typical loss for a mechanical splice?",
+      "options": [
+        "0.02 dB",
+        "0.1-0.3 dB",
+        "1.0 dB",
+        "0.5 dB"
+      ],
+      "correct_answer": 1,
+      "explanation": "Mechanical splices typically achieve 0.1-0.3 dB loss, higher than fusion splices but acceptable for many applications.",
+      "code_reference": "Industry standard"
+    },
+    {
+      "id": "lv_fiber_030",
+      "difficulty": "intermediate",
+      "question": "What is the purpose of gel or index matching fluid in mechanical splices?",
+      "options": [
+        "Cooling",
+        "Reduces Fresnel reflections at the fiber junction",
+        "Lubrication",
+        "Cleaning"
+      ],
+      "correct_answer": 1,
+      "explanation": "Index matching gel reduces light reflections at the junction by filling the gap with matching refractive index material.",
+      "code_reference": "Industry standard"
+    },
+    {
+      "id": "lv_fiber_031",
+      "difficulty": "intermediate",
+      "question": "What fiber type is specified for new installations per TIA-568?",
+      "options": [
+        "OM1 62.5 micron",
+        "OM3 or OM4 50 micron laser-optimized multimode",
+        "OM2",
+        "Any multimode"
+      ],
+      "correct_answer": 1,
+      "explanation": "TIA-568 recommends OM3 or OM4 laser-optimized 50-micron fiber for new multimode installations.",
+      "code_reference": "TIA-568"
+    },
+    {
+      "id": "lv_fiber_032",
+      "difficulty": "intermediate",
+      "question": "What is a pigtail in fiber optics?",
+      "options": [
+        "Bare fiber",
+        "Short fiber with connector on one end for splicing",
+        "Patch cable",
+        "Splice tray"
+      ],
+      "correct_answer": 1,
+      "explanation": "A pigtail is a short length of fiber with a factory-terminated connector on one end, spliced to cable fibers.",
+      "code_reference": "Industry standard"
+    },
+    {
+      "id": "lv_fiber_033",
+      "difficulty": "intermediate",
+      "question": "What is breakout cable (fan-out cable)?",
+      "options": [
+        "Loose tube",
+        "Cable with individually jacketed fibers for direct connectorization",
+        "Ribbon cable",
+        "Armored cable"
+      ],
+      "correct_answer": 1,
+      "explanation": "Breakout cables have individually jacketed fibers that can be directly terminated with connectors.",
+      "code_reference": "Industry standard"
+    },
+    {
+      "id": "lv_fiber_034",
+      "difficulty": "advanced",
+      "question": "What is the Insertion Loss Test Method for fiber certification?",
+      "options": [
+        "Visual inspection",
+        "Measure end-to-end loss using calibrated light source and power meter",
+        "OTDR only",
+        "Continuity check"
+      ],
+      "correct_answer": 1,
+      "explanation": "Insertion loss testing measures total link loss using a calibrated light source and optical power meter.",
+      "code_reference": "TIA-568"
+    },
+    {
+      "id": "lv_fiber_035",
+      "difficulty": "advanced",
+      "question": "What is an OTDR dead zone?",
+      "options": [
+        "Cable fault",
+        "Distance after an event where OTDR cannot detect other events",
+        "Signal loss area",
+        "Connector location"
+      ],
+      "correct_answer": 1,
+      "explanation": "Dead zones are distances after connectors/splices where the OTDR receiver saturates and cannot detect events.",
+      "code_reference": "Industry standard"
+    },
+    {
+      "id": "lv_fiber_036",
+      "difficulty": "advanced",
+      "question": "What is WDM (Wavelength Division Multiplexing)?",
+      "options": [
+        "Cable type",
+        "Transmitting multiple signals at different wavelengths on one fiber",
+        "Connector type",
+        "Testing method"
+      ],
+      "correct_answer": 1,
+      "explanation": "WDM sends multiple signals at different wavelengths simultaneously over a single fiber strand.",
+      "code_reference": "Industry standard"
+    },
+    {
+      "id": "lv_fiber_037",
+      "difficulty": "advanced",
+      "question": "What is the difference between CWDM and DWDM?",
+      "options": [
+        "Cable type",
+        "CWDM uses wider wavelength spacing; DWDM uses narrower for more channels",
+        "Connector type",
+        "Speed rating"
+      ],
+      "correct_answer": 1,
+      "explanation": "CWDM (Coarse) uses 20nm spacing for up to 18 channels; DWDM (Dense) uses <1nm for 40+ channels.",
+      "code_reference": "Industry standard"
+    },
+    {
+      "id": "lv_fiber_038",
+      "difficulty": "advanced",
+      "question": "What is PMD (Polarization Mode Dispersion)?",
+      "options": [
+        "Connector loss",
+        "Signal distortion from different polarization states traveling at different speeds",
+        "Splice loss",
+        "Attenuation"
+      ],
+      "correct_answer": 1,
+      "explanation": "PMD causes pulse spreading due to birefringence making polarization states travel at different velocities.",
+      "code_reference": "Industry standard"
+    },
+    {
+      "id": "lv_fiber_039",
+      "difficulty": "advanced",
+      "question": "What is the typical attenuation of single-mode fiber at 1310nm?",
+      "options": [
+        "3.5 dB/km",
+        "0.35 dB/km",
+        "0.5 dB/km",
+        "1.0 dB/km"
+      ],
+      "correct_answer": 1,
+      "explanation": "Single-mode fiber has approximately 0.35 dB/km attenuation at 1310nm wavelength.",
+      "code_reference": "Industry standard"
+    },
+    {
+      "id": "lv_fiber_040",
+      "difficulty": "advanced",
+      "question": "What is the typical attenuation of single-mode fiber at 1550nm?",
+      "options": [
+        "0.35 dB/km",
+        "0.20-0.25 dB/km",
+        "0.5 dB/km",
+        "3.0 dB/km"
+      ],
+      "correct_answer": 1,
+      "explanation": "Single-mode fiber has lowest attenuation at 1550nm, approximately 0.20-0.25 dB/km.",
+      "code_reference": "Industry standard"
+    },
+    {
+      "id": "lv_fiber_041",
+      "difficulty": "advanced",
+      "question": "What causes macrobend loss in fiber?",
+      "options": [
+        "Connector issues",
+        "Excessive bending exceeding minimum bend radius causing light leakage",
+        "Splice problems",
+        "Wavelength mismatch"
+      ],
+      "correct_answer": 1,
+      "explanation": "Macrobend loss occurs when fiber is bent too sharply, allowing light to escape the core.",
+      "code_reference": "Industry standard"
+    },
+    {
+      "id": "lv_fiber_042",
+      "difficulty": "advanced",
+      "question": "What is an optical amplifier (EDFA)?",
+      "options": [
+        "Electrical amplifier",
+        "Erbium-Doped Fiber Amplifier that boosts optical signals directly",
+        "Repeater",
+        "Regenerator"
+      ],
+      "correct_answer": 1,
+      "explanation": "EDFA uses erbium-doped fiber excited by pump laser to amplify optical signals without conversion to electrical.",
+      "code_reference": "Industry standard"
+    },
+    {
+      "id": "lv_fiber_043",
+      "difficulty": "advanced",
+      "question": "What is the purpose of Tier 1 vs Tier 2 fiber certification?",
+      "options": [
+        "Speed classes",
+        "Tier 1 is insertion loss only; Tier 2 adds OTDR characterization",
+        "Cable types",
+        "Connector types"
+      ],
+      "correct_answer": 1,
+      "explanation": "Tier 1 tests total link loss; Tier 2 adds OTDR testing for detailed characterization of events and loss distribution.",
+      "code_reference": "TIA-568"
+    },
+    {
+      "id": "lv_fiber_044",
+      "difficulty": "advanced",
+      "question": "What is a VCSEL light source?",
+      "options": [
+        "LED type",
+        "Vertical Cavity Surface Emitting Laser used for multimode fiber",
+        "Single-mode laser",
+        "Testing equipment"
+      ],
+      "correct_answer": 1,
+      "explanation": "VCSEL (Vertical Cavity Surface Emitting Laser) is a low-cost laser source optimized for multimode fiber.",
+      "code_reference": "Industry standard"
+    },
+    {
+      "id": "lv_fiber_045",
+      "difficulty": "advanced",
+      "question": "What documentation is required for fiber optic system installation?",
+      "options": [
+        "None required",
+        "Test results, splice records, cable routes, and as-built drawings",
+        "Photos only",
+        "Purchase orders"
+      ],
+      "correct_answer": 1,
+      "explanation": "Complete documentation including test results, splice maps, cable routes, and as-built drawings is essential.",
+      "code_reference": "TIA-568, Industry standards"
+    }
+  ]
+}

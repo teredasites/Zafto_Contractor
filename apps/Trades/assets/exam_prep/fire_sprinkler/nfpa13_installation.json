@@ -1,0 +1,847 @@
+{
+  "topic_id": "FS-INST",
+  "topic_name": "NFPA 13 Installation",
+  "code_version": "NFPA 13-2022",
+  "questions": [
+    {
+      "id": "FS-INST-001",
+      "version": "1.0",
+      "exam_types": ["nicet_1", "nicet_2", "state"],
+      "topic_id": "FS-INST",
+      "topic_name": "NFPA 13 Installation",
+      "code_articles": ["NFPA 13 8.5.2.1"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "According to NFPA 13, what is the maximum coverage area per sprinkler for standard spray sprinklers in Light Hazard occupancies?",
+      "choices": [
+        {"id": "A", "text": "130 square feet"},
+        {"id": "B", "text": "168 square feet"},
+        {"id": "C", "text": "200 square feet"},
+        {"id": "D", "text": "225 square feet"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Light Hazard allows 225 sq ft maximum coverage per sprinkler.",
+        "detailed": "NFPA 13 Section 8.5.2.1 specifies that standard spray sprinklers in Light Hazard occupancies shall have a maximum coverage area of 225 square feet per sprinkler. This is the largest allowable coverage area.",
+        "how_to_find": "NFPA 13, Chapter 8, Table 8.5.2.1 - Protection Areas and Maximum Spacing"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "8.5.2.1"},
+      "tags": ["spacing", "coverage", "light hazard", "standard spray"],
+      "verified": true
+    },
+    {
+      "id": "FS-INST-002",
+      "version": "1.0",
+      "exam_types": ["nicet_1", "nicet_2", "state"],
+      "topic_id": "FS-INST",
+      "topic_name": "NFPA 13 Installation",
+      "code_articles": ["NFPA 13 8.5.2.1"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the maximum coverage area per sprinkler for standard spray sprinklers in Ordinary Hazard Group 1 occupancies?",
+      "choices": [
+        {"id": "A", "text": "100 square feet"},
+        {"id": "B", "text": "130 square feet"},
+        {"id": "C", "text": "168 square feet"},
+        {"id": "D", "text": "200 square feet"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Ordinary Hazard Group 1 allows 130 sq ft maximum per sprinkler.",
+        "detailed": "NFPA 13 specifies that standard spray sprinklers in Ordinary Hazard Group 1 occupancies have a maximum coverage area of 130 square feet. This is reduced from Light Hazard due to higher fire load.",
+        "how_to_find": "NFPA 13, Chapter 8, Table 8.5.2.1"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "8.5.2.1"},
+      "tags": ["spacing", "coverage", "ordinary hazard"],
+      "verified": true
+    },
+    {
+      "id": "FS-INST-003",
+      "version": "1.0",
+      "exam_types": ["nicet_1", "nicet_2", "state"],
+      "topic_id": "FS-INST",
+      "topic_name": "NFPA 13 Installation",
+      "code_articles": ["NFPA 13 8.5.5"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 75,
+      "question": "According to NFPA 13, what is the maximum distance from a wall to the first sprinkler on a branch line in Light Hazard occupancies?",
+      "choices": [
+        {"id": "A", "text": "One-half the allowable distance between sprinklers"},
+        {"id": "B", "text": "6 feet"},
+        {"id": "C", "text": "7 feet 6 inches"},
+        {"id": "D", "text": "9 feet"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Distance to wall cannot exceed half the allowable sprinkler spacing.",
+        "detailed": "NFPA 13 Section 8.5.5.1 requires that the distance from sprinklers to walls shall not exceed one-half the allowable distance between sprinklers. For Light Hazard at 15' max spacing, that's 7.5' max to wall.",
+        "how_to_find": "NFPA 13, Section 8.5.5.1 - Distance from Walls"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "8.5.5.1"},
+      "tags": ["spacing", "walls", "layout"],
+      "verified": true
+    },
+    {
+      "id": "FS-INST-004",
+      "version": "1.0",
+      "exam_types": ["nicet_1", "nicet_2", "state"],
+      "topic_id": "FS-INST",
+      "topic_name": "NFPA 13 Installation",
+      "code_articles": ["NFPA 13 8.6.4"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 75,
+      "question": "For standard spray pendent sprinklers, what is the minimum distance the deflector must be below the ceiling?",
+      "choices": [
+        {"id": "A", "text": "1 inch"},
+        {"id": "B", "text": "2 inches"},
+        {"id": "C", "text": "4 inches"},
+        {"id": "D", "text": "6 inches"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Deflector must be minimum 1 inch below ceiling, maximum 12 inches.",
+        "detailed": "NFPA 13 Section 8.6.4.1 specifies standard spray pendent and upright sprinklers shall be positioned so the deflector is a minimum of 1 inch and maximum of 12 inches below the ceiling.",
+        "how_to_find": "NFPA 13, Section 8.6.4.1 - Deflector Distance Below Ceilings"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "8.6.4.1"},
+      "tags": ["deflector", "spacing", "pendent"],
+      "verified": true
+    },
+    {
+      "id": "FS-INST-005",
+      "version": "1.0",
+      "exam_types": ["nicet_1", "nicet_2", "state"],
+      "topic_id": "FS-INST",
+      "topic_name": "NFPA 13 Installation",
+      "code_articles": ["NFPA 13 8.6.4"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 75,
+      "question": "What is the maximum distance a standard spray sprinkler deflector can be positioned below the ceiling?",
+      "choices": [
+        {"id": "A", "text": "6 inches"},
+        {"id": "B", "text": "10 inches"},
+        {"id": "C", "text": "12 inches"},
+        {"id": "D", "text": "18 inches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Maximum 12 inches below ceiling for standard spray sprinklers.",
+        "detailed": "NFPA 13 requires standard spray sprinklers to have deflectors positioned between 1 and 12 inches below the ceiling. Positioning beyond 12 inches delays sprinkler activation.",
+        "how_to_find": "NFPA 13, Section 8.6.4.1"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "8.6.4.1"},
+      "tags": ["deflector", "spacing", "installation"],
+      "verified": true
+    },
+    {
+      "id": "FS-INST-006",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-INST",
+      "topic_name": "NFPA 13 Installation",
+      "code_articles": ["NFPA 13 8.5.6"],
+      "code_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "When installing sprinklers near obstructions, what is the minimum horizontal distance required from the sprinkler deflector to the side of a continuous obstruction more than 4 feet wide?",
+      "choices": [
+        {"id": "A", "text": "6 inches"},
+        {"id": "B", "text": "12 inches"},
+        {"id": "C", "text": "24 inches"},
+        {"id": "D", "text": "36 inches"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Sprinklers must be minimum 36 inches from continuous obstructions over 4 feet wide.",
+        "detailed": "NFPA 13 Section 8.5.6.1 requires sprinklers to be positioned at least 3 feet (36 inches) from obstructions more than 4 feet wide to ensure proper spray pattern development.",
+        "how_to_find": "NFPA 13, Section 8.5.6.1 - Obstructions to Sprinkler Discharge"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "8.5.6.1"},
+      "tags": ["obstructions", "spacing", "clearances"],
+      "verified": true
+    },
+    {
+      "id": "FS-INST-007",
+      "version": "1.0",
+      "exam_types": ["nicet_1", "nicet_2", "state"],
+      "topic_id": "FS-INST",
+      "topic_name": "NFPA 13 Installation",
+      "code_articles": ["NFPA 13 9.1.1"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "According to NFPA 13, what is the maximum spacing for pipe hangers on Schedule 40 steel pipe 1-1/4 inch and smaller?",
+      "choices": [
+        {"id": "A", "text": "6 feet"},
+        {"id": "B", "text": "10 feet"},
+        {"id": "C", "text": "12 feet"},
+        {"id": "D", "text": "15 feet"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Steel pipe 1-1/4 inch and smaller requires hangers at maximum 12-foot intervals.",
+        "detailed": "NFPA 13 Table 9.1.1.6 specifies maximum hanger spacing of 12 feet for Schedule 40 steel pipe 1-1/4 inch and smaller. Larger pipes can have greater spacing.",
+        "how_to_find": "NFPA 13, Table 9.1.1.6 - Hanger Spacing"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "9.1.1.6"},
+      "tags": ["hangers", "support", "pipe"],
+      "verified": true
+    },
+    {
+      "id": "FS-INST-008",
+      "version": "1.0",
+      "exam_types": ["nicet_1", "nicet_2", "state"],
+      "topic_id": "FS-INST",
+      "topic_name": "NFPA 13 Installation",
+      "code_articles": ["NFPA 13 9.1.1"],
+      "code_tables": ["Table 9.1.1.6"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 75,
+      "question": "What is the maximum hanger spacing for 2-inch Schedule 40 steel pipe?",
+      "choices": [
+        {"id": "A", "text": "10 feet"},
+        {"id": "B", "text": "12 feet"},
+        {"id": "C", "text": "15 feet"},
+        {"id": "D", "text": "18 feet"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "2-inch steel pipe can have hangers spaced up to 15 feet apart.",
+        "detailed": "Per NFPA 13 Table 9.1.1.6, Schedule 40 steel pipe from 1-1/2 inch to 4 inch can have hanger spacing up to 15 feet maximum.",
+        "how_to_find": "NFPA 13, Table 9.1.1.6"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "Table 9.1.1.6"},
+      "tags": ["hangers", "support", "pipe"],
+      "verified": true
+    },
+    {
+      "id": "FS-INST-009",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-INST",
+      "topic_name": "NFPA 13 Installation",
+      "code_articles": ["NFPA 13 8.15.1"],
+      "code_tables": [],
+      "type": "concept",
+      "difficulty": "hard",
+      "time_estimate_seconds": 90,
+      "question": "According to NFPA 13, what temperature rating sprinkler must be used within 12 inches of a unit heater?",
+      "choices": [
+        {"id": "A", "text": "Ordinary (135°F-170°F)"},
+        {"id": "B", "text": "Intermediate (175°F-225°F)"},
+        {"id": "C", "text": "High (250°F-300°F)"},
+        {"id": "D", "text": "Extra High (325°F-375°F)"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Intermediate temperature sprinklers are required within 12 inches of heat sources.",
+        "detailed": "NFPA 13 Section 8.15.1 requires intermediate temperature (175°F-225°F) sprinklers when installed within 12 inches horizontally of a heat source. This prevents false activation from heat sources.",
+        "how_to_find": "NFPA 13, Section 8.15.1 - Temperature Ratings Near Heat Sources"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "8.15.1"},
+      "tags": ["temperature rating", "heat sources", "spacing"],
+      "verified": true
+    },
+    {
+      "id": "FS-INST-010",
+      "version": "1.0",
+      "exam_types": ["nicet_1", "nicet_2", "state"],
+      "topic_id": "FS-INST",
+      "topic_name": "NFPA 13 Installation",
+      "code_articles": ["NFPA 13 7.1"],
+      "code_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "Which of the following is an example of a Light Hazard occupancy?",
+      "choices": [
+        {"id": "A", "text": "Automobile parking garage"},
+        {"id": "B", "text": "Restaurant service area"},
+        {"id": "C", "text": "Church"},
+        {"id": "D", "text": "Dry cleaning plant"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Churches, offices, and similar spaces are Light Hazard occupancies.",
+        "detailed": "NFPA 13 Section 5.2 classifies Light Hazard occupancies as locations with low quantity and combustibility of contents. Churches, offices, hospitals, schools, and residences are Light Hazard.",
+        "how_to_find": "NFPA 13, Section 5.2 - Light Hazard Occupancies"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "5.2"},
+      "tags": ["hazard classification", "occupancy"],
+      "verified": true
+    },
+    {
+      "id": "FS-INST-011",
+      "version": "1.0",
+      "exam_types": ["nicet_1", "nicet_2", "state"],
+      "topic_id": "FS-INST",
+      "topic_name": "NFPA 13 Installation",
+      "code_articles": ["NFPA 13 5.3"],
+      "code_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 75,
+      "question": "Which of the following is classified as an Ordinary Hazard Group 2 occupancy?",
+      "choices": [
+        {"id": "A", "text": "Office building"},
+        {"id": "B", "text": "Library stack room"},
+        {"id": "C", "text": "Machine shop"},
+        {"id": "D", "text": "Church"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Machine shops are Ordinary Hazard Group 2 due to combustible materials and processes.",
+        "detailed": "NFPA 13 Section 5.3.2 lists Ordinary Hazard Group 2 occupancies including machine shops, metalworking, post offices, and stages. These have moderate fire load and combustibility.",
+        "how_to_find": "NFPA 13, Section 5.3.2 - Ordinary Hazard Occupancies Group 2"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "5.3.2"},
+      "tags": ["hazard classification", "occupancy"],
+      "verified": true
+    },
+    {
+      "id": "FS-INST-012",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-INST",
+      "topic_name": "NFPA 13 Installation",
+      "code_articles": ["NFPA 13 8.3.3"],
+      "code_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 75,
+      "question": "What is the required pitch (slope) for branch lines in a dry pipe sprinkler system?",
+      "choices": [
+        {"id": "A", "text": "1/4 inch per 10 feet"},
+        {"id": "B", "text": "1/2 inch per 10 feet"},
+        {"id": "C", "text": "1 inch per 10 feet"},
+        {"id": "D", "text": "2 inches per 10 feet"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Branch lines in dry systems must slope 1/2 inch per 10 feet toward drain.",
+        "detailed": "NFPA 13 Section 8.3.3.1 requires branch lines in dry systems to be pitched at least 1/2 inch per 10 feet toward the main drain. This ensures complete drainage after system activation.",
+        "how_to_find": "NFPA 13, Section 8.3.3.1 - Pitch of Piping"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "8.3.3.1"},
+      "tags": ["dry system", "pitch", "drainage"],
+      "verified": true
+    },
+    {
+      "id": "FS-INST-013",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-INST",
+      "topic_name": "NFPA 13 Installation",
+      "code_articles": ["NFPA 13 8.3.3"],
+      "code_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 75,
+      "question": "What is the minimum required pitch for mains in a dry pipe system?",
+      "choices": [
+        {"id": "A", "text": "1/4 inch per 10 feet"},
+        {"id": "B", "text": "1/2 inch per 10 feet"},
+        {"id": "C", "text": "1 inch per 10 feet"},
+        {"id": "D", "text": "No pitch required"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Mains in dry systems must slope minimum 1/4 inch per 10 feet.",
+        "detailed": "NFPA 13 Section 8.3.3.1 requires mains in dry pipe systems to be pitched at least 1/4 inch per 10 feet (1:480 slope). Branch lines require 1/2 inch per 10 feet.",
+        "how_to_find": "NFPA 13, Section 8.3.3.1"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "8.3.3.1"},
+      "tags": ["dry system", "pitch", "mains"],
+      "verified": true
+    },
+    {
+      "id": "FS-INST-014",
+      "version": "1.0",
+      "exam_types": ["nicet_1", "nicet_2", "state"],
+      "topic_id": "FS-INST",
+      "topic_name": "NFPA 13 Installation",
+      "code_articles": ["NFPA 13 8.17.2"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the standard K-factor for a nominal 1/2-inch orifice standard spray sprinkler?",
+      "choices": [
+        {"id": "A", "text": "2.8"},
+        {"id": "B", "text": "5.6"},
+        {"id": "C", "text": "8.0"},
+        {"id": "D", "text": "11.2"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Standard 1/2-inch orifice sprinklers have a K-factor of 5.6.",
+        "detailed": "The K-factor for a nominal 1/2-inch orifice standard spray sprinkler is 5.6. This is the most common sprinkler type used in commercial installations.",
+        "how_to_find": "NFPA 13, Section 8.17.2 or manufacturer specifications"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "8.17.2"},
+      "tags": ["k-factor", "sprinkler", "orifice"],
+      "verified": true
+    },
+    {
+      "id": "FS-INST-015",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-INST",
+      "topic_name": "NFPA 13 Installation",
+      "code_articles": ["NFPA 13 11.2.3"],
+      "code_tables": [],
+      "type": "concept",
+      "difficulty": "hard",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum design density for Light Hazard occupancies using the density/area method?",
+      "choices": [
+        {"id": "A", "text": "0.05 gpm/sq ft over 2000 sq ft"},
+        {"id": "B", "text": "0.10 gpm/sq ft over 1500 sq ft"},
+        {"id": "C", "text": "0.15 gpm/sq ft over 1500 sq ft"},
+        {"id": "D", "text": "0.20 gpm/sq ft over 1500 sq ft"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Light Hazard requires 0.10 gpm/sq ft over 1500 sq ft design area.",
+        "detailed": "NFPA 13 Figure 11.2.3.1.1 shows the density/area curves. Light Hazard minimum is 0.10 gpm/sq ft over 1500 sq ft remote design area.",
+        "how_to_find": "NFPA 13, Figure 11.2.3.1.1 - Density/Area Curves"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "11.2.3.1.1"},
+      "tags": ["density", "design area", "hydraulics"],
+      "verified": true
+    },
+    {
+      "id": "FS-INST-016",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-INST",
+      "topic_name": "NFPA 13 Installation",
+      "code_articles": ["NFPA 13 11.2.3"],
+      "code_tables": [],
+      "type": "concept",
+      "difficulty": "hard",
+      "time_estimate_seconds": 90,
+      "question": "What design density is required for Ordinary Hazard Group 2 at the minimum remote area?",
+      "choices": [
+        {"id": "A", "text": "0.15 gpm/sq ft over 1500 sq ft"},
+        {"id": "B", "text": "0.20 gpm/sq ft over 1500 sq ft"},
+        {"id": "C", "text": "0.25 gpm/sq ft over 1500 sq ft"},
+        {"id": "D", "text": "0.30 gpm/sq ft over 2500 sq ft"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Ordinary Hazard Group 2 requires 0.20 gpm/sq ft over 1500 sq ft.",
+        "detailed": "Per NFPA 13 Figure 11.2.3.1.1, Ordinary Hazard Group 2 requires a minimum density of 0.20 gpm/sq ft over a 1500 sq ft remote design area.",
+        "how_to_find": "NFPA 13, Figure 11.2.3.1.1"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "11.2.3.1.1"},
+      "tags": ["density", "ordinary hazard", "hydraulics"],
+      "verified": true
+    },
+    {
+      "id": "FS-INST-017",
+      "version": "1.0",
+      "exam_types": ["nicet_1", "nicet_2", "state"],
+      "topic_id": "FS-INST",
+      "topic_name": "NFPA 13 Installation",
+      "code_articles": ["NFPA 13 8.15.5"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the ordinary temperature classification range for sprinklers?",
+      "choices": [
+        {"id": "A", "text": "100°F to 134°F"},
+        {"id": "B", "text": "135°F to 170°F"},
+        {"id": "C", "text": "175°F to 225°F"},
+        {"id": "D", "text": "250°F to 300°F"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Ordinary temperature sprinklers are rated 135°F to 170°F.",
+        "detailed": "NFPA 13 Table 8.15.5.1 defines ordinary temperature classification as 135°F to 170°F. These are used in areas with maximum ceiling temperatures of 100°F.",
+        "how_to_find": "NFPA 13, Table 8.15.5.1 - Temperature Ratings and Classifications"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "Table 8.15.5.1"},
+      "tags": ["temperature rating", "classification"],
+      "verified": true
+    },
+    {
+      "id": "FS-INST-018",
+      "version": "1.0",
+      "exam_types": ["nicet_1", "nicet_2", "state"],
+      "topic_id": "FS-INST",
+      "topic_name": "NFPA 13 Installation",
+      "code_articles": ["NFPA 13 6.2.3"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 75,
+      "question": "According to NFPA 13, where must the system riser be located?",
+      "choices": [
+        {"id": "A", "text": "Inside the building only"},
+        {"id": "B", "text": "Outside the building only"},
+        {"id": "C", "text": "Inside or in a heated enclosure"},
+        {"id": "D", "text": "At least 10 feet from any wall"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Risers must be inside or in a heated enclosure to prevent freezing.",
+        "detailed": "NFPA 13 requires system risers to be located inside the building or within a heated enclosure to protect against freezing and provide accessibility for inspection and testing.",
+        "how_to_find": "NFPA 13, Section 6.2.3 - Riser Location"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "6.2.3"},
+      "tags": ["riser", "location", "installation"],
+      "verified": true
+    },
+    {
+      "id": "FS-INST-019",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-INST",
+      "topic_name": "NFPA 13 Installation",
+      "code_articles": ["NFPA 13 8.16.1"],
+      "code_tables": [],
+      "type": "concept",
+      "difficulty": "hard",
+      "time_estimate_seconds": 90,
+      "question": "Quick-response sprinklers are required in which of the following locations?",
+      "choices": [
+        {"id": "A", "text": "All storage areas"},
+        {"id": "B", "text": "Light hazard occupancies only"},
+        {"id": "C", "text": "Dwelling units and hotel guest rooms"},
+        {"id": "D", "text": "Only where specifically required by AHJ"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Quick-response sprinklers are required in dwelling units and hotel guest rooms.",
+        "detailed": "NFPA 13 Section 8.16.1 requires quick-response or residential sprinklers in light hazard occupancies and dwelling units. This includes hotel guest rooms and residential board and care facilities.",
+        "how_to_find": "NFPA 13, Section 8.16.1 - Quick Response and Residential Sprinklers"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "8.16.1"},
+      "tags": ["quick response", "residential", "sprinkler type"],
+      "verified": true
+    },
+    {
+      "id": "FS-INST-020",
+      "version": "1.0",
+      "exam_types": ["nicet_1", "nicet_2", "state"],
+      "topic_id": "FS-INST",
+      "topic_name": "NFPA 13 Installation",
+      "code_articles": ["NFPA 13 7.1.1"],
+      "code_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "Which type of sprinkler system has water under pressure at all times up to the sprinkler?",
+      "choices": [
+        {"id": "A", "text": "Dry pipe system"},
+        {"id": "B", "text": "Wet pipe system"},
+        {"id": "C", "text": "Preaction system"},
+        {"id": "D", "text": "Deluge system"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Wet pipe systems maintain water under pressure throughout the piping.",
+        "detailed": "A wet pipe system is a sprinkler system with automatic sprinklers attached to a piping system containing water and connected to a water supply so that water discharges immediately from sprinklers opened by heat from a fire.",
+        "how_to_find": "NFPA 13, Section 7.1.1 - Wet Pipe Systems"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "7.1.1"},
+      "tags": ["system types", "wet pipe"],
+      "verified": true
+    },
+    {
+      "id": "FS-INST-021",
+      "version": "1.0",
+      "exam_types": ["nicet_1", "nicet_2", "state"],
+      "topic_id": "FS-INST",
+      "topic_name": "NFPA 13 Installation",
+      "code_articles": ["NFPA 13 7.2"],
+      "code_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 75,
+      "question": "A dry pipe system is typically used when:",
+      "choices": [
+        {"id": "A", "text": "The building has high ceilings"},
+        {"id": "B", "text": "The protected area is subject to freezing"},
+        {"id": "C", "text": "The water supply pressure is low"},
+        {"id": "D", "text": "The building is a high-rise"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Dry pipe systems are used where piping is exposed to freezing temperatures.",
+        "detailed": "NFPA 13 Section 7.2 describes dry pipe systems as those where piping is filled with air or nitrogen under pressure. They are used in areas subject to freezing such as unheated warehouses, parking garages, and loading docks.",
+        "how_to_find": "NFPA 13, Section 7.2 - Dry Pipe Systems"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "7.2"},
+      "tags": ["dry pipe", "system types", "freezing"],
+      "verified": true
+    },
+    {
+      "id": "FS-INST-022",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-INST",
+      "topic_name": "NFPA 13 Installation",
+      "code_articles": ["NFPA 13 7.2.3"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum time allowed for water to travel from the dry valve to the inspector's test connection in a dry pipe system?",
+      "choices": [
+        {"id": "A", "text": "30 seconds"},
+        {"id": "B", "text": "45 seconds"},
+        {"id": "C", "text": "60 seconds"},
+        {"id": "D", "text": "90 seconds"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Water must reach inspector's test in 60 seconds maximum.",
+        "detailed": "NFPA 13 Section 7.2.3.5 requires the dry pipe system to deliver water to the inspector's test connection within 60 seconds from trip. Systems over 500 gallons may use 90 seconds with quick-opening device.",
+        "how_to_find": "NFPA 13, Section 7.2.3.5 - Water Delivery Time"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "7.2.3.5"},
+      "tags": ["dry pipe", "trip test", "timing"],
+      "verified": true
+    },
+    {
+      "id": "FS-INST-023",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-INST",
+      "topic_name": "NFPA 13 Installation",
+      "code_articles": ["NFPA 13 9.3.4"],
+      "code_tables": [],
+      "type": "concept",
+      "difficulty": "hard",
+      "time_estimate_seconds": 90,
+      "question": "Where are seismic separation assemblies required in a sprinkler system?",
+      "choices": [
+        {"id": "A", "text": "Only at the system riser"},
+        {"id": "B", "text": "At all building expansion joints"},
+        {"id": "C", "text": "At building seismic separation joints"},
+        {"id": "D", "text": "Every 100 feet of piping"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Seismic separation assemblies are required at building seismic joints.",
+        "detailed": "NFPA 13 Section 9.3.4 requires flexible couplings or seismic separation assemblies where sprinkler piping crosses building seismic separation joints to accommodate differential movement.",
+        "how_to_find": "NFPA 13, Section 9.3.4 - Seismic Separation Assemblies"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "9.3.4"},
+      "tags": ["seismic", "flexible couplings", "expansion"],
+      "verified": true
+    },
+    {
+      "id": "FS-INST-024",
+      "version": "1.0",
+      "exam_types": ["nicet_1", "nicet_2", "state"],
+      "topic_id": "FS-INST",
+      "topic_name": "NFPA 13 Installation",
+      "code_articles": ["NFPA 13 6.7.2"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 75,
+      "question": "What type of valve is required to control each floor in a high-rise building sprinkler system?",
+      "choices": [
+        {"id": "A", "text": "Gate valve"},
+        {"id": "B", "text": "Ball valve"},
+        {"id": "C", "text": "Indicating-type valve"},
+        {"id": "D", "text": "Check valve"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Indicating-type valves show visually whether the valve is open or closed.",
+        "detailed": "NFPA 13 requires indicating-type control valves (such as OS&Y or PIV) for floor control valves in high-rise buildings. This ensures maintenance personnel can verify valve position.",
+        "how_to_find": "NFPA 13, Section 6.7.2 - Control Valves"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "6.7.2"},
+      "tags": ["valves", "control", "high-rise"],
+      "verified": true
+    },
+    {
+      "id": "FS-INST-025",
+      "version": "1.0",
+      "exam_types": ["nicet_1", "nicet_2", "state"],
+      "topic_id": "FS-INST",
+      "topic_name": "NFPA 13 Installation",
+      "code_articles": ["NFPA 13 6.6"],
+      "code_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 75,
+      "question": "What is the purpose of a fire department connection (FDC)?",
+      "choices": [
+        {"id": "A", "text": "To allow firefighters to drain the system"},
+        {"id": "B", "text": "To supplement the water supply during firefighting"},
+        {"id": "C", "text": "To bypass the main control valve"},
+        {"id": "D", "text": "To test the alarm system"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "FDC allows fire department to pump additional water into the sprinkler system.",
+        "detailed": "NFPA 13 Section 6.6 requires fire department connections to allow the fire department to supplement the building water supply by pumping water into the system during firefighting operations.",
+        "how_to_find": "NFPA 13, Section 6.6 - Fire Department Connections"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "6.6"},
+      "tags": ["FDC", "fire department", "water supply"],
+      "verified": true
+    },
+    {
+      "id": "FS-INST-026",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "state"],
+      "topic_id": "FS-INST",
+      "topic_name": "NFPA 13 Installation",
+      "code_articles": ["NFPA 13 8.12.6"],
+      "code_tables": [],
+      "type": "concept",
+      "difficulty": "hard",
+      "time_estimate_seconds": 90,
+      "question": "According to NFPA 13, ESFR sprinklers are permitted in buildings with ceiling heights up to:",
+      "choices": [
+        {"id": "A", "text": "25 feet"},
+        {"id": "B", "text": "35 feet"},
+        {"id": "C", "text": "45 feet"},
+        {"id": "D", "text": "55 feet"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "ESFR sprinklers are generally listed for ceilings up to 45 feet.",
+        "detailed": "Early Suppression Fast Response (ESFR) sprinklers are high-challenge sprinklers designed to suppress fires in storage applications. They are typically listed for use with ceiling heights up to 45 feet depending on storage configuration.",
+        "how_to_find": "NFPA 13, Section 8.12.6 and manufacturer listings"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "8.12.6"},
+      "tags": ["ESFR", "storage", "ceiling height"],
+      "verified": true
+    },
+    {
+      "id": "FS-INST-027",
+      "version": "1.0",
+      "exam_types": ["nicet_1", "nicet_2", "state"],
+      "topic_id": "FS-INST",
+      "topic_name": "NFPA 13 Installation",
+      "code_articles": ["NFPA 13 Table 22.4.4.7"],
+      "code_tables": ["Table 22.4.4.7"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 75,
+      "question": "According to NFPA 13, what is the maximum number of sprinklers allowed on a single branch line using the pipe schedule method for Light Hazard?",
+      "choices": [
+        {"id": "A", "text": "6 sprinklers"},
+        {"id": "B", "text": "8 sprinklers"},
+        {"id": "C", "text": "10 sprinklers"},
+        {"id": "D", "text": "12 sprinklers"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Light Hazard pipe schedule allows maximum 8 sprinklers per branch line.",
+        "detailed": "NFPA 13 Table 22.4.4.7 specifies that pipe schedule systems for Light Hazard occupancies are limited to 8 sprinklers on any branch line. This ensures adequate water delivery without hydraulic calculations.",
+        "how_to_find": "NFPA 13, Table 22.4.4.7 - Pipe Schedule"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "Table 22.4.4.7"},
+      "tags": ["pipe schedule", "light hazard", "branch line"],
+      "verified": true
+    },
+    {
+      "id": "FS-INST-028",
+      "version": "1.0",
+      "exam_types": ["nicet_1", "nicet_2", "state"],
+      "topic_id": "FS-INST",
+      "topic_name": "NFPA 13 Installation",
+      "code_articles": ["NFPA 13 11.2.4.4"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 75,
+      "question": "What hose stream allowance is required for Light Hazard occupancies?",
+      "choices": [
+        {"id": "A", "text": "50 gpm"},
+        {"id": "B", "text": "100 gpm"},
+        {"id": "C", "text": "250 gpm"},
+        {"id": "D", "text": "500 gpm"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Light Hazard requires 100 gpm hose stream allowance.",
+        "detailed": "NFPA 13 Section 11.2.4.4 requires a hose stream allowance of 100 gpm for Light Hazard occupancies. This is added to the sprinkler system demand for water supply calculations.",
+        "how_to_find": "NFPA 13, Section 11.2.4.4 - Hose Stream Demand"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "11.2.4.4"},
+      "tags": ["hose stream", "water supply", "light hazard"],
+      "verified": true
+    },
+    {
+      "id": "FS-INST-029",
+      "version": "1.0",
+      "exam_types": ["nicet_2", "nicet_3", "state"],
+      "topic_id": "FS-INST",
+      "topic_name": "NFPA 13 Installation",
+      "code_articles": ["NFPA 13 11.2.4.4"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 75,
+      "question": "What is the hose stream allowance for Ordinary Hazard occupancies?",
+      "choices": [
+        {"id": "A", "text": "100 gpm"},
+        {"id": "B", "text": "250 gpm"},
+        {"id": "C", "text": "500 gpm"},
+        {"id": "D", "text": "750 gpm"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Ordinary Hazard requires 250 gpm hose stream allowance.",
+        "detailed": "NFPA 13 Section 11.2.4.4 specifies that Ordinary Hazard occupancies (Group 1 and Group 2) require a hose stream allowance of 250 gpm to be added to the sprinkler demand.",
+        "how_to_find": "NFPA 13, Section 11.2.4.4"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "11.2.4.4"},
+      "tags": ["hose stream", "ordinary hazard", "water supply"],
+      "verified": true
+    },
+    {
+      "id": "FS-INST-030",
+      "version": "1.0",
+      "exam_types": ["nicet_1", "nicet_2", "state"],
+      "topic_id": "FS-INST",
+      "topic_name": "NFPA 13 Installation",
+      "code_articles": ["NFPA 13 6.4"],
+      "code_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum required duration for water supply for Light Hazard occupancies?",
+      "choices": [
+        {"id": "A", "text": "15 minutes"},
+        {"id": "B", "text": "30 minutes"},
+        {"id": "C", "text": "60 minutes"},
+        {"id": "D", "text": "90 minutes"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Light Hazard requires 30 minutes water supply duration.",
+        "detailed": "NFPA 13 Section 11.2.4.5 requires that the water supply duration be at least 30 minutes for Light Hazard occupancies. Higher hazard occupancies require 60-120 minutes.",
+        "how_to_find": "NFPA 13, Section 11.2.4.5 - Duration"
+      },
+      "code_reference": {"standard": "NFPA 13", "section": "11.2.4.5"},
+      "tags": ["duration", "water supply", "light hazard"],
+      "verified": true
+    }
+  ]
+}

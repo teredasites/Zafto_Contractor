@@ -1,0 +1,502 @@
+{
+  "category": "Elevator Mechanic",
+  "subcategory": "Controls and Dispatching",
+  "description": "Elevator control systems and group dispatching",
+  "difficulty_distribution": {
+    "beginner": 10,
+    "intermediate": 15,
+    "advanced": 10
+  },
+  "questions": [
+    {
+      "id": "elev_ctrl_001",
+      "difficulty": "beginner",
+      "question": "What is the function of an elevator controller?",
+      "options": [
+        "To provide passenger comfort only",
+        "To manage all elevator operations including motion, doors, and safety",
+        "To generate power",
+        "To provide lighting only"
+      ],
+      "correct_answer": 1,
+      "explanation": "The controller is the brain of the elevator, managing motor operation, door control, position sensing, safety circuits, and communication with the dispatch system.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "elev_ctrl_002",
+      "difficulty": "beginner",
+      "question": "What is simplex operation?",
+      "options": [
+        "Simple installation",
+        "A single elevator operating independently",
+        "Single-speed operation",
+        "Basic programming"
+      ],
+      "correct_answer": 1,
+      "explanation": "Simplex refers to a single elevator operating independently, not coordinated with other elevators in the building.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "elev_ctrl_003",
+      "difficulty": "beginner",
+      "question": "What is group supervisory control?",
+      "options": [
+        "Multiple people supervising",
+        "A system coordinating multiple elevators to efficiently serve hall calls",
+        "Remote monitoring",
+        "Manual operation"
+      ],
+      "correct_answer": 1,
+      "explanation": "Group supervisory systems coordinate multiple elevators, assigning hall calls to the most appropriate car based on algorithms for efficiency.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "elev_ctrl_004",
+      "difficulty": "beginner",
+      "question": "What is a hall call?",
+      "options": [
+        "An intercom request",
+        "A passenger request to summon an elevator from a floor landing",
+        "A maintenance call",
+        "An emergency call"
+      ],
+      "correct_answer": 1,
+      "explanation": "A hall call is registered when a passenger presses the up or down button at a floor landing to summon an elevator.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "elev_ctrl_005",
+      "difficulty": "beginner",
+      "question": "What is a car call?",
+      "options": [
+        "Calling for a car",
+        "A destination floor selected by a passenger inside the elevator",
+        "A telephone call",
+        "An emergency call"
+      ],
+      "correct_answer": 1,
+      "explanation": "A car call is registered when a passenger inside the elevator presses a floor button to select their destination.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "elev_ctrl_006",
+      "difficulty": "beginner",
+      "question": "What is a VFD (Variable Frequency Drive)?",
+      "options": [
+        "A type of elevator car",
+        "A motor controller that varies speed by adjusting electrical frequency",
+        "A ventilation system",
+        "A door operator"
+      ],
+      "correct_answer": 1,
+      "explanation": "VFDs control AC motor speed by varying the frequency of the electrical supply, enabling smooth acceleration/deceleration and precise floor leveling.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "elev_ctrl_007",
+      "difficulty": "beginner",
+      "question": "What is independent service mode?",
+      "options": [
+        "Self-installation",
+        "Mode where an elevator responds only to car calls, ignoring hall calls",
+        "Emergency mode",
+        "Testing mode"
+      ],
+      "correct_answer": 1,
+      "explanation": "Independent service allows exclusive use of an elevator (e.g., for moving furniture), responding only to car calls and holding doors until sent to another floor.",
+      "code_reference": "ASME A17.1"
+    },
+    {
+      "id": "elev_ctrl_008",
+      "difficulty": "beginner",
+      "question": "What is inspection mode?",
+      "options": [
+        "AHJ inspection",
+        "Slow-speed operation controlled from car top for maintenance",
+        "Visual inspection",
+        "Code inspection"
+      ],
+      "correct_answer": 1,
+      "explanation": "Inspection operation allows slow-speed control from the car top for maintenance and inspection, with safety circuits still active.",
+      "code_reference": "ASME A17.1, Section 2.26.1"
+    },
+    {
+      "id": "elev_ctrl_009",
+      "difficulty": "beginner",
+      "question": "What is firefighter's service Phase I?",
+      "options": [
+        "Firefighter training",
+        "Automatic recall of elevators to a designated floor upon fire alarm",
+        "First responder access",
+        "Manual fire control"
+      ],
+      "correct_answer": 1,
+      "explanation": "Phase I recall automatically returns elevators to a designated floor (usually lobby) when the building fire alarm activates, for firefighter access.",
+      "code_reference": "ASME A17.1, Section 2.27.3"
+    },
+    {
+      "id": "elev_ctrl_010",
+      "difficulty": "beginner",
+      "question": "What is firefighter's service Phase II?",
+      "options": [
+        "Second phase of recall",
+        "Manual control of elevator by firefighters using special key",
+        "Emergency evacuation",
+        "Fire suppression"
+      ],
+      "correct_answer": 1,
+      "explanation": "Phase II allows firefighters to manually control a recalled elevator using a special key, overriding normal automatic operations.",
+      "code_reference": "ASME A17.1, Section 2.27.3"
+    },
+    {
+      "id": "elev_ctrl_011",
+      "difficulty": "intermediate",
+      "question": "What is destination dispatch?",
+      "options": [
+        "Sending elevators to maintenance",
+        "Passengers select destination before entering; system assigns elevator",
+        "Dispatching repair technicians",
+        "Remote elevator control"
+      ],
+      "correct_answer": 1,
+      "explanation": "Destination dispatch has passengers enter their destination floor before boarding. The system groups passengers going to similar floors for efficiency.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "elev_ctrl_012",
+      "difficulty": "intermediate",
+      "question": "What is elevator zoning?",
+      "options": [
+        "Building zones for codes",
+        "Assigning elevators to serve specific floor ranges",
+        "Security zones",
+        "Climate zones"
+      ],
+      "correct_answer": 1,
+      "explanation": "Zoning dedicates elevators to specific floor ranges (e.g., low-rise, mid-rise, high-rise zones) in tall buildings for efficiency.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "elev_ctrl_013",
+      "difficulty": "intermediate",
+      "question": "What is up-peak mode?",
+      "options": [
+        "Maximum speed operation",
+        "Dispatch algorithm for heavy incoming lobby traffic (morning rush)",
+        "Upward travel only",
+        "Peak power usage"
+      ],
+      "correct_answer": 1,
+      "explanation": "Up-peak dispatches elevators to return empty to the lobby during heavy incoming traffic periods (morning arrival) to minimize wait times.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "elev_ctrl_014",
+      "difficulty": "intermediate",
+      "question": "What is down-peak mode?",
+      "options": [
+        "Minimum speed operation",
+        "Dispatch algorithm for heavy outgoing lobby traffic (evening departure)",
+        "Downward travel only",
+        "Power-saving mode"
+      ],
+      "correct_answer": 1,
+      "explanation": "Down-peak dispatches elevators to upper floors during heavy outgoing traffic (evening departure) to minimize passenger wait times.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "elev_ctrl_015",
+      "difficulty": "intermediate",
+      "question": "What is the position transducer?",
+      "options": [
+        "A door sensor",
+        "A device that tracks the exact position of the elevator car",
+        "A load weighing device",
+        "A speed sensor only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Position transducers (encoders, tape readers) continuously track car position for accurate floor leveling and display.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "elev_ctrl_016",
+      "difficulty": "intermediate",
+      "question": "What is load weighing in elevators?",
+      "options": [
+        "Weighing packages",
+        "Measuring car load for dispatching and overload protection",
+        "Building load calculation",
+        "Counter weight measurement"
+      ],
+      "correct_answer": 1,
+      "explanation": "Load weighing devices measure car load for dispatch decisions (bypass halls when full), overload alarms, and proper motor control.",
+      "code_reference": "ASME A17.1"
+    },
+    {
+      "id": "elev_ctrl_017",
+      "difficulty": "intermediate",
+      "question": "What triggers elevator overload bypass?",
+      "options": [
+        "Too many buttons pressed",
+        "Load exceeds threshold (typically 80%); car bypasses hall calls",
+        "Slow response",
+        "Motor overheating"
+      ],
+      "correct_answer": 1,
+      "explanation": "When the load weighing device indicates the car is near capacity (typically 80%), the elevator bypasses hall calls to efficiently serve existing passengers.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "elev_ctrl_018",
+      "difficulty": "intermediate",
+      "question": "What is door dwell time?",
+      "options": [
+        "Door installation time",
+        "Time doors remain open at a floor before closing automatically",
+        "Door speed",
+        "Door width"
+      ],
+      "correct_answer": 1,
+      "explanation": "Door dwell (hold) time is the adjustable time doors remain open at a floor. It can vary based on traffic, time of day, or floor.",
+      "code_reference": "ASME A17.1"
+    },
+    {
+      "id": "elev_ctrl_019",
+      "difficulty": "intermediate",
+      "question": "What is the door reopening device?",
+      "options": [
+        "Door motor",
+        "Safety device (photoeye or edge) that reopens closing doors if obstructed",
+        "Emergency release",
+        "Door key"
+      ],
+      "correct_answer": 1,
+      "explanation": "Door reopening devices (photoeyes, safety edges, presence sensors) detect obstructions and reopen closing doors to prevent injury.",
+      "code_reference": "ASME A17.1, Section 2.13"
+    },
+    {
+      "id": "elev_ctrl_020",
+      "difficulty": "intermediate",
+      "question": "What is reduced speed door closing (nudging)?",
+      "options": [
+        "Slow motion doors",
+        "Doors close slowly with audible warning after extended open time",
+        "Gentle door closing",
+        "Door lubrication"
+      ],
+      "correct_answer": 1,
+      "explanation": "Nudging mode closes doors at reduced speed with an audible warning after doors have been blocked open excessively, to eventually complete the close cycle.",
+      "code_reference": "ASME A17.1, Section 2.13"
+    },
+    {
+      "id": "elev_ctrl_021",
+      "difficulty": "intermediate",
+      "question": "What is an encoder in elevator systems?",
+      "options": [
+        "A code device",
+        "A device measuring motor/sheave rotation for speed and position",
+        "An encryption device",
+        "A communication device"
+      ],
+      "correct_answer": 1,
+      "explanation": "Encoders mounted on the motor or sheave measure rotation to determine car speed and position for the control system.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "elev_ctrl_022",
+      "difficulty": "intermediate",
+      "question": "What is a PLC in elevator control?",
+      "options": [
+        "Power Line Carrier",
+        "Programmable Logic Controller - a digital computer for automation",
+        "Passenger Load Calculator",
+        "Primary Lock Control"
+      ],
+      "correct_answer": 1,
+      "explanation": "PLCs are industrial computers used in some elevator controllers to process inputs, execute logic, and control outputs for elevator operation.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "elev_ctrl_023",
+      "difficulty": "intermediate",
+      "question": "What is the safety chain in elevator controls?",
+      "options": [
+        "A physical chain",
+        "Series of safety switch contacts that must all be closed for operation",
+        "Emergency chain",
+        "Anchor chain"
+      ],
+      "correct_answer": 1,
+      "explanation": "The safety chain is a series of safety devices wired in series. If any device opens (trips), the chain breaks and stops the elevator.",
+      "code_reference": "ASME A17.1"
+    },
+    {
+      "id": "elev_ctrl_024",
+      "difficulty": "advanced",
+      "question": "What is closed-loop vector control?",
+      "options": [
+        "Circular path control",
+        "VFD technique using feedback for precise torque and speed control",
+        "Door closing algorithm",
+        "Route optimization"
+      ],
+      "correct_answer": 1,
+      "explanation": "Closed-loop vector (flux vector) control uses motor feedback to precisely control torque and speed for smooth ride quality and accurate leveling.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "elev_ctrl_025",
+      "difficulty": "advanced",
+      "question": "What is regenerative braking energy handling?",
+      "options": [
+        "Storing energy in batteries",
+        "Returning generated energy to the grid or dissipating as heat",
+        "Reusing brake pads",
+        "Recycling oil"
+      ],
+      "correct_answer": 1,
+      "explanation": "During regenerative braking (overhauling conditions), the motor generates electricity. This can be returned to the grid, shared with other elevators, or dissipated in resistors.",
+      "code_reference": "NEC 620, Industry Standard"
+    },
+    {
+      "id": "elev_ctrl_026",
+      "difficulty": "advanced",
+      "question": "What is AI-based elevator dispatching?",
+      "options": [
+        "Robot elevators",
+        "Using artificial intelligence to optimize dispatch decisions",
+        "Automatic installation",
+        "Voice control"
+      ],
+      "correct_answer": 1,
+      "explanation": "AI dispatch systems learn traffic patterns and optimize car assignments to minimize wait times and improve overall building traffic handling.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "elev_ctrl_027",
+      "difficulty": "advanced",
+      "question": "What is a rope gripper (machine-room-less safety)?",
+      "options": [
+        "Rope clamp",
+        "A device that can stop the car by gripping the ropes in emergencies",
+        "Installation tool",
+        "Rope guide"
+      ],
+      "correct_answer": 1,
+      "explanation": "Some MRL elevators use rope grippers as an alternative to traditional car safeties, providing emergency stopping capability by gripping the suspension ropes.",
+      "code_reference": "ASME A17.1"
+    },
+    {
+      "id": "elev_ctrl_028",
+      "difficulty": "advanced",
+      "question": "What is unintended car movement protection (UCM)?",
+      "options": [
+        "Parking brake",
+        "System detecting and stopping movement with doors open at landing",
+        "Slow-speed mode",
+        "Leveling system"
+      ],
+      "correct_answer": 1,
+      "explanation": "UCM protection detects unintended car movement (roll-away) when doors are open at a landing and activates a stopping device to prevent injury.",
+      "code_reference": "ASME A17.1, Section 2.19.3"
+    },
+    {
+      "id": "elev_ctrl_029",
+      "difficulty": "advanced",
+      "question": "What is seismic operation?",
+      "options": [
+        "Earthquake-proof elevators",
+        "Automatic shutdown and inspection after seismic event detection",
+        "Underground elevators",
+        "Vibration dampening"
+      ],
+      "correct_answer": 1,
+      "explanation": "Seismic controls stop elevators and prevent restart after earthquake detection until inspected for damage, per code requirements.",
+      "code_reference": "ASME A17.1, Section 8.4"
+    },
+    {
+      "id": "elev_ctrl_030",
+      "difficulty": "advanced",
+      "question": "What is remote monitoring for elevators?",
+      "options": [
+        "Security cameras in cars",
+        "Real-time monitoring of elevator status and faults from off-site",
+        "Remote control toys",
+        "Wireless installation"
+      ],
+      "correct_answer": 1,
+      "explanation": "Remote monitoring systems transmit elevator status, faults, and operating data to service providers for proactive maintenance and faster response.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "elev_ctrl_031",
+      "difficulty": "advanced",
+      "question": "What is elevator traffic analysis?",
+      "options": [
+        "Counting elevator cars",
+        "Studying usage patterns to optimize dispatch and plan capacity",
+        "Traffic light control",
+        "Building traffic flow"
+      ],
+      "correct_answer": 1,
+      "explanation": "Traffic analysis studies passenger flow, wait times, and elevator utilization to optimize settings and assess whether capacity meets demand.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "elev_ctrl_032",
+      "difficulty": "intermediate",
+      "question": "What is the door zone?",
+      "options": [
+        "Area around doors",
+        "The range around a floor level where doors are permitted to open",
+        "Door width",
+        "Landing area"
+      ],
+      "correct_answer": 1,
+      "explanation": "The door zone is the limited range (typically ±3-4 inches) around the floor level where car and hoistway doors are permitted to open.",
+      "code_reference": "ASME A17.1"
+    },
+    {
+      "id": "elev_ctrl_033",
+      "difficulty": "intermediate",
+      "question": "What is pre-opening of doors?",
+      "options": [
+        "Opening doors before arrival at floor level",
+        "Opening car doors as car approaches floor while still moving slowly",
+        "Test opening",
+        "Manual opening"
+      ],
+      "correct_answer": 1,
+      "explanation": "Some systems begin opening car doors as the car approaches the floor at reduced speed (within door zone), improving passenger throughput.",
+      "code_reference": "ASME A17.1"
+    },
+    {
+      "id": "elev_ctrl_034",
+      "difficulty": "intermediate",
+      "question": "What is hall call timeout?",
+      "options": [
+        "Button failure",
+        "Automatic cancellation of unanswered hall calls after set time",
+        "Registration delay",
+        "System error"
+      ],
+      "correct_answer": 1,
+      "explanation": "Hall calls that aren't answered within a set time (typically 45-90 seconds) are cancelled and re-registered to allow reassignment.",
+      "code_reference": "Industry Standard"
+    },
+    {
+      "id": "elev_ctrl_035",
+      "difficulty": "advanced",
+      "question": "What is sector dispatching?",
+      "options": [
+        "Building sector assignment",
+        "Algorithm dividing the building into sectors for elevator assignment",
+        "Security sectors",
+        "Maintenance sectors"
+      ],
+      "correct_answer": 1,
+      "explanation": "Sector dispatching divides floors into sectors, assigning each elevator responsibility for certain sectors to reduce stops and improve efficiency.",
+      "code_reference": "Industry Standard"
+    }
+  ]
+}

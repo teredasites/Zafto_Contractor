@@ -1,0 +1,502 @@
+{
+  "category": "Elevator Mechanic",
+  "subcategory": "Inspection and Testing Procedures",
+  "description": "ASME A17.1 and A17.2 inspection and testing requirements",
+  "difficulty_distribution": {
+    "beginner": 10,
+    "intermediate": 15,
+    "advanced": 10
+  },
+  "questions": [
+    {
+      "id": "elev_insp_001",
+      "difficulty": "beginner",
+      "question": "How often must Category 1 periodic tests be performed on elevators?",
+      "options": [
+        "Monthly",
+        "Annually",
+        "Every 3 years",
+        "Every 5 years"
+      ],
+      "correct_answer": 1,
+      "explanation": "Category 1 periodic tests must be performed annually and include operational tests of safety devices without full-load testing.",
+      "code_reference": "ASME A17.1 Section 8.11"
+    },
+    {
+      "id": "elev_insp_002",
+      "difficulty": "beginner",
+      "question": "How often must Category 5 periodic tests be performed?",
+      "options": [
+        "Annually",
+        "Every 3 years",
+        "Every 5 years",
+        "Every 10 years"
+      ],
+      "correct_answer": 2,
+      "explanation": "Category 5 tests are performed every 5 years and include full-load safety tests such as governor overspeed testing.",
+      "code_reference": "ASME A17.1 Section 8.11"
+    },
+    {
+      "id": "elev_insp_003",
+      "difficulty": "beginner",
+      "question": "What document provides procedures for elevator inspections?",
+      "options": [
+        "ASME A17.1",
+        "ASME A17.2 Guide for Inspection",
+        "NFPA 70",
+        "OSHA 1910"
+      ],
+      "correct_answer": 1,
+      "explanation": "ASME A17.2 is the Guide for Inspection of Elevators, Escalators, and Moving Walks, providing detailed inspection procedures.",
+      "code_reference": "ASME A17.2"
+    },
+    {
+      "id": "elev_insp_004",
+      "difficulty": "beginner",
+      "question": "Who is authorized to perform elevator inspections in most jurisdictions?",
+      "options": [
+        "Any elevator mechanic",
+        "Qualified Elevator Inspector (QEI)",
+        "Building owner",
+        "Fire department"
+      ],
+      "correct_answer": 1,
+      "explanation": "A Qualified Elevator Inspector (QEI) certified through NAESA or equivalent is required to perform elevator inspections.",
+      "code_reference": "ASME A17.1 Section 8.10"
+    },
+    {
+      "id": "elev_insp_005",
+      "difficulty": "beginner",
+      "question": "What is the purpose of a no-load safety test?",
+      "options": [
+        "Test under full capacity",
+        "Verify safety device operation without load",
+        "Test emergency power",
+        "Measure car speed only"
+      ],
+      "correct_answer": 1,
+      "explanation": "No-load safety tests verify that safety devices will operate properly without subjecting equipment to full-load stress.",
+      "code_reference": "ASME A17.2 Section 1.3"
+    },
+    {
+      "id": "elev_insp_006",
+      "difficulty": "beginner",
+      "question": "What must be verified during a door restriction test?",
+      "options": [
+        "Door speed only",
+        "Door cannot be opened more than 4 inches when car is outside unlocking zone",
+        "Door color",
+        "Door weight"
+      ],
+      "correct_answer": 1,
+      "explanation": "Hoistway doors must not open more than 4 inches when the car is outside the unlocking zone (typically 18 inches above/below floor).",
+      "code_reference": "ASME A17.1 Section 2.12"
+    },
+    {
+      "id": "elev_insp_007",
+      "difficulty": "beginner",
+      "question": "What is the unlocking zone for hoistway doors?",
+      "options": [
+        "6 inches above or below floor",
+        "18 inches above or below floor level",
+        "36 inches above or below floor",
+        "At floor level only"
+      ],
+      "correct_answer": 1,
+      "explanation": "The unlocking zone is typically 18 inches above or below floor level where hoistway doors can be unlocked by the car.",
+      "code_reference": "ASME A17.1 Section 2.12.2"
+    },
+    {
+      "id": "elev_insp_008",
+      "difficulty": "beginner",
+      "question": "What should be checked during a pit inspection?",
+      "options": [
+        "Car interior only",
+        "Buffers, pit stop switch, lighting, ladder, and drainage",
+        "Machine room only",
+        "Hoistway doors only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Pit inspection includes checking buffers, pit stop switch, lighting, access ladder, drainage, and general cleanliness.",
+      "code_reference": "ASME A17.2 Section 2.3"
+    },
+    {
+      "id": "elev_insp_009",
+      "difficulty": "beginner",
+      "question": "What is the minimum pit depth for hydraulic elevators?",
+      "options": [
+        "12 inches",
+        "24 inches minimum clearance below car platform",
+        "48 inches",
+        "No minimum"
+      ],
+      "correct_answer": 1,
+      "explanation": "The pit must provide at least 24 inches clearance below the car platform at the lowest point of travel.",
+      "code_reference": "ASME A17.1 Section 2.2"
+    },
+    {
+      "id": "elev_insp_010",
+      "difficulty": "beginner",
+      "question": "What is the purpose of the car top inspection station?",
+      "options": [
+        "Passenger use",
+        "Allows mechanic to control elevator at slow speed while on car top",
+        "Emergency exit",
+        "Storage"
+      ],
+      "correct_answer": 1,
+      "explanation": "The car top inspection station allows mechanics to operate the elevator at slow inspection speed while performing maintenance on the car top.",
+      "code_reference": "ASME A17.1 Section 2.26.1.4"
+    },
+    {
+      "id": "elev_insp_011",
+      "difficulty": "intermediate",
+      "question": "During a Category 5 test, at what percentage of governor tripping speed must the safety be tested?",
+      "options": [
+        "At rated speed",
+        "At 115% of rated speed or governor tripping speed",
+        "At 50% of rated speed",
+        "At any speed"
+      ],
+      "correct_answer": 1,
+      "explanation": "Category 5 full-load safety tests verify safety operation at governor tripping speed (typically 115% of rated speed).",
+      "code_reference": "ASME A17.1 Section 8.11"
+    },
+    {
+      "id": "elev_insp_012",
+      "difficulty": "intermediate",
+      "question": "What test verifies proper operation of the firefighters' emergency operation?",
+      "options": [
+        "Load test",
+        "Phase I recall and Phase II in-car operation tests",
+        "Speed test only",
+        "Buffer test"
+      ],
+      "correct_answer": 1,
+      "explanation": "Firefighters' emergency operation testing includes Phase I (automatic recall) and Phase II (in-car operation by firefighters).",
+      "code_reference": "ASME A17.1 Section 2.27.3"
+    },
+    {
+      "id": "elev_insp_013",
+      "difficulty": "intermediate",
+      "question": "What is the maximum allowable stopping distance for a safety device test?",
+      "options": [
+        "Fixed at 12 inches",
+        "Varies based on rated speed, specified in A17.1 tables",
+        "Unlimited",
+        "1 inch"
+      ],
+      "correct_answer": 1,
+      "explanation": "Maximum stopping distances are specified in ASME A17.1 tables and vary based on rated speed and safety type.",
+      "code_reference": "ASME A17.1 Section 2.17"
+    },
+    {
+      "id": "elev_insp_014",
+      "difficulty": "intermediate",
+      "question": "How is rope stretch measured during inspection?",
+      "options": [
+        "Visual only",
+        "Measure distance between reference marks on ropes",
+        "Not measured",
+        "By weight only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Rope stretch is measured by checking the distance between reference marks applied to ropes during installation or previous inspection.",
+      "code_reference": "ASME A17.1 Section 8.6"
+    },
+    {
+      "id": "elev_insp_015",
+      "difficulty": "intermediate",
+      "question": "What is the maximum allowable rope wear before replacement is required?",
+      "options": [
+        "Any visible wear",
+        "When diameter reduction exceeds specified limits or broken wires exceed count",
+        "50% wear",
+        "No limit"
+      ],
+      "correct_answer": 1,
+      "explanation": "Ropes must be replaced when diameter reduction or broken wire count exceeds limits specified in ASME A17.1.",
+      "code_reference": "ASME A17.1 Section 8.6.4"
+    },
+    {
+      "id": "elev_insp_016",
+      "difficulty": "intermediate",
+      "question": "What must be verified during a pressure relief valve test on hydraulic elevators?",
+      "options": [
+        "Flow rate only",
+        "Opens at or below 150% of working pressure",
+        "Does not open",
+        "Visual check only"
+      ],
+      "correct_answer": 1,
+      "explanation": "The pressure relief valve must open at or below 150% of the working pressure to prevent system over-pressurization.",
+      "code_reference": "ASME A17.1 Section 3.19"
+    },
+    {
+      "id": "elev_insp_017",
+      "difficulty": "intermediate",
+      "question": "How often must emergency lighting and alarms be tested?",
+      "options": [
+        "Monthly",
+        "During each Category 1 test (annually)",
+        "Every 5 years",
+        "Never"
+      ],
+      "correct_answer": 1,
+      "explanation": "Emergency lighting, alarms, and communication devices must be tested during each Category 1 periodic test.",
+      "code_reference": "ASME A17.1 Section 8.11"
+    },
+    {
+      "id": "elev_insp_018",
+      "difficulty": "intermediate",
+      "question": "What is tested during a terminal stopping device test?",
+      "options": [
+        "Door operation",
+        "Normal and final terminal stopping devices slow or stop car at terminal floors",
+        "Lighting",
+        "Communication"
+      ],
+      "correct_answer": 1,
+      "explanation": "Terminal stopping device tests verify that normal and final limits properly slow or stop the car at terminal floors.",
+      "code_reference": "ASME A17.1 Section 2.25"
+    },
+    {
+      "id": "elev_insp_019",
+      "difficulty": "intermediate",
+      "question": "What documentation must be maintained for elevator inspections?",
+      "options": [
+        "None required",
+        "Test tags, inspection reports, and maintenance records",
+        "Photos only",
+        "Verbal reports"
+      ],
+      "correct_answer": 1,
+      "explanation": "Written inspection reports, test tags in the machine room, and maintenance records must be maintained and available.",
+      "code_reference": "ASME A17.1 Section 8.6"
+    },
+    {
+      "id": "elev_insp_020",
+      "difficulty": "intermediate",
+      "question": "What is the purpose of testing the slack rope or chain device?",
+      "options": [
+        "Measures speed",
+        "Verifies it stops the car if suspension ropes become slack",
+        "Checks door operation",
+        "Tests emergency power"
+      ],
+      "correct_answer": 1,
+      "explanation": "The slack rope device must stop the car if suspension ropes become abnormally slack, preventing uncontrolled descent.",
+      "code_reference": "ASME A17.1 Section 3.21"
+    },
+    {
+      "id": "elev_insp_021",
+      "difficulty": "intermediate",
+      "question": "During a leveling test, what is the maximum allowable variance?",
+      "options": [
+        "1 inch",
+        "Plus or minus 1/2 inch at rated load",
+        "3 inches",
+        "No limit"
+      ],
+      "correct_answer": 1,
+      "explanation": "Elevator leveling must be within plus or minus 1/2 inch of the landing under rated load conditions.",
+      "code_reference": "ASME A17.1 Section 2.26"
+    },
+    {
+      "id": "elev_insp_022",
+      "difficulty": "intermediate",
+      "question": "What is verified during a car frame to rail clearance check?",
+      "options": [
+        "Rail color",
+        "Guide shoes/rollers maintain proper clearance from rails",
+        "Rail height",
+        "Rail weight"
+      ],
+      "correct_answer": 1,
+      "explanation": "Car frame to rail clearance ensures guide shoes or rollers maintain proper contact and clearance for safe operation.",
+      "code_reference": "ASME A17.1 Section 2.23"
+    },
+    {
+      "id": "elev_insp_023",
+      "difficulty": "intermediate",
+      "question": "How is door closing force measured?",
+      "options": [
+        "Not measured",
+        "Force gauge measuring kinetic energy (max 2.5 ft-lbs for passenger doors)",
+        "Visual observation",
+        "Timing only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Door closing force is measured with a force gauge; kinetic energy must not exceed 2.5 ft-lbs for passenger doors.",
+      "code_reference": "ASME A17.1 Section 2.13"
+    },
+    {
+      "id": "elev_insp_024",
+      "difficulty": "intermediate",
+      "question": "What is the purpose of a hoistway door interlock test?",
+      "options": [
+        "Test door speed",
+        "Verify car cannot run unless doors are closed and locked",
+        "Check door appearance",
+        "Measure door weight"
+      ],
+      "correct_answer": 1,
+      "explanation": "Interlock tests verify that the elevator cannot operate unless all hoistway doors are properly closed and locked.",
+      "code_reference": "ASME A17.1 Section 2.12"
+    },
+    {
+      "id": "elev_insp_025",
+      "difficulty": "intermediate",
+      "question": "What is tested during an ascending car overspeed protection test?",
+      "options": [
+        "Down direction only",
+        "Device stops or slows car exceeding speed in up direction",
+        "Door operation",
+        "Lighting"
+      ],
+      "correct_answer": 1,
+      "explanation": "Ascending car overspeed protection (ACOP) devices must stop or slow a car exceeding governor tripping speed in the up direction.",
+      "code_reference": "ASME A17.1 Section 2.19"
+    },
+    {
+      "id": "elev_insp_026",
+      "difficulty": "advanced",
+      "question": "What Category test requires testing the safety with full rated load?",
+      "options": [
+        "Category 1",
+        "Category 5",
+        "Category 3",
+        "No category requires this"
+      ],
+      "correct_answer": 1,
+      "explanation": "Category 5 tests (every 5 years) require testing car safeties with rated load to verify stopping performance.",
+      "code_reference": "ASME A17.1 Section 8.11"
+    },
+    {
+      "id": "elev_insp_027",
+      "difficulty": "advanced",
+      "question": "What is the procedure for testing unintended car movement protection (UCM)?",
+      "options": [
+        "Visual inspection only",
+        "Simulate door zone detection failure and verify UCM device activation",
+        "Not tested",
+        "Load test only"
+      ],
+      "correct_answer": 1,
+      "explanation": "UCM testing involves simulating conditions that could cause unintended movement and verifying protective device activation.",
+      "code_reference": "ASME A17.1 Section 2.19"
+    },
+    {
+      "id": "elev_insp_028",
+      "difficulty": "advanced",
+      "question": "How is the emergency brake on machine-room-less (MRL) elevators tested?",
+      "options": [
+        "Same as conventional",
+        "Specific procedures verifying brake holds at 125% of rated load",
+        "Not required",
+        "Visual only"
+      ],
+      "correct_answer": 1,
+      "explanation": "MRL elevator emergency brakes must hold 125% of rated load; specific test procedures verify brake adequacy.",
+      "code_reference": "ASME A17.1 Section 2.24"
+    },
+    {
+      "id": "elev_insp_029",
+      "difficulty": "advanced",
+      "question": "What is verified during a counterweight safety test?",
+      "options": [
+        "Counterweight color",
+        "Counterweight safety device stops counterweight in overspeed descent",
+        "Counterweight weight only",
+        "Not required"
+      ],
+      "correct_answer": 1,
+      "explanation": "Where required, counterweight safeties must be tested to verify they stop the counterweight during overspeed descent.",
+      "code_reference": "ASME A17.1 Section 2.17"
+    },
+    {
+      "id": "elev_insp_030",
+      "difficulty": "advanced",
+      "question": "What special testing is required after modernization?",
+      "options": [
+        "No testing needed",
+        "Acceptance inspection and tests per ASME A17.1 requirements",
+        "Visual only",
+        "Same as periodic test"
+      ],
+      "correct_answer": 1,
+      "explanation": "After modernization or major alteration, full acceptance inspection and testing per ASME A17.1 requirements is mandatory.",
+      "code_reference": "ASME A17.1 Section 8.10"
+    },
+    {
+      "id": "elev_insp_031",
+      "difficulty": "advanced",
+      "question": "How is seismic switch operation verified?",
+      "options": [
+        "Not tested",
+        "Simulate seismic event and verify elevator responds correctly",
+        "Visual check only",
+        "Every 10 years"
+      ],
+      "correct_answer": 1,
+      "explanation": "Seismic switch testing simulates seismic activation and verifies proper elevator response (typically moving to nearest floor).",
+      "code_reference": "ASME A17.1 Section 8.4"
+    },
+    {
+      "id": "elev_insp_032",
+      "difficulty": "advanced",
+      "question": "What documentation is required when safeties are replaced?",
+      "options": [
+        "None",
+        "Manufacturer's data and new acceptance test results",
+        "Photo only",
+        "Verbal report"
+      ],
+      "correct_answer": 1,
+      "explanation": "Safety replacement requires manufacturer's data tag and documentation, plus acceptance testing per A17.1.",
+      "code_reference": "ASME A17.1 Section 8.6"
+    },
+    {
+      "id": "elev_insp_033",
+      "difficulty": "advanced",
+      "question": "What is tested during a rope gripper test for MRL elevators?",
+      "options": [
+        "Rope color",
+        "Device grips ropes and stops car during overspeed or free-fall",
+        "Rope weight",
+        "Not applicable"
+      ],
+      "correct_answer": 1,
+      "explanation": "Rope grippers (used in some MRL installations) must be tested to verify they grip ropes and stop the car during emergency conditions.",
+      "code_reference": "ASME A17.1 Section 2.17"
+    },
+    {
+      "id": "elev_insp_034",
+      "difficulty": "advanced",
+      "question": "How is hydraulic cylinder integrity verified?",
+      "options": [
+        "Visual only",
+        "Drift test measuring car descent over time without pump operation",
+        "Weight test",
+        "Not tested"
+      ],
+      "correct_answer": 1,
+      "explanation": "Cylinder integrity is checked by drift tests measuring car descent over time (typically 10 minutes) without pump operation.",
+      "code_reference": "ASME A17.1 Section 3.19"
+    },
+    {
+      "id": "elev_insp_035",
+      "difficulty": "advanced",
+      "question": "What is the procedure for testing emergency terminal speed limiting device (ETSL)?",
+      "options": [
+        "Visual only",
+        "Verify operation when normal terminal limits fail",
+        "Not required",
+        "Same as governor test"
+      ],
+      "correct_answer": 1,
+      "explanation": "ETSL device testing verifies the device reduces car speed when normal terminal stopping devices fail to slow the car.",
+      "code_reference": "ASME A17.1 Section 2.25"
+    }
+  ]
+}

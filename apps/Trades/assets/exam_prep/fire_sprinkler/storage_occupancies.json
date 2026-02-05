@@ -1,0 +1,642 @@
+{
+  "category": "Fire Sprinkler",
+  "subcategory": "Storage Occupancies",
+  "description": "NFPA 13 storage protection and commodity classification",
+  "difficulty_distribution": {
+    "beginner": 10,
+    "intermediate": 20,
+    "advanced": 15
+  },
+  "questions": [
+    {
+      "id": "fs_stor_001",
+      "difficulty": "beginner",
+      "question": "What is high-piled storage?",
+      "options": [
+        "Storage over 6 feet high",
+        "Storage over 12 feet high",
+        "Storage exceeding height defined by code, typically 12+ feet",
+        "Storage on pallets only"
+      ],
+      "correct_answer": 2,
+      "explanation": "High-piled storage is generally defined as storage exceeding 12 feet in height. Specific definitions vary by commodity class and local codes.",
+      "code_reference": "NFPA 13, Chapter 1"
+    },
+    {
+      "id": "fs_stor_002",
+      "difficulty": "beginner",
+      "question": "How many commodity classes are there in NFPA 13?",
+      "options": [
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "correct_answer": 1,
+      "explanation": "NFPA 13 classifies commodities into four classes: Class I, II, III, and IV, based on combustibility. Group A plastics are classified separately.",
+      "code_reference": "NFPA 13, Section 5.6"
+    },
+    {
+      "id": "fs_stor_003",
+      "difficulty": "beginner",
+      "question": "What is a Class I commodity?",
+      "options": [
+        "Highly combustible plastics",
+        "Noncombustible products in ordinary cartons",
+        "Combustible products with extensive plastic",
+        "Flammable liquids"
+      ],
+      "correct_answer": 1,
+      "explanation": "Class I commodities are noncombustible products on wooden pallets, in ordinary corrugated cartons, or wrapped in paper. Examples include canned goods and metal parts.",
+      "code_reference": "NFPA 13, Section 5.6.3"
+    },
+    {
+      "id": "fs_stor_004",
+      "difficulty": "beginner",
+      "question": "What makes a Class IV commodity?",
+      "options": [
+        "All metal products",
+        "Products containing Group A plastics or significant combustible content",
+        "Food products",
+        "Clothing"
+      ],
+      "correct_answer": 1,
+      "explanation": "Class IV commodities consist of products containing significant amounts of Group A plastics in packaging or product content, or products with high combustibility.",
+      "code_reference": "NFPA 13, Section 5.6.6"
+    },
+    {
+      "id": "fs_stor_005",
+      "difficulty": "beginner",
+      "question": "What are Group A plastics?",
+      "options": [
+        "All plastic materials",
+        "High-hazard plastics with high heat release rates (ABS, polystyrene, etc.)",
+        "Low-hazard plastics",
+        "Recycled plastics"
+      ],
+      "correct_answer": 1,
+      "explanation": "Group A plastics have high heat release rates and include ABS, polystyrene, polyurethane foam, and similar materials that burn rapidly and intensely.",
+      "code_reference": "NFPA 13, Section 5.6.7"
+    },
+    {
+      "id": "fs_stor_006",
+      "difficulty": "beginner",
+      "question": "What is the difference between solid pile and rack storage?",
+      "options": [
+        "No difference",
+        "Solid pile has no aisles; rack storage uses racks with flue spaces",
+        "Solid pile is outdoor storage",
+        "Rack storage is only for plastics"
+      ],
+      "correct_answer": 1,
+      "explanation": "Solid pile storage is stacked directly on the floor with minimal clearances. Rack storage uses rack structures with transverse and longitudinal flue spaces.",
+      "code_reference": "NFPA 13, Chapter 20"
+    },
+    {
+      "id": "fs_stor_007",
+      "difficulty": "beginner",
+      "question": "What is an aisle in rack storage?",
+      "options": [
+        "Space between pallets",
+        "Clear space for personnel and equipment movement between rack rows",
+        "Space above racks",
+        "Space at rack ends"
+      ],
+      "correct_answer": 1,
+      "explanation": "Aisles are clear spaces between rack rows for material handling equipment movement. Minimum aisle width affects sprinkler design requirements.",
+      "code_reference": "NFPA 13, Section 3.9"
+    },
+    {
+      "id": "fs_stor_008",
+      "difficulty": "beginner",
+      "question": "What is a flue space in rack storage?",
+      "options": [
+        "Exhaust vent",
+        "Vertical open space between stored materials for fire/water movement",
+        "Floor drain",
+        "Sprinkler opening"
+      ],
+      "correct_answer": 1,
+      "explanation": "Flue spaces are vertical openings between stored materials (transverse and longitudinal) that allow hot gases to rise and water to penetrate to lower levels.",
+      "code_reference": "NFPA 13, Section 3.3"
+    },
+    {
+      "id": "fs_stor_009",
+      "difficulty": "beginner",
+      "question": "What is the minimum required transverse flue space in rack storage?",
+      "options": [
+        "2 inches",
+        "3 inches",
+        "6 inches",
+        "12 inches"
+      ],
+      "correct_answer": 2,
+      "explanation": "Transverse flue spaces must be at least 6 inches wide, maintained vertically through the rack structure, for proper sprinkler water penetration.",
+      "code_reference": "NFPA 13, Section 20.3"
+    },
+    {
+      "id": "fs_stor_010",
+      "difficulty": "beginner",
+      "question": "What is ESFR protection?",
+      "options": [
+        "External Sprinkler Fire Rating",
+        "Early Suppression Fast Response ceiling-only protection",
+        "Emergency Safety Fire Response",
+        "Extended Storage Fire Resistance"
+      ],
+      "correct_answer": 1,
+      "explanation": "ESFR (Early Suppression Fast Response) sprinklers provide ceiling-only protection for high-piled storage by suppressing fires early with high water discharge.",
+      "code_reference": "NFPA 13, Section 11.2"
+    },
+    {
+      "id": "fs_stor_011",
+      "difficulty": "intermediate",
+      "question": "What ceiling height limitation applies to ESFR protection?",
+      "options": [
+        "No limit",
+        "30 feet maximum",
+        "35-40 feet depending on commodity",
+        "50 feet maximum"
+      ],
+      "correct_answer": 2,
+      "explanation": "ESFR protection is limited by ceiling height, typically 35-40 feet maximum depending on commodity class, storage height, and sprinkler K-factor.",
+      "code_reference": "NFPA 13, Chapter 20"
+    },
+    {
+      "id": "fs_stor_012",
+      "difficulty": "intermediate",
+      "question": "When is in-rack sprinkler protection required?",
+      "options": [
+        "Always required",
+        "When storage exceeds ESFR or control mode ceiling-only protection limits",
+        "Only for Class IV commodities",
+        "Only above 50 feet"
+      ],
+      "correct_answer": 1,
+      "explanation": "In-rack sprinklers are required when storage height, commodity class, or ceiling height exceeds the limits of ceiling-only protection methods.",
+      "code_reference": "NFPA 13, Chapter 25"
+    },
+    {
+      "id": "fs_stor_013",
+      "difficulty": "intermediate",
+      "question": "What is control mode density/area (CMDA) protection?",
+      "options": [
+        "Fire suppression method",
+        "Method to control fire spread until fire department arrives",
+        "Fire prevention method",
+        "Passive fire protection"
+      ],
+      "correct_answer": 1,
+      "explanation": "Control mode (formerly control mode density area) sprinklers control fire spread and pre-wet surrounding commodities rather than achieving early suppression.",
+      "code_reference": "NFPA 13, Section 11.1"
+    },
+    {
+      "id": "fs_stor_014",
+      "difficulty": "intermediate",
+      "question": "What is the minimum aisle width typically required for rack storage?",
+      "options": [
+        "2 feet",
+        "4 feet",
+        "8 feet",
+        "Varies by protection scheme, often 4-8 feet minimum"
+      ],
+      "correct_answer": 3,
+      "explanation": "Minimum aisle width varies based on the protection scheme used. Many designs require 4-8 foot minimum aisles. Narrow aisles may require special protection.",
+      "code_reference": "NFPA 13, Section 20.4"
+    },
+    {
+      "id": "fs_stor_015",
+      "difficulty": "intermediate",
+      "question": "What is a double-row rack?",
+      "options": [
+        "Racks arranged in pairs with no longitudinal flue between them",
+        "Two-tier racks",
+        "Racks with double-wide pallets",
+        "Racks against two walls"
+      ],
+      "correct_answer": 0,
+      "explanation": "Double-row racks are back-to-back rack configurations with no longitudinal flue space between the rows. They require specific protection approaches.",
+      "code_reference": "NFPA 13, Section 3.9"
+    },
+    {
+      "id": "fs_stor_016",
+      "difficulty": "intermediate",
+      "question": "What storage arrangement presents the greatest fire challenge?",
+      "options": [
+        "Palletized floor storage",
+        "Single-row racks",
+        "High-piled rack storage with solid shelves",
+        "Bin boxes"
+      ],
+      "correct_answer": 2,
+      "explanation": "Solid shelves block sprinkler water penetration and trap heat, creating more challenging fire conditions than open racks with flue spaces.",
+      "code_reference": "NFPA 13, Chapter 20"
+    },
+    {
+      "id": "fs_stor_017",
+      "difficulty": "intermediate",
+      "question": "What is the design area for ESFR protection?",
+      "options": [
+        "Based on density curves",
+        "Typically 12 sprinklers at minimum pressure",
+        "1500 sq ft",
+        "3000 sq ft"
+      ],
+      "correct_answer": 1,
+      "explanation": "ESFR systems are designed for a specific number of sprinklers (typically 12) at minimum operating pressure, not a density over area.",
+      "code_reference": "NFPA 13, Section 20.6"
+    },
+    {
+      "id": "fs_stor_018",
+      "difficulty": "intermediate",
+      "question": "What minimum K-factor ESFR sprinklers are available?",
+      "options": [
+        "K-8.0",
+        "K-11.2",
+        "K-14.0",
+        "K-16.8"
+      ],
+      "correct_answer": 2,
+      "explanation": "ESFR sprinklers are available in K-14.0, K-16.8, K-22.4, and K-25.2 sizes. Larger K-factors provide more water at lower pressures.",
+      "code_reference": "NFPA 13, Table 20.6"
+    },
+    {
+      "id": "fs_stor_019",
+      "difficulty": "intermediate",
+      "question": "What is required for rubber tire storage?",
+      "options": [
+        "Standard sprinkler protection",
+        "Special protection per NFPA 13 or NFPA 230",
+        "No special requirements",
+        "Foam systems only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Rubber tire storage presents unique fire hazards and requires special protection criteria due to high heat release and deep-seated fire potential.",
+      "code_reference": "NFPA 13, Section 23.3"
+    },
+    {
+      "id": "fs_stor_020",
+      "difficulty": "intermediate",
+      "question": "What is the clearance requirement between sprinklers and top of storage?",
+      "options": [
+        "6 inches",
+        "12 inches",
+        "18 inches minimum",
+        "36 inches"
+      ],
+      "correct_answer": 2,
+      "explanation": "A minimum of 18 inches must be maintained between sprinkler deflectors and the top of storage to allow proper spray pattern development.",
+      "code_reference": "NFPA 13, Section 10.2.6"
+    },
+    {
+      "id": "fs_stor_021",
+      "difficulty": "intermediate",
+      "question": "When are face sprinklers required in rack storage?",
+      "options": [
+        "Never required",
+        "When rack depth exceeds 16 feet double row or per design",
+        "Always required",
+        "Only for Group A plastics"
+      ],
+      "correct_answer": 1,
+      "explanation": "Face sprinklers may be required for deep rack configurations to provide protection at the rack faces where in-rack sprinklers cannot reach.",
+      "code_reference": "NFPA 13, Chapter 25"
+    },
+    {
+      "id": "fs_stor_022",
+      "difficulty": "intermediate",
+      "question": "What is barrier protection in rack storage?",
+      "options": [
+        "Fire barriers between racks",
+        "Horizontal barriers with in-rack sprinklers below each level",
+        "Vertical fire curtains",
+        "Smoke barriers"
+      ],
+      "correct_answer": 1,
+      "explanation": "Horizontal barriers at rack levels create separate protected compartments with in-rack sprinklers below each barrier, limiting vertical fire spread.",
+      "code_reference": "NFPA 13, Section 25.6"
+    },
+    {
+      "id": "fs_stor_023",
+      "difficulty": "intermediate",
+      "question": "How does encapsulation affect commodity classification?",
+      "options": [
+        "No effect",
+        "May increase commodity class due to plastic wrap restricting water penetration",
+        "Decreases commodity class",
+        "Only affects flue space requirements"
+      ],
+      "correct_answer": 1,
+      "explanation": "Encapsulated (stretch-wrapped) commodities can trap heat and prevent water penetration, potentially requiring classification as a higher hazard.",
+      "code_reference": "NFPA 13, Section 5.6"
+    },
+    {
+      "id": "fs_stor_024",
+      "difficulty": "advanced",
+      "question": "What is the maximum storage height for ESFR K-14.0 sprinklers protecting Class III commodities?",
+      "options": [
+        "20 feet",
+        "25 feet",
+        "30 feet",
+        "Per tables based on ceiling height and storage arrangement"
+      ],
+      "correct_answer": 3,
+      "explanation": "Maximum storage heights for ESFR protection depend on ceiling height, K-factor, commodity class, and storage arrangement. Tables in NFPA 13 provide specific limits.",
+      "code_reference": "NFPA 13, Chapter 20"
+    },
+    {
+      "id": "fs_stor_025",
+      "difficulty": "advanced",
+      "question": "What is the water demand calculation approach for in-rack sprinklers?",
+      "options": [
+        "Same as ceiling sprinklers",
+        "Based on number of levels and in-rack sprinkler K-factor/pressure",
+        "Fixed demand regardless of storage",
+        "Per insurance requirements only"
+      ],
+      "correct_answer": 1,
+      "explanation": "In-rack sprinkler demand is calculated based on the number of operating levels, sprinklers per level, and required pressure at the most remote sprinklers.",
+      "code_reference": "NFPA 13, Section 25.7"
+    },
+    {
+      "id": "fs_stor_026",
+      "difficulty": "advanced",
+      "question": "What happens when storage blocks longitudinal flue spaces?",
+      "options": [
+        "No effect on protection",
+        "Fire spread increases and protection scheme must account for blocked flues",
+        "Only affects aisle protection",
+        "Only affects ESFR systems"
+      ],
+      "correct_answer": 1,
+      "explanation": "Blocked longitudinal flues allow horizontal fire spread and affect vertical flue space effectiveness. Protection schemes must address blocked flue conditions.",
+      "code_reference": "NFPA 13, Section 20.3"
+    },
+    {
+      "id": "fs_stor_027",
+      "difficulty": "advanced",
+      "question": "For cartoned Group A expanded plastics, what is the commodity classification?",
+      "options": [
+        "Class IV",
+        "Cartoned Expanded Group A plastic",
+        "High-hazard contents",
+        "Class III"
+      ],
+      "correct_answer": 1,
+      "explanation": "Cartoned expanded Group A plastics are classified separately from other Group A plastics and require specific protection criteria.",
+      "code_reference": "NFPA 13, Chapter 21"
+    },
+    {
+      "id": "fs_stor_028",
+      "difficulty": "advanced",
+      "question": "What is the ignition scenario assumed in NFPA 13 storage protection design?",
+      "options": [
+        "Top of storage",
+        "Single ignition at floor level",
+        "Multiple ignition points",
+        "Arson scenario"
+      ],
+      "correct_answer": 1,
+      "explanation": "NFPA 13 protection schemes assume a single ignition point at floor level. Multiple ignitions or elevated ignitions are not the design basis.",
+      "code_reference": "NFPA 13, Annex"
+    },
+    {
+      "id": "fs_stor_029",
+      "difficulty": "advanced",
+      "question": "How do open-top containers affect storage classification?",
+      "options": [
+        "No effect",
+        "Can increase hazard by exposing combustible contents",
+        "Decrease hazard",
+        "Only affects flue space"
+      ],
+      "correct_answer": 1,
+      "explanation": "Open-top containers expose combustible contents directly to fire, potentially increasing the fire hazard beyond the normal commodity classification.",
+      "code_reference": "NFPA 13, Section 5.6"
+    },
+    {
+      "id": "fs_stor_030",
+      "difficulty": "advanced",
+      "question": "What is the protection approach for automated storage/retrieval systems (AS/RS)?",
+      "options": [
+        "Standard rack protection",
+        "ESFR only",
+        "Special requirements addressing enclosed racks and limited access",
+        "No protection required"
+      ],
+      "correct_answer": 2,
+      "explanation": "AS/RS systems require special protection approaches due to enclosed rack configurations, limited fire department access, and high storage densities.",
+      "code_reference": "NFPA 13, Section 24.1"
+    },
+    {
+      "id": "fs_stor_031",
+      "difficulty": "advanced",
+      "question": "What is the hose stream allowance for high-piled storage?",
+      "options": [
+        "250 gpm",
+        "500 gpm",
+        "Per sprinkler demand calculations",
+        "Based on commodity class and storage arrangement"
+      ],
+      "correct_answer": 3,
+      "explanation": "Hose stream allowance varies based on protection method, commodity class, and storage configuration. ESFR systems may have reduced allowances.",
+      "code_reference": "NFPA 13, Section 19.3"
+    },
+    {
+      "id": "fs_stor_032",
+      "difficulty": "advanced",
+      "question": "When can quick-response sprinklers be used in storage applications?",
+      "options": [
+        "Never",
+        "Only for low-piled storage",
+        "When approved for specific storage configurations per NFPA 13",
+        "Always required"
+      ],
+      "correct_answer": 2,
+      "explanation": "Quick-response sprinklers may be used in some storage applications where permitted by NFPA 13. Standard response is more common for high-piled storage.",
+      "code_reference": "NFPA 13, Chapter 20"
+    },
+    {
+      "id": "fs_stor_033",
+      "difficulty": "advanced",
+      "question": "What testing verifies in-rack sprinkler installation compliance?",
+      "options": [
+        "Flow test only",
+        "Visual inspection and system acceptance testing",
+        "Fire test",
+        "No testing required"
+      ],
+      "correct_answer": 1,
+      "explanation": "In-rack installations require visual verification of sprinkler placement, clearances, and flue spaces, plus standard system testing.",
+      "code_reference": "NFPA 13, Chapter 27"
+    },
+    {
+      "id": "fs_stor_034",
+      "difficulty": "intermediate",
+      "question": "What is the protection approach for idle pallet storage?",
+      "options": [
+        "Same as Class I",
+        "Same as general commodity storage",
+        "Special criteria for pallets stored separately from commodities",
+        "No protection required"
+      ],
+      "correct_answer": 2,
+      "explanation": "Idle pallet storage (empty pallets) presents a high fire hazard and has specific protection requirements in NFPA 13 based on storage height and arrangement.",
+      "code_reference": "NFPA 13, Section 23.1"
+    },
+    {
+      "id": "fs_stor_035",
+      "difficulty": "intermediate",
+      "question": "What defines a portable rack?",
+      "options": [
+        "Any rack on wheels",
+        "Racks that can be arranged and rearranged in a building",
+        "Temporary outdoor storage",
+        "Racks under 6 feet tall"
+      ],
+      "correct_answer": 1,
+      "explanation": "Portable racks can be moved and reconfigured, affecting flue space maintenance and requiring protection schemes that account for variable arrangements.",
+      "code_reference": "NFPA 13, Section 20.4"
+    },
+    {
+      "id": "fs_stor_036",
+      "difficulty": "intermediate",
+      "question": "What is the significance of array testing for sprinkler protection?",
+      "options": [
+        "Testing sprinkler patterns",
+        "Full-scale fire tests validating protection for specific storage configurations",
+        "Manufacturing quality tests",
+        "Annual inspection tests"
+      ],
+      "correct_answer": 1,
+      "explanation": "Array testing involves full-scale fire tests conducted by laboratories to validate sprinkler protection for specific commodity types and storage arrangements.",
+      "code_reference": "NFPA 13, Annex"
+    },
+    {
+      "id": "fs_stor_037",
+      "difficulty": "advanced",
+      "question": "What is the effect of mixed commodity storage on classification?",
+      "options": [
+        "Average the classifications",
+        "Use the lowest classification",
+        "Use the highest classification present in storage",
+        "Separate calculations for each"
+      ],
+      "correct_answer": 2,
+      "explanation": "When commodities of different classes are mixed, protection must be designed for the highest classification present unless segregated storage is maintained.",
+      "code_reference": "NFPA 13, Section 5.6"
+    },
+    {
+      "id": "fs_stor_038",
+      "difficulty": "beginner",
+      "question": "What is the purpose of commodity classification?",
+      "options": [
+        "Inventory tracking",
+        "To determine appropriate sprinkler protection based on fire hazard",
+        "Insurance purposes only",
+        "Building code compliance"
+      ],
+      "correct_answer": 1,
+      "explanation": "Commodity classification determines the fire hazard level, which directly affects sprinkler system design including density, design area, and sprinkler type.",
+      "code_reference": "NFPA 13, Section 5.6"
+    },
+    {
+      "id": "fs_stor_039",
+      "difficulty": "intermediate",
+      "question": "What is a push-back rack?",
+      "options": [
+        "Rack that collapses for storage",
+        "Rack with carts that push back to load from one aisle",
+        "Emergency exit rack",
+        "Portable rack system"
+      ],
+      "correct_answer": 1,
+      "explanation": "Push-back racks use carts or lanes that allow loading/unloading from one aisle with pallets pushed back behind each other. They have specific protection requirements.",
+      "code_reference": "NFPA 13, Section 3.9"
+    },
+    {
+      "id": "fs_stor_040",
+      "difficulty": "intermediate",
+      "question": "For roll paper storage, what special considerations apply?",
+      "options": [
+        "None, treated as Class I",
+        "Special orientation and banding requirements affect protection",
+        "Same as tire storage",
+        "Only outdoor storage permitted"
+      ],
+      "correct_answer": 1,
+      "explanation": "Roll paper storage presents unique fire behavior based on roll orientation (vertical vs. horizontal), banding, and storage arrangement.",
+      "code_reference": "NFPA 13, Section 23.2"
+    },
+    {
+      "id": "fs_stor_041",
+      "difficulty": "advanced",
+      "question": "What ceiling slope limitation applies to ESFR sprinklers?",
+      "options": [
+        "No limitation",
+        "2 in 12 (16.7%) maximum",
+        "4 in 12 maximum",
+        "Flat ceilings only"
+      ],
+      "correct_answer": 1,
+      "explanation": "ESFR sprinklers are typically limited to smooth flat ceilings or slopes not exceeding 2 in 12. Steeper slopes affect spray patterns.",
+      "code_reference": "NFPA 13, Section 11.2"
+    },
+    {
+      "id": "fs_stor_042",
+      "difficulty": "advanced",
+      "question": "What is the effect of draft curtains in storage occupancies?",
+      "options": [
+        "Not permitted",
+        "May reduce number of sprinklers operating and improve performance",
+        "Only for smoke control",
+        "Required for all storage"
+      ],
+      "correct_answer": 1,
+      "explanation": "Draft curtains can confine heat and smoke, potentially improving sprinkler response and reducing the number of sprinklers needed to control a fire.",
+      "code_reference": "NFPA 13, Section 11.2"
+    },
+    {
+      "id": "fs_stor_043",
+      "difficulty": "intermediate",
+      "question": "What is a catwalk in rack storage protection?",
+      "options": [
+        "Emergency exit path",
+        "Elevated walkway that may require special protection considerations",
+        "Maintenance platform",
+        "Fire department access"
+      ],
+      "correct_answer": 1,
+      "explanation": "Catwalks or pick modules in rack structures may create horizontal barriers affecting fire spread and sprinkler water penetration, requiring special protection.",
+      "code_reference": "NFPA 13, Chapter 25"
+    },
+    {
+      "id": "fs_stor_044",
+      "difficulty": "advanced",
+      "question": "What is the maximum ceiling temperature rating for ESFR sprinklers in storage?",
+      "options": [
+        "155°F only",
+        "165°F or 200°F depending on ceiling temperature",
+        "212°F required",
+        "286°F"
+      ],
+      "correct_answer": 1,
+      "explanation": "ESFR sprinklers are typically 165°F (ordinary) or 200°F (intermediate) rating based on expected maximum ceiling temperatures.",
+      "code_reference": "NFPA 13, Section 11.2"
+    },
+    {
+      "id": "fs_stor_045",
+      "difficulty": "advanced",
+      "question": "For flammable liquid storage in warehouses, what standards apply?",
+      "options": [
+        "NFPA 13 only",
+        "NFPA 30 primarily with NFPA 13 for sprinkler installation",
+        "NFPA 30B only",
+        "IBC only"
+      ],
+      "correct_answer": 1,
+      "explanation": "Flammable liquid storage is governed primarily by NFPA 30, with NFPA 13 referenced for sprinkler system installation and some protection criteria.",
+      "code_reference": "NFPA 30, NFPA 13"
+    }
+  ]
+}

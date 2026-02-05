@@ -1,0 +1,2907 @@
+{
+  "topic_id": "SO",
+  "topic_name": "Special Occupancies",
+  "nec_version": "2026",
+  "questions": [
+    {
+      "id": "SO-001",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["500"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Class I hazardous locations contain which type of hazard?",
+      "choices": [
+        {"id": "A", "text": "Combustible dusts"},
+        {"id": "B", "text": "Flammable gases or vapors"},
+        {"id": "C", "text": "Ignitable fibers"},
+        {"id": "D", "text": "Combustible metals"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Class I locations have flammable gases, vapors, or liquids that can produce ignitable mixtures.",
+        "detailed": "Article 500.5(B) defines Class I locations as those in which flammable gases, flammable liquid-produced vapors, or combustible liquid-produced vapors are or may be present in the air in quantities sufficient to produce explosive or ignitible mixtures.",
+        "how_to_find": "Go to 500.5(B) for Class I definition."
+      },
+      "nec_reference": {"article": "500", "section": "500.5(B)"},
+      "zafto_links": [{"screen_id": "hazardous_locations", "relevance": "primary", "description": "Hazardous location classifications"}],
+      "tags": ["Class I", "hazardous locations", "flammable gases"],
+      "verified": true
+    },
+    {
+      "id": "SO-002",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["500"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Class II hazardous locations contain which type of hazard?",
+      "choices": [
+        {"id": "A", "text": "Flammable gases"},
+        {"id": "B", "text": "Combustible dusts"},
+        {"id": "C", "text": "Ignitable fibers"},
+        {"id": "D", "text": "Flammable liquids"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Class II locations have combustible dusts present in hazardous quantities.",
+        "detailed": "Article 500.5(C) defines Class II locations as those that are hazardous because of the presence of combustible dust. Examples include grain elevators, coal handling facilities, and flour mills.",
+        "how_to_find": "Go to 500.5(C) for Class II definition."
+      },
+      "nec_reference": {"article": "500", "section": "500.5(C)"},
+      "zafto_links": [{"screen_id": "hazardous_locations", "relevance": "primary", "description": "Class/Division system"}],
+      "tags": ["Class II", "hazardous locations", "combustible dust"],
+      "verified": true
+    },
+    {
+      "id": "SO-003",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["500"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "Division 1 locations are those where hazardous conditions exist:",
+      "choices": [
+        {"id": "A", "text": "Only during abnormal conditions"},
+        {"id": "B", "text": "Under normal operating conditions"},
+        {"id": "C", "text": "Never"},
+        {"id": "D", "text": "Only outdoors"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Division 1 means hazardous concentrations exist under normal operating conditions.",
+        "detailed": "Division 1 locations are where ignitable concentrations exist continuously, intermittently, or periodically under normal operating conditions, or where ignitable concentrations may exist due to repair/maintenance or breakdown. Division 2 is abnormal conditions only.",
+        "how_to_find": "Go to 500.5(B)(1) for Division 1 definition."
+      },
+      "nec_reference": {"article": "500", "section": "500.5(B)(1)"},
+      "zafto_links": [{"screen_id": "hazardous_locations", "relevance": "primary", "description": "Division 1 vs 2"}],
+      "tags": ["Division 1", "hazardous locations", "normal conditions"],
+      "verified": true
+    },
+    {
+      "id": "SO-004",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["680"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum burial depth for underground wiring to a pool pump motor?",
+      "choices": [
+        {"id": "A", "text": "6 inches"},
+        {"id": "B", "text": "12 inches"},
+        {"id": "C", "text": "18 inches"},
+        {"id": "D", "text": "24 inches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Underground wiring to pool equipment requires minimum 18 inches cover per 680.10.",
+        "detailed": "Section 680.10 requires underground wiring supplying pool equipment not to be installed under the pool or within 5 feet horizontally of the inside wall. Where space limitations prevent 5-foot separation, an approved rigid metal raceway or listed liquidtight flexible nonmetallic conduit with 18-inch minimum cover is required.",
+        "how_to_find": "Go to 680.10 and Table 300.5 for pool wiring burial."
+      },
+      "nec_reference": {"article": "680", "section": "680.10"},
+      "zafto_links": [{"screen_id": "pool_spa_wiring", "relevance": "primary", "description": "Pool wiring requirements"}],
+      "tags": ["pool", "burial depth", "underground"],
+      "verified": true
+    },
+    {
+      "id": "SO-005",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["680"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the required distance from the inside wall of a pool to overhead service conductors?",
+      "choices": [
+        {"id": "A", "text": "5 feet horizontal"},
+        {"id": "B", "text": "10 feet horizontal"},
+        {"id": "C", "text": "22.5 feet horizontal"},
+        {"id": "D", "text": "10 feet in any direction"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Overhead service conductors must be at least 10 feet horizontally from pool water edge.",
+        "detailed": "Section 680.8(A) requires overhead service conductors to maintain a clearance of at least 3.0 m (10 ft) in any direction from the water, measured from the inside walls of the pool. Utility-owned service drops follow the same requirements.",
+        "how_to_find": "Go to 680.8(A) for overhead clearances at pools."
+      },
+      "nec_reference": {"article": "680", "section": "680.8(A)"},
+      "zafto_links": [{"screen_id": "pool_spa_wiring", "relevance": "primary", "description": "Pool clearances"}],
+      "tags": ["pool", "overhead", "clearances"],
+      "verified": true
+    },
+    {
+      "id": "SO-006",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["680"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Receptacles within how many feet of the inside walls of a pool require GFCI protection?",
+      "choices": [
+        {"id": "A", "text": "6 feet"},
+        {"id": "B", "text": "10 feet"},
+        {"id": "C", "text": "15 feet"},
+        {"id": "D", "text": "20 feet"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Receptacles within 20 feet of pool water edge require GFCI protection per 680.22(A)(1).",
+        "detailed": "Section 680.22(A)(1) requires all 125-volt through 250-volt receptacles located within 6 m (20 ft) of the inside walls of a pool to be protected by a GFCI. Additionally, receptacles that supply pool pump motors must be GFCI protected.",
+        "how_to_find": "Go to 680.22(A)(1) for pool GFCI requirements."
+      },
+      "nec_reference": {"article": "680", "section": "680.22(A)(1)"},
+      "zafto_links": [{"screen_id": "pool_spa_wiring", "relevance": "primary", "description": "Pool GFCI requirements"}],
+      "tags": ["pool", "GFCI", "receptacles"],
+      "verified": true
+    },
+    {
+      "id": "SO-007",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["680"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "The equipotential bonding grid for a pool is required to include:",
+      "choices": [
+        {"id": "A", "text": "Only the pool shell"},
+        {"id": "B", "text": "All metal parts within 5 feet of the pool"},
+        {"id": "C", "text": "Only the pool ladder"},
+        {"id": "D", "text": "Only underwater lighting"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Pool bonding must include all conductive parts within 5 feet of the pool water.",
+        "detailed": "Section 680.26(B) requires bonding of conductive pool shells, perimeter surfaces, metal fittings, underwater lighting, metal parts of electrical equipment, and all fixed metal parts within 1.5 m (5 ft) of the inside walls of the pool. This creates equipotential bonding to prevent voltage gradients.",
+        "how_to_find": "Go to 680.26(B) for pool bonding requirements."
+      },
+      "nec_reference": {"article": "680", "section": "680.26(B)"},
+      "zafto_links": [{"screen_id": "pool_spa_wiring", "relevance": "primary", "description": "Pool bonding grid"}],
+      "tags": ["pool", "bonding", "equipotential"],
+      "verified": true
+    },
+    {
+      "id": "SO-008",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["680"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the minimum size copper bonding conductor for pool equipment?",
+      "choices": [
+        {"id": "A", "text": "12 AWG"},
+        {"id": "B", "text": "10 AWG"},
+        {"id": "C", "text": "8 AWG"},
+        {"id": "D", "text": "6 AWG"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Pool bonding conductors must be minimum 8 AWG solid copper per 680.26(C).",
+        "detailed": "Section 680.26(C) requires the equipotential bonding conductor to be a minimum 8 AWG solid copper conductor. Connections must be made using listed pressure connectors, terminal bars, or other listed means. Splices must be accessible.",
+        "how_to_find": "Go to 680.26(C) for bonding conductor sizing."
+      },
+      "nec_reference": {"article": "680", "section": "680.26(C)"},
+      "zafto_links": [{"screen_id": "pool_spa_wiring", "relevance": "primary", "description": "Pool bonding"}],
+      "tags": ["pool", "bonding", "8 AWG"],
+      "verified": true
+    },
+    {
+      "id": "SO-009",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["500"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Group D atmospheres in Class I locations include:",
+      "choices": [
+        {"id": "A", "text": "Acetylene"},
+        {"id": "B", "text": "Hydrogen"},
+        {"id": "C", "text": "Gasoline, propane, natural gas"},
+        {"id": "D", "text": "Metal dusts"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Group D includes common fuels like gasoline, propane, and natural gas.",
+        "detailed": "Article 500.6(A) classifies Class I atmospheres by groups. Group A: Acetylene. Group B: Hydrogen. Group C: Ethylene, carbon monoxide. Group D: Gasoline, propane, natural gas, ammonia - the most common hazardous locations. Group D equipment is most widely available.",
+        "how_to_find": "Go to 500.6(A) for atmosphere group classifications."
+      },
+      "nec_reference": {"article": "500", "section": "500.6(A)"},
+      "zafto_links": [{"screen_id": "hazardous_locations", "relevance": "primary", "description": "Group classifications"}],
+      "tags": ["Group D", "Class I", "hazardous locations"],
+      "verified": true
+    },
+    {
+      "id": "SO-010",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["517"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "In a hospital patient care vicinity, what is the maximum voltage permitted between the equipment grounding conductors of two receptacles?",
+      "choices": [
+        {"id": "A", "text": "1 millivolt"},
+        {"id": "B", "text": "20 millivolts"},
+        {"id": "C", "text": "40 millivolts"},
+        {"id": "D", "text": "500 millivolts"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Healthcare facilities limit potential between receptacle grounds to 40 millivolts in patient care areas.",
+        "detailed": "Section 517.13(B) requires receptacles and equipment in patient care areas to limit the potential difference between exposed conductive surfaces to 40 millivolts or less. This protects patients with direct cardiac connections from microshock hazards.",
+        "how_to_find": "Go to 517.13(B) for healthcare facility grounding."
+      },
+      "nec_reference": {"article": "517", "section": "517.13(B)"},
+      "zafto_links": [],
+      "tags": ["healthcare", "patient care", "grounding"],
+      "verified": true
+    },
+    {
+      "id": "SO-011",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["500"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Class III hazardous locations contain which type of hazard?",
+      "choices": [
+        {"id": "A", "text": "Flammable gases"},
+        {"id": "B", "text": "Combustible dusts"},
+        {"id": "C", "text": "Easily ignitable fibers or flyings"},
+        {"id": "D", "text": "Corrosive vapors"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Class III locations contain easily ignitable fibers or flyings not likely to be in suspension.",
+        "detailed": "Article 500.5(D) defines Class III locations as those that are hazardous because of the presence of easily ignitible fibers or materials producing combustible flyings. Examples include textile mills, cotton gins, and woodworking facilities.",
+        "how_to_find": "Go to 500.5(D) for Class III definition."
+      },
+      "nec_reference": {"article": "500", "section": "500.5(D)"},
+      "zafto_links": [{"screen_id": "hazardous_locations", "relevance": "primary", "description": "Class III locations"}],
+      "tags": ["Class III", "hazardous locations", "fibers"],
+      "verified": true
+    },
+    {
+      "id": "SO-012",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["505"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "The Zone classification system is an alternative to which classification method?",
+      "choices": [
+        {"id": "A", "text": "NEMA classification"},
+        {"id": "B", "text": "Class/Division system"},
+        {"id": "C", "text": "UL listing system"},
+        {"id": "D", "text": "IEEE classification"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "The Zone system (Articles 505/506) is an IEC-based alternative to the Class/Division system.",
+        "detailed": "Article 505 provides the Zone classification system as an alternative to the Class I Division system. Zone 0 = ignitable continuously, Zone 1 = ignitable under normal conditions, Zone 2 = ignitable only abnormally. This aligns with international IEC standards.",
+        "how_to_find": "Go to Article 505 for Zone classification system."
+      },
+      "nec_reference": {"article": "505", "section": "505.5"},
+      "zafto_links": [{"screen_id": "hazardous_locations", "relevance": "primary", "description": "Zone system"}],
+      "tags": ["Zone", "IEC", "hazardous locations"],
+      "verified": true
+    },
+    {
+      "id": "SO-013",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["501"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "In Class I, Division 1 locations, what wiring method is generally required?",
+      "choices": [
+        {"id": "A", "text": "Type NM cable"},
+        {"id": "B", "text": "Threaded rigid metal conduit or MI cable"},
+        {"id": "C", "text": "EMT"},
+        {"id": "D", "text": "Type AC cable"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Class I Division 1 requires threaded rigid metal conduit, IMC, or MI cable per 501.10(A).",
+        "detailed": "Section 501.10(A) requires wiring methods in Class I Division 1 locations to be threaded rigid metal conduit, threaded steel IMC, or Type MI cable. All boxes, fittings, and joints must be explosionproof. Flexible connections where necessary must use listed flexible fittings.",
+        "how_to_find": "Go to 501.10(A) for Class I Division 1 wiring methods."
+      },
+      "nec_reference": {"article": "501", "section": "501.10(A)"},
+      "zafto_links": [{"screen_id": "hazardous_locations", "relevance": "primary", "description": "Division 1 wiring"}],
+      "tags": ["Class I", "Division 1", "rigid conduit"],
+      "verified": true
+    },
+    {
+      "id": "SO-014",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["501"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Explosionproof equipment is designed to:",
+      "choices": [
+        {"id": "A", "text": "Prevent any sparks from occurring"},
+        {"id": "B", "text": "Contain an internal explosion and prevent ignition of surrounding atmosphere"},
+        {"id": "C", "text": "Operate at temperatures below ignition point"},
+        {"id": "D", "text": "Exclude all flammable vapors from entering"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Explosionproof enclosures contain internal explosions and cool escaping gases below ignition temperature.",
+        "detailed": "Explosionproof equipment per 500.2 is designed to withstand an internal explosion without rupturing, and to cool any gases escaping through joints or openings to below the ignition temperature of the surrounding atmosphere. This prevents internal sparks from igniting external hazardous atmospheres.",
+        "how_to_find": "Go to 500.2 for explosionproof definition."
+      },
+      "nec_reference": {"article": "500", "section": "500.2"},
+      "zafto_links": [{"screen_id": "hazardous_locations", "relevance": "primary", "description": "Explosionproof equipment"}],
+      "tags": ["explosionproof", "enclosures", "hazardous locations"],
+      "verified": true
+    },
+    {
+      "id": "SO-015",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["501"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Sealing fittings in Class I locations are required to prevent:",
+      "choices": [
+        {"id": "A", "text": "Water entry"},
+        {"id": "B", "text": "Passage of gases, vapors, or flames through conduit"},
+        {"id": "C", "text": "Conduit corrosion"},
+        {"id": "D", "text": "Conductor damage"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Seals prevent gases, vapors, and flames from traveling through conduit systems.",
+        "detailed": "Section 501.15 requires sealing fittings to minimize the passage of gases and vapors and to prevent flames from traveling through the raceway system. Seals are required at boundaries between hazardous and non-hazardous areas, and at enclosures containing arcing equipment.",
+        "how_to_find": "Go to 501.15 for sealing requirements."
+      },
+      "nec_reference": {"article": "501", "section": "501.15"},
+      "zafto_links": [{"screen_id": "hazardous_locations", "relevance": "primary", "description": "Sealing fittings"}],
+      "tags": ["seals", "Class I", "conduit"],
+      "verified": true
+    },
+    {
+      "id": "SO-016",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["680"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "At what distance from a pool must a receptacle outlet be installed to serve the pool pump?",
+      "choices": [
+        {"id": "A", "text": "Not less than 3 feet and not more than 6 feet"},
+        {"id": "B", "text": "Not less than 6 feet and not more than 20 feet"},
+        {"id": "C", "text": "Within 10 feet"},
+        {"id": "D", "text": "No distance requirement"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Pool pump receptacles must be 6-20 feet from inside wall of pool per 680.22(A)(5).",
+        "detailed": "Section 680.22(A)(5) requires at least one 125-volt receptacle located not less than 6 feet (1.83 m) and not more than 20 feet (6.0 m) from the inside wall of the pool. This receptacle must be GFCI protected and is intended for pool pump and maintenance equipment.",
+        "how_to_find": "Go to 680.22(A)(5) for pool receptacle placement."
+      },
+      "nec_reference": {"article": "680", "section": "680.22(A)(5)"},
+      "zafto_links": [{"screen_id": "pool_spa_wiring", "relevance": "primary", "description": "Pool receptacle location"}],
+      "tags": ["pool", "receptacle", "6 feet"],
+      "verified": true
+    },
+    {
+      "id": "SO-017",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["680"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the maximum voltage for underwater pool lighting fixtures?",
+      "choices": [
+        {"id": "A", "text": "12 volts"},
+        {"id": "B", "text": "15 volts"},
+        {"id": "C", "text": "30 volts"},
+        {"id": "D", "text": "150 volts"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Low-voltage underwater luminaires are limited to 15 volts per 680.23(A)(2).",
+        "detailed": "Section 680.23(A)(2) permits underwater luminaires operating at not more than 15 volts supplied by listed transformers or power supplies. These low-voltage systems provide enhanced safety by limiting shock hazard in the pool water environment.",
+        "how_to_find": "Go to 680.23(A)(2) for low-voltage pool lighting."
+      },
+      "nec_reference": {"article": "680", "section": "680.23(A)(2)"},
+      "zafto_links": [{"screen_id": "pool_spa_wiring", "relevance": "primary", "description": "Pool lighting voltage"}],
+      "tags": ["pool", "underwater lighting", "15 volts"],
+      "verified": true
+    },
+    {
+      "id": "SO-018",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["680"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Storable pools with a water depth greater than what dimension must comply with permanent pool requirements?",
+      "choices": [
+        {"id": "A", "text": "24 inches"},
+        {"id": "B", "text": "36 inches"},
+        {"id": "C", "text": "42 inches"},
+        {"id": "D", "text": "48 inches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Storable pools exceeding 42 inches water depth must meet permanent pool requirements per 680.31.",
+        "detailed": "Section 680.31 defines storable pools as those with maximum water depth of 42 inches (1.0 m) or a maximum dimension of 18 feet. Pools exceeding these dimensions must comply with the more stringent requirements for permanently installed pools in Part II of Article 680.",
+        "how_to_find": "Go to 680.31 for storable pool definition."
+      },
+      "nec_reference": {"article": "680", "section": "680.31"},
+      "zafto_links": [{"screen_id": "pool_spa_wiring", "relevance": "secondary", "description": "Storable pools"}],
+      "tags": ["pool", "storable", "42 inches"],
+      "verified": true
+    },
+    {
+      "id": "SO-019",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["680"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A hot tub installed indoors requires GFCI protection for receptacles within what distance?",
+      "choices": [
+        {"id": "A", "text": "3 feet"},
+        {"id": "B", "text": "6 feet"},
+        {"id": "C", "text": "10 feet"},
+        {"id": "D", "text": "20 feet"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Indoor spa/hot tub receptacles within 6 feet require GFCI per 680.43(A).",
+        "detailed": "Section 680.43(A) requires all 125-volt through 250-volt receptacles within 6 feet (1.83 m) of the inside walls of an indoor spa or hot tub to have GFCI protection. This provides shock protection in the wet environment around hot tubs.",
+        "how_to_find": "Go to 680.43(A) for indoor spa GFCI requirements."
+      },
+      "nec_reference": {"article": "680", "section": "680.43(A)"},
+      "zafto_links": [{"screen_id": "pool_spa_wiring", "relevance": "primary", "description": "Hot tub GFCI"}],
+      "tags": ["hot tub", "spa", "GFCI"],
+      "verified": true
+    },
+    {
+      "id": "SO-020",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["517"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A 'patient care area' in a healthcare facility is defined as:",
+      "choices": [
+        {"id": "A", "text": "Any room in a hospital"},
+        {"id": "B", "text": "Space where patients are examined or treated"},
+        {"id": "C", "text": "Only operating rooms"},
+        {"id": "D", "text": "Only emergency rooms"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Patient care areas are spaces where patients are normally examined, treated, or monitored.",
+        "detailed": "Section 517.2 defines patient care areas as spaces where patients are normally examined, treated, or monitored, including patient rooms, examining rooms, treatment areas, and similar locations. Different categories (general care, critical care) have different electrical requirements.",
+        "how_to_find": "Go to 517.2 for patient care area definition."
+      },
+      "nec_reference": {"article": "517", "section": "517.2"},
+      "zafto_links": [],
+      "tags": ["healthcare", "patient care", "definition"],
+      "verified": true
+    },
+    {
+      "id": "SO-021",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["517"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "The essential electrical system in a hospital must have power restored within what time after normal power failure?",
+      "choices": [
+        {"id": "A", "text": "5 seconds"},
+        {"id": "B", "text": "10 seconds"},
+        {"id": "C", "text": "30 seconds"},
+        {"id": "D", "text": "60 seconds"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Hospital essential electrical systems must restore power within 10 seconds per 517.31(B).",
+        "detailed": "Section 517.31(B) requires essential electrical system equipment to have power automatically restored within 10 seconds after interruption of normal power. This ensures critical life-safety and patient care equipment operates with minimal interruption.",
+        "how_to_find": "Go to 517.31(B) for essential system timing."
+      },
+      "nec_reference": {"article": "517", "section": "517.31(B)"},
+      "zafto_links": [],
+      "tags": ["healthcare", "essential system", "10 seconds"],
+      "verified": true
+    },
+    {
+      "id": "SO-022",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["517"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "The hospital essential electrical system consists of which branches?",
+      "choices": [
+        {"id": "A", "text": "Life safety and equipment system"},
+        {"id": "B", "text": "Emergency and standby"},
+        {"id": "C", "text": "Life safety and critical"},
+        {"id": "D", "text": "Primary and secondary"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Hospital essential systems consist of life safety and critical branches per 517.30.",
+        "detailed": "Section 517.30 requires hospital essential electrical systems to be comprised of two separate branches: the life safety branch and the critical branch. These branches supply different types of loads with the life safety branch powering illumination, alarms, and emergency communications.",
+        "how_to_find": "Go to 517.30 for essential system components."
+      },
+      "nec_reference": {"article": "517", "section": "517.30"},
+      "zafto_links": [],
+      "tags": ["healthcare", "essential system", "branches"],
+      "verified": true
+    },
+    {
+      "id": "SO-023",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["517"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "In a hospital patient bed location, how many receptacles must be connected to the critical branch?",
+      "choices": [
+        {"id": "A", "text": "One"},
+        {"id": "B", "text": "Two"},
+        {"id": "C", "text": "At least one"},
+        {"id": "D", "text": "All receptacles"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "At least one receptacle at each patient bed location must be on the critical branch per 517.19(B).",
+        "detailed": "Section 517.19(B)(2) requires at least one receptacle connected to either the critical branch or the normal system at each patient bed location in general care areas. Critical care areas have more stringent requirements with multiple receptacles on emergency power.",
+        "how_to_find": "Go to 517.19(B)(2) for patient bed receptacles."
+      },
+      "nec_reference": {"article": "517", "section": "517.19(B)(2)"},
+      "zafto_links": [],
+      "tags": ["healthcare", "receptacles", "critical branch"],
+      "verified": true
+    },
+    {
+      "id": "SO-024",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["518"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Article 518 covers wiring in places of assembly designed for how many occupants?",
+      "choices": [
+        {"id": "A", "text": "50 or more persons"},
+        {"id": "B", "text": "100 or more persons"},
+        {"id": "C", "text": "200 or more persons"},
+        {"id": "D", "text": "500 or more persons"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Article 518 applies to assembly occupancies designed for 100 or more persons.",
+        "detailed": "Article 518.1 covers all buildings or portions of buildings designed or intended for the assembly of 100 or more persons. This includes theaters, auditoriums, restaurants, dance halls, churches, and similar gathering places.",
+        "how_to_find": "Go to 518.1 for assembly occupancy scope."
+      },
+      "nec_reference": {"article": "518", "section": "518.1"},
+      "zafto_links": [],
+      "tags": ["assembly", "100 persons", "places of assembly"],
+      "verified": true
+    },
+    {
+      "id": "SO-025",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["518"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "In assembly occupancies, what type of temporary wiring is permitted?",
+      "choices": [
+        {"id": "A", "text": "No temporary wiring permitted"},
+        {"id": "B", "text": "Type NM cable"},
+        {"id": "C", "text": "Listed flexible cords approved for hard usage or extra-hard usage"},
+        {"id": "D", "text": "Any portable cord"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Assembly occupancies permit listed hard or extra-hard usage flexible cords for temporary wiring per 518.3(B).",
+        "detailed": "Section 518.3(B) permits temporary wiring in assembly occupancies using listed flexible cords approved for hard usage or extra-hard usage. This wiring must be protected from physical damage and is intended for events, exhibitions, and temporary displays.",
+        "how_to_find": "Go to 518.3(B) for assembly temporary wiring."
+      },
+      "nec_reference": {"article": "518", "section": "518.3(B)"},
+      "zafto_links": [],
+      "tags": ["assembly", "temporary wiring", "flexible cord"],
+      "verified": true
+    },
+    {
+      "id": "SO-026",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["520"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Article 520 covers electrical equipment for:",
+      "choices": [
+        {"id": "A", "text": "Swimming pools"},
+        {"id": "B", "text": "Theaters, audience areas, and similar locations"},
+        {"id": "C", "text": "Agricultural buildings"},
+        {"id": "D", "text": "Marinas"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Article 520 covers theaters, motion picture studios, audience areas, and similar locations.",
+        "detailed": "Article 520 applies to theaters, motion picture and television studios, and similar locations including audience areas, stages, dressing rooms, and projection rooms. It addresses portable stage equipment, stage switchboards, and special effects equipment.",
+        "how_to_find": "Go to 520.1 for theater and stage scope."
+      },
+      "nec_reference": {"article": "520", "section": "520.1"},
+      "zafto_links": [],
+      "tags": ["theater", "stage", "audience areas"],
+      "verified": true
+    },
+    {
+      "id": "SO-027",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["520"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Portable stage equipment supply cords must be rated for what minimum usage?",
+      "choices": [
+        {"id": "A", "text": "Light duty"},
+        {"id": "B", "text": "Hard usage"},
+        {"id": "C", "text": "Extra-hard usage"},
+        {"id": "D", "text": "Junior hard usage"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Portable stage equipment supply cords must be extra-hard usage per 520.68(A).",
+        "detailed": "Section 520.68(A) requires supply cords for portable stage equipment to be listed extra-hard usage cords having an ampacity not less than the load and protected by overcurrent devices. This ensures durability in the demanding stage environment.",
+        "how_to_find": "Go to 520.68(A) for portable stage equipment cords."
+      },
+      "nec_reference": {"article": "520", "section": "520.68(A)"},
+      "zafto_links": [],
+      "tags": ["stage", "portable equipment", "extra-hard usage"],
+      "verified": true
+    },
+    {
+      "id": "SO-028",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["547"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Article 547 covers electrical installations in:",
+      "choices": [
+        {"id": "A", "text": "Healthcare facilities"},
+        {"id": "B", "text": "Agricultural buildings"},
+        {"id": "C", "text": "Theaters"},
+        {"id": "D", "text": "Marinas"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Article 547 covers agricultural buildings including livestock and poultry facilities.",
+        "detailed": "Article 547 applies to buildings and areas where agricultural activities are performed, including livestock confinement buildings, poultry facilities, hay storage, and grain handling areas. These locations have unique hazards from moisture, dust, corrosive atmospheres, and animal contact.",
+        "how_to_find": "Go to 547.1 for agricultural building scope."
+      },
+      "nec_reference": {"article": "547", "section": "547.1"},
+      "zafto_links": [],
+      "tags": ["agricultural", "livestock", "farm buildings"],
+      "verified": true
+    },
+    {
+      "id": "SO-029",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["547"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "In agricultural buildings with corrosive atmospheres, what type of wiring system is required?",
+      "choices": [
+        {"id": "A", "text": "Type NM cable"},
+        {"id": "B", "text": "Rigid metal conduit"},
+        {"id": "C", "text": "Copper-free aluminum"},
+        {"id": "D", "text": "Type UF cable or approved raceways"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Agricultural buildings with corrosive atmospheres require Type UF cable or corrosion-resistant raceways per 547.5.",
+        "detailed": "Section 547.5 requires wiring systems in agricultural areas containing corrosive atmospheres to use copper or copper-clad aluminum conductors. Type UF cable or listed raceways suitable for corrosive locations are permitted. All enclosures and fittings must be suitable for wet locations.",
+        "how_to_find": "Go to 547.5 for agricultural wiring methods."
+      },
+      "nec_reference": {"article": "547", "section": "547.5"},
+      "zafto_links": [],
+      "tags": ["agricultural", "corrosive", "UF cable"],
+      "verified": true
+    },
+    {
+      "id": "SO-030",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["547"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is required at the site-isolating device for agricultural buildings?",
+      "choices": [
+        {"id": "A", "text": "No bonding required"},
+        {"id": "B", "text": "Equipment grounding conductor must be bonded to grounding electrode system"},
+        {"id": "C", "text": "Only the neutral must be grounded"},
+        {"id": "D", "text": "A separate transformer"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "At agricultural building site-isolating devices, EGC must bond to grounding electrode system per 547.9.",
+        "detailed": "Section 547.9 requires a site-isolating device at each agricultural building supplied by a distribution point. The equipment grounding conductor must be connected to the grounding electrode system at the building to ensure proper fault clearing and voltage stabilization.",
+        "how_to_find": "Go to 547.9 for agricultural grounding requirements."
+      },
+      "nec_reference": {"article": "547", "section": "547.9"},
+      "zafto_links": [],
+      "tags": ["agricultural", "grounding", "site-isolating device"],
+      "verified": true
+    },
+    {
+      "id": "SO-031",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["555"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Article 555 covers electrical wiring in:",
+      "choices": [
+        {"id": "A", "text": "Swimming pools"},
+        {"id": "B", "text": "Marinas and boatyards"},
+        {"id": "C", "text": "Mobile homes"},
+        {"id": "D", "text": "RV parks"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Article 555 covers marinas, boatyards, floating buildings, and commercial/non-commercial docking facilities.",
+        "detailed": "Article 555 applies to the installation of wiring and equipment in the areas comprising fixed or floating piers, wharves, docks, and other areas in marinas, boatyards, boat basins, and similar facilities. It addresses the unique hazards of marine environments.",
+        "how_to_find": "Go to 555.1 for marina scope."
+      },
+      "nec_reference": {"article": "555", "section": "555.1"},
+      "zafto_links": [],
+      "tags": ["marina", "boatyard", "docks"],
+      "verified": true
+    },
+    {
+      "id": "SO-032",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["555"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Marina shore power receptacles must have ground-fault protection with a trip threshold of:",
+      "choices": [
+        {"id": "A", "text": "5 mA"},
+        {"id": "B", "text": "15 mA"},
+        {"id": "C", "text": "30 mA"},
+        {"id": "D", "text": "100 mA"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Marina receptacles require 30 mA ground-fault protection per 555.35(B).",
+        "detailed": "Section 555.35(B) requires GFCI protection set to open at a ground-fault current not exceeding 30 mA for marina shore power receptacles. This higher threshold than standard 5 mA GFCIs accounts for the leakage inherent in marine environments while providing protection against electrocution in the water.",
+        "how_to_find": "Go to 555.35(B) for marina ground-fault protection."
+      },
+      "nec_reference": {"article": "555", "section": "555.35(B)"},
+      "zafto_links": [],
+      "tags": ["marina", "GFCI", "30 mA"],
+      "verified": true
+    },
+    {
+      "id": "SO-033",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["555"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "The minimum size feeder for a marina dock section with four 30-ampere receptacles is:",
+      "choices": [
+        {"id": "A", "text": "60 amperes"},
+        {"id": "B", "text": "80 amperes"},
+        {"id": "C", "text": "100 amperes"},
+        {"id": "D", "text": "120 amperes"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Marina feeders use demand factors from Table 555.12 - four 30A receptacles = 80A.",
+        "detailed": "Table 555.12 provides demand factors for marina feeders and services. For 1-4 shore power receptacles of any rating, use 100% demand factor. Four 30-ampere receptacles at 80% (30A × 0.80 × 4) plus the actual receptacle rating calculation results in minimum 80 ampere feeder for dock section.",
+        "how_to_find": "Go to Table 555.12 for marina demand factors."
+      },
+      "nec_reference": {"article": "555", "section": "Table 555.12"},
+      "zafto_links": [],
+      "tags": ["marina", "demand factor", "feeder sizing"],
+      "verified": true
+    },
+    {
+      "id": "SO-034",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["550"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Article 550 covers electrical systems for:",
+      "choices": [
+        {"id": "A", "text": "Recreational vehicles"},
+        {"id": "B", "text": "Mobile homes and manufactured buildings"},
+        {"id": "C", "text": "Marinas"},
+        {"id": "D", "text": "Construction sites"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Article 550 covers mobile homes, manufactured homes, and mobile home parks.",
+        "detailed": "Article 550 applies to the electrical systems in mobile homes, manufactured homes, and mobile home parks. It covers the internal wiring of manufactured units, the service equipment, and feeder assembly from the service to the home.",
+        "how_to_find": "Go to 550.1 for mobile home scope."
+      },
+      "nec_reference": {"article": "550", "section": "550.1"},
+      "zafto_links": [],
+      "tags": ["mobile home", "manufactured housing", "Article 550"],
+      "verified": true
+    },
+    {
+      "id": "SO-035",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["550"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum service for a mobile home?",
+      "choices": [
+        {"id": "A", "text": "60 amperes"},
+        {"id": "B", "text": "100 amperes"},
+        {"id": "C", "text": "150 amperes"},
+        {"id": "D", "text": "200 amperes"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Mobile home services must be minimum 100 amperes per 550.32(B).",
+        "detailed": "Section 550.32(B) requires the mobile home service equipment or feeder assembly rating to be not less than 100 amperes at 120/240 volts. The power supply cord and attachment plug, if used, must be rated not less than 50 amperes.",
+        "how_to_find": "Go to 550.32(B) for mobile home service rating."
+      },
+      "nec_reference": {"article": "550", "section": "550.32(B)"},
+      "zafto_links": [],
+      "tags": ["mobile home", "100 amperes", "service"],
+      "verified": true
+    },
+    {
+      "id": "SO-036",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["551"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "Article 551 covers electrical systems for:",
+      "choices": [
+        {"id": "A", "text": "Mobile homes"},
+        {"id": "B", "text": "Recreational vehicles and parks"},
+        {"id": "C", "text": "Floating buildings"},
+        {"id": "D", "text": "Carnivals"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Article 551 covers recreational vehicles (RVs) and recreational vehicle parks.",
+        "detailed": "Article 551 applies to the electrical systems of recreational vehicles including travel trailers, camping trailers, truck campers, and motor homes, as well as the electrical wiring systems in recreational vehicle parks providing RV sites.",
+        "how_to_find": "Go to 551.1 for recreational vehicle scope."
+      },
+      "nec_reference": {"article": "551", "section": "551.1"},
+      "zafto_links": [],
+      "tags": ["RV", "recreational vehicle", "RV park"],
+      "verified": true
+    },
+    {
+      "id": "SO-037",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["551"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "The minimum supply for an RV site with 120/240-volt service is:",
+      "choices": [
+        {"id": "A", "text": "20 amperes"},
+        {"id": "B", "text": "30 amperes"},
+        {"id": "C", "text": "50 amperes"},
+        {"id": "D", "text": "100 amperes"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "RV site 120/240V supplies require minimum 50 amperes per 551.73(A).",
+        "detailed": "Section 551.73(A) specifies that a 50-ampere, 125/250-volt receptacle conforming to Figure 551.46(C) configuration is required for RV sites requiring 120/240-volt service. A 30-ampere, 125-volt supply is the minimum for single-phase 120V sites.",
+        "how_to_find": "Go to 551.73(A) for RV site supply requirements."
+      },
+      "nec_reference": {"article": "551", "section": "551.73(A)"},
+      "zafto_links": [],
+      "tags": ["RV", "50 ampere", "site supply"],
+      "verified": true
+    },
+    {
+      "id": "SO-038",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["525"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Article 525 covers electrical wiring for:",
+      "choices": [
+        {"id": "A", "text": "Permanent amusement parks"},
+        {"id": "B", "text": "Carnivals, circuses, and fairs"},
+        {"id": "C", "text": "Theaters only"},
+        {"id": "D", "text": "Sports arenas"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Article 525 covers carnivals, circuses, fairs, and similar temporary events.",
+        "detailed": "Article 525 applies to the installation of portable wiring and equipment for carnivals, circuses, fairs, and similar functions including portable or mobile structures. It addresses the unique requirements of temporary installations and frequent setup/teardown.",
+        "how_to_find": "Go to 525.1 for carnival scope."
+      },
+      "nec_reference": {"article": "525", "section": "525.1"},
+      "zafto_links": [],
+      "tags": ["carnival", "circus", "fair"],
+      "verified": true
+    },
+    {
+      "id": "SO-039",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["525"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Portable distribution equipment at carnivals must be bonded to the system grounding conductor by what minimum size bonding jumper?",
+      "choices": [
+        {"id": "A", "text": "Based on Table 250.122"},
+        {"id": "B", "text": "6 AWG copper minimum"},
+        {"id": "C", "text": "8 AWG copper minimum"},
+        {"id": "D", "text": "4 AWG copper minimum"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Carnival portable distribution equipment requires minimum 6 AWG bonding jumper per 525.32.",
+        "detailed": "Section 525.32 requires portable distribution equipment to have an equipment bonding jumper connected to the system grounding conductor. The bonding jumper must be not smaller than 6 AWG copper to ensure adequate fault current capacity.",
+        "how_to_find": "Go to 525.32 for carnival bonding requirements."
+      },
+      "nec_reference": {"article": "525", "section": "525.32"},
+      "zafto_links": [],
+      "tags": ["carnival", "bonding", "6 AWG"],
+      "verified": true
+    },
+    {
+      "id": "SO-040",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["502"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "In Class II, Division 1 locations, what type of equipment must be used?",
+      "choices": [
+        {"id": "A", "text": "Explosionproof"},
+        {"id": "B", "text": "Dust-ignitionproof"},
+        {"id": "C", "text": "Weatherproof"},
+        {"id": "D", "text": "General purpose"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Class II Division 1 requires dust-ignitionproof equipment per 502.100.",
+        "detailed": "Section 502.100 requires equipment in Class II Division 1 locations to be approved as dust-ignitionproof. This equipment prevents the ingress of dust and limits surface temperatures to prevent ignition of dust layers on or around the enclosure.",
+        "how_to_find": "Go to 502.100 for Class II Division 1 equipment."
+      },
+      "nec_reference": {"article": "502", "section": "502.100"},
+      "zafto_links": [{"screen_id": "hazardous_locations", "relevance": "primary", "description": "Dust-ignitionproof"}],
+      "tags": ["Class II", "dust-ignitionproof", "Division 1"],
+      "verified": true
+    },
+    {
+      "id": "SO-041",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["503"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "In Class III locations, motors must be:",
+      "choices": [
+        {"id": "A", "text": "Open drip-proof type"},
+        {"id": "B", "text": "Totally enclosed non-ventilated or dust-tight"},
+        {"id": "C", "text": "Any standard motor"},
+        {"id": "D", "text": "Explosionproof only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Class III locations require totally enclosed non-ventilated or dust-tight motors per 503.6.",
+        "detailed": "Section 503.6 requires motors, generators, and other rotating equipment in Class III locations to be totally enclosed non-ventilated, totally enclosed pipe ventilated, or totally enclosed fan-cooled. Self-cleaning textile motors are also acceptable in certain conditions.",
+        "how_to_find": "Go to 503.6 for Class III motor requirements."
+      },
+      "nec_reference": {"article": "503", "section": "503.6"},
+      "zafto_links": [{"screen_id": "hazardous_locations", "relevance": "secondary", "description": "Class III motors"}],
+      "tags": ["Class III", "motors", "enclosed"],
+      "verified": true
+    },
+    {
+      "id": "SO-042",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["511"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Article 511 covers electrical wiring in:",
+      "choices": [
+        {"id": "A", "text": "Swimming pools"},
+        {"id": "B", "text": "Commercial garages"},
+        {"id": "C", "text": "Mobile homes"},
+        {"id": "D", "text": "Healthcare facilities"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Article 511 covers commercial garages where volatile flammable liquids or gases are used.",
+        "detailed": "Article 511 applies to locations used for service and repair of self-propelled vehicles (including passenger automobiles, buses, trucks) where volatile flammable liquids or flammable gases are used for fuel or power. This includes repair garages but not parking garages.",
+        "how_to_find": "Go to 511.1 for commercial garage scope."
+      },
+      "nec_reference": {"article": "511", "section": "511.1"},
+      "zafto_links": [],
+      "tags": ["commercial garage", "repair garage", "flammable"],
+      "verified": true
+    },
+    {
+      "id": "SO-043",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["511"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "The classified area in a commercial garage extends how high above the floor level?",
+      "choices": [
+        {"id": "A", "text": "12 inches"},
+        {"id": "B", "text": "18 inches"},
+        {"id": "C", "text": "36 inches"},
+        {"id": "D", "text": "48 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Commercial garage classified areas extend 18 inches above floor per 511.3(B).",
+        "detailed": "Section 511.3(B) defines the classified area in commercial repair garages as extending 18 inches (450 mm) above the floor level. Above this height is considered unclassified if ventilation provides at least four air changes per hour and air is exhausted at the floor level.",
+        "how_to_find": "Go to 511.3(B) for garage classified area extent."
+      },
+      "nec_reference": {"article": "511", "section": "511.3(B)"},
+      "zafto_links": [],
+      "tags": ["commercial garage", "18 inches", "classified area"],
+      "verified": true
+    },
+    {
+      "id": "SO-044",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["514"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Article 514 covers electrical equipment at:",
+      "choices": [
+        {"id": "A", "text": "Paint spray booths"},
+        {"id": "B", "text": "Motor fuel dispensing facilities"},
+        {"id": "C", "text": "Agricultural buildings"},
+        {"id": "D", "text": "Healthcare facilities"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Article 514 covers motor fuel dispensing facilities including gas stations.",
+        "detailed": "Article 514 applies to motor fuel dispensing facilities, including gas stations, truck stops, fleet fueling facilities, and similar locations where fuel is dispensed. It addresses the hazardous area classification and special equipment requirements around dispensing devices.",
+        "how_to_find": "Go to 514.1 for motor fuel dispensing scope."
+      },
+      "nec_reference": {"article": "514", "section": "514.1"},
+      "zafto_links": [],
+      "tags": ["gas station", "fuel dispensing", "Article 514"],
+      "verified": true
+    },
+    {
+      "id": "SO-045",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["514"],
+      "nec_tables": ["Table 514.3(B)(1)"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the Class I Division classification within 18 inches of a fuel dispenser enclosure?",
+      "choices": [
+        {"id": "A", "text": "Division 1"},
+        {"id": "B", "text": "Division 2"},
+        {"id": "C", "text": "Unclassified"},
+        {"id": "D", "text": "Class II"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Within 18 inches of the dispenser enclosure is Class I Division 1 per Table 514.3(B)(1).",
+        "detailed": "Table 514.3(B)(1) classifies the space within 18 inches (450 mm) in all directions from the dispenser enclosure exterior surface as Class I, Division 1. This most restrictive classification accounts for the highest probability of flammable vapor presence near dispensing equipment.",
+        "how_to_find": "Go to Table 514.3(B)(1) for dispenser classified areas."
+      },
+      "nec_reference": {"article": "514", "section": "Table 514.3(B)(1)"},
+      "zafto_links": [],
+      "tags": ["fuel dispensing", "Division 1", "18 inches"],
+      "verified": true
+    },
+    {
+      "id": "SO-046",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["516"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Article 516 covers electrical wiring in:",
+      "choices": [
+        {"id": "A", "text": "Commercial garages"},
+        {"id": "B", "text": "Spray application, dipping, and coating processes"},
+        {"id": "C", "text": "Swimming pools"},
+        {"id": "D", "text": "Healthcare facilities"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Article 516 covers spray application, dipping, coating, and powder coating operations.",
+        "detailed": "Article 516 applies to the electrical wiring and equipment in locations where paint, lacquer, and other flammable finishes are applied by spray, dipping, or coating, and where powder coating operations occur. This includes auto body shops, furniture finishing, and industrial coating operations.",
+        "how_to_find": "Go to 516.1 for spray application scope."
+      },
+      "nec_reference": {"article": "516", "section": "516.1"},
+      "zafto_links": [],
+      "tags": ["spray application", "paint booth", "coating"],
+      "verified": true
+    },
+    {
+      "id": "SO-047",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["516"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "The interior of an open spray booth is classified as:",
+      "choices": [
+        {"id": "A", "text": "Class I, Division 1"},
+        {"id": "B", "text": "Class I, Division 2"},
+        {"id": "C", "text": "Class II, Division 1"},
+        {"id": "D", "text": "Unclassified"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "The interior of spray booths is Class I Division 1 per 516.3(A).",
+        "detailed": "Section 516.3(A) classifies the interior of spray booths and rooms, including the interior of exhaust ducts, as Class I Division 1 locations. This most restrictive classification applies because flammable concentrations exist continuously during spray operations.",
+        "how_to_find": "Go to 516.3(A) for spray booth classification."
+      },
+      "nec_reference": {"article": "516", "section": "516.3(A)"},
+      "zafto_links": [],
+      "tags": ["spray booth", "Class I Division 1", "paint"],
+      "verified": true
+    },
+    {
+      "id": "SO-048",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["513"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Article 513 covers electrical wiring in:",
+      "choices": [
+        {"id": "A", "text": "Commercial garages"},
+        {"id": "B", "text": "Aircraft hangars"},
+        {"id": "C", "text": "Boat houses"},
+        {"id": "D", "text": "Warehouses"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Article 513 covers aircraft hangars where aircraft are stored or serviced.",
+        "detailed": "Article 513 applies to buildings or structures used for storage or servicing of aircraft where gasoline, jet fuels, or other volatile flammable liquids or gases are used. This includes maintenance hangars, paint hangars, and storage hangars.",
+        "how_to_find": "Go to 513.1 for aircraft hangar scope."
+      },
+      "nec_reference": {"article": "513", "section": "513.1"},
+      "zafto_links": [],
+      "tags": ["aircraft hangar", "aviation", "fueling"],
+      "verified": true
+    },
+    {
+      "id": "SO-049",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["513"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "In aircraft hangars, the classified area around aircraft extends how far horizontally from aircraft wings and engines?",
+      "choices": [
+        {"id": "A", "text": "3 feet"},
+        {"id": "B", "text": "5 feet"},
+        {"id": "C", "text": "10 feet"},
+        {"id": "D", "text": "20 feet"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Aircraft hangar classified areas extend 5 feet horizontally from wings and engine enclosures per 513.3(B).",
+        "detailed": "Section 513.3(B) defines the Class I Division 2 or Zone 2 area as extending 5 feet (1.5 m) horizontally from aircraft power plants, aircraft fuel tanks, and structures containing fuel. This classification extends from floor level to 18 inches above the upper surface of the aircraft wings.",
+        "how_to_find": "Go to 513.3(B) for aircraft hangar classifications."
+      },
+      "nec_reference": {"article": "513", "section": "513.3(B)"},
+      "zafto_links": [],
+      "tags": ["aircraft hangar", "5 feet", "classified area"],
+      "verified": true
+    },
+    {
+      "id": "SO-050",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["515"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Article 515 covers electrical wiring at:",
+      "choices": [
+        {"id": "A", "text": "Gas stations only"},
+        {"id": "B", "text": "Bulk storage plants for flammable liquids"},
+        {"id": "C", "text": "Paint spray booths"},
+        {"id": "D", "text": "Grain elevators"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Article 515 covers bulk storage plants where flammable liquids are stored in bulk quantities.",
+        "detailed": "Article 515 applies to locations where flammable liquids are received by tank vessel, pipelines, tank car, or tank vehicle, and are stored or blended in bulk for the purpose of distributing by tank vessel, pipeline, tank car, tank vehicle, portable tank, or container.",
+        "how_to_find": "Go to 515.1 for bulk storage plant scope."
+      },
+      "nec_reference": {"article": "515", "section": "515.1"},
+      "zafto_links": [],
+      "tags": ["bulk storage", "flammable liquids", "tank farm"],
+      "verified": true
+    },
+    {
+      "id": "SO-051",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["504"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Intrinsically safe equipment operates by:",
+      "choices": [
+        {"id": "A", "text": "Containing explosions within the enclosure"},
+        {"id": "B", "text": "Limiting energy below ignition threshold"},
+        {"id": "C", "text": "Purging with clean air"},
+        {"id": "D", "text": "Operating at reduced voltage only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Intrinsically safe systems limit electrical and thermal energy below levels that can ignite hazardous atmospheres.",
+        "detailed": "Article 504 covers intrinsically safe systems where equipment and wiring are incapable of releasing sufficient electrical or thermal energy to cause ignition of a specific hazardous atmospheric mixture. Energy is limited through barriers, resistors, and design that prevents sparks with enough energy to ignite.",
+        "how_to_find": "Go to 504.2 for intrinsic safety definition."
+      },
+      "nec_reference": {"article": "504", "section": "504.2"},
+      "zafto_links": [{"screen_id": "hazardous_locations", "relevance": "primary", "description": "Intrinsic safety"}],
+      "tags": ["intrinsically safe", "energy limiting", "hazardous"],
+      "verified": true
+    },
+    {
+      "id": "SO-052",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["504"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Intrinsically safe circuit wiring must be separated from non-intrinsically safe wiring by:",
+      "choices": [
+        {"id": "A", "text": "No separation required"},
+        {"id": "B", "text": "At least 2 inches or a grounded metal partition"},
+        {"id": "C", "text": "A minimum of 50 mm (2 in.) or approved barriers"},
+        {"id": "D", "text": "Only conduit separation"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Intrinsically safe wiring must be separated from other wiring by at least 50 mm or approved barriers per 504.30(A).",
+        "detailed": "Section 504.30(A) requires intrinsically safe circuit conductors to be separated from conductors of any non-intrinsically safe circuit by a distance of at least 50 mm (2 in.) and secured, or by using one of the methods specified for maintaining integrity of the IS circuit.",
+        "how_to_find": "Go to 504.30(A) for IS wiring separation."
+      },
+      "nec_reference": {"article": "504", "section": "504.30(A)"},
+      "zafto_links": [{"screen_id": "hazardous_locations", "relevance": "secondary", "description": "IS wiring"}],
+      "tags": ["intrinsically safe", "separation", "50 mm"],
+      "verified": true
+    },
+    {
+      "id": "SO-053",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["500"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Purged and pressurized equipment protects against ignition by:",
+      "choices": [
+        {"id": "A", "text": "Containing internal explosions"},
+        {"id": "B", "text": "Limiting electrical energy"},
+        {"id": "C", "text": "Maintaining positive pressure to exclude hazardous atmosphere"},
+        {"id": "D", "text": "Operating at temperatures below flash point"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Purged/pressurized enclosures maintain positive internal pressure to keep hazardous atmospheres out.",
+        "detailed": "Purged and pressurized equipment per NFPA 496 maintains a flow of protective gas (usually air or inert gas) at sufficient pressure and volume to prevent entry of the hazardous atmosphere into the enclosure. Types X, Y, and Z provide different levels of protection.",
+        "how_to_find": "See 500.2 definition and NFPA 496 for purging/pressurization."
+      },
+      "nec_reference": {"article": "500", "section": "500.2"},
+      "zafto_links": [{"screen_id": "hazardous_locations", "relevance": "primary", "description": "Purging/pressurization"}],
+      "tags": ["purged", "pressurized", "Type X Y Z"],
+      "verified": true
+    },
+    {
+      "id": "SO-054",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["501"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Conduit seals in Class I Division 1 locations must be installed within what distance of the enclosure?",
+      "choices": [
+        {"id": "A", "text": "6 inches"},
+        {"id": "B", "text": "12 inches"},
+        {"id": "C", "text": "18 inches"},
+        {"id": "D", "text": "24 inches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Class I Division 1 seals must be within 18 inches of the enclosure per 501.15(A)(1).",
+        "detailed": "Section 501.15(A)(1) requires sealing fittings in Class I Division 1 locations to be located within 450 mm (18 in.) of the enclosures containing arcing or sparking equipment. The seal prevents passage of gases through the conduit system into or out of the explosionproof enclosure.",
+        "how_to_find": "Go to 501.15(A)(1) for seal location requirements."
+      },
+      "nec_reference": {"article": "501", "section": "501.15(A)(1)"},
+      "zafto_links": [{"screen_id": "hazardous_locations", "relevance": "primary", "description": "Seal locations"}],
+      "tags": ["sealing", "18 inches", "Class I"],
+      "verified": true
+    },
+    {
+      "id": "SO-055",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["501"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Sealing fittings must have the compound poured to a minimum thickness of:",
+      "choices": [
+        {"id": "A", "text": "Equal to the trade size of conduit"},
+        {"id": "B", "text": "1/2 inch"},
+        {"id": "C", "text": "1 inch"},
+        {"id": "D", "text": "2 inches"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Seal compound thickness must equal the conduit trade size per 501.15(C)(6).",
+        "detailed": "Section 501.15(C)(6) requires the thickness of the sealing compound to be not less than the trade size of the sealing fitting and in no case less than 16 mm (5/8 in.). For example, a 2-inch conduit requires at least 2 inches of compound thickness.",
+        "how_to_find": "Go to 501.15(C)(6) for sealing compound requirements."
+      },
+      "nec_reference": {"article": "501", "section": "501.15(C)(6)"},
+      "zafto_links": [{"screen_id": "hazardous_locations", "relevance": "primary", "description": "Seal compound"}],
+      "tags": ["sealing compound", "thickness", "trade size"],
+      "verified": true
+    },
+    {
+      "id": "SO-056",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["505"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Zone 0 in the Zone classification system is equivalent to which Class/Division designation?",
+      "choices": [
+        {"id": "A", "text": "Class I Division 1"},
+        {"id": "B", "text": "Class I Division 2"},
+        {"id": "C", "text": "More restrictive than Division 1"},
+        {"id": "D", "text": "Class II Division 1"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Zone 0 is more restrictive than Division 1 - ignitable concentrations exist continuously or for long periods.",
+        "detailed": "Zone 0 per 505.5(B)(1) applies where ignitable concentrations of flammable gases or vapors exist continuously or for long periods of time. This is more restrictive than Division 1, which covers normal but not necessarily continuous presence. Equipment for Zone 0 requires Category ia intrinsic safety.",
+        "how_to_find": "Go to 505.5(B)(1) for Zone 0 definition."
+      },
+      "nec_reference": {"article": "505", "section": "505.5(B)(1)"},
+      "zafto_links": [{"screen_id": "hazardous_locations", "relevance": "primary", "description": "Zone system"}],
+      "tags": ["Zone 0", "continuous", "IEC"],
+      "verified": true
+    },
+    {
+      "id": "SO-057",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["590"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Article 590 covers:",
+      "choices": [
+        {"id": "A", "text": "Permanent installations"},
+        {"id": "B", "text": "Temporary wiring during construction, remodeling, or demolition"},
+        {"id": "C", "text": "Hazardous locations only"},
+        {"id": "D", "text": "Mobile homes"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Article 590 covers temporary wiring for construction, demolition, or similar activities.",
+        "detailed": "Article 590 applies to temporary electrical power and lighting installations used during construction, remodeling, maintenance, repair, or demolition of buildings, structures, equipment, or similar activities. Temporary wiring methods have relaxed requirements compared to permanent installations.",
+        "how_to_find": "Go to 590.1 for temporary wiring scope."
+      },
+      "nec_reference": {"article": "590", "section": "590.1"},
+      "zafto_links": [],
+      "tags": ["temporary wiring", "construction", "Article 590"],
+      "verified": true
+    },
+    {
+      "id": "SO-058",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["590"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "Temporary wiring must be removed:",
+      "choices": [
+        {"id": "A", "text": "Within 30 days of installation"},
+        {"id": "B", "text": "When purpose is completed"},
+        {"id": "C", "text": "Within 90 days"},
+        {"id": "D", "text": "Within one year"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Temporary wiring must be removed immediately upon completion of the purpose per 590.3(D).",
+        "detailed": "Section 590.3(D) requires temporary wiring to be removed immediately upon completion of construction or the purpose for which the wiring was installed. There is no specific time limit; removal is triggered by completion of the work requiring temporary power.",
+        "how_to_find": "Go to 590.3(D) for temporary wiring removal."
+      },
+      "nec_reference": {"article": "590", "section": "590.3(D)"},
+      "zafto_links": [],
+      "tags": ["temporary wiring", "removal", "construction"],
+      "verified": true
+    },
+    {
+      "id": "SO-059",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["590"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "GFCI protection is required for all 125-volt, 15- and 20-ampere receptacles at construction sites that are:",
+      "choices": [
+        {"id": "A", "text": "Only those in wet locations"},
+        {"id": "B", "text": "Only those outdoors"},
+        {"id": "C", "text": "Not part of permanent wiring"},
+        {"id": "D", "text": "All of them regardless of location"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "All temporary 125V, 15/20A receptacles not part of permanent wiring require GFCI per 590.6(A).",
+        "detailed": "Section 590.6(A)(1) requires GFCI protection for all 125-volt, single-phase, 15-, 20-, and 30-ampere receptacle outlets that are not a part of the permanent wiring of the building or structure. This applies to construction site temporary power regardless of indoor or outdoor location.",
+        "how_to_find": "Go to 590.6(A) for construction GFCI requirements."
+      },
+      "nec_reference": {"article": "590", "section": "590.6(A)(1)"},
+      "zafto_links": [],
+      "tags": ["construction", "GFCI", "temporary wiring"],
+      "verified": true
+    },
+    {
+      "id": "SO-060",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["680"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Switches controlling pool lighting must be located at least how far from the pool edge?",
+      "choices": [
+        {"id": "A", "text": "3 feet"},
+        {"id": "B", "text": "5 feet"},
+        {"id": "C", "text": "10 feet"},
+        {"id": "D", "text": "No minimum distance"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Pool light switches must be at least 5 feet from the inside wall of the pool per 680.22(C).",
+        "detailed": "Section 680.22(C) requires switching devices to be located at least 1.5 m (5 ft) from the inside walls of the pool, unless separated from the pool by a solid fence, wall, or other permanent barrier. This protects users from shock while operating switches in wet conditions.",
+        "how_to_find": "Go to 680.22(C) for pool switch location."
+      },
+      "nec_reference": {"article": "680", "section": "680.22(C)"},
+      "zafto_links": [{"screen_id": "pool_spa_wiring", "relevance": "primary", "description": "Pool switch location"}],
+      "tags": ["pool", "switch", "5 feet"],
+      "verified": true
+    },
+    {
+      "id": "SO-061",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["680"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the minimum depth for a wet-niche pool light below the normal water level?",
+      "choices": [
+        {"id": "A", "text": "12 inches"},
+        {"id": "B", "text": "18 inches"},
+        {"id": "C", "text": "4 inches"},
+        {"id": "D", "text": "No minimum depth"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Wet-niche luminaires must be at least 18 inches below the normal water level per 680.23(A)(5).",
+        "detailed": "Section 680.23(A)(5) requires wet-niche luminaires to be installed with the top of the luminaire lens not less than 18 inches (450 mm) below the normal water level of the pool, unless the luminaire is listed for a lesser depth. This ensures adequate water coverage for heat dissipation.",
+        "how_to_find": "Go to 680.23(A)(5) for wet-niche depth."
+      },
+      "nec_reference": {"article": "680", "section": "680.23(A)(5)"},
+      "zafto_links": [{"screen_id": "pool_spa_wiring", "relevance": "primary", "description": "Pool light depth"}],
+      "tags": ["pool", "wet-niche", "18 inches"],
+      "verified": true
+    },
+    {
+      "id": "SO-062",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["680"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "The cord for a wet-niche pool luminaire must be at least how long?",
+      "choices": [
+        {"id": "A", "text": "6 feet"},
+        {"id": "B", "text": "10 feet"},
+        {"id": "C", "text": "12 feet"},
+        {"id": "D", "text": "Length to reach junction box plus 1 foot"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Wet-niche pool luminaire cord must be at least 12 feet to allow servicing on the deck per 680.23(B)(3).",
+        "detailed": "Section 680.23(B)(3) requires the flexible cord for wet-niche luminaires to be not less than 3.6 m (12 ft) in length. This permits the luminaire to be removed from the niche and placed on the deck for servicing without lowering the pool water level.",
+        "how_to_find": "Go to 680.23(B)(3) for wet-niche cord length."
+      },
+      "nec_reference": {"article": "680", "section": "680.23(B)(3)"},
+      "zafto_links": [{"screen_id": "pool_spa_wiring", "relevance": "primary", "description": "Pool light cord"}],
+      "tags": ["pool", "wet-niche", "12 feet cord"],
+      "verified": true
+    },
+    {
+      "id": "SO-063",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["680"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Pool pump motors must be connected by what wiring method?",
+      "choices": [
+        {"id": "A", "text": "Direct burial only"},
+        {"id": "B", "text": "Any approved method including flexible cord"},
+        {"id": "C", "text": "Rigid metal conduit only"},
+        {"id": "D", "text": "Hard-wired only, no cord"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Pool motors may be cord-and-plug connected or permanently wired per 680.21(A)(4).",
+        "detailed": "Section 680.21(A)(4) permits pool pump motors to be cord-and-plug connected to facilitate removal for maintenance, provided the cord is not longer than 3 feet for cord-and-plug connected units. Permanent wiring methods per Chapter 3 are also acceptable.",
+        "how_to_find": "Go to 680.21(A)(4) for pool motor connections."
+      },
+      "nec_reference": {"article": "680", "section": "680.21(A)(4)"},
+      "zafto_links": [{"screen_id": "pool_spa_wiring", "relevance": "primary", "description": "Pool pump wiring"}],
+      "tags": ["pool", "pump motor", "cord-and-plug"],
+      "verified": true
+    },
+    {
+      "id": "SO-064",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["682"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Article 682 covers electrical installations for:",
+      "choices": [
+        {"id": "A", "text": "Swimming pools"},
+        {"id": "B", "text": "Natural and artificially made bodies of water"},
+        {"id": "C", "text": "Marinas only"},
+        {"id": "D", "text": "Fountains"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Article 682 covers electrical installations in natural and artificially made bodies of water.",
+        "detailed": "Article 682 applies to electrical installations for floating structures, submersible equipment used for aeration, water flow, and water-level control, and related features such as decorative fountains in natural and artificially made bodies of water. This excludes swimming pools (Article 680) and marinas (Article 555).",
+        "how_to_find": "Go to 682.1 for bodies of water scope."
+      },
+      "nec_reference": {"article": "682", "section": "682.1"},
+      "zafto_links": [],
+      "tags": ["lakes", "ponds", "natural water"],
+      "verified": true
+    },
+    {
+      "id": "SO-065",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["517"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "The isolated power system in a hospital operating room limits line-to-ground voltage to:",
+      "choices": [
+        {"id": "A", "text": "50 volts"},
+        {"id": "B", "text": "120 volts"},
+        {"id": "C", "text": "Any value that activates the LIM alarm"},
+        {"id": "D", "text": "5 milliamperes hazard current"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Isolated power systems must alarm when hazard current reaches 5 mA per 517.160(A).",
+        "detailed": "Section 517.160(A) requires isolated power systems to include a line isolation monitor (LIM) that indicates total hazard current. The LIM must have a green signal lamp illuminated when hazard current is less than 5 mA and an audible and visual alarm when 5 mA is exceeded.",
+        "how_to_find": "Go to 517.160(A) for isolated power system requirements."
+      },
+      "nec_reference": {"article": "517", "section": "517.160(A)"},
+      "zafto_links": [],
+      "tags": ["healthcare", "isolated power", "5 mA"],
+      "verified": true
+    },
+    {
+      "id": "SO-066",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["517"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "In a critical care area of a hospital, the minimum number of receptacles required at each patient bed location is:",
+      "choices": [
+        {"id": "A", "text": "4"},
+        {"id": "B", "text": "6"},
+        {"id": "C", "text": "8"},
+        {"id": "D", "text": "14"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Critical care areas require a minimum of 14 receptacles at each patient bed location per 517.19(B)(2).",
+        "detailed": "Section 517.19(B)(2) requires a minimum of 14 receptacles at each patient bed location in critical care areas. At least 4 of these must be connected to the critical branch (emergency power). General care areas require a minimum of 8 receptacles.",
+        "how_to_find": "Go to 517.19(B)(2) for critical care receptacle count."
+      },
+      "nec_reference": {"article": "517", "section": "517.19(B)(2)"},
+      "zafto_links": [],
+      "tags": ["healthcare", "critical care", "14 receptacles"],
+      "verified": true
+    },
+    {
+      "id": "SO-067",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["517"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What color receptacles are required on the life safety branch in a healthcare facility?",
+      "choices": [
+        {"id": "A", "text": "White"},
+        {"id": "B", "text": "Red"},
+        {"id": "C", "text": "Orange"},
+        {"id": "D", "text": "Green"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Life safety and critical branch receptacles must be distinctively colored (typically red) per 517.18(A).",
+        "detailed": "Section 517.18(A) requires receptacles connected to the emergency system to be distinctively identified by color or marking from receptacles on the normal system. Red is the most common color used for emergency power receptacles in healthcare facilities.",
+        "how_to_find": "Go to 517.18(A) for emergency receptacle identification."
+      },
+      "nec_reference": {"article": "517", "section": "517.18(A)"},
+      "zafto_links": [],
+      "tags": ["healthcare", "red receptacle", "emergency"],
+      "verified": true
+    },
+    {
+      "id": "SO-068",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["553"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Article 553 covers electrical wiring for:",
+      "choices": [
+        {"id": "A", "text": "Mobile homes"},
+        {"id": "B", "text": "Floating buildings"},
+        {"id": "C", "text": "RV parks"},
+        {"id": "D", "text": "Boats"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Article 553 covers electrical systems for floating buildings including houseboats used as dwellings.",
+        "detailed": "Article 553 applies to the electrical wiring, services, and equipment for floating buildings including houseboats that are permanently moored and serve as dwelling units. It addresses the unique requirements of buildings that move with water level changes.",
+        "how_to_find": "Go to 553.1 for floating building scope."
+      },
+      "nec_reference": {"article": "553", "section": "553.1"},
+      "zafto_links": [],
+      "tags": ["floating building", "houseboat", "Article 553"],
+      "verified": true
+    },
+    {
+      "id": "SO-069",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["553"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Floating building feeders must be installed with sufficient slack to accommodate:",
+      "choices": [
+        {"id": "A", "text": "Seasonal temperature changes"},
+        {"id": "B", "text": "Movement of the building with water level changes"},
+        {"id": "C", "text": "Emergency disconnection"},
+        {"id": "D", "text": "Future expansion"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Floating building feeders need slack to allow movement due to water level changes per 553.6.",
+        "detailed": "Section 553.6 requires the feeder or service-entrance conductors to a floating building to have sufficient length to permit the building's movement in response to changing water levels, currents, and tidal action without straining or damaging the conductors.",
+        "how_to_find": "Go to 553.6 for floating building feeder requirements."
+      },
+      "nec_reference": {"article": "553", "section": "553.6"},
+      "zafto_links": [],
+      "tags": ["floating building", "feeder", "movement"],
+      "verified": true
+    },
+    {
+      "id": "SO-070",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["501"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "In Class I locations, what is the maximum number of splices permitted in a seal fitting?",
+      "choices": [
+        {"id": "A", "text": "0"},
+        {"id": "B", "text": "2"},
+        {"id": "C", "text": "4"},
+        {"id": "D", "text": "Unlimited if properly insulated"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Splices and taps are not permitted in sealing fittings per 501.15(C)(3).",
+        "detailed": "Section 501.15(C)(3) prohibits splices and taps in sealing fittings. The conductors must pass through the seal without any connections. Splices must be made in separate junction boxes, not within the seal where the compound might interfere with connections.",
+        "how_to_find": "Go to 501.15(C)(3) for seal fitting restrictions."
+      },
+      "nec_reference": {"article": "501", "section": "501.15(C)(3)"},
+      "zafto_links": [{"screen_id": "hazardous_locations", "relevance": "primary", "description": "Seal requirements"}],
+      "tags": ["sealing", "splices", "Class I"],
+      "verified": true
+    },
+    {
+      "id": "SO-071",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["501"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Conduit runs in Class I Division 2 locations require sealing when the conduit is what size or larger?",
+      "choices": [
+        {"id": "A", "text": "1/2 inch"},
+        {"id": "B", "text": "1 inch"},
+        {"id": "C", "text": "2 inches"},
+        {"id": "D", "text": "No size threshold applies"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Class I Division 2 conduit seals are required for 2-inch or larger conduit per 501.15(B)(2).",
+        "detailed": "Section 501.15(B)(2) requires sealing at boundaries between Division 2 and unclassified locations where the conduit is 2 inches (metric designator 53) or larger. Smaller conduits are not required to be sealed at this boundary but are still required at enclosures containing ignition sources.",
+        "how_to_find": "Go to 501.15(B)(2) for Division 2 boundary seals."
+      },
+      "nec_reference": {"article": "501", "section": "501.15(B)(2)"},
+      "zafto_links": [{"screen_id": "hazardous_locations", "relevance": "primary", "description": "Division 2 seals"}],
+      "tags": ["sealing", "2 inch", "Division 2"],
+      "verified": true
+    },
+    {
+      "id": "SO-072",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["500"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "The temperature marking on equipment for hazardous locations indicates:",
+      "choices": [
+        {"id": "A", "text": "Maximum ambient temperature rating"},
+        {"id": "B", "text": "Maximum surface temperature under all conditions"},
+        {"id": "C", "text": "Operating temperature range"},
+        {"id": "D", "text": "Internal temperature limit"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Temperature marking shows maximum surface temperature the equipment can reach under any conditions per 500.8(B).",
+        "detailed": "Section 500.8(B) requires equipment to be marked with the maximum surface temperature it can reach based on a 40°C (104°F) ambient. This temperature must not exceed the ignition temperature of the specific gas or vapor present. Equipment is rated by T-codes (T1-T6) indicating surface temperature range.",
+        "how_to_find": "Go to 500.8(B) for temperature marking requirements."
+      },
+      "nec_reference": {"article": "500", "section": "500.8(B)"},
+      "zafto_links": [{"screen_id": "hazardous_locations", "relevance": "primary", "description": "Temperature codes"}],
+      "tags": ["T-code", "temperature", "surface temperature"],
+      "verified": true
+    },
+    {
+      "id": "SO-073",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["500"],
+      "nec_tables": ["Table 500.8(B)"],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Equipment marked T3 has a maximum surface temperature of:",
+      "choices": [
+        {"id": "A", "text": "300°C (572°F)"},
+        {"id": "B", "text": "280°C (536°F)"},
+        {"id": "C", "text": "200°C (392°F)"},
+        {"id": "D", "text": "135°C (275°F)"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "T3 equipment has a maximum surface temperature of 200°C (392°F) per Table 500.8(B).",
+        "detailed": "Table 500.8(B) lists temperature classes for hazardous location equipment. T3 class has maximum surface temperature of 200°C (392°F). Higher T-numbers indicate lower maximum temperatures: T1=450°C, T2=300°C, T3=200°C, T4=135°C, T5=100°C, T6=85°C.",
+        "how_to_find": "Go to Table 500.8(B) for temperature classifications."
+      },
+      "nec_reference": {"article": "500", "section": "Table 500.8(B)"},
+      "zafto_links": [{"screen_id": "hazardous_locations", "relevance": "primary", "description": "T-class ratings"}],
+      "tags": ["T3", "temperature class", "200°C"],
+      "verified": true
+    },
+    {
+      "id": "SO-074",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["514"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Underground wiring at gas stations must be in what type of conduit?",
+      "choices": [
+        {"id": "A", "text": "Any approved conduit"},
+        {"id": "B", "text": "Rigid metal conduit only"},
+        {"id": "C", "text": "Threaded rigid metal conduit or approved rigid nonmetallic"},
+        {"id": "D", "text": "Direct burial cable only"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Gas station underground wiring requires threaded RMC or approved rigid nonmetallic conduit per 514.8.",
+        "detailed": "Section 514.8 requires underground wiring at motor fuel dispensing facilities to be installed in threaded rigid metal conduit or in listed rigid nonmetallic conduit. If rigid nonmetallic conduit is used, an equipment grounding conductor must be included for grounding of non-current-carrying metal parts.",
+        "how_to_find": "Go to 514.8 for gas station underground wiring."
+      },
+      "nec_reference": {"article": "514", "section": "514.8"},
+      "zafto_links": [],
+      "tags": ["gas station", "underground", "conduit"],
+      "verified": true
+    },
+    {
+      "id": "SO-075",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["680"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A pool must have at least how many 125-volt receptacles located between 6 and 20 feet from the pool?",
+      "choices": [
+        {"id": "A", "text": "None required"},
+        {"id": "B", "text": "One"},
+        {"id": "C", "text": "Two"},
+        {"id": "D", "text": "Three"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "At least one 125V receptacle is required between 6 and 20 feet from the pool per 680.22(A)(5).",
+        "detailed": "Section 680.22(A)(5) requires at least one 125-volt receptacle outlet to be located not less than 6 feet (1.83 m) and not more than 20 feet (6.0 m) from the inside wall of the pool. This receptacle must be GFCI protected and serves pool maintenance equipment.",
+        "how_to_find": "Go to 680.22(A)(5) for required pool receptacle."
+      },
+      "nec_reference": {"article": "680", "section": "680.22(A)(5)"},
+      "zafto_links": [{"screen_id": "pool_spa_wiring", "relevance": "primary", "description": "Required receptacle"}],
+      "tags": ["pool", "receptacle", "one required"],
+      "verified": true
+    },
+    {
+      "id": "SO-076",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["680"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Luminaires installed over a pool must be at least how high above the maximum water level?",
+      "choices": [
+        {"id": "A", "text": "5 feet"},
+        {"id": "B", "text": "7.5 feet"},
+        {"id": "C", "text": "10 feet"},
+        {"id": "D", "text": "12 feet"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Luminaires over pools must be at least 12 feet above maximum water level per 680.22(B)(1).",
+        "detailed": "Section 680.22(B)(1) requires luminaires, lighting outlets, and ceiling-suspended paddle fans installed over the pool or over the area extending 5 feet horizontally from the pool edge to be not less than 12 feet (3.7 m) above the maximum water level.",
+        "how_to_find": "Go to 680.22(B)(1) for luminaire height over pools."
+      },
+      "nec_reference": {"article": "680", "section": "680.22(B)(1)"},
+      "zafto_links": [{"screen_id": "pool_spa_wiring", "relevance": "primary", "description": "Luminaire height"}],
+      "tags": ["pool", "luminaire", "12 feet height"],
+      "verified": true
+    },
+    {
+      "id": "SO-077",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["680"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "The purpose of equipotential bonding around pools is to:",
+      "choices": [
+        {"id": "A", "text": "Provide a path for fault current"},
+        {"id": "B", "text": "Reduce voltage gradients that could cause electric shock"},
+        {"id": "C", "text": "Ground the pool structure"},
+        {"id": "D", "text": "Protect equipment from lightning"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Equipotential bonding reduces voltage gradients to prevent shock from touch potential differences.",
+        "detailed": "Section 680.26 requires equipotential bonding to reduce voltage gradients in the pool area. By bonding all conductive surfaces at the same potential, any voltage difference that could cause shock when a person contacts two surfaces simultaneously is minimized. This is different from grounding for fault clearing.",
+        "how_to_find": "Go to 680.26 for equipotential bonding purpose."
+      },
+      "nec_reference": {"article": "680", "section": "680.26"},
+      "zafto_links": [{"screen_id": "pool_spa_wiring", "relevance": "primary", "description": "Equipotential bonding"}],
+      "tags": ["pool", "equipotential", "voltage gradient"],
+      "verified": true
+    },
+    {
+      "id": "SO-078",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["555"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Marina wiring systems must use conductors with insulation rated for what conditions?",
+      "choices": [
+        {"id": "A", "text": "Dry locations only"},
+        {"id": "B", "text": "Damp locations"},
+        {"id": "C", "text": "Wet locations"},
+        {"id": "D", "text": "Any standard insulation"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Marina conductors must have insulation suitable for wet locations per 555.13(A).",
+        "detailed": "Section 555.13(A) requires conductors installed in marina wiring systems to have insulation rated for wet locations. This accounts for the constant exposure to moisture, humidity, and potential water contact inherent in marine environments.",
+        "how_to_find": "Go to 555.13(A) for marina conductor insulation."
+      },
+      "nec_reference": {"article": "555", "section": "555.13(A)"},
+      "zafto_links": [],
+      "tags": ["marina", "wet location", "insulation"],
+      "verified": true
+    },
+    {
+      "id": "SO-079",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["547"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Equipotential planes in agricultural buildings are required in areas housing:",
+      "choices": [
+        {"id": "A", "text": "Grain storage only"},
+        {"id": "B", "text": "Livestock where metallic equipment is accessible"},
+        {"id": "C", "text": "Tractors and farm equipment"},
+        {"id": "D", "text": "All agricultural buildings"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Equipotential planes are required where livestock contact metallic equipment per 547.10.",
+        "detailed": "Section 547.10 requires equipotential planes in concrete floor areas of livestock confinement buildings where metallic equipment that may become energized and is accessible to animals is located. The plane limits voltage between conductive surfaces animals may contact simultaneously.",
+        "how_to_find": "Go to 547.10 for agricultural equipotential planes."
+      },
+      "nec_reference": {"article": "547", "section": "547.10"},
+      "zafto_links": [],
+      "tags": ["agricultural", "equipotential plane", "livestock"],
+      "verified": true
+    },
+    {
+      "id": "SO-080",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["680"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "The perimeter surface bonding required around a pool extends how far from the inside wall?",
+      "choices": [
+        {"id": "A", "text": "18 inches"},
+        {"id": "B", "text": "3 feet"},
+        {"id": "C", "text": "5 feet"},
+        {"id": "D", "text": "10 feet"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Pool perimeter surface bonding extends 3 feet horizontally from inside wall per 680.26(B)(2).",
+        "detailed": "Section 680.26(B)(2) requires bonding of perimeter surfaces, including unpaved surfaces, poured concrete, and other conductive materials extending 3 feet (1.0 m) horizontally from the inside walls of the pool. This creates an equipotential zone where people walk near the pool.",
+        "how_to_find": "Go to 680.26(B)(2) for perimeter surface bonding."
+      },
+      "nec_reference": {"article": "680", "section": "680.26(B)(2)"},
+      "zafto_links": [{"screen_id": "pool_spa_wiring", "relevance": "primary", "description": "Perimeter bonding"}],
+      "tags": ["pool", "perimeter bonding", "3 feet"],
+      "verified": true
+    },
+    {
+      "id": "SO-081",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["680"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A fountain must have all water-contact electrical equipment operate at not more than:",
+      "choices": [
+        {"id": "A", "text": "15 volts"},
+        {"id": "B", "text": "30 volts"},
+        {"id": "C", "text": "120 volts with GFCI"},
+        {"id": "D", "text": "15 volts or be supplied by listed equipment"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Fountain electrical equipment in contact with water must operate at 15V or less, or use listed equipment per 680.51.",
+        "detailed": "Section 680.51 requires all electrical equipment in contact with the water in a fountain to operate at 15 volts or less, or be listed for use in fountains. Higher voltage equipment in a fountain must be GFCI protected and meet specific installation requirements.",
+        "how_to_find": "Go to 680.51 for fountain electrical requirements."
+      },
+      "nec_reference": {"article": "680", "section": "680.51"},
+      "zafto_links": [{"screen_id": "pool_spa_wiring", "relevance": "secondary", "description": "Fountain wiring"}],
+      "tags": ["fountain", "15 volts", "water contact"],
+      "verified": true
+    },
+    {
+      "id": "SO-082",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["680"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Self-contained spas and hot tubs must be protected by:",
+      "choices": [
+        {"id": "A", "text": "Standard circuit breaker only"},
+        {"id": "B", "text": "GFCI protection"},
+        {"id": "C", "text": "Fuses only"},
+        {"id": "D", "text": "No specific protection required"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Self-contained spas must have GFCI protection per 680.44.",
+        "detailed": "Section 680.44 requires all 125-volt through 250-volt equipment used with self-contained spas, hot tubs, and associated electrical equipment to be protected by a GFCI. The unit must be cord-connected with a factory-installed GFCI or connected to a GFCI-protected outlet.",
+        "how_to_find": "Go to 680.44 for self-contained spa protection."
+      },
+      "nec_reference": {"article": "680", "section": "680.44"},
+      "zafto_links": [{"screen_id": "pool_spa_wiring", "relevance": "primary", "description": "Spa GFCI"}],
+      "tags": ["spa", "hot tub", "GFCI"],
+      "verified": true
+    },
+    {
+      "id": "SO-083",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["520"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the maximum load permitted on a stage lighting dimmer circuit?",
+      "choices": [
+        {"id": "A", "text": "80% of dimmer rating"},
+        {"id": "B", "text": "100% of dimmer rating"},
+        {"id": "C", "text": "125% of dimmer rating"},
+        {"id": "D", "text": "50% of dimmer rating"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Stage dimmer circuits are limited to 80% of the dimmer rating per 520.25(B).",
+        "detailed": "Section 520.25(B) requires stage lighting dimmer circuits to be loaded at not more than 80% of the dimmer rating. This derating accounts for the continuous nature of stage lighting loads and allows for variations in dimmer performance across the control range.",
+        "how_to_find": "Go to 520.25(B) for dimmer load limits."
+      },
+      "nec_reference": {"article": "520", "section": "520.25(B)"},
+      "zafto_links": [],
+      "tags": ["stage", "dimmer", "80%"],
+      "verified": true
+    },
+    {
+      "id": "SO-084",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["517"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "A wet procedure location in a healthcare facility is defined as:",
+      "choices": [
+        {"id": "A", "text": "Any bathroom"},
+        {"id": "B", "text": "Area where patients are bathed"},
+        {"id": "C", "text": "Area where interruption of power could result in patient injury"},
+        {"id": "D", "text": "Area where fluids may contact grounded surfaces and patients"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Wet procedure locations are where fluids may contact patients and grounded surfaces simultaneously per 517.2.",
+        "detailed": "Section 517.2 defines wet procedure locations as patient care areas where procedures are performed that are normally subjected to wet conditions while patients may be connected to line-operated equipment. This includes operating rooms, delivery rooms, and dialysis units.",
+        "how_to_find": "Go to 517.2 for wet procedure location definition."
+      },
+      "nec_reference": {"article": "517", "section": "517.2"},
+      "zafto_links": [],
+      "tags": ["healthcare", "wet procedure", "operating room"],
+      "verified": true
+    },
+    {
+      "id": "SO-085",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["517"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Isolated power systems are required in which healthcare locations?",
+      "choices": [
+        {"id": "A", "text": "All patient rooms"},
+        {"id": "B", "text": "Wet procedure locations"},
+        {"id": "C", "text": "Waiting rooms"},
+        {"id": "D", "text": "Administrative areas"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Isolated power systems are required in wet procedure locations per 517.160.",
+        "detailed": "Section 517.160 requires isolated power systems in wet procedure locations of healthcare facilities where interruption of power cannot be tolerated and a wet condition exists. The isolated system prevents microshock hazards to patients during invasive procedures.",
+        "how_to_find": "Go to 517.160 for isolated power requirements."
+      },
+      "nec_reference": {"article": "517", "section": "517.160"},
+      "zafto_links": [],
+      "tags": ["healthcare", "isolated power", "wet procedure"],
+      "verified": true
+    },
+    {
+      "id": "SO-086",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["501"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "In Class I Division 2 locations, general-purpose enclosures may be used for equipment that:",
+      "choices": [
+        {"id": "A", "text": "Contains no arcing or sparking devices"},
+        {"id": "B", "text": "Is rated for outdoor use"},
+        {"id": "C", "text": "Has GFCI protection"},
+        {"id": "D", "text": "Is listed for damp locations"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "General-purpose enclosures are permitted in Division 2 for non-arcing, non-sparking equipment per 501.105(B).",
+        "detailed": "Section 501.105(B)(1) permits general-purpose enclosures for equipment in Class I Division 2 locations where the equipment does not contain arcing, sparking, or heat-producing components. This recognizes that Division 2 hazards only exist during abnormal conditions.",
+        "how_to_find": "Go to 501.105(B)(1) for Division 2 enclosure requirements."
+      },
+      "nec_reference": {"article": "501", "section": "501.105(B)(1)"},
+      "zafto_links": [{"screen_id": "hazardous_locations", "relevance": "primary", "description": "Division 2 equipment"}],
+      "tags": ["Class I", "Division 2", "general-purpose"],
+      "verified": true
+    },
+    {
+      "id": "SO-087",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["502"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Class II dust-ignitionproof equipment must limit surface temperature to prevent:",
+      "choices": [
+        {"id": "A", "text": "Condensation"},
+        {"id": "B", "text": "Ignition of dust layers"},
+        {"id": "C", "text": "Equipment damage"},
+        {"id": "D", "text": "Static buildup"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Dust-ignitionproof equipment limits surface temperature to prevent ignition of dust accumulations per 502.5.",
+        "detailed": "Section 502.5 requires equipment in Class II locations to have surface temperatures not exceeding the ignition temperature of the specific dust involved. Dust layers have lower ignition temperatures than dust clouds, so equipment must consider dust accumulation on surfaces.",
+        "how_to_find": "Go to 502.5 for Class II temperature requirements."
+      },
+      "nec_reference": {"article": "502", "section": "502.5"},
+      "zafto_links": [{"screen_id": "hazardous_locations", "relevance": "primary", "description": "Dust ignition temperature"}],
+      "tags": ["Class II", "dust", "surface temperature"],
+      "verified": true
+    },
+    {
+      "id": "SO-088",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["511"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "In a commercial repair garage, what equipment may be installed within the classified area below 18 inches?",
+      "choices": [
+        {"id": "A", "text": "Standard receptacles"},
+        {"id": "B", "text": "General-purpose lighting"},
+        {"id": "C", "text": "Only equipment suitable for Class I Division 1 or 2"},
+        {"id": "D", "text": "Any listed equipment"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Equipment within 18 inches of floor in repair garages must be suitable for Class I Division 1 or 2 per 511.3(B).",
+        "detailed": "Section 511.3(B) classifies the area up to 18 inches above the floor in commercial repair garages as Class I Division 2. Any equipment installed in this area must be suitable for that classification - either listed for Division 2 use or approved for Division 1.",
+        "how_to_find": "Go to 511.3(B) for garage equipment requirements."
+      },
+      "nec_reference": {"article": "511", "section": "511.3(B)"},
+      "zafto_links": [],
+      "tags": ["commercial garage", "18 inches", "classified equipment"],
+      "verified": true
+    },
+    {
+      "id": "SO-089",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["550"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "The mobile home feeder assembly (power supply cord) must be rated not less than:",
+      "choices": [
+        {"id": "A", "text": "30 amperes"},
+        {"id": "B", "text": "40 amperes"},
+        {"id": "C", "text": "50 amperes"},
+        {"id": "D", "text": "60 amperes"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Mobile home power supply cords must be rated at least 50 amperes per 550.10(B).",
+        "detailed": "Section 550.10(B) requires the power supply cord for a mobile home to be a listed 50-ampere mobile home power supply cord. The cord provides the connection between the mobile home's distribution panelboard and the mobile home lot service equipment.",
+        "how_to_find": "Go to 550.10(B) for mobile home cord rating."
+      },
+      "nec_reference": {"article": "550", "section": "550.10(B)"},
+      "zafto_links": [],
+      "tags": ["mobile home", "50 ampere", "power supply cord"],
+      "verified": true
+    },
+    {
+      "id": "SO-090",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["551"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "The standard 30-ampere RV site supply receptacle configuration is:",
+      "choices": [
+        {"id": "A", "text": "NEMA 14-30"},
+        {"id": "B", "text": "NEMA TT-30"},
+        {"id": "C", "text": "NEMA 5-30"},
+        {"id": "D", "text": "NEMA 6-30"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "RV 30-ampere receptacles use NEMA TT-30 configuration per 551.71.",
+        "detailed": "Section 551.71 specifies that 30-ampere, 125-volt RV site supply receptacles must be of the NEMA TT-30R configuration. This is a unique configuration specific to recreational vehicles, different from standard residential 30-ampere receptacles.",
+        "how_to_find": "Go to 551.71 and Figure 551.46(C) for RV receptacle configurations."
+      },
+      "nec_reference": {"article": "551", "section": "551.71"},
+      "zafto_links": [],
+      "tags": ["RV", "TT-30", "receptacle"],
+      "verified": true
+    },
+    {
+      "id": "SO-091",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["525"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "At carnivals, GFCI protection is required for all receptacles rated:",
+      "choices": [
+        {"id": "A", "text": "15 and 20 amperes only"},
+        {"id": "B", "text": "15, 20, and 30 amperes"},
+        {"id": "C", "text": "All single-phase 15 through 50 amperes, 125V and 125/250V"},
+        {"id": "D", "text": "Only outdoor receptacles"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Carnival receptacles require GFCI for all single-phase 15-50A, 125V and 125/250V per 525.23.",
+        "detailed": "Section 525.23 requires GFCI protection for all 125-volt, single-phase, 15- through 50-ampere receptacles, and for all 125/250-volt, single-phase, 15- through 50-ampere receptacles used at carnivals, circuses, and fairs. This broad requirement addresses the high risk of wet conditions.",
+        "how_to_find": "Go to 525.23 for carnival GFCI requirements."
+      },
+      "nec_reference": {"article": "525", "section": "525.23"},
+      "zafto_links": [],
+      "tags": ["carnival", "GFCI", "50 ampere"],
+      "verified": true
+    },
+    {
+      "id": "SO-092",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["590"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Temporary wiring for construction sites can use what cable type run on the ground?",
+      "choices": [
+        {"id": "A", "text": "Type NM cable"},
+        {"id": "B", "text": "Type SE cable"},
+        {"id": "C", "text": "Type UF cable if protected from damage"},
+        {"id": "D", "text": "No cable may be run on the ground"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Temporary wiring may use Type UF or other approved cables on the ground if protected per 590.4(J).",
+        "detailed": "Section 590.4(J) permits cables and flexible cords and cables to be laid on the ground for temporary wiring where protected from accidental damage and where the location is not subject to severe physical damage. Type UF cable is suitable for direct burial and wet locations.",
+        "how_to_find": "Go to 590.4(J) for temporary cable on ground."
+      },
+      "nec_reference": {"article": "590", "section": "590.4(J)"},
+      "zafto_links": [],
+      "tags": ["temporary wiring", "UF cable", "ground"],
+      "verified": true
+    },
+    {
+      "id": "SO-093",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["680"],
+      "nec_tables": [],
+      "type": "calculation",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "A pool has an inside perimeter of 80 feet. The minimum length of bonding conductor in the perimeter surface is:",
+      "choices": [
+        {"id": "A", "text": "40 feet"},
+        {"id": "B", "text": "80 feet"},
+        {"id": "C", "text": "The bonding grid must be within 3 feet of pool edge"},
+        {"id": "D", "text": "No specific length required"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Pool perimeter bonding must be within 3 feet of inside wall, not based on perimeter length per 680.26(B)(2).",
+        "detailed": "Section 680.26(B)(2) requires bonding of poured concrete and other conductive perimeter surfaces extending 3 feet horizontally from the inside walls of the pool. The requirement is based on distance from pool edge, not total perimeter length. The bonding grid ensures equipotential in areas where people walk.",
+        "how_to_find": "Go to 680.26(B)(2) for perimeter surface bonding."
+      },
+      "nec_reference": {"article": "680", "section": "680.26(B)(2)"},
+      "zafto_links": [{"screen_id": "pool_spa_wiring", "relevance": "primary", "description": "Perimeter bonding"}],
+      "tags": ["pool", "perimeter bonding", "3 feet"],
+      "verified": true
+    },
+    {
+      "id": "SO-094",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["555"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Marina feeder disconnecting means must be located:",
+      "choices": [
+        {"id": "A", "text": "On the pier or dock"},
+        {"id": "B", "text": "On shore at a readily accessible location"},
+        {"id": "C", "text": "At each boat slip"},
+        {"id": "D", "text": "Inside the marina office"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Marina feeder disconnects must be located on shore and be readily accessible per 555.11.",
+        "detailed": "Section 555.11 requires the disconnecting means for marina feeders to be located on land at a readily accessible location. This ensures emergency disconnection can occur safely without personnel having to access potentially unstable dock structures during an emergency.",
+        "how_to_find": "Go to 555.11 for marina disconnect location."
+      },
+      "nec_reference": {"article": "555", "section": "555.11"},
+      "zafto_links": [],
+      "tags": ["marina", "disconnect", "on shore"],
+      "verified": true
+    },
+    {
+      "id": "SO-095",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["517"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "The alternate power source for a hospital essential electrical system must be:",
+      "choices": [
+        {"id": "A", "text": "A battery system"},
+        {"id": "B", "text": "An on-site generator"},
+        {"id": "C", "text": "A second utility feed"},
+        {"id": "D", "text": "Any of the above"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Hospital essential electrical systems require on-site generator per 517.30(B)(1).",
+        "detailed": "Section 517.30(B)(1) requires hospitals to have one or more generator sets on the premises for the essential electrical system. Battery systems and second utility feeds alone do not meet the requirement. The generator must have on-site fuel supply for specified duration.",
+        "how_to_find": "Go to 517.30(B)(1) for hospital generator requirement."
+      },
+      "nec_reference": {"article": "517", "section": "517.30(B)(1)"},
+      "zafto_links": [],
+      "tags": ["healthcare", "generator", "essential system"],
+      "verified": true
+    },
+    {
+      "id": "SO-096",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["500"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "The primary difference between explosion-proof and dust-ignitionproof enclosures is:",
+      "choices": [
+        {"id": "A", "text": "Explosion-proof is for gases; dust-ignitionproof is for dusts"},
+        {"id": "B", "text": "Material construction only"},
+        {"id": "C", "text": "Size limitations"},
+        {"id": "D", "text": "Color coding requirements"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Explosion-proof is for Class I (gases/vapors); dust-ignitionproof is for Class II (dusts) per 500.2.",
+        "detailed": "Section 500.2 defines explosion-proof apparatus as designed to withstand internal explosions of gases/vapors (Class I), while dust-ignitionproof apparatus excludes dust and limits surface temperature for combustible dusts (Class II). The protection concepts differ based on the hazard type.",
+        "how_to_find": "Go to 500.2 for enclosure type definitions."
+      },
+      "nec_reference": {"article": "500", "section": "500.2"},
+      "zafto_links": [{"screen_id": "hazardous_locations", "relevance": "primary", "description": "Enclosure types"}],
+      "tags": ["explosion-proof", "dust-ignitionproof", "Class I vs II"],
+      "verified": true
+    },
+    {
+      "id": "SO-097",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["516"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "The classified area around an open spray booth extends horizontally from the opening:",
+      "choices": [
+        {"id": "A", "text": "3 feet"},
+        {"id": "B", "text": "5 feet"},
+        {"id": "C", "text": "10 feet"},
+        {"id": "D", "text": "20 feet"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Spray booth classified area extends 5 feet horizontally from the open face per 516.3(B).",
+        "detailed": "Section 516.3(B) defines the Class I Division 2 area as extending 5 feet (1.5 m) horizontally and 3 feet vertically from open face or opening of a spray booth. This area accounts for overspray and vapor that may escape from the booth during operations.",
+        "how_to_find": "Go to 516.3(B) for spray booth classified extent."
+      },
+      "nec_reference": {"article": "516", "section": "516.3(B)"},
+      "zafto_links": [],
+      "tags": ["spray booth", "5 feet", "Division 2"],
+      "verified": true
+    },
+    {
+      "id": "SO-098",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["680"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Double-insulated pool pump motors:",
+      "choices": [
+        {"id": "A", "text": "Must be bonded with 8 AWG copper"},
+        {"id": "B", "text": "Are not required to be bonded"},
+        {"id": "C", "text": "Must have a separate grounding conductor"},
+        {"id": "D", "text": "Are prohibited near pools"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Listed double-insulated pool pump motors are not required to be bonded per 680.26(B)(6)(a).",
+        "detailed": "Section 680.26(B)(6)(a) Exception permits listed double-insulated pool pump motors to be installed without bonding to the equipotential bonding grid. The double insulation provides equivalent protection against shock by isolating all accessible parts from the internal electrical system.",
+        "how_to_find": "Go to 680.26(B)(6)(a) Exception for double-insulated motors."
+      },
+      "nec_reference": {"article": "680", "section": "680.26(B)(6)(a)"},
+      "zafto_links": [{"screen_id": "pool_spa_wiring", "relevance": "primary", "description": "Double-insulated motors"}],
+      "tags": ["pool", "double-insulated", "bonding exception"],
+      "verified": true
+    },
+    {
+      "id": "SO-099",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["547"],
+      "nec_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Motors in agricultural dust areas must be:",
+      "choices": [
+        {"id": "A", "text": "Open drip-proof"},
+        {"id": "B", "text": "Totally enclosed or designed to minimize dust entry"},
+        {"id": "C", "text": "Explosion-proof"},
+        {"id": "D", "text": "Any standard motor with covers"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Agricultural area motors must be totally enclosed or designed to minimize dust entry per 547.7.",
+        "detailed": "Section 547.7 requires motors and other rotating electrical machinery located in agricultural dusty areas to be totally enclosed or designed to minimize the entrance of dust, lint, or other materials. This protects motor windings from combustible dust accumulation.",
+        "how_to_find": "Go to 547.7 for agricultural motor requirements."
+      },
+      "nec_reference": {"article": "547", "section": "547.7"},
+      "zafto_links": [],
+      "tags": ["agricultural", "motor", "totally enclosed"],
+      "verified": true
+    },
+    {
+      "id": "SO-100",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "SO",
+      "topic_name": "Special Occupancies",
+      "nec_articles": ["680"],
+      "nec_tables": [],
+      "type": "concept",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "A hydromassage bathtub differs from a spa in that it:",
+      "choices": [
+        {"id": "A", "text": "Uses less water"},
+        {"id": "B", "text": "Is designed for draining after each use"},
+        {"id": "C", "text": "Does not require GFCI protection"},
+        {"id": "D", "text": "Can use standard electrical equipment"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Hydromassage bathtubs are designed to be drained after each use unlike spas per 680.2.",
+        "detailed": "Section 680.2 defines a hydromassage bathtub as permanently installed bathtub equipment with recirculating piping, pump, and associated equipment designed so it is drained after each use. Spas are designed to retain water for extended periods. Both require GFCI protection but have different Article 680 requirements.",
+        "how_to_find": "Go to 680.2 for hydromassage bathtub definition."
+      },
+      "nec_reference": {"article": "680", "section": "680.2"},
+      "zafto_links": [{"screen_id": "pool_spa_wiring", "relevance": "secondary", "description": "Hydromassage tub"}],
+      "tags": ["hydromassage", "bathtub", "drained after use"],
+      "verified": true
+    }
+  ]
+}

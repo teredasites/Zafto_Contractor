@@ -1,0 +1,3487 @@
+{
+  "topic_id": "CS",
+  "topic_name": "Code & Safety",
+  "code_version": "IPC 2021",
+  "questions": [
+    {
+      "id": "CS-001",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["101"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the primary purpose of the International Plumbing Code?",
+      "choices": [
+        {"id": "A", "text": "Increase plumber wages"},
+        {"id": "B", "text": "Protect public health and safety"},
+        {"id": "C", "text": "Standardize fixture colors"},
+        {"id": "D", "text": "Regulate plumber licensing"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "IPC purpose is to protect public health and safety.",
+        "detailed": "Per IPC Section 101.2, the purpose of the code is to establish minimum requirements to safeguard public health, safety, and welfare through proper plumbing design and installation.",
+        "how_to_find": "Reference IPC Section 101.2 for code purpose."
+      },
+      "code_reference": {"code": "IPC", "section": "101.2"},
+      "zafto_links": [],
+      "tags": ["code purpose", "public health", "safety"],
+      "verified": true
+    },
+    {
+      "id": "CS-002",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["101"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Who has authority to enforce the plumbing code?",
+      "choices": [
+        {"id": "A", "text": "Property owner"},
+        {"id": "B", "text": "Code official/building department"},
+        {"id": "C", "text": "General contractor"},
+        {"id": "D", "text": "Plumbing supply house"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Code official/building department enforces the code.",
+        "detailed": "Per IPC Section 103.1, the code official (typically the building department) is charged with administration and enforcement of the plumbing code.",
+        "how_to_find": "Reference IPC Section 103.1 for enforcement authority."
+      },
+      "code_reference": {"code": "IPC", "section": "103.1"},
+      "zafto_links": [],
+      "tags": ["code official", "enforcement", "authority"],
+      "verified": true
+    },
+    {
+      "id": "CS-003",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["105"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "When is a plumbing permit required?",
+      "choices": [
+        {"id": "A", "text": "Only for new construction"},
+        {"id": "B", "text": "Before installation, alteration, or repair of plumbing"},
+        {"id": "C", "text": "Only for commercial work"},
+        {"id": "D", "text": "After work is completed"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Permit required before any plumbing work begins.",
+        "detailed": "Per IPC Section 105.1, a permit is required for the installation, alteration, or repair of any plumbing system. Work shall not begin until permit is obtained.",
+        "how_to_find": "Reference IPC Section 105.1 for permit requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "105.1"},
+      "zafto_links": [],
+      "tags": ["permit", "required", "before work"],
+      "verified": true
+    },
+    {
+      "id": "CS-004",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["105"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What minor repairs typically do NOT require a permit?",
+      "choices": [
+        {"id": "A", "text": "Installing a new toilet"},
+        {"id": "B", "text": "Replacing faucet washers or clearing stoppages"},
+        {"id": "C", "text": "Running new water lines"},
+        {"id": "D", "text": "Installing water heater"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Minor repairs like washers and clearing stoppages exempt.",
+        "detailed": "Per IPC Section 105.2, minor repairs such as replacing faucet parts, clearing stoppages, and repairing leaks (not involving concealed piping) are typically exempt from permits.",
+        "how_to_find": "Reference IPC Section 105.2 for permit exemptions."
+      },
+      "code_reference": {"code": "IPC", "section": "105.2"},
+      "zafto_links": [],
+      "tags": ["permit exempt", "minor repairs", "faucet parts"],
+      "verified": true
+    },
+    {
+      "id": "CS-005",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["107"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "When must plumbing work be inspected?",
+      "choices": [
+        {"id": "A", "text": "Only when complete"},
+        {"id": "B", "text": "Before concealment and upon completion"},
+        {"id": "C", "text": "Never for residential work"},
+        {"id": "D", "text": "Only if owner requests"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Inspection required before concealment and at completion.",
+        "detailed": "Per IPC Section 107.1, plumbing work shall be inspected before concealing and upon completion. Rough-in inspection occurs before walls are closed.",
+        "how_to_find": "Reference IPC Section 107.1 for inspection requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "107.1"},
+      "zafto_links": [],
+      "tags": ["inspection", "before concealment", "completion"],
+      "verified": true
+    },
+    {
+      "id": "CS-006",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["312"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What test is required for DWV piping before final approval?",
+      "choices": [
+        {"id": "A", "text": "Visual inspection only"},
+        {"id": "B", "text": "Water or air pressure test"},
+        {"id": "C", "text": "Smoke test only"},
+        {"id": "D", "text": "Dye test only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "DWV requires water or air pressure test.",
+        "detailed": "Per IPC Section 312.2, DWV systems shall be tested with water to full rough-in height or with air at 5 psi for 15 minutes minimum.",
+        "how_to_find": "Reference IPC Section 312.2 for DWV testing."
+      },
+      "code_reference": {"code": "IPC", "section": "312.2"},
+      "zafto_links": [],
+      "tags": ["DWV test", "water test", "air test"],
+      "verified": true
+    },
+    {
+      "id": "CS-007",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["312"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum air test pressure for DWV systems?",
+      "choices": [
+        {"id": "A", "text": "3 psi"},
+        {"id": "B", "text": "5 psi"},
+        {"id": "C", "text": "10 psi"},
+        {"id": "D", "text": "15 psi"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "DWV air test pressure is 5 psi minimum.",
+        "detailed": "Per IPC Section 312.2, when testing DWV with air, the system shall maintain a pressure of at least 5 psi for a minimum of 15 minutes.",
+        "how_to_find": "Reference IPC Section 312.2 for air test pressure."
+      },
+      "code_reference": {"code": "IPC", "section": "312.2"},
+      "zafto_links": [],
+      "tags": ["air test", "5 psi", "DWV"],
+      "verified": true
+    },
+    {
+      "id": "CS-008",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["312"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum water test requirement for DWV?",
+      "choices": [
+        {"id": "A", "text": "5 feet of head for 10 minutes"},
+        {"id": "B", "text": "10 feet of head for 15 minutes"},
+        {"id": "C", "text": "Fill to highest opening for 15 minutes"},
+        {"id": "D", "text": "Any amount for 5 minutes"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Water test: 10 feet head minimum for 15 minutes.",
+        "detailed": "Per IPC Section 312.2, water test shall fill system to highest opening with 10-foot minimum head for at least 15 minutes. Multi-story may be tested in sections.",
+        "how_to_find": "Reference IPC Section 312.2 for water test requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "312.2"},
+      "zafto_links": [],
+      "tags": ["water test", "10 feet head", "15 minutes"],
+      "verified": true
+    },
+    {
+      "id": "CS-009",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["312"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the final test for drainage systems?",
+      "choices": [
+        {"id": "A", "text": "Pressure test"},
+        {"id": "B", "text": "Visual test with running water"},
+        {"id": "C", "text": "Smoke test"},
+        {"id": "D", "text": "No final test required"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Final test is visual inspection with running water.",
+        "detailed": "Per IPC Section 312.3, the final test consists of visual inspection with water flow through fixtures to verify proper drainage and no leaks at joints.",
+        "how_to_find": "Reference IPC Section 312.3 for final test requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "312.3"},
+      "zafto_links": [],
+      "tags": ["final test", "visual", "running water"],
+      "verified": true
+    },
+    {
+      "id": "CS-010",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["312"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What test is required for water supply piping?",
+      "choices": [
+        {"id": "A", "text": "Air test only"},
+        {"id": "B", "text": "Working pressure or 40 psi minimum"},
+        {"id": "C", "text": "150 psi"},
+        {"id": "D", "text": "No test required"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Water supply tested at working pressure or 40 psi minimum.",
+        "detailed": "Per IPC Section 312.5, water distribution piping shall be tested at the greater of normal working pressure or 40 psi for the duration required.",
+        "how_to_find": "Reference IPC Section 312.5 for water piping test."
+      },
+      "code_reference": {"code": "IPC", "section": "312.5"},
+      "zafto_links": [],
+      "tags": ["water supply test", "40 psi", "working pressure"],
+      "verified": true
+    },
+    {
+      "id": "CS-011",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["301"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What quality of materials must be used in plumbing systems?",
+      "choices": [
+        {"id": "A", "text": "Any available materials"},
+        {"id": "B", "text": "Listed, labeled, and approved materials"},
+        {"id": "C", "text": "Only metal materials"},
+        {"id": "D", "text": "Cheapest available"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Only listed, labeled, and approved materials allowed.",
+        "detailed": "Per IPC Section 301.2, materials used in plumbing systems shall be listed, labeled, and in accordance with approved standards. Quality is assured through third-party testing.",
+        "how_to_find": "Reference IPC Section 301.2 for material requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "301.2"},
+      "zafto_links": [],
+      "tags": ["listed materials", "approved", "labeled"],
+      "verified": true
+    },
+    {
+      "id": "CS-012",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["301"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What does 'listed' mean for plumbing materials?",
+      "choices": [
+        {"id": "A", "text": "On a store inventory list"},
+        {"id": "B", "text": "Included in a testing agency's list of approved products"},
+        {"id": "C", "text": "Listed in the code book"},
+        {"id": "D", "text": "Listed on a manufacturer website"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Listed means included in an approved testing agency's list.",
+        "detailed": "Per IPC Chapter 2 definitions, 'listed' means equipment or materials that appear in a list published by an approved testing agency (like UL, NSF, IAPMO) indicating compliance with standards.",
+        "how_to_find": "Reference IPC Chapter 2 for listed definition."
+      },
+      "code_reference": {"code": "IPC", "section": "202"},
+      "zafto_links": [],
+      "tags": ["listed", "testing agency", "approved"],
+      "verified": true
+    },
+    {
+      "id": "CS-013",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["301"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What does 'labeled' mean for plumbing materials?",
+      "choices": [
+        {"id": "A", "text": "Has a price label"},
+        {"id": "B", "text": "Bears mark of approved testing agency"},
+        {"id": "C", "text": "Has manufacturer name"},
+        {"id": "D", "text": "Has installation instructions"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Labeled means bearing mark of approved testing agency.",
+        "detailed": "Per IPC Chapter 2 definitions, 'labeled' means equipment or materials bearing the label, symbol, or mark of an approved testing agency indicating compliance with applicable standards.",
+        "how_to_find": "Reference IPC Chapter 2 for labeled definition."
+      },
+      "code_reference": {"code": "IPC", "section": "202"},
+      "zafto_links": [],
+      "tags": ["labeled", "agency mark", "compliance"],
+      "verified": true
+    },
+    {
+      "id": "CS-014",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["104"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Can alternative materials or methods be approved?",
+      "choices": [
+        {"id": "A", "text": "No, only code-specified materials"},
+        {"id": "B", "text": "Yes, if approved by code official"},
+        {"id": "C", "text": "Only in commercial buildings"},
+        {"id": "D", "text": "Only with engineer's stamp"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Code official may approve alternatives that meet intent.",
+        "detailed": "Per IPC Section 104.11, the code official may approve alternative materials, designs, or methods that demonstrate equivalence to code requirements in quality, strength, and safety.",
+        "how_to_find": "Reference IPC Section 104.11 for alternative approval."
+      },
+      "code_reference": {"code": "IPC", "section": "104.11"},
+      "zafto_links": [],
+      "tags": ["alternative materials", "code official approval", "equivalent"],
+      "verified": true
+    },
+    {
+      "id": "CS-015",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["305"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is required when pipes pass through fire-rated assemblies?",
+      "choices": [
+        {"id": "A", "text": "Nothing special"},
+        {"id": "B", "text": "Firestopping to maintain fire rating"},
+        {"id": "C", "text": "Metal pipe only"},
+        {"id": "D", "text": "Insulation wrap"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Firestopping required to maintain fire rating.",
+        "detailed": "Per IPC Section 305.5, penetrations through fire-resistance-rated assemblies shall be protected with approved firestop systems to maintain the required fire rating.",
+        "how_to_find": "Reference IPC Section 305.5 for firestopping."
+      },
+      "code_reference": {"code": "IPC", "section": "305.5"},
+      "zafto_links": [],
+      "tags": ["firestopping", "fire rating", "penetrations"],
+      "verified": true
+    },
+    {
+      "id": "CS-016",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["305"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What protection is required for pipes in exterior walls?",
+      "choices": [
+        {"id": "A", "text": "None"},
+        {"id": "B", "text": "Protection from freezing"},
+        {"id": "C", "text": "Painting"},
+        {"id": "D", "text": "Metal shielding"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Pipes in exterior walls must be protected from freezing.",
+        "detailed": "Per IPC Section 305.6, water piping installed in exterior walls, attics, or other locations subject to freezing shall be adequately protected by insulation or other means.",
+        "how_to_find": "Reference IPC Section 305.6 for freeze protection."
+      },
+      "code_reference": {"code": "IPC", "section": "305.6"},
+      "zafto_links": [],
+      "tags": ["exterior walls", "freeze protection", "insulation"],
+      "verified": true
+    },
+    {
+      "id": "CS-017",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["305"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is required when piping is installed in corrosive soil?",
+      "choices": [
+        {"id": "A", "text": "Nothing special"},
+        {"id": "B", "text": "Corrosion-resistant material or protection"},
+        {"id": "C", "text": "Deeper burial only"},
+        {"id": "D", "text": "Larger pipe size"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Corrosive soil requires resistant material or protection.",
+        "detailed": "Per IPC Section 305.2, piping installed in corrosive soils shall be of approved corrosion-resistant material or shall be protected by an approved protective covering.",
+        "how_to_find": "Reference IPC Section 305.2 for corrosion protection."
+      },
+      "code_reference": {"code": "IPC", "section": "305.2"},
+      "zafto_links": [],
+      "tags": ["corrosive soil", "protection", "resistant material"],
+      "verified": true
+    },
+    {
+      "id": "CS-018",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["306"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is a plumbing fixture?",
+      "choices": [
+        {"id": "A", "text": "Any pipe fitting"},
+        {"id": "B", "text": "Device for receiving water discharge and conveying to drainage"},
+        {"id": "C", "text": "Water heater"},
+        {"id": "D", "text": "Shutoff valve"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Fixture receives discharge and conveys to drainage system.",
+        "detailed": "Per IPC Chapter 2 definitions, a plumbing fixture is a device that receives water and/or waste matter and discharges into the drainage system (sink, toilet, lavatory, etc.).",
+        "how_to_find": "Reference IPC Chapter 2 for fixture definition."
+      },
+      "code_reference": {"code": "IPC", "section": "202"},
+      "zafto_links": [],
+      "tags": ["fixture", "definition", "receives discharge"],
+      "verified": true
+    },
+    {
+      "id": "CS-019",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["306"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is potable water?",
+      "choices": [
+        {"id": "A", "text": "Any water from a pipe"},
+        {"id": "B", "text": "Water safe for drinking and cooking"},
+        {"id": "C", "text": "Hot water only"},
+        {"id": "D", "text": "Treated wastewater"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Potable water is safe for drinking and cooking.",
+        "detailed": "Per IPC Chapter 2 definitions, potable water is water that is free from impurities in amounts sufficient to cause disease or harmful effects, suitable for drinking and cooking.",
+        "how_to_find": "Reference IPC Chapter 2 for potable water definition."
+      },
+      "code_reference": {"code": "IPC", "section": "202"},
+      "zafto_links": [],
+      "tags": ["potable water", "drinking", "safe"],
+      "verified": true
+    },
+    {
+      "id": "CS-020",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["301"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Who is responsible for code compliance of plumbing work?",
+      "choices": [
+        {"id": "A", "text": "Code inspector only"},
+        {"id": "B", "text": "Owner and/or contractor performing work"},
+        {"id": "C", "text": "Manufacturer only"},
+        {"id": "D", "text": "Building department only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Owner and contractor are responsible for compliance.",
+        "detailed": "Per IPC Section 105.4, the permit holder (owner or contractor) is responsible for compliance with the code. The inspector verifies but does not assume responsibility for compliance.",
+        "how_to_find": "Reference IPC Section 105.4 for responsibility."
+      },
+      "code_reference": {"code": "IPC", "section": "105.4"},
+      "zafto_links": [],
+      "tags": ["responsibility", "code compliance", "contractor"],
+      "verified": true
+    },
+    {
+      "id": "CS-021",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["310"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the purpose of a trap in the drainage system?",
+      "choices": [
+        {"id": "A", "text": "Catch debris"},
+        {"id": "B", "text": "Prevent sewer gases from entering building"},
+        {"id": "C", "text": "Regulate flow rate"},
+        {"id": "D", "text": "Create vacuum"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Traps prevent sewer gases from entering building.",
+        "detailed": "Per IPC Section 1001.1, traps maintain a water seal that prevents sewer gases, odors, and vermin from passing from the drainage system into the building.",
+        "how_to_find": "Reference IPC Section 1001.1 for trap purpose."
+      },
+      "code_reference": {"code": "IPC", "section": "1001.1"},
+      "zafto_links": [],
+      "tags": ["trap", "sewer gas", "water seal"],
+      "verified": true
+    },
+    {
+      "id": "CS-022",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["904"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the purpose of venting in the drainage system?",
+      "choices": [
+        {"id": "A", "text": "Remove odors from building"},
+        {"id": "B", "text": "Maintain trap seals and equalize pressure"},
+        {"id": "C", "text": "Provide combustion air"},
+        {"id": "D", "text": "Allow roof access"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Vents maintain trap seals and equalize system pressure.",
+        "detailed": "Per IPC Section 901.2, vent systems allow air circulation, protect trap seals from siphonage and back pressure, and allow safe drainage flow.",
+        "how_to_find": "Reference IPC Section 901.2 for vent purpose."
+      },
+      "code_reference": {"code": "IPC", "section": "901.2"},
+      "zafto_links": [],
+      "tags": ["venting", "trap seal", "air circulation"],
+      "verified": true
+    },
+    {
+      "id": "CS-023",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["312"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Can testing be witnessed by someone other than the code official?",
+      "choices": [
+        {"id": "A", "text": "No, only code official can witness"},
+        {"id": "B", "text": "Yes, with code official approval"},
+        {"id": "C", "text": "Contractor can self-certify"},
+        {"id": "D", "text": "Never required to witness"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Others may witness tests with code official approval.",
+        "detailed": "Per IPC Section 107.2, the code official may accept tests witnessed by approved third parties or may require presence at certain tests based on jurisdiction requirements.",
+        "how_to_find": "Reference IPC Section 107.2 for test witnessing."
+      },
+      "code_reference": {"code": "IPC", "section": "107.2"},
+      "zafto_links": [],
+      "tags": ["test witness", "code official", "third party"],
+      "verified": true
+    },
+    {
+      "id": "CS-024",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["312"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is required if a test fails?",
+      "choices": [
+        {"id": "A", "text": "Abandon the system"},
+        {"id": "B", "text": "Make repairs and retest"},
+        {"id": "C", "text": "Get variance"},
+        {"id": "D", "text": "Pay fine and continue"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Failed tests require repairs and retesting.",
+        "detailed": "Per IPC Section 312.4, if any test shows defects, defective work shall be corrected and the system retested until it passes the required test.",
+        "how_to_find": "Reference IPC Section 312.4 for test failures."
+      },
+      "code_reference": {"code": "IPC", "section": "312.4"},
+      "zafto_links": [],
+      "tags": ["test failure", "repair", "retest"],
+      "verified": true
+    },
+    {
+      "id": "CS-025",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["303"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the required identification for underground piping?",
+      "choices": [
+        {"id": "A", "text": "No identification required"},
+        {"id": "B", "text": "Marking tape or tracer wire above non-metallic pipe"},
+        {"id": "C", "text": "Paint only"},
+        {"id": "D", "text": "GPS coordinates"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Underground non-metallic pipe requires tape or tracer wire.",
+        "detailed": "Per IPC Section 306.5 and local amendments, underground non-metallic piping shall have detectable marking tape or tracer wire for locating purposes.",
+        "how_to_find": "Reference IPC Section 306.5 and local requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "306.5"},
+      "zafto_links": [],
+      "tags": ["underground", "marking tape", "tracer wire"],
+      "verified": true
+    },
+    {
+      "id": "CS-026",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["307"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is required when notching or boring floor joists for piping?",
+      "choices": [
+        {"id": "A", "text": "Any location is acceptable"},
+        {"id": "B", "text": "Limited to code-specified locations and sizes"},
+        {"id": "C", "text": "Prohibited entirely"},
+        {"id": "D", "text": "Unlimited with metal plates"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Notching and boring limited by building code.",
+        "detailed": "Per IPC Section 307.1 and IRC, notches and holes in joists are limited in location (middle third) and size to maintain structural integrity.",
+        "how_to_find": "Reference IPC Section 307.1 and building code."
+      },
+      "code_reference": {"code": "IPC", "section": "307.1"},
+      "zafto_links": [],
+      "tags": ["notching", "boring", "structural"],
+      "verified": true
+    },
+    {
+      "id": "CS-027",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["307"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What protection is required when piping is within 1-1/2 inches of stud face?",
+      "choices": [
+        {"id": "A", "text": "None required"},
+        {"id": "B", "text": "Steel nail plate"},
+        {"id": "C", "text": "Extra insulation"},
+        {"id": "D", "text": "Deeper notch"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Steel nail plate required when pipe within 1-1/2\" of face.",
+        "detailed": "Per IPC Section 307.2, where piping is installed in studs, joists, or rafters within 1-1/2 inches of the edge, a steel protection plate minimum 1/16 inch thick is required.",
+        "how_to_find": "Reference IPC Section 307.2 for nail plate requirement."
+      },
+      "code_reference": {"code": "IPC", "section": "307.2"},
+      "zafto_links": [],
+      "tags": ["nail plate", "protection", "1-1/2 inches"],
+      "verified": true
+    },
+    {
+      "id": "CS-028",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["108"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What happens if work is concealed before inspection?",
+      "choices": [
+        {"id": "A", "text": "Automatic approval"},
+        {"id": "B", "text": "Code official may require uncovering"},
+        {"id": "C", "text": "No consequence"},
+        {"id": "D", "text": "Reduced permit fee"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Code official may require uncovering concealed work.",
+        "detailed": "Per IPC Section 107.4, if work is concealed before required inspection, the code official may require that work be exposed for inspection at the permit holder's expense.",
+        "how_to_find": "Reference IPC Section 107.4 for concealed work."
+      },
+      "code_reference": {"code": "IPC", "section": "107.4"},
+      "zafto_links": [],
+      "tags": ["concealed work", "uncovering", "inspection"],
+      "verified": true
+    },
+    {
+      "id": "CS-029",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["105"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "How long is a plumbing permit typically valid?",
+      "choices": [
+        {"id": "A", "text": "30 days"},
+        {"id": "B", "text": "6 months to 1 year (180 days typical)"},
+        {"id": "C", "text": "Forever"},
+        {"id": "D", "text": "Until property sells"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Permits typically valid 180 days to 1 year.",
+        "detailed": "Per IPC Section 105.5, permits expire if work is not commenced within 180 days or if work is suspended/abandoned for 180 days. Extensions may be available.",
+        "how_to_find": "Reference IPC Section 105.5 for permit validity."
+      },
+      "code_reference": {"code": "IPC", "section": "105.5"},
+      "zafto_links": [],
+      "tags": ["permit validity", "180 days", "expiration"],
+      "verified": true
+    },
+    {
+      "id": "CS-030",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["108"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is a stop-work order?",
+      "choices": [
+        {"id": "A", "text": "End of work day notification"},
+        {"id": "B", "text": "Official order to cease all work due to violations"},
+        {"id": "C", "text": "Request for more materials"},
+        {"id": "D", "text": "Permit renewal notice"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Stop-work order halts work due to code violations.",
+        "detailed": "Per IPC Section 108.4, when work is being done in violation of code, the code official may issue a stop-work order requiring immediate cessation of work until violations are corrected.",
+        "how_to_find": "Reference IPC Section 108.4 for stop-work orders."
+      },
+      "code_reference": {"code": "IPC", "section": "108.4"},
+      "zafto_links": [],
+      "tags": ["stop-work order", "violation", "cease work"],
+      "verified": true
+    },
+    {
+      "id": "CS-031",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["109"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Can a property owner appeal a code official's decision?",
+      "choices": [
+        {"id": "A", "text": "No, decisions are final"},
+        {"id": "B", "text": "Yes, to a board of appeals"},
+        {"id": "C", "text": "Only through court"},
+        {"id": "D", "text": "Only the contractor can appeal"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Decisions may be appealed to board of appeals.",
+        "detailed": "Per IPC Section 109.1, any person aggrieved by a code official's decision may appeal to the board of appeals established to hear and decide matters under the code.",
+        "how_to_find": "Reference IPC Section 109 for appeals process."
+      },
+      "code_reference": {"code": "IPC", "section": "109.1"},
+      "zafto_links": [],
+      "tags": ["appeal", "board of appeals", "aggrieved"],
+      "verified": true
+    },
+    {
+      "id": "CS-032",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["302"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What connections are prohibited to the sanitary drainage system?",
+      "choices": [
+        {"id": "A", "text": "Toilets"},
+        {"id": "B", "text": "Storm water, surface water, groundwater"},
+        {"id": "C", "text": "Kitchen sinks"},
+        {"id": "D", "text": "Lavatories"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Storm water and groundwater prohibited from sanitary sewer.",
+        "detailed": "Per IPC Section 302.1, storm water, surface water, groundwater, roof runoff, and similar shall not be discharged into the sanitary drainage system.",
+        "how_to_find": "Reference IPC Section 302.1 for prohibited connections."
+      },
+      "code_reference": {"code": "IPC", "section": "302.1"},
+      "zafto_links": [],
+      "tags": ["prohibited", "storm water", "sanitary sewer"],
+      "verified": true
+    },
+    {
+      "id": "CS-033",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["303"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What accessibility requirement applies to plumbing fixtures?",
+      "choices": [
+        {"id": "A", "text": "None"},
+        {"id": "B", "text": "Compliance with ICC A117.1 for accessible fixtures"},
+        {"id": "C", "text": "Taller fixtures only"},
+        {"id": "D", "text": "Wider doors only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Accessible fixtures must comply with ICC A117.1.",
+        "detailed": "Per IPC Section 404.1, plumbing fixtures required to be accessible shall comply with ICC A117.1, Accessible and Usable Buildings and Facilities.",
+        "how_to_find": "Reference IPC Section 404.1 for accessibility."
+      },
+      "code_reference": {"code": "IPC", "section": "404.1"},
+      "zafto_links": [],
+      "tags": ["accessibility", "ICC A117.1", "ADA"],
+      "verified": true
+    },
+    {
+      "id": "CS-034",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["303"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is required when plumbing interferes with structural members?",
+      "choices": [
+        {"id": "A", "text": "Cut anything needed"},
+        {"id": "B", "text": "Approval from architect/engineer or within code limits"},
+        {"id": "C", "text": "No restrictions"},
+        {"id": "D", "text": "Use smaller pipe"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Structural modifications require engineer approval or code limits.",
+        "detailed": "Per IPC Section 307.1, cutting, notching, or boring of structural members shall be within building code limits or approved by an architect or engineer.",
+        "how_to_find": "Reference IPC Section 307.1 for structural requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "307.1"},
+      "zafto_links": [],
+      "tags": ["structural", "engineer approval", "modifications"],
+      "verified": true
+    },
+    {
+      "id": "CS-035",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["303"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is workmanship standard for plumbing installations?",
+      "choices": [
+        {"id": "A", "text": "Any quality acceptable"},
+        {"id": "B", "text": "Neat and workmanlike manner"},
+        {"id": "C", "text": "Decorative only"},
+        {"id": "D", "text": "No standard specified"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Plumbing shall be installed in neat and workmanlike manner.",
+        "detailed": "Per IPC Section 301.1, plumbing shall be installed in a neat and workmanlike manner. Pipe runs should be straight with proper support and alignment.",
+        "how_to_find": "Reference IPC Section 301.1 for workmanship."
+      },
+      "code_reference": {"code": "IPC", "section": "301.1"},
+      "zafto_links": [],
+      "tags": ["workmanship", "neat", "workmanlike"],
+      "verified": true
+    },
+    {
+      "id": "CS-036",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["311"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is required for connection to public sewer?",
+      "choices": [
+        {"id": "A", "text": "Any connection method"},
+        {"id": "B", "text": "Per local requirements and proper connection fitting"},
+        {"id": "C", "text": "Direct PVC connection"},
+        {"id": "D", "text": "No permit needed"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Sewer connection per local requirements and proper methods.",
+        "detailed": "Per IPC Section 701.2, connection to public sewer shall be per local requirements, typically requiring a watertight connection and possibly separate permit from sewer authority.",
+        "how_to_find": "Reference IPC Section 701.2 and local sewer requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "701.2"},
+      "zafto_links": [],
+      "tags": ["public sewer", "connection", "local requirements"],
+      "verified": true
+    },
+    {
+      "id": "CS-037",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["312"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is a shower pan test?",
+      "choices": [
+        {"id": "A", "text": "Air pressure test"},
+        {"id": "B", "text": "Flood test to threshold height for 15 minutes"},
+        {"id": "C", "text": "Dye test"},
+        {"id": "D", "text": "Visual inspection only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Shower pan flood tested to threshold for 15 minutes.",
+        "detailed": "Per IPC Section 312.9, site-built shower pans shall be tested by filling with water to the threshold height and allowing to stand for minimum 15 minutes.",
+        "how_to_find": "Reference IPC Section 312.9 for shower pan testing."
+      },
+      "code_reference": {"code": "IPC", "section": "312.9"},
+      "zafto_links": [],
+      "tags": ["shower pan test", "flood", "15 minutes"],
+      "verified": true
+    },
+    {
+      "id": "CS-038",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["312"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is a smoke test used for?",
+      "choices": [
+        {"id": "A", "text": "Testing fire alarms"},
+        {"id": "B", "text": "Locating leaks in existing drainage systems"},
+        {"id": "C", "text": "Testing new construction only"},
+        {"id": "D", "text": "Checking furnace operation"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Smoke test locates leaks in drainage systems.",
+        "detailed": "Per IPC Section 312.6, smoke testing introduces smoke under pressure to locate leaks or defects in existing drainage and vent systems, especially useful in older buildings.",
+        "how_to_find": "Reference IPC Section 312.6 for smoke testing."
+      },
+      "code_reference": {"code": "IPC", "section": "312.6"},
+      "zafto_links": [],
+      "tags": ["smoke test", "locate leaks", "existing systems"],
+      "verified": true
+    },
+    {
+      "id": "CS-039",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["311"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum length of time a building sewer can remain uncovered?",
+      "choices": [
+        {"id": "A", "text": "24 hours"},
+        {"id": "B", "text": "Until inspection is complete"},
+        {"id": "C", "text": "One week"},
+        {"id": "D", "text": "No limit"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Sewer remains uncovered until inspection is complete.",
+        "detailed": "Per IPC Section 107.1, building sewers shall remain accessible for inspection before covering. Once inspected and approved, they may be backfilled.",
+        "how_to_find": "Reference IPC Section 107.1 for inspection timing."
+      },
+      "code_reference": {"code": "IPC", "section": "107.1"},
+      "zafto_links": [],
+      "tags": ["building sewer", "uncovered", "inspection"],
+      "verified": true
+    },
+    {
+      "id": "CS-040",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["312"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What gas is commonly used for medical gas system testing?",
+      "choices": [
+        {"id": "A", "text": "Oxygen"},
+        {"id": "B", "text": "Nitrogen"},
+        {"id": "C", "text": "Carbon dioxide"},
+        {"id": "D", "text": "Helium"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Nitrogen is used for medical gas system testing.",
+        "detailed": "Per NFPA 99, medical gas systems are tested with oil-free dry nitrogen at specified pressures to verify system integrity before placing into service.",
+        "how_to_find": "Reference NFPA 99 for medical gas testing."
+      },
+      "code_reference": {"code": "IPC", "section": "312"},
+      "zafto_links": [],
+      "tags": ["medical gas", "nitrogen", "testing"],
+      "verified": true
+    },
+    {
+      "id": "CS-041",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["303"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the code requirement for used or secondhand materials?",
+      "choices": [
+        {"id": "A", "text": "Always prohibited"},
+        {"id": "B", "text": "Allowed if approved and in good condition"},
+        {"id": "C", "text": "Allowed without restrictions"},
+        {"id": "D", "text": "Only for drainage"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Used materials allowed if approved and in good condition.",
+        "detailed": "Per IPC Section 301.3, used materials may be reused if approved by the code official, free from defects, and conforming to requirements for new materials.",
+        "how_to_find": "Reference IPC Section 301.3 for reused materials."
+      },
+      "code_reference": {"code": "IPC", "section": "301.3"},
+      "zafto_links": [],
+      "tags": ["used materials", "approved", "good condition"],
+      "verified": true
+    },
+    {
+      "id": "CS-042",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["1101"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is a combined sewer system?",
+      "choices": [
+        {"id": "A", "text": "Private and public sewer combined"},
+        {"id": "B", "text": "Sanitary and storm water in same sewer"},
+        {"id": "C", "text": "Multi-building connection"},
+        {"id": "D", "text": "Above and below ground sewer"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Combined sewer carries both sanitary and storm water.",
+        "detailed": "Per IPC Section 1101.2, a combined sewer is a sewer receiving both sewage (sanitary) and stormwater runoff. Many older cities have combined systems.",
+        "how_to_find": "Reference IPC Section 1101.2 for combined sewer."
+      },
+      "code_reference": {"code": "IPC", "section": "1101.2"},
+      "zafto_links": [],
+      "tags": ["combined sewer", "sanitary", "storm water"],
+      "verified": true
+    },
+    {
+      "id": "CS-043",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["301"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What agency commonly lists/labels plumbing products?",
+      "choices": [
+        {"id": "A", "text": "FDA"},
+        {"id": "B", "text": "NSF, IAPMO, UL, CSA"},
+        {"id": "C", "text": "EPA only"},
+        {"id": "D", "text": "OSHA"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "NSF, IAPMO, UL, CSA are common plumbing testing agencies.",
+        "detailed": "Per IPC Section 301.2, products shall be listed by approved agencies such as NSF International, IAPMO, Underwriters Laboratories (UL), or CSA.",
+        "how_to_find": "Reference IPC Section 301.2 for approved agencies."
+      },
+      "code_reference": {"code": "IPC", "section": "301.2"},
+      "zafto_links": [],
+      "tags": ["NSF", "IAPMO", "UL", "listing agencies"],
+      "verified": true
+    },
+    {
+      "id": "CS-044",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["304"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What trenching safety is required when installing underground piping?",
+      "choices": [
+        {"id": "A", "text": "No special requirements"},
+        {"id": "B", "text": "OSHA excavation safety requirements"},
+        {"id": "C", "text": "Plumber's discretion"},
+        {"id": "D", "text": "Only for depths over 10 feet"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "OSHA excavation safety requirements apply.",
+        "detailed": "Per OSHA 29 CFR 1926 Subpart P, trenches 5 feet or deeper require protection (sloping, shoring, or trench box) unless in stable rock. Even shallow trenches may need protection.",
+        "how_to_find": "Reference OSHA 1926 Subpart P for excavation safety."
+      },
+      "code_reference": {"code": "OSHA", "section": "1926 Subpart P"},
+      "zafto_links": [],
+      "tags": ["trenching safety", "OSHA", "excavation"],
+      "verified": true
+    },
+    {
+      "id": "CS-045",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["304"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "At what trench depth is protection required per OSHA?",
+      "choices": [
+        {"id": "A", "text": "4 feet"},
+        {"id": "B", "text": "5 feet"},
+        {"id": "C", "text": "6 feet"},
+        {"id": "D", "text": "8 feet"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Trench protection required at 5 feet depth.",
+        "detailed": "Per OSHA 1926.652, excavations 5 feet or deeper require protective systems unless the excavation is in stable rock. Shallower trenches may also require protection based on conditions.",
+        "how_to_find": "Reference OSHA 1926.652 for excavation protection."
+      },
+      "code_reference": {"code": "OSHA", "section": "1926.652"},
+      "zafto_links": [],
+      "tags": ["trench depth", "5 feet", "OSHA"],
+      "verified": true
+    },
+    {
+      "id": "CS-046",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["304"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What personal protective equipment is commonly required for plumbing work?",
+      "choices": [
+        {"id": "A", "text": "None required"},
+        {"id": "B", "text": "Safety glasses, gloves, appropriate footwear"},
+        {"id": "C", "text": "Hard hat only"},
+        {"id": "D", "text": "Coveralls only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Safety glasses, gloves, and appropriate footwear required.",
+        "detailed": "Per OSHA standards, PPE for plumbing typically includes safety glasses for eye protection, work gloves, and appropriate footwear. Specific tasks may require additional PPE.",
+        "how_to_find": "Reference OSHA PPE requirements."
+      },
+      "code_reference": {"code": "OSHA", "section": "1926"},
+      "zafto_links": [],
+      "tags": ["PPE", "safety glasses", "gloves"],
+      "verified": true
+    },
+    {
+      "id": "CS-047",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["304"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What precaution is required when soldering copper pipe?",
+      "choices": [
+        {"id": "A", "text": "Adequate ventilation and fire protection"},
+        {"id": "B", "text": "No special precautions"},
+        {"id": "C", "text": "Rubber gloves only"},
+        {"id": "D", "text": "Hard hat"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Ventilation and fire protection required when soldering.",
+        "detailed": "When soldering, ensure adequate ventilation to prevent fume inhalation, have fire extinguisher nearby, protect combustibles, and use heat shields near flammable materials.",
+        "how_to_find": "Reference OSHA hot work requirements and safe practices."
+      },
+      "code_reference": {"code": "OSHA", "section": "1926.352"},
+      "zafto_links": [],
+      "tags": ["soldering", "ventilation", "fire protection"],
+      "verified": true
+    },
+    {
+      "id": "CS-048",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["304"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is required before entering a confined space like a septic tank?",
+      "choices": [
+        {"id": "A", "text": "Nothing special"},
+        {"id": "B", "text": "Atmospheric testing and permit-required entry procedures"},
+        {"id": "C", "text": "Just a flashlight"},
+        {"id": "D", "text": "Rubber boots only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Atmospheric testing and permit-required procedures needed.",
+        "detailed": "Per OSHA 1910.146, confined spaces like septic tanks require atmospheric testing for oxygen deficiency and hazardous gases, plus permit-required entry procedures including attendant.",
+        "how_to_find": "Reference OSHA 1910.146 for confined space entry."
+      },
+      "code_reference": {"code": "OSHA", "section": "1910.146"},
+      "zafto_links": [],
+      "tags": ["confined space", "atmospheric testing", "permit"],
+      "verified": true
+    },
+    {
+      "id": "CS-049",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["303"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the code requirement for fixture accessibility for maintenance?",
+      "choices": [
+        {"id": "A", "text": "No requirement"},
+        {"id": "B", "text": "Reasonable access for repair and replacement"},
+        {"id": "C", "text": "Only visible fixtures"},
+        {"id": "D", "text": "Commercial buildings only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Fixtures must have reasonable access for maintenance.",
+        "detailed": "Per IPC Section 405.2, plumbing fixtures shall be installed to provide reasonable access for service, repair, and replacement without requiring building demolition.",
+        "how_to_find": "Reference IPC Section 405.2 for fixture access."
+      },
+      "code_reference": {"code": "IPC", "section": "405.2"},
+      "zafto_links": [],
+      "tags": ["fixture access", "maintenance", "repair"],
+      "verified": true
+    },
+    {
+      "id": "CS-050",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["712"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What safety device is required on a sewage ejector basin?",
+      "choices": [
+        {"id": "A", "text": "None"},
+        {"id": "B", "text": "Gas-tight and bolted cover"},
+        {"id": "C", "text": "Screen only"},
+        {"id": "D", "text": "Alarm only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Sewage ejector requires gas-tight, bolted cover.",
+        "detailed": "Per IPC Section 712.3.2, sewage ejector basins shall have gas-tight covers held in place by bolts or other approved fasteners to prevent sewer gas escape.",
+        "how_to_find": "Reference IPC Section 712.3.2 for ejector cover."
+      },
+      "code_reference": {"code": "IPC", "section": "712.3.2"},
+      "zafto_links": [],
+      "tags": ["sewage ejector", "gas-tight cover", "bolted"],
+      "verified": true
+    },
+    {
+      "id": "CS-051",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["1002"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum trap seal depth?",
+      "choices": [
+        {"id": "A", "text": "1 inch"},
+        {"id": "B", "text": "2 inches"},
+        {"id": "C", "text": "3 inches"},
+        {"id": "D", "text": "4 inches"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Minimum trap seal is 2 inches.",
+        "detailed": "Per IPC Section 1002.4, traps shall have a minimum liquid seal of 2 inches and a maximum of 4 inches to effectively block sewer gases.",
+        "how_to_find": "Reference IPC Section 1002.4 for trap seal depth."
+      },
+      "code_reference": {"code": "IPC", "section": "1002.4"},
+      "zafto_links": [],
+      "tags": ["trap seal", "2 inches", "minimum"],
+      "verified": true
+    },
+    {
+      "id": "CS-052",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["1002"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum trap seal depth?",
+      "choices": [
+        {"id": "A", "text": "2 inches"},
+        {"id": "B", "text": "3 inches"},
+        {"id": "C", "text": "4 inches"},
+        {"id": "D", "text": "6 inches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Maximum trap seal is 4 inches.",
+        "detailed": "Per IPC Section 1002.4, the maximum trap seal depth is 4 inches. Deeper seals can cause self-siphonage problems.",
+        "how_to_find": "Reference IPC Section 1002.4 for maximum trap seal."
+      },
+      "code_reference": {"code": "IPC", "section": "1002.4"},
+      "zafto_links": [],
+      "tags": ["trap seal", "4 inches", "maximum"],
+      "verified": true
+    },
+    {
+      "id": "CS-053",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["1003"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Which type of trap is prohibited?",
+      "choices": [
+        {"id": "A", "text": "P-trap"},
+        {"id": "B", "text": "S-trap"},
+        {"id": "C", "text": "Drum trap with cleanout"},
+        {"id": "D", "text": "Running trap"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "S-traps are prohibited due to siphonage.",
+        "detailed": "Per IPC Section 1003.2, S-traps, bell traps, and crown-vented traps are prohibited because their design allows self-siphonage, destroying the trap seal.",
+        "how_to_find": "Reference IPC Section 1003.2 for prohibited traps."
+      },
+      "code_reference": {"code": "IPC", "section": "1003.2"},
+      "zafto_links": [],
+      "tags": ["S-trap", "prohibited", "siphonage"],
+      "verified": true
+    },
+    {
+      "id": "CS-054",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["706"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the purpose of a cleanout?",
+      "choices": [
+        {"id": "A", "text": "Ventilation"},
+        {"id": "B", "text": "Access for clearing blockages"},
+        {"id": "C", "text": "Pressure relief"},
+        {"id": "D", "text": "Flow measurement"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Cleanouts provide access for clearing blockages.",
+        "detailed": "Per IPC Section 708.1, cleanouts provide access to the drainage system for clearing stoppages using snakes, augers, or water jetting equipment.",
+        "how_to_find": "Reference IPC Section 708.1 for cleanout purpose."
+      },
+      "code_reference": {"code": "IPC", "section": "708.1"},
+      "zafto_links": [],
+      "tags": ["cleanout", "access", "blockage clearing"],
+      "verified": true
+    },
+    {
+      "id": "CS-055",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["708"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum spacing between cleanouts on horizontal drains?",
+      "choices": [
+        {"id": "A", "text": "50 feet"},
+        {"id": "B", "text": "75 feet"},
+        {"id": "C", "text": "100 feet"},
+        {"id": "D", "text": "150 feet"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Cleanouts required every 100 feet maximum.",
+        "detailed": "Per IPC Section 708.3.4, horizontal drains shall have cleanouts at intervals not exceeding 100 feet for 4-inch and smaller pipes.",
+        "how_to_find": "Reference IPC Section 708.3.4 for cleanout spacing."
+      },
+      "code_reference": {"code": "IPC", "section": "708.3.4"},
+      "zafto_links": [],
+      "tags": ["cleanout spacing", "100 feet", "horizontal"],
+      "verified": true
+    },
+    {
+      "id": "CS-056",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["708"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Where must a cleanout be installed in the building drain?",
+      "choices": [
+        {"id": "A", "text": "Only at end"},
+        {"id": "B", "text": "At base of each stack and at changes of direction"},
+        {"id": "C", "text": "Under floor only"},
+        {"id": "D", "text": "Outside only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Cleanouts at stack base and changes in direction.",
+        "detailed": "Per IPC Section 708.3, cleanouts are required at the base of each waste/soil stack and at each aggregate change in direction exceeding 135 degrees.",
+        "how_to_find": "Reference IPC Section 708.3 for cleanout locations."
+      },
+      "code_reference": {"code": "IPC", "section": "708.3"},
+      "zafto_links": [],
+      "tags": ["cleanout location", "stack base", "direction change"],
+      "verified": true
+    },
+    {
+      "id": "CS-057",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["705"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum slope for a 4-inch or larger horizontal drain?",
+      "choices": [
+        {"id": "A", "text": "1/16 inch per foot"},
+        {"id": "B", "text": "1/8 inch per foot"},
+        {"id": "C", "text": "1/4 inch per foot"},
+        {"id": "D", "text": "1/2 inch per foot"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "4-inch and larger drains minimum 1/8 inch per foot slope.",
+        "detailed": "Per IPC Section 704.1, horizontal drainage piping 4 inches and larger shall have a minimum slope of 1/8 inch per foot (1% grade).",
+        "how_to_find": "Reference IPC Section 704.1 for drain slope."
+      },
+      "code_reference": {"code": "IPC", "section": "704.1"},
+      "zafto_links": [],
+      "tags": ["drain slope", "1/8 inch per foot", "4-inch"],
+      "verified": true
+    },
+    {
+      "id": "CS-058",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["705"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum slope for horizontal drains smaller than 4 inches?",
+      "choices": [
+        {"id": "A", "text": "1/16 inch per foot"},
+        {"id": "B", "text": "1/8 inch per foot"},
+        {"id": "C", "text": "1/4 inch per foot"},
+        {"id": "D", "text": "1/2 inch per foot"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Drains smaller than 4-inch need 1/4 inch per foot slope.",
+        "detailed": "Per IPC Section 704.1, horizontal drainage piping smaller than 4 inches shall have a minimum slope of 1/4 inch per foot (2% grade).",
+        "how_to_find": "Reference IPC Section 704.1 for small drain slope."
+      },
+      "code_reference": {"code": "IPC", "section": "704.1"},
+      "zafto_links": [],
+      "tags": ["drain slope", "1/4 inch per foot", "small drains"],
+      "verified": true
+    },
+    {
+      "id": "CS-059",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["802"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is an indirect waste?",
+      "choices": [
+        {"id": "A", "text": "Waste from residential toilet"},
+        {"id": "B", "text": "Waste discharged through air gap to drainage"},
+        {"id": "C", "text": "Greywater recycling"},
+        {"id": "D", "text": "Storm drain"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Indirect waste discharges through air gap to drainage.",
+        "detailed": "Per IPC Section 802.1, indirect waste is waste discharged from equipment through an air gap or air break into a floor sink, floor drain, or other receptor connected to drainage.",
+        "how_to_find": "Reference IPC Section 802.1 for indirect waste definition."
+      },
+      "code_reference": {"code": "IPC", "section": "802.1"},
+      "zafto_links": [],
+      "tags": ["indirect waste", "air gap", "receptor"],
+      "verified": true
+    },
+    {
+      "id": "CS-060",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["1003"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What type of trap is acceptable as an integral part of a fixture?",
+      "choices": [
+        {"id": "A", "text": "S-trap"},
+        {"id": "B", "text": "Integral trap in water closet or urinal"},
+        {"id": "C", "text": "Bell trap"},
+        {"id": "D", "text": "Crown-vented trap"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Integral traps in toilets and urinals are acceptable.",
+        "detailed": "Per IPC Section 1003.1, water closets and urinals have integral traps that are acceptable because they are designed as part of the fixture with proper seal protection.",
+        "how_to_find": "Reference IPC Section 1003.1 for integral traps."
+      },
+      "code_reference": {"code": "IPC", "section": "1003.1"},
+      "zafto_links": [],
+      "tags": ["integral trap", "water closet", "urinal"],
+      "verified": true
+    },
+    {
+      "id": "CS-061",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["711"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum pipe size for a building sewer?",
+      "choices": [
+        {"id": "A", "text": "2 inches"},
+        {"id": "B", "text": "3 inches"},
+        {"id": "C", "text": "4 inches"},
+        {"id": "D", "text": "6 inches"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Minimum building sewer size is 4 inches.",
+        "detailed": "Per IPC Section 703.2, the building sewer pipe shall be minimum 4 inches in diameter to handle the total drainage load from the building.",
+        "how_to_find": "Reference IPC Section 703.2 for building sewer size."
+      },
+      "code_reference": {"code": "IPC", "section": "703.2"},
+      "zafto_links": [],
+      "tags": ["building sewer", "4 inches", "minimum size"],
+      "verified": true
+    },
+    {
+      "id": "CS-062",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["711"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum cover for a building sewer?",
+      "choices": [
+        {"id": "A", "text": "6 inches"},
+        {"id": "B", "text": "12 inches"},
+        {"id": "C", "text": "18 inches"},
+        {"id": "D", "text": "Per local frost depth"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Building sewer minimum 12-inch cover.",
+        "detailed": "Per IPC Section 306.3, building sewers shall have minimum 12 inches of cover unless protected from physical damage or in areas with vehicular traffic.",
+        "how_to_find": "Reference IPC Section 306.3 for sewer cover depth."
+      },
+      "code_reference": {"code": "IPC", "section": "306.3"},
+      "zafto_links": [],
+      "tags": ["building sewer", "cover depth", "12 inches"],
+      "verified": true
+    },
+    {
+      "id": "CS-063",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["701"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the building drain?",
+      "choices": [
+        {"id": "A", "text": "Drain outside the building"},
+        {"id": "B", "text": "Lowest horizontal piping inside building to sewer"},
+        {"id": "C", "text": "Roof drain"},
+        {"id": "D", "text": "Floor drain"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Building drain is lowest horizontal piping inside to sewer.",
+        "detailed": "Per IPC Chapter 2, the building drain is the lowest horizontal piping inside the building that receives discharge from waste and soil stacks and conveys it to the building sewer.",
+        "how_to_find": "Reference IPC Chapter 2 for building drain definition."
+      },
+      "code_reference": {"code": "IPC", "section": "202"},
+      "zafto_links": [],
+      "tags": ["building drain", "lowest piping", "horizontal"],
+      "verified": true
+    },
+    {
+      "id": "CS-064",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["701"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is the building sewer?",
+      "choices": [
+        {"id": "A", "text": "Piping inside the building"},
+        {"id": "B", "text": "Piping from building to public sewer"},
+        {"id": "C", "text": "Public sewer main"},
+        {"id": "D", "text": "Storm sewer only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Building sewer connects building drain to public sewer.",
+        "detailed": "Per IPC Chapter 2, the building sewer is the horizontal piping from the building drain (at 2-3 feet outside building) to the public sewer or private disposal.",
+        "how_to_find": "Reference IPC Chapter 2 for building sewer definition."
+      },
+      "code_reference": {"code": "IPC", "section": "202"},
+      "zafto_links": [],
+      "tags": ["building sewer", "outside building", "public sewer"],
+      "verified": true
+    },
+    {
+      "id": "CS-065",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["305"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What bedding material is required under plastic sewer pipe?",
+      "choices": [
+        {"id": "A", "text": "Concrete"},
+        {"id": "B", "text": "Gravel or sand free of sharp objects"},
+        {"id": "C", "text": "Native soil"},
+        {"id": "D", "text": "Crusite fill"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Plastic pipe needs gravel/sand bedding free of sharp objects.",
+        "detailed": "Per IPC Section 306.2, plastic pipe underground shall be uniformly supported on bedding material free of rocks, debris, and sharp objects that could damage the pipe.",
+        "how_to_find": "Reference IPC Section 306.2 for pipe bedding."
+      },
+      "code_reference": {"code": "IPC", "section": "306.2"},
+      "zafto_links": [],
+      "tags": ["bedding", "plastic pipe", "gravel sand"],
+      "verified": true
+    },
+    {
+      "id": "CS-066",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["802"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What equipment typically requires indirect waste connection?",
+      "choices": [
+        {"id": "A", "text": "Toilets"},
+        {"id": "B", "text": "Commercial refrigerators and HVAC condensate"},
+        {"id": "C", "text": "Bathtubs"},
+        {"id": "D", "text": "Lavatories"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Commercial refrigerators and HVAC condensate need indirect waste.",
+        "detailed": "Per IPC Section 802.1, food-handling equipment, refrigerators, ice makers, and HVAC condensate drains require indirect waste to prevent contamination of food or air.",
+        "how_to_find": "Reference IPC Section 802.1 for indirect waste requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "802.1"},
+      "zafto_links": [],
+      "tags": ["indirect waste", "refrigerator", "condensate"],
+      "verified": true
+    },
+    {
+      "id": "CS-067",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["1002"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What causes trap seal loss from evaporation?",
+      "choices": [
+        {"id": "A", "text": "High water pressure"},
+        {"id": "B", "text": "Infrequent use allowing water to evaporate"},
+        {"id": "C", "text": "Cold temperatures"},
+        {"id": "D", "text": "High flow rate"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Infrequent use allows trap water to evaporate.",
+        "detailed": "Per IPC Section 1002.4, traps can lose their seal through evaporation when fixtures are not used regularly. Trap primers help maintain seal in rarely-used fixtures.",
+        "how_to_find": "Reference IPC Section 1002.4 for trap seal maintenance."
+      },
+      "code_reference": {"code": "IPC", "section": "1002.4"},
+      "zafto_links": [],
+      "tags": ["trap seal loss", "evaporation", "infrequent use"],
+      "verified": true
+    },
+    {
+      "id": "CS-068",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["1002"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What causes siphonage of a trap seal?",
+      "choices": [
+        {"id": "A", "text": "High water pressure"},
+        {"id": "B", "text": "Negative pressure from improper venting"},
+        {"id": "C", "text": "Too much water flow"},
+        {"id": "D", "text": "Trap too small"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Negative pressure from poor venting causes siphonage.",
+        "detailed": "Per IPC Section 901.2, siphonage occurs when negative pressure (vacuum) in drainage pulls water from the trap. Proper venting prevents this by equalizing pressure.",
+        "how_to_find": "Reference IPC Section 901.2 for siphonage prevention."
+      },
+      "code_reference": {"code": "IPC", "section": "901.2"},
+      "zafto_links": [],
+      "tags": ["siphonage", "negative pressure", "venting"],
+      "verified": true
+    },
+    {
+      "id": "CS-069",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["312"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is a peppermint test?",
+      "choices": [
+        {"id": "A", "text": "Water quality test"},
+        {"id": "B", "text": "Odor test to detect leaks in drainage system"},
+        {"id": "C", "text": "Pressure test"},
+        {"id": "D", "text": "Flow test"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Peppermint test detects leaks by odor.",
+        "detailed": "Per IPC Section 312.8, peppermint (oil of peppermint) test introduces a strong odor into the drainage system. If the odor is detected inside, there's a leak in the system.",
+        "how_to_find": "Reference IPC Section 312.8 for peppermint testing."
+      },
+      "code_reference": {"code": "IPC", "section": "312.8"},
+      "zafto_links": [],
+      "tags": ["peppermint test", "odor", "leak detection"],
+      "verified": true
+    },
+    {
+      "id": "CS-070",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["106"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What documents must be kept at job site during construction?",
+      "choices": [
+        {"id": "A", "text": "Nothing required"},
+        {"id": "B", "text": "Approved permit and plans"},
+        {"id": "C", "text": "Material receipts only"},
+        {"id": "D", "text": "Contractor license only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Approved permit and plans required at job site.",
+        "detailed": "Per IPC Section 106.3.1, the approved permit and construction documents shall be available at the job site for inspection during working hours.",
+        "how_to_find": "Reference IPC Section 106.3.1 for site documents."
+      },
+      "code_reference": {"code": "IPC", "section": "106.3.1"},
+      "zafto_links": [],
+      "tags": ["job site", "permit", "plans"],
+      "verified": true
+    },
+    {
+      "id": "CS-071",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["1002"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is a trap primer?",
+      "choices": [
+        {"id": "A", "text": "Paint for traps"},
+        {"id": "B", "text": "Device that adds water to maintain trap seal"},
+        {"id": "C", "text": "Trap installation tool"},
+        {"id": "D", "text": "Type of trap"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Trap primer adds water to maintain trap seal.",
+        "detailed": "Per IPC Section 1002.4, a trap primer is a device that automatically supplies water to traps to maintain the seal, typically used on floor drains that receive infrequent use.",
+        "how_to_find": "Reference IPC Section 1002.4 for trap primers."
+      },
+      "code_reference": {"code": "IPC", "section": "1002.4"},
+      "zafto_links": [],
+      "tags": ["trap primer", "water supply", "seal maintenance"],
+      "verified": true
+    },
+    {
+      "id": "CS-072",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["202"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is a soil stack?",
+      "choices": [
+        {"id": "A", "text": "Vent pipe only"},
+        {"id": "B", "text": "Vertical pipe receiving toilet waste"},
+        {"id": "C", "text": "Horizontal drain"},
+        {"id": "D", "text": "Water supply pipe"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Soil stack is vertical pipe receiving water closet waste.",
+        "detailed": "Per IPC Chapter 2, a soil stack is a vertical drainage pipe that receives discharge from one or more water closets (toilets), with or without other fixtures.",
+        "how_to_find": "Reference IPC Chapter 2 for soil stack definition."
+      },
+      "code_reference": {"code": "IPC", "section": "202"},
+      "zafto_links": [],
+      "tags": ["soil stack", "vertical", "water closet"],
+      "verified": true
+    },
+    {
+      "id": "CS-073",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["202"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is a waste stack?",
+      "choices": [
+        {"id": "A", "text": "Same as soil stack"},
+        {"id": "B", "text": "Vertical pipe receiving fixtures other than toilets"},
+        {"id": "C", "text": "Storm drain"},
+        {"id": "D", "text": "Grease trap"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Waste stack receives fixtures other than water closets.",
+        "detailed": "Per IPC Chapter 2, a waste stack is a vertical drainage pipe that receives discharge from fixtures other than water closets (sinks, lavatories, etc.).",
+        "how_to_find": "Reference IPC Chapter 2 for waste stack definition."
+      },
+      "code_reference": {"code": "IPC", "section": "202"},
+      "zafto_links": [],
+      "tags": ["waste stack", "vertical", "no toilets"],
+      "verified": true
+    },
+    {
+      "id": "CS-074",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["202"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is a stack vent?",
+      "choices": [
+        {"id": "A", "text": "Separate vent pipe"},
+        {"id": "B", "text": "Extension of soil/waste stack above highest fixture"},
+        {"id": "C", "text": "Vent at base of stack"},
+        {"id": "D", "text": "Air admittance valve"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Stack vent is extension of stack above highest fixture.",
+        "detailed": "Per IPC Chapter 2, a stack vent is the extension of a soil or waste stack above the highest horizontal drain connected to the stack, terminating through the roof.",
+        "how_to_find": "Reference IPC Chapter 2 for stack vent definition."
+      },
+      "code_reference": {"code": "IPC", "section": "202"},
+      "zafto_links": [],
+      "tags": ["stack vent", "extension", "above fixture"],
+      "verified": true
+    },
+    {
+      "id": "CS-075",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["903"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "How high must a vent terminate above the roof?",
+      "choices": [
+        {"id": "A", "text": "Flush with roof"},
+        {"id": "B", "text": "6 inches minimum"},
+        {"id": "C", "text": "12 inches minimum"},
+        {"id": "D", "text": "24 inches minimum"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Vent must extend 6 inches minimum above roof.",
+        "detailed": "Per IPC Section 903.1, vent pipes shall extend through the roof and terminate at least 6 inches above the roof surface. In cold climates, 12 inches or more may be required.",
+        "how_to_find": "Reference IPC Section 903.1 for vent termination height."
+      },
+      "code_reference": {"code": "IPC", "section": "903.1"},
+      "zafto_links": [],
+      "tags": ["vent termination", "roof", "6 inches"],
+      "verified": true
+    },
+    {
+      "id": "CS-076",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["903"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the minimum distance from a vent termination to an operable window?",
+      "choices": [
+        {"id": "A", "text": "3 feet"},
+        {"id": "B", "text": "5 feet"},
+        {"id": "C", "text": "10 feet"},
+        {"id": "D", "text": "No minimum"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Vents must be 10 feet minimum from operable windows.",
+        "detailed": "Per IPC Section 903.5, vent terminations shall be at least 10 feet from operable windows, doors, or air intakes, or 3 feet above if within 10 feet horizontally.",
+        "how_to_find": "Reference IPC Section 903.5 for vent location restrictions."
+      },
+      "code_reference": {"code": "IPC", "section": "903.5"},
+      "zafto_links": [],
+      "tags": ["vent termination", "window distance", "10 feet"],
+      "verified": true
+    },
+    {
+      "id": "CS-077",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["1101"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the purpose of a grease interceptor?",
+      "choices": [
+        {"id": "A", "text": "Remove debris"},
+        {"id": "B", "text": "Separate fats, oils, and grease from wastewater"},
+        {"id": "C", "text": "Filter sediment"},
+        {"id": "D", "text": "Neutralize chemicals"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Grease interceptor separates FOG from wastewater.",
+        "detailed": "Per IPC Section 1003.3, grease interceptors separate and retain fats, oils, and grease (FOG) from wastewater before it enters the drainage system, preventing sewer blockages.",
+        "how_to_find": "Reference IPC Section 1003.3 for grease interceptor purpose."
+      },
+      "code_reference": {"code": "IPC", "section": "1003.3"},
+      "zafto_links": [],
+      "tags": ["grease interceptor", "FOG", "separate"],
+      "verified": true
+    },
+    {
+      "id": "CS-078",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["1101"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Where are grease interceptors required?",
+      "choices": [
+        {"id": "A", "text": "All residential kitchens"},
+        {"id": "B", "text": "Commercial kitchens discharging grease-laden waste"},
+        {"id": "C", "text": "Only fast food restaurants"},
+        {"id": "D", "text": "All buildings"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Required at commercial kitchens with grease-laden waste.",
+        "detailed": "Per IPC Section 1003.3.1, grease interceptors are required for commercial food establishments where grease-laden waste is discharged into the drainage system.",
+        "how_to_find": "Reference IPC Section 1003.3.1 for grease interceptor requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "1003.3.1"},
+      "zafto_links": [],
+      "tags": ["grease interceptor", "commercial kitchen", "required"],
+      "verified": true
+    },
+    {
+      "id": "CS-079",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["710"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What fitting is prohibited on horizontal drains?",
+      "choices": [
+        {"id": "A", "text": "Wye"},
+        {"id": "B", "text": "Long-sweep 90"},
+        {"id": "C", "text": "Short-pattern 90"},
+        {"id": "D", "text": "Sanitary tee"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Short-pattern (quarter bend) 90° prohibited on horizontal.",
+        "detailed": "Per IPC Section 706.3, short-pattern 90-degree fittings (quarter bends) are prohibited on horizontal drainage because they cause turbulent flow. Long-sweep or two 45s are required.",
+        "how_to_find": "Reference IPC Section 706.3 for prohibited fittings."
+      },
+      "code_reference": {"code": "IPC", "section": "706.3"},
+      "zafto_links": [],
+      "tags": ["prohibited fitting", "short-pattern 90", "horizontal"],
+      "verified": true
+    },
+    {
+      "id": "CS-080",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["710"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What fitting is used for horizontal to vertical drainage transition?",
+      "choices": [
+        {"id": "A", "text": "Sanitary tee"},
+        {"id": "B", "text": "Wye with 1/8 bend or combo"},
+        {"id": "C", "text": "Cross"},
+        {"id": "D", "text": "Quarter bend"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Wye with 1/8 bend or combination fitting for horizontal entry.",
+        "detailed": "Per IPC Section 706.3, horizontal drains connecting to vertical stacks require wye fittings with 1/8 bend or combination wye-eighth-bend fittings to maintain proper flow.",
+        "how_to_find": "Reference IPC Section 706.3 for proper drain fittings."
+      },
+      "code_reference": {"code": "IPC", "section": "706.3"},
+      "zafto_links": [],
+      "tags": ["wye", "combination", "horizontal to vertical"],
+      "verified": true
+    },
+    {
+      "id": "CS-081",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["710"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Can a sanitary tee be used on its back (horizontal inlet)?",
+      "choices": [
+        {"id": "A", "text": "Yes, in any orientation"},
+        {"id": "B", "text": "No, inlet must be vertical"},
+        {"id": "C", "text": "Only for vents"},
+        {"id": "D", "text": "Only on waste stacks"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Sanitary tee inlet must be vertical, not horizontal.",
+        "detailed": "Per IPC Section 706.3, sanitary tees can only receive flow from vertical (dropping) direction. They cannot be installed with horizontal (side) inlets in drainage; use wye instead.",
+        "how_to_find": "Reference IPC Section 706.3 for sanitary tee orientation."
+      },
+      "code_reference": {"code": "IPC", "section": "706.3"},
+      "zafto_links": [],
+      "tags": ["sanitary tee", "vertical inlet", "orientation"],
+      "verified": true
+    },
+    {
+      "id": "CS-082",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["701"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What material is commonly used for DWV piping in residential?",
+      "choices": [
+        {"id": "A", "text": "Lead"},
+        {"id": "B", "text": "PVC or ABS"},
+        {"id": "C", "text": "Copper only"},
+        {"id": "D", "text": "Galvanized steel"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "PVC and ABS are common residential DWV materials.",
+        "detailed": "Per IPC Section 702.1, approved DWV materials include PVC, ABS, copper (DWV), cast iron, and others. PVC and ABS are most common in residential construction.",
+        "how_to_find": "Reference IPC Section 702.1 for approved DWV materials."
+      },
+      "code_reference": {"code": "IPC", "section": "702.1"},
+      "zafto_links": [],
+      "tags": ["DWV materials", "PVC", "ABS"],
+      "verified": true
+    },
+    {
+      "id": "CS-083",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["701"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Can ABS and PVC be mixed in the same DWV system?",
+      "choices": [
+        {"id": "A", "text": "Yes, with standard solvent cement"},
+        {"id": "B", "text": "Only with transition fittings or approved cement"},
+        {"id": "C", "text": "Never allowed"},
+        {"id": "D", "text": "Only underground"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "ABS to PVC requires transition fittings or special cement.",
+        "detailed": "Per IPC Section 705.15, connections between ABS and PVC require approved transition fittings, mechanical couplings, or approved transition solvent cement per manufacturer instructions.",
+        "how_to_find": "Reference IPC Section 705.15 for ABS/PVC transition."
+      },
+      "code_reference": {"code": "IPC", "section": "705.15"},
+      "zafto_links": [],
+      "tags": ["ABS", "PVC", "transition", "mixed materials"],
+      "verified": true
+    },
+    {
+      "id": "CS-084",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["903"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the minimum vent size for a 3-inch water closet drain?",
+      "choices": [
+        {"id": "A", "text": "1-1/2 inches"},
+        {"id": "B", "text": "2 inches"},
+        {"id": "C", "text": "3 inches"},
+        {"id": "D", "text": "Per Table 906.2"}
+      ],
+      "correct_answer": "D",
+      "explanation": {
+        "short": "Vent size determined by IPC Table 906.2.",
+        "detailed": "Per IPC Table 906.2, vent size for a 3-inch water closet drain is typically 2 inches minimum, but actual size depends on developed length and fixture units.",
+        "how_to_find": "Reference IPC Table 906.2 for vent sizing."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 906.2"},
+      "zafto_links": [],
+      "tags": ["vent size", "water closet", "Table 906.2"],
+      "verified": true
+    },
+    {
+      "id": "CS-085",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["108"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the penalty for performing plumbing without a permit?",
+      "choices": [
+        {"id": "A", "text": "No penalty"},
+        {"id": "B", "text": "Fines and/or requirement to obtain permit"},
+        {"id": "C", "text": "Jail time"},
+        {"id": "D", "text": "Property seizure"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Work without permit may result in fines and permit requirement.",
+        "detailed": "Per IPC Section 108.4, violations of the code may result in fines, stop-work orders, and requirement to obtain proper permits. Repeated violations may result in license action.",
+        "how_to_find": "Reference IPC Section 108.4 for violation penalties."
+      },
+      "code_reference": {"code": "IPC", "section": "108.4"},
+      "zafto_links": [],
+      "tags": ["permit violation", "fines", "penalty"],
+      "verified": true
+    },
+    {
+      "id": "CS-086",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["711"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the minimum horizontal offset for a building sewer under a building?",
+      "choices": [
+        {"id": "A", "text": "No offset required"},
+        {"id": "B", "text": "2 feet from footings or foundations"},
+        {"id": "C", "text": "5 feet from building"},
+        {"id": "D", "text": "10 feet minimum"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Building sewer 2 feet minimum from footings/foundations.",
+        "detailed": "Per IPC Section 306.4, building drain/sewer piping under buildings shall be at least 2 feet from bearing footings or foundations unless protected.",
+        "how_to_find": "Reference IPC Section 306.4 for sewer location."
+      },
+      "code_reference": {"code": "IPC", "section": "306.4"},
+      "zafto_links": [],
+      "tags": ["building sewer", "footing offset", "2 feet"],
+      "verified": true
+    },
+    {
+      "id": "CS-087",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["903"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Can a vent pipe be reduced in size as it goes up?",
+      "choices": [
+        {"id": "A", "text": "Yes, to any size"},
+        {"id": "B", "text": "No, must maintain minimum size"},
+        {"id": "C", "text": "Only at roof penetration"},
+        {"id": "D", "text": "Only in cold climates"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Vent size cannot be reduced below minimum required.",
+        "detailed": "Per IPC Section 903.3, vent piping shall not be reduced in size from the required minimum. The vent size is based on developed length and fixture load.",
+        "how_to_find": "Reference IPC Section 903.3 for vent size requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "903.3"},
+      "zafto_links": [],
+      "tags": ["vent size", "no reduction", "minimum"],
+      "verified": true
+    },
+    {
+      "id": "CS-088",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["918"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is an Air Admittance Valve (AAV)?",
+      "choices": [
+        {"id": "A", "text": "Air compressor fitting"},
+        {"id": "B", "text": "One-way vent valve that opens on negative pressure"},
+        {"id": "C", "text": "Check valve"},
+        {"id": "D", "text": "Pressure relief valve"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "AAV is one-way valve allowing air in on negative pressure.",
+        "detailed": "Per IPC Section 918.1, an Air Admittance Valve is a one-way vent device that opens to admit air when negative pressure develops in the drainage system, preventing trap siphonage.",
+        "how_to_find": "Reference IPC Section 918.1 for AAV definition."
+      },
+      "code_reference": {"code": "IPC", "section": "918.1"},
+      "zafto_links": [],
+      "tags": ["AAV", "air admittance valve", "one-way"],
+      "verified": true
+    },
+    {
+      "id": "CS-089",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["918"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Where can an AAV be installed?",
+      "choices": [
+        {"id": "A", "text": "Anywhere in drainage system"},
+        {"id": "B", "text": "Above flood level rim, in ventilated space, accessible"},
+        {"id": "C", "text": "Only outdoors"},
+        {"id": "D", "text": "Only in basements"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "AAV installed above flood level, in ventilated accessible space.",
+        "detailed": "Per IPC Section 918.5, AAVs shall be installed above the flood level rim, in spaces with ventilation, and accessible for service. They cannot replace the main vent through roof.",
+        "how_to_find": "Reference IPC Section 918.5 for AAV installation."
+      },
+      "code_reference": {"code": "IPC", "section": "918.5"},
+      "zafto_links": [],
+      "tags": ["AAV installation", "flood level", "accessible"],
+      "verified": true
+    },
+    {
+      "id": "CS-090",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["918"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Can AAVs replace all vents in a building?",
+      "choices": [
+        {"id": "A", "text": "Yes, completely"},
+        {"id": "B", "text": "No, at least one vent must extend through roof"},
+        {"id": "C", "text": "Only in single-story buildings"},
+        {"id": "D", "text": "Only with special approval"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "At least one vent must extend through roof.",
+        "detailed": "Per IPC Section 918.7, each building's drainage system requires at least one vent extending through the roof. AAVs can supplement but not replace all roof vents.",
+        "how_to_find": "Reference IPC Section 918.7 for AAV limitations."
+      },
+      "code_reference": {"code": "IPC", "section": "918.7"},
+      "zafto_links": [],
+      "tags": ["AAV limitation", "roof vent required", "main vent"],
+      "verified": true
+    },
+    {
+      "id": "CS-091",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["1101"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is a private sewage disposal system?",
+      "choices": [
+        {"id": "A", "text": "Industrial treatment"},
+        {"id": "B", "text": "On-site system like septic tank for buildings without public sewer"},
+        {"id": "C", "text": "Private sewer company"},
+        {"id": "D", "text": "Greywater recycling"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Private disposal serves buildings without public sewer access.",
+        "detailed": "Per IPC Chapter 11 (referenced to IPSDC), private sewage disposal systems include septic tanks and drainfields for properties not served by public sewer.",
+        "how_to_find": "Reference IPC Chapter 11 for private disposal."
+      },
+      "code_reference": {"code": "IPC", "section": "1101"},
+      "zafto_links": [],
+      "tags": ["private disposal", "septic", "no public sewer"],
+      "verified": true
+    },
+    {
+      "id": "CS-092",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["202"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the flood level rim?",
+      "choices": [
+        {"id": "A", "text": "Floor level"},
+        {"id": "B", "text": "Top edge of fixture where water would overflow"},
+        {"id": "C", "text": "Drain opening"},
+        {"id": "D", "text": "Faucet outlet"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Flood level rim is top edge where water overflows.",
+        "detailed": "Per IPC Chapter 2, the flood level rim is the edge of a fixture or receptor over which water would overflow - the maximum level water can reach before spilling.",
+        "how_to_find": "Reference IPC Chapter 2 for flood level rim definition."
+      },
+      "code_reference": {"code": "IPC", "section": "202"},
+      "zafto_links": [],
+      "tags": ["flood level rim", "overflow edge", "fixture"],
+      "verified": true
+    },
+    {
+      "id": "CS-093",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["304"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the hazard of hydrogen sulfide gas in sewers?",
+      "choices": [
+        {"id": "A", "text": "Bad odor only"},
+        {"id": "B", "text": "Toxic, potentially fatal at high concentrations"},
+        {"id": "C", "text": "Flammable only"},
+        {"id": "D", "text": "No hazard"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Hydrogen sulfide is toxic and potentially fatal.",
+        "detailed": "Hydrogen sulfide (H2S) in sewers is toxic - it can cause unconsciousness and death at high concentrations. It also dulls sense of smell, making it more dangerous.",
+        "how_to_find": "Reference OSHA hazard data for hydrogen sulfide."
+      },
+      "code_reference": {"code": "OSHA", "section": "1910.1000"},
+      "zafto_links": [],
+      "tags": ["hydrogen sulfide", "toxic", "sewer gas"],
+      "verified": true
+    },
+    {
+      "id": "CS-094",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["304"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the primary hazard of methane in sewers?",
+      "choices": [
+        {"id": "A", "text": "Toxic"},
+        {"id": "B", "text": "Flammable and explosive"},
+        {"id": "C", "text": "Corrosive"},
+        {"id": "D", "text": "Bad odor only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Methane is flammable and explosive in confined spaces.",
+        "detailed": "Methane accumulates in sewers and confined spaces. It's highly flammable and can cause explosions when mixed with air in concentrations between 5-15% (LEL to UEL).",
+        "how_to_find": "Reference confined space hazard information."
+      },
+      "code_reference": {"code": "OSHA", "section": "1910.146"},
+      "zafto_links": [],
+      "tags": ["methane", "flammable", "explosive"],
+      "verified": true
+    },
+    {
+      "id": "CS-095",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["705"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What joining method is used for cast iron no-hub pipe?",
+      "choices": [
+        {"id": "A", "text": "Soldering"},
+        {"id": "B", "text": "No-hub coupling with stainless steel band"},
+        {"id": "C", "text": "Solvent cement"},
+        {"id": "D", "text": "Lead and oakum"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "No-hub cast iron uses stainless steel band couplings.",
+        "detailed": "Per IPC Section 705.5, hubless cast iron pipe is joined with no-hub couplings consisting of a neoprene gasket and stainless steel band clamps.",
+        "how_to_find": "Reference IPC Section 705.5 for no-hub connections."
+      },
+      "code_reference": {"code": "IPC", "section": "705.5"},
+      "zafto_links": [],
+      "tags": ["no-hub", "cast iron", "coupling"],
+      "verified": true
+    },
+    {
+      "id": "CS-096",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["705"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the purpose of solvent cement for plastic pipe?",
+      "choices": [
+        {"id": "A", "text": "Lubrication"},
+        {"id": "B", "text": "Chemical fusion of pipe and fitting"},
+        {"id": "C", "text": "Sealing only"},
+        {"id": "D", "text": "Cleaning"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Solvent cement chemically fuses pipe and fitting.",
+        "detailed": "Per IPC Section 705.14, solvent cement for PVC and ABS dissolves the surfaces, allowing them to chemically fuse together into a permanent joint.",
+        "how_to_find": "Reference IPC Section 705.14 for solvent cement joining."
+      },
+      "code_reference": {"code": "IPC", "section": "705.14"},
+      "zafto_links": [],
+      "tags": ["solvent cement", "chemical fusion", "plastic pipe"],
+      "verified": true
+    },
+    {
+      "id": "CS-097",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["705"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What primer is required before solvent cementing PVC pipe?",
+      "choices": [
+        {"id": "A", "text": "No primer needed"},
+        {"id": "B", "text": "Purple primer per ASTM F656"},
+        {"id": "C", "text": "White primer only"},
+        {"id": "D", "text": "Petroleum-based primer"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Purple primer required for PVC DWV joints.",
+        "detailed": "Per IPC Section 705.14.1, PVC pipe joints require primer conforming to ASTM F656. Purple tint is typically required to provide visible evidence of proper priming.",
+        "how_to_find": "Reference IPC Section 705.14.1 for PVC primer."
+      },
+      "code_reference": {"code": "IPC", "section": "705.14.1"},
+      "zafto_links": [],
+      "tags": ["PVC primer", "purple", "ASTM F656"],
+      "verified": true
+    },
+    {
+      "id": "CS-098",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["705"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Is primer required for ABS pipe?",
+      "choices": [
+        {"id": "A", "text": "Yes, same as PVC"},
+        {"id": "B", "text": "No, ABS solvent cement bonds without primer"},
+        {"id": "C", "text": "Only outdoors"},
+        {"id": "D", "text": "Only for DWV"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "ABS does not require primer before cementing.",
+        "detailed": "Per IPC Section 705.14.2, ABS pipe connections use ABS solvent cement without primer. The cement itself provides adequate surface preparation for ABS material.",
+        "how_to_find": "Reference IPC Section 705.14.2 for ABS joining."
+      },
+      "code_reference": {"code": "IPC", "section": "705.14.2"},
+      "zafto_links": [],
+      "tags": ["ABS", "no primer", "solvent cement"],
+      "verified": true
+    },
+    {
+      "id": "CS-099",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["101"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What takes precedence when there's a conflict between code sections?",
+      "choices": [
+        {"id": "A", "text": "Older section"},
+        {"id": "B", "text": "More restrictive requirement"},
+        {"id": "C", "text": "Less restrictive requirement"},
+        {"id": "D", "text": "Neither - code official decides"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "More restrictive requirement takes precedence.",
+        "detailed": "Per IPC Section 102.1, when different sections of the code specify different requirements for the same installation, the most restrictive requirement governs.",
+        "how_to_find": "Reference IPC Section 102.1 for code conflicts."
+      },
+      "code_reference": {"code": "IPC", "section": "102.1"},
+      "zafto_links": [],
+      "tags": ["code conflict", "more restrictive", "precedence"],
+      "verified": true
+    },
+    {
+      "id": "CS-100",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["102"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "Does existing plumbing need to be upgraded to current code?",
+      "choices": [
+        {"id": "A", "text": "Always"},
+        {"id": "B", "text": "Only when alterations are made or hazards exist"},
+        {"id": "C", "text": "Never"},
+        {"id": "D", "text": "Every 10 years"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Existing legal installations may remain unless altered or hazardous.",
+        "detailed": "Per IPC Section 102.2, existing plumbing installations lawful at time of installation may remain unless the code official determines a hazard or until alterations are made.",
+        "how_to_find": "Reference IPC Section 102.2 for existing installations."
+      },
+      "code_reference": {"code": "IPC", "section": "102.2"},
+      "zafto_links": [],
+      "tags": ["existing plumbing", "alterations", "grandfathered"],
+      "verified": true
+    },
+    {
+      "id": "CS-101",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["713"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is the purpose of a backwater valve?",
+      "choices": [
+        {"id": "A", "text": "Increase water pressure"},
+        {"id": "B", "text": "Prevent sewage backup into building"},
+        {"id": "C", "text": "Filter debris"},
+        {"id": "D", "text": "Regulate flow rate"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Backwater valve prevents sewer backup into building.",
+        "detailed": "Per IPC Section 715.1, a backwater valve is a check valve installed on the building drain to prevent sewage from backing up into the building during sewer surcharge.",
+        "how_to_find": "Reference IPC Section 715.1 for backwater valves."
+      },
+      "code_reference": {"code": "IPC", "section": "715.1"},
+      "zafto_links": [],
+      "tags": ["backwater valve", "sewage backup", "prevention"],
+      "verified": true
+    },
+    {
+      "id": "CS-102",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["713"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "Where is a backwater valve typically required?",
+      "choices": [
+        {"id": "A", "text": "All buildings"},
+        {"id": "B", "text": "Where fixtures are below street/sewer level"},
+        {"id": "C", "text": "Only commercial buildings"},
+        {"id": "D", "text": "Only new construction"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Required where fixtures are below sewer/street level.",
+        "detailed": "Per IPC Section 715.1, backwater valves are required when fixtures are installed below the level of the public sewer or where backup is possible.",
+        "how_to_find": "Reference IPC Section 715.1 for backwater valve requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "715.1"},
+      "zafto_links": [],
+      "tags": ["backwater valve", "below sewer", "required location"],
+      "verified": true
+    },
+    {
+      "id": "CS-103",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["107"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is a rough-in inspection?",
+      "choices": [
+        {"id": "A", "text": "Final inspection"},
+        {"id": "B", "text": "Inspection of piping before walls are closed"},
+        {"id": "C", "text": "Underground only"},
+        {"id": "D", "text": "Fixture inspection"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Rough-in inspection before walls/ceilings are closed.",
+        "detailed": "Per IPC Section 107.1, rough-in inspection examines DWV and water piping before walls, ceilings, or other concealment occurs, allowing visual inspection and testing.",
+        "how_to_find": "Reference IPC Section 107.1 for inspection stages."
+      },
+      "code_reference": {"code": "IPC", "section": "107.1"},
+      "zafto_links": [],
+      "tags": ["rough-in inspection", "before concealment", "testing"],
+      "verified": true
+    },
+    {
+      "id": "CS-104",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["107"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is a final plumbing inspection?",
+      "choices": [
+        {"id": "A", "text": "Only underground inspection"},
+        {"id": "B", "text": "Complete system with fixtures installed"},
+        {"id": "C", "text": "Rough piping only"},
+        {"id": "D", "text": "Water heater only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Final inspection with all fixtures installed and functional.",
+        "detailed": "Per IPC Section 107.1, final inspection verifies complete plumbing system including fixtures, water heater, and all connections operating properly.",
+        "how_to_find": "Reference IPC Section 107.1 for final inspection."
+      },
+      "code_reference": {"code": "IPC", "section": "107.1"},
+      "zafto_links": [],
+      "tags": ["final inspection", "fixtures installed", "complete system"],
+      "verified": true
+    },
+    {
+      "id": "CS-105",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["312"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What minimum air test duration is required for DWV?",
+      "choices": [
+        {"id": "A", "text": "5 minutes"},
+        {"id": "B", "text": "10 minutes"},
+        {"id": "C", "text": "15 minutes"},
+        {"id": "D", "text": "30 minutes"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "DWV air test minimum 15 minutes at 5 psi.",
+        "detailed": "Per IPC Section 312.2, DWV air test shall maintain 5 psi for a minimum of 15 minutes without pressure drop indicating leaks.",
+        "how_to_find": "Reference IPC Section 312.2 for air test duration."
+      },
+      "code_reference": {"code": "IPC", "section": "312.2"},
+      "zafto_links": [],
+      "tags": ["air test", "15 minutes", "duration"],
+      "verified": true
+    },
+    {
+      "id": "CS-106",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["308"],
+      "code_tables": ["308.5"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What determines pipe support spacing?",
+      "choices": [
+        {"id": "A", "text": "Installer preference"},
+        {"id": "B", "text": "IPC Table 308.5 by material and size"},
+        {"id": "C", "text": "Same for all pipes"},
+        {"id": "D", "text": "Only at fittings"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Support spacing per IPC Table 308.5.",
+        "detailed": "Per IPC Section 308.5, pipe support intervals are specified in Table 308.5 based on pipe material, size, and whether horizontal or vertical.",
+        "how_to_find": "Reference IPC Table 308.5 for support spacing."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 308.5"},
+      "zafto_links": [],
+      "tags": ["pipe support", "spacing", "Table 308.5"],
+      "verified": true
+    },
+    {
+      "id": "CS-107",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["308"],
+      "code_tables": ["308.5"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum horizontal support spacing for 4-inch PVC DWV?",
+      "choices": [
+        {"id": "A", "text": "2 feet"},
+        {"id": "B", "text": "4 feet"},
+        {"id": "C", "text": "6 feet"},
+        {"id": "D", "text": "10 feet"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "4-inch PVC DWV horizontal support every 4 feet.",
+        "detailed": "Per IPC Table 308.5, PVC DWV pipe requires horizontal support at 4-foot intervals for all sizes.",
+        "how_to_find": "Reference IPC Table 308.5 for PVC support spacing."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 308.5"},
+      "zafto_links": [],
+      "tags": ["PVC support", "4 feet", "horizontal"],
+      "verified": true
+    },
+    {
+      "id": "CS-108",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["308"],
+      "code_tables": ["308.5"],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is the maximum horizontal support spacing for cast iron pipe?",
+      "choices": [
+        {"id": "A", "text": "4 feet"},
+        {"id": "B", "text": "5 feet"},
+        {"id": "C", "text": "10 feet"},
+        {"id": "D", "text": "Every fitting"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Cast iron horizontal support every 5 feet (at each joint).",
+        "detailed": "Per IPC Table 308.5, cast iron pipe requires horizontal support at intervals of 5 feet, typically at each joint for hub-and-spigot pipe.",
+        "how_to_find": "Reference IPC Table 308.5 for cast iron support."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 308.5"},
+      "zafto_links": [],
+      "tags": ["cast iron support", "5 feet", "at joints"],
+      "verified": true
+    },
+    {
+      "id": "CS-109",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["306"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is required when backfilling over plastic pipe?",
+      "choices": [
+        {"id": "A", "text": "Immediate heavy compaction"},
+        {"id": "B", "text": "Initial cover with fine material, then careful compaction"},
+        {"id": "C", "text": "Concrete encasement"},
+        {"id": "D", "text": "No special requirements"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Initial fine material cover, then careful compaction.",
+        "detailed": "Per IPC Section 306.2, plastic pipe shall be protected during backfill with initial cover of fine material free of rocks before compaction to prevent damage.",
+        "how_to_find": "Reference IPC Section 306.2 for backfill requirements."
+      },
+      "code_reference": {"code": "IPC", "section": "306.2"},
+      "zafto_links": [],
+      "tags": ["backfill", "plastic pipe", "fine material"],
+      "verified": true
+    },
+    {
+      "id": "CS-110",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["705"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What is a mechanical joint?",
+      "choices": [
+        {"id": "A", "text": "Soldered connection"},
+        {"id": "B", "text": "Connection using compression or clamping devices"},
+        {"id": "C", "text": "Cemented connection"},
+        {"id": "D", "text": "Welded connection"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Mechanical joints use compression or clamping.",
+        "detailed": "Per IPC Section 705.6, mechanical joints include compression fittings, no-hub couplings, push-fit connections, and other methods using physical clamping rather than fusion.",
+        "how_to_find": "Reference IPC Section 705.6 for mechanical joints."
+      },
+      "code_reference": {"code": "IPC", "section": "705.6"},
+      "zafto_links": [],
+      "tags": ["mechanical joint", "compression", "clamping"],
+      "verified": true
+    },
+    {
+      "id": "CS-111",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["709"],
+      "code_tables": ["709.1"],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What is a DFU (Drainage Fixture Unit)?",
+      "choices": [
+        {"id": "A", "text": "Pipe size rating"},
+        {"id": "B", "text": "Unit of probable discharge load from fixture"},
+        {"id": "C", "text": "Water pressure measurement"},
+        {"id": "D", "text": "Installation dimension"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "DFU measures probable discharge load from fixtures.",
+        "detailed": "Per IPC Chapter 2, a drainage fixture unit (DFU) is a unit value assigned to fixtures to express probable discharge load for drain sizing purposes.",
+        "how_to_find": "Reference IPC Chapter 2 and Table 709.1 for DFU."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 709.1"},
+      "zafto_links": [],
+      "tags": ["DFU", "fixture unit", "discharge load"],
+      "verified": true
+    },
+    {
+      "id": "CS-112",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["709"],
+      "code_tables": ["709.1"],
+      "type": "calculation",
+      "difficulty": "medium",
+      "time_estimate_seconds": 120,
+      "question": "What is the DFU value for a residential water closet?",
+      "choices": [
+        {"id": "A", "text": "2"},
+        {"id": "B", "text": "3"},
+        {"id": "C", "text": "4"},
+        {"id": "D", "text": "6"}
+      ],
+      "correct_answer": "C",
+      "explanation": {
+        "short": "Residential water closet = 4 DFU.",
+        "detailed": "Per IPC Table 709.1, a water closet (private, tank type) has a drainage fixture unit value of 4 DFU for sizing drain piping.",
+        "how_to_find": "Reference IPC Table 709.1 for fixture DFU values."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 709.1"},
+      "zafto_links": [],
+      "tags": ["DFU", "water closet", "4"],
+      "verified": true
+    },
+    {
+      "id": "CS-113",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["709"],
+      "code_tables": ["709.1"],
+      "type": "calculation",
+      "difficulty": "medium",
+      "time_estimate_seconds": 120,
+      "question": "What is the DFU value for a lavatory?",
+      "choices": [
+        {"id": "A", "text": "1"},
+        {"id": "B", "text": "2"},
+        {"id": "C", "text": "3"},
+        {"id": "D", "text": "4"}
+      ],
+      "correct_answer": "A",
+      "explanation": {
+        "short": "Lavatory = 1 DFU.",
+        "detailed": "Per IPC Table 709.1, a lavatory (private) has a drainage fixture unit value of 1 DFU.",
+        "how_to_find": "Reference IPC Table 709.1 for lavatory DFU."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 709.1"},
+      "zafto_links": [],
+      "tags": ["DFU", "lavatory", "1"],
+      "verified": true
+    },
+    {
+      "id": "CS-114",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["709"],
+      "code_tables": ["709.1"],
+      "type": "calculation",
+      "difficulty": "medium",
+      "time_estimate_seconds": 120,
+      "question": "What is the DFU value for a bathtub with shower?",
+      "choices": [
+        {"id": "A", "text": "1"},
+        {"id": "B", "text": "2"},
+        {"id": "C", "text": "3"},
+        {"id": "D", "text": "4"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Bathtub with shower = 2 DFU.",
+        "detailed": "Per IPC Table 709.1, a bathtub with or without shower (private) has a drainage fixture unit value of 2 DFU.",
+        "how_to_find": "Reference IPC Table 709.1 for bathtub DFU."
+      },
+      "code_reference": {"code": "IPC", "section": "Table 709.1"},
+      "zafto_links": [],
+      "tags": ["DFU", "bathtub", "2"],
+      "verified": true
+    },
+    {
+      "id": "CS-115",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["702"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "hard",
+      "time_estimate_seconds": 120,
+      "question": "What materials are approved for underground building sewer?",
+      "choices": [
+        {"id": "A", "text": "PVC only"},
+        {"id": "B", "text": "PVC, ABS, cast iron, and other approved materials"},
+        {"id": "C", "text": "Clay tile only"},
+        {"id": "D", "text": "Concrete only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Multiple approved materials for underground sewer.",
+        "detailed": "Per IPC Section 702.2, approved materials for underground building sewer include PVC, ABS, extra-heavy cast iron, concrete, and vitrified clay (where approved).",
+        "how_to_find": "Reference IPC Section 702.2 for sewer materials."
+      },
+      "code_reference": {"code": "IPC", "section": "702.2"},
+      "zafto_links": [],
+      "tags": ["building sewer", "materials", "underground"],
+      "verified": true
+    },
+    {
+      "id": "CS-116",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["304"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What is required when cutting cast iron pipe?",
+      "choices": [
+        {"id": "A", "text": "Hacksaw only"},
+        {"id": "B", "text": "Snap cutter or abrasive saw with eye and ear protection"},
+        {"id": "C", "text": "Hammer and chisel only"},
+        {"id": "D", "text": "No special precautions"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Use snap cutter or abrasive saw with PPE.",
+        "detailed": "Cast iron cutting with snap cutters or abrasive saws requires eye protection (flying chips) and hearing protection (noise). A square cut is essential for proper joining.",
+        "how_to_find": "Reference safe cutting practices for cast iron."
+      },
+      "code_reference": {"code": "OSHA", "section": "1926"},
+      "zafto_links": [],
+      "tags": ["cast iron", "cutting", "PPE"],
+      "verified": true
+    },
+    {
+      "id": "CS-117",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["312"],
+      "code_tables": [],
+      "type": "scenario",
+      "difficulty": "hard",
+      "time_estimate_seconds": 150,
+      "question": "A DWV test fails due to pressure drop. What is the first step?",
+      "choices": [
+        {"id": "A", "text": "Increase test pressure"},
+        {"id": "B", "text": "Locate the leak"},
+        {"id": "C", "text": "Replace all piping"},
+        {"id": "D", "text": "Request variance"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "First locate the leak using soap solution or other method.",
+        "detailed": "Per IPC Section 312.4, when a test fails, locate the leak using soap solution (for air test) or visual inspection (water test), repair, and retest until passing.",
+        "how_to_find": "Reference IPC Section 312.4 for test failure procedure."
+      },
+      "code_reference": {"code": "IPC", "section": "312.4"},
+      "zafto_links": [],
+      "tags": ["test failure", "locate leak", "repair"],
+      "verified": true
+    },
+    {
+      "id": "CS-118",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["301"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "medium",
+      "time_estimate_seconds": 90,
+      "question": "What markings must appear on approved plumbing materials?",
+      "choices": [
+        {"id": "A", "text": "Price only"},
+        {"id": "B", "text": "Manufacturer, standard, and agency listing mark"},
+        {"id": "C", "text": "Color code only"},
+        {"id": "D", "text": "Size only"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "Materials must show manufacturer, standard, and listing mark.",
+        "detailed": "Per IPC Section 301.2, listed plumbing materials shall bear manufacturer identification, applicable standard reference, and listing agency mark.",
+        "how_to_find": "Reference IPC Section 301.2 for material marking."
+      },
+      "code_reference": {"code": "IPC", "section": "301.2"},
+      "zafto_links": [],
+      "tags": ["material marking", "manufacturer", "listing"],
+      "verified": true
+    },
+    {
+      "id": "CS-119",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["101"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What document provides the model plumbing code adopted by many states?",
+      "choices": [
+        {"id": "A", "text": "National Electrical Code"},
+        {"id": "B", "text": "International Plumbing Code (IPC)"},
+        {"id": "C", "text": "OSHA regulations"},
+        {"id": "D", "text": "Building Officials Code"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "IPC is the model code adopted by many states.",
+        "detailed": "The International Plumbing Code (IPC), published by ICC, is the model plumbing code adopted by many states and local jurisdictions, sometimes with amendments.",
+        "how_to_find": "Reference IPC adoption maps and state regulations."
+      },
+      "code_reference": {"code": "IPC", "section": "101.1"},
+      "zafto_links": [],
+      "tags": ["IPC", "model code", "adoption"],
+      "verified": true
+    },
+    {
+      "id": "CS-120",
+      "version": "1.0",
+      "exam_types": ["journeyman", "master"],
+      "topic_id": "CS",
+      "topic_name": "Code & Safety",
+      "code_articles": ["101"],
+      "code_tables": [],
+      "type": "lookup",
+      "difficulty": "easy",
+      "time_estimate_seconds": 60,
+      "question": "What alternative model plumbing code is used primarily in western states?",
+      "choices": [
+        {"id": "A", "text": "International Plumbing Code (IPC)"},
+        {"id": "B", "text": "Uniform Plumbing Code (UPC)"},
+        {"id": "C", "text": "National Plumbing Code"},
+        {"id": "D", "text": "Standard Plumbing Code"}
+      ],
+      "correct_answer": "B",
+      "explanation": {
+        "short": "UPC is the model code used primarily in western states.",
+        "detailed": "The Uniform Plumbing Code (UPC), published by IAPMO, is the alternative model code used primarily in California and other western states.",
+        "how_to_find": "Reference plumbing code adoption by state."
+      },
+      "code_reference": {"code": "UPC", "section": "101"},
+      "zafto_links": [],
+      "tags": ["UPC", "Uniform Plumbing Code", "western states"],
+      "verified": true
+    }
+  ]
+}

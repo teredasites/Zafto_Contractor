@@ -1,0 +1,412 @@
+'use client';
+
+import { useState } from 'react';
+import {
+  Plus,
+  Search,
+  DollarSign,
+  Clock,
+  Package,
+  Wrench,
+  Edit,
+  Trash2,
+  MoreHorizontal,
+  Download,
+  Upload,
+} from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { SearchInput, Select } from '@/components/ui/input';
+import { CommandPalette } from '@/components/command-palette';
+import { formatCurrency, cn } from '@/lib/utils';
+
+type TabType = 'labor' | 'materials' | 'assemblies';
+
+interface LaborRate {
+  id: string;
+  name: string;
+  description?: string;
+  rate: number;
+  unit: 'hour' | 'day' | 'job';
+  category: string;
+}
+
+interface Material {
+  id: string;
+  name: string;
+  description?: string;
+  cost: number;
+  price: number;
+  markup: number;
+  unit: string;
+  category: string;
+  sku?: string;
+}
+
+interface Assembly {
+  id: string;
+  name: string;
+  description?: string;
+  items: { type: 'labor' | 'material'; id: string; quantity: number }[];
+  totalCost: number;
+  totalPrice: number;
+  category: string;
+}
+
+// Mock data
+const mockLaborRates: LaborRate[] = [
+  { id: 'l1', name: 'Standard Labor', description: 'Regular hourly rate', rate: 125, unit: 'hour', category: 'General' },
+  { id: 'l2', name: 'Overtime Labor', description: 'Time and a half', rate: 187.50, unit: 'hour', category: 'General' },
+  { id: 'l3', name: 'Emergency Rate', description: 'After hours/weekend', rate: 200, unit: 'hour', category: 'Emergency' },
+  { id: 'l4', name: 'Apprentice Rate', description: 'Training rate', rate: 65, unit: 'hour', category: 'General' },
+  { id: 'l5', name: 'Service Call', description: 'Minimum service fee', rate: 95, unit: 'job', category: 'Service' },
+];
+
+const mockMaterials: Material[] = [
+  { id: 'm1', name: '2x4 LED Panel', description: '4000K, 40W', cost: 45, price: 85, markup: 88.9, unit: 'each', category: 'Lighting', sku: 'LED-2X4-40W' },
+  { id: 'm2', name: '200A Main Panel', description: 'Square D Homeline', cost: 280, price: 450, markup: 60.7, unit: 'each', category: 'Panels', sku: 'PNL-200A-SQD' },
+  { id: 'm3', name: '12/2 Romex (250ft)', description: 'NM-B Cable', cost: 95, price: 145, markup: 52.6, unit: 'roll', category: 'Wire', sku: 'WIRE-12-2-250' },
+  { id: 'm4', name: 'GFCI Outlet', description: '20A, White', cost: 18, price: 35, markup: 94.4, unit: 'each', category: 'Devices', sku: 'DEV-GFCI-20' },
+  { id: 'm5', name: 'Whole-Home Surge Protector', description: 'Eaton Type 2', cost: 180, price: 350, markup: 94.4, unit: 'each', category: 'Protection', sku: 'SURGE-WH-01' },
+];
+
+const mockAssemblies: Assembly[] = [
+  { id: 'a1', name: 'GFCI Installation', description: 'Complete GFCI outlet install', items: [{ type: 'material', id: 'm4', quantity: 1 }, { type: 'labor', id: 'l1', quantity: 0.5 }], totalCost: 80.50, totalPrice: 135, category: 'Outlets' },
+  { id: 'a2', name: 'LED Panel Swap', description: 'Replace fluorescent with LED', items: [{ type: 'material', id: 'm1', quantity: 1 }, { type: 'labor', id: 'l1', quantity: 0.5 }], totalCost: 107.50, totalPrice: 175, category: 'Lighting' },
+];
+
+export default function PriceBookPage() {
+  const [activeTab, setActiveTab] = useState<TabType>('labor');
+  const [search, setSearch] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('all');
+
+  const tabs: { id: TabType; label: string; icon: React.ReactNode; count: number }[] = [
+    { id: 'labor', label: 'Labor Rates', icon: <Clock size={16} />, count: mockLaborRates.length },
+    { id: 'materials', label: 'Materials', icon: <Package size={16} />, count: mockMaterials.length },
+    { id: 'assemblies', label: 'Assemblies', icon: <Wrench size={16} />, count: mockAssemblies.length },
+  ];
+
+  const laborCategories = [...new Set(mockLaborRates.map((l) => l.category))];
+  const materialCategories = [...new Set(mockMaterials.map((m) => m.category))];
+  const assemblyCategories = [...new Set(mockAssemblies.map((a) => a.category))];
+
+  const currentCategories = activeTab === 'labor' ? laborCategories : activeTab === 'materials' ? materialCategories : assemblyCategories;
+
+  return (
+    <div className="space-y-6">
+      <CommandPalette />
+
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold text-main">Price Book</h1>
+          <p className="text-muted mt-1">Manage your labor rates, materials, and assemblies</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button variant="secondary">
+            <Upload size={16} />
+            Import
+          </Button>
+          <Button variant="secondary">
+            <Download size={16} />
+            Export
+          </Button>
+          <Button>
+            <Plus size={16} />
+            Add {activeTab === 'labor' ? 'Rate' : activeTab === 'materials' ? 'Material' : 'Assembly'}
+          </Button>
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex gap-1 p-1 bg-secondary rounded-lg w-fit">
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => {
+              setActiveTab(tab.id);
+              setCategoryFilter('all');
+            }}
+            className={cn(
+              'flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-colors',
+              activeTab === tab.id
+                ? 'bg-surface text-main shadow-sm'
+                : 'text-muted hover:text-main'
+            )}
+          >
+            {tab.icon}
+            {tab.label}
+            <span className={cn(
+              'px-1.5 py-0.5 text-xs rounded-full',
+              activeTab === tab.id ? 'bg-accent text-white' : 'bg-main text-muted'
+            )}>
+              {tab.count}
+            </span>
+          </button>
+        ))}
+      </div>
+
+      {/* Filters */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        <SearchInput
+          value={search}
+          onChange={setSearch}
+          placeholder={`Search ${activeTab}...`}
+          className="sm:w-80"
+        />
+        <Select
+          options={[
+            { value: 'all', label: 'All Categories' },
+            ...currentCategories.map((cat) => ({ value: cat, label: cat })),
+          ]}
+          value={categoryFilter}
+          onChange={(e) => setCategoryFilter(e.target.value)}
+          className="sm:w-48"
+        />
+      </div>
+
+      {/* Content */}
+      {activeTab === 'labor' && (
+        <LaborRatesTab rates={mockLaborRates} search={search} categoryFilter={categoryFilter} />
+      )}
+      {activeTab === 'materials' && (
+        <MaterialsTab materials={mockMaterials} search={search} categoryFilter={categoryFilter} />
+      )}
+      {activeTab === 'assemblies' && (
+        <AssembliesTab assemblies={mockAssemblies} search={search} categoryFilter={categoryFilter} />
+      )}
+    </div>
+  );
+}
+
+function LaborRatesTab({ rates, search, categoryFilter }: { rates: LaborRate[]; search: string; categoryFilter: string }) {
+  const filteredRates = rates.filter((rate) => {
+    const matchesSearch = rate.name.toLowerCase().includes(search.toLowerCase()) ||
+      rate.description?.toLowerCase().includes(search.toLowerCase());
+    const matchesCategory = categoryFilter === 'all' || rate.category === categoryFilter;
+    return matchesSearch && matchesCategory;
+  });
+
+  return (
+    <Card>
+      <CardContent className="p-0">
+        {filteredRates.length === 0 ? (
+          <div className="py-12 text-center text-muted">
+            <Clock size={40} className="mx-auto mb-2 opacity-50" />
+            <p>No labor rates found</p>
+          </div>
+        ) : (
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-main">
+                <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">Name</th>
+                <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">Category</th>
+                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Rate</th>
+                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Unit</th>
+                <th className="px-6 py-3"></th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-main">
+              {filteredRates.map((rate) => (
+                <tr key={rate.id} className="hover:bg-surface-hover">
+                  <td className="px-6 py-4">
+                    <p className="font-medium text-main">{rate.name}</p>
+                    {rate.description && <p className="text-sm text-muted">{rate.description}</p>}
+                  </td>
+                  <td className="px-6 py-4">
+                    <Badge variant="default">{rate.category}</Badge>
+                  </td>
+                  <td className="px-6 py-4 text-right font-semibold text-main">
+                    {formatCurrency(rate.rate)}
+                  </td>
+                  <td className="px-6 py-4 text-right text-muted capitalize">
+                    per {rate.unit}
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <ActionMenu />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+function MaterialsTab({ materials, search, categoryFilter }: { materials: Material[]; search: string; categoryFilter: string }) {
+  const filteredMaterials = materials.filter((mat) => {
+    const matchesSearch = mat.name.toLowerCase().includes(search.toLowerCase()) ||
+      mat.description?.toLowerCase().includes(search.toLowerCase()) ||
+      mat.sku?.toLowerCase().includes(search.toLowerCase());
+    const matchesCategory = categoryFilter === 'all' || mat.category === categoryFilter;
+    return matchesSearch && matchesCategory;
+  });
+
+  return (
+    <Card>
+      <CardContent className="p-0">
+        {filteredMaterials.length === 0 ? (
+          <div className="py-12 text-center text-muted">
+            <Package size={40} className="mx-auto mb-2 opacity-50" />
+            <p>No materials found</p>
+          </div>
+        ) : (
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-main">
+                <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">Item</th>
+                <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">SKU</th>
+                <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">Category</th>
+                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Cost</th>
+                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Price</th>
+                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Markup</th>
+                <th className="px-6 py-3"></th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-main">
+              {filteredMaterials.map((mat) => (
+                <tr key={mat.id} className="hover:bg-surface-hover">
+                  <td className="px-6 py-4">
+                    <p className="font-medium text-main">{mat.name}</p>
+                    {mat.description && <p className="text-sm text-muted">{mat.description}</p>}
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className="font-mono text-sm text-muted">{mat.sku || '-'}</span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <Badge variant="default">{mat.category}</Badge>
+                  </td>
+                  <td className="px-6 py-4 text-right text-muted">
+                    {formatCurrency(mat.cost)}
+                  </td>
+                  <td className="px-6 py-4 text-right font-semibold text-main">
+                    {formatCurrency(mat.price)}
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <span className={cn(
+                      'font-medium',
+                      mat.markup >= 50 ? 'text-emerald-600' : mat.markup >= 30 ? 'text-amber-600' : 'text-red-600'
+                    )}>
+                      {mat.markup.toFixed(1)}%
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <ActionMenu />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+function AssembliesTab({ assemblies, search, categoryFilter }: { assemblies: Assembly[]; search: string; categoryFilter: string }) {
+  const filteredAssemblies = assemblies.filter((asm) => {
+    const matchesSearch = asm.name.toLowerCase().includes(search.toLowerCase()) ||
+      asm.description?.toLowerCase().includes(search.toLowerCase());
+    const matchesCategory = categoryFilter === 'all' || asm.category === categoryFilter;
+    return matchesSearch && matchesCategory;
+  });
+
+  return (
+    <Card>
+      <CardContent className="p-0">
+        {filteredAssemblies.length === 0 ? (
+          <div className="py-12 text-center text-muted">
+            <Wrench size={40} className="mx-auto mb-2 opacity-50" />
+            <p>No assemblies found</p>
+          </div>
+        ) : (
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-main">
+                <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">Assembly</th>
+                <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">Category</th>
+                <th className="text-center text-xs font-medium text-muted uppercase px-6 py-3">Items</th>
+                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Cost</th>
+                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Price</th>
+                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Margin</th>
+                <th className="px-6 py-3"></th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-main">
+              {filteredAssemblies.map((asm) => {
+                const margin = ((asm.totalPrice - asm.totalCost) / asm.totalPrice * 100);
+                return (
+                  <tr key={asm.id} className="hover:bg-surface-hover">
+                    <td className="px-6 py-4">
+                      <p className="font-medium text-main">{asm.name}</p>
+                      {asm.description && <p className="text-sm text-muted">{asm.description}</p>}
+                    </td>
+                    <td className="px-6 py-4">
+                      <Badge variant="default">{asm.category}</Badge>
+                    </td>
+                    <td className="px-6 py-4 text-center text-muted">
+                      {asm.items.length}
+                    </td>
+                    <td className="px-6 py-4 text-right text-muted">
+                      {formatCurrency(asm.totalCost)}
+                    </td>
+                    <td className="px-6 py-4 text-right font-semibold text-main">
+                      {formatCurrency(asm.totalPrice)}
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <span className={cn(
+                        'font-medium',
+                        margin >= 40 ? 'text-emerald-600' : margin >= 25 ? 'text-amber-600' : 'text-red-600'
+                      )}>
+                        {margin.toFixed(1)}%
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <ActionMenu />
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+function ActionMenu() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="relative">
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          setOpen(!open);
+        }}
+        className="p-2 hover:bg-surface-hover rounded-lg transition-colors"
+      >
+        <MoreHorizontal size={18} className="text-muted" />
+      </button>
+      {open && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
+          <div className="absolute right-0 top-full mt-1 w-40 bg-surface border border-main rounded-lg shadow-lg py-1 z-50">
+            <button className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
+              <Edit size={14} />
+              Edit
+            </button>
+            <button className="w-full px-4 py-2 text-left text-sm hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 flex items-center gap-2">
+              <Trash2 size={14} />
+              Delete
+            </button>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
