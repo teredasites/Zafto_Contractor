@@ -35,9 +35,15 @@ Build Documentation/
 # Environment / Secrets
 .env
 .env.*
+!.env.example
+!.env.local.example
 *.env
-env.dart
 secrets.dart
+
+# Flutter env configs with real keys (lib/core/env_*.dart except template)
+lib/core/env_dev.dart
+lib/core/env_staging.dart
+lib/core/env_prod.dart
 **/secrets/
 **/credentials/
 google-services.json
