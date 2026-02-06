@@ -46,7 +46,7 @@ dependencies:
   # PDF & Sharing (Sprint 3.6)
   pdf: ^3.10.8
   printing: ^5.12.0
-  share_plus: ^7.2.2
+  share_plus: ^12.0.1
   url_launcher: ^6.2.4
 
   # Permissions (Sprint 3.6)
