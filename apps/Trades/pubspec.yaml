@@ -58,7 +58,7 @@ dependencies:
   # Job Management (Sprint 3.6)
   signature: ^5.4.1
   uuid: ^4.2.1
-  file_picker: ^8.0.0
+  file_picker: ^10.3.10
 
   # Sensors (Level & Plumb)
   sensors_plus: ^4.0.2
