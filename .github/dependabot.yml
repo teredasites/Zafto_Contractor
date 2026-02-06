@@ -1,0 +1,34 @@
+version: 2
+updates:
+  # Flutter/Dart dependencies
+  - package-ecosystem: "pub"
+    directory: "/apps/Trades"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "flutter"
+
+  # Web CRM (Next.js) dependencies
+  - package-ecosystem: "npm"
+    directory: "/apps/Trades/web-portal"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "web-crm"
+
+  # Client Portal (Next.js) dependencies
+  - package-ecosystem: "npm"
+    directory: "/apps/Trades/client-portal"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "client-portal"
