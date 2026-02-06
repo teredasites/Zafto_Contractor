@@ -160,7 +160,7 @@ class _BidsHubScreenState extends ConsumerState<BidsHubScreen> {
           _buildChip(colors, 'Sent', BidStatus.sent),
           _buildChip(colors, 'Viewed', BidStatus.viewed),
           _buildChip(colors, 'Accepted', BidStatus.accepted),
-          _buildChip(colors, 'Declined', BidStatus.declined),
+          _buildChip(colors, 'Declined', BidStatus.rejected),
         ],
       ),
     );
@@ -270,7 +270,7 @@ class _BidsHubScreenState extends ConsumerState<BidsHubScreen> {
       BidStatus.sent => (colors.accentInfo, colors.accentInfo.withValues(alpha: 0.15), 'Sent'),
       BidStatus.viewed => (colors.accentWarning, colors.accentWarning.withValues(alpha: 0.15), 'Viewed'),
       BidStatus.accepted => (colors.accentSuccess, colors.accentSuccess.withValues(alpha: 0.15), 'Accepted'),
-      BidStatus.declined => (colors.accentError, colors.accentError.withValues(alpha: 0.15), 'Declined'),
+      BidStatus.rejected => (colors.accentError, colors.accentError.withValues(alpha: 0.15), 'Declined'),
       BidStatus.expired => (colors.textTertiary, colors.fillDefault, 'Expired'),
       BidStatus.converted => (colors.accentPrimary, colors.accentPrimary.withValues(alpha: 0.15), 'Converted'),
       BidStatus.cancelled => (colors.textTertiary, colors.fillDefault, 'Cancelled'),

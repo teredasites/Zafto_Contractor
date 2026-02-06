@@ -7,6 +7,8 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../theme/zafto_colors.dart';
 import '../../theme/theme_provider.dart';
 import '../../services/field_camera_service.dart';
+import '../../services/compliance_service.dart';
+import '../../models/compliance_record.dart';
 
 /// Dead Man Switch - Lone worker safety timer with emergency alert
 class DeadManSwitchScreen extends ConsumerStatefulWidget {
@@ -653,6 +655,9 @@ class _DeadManSwitchScreenState extends ConsumerState<DeadManSwitchScreen> with 
 
     _startTickTimer();
     _mainTimer = Timer(_checkInInterval, _onTimerExpired);
+
+    // Persist timer start to compliance_records
+    _saveComplianceEvent('timer_start');
   }
 
   void _stopTimer() {
@@ -710,19 +715,21 @@ class _DeadManSwitchScreenState extends ConsumerState<DeadManSwitchScreen> with 
       _state = _SwitchState.alerting;
     });
 
-    // TODO: BACKEND - Send emergency alert
-    // - SMS to all emergency contacts
+    // Persist alert event — SAFETY CRITICAL record
+    _saveComplianceEvent('alert_triggered', severity: 'critical');
+
+    // TODO: Edge Function — Send SMS to emergency contacts via Telnyx
     // - Include last known GPS coordinates
     // - Include job site info if available
     // - Push notification to contacts' apps
-    // - Log incident for compliance
   }
 
   void _cancelAlert() {
     HapticFeedback.heavyImpact();
     _logActivity('Alert cancelled - user OK', LucideIcons.checkCircle, Colors.green);
 
-    // TODO: BACKEND - Send "I'm OK" message to contacts
+    // Persist cancellation event
+    _saveComplianceEvent('alert_cancelled');
 
     setState(() {
       _state = _SwitchState.active;
@@ -739,6 +746,33 @@ class _DeadManSwitchScreenState extends ConsumerState<DeadManSwitchScreen> with 
         setState(() => _remainingTime -= const Duration(seconds: 1));
       }
     });
+  }
+
+  Future<void> _saveComplianceEvent(String action, {String? severity}) async {
+    try {
+      final service = ref.read(complianceServiceProvider);
+      await service.createRecord(
+        type: ComplianceRecordType.deadManSwitch,
+        jobId: widget.jobId,
+        severity: severity,
+        latitude: _latitude,
+        longitude: _longitude,
+        data: {
+          'action': action,
+          'check_in_interval_minutes': _checkInInterval.inMinutes,
+          'grace_period_seconds': _graceGracePeriod.inSeconds,
+          'contacts': _contacts.map((c) => {'name': c.name, 'phone': c.phone}).toList(),
+          'location': _currentAddress,
+          'activity_log': _activityLog.map((l) => {
+            'message': l.message,
+            'timestamp': l.timestamp.toUtc().toIso8601String(),
+          }).toList(),
+        },
+        startedAt: DateTime.now(),
+      );
+    } catch (_) {
+      // Silent — don't disrupt timer UX for DB errors
+    }
   }
 
   void _logActivity(String message, IconData icon, Color color) {

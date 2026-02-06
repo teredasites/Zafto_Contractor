@@ -7,6 +7,8 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../theme/zafto_colors.dart';
 import '../../theme/theme_provider.dart';
 import '../../services/field_camera_service.dart';
+import '../../services/compliance_service.dart';
+import '../../models/compliance_record.dart';
 
 /// Confined Space Timer - OSHA-compliant entry tracking with air monitoring reminders
 class ConfinedSpaceTimerScreen extends ConsumerStatefulWidget {
@@ -1005,16 +1007,51 @@ class _ConfinedSpaceTimerScreenState extends ConsumerState<ConfinedSpaceTimerScr
     });
   }
 
-  void _completeEntry() {
+  void _completeEntry() async {
     HapticFeedback.heavyImpact();
     _elapsedTimer?.cancel();
     setState(() => _state = _EntryState.exited);
 
-    // TODO: BACKEND - Save entry log
-    // - Record all entry/exit times
-    // - Save air monitoring readings
-    // - Link to permit and job
-    // - Generate compliance report
+    // Persist confined space entry to Supabase
+    try {
+      final service = ref.read(complianceServiceProvider);
+      await service.createRecord(
+        type: ComplianceRecordType.confinedSpace,
+        jobId: widget.jobId,
+        data: {
+          'permit_number': _permitController.text.trim(),
+          'space_description': _spaceDescriptionController.text.trim(),
+          'attendant': _attendantName,
+          'supervisor': _supervisorName,
+          'location': _currentAddress,
+          'checklist': {
+            for (var entry in _checklist.entries)
+              entry.key.label: entry.value,
+          },
+          'entrants': _entrants.map((e) => {
+            'name': e.name,
+            'entry_time': e.entryTime?.toUtc().toIso8601String(),
+            'exit_time': e.exitTime?.toUtc().toIso8601String(),
+          }).toList(),
+          'air_readings': _airReadings.map((r) => {
+            'timestamp': r.timestamp.toUtc().toIso8601String(),
+            'o2': r.o2,
+            'lel': r.lel,
+            'co': r.co,
+            'h2s': r.h2s,
+          }).toList(),
+          'total_duration_seconds': _elapsedTime.inSeconds,
+        },
+        startedAt: _entryTime,
+        endedAt: DateTime.now(),
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save entry log: $e'), backgroundColor: Colors.red),
+        );
+      }
+    }
   }
 
   void _generateReport(ZaftoColors colors) {

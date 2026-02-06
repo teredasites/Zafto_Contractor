@@ -156,7 +156,7 @@ IMPORTANT: ${user.displayName.split(' ').first} is currently working on this job
 Job: ${currentJob!.displayTitle}
 Customer: ${currentJob!.customerName}
 Address: ${currentJob!.fullAddress}
-Status: ${currentJob!.statusDisplay}
+Status: ${currentJob!.statusLabel}
 ${currentJob!.description != null ? 'Description: ${currentJob!.description}' : ''}
 ${currentJob!.scheduledStart != null ? 'Scheduled: ${_formatDateTime(currentJob!.scheduledStart!)}' : ''}
 

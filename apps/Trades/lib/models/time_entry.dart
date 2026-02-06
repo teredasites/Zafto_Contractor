@@ -1,25 +1,32 @@
-/// ZAFTO Time Entry Model
-/// Time Clock System for tracking employee hours
-/// Session 23 - February 2026
-/// Updated Session 28 - Continuous GPS Tracking
+// ZAFTO Time Entry Model — Supabase Schema
+// Rewritten: Sprint B1e (Session 43)
+//
+// Matches public.time_entries table (core columns).
+// Extra GPS/tracking data stored in location_pings JSONB.
+// Replaces old ClockEntry (Firebase/Equatable/Hive).
 
-import 'package:equatable/equatable.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:math' as math;
 
-/// Status of a time entry
+// ============================================================
+// ENUMS
+// ============================================================
+
 enum ClockEntryStatus {
-  active,     // Currently clocked in
-  completed,  // Clocked out, awaiting approval
-  approved,   // Approved by admin
-  rejected,   // Rejected (needs correction)
+  active,
+  completed,
+  approved,
+  rejected;
 }
 
-/// GPS location data
-class GpsLocation extends Equatable {
+// ============================================================
+// GPS LOCATION
+// ============================================================
+
+class GpsLocation {
   final double latitude;
   final double longitude;
   final double? accuracy;
-  final String? address;  // Reverse geocoded address
+  final String? address;
 
   const GpsLocation({
     required this.latitude,
@@ -28,15 +35,12 @@ class GpsLocation extends Equatable {
     this.address,
   });
 
-  @override
-  List<Object?> get props => [latitude, longitude];
-
   Map<String, dynamic> toMap() => {
-    'latitude': latitude,
-    'longitude': longitude,
-    'accuracy': accuracy,
-    'address': address,
-  };
+        'latitude': latitude,
+        'longitude': longitude,
+        'accuracy': accuracy,
+        'address': address,
+      };
 
   factory GpsLocation.fromMap(Map<String, dynamic> map) {
     return GpsLocation(
@@ -47,70 +51,38 @@ class GpsLocation extends Equatable {
     );
   }
 
-  factory GpsLocation.fromGeoPoint(GeoPoint point) {
-    return GpsLocation(
-      latitude: point.latitude,
-      longitude: point.longitude,
-    );
-  }
-
-  GeoPoint toGeoPoint() => GeoPoint(latitude, longitude);
-
-  /// Calculate distance to another location in meters (Haversine formula)
+  // Haversine distance in meters
   double distanceTo(GpsLocation other) {
-    const double earthRadius = 6371000; // meters
-    final dLat = _toRadians(other.latitude - latitude);
-    final dLon = _toRadians(other.longitude - longitude);
-    final a = _sin(dLat / 2) * _sin(dLat / 2) +
-        _cos(_toRadians(latitude)) * _cos(_toRadians(other.latitude)) *
-        _sin(dLon / 2) * _sin(dLon / 2);
-    final c = 2 * _atan2(_sqrt(a), _sqrt(1 - a));
+    const earthRadius = 6371000.0;
+    final dLat = _toRad(other.latitude - latitude);
+    final dLon = _toRad(other.longitude - longitude);
+    final a = math.sin(dLat / 2) * math.sin(dLat / 2) +
+        math.cos(_toRad(latitude)) *
+            math.cos(_toRad(other.latitude)) *
+            math.sin(dLon / 2) *
+            math.sin(dLon / 2);
+    final c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a));
     return earthRadius * c;
   }
 
-  static double _toRadians(double deg) => deg * 3.14159265359 / 180;
-  static double _sin(double x) => _sinTable(x);
-  static double _cos(double x) => _sinTable(x + 1.5707963267949);
-  static double _sqrt(double x) => x <= 0 ? 0 : _newtonSqrt(x);
-  static double _atan2(double y, double x) {
-    if (x > 0) return _atan(y / x);
-    if (x < 0 && y >= 0) return _atan(y / x) + 3.14159265359;
-    if (x < 0 && y < 0) return _atan(y / x) - 3.14159265359;
-    if (x == 0 && y > 0) return 1.5707963267949;
-    if (x == 0 && y < 0) return -1.5707963267949;
-    return 0;
-  }
-  static double _atan(double x) => x - (x*x*x)/3 + (x*x*x*x*x)/5;
-  static double _sinTable(double x) {
-    x = x % (2 * 3.14159265359);
-    return x - (x*x*x)/6 + (x*x*x*x*x)/120 - (x*x*x*x*x*x*x)/5040;
-  }
-  static double _newtonSqrt(double x) {
-    double guess = x / 2;
-    for (int i = 0; i < 10; i++) {
-      guess = (guess + x / guess) / 2;
-    }
-    return guess;
-  }
+  static double _toRad(double deg) => deg * math.pi / 180;
 }
 
 // ============================================================
-// CONTINUOUS GPS TRACKING
+// LOCATION PING
 // ============================================================
 
-/// A single GPS ping during an active time entry
-/// Captured by background location service while clocked in
-class LocationPing extends Equatable {
+class LocationPing {
   final DateTime timestamp;
   final double latitude;
   final double longitude;
-  final double? accuracy;       // GPS accuracy in meters
-  final double? speed;          // Speed in m/s (if moving)
-  final double? heading;        // Direction of travel in degrees
-  final double? altitude;       // Altitude in meters
-  final String? activity;       // 'stationary', 'walking', 'driving', 'unknown'
-  final int? batteryLevel;      // Device battery % at time of ping
-  final bool isCharging;        // Was device charging
+  final double? accuracy;
+  final double? speed;
+  final double? heading;
+  final double? altitude;
+  final String? activity;
+  final int? batteryLevel;
+  final bool isCharging;
 
   const LocationPing({
     required this.timestamp,
@@ -125,27 +97,24 @@ class LocationPing extends Equatable {
     this.isCharging = false,
   });
 
-  @override
-  List<Object?> get props => [timestamp, latitude, longitude];
-
   GpsLocation toGpsLocation() => GpsLocation(
-    latitude: latitude,
-    longitude: longitude,
-    accuracy: accuracy,
-  );
+        latitude: latitude,
+        longitude: longitude,
+        accuracy: accuracy,
+      );
 
   Map<String, dynamic> toMap() => {
-    'timestamp': timestamp.toIso8601String(),
-    'latitude': latitude,
-    'longitude': longitude,
-    'accuracy': accuracy,
-    'speed': speed,
-    'heading': heading,
-    'altitude': altitude,
-    'activity': activity,
-    'batteryLevel': batteryLevel,
-    'isCharging': isCharging,
-  };
+        'timestamp': timestamp.toIso8601String(),
+        'latitude': latitude,
+        'longitude': longitude,
+        'accuracy': accuracy,
+        'speed': speed,
+        'heading': heading,
+        'altitude': altitude,
+        'activity': activity,
+        'batteryLevel': batteryLevel,
+        'isCharging': isCharging,
+      };
 
   factory LocationPing.fromMap(Map<String, dynamic> map) {
     return LocationPing(
@@ -162,7 +131,6 @@ class LocationPing extends Equatable {
     );
   }
 
-  /// Create from Geolocator Position
   factory LocationPing.now({
     required double latitude,
     required double longitude,
@@ -189,43 +157,33 @@ class LocationPing extends Equatable {
   }
 }
 
-/// Configuration for GPS tracking behavior
+// ============================================================
+// LOCATION TRACKING CONFIG
+// ============================================================
+
 class LocationTrackingConfig {
-  /// Ping interval in seconds (default: 5 minutes = 300 seconds)
   final int pingIntervalSeconds;
-
-  /// Minimum distance moved before recording a ping (meters)
   final double distanceFilterMeters;
-
-  /// Accuracy level for GPS
-  final String accuracyLevel; // 'high', 'balanced', 'low'
-
-  /// Whether to track during breaks
+  final String accuracyLevel;
   final bool trackDuringBreaks;
-
-  /// Whether to show persistent notification
   final bool showNotification;
-
-  /// Maximum pings to store locally before sync
   final int maxLocalPings;
 
   const LocationTrackingConfig({
-    this.pingIntervalSeconds = 300,    // 5 minutes
-    this.distanceFilterMeters = 50,    // 50 meters
+    this.pingIntervalSeconds = 300,
+    this.distanceFilterMeters = 50,
     this.accuracyLevel = 'balanced',
     this.trackDuringBreaks = false,
     this.showNotification = true,
     this.maxLocalPings = 500,
   });
 
-  /// Battery-friendly preset (15 min intervals, 100m filter)
   static const batterySaver = LocationTrackingConfig(
     pingIntervalSeconds: 900,
     distanceFilterMeters: 100,
     accuracyLevel: 'low',
   );
 
-  /// Precision preset for fleet tracking (2 min intervals, 25m filter)
   static const precision = LocationTrackingConfig(
     pingIntervalSeconds: 120,
     distanceFilterMeters: 25,
@@ -233,18 +191,19 @@ class LocationTrackingConfig {
   );
 
   Map<String, dynamic> toMap() => {
-    'pingIntervalSeconds': pingIntervalSeconds,
-    'distanceFilterMeters': distanceFilterMeters,
-    'accuracyLevel': accuracyLevel,
-    'trackDuringBreaks': trackDuringBreaks,
-    'showNotification': showNotification,
-    'maxLocalPings': maxLocalPings,
-  };
+        'pingIntervalSeconds': pingIntervalSeconds,
+        'distanceFilterMeters': distanceFilterMeters,
+        'accuracyLevel': accuracyLevel,
+        'trackDuringBreaks': trackDuringBreaks,
+        'showNotification': showNotification,
+        'maxLocalPings': maxLocalPings,
+      };
 
   factory LocationTrackingConfig.fromMap(Map<String, dynamic> map) {
     return LocationTrackingConfig(
       pingIntervalSeconds: map['pingIntervalSeconds'] as int? ?? 300,
-      distanceFilterMeters: (map['distanceFilterMeters'] as num?)?.toDouble() ?? 50,
+      distanceFilterMeters:
+          (map['distanceFilterMeters'] as num?)?.toDouble() ?? 50,
       accuracyLevel: map['accuracyLevel'] as String? ?? 'balanced',
       trackDuringBreaks: map['trackDuringBreaks'] as bool? ?? false,
       showNotification: map['showNotification'] as bool? ?? true,
@@ -253,59 +212,94 @@ class LocationTrackingConfig {
   }
 }
 
-/// Time entry model for clock in/out tracking
-class ClockEntry extends Equatable {
+// ============================================================
+// BREAK ENTRY
+// ============================================================
+
+class BreakEntry {
+  final DateTime start;
+  final DateTime? end;
+  final String? reason;
+
+  const BreakEntry({required this.start, this.end, this.reason});
+
+  Duration get duration => end != null ? end!.difference(start) : Duration.zero;
+  bool get isActive => end == null;
+
+  Map<String, dynamic> toMap() => {
+        'start': start.toIso8601String(),
+        'end': end?.toIso8601String(),
+        'reason': reason,
+      };
+
+  factory BreakEntry.fromMap(Map<String, dynamic> map) {
+    return BreakEntry(
+      start: DateTime.parse(map['start'] as String),
+      end: map['end'] != null ? DateTime.parse(map['end'] as String) : null,
+      reason: map['reason'] as String?,
+    );
+  }
+
+  BreakEntry endBreak() =>
+      BreakEntry(start: start, end: DateTime.now(), reason: reason);
+}
+
+// ============================================================
+// CLOCK ENTRY (TIME ENTRY)
+// ============================================================
+
+class ClockEntry {
   final String id;
   final String companyId;
   final String userId;
-  final String? jobId;           // Optional - clocked into specific job
+  final String? jobId;
 
   // Clock times
   final DateTime clockIn;
   final DateTime? clockOut;
 
-  // Locations
-  final GpsLocation clockInLocation;
+  // Locations (stored in location_pings JSONB)
+  final GpsLocation? clockInLocation;
   final GpsLocation? clockOutLocation;
 
-  // Continuous GPS Tracking (Session 28)
-  final List<LocationPing> locationPings;  // Background GPS pings during shift
-  final bool locationTrackingEnabled;       // Is tracking active for this entry
-  final DateTime? lastPingAt;               // Last successful ping time
-  final LocationTrackingConfig? trackingConfig;  // Tracking settings
+  // GPS tracking (pings stored in location_pings JSONB)
+  final List<LocationPing> locationPings;
+  final bool locationTrackingEnabled;
+  final DateTime? lastPingAt;
+  final LocationTrackingConfig? trackingConfig;
 
-  // Labor & Payroll (for ZAFTO Books integration)
-  final double? hourlyRate;       // Employee's hourly rate for this entry
-  final double? laborCost;        // Calculated: totalHours * hourlyRate
-  final double? overtimeHours;    // Hours beyond 8hr/day or 40hr/week
-  final double? overtimeRate;     // Overtime multiplier (1.5x, 2x, etc.)
+  // Labor & Payroll
+  final double? hourlyRate;
+  final double? laborCost;
+  final double? overtimeHours;
+  final double? overtimeRate;
 
   // Metadata
   final String? notes;
-  final double? totalHours;       // Calculated on clock out
-  final bool isManualEntry;       // Admin-created entry
-  final String? approvedBy;       // User who approved
+  final double? totalHours;
+  final bool isManualEntry;
+  final String? approvedBy;
   final DateTime? approvedAt;
   final ClockEntryStatus status;
 
-  // Break tracking
+  // Break tracking (stored in location_pings JSONB)
   final List<BreakEntry> breaks;
 
-  // Mileage tracking (calculated from location pings)
-  final double? totalMilesDriven;  // Calculated from pings where activity='driving'
+  // Mileage
+  final double? totalMilesDriven;
 
   // Timestamps
   final DateTime createdAt;
   final DateTime updatedAt;
 
   const ClockEntry({
-    required this.id,
-    required this.companyId,
-    required this.userId,
+    this.id = '',
+    this.companyId = '',
+    this.userId = '',
     this.jobId,
     required this.clockIn,
     this.clockOut,
-    required this.clockInLocation,
+    this.clockInLocation,
     this.clockOutLocation,
     this.locationPings = const [],
     this.locationTrackingEnabled = true,
@@ -327,66 +321,45 @@ class ClockEntry extends Equatable {
     required this.updatedAt,
   });
 
-  @override
-  List<Object?> get props => [id, companyId, userId, clockIn, clockOut, status, updatedAt];
+  // ============================================================
+  // COMPUTED PROPERTIES
+  // ============================================================
 
-  /// Check if currently clocked in
   bool get isActive => status == ClockEntryStatus.active && clockOut == null;
 
-  /// Calculate elapsed time (for active entries)
   Duration get elapsed {
     final end = clockOut ?? DateTime.now();
     return end.difference(clockIn);
   }
 
-  /// Calculate total break time
-  Duration get totalBreakTime {
-    return breaks.fold(Duration.zero, (total, b) => total + b.duration);
-  }
+  Duration get totalBreakTime =>
+      breaks.fold(Duration.zero, (total, b) => total + b.duration);
 
-  /// Calculate worked time (elapsed minus breaks)
-  Duration get workedTime {
-    return elapsed - totalBreakTime;
-  }
+  Duration get workedTime => elapsed - totalBreakTime;
 
-  /// Format elapsed time as string (e.g., "2h 30m")
   String get elapsedFormatted {
     final d = elapsed;
-    if (d.inHours > 0) {
-      return '${d.inHours}h ${d.inMinutes % 60}m';
-    }
+    if (d.inHours > 0) return '${d.inHours}h ${d.inMinutes % 60}m';
     return '${d.inMinutes}m';
   }
 
-  /// Format worked time as string
   String get workedTimeFormatted {
     final d = workedTime;
-    if (d.inHours > 0) {
-      return '${d.inHours}h ${d.inMinutes % 60}m';
-    }
+    if (d.inHours > 0) return '${d.inHours}h ${d.inMinutes % 60}m';
     return '${d.inMinutes}m';
   }
 
-  // ============================================================
-  // GPS TRACKING HELPERS
-  // ============================================================
-
-  /// Get the most recent location (last ping, or clock out, or clock in)
-  GpsLocation get currentLocation {
-    if (locationPings.isNotEmpty) {
-      return locationPings.last.toGpsLocation();
-    }
+  GpsLocation? get currentLocation {
+    if (locationPings.isNotEmpty) return locationPings.last.toGpsLocation();
     return clockOutLocation ?? clockInLocation;
   }
 
-  /// Check if GPS tracking is stale (no ping in last 10 minutes)
   bool get isTrackingStale {
     if (!isActive || !locationTrackingEnabled) return false;
     final lastPing = lastPingAt ?? clockIn;
     return DateTime.now().difference(lastPing).inMinutes > 10;
   }
 
-  /// Calculate total distance traveled from pings (in meters)
   double get totalDistanceMeters {
     if (locationPings.length < 2) return 0;
     double total = 0;
@@ -398,29 +371,83 @@ class ClockEntry extends Equatable {
     return total;
   }
 
-  /// Calculate total distance in miles
   double get totalDistanceMiles => totalDistanceMeters / 1609.34;
-
-  /// Get ping count
   int get pingCount => locationPings.length;
-
-  /// Check if currently on a break
   bool get isOnBreak => breaks.isNotEmpty && breaks.last.isActive;
 
-  /// Calculate labor cost (if hourly rate is set)
   double? get calculatedLaborCost {
     if (hourlyRate == null || totalHours == null) return null;
-    final regularHours = (totalHours! - (overtimeHours ?? 0)).clamp(0, double.infinity);
+    final regularHours =
+        (totalHours! - (overtimeHours ?? 0)).clamp(0, double.infinity);
     final otHours = overtimeHours ?? 0;
     final otMultiplier = overtimeRate ?? 1.5;
     return (regularHours * hourlyRate!) + (otHours * hourlyRate! * otMultiplier);
   }
 
   // ============================================================
-  // SERIALIZATION
+  // SERIALIZATION — Supabase (snake_case)
   // ============================================================
 
-  Map<String, dynamic> toMap() {
+  // Build the JSONB payload for location_pings column.
+  // Stores pings + all extra fields that don't have dedicated DB columns.
+  Map<String, dynamic> buildLocationPingsPayload() {
+    return {
+      'pings': locationPings.map((p) => p.toMap()).toList(),
+      'clockInLocation': clockInLocation?.toMap(),
+      'clockOutLocation': clockOutLocation?.toMap(),
+      'breaks': breaks.map((b) => b.toMap()).toList(),
+      'trackingConfig': trackingConfig?.toMap(),
+      'locationTrackingEnabled': locationTrackingEnabled,
+      'lastPingAt': lastPingAt?.toIso8601String(),
+      'isManualEntry': isManualEntry,
+      'overtimeRate': overtimeRate,
+      'totalMilesDriven': totalMilesDriven ?? totalDistanceMiles,
+    };
+  }
+
+  Map<String, dynamic> toInsertJson() {
+    return {
+      'company_id': companyId,
+      'user_id': userId,
+      'job_id': jobId,
+      'clock_in': clockIn.toIso8601String(),
+      'clock_out': clockOut?.toIso8601String(),
+      'break_minutes': totalBreakTime.inMinutes,
+      'total_minutes':
+          totalHours != null ? (totalHours! * 60).round() : null,
+      'hourly_rate': hourlyRate,
+      'labor_cost': laborCost ?? calculatedLaborCost,
+      'overtime_minutes':
+          overtimeHours != null ? (overtimeHours! * 60).round() : 0,
+      'notes': notes,
+      'location_pings': buildLocationPingsPayload(),
+      'status': status.name,
+      'approved_by': approvedBy,
+      'approved_at': approvedAt?.toIso8601String(),
+    };
+  }
+
+  Map<String, dynamic> toUpdateJson() {
+    return {
+      'job_id': jobId,
+      'clock_out': clockOut?.toIso8601String(),
+      'break_minutes': totalBreakTime.inMinutes,
+      'total_minutes':
+          totalHours != null ? (totalHours! * 60).round() : null,
+      'hourly_rate': hourlyRate,
+      'labor_cost': laborCost ?? calculatedLaborCost,
+      'overtime_minutes':
+          overtimeHours != null ? (overtimeHours! * 60).round() : 0,
+      'notes': notes,
+      'location_pings': buildLocationPingsPayload(),
+      'status': status.name,
+      'approved_by': approvedBy,
+      'approved_at': approvedAt?.toIso8601String(),
+    };
+  }
+
+  // Legacy camelCase JSON (for backward compat)
+  Map<String, dynamic> toJson() {
     return {
       'id': id,
       'companyId': companyId,
@@ -428,19 +455,16 @@ class ClockEntry extends Equatable {
       'jobId': jobId,
       'clockIn': clockIn.toIso8601String(),
       'clockOut': clockOut?.toIso8601String(),
-      'clockInLocation': clockInLocation.toMap(),
+      'clockInLocation': clockInLocation?.toMap(),
       'clockOutLocation': clockOutLocation?.toMap(),
-      // GPS tracking fields
       'locationPings': locationPings.map((p) => p.toMap()).toList(),
       'locationTrackingEnabled': locationTrackingEnabled,
       'lastPingAt': lastPingAt?.toIso8601String(),
       'trackingConfig': trackingConfig?.toMap(),
-      // Labor fields
       'hourlyRate': hourlyRate,
       'laborCost': laborCost ?? calculatedLaborCost,
       'overtimeHours': overtimeHours,
       'overtimeRate': overtimeRate,
-      // Original fields
       'notes': notes,
       'totalHours': totalHours,
       'isManualEntry': isManualEntry,
@@ -454,65 +478,170 @@ class ClockEntry extends Equatable {
     };
   }
 
-  Map<String, dynamic> toJson() => toMap();
+  Map<String, dynamic> toMap() => toJson();
 
-  factory ClockEntry.fromMap(Map<String, dynamic> map) {
+  // ============================================================
+  // DESERIALIZATION — dual format (snake_case + camelCase)
+  // ============================================================
+
+  factory ClockEntry.fromJson(Map<String, dynamic> json) {
+    // Parse location_pings JSONB — could be structured object (Supabase)
+    // or a simple list (legacy).
+    final rawPings = json['location_pings'] ?? json['locationPings'];
+    List<LocationPing> pings = [];
+    GpsLocation? clockInLoc;
+    GpsLocation? clockOutLoc;
+    List<BreakEntry> breaksList = [];
+    LocationTrackingConfig? trackingCfg;
+    bool trackingEnabled = true;
+    DateTime? lastPing;
+    bool manualEntry = false;
+    double? otRate;
+    double? milesDriven;
+
+    if (rawPings is Map<String, dynamic>) {
+      // Structured JSONB from Supabase
+      final pingList = rawPings['pings'] as List<dynamic>?;
+      if (pingList != null) {
+        pings = pingList
+            .map((p) => LocationPing.fromMap(p as Map<String, dynamic>))
+            .toList();
+      }
+      if (rawPings['clockInLocation'] != null) {
+        clockInLoc =
+            GpsLocation.fromMap(rawPings['clockInLocation'] as Map<String, dynamic>);
+      }
+      if (rawPings['clockOutLocation'] != null) {
+        clockOutLoc =
+            GpsLocation.fromMap(rawPings['clockOutLocation'] as Map<String, dynamic>);
+      }
+      final breakList = rawPings['breaks'] as List<dynamic>?;
+      if (breakList != null) {
+        breaksList = breakList
+            .map((b) => BreakEntry.fromMap(b as Map<String, dynamic>))
+            .toList();
+      }
+      if (rawPings['trackingConfig'] != null) {
+        trackingCfg = LocationTrackingConfig.fromMap(
+            rawPings['trackingConfig'] as Map<String, dynamic>);
+      }
+      trackingEnabled = rawPings['locationTrackingEnabled'] as bool? ?? true;
+      if (rawPings['lastPingAt'] != null) {
+        lastPing = DateTime.parse(rawPings['lastPingAt'] as String);
+      }
+      manualEntry = rawPings['isManualEntry'] as bool? ?? false;
+      otRate = (rawPings['overtimeRate'] as num?)?.toDouble();
+      milesDriven = (rawPings['totalMilesDriven'] as num?)?.toDouble();
+    } else if (rawPings is List) {
+      // Legacy format: plain array of pings
+      pings = rawPings
+          .map((p) => LocationPing.fromMap(p as Map<String, dynamic>))
+          .toList();
+    }
+
+    // Fall back to top-level fields for legacy camelCase format
+    if (clockInLoc == null && json['clockInLocation'] != null) {
+      clockInLoc =
+          GpsLocation.fromMap(json['clockInLocation'] as Map<String, dynamic>);
+    }
+    if (clockOutLoc == null && json['clockOutLocation'] != null) {
+      clockOutLoc =
+          GpsLocation.fromMap(json['clockOutLocation'] as Map<String, dynamic>);
+    }
+    if (breaksList.isEmpty && json['breaks'] != null) {
+      breaksList = (json['breaks'] as List<dynamic>)
+          .map((b) => BreakEntry.fromMap(b as Map<String, dynamic>))
+          .toList();
+    }
+    if (trackingCfg == null && json['trackingConfig'] != null) {
+      trackingCfg = LocationTrackingConfig.fromMap(
+          json['trackingConfig'] as Map<String, dynamic>);
+    }
+
+    // Parse total hours from total_minutes (DB) or totalHours (legacy)
+    final totalMinutesRaw = json['total_minutes'] ?? json['totalMinutes'];
+    final totalHoursLegacy = json['totalHours'];
+    double? totalHrs;
+    if (totalMinutesRaw != null) {
+      totalHrs = (totalMinutesRaw as num).toDouble() / 60.0;
+    } else if (totalHoursLegacy != null) {
+      totalHrs = (totalHoursLegacy as num).toDouble();
+    }
+
+    // Parse overtime
+    final otMinutesRaw = json['overtime_minutes'] ?? json['overtimeMinutes'];
+    double? otHours;
+    if (otMinutesRaw != null) {
+      otHours = (otMinutesRaw as num).toDouble() / 60.0;
+    } else if (json['overtimeHours'] != null) {
+      otHours = (json['overtimeHours'] as num).toDouble();
+    }
+
     return ClockEntry(
-      id: map['id'] as String,
-      companyId: map['companyId'] as String,
-      userId: map['userId'] as String,
-      jobId: map['jobId'] as String?,
-      clockIn: _parseDateTime(map['clockIn']),
-      clockOut: map['clockOut'] != null ? _parseDateTime(map['clockOut']) : null,
-      clockInLocation: GpsLocation.fromMap(map['clockInLocation'] as Map<String, dynamic>),
-      clockOutLocation: map['clockOutLocation'] != null
-          ? GpsLocation.fromMap(map['clockOutLocation'] as Map<String, dynamic>)
-          : null,
-      // GPS tracking fields
-      locationPings: (map['locationPings'] as List<dynamic>?)
-          ?.map((p) => LocationPing.fromMap(p as Map<String, dynamic>))
-          .toList() ?? [],
-      locationTrackingEnabled: map['locationTrackingEnabled'] as bool? ?? true,
-      lastPingAt: map['lastPingAt'] != null ? _parseDateTime(map['lastPingAt']) : null,
-      trackingConfig: map['trackingConfig'] != null
-          ? LocationTrackingConfig.fromMap(map['trackingConfig'] as Map<String, dynamic>)
-          : null,
-      // Labor fields
-      hourlyRate: (map['hourlyRate'] as num?)?.toDouble(),
-      laborCost: (map['laborCost'] as num?)?.toDouble(),
-      overtimeHours: (map['overtimeHours'] as num?)?.toDouble(),
-      overtimeRate: (map['overtimeRate'] as num?)?.toDouble(),
-      // Original fields
-      notes: map['notes'] as String?,
-      totalHours: (map['totalHours'] as num?)?.toDouble(),
-      isManualEntry: map['isManualEntry'] as bool? ?? false,
-      approvedBy: map['approvedBy'] as String?,
-      approvedAt: map['approvedAt'] != null ? _parseDateTime(map['approvedAt']) : null,
-      status: ClockEntryStatus.values.firstWhere(
-        (s) => s.name == map['status'],
-        orElse: () => ClockEntryStatus.active,
-      ),
-      breaks: (map['breaks'] as List<dynamic>?)
-          ?.map((b) => BreakEntry.fromMap(b as Map<String, dynamic>))
-          .toList() ?? [],
-      totalMilesDriven: (map['totalMilesDriven'] as num?)?.toDouble(),
-      createdAt: _parseDateTime(map['createdAt']),
-      updatedAt: _parseDateTime(map['updatedAt']),
+      id: json['id'] as String? ?? '',
+      companyId:
+          (json['company_id'] ?? json['companyId']) as String? ?? '',
+      userId: (json['user_id'] ?? json['userId']) as String? ?? '',
+      jobId: (json['job_id'] ?? json['jobId']) as String?,
+      clockIn: _parseDate(json['clock_in'] ?? json['clockIn']),
+      clockOut: _parseOptionalDate(json['clock_out'] ?? json['clockOut']),
+      clockInLocation: clockInLoc,
+      clockOutLocation: clockOutLoc,
+      locationPings: pings,
+      locationTrackingEnabled:
+          json['locationTrackingEnabled'] as bool? ?? trackingEnabled,
+      lastPingAt: json['lastPingAt'] != null
+          ? _parseDate(json['lastPingAt'])
+          : lastPing,
+      trackingConfig: trackingCfg,
+      hourlyRate:
+          ((json['hourly_rate'] ?? json['hourlyRate']) as num?)?.toDouble(),
+      laborCost:
+          ((json['labor_cost'] ?? json['laborCost']) as num?)?.toDouble(),
+      overtimeHours: otHours,
+      overtimeRate:
+          json['overtimeRate'] != null
+              ? (json['overtimeRate'] as num).toDouble()
+              : otRate,
+      notes: json['notes'] as String?,
+      totalHours: totalHrs,
+      isManualEntry: json['isManualEntry'] as bool? ?? manualEntry,
+      approvedBy:
+          (json['approved_by'] ?? json['approvedBy']) as String?,
+      approvedAt: _parseOptionalDate(
+          json['approved_at'] ?? json['approvedAt']),
+      status: _parseStatus(json['status'] as String?),
+      breaks: breaksList,
+      totalMilesDriven:
+          (json['totalMilesDriven'] as num?)?.toDouble() ?? milesDriven,
+      createdAt:
+          _parseDate(json['created_at'] ?? json['createdAt']),
+      updatedAt:
+          _parseDate(json['updated_at'] ?? json['updatedAt']),
     );
   }
 
-  factory ClockEntry.fromJson(Map<String, dynamic> json) => ClockEntry.fromMap(json);
+  factory ClockEntry.fromMap(Map<String, dynamic> map) =>
+      ClockEntry.fromJson(map);
 
-  factory ClockEntry.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
-    return ClockEntry.fromMap({...data, 'id': doc.id});
+  static ClockEntryStatus _parseStatus(String? s) {
+    if (s == null) return ClockEntryStatus.active;
+    return ClockEntryStatus.values.firstWhere(
+      (e) => e.name == s,
+      orElse: () => ClockEntryStatus.active,
+    );
   }
 
-  static DateTime _parseDateTime(dynamic value) {
+  static DateTime _parseDate(dynamic value) {
     if (value == null) return DateTime.now();
-    if (value is Timestamp) return value.toDate();
     if (value is String) return DateTime.parse(value);
     return DateTime.now();
+  }
+
+  static DateTime? _parseOptionalDate(dynamic value) {
+    if (value == null) return null;
+    if (value is String) return DateTime.parse(value);
+    return null;
   }
 
   // ============================================================
@@ -557,7 +686,8 @@ class ClockEntry extends Equatable {
       clockInLocation: clockInLocation ?? this.clockInLocation,
       clockOutLocation: clockOutLocation ?? this.clockOutLocation,
       locationPings: locationPings ?? this.locationPings,
-      locationTrackingEnabled: locationTrackingEnabled ?? this.locationTrackingEnabled,
+      locationTrackingEnabled:
+          locationTrackingEnabled ?? this.locationTrackingEnabled,
       lastPingAt: lastPingAt ?? this.lastPingAt,
       trackingConfig: trackingConfig ?? this.trackingConfig,
       hourlyRate: hourlyRate ?? this.hourlyRate,
@@ -581,7 +711,6 @@ class ClockEntry extends Equatable {
   // FACTORY CONSTRUCTORS
   // ============================================================
 
-  /// Create a new clock-in entry
   factory ClockEntry.clockIn({
     required String companyId,
     required String userId,
@@ -593,7 +722,6 @@ class ClockEntry extends Equatable {
   }) {
     final now = DateTime.now();
     return ClockEntry(
-      id: 'time_${now.millisecondsSinceEpoch}',
       companyId: companyId,
       userId: userId,
       jobId: jobId,
@@ -610,7 +738,6 @@ class ClockEntry extends Equatable {
     );
   }
 
-  /// Add a location ping to the entry
   ClockEntry addPing(LocationPing ping) {
     return copyWith(
       locationPings: [...locationPings, ping],
@@ -619,18 +746,17 @@ class ClockEntry extends Equatable {
     );
   }
 
-  /// Clock out an active entry
   ClockEntry clockOutEntry(GpsLocation location, {String? notes}) {
     final now = DateTime.now();
     final hours = now.difference(clockIn).inMinutes / 60.0;
     final breakHours = totalBreakTime.inMinutes / 60.0;
-    final workedHours = hours - breakHours;
+    final workedHrs = hours - breakHours;
 
     return copyWith(
       clockOut: now,
       clockOutLocation: location,
-      totalHours: workedHours,
-      laborCost: hourlyRate != null ? workedHours * hourlyRate! : null,
+      totalHours: workedHrs,
+      laborCost: hourlyRate != null ? workedHrs * hourlyRate! : null,
       totalMilesDriven: totalDistanceMiles,
       status: ClockEntryStatus.completed,
       notes: notes ?? this.notes,
@@ -638,7 +764,6 @@ class ClockEntry extends Equatable {
     );
   }
 
-  /// Create a manual entry (admin)
   factory ClockEntry.manual({
     required String companyId,
     required String userId,
@@ -653,7 +778,6 @@ class ClockEntry extends Equatable {
     final hours = clockOut.difference(clockIn).inMinutes / 60.0;
 
     return ClockEntry(
-      id: 'time_${now.millisecondsSinceEpoch}',
       companyId: companyId,
       userId: userId,
       jobId: jobId,
@@ -661,7 +785,7 @@ class ClockEntry extends Equatable {
       clockOut: clockOut,
       clockInLocation: location,
       clockOutLocation: location,
-      locationTrackingEnabled: false,  // Manual entries don't have GPS tracking
+      locationTrackingEnabled: false,
       totalHours: hours,
       hourlyRate: hourlyRate,
       laborCost: hourlyRate != null ? hours * hourlyRate : null,
@@ -672,47 +796,4 @@ class ClockEntry extends Equatable {
       updatedAt: now,
     );
   }
-}
-
-/// Break entry within a time entry
-class BreakEntry extends Equatable {
-  final DateTime start;
-  final DateTime? end;
-  final String? reason;  // 'lunch', 'personal', etc.
-
-  const BreakEntry({
-    required this.start,
-    this.end,
-    this.reason,
-  });
-
-  @override
-  List<Object?> get props => [start, end];
-
-  Duration get duration {
-    if (end == null) return Duration.zero;
-    return end!.difference(start);
-  }
-
-  bool get isActive => end == null;
-
-  Map<String, dynamic> toMap() => {
-    'start': start.toIso8601String(),
-    'end': end?.toIso8601String(),
-    'reason': reason,
-  };
-
-  factory BreakEntry.fromMap(Map<String, dynamic> map) {
-    return BreakEntry(
-      start: DateTime.parse(map['start'] as String),
-      end: map['end'] != null ? DateTime.parse(map['end'] as String) : null,
-      reason: map['reason'] as String?,
-    );
-  }
-
-  BreakEntry endBreak() => BreakEntry(
-    start: start,
-    end: DateTime.now(),
-    reason: reason,
-  );
 }

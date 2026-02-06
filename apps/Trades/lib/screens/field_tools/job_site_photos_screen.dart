@@ -8,12 +8,12 @@ import 'package:image_picker/image_picker.dart';
 import '../../theme/zafto_colors.dart';
 import '../../theme/theme_provider.dart';
 import '../../services/field_camera_service.dart';
-import '../../services/job_service.dart';
-import '../../models/job_photo.dart';
+import '../../services/photo_service.dart';
+import '../../models/photo.dart';
+import '../../repositories/photo_repository.dart';
 
-/// Job Site Photos - Capture and organize job photos with date/location stamps
 class JobSitePhotosScreen extends ConsumerStatefulWidget {
-  final String? jobId; // Optional - if provided, photos link to this job
+  final String? jobId;
 
   const JobSitePhotosScreen({super.key, this.jobId});
 
@@ -22,16 +22,26 @@ class JobSitePhotosScreen extends ConsumerStatefulWidget {
 }
 
 class _JobSitePhotosScreenState extends ConsumerState<JobSitePhotosScreen> {
-  final List<CapturedPhoto> _capturedPhotos = [];
-  PhotoType _selectedType = PhotoType.during;
+  PhotoCategory _selectedCategory = PhotoCategory.general;
   bool _isCapturing = false;
   bool _showDateStamp = true;
   bool _showLocationStamp = true;
+
+  // Local byte cache for freshly captured photos (instant display before URL loads)
+  final Map<String, Uint8List> _localPhotoBytes = {};
+
 
   @override
   Widget build(BuildContext context) {
     final colors = ref.watch(zaftoColorsProvider);
     final cameraService = ref.watch(fieldCameraServiceProvider);
+
+    // Load saved photos from DB if jobId is provided
+    final photosAsync = widget.jobId != null
+        ? ref.watch(jobPhotosProvider(widget.jobId!))
+        : const AsyncValue<List<Photo>>.data([]);
+
+    final photos = photosAsync.valueOrNull ?? [];
 
     return Scaffold(
       backgroundColor: colors.bgBase,
@@ -44,11 +54,6 @@ class _JobSitePhotosScreenState extends ConsumerState<JobSitePhotosScreen> {
         ),
         title: Text('Job Site Photos', style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w600)),
         actions: [
-          if (_capturedPhotos.isNotEmpty)
-            IconButton(
-              icon: Icon(LucideIcons.save, color: colors.accentPrimary),
-              onPressed: _saveAllPhotos,
-            ),
           IconButton(
             icon: Icon(LucideIcons.settings, color: colors.textSecondary),
             onPressed: () => _showSettings(colors),
@@ -57,17 +62,47 @@ class _JobSitePhotosScreenState extends ConsumerState<JobSitePhotosScreen> {
       ),
       body: Column(
         children: [
-          // Photo type selector
-          _buildTypeSelector(colors),
+          // Category selector
+          _buildCategorySelector(colors),
 
           // Stamp indicators
-          _buildStampIndicators(colors),
+          _buildStampIndicators(colors, photos.length),
+
+          // No job warning
+          if (widget.jobId == null)
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: colors.accentWarning.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: colors.accentWarning.withOpacity(0.3)),
+              ),
+              child: Row(
+                children: [
+                  Icon(LucideIcons.alertTriangle, size: 16, color: colors.accentWarning),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'No job selected — photos will be saved without a job link',
+                      style: TextStyle(fontSize: 12, color: colors.accentWarning),
+                    ),
+                  ),
+                ],
+              ),
+            ),
 
           // Photo grid
           Expanded(
-            child: _capturedPhotos.isEmpty
-                ? _buildEmptyState(colors)
-                : _buildPhotoGrid(colors),
+            child: photosAsync.when(
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (e, _) => Center(
+                child: Text('Failed to load photos', style: TextStyle(color: colors.accentError)),
+              ),
+              data: (photos) => photos.isEmpty
+                  ? _buildEmptyState(colors)
+                  : _buildPhotoGrid(colors, photos),
+            ),
           ),
         ],
       ),
@@ -103,7 +138,16 @@ class _JobSitePhotosScreenState extends ConsumerState<JobSitePhotosScreen> {
     );
   }
 
-  Widget _buildTypeSelector(ZaftoColors colors) {
+  Widget _buildCategorySelector(ZaftoColors colors) {
+    final categories = [
+      PhotoCategory.general,
+      PhotoCategory.before,
+      PhotoCategory.after,
+      PhotoCategory.defect,
+      PhotoCategory.inspection,
+      PhotoCategory.completion,
+    ];
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
@@ -113,11 +157,10 @@ class _JobSitePhotosScreenState extends ConsumerState<JobSitePhotosScreen> {
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
-          children: PhotoType.values
-              .where((t) => t != PhotoType.signature && t != PhotoType.invoice)
-              .map((type) => Padding(
+          children: categories
+              .map((cat) => Padding(
                     padding: const EdgeInsets.only(right: 8),
-                    child: _buildTypeChip(colors, type),
+                    child: _buildCategoryChip(colors, cat),
                   ))
               .toList(),
         ),
@@ -125,12 +168,12 @@ class _JobSitePhotosScreenState extends ConsumerState<JobSitePhotosScreen> {
     );
   }
 
-  Widget _buildTypeChip(ZaftoColors colors, PhotoType type) {
-    final isSelected = _selectedType == type;
+  Widget _buildCategoryChip(ZaftoColors colors, PhotoCategory category) {
+    final isSelected = _selectedCategory == category;
     return GestureDetector(
       onTap: () {
         HapticFeedback.selectionClick();
-        setState(() => _selectedType = type);
+        setState(() => _selectedCategory = category);
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -142,7 +185,7 @@ class _JobSitePhotosScreenState extends ConsumerState<JobSitePhotosScreen> {
           ),
         ),
         child: Text(
-          _getTypeLabel(type),
+          category.label,
           style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w600,
@@ -155,7 +198,7 @@ class _JobSitePhotosScreenState extends ConsumerState<JobSitePhotosScreen> {
     );
   }
 
-  Widget _buildStampIndicators(ZaftoColors colors) {
+  Widget _buildStampIndicators(ZaftoColors colors, int photoCount) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
@@ -177,7 +220,7 @@ class _JobSitePhotosScreenState extends ConsumerState<JobSitePhotosScreen> {
           Text('Location stamp', style: TextStyle(fontSize: 12, color: colors.textSecondary)),
           const Spacer(),
           Text(
-            '${_capturedPhotos.length} photo${_capturedPhotos.length != 1 ? 's' : ''}',
+            '$photoCount photo${photoCount != 1 ? 's' : ''}',
             style: TextStyle(fontSize: 12, color: colors.textTertiary),
           ),
         ],
@@ -214,7 +257,7 @@ class _JobSitePhotosScreenState extends ConsumerState<JobSitePhotosScreen> {
     );
   }
 
-  Widget _buildPhotoGrid(ZaftoColors colors) {
+  Widget _buildPhotoGrid(ZaftoColors colors, List<Photo> photos) {
     return GridView.builder(
       padding: const EdgeInsets.all(16),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -223,18 +266,20 @@ class _JobSitePhotosScreenState extends ConsumerState<JobSitePhotosScreen> {
         mainAxisSpacing: 12,
         childAspectRatio: 0.85,
       ),
-      itemCount: _capturedPhotos.length,
+      itemCount: photos.length,
       itemBuilder: (context, index) {
-        final photo = _capturedPhotos[index];
-        return _buildPhotoCard(colors, photo, index);
+        final photo = photos[index];
+        return _buildPhotoCard(colors, photo);
       },
     );
   }
 
-  Widget _buildPhotoCard(ZaftoColors colors, CapturedPhoto photo, int index) {
+  Widget _buildPhotoCard(ZaftoColors colors, Photo photo) {
+    final localBytes = _localPhotoBytes[photo.id];
+
     return GestureDetector(
-      onTap: () => _showPhotoDetail(colors, photo, index),
-      onLongPress: () => _showPhotoOptions(colors, index),
+      onTap: () => _showPhotoDetail(colors, photo),
+      onLongPress: () => _showPhotoOptions(colors, photo),
       child: Container(
         decoration: BoxDecoration(
           color: colors.bgElevated,
@@ -244,17 +289,32 @@ class _JobSitePhotosScreenState extends ConsumerState<JobSitePhotosScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Photo thumbnail with stamp overlay
+            // Photo thumbnail
             Expanded(
               child: Stack(
                 fit: StackFit.expand,
                 children: [
                   ClipRRect(
                     borderRadius: const BorderRadius.vertical(top: Radius.circular(11)),
-                    child: Image.memory(
-                      photo.bytes,
-                      fit: BoxFit.cover,
-                    ),
+                    child: localBytes != null
+                        ? Image.memory(localBytes, fit: BoxFit.cover)
+                        : FutureBuilder<String>(
+                            future: ref.read(photoRepositoryProvider).getPhotoUrl(photo.storagePath),
+                            builder: (context, snapshot) {
+                              if (!snapshot.hasData) {
+                                return Container(
+                                  color: colors.fillDefault,
+                                  child: Center(
+                                    child: SizedBox(
+                                      width: 20, height: 20,
+                                      child: CircularProgressIndicator(strokeWidth: 2, color: colors.textTertiary),
+                                    ),
+                                  ),
+                                );
+                              }
+                              return Image.network(snapshot.data!, fit: BoxFit.cover);
+                            },
+                          ),
                   ),
                   // Stamp overlay indicator
                   Positioned(
@@ -269,27 +329,27 @@ class _JobSitePhotosScreenState extends ConsumerState<JobSitePhotosScreen> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(LucideIcons.calendar, size: 10, color: Colors.white),
+                          const Icon(LucideIcons.calendar, size: 10, color: Colors.white),
                           if (photo.hasLocation) ...[
                             const SizedBox(width: 4),
-                            Icon(LucideIcons.mapPin, size: 10, color: Colors.white),
+                            const Icon(LucideIcons.mapPin, size: 10, color: Colors.white),
                           ],
                         ],
                       ),
                     ),
                   ),
-                  // Type badge
+                  // Category badge
                   Positioned(
                     top: 8,
                     left: 8,
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: _getTypeColor(colors, _selectedType),
+                        color: _getCategoryColor(colors, photo.category),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
-                        _getTypeLabel(_selectedType),
+                        photo.categoryLabel,
                         style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: Colors.white),
                       ),
                     ),
@@ -304,12 +364,12 @@ class _JobSitePhotosScreenState extends ConsumerState<JobSitePhotosScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    photo.timestampDisplay,
+                    _formatDate(photo.createdAt),
                     style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: colors.textPrimary),
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    photo.locationDisplay,
+                    photo.displayName,
                     style: TextStyle(fontSize: 10, color: colors.textTertiary),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -332,24 +392,56 @@ class _JobSitePhotosScreenState extends ConsumerState<JobSitePhotosScreen> {
     HapticFeedback.mediumImpact();
 
     try {
-      final photo = await service.capturePhoto(
+      final captured = await service.capturePhoto(
         source: source,
         addDateStamp: _showDateStamp,
         addLocationStamp: _showLocationStamp,
       );
 
-      if (photo != null) {
-        setState(() => _capturedPhotos.add(photo));
-        HapticFeedback.lightImpact();
+      if (captured != null) {
+        // Upload to Supabase immediately
+        final photoService = ref.read(photoServiceProvider);
+        try {
+          final savedPhoto = await photoService.uploadPhoto(
+            bytes: captured.bytes,
+            jobId: widget.jobId,
+            category: _selectedCategory,
+            fileName: captured.fileName,
+            takenAt: captured.capturedAt,
+            latitude: captured.latitude,
+            longitude: captured.longitude,
+          );
+
+          // Cache bytes locally for instant display
+          _localPhotoBytes[savedPhoto.id] = captured.bytes;
+
+          // Refresh the photos list from DB
+          if (widget.jobId != null) {
+            ref.read(jobPhotosProvider(widget.jobId!).notifier).loadPhotos();
+          }
+
+          HapticFeedback.lightImpact();
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Photo saved'),
+                behavior: SnackBarBehavior.floating,
+                duration: Duration(seconds: 1),
+              ),
+            );
+          }
+        } catch (e) {
+          _showError('Failed to save photo: $e');
+        }
       }
     } catch (e) {
       _showError('Failed to capture photo: $e');
     } finally {
-      setState(() => _isCapturing = false);
+      if (mounted) setState(() => _isCapturing = false);
     }
   }
 
-  void _showPhotoDetail(ZaftoColors colors, CapturedPhoto photo, int index) {
+  void _showPhotoDetail(ZaftoColors colors, Photo photo) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -357,16 +449,17 @@ class _JobSitePhotosScreenState extends ConsumerState<JobSitePhotosScreen> {
       builder: (context) => _PhotoDetailSheet(
         colors: colors,
         photo: photo,
-        type: _selectedType,
+        localBytes: _localPhotoBytes[photo.id],
+        photoRepo: ref.read(photoRepositoryProvider),
         onDelete: () {
           Navigator.pop(context);
-          setState(() => _capturedPhotos.removeAt(index));
+          _deletePhoto(photo);
         },
       ),
     );
   }
 
-  void _showPhotoOptions(ZaftoColors colors, int index) {
+  void _showPhotoOptions(ZaftoColors colors, Photo photo) {
     HapticFeedback.mediumImpact();
     showModalBottomSheet(
       context: context,
@@ -393,8 +486,7 @@ class _JobSitePhotosScreenState extends ConsumerState<JobSitePhotosScreen> {
               title: Text('Delete photo', style: TextStyle(color: colors.accentError)),
               onTap: () {
                 Navigator.pop(context);
-                setState(() => _capturedPhotos.removeAt(index));
-                HapticFeedback.lightImpact();
+                _deletePhoto(photo);
               },
             ),
             const SizedBox(height: 16),
@@ -402,6 +494,20 @@ class _JobSitePhotosScreenState extends ConsumerState<JobSitePhotosScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _deletePhoto(Photo photo) async {
+    HapticFeedback.lightImpact();
+    try {
+      final photoService = ref.read(photoServiceProvider);
+      await photoService.deletePhoto(photo.id);
+      _localPhotoBytes.remove(photo.id);
+      if (widget.jobId != null) {
+        ref.read(jobPhotosProvider(widget.jobId!).notifier).loadPhotos();
+      }
+    } catch (e) {
+      _showError('Failed to delete photo');
+    }
   }
 
   void _showSettings(ZaftoColors colors) {
@@ -462,18 +568,8 @@ class _JobSitePhotosScreenState extends ConsumerState<JobSitePhotosScreen> {
     );
   }
 
-  Future<void> _saveAllPhotos() async {
-    // TODO: BACKEND - Implement save to job/cloud storage
-    HapticFeedback.mediumImpact();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('${_capturedPhotos.length} photos saved'),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
-  }
-
   void _showError(String message) {
+    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
@@ -487,27 +583,26 @@ class _JobSitePhotosScreenState extends ConsumerState<JobSitePhotosScreen> {
   // HELPERS
   // ============================================================
 
-  String _getTypeLabel(PhotoType type) {
-    switch (type) {
-      case PhotoType.before: return 'Before';
-      case PhotoType.during: return 'During';
-      case PhotoType.after: return 'After';
-      case PhotoType.issue: return 'Issue';
-      case PhotoType.equipment: return 'Equipment';
-      case PhotoType.permit: return 'Permit';
-      case PhotoType.other: return 'Other';
-      default: return 'Photo';
-    }
+  String _formatDate(DateTime date) {
+    return '${date.month}/${date.day}/${date.year} ${date.hour}:${date.minute.toString().padLeft(2, '0')}';
   }
 
-  Color _getTypeColor(ZaftoColors colors, PhotoType type) {
-    switch (type) {
-      case PhotoType.before: return colors.accentInfo;
-      case PhotoType.during: return colors.accentWarning;
-      case PhotoType.after: return colors.accentSuccess;
-      case PhotoType.issue: return colors.accentError;
-      case PhotoType.equipment: return colors.accentPrimary;
-      default: return colors.textSecondary;
+  Color _getCategoryColor(ZaftoColors colors, PhotoCategory category) {
+    switch (category) {
+      case PhotoCategory.before:
+        return colors.accentInfo;
+      case PhotoCategory.after:
+        return colors.accentSuccess;
+      case PhotoCategory.defect:
+        return colors.accentError;
+      case PhotoCategory.inspection:
+        return colors.accentWarning;
+      case PhotoCategory.markup:
+        return colors.accentPrimary;
+      case PhotoCategory.completion:
+        return colors.accentSuccess;
+      default:
+        return colors.textSecondary;
     }
   }
 }
@@ -518,14 +613,16 @@ class _JobSitePhotosScreenState extends ConsumerState<JobSitePhotosScreen> {
 
 class _PhotoDetailSheet extends StatelessWidget {
   final ZaftoColors colors;
-  final CapturedPhoto photo;
-  final PhotoType type;
+  final Photo photo;
+  final Uint8List? localBytes;
+  final PhotoRepository photoRepo;
   final VoidCallback onDelete;
 
   const _PhotoDetailSheet({
     required this.colors,
     required this.photo,
-    required this.type,
+    this.localBytes,
+    required this.photoRepo,
     required this.onDelete,
   });
 
@@ -556,7 +653,17 @@ class _PhotoDetailSheet extends StatelessWidget {
             child: Stack(
               fit: StackFit.expand,
               children: [
-                Image.memory(photo.bytes, fit: BoxFit.contain),
+                localBytes != null
+                    ? Image.memory(localBytes!, fit: BoxFit.contain)
+                    : FutureBuilder<String>(
+                        future: photoRepo.getPhotoUrl(photo.storagePath),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) {
+                            return Center(child: CircularProgressIndicator(color: colors.accentPrimary));
+                          }
+                          return Image.network(snapshot.data!, fit: BoxFit.contain);
+                        },
+                      ),
                 // Stamp overlay
                 Positioned(
                   bottom: 16,
@@ -577,7 +684,7 @@ class _PhotoDetailSheet extends StatelessWidget {
                             const Icon(LucideIcons.calendar, size: 14, color: Colors.white),
                             const SizedBox(width: 6),
                             Text(
-                              photo.timestampDisplay,
+                              '${photo.createdAt.month}/${photo.createdAt.day}/${photo.createdAt.year}',
                               style: const TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.w600),
                             ),
                           ],
@@ -590,7 +697,7 @@ class _PhotoDetailSheet extends StatelessWidget {
                               const Icon(LucideIcons.mapPin, size: 14, color: Colors.white),
                               const SizedBox(width: 6),
                               Text(
-                                photo.locationDisplay,
+                                '${photo.latitude!.toStringAsFixed(4)}, ${photo.longitude!.toStringAsFixed(4)}',
                                 style: const TextStyle(fontSize: 11, color: Colors.white70),
                               ),
                             ],
@@ -635,7 +742,7 @@ class _PhotoDetailSheet extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
                     onPressed: () {
-                      // TODO: Implement share
+                      // TODO: Implement share (B6 polish)
                       Navigator.pop(context);
                     },
                   ),

@@ -5,7 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/scheduled_item.dart';
-import '../models/business/job.dart';
+import '../models/job.dart';
 import 'job_service.dart';
 
 // ============================================================
@@ -78,14 +78,14 @@ class CalendarService {
 
     // Convert jobs with scheduled dates to scheduled items
     for (final job in jobs) {
-      if (job.scheduledDate != null && _isSameDay(job.scheduledDate!, date)) {
+      if (job.scheduledStart != null && _isSameDay(job.scheduledStart!, date)) {
         items.add(ScheduledItem.fromJob(
           id: job.id,
-          title: job.title,
+          title: job.displayTitle,
           customerName: job.customerName,
           address: job.address,
-          scheduledDate: job.scheduledDate!,
-          notes: job.notes,
+          scheduledDate: job.scheduledStart!,
+          notes: job.description,
         ));
       }
     }
@@ -125,7 +125,7 @@ class CalendarService {
         date = date.add(const Duration(days: 1))) {
       final normalizedDate = DateTime(date.year, date.month, date.day);
       final dayJobs = jobs.where((j) =>
-          j.scheduledDate != null && _isSameDay(j.scheduledDate!, normalizedDate));
+          j.scheduledStart != null && _isSameDay(j.scheduledStart!, normalizedDate));
 
       if (dayJobs.isNotEmpty) {
         result[normalizedDate] = DayStats(
@@ -145,17 +145,17 @@ class CalendarService {
     final items = <ScheduledItem>[];
 
     for (final job in jobs) {
-      if (job.scheduledDate != null) {
-        final jobDate = job.scheduledDate!;
+      if (job.scheduledStart != null) {
+        final jobDate = job.scheduledStart!;
         if ((jobDate.isAfter(start) || _isSameDay(jobDate, start)) &&
             (jobDate.isBefore(end) || _isSameDay(jobDate, end))) {
           items.add(ScheduledItem.fromJob(
             id: job.id,
-            title: job.title,
+            title: job.displayTitle,
             customerName: job.customerName,
             address: job.address,
-            scheduledDate: job.scheduledDate!,
-            notes: job.notes,
+            scheduledDate: job.scheduledStart!,
+            notes: job.description,
           ));
         }
       }

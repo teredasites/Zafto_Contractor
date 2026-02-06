@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../theme/zafto_colors.dart';
 import '../../theme/theme_provider.dart';
-import '../../models/business/invoice.dart';
+import '../../models/invoice.dart';
 import '../../services/invoice_service.dart';
 import 'invoice_detail_screen.dart';
 import 'invoice_create_screen.dart';
@@ -171,7 +171,7 @@ class _InvoicesHubScreenState extends ConsumerState<InvoicesHubScreen> {
               children: [
                 Icon(LucideIcons.calendar, size: 12, color: colors.textTertiary),
                 const SizedBox(width: 4),
-                Text('Due ${_formatDate(invoice.dueDate)}', style: TextStyle(fontSize: 12, color: invoice.isOverdue ? Colors.red : colors.textTertiary)),
+                Text('Due ${invoice.dueDate != null ? _formatDate(invoice.dueDate!) : 'N/A'}', style: TextStyle(fontSize: 12, color: invoice.isOverdue ? Colors.red : colors.textTertiary)),
               ],
             ),
             const SizedBox(height: 12),
@@ -191,11 +191,15 @@ class _InvoicesHubScreenState extends ConsumerState<InvoicesHubScreen> {
   Widget _buildStatusBadge(ZaftoColors colors, Invoice invoice) {
     final (color, bgColor) = switch (invoice.status) {
       InvoiceStatus.draft => (colors.textTertiary, colors.fillDefault),
+      InvoiceStatus.pendingApproval => (colors.accentWarning, colors.accentWarning.withValues(alpha: 0.15)),
+      InvoiceStatus.approved => (colors.accentSuccess, colors.accentSuccess.withValues(alpha: 0.15)),
+      InvoiceStatus.rejected => (Colors.red, Colors.red.withValues(alpha: 0.15)),
       InvoiceStatus.sent => (colors.accentInfo, colors.accentInfo.withValues(alpha: 0.15)),
       InvoiceStatus.viewed => (colors.accentInfo, colors.accentInfo.withValues(alpha: 0.15)),
+      InvoiceStatus.partiallyPaid => (colors.accentWarning, colors.accentWarning.withValues(alpha: 0.15)),
       InvoiceStatus.paid => (colors.accentSuccess, colors.accentSuccess.withValues(alpha: 0.15)),
       InvoiceStatus.overdue => (Colors.red, Colors.red.withValues(alpha: 0.15)),
-      InvoiceStatus.cancelled => (colors.textTertiary, colors.fillDefault),
+      InvoiceStatus.voided => (colors.textTertiary, colors.fillDefault),
     };
     final label = invoice.isOverdue && invoice.status != InvoiceStatus.paid ? 'Overdue' : invoice.statusLabel;
     return Container(

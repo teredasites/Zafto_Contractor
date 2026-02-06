@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../theme/zafto_colors.dart';
 import '../../theme/theme_provider.dart';
-import '../../models/business/job.dart';
+import '../../models/job.dart';
 import '../../services/job_service.dart';
 import 'job_create_screen.dart';
 import '../invoices/invoice_create_screen.dart';
@@ -71,7 +71,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                 _buildDetailsCard(colors),
                 const SizedBox(height: 16),
                 _buildAmountCard(colors),
-                if (_job!.notes?.isNotEmpty == true) ...[
+                if (_job!.description?.isNotEmpty == true) ...[
                   const SizedBox(height: 16),
                   _buildNotesCard(colors),
                 ],
@@ -110,21 +110,21 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
           children: [
             _buildStatusBadge(colors, _job!.status),
             const Spacer(),
-            if (_job!.scheduledDate != null)
+            if (_job!.scheduledStart != null)
               Row(
                 children: [
                   Icon(LucideIcons.calendar, size: 14, color: colors.textTertiary),
                   const SizedBox(width: 4),
-                  Text(_formatDate(_job!.scheduledDate!), style: TextStyle(fontSize: 13, color: colors.textTertiary)),
+                  Text(_formatDate(_job!.scheduledStart!), style: TextStyle(fontSize: 13, color: colors.textTertiary)),
                 ],
               ),
           ],
         ),
         const SizedBox(height: 12),
-        Text(_job!.title, style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700, color: colors.textPrimary)),
-        if (_job!.customerName != null) ...[
+        Text(_job!.displayTitle, style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700, color: colors.textPrimary)),
+        if (_job!.customerName.isNotEmpty) ...[
           const SizedBox(height: 6),
-          Text(_job!.customerName!, style: TextStyle(fontSize: 16, color: colors.textSecondary)),
+          Text(_job!.customerName, style: TextStyle(fontSize: 16, color: colors.textSecondary)),
         ],
       ],
     );
@@ -132,7 +132,10 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
 
   Widget _buildStatusBadge(ZaftoColors colors, JobStatus status) {
     final (color, bgColor, icon) = switch (status) {
-      JobStatus.lead => (colors.textTertiary, colors.fillDefault, LucideIcons.inbox),
+      JobStatus.draft => (colors.textTertiary, colors.fillDefault, LucideIcons.inbox),
+      JobStatus.dispatched => (colors.accentInfo, colors.accentInfo.withValues(alpha: 0.15), LucideIcons.truck),
+      JobStatus.enRoute => (colors.accentInfo, colors.accentInfo.withValues(alpha: 0.15), LucideIcons.navigation),
+      JobStatus.onHold => (colors.accentWarning, colors.accentWarning.withValues(alpha: 0.15), LucideIcons.pauseCircle),
       JobStatus.scheduled => (colors.accentInfo, colors.accentInfo.withValues(alpha: 0.15), LucideIcons.calendar),
       JobStatus.inProgress => (colors.accentSuccess, colors.accentSuccess.withValues(alpha: 0.15), LucideIcons.play),
       JobStatus.completed => (colors.accentPrimary, colors.accentPrimary.withValues(alpha: 0.15), LucideIcons.checkCircle),
@@ -163,18 +166,18 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
       ),
       child: Column(
         children: [
-          if (_job!.address != null) _buildDetailRow(colors, LucideIcons.mapPin, 'Address', _job!.address!),
-          if (_job!.customerName != null) ...[
-            if (_job!.address != null) Divider(height: 24, color: colors.borderSubtle),
-            _buildDetailRow(colors, LucideIcons.user, 'Customer', _job!.customerName!),
+          if (_job!.address.isNotEmpty) _buildDetailRow(colors, LucideIcons.mapPin, 'Address', _job!.address),
+          if (_job!.customerName.isNotEmpty) ...[
+            if (_job!.address.isNotEmpty) Divider(height: 24, color: colors.borderSubtle),
+            _buildDetailRow(colors, LucideIcons.user, 'Customer', _job!.customerName),
           ],
-          if (_job!.scheduledDate != null) ...[
+          if (_job!.scheduledStart != null) ...[
             Divider(height: 24, color: colors.borderSubtle),
-            _buildDetailRow(colors, LucideIcons.calendar, 'Scheduled', _formatDateFull(_job!.scheduledDate!)),
+            _buildDetailRow(colors, LucideIcons.calendar, 'Scheduled', _formatDateFull(_job!.scheduledStart!)),
           ],
-          if (_job!.completedDate != null) ...[
+          if (_job!.completedAt != null) ...[
             Divider(height: 24, color: colors.borderSubtle),
-            _buildDetailRow(colors, LucideIcons.checkCircle, 'Completed', _formatDateFull(_job!.completedDate!)),
+            _buildDetailRow(colors, LucideIcons.checkCircle, 'Completed', _formatDateFull(_job!.completedAt!)),
           ],
         ],
       ),
@@ -261,7 +264,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
             ],
           ),
           const SizedBox(height: 10),
-          Text(_job!.notes!, style: TextStyle(fontSize: 14, color: colors.textPrimary, height: 1.5)),
+          Text(_job!.description!, style: TextStyle(fontSize: 14, color: colors.textPrimary, height: 1.5)),
         ],
       ),
     );
@@ -338,12 +341,15 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
 
   List<JobStatus> _getNextStatuses(JobStatus current) {
     return switch (current) {
-      JobStatus.lead => [JobStatus.scheduled, JobStatus.cancelled],
-      JobStatus.scheduled => [JobStatus.inProgress, JobStatus.cancelled],
-      JobStatus.inProgress => [JobStatus.completed],
+      JobStatus.draft => [JobStatus.scheduled, JobStatus.cancelled],
+      JobStatus.scheduled => [JobStatus.dispatched, JobStatus.inProgress, JobStatus.cancelled],
+      JobStatus.dispatched => [JobStatus.enRoute, JobStatus.inProgress, JobStatus.cancelled],
+      JobStatus.enRoute => [JobStatus.inProgress],
+      JobStatus.inProgress => [JobStatus.onHold, JobStatus.completed],
+      JobStatus.onHold => [JobStatus.inProgress, JobStatus.cancelled],
       JobStatus.completed => [JobStatus.invoiced],
       JobStatus.invoiced => [],
-      JobStatus.cancelled => [JobStatus.lead],
+      JobStatus.cancelled => [JobStatus.draft],
     };
   }
 
@@ -352,7 +358,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
     final now = DateTime.now();
     final updated = _job!.copyWith(
       status: newStatus,
-      completedDate: newStatus == JobStatus.completed ? now : _job!.completedDate,
+      completedAt: newStatus == JobStatus.completed ? now : _job!.completedAt,
       updatedAt: now,
     );
     await ref.read(jobsProvider.notifier).updateJob(updated);

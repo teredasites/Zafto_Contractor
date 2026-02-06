@@ -4,9 +4,9 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/business/job.dart';
-import '../models/business/invoice.dart';
-import '../models/business/customer.dart';
+import '../models/job.dart';
+import '../models/invoice.dart';
+import '../models/customer.dart';
 import '../models/bid.dart';
 import 'auth_service.dart';
 

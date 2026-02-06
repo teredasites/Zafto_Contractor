@@ -1,80 +1,53 @@
-import 'package:equatable/equatable.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+// ZAFTO Job Model — Supabase Schema
+// Rewritten: Sprint B1c (Session 41)
+//
+// Matches public.jobs table exactly.
+// Replaces both models/job.dart (Firebase) and models/business/job.dart.
 
-/// Job status progression
 enum JobStatus {
-  draft,        // Not yet scheduled
-  scheduled,    // On calendar
-  dispatched,   // Sent to technician (Growing+ tiers)
-  enRoute,      // Tech on the way
-  inProgress,   // Work started
-  onHold,       // Waiting on parts, customer, etc.
-  completed,    // Work done
-  invoiced,     // Invoice sent
-  cancelled     // Job cancelled
+  draft,
+  scheduled,
+  dispatched,
+  enRoute,
+  inProgress,
+  onHold,
+  completed,
+  invoiced,
+  cancelled,
 }
 
-/// Job priority levels
 enum JobPriority { low, normal, high, urgent }
 
-/// Time entry for tracking work hours
-class TimeEntry extends Equatable {
-  final String id;
-  final String userId;
-  final DateTime startTime;
-  final DateTime? endTime;
-  final int? minutes;
-  final String? notes;
+enum JobType {
+  standard,
+  insuranceClaim,
+  warrantyDispatch;
 
-  const TimeEntry({
-    required this.id,
-    required this.userId,
-    required this.startTime,
-    this.endTime,
-    this.minutes,
-    this.notes,
-  });
-
-  @override
-  List<Object?> get props => [id, userId, startTime, endTime];
-
-  Map<String, dynamic> toMap() => {
-        'id': id,
-        'userId': userId,
-        'startTime': startTime.toIso8601String(),
-        'endTime': endTime?.toIso8601String(),
-        'minutes': minutes,
-        'notes': notes,
+  String get dbValue => switch (this) {
+        JobType.standard => 'standard',
+        JobType.insuranceClaim => 'insurance_claim',
+        JobType.warrantyDispatch => 'warranty_dispatch',
       };
-
-  factory TimeEntry.fromMap(Map<String, dynamic> map) => TimeEntry(
-        id: map['id'] as String,
-        userId: map['userId'] as String,
-        startTime: DateTime.parse(map['startTime'] as String),
-        endTime: map['endTime'] != null
-            ? DateTime.parse(map['endTime'] as String)
-            : null,
-        minutes: map['minutes'] as int?,
-        notes: map['notes'] as String?,
-      );
 }
 
-/// Job model with assignment and workflow tracking
-class Job extends Equatable {
+class Job {
   final String id;
   final String companyId;
   final String createdByUserId;
 
-  // Assignment (Team+ tiers)
+  // Relationships
+  final String? customerId;
   final String? assignedToUserId;
   final List<String> assignedUserIds;
   final String? teamId;
 
-  // Trade
+  // Details
+  final String? title;
+  final String? description;
+  final String? internalNotes;
   final String tradeType;
 
   // Customer (denormalized for offline)
-  final String? customerId;
   final String customerName;
   final String? customerEmail;
   final String? customerPhone;
@@ -87,279 +60,340 @@ class Job extends Equatable {
   final double? latitude;
   final double? longitude;
 
+  // Status
+  final JobStatus status;
+  final JobPriority priority;
+  final JobType jobType;
+  final Map<String, dynamic> typeMetadata;
+
   // Scheduling
   final DateTime? scheduledStart;
   final DateTime? scheduledEnd;
-  final int? estimatedDuration; // Minutes
-
-  // Status
-  final JobStatus status;
+  final int? estimatedDuration; // minutes
   final DateTime? startedAt;
   final DateTime? completedAt;
 
-  // Details
-  final String? title;
-  final String? description;
-  final String? internalNotes;
-  final List<String> tags;
-  final JobPriority priority;
+  // Financial
+  final double estimatedAmount;
+  final double? actualAmount;
 
-  // Linked Data
-  final List<String> photoIds;
-  final List<String> calculationIds;
+  // Tags
+  final List<String> tags;
+
+  // Links
   final String? invoiceId;
   final String? quoteId;
 
-  // Time Tracking (Business+ tiers)
-  final List<TimeEntry> timeEntries;
-  final int totalMinutesWorked;
-
   // Sync
-  final DateTime createdAt;
-  final DateTime updatedAt;
   final bool syncedToCloud;
 
+  // Metadata
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final DateTime? deletedAt;
+
   const Job({
-    required this.id,
-    required this.companyId,
-    required this.createdByUserId,
+    this.id = '',
+    this.companyId = '',
+    this.createdByUserId = '',
+    this.customerId,
     this.assignedToUserId,
     this.assignedUserIds = const [],
     this.teamId,
+    this.title,
+    this.description,
+    this.internalNotes,
     this.tradeType = 'electrical',
-    this.customerId,
-    required this.customerName,
+    this.customerName = '',
     this.customerEmail,
     this.customerPhone,
-    required this.address,
+    this.address = '',
     this.city,
     this.state,
     this.zipCode,
     this.latitude,
     this.longitude,
+    this.status = JobStatus.draft,
+    this.priority = JobPriority.normal,
+    this.jobType = JobType.standard,
+    this.typeMetadata = const {},
     this.scheduledStart,
     this.scheduledEnd,
     this.estimatedDuration,
-    this.status = JobStatus.draft,
     this.startedAt,
     this.completedAt,
-    this.title,
-    this.description,
-    this.internalNotes,
+    this.estimatedAmount = 0,
+    this.actualAmount,
     this.tags = const [],
-    this.priority = JobPriority.normal,
-    this.photoIds = const [],
-    this.calculationIds = const [],
     this.invoiceId,
     this.quoteId,
-    this.timeEntries = const [],
-    this.totalMinutesWorked = 0,
+    this.syncedToCloud = false,
     required this.createdAt,
     required this.updatedAt,
-    this.syncedToCloud = false,
+    this.deletedAt,
   });
-
-  @override
-  List<Object?> get props => [id, companyId, status, updatedAt];
-
-  // ============================================================
-  // COMPUTED PROPERTIES
-  // ============================================================
-
-  /// Display title - uses title or falls back to address
-  String get displayTitle => title ?? address;
-
-  /// Check if job is active (in progress or en route)
-  bool get isActive =>
-      status == JobStatus.inProgress || status == JobStatus.enRoute;
-
-  /// Check if job can be started
-  bool get canStart =>
-      status == JobStatus.scheduled || status == JobStatus.dispatched;
-
-  /// Check if job can be completed
-  bool get canComplete => status == JobStatus.inProgress;
-
-  /// Check if job is editable
-  bool get isEditable =>
-      status != JobStatus.invoiced && status != JobStatus.cancelled;
-
-  /// Check if job has been assigned
-  bool get isAssigned =>
-      assignedToUserId != null || assignedUserIds.isNotEmpty;
-
-  /// Get status display text
-  String get statusDisplay {
-    switch (status) {
-      case JobStatus.draft:
-        return 'Draft';
-      case JobStatus.scheduled:
-        return 'Scheduled';
-      case JobStatus.dispatched:
-        return 'Dispatched';
-      case JobStatus.enRoute:
-        return 'En Route';
-      case JobStatus.inProgress:
-        return 'In Progress';
-      case JobStatus.onHold:
-        return 'On Hold';
-      case JobStatus.completed:
-        return 'Completed';
-      case JobStatus.invoiced:
-        return 'Invoiced';
-      case JobStatus.cancelled:
-        return 'Cancelled';
-    }
-  }
-
-  /// Get priority display text
-  String get priorityDisplay {
-    switch (priority) {
-      case JobPriority.low:
-        return 'Low';
-      case JobPriority.normal:
-        return 'Normal';
-      case JobPriority.high:
-        return 'High';
-      case JobPriority.urgent:
-        return 'Urgent';
-    }
-  }
-
-  /// Full address string
-  String get fullAddress {
-    final parts = [address];
-    if (city != null) parts.add(city!);
-    if (state != null) parts.add(state!);
-    if (zipCode != null) parts.add(zipCode!);
-    return parts.join(', ');
-  }
-
-  /// Duration in hours and minutes
-  String get durationDisplay {
-    if (totalMinutesWorked == 0) return '-';
-    final hours = totalMinutesWorked ~/ 60;
-    final mins = totalMinutesWorked % 60;
-    if (hours == 0) return '${mins}m';
-    if (mins == 0) return '${hours}h';
-    return '${hours}h ${mins}m';
-  }
 
   // ============================================================
   // SERIALIZATION
   // ============================================================
 
-  Map<String, dynamic> toMap() {
+  // Generic JSON output (camelCase for legacy code).
+  Map<String, dynamic> toJson() {
     return {
       'id': id,
       'companyId': companyId,
       'createdByUserId': createdByUserId,
-      'assignedToUserId': assignedToUserId,
-      'assignedUserIds': assignedUserIds,
-      'teamId': teamId,
-      'tradeType': tradeType,
       'customerId': customerId,
-      'customerName': customerName,
-      'customerEmail': customerEmail,
-      'customerPhone': customerPhone,
-      'address': address,
-      'city': city,
-      'state': state,
-      'zipCode': zipCode,
-      'latitude': latitude,
-      'longitude': longitude,
-      'scheduledStart': scheduledStart?.toIso8601String(),
-      'scheduledEnd': scheduledEnd?.toIso8601String(),
-      'estimatedDuration': estimatedDuration,
-      'status': status.name,
-      'startedAt': startedAt?.toIso8601String(),
-      'completedAt': completedAt?.toIso8601String(),
+      'assignedToUserId': assignedToUserId,
       'title': title,
-      'description': description,
-      'internalNotes': internalNotes,
-      'tags': tags,
+      'customerName': customerName,
+      'address': address,
+      'status': status.name,
       'priority': priority.name,
-      'photoIds': photoIds,
-      'calculationIds': calculationIds,
-      'invoiceId': invoiceId,
-      'quoteId': quoteId,
-      'timeEntries': timeEntries.map((e) => e.toMap()).toList(),
-      'totalMinutesWorked': totalMinutesWorked,
+      'scheduledDate': scheduledStart?.toIso8601String(),
+      'completedDate': completedAt?.toIso8601String(),
+      'estimatedAmount': estimatedAmount,
+      'actualAmount': actualAmount,
+      'notes': description,
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
-      'syncedToCloud': syncedToCloud,
     };
   }
 
-  factory Job.fromMap(Map<String, dynamic> map) {
+  // Insert payload (snake_case for Supabase).
+  Map<String, dynamic> toInsertJson() {
+    return {
+      'company_id': companyId,
+      'created_by_user_id': createdByUserId,
+      'customer_id': customerId,
+      'assigned_to_user_id': assignedToUserId,
+      'assigned_user_ids': assignedUserIds,
+      'team_id': teamId,
+      'title': title,
+      'description': description,
+      'internal_notes': internalNotes,
+      'trade_type': tradeType,
+      'customer_name': customerName,
+      'customer_email': customerEmail,
+      'customer_phone': customerPhone,
+      'address': address,
+      'city': city,
+      'state': state,
+      'zip_code': zipCode,
+      'latitude': latitude,
+      'longitude': longitude,
+      'status': status.name,
+      'priority': priority.name,
+      'job_type': jobType.dbValue,
+      'type_metadata': typeMetadata,
+      'scheduled_start': scheduledStart?.toUtc().toIso8601String(),
+      'scheduled_end': scheduledEnd?.toUtc().toIso8601String(),
+      'estimated_duration': estimatedDuration,
+      'estimated_amount': estimatedAmount,
+      'tags': tags,
+    };
+  }
+
+  // Update payload (snake_case for Supabase).
+  Map<String, dynamic> toUpdateJson() {
+    return {
+      'customer_id': customerId,
+      'assigned_to_user_id': assignedToUserId,
+      'assigned_user_ids': assignedUserIds,
+      'team_id': teamId,
+      'title': title,
+      'description': description,
+      'internal_notes': internalNotes,
+      'trade_type': tradeType,
+      'customer_name': customerName,
+      'customer_email': customerEmail,
+      'customer_phone': customerPhone,
+      'address': address,
+      'city': city,
+      'state': state,
+      'zip_code': zipCode,
+      'latitude': latitude,
+      'longitude': longitude,
+      'status': status.name,
+      'priority': priority.name,
+      'job_type': jobType.dbValue,
+      'type_metadata': typeMetadata,
+      'scheduled_start': scheduledStart?.toUtc().toIso8601String(),
+      'scheduled_end': scheduledEnd?.toUtc().toIso8601String(),
+      'estimated_duration': estimatedDuration,
+      'started_at': startedAt?.toUtc().toIso8601String(),
+      'completed_at': completedAt?.toUtc().toIso8601String(),
+      'estimated_amount': estimatedAmount,
+      'actual_amount': actualAmount,
+      'tags': tags,
+      'invoice_id': invoiceId,
+      'quote_id': quoteId,
+    };
+  }
+
+  // Handles both snake_case (Supabase) and camelCase (legacy).
+  factory Job.fromJson(Map<String, dynamic> json) {
     return Job(
-      id: map['id'] as String,
-      companyId: map['companyId'] as String,
-      createdByUserId: map['createdByUserId'] as String,
-      assignedToUserId: map['assignedToUserId'] as String?,
-      assignedUserIds: List<String>.from(map['assignedUserIds'] ?? []),
-      teamId: map['teamId'] as String?,
-      tradeType: map['tradeType'] as String? ?? 'electrical',
-      customerId: map['customerId'] as String?,
-      customerName: map['customerName'] as String,
-      customerEmail: map['customerEmail'] as String?,
-      customerPhone: map['customerPhone'] as String?,
-      address: map['address'] as String,
-      city: map['city'] as String?,
-      state: map['state'] as String?,
-      zipCode: map['zipCode'] as String?,
-      latitude: (map['latitude'] as num?)?.toDouble(),
-      longitude: (map['longitude'] as num?)?.toDouble(),
-      scheduledStart: map['scheduledStart'] != null
-          ? _parseDateTime(map['scheduledStart'])
-          : null,
-      scheduledEnd: map['scheduledEnd'] != null
-          ? _parseDateTime(map['scheduledEnd'])
-          : null,
-      estimatedDuration: map['estimatedDuration'] as int?,
-      status: JobStatus.values.firstWhere(
-        (s) => s.name == map['status'],
-        orElse: () => JobStatus.draft,
-      ),
-      startedAt:
-          map['startedAt'] != null ? _parseDateTime(map['startedAt']) : null,
-      completedAt: map['completedAt'] != null
-          ? _parseDateTime(map['completedAt'])
-          : null,
-      title: map['title'] as String?,
-      description: map['description'] as String?,
-      internalNotes: map['internalNotes'] as String?,
-      tags: List<String>.from(map['tags'] ?? []),
+      id: json['id'] as String? ?? '',
+      companyId: (json['company_id'] ?? json['companyId']) as String? ?? '',
+      createdByUserId:
+          (json['created_by_user_id'] ?? json['createdByUserId']) as String? ??
+              '',
+      customerId:
+          (json['customer_id'] ?? json['customerId']) as String?,
+      assignedToUserId:
+          (json['assigned_to_user_id'] ?? json['assignedToUserId']) as String?,
+      assignedUserIds: (json['assigned_user_ids'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
+      teamId: (json['team_id'] ?? json['teamId']) as String?,
+      title: json['title'] as String?,
+      description: (json['description'] ?? json['notes']) as String?,
+      internalNotes:
+          (json['internal_notes'] ?? json['internalNotes']) as String?,
+      tradeType:
+          (json['trade_type'] ?? json['tradeType']) as String? ?? 'electrical',
+      customerName:
+          (json['customer_name'] ?? json['customerName']) as String? ?? '',
+      customerEmail:
+          (json['customer_email'] ?? json['customerEmail']) as String?,
+      customerPhone:
+          (json['customer_phone'] ?? json['customerPhone']) as String?,
+      address: json['address'] as String? ?? '',
+      city: json['city'] as String?,
+      state: json['state'] as String?,
+      zipCode: (json['zip_code'] ?? json['zipCode']) as String?,
+      latitude: (json['latitude'] as num?)?.toDouble(),
+      longitude: (json['longitude'] as num?)?.toDouble(),
+      status: _parseJobStatus(json['status'] as String?),
       priority: JobPriority.values.firstWhere(
-        (p) => p.name == map['priority'],
+        (p) => p.name == json['priority'],
         orElse: () => JobPriority.normal,
       ),
-      photoIds: List<String>.from(map['photoIds'] ?? []),
-      calculationIds: List<String>.from(map['calculationIds'] ?? []),
-      invoiceId: map['invoiceId'] as String?,
-      quoteId: map['quoteId'] as String?,
-      timeEntries: (map['timeEntries'] as List<dynamic>?)
-              ?.map((e) => TimeEntry.fromMap(e as Map<String, dynamic>))
+      jobType: _parseJobType(
+          (json['job_type'] ?? json['jobType']) as String?),
+      typeMetadata: (json['type_metadata'] ?? json['typeMetadata'])
+              as Map<String, dynamic>? ??
+          const {},
+      scheduledStart: _parseOptionalDate(
+          json['scheduled_start'] ?? json['scheduledStart'] ?? json['scheduledDate']),
+      scheduledEnd: _parseOptionalDate(
+          json['scheduled_end'] ?? json['scheduledEnd']),
+      estimatedDuration:
+          ((json['estimated_duration'] ?? json['estimatedDuration']) as num?)
+              ?.toInt(),
+      startedAt: _parseOptionalDate(
+          json['started_at'] ?? json['startedAt']),
+      completedAt: _parseOptionalDate(
+          json['completed_at'] ?? json['completedAt'] ?? json['completedDate']),
+      estimatedAmount:
+          ((json['estimated_amount'] ?? json['estimatedAmount']) as num?)
+                  ?.toDouble() ??
+              0,
+      actualAmount:
+          ((json['actual_amount'] ?? json['actualAmount']) as num?)
+              ?.toDouble(),
+      tags: (json['tags'] as List<dynamic>?)
+              ?.map((e) => e as String)
               .toList() ??
-          [],
-      totalMinutesWorked: map['totalMinutesWorked'] as int? ?? 0,
-      createdAt: _parseDateTime(map['createdAt']),
-      updatedAt: _parseDateTime(map['updatedAt']),
-      syncedToCloud: map['syncedToCloud'] as bool? ?? false,
+          const [],
+      invoiceId:
+          (json['invoice_id'] ?? json['invoiceId']) as String?,
+      quoteId: (json['quote_id'] ?? json['quoteId']) as String?,
+      syncedToCloud:
+          (json['synced_to_cloud'] ?? json['syncedToCloud']) as bool? ?? false,
+      createdAt: _parseDate(json['created_at'] ?? json['createdAt']),
+      updatedAt: _parseDate(json['updated_at'] ?? json['updatedAt']),
+      deletedAt: _parseOptionalDate(
+          json['deleted_at'] ?? json['deletedAt']),
     );
   }
 
-  factory Job.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
-    return Job.fromMap({...data, 'id': doc.id});
+  static JobStatus _parseJobStatus(String? value) {
+    if (value == null) return JobStatus.draft;
+    // Handle legacy 'lead' → 'draft' mapping
+    if (value == 'lead') return JobStatus.draft;
+    return JobStatus.values.firstWhere(
+      (s) => s.name == value,
+      orElse: () => JobStatus.draft,
+    );
   }
 
-  static DateTime _parseDateTime(dynamic value) {
+  static JobType _parseJobType(String? value) {
+    if (value == null) return JobType.standard;
+    // Handle both camelCase enum name and snake_case DB value
+    if (value == 'insurance_claim') return JobType.insuranceClaim;
+    if (value == 'warranty_dispatch') return JobType.warrantyDispatch;
+    return JobType.values.firstWhere(
+      (t) => t.name == value,
+      orElse: () => JobType.standard,
+    );
+  }
+
+  static DateTime _parseDate(dynamic value) {
     if (value == null) return DateTime.now();
-    if (value is Timestamp) return value.toDate();
     if (value is String) return DateTime.parse(value);
     return DateTime.now();
   }
+
+  static DateTime? _parseOptionalDate(dynamic value) {
+    if (value == null) return null;
+    if (value is String) return DateTime.parse(value);
+    return null;
+  }
+
+  // ============================================================
+  // COMPUTED PROPERTIES
+  // ============================================================
+
+  String get displayTitle => title ?? 'Untitled Job';
+
+  String get statusLabel => switch (status) {
+        JobStatus.draft => 'Draft',
+        JobStatus.scheduled => 'Scheduled',
+        JobStatus.dispatched => 'Dispatched',
+        JobStatus.enRoute => 'En Route',
+        JobStatus.inProgress => 'In Progress',
+        JobStatus.onHold => 'On Hold',
+        JobStatus.completed => 'Completed',
+        JobStatus.invoiced => 'Invoiced',
+        JobStatus.cancelled => 'Cancelled',
+      };
+
+  String get priorityDisplay => switch (priority) {
+        JobPriority.low => 'Low',
+        JobPriority.normal => 'Normal',
+        JobPriority.high => 'High',
+        JobPriority.urgent => 'Urgent',
+      };
+
+  String get fullAddress {
+    final parts = <String>[];
+    if (address.isNotEmpty) parts.add(address);
+    if (city != null && city!.isNotEmpty) parts.add(city!);
+    if (state != null && state!.isNotEmpty) parts.add(state!);
+    if (zipCode != null && zipCode!.isNotEmpty) parts.add(zipCode!);
+    return parts.join(', ');
+  }
+
+  bool get isActive =>
+      status == JobStatus.scheduled ||
+      status == JobStatus.dispatched ||
+      status == JobStatus.enRoute ||
+      status == JobStatus.inProgress;
+
+  bool get canStart =>
+      status == JobStatus.scheduled ||
+      status == JobStatus.dispatched ||
+      status == JobStatus.enRoute;
+
+  bool get canComplete => status == JobStatus.inProgress;
+
+  bool get isEditable =>
+      status != JobStatus.invoiced && status != JobStatus.cancelled;
+
+  bool get isAssigned => assignedToUserId != null;
 
   // ============================================================
   // COPY WITH
@@ -369,11 +403,14 @@ class Job extends Equatable {
     String? id,
     String? companyId,
     String? createdByUserId,
+    String? customerId,
     String? assignedToUserId,
     List<String>? assignedUserIds,
     String? teamId,
+    String? title,
+    String? description,
+    String? internalNotes,
     String? tradeType,
-    String? customerId,
     String? customerName,
     String? customerEmail,
     String? customerPhone,
@@ -383,36 +420,37 @@ class Job extends Equatable {
     String? zipCode,
     double? latitude,
     double? longitude,
+    JobStatus? status,
+    JobPriority? priority,
+    JobType? jobType,
+    Map<String, dynamic>? typeMetadata,
     DateTime? scheduledStart,
     DateTime? scheduledEnd,
     int? estimatedDuration,
-    JobStatus? status,
     DateTime? startedAt,
     DateTime? completedAt,
-    String? title,
-    String? description,
-    String? internalNotes,
+    double? estimatedAmount,
+    double? actualAmount,
     List<String>? tags,
-    JobPriority? priority,
-    List<String>? photoIds,
-    List<String>? calculationIds,
     String? invoiceId,
     String? quoteId,
-    List<TimeEntry>? timeEntries,
-    int? totalMinutesWorked,
+    bool? syncedToCloud,
     DateTime? createdAt,
     DateTime? updatedAt,
-    bool? syncedToCloud,
+    DateTime? deletedAt,
   }) {
     return Job(
       id: id ?? this.id,
       companyId: companyId ?? this.companyId,
       createdByUserId: createdByUserId ?? this.createdByUserId,
+      customerId: customerId ?? this.customerId,
       assignedToUserId: assignedToUserId ?? this.assignedToUserId,
       assignedUserIds: assignedUserIds ?? this.assignedUserIds,
       teamId: teamId ?? this.teamId,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      internalNotes: internalNotes ?? this.internalNotes,
       tradeType: tradeType ?? this.tradeType,
-      customerId: customerId ?? this.customerId,
       customerName: customerName ?? this.customerName,
       customerEmail: customerEmail ?? this.customerEmail,
       customerPhone: customerPhone ?? this.customerPhone,
@@ -422,54 +460,57 @@ class Job extends Equatable {
       zipCode: zipCode ?? this.zipCode,
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
+      status: status ?? this.status,
+      priority: priority ?? this.priority,
+      jobType: jobType ?? this.jobType,
+      typeMetadata: typeMetadata ?? this.typeMetadata,
       scheduledStart: scheduledStart ?? this.scheduledStart,
       scheduledEnd: scheduledEnd ?? this.scheduledEnd,
       estimatedDuration: estimatedDuration ?? this.estimatedDuration,
-      status: status ?? this.status,
       startedAt: startedAt ?? this.startedAt,
       completedAt: completedAt ?? this.completedAt,
-      title: title ?? this.title,
-      description: description ?? this.description,
-      internalNotes: internalNotes ?? this.internalNotes,
+      estimatedAmount: estimatedAmount ?? this.estimatedAmount,
+      actualAmount: actualAmount ?? this.actualAmount,
       tags: tags ?? this.tags,
-      priority: priority ?? this.priority,
-      photoIds: photoIds ?? this.photoIds,
-      calculationIds: calculationIds ?? this.calculationIds,
       invoiceId: invoiceId ?? this.invoiceId,
       quoteId: quoteId ?? this.quoteId,
-      timeEntries: timeEntries ?? this.timeEntries,
-      totalMinutesWorked: totalMinutesWorked ?? this.totalMinutesWorked,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? DateTime.now(),
       syncedToCloud: syncedToCloud ?? this.syncedToCloud,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
     );
   }
+}
 
-  // ============================================================
-  // FACTORY CONSTRUCTORS
-  // ============================================================
+// Kept for backward compatibility with bid/invoice screens.
+class JobLineItem {
+  final String id;
+  final String description;
+  final double quantity;
+  final double unitPrice;
+  final double total;
 
-  /// Create a new job draft
-  factory Job.create({
-    required String id,
-    required String companyId,
-    required String createdByUserId,
-    required String customerName,
-    required String address,
-    String? customerId,
-    String? title,
-  }) {
-    final now = DateTime.now();
-    return Job(
-      id: id,
-      companyId: companyId,
-      createdByUserId: createdByUserId,
-      customerName: customerName,
-      address: address,
-      customerId: customerId,
-      title: title,
-      createdAt: now,
-      updatedAt: now,
-    );
-  }
+  const JobLineItem({
+    required this.id,
+    required this.description,
+    this.quantity = 1,
+    required this.unitPrice,
+    double? total,
+  }) : total = total ?? (quantity * unitPrice);
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'description': description,
+        'quantity': quantity,
+        'unitPrice': unitPrice,
+        'total': total,
+      };
+
+  factory JobLineItem.fromJson(Map<String, dynamic> json) => JobLineItem(
+        id: json['id'] as String,
+        description: json['description'] as String,
+        quantity: (json['quantity'] as num?)?.toDouble() ?? 1,
+        unitPrice: (json['unitPrice'] as num?)?.toDouble() ?? 0,
+        total: (json['total'] as num?)?.toDouble(),
+      );
 }

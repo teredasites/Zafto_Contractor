@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../theme/zafto_colors.dart';
 import '../../theme/theme_provider.dart';
-import '../../models/business/job.dart';
+import '../../models/job.dart';
 import '../../services/job_service.dart';
 import 'job_detail_screen.dart';
 import 'job_create_screen.dart';
@@ -116,7 +116,7 @@ class _JobsHubScreenState extends ConsumerState<JobsHubScreen> {
           _buildChip(colors, 'Active', JobStatus.inProgress),
           _buildChip(colors, 'Scheduled', JobStatus.scheduled),
           _buildChip(colors, 'Completed', JobStatus.completed),
-          _buildChip(colors, 'Leads', JobStatus.lead),
+          _buildChip(colors, 'Drafts', JobStatus.draft),
         ],
       ),
     );
@@ -176,23 +176,23 @@ class _JobsHubScreenState extends ConsumerState<JobsHubScreen> {
               children: [
                 _buildStatusBadge(colors, job.status),
                 const Spacer(),
-                if (job.scheduledDate != null)
-                  Text(_formatDate(job.scheduledDate!), style: TextStyle(fontSize: 12, color: colors.textTertiary)),
+                if (job.scheduledStart != null)
+                  Text(_formatDate(job.scheduledStart!), style: TextStyle(fontSize: 12, color: colors.textTertiary)),
               ],
             ),
             const SizedBox(height: 10),
-            Text(job.title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: colors.textPrimary)),
-            if (job.customerName != null) ...[
+            Text(job.displayTitle, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: colors.textPrimary)),
+            if (job.customerName.isNotEmpty) ...[
               const SizedBox(height: 4),
-              Text(job.customerName!, style: TextStyle(fontSize: 14, color: colors.textSecondary)),
+              Text(job.customerName, style: TextStyle(fontSize: 14, color: colors.textSecondary)),
             ],
-            if (job.address != null) ...[
+            if (job.address.isNotEmpty) ...[
               const SizedBox(height: 2),
               Row(
                 children: [
                   Icon(LucideIcons.mapPin, size: 12, color: colors.textTertiary),
                   const SizedBox(width: 4),
-                  Expanded(child: Text(job.address!, style: TextStyle(fontSize: 12, color: colors.textTertiary), overflow: TextOverflow.ellipsis)),
+                  Expanded(child: Text(job.address, style: TextStyle(fontSize: 12, color: colors.textTertiary), overflow: TextOverflow.ellipsis)),
                 ],
               ),
             ],
@@ -212,7 +212,10 @@ class _JobsHubScreenState extends ConsumerState<JobsHubScreen> {
 
   Widget _buildStatusBadge(ZaftoColors colors, JobStatus status) {
     final (color, bgColor) = switch (status) {
-      JobStatus.lead => (colors.textTertiary, colors.fillDefault),
+      JobStatus.draft => (colors.textTertiary, colors.fillDefault),
+      JobStatus.dispatched => (colors.accentInfo, colors.accentInfo.withValues(alpha: 0.15)),
+      JobStatus.enRoute => (colors.accentInfo, colors.accentInfo.withValues(alpha: 0.15)),
+      JobStatus.onHold => (colors.accentWarning, colors.accentWarning.withValues(alpha: 0.15)),
       JobStatus.scheduled => (colors.accentInfo, colors.accentInfo.withValues(alpha: 0.15)),
       JobStatus.inProgress => (colors.accentSuccess, colors.accentSuccess.withValues(alpha: 0.15)),
       JobStatus.completed => (colors.accentPrimary, colors.accentPrimary.withValues(alpha: 0.15)),

@@ -38,7 +38,7 @@ import 'dart:convert';
 
 import '../../theme/zafto_colors.dart';
 import '../../theme/theme_provider.dart';
-import '../../models/business/job.dart';
+import '../../models/job.dart';
 import '../../services/job_service.dart';
 
 // ============================================================
@@ -390,7 +390,7 @@ class _SaveToJobSheetState extends ConsumerState<_SaveToJobSheet> {
         Navigator.pop(context, true);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Saved to ${job.title}'),
+            content: Text('Saved to ${job.displayTitle}'),
             behavior: SnackBarBehavior.floating,
             duration: const Duration(seconds: 2),
           ),
@@ -647,7 +647,7 @@ class _SaveToJobSheetState extends ConsumerState<_SaveToJobSheet> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    job.title,
+                                    job.displayTitle,
                                     style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w600,
@@ -657,7 +657,7 @@ class _SaveToJobSheetState extends ConsumerState<_SaveToJobSheet> {
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                   Text(
-                                    '${job.customerName ?? 'No customer'} - ${job.statusLabel}',
+                                    '${job.customerName.isNotEmpty ? job.customerName : 'No customer'} - ${job.statusLabel}',
                                     style: TextStyle(
                                       fontSize: 12,
                                       color: colors.textSecondary,
