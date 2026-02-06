@@ -41,7 +41,7 @@ dependencies:
 
   # Location Services (Sprint 3.6)
   geolocator: ^11.0.0
-  geocoding: ^2.1.1
+  geocoding: ^4.0.0
 
   # PDF & Sharing (Sprint 3.6)
   pdf: ^3.10.8
