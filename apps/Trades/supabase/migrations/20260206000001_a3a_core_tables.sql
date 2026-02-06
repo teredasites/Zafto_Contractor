@@ -6,12 +6,12 @@
 -- Tables: companies, users, audit_log, user_sessions, login_attempts
 -- ============================================================
 
--- Helper functions for RLS
-CREATE OR REPLACE FUNCTION auth.company_id() RETURNS uuid AS $$
+-- Helper functions for RLS (in public schema — auth schema is locked by Supabase)
+CREATE OR REPLACE FUNCTION public.requesting_company_id() RETURNS uuid AS $$
   SELECT (auth.jwt() -> 'app_metadata' ->> 'company_id')::uuid;
 $$ LANGUAGE sql STABLE;
 
-CREATE OR REPLACE FUNCTION auth.user_role() RETURNS text AS $$
+CREATE OR REPLACE FUNCTION public.requesting_user_role() RETURNS text AS $$
   SELECT auth.jwt() -> 'app_metadata' ->> 'role';
 $$ LANGUAGE sql STABLE;
 
@@ -58,10 +58,10 @@ ALTER TABLE companies ENABLE ROW LEVEL SECURITY;
 CREATE TRIGGER companies_updated_at BEFORE UPDATE ON companies FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
 -- RLS: Users can read their own company
-CREATE POLICY "companies_select" ON companies FOR SELECT USING (id = auth.company_id());
+CREATE POLICY "companies_select" ON companies FOR SELECT USING (id = requesting_company_id());
 -- RLS: Only owner/admin can update company
 CREATE POLICY "companies_update" ON companies FOR UPDATE USING (
-  id = auth.company_id() AND auth.user_role() IN ('owner', 'admin')
+  id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin')
 );
 -- RLS: Anyone can insert (onboarding creates company)
 CREATE POLICY "companies_insert" ON companies FOR INSERT WITH CHECK (true);
@@ -90,12 +90,12 @@ ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 CREATE TRIGGER users_updated_at BEFORE UPDATE ON users FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
 -- RLS: Users see their own company members
-CREATE POLICY "users_select" ON users FOR SELECT USING (company_id = auth.company_id());
+CREATE POLICY "users_select" ON users FOR SELECT USING (company_id = requesting_company_id());
 -- RLS: Owner/admin can manage users, or user can update self
 CREATE POLICY "users_update" ON users FOR UPDATE USING (
-  company_id = auth.company_id() AND (auth.user_role() IN ('owner', 'admin') OR id = auth.uid())
+  company_id = requesting_company_id() AND (requesting_user_role() IN ('owner', 'admin') OR id = auth.uid())
 );
-CREATE POLICY "users_insert" ON users FOR INSERT WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "users_insert" ON users FOR INSERT WITH CHECK (company_id = requesting_company_id());
 
 -- ============================================================
 -- AUDIT LOG TABLE (append-only, immutable)
@@ -116,7 +116,7 @@ CREATE INDEX idx_audit_log_company_time ON audit_log (company_id, created_at DES
 CREATE INDEX idx_audit_log_table_record ON audit_log (table_name, record_id);
 
 ALTER TABLE audit_log ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "audit_select" ON audit_log FOR SELECT USING (company_id = auth.company_id());
+CREATE POLICY "audit_select" ON audit_log FOR SELECT USING (company_id = requesting_company_id());
 
 -- Audit trigger function (attached to every business table)
 CREATE OR REPLACE FUNCTION audit_trigger_fn()
@@ -169,7 +169,7 @@ CREATE INDEX idx_login_attempts_email ON login_attempts (email, created_at DESC)
 
 -- ============================================================
 -- JWT CLAIMS TRIGGER (sets company_id + role on JWT after user creation)
--- This is CRITICAL — all RLS policies depend on auth.company_id()
+-- This is CRITICAL — all RLS policies depend on requesting_company_id()
 -- ============================================================
 CREATE OR REPLACE FUNCTION handle_new_user()
 RETURNS TRIGGER AS $$

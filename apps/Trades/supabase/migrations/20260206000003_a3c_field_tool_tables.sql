@@ -37,10 +37,10 @@ CREATE INDEX idx_photos_job ON photos (job_id);
 CREATE INDEX idx_photos_company ON photos (company_id, created_at DESC);
 CREATE TRIGGER photos_audit AFTER INSERT OR UPDATE OR DELETE ON photos FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
 
-CREATE POLICY "photos_select" ON photos FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
-CREATE POLICY "photos_insert" ON photos FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "photos_update" ON photos FOR UPDATE USING (company_id = auth.company_id());
-CREATE POLICY "photos_delete" ON photos FOR DELETE USING (company_id = auth.company_id());
+CREATE POLICY "photos_select" ON photos FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+CREATE POLICY "photos_insert" ON photos FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "photos_update" ON photos FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "photos_delete" ON photos FOR DELETE USING (company_id = requesting_company_id());
 
 -- SIGNATURES
 CREATE TABLE signatures (
@@ -61,8 +61,8 @@ CREATE TABLE signatures (
 
 ALTER TABLE signatures ENABLE ROW LEVEL SECURITY;
 CREATE TRIGGER signatures_audit AFTER INSERT OR UPDATE OR DELETE ON signatures FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
-CREATE POLICY "signatures_select" ON signatures FOR SELECT USING (company_id = auth.company_id());
-CREATE POLICY "signatures_insert" ON signatures FOR INSERT WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "signatures_select" ON signatures FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "signatures_insert" ON signatures FOR INSERT WITH CHECK (company_id = requesting_company_id());
 
 -- VOICE NOTES
 CREATE TABLE voice_notes (
@@ -83,8 +83,8 @@ CREATE TABLE voice_notes (
 
 ALTER TABLE voice_notes ENABLE ROW LEVEL SECURITY;
 CREATE TRIGGER voice_notes_audit AFTER INSERT OR UPDATE OR DELETE ON voice_notes FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
-CREATE POLICY "voice_notes_select" ON voice_notes FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
-CREATE POLICY "voice_notes_insert" ON voice_notes FOR INSERT WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "voice_notes_select" ON voice_notes FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+CREATE POLICY "voice_notes_insert" ON voice_notes FOR INSERT WITH CHECK (company_id = requesting_company_id());
 
 -- RECEIPTS
 CREATE TABLE receipts (
@@ -110,9 +110,9 @@ CREATE TABLE receipts (
 ALTER TABLE receipts ENABLE ROW LEVEL SECURITY;
 CREATE TRIGGER receipts_updated_at BEFORE UPDATE ON receipts FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER receipts_audit AFTER INSERT OR UPDATE OR DELETE ON receipts FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
-CREATE POLICY "receipts_select" ON receipts FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
-CREATE POLICY "receipts_insert" ON receipts FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "receipts_update" ON receipts FOR UPDATE USING (company_id = auth.company_id());
+CREATE POLICY "receipts_select" ON receipts FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+CREATE POLICY "receipts_insert" ON receipts FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "receipts_update" ON receipts FOR UPDATE USING (company_id = requesting_company_id());
 
 -- SAFETY / COMPLIANCE RECORDS
 CREATE TABLE compliance_records (
@@ -136,8 +136,8 @@ CREATE TABLE compliance_records (
 ALTER TABLE compliance_records ENABLE ROW LEVEL SECURITY;
 CREATE INDEX idx_compliance_records_company_type ON compliance_records (company_id, record_type);
 CREATE TRIGGER compliance_records_audit AFTER INSERT OR UPDATE OR DELETE ON compliance_records FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
-CREATE POLICY "compliance_select" ON compliance_records FOR SELECT USING (company_id = auth.company_id());
-CREATE POLICY "compliance_insert" ON compliance_records FOR INSERT WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "compliance_select" ON compliance_records FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "compliance_insert" ON compliance_records FOR INSERT WITH CHECK (company_id = requesting_company_id());
 
 -- MILEAGE TRIPS
 CREATE TABLE mileage_trips (
@@ -159,5 +159,5 @@ CREATE TABLE mileage_trips (
 
 ALTER TABLE mileage_trips ENABLE ROW LEVEL SECURITY;
 CREATE TRIGGER mileage_trips_audit AFTER INSERT OR UPDATE OR DELETE ON mileage_trips FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
-CREATE POLICY "mileage_select" ON mileage_trips FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
-CREATE POLICY "mileage_insert" ON mileage_trips FOR INSERT WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "mileage_select" ON mileage_trips FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+CREATE POLICY "mileage_insert" ON mileage_trips FOR INSERT WITH CHECK (company_id = requesting_company_id());
