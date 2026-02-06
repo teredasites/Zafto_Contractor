@@ -67,7 +67,7 @@ dependencies:
   supabase_flutter: ^2.8.0
 
   # Utilities
-  intl: ^0.19.0
+  intl: ^0.20.2
   connectivity_plus: ^6.0.3
   path_provider: ^2.1.2
   collection: ^1.18.0
