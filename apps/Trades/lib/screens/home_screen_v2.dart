@@ -270,7 +270,7 @@ class _HomeScreenV2State extends ConsumerState<HomeScreenV2> {
       final job = activeJobs.first;
       items.add(_RightNowItem(
         type: _RightNowType.activeJob,
-        title: job.title,
+        title: job.displayTitle,
         subtitle: job.customerName ?? job.address ?? 'Active job',
         value: '\$${_formatMoney(job.estimatedAmount)}',
         icon: LucideIcons.hardHat,

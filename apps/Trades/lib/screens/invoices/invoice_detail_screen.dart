@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../theme/zafto_colors.dart';
 import '../../theme/theme_provider.dart';
-import '../../models/business/invoice.dart';
+import '../../models/invoice.dart';
 import '../../services/invoice_service.dart';
 import 'invoice_create_screen.dart';
 import '../../services/invoice_pdf_generator.dart';
@@ -95,9 +95,9 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text('Due ${_formatDate(_invoice!.dueDate)}', style: TextStyle(fontSize: 13, color: _invoice!.isOverdue ? Colors.red : colors.textTertiary)),
+            Text('Due ${_invoice!.dueDate != null ? _formatDate(_invoice!.dueDate!) : 'N/A'}', style: TextStyle(fontSize: 13, color: _invoice!.isOverdue ? Colors.red : colors.textTertiary)),
             const SizedBox(height: 4),
-            Text('Issued ${_formatDate(_invoice!.issueDate)}', style: TextStyle(fontSize: 12, color: colors.textQuaternary)),
+            Text('Issued ${_formatDate(_invoice!.createdAt)}', style: TextStyle(fontSize: 12, color: colors.textQuaternary)),
           ],
         ),
       ],
@@ -107,11 +107,15 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
   Widget _buildStatusBadge(ZaftoColors colors) {
     final (color, bgColor, icon) = switch (_invoice!.status) {
       InvoiceStatus.draft => (colors.textTertiary, colors.fillDefault, LucideIcons.fileEdit),
+      InvoiceStatus.pendingApproval => (colors.accentWarning, colors.accentWarning.withValues(alpha: 0.15), LucideIcons.clock),
+      InvoiceStatus.approved => (colors.accentSuccess, colors.accentSuccess.withValues(alpha: 0.15), LucideIcons.checkCircle2),
+      InvoiceStatus.rejected => (Colors.red, Colors.red.withValues(alpha: 0.15), LucideIcons.xCircle),
       InvoiceStatus.sent => (colors.accentInfo, colors.accentInfo.withValues(alpha: 0.15), LucideIcons.send),
       InvoiceStatus.viewed => (colors.accentInfo, colors.accentInfo.withValues(alpha: 0.15), LucideIcons.eye),
+      InvoiceStatus.partiallyPaid => (colors.accentWarning, colors.accentWarning.withValues(alpha: 0.15), LucideIcons.dollarSign),
       InvoiceStatus.paid => (colors.accentSuccess, colors.accentSuccess.withValues(alpha: 0.15), LucideIcons.checkCircle),
       InvoiceStatus.overdue => (Colors.red, Colors.red.withValues(alpha: 0.15), LucideIcons.alertCircle),
-      InvoiceStatus.cancelled => (colors.textTertiary, colors.fillDefault, LucideIcons.x),
+      InvoiceStatus.voided => (colors.textTertiary, colors.fillDefault, LucideIcons.x),
     };
     final label = _invoice!.isOverdue && _invoice!.status != InvoiceStatus.paid ? 'Overdue' : _invoice!.statusLabel;
     return Container(
@@ -194,14 +198,14 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
           Divider(color: colors.borderSubtle),
           const SizedBox(height: 12),
           _buildTotalRow(colors, 'Total', '\$${_invoice!.total.toStringAsFixed(2)}', isBold: true),
-          if (_invoice!.isPaid && _invoice!.paidDate != null) ...[
+          if (_invoice!.isPaid && _invoice!.paidAt != null) ...[
             const SizedBox(height: 12),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(LucideIcons.checkCircle, size: 16, color: colors.accentSuccess),
                 const SizedBox(width: 6),
-                Text('Paid on ${_formatDateFull(_invoice!.paidDate!)}', style: TextStyle(fontSize: 13, color: colors.accentSuccess)),
+                Text('Paid on ${_formatDateFull(_invoice!.paidAt!)}', style: TextStyle(fontSize: 13, color: colors.accentSuccess)),
               ],
             ),
           ],
@@ -330,7 +334,7 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
 
   Future<void> _markPaid() async {
     final now = DateTime.now();
-    final updated = _invoice!.copyWith(status: InvoiceStatus.paid, paidDate: now, updatedAt: now);
+    final updated = _invoice!.copyWith(status: InvoiceStatus.paid, paidAt: now, updatedAt: now);
     await ref.read(invoicesProvider.notifier).updateInvoice(updated);
     setState(() => _invoice = updated);
     if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: const Text('Invoice marked as paid'), backgroundColor: ref.read(zaftoColorsProvider).accentSuccess));

@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../theme/zafto_colors.dart';
 import '../../theme/theme_provider.dart';
-import '../../models/business/customer.dart';
+import '../../models/customer.dart';
 import '../../services/customer_service.dart';
 
 class CustomerCreateScreen extends ConsumerStatefulWidget {

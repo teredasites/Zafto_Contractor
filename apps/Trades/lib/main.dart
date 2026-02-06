@@ -9,26 +9,31 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'firebase_options.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import 'core/supabase_client.dart';
+import 'core/env_dev.dart';
 import 'theme/theme_provider.dart';
 import 'theme/zafto_theme_builder.dart';
 import 'screens/home_screen_v2.dart';
 import 'screens/auth/login_screen.dart';
+import 'screens/onboarding/company_setup_screen.dart';
 import 'services/auth_service.dart';
 import 'services/exam_prep/progress_tracker.dart';
 
 /// ZAFTO - Multi-Trade Professional Platform
-/// 
+///
 /// Design System v2.6 - LOCKED January 28, 2026
-/// Philosophy: "Apple-crisp Silicon Valley Toolbox"
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
-  // Initialize Firebase
+
+  // Initialize Supabase (primary backend)
+  await initSupabase(devConfig);
+
+  // Initialize Firebase (kept for AI Cloud Functions — remove after Edge Function migration)
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  
+
   if (!kIsWeb) {
     FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
     PlatformDispatcher.instance.onError = (error, stack) {
@@ -36,7 +41,7 @@ void main() async {
       return true;
     };
   }
-  
+
   // Initialize Hive for local storage
   await Hive.initFlutter();
   await Hive.openBox('settings');
@@ -55,10 +60,10 @@ void main() async {
   // Session 23 Time Clock boxes
   await Hive.openBox<String>('time_entries');
   await Hive.openBox<String>('time_entries_sync_meta');
-  
+
   // Initialize exam progress tracker (CRITICAL - must be after Hive init)
   await ProgressTracker().initialize();
-  
+
   // Lock to portrait mode (mobile only)
   if (!kIsWeb) {
     SystemChrome.setPreferredOrientations([
@@ -66,7 +71,7 @@ void main() async {
       DeviceOrientation.portraitDown,
     ]);
   }
-  
+
   runApp(const ProviderScope(child: ZaftoApp()));
 }
 
@@ -77,7 +82,7 @@ class ZaftoApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeState = ref.watch(themeProvider);
     final themeData = ZaftoThemeBuilder.buildTheme(themeState.currentTheme);
-    
+
     // Set system UI based on theme
     final isDark = themeState.isDark;
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -86,7 +91,7 @@ class ZaftoApp extends ConsumerWidget {
       systemNavigationBarColor: themeState.colors.navBg,
       systemNavigationBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
     ));
-    
+
     return MaterialApp(
       title: 'ZAFTO',
       debugShowCheckedModeBanner: false,
@@ -98,7 +103,7 @@ class ZaftoApp extends ConsumerWidget {
   }
 }
 
-/// Entry point - onboarding screens disabled for rebuild
+/// App entry point — routes based on auth state.
 class _AppEntry extends ConsumerWidget {
   const _AppEntry();
 
@@ -111,7 +116,7 @@ class _AppEntry extends ConsumerWidget {
       return const HomeScreenV2();
     }
 
-    // MOBILE: Check auth only
+    // MOBILE: Route based on auth state
     final authState = ref.watch(authStateProvider);
 
     if (authState.status == AuthStatus.initial || authState.status == AuthStatus.loading) {
@@ -123,8 +128,13 @@ class _AppEntry extends ConsumerWidget {
       );
     }
 
-    if (authState.status == AuthStatus.unauthenticated || authState.user == null) {
+    if (authState.status == AuthStatus.unauthenticated ||
+        authState.status == AuthStatus.error) {
       return const LoginScreen();
+    }
+
+    if (authState.status == AuthStatus.needsOnboarding) {
+      return const CompanySetupScreen();
     }
 
     return const HomeScreenV2();

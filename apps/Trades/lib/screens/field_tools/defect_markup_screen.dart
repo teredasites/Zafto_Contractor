@@ -1,14 +1,15 @@
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:image_picker/image_picker.dart';
-
 import '../../theme/zafto_colors.dart';
 import '../../theme/theme_provider.dart';
 import '../../services/field_camera_service.dart';
+import '../../services/photo_service.dart';
+import '../../models/photo.dart';
 
 /// Defect Markup Tool - Photo capture with drawing/annotation overlay
 class DefectMarkupScreen extends ConsumerStatefulWidget {
@@ -472,12 +473,88 @@ class _DefectMarkupScreenState extends ConsumerState<DefectMarkupScreen> {
     });
   }
 
+  bool _isSaving = false;
+
   Future<void> _saveMarkup() async {
-    // TODO: BACKEND - Render canvas to image and save
+    if (_photo == null || _isSaving) return;
+    setState(() => _isSaving = true);
     HapticFeedback.mediumImpact();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Markup saved'), behavior: SnackBarBehavior.floating),
-    );
+
+    try {
+      // Render the RepaintBoundary (photo + annotations) to an image
+      final boundary = _canvasKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
+      if (boundary == null) {
+        _showError('Could not capture markup');
+        return;
+      }
+
+      final image = await boundary.toImage(pixelRatio: 2.0);
+      final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      if (byteData == null) {
+        _showError('Could not render markup image');
+        return;
+      }
+
+      final bytes = byteData.buffer.asUint8List();
+
+      // Build annotation metadata for re-editing later
+      final annotationData = {
+        'paths': _paths.map((p) => {
+          'tool': p.tool.name,
+          'color': p.color.value,
+          'strokeWidth': p.strokeWidth,
+          'points': p.points.map((pt) => [pt.dx, pt.dy]).toList(),
+        }).toList(),
+        'textAnnotations': _textAnnotations.map((t) => {
+          'text': t.text,
+          'x': t.position.dx,
+          'y': t.position.dy,
+          'color': t.color.value,
+        }).toList(),
+      };
+
+      // Upload rendered markup image
+      final photoService = ref.read(photoServiceProvider);
+      await photoService.uploadPhoto(
+        bytes: bytes,
+        jobId: widget.jobId,
+        category: PhotoCategory.markup,
+        caption: 'Defect markup',
+        fileName: 'markup_${DateTime.now().millisecondsSinceEpoch}.png',
+        contentType: 'image/png',
+        takenAt: _photo!.capturedAt,
+        latitude: _photo!.latitude,
+        longitude: _photo!.longitude,
+        metadata: annotationData,
+      );
+
+      // Also upload the original base photo
+      await photoService.uploadPhoto(
+        bytes: _photo!.bytes,
+        jobId: widget.jobId,
+        category: PhotoCategory.defect,
+        caption: 'Defect (original)',
+        fileName: _photo!.fileName,
+        takenAt: _photo!.capturedAt,
+        latitude: _photo!.latitude,
+        longitude: _photo!.longitude,
+      );
+
+      // Refresh job photos if applicable
+      if (widget.jobId != null) {
+        ref.read(jobPhotosProvider(widget.jobId!).notifier).loadPhotos();
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Markup saved'), behavior: SnackBarBehavior.floating),
+        );
+      }
+    } catch (e) {
+      _showError('Failed to save markup: $e');
+    } finally {
+      if (mounted) setState(() => _isSaving = false);
+    }
   }
 
   void _showError(String message) {

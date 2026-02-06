@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,6 +7,8 @@ import 'package:image_picker/image_picker.dart';
 import '../../theme/zafto_colors.dart';
 import '../../theme/theme_provider.dart';
 import '../../services/field_camera_service.dart';
+import '../../services/compliance_service.dart';
+import '../../models/compliance_record.dart';
 
 /// Incident Report - OSHA-compliant workplace incident documentation
 class IncidentReportScreen extends ConsumerStatefulWidget {
@@ -669,7 +670,6 @@ class _IncidentReportScreenState extends ConsumerState<IncidentReportScreen> {
 
   void _submitReport() async {
     if (!_formKey.currentState!.validate()) {
-      // Scroll to first error
       _scrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
       return;
     }
@@ -684,31 +684,64 @@ class _IncidentReportScreenState extends ConsumerState<IncidentReportScreen> {
     HapticFeedback.heavyImpact();
     setState(() => _isSaving = true);
 
-    // TODO: BACKEND - Submit incident report
-    // - Save to database with all form data
-    // - Upload photos to cloud storage
-    // - Generate PDF report
-    // - Send notifications based on severity
-    // - Update OSHA logs if recordable
-
-    await Future.delayed(const Duration(seconds: 1));
-
-    if (mounted) {
-      setState(() => _isSaving = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              const Icon(LucideIcons.checkCircle, color: Colors.white),
-              const SizedBox(width: 12),
-              const Expanded(child: Text('Incident report submitted')),
-            ],
-          ),
-          backgroundColor: Colors.green,
-          behavior: SnackBarBehavior.floating,
-        ),
+    try {
+      final service = ref.read(complianceServiceProvider);
+      final incidentDateTime = DateTime(
+        _incidentDate.year,
+        _incidentDate.month,
+        _incidentDate.day,
+        _incidentTime.hour,
+        _incidentTime.minute,
       );
-      Navigator.pop(context);
+
+      await service.createRecord(
+        type: ComplianceRecordType.incidentReport,
+        jobId: widget.jobId,
+        severity: _severity.name,
+        data: {
+          'incident_type': _type.label,
+          'description': _descriptionController.text.trim(),
+          'location': _locationController.text.trim(),
+          'injured_party': _injuredPartyController.text.trim(),
+          'injury_description': _injuryDescriptionController.text.trim(),
+          'witnesses': _witnessController.text.trim(),
+          'immediate_action': _immediateActionController.text.trim(),
+          'root_cause': _rootCauseController.text.trim(),
+          'prevention_measures': _preventionController.text.trim(),
+          'medical_attention_required': _medicalAttentionRequired,
+          'work_stoppage': _workStoppage,
+          'osha_recordable': _oshaRecordable,
+          'property_damage': _propertyDamage,
+          'photo_count': _photos.length,
+          'fetched_address': _currentAddress,
+        },
+        startedAt: incidentDateTime,
+      );
+
+      if (mounted) {
+        setState(() => _isSaving = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Row(
+              children: [
+                Icon(LucideIcons.checkCircle, color: Colors.white),
+                SizedBox(width: 12),
+                Expanded(child: Text('Incident report submitted')),
+              ],
+            ),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isSaving = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to submit report: $e'), backgroundColor: Colors.red),
+        );
+      }
     }
   }
 

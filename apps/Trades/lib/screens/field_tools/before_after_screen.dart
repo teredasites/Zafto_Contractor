@@ -8,6 +8,8 @@ import 'package:image_picker/image_picker.dart';
 import '../../theme/zafto_colors.dart';
 import '../../theme/theme_provider.dart';
 import '../../services/field_camera_service.dart';
+import '../../services/photo_service.dart';
+import '../../models/photo.dart';
 
 /// Before/After Comparison Tool - Side-by-side photo comparison with slider
 class BeforeAfterScreen extends ConsumerStatefulWidget {
@@ -507,12 +509,55 @@ class _BeforeAfterScreenState extends ConsumerState<BeforeAfterScreen> {
     }
   }
 
+  bool _isSaving = false;
+
   Future<void> _saveComparison() async {
-    // TODO: BACKEND - Save comparison to job
+    if (_beforePhoto == null || _afterPhoto == null || _isSaving) return;
+    setState(() => _isSaving = true);
     HapticFeedback.mediumImpact();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Comparison saved'), behavior: SnackBarBehavior.floating),
-    );
+
+    try {
+      final photoService = ref.read(photoServiceProvider);
+
+      // Upload "before" photo
+      await photoService.uploadPhoto(
+        bytes: _beforePhoto!.bytes,
+        jobId: widget.jobId,
+        category: PhotoCategory.before,
+        caption: 'Before',
+        fileName: _beforePhoto!.fileName,
+        takenAt: _beforePhoto!.capturedAt,
+        latitude: _beforePhoto!.latitude,
+        longitude: _beforePhoto!.longitude,
+      );
+
+      // Upload "after" photo
+      await photoService.uploadPhoto(
+        bytes: _afterPhoto!.bytes,
+        jobId: widget.jobId,
+        category: PhotoCategory.after,
+        caption: 'After',
+        fileName: _afterPhoto!.fileName,
+        takenAt: _afterPhoto!.capturedAt,
+        latitude: _afterPhoto!.latitude,
+        longitude: _afterPhoto!.longitude,
+      );
+
+      // Refresh job photos if applicable
+      if (widget.jobId != null) {
+        ref.read(jobPhotosProvider(widget.jobId!).notifier).loadPhotos();
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Before/after photos saved'), behavior: SnackBarBehavior.floating),
+        );
+      }
+    } catch (e) {
+      _showError('Failed to save: $e');
+    } finally {
+      if (mounted) setState(() => _isSaving = false);
+    }
   }
 
   Future<void> _exportComparison() async {

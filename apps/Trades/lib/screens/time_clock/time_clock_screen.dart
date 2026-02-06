@@ -20,7 +20,7 @@ import '../../theme/theme_provider.dart';
 import '../../models/time_entry.dart';
 import '../../services/time_clock_service.dart';
 import '../../services/job_service.dart';
-import '../../models/business/job.dart';
+import '../../models/job.dart';
 
 class TimeClockScreen extends ConsumerStatefulWidget {
   const TimeClockScreen({super.key});
@@ -500,7 +500,7 @@ class _TimeClockScreenState extends ConsumerState<TimeClockScreen>
                   ...jobs.map((job) => DropdownMenuItem(
                     value: job.id,
                     child: Text(
-                      job.title,
+                      job.displayTitle,
                       style: TextStyle(color: colors.textPrimary),
                       overflow: TextOverflow.ellipsis,
                     ),

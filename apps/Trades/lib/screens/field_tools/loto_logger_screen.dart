@@ -7,6 +7,8 @@ import 'package:image_picker/image_picker.dart';
 import '../../theme/zafto_colors.dart';
 import '../../theme/theme_provider.dart';
 import '../../services/field_camera_service.dart';
+import '../../services/compliance_service.dart';
+import '../../models/compliance_record.dart';
 
 /// LOTO Logger - Lock Out Tag Out documentation for safety compliance
 class LOTOLoggerScreen extends ConsumerStatefulWidget {
@@ -457,7 +459,7 @@ class _LOTOLoggerScreenState extends ConsumerState<LOTOLoggerScreen> {
     }
   }
 
-  void _createEntry() {
+  void _createEntry() async {
     if (_equipmentController.text.isEmpty || _locationController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill in equipment ID and location'), behavior: SnackBarBehavior.floating),
@@ -467,26 +469,78 @@ class _LOTOLoggerScreenState extends ConsumerState<LOTOLoggerScreen> {
 
     HapticFeedback.heavyImpact();
 
+    final entry = _LOTOEntry(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      equipmentId: _equipmentController.text,
+      location: _locationController.text,
+      energyType: _selectedEnergyType,
+      reason: _reasonController.text,
+      lockedAt: DateTime.now(),
+      photoBytes: _lockoutPhoto?.bytes,
+    );
+
     setState(() {
-      _entries.add(_LOTOEntry(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        equipmentId: _equipmentController.text,
-        location: _locationController.text,
-        energyType: _selectedEnergyType,
-        reason: _reasonController.text,
-        lockedAt: DateTime.now(),
-        photoBytes: _lockoutPhoto?.bytes,
-      ));
+      _entries.add(entry);
       _isCreating = false;
       _clearForm();
     });
+
+    // Persist lockout event to Supabase
+    try {
+      final service = ref.read(complianceServiceProvider);
+      await service.createRecord(
+        type: ComplianceRecordType.loto,
+        jobId: widget.jobId,
+        data: {
+          'action': 'lockout',
+          'equipment_id': entry.equipmentId,
+          'location': entry.location,
+          'energy_type': entry.energyType,
+          'reason': entry.reason,
+        },
+        startedAt: entry.lockedAt,
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save lockout: $e'), backgroundColor: Colors.red),
+        );
+      }
+    }
   }
 
-  void _releaseEntry(int index) {
+  void _releaseEntry(int index) async {
     HapticFeedback.mediumImpact();
+    final releasedAt = DateTime.now();
+    final entry = _entries[index];
+
     setState(() {
-      _entries[index] = _entries[index].copyWith(releasedAt: DateTime.now());
+      _entries[index] = entry.copyWith(releasedAt: releasedAt);
     });
+
+    // Persist release event to Supabase
+    try {
+      final service = ref.read(complianceServiceProvider);
+      await service.createRecord(
+        type: ComplianceRecordType.loto,
+        jobId: widget.jobId,
+        data: {
+          'action': 'release',
+          'equipment_id': entry.equipmentId,
+          'location': entry.location,
+          'energy_type': entry.energyType,
+          'reason': entry.reason,
+        },
+        startedAt: entry.lockedAt,
+        endedAt: releasedAt,
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save release: $e'), backgroundColor: Colors.red),
+        );
+      }
+    }
   }
 
   void _clearForm() {

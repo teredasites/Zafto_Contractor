@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../theme/zafto_colors.dart';
 import '../../theme/theme_provider.dart';
-import '../../models/business/job.dart';
+import '../../models/job.dart';
 import '../../services/job_service.dart';
 
 class JobCreateScreen extends ConsumerStatefulWidget {
@@ -39,12 +39,12 @@ class _JobCreateScreenState extends ConsumerState<JobCreateScreen> {
   }
 
   void _populateFields(Job job) {
-    _titleController.text = job.title;
-    _customerController.text = job.customerName ?? '';
-    _addressController.text = job.address ?? '';
+    _titleController.text = job.title ?? '';
+    _customerController.text = job.customerName;
+    _addressController.text = job.address;
     _amountController.text = job.estimatedAmount > 0 ? job.estimatedAmount.toString() : '';
-    _notesController.text = job.notes ?? '';
-    _scheduledDate = job.scheduledDate;
+    _notesController.text = job.description ?? '';
+    _scheduledDate = job.scheduledStart;
   }
 
   @override
@@ -251,11 +251,11 @@ class _JobCreateScreenState extends ConsumerState<JobCreateScreen> {
       // Update existing job
       final updated = widget.editJob!.copyWith(
         title: _titleController.text.trim(),
-        customerName: _customerController.text.trim().isNotEmpty ? _customerController.text.trim() : null,
-        address: _addressController.text.trim().isNotEmpty ? _addressController.text.trim() : null,
+        customerName: _customerController.text.trim().isNotEmpty ? _customerController.text.trim() : '',
+        address: _addressController.text.trim().isNotEmpty ? _addressController.text.trim() : '',
         estimatedAmount: double.tryParse(_amountController.text) ?? 0,
-        notes: _notesController.text.trim().isNotEmpty ? _notesController.text.trim() : null,
-        scheduledDate: _scheduledDate,
+        description: _notesController.text.trim().isNotEmpty ? _notesController.text.trim() : null,
+        scheduledStart: _scheduledDate,
         updatedAt: now,
       );
       
@@ -263,7 +263,7 @@ class _JobCreateScreenState extends ConsumerState<JobCreateScreen> {
       
       if (mounted) {
         Navigator.pop(context, updated); // Return updated job
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Job "${updated.title}" updated'), backgroundColor: ref.read(zaftoColorsProvider).accentSuccess));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Job "${updated.displayTitle}" updated'), backgroundColor: ref.read(zaftoColorsProvider).accentSuccess));
       }
     } else {
       // Create new job
@@ -271,12 +271,12 @@ class _JobCreateScreenState extends ConsumerState<JobCreateScreen> {
       final job = Job(
         id: service.generateId(),
         title: _titleController.text.trim(),
-        customerName: _customerController.text.trim().isNotEmpty ? _customerController.text.trim() : null,
-        address: _addressController.text.trim().isNotEmpty ? _addressController.text.trim() : null,
+        customerName: _customerController.text.trim().isNotEmpty ? _customerController.text.trim() : '',
+        address: _addressController.text.trim().isNotEmpty ? _addressController.text.trim() : '',
         estimatedAmount: double.tryParse(_amountController.text) ?? 0,
-        notes: _notesController.text.trim().isNotEmpty ? _notesController.text.trim() : null,
-        scheduledDate: _scheduledDate,
-        status: _scheduledDate != null ? JobStatus.scheduled : JobStatus.lead,
+        description: _notesController.text.trim().isNotEmpty ? _notesController.text.trim() : null,
+        scheduledStart: _scheduledDate,
+        status: _scheduledDate != null ? JobStatus.scheduled : JobStatus.draft,
         createdAt: now,
         updatedAt: now,
       );

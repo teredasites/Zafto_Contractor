@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,6 +6,8 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../theme/zafto_colors.dart';
 import '../../theme/theme_provider.dart';
 import '../../services/field_camera_service.dart';
+import '../../services/compliance_service.dart';
+import '../../models/compliance_record.dart';
 
 /// Safety Briefing - Toolbox talks with crew sign-off and documentation
 class SafetyBriefingScreen extends ConsumerStatefulWidget {
@@ -681,32 +682,55 @@ class _SafetyBriefingScreenState extends ConsumerState<SafetyBriefingScreen> {
     HapticFeedback.heavyImpact();
     setState(() => _isSaving = true);
 
-    // TODO: BACKEND - Save safety briefing
-    // - Save to database with all form data
-    // - Record crew attendance with timestamps
-    // - Generate PDF summary
-    // - Link to job if jobId provided
-    // - Track for OSHA compliance
+    try {
+      final service = ref.read(complianceServiceProvider);
+      final signedMembers = _crewMembers.where((m) => m.hasSigned).toList();
 
-    await Future.delayed(const Duration(seconds: 1));
-
-    if (mounted) {
-      setState(() => _isSaving = false);
-      final signedCount = _crewMembers.where((m) => m.hasSigned).length;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              const Icon(LucideIcons.checkCircle, color: Colors.white),
-              const SizedBox(width: 12),
-              Expanded(child: Text('Briefing recorded - $signedCount crew signed')),
-            ],
-          ),
-          backgroundColor: Colors.green,
-          behavior: SnackBarBehavior.floating,
-        ),
+      await service.createRecord(
+        type: ComplianceRecordType.safetyBriefing,
+        jobId: widget.jobId,
+        data: {
+          'topic': _topicController.text.trim(),
+          'preset_topic': _selectedTopic?.title,
+          'hazards': _selectedHazards.map((h) => h.label).toList(),
+          'ppe_required': _requiredPPE.map((p) => p.label).toList(),
+          'notes': _notesController.text.trim(),
+          'crew_attendance': _crewMembers.map((m) => {
+            'name': m.name,
+            'signed': m.hasSigned,
+            'signed_at': m.signedAt?.toUtc().toIso8601String(),
+          }).toList(),
+          'total_crew': _crewMembers.length,
+          'total_signed': signedMembers.length,
+          'location': _currentAddress,
+        },
+        startedAt: _briefingDate,
       );
-      Navigator.pop(context);
+
+      if (mounted) {
+        setState(() => _isSaving = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(LucideIcons.checkCircle, color: Colors.white),
+                const SizedBox(width: 12),
+                Expanded(child: Text('Briefing recorded - ${signedMembers.length} crew signed')),
+              ],
+            ),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isSaving = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save briefing: $e'), backgroundColor: Colors.red),
+        );
+      }
     }
   }
 

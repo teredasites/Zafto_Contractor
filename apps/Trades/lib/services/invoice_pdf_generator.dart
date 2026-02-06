@@ -14,7 +14,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:flutter/services.dart';
-import '../models/business/invoice.dart';
+import '../models/invoice.dart';
 
 class InvoicePdfGenerator {
   // Brand colors
@@ -141,11 +141,12 @@ class InvoicePdfGenerator {
             pw.SizedBox(height: 16),
             _buildInvoiceDetail('Invoice #', invoice.invoiceNumber, fontMedium, fontBold),
             pw.SizedBox(height: 6),
-            _buildInvoiceDetail('Date', _formatDate(invoice.issueDate), fontMedium, fontRegular),
+            _buildInvoiceDetail('Date', _formatDate(invoice.createdAt), fontMedium, fontRegular),
             pw.SizedBox(height: 6),
-            _buildInvoiceDetail('Due Date', _formatDate(invoice.dueDate), fontMedium, fontRegular, 
-              highlight: invoice.isOverdue),
-            if (invoice.isPaid && invoice.paidDate != null) ...[
+            if (invoice.dueDate != null)
+              _buildInvoiceDetail('Due Date', _formatDate(invoice.dueDate!), fontMedium, fontRegular,
+                highlight: invoice.isOverdue),
+            if (invoice.isPaid && invoice.paidAt != null) ...[
               pw.SizedBox(height: 12),
               pw.Container(
                 padding: const pw.EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -154,7 +155,7 @@ class InvoicePdfGenerator {
                   borderRadius: pw.BorderRadius.circular(4),
                 ),
                 child: pw.Text(
-                  'PAID ${_formatDate(invoice.paidDate!)}',
+                  'PAID ${_formatDate(invoice.paidAt!)}',
                   style: pw.TextStyle(font: fontSemiBold, fontSize: 10, color: _white),
                 ),
               ),

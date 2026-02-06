@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../theme/zafto_colors.dart';
 import '../../theme/theme_provider.dart';
-import '../../models/business/invoice.dart';
+import '../../models/invoice.dart';
 import '../../services/invoice_service.dart';
 
 class InvoiceCreateScreen extends ConsumerStatefulWidget {
@@ -54,7 +54,7 @@ class _InvoiceCreateScreenState extends ConsumerState<InvoiceCreateScreen> {
     _notesController.text = invoice.notes ?? '';
     _taxRate = invoice.taxRate;
     _taxController.text = _taxRate > 0 ? _taxRate.toString() : '';
-    _dueDate = invoice.dueDate;
+    _dueDate = invoice.dueDate ?? DateTime.now().add(const Duration(days: 30));
     
     for (final item in invoice.lineItems) {
       _lineItems.add(_LineItemData(
@@ -388,7 +388,6 @@ class _InvoiceCreateScreenState extends ConsumerState<InvoiceCreateScreen> {
         taxRate: _taxRate,
         taxAmount: _taxAmount,
         total: _total,
-        issueDate: now,
         dueDate: _dueDate,
         notes: _notesController.text.trim().isNotEmpty ? _notesController.text.trim() : null,
         createdAt: now,

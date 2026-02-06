@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,6 +7,8 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../theme/zafto_colors.dart';
 import '../../theme/theme_provider.dart';
 import '../../services/field_camera_service.dart';
+import '../../services/signature_service.dart';
+import '../../models/signature.dart';
 
 /// Client Signature Capture - Digital signature for approvals, change orders, completion
 class ClientSignatureScreen extends ConsumerStatefulWidget {
@@ -596,23 +597,45 @@ class _ClientSignatureScreenState extends ConsumerState<ClientSignatureScreen> {
     setState(() => _isSaving = true);
 
     try {
-      // Generate signature image
+      // Generate signature image as PNG bytes
       _signatureImage = await _generateSignatureImage();
 
-      // TODO: BACKEND - Save signature
-      // - Upload signature image to cloud storage
-      // - Create signature record with:
-      //   - Document type
-      //   - Signer name and title
-      //   - Timestamp
-      //   - GPS location
-      //   - Job ID if applicable
-      //   - Notes
-      //   - Signature image URL
-      // - Update related document status
-      // - Send confirmation to client
+      // Map screen enum to model enum
+      SignaturePurpose purpose;
+      switch (_signatureType) {
+        case _SignatureType.approval:
+          purpose = SignaturePurpose.workApproval;
+        case _SignatureType.changeOrder:
+          purpose = SignaturePurpose.changeOrder;
+        case _SignatureType.completion:
+          purpose = SignaturePurpose.jobCompletion;
+        case _SignatureType.invoice:
+          purpose = SignaturePurpose.invoiceApproval;
+        case _SignatureType.waiver:
+          purpose = SignaturePurpose.liabilityWaiver;
+      }
 
-      await Future.delayed(const Duration(seconds: 1));
+      // Get GPS coordinates for the signature record
+      final cameraService = ref.read(fieldCameraServiceProvider);
+      final location = await cameraService.getCurrentLocation();
+
+      // Save to Supabase: upload PNG → insert signatures table row
+      final sigService = ref.read(signatureServiceProvider);
+      await sigService.createSignature(
+        jobId: widget.jobId,
+        signerName: _nameController.text.trim(),
+        signerRole: _titleController.text.trim().isNotEmpty
+            ? _titleController.text.trim()
+            : null,
+        purpose: purpose,
+        imageBytes: _signatureImage!,
+        notes: _notesController.text.trim().isNotEmpty
+            ? _notesController.text.trim()
+            : null,
+        latitude: location?.latitude,
+        longitude: location?.longitude,
+        locationAddress: _currentAddress,
+      );
 
       if (mounted) {
         setState(() => _isSaving = false);
@@ -639,10 +662,12 @@ class _ClientSignatureScreenState extends ConsumerState<ClientSignatureScreen> {
         });
       }
     } catch (e) {
-      setState(() => _isSaving = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to save: $e'), backgroundColor: Colors.red),
-      );
+      if (mounted) {
+        setState(() => _isSaving = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save: $e'), backgroundColor: Colors.red),
+        );
+      }
     }
   }
 

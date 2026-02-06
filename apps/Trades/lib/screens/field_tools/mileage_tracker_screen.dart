@@ -8,6 +8,7 @@ import 'package:geolocator/geolocator.dart';
 import '../../theme/zafto_colors.dart';
 import '../../theme/theme_provider.dart';
 import '../../services/field_camera_service.dart';
+import '../../services/mileage_service.dart';
 
 /// Mileage Tracker - GPS-based trip tracking for tax deductions
 class MileageTrackerScreen extends ConsumerStatefulWidget {
@@ -26,6 +27,7 @@ class _MileageTrackerScreenState extends ConsumerState<MileageTrackerScreen> {
   Position? _lastPosition;
   double _currentDistance = 0.0;
   String? _startAddress;
+  String? _savedTripId; // Supabase ID for the last saved trip
 
   // IRS 2024 standard mileage rate
   static const double _irsRate = 0.67; // $0.67 per mile
@@ -188,7 +190,7 @@ class _MileageTrackerScreenState extends ConsumerState<MileageTrackerScreen> {
               Column(
                 children: [
                   Text(
-                    '${_currentDistance.toStringAsFixed(1)}',
+                    _currentDistance.toStringAsFixed(1),
                     style: TextStyle(fontSize: 32, fontWeight: FontWeight.w700, color: colors.textPrimary),
                   ),
                   Text('miles', style: TextStyle(fontSize: 13, color: colors.textTertiary)),
@@ -475,10 +477,11 @@ class _MileageTrackerScreenState extends ConsumerState<MileageTrackerScreen> {
     final location = await cameraService.getCurrentLocation();
 
     if (_activeTrip != null) {
+      final endTime = DateTime.now();
       final completedTrip = _Trip(
         id: _activeTrip!.id,
         startTime: _activeTrip!.startTime,
-        endTime: DateTime.now(),
+        endTime: endTime,
         startLat: _activeTrip!.startLat,
         startLng: _activeTrip!.startLng,
         endLat: location?.latitude,
@@ -486,7 +489,7 @@ class _MileageTrackerScreenState extends ConsumerState<MileageTrackerScreen> {
         startAddress: _activeTrip!.startAddress,
         endAddress: location?.address,
         miles: _currentDistance,
-        duration: DateTime.now().difference(_activeTrip!.startTime),
+        duration: endTime.difference(_activeTrip!.startTime),
       );
 
       setState(() {
@@ -494,6 +497,27 @@ class _MileageTrackerScreenState extends ConsumerState<MileageTrackerScreen> {
         _activeTrip = null;
         _currentDistance = 0;
       });
+
+      // Save trip to Supabase (fire-and-forget, purpose added after dialog)
+      _savedTripId = null;
+      try {
+        final mileageService = ref.read(mileageServiceProvider);
+        final savedTrip = await mileageService.createTrip(
+          jobId: widget.jobId,
+          startAddress: completedTrip.startAddress,
+          endAddress: completedTrip.endAddress,
+          distanceMiles: completedTrip.miles,
+          tripDate: completedTrip.startTime,
+          startLatitude: completedTrip.startLat,
+          startLongitude: completedTrip.startLng,
+          endLatitude: completedTrip.endLat,
+          endLongitude: completedTrip.endLng,
+          durationSeconds: completedTrip.duration.inSeconds,
+        );
+        _savedTripId = savedTrip.id;
+      } catch (e) {
+        debugPrint('Failed to save trip: $e');
+      }
 
       // Ask for trip purpose
       _showPurposeDialog(completedTrip);
@@ -542,6 +566,13 @@ class _MileageTrackerScreenState extends ConsumerState<MileageTrackerScreen> {
                         _trips[index] = _trips[index].copyWith(purpose: purpose);
                       });
                     }
+                    // Update purpose in Supabase if trip was saved
+                    if (_savedTripId != null) {
+                      ref.read(mileageServiceProvider).updateTrip(
+                        _savedTripId!,
+                        {'purpose': purpose},
+                      ).then((_) {}).catchError((_) {});
+                    }
                   },
                 )),
             const SizedBox(height: 16),
@@ -553,7 +584,7 @@ class _MileageTrackerScreenState extends ConsumerState<MileageTrackerScreen> {
 
   void _exportReport() {
     HapticFeedback.lightImpact();
-    // TODO: BACKEND - Generate CSV/PDF report
+    // TODO: CSV/PDF mileage report — Phase B3 or later.
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Export coming soon'), behavior: SnackBarBehavior.floating),
     );

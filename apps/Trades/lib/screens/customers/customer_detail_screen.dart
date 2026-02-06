@@ -7,9 +7,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../theme/zafto_colors.dart';
 import '../../theme/theme_provider.dart';
-import '../../models/business/customer.dart';
-import '../../models/business/job.dart';
-import '../../models/business/invoice.dart';
+import '../../models/customer.dart';
+import '../../models/job.dart';
+import '../../models/invoice.dart';
 import '../../services/customer_service.dart';
 import '../../services/job_service.dart';
 import '../../services/invoice_service.dart';
@@ -59,7 +59,7 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen> {
   }
 
   double get _totalRevenue => _invoices.where((i) => i.isPaid).fold(0, (sum, i) => sum + i.total);
-  double get _outstanding => _invoices.where((i) => !i.isPaid && i.status != InvoiceStatus.cancelled).fold(0, (sum, i) => sum + i.total);
+  double get _outstanding => _invoices.where((i) => !i.isPaid && i.status != InvoiceStatus.voided).fold(0, (sum, i) => sum + i.total);
 
   @override
   Widget build(BuildContext context) {
@@ -254,7 +254,7 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(job.title, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: colors.textPrimary)),
+                  Text(job.displayTitle, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: colors.textPrimary)),
                   Text(job.statusLabel, style: TextStyle(fontSize: 12, color: colors.textTertiary)),
                 ],
               ),

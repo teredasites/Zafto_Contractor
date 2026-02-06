@@ -9,7 +9,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../theme/zafto_colors.dart';
 import '../../theme/theme_provider.dart';
 import '../../models/bid.dart';
-import '../../models/business/job.dart';
+import '../../models/job.dart';
 import '../../services/bid_service.dart';
 import '../../services/job_service.dart';
 import 'bid_create_screen.dart';
@@ -390,17 +390,7 @@ class _BidDetailScreenState extends ConsumerState<BidDetailScreen> {
           if (bid.depositAmount > 0) ...[
             const SizedBox(height: 8),
             _buildTotalRow(colors, 'Deposit Required (${bid.depositPercent.toStringAsFixed(0)}%)', bid.depositDisplay, color: colors.accentWarning),
-            if (bid.depositPaid)
-              Padding(
-                padding: const EdgeInsets.only(top: 4),
-                child: Row(
-                  children: [
-                    Icon(LucideIcons.check, size: 14, color: colors.accentSuccess),
-                    const SizedBox(width: 4),
-                    Text('Deposit paid', style: TextStyle(fontSize: 12, color: colors.accentSuccess)),
-                  ],
-                ),
-              ),
+            // TODO:BACKEND deposit payment tracking (future feature)
           ],
         ],
       ),
@@ -469,10 +459,11 @@ class _BidDetailScreenState extends ConsumerState<BidDetailScreen> {
           _buildTimelineItem(colors, 'Created', bid.createdAt, true),
           if (bid.sentAt != null) _buildTimelineItem(colors, 'Sent', bid.sentAt!, true),
           if (bid.viewedAt != null) _buildTimelineItem(colors, 'Viewed', bid.viewedAt!, true),
-          if (bid.respondedAt != null) _buildTimelineItem(colors, bid.isAccepted ? 'Accepted' : 'Declined', bid.respondedAt!, true),
+          if (bid.acceptedAt != null) _buildTimelineItem(colors, 'Accepted', bid.acceptedAt!, true),
+          if (bid.rejectedAt != null) _buildTimelineItem(colors, 'Rejected', bid.rejectedAt!, true),
           if (bid.signedAt != null) _buildTimelineItem(colors, 'Signed', bid.signedAt!, true),
-          if (bid.depositPaidAt != null) _buildTimelineItem(colors, 'Deposit Paid', bid.depositPaidAt!, true),
-          if (bid.convertedAt != null) _buildTimelineItem(colors, 'Converted to Job', bid.convertedAt!, false),
+          // TODO:BACKEND deposit payment tracking (future feature)
+          if (bid.status == BidStatus.converted && bid.jobId != null) _buildTimelineItem(colors, 'Converted to Job', bid.updatedAt, false),
         ],
       ),
     );
@@ -566,7 +557,7 @@ class _BidDetailScreenState extends ConsumerState<BidDetailScreen> {
       BidStatus.sent => (colors.accentInfo, colors.accentInfo.withValues(alpha: 0.15)),
       BidStatus.viewed => (colors.accentWarning, colors.accentWarning.withValues(alpha: 0.15)),
       BidStatus.accepted => (colors.accentSuccess, colors.accentSuccess.withValues(alpha: 0.15)),
-      BidStatus.declined => (colors.accentError, colors.accentError.withValues(alpha: 0.15)),
+      BidStatus.rejected => (colors.accentError, colors.accentError.withValues(alpha: 0.15)),
       BidStatus.expired => (colors.textTertiary, colors.fillDefault),
       BidStatus.converted => (colors.accentPrimary, colors.accentPrimary.withValues(alpha: 0.15)),
       BidStatus.cancelled => (colors.textTertiary, colors.fillDefault),
@@ -640,19 +631,17 @@ class _BidDetailScreenState extends ConsumerState<BidDetailScreen> {
         id: jobService.generateId(),
         customerId: bid.customerId,
         title: bid.projectName ?? 'Job from ${bid.bidNumber}',
-        customerName: bid.customerName,
-        address: bid.fullCustomerAddress,
+        customerName: bid.customerName ?? '',
+        address: bid.fullCustomerAddress ?? '',
         status: JobStatus.scheduled,
         estimatedAmount: estimatedAmount,
-        notes: bid.scopeOfWork,
-        photoUrls: bid.photos.map((p) => p.cloudUrl ?? p.localPath).toList(),
-        lineItems: lineItems,
+        description: bid.scopeOfWork,
         createdAt: now,
         updatedAt: now,
       );
 
       // Save job
-      await jobService.saveJob(job);
+      await ref.read(jobsProvider.notifier).addJob(job);
 
       // Update bid with converted status
       final updatedBid = await bidService.convertToJob(bid.id, job.id);

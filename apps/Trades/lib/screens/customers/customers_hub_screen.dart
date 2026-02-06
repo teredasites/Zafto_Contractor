@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../theme/zafto_colors.dart';
 import '../../theme/theme_provider.dart';
-import '../../models/business/customer.dart';
+import '../../models/customer.dart';
 import '../../services/customer_service.dart';
 import 'customer_detail_screen.dart';
 import 'customer_create_screen.dart';

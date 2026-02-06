@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,6 +7,8 @@ import 'package:image_picker/image_picker.dart';
 import '../../theme/zafto_colors.dart';
 import '../../theme/theme_provider.dart';
 import '../../services/field_camera_service.dart';
+import '../../services/receipt_service.dart';
+import '../../models/receipt.dart';
 
 /// Receipt Scanner - OCR-powered expense tracking with categorization
 class ReceiptScannerScreen extends ConsumerStatefulWidget {
@@ -33,7 +34,6 @@ class _ReceiptScannerScreenState extends ConsumerState<ReceiptScannerScreen> {
   _PaymentMethod _paymentMethod = _PaymentMethod.companyCreditCard;
 
   // Capture state
-  bool _isCapturing = false;
   bool _isProcessing = false;
   CapturedPhoto? _capturedImage;
 
@@ -660,7 +660,6 @@ class _ReceiptScannerScreenState extends ConsumerState<ReceiptScannerScreen> {
 
   Future<void> _captureReceipt(ZaftoColors colors) async {
     final cameraService = ref.read(fieldCameraServiceProvider);
-    setState(() => _isCapturing = true);
 
     try {
       final photo = await cameraService.capturePhoto(
@@ -672,14 +671,11 @@ class _ReceiptScannerScreenState extends ConsumerState<ReceiptScannerScreen> {
       if (photo != null && mounted) {
         setState(() {
           _capturedImage = photo;
-          _isCapturing = false;
         });
         _processReceipt();
-      } else {
-        setState(() => _isCapturing = false);
       }
     } catch (e) {
-      setState(() => _isCapturing = false);
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to capture: $e'), backgroundColor: Colors.red),
       );
@@ -710,19 +706,15 @@ class _ReceiptScannerScreenState extends ConsumerState<ReceiptScannerScreen> {
   Future<void> _processReceipt() async {
     setState(() => _isProcessing = true);
 
-    // TODO: BACKEND - OCR Processing
-    // - Send image to OCR service (Google Vision, AWS Textract, etc.)
-    // - Extract: vendor name, total amount, date, line items
-    // - Auto-categorize based on vendor name
-    // - Pre-fill form fields
+    // TODO: OCR Edge Function (receipt-ocr) — deferred to Phase E.
+    // Will call Claude Vision API to extract vendor, amount, date, line items.
+    // For now, user fills in fields manually after capture.
 
-    // Simulate OCR processing
-    await Future.delayed(const Duration(seconds: 1));
+    // Brief pause for UX (camera → editor transition)
+    await Future.delayed(const Duration(milliseconds: 300));
 
-    // Sample auto-fill (would come from OCR)
     setState(() {
       _isProcessing = false;
-      // In production, these would be extracted from the receipt
       _vendorController.text = '';
       _amountController.text = '';
     });
@@ -760,7 +752,7 @@ class _ReceiptScannerScreenState extends ConsumerState<ReceiptScannerScreen> {
     });
   }
 
-  void _saveReceipt() {
+  Future<void> _saveReceipt() async {
     final vendor = _vendorController.text.trim();
     final amountText = _amountController.text.trim();
     final amount = double.tryParse(amountText);
@@ -781,35 +773,84 @@ class _ReceiptScannerScreenState extends ConsumerState<ReceiptScannerScreen> {
 
     HapticFeedback.mediumImpact();
 
-    final receipt = _ScannedReceipt(
-      id: _currentReceipt?.id ?? DateTime.now().millisecondsSinceEpoch.toString(),
-      vendor: vendor,
-      amount: amount,
-      category: _category,
-      date: _receiptDate,
-      description: _descriptionController.text.trim(),
-      paymentMethod: _paymentMethod,
-      imageBytes: _capturedImage?.bytes,
-      jobId: widget.jobId,
-    );
+    // Map screen enum to model enum
+    ReceiptCategory modelCategory;
+    switch (_category) {
+      case _ExpenseCategory.materials:
+        modelCategory = ReceiptCategory.materials;
+      case _ExpenseCategory.tools:
+        modelCategory = ReceiptCategory.tools;
+      case _ExpenseCategory.fuel:
+        modelCategory = ReceiptCategory.fuel;
+      case _ExpenseCategory.meals:
+        modelCategory = ReceiptCategory.meals;
+      case _ExpenseCategory.equipment:
+        modelCategory = ReceiptCategory.equipment;
+      case _ExpenseCategory.permits:
+        modelCategory = ReceiptCategory.permits;
+      case _ExpenseCategory.other:
+        modelCategory = ReceiptCategory.other;
+    }
 
-    setState(() {
-      if (_currentReceipt != null) {
-        final index = _receipts.indexWhere((r) => r.id == _currentReceipt!.id);
-        if (index >= 0) {
-          _receipts[index] = receipt;
+    try {
+      final receiptService = ref.read(receiptServiceProvider);
+      await receiptService.createReceipt(
+        jobId: widget.jobId,
+        vendorName: vendor,
+        amount: amount,
+        category: modelCategory,
+        receiptDate: _receiptDate,
+        description: _descriptionController.text.trim(),
+        paymentMethod: _paymentMethod.name,
+        imageBytes: _capturedImage?.bytes,
+      );
+
+      // Also keep in local list for the current session display
+      final receipt = _ScannedReceipt(
+        id: _currentReceipt?.id ?? DateTime.now().millisecondsSinceEpoch.toString(),
+        vendor: vendor,
+        amount: amount,
+        category: _category,
+        date: _receiptDate,
+        description: _descriptionController.text.trim(),
+        paymentMethod: _paymentMethod,
+        imageBytes: _capturedImage?.bytes,
+        jobId: widget.jobId,
+      );
+
+      if (!mounted) return;
+
+      setState(() {
+        if (_currentReceipt != null) {
+          final index = _receipts.indexWhere((r) => r.id == _currentReceipt!.id);
+          if (index >= 0) {
+            _receipts[index] = receipt;
+          }
+        } else {
+          _receipts.add(receipt);
         }
-      } else {
-        _receipts.add(receipt);
-      }
-      _cancelEdit();
-    });
+        _cancelEdit();
+      });
 
-    // TODO: BACKEND - Save receipt
-    // - Upload image to cloud storage
-    // - Save receipt record to database
-    // - Link to job if applicable
-    // - Update expense tracking
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(LucideIcons.checkCircle, color: Colors.white),
+              const SizedBox(width: 12),
+              Text('Receipt saved — $vendor \$${amount.toStringAsFixed(2)}'),
+            ],
+          ),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to save receipt: $e'), backgroundColor: Colors.red),
+      );
+    }
   }
 
   void _deleteReceipt(ZaftoColors colors, int index) {
@@ -858,11 +899,7 @@ class _ReceiptScannerScreenState extends ConsumerState<ReceiptScannerScreen> {
   }
 
   void _exportReceipts(ZaftoColors colors) {
-    // TODO: BACKEND - Export to CSV/PDF
-    // - Generate expense report
-    // - Include all receipt images
-    // - Categorize by type
-    // - Calculate totals per category
+    // TODO: CSV/PDF export — Phase B3 or later.
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: const Text('Export coming soon'),

@@ -348,9 +348,8 @@ class _BidCreateScreenState extends ConsumerState<BidCreateScreen> {
       final bidNumber = await service.generateBidNumber();
 
       bid = Bid.create(
-        id: service.generateId(),
-        companyId: 'default', // Will be set by service
-        createdByUserId: 'default', // Will be set by service
+        companyId: '', // Enriched by service
+        createdByUserId: '', // Enriched by service
         bidNumber: bidNumber,
         customerName: _customerController.text.trim(),
         customerAddress: _addressController.text.trim(),
