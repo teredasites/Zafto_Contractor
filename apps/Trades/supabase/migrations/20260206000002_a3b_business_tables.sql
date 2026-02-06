@@ -46,10 +46,10 @@ ALTER TABLE customers ENABLE ROW LEVEL SECURITY;
 CREATE TRIGGER customers_updated_at BEFORE UPDATE ON customers FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER customers_audit AFTER INSERT OR UPDATE OR DELETE ON customers FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
 
-CREATE POLICY "customers_select" ON customers FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
-CREATE POLICY "customers_insert" ON customers FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "customers_update" ON customers FOR UPDATE USING (company_id = auth.company_id());
-CREATE POLICY "customers_delete" ON customers FOR DELETE USING (company_id = auth.company_id() AND auth.user_role() IN ('owner', 'admin'));
+CREATE POLICY "customers_select" ON customers FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+CREATE POLICY "customers_insert" ON customers FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "customers_update" ON customers FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "customers_delete" ON customers FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin'));
 
 -- JOBS
 CREATE TABLE jobs (
@@ -110,10 +110,10 @@ CREATE INDEX idx_jobs_assigned ON jobs (assigned_to_user_id);
 CREATE TRIGGER jobs_updated_at BEFORE UPDATE ON jobs FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER jobs_audit AFTER INSERT OR UPDATE OR DELETE ON jobs FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
 
-CREATE POLICY "jobs_select" ON jobs FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
-CREATE POLICY "jobs_insert" ON jobs FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "jobs_update" ON jobs FOR UPDATE USING (company_id = auth.company_id());
-CREATE POLICY "jobs_delete" ON jobs FOR DELETE USING (company_id = auth.company_id() AND auth.user_role() IN ('owner', 'admin'));
+CREATE POLICY "jobs_select" ON jobs FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+CREATE POLICY "jobs_insert" ON jobs FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "jobs_update" ON jobs FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "jobs_delete" ON jobs FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin'));
 
 -- INVOICES
 CREATE TABLE invoices (
@@ -175,10 +175,10 @@ CREATE INDEX idx_invoices_company_status ON invoices (company_id, status);
 CREATE TRIGGER invoices_updated_at BEFORE UPDATE ON invoices FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER invoices_audit AFTER INSERT OR UPDATE OR DELETE ON invoices FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
 
-CREATE POLICY "invoices_select" ON invoices FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
-CREATE POLICY "invoices_insert" ON invoices FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "invoices_update" ON invoices FOR UPDATE USING (company_id = auth.company_id());
-CREATE POLICY "invoices_delete" ON invoices FOR DELETE USING (company_id = auth.company_id() AND auth.user_role() IN ('owner', 'admin'));
+CREATE POLICY "invoices_select" ON invoices FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+CREATE POLICY "invoices_insert" ON invoices FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "invoices_update" ON invoices FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "invoices_delete" ON invoices FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin'));
 
 -- BIDS
 CREATE TABLE bids (
@@ -226,10 +226,10 @@ ALTER TABLE bids ENABLE ROW LEVEL SECURITY;
 CREATE TRIGGER bids_updated_at BEFORE UPDATE ON bids FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER bids_audit AFTER INSERT OR UPDATE OR DELETE ON bids FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
 
-CREATE POLICY "bids_select" ON bids FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
-CREATE POLICY "bids_insert" ON bids FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "bids_update" ON bids FOR UPDATE USING (company_id = auth.company_id());
-CREATE POLICY "bids_delete" ON bids FOR DELETE USING (company_id = auth.company_id() AND auth.user_role() IN ('owner', 'admin'));
+CREATE POLICY "bids_select" ON bids FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+CREATE POLICY "bids_insert" ON bids FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "bids_update" ON bids FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "bids_delete" ON bids FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin'));
 
 -- TIME ENTRIES
 CREATE TABLE time_entries (
@@ -259,6 +259,6 @@ CREATE INDEX idx_time_entries_job ON time_entries (job_id);
 CREATE TRIGGER time_entries_updated_at BEFORE UPDATE ON time_entries FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER time_entries_audit AFTER INSERT OR UPDATE OR DELETE ON time_entries FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
 
-CREATE POLICY "time_entries_select" ON time_entries FOR SELECT USING (company_id = auth.company_id());
-CREATE POLICY "time_entries_insert" ON time_entries FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "time_entries_update" ON time_entries FOR UPDATE USING (company_id = auth.company_id() AND (auth.user_role() IN ('owner', 'admin') OR user_id = auth.uid()));
+CREATE POLICY "time_entries_select" ON time_entries FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "time_entries_insert" ON time_entries FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "time_entries_update" ON time_entries FOR UPDATE USING (company_id = requesting_company_id() AND (requesting_user_role() IN ('owner', 'admin') OR user_id = auth.uid()));
