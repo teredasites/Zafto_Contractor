@@ -15,12 +15,14 @@ import {
   Calendar,
   CheckCircle,
   AlertCircle,
+  Building2,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CommandPalette } from '@/components/command-palette';
 import { formatCurrency, cn } from '@/lib/utils';
+import { getSupabase } from '@/lib/supabase';
 import { useCPAAccess } from '@/lib/hooks/use-cpa-access';
 import type { ExportPackageData } from '@/lib/hooks/use-cpa-access';
 
@@ -43,7 +45,7 @@ export default function CPAExportPage() {
   const currentYear = new Date().getFullYear();
   const [startDate, setStartDate] = useState(`${currentYear}-01-01`);
   const [endDate, setEndDate] = useState(`${currentYear}-12-31`);
-  const [packageData, setPackageData] = useState<ExportPackageData | null>(null);
+  const [packageData, setPackageData] = useState<(ExportPackageData & { scheduleE?: { properties: { propertyAddress: string; income: number; expenses: Record<string, number>; totalExpenses: number; netIncome: number }[]; totalIncome: number; totalExpenses: number; totalNet: number } }) | null>(null);
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -57,7 +59,62 @@ export default function CPAExportPage() {
     const result = await exportPackage({ startDate, endDate });
 
     if (result) {
-      setPackageData(result);
+      // Calculate Schedule E data
+      const supabase = getSupabase();
+      const { data: rentData } = await supabase
+        .from('rent_payments')
+        .select('amount, rent_charges(property_id, properties(address_line1))')
+        .gte('payment_date', startDate)
+        .lte('payment_date', endDate);
+
+      const { data: expData } = await supabase
+        .from('expense_records')
+        .select('total, property_id, schedule_e_category, properties(address_line1)')
+        .not('property_id', 'is', null)
+        .gte('expense_date', startDate)
+        .lte('expense_date', endDate)
+        .eq('status', 'posted');
+
+      const propMap = new Map<string, { propertyAddress: string; income: number; expenses: Record<string, number>; totalExpenses: number; netIncome: number }>();
+
+      for (const row of (rentData || []) as Record<string, unknown>[]) {
+        const charge = row.rent_charges as Record<string, unknown> | null;
+        if (!charge) continue;
+        const propId = charge.property_id as string;
+        const prop = charge.properties as Record<string, unknown> | null;
+        if (!propMap.has(propId)) {
+          propMap.set(propId, { propertyAddress: (prop?.address_line1 as string) || 'Unknown', income: 0, expenses: {}, totalExpenses: 0, netIncome: 0 });
+        }
+        propMap.get(propId)!.income += Number(row.amount || 0);
+      }
+
+      for (const row of (expData || []) as Record<string, unknown>[]) {
+        const propId = row.property_id as string;
+        const prop = row.properties as Record<string, unknown> | null;
+        if (!propMap.has(propId)) {
+          propMap.set(propId, { propertyAddress: (prop?.address_line1 as string) || 'Unknown', income: 0, expenses: {}, totalExpenses: 0, netIncome: 0 });
+        }
+        const entry = propMap.get(propId)!;
+        const cat = (row.schedule_e_category as string) || 'other';
+        entry.expenses[cat] = (entry.expenses[cat] || 0) + Number(row.total || 0);
+        entry.totalExpenses += Number(row.total || 0);
+      }
+
+      for (const entry of propMap.values()) {
+        entry.netIncome = entry.income - entry.totalExpenses;
+      }
+
+      const propArray = [...propMap.values()];
+
+      setPackageData({
+        ...result,
+        scheduleE: {
+          properties: propArray,
+          totalIncome: propArray.reduce((s, p) => s + p.income, 0),
+          totalExpenses: propArray.reduce((s, p) => s + p.totalExpenses, 0),
+          totalNet: propArray.reduce((s, p) => s + p.netIncome, 0),
+        },
+      });
     } else {
       setError('Failed to generate export package. Please try again.');
     }
@@ -138,12 +195,34 @@ export default function CPAExportPage() {
     exportCSV(vendors1099.vendors, headers, `1099_vendors_${startDate.substring(0, 4)}.csv`);
   };
 
+  const downloadScheduleECSV = () => {
+    if (!packageData?.scheduleE) return;
+    const rows = packageData.scheduleE.properties.flatMap((p: { propertyAddress: string; income: number; expenses: Record<string, number>; totalExpenses: number; netIncome: number }) => [
+      { property: p.propertyAddress, category: 'Rental Income', amount: p.income },
+      ...Object.entries(p.expenses).map(([cat, amt]) => ({
+        property: p.propertyAddress,
+        category: cat.replace(/_/g, ' '),
+        amount: -amt,
+      })),
+      { property: p.propertyAddress, category: 'Net Income', amount: p.netIncome },
+    ]);
+
+    const headers = [
+      { key: 'property', label: 'Property' },
+      { key: 'category', label: 'Category' },
+      { key: 'amount', label: 'Amount' },
+    ];
+
+    exportCSV(rows, headers, `schedule_e_${startDate}_to_${endDate}.csv`);
+  };
+
   const downloadAllCSVs = () => {
     downloadPnLCSV();
     // Small delays to avoid browser blocking multiple downloads
     setTimeout(() => downloadBalanceSheetCSV(), 200);
     setTimeout(() => downloadTrialBalanceCSV(), 400);
     setTimeout(() => downloadVendors1099CSV(), 600);
+    setTimeout(() => downloadScheduleECSV(), 800);
   };
 
   if (accessLoading) {
@@ -275,7 +354,7 @@ export default function CPAExportPage() {
       {packageData && !generating && (
         <>
           {/* Summary Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             {/* P&L Summary */}
             <Card>
               <CardContent className="p-5">
@@ -395,6 +474,37 @@ export default function CPAExportPage() {
                   <div className="flex items-center justify-between text-sm font-semibold pt-1.5 border-t border-default">
                     <span className="text-main">Total Payments</span>
                     <span className="tabular-nums text-main">{formatCurrency(packageData.vendors1099.totalPayments)}</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Schedule E Summary */}
+            <Card>
+              <CardContent className="p-5">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="p-2.5 bg-teal-100 dark:bg-teal-900/30 rounded-xl">
+                    <Building2 size={20} className="text-teal-600 dark:text-teal-400" />
+                  </div>
+                  <Button variant="ghost" size="sm" onClick={downloadScheduleECSV}>
+                    <Download size={14} />
+                  </Button>
+                </div>
+                <p className="text-sm font-medium text-main">Schedule E</p>
+                <div className="mt-3 space-y-1.5">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted">Rental Income</span>
+                    <span className="tabular-nums text-main">{formatCurrency(packageData?.scheduleE?.totalIncome || 0)}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted">Expenses</span>
+                    <span className="tabular-nums text-main">{formatCurrency(packageData?.scheduleE?.totalExpenses || 0)}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm font-semibold pt-1.5 border-t border-default">
+                    <span className="text-main">Net Rental</span>
+                    <span className={cn('tabular-nums', (packageData?.scheduleE?.totalNet || 0) >= 0 ? 'text-emerald-600' : 'text-red-500')}>
+                      {formatCurrency(packageData?.scheduleE?.totalNet || 0)}
+                    </span>
                   </div>
                 </div>
               </CardContent>

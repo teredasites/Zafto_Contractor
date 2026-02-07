@@ -198,7 +198,7 @@ export function useSchedule() {
       jobId: j.id,
       customerId: j.customerId,
       assignedTo: j.assignedTo,
-      color: JOB_TYPE_COLORS[j.jobType]?.dot,
+      color: j.propertyId ? '#10b981' : JOB_TYPE_COLORS[j.jobType]?.dot,
     }));
 
   return { schedule, loading, error };

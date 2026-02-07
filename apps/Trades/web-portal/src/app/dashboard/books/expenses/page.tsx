@@ -3,7 +3,7 @@
 import { useState, useRef } from 'react';
 import {
   Plus, Search, ArrowLeft, Check, X, Ban, Upload,
-  Receipt, Calendar, DollarSign, Tag,
+  Receipt, Calendar, DollarSign, Tag, Building2, Percent,
 } from 'lucide-react';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
@@ -20,6 +20,7 @@ import {
   PAYMENT_METHOD_LABELS,
 } from '@/lib/hooks/use-expenses';
 import { useVendors } from '@/lib/hooks/use-vendors';
+import { useProperties } from '@/lib/hooks/use-properties';
 import type { ExpenseData } from '@/lib/hooks/use-expenses';
 
 const statusConfig: Record<string, { label: string; variant: 'default' | 'success' | 'warning' | 'error' }> = {
@@ -43,16 +44,18 @@ export default function ExpensesPage() {
     dateTo: dateTo || undefined,
   });
   const { vendors } = useVendors();
+  const { properties } = useProperties();
+  const [propertyFilter, setPropertyFilter] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [voidId, setVoidId] = useState<string | null>(null);
   const [voidReason, setVoidReason] = useState('');
 
-  const filtered = search
-    ? expenses.filter((e) => {
-        const q = search.toLowerCase();
-        return e.description.toLowerCase().includes(q) || (e.vendorName?.toLowerCase().includes(q) ?? false);
-      })
-    : expenses;
+  const filtered = expenses.filter((e) => {
+    const q = search.toLowerCase();
+    const matchesSearch = !search || e.description.toLowerCase().includes(q) || (e.vendorName?.toLowerCase().includes(q) ?? false);
+    const matchesProperty = !propertyFilter || e.propertyId === propertyFilter;
+    return matchesSearch && matchesProperty;
+  });
 
   if (loading) {
     return (
@@ -122,6 +125,10 @@ export default function ExpensesPage() {
         </select>
         <Input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="w-36" placeholder="From" />
         <Input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="w-36" placeholder="To" />
+        <select value={propertyFilter} onChange={(e) => setPropertyFilter(e.target.value)} className="px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm">
+          <option value="">All Properties</option>
+          {properties.map((p) => <option key={p.id} value={p.id}>{p.addressLine1 || p.city}</option>)}
+        </select>
       </div>
 
       {error && (
@@ -134,9 +141,10 @@ export default function ExpensesPage() {
           {/* Header */}
           <div className="grid grid-cols-12 gap-2 px-6 py-3 text-xs font-medium text-muted uppercase tracking-wide bg-secondary/50 border-b border-main">
             <div className="col-span-1">Date</div>
-            <div className="col-span-3">Description</div>
+            <div className="col-span-2">Description</div>
             <div className="col-span-2">Vendor</div>
             <div className="col-span-1">Category</div>
+            <div className="col-span-1">Property</div>
             <div className="col-span-1">Method</div>
             <div className="col-span-1 text-right">Amount</div>
             <div className="col-span-1">Status</div>
@@ -151,12 +159,13 @@ export default function ExpensesPage() {
               return (
                 <div key={expense.id} className="grid grid-cols-12 gap-2 px-6 py-3 items-center hover:bg-surface-hover transition-colors">
                   <div className="col-span-1 text-sm text-muted tabular-nums">{expense.expenseDate}</div>
-                  <div className="col-span-3">
+                  <div className="col-span-2">
                     <p className="text-sm font-medium text-main truncate">{expense.description}</p>
                     {expense.jobTitle && <p className="text-xs text-muted truncate">Job: {expense.jobTitle}</p>}
                   </div>
                   <div className="col-span-2 text-sm text-muted truncate">{expense.vendorName || '—'}</div>
                   <div className="col-span-1"><Badge variant="default" size="sm">{EXPENSE_CATEGORY_LABELS[expense.category] || expense.category}</Badge></div>
+                  <div className="col-span-1 text-xs text-muted truncate">{expense.propertyAddress || '—'}</div>
                   <div className="col-span-1 text-xs text-muted">{PAYMENT_METHOD_LABELS[expense.paymentMethod] || expense.paymentMethod}</div>
                   <div className="col-span-1 text-right text-sm font-medium text-main tabular-nums">{formatCurrency(expense.total)}</div>
                   <div className="col-span-1"><Badge variant={sc.variant} size="sm">{sc.label}</Badge></div>
@@ -193,6 +202,7 @@ export default function ExpensesPage() {
       {modalOpen && (
         <ExpenseModal
           vendors={vendors}
+          properties={properties}
           onSave={async (data) => {
             await createExpense(data);
             setModalOpen(false);
@@ -222,8 +232,9 @@ export default function ExpensesPage() {
   );
 }
 
-function ExpenseModal({ vendors, onSave, onClose }: {
+function ExpenseModal({ vendors, properties, onSave, onClose }: {
   vendors: { id: string; vendorName: string }[];
+  properties: { id: string; addressLine1: string; city: string }[];
   onSave: (data: Parameters<ReturnType<typeof useExpenses>['createExpense']>[0]) => Promise<void>;
   onClose: () => void;
 }) {
@@ -241,6 +252,8 @@ function ExpenseModal({ vendors, onSave, onClose }: {
   const [checkNumber, setCheckNumber] = useState('');
   const [notes, setNotes] = useState('');
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
+  const [propertyId, setPropertyId] = useState('');
+  const [scheduleECategory, setScheduleECategory] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -260,6 +273,8 @@ function ExpenseModal({ vendors, onSave, onClose }: {
         checkNumber: checkNumber || undefined,
         notes: notes || undefined,
         receiptFile: receiptFile || undefined,
+        propertyId: propertyId || undefined,
+        scheduleECategory: scheduleECategory || undefined,
       });
     } catch (e: unknown) {
       setErr(e instanceof Error ? e.message : 'Save failed');
@@ -290,6 +305,38 @@ function ExpenseModal({ vendors, onSave, onClose }: {
           <div>
             <label className="block text-sm font-medium text-main mb-1">Description *</label>
             <Input value={description} onChange={(e) => setDescription(e.target.value)} required />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-main mb-1">Property</label>
+              <select value={propertyId} onChange={(e) => setPropertyId(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm">
+                <option value="">None (Business)</option>
+                {properties.map((p) => <option key={p.id} value={p.id}>{p.addressLine1 || p.city}</option>)}
+              </select>
+            </div>
+            {propertyId && (
+              <div>
+                <label className="block text-sm font-medium text-main mb-1">Schedule E Category</label>
+                <select value={scheduleECategory} onChange={(e) => setScheduleECategory(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm">
+                  <option value="">Select...</option>
+                  <option value="advertising">Advertising</option>
+                  <option value="auto_and_travel">Auto and travel</option>
+                  <option value="cleaning_maintenance">Cleaning and maintenance</option>
+                  <option value="commissions">Commissions</option>
+                  <option value="insurance">Insurance</option>
+                  <option value="legal_professional">Legal/professional fees</option>
+                  <option value="management_fees">Management fees</option>
+                  <option value="mortgage_interest">Mortgage interest</option>
+                  <option value="other_interest">Other interest</option>
+                  <option value="repairs">Repairs</option>
+                  <option value="supplies">Supplies</option>
+                  <option value="taxes">Taxes</option>
+                  <option value="utilities">Utilities</option>
+                  <option value="depreciation">Depreciation</option>
+                  <option value="other">Other expenses</option>
+                </select>
+              </div>
+            )}
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>

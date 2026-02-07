@@ -33,6 +33,7 @@ export default function JobsPage() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
   const [stormFilter, setStormFilter] = useState('all');
+  const [originFilter, setOriginFilter] = useState('all');
   const [sourceFilter, setSourceFilter] = useState('all');
   const [view, setView] = useState<'list' | 'board'>('list');
   const { jobs, loading: jobsLoading } = useJobs();
@@ -64,8 +65,11 @@ export default function JobsPage() {
     const matchesType = typeFilter === 'all' || job.jobType === typeFilter;
     const matchesStorm = stormFilter === 'all' || job.tags.some((t) => t === `storm:${stormFilter}`);
     const matchesSource = sourceFilter === 'all' || job.source === sourceFilter;
+    const matchesOrigin = originFilter === 'all' ||
+      (originFilter === 'client' && !job.propertyId) ||
+      (originFilter === 'maintenance' && !!job.propertyId);
 
-    return matchesSearch && matchesStatus && matchesType && matchesStorm && matchesSource;
+    return matchesSearch && matchesStatus && matchesType && matchesStorm && matchesSource && matchesOrigin;
   });
 
   // Extract unique storm events from job tags
@@ -200,6 +204,16 @@ export default function JobsPage() {
             className="sm:w-48"
           />
         )}
+        <Select
+          options={[
+            { value: 'all', label: 'All Jobs' },
+            { value: 'client', label: 'Client Jobs' },
+            { value: 'maintenance', label: 'Maintenance Jobs' },
+          ]}
+          value={originFilter}
+          onChange={(e) => setOriginFilter(e.target.value)}
+          className="sm:w-40"
+        />
         <Select
           options={[
             { value: 'all', label: 'All Sources' },

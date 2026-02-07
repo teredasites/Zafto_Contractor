@@ -13,8 +13,10 @@ import {
   AlertCircle,
   Calendar,
   ArrowRight,
+  Building2,
   DollarSign,
   CheckCircle2,
+  Home,
   Send,
   Eye,
   MapPin,
@@ -40,7 +42,12 @@ import { useJobs, useSchedule, useTeam } from '@/lib/hooks/use-jobs';
 import { useInvoices } from '@/lib/hooks/use-invoices';
 import { useVerticalDetection } from '@/lib/hooks/use-verticals';
 import { useBids } from '@/lib/hooks/use-bids';
+import { useLeases } from '@/lib/hooks/use-leases';
+import { usePmMaintenance } from '@/lib/hooks/use-pm-maintenance';
+import { useProperties } from '@/lib/hooks/use-properties';
+import { useRent } from '@/lib/hooks/use-rent';
 import { useReports } from '@/lib/hooks/use-reports';
+import { useUnits } from '@/lib/hooks/use-units';
 import { JOB_TYPE_LABELS, JOB_TYPE_COLORS } from '@/lib/hooks/mappers';
 
 export default function DashboardPage() {
@@ -56,6 +63,50 @@ export default function DashboardPage() {
   const { activity } = useActivity();
   const { data: reportData } = useReports();
   const verticals = useVerticalDetection();
+  const { properties } = useProperties();
+  const { units } = useUnits();
+  const { charges } = useRent();
+  const { requests: maintenanceRequests } = usePmMaintenance();
+  const { leases } = useLeases();
+
+  // PM stats
+  const pmEnabled = properties.length > 0;
+  const totalUnits = units.length;
+  const occupiedUnits = units.filter(u => u.status === 'occupied').length;
+  const occupancyRate = totalUnits > 0 ? Math.round((occupiedUnits / totalUnits) * 100) : 0;
+  const now = new Date();
+  const thisMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  const rentDueThisMonth = charges.filter(c => c.dueDate.startsWith(thisMonth)).reduce((sum, c) => sum + c.amount, 0);
+  const rentCollectedThisMonth = charges.filter(c => c.dueDate.startsWith(thisMonth)).reduce((sum, c) => sum + c.paidAmount, 0);
+  const openMaintenance = maintenanceRequests.filter(r => r.status === 'submitted' || r.status === 'in_progress').length;
+  const thirtyDaysFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+  const expiringLeases = leases.filter(l => l.status === 'active' && l.endDate && l.endDate <= thirtyDaysFromNow).length;
+
+  // REPS: Pull time entries for property-related jobs
+  const [repsHours, setRepsHours] = useState(0);
+  useEffect(() => {
+    if (!pmEnabled) return;
+    const fetchRepsHours = async () => {
+      try {
+        const supabase = getSupabase();
+        const yearStart = `${new Date().getFullYear()}-01-01T00:00:00`;
+        const { data } = await supabase
+          .from('time_entries')
+          .select('total_minutes, job_id, jobs!inner(property_id)')
+          .not('jobs.property_id', 'is', null)
+          .gte('clock_in', yearStart)
+          .in('status', ['completed', 'approved']);
+
+        const totalMinutes = (data || []).reduce((sum: number, entry: Record<string, unknown>) => {
+          return sum + (Number(entry.total_minutes) || 0);
+        }, 0);
+        setRepsHours(Math.round(totalMinutes / 60));
+      } catch {
+        // Silent — REPS is informational
+      }
+    };
+    fetchRepsHours();
+  }, [pmEnabled]);
 
   const revenueData = reportData?.monthlyRevenue || [];
   const jobsByStatusData = reportData?.jobsByStatus || [];
@@ -430,6 +481,102 @@ export default function DashboardPage() {
                   />
                 )}
               </>
+            )}
+
+            {/* Rental Portfolio */}
+            {pmEnabled && (
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <Building2 size={14} className="text-teal-500" />
+                    Rental Portfolio
+                  </CardTitle>
+                  <button
+                    onClick={() => router.push('/dashboard/properties')}
+                    className="text-xs text-accent hover:underline"
+                  >
+                    View All
+                  </button>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="p-2 bg-secondary rounded-lg text-center">
+                      <p className="text-lg font-semibold text-main">{properties.length}</p>
+                      <p className="text-[10px] text-muted">Properties</p>
+                    </div>
+                    <div className="p-2 bg-secondary rounded-lg text-center">
+                      <p className="text-lg font-semibold text-main">{occupancyRate}%</p>
+                      <p className="text-[10px] text-muted">Occupancy</p>
+                    </div>
+                  </div>
+                  <div className="space-y-1.5 text-xs">
+                    <div className="flex justify-between">
+                      <span className="text-muted">Rent Due (This Month)</span>
+                      <span className="font-medium text-main">{formatCurrency(rentDueThisMonth)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted">Rent Collected</span>
+                      <span className="font-medium text-emerald-600 dark:text-emerald-400">{formatCurrency(rentCollectedThisMonth)}</span>
+                    </div>
+                    {openMaintenance > 0 && (
+                      <div className="flex justify-between">
+                        <span className="text-muted">Open Maintenance</span>
+                        <span className="font-medium text-amber-600 dark:text-amber-400">{openMaintenance}</span>
+                      </div>
+                    )}
+                    {expiringLeases > 0 && (
+                      <div className="flex justify-between">
+                        <span className="text-muted">Leases Expiring (30d)</span>
+                        <span className="font-medium text-red-500">{expiringLeases}</span>
+                      </div>
+                    )}
+                  </div>
+                  {/* Occupancy bar */}
+                  <div>
+                    <div className="flex justify-between text-[10px] text-muted mb-1">
+                      <span>{occupiedUnits}/{totalUnits} units occupied</span>
+                      <span>{occupancyRate}%</span>
+                    </div>
+                    <div className="h-2 bg-secondary rounded-full overflow-hidden">
+                      <div className="h-full bg-teal-500 rounded-full" style={{ width: `${occupancyRate}%` }} />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* REPS Hour Tracker */}
+            {pmEnabled && (
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <Clock size={14} className="text-indigo-500" />
+                    REPS Hour Tracker
+                  </CardTitle>
+                  <span className="text-[10px] text-muted">{new Date().getFullYear()} Tax Year</span>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="text-center">
+                    <p className="text-2xl font-bold text-main">{repsHours.toLocaleString()}</p>
+                    <p className="text-xs text-muted">of 750 hours</p>
+                  </div>
+                  <div className="h-2 bg-secondary rounded-full overflow-hidden">
+                    <div
+                      className={cn('h-full rounded-full', repsHours >= 750 ? 'bg-emerald-500' : repsHours >= 500 ? 'bg-amber-500' : 'bg-indigo-500')}
+                      style={{ width: `${Math.min((repsHours / 750) * 100, 100)}%` }}
+                    />
+                  </div>
+                  <div className="flex justify-between text-[10px] text-muted">
+                    <span>{Math.max(0, 750 - repsHours)} hrs remaining</span>
+                    <span>{repsHours >= 750 ? 'Qualified' : `${Math.round((repsHours / 750) * 100)}%`}</span>
+                  </div>
+                  {repsHours >= 750 && (
+                    <div className="p-2 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg text-center">
+                      <p className="text-xs font-medium text-emerald-700 dark:text-emerald-400">REPS Qualified</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
             )}
           </ProModeGate>
 

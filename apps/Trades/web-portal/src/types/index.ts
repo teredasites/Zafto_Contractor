@@ -224,6 +224,7 @@ export interface Job {
   photos: JobPhoto[];
   source: string;
   tags: string[];
+  propertyId?: string;
   createdAt: Date;
   updatedAt: Date;
 }
