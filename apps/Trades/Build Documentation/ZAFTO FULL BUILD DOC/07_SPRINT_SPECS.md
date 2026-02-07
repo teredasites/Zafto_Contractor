@@ -6577,18 +6577,19 @@ Include <content>{markdown}</content> for rendered display.
 **Source:** `Expansion/25_XACTIMATE_ESTIMATE_ENGINE.md`
 **Goal:** Replace $300/mo Xactimate with built-in estimate writing, independent pricing, and AI-powered scope analysis.
 **Depends on:** E1 (AI infra), D2a (insurance tables already deployed), legal review (for ESX export).
-**Status: SPEC COMPLETE — BLOCKED on Phase E readiness + legal review**
+**Status: E5a DONE (S78) — E5b+ continue in sequence**
 
 #### E5a: Pricing Database Foundation (~8 hrs)
-**BLOCKED ON: E1 complete**
-- [ ] Deploy `xactimate_codes` table + seed with published codes (70+ categories, 27,000+ items)
-- [ ] Deploy `pricing_entries` table + seed with initial public data
-- [ ] Deploy `pricing_contributions` table (anonymized crowd-sourced data)
-- [ ] Deploy `estimate_templates` table
-- [ ] ALTER `xactimate_estimate_lines` — add code_id, MAT/LAB/EQU, room_name, line_number, coverage_group
-- [ ] Build pricing aggregation Edge Function (monthly cron)
-- [ ] Build code search/browse API (full-text search on description)
-- [ ] Commit: `[E5a] Xactimate pricing database foundation`
+**Status: DONE (Session 78)**
+- [x] Deploy `xactimate_codes` table + seed with 77 initial codes (migration 000026, 86 tables total)
+- [x] Deploy `pricing_entries` table (regional pricing with MAT/LAB/EQU + confidence)
+- [x] Deploy `pricing_contributions` table (anonymized crowd-sourced data)
+- [x] Deploy `estimate_templates` table (reusable templates per trade/loss type)
+- [x] Deploy `esx_imports` table (ESX file tracking)
+- [x] ALTER `xactimate_estimate_lines` — added code_id, material_cost, labor_cost, equipment_cost, room_name, line_number, coverage_group
+- [x] Build pricing aggregation Edge Function (`xact-pricing-aggregate` — monthly cron)
+- [x] Build code search/browse API (`xact-code-search` — FTS on description, category filter, pricing lookup)
+- [x] Commit: `[E5a] Xactimate pricing database foundation`
 
 #### E5b: Estimate Writer UI — Web CRM (~12 hrs)
 - [ ] Estimate editor page: room-by-room line item entry
