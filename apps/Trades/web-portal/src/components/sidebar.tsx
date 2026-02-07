@@ -39,6 +39,15 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   Award,
+  Building2,
+  Home,
+  KeyRound,
+  ScrollText,
+  Banknote,
+  HardHat,
+  ScanSearch,
+  Cog,
+  RotateCcw,
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { ZMark } from '@/components/z-console/z-mark';
@@ -107,6 +116,20 @@ const navigationGroups: NavGroup[] = [
       { name: 'Documents', href: '/dashboard/documents', icon: FolderOpen },
       { name: 'Reports', href: '/dashboard/reports', icon: BarChart3 },
       { name: 'Automations', href: '/dashboard/automations', icon: Zap },
+    ],
+  },
+  {
+    label: 'PROPERTIES',
+    items: [
+      { name: 'Portfolio', href: '/dashboard/properties', icon: Building2 },
+      { name: 'Units', href: '/dashboard/properties/units', icon: Home },
+      { name: 'Tenants', href: '/dashboard/properties/tenants', icon: KeyRound },
+      { name: 'Leases', href: '/dashboard/properties/leases', icon: ScrollText },
+      { name: 'Rent', href: '/dashboard/properties/rent', icon: Banknote },
+      { name: 'Maintenance', href: '/dashboard/properties/maintenance', icon: HardHat },
+      { name: 'Inspections', href: '/dashboard/properties/inspections', icon: ScanSearch },
+      { name: 'Assets', href: '/dashboard/properties/assets', icon: Cog },
+      { name: 'Unit Turns', href: '/dashboard/properties/turns', icon: RotateCcw },
     ],
   },
   {
