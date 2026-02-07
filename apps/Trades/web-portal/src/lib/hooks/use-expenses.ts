@@ -32,6 +32,10 @@ export interface ExpenseData {
   notes: string | null;
   createdByUserId: string | null;
   createdAt: string;
+  propertyId: string | null;
+  propertyAddress: string | null;
+  scheduleECategory: string | null;
+  propertyAllocationPct: number;
 }
 
 export const EXPENSE_CATEGORIES = [
@@ -57,6 +61,7 @@ export const PAYMENT_METHOD_LABELS: Record<string, string> = {
 function mapExpense(row: Record<string, unknown>): ExpenseData {
   const vendor = row.vendors as Record<string, unknown> | null;
   const job = row.jobs as Record<string, unknown> | null;
+  const property = row.properties as Record<string, unknown> | null;
   return {
     id: row.id as string,
     vendorId: row.vendor_id as string | null,
@@ -81,6 +86,10 @@ function mapExpense(row: Record<string, unknown>): ExpenseData {
     notes: row.notes as string | null,
     createdByUserId: row.created_by_user_id as string | null,
     createdAt: row.created_at as string,
+    propertyId: row.property_id as string | null,
+    propertyAddress: property?.address_line1 as string | null ?? null,
+    scheduleECategory: row.schedule_e_category as string | null,
+    propertyAllocationPct: Number(row.property_allocation_pct ?? 100),
   };
 }
 
@@ -103,7 +112,7 @@ export function useExpenses(filters?: {
 
       let query = supabase
         .from('expense_records')
-        .select('*, vendors(vendor_name), jobs(title)')
+        .select('*, vendors(vendor_name), jobs(title), properties(address_line1)')
         .is('deleted_at', null)
         .order('expense_date', { ascending: false });
 
@@ -136,6 +145,9 @@ export function useExpenses(filters?: {
     category: string;
     accountId?: string;
     jobId?: string;
+    propertyId?: string;
+    scheduleECategory?: string;
+    propertyAllocationPct?: number;
     paymentMethod: string;
     checkNumber?: string;
     notes?: string;
@@ -180,6 +192,9 @@ export function useExpenses(filters?: {
         category: data.category,
         account_id: data.accountId || null,
         job_id: data.jobId || null,
+        property_id: data.propertyId || null,
+        schedule_e_category: data.scheduleECategory || null,
+        property_allocation_pct: data.propertyAllocationPct ?? 100,
         payment_method: data.paymentMethod,
         check_number: data.checkNumber || null,
         receipt_storage_path: receiptStoragePath,

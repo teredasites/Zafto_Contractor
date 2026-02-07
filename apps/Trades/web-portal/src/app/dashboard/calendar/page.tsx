@@ -299,6 +299,25 @@ export default function CalendarPage() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Legend */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Legend</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="w-3 h-3 rounded-full bg-blue-500" />
+                  <span className="text-muted">Client Jobs</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="w-3 h-3 rounded-full bg-emerald-500" />
+                  <span className="text-muted">Maintenance Jobs</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

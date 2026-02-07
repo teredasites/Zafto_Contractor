@@ -20,9 +20,11 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CommandPalette } from '@/components/command-palette';
 import { formatCurrency, cn } from '@/lib/utils';
+import { getSupabase } from '@/lib/supabase';
 import { useFinancialStatements } from '@/lib/hooks/use-financial-statements';
 import type { AccountBalance, AgingRow, JournalDetail } from '@/lib/hooks/use-financial-statements';
 import { useAccounts } from '@/lib/hooks/use-accounts';
+import { useProperties } from '@/lib/hooks/use-properties';
 
 // ZBooks Navigation
 const zbooksNav = [
@@ -32,7 +34,7 @@ const zbooksNav = [
   { label: 'Reports', href: '/dashboard/books/reports', active: true },
 ];
 
-type ReportTab = 'pnl' | 'balance_sheet' | 'cash_flow' | 'ar_aging' | 'ap_aging' | 'gl_detail' | 'trial_balance';
+type ReportTab = 'pnl' | 'balance_sheet' | 'cash_flow' | 'ar_aging' | 'ap_aging' | 'gl_detail' | 'trial_balance' | 'schedule_e';
 
 const reportTabs: { key: ReportTab; label: string; icon: typeof TrendingUp }[] = [
   { key: 'pnl', label: 'P&L', icon: TrendingUp },
@@ -42,6 +44,7 @@ const reportTabs: { key: ReportTab; label: string; icon: typeof TrendingUp }[] =
   { key: 'ap_aging', label: 'AP Aging', icon: Building },
   { key: 'gl_detail', label: 'GL Detail', icon: BookOpen },
   { key: 'trial_balance', label: 'Trial Balance', icon: FileText },
+  { key: 'schedule_e', label: 'Schedule E', icon: Building },
 ];
 
 function getDateRange(period: string): { start: string; end: string } {
@@ -163,6 +166,40 @@ function AgingTable({ rows, entityLabel }: { rows: AgingRow[]; entityLabel: stri
   );
 }
 
+interface ScheduleEPropertyReport {
+  propertyId: string;
+  propertyAddress: string;
+  income: number;
+  expenses: Record<string, number>;
+  totalExpenses: number;
+  netIncome: number;
+}
+
+interface ScheduleEData {
+  properties: ScheduleEPropertyReport[];
+  totalIncome: number;
+  totalExpenses: number;
+  totalNet: number;
+}
+
+const SCHEDULE_E_CATEGORIES: { key: string; label: string }[] = [
+  { key: 'advertising', label: 'Advertising' },
+  { key: 'auto_and_travel', label: 'Auto and travel' },
+  { key: 'cleaning_maintenance', label: 'Cleaning and maintenance' },
+  { key: 'commissions', label: 'Commissions' },
+  { key: 'insurance', label: 'Insurance' },
+  { key: 'legal_professional', label: 'Legal and other professional fees' },
+  { key: 'management_fees', label: 'Management fees' },
+  { key: 'mortgage_interest', label: 'Mortgage interest paid' },
+  { key: 'other_interest', label: 'Other interest' },
+  { key: 'repairs', label: 'Repairs' },
+  { key: 'supplies', label: 'Supplies' },
+  { key: 'taxes', label: 'Taxes' },
+  { key: 'utilities', label: 'Utilities' },
+  { key: 'depreciation', label: 'Depreciation expense or depletion' },
+  { key: 'other', label: 'Other expenses' },
+];
+
 export default function FinancialReportsPage() {
   const router = useRouter();
   const {
@@ -195,6 +232,7 @@ export default function FinancialReportsPage() {
   const [apData, setApData] = useState<AgingRow[]>([]);
   const [glData, setGlData] = useState<{ entries: JournalDetail[]; openingBalance: number; closingBalance: number } | null>(null);
   const [tbData, setTbData] = useState<Awaited<ReturnType<typeof fetchTrialBalance>> | null>(null);
+  const [scheduleEData, setScheduleEData] = useState<ScheduleEData | null>(null);
   const [reportLoading, setReportLoading] = useState(false);
 
   const runReport = async () => {
@@ -227,6 +265,78 @@ export default function FinancialReportsPage() {
       case 'trial_balance':
         setTbData(await fetchTrialBalance(asOfDate));
         break;
+      case 'schedule_e': {
+        const supabase = getSupabase();
+        // Get rent payments (income) by property
+        const { data: rentData } = await supabase
+          .from('rent_payments')
+          .select('amount, rent_charges(property_id, properties(address_line1))')
+          .gte('payment_date', range.start)
+          .lte('payment_date', range.end);
+
+        // Get expenses allocated to properties
+        const { data: expData } = await supabase
+          .from('expense_records')
+          .select('total, property_id, schedule_e_category, properties(address_line1)')
+          .not('property_id', 'is', null)
+          .gte('expense_date', range.start)
+          .lte('expense_date', range.end)
+          .eq('status', 'posted');
+
+        // Aggregate by property
+        const propMap = new Map<string, ScheduleEPropertyReport>();
+
+        for (const row of (rentData || []) as Record<string, unknown>[]) {
+          const charge = row.rent_charges as Record<string, unknown> | null;
+          if (!charge) continue;
+          const propId = charge.property_id as string;
+          const prop = charge.properties as Record<string, unknown> | null;
+          if (!propMap.has(propId)) {
+            propMap.set(propId, {
+              propertyId: propId,
+              propertyAddress: (prop?.address_line1 as string) || 'Unknown',
+              income: 0,
+              expenses: {},
+              totalExpenses: 0,
+              netIncome: 0,
+            });
+          }
+          const entry = propMap.get(propId)!;
+          entry.income += Number(row.amount || 0);
+        }
+
+        for (const row of (expData || []) as Record<string, unknown>[]) {
+          const propId = row.property_id as string;
+          const prop = row.properties as Record<string, unknown> | null;
+          if (!propMap.has(propId)) {
+            propMap.set(propId, {
+              propertyId: propId,
+              propertyAddress: (prop?.address_line1 as string) || 'Unknown',
+              income: 0,
+              expenses: {},
+              totalExpenses: 0,
+              netIncome: 0,
+            });
+          }
+          const entry = propMap.get(propId)!;
+          const cat = (row.schedule_e_category as string) || 'other';
+          entry.expenses[cat] = (entry.expenses[cat] || 0) + Number(row.total || 0);
+          entry.totalExpenses += Number(row.total || 0);
+        }
+
+        for (const entry of propMap.values()) {
+          entry.netIncome = entry.income - entry.totalExpenses;
+        }
+
+        const propArray = [...propMap.values()];
+        setScheduleEData({
+          properties: propArray,
+          totalIncome: propArray.reduce((s, p) => s + p.income, 0),
+          totalExpenses: propArray.reduce((s, p) => s + p.totalExpenses, 0),
+          totalNet: propArray.reduce((s, p) => s + p.netIncome, 0),
+        });
+        break;
+      }
     }
     setReportLoading(false);
   };
@@ -237,7 +347,7 @@ export default function FinancialReportsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
 
-  const needsDateRange = ['pnl', 'cash_flow', 'gl_detail'].includes(activeTab);
+  const needsDateRange = ['pnl', 'cash_flow', 'gl_detail', 'schedule_e'].includes(activeTab);
   const needsAsOfDate = ['balance_sheet', 'trial_balance'].includes(activeTab);
   const needsAccountSelect = activeTab === 'gl_detail';
 
@@ -585,6 +695,81 @@ export default function FinancialReportsPage() {
                 </table>
               </CardContent>
             </Card>
+          )}
+
+          {/* Schedule E */}
+          {activeTab === 'schedule_e' && scheduleEData && (
+            <div className="space-y-6">
+              {/* Summary */}
+              <div className="grid grid-cols-3 gap-4">
+                <Card><CardContent className="p-4 text-center">
+                  <p className="text-xs text-muted uppercase">Total Rental Income</p>
+                  <p className="text-xl font-semibold text-main mt-1 tabular-nums">{formatCurrency(scheduleEData.totalIncome)}</p>
+                </CardContent></Card>
+                <Card><CardContent className="p-4 text-center">
+                  <p className="text-xs text-muted uppercase">Total Expenses</p>
+                  <p className="text-xl font-semibold text-main mt-1 tabular-nums">{formatCurrency(scheduleEData.totalExpenses)}</p>
+                </CardContent></Card>
+                <Card><CardContent className="p-4 text-center">
+                  <p className="text-xs text-muted uppercase">Net Rental Income</p>
+                  <p className={cn('text-xl font-semibold mt-1 tabular-nums', scheduleEData.totalNet >= 0 ? 'text-emerald-600' : 'text-red-500')}>
+                    {formatCurrency(scheduleEData.totalNet)}
+                  </p>
+                </CardContent></Card>
+              </div>
+
+              {/* Per-property breakdown */}
+              {scheduleEData.properties.map((prop) => (
+                <Card key={prop.propertyId}>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0">
+                    <CardTitle className="text-base">{prop.propertyAddress}</CardTitle>
+                    <span className={cn('text-sm font-semibold tabular-nums', prop.netIncome >= 0 ? 'text-emerald-600' : 'text-red-500')}>
+                      Net: {formatCurrency(prop.netIncome)}
+                    </span>
+                  </CardHeader>
+                  <CardContent className="p-0">
+                    <table className="w-full text-sm">
+                      <tbody>
+                        <tr className="bg-secondary/50">
+                          <td className="px-3 py-1.5 font-semibold text-main" colSpan={2}>Rental Income</td>
+                        </tr>
+                        <tr className="border-b border-default">
+                          <td className="px-3 py-1.5 text-muted pl-6">Rents received</td>
+                          <td className="px-3 py-1.5 text-right tabular-nums text-main">{formatCurrency(prop.income)}</td>
+                        </tr>
+                        <tr className="bg-secondary/50">
+                          <td className="px-3 py-1.5 font-semibold text-main" colSpan={2}>Expenses</td>
+                        </tr>
+                        {SCHEDULE_E_CATEGORIES.map(cat => {
+                          const amount = prop.expenses[cat.key] || 0;
+                          if (amount === 0) return null;
+                          return (
+                            <tr key={cat.key} className="border-b border-default">
+                              <td className="px-3 py-1.5 text-muted pl-6">{cat.label}</td>
+                              <td className="px-3 py-1.5 text-right tabular-nums text-main">{formatCurrency(amount)}</td>
+                            </tr>
+                          );
+                        })}
+                        <tr className="border-t-2 border-default font-semibold">
+                          <td className="px-3 py-2 text-main">Total Expenses</td>
+                          <td className="px-3 py-2 text-right tabular-nums text-main">{formatCurrency(prop.totalExpenses)}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </CardContent>
+                </Card>
+              ))}
+
+              {scheduleEData.properties.length === 0 && (
+                <Card>
+                  <CardContent className="p-12 text-center text-muted">
+                    <Building size={40} className="mx-auto mb-2 opacity-50" />
+                    <p>No property income or expenses found for this period</p>
+                    <p className="text-xs mt-1">Allocate expenses to properties in ZBooks Expenses</p>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
           )}
         </>
       )}

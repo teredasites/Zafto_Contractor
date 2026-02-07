@@ -239,6 +239,7 @@ export function mapJob(row: Record<string, unknown>): Job {
     photos: [],
     source: (row.source as string) || 'direct',
     tags: (row.tags as string[]) || [],
+    propertyId: (row.property_id as string) || undefined,
     createdAt: new Date(row.created_at as string),
     updatedAt: new Date(row.updated_at as string),
   };
