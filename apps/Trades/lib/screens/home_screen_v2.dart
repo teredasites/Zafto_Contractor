@@ -18,6 +18,7 @@ import 'tools/tools_hub_screen.dart';
 import 'exam_prep/exam_prep_hub_screen.dart';
 import 'ai/ai_chat_screen.dart';
 import 'settings/settings_screen.dart';
+import 'certifications/certifications_screen.dart';
 import 'jobs/jobs_hub_screen.dart';
 import 'jobs/job_detail_screen.dart';
 import 'invoices/invoices_hub_screen.dart';
@@ -810,6 +811,10 @@ class _HomeScreenV2State extends ConsumerState<HomeScreenV2> {
                   behavior: SnackBarBehavior.floating,
                 ),
               );
+            }),
+            _buildMoreMenuItem(colors, LucideIcons.award, 'Certifications', 'EPA, OSHA, state licenses, trade certs', () {
+              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const CertificationsScreen()));
             }),
             Divider(color: colors.borderSubtle, height: 1),
             _buildMoreMenuItem(colors, LucideIcons.settings, 'Settings', 'Account, themes, preferences', () {

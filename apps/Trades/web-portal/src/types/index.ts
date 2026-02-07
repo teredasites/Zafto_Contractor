@@ -172,6 +172,32 @@ export interface BidAddOn {
   isSelected: boolean;
 }
 
+// ==================== JOB TYPES ====================
+export type JobType = 'standard' | 'insurance_claim' | 'warranty_dispatch';
+
+export interface InsuranceMetadata {
+  claimNumber: string;
+  policyNumber?: string;
+  insuranceCompany: string;
+  adjusterName?: string;
+  adjusterPhone?: string;
+  adjusterEmail?: string;
+  dateOfLoss: string;
+  deductible?: number;
+  coverageLimit?: number;
+  approvalStatus?: 'pending' | 'approved' | 'denied' | 'supplemental';
+}
+
+export interface WarrantyMetadata {
+  warrantyCompany: string;
+  dispatchNumber: string;
+  authorizationLimit?: number;
+  serviceFee?: number;
+  warrantyType?: 'home_warranty' | 'manufacturer' | 'extended';
+  expirationDate?: string;
+  recallId?: string;
+}
+
 // ==================== JOBS ====================
 export interface Job {
   id: string;
@@ -181,6 +207,8 @@ export interface Job {
   bidId?: string;
   title: string;
   description?: string;
+  jobType: JobType;
+  typeMetadata: InsuranceMetadata | WarrantyMetadata | Record<string, unknown>;
   status: JobStatus;
   priority: JobPriority;
   address: Address;
@@ -194,6 +222,7 @@ export interface Job {
   actualCost: number;
   notes: JobNote[];
   photos: JobPhoto[];
+  source: string;
   tags: string[];
   createdAt: Date;
   updatedAt: Date;
@@ -262,12 +291,15 @@ export type InvoiceStatus =
   | 'void'
   | 'refunded';
 
+export type PaymentSource = 'standard' | 'carrier' | 'deductible' | 'upgrade';
+
 export interface InvoiceLineItem {
   id: string;
   description: string;
   quantity: number;
   unitPrice: number;
   total: number;
+  paymentSource?: PaymentSource;
 }
 
 // ==================== TEAM ====================
@@ -487,4 +519,288 @@ export interface JobsReport {
   averageDuration: number;
   byStatus: Record<JobStatus, number>;
   byTech: { techId: string; techName: string; count: number }[];
+}
+
+// ==================== INSURANCE / RESTORATION ====================
+
+export type ClaimStatus =
+  | 'new'
+  | 'scope_requested'
+  | 'scope_submitted'
+  | 'estimate_pending'
+  | 'estimate_approved'
+  | 'supplement_submitted'
+  | 'supplement_approved'
+  | 'work_in_progress'
+  | 'work_complete'
+  | 'final_inspection'
+  | 'settled'
+  | 'closed'
+  | 'denied';
+
+export type LossType =
+  | 'fire'
+  | 'water'
+  | 'storm'
+  | 'wind'
+  | 'hail'
+  | 'theft'
+  | 'vandalism'
+  | 'mold'
+  | 'flood'
+  | 'earthquake'
+  | 'other'
+  | 'unknown';
+
+export type SupplementStatus =
+  | 'draft'
+  | 'submitted'
+  | 'under_review'
+  | 'approved'
+  | 'denied'
+  | 'partially_approved';
+
+export type SupplementReason =
+  | 'hidden_damage'
+  | 'code_upgrade'
+  | 'scope_change'
+  | 'material_upgrade'
+  | 'additional_repair'
+  | 'other';
+
+export type TpiInspectionType =
+  | 'initial'
+  | 'progress'
+  | 'supplement'
+  | 'final'
+  | 're_inspection';
+
+export type TpiStatus =
+  | 'pending'
+  | 'scheduled'
+  | 'confirmed'
+  | 'in_progress'
+  | 'completed'
+  | 'cancelled'
+  | 'rescheduled';
+
+export type TpiResult = 'passed' | 'failed' | 'conditional' | 'deferred';
+
+export type EquipmentType =
+  | 'dehumidifier'
+  | 'air_mover'
+  | 'air_scrubber'
+  | 'heater'
+  | 'moisture_meter'
+  | 'thermal_camera'
+  | 'hydroxyl_generator'
+  | 'negative_air_machine'
+  | 'other';
+
+export type EquipmentStatus = 'deployed' | 'removed' | 'maintenance' | 'lost';
+
+export type MaterialMoistureType =
+  | 'drywall'
+  | 'wood'
+  | 'concrete'
+  | 'carpet'
+  | 'pad'
+  | 'insulation'
+  | 'subfloor'
+  | 'hardwood'
+  | 'laminate'
+  | 'tile_backer'
+  | 'other';
+
+export type ReadingUnit = 'percent' | 'relative' | 'wme' | 'grains';
+
+export type DryingLogType =
+  | 'setup'
+  | 'daily'
+  | 'adjustment'
+  | 'equipment_change'
+  | 'completion'
+  | 'note';
+
+export type ClaimCategory = 'restoration' | 'storm' | 'reconstruction' | 'commercial';
+
+export interface InsuranceClaimData {
+  id: string;
+  companyId: string;
+  jobId: string;
+  insuranceCompany: string;
+  claimNumber: string;
+  policyNumber?: string;
+  dateOfLoss: string;
+  lossType: LossType;
+  lossDescription?: string;
+  adjusterName?: string;
+  adjusterPhone?: string;
+  adjusterEmail?: string;
+  adjusterCompany?: string;
+  deductible: number;
+  coverageLimit?: number;
+  approvedAmount?: number;
+  supplementTotal: number;
+  depreciation: number;
+  acv?: number;
+  rcv?: number;
+  depreciationRecovered: boolean;
+  amountCollected: number;
+  claimStatus: ClaimStatus;
+  claimCategory: ClaimCategory;
+  scopeSubmittedAt?: string;
+  estimateApprovedAt?: string;
+  workStartedAt?: string;
+  workCompletedAt?: string;
+  settledAt?: string;
+  xactimateClaimId?: string;
+  xactimateFileUrl?: string;
+  notes?: string;
+  data: Record<string, unknown>;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt?: string;
+  // Joined
+  job?: { title: string; customer_name: string; address?: string };
+}
+
+// Category-specific JSONB data structures
+export interface StormClaimData {
+  weatherEventDate?: string;
+  stormSeverity: 'minor' | 'moderate' | 'severe' | 'catastrophic';
+  aerialAssessmentNeeded: boolean;
+  batchEventId?: string;
+  emergencyTarped: boolean;
+  temporaryRepairs?: string;
+  weatherEventType?: 'hurricane' | 'tornado' | 'hailstorm' | 'thunderstorm' | 'ice_storm' | 'flood';
+  affectedUnits?: number;
+}
+
+export interface ReconstructionClaimData {
+  currentPhase: 'scope_review' | 'selections' | 'materials' | 'demo' | 'rough_in' | 'inspection' | 'finish' | 'walkthrough' | 'supplements' | 'payment';
+  phases: { name: string; status: 'pending' | 'in_progress' | 'complete'; budgetAmount?: number; completionPercent?: number }[];
+  multiContractor: boolean;
+  expectedDurationMonths?: number;
+  permitsRequired: boolean;
+  permitStatus?: 'not_applied' | 'pending' | 'approved' | 'denied';
+}
+
+export interface CommercialClaimData {
+  propertyType?: 'office' | 'retail' | 'warehouse' | 'restaurant' | 'industrial' | 'multi_unit' | 'hotel' | 'other';
+  businessName?: string;
+  tenantName?: string;
+  tenantContact?: string;
+  businessIncomeLoss?: number;
+  businessInterruptionDays?: number;
+  emergencyAuthAmount?: number;
+  emergencyServiceAuthorized: boolean;
+}
+
+export interface ClaimSupplementData {
+  id: string;
+  companyId: string;
+  claimId: string;
+  supplementNumber: number;
+  title: string;
+  description?: string;
+  reason: SupplementReason;
+  amount: number;
+  rcvAmount?: number;
+  acvAmount?: number;
+  depreciationAmount: number;
+  status: SupplementStatus;
+  approvedAmount?: number;
+  lineItems: Record<string, unknown>[];
+  photos: Record<string, unknown>[];
+  submittedAt?: string;
+  reviewedAt?: string;
+  reviewerNotes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface TpiInspectionData {
+  id: string;
+  companyId: string;
+  claimId: string;
+  jobId: string;
+  inspectorName?: string;
+  inspectorCompany?: string;
+  inspectorPhone?: string;
+  inspectorEmail?: string;
+  inspectionType: TpiInspectionType;
+  scheduledDate?: string;
+  completedDate?: string;
+  status: TpiStatus;
+  result?: TpiResult;
+  findings?: string;
+  photos: Record<string, unknown>[];
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface MoistureReadingData {
+  id: string;
+  companyId: string;
+  jobId: string;
+  claimId?: string;
+  areaName: string;
+  floorLevel?: string;
+  materialType: MaterialMoistureType;
+  readingValue: number;
+  readingUnit: ReadingUnit;
+  targetValue?: number;
+  meterType?: string;
+  meterModel?: string;
+  ambientTempF?: number;
+  ambientHumidity?: number;
+  isDry: boolean;
+  recordedByUserId?: string;
+  recordedAt: string;
+  createdAt: string;
+}
+
+export interface DryingLogData {
+  id: string;
+  companyId: string;
+  jobId: string;
+  claimId?: string;
+  logType: DryingLogType;
+  summary: string;
+  details?: string;
+  equipmentCount: number;
+  dehumidifiersRunning: number;
+  airMoversRunning: number;
+  airScrubbersRunning: number;
+  outdoorTempF?: number;
+  outdoorHumidity?: number;
+  indoorTempF?: number;
+  indoorHumidity?: number;
+  photos: Record<string, unknown>[];
+  recordedByUserId?: string;
+  recordedAt: string;
+  createdAt: string;
+}
+
+export interface RestorationEquipmentData {
+  id: string;
+  companyId: string;
+  jobId: string;
+  claimId?: string;
+  equipmentType: EquipmentType;
+  make?: string;
+  model?: string;
+  serialNumber?: string;
+  assetTag?: string;
+  areaDeployed: string;
+  deployedAt: string;
+  removedAt?: string;
+  dailyRate: number;
+  totalDays?: number;
+  status: EquipmentStatus;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
 }

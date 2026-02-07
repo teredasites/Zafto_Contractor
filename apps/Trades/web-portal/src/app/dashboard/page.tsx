@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   FileText,
@@ -20,6 +21,7 @@ import {
   Phone,
   Plus,
   Radio,
+  Shield,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { StatsCard } from '@/components/ui/stats-card';
@@ -36,8 +38,10 @@ import { formatCurrency, formatRelativeTime, formatDate, formatTime, cn } from '
 import { useStats, useActivity } from '@/lib/hooks/use-stats';
 import { useJobs, useSchedule, useTeam } from '@/lib/hooks/use-jobs';
 import { useInvoices } from '@/lib/hooks/use-invoices';
+import { useVerticalDetection } from '@/lib/hooks/use-verticals';
 import { useBids } from '@/lib/hooks/use-bids';
 import { useReports } from '@/lib/hooks/use-reports';
+import { JOB_TYPE_LABELS, JOB_TYPE_COLORS } from '@/lib/hooks/mappers';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -51,6 +55,7 @@ export default function DashboardPage() {
   const { team } = useTeam();
   const { activity } = useActivity();
   const { data: reportData } = useReports();
+  const verticals = useVerticalDetection();
 
   const revenueData = reportData?.monthlyRevenue || [];
   const jobsByStatusData = reportData?.jobsByStatus || [];
@@ -61,7 +66,9 @@ export default function DashboardPage() {
     const newMode = isProMode ? 'simple' : 'pro';
     try {
       const supabase = getSupabase();
-      await supabase.from('companies').update({ ui_mode: newMode }).eq('id', companyId);
+      const { data: current } = await supabase.from('companies').select('settings').eq('id', companyId).single();
+      const settings = (current?.settings as Record<string, unknown>) || {};
+      await supabase.from('companies').update({ settings: { ...settings, ui_mode: newMode } }).eq('id', companyId);
     } catch (e) {
       console.error('Failed to toggle mode:', e);
     }
@@ -283,6 +290,11 @@ export default function DashboardPage() {
                         <div className="flex items-center gap-2">
                           <h4 className="font-medium text-main truncate">{job.title}</h4>
                           <StatusBadge status={job.status} />
+                          {job.jobType !== 'standard' && (
+                            <span className={cn('inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-medium rounded-full', JOB_TYPE_COLORS[job.jobType].bg, JOB_TYPE_COLORS[job.jobType].text)}>
+                              {JOB_TYPE_LABELS[job.jobType]}
+                            </span>
+                          )}
                         </div>
                         <p className="text-sm text-muted mt-1">
                           {job.customer?.firstName} {job.customer?.lastName}
@@ -380,6 +392,45 @@ export default function DashboardPage() {
                 </CardContent>
               </Card>
             </div>
+
+            {/* Revenue by Job Type */}
+            <RevenueByTypeWidget jobs={jobs} invoices={invoices} />
+
+            {/* Vertical Detection Widgets — progressive disclosure */}
+            {!verticals.loading && (
+              <>
+                {verticals.storm && (
+                  <StormDashboardWidget jobs={jobs} invoices={invoices} />
+                )}
+                {verticals.reconstruction && (
+                  <VerticalSummaryCard
+                    title="Reconstruction Pipeline"
+                    icon={<Briefcase size={14} className="text-orange-500" />}
+                    description="Active reconstruction claims detected"
+                    linkLabel="View Claims"
+                    linkHref="/dashboard/insurance?category=reconstruction"
+                  />
+                )}
+                {verticals.commercial && (
+                  <VerticalSummaryCard
+                    title="Commercial Claims"
+                    icon={<MapPin size={14} className="text-indigo-500" />}
+                    description="Commercial property claims active"
+                    linkLabel="View Claims"
+                    linkHref="/dashboard/insurance?category=commercial"
+                  />
+                )}
+                {verticals.warranty && (
+                  <VerticalSummaryCard
+                    title="Warranty Network"
+                    icon={<Shield size={14} className="text-purple-500" />}
+                    description="Multiple warranty company relationships"
+                    linkLabel="View Warranties"
+                    linkHref="/dashboard/warranties"
+                  />
+                )}
+              </>
+            )}
           </ProModeGate>
 
           {/* Overdue Invoices Alert */}
@@ -445,6 +496,206 @@ export default function DashboardPage() {
       </div>
 
     </div>
+  );
+}
+
+const JOB_TYPE_REVENUE_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
+  standard: { label: 'Retail', color: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-500' },
+  insurance_claim: { label: 'Insurance', color: 'text-amber-600 dark:text-amber-400', bg: 'bg-amber-500' },
+  warranty_dispatch: { label: 'Warranty', color: 'text-purple-600 dark:text-purple-400', bg: 'bg-purple-500' },
+  maintenance: { label: 'Maintenance', color: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-500' },
+};
+
+function RevenueByTypeWidget({ jobs, invoices }: { jobs: { id: string; jobType: string; estimatedValue: number }[]; invoices: { jobId?: string; total: number; status: string }[] }) {
+  // Build job type lookup
+  const jobTypeMap = new Map<string, string>();
+  for (const job of jobs) {
+    jobTypeMap.set(job.id, job.jobType);
+  }
+
+  // Sum invoice totals by job type
+  const typeRevenue: Record<string, number> = {};
+  const typeCount: Record<string, number> = {};
+  for (const inv of invoices) {
+    if (!inv.jobId) continue;
+    const jt = jobTypeMap.get(inv.jobId) || 'standard';
+    typeRevenue[jt] = (typeRevenue[jt] || 0) + inv.total;
+    typeCount[jt] = (typeCount[jt] || 0) + 1;
+  }
+
+  // Also count jobs without invoices by estimated value
+  for (const job of jobs) {
+    if (!typeRevenue[job.jobType]) {
+      typeRevenue[job.jobType] = (typeRevenue[job.jobType] || 0);
+    }
+  }
+
+  const grandTotal = Object.values(typeRevenue).reduce((a, b) => a + b, 0);
+  if (grandTotal === 0) return null;
+
+  const types = Object.keys(typeRevenue).filter((k) => typeRevenue[k] > 0).sort((a, b) => typeRevenue[b] - typeRevenue[a]);
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm flex items-center gap-2">
+          <Shield size={14} className="text-muted" />
+          Revenue by Job Type
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        {/* Stacked bar */}
+        <div className="flex h-3 rounded-full overflow-hidden bg-secondary">
+          {types.map((t) => (
+            <div
+              key={t}
+              className={cn('h-full', JOB_TYPE_REVENUE_CONFIG[t]?.bg || 'bg-gray-400')}
+              style={{ width: `${(typeRevenue[t] / grandTotal) * 100}%` }}
+            />
+          ))}
+        </div>
+
+        {/* Breakdown rows */}
+        <div className="space-y-2">
+          {types.map((t) => {
+            const cfg = JOB_TYPE_REVENUE_CONFIG[t] || { label: t, color: 'text-main', bg: 'bg-gray-400' };
+            const pct = ((typeRevenue[t] / grandTotal) * 100).toFixed(1);
+            const avg = typeCount[t] ? typeRevenue[t] / typeCount[t] : 0;
+            return (
+              <div key={t} className="flex items-center justify-between text-xs">
+                <div className="flex items-center gap-2">
+                  <span className={cn('w-2 h-2 rounded-full', cfg.bg)} />
+                  <span className="text-muted">{cfg.label}</span>
+                  <span className="text-muted/60">{pct}%</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-muted/60">avg {formatCurrency(avg)}</span>
+                  <span className={cn('font-medium', cfg.color)}>{formatCurrency(typeRevenue[t])}</span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Total */}
+        <div className="flex justify-between pt-2 border-t border-main text-sm font-semibold">
+          <span>Total</span>
+          <span>{formatCurrency(grandTotal)}</span>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function StormDashboardWidget({ jobs, invoices }: { jobs: { id: string; jobType: string; tags: string[]; status: string; estimatedValue: number }[]; invoices: { jobId?: string; total: number; status: string }[] }) {
+  const router = useRouter();
+
+  // Find storm-tagged jobs
+  const stormJobs = jobs.filter((j) => j.tags.some((t) => t.startsWith('storm:')));
+  if (stormJobs.length === 0) return null;
+
+  // Extract unique storm events
+  const events = [...new Set(stormJobs.flatMap((j) => j.tags.filter((t) => t.startsWith('storm:')).map((t) => t.replace('storm:', ''))))];
+
+  // Pipeline metrics
+  const jobIds = new Set(stormJobs.map((j) => j.id));
+  const stormInvoices = invoices.filter((i) => i.jobId && jobIds.has(i.jobId));
+  const pipeline = stormJobs.reduce((sum, j) => sum + j.estimatedValue, 0);
+  const collected = stormInvoices.filter((i) => i.status === 'paid').reduce((sum, i) => sum + i.total, 0);
+
+  const statusCounts: Record<string, number> = {};
+  for (const j of stormJobs) {
+    statusCounts[j.status] = (statusCounts[j.status] || 0) + 1;
+  }
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm flex items-center gap-2">
+          <AlertCircle size={14} className="text-amber-500" />
+          Storm Pipeline
+        </CardTitle>
+        <button
+          onClick={() => router.push('/dashboard/jobs?type=insurance_claim')}
+          className="text-xs text-accent hover:underline"
+        >
+          View All
+        </button>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        <div className="grid grid-cols-2 gap-3">
+          <div className="p-2 bg-secondary rounded-lg text-center">
+            <p className="text-lg font-semibold text-main">{stormJobs.length}</p>
+            <p className="text-[10px] text-muted">Total Jobs</p>
+          </div>
+          <div className="p-2 bg-secondary rounded-lg text-center">
+            <p className="text-lg font-semibold text-main">{events.length}</p>
+            <p className="text-[10px] text-muted">Storm Events</p>
+          </div>
+        </div>
+
+        <div className="space-y-1.5 text-xs">
+          <div className="flex justify-between">
+            <span className="text-muted">Pipeline</span>
+            <span className="font-medium text-main">{formatCurrency(pipeline)}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-muted">Collected</span>
+            <span className="font-medium text-emerald-600 dark:text-emerald-400">{formatCurrency(collected)}</span>
+          </div>
+          {statusCounts['in_progress'] && (
+            <div className="flex justify-between">
+              <span className="text-muted">In Production</span>
+              <span className="font-medium text-blue-600 dark:text-blue-400">{statusCounts['in_progress']}</span>
+            </div>
+          )}
+          {statusCounts['completed'] && (
+            <div className="flex justify-between">
+              <span className="text-muted">Complete</span>
+              <span className="font-medium text-emerald-600 dark:text-emerald-400">{statusCounts['completed']}</span>
+            </div>
+          )}
+        </div>
+
+        {events.length > 0 && (
+          <div className="pt-2 border-t border-main space-y-1">
+            <p className="text-[10px] font-medium text-muted uppercase">Active Events</p>
+            {events.slice(0, 3).map((evt) => (
+              <div key={evt} className="text-xs text-main truncate">{evt}</div>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+function VerticalSummaryCard({ title, icon, description, linkLabel, linkHref }: {
+  title: string;
+  icon: React.ReactNode;
+  description: string;
+  linkLabel: string;
+  linkHref: string;
+}) {
+  const router = useRouter();
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm flex items-center gap-2">
+          {icon}
+          {title}
+        </CardTitle>
+        <button
+          onClick={() => router.push(linkHref)}
+          className="text-xs text-accent hover:underline"
+        >
+          {linkLabel}
+        </button>
+      </CardHeader>
+      <CardContent>
+        <p className="text-xs text-muted">{description}</p>
+      </CardContent>
+    </Card>
   );
 }
 

@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
-import { Hammer, Clock, CheckCircle2, AlertCircle, ChevronRight, Calendar } from 'lucide-react';
+import { Hammer, Clock, CheckCircle2, AlertCircle, ChevronRight, Calendar, Shield } from 'lucide-react';
 import { useProjects } from '@/lib/hooks/use-projects';
 import { formatCurrency } from '@/lib/hooks/mappers';
 
@@ -100,6 +100,11 @@ export default function ProjectsPage() {
                   <div>
                     <h3 className="font-semibold text-gray-900 text-sm">{project.name}</h3>
                     <p className="text-xs text-gray-500 mt-0.5">{project.contractor}{project.trade ? ` · ${project.trade}` : ''}</p>
+                    {project.jobType === 'insurance_claim' && (
+                      <span className="inline-flex items-center gap-1 mt-1 text-xs font-medium text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full">
+                        <Shield size={10} /> Insurance
+                      </span>
+                    )}
                   </div>
                   <span className={`flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full ${config.bg} ${config.color}`}>
                     <StatusIcon size={12} /> {config.label}

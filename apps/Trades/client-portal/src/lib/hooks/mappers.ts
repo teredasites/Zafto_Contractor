@@ -1,6 +1,16 @@
 // Client Portal data types and mappers
 // Maps Supabase DB rows → TypeScript interfaces
 
+// ==================== JOB TYPES ====================
+
+export type JobType = 'standard' | 'insurance_claim' | 'warranty_dispatch';
+
+export const JOB_TYPE_LABELS: Record<JobType, string> = {
+  standard: 'Standard',
+  insurance_claim: 'Insurance Claim',
+  warranty_dispatch: 'Warranty Dispatch',
+};
+
 export interface ProjectData {
   id: string;
   name: string;
@@ -16,6 +26,8 @@ export interface ProjectData {
   address: string;
   city: string;
   state: string;
+  jobType: JobType;
+  typeMetadata: Record<string, unknown>;
 }
 
 export interface InvoiceData {
@@ -92,13 +104,12 @@ const INVOICE_STATUS_MAP: Record<string, InvoiceData['status']> = {
 export function mapProject(row: Record<string, unknown>): ProjectData {
   const status = JOB_STATUS_MAP[row.status as string] || 'scheduled';
   const progress = status === 'completed' ? 100
-    : status === 'active' ? (row.completion_percentage as number) || 50
     : 0;
 
   return {
     id: row.id as string,
     name: row.title as string || '',
-    contractor: row.company_name as string || row.customer_name as string || '',
+    contractor: row.customer_name as string || '',
     trade: (row.tags as string[])?.[0] || '',
     status,
     progress,
@@ -110,6 +121,8 @@ export function mapProject(row: Record<string, unknown>): ProjectData {
     address: row.address as string || '',
     city: row.city as string || '',
     state: row.state as string || '',
+    jobType: ((row.job_type as string) || 'standard') as JobType,
+    typeMetadata: (row.type_metadata as Record<string, unknown>) || {},
   };
 }
 
@@ -128,7 +141,7 @@ export function mapInvoice(row: Record<string, unknown>): InvoiceData {
     number: row.invoice_number as string || '',
     project: (row as Record<string, Record<string, unknown>>).jobs?.title as string || '',
     projectId: row.job_id as string || null,
-    amount: (row.total_amount as number) || 0,
+    amount: (row.total as number) || 0,
     status: finalStatus,
     dueDate,
     paidDate: row.paid_at as string || null,
@@ -142,18 +155,18 @@ export function mapBid(row: Record<string, unknown>): BidData {
     id: row.id as string,
     number: row.bid_number as string || '',
     title: row.title as string || '',
-    totalAmount: (row.total_amount as number) || 0,
+    totalAmount: (row.total as number) || 0,
     status: row.status as string || 'draft',
     createdAt: row.created_at as string || '',
-    expiresAt: row.expires_at as string || null,
-    description: row.description as string || '',
+    expiresAt: row.valid_until as string || null,
+    description: row.scope_of_work as string || '',
   };
 }
 
 export function mapChangeOrder(row: Record<string, unknown>): ChangeOrderData {
   return {
     id: row.id as string,
-    orderNumber: row.order_number as string || '',
+    orderNumber: row.change_order_number as string || '',
     title: row.title as string || '',
     description: row.description as string || '',
     amount: (row.amount as number) || 0,

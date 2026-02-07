@@ -22,11 +22,14 @@ import { formatCurrency, cn } from '@/lib/utils';
 import { useCustomers } from '@/lib/hooks/use-customers';
 import { useJobs } from '@/lib/hooks/use-jobs';
 
+type PaymentSource = 'standard' | 'carrier' | 'deductible' | 'upgrade';
+
 interface LineItem {
   id: string;
   description: string;
   quantity: number;
   unitPrice: number;
+  paymentSource: PaymentSource;
 }
 
 export default function NewInvoicePage() {
@@ -44,7 +47,7 @@ export default function NewInvoicePage() {
   });
 
   const [lineItems, setLineItems] = useState<LineItem[]>([
-    { id: '1', description: '', quantity: 1, unitPrice: 0 },
+    { id: '1', description: '', quantity: 1, unitPrice: 0, paymentSource: 'standard' },
   ]);
 
   const [customerSearch, setCustomerSearch] = useState('');
@@ -73,10 +76,12 @@ export default function NewInvoicePage() {
     (j) => j.customerId === formData.customerId && (j.status === 'completed' || j.status === 'in_progress')
   );
 
+  const isInsuranceJob = selectedJob?.jobType === 'insurance_claim' || selectedJob?.jobType === 'warranty_dispatch';
+
   const addLineItem = () => {
     setLineItems([
       ...lineItems,
-      { id: Date.now().toString(), description: '', quantity: 1, unitPrice: 0 },
+      { id: Date.now().toString(), description: '', quantity: 1, unitPrice: 0, paymentSource: isInsuranceJob ? 'carrier' : 'standard' },
     ]);
   };
 
@@ -100,7 +105,7 @@ export default function NewInvoicePage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Save to Firestore
+    // TODO: Save to Supabase
     console.log('Creating invoice:', { ...formData, lineItems, subtotal, tax, total });
     router.push('/dashboard/invoices');
   };
@@ -254,6 +259,9 @@ export default function NewInvoicePage() {
                     <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">Description</th>
                     <th className="text-right text-xs font-medium text-muted uppercase px-4 py-3 w-24">Qty</th>
                     <th className="text-right text-xs font-medium text-muted uppercase px-4 py-3 w-32">Price</th>
+                    {isInsuranceJob && (
+                      <th className="text-left text-xs font-medium text-muted uppercase px-4 py-3 w-40">Source</th>
+                    )}
                     <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3 w-32">Total</th>
                     <th className="w-12"></th>
                   </tr>
@@ -292,6 +300,20 @@ export default function NewInvoicePage() {
                           />
                         </div>
                       </td>
+                      {isInsuranceJob && (
+                        <td className="px-4 py-3">
+                          <select
+                            value={item.paymentSource}
+                            onChange={(e) => updateLineItem(item.id, 'paymentSource', e.target.value)}
+                            className="w-full px-3 py-2 bg-secondary border border-main rounded-lg text-main text-sm focus:outline-none focus:ring-2 focus:ring-accent/50"
+                          >
+                            <option value="carrier">Carrier</option>
+                            <option value="deductible">Deductible</option>
+                            <option value="upgrade">Upgrade</option>
+                            <option value="standard">Standard</option>
+                          </select>
+                        </td>
+                      )}
                       <td className="px-6 py-3 text-right font-medium text-main">
                         {formatCurrency(item.quantity * item.unitPrice)}
                       </td>

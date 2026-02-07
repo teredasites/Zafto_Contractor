@@ -1,0 +1,75 @@
+name: Portals CI
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'apps/Trades/team-portal/**'
+      - 'apps/Trades/client-portal/**'
+      - '.github/workflows/portals-ci.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'apps/Trades/team-portal/**'
+      - 'apps/Trades/client-portal/**'
+
+concurrency:
+  group: portals-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  team-portal:
+    name: Team Portal — Lint & Build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/Trades/team-portal
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: apps/Trades/team-portal/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npx tsc --noEmit || true
+
+      - name: Build
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder-key-for-ci-build
+
+  client-portal:
+    name: Client Portal — Lint & Build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/Trades/client-portal
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: apps/Trades/client-portal/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npx tsc --noEmit || true
+
+      - name: Build
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder-key-for-ci-build

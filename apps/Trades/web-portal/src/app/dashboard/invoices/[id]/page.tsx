@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import {
   ArrowLeft,
@@ -28,7 +28,7 @@ import { Button } from '@/components/ui/button';
 import { StatusBadge, Badge } from '@/components/ui/badge';
 import { formatCurrency, formatDate, formatDateTime, cn } from '@/lib/utils';
 import { useInvoice } from '@/lib/hooks/use-invoices';
-import type { Invoice } from '@/types';
+import type { Invoice, InvoiceLineItem } from '@/types';
 
 export default function InvoiceDetailPage() {
   const router = useRouter();
@@ -249,14 +249,45 @@ export default function InvoiceDetailPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-main">
-                  {invoice.lineItems.map((item) => (
-                    <tr key={item.id}>
-                      <td className="px-6 py-4 font-medium text-main">{item.description}</td>
-                      <td className="px-6 py-4 text-right text-muted">{item.quantity}</td>
-                      <td className="px-6 py-4 text-right text-muted">{formatCurrency(item.unitPrice)}</td>
-                      <td className="px-6 py-4 text-right font-medium text-main">{formatCurrency(item.total)}</td>
-                    </tr>
-                  ))}
+                  {(() => {
+                    const hasInsurance = invoice.lineItems.some((i: InvoiceLineItem) => i.paymentSource && i.paymentSource !== 'standard');
+                    if (!hasInsurance) {
+                      return invoice.lineItems.map((item: InvoiceLineItem) => (
+                        <tr key={item.id}>
+                          <td className="px-6 py-4 font-medium text-main">{item.description}</td>
+                          <td className="px-6 py-4 text-right text-muted">{item.quantity}</td>
+                          <td className="px-6 py-4 text-right text-muted">{formatCurrency(item.unitPrice)}</td>
+                          <td className="px-6 py-4 text-right font-medium text-main">{formatCurrency(item.total)}</td>
+                        </tr>
+                      ));
+                    }
+                    const sections: { key: string; label: string; color: string; items: InvoiceLineItem[] }[] = [
+                      { key: 'carrier', label: 'Insurance-Covered Work', color: 'text-blue-600 dark:text-blue-400', items: [] },
+                      { key: 'deductible', label: 'Deductible', color: 'text-orange-600 dark:text-orange-400', items: [] },
+                      { key: 'upgrade', label: 'Upgrades (Out-of-Pocket)', color: 'text-purple-600 dark:text-purple-400', items: [] },
+                      { key: 'standard', label: 'Other', color: 'text-muted', items: [] },
+                    ];
+                    for (const item of invoice.lineItems) {
+                      const s = sections.find(s => s.key === (item.paymentSource || 'standard'));
+                      if (s) s.items.push(item);
+                    }
+                    return sections.filter(s => s.items.length > 0).map(section => (
+                      <React.Fragment key={section.key}>
+                        <tr className="bg-muted/30">
+                          <td colSpan={3} className={`px-6 py-2 text-xs font-semibold uppercase ${section.color}`}>{section.label}</td>
+                          <td className={`px-6 py-2 text-right text-xs font-semibold ${section.color}`}>{formatCurrency(section.items.reduce((s, i) => s + i.total, 0))}</td>
+                        </tr>
+                        {section.items.map((item: InvoiceLineItem) => (
+                          <tr key={item.id}>
+                            <td className="px-6 py-4 font-medium text-main">{item.description}</td>
+                            <td className="px-6 py-4 text-right text-muted">{item.quantity}</td>
+                            <td className="px-6 py-4 text-right text-muted">{formatCurrency(item.unitPrice)}</td>
+                            <td className="px-6 py-4 text-right font-medium text-main">{formatCurrency(item.total)}</td>
+                          </tr>
+                        ))}
+                      </React.Fragment>
+                    ));
+                  })()}
                 </tbody>
               </table>
 

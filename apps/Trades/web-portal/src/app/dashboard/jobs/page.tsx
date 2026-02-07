@@ -24,12 +24,16 @@ import { CommandPalette } from '@/components/command-palette';
 import { formatCurrency, formatDate, getStatusLabel, cn } from '@/lib/utils';
 import { useJobs, useTeam } from '@/lib/hooks/use-jobs';
 import { useStats } from '@/lib/hooks/use-stats';
-import type { Job, TeamMember } from '@/types';
+import { JOB_TYPE_LABELS, JOB_TYPE_COLORS } from '@/lib/hooks/mappers';
+import type { Job, JobType, TeamMember } from '@/types';
 
 export default function JobsPage() {
   const router = useRouter();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [typeFilter, setTypeFilter] = useState('all');
+  const [stormFilter, setStormFilter] = useState('all');
+  const [sourceFilter, setSourceFilter] = useState('all');
   const [view, setView] = useState<'list' | 'board'>('list');
   const { jobs, loading: jobsLoading } = useJobs();
   const { team } = useTeam();
@@ -57,9 +61,17 @@ export default function JobsPage() {
       job.customer?.lastName?.toLowerCase().includes(search.toLowerCase());
 
     const matchesStatus = statusFilter === 'all' || job.status === statusFilter;
+    const matchesType = typeFilter === 'all' || job.jobType === typeFilter;
+    const matchesStorm = stormFilter === 'all' || job.tags.some((t) => t === `storm:${stormFilter}`);
+    const matchesSource = sourceFilter === 'all' || job.source === sourceFilter;
 
-    return matchesSearch && matchesStatus;
+    return matchesSearch && matchesStatus && matchesType && matchesStorm && matchesSource;
   });
+
+  // Extract unique storm events from job tags
+  const stormEvents = [...new Set(
+    jobs.flatMap((j) => j.tags.filter((t) => t.startsWith('storm:')).map((t) => t.replace('storm:', '')))
+  )].sort();
 
   const statusOptions = [
     { value: 'all', label: 'All Statuses' },
@@ -166,6 +178,42 @@ export default function JobsPage() {
           onChange={(e) => setStatusFilter(e.target.value)}
           className="sm:w-48"
         />
+        <Select
+          options={[
+            { value: 'all', label: 'All Types' },
+            { value: 'standard', label: 'Standard' },
+            { value: 'insurance_claim', label: 'Insurance Claim' },
+            { value: 'warranty_dispatch', label: 'Warranty Dispatch' },
+          ]}
+          value={typeFilter}
+          onChange={(e) => setTypeFilter(e.target.value)}
+          className="sm:w-48"
+        />
+        {stormEvents.length > 0 && (
+          <Select
+            options={[
+              { value: 'all', label: 'All Storm Events' },
+              ...stormEvents.map((e) => ({ value: e, label: e })),
+            ]}
+            value={stormFilter}
+            onChange={(e) => setStormFilter(e.target.value)}
+            className="sm:w-48"
+          />
+        )}
+        <Select
+          options={[
+            { value: 'all', label: 'All Sources' },
+            { value: 'direct', label: 'Direct' },
+            { value: 'referral', label: 'Referral' },
+            { value: 'canvass', label: 'Canvass' },
+            { value: 'website', label: 'Website' },
+            { value: 'phone', label: 'Phone' },
+            { value: 'other', label: 'Other' },
+          ]}
+          value={sourceFilter}
+          onChange={(e) => setSourceFilter(e.target.value)}
+          className="sm:w-40"
+        />
         <div className="flex items-center gap-1 p-1 bg-secondary rounded-lg ml-auto">
           <button
             onClick={() => setView('list')}
@@ -254,6 +302,9 @@ function JobRow({ job, team, onClick }: { job: Job; team: TeamMember[]; onClick:
           <div className="flex items-center gap-2">
             <h4 className="font-medium text-main truncate">{job.title}</h4>
             <StatusBadge status={job.status} />
+            {job.jobType !== 'standard' && (
+              <JobTypeBadge type={job.jobType} />
+            )}
             {job.priority === 'urgent' && (
               <Badge variant="error" size="sm">
                 Urgent
@@ -296,14 +347,29 @@ function JobRow({ job, team, onClick }: { job: Job; team: TeamMember[]; onClick:
   );
 }
 
+function JobTypeBadge({ type }: { type: JobType }) {
+  const colors = JOB_TYPE_COLORS[type];
+  return (
+    <span className={cn('inline-flex items-center gap-1.5 px-2 py-0.5 text-xs font-medium rounded-full', colors.bg, colors.text)}>
+      <span className={cn('w-1.5 h-1.5 rounded-full', colors.dot)} />
+      {JOB_TYPE_LABELS[type]}
+    </span>
+  );
+}
+
 function JobCard({ job, team, onClick }: { job: Job; team: TeamMember[]; onClick: () => void }) {
   return (
     <Card hover onClick={onClick} className="p-4">
       <div className="flex items-start justify-between gap-2 mb-2">
         <h4 className="font-medium text-main text-sm line-clamp-2">{job.title}</h4>
-        {job.priority === 'urgent' && (
-          <Badge variant="error" size="sm">!</Badge>
-        )}
+        <div className="flex items-center gap-1">
+          {job.jobType !== 'standard' && (
+            <JobTypeBadge type={job.jobType} />
+          )}
+          {job.priority === 'urgent' && (
+            <Badge variant="error" size="sm">!</Badge>
+          )}
+        </div>
       </div>
       <p className="text-xs text-muted mb-3">
         {job.customer?.firstName} {job.customer?.lastName}

@@ -232,6 +232,8 @@ export function useBid(id: string | undefined) {
       return;
     }
 
+    let ignore = false;
+
     const fetchBid = async () => {
       try {
         setLoading(true);
@@ -239,17 +241,20 @@ export function useBid(id: string | undefined) {
         const supabase = getSupabase();
         const { data, error: err } = await supabase.from('bids').select('*').eq('id', id).single();
 
+        if (ignore) return;
         if (err) throw err;
         setBid(data ? mapBid(data) : null);
       } catch (e: unknown) {
+        if (ignore) return;
         const msg = e instanceof Error ? e.message : 'Bid not found';
         setError(msg);
       } finally {
-        setLoading(false);
+        if (!ignore) setLoading(false);
       }
     };
 
     fetchBid();
+    return () => { ignore = true; };
   }, [id]);
 
   return { bid, loading, error };

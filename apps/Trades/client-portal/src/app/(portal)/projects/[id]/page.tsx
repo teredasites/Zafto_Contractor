@@ -2,10 +2,11 @@
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Hammer, Clock, CheckCircle2, Calendar, FileText, Users, MessageSquare, MapPin, AlertCircle, Inbox } from 'lucide-react';
+import { ArrowLeft, Hammer, Clock, CheckCircle2, Calendar, FileText, Users, MessageSquare, MapPin, AlertCircle, Inbox, Shield } from 'lucide-react';
 import { useProject } from '@/lib/hooks/use-projects';
 import { useChangeOrders } from '@/lib/hooks/use-change-orders';
 import { useInvoices } from '@/lib/hooks/use-invoices';
+import { useProjectClaim, CLAIM_STATUS_LABELS, CLAIM_STATUS_DESCRIPTIONS, CLAIM_TIMELINE_STEPS, getStatusIndex } from '@/lib/hooks/use-insurance';
 import { formatCurrency, formatDate } from '@/lib/hooks/mappers';
 
 type ProjectStatus = 'active' | 'scheduled' | 'completed' | 'on_hold';
@@ -50,14 +51,17 @@ export default function ProjectDetailPage() {
   const { orders, loading: ordersLoading } = useChangeOrders();
   const { invoices, loading: invoicesLoading } = useInvoices();
 
+  const isInsurance = project?.jobType === 'insurance_claim';
+  const { claim, loading: claimLoading } = useProjectClaim(isInsurance ? id : null);
+
   const [tab, setTab] = useState<'timeline' | 'details' | 'documents'>('timeline');
   const tabs = [
-    { key: 'timeline' as const, label: 'Timeline' },
+    { key: 'timeline' as const, label: isInsurance ? 'Claim Status' : 'Timeline' },
     { key: 'details' as const, label: 'Details' },
     { key: 'documents' as const, label: 'Documents' },
   ];
 
-  const loading = projectLoading || ordersLoading || invoicesLoading;
+  const loading = projectLoading || ordersLoading || invoicesLoading || (isInsurance && claimLoading);
 
   if (loading) {
     return (
@@ -117,6 +121,20 @@ export default function ProjectDetailPage() {
         </div>
       </div>
 
+      {/* Insurance Claim Banner */}
+      {isInsurance && claim && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-1">
+            <Shield size={16} className="text-amber-600" />
+            <span className="text-sm font-semibold text-amber-800">Insurance Claim</span>
+          </div>
+          <p className="text-xs text-amber-700">{claim.insuranceCompany} — Claim #{claim.claimNumber}</p>
+          {claim.dateOfLoss && (
+            <p className="text-xs text-amber-600 mt-0.5">Date of Loss: {formatDate(claim.dateOfLoss)}</p>
+          )}
+        </div>
+      )}
+
       {/* Progress Bar */}
       <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
         <div className="flex justify-between text-xs mb-2">
@@ -158,13 +176,17 @@ export default function ProjectDetailPage() {
         ))}
       </div>
 
-      {/* Timeline Tab */}
+      {/* Timeline / Claim Status Tab */}
       {tab === 'timeline' && (
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 text-center">
-          <Clock size={28} className="mx-auto text-gray-300 mb-3" />
-          <h3 className="font-semibold text-gray-900 text-sm">Timeline</h3>
-          <p className="text-xs text-gray-500 mt-1">Timeline events will appear as your project progresses.</p>
-        </div>
+        isInsurance && claim ? (
+          <ClaimTimeline claim={claim} />
+        ) : (
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 text-center">
+            <Clock size={28} className="mx-auto text-gray-300 mb-3" />
+            <h3 className="font-semibold text-gray-900 text-sm">Timeline</h3>
+            <p className="text-xs text-gray-500 mt-1">Timeline events will appear as your project progresses.</p>
+          </div>
+        )
       )}
 
       {/* Details Tab */}
@@ -179,6 +201,29 @@ export default function ProjectDetailPage() {
               <p className="text-sm text-gray-400 italic">No description provided.</p>
             )}
           </div>
+
+          {/* Insurance Deductible */}
+          {isInsurance && claim && (
+            <div className="bg-white rounded-xl border border-gray-100 p-4">
+              <h3 className="font-semibold text-sm text-gray-900 mb-3">Insurance Details</h3>
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-500">Insurance Company</span>
+                  <span className="font-medium">{claim.insuranceCompany}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-500">Claim Number</span>
+                  <span className="font-medium">{claim.claimNumber}</span>
+                </div>
+                {claim.deductible > 0 && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Your Deductible</span>
+                    <span className="font-bold text-gray-900">{formatCurrency(claim.deductible)}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Cost Summary */}
           <div className="bg-white rounded-xl border border-gray-100 p-4">
@@ -244,6 +289,89 @@ export default function ProjectDetailPage() {
           <p className="text-xs text-gray-500 mt-1">Documents will appear here when your contractor uploads them.</p>
         </div>
       )}
+    </div>
+  );
+}
+
+// ==================== CLAIM TIMELINE ====================
+
+function ClaimTimeline({ claim }: { claim: { claimStatus: string; workStartedAt?: string; workCompletedAt?: string; settledAt?: string } }) {
+  const currentIndex = getStatusIndex(claim.claimStatus as Parameters<typeof getStatusIndex>[0]);
+  const isDenied = claim.claimStatus === 'denied';
+
+  return (
+    <div className="space-y-4">
+      {/* Status Card */}
+      <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+        <div className="flex items-center gap-2 mb-2">
+          {isDenied ? (
+            <AlertCircle size={18} className="text-red-500" />
+          ) : currentIndex >= 10 ? (
+            <CheckCircle2 size={18} className="text-green-500" />
+          ) : (
+            <Shield size={18} className="text-amber-500" />
+          )}
+          <h3 className="font-semibold text-sm text-gray-900">
+            {CLAIM_STATUS_LABELS[claim.claimStatus as keyof typeof CLAIM_STATUS_LABELS] || claim.claimStatus}
+          </h3>
+        </div>
+        <p className="text-xs text-gray-500 leading-relaxed">
+          {CLAIM_STATUS_DESCRIPTIONS[claim.claimStatus as keyof typeof CLAIM_STATUS_DESCRIPTIONS] || ''}
+        </p>
+      </div>
+
+      {/* Visual Timeline */}
+      <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+        <h3 className="font-semibold text-sm text-gray-900 mb-4">Claim Progress</h3>
+        <div className="space-y-0">
+          {CLAIM_TIMELINE_STEPS.map((step, i) => {
+            const stepIndex = getStatusIndex(step.status);
+            const isComplete = currentIndex >= stepIndex;
+            const isCurrent = claim.claimStatus === step.status ||
+              (currentIndex > stepIndex && (i === CLAIM_TIMELINE_STEPS.length - 1 || currentIndex < getStatusIndex(CLAIM_TIMELINE_STEPS[i + 1].status)));
+            const isLast = i === CLAIM_TIMELINE_STEPS.length - 1;
+
+            // Get date for completed steps
+            let dateLabel = '';
+            if (step.status === 'work_in_progress' && claim.workStartedAt) dateLabel = formatDate(claim.workStartedAt);
+            if (step.status === 'work_complete' && claim.workCompletedAt) dateLabel = formatDate(claim.workCompletedAt);
+            if (step.status === 'settled' && claim.settledAt) dateLabel = formatDate(claim.settledAt);
+
+            return (
+              <div key={step.status} className="flex gap-3">
+                {/* Dot + Line */}
+                <div className="flex flex-col items-center">
+                  <div className={`w-3 h-3 rounded-full border-2 flex-shrink-0 ${
+                    isComplete
+                      ? 'bg-green-500 border-green-500'
+                      : isCurrent
+                        ? 'bg-white border-amber-500'
+                        : 'bg-white border-gray-300'
+                  }`} />
+                  {!isLast && (
+                    <div className={`w-0.5 h-8 ${isComplete ? 'bg-green-300' : 'bg-gray-200'}`} />
+                  )}
+                </div>
+                {/* Label */}
+                <div className={`pb-4 ${isLast ? 'pb-0' : ''}`}>
+                  <p className={`text-sm font-medium ${isComplete ? 'text-gray-900' : 'text-gray-400'}`}>
+                    {step.label}
+                  </p>
+                  {dateLabel && (
+                    <p className="text-xs text-gray-400">{dateLabel}</p>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {isDenied && (
+          <div className="mt-3 p-3 bg-red-50 rounded-lg border border-red-200">
+            <p className="text-xs text-red-700 font-medium">Your claim was denied. Please contact your contractor for next steps.</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

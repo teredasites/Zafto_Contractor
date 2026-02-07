@@ -135,6 +135,31 @@ export default function BooksPage() {
         </div>
       </div>
 
+      {/* ZBooks Navigation */}
+      <div className="flex items-center gap-2">
+        {[
+          { label: 'Overview', href: '/dashboard/books', active: true },
+          { label: 'Chart of Accounts', href: '/dashboard/books/accounts', active: false },
+          { label: 'Expenses', href: '/dashboard/books/expenses', active: false },
+          { label: 'Vendors', href: '/dashboard/books/vendors', active: false },
+          { label: 'Vendor Payments', href: '/dashboard/books/vendor-payments', active: false },
+          { label: 'Banking', href: '/dashboard/books/banking', active: false },
+        ].map((tab) => (
+          <button
+            key={tab.label}
+            onClick={() => { if (!tab.active) router.push(tab.href); }}
+            className={cn(
+              'px-4 py-2 text-sm font-medium rounded-lg transition-colors',
+              tab.active
+                ? 'bg-accent text-white'
+                : 'bg-secondary text-muted hover:text-main'
+            )}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white border-0">

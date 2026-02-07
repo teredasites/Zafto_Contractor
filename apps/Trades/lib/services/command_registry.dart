@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../screens/certifications/certifications_screen.dart';
+
 /// Command types for categorization and filtering
 enum CommandType {
   calculator,
@@ -16,6 +18,9 @@ enum CommandType {
   job,
   invoice,
   customer,
+  bid,
+  fieldTool,
+  timeClock,
   settings,
   action,
   aiScanner,
@@ -148,11 +153,14 @@ class CommandRegistry {
   }
   
   /// Get suggested/frequent commands (can be personalized later)
-  List<AppCommand> getSuggested({int limit = 6}) {
-    // For now, return a mix of common actions and tools
-    final actions = _commands.where((c) => c.type == CommandType.action).take(3);
-    final calcs = _commands.where((c) => c.type == CommandType.calculator).take(3);
-    return [...actions, ...calcs].take(limit).toList();
+  List<AppCommand> getSuggested({int limit = 8}) {
+    final actions = _commands.where((c) => c.type == CommandType.action).take(4);
+    final business = _commands.where((c) =>
+      c.type == CommandType.job || c.type == CommandType.bid ||
+      c.type == CommandType.invoice || c.type == CommandType.customer ||
+      c.type == CommandType.timeClock
+    ).take(4);
+    return [...actions, ...business].take(limit).toList();
   }
 }
 
@@ -577,6 +585,228 @@ void _registerAllCommands(CommandRegistry registry) {
     ),
   ]);
   
+  // === BIDS ===
+  registry.registerAll([
+    AppCommand(
+      id: 'bids_hub',
+      title: 'Bids',
+      subtitle: 'View all bids and estimates',
+      type: CommandType.bid,
+      icon: LucideIcons.fileCheck,
+      keywords: ['bids', 'estimate', 'proposal', 'quote', 'list'],
+    ),
+    AppCommand(
+      id: 'action_new_bid',
+      title: 'New Bid',
+      subtitle: 'Create a new bid or estimate',
+      type: CommandType.action,
+      icon: LucideIcons.filePlus2,
+      keywords: ['create', 'add', 'bid', 'estimate', 'proposal'],
+    ),
+  ]);
+
+  // === TIME & SCHEDULING ===
+  registry.registerAll([
+    AppCommand(
+      id: 'time_clock',
+      title: 'Time Clock',
+      subtitle: 'Clock in/out and track hours',
+      type: CommandType.timeClock,
+      icon: LucideIcons.clock,
+      keywords: ['time', 'clock', 'hours', 'punch', 'in', 'out', 'track'],
+    ),
+    AppCommand(
+      id: 'calendar',
+      title: 'Calendar',
+      subtitle: 'View schedule and appointments',
+      type: CommandType.timeClock,
+      icon: LucideIcons.calendar,
+      keywords: ['calendar', 'schedule', 'appointment', 'date', 'event'],
+    ),
+  ]);
+
+  // === FIELD TOOLS ===
+  registry.registerAll([
+    // Hub
+    AppCommand(
+      id: 'field_tools_hub',
+      title: 'Field Tools',
+      subtitle: 'All 19 field tools in one place',
+      type: CommandType.fieldTool,
+      icon: LucideIcons.wrench,
+      keywords: ['field', 'tools', 'hub', 'all'],
+    ),
+    // Photo & Documentation
+    AppCommand(
+      id: 'tool_job_site_photos',
+      title: 'Job Site Photos',
+      subtitle: 'Capture photos with GPS and timestamps',
+      type: CommandType.fieldTool,
+      icon: LucideIcons.camera,
+      keywords: ['photo', 'camera', 'capture', 'site', 'gps', 'picture'],
+    ),
+    AppCommand(
+      id: 'tool_before_after',
+      title: 'Before / After',
+      subtitle: 'Side-by-side comparison photos',
+      type: CommandType.fieldTool,
+      icon: LucideIcons.columns,
+      keywords: ['before', 'after', 'comparison', 'slider', 'photo'],
+    ),
+    AppCommand(
+      id: 'tool_defect_markup',
+      title: 'Defect Markup',
+      subtitle: 'Annotate photos with drawings and notes',
+      type: CommandType.fieldTool,
+      icon: LucideIcons.edit3,
+      keywords: ['markup', 'annotate', 'defect', 'draw', 'arrow', 'photo'],
+    ),
+    AppCommand(
+      id: 'tool_voice_notes',
+      title: 'Voice Notes',
+      subtitle: 'Record audio notes on the job site',
+      type: CommandType.fieldTool,
+      icon: LucideIcons.mic,
+      keywords: ['voice', 'audio', 'recording', 'notes', 'dictate', 'mic'],
+    ),
+    // Business & Tracking
+    AppCommand(
+      id: 'tool_mileage_tracker',
+      title: 'Mileage Tracker',
+      subtitle: 'GPS trip tracking for deductions',
+      type: CommandType.fieldTool,
+      icon: LucideIcons.car,
+      keywords: ['mileage', 'gps', 'trip', 'tracking', 'drive', 'irs', 'deduction'],
+    ),
+    AppCommand(
+      id: 'tool_receipt_scanner',
+      title: 'Receipt Scanner',
+      subtitle: 'Capture and organize expense receipts',
+      type: CommandType.fieldTool,
+      icon: LucideIcons.receipt,
+      keywords: ['receipt', 'expense', 'scan', 'ocr', 'cost'],
+    ),
+    AppCommand(
+      id: 'tool_client_signature',
+      title: 'Client Signature',
+      subtitle: 'Digital signature capture',
+      type: CommandType.fieldTool,
+      icon: LucideIcons.penTool,
+      keywords: ['signature', 'sign', 'digital', 'approval', 'client'],
+    ),
+    AppCommand(
+      id: 'tool_materials_tracker',
+      title: 'Materials Tracker',
+      subtitle: 'Track materials and equipment costs',
+      type: CommandType.fieldTool,
+      icon: LucideIcons.package,
+      keywords: ['materials', 'equipment', 'inventory', 'cost', 'parts'],
+    ),
+    AppCommand(
+      id: 'tool_daily_log',
+      title: 'Daily Log',
+      subtitle: 'Daily job reports with crew and weather',
+      type: CommandType.fieldTool,
+      icon: LucideIcons.clipboardList,
+      keywords: ['daily', 'log', 'report', 'crew', 'weather', 'journal'],
+    ),
+    // Field Operations
+    AppCommand(
+      id: 'tool_punch_list',
+      title: 'Punch List',
+      subtitle: 'Task checklist with priority tracking',
+      type: CommandType.fieldTool,
+      icon: LucideIcons.checkSquare,
+      keywords: ['punch', 'list', 'checklist', 'task', 'priority', 'todo'],
+    ),
+    AppCommand(
+      id: 'tool_change_orders',
+      title: 'Change Orders',
+      subtitle: 'Scope changes and approval workflow',
+      type: CommandType.fieldTool,
+      icon: LucideIcons.fileDiff,
+      keywords: ['change', 'order', 'scope', 'approval', 'co'],
+    ),
+    AppCommand(
+      id: 'tool_job_completion',
+      title: 'Job Completion',
+      subtitle: 'Validate and close out jobs',
+      type: CommandType.fieldTool,
+      icon: LucideIcons.checkCircle,
+      keywords: ['completion', 'close', 'validate', 'finish', 'done'],
+    ),
+    AppCommand(
+      id: 'tool_sun_position',
+      title: 'Sun Position',
+      subtitle: 'Solar angles for panel placement',
+      type: CommandType.fieldTool,
+      icon: LucideIcons.sun,
+      keywords: ['sun', 'solar', 'position', 'angle', 'panel', 'azimuth'],
+    ),
+    // Safety & Compliance
+    AppCommand(
+      id: 'tool_loto_logger',
+      title: 'LOTO Logger',
+      subtitle: 'Lock Out / Tag Out tracking',
+      type: CommandType.fieldTool,
+      icon: LucideIcons.lock,
+      keywords: ['loto', 'lockout', 'tagout', 'safety', 'energy'],
+    ),
+    AppCommand(
+      id: 'tool_incident_report',
+      title: 'Incident Report',
+      subtitle: 'OSHA incident documentation',
+      type: CommandType.fieldTool,
+      icon: LucideIcons.alertTriangle,
+      keywords: ['incident', 'report', 'osha', 'accident', 'injury'],
+    ),
+    AppCommand(
+      id: 'tool_safety_briefing',
+      title: 'Safety Briefing',
+      subtitle: 'Toolbox talks and crew sign-off',
+      type: CommandType.fieldTool,
+      icon: LucideIcons.shield,
+      keywords: ['safety', 'briefing', 'toolbox', 'talk', 'meeting'],
+    ),
+    AppCommand(
+      id: 'tool_confined_space',
+      title: 'Confined Space',
+      subtitle: 'Entry tracking and air monitoring',
+      type: CommandType.fieldTool,
+      icon: LucideIcons.box,
+      keywords: ['confined', 'space', 'entry', 'air', 'permit', 'osha'],
+    ),
+    // Utilities
+    AppCommand(
+      id: 'tool_dead_man_switch',
+      title: 'Dead Man Switch',
+      subtitle: 'Lone worker safety timer',
+      type: CommandType.fieldTool,
+      icon: LucideIcons.userCheck,
+      keywords: ['dead', 'man', 'switch', 'safety', 'lone', 'worker', 'timer'],
+    ),
+    AppCommand(
+      id: 'tool_level_plumb',
+      title: 'Level & Plumb',
+      subtitle: 'Digital level with calibration',
+      type: CommandType.fieldTool,
+      icon: LucideIcons.ruler,
+      keywords: ['level', 'plumb', 'bubble', 'calibration', 'angle'],
+    ),
+  ]);
+
+  // === NOTIFICATIONS ===
+  registry.registerAll([
+    AppCommand(
+      id: 'notifications',
+      title: 'Notifications',
+      subtitle: 'View all notifications',
+      type: CommandType.action,
+      icon: LucideIcons.bell,
+      keywords: ['notifications', 'alerts', 'bell', 'unread', 'messages'],
+    ),
+  ]);
+
   // === SETTINGS ===
   registry.registerAll([
     AppCommand(
@@ -610,6 +840,15 @@ void _registerAllCommands(CommandRegistry registry) {
       type: CommandType.settings,
       icon: LucideIcons.user,
       keywords: ['profile', 'account', 'user'],
+    ),
+    AppCommand(
+      id: 'certifications',
+      title: 'Certifications',
+      subtitle: 'Employee licenses and certifications',
+      type: CommandType.settings,
+      icon: LucideIcons.award,
+      keywords: ['certification', 'license', 'cert', 'epa', 'osha', 'cpr', 'cdl', 'nicet', 'iicrc'],
+      builder: (_) => const CertificationsScreen(),
     ),
   ]);
 }

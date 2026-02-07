@@ -14,6 +14,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supa;
 
 import '../core/errors.dart';
+import '../core/sentry_service.dart';
 import '../repositories/auth_repository.dart';
 
 // ============================================================
@@ -193,6 +194,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
           state = const AuthState(status: AuthStatus.unauthenticated);
         }
       } else if (event == supa.AuthChangeEvent.signedOut) {
+        // Clear Sentry user context on logout
+        SentryService.configureScope(null, null, null);
         state = const AuthState(status: AuthStatus.unauthenticated);
       }
     });
@@ -213,6 +216,13 @@ class AuthNotifier extends StateNotifier<AuthState> {
       }
 
       final zaftoUser = ZaftoUser.fromProfile(profile);
+
+      // Set Sentry user context for error attribution
+      SentryService.configureScope(
+        zaftoUser.uid,
+        zaftoUser.companyId,
+        zaftoUser.role,
+      );
 
       state = AuthState(
         status: AuthStatus.authenticated,

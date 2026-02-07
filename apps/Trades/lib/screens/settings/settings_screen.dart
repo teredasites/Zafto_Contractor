@@ -11,6 +11,7 @@ import '../../services/state_preferences_service.dart';
 import '../../services/ui_mode_service.dart';
 import '../../models/company.dart';
 import '../onboarding/state_selection_screen.dart';
+import '../certifications/certifications_screen.dart';
 
 /// Settings Screen - Design System v2.6
 class SettingsScreen extends ConsumerStatefulWidget {
@@ -86,6 +87,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           const SizedBox(height: 12),
           _buildAiCreditsCard(colors),
           
+          const SizedBox(height: 32),
+          _buildSectionHeader(colors, 'CERTIFICATIONS & LICENSES'),
+          const SizedBox(height: 12),
+          _buildCertificationsCard(colors),
+
           const SizedBox(height: 32),
           _buildSectionHeader(colors, 'PREFERENCES'),
           const SizedBox(height: 12),
@@ -501,6 +507,56 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             onTap: _clearHistory,
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildCertificationsCard(ZaftoColors colors) {
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.selectionClick();
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const CertificationsScreen()),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: colors.bgElevated,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: colors.borderSubtle),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: colors.accentPrimary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(LucideIcons.award, size: 20, color: colors.accentPrimary),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Manage Certifications',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: colors.textPrimary),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'EPA, OSHA, state licenses, trade certs',
+                    style: TextStyle(fontSize: 12, color: colors.textSecondary),
+                  ),
+                ],
+              ),
+            ),
+            Icon(LucideIcons.chevronRight, size: 20, color: colors.textTertiary),
+          ],
+        ),
       ),
     );
   }

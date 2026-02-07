@@ -9,6 +9,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { onAuthChange } from '@/lib/auth';
 import { getSupabase } from '@/lib/supabase';
+import { setSentryUser, clearSentryUser } from '@/lib/sentry';
 import type { User } from '@supabase/supabase-js';
 
 interface UserProfile {
@@ -19,6 +20,8 @@ interface UserProfile {
   role: string | null;
   trade: string | null;
   avatarUrl: string | null;
+  customRoleId: string | null;
+  branchId: string | null;
 }
 
 interface AuthContextType {
@@ -48,7 +51,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const supabase = getSupabase();
           const { data } = await supabase
             .from('users')
-            .select('id, email, display_name, company_id, role, trade, avatar_url')
+            .select('id, email, full_name, company_id, role, trade, avatar_url, custom_role_id, branch_id')
             .eq('id', authUser.id)
             .single();
 
@@ -56,20 +59,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setProfile({
               uid: data.id,
               email: data.email,
-              displayName: data.display_name,
+              displayName: data.full_name,
               companyId: data.company_id,
               role: data.role,
               trade: data.trade,
               avatarUrl: data.avatar_url,
+              customRoleId: data.custom_role_id,
+              branchId: data.branch_id,
             });
+            setSentryUser(data.id, data.company_id ?? undefined, data.role ?? undefined);
           } else {
             setProfile(null);
+            clearSentryUser();
           }
         } catch {
           setProfile(null);
+          clearSentryUser();
         }
       } else {
         setProfile(null);
+        clearSentryUser();
       }
 
       setLoading(false);

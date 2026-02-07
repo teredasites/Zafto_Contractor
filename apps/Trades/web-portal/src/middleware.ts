@@ -1,11 +1,14 @@
-// ZAFTO Web CRM — Auth Middleware
-// Sprint B4a | Session 48
+// ZAFTO Web CRM — Auth + RBAC Middleware
+// Sprint B4a | Session 48 | RBAC added Session 55
 //
-// Protects /dashboard/* routes. Redirects to / if no valid session.
+// Protects /dashboard/* routes. Verifies auth AND role.
+// Allowed roles: owner, admin, office_manager, cpa, super_admin
 // Refreshes auth tokens on each request.
 
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
+
+const CRM_ALLOWED_ROLES = ['owner', 'admin', 'office_manager', 'cpa', 'super_admin'];
 
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -41,10 +44,27 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   // Protected routes: /dashboard/*
-  if (request.nextUrl.pathname.startsWith('/dashboard') && !user) {
-    const url = request.nextUrl.clone();
-    url.pathname = '/';
-    return NextResponse.redirect(url);
+  if (request.nextUrl.pathname.startsWith('/dashboard')) {
+    if (!user) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/';
+      url.searchParams.set('redirect', request.nextUrl.pathname);
+      return NextResponse.redirect(url);
+    }
+
+    // Verify role from users table
+    const { data: profile } = await supabase
+      .from('users')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+
+    if (!profile || !CRM_ALLOWED_ROLES.includes(profile.role)) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/';
+      url.searchParams.set('error', 'unauthorized');
+      return NextResponse.redirect(url);
+    }
   }
 
   // If on login page and already authenticated, redirect to dashboard.

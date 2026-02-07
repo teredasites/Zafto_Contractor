@@ -17,6 +17,14 @@ enum InvoiceStatus {
   overdue,
 }
 
+// Payment source for insurance/warranty invoice line items
+enum PaymentSource {
+  standard,   // Normal retail — no insurance involvement
+  carrier,    // Insurance company pays (approved estimate scope)
+  deductible, // Homeowner pays (their deductible portion)
+  upgrade,    // Homeowner pays (upgrade beyond pre-loss condition)
+}
+
 class InvoiceLineItem {
   final String id;
   final String description;
@@ -25,6 +33,7 @@ class InvoiceLineItem {
   final double unitPrice;
   final double total;
   final bool isTaxable;
+  final PaymentSource paymentSource;
 
   const InvoiceLineItem({
     required this.id,
@@ -34,6 +43,7 @@ class InvoiceLineItem {
     required this.unitPrice,
     double? total,
     this.isTaxable = true,
+    this.paymentSource = PaymentSource.standard,
   }) : total = total ?? (quantity * unitPrice);
 
   Map<String, dynamic> toJson() => {
@@ -44,6 +54,7 @@ class InvoiceLineItem {
         'unitPrice': unitPrice,
         'total': total,
         'isTaxable': isTaxable,
+        'paymentSource': paymentSource.name,
       };
 
   factory InvoiceLineItem.fromJson(Map<String, dynamic> json) =>
@@ -55,7 +66,13 @@ class InvoiceLineItem {
         unitPrice: (json['unitPrice'] as num?)?.toDouble() ?? 0,
         total: (json['total'] as num?)?.toDouble(),
         isTaxable: json['isTaxable'] as bool? ?? true,
+        paymentSource: _parsePaymentSource(json['paymentSource'] as String?),
       );
+
+  static PaymentSource _parsePaymentSource(String? value) {
+    if (value == null) return PaymentSource.standard;
+    return PaymentSource.values.asNameMap()[value] ?? PaymentSource.standard;
+  }
 
   InvoiceLineItem copyWith({
     String? id,
@@ -65,6 +82,7 @@ class InvoiceLineItem {
     double? unitPrice,
     double? total,
     bool? isTaxable,
+    PaymentSource? paymentSource,
   }) {
     return InvoiceLineItem(
       id: id ?? this.id,
@@ -74,6 +92,7 @@ class InvoiceLineItem {
       unitPrice: unitPrice ?? this.unitPrice,
       total: total ?? this.total,
       isTaxable: isTaxable ?? this.isTaxable,
+      paymentSource: paymentSource ?? this.paymentSource,
     );
   }
 

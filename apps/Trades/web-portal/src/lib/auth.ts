@@ -57,10 +57,11 @@ export function onAuthChange(callback: (user: User | null) => void) {
     callback(session?.user ?? null);
   });
 
-  // Also check current session immediately.
-  supabase.auth.getSession().then(({ data: { session } }: { data: { session: Session | null } }) => {
-    callback(session?.user ?? null);
-  });
+  // Check current user immediately (getUser() is server-verified, unlike getSession()).
+  void (async () => {
+    const { data } = await supabase.auth.getUser();
+    callback(data.user ?? null);
+  })();
 
   return () => subscription.unsubscribe();
 }

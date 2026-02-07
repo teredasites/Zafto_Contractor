@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import {
   ArrowLeft,
@@ -25,6 +25,7 @@ import {
   CheckCircle,
   Plus,
   Package,
+  Shield,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -32,7 +33,10 @@ import { StatusBadge, Badge } from '@/components/ui/badge';
 import { Avatar, AvatarGroup } from '@/components/ui/avatar';
 import { formatCurrency, formatDate, formatDateTime, cn } from '@/lib/utils';
 import { useJob, useTeam } from '@/lib/hooks/use-jobs';
-import type { Job, JobNote } from '@/types';
+import { useClaimByJob } from '@/lib/hooks/use-insurance';
+import { JOB_TYPE_LABELS, JOB_TYPE_COLORS } from '@/lib/hooks/mappers';
+import type { Job, JobType, JobNote, InsuranceMetadata, WarrantyMetadata, PaymentSource } from '@/types';
+import { getSupabase } from '@/lib/supabase';
 
 type TabType = 'overview' | 'tasks' | 'materials' | 'photos' | 'time' | 'notes';
 
@@ -93,6 +97,12 @@ export default function JobDetailPage() {
             <div className="flex items-center gap-3">
               <h1 className="text-2xl font-semibold text-main">{job.title}</h1>
               <StatusBadge status={job.status} />
+              {job.jobType !== 'standard' && (
+                <span className={cn('inline-flex items-center gap-1.5 px-2 py-0.5 text-xs font-medium rounded-full', JOB_TYPE_COLORS[job.jobType].bg, JOB_TYPE_COLORS[job.jobType].text)}>
+                  <span className={cn('w-1.5 h-1.5 rounded-full', JOB_TYPE_COLORS[job.jobType].dot)} />
+                  {JOB_TYPE_LABELS[job.jobType]}
+                </span>
+              )}
               {job.priority === 'urgent' && <Badge variant="error">Urgent</Badge>}
               {job.priority === 'high' && <Badge variant="warning">High</Badge>}
             </div>
@@ -197,6 +207,12 @@ export default function JobDetailPage() {
                 <p className="text-2xl font-semibold text-main">{formatCurrency(job.estimatedValue)}</p>
               </div>
               <div className="flex justify-between text-sm">
+                <span className="text-muted">Type</span>
+                <span className={cn('inline-flex items-center gap-1.5 px-2 py-0.5 text-xs font-medium rounded-full', JOB_TYPE_COLORS[job.jobType].bg, JOB_TYPE_COLORS[job.jobType].text)}>
+                  {JOB_TYPE_LABELS[job.jobType]}
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
                 <span className="text-muted">Status</span>
                 <StatusBadge status={job.status} />
               </div>
@@ -218,6 +234,16 @@ export default function JobDetailPage() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Type Metadata */}
+          {job.jobType !== 'standard' && job.typeMetadata && Object.keys(job.typeMetadata).length > 0 && (
+            <TypeMetadataCard job={job} />
+          )}
+
+          {/* Upgrade Tracking Summary — insurance/warranty jobs only */}
+          {(job.jobType === 'insurance_claim' || job.jobType === 'warranty_dispatch') && (
+            <UpgradeTrackingSummary jobId={job.id} />
+          )}
 
           {/* Customer */}
           <Card>
@@ -561,6 +587,99 @@ function TimeTab({ job }: { job: Job }) {
   );
 }
 
+function TypeMetadataCard({ job }: { job: Job }) {
+  const meta = job.typeMetadata;
+  const colors = JOB_TYPE_COLORS[job.jobType];
+  const router = useRouter();
+  const { claim } = useClaimByJob(job.jobType === 'insurance_claim' ? job.id : null);
+
+  if (job.jobType === 'insurance_claim') {
+    const ins = meta as InsuranceMetadata;
+    const approvalColors: Record<string, string> = {
+      pending: 'text-amber-600 dark:text-amber-400',
+      approved: 'text-emerald-600 dark:text-emerald-400',
+      denied: 'text-red-600 dark:text-red-400',
+      supplemental: 'text-blue-600 dark:text-blue-400',
+    };
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2">
+            <span className={cn('w-2 h-2 rounded-full', colors.dot)} />
+            Insurance Details
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2.5 text-sm">
+          <MetaRow label="Company" value={ins.insuranceCompany} />
+          <MetaRow label="Claim #" value={ins.claimNumber} />
+          {ins.policyNumber && <MetaRow label="Policy #" value={ins.policyNumber} />}
+          {ins.dateOfLoss && <MetaRow label="Date of Loss" value={ins.dateOfLoss} />}
+          {ins.adjusterName && <MetaRow label="Adjuster" value={ins.adjusterName} />}
+          {ins.adjusterPhone && <MetaRow label="Adjuster Phone" value={ins.adjusterPhone} />}
+          {ins.deductible != null && <MetaRow label="Deductible" value={formatCurrency(ins.deductible)} />}
+          {ins.coverageLimit != null && <MetaRow label="Coverage Limit" value={formatCurrency(ins.coverageLimit)} />}
+          {ins.approvalStatus && (
+            <div className="flex justify-between">
+              <span className="text-muted">Approval</span>
+              <span className={cn('font-medium capitalize', approvalColors[ins.approvalStatus] || 'text-main')}>
+                {ins.approvalStatus}
+              </span>
+            </div>
+          )}
+          {claim && (
+            <button
+              onClick={() => router.push(`/dashboard/insurance/${claim.id}`)}
+              className="w-full mt-2 flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 text-xs font-medium hover:bg-amber-500/20 transition-colors"
+            >
+              <Shield className="w-3.5 h-3.5" />
+              View Claim
+            </button>
+          )}
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (job.jobType === 'warranty_dispatch') {
+    const war = meta as WarrantyMetadata;
+    const typeLabels: Record<string, string> = {
+      home_warranty: 'Home Warranty',
+      manufacturer: 'Manufacturer',
+      extended: 'Extended',
+    };
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2">
+            <span className={cn('w-2 h-2 rounded-full', colors.dot)} />
+            Warranty Details
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2.5 text-sm">
+          <MetaRow label="Company" value={war.warrantyCompany} />
+          <MetaRow label="Dispatch #" value={war.dispatchNumber} />
+          {war.warrantyType && <MetaRow label="Type" value={typeLabels[war.warrantyType] || war.warrantyType} />}
+          {war.authorizationLimit != null && <MetaRow label="Auth Limit" value={formatCurrency(war.authorizationLimit)} />}
+          {war.serviceFee != null && <MetaRow label="Service Fee" value={formatCurrency(war.serviceFee)} />}
+          {war.expirationDate && <MetaRow label="Expires" value={war.expirationDate} />}
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return null;
+}
+
+function MetaRow({ label, value }: { label: string; value?: string | number }) {
+  if (!value) return null;
+  return (
+    <div className="flex justify-between">
+      <span className="text-muted">{label}</span>
+      <span className="text-main font-medium">{value}</span>
+    </div>
+  );
+}
+
 function NotesTab({ job }: { job: Job }) {
   const [newNote, setNewNote] = useState('');
 
@@ -596,6 +715,78 @@ function NotesTab({ job }: { job: Job }) {
               </div>
             ))
           )}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+const SOURCE_CONFIG: Record<string, { label: string; color: string }> = {
+  carrier: { label: 'Carrier Approved', color: 'text-blue-600 dark:text-blue-400' },
+  deductible: { label: 'Deductible', color: 'text-amber-600 dark:text-amber-400' },
+  upgrade: { label: 'Homeowner Upgrades', color: 'text-purple-600 dark:text-purple-400' },
+  standard: { label: 'Standard', color: 'text-main' },
+};
+
+function UpgradeTrackingSummary({ jobId }: { jobId: string }) {
+  const [totals, setTotals] = useState<Record<string, number>>({});
+  const [loading, setLoading] = useState(true);
+
+  const fetchTotals = useCallback(async () => {
+    try {
+      const supabase = getSupabase();
+      const { data } = await supabase
+        .from('invoices')
+        .select('line_items')
+        .eq('job_id', jobId);
+
+      const sums: Record<string, number> = {};
+      for (const row of data || []) {
+        const items = Array.isArray(row.line_items) ? row.line_items : [];
+        for (const li of items) {
+          const item = li as Record<string, unknown>;
+          const src = (item.payment_source as string) || 'standard';
+          const amt = Number(item.quantity || 1) * Number(item.unit_price ?? item.unitPrice ?? 0);
+          sums[src] = (sums[src] || 0) + amt;
+        }
+      }
+      setTotals(sums);
+    } catch (_) {
+      // silent
+    } finally {
+      setLoading(false);
+    }
+  }, [jobId]);
+
+  useEffect(() => { fetchTotals(); }, [fetchTotals]);
+
+  const hasNonStandard = Object.keys(totals).some((k) => k !== 'standard' && totals[k] > 0);
+  if (loading || !hasNonStandard) return null;
+
+  const grandTotal = Object.values(totals).reduce((a, b) => a + b, 0);
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base flex items-center gap-2">
+          <DollarSign size={18} className="text-muted" />
+          Payment Source Breakdown
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-2.5 text-sm">
+        {(['carrier', 'deductible', 'upgrade', 'standard'] as const).map((src) =>
+          totals[src] ? (
+            <div key={src} className="flex justify-between">
+              <span className="text-muted">{SOURCE_CONFIG[src].label}</span>
+              <span className={cn('font-medium', SOURCE_CONFIG[src].color)}>
+                {formatCurrency(totals[src])}
+              </span>
+            </div>
+          ) : null
+        )}
+        <div className="flex justify-between pt-2 border-t border-main font-semibold">
+          <span>Total</span>
+          <span>{formatCurrency(grandTotal)}</span>
         </div>
       </CardContent>
     </Card>

@@ -175,6 +175,10 @@ class _JobsHubScreenState extends ConsumerState<JobsHubScreen> {
             Row(
               children: [
                 _buildStatusBadge(colors, job.status),
+                if (job.jobType != JobType.standard) ...[
+                  const SizedBox(width: 6),
+                  _buildTypeBadge(colors, job.jobType),
+                ],
                 const Spacer(),
                 if (job.scheduledStart != null)
                   Text(_formatDate(job.scheduledStart!), style: TextStyle(fontSize: 12, color: colors.textTertiary)),
@@ -226,6 +230,19 @@ class _JobsHubScreenState extends ConsumerState<JobsHubScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(color: bgColor, borderRadius: BorderRadius.circular(6)),
       child: Text(status.name[0].toUpperCase() + status.name.substring(1), style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: color)),
+    );
+  }
+
+  Widget _buildTypeBadge(ZaftoColors colors, JobType type) {
+    final (color, label) = switch (type) {
+      JobType.standard => (colors.accentInfo, 'Standard'),
+      JobType.insuranceClaim => (const Color(0xFFF59E0B), 'Insurance'),
+      JobType.warrantyDispatch => (const Color(0xFF8B5CF6), 'Warranty'),
+    };
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(color: color.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(6)),
+      child: Text(label, style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: color)),
     );
   }
 

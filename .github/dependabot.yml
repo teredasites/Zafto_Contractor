@@ -22,6 +22,17 @@ updates:
       - "dependencies"
       - "web-crm"
 
+  # Employee Field Portal (Next.js) dependencies
+  - package-ecosystem: "npm"
+    directory: "/apps/Trades/team-portal"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "team-portal"
+
   # Client Portal (Next.js) dependencies
   - package-ecosystem: "npm"
     directory: "/apps/Trades/client-portal"

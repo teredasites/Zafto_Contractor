@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Plus,
   Search,
@@ -19,6 +19,11 @@ import {
   Home,
   User,
   Filter,
+  Inbox,
+  Timer,
+  DollarSign,
+  TrendingUp,
+  ArrowUpRight,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -26,6 +31,7 @@ import { Badge } from '@/components/ui/badge';
 import { SearchInput, Select } from '@/components/ui/input';
 import { CommandPalette } from '@/components/command-palette';
 import { formatCurrency, formatDate, cn } from '@/lib/utils';
+import { getSupabase } from '@/lib/supabase';
 
 type WarrantyStatus = 'active' | 'expiring_soon' | 'expired' | 'claimed';
 type WarrantyType = 'labor' | 'equipment' | 'manufacturer' | 'extended';
@@ -179,7 +185,10 @@ function getDaysRemaining(endDate: Date): number {
   return Math.ceil((endDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
 }
 
+type TabType = 'warranties' | 'dispatches';
+
 export default function WarrantiesPage() {
+  const [activeTab, setActiveTab] = useState<TabType>('warranties');
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
@@ -218,6 +227,28 @@ export default function WarrantiesPage() {
         </Button>
       </div>
 
+      {/* Tabs */}
+      <div className="flex items-center gap-1 p-1 bg-secondary rounded-lg w-fit">
+        <button
+          onClick={() => setActiveTab('warranties')}
+          className={cn('px-4 py-1.5 text-sm rounded-md transition-colors', activeTab === 'warranties' ? 'bg-surface text-main shadow-sm' : 'text-muted hover:text-main')}
+        >
+          <Shield size={14} className="inline mr-1.5" />
+          Warranties
+        </button>
+        <button
+          onClick={() => setActiveTab('dispatches')}
+          className={cn('px-4 py-1.5 text-sm rounded-md transition-colors', activeTab === 'dispatches' ? 'bg-surface text-main shadow-sm' : 'text-muted hover:text-main')}
+        >
+          <Inbox size={14} className="inline mr-1.5" />
+          Dispatch Inbox
+        </button>
+      </div>
+
+      {activeTab === 'dispatches' ? (
+        <DispatchInbox />
+      ) : (
+      <>
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
@@ -376,6 +407,8 @@ export default function WarrantiesPage() {
       {/* Detail Modal */}
       {selectedWarranty && <WarrantyDetailModal warranty={selectedWarranty} onClose={() => setSelectedWarranty(null)} />}
       {showNewModal && <NewWarrantyModal onClose={() => setShowNewModal(false)} />}
+      </>
+      )}
     </div>
   );
 }
@@ -485,6 +518,197 @@ function WarrantyDetailModal({ warranty, onClose }: { warranty: Warranty; onClos
           </div>
         </CardContent>
       </Card>
+    </div>
+  );
+}
+
+interface WarrantyDispatch {
+  id: string;
+  warrantyCompanyName: string;
+  dispatchNumber: string;
+  status: string;
+  customerName: string;
+  address: string;
+  issueDescription: string;
+  authorizationLimit: number;
+  slaDeadline: string | null;
+  createdAt: string;
+  upsellJobId?: string;
+  upsellJobTitle?: string;
+}
+
+const DISPATCH_STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
+  new: { label: 'New', color: 'text-blue-700 dark:text-blue-300', bg: 'bg-blue-100 dark:bg-blue-900/30' },
+  acknowledged: { label: 'Acknowledged', color: 'text-indigo-700 dark:text-indigo-300', bg: 'bg-indigo-100 dark:bg-indigo-900/30' },
+  scheduled: { label: 'Scheduled', color: 'text-cyan-700 dark:text-cyan-300', bg: 'bg-cyan-100 dark:bg-cyan-900/30' },
+  in_progress: { label: 'In Progress', color: 'text-amber-700 dark:text-amber-300', bg: 'bg-amber-100 dark:bg-amber-900/30' },
+  parts_ordered: { label: 'Parts Ordered', color: 'text-purple-700 dark:text-purple-300', bg: 'bg-purple-100 dark:bg-purple-900/30' },
+  completed: { label: 'Completed', color: 'text-emerald-700 dark:text-emerald-300', bg: 'bg-emerald-100 dark:bg-emerald-900/30' },
+  invoiced: { label: 'Invoiced', color: 'text-green-700 dark:text-green-300', bg: 'bg-green-100 dark:bg-green-900/30' },
+};
+
+function DispatchInbox() {
+  const [dispatches, setDispatches] = useState<WarrantyDispatch[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [companyFilter, setCompanyFilter] = useState('all');
+
+  const fetchDispatches = useCallback(async () => {
+    try {
+      const supabase = getSupabase();
+      const [dispatchRes, upsellRes] = await Promise.all([
+        supabase
+          .from('warranty_dispatches')
+          .select('*, warranty_companies(name)')
+          .order('created_at', { ascending: false }),
+        supabase
+          .from('jobs')
+          .select('id, title, type_metadata')
+          .not('type_metadata->>upsell_from_warranty_dispatch_id', 'is', null),
+      ]);
+
+      const upsellMap = new Map<string, { id: string; title: string }>();
+      for (const job of (upsellRes.data || [])) {
+        const meta = job.type_metadata as Record<string, unknown> | null;
+        const dispatchId = meta?.upsell_from_warranty_dispatch_id as string | undefined;
+        if (dispatchId) upsellMap.set(dispatchId, { id: job.id, title: job.title });
+      }
+
+      setDispatches((dispatchRes.data || []).map((row: Record<string, unknown>) => {
+        const id = row.id as string;
+        const upsell = upsellMap.get(id);
+        return {
+          id,
+          warrantyCompanyName: ((row.warranty_companies as Record<string, unknown>)?.name as string) || 'Unknown',
+          dispatchNumber: (row.dispatch_number as string) || '',
+          status: (row.status as string) || 'new',
+          customerName: (row.customer_name as string) || '',
+          address: (row.service_address as string) || '',
+          issueDescription: (row.issue_description as string) || '',
+          authorizationLimit: Number(row.authorization_limit) || 0,
+          slaDeadline: row.sla_deadline as string | null,
+          createdAt: row.created_at as string,
+          upsellJobId: upsell?.id,
+          upsellJobTitle: upsell?.title,
+        };
+      }));
+    } catch (_) {
+      // silent
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { fetchDispatches(); }, [fetchDispatches]);
+
+  const companies = [...new Set(dispatches.map((d) => d.warrantyCompanyName))].sort();
+  const filtered = dispatches.filter((d) => companyFilter === 'all' || d.warrantyCompanyName === companyFilter);
+
+  if (loading) {
+    return (
+      <div className="space-y-3">
+        {[...Array(3)].map((_, i) => (
+          <div key={i} className="bg-surface border border-main rounded-xl p-5">
+            <div className="skeleton h-4 w-48 mb-2" />
+            <div className="skeleton h-3 w-32" />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  const upsellCount = dispatches.filter((d) => d.upsellJobId).length;
+  const conversionRate = dispatches.length > 0 ? Math.round((upsellCount / dispatches.length) * 100) : 0;
+
+  return (
+    <div className="space-y-4">
+      {/* Conversion Rate + Filter */}
+      <div className="flex items-center gap-4">
+        {dispatches.length > 0 && (
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border border-emerald-200 dark:border-emerald-800">
+            <TrendingUp size={14} className="text-emerald-600 dark:text-emerald-400" />
+            <span className="text-xs font-medium text-emerald-700 dark:text-emerald-300">
+              {upsellCount} upsell{upsellCount !== 1 ? 's' : ''} ({conversionRate}% conversion)
+            </span>
+          </div>
+        )}
+        {companies.length > 0 && (
+          <Select
+            options={[
+              { value: 'all', label: 'All Companies' },
+              ...companies.map((c) => ({ value: c, label: c })),
+            ]}
+            value={companyFilter}
+            onChange={(e) => setCompanyFilter(e.target.value)}
+            className="w-56"
+          />
+        )}
+      </div>
+
+      {/* Dispatches List */}
+      {filtered.length === 0 ? (
+        <Card>
+          <CardContent className="p-12 text-center">
+            <Inbox size={48} className="mx-auto text-muted mb-4" />
+            <h3 className="text-lg font-medium text-main mb-2">No dispatches</h3>
+            <p className="text-muted">Warranty dispatches from your partner companies will appear here.</p>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="space-y-3">
+          {filtered.map((d) => {
+            const statusCfg = DISPATCH_STATUS_CONFIG[d.status] || { label: d.status, color: 'text-main', bg: 'bg-secondary' };
+            const slaMs = d.slaDeadline ? new Date(d.slaDeadline).getTime() - Date.now() : null;
+            const slaHours = slaMs ? Math.round(slaMs / (1000 * 60 * 60)) : null;
+            const slaUrgent = slaHours !== null && slaHours <= 4;
+
+            return (
+              <Card key={d.id} className="hover:border-accent/30 transition-colors">
+                <CardContent className="p-5">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="font-medium text-main">{d.dispatchNumber || 'No dispatch #'}</span>
+                        <span className={cn('px-2 py-0.5 rounded-full text-xs font-medium', statusCfg.bg, statusCfg.color)}>{statusCfg.label}</span>
+                        {slaUrgent && (
+                          <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 flex items-center gap-1">
+                            <Timer size={10} />
+                            SLA {slaHours}h
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-sm text-muted">{d.warrantyCompanyName}</p>
+                      <p className="text-sm text-main mt-1">{d.issueDescription || 'No description'}</p>
+                      <div className="flex items-center gap-4 mt-2 text-xs text-muted">
+                        <span className="flex items-center gap-1"><User size={12} />{d.customerName || 'No customer'}</span>
+                        {d.address && <span>{d.address}</span>}
+                        {d.upsellJobId && (
+                          <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-medium">
+                            <ArrowUpRight size={11} />
+                            Upsold: {d.upsellJobTitle || 'Retail job'}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="text-right flex-shrink-0 ml-4">
+                      {d.authorizationLimit > 0 && (
+                        <div className="flex items-center gap-1 text-sm font-medium text-main">
+                          <DollarSign size={14} className="text-muted" />
+                          {formatCurrency(d.authorizationLimit)}
+                          <span className="text-xs text-muted font-normal ml-1">auth limit</span>
+                        </div>
+                      )}
+                      {slaHours !== null && !slaUrgent && slaHours > 0 && (
+                        <p className="text-xs text-muted mt-1">{slaHours}h SLA remaining</p>
+                      )}
+                      <p className="text-xs text-muted mt-1">{formatDate(new Date(d.createdAt))}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

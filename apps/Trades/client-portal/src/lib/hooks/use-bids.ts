@@ -9,19 +9,24 @@ export function useBids() {
   const { profile } = useAuth();
   const [bids, setBids] = useState<BidData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchBids = useCallback(async () => {
     if (!profile?.customerId) { setLoading(false); return; }
     const supabase = getSupabase();
 
-    const { data } = await supabase
+    const { data, error: fetchError } = await supabase
       .from('bids')
       .select('*')
       .eq('customer_id', profile.customerId)
       .is('deleted_at', null)
       .order('created_at', { ascending: false });
 
-    setBids((data || []).map(mapBid));
+    if (fetchError) {
+      setError(fetchError.message);
+    } else {
+      setBids((data || []).map(mapBid));
+    }
     setLoading(false);
   }, [profile?.customerId]);
 
@@ -37,22 +42,58 @@ export function useBids() {
   }, [fetchBids, profile?.customerId]);
 
   const acceptBid = async (bidId: string) => {
+    if (!profile?.customerId) {
+      setError('Not authenticated');
+      return;
+    }
     const supabase = getSupabase();
-    await supabase.from('bids').update({
-      status: 'accepted',
-      accepted_at: new Date().toISOString(),
-    }).eq('id', bidId);
+    // Ownership check: only update if bid belongs to this customer
+    const { error: updateError, count } = await supabase
+      .from('bids')
+      .update({
+        status: 'accepted',
+        accepted_at: new Date().toISOString(),
+      })
+      .eq('id', bidId)
+      .eq('customer_id', profile.customerId);
+
+    if (updateError) {
+      setError(updateError.message);
+      return;
+    }
+    if (count === 0) {
+      setError('Bid not found or access denied');
+      return;
+    }
     fetchBids();
   };
 
   const rejectBid = async (bidId: string) => {
+    if (!profile?.customerId) {
+      setError('Not authenticated');
+      return;
+    }
     const supabase = getSupabase();
-    await supabase.from('bids').update({
-      status: 'rejected',
-      rejected_at: new Date().toISOString(),
-    }).eq('id', bidId);
+    // Ownership check: only update if bid belongs to this customer
+    const { error: updateError, count } = await supabase
+      .from('bids')
+      .update({
+        status: 'rejected',
+        rejected_at: new Date().toISOString(),
+      })
+      .eq('id', bidId)
+      .eq('customer_id', profile.customerId);
+
+    if (updateError) {
+      setError(updateError.message);
+      return;
+    }
+    if (count === 0) {
+      setError('Bid not found or access denied');
+      return;
+    }
     fetchBids();
   };
 
-  return { bids, loading, acceptBid, rejectBid };
+  return { bids, loading, error, acceptBid, rejectBid };
 }
