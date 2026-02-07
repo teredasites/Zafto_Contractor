@@ -791,14 +791,6 @@ void _registerAllCommands(CommandRegistry registry) {
     ),
     // Utilities
     AppCommand(
-      id: 'tool_dead_man_switch',
-      title: 'Dead Man Switch',
-      subtitle: 'Lone worker safety timer',
-      type: CommandType.fieldTool,
-      icon: LucideIcons.userCheck,
-      keywords: ['dead', 'man', 'switch', 'safety', 'lone', 'worker', 'timer'],
-    ),
-    AppCommand(
       id: 'tool_level_plumb',
       title: 'Level & Plumb',
       subtitle: 'Digital level with calibration',

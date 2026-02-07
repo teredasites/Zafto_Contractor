@@ -5952,18 +5952,20 @@ Execute in sequence:
 **Source:** `Expansion/45_FLUTTER_APP_REMAKE.md`
 **Goal:** Complete mobile app rebuild — 7 role-based experiences (Owner, Tech, Office, Inspector, CPA, Homeowner, Tenant), Apple-crisp design system, Z Intelligence (voice + camera + ambient — NOT chatbot), remove dead features.
 **Depends on:** D5 complete (all business data wired). Executes BEFORE Phase E.
-**Status: SPEC COMPLETE — BLOCKED on Phase D completion**
+**Status: IN PROGRESS (Session 77)**
 
 ### R1a: Design System + App Shell (~12 hrs)
-- [ ] Flutter design system: colors, typography, spacing, elevation, animations
-- [ ] Component library: ZCard, ZButton, ZTextField, ZBottomSheet, ZChip, ZBadge, ZAvatar, ZSkeleton
-- [ ] Adaptive app shell with role-based routing
-- [ ] Bottom navigation factory (correct tabs per role)
-- [ ] Role switching (long-press avatar)
-- [ ] Light/dark theme system
-- [ ] Z button (floating) — tap/long-press/hold handlers
-- [ ] Remove dead features: Toolbox, Dead Man Switch, all static content screens
-- [ ] Commit: `[R1a] App remake — design system + adaptive shell`
+**Status: DONE (Session 77)**
+- [x] Flutter design system: colors, typography, spacing, elevation, animations (existing v2.6 system retained — already has 10 themes, color tokens, spacing grid, animation constants)
+- [x] Component library: ZCard, ZButton, ZTextField, ZBottomSheet, ZChip, ZBadge, ZAvatar, ZSkeleton (`lib/widgets/zafto/z_components.dart` — 817 lines, 8 components)
+- [x] Adaptive app shell with role-based routing (`lib/navigation/app_shell.dart` — AppShell ConsumerStatefulWidget with IndexedStack, role-based bottom nav, Z floating button)
+- [x] Bottom navigation factory (correct tabs per role) (`lib/navigation/role_navigation.dart` — TabConfig + getTabsForRole for all 7 roles: Owner/Admin, Tech, Office, Inspector, CPA, Client, Tenant)
+- [x] Role switching (long-press avatar) — wired in ZAvatar onLongPress, AppShell placeholder
+- [x] Light/dark theme system (existing v2.6: 4 light + 5 dark + 1 accessibility theme)
+- [x] Z button (floating) — tap=quick actions sheet, long-press=camera placeholder, 56x56 accentPrimary circle with white Z
+- [x] Remove dead features: Dead Man Switch DELETED (liability per spec). Toolbox/static content deferred to Phase E (Z Intelligence replaces them). References removed from field_tools_hub, home_screen_v2, command_palette, command_registry.
+- [x] UserRole enum (`lib/core/user_role.dart` — 8 roles + extension with label, shortLabel, isBusinessRole, isFieldRole, isFinancialRole, isExternalRole, fromString)
+- [x] Commit: `[R1a] App remake — design system + adaptive shell`
 
 ### R1b: Owner/Admin Experience (~14 hrs)
 - [ ] Owner home screen (revenue, attention items, schedule, activity)
