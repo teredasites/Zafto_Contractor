@@ -19,6 +19,7 @@ import '../screens/invoices/invoices_hub_screen.dart';
 import '../screens/customers/customers_hub_screen.dart';
 import '../screens/bids/bids_hub_screen.dart';
 import '../screens/bids/bid_create_screen.dart';
+import '../screens/properties/properties_hub_screen.dart';
 import '../screens/time_clock/time_clock_screen.dart';
 import '../screens/calendar/calendar_screen.dart';
 import '../screens/settings/settings_screen.dart';
@@ -135,6 +136,10 @@ class _CommandPaletteState extends ConsumerState<CommandPalette> {
         nav.push(MaterialPageRoute(builder: (_) => const CustomersHubScreen()));
       case 'bids_hub':
         nav.push(MaterialPageRoute(builder: (_) => const BidsHubScreen()));
+
+      // Properties
+      case 'properties_hub':
+        nav.push(MaterialPageRoute(builder: (_) => const PropertiesHubScreen()));
 
       // Time & Scheduling
       case 'time_clock':
@@ -395,6 +400,7 @@ class _CommandPaletteState extends ConsumerState<CommandPalette> {
       CommandType.timeClock => 'TIME & SCHEDULING',
       CommandType.settings => 'SETTINGS',
       CommandType.aiScanner => 'AI FEATURES',
+      CommandType.property => 'PROPERTIES',
     };
     
     return Padding(
@@ -504,6 +510,7 @@ class _CommandPaletteState extends ConsumerState<CommandPalette> {
       CommandType.timeClock => colors.accentInfo,
       CommandType.settings => colors.textTertiary,
       CommandType.aiScanner => colors.accentPrimary,
+      CommandType.property => colors.accentInfo,
     };
   }
 

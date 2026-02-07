@@ -65,6 +65,12 @@ class ZaftoColors extends ThemeExtension<ZaftoColors> {
   /// Alias for accentError - short form
   Color get error => accentError;
 
+  /// Alias for accentSuccess - short form
+  Color get success => accentSuccess;
+
+  /// Alias for borderDefault - short form
+  Color get border => borderDefault;
+
   /// Alias for accentError - negative/error state
   Color get accentNegative => accentError;
 
