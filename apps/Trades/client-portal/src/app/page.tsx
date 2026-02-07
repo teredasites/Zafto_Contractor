@@ -1,19 +1,28 @@
 'use client';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Eye, EyeOff, Shield, ArrowRight } from 'lucide-react';
+import { Shield, ArrowRight, Mail, CheckCircle2 } from 'lucide-react';
+import { signInWithMagicLink } from '@/lib/auth';
 
 export default function LoginPage() {
-  const router = useRouter();
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [sent, setSent] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!email) return;
     setLoading(true);
-    setTimeout(() => router.push('/home'), 800);
+    setError(null);
+
+    const { error: authError } = await signInWithMagicLink(email);
+    setLoading(false);
+
+    if (authError) {
+      setError(authError);
+    } else {
+      setSent(true);
+    }
   };
 
   return (
@@ -35,47 +44,60 @@ export default function LoginPage() {
 
         {/* Form Card */}
         <div className="rounded-xl p-6 border" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border-light)' }}>
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>Email</label>
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@email.com"
-                className="w-full px-3.5 py-2.5 rounded-lg text-sm outline-none transition-colors border"
-                style={{ backgroundColor: 'var(--bg)', borderColor: 'var(--border)', color: 'var(--text)' }}
-              />
+          {sent ? (
+            <div className="text-center space-y-3 py-4">
+              <div className="w-12 h-12 rounded-full mx-auto flex items-center justify-center" style={{ backgroundColor: 'var(--success-light)' }}>
+                <CheckCircle2 size={24} style={{ color: 'var(--success)' }} />
+              </div>
+              <h2 className="text-sm font-semibold" style={{ color: 'var(--text)' }}>Check your email</h2>
+              <p className="text-xs leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                We sent a sign-in link to <strong style={{ color: 'var(--text)' }}>{email}</strong>. Click the link in your email to access your portal.
+              </p>
+              <button onClick={() => { setSent(false); setEmail(''); }} className="text-xs font-medium mt-2" style={{ color: 'var(--accent)' }}>
+                Use a different email
+              </button>
             </div>
-            <div>
-              <label className="block text-sm font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>Password</label>
-              <div className="relative">
-                <input type={showPassword ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} placeholder="Enter your password"
-                  className="w-full px-3.5 py-2.5 rounded-lg text-sm outline-none transition-colors border pr-10"
+          ) : (
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>Email</label>
+                <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@email.com" required
+                  className="w-full px-3.5 py-2.5 rounded-lg text-sm outline-none transition-colors border"
                   style={{ backgroundColor: 'var(--bg)', borderColor: 'var(--border)', color: 'var(--text)' }}
                 />
-                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-muted)' }}>
-                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                </button>
               </div>
-            </div>
 
-            <div className="flex items-center justify-between">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" className="rounded" style={{ accentColor: 'var(--accent)' }} />
-                <span className="text-sm" style={{ color: 'var(--text-muted)' }}>Remember me</span>
-              </label>
-              <button type="button" className="text-sm font-medium" style={{ color: 'var(--accent)' }}>Forgot password?</button>
-            </div>
+              {error && (
+                <p className="text-xs px-3 py-2 rounded-lg" style={{ backgroundColor: 'var(--error-light)', color: 'var(--error)' }}>
+                  {error}
+                </p>
+              )}
 
-            <button type="submit" disabled={loading}
-              className="w-full py-2.5 rounded-lg text-white text-sm font-semibold flex items-center justify-center gap-2 transition-all disabled:opacity-50"
-              style={{ backgroundColor: 'var(--accent)' }}>
-              {loading ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <>Sign In <ArrowRight size={16} /></>}
-            </button>
-          </form>
+              <button type="submit" disabled={loading || !email}
+                className="w-full py-2.5 rounded-lg text-white text-sm font-semibold flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+                style={{ backgroundColor: 'var(--accent)' }}>
+                {loading ? (
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <>
+                    <Mail size={16} />
+                    Send Sign-In Link
+                    <ArrowRight size={16} />
+                  </>
+                )}
+              </button>
+
+              <p className="text-xs text-center" style={{ color: 'var(--text-muted)' }}>
+                No password needed. We&apos;ll send a secure link to your email.
+              </p>
+            </form>
+          )}
         </div>
 
         {/* Footer */}
         <div className="text-center mt-6 space-y-2">
           <p className="text-xs flex items-center justify-center gap-1.5" style={{ color: 'var(--text-muted)' }}>
-            <Shield size={12} /> Secured by ZAFTO · Your contractor sent you this portal
+            <Shield size={12} /> Secured by ZAFTO
           </p>
           <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
             Don&apos;t have an account? Your contractor will send you an invite.

@@ -51,24 +51,9 @@ interface InventoryTransaction {
   user: string;
 }
 
-const mockInventory: InventoryItem[] = [
-  { id: '1', name: '20A Single Pole Breaker', sku: 'SPB-20', category: 'Electrical', quantity: 45, minQuantity: 20, unitCost: 8, location: 'Shelf A1', vendor: 'Electrical Supply Co.', lastRestocked: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
-  { id: '2', name: '12/2 Romex Wire (250ft)', sku: 'RMX-12-250', category: 'Electrical', quantity: 8, minQuantity: 10, unitCost: 95, location: 'Shelf B2', vendor: 'Electrical Supply Co.', lastUsed: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000) },
-  { id: '3', name: 'LED Recessed Light 6"', sku: 'LED-RC-6', category: 'Electrical', quantity: 24, minQuantity: 12, unitCost: 18, location: 'Shelf A3', vendor: 'Electrical Supply Co.' },
-  { id: '4', name: '1/2" PEX Tubing (100ft)', sku: 'PEX-12-100', category: 'Plumbing', quantity: 3, minQuantity: 5, unitCost: 45, location: 'Shelf C1', vendor: 'Plumbing Wholesale', lastUsed: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000) },
-  { id: '5', name: 'SharkBite 1/2" Coupling', sku: 'SB-12-C', category: 'Plumbing', quantity: 18, minQuantity: 10, unitCost: 8.50, location: 'Shelf C2', vendor: 'Plumbing Wholesale' },
-  { id: '6', name: 'Thermostat - Programmable', sku: 'THERM-PRO', category: 'HVAC', quantity: 6, minQuantity: 4, unitCost: 65, location: 'Shelf D1', vendor: 'HVAC Distributors Inc.' },
-  { id: '7', name: 'R-410A Refrigerant (25lb)', sku: 'R410-25', category: 'HVAC', quantity: 2, minQuantity: 3, unitCost: 175, location: 'Cage 1', vendor: 'HVAC Distributors Inc.', lastUsed: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000) },
-  { id: '8', name: 'Outlet - 15A Duplex', sku: 'OUT-15D', category: 'Electrical', quantity: 50, minQuantity: 25, unitCost: 2.50, location: 'Shelf A2', vendor: 'Electrical Supply Co.' },
-];
-
-const mockTransactions: InventoryTransaction[] = [
-  { id: 't1', itemId: '2', type: 'out', quantity: 2, reason: 'Used on job', jobId: 'j1', jobName: 'Panel Upgrade - Martinez', date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), user: 'John Smith' },
-  { id: 't2', itemId: '1', type: 'in', quantity: 20, reason: 'Restocked from PO-2024-001', date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), user: 'Mike Johnson' },
-  { id: 't3', itemId: '4', type: 'out', quantity: 1, reason: 'Used on job', jobId: 'j2', jobName: 'Bathroom Remodel - Chen', date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), user: 'John Smith' },
-  { id: 't4', itemId: '7', type: 'out', quantity: 1, reason: 'Used on job', jobId: 'j3', jobName: 'AC Install - Thompson', date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), user: 'Tom Williams' },
-  { id: 't5', itemId: '3', type: 'adjustment', quantity: -2, reason: 'Inventory count correction', date: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000), user: 'Admin' },
-];
+// Inventory Management — Future phase. No inventory table yet. Empty until wired.
+const inventoryItems: InventoryItem[] = [];
+const inventoryTransactions: InventoryTransaction[] = [];
 
 export default function InventoryPage() {
   const [search, setSearch] = useState('');
@@ -78,7 +63,7 @@ export default function InventoryPage() {
   const [showAdjustModal, setShowAdjustModal] = useState<InventoryItem | null>(null);
   const [showHistoryModal, setShowHistoryModal] = useState<InventoryItem | null>(null);
 
-  const filteredItems = mockInventory.filter((item) => {
+  const filteredItems = inventoryItems.filter((item) => {
     const matchesSearch =
       item.name.toLowerCase().includes(search.toLowerCase()) ||
       item.sku.toLowerCase().includes(search.toLowerCase());
@@ -96,10 +81,10 @@ export default function InventoryPage() {
   ];
 
   // Stats
-  const totalItems = mockInventory.length;
-  const totalValue = mockInventory.reduce((sum, item) => sum + item.quantity * item.unitCost, 0);
-  const lowStockItems = mockInventory.filter((item) => item.quantity <= item.minQuantity);
-  const outOfStock = mockInventory.filter((item) => item.quantity === 0);
+  const totalItems = inventoryItems.length;
+  const totalValue = inventoryItems.reduce((sum, item) => sum + item.quantity * item.unitCost, 0);
+  const lowStockItems = inventoryItems.filter((item) => item.quantity <= item.minQuantity);
+  const outOfStock = inventoryItems.filter((item) => item.quantity === 0);
 
   return (
     <div className="space-y-6">
@@ -409,7 +394,7 @@ function AdjustQuantityModal({ item, onClose }: { item: InventoryItem; onClose: 
 }
 
 function HistoryModal({ item, onClose }: { item: InventoryItem; onClose: () => void }) {
-  const itemTransactions = mockTransactions.filter((t) => t.itemId === item.id);
+  const itemTransactions = inventoryTransactions.filter((t) => t.itemId === item.id);
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">

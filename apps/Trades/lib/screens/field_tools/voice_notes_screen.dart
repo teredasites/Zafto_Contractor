@@ -1,12 +1,17 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:record/record.dart';
+import 'package:audioplayers/audioplayers.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../theme/zafto_colors.dart';
 import '../../theme/theme_provider.dart';
 import '../../services/field_camera_service.dart';
+import '../../services/voice_note_service.dart';
 
 /// Voice Notes - Audio recording with timestamps and optional transcription
 class VoiceNotesScreen extends ConsumerStatefulWidget {
@@ -24,16 +29,24 @@ class _VoiceNotesScreenState extends ConsumerState<VoiceNotesScreen> {
   Duration _recordingDuration = Duration.zero;
   Timer? _recordingTimer;
   String? _currentAddress;
+  String? _playingNoteId;
+
+  // Audio
+  late AudioRecorder _recorder;
+  final AudioPlayer _audioPlayer = AudioPlayer();
 
   @override
   void initState() {
     super.initState();
+    _recorder = AudioRecorder();
     _fetchLocation();
   }
 
   @override
   void dispose() {
     _recordingTimer?.cancel();
+    _recorder.dispose();
+    _audioPlayer.dispose();
     super.dispose();
   }
 
@@ -59,13 +72,6 @@ class _VoiceNotesScreenState extends ConsumerState<VoiceNotesScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text('Voice Notes', style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w600)),
-        actions: [
-          if (_notes.isNotEmpty)
-            IconButton(
-              icon: Icon(LucideIcons.save, color: colors.accentPrimary),
-              onPressed: _saveAllNotes,
-            ),
-        ],
       ),
       body: Column(
         children: [
@@ -156,6 +162,8 @@ class _VoiceNotesScreenState extends ConsumerState<VoiceNotesScreen> {
   }
 
   Widget _buildNoteCard(ZaftoColors colors, _VoiceNote note, int index) {
+    final isPlaying = _playingNoteId == note.id;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -183,9 +191,27 @@ class _VoiceNotesScreenState extends ConsumerState<VoiceNotesScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Voice Note ${index + 1}',
-                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: colors.textPrimary),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            'Voice Note ${index + 1}',
+                            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: colors.textPrimary),
+                          ),
+                        ),
+                        if (!note.isSaved)
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: colors.accentWarning.withOpacity(0.15),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              'Saving...',
+                              style: TextStyle(fontSize: 11, color: colors.accentWarning, fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                      ],
                     ),
                     const SizedBox(height: 2),
                     Text(
@@ -195,22 +221,23 @@ class _VoiceNotesScreenState extends ConsumerState<VoiceNotesScreen> {
                   ],
                 ),
               ),
-              // Play button
-              GestureDetector(
-                onTap: () => _playNote(note),
-                child: Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: colors.accentSuccess.withOpacity(0.15),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    note.isPlaying ? LucideIcons.pause : LucideIcons.play,
-                    size: 20,
-                    color: colors.accentSuccess,
+              // Play button (only for saved notes)
+              if (note.isSaved)
+                GestureDetector(
+                  onTap: () => _playNote(note),
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: colors.accentSuccess.withOpacity(0.15),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      isPlaying ? LucideIcons.pause : LucideIcons.play,
+                      size: 20,
+                      color: colors.accentSuccess,
+                    ),
                   ),
                 ),
-              ),
             ],
           ),
           const SizedBox(height: 12),
@@ -328,8 +355,19 @@ class _VoiceNotesScreenState extends ConsumerState<VoiceNotesScreen> {
   // ACTIONS
   // ============================================================
 
-  void _startRecording() {
+  Future<void> _startRecording() async {
     HapticFeedback.heavyImpact();
+
+    if (!await _recorder.hasPermission()) return;
+
+    final dir = await getTemporaryDirectory();
+    final path = '${dir.path}/voice_note_${DateTime.now().millisecondsSinceEpoch}.m4a';
+
+    await _recorder.start(
+      const RecordConfig(encoder: AudioEncoder.aacLc, bitRate: 128000),
+      path: path,
+    );
+
     setState(() {
       _isRecording = true;
       _recordingDuration = Duration.zero;
@@ -338,64 +376,157 @@ class _VoiceNotesScreenState extends ConsumerState<VoiceNotesScreen> {
     _recordingTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() => _recordingDuration += const Duration(seconds: 1));
     });
-
-    // TODO: BACKEND - Start actual audio recording
   }
 
-  void _stopRecording() {
+  Future<void> _stopRecording() async {
     HapticFeedback.mediumImpact();
     _recordingTimer?.cancel();
 
     if (_recordingDuration.inSeconds >= 1) {
+      final path = await _recorder.stop();
+
+      if (path == null) {
+        setState(() {
+          _isRecording = false;
+          _recordingDuration = Duration.zero;
+        });
+        return;
+      }
+
+      final localNote = _VoiceNote(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        duration: _recordingDuration,
+        recordedAt: DateTime.now(),
+        address: _currentAddress,
+        audioPath: path,
+      );
+
       setState(() {
-        _notes.add(_VoiceNote(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          duration: _recordingDuration,
-          recordedAt: DateTime.now(),
-          address: _currentAddress,
-        ));
+        _notes.add(localNote);
         _isRecording = false;
         _recordingDuration = Duration.zero;
       });
+
+      // Auto-save to Supabase
+      _saveNote(_notes.length - 1);
     } else {
+      await _recorder.stop();
       setState(() {
         _isRecording = false;
         _recordingDuration = Duration.zero;
       });
     }
-
-    // TODO: BACKEND - Stop recording and save audio file
   }
 
-  void _playNote(_VoiceNote note) {
+  Future<void> _saveNote(int index) async {
+    final note = _notes[index];
+    if (note.isSaved || note.audioPath == null) return;
+
+    try {
+      final file = File(note.audioPath!);
+      final bytes = await file.readAsBytes();
+      final fileName = 'voice_note_${note.recordedAt.millisecondsSinceEpoch}.m4a';
+
+      final voiceNoteService = ref.read(voiceNoteServiceProvider);
+      final savedNote = await voiceNoteService.createVoiceNote(
+        jobId: widget.jobId,
+        audioBytes: bytes,
+        fileName: fileName,
+        durationSeconds: note.duration.inSeconds,
+        recordedAt: note.recordedAt,
+      );
+
+      if (mounted) {
+        setState(() {
+          _notes[index] = note.copyWith(
+            savedId: savedNote.id,
+            storagePath: savedNote.storagePath,
+          );
+        });
+      }
+
+      // Clean up temp file
+      await file.delete().then((_) {}).catchError((_) {});
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to save voice note'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _playNote(_VoiceNote note) async {
     HapticFeedback.lightImpact();
-    // TODO: BACKEND - Play audio file
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Audio playback coming soon'), behavior: SnackBarBehavior.floating),
-    );
+
+    // Toggle off if same note is playing
+    if (_playingNoteId == note.id) {
+      await _audioPlayer.stop();
+      setState(() => _playingNoteId = null);
+      return;
+    }
+
+    // Stop any current playback
+    await _audioPlayer.stop();
+
+    if (note.storagePath == null) return;
+
+    try {
+      final voiceNoteService = ref.read(voiceNoteServiceProvider);
+      final url = await voiceNoteService.getAudioUrl(note.storagePath!);
+
+      setState(() => _playingNoteId = note.id);
+      await _audioPlayer.play(UrlSource(url));
+
+      // Listen for completion to reset playing state
+      _audioPlayer.onPlayerComplete.first.then((_) {
+        if (mounted) setState(() => _playingNoteId = null);
+      });
+    } catch (e) {
+      setState(() => _playingNoteId = null);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Could not play audio'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
   }
 
   void _transcribeNote(int index) {
     HapticFeedback.lightImpact();
-    // TODO: BACKEND - Send to transcription service (Whisper API)
-    setState(() {
-      _notes[index] = _notes[index].copyWith(
-        transcription: 'Sample transcription: "Check the panel box, looks like we need a 200 amp upgrade. Customer mentioned flickering lights in the kitchen."',
-      );
-    });
-  }
-
-  void _deleteNote(int index) {
-    HapticFeedback.mediumImpact();
-    setState(() => _notes.removeAt(index));
-  }
-
-  Future<void> _saveAllNotes() async {
-    HapticFeedback.mediumImpact();
-    // TODO: BACKEND - Save to job
+    // Transcription Edge Function deferred to Phase E (AI layer).
+    // Notes save with transcription_status='pending' by default.
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('${_notes.length} notes saved'), behavior: SnackBarBehavior.floating),
+      const SnackBar(
+        content: Text('AI transcription coming soon'),
+        behavior: SnackBarBehavior.floating,
+      ),
     );
+  }
+
+  Future<void> _deleteNote(int index) async {
+    HapticFeedback.mediumImpact();
+    final note = _notes[index];
+
+    // Soft delete in DB if saved
+    if (note.isSaved) {
+      final voiceNoteService = ref.read(voiceNoteServiceProvider);
+      voiceNoteService.deleteVoiceNote(note.savedId!).then((_) {}).catchError((_) {});
+    }
+
+    // Stop playback if this note is playing
+    if (_playingNoteId == note.id) {
+      await _audioPlayer.stop();
+      _playingNoteId = null;
+    }
+
+    setState(() => _notes.removeAt(index));
   }
 
   String _formatDuration(Duration d) {
@@ -416,7 +547,8 @@ class _VoiceNote {
   final String? address;
   final String? transcription;
   final String? audioPath;
-  final bool isPlaying;
+  final String? storagePath;
+  final String? savedId;
 
   const _VoiceNote({
     required this.id,
@@ -425,8 +557,11 @@ class _VoiceNote {
     this.address,
     this.transcription,
     this.audioPath,
-    this.isPlaying = false,
+    this.storagePath,
+    this.savedId,
   });
+
+  bool get isSaved => savedId != null;
 
   _VoiceNote copyWith({
     String? id,
@@ -435,7 +570,8 @@ class _VoiceNote {
     String? address,
     String? transcription,
     String? audioPath,
-    bool? isPlaying,
+    String? storagePath,
+    String? savedId,
   }) {
     return _VoiceNote(
       id: id ?? this.id,
@@ -444,7 +580,8 @@ class _VoiceNote {
       address: address ?? this.address,
       transcription: transcription ?? this.transcription,
       audioPath: audioPath ?? this.audioPath,
-      isPlaying: isPlaying ?? this.isPlaying,
+      storagePath: storagePath ?? this.storagePath,
+      savedId: savedId ?? this.savedId,
     );
   }
 }

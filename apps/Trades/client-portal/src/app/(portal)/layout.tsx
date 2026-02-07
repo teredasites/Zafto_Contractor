@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Home, FolderKanban, CreditCard, Building2, Menu, Bell } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { ThemeToggle } from '@/components/theme-toggle';
+import { AuthProvider, useAuth } from '@/components/auth-provider';
 
 const tabs = [
   { label: 'Home', href: '/home', icon: Home },
@@ -13,8 +14,12 @@ const tabs = [
   { label: 'Menu', href: '/menu', icon: Menu },
 ];
 
-export default function PortalLayout({ children }: { children: React.ReactNode }) {
+function PortalShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const { profile } = useAuth();
+  const initials = profile?.displayName
+    ? profile.displayName.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)
+    : '?';
 
   const isActive = (href: string) => {
     if (href === '/home') return pathname === '/home';
@@ -58,7 +63,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
               <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--accent)' }} />
             </button>
             <div className="w-8 h-8 rounded-full flex items-center justify-center ml-1" style={{ backgroundColor: 'var(--accent-light)' }}>
-              <span className="text-xs font-semibold" style={{ color: 'var(--accent)' }}>SJ</span>
+              <span className="text-xs font-semibold" style={{ color: 'var(--accent)' }}>{initials}</span>
             </div>
           </div>
         </div>
@@ -88,5 +93,13 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
         </div>
       </nav>
     </div>
+  );
+}
+
+export default function PortalLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <AuthProvider>
+      <PortalShell>{children}</PortalShell>
+    </AuthProvider>
   );
 }

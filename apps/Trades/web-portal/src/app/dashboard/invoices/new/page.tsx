@@ -19,7 +19,8 @@ import { Button } from '@/components/ui/button';
 import { Input, Select } from '@/components/ui/input';
 import { Avatar } from '@/components/ui/avatar';
 import { formatCurrency, cn } from '@/lib/utils';
-import { mockCustomers, mockJobs } from '@/lib/mock-data';
+import { useCustomers } from '@/lib/hooks/use-customers';
+import { useJobs } from '@/lib/hooks/use-jobs';
 
 interface LineItem {
   id: string;
@@ -48,9 +49,11 @@ export default function NewInvoicePage() {
 
   const [customerSearch, setCustomerSearch] = useState('');
   const [showCustomerSearch, setShowCustomerSearch] = useState(false);
+  const { customers } = useCustomers();
+  const { jobs } = useJobs();
 
-  const selectedCustomer = mockCustomers.find((c) => c.id === formData.customerId);
-  const selectedJob = mockJobs.find((j) => j.id === formData.jobId);
+  const selectedCustomer = customers.find((c) => c.id === formData.customerId);
+  const selectedJob = jobs.find((j) => j.id === formData.jobId);
 
   // If job is selected, auto-select customer
   useEffect(() => {
@@ -59,14 +62,14 @@ export default function NewInvoicePage() {
     }
   }, [selectedJob, formData.customerId]);
 
-  const filteredCustomers = mockCustomers.filter(
+  const filteredCustomers = customers.filter(
     (c) =>
       c.firstName.toLowerCase().includes(customerSearch.toLowerCase()) ||
       c.lastName.toLowerCase().includes(customerSearch.toLowerCase()) ||
       c.email.toLowerCase().includes(customerSearch.toLowerCase())
   );
 
-  const customerJobs = mockJobs.filter(
+  const customerJobs = jobs.filter(
     (j) => j.customerId === formData.customerId && (j.status === 'completed' || j.status === 'in_progress')
   );
 

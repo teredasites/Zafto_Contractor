@@ -1,52 +1,66 @@
-// @ts-nocheck
-import {
-  signInWithEmailAndPassword,
-  signOut as firebaseSignOut,
-  onAuthStateChanged,
-  type User
-} from 'firebase/auth';
-import { auth } from './firebase';
+// ZAFTO Web CRM — Supabase Auth
+// Sprint B4a | Session 48
+//
+// Replaces Firebase Auth. Same API surface (signIn, signOut, onAuthChange)
+// so consumers migrate with minimal changes.
+
+import { getSupabase } from './supabase';
+import type { User, AuthChangeEvent, Session } from '@supabase/supabase-js';
+
+export type { User };
 
 export async function signIn(email: string, password: string) {
   try {
-    const result = await signInWithEmailAndPassword(auth, email, password);
-    return { user: result.user, error: null };
-  } catch (error: any) {
-    let message = 'An error occurred during sign in';
+    const supabase = getSupabase();
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-    switch (error.code) {
-      case 'auth/user-not-found':
-        message = 'No account found with this email';
-        break;
-      case 'auth/wrong-password':
-        message = 'Incorrect password';
-        break;
-      case 'auth/invalid-email':
-        message = 'Invalid email address';
-        break;
-      case 'auth/too-many-requests':
-        message = 'Too many attempts. Please try again later';
-        break;
-      case 'auth/invalid-credential':
+    if (error) {
+      let message = 'An error occurred during sign in';
+
+      if (error.message.includes('Invalid login credentials')) {
         message = 'Invalid email or password';
-        break;
+      } else if (error.message.includes('Email not confirmed')) {
+        message = 'Please verify your email address';
+      } else if (error.message.includes('too many requests')) {
+        message = 'Too many attempts. Please try again later';
+      } else if (error.message.includes('User not found')) {
+        message = 'No account found with this email';
+      }
+
+      return { user: null, error: message };
     }
 
-    return { user: null, error: message };
+    return { user: data.user, error: null };
+  } catch {
+    return { user: null, error: 'An error occurred during sign in' };
   }
 }
 
 export async function signOut() {
   try {
-    await firebaseSignOut(auth);
+    const supabase = getSupabase();
+    await supabase.auth.signOut();
     return { error: null };
-  } catch (error) {
+  } catch {
     return { error: 'Failed to sign out' };
   }
 }
 
 export function onAuthChange(callback: (user: User | null) => void) {
-  return onAuthStateChanged(auth, callback);
-}
+  const supabase = getSupabase();
+  const {
+    data: { subscription },
+  } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, session: Session | null) => {
+    callback(session?.user ?? null);
+  });
 
-export { type User };
+  // Also check current session immediately.
+  supabase.auth.getSession().then(({ data: { session } }: { data: { session: Session | null } }) => {
+    callback(session?.user ?? null);
+  });
+
+  return () => subscription.unsubscribe();
+}

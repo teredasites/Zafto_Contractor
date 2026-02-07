@@ -1,0 +1,84 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg: #ffffff;
+  --bg-secondary: #f6f8fa;
+  --surface: #ffffff;
+  --surface-hover: #f6f8fa;
+  --border: #d0d5dd;
+  --border-light: #e4e7ec;
+  --text: #0a1628;
+  --text-secondary: #344054;
+  --text-muted: #5d6b7e;
+  --accent: #10b981;
+  --accent-hover: #059669;
+  --accent-light: #ecfdf5;
+}
+
+.dark {
+  --bg: #0a0a0a;
+  --bg-secondary: #111111;
+  --surface: #141414;
+  --surface-hover: #1a1a1a;
+  --border: #262626;
+  --border-light: #333333;
+  --text: #ffffff;
+  --text-secondary: #a3a3a3;
+  --text-muted: #737373;
+  --accent: #10b981;
+  --accent-hover: #34d399;
+  --accent-light: #0a1f17;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+input, button, select, textarea { font-size: inherit; }
+
+@layer utilities {
+  .bg-main { background-color: var(--bg); }
+  .bg-secondary { background-color: var(--bg-secondary); }
+  .bg-surface { background-color: var(--surface); }
+  .bg-surface-hover { background-color: var(--surface-hover); }
+  .bg-accent { background-color: var(--accent); }
+  .bg-accent-hover { background-color: var(--accent-hover); }
+  .bg-accent-light { background-color: var(--accent-light); }
+  .border-main { border-color: var(--border); }
+  .border-light { border-color: var(--border-light); }
+  .text-main { color: var(--text); }
+  .text-secondary { color: var(--text-secondary); }
+  .text-muted { color: var(--text-muted); }
+  .text-accent { color: var(--accent); }
+}
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-secondary); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+.animate-fade-in {
+  animation: fadeIn 0.15s ease-out;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-secondary) 25%, var(--surface-hover) 50%, var(--bg-secondary) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

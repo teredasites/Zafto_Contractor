@@ -5,7 +5,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @import 'mapbox-gl/dist/mapbox-gl.css';
 
-/* Light mode (default) - Stripe style */
+/* Light mode (default) */
 :root {
   --bg: #ffffff;
   --bg-secondary: #f6f8fa;
@@ -16,9 +16,9 @@
   --text: #0a1628;
   --text-secondary: #344054;
   --text-muted: #5d6b7e;
-  --accent: #635bff;
-  --accent-hover: #5046e5;
-  --accent-light: #f0f0ff;
+  --accent: #10b981;
+  --accent-hover: #059669;
+  --accent-light: #ecfdf5;
 }
 
 /* Dark mode */
@@ -32,9 +32,9 @@
   --text: #ffffff;
   --text-secondary: #a3a3a3;
   --text-muted: #737373;
-  --accent: #635bff;
-  --accent-hover: #7c75ff;
-  --accent-light: #1a1a2e;
+  --accent: #10b981;
+  --accent-hover: #34d399;
+  --accent-light: #0a1f17;
 }
 
 body {
@@ -66,8 +66,10 @@ table {
   .bg-accent { background-color: var(--accent); }
   .bg-accent-hover { background-color: var(--accent-hover); }
   .bg-accent-light { background-color: var(--accent-light); }
+  .bg-elevated { background-color: var(--surface-hover); }
 
   .border-main { border-color: var(--border); }
+  .border-subtle { border-color: var(--border-light); }
   .border-light { border-color: var(--border-light); }
 
   .text-main { color: var(--text); }
@@ -185,14 +187,32 @@ table {
   overflow: hidden;
 }
 
+/* Sidebar label fade */
+.sidebar-label {
+  opacity: 1;
+  transition: opacity 150ms ease;
+}
+
+/* Card hover effect */
+.card-hover {
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+.card-hover:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+.dark .card-hover:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
 /* Animation utilities */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.2s ease-out;
+  animation: fadeIn 0.15s ease-out;
 }
 
 @keyframes slideUp {
@@ -202,6 +222,47 @@ table {
 
 .animate-slide-up {
   animation: slideUp 0.2s ease-out;
+}
+
+/* Staggered children animation */
+@keyframes staggerFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-stagger > * {
+  animation: staggerFadeIn 0.2s ease-out both;
+}
+
+.animate-stagger > *:nth-child(1) { animation-delay: 0ms; }
+.animate-stagger > *:nth-child(2) { animation-delay: 50ms; }
+.animate-stagger > *:nth-child(3) { animation-delay: 100ms; }
+.animate-stagger > *:nth-child(4) { animation-delay: 150ms; }
+.animate-stagger > *:nth-child(5) { animation-delay: 200ms; }
+.animate-stagger > *:nth-child(6) { animation-delay: 250ms; }
+
+/* Chart line draw-in */
+@keyframes drawLine {
+  from { stroke-dashoffset: 1000; }
+  to { stroke-dashoffset: 0; }
+}
+
+.animate-draw-line {
+  stroke-dasharray: 1000;
+  animation: drawLine 0.8s ease-out forwards;
+}
+
+/* Skeleton shimmer loading */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-secondary) 25%, var(--surface-hover) 50%, var(--bg-secondary) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: 4px;
 }
 
 /* Mapbox Popup Styling */
@@ -302,4 +363,159 @@ table {
 
 .dark .mapboxgl-ctrl-group button span {
   filter: invert(1);
+}
+
+/* ============================================
+   Z CONSOLE — Persistent AI Panel
+   ============================================ */
+
+:root {
+  --z-ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --z-duration: 280ms;
+}
+
+/* Z Pulse — floating button glow */
+@keyframes zPulseGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+}
+
+.z-pulse-glow {
+  animation: zPulseGlow 2.5s ease-in-out infinite;
+}
+
+/* Z Pulse — active (has insight) */
+@keyframes zPulseActive {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+  50% { box-shadow: 0 0 16px 6px rgba(16, 185, 129, 0.25); }
+}
+
+.z-pulse-active {
+  animation: zPulseActive 2s ease-in-out infinite;
+}
+
+/* Z Thinking — pulsing dots */
+@keyframes zThinkingDot {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+.z-thinking-dot {
+  animation: zThinkingDot 1.4s ease-in-out infinite;
+}
+
+.z-thinking-dot:nth-child(2) { animation-delay: 0.2s; }
+.z-thinking-dot:nth-child(3) { animation-delay: 0.4s; }
+
+/* Glass panel effect */
+.z-glass {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+.dark .z-glass {
+  background: rgba(20, 20, 20, 0.85);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+/* Z message appearance */
+@keyframes zMessageIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.z-message-in {
+  animation: zMessageIn 200ms ease-out;
+}
+
+/* Artifact pane — always light background */
+.z-artifact-pane {
+  background: #ffffff !important;
+  color: #0a1628 !important;
+}
+
+.z-artifact-pane * {
+  color: inherit;
+}
+
+.z-artifact-pane .text-muted {
+  color: #5d6b7e !important;
+}
+
+.z-artifact-pane .border-main {
+  border-color: #d0d5dd !important;
+}
+
+/* Artifact content reveal during generation */
+@keyframes zArtifactReveal {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.z-artifact-reveal {
+  animation: zArtifactReveal 0.4s ease-out forwards;
+}
+
+/* Z prose — markdown inside Z messages (extends .prose) */
+.z-prose h1 { font-size: 1.25em; font-weight: 600; margin: 0.75em 0 0.4em; }
+.z-prose h2 { font-size: 1.125em; font-weight: 600; margin: 0.6em 0 0.3em; }
+.z-prose h3 { font-size: 1em; font-weight: 600; margin: 0.5em 0 0.25em; }
+.z-prose p { margin-bottom: 0.5em; }
+.z-prose ul, .z-prose ol { margin-left: 1.25em; margin-bottom: 0.5em; }
+.z-prose li { margin-bottom: 0.2em; }
+.z-prose strong { font-weight: 600; }
+.z-prose code {
+  background-color: var(--bg-secondary);
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+  font-size: 0.88em;
+  font-family: 'JetBrains Mono', monospace;
+}
+.z-prose pre {
+  background-color: var(--bg-secondary);
+  padding: 0.75em 1em;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 0.5em 0;
+  font-size: 0.88em;
+}
+.z-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.5em 0;
+  font-size: 13px;
+}
+.z-prose th, .z-prose td {
+  padding: 6px 10px;
+  border: 1px solid var(--border-light);
+  text-align: left;
+}
+.z-prose th {
+  font-weight: 600;
+  background-color: var(--bg-secondary);
+}
+.z-prose hr {
+  border: none;
+  border-top: 1px solid var(--border-light);
+  margin: 1em 0;
+}
+
+/* Z artifact prose (always light) */
+.z-artifact-pane .z-prose th,
+.z-artifact-pane .z-prose td {
+  border-color: #e4e7ec;
+}
+.z-artifact-pane .z-prose th {
+  background-color: #f6f8fa;
+}
+.z-artifact-pane .z-prose code {
+  background-color: #f6f8fa;
+}
+.z-artifact-pane .z-prose pre {
+  background-color: #f6f8fa;
+}
+.z-artifact-pane .z-prose hr {
+  border-top-color: #e4e7ec;
 }

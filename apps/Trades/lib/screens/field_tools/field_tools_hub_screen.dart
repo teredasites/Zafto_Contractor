@@ -21,8 +21,13 @@ import 'confined_space_timer_screen.dart';
 import 'client_signature_screen.dart';
 import 'receipt_scanner_screen.dart';
 import 'level_plumb_screen.dart';
+import 'materials_tracker_screen.dart';
+import 'daily_log_screen.dart';
+import 'punch_list_screen.dart';
+import 'change_order_screen.dart';
+import 'job_completion_screen.dart';
 
-/// Field Tools Hub - All 14 iPhone hardware tools in one place
+/// Field Tools Hub - All 19 field tools in one place
 class FieldToolsHubScreen extends ConsumerWidget {
   final String? jobId;
 
@@ -113,6 +118,46 @@ class FieldToolsHubScreen extends ConsumerWidget {
             subtitle: 'Digital signatures for approvals',
             color: Colors.cyan,
             onTap: () => _openTool(context, ClientSignatureScreen(jobId: jobId)),
+          ),
+          _buildToolCard(
+            context, colors,
+            icon: LucideIcons.package,
+            title: 'Materials Tracker',
+            subtitle: 'Track materials, equipment & costs',
+            color: Colors.deepPurple,
+            onTap: () => _openTool(context, MaterialsTrackerScreen(jobId: jobId)),
+          ),
+          _buildToolCard(
+            context, colors,
+            icon: LucideIcons.clipboardList,
+            title: 'Daily Log',
+            subtitle: 'Daily job reports with weather & crew',
+            color: Colors.blueGrey,
+            onTap: () => _openTool(context, DailyLogScreen(jobId: jobId)),
+          ),
+          _buildToolCard(
+            context, colors,
+            icon: LucideIcons.checkSquare,
+            title: 'Punch List',
+            subtitle: 'Task checklist with priority & progress',
+            color: Colors.green,
+            onTap: () => _openTool(context, PunchListScreen(jobId: jobId)),
+          ),
+          _buildToolCard(
+            context, colors,
+            icon: LucideIcons.fileDiff,
+            title: 'Change Orders',
+            subtitle: 'Scope changes with approval workflow',
+            color: Colors.amber,
+            onTap: () => _openTool(context, ChangeOrderScreen(jobId: jobId)),
+          ),
+          _buildToolCard(
+            context, colors,
+            icon: LucideIcons.checkCircle,
+            title: 'Job Completion',
+            subtitle: 'Validate requirements & close out job',
+            color: Colors.teal,
+            onTap: () => _openTool(context, JobCompletionScreen(jobId: jobId)),
           ),
           const SizedBox(height: 24),
 

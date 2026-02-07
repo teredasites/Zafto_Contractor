@@ -43,18 +43,8 @@ interface Document {
   url: string;
 }
 
-const mockDocuments: Document[] = [
-  { id: '1', name: 'Estimate_Martinez_2024.pdf', type: 'pdf', size: 245000, category: 'Estimates', customerId: 'c1', customerName: 'Sarah Martinez', jobId: 'j1', jobName: 'Panel Upgrade', uploadedBy: 'John Smith', uploadedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), url: '#' },
-  { id: '2', name: 'Contract_Thompson_Signed.pdf', type: 'pdf', size: 512000, category: 'Contracts', customerId: 'c2', customerName: 'Mike Thompson', jobId: 'j2', jobName: 'Commercial Wiring', uploadedBy: 'John Smith', uploadedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), url: '#' },
-  { id: '3', name: 'Site_Photo_Kitchen_01.jpg', type: 'image', size: 2400000, category: 'Photos', customerId: 'c3', customerName: 'Jennifer Davis', jobId: 'j3', jobName: 'Kitchen Remodel', uploadedBy: 'Mike Johnson', uploadedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), url: '#' },
-  { id: '4', name: 'Site_Photo_Kitchen_02.jpg', type: 'image', size: 2100000, category: 'Photos', customerId: 'c3', customerName: 'Jennifer Davis', jobId: 'j3', jobName: 'Kitchen Remodel', uploadedBy: 'Mike Johnson', uploadedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), url: '#' },
-  { id: '5', name: 'Permit_Electrical_2024.pdf', type: 'pdf', size: 180000, category: 'Permits', customerId: 'c1', customerName: 'Sarah Martinez', jobId: 'j1', jobName: 'Panel Upgrade', uploadedBy: 'John Smith', uploadedAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000), url: '#' },
-  { id: '6', name: 'Invoice_2024_089.pdf', type: 'pdf', size: 125000, category: 'Invoices', customerId: 'c4', customerName: 'Robert Chen', uploadedBy: 'Admin', uploadedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), url: '#' },
-  { id: '7', name: 'Floor_Plan_Chen.pdf', type: 'pdf', size: 890000, category: 'Plans', customerId: 'c4', customerName: 'Robert Chen', jobId: 'j4', jobName: 'Home Rewire', uploadedBy: 'John Smith', uploadedAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000), url: '#' },
-  { id: '8', name: 'Material_List.xlsx', type: 'spreadsheet', size: 45000, category: 'Other', jobId: 'j2', jobName: 'Commercial Wiring', uploadedBy: 'John Smith', uploadedAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000), url: '#' },
-  { id: '9', name: 'Insurance_Certificate_2024.pdf', type: 'pdf', size: 320000, category: 'Certificates', uploadedBy: 'Admin', uploadedAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), url: '#' },
-  { id: '10', name: 'W9_ABC_Electric.pdf', type: 'pdf', size: 95000, category: 'Certificates', uploadedBy: 'Admin', uploadedAt: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000), url: '#' },
-];
+// Document Management — Future phase. No documents table yet. Empty until wired.
+const documents: Document[] = [];
 
 const categoryOptions = [
   { value: 'all', label: 'All Categories' },
@@ -74,7 +64,7 @@ export default function DocumentsPage() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showUploadModal, setShowUploadModal] = useState(false);
 
-  const filteredDocs = mockDocuments.filter((doc) => {
+  const filteredDocs = documents.filter((doc) => {
     const matchesSearch =
       doc.name.toLowerCase().includes(search.toLowerCase()) ||
       doc.customerName?.toLowerCase().includes(search.toLowerCase()) ||
@@ -99,9 +89,9 @@ export default function DocumentsPage() {
   };
 
   // Stats
-  const totalDocs = mockDocuments.length;
-  const totalSize = mockDocuments.reduce((sum, d) => sum + d.size, 0);
-  const recentDocs = mockDocuments.filter((d) => Date.now() - d.uploadedAt.getTime() < 7 * 24 * 60 * 60 * 1000).length;
+  const totalDocs = documents.length;
+  const totalSize = documents.reduce((sum, d) => sum + d.size, 0);
+  const recentDocs = documents.filter((d) => Date.now() - d.uploadedAt.getTime() < 7 * 24 * 60 * 60 * 1000).length;
 
   return (
     <div className="space-y-6">
@@ -167,7 +157,7 @@ export default function DocumentsPage() {
                 <Image size={20} className="text-amber-600 dark:text-amber-400" />
               </div>
               <div>
-                <p className="text-2xl font-semibold text-main">{mockDocuments.filter((d) => d.type === 'image').length}</p>
+                <p className="text-2xl font-semibold text-main">{documents.filter((d) => d.type === 'image').length}</p>
                 <p className="text-sm text-muted">Photos</p>
               </div>
             </div>

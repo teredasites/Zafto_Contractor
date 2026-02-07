@@ -25,8 +25,12 @@ import { Select } from '@/components/ui/input';
 import { SimpleAreaChart, DonutChart, DonutLegend, SimpleBarChart } from '@/components/ui/charts';
 import { CommandPalette } from '@/components/command-palette';
 import { formatCurrency, formatDate, cn } from '@/lib/utils';
-import { mockBankAccounts, mockTransactions, mockRevenueData } from '@/lib/mock-data';
-import type { Transaction, TransactionCategory } from '@/types';
+import { useReports } from '@/lib/hooks/use-reports';
+import type { Transaction, TransactionCategory, BankAccount } from '@/types';
+
+// ZBooks — Phase F. No bank/transaction tables yet. Empty until wired.
+const bankAccounts: BankAccount[] = [];
+const transactions: Transaction[] = [];
 
 const categoryLabels: Record<TransactionCategory, string> = {
   materials: 'Materials',
@@ -61,22 +65,23 @@ const categoryColors: Record<string, string> = {
 
 export default function BooksPage() {
   const router = useRouter();
+  const { data: reportData } = useReports();
   const [period, setPeriod] = useState('month');
   const [categoryFilter, setCategoryFilter] = useState('all');
 
   // Calculate totals
-  const totalIncome = mockTransactions
+  const totalIncome = transactions
     .filter((t) => t.isIncome)
     .reduce((sum, t) => sum + t.amount, 0);
 
-  const totalExpenses = mockTransactions
+  const totalExpenses = transactions
     .filter((t) => !t.isIncome)
     .reduce((sum, t) => sum + Math.abs(t.amount), 0);
 
   const netProfit = totalIncome - totalExpenses;
 
   // Calculate expenses by category
-  const expensesByCategory = mockTransactions
+  const expensesByCategory = transactions
     .filter((t) => !t.isIncome)
     .reduce((acc, t) => {
       acc[t.category] = (acc[t.category] || 0) + Math.abs(t.amount);
@@ -92,7 +97,7 @@ export default function BooksPage() {
     .sort((a, b) => b.value - a.value);
 
   // Filter transactions
-  const filteredTransactions = mockTransactions.filter((t) => {
+  const filteredTransactions = transactions.filter((t) => {
     if (categoryFilter === 'all') return true;
     if (categoryFilter === 'income') return t.isIncome;
     if (categoryFilter === 'expenses') return !t.isIncome;
@@ -100,15 +105,16 @@ export default function BooksPage() {
   });
 
   // Revenue chart data
-  const revenueChartData = mockRevenueData.map((d) => ({
+  const revenueData = reportData?.monthlyRevenue || [];
+  const revenueChartData = revenueData.map((d) => ({
     date: d.date,
     value: d.profit,
   }));
 
-  const totalBalance = mockBankAccounts.reduce((sum, a) => sum + a.currentBalance, 0);
+  const totalBalance = bankAccounts.reduce((sum, a) => sum + a.currentBalance, 0);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 animate-fade-in">
       <CommandPalette />
 
       {/* Header */}
@@ -144,7 +150,7 @@ export default function BooksPage() {
             </div>
             <div className="flex items-center gap-2 mt-4">
               <span className="text-emerald-100 text-sm">
-                {mockBankAccounts.length} connected account{mockBankAccounts.length !== 1 ? 's' : ''}
+                {bankAccounts.length} connected account{bankAccounts.length !== 1 ? 's' : ''}
               </span>
             </div>
           </CardContent>
@@ -266,7 +272,7 @@ export default function BooksPage() {
           </CardHeader>
           <CardContent className="p-0">
             <div className="divide-y divide-main">
-              {mockBankAccounts.map((account) => (
+              {bankAccounts.map((account) => (
                 <div key={account.id} className="px-6 py-4">
                   <div className="flex items-center gap-3">
                     <div className="p-2 bg-secondary rounded-lg">

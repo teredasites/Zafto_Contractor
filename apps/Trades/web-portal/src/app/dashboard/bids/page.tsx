@@ -27,47 +27,20 @@ import { StatusBadge, Badge } from '@/components/ui/badge';
 import { SearchInput, Select } from '@/components/ui/input';
 import { CommandPalette } from '@/components/command-palette';
 import { formatCurrency, formatDate, formatRelativeTime, cn } from '@/lib/utils';
-import { getBids, subscribeToBids, getDashboardStats } from '@/lib/firestore';
+import { useBids } from '@/lib/hooks/use-bids';
+import { useStats } from '@/lib/hooks/use-stats';
 import { usePermissions } from '@/components/permission-gate';
-import { mockBids, mockDashboardStats } from '@/lib/mock-data';
 import type { Bid } from '@/types';
 
 export default function BidsPage() {
   const router = useRouter();
-  const { companyId, loading: permLoading } = usePermissions();
+  const { loading: permLoading } = usePermissions();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [bids, setBids] = useState<Bid[]>([]);
-  const [stats, setStats] = useState(mockDashboardStats.bids);
-  const [loading, setLoading] = useState(true);
+  const { bids, loading } = useBids();
+  const { stats: dashStats } = useStats();
+  const stats = dashStats.bids;
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-
-  // Subscribe to real-time bids from Firestore
-  useEffect(() => {
-    if (permLoading) return;
-
-    // If no companyId (not set up yet), use mock data
-    if (!companyId) {
-      setBids(mockBids);
-      setStats(mockDashboardStats.bids);
-      setLoading(false);
-      return;
-    }
-
-    // Subscribe to Firestore
-    setLoading(true);
-    const unsubscribe = subscribeToBids(companyId, (firestoreBids) => {
-      setBids(firestoreBids);
-      setLoading(false);
-    });
-
-    // Also get stats
-    getDashboardStats(companyId).then((s) => {
-      setStats(s.bids);
-    });
-
-    return () => unsubscribe();
-  }, [companyId, permLoading]);
 
   const filteredBids = bids.filter((bid) => {
     const matchesSearch =
@@ -92,7 +65,7 @@ export default function BidsPage() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 animate-fade-in">
       <CommandPalette />
 
       {/* Header */}

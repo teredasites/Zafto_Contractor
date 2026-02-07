@@ -31,7 +31,7 @@ import { Button } from '@/components/ui/button';
 import { StatusBadge, Badge } from '@/components/ui/badge';
 import { Avatar, AvatarGroup } from '@/components/ui/avatar';
 import { formatCurrency, formatDate, formatDateTime, cn } from '@/lib/utils';
-import { mockJobs, mockTeam } from '@/lib/mock-data';
+import { useJob, useTeam } from '@/lib/hooks/use-jobs';
 import type { Job, JobNote } from '@/types';
 
 type TabType = 'overview' | 'tasks' | 'materials' | 'photos' | 'time' | 'notes';
@@ -41,19 +41,10 @@ export default function JobDetailPage() {
   const params = useParams();
   const jobId = params.id as string;
 
-  const [job, setJob] = useState<Job | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { job, loading } = useJob(jobId);
+  const { team } = useTeam();
   const [activeTab, setActiveTab] = useState<TabType>('overview');
   const [menuOpen, setMenuOpen] = useState(false);
-
-  useEffect(() => {
-    // TODO: Replace with Firestore query
-    const found = mockJobs.find((j) => j.id === jobId);
-    if (found) {
-      setJob(found);
-    }
-    setLoading(false);
-  }, [jobId]);
 
   if (loading) {
     return (
@@ -76,7 +67,7 @@ export default function JobDetailPage() {
     );
   }
 
-  const assignedMembers = job.assignedTo.map((id) => mockTeam.find((t) => t.id === id)).filter(Boolean);
+  const assignedMembers = job.assignedTo.map((id) => team.find((t) => t.id === id)).filter(Boolean);
 
   const tabs: { id: TabType; label: string; icon: React.ReactNode }[] = [
     { id: 'overview', label: 'Overview', icon: <Briefcase size={16} /> },

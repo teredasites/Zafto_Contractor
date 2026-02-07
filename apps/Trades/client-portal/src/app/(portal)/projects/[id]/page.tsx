@@ -1,37 +1,103 @@
 'use client';
 import { useState } from 'react';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Hammer, Clock, CheckCircle2, Camera, FileText, PenLine, Users, MessageSquare, MapPin, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Hammer, Clock, CheckCircle2, Calendar, FileText, Users, MessageSquare, MapPin, AlertCircle, Inbox } from 'lucide-react';
+import { useProject } from '@/lib/hooks/use-projects';
+import { useChangeOrders } from '@/lib/hooks/use-change-orders';
+import { useInvoices } from '@/lib/hooks/use-invoices';
+import { formatCurrency, formatDate } from '@/lib/hooks/mappers';
 
-interface TimelineEvent { id: string; date: string; title: string; description: string; type: 'completed' | 'current' | 'upcoming'; hasPhotos?: boolean; }
+type ProjectStatus = 'active' | 'scheduled' | 'completed' | 'on_hold';
 
-const project = {
-  id: 'proj-1', name: '200A Panel Upgrade', contractor: "Mike's Electric", contractorPhone: '(860) 555-0142',
-  status: 'active' as const, progress: 65, trade: 'Electrical',
-  scope: 'Upgrade existing 100A panel to 200A service. Includes new meter base, main breaker panel, and 20 new circuits.',
-  startDate: 'Jan 15, 2026', estCompletion: 'Feb 14, 2026',
-  estimateTotal: '$4,800', paid: '$2,400', remaining: '$2,400',
-  crew: [{ name: 'Mike Torres', role: 'Lead Electrician' }, { name: 'James Park', role: 'Apprentice' }],
-  changeOrders: [{ id: 'co-1', title: 'Add EV charger circuit', amount: '+$450', status: 'approved' }],
+const statusConfig: Record<ProjectStatus, { label: string; color: string; bg: string; icon: typeof Clock }> = {
+  active: { label: 'In Progress', color: 'text-blue-700', bg: 'bg-blue-50', icon: Hammer },
+  scheduled: { label: 'Scheduled', color: 'text-purple-700', bg: 'bg-purple-50', icon: Calendar },
+  completed: { label: 'Completed', color: 'text-green-700', bg: 'bg-green-50', icon: CheckCircle2 },
+  on_hold: { label: 'On Hold', color: 'text-amber-700', bg: 'bg-amber-50', icon: AlertCircle },
 };
 
-const timeline: TimelineEvent[] = [
-  { id: 't1', date: 'Jan 15', title: 'Project Started', description: 'Permit pulled, materials ordered', type: 'completed' },
-  { id: 't2', date: 'Jan 18', title: 'Meter Base Installed', description: 'New 200A meter base mounted and inspected', type: 'completed', hasPhotos: true },
-  { id: 't3', date: 'Jan 22', title: 'Panel Mounted', description: 'New Eaton 200A panel installed, circuits being wired', type: 'completed', hasPhotos: true },
-  { id: 't4', date: 'Feb 1', title: 'Circuit Wiring', description: '14 of 20 circuits completed', type: 'current' },
-  { id: 't5', date: 'Feb 8', title: 'Final Connections', description: 'Complete remaining circuits, connect to utility', type: 'upcoming' },
-  { id: 't6', date: 'Feb 12', title: 'Inspection', description: 'City electrical inspection scheduled', type: 'upcoming' },
-  { id: 't7', date: 'Feb 14', title: 'Project Complete', description: 'Final walkthrough and cleanup', type: 'upcoming' },
-];
+function DetailSkeleton() {
+  return (
+    <div className="space-y-5 animate-pulse">
+      <div>
+        <div className="h-4 w-28 bg-gray-200 rounded mb-3" />
+        <div className="flex items-start justify-between">
+          <div>
+            <div className="h-6 w-48 bg-gray-200 rounded" />
+            <div className="h-4 w-32 bg-gray-100 rounded mt-2" />
+          </div>
+          <div className="h-6 w-20 bg-gray-100 rounded-full" />
+        </div>
+      </div>
+      <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+        <div className="h-3 bg-gray-100 rounded-full mb-2" />
+        <div className="h-3 bg-gray-100 rounded-full w-2/3" />
+      </div>
+      <div className="grid grid-cols-3 gap-2">
+        <div className="bg-white rounded-xl border border-gray-100 p-3 h-16" />
+        <div className="bg-white rounded-xl border border-gray-100 p-3 h-16" />
+        <div className="bg-white rounded-xl border border-gray-100 p-3 h-16" />
+      </div>
+      <div className="bg-white rounded-xl border border-gray-100 p-4 h-32" />
+    </div>
+  );
+}
 
 export default function ProjectDetailPage() {
+  const { id } = useParams<{ id: string }>();
+  const { project, loading: projectLoading } = useProject(id);
+  const { orders, loading: ordersLoading } = useChangeOrders();
+  const { invoices, loading: invoicesLoading } = useInvoices();
+
   const [tab, setTab] = useState<'timeline' | 'details' | 'documents'>('timeline');
   const tabs = [
     { key: 'timeline' as const, label: 'Timeline' },
     { key: 'details' as const, label: 'Details' },
     { key: 'documents' as const, label: 'Documents' },
   ];
+
+  const loading = projectLoading || ordersLoading || invoicesLoading;
+
+  if (loading) {
+    return (
+      <div className="space-y-5">
+        <Link href="/projects" className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-3">
+          <ArrowLeft size={16} /> Back to Projects
+        </Link>
+        <DetailSkeleton />
+      </div>
+    );
+  }
+
+  if (!project) {
+    return (
+      <div className="space-y-5">
+        <Link href="/projects" className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-3">
+          <ArrowLeft size={16} /> Back to Projects
+        </Link>
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-8 text-center">
+          <AlertCircle size={32} className="mx-auto text-gray-300 mb-3" />
+          <h3 className="font-semibold text-gray-900 text-sm">Project not found</h3>
+          <p className="text-xs text-gray-500 mt-1">This project may have been removed or you don't have access.</p>
+        </div>
+      </div>
+    );
+  }
+
+  const config = statusConfig[project.status];
+  const StatusIcon = config.icon;
+
+  // Filter change orders for this project
+  const projectChangeOrders = orders.filter(co => co.jobTitle === project.name);
+
+  // Filter invoices for this project and compute cost summary
+  const projectInvoices = invoices.filter(i => i.projectId === id);
+  const totalPaid = projectInvoices
+    .filter(i => i.status === 'paid')
+    .reduce((sum, i) => sum + i.amount, 0);
+  const totalInvoiced = projectInvoices.reduce((sum, i) => sum + i.amount, 0);
+  const remaining = project.totalCost - totalPaid;
 
   return (
     <div className="space-y-5">
@@ -43,10 +109,10 @@ export default function ProjectDetailPage() {
         <div className="flex items-start justify-between">
           <div>
             <h1 className="text-xl font-bold text-gray-900">{project.name}</h1>
-            <p className="text-sm text-gray-500 mt-0.5">{project.contractor} · {project.trade}</p>
+            <p className="text-sm text-gray-500 mt-0.5">{project.contractor}{project.trade ? ` · ${project.trade}` : ''}</p>
           </div>
-          <span className="flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full bg-blue-50 text-blue-700">
-            <Hammer size={12} /> In Progress
+          <span className={`flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full ${config.bg} ${config.color}`}>
+            <StatusIcon size={12} /> {config.label}
           </span>
         </div>
       </div>
@@ -58,11 +124,11 @@ export default function ProjectDetailPage() {
           <span className="font-bold text-gray-900">{project.progress}%</span>
         </div>
         <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
-          <div className="h-full bg-orange-500 rounded-full" style={{ width: `${project.progress}%` }} />
+          <div className="h-full rounded-full" style={{ width: `${project.progress}%`, backgroundColor: 'var(--accent)' }} />
         </div>
         <div className="flex justify-between mt-2 text-xs text-gray-400">
-          <span>Started {project.startDate}</span>
-          <span>Est. {project.estCompletion}</span>
+          <span>{project.startDate ? `Started ${formatDate(project.startDate)}` : 'Not started'}</span>
+          <span>{project.endDate ? `Est. ${formatDate(project.endDate)}` : ''}</span>
         </div>
       </div>
 
@@ -94,62 +160,75 @@ export default function ProjectDetailPage() {
 
       {/* Timeline Tab */}
       {tab === 'timeline' && (
-        <div className="relative">
-          {timeline.map((event, i) => (
-            <div key={event.id} className="flex gap-3 pb-6 last:pb-0">
-              <div className="flex flex-col items-center">
-                <div className={`w-3 h-3 rounded-full border-2 mt-1 ${event.type === 'completed' ? 'bg-green-500 border-green-500' : event.type === 'current' ? 'bg-orange-500 border-orange-500 animate-pulse' : 'bg-white border-gray-300'}`} />
-                {i < timeline.length - 1 && <div className={`w-0.5 flex-1 mt-1 ${event.type === 'completed' ? 'bg-green-200' : 'bg-gray-200'}`} />}
-              </div>
-              <div className="flex-1 pb-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-400 font-medium">{event.date}</span>
-                  {event.type === 'current' && <span className="text-[10px] px-1.5 py-0.5 bg-orange-100 text-orange-600 rounded font-medium">CURRENT</span>}
-                </div>
-                <h4 className={`font-medium text-sm mt-0.5 ${event.type === 'upcoming' ? 'text-gray-400' : 'text-gray-900'}`}>{event.title}</h4>
-                <p className={`text-xs mt-0.5 ${event.type === 'upcoming' ? 'text-gray-300' : 'text-gray-500'}`}>{event.description}</p>
-                {event.hasPhotos && (
-                  <button className="flex items-center gap-1 text-xs text-blue-500 mt-1.5 hover:text-blue-600">
-                    <Camera size={12} /> View Photos
-                  </button>
-                )}
-              </div>
-            </div>
-          ))}
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 text-center">
+          <Clock size={28} className="mx-auto text-gray-300 mb-3" />
+          <h3 className="font-semibold text-gray-900 text-sm">Timeline</h3>
+          <p className="text-xs text-gray-500 mt-1">Timeline events will appear as your project progresses.</p>
         </div>
       )}
 
       {/* Details Tab */}
       {tab === 'details' && (
         <div className="space-y-4">
+          {/* Scope of Work */}
           <div className="bg-white rounded-xl border border-gray-100 p-4">
             <h3 className="font-semibold text-sm text-gray-900 mb-2">Scope of Work</h3>
-            <p className="text-sm text-gray-600">{project.scope}</p>
+            {project.description ? (
+              <p className="text-sm text-gray-600">{project.description}</p>
+            ) : (
+              <p className="text-sm text-gray-400 italic">No description provided.</p>
+            )}
           </div>
+
+          {/* Cost Summary */}
           <div className="bg-white rounded-xl border border-gray-100 p-4">
             <h3 className="font-semibold text-sm text-gray-900 mb-3">Cost Summary</h3>
             <div className="space-y-2">
-              <div className="flex justify-between text-sm"><span className="text-gray-500">Estimate Total</span><span className="font-medium">{project.estimateTotal}</span></div>
-              <div className="flex justify-between text-sm"><span className="text-gray-500">Paid</span><span className="text-green-600 font-medium">{project.paid}</span></div>
-              <div className="flex justify-between text-sm border-t border-gray-100 pt-2"><span className="font-medium text-gray-700">Remaining</span><span className="font-bold text-gray-900">{project.remaining}</span></div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">Estimate Total</span>
+                <span className="font-medium">{formatCurrency(project.totalCost)}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">Paid</span>
+                <span className="text-green-600 font-medium">{formatCurrency(totalPaid)}</span>
+              </div>
+              {totalInvoiced > totalPaid && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-500">Invoiced (unpaid)</span>
+                  <span className="text-amber-600 font-medium">{formatCurrency(totalInvoiced - totalPaid)}</span>
+                </div>
+              )}
+              <div className="flex justify-between text-sm border-t border-gray-100 pt-2">
+                <span className="font-medium text-gray-700">Remaining</span>
+                <span className="font-bold text-gray-900">{formatCurrency(remaining > 0 ? remaining : 0)}</span>
+              </div>
             </div>
           </div>
+
+          {/* Crew */}
           <div className="bg-white rounded-xl border border-gray-100 p-4">
             <h3 className="font-semibold text-sm text-gray-900 mb-3">Crew</h3>
-            {project.crew.map(c => (
-              <div key={c.name} className="flex items-center gap-3 py-2">
-                <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center"><Users size={14} className="text-gray-500" /></div>
-                <div><p className="text-sm font-medium text-gray-900">{c.name}</p><p className="text-xs text-gray-500">{c.role}</p></div>
+            <div className="flex items-center gap-3 py-2">
+              <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                <Users size={14} className="text-gray-400" />
               </div>
-            ))}
+              <p className="text-sm text-gray-500">Crew information will appear here.</p>
+            </div>
           </div>
-          {project.changeOrders.length > 0 && (
+
+          {/* Change Orders */}
+          {projectChangeOrders.length > 0 && (
             <div className="bg-white rounded-xl border border-gray-100 p-4">
               <h3 className="font-semibold text-sm text-gray-900 mb-3">Change Orders</h3>
-              {project.changeOrders.map(co => (
+              {projectChangeOrders.map(co => (
                 <div key={co.id} className="flex items-center justify-between py-2">
-                  <div><p className="text-sm font-medium text-gray-900">{co.title}</p><p className="text-xs text-gray-500">{co.status}</p></div>
-                  <span className="text-sm font-bold text-orange-600">{co.amount}</span>
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">{co.title}</p>
+                    <p className="text-xs text-gray-500">{co.orderNumber} · {co.status}</p>
+                  </div>
+                  <span className="text-sm font-bold" style={{ color: 'var(--accent)' }}>
+                    {co.amount >= 0 ? '+' : ''}{formatCurrency(co.amount)}
+                  </span>
                 </div>
               ))}
             </div>
@@ -159,19 +238,10 @@ export default function ProjectDetailPage() {
 
       {/* Documents Tab */}
       {tab === 'documents' && (
-        <div className="space-y-2">
-          {[
-            { name: 'Estimate — 200A Panel Upgrade.pdf', type: 'Estimate', date: 'Jan 10, 2026' },
-            { name: 'Service Agreement — Signed.pdf', type: 'Agreement', date: 'Jan 12, 2026' },
-            { name: 'Electrical Permit #EP-2026-0142.pdf', type: 'Permit', date: 'Jan 14, 2026' },
-            { name: 'Inspection Report — Meter Base.pdf', type: 'Inspection', date: 'Jan 19, 2026' },
-          ].map(doc => (
-            <div key={doc.name} className="flex items-center gap-3 bg-white rounded-xl border border-gray-100 p-3 hover:shadow-sm transition-all cursor-pointer">
-              <div className="p-2 bg-gray-50 rounded-lg"><FileText size={16} className="text-gray-400" /></div>
-              <div className="flex-1 min-w-0"><p className="text-sm font-medium text-gray-900 truncate">{doc.name}</p><p className="text-xs text-gray-400">{doc.type} · {doc.date}</p></div>
-              <ChevronRight size={14} className="text-gray-300" />
-            </div>
-          ))}
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 text-center">
+          <Inbox size={28} className="mx-auto text-gray-300 mb-3" />
+          <h3 className="font-semibold text-gray-900 text-sm">Documents</h3>
+          <p className="text-xs text-gray-500 mt-1">Documents will appear here when your contractor uploads them.</p>
         </div>
       )}
     </div>

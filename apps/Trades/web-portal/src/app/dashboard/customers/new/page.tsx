@@ -18,9 +18,12 @@ import { Button } from '@/components/ui/button';
 import { Input, Select } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { useCustomers } from '@/lib/hooks/use-customers';
 
 export default function NewCustomerPage() {
   const router = useRouter();
+  const { createCustomer } = useCustomers();
+  const [saving, setSaving] = useState(false);
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -65,11 +68,26 @@ export default function NewCustomerPage() {
     setTags(tags.filter((t) => t !== tag));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Save to Firestore
-    console.log('Creating customer:', { ...formData, tags });
-    router.push('/dashboard/customers');
+    try {
+      setSaving(true);
+      await createCustomer({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email || undefined,
+        phone: formData.phone,
+        address: formData.address,
+        tags,
+        notes: formData.notes || undefined,
+        source: formData.source || undefined,
+      });
+      router.push('/dashboard/customers');
+    } catch (err) {
+      console.error('Failed to create customer:', err);
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -278,8 +296,8 @@ export default function NewCustomerPage() {
 
           {/* Actions */}
           <div className="space-y-3">
-            <Button type="submit" className="w-full">
-              Add Customer
+            <Button type="submit" className="w-full" disabled={saving}>
+              {saving ? 'Saving...' : 'Add Customer'}
             </Button>
             <Button type="button" variant="secondary" className="w-full" onClick={() => router.back()}>
               Cancel

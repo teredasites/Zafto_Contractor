@@ -10,20 +10,22 @@ import {
   Users,
   FileText,
   Download,
-  Calendar,
   ChevronDown,
+  Loader2,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CommandPalette } from '@/components/command-palette';
 import { formatCurrency, cn } from '@/lib/utils';
-import { mockRevenueData, mockJobsByStatus, mockRevenueByCategory } from '@/lib/mock-data';
+import { useReports } from '@/lib/hooks/use-reports';
+import type { MonthlyRevenue, StatusCount, RevenueCategory, TeamMemberStat, InvoiceStats, JobStats } from '@/lib/hooks/use-reports';
 
 type ReportType = 'revenue' | 'jobs' | 'team' | 'invoices';
 type DateRange = '7d' | '30d' | '90d' | '12m' | 'ytd' | 'custom';
 
 export default function ReportsPage() {
+  const { data, loading, error } = useReports();
   const [activeReport, setActiveReport] = useState<ReportType>('revenue');
   const [dateRange, setDateRange] = useState<DateRange>('30d');
 
@@ -42,9 +44,28 @@ export default function ReportsPage() {
     { value: 'ytd', label: 'Year to date' },
   ];
 
+  if (loading) {
+    return (
+      <div className="space-y-8 animate-fade-in">
+        <div><div className="skeleton h-7 w-28 mb-2" /><div className="skeleton h-4 w-48" /></div>
+        <div className="flex gap-2">{[...Array(4)].map((_, i) => <div key={i} className="skeleton h-9 w-24 rounded-lg" />)}</div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+          {[...Array(4)].map((_, i) => <div key={i} className="bg-surface border border-main rounded-xl p-5"><div className="skeleton h-3 w-24 mb-2" /><div className="skeleton h-7 w-20" /></div>)}
+        </div>
+        <div className="bg-surface border border-main rounded-xl p-6"><div className="skeleton h-4 w-32 mb-4" /><div className="skeleton h-48 w-full" /></div>
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 animate-fade-in">
       <CommandPalette />
+
+      {error && (
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 text-sm text-red-700 dark:text-red-300">
+          {error}
+        </div>
+      )}
 
       {/* Header */}
       <div className="flex items-center justify-between">
@@ -94,16 +115,16 @@ export default function ReportsPage() {
       </div>
 
       {/* Report Content */}
-      {activeReport === 'revenue' && <RevenueReport />}
-      {activeReport === 'jobs' && <JobsReport />}
-      {activeReport === 'team' && <TeamReport />}
-      {activeReport === 'invoices' && <InvoicesReport />}
+      {data && activeReport === 'revenue' && <RevenueReport data={data.monthlyRevenue} categories={data.revenueByCategory} />}
+      {data && activeReport === 'jobs' && <JobsReport statusData={data.jobsByStatus} stats={data.jobStats} />}
+      {data && activeReport === 'team' && <TeamReport team={data.team} />}
+      {data && activeReport === 'invoices' && <InvoicesReport stats={data.invoiceStats} />}
     </div>
   );
 }
 
-function RevenueReport() {
-  const totals = mockRevenueData.reduce(
+function RevenueReport({ data, categories }: { data: MonthlyRevenue[]; categories: RevenueCategory[] }) {
+  const totals = data.reduce(
     (acc, curr) => ({
       revenue: acc.revenue + curr.revenue,
       expenses: acc.expenses + curr.expenses,
@@ -112,8 +133,9 @@ function RevenueReport() {
     { revenue: 0, expenses: 0, profit: 0 }
   );
 
-  const avgMonthlyRevenue = totals.revenue / 12;
-  const profitMargin = (totals.profit / totals.revenue) * 100;
+  const avgMonthlyRevenue = data.length > 0 ? totals.revenue / data.length : 0;
+  const profitMargin = totals.revenue > 0 ? (totals.profit / totals.revenue) * 100 : 0;
+  const maxRevenue = Math.max(...data.map((m) => m.revenue), 1);
 
   return (
     <div className="space-y-6">
@@ -130,10 +152,6 @@ function RevenueReport() {
                 <TrendingUp size={20} className="text-emerald-600" />
               </div>
             </div>
-            <p className="text-xs text-emerald-600 mt-2 flex items-center gap-1">
-              <TrendingUp size={12} />
-              +12.5% vs last period
-            </p>
           </CardContent>
         </Card>
 
@@ -141,17 +159,13 @@ function RevenueReport() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted">Total Expenses</p>
+                <p className="text-sm text-muted">Material Costs</p>
                 <p className="text-2xl font-semibold text-main">{formatCurrency(totals.expenses)}</p>
               </div>
               <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg">
                 <TrendingDown size={20} className="text-red-600" />
               </div>
             </div>
-            <p className="text-xs text-red-600 mt-2 flex items-center gap-1">
-              <TrendingUp size={12} />
-              +8.2% vs last period
-            </p>
           </CardContent>
         </Card>
 
@@ -166,10 +180,6 @@ function RevenueReport() {
                 <DollarSign size={20} className="text-blue-600" />
               </div>
             </div>
-            <p className="text-xs text-emerald-600 mt-2 flex items-center gap-1">
-              <TrendingUp size={12} />
-              +15.3% vs last period
-            </p>
           </CardContent>
         </Card>
 
@@ -200,13 +210,13 @@ function RevenueReport() {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {mockRevenueData.slice(-6).map((month) => (
+              {data.slice(-6).map((month) => (
                 <div key={month.date} className="flex items-center gap-4">
                   <span className="text-sm text-muted w-12">{month.date}</span>
                   <div className="flex-1 h-8 bg-secondary rounded-lg overflow-hidden flex">
                     <div
                       className="h-full bg-emerald-500"
-                      style={{ width: `${(month.revenue / 35000) * 100}%` }}
+                      style={{ width: `${(month.revenue / maxRevenue) * 100}%` }}
                     />
                   </div>
                   <span className="text-sm font-medium text-main w-24 text-right">
@@ -225,9 +235,9 @@ function RevenueReport() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {mockRevenueByCategory.map((category) => {
-                const total = mockRevenueByCategory.reduce((sum, c) => sum + c.value, 0);
-                const percentage = (category.value / total) * 100;
+              {categories.map((category) => {
+                const total = categories.reduce((sum, c) => sum + c.value, 0);
+                const percentage = total > 0 ? (category.value / total) * 100 : 0;
                 return (
                   <div key={category.name}>
                     <div className="flex items-center justify-between mb-1">
@@ -260,14 +270,14 @@ function RevenueReport() {
               <tr className="border-b border-main">
                 <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">Month</th>
                 <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Revenue</th>
-                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Expenses</th>
+                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Materials</th>
                 <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Profit</th>
                 <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Margin</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-main">
-              {mockRevenueData.map((month) => {
-                const margin = (month.profit / month.revenue) * 100;
+              {data.map((month) => {
+                const margin = month.revenue > 0 ? (month.profit / month.revenue) * 100 : 0;
                 return (
                   <tr key={month.date} className="hover:bg-surface-hover">
                     <td className="px-6 py-4 font-medium text-main">{month.date}</td>
@@ -290,9 +300,7 @@ function RevenueReport() {
   );
 }
 
-function JobsReport() {
-  const totalJobs = mockJobsByStatus.reduce((sum, s) => sum + s.value, 0);
-
+function JobsReport({ statusData, stats }: { statusData: StatusCount[]; stats: JobStats }) {
   return (
     <div className="space-y-6">
       {/* Summary Cards */}
@@ -300,25 +308,25 @@ function JobsReport() {
         <Card>
           <CardContent className="p-4">
             <p className="text-sm text-muted">Total Jobs</p>
-            <p className="text-2xl font-semibold text-main">{totalJobs}</p>
+            <p className="text-2xl font-semibold text-main">{stats.total}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
             <p className="text-sm text-muted">Completion Rate</p>
-            <p className="text-2xl font-semibold text-emerald-600">86%</p>
+            <p className="text-2xl font-semibold text-emerald-600">{stats.completionRate}%</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
             <p className="text-sm text-muted">Avg. Job Value</p>
-            <p className="text-2xl font-semibold text-main">{formatCurrency(2450)}</p>
+            <p className="text-2xl font-semibold text-main">{formatCurrency(stats.avgValue)}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
-            <p className="text-sm text-muted">Avg. Duration</p>
-            <p className="text-2xl font-semibold text-main">4.2 hrs</p>
+            <p className="text-sm text-muted">Active Statuses</p>
+            <p className="text-2xl font-semibold text-main">{statusData.length}</p>
           </CardContent>
         </Card>
       </div>
@@ -330,7 +338,7 @@ function JobsReport() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {mockJobsByStatus.map((status) => (
+            {statusData.map((status) => (
               <div key={status.name} className="p-4 bg-secondary rounded-lg text-center">
                 <div
                   className="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center"
@@ -343,19 +351,16 @@ function JobsReport() {
               </div>
             ))}
           </div>
+          {statusData.length === 0 && (
+            <p className="text-center text-muted py-8">No jobs yet</p>
+          )}
         </CardContent>
       </Card>
     </div>
   );
 }
 
-function TeamReport() {
-  const teamStats = [
-    { name: 'Mike Johnson', role: 'Admin', jobs: 45, revenue: 112500, avgRating: 4.9 },
-    { name: 'Carlos Rivera', role: 'Field Tech', jobs: 38, revenue: 89200, avgRating: 4.8 },
-    { name: 'James Wilson', role: 'Field Tech', jobs: 32, revenue: 76800, avgRating: 4.7 },
-  ];
-
+function TeamReport({ team }: { team: TeamMemberStat[] }) {
   return (
     <div className="space-y-6">
       <Card>
@@ -363,39 +368,39 @@ function TeamReport() {
           <CardTitle className="text-base">Team Performance</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-main">
-                <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">Team Member</th>
-                <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">Role</th>
-                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Jobs</th>
-                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Revenue</th>
-                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Avg Rating</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-main">
-              {teamStats.map((member) => (
-                <tr key={member.name} className="hover:bg-surface-hover">
-                  <td className="px-6 py-4 font-medium text-main">{member.name}</td>
-                  <td className="px-6 py-4">
-                    <Badge variant="default">{member.role}</Badge>
-                  </td>
-                  <td className="px-6 py-4 text-right text-main">{member.jobs}</td>
-                  <td className="px-6 py-4 text-right font-medium text-main">{formatCurrency(member.revenue)}</td>
-                  <td className="px-6 py-4 text-right">
-                    <span className="text-amber-500">{member.avgRating}</span>
-                  </td>
+          {team.length > 0 ? (
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-main">
+                  <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">Team Member</th>
+                  <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">Role</th>
+                  <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Jobs</th>
+                  <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Revenue</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-main">
+                {team.map((member) => (
+                  <tr key={member.name} className="hover:bg-surface-hover">
+                    <td className="px-6 py-4 font-medium text-main">{member.name}</td>
+                    <td className="px-6 py-4">
+                      <Badge variant="default">{member.role}</Badge>
+                    </td>
+                    <td className="px-6 py-4 text-right text-main">{member.jobs}</td>
+                    <td className="px-6 py-4 text-right font-medium text-main">{formatCurrency(member.revenue)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <div className="p-8 text-center text-muted">No team data available</div>
+          )}
         </CardContent>
       </Card>
     </div>
   );
 }
 
-function InvoicesReport() {
+function InvoicesReport({ stats }: { stats: InvoiceStats }) {
   return (
     <div className="space-y-6">
       {/* Summary Cards */}
@@ -403,25 +408,25 @@ function InvoicesReport() {
         <Card>
           <CardContent className="p-4">
             <p className="text-sm text-muted">Total Invoiced</p>
-            <p className="text-2xl font-semibold text-main">{formatCurrency(285400)}</p>
+            <p className="text-2xl font-semibold text-main">{formatCurrency(stats.totalInvoiced)}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
             <p className="text-sm text-muted">Total Collected</p>
-            <p className="text-2xl font-semibold text-emerald-600">{formatCurrency(268750)}</p>
+            <p className="text-2xl font-semibold text-emerald-600">{formatCurrency(stats.totalCollected)}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
             <p className="text-sm text-muted">Outstanding</p>
-            <p className="text-2xl font-semibold text-amber-600">{formatCurrency(12450)}</p>
+            <p className="text-2xl font-semibold text-amber-600">{formatCurrency(stats.outstanding)}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
             <p className="text-sm text-muted">Overdue</p>
-            <p className="text-2xl font-semibold text-red-600">{formatCurrency(4200)}</p>
+            <p className="text-2xl font-semibold text-red-600">{formatCurrency(stats.overdue)}</p>
           </CardContent>
         </Card>
       </div>
@@ -433,22 +438,12 @@ function InvoicesReport() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg">
-              <span className="font-medium text-main">Current (0-30 days)</span>
-              <span className="font-semibold text-emerald-600">{formatCurrency(8250)}</span>
-            </div>
-            <div className="flex items-center justify-between p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
-              <span className="font-medium text-main">31-60 days</span>
-              <span className="font-semibold text-amber-600">{formatCurrency(2850)}</span>
-            </div>
-            <div className="flex items-center justify-between p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
-              <span className="font-medium text-main">61-90 days</span>
-              <span className="font-semibold text-orange-600">{formatCurrency(1350)}</span>
-            </div>
-            <div className="flex items-center justify-between p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
-              <span className="font-medium text-main">90+ days</span>
-              <span className="font-semibold text-red-600">{formatCurrency(2850)}</span>
-            </div>
+            {stats.aging.map((bucket) => (
+              <div key={bucket.label} className={cn('flex items-center justify-between p-4 rounded-lg', bucket.bgClass)}>
+                <span className="font-medium text-main">{bucket.label}</span>
+                <span className={cn('font-semibold', bucket.textClass)}>{formatCurrency(bucket.amount)}</span>
+              </div>
+            ))}
           </div>
         </CardContent>
       </Card>

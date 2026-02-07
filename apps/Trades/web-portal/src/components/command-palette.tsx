@@ -12,12 +12,12 @@ import {
   Users,
   Settings,
   Plus,
-  Sparkles,
   Calculator,
   DollarSign,
   X,
   ArrowRight,
 } from 'lucide-react';
+import { ZMark } from '@/components/z-console/z-mark';
 import { cn } from '@/lib/utils';
 
 interface Command {
@@ -170,9 +170,9 @@ export function CommandPalette() {
       id: 'ai-chat',
       title: 'Z',
       subtitle: 'Ask Z anything',
-      icon: <Sparkles size={18} />,
+      icon: <ZMark size={18} />,
       shortcut: ['Z'],
-      action: () => router.push('/dashboard/z'),
+      action: () => window.dispatchEvent(new CustomEvent('zConsoleToggle')),
       category: 'ai',
     },
   ];

@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   FileText,
@@ -19,7 +18,6 @@ import {
   Eye,
   MapPin,
   Phone,
-  Sparkles,
   Plus,
   Radio,
 } from 'lucide-react';
@@ -29,68 +27,67 @@ import { StatusBadge } from '@/components/ui/badge';
 import { Avatar, AvatarGroup } from '@/components/ui/avatar';
 import { SimpleAreaChart, DonutChart, DonutLegend, SimpleBarChart } from '@/components/ui/charts';
 import { Button } from '@/components/ui/button';
-import { ZAIChat, ZAITrigger } from '@/components/z-ai-chat';
 import { CommandPalette } from '@/components/command-palette';
 import { TeamMapWidget } from '@/components/ui/team-map';
 import { ClockStatusWidget } from '@/components/time-clock/clock-status-widget';
 import { usePermissions, ProModeGate } from '@/components/permission-gate';
-import { doc, updateDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { getSupabase } from '@/lib/supabase';
 import { formatCurrency, formatRelativeTime, formatDate, formatTime, cn } from '@/lib/utils';
-import {
-  mockDashboardStats,
-  mockJobs,
-  mockInvoices,
-  mockBids,
-  mockActivity,
-  mockSchedule,
-  mockTeam,
-  mockRevenueData,
-  mockJobsByStatus,
-  mockRevenueByCategory,
-} from '@/lib/mock-data';
+import { useStats, useActivity } from '@/lib/hooks/use-stats';
+import { useJobs, useSchedule, useTeam } from '@/lib/hooks/use-jobs';
+import { useInvoices } from '@/lib/hooks/use-invoices';
+import { useBids } from '@/lib/hooks/use-bids';
+import { useReports } from '@/lib/hooks/use-reports';
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [showZChat, setShowZChat] = useState(false);
-  const [zChatMinimized, setZChatMinimized] = useState(false);
   const { isProMode, companyId, loading: permLoading } = usePermissions();
+
+  const { stats, loading: statsLoading } = useStats();
+  const { jobs } = useJobs();
+  const { invoices } = useInvoices();
+  const { bids } = useBids();
+  const { schedule } = useSchedule();
+  const { team } = useTeam();
+  const { activity } = useActivity();
+  const { data: reportData } = useReports();
+
+  const revenueData = reportData?.monthlyRevenue || [];
+  const jobsByStatusData = reportData?.jobsByStatus || [];
+  const revenueByCategoryData = reportData?.revenueByCategory || [];
 
   const handleToggleProMode = async () => {
     if (!companyId) return;
     const newMode = isProMode ? 'simple' : 'pro';
     try {
-      await updateDoc(doc(db, 'companies', companyId), {
-        uiMode: newMode,
-        updatedAt: new Date().toISOString(),
-      });
+      const supabase = getSupabase();
+      await supabase.from('companies').update({ ui_mode: newMode }).eq('id', companyId);
     } catch (e) {
       console.error('Failed to toggle mode:', e);
     }
   };
 
-  const stats = mockDashboardStats;
-  const todayJobs = mockSchedule.filter((s) => {
+  const todayJobs = schedule.filter((s) => {
     const today = new Date();
     const itemDate = new Date(s.start);
     return itemDate.toDateString() === today.toDateString();
   });
 
-  const upcomingJobs = mockJobs.filter(
+  const upcomingJobs = jobs.filter(
     (j) => j.status === 'scheduled' || j.status === 'in_progress'
   ).slice(0, 5);
 
-  const overdueInvoices = mockInvoices.filter((i) => i.status === 'overdue');
-  const recentActivity = mockActivity.slice(0, 6);
+  const overdueInvoices = invoices.filter((i) => i.status === 'overdue');
+  const recentActivity = activity.slice(0, 6);
 
   // Chart data
-  const revenueChartData = mockRevenueData.map((d) => ({
+  const revenueChartData = revenueData.map((d) => ({
     date: d.date,
     value: d.revenue,
   }));
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 animate-fade-in">
       {/* Command Palette */}
       <CommandPalette />
 
@@ -98,7 +95,7 @@ export default function DashboardPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-main">Dashboard</h1>
-          <p className="text-muted mt-1">
+          <p className="text-[13px] text-muted mt-1">
             Welcome back. Here's what's happening today.
           </p>
         </div>
@@ -115,7 +112,18 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      {statsLoading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="bg-surface border border-main rounded-xl p-5">
+              <div className="skeleton h-3 w-24 mb-3" />
+              <div className="skeleton h-7 w-16 mb-2" />
+              <div className="skeleton h-3 w-20" />
+            </div>
+          ))}
+        </div>
+      ) : (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 animate-stagger">
         <StatsCard
           title="Revenue This Month"
           value={formatCurrency(stats.revenue.thisMonth)}
@@ -144,9 +152,10 @@ export default function DashboardPage() {
           trend={stats.invoices.overdue > 0 ? 'down' : 'neutral'}
         />
       </div>
+      )}
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         {/* Left Column - Revenue Chart & Jobs */}
         <div className="lg:col-span-2 space-y-6">
           {/* Revenue Chart - PRO FEATURE */}
@@ -176,19 +185,19 @@ export default function DashboardPage() {
                   <div>
                     <p className="text-sm text-muted">Total Revenue</p>
                     <p className="text-xl font-semibold text-main">
-                      {formatCurrency(mockRevenueData.reduce((sum, d) => sum + d.revenue, 0))}
+                      {formatCurrency(revenueData.reduce((sum, d) => sum + d.revenue, 0))}
                     </p>
                   </div>
                   <div>
                     <p className="text-sm text-muted">Total Expenses</p>
                     <p className="text-xl font-semibold text-main">
-                      {formatCurrency(mockRevenueData.reduce((sum, d) => sum + d.expenses, 0))}
+                      {formatCurrency(revenueData.reduce((sum, d) => sum + d.expenses, 0))}
                     </p>
                   </div>
                   <div>
                     <p className="text-sm text-muted">Net Profit</p>
                     <p className="text-xl font-semibold text-emerald-600">
-                      {formatCurrency(mockRevenueData.reduce((sum, d) => sum + d.profit, 0))}
+                      {formatCurrency(revenueData.reduce((sum, d) => sum + d.profit, 0))}
                     </p>
                   </div>
                 </div>
@@ -237,7 +246,7 @@ export default function DashboardPage() {
                           <div className="flex items-center gap-4 mt-2">
                             <AvatarGroup
                               avatars={item.assignedTo.map((id) => {
-                                const member = mockTeam.find((t) => t.id === id);
+                                const member = team.find((t) => t.id === id);
                                 return { name: member?.name || 'Unknown' };
                               })}
                               size="sm"
@@ -298,40 +307,13 @@ export default function DashboardPage() {
         </div>
 
         {/* Right Column - Activity, Charts, Quick Actions */}
-        <div className="space-y-6">
-          {/* Quick Actions - Ask Z */}
-          <Card className="bg-gradient-to-br from-[var(--accent)] to-[color-mix(in_srgb,var(--accent),black_20%)] text-white border-0">
-            <CardContent className="p-5">
-              <div className="flex items-center gap-3 mb-3">
-                <Sparkles size={20} />
-                <div>
-                  <h3 className="font-semibold">Ask Z</h3>
-                  <p className="text-white/80 text-xs">Your business assistant</p>
-                </div>
-              </div>
-              <div className="space-y-1.5">
-                <button
-                  onClick={() => setShowZChat(true)}
-                  className="w-full text-left px-3 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors text-sm"
-                >
-                  "Create a bid for panel upgrade"
-                </button>
-                <button
-                  onClick={() => setShowZChat(true)}
-                  className="w-full text-left px-3 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors text-sm"
-                >
-                  "What's my schedule tomorrow?"
-                </button>
-              </div>
-            </CardContent>
-          </Card>
-
+        <div className="space-y-5">
           {/* PRO MODE: 2-column grid for widgets */}
           <ProModeGate>
             <div className="grid grid-cols-2 gap-4">
               {/* Time Clock Widget */}
               <ClockStatusWidget
-                teamMembers={mockTeam}
+                teamMembers={team}
                 variant="compact"
               />
 
@@ -345,7 +327,7 @@ export default function DashboardPage() {
                 </CardHeader>
                 <CardContent className="p-4 pt-0">
                   <TeamMapWidget
-                    members={mockTeam}
+                    members={team}
                     onViewAll={() => router.push('/dashboard/team')}
                   />
                 </CardContent>
@@ -359,15 +341,15 @@ export default function DashboardPage() {
                 <CardContent className="p-4 pt-0">
                   <div className="flex items-center justify-center">
                     <DonutChart
-                      data={mockJobsByStatus}
+                      data={jobsByStatusData}
                       size={100}
                       thickness={18}
-                      centerValue={mockJobsByStatus.reduce((sum, d) => sum + d.value, 0).toString()}
+                      centerValue={jobsByStatusData.reduce((sum, d) => sum + d.value, 0).toString()}
                       centerLabel="Total"
                     />
                   </div>
                   <DonutLegend
-                    data={mockJobsByStatus}
+                    data={jobsByStatusData}
                     className="mt-2 text-xs"
                     formatValue={(v) => v.toString()}
                   />
@@ -381,13 +363,13 @@ export default function DashboardPage() {
                 </CardHeader>
                 <CardContent className="p-4 pt-0">
                   <DonutLegend
-                    data={mockRevenueByCategory}
+                    data={revenueByCategoryData}
                     className="text-xs"
                     formatValue={(v) => formatCurrency(v)}
                   />
                   <div className="mt-2">
                     <SimpleBarChart
-                      data={mockRevenueByCategory.map((d) => ({
+                      data={revenueByCategoryData.map((d) => ({
                         label: d.name,
                         value: d.value,
                         color: d.color,
@@ -462,17 +444,6 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Z AI Chat */}
-      {showZChat ? (
-        <ZAIChat
-          isOpen={showZChat}
-          onClose={() => setShowZChat(false)}
-          isMinimized={zChatMinimized}
-          onToggleMinimize={() => setZChatMinimized(!zChatMinimized)}
-        />
-      ) : (
-        <ZAITrigger onClick={() => setShowZChat(true)} />
-      )}
     </div>
   );
 }
@@ -483,7 +454,7 @@ function ActivityIcon({ type }: { type: string }) {
     paid: { icon: <DollarSign size={14} />, color: 'text-emerald-500' },
     completed: { icon: <CheckCircle2 size={14} />, color: 'text-emerald-500' },
     sent: { icon: <Send size={14} />, color: 'text-blue-500' },
-    viewed: { icon: <Eye size={14} />, color: 'text-purple-500' },
+    viewed: { icon: <Eye size={14} />, color: 'text-blue-400' },
     accepted: { icon: <CheckCircle2 size={14} />, color: 'text-emerald-500' },
   };
 

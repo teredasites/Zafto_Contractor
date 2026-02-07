@@ -3,172 +3,58 @@
 import { useState } from 'react';
 import {
   Plus,
-  Search,
   FileDiff,
-  FileText,
   Clock,
   Calendar,
-  AlertTriangle,
   CheckCircle,
   XCircle,
-  MoreHorizontal,
-  ArrowRight,
   DollarSign,
   ArrowUpRight,
   ArrowDownRight,
   User,
   Briefcase,
-  Pen,
   Send,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { SearchInput, Select } from '@/components/ui/input';
 import { CommandPalette } from '@/components/command-palette';
 import { formatCurrency, formatDate, cn } from '@/lib/utils';
+import { useChangeOrders } from '@/lib/hooks/use-change-orders';
+import type { ChangeOrderData } from '@/lib/hooks/mappers';
 
-type ChangeOrderStatus = 'draft' | 'pending_approval' | 'approved' | 'rejected' | 'completed';
-
-interface ChangeOrderItem {
-  description: string;
-  quantity: number;
-  unitPrice: number;
-  total: number;
-}
-
-interface ChangeOrder {
-  id: string;
-  number: string;
-  status: ChangeOrderStatus;
-  jobId: string;
-  jobName: string;
-  customerId: string;
-  customerName: string;
-  title: string;
-  description: string;
-  reason: string;
-  items: ChangeOrderItem[];
-  originalJobTotal: number;
-  changeAmount: number;
-  newJobTotal: number;
-  createdAt: Date;
-  sentAt?: Date;
-  approvedAt?: Date;
-  approvedBy?: string;
-  customerSignature?: boolean;
-  scheduledDaysImpact: number;
-  notes?: string;
-}
+type ChangeOrderStatus = 'draft' | 'pending_approval' | 'approved' | 'rejected' | 'voided';
 
 const statusConfig: Record<ChangeOrderStatus, { label: string; color: string; bgColor: string }> = {
   draft: { label: 'Draft', color: 'text-gray-700 dark:text-gray-300', bgColor: 'bg-gray-100 dark:bg-gray-900/30' },
   pending_approval: { label: 'Pending Approval', color: 'text-amber-700 dark:text-amber-300', bgColor: 'bg-amber-100 dark:bg-amber-900/30' },
   approved: { label: 'Approved', color: 'text-emerald-700 dark:text-emerald-300', bgColor: 'bg-emerald-100 dark:bg-emerald-900/30' },
   rejected: { label: 'Rejected', color: 'text-red-700 dark:text-red-300', bgColor: 'bg-red-100 dark:bg-red-900/30' },
-  completed: { label: 'Completed', color: 'text-blue-700 dark:text-blue-300', bgColor: 'bg-blue-100 dark:bg-blue-900/30' },
+  voided: { label: 'Voided', color: 'text-slate-700 dark:text-slate-300', bgColor: 'bg-slate-100 dark:bg-slate-900/30' },
 };
-
-const mockChangeOrders: ChangeOrder[] = [
-  {
-    id: 'co1', number: 'CO-2026-001', status: 'pending_approval',
-    jobId: 'j1', jobName: 'Full Home Rewire - 123 Oak Ave',
-    customerId: 'c1', customerName: 'Robert Chen',
-    title: 'Add EV Charger Circuit',
-    description: 'Customer requested addition of 50A dedicated circuit for Level 2 EV charger in garage.',
-    reason: 'Customer request - new electric vehicle purchase',
-    items: [
-      { description: '50A breaker and GFCI protection', quantity: 1, unitPrice: 185, total: 185 },
-      { description: '6/3 NM-B wire (45 ft run)', quantity: 45, unitPrice: 4.50, total: 202.50 },
-      { description: 'NEMA 14-50 outlet and box', quantity: 1, unitPrice: 65, total: 65 },
-      { description: 'Labor - circuit installation', quantity: 4, unitPrice: 95, total: 380 },
-    ],
-    originalJobTotal: 15000, changeAmount: 832.50, newJobTotal: 15832.50,
-    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-    sentAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
-    scheduledDaysImpact: 1,
-  },
-  {
-    id: 'co2', number: 'CO-2026-002', status: 'approved',
-    jobId: 'j2', jobName: 'HVAC Install - 456 Elm St',
-    customerId: 'c2', customerName: 'Sarah Martinez',
-    title: 'Upgrade to Variable Speed Blower',
-    description: 'Upgrade air handler from single-speed to variable-speed blower motor for improved efficiency.',
-    reason: 'Contractor recommendation for energy savings',
-    items: [
-      { description: 'Variable speed ECM blower motor upgrade', quantity: 1, unitPrice: 850, total: 850 },
-      { description: 'Additional labor for motor swap', quantity: 2, unitPrice: 95, total: 190 },
-    ],
-    originalJobTotal: 12500, changeAmount: 1040, newJobTotal: 13540,
-    createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
-    sentAt: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000),
-    approvedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-    approvedBy: 'Sarah Martinez', customerSignature: true,
-    scheduledDaysImpact: 0,
-  },
-  {
-    id: 'co3', number: 'CO-2026-003', status: 'draft',
-    jobId: 'j5', jobName: 'Full Roof Replacement - 555 Birch Ln',
-    customerId: 'c5', customerName: 'David Wilson',
-    title: 'Add Ridge Vent and Soffit Vents',
-    description: 'Found inadequate attic ventilation during tear-off. Recommend adding continuous ridge vent and soffit intake vents.',
-    reason: 'Discovered during work - code requirement',
-    items: [
-      { description: 'Ridge vent material (42 LF)', quantity: 42, unitPrice: 8, total: 336 },
-      { description: 'Soffit intake vents (8 units)', quantity: 8, unitPrice: 35, total: 280 },
-      { description: 'Labor - ventilation install', quantity: 6, unitPrice: 85, total: 510 },
-    ],
-    originalJobTotal: 18500, changeAmount: 1126, newJobTotal: 19626,
-    createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
-    scheduledDaysImpact: 1,
-    notes: 'Required per IRC R806.1 for proper attic ventilation ratio',
-  },
-  {
-    id: 'co4', number: 'CO-2026-004', status: 'rejected',
-    jobId: 'j3', jobName: 'Water Heater Replacement - 789 Industrial',
-    customerId: 'c3', customerName: 'Mike Thompson',
-    title: 'Upgrade to Commercial Recirculation System',
-    description: 'Proposed hot water recirculation pump and dedicated return line for faster hot water delivery.',
-    reason: 'Contractor recommendation',
-    items: [
-      { description: 'Grundfos commercial recirc pump', quantity: 1, unitPrice: 450, total: 450 },
-      { description: '3/4" copper return line (80 ft)', quantity: 80, unitPrice: 12, total: 960 },
-      { description: 'Labor - recirculation install', quantity: 8, unitPrice: 95, total: 760 },
-    ],
-    originalJobTotal: 8500, changeAmount: 2170, newJobTotal: 10670,
-    createdAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
-    sentAt: new Date(Date.now() - 13 * 24 * 60 * 60 * 1000),
-    scheduledDaysImpact: 2,
-    notes: 'Customer declined - budget constraints',
-  },
-  {
-    id: 'co5', number: 'CO-2025-012', status: 'completed',
-    jobId: 'j7', jobName: 'Store Buildout - 100 Main St',
-    customerId: 'c5', customerName: 'David Wilson',
-    title: 'Additional Lighting Circuits for Display Area',
-    description: 'Customer wants dedicated circuits for track lighting in new display area not in original scope.',
-    reason: 'Design change by customer',
-    items: [
-      { description: '20A dedicated circuits (3x)', quantity: 3, unitPrice: 285, total: 855 },
-      { description: 'Track lighting rough-in (12 heads)', quantity: 12, unitPrice: 45, total: 540 },
-      { description: 'Dimmer switches (3x)', quantity: 3, unitPrice: 85, total: 255 },
-    ],
-    originalJobTotal: 45000, changeAmount: 1650, newJobTotal: 46650,
-    createdAt: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000),
-    sentAt: new Date(Date.now() - 44 * 24 * 60 * 60 * 1000),
-    approvedAt: new Date(Date.now() - 42 * 24 * 60 * 60 * 1000),
-    approvedBy: 'David Wilson', customerSignature: true,
-    scheduledDaysImpact: 2,
-  },
-];
 
 export default function ChangeOrdersPage() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [showNewModal, setShowNewModal] = useState(false);
-  const [selectedCO, setSelectedCO] = useState<ChangeOrder | null>(null);
+  const [selectedCO, setSelectedCO] = useState<ChangeOrderData | null>(null);
+  const { changeOrders, loading } = useChangeOrders();
 
-  const filteredCOs = mockChangeOrders.filter((co) => {
+  if (loading) {
+    return (
+      <div className="space-y-8 animate-fade-in">
+        <div><div className="skeleton h-7 w-40 mb-2" /><div className="skeleton h-4 w-64" /></div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {[...Array(4)].map((_, i) => <div key={i} className="bg-surface border border-main rounded-xl p-5"><div className="skeleton h-3 w-20 mb-2" /><div className="skeleton h-7 w-14" /></div>)}
+        </div>
+        <div className="bg-surface border border-main rounded-xl divide-y divide-main">
+          {[...Array(4)].map((_, i) => <div key={i} className="px-6 py-4 flex items-center gap-4"><div className="flex-1"><div className="skeleton h-4 w-36 mb-2" /><div className="skeleton h-3 w-28" /></div><div className="skeleton h-5 w-16 rounded-full" /></div>)}
+        </div>
+      </div>
+    );
+  }
+
+  const filteredCOs = changeOrders.filter((co) => {
     const matchesSearch =
       co.title.toLowerCase().includes(search.toLowerCase()) ||
       co.customerName.toLowerCase().includes(search.toLowerCase()) ||
@@ -178,13 +64,13 @@ export default function ChangeOrdersPage() {
     return matchesSearch && matchesStatus;
   });
 
-  const pendingCount = mockChangeOrders.filter((co) => co.status === 'pending_approval').length;
-  const approvedTotal = mockChangeOrders.filter((co) => ['approved', 'completed'].includes(co.status)).reduce((sum, co) => sum + co.changeAmount, 0);
-  const pendingTotal = mockChangeOrders.filter((co) => co.status === 'pending_approval').reduce((sum, co) => sum + co.changeAmount, 0);
-  const totalImpactDays = mockChangeOrders.filter((co) => ['approved', 'completed'].includes(co.status)).reduce((sum, co) => sum + co.scheduledDaysImpact, 0);
+  const pendingCount = changeOrders.filter((co) => co.status === 'pending_approval').length;
+  const approvedTotal = changeOrders.filter((co) => co.status === 'approved').reduce((sum, co) => sum + co.amount, 0);
+  const pendingTotal = changeOrders.filter((co) => co.status === 'pending_approval').reduce((sum, co) => sum + co.amount, 0);
+  const totalCOs = changeOrders.length;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 animate-fade-in">
       <CommandPalette />
       <div className="flex items-center justify-between">
         <div>
@@ -209,7 +95,7 @@ export default function ChangeOrdersPage() {
         </div></CardContent></Card>
         <Card><CardContent className="p-4"><div className="flex items-center gap-3">
           <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg"><Calendar size={20} className="text-purple-600 dark:text-purple-400" /></div>
-          <div><p className="text-2xl font-semibold text-main">{totalImpactDays} days</p><p className="text-sm text-muted">Schedule Impact</p></div>
+          <div><p className="text-2xl font-semibold text-main">{totalCOs}</p><p className="text-sm text-muted">Total COs</p></div>
         </div></CardContent></Card>
       </div>
 
@@ -221,7 +107,7 @@ export default function ChangeOrdersPage() {
       <div className="space-y-3">
         {filteredCOs.map((co) => {
           const sConfig = statusConfig[co.status];
-          const isIncrease = co.changeAmount >= 0;
+          const isIncrease = co.amount >= 0;
           return (
             <Card key={co.id} className="hover:border-accent/30 transition-colors cursor-pointer" onClick={() => setSelectedCO(co)}>
               <CardContent className="p-5">
@@ -234,7 +120,7 @@ export default function ChangeOrdersPage() {
                       <div className="flex items-center gap-2 mb-1">
                         <span className="text-sm font-mono text-muted">{co.number}</span>
                         <span className={cn('px-2 py-0.5 rounded-full text-xs font-medium', sConfig.bgColor, sConfig.color)}>{sConfig.label}</span>
-                        {co.customerSignature && <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300">Signed</span>}
+                        {co.approvedByName && co.status === 'approved' && <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300">Approved</span>}
                       </div>
                       <h3 className="font-medium text-main mb-1">{co.title}</h3>
                       <div className="flex items-center gap-4 text-sm text-muted">
@@ -246,10 +132,9 @@ export default function ChangeOrdersPage() {
                   </div>
                   <div className="text-right flex-shrink-0 ml-4">
                     <p className={cn('text-lg font-semibold', isIncrease ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400')}>
-                      {isIncrease ? '+' : ''}{formatCurrency(co.changeAmount)}
+                      {isIncrease ? '+' : ''}{formatCurrency(co.amount)}
                     </p>
                     <p className="text-sm text-muted">{co.items.length} item{co.items.length !== 1 ? 's' : ''}</p>
-                    {co.scheduledDaysImpact > 0 && <p className="text-xs text-muted mt-1">+{co.scheduledDaysImpact} day{co.scheduledDaysImpact !== 1 ? 's' : ''}</p>}
                   </div>
                 </div>
               </CardContent>
@@ -273,9 +158,9 @@ export default function ChangeOrdersPage() {
   );
 }
 
-function CODetailModal({ co, onClose }: { co: ChangeOrder; onClose: () => void }) {
+function CODetailModal({ co, onClose }: { co: ChangeOrderData; onClose: () => void }) {
   const sConfig = statusConfig[co.status];
-  const isIncrease = co.changeAmount >= 0;
+  const isIncrease = co.amount >= 0;
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
@@ -297,7 +182,7 @@ function CODetailModal({ co, onClose }: { co: ChangeOrder; onClose: () => void }
             <div><p className="text-xs text-muted uppercase tracking-wider">Job</p><p className="font-medium text-main">{co.jobName}</p></div>
             <div><p className="text-xs text-muted uppercase tracking-wider">Customer</p><p className="font-medium text-main">{co.customerName}</p></div>
             <div><p className="text-xs text-muted uppercase tracking-wider">Reason</p><p className="font-medium text-main">{co.reason}</p></div>
-            <div><p className="text-xs text-muted uppercase tracking-wider">Schedule Impact</p><p className="font-medium text-main">{co.scheduledDaysImpact > 0 ? `+${co.scheduledDaysImpact} day${co.scheduledDaysImpact !== 1 ? 's' : ''}` : 'No impact'}</p></div>
+            <div><p className="text-xs text-muted uppercase tracking-wider">Created</p><p className="font-medium text-main">{formatDate(co.createdAt)}</p></div>
           </div>
 
           <div>
@@ -325,25 +210,16 @@ function CODetailModal({ co, onClose }: { co: ChangeOrder; onClose: () => void }
           </div>
 
           <div className="p-4 bg-secondary rounded-lg">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-muted">Original Job Total</span>
-              <span className="font-medium text-main">{formatCurrency(co.originalJobTotal)}</span>
-            </div>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-muted">Change Order Amount</span>
-              <span className={cn('font-medium', isIncrease ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400')}>{isIncrease ? '+' : ''}{formatCurrency(co.changeAmount)}</span>
-            </div>
-            <div className="flex items-center justify-between pt-2 border-t border-main">
-              <span className="font-medium text-main">New Job Total</span>
-              <span className="text-lg font-semibold text-main">{formatCurrency(co.newJobTotal)}</span>
+            <div className="flex items-center justify-between">
+              <span className="font-medium text-main">Change Order Amount</span>
+              <span className={cn('text-lg font-semibold', isIncrease ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400')}>{isIncrease ? '+' : ''}{formatCurrency(co.amount)}</span>
             </div>
           </div>
 
-          {co.approvedBy && (
+          {co.approvedByName && (
             <div className="flex items-center gap-2 p-3 bg-emerald-50 dark:bg-emerald-900/10 rounded-lg">
               <CheckCircle size={16} className="text-emerald-600" />
-              <span className="text-sm text-emerald-700 dark:text-emerald-300">Approved by {co.approvedBy} on {co.approvedAt ? formatDate(co.approvedAt) : 'N/A'}</span>
-              {co.customerSignature && <span className="text-xs text-emerald-600 ml-auto">Customer signed</span>}
+              <span className="text-sm text-emerald-700 dark:text-emerald-300">Approved by {co.approvedByName} on {co.approvedAt ? formatDate(co.approvedAt) : 'N/A'}</span>
             </div>
           )}
 

@@ -3,8 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { LogIn, Briefcase, FileText, Calendar, Users, AlertCircle } from 'lucide-react';
-import { signIn } from '@/lib/auth';
-import { onAuthChange } from '@/lib/auth';
+import { signIn, onAuthChange } from '@/lib/auth';
 
 export default function Home() {
   const router = useRouter();

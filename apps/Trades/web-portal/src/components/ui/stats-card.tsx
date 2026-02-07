@@ -41,19 +41,19 @@ export function StatsCard({
   };
 
   return (
-    <div className={cn('bg-surface border border-main rounded-xl p-6', className)}>
+    <div className={cn('bg-surface border border-main rounded-xl p-5 card-hover', className)}>
       <div className="flex items-center justify-between">
-        <p className="text-sm font-medium text-muted">{title}</p>
+        <p className="text-[13px] font-medium text-muted">{title}</p>
         {icon && (
-          <div className="p-2 rounded-lg bg-accent-light text-accent">
+          <div className="text-muted">
             {icon}
           </div>
         )}
       </div>
-      <div className="mt-3">
-        <p className="text-2xl font-semibold text-main">{value}</p>
+      <div className="mt-2">
+        <p className="text-[26px] font-semibold text-main leading-tight">{value}</p>
         {(change !== undefined || changeLabel) && (
-          <div className={cn('flex items-center gap-1 mt-2 text-sm', getTrendColor())}>
+          <div className={cn('flex items-center gap-1 mt-1.5 text-[13px]', getTrendColor())}>
             {getTrendIcon()}
             {change !== undefined && (
               <span className="font-medium">
@@ -88,8 +88,8 @@ export function MiniStats({ items, className }: MiniStatsProps) {
               style={{ backgroundColor: item.color }}
             />
           )}
-          <span className="text-sm text-muted">{item.label}</span>
-          <span className="text-sm font-semibold text-main">{item.value}</span>
+          <span className="text-[13px] text-muted">{item.label}</span>
+          <span className="text-[13px] font-semibold text-main">{item.value}</span>
         </div>
       ))}
     </div>

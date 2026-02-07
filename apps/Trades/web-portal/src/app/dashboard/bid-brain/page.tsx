@@ -310,7 +310,7 @@ export default function BidBrainPage() {
                           ) : entry.winRate < 45 ? (
                             <Badge className="text-xs bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">Raise prices</Badge>
                           ) : (
-                            <Badge variant="secondary" className="text-xs">Healthy</Badge>
+                            <Badge variant="default" className="text-xs">Healthy</Badge>
                           )}
                         </td>
                       </tr>

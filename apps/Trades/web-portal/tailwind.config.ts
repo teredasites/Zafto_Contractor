@@ -12,8 +12,8 @@ const config: Config = {
       colors: {
         // Zafto brand colors
         zafto: {
-          accent: '#635bff', // Stripe purple
-          accentHover: '#5046e5',
+          accent: '#10b981', // Emerald green
+          accentHover: '#059669',
           success: '#22c55e',
           warning: '#f59e0b',
           error: '#ef4444',
