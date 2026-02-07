@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   DollarSign,
@@ -8,110 +8,177 @@ import {
   TrendingDown,
   CreditCard,
   Building,
-  Plus,
-  Download,
-  Filter,
   ArrowRight,
-  CheckCircle,
   AlertCircle,
-  RefreshCw,
+  AlertTriangle,
   FileText,
   PiggyBank,
+  Wallet,
+  Receipt,
+  Users,
+  Landmark,
+  BarChart3,
+  Calculator,
+  Clock,
+  CalendarCheck,
+  Repeat,
+  Loader2,
+  BookOpen,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Select } from '@/components/ui/input';
-import { SimpleAreaChart, DonutChart, DonutLegend, SimpleBarChart } from '@/components/ui/charts';
+import { SimpleBarChart, DonutChart, DonutLegend } from '@/components/ui/charts';
 import { CommandPalette } from '@/components/command-palette';
-import { formatCurrency, formatDate, cn } from '@/lib/utils';
-import { useReports } from '@/lib/hooks/use-reports';
-import type { Transaction, TransactionCategory, BankAccount } from '@/types';
+import { formatCurrency, cn } from '@/lib/utils';
+import { useBanking } from '@/lib/hooks/use-banking';
+import { useFinancialStatements } from '@/lib/hooks/use-financial-statements';
+import type { AgingRow, AccountBalance } from '@/lib/hooks/use-financial-statements';
+import { useReconciliation } from '@/lib/hooks/use-reconciliation';
 
-// ZBooks — Phase F. No bank/transaction tables yet. Empty until wired.
-const bankAccounts: BankAccount[] = [];
-const transactions: Transaction[] = [];
+// Expense category colors for donut chart
+const EXPENSE_COLORS = [
+  '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899',
+  '#06b6d4', '#ef4444', '#84cc16', '#f97316', '#64748b',
+];
 
-const categoryLabels: Record<TransactionCategory, string> = {
-  materials: 'Materials',
-  labor: 'Labor',
-  fuel: 'Fuel',
-  tools: 'Tools',
-  equipment: 'Equipment',
-  vehicle: 'Vehicle',
-  insurance: 'Insurance',
-  permits: 'Permits',
-  advertising: 'Advertising',
-  office: 'Office',
-  utilities: 'Utilities',
-  subcontractor: 'Subcontractor',
-  income: 'Income',
-  refund: 'Refund',
-  transfer: 'Transfer',
-  uncategorized: 'Uncategorized',
-};
+// Navigation tabs for ZBooks
+const BOOKS_TABS = [
+  { label: 'Overview', href: '/dashboard/books', active: true },
+  { label: 'Chart of Accounts', href: '/dashboard/books/accounts', active: false },
+  { label: 'Expenses', href: '/dashboard/books/expenses', active: false },
+  { label: 'Vendors', href: '/dashboard/books/vendors', active: false },
+  { label: 'Banking', href: '/dashboard/books/banking', active: false },
+  { label: 'Reports', href: '/dashboard/books/reports', active: false },
+  { label: 'Tax & 1099', href: '/dashboard/books/tax-settings', active: false },
+  { label: 'Recurring', href: '/dashboard/books/recurring', active: false },
+  { label: 'Periods', href: '/dashboard/books/periods', active: false },
+];
 
-const categoryColors: Record<string, string> = {
-  materials: '#3b82f6',
-  labor: '#10b981',
-  fuel: '#f59e0b',
-  tools: '#8b5cf6',
-  equipment: '#ec4899',
-  vehicle: '#06b6d4',
-  insurance: '#ef4444',
-  permits: '#84cc16',
-  income: '#22c55e',
-};
+// Quick links for ZBooks sub-pages
+const QUICK_LINKS = [
+  { label: 'Chart of Accounts', href: '/dashboard/books/accounts', icon: BookOpen },
+  { label: 'Expenses', href: '/dashboard/books/expenses', icon: Receipt },
+  { label: 'Vendors', href: '/dashboard/books/vendors', icon: Users },
+  { label: 'Vendor Payments', href: '/dashboard/books/vendor-payments', icon: CreditCard },
+  { label: 'Banking', href: '/dashboard/books/banking', icon: Landmark },
+  { label: 'Reconciliation', href: '/dashboard/books/reconciliation', icon: Calculator },
+  { label: 'Reports', href: '/dashboard/books/reports', icon: BarChart3 },
+  { label: 'Tax & 1099', href: '/dashboard/books/tax-settings', icon: FileText },
+  { label: 'Recurring', href: '/dashboard/books/recurring', icon: Repeat },
+  { label: 'Periods', href: '/dashboard/books/periods', icon: CalendarCheck },
+];
+
+interface PnLData {
+  revenue: AccountBalance[];
+  cogs: AccountBalance[];
+  expenses: AccountBalance[];
+  totalRevenue: number;
+  totalCogs: number;
+  grossProfit: number;
+  totalExpenses: number;
+  netIncome: number;
+}
 
 export default function BooksPage() {
   const router = useRouter();
-  const { data: reportData } = useReports();
-  const [period, setPeriod] = useState('month');
-  const [categoryFilter, setCategoryFilter] = useState('all');
 
-  // Calculate totals
-  const totalIncome = transactions
-    .filter((t) => t.isIncome)
-    .reduce((sum, t) => sum + t.amount, 0);
+  // Hooks
+  const {
+    accounts: bankAccounts,
+    totalBalance,
+    unreviewedCount,
+    loading: bankingLoading,
+  } = useBanking();
 
-  const totalExpenses = transactions
-    .filter((t) => !t.isIncome)
-    .reduce((sum, t) => sum + Math.abs(t.amount), 0);
+  const {
+    fetchProfitAndLoss,
+    fetchARaging,
+    fetchAPaging,
+    loading: statementsLoading,
+  } = useFinancialStatements();
 
-  const netProfit = totalIncome - totalExpenses;
+  const {
+    reconciliations,
+    loading: reconciliationLoading,
+  } = useReconciliation();
 
-  // Calculate expenses by category
-  const expensesByCategory = transactions
-    .filter((t) => !t.isIncome)
-    .reduce((acc, t) => {
-      acc[t.category] = (acc[t.category] || 0) + Math.abs(t.amount);
-      return acc;
-    }, {} as Record<string, number>);
+  // Local state for fetched data
+  const [pnlData, setPnlData] = useState<PnLData | null>(null);
+  const [arAging, setArAging] = useState<AgingRow[]>([]);
+  const [apAging, setApAging] = useState<AgingRow[]>([]);
+  const [dataLoaded, setDataLoaded] = useState(false);
 
-  const expenseChartData = Object.entries(expensesByCategory)
-    .map(([category, value]) => ({
-      name: categoryLabels[category as TransactionCategory] || category,
-      value,
-      color: categoryColors[category] || '#64748b',
-    }))
-    .sort((a, b) => b.value - a.value);
+  // Fetch P&L, AR aging, AP aging on mount
+  useEffect(() => {
+    let cancelled = false;
 
-  // Filter transactions
-  const filteredTransactions = transactions.filter((t) => {
-    if (categoryFilter === 'all') return true;
-    if (categoryFilter === 'income') return t.isIncome;
-    if (categoryFilter === 'expenses') return !t.isIncome;
-    return t.category === categoryFilter;
+    const loadData = async () => {
+      const now = new Date();
+      const monthStart = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`;
+      const monthEnd = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+      const [pnl, ar, ap] = await Promise.all([
+        fetchProfitAndLoss(monthStart, monthEnd),
+        fetchARaging(),
+        fetchAPaging(),
+      ]);
+
+      if (!cancelled) {
+        setPnlData(pnl);
+        setArAging(ar);
+        setApAging(ap);
+        setDataLoaded(true);
+      }
+    };
+
+    loadData();
+    return () => { cancelled = true; };
+  }, [fetchProfitAndLoss, fetchARaging, fetchAPaging]);
+
+  // Derived values
+  const totalAR = arAging.reduce((s, r) => s + r.total, 0);
+  const totalAP = apAging.reduce((s, r) => s + r.total, 0);
+  const netIncome = pnlData?.netIncome ?? 0;
+  const totalRevenue = pnlData?.totalRevenue ?? 0;
+  const profitMargin = totalRevenue > 0 ? (netIncome / totalRevenue) * 100 : 0;
+
+  // AR overdue (90+ days)
+  const overdueARRows = arAging.filter(r => r.days90plus > 0);
+  const overdueARTotal = arAging.reduce((s, r) => s + r.days90plus, 0);
+
+  // AP current (due bills)
+  const apCurrentTotal = apAging.reduce((s, r) => s + r.current, 0);
+
+  // Unreconciled: accounts where last sync > 30 days ago
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  const unreconciledAccounts = bankAccounts.filter(acct => {
+    if (!acct.lastSyncedAt) return true;
+    return new Date(acct.lastSyncedAt) < thirtyDaysAgo;
   });
 
-  // Revenue chart data
-  const revenueData = reportData?.monthlyRevenue || [];
-  const revenueChartData = revenueData.map((d) => ({
-    date: d.date,
-    value: d.profit,
-  }));
+  // Expense breakdown for donut chart
+  const expenseChartData = (pnlData?.expenses ?? [])
+    .filter(a => a.balance > 0)
+    .sort((a, b) => b.balance - a.balance)
+    .map((a, i) => ({
+      name: a.accountName,
+      value: a.balance,
+      color: EXPENSE_COLORS[i % EXPENSE_COLORS.length],
+    }));
 
-  const totalBalance = bankAccounts.reduce((sum, a) => sum + a.currentBalance, 0);
+  // P&L summary bar chart data
+  const pnlBarData = pnlData
+    ? [
+        { label: 'Revenue', value: pnlData.totalRevenue, color: '#10b981' },
+        { label: 'COGS', value: pnlData.totalCogs, color: '#f59e0b' },
+        { label: 'Expenses', value: pnlData.totalExpenses, color: '#ef4444' },
+        { label: 'Net Income', value: Math.max(pnlData.netIncome, 0), color: '#3b82f6' },
+      ]
+    : [];
+
+  const isLoading = bankingLoading || statementsLoading || reconciliationLoading || !dataLoaded;
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -120,36 +187,34 @@ export default function BooksPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">Zafto Books</h1>
-          <p className="text-muted mt-1">Track your finances and cash flow</p>
+          <h1 className="text-2xl font-semibold text-main">ZBooks</h1>
+          <p className="text-muted mt-1">Financial dashboard</p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="secondary">
-            <Download size={16} />
-            Export
+          <Button
+            variant="secondary"
+            onClick={() => router.push('/dashboard/books/expenses')}
+          >
+            <Receipt size={16} />
+            Record Expense
           </Button>
-          <Button onClick={() => {}}>
-            <Plus size={16} />
-            Add Transaction
+          <Button onClick={() => router.push('/dashboard/books/reports')}>
+            <BarChart3 size={16} />
+            Run P&L
           </Button>
         </div>
       </div>
 
-      {/* ZBooks Navigation */}
-      <div className="flex items-center gap-2">
-        {[
-          { label: 'Overview', href: '/dashboard/books', active: true },
-          { label: 'Chart of Accounts', href: '/dashboard/books/accounts', active: false },
-          { label: 'Expenses', href: '/dashboard/books/expenses', active: false },
-          { label: 'Vendors', href: '/dashboard/books/vendors', active: false },
-          { label: 'Vendor Payments', href: '/dashboard/books/vendor-payments', active: false },
-          { label: 'Banking', href: '/dashboard/books/banking', active: false },
-        ].map((tab) => (
+      {/* ZBooks Navigation Tabs */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-1">
+        {BOOKS_TABS.map((tab) => (
           <button
             key={tab.label}
-            onClick={() => { if (!tab.active) router.push(tab.href); }}
+            onClick={() => {
+              if (!tab.active) router.push(tab.href);
+            }}
             className={cn(
-              'px-4 py-2 text-sm font-medium rounded-lg transition-colors',
+              'px-4 py-2 text-sm font-medium rounded-lg transition-colors whitespace-nowrap',
               tab.active
                 ? 'bg-accent text-white'
                 : 'bg-secondary text-muted hover:text-main'
@@ -160,306 +225,384 @@ export default function BooksPage() {
         ))}
       </div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white border-0">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-emerald-100 text-sm">Total Balance</p>
-                <p className="text-3xl font-bold mt-1">{formatCurrency(totalBalance)}</p>
-              </div>
-              <div className="p-3 bg-white/20 rounded-xl">
-                <Building size={24} />
-              </div>
-            </div>
-            <div className="flex items-center gap-2 mt-4">
-              <span className="text-emerald-100 text-sm">
-                {bankAccounts.length} connected account{bankAccounts.length !== 1 ? 's' : ''}
-              </span>
-            </div>
-          </CardContent>
-        </Card>
+      {/* Loading State */}
+      {isLoading && (
+        <div className="flex items-center justify-center py-12">
+          <Loader2 size={24} className="animate-spin text-muted" />
+          <span className="ml-3 text-muted text-sm">Loading financial data...</span>
+        </div>
+      )}
 
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-muted text-sm">Income</p>
-                <p className="text-2xl font-bold text-main mt-1">{formatCurrency(totalIncome)}</p>
-              </div>
-              <div className="p-3 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl">
-                <TrendingUp size={24} className="text-emerald-600 dark:text-emerald-400" />
-              </div>
-            </div>
-            <p className="text-sm text-emerald-600 mt-2">This month</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-muted text-sm">Expenses</p>
-                <p className="text-2xl font-bold text-main mt-1">{formatCurrency(totalExpenses)}</p>
-              </div>
-              <div className="p-3 bg-red-100 dark:bg-red-900/30 rounded-xl">
-                <TrendingDown size={24} className="text-red-600 dark:text-red-400" />
-              </div>
-            </div>
-            <p className="text-sm text-red-600 mt-2">This month</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-muted text-sm">Net Profit</p>
-                <p className={cn(
-                  'text-2xl font-bold mt-1',
-                  netProfit >= 0 ? 'text-emerald-600' : 'text-red-600'
-                )}>
-                  {formatCurrency(netProfit)}
-                </p>
-              </div>
-              <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
-                <PiggyBank size={24} className="text-blue-600 dark:text-blue-400" />
-              </div>
-            </div>
-            <p className={cn('text-sm mt-2', netProfit >= 0 ? 'text-emerald-600' : 'text-red-600')}>
-              {netProfit >= 0 ? '+' : ''}{((netProfit / totalIncome) * 100).toFixed(1)}% margin
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Profit Trend */}
-        <Card className="lg:col-span-2">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0">
-            <div>
-              <CardTitle>Profit Trend</CardTitle>
-              <p className="text-sm text-muted mt-1">Monthly net profit</p>
-            </div>
-            <Select
-              options={[
-                { value: 'month', label: 'This Month' },
-                { value: 'quarter', label: 'This Quarter' },
-                { value: 'year', label: 'This Year' },
-              ]}
-              value={period}
-              onChange={(e) => setPeriod(e.target.value)}
-              className="w-36"
-            />
-          </CardHeader>
-          <CardContent>
-            <div className="h-64">
-              <SimpleAreaChart data={revenueChartData} height={256} color="#10b981" />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Expenses by Category */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Expenses by Category</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-center mb-4">
-              <DonutChart
-                data={expenseChartData}
-                size={140}
-                thickness={20}
-                centerValue={formatCurrency(totalExpenses)}
-                centerLabel="Total"
-              />
-            </div>
-            <DonutLegend
-              data={expenseChartData.slice(0, 5)}
-              formatValue={(v) => formatCurrency(v)}
-            />
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Bank Accounts & Transactions */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Bank Accounts */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0">
-            <CardTitle>Connected Accounts</CardTitle>
-            <Button variant="ghost" size="sm">
-              <Plus size={14} />
-              Add
-            </Button>
-          </CardHeader>
-          <CardContent className="p-0">
-            <div className="divide-y divide-main">
-              {bankAccounts.map((account) => (
-                <div key={account.id} className="px-6 py-4">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-secondary rounded-lg">
-                      {account.type === 'credit' ? (
-                        <CreditCard size={20} className="text-muted" />
-                      ) : (
-                        <Building size={20} className="text-muted" />
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-main">{account.name}</p>
-                      <p className="text-sm text-muted">****{account.mask}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-semibold text-main">
-                        {formatCurrency(account.currentBalance)}
-                      </p>
-                      <p className="text-xs text-muted">
-                        Synced {formatDate(account.lastSynced)}
-                      </p>
-                    </div>
+      {!isLoading && (
+        <>
+          {/* KPI Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            {/* Cash Position */}
+            <Card>
+              <CardContent className="p-5">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="p-2.5 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl">
+                    <Wallet size={20} className="text-emerald-600 dark:text-emerald-400" />
                   </div>
                 </div>
-              ))}
-            </div>
-            <div className="px-6 py-3 bg-secondary/50 border-t border-main">
-              <button className="flex items-center gap-2 text-sm text-accent hover:underline">
-                <RefreshCw size={14} />
-                Sync All Accounts
-              </button>
-            </div>
-          </CardContent>
-        </Card>
+                <p className="text-sm text-muted">Cash Position</p>
+                <p className="text-2xl font-bold text-main mt-1">
+                  {formatCurrency(totalBalance)}
+                </p>
+                <p className="text-xs text-muted mt-2">
+                  {bankAccounts.length} account{bankAccounts.length !== 1 ? 's' : ''}
+                </p>
+              </CardContent>
+            </Card>
 
-        {/* Transactions */}
-        <Card className="lg:col-span-2">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0">
-            <CardTitle>Recent Transactions</CardTitle>
-            <Select
-              options={[
-                { value: 'all', label: 'All' },
-                { value: 'income', label: 'Income' },
-                { value: 'expenses', label: 'Expenses' },
-              ]}
-              value={categoryFilter}
-              onChange={(e) => setCategoryFilter(e.target.value)}
-              className="w-32"
-            />
-          </CardHeader>
-          <CardContent className="p-0">
-            <div className="divide-y divide-main max-h-96 overflow-y-auto">
-              {filteredTransactions.map((transaction) => (
-                <TransactionRow key={transaction.id} transaction={transaction} />
-              ))}
-            </div>
-            <div className="px-6 py-3 bg-secondary/50 border-t border-main">
-              <Button variant="ghost" size="sm" className="w-full">
-                View All Transactions
-                <ArrowRight size={14} />
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+            {/* Accounts Receivable */}
+            <Card>
+              <CardContent className="p-5">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="p-2.5 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
+                    <TrendingUp size={20} className="text-blue-600 dark:text-blue-400" />
+                  </div>
+                </div>
+                <p className="text-sm text-muted">Accounts Receivable</p>
+                <p className="text-2xl font-bold text-main mt-1">
+                  {formatCurrency(totalAR)}
+                </p>
+                <p className="text-xs text-muted mt-2">
+                  {arAging.length} customer{arAging.length !== 1 ? 's' : ''}
+                </p>
+              </CardContent>
+            </Card>
 
-      {/* Reports Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Reports & Exports</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <ReportCard
-              title="Profit & Loss"
-              description="Income vs expenses breakdown"
-              icon={<FileText size={20} />}
-            />
-            <ReportCard
-              title="Cash Flow"
-              description="Money in and out over time"
-              icon={<TrendingUp size={20} />}
-            />
-            <ReportCard
-              title="Tax Summary"
-              description="Export for your CPA"
-              icon={<Download size={20} />}
-            />
-            <ReportCard
-              title="1099 Report"
-              description="Subcontractor payments"
-              icon={<FileText size={20} />}
-            />
+            {/* Accounts Payable */}
+            <Card>
+              <CardContent className="p-5">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="p-2.5 bg-amber-100 dark:bg-amber-900/30 rounded-xl">
+                    <TrendingDown size={20} className="text-amber-600 dark:text-amber-400" />
+                  </div>
+                </div>
+                <p className="text-sm text-muted">Accounts Payable</p>
+                <p className="text-2xl font-bold text-main mt-1">
+                  {formatCurrency(totalAP)}
+                </p>
+                <p className="text-xs text-muted mt-2">
+                  {apAging.length} vendor{apAging.length !== 1 ? 's' : ''}
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Net Income (MTD) */}
+            <Card>
+              <CardContent className="p-5">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="p-2.5 bg-purple-100 dark:bg-purple-900/30 rounded-xl">
+                    <DollarSign size={20} className="text-purple-600 dark:text-purple-400" />
+                  </div>
+                </div>
+                <p className="text-sm text-muted">Net Income (MTD)</p>
+                <p className={cn(
+                  'text-2xl font-bold mt-1',
+                  netIncome >= 0 ? 'text-emerald-600' : 'text-red-600'
+                )}>
+                  {formatCurrency(netIncome)}
+                </p>
+                <p className="text-xs text-muted mt-2">
+                  {formatCurrency(totalRevenue)} revenue
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Profit Margin */}
+            <Card>
+              <CardContent className="p-5">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="p-2.5 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl">
+                    <PiggyBank size={20} className="text-indigo-600 dark:text-indigo-400" />
+                  </div>
+                </div>
+                <p className="text-sm text-muted">Profit Margin</p>
+                <p className={cn(
+                  'text-2xl font-bold mt-1',
+                  profitMargin >= 0 ? 'text-emerald-600' : 'text-red-600'
+                )}>
+                  {profitMargin.toFixed(1)}%
+                </p>
+                <p className="text-xs text-muted mt-2">
+                  Net income / revenue
+                </p>
+              </CardContent>
+            </Card>
           </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
 
-function TransactionRow({ transaction }: { transaction: Transaction }) {
-  const isIncome = transaction.isIncome;
+          {/* Charts Row */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* P&L Summary Bar Chart */}
+            <Card className="lg:col-span-2">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0">
+                <div>
+                  <CardTitle>Profit & Loss Summary</CardTitle>
+                  <p className="text-sm text-muted mt-1">Current month-to-date</p>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => router.push('/dashboard/books/reports')}
+                >
+                  Full Report
+                  <ArrowRight size={14} />
+                </Button>
+              </CardHeader>
+              <CardContent>
+                {pnlBarData.length > 0 && (pnlData?.totalRevenue ?? 0) > 0 ? (
+                  <div className="space-y-4">
+                    <div className="h-52">
+                      <SimpleBarChart
+                        data={pnlBarData}
+                        height={208}
+                        formatValue={(v) => formatCurrency(v)}
+                      />
+                    </div>
+                    <div className="grid grid-cols-4 gap-3 pt-2 border-t border-main">
+                      {pnlBarData.map((item) => (
+                        <div key={item.label} className="text-center">
+                          <p className="text-xs text-muted">{item.label}</p>
+                          <p className="text-sm font-semibold text-main mt-0.5">
+                            {formatCurrency(item.value)}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-12 text-center">
+                    <BarChart3 size={32} className="text-muted mb-3" />
+                    <p className="text-sm text-muted">
+                      No P&L data for this period yet.
+                    </p>
+                    <p className="text-xs text-muted mt-1">
+                      Revenue and expenses will appear here once journal entries are posted.
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
 
-  return (
-    <div className="px-6 py-4 hover:bg-surface-hover transition-colors">
-      <div className="flex items-center gap-4">
-        <div
-          className={cn(
-            'p-2 rounded-lg',
-            isIncome
-              ? 'bg-emerald-100 dark:bg-emerald-900/30'
-              : 'bg-slate-100 dark:bg-slate-800'
-          )}
-        >
-          {isIncome ? (
-            <TrendingUp size={18} className="text-emerald-600 dark:text-emerald-400" />
-          ) : (
-            <TrendingDown size={18} className="text-slate-600 dark:text-slate-400" />
-          )}
-        </div>
-        <div className="flex-1 min-w-0">
-          <p className="font-medium text-main">{transaction.merchantName || transaction.description}</p>
-          <div className="flex items-center gap-2 mt-0.5">
-            <span className="text-sm text-muted">{formatDate(transaction.date)}</span>
-            <Badge variant="default" size="sm">
-              {categoryLabels[transaction.category]}
-            </Badge>
-            {!transaction.isReviewed && (
-              <Badge variant="warning" size="sm">Needs Review</Badge>
-            )}
+            {/* Expenses by Category Donut */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Expenses by Category</CardTitle>
+                <p className="text-sm text-muted mt-1">MTD breakdown</p>
+              </CardHeader>
+              <CardContent>
+                {expenseChartData.length > 0 ? (
+                  <>
+                    <div className="flex items-center justify-center mb-4">
+                      <DonutChart
+                        data={expenseChartData}
+                        size={140}
+                        thickness={20}
+                        centerValue={formatCurrency(pnlData?.totalExpenses ?? 0)}
+                        centerLabel="Total"
+                      />
+                    </div>
+                    <DonutLegend
+                      data={expenseChartData.slice(0, 6)}
+                      formatValue={(v) => formatCurrency(v)}
+                    />
+                  </>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-12 text-center">
+                    <Receipt size={32} className="text-muted mb-3" />
+                    <p className="text-sm text-muted">No expenses recorded yet.</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </div>
-        </div>
-        <p
-          className={cn(
-            'font-semibold',
-            isIncome ? 'text-emerald-600' : 'text-main'
-          )}
-        >
-          {isIncome ? '+' : ''}{formatCurrency(transaction.amount)}
-        </p>
-      </div>
-    </div>
-  );
-}
 
-function ReportCard({
-  title,
-  description,
-  icon,
-}: {
-  title: string;
-  description: string;
-  icon: React.ReactNode;
-}) {
-  return (
-    <div className="p-4 bg-secondary rounded-xl hover:bg-surface-hover cursor-pointer transition-colors group">
-      <div className="flex items-center gap-3 mb-2">
-        <div className="p-2 bg-accent-light rounded-lg text-accent group-hover:bg-accent group-hover:text-white transition-colors">
-          {icon}
-        </div>
-        <h4 className="font-medium text-main">{title}</h4>
-      </div>
-      <p className="text-sm text-muted">{description}</p>
+          {/* Alerts Section */}
+          <div>
+            <h2 className="text-lg font-semibold text-main mb-4">Alerts & Action Items</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Overdue AR */}
+              <Card className={cn(
+                overdueARRows.length > 0 && 'border-red-200 dark:border-red-900/40'
+              )}>
+                <CardContent className="p-5">
+                  <div className="flex items-start gap-3">
+                    <div className={cn(
+                      'p-2 rounded-lg',
+                      overdueARRows.length > 0
+                        ? 'bg-red-100 dark:bg-red-900/30'
+                        : 'bg-secondary'
+                    )}>
+                      <AlertCircle size={18} className={cn(
+                        overdueARRows.length > 0
+                          ? 'text-red-600 dark:text-red-400'
+                          : 'text-muted'
+                      )} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-main">Overdue AR (90+ days)</p>
+                      {overdueARRows.length > 0 ? (
+                        <>
+                          <p className="text-lg font-bold text-red-600 mt-1">
+                            {formatCurrency(overdueARTotal)}
+                          </p>
+                          <p className="text-xs text-muted mt-1">
+                            {overdueARRows.length} customer{overdueARRows.length !== 1 ? 's' : ''}
+                          </p>
+                        </>
+                      ) : (
+                        <p className="text-sm text-emerald-600 mt-1">All clear</p>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Unreviewed Transactions */}
+              <Card className={cn(
+                unreviewedCount > 0 && 'border-amber-200 dark:border-amber-900/40'
+              )}>
+                <CardContent className="p-5">
+                  <div className="flex items-start gap-3">
+                    <div className={cn(
+                      'p-2 rounded-lg',
+                      unreviewedCount > 0
+                        ? 'bg-amber-100 dark:bg-amber-900/30'
+                        : 'bg-secondary'
+                    )}>
+                      <Clock size={18} className={cn(
+                        unreviewedCount > 0
+                          ? 'text-amber-600 dark:text-amber-400'
+                          : 'text-muted'
+                      )} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-main">Unreviewed Transactions</p>
+                      {unreviewedCount > 0 ? (
+                        <>
+                          <p className="text-lg font-bold text-amber-600 mt-1">
+                            {unreviewedCount}
+                          </p>
+                          <p className="text-xs text-muted mt-1">
+                            Need categorization
+                          </p>
+                        </>
+                      ) : (
+                        <p className="text-sm text-emerald-600 mt-1">All reviewed</p>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Unreconciled Accounts */}
+              <Card className={cn(
+                unreconciledAccounts.length > 0 && 'border-amber-200 dark:border-amber-900/40'
+              )}>
+                <CardContent className="p-5">
+                  <div className="flex items-start gap-3">
+                    <div className={cn(
+                      'p-2 rounded-lg',
+                      unreconciledAccounts.length > 0
+                        ? 'bg-amber-100 dark:bg-amber-900/30'
+                        : 'bg-secondary'
+                    )}>
+                      <AlertTriangle size={18} className={cn(
+                        unreconciledAccounts.length > 0
+                          ? 'text-amber-600 dark:text-amber-400'
+                          : 'text-muted'
+                      )} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-main">Unreconciled Accounts</p>
+                      {unreconciledAccounts.length > 0 ? (
+                        <>
+                          <p className="text-lg font-bold text-amber-600 mt-1">
+                            {unreconciledAccounts.length}
+                          </p>
+                          <p className="text-xs text-muted mt-1">
+                            Last sync &gt; 30 days ago
+                          </p>
+                        </>
+                      ) : (
+                        <p className="text-sm text-emerald-600 mt-1">All reconciled</p>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Due Bills (AP Current) */}
+              <Card className={cn(
+                apCurrentTotal > 0 && 'border-blue-200 dark:border-blue-900/40'
+              )}>
+                <CardContent className="p-5">
+                  <div className="flex items-start gap-3">
+                    <div className={cn(
+                      'p-2 rounded-lg',
+                      apCurrentTotal > 0
+                        ? 'bg-blue-100 dark:bg-blue-900/30'
+                        : 'bg-secondary'
+                    )}>
+                      <FileText size={18} className={cn(
+                        apCurrentTotal > 0
+                          ? 'text-blue-600 dark:text-blue-400'
+                          : 'text-muted'
+                      )} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-main">Due Bills</p>
+                      {apCurrentTotal > 0 ? (
+                        <>
+                          <p className="text-lg font-bold text-blue-600 mt-1">
+                            {formatCurrency(apCurrentTotal)}
+                          </p>
+                          <p className="text-xs text-muted mt-1">
+                            Current payables
+                          </p>
+                        </>
+                      ) : (
+                        <p className="text-sm text-emerald-600 mt-1">No bills due</p>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+
+          {/* Quick Links Grid */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Quick Links</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+                {QUICK_LINKS.map((link) => {
+                  const Icon = link.icon;
+                  return (
+                    <button
+                      key={link.href}
+                      onClick={() => router.push(link.href)}
+                      className="p-4 bg-secondary rounded-xl hover:bg-surface-hover cursor-pointer transition-colors group text-left"
+                    >
+                      <div className="flex items-center gap-3 mb-1.5">
+                        <div className="p-2 bg-accent-light rounded-lg text-accent group-hover:bg-accent group-hover:text-white transition-colors">
+                          <Icon size={18} />
+                        </div>
+                      </div>
+                      <p className="text-sm font-medium text-main">{link.label}</p>
+                    </button>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
+        </>
+      )}
     </div>
   );
 }

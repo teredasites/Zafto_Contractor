@@ -18,6 +18,7 @@ import 'tools/tools_hub_screen.dart';
 import 'exam_prep/exam_prep_hub_screen.dart';
 import 'ai/ai_chat_screen.dart';
 import 'settings/settings_screen.dart';
+import 'books/zbooks_hub_screen.dart';
 import 'certifications/certifications_screen.dart';
 import 'jobs/jobs_hub_screen.dart';
 import 'jobs/job_detail_screen.dart';
@@ -789,6 +790,10 @@ class _HomeScreenV2State extends ConsumerState<HomeScreenV2> {
             ),
             const SizedBox(height: 20),
             // Menu items
+            _buildMoreMenuItem(colors, LucideIcons.bookOpen, 'ZBooks', 'Expenses, receipts, financials', () {
+              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const ZBooksHubScreen()));
+            }),
             _buildMoreMenuItem(colors, LucideIcons.users, 'Customers', 'Manage your client list', () {
               Navigator.pop(context);
               Navigator.push(context, MaterialPageRoute(builder: (_) => const CustomersHubScreen()));
