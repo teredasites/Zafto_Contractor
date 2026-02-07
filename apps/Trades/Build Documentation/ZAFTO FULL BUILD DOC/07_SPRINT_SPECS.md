@@ -6701,14 +6701,14 @@ Include <content>{markdown}</content> for rendered display.
 **Status: SPEC COMPLETE — BLOCKED on Phase E readiness**
 
 #### E6a: Walkthrough Data Model + Templates (~6 hrs)
-**BLOCKED ON: E1 complete**
-- [ ] Deploy `walkthroughs` table + RLS
-- [ ] Deploy `walkthrough_rooms` table
-- [ ] Deploy `walkthrough_photos` table
-- [ ] Deploy `walkthrough_templates` table + seed ~14 system templates
-- [ ] Deploy `property_floor_plans` table
-- [ ] ALTER bids, jobs, property_assets (add walkthrough/floor plan links)
-- [ ] Commit: `[E6a] Walkthrough engine — data model + templates`
+**DONE (Session 79)**
+- [x] Deploy `walkthroughs` table + RLS
+- [x] Deploy `walkthrough_rooms` table
+- [x] Deploy `walkthrough_photos` table
+- [x] Deploy `walkthrough_templates` table + seed ~14 system templates
+- [x] Deploy `property_floor_plans` table
+- [x] ALTER bids, jobs (add walkthrough_id FK)
+- [x] Commit: `[E6a] Walkthrough engine — data model + templates`
 
 #### E6b: Flutter Walkthrough Capture Flow (~16 hrs)
 - [ ] Walkthrough start screen (name, customer link, type, template)
