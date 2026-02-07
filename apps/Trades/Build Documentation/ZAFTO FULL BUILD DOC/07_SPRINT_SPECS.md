@@ -6664,12 +6664,14 @@ Include <content>{markdown}</content> for rendered display.
 - [ ] Commit: `[E5h] ESX export — generate Xactimate-compatible files`
 
 #### E5i: Crowd-Sourced Pricing Pipeline (~4 hrs)
-- [ ] Invoice finalization hook: extract codes + pricing + ZIP
-- [ ] Anonymization pipeline: strip PII before contribution
-- [ ] Monthly aggregation Edge Function (cron)
-- [ ] Pricing confidence calculation (low/medium/high/verified)
-- [ ] Admin dashboard: pricing data coverage by region/trade
-- [ ] Commit: `[E5i] Crowd-sourced pricing pipeline`
+**Status: DONE (Session 79)**
+- [x] Invoice finalization trigger: fn_extract_pricing_contributions() on invoices.status → paid/finalized
+- [x] Anonymization pipeline: strips company_id, claim_id, customer info — only code_id + region + costs
+- [x] Monthly aggregation Edge Function: `xact-pricing-aggregate` (built in E5a)
+- [x] Pricing confidence calculation: low (<5), medium (5-19), high (20-49), verified (50+)
+- [x] Admin dashboard: pricing coverage page at /dashboard/estimates/pricing
+- [x] Migration 000027: trigger + property_zip column + coverage view + indexes
+- [x] Commit: `[E5i] Crowd-sourced pricing pipeline`
 
 #### E5j: Testing + Verification (~4 hrs)
 - [ ] Unit tests: code search, price lookup, O&P calculation
