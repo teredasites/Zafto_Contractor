@@ -6592,15 +6592,17 @@ Include <content>{markdown}</content> for rendered display.
 - [x] Commit: `[E5a] Xactimate pricing database foundation`
 
 #### E5b: Estimate Writer UI — Web CRM (~12 hrs)
-- [ ] Estimate editor page: room-by-room line item entry
-- [ ] Code browser sidebar: search/filter all 70+ categories
-- [ ] Auto-price lookup: select code → populate MAT/LAB/EQU from pricing DB
-- [ ] O&P calculator: configurable 10/10 markup per trade or total
-- [ ] Coverage group assignment: structural/contents/other
-- [ ] Summary view: ACV, RCV, depreciation, O&P totals
-- [ ] Estimate templates: save/load common scopes
-- [ ] Hook: `use-estimate-engine.ts` with full CRUD + calculations
-- [ ] Commit: `[E5b] Xactimate estimate writer — Web CRM`
+**Status: DONE (Session 79)**
+- [x] Estimate editor page: room-by-room line item entry
+- [x] Code browser sidebar: search/filter all 70+ categories
+- [x] Auto-price lookup: select code → populate MAT/LAB/EQU from pricing DB
+- [x] O&P calculator: configurable 10/10 markup per trade or total
+- [x] Coverage group assignment: structural/contents/other
+- [x] Summary view: ACV, RCV, depreciation, O&P totals
+- [x] Estimate templates: save/load common scopes
+- [x] Hook: `use-estimate-engine.ts` with full CRUD + calculations
+- [x] Sidebar nav: added INSURANCE section (Claims + Estimate Writer)
+- [x] Commit: `[E5b] Xactimate estimate writer — Web CRM`
 
 #### E5c: PDF Output (~6 hrs)
 - [ ] PDF template matching Xactimate layout
