@@ -1,6 +1,6 @@
 # ZAFTO CIRCUIT BLUEPRINT
 ## Living Wiring Diagram — What Connects, What Doesn't, What's Missing
-### Last Updated: February 7, 2026 (Session 76 — D5h Team Portal PM View DONE. D5a-D5h complete. 79 tables. 24 migrations. 5 apps all build clean.)
+### Last Updated: February 7, 2026 (Session 80 — E4 Growth Advisor in progress. R1+E1-E3+E5-E6 ALL DONE. 92 tables. 28 migrations. 26 Edge Functions deployed. 5 apps all build clean.)
 
 ---
 
@@ -16,88 +16,38 @@ You don't rough-in a house without a print. This is the print. Maps every pipe, 
 +-------------------------------------------------------------------+
 |                SUPABASE (PostgreSQL + Auth + Storage + Realtime)    |
 |                                                                    |
-|  Tables (DEPLOYED -- 79)       Storage Buckets (CREATED -- 7)      |
+|  Tables (DEPLOYED -- 92)       Storage Buckets (CREATED -- 7)      |
 |  +------------------+         +------------------+                 |
-|  | companies        |         | photos           |                 |
-|  | users            |         | signatures       |                 |
-|  | jobs             |         | voice-notes      |                 |
-|  | invoices         |         | receipts         |                 |
-|  | customers        |         | documents        |                 |
-|  | bids             |         | avatars          |                 |
-|  | time_entries     |         | company-logos     |                 |
-|  | audit_log        |         +------------------+                 |
-|  | user_sessions    |         All 7 PRIVATE                        |
-|  | login_attempts   |                                              |
-|  | photos           |         Edge Functions (5 DEPLOYED)          |
-|  | signatures       |          zbooks-bank-sync                    |
-|  | voice_notes      |          zbooks-reconciliation               |
-|  | receipts         |          zbooks-recurring                    |
-|  | compliance_recs  |          zbooks-reports                      |
-|  | mileage_trips    |          zbooks-tax-calc                     |
-|  | job_materials    |         4 more specified, not deployed:       |
-|  | daily_logs       |          dead-man-switch (SMS)               |
-|  | punch_list_items |          receipt-ocr (Claude Vision)         |
-|  | change_orders    |          transcribe-audio                    |
-|  | leads            |          send-notification                   |
-|  | notifications    |                                              |
-|  | support_tickets  |         PowerSync (NOT SET UP)               |
-|  | support_messages |         SQLite on device <-> PostgreSQL      |
-|  | knowledge_base   |                                              |
-|  | announcements    |                                              |
-|  | ops_audit_log    |                                              |
-|  | service_creds    |                                              |
-|  | client_portal_u  |                                              |
-|  | insurance_claims |                                              |
-|  | claim_supplement |                                              |
-|  | tpi_scheduling   |                                              |
-|  | xactimate_lines  |                                              |
-|  | moisture_reading |                                              |
-|  | drying_logs      |                                              |
-|  | restoration_eqp  |                                              |
-|  | branches         |                                              |
-|  | custom_roles     |                                              |
-|  | form_templates   |                                              |
-|  | certifications   |                                              |
-|  | api_keys         |                                              |
-|  | cert_types       |                                              |
-|  | cert_audit_log   |                                              |
-|  | ZBOOKS (15)      |                                              |
-|  | chart_of_accounts|                                              |
-|  | journal_entries  |                                              |
-|  | journal_entry_ln |                                              |
-|  | fiscal_periods   |                                              |
-|  | zbooks_audit_log |                                              |
-|  | tax_categories   |                                              |
-|  | bank_accounts    |                                              |
-|  | bank_transactions|                                              |
-|  | bank_recons      |                                              |
-|  | expenses         |                                              |
-|  | vendors          |                                              |
-|  | vendor_payments  |                                              |
-|  | recurring_tmpls  |                                              |
-|  | progress_billing |                                              |
-|  | retention_track  |                                              |
-|  | PM (18)          |                                              |
-|  | properties       |                                              |
-|  | units            |                                              |
-|  | tenants          |                                              |
-|  | leases           |                                              |
-|  | rent_charges     |                                              |
-|  | rent_payments    |                                              |
-|  | maintenance_reqs |                                              |
-|  | work_order_acts  |                                              |
-|  | pm_inspections   |                                              |
-|  | pm_inspect_items |                                              |
-|  | property_assets  |                                              |
-|  | asset_svc_recs   |                                              |
-|  | pm_documents     |                                              |
-|  | unit_turns       |                                              |
-|  | unit_turn_tasks  |                                              |
-|  | vendors_pm       |                                              |
-|  | vendor_contacts  |                                              |
-|  | vendor_assigns   |                                              |
-|  +------------------+                                              |
-|  24 migration files    3 test auth users + 1 company seeded       |
+|  | CORE (5)         |         | photos           |                 |
+|  | BUSINESS (5)     |         | signatures       |                 |
+|  | FIELD TOOLS (6)  |         | voice-notes      |                 |
+|  | B3 NEW TOOLS (4) |         | receipts         |                 |
+|  | OPS PORTAL (6)   |         | documents        |                 |
+|  | D2 INSURANCE (7) |         | avatars          |                 |
+|  | D6 ENTERPRISE (5)|         | company-logos     |                 |
+|  | D7 CERTS (2)     |         +------------------+                 |
+|  | D4 ZBOOKS (15)   |         All 7 PRIVATE                        |
+|  | D5 PM (18)       |                                              |
+|  | E1 AI (2)        |         Edge Functions (26 DEPLOYED)         |
+|  |  z_threads       |          ZBooks: 5 (bank-sync, recon,        |
+|  |  z_messages       |                  recurring, reports, tax)    |
+|  | E5 XACTIMATE (5) |          PM: 3 (rent-charge, lease-remind,  |
+|  |  xactimate_codes |                  asset-remind)               |
+|  |  pricing_entries  |          E1 AI: 1 (z-intelligence, 14 tools)|
+|  |  pricing_contribs|          E5: 6 (pricing-agg, code-search,   |
+|  |  estimate_tmplts |                  pdf, parse-pdf, scope,      |
+|  |  esx_imports      |                  crowd-source)              |
+|  | E6 WALKTHROUGH(5)|          E6: 4 (analyze, transcribe,        |
+|  |  walkthroughs    |                  generate-bid, bid-pdf)      |
+|  |  walkthrough_rooms|         E3: 4 (troubleshoot, photo-diagnose,|
+|  |  walkthrough_photo|                 parts-identify, repair-guide)|
+|  |  walkthrough_tmpl|          PM + ZBooks Edge Functions: 8       |
+|  |  property_floors |         NOT DEPLOYED:                        |
+|  | + leads, notifs, |          dead-man-switch (SMS — SAFETY)      |
+|  |   client_portal_u|          send-notification (push)            |
+|  |   warranty_cos   |                                              |
+|  +------------------+         PowerSync (NOT SET UP)               |
+|  28 migration files    3 test auth users + 1 company seeded       |
 +-----+------+----------+----------+----------+---------------------+
       |      |          |          |          |
       v      v          v          v          v
@@ -105,10 +55,10 @@ You don't rough-in a house without a print. This is the print. Maps every pipe, 
 | MOBILE | | WEB    | | TEAM    | | CLIENT | | OPS    |
 | APP    | | CRM    | | PORTAL  | | PORTAL | | PORTAL |
 | Flutter| | Next15 | | Next15  | | Next15 | | Next15 |
-| ~107   | | 68     | | 22      | | 22     | | 17     |
-| screens| | routes | | pages   | | routes | | routes |
-| ALL    | | 32+13  | |10 hooks | | 6 wired| | Supabase|
-| wired  | |+14 PM  | | PWA     | | 6 hooks| | queries|
+| 33 role| | 71     | | 25      | | 29     | | 17     |
+| screens| | routes | | routes  | | routes | | routes |
+| R1+E3  | | 39+PM  | |13 hooks | |11 hooks| | Supabase|
+| +E5+E6 | |+E4+E5  | |+AI tab  | |+AI chat| | queries|
 +--------+ +--------+ +---------+ +--------+ +--------+
  zafto.app  zafto.     team.       client.    ops.zafto
  (mobile)   cloud      zafto.app   zafto.     .cloud
@@ -210,13 +160,20 @@ DEFERRED -- Specified but intentionally postponed
 | insurance_claim_service.dart | LIVE Supabase | **DONE (D2b S63-S64)** -- Claims CRUD, status transitions. 12+ Riverpod providers. |
 | restoration_service.dart | LIVE Supabase | **DONE (D2d-D2g S63-S64)** -- Moisture, drying, equipment, TPI. Aggregates restoration sub-services. |
 | certification_service.dart | LIVE Supabase | **DONE (D7a S67-S68)** -- Certifications CRUD. Modular types via certificationTypesProvider (loads from certification_types table). Expiry tracking. Renewal reminders. |
+| ai_service.dart | LIVE Supabase | **DONE (E3c S80)** -- AiService (Edge Function client) + AiChatNotifier (chat state) + providers. Calls z-intelligence, ai-troubleshoot, ai-photo-diagnose Edge Functions. |
+| walkthrough_service.dart | LIVE Supabase | **DONE (E6b S79)** -- Walkthrough CRUD + rooms + photos. 7 Riverpod providers. |
+| estimate_service.dart | LIVE Supabase | **DONE (E5f S79)** -- Estimate line items, templates, code search. |
 | firestore_service.dart | Firebase | Content layer -- being removed |
 | location_tracking_service.dart | Local | **4 compile errors -- missing battery_plus package.** |
 
-**Repositories:** auth, customer, job, invoice, bid, time_entry, photo, compliance, receipt, signature, mileage, voice_note, insurance_claim, claim_supplement, moisture_reading, drying_log, restoration_equipment, tpi_inspection, certification, zbooks_account, zbooks_journal, zbooks_expense, property, tenant, lease, rent, pm_maintenance, inspection, asset (29 total)
-**Models:** Photo, ComplianceRecord, Receipt, Signature, MileageTrip, VoiceNote, Job (with JobType enum), Customer, Invoice, Bid, TimeEntry, Notification, InsuranceClaim, ClaimSupplement, MoistureReading, DryingLog, RestorationEquipment, TpiInspection, Certification, CertificationTypeConfig, ZBooksAccount, ZBooksJournalEntry, ZBooksExpense, Property, Unit, Tenant, Lease, MaintenanceRequest, PropertyAsset, PmInspection, UnitTurn (28 Supabase models)
+**Repositories:** auth, customer, job, invoice, bid, time_entry, photo, compliance, receipt, signature, mileage, voice_note, insurance_claim, claim_supplement, moisture_reading, drying_log, restoration_equipment, tpi_inspection, certification, zbooks_account, zbooks_journal, zbooks_expense, property, tenant, lease, rent, pm_maintenance, inspection, asset, walkthrough, estimate (31 total)
+**Models:** Photo, ComplianceRecord, Receipt, Signature, MileageTrip, VoiceNote, Job (with JobType enum), Customer, Invoice, Bid, TimeEntry, Notification, InsuranceClaim, ClaimSupplement, MoistureReading, DryingLog, RestorationEquipment, TpiInspection, Certification, CertificationTypeConfig, ZBooksAccount, ZBooksJournalEntry, ZBooksExpense, Property, Unit, Tenant, Lease, MaintenanceRequest, PropertyAsset, PmInspection, UnitTurn, Walkthrough, WalkthroughRoom, WalkthroughPhoto, WalkthroughTemplate, FloorPlan, XactimateCode, EstimateLine (35 Supabase models)
 **ZBooks Flutter Screens (D4m S70):** zbooks_hub_screen.dart, journal_entry_screen.dart, expense_entry_screen.dart — all in lib/screens/zbooks/
 **PM Flutter Screens (D5f S72):** 10 screens in lib/screens/properties/ — properties_hub, property_detail (5-tab), unit_detail, tenant_detail, lease_detail, rent, maintenance, inspection, asset, unit_turn
+**R1 Flutter App Remake (S78):** 33 role-based screens. Design system (8 widgets). AppShell with role switching. Owner (5), Tech (5), Office+Inspector+CPA (10), Client+Tenant (8), walkthrough start+capture+summary+room_detail_sheet (4). Z FAB on AppShell.
+**E3 Mobile AI (S80):** ai_service.dart (AiService + AiChatNotifier + providers), z_chat_sheet.dart (bottom sheet chat), ai_photo_analyzer.dart (vision defect detection). Z FAB tap → chat, long-press → quick actions.
+**E5 Xactimate (S79):** Flutter estimate entry screens in lib/screens/estimates/
+**E6 Walkthrough (S79):** 12 screens in lib/screens/walkthrough/ — list, start, capture, summary, room_detail_sheet + 4 annotation files + 4 sketch editor files
 **State widgets (B7 S57):** ZaftoLoadingState, ZaftoEmptyState -- reusable across all screens
 **Deleted in A1 (S37):** 8 dead files, 3,637 lines
 
@@ -231,9 +188,9 @@ DEFERRED -- Specified but intentionally postponed
 
 ---
 
-### 1B. WEB CRM -- NEXT.JS (53+ pages at zafto.cloud)
+### 1B. WEB CRM -- NEXT.JS (71 routes at zafto.cloud)
 
-**46+ pages wired to Supabase. 35 hook files. mock-data.ts DELETED. Firebase fully removed.**
+**50+ pages wired to Supabase. 39+ hook files. mock-data.ts DELETED. Firebase fully removed. `npm run build` passes (71 routes, 0 errors).**
 
 | Group | Pages | Backend | Notes |
 |-------|:-----:|:-------:|-------|
@@ -252,19 +209,24 @@ DEFERRED -- Specified but intentionally postponed
 | Dashboard (charts) | 1 | LIVE Supabase | **DONE (B4c S52)** -- useReports for all chart data. |
 | ZBooks (13 pages) | 13 | LIVE Supabase | **DONE (D4 S70)** -- 13 hooks, 13 pages: accounts (COA), expenses, vendors, vendor-payments, banking, reconciliation, reports (P&L/BS/TB/CF), tax-settings, recurring, periods, cpa-export, branches, construction (progress billing/retention/WIP). 5 Edge Functions. GL engine. Double-entry. |
 | Properties (14 pages) | 14 | LIVE Supabase | **DONE (D5b-D5d S71)** -- 11 hooks (use-properties, use-units, use-tenants, use-leases, use-rent, use-pm-maintenance, use-pm-inspections, use-assets, use-unit-turns, use-approvals, pm-mappers) + 14 pages: portfolio, property detail, new property, units list, unit detail, tenants list, tenant detail, leases list, lease detail, rent roll, maintenance pipeline (Kanban), inspections, asset health, unit turns board. Sidebar PROPERTIES section. |
-| Z (AI Chat) | 1 | PARTIAL | **Z Console (B4e S54):** Persistent AI console across all 39 pages. 3 states (pulse/chat/artifact). Mock flows. Split-screen artifacts. Thread history (localStorage). Cmd+J toggle. 22 files (5 lib + 17 components). |
+| Xactimate Estimates (E5 S79) | 3 | LIVE Supabase | **DONE (E5b S79)** -- Estimate editor, code browser, estimate list. use-estimates.ts + use-xact-codes.ts hooks. Room-by-room line items, PDF output. |
+| Walkthroughs (E6 S79) | 4 | LIVE Supabase | **DONE (E6f S79)** -- Walkthrough list, detail, bid view, workflow settings. use-walkthroughs.ts hook. AI bid generation integration. |
+| Revenue Insights (E4 S80) | 1 | LIVE Supabase | **DONE (E4b S80)** -- Revenue trends, margin analysis, top customers, seasonal patterns. use-revenue-insights.ts hook (426 lines). UNCOMMITTED. |
+| Growth / Revenue Autopilot (E4 S80) | 2 | LIVE Supabase | **DONE (E4e S80)** -- Follow-up queue, seasonal campaigns, review requests. use-growth-actions.ts hook. UNCOMMITTED. |
+| Bid Optimizer (E4 S80) | 1 | LIVE Supabase | **DONE (E4c S80)** -- AI bid suggestions panel on bid detail. use-bid-optimizer.ts hook. UNCOMMITTED. |
+| Equipment Insights (E4 S80) | 1 | LIVE Supabase | **DONE (E4d S80)** -- AI lifecycle panel on property equipment. use-equipment-insights.ts hook. UNCOMMITTED. |
+| Z (AI Chat) | 1 | LIVE Supabase | **Z Console (B4e S54):** Persistent AI console across all pages. 3 states (pulse/chat/artifact). **E2 (S78):** Wired to z-intelligence Edge Function. Thread history (localStorage). Cmd+J toggle. 22 files (5 lib + 17 components). |
 | Remaining (Permits, Comms, Warranties, Service Agreements) | 4 | MOCK | Placeholder pages, no backing tables (future phases) |
 | Equipment / Inventory / Documents | 3 | PARTIAL | Mock data removed -> empty typed arrays. No tables yet. |
 | Resources (Vendors, Purchase Orders) | 2 | MOCK | Need tables. Future phase. |
 | Office (Price Book, Automations) | 2 | MOCK | Future-phase features. |
-| Z Intelligence (Voice, Bid Brain, etc.) | 4 | MOCK | Phase E |
-| Settings + Auth | 2 | LIVE Supabase | **DONE (B4a S49)** -- Supabase Auth, middleware, AuthProvider, PermissionProvider. Firebase removed. |
+| Settings + Auth | 2 | LIVE Supabase | **DONE (B4a S49)** -- Supabase Auth, middleware, AuthProvider, PermissionProvider. Firebase removed. **Walkthrough workflows (E6h S79):** Settings tab for template management. |
 
 **Key files:**
 - `mock-data.ts` -- **DELETED (S52)**. Zero imports remaining.
 - `permission-gate.tsx` (424 lines) -- RBAC with 40+ permissions
 - `types/index.ts` -- TypeScript interfaces (Job, InsuranceMetadata, WarrantyMetadata, etc.)
-- 35 hook files: mappers.ts, use-customers.ts, use-jobs.ts, use-invoices.ts, use-bids.ts, use-stats.ts, use-change-orders.ts, use-inspections.ts, use-leads.ts, use-reports.ts, use-job-costs.ts, use-insurance.ts, use-enterprise.ts + 13 ZBooks hooks: use-accounts.ts, use-journal.ts, use-expenses.ts, use-vendors.ts, use-vendor-payments.ts, use-banking.ts, use-reconciliation.ts, use-zbooks-reports.ts, use-tax-settings.ts, use-recurring.ts, use-fiscal-periods.ts, use-cpa-access.ts, use-construction-accounting.ts + 11 PM hooks: pm-mappers.ts, use-properties.ts, use-units.ts, use-tenants.ts, use-leases.ts, use-rent.ts, use-pm-maintenance.ts, use-pm-inspections.ts, use-assets.ts, use-unit-turns.ts, use-approvals.ts
+- 39+ hook files: mappers.ts, use-customers.ts, use-jobs.ts, use-invoices.ts, use-bids.ts, use-stats.ts, use-change-orders.ts, use-inspections.ts, use-leads.ts, use-reports.ts, use-job-costs.ts, use-insurance.ts, use-enterprise.ts + 13 ZBooks hooks + 11 PM hooks + E4: use-revenue-insights.ts (426L), use-bid-optimizer.ts (121L), use-equipment-insights.ts (112L), use-growth-actions.ts (97L) + E5: use-estimates.ts, use-xact-codes.ts + E6: use-walkthroughs.ts
 - 22 Z Console files: 5 in src/lib/z-intelligence/ + 17 in src/components/z-console/
 - firebase.ts DELETED (B4a S49). auth.ts + firestore.ts rewritten for Supabase.
 - **UI Polish (B4d S53):** Collapsible sidebar (366 lines), skeleton loading (7 pages), chart bezier curves + draw-in animation, stagger animations, dark mode depth layers.
@@ -289,11 +251,13 @@ DEFERRED -- Specified but intentionally postponed
 | Maintenance (List, Detail) | 2 | LIVE Supabase | **DONE (D5g S73)** -- submit form (title, description, urgency, category, preferred times) + request list + status timeline + rating. |
 | Inspections | 1 | LIVE Supabase | **DONE (D5g S73)** -- read-only completed inspection reports for tenant's unit. |
 | Menu | 1 | LIVE Supabase | **Updated (D5g S73)** -- tenant services section (rent, lease, maintenance, inspections) prepended when tenant detected. |
+| AI Chat Widget (E3d S80) | — | LIVE Supabase | **DONE (E3d S80)** -- Floating Z button + slide-up chat panel (3 states). use-ai-assistant.ts hook. Project summaries + invoice explanations. Layout-level component. |
 | Remaining (Estimate, Agreement, Tracker, Equipment, Messages, Documents, Request, Referrals, Review) | 13 | MOCK | Future-phase placeholders. No backing tables. |
 
 **Key files:**
 - 6 base hook files: mappers.ts, use-projects.ts, use-invoices.ts, use-bids.ts, use-change-orders.ts, use-insurance.ts
 - 5 tenant hook files (D5g S73): tenant-mappers.ts, use-tenant.ts, use-rent-payments.ts, use-maintenance.ts, use-inspections-tenant.ts
+- E3d: use-ai-assistant.ts + ai-chat-widget.tsx (floating Z + slide-up panel)
 - client_portal_users table (S60) -- links auth users to customers
 - tenants.auth_user_id (D5a S71) -- links auth users to tenants. RLS: tenants_self, leases_tenant, rent_charges_tenant, rent_payments_tenant, maint_req_tenant_select/insert.
 - **Sentry (C1a S58):** @sentry/nextjs wired.
@@ -325,7 +289,7 @@ DEFERRED -- Specified but intentionally postponed
 | Settings | 1 | LIVE Supabase | Profile + preferences. |
 | Certifications | 1 | LIVE Supabase | **DONE (D7a S67-68)** -- use-certifications.ts hook. Read-only view of employee's certifications. Status lifecycle. Expiry countdown. Dynamic types from certification_types table. |
 | Properties | 1 | LIVE Supabase | **DONE (D5h S76)** -- Maintenance requests assigned to user. Filter tabs (All/Open/In Progress/Completed). Search. Urgency badges. Tenant contact (clickable phone/email). Status update buttons (Start Work/Mark Complete). Linked job navigation. |
-| AI Troubleshooting | 3 | DEFERRED | Phase E1 -- multi-trade diagnostics, code lookup, photo diagnosis |
+| AI Troubleshooting | 1 | LIVE Supabase | **DONE (E3b S80)** -- use-ai-troubleshoot.ts hook (254L). 5-tab UI: Diagnose/Photo/Code/Parts/Repair (1,364 lines). Calls 4 Edge Functions. |
 
 **Key files:**
 - 13 hook files: mappers.ts (+ PM types), use-jobs.ts, use-time-clock.ts, use-materials.ts, use-daily-log.ts, use-punch-list.ts, use-change-orders.ts, use-bids.ts, use-certifications.ts, use-insurance.ts, use-pm-jobs.ts, use-maintenance-requests.ts
@@ -493,7 +457,7 @@ Tech opens app -> Taps "Field Tools"
 
 ## SECTION 3: DATABASE SCHEMA
 
-### Deployed Tables (79 total -- dev Supabase)
+### Deployed Tables (92 total -- dev Supabase)
 
 **Core (5 -- migration 000001):** companies, users, audit_log, user_sessions, login_attempts
 **Business (5 -- migration 000002):** customers, jobs, invoices, bids, time_entries
@@ -512,8 +476,11 @@ Tech opens app -> Taps "Field Tools"
 **D4 ZBooks Banking/Expense/Vendor (7 -- migrations 000017-000018):** bank_accounts, bank_transactions, bank_reconciliations, expenses, vendors, vendor_payments, recurring_templates
 **D4 ZBooks Construction (2 -- migration 000020):** progress_billings (AIA G702/G703), retention_tracking
 **D5 Property Management (18 -- migrations 000021-000024):** properties, units, tenants, leases, rent_charges, rent_payments, maintenance_requests, work_order_actions, pm_inspections, pm_inspection_items, property_assets, asset_service_records, pm_documents, unit_turns, unit_turn_tasks, vendors (PM), vendor_contacts, vendor_assignments. + expense_records gets property_id/schedule_e_category/property_allocation_pct columns (D5e).
+**E1 AI Layer (2 -- migration 000025):** z_threads, z_messages (conversation storage for Z Intelligence)
+**E5 Xactimate (5 -- migration 000026):** xactimate_codes (77 seeded), pricing_entries, pricing_contributions, estimate_templates, esx_imports. + ALTER xactimate_estimate_lines (added code_id, costs, room_name, line_number, coverage_group).
+**E6 Walkthrough (5 -- migration 000028):** walkthroughs, walkthrough_rooms, walkthrough_photos, walkthrough_templates (14 seeded), property_floor_plans
 
-**Total: 79 tables. 24 migration files. All synced (local=remote). RLS on all. Audit triggers on all mutable tables. zbooks_audit_log + certification_audit_log are INSERT-only (no UPDATE/DELETE RLS).**
+**Total: 92 tables. 28 migration files. All synced (local=remote). RLS on all. Audit triggers on all mutable tables. zbooks_audit_log + certification_audit_log are INSERT-only (no UPDATE/DELETE RLS).**
 
 ### D1 Job Type Columns (Already Deployed)
 - `jobs.job_type` TEXT with CHECK constraint: 'standard', 'insurance_claim', 'warranty_dispatch'
@@ -586,7 +553,7 @@ Tech opens app -> Taps "Field Tools"
 - [x] Daily logs, punch lists, change orders, materials log
 - [x] Bid creation from field
 - [x] PWA manifest
-- [ ] AI Troubleshooting Center -- DEFERRED to Phase E1
+- [x] AI Troubleshooting Center -- **DONE (E3b S80)** -- 5-tab UI (Diagnose/Photo/Code/Parts/Repair) + 4 Edge Functions
 
 ### W6: Client Portal to Real Data -- DONE (B6 S56)
 - [x] Supabase Auth (magic link + password) -- **DONE S56/S60**
@@ -611,7 +578,7 @@ Tech opens app -> Taps "Field Tools"
 - [ ] C4: Security hardening -- PENDING
 - [x] C5: Incident Response Plan -- **DONE S59**
 
-### Phase D: Revenue Engine -- IN PROGRESS
+### Phase D: Revenue Engine -- COMPLETE
 - [x] D1: Job Type System -- **DONE S62** (3 types across all 5 apps)
 - [x] D2a-D2g: Insurance/Restoration Module -- **DONE S63-S64** (7 tables deployed, 36 total. Flutter: 3 screens, 6 models, 6 repos, 2 services. Web CRM: 2 pages, 1 hook. Claims CRUD + Supplements + Moisture + Drying + Equipment + TPI.)
 - [x] D2f: Certificate of Completion -- **DONE S68**
@@ -623,11 +590,22 @@ Tech opens app -> Taps "Field Tools"
 - [x] D5e: ZBooks Schedule E + Expense Allocation -- **DONE (S72)** -- expense→property allocation columns, Schedule E categories.
 - [x] D5f: Flutter Properties Hub + Screens -- **DONE (S72)** -- 5 models, 7 repos, 3 services, 10 screens. Home screen + command palette wired.
 - [x] D5g: Client Portal Tenant Flows -- **DONE (S73)** -- 5 hooks, 6 pages, home+menu updated. 29 routes. Stripe deferred to Phase E.
-- [ ] D5h: Team Portal PM View -- PENDING
-- [ ] D5i: Integration Tests -- PENDING
+- [x] D5h: Team Portal PM View -- **DONE (S76)** -- Properties page, job detail PM context, 3 hooks.
+- [x] D5i: Integration Tests + Edge Functions -- **DONE (S77)** -- 157 tests, 3 Edge Functions, seed data, integration wiring.
 - [x] D6: Enterprise Foundation -- **DONE S65-66** (branches, custom_roles, form_templates, certifications, api_keys — 5 tables, 41 total)
 - [x] D7a: Certifications Modular -- **DONE S67-68** (certification_types + certification_audit_log — 2 tables, 43 total. 25 seeded system types. Configurable per company. Immutable audit trail. All 3 surfaces use dynamic DB types with enum fallback.)
 - [x] D2f: Certificate of Completion -- **DONE S68** (Flutter: job_completion_screen.dart enhanced — detects insurance_claim jobs, adds 4 extra checks: moisture at target, equipment removed, drying complete, TPI final passed. Auto-transitions claim to work_complete. Web CRM: 7th "Completion" tab on claim detail with pre-flight checklist + status transition buttons.)
+
+### Phase E: AI Layer -- IN PROGRESS
+- [x] E1: Universal AI Architecture -- **DONE (S78)** -- z_threads + z_messages tables, z-intelligence Edge Function (14 tools), Supabase AI API client.
+- [x] E2: Z Console Wiring -- **DONE (S78)** -- Web CRM Z Console connected to z-intelligence Edge Function. 2 hooks (use-z-intelligence.ts, use-z-api.ts). Provider updated.
+- [x] E3a: AI Troubleshooting Edge Functions -- **DONE (S80)** -- 4 functions (ai-troubleshoot, ai-photo-diagnose, ai-parts-identify, ai-repair-guide). 1,311 lines. All deployed.
+- [x] E3b: Team Portal AI Troubleshooting -- **DONE (S80)** -- use-ai-troubleshoot.ts + troubleshoot/page.tsx (1,364 lines, 5-tab UI).
+- [x] E3c: Mobile Z Button + AI Chat -- **DONE (S80)** -- ai_service.dart + z_chat_sheet.dart + ai_photo_analyzer.dart. Z FAB in AppShell.
+- [x] E3d: Client Portal AI Chat Widget -- **DONE (S80)** -- use-ai-assistant.ts + ai-chat-widget.tsx. Floating Z + slide-up panel.
+- [x] E5: Xactimate Estimate Engine -- **DONE (S79)** -- 5 tables, estimate writer (Web CRM + Flutter), PDF output, AI parsing, scope assistant, crowd-sourced pricing. 6 Edge Functions.
+- [x] E6: Bid Walkthrough Engine -- **DONE (S79)** -- 5 tables, 12 Flutter screens, annotation system (7 tools), sketch editor (floor plans), CRM/portal viewers, AI bid generation. 4 Edge Functions.
+- [ ] E4a-e: Growth Advisor -- **IN PROGRESS (S80)** -- 5 Edge Functions written (2,133 lines), 4 hooks (756 lines), 4 CRM pages (2,263 lines). All files created locally. NOT committed, NOT deployed. Web CRM builds clean with new pages.
 
 ---
 
@@ -648,7 +626,7 @@ Tech opens app -> Taps "Field Tools"
 | stripeWebhook | Payment events | Migrate to Edge |
 | getPaymentStatus | Check payment status | Migrate to Edge |
 
-### New Supabase Edge Functions
+### New Supabase Edge Functions (26 DEPLOYED)
 | Function | Purpose | Status |
 |----------|---------|--------|
 | zbooks-bank-sync | Bank feed sync (Plaid) | **DEPLOYED (D4 S70)** |
@@ -659,12 +637,32 @@ Tech opens app -> Taps "Field Tools"
 | pm-rent-charge | Daily rent charge generation + late fees | **DEPLOYED (D5i S77)** |
 | pm-lease-reminders | Lease expiry notifications (90/60/30 days) | **DEPLOYED (D5i S77)** |
 | pm-asset-reminders | Asset service due notifications (14 days) | **DEPLOYED (D5i S77)** |
+| z-intelligence | Universal AI — 14 tools (chat, summarize, bid draft, code lookup, etc.) | **DEPLOYED (E1 S78)** |
+| xact-pricing-aggregate | Monthly pricing aggregation cron | **DEPLOYED (E5a S79)** |
+| xact-code-search | Full-text search on Xactimate codes + pricing | **DEPLOYED (E5a S79)** |
+| estimate-pdf | Generate Xactimate-style PDF estimates | **DEPLOYED (E5c S79)** |
+| estimate-parse-pdf | Claude Vision PDF import → structured data | **DEPLOYED (E5d S79)** |
+| estimate-scope-assist | AI gap detection + supplement generator | **DEPLOYED (E5e S79)** |
+| estimate-crowd-source | Anonymized crowd-sourced pricing pipeline | **DEPLOYED (E5i S79)** |
+| walkthrough-analyze | AI room analysis from photos + notes | **DEPLOYED (E6g S79)** |
+| walkthrough-transcribe | Voice note transcription for walkthroughs | **DEPLOYED (E6g S79)** |
+| walkthrough-generate-bid | AI bid generation from walkthrough data | **DEPLOYED (E6g S79)** |
+| walkthrough-bid-pdf | PDF output for walkthrough-generated bids | **DEPLOYED (E6g S79)** |
+| ai-troubleshoot | Multi-trade diagnostics (314L, 20 trades, NEC/IRC/IPC/IMC) | **DEPLOYED (E3a S80)** |
+| ai-photo-diagnose | Claude Vision defect detection (308L, 1-5 scale) | **DEPLOYED (E3a S80)** |
+| ai-parts-identify | Text+photo part ID (298L, dual mode) | **DEPLOYED (E3a S80)** |
+| ai-repair-guide | Skill-adaptive repair guide (391L, 3 skill levels) | **DEPLOYED (E3a S80)** |
 | dead-man-switch | SMS to emergency contacts | SAFETY CRITICAL -- not deployed |
-| receipt-ocr | Claude Vision OCR | Phase E -- not deployed |
-| transcribe-audio | Voice note transcription | Phase E -- not deployed |
-| send-notification | Push notifications | Phase E -- not deployed |
+| send-notification | Push notifications | not deployed |
 
-**Secrets to migrate:** STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, ANTHROPIC_API_KEY
+**E4 Edge Functions (5 WRITTEN, NOT DEPLOYED — uncommitted):**
+| ai-revenue-insights | Profit margins, trends, recommendations (491L) | LOCAL ONLY |
+| ai-customer-insights | CLV predictions, churn risk, upsell (609L) | LOCAL ONLY |
+| ai-bid-optimizer | Win probability, competitive pricing (423L) | LOCAL ONLY |
+| ai-equipment-insights | Lifecycle analysis from property equipment (297L) | LOCAL ONLY |
+| ai-growth-actions | Follow-up, upsell, campaign suggestions (313L) | LOCAL ONLY |
+
+**Secrets:** ANTHROPIC_API_KEY must be set (`npx supabase secrets set ANTHROPIC_API_KEY=sk-ant-...`). STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET for payment flows.
 
 ---
 
