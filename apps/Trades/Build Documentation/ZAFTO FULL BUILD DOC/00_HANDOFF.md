@@ -1,6 +1,6 @@
 # ZAFTO SESSION HANDOFF
 ## THE ONLY DOC YOU READ FIRST — EVERY SESSION
-### Last Updated: February 7, 2026 (Session 77)
+### Last Updated: February 7, 2026 (Session 78)
 
 ---
 
@@ -18,12 +18,12 @@
 
 | Field | Value |
 |-------|-------|
-| **Sprint** | D5 — Property Management — **DONE** |
-| **Sub-step** | D5j DONE. All D5a-D5j complete. Next: check 07_SPRINT_SPECS.md for next phase. |
-| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → search for next PENDING sprint |
-| **Status** | D5 COMPLETE. 18 tables, 14 CRM pages, 11 CRM hooks, 10 Flutter screens, 7 repos, 3 services, 5 models. Client Portal: 5 tenant hooks, 6 pages (29 routes). Team Portal: 3 PM hooks, properties page, job detail PM context. 3 Edge Functions. 157 model tests. Seed data. All builds pass. |
-| **Last Completed** | D5j — Testing + seed data: 157 model tests (property, maintenance_request, property_asset), seed SQL, all 5 builds verified (S77). |
-| **Session Count** | 77 |
+| **Sprint** | R1 — Flutter App Remake — **IN PROGRESS** |
+| **Sub-step** | R1a-R1h DONE. Next: R1i (Z Intelligence Integration) or R1j (Cross-Role Integration). |
+| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → search for R1i |
+| **Status** | R1a: Design system + app shell (z_components, UserRole, AppShell, role_navigation). R1b-R1h: 33 role-specific screens across 7 dirs (owner/tech/office/inspector/cpa/client/tenant). All wired into AppShell. Dead Man Switch removed. dart analyze: 0 errors. |
+| **Last Completed** | R1b-R1h — All 7 role experiences: 33 screens + app shell wiring, dart analyze clean (S78). |
+| **Session Count** | 78 |
 | **Tables Deployed** | 79 |
 | **Migration Files** | 24 |
 
@@ -90,6 +90,31 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 ---
 
 ## SESSION LOG (History — do NOT use for execution decisions, use CURRENT EXECUTION POINT above)
+
+### Session 78 (Feb 7) — R1a-R1h: Flutter App Remake — Design System + All 7 Role Experiences
+
+**R1a: Design System + App Shell (DONE):**
+- z_components.dart: 8 reusable components (ZCard, ZButton, ZTextField, ZBottomSheet, ZChip, ZBadge, ZAvatar, ZSkeleton)
+- UserRole enum (8 roles + extensions) in lib/core/user_role.dart
+- AppShell (IndexedStack + BottomNavigationBar + Z FAB) in lib/navigation/app_shell.dart
+- role_navigation.dart: TabConfig + getTabsForRole for all 7 roles
+- Dead Man Switch screen removed (liability risk)
+- Retained existing theme system v2.6 (10 themes, color tokens)
+- Commit: edf22f7
+
+**R1b-R1h: All 7 Role Experiences (DONE):**
+- Owner/Admin: 5 screens (home, jobs, money, calendar, more) in lib/screens/owner/
+- Tech: 5 screens (home, walkthrough, jobs, tools, more) in lib/screens/tech/
+- Office: 5 screens (home, schedule, customers, money, more) in lib/screens/office/
+- Inspector: 5 screens (home, inspect, history, tools, more) in lib/screens/inspector/
+- CPA: 4 screens (dashboard, accounts, reports, review) in lib/screens/cpa/
+- Client: 5 screens (home, scan, projects, my_home, more) in lib/screens/client/
+- Tenant: 4 screens (home, rent, maintenance, unit) in lib/screens/tenant/
+- All 33 screens wired into AppShell via _buildTabScreens switch
+- dart analyze: 0 errors across all files
+- Deferred to R1j: field tool rewiring, quick actions, inspector DB tables, client DB tables
+- Deferred to Phase E: Z-powered code lookup, AI home scanner, home health monitor
+- Commit: fc7303e
 
 ### Session 77 (Feb 7) — D5i + D5j: Integration Wiring + Testing (D5 COMPLETE)
 
