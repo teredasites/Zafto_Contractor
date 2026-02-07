@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zafto/core/user_role.dart';
 import 'package:zafto/navigation/role_navigation.dart';
 import 'package:zafto/theme/zafto_colors.dart';
 import 'package:zafto/screens/role_switcher_screen.dart';
+import 'package:zafto/screens/ai/z_chat_sheet.dart';
 
 // Owner/Admin screens
 import 'package:zafto/screens/owner/owner_home_screen.dart';
@@ -176,13 +178,14 @@ class _AppShellState extends ConsumerState<AppShell> {
       tag: 'z-button',
       child: GestureDetector(
         onLongPress: () {
-          // Placeholder for camera mode
+          HapticFeedback.heavyImpact();
+          _showQuickActions(context, colors);
         },
         child: SizedBox(
           width: 56,
           height: 56,
           child: FloatingActionButton(
-            onPressed: () => _showQuickActions(context, colors),
+            onPressed: () => showZChatSheet(context),
             elevation: 8,
             backgroundColor: colors.accentPrimary,
             shape: const CircleBorder(),
