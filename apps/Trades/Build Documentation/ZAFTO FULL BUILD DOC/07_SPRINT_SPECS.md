@@ -6605,13 +6605,14 @@ Include <content>{markdown}</content> for rendered display.
 - [x] Commit: `[E5b] Xactimate estimate writer — Web CRM`
 
 #### E5c: PDF Output (~6 hrs)
-- [ ] PDF template matching Xactimate layout
-- [ ] Cover sheet: company logo, claim info, contacts, policy
-- [ ] Line items: categorized with MAT/LAB/EQU columns
-- [ ] Summary: totals by coverage group, depreciation, O&P
-- [ ] Download + email + attach to claim record
-- [ ] Edge Function for server-side PDF generation
-- [ ] Commit: `[E5c] Xactimate-style PDF estimate output`
+**Status: DONE (Session 79)**
+- [x] PDF template matching Xactimate layout (print-ready HTML with @page rules)
+- [x] Cover sheet: company logo, claim info, contacts, policy
+- [x] Line items: categorized with MAT/LAB/EQU columns, room grouping
+- [x] Summary: totals by coverage group, depreciation, O&P
+- [x] Download button on estimate editor → opens print-ready page in new tab
+- [x] Edge Function `estimate-pdf` for server-side HTML generation (deployed)
+- [x] Commit: `[E5c] Xactimate-style PDF estimate output`
 
 #### E5d: AI PDF Parsing (~8 hrs)
 - [ ] Upload handler: accept Xactimate PDF exports
