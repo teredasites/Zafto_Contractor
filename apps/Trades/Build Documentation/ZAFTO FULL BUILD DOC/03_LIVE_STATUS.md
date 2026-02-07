@@ -1,9 +1,9 @@
 # ZAFTO LIVE STATUS
 ## UPDATE THIS EVERY SESSION
 
-**Last Updated:** February 7, 2026 (Session 76 — D5h Team Portal PM View DONE. 3 hooks, properties page, job detail PM context, sidebar updated. D5a-D5h complete.)
-**Current Phase:** BUILD — B1-B7 + C1-C3 + C5 ALL COMPLETE. C2 NEAR COMPLETE. **D1 COMPLETE. D2a-D2h ALL DONE. D3 Phase 1+2 COMPLETE. D4 ZBOOKS COMPLETE. D5a-D5h DONE. D6a-D6c DONE. D7a COMPLETE.** 5 apps total. 79 tables deployed. 24 migration files. All 5 apps build clean.
-**Next Action:** D5i (Integration Wiring + Rent Auto-Charge) → D5j (Testing + Seed Data) → R1 (App Remake) → Phase E (AI Layer).
+**Last Updated:** February 7, 2026 (Session 77 — D5i+D5j DONE. D5 PROPERTY MANAGEMENT COMPLETE. 3 Edge Functions, 157 model tests, seed data. Integration wiring done.)
+**Current Phase:** BUILD — B1-B7 + C1-C3 + C5 ALL COMPLETE. C2 NEAR COMPLETE. **D1 COMPLETE. D2a-D2h ALL DONE. D3 Phase 1+2 COMPLETE. D4 ZBOOKS COMPLETE. D5 COMPLETE. D6a-D6c DONE. D7a COMPLETE.** 5 apps total. 79 tables deployed. 24 migration files. All 5 apps build clean.
+**Next Action:** R1 (App Remake) → Phase E (AI Layer).
 
 ---
 
@@ -11,7 +11,7 @@
 
 | Field | Value |
 |-------|-------|
-| **Phase** | BUILD — B1-B7 ALL COMPLETE. C1-C3+C5 COMPLETE. D1 COMPLETE. **D2a-D2h ALL DONE. D3 Phase 1+2 COMPLETE. D4 ZBOOKS COMPLETE. D5a-D5h DONE.** D6a-D6c DONE. D7a COMPLETE. 79 tables. 24 migration files. Next: D5i (Integration Wiring). |
+| **Phase** | BUILD — B1-B7 ALL COMPLETE. C1-C3+C5 COMPLETE. D1 COMPLETE. **D2a-D2h ALL DONE. D3 Phase 1+2 COMPLETE. D4 ZBOOKS COMPLETE. D5 COMPLETE.** D6a-D6c DONE. D7a COMPLETE. 79 tables. 24 migration files. Next: R1 (App Remake) or Phase E. |
 | **Mobile App (Flutter)** | ~107 screens built. ALL core business wired. ALL 19 field tools wired. D2 Insurance: 3 screens. **D5f Properties (S72):** 10 screens (hub, property_detail 5-tab, unit_detail, tenant_detail, lease_detail, rent, maintenance, inspection, asset, unit_turn) + 5 models + 7 repos + 3 services. **D6b Enterprise:** 14 files. **D7a:** certifications. Screen registry: 78 commands. `dart analyze` passes 0 errors. |
 | **Web CRM (Next.js)** | **54 routes built**. 32+ pages wired/emptied. 24 hook files + 22 Z Console files. Auth+middleware DONE. UI Polish DONE. Z Console DONE. D2 Insurance: 2 pages. **D6c Enterprise:** 5 settings tabs. **D7a:** certifications page. **D4 ZBooks (S70):** 13 new hooks, 13 new pages (accounts, expenses, vendors, vendor-payments, banking, reconciliation, reports, tax-settings, recurring, periods, cpa-export, branches, construction). `npm run build` passes (54 routes, 0 errors). |
 | **Client Portal (Next.js)** | **29 routes. 12 pages wired to Supabase. 11 hooks + mappers (6 base + 5 tenant). Magic link auth (signInWithOtp). Middleware protects portal routes. AuthProvider with client_portal_users lookup. `npm run build` passes (29 routes, 0 errors).** `client.zafto.cloud`. **D2h (S68):** Insurance claim status timeline, claim banner, insurance badge. **D5g (S73):** 5 tenant hooks (tenant-mappers + use-tenant + use-rent-payments + use-maintenance + use-inspections-tenant), 6 new pages (rent, rent/[id], lease, maintenance, maintenance/[id], inspections), home + menu updated with tenant-aware content. Stripe payment UI placeholder. |
@@ -21,7 +21,7 @@
 | **Database** | Supabase (PostgreSQL). 2 projects (dev + prod). **79 tables DEPLOYED** (61 prior + 18 property management). RLS + audit on all. 24 migration files. Supabase CLI linked to dev. 3 test users + 1 company seeded. 29 system form templates + 25 system cert types + 15 warranty companies + 55 COA accounts + 26 tax categories seeded. zbooks_audit_log is INSERT-only (immutable). |
 | **Backend Connected** | Auth + Customers + Jobs + Invoices + Bids + Time Clock + Calendar ALL wired. ALL 19 field tools wired: 3 photo (B2a), 5 safety (B2b), 3 financial (B2c), 2 voice/level (B2d), 2 materials/log (B3a), 3 punch/CO/completion (B3b). **D2 Insurance (S63-S64):** Claims CRUD + supplements + moisture + drying + equipment + TPI all wired to 7 new Supabase tables. |
 | **DevOps** | **C1 DONE (S58):** Sentry in all 4 apps. CI/CD: 4 workflows. 154 model tests. Dependabot: 4 ecosystems. **C2 NEAR COMPLETE (S60-S61):** 21 schema mismatches fixed + 75 audit findings resolved. RBAC middleware on all portals. **C3 DONE (S59):** Ops Portal Phase 1 (16 pages, 6 new tables). **C5 DONE (S59):** Incident response plan. **D1 DONE (S62).** **D2a-D2g DONE (S63-S64).** **D6a-D6c DONE (S65).** |
-| **Blocker** | NONE — D5a-D5h DONE. Next: D5i (Integration Wiring) → D5j (Testing) → R1 (App Remake) → Phase E. |
+| **Blocker** | NONE — D5 COMPLETE. Next: R1 (App Remake) → Phase E (AI Layer). |
 
 ---
 
@@ -66,8 +66,8 @@
 | 13 | Ops Portal Phase 1 (18 pages, pre-launch) | ~40 | **DONE (S59)** — 16 dashboard pages + login. 6 new DB tables (support_tickets, support_messages, knowledge_base, announcements, ops_audit_log, service_credentials). Incident response plan (08_INCIDENT_RESPONSE.md). `npm run build` passes (17 routes, 0 errors). |
 | 14 | Security hardening (email migration, passwords, YubiKeys) | ~4 | PENDING |
 | 15 | Revenue Engine: Job Types + Insurance + Restoration + Enterprise | ~217 | **D1 COMPLETE (S62)** — Job type system: 3 types, full UI across all 5 apps. **D2a-D2h ALL DONE (S63-S64, S68)** — Insurance Claim Workflows: 7 new tables, Flutter 18 new files + insurance completion, Web CRM completion tab, Team Portal restoration progress + recording forms, Client Portal claim timeline. **D3a-D3d DONE (S69)** — Insurance Verticals: claim_category + JSONB vertical data (Storm/Recon/Commercial), typed models, category forms + display across Flutter + Web CRM. **D6a-D6c DONE (S65)** — Enterprise Foundation: 5 new tables. **D7a COMPLETE (S66-S68)** — Certification tracker across 3 surfaces with modular types + audit log. 43 tables, 15 migrations. D3e+D4 pending. |
-| 16 | Revenue Engine: ZBooks (QB replacement) | TBD | PENDING |
-| 17 | Revenue Engine: Property Management System | TBD | PENDING |
+| 16 | Revenue Engine: ZBooks (QB replacement) | TBD | **DONE (S70)** |
+| 17 | Revenue Engine: Property Management System | TBD | **DONE (S77)** — D5a-D5j. 18 tables, 14 CRM pages, 11 hooks, 10 Flutter screens, 3 Edge Functions, 157 tests. |
 | 18 | AI Layer: Universal AI Architecture + AI Troubleshooting Center | ~300-400 | PENDING |
 | 19 | AI Layer: Z Console + Command Center + Growth Advisor | ~278-358 | PENDING |
 | 20 | Platform: Phone System + Meeting Rooms | ~105-120 | PENDING |
