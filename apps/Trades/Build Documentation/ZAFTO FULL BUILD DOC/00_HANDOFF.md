@@ -18,25 +18,38 @@
 
 | Field | Value |
 |-------|-------|
-| **Sprint** | E3 — Employee Portal AI + Mobile AI — **DONE** |
-| **Sub-step** | E3a-E3e ALL DONE. Next: E4 (Growth Advisor + Advanced AI). |
-| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → search for Sprint E4 |
-| **Status** | E3: 4 new Edge Functions (ai-troubleshoot, ai-photo-diagnose, ai-parts-identify, ai-repair-guide), team portal troubleshoot page (1364 lines, 5-tab UI), Flutter ai_service + z_chat_sheet + ai_photo_analyzer, client portal ai-chat-widget. 26 total Edge Functions deployed. |
-| **Last Completed** | E3e — Testing + verification (S80). |
+| **Sprint** | **PHASE E PAUSED.** Moving to Phase F (Platform Completion). AI goes TRULY LAST. |
+| **Sub-step** | Phase E premature work exists (dormant). Next: F1 (Phone System) or whichever F-phase feature owner specs first. |
+| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → search for Phase F (needs detailing) |
+| **Status** | Phases A-D ALL DONE. R1 App Remake DONE. Phase E started prematurely (S78-S80) — code committed but PAUSED. Correct build order: F → G → E. |
+| **Last Completed** | E4a-e Growth Advisor committed (S80). Phase E now PAUSED per owner directive. |
 | **Session Count** | 80 |
 | **Tables Deployed** | 92 |
 | **Migration Files** | 28 |
 
-**R1 Flutter App Remake COMPLETE (S78).** Design system + 33 role screens + role switching. R1i deferred to Phase E.
-**D3 Phase 1+2 COMPLETE.** Phase 3 is future (6+ months post-launch).
-**D4 ZBooks COMPLETE (S70).** All 16 sub-steps (D4a-D4p) built. 13 hooks, 13 web pages, 5 Edge Functions, 3 Flutter screens, 61 tables, 20 migrations.
-**D5 Property Management COMPLETE (S77).** All 10 sub-steps (D5a-D5j) built. 18 tables, 14 CRM pages, 11 hooks, 10 Flutter screens, 3 Edge Functions, 157 model tests.
-**E1-E2 AI Layer COMPLETE (S78).** 2 tables, 1 Edge Function (14 tools), 2 hooks, 1 API client, provider updated.
-**E5 Xactimate Estimate Engine COMPLETE (S79).** 6 tables, estimate writer UI (Flutter + Web CRM + portals), pricing pipeline Edge Functions.
-**E6 Bid Walkthrough Engine COMPLETE (S79).** 5 tables, 12 Flutter screens, 4 annotation files, 4 sketch editor files, 11 web files, 4 AI Edge Functions. E6e (LiDAR) + E6i (3D) deferred.
-**E3 Employee Portal AI + Mobile AI COMPLETE (S80).** 4 new Edge Functions (1,311 lines), team portal troubleshoot page (1,364 lines, 5-tab UI), Flutter ai_service + z_chat_sheet + ai_photo_analyzer (2,413 lines), client portal ai-chat-widget (583 lines). 26 Edge Functions total.
-**Next:** E4 (Growth Advisor + Advanced AI) — needs detailing in sprint specs first.
-**ACTION REQUIRED:** Set ANTHROPIC_API_KEY secret: `npx supabase secrets set ANTHROPIC_API_KEY=sk-ant-...`
+## CRITICAL: AI GOES LAST — BUILD ORDER CORRECTED (S80)
+
+**Owner directive (S80):** Phase E (AI Layer) was started prematurely. AI must be built AFTER every platform feature exists (Phase F) and is debugged (Phase G). AI needs to know every feature like the back of its hand — every table, every screen, every workflow — so it can do literally anything a user asks within the program. Deep AI spec session required before resuming Phase E.
+
+**Correct build order: A(DONE) → B(DONE) → C(DONE) → D(DONE) → R1(DONE) → F(NEXT) → G → E(LAST)**
+
+**Phase E premature work (committed, dormant in codebase):**
+- E1-E2: z-intelligence EF (14 tools), Z Console wired, z_threads/z_messages tables (S78)
+- E3: 4 troubleshooting EFs, team portal troubleshoot page, Flutter AI chat, client portal widget (S80)
+- E4: 5 growth advisor EFs + 4 CRM pages (S80, not deployed)
+- E5: Xactimate estimate engine — 5 tables, 6 EFs, UI across all apps (S79)
+- E6: Walkthrough engine — 5 tables, 4 EFs, 12 Flutter screens, CRM/portal viewers (S79)
+- 26 Edge Functions deployed total. ANTHROPIC_API_KEY not set (functions are dormant).
+- This code is additive (new files/tables only) — does NOT break existing functionality.
+
+**Phase D summary (ALL DONE):**
+- D1: Job Type System (S62). D2: Insurance/Restoration (S63-S64, S68). D3: Insurance Verticals (S69).
+- D4: ZBooks (S70) — 15 tables, 13 hooks, 13 pages, 5 EFs, 3 Flutter screens.
+- D5: Property Management (S71-S77) — 18 tables, 14 CRM pages, 11 hooks, 10 Flutter screens, 3 EFs.
+- D6: Enterprise Foundation (S65-66). D7a: Certifications (S67-68).
+- R1: Flutter App Remake (S78) — 33 role screens, design system, AppShell.
+
+**Next: Phase F (Platform Completion).** Needs sprint specs written. Owner to decide priority order of F1-F10.
 
 ---
 
@@ -44,20 +57,32 @@
 
 | Gap | Status | Sprint | Details |
 |-----|--------|--------|---------|
-| D6: company_documents table | NOT BUILT | D6a | Table + UI deferred. No spec priority. |
-| D6: document_versions table | NOT BUILT | D6a | Table + UI deferred. No spec priority. |
-| D6: Flutter enterprise screens | NOT BUILT | D6b | Branch/roles/forms/API key screens for mobile. Settings page done in Web CRM only. |
-| D4: ZBooks | **ALL DONE** | D4 | D4a-D4p ALL complete. GL engine + 15 tables + 13 web pages + 3 Flutter screens + 5 Edge Functions. 13 hooks. |
-| D5: Property Management | **ALL DONE** | D5 | D5a-D5j ALL complete. 18 tables, 14 CRM pages, 11 hooks, 10 Flutter screens, 3 Edge Functions, 157 tests. |
+| **Phase E AI (PAUSED)** | **DORMANT** | E | Code committed S78-S80. NOT to be resumed until after F+G. Deep spec session required. |
+| F1: Phone System | NOT BUILT | F1 | Telnyx VoIP, AI receptionist, SMS, call recording |
+| F2: Website Builder V2 | NOT BUILT | F2 | Cloudflare Registrar, templates, AI content |
+| F3: Meeting Room System | NOT BUILT | F3 | LiveKit video, 6 meeting types, AI transcription |
+| F4: Mobile Field Toolkit | NOT BUILT | F4 | 25 tools: walkie-talkie/PTT, inspections, restoration |
+| F5: Business OS Expansion | NOT BUILT | F5 | CPA Portal, Payroll, Fleet, Route, Procurement, HR, Docs |
+| F6: Marketplace | NOT BUILT | F6 | Equipment diagnostics, lead gen, contractor bidding |
+| F7: ZAFTO Home Platform | NOT BUILT | F7 | Homeowner property intelligence, free + premium |
+| F8: Ops Portal Phases 2-4 | NOT BUILT | F8 | Marketing engine, treasury, legal, dev terminal |
+| F9: Hiring System | NOT BUILT | F9 | Multi-channel job posting, applicant pipeline |
+| F10: ZDocs + ZSheets | NOT BUILT | F10 | PDF-first document suite. BUILD LAST. |
+| C4: Security Hardening | PENDING | C4 | Email migration, passwords, YubiKeys. Pre-launch. |
+| PowerSync Offline | NOT STARTED | — | SQLite <-> PostgreSQL offline sync |
+| Dead Man Switch SMS | NOT DEPLOYED | — | SAFETY CRITICAL. Edge Function exists but no SMS provider wired. |
+| D6: company_documents table | NOT BUILT | D6a | Table + UI deferred. |
+| D6: Flutter enterprise screens | NOT BUILT | D6b | Branch/roles/forms/API key screens for mobile. |
 
 ---
 
 ## DRIFT PREVENTION RULES (ENFORCED — VIOLATION = DRIFT)
 
-1. **SEQUENTIAL EXECUTION** — Execute sprint sub-steps IN ORDER per `07_SPRINT_SPECS.md`. Never skip ahead.
-2. **CHECK OFF AS YOU GO** — Mark `[x]` in `07_SPRINT_SPECS.md` for each item completed. If it's not checked, it's not done.
-3. **NO OUT-OF-ORDER WORK** — If user requests work from a later sprint, discuss it first. If proceeding, add steps to sprint specs BEFORE coding.
-4. **VERIFY BEFORE CLAIMING DONE** — Run `dart analyze`, `npm run build` (all portals), targeted code checks. No "should work" — prove it.
+1. **AI GOES TRULY LAST** — Phase E is PAUSED. Do NOT resume AI work until ALL of Phase F + G are complete. AI must know every feature. Owner will initiate a deep spec session before any AI work resumes. This is the #1 rule.
+2. **SEQUENTIAL EXECUTION** — Execute sprint sub-steps IN ORDER per `07_SPRINT_SPECS.md`. Never skip ahead.
+3. **CHECK OFF AS YOU GO** — Mark `[x]` in `07_SPRINT_SPECS.md` for each item completed. If it's not checked, it's not done.
+4. **NO OUT-OF-ORDER WORK** — If user requests work from a later sprint, discuss it first. If proceeding, add steps to sprint specs BEFORE coding.
+5. **VERIFY BEFORE CLAIMING DONE** — Run `dart analyze`, `npm run build` (all portals), targeted code checks. No "should work" — prove it.
 5. **UPDATE THESE DOCS AT SESSION END:**
    - `07_SPRINT_SPECS.md` — check off completed items, add new items if scope expanded
    - THIS doc (`00_HANDOFF.md`) — update CURRENT EXECUTION POINT table + add session log entry
@@ -119,7 +144,20 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 - use-ai-assistant.ts hook, ai-chat-widget.tsx (floating Z + slide-up panel)
 - layout.tsx updated. Commit: e9dc070. Build clean.
 
-**Next:** E4 (Growth Advisor + Advanced AI) — needs detailing.
+**E4a-e: Growth Advisor (COMMITTED, not deployed):**
+- 5 Edge Functions (2,133 lines), 4 hooks (756 lines), 4 CRM pages (2,263 lines).
+- Commit: 6b57047. Web CRM builds clean (71 routes).
+
+**INTEL folder deleted** by owner — static trade content replaced by Claude AI. Commit: 75266fe.
+
+**PHASE E PAUSED (owner directive):**
+- AI was built prematurely (S78-S80). Should come AFTER Phase F (Platform) + G (QA).
+- All E code is additive (new files/tables). Does not break existing functionality.
+- Build order corrected: A→B→C→D→R1→**F→G→E**
+- Deep AI spec session required before resuming Phase E.
+- All docs updated to reflect this (master build plan, handoff, circuit blueprint, live status, sprint specs).
+
+**Next:** Phase F (Platform Completion). Owner to decide F1-F10 priority.
 
 ---
 
