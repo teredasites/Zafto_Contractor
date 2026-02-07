@@ -6627,12 +6627,15 @@ Include <content>{markdown}</content> for rendered display.
 - [x] Commit: `[E5d] AI PDF parsing — Xactimate estimate import`
 
 #### E5e: AI Scope Assistant (~6 hrs)
-- [ ] Gap detection engine: loss type → expected scope → missing items
-- [ ] Photo analysis: damage type → suggested line items
-- [ ] Supplement generator: new scope + justification narrative
-- [ ] Z Console integration: "/estimate" slash command
-- [ ] Pricing dispute letter generator
-- [ ] Commit: `[E5e] AI scope assistant — gap detection + supplement generator`
+**Status: DONE (Session 79)**
+- [x] Gap detection engine: loss type → expected scope → missing items (with priority levels)
+- [x] Photo analysis: damage type → suggested line items (Claude Vision)
+- [x] Supplement generator: narrative + additional items + standards + cost estimate
+- [x] Z Assist sidebar tab in estimate editor (integrated into existing sidebar)
+- [x] Pricing dispute letter generator (formal correspondence with key points)
+- [x] Edge Function `estimate-scope-assist` deployed (4 actions)
+- [x] Hook: `use-scope-assist.ts` with typed results for all 4 actions
+- [x] Commit: `[E5e] AI scope assistant — gap detection + supplement generator`
 
 #### E5f: Flutter Estimate Entry (~8 hrs)
 - [ ] Simplified estimate screen (mobile-optimized)

@@ -13,6 +13,10 @@ import {
   useEstimateLines, useXactCodes, usePricingLookup, useEstimateTemplates,
   type EstimateLine, type XactimateCode, type EstimateSummary, type EstimateTemplate,
 } from '@/lib/hooks/use-estimate-engine';
+import {
+  useScopeAssist,
+  type GapDetectionResult, type PhotoAnalysisResult, type SupplementResult, type DisputeLetterResult,
+} from '@/lib/hooks/use-scope-assist';
 
 // ── Claim header info ──
 
@@ -62,10 +66,11 @@ export default function EstimateEditorPage() {
   const { codes, loading: codesLoading, searchCodes, getCategories } = useXactCodes();
   const { lookupPrice } = usePricingLookup();
   const { templates, loading: templatesLoading, saveTemplate } = useEstimateTemplates();
+  const scopeAssist = useScopeAssist();
 
   // ── UI state ──
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [sidebarTab, setSidebarTab] = useState<'codes' | 'templates'>('codes');
+  const [sidebarTab, setSidebarTab] = useState<'codes' | 'templates' | 'assist'>('codes');
   const [codeSearch, setCodeSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [categories, setCategories] = useState<Array<{ code: string; name: string }>>([]);
@@ -536,6 +541,15 @@ export default function EstimateEditorPage() {
               >
                 Templates
               </button>
+              <button
+                onClick={() => setSidebarTab('assist')}
+                className={cn(
+                  'px-3 py-1.5 text-xs rounded-lg transition-colors',
+                  sidebarTab === 'assist' ? 'text-blue-400 bg-blue-500/10' : 'text-zinc-400 hover:text-zinc-200'
+                )}
+              >
+                Z Assist
+              </button>
             </div>
             <button onClick={() => setSidebarOpen(false)} className="p-1 text-zinc-500 hover:text-zinc-300">
               <X className="w-4 h-4" />
@@ -555,12 +569,14 @@ export default function EstimateEditorPage() {
               newRoomName={newRoomName}
               onAddCode={handleAddCode}
             />
-          ) : (
+          ) : sidebarTab === 'templates' ? (
             <TemplateBrowserPanel
               templates={templates}
               loading={templatesLoading}
               onApply={handleApplyTemplate}
             />
+          ) : (
+            <ScopeAssistPanel claimId={claimId} scopeAssist={scopeAssist} />
           )}
         </div>
       )}
@@ -1069,6 +1085,293 @@ function SummaryPanel({
           <span className="text-zinc-100 font-semibold">Grand Total</span>
           <span className="text-zinc-100 font-semibold text-lg">${fmt(summary.grandTotal)}</span>
         </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Scope Assist Panel ──
+
+function ScopeAssistPanel({
+  claimId, scopeAssist,
+}: {
+  claimId: string;
+  scopeAssist: ReturnType<typeof useScopeAssist>;
+}) {
+  const { loading, error, detectGaps, analyzePhoto, generateSupplement, generateDisputeLetter } = scopeAssist;
+  const [activeAction, setActiveAction] = useState<string | null>(null);
+  const [result, setResult] = useState<GapDetectionResult | PhotoAnalysisResult | SupplementResult | DisputeLetterResult | null>(null);
+  const [supplementReason, setSupplementReason] = useState('');
+  const photoInputRef = useRef<HTMLInputElement>(null);
+
+  const handleGapDetection = async () => {
+    setActiveAction('gap_detection');
+    setResult(null);
+    const res = await detectGaps(claimId);
+    if (res) setResult(res);
+  };
+
+  const handlePhotoAnalysis = async (file: File) => {
+    setActiveAction('photo_analysis');
+    setResult(null);
+    const buffer = await file.arrayBuffer();
+    const base64 = btoa(new Uint8Array(buffer).reduce((d, b) => d + String.fromCharCode(b), ''));
+    const mediaType = file.type || 'image/jpeg';
+    const res = await analyzePhoto(claimId, base64, mediaType);
+    if (res) setResult(res);
+  };
+
+  const handleSupplement = async () => {
+    if (!supplementReason.trim()) return;
+    setActiveAction('supplement');
+    setResult(null);
+    const res = await generateSupplement(claimId, supplementReason);
+    if (res) setResult(res);
+  };
+
+  const handleDisputeLetter = async () => {
+    setActiveAction('dispute_letter');
+    setResult(null);
+    const res = await generateDisputeLetter(claimId);
+    if (res) setResult(res);
+  };
+
+  return (
+    <div className="flex-1 flex flex-col overflow-hidden">
+      <input
+        ref={photoInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) handlePhotoAnalysis(file);
+        }}
+      />
+
+      {/* Action buttons */}
+      <div className="p-3 space-y-2 border-b border-zinc-800">
+        <button
+          onClick={handleGapDetection}
+          disabled={loading}
+          className="w-full flex items-center gap-2 px-3 py-2 text-xs text-left bg-zinc-800/50 border border-zinc-700/50 rounded-lg hover:bg-zinc-800 disabled:opacity-50"
+        >
+          <AlertCircle className="w-4 h-4 text-amber-400 flex-shrink-0" />
+          <div>
+            <span className="text-zinc-200 font-medium">Gap Detection</span>
+            <p className="text-zinc-500 text-[10px]">Find missing line items in scope</p>
+          </div>
+        </button>
+        <button
+          onClick={() => photoInputRef.current?.click()}
+          disabled={loading}
+          className="w-full flex items-center gap-2 px-3 py-2 text-xs text-left bg-zinc-800/50 border border-zinc-700/50 rounded-lg hover:bg-zinc-800 disabled:opacity-50"
+        >
+          <Zap className="w-4 h-4 text-blue-400 flex-shrink-0" />
+          <div>
+            <span className="text-zinc-200 font-medium">Photo Analysis</span>
+            <p className="text-zinc-500 text-[10px]">Upload damage photo for scope suggestions</p>
+          </div>
+        </button>
+        <div className="space-y-1">
+          <div className="flex gap-1">
+            <input
+              type="text"
+              value={supplementReason}
+              onChange={(e) => setSupplementReason(e.target.value)}
+              placeholder="Supplement reason..."
+              className="flex-1 px-2 py-1.5 text-xs bg-zinc-800 border border-zinc-700 rounded text-zinc-200 placeholder:text-zinc-600"
+            />
+            <button
+              onClick={handleSupplement}
+              disabled={loading || !supplementReason.trim()}
+              className="px-2 py-1.5 text-xs text-blue-400 bg-blue-500/10 border border-blue-500/20 rounded hover:bg-blue-500/20 disabled:opacity-50"
+            >
+              Generate
+            </button>
+          </div>
+          <p className="text-[10px] text-zinc-600 px-1">Generate supplement narrative + line items</p>
+        </div>
+        <button
+          onClick={handleDisputeLetter}
+          disabled={loading}
+          className="w-full flex items-center gap-2 px-3 py-2 text-xs text-left bg-zinc-800/50 border border-zinc-700/50 rounded-lg hover:bg-zinc-800 disabled:opacity-50"
+        >
+          <FileText className="w-4 h-4 text-red-400 flex-shrink-0" />
+          <div>
+            <span className="text-zinc-200 font-medium">Pricing Dispute Letter</span>
+            <p className="text-zinc-500 text-[10px]">Generate formal dispute correspondence</p>
+          </div>
+        </button>
+      </div>
+
+      {/* Results area */}
+      <div className="flex-1 overflow-y-auto p-3">
+        {loading && (
+          <div className="flex items-center justify-center py-8">
+            <Loader2 className="w-5 h-5 text-blue-500 animate-spin" />
+            <span className="ml-2 text-xs text-zinc-400">Analyzing...</span>
+          </div>
+        )}
+
+        {error && (
+          <div className="px-3 py-2 bg-red-500/10 border border-red-500/20 rounded text-xs text-red-400">
+            {error}
+          </div>
+        )}
+
+        {/* Gap Detection Results */}
+        {result && activeAction === 'gap_detection' && (() => {
+          const gaps = result as GapDetectionResult;
+          return (
+            <div className="space-y-3">
+              <p className="text-xs text-zinc-400">{gaps.overallAssessment}</p>
+              {gaps.missingItems.length > 0 && (
+                <div>
+                  <h4 className="text-[10px] uppercase tracking-wider text-zinc-500 mb-2">Missing Items</h4>
+                  {gaps.missingItems.map((item, i) => (
+                    <div key={i} className="px-2 py-2 bg-zinc-800/30 rounded mb-1.5">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[10px] font-mono text-blue-400">{item.code}</span>
+                        <span className={cn(
+                          'text-[10px] px-1 py-0.5 rounded',
+                          item.priority === 'HIGH' ? 'bg-red-500/10 text-red-400' :
+                          item.priority === 'MEDIUM' ? 'bg-amber-500/10 text-amber-400' :
+                          'bg-zinc-700 text-zinc-400'
+                        )}>
+                          {item.priority}
+                        </span>
+                      </div>
+                      <p className="text-xs text-zinc-300 mt-0.5">{item.description}</p>
+                      <p className="text-[10px] text-zinc-500 mt-0.5">{item.reason}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {gaps.unusualItems.length > 0 && (
+                <div>
+                  <h4 className="text-[10px] uppercase tracking-wider text-zinc-500 mb-2">Unusual Items</h4>
+                  {gaps.unusualItems.map((item, i) => (
+                    <div key={i} className="px-2 py-2 bg-amber-500/5 border border-amber-500/10 rounded mb-1.5">
+                      <span className="text-[10px] font-mono text-amber-400">Line {item.lineNumber}: {item.code}</span>
+                      <p className="text-xs text-zinc-300 mt-0.5">{item.issue}</p>
+                      <p className="text-[10px] text-zinc-500">{item.recommendation}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })()}
+
+        {/* Photo Analysis Results */}
+        {result && activeAction === 'photo_analysis' && (() => {
+          const photo = result as PhotoAnalysisResult;
+          return (
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-zinc-200 font-medium capitalize">{photo.damageType} damage</span>
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-700 text-zinc-400">{photo.severity}</span>
+              </div>
+              <p className="text-xs text-zinc-400">{photo.notes}</p>
+              {photo.suggestedItems.length > 0 && (
+                <div>
+                  <h4 className="text-[10px] uppercase tracking-wider text-zinc-500 mb-2">Suggested Items</h4>
+                  {photo.suggestedItems.map((item, i) => (
+                    <div key={i} className="px-2 py-2 bg-zinc-800/30 rounded mb-1.5">
+                      <span className="text-[10px] font-mono text-blue-400">{item.code}</span>
+                      <p className="text-xs text-zinc-300 mt-0.5">{item.description}</p>
+                      <p className="text-[10px] text-zinc-500">{item.reason}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {photo.investigations.length > 0 && (
+                <div>
+                  <h4 className="text-[10px] uppercase tracking-wider text-zinc-500 mb-2">Investigate</h4>
+                  <ul className="space-y-1">
+                    {photo.investigations.map((inv, i) => (
+                      <li key={i} className="text-xs text-zinc-400 flex items-start gap-1.5">
+                        <AlertCircle className="w-3 h-3 text-amber-400 mt-0.5 flex-shrink-0" />
+                        {inv}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          );
+        })()}
+
+        {/* Supplement Results */}
+        {result && activeAction === 'supplement' && (() => {
+          const supp = result as SupplementResult;
+          return (
+            <div className="space-y-3">
+              <div>
+                <h4 className="text-[10px] uppercase tracking-wider text-zinc-500 mb-2">Narrative</h4>
+                <p className="text-xs text-zinc-300 whitespace-pre-wrap">{supp.narrative}</p>
+              </div>
+              {supp.additionalItems.length > 0 && (
+                <div>
+                  <h4 className="text-[10px] uppercase tracking-wider text-zinc-500 mb-2">Additional Items</h4>
+                  {supp.additionalItems.map((item, i) => (
+                    <div key={i} className="px-2 py-2 bg-zinc-800/30 rounded mb-1.5">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[10px] font-mono text-blue-400">{item.code}</span>
+                        <span className="text-[10px] text-zinc-500">{item.quantity} {item.unit}</span>
+                      </div>
+                      <p className="text-xs text-zinc-300 mt-0.5">{item.description}</p>
+                      <p className="text-[10px] text-zinc-500">{item.reason}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-zinc-500">Estimated Additional Cost</span>
+                <span className="text-zinc-200 font-medium">${fmt(supp.estimatedAdditionalCost)}</span>
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* Dispute Letter Results */}
+        {result && activeAction === 'dispute_letter' && (() => {
+          const letter = result as DisputeLetterResult;
+          return (
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <h4 className="text-xs font-medium text-zinc-200">{letter.subject}</h4>
+                <button
+                  onClick={() => navigator.clipboard.writeText(letter.letterText)}
+                  className="text-[10px] text-blue-400 hover:underline"
+                >
+                  Copy
+                </button>
+              </div>
+              <pre className="text-xs text-zinc-300 whitespace-pre-wrap bg-zinc-800/50 rounded p-3 max-h-[300px] overflow-y-auto">{letter.letterText}</pre>
+              {letter.keyPoints.length > 0 && (
+                <div>
+                  <h4 className="text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Key Points</h4>
+                  <ul className="space-y-0.5">
+                    {letter.keyPoints.map((pt, i) => (
+                      <li key={i} className="text-[10px] text-zinc-400">• {pt}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              <p className="text-[10px] text-zinc-500">{letter.suggestedFollowUp}</p>
+            </div>
+          );
+        })()}
+
+        {!loading && !error && !result && (
+          <div className="text-center py-8 text-zinc-600 text-xs">
+            <Zap className="w-8 h-8 mx-auto mb-2 opacity-30" />
+            <p>Select an action above</p>
+            <p className="mt-1 text-zinc-700">Z Assist analyzes your estimate with AI</p>
+          </div>
+        )}
       </div>
     </div>
   );
