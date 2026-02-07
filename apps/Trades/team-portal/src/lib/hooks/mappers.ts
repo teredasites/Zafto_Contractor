@@ -40,6 +40,7 @@ export interface JobData {
   type: string;
   jobType: JobType;
   typeMetadata: InsuranceMetadata | WarrantyMetadata | Record<string, unknown>;
+  propertyId: string | null;
   scheduledStart: string | null;
   scheduledEnd: string | null;
   description: string;
@@ -366,6 +367,134 @@ export function mapTpiInspection(row: Record<string, unknown>): TpiInspectionDat
   };
 }
 
+// ==================== PROPERTY MANAGEMENT ====================
+
+export type MaintenanceRequestStatus = 'new' | 'assigned' | 'in_progress' | 'on_hold' | 'completed' | 'cancelled';
+export type MaintenanceUrgency = 'low' | 'normal' | 'high' | 'emergency';
+
+export interface MaintenanceRequestData {
+  id: string;
+  propertyId: string;
+  unitId: string | null;
+  tenantId: string | null;
+  jobId: string | null;
+  title: string;
+  description: string;
+  category: string;
+  urgency: MaintenanceUrgency;
+  status: MaintenanceRequestStatus;
+  assignedTo: string[];
+  propertyName: string;
+  unitNumber: string | null;
+  tenantName: string | null;
+  tenantPhone: string | null;
+  tenantEmail: string | null;
+  photos: string[];
+  scheduledDate: string | null;
+  completedAt: string | null;
+  createdAt: string;
+}
+
+export interface PropertySummary {
+  id: string;
+  name: string;
+  address: string;
+  city: string;
+  state: string;
+  propertyType: string;
+  unitCount: number;
+}
+
+export interface PropertyAssetData {
+  id: string;
+  propertyId: string;
+  unitId: string | null;
+  assetType: string;
+  brand: string;
+  model: string;
+  serialNumber: string | null;
+  installDate: string | null;
+  warrantyExpiration: string | null;
+  lastServiceDate: string | null;
+  nextServiceDate: string | null;
+  condition: string;
+  notes: string;
+}
+
+export function mapMaintenanceRequest(row: Record<string, unknown>): MaintenanceRequestData {
+  const property = row.properties as Record<string, unknown> | null;
+  const unit = row.units as Record<string, unknown> | null;
+  const tenant = row.tenants as Record<string, unknown> | null;
+  return {
+    id: row.id as string,
+    propertyId: row.property_id as string,
+    unitId: (row.unit_id as string) || null,
+    tenantId: (row.tenant_id as string) || null,
+    jobId: (row.job_id as string) || null,
+    title: (row.title as string) || '',
+    description: (row.description as string) || '',
+    category: (row.category as string) || 'general',
+    urgency: (row.urgency as MaintenanceUrgency) || 'normal',
+    status: (row.status as MaintenanceRequestStatus) || 'new',
+    assignedTo: (row.assigned_user_ids as string[]) || [],
+    propertyName: (property?.name as string) || '',
+    unitNumber: (unit?.unit_number as string) || null,
+    tenantName: (tenant?.name as string) || null,
+    tenantPhone: (tenant?.phone as string) || null,
+    tenantEmail: (tenant?.email as string) || null,
+    photos: (row.photos as string[]) || [],
+    scheduledDate: (row.scheduled_date as string) || null,
+    completedAt: (row.completed_at as string) || null,
+    createdAt: (row.created_at as string) || new Date().toISOString(),
+  };
+}
+
+export function mapPropertySummary(row: Record<string, unknown>): PropertySummary {
+  return {
+    id: row.id as string,
+    name: (row.name as string) || '',
+    address: (row.address as string) || '',
+    city: (row.city as string) || '',
+    state: (row.state as string) || '',
+    propertyType: (row.property_type as string) || 'residential',
+    unitCount: (row.unit_count as number) || 0,
+  };
+}
+
+export function mapPropertyAsset(row: Record<string, unknown>): PropertyAssetData {
+  return {
+    id: row.id as string,
+    propertyId: row.property_id as string,
+    unitId: (row.unit_id as string) || null,
+    assetType: (row.asset_type as string) || '',
+    brand: (row.brand as string) || '',
+    model: (row.model as string) || '',
+    serialNumber: (row.serial_number as string) || null,
+    installDate: (row.install_date as string) || null,
+    warrantyExpiration: (row.warranty_expiration as string) || null,
+    lastServiceDate: (row.last_service_date as string) || null,
+    nextServiceDate: (row.next_service_date as string) || null,
+    condition: (row.condition as string) || 'good',
+    notes: (row.notes as string) || '',
+  };
+}
+
+export const URGENCY_COLORS: Record<MaintenanceUrgency, { bg: string; text: string }> = {
+  low: { bg: 'bg-slate-100 dark:bg-slate-900/30', text: 'text-slate-600 dark:text-slate-400' },
+  normal: { bg: 'bg-blue-100 dark:bg-blue-900/30', text: 'text-blue-600 dark:text-blue-400' },
+  high: { bg: 'bg-orange-100 dark:bg-orange-900/30', text: 'text-orange-600 dark:text-orange-400' },
+  emergency: { bg: 'bg-red-100 dark:bg-red-900/30', text: 'text-red-600 dark:text-red-400' },
+};
+
+export const MAINTENANCE_STATUS_LABELS: Record<MaintenanceRequestStatus, string> = {
+  new: 'New',
+  assigned: 'Assigned',
+  in_progress: 'In Progress',
+  on_hold: 'On Hold',
+  completed: 'Completed',
+  cancelled: 'Cancelled',
+};
+
 // --- Job Type Maps ---
 
 export const JOB_TYPE_LABELS: Record<JobType, string> = {
@@ -403,6 +532,7 @@ export function mapJob(row: Record<string, unknown>): JobData {
     type: jobType,
     jobType,
     typeMetadata: (row.type_metadata as Record<string, unknown>) || {},
+    propertyId: (row.property_id as string) || null,
     scheduledStart: (row.scheduled_start as string) || null,
     scheduledEnd: (row.scheduled_end as string) || null,
     description: (row.description as string) || '',
