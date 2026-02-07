@@ -62,3 +62,4 @@ key.properties
 # Node
 node_modules/
 **/node_modules/
+apps/Trades/supabase/.temp/

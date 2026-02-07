@@ -8,6 +8,8 @@ import 'package:sensors_plus/sensors_plus.dart';
 
 import '../../theme/zafto_colors.dart';
 import '../../theme/theme_provider.dart';
+import '../../services/compliance_service.dart';
+import '../../models/compliance_record.dart';
 
 /// Level & Plumb Tool - Accelerometer-based digital level with camera overlay
 class LevelPlumbScreen extends ConsumerStatefulWidget {
@@ -675,27 +677,55 @@ class _LevelPlumbScreenState extends ConsumerState<LevelPlumbScreen>
     );
   }
 
-  void _saveReading(ZaftoColors colors) {
+  Future<void> _saveReading(ZaftoColors colors) async {
     final xAngle = _calculateAngle(_x, _z);
     final yAngle = _calculateAngle(_y, _z);
+    final totalAngle = math.sqrt(xAngle * xAngle + yAngle * yAngle);
 
     HapticFeedback.mediumImpact();
 
-    // TODO: BACKEND - Save reading to job
-    // - Store x_angle, y_angle, timestamp, is_level
-    // - Link to jobId if provided
-    // - Store with photo if camera was used
+    try {
+      final complianceService = ref.read(complianceServiceProvider);
+      await complianceService.createRecord(
+        type: ComplianceRecordType.inspection,
+        jobId: widget.jobId,
+        data: {
+          'tool': 'level_plumb',
+          'mode': _mode == LevelMode.surface ? 'surface' : 'bullseye',
+          'x_angle': double.parse(xAngle.toStringAsFixed(2)),
+          'y_angle': double.parse(yAngle.toStringAsFixed(2)),
+          'total_angle': double.parse(totalAngle.toStringAsFixed(2)),
+          'is_level': _isLevel,
+          'threshold_degrees': _levelThreshold,
+          'calibration_x_offset': _xOffset,
+          'calibration_y_offset': _yOffset,
+        },
+      );
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Level reading saved: X=${xAngle.toStringAsFixed(1)}° Y=${yAngle.toStringAsFixed(1)}°',
-        ),
-        backgroundColor: colors.accentSuccess,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      ),
-    );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Level reading saved: X=${xAngle.toStringAsFixed(1)}° Y=${yAngle.toStringAsFixed(1)}°',
+            ),
+            backgroundColor: colors.accentSuccess,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Failed to save reading'),
+            backgroundColor: colors.accentError,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          ),
+        );
+      }
+    }
   }
 
   void _showSettingsSheet(ZaftoColors colors) {

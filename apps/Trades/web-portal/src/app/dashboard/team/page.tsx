@@ -36,7 +36,7 @@ import { Avatar } from '@/components/ui/avatar';
 import { TeamMap } from '@/components/ui/team-map';
 import { CommandPalette } from '@/components/command-palette';
 import { formatRelativeTime, formatCurrency, formatDate, formatTime, cn } from '@/lib/utils';
-import { mockTeam, mockJobs, mockSchedule } from '@/lib/mock-data';
+import { useJobs, useTeam } from '@/lib/hooks/use-jobs';
 import type { TeamMember, UserRole, Job } from '@/types';
 
 const roleColors: Record<UserRole, { bg: string; text: string }> = {
@@ -59,6 +59,8 @@ type ViewMode = 'team' | 'dispatch';
 
 export default function TeamPage() {
   const router = useRouter();
+  const { team } = useTeam();
+  const { jobs } = useJobs();
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
   const [showInviteModal, setShowInviteModal] = useState(false);
@@ -67,7 +69,7 @@ export default function TeamPage() {
   const [showMessageModal, setShowMessageModal] = useState(false);
   const [selectedMemberForMessage, setSelectedMemberForMessage] = useState<TeamMember | null>(null);
 
-  const filteredMembers = mockTeam.filter((member) => {
+  const filteredMembers = team.filter((member) => {
     const matchesSearch =
       member.name.toLowerCase().includes(search.toLowerCase()) ||
       member.email.toLowerCase().includes(search.toLowerCase());
@@ -85,21 +87,21 @@ export default function TeamPage() {
     { value: 'subcontractor', label: 'Subcontractor' },
   ];
 
-  const activeCount = mockTeam.filter((m) => m.isActive).length;
-  const fieldCount = mockTeam.filter((m) => m.role === 'field_tech').length;
-  const onlineCount = mockTeam.filter(
+  const activeCount = team.filter((m) => m.isActive).length;
+  const fieldCount = team.filter((m) => m.role === 'field_tech').length;
+  const onlineCount = team.filter(
     (m) => m.lastActive && new Date().getTime() - new Date(m.lastActive).getTime() < 30 * 60 * 1000
   ).length;
 
   // Get today's scheduled jobs
-  const todayJobs = mockJobs.filter((job) => {
+  const todayJobs = jobs.filter((job) => {
     if (!job.scheduledStart) return false;
     const today = new Date();
     const jobDate = new Date(job.scheduledStart);
     return jobDate.toDateString() === today.toDateString();
   });
 
-  const unassignedJobs = mockJobs.filter(
+  const unassignedJobs = jobs.filter(
     (job) => (job.status === 'scheduled' || job.status === 'lead') && job.assignedTo.length === 0
   );
 
@@ -118,7 +120,7 @@ export default function TeamPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 animate-fade-in">
       <CommandPalette />
 
       {/* Header */}
@@ -290,13 +292,13 @@ export default function TeamPage() {
               </CardHeader>
               <CardContent className="p-0">
                 <div className="divide-y divide-main">
-                  {mockTeam
+                  {team
                     .filter((m) => m.role === 'field_tech')
                     .map((member) => {
                       const isOnline =
                         member.lastActive &&
                         new Date().getTime() - new Date(member.lastActive).getTime() < 30 * 60 * 1000;
-                      const assignedJobs = mockJobs.filter(
+                      const assignedJobs = jobs.filter(
                         (j) => j.assignedTo.includes(member.id) && (j.status === 'scheduled' || j.status === 'in_progress')
                       );
 
@@ -355,8 +357,8 @@ export default function TeamPage() {
               </CardHeader>
               <CardContent className="p-4 h-[calc(100%-4rem)]">
                 <TeamMap
-                  members={mockTeam}
-                  jobs={mockJobs}
+                  members={team}
+                  jobs={jobs}
                   variant="full"
                   onMemberClick={handleMemberClick}
                   onJobClick={handleJobClick}
@@ -378,7 +380,7 @@ export default function TeamPage() {
                     <Users size={20} className="text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
-                    <p className="text-2xl font-semibold text-main">{mockTeam.length}</p>
+                    <p className="text-2xl font-semibold text-main">{team.length}</p>
                     <p className="text-sm text-muted">Total Members</p>
                   </div>
                 </div>

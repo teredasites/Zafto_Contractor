@@ -27,7 +27,7 @@ import { Avatar } from '@/components/ui/avatar';
 import { DataTable } from '@/components/ui/data-table';
 import { CommandPalette } from '@/components/command-palette';
 import { cn, formatCurrency } from '@/lib/utils';
-import { mockTeam } from '@/lib/mock-data';
+import { useTeam } from '@/lib/hooks/use-jobs';
 
 // Time entry status
 type TimeEntryStatus = 'active' | 'completed' | 'approved' | 'rejected';
@@ -119,6 +119,7 @@ const formatWeekRange = (start: Date, end: Date) => {
 
 export default function TimeClockPage() {
   const router = useRouter();
+  const { team } = useTeam();
   const [currentWeek, setCurrentWeek] = useState(new Date());
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [view, setView] = useState<'week' | 'list'>('week');
@@ -233,7 +234,7 @@ export default function TimeClockPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 animate-fade-in">
       <CommandPalette />
 
       {/* Header */}
@@ -314,7 +315,7 @@ export default function TimeClockPage() {
             className="px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm"
           >
             <option value="">All Employees</option>
-            {mockTeam.map((member) => (
+            {team.map((member) => (
               <option key={member.id} value={member.id}>
                 {member.name}
               </option>
@@ -380,7 +381,7 @@ export default function TimeClockPage() {
                 </thead>
                 <tbody className="divide-y divide-main">
                   {Object.entries(entriesByUser).map(([userId, entries]) => {
-                    const user = mockTeam.find((m) => m.id === userId);
+                    const user = team.find((m) => m.id === userId);
                     const weekTotal = entries.reduce((sum, e) => sum + (e.totalHours || 0), 0);
 
                     return (

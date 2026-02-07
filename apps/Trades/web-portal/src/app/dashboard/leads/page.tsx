@@ -1,58 +1,27 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import {
   Plus,
-  Search,
-  Filter,
   MoreHorizontal,
-  Phone,
-  Mail,
-  MapPin,
-  Calendar,
   DollarSign,
   User,
   ArrowRight,
   Clock,
   CheckCircle,
-  XCircle,
   AlertCircle,
-  GripVertical,
-  FileText,
+  Loader2,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { SearchInput, Select } from '@/components/ui/input';
 import { Avatar } from '@/components/ui/avatar';
 import { CommandPalette } from '@/components/command-palette';
 import { formatCurrency, formatDate, formatRelativeTime, cn } from '@/lib/utils';
+import { useLeads } from '@/lib/hooks/use-leads';
+import type { LeadData } from '@/lib/hooks/mappers';
 
 type LeadStage = 'new' | 'contacted' | 'qualified' | 'proposal' | 'won' | 'lost';
-
-interface Lead {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  company?: string;
-  source: string;
-  stage: LeadStage;
-  value: number;
-  notes: string;
-  address?: {
-    street: string;
-    city: string;
-    state: string;
-    zip: string;
-  };
-  assignedTo?: string;
-  createdAt: Date;
-  updatedAt: Date;
-  lastContactedAt?: Date;
-  nextFollowUp?: Date;
-}
 
 const stageConfig: Record<LeadStage, { label: string; color: string; bgColor: string }> = {
   new: { label: 'New', color: 'text-blue-700 dark:text-blue-300', bgColor: 'bg-blue-100 dark:bg-blue-900/30' },
@@ -63,100 +32,22 @@ const stageConfig: Record<LeadStage, { label: string; color: string; bgColor: st
   lost: { label: 'Lost', color: 'text-red-700 dark:text-red-300', bgColor: 'bg-red-100 dark:bg-red-900/30' },
 };
 
-const mockLeads: Lead[] = [
-  {
-    id: '1',
-    name: 'Robert Chen',
-    email: 'robert.chen@email.com',
-    phone: '(555) 123-4567',
-    company: 'Chen Properties LLC',
-    source: 'Website',
-    stage: 'new',
-    value: 15000,
-    notes: 'Interested in full home rewire. 2,500 sq ft colonial.',
-    address: { street: '123 Oak Ave', city: 'Hartford', state: 'CT', zip: '06101' },
-    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-    updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-    nextFollowUp: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
-  },
-  {
-    id: '2',
-    name: 'Sarah Martinez',
-    email: 'sarah.m@gmail.com',
-    phone: '(555) 234-5678',
-    source: 'Referral',
-    stage: 'contacted',
-    value: 8500,
-    notes: 'Panel upgrade needed. Referred by Tom Wilson.',
-    address: { street: '456 Elm St', city: 'West Hartford', state: 'CT', zip: '06107' },
-    createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
-    updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
-    lastContactedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
-    nextFollowUp: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
-  },
-  {
-    id: '3',
-    name: 'Mike Thompson',
-    email: 'mthompson@business.com',
-    phone: '(555) 345-6789',
-    company: 'Thompson Auto Shop',
-    source: 'Google',
-    stage: 'qualified',
-    value: 25000,
-    notes: 'Commercial electrical for new auto shop. 3-phase service needed.',
-    address: { street: '789 Industrial Blvd', city: 'Manchester', state: 'CT', zip: '06040' },
-    assignedTo: 'John Smith',
-    createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
-    updatedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
-    lastContactedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
-  },
-  {
-    id: '4',
-    name: 'Jennifer Davis',
-    email: 'jdavis@email.com',
-    phone: '(555) 456-7890',
-    source: 'Yelp',
-    stage: 'proposal',
-    value: 12000,
-    notes: 'Kitchen remodel electrical. Bid sent, waiting for response.',
-    address: { street: '321 Maple Dr', city: 'Glastonbury', state: 'CT', zip: '06033' },
-    assignedTo: 'John Smith',
-    createdAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
-    updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-    lastContactedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-  },
-  {
-    id: '5',
-    name: 'David Wilson',
-    email: 'dwilson@company.com',
-    phone: '(555) 567-8901',
-    company: 'Wilson Retail Group',
-    source: 'Referral',
-    stage: 'won',
-    value: 45000,
-    notes: 'Converted to bid #BID-2024-089. Full store buildout.',
-    createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-    updatedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-  },
-  {
-    id: '6',
-    name: 'Lisa Brown',
-    email: 'lbrown@email.com',
-    phone: '(555) 678-9012',
-    source: 'Website',
-    stage: 'lost',
-    value: 6000,
-    notes: 'Lost to competitor - price was main factor.',
-    createdAt: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000),
-    updatedAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
-  },
-];
+const sourceLabels: Record<string, string> = {
+  website: 'Website',
+  referral: 'Referral',
+  google: 'Google',
+  yelp: 'Yelp',
+  facebook: 'Facebook',
+  instagram: 'Instagram',
+  nextdoor: 'Nextdoor',
+  homeadvisor: 'HomeAdvisor',
+  other: 'Other',
+};
 
 export default function LeadsPage() {
-  const router = useRouter();
+  const { leads, loading, error, createLead, updateLeadStage } = useLeads();
   const [search, setSearch] = useState('');
   const [sourceFilter, setSourceFilter] = useState('all');
-  const [leads, setLeads] = useState(mockLeads);
   const [viewMode, setViewMode] = useState<'pipeline' | 'list'>('pipeline');
   const [showNewLeadModal, setShowNewLeadModal] = useState(false);
   const [draggedLead, setDraggedLead] = useState<string | null>(null);
@@ -164,23 +55,25 @@ export default function LeadsPage() {
   const filteredLeads = leads.filter((lead) => {
     const matchesSearch =
       lead.name.toLowerCase().includes(search.toLowerCase()) ||
-      lead.email.toLowerCase().includes(search.toLowerCase()) ||
-      lead.company?.toLowerCase().includes(search.toLowerCase());
+      (lead.email || '').toLowerCase().includes(search.toLowerCase()) ||
+      (lead.companyName || '').toLowerCase().includes(search.toLowerCase());
     const matchesSource = sourceFilter === 'all' || lead.source === sourceFilter;
     return matchesSearch && matchesSource;
   });
 
   const sourceOptions = [
     { value: 'all', label: 'All Sources' },
-    { value: 'Website', label: 'Website' },
-    { value: 'Referral', label: 'Referral' },
-    { value: 'Google', label: 'Google' },
-    { value: 'Yelp', label: 'Yelp' },
-    { value: 'Facebook', label: 'Facebook' },
-    { value: 'Other', label: 'Other' },
+    { value: 'website', label: 'Website' },
+    { value: 'referral', label: 'Referral' },
+    { value: 'google', label: 'Google' },
+    { value: 'yelp', label: 'Yelp' },
+    { value: 'facebook', label: 'Facebook' },
+    { value: 'instagram', label: 'Instagram' },
+    { value: 'nextdoor', label: 'Nextdoor' },
+    { value: 'homeadvisor', label: 'HomeAdvisor' },
+    { value: 'other', label: 'Other' },
   ];
 
-  const stages: LeadStage[] = ['new', 'contacted', 'qualified', 'proposal', 'won', 'lost'];
   const activeStages: LeadStage[] = ['new', 'contacted', 'qualified', 'proposal'];
 
   const getStageLeads = (stage: LeadStage) => filteredLeads.filter((l) => l.stage === stage);
@@ -193,13 +86,13 @@ export default function LeadsPage() {
     e.preventDefault();
   };
 
-  const handleDrop = (stage: LeadStage) => {
+  const handleDrop = async (stage: LeadStage) => {
     if (!draggedLead) return;
-    setLeads((prev) =>
-      prev.map((lead) =>
-        lead.id === draggedLead ? { ...lead, stage, updatedAt: new Date() } : lead
-      )
-    );
+    try {
+      await updateLeadStage(draggedLead, stage);
+    } catch {
+      // Real-time subscription will refetch
+    }
     setDraggedLead(null);
   };
 
@@ -209,9 +102,23 @@ export default function LeadsPage() {
   const qualifiedCount = getStageLeads('qualified').length + getStageLeads('proposal').length;
   const wonValue = filteredLeads.filter((l) => l.stage === 'won').reduce((sum, l) => sum + l.value, 0);
 
+  if (loading && leads.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="h-8 w-8 animate-spin text-muted" />
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 animate-fade-in">
       <CommandPalette />
+
+      {error && (
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 text-sm text-red-700 dark:text-red-300">
+          {error}
+        </div>
+      )}
 
       {/* Header */}
       <div className="flex items-center justify-between">
@@ -382,7 +289,7 @@ export default function LeadsPage() {
               </thead>
               <tbody>
                 {filteredLeads.map((lead) => {
-                  const config = stageConfig[lead.stage];
+                  const config = stageConfig[lead.stage as LeadStage] || stageConfig.new;
                   return (
                     <tr key={lead.id} className="border-b border-main/50 hover:bg-surface-hover">
                       <td className="px-6 py-4">
@@ -390,11 +297,11 @@ export default function LeadsPage() {
                           <Avatar name={lead.name} size="sm" />
                           <div>
                             <p className="font-medium text-main">{lead.name}</p>
-                            <p className="text-sm text-muted">{lead.email}</p>
+                            <p className="text-sm text-muted">{lead.email || ''}</p>
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-sm text-muted">{lead.source}</td>
+                      <td className="px-6 py-4 text-sm text-muted">{sourceLabels[lead.source] || lead.source}</td>
                       <td className="px-6 py-4">
                         <span className={cn('px-2 py-1 rounded-full text-xs font-medium', config.bgColor, config.color)}>
                           {config.label}
@@ -431,14 +338,16 @@ export default function LeadsPage() {
 
       {/* New Lead Modal */}
       {showNewLeadModal && (
-        <NewLeadModal onClose={() => setShowNewLeadModal(false)} />
+        <NewLeadModal
+          onClose={() => setShowNewLeadModal(false)}
+          onCreate={createLead}
+        />
       )}
     </div>
   );
 }
 
-function LeadCard({ lead, onDragStart, isDragging }: { lead: Lead; onDragStart: () => void; isDragging: boolean }) {
-  const config = stageConfig[lead.stage];
+function LeadCard({ lead, onDragStart, isDragging }: { lead: LeadData; onDragStart: () => void; isDragging: boolean }) {
   const hasOverdueFollowUp = lead.nextFollowUp && new Date(lead.nextFollowUp) < new Date();
 
   return (
@@ -455,7 +364,7 @@ function LeadCard({ lead, onDragStart, isDragging }: { lead: Lead; onDragStart: 
           <Avatar name={lead.name} size="sm" />
           <div>
             <p className="font-medium text-main text-sm">{lead.name}</p>
-            {lead.company && <p className="text-xs text-muted">{lead.company}</p>}
+            {lead.companyName && <p className="text-xs text-muted">{lead.companyName}</p>}
           </div>
         </div>
         <button className="p-1 hover:bg-surface-hover rounded">
@@ -488,13 +397,37 @@ function LeadCard({ lead, onDragStart, isDragging }: { lead: Lead; onDragStart: 
   );
 }
 
-function NewLeadModal({ onClose }: { onClose: () => void }) {
+function NewLeadModal({ onClose, onCreate }: {
+  onClose: () => void;
+  onCreate: (input: { name: string; email?: string; phone?: string; source?: string; value?: number; notes?: string }) => Promise<string>;
+}) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  const [source, setSource] = useState('Website');
+  const [source, setSource] = useState('website');
   const [value, setValue] = useState('');
   const [notes, setNotes] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  const handleSubmit = async () => {
+    if (!name.trim()) return;
+    setSaving(true);
+    try {
+      await onCreate({
+        name: name.trim(),
+        email: email.trim() || undefined,
+        phone: phone.trim() || undefined,
+        source,
+        value: value ? parseFloat(value) : undefined,
+        notes: notes.trim() || undefined,
+      });
+      onClose();
+    } catch (e) {
+      alert(e instanceof Error ? e.message : 'Failed to create lead');
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
@@ -541,12 +474,15 @@ function NewLeadModal({ onClose }: { onClose: () => void }) {
                 onChange={(e) => setSource(e.target.value)}
                 className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main focus:border-accent focus:ring-1 focus:ring-accent"
               >
-                <option value="Website">Website</option>
-                <option value="Referral">Referral</option>
-                <option value="Google">Google</option>
-                <option value="Yelp">Yelp</option>
-                <option value="Facebook">Facebook</option>
-                <option value="Other">Other</option>
+                <option value="website">Website</option>
+                <option value="referral">Referral</option>
+                <option value="google">Google</option>
+                <option value="yelp">Yelp</option>
+                <option value="facebook">Facebook</option>
+                <option value="instagram">Instagram</option>
+                <option value="nextdoor">Nextdoor</option>
+                <option value="homeadvisor">HomeAdvisor</option>
+                <option value="other">Other</option>
               </select>
             </div>
             <div>
@@ -571,12 +507,12 @@ function NewLeadModal({ onClose }: { onClose: () => void }) {
             </div>
           </div>
           <div className="flex items-center gap-3 pt-4">
-            <Button variant="secondary" className="flex-1" onClick={onClose}>
+            <Button variant="secondary" className="flex-1" onClick={onClose} disabled={saving}>
               Cancel
             </Button>
-            <Button className="flex-1">
-              <Plus size={16} />
-              Add Lead
+            <Button className="flex-1" onClick={handleSubmit} disabled={saving || !name.trim()}>
+              {saving ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />}
+              {saving ? 'Adding...' : 'Add Lead'}
             </Button>
           </div>
         </CardContent>

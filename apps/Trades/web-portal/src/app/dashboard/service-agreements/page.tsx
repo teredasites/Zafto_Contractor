@@ -325,7 +325,7 @@ function AgreementCard({ agreement, onClick }: { agreement: ServiceAgreement; on
             <p className="text-sm text-muted">{agreement.type}</p>
           </div>
           {agreement.autoRenew && (
-            <RefreshCw size={16} className="text-blue-500" title="Auto-renew enabled" />
+            <RefreshCw size={16} className="text-blue-500" aria-label="Auto-renew enabled" />
           )}
         </div>
 

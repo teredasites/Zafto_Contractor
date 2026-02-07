@@ -36,7 +36,7 @@ export function CardHeader({ children, className, onClick }: CardHeaderProps) {
     <div
       onClick={onClick}
       className={cn(
-        'px-6 py-4 border-b border-main',
+        'px-6 py-3.5 border-b border-main',
         onClick && 'cursor-pointer',
         className
       )}
@@ -48,7 +48,7 @@ export function CardHeader({ children, className, onClick }: CardHeaderProps) {
 
 export function CardTitle({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
-    <h3 className={cn('text-lg font-semibold text-main', className)}>
+    <h3 className={cn('text-[15px] font-semibold text-main', className)}>
       {children}
     </h3>
   );

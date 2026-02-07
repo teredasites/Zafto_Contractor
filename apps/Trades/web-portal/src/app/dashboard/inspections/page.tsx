@@ -3,63 +3,28 @@
 import { useState } from 'react';
 import {
   Plus,
-  Search,
   ClipboardCheck,
   ClipboardList,
   CheckCircle,
   CheckSquare,
   Square,
   XCircle,
-  Clock,
   Calendar,
-  AlertTriangle,
   Camera,
   User,
   Briefcase,
-  MapPin,
-  MoreHorizontal,
-  ArrowRight,
-  FileText,
-  Shield,
   Star,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { SearchInput, Select } from '@/components/ui/input';
 import { CommandPalette } from '@/components/command-palette';
 import { formatDate, cn } from '@/lib/utils';
+import { useInspections } from '@/lib/hooks/use-inspections';
+import type { InspectionData } from '@/lib/hooks/mappers';
 
 type InspectionStatus = 'scheduled' | 'in_progress' | 'passed' | 'failed' | 'partial';
 type InspectionType = 'quality' | 'safety' | 'punch_list' | 'pre_closeout' | 'compliance' | 'progress';
-
-interface ChecklistItem {
-  id: string;
-  label: string;
-  completed: boolean;
-  note?: string;
-  photoRequired: boolean;
-  hasPhoto: boolean;
-}
-
-interface Inspection {
-  id: string;
-  type: InspectionType;
-  status: InspectionStatus;
-  title: string;
-  jobId: string;
-  jobName: string;
-  customerId: string;
-  customerName: string;
-  address: string;
-  assignedTo: string;
-  scheduledDate: Date;
-  completedDate?: Date;
-  checklist: ChecklistItem[];
-  overallScore?: number;
-  notes?: string;
-  photos: number;
-}
 
 const statusConfig: Record<InspectionStatus, { label: string; color: string; bgColor: string }> = {
   scheduled: { label: 'Scheduled', color: 'text-blue-700 dark:text-blue-300', bgColor: 'bg-blue-100 dark:bg-blue-900/30' },
@@ -78,116 +43,29 @@ const typeConfig: Record<InspectionType, { label: string; color: string; bgColor
   progress: { label: 'Progress', color: 'text-cyan-700 dark:text-cyan-300', bgColor: 'bg-cyan-100 dark:bg-cyan-900/30' },
 };
 
-const mockInspections: Inspection[] = [
-  {
-    id: 'ins1', type: 'quality', status: 'scheduled',
-    title: 'Rough-In Quality Check - Electrical',
-    jobId: 'j1', jobName: 'Full Home Rewire - 123 Oak Ave',
-    customerId: 'c1', customerName: 'Robert Chen',
-    address: '123 Oak Ave, Hartford, CT 06101',
-    assignedTo: 'John Smith',
-    scheduledDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
-    checklist: [
-      { id: 'c1', label: 'Wire runs properly supported (every 4.5 ft)', completed: false, photoRequired: true, hasPhoto: false },
-      { id: 'c2', label: 'Box fill calculations verified', completed: false, photoRequired: false, hasPhoto: false },
-      { id: 'c3', label: 'Proper wire sizing per circuit load', completed: false, photoRequired: false, hasPhoto: false },
-      { id: 'c4', label: 'GFCI/AFCI protection where required', completed: false, photoRequired: true, hasPhoto: false },
-      { id: 'c5', label: 'Grounding and bonding complete', completed: false, photoRequired: true, hasPhoto: false },
-      { id: 'c6', label: 'Panel labeling accurate', completed: false, photoRequired: true, hasPhoto: false },
-      { id: 'c7', label: 'No visible code violations', completed: false, photoRequired: false, hasPhoto: false },
-    ],
-    photos: 0,
-  },
-  {
-    id: 'ins2', type: 'safety', status: 'passed',
-    title: 'Job Site Safety Inspection',
-    jobId: 'j7', jobName: 'Store Buildout - 100 Main St',
-    customerId: 'c5', customerName: 'David Wilson',
-    address: '100 Main St, Hartford, CT 06103',
-    assignedTo: 'Mike Johnson',
-    scheduledDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
-    completedDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
-    checklist: [
-      { id: 's1', label: 'PPE being worn by all workers', completed: true, photoRequired: false, hasPhoto: false },
-      { id: 's2', label: 'Fire extinguisher accessible', completed: true, photoRequired: true, hasPhoto: true },
-      { id: 's3', label: 'First aid kit stocked and accessible', completed: true, photoRequired: false, hasPhoto: false },
-      { id: 's4', label: 'Lockout/tagout procedures followed', completed: true, photoRequired: true, hasPhoto: true },
-      { id: 's5', label: 'Electrical panels accessible (3 ft clearance)', completed: true, photoRequired: true, hasPhoto: true },
-      { id: 's6', label: 'Cords and tools in good condition', completed: true, photoRequired: false, hasPhoto: false },
-      { id: 's7', label: 'Work area clean and organized', completed: true, photoRequired: false, hasPhoto: false },
-      { id: 's8', label: 'OSHA poster displayed', completed: true, photoRequired: true, hasPhoto: true },
-    ],
-    overallScore: 100, photos: 4,
-  },
-  {
-    id: 'ins3', type: 'punch_list', status: 'in_progress',
-    title: 'Final Punch List - HVAC Install',
-    jobId: 'j2', jobName: 'HVAC Install - 456 Elm St',
-    customerId: 'c2', customerName: 'Sarah Martinez',
-    address: '456 Elm St, West Hartford, CT 06107',
-    assignedTo: 'Tom Davis',
-    scheduledDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
-    checklist: [
-      { id: 'p1', label: 'Thermostat programmed and tested', completed: true, photoRequired: false, hasPhoto: false },
-      { id: 'p2', label: 'All registers installed and adjusted', completed: true, photoRequired: true, hasPhoto: true },
-      { id: 'p3', label: 'Condensate drain tested', completed: true, photoRequired: false, hasPhoto: false },
-      { id: 'p4', label: 'Refrigerant charge verified', completed: false, photoRequired: false, hasPhoto: false },
-      { id: 'p5', label: 'Ductwork sealed and insulated', completed: false, photoRequired: true, hasPhoto: false },
-      { id: 'p6', label: 'Customer walkthrough completed', completed: false, photoRequired: false, hasPhoto: false },
-      { id: 'p7', label: 'Equipment manuals provided', completed: false, photoRequired: false, hasPhoto: false },
-      { id: 'p8', label: 'Warranty registration completed', completed: false, photoRequired: false, hasPhoto: false },
-    ],
-    overallScore: 38, photos: 1,
-    notes: 'Waiting on refrigerant gauges from Van #2',
-  },
-  {
-    id: 'ins4', type: 'pre_closeout', status: 'failed',
-    title: 'Pre-Closeout Inspection - Roof',
-    jobId: 'j5', jobName: 'Full Roof Replacement - 555 Birch Ln',
-    customerId: 'c5', customerName: 'David Wilson',
-    address: '555 Birch Ln, Glastonbury, CT 06033',
-    assignedTo: 'John Smith',
-    scheduledDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
-    completedDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
-    checklist: [
-      { id: 'r1', label: 'Shingles properly aligned and nailed', completed: true, photoRequired: true, hasPhoto: true },
-      { id: 'r2', label: 'Flashing sealed at all penetrations', completed: false, photoRequired: true, hasPhoto: true },
-      { id: 'r3', label: 'Ridge cap installed correctly', completed: true, photoRequired: true, hasPhoto: true },
-      { id: 'r4', label: 'Gutters clean and reattached', completed: true, photoRequired: false, hasPhoto: false },
-      { id: 'r5', label: 'All debris removed from site', completed: true, photoRequired: false, hasPhoto: false },
-      { id: 'r6', label: 'Magnetic nail sweep completed', completed: true, photoRequired: false, hasPhoto: false },
-    ],
-    overallScore: 83, photos: 3,
-    notes: 'Chimney flashing needs resealing - scheduled for correction',
-  },
-  {
-    id: 'ins5', type: 'progress', status: 'passed',
-    title: '50% Progress Check - Commercial Wiring',
-    jobId: 'j7', jobName: 'Store Buildout - 100 Main St',
-    customerId: 'c5', customerName: 'David Wilson',
-    address: '100 Main St, Hartford, CT 06103',
-    assignedTo: 'Mike Johnson',
-    scheduledDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
-    completedDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
-    checklist: [
-      { id: 'pg1', label: 'Conduit runs per plan', completed: true, photoRequired: true, hasPhoto: true },
-      { id: 'pg2', label: 'Panel scheduled correctly', completed: true, photoRequired: true, hasPhoto: true },
-      { id: 'pg3', label: 'Wire pulled to all locations', completed: true, photoRequired: false, hasPhoto: false },
-      { id: 'pg4', label: 'Data/low voltage rough-in complete', completed: true, photoRequired: false, hasPhoto: false },
-      { id: 'pg5', label: 'On schedule per timeline', completed: true, photoRequired: false, hasPhoto: false },
-    ],
-    overallScore: 100, photos: 2,
-  },
-];
-
 export default function InspectionsPage() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
-  const [selectedInspection, setSelectedInspection] = useState<Inspection | null>(null);
+  const [selectedInspection, setSelectedInspection] = useState<InspectionData | null>(null);
   const [showNewModal, setShowNewModal] = useState(false);
+  const { inspections, loading } = useInspections();
 
-  const filteredInspections = mockInspections.filter((ins) => {
+  if (loading) {
+    return (
+      <div className="space-y-8 animate-fade-in">
+        <div><div className="skeleton h-7 w-48 mb-2" /><div className="skeleton h-4 w-56" /></div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {[...Array(4)].map((_, i) => <div key={i} className="bg-surface border border-main rounded-xl p-5"><div className="skeleton h-3 w-20 mb-2" /><div className="skeleton h-7 w-10" /></div>)}
+        </div>
+        <div className="bg-surface border border-main rounded-xl divide-y divide-main">
+          {[...Array(4)].map((_, i) => <div key={i} className="px-6 py-4 flex items-center gap-4"><div className="flex-1"><div className="skeleton h-4 w-40 mb-2" /><div className="skeleton h-3 w-32" /></div><div className="skeleton h-5 w-16 rounded-full" /></div>)}
+        </div>
+      </div>
+    );
+  }
+
+  const filteredInspections = inspections.filter((ins) => {
     const matchesSearch =
       ins.title.toLowerCase().includes(search.toLowerCase()) ||
       ins.customerName.toLowerCase().includes(search.toLowerCase()) ||
@@ -198,13 +76,13 @@ export default function InspectionsPage() {
     return matchesSearch && matchesStatus && matchesType;
   });
 
-  const scheduledCount = mockInspections.filter((i) => i.status === 'scheduled').length;
-  const inProgressCount = mockInspections.filter((i) => i.status === 'in_progress').length;
-  const passedCount = mockInspections.filter((i) => i.status === 'passed').length;
-  const failedCount = mockInspections.filter((i) => i.status === 'failed').length;
+  const scheduledCount = inspections.filter((i) => i.status === 'scheduled').length;
+  const inProgressCount = inspections.filter((i) => i.status === 'in_progress').length;
+  const passedCount = inspections.filter((i) => i.status === 'passed').length;
+  const failedCount = inspections.filter((i) => i.status === 'failed').length;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 animate-fade-in">
       <CommandPalette />
       <div className="flex items-center justify-between">
         <div>
@@ -241,8 +119,8 @@ export default function InspectionsPage() {
 
       <div className="space-y-3">
         {filteredInspections.map((ins) => {
-          const sConfig = statusConfig[ins.status];
-          const tConfig = typeConfig[ins.type];
+          const sConfig = statusConfig[ins.status as InspectionStatus] || statusConfig.scheduled;
+          const tConfig = typeConfig[ins.type as InspectionType] || typeConfig.quality;
           const completedItems = ins.checklist.filter((c) => c.completed).length;
           const totalItems = ins.checklist.length;
           const progress = totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
@@ -308,9 +186,9 @@ export default function InspectionsPage() {
   );
 }
 
-function InspectionDetailModal({ inspection, onClose }: { inspection: Inspection; onClose: () => void }) {
-  const sConfig = statusConfig[inspection.status];
-  const tConfig = typeConfig[inspection.type];
+function InspectionDetailModal({ inspection, onClose }: { inspection: InspectionData; onClose: () => void }) {
+  const sConfig = statusConfig[inspection.status as InspectionStatus] || statusConfig.scheduled;
+  const tConfig = typeConfig[inspection.type as InspectionType] || typeConfig.quality;
   const completedItems = inspection.checklist.filter((c) => c.completed).length;
   const totalItems = inspection.checklist.length;
   const progress = totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;

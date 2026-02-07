@@ -22,22 +22,39 @@ import { SearchInput, Select } from '@/components/ui/input';
 import { Avatar, AvatarGroup } from '@/components/ui/avatar';
 import { CommandPalette } from '@/components/command-palette';
 import { formatCurrency, formatDate, getStatusLabel, cn } from '@/lib/utils';
-import { mockJobs, mockTeam, mockDashboardStats } from '@/lib/mock-data';
-import type { Job } from '@/types';
+import { useJobs, useTeam } from '@/lib/hooks/use-jobs';
+import { useStats } from '@/lib/hooks/use-stats';
+import type { Job, TeamMember } from '@/types';
 
 export default function JobsPage() {
   const router = useRouter();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [view, setView] = useState<'list' | 'board'>('list');
+  const { jobs, loading: jobsLoading } = useJobs();
+  const { team } = useTeam();
+  const { stats: dashStats } = useStats();
+  const stats = dashStats.jobs;
 
-  const stats = mockDashboardStats.jobs;
+  if (jobsLoading) {
+    return (
+      <div className="space-y-8 animate-fade-in">
+        <div><div className="skeleton h-7 w-28 mb-2" /><div className="skeleton h-4 w-48" /></div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {[...Array(4)].map((_, i) => <div key={i} className="bg-surface border border-main rounded-xl p-5"><div className="skeleton h-3 w-20 mb-2" /><div className="skeleton h-7 w-10" /></div>)}
+        </div>
+        <div className="bg-surface border border-main rounded-xl divide-y divide-main">
+          {[...Array(5)].map((_, i) => <div key={i} className="px-6 py-4 flex items-center gap-4"><div className="flex-1"><div className="skeleton h-4 w-40 mb-2" /><div className="skeleton h-3 w-32" /></div><div className="skeleton h-4 w-20" /></div>)}
+        </div>
+      </div>
+    );
+  }
 
-  const filteredJobs = mockJobs.filter((job) => {
+  const filteredJobs = jobs.filter((job) => {
     const matchesSearch =
       job.title.toLowerCase().includes(search.toLowerCase()) ||
-      job.customer?.firstName.toLowerCase().includes(search.toLowerCase()) ||
-      job.customer?.lastName.toLowerCase().includes(search.toLowerCase());
+      job.customer?.firstName?.toLowerCase().includes(search.toLowerCase()) ||
+      job.customer?.lastName?.toLowerCase().includes(search.toLowerCase());
 
     const matchesStatus = statusFilter === 'all' || job.status === statusFilter;
 
@@ -64,7 +81,7 @@ export default function JobsPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 animate-fade-in">
       <CommandPalette />
 
       {/* Header */}
@@ -190,6 +207,7 @@ export default function JobsPage() {
                   <JobRow
                     key={job.id}
                     job={job}
+                    team={team}
                     onClick={() => router.push(`/dashboard/jobs/${job.id}`)}
                   />
                 ))}
@@ -212,6 +230,7 @@ export default function JobsPage() {
                   <JobCard
                     key={job.id}
                     job={job}
+                    team={team}
                     onClick={() => router.push(`/dashboard/jobs/${job.id}`)}
                   />
                 ))}
@@ -224,7 +243,7 @@ export default function JobsPage() {
   );
 }
 
-function JobRow({ job, onClick }: { job: Job; onClick: () => void }) {
+function JobRow({ job, team, onClick }: { job: Job; team: TeamMember[]; onClick: () => void }) {
   return (
     <div
       className="px-6 py-4 hover:bg-surface-hover cursor-pointer transition-colors"
@@ -260,7 +279,7 @@ function JobRow({ job, onClick }: { job: Job; onClick: () => void }) {
         <div className="flex items-center gap-4">
           <AvatarGroup
             avatars={job.assignedTo.map((id) => {
-              const member = mockTeam.find((t) => t.id === id);
+              const member = team.find((t) => t.id === id);
               return { name: member?.name || 'Unknown' };
             })}
             size="sm"
@@ -277,7 +296,7 @@ function JobRow({ job, onClick }: { job: Job; onClick: () => void }) {
   );
 }
 
-function JobCard({ job, onClick }: { job: Job; onClick: () => void }) {
+function JobCard({ job, team, onClick }: { job: Job; team: TeamMember[]; onClick: () => void }) {
   return (
     <Card hover onClick={onClick} className="p-4">
       <div className="flex items-start justify-between gap-2 mb-2">
@@ -292,7 +311,7 @@ function JobCard({ job, onClick }: { job: Job; onClick: () => void }) {
       <div className="flex items-center justify-between">
         <AvatarGroup
           avatars={job.assignedTo.map((id) => {
-            const member = mockTeam.find((t) => t.id === id);
+            const member = team.find((t) => t.id === id);
             return { name: member?.name || 'Unknown' };
           })}
           size="sm"

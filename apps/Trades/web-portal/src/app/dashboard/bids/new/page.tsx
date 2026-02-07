@@ -40,7 +40,7 @@ import { Button } from '@/components/ui/button';
 import { Input, Select } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { formatCurrency, cn } from '@/lib/utils';
-import { mockCustomers } from '@/lib/mock-data';
+import { useCustomers } from '@/lib/hooks/use-customers';
 import type { BidOption, BidLineItem, BidAddOn, LineItemCategory, Customer } from '@/types';
 
 // Generate unique IDs
@@ -255,6 +255,7 @@ export default function NewBidPage() {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { company } = useCompany();
+  const { customers } = useCustomers();
 
   // Customer selection
   const [customerSearch, setCustomerSearch] = useState('');
@@ -336,10 +337,10 @@ export default function NewBidPage() {
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
 
   // Filter customers based on search
-  const filteredCustomers = mockCustomers.filter((c) =>
+  const filteredCustomers = customers.filter((c) =>
     `${c.firstName} ${c.lastName}`.toLowerCase().includes(customerSearch.toLowerCase()) ||
     c.email.toLowerCase().includes(customerSearch.toLowerCase()) ||
-    c.phone.includes(customerSearch)
+    (c.phone || '').includes(customerSearch)
   );
 
   // Filter price book items

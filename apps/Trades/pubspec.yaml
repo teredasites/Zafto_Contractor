@@ -63,8 +63,15 @@ dependencies:
   # Sensors (Level & Plumb)
   sensors_plus: ^4.0.2
 
+  # Audio (Voice Notes)
+  record: ^5.1.2
+  audioplayers: ^6.1.0
+
   # Supabase (replacing Firebase for backend)
   supabase_flutter: ^2.8.0
+
+  # Battery (Location Tracking)
+  battery_plus: ^6.0.3
 
   # Utilities
   intl: ^0.19.0

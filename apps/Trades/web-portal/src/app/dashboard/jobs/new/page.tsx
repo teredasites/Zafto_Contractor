@@ -20,7 +20,8 @@ import { Input, Select } from '@/components/ui/input';
 import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import { mockCustomers, mockTeam } from '@/lib/mock-data';
+import { useCustomers } from '@/lib/hooks/use-customers';
+import { useTeam } from '@/lib/hooks/use-jobs';
 
 export default function NewJobPage() {
   const router = useRouter();
@@ -48,10 +49,12 @@ export default function NewJobPage() {
   const [customerSearch, setCustomerSearch] = useState('');
   const [showCustomerSearch, setShowCustomerSearch] = useState(false);
   const [assignedMembers, setAssignedMembers] = useState<string[]>([]);
+  const { customers } = useCustomers();
+  const { team } = useTeam();
 
-  const selectedCustomer = mockCustomers.find((c) => c.id === formData.customerId);
+  const selectedCustomer = customers.find((c) => c.id === formData.customerId);
 
-  const filteredCustomers = mockCustomers.filter(
+  const filteredCustomers = customers.filter(
     (c) =>
       c.firstName.toLowerCase().includes(customerSearch.toLowerCase()) ||
       c.lastName.toLowerCase().includes(customerSearch.toLowerCase()) ||
@@ -319,7 +322,7 @@ export default function NewJobPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                {mockTeam.filter((m) => m.role === 'field_tech' || m.role === 'admin').map((member) => (
+                {team.filter((m) => m.role === 'field_tech' || m.role === 'admin').map((member) => (
                   <button
                     key={member.id}
                     type="button"

@@ -2,7 +2,7 @@
 
 /**
  * ZAFTO Permission Gate Component
- * Session 23 - RBAC Enforcement for Web Portal
+ * Sprint B4a (Session 48) — Rewritten for Supabase
  *
  * Usage:
  * ```tsx
@@ -17,8 +17,7 @@
  */
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { doc, onSnapshot } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { getSupabase } from '@/lib/supabase';
 import { useAuth } from './auth-provider';
 
 // ============================================================
@@ -78,49 +77,55 @@ export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
 
 export type CompanyTier = 'solo' | 'team' | 'business' | 'enterprise';
 
-export interface Role {
-  id: string;
-  companyId: string;
-  name: string;
-  description?: string;
-  isSystemRole: boolean;
-  isDefault: boolean;
-  permissions: Record<string, boolean>;
-}
-
 export interface Company {
   id: string;
   name: string;
   tier: CompanyTier;
-  ownerUserId: string;
-  uiMode?: 'simple' | 'pro';
-  enabledProFeatures?: string[];
+  owner_user_id: string;
+  ui_mode?: 'simple' | 'pro';
+  enabled_pro_features?: string[];
 }
 
+// Default permissions by role. Owner gets everything.
+// This will later be replaced by a roles table in Supabase.
+const ROLE_PERMISSIONS: Record<string, Permission[]> = {
+  owner: Object.values(PERMISSIONS),
+  admin: Object.values(PERMISSIONS),
+  office: [
+    PERMISSIONS.JOBS_VIEW_ALL, PERMISSIONS.JOBS_CREATE, PERMISSIONS.JOBS_EDIT_ALL,
+    PERMISSIONS.INVOICES_VIEW_ALL, PERMISSIONS.INVOICES_CREATE, PERMISSIONS.INVOICES_EDIT, PERMISSIONS.INVOICES_SEND,
+    PERMISSIONS.CUSTOMERS_VIEW_ALL, PERMISSIONS.CUSTOMERS_CREATE, PERMISSIONS.CUSTOMERS_EDIT,
+    PERMISSIONS.TEAM_VIEW,
+    PERMISSIONS.DISPATCH_VIEW, PERMISSIONS.DISPATCH_MANAGE,
+    PERMISSIONS.REPORTS_VIEW, PERMISSIONS.REPORTS_EXPORT,
+    PERMISSIONS.TIMECLOCK_OWN, PERMISSIONS.TIMECLOCK_VIEW_ALL,
+  ],
+  tech: [
+    PERMISSIONS.JOBS_VIEW_OWN, PERMISSIONS.JOBS_EDIT_OWN,
+    PERMISSIONS.CUSTOMERS_VIEW_OWN,
+    PERMISSIONS.TIMECLOCK_OWN,
+  ],
+  cpa: [
+    PERMISSIONS.INVOICES_VIEW_ALL,
+    PERMISSIONS.REPORTS_VIEW, PERMISSIONS.REPORTS_EXPORT,
+    PERMISSIONS.AUDIT_VIEW,
+  ],
+};
+
 interface PermissionContextType {
-  // State
   loading: boolean;
   companyId: string | null;
-  roleId: string | null;
   company: Company | null;
-  role: Role | null;
-
-  // Permission checks
+  role: string | null;
   can: (permission: Permission) => boolean;
   canAll: (permissions: Permission[]) => boolean;
   canAny: (permissions: Permission[]) => boolean;
-
-  // Tier checks
   tier: CompanyTier | null;
   isSolo: boolean;
   isTeamOrHigher: boolean;
   isBusinessOrHigher: boolean;
   isEnterprise: boolean;
-
-  // Ownership
   isOwner: boolean;
-
-  // Pro Mode (Session 23)
   isProMode: boolean;
   hasProFeature: (feature: string) => boolean;
 }
@@ -128,7 +133,6 @@ interface PermissionContextType {
 const PermissionContext = createContext<PermissionContextType>({
   loading: true,
   companyId: null,
-  roleId: null,
   company: null,
   role: null,
   can: () => false,
@@ -153,13 +157,9 @@ interface PermissionProviderProps {
 }
 
 export function PermissionProvider({ children }: PermissionProviderProps) {
-  const { user, loading: authLoading } = useAuth();
+  const { user, profile, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(true);
-  const [companyId, setCompanyId] = useState<string | null>(null);
-  const [roleId, setRoleId] = useState<string | null>(null);
   const [company, setCompany] = useState<Company | null>(null);
-  const [role, setRole] = useState<Role | null>(null);
-  // Initialize from localStorage synchronously (client-only)
   const [localProMode, setLocalProMode] = useState<boolean>(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('zafto_pro_mode') === 'true';
@@ -167,7 +167,7 @@ export function PermissionProvider({ children }: PermissionProviderProps) {
     return false;
   });
 
-  // Listen for changes from ProModeToggle
+  // Listen for Pro Mode toggle changes.
   useEffect(() => {
     const handleProModeChange = (e: CustomEvent) => {
       setLocalProMode(e.detail as boolean);
@@ -176,79 +176,49 @@ export function PermissionProvider({ children }: PermissionProviderProps) {
     return () => window.removeEventListener('proModeChange', handleProModeChange as EventListener);
   }, []);
 
-  // Fetch user's company/role from Firestore
+  // Fetch company data from Supabase.
   useEffect(() => {
     if (authLoading) return;
-    if (!user) {
-      setLoading(false);
-      setCompanyId(null);
-      setRoleId(null);
+    if (!profile?.companyId) {
       setCompany(null);
-      setRole(null);
+      setLoading(false);
       return;
     }
 
-    // Subscribe to user document to get companyId and roleId
-    const userRef = doc(db, 'users', user.uid);
-    const unsubUser = onSnapshot(userRef, (doc) => {
-      if (doc.exists()) {
-        const data = doc.data();
-        setCompanyId(data.companyId || null);
-        setRoleId(data.roleId || null);
-      } else {
-        setCompanyId(null);
-        setRoleId(null);
+    const supabase = getSupabase();
+    supabase
+      .from('companies')
+      .select('id, name, subscription_tier, owner_user_id')
+      .eq('id', profile.companyId)
+      .single()
+      .then(({ data }: { data: { id: string; name: string; subscription_tier: string; owner_user_id: string } | null }) => {
+        if (data) {
+          setCompany({
+            id: data.id,
+            name: data.name,
+            tier: (data.subscription_tier as CompanyTier) || 'solo',
+            owner_user_id: data.owner_user_id,
+          });
+        } else {
+          setCompany(null);
+        }
         setLoading(false);
-      }
-    });
-
-    return () => unsubUser();
-  }, [user, authLoading]);
-
-  // Fetch company data
-  useEffect(() => {
-    if (!companyId) {
-      setCompany(null);
-      return;
-    }
-
-    const companyRef = doc(db, 'companies', companyId);
-    const unsubCompany = onSnapshot(companyRef, (doc) => {
-      if (doc.exists()) {
-        setCompany({ id: doc.id, ...doc.data() } as Company);
-      } else {
+      })
+      .catch(() => {
         setCompany(null);
-      }
-    });
+        setLoading(false);
+      });
+  }, [profile?.companyId, authLoading]);
 
-    return () => unsubCompany();
-  }, [companyId]);
+  // Role from user profile.
+  const role = profile?.role || null;
 
-  // Fetch role data
-  useEffect(() => {
-    if (!companyId || !roleId) {
-      setRole(null);
-      setLoading(false);
-      return;
-    }
-
-    const roleRef = doc(db, 'companies', companyId, 'roles', roleId);
-    const unsubRole = onSnapshot(roleRef, (doc) => {
-      if (doc.exists()) {
-        setRole({ id: doc.id, ...doc.data() } as Role);
-      } else {
-        setRole(null);
-      }
-      setLoading(false);
-    });
-
-    return () => unsubRole();
-  }, [companyId, roleId]);
-
-  // Permission check functions
+  // Permission check: look up role in ROLE_PERMISSIONS map.
   const can = (permission: Permission): boolean => {
     if (!role) return false;
-    return role.permissions[permission] === true;
+    const perms = ROLE_PERMISSIONS[role];
+    if (!perms) return false;
+    return perms.includes(permission);
   };
 
   const canAll = (permissions: Permission[]): boolean => {
@@ -259,30 +229,27 @@ export function PermissionProvider({ children }: PermissionProviderProps) {
     return permissions.some((p) => can(p));
   };
 
-  // Tier helpers
+  // Tier helpers.
   const tier = company?.tier || null;
   const isSolo = tier === 'solo';
   const isTeamOrHigher = tier === 'team' || tier === 'business' || tier === 'enterprise';
   const isBusinessOrHigher = tier === 'business' || tier === 'enterprise';
   const isEnterprise = tier === 'enterprise';
 
-  // Ownership
-  const isOwner = user?.uid === company?.ownerUserId;
+  // Ownership.
+  const isOwner = user?.id === company?.owner_user_id;
 
-  // Pro Mode (Session 23)
-  // Use localStorage state if no company, otherwise use Firestore
-  const isProMode = company ? company.uiMode === 'pro' : localProMode;
+  // Pro Mode.
+  const isProMode = company ? company.ui_mode === 'pro' : localProMode;
   const hasProFeature = (feature: string): boolean => {
     if (!isProMode) return false;
-    // If no company or no specific features enabled, all are available in pro mode
-    if (!company || !company.enabledProFeatures || company.enabledProFeatures.length === 0) return true;
-    return company.enabledProFeatures.includes(feature);
+    if (!company || !company.enabled_pro_features || company.enabled_pro_features.length === 0) return true;
+    return company.enabled_pro_features.includes(feature);
   };
 
   const value: PermissionContextType = {
     loading,
-    companyId,
-    roleId,
+    companyId: profile?.companyId || null,
     company,
     role,
     can,
@@ -314,21 +281,13 @@ export function usePermissions() {
 // ============================================================
 
 interface PermissionGateProps {
-  /** Single permission to check */
   permission?: Permission;
-  /** Multiple permissions to check */
   permissions?: Permission[];
-  /** If true, requires ALL permissions; if false, requires ANY (default: false) */
   requireAll?: boolean;
-  /** Content to show when permission is granted */
   children: ReactNode;
-  /** Optional content to show when permission is denied */
   fallback?: ReactNode;
 }
 
-/**
- * Gate that shows content only if user has required permission(s)
- */
 export function PermissionGate({
   permission,
   permissions,
@@ -352,17 +311,11 @@ export function PermissionGate({
 }
 
 interface TierGateProps {
-  /** Minimum tier required */
   minimumTier: CompanyTier;
-  /** Content to show when tier requirement is met */
   children: ReactNode;
-  /** Optional content to show when tier requirement is not met */
   fallback?: ReactNode;
 }
 
-/**
- * Gate that shows content only if company meets minimum tier
- */
 export function TierGate({ minimumTier, children, fallback = null }: TierGateProps) {
   const { tier, loading } = usePermissions();
 
@@ -378,17 +331,11 @@ export function TierGate({ minimumTier, children, fallback = null }: TierGatePro
 }
 
 interface ProModeGateProps {
-  /** Content to show when in Pro Mode */
   children: ReactNode;
-  /** Optional content to show in Simple Mode */
   fallback?: ReactNode;
-  /** Optional specific feature to check */
   feature?: string;
 }
 
-/**
- * Gate that shows content only in Pro Mode (Session 23)
- */
 export function ProModeGate({ children, fallback = null, feature }: ProModeGateProps) {
   const { isProMode, hasProFeature, loading } = usePermissions();
 
@@ -411,9 +358,6 @@ interface OwnerOnlyProps {
   fallback?: ReactNode;
 }
 
-/**
- * Gate that shows content only for company owner
- */
 export function OwnerOnly({ children, fallback = null }: OwnerOnlyProps) {
   const { isOwner, loading } = usePermissions();
 

@@ -22,7 +22,7 @@ import { SearchInput, Select } from '@/components/ui/input';
 import { Avatar } from '@/components/ui/avatar';
 import { CommandPalette } from '@/components/command-palette';
 import { formatCurrency, cn } from '@/lib/utils';
-import { mockCustomers } from '@/lib/mock-data';
+import { useCustomers } from '@/lib/hooks/use-customers';
 import type { Customer } from '@/types';
 
 export default function CustomersPage() {
@@ -30,11 +30,12 @@ export default function CustomersPage() {
   const [search, setSearch] = useState('');
   const [tagFilter, setTagFilter] = useState('all');
   const [view, setView] = useState<'list' | 'grid'>('list');
+  const { customers, loading: customersLoading } = useCustomers();
 
   // Get unique tags
-  const allTags = [...new Set(mockCustomers.flatMap((c) => c.tags))];
+  const allTags = [...new Set(customers.flatMap((c) => c.tags))];
 
-  const filteredCustomers = mockCustomers.filter((customer) => {
+  const filteredCustomers = customers.filter((customer) => {
     const matchesSearch =
       customer.firstName.toLowerCase().includes(search.toLowerCase()) ||
       customer.lastName.toLowerCase().includes(search.toLowerCase()) ||
@@ -45,18 +46,32 @@ export default function CustomersPage() {
     return matchesSearch && matchesTag;
   });
 
-  const totalRevenue = mockCustomers.reduce((sum, c) => sum + c.totalRevenue, 0);
-  const totalJobs = mockCustomers.reduce((sum, c) => sum + c.jobCount, 0);
+  const totalRevenue = customers.reduce((sum, c) => sum + c.totalRevenue, 0);
+  const totalJobs = customers.reduce((sum, c) => sum + c.jobCount, 0);
+
+  if (customersLoading) {
+    return (
+      <div className="space-y-8 animate-fade-in">
+        <div><div className="skeleton h-7 w-40 mb-2" /><div className="skeleton h-4 w-56" /></div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {[...Array(4)].map((_, i) => <div key={i} className="bg-surface border border-main rounded-xl p-4"><div className="skeleton h-4 w-20 mb-2" /><div className="skeleton h-6 w-12" /></div>)}
+        </div>
+        <div className="bg-surface border border-main rounded-xl divide-y divide-main">
+          {[...Array(5)].map((_, i) => <div key={i} className="px-6 py-4 flex items-center gap-4"><div className="skeleton w-10 h-10 rounded-full" /><div className="flex-1"><div className="skeleton h-4 w-32 mb-2" /><div className="skeleton h-3 w-48" /></div><div className="skeleton h-4 w-20" /></div>)}
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 animate-fade-in">
       <CommandPalette />
 
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-main">Customers</h1>
-          <p className="text-muted mt-1">Manage your customer relationships</p>
+          <p className="text-[13px] text-muted mt-1">Manage your customer relationships</p>
         </div>
         <Button onClick={() => router.push('/dashboard/customers/new')}>
           <Plus size={16} />
@@ -73,7 +88,7 @@ export default function CustomersPage() {
                 <Users size={20} className="text-blue-600 dark:text-blue-400" />
               </div>
               <div>
-                <p className="text-2xl font-semibold text-main">{mockCustomers.length}</p>
+                <p className="text-2xl font-semibold text-main">{customers.length}</p>
                 <p className="text-sm text-muted">Total Customers</p>
               </div>
             </div>
@@ -113,7 +128,7 @@ export default function CustomersPage() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">
-                  {formatCurrency(totalRevenue / mockCustomers.length)}
+                  {formatCurrency(customers.length > 0 ? totalRevenue / customers.length : 0)}
                 </p>
                 <p className="text-sm text-muted">Avg. Revenue</p>
               </div>

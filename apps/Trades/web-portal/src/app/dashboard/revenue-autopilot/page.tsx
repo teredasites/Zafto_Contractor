@@ -252,7 +252,35 @@ export default function RevenueAutopilotPage() {
               );
             })}
           </div>
-                  {/* Actions */}
+          <div className="lg:col-span-2">
+            {selectedOpp ? (
+              <Card className="sticky top-0">
+                <CardContent className="p-4 space-y-4">
+                  <div className="flex items-center gap-2">
+                    <div className={cn('w-8 h-8 rounded-lg flex items-center justify-center', typeConfig[selectedOpp.type].bgColor)}>
+                      {(() => { const Icon = typeConfig[selectedOpp.type].icon; return <Icon className={cn('w-4 h-4', typeConfig[selectedOpp.type].color)} />; })()}
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold">{selectedOpp.title}</p>
+                      <Badge className={cn('text-[10px]', statusConfig[selectedOpp.status].color)}>{statusConfig[selectedOpp.status].label}</Badge>
+                    </div>
+                  </div>
+                  <div className="space-y-2 text-xs">
+                    <div className="flex items-center gap-2"><User className="w-3.5 h-3.5 text-muted-foreground" /><span>{selectedOpp.customer}</span></div>
+                    <div className="flex items-center gap-2"><Mail className="w-3.5 h-3.5 text-muted-foreground" /><span>{selectedOpp.customerEmail}</span></div>
+                    <div className="flex items-center gap-2"><MapPin className="w-3.5 h-3.5 text-muted-foreground" /><span>{selectedOpp.address}</span></div>
+                    {selectedOpp.relatedEquipment && (
+                      <div className="flex items-center gap-2"><Wrench className="w-3.5 h-3.5 text-muted-foreground" /><span>{selectedOpp.relatedEquipment}</span></div>
+                    )}
+                  </div>
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-muted-foreground">Est. Value</span>
+                    <span className="font-bold text-emerald-600">{formatCurrency(selectedOpp.estimatedValue)}</span>
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium mb-1">AI Draft Message</p>
+                    <div className="p-3 rounded-lg bg-muted/50 text-xs leading-relaxed">{selectedOpp.draftMessage}</div>
+                  </div>
                   <div className="space-y-2">
                     {selectedOpp.status === 'ready' && (
                       <>

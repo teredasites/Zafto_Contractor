@@ -30,7 +30,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { StatusBadge, Badge } from '@/components/ui/badge';
 import { formatCurrency, formatDate, formatDateTime, cn, getStatusColor } from '@/lib/utils';
-import { mockBids } from '@/lib/mock-data';
+import { useBid } from '@/lib/hooks/use-bids';
 import type { Bid, BidOption } from '@/types';
 
 // Timeline event type
@@ -47,29 +47,21 @@ export default function BidDetailPage() {
   const params = useParams();
   const bidId = params.id as string;
 
-  const [bid, setBid] = useState<Bid | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { bid, loading } = useBid(bidId);
   const [activeOptionIndex, setActiveOptionIndex] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // Fetch bid data
+  // Set active option when bid loads
   useEffect(() => {
-    // TODO: Replace with Firestore query
-    const found = mockBids.find((b) => b.id === bidId);
-    if (found) {
-      setBid(found);
-      // Find selected option index
-      if (found.selectedOptionId) {
-        const idx = found.options.findIndex((o) => o.id === found.selectedOptionId);
-        if (idx >= 0) setActiveOptionIndex(idx);
-      } else {
-        // Default to recommended option
-        const recommendedIdx = found.options.findIndex((o) => o.isRecommended);
-        if (recommendedIdx >= 0) setActiveOptionIndex(recommendedIdx);
-      }
+    if (!bid) return;
+    if (bid.selectedOptionId) {
+      const idx = bid.options.findIndex((o) => o.id === bid.selectedOptionId);
+      if (idx >= 0) setActiveOptionIndex(idx);
+    } else {
+      const recommendedIdx = bid.options.findIndex((o) => o.isRecommended);
+      if (recommendedIdx >= 0) setActiveOptionIndex(recommendedIdx);
     }
-    setLoading(false);
-  }, [bidId]);
+  }, [bid]);
 
   if (loading) {
     return (
@@ -238,9 +230,9 @@ export default function BidDetailPage() {
                 <div>
                   <p className="text-sm text-muted">Total</p>
                   <p className="text-3xl font-semibold text-main">{formatCurrency(bid.total)}</p>
-                  {bid.depositRequired > 0 && (
+                  {bid.depositAmount > 0 && (
                     <p className="text-sm text-muted mt-1">
-                      Deposit: {formatCurrency(bid.depositRequired)}
+                      Deposit: {formatCurrency(bid.depositAmount)}
                       {bid.depositPaid && (
                         <span className="text-emerald-600 ml-2">Paid</span>
                       )}

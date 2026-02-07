@@ -375,7 +375,7 @@ export function TeamMap({ members, jobs = [], variant = 'compact', onMemberClick
                 {selectedMember.phone && (
                   <a
                     href={`tel:${selectedMember.phone}`}
-                    className="flex-1 flex items-center justify-center gap-2 py-2 px-3 bg-[#635bff] text-white rounded-lg hover:bg-[#5046e5] transition-colors text-sm font-medium"
+                    className="flex-1 flex items-center justify-center gap-2 py-2 px-3 bg-accent text-white rounded-lg hover:bg-accent-hover transition-colors text-sm font-medium"
                   >
                     <Phone size={14} />
                     Call
@@ -441,7 +441,7 @@ export function TeamMap({ members, jobs = [], variant = 'compact', onMemberClick
                   href={`https://www.google.com/maps/dir/?api=1&destination=${jobLocations[selectedJob.id]?.lat},${jobLocations[selectedJob.id]?.lng}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center gap-2 py-2 px-3 bg-[#635bff] text-white rounded-lg hover:bg-[#5046e5] transition-colors text-sm font-medium"
+                  className="w-full flex items-center justify-center gap-2 py-2 px-3 bg-accent text-white rounded-lg hover:bg-accent-hover transition-colors text-sm font-medium"
                 >
                   <Navigation size={14} />
                   Get Directions

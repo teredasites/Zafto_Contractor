@@ -22,21 +22,37 @@ import { StatusBadge, Badge } from '@/components/ui/badge';
 import { SearchInput, Select } from '@/components/ui/input';
 import { CommandPalette } from '@/components/command-palette';
 import { formatCurrency, formatDate, cn } from '@/lib/utils';
-import { mockInvoices, mockDashboardStats } from '@/lib/mock-data';
+import { useInvoices } from '@/lib/hooks/use-invoices';
+import { useStats } from '@/lib/hooks/use-stats';
 import type { Invoice } from '@/types';
 
 export default function InvoicesPage() {
   const router = useRouter();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const { invoices, loading: invoicesLoading } = useInvoices();
+  const { stats: dashStats } = useStats();
+  const stats = dashStats.invoices;
 
-  const stats = mockDashboardStats.invoices;
+  if (invoicesLoading) {
+    return (
+      <div className="space-y-8 animate-fade-in">
+        <div><div className="skeleton h-7 w-32 mb-2" /><div className="skeleton h-4 w-52" /></div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {[...Array(4)].map((_, i) => <div key={i} className="bg-surface border border-main rounded-xl p-5"><div className="skeleton h-3 w-24 mb-2" /><div className="skeleton h-7 w-16" /></div>)}
+        </div>
+        <div className="bg-surface border border-main rounded-xl divide-y divide-main">
+          {[...Array(5)].map((_, i) => <div key={i} className="px-6 py-4 flex items-center gap-4"><div className="flex-1"><div className="skeleton h-4 w-28 mb-2" /><div className="skeleton h-3 w-40" /></div><div className="skeleton h-4 w-20" /></div>)}
+        </div>
+      </div>
+    );
+  }
 
-  const filteredInvoices = mockInvoices.filter((invoice) => {
+  const filteredInvoices = invoices.filter((invoice) => {
     const matchesSearch =
       invoice.invoiceNumber.toLowerCase().includes(search.toLowerCase()) ||
-      invoice.customer?.firstName.toLowerCase().includes(search.toLowerCase()) ||
-      invoice.customer?.lastName.toLowerCase().includes(search.toLowerCase());
+      invoice.customer?.firstName?.toLowerCase().includes(search.toLowerCase()) ||
+      invoice.customer?.lastName?.toLowerCase().includes(search.toLowerCase());
 
     const matchesStatus = statusFilter === 'all' || invoice.status === statusFilter;
 
@@ -54,7 +70,7 @@ export default function InvoicesPage() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 animate-fade-in">
       <CommandPalette />
 
       {/* Header */}

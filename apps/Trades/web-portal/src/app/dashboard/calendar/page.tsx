@@ -16,7 +16,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarGroup } from '@/components/ui/avatar';
 import { CommandPalette } from '@/components/command-palette';
 import { formatTime, cn } from '@/lib/utils';
-import { mockSchedule, mockTeam } from '@/lib/mock-data';
+import { useSchedule, useTeam } from '@/lib/hooks/use-jobs';
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const MONTHS = [
@@ -26,6 +26,8 @@ const MONTHS = [
 
 export default function CalendarPage() {
   const router = useRouter();
+  const { schedule } = useSchedule();
+  const { team } = useTeam();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState<'month' | 'week'>('month');
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
@@ -61,7 +63,7 @@ export default function CalendarPage() {
 
   // Get events for selected date
   const selectedDateEvents = selectedDate
-    ? mockSchedule.filter((event) => {
+    ? schedule.filter((event) => {
         const eventDate = new Date(event.start);
         return eventDate.toDateString() === selectedDate.toDateString();
       })
@@ -69,14 +71,14 @@ export default function CalendarPage() {
 
   // Get events for a day (for calendar dots)
   const getEventsForDay = (date: Date) => {
-    return mockSchedule.filter((event) => {
+    return schedule.filter((event) => {
       const eventDate = new Date(event.start);
       return eventDate.toDateString() === date.toDateString();
     });
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 animate-fade-in">
       <CommandPalette />
 
       {/* Header */}
@@ -253,7 +255,7 @@ export default function CalendarPage() {
                             <div className="mt-2">
                               <AvatarGroup
                                 avatars={event.assignedTo.map((id) => {
-                                  const member = mockTeam.find((t) => t.id === id);
+                                  const member = team.find((t) => t.id === id);
                                   return { name: member?.name || 'Unknown' };
                                 })}
                                 size="sm"
@@ -279,19 +281,19 @@ export default function CalendarPage() {
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted">Scheduled Jobs</span>
                   <span className="font-semibold text-main">
-                    {mockSchedule.filter((e) => e.type === 'job').length}
+                    {schedule.filter((e) => e.type === 'job').length}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted">Appointments</span>
                   <span className="font-semibold text-main">
-                    {mockSchedule.filter((e) => e.type === 'appointment').length}
+                    {schedule.filter((e) => e.type === 'appointment').length}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted">Team Members</span>
                   <span className="font-semibold text-main">
-                    {mockTeam.filter((t) => t.isActive).length} active
+                    {team.filter((t) => t.isActive).length} active
                   </span>
                 </div>
               </div>

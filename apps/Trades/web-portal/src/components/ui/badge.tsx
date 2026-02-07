@@ -4,7 +4,7 @@ import { cn, getStatusColor } from '@/lib/utils';
 
 interface BadgeProps {
   children: React.ReactNode;
-  variant?: 'default' | 'success' | 'warning' | 'error' | 'info' | 'purple';
+  variant?: 'default' | 'secondary' | 'success' | 'warning' | 'error' | 'info' | 'purple';
   size?: 'sm' | 'md';
   dot?: boolean;
   className?: string;
@@ -13,6 +13,7 @@ interface BadgeProps {
 export function Badge({ children, variant = 'default', size = 'sm', dot = false, className }: BadgeProps) {
   const variants = {
     default: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
+    secondary: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400',
     success: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300',
     warning: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
     error: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300',
@@ -22,6 +23,7 @@ export function Badge({ children, variant = 'default', size = 'sm', dot = false,
 
   const dotColors = {
     default: 'bg-slate-500',
+    secondary: 'bg-slate-400',
     success: 'bg-emerald-500',
     warning: 'bg-amber-500',
     error: 'bg-red-500',

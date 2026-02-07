@@ -25,7 +25,10 @@ import { Button } from '@/components/ui/button';
 import { StatusBadge, Badge } from '@/components/ui/badge';
 import { Avatar } from '@/components/ui/avatar';
 import { formatCurrency, formatDate, cn } from '@/lib/utils';
-import { mockCustomers, mockBids, mockJobs, mockInvoices } from '@/lib/mock-data';
+import { useCustomer } from '@/lib/hooks/use-customers';
+import { useBids } from '@/lib/hooks/use-bids';
+import { useJobs } from '@/lib/hooks/use-jobs';
+import { useInvoices } from '@/lib/hooks/use-invoices';
 import type { Customer } from '@/types';
 
 type TabType = 'overview' | 'bids' | 'jobs' | 'invoices';
@@ -35,19 +38,12 @@ export default function CustomerDetailPage() {
   const params = useParams();
   const customerId = params.id as string;
 
-  const [customer, setCustomer] = useState<Customer | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { customer, loading } = useCustomer(customerId);
+  const { bids } = useBids();
+  const { jobs } = useJobs();
+  const { invoices } = useInvoices();
   const [activeTab, setActiveTab] = useState<TabType>('overview');
   const [menuOpen, setMenuOpen] = useState(false);
-
-  useEffect(() => {
-    // TODO: Replace with Firestore query
-    const found = mockCustomers.find((c) => c.id === customerId);
-    if (found) {
-      setCustomer(found);
-    }
-    setLoading(false);
-  }, [customerId]);
 
   if (loading) {
     return (
@@ -70,9 +66,9 @@ export default function CustomerDetailPage() {
     );
   }
 
-  const customerBids = mockBids.filter((b) => b.customerId === customerId);
-  const customerJobs = mockJobs.filter((j) => j.customerId === customerId);
-  const customerInvoices = mockInvoices.filter((i) => i.customerId === customerId);
+  const customerBids = bids.filter((b) => b.customerId === customerId);
+  const customerJobs = jobs.filter((j) => j.customerId === customerId);
+  const customerInvoices = invoices.filter((i) => i.customerId === customerId);
 
   const tabs: { id: TabType; label: string; count: number }[] = [
     { id: 'overview', label: 'Overview', count: 0 },

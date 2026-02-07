@@ -27,7 +27,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { StatusBadge, Badge } from '@/components/ui/badge';
 import { formatCurrency, formatDate, formatDateTime, cn } from '@/lib/utils';
-import { mockInvoices } from '@/lib/mock-data';
+import { useInvoice } from '@/lib/hooks/use-invoices';
 import type { Invoice } from '@/types';
 
 export default function InvoiceDetailPage() {
@@ -35,19 +35,9 @@ export default function InvoiceDetailPage() {
   const params = useParams();
   const invoiceId = params.id as string;
 
-  const [invoice, setInvoice] = useState<Invoice | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { invoice, loading } = useInvoice(invoiceId);
   const [menuOpen, setMenuOpen] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-
-  useEffect(() => {
-    // TODO: Replace with Firestore query
-    const found = mockInvoices.find((i) => i.id === invoiceId);
-    if (found) {
-      setInvoice(found);
-    }
-    setLoading(false);
-  }, [invoiceId]);
 
   if (loading) {
     return (

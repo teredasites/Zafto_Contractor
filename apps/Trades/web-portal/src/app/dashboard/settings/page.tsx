@@ -31,7 +31,8 @@ import { Input } from '@/components/ui/input';
 import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { CommandPalette } from '@/components/command-palette';
-import { cn } from '@/lib/utils';
+import { cn, formatRelativeTime } from '@/lib/utils';
+import { useTeam } from '@/lib/hooks/use-jobs';
 
 type SettingsTab = 'profile' | 'company' | 'team' | 'billing' | 'notifications' | 'appearance' | 'security' | 'integrations';
 
@@ -50,13 +51,13 @@ export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<SettingsTab>('profile');
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 animate-fade-in">
       <CommandPalette />
 
       {/* Header */}
       <div>
         <h1 className="text-2xl font-semibold text-main">Settings</h1>
-        <p className="text-muted mt-1">Manage your account and preferences</p>
+        <p className="text-[13px] text-muted mt-1">Manage your account and preferences</p>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6">
@@ -259,13 +260,16 @@ function CompanySettings() {
 
 function TeamSettings() {
   const [showInviteModal, setShowInviteModal] = useState(false);
+  const { team: teamData } = useTeam();
 
-  const teamMembers = [
-    { id: '1', name: 'Mike Johnson', email: 'mike@mitchellelectric.com', role: 'owner', status: 'active', lastActive: 'Now' },
-    { id: '2', name: 'Carlos Rivera', email: 'carlos@mitchellelectric.com', role: 'field_tech', status: 'active', lastActive: '15m ago' },
-    { id: '3', name: 'James Wilson', email: 'james@mitchellelectric.com', role: 'field_tech', status: 'active', lastActive: '45m ago' },
-    { id: '4', name: 'Lisa Martinez', email: 'lisa@mitchellelectric.com', role: 'office', status: 'active', lastActive: '2h ago' },
-  ];
+  const teamMembers = teamData.map((m) => ({
+    id: m.id,
+    name: m.name || m.email,
+    email: m.email,
+    role: m.role,
+    status: m.isActive ? 'active' : 'inactive',
+    lastActive: m.lastActive ? formatRelativeTime(m.lastActive) : 'Never',
+  }));
 
   const pendingInvites = [
     { id: 'i1', email: 'newtech@email.com', role: 'field_tech', sentAt: '2 days ago' },

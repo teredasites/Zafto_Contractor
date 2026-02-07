@@ -66,96 +66,8 @@ const statusConfig: Record<EquipmentStatus, { label: string; color: string; bgCo
   out_of_service: { label: 'Out of Service', color: 'text-red-700 dark:text-red-300', bgColor: 'bg-red-100 dark:bg-red-900/30' },
 };
 
-const mockEquipment: Equipment[] = [
-  {
-    id: 'e1',
-    name: 'Work Van #1',
-    type: 'vehicle',
-    make: 'Ford',
-    model: 'Transit 250',
-    year: 2022,
-    licensePlate: 'CT-123-ABC',
-    status: 'in_use',
-    assignedTo: 'John Smith',
-    currentJob: 'Panel Upgrade - Martinez',
-    lastMaintenanceDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-    nextMaintenanceDate: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
-    purchaseDate: new Date('2022-03-15'),
-    purchasePrice: 45000,
-    currentValue: 38000,
-  },
-  {
-    id: 'e2',
-    name: 'Work Van #2',
-    type: 'vehicle',
-    make: 'Chevrolet',
-    model: 'Express 2500',
-    year: 2021,
-    licensePlate: 'CT-456-DEF',
-    status: 'available',
-    lastMaintenanceDate: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000),
-    nextMaintenanceDate: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000),
-    purchaseDate: new Date('2021-06-20'),
-    purchasePrice: 42000,
-    currentValue: 32000,
-  },
-  {
-    id: 'e3',
-    name: 'Scissor Lift',
-    type: 'equipment',
-    make: 'Genie',
-    model: 'GS-1930',
-    serialNumber: 'GS1930-78542',
-    status: 'available',
-    lastMaintenanceDate: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000),
-    nextMaintenanceDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000), // Overdue
-    purchaseDate: new Date('2020-01-10'),
-    purchasePrice: 12000,
-    currentValue: 8000,
-    notes: 'Annual inspection required',
-  },
-  {
-    id: 'e4',
-    name: 'Wire Puller',
-    type: 'tool',
-    make: 'Greenlee',
-    model: '6001',
-    serialNumber: 'GL6001-12345',
-    status: 'in_use',
-    assignedTo: 'Mike Johnson',
-    currentJob: 'Commercial Wiring - Thompson',
-    purchaseDate: new Date('2019-08-05'),
-    purchasePrice: 2500,
-    currentValue: 1500,
-  },
-  {
-    id: 'e5',
-    name: 'Pipe Threader',
-    type: 'tool',
-    make: 'Ridgid',
-    model: '300 Compact',
-    serialNumber: 'RG300-98765',
-    status: 'maintenance',
-    lastMaintenanceDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
-    notes: 'Motor repair in progress',
-    purchaseDate: new Date('2018-11-20'),
-    purchasePrice: 3500,
-    currentValue: 2000,
-  },
-  {
-    id: 'e6',
-    name: 'Trailer',
-    type: 'vehicle',
-    make: 'Big Tex',
-    model: '70PI-16',
-    year: 2020,
-    licensePlate: 'CT-TRL-789',
-    status: 'available',
-    purchaseDate: new Date('2020-04-01'),
-    purchasePrice: 5500,
-    currentValue: 4000,
-  },
-];
+// Equipment/Fleet Management — Future phase. No equipment table yet. Empty until wired.
+const equipment: Equipment[] = [];
 
 export default function EquipmentPage() {
   const [search, setSearch] = useState('');
@@ -164,7 +76,7 @@ export default function EquipmentPage() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedEquipment, setSelectedEquipment] = useState<Equipment | null>(null);
 
-  const filteredEquipment = mockEquipment.filter((eq) => {
+  const filteredEquipment = equipment.filter((eq) => {
     const matchesSearch =
       eq.name.toLowerCase().includes(search.toLowerCase()) ||
       eq.make?.toLowerCase().includes(search.toLowerCase()) ||
@@ -190,10 +102,10 @@ export default function EquipmentPage() {
   ];
 
   // Stats
-  const totalEquipment = mockEquipment.length;
-  const inUseCount = mockEquipment.filter((e) => e.status === 'in_use').length;
-  const maintenanceDue = mockEquipment.filter((e) => e.nextMaintenanceDate && new Date(e.nextMaintenanceDate) < new Date()).length;
-  const totalValue = mockEquipment.reduce((sum, e) => sum + (e.currentValue || 0), 0);
+  const totalEquipment = equipment.length;
+  const inUseCount = equipment.filter((e) => e.status === 'in_use').length;
+  const maintenanceDue = equipment.filter((e) => e.nextMaintenanceDate && new Date(e.nextMaintenanceDate) < new Date()).length;
+  const totalValue = equipment.reduce((sum, e) => sum + (e.currentValue || 0), 0);
 
   return (
     <div className="space-y-6">
