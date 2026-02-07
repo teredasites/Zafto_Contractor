@@ -6615,13 +6615,16 @@ Include <content>{markdown}</content> for rendered display.
 - [x] Commit: `[E5c] Xactimate-style PDF estimate output`
 
 #### E5d: AI PDF Parsing (~8 hrs)
-- [ ] Upload handler: accept Xactimate PDF exports
-- [ ] Claude Vision extraction prompt (structured output)
-- [ ] Mapping engine: extracted text → xactimate_codes lookup
-- [ ] Auto-populate claim + estimate lines from parsed data
-- [ ] Review UI: show parsed results for contractor confirmation
-- [ ] Discrepancy highlighting: ZAFTO price vs parsed Xactimate price
-- [ ] Commit: `[E5d] AI PDF parsing — Xactimate estimate import`
+**Status: DONE (Session 79)**
+- [x] Upload handler: accept Xactimate PDF exports (base64 → Edge Function)
+- [x] Claude Vision extraction prompt (structured JSON output, all line items)
+- [x] Mapping engine: extracted codes → xactimate_codes lookup + pricing comparison
+- [x] Auto-populate claim + estimate lines from parsed data (batch insert)
+- [x] Review UI: 3-step wizard (upload → review → confirm) with selectable items
+- [x] Discrepancy highlighting: ZAFTO price vs parsed Xactimate price, code match indicators
+- [x] Edge Function `estimate-parse-pdf` deployed
+- [x] Import PDF button on estimates list page
+- [x] Commit: `[E5d] AI PDF parsing — Xactimate estimate import`
 
 #### E5e: AI Scope Assistant (~6 hrs)
 - [ ] Gap detection engine: loss type → expected scope → missing items
