@@ -5,7 +5,7 @@ import Link from 'next/link';
 import {
   LayoutDashboard, Briefcase, Clock, Calendar, Camera, FileText,
   Package, CheckSquare, FileSignature, Bell, Settings, Wrench,
-  Receipt, ChevronLeft, Menu, Sun, Moon, LogOut, X, Award,
+  Receipt, ChevronLeft, Menu, Sun, Moon, LogOut, X, Award, Building2,
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { useTheme } from '@/components/theme-provider';
@@ -18,6 +18,7 @@ const navItems = [
   { label: 'OVERVIEW', items: [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     { name: 'My Jobs', href: '/dashboard/jobs', icon: Briefcase },
+    { name: 'Properties', href: '/dashboard/properties', icon: Building2 },
     { name: 'Schedule', href: '/dashboard/schedule', icon: Calendar },
   ]},
   { label: 'CLOCK & TOOLS', items: [

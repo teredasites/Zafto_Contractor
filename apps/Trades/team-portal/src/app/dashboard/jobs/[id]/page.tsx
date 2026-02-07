@@ -7,16 +7,17 @@ import {
   ArrowLeft, MapPin, Calendar, Clock, FileText, Wrench,
   CheckSquare, Package, Play, ClipboardList,
   Droplets, Wind, Thermometer, CheckCircle2, AlertTriangle,
-  Shield, Plus, X,
+  Shield, Plus, X, Building2, Phone, Mail, User, Hammer,
 } from 'lucide-react';
 import { useJob } from '@/lib/hooks/use-jobs';
+import { useJobPropertyContext, type JobPropertyContext } from '@/lib/hooks/use-pm-jobs';
 import { useJobInsurance, addMoistureReading, addDryingLog, deployEquipment, removeEquipment } from '@/lib/hooks/use-insurance';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { StatusBadge } from '@/components/ui/badge';
 import { formatDate, formatTime, formatCurrency, cn } from '@/lib/utils';
-import { JOB_TYPE_LABELS, JOB_TYPE_COLORS } from '@/lib/hooks/mappers';
-import type { JobType, InsuranceMetadata, WarrantyMetadata, ClaimStatus, MaterialMoistureType, DryingLogType, EquipmentType } from '@/lib/hooks/mappers';
+import { JOB_TYPE_LABELS, JOB_TYPE_COLORS, URGENCY_COLORS, MAINTENANCE_STATUS_LABELS } from '@/lib/hooks/mappers';
+import type { JobType, InsuranceMetadata, WarrantyMetadata, ClaimStatus, MaterialMoistureType, DryingLogType, EquipmentType, MaintenanceUrgency, MaintenanceRequestStatus } from '@/lib/hooks/mappers';
 
 const CLAIM_STATUS_LABELS: Record<ClaimStatus, string> = {
   new: 'New Claim',
@@ -59,7 +60,9 @@ export default function JobDetailPage() {
   const jobId = params.id as string;
   const { job, loading } = useJob(jobId);
   const isInsurance = job?.jobType === 'insurance_claim';
+  const isPropertyJob = !!job?.propertyId;
   const { claim, moisture, dryingLogs, equipment, tpiInspections, loading: insLoading } = useJobInsurance(isInsurance ? jobId : null);
+  const { context: pmContext, loading: pmLoading } = useJobPropertyContext(isPropertyJob ? jobId : null, job?.propertyId ?? null);
 
   if (loading) return <JobDetailSkeleton />;
 
@@ -174,6 +177,11 @@ export default function JobDetailPage() {
         <TypeMetadataSection jobType={job.jobType as JobType} metadata={job.typeMetadata} />
       )}
 
+      {/* Property Maintenance Context */}
+      {isPropertyJob && !pmLoading && pmContext && (
+        <PropertyMaintenanceSection context={pmContext} />
+      )}
+
       {/* Insurance Restoration Progress */}
       {isInsurance && !insLoading && claim && (
         <RestorationProgress
@@ -229,6 +237,121 @@ export default function JobDetailPage() {
           </Link>
         </div>
       </div>
+    </div>
+  );
+}
+
+// ==================== PROPERTY MAINTENANCE ====================
+
+function PropertyMaintenanceSection({ context }: { context: JobPropertyContext }) {
+  return (
+    <div className="space-y-4">
+      {/* Property Info */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Building2 size={16} className="text-emerald-500" />
+            Property Details
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <MetaRow label="Property" value={context.propertyName} />
+          {context.propertyAddress && <MetaRow label="Address" value={context.propertyAddress} />}
+          {context.unitNumber && <MetaRow label="Unit" value={context.unitNumber} />}
+        </CardContent>
+      </Card>
+
+      {/* Tenant Contact */}
+      {context.tenantName && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <User size={16} className="text-blue-500" />
+              Tenant
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <p className="text-sm font-medium text-main">{context.tenantName}</p>
+            {context.tenantPhone && (
+              <a href={`tel:${context.tenantPhone}`} className="flex items-center gap-2 text-sm text-accent hover:underline">
+                <Phone size={14} /> {context.tenantPhone}
+              </a>
+            )}
+            {context.tenantEmail && (
+              <a href={`mailto:${context.tenantEmail}`} className="flex items-center gap-2 text-sm text-accent hover:underline">
+                <Mail size={14} /> {context.tenantEmail}
+              </a>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Maintenance Request */}
+      {context.maintenanceRequest && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Hammer size={16} className="text-orange-500" />
+              Maintenance Request
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <p className="text-sm font-medium text-main">{context.maintenanceRequest.title}</p>
+            {context.maintenanceRequest.description && (
+              <p className="text-sm text-secondary whitespace-pre-wrap">{context.maintenanceRequest.description}</p>
+            )}
+            <div className="flex flex-wrap gap-2">
+              {context.maintenanceRequest.category && (
+                <span className="text-xs px-2 py-0.5 rounded-full bg-secondary text-muted font-medium">
+                  {context.maintenanceRequest.category}
+                </span>
+              )}
+              <span className={cn(
+                'text-xs px-2 py-0.5 rounded-full font-medium',
+                URGENCY_COLORS[context.maintenanceRequest.urgency as MaintenanceUrgency]?.bg || 'bg-secondary',
+                URGENCY_COLORS[context.maintenanceRequest.urgency as MaintenanceUrgency]?.text || 'text-muted',
+              )}>
+                {context.maintenanceRequest.urgency}
+              </span>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-secondary text-muted font-medium">
+                {MAINTENANCE_STATUS_LABELS[context.maintenanceRequest.status as MaintenanceRequestStatus] || context.maintenanceRequest.status}
+              </span>
+            </div>
+            {context.maintenanceRequest.photos.length > 0 && (
+              <p className="text-xs text-muted">{context.maintenanceRequest.photos.length} photo{context.maintenanceRequest.photos.length !== 1 ? 's' : ''} attached</p>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Property Assets */}
+      {context.assets.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Wrench size={16} className="text-violet-500" />
+              Property Assets ({context.assets.length})
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {context.assets.map((asset) => (
+              <div key={asset.id} className="flex items-center justify-between text-sm py-1.5 border-b border-main/5 last:border-0">
+                <div>
+                  <span className="text-main font-medium capitalize">{asset.assetType.replace(/_/g, ' ')}</span>
+                  {asset.brand && <span className="text-muted ml-2 text-xs">{asset.brand} {asset.model}</span>}
+                </div>
+                <span className={cn('text-xs font-medium capitalize',
+                  asset.condition === 'good' || asset.condition === 'excellent' ? 'text-emerald-600 dark:text-emerald-400' :
+                  asset.condition === 'fair' ? 'text-amber-600 dark:text-amber-400' :
+                  'text-red-600 dark:text-red-400'
+                )}>
+                  {asset.condition}
+                </span>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

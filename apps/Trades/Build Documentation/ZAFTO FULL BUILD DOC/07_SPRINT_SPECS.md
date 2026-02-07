@@ -5734,7 +5734,7 @@ client-portal/src/app/portal/home/page.tsx           — Update: show rent due +
 ---
 
 #### D5h: Team Portal — Property Maintenance View
-**Status: PENDING** | **Est: ~4 hrs**
+**Status: DONE (Session 76)** | **Est: ~4 hrs**
 
 **Files to create:**
 ```
@@ -5748,12 +5748,12 @@ team-portal/src/app/dashboard/properties/page.tsx    — Maintenance requests as
 ```
 
 **Steps:**
-- [ ] Create use-pm-jobs.ts — jobs WHERE property_id IS NOT NULL (property maintenance jobs)
-- [ ] Create use-maintenance-requests.ts — requests assigned to current user
-- [ ] Create Properties maintenance page — list of assigned maintenance work with property/unit/tenant info
-- [ ] Update Jobs list — maintenance jobs show property name + unit number + tenant name (instead of customer)
-- [ ] Update Job detail — if maintenance job: show maintenance request details, tenant contact, asset info for the unit
-- [ ] `npm run build` passes
+- [x] Create use-pm-jobs.ts — jobs WHERE property_id IS NOT NULL (property maintenance jobs)
+- [x] Create use-maintenance-requests.ts — requests assigned to current user
+- [x] Create Properties maintenance page — list of assigned maintenance work with property/unit/tenant info
+- [x] Update Jobs list — propertyId added to JobData interface + mapJob
+- [x] Update Job detail — if maintenance job: show property details, tenant contact, maintenance request, assets
+- [x] `npm run build` passes
 - [ ] Commit: `[D5h] Team Portal — Property maintenance view`
 
 ---
@@ -5947,9 +5947,114 @@ Execute in sequence:
 
 ---
 
+## SPRINT R1: FLUTTER APP REMAKE
+
+**Source:** `Expansion/45_FLUTTER_APP_REMAKE.md`
+**Goal:** Complete mobile app rebuild — 7 role-based experiences (Owner, Tech, Office, Inspector, CPA, Homeowner, Tenant), Apple-crisp design system, Z Intelligence (voice + camera + ambient — NOT chatbot), remove dead features.
+**Depends on:** D5 complete (all business data wired). Executes BEFORE Phase E.
+**Status: SPEC COMPLETE — BLOCKED on Phase D completion**
+
+### R1a: Design System + App Shell (~12 hrs)
+- [ ] Flutter design system: colors, typography, spacing, elevation, animations
+- [ ] Component library: ZCard, ZButton, ZTextField, ZBottomSheet, ZChip, ZBadge, ZAvatar, ZSkeleton
+- [ ] Adaptive app shell with role-based routing
+- [ ] Bottom navigation factory (correct tabs per role)
+- [ ] Role switching (long-press avatar)
+- [ ] Light/dark theme system
+- [ ] Z button (floating) — tap/long-press/hold handlers
+- [ ] Remove dead features: Toolbox, Dead Man Switch, all static content screens
+- [ ] Commit: `[R1a] App remake — design system + adaptive shell`
+
+### R1b: Owner/Admin Experience (~14 hrs)
+- [ ] Owner home screen (revenue, attention items, schedule, activity)
+- [ ] Jobs tab (pipeline, filters, search)
+- [ ] Money tab (invoices + bids + ZBooks)
+- [ ] Calendar tab (day/week/month, assignments)
+- [ ] More menu (customers, team, insurance, properties, reports, leads, settings)
+- [ ] Commit: `[R1b] Owner/Admin experience`
+
+### R1c: Tech/Field Experience (~14 hrs)
+- [ ] Tech home screen (clock slider, today's jobs, quick actions, stats)
+- [ ] Walkthrough tab (prominent entry point)
+- [ ] Jobs tab (my jobs, today focus)
+- [ ] Tools screen (job site, safety, financial, insurance categories)
+- [ ] Quick actions menu (role/context/time aware)
+- [ ] Rewire all existing field tools to new design system
+- [ ] Commit: `[R1c] Tech/Field experience`
+
+### R1d: Office Manager Experience (~10 hrs)
+- [ ] Office home screen (today, actions, schedule, messages)
+- [ ] Schedule tab (calendar + dispatch)
+- [ ] Customers tab (CRM + leads)
+- [ ] Money tab (invoices + bids + payments)
+- [ ] Commit: `[R1d] Office Manager experience`
+
+### R1e: Inspector Experience (~14 hrs)
+- [ ] Deploy inspection_templates + inspection_results + inspection_deficiencies tables
+- [ ] Seed system inspection templates
+- [ ] Inspector home screen (today's inspections, stats)
+- [ ] Active inspection screen (checklist with pass/fail/conditional per item)
+- [ ] Deficiency capture (fail → photo → annotate → code cite → severity)
+- [ ] History + re-inspection linking
+- [ ] Code lookup (Z-powered natural language)
+- [ ] Floor plan integration (pin deficiencies)
+- [ ] Report generation (auto PDF)
+- [ ] Web CRM inspection hooks
+- [ ] Commit: `[R1e] Inspector experience`
+
+### R1f: Homeowner/Client Experience (~12 hrs)
+- [ ] Deploy home_scan_logs + home_maintenance_reminders tables
+- [ ] Homeowner home screen (projects, attention, health, scan CTA)
+- [ ] Home Scanner (camera → AI diagnosis → actions → contractor request)
+- [ ] Research mode (deep info on issues)
+- [ ] Projects + bid review + invoices/payments
+- [ ] My Home (floor plan viewer, systems, maintenance log)
+- [ ] Home Health Monitor (AI reminders, seasonal checklists)
+- [ ] Commit: `[R1f] Homeowner experience`
+
+### R1g: CPA Experience (~6 hrs)
+- [ ] CPA home screen (financial overview, review queue)
+- [ ] Accounts + journal entries
+- [ ] Reports (P&L, Balance Sheet, Cash Flow, Schedule C/E, 1099)
+- [ ] Expense/receipt/invoice review queue
+- [ ] Commit: `[R1g] CPA experience`
+
+### R1h: Tenant Experience (~4 hrs)
+- [ ] Tenant home screen (rent, maintenance, lease)
+- [ ] Rent (balance, history, pay)
+- [ ] Maintenance (submit, track, rate)
+- [ ] My Unit (details, lease, inspections)
+- [ ] Commit: `[R1h] Tenant experience`
+
+### R1i: Z Intelligence Integration (~16 hrs)
+- [ ] Voice-first Z (speech → intent → action → confirmation)
+- [ ] Camera-first Z (live camera → Claude Vision → result card → actions)
+- [ ] Ambient Z (contextual suggestions → dismiss tracking → learning)
+- [ ] Quick action menu per role
+- [ ] Voice command execution (top 20 actions)
+- [ ] Camera identification (top 10 scenarios)
+- [ ] Ambient suggestions (10+ types per role)
+- [ ] Z settings (voice/wake word/ambient/camera toggles)
+- [ ] Commit: `[R1i] Z Intelligence — voice + camera + ambient`
+
+### R1j: Cross-Role Integration + Testing (~8 hrs)
+- [ ] Permission override system (admin grants/restricts per user)
+- [ ] Role switching
+- [ ] Deep linking from notifications
+- [ ] Onboarding flow per role
+- [ ] All 7 roles navigate correctly
+- [ ] All existing backend wiring connected to new screens
+- [ ] `dart analyze` passes
+- [ ] Commit: `[R1j] App remake complete — 7 roles, all tools wired`
+
+**Total estimated: ~110 hours across 10 sub-steps**
+**New tables: 6 (app_user_preferences, inspection_templates, inspection_results, inspection_deficiencies, home_scan_logs, home_maintenance_reminders)**
+
+---
+
 ## PHASE E: AI LAYER
 
-**Prerequisite:** All business data must be flowing (B1-B6 COMPLETE). AI depends on real data.
+**Prerequisite:** All business data must be flowing (B1-B6 COMPLETE) + R1 app remake. AI depends on real data + new app shell.
 **API:** Claude API (Anthropic) via Supabase Edge Functions (Deno). No direct browser→Claude calls.
 **Model:** Claude Sonnet 4.5 for speed, Claude Opus 4.6 for complex artifact generation.
 
@@ -6448,6 +6553,212 @@ Include <content>{markdown}</content> for rendered display.
 - Upsell/cross-sell suggestions
 - Seasonal campaign generation
 - Review request automation
+
+---
+
+### Sprint E5: Xactimate Estimate Engine
+**Source:** `Expansion/25_XACTIMATE_ESTIMATE_ENGINE.md`
+**Goal:** Replace $300/mo Xactimate with built-in estimate writing, independent pricing, and AI-powered scope analysis.
+**Depends on:** E1 (AI infra), D2a (insurance tables already deployed), legal review (for ESX export).
+**Status: SPEC COMPLETE — BLOCKED on Phase E readiness + legal review**
+
+#### E5a: Pricing Database Foundation (~8 hrs)
+**BLOCKED ON: E1 complete**
+- [ ] Deploy `xactimate_codes` table + seed with published codes (70+ categories, 27,000+ items)
+- [ ] Deploy `pricing_entries` table + seed with initial public data
+- [ ] Deploy `pricing_contributions` table (anonymized crowd-sourced data)
+- [ ] Deploy `estimate_templates` table
+- [ ] ALTER `xactimate_estimate_lines` — add code_id, MAT/LAB/EQU, room_name, line_number, coverage_group
+- [ ] Build pricing aggregation Edge Function (monthly cron)
+- [ ] Build code search/browse API (full-text search on description)
+- [ ] Commit: `[E5a] Xactimate pricing database foundation`
+
+#### E5b: Estimate Writer UI — Web CRM (~12 hrs)
+- [ ] Estimate editor page: room-by-room line item entry
+- [ ] Code browser sidebar: search/filter all 70+ categories
+- [ ] Auto-price lookup: select code → populate MAT/LAB/EQU from pricing DB
+- [ ] O&P calculator: configurable 10/10 markup per trade or total
+- [ ] Coverage group assignment: structural/contents/other
+- [ ] Summary view: ACV, RCV, depreciation, O&P totals
+- [ ] Estimate templates: save/load common scopes
+- [ ] Hook: `use-estimate-engine.ts` with full CRUD + calculations
+- [ ] Commit: `[E5b] Xactimate estimate writer — Web CRM`
+
+#### E5c: PDF Output (~6 hrs)
+- [ ] PDF template matching Xactimate layout
+- [ ] Cover sheet: company logo, claim info, contacts, policy
+- [ ] Line items: categorized with MAT/LAB/EQU columns
+- [ ] Summary: totals by coverage group, depreciation, O&P
+- [ ] Download + email + attach to claim record
+- [ ] Edge Function for server-side PDF generation
+- [ ] Commit: `[E5c] Xactimate-style PDF estimate output`
+
+#### E5d: AI PDF Parsing (~8 hrs)
+- [ ] Upload handler: accept Xactimate PDF exports
+- [ ] Claude Vision extraction prompt (structured output)
+- [ ] Mapping engine: extracted text → xactimate_codes lookup
+- [ ] Auto-populate claim + estimate lines from parsed data
+- [ ] Review UI: show parsed results for contractor confirmation
+- [ ] Discrepancy highlighting: ZAFTO price vs parsed Xactimate price
+- [ ] Commit: `[E5d] AI PDF parsing — Xactimate estimate import`
+
+#### E5e: AI Scope Assistant (~6 hrs)
+- [ ] Gap detection engine: loss type → expected scope → missing items
+- [ ] Photo analysis: damage type → suggested line items
+- [ ] Supplement generator: new scope + justification narrative
+- [ ] Z Console integration: "/estimate" slash command
+- [ ] Pricing dispute letter generator
+- [ ] Commit: `[E5e] AI scope assistant — gap detection + supplement generator`
+
+#### E5f: Flutter Estimate Entry (~8 hrs)
+- [ ] Simplified estimate screen (mobile-optimized)
+- [ ] Photo capture → AI scope suggestion
+- [ ] Code search with autocomplete
+- [ ] Quick-add from templates
+- [ ] Model + repository + service layer
+- [ ] Sync with web CRM estimate (same DB tables)
+- [ ] Commit: `[E5f] Flutter estimate entry — mobile field estimating`
+
+#### E5g: ESX Import (~6 hrs) — BLOCKED ON LEGAL REVIEW
+- [ ] **PREREQUISITE: Legal counsel review COMPLETE**
+- [ ] ESX upload handler + ZIP extraction
+- [ ] XACTDOC XML parser (contacts, claim, line items)
+- [ ] Image extraction and storage
+- [ ] Auto-populate claim + estimate from parsed ESX
+- [ ] Error handling for unknown XML elements/versions
+- [ ] Commit: `[E5g] ESX import — parse Xactimate project files`
+
+#### E5h: ESX Export (~6 hrs) — BLOCKED ON LEGAL REVIEW
+- [ ] **PREREQUISITE: Legal counsel review COMPLETE**
+- [ ] ESX file generator (XML + images → ZIP)
+- [ ] XACTDOC XML writer (valid schema)
+- [ ] Download as .esx for import into Xactimate/XactAnalysis
+- [ ] Round-trip verification test
+- [ ] Commit: `[E5h] ESX export — generate Xactimate-compatible files`
+
+#### E5i: Crowd-Sourced Pricing Pipeline (~4 hrs)
+- [ ] Invoice finalization hook: extract codes + pricing + ZIP
+- [ ] Anonymization pipeline: strip PII before contribution
+- [ ] Monthly aggregation Edge Function (cron)
+- [ ] Pricing confidence calculation (low/medium/high/verified)
+- [ ] Admin dashboard: pricing data coverage by region/trade
+- [ ] Commit: `[E5i] Crowd-sourced pricing pipeline`
+
+#### E5j: Testing + Verification (~4 hrs)
+- [ ] Unit tests: code search, price lookup, O&P calculation
+- [ ] Integration tests: PDF parse → claim creation flow
+- [ ] Template round-trip: create → save → load → verify
+- [ ] All 5 apps build clean
+- [ ] Commit: `[E5j] Xactimate estimate engine — testing complete`
+
+**Total estimated: ~68 hours across 10 sub-steps**
+**New tables: 5 (xactimate_codes, pricing_entries, pricing_contributions, estimate_templates, esx_imports) + 1 ALTER**
+
+---
+
+### Sprint E6: Bid Walkthrough Engine
+**Source:** `Expansion/44_BID_WALKTHROUGH_ENGINE.md`
+**Goal:** Field-to-bid pipeline — room-by-room walkthrough, LiDAR dimensions, photo annotations, sketch editor, 2D/3D asset viewer/editor, AI bid generation in every format, customizable workflows per company.
+**Depends on:** E1 (AI infra), E5 (Xactimate codes/pricing for insurance bids), D5 (property tables for floor plan links).
+**Status: SPEC COMPLETE — BLOCKED on Phase E readiness**
+
+#### E6a: Walkthrough Data Model + Templates (~6 hrs)
+**BLOCKED ON: E1 complete**
+- [ ] Deploy `walkthroughs` table + RLS
+- [ ] Deploy `walkthrough_rooms` table
+- [ ] Deploy `walkthrough_photos` table
+- [ ] Deploy `walkthrough_templates` table + seed ~14 system templates
+- [ ] Deploy `property_floor_plans` table
+- [ ] ALTER bids, jobs, property_assets (add walkthrough/floor plan links)
+- [ ] Commit: `[E6a] Walkthrough engine — data model + templates`
+
+#### E6b: Flutter Walkthrough Capture Flow (~16 hrs)
+- [ ] Walkthrough start screen (name, customer link, type, template)
+- [ ] Room capture screen (photo, notes, tags, custom fields per template)
+- [ ] Multi-photo per room with auto-numbering
+- [ ] Voice note recording per room
+- [ ] Room list with progress indicators
+- [ ] Exterior capture flow
+- [ ] Walkthrough finish screen (summary, upload trigger)
+- [ ] Offline persistence (PowerSync + local file storage)
+- [ ] Background upload with progress tracking
+- [ ] Model + Repository + Service layer
+- [ ] Commit: `[E6b] Flutter walkthrough capture flow`
+
+#### E6c: Photo Annotation System (~8 hrs)
+- [ ] Annotation editor (CustomPainter overlay on photo)
+- [ ] Tools: draw, arrow, circle, rectangle, text, measurement, stamp
+- [ ] Color/thickness selection
+- [ ] Save annotations as JSON overlay (original untouched)
+- [ ] Render annotated version as PNG for export
+- [ ] Before/after photo linking + comparison view
+- [ ] Commit: `[E6c] Photo annotation system`
+
+#### E6d: Sketch Editor + Floor Plan Engine (~16 hrs)
+- [ ] Floor plan canvas (CustomPainter + GestureDetector)
+- [ ] Wall drawing tool with angle snapping
+- [ ] Door/window/fixture placement from symbol library
+- [ ] Room auto-detection from enclosed walls
+- [ ] Dimension labels (auto-calculated, manually editable)
+- [ ] Asset pins (link to property_assets table)
+- [ ] Annotation overlay (text, area highlights)
+- [ ] Multi-floor support (tabs)
+- [ ] Undo/redo stack
+- [ ] Save as structured JSON (not bitmap)
+- [ ] Export as PNG/PDF
+- [ ] Commit: `[E6d] Sketch editor + floor plan engine`
+
+#### E6e: LiDAR Integration (~10 hrs)
+- [ ] Evaluate and integrate ARKit plugin for iOS
+- [ ] Room dimension capture from LiDAR scan
+- [ ] Auto-populate sketch from LiDAR data
+- [ ] Dimension editing (override LiDAR with manual values)
+- [ ] LiDAR data storage (compressed mesh/point cloud)
+- [ ] Fallback to manual dimension entry on non-LiDAR devices
+- [ ] Commit: `[E6e] LiDAR integration — room scanning + auto-sketch`
+
+#### E6f: 2D Floor Plan Viewer — All Apps (~8 hrs)
+- [ ] Web CRM: Canvas/SVG floor plan renderer (interactive, editable)
+- [ ] Web CRM: Room selection, asset pins, photo pins, status color-coding
+- [ ] Client Portal: Simplified read-only viewer
+- [ ] Team Portal: Viewer with progress marking
+- [ ] Print-friendly export (clean black-and-white)
+- [ ] Commit: `[E6f] 2D floor plan viewer — all apps`
+
+#### E6g: AI Bid Generation Pipeline (~10 hrs)
+- [ ] Edge Function: process walkthrough → analyze photos (Claude Vision)
+- [ ] Edge Function: voice note transcription + extraction
+- [ ] Edge Function: combine all data → generate bid per format
+- [ ] Bid templates: standard, 3-tier, insurance/Xactimate, AIA, trade-specific, inspection report
+- [ ] Bid review screen (Flutter + Web CRM)
+- [ ] Bid edit + send capabilities
+- [ ] Commit: `[E6g] AI bid generation pipeline — all formats`
+
+#### E6h: Workflow Customization UI (~6 hrs)
+- [ ] Web CRM: Settings > Walkthrough Workflows page
+- [ ] Template editor: rooms, required fields, custom fields, checklist, AI instructions
+- [ ] Approval workflow configuration
+- [ ] Clone system template → customize
+- [ ] Commit: `[E6h] Walkthrough workflow customization`
+
+#### E6i: 3D Property Viewer + Editor (~12 hrs) — PHASE 2
+- [ ] LiDAR mesh capture + storage
+- [ ] 3D renderer (Flutter: flutter_gl, Web: Three.js)
+- [ ] Orbit/zoom/pan, tap surfaces, asset pins in 3D
+- [ ] 2D ↔ 3D sync (edits in either view update both)
+- [ ] Cross-section view
+- [ ] Commit: `[E6i] 3D property viewer + editor`
+
+#### E6j: Testing + Verification (~4 hrs)
+- [ ] End-to-end: walkthrough → upload → bid generation → review → send
+- [ ] Offline walkthrough → reconnect → upload completes
+- [ ] Floor plan CRUD across all apps
+- [ ] Template customization applied in walkthrough
+- [ ] All 5 apps build clean
+- [ ] Commit: `[E6j] Bid walkthrough engine — testing complete`
+
+**Total estimated: ~96 hours across 10 sub-steps**
+**New tables: 5 (walkthroughs, walkthrough_rooms, walkthrough_photos, property_floor_plans, walkthrough_templates) + 3 ALTERs**
 
 ---
 

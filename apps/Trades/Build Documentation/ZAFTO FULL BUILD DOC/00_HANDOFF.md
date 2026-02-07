@@ -23,7 +23,7 @@
 | **Sprint Specs Location** | `07_SPRINT_SPECS.md` → search for "D5h" |
 | **Status** | D5a-D5g DONE. 18 tables, 14 CRM pages, 11 CRM hooks, 10 Flutter screens, 7 repos, 3 services, 5 models. Client Portal: 5 tenant hooks, 6 new pages (29 routes). All builds pass. |
 | **Last Completed** | D5g — Client Portal Tenant Flows: 5 hooks + 6 pages (rent, lease, maintenance, inspections) + home/menu updates (S73). |
-| **Session Count** | 73 |
+| **Session Count** | 75 |
 | **Tables Deployed** | 79 |
 | **Migration Files** | 24 |
 
@@ -89,6 +89,57 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 ---
 
 ## SESSION LOG (History — do NOT use for execution decisions, use CURRENT EXECUTION POINT above)
+
+### Session 75 (Feb 7) — Xactimate Estimate Engine Spec (DOCS ONLY)
+
+**Xactimate Estimate Engine — Expansion Spec (DONE):**
+- Created `Expansion/25_XACTIMATE_ESTIMATE_ENGINE.md` — comprehensive spec covering:
+  - Problem statement (Verisk monopoly, $300/mo, 30-50% suppressed pricing)
+  - Product architecture (4 engines: Estimate Writer, Pricing DB, ESX Import/Export, PDF Output)
+  - Data architecture (5 new tables: xactimate_codes, pricing_entries, pricing_contributions, estimate_templates, esx_imports + 1 ALTER on xactimate_estimate_lines)
+  - Full Xactimate code system (70+ categories, MAT/LAB/EQU, coverage groups, O&P, units)
+  - ESX file format (ZIP + XACTDOC XML + images, XML schema documented)
+  - Pricing strategy (crowd-sourced from real ZAFTO invoices, anonymized, regional, confidence levels)
+  - AI integration (PDF parsing, photo-to-estimate, scope gap detection, supplement generator)
+  - 10 build phases (E5a-E5j, ~68 hrs total, ESX blocked on legal)
+  - Competitive analysis (Xactimate vs Symbility vs iScope vs ZAFTO)
+  - Legal framework (DMCA 1201(f), Sega/Sony/Google precedents, clean room protocol)
+  - Risk register (6 risks with mitigations)
+- Added Sprint E5 (10 sub-steps) to `07_SPRINT_SPECS.md` between E4 and Phase F
+- Updated memory/xactimate-strategy.md status to SPEC COMPLETE
+- NO CODE CHANGES — spec only. All 5 apps remain build-clean.
+
+**Bid Walkthrough Engine — Expansion Spec (DONE):**
+- Created `Expansion/44_BID_WALKTHROUGH_ENGINE.md` — comprehensive spec covering:
+  - Full field-to-bid pipeline: room-by-room walkthrough, LiDAR, photos, annotations, voice notes, sketches
+  - Property Sketch Editor: draw/edit floor plans, wall snapping, symbol library (6 trade categories), multi-floor
+  - 2D Floor Plan Viewer/Editor across all 4 apps (Flutter editor, Web/Client/Team viewers)
+  - 3D Property Viewer/Editor (Phase 2): LiDAR mesh rendering, 2D↔3D sync, cross-section views
+  - Living Asset Map: equipment pinned on floor plans, full lifecycle tracking
+  - Photo System: smart capture, annotation tools (draw/arrow/text/measure/stamp), before/after linking
+  - AI Bid Generation: Claude analyzes all walkthrough data → generates format-perfect bids
+  - Every bid format: standard, 3-tier, Xactimate/insurance, AIA/commercial, trade-specific, inspection report
+  - Customizable Workflows: per-company templates with custom fields, checklists, room presets, AI instructions
+  - Offline support: full capture offline, background upload when reconnected
+  - 5 new tables (walkthroughs, walkthrough_rooms, walkthrough_photos, property_floor_plans, walkthrough_templates) + 3 ALTERs
+- Added Sprint E6 (10 sub-steps, ~96 hrs) to `07_SPRINT_SPECS.md`
+- Noted Flutter app modernization needed (separate sprint, not blocking walkthrough)
+
+**Flutter App Remake — Expansion Spec (DONE):**
+- Created `Expansion/45_FLUTTER_APP_REMAKE.md` — complete app rebuild spec covering:
+  - 7 role-based experiences: Owner/Admin, Tech/Field, Office Manager, Inspector, CPA, Homeowner/Client, Tenant
+  - Apple-crisp design system (light default, dark option, SF Pro typography, generous whitespace, haptic feedback)
+  - Z Intelligence — NOT a chatbot. Three modes: voice-first (hands-free), camera-first (point-and-identify), ambient (contextual suggestions)
+  - Complete tool inventory per role (Owner: 15 categories, Tech: 17, Office: 11, Inspector: 11, Homeowner: 13, CPA: 10, Tenant: 6)
+  - Inspector deep dive: configurable checklists, pass/fail/conditional scoring, deficiency tracking + work order creation, re-inspection linking
+  - Homeowner deep dive: Home Scanner (AI diagnosis from photos), Home Health Monitor (maintenance reminders), one-tap contractor requests
+  - Removed features: Dead Man Switch (liability), Toolbox/calculators/code ref/exam prep (replaced by Z Intelligence)
+  - 6 new tables (app_user_preferences, inspection_templates, inspection_results, inspection_deficiencies, home_scan_logs, home_maintenance_reminders)
+  - Feature connectivity map: every mobile action → CRM visibility
+- Added Sprint R1 (10 sub-steps, ~110 hrs) to `07_SPRINT_SPECS.md` — executes AFTER Phase D, BEFORE Phase E
+- **Next:** Resume D5h (Team Portal — Property Maintenance View)
+
+---
 
 ### Session 73 (Feb 7) — D5g: Client Portal Tenant Flows
 

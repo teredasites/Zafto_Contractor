@@ -23,18 +23,19 @@ export function Badge({ children, variant = 'default', className }: BadgeProps) 
   );
 }
 
-export function StatusBadge({ status, className }: { status: string; className?: string }) {
+export function StatusBadge({ status, label, className }: { status: string; label?: string; className?: string }) {
   const colors = getStatusColor(status);
   const labels: Record<string, string> = {
     draft: 'Draft', scheduled: 'Scheduled', dispatched: 'Dispatched',
     en_route: 'En Route', in_progress: 'In Progress', on_hold: 'On Hold',
     completed: 'Completed', open: 'Open', pending: 'Pending',
     approved: 'Approved', rejected: 'Rejected', pending_approval: 'Pending Approval',
+    new: 'New', assigned: 'Assigned', cancelled: 'Cancelled',
   };
   return (
     <span className={cn('inline-flex items-center gap-1.5 px-2 py-0.5 text-xs font-medium rounded-full', colors.bg, colors.text, className)}>
       <span className={cn('w-1.5 h-1.5 rounded-full', colors.dot)} />
-      {labels[status] || status}
+      {label || labels[status] || status}
     </span>
   );
 }
