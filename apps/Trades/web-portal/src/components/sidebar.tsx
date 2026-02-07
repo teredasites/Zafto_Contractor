@@ -48,6 +48,8 @@ import {
   ScanSearch,
   Cog,
   RotateCcw,
+  Calculator,
+  Umbrella,
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { ZMark } from '@/components/z-console/z-mark';
@@ -77,6 +79,13 @@ const navigationGroups: NavGroup[] = [
       { name: 'Jobs', href: '/dashboard/jobs', icon: Briefcase },
       { name: 'Change Orders', href: '/dashboard/change-orders', icon: ArrowRightLeft },
       { name: 'Invoices', href: '/dashboard/invoices', icon: Receipt },
+    ],
+  },
+  {
+    label: 'INSURANCE',
+    items: [
+      { name: 'Claims', href: '/dashboard/insurance', icon: Umbrella },
+      { name: 'Estimate Writer', href: '/dashboard/estimates', icon: Calculator },
     ],
   },
   {
