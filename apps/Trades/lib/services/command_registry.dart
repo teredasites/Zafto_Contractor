@@ -24,6 +24,7 @@ enum CommandType {
   settings,
   action,
   aiScanner,
+  property,
 }
 
 /// A single command/destination in the app
@@ -585,6 +586,18 @@ void _registerAllCommands(CommandRegistry registry) {
     ),
   ]);
   
+  // === PROPERTIES ===
+  registry.registerAll([
+    AppCommand(
+      id: 'properties_hub',
+      title: 'Properties',
+      subtitle: 'Rental portfolio management',
+      type: CommandType.property,
+      icon: LucideIcons.building2,
+      keywords: ['property', 'rental', 'tenant', 'lease', 'rent', 'portfolio', 'unit', 'landlord'],
+    ),
+  ]);
+
   // === BIDS ===
   registry.registerAll([
     AppCommand(

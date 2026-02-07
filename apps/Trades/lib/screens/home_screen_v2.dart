@@ -42,6 +42,7 @@ import 'field_tools/sun_position_screen.dart';
 import 'field_tools/level_plumb_screen.dart';
 import 'calendar/calendar_screen.dart';
 import 'contract_analyzer/contract_analyzer_hub_screen.dart';
+import 'properties/properties_hub_screen.dart';
 import 'time_clock/time_clock_screen.dart';
 import '../services/calendar_service.dart';
 import '../services/time_clock_service.dart';
@@ -793,6 +794,10 @@ class _HomeScreenV2State extends ConsumerState<HomeScreenV2> {
             _buildMoreMenuItem(colors, LucideIcons.bookOpen, 'ZBooks', 'Expenses, receipts, financials', () {
               Navigator.pop(context);
               Navigator.push(context, MaterialPageRoute(builder: (_) => const ZBooksHubScreen()));
+            }),
+            _buildMoreMenuItem(colors, LucideIcons.building2, 'Properties', 'Rental portfolio management', () {
+              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const PropertiesHubScreen()));
             }),
             _buildMoreMenuItem(colors, LucideIcons.users, 'Customers', 'Manage your client list', () {
               Navigator.pop(context);
@@ -1743,6 +1748,7 @@ class _FeatureCarousel extends StatelessWidget {
       _FeatureItem(icon: LucideIcons.fileSignature, title: 'Bid Builder', subtitle: 'Professional estimates', onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const BidsHubScreen()))),
       _FeatureItem(icon: LucideIcons.hardHat, title: 'Job Tracker', subtitle: 'Active projects', onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const JobsHubScreen()))),
       _FeatureItem(icon: LucideIcons.receipt, title: 'Invoices', subtitle: 'Bill and get paid', onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const InvoicesHubScreen()))),
+      _FeatureItem(icon: LucideIcons.building2, title: 'Properties', subtitle: 'Portfolio manager', onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PropertiesHubScreen()))),
       _FeatureItem(icon: LucideIcons.calculator, title: 'Calculators', subtitle: '1,186 trade tools', onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ToolsHubScreen()))),
       _FeatureItem(icon: LucideIcons.fileSearch, title: 'Contract Analyzer', subtitle: 'AI review', hasAiBadge: true, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ContractAnalyzerHubScreen()))),
       // Field tools - ordered by daily use frequency
