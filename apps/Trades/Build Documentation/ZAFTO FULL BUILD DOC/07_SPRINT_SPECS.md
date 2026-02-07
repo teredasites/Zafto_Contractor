@@ -5759,21 +5759,21 @@ team-portal/src/app/dashboard/properties/page.tsx    — Maintenance requests as
 ---
 
 #### D5i: Integration Wiring + Rent Auto-Charge
-**Status: PENDING** | **Est: ~6 hrs**
+**Status: DONE (Session 76)** | **Est: ~6 hrs**
 
 **Steps:**
-- [ ] Create Edge Function: `pm-rent-charge` — runs daily, generates rent_charges for active leases where due_date matches, applies late fees after grace period
-- [ ] Create Edge Function: `pm-lease-reminders` — runs daily, sends notifications for expiring leases (90/60/30 days)
-- [ ] Create Edge Function: `pm-asset-reminders` — runs daily, sends notifications for assets with upcoming service dates
-- [ ] Wire maintenance request → job creation (self-assign flow): request.job_id populated, job.maintenance_request_id set, job.property_id + unit_id set, work_order_actions INSERT for each step
-- [ ] Wire job completion → maintenance request update: when job status = completed, update maintenance_request.status = completed, insert work_order_actions completion record
-- [ ] Wire rent payment → ZBooks: on payment confirmation, auto-create journal entry (debit Cash account, credit Rental Income account for that property)
-- [ ] Wire expense allocation: when creating expense with property_id, tag tax_schedule = 'schedule_e', ZBooks categorizes under property
-- [ ] Wire inspection items → maintenance: when inspection item has requires_repair = true, offer "Create Work Order" button → creates maintenance_request + job
-- [ ] Wire unit turn → job creation: each unit_turn_task with type=repair/replace can create a ZAFTO job
-- [ ] Wire asset service record → job: when completing a maintenance job on a unit with matching asset_type, prompt "Update asset service record?" → insert asset_service_records row
-- [ ] Wire lease termination → unit turn: when lease is terminated, auto-create unit_turn with move_out_date
-- [ ] `dart analyze` passes + `npm run build` passes (all portals)
+- [x] Create Edge Function: `pm-rent-charge` — runs daily, generates rent_charges for active leases where due_date matches, applies late fees after grace period
+- [x] Create Edge Function: `pm-lease-reminders` — runs daily, sends notifications for expiring leases (90/60/30 days)
+- [x] Create Edge Function: `pm-asset-reminders` — runs daily, sends notifications for assets with upcoming service dates
+- [x] Wire maintenance request → job creation (self-assign flow): Flutter handleItMyself fixed (propertyId/unitId/maintenanceRequestId), CRM createJobFromRequest added
+- [x] Wire job completion → maintenance request update: Flutter completeMaintenanceJob method, CRM hook updates request status
+- [x] Wire rent payment → ZBooks: auto-creates journal entry (debit Cash, credit Rental Income) with property tagging
+- [x] Wire expense allocation: already done in D5e (property_id + schedule_e_category + property_allocation_pct on expense_records)
+- [x] Wire inspection items → maintenance: CRM createRepairFromInspection function added to use-pm-inspections.ts
+- [x] Wire unit turn → job creation: CRM createJobFromTurnTask function added to use-unit-turns.ts
+- [x] Wire asset service record → job: CRM recordServiceFromJob function added to use-assets.ts
+- [x] Wire lease termination → unit turn: CRM terminateLease auto-creates unit_turn with move_out_date
+- [x] `dart analyze` passes (0 errors) + `npm run build` passes (all 5 portals)
 - [ ] Commit: `[D5i] Integration wiring — rent auto-charge, maintenance→job, ZBooks journal entries`
 
 ---

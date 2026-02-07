@@ -147,6 +147,44 @@ class PmMaintenanceRepository {
   }
 
   // ============================================================
+  // MAINTENANCE REQUESTS — QUERY BY JOB
+  // ============================================================
+
+  Future<List<MaintenanceRequest>> getRequestsForJob(String jobId) async {
+    try {
+      final response = await supabase
+          .from(_requestsTable)
+          .select()
+          .eq('job_id', jobId);
+      return (response as List)
+          .map((row) => MaintenanceRequest.fromJson(row))
+          .toList();
+    } catch (e) {
+      throw DatabaseError(
+        'Failed to fetch maintenance requests for job: $e',
+        userMessage:
+            'Could not load maintenance requests for this job. Please try again.',
+        cause: e,
+      );
+    }
+  }
+
+  Future<void> linkJobToRequest(String requestId, String jobId) async {
+    try {
+      await supabase
+          .from(_requestsTable)
+          .update({'job_id': jobId})
+          .eq('id', requestId);
+    } catch (e) {
+      throw DatabaseError(
+        'Failed to link job to maintenance request: $e',
+        userMessage: 'Could not link job to request. Please try again.',
+        cause: e,
+      );
+    }
+  }
+
+  // ============================================================
   // WORK ORDER ACTIONS — READ
   // ============================================================
 

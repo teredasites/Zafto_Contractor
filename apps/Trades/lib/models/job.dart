@@ -87,6 +87,11 @@ class Job {
   final String? invoiceId;
   final String? quoteId;
 
+  // Property Management
+  final String? propertyId;
+  final String? unitId;
+  final String? maintenanceRequestId;
+
   // Sync
   final bool syncedToCloud;
 
@@ -131,6 +136,9 @@ class Job {
     this.tags = const [],
     this.invoiceId,
     this.quoteId,
+    this.propertyId,
+    this.unitId,
+    this.maintenanceRequestId,
     this.syncedToCloud = false,
     required this.createdAt,
     required this.updatedAt,
@@ -196,6 +204,9 @@ class Job {
       'estimated_amount': estimatedAmount,
       'source': source,
       'tags': tags,
+      'property_id': propertyId,
+      'unit_id': unitId,
+      'maintenance_request_id': maintenanceRequestId,
     };
   }
 
@@ -234,6 +245,9 @@ class Job {
       'tags': tags,
       'invoice_id': invoiceId,
       'quote_id': quoteId,
+      'property_id': propertyId,
+      'unit_id': unitId,
+      'maintenance_request_id': maintenanceRequestId,
     };
   }
 
@@ -308,6 +322,9 @@ class Job {
       invoiceId:
           (json['invoice_id'] ?? json['invoiceId']) as String?,
       quoteId: (json['quote_id'] ?? json['quoteId']) as String?,
+      propertyId: (json['property_id'] ?? json['propertyId']) as String?,
+      unitId: (json['unit_id'] ?? json['unitId']) as String?,
+      maintenanceRequestId: (json['maintenance_request_id'] ?? json['maintenanceRequestId']) as String?,
       syncedToCloud:
           (json['synced_to_cloud'] ?? json['syncedToCloud']) as bool? ?? false,
       createdAt: _parseDate(json['created_at'] ?? json['createdAt']),
@@ -452,6 +469,9 @@ class Job {
     List<String>? tags,
     String? invoiceId,
     String? quoteId,
+    String? propertyId,
+    String? unitId,
+    String? maintenanceRequestId,
     bool? syncedToCloud,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -493,6 +513,9 @@ class Job {
       tags: tags ?? this.tags,
       invoiceId: invoiceId ?? this.invoiceId,
       quoteId: quoteId ?? this.quoteId,
+      propertyId: propertyId ?? this.propertyId,
+      unitId: unitId ?? this.unitId,
+      maintenanceRequestId: maintenanceRequestId ?? this.maintenanceRequestId,
       syncedToCloud: syncedToCloud ?? this.syncedToCloud,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,

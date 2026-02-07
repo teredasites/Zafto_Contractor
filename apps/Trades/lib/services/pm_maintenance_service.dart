@@ -89,8 +89,6 @@ class PmMaintenanceService {
   // unit, auto-assigns to current user. The contractor who owns
   // the property handles the repair themselves — no vendor needed.
   //
-  // TODO: Once Job model is expanded with propertyId/unitId/
-  // maintenanceRequestId fields, pass them in the Job constructor.
   Future<Job> handleItMyself(String requestId) async {
     final request = await _repo.getRequest(requestId);
     if (request == null) {
@@ -107,10 +105,10 @@ class PmMaintenanceService {
       title: 'Maintenance: ${request.title}',
       description: request.description,
       status: JobStatus.inProgress,
-      jobType: JobType.standard, // TODO: Add JobType.maintenance
-      // TODO: propertyId: request.propertyId,
-      // TODO: unitId: request.unitId,
-      // TODO: maintenanceRequestId: request.id,
+      jobType: JobType.standard,
+      propertyId: request.propertyId,
+      unitId: request.unitId,
+      maintenanceRequestId: request.id,
       assignedUserIds: [_authState.user?.uid ?? ''],
       createdByUserId: _authState.user?.uid ?? '',
       estimatedAmount: request.estimatedCost ?? 0,
@@ -122,7 +120,9 @@ class PmMaintenanceService {
 
     // Update request: link job, set status to in_progress
     await _repo.updateRequestStatus(requestId, MaintenanceStatus.inProgress);
-    // TODO: Also link job_id on the maintenance_request row via direct update
+
+    // Link job to maintenance request
+    await _repo.linkJobToRequest(requestId, created.id);
 
     // Add work order action
     await _repo.addAction(WorkOrderAction(
@@ -169,6 +169,29 @@ class PmMaintenanceService {
       details: notes ?? 'Request completed',
       createdAt: DateTime.now(),
     ));
+  }
+
+  // ============================================================
+  // JOB COMPLETION → MAINTENANCE REQUEST UPDATE
+  // ============================================================
+
+  // Wire: job completion → update linked maintenance request
+  Future<void> completeMaintenanceJob(String jobId) async {
+    // Find maintenance request linked to this job
+    final requests = await _repo.getRequestsForJob(jobId);
+    if (requests.isEmpty) return;
+
+    for (final req in requests) {
+      await _repo.updateRequestStatus(req.id, MaintenanceStatus.completed);
+      await _repo.addAction(WorkOrderAction(
+        id: '',
+        maintenanceRequestId: req.id,
+        actionType: WorkOrderActionType.completed,
+        performedBy: _authState.user?.uid ?? '',
+        details: 'Job $jobId completed — maintenance request auto-closed',
+        createdAt: DateTime.now(),
+      ));
+    }
   }
 }
 

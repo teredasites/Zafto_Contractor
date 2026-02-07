@@ -1,6 +1,6 @@
 # ZAFTO SESSION HANDOFF
 ## THE ONLY DOC YOU READ FIRST — EVERY SESSION
-### Last Updated: February 7, 2026 (Session 73)
+### Last Updated: February 7, 2026 (Session 76)
 
 ---
 
@@ -19,17 +19,17 @@
 | Field | Value |
 |-------|-------|
 | **Sprint** | D5 — Property Management — **IN PROGRESS** |
-| **Sub-step** | D5h — PENDING. D5a-D5g DONE. Next: D5h (Team Portal — Property Maintenance View). |
-| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → search for "D5h" |
-| **Status** | D5a-D5g DONE. 18 tables, 14 CRM pages, 11 CRM hooks, 10 Flutter screens, 7 repos, 3 services, 5 models. Client Portal: 5 tenant hooks, 6 new pages (29 routes). All builds pass. |
-| **Last Completed** | D5g — Client Portal Tenant Flows: 5 hooks + 6 pages (rent, lease, maintenance, inspections) + home/menu updates (S73). |
-| **Session Count** | 75 |
+| **Sub-step** | D5i — PENDING. D5a-D5h DONE. Next: D5i (Integration Wiring + Rent Auto-Charge). |
+| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → search for "D5i" |
+| **Status** | D5a-D5h DONE. 18 tables, 14 CRM pages, 11 CRM hooks, 10 Flutter screens, 7 repos, 3 services, 5 models. Client Portal: 5 tenant hooks, 6 new pages (29 routes). Team Portal: 3 PM hooks, properties page, job detail PM context, sidebar updated. All builds pass. |
+| **Last Completed** | D5h — Team Portal Property Maintenance View: use-pm-jobs.ts, use-maintenance-requests.ts, properties page, job detail PropertyMaintenanceSection, sidebar Properties nav (S76). |
+| **Session Count** | 76 |
 | **Tables Deployed** | 79 |
 | **Migration Files** | 24 |
 
 **D3 Phase 1+2 COMPLETE.** Phase 3 is future (6+ months post-launch).
 **D4 ZBooks COMPLETE (S70).** All 16 sub-steps (D4a-D4p) built. 13 hooks, 13 web pages, 5 Edge Functions, 3 Flutter screens, 61 tables, 20 migrations.
-**Next:** D5 (Property Mgmt — needs spec session) → Phase E (AI Layer)
+**Next:** D5i (Integration Wiring + Rent Auto-Charge) → D5j (Testing + Seed Data) → R1 (App Remake) → Phase E (AI Layer)
 
 ---
 
@@ -41,7 +41,7 @@
 | D6: document_versions table | NOT BUILT | D6a | Table + UI deferred. No spec priority. |
 | D6: Flutter enterprise screens | NOT BUILT | D6b | Branch/roles/forms/API key screens for mobile. Settings page done in Web CRM only. |
 | D4: ZBooks | **ALL DONE** | D4 | D4a-D4p ALL complete. GL engine + 15 tables + 13 web pages + 3 Flutter screens + 5 Edge Functions. 13 hooks. |
-| D5: Property Management | D5a-D5f DONE | D5 | D5g (Client Portal tenant flows) + D5h (Team Portal) + D5i (integration tests) remaining. |
+| D5: Property Management | D5a-D5h DONE | D5 | D5i (Integration wiring + rent auto-charge) + D5j (Testing + seed data) remaining. |
 
 ---
 
@@ -89,6 +89,22 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 ---
 
 ## SESSION LOG (History — do NOT use for execution decisions, use CURRENT EXECUTION POINT above)
+
+### Session 76 (Feb 7) — D5h: Team Portal Property Maintenance View
+
+**D5h: Team Portal — Property Maintenance View (DONE):**
+- Created `use-pm-jobs.ts` — `usePmJobs()` hook (property jobs WHERE property_id IS NOT NULL) + `useJobPropertyContext()` hook (parallel queries for property, tenant, maintenance request, assets)
+- Created `use-maintenance-requests.ts` — `useMaintenanceRequests()` hook with real-time subscription + `updateRequestStatus()` mutation
+- Created `properties/page.tsx` — Full maintenance requests page: filter tabs (All/Open/In Progress/Completed), search, urgency badges, tenant contact, status update buttons (Start Work/Mark Complete), linked job navigation
+- Updated `mappers.ts` — Added `propertyId` to JobData + mapJob. Added PM types (MaintenanceRequestData, PropertySummary, PropertyAssetData), mapper functions, URGENCY_COLORS, MAINTENANCE_STATUS_LABELS
+- Updated `jobs/[id]/page.tsx` — PropertyMaintenanceSection component: property details, tenant contact (clickable phone/email), maintenance request with urgency/category/status, property assets with condition indicators
+- Updated `sidebar.tsx` — Added "Properties" nav item with Building2 icon in OVERVIEW section
+- Updated `badge.tsx` — Added optional `label` prop to StatusBadge + maintenance status entries (new, assigned, cancelled)
+- Updated `utils.ts` — Added new/assigned/cancelled status colors
+- `npm run build` passes (25 routes, 0 errors)
+- Committed + pushed to GitHub: `[D5h] Team Portal — Property maintenance view` (3067a10)
+
+---
 
 ### Session 75 (Feb 7) — Xactimate Estimate Engine Spec (DOCS ONLY)
 

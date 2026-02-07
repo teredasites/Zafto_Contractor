@@ -347,3 +347,47 @@ export function useUnitTurns() {
     createJobFromTask,
   };
 }
+
+/**
+ * Creates a ZAFTO job from a unit turn task, links the task to the job,
+ * and updates the task status to in_progress.
+ */
+export async function createJobFromTurnTask(params: {
+  unitTurnId: string;
+  taskId: string;
+  propertyId: string;
+  unitId: string;
+  title: string;
+  description: string;
+  companyId: string;
+  userId: string;
+}): Promise<string> {
+  const supabase = getSupabase();
+
+  const { data: job, error: jobErr } = await supabase
+    .from('jobs')
+    .insert({
+      company_id: params.companyId,
+      created_by_user_id: params.userId,
+      title: `Unit Turn: ${params.title}`,
+      description: params.description,
+      status: 'scheduled',
+      job_type: 'standard',
+      property_id: params.propertyId,
+      unit_id: params.unitId,
+      assigned_user_ids: [params.userId],
+      source: 'unit_turn',
+    })
+    .select('id')
+    .single();
+
+  if (jobErr) throw jobErr;
+
+  // Link task to job
+  await supabase
+    .from('unit_turn_tasks')
+    .update({ job_id: job.id, status: 'in_progress' })
+    .eq('id', params.taskId);
+
+  return job.id;
+}

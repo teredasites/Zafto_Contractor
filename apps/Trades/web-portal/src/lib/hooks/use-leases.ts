@@ -120,6 +120,15 @@ export function useLeases() {
 
   const terminateLease = async (id: string, reason: string) => {
     const supabase = getSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    // Fetch lease details before terminating (need property_id, unit_id, tenant_id)
+    const { data: lease } = await supabase
+      .from('leases')
+      .select('property_id, unit_id, tenant_id, company_id')
+      .eq('id', id)
+      .single();
+
     const { error: err } = await supabase
       .from('leases')
       .update({
@@ -129,6 +138,25 @@ export function useLeases() {
       })
       .eq('id', id);
     if (err) throw err;
+
+    // Wire: lease termination → auto-create unit turn
+    if (lease?.unit_id) {
+      try {
+        await supabase.from('unit_turns').insert({
+          company_id: lease.company_id,
+          property_id: lease.property_id,
+          unit_id: lease.unit_id,
+          previous_tenant_id: lease.tenant_id,
+          move_out_date: new Date().toISOString().split('T')[0],
+          status: 'pending',
+          created_by_user_id: user?.id || null,
+          notes: `Auto-created from lease termination: ${reason}`,
+        });
+      } catch {
+        // Non-critical — lease still terminated even if unit turn fails
+        console.error('Failed to auto-create unit turn from lease termination');
+      }
+    }
   };
 
   const getExpiringLeases = async (daysAhead: number): Promise<LeaseData[]> => {

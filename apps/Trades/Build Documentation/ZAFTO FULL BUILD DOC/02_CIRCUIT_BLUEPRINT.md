@@ -1,6 +1,6 @@
 # ZAFTO CIRCUIT BLUEPRINT
 ## Living Wiring Diagram — What Connects, What Doesn't, What's Missing
-### Last Updated: February 7, 2026 (Session 72 — D5f Flutter Properties Hub DONE. D5a-D5f complete. 79 tables. 24 migrations. 5 apps all build clean.)
+### Last Updated: February 7, 2026 (Session 76 — D5h Team Portal PM View DONE. D5a-D5h complete. 79 tables. 24 migrations. 5 apps all build clean.)
 
 ---
 
@@ -302,14 +302,14 @@ DEFERRED -- Specified but intentionally postponed
 
 ---
 
-### 1D. EMPLOYEE FIELD PORTAL -- NEXT.JS (21 pages + login at team.zafto.app)
+### 1D. EMPLOYEE FIELD PORTAL -- NEXT.JS (23 pages + login at team.zafto.app)
 
-**DONE (B5 S55, D7a S67-68). 9 Supabase hooks. PWA-ready. Field-optimized UI (big touch targets). `npm run build` passes (24 routes, 0 errors).**
+**DONE (B5 S55, D7a S67-68, D5h S76). 13 Supabase hooks. PWA-ready. Field-optimized UI (big touch targets). `npm run build` passes (25 routes, 0 errors).**
 
 | Group | Pages | Backend | Notes |
 |-------|:-----:|:-------:|-------|
 | Auth + Dashboard | 2 | LIVE Supabase | Login + dashboard with today's jobs, active time clock, team status. |
-| Jobs (list, detail) | 2 | LIVE Supabase | Assigned jobs with status badges. Job detail with full info. **D1 (S62):** Type badge (small pill), colored accent bar on cards, TypeMetadataSection for insurance/warranty display. **D2h (S68):** Insurance jobs show Restoration Progress (moisture readings + drying status + equipment deploy/remove + TPI inspections). Inline recording forms for moisture/drying/equipment. |
+| Jobs (list, detail) | 2 | LIVE Supabase | Assigned jobs with status badges. Job detail with full info. **D1 (S62):** Type badge (small pill), colored accent bar on cards, TypeMetadataSection for insurance/warranty display. **D2h (S68):** Insurance jobs show Restoration Progress (moisture readings + drying status + equipment deploy/remove + TPI inspections). Inline recording forms for moisture/drying/equipment. **D5h (S76):** Property jobs show PropertyMaintenanceSection (property details, tenant contact, maintenance request with urgency/status, property assets with condition). |
 | Time Clock | 1 | LIVE Supabase | Clock in/out with GPS, break tracking. |
 | Schedule | 1 | LIVE Supabase | Scheduled jobs view. **D1 (S62):** Color accent bar by job type. |
 | Materials | 1 | LIVE Supabase | Job materials tracking. |
@@ -324,10 +324,11 @@ DEFERRED -- Specified but intentionally postponed
 | Signatures | 1 | LIVE Supabase | Client signatures. |
 | Settings | 1 | LIVE Supabase | Profile + preferences. |
 | Certifications | 1 | LIVE Supabase | **DONE (D7a S67-68)** -- use-certifications.ts hook. Read-only view of employee's certifications. Status lifecycle. Expiry countdown. Dynamic types from certification_types table. |
+| Properties | 1 | LIVE Supabase | **DONE (D5h S76)** -- Maintenance requests assigned to user. Filter tabs (All/Open/In Progress/Completed). Search. Urgency badges. Tenant contact (clickable phone/email). Status update buttons (Start Work/Mark Complete). Linked job navigation. |
 | AI Troubleshooting | 3 | DEFERRED | Phase E1 -- multi-trade diagnostics, code lookup, photo diagnosis |
 
 **Key files:**
-- 10 hook files: mappers.ts, use-jobs.ts, use-time-clock.ts, use-materials.ts, use-daily-log.ts, use-punch-list.ts, use-change-orders.ts, use-bids.ts, use-certifications.ts, use-insurance.ts
+- 13 hook files: mappers.ts (+ PM types), use-jobs.ts, use-time-clock.ts, use-materials.ts, use-daily-log.ts, use-punch-list.ts, use-change-orders.ts, use-bids.ts, use-certifications.ts, use-insurance.ts, use-pm-jobs.ts, use-maintenance-requests.ts
 - PWA manifest (installable on phone home screen)
 - **Sentry (C1a S58):** @sentry/nextjs wired (instrumentation pattern).
 - **RBAC middleware (C2 S61):** owner/admin/office_manager/technician/super_admin.
@@ -404,7 +405,7 @@ DEFERRED -- Specified but intentionally postponed
 | D2: Insurance/Restoration | D2a-D2h DONE (S63-S64, S68). | 7 new tables deployed (36 total). Flutter: 18 new files + insurance completion checklist. Web CRM: 3 new files + completion tab. Team Portal: use-insurance.ts + job detail restoration progress. Client Portal: use-insurance.ts + claim timeline. |
 | D3: Insurance Verticals | D3a-D3d DONE (S69) | Phase 1+2 COMPLETE. claim_category + JSONB vertical data. Storm/Recon/Commercial typed models + category forms across Flutter + Web CRM. Phase 3 deferred (6+ months). |
 | D4: ZBooks | **ALL DONE (S70)** | 16 sub-steps (D4a-D4p). GL engine. Double-entry. 15 new tables. 13 hooks. 13 web pages. 5 Edge Functions. 3 Flutter screens (hub, journal entry, expenses). CPA portal access. Construction accounting (AIA G702/G703 progress billing + retention). 55 COA accounts + 26 tax categories seeded. zbooks_audit_log INSERT-only. |
-| D5: Property Management | D5a-D5g DONE (S71-S73) | 18 new tables (79 total). 4 migrations. Web CRM: 14 pages, 11 hooks, sidebar section. Flutter: 10 screens, 7 repos, 3 services, 5 models. Client Portal: 5 tenant hooks (tenant-mappers, use-tenant, use-rent-payments, use-maintenance, use-inspections-tenant), 6 new pages (rent, rent/[id], lease, maintenance, maintenance/[id], inspections), home+menu updated with tenant-aware content. 29 routes. ZBooks: expense→property allocation (Schedule E). THE MOAT: "I'll Handle It" creates job from maintenance request. D5h (Team Portal) remaining. |
+| D5: Property Management | D5a-D5h DONE (S71-S76) | 18 new tables (79 total). 4 migrations. Web CRM: 14 pages, 11 hooks, sidebar section. Flutter: 10 screens, 7 repos, 3 services, 5 models. Client Portal: 5 tenant hooks, 6 new pages, home+menu tenant-aware. Team Portal: 3 PM hooks, properties page, job detail PM context. 25 routes. ZBooks: expense→property allocation (Schedule E). THE MOAT: "I'll Handle It" creates job from maintenance request. D5i (Integration Wiring) + D5j (Testing) remaining. |
 | D6: Enterprise Foundation | DONE (S65-66) | 5 new tables: branches, custom_roles, form_templates, certifications, api_keys. Multi-location, custom roles, configurable compliance forms, cert tracking, API key management. |
 | D7a: Certifications | DONE (S67-68) | Cert tracker across Flutter + Web CRM + Team Portal. Modular types: certification_types table (25 system defaults, company-custom). Immutable audit log: certification_audit_log (INSERT-only). All 3 surfaces use dynamic types from DB with enum fallback. |
 
