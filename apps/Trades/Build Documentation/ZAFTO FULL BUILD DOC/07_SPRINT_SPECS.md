@@ -6638,13 +6638,18 @@ Include <content>{markdown}</content> for rendered display.
 - [x] Commit: `[E5e] AI scope assistant — gap detection + supplement generator`
 
 #### E5f: Flutter Estimate Entry (~8 hrs)
-- [ ] Simplified estimate screen (mobile-optimized)
-- [ ] Photo capture → AI scope suggestion
-- [ ] Code search with autocomplete
-- [ ] Quick-add from templates
-- [ ] Model + repository + service layer
-- [ ] Sync with web CRM estimate (same DB tables)
-- [ ] Commit: `[E5f] Flutter estimate entry — mobile field estimating`
+**Status: DONE (Session 79)**
+- [x] Simplified estimate screen (mobile-optimized, room-grouped, swipe-to-delete)
+- [x] Photo capture → AI scope suggestion (opens camera, sends to scope assist)
+- [x] Code search with autocomplete (bottom sheet, category filter, debounced search)
+- [x] Quick-add from templates (template picker bottom sheet)
+- [x] Model: estimate_line.dart + xactimate_code.dart
+- [x] Repository: estimate_repository.dart (CRUD + code search + pricing lookup)
+- [x] Service: estimate_service.dart (auth-enriched, company_id injection)
+- [x] Screen: estimate_editor_screen.dart + code_search_sheet.dart
+- [x] Sync with web CRM estimate (same DB tables)
+- [x] dart analyze: 0 issues on all 6 new files
+- [x] Commit: `[E5f] Flutter estimate entry — mobile field estimating`
 
 #### E5g: ESX Import (~6 hrs) — BLOCKED ON LEGAL REVIEW
 - [ ] **PREREQUISITE: Legal counsel review COMPLETE**
