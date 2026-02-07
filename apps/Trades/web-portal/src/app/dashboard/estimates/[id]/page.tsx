@@ -347,6 +347,28 @@ export default function EstimateEditorPage() {
                 <Save className="w-3.5 h-3.5" />
                 Save Template
               </button>
+              {/* Download PDF */}
+              <button
+                onClick={() => {
+                  const supabase = getSupabase();
+                  supabase.auth.getSession().then(({ data: { session } }: { data: { session: { access_token: string } | null } }) => {
+                    if (!session) return;
+                    const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+                    const url = `${baseUrl}/functions/v1/estimate-pdf?claim_id=${claimId}&overhead=${overheadRate}&profit=${profitRate}`;
+                    const win = window.open('about:blank', '_blank');
+                    if (win) {
+                      fetch(url, { headers: { Authorization: `Bearer ${session.access_token}` } })
+                        .then(r => r.text())
+                        .then(html => { win.document.write(html); win.document.close(); })
+                        .catch(() => win.close());
+                    }
+                  });
+                }}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-zinc-300 bg-zinc-800/50 border border-zinc-700/50 rounded-lg hover:bg-zinc-800"
+              >
+                <Download className="w-3.5 h-3.5" />
+                PDF
+              </button>
               {/* Code Browser Toggle */}
               <button
                 onClick={() => setSidebarOpen(!sidebarOpen)}
