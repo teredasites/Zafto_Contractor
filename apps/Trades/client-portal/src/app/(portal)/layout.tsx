@@ -5,6 +5,7 @@ import { Home, FolderKanban, CreditCard, Building2, Menu, Bell } from 'lucide-re
 import { Logo } from '@/components/logo';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { AuthProvider, useAuth } from '@/components/auth-provider';
+import AiChatWidget from '@/components/ai-chat-widget';
 
 const tabs = [
   { label: 'Home', href: '/home', icon: Home },
@@ -92,6 +93,9 @@ function PortalShell({ children }: { children: React.ReactNode }) {
           })}
         </div>
       </nav>
+
+      {/* AI Chat Widget */}
+      <AiChatWidget />
     </div>
   );
 }
