@@ -1,6 +1,6 @@
 # ZAFTO SESSION HANDOFF
 ## THE ONLY DOC YOU READ FIRST — EVERY SESSION
-### Last Updated: February 7, 2026 (Session 78)
+### Last Updated: February 7, 2026 (Session 79)
 
 ---
 
@@ -18,21 +18,23 @@
 
 | Field | Value |
 |-------|-------|
-| **Sprint** | E1-E2 — Phase E: AI Layer — **DONE** |
-| **Sub-step** | E1a-E1e + E2a-E2e ALL DONE. Next: E3 (Employee Portal AI + Mobile AI) — outline only, needs detailing. |
-| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → search for Sprint E3 |
-| **Status** | E1: z_threads + z_artifacts tables (migration 000025). z-intelligence Edge Function deployed (14 tools, SSE streaming, artifact detection). use-z-threads.ts + use-z-artifacts.ts hooks. api-client.ts SSE parser. Provider updated with streaming actions. E2: All wiring done as part of E1 implementation. Mock mode retained as fallback. |
-| **Last Completed** | E1-E2 — Z Intelligence infrastructure + Claude API wiring (S78). |
-| **Session Count** | 78 |
-| **Tables Deployed** | 81 |
-| **Migration Files** | 25 |
+| **Sprint** | E5-E6 — Phase E: Xactimate Estimate Engine + Bid Walkthrough Engine — **DONE** |
+| **Sub-step** | E5a-E5j + E6a-E6h ALL DONE. E6e (LiDAR) + E6i (3D viewer) deferred. Next: E3 or E7. |
+| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → search for Sprint E7 or E3 |
+| **Status** | E5: 6 new tables (xactimate_codes, pricing_entries, etc.), estimate writer UI, pricing pipeline. E6: 5 walkthrough tables (migration 000028), 12 Flutter screens, 4 annotation files, 4 sketch editor files, 11 web portal files, 4 Edge Functions (analyze/transcribe/generate-bid/bid-pdf). 22 total Edge Functions deployed. |
+| **Last Completed** | E6h — Walkthrough workflow customization (S79). |
+| **Session Count** | 79 |
+| **Tables Deployed** | 92 |
+| **Migration Files** | 28 |
 
 **R1 Flutter App Remake COMPLETE (S78).** Design system + 33 role screens + role switching. R1i deferred to Phase E.
 **D3 Phase 1+2 COMPLETE.** Phase 3 is future (6+ months post-launch).
 **D4 ZBooks COMPLETE (S70).** All 16 sub-steps (D4a-D4p) built. 13 hooks, 13 web pages, 5 Edge Functions, 3 Flutter screens, 61 tables, 20 migrations.
 **D5 Property Management COMPLETE (S77).** All 10 sub-steps (D5a-D5j) built. 18 tables, 14 CRM pages, 11 hooks, 10 Flutter screens, 3 Edge Functions, 157 model tests.
 **E1-E2 AI Layer COMPLETE (S78).** 2 tables, 1 Edge Function (14 tools), 2 hooks, 1 API client, provider updated.
-**Next:** E3 (Employee Portal AI) or E5 (Xactimate Estimate Engine) — both need spec detailing.
+**E5 Xactimate Estimate Engine COMPLETE (S79).** 6 tables, estimate writer UI (Flutter + Web CRM + portals), pricing pipeline Edge Functions.
+**E6 Bid Walkthrough Engine COMPLETE (S79).** 5 tables, 12 Flutter screens, 4 annotation files, 4 sketch editor files, 11 web files, 4 AI Edge Functions. E6e (LiDAR) + E6i (3D) deferred.
+**Next:** E3 (Employee Portal AI) or E7 (next Phase E feature).
 **ACTION REQUIRED:** Set ANTHROPIC_API_KEY secret: `npx supabase secrets set ANTHROPIC_API_KEY=sk-ant-...`
 
 ---
@@ -93,6 +95,53 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 ---
 
 ## SESSION LOG (History — do NOT use for execution decisions, use CURRENT EXECUTION POINT above)
+
+### Session 79 (Feb 7) — E5 + E6: Xactimate Estimate Engine + Bid Walkthrough Engine
+
+**E5: Xactimate Estimate Engine (DONE — built in S79 continuation):**
+- E5a-E5d: DB tables (xactimate_codes, pricing_entries, estimate_templates, etc.), models, repos, services
+- E5e-E5f: Flutter estimate entry screens, Web CRM estimate pages
+- E5g-E5i: Pricing pipeline Edge Functions, portal viewers
+- E5j: Testing verification — all apps build clean
+- Commits: multiple (see git log)
+
+**E6a: Walkthrough Engine Data Model (DONE):**
+- Migration 000028: walkthroughs, walkthrough_rooms, walkthrough_photos, walkthrough_templates, property_floor_plans (5 tables, RLS, audit triggers, 14 seed templates)
+- 92 tables total deployed. Commit: 648a329
+
+**E6b: Flutter Walkthrough Capture Flow (DONE):**
+- 5 models (walkthrough, room, photo, template, floor_plan) + 1 repository + 1 service (7 Riverpod providers)
+- 5 screens: list (filter chips), start (template selector), capture (room tabs, photo capture, dimensions, condition rating, auto-save), summary (warnings, weather), room detail sheet
+- 12 files, 5,659 lines. dart analyze: 0 issues. Commit: 8465b41
+
+**E6c: Photo Annotation System (DONE):**
+- 7 annotation tools (draw, arrow, circle, rectangle, text, measurement, stamp)
+- AnnotationLayer with undo/redo, AnnotationPainter CustomPainter, full-screen editor, before/after viewer
+- 4 files, 2,026 lines. dart analyze: 0 issues. Commit: 78efc26
+
+**E6d: Sketch Editor + Floor Plan Engine (DONE):**
+- FloorPlanData model: walls, doors (7 types), windows (6 types), fixtures (27 types), labels, dimensions, room detection
+- Command pattern undo/redo (100 history), SketchGeometry utilities, SketchPainter CustomPainter
+- Multi-floor support, angle/endpoint snapping, symbol library (7 categories)
+- 4 files, 4,900 lines. dart analyze: 0 issues. Commit: a929ea7
+
+**E6f: Walkthrough Viewers — All Apps (DONE):**
+- Web CRM: use-walkthroughs hook (CRUD + real-time), list page, detail page (rooms/photos/floor plan/notes tabs), bid generation review page, sidebar nav updated
+- Team Portal: use-walkthroughs hook (read + mark-complete), list + detail pages
+- Client Portal: use-walkthroughs hook (read-only), list + report view with print
+- 11 files, 4,076 lines. All 3 portals build clean. Commit: 71af9d6
+
+**E6g: AI Bid Generation Pipeline (DONE):**
+- 4 Edge Functions: walkthrough-analyze (Claude Vision), walkthrough-transcribe, walkthrough-generate-bid (6 formats), walkthrough-bid-pdf (HTML generation)
+- 4 files, 1,976 lines. All deployed to Supabase (22 total Edge Functions). Commit: 11e4a4a
+
+**E6h: Walkthrough Workflow Customization (DONE):**
+- use-walkthrough-templates hook (CRUD + clone + real-time)
+- Settings > Walkthrough Workflows page: system templates (read-only + clone), custom template editor with room builder, custom fields, checklists, AI instructions
+- 2 files, 1,442 lines. Web portal builds clean. Commit: 50e644c
+
+**Deferred:** E6e (LiDAR — requires ARKit evaluation), E6i (3D Viewer — Phase 2)
+**Session stats:** 37 new files, 20,079 lines of code, 7 commits, 4 Edge Functions deployed, 92 tables
 
 ### Session 78 (Feb 7) — R1 + E1 + E2: Flutter App Remake + AI Layer Infrastructure
 
