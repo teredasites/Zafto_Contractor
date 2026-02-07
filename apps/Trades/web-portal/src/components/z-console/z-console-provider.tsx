@@ -7,6 +7,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   type ReactNode,
 } from 'react';
 import { usePathname } from 'next/navigation';
@@ -16,12 +17,16 @@ import type {
   ZThread,
   ZMessage,
   ZArtifact,
-  ZContextChip,
-  ZQuickAction,
 } from '@/lib/z-intelligence/types';
 import { getPageContext } from '@/lib/z-intelligence/context-map';
 import { simulateResponse } from '@/lib/z-intelligence/mock-responses';
+import { sendToZ } from '@/lib/z-intelligence/api-client';
 import { MOCK_BID_ARTIFACT } from '@/lib/z-intelligence/artifact-templates';
+
+// ── Feature flag: set to true to use real Claude API ──
+const USE_LIVE_API = typeof window !== 'undefined' &&
+  Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL) &&
+  Boolean(process.env.NEXT_PUBLIC_Z_INTELLIGENCE_ENABLED);
 
 // ── State ────────────────────────────────────────────
 interface ProviderState {
@@ -29,6 +34,8 @@ interface ProviderState {
   threads: ZThread[];
   currentThreadId: string | null;
   isThinking: boolean;
+  streamingContent: string; // partial content for streaming display
+  tokenCount: number; // usage tracking
 }
 
 type Action =
@@ -43,7 +50,12 @@ type Action =
   | { type: 'CLEAR_ARTIFACT'; threadId: string }
   | { type: 'NEW_THREAD'; thread: ZThread }
   | { type: 'SELECT_THREAD'; threadId: string }
-  | { type: 'RESTORE'; threads: ZThread[]; currentThreadId: string | null };
+  | { type: 'RESTORE'; threads: ZThread[]; currentThreadId: string | null }
+  | { type: 'ADD_PARTIAL_CONTENT'; delta: string }
+  | { type: 'CLEAR_PARTIAL_CONTENT' }
+  | { type: 'UPDATE_TOOL_CALLS'; threadId: string; toolCalls: ZMessage['toolCalls'] }
+  | { type: 'SET_TOKEN_COUNT'; count: number }
+  | { type: 'UPDATE_THREAD_ID'; oldId: string; newId: string };
 
 function reducer(state: ProviderState, action: Action): ProviderState {
   switch (action.type) {
@@ -133,6 +145,42 @@ function reducer(state: ProviderState, action: Action): ProviderState {
     case 'RESTORE':
       return { ...state, threads: action.threads, currentThreadId: action.currentThreadId };
 
+    // Streaming actions
+    case 'ADD_PARTIAL_CONTENT':
+      return { ...state, streamingContent: state.streamingContent + action.delta };
+
+    case 'CLEAR_PARTIAL_CONTENT':
+      return { ...state, streamingContent: '' };
+
+    case 'UPDATE_TOOL_CALLS': {
+      const threads = state.threads.map((t) => {
+        if (t.id !== action.threadId) return t;
+        const msgs = [...t.messages];
+        // Update last assistant message's tool calls
+        for (let i = msgs.length - 1; i >= 0; i--) {
+          if (msgs[i].role === 'assistant') {
+            msgs[i] = { ...msgs[i], toolCalls: action.toolCalls };
+            break;
+          }
+        }
+        return { ...t, messages: msgs };
+      });
+      return { ...state, threads };
+    }
+
+    case 'SET_TOKEN_COUNT':
+      return { ...state, tokenCount: state.tokenCount + action.count };
+
+    case 'UPDATE_THREAD_ID': {
+      const threads = state.threads.map((t) =>
+        t.id === action.oldId ? { ...t, id: action.newId } : t,
+      );
+      const currentThreadId = state.currentThreadId === action.oldId
+        ? action.newId
+        : state.currentThreadId;
+      return { ...state, threads, currentThreadId };
+    }
+
     default:
       return state;
   }
@@ -155,7 +203,7 @@ function createThread(pathname: string): ZThread {
   };
 }
 
-// ── Storage ──────────────────────────────────────────
+// ── Storage (localStorage fallback for mock mode) ────
 const STORAGE_KEY = 'zafto_z_threads';
 const THREAD_ID_KEY = 'zafto_z_current_thread';
 
@@ -194,12 +242,15 @@ export function useZConsole(): ZConsoleContextType {
 // ── Provider ─────────────────────────────────────────
 export function ZConsoleProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const streamingRef = useRef<string>('');
 
   const [state, dispatch] = useReducer(reducer, {
     consoleState: 'collapsed',
     threads: [],
     currentThreadId: null,
     isThinking: false,
+    streamingContent: '',
+    tokenCount: 0,
   });
 
   // Restore from localStorage on mount
@@ -266,6 +317,7 @@ export function ZConsoleProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'SELECT_THREAD', threadId });
   }, []);
 
+  // ── Send Message (dual-mode: live API or mock) ──
   const sendMessage = useCallback(async (content: string) => {
     let threadId = state.currentThreadId;
 
@@ -289,47 +341,143 @@ export function ZConsoleProvider({ children }: { children: ReactNode }) {
     // Start thinking
     dispatch({ type: 'SET_THINKING', value: true });
 
-    try {
-      // Get current artifact for edit detection
+    if (USE_LIVE_API) {
+      // ── Live Claude API mode ──
+      dispatch({ type: 'CLEAR_PARTIAL_CONTENT' });
+      streamingRef.current = '';
+
       const thread = state.threads.find((t) => t.id === threadId);
       const currentArtifact = thread?.artifact;
 
-      const response = await simulateResponse(content, threadId, currentArtifact);
-
-      dispatch({ type: 'SET_THINKING', value: false });
-
-      // Add assistant messages
-      for (const msg of response.messages) {
-        const assistantMsg: ZMessage = {
-          id: uid(),
-          threadId: threadId!,
-          role: msg.role,
-          content: msg.content,
-          toolCalls: msg.toolCalls,
-          artifactId: msg.artifactId,
-          timestamp: new Date().toISOString(),
-        };
-        dispatch({ type: 'ADD_MESSAGE', threadId: threadId!, message: assistantMsg });
-      }
-
-      // Handle artifact
-      if (response.artifact) {
-        if (currentArtifact) {
-          dispatch({ type: 'UPDATE_ARTIFACT_VERSION', threadId: threadId!, artifact: response.artifact });
-        } else {
-          dispatch({ type: 'SET_ARTIFACT', threadId: threadId!, artifact: response.artifact });
-        }
-      }
-    } catch {
-      dispatch({ type: 'SET_THINKING', value: false });
-      const errorMsg: ZMessage = {
-        id: uid(),
+      // Add placeholder assistant message for streaming
+      const streamMsgId = uid();
+      const streamMsg: ZMessage = {
+        id: streamMsgId,
         threadId: threadId!,
         role: 'assistant',
-        content: 'Something went wrong. Please try again.',
+        content: '',
         timestamp: new Date().toISOString(),
       };
-      dispatch({ type: 'ADD_MESSAGE', threadId: threadId!, message: errorMsg });
+      dispatch({ type: 'ADD_MESSAGE', threadId: threadId!, message: streamMsg });
+
+      await sendToZ(
+        {
+          threadId: threadId!,
+          message: content,
+          pageContext: pathname,
+          artifactContext: currentArtifact ? {
+            id: currentArtifact.id,
+            type: currentArtifact.type,
+            content: currentArtifact.content,
+            data: currentArtifact.data,
+            currentVersion: currentArtifact.currentVersion,
+          } : undefined,
+        },
+        {
+          onThinking: (toolCalls) => {
+            dispatch({
+              type: 'UPDATE_TOOL_CALLS',
+              threadId: threadId!,
+              toolCalls: toolCalls.map((tc) => ({
+                id: uid(),
+                name: tc.name,
+                description: tc.name,
+                status: tc.status as 'running' | 'complete' | 'error',
+              })),
+            });
+          },
+          onToolResult: (name, status) => {
+            dispatch({
+              type: 'UPDATE_TOOL_CALLS',
+              threadId: threadId!,
+              toolCalls: [{ id: uid(), name, description: name, status: status as 'complete' }],
+            });
+          },
+          onContent: (delta) => {
+            streamingRef.current += delta;
+            dispatch({ type: 'ADD_PARTIAL_CONTENT', delta });
+          },
+          onArtifact: (artifact) => {
+            if (currentArtifact) {
+              dispatch({ type: 'UPDATE_ARTIFACT_VERSION', threadId: threadId!, artifact });
+            } else {
+              dispatch({ type: 'SET_ARTIFACT', threadId: threadId!, artifact });
+            }
+          },
+          onDone: (meta) => {
+            // Finalize: replace streaming message with complete content
+            const finalMsg: ZMessage = {
+              id: uid(),
+              threadId: threadId!,
+              role: 'assistant',
+              content: streamingRef.current,
+              timestamp: new Date().toISOString(),
+            };
+            dispatch({ type: 'ADD_MESSAGE', threadId: threadId!, message: finalMsg });
+            dispatch({ type: 'SET_THINKING', value: false });
+            dispatch({ type: 'CLEAR_PARTIAL_CONTENT' });
+            dispatch({ type: 'SET_TOKEN_COUNT', count: meta.tokenCount });
+
+            // Update thread ID if server assigned a new one
+            if (meta.threadId && meta.threadId !== threadId) {
+              dispatch({ type: 'UPDATE_THREAD_ID', oldId: threadId!, newId: meta.threadId });
+            }
+          },
+          onError: (error) => {
+            dispatch({ type: 'SET_THINKING', value: false });
+            dispatch({ type: 'CLEAR_PARTIAL_CONTENT' });
+            const errorMsg: ZMessage = {
+              id: uid(),
+              threadId: threadId!,
+              role: 'assistant',
+              content: `Error: ${error}`,
+              timestamp: new Date().toISOString(),
+            };
+            dispatch({ type: 'ADD_MESSAGE', threadId: threadId!, message: errorMsg });
+          },
+        }
+      );
+    } else {
+      // ── Mock mode (demo/development) ──
+      try {
+        const thread = state.threads.find((t) => t.id === threadId);
+        const currentArtifact = thread?.artifact;
+
+        const response = await simulateResponse(content, threadId!, currentArtifact);
+
+        dispatch({ type: 'SET_THINKING', value: false });
+
+        for (const msg of response.messages) {
+          const assistantMsg: ZMessage = {
+            id: uid(),
+            threadId: threadId!,
+            role: msg.role,
+            content: msg.content,
+            toolCalls: msg.toolCalls,
+            artifactId: msg.artifactId,
+            timestamp: new Date().toISOString(),
+          };
+          dispatch({ type: 'ADD_MESSAGE', threadId: threadId!, message: assistantMsg });
+        }
+
+        if (response.artifact) {
+          if (currentArtifact) {
+            dispatch({ type: 'UPDATE_ARTIFACT_VERSION', threadId: threadId!, artifact: response.artifact });
+          } else {
+            dispatch({ type: 'SET_ARTIFACT', threadId: threadId!, artifact: response.artifact });
+          }
+        }
+      } catch {
+        dispatch({ type: 'SET_THINKING', value: false });
+        const errorMsg: ZMessage = {
+          id: uid(),
+          threadId: threadId!,
+          role: 'assistant',
+          content: 'Something went wrong. Please try again.',
+          timestamp: new Date().toISOString(),
+        };
+        dispatch({ type: 'ADD_MESSAGE', threadId: threadId!, message: errorMsg });
+      }
     }
   }, [state.currentThreadId, state.threads, pathname]);
 
@@ -337,7 +485,6 @@ export function ZConsoleProvider({ children }: { children: ReactNode }) {
     if (!state.currentThreadId) return;
     dispatch({ type: 'UPDATE_ARTIFACT_STATUS', threadId: state.currentThreadId, status: 'approved' });
 
-    // Add system message
     const msg: ZMessage = {
       id: uid(),
       threadId: state.currentThreadId,
@@ -389,14 +536,12 @@ export function ZConsoleProvider({ children }: { children: ReactNode }) {
   const showDemoArtifact = useCallback(() => {
     let threadId = state.currentThreadId;
 
-    // Auto-create thread if none
     if (!threadId) {
       const thread = createThread(pathname);
       dispatch({ type: 'NEW_THREAD', thread });
       threadId = thread.id;
     }
 
-    // Inject a demo user message
     const userMsg: ZMessage = {
       id: uid(),
       threadId,
@@ -406,7 +551,6 @@ export function ZConsoleProvider({ children }: { children: ReactNode }) {
     };
     dispatch({ type: 'ADD_MESSAGE', threadId, message: userMsg });
 
-    // Inject assistant response with tool calls
     const assistantMsg: ZMessage = {
       id: uid(),
       threadId,
@@ -421,8 +565,6 @@ export function ZConsoleProvider({ children }: { children: ReactNode }) {
       timestamp: new Date().toISOString(),
     };
     dispatch({ type: 'ADD_MESSAGE', threadId, message: assistantMsg });
-
-    // Set the artifact — triggers split-screen
     dispatch({ type: 'SET_ARTIFACT', threadId, artifact: { ...MOCK_BID_ARTIFACT } });
   }, [state.currentThreadId, pathname]);
 

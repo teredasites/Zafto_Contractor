@@ -18,19 +18,22 @@
 
 | Field | Value |
 |-------|-------|
-| **Sprint** | R1 — Flutter App Remake — **IN PROGRESS** |
-| **Sub-step** | R1a-R1h DONE. Next: R1i (Z Intelligence Integration) or R1j (Cross-Role Integration). |
-| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → search for R1i |
-| **Status** | R1a: Design system + app shell (z_components, UserRole, AppShell, role_navigation). R1b-R1h: 33 role-specific screens across 7 dirs (owner/tech/office/inspector/cpa/client/tenant). All wired into AppShell. Dead Man Switch removed. dart analyze: 0 errors. |
-| **Last Completed** | R1b-R1h — All 7 role experiences: 33 screens + app shell wiring, dart analyze clean (S78). |
+| **Sprint** | E1-E2 — Phase E: AI Layer — **DONE** |
+| **Sub-step** | E1a-E1e + E2a-E2e ALL DONE. Next: E3 (Employee Portal AI + Mobile AI) — outline only, needs detailing. |
+| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → search for Sprint E3 |
+| **Status** | E1: z_threads + z_artifacts tables (migration 000025). z-intelligence Edge Function deployed (14 tools, SSE streaming, artifact detection). use-z-threads.ts + use-z-artifacts.ts hooks. api-client.ts SSE parser. Provider updated with streaming actions. E2: All wiring done as part of E1 implementation. Mock mode retained as fallback. |
+| **Last Completed** | E1-E2 — Z Intelligence infrastructure + Claude API wiring (S78). |
 | **Session Count** | 78 |
-| **Tables Deployed** | 79 |
-| **Migration Files** | 24 |
+| **Tables Deployed** | 81 |
+| **Migration Files** | 25 |
 
+**R1 Flutter App Remake COMPLETE (S78).** Design system + 33 role screens + role switching. R1i deferred to Phase E.
 **D3 Phase 1+2 COMPLETE.** Phase 3 is future (6+ months post-launch).
 **D4 ZBooks COMPLETE (S70).** All 16 sub-steps (D4a-D4p) built. 13 hooks, 13 web pages, 5 Edge Functions, 3 Flutter screens, 61 tables, 20 migrations.
 **D5 Property Management COMPLETE (S77).** All 10 sub-steps (D5a-D5j) built. 18 tables, 14 CRM pages, 11 hooks, 10 Flutter screens, 3 Edge Functions, 157 model tests.
-**Next:** Check sprint specs for next phase → R1 (App Remake) → Phase E (AI Layer)
+**E1-E2 AI Layer COMPLETE (S78).** 2 tables, 1 Edge Function (14 tools), 2 hooks, 1 API client, provider updated.
+**Next:** E3 (Employee Portal AI) or E5 (Xactimate Estimate Engine) — both need spec detailing.
+**ACTION REQUIRED:** Set ANTHROPIC_API_KEY secret: `npx supabase secrets set ANTHROPIC_API_KEY=sk-ant-...`
 
 ---
 
@@ -91,7 +94,7 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 
 ## SESSION LOG (History — do NOT use for execution decisions, use CURRENT EXECUTION POINT above)
 
-### Session 78 (Feb 7) — R1a-R1h: Flutter App Remake — Design System + All 7 Role Experiences
+### Session 78 (Feb 7) — R1 + E1 + E2: Flutter App Remake + AI Layer Infrastructure
 
 **R1a: Design System + App Shell (DONE):**
 - z_components.dart: 8 reusable components (ZCard, ZButton, ZTextField, ZBottomSheet, ZChip, ZBadge, ZAvatar, ZSkeleton)
@@ -115,6 +118,30 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 - Deferred to R1j: field tool rewiring, quick actions, inspector DB tables, client DB tables
 - Deferred to Phase E: Z-powered code lookup, AI home scanner, home health monitor
 - Commit: fc7303e
+
+**R1j: Role Switching + Navigation (DONE):**
+- Created role_provider.dart (Riverpod StateProvider for current role)
+- Created role_switcher_screen.dart (8-role picker, grouped sections)
+- Updated AppShell with Switch Role quick action in Z button sheet
+- Commit: 53149ca
+
+**E1: Universal AI Architecture (DONE):**
+- E1a: z_threads + z_artifacts tables deployed (migration 000025, 81 tables total)
+- E1b: z-intelligence Edge Function deployed — Claude API proxy with SSE streaming
+- E1c: 14 tools (searchCustomers, getJob, calculateMargin, etc.) with Supabase queries
+- E1d: Artifact parser — detects `<artifact>` tags, saves to z_artifacts, streams events
+- E1e: use-z-threads.ts, use-z-artifacts.ts hooks + api-client.ts SSE parser
+- Provider updated with 5 new reducer actions (ADD_PARTIAL_CONTENT, CLEAR_PARTIAL_CONTENT, UPDATE_TOOL_CALLS, SET_TOKEN_COUNT, UPDATE_THREAD_ID)
+- Dual-mode: mock (default) or live API (NEXT_PUBLIC_Z_INTELLIGENCE_ENABLED)
+- ANTHROPIC_API_KEY secret NOT set yet (user action required)
+
+**E2: Z Console → Claude API Wiring (DONE):**
+- Built as part of E1 — api-client.ts replaces mock engine, provider wired to sendToZ
+- Slash commands handled via system prompt (Claude routes naturally)
+- Artifact lifecycle: generate/edit/approve/reject/save draft all functional
+- Context-aware system prompts in Edge Function
+- Error handling in api-client callbacks + provider
+- All 5 apps build clean (web portal npm run build, dart analyze 0 errors)
 
 ### Session 77 (Feb 7) — D5i + D5j: Integration Wiring + Testing (D5 COMPLETE)
 
