@@ -51,6 +51,7 @@ import {
   RotateCcw,
   Calculator,
   Umbrella,
+  TrendingUp,
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { ZMark } from '@/components/z-console/z-mark';
@@ -126,7 +127,9 @@ const navigationGroups: NavGroup[] = [
       { name: 'Price Book', href: '/dashboard/price-book', icon: BookOpen },
       { name: 'Documents', href: '/dashboard/documents', icon: FolderOpen },
       { name: 'Reports', href: '/dashboard/reports', icon: BarChart3 },
+      { name: 'Revenue', href: '/dashboard/revenue-insights', icon: TrendingUp },
       { name: 'Automations', href: '/dashboard/automations', icon: Zap },
+      { name: 'Growth', href: '/dashboard/growth', icon: Rocket },
     ],
   },
   {
