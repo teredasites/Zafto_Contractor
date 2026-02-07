@@ -6568,32 +6568,51 @@ Include <content>{markdown}</content> for rendered display.
 
 ---
 
-### Sprint E4: Growth Advisor + Advanced AI (Outline)
-*Detail when E3 nears completion.*
+### Sprint E4: Growth Advisor + Advanced AI
+**Source:** E1 (z-intelligence Edge Function), E3 (troubleshooting functions), existing job/invoice/bid data.
+**Goal:** AI-powered business intelligence — revenue insights, bid optimization, equipment lifecycle, growth automation.
+**Depends on:** E1 (DONE), E3 (DONE), D4 ZBooks (DONE), D5 Property Management (DONE).
 
-**E4a: Revenue Intelligence**
-- Profit margin optimization suggestions
-- Pricing recommendations based on job history
-- Seasonal trend analysis
-- Customer lifetime value predictions
+#### E4a: Revenue Intelligence Edge Functions (~6 hrs)
+- [ ] Edge Function: `ai-revenue-insights` — analyze invoices/jobs for profit margins, trends, recommendations
+- [ ] Edge Function: `ai-customer-insights` — CLV predictions, churn risk, upsell opportunities from job history
+- [ ] Both query real data (invoices, jobs, customers tables) + Claude analysis
+- [ ] Commit: `[E4a] Revenue intelligence Edge Functions`
 
-**E4b: Bid Brain (AI-enhanced bidding)**
-- Win probability scoring
-- Competitive price analysis
-- Scope optimization suggestions
-- Auto-generate bid from job walkthrough notes
+#### E4b: Web CRM Revenue Dashboard (~8 hrs)
+- [ ] use-revenue-insights.ts hook (revenue trends, margin analysis, pricing recommendations)
+- [ ] Dashboard page: revenue trends chart, margin heatmap, top customers, seasonal patterns
+- [ ] Customer insights panel: CLV scores, churn risk badges, recommended actions
+- [ ] Commit: `[E4b] Web CRM revenue intelligence dashboard`
 
-**E4c: Equipment Memory**
-- Equipment lifecycle tracking per property
-- Predictive maintenance alerts
-- Parts inventory suggestions
-- Warranty tracking
+#### E4c: Bid Brain — AI-Enhanced Bidding (~8 hrs)
+- [ ] Edge Function: `ai-bid-optimizer` — win probability, competitive pricing, scope suggestions
+- [ ] Web CRM bid detail: AI suggestions panel (price adjustment, scope additions, win rate)
+- [ ] Flutter bid screen: "Optimize with Z" button → shows AI suggestions before submission
+- [ ] Auto-generate bid from walkthrough data (leverages walkthrough-generate-bid)
+- [ ] Commit: `[E4c] Bid Brain — AI bid optimization`
 
-**E4d: Revenue Autopilot**
-- Automated follow-up scheduling
-- Upsell/cross-sell suggestions
-- Seasonal campaign generation
-- Review request automation
+#### E4d: Equipment Memory (~6 hrs)
+- [ ] Edge Function: `ai-equipment-insights` — lifecycle analysis from property equipment data
+- [ ] Predictive maintenance alerts: calculate next service date from install date + manufacturer intervals
+- [ ] Parts inventory suggestions based on equipment age + common failure patterns
+- [ ] Web CRM equipment detail: AI lifecycle panel with maintenance timeline
+- [ ] Commit: `[E4d] Equipment Memory — lifecycle tracking + predictions`
+
+#### E4e: Revenue Autopilot (~6 hrs)
+- [ ] Edge Function: `ai-growth-actions` — generate follow-up, upsell, and campaign suggestions
+- [ ] Automated follow-up queue: AI suggests next-touch dates for dormant customers
+- [ ] Seasonal campaign generation: trade-specific campaigns (HVAC spring/fall, roofing spring, etc.)
+- [ ] Review request automation: post-completion trigger → AI drafts personalized review request
+- [ ] Web CRM growth page: action queue with AI-generated suggestions
+- [ ] Commit: `[E4e] Revenue Autopilot — growth actions + campaigns`
+
+#### E4f: Testing + Verification (~2 hrs)
+- [ ] Revenue insights tested with real invoice/job data patterns
+- [ ] Bid Brain suggestions render correctly in CRM + Flutter
+- [ ] Equipment lifecycle calculations accurate for test data
+- [ ] All 5 apps build clean
+- [ ] Commit: `[E4f] Growth Advisor — testing complete`
 
 ---
 
