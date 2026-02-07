@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { FileText, Search, Plus, DollarSign, ChevronRight, Calculator } from 'lucide-react';
+import { FileText, Search, Plus, DollarSign, ChevronRight, Calculator, Upload } from 'lucide-react';
 import { getSupabase } from '@/lib/supabase';
 
 interface ClaimWithEstimate {
@@ -81,6 +81,13 @@ export default function EstimatesPage() {
           <h1 className="text-2xl font-semibold text-zinc-100">Estimate Writer</h1>
           <p className="text-sm text-zinc-400 mt-1">Write and manage insurance restoration estimates</p>
         </div>
+        <button
+          onClick={() => router.push('/dashboard/estimates/import')}
+          className="flex items-center gap-1.5 px-4 py-2 text-sm text-zinc-300 bg-zinc-800/50 border border-zinc-700/50 rounded-lg hover:bg-zinc-800 transition-colors"
+        >
+          <Upload className="w-4 h-4" />
+          Import PDF
+        </button>
       </div>
 
       <div className="flex items-center gap-3">
