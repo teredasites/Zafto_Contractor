@@ -3,7 +3,7 @@
 
 **Last Updated:** February 7, 2026 (Session 80 — E3 AI Troubleshooting DONE. E4 Growth Advisor in progress (uncommitted). R1+E1-E6 ALL DONE. 92 tables. 28 migrations. 26 Edge Functions deployed.)
 **Current Phase:** BUILD — Phases A-D ALL COMPLETE. **R1 App Remake COMPLETE. E1-E2 AI Layer COMPLETE. E3 Employee AI COMPLETE. E5 Xactimate COMPLETE. E6 Walkthrough COMPLETE.** E4 Growth Advisor in progress (files written, not committed/deployed). 5 apps total. 92 tables deployed. 28 migration files. 26 Edge Functions deployed. All 5 apps build clean.
-**Next Action:** Commit + deploy E4 → E4f testing → Phase E remaining (E7+) or launch prep.
+**Next Action:** Phase F (Platform Completion). AI goes TRULY LAST — after F + G. Owner to decide F1-F10 priority order.
 
 ---
 
@@ -22,7 +22,7 @@
 | **Edge Functions** | **26 DEPLOYED:** ZBooks (5), PM (3), z-intelligence (1, 14 tools), Xactimate (6), Walkthrough (4), AI Troubleshooting (4), plus 3 crowd-source/pricing. **5 LOCAL (E4, uncommitted):** ai-revenue-insights, ai-customer-insights, ai-bid-optimizer, ai-equipment-insights, ai-growth-actions (2,133 lines total). **2 NOT DEPLOYED:** dead-man-switch (SMS), send-notification. |
 | **Backend Connected** | Auth + Customers + Jobs + Invoices + Bids + Time Clock + Calendar ALL wired. ALL 19 field tools wired. D2 Insurance: 7 tables. D4 ZBooks: GL engine + 15 tables. D5 PM: 18 tables. E1 AI: z_threads + z_messages. E5 Xactimate: 5 tables. E6 Walkthrough: 5 tables. |
 | **DevOps** | **C1 DONE (S58):** Sentry in all 4 apps. CI/CD: 4 workflows. 154 model tests. **C2 NEAR COMPLETE (S60-S61):** RBAC middleware on all portals. **C3 DONE (S59):** Ops Portal. **C5 DONE (S59):** Incident response. |
-| **Blocker** | **ANTHROPIC_API_KEY not set as Supabase secret.** All AI Edge Functions will return errors until: `npx supabase secrets set ANTHROPIC_API_KEY=sk-ant-...` E4 uncommitted — needs commit + deploy + test. |
+| **Blocker** | **Phase E PAUSED.** AI goes last — after F+G. Phase F sprint specs need detailing. Owner to decide F1-F10 priority. ANTHROPIC_API_KEY not set (dormant until E resumes). |
 
 ---
 

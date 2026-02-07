@@ -6065,9 +6065,15 @@ Execute in sequence:
 
 ---
 
-## PHASE E: AI LAYER
+## PHASE E: AI LAYER — **PAUSED (S80 OWNER DIRECTIVE)**
 
-**Prerequisite:** All business data must be flowing (B1-B6 COMPLETE) + R1 app remake. AI depends on real data + new app shell.
+**STATUS: ALL PHASE E WORK IS PAUSED.** AI was built prematurely in S78-S80. Code is committed but DORMANT.
+**AI goes TRULY LAST.** Must come after ALL of Phase F (Platform Completion) + Phase G (QA/Hardening).
+**Reason:** AI must know every feature, every table, every screen, every workflow — so it can do literally anything within the program. Building AI before the platform is complete means AI won't know about Phone System, Website Builder, Meeting Rooms, ZDocs, Marketplace, Business OS, Hiring, etc.
+**When to resume:** After Phase F + G are COMPLETE. Owner will initiate a deep AI spec session first. All premature E work will be audited/rebuilt with full platform context.
+**Correct build order: A(DONE) → B(DONE) → C(DONE) → D(DONE) → R1(DONE) → F(NEXT) → G → E(LAST)**
+
+**Premature work below is COMMITTED and DORMANT. Do not continue, extend, or deploy.**
 **API:** Claude API (Anthropic) via Supabase Edge Functions (Deno). No direct browser→Claude calls.
 **Model:** Claude Sonnet 4.5 for speed, Claude Opus 4.6 for complex artifact generation.
 
