@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zafto/core/user_role.dart';
 import 'package:zafto/navigation/role_navigation.dart';
 import 'package:zafto/theme/zafto_colors.dart';
+import 'package:zafto/screens/role_switcher_screen.dart';
 
 // Owner/Admin screens
 import 'package:zafto/screens/owner/owner_home_screen.dart';
@@ -207,7 +208,7 @@ class _AppShellState extends ConsumerState<AppShell> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) {
+      builder: (sheetContext) {
         return SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(24),
@@ -228,9 +229,17 @@ class _AppShellState extends ConsumerState<AppShell> {
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 const SizedBox(height: 16),
-                Text(
-                  'Coming soon',
-                  style: Theme.of(context).textTheme.bodyMedium,
+                _buildQuickActionItem(
+                  colors,
+                  icon: Icons.swap_horiz,
+                  label: 'Switch Role',
+                  onTap: () {
+                    Navigator.pop(sheetContext);
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => const RoleSwitcherScreen()),
+                    );
+                  },
                 ),
                 const SizedBox(height: 24),
               ],
@@ -238,6 +247,41 @@ class _AppShellState extends ConsumerState<AppShell> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildQuickActionItem(
+    ZaftoColors colors, {
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+          child: Row(
+            children: [
+              Icon(icon, size: 22, color: colors.textSecondary),
+              const SizedBox(width: 14),
+              Text(
+                label,
+                style: TextStyle(
+                  fontFamily: 'SF Pro Text',
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                  color: colors.textPrimary,
+                ),
+              ),
+              const Spacer(),
+              Icon(Icons.chevron_right, size: 18, color: colors.textQuaternary),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
