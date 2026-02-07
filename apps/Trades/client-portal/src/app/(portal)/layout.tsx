@@ -23,7 +23,7 @@ function PortalShell({ children }: { children: React.ReactNode }) {
 
   const isActive = (href: string) => {
     if (href === '/home') return pathname === '/home';
-    if (href === '/menu') return pathname === '/menu' || ['/messages', '/documents', '/request', '/referrals', '/review', '/settings'].some(p => pathname.startsWith(p));
+    if (href === '/menu') return pathname === '/menu' || ['/messages', '/documents', '/request', '/referrals', '/review', '/settings', '/rent', '/lease', '/maintenance', '/inspections'].some(p => pathname.startsWith(p));
     return pathname.startsWith(href);
   };
 

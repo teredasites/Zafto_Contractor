@@ -1,8 +1,19 @@
 'use client';
 import Link from 'next/link';
-import { MessageSquare, FileText, Wrench, Share2, Star, Settings, ChevronRight, Shield, HelpCircle, Phone } from 'lucide-react';
+import { MessageSquare, FileText, Wrench, Share2, Star, Settings, ChevronRight, Shield, HelpCircle, Phone, CreditCard, ClipboardList, Home, ClipboardCheck } from 'lucide-react';
+import { useTenant } from '@/lib/hooks/use-tenant';
 
-const menuItems = [
+interface MenuItem {
+  label: string;
+  desc: string;
+  href: string;
+  icon: typeof MessageSquare;
+  color: string;
+  bg: string;
+  badge?: number;
+}
+
+const baseMenuItems: MenuItem[] = [
   { label: 'Messages', desc: '1 new message', href: '/messages', icon: MessageSquare, color: 'text-blue-600', bg: 'bg-blue-50', badge: 1 },
   { label: 'Documents', desc: '10 files', href: '/documents', icon: FileText, color: 'text-purple-600', bg: 'bg-purple-50' },
   { label: 'Request Service', desc: 'Standard or emergency', href: '/request', icon: Wrench, color: 'text-orange-600', bg: 'bg-orange-50' },
@@ -11,10 +22,26 @@ const menuItems = [
   { label: 'Settings', desc: 'Profile, notifications, security', href: '/settings', icon: Settings, color: 'text-gray-600', bg: 'bg-gray-100' },
 ];
 
+const tenantMenuItems: MenuItem[] = [
+  { label: 'Rent Payments', desc: 'Balance, history & pay', href: '/rent', icon: CreditCard, color: 'text-indigo-600', bg: 'bg-indigo-50' },
+  { label: 'My Lease', desc: 'Lease terms & details', href: '/lease', icon: Home, color: 'text-teal-600', bg: 'bg-teal-50' },
+  { label: 'Maintenance', desc: 'Submit & track requests', href: '/maintenance', icon: ClipboardList, color: 'text-amber-600', bg: 'bg-amber-50' },
+  { label: 'Inspections', desc: 'View inspection reports', href: '/inspections', icon: ClipboardCheck, color: 'text-sky-600', bg: 'bg-sky-50' },
+];
+
 export default function MenuPage() {
+  const { tenant } = useTenant();
+  const menuItems = tenant ? [...tenantMenuItems, ...baseMenuItems] : baseMenuItems;
+
   return (
     <div className="space-y-5">
       <h1 className="text-xl font-bold text-gray-900">More</h1>
+
+      {tenant && (
+        <div className="rounded-lg px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-gray-500">
+          Tenant Services
+        </div>
+      )}
 
       <div className="space-y-2">
         {menuItems.map(item => {
