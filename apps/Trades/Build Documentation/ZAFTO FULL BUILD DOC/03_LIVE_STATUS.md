@@ -1,9 +1,9 @@
 # ZAFTO LIVE STATUS
 ## UPDATE THIS EVERY SESSION
 
-**Last Updated:** February 7, 2026 (Session 73 — D5g Client Portal Tenant Flows DONE. 5 hooks, 6 pages, home+menu updated. D5a-D5g complete.)
-**Current Phase:** BUILD — B1-B7 + C1-C3 + C5 ALL COMPLETE. C2 NEAR COMPLETE. **D1 COMPLETE. D2a-D2h ALL DONE. D3 Phase 1+2 COMPLETE. D4 ZBOOKS COMPLETE. D5a-D5g DONE. D6a-D6c DONE. D7a COMPLETE.** 5 apps total. 79 tables deployed. 24 migration files. All 5 apps build clean.
-**Next Action:** D5h (Team Portal PM) → D5i (Integration Tests) → Phase E (AI Layer).
+**Last Updated:** February 7, 2026 (Session 76 — D5h Team Portal PM View DONE. 3 hooks, properties page, job detail PM context, sidebar updated. D5a-D5h complete.)
+**Current Phase:** BUILD — B1-B7 + C1-C3 + C5 ALL COMPLETE. C2 NEAR COMPLETE. **D1 COMPLETE. D2a-D2h ALL DONE. D3 Phase 1+2 COMPLETE. D4 ZBOOKS COMPLETE. D5a-D5h DONE. D6a-D6c DONE. D7a COMPLETE.** 5 apps total. 79 tables deployed. 24 migration files. All 5 apps build clean.
+**Next Action:** D5i (Integration Wiring + Rent Auto-Charge) → D5j (Testing + Seed Data) → R1 (App Remake) → Phase E (AI Layer).
 
 ---
 
@@ -11,17 +11,17 @@
 
 | Field | Value |
 |-------|-------|
-| **Phase** | BUILD — B1-B7 ALL COMPLETE. C1-C3+C5 COMPLETE. D1 COMPLETE. **D2a-D2h ALL DONE. D3 Phase 1+2 COMPLETE. D4 ZBOOKS COMPLETE. D5a-D5g DONE.** D6a-D6c DONE. D7a COMPLETE. 79 tables. 24 migration files. Next: D5h (Team Portal PM). |
+| **Phase** | BUILD — B1-B7 ALL COMPLETE. C1-C3+C5 COMPLETE. D1 COMPLETE. **D2a-D2h ALL DONE. D3 Phase 1+2 COMPLETE. D4 ZBOOKS COMPLETE. D5a-D5h DONE.** D6a-D6c DONE. D7a COMPLETE. 79 tables. 24 migration files. Next: D5i (Integration Wiring). |
 | **Mobile App (Flutter)** | ~107 screens built. ALL core business wired. ALL 19 field tools wired. D2 Insurance: 3 screens. **D5f Properties (S72):** 10 screens (hub, property_detail 5-tab, unit_detail, tenant_detail, lease_detail, rent, maintenance, inspection, asset, unit_turn) + 5 models + 7 repos + 3 services. **D6b Enterprise:** 14 files. **D7a:** certifications. Screen registry: 78 commands. `dart analyze` passes 0 errors. |
 | **Web CRM (Next.js)** | **54 routes built**. 32+ pages wired/emptied. 24 hook files + 22 Z Console files. Auth+middleware DONE. UI Polish DONE. Z Console DONE. D2 Insurance: 2 pages. **D6c Enterprise:** 5 settings tabs. **D7a:** certifications page. **D4 ZBooks (S70):** 13 new hooks, 13 new pages (accounts, expenses, vendors, vendor-payments, banking, reconciliation, reports, tax-settings, recurring, periods, cpa-export, branches, construction). `npm run build` passes (54 routes, 0 errors). |
 | **Client Portal (Next.js)** | **29 routes. 12 pages wired to Supabase. 11 hooks + mappers (6 base + 5 tenant). Magic link auth (signInWithOtp). Middleware protects portal routes. AuthProvider with client_portal_users lookup. `npm run build` passes (29 routes, 0 errors).** `client.zafto.cloud`. **D2h (S68):** Insurance claim status timeline, claim banner, insurance badge. **D5g (S73):** 5 tenant hooks (tenant-mappers + use-tenant + use-rent-payments + use-maintenance + use-inspections-tenant), 6 new pages (rent, rent/[id], lease, maintenance, maintenance/[id], inspections), home + menu updated with tenant-aware content. Stripe payment UI placeholder. |
-| **Employee Field Portal (Next.js)** | **22 dashboard pages + login. 10 Supabase hooks. PWA-ready. `npm run build` passes (24 routes, 0 errors).** `team.zafto.app`. Field-optimized UI. **D7a (S67):** `/dashboard/certifications` (employee self-service view). **D2h (S68):** Insurance job detail shows restoration progress (moisture readings, drying status, equipment deploy/remove, TPI inspections) with inline recording forms. |
+| **Employee Field Portal (Next.js)** | **23 dashboard pages + login. 13 Supabase hooks. PWA-ready. `npm run build` passes (25 routes, 0 errors).** `team.zafto.app`. Field-optimized UI. **D7a (S67):** `/dashboard/certifications` (employee self-service view). **D2h (S68):** Insurance job detail shows restoration progress with inline recording forms. **D5h (S76):** Properties page (maintenance requests with filter/search/status actions), job detail PropertyMaintenanceSection (property details, tenant contact, maintenance request, assets), sidebar Properties nav. 3 new hooks (use-pm-jobs, use-maintenance-requests + mappers PM types). |
 | **Ops Portal (Next.js)** | **16 dashboard pages + login. 17 routes. `npm run build` passes (0 errors).** `ops.zafto.cloud`. Deep navy/teal theme. super_admin role gate. Pages: Command Center, Companies, Company Detail, Users, User Detail, Tickets, Ticket Detail, Knowledge Base, KB Editor, Revenue, Subscriptions, Churn, System Status, Errors, Service Directory. Support ticket reply + KB article editor functional. Revenue/Health pages show zeros (Stripe/Sentry APIs not wired). |
 | **Field Tools** | **19 total. ALL wired.** 14 original (B2a-d) + 2 new (B3a: Materials+DailyLog) + 3 new (B3b: PunchList+ChangeOrders+JobCompletion). 0 remaining. |
 | **Database** | Supabase (PostgreSQL). 2 projects (dev + prod). **79 tables DEPLOYED** (61 prior + 18 property management). RLS + audit on all. 24 migration files. Supabase CLI linked to dev. 3 test users + 1 company seeded. 29 system form templates + 25 system cert types + 15 warranty companies + 55 COA accounts + 26 tax categories seeded. zbooks_audit_log is INSERT-only (immutable). |
 | **Backend Connected** | Auth + Customers + Jobs + Invoices + Bids + Time Clock + Calendar ALL wired. ALL 19 field tools wired: 3 photo (B2a), 5 safety (B2b), 3 financial (B2c), 2 voice/level (B2d), 2 materials/log (B3a), 3 punch/CO/completion (B3b). **D2 Insurance (S63-S64):** Claims CRUD + supplements + moisture + drying + equipment + TPI all wired to 7 new Supabase tables. |
 | **DevOps** | **C1 DONE (S58):** Sentry in all 4 apps. CI/CD: 4 workflows. 154 model tests. Dependabot: 4 ecosystems. **C2 NEAR COMPLETE (S60-S61):** 21 schema mismatches fixed + 75 audit findings resolved. RBAC middleware on all portals. **C3 DONE (S59):** Ops Portal Phase 1 (16 pages, 6 new tables). **C5 DONE (S59):** Incident response plan. **D1 DONE (S62).** **D2a-D2g DONE (S63-S64).** **D6a-D6c DONE (S65).** |
-| **Blocker** | NONE — D5a-D5g DONE. Next: D5h (Team Portal PM) → D5i → Phase E. |
+| **Blocker** | NONE — D5a-D5h DONE. Next: D5i (Integration Wiring) → D5j (Testing) → R1 (App Remake) → Phase E. |
 
 ---
 

@@ -286,3 +286,59 @@ export function usePmMaintenance() {
     getRequestsByStatus,
   };
 }
+
+/**
+ * Creates a ZAFTO job from a maintenance request, links them together,
+ * updates the request status, and logs a work order action.
+ */
+export async function createJobFromRequest(request: {
+  id: string;
+  propertyId: string;
+  unitId?: string;
+  title: string;
+  description: string;
+  companyId: string;
+  userId: string;
+}): Promise<string> {
+  const supabase = getSupabase();
+
+  // Create job linked to property
+  const { data: job, error: jobErr } = await supabase
+    .from('jobs')
+    .insert({
+      company_id: request.companyId,
+      created_by_user_id: request.userId,
+      title: `Maintenance: ${request.title}`,
+      description: request.description,
+      status: 'in_progress',
+      job_type: 'standard',
+      property_id: request.propertyId,
+      unit_id: request.unitId || null,
+      maintenance_request_id: request.id,
+      assigned_user_ids: [request.userId],
+      source: 'maintenance_request',
+    })
+    .select('id')
+    .single();
+
+  if (jobErr) throw jobErr;
+
+  // Link job to maintenance request + update status
+  const { error: updateErr } = await supabase
+    .from('maintenance_requests')
+    .update({ job_id: job.id, status: 'in_progress' })
+    .eq('id', request.id);
+
+  if (updateErr) throw updateErr;
+
+  // Add work order action
+  await supabase.from('work_order_actions').insert({
+    maintenance_request_id: request.id,
+    action_type: 'started',
+    performed_by: request.userId,
+    details: `Job ${job.id} created from CRM`,
+    company_id: request.companyId,
+  });
+
+  return job.id;
+}

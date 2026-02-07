@@ -278,3 +278,38 @@ export function useAssets() {
     getAssetsNeedingService,
   };
 }
+
+// Wire: job completion → asset service record update
+export async function recordServiceFromJob(params: {
+  assetId: string;
+  jobId: string;
+  serviceType: string;
+  description: string;
+  cost?: number;
+  performedBy: string;
+  companyId: string;
+}): Promise<void> {
+  const supabase = getSupabase();
+  const today = new Date().toISOString().split('T')[0];
+
+  // Insert service record
+  await supabase.from('asset_service_records').insert({
+    asset_id: params.assetId,
+    company_id: params.companyId,
+    service_type: params.serviceType,
+    service_date: today,
+    description: params.description,
+    cost: params.cost || 0,
+    performed_by: params.performedBy,
+    job_id: params.jobId,
+  });
+
+  // Update asset's last_service_date and calculate next_service_date
+  await supabase
+    .from('property_assets')
+    .update({
+      last_service_date: today,
+      condition: 'good',
+    })
+    .eq('id', params.assetId);
+}

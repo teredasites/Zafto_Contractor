@@ -168,6 +168,66 @@ export function useRent() {
 
     if (updateErr) throw updateErr;
 
+    // Wire: rent payment → ZBooks journal entry (debit Cash, credit Rental Income)
+    try {
+      // Fetch the charge's property for journal tagging
+      const { data: fullCharge } = await supabase
+        .from('rent_charges')
+        .select('property_id, lease_id')
+        .eq('id', chargeId)
+        .single();
+
+      // Find Cash and Rental Income accounts
+      const { data: accounts } = await supabase
+        .from('chart_of_accounts')
+        .select('id, account_name, account_type')
+        .eq('company_id', companyId)
+        .in('account_name', ['Cash', 'Rental Income']);
+
+      const cashAcct = accounts?.find((a: { account_name: string }) => a.account_name === 'Cash');
+      const incomeAcct = accounts?.find((a: { account_name: string }) => a.account_name === 'Rental Income');
+
+      if (cashAcct && incomeAcct) {
+        const { data: je } = await supabase
+          .from('journal_entries')
+          .insert({
+            company_id: companyId,
+            entry_date: new Date().toISOString().split('T')[0],
+            description: `Rent payment received — Charge ${chargeId}`,
+            source: 'rent_payment',
+            source_id: paymentResult.id,
+            status: 'posted',
+            created_by_user_id: user.id,
+          })
+          .select('id')
+          .single();
+
+        if (je) {
+          await supabase.from('journal_entry_lines').insert([
+            {
+              journal_entry_id: je.id,
+              account_id: cashAcct.id,
+              debit: data.amount,
+              credit: 0,
+              description: 'Rent payment — Cash',
+              property_id: fullCharge?.property_id || null,
+            },
+            {
+              journal_entry_id: je.id,
+              account_id: incomeAcct.id,
+              debit: 0,
+              credit: data.amount,
+              description: 'Rent payment — Rental Income',
+              property_id: fullCharge?.property_id || null,
+            },
+          ]);
+        }
+      }
+    } catch {
+      // Non-critical — payment still recorded even if journal fails
+      console.error('Failed to create ZBooks journal entry for rent payment');
+    }
+
     return paymentResult.id;
   };
 

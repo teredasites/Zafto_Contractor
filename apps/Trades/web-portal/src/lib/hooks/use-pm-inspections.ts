@@ -209,3 +209,41 @@ export function usePmInspections() {
     getInspectionsByProperty,
   };
 }
+
+/**
+ * Creates a maintenance request from an inspection finding,
+ * linking it back to the inspection source.
+ */
+export async function createRepairFromInspection(params: {
+  inspectionId: string;
+  inspectionItemId: string;
+  propertyId: string;
+  unitId?: string;
+  title: string;
+  description: string;
+  urgency: string;
+  companyId: string;
+  userId: string;
+}): Promise<string> {
+  const supabase = getSupabase();
+
+  const { data, error } = await supabase
+    .from('maintenance_requests')
+    .insert({
+      property_id: params.propertyId,
+      unit_id: params.unitId || null,
+      title: params.title,
+      description: `From inspection: ${params.description}`,
+      category: 'repair',
+      urgency: params.urgency,
+      status: 'new',
+      company_id: params.companyId,
+      created_by_user_id: params.userId,
+      source: 'inspection',
+    })
+    .select('id')
+    .single();
+
+  if (error) throw error;
+  return data.id;
+}
