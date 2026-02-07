@@ -1,5 +1,5 @@
-/// Invoice Create/Edit Screen - Design System v2.6
-/// Invoice creation and editing
+// Invoice Create/Edit Screen - Design System v2.6
+// Invoice creation and editing
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../theme/zafto_colors.dart';
 import '../../theme/theme_provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/invoice.dart';
 import '../../services/invoice_service.dart';
 
@@ -30,7 +31,8 @@ class _InvoiceCreateScreenState extends ConsumerState<InvoiceCreateScreen> {
   double _taxRate = 0;
   DateTime _dueDate = DateTime.now().add(const Duration(days: 30));
   bool _isSaving = false;
-  
+  bool _isInsuranceJob = false;
+
   bool get _isEditMode => widget.editInvoice != null;
 
   @override
@@ -46,10 +48,23 @@ class _InvoiceCreateScreenState extends ConsumerState<InvoiceCreateScreen> {
         _lineItems.add(_LineItemData());
       }
     }
+    _checkInsuranceJob();
+  }
+
+  Future<void> _checkInsuranceJob() async {
+    final jobId = widget.jobId ?? widget.editInvoice?.jobId;
+    if (jobId == null) return;
+    try {
+      final supabase = Supabase.instance.client;
+      final result = await supabase.from('jobs').select('job_type').eq('id', jobId).maybeSingle();
+      if (result != null && (result['job_type'] == 'insurance_claim' || result['job_type'] == 'warranty_dispatch')) {
+        setState(() => _isInsuranceJob = true);
+      }
+    } catch (_) {}
   }
 
   void _populateFields(Invoice invoice) {
-    _customerController.text = invoice.customerName ?? '';
+    _customerController.text = invoice.customerName;
     _emailController.text = invoice.customerEmail ?? '';
     _notesController.text = invoice.notes ?? '';
     _taxRate = invoice.taxRate;
@@ -61,6 +76,7 @@ class _InvoiceCreateScreenState extends ConsumerState<InvoiceCreateScreen> {
         description: item.description,
         quantity: item.quantity,
         unitPrice: item.unitPrice,
+        paymentSource: item.paymentSource,
       ));
     }
     if (_lineItems.isEmpty) {
@@ -219,6 +235,41 @@ class _InvoiceCreateScreenState extends ConsumerState<InvoiceCreateScreen> {
                   Text('\$${item.total.toStringAsFixed(2)}', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: colors.textPrimary)),
                 ],
               ),
+              if (_isInsuranceJob) ...[
+                const SizedBox(height: 8),
+                Row(
+                  children: PaymentSource.values.where((s) => s != PaymentSource.standard).map((source) {
+                    final isSelected = item.paymentSource == source;
+                    final label = switch (source) {
+                      PaymentSource.carrier => 'Carrier',
+                      PaymentSource.deductible => 'Deductible',
+                      PaymentSource.upgrade => 'Upgrade',
+                      PaymentSource.standard => 'Standard',
+                    };
+                    final color = switch (source) {
+                      PaymentSource.carrier => const Color(0xFF3B82F6),
+                      PaymentSource.deductible => const Color(0xFFF97316),
+                      PaymentSource.upgrade => const Color(0xFF8B5CF6),
+                      PaymentSource.standard => colors.textTertiary,
+                    };
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 6),
+                      child: GestureDetector(
+                        onTap: () => setState(() => item.paymentSource = isSelected ? PaymentSource.standard : source),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: isSelected ? color.withValues(alpha: 0.15) : Colors.transparent,
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(color: isSelected ? color : colors.borderDefault),
+                          ),
+                          child: Text(label, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: isSelected ? color : colors.textTertiary)),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ],
             ],
           ),
         );
@@ -348,6 +399,7 @@ class _InvoiceCreateScreenState extends ConsumerState<InvoiceCreateScreen> {
       description: i.description,
       quantity: i.quantity,
       unitPrice: i.unitPrice,
+      paymentSource: i.paymentSource,
     )).toList();
 
     if (_isEditMode) {
@@ -408,11 +460,12 @@ class _LineItemData {
   String description;
   double quantity;
   double unitPrice;
+  PaymentSource paymentSource;
   final descController = TextEditingController();
   final qtyController = TextEditingController();
   final priceController = TextEditingController();
 
-  _LineItemData({this.description = '', this.quantity = 1, this.unitPrice = 0}) {
+  _LineItemData({this.description = '', this.quantity = 1, this.unitPrice = 0, this.paymentSource = PaymentSource.standard}) {
     descController.text = description;
     qtyController.text = quantity > 0 ? quantity.toString() : '';
     priceController.text = unitPrice > 0 ? unitPrice.toString() : '';

@@ -7,21 +7,30 @@ import { mapBid, type BidData } from './mappers';
 export function useBids() {
   const [bids, setBids] = useState<BidData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchBids = useCallback(async () => {
-    const supabase = getSupabase();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) { setLoading(false); return; }
+    try {
+      setError(null);
+      const supabase = getSupabase();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { setLoading(false); return; }
 
-    const { data } = await supabase
-      .from('bids')
-      .select('*')
-      .eq('created_by_user_id', user.id)
-      .is('deleted_at', null)
-      .order('created_at', { ascending: false });
+      const { data, error: err } = await supabase
+        .from('bids')
+        .select('*')
+        .eq('created_by_user_id', user.id)
+        .is('deleted_at', null)
+        .order('created_at', { ascending: false });
 
-    setBids((data || []).map(mapBid));
-    setLoading(false);
+      if (err) throw err;
+      setBids((data || []).map(mapBid));
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Failed to load bids';
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -34,31 +43,42 @@ export function useBids() {
   }, [fetchBids]);
 
   const createBid = async (data: { customerName: string; title: string; totalAmount: number; description?: string }) => {
-    const supabase = getSupabase();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    try {
+      setError(null);
+      const supabase = getSupabase();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
 
-    const today = new Date().toISOString().split('T')[0].replace(/-/g, '');
-    const { data: lastBid } = await supabase.from('bids')
-      .select('bid_number').ilike('bid_number', `BID-${today}-%`)
-      .order('created_at', { ascending: false }).limit(1);
+      const today = new Date().toISOString().split('T')[0].replace(/-/g, '');
+      const { data: lastBid, error: lastBidErr } = await supabase.from('bids')
+        .select('bid_number').ilike('bid_number', `BID-${today}-%`)
+        .order('created_at', { ascending: false }).limit(1);
 
-    let seq = 1;
-    if (lastBid && lastBid.length > 0) {
-      const match = (lastBid[0].bid_number as string).match(/-(\d+)$/);
-      if (match) seq = parseInt(match[1], 10) + 1;
+      if (lastBidErr) throw lastBidErr;
+
+      let seq = 1;
+      if (lastBid && lastBid.length > 0) {
+        const match = (lastBid[0].bid_number as string).match(/-(\d+)$/);
+        if (match) seq = parseInt(match[1], 10) + 1;
+      }
+
+      const { error: err } = await supabase.from('bids').insert({
+        company_id: user.app_metadata?.company_id,
+        created_by_user_id: user.id,
+        bid_number: `BID-${today}-${String(seq).padStart(3, '0')}`,
+        customer_name: data.customerName, title: data.title,
+        total: data.totalAmount, scope_of_work: data.description || '',
+        status: 'draft',
+      });
+
+      if (err) throw err;
+      fetchBids();
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Failed to create bid';
+      setError(msg);
+      throw e;
     }
-
-    await supabase.from('bids').insert({
-      company_id: user.app_metadata?.company_id,
-      created_by_user_id: user.id,
-      bid_number: `BID-${today}-${String(seq).padStart(3, '0')}`,
-      customer_name: data.customerName, title: data.title,
-      total_amount: data.totalAmount, description: data.description || '',
-      status: 'draft',
-    });
-    fetchBids();
   };
 
-  return { bids, loading, createBid };
+  return { bids, loading, error, createBid };
 }

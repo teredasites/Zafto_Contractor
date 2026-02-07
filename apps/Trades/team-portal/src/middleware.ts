@@ -1,5 +1,13 @@
+// ZAFTO Employee Field Portal — Auth + RBAC Middleware
+// Sprint B5 | RBAC added Session 55
+//
+// Protects /dashboard/* routes. Verifies auth AND role.
+// Allowed roles: owner, admin, office_manager, technician, super_admin
+
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
+
+const TEAM_ALLOWED_ROLES = ['owner', 'admin', 'office_manager', 'technician', 'super_admin'];
 
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
@@ -25,12 +33,31 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (request.nextUrl.pathname.startsWith('/dashboard') && !user) {
-    const url = request.nextUrl.clone();
-    url.pathname = '/';
-    return NextResponse.redirect(url);
+  // Protected routes: /dashboard/*
+  if (request.nextUrl.pathname.startsWith('/dashboard')) {
+    if (!user) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/';
+      url.searchParams.set('redirect', request.nextUrl.pathname);
+      return NextResponse.redirect(url);
+    }
+
+    // Verify role from users table
+    const { data: profile } = await supabase
+      .from('users')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+
+    if (!profile || !TEAM_ALLOWED_ROLES.includes(profile.role)) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/';
+      url.searchParams.set('error', 'unauthorized');
+      return NextResponse.redirect(url);
+    }
   }
 
+  // If on login page and already authenticated, redirect to dashboard.
   if (request.nextUrl.pathname === '/' && user) {
     const url = request.nextUrl.clone();
     url.pathname = '/dashboard';

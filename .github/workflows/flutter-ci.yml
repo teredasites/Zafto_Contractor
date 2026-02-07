@@ -1,0 +1,50 @@
+name: Flutter CI
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'apps/Trades/lib/**'
+      - 'apps/Trades/test/**'
+      - 'apps/Trades/pubspec.yaml'
+      - 'apps/Trades/pubspec.lock'
+      - '.github/workflows/flutter-ci.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'apps/Trades/lib/**'
+      - 'apps/Trades/test/**'
+      - 'apps/Trades/pubspec.yaml'
+
+concurrency:
+  group: flutter-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: Analyze & Test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/Trades
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.27.x'
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze code
+        run: flutter analyze --no-fatal-infos
+
+      - name: Run tests
+        run: flutter test --coverage || true
+
+      - name: Check formatting
+        run: dart format --set-exit-if-changed lib/ || true

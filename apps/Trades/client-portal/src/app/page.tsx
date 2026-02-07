@@ -1,13 +1,16 @@
 'use client';
 import { useState } from 'react';
-import { Shield, ArrowRight, Mail, CheckCircle2 } from 'lucide-react';
-import { signInWithMagicLink } from '@/lib/auth';
+import { Shield, ArrowRight, Mail, CheckCircle2, Lock, Eye, EyeOff } from 'lucide-react';
+import { signInWithMagicLink, signInWithPassword } from '@/lib/auth';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [usePassword, setUsePassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -15,13 +18,20 @@ export default function LoginPage() {
     setLoading(true);
     setError(null);
 
-    const { error: authError } = await signInWithMagicLink(email);
-    setLoading(false);
-
-    if (authError) {
-      setError(authError);
+    if (usePassword) {
+      const { error: authError } = await signInWithPassword(email, password);
+      setLoading(false);
+      if (authError) {
+        setError(authError);
+      }
     } else {
-      setSent(true);
+      const { error: authError } = await signInWithMagicLink(email);
+      setLoading(false);
+      if (authError) {
+        setError(authError);
+      } else {
+        setSent(true);
+      }
     }
   };
 
@@ -67,17 +77,40 @@ export default function LoginPage() {
                 />
               </div>
 
+              {usePassword && (
+                <div>
+                  <label className="block text-sm font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>Password</label>
+                  <div className="relative">
+                    <input type={showPassword ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} placeholder="Enter password" required
+                      className="w-full px-3.5 py-2.5 pr-10 rounded-lg text-sm outline-none transition-colors border"
+                      style={{ backgroundColor: 'var(--bg)', borderColor: 'var(--border)', color: 'var(--text)' }}
+                    />
+                    <button type="button" onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 opacity-50 hover:opacity-100 transition-opacity"
+                      style={{ color: 'var(--text-muted)' }}>
+                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {error && (
                 <p className="text-xs px-3 py-2 rounded-lg" style={{ backgroundColor: 'var(--error-light)', color: 'var(--error)' }}>
                   {error}
                 </p>
               )}
 
-              <button type="submit" disabled={loading || !email}
+              <button type="submit" disabled={loading || !email || (usePassword && !password)}
                 className="w-full py-2.5 rounded-lg text-white text-sm font-semibold flex items-center justify-center gap-2 transition-all disabled:opacity-50"
                 style={{ backgroundColor: 'var(--accent)' }}>
                 {loading ? (
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : usePassword ? (
+                  <>
+                    <Lock size={16} />
+                    Sign In
+                    <ArrowRight size={16} />
+                  </>
                 ) : (
                   <>
                     <Mail size={16} />
@@ -88,7 +121,19 @@ export default function LoginPage() {
               </button>
 
               <p className="text-xs text-center" style={{ color: 'var(--text-muted)' }}>
-                No password needed. We&apos;ll send a secure link to your email.
+                {usePassword ? (
+                  <button type="button" onClick={() => setUsePassword(false)} style={{ color: 'var(--accent)' }} className="font-medium">
+                    Use magic link instead
+                  </button>
+                ) : (
+                  <>
+                    No password needed. We&apos;ll send a secure link to your email.
+                    <br />
+                    <button type="button" onClick={() => setUsePassword(true)} style={{ color: 'var(--accent)' }} className="font-medium mt-1 inline-block">
+                      Sign in with password
+                    </button>
+                  </>
+                )}
               </p>
             </form>
           )}

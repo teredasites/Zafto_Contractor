@@ -2,7 +2,8 @@
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { getSupabase } from '@/lib/supabase';
-import type { User } from '@supabase/supabase-js';
+import { setSentryUser, clearSentryUser } from '@/lib/sentry';
+import type { User, AuthChangeEvent, Session } from '@supabase/supabase-js';
 
 interface ClientProfile {
   id: string;
@@ -58,6 +59,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             customerId: clientUser.customer_id,
             companyId: clientUser.company_id,
           });
+          setSentryUser(clientUser.id, clientUser.company_id ?? undefined, 'client');
         } else {
           // Fallback: minimal profile from auth
           setProfile({
@@ -67,6 +69,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             customerId: null,
             companyId: null,
           });
+          setSentryUser(authUser.id, undefined, 'client');
         }
       } else {
         setProfile(null);
@@ -76,13 +79,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     loadUser();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, session: Session | null) => {
       if (session?.user) {
         setUser(session.user);
         loadUser();
       } else {
         setUser(null);
         setProfile(null);
+        clearSentryUser();
         setLoading(false);
       }
     });
@@ -95,6 +99,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await supabase.auth.signOut();
     setUser(null);
     setProfile(null);
+    clearSentryUser();
   };
 
   return (

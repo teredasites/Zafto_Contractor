@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getSupabase } from '@/lib/supabase';
 import { mapInvoice, INVOICE_STATUS_TO_DB } from './mappers';
+import { createInvoiceJournal, createPaymentJournal } from './use-zbooks-engine';
 import type { Invoice, InvoiceStatus } from '@/types';
 
 export function useInvoices() {
@@ -150,6 +151,9 @@ export function useInvoices() {
       .eq('id', id);
 
     if (err) throw err;
+
+    // Auto-post journal entry: DR Cash/Bank, CR Accounts Receivable
+    await createPaymentJournal(id, amount, method);
   };
 
   const sendInvoice = async (id: string) => {
@@ -159,6 +163,9 @@ export function useInvoices() {
       .update({ status: 'sent', sent_at: new Date().toISOString() })
       .eq('id', id);
     if (err) throw err;
+
+    // Auto-post journal entry: DR Accounts Receivable, CR Revenue
+    await createInvoiceJournal(id);
   };
 
   const deleteInvoice = async (id: string) => {
@@ -194,6 +201,8 @@ export function useInvoice(id: string | undefined) {
       return;
     }
 
+    let ignore = false;
+
     const fetchInvoice = async () => {
       try {
         setLoading(true);
@@ -201,17 +210,20 @@ export function useInvoice(id: string | undefined) {
         const supabase = getSupabase();
         const { data, error: err } = await supabase.from('invoices').select('*').eq('id', id).single();
 
+        if (ignore) return;
         if (err) throw err;
         setInvoice(data ? mapInvoice(data) : null);
       } catch (e: unknown) {
+        if (ignore) return;
         const msg = e instanceof Error ? e.message : 'Invoice not found';
         setError(msg);
       } finally {
-        setLoading(false);
+        if (!ignore) setLoading(false);
       }
     };
 
     fetchInvoice();
+    return () => { ignore = true; };
   }, [id]);
 
   return { invoice, loading, error };

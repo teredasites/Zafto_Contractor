@@ -77,6 +77,9 @@ class Job {
   final double estimatedAmount;
   final double? actualAmount;
 
+  // Source
+  final String source;
+
   // Tags
   final List<String> tags;
 
@@ -124,6 +127,7 @@ class Job {
     this.completedAt,
     this.estimatedAmount = 0,
     this.actualAmount,
+    this.source = 'direct',
     this.tags = const [],
     this.invoiceId,
     this.quoteId,
@@ -190,6 +194,7 @@ class Job {
       'scheduled_end': scheduledEnd?.toUtc().toIso8601String(),
       'estimated_duration': estimatedDuration,
       'estimated_amount': estimatedAmount,
+      'source': source,
       'tags': tags,
     };
   }
@@ -225,6 +230,7 @@ class Job {
       'completed_at': completedAt?.toUtc().toIso8601String(),
       'estimated_amount': estimatedAmount,
       'actual_amount': actualAmount,
+      'source': source,
       'tags': tags,
       'invoice_id': invoiceId,
       'quote_id': quoteId,
@@ -294,6 +300,7 @@ class Job {
       actualAmount:
           ((json['actual_amount'] ?? json['actualAmount']) as num?)
               ?.toDouble(),
+      source: (json['source'] as String?) ?? 'direct',
       tags: (json['tags'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
@@ -368,6 +375,16 @@ class Job {
         JobPriority.urgent => 'Urgent',
       };
 
+  String get jobTypeLabel => switch (jobType) {
+        JobType.standard => 'Standard',
+        JobType.insuranceClaim => 'Insurance Claim',
+        JobType.warrantyDispatch => 'Warranty Dispatch',
+      };
+
+  bool get isInsuranceClaim => jobType == JobType.insuranceClaim;
+  bool get isWarrantyDispatch => jobType == JobType.warrantyDispatch;
+  bool get hasTypeMetadata => typeMetadata.isNotEmpty;
+
   String get fullAddress {
     final parts = <String>[];
     if (address.isNotEmpty) parts.add(address);
@@ -431,6 +448,7 @@ class Job {
     DateTime? completedAt,
     double? estimatedAmount,
     double? actualAmount,
+    String? source,
     List<String>? tags,
     String? invoiceId,
     String? quoteId,
@@ -471,6 +489,7 @@ class Job {
       completedAt: completedAt ?? this.completedAt,
       estimatedAmount: estimatedAmount ?? this.estimatedAmount,
       actualAmount: actualAmount ?? this.actualAmount,
+      source: source ?? this.source,
       tags: tags ?? this.tags,
       invoiceId: invoiceId ?? this.invoiceId,
       quoteId: quoteId ?? this.quoteId,

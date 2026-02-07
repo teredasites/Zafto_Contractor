@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { getSupabase } from '@/lib/supabase';
-import { mapJob, JOB_STATUS_TO_DB } from './mappers';
+import { mapJob, JOB_STATUS_TO_DB, JOB_TYPE_COLORS } from './mappers';
 import type { Job, JobStatus, ScheduledItem, TeamMember } from '@/types';
 import { mapTeamMember } from './mappers';
 
@@ -63,6 +63,8 @@ export function useJobs() {
         customer_id: data.customerId || null,
         title: data.title || 'Untitled Job',
         description: data.description || null,
+        job_type: data.jobType || 'standard',
+        type_metadata: data.typeMetadata || {},
         status: JOB_STATUS_TO_DB[data.status || 'lead'] || 'draft',
         priority: data.priority || 'normal',
         address: data.address?.street || '',
@@ -91,6 +93,8 @@ export function useJobs() {
 
     if (data.title !== undefined) updateData.title = data.title;
     if (data.description !== undefined) updateData.description = data.description;
+    if (data.jobType !== undefined) updateData.job_type = data.jobType;
+    if (data.typeMetadata !== undefined) updateData.type_metadata = data.typeMetadata;
     if (data.status !== undefined) updateData.status = JOB_STATUS_TO_DB[data.status] || data.status;
     if (data.priority !== undefined) updateData.priority = data.priority;
     if (data.address) {
@@ -149,6 +153,8 @@ export function useJob(id: string | undefined) {
       return;
     }
 
+    let ignore = false;
+
     const fetchJob = async () => {
       try {
         setLoading(true);
@@ -156,17 +162,20 @@ export function useJob(id: string | undefined) {
         const supabase = getSupabase();
         const { data, error: err } = await supabase.from('jobs').select('*').eq('id', id).single();
 
+        if (ignore) return;
         if (err) throw err;
         setJob(data ? mapJob(data) : null);
       } catch (e: unknown) {
+        if (ignore) return;
         const msg = e instanceof Error ? e.message : 'Job not found';
         setError(msg);
       } finally {
-        setLoading(false);
+        if (!ignore) setLoading(false);
       }
     };
 
     fetchJob();
+    return () => { ignore = true; };
   }, [id]);
 
   return { job, loading, error };
@@ -189,6 +198,7 @@ export function useSchedule() {
       jobId: j.id,
       customerId: j.customerId,
       assignedTo: j.assignedTo,
+      color: JOB_TYPE_COLORS[j.jobType]?.dot,
     }));
 
   return { schedule, loading, error };

@@ -9,6 +9,7 @@ import '../../core/supabase_client.dart';
 
 // Job Completion — Validates all requirements before marking job complete.
 // Auto-checks: punch list, photos, signature, time entries, materials, daily log, change orders.
+// Insurance claims get 4 extra checks: moisture, equipment, drying, TPI.
 class JobCompletionScreen extends ConsumerStatefulWidget {
   final String? jobId;
 
@@ -42,6 +43,8 @@ class _JobCompletionScreenState extends ConsumerState<JobCompletionScreen> {
   late List<_CompletionCheck> _checks;
   bool _isCompleting = false;
   bool _jobAlreadyComplete = false;
+  bool _isInsuranceClaim = false;
+  String? _claimId;
 
   @override
   void initState() {
@@ -91,7 +94,7 @@ class _JobCompletionScreenState extends ConsumerState<JobCompletionScreen> {
       ),
     ];
     if (widget.jobId != null) {
-      _runAllChecks();
+      _detectJobTypeAndRunChecks();
     } else {
       for (final c in _checks) {
         c.isLoading = false;
@@ -99,8 +102,67 @@ class _JobCompletionScreenState extends ConsumerState<JobCompletionScreen> {
     }
   }
 
+  Future<void> _detectJobTypeAndRunChecks() async {
+    try {
+      final jobResponse = await supabase
+          .from('jobs')
+          .select('job_type')
+          .eq('id', widget.jobId!)
+          .single();
+
+      if (jobResponse['job_type'] == 'insurance_claim') {
+        _isInsuranceClaim = true;
+
+        // Look up the claim for this job
+        final claimResponse = await supabase
+            .from('insurance_claims')
+            .select('id')
+            .eq('job_id', widget.jobId!)
+            .limit(1);
+        final claimRows = claimResponse as List;
+        if (claimRows.isNotEmpty) {
+          _claimId = claimRows[0]['id'] as String;
+        }
+
+        // Add insurance-specific checks
+        _checks.addAll([
+          _CompletionCheck(
+            id: 'moisture_target',
+            title: 'Moisture Readings at Target',
+            subtitle: 'All moisture readings show dry conditions',
+            icon: LucideIcons.droplets,
+          ),
+          _CompletionCheck(
+            id: 'equipment_removed',
+            title: 'All Equipment Removed',
+            subtitle: 'Restoration equipment returned or removed',
+            icon: LucideIcons.wrench,
+          ),
+          _CompletionCheck(
+            id: 'drying_complete',
+            title: 'Drying Completion Logged',
+            subtitle: 'Drying log has a completion entry',
+            icon: LucideIcons.thermometer,
+          ),
+          _CompletionCheck(
+            id: 'tpi_passed',
+            title: 'TPI Final Inspection Passed',
+            subtitle: 'Third-party inspector approved the work',
+            icon: LucideIcons.clipboardCheck,
+          ),
+        ]);
+
+        if (mounted) setState(() {});
+      }
+    } catch (_) {
+      // Non-insurance job or error — proceed with standard checks
+    }
+
+    _runAllChecks();
+  }
+
   Future<void> _runAllChecks() async {
-    await Future.wait([
+    final futures = <Future>[
       _checkPunchList(),
       _checkPhotos(),
       _checkSignature(),
@@ -109,7 +171,18 @@ class _JobCompletionScreenState extends ConsumerState<JobCompletionScreen> {
       _checkDailyLog(),
       _checkChangeOrders(),
       _checkJobStatus(),
-    ]);
+    ];
+
+    if (_isInsuranceClaim) {
+      futures.addAll([
+        _checkMoistureTarget(),
+        _checkEquipmentRemoved(),
+        _checkDryingComplete(),
+        _checkTpiPassed(),
+      ]);
+    }
+
+    await Future.wait(futures);
   }
 
   Future<void> _checkPunchList() async {
@@ -268,6 +341,118 @@ class _JobCompletionScreenState extends ConsumerState<JobCompletionScreen> {
     if (mounted) setState(() {});
   }
 
+  // ==================== INSURANCE-SPECIFIC CHECKS ====================
+
+  Future<void> _checkMoistureTarget() async {
+    final check = _checks.firstWhere((c) => c.id == 'moisture_target');
+    try {
+      final response = await supabase
+          .from('moisture_readings')
+          .select('id, is_dry')
+          .eq('job_id', widget.jobId!);
+
+      final items = response as List;
+      if (items.isEmpty) {
+        check.isChecked = false;
+        check.detail = 'No moisture readings recorded';
+      } else {
+        final notDry = items.where((r) => r['is_dry'] != true).length;
+        check.isChecked = notDry == 0;
+        check.detail = notDry == 0
+            ? 'All ${items.length} readings at target'
+            : '$notDry of ${items.length} still wet';
+      }
+    } catch (_) {
+      check.detail = 'Could not verify';
+    }
+    check.isLoading = false;
+    if (mounted) setState(() {});
+  }
+
+  Future<void> _checkEquipmentRemoved() async {
+    final check = _checks.firstWhere((c) => c.id == 'equipment_removed');
+    try {
+      final response = await supabase
+          .from('restoration_equipment')
+          .select('id, status')
+          .eq('job_id', widget.jobId!);
+
+      final items = response as List;
+      if (items.isEmpty) {
+        check.isChecked = true;
+        check.detail = 'No equipment deployed';
+      } else {
+        final stillDeployed = items.where((r) =>
+            r['status'] == 'deployed' || r['status'] == 'maintenance').length;
+        check.isChecked = stillDeployed == 0;
+        check.detail = stillDeployed == 0
+            ? 'All ${items.length} pieces removed'
+            : '$stillDeployed still on site';
+      }
+    } catch (_) {
+      check.detail = 'Could not verify';
+    }
+    check.isLoading = false;
+    if (mounted) setState(() {});
+  }
+
+  Future<void> _checkDryingComplete() async {
+    final check = _checks.firstWhere((c) => c.id == 'drying_complete');
+    try {
+      final response = await supabase
+          .from('drying_logs')
+          .select('id')
+          .eq('job_id', widget.jobId!)
+          .eq('log_type', 'completion')
+          .limit(1);
+
+      final items = response as List;
+      check.isChecked = items.isNotEmpty;
+      check.detail = items.isNotEmpty
+          ? 'Drying completion logged'
+          : 'No completion entry in drying log';
+    } catch (_) {
+      check.detail = 'Could not verify';
+    }
+    check.isLoading = false;
+    if (mounted) setState(() {});
+  }
+
+  Future<void> _checkTpiPassed() async {
+    final check = _checks.firstWhere((c) => c.id == 'tpi_passed');
+    if (_claimId == null) {
+      check.isChecked = false;
+      check.detail = 'No linked insurance claim';
+      check.isLoading = false;
+      if (mounted) setState(() {});
+      return;
+    }
+    try {
+      final response = await supabase
+          .from('tpi_scheduling')
+          .select('id, inspection_type, status, result')
+          .eq('claim_id', _claimId!)
+          .eq('inspection_type', 'final_inspection');
+
+      final items = response as List;
+      if (items.isEmpty) {
+        check.isChecked = false;
+        check.detail = 'No final inspection scheduled';
+      } else {
+        final passed = items.any(
+            (r) => r['status'] == 'completed' && r['result'] == 'passed');
+        check.isChecked = passed;
+        check.detail = passed
+            ? 'Final inspection passed'
+            : 'Final inspection not yet passed';
+      }
+    } catch (_) {
+      check.detail = 'Could not verify';
+    }
+    check.isLoading = false;
+    if (mounted) setState(() {});
+  }
+
   Future<void> _checkJobStatus() async {
     try {
       final response = await supabase
@@ -307,7 +492,8 @@ class _JobCompletionScreenState extends ConsumerState<JobCompletionScreen> {
           icon: Icon(LucideIcons.arrowLeft, color: colors.textPrimary),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text('Job Completion',
+        title: Text(
+            _isInsuranceClaim ? 'Insurance Completion' : 'Job Completion',
             style: TextStyle(
                 color: colors.textPrimary, fontWeight: FontWeight.w600)),
         actions: [
@@ -320,6 +506,7 @@ class _JobCompletionScreenState extends ConsumerState<JobCompletionScreen> {
                   c.isChecked = false;
                   c.detail = null;
                 }
+                _jobAlreadyComplete = false;
                 setState(() {});
                 _runAllChecks();
               },
@@ -577,12 +764,15 @@ class _JobCompletionScreenState extends ConsumerState<JobCompletionScreen> {
   }
 
   Future<void> _completeJob(ZaftoColors colors) async {
+    final dialogContent = _isInsuranceClaim
+        ? 'The job will be completed and the insurance claim status will advance to "Work Complete".'
+        : 'The job status will be set to completed. This can be undone from the job details screen.';
+
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Complete this job?'),
-        content: const Text(
-            'The job status will be set to completed. This can be undone from the job details screen.'),
+        content: Text(dialogContent),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx, false),
@@ -601,10 +791,20 @@ class _JobCompletionScreenState extends ConsumerState<JobCompletionScreen> {
     HapticFeedback.heavyImpact();
 
     try {
+      final now = DateTime.now().toUtc().toIso8601String();
+
       await supabase.from('jobs').update({
         'status': 'completed',
-        'completed_at': DateTime.now().toUtc().toIso8601String(),
+        'completed_at': now,
       }).eq('id', widget.jobId!);
+
+      // Advance insurance claim to work_complete
+      if (_isInsuranceClaim && _claimId != null) {
+        await supabase.from('insurance_claims').update({
+          'claim_status': 'work_complete',
+          'work_completed_at': now,
+        }).eq('id', _claimId!);
+      }
 
       if (mounted) {
         setState(() {
@@ -612,8 +812,10 @@ class _JobCompletionScreenState extends ConsumerState<JobCompletionScreen> {
           _jobAlreadyComplete = true;
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Job marked as completed'),
+          SnackBar(
+            content: Text(_isInsuranceClaim
+                ? 'Job completed — claim advanced to Work Complete'
+                : 'Job marked as completed'),
             behavior: SnackBarBehavior.floating,
           ),
         );

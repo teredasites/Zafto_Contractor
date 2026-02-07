@@ -123,6 +123,8 @@ export function useCustomer(id: string | undefined) {
       return;
     }
 
+    let ignore = false;
+
     const fetchCustomer = async () => {
       try {
         setLoading(true);
@@ -134,17 +136,20 @@ export function useCustomer(id: string | undefined) {
           .eq('id', id)
           .single();
 
+        if (ignore) return;
         if (err) throw err;
         setCustomer(data ? mapCustomer(data) : null);
       } catch (e: unknown) {
+        if (ignore) return;
         const msg = e instanceof Error ? e.message : 'Customer not found';
         setError(msg);
       } finally {
-        setLoading(false);
+        if (!ignore) setLoading(false);
       }
     };
 
     fetchCustomer();
+    return () => { ignore = true; };
   }, [id]);
 
   return { customer, loading, error };

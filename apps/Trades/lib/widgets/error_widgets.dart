@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 import '../services/error_service.dart';
+import '../theme/theme_provider.dart';
 
 /// ZAFTO Error Widgets
 /// 
@@ -232,6 +235,124 @@ class ErrorStateWidget extends StatelessWidget {
             if (onRetry != null) ...[
               const SizedBox(height: 24),
               RetryButton(onRetry: () async => onRetry!()),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Reusable loading state — centered spinner with optional message.
+/// Replaces scattered `Center(child: CircularProgressIndicator())` across screens.
+class ZaftoLoadingState extends ConsumerWidget {
+  final String? message;
+
+  const ZaftoLoadingState({super.key, this.message});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colors = ref.watch(zaftoColorsProvider);
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: 32,
+            height: 32,
+            child: CircularProgressIndicator(
+              strokeWidth: 3,
+              valueColor: AlwaysStoppedAnimation<Color>(colors.accentPrimary),
+            ),
+          ),
+          if (message != null) ...[
+            const SizedBox(height: 16),
+            Text(
+              message!,
+              style: TextStyle(
+                fontSize: 14,
+                color: colors.textTertiary,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Reusable empty state — icon circle + title + subtitle + optional action.
+/// Matches the existing pattern from materials_tracker, jobs_hub, etc.
+class ZaftoEmptyState extends ConsumerWidget {
+  final IconData icon;
+  final String title;
+  final String? subtitle;
+  final String? actionLabel;
+  final VoidCallback? onAction;
+
+  const ZaftoEmptyState({
+    super.key,
+    required this.icon,
+    required this.title,
+    this.subtitle,
+    this.actionLabel,
+    this.onAction,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colors = ref.watch(zaftoColorsProvider);
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: colors.fillDefault,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, size: 48, color: colors.textTertiary),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.w600,
+                color: colors.textPrimary,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            if (subtitle != null) ...[
+              const SizedBox(height: 8),
+              Text(
+                subtitle!,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: colors.textTertiary,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+            if (actionLabel != null && onAction != null) ...[
+              const SizedBox(height: 20),
+              TextButton.icon(
+                onPressed: () {
+                  HapticFeedback.lightImpact();
+                  onAction!();
+                },
+                icon: Icon(LucideIcons.plus, size: 16, color: colors.accentPrimary),
+                label: Text(
+                  actionLabel!,
+                  style: TextStyle(
+                    color: colors.accentPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
             ],
           ],
         ),

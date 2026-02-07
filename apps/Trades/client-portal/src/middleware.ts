@@ -1,3 +1,10 @@
+// ZAFTO Client Portal — Auth + RBAC Middleware
+// Sprint B6 | RBAC added Session 55
+//
+// Protects all routes except / and /auth/*.
+// Verifies auth AND checks client_portal_users table.
+// Also allows super_admin from users table (for testing).
+
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
@@ -31,6 +38,31 @@ export async function middleware(request: NextRequest) {
 
   if (!user && !isPublicRoute) {
     return NextResponse.redirect(new URL('/', request.url));
+  }
+
+  // Role check for authenticated users on protected routes
+  if (user && !isPublicRoute) {
+    // Check if user has a client_portal_users record
+    const { data: clientProfile } = await supabase
+      .from('client_portal_users')
+      .select('id')
+      .eq('auth_user_id', user.id)
+      .single();
+
+    if (!clientProfile) {
+      // Fallback: allow super_admin from users table (for testing)
+      const { data: adminProfile } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+
+      if (!adminProfile || adminProfile.role !== 'super_admin') {
+        const redirectUrl = new URL('/', request.url);
+        redirectUrl.searchParams.set('error', 'unauthorized');
+        return NextResponse.redirect(redirectUrl);
+      }
+    }
   }
 
   if (user && pathname === '/') {

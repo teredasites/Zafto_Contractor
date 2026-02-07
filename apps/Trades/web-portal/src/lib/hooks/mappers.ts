@@ -1,6 +1,6 @@
 // DB row → TypeScript type mappers
 // Maps snake_case Supabase rows to camelCase TypeScript interfaces
-import type { Customer, Job, Invoice, Bid, BidOption, TeamMember, Address, Activity } from '@/types';
+import type { Customer, Job, JobType, Invoice, Bid, BidOption, TeamMember, Address, Activity } from '@/types';
 
 // Local types for entities not yet in global types
 export interface ChangeOrderItem {
@@ -159,6 +159,20 @@ export const INVOICE_STATUS_TO_DB: Record<string, string> = {
   refunded: 'voided',
 };
 
+// ==================== JOB TYPE MAPS ====================
+
+export const JOB_TYPE_LABELS: Record<JobType, string> = {
+  standard: 'Standard',
+  insurance_claim: 'Insurance Claim',
+  warranty_dispatch: 'Warranty Dispatch',
+};
+
+export const JOB_TYPE_COLORS: Record<JobType, { bg: string; text: string; dot: string }> = {
+  standard: { bg: 'bg-blue-100 dark:bg-blue-900/30', text: 'text-blue-700 dark:text-blue-300', dot: 'bg-blue-500' },
+  insurance_claim: { bg: 'bg-amber-100 dark:bg-amber-900/30', text: 'text-amber-700 dark:text-amber-300', dot: 'bg-amber-500' },
+  warranty_dispatch: { bg: 'bg-purple-100 dark:bg-purple-900/30', text: 'text-purple-700 dark:text-purple-300', dot: 'bg-purple-500' },
+};
+
 // ==================== ENTITY MAPPERS ====================
 
 export function mapCustomer(row: Record<string, unknown>): Customer {
@@ -208,6 +222,8 @@ export function mapJob(row: Record<string, unknown>): Job {
     bidId: (row.quote_id as string) || undefined,
     title: (row.title as string) || 'Untitled Job',
     description: (row.description as string) || undefined,
+    jobType: ((row.job_type as string) || 'standard') as JobType,
+    typeMetadata: (row.type_metadata as Record<string, unknown>) || {},
     status: (JOB_STATUS_FROM_DB[row.status as string] || (row.status as string)) as Job['status'],
     priority: ((row.priority as string) || 'normal') as Job['priority'],
     address: mapAddress(row),
@@ -221,6 +237,7 @@ export function mapJob(row: Record<string, unknown>): Job {
     actualCost: Number(row.actual_amount) || 0,
     notes: [],
     photos: [],
+    source: (row.source as string) || 'direct',
     tags: (row.tags as string[]) || [],
     createdAt: new Date(row.created_at as string),
     updatedAt: new Date(row.updated_at as string),
@@ -239,6 +256,7 @@ export function mapInvoice(row: Record<string, unknown>): Invoice {
         quantity: Number(li.quantity) || 1,
         unitPrice: Number(li.unit_price ?? li.unitPrice) || 0,
         total: Number(li.amount ?? li.total) || 0,
+        paymentSource: (li.payment_source ?? li.paymentSource ?? 'standard') as 'standard' | 'carrier' | 'deductible' | 'upgrade',
       }))
     : [];
 
@@ -356,7 +374,7 @@ export function mapTeamMember(row: Record<string, unknown>): TeamMember {
     companyId: (row.company_id as string) || '',
     userId: row.id as string,
     email: (row.email as string) || '',
-    name: (row.full_name as string) || (row.display_name as string) || '',
+    name: (row.full_name as string) || '',
     role: ((row.role as string) || 'field_tech') as TeamMember['role'],
     phone: (row.phone as string) || undefined,
     avatar: (row.avatar_url as string) || undefined,
@@ -486,5 +504,262 @@ export function mapInspection(row: Record<string, unknown>): InspectionData {
     notes: (data.notes as string) || (row.notes as string) || undefined,
     photos: Number(data.photo_count) || 0,
     createdAt: new Date(row.created_at as string),
+  };
+}
+
+// ==================== INSURANCE / RESTORATION MAPPERS ====================
+
+import type {
+  InsuranceClaimData,
+  ClaimSupplementData,
+  TpiInspectionData,
+  MoistureReadingData,
+  DryingLogData,
+  RestorationEquipmentData,
+  ClaimStatus,
+  ClaimCategory,
+} from '@/types';
+
+export const CLAIM_CATEGORY_LABELS: Record<ClaimCategory, string> = {
+  restoration: 'Restoration',
+  storm: 'Storm/Weather',
+  reconstruction: 'Reconstruction',
+  commercial: 'Commercial',
+};
+
+export const CLAIM_CATEGORY_COLORS: Record<ClaimCategory, string> = {
+  restoration: 'bg-blue-100 text-blue-700',
+  storm: 'bg-purple-100 text-purple-700',
+  reconstruction: 'bg-orange-100 text-orange-700',
+  commercial: 'bg-emerald-100 text-emerald-700',
+};
+
+export const CLAIM_STATUS_LABELS: Record<ClaimStatus, string> = {
+  new: 'New',
+  scope_requested: 'Scope Requested',
+  scope_submitted: 'Scope Submitted',
+  estimate_pending: 'Estimate Pending',
+  estimate_approved: 'Estimate Approved',
+  supplement_submitted: 'Supplement Submitted',
+  supplement_approved: 'Supplement Approved',
+  work_in_progress: 'Work In Progress',
+  work_complete: 'Work Complete',
+  final_inspection: 'Final Inspection',
+  settled: 'Settled',
+  closed: 'Closed',
+  denied: 'Denied',
+};
+
+export const CLAIM_STATUS_COLORS: Record<ClaimStatus, string> = {
+  new: 'bg-blue-100 text-blue-700',
+  scope_requested: 'bg-yellow-100 text-yellow-700',
+  scope_submitted: 'bg-yellow-100 text-yellow-700',
+  estimate_pending: 'bg-orange-100 text-orange-700',
+  estimate_approved: 'bg-green-100 text-green-700',
+  supplement_submitted: 'bg-purple-100 text-purple-700',
+  supplement_approved: 'bg-purple-100 text-purple-700',
+  work_in_progress: 'bg-blue-100 text-blue-700',
+  work_complete: 'bg-teal-100 text-teal-700',
+  final_inspection: 'bg-indigo-100 text-indigo-700',
+  settled: 'bg-green-100 text-green-700',
+  closed: 'bg-gray-100 text-gray-500',
+  denied: 'bg-red-100 text-red-700',
+};
+
+export const LOSS_TYPE_LABELS: Record<string, string> = {
+  fire: 'Fire',
+  water: 'Water',
+  storm: 'Storm',
+  wind: 'Wind',
+  hail: 'Hail',
+  theft: 'Theft',
+  vandalism: 'Vandalism',
+  mold: 'Mold',
+  flood: 'Flood',
+  earthquake: 'Earthquake',
+  other: 'Other',
+  unknown: 'Unknown',
+};
+
+export const EQUIPMENT_TYPE_LABELS: Record<string, string> = {
+  dehumidifier: 'Dehumidifier',
+  air_mover: 'Air Mover',
+  air_scrubber: 'Air Scrubber',
+  heater: 'Heater',
+  moisture_meter: 'Moisture Meter',
+  thermal_camera: 'Thermal Camera',
+  hydroxyl_generator: 'Hydroxyl Generator',
+  negative_air_machine: 'Negative Air Machine',
+  other: 'Other',
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function mapInsuranceClaim(row: any): InsuranceClaimData {
+  const jobData = row.jobs as { title?: string; customer_name?: string; address?: string } | null;
+  return {
+    id: row.id,
+    companyId: row.company_id,
+    jobId: row.job_id,
+    insuranceCompany: row.insurance_company || '',
+    claimNumber: row.claim_number || '',
+    policyNumber: row.policy_number || undefined,
+    dateOfLoss: row.date_of_loss || '',
+    lossType: row.loss_type || 'unknown',
+    lossDescription: row.loss_description || undefined,
+    adjusterName: row.adjuster_name || undefined,
+    adjusterPhone: row.adjuster_phone || undefined,
+    adjusterEmail: row.adjuster_email || undefined,
+    adjusterCompany: row.adjuster_company || undefined,
+    deductible: Number(row.deductible) || 0,
+    coverageLimit: row.coverage_limit != null ? Number(row.coverage_limit) : undefined,
+    approvedAmount: row.approved_amount != null ? Number(row.approved_amount) : undefined,
+    supplementTotal: Number(row.supplement_total) || 0,
+    depreciation: Number(row.depreciation) || 0,
+    acv: row.acv != null ? Number(row.acv) : undefined,
+    rcv: row.rcv != null ? Number(row.rcv) : undefined,
+    depreciationRecovered: row.depreciation_recovered || false,
+    amountCollected: Number(row.amount_collected) || 0,
+    claimStatus: row.claim_status || 'new',
+    claimCategory: row.claim_category || 'restoration',
+    scopeSubmittedAt: row.scope_submitted_at || undefined,
+    estimateApprovedAt: row.estimate_approved_at || undefined,
+    workStartedAt: row.work_started_at || undefined,
+    workCompletedAt: row.work_completed_at || undefined,
+    settledAt: row.settled_at || undefined,
+    xactimateClaimId: row.xactimate_claim_id || undefined,
+    xactimateFileUrl: row.xactimate_file_url || undefined,
+    notes: row.notes || undefined,
+    data: row.data || {},
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+    deletedAt: row.deleted_at || undefined,
+    job: jobData ? {
+      title: jobData.title || '',
+      customer_name: jobData.customer_name || '',
+      address: jobData.address || undefined,
+    } : undefined,
+  };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function mapClaimSupplement(row: any): ClaimSupplementData {
+  return {
+    id: row.id,
+    companyId: row.company_id,
+    claimId: row.claim_id,
+    supplementNumber: row.supplement_number || 1,
+    title: row.title || '',
+    description: row.description || undefined,
+    reason: row.reason || 'hidden_damage',
+    amount: Number(row.amount) || 0,
+    rcvAmount: row.rcv_amount != null ? Number(row.rcv_amount) : undefined,
+    acvAmount: row.acv_amount != null ? Number(row.acv_amount) : undefined,
+    depreciationAmount: Number(row.depreciation_amount) || 0,
+    status: row.status || 'draft',
+    approvedAmount: row.approved_amount != null ? Number(row.approved_amount) : undefined,
+    lineItems: row.line_items || [],
+    photos: row.photos || [],
+    submittedAt: row.submitted_at || undefined,
+    reviewedAt: row.reviewed_at || undefined,
+    reviewerNotes: row.reviewer_notes || undefined,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function mapTpiInspection(row: any): TpiInspectionData {
+  return {
+    id: row.id,
+    companyId: row.company_id,
+    claimId: row.claim_id,
+    jobId: row.job_id,
+    inspectorName: row.inspector_name || undefined,
+    inspectorCompany: row.inspector_company || undefined,
+    inspectorPhone: row.inspector_phone || undefined,
+    inspectorEmail: row.inspector_email || undefined,
+    inspectionType: row.inspection_type || 'progress',
+    scheduledDate: row.scheduled_date || undefined,
+    completedDate: row.completed_date || undefined,
+    status: row.status || 'pending',
+    result: row.result || undefined,
+    findings: row.findings || undefined,
+    photos: row.photos || [],
+    notes: row.notes || undefined,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function mapMoistureReading(row: any): MoistureReadingData {
+  return {
+    id: row.id,
+    companyId: row.company_id,
+    jobId: row.job_id,
+    claimId: row.claim_id || undefined,
+    areaName: row.area_name || '',
+    floorLevel: row.floor_level || undefined,
+    materialType: row.material_type || 'drywall',
+    readingValue: Number(row.reading_value) || 0,
+    readingUnit: row.reading_unit || 'percent',
+    targetValue: row.target_value != null ? Number(row.target_value) : undefined,
+    meterType: row.meter_type || undefined,
+    meterModel: row.meter_model || undefined,
+    ambientTempF: row.ambient_temp_f != null ? Number(row.ambient_temp_f) : undefined,
+    ambientHumidity: row.ambient_humidity != null ? Number(row.ambient_humidity) : undefined,
+    isDry: row.is_dry || false,
+    recordedByUserId: row.recorded_by_user_id || undefined,
+    recordedAt: row.recorded_at,
+    createdAt: row.created_at,
+  };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function mapDryingLog(row: any): DryingLogData {
+  return {
+    id: row.id,
+    companyId: row.company_id,
+    jobId: row.job_id,
+    claimId: row.claim_id || undefined,
+    logType: row.log_type || 'daily',
+    summary: row.summary || '',
+    details: row.details || undefined,
+    equipmentCount: row.equipment_count || 0,
+    dehumidifiersRunning: row.dehumidifiers_running || 0,
+    airMoversRunning: row.air_movers_running || 0,
+    airScrubbersRunning: row.air_scrubbers_running || 0,
+    outdoorTempF: row.outdoor_temp_f != null ? Number(row.outdoor_temp_f) : undefined,
+    outdoorHumidity: row.outdoor_humidity != null ? Number(row.outdoor_humidity) : undefined,
+    indoorTempF: row.indoor_temp_f != null ? Number(row.indoor_temp_f) : undefined,
+    indoorHumidity: row.indoor_humidity != null ? Number(row.indoor_humidity) : undefined,
+    photos: row.photos || [],
+    recordedByUserId: row.recorded_by_user_id || undefined,
+    recordedAt: row.recorded_at,
+    createdAt: row.created_at,
+  };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function mapRestorationEquipment(row: any): RestorationEquipmentData {
+  return {
+    id: row.id,
+    companyId: row.company_id,
+    jobId: row.job_id,
+    claimId: row.claim_id || undefined,
+    equipmentType: row.equipment_type || 'other',
+    make: row.make || undefined,
+    model: row.model || undefined,
+    serialNumber: row.serial_number || undefined,
+    assetTag: row.asset_tag || undefined,
+    areaDeployed: row.area_deployed || '',
+    deployedAt: row.deployed_at,
+    removedAt: row.removed_at || undefined,
+    dailyRate: Number(row.daily_rate) || 0,
+    totalDays: row.total_days != null ? Number(row.total_days) : undefined,
+    status: row.status || 'deployed',
+    notes: row.notes || undefined,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
   };
 }

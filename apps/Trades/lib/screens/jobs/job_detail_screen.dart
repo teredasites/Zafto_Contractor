@@ -1,5 +1,5 @@
-/// Job Detail Screen - Design System v2.6
-/// Full job view with edit, status change, photos
+// Job Detail Screen - Design System v2.6
+// Full job view with edit, status change, photos
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,8 +9,10 @@ import '../../theme/zafto_colors.dart';
 import '../../theme/theme_provider.dart';
 import '../../models/job.dart';
 import '../../services/job_service.dart';
+import '../../services/insurance_claim_service.dart';
 import 'job_create_screen.dart';
 import '../invoices/invoice_create_screen.dart';
+import '../insurance/claim_detail_screen.dart';
 
 class JobDetailScreen extends ConsumerStatefulWidget {
   final String jobId;
@@ -69,6 +71,10 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                 _buildStatusSection(colors),
                 const SizedBox(height: 20),
                 _buildDetailsCard(colors),
+                if (_job!.jobType != JobType.standard && _job!.hasTypeMetadata) ...[
+                  const SizedBox(height: 16),
+                  _buildTypeMetadataCard(colors),
+                ],
                 const SizedBox(height: 16),
                 _buildAmountCard(colors),
                 if (_job!.description?.isNotEmpty == true) ...[
@@ -109,6 +115,10 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
         Row(
           children: [
             _buildStatusBadge(colors, _job!.status),
+            if (_job!.jobType != JobType.standard) ...[
+              const SizedBox(width: 8),
+              _buildJobTypeBadge(colors, _job!),
+            ],
             const Spacer(),
             if (_job!.scheduledStart != null)
               Row(
@@ -154,6 +164,107 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
         ],
       ),
     );
+  }
+
+  Widget _buildJobTypeBadge(ZaftoColors colors, Job job) {
+    final (color, icon) = switch (job.jobType) {
+      JobType.standard => (colors.accentInfo, LucideIcons.briefcase),
+      JobType.insuranceClaim => (const Color(0xFFF59E0B), LucideIcons.shield),
+      JobType.warrantyDispatch => (const Color(0xFF8B5CF6), LucideIcons.fileCheck),
+    };
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(color: color.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(8)),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 13, color: color),
+          const SizedBox(width: 5),
+          Text(job.jobTypeLabel, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: color)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTypeMetadataCard(ZaftoColors colors) {
+    final meta = _job!.typeMetadata;
+    final isInsurance = _job!.isInsuranceClaim;
+    final accentColor = isInsurance ? const Color(0xFFF59E0B) : const Color(0xFF8B5CF6);
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: colors.bgElevated,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: accentColor.withValues(alpha: 0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(isInsurance ? LucideIcons.shield : LucideIcons.fileCheck, size: 16, color: accentColor),
+              const SizedBox(width: 8),
+              Text(isInsurance ? 'Insurance Claim' : 'Warranty Dispatch',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: colors.textPrimary)),
+            ],
+          ),
+          const SizedBox(height: 12),
+          if (isInsurance) ...[
+            if (meta['insuranceCompany'] != null) _buildMetaRow(colors, 'Carrier', meta['insuranceCompany'] as String),
+            if (meta['claimNumber'] != null) _buildMetaRow(colors, 'Claim #', meta['claimNumber'] as String),
+            if (meta['dateOfLoss'] != null) _buildMetaRow(colors, 'Date of Loss', _formatDateStr(meta['dateOfLoss'] as String)),
+            if (meta['adjusterName'] != null) _buildMetaRow(colors, 'Adjuster', meta['adjusterName'] as String),
+            if (meta['deductible'] != null) _buildMetaRow(colors, 'Deductible', '\$${(meta['deductible'] as num).toStringAsFixed(2)}'),
+            if (meta['approvalStatus'] != null) _buildMetaRow(colors, 'Status', (meta['approvalStatus'] as String).toUpperCase()),
+            const SizedBox(height: 8),
+            SizedBox(
+              width: double.infinity,
+              child: TextButton.icon(
+                onPressed: () {
+                  final claimAsync = ref.read(jobClaimProvider(_job!.id));
+                  claimAsync.whenData((claim) {
+                    if (claim != null && mounted) {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => ClaimDetailScreen(claimId: claim.id)));
+                    }
+                  });
+                },
+                icon: const Icon(LucideIcons.shield, size: 14),
+                label: const Text('View Claim', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                style: TextButton.styleFrom(
+                  foregroundColor: const Color(0xFFF59E0B),
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                ),
+              ),
+            ),
+          ] else ...[
+            if (meta['warrantyCompany'] != null) _buildMetaRow(colors, 'Company', meta['warrantyCompany'] as String),
+            if (meta['dispatchNumber'] != null) _buildMetaRow(colors, 'Dispatch #', meta['dispatchNumber'] as String),
+            if (meta['authorizationLimit'] != null) _buildMetaRow(colors, 'Auth Limit', '\$${(meta['authorizationLimit'] as num).toStringAsFixed(2)}'),
+            if (meta['serviceFee'] != null) _buildMetaRow(colors, 'Service Fee', '\$${(meta['serviceFee'] as num).toStringAsFixed(2)}'),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMetaRow(ZaftoColors colors, String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(width: 100, child: Text(label, style: TextStyle(fontSize: 12, color: colors.textTertiary))),
+          Expanded(child: Text(value, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: colors.textPrimary))),
+        ],
+      ),
+    );
+  }
+
+  String _formatDateStr(String iso) {
+    final d = DateTime.tryParse(iso);
+    if (d == null) return iso;
+    return '${d.month}/${d.day}/${d.year}';
   }
 
   Widget _buildDetailsCard(ZaftoColors colors) {

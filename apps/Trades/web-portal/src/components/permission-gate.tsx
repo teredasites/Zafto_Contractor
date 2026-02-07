@@ -67,6 +67,14 @@ export const PERMISSIONS = {
   TIMECLOCK_OWN: 'timeclock.own',
   TIMECLOCK_VIEW_ALL: 'timeclock.view.all',
   TIMECLOCK_MANAGE: 'timeclock.manage',
+  // Enterprise
+  BRANCHES_VIEW: 'branches.view',
+  BRANCHES_MANAGE: 'branches.manage',
+  CERTIFICATIONS_VIEW: 'certifications.view',
+  CERTIFICATIONS_MANAGE: 'certifications.manage',
+  FORMS_VIEW: 'forms.view',
+  FORMS_MANAGE: 'forms.manage',
+  API_KEYS_MANAGE: 'api_keys.manage',
 } as const;
 
 // ============================================================
@@ -99,6 +107,7 @@ const ROLE_PERMISSIONS: Record<string, Permission[]> = {
     PERMISSIONS.DISPATCH_VIEW, PERMISSIONS.DISPATCH_MANAGE,
     PERMISSIONS.REPORTS_VIEW, PERMISSIONS.REPORTS_EXPORT,
     PERMISSIONS.TIMECLOCK_OWN, PERMISSIONS.TIMECLOCK_VIEW_ALL,
+    PERMISSIONS.BRANCHES_VIEW, PERMISSIONS.CERTIFICATIONS_VIEW, PERMISSIONS.FORMS_VIEW,
   ],
   tech: [
     PERMISSIONS.JOBS_VIEW_OWN, PERMISSIONS.JOBS_EDIT_OWN,
@@ -160,6 +169,7 @@ export function PermissionProvider({ children }: PermissionProviderProps) {
   const { user, profile, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(true);
   const [company, setCompany] = useState<Company | null>(null);
+  const [customPermissions, setCustomPermissions] = useState<Record<string, boolean> | null>(null);
   const [localProMode, setLocalProMode] = useState<boolean>(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('zafto_pro_mode') === 'true';
@@ -188,16 +198,19 @@ export function PermissionProvider({ children }: PermissionProviderProps) {
     const supabase = getSupabase();
     supabase
       .from('companies')
-      .select('id, name, subscription_tier, owner_user_id')
+      .select('id, name, subscription_tier, owner_user_id, settings')
       .eq('id', profile.companyId)
       .single()
-      .then(({ data }: { data: { id: string; name: string; subscription_tier: string; owner_user_id: string } | null }) => {
+      .then(({ data }: { data: { id: string; name: string; subscription_tier: string; owner_user_id: string; settings: Record<string, unknown> | null } | null }) => {
         if (data) {
+          const s = data.settings || {};
           setCompany({
             id: data.id,
             name: data.name,
             tier: (data.subscription_tier as CompanyTier) || 'solo',
             owner_user_id: data.owner_user_id,
+            ui_mode: (s.ui_mode as 'simple' | 'pro') || undefined,
+            enabled_pro_features: (s.enabled_pro_features as string[]) || undefined,
           });
         } else {
           setCompany(null);
@@ -210,12 +223,40 @@ export function PermissionProvider({ children }: PermissionProviderProps) {
       });
   }, [profile?.companyId, authLoading]);
 
+  // Fetch custom role permissions if user has custom_role_id.
+  useEffect(() => {
+    if (authLoading || !profile?.customRoleId) {
+      setCustomPermissions(null);
+      return;
+    }
+
+    const supabase = getSupabase();
+    supabase
+      .from('custom_roles')
+      .select('permissions')
+      .eq('id', profile.customRoleId)
+      .single()
+      .then(({ data }: { data: { permissions: Record<string, boolean> } | null }) => {
+        if (data?.permissions) {
+          setCustomPermissions(data.permissions);
+        }
+      })
+      .catch(() => {
+        setCustomPermissions(null);
+      });
+  }, [profile?.customRoleId, authLoading]);
+
   // Role from user profile.
   const role = profile?.role || null;
 
-  // Permission check: look up role in ROLE_PERMISSIONS map.
+  // Permission check: custom role permissions override default role-based lookup.
   const can = (permission: Permission): boolean => {
     if (!role) return false;
+    // If user has custom role permissions, use those.
+    if (customPermissions) {
+      return customPermissions[permission] === true;
+    }
+    // Fall back to default role-based permissions.
     const perms = ROLE_PERMISSIONS[role];
     if (!perms) return false;
     return perms.includes(permission);

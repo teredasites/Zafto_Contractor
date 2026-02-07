@@ -17,7 +17,34 @@ import '../screens/customers/customer_create_screen.dart';
 import '../screens/jobs/jobs_hub_screen.dart';
 import '../screens/invoices/invoices_hub_screen.dart';
 import '../screens/customers/customers_hub_screen.dart';
+import '../screens/bids/bids_hub_screen.dart';
+import '../screens/bids/bid_create_screen.dart';
+import '../screens/time_clock/time_clock_screen.dart';
+import '../screens/calendar/calendar_screen.dart';
 import '../screens/settings/settings_screen.dart';
+import '../screens/notifications/notifications_screen.dart';
+// Field tools
+import '../screens/field_tools/field_tools_hub_screen.dart';
+import '../screens/field_tools/job_site_photos_screen.dart';
+import '../screens/field_tools/before_after_screen.dart';
+import '../screens/field_tools/defect_markup_screen.dart';
+import '../screens/field_tools/voice_notes_screen.dart';
+import '../screens/field_tools/mileage_tracker_screen.dart';
+import '../screens/field_tools/receipt_scanner_screen.dart';
+import '../screens/field_tools/client_signature_screen.dart';
+import '../screens/field_tools/materials_tracker_screen.dart';
+import '../screens/field_tools/daily_log_screen.dart';
+import '../screens/field_tools/punch_list_screen.dart';
+import '../screens/field_tools/change_order_screen.dart';
+import '../screens/field_tools/job_completion_screen.dart';
+import '../screens/field_tools/sun_position_screen.dart';
+import '../screens/field_tools/loto_logger_screen.dart';
+import '../screens/field_tools/incident_report_screen.dart';
+import '../screens/field_tools/safety_briefing_screen.dart';
+import '../screens/field_tools/confined_space_timer_screen.dart';
+import '../screens/field_tools/dead_man_switch_screen.dart';
+import '../screens/field_tools/level_plumb_screen.dart';
+import '../screens/certifications/certifications_screen.dart';
 
 class CommandPalette extends ConsumerStatefulWidget {
   const CommandPalette({super.key});
@@ -87,42 +114,89 @@ class _CommandPaletteState extends ConsumerState<CommandPalette> {
 
   void _navigateToCommand(AppCommand command) {
     final nav = Navigator.of(context);
-    
+
     switch (command.id) {
       // Quick Actions
       case 'action_new_job':
         nav.push(MaterialPageRoute(builder: (_) => const JobCreateScreen()));
-        break;
       case 'action_new_invoice':
         nav.push(MaterialPageRoute(builder: (_) => const InvoiceCreateScreen()));
-        break;
       case 'action_new_customer':
         nav.push(MaterialPageRoute(builder: (_) => const CustomerCreateScreen()));
-        break;
-        
+      case 'action_new_bid':
+        nav.push(MaterialPageRoute(builder: (_) => const BidCreateScreen()));
+
       // Business Hubs
       case 'jobs_hub':
         nav.push(MaterialPageRoute(builder: (_) => const JobsHubScreen()));
-        break;
       case 'invoices_hub':
         nav.push(MaterialPageRoute(builder: (_) => const InvoicesHubScreen()));
-        break;
       case 'customers_hub':
         nav.push(MaterialPageRoute(builder: (_) => const CustomersHubScreen()));
-        break;
-        
+      case 'bids_hub':
+        nav.push(MaterialPageRoute(builder: (_) => const BidsHubScreen()));
+
+      // Time & Scheduling
+      case 'time_clock':
+        nav.push(MaterialPageRoute(builder: (_) => const TimeClockScreen()));
+      case 'calendar':
+        nav.push(MaterialPageRoute(builder: (_) => const CalendarScreen()));
+
+      // Field Tools
+      case 'field_tools_hub':
+        nav.push(MaterialPageRoute(builder: (_) => const FieldToolsHubScreen()));
+      case 'tool_job_site_photos':
+        nav.push(MaterialPageRoute(builder: (_) => const JobSitePhotosScreen()));
+      case 'tool_before_after':
+        nav.push(MaterialPageRoute(builder: (_) => const BeforeAfterScreen()));
+      case 'tool_defect_markup':
+        nav.push(MaterialPageRoute(builder: (_) => const DefectMarkupScreen()));
+      case 'tool_voice_notes':
+        nav.push(MaterialPageRoute(builder: (_) => const VoiceNotesScreen()));
+      case 'tool_mileage_tracker':
+        nav.push(MaterialPageRoute(builder: (_) => const MileageTrackerScreen()));
+      case 'tool_receipt_scanner':
+        nav.push(MaterialPageRoute(builder: (_) => const ReceiptScannerScreen()));
+      case 'tool_client_signature':
+        nav.push(MaterialPageRoute(builder: (_) => const ClientSignatureScreen()));
+      case 'tool_materials_tracker':
+        nav.push(MaterialPageRoute(builder: (_) => const MaterialsTrackerScreen()));
+      case 'tool_daily_log':
+        nav.push(MaterialPageRoute(builder: (_) => const DailyLogScreen()));
+      case 'tool_punch_list':
+        nav.push(MaterialPageRoute(builder: (_) => const PunchListScreen()));
+      case 'tool_change_orders':
+        nav.push(MaterialPageRoute(builder: (_) => const ChangeOrderScreen()));
+      case 'tool_job_completion':
+        nav.push(MaterialPageRoute(builder: (_) => const JobCompletionScreen()));
+      case 'tool_sun_position':
+        nav.push(MaterialPageRoute(builder: (_) => const SunPositionScreen()));
+      case 'tool_loto_logger':
+        nav.push(MaterialPageRoute(builder: (_) => const LOTOLoggerScreen()));
+      case 'tool_incident_report':
+        nav.push(MaterialPageRoute(builder: (_) => const IncidentReportScreen()));
+      case 'tool_safety_briefing':
+        nav.push(MaterialPageRoute(builder: (_) => const SafetyBriefingScreen()));
+      case 'tool_confined_space':
+        nav.push(MaterialPageRoute(builder: (_) => const ConfinedSpaceTimerScreen()));
+      case 'tool_dead_man_switch':
+        nav.push(MaterialPageRoute(builder: (_) => const DeadManSwitchScreen()));
+      case 'tool_level_plumb':
+        nav.push(MaterialPageRoute(builder: (_) => const LevelPlumbScreen()));
+
+      // Notifications
+      case 'notifications':
+        nav.push(MaterialPageRoute(builder: (_) => const NotificationsScreen()));
+
+      // Certifications
+      case 'certifications':
+        nav.push(MaterialPageRoute(builder: (_) => const CertificationsScreen()));
+
       // Settings
-      case 'settings_main':
-      case 'settings_theme':
-      case 'settings_state':
-      case 'settings_profile':
+      case 'settings_main' || 'settings_theme' || 'settings_state' || 'settings_profile':
         nav.push(MaterialPageRoute(builder: (_) => const SettingsScreen()));
-        break;
-        
-      // For other commands, we'd need to add routes
-      // This can be expanded as needed
+
       default:
-        // Show coming soon for unimplemented routes
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Opening ${command.title}...')),
         );
@@ -219,6 +293,7 @@ class _CommandPaletteState extends ConsumerState<CommandPalette> {
         children: [
           _buildFilterChip(colors, null, 'All', LucideIcons.layoutGrid),
           _buildFilterChip(colors, CommandType.action, 'Actions', LucideIcons.zap),
+          _buildFilterChip(colors, CommandType.fieldTool, 'Field Tools', LucideIcons.wrench),
           _buildFilterChip(colors, CommandType.calculator, 'Calculators', LucideIcons.calculator),
           _buildFilterChip(colors, CommandType.reference, 'Reference', LucideIcons.bookOpen),
           _buildFilterChip(colors, CommandType.examPrep, 'Exam', LucideIcons.graduationCap),
@@ -315,6 +390,9 @@ class _CommandPaletteState extends ConsumerState<CommandPalette> {
       CommandType.job => 'JOBS',
       CommandType.invoice => 'INVOICES',
       CommandType.customer => 'CUSTOMERS',
+      CommandType.bid => 'BIDS',
+      CommandType.fieldTool => 'FIELD TOOLS',
+      CommandType.timeClock => 'TIME & SCHEDULING',
       CommandType.settings => 'SETTINGS',
       CommandType.aiScanner => 'AI FEATURES',
     };
@@ -421,6 +499,9 @@ class _CommandPaletteState extends ConsumerState<CommandPalette> {
       CommandType.job => colors.accentInfo,
       CommandType.invoice => colors.accentSuccess,
       CommandType.customer => colors.textSecondary,
+      CommandType.bid => Colors.teal,
+      CommandType.fieldTool => Colors.amber,
+      CommandType.timeClock => colors.accentInfo,
       CommandType.settings => colors.textTertiary,
       CommandType.aiScanner => colors.accentPrimary,
     };

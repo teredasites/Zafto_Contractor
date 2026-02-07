@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { onAuthChange } from '@/lib/auth';
 import { getSupabase } from '@/lib/supabase';
+import { setSentryUser, clearSentryUser } from '@/lib/sentry';
 import type { User } from '@supabase/supabase-js';
 
 interface UserProfile {
@@ -36,18 +37,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const supabase = getSupabase();
           const { data } = await supabase
             .from('users')
-            .select('id, email, display_name, company_id, role, trade, avatar_url')
+            .select('id, email, full_name, company_id, role, trade, avatar_url')
             .eq('id', authUser.id)
             .single();
           if (data) {
             setProfile({
-              uid: data.id, email: data.email, displayName: data.display_name,
+              uid: data.id, email: data.email, displayName: data.full_name,
               companyId: data.company_id, role: data.role, trade: data.trade,
               avatarUrl: data.avatar_url,
             });
-          } else setProfile(null);
-        } catch { setProfile(null); }
-      } else setProfile(null);
+            setSentryUser(data.id, data.company_id ?? undefined, data.role ?? undefined);
+          } else {
+            setProfile(null);
+            clearSentryUser();
+          }
+        } catch {
+          setProfile(null);
+          clearSentryUser();
+        }
+      } else {
+        setProfile(null);
+        clearSentryUser();
+      }
       setLoading(false);
     });
     return () => unsubscribe();

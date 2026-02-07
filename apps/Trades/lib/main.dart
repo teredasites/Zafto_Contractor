@@ -8,6 +8,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'firebase_options.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'core/supabase_client.dart';
 import 'core/env_dev.dart';
@@ -24,55 +25,83 @@ import 'services/exam_prep/progress_tracker.dart';
 /// Design System v2.6 - LOCKED January 28, 2026
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  await SentryFlutter.init(
+    (options) {
+      options.dsn = devConfig.sentryDsn;
+      options.environment = devConfig.environment.name;
+      options.tracesSampleRate = 1.0;
+      options.attachScreenshot = true;
+      options.beforeSend = (event, hint) {
+        // Attach user context from current Supabase session if available
+        try {
+          final user = currentUser;
+          if (user != null) {
+            event = event.copyWith(
+              user: SentryUser(id: user.id),
+            );
+          }
+        } catch (_) {
+          // Supabase may not be initialized yet — skip
+        }
+        return event;
+      };
+    },
+    appRunner: () async {
+      // Initialize Supabase (primary backend)
+      await initSupabase(devConfig);
 
-  // Initialize Supabase (primary backend)
-  await initSupabase(devConfig);
+      // Initialize Firebase (kept for AI Cloud Functions — remove after Edge Function migration)
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
 
-  // Initialize Firebase (kept for AI Cloud Functions — remove after Edge Function migration)
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
+      if (!kIsWeb) {
+        FlutterError.onError = (details) {
+          FirebaseCrashlytics.instance.recordFlutterFatalError(details);
+          // Also report to Sentry
+          Sentry.captureException(details.exception, stackTrace: details.stack);
+        };
+        PlatformDispatcher.instance.onError = (error, stack) {
+          FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+          // Also report to Sentry
+          Sentry.captureException(error, stackTrace: stack);
+          return true;
+        };
+      }
+
+      // Initialize Hive for local storage
+      await Hive.initFlutter();
+      await Hive.openBox('settings');
+      await Hive.openBox('favorites');
+      await Hive.openBox('exam_progress');
+      await Hive.openBox('ai_credits');
+      await Hive.openBox('app_state');
+      // Sprint 5 Business boxes
+      await Hive.openBox<String>('jobs');
+      await Hive.openBox<String>('invoices');
+      await Hive.openBox<String>('customers');
+      // Sprint 16 Bid System boxes
+      await Hive.openBox<String>('bids');
+      await Hive.openBox<String>('bids_sync_meta');
+      await Hive.openBox<String>('bid_templates');
+      // Session 23 Time Clock boxes
+      await Hive.openBox<String>('time_entries');
+      await Hive.openBox<String>('time_entries_sync_meta');
+
+      // Initialize exam progress tracker (CRITICAL - must be after Hive init)
+      await ProgressTracker().initialize();
+
+      // Lock to portrait mode (mobile only)
+      if (!kIsWeb) {
+        SystemChrome.setPreferredOrientations([
+          DeviceOrientation.portraitUp,
+          DeviceOrientation.portraitDown,
+        ]);
+      }
+
+      runApp(const ProviderScope(child: ZaftoApp()));
+    },
   );
-
-  if (!kIsWeb) {
-    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
-    PlatformDispatcher.instance.onError = (error, stack) {
-      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-      return true;
-    };
-  }
-
-  // Initialize Hive for local storage
-  await Hive.initFlutter();
-  await Hive.openBox('settings');
-  await Hive.openBox('favorites');
-  await Hive.openBox('exam_progress');
-  await Hive.openBox('ai_credits');
-  await Hive.openBox('app_state');
-  // Sprint 5 Business boxes
-  await Hive.openBox<String>('jobs');
-  await Hive.openBox<String>('invoices');
-  await Hive.openBox<String>('customers');
-  // Sprint 16 Bid System boxes
-  await Hive.openBox<String>('bids');
-  await Hive.openBox<String>('bids_sync_meta');
-  await Hive.openBox<String>('bid_templates');
-  // Session 23 Time Clock boxes
-  await Hive.openBox<String>('time_entries');
-  await Hive.openBox<String>('time_entries_sync_meta');
-
-  // Initialize exam progress tracker (CRITICAL - must be after Hive init)
-  await ProgressTracker().initialize();
-
-  // Lock to portrait mode (mobile only)
-  if (!kIsWeb) {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
-  }
-
-  runApp(const ProviderScope(child: ZaftoApp()));
 }
 
 class ZaftoApp extends ConsumerWidget {

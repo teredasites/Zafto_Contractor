@@ -43,18 +43,35 @@ export function useInvoices() {
 }
 
 export function useInvoice(id: string) {
+  const { profile } = useAuth();
   const [invoice, setInvoice] = useState<InvoiceData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetch() {
+      if (!profile?.customerId) {
+        setError('Not authenticated');
+        setLoading(false);
+        return;
+      }
       const supabase = getSupabase();
-      const { data } = await supabase.from('invoices').select('*, jobs(title)').eq('id', id).single();
-      if (data) setInvoice(mapInvoice(data));
+      const { data, error: fetchError } = await supabase
+        .from('invoices')
+        .select('*, jobs(title)')
+        .eq('id', id)
+        .eq('customer_id', profile.customerId)
+        .single();
+
+      if (fetchError) {
+        setError(fetchError.message);
+      } else if (data) {
+        setInvoice(mapInvoice(data));
+      }
       setLoading(false);
     }
     fetch();
-  }, [id]);
+  }, [id, profile?.customerId]);
 
-  return { invoice, loading };
+  return { invoice, loading, error };
 }

@@ -7,6 +7,8 @@ import { useMyJobs } from '@/lib/hooks/use-jobs';
 import { Card, CardContent } from '@/components/ui/card';
 import { StatusBadge } from '@/components/ui/badge';
 import { cn, formatDate, formatTime } from '@/lib/utils';
+import { JOB_TYPE_LABELS, JOB_TYPE_COLORS } from '@/lib/hooks/mappers';
+import type { JobType } from '@/lib/hooks/mappers';
 
 type FilterTab = 'all' | 'active' | 'scheduled' | 'completed';
 
@@ -149,7 +151,14 @@ export default function JobsListPage() {
                     <div className="min-w-0 flex-1">
                       <div className="flex items-start justify-between gap-2">
                         <p className="text-sm font-medium text-main truncate">{job.title}</p>
-                        <StatusBadge status={job.status} className="flex-shrink-0" />
+                        <div className="flex items-center gap-1.5 flex-shrink-0">
+                          {job.jobType !== 'standard' && (
+                            <span className={cn('inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-medium rounded-full', JOB_TYPE_COLORS[job.jobType as JobType].bg, JOB_TYPE_COLORS[job.jobType as JobType].text)}>
+                              {JOB_TYPE_LABELS[job.jobType as JobType]}
+                            </span>
+                          )}
+                          <StatusBadge status={job.status} />
+                        </div>
                       </div>
                       <p className="text-sm text-secondary mt-0.5">{job.customerName}</p>
 

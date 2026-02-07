@@ -13,6 +13,8 @@ import {
   Search,
   Plus,
   X,
+  Shield,
+  FileCheck,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -21,7 +23,8 @@ import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { useCustomers } from '@/lib/hooks/use-customers';
-import { useTeam } from '@/lib/hooks/use-jobs';
+import { useJobs, useTeam } from '@/lib/hooks/use-jobs';
+import type { JobType } from '@/types';
 
 export default function NewJobPage() {
   const router = useRouter();
@@ -33,6 +36,7 @@ export default function NewJobPage() {
     title: '',
     description: '',
     customerId: customerId || '',
+    jobType: 'standard' as JobType,
     priority: 'normal',
     estimatedValue: '',
     scheduledDate: '',
@@ -44,13 +48,31 @@ export default function NewJobPage() {
       state: '',
       zip: '',
     },
+    // Insurance metadata
+    insuranceCompany: '',
+    claimNumber: '',
+    policyNumber: '',
+    dateOfLoss: '',
+    adjusterName: '',
+    adjusterPhone: '',
+    adjusterEmail: '',
+    deductible: '',
+    coverageLimit: '',
+    // Warranty metadata
+    warrantyCompany: '',
+    dispatchNumber: '',
+    authorizationLimit: '',
+    serviceFee: '',
+    warrantyType: 'home_warranty',
   });
 
   const [customerSearch, setCustomerSearch] = useState('');
   const [showCustomerSearch, setShowCustomerSearch] = useState(false);
   const [assignedMembers, setAssignedMembers] = useState<string[]>([]);
+  const [saving, setSaving] = useState(false);
   const { customers } = useCustomers();
   const { team } = useTeam();
+  const { createJob } = useJobs();
 
   const selectedCustomer = customers.find((c) => c.id === formData.customerId);
 
@@ -61,11 +83,63 @@ export default function NewJobPage() {
       c.email.toLowerCase().includes(customerSearch.toLowerCase())
   );
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const buildTypeMetadata = () => {
+    if (formData.jobType === 'insurance_claim') {
+      return {
+        claimNumber: formData.claimNumber,
+        policyNumber: formData.policyNumber || undefined,
+        insuranceCompany: formData.insuranceCompany,
+        adjusterName: formData.adjusterName || undefined,
+        adjusterPhone: formData.adjusterPhone || undefined,
+        adjusterEmail: formData.adjusterEmail || undefined,
+        dateOfLoss: formData.dateOfLoss,
+        deductible: formData.deductible ? parseFloat(formData.deductible) : undefined,
+        coverageLimit: formData.coverageLimit ? parseFloat(formData.coverageLimit) : undefined,
+        approvalStatus: 'pending' as const,
+      };
+    }
+    if (formData.jobType === 'warranty_dispatch') {
+      return {
+        warrantyCompany: formData.warrantyCompany,
+        dispatchNumber: formData.dispatchNumber,
+        authorizationLimit: formData.authorizationLimit ? parseFloat(formData.authorizationLimit) : undefined,
+        serviceFee: formData.serviceFee ? parseFloat(formData.serviceFee) : undefined,
+        warrantyType: formData.warrantyType as 'home_warranty' | 'manufacturer' | 'extended',
+      };
+    }
+    return {};
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Save to Firestore
-    console.log('Creating job:', { ...formData, assignedMembers });
-    router.push('/dashboard/jobs');
+    try {
+      setSaving(true);
+      const scheduledStart = formData.scheduledDate
+        ? new Date(`${formData.scheduledDate}T${formData.scheduledTime || '09:00'}`)
+        : undefined;
+
+      await createJob({
+        title: formData.title,
+        description: formData.description || undefined,
+        customerId: formData.customerId || undefined,
+        jobType: formData.jobType,
+        typeMetadata: buildTypeMetadata(),
+        status: 'lead',
+        priority: formData.priority as 'low' | 'normal' | 'high' | 'urgent',
+        address: formData.useCustomerAddress && selectedCustomer
+          ? selectedCustomer.address
+          : formData.address,
+        estimatedValue: formData.estimatedValue ? parseFloat(formData.estimatedValue) : 0,
+        scheduledStart,
+        assignedTo: assignedMembers,
+        customer: selectedCustomer,
+      });
+      router.push('/dashboard/jobs');
+    } catch (err) {
+      console.error('Failed to create job:', err);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const toggleMember = (memberId: string) => {
@@ -142,8 +216,177 @@ export default function NewJobPage() {
                   icon={<DollarSign size={16} />}
                 />
               </div>
+
+              {/* Job Type Selector */}
+              <div>
+                <label className="block text-sm font-medium text-main mb-2">Job Type</label>
+                <div className="grid grid-cols-3 gap-3">
+                  {([
+                    { value: 'standard', label: 'Standard', icon: Briefcase, color: 'blue' },
+                    { value: 'insurance_claim', label: 'Insurance Claim', icon: Shield, color: 'amber' },
+                    { value: 'warranty_dispatch', label: 'Warranty Dispatch', icon: FileCheck, color: 'purple' },
+                  ] as const).map(({ value, label, icon: Icon, color }) => (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => setFormData({ ...formData, jobType: value })}
+                      className={cn(
+                        'flex flex-col items-center gap-2 p-4 rounded-lg border-2 transition-colors text-center',
+                        formData.jobType === value
+                          ? `border-${color}-500 bg-${color}-50 dark:bg-${color}-900/20`
+                          : 'border-main hover:bg-surface-hover'
+                      )}
+                    >
+                      <Icon size={20} className={formData.jobType === value ? `text-${color}-600 dark:text-${color}-400` : 'text-muted'} />
+                      <span className={cn('text-sm font-medium', formData.jobType === value ? 'text-main' : 'text-muted')}>{label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
             </CardContent>
           </Card>
+
+          {/* Insurance Claim Fields */}
+          {formData.jobType === 'insurance_claim' && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Shield size={18} className="text-amber-600 dark:text-amber-400" />
+                  Insurance Details
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <Input
+                    label="Insurance Company"
+                    placeholder="e.g., State Farm"
+                    value={formData.insuranceCompany}
+                    onChange={(e) => setFormData({ ...formData, insuranceCompany: e.target.value })}
+                    required
+                  />
+                  <Input
+                    label="Claim Number"
+                    placeholder="CLM-XXXXXXX"
+                    value={formData.claimNumber}
+                    onChange={(e) => setFormData({ ...formData, claimNumber: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <Input
+                    label="Policy Number"
+                    placeholder="POL-XXXXXXX"
+                    value={formData.policyNumber}
+                    onChange={(e) => setFormData({ ...formData, policyNumber: e.target.value })}
+                  />
+                  <Input
+                    label="Date of Loss"
+                    type="date"
+                    value={formData.dateOfLoss}
+                    onChange={(e) => setFormData({ ...formData, dateOfLoss: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="grid grid-cols-3 gap-4">
+                  <Input
+                    label="Adjuster Name"
+                    placeholder="John Smith"
+                    value={formData.adjusterName}
+                    onChange={(e) => setFormData({ ...formData, adjusterName: e.target.value })}
+                  />
+                  <Input
+                    label="Adjuster Phone"
+                    placeholder="(555) 123-4567"
+                    value={formData.adjusterPhone}
+                    onChange={(e) => setFormData({ ...formData, adjusterPhone: e.target.value })}
+                  />
+                  <Input
+                    label="Adjuster Email"
+                    type="email"
+                    placeholder="adjuster@insurance.com"
+                    value={formData.adjusterEmail}
+                    onChange={(e) => setFormData({ ...formData, adjusterEmail: e.target.value })}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <Input
+                    label="Deductible"
+                    type="number"
+                    placeholder="0.00"
+                    value={formData.deductible}
+                    onChange={(e) => setFormData({ ...formData, deductible: e.target.value })}
+                    icon={<DollarSign size={16} />}
+                  />
+                  <Input
+                    label="Coverage Limit"
+                    type="number"
+                    placeholder="0.00"
+                    value={formData.coverageLimit}
+                    onChange={(e) => setFormData({ ...formData, coverageLimit: e.target.value })}
+                    icon={<DollarSign size={16} />}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Warranty Dispatch Fields */}
+          {formData.jobType === 'warranty_dispatch' && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base flex items-center gap-2">
+                  <FileCheck size={18} className="text-purple-600 dark:text-purple-400" />
+                  Warranty Details
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <Input
+                    label="Warranty Company"
+                    placeholder="e.g., American Home Shield"
+                    value={formData.warrantyCompany}
+                    onChange={(e) => setFormData({ ...formData, warrantyCompany: e.target.value })}
+                    required
+                  />
+                  <Input
+                    label="Dispatch Number"
+                    placeholder="DSP-XXXXXXX"
+                    value={formData.dispatchNumber}
+                    onChange={(e) => setFormData({ ...formData, dispatchNumber: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="grid grid-cols-3 gap-4">
+                  <Select
+                    label="Warranty Type"
+                    value={formData.warrantyType}
+                    onChange={(e) => setFormData({ ...formData, warrantyType: e.target.value })}
+                    options={[
+                      { value: 'home_warranty', label: 'Home Warranty' },
+                      { value: 'manufacturer', label: 'Manufacturer' },
+                      { value: 'extended', label: 'Extended Warranty' },
+                    ]}
+                  />
+                  <Input
+                    label="Authorization Limit"
+                    type="number"
+                    placeholder="0.00"
+                    value={formData.authorizationLimit}
+                    onChange={(e) => setFormData({ ...formData, authorizationLimit: e.target.value })}
+                    icon={<DollarSign size={16} />}
+                  />
+                  <Input
+                    label="Service Fee"
+                    type="number"
+                    placeholder="75.00"
+                    value={formData.serviceFee}
+                    onChange={(e) => setFormData({ ...formData, serviceFee: e.target.value })}
+                    icon={<DollarSign size={16} />}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Customer */}
           <Card>
@@ -350,8 +593,8 @@ export default function NewJobPage() {
 
           {/* Actions */}
           <div className="space-y-3">
-            <Button type="submit" className="w-full">
-              Create Job
+            <Button type="submit" className="w-full" disabled={saving}>
+              {saving ? 'Creating...' : 'Create Job'}
             </Button>
             <Button type="button" variant="secondary" className="w-full" onClick={() => router.back()}>
               Cancel

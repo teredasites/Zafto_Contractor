@@ -8,6 +8,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { StatusBadge } from '@/components/ui/badge';
 import { cn, formatTime } from '@/lib/utils';
 import type { JobData } from '@/lib/hooks/mappers';
+import { JOB_TYPE_COLORS } from '@/lib/hooks/mappers';
+import type { JobType } from '@/lib/hooks/mappers';
 
 function ScheduleSkeleton() {
   return (
@@ -140,11 +142,14 @@ export default function SchedulePage() {
                 {day.jobs.map((job) => (
                   <Link key={job.id} href={`/dashboard/jobs/${job.id}`}>
                     <Card className={cn(
-                      'hover:border-accent/30 transition-colors',
+                      'hover:border-accent/30 transition-colors overflow-hidden',
                       day.isToday && 'border-accent/20'
                     )}>
-                      <CardContent className="py-3">
-                        <div className="flex items-start gap-3">
+                      <CardContent className="py-3 relative">
+                        {job.jobType !== 'standard' && (
+                          <div className={cn('absolute left-0 top-0 bottom-0 w-1', JOB_TYPE_COLORS[job.jobType as JobType].dot)} />
+                        )}
+                        <div className={cn('flex items-start gap-3', job.jobType !== 'standard' && 'ml-2')}>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-start justify-between gap-2">
                               <p className="text-sm font-medium text-main truncate">{job.title}</p>

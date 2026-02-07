@@ -38,6 +38,7 @@ import {
   Clock,
   PanelLeftClose,
   PanelLeftOpen,
+  Award,
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { ZMark } from '@/components/z-console/z-mark';
@@ -91,6 +92,7 @@ const navigationGroups: NavGroup[] = [
     label: 'RESOURCES',
     items: [
       { name: 'Team', href: '/dashboard/team', icon: Users },
+      { name: 'Certifications', href: '/dashboard/certifications', icon: Award, permission: PERMISSIONS.CERTIFICATIONS_VIEW },
       { name: 'Equipment', href: '/dashboard/equipment', icon: Wrench },
       { name: 'Inventory', href: '/dashboard/inventory', icon: Package },
       { name: 'Vendors', href: '/dashboard/vendors', icon: Store },

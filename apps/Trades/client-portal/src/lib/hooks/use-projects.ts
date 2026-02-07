@@ -40,18 +40,35 @@ export function useProjects() {
 }
 
 export function useProject(id: string) {
+  const { profile } = useAuth();
   const [project, setProject] = useState<ProjectData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetch() {
+      if (!profile?.customerId) {
+        setError('Not authenticated');
+        setLoading(false);
+        return;
+      }
       const supabase = getSupabase();
-      const { data } = await supabase.from('jobs').select('*').eq('id', id).single();
-      if (data) setProject(mapProject(data));
+      const { data, error: fetchError } = await supabase
+        .from('jobs')
+        .select('*')
+        .eq('id', id)
+        .eq('customer_id', profile.customerId)
+        .single();
+
+      if (fetchError) {
+        setError(fetchError.message);
+      } else if (data) {
+        setProject(mapProject(data));
+      }
       setLoading(false);
     }
     fetch();
-  }, [id]);
+  }, [id, profile?.customerId]);
 
-  return { project, loading };
+  return { project, loading, error };
 }

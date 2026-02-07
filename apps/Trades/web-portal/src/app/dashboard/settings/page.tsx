@@ -24,6 +24,12 @@ import {
   Edit,
   Trash2,
   Send,
+  GitBranch,
+  UserCog,
+  Wrench,
+  ClipboardList,
+  Key,
+  Award,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -32,11 +38,15 @@ import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { CommandPalette } from '@/components/command-palette';
 import { cn, formatRelativeTime } from '@/lib/utils';
+import { getSupabase } from '@/lib/supabase';
 import { useTeam } from '@/lib/hooks/use-jobs';
+import { usePermissions, TierGate } from '@/components/permission-gate';
+import { useBranches, useCustomRoles, useFormTemplates, useCertifications, useApiKeys } from '@/lib/hooks/use-enterprise';
+import type { Branch, CustomRole, FormTemplate, Certification } from '@/lib/hooks/use-enterprise';
 
-type SettingsTab = 'profile' | 'company' | 'team' | 'billing' | 'notifications' | 'appearance' | 'security' | 'integrations';
+type SettingsTab = 'profile' | 'company' | 'team' | 'billing' | 'notifications' | 'appearance' | 'security' | 'integrations' | 'branches' | 'roles' | 'trades' | 'forms' | 'apikeys';
 
-const tabs: { id: SettingsTab; label: string; icon: React.ReactNode }[] = [
+const coreTabs: { id: SettingsTab; label: string; icon: React.ReactNode }[] = [
   { id: 'profile', label: 'Profile', icon: <User size={18} /> },
   { id: 'company', label: 'Company', icon: <Building size={18} /> },
   { id: 'team', label: 'Team', icon: <Users size={18} /> },
@@ -47,8 +57,26 @@ const tabs: { id: SettingsTab; label: string; icon: React.ReactNode }[] = [
   { id: 'integrations', label: 'Integrations', icon: <Link size={18} /> },
 ];
 
+const enterpriseTabs: { id: SettingsTab; label: string; icon: React.ReactNode; minTier: 'team' | 'business' | 'enterprise' }[] = [
+  { id: 'branches', label: 'Branches', icon: <GitBranch size={18} />, minTier: 'team' },
+  { id: 'trades', label: 'Trade Modules', icon: <Wrench size={18} />, minTier: 'team' },
+  { id: 'roles', label: 'Roles & Permissions', icon: <UserCog size={18} />, minTier: 'business' },
+  { id: 'forms', label: 'Compliance Forms', icon: <ClipboardList size={18} />, minTier: 'business' },
+  { id: 'apikeys', label: 'API Keys', icon: <Key size={18} />, minTier: 'enterprise' },
+];
+
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<SettingsTab>('profile');
+  const { isTeamOrHigher, isBusinessOrHigher, isEnterprise } = usePermissions();
+
+  const tierOrder = { team: 1, business: 2, enterprise: 3 };
+  const visibleEnterpriseTabs = enterpriseTabs.filter((tab) => {
+    const required = tierOrder[tab.minTier];
+    if (isEnterprise) return true;
+    if (isBusinessOrHigher) return required <= 2;
+    if (isTeamOrHigher) return required <= 1;
+    return false;
+  });
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -66,7 +94,7 @@ export default function SettingsPage() {
           <Card>
             <CardContent className="p-2">
               <nav className="space-y-1">
-                {tabs.map((tab) => (
+                {coreTabs.map((tab) => (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
@@ -81,6 +109,29 @@ export default function SettingsPage() {
                     {tab.label}
                   </button>
                 ))}
+
+                {visibleEnterpriseTabs.length > 0 && (
+                  <>
+                    <div className="pt-3 pb-1 px-3">
+                      <p className="text-[11px] font-semibold text-muted uppercase tracking-wider">Enterprise</p>
+                    </div>
+                    {visibleEnterpriseTabs.map((tab) => (
+                      <button
+                        key={tab.id}
+                        onClick={() => setActiveTab(tab.id)}
+                        className={cn(
+                          'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
+                          activeTab === tab.id
+                            ? 'bg-accent-light text-accent'
+                            : 'text-muted hover:text-main hover:bg-surface-hover'
+                        )}
+                      >
+                        {tab.icon}
+                        {tab.label}
+                      </button>
+                    ))}
+                  </>
+                )}
               </nav>
             </CardContent>
           </Card>
@@ -96,6 +147,11 @@ export default function SettingsPage() {
           {activeTab === 'appearance' && <AppearanceSettings />}
           {activeTab === 'security' && <SecuritySettings />}
           {activeTab === 'integrations' && <IntegrationSettings />}
+          {activeTab === 'branches' && <BranchesSettings />}
+          {activeTab === 'roles' && <RolesSettings />}
+          {activeTab === 'trades' && <TradeModulesSettings />}
+          {activeTab === 'forms' && <ComplianceFormsSettings />}
+          {activeTab === 'apikeys' && <ApiKeysSettings />}
         </div>
       </div>
     </div>
@@ -927,6 +983,448 @@ function IntegrationSettings() {
               </div>
             ))}
           </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+// ============================================================
+// ENTERPRISE SETTINGS TABS
+// ============================================================
+
+const AVAILABLE_TRADES = [
+  { id: 'hvac', label: 'HVAC', description: 'Heating, ventilation, and air conditioning' },
+  { id: 'plumbing', label: 'Plumbing', description: 'Residential and commercial plumbing' },
+  { id: 'electrical', label: 'Electrical', description: 'Electrical systems and wiring' },
+  { id: 'roofing', label: 'Roofing', description: 'Roof installation, repair, and inspection' },
+  { id: 'restoration', label: 'Restoration', description: 'Water, fire, and mold remediation' },
+  { id: 'general', label: 'General Contractor', description: 'Multi-trade project management' },
+  { id: 'painting', label: 'Painting', description: 'Interior and exterior painting' },
+  { id: 'solar', label: 'Solar', description: 'Solar panel installation and service' },
+  { id: 'pool', label: 'Pool & Spa', description: 'Pool construction, service, and repair' },
+  { id: 'pest', label: 'Pest Control', description: 'Pest management and WDO inspections' },
+  { id: 'landscaping', label: 'Landscaping', description: 'Landscaping and irrigation' },
+  { id: 'fire_protection', label: 'Fire Protection', description: 'Sprinkler systems and fire safety' },
+  { id: 'chimney', label: 'Chimney', description: 'Chimney inspection, sweep, and repair' },
+  { id: 'environmental', label: 'Environmental', description: 'Environmental testing and remediation' },
+  { id: 'septic', label: 'Septic', description: 'Septic system service and inspection' },
+  { id: 'garage_door', label: 'Garage Door', description: 'Garage door installation and repair' },
+  { id: 'locksmith', label: 'Locksmith', description: 'Lock and security systems' },
+  { id: 'appliance', label: 'Appliance Repair', description: 'Home appliance service and repair' },
+  { id: 'flooring', label: 'Flooring', description: 'Floor installation and refinishing' },
+  { id: 'insulation', label: 'Insulation', description: 'Insulation installation and upgrades' },
+];
+
+function BranchesSettings() {
+  const { branches, loading, createBranch, updateBranch, deleteBranch } = useBranches();
+  const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [formData, setFormData] = useState({ name: '', address: '', city: '', state: '', zipCode: '', phone: '', email: '', timezone: 'America/New_York' });
+
+  const handleSave = async () => {
+    try {
+      if (editingId) {
+        await updateBranch(editingId, formData as unknown as Partial<Branch>);
+      } else {
+        await createBranch(formData as unknown as Partial<Branch>);
+      }
+      setShowForm(false);
+      setEditingId(null);
+      setFormData({ name: '', address: '', city: '', state: '', zipCode: '', phone: '', email: '', timezone: 'America/New_York' });
+    } catch {
+      // Error handling via hook
+    }
+  };
+
+  const handleEdit = (branch: Branch) => {
+    setEditingId(branch.id);
+    setFormData({
+      name: branch.name,
+      address: branch.address || '',
+      city: branch.city || '',
+      state: branch.state || '',
+      zipCode: branch.zipCode || '',
+      phone: branch.phone || '',
+      email: branch.email || '',
+      timezone: branch.timezone,
+    });
+    setShowForm(true);
+  };
+
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Branches</CardTitle>
+              <CardDescription>Manage company locations and assign team members</CardDescription>
+            </div>
+            <Button onClick={() => { setShowForm(true); setEditingId(null); setFormData({ name: '', address: '', city: '', state: '', zipCode: '', phone: '', email: '', timezone: 'America/New_York' }); }}>
+              <Plus size={16} className="mr-2" />
+              Add Branch
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {showForm && (
+            <div className="mb-6 p-4 border border-main rounded-lg space-y-4">
+              <h4 className="font-medium text-main">{editingId ? 'Edit Branch' : 'New Branch'}</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Input label="Branch Name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
+                <Input label="Phone" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} />
+                <Input label="Address" value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })} />
+                <Input label="City" value={formData.city} onChange={(e) => setFormData({ ...formData, city: e.target.value })} />
+                <Input label="State" value={formData.state} onChange={(e) => setFormData({ ...formData, state: e.target.value })} />
+                <Input label="ZIP" value={formData.zipCode} onChange={(e) => setFormData({ ...formData, zipCode: e.target.value })} />
+              </div>
+              <div className="flex gap-2">
+                <Button onClick={handleSave}>{editingId ? 'Update' : 'Create'}</Button>
+                <Button variant="ghost" onClick={() => { setShowForm(false); setEditingId(null); }}>Cancel</Button>
+              </div>
+            </div>
+          )}
+
+          {loading ? (
+            <div className="space-y-3">
+              {[1, 2].map((i) => <div key={i} className="h-16 bg-secondary rounded-lg animate-pulse" />)}
+            </div>
+          ) : branches.length === 0 ? (
+            <div className="text-center py-8 text-muted">
+              <GitBranch size={32} className="mx-auto mb-2 opacity-40" />
+              <p>No branches yet. Add your first location.</p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {branches.map((branch) => (
+                <div key={branch.id} className="flex items-center justify-between p-4 bg-secondary rounded-lg">
+                  <div>
+                    <p className="font-medium text-main">{branch.name}</p>
+                    <p className="text-sm text-muted">
+                      {[branch.city, branch.state].filter(Boolean).join(', ') || 'No address'}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant={branch.isActive ? 'success' : 'secondary'}>
+                      {branch.isActive ? 'Active' : 'Inactive'}
+                    </Badge>
+                    <Button variant="ghost" size="sm" onClick={() => handleEdit(branch)}><Edit size={14} /></Button>
+                    <Button variant="ghost" size="sm" onClick={() => deleteBranch(branch.id)}><Trash2 size={14} /></Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+function RolesSettings() {
+  const { roles, loading, createRole, updateRole, deleteRole } = useCustomRoles();
+
+  const allPermissions = [
+    { group: 'Jobs', keys: ['jobs.view.own', 'jobs.view.all', 'jobs.create', 'jobs.edit.own', 'jobs.edit.all', 'jobs.delete', 'jobs.assign'] },
+    { group: 'Invoices', keys: ['invoices.view.own', 'invoices.view.all', 'invoices.create', 'invoices.edit', 'invoices.send', 'invoices.approve', 'invoices.void'] },
+    { group: 'Customers', keys: ['customers.view.own', 'customers.view.all', 'customers.create', 'customers.edit', 'customers.delete'] },
+    { group: 'Team', keys: ['team.view', 'team.invite', 'team.edit', 'team.remove'] },
+    { group: 'Operations', keys: ['dispatch.view', 'dispatch.manage', 'reports.view', 'reports.export'] },
+    { group: 'Admin', keys: ['company.settings', 'billing.manage', 'roles.manage', 'audit.view'] },
+    { group: 'Time Clock', keys: ['timeclock.own', 'timeclock.view.all', 'timeclock.manage'] },
+    { group: 'Enterprise', keys: ['branches.view', 'branches.manage', 'certifications.view', 'certifications.manage', 'forms.view', 'forms.manage', 'api_keys.manage'] },
+  ];
+
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Roles & Permissions</CardTitle>
+              <CardDescription>Create custom roles with granular permission control</CardDescription>
+            </div>
+            <Button onClick={() => createRole({ name: 'New Role', baseRole: 'technician', permissions: {} })}>
+              <Plus size={16} className="mr-2" />
+              Create Role
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {loading ? (
+            <div className="space-y-3">
+              {[1, 2, 3].map((i) => <div key={i} className="h-16 bg-secondary rounded-lg animate-pulse" />)}
+            </div>
+          ) : roles.length === 0 ? (
+            <div className="text-center py-8 text-muted">
+              <UserCog size={32} className="mx-auto mb-2 opacity-40" />
+              <p>No custom roles. Default role-based permissions are active.</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {roles.map((role) => (
+                <div key={role.id} className="border border-main rounded-lg">
+                  <div className="flex items-center justify-between p-4">
+                    <div>
+                      <p className="font-medium text-main">{role.name}</p>
+                      <p className="text-sm text-muted">
+                        Base: {role.baseRole} | {Object.values(role.permissions).filter(Boolean).length} permissions
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {role.isSystemRole && <Badge variant="secondary">System</Badge>}
+                      <Button variant="ghost" size="sm" onClick={() => deleteRole(role.id)}>
+                        <Trash2 size={14} />
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="border-t border-main p-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                      {allPermissions.map((group) => (
+                        <div key={group.group}>
+                          <p className="text-xs font-semibold text-muted uppercase mb-2">{group.group}</p>
+                          <div className="space-y-1">
+                            {group.keys.map((key) => (
+                              <label key={key} className="flex items-center gap-2 text-sm cursor-pointer">
+                                <input
+                                  type="checkbox"
+                                  checked={role.permissions[key] === true}
+                                  onChange={() => {
+                                    const newPerms = { ...role.permissions, [key]: !role.permissions[key] };
+                                    updateRole(role.id, { permissions: newPerms });
+                                  }}
+                                  className="rounded border-gray-300"
+                                  disabled={role.isSystemRole}
+                                />
+                                <span className="text-main">{key.split('.').pop()}</span>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+function TradeModulesSettings() {
+  const [enabledTrades, setEnabledTrades] = useState<string[]>([]);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    const supabase = getSupabase();
+    supabase
+      .from('companies')
+      .select('trades')
+      .single()
+      .then(({ data }: { data: { trades: string[] } | null }) => {
+        if (data?.trades) setEnabledTrades(data.trades);
+      });
+  }, []);
+
+  const toggleTrade = async (tradeId: string) => {
+    const newTrades = enabledTrades.includes(tradeId)
+      ? enabledTrades.filter((t) => t !== tradeId)
+      : [...enabledTrades, tradeId];
+    setEnabledTrades(newTrades);
+    setSaving(true);
+    try {
+      const supabase = getSupabase();
+      await supabase.from('companies').update({ trades: newTrades }).not('id', 'is', null);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Trade Modules</CardTitle>
+          <CardDescription>
+            Enable trades to unlock trade-specific compliance forms, certification types, and field tools.
+            {saving && <span className="ml-2 text-accent">Saving...</span>}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            {AVAILABLE_TRADES.map((trade) => {
+              const enabled = enabledTrades.includes(trade.id);
+              return (
+                <button
+                  key={trade.id}
+                  onClick={() => toggleTrade(trade.id)}
+                  className={cn(
+                    'flex items-start gap-3 p-4 rounded-lg border text-left transition-colors',
+                    enabled
+                      ? 'border-accent bg-accent-light'
+                      : 'border-main bg-secondary hover:bg-surface-hover'
+                  )}
+                >
+                  <div className={cn(
+                    'w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 mt-0.5',
+                    enabled ? 'bg-accent border-accent text-white' : 'border-gray-300'
+                  )}>
+                    {enabled && <Check size={12} />}
+                  </div>
+                  <div>
+                    <p className="font-medium text-main text-sm">{trade.label}</p>
+                    <p className="text-xs text-muted mt-0.5">{trade.description}</p>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+function ComplianceFormsSettings() {
+  const { templates, loading } = useFormTemplates();
+
+  const systemTemplates = templates.filter((t) => t.isSystem);
+  const customTemplates = templates.filter((t) => !t.isSystem);
+
+  const tradeGroups = systemTemplates.reduce<Record<string, FormTemplate[]>>((acc, t) => {
+    const key = t.trade || 'General';
+    if (!acc[key]) acc[key] = [];
+    acc[key].push(t);
+    return acc;
+  }, {});
+
+  return (
+    <div className="space-y-6">
+      {customTemplates.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Custom Forms</CardTitle>
+            <CardDescription>Forms created by your company</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {customTemplates.map((template) => (
+                <div key={template.id} className="flex items-center justify-between p-3 bg-secondary rounded-lg">
+                  <div>
+                    <p className="font-medium text-main text-sm">{template.name}</p>
+                    <p className="text-xs text-muted">{template.fields.length} fields | {template.category}</p>
+                  </div>
+                  <Badge variant="secondary">Custom</Badge>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      <Card>
+        <CardHeader>
+          <CardTitle>System Form Templates</CardTitle>
+          <CardDescription>
+            Pre-built compliance forms organized by trade. These are read-only system templates.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {loading ? (
+            <div className="space-y-3">
+              {[1, 2, 3].map((i) => <div key={i} className="h-16 bg-secondary rounded-lg animate-pulse" />)}
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {Object.entries(tradeGroups).sort(([a], [b]) => a.localeCompare(b)).map(([trade, group]) => (
+                <div key={trade}>
+                  <h4 className="text-sm font-semibold text-muted uppercase tracking-wider mb-2">
+                    {trade === 'General' ? 'All Trades' : trade.replace('_', ' ').toUpperCase()}
+                  </h4>
+                  <div className="space-y-1">
+                    {group.map((template) => (
+                      <div key={template.id} className="flex items-center justify-between p-3 bg-secondary rounded-lg">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <p className="font-medium text-main text-sm">{template.name}</p>
+                            {template.regulationReference && (
+                              <Badge variant="info" className="text-[10px]">{template.regulationReference}</Badge>
+                            )}
+                          </div>
+                          <p className="text-xs text-muted mt-0.5">{template.description}</p>
+                        </div>
+                        <div className="flex items-center gap-2 ml-4">
+                          <span className="text-xs text-muted">{template.fields.length} fields</span>
+                          <Badge variant="secondary">{template.category}</Badge>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+function ApiKeysSettings() {
+  const { apiKeys, loading, revokeApiKey, deleteApiKey } = useApiKeys();
+
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>API Keys</CardTitle>
+              <CardDescription>Manage API access for integrations and automations</CardDescription>
+            </div>
+            <Button disabled>
+              <Plus size={16} className="mr-2" />
+              Generate Key
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {loading ? (
+            <div className="space-y-3">
+              {[1, 2].map((i) => <div key={i} className="h-16 bg-secondary rounded-lg animate-pulse" />)}
+            </div>
+          ) : apiKeys.length === 0 ? (
+            <div className="text-center py-8 text-muted">
+              <Key size={32} className="mx-auto mb-2 opacity-40" />
+              <p>No API keys. Generate one to enable integrations.</p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {apiKeys.map((key) => (
+                <div key={key.id} className="flex items-center justify-between p-4 bg-secondary rounded-lg">
+                  <div>
+                    <p className="font-medium text-main">{key.name}</p>
+                    <p className="text-sm text-muted font-mono">{key.prefix}...</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant={key.isActive ? 'success' : 'secondary'}>
+                      {key.isActive ? 'Active' : 'Revoked'}
+                    </Badge>
+                    {key.isActive && (
+                      <Button variant="ghost" size="sm" onClick={() => revokeApiKey(key.id)}>Revoke</Button>
+                    )}
+                    <Button variant="ghost" size="sm" onClick={() => deleteApiKey(key.id)}>
+                      <Trash2 size={14} />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

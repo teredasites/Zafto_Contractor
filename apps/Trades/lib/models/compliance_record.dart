@@ -9,7 +9,8 @@ enum ComplianceRecordType {
   loto,
   confinedSpace,
   deadManSwitch,
-  inspection;
+  inspection,
+  formSubmission;
 
   String get dbValue {
     switch (this) {
@@ -25,6 +26,8 @@ enum ComplianceRecordType {
         return 'dead_man_switch';
       case ComplianceRecordType.inspection:
         return 'inspection';
+      case ComplianceRecordType.formSubmission:
+        return 'form_submission';
     }
   }
 
@@ -42,6 +45,8 @@ enum ComplianceRecordType {
         return 'Dead Man Switch';
       case ComplianceRecordType.inspection:
         return 'Inspection';
+      case ComplianceRecordType.formSubmission:
+        return 'Form Submission';
     }
   }
 
@@ -60,6 +65,8 @@ enum ComplianceRecordType {
         return ComplianceRecordType.deadManSwitch;
       case 'inspection':
         return ComplianceRecordType.inspection;
+      case 'form_submission':
+        return ComplianceRecordType.formSubmission;
       default:
         return ComplianceRecordType.inspection;
     }
@@ -82,6 +89,7 @@ class ComplianceRecord {
   final DateTime? startedAt;
   final DateTime? endedAt;
   final DateTime createdAt;
+  final String? formTemplateId;
 
   const ComplianceRecord({
     this.id = '',
@@ -99,6 +107,7 @@ class ComplianceRecord {
     this.startedAt,
     this.endedAt,
     required this.createdAt,
+    this.formTemplateId,
   });
 
   // Supabase INSERT — omit id, created_at (DB defaults)
@@ -111,6 +120,7 @@ class ComplianceRecord {
         'attachments': attachments,
         'crew_members': crewMembers,
         'status': status,
+        if (formTemplateId != null) 'form_template_id': formTemplateId,
         if (severity != null) 'severity': severity,
         if (locationLatitude != null) 'location_latitude': locationLatitude,
         if (locationLongitude != null) 'location_longitude': locationLongitude,
@@ -149,6 +159,7 @@ class ComplianceRecord {
           _parseOptionalDate(json['started_at'] ?? json['startedAt']),
       endedAt: _parseOptionalDate(json['ended_at'] ?? json['endedAt']),
       createdAt: _parseDate(json['created_at'] ?? json['createdAt']),
+      formTemplateId: json['form_template_id'] as String?,
     );
   }
 

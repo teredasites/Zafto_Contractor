@@ -13,6 +13,8 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { StatusBadge } from '@/components/ui/badge';
 import { cn, formatDate, formatTime } from '@/lib/utils';
+import { JOB_TYPE_COLORS } from '@/lib/hooks/mappers';
+import type { JobType } from '@/lib/hooks/mappers';
 
 function ElapsedTimer({ since }: { since: string }) {
   const [elapsed, setElapsed] = useState('00:00:00');
@@ -188,9 +190,12 @@ export default function DashboardPage() {
           <div className="space-y-2">
             {(todaysJobs.length > 0 ? todaysJobs : activeJobs).slice(0, 5).map((job) => (
               <Link key={job.id} href={`/dashboard/jobs/${job.id}`}>
-                <Card className="hover:border-accent/30 transition-colors">
-                  <CardContent className="py-3.5">
-                    <div className="flex items-start justify-between gap-3">
+                <Card className="hover:border-accent/30 transition-colors overflow-hidden">
+                  <CardContent className="py-3.5 relative">
+                    {job.jobType !== 'standard' && (
+                      <div className={cn('absolute left-0 top-0 bottom-0 w-1', JOB_TYPE_COLORS[job.jobType as JobType].dot)} />
+                    )}
+                    <div className={cn('flex items-start justify-between gap-3', job.jobType !== 'standard' && 'ml-2')}>
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-medium text-main truncate">{job.title}</p>
                         <p className="text-sm text-muted truncate">{job.customerName}</p>

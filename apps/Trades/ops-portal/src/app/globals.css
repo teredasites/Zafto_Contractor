@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Layer 1 — Page background */
+  --bg-page: #fafbfc;
+  /* Layer 2 — Cards */
+  --bg-card: #ffffff;
+  /* Layer 3 — Elevated surfaces */
+  --bg-elevated: #f4f5f7;
+  /* Borders */
+  --border: #e2e4ea;
+  /* Primary text */
+  --text-primary: #0f1847;
+  /* Secondary text */
+  --text-secondary: #5a5e70;
+  /* Accent */
+  --accent: #2b46d9;
+  --accent-hover: #2237b8;
+  /* Danger */
+  --danger: #dc2626;
+  --danger-hover: #b91c1c;
+}
+
+.dark {
+  --bg-page: #0a0b0f;
+  --bg-card: #12131a;
+  --bg-elevated: #1a1b24;
+  --border: #2a2b36;
+  --text-primary: #e8eaf0;
+  --text-secondary: #8b8fa0;
+  --accent: #5b7bf7;
+  --accent-hover: #6485f2;
+  --danger: #ef4444;
+  --danger-hover: #dc2626;
+}
+
+@layer base {
+  body {
+    @apply bg-[var(--bg-page)] text-[var(--text-primary)] antialiased;
+  }
+}
+
+@layer utilities {
+  .skeleton-shimmer {
+    background: linear-gradient(
+      90deg,
+      var(--bg-elevated) 25%,
+      var(--bg-card) 50%,
+      var(--bg-elevated) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out forwards;
+}
+
+/* Card hover effect */
+.card-hover {
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.card-hover:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  border-color: var(--accent);
+}
+
+/* Sidebar label transition */
+.sidebar-label {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}

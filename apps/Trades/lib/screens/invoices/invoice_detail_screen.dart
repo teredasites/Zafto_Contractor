@@ -1,5 +1,5 @@
-/// Invoice Detail Screen - Design System v2.6
-/// View, share, mark as paid
+// Invoice Detail Screen - Design System v2.6
+// View, share, mark as paid
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -148,7 +148,7 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(_invoice!.customerName ?? 'No customer', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: colors.textPrimary)),
+                Text(_invoice!.customerName, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: colors.textPrimary)),
                 if (_invoice!.customerEmail != null) Text(_invoice!.customerEmail!, style: TextStyle(fontSize: 13, color: colors.textTertiary)),
               ],
             ),
@@ -159,6 +159,8 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
   }
 
   Widget _buildLineItemsCard(ZaftoColors colors) {
+    final hasInsuranceSources = _invoice!.lineItems.any((i) => i.paymentSource != PaymentSource.standard);
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(color: colors.bgElevated, borderRadius: BorderRadius.circular(14), border: Border.all(color: colors.borderSubtle)),
@@ -167,17 +169,67 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
         children: [
           Text('LINE ITEMS', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: colors.textTertiary, letterSpacing: 0.5)),
           const SizedBox(height: 12),
-          ..._invoice!.lineItems.map((item) => Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: Row(
-              children: [
-                Expanded(child: Text(item.description, style: TextStyle(fontSize: 14, color: colors.textPrimary))),
-                Text('${item.quantity.toStringAsFixed(item.quantity == item.quantity.toInt() ? 0 : 1)} × \$${item.unitPrice.toStringAsFixed(2)}', style: TextStyle(fontSize: 13, color: colors.textTertiary)),
-                const SizedBox(width: 12),
-                Text('\$${item.total.toStringAsFixed(2)}', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: colors.textPrimary)),
-              ],
-            ),
-          )),
+          if (hasInsuranceSources)
+            ..._buildGroupedLineItems(colors)
+          else
+            ..._invoice!.lineItems.map((item) => _buildLineItemRow(item, colors)),
+        ],
+      ),
+    );
+  }
+
+  List<Widget> _buildGroupedLineItems(ZaftoColors colors) {
+    final sections = <PaymentSource, List<InvoiceLineItem>>{};
+    for (final item in _invoice!.lineItems) {
+      sections.putIfAbsent(item.paymentSource, () => []).add(item);
+    }
+
+    const sectionOrder = [PaymentSource.carrier, PaymentSource.deductible, PaymentSource.upgrade, PaymentSource.standard];
+    const sectionLabels = {
+      PaymentSource.carrier: 'Insurance-Covered Work',
+      PaymentSource.deductible: 'Deductible',
+      PaymentSource.upgrade: 'Upgrades (Out-of-Pocket)',
+      PaymentSource.standard: 'Other',
+    };
+    const sectionColors = {
+      PaymentSource.carrier: Color(0xFF3B82F6),
+      PaymentSource.deductible: Color(0xFFF97316),
+      PaymentSource.upgrade: Color(0xFF8B5CF6),
+      PaymentSource.standard: Color(0xFF6B7280),
+    };
+
+    final widgets = <Widget>[];
+    for (final source in sectionOrder) {
+      final items = sections[source];
+      if (items == null || items.isEmpty) continue;
+      final sectionTotal = items.fold<double>(0, (sum, i) => sum + i.total);
+
+      if (widgets.isNotEmpty) widgets.add(const SizedBox(height: 16));
+      widgets.add(Row(
+        children: [
+          Container(width: 3, height: 14, decoration: BoxDecoration(color: sectionColors[source], borderRadius: BorderRadius.circular(2))),
+          const SizedBox(width: 8),
+          Expanded(child: Text(sectionLabels[source]!, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: sectionColors[source]))),
+          Text('\$${sectionTotal.toStringAsFixed(2)}', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: sectionColors[source])),
+        ],
+      ));
+      widgets.add(const SizedBox(height: 8));
+      for (final item in items) {
+        widgets.add(_buildLineItemRow(item, colors));
+      }
+    }
+    return widgets;
+  }
+
+  Widget _buildLineItemRow(InvoiceLineItem item, ZaftoColors colors) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        children: [
+          Expanded(child: Text(item.description, style: TextStyle(fontSize: 14, color: colors.textPrimary))),
+          Text('${item.quantity.toStringAsFixed(item.quantity == item.quantity.toInt() ? 0 : 1)} × \$${item.unitPrice.toStringAsFixed(2)}', style: TextStyle(fontSize: 13, color: colors.textTertiary)),
+          const SizedBox(width: 12),
+          Text('\$${item.total.toStringAsFixed(2)}', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: colors.textPrimary)),
         ],
       ),
     );
