@@ -37,7 +37,7 @@ import 'field_tools/safety_briefing_screen.dart';
 import 'field_tools/incident_report_screen.dart';
 import 'field_tools/loto_logger_screen.dart';
 import 'field_tools/confined_space_timer_screen.dart';
-import 'field_tools/dead_man_switch_screen.dart';
+
 import 'field_tools/sun_position_screen.dart';
 import 'field_tools/level_plumb_screen.dart';
 import 'calendar/calendar_screen.dart';
@@ -1763,7 +1763,6 @@ class _FeatureCarousel extends StatelessWidget {
       _FeatureItem(icon: LucideIcons.alertTriangle, title: 'Incident Report', subtitle: 'OSHA compliant', onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const IncidentReportScreen()))),
       _FeatureItem(icon: LucideIcons.lock, title: 'LOTO Logger', subtitle: 'Lockout/Tagout', onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LOTOLoggerScreen()))),
       _FeatureItem(icon: LucideIcons.box, title: 'Confined Space', subtitle: 'Entry tracking', onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ConfinedSpaceTimerScreen()))),
-      _FeatureItem(icon: LucideIcons.userCheck, title: 'Dead Man Switch', subtitle: 'Lone worker', onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const DeadManSwitchScreen()))),
       _FeatureItem(icon: LucideIcons.sun, title: 'Sun Position', subtitle: 'Solar angles', onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SunPositionScreen()))),
       _FeatureItem(icon: LucideIcons.ruler, title: 'Level & Plumb', subtitle: 'Digital level', onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LevelPlumbScreen()))),
     ];

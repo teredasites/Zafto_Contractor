@@ -16,7 +16,7 @@ import 'loto_logger_screen.dart';
 import 'incident_report_screen.dart';
 import 'safety_briefing_screen.dart';
 import 'sun_position_screen.dart';
-import 'dead_man_switch_screen.dart';
+
 import 'confined_space_timer_screen.dart';
 import 'client_signature_screen.dart';
 import 'receipt_scanner_screen.dart';
@@ -195,14 +195,6 @@ class FieldToolsHubScreen extends ConsumerWidget {
             subtitle: 'Entry tracking with air monitoring',
             color: Colors.brown,
             onTap: () => _openTool(context, ConfinedSpaceTimerScreen(jobId: jobId)),
-          ),
-          _buildToolCard(
-            context, colors,
-            icon: LucideIcons.userCheck,
-            title: 'Dead Man Switch',
-            subtitle: 'Lone worker safety timer',
-            color: Colors.pink,
-            onTap: () => _openTool(context, DeadManSwitchScreen(jobId: jobId)),
           ),
           const SizedBox(height: 24),
 
