@@ -1,6 +1,6 @@
 # ZAFTO SESSION HANDOFF
 ## THE ONLY DOC YOU READ FIRST — EVERY SESSION
-### Last Updated: February 7, 2026 (Session 76)
+### Last Updated: February 7, 2026 (Session 77)
 
 ---
 
@@ -18,18 +18,19 @@
 
 | Field | Value |
 |-------|-------|
-| **Sprint** | D5 — Property Management — **IN PROGRESS** |
-| **Sub-step** | D5i — PENDING. D5a-D5h DONE. Next: D5i (Integration Wiring + Rent Auto-Charge). |
-| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → search for "D5i" |
-| **Status** | D5a-D5h DONE. 18 tables, 14 CRM pages, 11 CRM hooks, 10 Flutter screens, 7 repos, 3 services, 5 models. Client Portal: 5 tenant hooks, 6 new pages (29 routes). Team Portal: 3 PM hooks, properties page, job detail PM context, sidebar updated. All builds pass. |
-| **Last Completed** | D5h — Team Portal Property Maintenance View: use-pm-jobs.ts, use-maintenance-requests.ts, properties page, job detail PropertyMaintenanceSection, sidebar Properties nav (S76). |
-| **Session Count** | 76 |
+| **Sprint** | D5 — Property Management — **DONE** |
+| **Sub-step** | D5j DONE. All D5a-D5j complete. Next: check 07_SPRINT_SPECS.md for next phase. |
+| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → search for next PENDING sprint |
+| **Status** | D5 COMPLETE. 18 tables, 14 CRM pages, 11 CRM hooks, 10 Flutter screens, 7 repos, 3 services, 5 models. Client Portal: 5 tenant hooks, 6 pages (29 routes). Team Portal: 3 PM hooks, properties page, job detail PM context. 3 Edge Functions. 157 model tests. Seed data. All builds pass. |
+| **Last Completed** | D5j — Testing + seed data: 157 model tests (property, maintenance_request, property_asset), seed SQL, all 5 builds verified (S77). |
+| **Session Count** | 77 |
 | **Tables Deployed** | 79 |
 | **Migration Files** | 24 |
 
 **D3 Phase 1+2 COMPLETE.** Phase 3 is future (6+ months post-launch).
 **D4 ZBooks COMPLETE (S70).** All 16 sub-steps (D4a-D4p) built. 13 hooks, 13 web pages, 5 Edge Functions, 3 Flutter screens, 61 tables, 20 migrations.
-**Next:** D5i (Integration Wiring + Rent Auto-Charge) → D5j (Testing + Seed Data) → R1 (App Remake) → Phase E (AI Layer)
+**D5 Property Management COMPLETE (S77).** All 10 sub-steps (D5a-D5j) built. 18 tables, 14 CRM pages, 11 hooks, 10 Flutter screens, 3 Edge Functions, 157 model tests.
+**Next:** Check sprint specs for next phase → R1 (App Remake) → Phase E (AI Layer)
 
 ---
 
@@ -41,7 +42,7 @@
 | D6: document_versions table | NOT BUILT | D6a | Table + UI deferred. No spec priority. |
 | D6: Flutter enterprise screens | NOT BUILT | D6b | Branch/roles/forms/API key screens for mobile. Settings page done in Web CRM only. |
 | D4: ZBooks | **ALL DONE** | D4 | D4a-D4p ALL complete. GL engine + 15 tables + 13 web pages + 3 Flutter screens + 5 Edge Functions. 13 hooks. |
-| D5: Property Management | D5a-D5h DONE | D5 | D5i (Integration wiring + rent auto-charge) + D5j (Testing + seed data) remaining. |
+| D5: Property Management | **ALL DONE** | D5 | D5a-D5j ALL complete. 18 tables, 14 CRM pages, 11 hooks, 10 Flutter screens, 3 Edge Functions, 157 tests. |
 
 ---
 
@@ -89,6 +90,26 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 ---
 
 ## SESSION LOG (History — do NOT use for execution decisions, use CURRENT EXECUTION POINT above)
+
+### Session 77 (Feb 7) — D5i + D5j: Integration Wiring + Testing (D5 COMPLETE)
+
+**D5i: Integration Wiring + Rent Auto-Charge (DONE):**
+- Created 3 Edge Functions: `pm-rent-charge` (daily rent generation + late fees), `pm-lease-reminders` (90/60/30 day notifications), `pm-asset-reminders` (14-day service alerts)
+- Extended Flutter Job model with propertyId, unitId, maintenanceRequestId fields
+- Wired handleItMyself in pm_maintenance_service.dart (creates job with PM linkage)
+- Added completeMaintenanceJob (updates request + job status atomically)
+- Wired CRM integration: createJobFromRequest, createRepairFromInspection, createJobFromTurnTask
+- Wired rent payment → ZBooks journal entry (debit Cash, credit Rental Income, property-tagged)
+- Wired lease termination → auto-create unit turn
+- Added recordServiceFromJob standalone function in use-assets.ts
+
+**D5j: Testing + Seed Data (DONE):**
+- Created seed SQL: 2 properties, 3 units, 3 tenants, 3 leases, 5 maintenance requests, 2 inspections, 6 assets, 3 service records, 3 rent charges, 1 payment
+- Created 157 model tests across 3 files: property_test.dart (67), maintenance_request_test.dart (46), property_asset_test.dart (44)
+- All tests pass, all 5 apps build clean
+- **D5 IS NOW FULLY COMPLETE** — 18 tables, 14 CRM pages, 11 hooks, 10 Flutter screens, 3 Edge Functions, 157 tests
+
+---
 
 ### Session 76 (Feb 7) — D5h: Team Portal Property Maintenance View
 

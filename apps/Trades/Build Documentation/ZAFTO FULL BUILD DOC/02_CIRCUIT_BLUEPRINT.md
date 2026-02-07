@@ -405,7 +405,7 @@ DEFERRED -- Specified but intentionally postponed
 | D2: Insurance/Restoration | D2a-D2h DONE (S63-S64, S68). | 7 new tables deployed (36 total). Flutter: 18 new files + insurance completion checklist. Web CRM: 3 new files + completion tab. Team Portal: use-insurance.ts + job detail restoration progress. Client Portal: use-insurance.ts + claim timeline. |
 | D3: Insurance Verticals | D3a-D3d DONE (S69) | Phase 1+2 COMPLETE. claim_category + JSONB vertical data. Storm/Recon/Commercial typed models + category forms across Flutter + Web CRM. Phase 3 deferred (6+ months). |
 | D4: ZBooks | **ALL DONE (S70)** | 16 sub-steps (D4a-D4p). GL engine. Double-entry. 15 new tables. 13 hooks. 13 web pages. 5 Edge Functions. 3 Flutter screens (hub, journal entry, expenses). CPA portal access. Construction accounting (AIA G702/G703 progress billing + retention). 55 COA accounts + 26 tax categories seeded. zbooks_audit_log INSERT-only. |
-| D5: Property Management | D5a-D5h DONE (S71-S76) | 18 new tables (79 total). 4 migrations. Web CRM: 14 pages, 11 hooks, sidebar section. Flutter: 10 screens, 7 repos, 3 services, 5 models. Client Portal: 5 tenant hooks, 6 new pages, home+menu tenant-aware. Team Portal: 3 PM hooks, properties page, job detail PM context. 25 routes. ZBooks: expense→property allocation (Schedule E). THE MOAT: "I'll Handle It" creates job from maintenance request. D5i (Integration Wiring) + D5j (Testing) remaining. |
+| D5: Property Management | **ALL DONE (S71-S77)** | 18 new tables (79 total). 4 migrations. Web CRM: 14 pages, 11 hooks, sidebar section. Flutter: 10 screens, 7 repos, 3 services, 5 models. Client Portal: 5 tenant hooks, 6 new pages, home+menu tenant-aware. Team Portal: 3 PM hooks, properties page, job detail PM context. 3 Edge Functions (rent-charge, lease-reminders, asset-reminders). 157 model tests. Seed data. Integration wiring: maintenance→job, rent→ZBooks journal, lease termination→unit turn, job completion→request update, inspection→repair job, turn task→job. |
 | D6: Enterprise Foundation | DONE (S65-66) | 5 new tables: branches, custom_roles, form_templates, certifications, api_keys. Multi-location, custom roles, configurable compliance forms, cert tracking, API key management. |
 | D7a: Certifications | DONE (S67-68) | Cert tracker across Flutter + Web CRM + Team Portal. Modular types: certification_types table (25 system defaults, company-custom). Immutable audit log: certification_audit_log (INSERT-only). All 3 surfaces use dynamic types from DB with enum fallback. |
 
@@ -479,10 +479,15 @@ Tech opens app -> Taps "Field Tools"
 - RLS policies handle tenant auth automatically (tenants_self, leases_tenant, rent_charges_tenant, etc.).
 - REMAINING: Stripe Edge Function for rent payments (Phase E). Webhook handler (Phase E).
 
-**Pipe 8: PM Maintenance → Job (THE MOAT)**
-- "I'll Handle It" in Flutter + CRM creates a job from a maintenance request.
-- Job model lacks propertyId/unitId/maintenanceRequestId fields (TODO in code).
-- REMAINING: Expand Job model with PM fields. Link bidirectionally.
+**Pipe 8: PM Maintenance → Job (THE MOAT) — CONNECTED (S77)**
+- "I'll Handle It" in Flutter creates a job from a maintenance request with propertyId/unitId/maintenanceRequestId.
+- CRM: createJobFromRequest, createRepairFromInspection, createJobFromTurnTask — all wired.
+- Job model has propertyId, unitId, maintenanceRequestId fields (D5i S77).
+- completeMaintenanceJob updates request status + job status atomically.
+- Rent payment → ZBooks journal entry (debit Cash, credit Rental Income, property-tagged).
+- Lease termination → auto-create unit turn with move_out_date.
+- Job completion from inspection → repair job auto-created.
+- 3 Edge Functions: pm-rent-charge (daily rent + late fees), pm-lease-reminders (90/60/30 days), pm-asset-reminders (14 days).
 
 ---
 
@@ -651,6 +656,9 @@ Tech opens app -> Taps "Field Tools"
 | zbooks-recurring | Process recurring journal entries | **DEPLOYED (D4 S70)** |
 | zbooks-reports | P&L, Balance Sheet, Trial Balance, Cash Flow | **DEPLOYED (D4 S70)** |
 | zbooks-tax-calc | Tax category calculations | **DEPLOYED (D4 S70)** |
+| pm-rent-charge | Daily rent charge generation + late fees | **DEPLOYED (D5i S77)** |
+| pm-lease-reminders | Lease expiry notifications (90/60/30 days) | **DEPLOYED (D5i S77)** |
+| pm-asset-reminders | Asset service due notifications (14 days) | **DEPLOYED (D5i S77)** |
 | dead-man-switch | SMS to emergency contacts | SAFETY CRITICAL -- not deployed |
 | receipt-ocr | Claude Vision OCR | Phase E -- not deployed |
 | transcribe-audio | Voice note transcription | Phase E -- not deployed |
