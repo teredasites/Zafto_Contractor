@@ -4,6 +4,53 @@ import 'package:zafto/core/user_role.dart';
 import 'package:zafto/navigation/role_navigation.dart';
 import 'package:zafto/theme/zafto_colors.dart';
 
+// Owner/Admin screens
+import 'package:zafto/screens/owner/owner_home_screen.dart';
+import 'package:zafto/screens/owner/owner_jobs_screen.dart';
+import 'package:zafto/screens/owner/owner_money_screen.dart';
+import 'package:zafto/screens/owner/owner_calendar_screen.dart';
+import 'package:zafto/screens/owner/owner_more_screen.dart';
+
+// Tech screens
+import 'package:zafto/screens/tech/tech_home_screen.dart';
+import 'package:zafto/screens/tech/tech_walkthrough_screen.dart';
+import 'package:zafto/screens/tech/tech_jobs_screen.dart';
+import 'package:zafto/screens/tech/tech_tools_screen.dart';
+import 'package:zafto/screens/tech/tech_more_screen.dart';
+
+// Office screens
+import 'package:zafto/screens/office/office_home_screen.dart';
+import 'package:zafto/screens/office/office_schedule_screen.dart';
+import 'package:zafto/screens/office/office_customers_screen.dart';
+import 'package:zafto/screens/office/office_money_screen.dart';
+import 'package:zafto/screens/office/office_more_screen.dart';
+
+// Inspector screens
+import 'package:zafto/screens/inspector/inspector_home_screen.dart';
+import 'package:zafto/screens/inspector/inspector_inspect_screen.dart';
+import 'package:zafto/screens/inspector/inspector_history_screen.dart';
+import 'package:zafto/screens/inspector/inspector_tools_screen.dart';
+import 'package:zafto/screens/inspector/inspector_more_screen.dart';
+
+// CPA screens
+import 'package:zafto/screens/cpa/cpa_dashboard_screen.dart';
+import 'package:zafto/screens/cpa/cpa_accounts_screen.dart';
+import 'package:zafto/screens/cpa/cpa_reports_screen.dart';
+import 'package:zafto/screens/cpa/cpa_review_screen.dart';
+
+// Client screens
+import 'package:zafto/screens/client/client_home_screen.dart';
+import 'package:zafto/screens/client/client_scan_screen.dart';
+import 'package:zafto/screens/client/client_projects_screen.dart';
+import 'package:zafto/screens/client/client_my_home_screen.dart';
+import 'package:zafto/screens/client/client_more_screen.dart';
+
+// Tenant screens
+import 'package:zafto/screens/tenant/tenant_home_screen.dart';
+import 'package:zafto/screens/tenant/tenant_rent_screen.dart';
+import 'package:zafto/screens/tenant/tenant_maintenance_screen.dart';
+import 'package:zafto/screens/tenant/tenant_unit_screen.dart';
+
 class AppShell extends ConsumerStatefulWidget {
   final UserRole role;
 
@@ -64,17 +111,63 @@ class _AppShellState extends ConsumerState<AppShell> {
   }
 
   List<Widget> _buildTabScreens(UserRole role) {
-    final tabs = getTabsForRole(role);
-    return tabs.map((tab) {
-      return Scaffold(
-        body: Center(
-          child: Text(
-            '${role.label} - ${tab.label}',
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-        ),
-      );
-    }).toList();
+    switch (role) {
+      case UserRole.owner:
+      case UserRole.admin:
+        return const [
+          OwnerHomeScreen(),
+          OwnerJobsScreen(),
+          OwnerMoneyScreen(),
+          OwnerCalendarScreen(),
+          OwnerMoreScreen(),
+        ];
+      case UserRole.tech:
+        return const [
+          TechHomeScreen(),
+          TechWalkthroughScreen(),
+          TechJobsScreen(),
+          TechToolsScreen(),
+          TechMoreScreen(),
+        ];
+      case UserRole.office:
+        return const [
+          OfficeHomeScreen(),
+          OfficeScheduleScreen(),
+          OfficeCustomersScreen(),
+          OfficeMoneyScreen(),
+          OfficeMoreScreen(),
+        ];
+      case UserRole.inspector:
+        return const [
+          InspectorHomeScreen(),
+          InspectorInspectScreen(),
+          InspectorHistoryScreen(),
+          InspectorToolsScreen(),
+          InspectorMoreScreen(),
+        ];
+      case UserRole.cpa:
+        return const [
+          CpaDashboardScreen(),
+          CpaAccountsScreen(),
+          CpaReportsScreen(),
+          CpaReviewScreen(),
+        ];
+      case UserRole.client:
+        return const [
+          ClientHomeScreen(),
+          ClientScanScreen(),
+          ClientProjectsScreen(),
+          ClientMyHomeScreen(),
+          ClientMoreScreen(),
+        ];
+      case UserRole.tenant:
+        return const [
+          TenantHomeScreen(),
+          TenantRentScreen(),
+          TenantMaintenanceScreen(),
+          TenantUnitScreen(),
+        ];
+    }
   }
 
   Widget _buildZButton(ZaftoColors colors) {
