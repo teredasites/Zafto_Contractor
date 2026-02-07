@@ -1,6 +1,6 @@
 # ZAFTO SESSION HANDOFF
 ## THE ONLY DOC YOU READ FIRST — EVERY SESSION
-### Last Updated: February 7, 2026 (Session 79)
+### Last Updated: February 7, 2026 (Session 80)
 
 ---
 
@@ -18,12 +18,12 @@
 
 | Field | Value |
 |-------|-------|
-| **Sprint** | E5-E6 — Phase E: Xactimate Estimate Engine + Bid Walkthrough Engine — **DONE** |
-| **Sub-step** | E5a-E5j + E6a-E6h ALL DONE. E6e (LiDAR) + E6i (3D viewer) deferred. Next: E3 or E7. |
-| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → search for Sprint E7 or E3 |
-| **Status** | E5: 6 new tables (xactimate_codes, pricing_entries, etc.), estimate writer UI, pricing pipeline. E6: 5 walkthrough tables (migration 000028), 12 Flutter screens, 4 annotation files, 4 sketch editor files, 11 web portal files, 4 Edge Functions (analyze/transcribe/generate-bid/bid-pdf). 22 total Edge Functions deployed. |
-| **Last Completed** | E6h — Walkthrough workflow customization (S79). |
-| **Session Count** | 79 |
+| **Sprint** | E3 — Employee Portal AI + Mobile AI — **DONE** |
+| **Sub-step** | E3a-E3e ALL DONE. Next: E4 (Growth Advisor + Advanced AI). |
+| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → search for Sprint E4 |
+| **Status** | E3: 4 new Edge Functions (ai-troubleshoot, ai-photo-diagnose, ai-parts-identify, ai-repair-guide), team portal troubleshoot page (1364 lines, 5-tab UI), Flutter ai_service + z_chat_sheet + ai_photo_analyzer, client portal ai-chat-widget. 26 total Edge Functions deployed. |
+| **Last Completed** | E3e — Testing + verification (S80). |
+| **Session Count** | 80 |
 | **Tables Deployed** | 92 |
 | **Migration Files** | 28 |
 
@@ -34,7 +34,8 @@
 **E1-E2 AI Layer COMPLETE (S78).** 2 tables, 1 Edge Function (14 tools), 2 hooks, 1 API client, provider updated.
 **E5 Xactimate Estimate Engine COMPLETE (S79).** 6 tables, estimate writer UI (Flutter + Web CRM + portals), pricing pipeline Edge Functions.
 **E6 Bid Walkthrough Engine COMPLETE (S79).** 5 tables, 12 Flutter screens, 4 annotation files, 4 sketch editor files, 11 web files, 4 AI Edge Functions. E6e (LiDAR) + E6i (3D) deferred.
-**Next:** E3 (Employee Portal AI) or E7 (next Phase E feature).
+**E3 Employee Portal AI + Mobile AI COMPLETE (S80).** 4 new Edge Functions (1,311 lines), team portal troubleshoot page (1,364 lines, 5-tab UI), Flutter ai_service + z_chat_sheet + ai_photo_analyzer (2,413 lines), client portal ai-chat-widget (583 lines). 26 Edge Functions total.
+**Next:** E4 (Growth Advisor + Advanced AI) — needs detailing in sprint specs first.
 **ACTION REQUIRED:** Set ANTHROPIC_API_KEY secret: `npx supabase secrets set ANTHROPIC_API_KEY=sk-ant-...`
 
 ---
@@ -95,6 +96,32 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 ---
 
 ## SESSION LOG (History — do NOT use for execution decisions, use CURRENT EXECUTION POINT above)
+
+### Session 80 (Feb 7) — E3: Employee Portal AI + Mobile AI
+
+**E3a: AI Troubleshooting Edge Functions (DONE):**
+- 4 Edge Functions: ai-troubleshoot (314L), ai-photo-diagnose (308L), ai-parts-identify (298L), ai-repair-guide (391L)
+- All use Claude Sonnet 4.5, Supabase auth, structured JSON. 1,311 lines total.
+- Commit: 876333e. All 4 deployed (26 Edge Functions total).
+
+**E3b: Team Portal AI Troubleshooting Center (DONE):**
+- use-ai-troubleshoot.ts hook (254 lines, 5 AI callers)
+- troubleshoot/page.tsx (1,364 lines, 5-tab UI: Diagnose/Photo/Code/Parts/Repair)
+- Commit: 91b287f. Build clean.
+
+**E3c: Mobile Z Button + AI Chat (DONE):**
+- ai_service.dart (AiService + AiChatNotifier + providers, Edge Function client)
+- z_chat_sheet.dart (bottom sheet chat), ai_photo_analyzer.dart (vision defect detection)
+- app_shell.dart Z FAB opens chat. Legacy aiService alias for backward compat.
+- Commit: 839ea48. dart analyze: 0 issues.
+
+**E3d: Client Portal AI (DONE):**
+- use-ai-assistant.ts hook, ai-chat-widget.tsx (floating Z + slide-up panel)
+- layout.tsx updated. Commit: e9dc070. Build clean.
+
+**Next:** E4 (Growth Advisor + Advanced AI) — needs detailing.
+
+---
 
 ### Session 79 (Feb 7) — E5 + E6: Xactimate Estimate Engine + Bid Walkthrough Engine
 

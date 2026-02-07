@@ -6519,28 +6519,52 @@ Include <content>{markdown}</content> for rendered display.
 
 ---
 
-### Sprint E3: Employee Portal AI + Mobile AI (Outline)
-*Detail when E2 nears completion.*
+### Sprint E3: Employee Portal AI + Mobile AI
+**Source:** E1 infrastructure (z-intelligence Edge Function, z_threads/z_artifacts tables)
+**Goal:** Wire AI into team portal troubleshooting center + mobile app Z button + basic client portal AI.
+**Depends on:** E1 (AI infra DONE), E2 (Z Console wiring DONE).
 
-**E3a: AI Troubleshooting Center (team.zafto.app)**
-- Multi-trade diagnostics (electrical, HVAC, plumbing codes)
-- Photo-based diagnosis (upload photo → Claude Vision → diagnosis)
-- Code/compliance lookup (NEC, IRC, IPC, IMC)
-- Parts identification (describe part → identify + find suppliers)
-- Repair guides (step-by-step with safety warnings)
-- Company knowledge base (past jobs, common fixes, preferred methods)
+#### E3a: AI Troubleshooting Center — Edge Functions (~6 hrs) — DONE (S80)
+- [x] Edge Function: `ai-troubleshoot` — multi-trade diagnostics (314 lines, 20 trades, NEC/IRC/IPC/IMC code maps)
+- [x] Edge Function: `ai-photo-diagnose` — Claude Vision photo analysis (308 lines, base64 image, 1-5 condition scale)
+- [x] Edge Function: `ai-parts-identify` — text+photo part ID (298 lines, dual mode text/vision)
+- [x] Edge Function: `ai-repair-guide` — skill-adaptive repair guide (391 lines, apprentice/journeyman/master)
+- [x] Commit: `[E3a] AI troubleshooting Edge Functions` (876333e)
+- [x] All 4 deployed to Supabase (26 Edge Functions total)
 
-**E3b: Mobile App AI Integration (Flutter)**
-- Z button on mobile screens
-- Voice-to-text for field notes
-- Photo analysis for defect detection
-- Receipt OCR (Claude Vision)
-- Voice note transcription
+#### E3b: Team Portal AI Troubleshooting Center — UI (~8 hrs) — DONE (S80)
+- [x] use-ai-troubleshoot.ts hook (254 lines, 5 AI function callers, conversation history)
+- [x] troubleshoot/page.tsx (1364 lines, 5-tab UI: Diagnose/Photo/Code/Parts/Repair)
+- [x] Photo diagnosis tab: upload photo → show analysis results with condition stars
+- [x] Code lookup tab: search NEC/IRC/IPC/IMC/OSHA codes with AI explanation
+- [x] Parts ID tab: describe or photo → part identification + alternatives + suppliers
+- [x] Repair guides tab: trade/issue/skill → safety precautions + numbered steps + tools/materials
+- [ ] Company knowledge base: DEFERRED — requires z_threads querying (Phase E4)
+- [x] Commit: `[E3b] Team portal AI troubleshooting center` (91b287f)
 
-**E3c: Client Portal AI (basic)**
-- Project status summaries (AI-generated plain language)
-- Invoice explanations ("What am I paying for?")
-- Scheduling assistance ("When is my next appointment?")
+#### E3c: Mobile App Z Button + AI Integration (~8 hrs) — DONE (S80)
+- [x] ai_service.dart — AiService + AiChatNotifier + providers (Edge Function client)
+- [x] z_chat_sheet.dart — bottom sheet chat with message bubbles + quick actions
+- [x] ai_photo_analyzer.dart — photo defect detection screen with condition display
+- [x] app_shell.dart — Z FAB tap opens Z chat sheet, long-press opens quick actions
+- [x] Legacy aiService alias added for backward compat with ai_scanner screens
+- [ ] Voice-to-text for field notes: DEFERRED — uses same transcribe Edge Function, UI wiring later
+- [ ] Receipt OCR: DEFERRED to Phase E (already saves with ocr_status='pending')
+- [x] Commit: `[E3c] Mobile AI integration — Z button + chat + photo` (839ea48)
+
+#### E3d: Client Portal AI (basic) (~4 hrs) — DONE (S80)
+- [x] use-ai-assistant.ts hook (chat, project summary, invoice explainer via z-intelligence)
+- [x] ai-chat-widget.tsx (floating Z button + slide-up chat panel, 3 states)
+- [x] layout.tsx updated to include AiChatWidget in PortalShell
+- [x] Commit: `[E3d] Client portal AI — chat widget + summaries` (e9dc070)
+- [x] Build clean (24 static pages + dynamic routes)
+
+#### E3e: Testing + Verification (~2 hrs) — DONE (S80)
+- [x] dart analyze: 0 issues on all 4 new Flutter files
+- [x] team-portal: npm run build clean (troubleshoot page 11.4 kB)
+- [x] client-portal: npm run build clean (24 pages)
+- [x] All 4 Edge Functions deployed to Supabase
+- [x] All commits pushed to GitHub (876333e..e9dc070)
 
 ---
 
