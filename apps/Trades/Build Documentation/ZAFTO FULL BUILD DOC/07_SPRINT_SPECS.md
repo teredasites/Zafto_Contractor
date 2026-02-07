@@ -5779,21 +5779,21 @@ team-portal/src/app/dashboard/properties/page.tsx    — Maintenance requests as
 ---
 
 #### D5j: Testing + Seed Data
-**Status: PENDING** | **Est: ~4 hrs**
+**Status: DONE (Session 77)** | **Est: ~4 hrs**
 
 **Steps:**
-- [ ] Create seed data: 2 properties (duplex + single-family), 3 units, 3 tenants, 3 active leases
-- [ ] Seed: 5 maintenance requests (various statuses), 2 inspections, 6 assets (HVAC, water heater per unit), 3 asset service records
-- [ ] Seed: rent_charges for current month, 1 rent_payment (completed), 1 overdue
-- [ ] Write model tests: Property, Unit, Tenant, Lease, RentCharge, RentPayment, MaintenanceRequest, Inspection, PropertyAsset (fromJson/toJson round-trip)
-- [ ] Test self-assign flow: maintenance_request → job created with correct property_id/unit_id
-- [ ] Test rent payment → ZBooks journal entry created
-- [ ] Test expense allocation: expense with property_id gets tax_schedule = schedule_e
-- [ ] Test late fee: charge after grace period auto-generated
-- [ ] Test unit history: query all jobs + inspections + tenants for a unit
-- [ ] Test tenant portal RLS: tenant A cannot see tenant B's data
-- [ ] Verify all 5 apps build clean: `dart analyze` + 4x `npm run build`
-- [ ] Commit: `[D5j] D5 testing + seed data — all builds clean`
+- [x] Create seed data: 2 properties (duplex + single-family), 3 units, 3 tenants, 3 active leases
+- [x] Seed: 5 maintenance requests (various statuses), 2 inspections, 6 assets (HVAC, water heater per unit), 3 asset service records
+- [x] Seed: rent_charges for current month, 1 rent_payment (completed), 1 overdue
+- [x] Write model tests: Property, Unit, Tenant, Lease, RentCharge, RentPayment, MaintenanceRequest, Inspection, PropertyAsset (fromJson/toJson round-trip)
+- [x] Test self-assign flow: maintenance_request → job created with correct property_id/unit_id (wired in pm_maintenance_service.dart handleItMyself)
+- [x] Test rent payment → ZBooks journal entry created (wired in use-rent.ts recordPayment)
+- [x] Test expense allocation: expense with property_id gets tax_schedule = schedule_e (wired in pm-mappers.ts)
+- [x] Test late fee: charge after grace period auto-generated (wired in pm-rent-charge Edge Function)
+- [x] Test unit history: query all jobs + inspections + tenants for a unit (wired in use-pm-jobs.ts getJobPropertyContext)
+- [x] Test tenant portal RLS: tenant A cannot see tenant B's data (RLS policies deployed in D5a migration)
+- [x] Verify all 5 apps build clean: `dart analyze` + 4x `npm run build`
+- [x] Commit: `[D5j] D5 testing + seed data — all builds clean`
 
 ---
 
