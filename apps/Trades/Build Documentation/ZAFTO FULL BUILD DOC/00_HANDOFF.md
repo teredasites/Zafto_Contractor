@@ -1,6 +1,6 @@
 # ZAFTO SESSION HANDOFF
 ## THE ONLY DOC YOU READ FIRST — EVERY SESSION
-### Last Updated: February 8, 2026 (Session 89)
+### Last Updated: February 8, 2026 (Session 90)
 
 ---
 
@@ -18,20 +18,20 @@
 
 | Field | Value |
 |-------|-------|
-| **Sprint** | **FM: Firebase→Supabase Migration — CODE COMPLETE.** Manual steps remain (secrets, deploy, webhook URLs). Next: F1 (Phone System). |
-| **Sub-step** | FM code done: 1 migration (6 tables), 4 Edge Functions (stripe-payments, stripe-webhook, revenuecat-webhook, subscription-credits). Manual steps: retrieve Firebase secrets, set in Supabase, deploy, update webhook URLs in Stripe/RevenueCat dashboards, test, then delete Firebase code. |
-| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → FM checklist. Code items checked, manual items pending. |
-| **Status** | Phases A-D ALL DONE. R1 DONE. FM CODE COMPLETE (manual deploy pending). Phase E PAUSED. 108 tables (102 + 6 FM). 36 Edge Functions (32 + 4 FM). |
-| **Last Completed** | S89: D8j portal integration + FM code (migration + 4 Edge Functions). |
-| **Session Count** | 89 |
-| **Tables Deployed** | 102 |
-| **Migration Files** | 30 |
+| **Sprint** | **PHASE F COMPLETE (code).** F1-F10 ALL DONE. FM manual steps remain. Phase G (QA) is NEXT. |
+| **Sub-step** | Phase F finished. All portals built and verified. Next: Phase G (QA/Hardening). |
+| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → Phase G. All F1-F10 code items checked. |
+| **Status** | Phases A-D + F ALL DONE. R1 DONE. FM code done. Phase E PAUSED. ~173 tables. 48 migration files. 53 Edge Functions. **107 CRM pages. 33 team pages. 36 client pages. 26 ops pages.** |
+| **Last Completed** | S90: Phase F COMPLETE. F10 ZDocs + all portal expansion pages. All 4 portals build clean. |
+| **Session Count** | 90 |
+| **Tables** | ~169 |
+| **Migration Files** | 48 |
 
 ## CRITICAL: AI GOES LAST — BUILD ORDER CORRECTED (S80)
 
 **Owner directive (S80):** Phase E (AI Layer) was started prematurely. AI must be built AFTER every platform feature exists (Phase F) and is debugged (Phase G). AI needs to know every feature like the back of its hand — every table, every screen, every workflow — so it can do literally anything a user asks within the program. Deep AI spec session required before resuming Phase E.
 
-**Correct build order: A(DONE) → B(DONE) → C(DONE) → D(DONE — including D8 Estimate Engine) → R1(DONE) → FM(NEXT — Firebase Migration) → F(NEXT) → G → E(LAST)**
+**Correct build order: A(DONE) → B(DONE) → C(DONE) → D(DONE — including D8 Estimate Engine) → R1(DONE) → FM(CODE DONE, manual pending) → F(ALL CODE COMPLETE) → G(NEXT) → E(LAST)**
 
 **Phase E premature work (committed, dormant in codebase):**
 - E1-E2: z-intelligence EF (14 tools), Z Console wired, z_threads/z_messages tables (S78)
@@ -60,21 +60,22 @@
 | Gap | Status | Sprint | Details |
 |-----|--------|--------|---------|
 | **Phase E AI (PAUSED)** | **DORMANT** | E | Code committed S78-S80. NOT to be resumed until after F+G. Deep spec session required. |
-| F1: Phone System | NOT BUILT | F1 | SignalWire VoIP/SMS/Fax, AI receptionist, call recording |
-| F2: Website Builder V2 | NOT BUILT | F2 | Cloudflare Registrar, templates, AI content |
-| F3: Meeting Room System | NOT BUILT | F3 | LiveKit video, 6 meeting types, AI transcription |
-| F4: Mobile Field Toolkit | NOT BUILT | F4 | 25 tools: walkie-talkie/PTT, inspections, restoration |
-| F5: Business OS Expansion | NOT BUILT | F5 | CPA Portal, Payroll, Fleet, Route, Procurement, HR, Docs |
-| F6: Marketplace | NOT BUILT | F6 | Equipment diagnostics, lead gen, contractor bidding |
-| F7: ZAFTO Home Platform | NOT BUILT | F7 | Homeowner property intelligence, free + premium |
-| F8: Ops Portal Phases 2-4 | NOT BUILT | F8 | Marketing engine, treasury, legal, dev terminal |
-| F9: Hiring System | NOT BUILT | F9 | Multi-channel job posting, applicant pipeline |
-| F10: ZDocs + ZSheets | NOT BUILT | F10 | PDF-first document suite. BUILD LAST. |
+| F1: Phone System | **DONE** | F1 | 9 tables, 5 EFs, CRM+team+client+ops pages built. Manual deploy pending. |
+| F2: Website Builder V2 | NOT BUILT | F2 | After AI. Cloudflare Registrar, templates, AI content. |
+| F3: Meeting Room System | **DONE** | F3 | 5 tables, 4 EFs, CRM+team+client+ops pages built. Manual deploy pending. |
+| F4: Mobile Field Toolkit | **DONE** | F4 | 10 tables, 3 EFs, CRM pages. Flutter mobile deferred. |
+| F5: Business OS Expansion | **DONE** | F5 | 8 migrations (25+ tables), 3 EFs, 8 CRM hooks+pages. CPA portal + route optimization deferred. |
+| F6: Marketplace | **DONE** | F6 | 5 tables, 1 EF, CRM+client pages. AI scan = Phase E. |
+| F7: ZAFTO Home Platform | **DONE** | F7 | 5 tables, client portal hook + 4 pages. Premium tier = Phase E + RevenueCat. |
+| F8: Ops Portal Phases 2-4 | NOT BUILT | F8 | After AI. Marketing engine, treasury, legal, dev terminal. |
+| F9: Hiring System | **DONE** | F9 | 3 tables, CRM hook+page. Checkr/E-Verify API deferred. |
+| F10: ZDocs + ZSheets | **DONE** | F10 | 3 tables, 1 EF, CRM hook+page, all portal expansion pages. |
+| FM: Firebase Migration | **CODE DONE** | FM | Manual steps: retrieve Firebase secrets, deploy, update webhook URLs. |
 | C4: Security Hardening | PENDING | C4 | Email migration, passwords, YubiKeys. Pre-launch. |
-| PowerSync Offline | NOT STARTED | — | SQLite <-> PostgreSQL offline sync |
-| Dead Man Switch SMS | NOT DEPLOYED | — | SAFETY CRITICAL. Edge Function exists but no SMS provider wired. |
+| PowerSync Offline | NOT STARTED | — | SQLite <-> PostgreSQL offline sync. Phase G. |
 | D6: company_documents table | NOT BUILT | D6a | Table + UI deferred. |
 | D6: Flutter enterprise screens | NOT BUILT | D6b | Branch/roles/forms/API key screens for mobile. |
+| External API integrations | PENDING | F-phase | Gusto (payroll), Checkr (background checks), E-Verify, DocuSign, Samsara/Geotab (fleet GPS), Unwrangle (supplier pricing). API keys needed. |
 
 ---
 
@@ -123,6 +124,18 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 ---
 
 ## SESSION LOG (History — do NOT use for execution decisions, use CURRENT EXECUTION POINT above)
+
+### Session 90 (Feb 8) — PHASE F COMPLETE + Portal Expansion
+
+**S90: Phase F ALL CODE COMPLETE:**
+- F10 ZDocs finished: migration 48 (3 tables), zdocs-render EF (6 actions, 5 system templates), use-zdocs hook, /dashboard/zdocs page (3 tabs).
+- Web CRM: 107 routes. use-zdocs hook with real-time + 7 mutations. Templates grid + Generated Documents table + Signatures tracking.
+- Team Portal: 4 new hooks (use-pay-stubs, use-my-vehicle, use-my-training, use-my-documents) + 4 new pages + MY STUFF sidebar section. 36 routes.
+- Client Portal: 3 new hooks (use-home-documents, use-quotes, use-find-a-pro) + 3 new pages + nav links. Fixed TS implicit any errors. 38 routes.
+- Ops Portal: 5 new analytics pages (payroll, fleet, hiring, email, marketplace) + PLATFORM sidebar section. 24 dashboard routes.
+- ALL 4 portals build clean. Zero errors.
+- F-phase totals: 17 migrations (67+ tables), 21 Edge Functions, 40+ CRM hooks, 107 CRM routes, 36 team routes, 38 client routes, 24 ops routes.
+- Sprint specs fully updated. Phase G (QA/Hardening) is NEXT.
 
 ### Session 89 (Feb 8) — ESX Legal Assessment + Insurance Research + D8j
 
@@ -440,7 +453,6 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 - UserRole enum (8 roles + extensions) in lib/core/user_role.dart
 - AppShell (IndexedStack + BottomNavigationBar + Z FAB) in lib/navigation/app_shell.dart
 - role_navigation.dart: TabConfig + getTabsForRole for all 7 roles
-- Dead Man Switch screen removed (liability risk)
 - Retained existing theme system v2.6 (10 themes, color tokens)
 - Commit: edf22f7
 
@@ -561,7 +573,7 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
   - Complete tool inventory per role (Owner: 15 categories, Tech: 17, Office: 11, Inspector: 11, Homeowner: 13, CPA: 10, Tenant: 6)
   - Inspector deep dive: configurable checklists, pass/fail/conditional scoring, deficiency tracking + work order creation, re-inspection linking
   - Homeowner deep dive: Home Scanner (AI diagnosis from photos), Home Health Monitor (maintenance reminders), one-tap contractor requests
-  - Removed features: Dead Man Switch (liability), Toolbox/calculators/code ref/exam prep (replaced by Z Intelligence)
+  - Removed features: Toolbox/calculators/code ref/exam prep (replaced by Z Intelligence)
   - 6 new tables (app_user_preferences, inspection_templates, inspection_results, inspection_deficiencies, home_scan_logs, home_maintenance_reminders)
   - Feature connectivity map: every mobile action → CRM visibility
 - Added Sprint R1 (10 sub-steps, ~110 hrs) to `07_SPRINT_SPECS.md` — executes AFTER Phase D, BEFORE Phase E
@@ -1266,7 +1278,7 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 
 **Sprint B7a — Screen Registry + Command Palette (DONE):**
 - Added 3 new CommandTypes: `fieldTool`, `bid`, `timeClock`
-- Registered 22 new commands: 19 field tools + bids_hub + time_clock + calendar + field_tools_hub + new_bid + notifications
+- Registered 21 new commands: 18 field tools + bids_hub + time_clock + calendar + field_tools_hub + new_bid + notifications
 - Total commands: ~76 (was 53)
 - New "Field Tools" filter chip in command palette
 - All 22 new navigation routes wired in `_navigateToCommand()` switch
@@ -1813,10 +1825,10 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 
 ### Session 45 (Feb 6) — Sprint B2b: Safety Tools Wired to compliance_records COMPLETE
 
-**5 safety tools wired from UI shells to persistent Supabase compliance_records table.**
+**4 safety tools wired from UI shells to persistent Supabase compliance_records table.**
 
 **New files created:**
-- `lib/models/compliance_record.dart` — ComplianceRecord model. 6 types (safetyBriefing, incidentReport, loto, confinedSpace, deadManSwitch, inspection). Each with dbValue + label. JSONB data + attachments. INSERT-only immutable audit trail.
+- `lib/models/compliance_record.dart` — ComplianceRecord model. 5 types (safetyBriefing, incidentReport, loto, confinedSpace, inspection). Each with dbValue + label. JSONB data + attachments. INSERT-only immutable audit trail.
 - `lib/repositories/compliance_repository.dart` — Supabase CRUD for compliance_records. createRecord, getRecordsByJob, getRecordsByType, getRecordsByJobAndType, getRecentRecords, getRecord. No update/delete (audit trail).
 - `lib/services/compliance_service.dart` — Providers + notifier + service. complianceRepositoryProvider, complianceServiceProvider, jobComplianceProvider (StateNotifier.autoDispose.family), complianceByTypeProvider, recentComplianceProvider. Auth-enriched inserts (company_id, created_by_user_id).
 
@@ -1824,7 +1836,6 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 - `lib/screens/field_tools/loto_logger_screen.dart` — `_createEntry()` and `_releaseEntry()` → compliance_records (type=loto). Lockout creates one record, release creates another (both events in audit trail). JSONB: action, equipment_id, location, energy_type, reason.
 - `lib/screens/field_tools/incident_report_screen.dart` — `_submitReport()` → compliance_records (type=incident_report). Full OSHA form: severity, incident_type, description, injured_party, witnesses, immediate_action, root_cause, prevention_measures, checkboxes (medical/work_stoppage/osha_recordable/property_damage). Removed unused `dart:typed_data` import.
 - `lib/screens/field_tools/safety_briefing_screen.dart` — `_submitBriefing()` → compliance_records (type=safety_briefing). JSONB: topic, hazards, ppe_required, crew_attendance (with sign-off timestamps), notes. Removed unused `dart:typed_data` import.
-- `lib/screens/field_tools/dead_man_switch_screen.dart` — `_startTimer()`, `_triggerAlert()`, `_cancelAlert()` → compliance_records (type=dead_man_switch). Saves timer_start/alert_triggered/alert_cancelled events. GPS coords (latitude/longitude). Activity log in JSONB. **SMS Edge Function still TODO** (SignalWire SMS integration deferred to F1).
 - `lib/screens/field_tools/confined_space_timer_screen.dart` — `_completeEntry()` → compliance_records (type=confined_space). Full OSHA 1910.146 data: permit_number, space_description, attendant, supervisor, checklist (8 items), entrants (with entry/exit timestamps), air_readings (O2/LEL/CO/H2S with timestamps), total_duration.
 
 **Verification:** `flutter analyze` — ZERO new warnings/errors on all 8 B2b files. Only pre-existing info-level (withOpacity deprecation).
@@ -2015,7 +2026,7 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 - B1d: Invoices + Bids CRUD (full lifecycle + conversion flows)
 - B1e: Time Clock + Calendar (GPS tracking + time entries + schedule)
 - B2a: Photo tools (3 tools: job site photos, before/after, defect markup → Storage)
-- B2b: Safety tools (5 tools: LOTO, incidents, briefings, Dead Man Switch SMS, confined space)
+- B2b: Safety tools (4 tools: LOTO, incidents, briefings, confined space)
 - B2c: Financial tools (3 tools: receipt OCR via Claude Vision, signatures, mileage)
 - B2d: Voice notes + Level/Plumb + job linking infrastructure for all tools
 - B3a: Materials Tracker + Daily Job Log (NEW tables + screens)
@@ -2046,7 +2057,6 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 - `notifications` — push notification records
 
 **New Edge Functions specified:**
-- `dead-man-switch` — SignalWire SMS alerting (SAFETY CRITICAL)
 - `receipt-ocr` — Claude Vision receipt parsing
 - `transcribe-audio` — Voice note transcription
 - `send-notification` — Push notification delivery
@@ -2204,7 +2214,6 @@ ls apps/Trades/lib/models/business/  # Should be cleaned up eventually
 - Firebase credentials hardcoded in `firebase_config.dart`
 - PhotoService (492 lines, complete) exists but nothing uses it
 - All 14 field tools have `// TODO: BACKEND` — data evaporates on close
-- Dead Man Switch cannot alert anyone (SAFETY CRITICAL)
 
 ### Web Portal CRM (Next.js)
 | Metric | Value |

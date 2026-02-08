@@ -1,12 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Plus,
-  Search,
-  Filter,
-  MoreHorizontal,
   Package,
   Truck,
   CheckCircle,
@@ -15,14 +11,13 @@ import {
   FileText,
   Download,
   Send,
-  Eye,
-  Trash2,
   Building,
   DollarSign,
-  Calendar,
   ChevronDown,
   ChevronUp,
   X,
+  MoreHorizontal,
+  ClipboardList,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -30,171 +25,153 @@ import { StatusBadge, Badge } from '@/components/ui/badge';
 import { SearchInput, Select, Input } from '@/components/ui/input';
 import { CommandPalette } from '@/components/command-palette';
 import { formatCurrency, formatDate, cn } from '@/lib/utils';
+import { getSupabase } from '@/lib/supabase';
+import { useProcurement, type POLineItem, type ReceivingRecord } from '@/lib/hooks/use-procurement';
 
-type POStatus = 'draft' | 'sent' | 'confirmed' | 'partial' | 'received' | 'cancelled';
+// ============================================================
+// Types for purchase_orders table (fetched directly)
+// ============================================================
 
-interface POLineItem {
+interface PurchaseOrderData {
   id: string;
-  description: string;
-  sku?: string;
-  quantity: number;
-  unitCost: number;
-  total: number;
-  receivedQty: number;
-}
-
-interface PurchaseOrder {
-  id: string;
+  companyId: string;
   poNumber: string;
-  vendorId: string;
+  vendorId: string | null;
   vendorName: string;
-  jobId?: string;
-  jobName?: string;
-  status: POStatus;
-  lineItems: POLineItem[];
+  jobId: string | null;
+  jobTitle: string;
+  status: string;
   subtotal: number;
-  tax: number;
-  shipping: number;
-  total: number;
-  notes?: string;
-  expectedDate?: Date;
-  createdAt: Date;
-  updatedAt: Date;
-  sentAt?: Date;
-  receivedAt?: Date;
+  taxAmount: number;
+  shippingAmount: number;
+  totalAmount: number;
+  notes: string | null;
+  expectedDeliveryDate: string | null;
+  createdAt: string;
+  updatedAt: string;
+  sentAt: string | null;
+  receivedAt: string | null;
 }
 
-const statusConfig: Record<POStatus, { label: string; color: string }> = {
-  draft: { label: 'Draft', color: 'default' },
-  sent: { label: 'Sent', color: 'info' },
-  confirmed: { label: 'Confirmed', color: 'purple' },
-  partial: { label: 'Partial', color: 'warning' },
-  received: { label: 'Received', color: 'success' },
-  cancelled: { label: 'Cancelled', color: 'error' },
+function mapPurchaseOrder(row: Record<string, unknown>): PurchaseOrderData {
+  const vendor = row.vendor_directory as Record<string, unknown> | null;
+  const job = row.jobs as Record<string, unknown> | null;
+  return {
+    id: row.id as string,
+    companyId: row.company_id as string,
+    poNumber: (row.po_number as string) || '',
+    vendorId: row.vendor_id as string | null,
+    vendorName: (vendor?.name as string) || 'Unknown Vendor',
+    jobId: row.job_id as string | null,
+    jobTitle: (job?.title as string) || '',
+    status: (row.status as string) || 'draft',
+    subtotal: (row.subtotal as number) || 0,
+    taxAmount: (row.tax_amount as number) || 0,
+    shippingAmount: (row.shipping_amount as number) || 0,
+    totalAmount: (row.total_amount as number) || 0,
+    notes: row.notes as string | null,
+    expectedDeliveryDate: row.expected_delivery_date as string | null,
+    createdAt: row.created_at as string,
+    updatedAt: row.updated_at as string,
+    sentAt: row.sent_at as string | null,
+    receivedAt: row.received_at as string | null,
+  };
+}
+
+const statusConfig: Record<string, { label: string; variant: string }> = {
+  draft: { label: 'Draft', variant: 'default' },
+  sent: { label: 'Sent', variant: 'info' },
+  confirmed: { label: 'Confirmed', variant: 'purple' },
+  partial: { label: 'Partial', variant: 'warning' },
+  received: { label: 'Received', variant: 'success' },
+  cancelled: { label: 'Cancelled', variant: 'error' },
 };
 
-const mockPurchaseOrders: PurchaseOrder[] = [
-  {
-    id: '1',
-    poNumber: 'PO-2024-001',
-    vendorId: 'v1',
-    vendorName: 'Electrical Supply Co.',
-    jobId: 'j1',
-    jobName: 'Panel Upgrade - Martinez',
-    status: 'sent',
-    lineItems: [
-      { id: 'li1', description: '200A Main Breaker Panel', sku: 'MBP-200', quantity: 1, unitCost: 180, total: 180, receivedQty: 0 },
-      { id: 'li2', description: '20A Single Pole Breaker', sku: 'SPB-20', quantity: 10, unitCost: 8, total: 80, receivedQty: 0 },
-      { id: 'li3', description: '12/2 Romex Wire (250ft)', sku: 'RMX-12-250', quantity: 2, unitCost: 95, total: 190, receivedQty: 0 },
-    ],
-    subtotal: 450,
-    tax: 28.35,
-    shipping: 0,
-    total: 478.35,
-    expectedDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
-    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-    updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
-    sentAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
-  },
-  {
-    id: '2',
-    poNumber: 'PO-2024-002',
-    vendorId: 'v2',
-    vendorName: 'Plumbing Wholesale',
-    jobId: 'j2',
-    jobName: 'Bathroom Remodel - Chen',
-    status: 'partial',
-    lineItems: [
-      { id: 'li4', description: '50 Gallon Water Heater', sku: 'WH-50G', quantity: 1, unitCost: 450, total: 450, receivedQty: 1 },
-      { id: 'li5', description: '3/4" Copper Pipe (10ft)', sku: 'CP-34-10', quantity: 5, unitCost: 25, total: 125, receivedQty: 5 },
-      { id: 'li6', description: 'SharkBite Fittings Assortment', sku: 'SB-ASST', quantity: 1, unitCost: 85, total: 85, receivedQty: 0 },
-    ],
-    subtotal: 660,
-    tax: 41.58,
-    shipping: 25,
-    total: 726.58,
-    expectedDate: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
-    createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
-    updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
-    sentAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
-  },
-  {
-    id: '3',
-    poNumber: 'PO-2024-003',
-    vendorId: 'v1',
-    vendorName: 'Electrical Supply Co.',
-    status: 'draft',
-    lineItems: [
-      { id: 'li7', description: 'LED Recessed Light 6"', sku: 'LED-RC-6', quantity: 12, unitCost: 18, total: 216, receivedQty: 0 },
-      { id: 'li8', description: 'Dimmer Switch', sku: 'DIM-SW', quantity: 3, unitCost: 35, total: 105, receivedQty: 0 },
-    ],
-    subtotal: 321,
-    tax: 20.22,
-    shipping: 0,
-    total: 341.22,
-    notes: 'For kitchen lighting project',
-    createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
-    updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
-  },
-  {
-    id: '4',
-    poNumber: 'PO-2024-004',
-    vendorId: 'v3',
-    vendorName: 'HVAC Distributors Inc.',
-    jobId: 'j3',
-    jobName: 'AC Install - Thompson',
-    status: 'received',
-    lineItems: [
-      { id: 'li9', description: '3 Ton AC Condenser', sku: 'AC-3T', quantity: 1, unitCost: 1800, total: 1800, receivedQty: 1 },
-      { id: 'li10', description: 'Evaporator Coil', sku: 'EC-3T', quantity: 1, unitCost: 650, total: 650, receivedQty: 1 },
-      { id: 'li11', description: 'Line Set 25ft', sku: 'LS-25', quantity: 1, unitCost: 120, total: 120, receivedQty: 1 },
-    ],
-    subtotal: 2570,
-    tax: 161.91,
-    shipping: 75,
-    total: 2806.91,
-    createdAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
-    updatedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-    sentAt: new Date(Date.now() - 13 * 24 * 60 * 60 * 1000),
-    receivedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-  },
+const statusOptions = [
+  { value: 'all', label: 'All Statuses' },
+  { value: 'draft', label: 'Draft' },
+  { value: 'sent', label: 'Sent' },
+  { value: 'confirmed', label: 'Confirmed' },
+  { value: 'partial', label: 'Partial' },
+  { value: 'received', label: 'Received' },
+  { value: 'cancelled', label: 'Cancelled' },
 ];
 
 export default function PurchaseOrdersPage() {
-  const router = useRouter();
+  const [purchaseOrders, setPurchaseOrders] = useState<PurchaseOrderData[]>([]);
+  const [poLoading, setPOLoading] = useState(true);
+  const [poError, setPOError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [showNewPOModal, setShowNewPOModal] = useState(false);
   const [expandedPO, setExpandedPO] = useState<string | null>(null);
+  const [showNewPOModal, setShowNewPOModal] = useState(false);
 
-  const filteredPOs = mockPurchaseOrders.filter((po) => {
-    const matchesSearch =
-      po.poNumber.toLowerCase().includes(search.toLowerCase()) ||
-      po.vendorName.toLowerCase().includes(search.toLowerCase()) ||
-      po.jobName?.toLowerCase().includes(search.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || po.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
+  const { lineItems, receivingRecords, getLineItemsForPO, getReceivingForPO, loading: procLoading } = useProcurement();
 
-  const statusOptions = [
-    { value: 'all', label: 'All Statuses' },
-    { value: 'draft', label: 'Draft' },
-    { value: 'sent', label: 'Sent' },
-    { value: 'confirmed', label: 'Confirmed' },
-    { value: 'partial', label: 'Partial' },
-    { value: 'received', label: 'Received' },
-    { value: 'cancelled', label: 'Cancelled' },
-  ];
+  const fetchPurchaseOrders = useCallback(async () => {
+    try {
+      setPOLoading(true);
+      setPOError(null);
+      const supabase = getSupabase();
+      const { data, error: err } = await supabase
+        .from('purchase_orders')
+        .select('*, vendor_directory(name), jobs(title)')
+        .order('created_at', { ascending: false });
+
+      if (err) throw err;
+      setPurchaseOrders((data || []).map((r: Record<string, unknown>) => mapPurchaseOrder(r)));
+    } catch (e: unknown) {
+      setPOError(e instanceof Error ? e.message : 'Failed to load purchase orders');
+    } finally {
+      setPOLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchPurchaseOrders();
+
+    const supabase = getSupabase();
+    const channel = supabase
+      .channel('purchase-orders-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'purchase_orders' }, () => {
+        fetchPurchaseOrders();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [fetchPurchaseOrders]);
+
+  const filteredPOs = useMemo(() => {
+    return purchaseOrders.filter((po) => {
+      const matchesSearch =
+        po.poNumber.toLowerCase().includes(search.toLowerCase()) ||
+        po.vendorName.toLowerCase().includes(search.toLowerCase()) ||
+        po.jobTitle.toLowerCase().includes(search.toLowerCase());
+      const matchesStatus = statusFilter === 'all' || po.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
+  }, [purchaseOrders, search, statusFilter]);
 
   // Stats
-  const draftCount = mockPurchaseOrders.filter((po) => po.status === 'draft').length;
-  const pendingCount = mockPurchaseOrders.filter((po) => ['sent', 'confirmed', 'partial'].includes(po.status)).length;
-  const pendingValue = mockPurchaseOrders
-    .filter((po) => ['sent', 'confirmed', 'partial'].includes(po.status))
-    .reduce((sum, po) => sum + po.total, 0);
-  const thisMonthTotal = mockPurchaseOrders
+  const totalPOs = purchaseOrders.length;
+  const pendingPOs = purchaseOrders.filter((po) => ['sent', 'confirmed', 'partial'].includes(po.status));
+  const pendingValue = pendingPOs.reduce((sum, po) => sum + po.totalAmount, 0);
+  const receivedValue = purchaseOrders
     .filter((po) => po.status === 'received')
-    .reduce((sum, po) => sum + po.total, 0);
+    .reduce((sum, po) => sum + po.totalAmount, 0);
+  const openOrders = purchaseOrders.filter((po) => !['received', 'cancelled'].includes(po.status)).length;
+
+  const loading = poLoading || procLoading;
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -221,8 +198,8 @@ export default function PurchaseOrdersPage() {
                 <FileText size={20} className="text-slate-600 dark:text-slate-400" />
               </div>
               <div>
-                <p className="text-2xl font-semibold text-main">{draftCount}</p>
-                <p className="text-sm text-muted">Drafts</p>
+                <p className="text-2xl font-semibold text-main">{totalPOs}</p>
+                <p className="text-sm text-muted">Total POs</p>
               </div>
             </div>
           </CardContent>
@@ -234,21 +211,8 @@ export default function PurchaseOrdersPage() {
                 <Truck size={20} className="text-amber-600 dark:text-amber-400" />
               </div>
               <div>
-                <p className="text-2xl font-semibold text-main">{pendingCount}</p>
-                <p className="text-sm text-muted">Pending Delivery</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                <DollarSign size={20} className="text-blue-600 dark:text-blue-400" />
-              </div>
-              <div>
-                <p className="text-2xl font-semibold text-main">{formatCurrency(pendingValue)}</p>
-                <p className="text-sm text-muted">Pending Value</p>
+                <p className="text-2xl font-semibold text-main">{pendingPOs.length}</p>
+                <p className="text-sm text-muted">Pending</p>
               </div>
             </div>
           </CardContent>
@@ -260,8 +224,21 @@ export default function PurchaseOrdersPage() {
                 <CheckCircle size={20} className="text-emerald-600 dark:text-emerald-400" />
               </div>
               <div>
-                <p className="text-2xl font-semibold text-main">{formatCurrency(thisMonthTotal)}</p>
-                <p className="text-sm text-muted">Received This Month</p>
+                <p className="text-2xl font-semibold text-main">{formatCurrency(receivedValue)}</p>
+                <p className="text-sm text-muted">Received Value</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                <ClipboardList size={20} className="text-blue-600 dark:text-blue-400" />
+              </div>
+              <div>
+                <p className="text-2xl font-semibold text-main">{openOrders}</p>
+                <p className="text-sm text-muted">Open Orders</p>
               </div>
             </div>
           </CardContent>
@@ -287,7 +264,12 @@ export default function PurchaseOrdersPage() {
       {/* Purchase Orders List */}
       <Card>
         <CardContent className="p-0">
-          {filteredPOs.length === 0 ? (
+          {poError ? (
+            <div className="py-12 text-center">
+              <p className="text-red-500 mb-2">{poError}</p>
+              <Button variant="secondary" size="sm" onClick={fetchPurchaseOrders}>Retry</Button>
+            </div>
+          ) : filteredPOs.length === 0 ? (
             <div className="py-12 text-center text-muted">
               <Package size={40} className="mx-auto mb-2 opacity-50" />
               <p>No purchase orders found</p>
@@ -298,6 +280,8 @@ export default function PurchaseOrdersPage() {
                 <PORow
                   key={po.id}
                   po={po}
+                  lineItems={getLineItemsForPO(po.id)}
+                  receivingRecords={getReceivingForPO(po.id)}
                   isExpanded={expandedPO === po.id}
                   onToggle={() => setExpandedPO(expandedPO === po.id ? null : po.id)}
                 />
@@ -315,9 +299,24 @@ export default function PurchaseOrdersPage() {
   );
 }
 
-function PORow({ po, isExpanded, onToggle }: { po: PurchaseOrder; isExpanded: boolean; onToggle: () => void }) {
-  const config = statusConfig[po.status];
-  const isOverdue = po.expectedDate && new Date(po.expectedDate) < new Date() && !['received', 'cancelled'].includes(po.status);
+function PORow({
+  po,
+  lineItems,
+  receivingRecords,
+  isExpanded,
+  onToggle,
+}: {
+  po: PurchaseOrderData;
+  lineItems: POLineItem[];
+  receivingRecords: ReceivingRecord[];
+  isExpanded: boolean;
+  onToggle: () => void;
+}) {
+  const config = statusConfig[po.status] || statusConfig.draft;
+  const isOverdue =
+    po.expectedDeliveryDate &&
+    new Date(po.expectedDeliveryDate) < new Date() &&
+    !['received', 'cancelled'].includes(po.status);
 
   return (
     <div>
@@ -336,7 +335,7 @@ function PORow({ po, isExpanded, onToggle }: { po: PurchaseOrder; isExpanded: bo
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-3">
               <span className="font-mono font-medium text-main">{po.poNumber}</span>
-              <StatusBadge status={config.label.toLowerCase() as any} />
+              <StatusBadge status={po.status} />
               {isOverdue && (
                 <Badge variant="error" size="sm">
                   <AlertCircle size={12} />
@@ -349,18 +348,23 @@ function PORow({ po, isExpanded, onToggle }: { po: PurchaseOrder; isExpanded: bo
                 <Building size={14} />
                 {po.vendorName}
               </span>
-              {po.jobName && (
+              {po.jobTitle && (
                 <span className="flex items-center gap-1">
                   <Package size={14} />
-                  {po.jobName}
+                  {po.jobTitle}
+                </span>
+              )}
+              {lineItems.length > 0 && (
+                <span className="text-xs">
+                  {lineItems.length} item{lineItems.length !== 1 ? 's' : ''}
                 </span>
               )}
             </div>
           </div>
           <div className="text-right">
-            <p className="font-semibold text-main">{formatCurrency(po.total)}</p>
+            <p className="font-semibold text-main">{formatCurrency(po.totalAmount)}</p>
             <p className="text-sm text-muted">
-              {po.expectedDate ? `Expected ${formatDate(po.expectedDate)}` : 'No date set'}
+              {po.expectedDeliveryDate ? `Expected ${formatDate(po.expectedDeliveryDate)}` : 'No date set'}
             </p>
           </div>
           <div className="flex items-center gap-1">
@@ -379,40 +383,84 @@ function PORow({ po, isExpanded, onToggle }: { po: PurchaseOrder; isExpanded: bo
         <div className="px-6 pb-4 bg-secondary/30">
           <div className="ml-8 border-l-2 border-main pl-6 py-4">
             {/* Line Items */}
-            <table className="w-full mb-4">
-              <thead>
-                <tr className="text-left text-sm text-muted border-b border-main">
-                  <th className="pb-2 font-medium">Item</th>
-                  <th className="pb-2 font-medium">SKU</th>
-                  <th className="pb-2 font-medium text-right">Qty</th>
-                  <th className="pb-2 font-medium text-right">Received</th>
-                  <th className="pb-2 font-medium text-right">Unit Cost</th>
-                  <th className="pb-2 font-medium text-right">Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                {po.lineItems.map((item) => (
-                  <tr key={item.id} className="border-b border-main/50">
-                    <td className="py-2 text-main">{item.description}</td>
-                    <td className="py-2 text-muted text-sm">{item.sku || '-'}</td>
-                    <td className="py-2 text-right text-main">{item.quantity}</td>
-                    <td className="py-2 text-right">
-                      <span className={cn(
-                        'font-medium',
-                        item.receivedQty === item.quantity ? 'text-emerald-600' :
-                        item.receivedQty > 0 ? 'text-amber-600' : 'text-muted'
-                      )}>
-                        {item.receivedQty}
-                      </span>
-                    </td>
-                    <td className="py-2 text-right text-muted">{formatCurrency(item.unitCost)}</td>
-                    <td className="py-2 text-right font-medium text-main">{formatCurrency(item.total)}</td>
+            {lineItems.length > 0 ? (
+              <table className="w-full mb-4">
+                <thead>
+                  <tr className="text-left text-sm text-muted border-b border-main">
+                    <th className="pb-2 font-medium">Item</th>
+                    <th className="pb-2 font-medium text-right">Qty</th>
+                    <th className="pb-2 font-medium text-right">Received</th>
+                    <th className="pb-2 font-medium text-right">Unit Price</th>
+                    <th className="pb-2 font-medium text-right">Total</th>
+                    <th className="pb-2 font-medium">Status</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {lineItems.map((item) => (
+                    <tr key={item.id} className="border-b border-main/50">
+                      <td className="py-2 text-main">{item.itemDescription}</td>
+                      <td className="py-2 text-right text-main">
+                        {item.quantity}{item.unit ? ` ${item.unit}` : ''}
+                      </td>
+                      <td className="py-2 text-right">
+                        <span className={cn(
+                          'font-medium',
+                          item.receivedQuantity === item.quantity ? 'text-emerald-600' :
+                          item.receivedQuantity > 0 ? 'text-amber-600' : 'text-muted'
+                        )}>
+                          {item.receivedQuantity}
+                        </span>
+                      </td>
+                      <td className="py-2 text-right text-muted">{formatCurrency(item.unitPrice)}</td>
+                      <td className="py-2 text-right font-medium text-main">{formatCurrency(item.totalPrice)}</td>
+                      <td className="py-2">
+                        <Badge
+                          variant={
+                            item.status === 'received' ? 'success' :
+                            item.status === 'partial' ? 'warning' :
+                            item.status === 'cancelled' ? 'error' : 'default'
+                          }
+                          size="sm"
+                        >
+                          {item.status}
+                        </Badge>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <p className="text-sm text-muted mb-4">No line items recorded</p>
+            )}
 
-            {/* Totals */}
+            {/* Receiving Records */}
+            {receivingRecords.length > 0 && (
+              <div className="mb-4">
+                <p className="text-sm font-medium text-main mb-2">Receiving History</p>
+                <div className="space-y-2">
+                  {receivingRecords.map((rec) => (
+                    <div key={rec.id} className="flex items-center gap-3 text-sm p-2 bg-surface rounded-lg">
+                      <Truck size={16} className="text-muted" />
+                      <span className="text-main">{formatDate(rec.receivedAt)}</span>
+                      {rec.deliveryMethod && (
+                        <Badge variant="secondary" size="sm">{rec.deliveryMethod}</Badge>
+                      )}
+                      {rec.trackingNumber && (
+                        <span className="text-xs text-muted">#{rec.trackingNumber}</span>
+                      )}
+                      <span className="text-xs text-muted">
+                        {rec.items.length} item{rec.items.length !== 1 ? 's' : ''} received
+                      </span>
+                      {rec.allItemsReceived && (
+                        <Badge variant="success" size="sm">Complete</Badge>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Actions + Totals */}
             <div className="flex justify-between items-start">
               <div className="flex gap-2">
                 {po.status === 'draft' && (
@@ -439,17 +487,17 @@ function PORow({ po, isExpanded, onToggle }: { po: PurchaseOrder; isExpanded: bo
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted">Tax</span>
-                  <span className="text-main">{formatCurrency(po.tax)}</span>
+                  <span className="text-main">{formatCurrency(po.taxAmount)}</span>
                 </div>
-                {po.shipping > 0 && (
+                {po.shippingAmount > 0 && (
                   <div className="flex justify-between">
                     <span className="text-muted">Shipping</span>
-                    <span className="text-main">{formatCurrency(po.shipping)}</span>
+                    <span className="text-main">{formatCurrency(po.shippingAmount)}</span>
                   </div>
                 )}
                 <div className="flex justify-between font-semibold pt-1 border-t border-main">
                   <span>Total</span>
-                  <span>{formatCurrency(po.total)}</span>
+                  <span>{formatCurrency(po.totalAmount)}</span>
                 </div>
               </div>
             </div>
@@ -461,21 +509,36 @@ function PORow({ po, isExpanded, onToggle }: { po: PurchaseOrder; isExpanded: bo
 }
 
 function NewPOModal({ onClose }: { onClose: () => void }) {
-  const [vendor, setVendor] = useState('');
-  const [job, setJob] = useState('');
+  const { vendors } = useProcurement();
+  const [vendorId, setVendorId] = useState('');
+  const [jobId, setJobId] = useState('');
+  const [jobs, setJobs] = useState<{ id: string; title: string }[]>([]);
 
-  const vendors = [
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const supabase = getSupabase();
+        const { data } = await supabase
+          .from('jobs')
+          .select('id, title')
+          .is('deleted_at', null)
+          .order('title');
+        setJobs((data || []) as { id: string; title: string }[]);
+      } catch {
+        // Ignore fetch error for jobs dropdown
+      }
+    };
+    fetchJobs();
+  }, []);
+
+  const vendorOptions = [
     { value: '', label: 'Select Vendor' },
-    { value: 'v1', label: 'Electrical Supply Co.' },
-    { value: 'v2', label: 'Plumbing Wholesale' },
-    { value: 'v3', label: 'HVAC Distributors Inc.' },
+    ...vendors.filter((v) => v.isActive).map((v) => ({ value: v.id, label: v.name })),
   ];
 
-  const jobs = [
+  const jobOptions = [
     { value: '', label: 'No Job (Stock Order)' },
-    { value: 'j1', label: 'Panel Upgrade - Martinez' },
-    { value: 'j2', label: 'Bathroom Remodel - Chen' },
-    { value: 'j3', label: 'AC Install - Thompson' },
+    ...jobs.map((j) => ({ value: j.id, label: j.title })),
   ];
 
   return (
@@ -492,15 +555,15 @@ function NewPOModal({ onClose }: { onClose: () => void }) {
         <CardContent className="space-y-4">
           <Select
             label="Vendor *"
-            options={vendors}
-            value={vendor}
-            onChange={(e) => setVendor(e.target.value)}
+            options={vendorOptions}
+            value={vendorId}
+            onChange={(e) => setVendorId(e.target.value)}
           />
           <Select
             label="Link to Job (Optional)"
-            options={jobs}
-            value={job}
-            onChange={(e) => setJob(e.target.value)}
+            options={jobOptions}
+            value={jobId}
+            onChange={(e) => setJobId(e.target.value)}
           />
           <div>
             <label className="block text-sm font-medium text-main mb-1.5">Expected Delivery Date</label>
@@ -513,7 +576,7 @@ function NewPOModal({ onClose }: { onClose: () => void }) {
             <Button variant="secondary" className="flex-1" onClick={onClose}>
               Cancel
             </Button>
-            <Button className="flex-1">
+            <Button className="flex-1" disabled={!vendorId}>
               <Plus size={16} />
               Create PO
             </Button>

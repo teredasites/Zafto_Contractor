@@ -196,7 +196,6 @@ class _NotificationTile extends ConsumerWidget {
       NotificationType.timeEntryApproved => LucideIcons.clock,
       NotificationType.timeEntryRejected => LucideIcons.clock4,
       NotificationType.customerMessage => LucideIcons.messageSquare,
-      NotificationType.deadManSwitch => LucideIcons.alertTriangle,
       NotificationType.system => LucideIcons.bell,
     };
   }
@@ -212,7 +211,6 @@ class _NotificationTile extends ConsumerWidget {
       NotificationType.timeEntryApproved => colors.accentInfo as Color,
       NotificationType.timeEntryRejected => colors.accentWarning as Color,
       NotificationType.customerMessage => colors.accentPrimary as Color,
-      NotificationType.deadManSwitch => colors.accentError as Color,
       NotificationType.system => colors.textTertiary as Color,
     };
   }

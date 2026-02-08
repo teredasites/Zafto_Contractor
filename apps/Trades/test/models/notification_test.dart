@@ -30,7 +30,7 @@ void main() {
     // fromString
     // ================================================================
     group('fromString', () {
-      test('parses all 11 types correctly', () {
+      test('parses all 10 types correctly', () {
         final expectedMappings = {
           'job_assigned': NotificationType.jobAssigned,
           'invoice_paid': NotificationType.invoicePaid,
@@ -41,7 +41,6 @@ void main() {
           'time_entry_approved': NotificationType.timeEntryApproved,
           'time_entry_rejected': NotificationType.timeEntryRejected,
           'customer_message': NotificationType.customerMessage,
-          'dead_man_switch': NotificationType.deadManSwitch,
           'system': NotificationType.system,
         };
 
@@ -80,7 +79,6 @@ void main() {
           NotificationType.timeEntryApproved: 'time_entry_approved',
           NotificationType.timeEntryRejected: 'time_entry_rejected',
           NotificationType.customerMessage: 'customer_message',
-          NotificationType.deadManSwitch: 'dead_man_switch',
           NotificationType.system: 'system',
         };
 

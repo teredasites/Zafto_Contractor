@@ -1,14 +1,13 @@
 // ZAFTO Compliance Record Model — Supabase Backend
 // Maps to `compliance_records` table in Supabase PostgreSQL.
 // Stores safety briefings, incident reports, LOTO logs, confined space entries,
-// dead man switch events, and inspections.
+// and inspections.
 
 enum ComplianceRecordType {
   safetyBriefing,
   incidentReport,
   loto,
   confinedSpace,
-  deadManSwitch,
   inspection,
   formSubmission;
 
@@ -22,8 +21,6 @@ enum ComplianceRecordType {
         return 'loto';
       case ComplianceRecordType.confinedSpace:
         return 'confined_space';
-      case ComplianceRecordType.deadManSwitch:
-        return 'dead_man_switch';
       case ComplianceRecordType.inspection:
         return 'inspection';
       case ComplianceRecordType.formSubmission:
@@ -41,8 +38,6 @@ enum ComplianceRecordType {
         return 'LOTO';
       case ComplianceRecordType.confinedSpace:
         return 'Confined Space';
-      case ComplianceRecordType.deadManSwitch:
-        return 'Dead Man Switch';
       case ComplianceRecordType.inspection:
         return 'Inspection';
       case ComplianceRecordType.formSubmission:
@@ -61,8 +56,6 @@ enum ComplianceRecordType {
         return ComplianceRecordType.loto;
       case 'confined_space':
         return ComplianceRecordType.confinedSpace;
-      case 'dead_man_switch':
-        return ComplianceRecordType.deadManSwitch;
       case 'inspection':
         return ComplianceRecordType.inspection;
       case 'form_submission':
@@ -169,7 +162,6 @@ class ComplianceRecord {
   bool get isIncident =>
       recordType == ComplianceRecordType.incidentReport;
   bool get isSafetyCritical =>
-      recordType == ComplianceRecordType.deadManSwitch ||
       (isIncident && (severity == 'serious' || severity == 'critical'));
 
   static List<Map<String, dynamic>> _parseAttachments(dynamic value) {

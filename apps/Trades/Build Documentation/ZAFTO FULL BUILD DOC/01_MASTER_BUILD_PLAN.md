@@ -70,7 +70,7 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | What | Built | Wired | End-to-End |
 |------|:-----:|:-----:|:----------:|
 | Mobile App (R1 remake — 33 role screens) | YES | YES | YES (Supabase) |
-| Mobile Field Tools (19 total) | YES | YES (B2+B3) | YES (all 19 wired) |
+| Mobile Field Tools (18 total) | YES | YES (B2+B3) | YES (all 18 wired) |
 | Web CRM (71 routes) | YES | YES (39+ hooks) | YES (Supabase) |
 | Client Portal (29 routes) | YES | YES (11 hooks) | YES (Supabase) |
 | Employee Field Portal (25 routes) | YES | YES (14 hooks) | YES (Supabase) |
@@ -172,7 +172,7 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 |---|------|:-----:|---------|
 | F1 | Phone System (SignalWire) | ~40-55 | Business phone, AI receptionist, SMS, **fax send/receive**, call recording, E2E encryption. SignalWire SWML AI agent framework. |
 | F3 | Meeting Room System (LiveKit) | ~70 | Context-aware video (knows job/estimate/customer), 6 meeting types, freeze-frame annotate, AI transcription, booking, async video. |
-| F4 | Mobile Field Toolkit + Sketch/Bid | ~120-140 | 25 tools (walkie-talkie/PTT, restoration, inspections). **Sketch + Bid Flow** (room photos → dimensions → AI code suggestion → price book → bid PDF/ESX). **OSHA API** (free — safety standards, compliance auto-populate). R1c/R1e deferred items. |
+| F4 | Mobile Field Toolkit + Sketch/Bid | ~120-140 | 24 tools (walkie-talkie/PTT, restoration, inspections). **Sketch + Bid Flow** (room photos → dimensions → AI code suggestion → price book → bid PDF/ESX). **OSHA API** (free — safety standards, compliance auto-populate). R1c/R1e deferred items. |
 | F5 | Business OS + Lead Aggregation | ~180+ | 9 systems (CPA Portal, Payroll, Fleet, Route, Procurement, HR, Email, Phone, Docs). **Lead API aggregation** (Google Business Profile, Google LSA, Meta/Facebook, Nextdoor, Yelp, BuildZoom — all free). Single inbox for all lead sources. |
 | F6 | Marketplace | ~80-120 | Equipment AI diagnostics, pre-qualified lead gen, contractor bidding. Camera scan → AI model identification → contractor match. |
 | F7 | ZAFTO Home Platform | ~140-180 | Homeowner property intelligence. Free: equipment passport, service history, docs. Premium ($7.99/mo): AI advisor, predictive maintenance, contractor matching. R1f deferred items. |
@@ -237,7 +237,6 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | 7 | Incident Report | UI only, fake submit | B2 |
 | 8 | Safety Briefing | UI only, no records | B2 |
 | 9 | Sun Position | Standalone utility (OK) | — |
-| 10 | Dead Man Switch | **SAFETY CRITICAL — cannot alert anyone** | B2 |
 | 11 | Confined Space Timer | UI only, no OSHA logging | B2 |
 | 12 | Client Signature | UI only, fake save | B2 |
 | 13 | Receipt Scanner | UI only, fake OCR | B2 |
@@ -310,7 +309,7 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | Phone System (SignalWire VoIP/SMS/Fax) | Expansion/31 | ~40-55 | F1 |
 | Website Builder V2 | Expansion/28 | TBD | F2 |
 | Meeting Room System | Expansion/42 | ~55-70 | F3 |
-| Mobile Field Toolkit (25 tools) | Expansion/43 | ~89-107 | F4 |
+| Mobile Field Toolkit (24 tools) | Expansion/43 | ~89-107 | F4 |
 | Business OS Expansion (9 systems) | Expansion/27 | TBD | F5 |
 | Marketplace | Expansion/33 | TBD | F6 |
 | ZAFTO Home Platform | Expansion/16 | TBD | F7 |

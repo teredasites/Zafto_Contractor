@@ -51,6 +51,20 @@ import {
   Umbrella,
   TrendingUp,
   Menu,
+  Phone,
+  Printer,
+  Video,
+  Droplets,
+  Wind,
+  PenTool,
+  Ruler,
+  MapPin,
+  Car,
+  Banknote as BanknoteIcon,
+  UserCog,
+  Mail,
+  Truck,
+  GraduationCap,
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { ZMark } from '@/components/z-console/z-mark';
@@ -93,7 +107,10 @@ const navigationGroups: NavGroup[] = [
     railIcon: Calendar,
     items: [
       { name: 'Calendar', href: '/dashboard/calendar', icon: Calendar },
+      { name: 'Meetings', href: '/dashboard/meetings', icon: Video },
       { name: 'Inspections', href: '/dashboard/inspections', icon: ClipboardCheck },
+      { name: 'Inspection Engine', href: '/dashboard/inspection-engine', icon: Shield },
+      { name: 'OSHA Standards', href: '/dashboard/osha-standards', icon: FileCheck2 },
       { name: 'Permits', href: '/dashboard/permits', icon: FileCheck2 },
       { name: 'Time Clock', href: '/dashboard/time-clock', icon: Clock, permission: PERMISSIONS.TIMECLOCK_VIEW_ALL },
     ],
@@ -105,6 +122,10 @@ const navigationGroups: NavGroup[] = [
     items: [
       { name: 'Customers', href: '/dashboard/customers', icon: Users },
       { name: 'Communications', href: '/dashboard/communications', icon: MessageSquare },
+      { name: 'Team Chat', href: '/dashboard/team-chat', icon: MessageSquare },
+      { name: 'Phone', href: '/dashboard/phone', icon: Phone },
+      { name: 'Messages', href: '/dashboard/phone/sms', icon: MessageSquare },
+      { name: 'Fax', href: '/dashboard/phone/fax', icon: Printer },
       { name: 'Service Agreements', href: '/dashboard/service-agreements', icon: Handshake },
       { name: 'Warranties', href: '/dashboard/warranties', icon: Shield },
     ],
@@ -115,6 +136,10 @@ const navigationGroups: NavGroup[] = [
     railIcon: Umbrella,
     items: [
       { name: 'Claims', href: '/dashboard/insurance', icon: Umbrella },
+      { name: 'Moisture Readings', href: '/dashboard/moisture-readings', icon: Droplets },
+      { name: 'Drying Logs', href: '/dashboard/drying-logs', icon: Wind },
+      { name: 'Site Surveys', href: '/dashboard/site-surveys', icon: MapPin },
+      { name: 'Sketch + Bid', href: '/dashboard/sketch-bid', icon: PenTool },
     ],
   },
   {
@@ -128,6 +153,12 @@ const navigationGroups: NavGroup[] = [
       { name: 'Inventory', href: '/dashboard/inventory', icon: Package },
       { name: 'Vendors', href: '/dashboard/vendors', icon: Store },
       { name: 'Purchase Orders', href: '/dashboard/purchase-orders', icon: ShoppingCart },
+      { name: 'Fleet', href: '/dashboard/fleet', icon: Truck },
+      { name: 'HR', href: '/dashboard/hr', icon: UserCog },
+      { name: 'Payroll', href: '/dashboard/payroll', icon: BanknoteIcon, permission: PERMISSIONS.FINANCIALS_VIEW },
+      { name: 'Training', href: '/dashboard/hr', icon: GraduationCap },
+      { name: 'Hiring', href: '/dashboard/hiring', icon: UserCog },
+      { name: 'Marketplace', href: '/dashboard/marketplace', icon: Store },
     ],
   },
   {
@@ -137,11 +168,13 @@ const navigationGroups: NavGroup[] = [
     items: [
       { name: 'ZBooks', href: '/dashboard/books', icon: DollarSign },
       { name: 'Price Book', href: '/dashboard/price-book', icon: BookOpen },
+      { name: 'ZDocs', href: '/dashboard/zdocs', icon: FileText },
       { name: 'Documents', href: '/dashboard/documents', icon: FolderOpen },
       { name: 'Reports', href: '/dashboard/reports', icon: BarChart3 },
       { name: 'Revenue', href: '/dashboard/revenue-insights', icon: TrendingUp },
       { name: 'Automations', href: '/dashboard/automations', icon: Zap },
       { name: 'Growth', href: '/dashboard/growth', icon: Rocket },
+      { name: 'Email', href: '/dashboard/email', icon: Mail },
     ],
   },
   {
