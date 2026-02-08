@@ -185,6 +185,24 @@ Thank you for your business.`,
   createdAt: new Date().toISOString(),
 };
 
+export const STORAGE_BROWSER_ARTIFACT: ZArtifact = {
+  id: 'storage-browser',
+  type: 'generic',
+  title: 'File Manager',
+  content: 'Browse and manage your files stored in ZAFTO.',
+  data: {},
+  versions: [{
+    version: 1,
+    content: '',
+    data: {},
+    editDescription: 'Storage browser',
+    createdAt: new Date().toISOString(),
+  }],
+  currentVersion: 1,
+  status: 'ready',
+  createdAt: new Date().toISOString(),
+};
+
 export const MOCK_REPORT_ARTIFACT: ZArtifact = {
   id: 'mock-report-1',
   type: 'report',

@@ -12,6 +12,7 @@
     "@sentry/nextjs": "^10.38.0",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.95.3",
+    "@zip.js/zip.js": "^2.8.17",
     "clsx": "^2.1.0",
     "lucide-react": "^0.469.0",
     "mapbox-gl": "^3.3.0",

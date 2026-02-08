@@ -1,9 +1,9 @@
 # ZAFTO LIVE STATUS
 ## UPDATE THIS EVERY SESSION
 
-**Last Updated:** February 7, 2026 (Session 80 — E3 AI Troubleshooting DONE. E4 Growth Advisor in progress (uncommitted). R1+E1-E6 ALL DONE. 92 tables. 28 migrations. 26 Edge Functions deployed.)
-**Current Phase:** BUILD — Phases A-D ALL COMPLETE. **R1 App Remake COMPLETE. E1-E2 AI Layer COMPLETE. E3 Employee AI COMPLETE. E5 Xactimate COMPLETE. E6 Walkthrough COMPLETE.** E4 Growth Advisor in progress (files written, not committed/deployed). 5 apps total. 92 tables deployed. 28 migration files. 26 Edge Functions deployed. All 5 apps build clean.
-**Next Action:** Phase F (Platform Completion). AI goes TRULY LAST — after F + G. Owner to decide F1-F10 priority order.
+**Last Updated:** February 8, 2026 (Session 89 — D8j portal integration COMPLETE. D8 Estimate Engine ALL DONE.)
+**Current Phase:** BUILD — **Phases A-D ALL COMPLETE (including D8 Estimate Engine).** R1 COMPLETE. Phase E PAUSED. 102 tables. 30 migrations. 32 Edge Functions.
+**Next Action:** FM (Firebase→Supabase migration) → F1 (Phone System).
 
 ---
 
@@ -11,18 +11,20 @@
 
 | Field | Value |
 |-------|-------|
-| **Phase** | BUILD — Phases A-D ALL COMPLETE. **R1 COMPLETE. E1-E2 COMPLETE. E3 COMPLETE. E5 COMPLETE. E6 COMPLETE.** E4 Growth Advisor: 5 Edge Functions + 4 hooks + 4 pages written locally (uncommitted). 92 tables. 28 migrations. 26 Edge Functions deployed. Next: Commit E4 → deploy → test → next sprint. |
+| **Phase** | BUILD — **Phases A-D ALL COMPLETE (including D8 Estimate Engine: D8a-D8j ALL DONE).** R1 COMPLETE. E1-E6 COMPLETE (PAUSED). 102 tables. 30 migrations. 32 Edge Functions deployed. Next: FM (Firebase Migration) → F1 (Phone System). |
 | **Mobile App (Flutter)** | **R1 App Remake (S78):** 33 role-based screens, design system (8 widgets), AppShell with role switching. **E3c (S80):** ai_service.dart + z_chat_sheet.dart + ai_photo_analyzer.dart, Z FAB in AppShell. **E5f (S79):** Estimate entry screens. **E6b (S79):** 12 walkthrough screens + 4 annotation files + 4 sketch editor files. ALL core business wired. ALL 19 field tools wired. D2 Insurance: 3 screens. D5f Properties: 10 screens. `dart analyze` passes 0 errors. |
-| **Web CRM (Next.js)** | **71 routes built.** 50+ pages wired to Supabase. 39+ hook files + 22 Z Console files. Auth+middleware DONE. UI Polish DONE. **E2 (S78):** Z Console wired to z-intelligence. **E5b (S79):** Estimate editor + code browser. **E6f (S79):** Walkthrough list/detail/bid/workflow settings. **E4 (S80, UNCOMMITTED):** revenue-insights, growth, bid optimizer, equipment insights (4 pages + 4 hooks + sidebar updated). `npm run build` passes (71 routes, 0 errors). |
+| **Web CRM (Next.js)** | **71 routes built.** 50+ pages wired to Supabase. 40+ hook files + 22 Z Console files. Auth+middleware DONE. UI Polish DONE. **D8d (S86):** use-estimates.ts hook + estimates list page + estimate editor (room-by-room, item browser, O&P/tax calc, insurance mode, preview). Sidebar: Estimates moved to OPERATIONS. **E2 (S78):** Z Console wired to z-intelligence. **E5b (S79):** Import + pricing pages. **E6f (S79):** Walkthrough list/detail/bid/workflow settings. **E4 (S80, UNCOMMITTED):** revenue-insights, growth, bid optimizer, equipment insights (4 pages + 4 hooks + sidebar updated). **D8i UI overhaul (S88):** collapsible sidebar groups, ZAFTO wordmark fix, Z FAB ambient glow, artifact side-by-side with chat, persistent new chat button, drag-to-resize panels. `npm run build` passes (71 routes, 0 errors). |
 | **Client Portal (Next.js)** | **29 routes. 12 pages wired to Supabase. 12 hooks + mappers (6 base + 5 tenant + 1 AI).** Magic link auth. **E3d (S80):** AI chat widget (floating Z + slide-up panel) + use-ai-assistant.ts hook. `npm run build` passes (29 routes, 0 errors). `client.zafto.cloud`. |
-| **Employee Field Portal (Next.js)** | **25 routes. 14 Supabase hooks. PWA-ready.** `team.zafto.app`. **E3b (S80):** AI Troubleshooting Center — troubleshoot/page.tsx (1,364 lines, 5-tab UI: Diagnose/Photo/Code/Parts/Repair) + use-ai-troubleshoot.ts hook (254 lines). `npm run build` passes (25 routes, 0 errors). |
-| **Ops Portal (Next.js)** | **16 dashboard pages + login. 17 routes. `npm run build` passes (0 errors).** `ops.zafto.cloud`. Deep navy/teal theme. super_admin role gate. |
+| **Employee Field Portal (Next.js)** | **27 routes. 15 Supabase hooks. PWA-ready.** `team.zafto.app`. **D8j (S89):** Estimate hook (use-estimates.ts) + estimates list + estimate detail pages. **E3b (S80):** AI Troubleshooting Center — troubleshoot/page.tsx (1,364 lines, 5-tab UI: Diagnose/Photo/Code/Parts/Repair) + use-ai-troubleshoot.ts hook (254 lines). `npm run build` passes (27 routes, 0 errors). |
+| **Ops Portal (Next.js)** | **18 dashboard pages + login. 20 routes. `npm run build` passes (0 errors).** `ops.zafto.cloud`. Deep navy/teal theme. super_admin role gate. **D8h:** Code contributions admin (filter/search/verify/reject/promote). **D8i:** Pricing engine admin (MSA regions, pricing ingestion). **D8j:** Estimate analytics dashboard (platform-wide stats, type breakdown, code DB health). |
 | **Field Tools** | **19 total. ALL wired.** 14 original (B2a-d) + 2 new (B3a: Materials+DailyLog) + 3 new (B3b: PunchList+ChangeOrders+JobCompletion). 0 remaining. |
-| **Database** | Supabase (PostgreSQL). 2 projects (dev + prod). **92 tables DEPLOYED** (79 D-phase + 2 E1 AI + 5 E5 Xactimate + 5 E6 Walkthrough + 1 misc). RLS + audit on all. 28 migration files. Supabase CLI linked to dev. 3 test users + 1 company seeded. 55 COA accounts + 26 tax categories + 77 Xactimate codes + 14 walkthrough templates seeded. |
-| **Edge Functions** | **26 DEPLOYED:** ZBooks (5), PM (3), z-intelligence (1, 14 tools), Xactimate (6), Walkthrough (4), AI Troubleshooting (4), plus 3 crowd-source/pricing. **5 LOCAL (E4, uncommitted):** ai-revenue-insights, ai-customer-insights, ai-bid-optimizer, ai-equipment-insights, ai-growth-actions (2,133 lines total). **2 NOT DEPLOYED:** dead-man-switch (SMS), send-notification. |
+| **Database** | Supabase (PostgreSQL). 2 projects (dev + prod). **102 tables DEPLOYED** (79 D-phase + 10 D8 Estimate Engine + 1 D8i msa_regions + 2 E1 AI + 5 E5 Xactimate + 5 E6 Walkthrough). RLS + audit on all. 30 migration files. Supabase CLI linked to dev. 3 test users + 1 company seeded. 55 COA accounts + 26 tax categories + 77 Xactimate codes + 14 walkthrough templates + 86 estimate categories + 216 estimate items + 16 estimate units + 28 labor rates + 5,616 estimate_pricing rows (national + 25 MSAs) seeded. fn_zip_to_msa + fn_get_item_pricing Postgres functions. |
+| **Edge Functions** | **32 DEPLOYED:** ZBooks (5), PM (3), z-intelligence (1, 14 tools), Xactimate (6), Walkthrough (4), AI Troubleshooting (4), D8 estimate (5: export-estimate-pdf + import-esx + export-esx + code-verify + pricing-ingest), plus 3 crowd-source/pricing. **5 LOCAL (E4, uncommitted):** ai-revenue-insights, ai-customer-insights, ai-bid-optimizer, ai-equipment-insights, ai-growth-actions (2,133 lines total). **2 NOT DEPLOYED:** dead-man-switch (SMS), send-notification. |
 | **Backend Connected** | Auth + Customers + Jobs + Invoices + Bids + Time Clock + Calendar ALL wired. ALL 19 field tools wired. D2 Insurance: 7 tables. D4 ZBooks: GL engine + 15 tables. D5 PM: 18 tables. E1 AI: z_threads + z_messages. E5 Xactimate: 5 tables. E6 Walkthrough: 5 tables. |
 | **DevOps** | **C1 DONE (S58):** Sentry in all 4 apps. CI/CD: 4 workflows. 154 model tests. **C2 NEAR COMPLETE (S60-S61):** RBAC middleware on all portals. **C3 DONE (S59):** Ops Portal. **C5 DONE (S59):** Incident response. |
-| **Blocker** | **Phase E PAUSED.** AI goes last — after F+G. Phase F sprint specs need detailing. Owner to decide F1-F10 priority. ANTHROPIC_API_KEY not set (dormant until E resumes). |
+| **Blocker** | **Phase E PAUSED.** AI goes last — after F+G. Phase F sprint specs need writing. API signups 10 active (Supabase, Unwrangle, Plaid, Google, SignalWire, LiveKit, Mapbox, Stripe, Anthropic, RevenueCat). **3 need migration from Firebase→Supabase** (Stripe, Anthropic keys in Firebase secrets). Sentry DSN empty. **Xactimate: DECIDED** — Two-mode estimate engine (D8). Clean room spec at `SPRINT/07_ESTIMATE_ENGINE_SPEC.md`. |
+| **API Keys Stored** | **Supabase Secrets:** UNWRANGLE_API_KEY (supplier pricing), PLAID_CLIENT_ID + PLAID_SECRET (bank feeds, sandbox), GOOGLE_CLOUD_API_KEY (maps+calendar, $300 credit), SIGNALWIRE_* (VoIP/SMS/Fax — space URL + project ID + API token), LIVEKIT_* (video — URL + API key + secret). **Env files:** Mapbox (maps), SignalWire (all portals), LiveKit (all portals). **Firebase secrets (need migration to Supabase):** STRIPE_SECRET_KEY + STRIPE_WEBHOOK_SECRET (full payment integration in `backend/functions/index.js`), ANTHROPIC_API_KEY (AI). **RevenueCat:** webhook handler built (`revenueCatWebhook` in `backend/functions/`), uses header signature verification. **Sentry:** SDK wired in all apps, DSN is EMPTY — needs DSN from Sentry dashboard. **Stripe in source code:** `company.dart` has `stripeCustomerId`, `types/index.ts` has `stripeAccountId`, ops-portal references Stripe in revenue/subscriptions/directory pages. Pending: DocuSign, Indeed, Checkr, LinkedIn. |
+| **Security Policy** | ZAFTO_Information_Security_Policy.docx CREATED — 13 sections, enterprise-grade. WebAuthn/passkeys/biometrics documented. Reusable for all API applications. |
 
 ---
 
@@ -40,7 +42,7 @@
 | Cloudflare | ACTIVE | needs migration to admin@zafto.app |
 | RevenueCat | ACTIVE | admin@zafto.app |
 | Bitwarden | ACTIVE | needs migration to admin@zafto.app |
-| Google Play | NOT CREATED (deferred — Android later) | — |
+| Google Play | NOT CREATED (needed for launch — both iOS + Android) | — |
 | ProtonMail | NOT CREATED (break-glass recovery — do before launch) | — |
 | YubiKeys | NOT PURCHASED (do before launch) | — |
 
@@ -75,15 +77,24 @@
 | 21 | AI Layer: E6 Bid Walkthrough Engine | ~50 | **DONE (S79)** — 5 tables, 4 Edge Functions, 12 Flutter screens, Web CRM + portals. |
 | 22 | AI Layer: E3 Employee AI + Mobile AI | ~22 | **DONE (S80)** — 4 Edge Functions, team portal troubleshoot, Flutter AI chat, client portal widget. |
 | 23 | AI Layer: E4 Growth Advisor | ~36 | **IN PROGRESS (S80)** — 5 Edge Functions + 4 hooks + 4 pages written. Uncommitted. Need deploy + test. |
-| 24 | Platform: Phone System + Meeting Rooms | ~105-120 | PENDING |
-| 25 | Platform: Website Builder V2 + Marketplace | ~140-210 | PENDING |
-| 26 | Platform: Mobile Field Toolkit (25 tools) | ~89-107 | PENDING |
-| 27 | Platform: Business OS (9 systems) + Hiring + ZDocs | ~198+ | PENDING |
-| 28 | Platform: ZAFTO Home + Ops Portal 2-4 | ~251-291 | PENDING |
-| 29 | Debug, QA & Hardening | ~100-200 | PENDING |
-| 30 | **LAUNCH** | — | — |
+| 24 | **D8: Estimate Engine** | ~100+ | **DONE (S85-S89)** — D8a-D8j all complete. 10 tables, 5 EFs, all 5 apps wired. |
+| 25 | Firebase→Supabase Migration | ~8-12 | PENDING — 11 Cloud Functions (Stripe, RevenueCat, AI scans) |
+| 26 | R1j: Mobile Backend Rewire | ~8-12 | PENDING — Connect 33 R1 screens to live data |
+| 27 | F1: Phone System (SignalWire) | ~40-55 | PENDING — Voice, SMS, Fax, AI receptionist |
+| 28 | F3: Meeting Rooms (LiveKit) | ~70 | PENDING — Context-aware video, booking, AI transcription |
+| 29 | F4: Mobile Toolkit + Sketch/Bid + OSHA | ~120-140 | PENDING — 25 tools, sketch→bid flow, OSHA compliance |
+| 30 | F5: Business OS + Lead Aggregation | ~180+ | PENDING — 9 systems + free API lead sources |
+| 31 | F6: Marketplace | ~80-120 | PENDING — Equipment AI, lead gen, contractor bidding |
+| 32 | F7: ZAFTO Home | ~140-180 | PENDING — Homeowner property intelligence |
+| 33 | F9: Hiring System | ~18-22 | PENDING — Indeed/LinkedIn/ZipRecruiter, Checkr, E-Verify |
+| 34 | F10: ZDocs | TBD | PENDING — PDF-first doc suite (second to last) |
+| 35 | G: Debug, QA & Hardening | ~100-200 | PENDING |
+| 36 | E: AI Layer Rebuild | TBD | PENDING — Deep spec session, full platform knowledge |
+| 37 | F2: Website Builder (after AI) | ~60-90 | PENDING — AI content generation, templates |
+| 38 | F8: Ops Portal 2-4 (truly last) | ~111 | PENDING — Marketing, treasury, legal, dev |
+| 39 | **LAUNCH** | — | — |
 
-**TOTAL PRE-LAUNCH: ~2,000+ hours (all phases A through G)**
+**TOTAL PRE-LAUNCH: ~2,000+ hours (all phases A through launch)**
 
 ---
 
@@ -121,8 +132,8 @@
 |-----|--------|
 | `00_HANDOFF.md` | COMPLETE — updated every session |
 | `01_MASTER_BUILD_PLAN.md` | COMPLETE (Session 35) |
-| `02_CIRCUIT_BLUEPRINT.md` | COMPLETE — updated S80 (92 tables, 26 Edge Functions, Phase E wiring) |
-| `03_LIVE_STATUS.md` | COMPLETE (this file — updated S80) |
+| `02_CIRCUIT_BLUEPRINT.md` | COMPLETE — updated S88 (102 tables, 32 Edge Functions, D8i pricing engine) |
+| `03_LIVE_STATUS.md` | COMPLETE (this file — updated S88) |
 | `04_EXPANSION_SPECS.md` | COMPLETE (Session 36 — all 14 specs consolidated) |
 | `05_EXECUTION_PLAYBOOK.md` | COMPLETE (Session 37 — session protocol, methodology, quality gates) |
 | `06_ARCHITECTURE_PATTERNS.md` | COMPLETE (Session 37 — 14 code patterns with full examples) |

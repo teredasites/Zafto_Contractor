@@ -644,3 +644,132 @@ export function mapBid(row: Record<string, unknown>): BidData {
     createdAt: (row.created_at as string) || new Date().toISOString(),
   };
 }
+
+// ==================== ESTIMATES ====================
+
+export type EstimateType = 'regular' | 'insurance';
+export type EstimateStatus = 'draft' | 'sent' | 'approved' | 'declined' | 'revised' | 'completed';
+
+export const ESTIMATE_STATUS_LABELS: Record<EstimateStatus, string> = {
+  draft: 'Draft', sent: 'Sent', approved: 'Approved',
+  declined: 'Declined', revised: 'Revised', completed: 'Completed',
+};
+
+export const ESTIMATE_STATUS_COLORS: Record<EstimateStatus, { bg: string; text: string }> = {
+  draft: { bg: 'bg-slate-100 dark:bg-slate-900/30', text: 'text-slate-600 dark:text-slate-400' },
+  sent: { bg: 'bg-blue-100 dark:bg-blue-900/30', text: 'text-blue-600 dark:text-blue-400' },
+  approved: { bg: 'bg-emerald-100 dark:bg-emerald-900/30', text: 'text-emerald-600 dark:text-emerald-400' },
+  declined: { bg: 'bg-red-100 dark:bg-red-900/30', text: 'text-red-600 dark:text-red-400' },
+  revised: { bg: 'bg-amber-100 dark:bg-amber-900/30', text: 'text-amber-600 dark:text-amber-400' },
+  completed: { bg: 'bg-purple-100 dark:bg-purple-900/30', text: 'text-purple-600 dark:text-purple-400' },
+};
+
+export interface EstimateData {
+  id: string;
+  jobId: string | null;
+  customerId: string | null;
+  customerName: string;
+  propertyAddress: string;
+  estimateNumber: string;
+  title: string;
+  estimateType: EstimateType;
+  status: EstimateStatus;
+  subtotal: number;
+  overheadPercent: number;
+  overheadAmount: number;
+  profitPercent: number;
+  profitAmount: number;
+  taxPercent: number;
+  taxAmount: number;
+  grandTotal: number;
+  notes: string;
+  claimNumber: string;
+  carrierName: string;
+  deductible: number;
+  validUntil: string | null;
+  sentAt: string | null;
+  createdAt: string;
+}
+
+export interface EstimateAreaData {
+  id: string;
+  estimateId: string;
+  name: string;
+  lengthFt: number;
+  widthFt: number;
+  heightFt: number;
+  floorSf: number;
+  sortOrder: number;
+}
+
+export interface EstimateLineItemData {
+  id: string;
+  estimateId: string;
+  areaId: string | null;
+  zaftoCode: string;
+  description: string;
+  actionType: string;
+  quantity: number;
+  unitCode: string;
+  unitPrice: number;
+  lineTotal: number;
+  sortOrder: number;
+}
+
+export function mapEstimate(row: Record<string, unknown>): EstimateData {
+  return {
+    id: row.id as string,
+    jobId: row.job_id as string | null,
+    customerId: row.customer_id as string | null,
+    customerName: (row.customer_name as string) || '',
+    propertyAddress: (row.property_address as string) || '',
+    estimateNumber: (row.estimate_number as string) || '',
+    title: (row.title as string) || '',
+    estimateType: (row.estimate_type as EstimateType) || 'regular',
+    status: (row.status as EstimateStatus) || 'draft',
+    subtotal: Number(row.subtotal || 0),
+    overheadPercent: Number(row.overhead_percent || 0),
+    overheadAmount: Number(row.overhead_amount || 0),
+    profitPercent: Number(row.profit_percent || 0),
+    profitAmount: Number(row.profit_amount || 0),
+    taxPercent: Number(row.tax_percent || 0),
+    taxAmount: Number(row.tax_amount || 0),
+    grandTotal: Number(row.grand_total || 0),
+    notes: (row.notes as string) || '',
+    claimNumber: (row.claim_number as string) || '',
+    carrierName: (row.carrier_name as string) || '',
+    deductible: Number(row.deductible || 0),
+    validUntil: row.valid_until as string | null,
+    sentAt: row.sent_at as string | null,
+    createdAt: (row.created_at as string) || '',
+  };
+}
+
+export function mapEstimateArea(row: Record<string, unknown>): EstimateAreaData {
+  return {
+    id: row.id as string,
+    estimateId: row.estimate_id as string,
+    name: (row.name as string) || '',
+    lengthFt: Number(row.length_ft || 0),
+    widthFt: Number(row.width_ft || 0),
+    heightFt: Number(row.height_ft || 8),
+    floorSf: Number(row.floor_sf || 0),
+    sortOrder: Number(row.sort_order || 0),
+  };
+}
+
+export function mapEstimateLineItem(row: Record<string, unknown>): EstimateLineItemData {
+  return {
+    id: row.id as string,
+    estimateId: row.estimate_id as string,
+    areaId: row.area_id as string | null,
+    zaftoCode: (row.zafto_code as string) || '',
+    description: (row.description as string) || '',
+    actionType: (row.action_type as string) || 'replace',
+    quantity: Number(row.quantity || 1),
+    unitCode: (row.unit_code as string) || 'EA',
+    unitPrice: Number(row.unit_price || 0),
+    lineTotal: Number(row.line_total || 0),
+    sortOrder: Number(row.sort_order || 0),
+  };
+}

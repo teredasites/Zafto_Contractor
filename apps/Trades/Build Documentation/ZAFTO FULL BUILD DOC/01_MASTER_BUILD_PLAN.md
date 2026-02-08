@@ -39,7 +39,7 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
     │  RLS on every table. 6-layer security.           │
     ├──────────────────────────────────────────────────┤
     │  Stripe    Claude API    Cloudflare    Sentry    │
-    │  Telnyx    SendGrid      Plaid         RevenueCat│
+    │  SignalWire SendGrid     Plaid         RevenueCat│
     └────────────┬──────┬──────┬──────┬────────────────┘
                  │      │      │      │
          ┌───────┘  ┌───┘  ┌───┘  ┌───┘
@@ -82,9 +82,10 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | Property Management | YES | YES (11 hooks, 14 pages, 10 Flutter screens) | YES |
 | Insurance/Restoration | YES | YES (7 tables, all 5 apps) | YES |
 | **Phase E AI (PREMATURE)** | **YES (code exists)** | **PAUSED** | **NOT TESTED — AI goes LAST** |
-| **Phase F Platform** | **NOT STARTED** | **NO** | **NEXT** |
+| **D8 Estimate Engine** | **NOT STARTED** | **NO** | **NEXT** |
+| **Phase F Platform** | **NOT STARTED** | **NO** | After D8 |
 
-**Phases A-D ALL COMPLETE. R1 App Remake COMPLETE. Phase E AI was started prematurely (S78-S80) — code exists but is PAUSED. Correct next step: Phase F (Platform Completion), then G (QA), then E (AI layer built LAST with full platform knowledge).**
+**Phases A-D7 ALL COMPLETE. R1 App Remake COMPLETE. Phase E AI was started prematurely (S78-S80) — code exists but is PAUSED. Correct next step: D8 (Estimate Engine) → Firebase Migration → Phase F (Platform Completion) → G (QA) → E (AI layer built LAST) → F2 (Website Builder) + F8 (Ops Portal) truly last.**
 
 ---
 
@@ -130,6 +131,9 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | D3 | Insurance Verticals | ~107 | Storm, reconstruction, commercial, warranty network (JSONB, no new tables) |
 | D4 | ZBooks (QB replacement) | TBD | Full accounting: chart of accounts, receipt scan, P&L, bank sync (Plaid), CPA portal |
 | D5 | Property Management System | TBD | NEW — Contractor-owned properties. Tenant mgmt, leases, rent, maintenance loop. THE MOAT. |
+| D6 | Enterprise Foundation | ~20 | Multi-location, custom roles, form templates, API keys, certifications |
+| D7 | Certification System | ~12 | Modular cert types, immutable audit log, dynamic type registry |
+| D8 | Estimate Engine | ~100+ | Two-mode: Regular Bids (all contractors, PDF) + Insurance Estimates (ESX). Own code DB, crowdsource, regional pricing. See `SPRINT/07_ESTIMATE_ENGINE_SPEC.md` |
 
 ### PHASE E: AI LAYER — MOVED TO AFTER PHASE F + G (AI GOES TRULY LAST)
 
@@ -139,7 +143,7 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 - E1-E2: z-intelligence Edge Function (14 tools), Z Console wired, z_threads/z_messages tables
 - E3: 4 troubleshooting Edge Functions, team portal troubleshoot page, Flutter AI chat, client portal widget
 - E4: 5 growth advisor Edge Functions, 4 CRM pages (not deployed)
-- E5: Xactimate estimate engine (5 tables, 6 Edge Functions, UI across all apps)
+- E5: Xactimate estimate engine (5 tables, 6 Edge Functions, UI across all apps) — **SUPERSEDED by D8 (clean-room estimate engine). E5 code dormant. D8 uses independent spec: `SPRINT/07_ESTIMATE_ENGINE_SPEC.md`**
 - E6: Bid walkthrough engine (5 tables, 4 Edge Functions, 12 Flutter screens)
 
 **When we return to Phase E (after F+G):**
@@ -152,20 +156,28 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | E4 | Growth Advisor | ~88 | AI revenue expansion engine. Curated opportunity KB. |
 | E-review | Audit premature E work | TBD | Review/rebuild all S78-S80 AI code with full platform context. Ensure AI knows every F-phase feature. |
 
-### PHASE F: PLATFORM COMPLETION
+### PRE-F: FOUNDATION FOR PLATFORM
 
 | # | Task | Hours | Details |
 |---|------|:-----:|---------|
-| F1 | Phone System (Telnyx VoIP) | ~35-50 | Business phone, AI receptionist, SMS, call recording, E2E encryption |
-| F2 | Website Builder V2 | ~60-90 | Cloudflare Registrar, templates, AI content, $19.99/mo |
-| F3 | Meeting Room System | ~70 | LiveKit video, 6 meeting types, AI transcription, scheduling |
-| F4 | Mobile Field Toolkit | ~89-107 | 25 tools: walkie-talkie/PTT, inspections, restoration tools |
-| F5 | Business OS Expansion | ~180 | CPA Portal, Payroll, Fleet, Route, Procurement, HR, Docs |
-| F6 | Marketplace | ~80-120 | AI equipment diagnostics, lead gen, contractor bidding |
-| F7 | ZAFTO Home Platform | ~140-180 | Homeowner property intelligence, free + premium ($7.99/mo) |
-| F8 | Ops Portal Phases 2-4 | ~111 | Marketing engine, treasury, legal, dev terminal, analytics |
-| F9 | Hiring System | ~18-22 | Multi-channel job posting, applicant pipeline |
-| F10 | ZDocs + ZSheets | TBD | PDF-first document suite. BUILD LAST after all features locked. |
+| D8 | Estimate Engine | ~100+ | Two-mode (Regular Bids + Insurance ESX). Own code DB, crowdsource, regional pricing. Clean-room. See `07_SPRINT_SPECS.md` D8a-D8j. |
+| FM | Firebase→Supabase Migration | ~8-12 | Migrate 11 Cloud Functions (Stripe payments, RevenueCat, AI scans) from `backend/functions/` to Supabase Edge Functions. |
+| R1j | Mobile Backend Rewire | ~8-12 | Connect R1's 33 new screens to existing Phase B wired data (jobs, invoices, customers, field tools). |
+
+### PHASE F: PLATFORM COMPLETION
+
+**Build order: F1→F3→F4→F5→F6→F7→F9→F10. Then G, then E. F2+F8 build LAST (after AI).**
+
+| # | Task | Hours | Details |
+|---|------|:-----:|---------|
+| F1 | Phone System (SignalWire) | ~40-55 | Business phone, AI receptionist, SMS, **fax send/receive**, call recording, E2E encryption. SignalWire SWML AI agent framework. |
+| F3 | Meeting Room System (LiveKit) | ~70 | Context-aware video (knows job/estimate/customer), 6 meeting types, freeze-frame annotate, AI transcription, booking, async video. |
+| F4 | Mobile Field Toolkit + Sketch/Bid | ~120-140 | 25 tools (walkie-talkie/PTT, restoration, inspections). **Sketch + Bid Flow** (room photos → dimensions → AI code suggestion → price book → bid PDF/ESX). **OSHA API** (free — safety standards, compliance auto-populate). R1c/R1e deferred items. |
+| F5 | Business OS + Lead Aggregation | ~180+ | 9 systems (CPA Portal, Payroll, Fleet, Route, Procurement, HR, Email, Phone, Docs). **Lead API aggregation** (Google Business Profile, Google LSA, Meta/Facebook, Nextdoor, Yelp, BuildZoom — all free). Single inbox for all lead sources. |
+| F6 | Marketplace | ~80-120 | Equipment AI diagnostics, pre-qualified lead gen, contractor bidding. Camera scan → AI model identification → contractor match. |
+| F7 | ZAFTO Home Platform | ~140-180 | Homeowner property intelligence. Free: equipment passport, service history, docs. Premium ($7.99/mo): AI advisor, predictive maintenance, contractor matching. R1f deferred items. |
+| F9 | Hiring System | ~18-22 | Multi-channel (Indeed/LinkedIn/ZipRecruiter), applicant pipeline, Checkr background checks, E-Verify (free), onboarding integration. |
+| F10 | ZDocs + ZSheets | TBD | PDF-first document suite. Templates for all trade documents. E-signatures (DocuSign). SECOND TO LAST. |
 
 ### PHASE G: DEBUG, QA & HARDENING
 
@@ -175,6 +187,20 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | G2 | Security audit | ~20-30 | Pen testing, RLS verification, credential rotation |
 | G3 | Performance optimization | ~20-30 | Load testing, query optimization, caching |
 | G4 | Security hardening | ~4 | Email migration, Bitwarden changeover, 2FA, YubiKeys |
+
+### PHASE E: AI LAYER (REBUILD — after G)
+
+| # | Task | Hours | Details |
+|---|------|:-----:|---------|
+| E-review | Audit all premature E work | TBD | Deep spec session with owner. AI must know every feature, table, screen. Rebuild with full platform context. |
+| E1-E4 | Full AI implementation | TBD | Universal AI, Z Console, Command Center, Growth Advisor. Every feature AI-enhanced. |
+
+### POST-AI: FINAL FEATURES
+
+| # | Task | Hours | Details |
+|---|------|:-----:|---------|
+| F2 | Website Builder V2 | ~60-90 | Cloudflare Registrar, templates, **AI content generation**, booking widget, SEO. Builds after AI so AI generates content. $19.99/mo add-on. |
+| F8 | Ops Portal Phases 2-4 | ~111 | Marketing engine, treasury, legal, dev terminal, analytics. 54 additional pages. TRULY LAST — internal tool, doesn't affect product. |
 
 ### >>> LAUNCH <<<
 
@@ -274,11 +300,14 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | Insurance Verticals (4) | Expansion/38 | ~107 | D3 |
 | ZBooks (full accounting, QB replacement) | Expansion/16 App G-J | TBD | D4 |
 | **Property Management System** | **NEW** | **TBD** | **D5** |
+| Enterprise Foundation | Expansion | ~20 | D6 |
+| Certification System | Expansion | ~12 | D7 |
+| **Estimate Engine (Two-Mode)** | **SPRINT/07_ESTIMATE_ENGINE_SPEC.md** | **~100+** | **D8** |
 | Universal AI Architecture (6 layers) | Expansion/35 | TBD | E1 |
 | Z Console + Artifacts | Expansion/41 | TBD | E2 |
 | Unified Command Center (7 concepts) | Expansion/40 | TBD | E3 |
 | Growth Advisor | Expansion/39 | ~88 | E4 |
-| Phone System (Telnyx VoIP) | Expansion/31 | TBD | F1 |
+| Phone System (SignalWire VoIP/SMS/Fax) | Expansion/31 | ~40-55 | F1 |
 | Website Builder V2 | Expansion/28 | TBD | F2 |
 | Meeting Room System | Expansion/42 | ~55-70 | F3 |
 | Mobile Field Toolkit (25 tools) | Expansion/43 | ~89-107 | F4 |
@@ -400,8 +429,10 @@ Most property management software (AppFolio, Buildium, TenantCloud) is built for
 | AI bid generator | 5/mo | 50/mo | Unlimited | Unlimited |
 | Dispatch board + Live map | — | — | Y | Y |
 | Phone System lines | 1 | 5 | 15 | Unlimited |
+| Fax (send/receive) | Y | Y | Y | Y |
 | Website Builder | — | $19.99/mo | $19.99/mo | Included |
-| Insurance Claims Module | — | Y | Y | Y |
+| Estimate Engine (Regular Bids) | Y | Y | Y | Y |
+| Insurance Claims Module + ESX Export | — | Y | Y | Y |
 | Property Management | — | 10 units | 100 units | Unlimited |
 | Meeting Rooms | Y | Y | Y | Y |
 | Custom roles | — | — | — | Y |

@@ -1399,7 +1399,7 @@ Wire LOTO Logger, Incident Report, Safety Briefing, Dead Man Switch, and Confine
 ```
 lib/repositories/compliance_repository.dart — CRUD for compliance_records
 lib/providers/compliance_providers.dart     — Records by type, by job
-supabase/functions/dead-man-switch/index.ts — Edge Function for SMS alert (Telnyx)
+supabase/functions/dead-man-switch/index.ts — Edge Function for SMS alert (SignalWire)
 ```
 
 #### Files to Modify
@@ -1446,7 +1446,7 @@ lib/screens/field_tools/confined_space_timer_screen.dart  — Wire OSHA logging
 
 **Step 5: Dead Man Switch — SAFETY CRITICAL**
 - Currently: countdown timer → fake alert animation → `// TODO: SMS to emergency contacts`
-- Wire: When timer expires → call Supabase Edge Function → sends SMS via Telnyx
+- Wire: When timer expires → call Supabase Edge Function → sends SMS via SignalWire
 - Edge Function (`dead-man-switch/index.ts`):
   ```typescript
   // Receives: userId, companyId, location, emergencyContacts
@@ -2809,6 +2809,9 @@ Harden all accounts and access before launch.
 5. Purchase and configure YubiKeys for critical accounts
 6. Document all credentials in Bitwarden vault (organized by service)
 7. Revoke any old API keys or tokens
+8. Enable WebAuthn (passkeys/biometrics) in Supabase Auth for phishing-resistant MFA
+9. Add passkey enrollment option to all user-facing apps (CRM, Team Portal, Client Portal, Mobile)
+10. Update Information Security Policy doc to reflect passkey/biometric support
 
 #### Verify
 - [ ] Every account uses admin@zafto.app
@@ -2817,6 +2820,9 @@ Harden all accounts and access before launch.
 - [ ] ProtonMail recovery email works
 - [ ] All credentials in Bitwarden, organized
 - [ ] No old API keys active
+- [ ] WebAuthn/passkeys enabled in Supabase Auth config
+- [ ] Passkey enrollment UI available in all portals + mobile
+- [ ] Security policy doc updated with phishing-resistant MFA
 - [ ] Commit: `[C4] Security hardened — all accounts migrated, 2FA, passwords rotated`
 
 ---
@@ -5947,6 +5953,514 @@ Execute in sequence:
 
 ---
 
+### Sprint D8: Estimate Engine (~100+ hrs)
+**Source:** `SPRINT/07_ESTIMATE_ENGINE_SPEC.md` (Clean-room production spec — S85)
+**Goal:** Two-mode estimate engine. Mode 1: Regular Bids for ALL contractors (ZAFTO's own item database, PDF output). Mode 2: Insurance Estimates with ESX export (optional premium feature, industry-standard ZIP+XML format). Independent code database, crowdsource engine, regional pricing.
+**Depends on:** D2 (Insurance Infrastructure), D1 (Job Type System)
+**Status: PENDING**
+**SUPERSEDES:** E5 (premature Xactimate estimate engine). E5 code is dormant. D8 is a clean-room rebuild with independent architecture. Zero references to proprietary tools, decryption, or reverse engineering.
+
+#### D8a: Database — Estimate Engine Core Tables (~6 hrs)
+
+**New migration:** `20260208_d8_estimate_engine.sql`
+
+**10 new tables:**
+
+```sql
+-- ZAFTO's own item database (backbone for both modes)
+CREATE TABLE estimate_items (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    category_id UUID REFERENCES estimate_categories(id),
+    zafto_code VARCHAR(20) NOT NULL UNIQUE,
+    industry_code VARCHAR(20),
+    industry_selector VARCHAR(20),
+    description TEXT NOT NULL,
+    unit_code VARCHAR(10) NOT NULL,
+    action_types TEXT[] DEFAULT '{add}',
+    trade VARCHAR(50) NOT NULL,
+    subtrade VARCHAR(100),
+    tags TEXT[],
+    is_common BOOLEAN DEFAULT false,
+    source VARCHAR(50) DEFAULT 'zafto',
+    life_expectancy_years INT,
+    depreciation_max_pct INT,
+    created_at TIMESTAMPTZ DEFAULT now(),
+    updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE estimate_categories (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    code VARCHAR(10) NOT NULL UNIQUE,
+    industry_code VARCHAR(10),
+    name VARCHAR(100) NOT NULL,
+    labor_pct INT DEFAULT 50,
+    material_pct INT DEFAULT 40,
+    equipment_pct INT DEFAULT 10,
+    sort_order INT DEFAULT 0
+);
+
+CREATE TABLE estimate_units (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    code VARCHAR(10) NOT NULL UNIQUE,
+    name VARCHAR(50) NOT NULL,
+    abbreviation VARCHAR(10) NOT NULL
+);
+
+CREATE TABLE estimate_pricing (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    item_id UUID REFERENCES estimate_items(id),
+    region_code VARCHAR(20) NOT NULL,
+    labor_rate DECIMAL(10,2),
+    material_cost DECIMAL(10,2),
+    equipment_cost DECIMAL(10,2),
+    effective_date DATE NOT NULL,
+    source VARCHAR(50) NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT now(),
+    UNIQUE(item_id, region_code, effective_date)
+);
+
+CREATE TABLE estimate_labor_components (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    code VARCHAR(20) NOT NULL,
+    trade VARCHAR(50) NOT NULL,
+    description VARCHAR(200),
+    base_rate DECIMAL(10,2),
+    markup DECIMAL(10,2),
+    burden_pct DECIMAL(5,4),
+    region_code VARCHAR(20),
+    effective_date DATE,
+    source VARCHAR(50) DEFAULT 'public'
+);
+
+CREATE TABLE code_contributions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    company_id UUID REFERENCES companies(id),
+    user_id UUID REFERENCES auth.users(id),
+    industry_code VARCHAR(10) NOT NULL,
+    industry_selector VARCHAR(20) NOT NULL,
+    description TEXT NOT NULL,
+    unit_code VARCHAR(10),
+    action_type VARCHAR(10),
+    verified BOOLEAN DEFAULT false,
+    verification_count INT DEFAULT 1,
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE estimates (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    company_id UUID REFERENCES companies(id),
+    job_id UUID REFERENCES jobs(id),
+    customer_id UUID REFERENCES customers(id),
+    created_by UUID REFERENCES auth.users(id),
+    estimate_number VARCHAR(20) NOT NULL,
+    title VARCHAR(200),
+    property_address TEXT,
+    property_zip VARCHAR(10),
+    estimate_type VARCHAR(20) DEFAULT 'regular',
+    status VARCHAR(20) DEFAULT 'draft',
+    subtotal DECIMAL(12,2) DEFAULT 0,
+    overhead_pct DECIMAL(5,2) DEFAULT 10,
+    profit_pct DECIMAL(5,2) DEFAULT 10,
+    tax_pct DECIMAL(5,2) DEFAULT 0,
+    grand_total DECIMAL(12,2) DEFAULT 0,
+    deductible DECIMAL(10,2),
+    claim_number VARCHAR(50),
+    policy_number VARCHAR(50),
+    date_of_loss DATE,
+    insurance_carrier VARCHAR(200),
+    adjuster_name VARCHAR(200),
+    adjuster_email VARCHAR(200),
+    notes TEXT,
+    created_at TIMESTAMPTZ DEFAULT now(),
+    updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE estimate_areas (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    estimate_id UUID REFERENCES estimates(id) ON DELETE CASCADE,
+    name VARCHAR(100) NOT NULL,
+    floor_number INT DEFAULT 1,
+    length_ft DECIMAL(8,2),
+    width_ft DECIMAL(8,2),
+    height_ft DECIMAL(8,2) DEFAULT 8,
+    perimeter_ft DECIMAL(8,2),
+    area_sf DECIMAL(10,2),
+    sort_order INT DEFAULT 0,
+    lidar_data JSONB,
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE estimate_line_items (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    estimate_id UUID REFERENCES estimates(id) ON DELETE CASCADE,
+    area_id UUID REFERENCES estimate_areas(id),
+    item_id UUID REFERENCES estimate_items(id),
+    industry_code VARCHAR(10),
+    industry_selector VARCHAR(20),
+    description TEXT NOT NULL,
+    action_type VARCHAR(20) DEFAULT 'add',
+    quantity DECIMAL(10,2) NOT NULL,
+    unit_code VARCHAR(10) NOT NULL,
+    labor_rate DECIMAL(10,2) DEFAULT 0,
+    material_cost DECIMAL(10,2) DEFAULT 0,
+    equipment_cost DECIMAL(10,2) DEFAULT 0,
+    line_total DECIMAL(10,2) DEFAULT 0,
+    depreciation_pct DECIMAL(5,2) DEFAULT 0,
+    rcv DECIMAL(10,2) DEFAULT 0,
+    acv DECIMAL(10,2) DEFAULT 0,
+    phase INT DEFAULT 1,
+    notes TEXT,
+    ai_suggested BOOLEAN DEFAULT false,
+    sort_order INT DEFAULT 0,
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE estimate_photos (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    estimate_id UUID REFERENCES estimates(id) ON DELETE CASCADE,
+    area_id UUID REFERENCES estimate_areas(id),
+    line_item_id UUID REFERENCES estimate_line_items(id),
+    storage_path VARCHAR(500) NOT NULL,
+    caption TEXT,
+    ai_analysis JSONB,
+    taken_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+```
+
+**RLS:** All tables company-scoped. estimate_items read-all for ZAFTO items. code_contributions insert-own, read-verified.
+
+**Checklist D8a:**
+- [x] Create migration file `20260208000029_d8a_estimate_engine.sql`
+- [x] Deploy estimate_categories table + RLS
+- [x] Deploy estimate_units table + RLS
+- [x] Deploy estimate_items table + RLS + indexes (trade, category, tags GIN)
+- [x] Deploy estimate_pricing table + RLS + UNIQUE constraint
+- [x] Deploy estimate_labor_components table + RLS
+- [x] Deploy code_contributions table + RLS
+- [x] Deploy estimates table + RLS + audit trigger
+- [x] Deploy estimate_areas table + RLS
+- [x] Deploy estimate_line_items table + RLS
+- [x] Deploy estimate_photos table + RLS
+- [x] Verify all tables in Supabase SQL Editor (101 total)
+- [ ] Commit: `[D8a] Estimate engine database — 10 tables deployed`
+
+---
+
+#### D8b: Seed Data — Initial Code Database (~8 hrs)
+
+**Goal:** Populate estimate_items with ~200 common items across major trades. All data from publicly available sources (official Xactware category documentation, public industry training materials, published restoration guides).
+
+**Seed categories (90+ from official Xactware help docs):**
+ACC, ACT, APP, ARC, AWN, CAB, CLN, CNC, CON, CSF, DMO, DOR, DRY, ELE, ELS, EQA, EQC, EQU, EXC, FCC, FCR, FCS, FCT, FCV, FCW, FEE, FEN, FNC, FNH, FPL, FPS, FRM, FRP, GLS, HMR, HVC, INM, INS, LAB, LIT, LND, MAS, MBL, MPR, MSD, MSK, MTL, OBS, ORI, PLA, PLM, PNL, PNT, POL, PRM, PTG, RFG, SCF, SDG, SFG, SPE, SPR, STJ, STL, STR, STU, TBA, TCR, TIL, TMB, TMP, USR, VTC, WDA, WDP, WDR, WDS, WDT, WDV, WDW, WPR, WTR, XST
+
+**Seed items per trade (priority trades):**
+- Roofing (RFG): shingles, underlayment, flashing, ridge caps, drip edge
+- Drywall (DRY): hang, tape, texture, patch, ceiling
+- Plumbing (PLM): fixtures, supply lines, drain, water heater
+- Electrical (ELE): outlets, switches, panels, wiring, fixtures
+- Painting (PNT): interior walls, exterior, trim, ceilings
+- Demolition (DMO): debris removal, hazmat, structural
+- Water Remediation (WTR): extraction, drying, dehumidification, antimicrobial
+- Framing (FRM): studs, headers, joists, sheathing
+- Insulation (INS): batt, blown, spray foam, rigid
+- Siding (SDG): vinyl, fiber cement, wood
+- HVAC (HVC): units, ductwork, vents, thermostats
+
+**Seed units:** SF, LF, EA, SQ, HR, BF, CY, GA, LB, RL, CT, MO
+
+**Checklist D8b:**
+- [x] Create seed migration `20260208000030_d8b_seed_estimate_data.sql`
+- [x] Seed estimate_units (16 units of measure)
+- [x] Seed estimate_categories (86 categories with industry code mappings)
+- [x] Seed estimate_items (216 common items with ZAFTO codes + industry mappings)
+- [x] Seed estimate_labor_components (28 base rates per trade from BLS public data)
+- [x] Verify seed data loads correctly
+- [ ] Commit: `[D8b] Estimate engine seed data — 86 categories, 216 items`
+
+---
+
+#### D8c: Estimate CRUD — Flutter Mobile (~14 hrs)
+
+**Goal:** Full estimate creation and editing on mobile. Room-by-room workflow, line item picker, offline support.
+
+**New files:**
+- `lib/models/estimate.dart` — Estimate, EstimateArea, EstimateLineItem models
+- `lib/models/estimate_item.dart` — EstimateItem (code database item) model
+- `lib/repositories/estimate_repository.dart` — CRUD + code search + pricing lookup
+- `lib/services/estimate_service.dart` — Auth-enriched, company_id injection
+- `lib/screens/estimates/estimate_list_screen.dart` — List with filters (status, type)
+- `lib/screens/estimates/estimate_builder_screen.dart` — Room-by-room editor
+- `lib/screens/estimates/room_editor_screen.dart` — Room dimensions + line items
+- `lib/screens/estimates/line_item_picker_screen.dart` — Search + filter items
+- `lib/screens/estimates/estimate_preview_screen.dart` — Summary view before export
+
+**UI Flow:**
+1. Estimate List → tap "+" → New Estimate (regular or insurance toggle)
+2. Add rooms/areas → enter dimensions (or LiDAR placeholder for Phase E)
+3. Per room: search items → add to scope → adjust quantities
+4. Preview: subtotal, O&P, tax, grand total
+5. Actions: Save Draft, Generate PDF, Send to Customer
+
+**Checklist D8c:**
+- [x] Estimate model (Estimate, EstimateArea, EstimateLineItem, EstimatePhoto)
+- [x] EstimateItem model (code database item, EstimateCategory, EstimateUnit)
+- [x] EstimateEngineRepository (CRUD, search, code DB — separate from E5 estimate_repository)
+- [x] EstimateEngineService (auth-enriched, providers, notifier, stats)
+- [x] Estimate list screen (filters: draft/sent/approved/rejected, type: regular/insurance)
+- [x] Estimate builder screen (room list, totals summary, actions)
+- [x] Room editor screen (dimensions form, line item list, add item button)
+- [x] Line item picker (search by description/code/trade, category filter, add to room)
+- [x] Estimate preview screen (formatted summary, PDF trigger placeholder)
+- [x] Insurance mode toggle (shows claim/policy/carrier/adjuster fields)
+- [x] Auto-calculate totals (subtotal + O&P + tax = grand_total)
+- [x] dart analyze: 0 issues
+- [ ] Commit: `[D8c] Flutter estimate engine — mobile field estimating`
+
+---
+
+#### D8d: Estimate CRUD — Web CRM (~12 hrs)
+
+**Goal:** Full estimate management in the CRM. Estimate editor with room-by-room breakdown, auto-pricing, template system.
+
+**New files:**
+- `web-portal/src/lib/hooks/use-estimates.ts` — Full CRUD + calculations + search
+- `web-portal/src/app/dashboard/estimates/page.tsx` — Estimate list
+- `web-portal/src/app/dashboard/estimates/new/page.tsx` — Create estimate
+- `web-portal/src/app/dashboard/estimates/[id]/page.tsx` — Estimate editor
+- `web-portal/src/app/dashboard/estimates/[id]/preview/page.tsx` — PDF preview
+
+**Features:**
+- Estimate list with status badges and type filter
+- Room-by-room line item entry with drag-to-reorder
+- Code browser: search/filter all categories
+- Auto-price lookup: select item → populate costs from pricing DB
+- O&P calculator: configurable markup per trade or total
+- Insurance fields: claim #, policy #, carrier, adjuster (conditional on type=insurance)
+- Template system: save/load common scopes per trade
+- Summary view: subtotal, O&P, tax, depreciation (insurance mode), ACV/RCV
+
+**Checklist D8d:**
+- [x] use-estimates.ts hook (CRUD, search, calculations, real-time)
+- [x] Mappers for estimate tables (estimates, areas, line_items, items)
+- [x] Estimates list page (status filter, type filter, search)
+- [x] Estimate creation page (type selector, customer/job linking)
+- [x] Estimate editor page (room-by-room, line items, code search sidebar)
+- [x] Auto-pricing from estimate_items base prices (estimate_pricing deferred to crowdsource)
+- [x] O&P calculator (configurable percentages)
+- [x] Insurance mode conditional fields
+- [ ] Template save/load (estimate_templates) — deferred, needs template table wiring
+- [x] Summary view with totals (inline preview mode)
+- [x] Sidebar nav: add Estimates under Operations section (moved from Insurance)
+- [x] npm run build passes (71 routes, 0 errors)
+- [ ] Commit: `[D8d] Web CRM estimate engine — editor, pricing, templates`
+
+---
+
+#### D8e: PDF Export — Edge Function (~8 hrs)
+
+**Goal:** Generate professional branded PDF estimates. Company logo, room-by-room breakdown, photo evidence pages.
+
+**Edge Function:** `export-estimate-pdf`
+**Input:** estimate_id, template (standard | detailed | summary)
+
+**PDF Sections:**
+1. Cover page: company branding (logo, colors, contact info)
+2. Property details (address, customer, date)
+3. Room-by-room breakdown with line items
+4. Quantities, unit prices, line totals
+5. Subtotal, O&P, tax, grand total
+6. Insurance fields (if type=insurance): claim #, carrier, deductible
+7. Terms and conditions
+8. Photo evidence pages (from estimate_photos)
+
+**Checklist D8e:**
+- [x] Edge Function: export-estimate-pdf
+- [x] Load estimate with all areas, line items, photos
+- [x] Apply company branding from companies table
+- [x] Render HTML template (standard layout)
+- [x] Render HTML template (detailed layout — includes item-level pricing breakdown)
+- [x] Render HTML template (summary layout — totals only, no line items)
+- [x] PDF generation (HTML → print-ready page, standard Edge Function pattern)
+- [ ] Photo evidence pages (auto-layout from estimate_photos) — deferred to D8g photos sprint
+- [x] Download endpoint (returns HTML for print/PDF)
+- [x] Flutter: PDF preview + share (via share_plus)
+- [x] Web CRM: PDF preview + download button (fetch + blob URL + new tab)
+- [x] Deploy Edge Function to dev
+- [ ] Commit: `[D8e] PDF estimate export — branded, multi-template`
+
+---
+
+#### D8f: ESX Import — Edge Function (~8 hrs)
+**PREREQUISITE:** IP attorney opinion letter on interoperability defense (recommended but not blocking)
+
+**Goal:** Allow contractors to import existing estimate files (.esx) — standard industry ZIP+XML format documented publicly on FileFormat.com, FileInfo.com, and industry help sites.
+
+**Edge Function:** `import-esx`
+**Input:** .esx file (uploaded by user)
+
+**Process:**
+1. Validate file is ZIP archive (file size limit 100MB, ZIP bomb detection)
+2. Extract contents (standard ZIP decompression)
+3. Locate XML data file
+4. Parse XML: extract property/claim info, areas, line items (code + selector + description + quantity + unit)
+5. Map extracted codes to estimate_items (ZAFTO item database)
+6. Create estimate record with all line items
+7. Store new code+description pairs as contributions (code_contributions table)
+
+**Checklist D8f:**
+- [x] Edge Function: import-esx
+- [x] ZIP extraction (fflate via esm.sh, ZIP bomb detection 500MB limit)
+- [x] XML parser for industry-standard schema (fast-xml-parser via esm.sh)
+- [x] Extract: property info, claim info, areas, line items, pricing (full XACTDOC schema support)
+- [x] Map extracted codes to estimate_items table (ilike description match)
+- [x] Create estimate + areas + line_items from parsed data (auto-number EST-YYYYMMDD-NNN)
+- [x] Store unknown codes as code_contributions
+- [x] Error handling: invalid ZIP, missing XML, unknown schema version
+- [x] Input validation: file size limit (100MB), content type check
+- [x] Flutter: upload .esx button on estimate list (file_picker + http multipart)
+- [x] Web CRM: import .esx button on estimates page (FormData + fetch)
+- [x] Deploy Edge Function to dev
+- [ ] Commit: `[D8f] ESX import — parse industry-standard estimate files`
+
+---
+
+#### D8g: ESX Export — Edge Function (~8 hrs)
+**PREREQUISITE:** IP attorney opinion letter on interoperability defense (recommended but not blocking)
+
+**Goal:** Generate industry-compatible .esx files for insurance estimate submission. Standard ZIP+XML format.
+
+**Edge Function:** `export-esx`
+**Input:** estimate_id (must be type=insurance)
+
+**Process:**
+1. Load estimate with all areas, line items, photos
+2. Build XML document following industry-standard schema
+3. Add photo attachments as JPGs
+4. Package as ZIP archive
+5. Set .esx extension
+
+**Checklist D8g:**
+- [x] Edge Function: export-esx
+- [x] Load estimate with areas, line items, photos
+- [x] Generate XML: project header (property, dates, claim info)
+- [x] Generate XML: area definitions (ROOM elements with name+level)
+- [x] Generate XML: line items with industry codes + quantities (LINE elements with MAT/LAB/EQU)
+- [x] Generate XML: pricing data (from ZAFTO's pricing engine)
+- [x] Generate XML: O&P calculations + tax jurisdiction
+- [x] Add photo attachments as JPGs in ZIP (from estimate-photos bucket)
+- [x] Package as ZIP with .esx extension (fflate zipSync, level 6)
+- [x] Flutter: export .esx button (insurance estimates only, share_plus)
+- [x] Web CRM: export .esx button (insurance estimates only, blob download)
+- [ ] Round-trip test: export → import → compare (deferred to D8j integration testing)
+- [x] Deploy Edge Function to dev
+- [ ] Commit: `[D8g] ESX export — generate industry-compatible estimate files`
+
+---
+
+#### D8h: Code Contribution Engine (~6 hrs)
+
+**Goal:** Every ESX import feeds the code database. Crowdsource verification pipeline.
+
+**Process:**
+1. ESX import extracts code+description pairs → insert into code_contributions
+2. When 3+ users contribute same code+description → mark verified
+3. Verified contributions promoted to estimate_items (with source='contributed')
+4. Monthly aggregation Edge Function processes verification queue
+
+**Checklist D8h:**
+- [x] ESX import auto-inserts to code_contributions (wired in D8f) — fixed column names (industry_code/industry_selector/user_id)
+- [x] Verification count logic: increment when duplicate code+description submitted — dedup in import-esx
+- [x] Promote verified codes (3+ verifications) to estimate_items — code-verify EF promote-all action
+- [x] Edge Function: code-verify (on-demand via Ops Portal) — GET stats+queue, POST verify/reject/promote-one/promote-all
+- [x] Admin page: code contribution queue (Ops Portal) — /dashboard/code-contributions (filter tabs, search, bulk promote)
+- [x] Contribution stats: total contributed, verified, pending — stats cards + filter counts
+- [x] Deploy Edge Function to dev — code-verify deployed, import-esx redeployed with fix
+- [ ] Commit: `[D8h] Code contribution engine — crowdsource verification pipeline`
+
+---
+
+#### D8i: Pricing Engine Foundation (~8 hrs)
+
+**Goal:** Regional pricing from public data sources. BLS labor stats, FEMA equipment rates, supplier API prep.
+
+**Data Sources (all public, all legal):**
+- BLS Occupational Employment Wage Statistics (labor rates by MSA)
+- BLS Producer Price Index (material cost trends)
+- FEMA Equipment Rate Schedule (equipment costs)
+- Davis-Bacon prevailing wage data (government projects)
+- Supplier APIs via Unwrangle ($99/mo for HD + Lowe's — wired in Phase F)
+
+**Checklist D8i:**
+- [x] BLS data ingestion Edge Function (fetch + parse + insert estimate_pricing)
+- [x] FEMA equipment rate ingestion Edge Function
+- [x] Regional pricing calculator: ZIP → MSA code → pricing lookup
+- [x] Pricing fallback: if no regional data, use national average
+- [x] estimate_pricing table populated for major MSAs
+- [x] Pricing admin page (Ops Portal): view coverage, trigger refresh
+- [x] Deploy Edge Functions to dev
+- [ ] Commit: `[D8i] Pricing engine foundation — BLS + FEMA public data`
+
+---
+
+#### D8j: Portal Integration + Testing (~8 hrs)
+
+**Goal:** Estimate engine visible in all relevant portals. End-to-end testing.
+
+**Team Portal:**
+- Field estimate creation (simplified mobile-friendly form)
+- Assigned estimates view (estimates for tech's assigned jobs)
+
+**Client Portal:**
+- Estimate review page (customer views sent estimates)
+- Approve/reject with signature
+
+**Ops Portal:**
+- Estimate analytics (total estimates, conversion rate, average value)
+- Code database admin (view/edit/add items)
+- Pricing coverage dashboard
+
+**Checklist D8j:**
+- [x] Team Portal: estimate creation flow (hook + page)
+- [x] Team Portal: assigned estimates list
+- [x] Client Portal: estimate review page (read-only + approve/reject)
+- [x] Client Portal: digital signature on approval
+- [x] Ops Portal: estimate analytics widgets
+- [x] Ops Portal: code database browser/editor (covered by D8h code-contributions + D8j analytics Code DB Health section)
+- [x] Ops Portal: pricing coverage dashboard (covered by D8i pricing-engine + D8j analytics)
+- [ ] End-to-end test: create estimate (Flutter) → view in CRM → send to client → client approves (deferred — needs deployed env + test data)
+- [ ] End-to-end test: import ESX → review → edit → export PDF (ESX deferred to revenue stage per S89 owner directive)
+- [ ] End-to-end test: import ESX → edit → export ESX (round-trip) (ESX deferred to revenue stage per S89 owner directive)
+- [x] All 5 apps build clean (dart analyze + npm run build × 4)
+- [x] Commit: `[D8j] Estimate engine — portal integration + testing`
+
+---
+
+#### D8 Execution Order
+
+Execute in sequence:
+1. D8a (Database) — must be first
+2. D8b (Seed Data) — needs tables from D8a
+3. D8c + D8d (Flutter + Web CRM CRUD) — can be parallel, both need D8a+D8b
+4. D8e (PDF Export) — needs CRUD working
+5. D8f (ESX Import) — needs database + CRUD
+6. D8g (ESX Export) — needs database + CRUD
+7. D8h (Code Contribution Engine) — needs D8f wired
+8. D8i (Pricing Engine) — independent of ESX, can run after D8a
+9. D8j (Portal Integration + Testing) — last, needs everything above
+
+**AI-dependent features (deferred to Phase E):**
+- Photo damage classification (Claude Vision → suggested line items)
+- AI scope builder (damage type + room → complete line item list)
+- Text-to-code AI mapping (description → best matching items)
+- LiDAR room scanner (ARKit → auto-populate estimate_areas)
+
+**Total estimated: ~86 hours across 10 sub-steps**
+**New tables: 10 (estimate_items, estimate_categories, estimate_units, estimate_pricing, estimate_labor_components, code_contributions, estimates, estimate_areas, estimate_line_items, estimate_photos)**
+**New Edge Functions: 5 (export-estimate-pdf, import-esx, export-esx, code-verify, pricing-ingest)**
+
+---
+
 ## SPRINT R1: FLUTTER APP REMAKE
 
 **Source:** `Expansion/45_FLUTTER_APP_REMAKE.md`
@@ -6622,11 +7136,11 @@ Include <content>{markdown}</content> for rendered display.
 
 ---
 
-### Sprint E5: Xactimate Estimate Engine
-**Source:** `Expansion/25_XACTIMATE_ESTIMATE_ENGINE.md`
+### Sprint E5: Xactimate Estimate Engine — **SUPERSEDED BY D8**
+**Source:** `Expansion/25_XACTIMATE_ESTIMATE_ENGINE.md` — REPLACED by `SPRINT/07_ESTIMATE_ENGINE_SPEC.md`
 **Goal:** Replace $300/mo Xactimate with built-in estimate writing, independent pricing, and AI-powered scope analysis.
 **Depends on:** E1 (AI infra), D2a (insurance tables already deployed), legal review (for ESX export).
-**Status: E5a-f + E5i-j DONE (S79). E5g-h BLOCKED on legal review.**
+**Status: SUPERSEDED (S85). E5 code is DORMANT. D8 (clean-room estimate engine) replaces this with independent architecture — two-mode engine (Regular Bids + Insurance ESX), own code database, crowdsource engine. AI features (photo analysis, scope builder, code suggestion) will fold into E1 Universal AI when Phase E resumes. Zero references to proprietary tools or reverse engineering.**
 
 #### E5a: Pricing Database Foundation (~8 hrs)
 **Status: DONE (Session 78)**
@@ -6851,10 +7365,332 @@ Include <content>{markdown}</content> for rendered display.
 
 ---
 
-## PHASE F: PLATFORM COMPLETION
-*Outline specs — detail when Phase E nears completion.*
+## PRE-F: FOUNDATION SPRINTS
 
-### Sprint F1-F10: (See 01_MASTER_BUILD_PLAN.md for details)
+### Sprint FM: Firebase → Supabase Migration (~8-12 hrs)
+**Goal:** Migrate 11 Cloud Functions from `backend/functions/index.js` (Firebase project zafto-2b563) to Supabase Edge Functions. Eliminate last Firebase dependency.
+
+**Functions to migrate:**
+| Firebase Function | Purpose | New Edge Function |
+|-------------------|---------|-------------------|
+| analyzePanel | Panel AI analysis | Merge into existing ai-photo-diagnose |
+| analyzeNameplate | Nameplate extraction | Merge into existing ai-photo-diagnose |
+| analyzeWire | Wire identification | Merge into existing ai-photo-diagnose |
+| analyzeViolation | NEC violation check | Merge into existing ai-photo-diagnose |
+| smartScan | Auto-detect + route | Merge into existing ai-photo-diagnose |
+| getCredits | Check scan credits | New: subscription-credits |
+| addCredits | Add AI credits | New: subscription-credits |
+| revenueCatWebhook | IAP processing | New: revenuecat-webhook |
+| createPaymentIntent | Stripe payments | New: stripe-payments |
+| stripeWebhook | Payment events | New: stripe-webhook |
+| getPaymentStatus | Check payment status | Merge into stripe-payments |
+
+**Secrets to migrate:** STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, ANTHROPIC_API_KEY → `npx supabase secrets set`
+
+**Checklist FM:**
+- [ ] Retrieve key values from Firebase: `firebase functions:secrets:access STRIPE_SECRET_KEY`
+- [ ] Set keys in Supabase: `npx supabase secrets set STRIPE_SECRET_KEY=... STRIPE_WEBHOOK_SECRET=...`
+- [ ] Edge Function: stripe-payments (createPaymentIntent, getPaymentStatus)
+- [ ] Edge Function: stripe-webhook (payment events handler)
+- [ ] Edge Function: revenuecat-webhook (IAP credit processing)
+- [ ] Edge Function: subscription-credits (getCredits, addCredits)
+- [ ] Update Stripe webhook URL in Stripe Dashboard (Firebase → Supabase)
+- [ ] Update RevenueCat webhook URL
+- [ ] Test: create payment intent → verify webhook fires
+- [ ] Test: credit purchase → verify credits added
+- [ ] Delete `backend/functions/` directory (Firebase code)
+- [ ] Remove Firebase packages from root package.json if any
+- [ ] Commit: `[FM] Firebase→Supabase migration — 11 functions, zero Firebase`
+
+---
+
+### Sprint R1-fix: Mobile Backend Rewire (~8-12 hrs)
+**Goal:** Connect R1's 33 new role-based screens to existing Phase B wired data.
+
+**Deferred from R1 (S78):**
+- [ ] R1c: Rewire all 19 field tools to new design system nav
+- [ ] R1c: Quick actions menu (role/context/time aware)
+- [ ] R1e: Deploy inspection_templates + inspection_results + inspection_deficiencies tables
+- [ ] R1e: Seed system inspection templates
+- [ ] R1e: Deficiency capture (fail → photo → annotate → code cite → severity)
+- [ ] R1e: Floor plan integration (pin deficiencies)
+- [ ] R1e: Report generation (auto PDF)
+- [ ] R1f: Deploy home_scan_logs + home_maintenance_reminders tables
+- [ ] R1j: Permission override system (admin grants/restricts per user)
+- [ ] R1j: Deep linking from notifications
+- [ ] R1j: Onboarding flow per role
+- [ ] R1j: All existing backend wiring connected to new R1 screens
+- [ ] dart analyze: 0 errors
+- [ ] Commit: `[R1-fix] Backend rewire — 33 screens connected to live data`
+
+---
+
+## PHASE F: PLATFORM COMPLETION
+
+**Build order: F1→F3→F4→F5→F6→F7→F9→F10. F2+F8 build after Phase E (AI).**
+**Every sprint: enterprise security (RLS on all tables), enterprise speed (indexes on all queries), enterprise polish (Stripe-quality UI).**
+
+---
+
+### Sprint F1: Phone System — SignalWire (~40-55 hrs)
+**Source:** `04_EXPANSION_SPECS.md` F1 section
+**API:** SignalWire (Voice, SMS, Fax, Video). Keys already stored in Supabase secrets + env files.
+
+**F1a: Database + Edge Functions (~10 hrs)**
+- [ ] Tables: phone_numbers, call_records, voicemails, sms_messages, fax_records (5 new)
+- [ ] RLS: company-scoped on all 5 tables
+- [ ] Edge Function: signalwire-voice (inbound/outbound call handling, recording)
+- [ ] Edge Function: signalwire-sms (send/receive, webhook handler)
+- [ ] Edge Function: signalwire-fax (send PDF, receive → auto-PDF → Storage)
+- [ ] Edge Function: signalwire-webhook (CDR, delivery receipts, fax status)
+- [ ] Deploy + verify
+
+**F1b: Business Phone — Web CRM (~8 hrs)**
+- [ ] Hook: use-phone.ts (call log, voicemail, SMS conversations)
+- [ ] Page: /dashboard/phone (call log, active calls, voicemail inbox)
+- [ ] Page: /dashboard/phone/sms (conversation threads per customer)
+- [ ] Dialer component (click-to-call from any customer/job page)
+- [ ] Call recording playback in job timeline
+
+**F1c: Fax System — Web CRM + Mobile (~8 hrs)**
+- [ ] Hook: use-fax.ts (send, receive, history, status tracking)
+- [ ] Page: /dashboard/phone/fax (fax inbox/outbox, send new)
+- [ ] One-click fax from estimates, invoices, permits, contracts
+- [ ] Inbound fax: auto-PDF → Storage → notify → appears in CRM timeline
+- [ ] Flutter: fax send screen (pick document → enter number → send)
+- [ ] Flutter: fax history screen
+
+**F1d: Auto-Attendant + AI Receptionist (~10 hrs)**
+- [ ] SignalWire SWML configuration (IVR with business hours)
+- [ ] AI receptionist: natural language call screening + routing
+- [ ] Voicemail → transcription → notification
+- [ ] Business hours routing (day/evening/weekend rules)
+- [ ] Call escalation to video (bridge to F3 Meeting Rooms)
+
+**F1e: Portal Integration + Testing (~8 hrs)**
+- [ ] Team Portal: incoming call notifications, SMS from field
+- [ ] Client Portal: SMS conversation with contractor
+- [ ] Ops Portal: call analytics, usage dashboard
+- [ ] All 5 apps build clean
+- [ ] Commit: `[F1] Phone system — voice, SMS, fax, AI receptionist`
+
+---
+
+### Sprint F3: Meeting Room System — LiveKit (~70 hrs)
+**Source:** `04_EXPANSION_SPECS.md` F3 section
+**API:** LiveKit (WebRTC SFU). Keys already stored in Supabase secrets + env files.
+
+**F3a: Database + Core Video (~20 hrs)**
+- [ ] Tables: meetings, meeting_participants, meeting_captures, meeting_booking_types, async_videos (5 new)
+- [ ] RLS: company-scoped + participant access for external parties
+- [ ] Edge Function: meeting-room (create/join/end, recording management)
+- [ ] LiveKit room creation + token generation
+- [ ] 1-on-1 video calls (browser + mobile)
+- [ ] Call recording → Supabase Storage
+
+**F3b: Smart Rooms + Context (~15 hrs)**
+- [ ] Context panel: job details, estimate, customer info visible during call
+- [ ] Freeze-frame → annotate → save to job photos
+- [ ] Rear camera mode (site walk with annotations)
+- [ ] 6 meeting types: Customer Consultation, Insurance Adjuster, Team Huddle, Site Walk, Subcontractor, Expert Consult
+
+**F3c: Scheduling + Booking (~10 hrs)**
+- [ ] Booking types configuration (duration, buffer, availability)
+- [ ] Public booking link (customer self-schedules)
+- [ ] Calendar integration (blocks time, sends reminders)
+- [ ] Google Calendar sync (free API)
+
+**F3d: AI + Async (~12 hrs)**
+- [ ] Deepgram real-time transcription
+- [ ] Claude summary + action items (post-meeting)
+- [ ] Async video messages (record + send, Loom-style)
+- [ ] Reply threads on async videos
+
+**F3e: Advanced + Polish (~13 hrs)**
+- [ ] Multi-party calls (3+ participants)
+- [ ] Insurance adjuster role (limited view, no edit)
+- [ ] Phone-to-video escalation (F1 → F3 bridge via SignalWire SIP)
+- [ ] Meeting history + playback in job timeline
+- [ ] Client Portal: join meeting link
+- [ ] All 5 apps build clean
+- [ ] Commit: `[F3] Meeting rooms — context-aware video, booking, AI transcription`
+
+---
+
+### Sprint F4: Mobile Field Toolkit + Sketch/Bid Flow (~120-140 hrs)
+**Source:** `04_EXPANSION_SPECS.md` F4 section
+**APIs:** OSHA (free), LiveKit (PTT), Deepgram (transcription)
+
+**F4a: Database + New Tool Tables (~12 hrs)**
+- [ ] Tables: walkie_channels, ptt_logs, moisture_readings, drying_logs, restoration_equipment, inspections, bid_sketches, sketch_rooms, osha_standards (9 new)
+- [ ] RLS: company-scoped on all
+- [ ] Indexes: moisture_readings(job_id, reading_date), drying_logs(job_id), inspections(job_id)
+
+**F4b: Communication Tools (~20 hrs)**
+- [ ] Walkie-Talkie/PTT (LiveKit audio channels, push-to-talk, always-on per job)
+- [ ] Team Chat (persistent messaging per job/channel, Supabase real-time)
+- [ ] Client Messaging (direct messages visible in client portal)
+- [ ] Phone UI integration (F1 mobile screens)
+- [ ] Meeting UI integration (F3 mobile screens)
+
+**F4c: Restoration Tools (~18 hrs)**
+- [ ] Moisture Reading Logger (daily readings per room, graphed over time, IICRC standards)
+- [ ] Drying Log (immutable daily entries, equipment placement, readings)
+- [ ] Equipment Tracker (what's deployed where, pickup scheduling, utilization)
+- [ ] Claim Documentation Camera (auto-tag to claim, timestamp, GPS)
+
+**F4d: Inspection Tools (~16 hrs)**
+- [ ] Inspection Checklist (template-based, pass/fail/conditional per item)
+- [ ] Safety Checklist (OSHA-auto-populated by trade/job type)
+- [ ] Site Survey (dimensions, conditions, photos, notes)
+- [ ] Deficiency capture (fail → photo → annotate → code cite → severity)
+- [ ] Report generation (auto PDF from completed inspection)
+
+**F4e: OSHA Integration (~8 hrs)**
+- [ ] Edge Function: osha-data-sync (pull enforcement data, standards by SIC/NAICS)
+- [ ] osha_standards table populated (cached, daily refresh)
+- [ ] Safety briefing auto-populates relevant OSHA standards for job trade
+- [ ] Pre-job safety checklist generated from OSHA requirements
+- [ ] Violation lookup by company (competitor research in marketplace)
+
+**F4f: Sketch + Bid Flow — THE KILLER FEATURE (~30-40 hrs)**
+- [ ] Room capture: take photo → enter dimensions (length, width, height, window sizes, ceiling gaps)
+- [ ] Sketch editor: draw room outlines, annotate measurements, mark damage areas
+- [ ] AI code suggestion: photos + dimensions + job type → pull from D8 price book → suggested line items
+- [ ] Location-based pricing: ZIP → MSA → BLS wage data + regional material costs
+- [ ] Advanced: identify specific code from photo (Claude Vision → match to estimate_items)
+- [ ] Generate bid: rooms + codes + local pricing + sketch + photos = professional bid PDF or ESX
+- [ ] Connected to D8 estimate engine (shares estimate_items, estimate_pricing, estimates tables)
+- [ ] Works on: Flutter app (phone/tablet), team portal (laptop), web CRM (office)
+- [ ] Sketch data stored in bid_sketches + sketch_rooms tables
+
+**F4g: Field Tool Rewire + Testing (~16 hrs)**
+- [ ] Rewire all 19 existing field tools to R1 design system
+- [ ] Quick actions menu (role/context/time aware)
+- [ ] All 25 tools accessible from AppShell Tools tab
+- [ ] Offline-first patterns (PowerSync) for field tools
+- [ ] All 5 apps build clean
+- [ ] Commit: `[F4] Mobile toolkit — 25 tools, sketch/bid, OSHA, PTT`
+
+---
+
+### Sprint F5: Business OS + Lead Aggregation (~180+ hrs)
+**Source:** `04_EXPANSION_SPECS.md` F5 section
+**APIs:** SendGrid, Google Business Profile (free), Meta Business (free), Nextdoor (free), Yelp Fusion (free), Google LSA, BuildZoom (free), Gusto Embedded, Samsara/Geotab
+
+**F5a: Lead Aggregation System (~30 hrs)**
+- [ ] Edge Function per lead source: google-business-leads, meta-leads, nextdoor-leads, yelp-leads, google-lsa-leads, buildzoom-leads
+- [ ] Normalize all lead data → existing `leads` table (source, stage, contact info)
+- [ ] Auto-assign leads based on trade/area/availability rules
+- [ ] Unified lead inbox in CRM (all sources, one view)
+- [ ] Lead notification system (push + SMS + email)
+- [ ] Lead analytics: source performance, conversion rates, cost per lead
+
+**F5b: CPA Portal (~20 hrs)**
+- [ ] Read-only ZBooks access for accountants
+- [ ] GL, P&L, Balance Sheet, Cash Flow reports
+- [ ] Bank reconciliation review
+- [ ] 1099 preparation + export
+- [ ] Separate subdomain or role-gated CRM access
+
+**F5c: Payroll (~25 hrs)**
+- [ ] Time clock data → payroll calculations
+- [ ] Gusto Embedded integration (direct deposit, tax filing, W-2/1099)
+- [ ] Pay run approval workflow
+- [ ] Employee pay stubs in team portal
+
+**F5d: Fleet Management (~20 hrs)**
+- [ ] Vehicle tracking (Samsara/Geotab GPS)
+- [ ] Maintenance scheduling + alerts
+- [ ] Fuel log tracking
+- [ ] Insurance docs per vehicle
+- [ ] Fleet dashboard in CRM
+
+**F5e: Route Optimization (~15 hrs)**
+- [ ] Daily job schedule → optimized driving routes
+- [ ] Google Maps Directions API
+- [ ] Multi-stop optimization
+- [ ] Navigate from app (deep link to Maps)
+
+**F5f: Procurement (~20 hrs)**
+- [ ] PO creation + approval workflow
+- [ ] Vendor management (directory, contacts, terms)
+- [ ] Receiving + matching PO to invoice
+- [ ] Unwrangle integration for HD/Lowe's pricing (when activated)
+
+**F5g: HR Suite (~20 hrs)**
+- [ ] Employee records + onboarding checklists
+- [ ] Training tracking + cert/license expiration alerts
+- [ ] Performance reviews
+- [ ] OSHA training compliance tracking
+
+**F5h: Email System (~15 hrs)**
+- [ ] SendGrid integration: transactional (invoice sent, job update, appointment)
+- [ ] Marketing email (newsletters, follow-ups, promotions)
+- [ ] Email templates tied to CRM events
+- [ ] Email analytics (open rate, click rate)
+
+**F5i: Document Management (~15 hrs)**
+- [ ] File storage per job/customer/property (Supabase Storage)
+- [ ] Template system (proposals, contracts, lien waivers)
+- [ ] DocuSign integration for e-signatures
+- [ ] Version history
+- [ ] All 5 apps build clean
+- [ ] Commit: `[F5] Business OS — 9 systems, lead aggregation, enterprise backbone`
+
+---
+
+### Sprint F6: Marketplace (~80-120 hrs)
+**Source:** `04_EXPANSION_SPECS.md` F6 section
+
+- [ ] Equipment AI scanning (camera → model identification → diagnostics)
+- [ ] Pre-qualified lead generation (homeowner → contractor match)
+- [ ] Contractor bidding on marketplace leads
+- [ ] Service history tracking per property
+- [ ] Equipment database (known models, issues, lifespans)
+- [ ] Tables: equipment_scans, marketplace_leads, marketplace_bids, equipment_database
+- [ ] Commit: `[F6] Marketplace — equipment AI, lead gen, contractor bidding`
+
+---
+
+### Sprint F7: ZAFTO Home Platform (~140-180 hrs)
+**Source:** `04_EXPANSION_SPECS.md` F7 section
+
+- [ ] Client Portal evolves into homeowner property intelligence platform
+- [ ] Free: equipment passport, service history, doc storage, maintenance reminders
+- [ ] Premium ($7.99/mo): AI property advisor, predictive maintenance, contractor matching
+- [ ] R1f deferred items: home_scan_logs, home_maintenance_reminders tables
+- [ ] Home Scanner mobile feature (camera → AI equipment identification)
+- [ ] Tables: homeowner_properties, homeowner_equipment, service_history, maintenance_schedules, homeowner_documents
+- [ ] Commit: `[F7] ZAFTO Home — homeowner property intelligence platform`
+
+---
+
+### Sprint F9: Hiring System (~18-22 hrs)
+**Source:** `04_EXPANSION_SPECS.md` F9 section
+
+- [ ] Job posting creation in CRM
+- [ ] Multi-channel distribution: Indeed (free), LinkedIn, ZipRecruiter
+- [ ] Applicant pipeline: applied → screening → interview → offer → hired
+- [ ] Checkr background checks ($29-$80/check)
+- [ ] E-Verify integration (free federal employment verification)
+- [ ] Resume parsing
+- [ ] Interview scheduling (ties to calendar)
+- [ ] Onboarding checklist → HR Suite (F5g)
+- [ ] Commit: `[F9] Hiring system — multi-channel posting, applicant pipeline`
+
+---
+
+### Sprint F10: ZDocs + ZSheets (TBD hrs) — SECOND TO LAST
+**Source:** `04_EXPANSION_SPECS.md` F10 section
+
+- [ ] PDF-first document suite (NOT Google Docs — trade-focused)
+- [ ] Templates: proposals, contracts, change orders, inspection reports, lien waivers
+- [ ] Fill-from-CRM-data (customer, job, estimate, invoice auto-populate)
+- [ ] E-signature integration (DocuSign/PandaDoc)
+- [ ] Version history + audit trail
+- [ ] Build AFTER all features locked so templates cover every document type
+- [ ] Commit: `[F10] ZDocs — PDF-first document suite`
 
 ---
 
@@ -6865,6 +7701,41 @@ Include <content>{markdown}</content> for rendered display.
 ### Sprint G2: Security audit (~20-30 hrs)
 ### Sprint G3: Performance optimization (~20-30 hrs)
 ### Sprint G4: Final security hardening (~4 hrs)
+
+---
+
+## PHASE E: AI LAYER — REBUILD (after Phase G)
+*Deep spec session with owner required before starting. AI must know every feature, every table, every screen.*
+
+### Sprint E-review: Audit premature E work
+### Sprint E1-E4: Full AI implementation (rebuilt with complete platform knowledge)
+
+---
+
+## POST-AI: FINAL FEATURES
+
+### Sprint F2: Website Builder V2 (~60-90 hrs) — AFTER AI
+- [ ] Cloudflare Registrar for custom domains
+- [ ] Trade-specific templates
+- [ ] AI content generation (service pages, blog — needs Phase E)
+- [ ] CRM sync (completed job photos → auto-showcase)
+- [ ] Booking widget → CRM calendar
+- [ ] SEO optimization
+- [ ] Review display (Google/Yelp)
+- [ ] $19.99/mo add-on
+- [ ] Commit: `[F2] Website Builder — AI content, templates, booking`
+
+### Sprint F8: Ops Portal Phases 2-4 (~111 hrs) — TRULY LAST
+- [ ] Marketing engine (growth CRM, content, campaigns)
+- [ ] Treasury (revenue analytics, churn, LTV)
+- [ ] Legal (contracts, compliance, disputes)
+- [ ] Dev terminal (deployment, feature flags, A/B testing)
+- [ ] Ads + SEO management
+- [ ] Vault (secrets management UI)
+- [ ] Referral program management
+- [ ] Advanced analytics
+- [ ] 54 additional pages
+- [ ] Commit: `[F8] Ops Portal 2-4 — marketing, treasury, legal, dev`
 
 ---
 

@@ -21,7 +21,7 @@ import type {
 import { getPageContext } from '@/lib/z-intelligence/context-map';
 import { simulateResponse } from '@/lib/z-intelligence/mock-responses';
 import { sendToZ } from '@/lib/z-intelligence/api-client';
-import { MOCK_BID_ARTIFACT } from '@/lib/z-intelligence/artifact-templates';
+import { MOCK_BID_ARTIFACT, STORAGE_BROWSER_ARTIFACT } from '@/lib/z-intelligence/artifact-templates';
 
 // ── Feature flag: set to true to use real Claude API ──
 const USE_LIVE_API = typeof window !== 'undefined' &&
@@ -36,6 +36,8 @@ interface ProviderState {
   isThinking: boolean;
   streamingContent: string; // partial content for streaming display
   tokenCount: number; // usage tracking
+  chatWidth: number;
+  artifactWidth: number;
 }
 
 type Action =
@@ -55,7 +57,9 @@ type Action =
   | { type: 'CLEAR_PARTIAL_CONTENT' }
   | { type: 'UPDATE_TOOL_CALLS'; threadId: string; toolCalls: ZMessage['toolCalls'] }
   | { type: 'SET_TOKEN_COUNT'; count: number }
-  | { type: 'UPDATE_THREAD_ID'; oldId: string; newId: string };
+  | { type: 'UPDATE_THREAD_ID'; oldId: string; newId: string }
+  | { type: 'SET_CHAT_WIDTH'; width: number }
+  | { type: 'SET_ARTIFACT_WIDTH'; width: number };
 
 function reducer(state: ProviderState, action: Action): ProviderState {
   switch (action.type) {
@@ -181,6 +185,12 @@ function reducer(state: ProviderState, action: Action): ProviderState {
       return { ...state, threads, currentThreadId };
     }
 
+    case 'SET_CHAT_WIDTH':
+      return { ...state, chatWidth: action.width };
+
+    case 'SET_ARTIFACT_WIDTH':
+      return { ...state, artifactWidth: action.width };
+
     default:
       return state;
   }
@@ -251,6 +261,8 @@ export function ZConsoleProvider({ children }: { children: ReactNode }) {
     isThinking: false,
     streamingContent: '',
     tokenCount: 0,
+    chatWidth: 420,
+    artifactWidth: 600,
   });
 
   // Restore from localStorage on mount
@@ -267,6 +279,20 @@ export function ZConsoleProvider({ children }: { children: ReactNode }) {
       saveThreads(state.threads, state.currentThreadId);
     }
   }, [state.threads, state.currentThreadId]);
+
+  // Restore panel widths from localStorage
+  useEffect(() => {
+    const cw = localStorage.getItem('zafto_z_chat_width');
+    const aw = localStorage.getItem('zafto_z_artifact_width');
+    if (cw) dispatch({ type: 'SET_CHAT_WIDTH', width: parseInt(cw, 10) });
+    if (aw) dispatch({ type: 'SET_ARTIFACT_WIDTH', width: parseInt(aw, 10) });
+  }, []);
+
+  // Persist panel widths
+  useEffect(() => {
+    localStorage.setItem('zafto_z_chat_width', String(state.chatWidth));
+    localStorage.setItem('zafto_z_artifact_width', String(state.artifactWidth));
+  }, [state.chatWidth, state.artifactWidth]);
 
   // Update context chip + quick actions when pathname changes
   const { chip: contextChip, actions: quickActions } = useMemo(
@@ -315,6 +341,14 @@ export function ZConsoleProvider({ children }: { children: ReactNode }) {
 
   const selectThread = useCallback((threadId: string) => {
     dispatch({ type: 'SELECT_THREAD', threadId });
+  }, []);
+
+  const setChatWidth = useCallback((width: number) => {
+    dispatch({ type: 'SET_CHAT_WIDTH', width: Math.min(Math.max(width, 320), 700) });
+  }, []);
+
+  const setArtifactWidth = useCallback((width: number) => {
+    dispatch({ type: 'SET_ARTIFACT_WIDTH', width: Math.min(Math.max(width, 400), 900) });
   }, []);
 
   // ── Send Message (dual-mode: live API or mock) ──
@@ -568,6 +602,18 @@ export function ZConsoleProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'SET_ARTIFACT', threadId, artifact: { ...MOCK_BID_ARTIFACT } });
   }, [state.currentThreadId, pathname]);
 
+  const showStorageArtifact = useCallback(() => {
+    let threadId = state.currentThreadId;
+
+    if (!threadId) {
+      const thread = createThread(pathname);
+      dispatch({ type: 'NEW_THREAD', thread });
+      threadId = thread.id;
+    }
+
+    dispatch({ type: 'SET_ARTIFACT', threadId, artifact: { ...STORAGE_BROWSER_ARTIFACT } });
+  }, [state.currentThreadId, pathname]);
+
   // ── Context value ──
   const value: ZConsoleContextType = useMemo(() => ({
     consoleState: state.consoleState,
@@ -587,6 +633,11 @@ export function ZConsoleProvider({ children }: { children: ReactNode }) {
     selectArtifactVersion,
     closeArtifact,
     showDemoArtifact,
+    showStorageArtifact,
+    chatWidth: state.chatWidth,
+    artifactWidth: state.artifactWidth,
+    setChatWidth,
+    setArtifactWidth,
   }), [
     state.consoleState,
     currentThread,
@@ -605,6 +656,11 @@ export function ZConsoleProvider({ children }: { children: ReactNode }) {
     selectArtifactVersion,
     closeArtifact,
     showDemoArtifact,
+    showStorageArtifact,
+    state.chatWidth,
+    state.artifactWidth,
+    setChatWidth,
+    setArtifactWidth,
   ]);
 
   return (

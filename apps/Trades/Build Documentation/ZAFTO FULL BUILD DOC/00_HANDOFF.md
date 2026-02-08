@@ -1,6 +1,6 @@
 # ZAFTO SESSION HANDOFF
 ## THE ONLY DOC YOU READ FIRST — EVERY SESSION
-### Last Updated: February 7, 2026 (Session 80)
+### Last Updated: February 8, 2026 (Session 89)
 
 ---
 
@@ -18,20 +18,20 @@
 
 | Field | Value |
 |-------|-------|
-| **Sprint** | **PHASE E PAUSED.** Moving to Phase F (Platform Completion). AI goes TRULY LAST. |
-| **Sub-step** | Phase E premature work exists (dormant). Next: F1 (Phone System) or whichever F-phase feature owner specs first. |
-| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → search for Phase F (needs detailing) |
-| **Status** | Phases A-D ALL DONE. R1 App Remake DONE. Phase E started prematurely (S78-S80) — code committed but PAUSED. Correct build order: F → G → E. |
-| **Last Completed** | E4a-e Growth Advisor committed (S80). Phase E now PAUSED per owner directive. |
-| **Session Count** | 80 |
-| **Tables Deployed** | 92 |
-| **Migration Files** | 28 |
+| **Sprint** | **D8: Estimate Engine — ALL DONE (D8a-D8j).** Next: FM (Firebase Migration) → F1 (Phone System). |
+| **Sub-step** | D8j DONE. All portal integration complete. Team Portal: 27 routes (+2). Client Portal: 29 routes (estimate page rewritten). Ops Portal: 20 routes (+1). Next unchecked item: FM or F1 per build order. |
+| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → D8j checklist complete. Next: FM (Firebase→Supabase migration). |
+| **Status** | Phases A-D ALL DONE (including D8 Estimate Engine — all 10 sub-steps). R1 DONE. Phase E PAUSED. 102 tables. 32 Edge Functions. |
+| **Last Completed** | S89: D8j portal integration (Team Portal estimates, Client Portal review+signature, Ops Portal analytics). ESX legal deferred to revenue stage. Insurance workflow research complete. |
+| **Session Count** | 89 |
+| **Tables Deployed** | 102 |
+| **Migration Files** | 30 |
 
 ## CRITICAL: AI GOES LAST — BUILD ORDER CORRECTED (S80)
 
 **Owner directive (S80):** Phase E (AI Layer) was started prematurely. AI must be built AFTER every platform feature exists (Phase F) and is debugged (Phase G). AI needs to know every feature like the back of its hand — every table, every screen, every workflow — so it can do literally anything a user asks within the program. Deep AI spec session required before resuming Phase E.
 
-**Correct build order: A(DONE) → B(DONE) → C(DONE) → D(DONE) → R1(DONE) → F(NEXT) → G → E(LAST)**
+**Correct build order: A(DONE) → B(DONE) → C(DONE) → D(DONE — including D8 Estimate Engine) → R1(DONE) → FM(NEXT — Firebase Migration) → F(NEXT) → G → E(LAST)**
 
 **Phase E premature work (committed, dormant in codebase):**
 - E1-E2: z-intelligence EF (14 tools), Z Console wired, z_threads/z_messages tables (S78)
@@ -49,7 +49,9 @@
 - D6: Enterprise Foundation (S65-66). D7a: Certifications (S67-68).
 - R1: Flutter App Remake (S78) — 33 role screens, design system, AppShell.
 
-**Next: Phase F (Platform Completion).** Needs sprint specs written. Owner to decide priority order of F1-F10.
+**Next: Phase F (Platform Completion).** Order set by owner (S80):
+**F1 → F3 → F4 → F5 → F6 → F7 → F8 → F9 → F10 → F2 (Website Builder LAST — huge feature)**
+**PowerSync:** Moves to Phase G (after all tables exist, schema frozen, sync rules written once).
 
 ---
 
@@ -58,7 +60,7 @@
 | Gap | Status | Sprint | Details |
 |-----|--------|--------|---------|
 | **Phase E AI (PAUSED)** | **DORMANT** | E | Code committed S78-S80. NOT to be resumed until after F+G. Deep spec session required. |
-| F1: Phone System | NOT BUILT | F1 | Telnyx VoIP, AI receptionist, SMS, call recording |
+| F1: Phone System | NOT BUILT | F1 | SignalWire VoIP/SMS/Fax, AI receptionist, call recording |
 | F2: Website Builder V2 | NOT BUILT | F2 | Cloudflare Registrar, templates, AI content |
 | F3: Meeting Room System | NOT BUILT | F3 | LiveKit video, 6 meeting types, AI transcription |
 | F4: Mobile Field Toolkit | NOT BUILT | F4 | 25 tools: walkie-talkie/PTT, inspections, restoration |
@@ -122,6 +124,85 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 
 ## SESSION LOG (History — do NOT use for execution decisions, use CURRENT EXECUTION POINT above)
 
+### Session 89 (Feb 8) — ESX Legal Assessment + Insurance Research + D8j
+
+**S89: ESX Legal Risk Discussion (RESOLVED — ESX DEFERRED):**
+- Extended legal analysis: DMCA 1201 vs copyright distinction. Clean-room protects against copyright claims only. DMCA 1201 anti-circumvention is separate — sole defense is 1201(f) interoperability exception.
+- 1201(f) friction points: "lawfully obtained the program" requirement creates catch-22 (license = EULA risk, no license = "lawfully obtained" risk).
+- Owner decision: ESX features too risky to ship now. "This software looks too good to risk." Door left open for post-revenue with IP attorney blessing.
+- Owner directive: IP attorney deferred until revenue stage. Build zero-risk features now, lawyer before shipping ESX.
+- Strategy docs updated (memory/xactimate-strategy.md, memory/xactimate-legal-risk-assessment.md, memory/MEMORY.md).
+
+**S89: Insurance Workflow Deep Research (COMPLETE):**
+- 3 parallel research agents: contractor claim lifecycle, supplement process, codebase audit.
+- Full 10-step workflow documented: lead intake → emergency mitigation → documentation → initial scope → adjuster interaction → supplement process → O&P → ACV/RCV → payment → certificate of completion.
+- Competitor landscape: Encircle Hydro, LEVLR, Restoration AI, HOVER, Symbility, XactAI.
+- Key insight: "Adjusters re-write your estimate in Xactimate REGARDLESS. The supplement process is the real leverage point."
+- Zero-risk feature roadmap: supplement engine, AI estimate writer, PDF import, pricing intelligence, photo→scope AI, code library expansion, O&P calculator, drying report PDF.
+- Saved to memory/insurance-workflow-research.md (comprehensive).
+
+**S89: D8j — Portal Integration + Testing (DONE):**
+- Team Portal: use-estimates.ts hook (createFieldEstimate, addArea, addLineItem, recalculate) + estimates list page + estimate detail page. Sidebar updated. 27 routes (+2).
+- Client Portal: use-estimates.ts hook (approve/reject with ownership checks) + estimate review page rewritten from mock to production (604 lines). Digital signature (typed name + agreement checkbox). 29 routes.
+- Ops Portal: estimate analytics dashboard (6 stat cards, type breakdown, filter tabs, recent estimates table, code DB health section). Sidebar updated. 20 routes (+1).
+- All 5 apps build clean. D8 Estimate Engine COMPLETE (all 10 sub-steps: D8a-D8j).
+- Files: team-portal (mappers.ts, use-estimates.ts, estimates/page.tsx, estimates/[id]/page.tsx, sidebar.tsx), client-portal (mappers.ts, use-estimates.ts, estimate/page.tsx), ops-portal (estimates/page.tsx, sidebar.tsx).
+
+---
+
+### Session 87-88 (Feb 8) — D8e-D8i: Estimate Engine (continued)
+
+**S87: D8e+D8f+D8g — PDF Export + ESX Import/Export (ALL DONE):**
+- export-estimate-pdf EF: 3 templates (standard/detailed/summary), company branding, insurance details, print CSS. Wired into Web CRM (PDF button + 3 template buttons in preview) + Flutter (functions.invoke → temp file → Share.shareXFiles).
+- import-esx EF: Full XACTDOC parser (ZIP+XML), fflate for ZIP extraction with bomb detection, fast-xml-parser for XML. Parses XACTNET_INFO/CONTACTS/ADM/ESTIMATE. Code mapping to estimate_items via ilike. Unknown codes → code_contributions. Wired into Web CRM (Import .esx button) + Flutter (file_picker → MultipartRequest).
+- export-esx EF: XACTDOC XML generation from D8 estimate data, ZIP packaging with photos from estimate-photos bucket. Wired into Web CRM (.esx button for insurance) + Flutter (Export .esx for insurance).
+- All 3 Edge Functions deployed. 29 total.
+
+**S88: D8h — Code Contribution Engine (DONE):**
+- Fixed import-esx code_contributions insert: wrong column names (category_code→industry_code, item_code→industry_selector, contributed_by→user_id). Removed non-existent source/status columns.
+- Added dedup logic: checks for existing industry_code+industry_selector, increments verification_count instead of duplicate insert.
+- code-verify Edge Function: GET stats+queue (filter by all/pending/verified/promoted/ready, pagination). POST actions (verify, reject, promote-one, promote-all). Super_admin role gate. Promotes verified codes (3+ verifications) to estimate_items with source='contributed'.
+- Ops Portal code-contributions admin page: stats cards (total/pending/ready/verified/promoted), filter tabs, search, verify/reject/promote buttons per row, bulk "Promote All" action. 18 routes total (+1).
+- Sidebar updated: DATA section with Code Contributions link.
+- import-esx redeployed with fix. code-verify deployed. Ops Portal builds clean (18 routes, 0 errors).
+
+**S88: D8i — Pricing Engine Foundation (DONE):**
+- pricing-ingest Edge Function: BLS + FEMA + PPI ingestion, ZIP→MSA lookup, batch pricing.
+- msa_regions table: 25 MSAs with cost indices + ZIP prefixes.
+- fn_zip_to_msa + fn_get_item_pricing Postgres functions.
+- 5,616 estimate_pricing rows seeded (national + 25 MSAs).
+- Ops Portal pricing-engine admin page. 19 routes total (+1).
+- Web CRM UI overhaul: collapsible sidebar groups, ZAFTO wordmark fix, Z FAB ambient glow, artifact side-by-side with chat, persistent new chat button, drag-to-resize panels.
+
+---
+
+### Session 85-86 (Feb 7-8) — D8: Estimate Engine
+
+**S85: Doc updates + planning.**
+- Updated all build docs with finalized Phase F build order.
+- Added detailed sprint spec checklists for D8a-D8j and F-phase.
+- Finalized build order: D8 → Firebase Migration → F1→F3→F4→F5→F6→F7→F9→F10→G→E→F2→F8.
+- Audited API keys across all apps (Stripe/RevenueCat/Anthropic in Firebase backend need migration).
+
+**S86: D8a — Estimate Engine Database (DONE):**
+- 10 tables: estimate_categories, estimate_units, estimate_items, estimate_pricing, estimate_labor_components, code_contributions, estimates, estimate_areas, estimate_line_items, estimate_photos.
+- Enterprise RLS, GIN indexes, audit trigger, partial indexes. Migration made idempotent.
+- Fixed COALESCE in UNIQUE constraint (PostgreSQL limitation) and index name collision with E5.
+- Deployed: 101 total tables.
+
+**S86: D8b — Seed Data (DONE):**
+- 16 units, 86 categories with industry code mappings, 216 items across 15+ trades, 28 BLS labor rates.
+- All verified via SQL counts.
+
+**S86: D8c — Flutter Estimate CRUD (DONE):**
+- Models: estimate.dart (Estimate, EstimateArea, EstimateLineItem, EstimatePhoto + 4 enums), estimate_item.dart (EstimateItem, EstimateCategory, EstimateUnit).
+- estimate_engine_repository.dart — full CRUD, code search, auto-numbering (named "engine" to avoid E5 collision).
+- estimate_engine_service.dart — 10 providers, EstimatesNotifier, EstimateStats, business logic (send/approve/reject/duplicate/recalculate).
+- 5 screens: estimate_list_screen (stats bar, status+type filters, search), estimate_builder_screen (room-by-room editor, insurance toggle, O&P settings), room_editor_screen (dimensions, computed measurements, line items), line_item_picker_screen (code DB search, trade filters, manual entry), estimate_preview_screen (read-only summary, insurance totals, send action).
+- dart analyze: 0 issues across all 9 D8c files.
+
+---
+
 ### Session 80 (Feb 7) — E3: Employee Portal AI + Mobile AI
 
 **E3a: AI Troubleshooting Edge Functions (DONE):**
@@ -157,7 +238,141 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 - Deep AI spec session required before resuming Phase E.
 - All docs updated to reflect this (master build plan, handoff, circuit blueprint, live status, sprint specs).
 
+**API Integration Strategy (RESEARCHED):**
+- Comprehensive research completed: 40+ APIs across 11 categories to make ZAFTO feel like full ecosystem on first login.
+- Full list saved to `memory/api-integrations.md`. Key APIs: Unwrangle (HD+Lowe's pricing), HD Pro Xtra (direct B2B ordering), RSMeans (construction cost DB), Angi/Thumbtack/Google LSA (lead aggregation), SignalWire (VoIP/SMS/Fax — replaces Telnyx+Plivo, both rejected), LiveKit (video), Indeed/LinkedIn/ZipRecruiter (hiring), Checkr (background checks), Gusto (embedded payroll), Plaid (bank feeds), DocuSign (e-sig), Samsara (fleet GPS).
+- Architecture: 1 Edge Function per API → normalize to ZAFTO schema → insert into tables → audit log.
+- Priority order maps directly to F-phase features.
+
 **Next:** Phase F (Platform Completion). Owner to decide F1-F10 priority.
+
+### Session 83 (Feb 7) — Xactimate Deep Research: Legal Risk + Market Assessment + IICRC Knowledge Audit
+
+**Xactimate Legal Risk Assessment (4-agent deep research):**
+- Deployed 4 parallel research agents: ESX Producers Legal Status, Adjuster ESX Acceptance, Verisk Litigation/DMCA Interop, Xactimate Alternatives Market
+- **CRITICAL FINDING:** Every company producing ESX files does so through formal Verisk partnership. ZERO independent ESX producers exist commercially. magicplan, HOVER, Encircle, DocuSketch — ALL go through Verisk's Strategic Alliance program.
+- **#1 RISK:** EULA breach of contract (SAS v. WPL: $79.1M damages trebled), NOT copyright or DMCA
+- **ESX has NO DRM** — DMCA 1201 likely doesn't apply (nothing to "circumvent" in a ZIP file)
+- **Circuit split unresolved** — 5th Cir (Vault) says EULA can't override copyright; Fed Cir (Bowers) + 8th Cir (BnetD) say it can
+- **Key case law compiled:** Sega v. Accolade (RE for interop = fair use), Google v. Oracle (API reimplementation = fair use), Lotus v. Borland (menu hierarchy = uncopyrightable), Blizzard v. BnetD (EULA can waive interop rights), Compulife v. Newman (scraping pricing DB = trade secret)
+
+**Risk Mitigation Strategy:**
+1. NEVER accept Xactimate EULA on any dev machine (eliminates breach of contract)
+2. Clean room methodology (Team A documents ESX structure, Team B implements)
+3. Analyze customer-provided ESX files only (no EULA needed)
+4. Build own pricing database (crowd-sourced from real ZAFTO user jobs)
+5. IP attorney opinion letter before shipping ($5K-10K insurance)
+
+**Three Viable Paths Identified:**
+- **Path A: Verisk Partnership** — Apply through Strategic Alliance, get official API/XactNet access. Safe but under Verisk's control.
+- **Path B: Independent Estimating** — Own pricing DB + line item codes, output professional PDFs (not ESX). Low adoption risk.
+- **Path C: Clean Room ESX Interop** — Clean room from customer-provided ESX, own pricing DB, ESX-compatible output. First company to do this. Needs counsel.
+
+**IICRC Knowledge Base Assessment (1,140 lines reviewed):**
+- STRONG for restoration-specific insurance claims (~6 categories: WTR, HMR, TCR, CLN, FRE, DMO)
+- Equipment calculation formulas, adjuster documentation requirements, insurance dispute strategies all solid
+- MISSING: 64+ of 70+ Xactimate category codes, regional pricing (460+ ZIP regions), O&P rules by carrier, depreciation schedules, 27,000+ line items, non-restoration trades
+- **Strategic implication:** Launch Xactimate competition with restoration contractors FIRST (where IICRC knowledge is strong), expand to construction trades later
+
+**Adjuster Acceptance Intelligence (owner-provided, independently verified):**
+- Adjusters WILL accept non-Xactimate ESX if: clean import, Xactimate-style structure, pricing within 10-15% of regional list, scope aligns with inspection
+- Adjusters REJECT when: carrier requires Xactimate-only, ESX imports poorly, custom pricing, inexperienced adjuster
+- **Key insight:** "Produces estimates that adjusters don't feel the need to rewrite" > "ESX compatible"
+- Adjusters re-write estimates regardless. Supplement process is the real leverage point.
+
+**Verisk Competitive Intelligence:**
+- Competitive response playbook: Acquire (52 total) → Partner (130+) → Litigate ($375M EagleView) → Build AI (XactAI Sept 2025) → Ignore
+- FTC actively opposing: blocked 2 acquisitions (EagleView 2014, AccuLynx 2025)
+- Contractor frustration extreme: 100-200% above Xactimate pricing for small jobs
+- Window is narrow: Verisk building XactAI to deepen moat
+
+**Files Saved (memory, NOT in source code):**
+- `memory/xactimate-legal-risk-assessment.md` — Full S83 research (risk matrix, case law, 3 paths)
+- `memory/xactimate-deep-dive.md` — Updated with adjuster acceptance intelligence
+- `memory/MEMORY.md` — Updated Xactimate strategy section
+
+**PENDING: Owner to choose Path A/B/C. IP attorney opinion letter required before any ESX shipping.**
+
+**Next:** Owner path decision → Finish remaining API signups → Write Phase F sprint specs.
+
+---
+
+### Session 82 (Feb 7) — Xactimate ESX Deep Dive: Decryption Tool Review + MCP Server
+
+**ESX Decryption Tool Reviewed:**
+- PowerShell script (`esx_decrypt.ps1`) using Xactimate's `Core.Sys.Zip.dll` → `DoubleZipProvider.Undo()` method
+- Encryption: AES-128-ECB, 16-byte blocks, header `04 04 0A XX`, footer `FF FE FF FE`
+- Requires Xactimate Desktop installed (DLLs at `C:\Program Files\Xactware\XactimateDesktop\CORE\`)
+- **NOT available on current dev machine** — Xactimate Desktop not installed
+- Two XACTDOC variants: plain XML (sketch-only) and encrypted ZIPXML (full estimates)
+
+**MCP Server Prototype Reviewed:**
+- REST API on localhost:8765 for ESX read/write/encrypt/decrypt
+- Built for "Restoration Bid App" prototype (codename "Damians Mission")
+- Can both read AND write ESX files including re-encryption via DoubleZipProvider.Do()
+- Production limitation: requires local Xactimate DLL — can't run on Supabase Edge Functions
+
+**DLL Exploration Scripts Reviewed:**
+- `explore_xact_dlls.ps1` — inspects public types in Pricelist, EstimateData, XactDocs DLLs
+- `explore_estdata.ps1` — deep dive into EstData class (constructors, methods, properties, factory)
+- Key classes: `Core.Sys.Zip.DoubleZipProvider`, `Core.Sys.AESImplementation`, `Xm8.Busi.EstimateData.EstData`
+
+**XACTDOC XML Schema (from cracked samples):**
+- Root: `<XACTDOC>` with lastCalcGrandTotal, totalLineItems, usesRulesEngine attrs
+- `<PROJECT_INFO>` — userID, userName, versionCreated
+- `<LINE_ITEMS>` → `<ESTIMATE_ITEM>` — category, description, quantity, unit, unitPrice, total
+- Sketch data: `<SKETCHDOCUMENT>` → `<SKETCHLEVEL>` → rooms/walls/vertices/openings
+- Real samples tested: SHARON ($32,550.41, 52 items), KENNEDY ($3,366.43, 3 items)
+
+**Production Path Options:**
+1. Extract AES key from DLL → reimplement in TypeScript/Deno (most portable)
+2. Sidecar Windows service with DLL (complex deployment)
+3. Client-side decryption in Electron/desktop wrapper
+4. WASM compilation of decryption logic
+5. PDF parsing via Claude Vision (simplest, no DLL needed)
+
+**Next:** Deep legal research on ESX interoperability risk.
+
+---
+
+### Session 81 (Feb 7) — API Signups + Security Policy + Xactimate Research
+
+**API Signups (IN PROGRESS):**
+- Unwrangle API key stored in Supabase secrets (trial, 100 credits)
+- Plaid client_id + secret stored in Supabase secrets (sandbox — Auth, Balance, Identity, Income, Transactions)
+- Google Cloud API key stored in Supabase secrets ($300 credit until May 9 2026, Maps + Calendar + Geocoding enabled)
+- Telnyx: REJECTED (white-label appeal denied)
+- Plivo: REJECTED (trial account denied)
+- **SignalWire: ACTIVE (S85)** — VoIP + SMS + Fax + Video. Replaces Telnyx+Plivo. Keys in all env files + Supabase secrets.
+- **LiveKit: ACTIVE (S85)** — Video/meetings. Keys in all env files + Supabase secrets.
+- SendGrid: REJECTED — pivoted to MS Graph (free, already have MS 365)
+- OpenWeatherMap: SKIPPED — using Open-Meteo (free, no key)
+- Still need: DocuSign, Indeed, Checkr, LinkedIn, FMCSA
+- Partnership applications needed: Gusto Embedded, ZipRecruiter
+- **FIREBASE→SUPABASE MIGRATION NEEDED:** Stripe (STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET) + Anthropic (ANTHROPIC_API_KEY) keys exist in Firebase secrets (`backend/functions/index.js` via `defineSecret`). Full Stripe payment integration (PaymentIntents, webhooks) + RevenueCat webhook handler + AI scan credits all running on Firebase Cloud Functions against Firestore on `zafto-2b563`. Must be migrated to Supabase Edge Functions. See `02_CIRCUIT_BLUEPRINT.md` Section 5 for full list of 11 Firebase functions pending migration.
+- **SENTRY DSN EMPTY** — SDK wired in all 4 web apps + Flutter, but DSN is empty string everywhere. Need to grab DSN from Sentry dashboard and fill into env files.
+- **RevenueCat** — webhook handler exists in Firebase (`revenueCatWebhook`), but no SDK API key stored for mobile IAP integration
+
+**Information Security Policy (CREATED):**
+- `ZAFTO_Information_Security_Policy.docx` — 13-section enterprise security policy
+- Covers: RBAC, RLS, MFA (WebAuthn/passkeys/biometrics + TOTP), encryption (TLS 1.2+, AES-256), incident response, data retention, vulnerability management
+- Created for Plaid compliance questionnaire, reusable for all future API applications
+
+**C4 Sprint Specs Updated:**
+- Added steps 8-10: WebAuthn/passkeys in Supabase Auth, passkey enrollment UI in all apps, security policy update
+- Added 3 verification checkboxes
+
+**API Cost Reference:**
+- Saved to `memory/api-costs.md` — Plaid per-call pricing, coding rules (no polling, cache aggressively, one-time calls stored forever)
+- Est. API cost per contractor: ~$3-5/mo vs $49-99/mo subscription = 90%+ margin
+
+**Xactimate:** Owner found decryption tool for ESX files. Discussion pending.
+
+**Next:** Finish remaining 7 API signups → Xactimate decryption discussion → Write Phase F sprint specs.
+
+---
+
+### Session 80 (Feb 7) — E3: Employee Portal AI + Mobile AI
 
 ---
 
@@ -1599,7 +1814,7 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 - `lib/screens/field_tools/loto_logger_screen.dart` — `_createEntry()` and `_releaseEntry()` → compliance_records (type=loto). Lockout creates one record, release creates another (both events in audit trail). JSONB: action, equipment_id, location, energy_type, reason.
 - `lib/screens/field_tools/incident_report_screen.dart` — `_submitReport()` → compliance_records (type=incident_report). Full OSHA form: severity, incident_type, description, injured_party, witnesses, immediate_action, root_cause, prevention_measures, checkboxes (medical/work_stoppage/osha_recordable/property_damage). Removed unused `dart:typed_data` import.
 - `lib/screens/field_tools/safety_briefing_screen.dart` — `_submitBriefing()` → compliance_records (type=safety_briefing). JSONB: topic, hazards, ppe_required, crew_attendance (with sign-off timestamps), notes. Removed unused `dart:typed_data` import.
-- `lib/screens/field_tools/dead_man_switch_screen.dart` — `_startTimer()`, `_triggerAlert()`, `_cancelAlert()` → compliance_records (type=dead_man_switch). Saves timer_start/alert_triggered/alert_cancelled events. GPS coords (latitude/longitude). Activity log in JSONB. **SMS Edge Function still TODO** (Telnyx integration deferred).
+- `lib/screens/field_tools/dead_man_switch_screen.dart` — `_startTimer()`, `_triggerAlert()`, `_cancelAlert()` → compliance_records (type=dead_man_switch). Saves timer_start/alert_triggered/alert_cancelled events. GPS coords (latitude/longitude). Activity log in JSONB. **SMS Edge Function still TODO** (SignalWire SMS integration deferred to F1).
 - `lib/screens/field_tools/confined_space_timer_screen.dart` — `_completeEntry()` → compliance_records (type=confined_space). Full OSHA 1910.146 data: permit_number, space_description, attendant, supervisor, checklist (8 items), entrants (with entry/exit timestamps), air_readings (O2/LEL/CO/H2S with timestamps), total_duration.
 
 **Verification:** `flutter analyze` — ZERO new warnings/errors on all 8 B2b files. Only pre-existing info-level (withOpacity deprecation).
@@ -1821,7 +2036,7 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 - `notifications` — push notification records
 
 **New Edge Functions specified:**
-- `dead-man-switch` — Telnyx SMS alerting (SAFETY CRITICAL)
+- `dead-man-switch` — SignalWire SMS alerting (SAFETY CRITICAL)
 - `receipt-ocr` — Claude Vision receipt parsing
 - `transcribe-audio` — Voice note transcription
 - `send-notification` — Push notification delivery
@@ -2037,7 +2252,7 @@ ls apps/Trades/lib/models/business/  # Should be cleaned up eventually
 | Anthropic | needs migration to admin@zafto.app | ACTIVE |
 | Cloudflare | needs migration to admin@zafto.app | ACTIVE |
 | Bitwarden | needs migration to admin@zafto.app | ACTIVE |
-| Google Play | — | NOT CREATED (deferred) |
+| Google Play | — | NOT CREATED (needed for launch — both iOS + Android) |
 | ProtonMail | — | NOT CREATED (pre-launch) |
 
 ---

@@ -91,4 +91,9 @@ export interface ZConsoleContextType {
   selectArtifactVersion: (version: number) => void;
   closeArtifact: () => void;
   showDemoArtifact: () => void;
+  showStorageArtifact: () => void;
+  chatWidth: number;
+  artifactWidth: number;
+  setChatWidth: (width: number) => void;
+  setArtifactWidth: (width: number) => void;
 }

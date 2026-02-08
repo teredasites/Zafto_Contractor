@@ -14,6 +14,10 @@ class EnvConfig {
   final String supabaseAnonKey;
   final String powerSyncUrl;
   final String sentryDsn;
+  final String livekitUrl;
+  final String livekitApiKey;
+  final String signalwireSpaceUrl;
+  final String signalwireProjectId;
   final Environment environment;
 
   const EnvConfig({
@@ -21,6 +25,10 @@ class EnvConfig {
     required this.supabaseAnonKey,
     required this.powerSyncUrl,
     this.sentryDsn = '',
+    this.livekitUrl = '',
+    this.livekitApiKey = '',
+    this.signalwireSpaceUrl = '',
+    this.signalwireProjectId = '',
     required this.environment,
   });
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { Check, X, Save, ChevronLeft } from 'lucide-react';
+import { Check, X, Save, PanelRightClose } from 'lucide-react';
 import type { ZArtifact } from '@/lib/z-intelligence/types';
 import { cn } from '@/lib/utils';
 
@@ -33,14 +33,19 @@ export function ZArtifactToolbar({
 
   return (
     <div className="flex items-center justify-between px-4 py-3 border-b" style={{ borderColor: '#e4e7ec' }}>
-      {/* Left: back + title + status */}
+      {/* Left: close + title + status */}
       <div className="flex items-center gap-3 min-w-0">
+        {/* Close button — prominent, filled */}
         <button
           onClick={onClose}
-          className="p-1 rounded-md hover:bg-gray-100 transition-colors flex-shrink-0"
-          style={{ color: '#5d6b7e' }}
+          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[12px] font-medium
+            border transition-colors flex-shrink-0
+            hover:bg-gray-100 dark:hover:bg-gray-800"
+          style={{ borderColor: '#d0d5dd', color: '#344054' }}
+          title="Close artifact"
         >
-          <ChevronLeft size={18} />
+          <PanelRightClose size={15} />
+          <span>Close</span>
         </button>
 
         <div className="min-w-0">
