@@ -7388,19 +7388,22 @@ Include <content>{markdown}</content> for rendered display.
 **Secrets to migrate:** STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, ANTHROPIC_API_KEY → `npx supabase secrets set`
 
 **Checklist FM:**
-- [ ] Retrieve key values from Firebase: `firebase functions:secrets:access STRIPE_SECRET_KEY`
-- [ ] Set keys in Supabase: `npx supabase secrets set STRIPE_SECRET_KEY=... STRIPE_WEBHOOK_SECRET=...`
-- [ ] Edge Function: stripe-payments (createPaymentIntent, getPaymentStatus)
-- [ ] Edge Function: stripe-webhook (payment events handler)
-- [ ] Edge Function: revenuecat-webhook (IAP credit processing)
-- [ ] Edge Function: subscription-credits (getCredits, addCredits)
-- [ ] Update Stripe webhook URL in Stripe Dashboard (Firebase → Supabase)
-- [ ] Update RevenueCat webhook URL
+- [ ] Retrieve key values from Firebase: `firebase functions:secrets:access STRIPE_SECRET_KEY` (MANUAL — need Firebase CLI access)
+- [ ] Set keys in Supabase: `npx supabase secrets set STRIPE_SECRET_KEY=... STRIPE_WEBHOOK_SECRET=...` (MANUAL — after key retrieval)
+- [x] Database migration: payment_intents, payments, payment_failures, user_credits, scan_logs, credit_purchases (6 tables)
+- [x] Edge Function: stripe-payments (createPaymentIntent, getPaymentStatus)
+- [x] Edge Function: stripe-webhook (payment events handler with signature verification)
+- [x] Edge Function: revenuecat-webhook (IAP credit processing + refund handling)
+- [x] Edge Function: subscription-credits (getCredits, addCredits, deductCredits)
+- [ ] Update Stripe webhook URL in Stripe Dashboard (Firebase → Supabase) (MANUAL)
+- [ ] Update RevenueCat webhook URL (MANUAL)
+- [ ] Deploy migration: `npx supabase db push` (MANUAL — after secrets set)
+- [ ] Deploy Edge Functions: `npx supabase functions deploy stripe-payments stripe-webhook revenuecat-webhook subscription-credits` (MANUAL)
 - [ ] Test: create payment intent → verify webhook fires
 - [ ] Test: credit purchase → verify credits added
-- [ ] Delete `backend/functions/` directory (Firebase code)
+- [ ] Delete `backend/functions/` directory (Firebase code) — DEFERRED until webhook URLs updated and tested
 - [ ] Remove Firebase packages from root package.json if any
-- [ ] Commit: `[FM] Firebase→Supabase migration — 11 functions, zero Firebase`
+- [x] Commit: `[FM] Firebase→Supabase migration — payments, credits, webhooks`
 
 ---
 
