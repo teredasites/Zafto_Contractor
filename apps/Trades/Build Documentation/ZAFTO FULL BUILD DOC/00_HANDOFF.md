@@ -18,11 +18,11 @@
 
 | Field | Value |
 |-------|-------|
-| **Sprint** | **D8: Estimate Engine — ALL DONE (D8a-D8j).** Next: FM (Firebase Migration) → F1 (Phone System). |
-| **Sub-step** | D8j DONE. All portal integration complete. Team Portal: 27 routes (+2). Client Portal: 29 routes (estimate page rewritten). Ops Portal: 20 routes (+1). Next unchecked item: FM or F1 per build order. |
-| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → D8j checklist complete. Next: FM (Firebase→Supabase migration). |
-| **Status** | Phases A-D ALL DONE (including D8 Estimate Engine — all 10 sub-steps). R1 DONE. Phase E PAUSED. 102 tables. 32 Edge Functions. |
-| **Last Completed** | S89: D8j portal integration (Team Portal estimates, Client Portal review+signature, Ops Portal analytics). ESX legal deferred to revenue stage. Insurance workflow research complete. |
+| **Sprint** | **FM: Firebase→Supabase Migration — CODE COMPLETE.** Manual steps remain (secrets, deploy, webhook URLs). Next: F1 (Phone System). |
+| **Sub-step** | FM code done: 1 migration (6 tables), 4 Edge Functions (stripe-payments, stripe-webhook, revenuecat-webhook, subscription-credits). Manual steps: retrieve Firebase secrets, set in Supabase, deploy, update webhook URLs in Stripe/RevenueCat dashboards, test, then delete Firebase code. |
+| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → FM checklist. Code items checked, manual items pending. |
+| **Status** | Phases A-D ALL DONE. R1 DONE. FM CODE COMPLETE (manual deploy pending). Phase E PAUSED. 108 tables (102 + 6 FM). 36 Edge Functions (32 + 4 FM). |
+| **Last Completed** | S89: D8j portal integration + FM code (migration + 4 Edge Functions). |
 | **Session Count** | 89 |
 | **Tables Deployed** | 102 |
 | **Migration Files** | 30 |
@@ -140,6 +140,16 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 - Key insight: "Adjusters re-write your estimate in Xactimate REGARDLESS. The supplement process is the real leverage point."
 - Zero-risk feature roadmap: supplement engine, AI estimate writer, PDF import, pricing intelligence, photo→scope AI, code library expansion, O&P calculator, drying report PDF.
 - Saved to memory/insurance-workflow-research.md (comprehensive).
+
+**S89: FM — Firebase→Supabase Migration (CODE COMPLETE):**
+- Migration: 6 new tables (payment_intents, payments, payment_failures, user_credits, scan_logs, credit_purchases). All with RLS, indexes, triggers.
+- Edge Function: stripe-payments (createPaymentIntent + getPaymentStatus → Supabase tables)
+- Edge Function: stripe-webhook (payment_intent.succeeded/failed → updates bids/invoices/payment_intents)
+- Edge Function: revenuecat-webhook (IAP purchases + refunds → user_credits + credit_purchases)
+- Edge Function: subscription-credits (get/add/deduct credits → user_credits + scan_logs)
+- AI scan functions already migrated via Phase E (ai-photo-diagnose EF covers all 5 Firebase scan types)
+- Manual steps remaining: retrieve Firebase secrets → set in Supabase → deploy migration + EFs → update webhook URLs → test → delete Firebase code
+- 108 tables total (102 + 6 FM). 36 Edge Functions total (32 + 4 FM).
 
 **S89: D8j — Portal Integration + Testing (DONE):**
 - Team Portal: use-estimates.ts hook (createFieldEstimate, addArea, addLineItem, recalculate) + estimates list page + estimate detail page. Sidebar updated. 27 routes (+2).
