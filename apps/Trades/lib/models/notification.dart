@@ -12,7 +12,6 @@ enum NotificationType {
   timeEntryApproved,
   timeEntryRejected,
   customerMessage,
-  deadManSwitch,
   system;
 
   String get dbValue {
@@ -35,8 +34,6 @@ enum NotificationType {
         return 'time_entry_rejected';
       case NotificationType.customerMessage:
         return 'customer_message';
-      case NotificationType.deadManSwitch:
-        return 'dead_man_switch';
       case NotificationType.system:
         return 'system';
     }

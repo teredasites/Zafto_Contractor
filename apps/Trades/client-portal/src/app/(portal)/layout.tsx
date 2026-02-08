@@ -1,7 +1,7 @@
 'use client';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { Home, FolderKanban, CreditCard, Building2, Menu, Bell } from 'lucide-react';
+import { Home, FolderKanban, CreditCard, Building2, Menu, Bell, MessageSquare, Video } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { AuthProvider, useAuth } from '@/components/auth-provider';
@@ -15,6 +15,16 @@ const tabs = [
   { label: 'Menu', href: '/menu', icon: Menu },
 ];
 
+const desktopTabs = [
+  { label: 'Home', href: '/home', icon: Home },
+  { label: 'Projects', href: '/projects', icon: FolderKanban },
+  { label: 'Payments', href: '/payments', icon: CreditCard },
+  { label: 'Messages', href: '/messages', icon: MessageSquare },
+  { label: 'Meetings', href: '/meetings', icon: Video },
+  { label: 'My Home', href: '/my-home', icon: Building2 },
+  { label: 'Menu', href: '/menu', icon: Menu },
+];
+
 function PortalShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { profile } = useAuth();
@@ -24,7 +34,9 @@ function PortalShell({ children }: { children: React.ReactNode }) {
 
   const isActive = (href: string) => {
     if (href === '/home') return pathname === '/home';
-    if (href === '/menu') return pathname === '/menu' || ['/messages', '/documents', '/request', '/referrals', '/review', '/settings', '/rent', '/lease', '/maintenance', '/inspections'].some(p => pathname.startsWith(p));
+    if (href === '/messages') return pathname.startsWith('/messages');
+    if (href === '/meetings') return pathname.startsWith('/meetings') || pathname.startsWith('/book');
+    if (href === '/menu') return pathname === '/menu' || ['/documents', '/request', '/referrals', '/review', '/settings', '/rent', '/lease', '/maintenance', '/inspections', '/get-quotes', '/find-a-pro'].some(p => pathname.startsWith(p));
     return pathname.startsWith(href);
   };
 
@@ -41,7 +53,7 @@ function PortalShell({ children }: { children: React.ReactNode }) {
 
             {/* Desktop nav tabs */}
             <nav className="hidden md:flex items-center gap-1">
-              {tabs.map(tab => {
+              {desktopTabs.map(tab => {
                 const Icon = tab.icon;
                 const active = isActive(tab.href);
                 return (

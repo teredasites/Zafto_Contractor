@@ -3,109 +3,106 @@
 import { useState } from 'react';
 import {
   Plus,
-  Search,
-  Truck,
   Wrench,
   AlertTriangle,
-  Calendar,
   MapPin,
-  MoreHorizontal,
   CheckCircle,
-  Clock,
   X,
   FileText,
   DollarSign,
-  User,
+  Wind,
+  Thermometer,
+  Droplets,
+  Zap,
+  Eye,
+  ScanLine,
+  Fan,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { SearchInput, Select, Input } from '@/components/ui/input';
-import { Avatar } from '@/components/ui/avatar';
 import { CommandPalette } from '@/components/command-palette';
-import { formatCurrency, formatDate, cn } from '@/lib/utils';
+import { formatCurrency, formatDate, formatDateTime, cn } from '@/lib/utils';
+import { useRestorationTools } from '@/lib/hooks/use-restoration-tools';
+import type { RestorationEquipmentWithJob } from '@/lib/hooks/use-restoration-tools';
+import { EQUIPMENT_TYPE_LABELS } from '@/lib/hooks/mappers';
+import type { EquipmentStatus } from '@/types';
 
-type EquipmentStatus = 'available' | 'in_use' | 'maintenance' | 'out_of_service';
-type EquipmentType = 'vehicle' | 'tool' | 'equipment';
+type RestorationStatus = 'deployed' | 'removed' | 'maintenance' | 'lost';
 
-interface Equipment {
-  id: string;
-  name: string;
-  type: EquipmentType;
-  make?: string;
-  model?: string;
-  year?: number;
-  serialNumber?: string;
-  licensePlate?: string;
-  status: EquipmentStatus;
-  assignedTo?: string;
-  currentJob?: string;
-  lastMaintenanceDate?: Date;
-  nextMaintenanceDate?: Date;
-  purchaseDate?: Date;
-  purchasePrice?: number;
-  currentValue?: number;
-  notes?: string;
-}
-
-interface MaintenanceRecord {
-  id: string;
-  equipmentId: string;
-  type: string;
-  description: string;
-  cost: number;
-  date: Date;
-  vendor?: string;
-  mileage?: number;
-}
-
-const statusConfig: Record<EquipmentStatus, { label: string; color: string; bgColor: string }> = {
-  available: { label: 'Available', color: 'text-emerald-700 dark:text-emerald-300', bgColor: 'bg-emerald-100 dark:bg-emerald-900/30' },
-  in_use: { label: 'In Use', color: 'text-blue-700 dark:text-blue-300', bgColor: 'bg-blue-100 dark:bg-blue-900/30' },
+const statusConfig: Record<RestorationStatus, { label: string; color: string; bgColor: string }> = {
+  deployed: { label: 'Deployed', color: 'text-emerald-700 dark:text-emerald-300', bgColor: 'bg-emerald-100 dark:bg-emerald-900/30' },
+  removed: { label: 'Removed', color: 'text-blue-700 dark:text-blue-300', bgColor: 'bg-blue-100 dark:bg-blue-900/30' },
   maintenance: { label: 'Maintenance', color: 'text-amber-700 dark:text-amber-300', bgColor: 'bg-amber-100 dark:bg-amber-900/30' },
-  out_of_service: { label: 'Out of Service', color: 'text-red-700 dark:text-red-300', bgColor: 'bg-red-100 dark:bg-red-900/30' },
+  lost: { label: 'Lost', color: 'text-red-700 dark:text-red-300', bgColor: 'bg-red-100 dark:bg-red-900/30' },
 };
 
-// Equipment/Fleet Management — Future phase. No equipment table yet. Empty until wired.
-const equipment: Equipment[] = [];
+const typeOptions = [
+  { value: 'all', label: 'All Types' },
+  ...Object.entries(EQUIPMENT_TYPE_LABELS).map(([value, label]) => ({ value, label })),
+];
+
+const statusOptions = [
+  { value: 'all', label: 'All Statuses' },
+  { value: 'deployed', label: 'Deployed' },
+  { value: 'removed', label: 'Removed' },
+  { value: 'maintenance', label: 'Maintenance' },
+  { value: 'lost', label: 'Lost' },
+];
+
+function getEquipmentIcon(type: string) {
+  switch (type) {
+    case 'dehumidifier': return <Droplets size={20} />;
+    case 'air_mover': return <Wind size={20} />;
+    case 'air_scrubber': return <Fan size={20} />;
+    case 'heater': return <Thermometer size={20} />;
+    case 'moisture_meter': return <Zap size={20} />;
+    case 'thermal_camera': return <Eye size={20} />;
+    case 'hydroxyl_generator': return <Wind size={20} />;
+    case 'negative_air_machine': return <ScanLine size={20} />;
+    default: return <Wrench size={20} />;
+  }
+}
 
 export default function EquipmentPage() {
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const [showAddModal, setShowAddModal] = useState(false);
-  const [selectedEquipment, setSelectedEquipment] = useState<Equipment | null>(null);
+  const [selectedEquipment, setSelectedEquipment] = useState<RestorationEquipmentWithJob | null>(null);
+  const { equipment, activeEquipment, stats, loading, updateEquipment } = useRestorationTools();
+
+  if (loading) {
+    return (
+      <div className="space-y-8 animate-fade-in">
+        <div><div className="skeleton h-7 w-48 mb-2" /><div className="skeleton h-4 w-56" /></div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {[...Array(4)].map((_, i) => <div key={i} className="bg-surface border border-main rounded-xl p-5"><div className="skeleton h-3 w-20 mb-2" /><div className="skeleton h-7 w-10" /></div>)}
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[...Array(6)].map((_, i) => <div key={i} className="bg-surface border border-main rounded-xl p-5"><div className="skeleton h-5 w-32 mb-3" /><div className="skeleton h-3 w-24 mb-2" /><div className="skeleton h-3 w-20" /></div>)}
+        </div>
+      </div>
+    );
+  }
 
   const filteredEquipment = equipment.filter((eq) => {
     const matchesSearch =
-      eq.name.toLowerCase().includes(search.toLowerCase()) ||
-      eq.make?.toLowerCase().includes(search.toLowerCase()) ||
-      eq.model?.toLowerCase().includes(search.toLowerCase());
-    const matchesType = typeFilter === 'all' || eq.type === typeFilter;
+      (EQUIPMENT_TYPE_LABELS[eq.equipmentType] || eq.equipmentType).toLowerCase().includes(search.toLowerCase()) ||
+      (eq.make || '').toLowerCase().includes(search.toLowerCase()) ||
+      (eq.model || '').toLowerCase().includes(search.toLowerCase()) ||
+      eq.areaDeployed.toLowerCase().includes(search.toLowerCase()) ||
+      eq.jobName.toLowerCase().includes(search.toLowerCase());
+    const matchesType = typeFilter === 'all' || eq.equipmentType === typeFilter;
     const matchesStatus = statusFilter === 'all' || eq.status === statusFilter;
     return matchesSearch && matchesType && matchesStatus;
   });
 
-  const typeOptions = [
-    { value: 'all', label: 'All Types' },
-    { value: 'vehicle', label: 'Vehicles' },
-    { value: 'tool', label: 'Tools' },
-    { value: 'equipment', label: 'Equipment' },
-  ];
-
-  const statusOptions = [
-    { value: 'all', label: 'All Statuses' },
-    { value: 'available', label: 'Available' },
-    { value: 'in_use', label: 'In Use' },
-    { value: 'maintenance', label: 'Maintenance' },
-    { value: 'out_of_service', label: 'Out of Service' },
-  ];
-
   // Stats
   const totalEquipment = equipment.length;
-  const inUseCount = equipment.filter((e) => e.status === 'in_use').length;
-  const maintenanceDue = equipment.filter((e) => e.nextMaintenanceDate && new Date(e.nextMaintenanceDate) < new Date()).length;
-  const totalValue = equipment.reduce((sum, e) => sum + (e.currentValue || 0), 0);
+  const deployedCount = activeEquipment.length;
+  const maintenanceCount = equipment.filter((e) => e.status === 'maintenance').length;
+  const totalDailyRate = activeEquipment.reduce((sum, e) => sum + e.dailyRate, 0);
 
   return (
     <div className="space-y-6">
@@ -115,7 +112,7 @@ export default function EquipmentPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-main">Equipment</h1>
-          <p className="text-muted mt-1">Manage vehicles, tools, and equipment</p>
+          <p className="text-muted mt-1">Manage restoration equipment deployments and tracking</p>
         </div>
         <Button onClick={() => setShowAddModal(true)}>
           <Plus size={16} />
@@ -129,7 +126,7 @@ export default function EquipmentPage() {
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                <Truck size={20} className="text-blue-600 dark:text-blue-400" />
+                <Wrench size={20} className="text-blue-600 dark:text-blue-400" />
               </div>
               <div>
                 <p className="text-2xl font-semibold text-main">{totalEquipment}</p>
@@ -145,21 +142,21 @@ export default function EquipmentPage() {
                 <CheckCircle size={20} className="text-emerald-600 dark:text-emerald-400" />
               </div>
               <div>
-                <p className="text-2xl font-semibold text-main">{inUseCount}</p>
-                <p className="text-sm text-muted">In Use</p>
+                <p className="text-2xl font-semibold text-main">{deployedCount}</p>
+                <p className="text-sm text-muted">Deployed</p>
               </div>
             </div>
           </CardContent>
         </Card>
-        <Card className={maintenanceDue > 0 ? 'border-amber-500' : ''}>
+        <Card className={maintenanceCount > 0 ? 'border-amber-500' : ''}>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
-                <Wrench size={20} className="text-amber-600 dark:text-amber-400" />
+                <AlertTriangle size={20} className="text-amber-600 dark:text-amber-400" />
               </div>
               <div>
-                <p className="text-2xl font-semibold text-main">{maintenanceDue}</p>
-                <p className="text-sm text-muted">Maintenance Due</p>
+                <p className="text-2xl font-semibold text-main">{maintenanceCount}</p>
+                <p className="text-sm text-muted">Maintenance</p>
               </div>
             </div>
           </CardContent>
@@ -171,8 +168,8 @@ export default function EquipmentPage() {
                 <DollarSign size={20} className="text-purple-600 dark:text-purple-400" />
               </div>
               <div>
-                <p className="text-2xl font-semibold text-main">{formatCurrency(totalValue)}</p>
-                <p className="text-sm text-muted">Total Value</p>
+                <p className="text-2xl font-semibold text-main">{formatCurrency(totalDailyRate)}</p>
+                <p className="text-sm text-muted">Daily Rate</p>
               </div>
             </div>
           </CardContent>
@@ -191,7 +188,7 @@ export default function EquipmentPage() {
           options={typeOptions}
           value={typeFilter}
           onChange={(e) => setTypeFilter(e.target.value)}
-          className="sm:w-40"
+          className="sm:w-48"
         />
         <Select
           options={statusOptions}
@@ -212,6 +209,19 @@ export default function EquipmentPage() {
         ))}
       </div>
 
+      {filteredEquipment.length === 0 && (
+        <Card>
+          <CardContent className="p-12 text-center">
+            <Wrench size={48} className="mx-auto text-muted mb-4" />
+            <h3 className="text-lg font-medium text-main mb-2">No equipment found</h3>
+            <p className="text-muted mb-4">Track dehumidifiers, air movers, and other restoration equipment deployed to job sites.</p>
+            <Button onClick={() => setShowAddModal(true)}>
+              <Plus size={16} />Add Equipment
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Add Modal */}
       {showAddModal && (
         <AddEquipmentModal onClose={() => setShowAddModal(false)} />
@@ -222,23 +232,21 @@ export default function EquipmentPage() {
         <EquipmentDetailModal
           equipment={selectedEquipment}
           onClose={() => setSelectedEquipment(null)}
+          onUpdateStatus={async (id, status) => {
+            await updateEquipment(id, {
+              status: status as EquipmentStatus,
+              removedAt: status === 'removed' ? new Date().toISOString() : undefined,
+            });
+            setSelectedEquipment(null);
+          }}
         />
       )}
     </div>
   );
 }
 
-function EquipmentCard({ equipment, onClick }: { equipment: Equipment; onClick: () => void }) {
-  const config = statusConfig[equipment.status];
-  const maintenanceOverdue = equipment.nextMaintenanceDate && new Date(equipment.nextMaintenanceDate) < new Date();
-
-  const getIcon = () => {
-    switch (equipment.type) {
-      case 'vehicle': return <Truck size={20} />;
-      case 'tool': return <Wrench size={20} />;
-      default: return <Wrench size={20} />;
-    }
-  };
+function EquipmentCard({ equipment, onClick }: { equipment: RestorationEquipmentWithJob; onClick: () => void }) {
+  const config = statusConfig[equipment.status as RestorationStatus] || statusConfig.deployed;
 
   return (
     <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={onClick}>
@@ -246,10 +254,12 @@ function EquipmentCard({ equipment, onClick }: { equipment: Equipment; onClick: 
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-secondary rounded-lg">
-              {getIcon()}
+              {getEquipmentIcon(equipment.equipmentType)}
             </div>
             <div>
-              <h3 className="font-medium text-main">{equipment.name}</h3>
+              <h3 className="font-medium text-main">
+                {EQUIPMENT_TYPE_LABELS[equipment.equipmentType] || equipment.equipmentType}
+              </h3>
               {equipment.make && equipment.model && (
                 <p className="text-sm text-muted">{equipment.make} {equipment.model}</p>
               )}
@@ -260,46 +270,51 @@ function EquipmentCard({ equipment, onClick }: { equipment: Equipment; onClick: 
           </span>
         </div>
 
-        {equipment.assignedTo && (
+        {equipment.jobName && (
           <div className="flex items-center gap-2 mb-2 text-sm">
-            <User size={14} className="text-muted" />
-            <span className="text-main">{equipment.assignedTo}</span>
+            <FileText size={14} className="text-muted" />
+            <span className="text-main truncate">{equipment.jobName}</span>
           </div>
         )}
 
-        {equipment.currentJob && (
+        {equipment.areaDeployed && (
           <div className="flex items-center gap-2 mb-2 text-sm">
             <MapPin size={14} className="text-muted" />
-            <span className="text-muted truncate">{equipment.currentJob}</span>
+            <span className="text-muted truncate">{equipment.areaDeployed}</span>
           </div>
         )}
 
-        {equipment.nextMaintenanceDate && (
-          <div className={cn(
-            'flex items-center gap-2 text-sm',
-            maintenanceOverdue ? 'text-red-600' : 'text-muted'
-          )}>
-            <Wrench size={14} />
-            <span>
-              {maintenanceOverdue ? 'Maintenance overdue' : `Next: ${formatDate(equipment.nextMaintenanceDate)}`}
-            </span>
-            {maintenanceOverdue && <AlertTriangle size={14} />}
+        {equipment.serialNumber && (
+          <div className="text-xs text-muted font-mono mb-2">
+            S/N: {equipment.serialNumber}
           </div>
         )}
 
-        {equipment.currentValue && (
-          <div className="mt-3 pt-3 border-t border-main">
-            <p className="text-lg font-semibold text-main">{formatCurrency(equipment.currentValue)}</p>
-            <p className="text-xs text-muted">Current value</p>
+        <div className="mt-3 pt-3 border-t border-main flex items-center justify-between">
+          <div>
+            <p className="text-lg font-semibold text-main">{formatCurrency(equipment.dailyRate)}</p>
+            <p className="text-xs text-muted">per day</p>
           </div>
-        )}
+          <div className="text-right">
+            <p className="text-xs text-muted">Deployed</p>
+            <p className="text-sm text-main">{formatDate(equipment.deployedAt)}</p>
+          </div>
+        </div>
       </CardContent>
     </Card>
   );
 }
 
-function EquipmentDetailModal({ equipment, onClose }: { equipment: Equipment; onClose: () => void }) {
-  const config = statusConfig[equipment.status];
+function EquipmentDetailModal({
+  equipment,
+  onClose,
+  onUpdateStatus,
+}: {
+  equipment: RestorationEquipmentWithJob;
+  onClose: () => void;
+  onUpdateStatus: (id: string, status: string) => Promise<void>;
+}) {
+  const config = statusConfig[equipment.status as RestorationStatus] || statusConfig.deployed;
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
@@ -308,13 +323,15 @@ function EquipmentDetailModal({ equipment, onClose }: { equipment: Equipment; on
           <div className="flex items-start justify-between">
             <div>
               <div className="flex items-center gap-3">
-                <h2 className="text-xl font-semibold text-main">{equipment.name}</h2>
+                <h2 className="text-xl font-semibold text-main">
+                  {EQUIPMENT_TYPE_LABELS[equipment.equipmentType] || equipment.equipmentType}
+                </h2>
                 <span className={cn('px-2 py-1 rounded-full text-xs font-medium', config.bgColor, config.color)}>
                   {config.label}
                 </span>
               </div>
               {equipment.make && equipment.model && (
-                <p className="text-muted">{equipment.year} {equipment.make} {equipment.model}</p>
+                <p className="text-muted">{equipment.make} {equipment.model}</p>
               )}
             </div>
             <button onClick={onClose} className="p-1.5 hover:bg-surface-hover rounded-lg">
@@ -331,60 +348,54 @@ function EquipmentDetailModal({ equipment, onClose }: { equipment: Equipment; on
                 <p className="font-mono text-main">{equipment.serialNumber}</p>
               </div>
             )}
-            {equipment.licensePlate && (
+            {equipment.assetTag && (
               <div>
-                <p className="text-sm text-muted mb-1">License Plate</p>
-                <p className="font-mono text-main">{equipment.licensePlate}</p>
+                <p className="text-sm text-muted mb-1">Asset Tag</p>
+                <p className="font-mono text-main">{equipment.assetTag}</p>
               </div>
             )}
-            {equipment.assignedTo && (
+            {equipment.jobName && (
               <div>
-                <p className="text-sm text-muted mb-1">Assigned To</p>
-                <p className="text-main">{equipment.assignedTo}</p>
+                <p className="text-sm text-muted mb-1">Job</p>
+                <p className="text-main">{equipment.jobName}</p>
               </div>
             )}
-            {equipment.currentJob && (
+            {equipment.areaDeployed && (
               <div>
-                <p className="text-sm text-muted mb-1">Current Job</p>
-                <p className="text-main">{equipment.currentJob}</p>
+                <p className="text-sm text-muted mb-1">Area Deployed</p>
+                <p className="text-main">{equipment.areaDeployed}</p>
               </div>
             )}
           </div>
 
-          {/* Maintenance */}
+          {/* Deployment Info */}
           <div className="p-4 bg-secondary rounded-lg">
-            <h3 className="font-medium text-main mb-3">Maintenance</h3>
+            <h3 className="font-medium text-main mb-3">Deployment</h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-sm text-muted mb-1">Last Service</p>
-                <p className="text-main">{equipment.lastMaintenanceDate ? formatDate(equipment.lastMaintenanceDate) : 'N/A'}</p>
+                <p className="text-sm text-muted mb-1">Deployed At</p>
+                <p className="text-main">{formatDateTime(equipment.deployedAt)}</p>
               </div>
               <div>
-                <p className="text-sm text-muted mb-1">Next Service</p>
-                <p className={cn(
-                  equipment.nextMaintenanceDate && new Date(equipment.nextMaintenanceDate) < new Date() ? 'text-red-600 font-medium' : 'text-main'
-                )}>
-                  {equipment.nextMaintenanceDate ? formatDate(equipment.nextMaintenanceDate) : 'N/A'}
+                <p className="text-sm text-muted mb-1">Removed At</p>
+                <p className={cn(equipment.removedAt ? 'text-main' : 'text-muted')}>
+                  {equipment.removedAt ? formatDateTime(equipment.removedAt) : 'Still deployed'}
                 </p>
               </div>
             </div>
           </div>
 
           {/* Financial */}
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             <div className="text-center p-4 bg-secondary rounded-lg">
-              <p className="text-2xl font-semibold text-main">{formatCurrency(equipment.purchasePrice || 0)}</p>
-              <p className="text-sm text-muted">Purchase Price</p>
-            </div>
-            <div className="text-center p-4 bg-secondary rounded-lg">
-              <p className="text-2xl font-semibold text-main">{formatCurrency(equipment.currentValue || 0)}</p>
-              <p className="text-sm text-muted">Current Value</p>
+              <p className="text-2xl font-semibold text-main">{formatCurrency(equipment.dailyRate)}</p>
+              <p className="text-sm text-muted">Daily Rate</p>
             </div>
             <div className="text-center p-4 bg-secondary rounded-lg">
               <p className="text-2xl font-semibold text-main">
-                {equipment.purchaseDate ? formatDate(equipment.purchaseDate) : 'N/A'}
+                {equipment.totalDays != null ? equipment.totalDays : '--'}
               </p>
-              <p className="text-sm text-muted">Purchase Date</p>
+              <p className="text-sm text-muted">Days Deployed</p>
             </div>
           </div>
 
@@ -397,17 +408,28 @@ function EquipmentDetailModal({ equipment, onClose }: { equipment: Equipment; on
 
           {/* Actions */}
           <div className="flex items-center gap-3 pt-4 border-t border-main">
-            <Button className="flex-1">
+            {equipment.status === 'deployed' && (
+              <Button className="flex-1" onClick={() => onUpdateStatus(equipment.id, 'removed')}>
+                <X size={16} />
+                Remove Equipment
+              </Button>
+            )}
+            {equipment.status === 'removed' && (
+              <Button className="flex-1" onClick={() => onUpdateStatus(equipment.id, 'deployed')}>
+                <CheckCircle size={16} />
+                Re-Deploy
+              </Button>
+            )}
+            <Button
+              variant="secondary"
+              onClick={() => onUpdateStatus(equipment.id, 'maintenance')}
+              disabled={equipment.status === 'maintenance'}
+            >
               <Wrench size={16} />
-              Log Maintenance
+              Maintenance
             </Button>
-            <Button variant="secondary">
-              <User size={16} />
-              Assign
-            </Button>
-            <Button variant="ghost">
-              <FileText size={16} />
-              History
+            <Button variant="ghost" onClick={onClose}>
+              Close
             </Button>
           </div>
         </CardContent>
@@ -429,24 +451,31 @@ function AddEquipmentModal({ onClose }: { onClose: () => void }) {
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <Input label="Name *" placeholder="Work Van #1" />
-          <Select
-            label="Type"
-            options={[
-              { value: 'vehicle', label: 'Vehicle' },
-              { value: 'tool', label: 'Tool' },
-              { value: 'equipment', label: 'Equipment' },
-            ]}
-          />
-          <div className="grid grid-cols-3 gap-4">
-            <Input label="Make" placeholder="Ford" />
-            <Input label="Model" placeholder="Transit" />
-            <Input label="Year" type="number" placeholder="2022" />
+          <div>
+            <label className="block text-sm font-medium text-main mb-1.5">Equipment Type *</label>
+            <select className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main">
+              {Object.entries(EQUIPMENT_TYPE_LABELS).map(([value, label]) => (
+                <option key={value} value={value}>{label}</option>
+              ))}
+            </select>
           </div>
-          <Input label="Serial Number / VIN" placeholder="Optional" />
           <div className="grid grid-cols-2 gap-4">
-            <Input label="Purchase Price" type="number" placeholder="0.00" />
-            <Input label="Current Value" type="number" placeholder="0.00" />
+            <Input label="Make" placeholder="Dri-Eaz" />
+            <Input label="Model" placeholder="LGR 3500i" />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <Input label="Serial Number" placeholder="Optional" />
+            <Input label="Asset Tag" placeholder="Optional" />
+          </div>
+          <Input label="Area Deployed *" placeholder="Living Room - East Wall" />
+          <Input label="Daily Rate ($)" type="number" placeholder="0.00" />
+          <div>
+            <label className="block text-sm font-medium text-main mb-1.5">Notes</label>
+            <textarea
+              rows={2}
+              placeholder="Additional notes..."
+              className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted resize-none"
+            />
           </div>
           <div className="flex items-center gap-3 pt-4">
             <Button variant="secondary" className="flex-1" onClick={onClose}>Cancel</Button>

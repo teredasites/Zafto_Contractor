@@ -75,6 +75,15 @@ export const PERMISSIONS = {
   FORMS_VIEW: 'forms.view',
   FORMS_MANAGE: 'forms.manage',
   API_KEYS_MANAGE: 'api_keys.manage',
+  // Financials
+  FINANCIALS_VIEW: 'financials.view',
+  FINANCIALS_MANAGE: 'financials.manage',
+  // Fleet
+  FLEET_VIEW: 'fleet.view',
+  FLEET_MANAGE: 'fleet.manage',
+  // Payroll
+  PAYROLL_VIEW: 'payroll.view',
+  PAYROLL_MANAGE: 'payroll.manage',
 } as const;
 
 // ============================================================

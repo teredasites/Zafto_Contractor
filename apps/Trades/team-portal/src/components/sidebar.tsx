@@ -5,7 +5,8 @@ import Link from 'next/link';
 import {
   LayoutDashboard, Briefcase, Clock, Calendar, Camera, FileText,
   Package, CheckSquare, FileSignature, Bell, Settings, Wrench,
-  Receipt, ChevronLeft, Menu, Sun, Moon, LogOut, X, Award, Building2, Calculator,
+  Receipt, ChevronLeft, Menu, Sun, Moon, LogOut, X, Award, Building2, Calculator, Phone, Video,
+  DollarSign, Car, GraduationCap, FolderOpen,
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { useTheme } from '@/components/theme-provider';
@@ -24,12 +25,20 @@ const navItems = [
   { label: 'CLOCK & TOOLS', items: [
     { name: 'Time Clock', href: '/dashboard/time-clock', icon: Clock },
     { name: 'Field Tools', href: '/dashboard/field-tools', icon: Wrench },
+    { name: 'Phone', href: '/dashboard/phone', icon: Phone },
+    { name: 'Meetings', href: '/dashboard/meetings', icon: Video },
   ]},
   { label: 'DOCUMENTATION', items: [
     { name: 'Daily Log', href: '/dashboard/daily-log', icon: FileText },
     { name: 'Materials', href: '/dashboard/materials', icon: Package },
     { name: 'Punch List', href: '/dashboard/punch-list', icon: CheckSquare },
     { name: 'Change Orders', href: '/dashboard/change-orders', icon: FileSignature },
+    { name: 'My Documents', href: '/dashboard/my-documents', icon: FolderOpen },
+  ]},
+  { label: 'MY STUFF', items: [
+    { name: 'Pay Stubs', href: '/dashboard/pay-stubs', icon: DollarSign },
+    { name: 'My Fleet', href: '/dashboard/my-vehicle', icon: Car },
+    { name: 'Training', href: '/dashboard/training', icon: GraduationCap },
   ]},
   { label: 'BUSINESS', items: [
     { name: 'Estimates', href: '/dashboard/estimates', icon: Calculator },

@@ -15,6 +15,8 @@ import {
   CreditCard,
   TrendingDown,
   FolderOpen,
+  Phone,
+  Video,
   Code2,
   Calculator,
   LogOut,
@@ -22,6 +24,11 @@ import {
   Moon,
   Menu,
   X,
+  Banknote,
+  Truck,
+  Briefcase,
+  Mail,
+  ShoppingBag,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Logo } from '@/components/logo';
@@ -142,6 +149,46 @@ const navSections: NavSection[] = [
         label: 'Directory',
         href: '/dashboard/directory',
         icon: <FolderOpen className="h-4 w-4" />,
+      },
+      {
+        label: 'Phone Analytics',
+        href: '/dashboard/phone-analytics',
+        icon: <Phone className="h-4 w-4" />,
+      },
+      {
+        label: 'Meeting Analytics',
+        href: '/dashboard/meeting-analytics',
+        icon: <Video className="h-4 w-4" />,
+      },
+    ],
+  },
+  {
+    title: 'PLATFORM',
+    items: [
+      {
+        label: 'Payroll Analytics',
+        href: '/dashboard/payroll-analytics',
+        icon: <Banknote className="h-4 w-4" />,
+      },
+      {
+        label: 'Fleet Analytics',
+        href: '/dashboard/fleet-analytics',
+        icon: <Truck className="h-4 w-4" />,
+      },
+      {
+        label: 'Hiring Analytics',
+        href: '/dashboard/hiring-analytics',
+        icon: <Briefcase className="h-4 w-4" />,
+      },
+      {
+        label: 'Email Analytics',
+        href: '/dashboard/email-analytics',
+        icon: <Mail className="h-4 w-4" />,
+      },
+      {
+        label: 'Marketplace Analytics',
+        href: '/dashboard/marketplace-analytics',
+        icon: <ShoppingBag className="h-4 w-4" />,
       },
     ],
   },
