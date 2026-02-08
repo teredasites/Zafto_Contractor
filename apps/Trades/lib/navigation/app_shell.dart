@@ -6,6 +6,7 @@ import 'package:zafto/navigation/role_navigation.dart';
 import 'package:zafto/theme/zafto_colors.dart';
 import 'package:zafto/screens/role_switcher_screen.dart';
 import 'package:zafto/screens/ai/z_chat_sheet.dart';
+import 'package:zafto/services/quick_actions_service.dart';
 
 // Owner/Admin screens
 import 'package:zafto/screens/owner/owner_home_screen.dart';
@@ -67,7 +68,26 @@ class _AppShellState extends ConsumerState<AppShell> {
   int _currentIndex = 0;
 
   @override
+  void initState() {
+    super.initState();
+    // Deferred to first frame so context is available
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ZaftoQuickActions.initialize(context, widget.role);
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant AppShell oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.role != widget.role) {
+      ZaftoQuickActions.updateRole(widget.role);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    // Keep context fresh for quick action navigation
+    ZaftoQuickActions.setContext(context);
     final colors = Theme.of(context).extension<ZaftoColors>()!;
     final tabs = getTabsForRole(widget.role);
     final screens = _buildTabScreens(widget.role);

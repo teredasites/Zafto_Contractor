@@ -1,41 +1,68 @@
 'use client';
 
-import type { ZMessage, ZArtifact } from '@/lib/z-intelligence/types';
+import { useCallback } from 'react';
+import type { ZArtifact } from '@/lib/z-intelligence/types';
 import { ZArtifactViewer } from './z-artifact-viewer';
-import { ZChatMessages } from './z-chat-messages';
-import { ZChatInput } from './z-chat-input';
 
 interface ZArtifactSplitProps {
   artifact: ZArtifact;
-  messages: ZMessage[];
-  isThinking: boolean;
-  onSend: (message: string) => void;
   onApprove: () => void;
   onReject: () => void;
   onSaveDraft: () => void;
   onVersionSelect: (version: number) => void;
   onCloseArtifact: () => void;
+  width: number;
+  onWidthChange: (width: number) => void;
 }
 
 export function ZArtifactSplit({
   artifact,
-  messages,
-  isThinking,
-  onSend,
   onApprove,
   onReject,
   onSaveDraft,
   onVersionSelect,
   onCloseArtifact,
+  width,
+  onWidthChange,
 }: ZArtifactSplitProps) {
+  const handleResizeStart = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    const startX = e.clientX;
+    const startWidth = width;
+
+    const onMouseMove = (ev: MouseEvent) => {
+      const delta = startX - ev.clientX;
+      onWidthChange(startWidth + delta);
+    };
+
+    const onMouseUp = () => {
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    };
+
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  }, [width, onWidthChange]);
+
   return (
-    <div className="fixed top-0 right-0 h-full z-45 flex flex-col border-l shadow-2xl"
+    <div
+      className="fixed top-0 right-0 h-full z-[49] flex flex-col border-l shadow-2xl z-artifact-enter"
       style={{
-        width: 'min(60vw, 800px)',
+        width: `${width}px`,
         borderColor: '#e4e7ec',
       }}
     >
-      {/* Top: Artifact viewer (~70%) */}
+      {/* Resize handle */}
+      <div
+        className="absolute left-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-accent/30 active:bg-accent/40 transition-colors z-50"
+        onMouseDown={handleResizeStart}
+      />
+
+      {/* Full-height artifact viewer */}
       <div className="flex-1 min-h-0 overflow-hidden">
         <ZArtifactViewer
           artifact={artifact}
@@ -44,19 +71,6 @@ export function ZArtifactSplit({
           onSaveDraft={onSaveDraft}
           onVersionSelect={onVersionSelect}
           onClose={onCloseArtifact}
-        />
-      </div>
-
-      {/* Bottom: Compact chat (~30%) */}
-      <div className="h-[30%] min-h-[180px] max-h-[280px] flex flex-col border-t bg-surface"
-        style={{ borderColor: '#e4e7ec' }}
-      >
-        <ZChatMessages messages={messages} isThinking={isThinking} compact />
-        <ZChatInput
-          onSend={onSend}
-          disabled={isThinking}
-          compact
-          placeholder="Describe changes..."
         />
       </div>
     </div>

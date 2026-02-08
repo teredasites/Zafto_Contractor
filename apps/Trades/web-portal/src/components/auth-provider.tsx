@@ -17,6 +17,7 @@ interface UserProfile {
   email: string | null;
   displayName: string | null;
   companyId: string | null;
+  companyName: string | null;
   role: string | null;
   trade: string | null;
   avatarUrl: string | null;
@@ -51,7 +52,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const supabase = getSupabase();
           const { data } = await supabase
             .from('users')
-            .select('id, email, full_name, company_id, role, trade, avatar_url, custom_role_id, branch_id')
+            .select('id, email, full_name, company_id, role, trade, avatar_url, custom_role_id, branch_id, companies(name)')
             .eq('id', authUser.id)
             .single();
 
@@ -61,6 +62,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               email: data.email,
               displayName: data.full_name,
               companyId: data.company_id,
+              companyName: (data as any).companies?.name || null,
               role: data.role,
               trade: data.trade,
               avatarUrl: data.avatar_url,

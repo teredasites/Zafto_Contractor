@@ -4,295 +4,213 @@ import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import {
   ArrowLeft, Plus, Trash2, Search, X, ChevronDown, ChevronRight, Save,
-  DollarSign, Package, Wrench, Zap, FileText, Home, BookOpen,
-  Calculator, Copy, Download, Layers, AlertCircle, Check, Loader2,
+  DollarSign, Package, Wrench, Zap, FileText, Home,
+  Calculator, Layers, AlertCircle, Loader2, Shield, Send, Eye,
+  Ruler, Pencil, Check, Download,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getSupabase } from '@/lib/supabase';
 import {
-  useEstimateLines, useXactCodes, usePricingLookup, useEstimateTemplates,
-  type EstimateLine, type XactimateCode, type EstimateSummary, type EstimateTemplate,
-} from '@/lib/hooks/use-estimate-engine';
-import {
-  useScopeAssist,
-  type GapDetectionResult, type PhotoAnalysisResult, type SupplementResult, type DisputeLetterResult,
-} from '@/lib/hooks/use-scope-assist';
+  useEstimate, useEstimateItems, fmtCurrency,
+  type EstimateArea, type EstimateLineItem, type EstimateItem,
+} from '@/lib/hooks/use-estimates';
 
-// ── Claim header info ──
-
-interface ClaimInfo {
-  id: string;
-  claimNumber: string;
-  customerName: string;
-  lossType: string;
-  propertyAddress: string;
-  claimStatus: string;
-}
-
-// ── Coverage group config ──
-
-const COVERAGE_GROUPS = [
-  { id: 'structural' as const, label: 'Structural', color: 'blue' },
-  { id: 'contents' as const, label: 'Contents', color: 'purple' },
-  { id: 'other' as const, label: 'Other', color: 'amber' },
+const ACTION_TYPES = [
+  { value: 'remove', label: 'Remove' },
+  { value: 'replace', label: 'Replace' },
+  { value: 'install', label: 'Install' },
+  { value: 'repair', label: 'Repair' },
+  { value: 'clean', label: 'Clean' },
+  { value: 'treat', label: 'Treat' },
+  { value: 'other', label: 'Other' },
 ];
 
-const COVERAGE_COLORS: Record<string, string> = {
-  structural: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
-  contents: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
-  other: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
-};
+const TRADES = ['RFG', 'DRY', 'PLM', 'ELE', 'PNT', 'DMO', 'WTR', 'FRM', 'INS', 'SDG', 'HVC'];
 
-const CONFIDENCE_COLORS: Record<string, string> = {
-  low: 'text-red-400',
-  medium: 'text-amber-400',
-  high: 'text-green-400',
-  verified: 'text-emerald-400',
-};
-
-const fmt = (n: number) => n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const ROOM_PRESETS = [
+  'Kitchen', 'Living Room', 'Dining Room', 'Master Bedroom', 'Bedroom 2', 'Bedroom 3',
+  'Bathroom', 'Master Bath', 'Laundry', 'Garage', 'Hallway', 'Foyer',
+  'Basement', 'Attic', 'Office', 'Exterior - Front', 'Exterior - Back', 'Exterior - Sides', 'Roof',
+];
 
 export default function EstimateEditorPage() {
   const params = useParams();
   const router = useRouter();
-  const claimId = params.id as string;
+  const estimateId = params.id as string;
 
-  // ── Claim info ──
-  const [claim, setClaim] = useState<ClaimInfo | null>(null);
-  const [claimLoading, setClaimLoading] = useState(true);
+  const {
+    estimate, areas, lineItems, loading, error,
+    updateEstimate, addArea, updateArea, deleteArea,
+    addLineItem, updateLineItem, deleteLineItem, recalculateTotals,
+  } = useEstimate(estimateId);
 
-  // ── Hooks ──
-  const { lines, loading: linesLoading, addLine, updateLine, deleteLine, calculateSummary } = useEstimateLines(claimId);
-  const { codes, loading: codesLoading, searchCodes, getCategories } = useXactCodes();
-  const { lookupPrice } = usePricingLookup();
-  const { templates, loading: templatesLoading, saveTemplate } = useEstimateTemplates();
-  const scopeAssist = useScopeAssist();
+  const { items: codeItems, loading: itemsLoading, searchItems } = useEstimateItems();
 
-  // ── UI state ──
+  // UI State
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [sidebarTab, setSidebarTab] = useState<'codes' | 'templates' | 'assist'>('codes');
-  const [codeSearch, setCodeSearch] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [categories, setCategories] = useState<Array<{ code: string; name: string }>>([]);
-  const [overheadRate, setOverheadRate] = useState(10);
-  const [profitRate, setProfitRate] = useState(10);
+  const [itemSearch, setItemSearch] = useState('');
+  const [tradeFilter, setTradeFilter] = useState('');
+  const [commonOnly, setCommonOnly] = useState(false);
   const [editingLine, setEditingLine] = useState<string | null>(null);
   const [addingRoom, setAddingRoom] = useState(false);
   const [newRoomName, setNewRoomName] = useState('');
-  const [savingTemplate, setSavingTemplate] = useState(false);
-  const [templateName, setTemplateName] = useState('');
-  const [regionCode, setRegionCode] = useState('');
+  const [editingHeader, setEditingHeader] = useState(false);
+  const [editingInsurance, setEditingInsurance] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
   const searchTimer = useRef<ReturnType<typeof setTimeout>>(null);
 
-  // ── Fetch claim info ──
-  useEffect(() => {
-    async function fetchClaim() {
-      const supabase = getSupabase();
-      const { data } = await supabase
-        .from('insurance_claims')
-        .select('id, claim_number, customer_name, loss_type, property_address, claim_status')
-        .eq('id', claimId)
-        .single();
-
-      if (data) {
-        setClaim({
-          id: data.id,
-          claimNumber: data.claim_number || '',
-          customerName: data.customer_name || '',
-          lossType: data.loss_type || '',
-          propertyAddress: data.property_address || '',
-          claimStatus: data.claim_status || '',
-        });
-      }
-      setClaimLoading(false);
+  // Group line items by area
+  const areaLineItems = useMemo(() => {
+    const map = new Map<string | null, EstimateLineItem[]>();
+    for (const li of lineItems) {
+      const key = li.areaId;
+      const existing = map.get(key) || [];
+      existing.push(li);
+      map.set(key, existing);
     }
-    fetchClaim();
-  }, [claimId]);
+    return map;
+  }, [lineItems]);
 
-  // ── Fetch categories on mount ──
-  useEffect(() => {
-    getCategories().then(setCategories);
-  }, [getCategories]);
+  // Computed totals
+  const totals = useMemo(() => {
+    if (!estimate) return { subtotal: 0, overhead: 0, profit: 0, tax: 0, grand: 0 };
+    const subtotal = lineItems.reduce((sum, li) => sum + li.lineTotal, 0);
+    const overhead = subtotal * (estimate.overheadPercent / 100);
+    const profit = subtotal * (estimate.profitPercent / 100);
+    const taxable = subtotal + overhead + profit;
+    const tax = taxable * (estimate.taxPercent / 100);
+    const grand = taxable + tax;
+    return { subtotal, overhead, profit, tax, grand };
+  }, [estimate, lineItems]);
 
-  // ── Debounced code search ──
-  const handleCodeSearch = useCallback((query: string) => {
-    setCodeSearch(query);
+  // Debounced item search
+  const handleItemSearch = useCallback((query: string) => {
+    setItemSearch(query);
     if (searchTimer.current) clearTimeout(searchTimer.current);
     searchTimer.current = setTimeout(() => {
-      searchCodes(query, selectedCategory);
+      searchItems(query, tradeFilter || undefined, commonOnly);
     }, 300);
-  }, [searchCodes, selectedCategory]);
+  }, [searchItems, tradeFilter, commonOnly]);
 
   useEffect(() => {
-    if (sidebarOpen && sidebarTab === 'codes') {
-      searchCodes(codeSearch, selectedCategory);
+    if (sidebarOpen) {
+      searchItems(itemSearch, tradeFilter || undefined, commonOnly);
     }
-  }, [selectedCategory, sidebarOpen, sidebarTab]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [tradeFilter, commonOnly, sidebarOpen]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ── Group lines by room ──
-  const roomGroups = useMemo(() => {
-    const groups = new Map<string, EstimateLine[]>();
-    for (const line of lines) {
-      const room = line.roomName || 'Unassigned';
-      const existing = groups.get(room) || [];
-      existing.push(line);
-      groups.set(room, existing);
-    }
-    return groups;
-  }, [lines]);
-
-  // ── Summary ──
-  const summary = useMemo(() => calculateSummary(lines, overheadRate, profitRate), [lines, overheadRate, profitRate, calculateSummary]);
-
-  // ── Add code to estimate ──
-  const handleAddCode = useCallback(async (code: XactimateCode, room: string) => {
-    let unitPrice = 0;
-    let materialCost = 0;
-    let laborCost = 0;
-    let equipmentCost = 0;
-
-    // Auto-lookup pricing if region is set
-    if (regionCode) {
-      const pricing = await lookupPrice(code.id, regionCode);
-      if (pricing) {
-        materialCost = pricing.materialCost;
-        laborCost = pricing.laborCost;
-        equipmentCost = pricing.equipmentCost;
-        unitPrice = pricing.totalCost;
-      }
-    }
-
-    const nextLineNumber = lines.filter(l => l.roomName === room).length + 1;
-
-    await addLine({
-      claimId,
-      codeId: code.id,
-      category: code.categoryCode,
-      itemCode: code.fullCode,
-      description: code.description,
+  // Add code item to estimate
+  const handleAddItem = useCallback(async (item: EstimateItem, areaId?: string) => {
+    await addLineItem({
+      areaId,
+      itemId: item.id,
+      zaftoCode: item.zaftoCode,
+      description: item.name,
+      actionType: 'replace',
       quantity: 1,
-      unit: code.unit,
-      unitPrice,
-      total: unitPrice,
-      materialCost,
-      laborCost,
-      equipmentCost,
-      roomName: room,
-      lineNumber: nextLineNumber,
-      coverageGroup: code.coverageGroup,
-      isSupplement: false,
-      supplementId: null,
-      depreciationRate: 0,
-      acvAmount: null,
-      rcvAmount: null,
-      notes: '',
+      unitCode: item.defaultUnit,
+      materialCost: item.materialCost,
+      laborCost: item.laborCost,
+      equipmentCost: item.equipmentCost,
+      unitPrice: item.basePrice,
     });
-  }, [claimId, lines, regionCode, lookupPrice, addLine]);
+    await recalculateTotals();
+  }, [addLineItem, recalculateTotals]);
 
-  // ── Apply template ──
-  const handleApplyTemplate = useCallback(async (template: EstimateTemplate) => {
-    const room = Array.from(roomGroups.keys())[0] || 'Main';
-    for (const item of template.lineItems) {
-      // Try to find the code in the database
-      const supabase = getSupabase();
-      const { data: codeRow } = await supabase
-        .from('xactimate_codes')
-        .select('*')
-        .eq('full_code', item.code)
-        .single();
+  // Add room
+  const handleAddRoom = useCallback(async (name: string) => {
+    await addArea(name);
+    setAddingRoom(false);
+    setNewRoomName('');
+  }, [addArea]);
 
-      if (codeRow) {
-        const code: XactimateCode = {
-          id: codeRow.id,
-          categoryCode: codeRow.category_code,
-          categoryName: codeRow.category_name,
-          selectorCode: codeRow.selector_code,
-          fullCode: codeRow.full_code,
-          description: item.description || codeRow.description,
-          unit: item.unit || codeRow.unit,
-          coverageGroup: codeRow.coverage_group,
-          hasMaterial: codeRow.has_material,
-          hasLabor: codeRow.has_labor,
-          hasEquipment: codeRow.has_equipment,
-        };
-        await handleAddCode(code, room);
-      } else {
-        // Custom line (no matching code)
-        const nextLineNumber = lines.length + 1;
-        await addLine({
-          claimId,
-          codeId: null,
-          category: '',
-          itemCode: item.code,
-          description: item.description,
-          quantity: item.qty,
-          unit: item.unit,
-          unitPrice: 0,
-          total: 0,
-          materialCost: 0,
-          laborCost: 0,
-          equipmentCost: 0,
-          roomName: room,
-          lineNumber: nextLineNumber,
-          coverageGroup: 'structural',
-          isSupplement: false,
-          supplementId: null,
-          depreciationRate: 0,
-          acvAmount: null,
-          rcvAmount: null,
-          notes: item.notes || '',
-        });
-      }
-    }
-  }, [roomGroups, handleAddCode, lines, addLine, claimId]);
-
-  // ── Save as template ──
-  const handleSaveTemplate = useCallback(async () => {
-    if (!templateName.trim()) return;
-    await saveTemplate({
-      name: templateName.trim(),
-      description: `Template from claim ${claim?.claimNumber || claimId}`,
-      tradeType: '',
-      lossType: claim?.lossType || '',
-      lineItems: lines.map(l => ({
-        code: l.itemCode,
-        description: l.description,
-        qty: l.quantity,
-        unit: l.unit,
-        notes: l.notes,
-      })),
-    });
-    setSavingTemplate(false);
-    setTemplateName('');
-  }, [templateName, saveTemplate, claim, claimId, lines]);
-
-  // ── Inline line editing ──
-  const handleLineUpdate = useCallback(async (lineId: string, field: string, value: string | number) => {
-    const line = lines.find(l => l.id === lineId);
+  // Line item field update
+  const handleLineFieldUpdate = useCallback(async (lineId: string, field: string, value: string | number) => {
+    const line = lineItems.find(l => l.id === lineId);
     if (!line) return;
 
-    const updates: Partial<EstimateLine> = {};
+    const updates: Record<string, unknown> = {};
     if (field === 'quantity') {
       const qty = Number(value) || 0;
       updates.quantity = qty;
-      updates.total = qty * line.unitPrice;
-    } else if (field === 'unitPrice') {
+      updates.line_total = qty * line.unitPrice;
+    } else if (field === 'unit_price') {
       const price = Number(value) || 0;
-      updates.unitPrice = price;
-      updates.total = line.quantity * price;
-    } else if (field === 'depreciationRate') {
-      updates.depreciationRate = Number(value) || 0;
-    } else if (field === 'coverageGroup') {
-      updates.coverageGroup = value as EstimateLine['coverageGroup'];
+      updates.unit_price = price;
+      updates.line_total = line.quantity * price;
+    } else if (field === 'action_type') {
+      updates.action_type = value;
     } else if (field === 'notes') {
-      updates.notes = value as string;
+      updates.notes = value;
+    } else if (field === 'description') {
+      updates.description = value;
     }
 
-    await updateLine(lineId, updates);
-  }, [lines, updateLine]);
+    await updateLineItem(lineId, updates);
+    await recalculateTotals();
+  }, [lineItems, updateLineItem, recalculateTotals]);
 
-  // ── Loading state ──
-  if (claimLoading) {
+  // Delete line with recalc
+  const handleDeleteLine = useCallback(async (lineId: string) => {
+    await deleteLineItem(lineId);
+    await recalculateTotals();
+  }, [deleteLineItem, recalculateTotals]);
+
+  // Update O&P rates
+  const handleRateChange = useCallback(async (field: string, value: number) => {
+    await updateEstimate({ [field]: value });
+  }, [updateEstimate]);
+
+  // Export ESX via Edge Function (downloads .esx file)
+  const handleExportEsx = useCallback(async () => {
+    const supabase = getSupabase();
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
+    const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+    const url = `${baseUrl}/functions/v1/export-esx?estimate_id=${estimateId}`;
+    const res = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${session.access_token}`,
+        'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
+      },
+    });
+    if (!res.ok) return;
+    const blob = await res.blob();
+    const blobUrl = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = `${estimate?.estimateNumber || 'estimate'}.esx`;
+    a.click();
+    URL.revokeObjectURL(blobUrl);
+  }, [estimateId, estimate?.estimateNumber]);
+
+  // Download PDF via Edge Function (fetches HTML, opens in new tab for print)
+  const handleDownloadPdf = useCallback(async (template: 'standard' | 'detailed' | 'summary' = 'standard') => {
+    const supabase = getSupabase();
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
+    const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+    const url = `${baseUrl}/functions/v1/export-estimate-pdf?estimate_id=${estimateId}&template=${template}`;
+    const res = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${session.access_token}`,
+        'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
+      },
+    });
+    if (!res.ok) return;
+    const html = await res.text();
+    const blob = new Blob([html], { type: 'text/html' });
+    const blobUrl = URL.createObjectURL(blob);
+    window.open(blobUrl, '_blank');
+  }, [estimateId]);
+
+  // Send estimate
+  const handleSend = useCallback(async () => {
+    await recalculateTotals();
+    await updateEstimate({ status: 'sent', sent_at: new Date().toISOString() });
+  }, [recalculateTotals, updateEstimate]);
+
+  // ── Loading ──
+  if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
         <Loader2 className="w-6 h-6 text-zinc-500 animate-spin" />
@@ -300,15 +218,28 @@ export default function EstimateEditorPage() {
     );
   }
 
-  if (!claim) {
+  if (!estimate) {
     return (
       <div className="text-center py-16 text-zinc-500">
         <AlertCircle className="w-12 h-12 mx-auto mb-3 opacity-50" />
-        <p className="text-lg font-medium">Claim not found</p>
+        <p className="text-lg font-medium">Estimate not found</p>
         <button onClick={() => router.push('/dashboard/estimates')} className="text-sm text-blue-400 hover:underline mt-2">
           Back to estimates
         </button>
       </div>
+    );
+  }
+
+  if (showPreview) {
+    return (
+      <EstimatePreview
+        estimate={estimate}
+        areas={areas}
+        lineItems={lineItems}
+        areaLineItems={areaLineItems}
+        totals={totals}
+        onBack={() => setShowPreview(false)}
+      />
     );
   }
 
@@ -324,57 +255,47 @@ export default function EstimateEditorPage() {
                 <ArrowLeft className="w-4 h-4" />
               </button>
               <div>
-                <h1 className="text-lg font-semibold text-zinc-100">
-                  {claim.claimNumber || 'Untitled Estimate'}
-                </h1>
+                <div className="flex items-center gap-2">
+                  <h1 className="text-lg font-semibold text-zinc-100">{estimate.estimateNumber}</h1>
+                  <span className={cn(
+                    'text-[10px] px-1.5 py-0.5 rounded-full capitalize',
+                    estimate.status === 'draft' ? 'bg-zinc-700/50 text-zinc-400' :
+                    estimate.status === 'approved' ? 'bg-green-500/10 text-green-400' :
+                    estimate.status === 'sent' ? 'bg-blue-500/10 text-blue-400' :
+                    'bg-zinc-700/50 text-zinc-400'
+                  )}>
+                    {estimate.status}
+                  </span>
+                  {estimate.estimateType === 'insurance' && (
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-purple-500/10 text-purple-400">Insurance</span>
+                  )}
+                </div>
                 <p className="text-xs text-zinc-500">
-                  {claim.customerName} &middot; {claim.lossType.replace(/_/g, ' ')} &middot; {claim.propertyAddress || 'No address'}
+                  {estimate.title} &middot; {estimate.customerName || 'No customer'}
                 </p>
               </div>
             </div>
             <div className="flex items-center gap-2">
-              {/* Region Code */}
-              <div className="flex items-center gap-1.5">
-                <label className="text-xs text-zinc-500">Region:</label>
-                <input
-                  type="text"
-                  value={regionCode}
-                  onChange={(e) => setRegionCode(e.target.value.toUpperCase())}
-                  placeholder="e.g. TX-HOU"
-                  className="w-24 px-2 py-1 text-xs bg-zinc-800/50 border border-zinc-700/50 rounded text-zinc-200 placeholder:text-zinc-600"
-                />
-              </div>
-              {/* Template actions */}
-              <button
-                onClick={() => setSavingTemplate(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-zinc-300 bg-zinc-800/50 border border-zinc-700/50 rounded-lg hover:bg-zinc-800"
-              >
-                <Save className="w-3.5 h-3.5" />
-                Save Template
+              <button onClick={() => setShowPreview(true)} className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-zinc-300 bg-zinc-800/50 border border-zinc-700/50 rounded-lg hover:bg-zinc-800">
+                <Eye className="w-3.5 h-3.5" />
+                Preview
               </button>
-              {/* Download PDF */}
-              <button
-                onClick={() => {
-                  const supabase = getSupabase();
-                  supabase.auth.getSession().then(({ data: { session } }: { data: { session: { access_token: string } | null } }) => {
-                    if (!session) return;
-                    const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-                    const url = `${baseUrl}/functions/v1/estimate-pdf?claim_id=${claimId}&overhead=${overheadRate}&profit=${profitRate}`;
-                    const win = window.open('about:blank', '_blank');
-                    if (win) {
-                      fetch(url, { headers: { Authorization: `Bearer ${session.access_token}` } })
-                        .then(r => r.text())
-                        .then(html => { win.document.write(html); win.document.close(); })
-                        .catch(() => win.close());
-                    }
-                  });
-                }}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-zinc-300 bg-zinc-800/50 border border-zinc-700/50 rounded-lg hover:bg-zinc-800"
-              >
+              <button onClick={() => handleDownloadPdf('standard')} className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-zinc-300 bg-zinc-800/50 border border-zinc-700/50 rounded-lg hover:bg-zinc-800">
                 <Download className="w-3.5 h-3.5" />
                 PDF
               </button>
-              {/* Code Browser Toggle */}
+              {estimate.estimateType === 'insurance' && (
+                <button onClick={handleExportEsx} className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-zinc-300 bg-zinc-800/50 border border-zinc-700/50 rounded-lg hover:bg-zinc-800">
+                  <FileText className="w-3.5 h-3.5" />
+                  .esx
+                </button>
+              )}
+              {estimate.status === 'draft' && (
+                <button onClick={handleSend} className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-white bg-blue-600 rounded-lg hover:bg-blue-500">
+                  <Send className="w-3.5 h-3.5" />
+                  Send
+                </button>
+              )}
               <button
                 onClick={() => setSidebarOpen(!sidebarOpen)}
                 className={cn(
@@ -384,248 +305,412 @@ export default function EstimateEditorPage() {
                     : 'text-zinc-300 bg-zinc-800/50 border-zinc-700/50 hover:bg-zinc-800'
                 )}
               >
-                <BookOpen className="w-3.5 h-3.5" />
-                Code Browser
+                <Search className="w-3.5 h-3.5" />
+                Item Browser
               </button>
             </div>
           </div>
         </div>
 
-        {/* Save Template Modal */}
-        {savingTemplate && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-            <div className="bg-zinc-900 border border-zinc-700 rounded-xl p-6 w-96">
-              <h3 className="text-sm font-medium text-zinc-100 mb-4">Save as Template</h3>
-              <input
-                type="text"
-                value={templateName}
-                onChange={(e) => setTemplateName(e.target.value)}
-                placeholder="Template name..."
-                className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-sm text-zinc-100 placeholder:text-zinc-500 mb-4"
-                autoFocus
-              />
-              <p className="text-xs text-zinc-500 mb-4">{lines.length} line items will be saved</p>
-              <div className="flex justify-end gap-2">
-                <button onClick={() => setSavingTemplate(false)} className="px-3 py-1.5 text-xs text-zinc-400 hover:text-zinc-200">Cancel</button>
-                <button onClick={handleSaveTemplate} className="px-3 py-1.5 text-xs text-white bg-blue-600 rounded-lg hover:bg-blue-500">Save</button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Room sections */}
         <div className="p-6 space-y-6">
-          {/* Add Room */}
+          {/* ── Estimate Header Card ── */}
+          <div className="bg-zinc-800/30 border border-zinc-700/30 rounded-xl p-5">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-medium text-zinc-200 flex items-center gap-2">
+                <FileText className="w-4 h-4 text-zinc-400" />
+                Estimate Details
+              </h3>
+              <button onClick={() => setEditingHeader(!editingHeader)} className="text-xs text-blue-400 hover:underline">
+                {editingHeader ? 'Done' : 'Edit'}
+              </button>
+            </div>
+            {editingHeader ? (
+              <EstimateHeaderForm estimate={estimate} onUpdate={updateEstimate} />
+            ) : (
+              <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-xs">
+                <div><span className="text-zinc-500">Title:</span> <span className="text-zinc-200 ml-2">{estimate.title || '—'}</span></div>
+                <div><span className="text-zinc-500">Customer:</span> <span className="text-zinc-200 ml-2">{estimate.customerName || '—'}</span></div>
+                <div><span className="text-zinc-500">Address:</span> <span className="text-zinc-200 ml-2">{estimate.propertyAddress || '—'}</span></div>
+                <div><span className="text-zinc-500">City/State/Zip:</span> <span className="text-zinc-200 ml-2">{[estimate.propertyCity, estimate.propertyState, estimate.propertyZip].filter(Boolean).join(', ') || '—'}</span></div>
+              </div>
+            )}
+          </div>
+
+          {/* ── Insurance Details Card ── */}
+          {estimate.estimateType === 'insurance' && (
+            <div className="bg-purple-500/5 border border-purple-500/10 rounded-xl p-5">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-medium text-purple-300 flex items-center gap-2">
+                  <Shield className="w-4 h-4" />
+                  Insurance Details
+                </h3>
+                <button onClick={() => setEditingInsurance(!editingInsurance)} className="text-xs text-purple-400 hover:underline">
+                  {editingInsurance ? 'Done' : 'Edit'}
+                </button>
+              </div>
+              {editingInsurance ? (
+                <InsuranceForm estimate={estimate} onUpdate={updateEstimate} />
+              ) : (
+                <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-xs">
+                  <div><span className="text-zinc-500">Claim #:</span> <span className="text-zinc-200 ml-2">{estimate.claimNumber || '—'}</span></div>
+                  <div><span className="text-zinc-500">Policy #:</span> <span className="text-zinc-200 ml-2">{estimate.policyNumber || '—'}</span></div>
+                  <div><span className="text-zinc-500">Carrier:</span> <span className="text-zinc-200 ml-2">{estimate.carrierName || '—'}</span></div>
+                  <div><span className="text-zinc-500">Adjuster:</span> <span className="text-zinc-200 ml-2">{estimate.adjusterName || '—'}</span></div>
+                  <div><span className="text-zinc-500">Deductible:</span> <span className="text-zinc-200 ml-2">${fmtCurrency(estimate.deductible)}</span></div>
+                  <div><span className="text-zinc-500">Date of Loss:</span> <span className="text-zinc-200 ml-2">{estimate.dateOfLoss ? new Date(estimate.dateOfLoss).toLocaleDateString() : '—'}</span></div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ── Add Room ── */}
           <div className="flex items-center gap-2">
             {addingRoom ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <Home className="w-4 h-4 text-zinc-500" />
                 <input
                   type="text"
                   value={newRoomName}
                   onChange={(e) => setNewRoomName(e.target.value)}
-                  placeholder="Room name (e.g. Kitchen, Master Bedroom)"
-                  className="px-3 py-1.5 bg-zinc-800 border border-zinc-700 rounded-lg text-sm text-zinc-100 placeholder:text-zinc-500 w-64"
+                  placeholder="Room name..."
+                  className="px-3 py-1.5 bg-zinc-800 border border-zinc-700 rounded-lg text-sm text-zinc-100 placeholder:text-zinc-500 w-48"
                   autoFocus
                   onKeyDown={(e) => {
-                    if (e.key === 'Enter' && newRoomName.trim()) {
-                      setAddingRoom(false);
-                      setNewRoomName('');
-                      // Room is auto-created when a line is added to it
-                    }
-                    if (e.key === 'Escape') {
-                      setAddingRoom(false);
-                      setNewRoomName('');
-                    }
+                    if (e.key === 'Enter' && newRoomName.trim()) handleAddRoom(newRoomName.trim());
+                    if (e.key === 'Escape') { setAddingRoom(false); setNewRoomName(''); }
                   }}
                 />
-                <button
-                  onClick={() => { setAddingRoom(false); setNewRoomName(''); }}
-                  className="p-1 text-zinc-500 hover:text-zinc-300"
-                >
+                <button onClick={() => { setAddingRoom(false); setNewRoomName(''); }} className="p-1 text-zinc-500 hover:text-zinc-300">
                   <X className="w-4 h-4" />
                 </button>
+                <div className="w-full flex flex-wrap gap-1 mt-1">
+                  {ROOM_PRESETS.filter(r => !areas.some(a => a.name === r)).slice(0, 12).map((preset) => (
+                    <button
+                      key={preset}
+                      onClick={() => handleAddRoom(preset)}
+                      className="px-2 py-1 text-[10px] text-zinc-400 bg-zinc-800/50 border border-zinc-700/50 rounded hover:text-zinc-200 hover:border-zinc-600"
+                    >
+                      {preset}
+                    </button>
+                  ))}
+                </div>
               </div>
             ) : (
-              <button
-                onClick={() => setAddingRoom(true)}
-                className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-zinc-200"
-              >
+              <button onClick={() => setAddingRoom(true)} className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-zinc-200">
                 <Plus className="w-3.5 h-3.5" />
-                Add Room
+                Add Room / Area
               </button>
             )}
           </div>
 
-          {/* Lines loading */}
-          {linesLoading ? (
-            <div className="space-y-3">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="h-16 bg-zinc-800/50 rounded-lg animate-pulse" />
-              ))}
-            </div>
-          ) : lines.length === 0 ? (
+          {/* ── Area Sections ── */}
+          {areas.length === 0 && lineItems.length === 0 ? (
             <div className="text-center py-16 text-zinc-500">
               <Calculator className="w-12 h-12 mx-auto mb-3 opacity-50" />
-              <p className="text-lg font-medium">No line items yet</p>
-              <p className="text-sm mt-1">Open the Code Browser to add Xactimate codes, or apply a template</p>
-              <div className="flex items-center justify-center gap-3 mt-4">
-                <button
-                  onClick={() => { setSidebarOpen(true); setSidebarTab('codes'); }}
-                  className="flex items-center gap-1.5 px-4 py-2 text-sm text-blue-400 bg-blue-500/10 border border-blue-500/20 rounded-lg hover:bg-blue-500/20"
-                >
-                  <BookOpen className="w-4 h-4" />
-                  Browse Codes
-                </button>
-                <button
-                  onClick={() => { setSidebarOpen(true); setSidebarTab('templates'); }}
-                  className="flex items-center gap-1.5 px-4 py-2 text-sm text-zinc-300 bg-zinc-800/50 border border-zinc-700/50 rounded-lg hover:bg-zinc-800"
-                >
-                  <Copy className="w-4 h-4" />
-                  Use Template
-                </button>
-              </div>
+              <p className="text-lg font-medium">No rooms or line items yet</p>
+              <p className="text-sm mt-1">Add a room above, then use the Item Browser to add line items</p>
+              <button
+                onClick={() => setSidebarOpen(true)}
+                className="mt-4 flex items-center gap-1.5 mx-auto px-4 py-2 text-sm text-blue-400 bg-blue-500/10 border border-blue-500/20 rounded-lg hover:bg-blue-500/20"
+              >
+                <Search className="w-4 h-4" />
+                Open Item Browser
+              </button>
             </div>
           ) : (
             <>
-              {/* Room groups */}
-              {Array.from(roomGroups.entries()).map(([room, roomLines]) => (
-                <RoomSection
-                  key={room}
-                  room={room}
-                  lines={roomLines}
+              {areas.map((area) => (
+                <AreaSection
+                  key={area.id}
+                  area={area}
+                  lines={areaLineItems.get(area.id) || []}
                   editingLine={editingLine}
-                  onEdit={setEditingLine}
-                  onUpdate={handleLineUpdate}
-                  onDelete={deleteLine}
-                  onAddCode={(code) => handleAddCode(code, room)}
-                  onOpenBrowser={() => { setSidebarOpen(true); setSidebarTab('codes'); }}
+                  onEditLine={setEditingLine}
+                  onUpdateLine={handleLineFieldUpdate}
+                  onDeleteLine={handleDeleteLine}
+                  onDeleteArea={deleteArea}
+                  onUpdateArea={updateArea}
+                  onOpenBrowser={() => setSidebarOpen(true)}
                 />
               ))}
 
-              {/* ── Summary Panel ── */}
-              <SummaryPanel
-                summary={summary}
-                overheadRate={overheadRate}
-                profitRate={profitRate}
-                onOverheadChange={setOverheadRate}
-                onProfitChange={setProfitRate}
-                lineCount={lines.length}
+              {/* Unassigned line items */}
+              {(areaLineItems.get(null) || []).length > 0 && (
+                <AreaSection
+                  area={null}
+                  lines={areaLineItems.get(null) || []}
+                  editingLine={editingLine}
+                  onEditLine={setEditingLine}
+                  onUpdateLine={handleLineFieldUpdate}
+                  onDeleteLine={handleDeleteLine}
+                  onDeleteArea={() => {}}
+                  onUpdateArea={() => {}}
+                  onOpenBrowser={() => setSidebarOpen(true)}
+                />
+              )}
+
+              {/* ── Totals Panel ── */}
+              <TotalsPanel
+                estimate={estimate}
+                totals={totals}
+                lineCount={lineItems.length}
+                onRateChange={handleRateChange}
               />
             </>
           )}
         </div>
       </div>
 
-      {/* ── Sidebar: Code Browser / Templates ── */}
+      {/* ── Sidebar: Item Browser ── */}
       {sidebarOpen && (
         <div className="fixed right-0 top-16 bottom-0 w-[380px] bg-zinc-900 border-l border-zinc-800 flex flex-col z-20">
-          {/* Sidebar Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-800">
-            <div className="flex items-center gap-1">
-              <button
-                onClick={() => setSidebarTab('codes')}
-                className={cn(
-                  'px-3 py-1.5 text-xs rounded-lg transition-colors',
-                  sidebarTab === 'codes' ? 'text-blue-400 bg-blue-500/10' : 'text-zinc-400 hover:text-zinc-200'
-                )}
-              >
-                Codes
-              </button>
-              <button
-                onClick={() => setSidebarTab('templates')}
-                className={cn(
-                  'px-3 py-1.5 text-xs rounded-lg transition-colors',
-                  sidebarTab === 'templates' ? 'text-blue-400 bg-blue-500/10' : 'text-zinc-400 hover:text-zinc-200'
-                )}
-              >
-                Templates
-              </button>
-              <button
-                onClick={() => setSidebarTab('assist')}
-                className={cn(
-                  'px-3 py-1.5 text-xs rounded-lg transition-colors',
-                  sidebarTab === 'assist' ? 'text-blue-400 bg-blue-500/10' : 'text-zinc-400 hover:text-zinc-200'
-                )}
-              >
-                Z Assist
-              </button>
-            </div>
+            <span className="text-sm font-medium text-zinc-200">ZAFTO Code Database</span>
             <button onClick={() => setSidebarOpen(false)} className="p-1 text-zinc-500 hover:text-zinc-300">
               <X className="w-4 h-4" />
             </button>
           </div>
 
-          {sidebarTab === 'codes' ? (
-            <CodeBrowserPanel
-              codes={codes}
-              loading={codesLoading}
-              categories={categories}
-              selectedCategory={selectedCategory}
-              onCategoryChange={setSelectedCategory}
-              codeSearch={codeSearch}
-              onSearch={handleCodeSearch}
-              rooms={Array.from(roomGroups.keys())}
-              newRoomName={newRoomName}
-              onAddCode={handleAddCode}
-            />
-          ) : sidebarTab === 'templates' ? (
-            <TemplateBrowserPanel
-              templates={templates}
-              loading={templatesLoading}
-              onApply={handleApplyTemplate}
-            />
-          ) : (
-            <ScopeAssistPanel claimId={claimId} scopeAssist={scopeAssist} />
-          )}
+          {/* Search + Filters */}
+          <div className="p-3 space-y-2 border-b border-zinc-800">
+            <div className="relative">
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-500" />
+              <input
+                type="text"
+                value={itemSearch}
+                onChange={(e) => handleItemSearch(e.target.value)}
+                placeholder="Search codes or descriptions..."
+                className="w-full pl-8 pr-3 py-1.5 bg-zinc-800/50 border border-zinc-700/50 rounded-lg text-xs text-zinc-100 placeholder:text-zinc-500"
+              />
+            </div>
+            {/* Trade chips */}
+            <div className="flex flex-wrap gap-1">
+              <button
+                onClick={() => setTradeFilter('')}
+                className={cn(
+                  'px-2 py-1 text-[10px] rounded transition-colors',
+                  !tradeFilter ? 'bg-blue-500/10 text-blue-400' : 'text-zinc-500 hover:text-zinc-300'
+                )}
+              >
+                All
+              </button>
+              {TRADES.map((t) => (
+                <button
+                  key={t}
+                  onClick={() => setTradeFilter(tradeFilter === t ? '' : t)}
+                  className={cn(
+                    'px-2 py-1 text-[10px] rounded transition-colors',
+                    tradeFilter === t ? 'bg-blue-500/10 text-blue-400' : 'text-zinc-500 hover:text-zinc-300'
+                  )}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+            <label className="flex items-center gap-2 text-xs text-zinc-400">
+              <input
+                type="checkbox"
+                checked={commonOnly}
+                onChange={(e) => setCommonOnly(e.target.checked)}
+                className="rounded border-zinc-600"
+              />
+              Common items only
+            </label>
+          </div>
+
+          {/* Item list */}
+          <div className="flex-1 overflow-y-auto">
+            {itemsLoading ? (
+              <div className="p-4 space-y-2">
+                {[1, 2, 3, 4, 5].map(i => (
+                  <div key={i} className="h-12 bg-zinc-800/50 rounded animate-pulse" />
+                ))}
+              </div>
+            ) : codeItems.length === 0 ? (
+              <div className="p-6 text-center text-zinc-500 text-xs">
+                {itemSearch ? 'No items found' : 'Search or filter by trade to browse items'}
+              </div>
+            ) : (
+              <div className="divide-y divide-zinc-800/50">
+                {codeItems.map(item => (
+                  <ItemRow
+                    key={item.id}
+                    item={item}
+                    areas={areas}
+                    onAdd={handleAddItem}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>
   );
 }
 
-// ── Room Section Component ──
+// ── Estimate Header Form ──
 
-function RoomSection({
-  room, lines, editingLine, onEdit, onUpdate, onDelete, onAddCode, onOpenBrowser,
+function EstimateHeaderForm({
+  estimate,
+  onUpdate,
 }: {
-  room: string;
-  lines: EstimateLine[];
+  estimate: { title: string; customerName: string; customerEmail: string; customerPhone: string; propertyAddress: string; propertyCity: string; propertyState: string; propertyZip: string; notes: string };
+  onUpdate: (u: Record<string, unknown>) => Promise<void>;
+}) {
+  return (
+    <div className="grid grid-cols-2 gap-3">
+      <input type="text" defaultValue={estimate.title} onBlur={(e) => onUpdate({ title: e.target.value })}
+        placeholder="Title" className="px-2 py-1.5 bg-zinc-800 border border-zinc-700 rounded text-xs text-zinc-100 placeholder:text-zinc-500" />
+      <input type="text" defaultValue={estimate.customerName} onBlur={(e) => onUpdate({ customer_name: e.target.value })}
+        placeholder="Customer name" className="px-2 py-1.5 bg-zinc-800 border border-zinc-700 rounded text-xs text-zinc-100 placeholder:text-zinc-500" />
+      <input type="email" defaultValue={estimate.customerEmail} onBlur={(e) => onUpdate({ customer_email: e.target.value })}
+        placeholder="Customer email" className="px-2 py-1.5 bg-zinc-800 border border-zinc-700 rounded text-xs text-zinc-100 placeholder:text-zinc-500" />
+      <input type="tel" defaultValue={estimate.customerPhone} onBlur={(e) => onUpdate({ customer_phone: e.target.value })}
+        placeholder="Customer phone" className="px-2 py-1.5 bg-zinc-800 border border-zinc-700 rounded text-xs text-zinc-100 placeholder:text-zinc-500" />
+      <input type="text" defaultValue={estimate.propertyAddress} onBlur={(e) => onUpdate({ property_address: e.target.value })}
+        placeholder="Address" className="col-span-2 px-2 py-1.5 bg-zinc-800 border border-zinc-700 rounded text-xs text-zinc-100 placeholder:text-zinc-500" />
+      <input type="text" defaultValue={estimate.propertyCity} onBlur={(e) => onUpdate({ property_city: e.target.value })}
+        placeholder="City" className="px-2 py-1.5 bg-zinc-800 border border-zinc-700 rounded text-xs text-zinc-100 placeholder:text-zinc-500" />
+      <div className="flex gap-2">
+        <input type="text" defaultValue={estimate.propertyState} onBlur={(e) => onUpdate({ property_state: e.target.value })}
+          placeholder="State" className="w-20 px-2 py-1.5 bg-zinc-800 border border-zinc-700 rounded text-xs text-zinc-100 placeholder:text-zinc-500" />
+        <input type="text" defaultValue={estimate.propertyZip} onBlur={(e) => onUpdate({ property_zip: e.target.value })}
+          placeholder="ZIP" className="flex-1 px-2 py-1.5 bg-zinc-800 border border-zinc-700 rounded text-xs text-zinc-100 placeholder:text-zinc-500" />
+      </div>
+      <textarea defaultValue={estimate.notes} onBlur={(e) => onUpdate({ notes: e.target.value })}
+        placeholder="Notes..." rows={2} className="col-span-2 px-2 py-1.5 bg-zinc-800 border border-zinc-700 rounded text-xs text-zinc-100 placeholder:text-zinc-500 resize-none" />
+    </div>
+  );
+}
+
+// ── Insurance Form ──
+
+function InsuranceForm({
+  estimate,
+  onUpdate,
+}: {
+  estimate: { claimNumber: string; policyNumber: string; carrierName: string; adjusterName: string; adjusterEmail: string; adjusterPhone: string; deductible: number; dateOfLoss: string | null };
+  onUpdate: (u: Record<string, unknown>) => Promise<void>;
+}) {
+  return (
+    <div className="grid grid-cols-2 gap-3">
+      <input type="text" defaultValue={estimate.claimNumber} onBlur={(e) => onUpdate({ claim_number: e.target.value })}
+        placeholder="Claim #" className="px-2 py-1.5 bg-zinc-800 border border-zinc-700 rounded text-xs text-zinc-100 placeholder:text-zinc-500" />
+      <input type="text" defaultValue={estimate.policyNumber} onBlur={(e) => onUpdate({ policy_number: e.target.value })}
+        placeholder="Policy #" className="px-2 py-1.5 bg-zinc-800 border border-zinc-700 rounded text-xs text-zinc-100 placeholder:text-zinc-500" />
+      <input type="text" defaultValue={estimate.carrierName} onBlur={(e) => onUpdate({ carrier_name: e.target.value })}
+        placeholder="Carrier name" className="px-2 py-1.5 bg-zinc-800 border border-zinc-700 rounded text-xs text-zinc-100 placeholder:text-zinc-500" />
+      <input type="text" defaultValue={estimate.adjusterName} onBlur={(e) => onUpdate({ adjuster_name: e.target.value })}
+        placeholder="Adjuster name" className="px-2 py-1.5 bg-zinc-800 border border-zinc-700 rounded text-xs text-zinc-100 placeholder:text-zinc-500" />
+      <input type="email" defaultValue={estimate.adjusterEmail} onBlur={(e) => onUpdate({ adjuster_email: e.target.value })}
+        placeholder="Adjuster email" className="px-2 py-1.5 bg-zinc-800 border border-zinc-700 rounded text-xs text-zinc-100 placeholder:text-zinc-500" />
+      <input type="tel" defaultValue={estimate.adjusterPhone} onBlur={(e) => onUpdate({ adjuster_phone: e.target.value })}
+        placeholder="Adjuster phone" className="px-2 py-1.5 bg-zinc-800 border border-zinc-700 rounded text-xs text-zinc-100 placeholder:text-zinc-500" />
+      <input type="number" step="0.01" defaultValue={estimate.deductible} onBlur={(e) => onUpdate({ deductible: Number(e.target.value) || 0 })}
+        placeholder="Deductible" className="px-2 py-1.5 bg-zinc-800 border border-zinc-700 rounded text-xs text-zinc-100 placeholder:text-zinc-500" />
+      <input type="date" defaultValue={estimate.dateOfLoss || ''} onBlur={(e) => onUpdate({ date_of_loss: e.target.value || null })}
+        className="px-2 py-1.5 bg-zinc-800 border border-zinc-700 rounded text-xs text-zinc-100" />
+    </div>
+  );
+}
+
+// ── Area Section ──
+
+function AreaSection({
+  area,
+  lines,
+  editingLine,
+  onEditLine,
+  onUpdateLine,
+  onDeleteLine,
+  onDeleteArea,
+  onUpdateArea,
+  onOpenBrowser,
+}: {
+  area: EstimateArea | null;
+  lines: EstimateLineItem[];
   editingLine: string | null;
-  onEdit: (id: string | null) => void;
-  onUpdate: (id: string, field: string, value: string | number) => void;
-  onDelete: (id: string) => void;
-  onAddCode: (code: XactimateCode) => void;
+  onEditLine: (id: string | null) => void;
+  onUpdateLine: (id: string, field: string, value: string | number) => void;
+  onDeleteLine: (id: string) => void;
+  onDeleteArea: (id: string) => void;
+  onUpdateArea: (id: string, updates: Record<string, unknown>) => void;
   onOpenBrowser: () => void;
 }) {
   const [collapsed, setCollapsed] = useState(false);
-  const roomTotal = lines.reduce((sum, l) => sum + l.total, 0);
+  const [showDimensions, setShowDimensions] = useState(false);
+  const areaTotal = lines.reduce((sum, l) => sum + l.lineTotal, 0);
 
   return (
     <div className="bg-zinc-800/30 border border-zinc-700/30 rounded-xl overflow-hidden">
-      {/* Room Header */}
-      <button
-        onClick={() => setCollapsed(!collapsed)}
-        className="w-full flex items-center justify-between px-4 py-3 hover:bg-zinc-800/40 transition-colors"
-      >
-        <div className="flex items-center gap-2">
+      {/* Area Header */}
+      <div className="flex items-center justify-between px-4 py-3 hover:bg-zinc-800/40 transition-colors">
+        <button onClick={() => setCollapsed(!collapsed)} className="flex items-center gap-2 flex-1">
           {collapsed ? <ChevronRight className="w-4 h-4 text-zinc-500" /> : <ChevronDown className="w-4 h-4 text-zinc-500" />}
           <Home className="w-4 h-4 text-zinc-400" />
-          <span className="text-sm font-medium text-zinc-200">{room}</span>
+          <span className="text-sm font-medium text-zinc-200">{area?.name || 'Unassigned'}</span>
           <span className="text-xs text-zinc-500">{lines.length} items</span>
+        </button>
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium text-zinc-200">${fmtCurrency(areaTotal)}</span>
+          {area && (
+            <>
+              <button onClick={() => setShowDimensions(!showDimensions)} className="p-1 text-zinc-500 hover:text-zinc-300" title="Dimensions">
+                <Ruler className="w-3.5 h-3.5" />
+              </button>
+              <button onClick={() => onDeleteArea(area.id)} className="p-1 text-zinc-600 hover:text-red-400">
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
+            </>
+          )}
         </div>
-        <span className="text-sm font-medium text-zinc-200">${fmt(roomTotal)}</span>
-      </button>
+      </div>
+
+      {/* Dimensions */}
+      {showDimensions && area && (
+        <div className="px-4 py-3 bg-zinc-800/20 border-t border-zinc-800/50">
+          <div className="grid grid-cols-4 gap-2">
+            {[
+              { label: 'Length (ft)', field: 'length_ft', value: area.lengthFt },
+              { label: 'Width (ft)', field: 'width_ft', value: area.widthFt },
+              { label: 'Height (ft)', field: 'height_ft', value: area.heightFt },
+              { label: 'Windows', field: 'window_count', value: area.windowCount },
+            ].map((dim) => (
+              <div key={dim.field}>
+                <label className="text-[10px] text-zinc-500 block mb-1">{dim.label}</label>
+                <input
+                  type="number"
+                  step="0.1"
+                  defaultValue={dim.value}
+                  onBlur={(e) => {
+                    const val = Number(e.target.value) || 0;
+                    onUpdateArea(area.id, { [dim.field]: val });
+                  }}
+                  className="w-full px-2 py-1 text-xs bg-zinc-800 border border-zinc-700 rounded text-zinc-200"
+                />
+              </div>
+            ))}
+          </div>
+          {area.lengthFt > 0 && area.widthFt > 0 && (
+            <div className="flex items-center gap-4 mt-2 text-[10px] text-zinc-500">
+              <span>Floor: {(area.lengthFt * area.widthFt).toFixed(1)} SF</span>
+              <span>Perimeter: {((area.lengthFt + area.widthFt) * 2).toFixed(1)} LF</span>
+              <span>Wall: {(((area.lengthFt + area.widthFt) * 2) * area.heightFt).toFixed(1)} SF</span>
+            </div>
+          )}
+        </div>
+      )}
 
       {!collapsed && (
         <div className="border-t border-zinc-700/30">
           {/* Column headers */}
-          <div className="grid grid-cols-[1fr_60px_80px_80px_100px_36px] gap-2 px-4 py-2 text-[10px] uppercase tracking-wider text-zinc-600 border-b border-zinc-800/50">
+          <div className="grid grid-cols-[1fr_70px_70px_80px_90px_36px] gap-2 px-4 py-2 text-[10px] uppercase tracking-wider text-zinc-600 border-b border-zinc-800/50">
             <span>Item</span>
             <span className="text-right">Qty</span>
-            <span className="text-right">Unit Price</span>
+            <span className="text-right">Unit $</span>
             <span className="text-right">Total</span>
-            <span className="text-center">Coverage</span>
+            <span className="text-center">Action</span>
             <span />
           </div>
 
@@ -635,18 +720,15 @@ function RoomSection({
               key={line.id}
               line={line}
               isEditing={editingLine === line.id}
-              onEdit={() => onEdit(editingLine === line.id ? null : line.id)}
-              onUpdate={onUpdate}
-              onDelete={() => onDelete(line.id)}
+              onEdit={() => onEditLine(editingLine === line.id ? null : line.id)}
+              onUpdate={onUpdateLine}
+              onDelete={() => onDeleteLine(line.id)}
             />
           ))}
 
-          {/* Add from browser */}
+          {/* Add line button */}
           <div className="px-4 py-2 border-t border-zinc-800/50">
-            <button
-              onClick={onOpenBrowser}
-              className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-zinc-300"
-            >
+            <button onClick={onOpenBrowser} className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-zinc-300">
               <Plus className="w-3.5 h-3.5" />
               Add line item
             </button>
@@ -662,7 +744,7 @@ function RoomSection({
 function LineItemRow({
   line, isEditing, onEdit, onUpdate, onDelete,
 }: {
-  line: EstimateLine;
+  line: EstimateLineItem;
   isEditing: boolean;
   onEdit: () => void;
   onUpdate: (id: string, field: string, value: string | number) => void;
@@ -672,80 +754,59 @@ function LineItemRow({
     <div className="group">
       <div
         className={cn(
-          'grid grid-cols-[1fr_60px_80px_80px_100px_36px] gap-2 px-4 py-2.5 items-center transition-colors cursor-pointer',
+          'grid grid-cols-[1fr_70px_70px_80px_90px_36px] gap-2 px-4 py-2.5 items-center transition-colors cursor-pointer',
           isEditing ? 'bg-zinc-800/60' : 'hover:bg-zinc-800/30'
         )}
         onClick={onEdit}
       >
-        {/* Item info */}
         <div className="min-w-0">
           <div className="flex items-center gap-1.5">
-            <span className="text-[10px] font-mono text-zinc-500">{line.itemCode}</span>
+            {line.zaftoCode && <span className="text-[10px] font-mono text-blue-400">{line.zaftoCode}</span>}
           </div>
           <p className="text-xs text-zinc-300 truncate">{line.description}</p>
           {line.notes && <p className="text-[10px] text-zinc-600 truncate mt-0.5">{line.notes}</p>}
         </div>
 
-        {/* Qty */}
         <div className="text-right">
           {isEditing ? (
-            <input
-              type="number"
-              value={line.quantity}
+            <input type="number" value={line.quantity}
               onChange={(e) => onUpdate(line.id, 'quantity', e.target.value)}
               className="w-full px-1 py-0.5 text-xs text-right bg-zinc-800 border border-zinc-600 rounded text-zinc-200"
-              onClick={(e) => e.stopPropagation()}
-            />
+              onClick={(e) => e.stopPropagation()} />
           ) : (
-            <span className="text-xs text-zinc-300">{line.quantity} {line.unit}</span>
+            <span className="text-xs text-zinc-300">{line.quantity} {line.unitCode}</span>
           )}
         </div>
 
-        {/* Unit price */}
         <div className="text-right">
           {isEditing ? (
-            <input
-              type="number"
-              step="0.01"
-              value={line.unitPrice}
-              onChange={(e) => onUpdate(line.id, 'unitPrice', e.target.value)}
+            <input type="number" step="0.01" value={line.unitPrice}
+              onChange={(e) => onUpdate(line.id, 'unit_price', e.target.value)}
               className="w-full px-1 py-0.5 text-xs text-right bg-zinc-800 border border-zinc-600 rounded text-zinc-200"
-              onClick={(e) => e.stopPropagation()}
-            />
+              onClick={(e) => e.stopPropagation()} />
           ) : (
-            <span className="text-xs text-zinc-300">${fmt(line.unitPrice)}</span>
+            <span className="text-xs text-zinc-300">${fmtCurrency(line.unitPrice)}</span>
           )}
         </div>
 
-        {/* Total */}
-        <span className="text-xs text-right font-medium text-zinc-200">${fmt(line.total)}</span>
+        <span className="text-xs text-right font-medium text-zinc-200">${fmtCurrency(line.lineTotal)}</span>
 
-        {/* Coverage */}
         <div className="flex justify-center">
           {isEditing ? (
-            <select
-              value={line.coverageGroup}
-              onChange={(e) => { onUpdate(line.id, 'coverageGroup', e.target.value); e.stopPropagation(); }}
+            <select value={line.actionType}
+              onChange={(e) => { onUpdate(line.id, 'action_type', e.target.value); e.stopPropagation(); }}
               className="text-[10px] px-1 py-0.5 bg-zinc-800 border border-zinc-600 rounded text-zinc-200"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {COVERAGE_GROUPS.map(g => (
-                <option key={g.id} value={g.id}>{g.label}</option>
-              ))}
+              onClick={(e) => e.stopPropagation()}>
+              {ACTION_TYPES.map(a => <option key={a.value} value={a.value}>{a.label}</option>)}
             </select>
           ) : (
-            <span className={cn('text-[10px] px-1.5 py-0.5 rounded border', COVERAGE_COLORS[line.coverageGroup])}>
-              {line.coverageGroup}
-            </span>
+            <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-700/50 text-zinc-400 capitalize">{line.actionType}</span>
           )}
         </div>
 
-        {/* Delete */}
         <div className="flex justify-center">
-          <button
-            onClick={(e) => { e.stopPropagation(); onDelete(); }}
-            className="p-1 text-zinc-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
-          >
+          <button onClick={(e) => { e.stopPropagation(); onDelete(); }}
+            className="p-1 text-zinc-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity">
             <Trash2 className="w-3.5 h-3.5" />
           </button>
         </div>
@@ -754,47 +815,27 @@ function LineItemRow({
       {/* Expanded edit row */}
       {isEditing && (
         <div className="px-4 py-2 bg-zinc-800/40 border-t border-zinc-800/50 grid grid-cols-3 gap-3">
-          {/* MAT / LAB / EQU breakdown */}
           <div className="flex items-center gap-2">
             <Package className="w-3 h-3 text-zinc-500" />
             <span className="text-[10px] text-zinc-500">MAT:</span>
-            <span className="text-xs text-zinc-300">${fmt(line.materialCost)}</span>
+            <span className="text-xs text-zinc-300">${fmtCurrency(line.materialCost)}</span>
           </div>
           <div className="flex items-center gap-2">
             <Wrench className="w-3 h-3 text-zinc-500" />
             <span className="text-[10px] text-zinc-500">LAB:</span>
-            <span className="text-xs text-zinc-300">${fmt(line.laborCost)}</span>
+            <span className="text-xs text-zinc-300">${fmtCurrency(line.laborCost)}</span>
           </div>
           <div className="flex items-center gap-2">
             <Zap className="w-3 h-3 text-zinc-500" />
             <span className="text-[10px] text-zinc-500">EQU:</span>
-            <span className="text-xs text-zinc-300">${fmt(line.equipmentCost)}</span>
+            <span className="text-xs text-zinc-300">${fmtCurrency(line.equipmentCost)}</span>
           </div>
-          {/* Depreciation */}
-          <div className="col-span-2 flex items-center gap-2">
-            <span className="text-[10px] text-zinc-500">Depreciation %:</span>
-            <input
-              type="number"
-              min="0"
-              max="100"
-              value={line.depreciationRate}
-              onChange={(e) => onUpdate(line.id, 'depreciationRate', e.target.value)}
-              className="w-16 px-1.5 py-0.5 text-xs bg-zinc-800 border border-zinc-600 rounded text-zinc-200"
-            />
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] text-zinc-500">ACV:</span>
-            <span className="text-xs text-zinc-300">${fmt(line.total * (1 - line.depreciationRate / 100))}</span>
-          </div>
-          {/* Notes */}
           <div className="col-span-3">
-            <input
-              type="text"
-              value={line.notes}
+            <input type="text" value={line.notes}
               onChange={(e) => onUpdate(line.id, 'notes', e.target.value)}
               placeholder="Notes..."
               className="w-full px-2 py-1 text-xs bg-zinc-800 border border-zinc-700 rounded text-zinc-200 placeholder:text-zinc-600"
-            />
+              onClick={(e) => e.stopPropagation()} />
           </div>
         </div>
       )}
@@ -802,577 +843,311 @@ function LineItemRow({
   );
 }
 
-// ── Code Browser Panel ──
+// ── Item Row (Sidebar) ──
 
-function CodeBrowserPanel({
-  codes, loading, categories, selectedCategory, onCategoryChange,
-  codeSearch, onSearch, rooms, newRoomName, onAddCode,
+function ItemRow({
+  item, areas, onAdd,
 }: {
-  codes: XactimateCode[];
-  loading: boolean;
-  categories: Array<{ code: string; name: string }>;
-  selectedCategory: string;
-  onCategoryChange: (c: string) => void;
-  codeSearch: string;
-  onSearch: (q: string) => void;
-  rooms: string[];
-  newRoomName: string;
-  onAddCode: (code: XactimateCode, room: string) => void;
+  item: EstimateItem;
+  areas: EstimateArea[];
+  onAdd: (item: EstimateItem, areaId?: string) => void;
 }) {
-  const [addingToRoom, setAddingToRoom] = useState<{ codeId: string; room: string } | null>(null);
-  const targetRooms = rooms.length > 0 ? rooms : [newRoomName || 'Main'];
+  const [showPicker, setShowPicker] = useState(false);
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
-      {/* Search */}
-      <div className="p-3 space-y-2 border-b border-zinc-800">
-        <div className="relative">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-500" />
-          <input
-            type="text"
-            value={codeSearch}
-            onChange={(e) => onSearch(e.target.value)}
-            placeholder="Search codes or descriptions..."
-            className="w-full pl-8 pr-3 py-1.5 bg-zinc-800/50 border border-zinc-700/50 rounded-lg text-xs text-zinc-100 placeholder:text-zinc-500"
-          />
-        </div>
-        {/* Category filter */}
-        <select
-          value={selectedCategory}
-          onChange={(e) => onCategoryChange(e.target.value)}
-          className="w-full px-2 py-1.5 bg-zinc-800/50 border border-zinc-700/50 rounded-lg text-xs text-zinc-200"
-        >
-          <option value="">All categories</option>
-          {categories.map(c => (
-            <option key={c.code} value={c.code}>{c.code} — {c.name}</option>
-          ))}
-        </select>
-      </div>
-
-      {/* Code list */}
-      <div className="flex-1 overflow-y-auto">
-        {loading ? (
-          <div className="p-4 space-y-2">
-            {[1, 2, 3, 4, 5].map(i => (
-              <div key={i} className="h-12 bg-zinc-800/50 rounded animate-pulse" />
-            ))}
+    <div className="px-3 py-2.5 hover:bg-zinc-800/30 transition-colors">
+      <div className="flex items-start justify-between gap-2">
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-1.5">
+            <span className="text-[10px] font-mono font-medium text-blue-400">{item.zaftoCode}</span>
+            <span className="text-[10px] px-1 py-0.5 rounded bg-zinc-700/50 text-zinc-500">{item.trade}</span>
           </div>
-        ) : codes.length === 0 ? (
-          <div className="p-6 text-center text-zinc-500 text-xs">
-            {codeSearch ? 'No codes found' : 'Search or select a category'}
-          </div>
-        ) : (
-          <div className="divide-y divide-zinc-800/50">
-            {codes.map(code => (
-              <div key={code.id} className="px-3 py-2.5 hover:bg-zinc-800/30 transition-colors">
-                <div className="flex items-start justify-between gap-2">
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-[10px] font-mono font-medium text-blue-400">{code.fullCode}</span>
-                      <span className={cn('text-[10px] px-1 py-0.5 rounded border', COVERAGE_COLORS[code.coverageGroup])}>
-                        {code.coverageGroup.charAt(0).toUpperCase()}
-                      </span>
-                    </div>
-                    <p className="text-xs text-zinc-300 mt-0.5 line-clamp-2">{code.description}</p>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="text-[10px] text-zinc-600">{code.unit}</span>
-                      <div className="flex items-center gap-1">
-                        {code.hasMaterial && <Package className="w-2.5 h-2.5 text-zinc-600" />}
-                        {code.hasLabor && <Wrench className="w-2.5 h-2.5 text-zinc-600" />}
-                        {code.hasEquipment && <Zap className="w-2.5 h-2.5 text-zinc-600" />}
-                      </div>
-                    </div>
-                  </div>
-                  {/* Add button with room picker */}
-                  <div className="relative flex-shrink-0">
-                    {addingToRoom?.codeId === code.id ? (
-                      <div className="absolute right-0 top-0 bg-zinc-800 border border-zinc-700 rounded-lg shadow-xl p-1.5 min-w-[140px] z-10">
-                        {targetRooms.map(room => (
-                          <button
-                            key={room}
-                            onClick={() => { onAddCode(code, room); setAddingToRoom(null); }}
-                            className="w-full text-left px-2 py-1.5 text-xs text-zinc-300 hover:bg-zinc-700 rounded"
-                          >
-                            {room}
-                          </button>
-                        ))}
-                        <button
-                          onClick={() => setAddingToRoom(null)}
-                          className="w-full text-left px-2 py-1 text-[10px] text-zinc-500 hover:text-zinc-300 mt-1 border-t border-zinc-700 pt-1"
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    ) : (
-                      <button
-                        onClick={() => {
-                          if (targetRooms.length === 1) {
-                            onAddCode(code, targetRooms[0]);
-                          } else {
-                            setAddingToRoom({ codeId: code.id, room: '' });
-                          }
-                        }}
-                        className="p-1.5 text-zinc-500 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"
-                        title="Add to estimate"
-                      >
-                        <Plus className="w-4 h-4" />
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-// ── Template Browser Panel ──
-
-function TemplateBrowserPanel({
-  templates, loading, onApply,
-}: {
-  templates: EstimateTemplate[];
-  loading: boolean;
-  onApply: (t: EstimateTemplate) => void;
-}) {
-  if (loading) {
-    return (
-      <div className="p-4 space-y-2">
-        {[1, 2, 3].map(i => (
-          <div key={i} className="h-16 bg-zinc-800/50 rounded animate-pulse" />
-        ))}
-      </div>
-    );
-  }
-
-  if (templates.length === 0) {
-    return (
-      <div className="p-6 text-center text-zinc-500 text-xs">
-        <FileText className="w-8 h-8 mx-auto mb-2 opacity-50" />
-        <p>No templates yet</p>
-        <p className="mt-1 text-zinc-600">Save your first estimate as a template</p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex-1 overflow-y-auto divide-y divide-zinc-800/50">
-      {templates.map(template => (
-        <div key={template.id} className="px-3 py-3 hover:bg-zinc-800/30 transition-colors">
-          <div className="flex items-start justify-between gap-2">
-            <div className="min-w-0">
-              <p className="text-xs font-medium text-zinc-200">{template.name}</p>
-              {template.description && <p className="text-[10px] text-zinc-500 mt-0.5">{template.description}</p>}
-              <div className="flex items-center gap-2 mt-1">
-                <span className="text-[10px] text-zinc-600">{template.lineItems.length} items</span>
-                {template.lossType && (
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">{template.lossType.replace(/_/g, ' ')}</span>
-                )}
-                {template.isSystem && (
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400">System</span>
-                )}
-              </div>
+          <p className="text-xs text-zinc-300 mt-0.5 line-clamp-2">{item.name}</p>
+          <div className="flex items-center gap-2 mt-1">
+            <span className="text-[10px] text-zinc-600">{item.defaultUnit}</span>
+            <span className="text-[10px] text-zinc-500">${fmtCurrency(item.basePrice)}</span>
+            <div className="flex items-center gap-1">
+              {item.materialCost > 0 && <Package className="w-2.5 h-2.5 text-zinc-600" />}
+              {item.laborCost > 0 && <Wrench className="w-2.5 h-2.5 text-zinc-600" />}
+              {item.equipmentCost > 0 && <Zap className="w-2.5 h-2.5 text-zinc-600" />}
             </div>
-            <button
-              onClick={() => onApply(template)}
-              className="flex items-center gap-1 px-2 py-1 text-[10px] text-blue-400 bg-blue-500/10 border border-blue-500/20 rounded hover:bg-blue-500/20 flex-shrink-0"
-            >
-              <Copy className="w-3 h-3" />
-              Apply
-            </button>
           </div>
         </div>
-      ))}
+        <div className="relative flex-shrink-0">
+          {showPicker && areas.length > 0 ? (
+            <div className="absolute right-0 top-0 bg-zinc-800 border border-zinc-700 rounded-lg shadow-xl p-1.5 min-w-[140px] z-10">
+              {areas.map(area => (
+                <button key={area.id}
+                  onClick={() => { onAdd(item, area.id); setShowPicker(false); }}
+                  className="w-full text-left px-2 py-1.5 text-xs text-zinc-300 hover:bg-zinc-700 rounded">
+                  {area.name}
+                </button>
+              ))}
+              <button onClick={() => { onAdd(item); setShowPicker(false); }}
+                className="w-full text-left px-2 py-1.5 text-xs text-zinc-500 hover:bg-zinc-700 rounded border-t border-zinc-700 mt-1 pt-1.5">
+                No room
+              </button>
+              <button onClick={() => setShowPicker(false)}
+                className="w-full text-left px-2 py-1 text-[10px] text-zinc-600 hover:text-zinc-300 mt-1 border-t border-zinc-700 pt-1">
+                Cancel
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => {
+                if (areas.length === 0) { onAdd(item); }
+                else if (areas.length === 1) { onAdd(item, areas[0].id); }
+                else { setShowPicker(true); }
+              }}
+              className="p-1.5 text-zinc-500 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"
+              title="Add to estimate">
+              <Plus className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
 
-// ── Summary Panel ──
+// ── Totals Panel ──
 
-function SummaryPanel({
-  summary, overheadRate, profitRate, onOverheadChange, onProfitChange, lineCount,
+function TotalsPanel({
+  estimate, totals, lineCount, onRateChange,
 }: {
-  summary: EstimateSummary;
-  overheadRate: number;
-  profitRate: number;
-  onOverheadChange: (r: number) => void;
-  onProfitChange: (r: number) => void;
+  estimate: { overheadPercent: number; profitPercent: number; taxPercent: number; estimateType: string; deductible: number };
+  totals: { subtotal: number; overhead: number; profit: number; tax: number; grand: number };
   lineCount: number;
+  onRateChange: (field: string, value: number) => void;
 }) {
   return (
     <div className="bg-zinc-800/30 border border-zinc-700/30 rounded-xl p-5">
       <h3 className="text-sm font-medium text-zinc-200 mb-4 flex items-center gap-2">
         <Layers className="w-4 h-4 text-zinc-400" />
-        Estimate Summary
+        Estimate Totals
         <span className="text-xs text-zinc-500 font-normal ml-auto">{lineCount} line items</span>
       </h3>
 
-      {/* Coverage group breakdown */}
-      <div className="space-y-3 mb-5">
-        {COVERAGE_GROUPS.map(group => {
-          const data = summary[group.id];
-          if (data.rcv === 0) return null;
-          return (
-            <div key={group.id} className="grid grid-cols-4 gap-4 text-xs">
-              <div className="flex items-center gap-2">
-                <span className={cn('px-1.5 py-0.5 rounded border text-[10px]', COVERAGE_COLORS[group.id])}>
-                  {group.label}
-                </span>
-              </div>
-              <div className="text-right">
-                <span className="text-zinc-500 text-[10px] block">RCV</span>
-                <span className="text-zinc-200 font-medium">${fmt(data.rcv)}</span>
-              </div>
-              <div className="text-right">
-                <span className="text-zinc-500 text-[10px] block">Depreciation</span>
-                <span className="text-red-400">(${fmt(data.depreciation)})</span>
-              </div>
-              <div className="text-right">
-                <span className="text-zinc-500 text-[10px] block">ACV</span>
-                <span className="text-zinc-200 font-medium">${fmt(data.acv)}</span>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Subtotal + O&P */}
-      <div className="border-t border-zinc-700/50 pt-4 space-y-2.5">
+      <div className="space-y-2.5">
         <div className="flex items-center justify-between text-xs">
-          <span className="text-zinc-400">Subtotal (RCV)</span>
-          <span className="text-zinc-200 font-medium">${fmt(summary.subtotal)}</span>
+          <span className="text-zinc-400">Subtotal</span>
+          <span className="text-zinc-200 font-medium">${fmtCurrency(totals.subtotal)}</span>
         </div>
 
         {/* Overhead */}
         <div className="flex items-center justify-between text-xs">
           <div className="flex items-center gap-2">
             <span className="text-zinc-400">Overhead</span>
-            <input
-              type="number"
-              min="0"
-              max="100"
-              value={overheadRate}
-              onChange={(e) => onOverheadChange(Number(e.target.value) || 0)}
-              className="w-14 px-1.5 py-0.5 text-xs bg-zinc-800 border border-zinc-700 rounded text-zinc-200 text-right"
-            />
+            <input type="number" min="0" max="100" value={estimate.overheadPercent}
+              onChange={(e) => onRateChange('overhead_percent', Number(e.target.value) || 0)}
+              className="w-14 px-1.5 py-0.5 text-xs bg-zinc-800 border border-zinc-700 rounded text-zinc-200 text-right" />
             <span className="text-zinc-600">%</span>
           </div>
-          <span className="text-zinc-200">${fmt(summary.overhead)}</span>
+          <span className="text-zinc-200">${fmtCurrency(totals.overhead)}</span>
         </div>
 
         {/* Profit */}
         <div className="flex items-center justify-between text-xs">
           <div className="flex items-center gap-2">
             <span className="text-zinc-400">Profit</span>
-            <input
-              type="number"
-              min="0"
-              max="100"
-              value={profitRate}
-              onChange={(e) => onProfitChange(Number(e.target.value) || 0)}
-              className="w-14 px-1.5 py-0.5 text-xs bg-zinc-800 border border-zinc-700 rounded text-zinc-200 text-right"
-            />
+            <input type="number" min="0" max="100" value={estimate.profitPercent}
+              onChange={(e) => onRateChange('profit_percent', Number(e.target.value) || 0)}
+              className="w-14 px-1.5 py-0.5 text-xs bg-zinc-800 border border-zinc-700 rounded text-zinc-200 text-right" />
             <span className="text-zinc-600">%</span>
           </div>
-          <span className="text-zinc-200">${fmt(summary.profit)}</span>
+          <span className="text-zinc-200">${fmtCurrency(totals.profit)}</span>
+        </div>
+
+        {/* Tax */}
+        <div className="flex items-center justify-between text-xs">
+          <div className="flex items-center gap-2">
+            <span className="text-zinc-400">Tax</span>
+            <input type="number" min="0" max="100" step="0.01" value={estimate.taxPercent}
+              onChange={(e) => onRateChange('tax_percent', Number(e.target.value) || 0)}
+              className="w-14 px-1.5 py-0.5 text-xs bg-zinc-800 border border-zinc-700 rounded text-zinc-200 text-right" />
+            <span className="text-zinc-600">%</span>
+          </div>
+          <span className="text-zinc-200">${fmtCurrency(totals.tax)}</span>
         </div>
 
         {/* Grand Total */}
         <div className="flex items-center justify-between text-sm pt-2.5 border-t border-zinc-700/50">
           <span className="text-zinc-100 font-semibold">Grand Total</span>
-          <span className="text-zinc-100 font-semibold text-lg">${fmt(summary.grandTotal)}</span>
+          <span className="text-zinc-100 font-semibold text-lg">${fmtCurrency(totals.grand)}</span>
         </div>
+
+        {/* Insurance net claim */}
+        {estimate.estimateType === 'insurance' && estimate.deductible > 0 && (
+          <div className="flex items-center justify-between text-xs pt-2 border-t border-zinc-700/50">
+            <span className="text-purple-400">Net Claim (after deductible)</span>
+            <span className="text-purple-300 font-medium">${fmtCurrency(Math.max(0, totals.grand - estimate.deductible))}</span>
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
-// ── Scope Assist Panel ──
+// ── Estimate Preview ──
 
-function ScopeAssistPanel({
-  claimId, scopeAssist,
+function EstimatePreview({
+  estimate, areas, lineItems, areaLineItems, totals, onBack,
 }: {
-  claimId: string;
-  scopeAssist: ReturnType<typeof useScopeAssist>;
+  estimate: NonNullable<ReturnType<typeof useEstimate>['estimate']>;
+  areas: EstimateArea[];
+  lineItems: EstimateLineItem[];
+  areaLineItems: Map<string | null, EstimateLineItem[]>;
+  totals: { subtotal: number; overhead: number; profit: number; tax: number; grand: number };
+  onBack: () => void;
 }) {
-  const { loading, error, detectGaps, analyzePhoto, generateSupplement, generateDisputeLetter } = scopeAssist;
-  const [activeAction, setActiveAction] = useState<string | null>(null);
-  const [result, setResult] = useState<GapDetectionResult | PhotoAnalysisResult | SupplementResult | DisputeLetterResult | null>(null);
-  const [supplementReason, setSupplementReason] = useState('');
-  const photoInputRef = useRef<HTMLInputElement>(null);
-
-  const handleGapDetection = async () => {
-    setActiveAction('gap_detection');
-    setResult(null);
-    const res = await detectGaps(claimId);
-    if (res) setResult(res);
-  };
-
-  const handlePhotoAnalysis = async (file: File) => {
-    setActiveAction('photo_analysis');
-    setResult(null);
-    const buffer = await file.arrayBuffer();
-    const base64 = btoa(new Uint8Array(buffer).reduce((d, b) => d + String.fromCharCode(b), ''));
-    const mediaType = file.type || 'image/jpeg';
-    const res = await analyzePhoto(claimId, base64, mediaType);
-    if (res) setResult(res);
-  };
-
-  const handleSupplement = async () => {
-    if (!supplementReason.trim()) return;
-    setActiveAction('supplement');
-    setResult(null);
-    const res = await generateSupplement(claimId, supplementReason);
-    if (res) setResult(res);
-  };
-
-  const handleDisputeLetter = async () => {
-    setActiveAction('dispute_letter');
-    setResult(null);
-    const res = await generateDisputeLetter(claimId);
-    if (res) setResult(res);
+  const handlePdf = async (template: 'standard' | 'detailed' | 'summary') => {
+    const supabase = getSupabase();
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
+    const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+    const url = `${baseUrl}/functions/v1/export-estimate-pdf?estimate_id=${estimate.id}&template=${template}`;
+    const res = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${session.access_token}`,
+        'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
+      },
+    });
+    if (!res.ok) return;
+    const html = await res.text();
+    const blob = new Blob([html], { type: 'text/html' });
+    const blobUrl = URL.createObjectURL(blob);
+    window.open(blobUrl, '_blank');
   };
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
-      <input
-        ref={photoInputRef}
-        type="file"
-        accept="image/*"
-        className="hidden"
-        onChange={(e) => {
-          const file = e.target.files?.[0];
-          if (file) handlePhotoAnalysis(file);
-        }}
-      />
-
-      {/* Action buttons */}
-      <div className="p-3 space-y-2 border-b border-zinc-800">
-        <button
-          onClick={handleGapDetection}
-          disabled={loading}
-          className="w-full flex items-center gap-2 px-3 py-2 text-xs text-left bg-zinc-800/50 border border-zinc-700/50 rounded-lg hover:bg-zinc-800 disabled:opacity-50"
-        >
-          <AlertCircle className="w-4 h-4 text-amber-400 flex-shrink-0" />
-          <div>
-            <span className="text-zinc-200 font-medium">Gap Detection</span>
-            <p className="text-zinc-500 text-[10px]">Find missing line items in scope</p>
-          </div>
+    <div className="max-w-3xl mx-auto p-8">
+      <div className="flex items-center justify-between mb-6">
+        <button onClick={onBack} className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-zinc-200">
+          <ArrowLeft className="w-3.5 h-3.5" />
+          Back to editor
         </button>
-        <button
-          onClick={() => photoInputRef.current?.click()}
-          disabled={loading}
-          className="w-full flex items-center gap-2 px-3 py-2 text-xs text-left bg-zinc-800/50 border border-zinc-700/50 rounded-lg hover:bg-zinc-800 disabled:opacity-50"
-        >
-          <Zap className="w-4 h-4 text-blue-400 flex-shrink-0" />
-          <div>
-            <span className="text-zinc-200 font-medium">Photo Analysis</span>
-            <p className="text-zinc-500 text-[10px]">Upload damage photo for scope suggestions</p>
-          </div>
-        </button>
-        <div className="space-y-1">
-          <div className="flex gap-1">
-            <input
-              type="text"
-              value={supplementReason}
-              onChange={(e) => setSupplementReason(e.target.value)}
-              placeholder="Supplement reason..."
-              className="flex-1 px-2 py-1.5 text-xs bg-zinc-800 border border-zinc-700 rounded text-zinc-200 placeholder:text-zinc-600"
-            />
-            <button
-              onClick={handleSupplement}
-              disabled={loading || !supplementReason.trim()}
-              className="px-2 py-1.5 text-xs text-blue-400 bg-blue-500/10 border border-blue-500/20 rounded hover:bg-blue-500/20 disabled:opacity-50"
-            >
-              Generate
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] text-zinc-500 uppercase tracking-wider mr-1">Download PDF</span>
+          {(['standard', 'detailed', 'summary'] as const).map((t) => (
+            <button key={t} onClick={() => handlePdf(t)}
+              className="flex items-center gap-1 px-2.5 py-1.5 text-[11px] text-zinc-300 bg-zinc-800/50 border border-zinc-700/50 rounded-lg hover:bg-zinc-800 capitalize">
+              <Download className="w-3 h-3" />
+              {t}
             </button>
-          </div>
-          <p className="text-[10px] text-zinc-600 px-1">Generate supplement narrative + line items</p>
+          ))}
         </div>
-        <button
-          onClick={handleDisputeLetter}
-          disabled={loading}
-          className="w-full flex items-center gap-2 px-3 py-2 text-xs text-left bg-zinc-800/50 border border-zinc-700/50 rounded-lg hover:bg-zinc-800 disabled:opacity-50"
-        >
-          <FileText className="w-4 h-4 text-red-400 flex-shrink-0" />
+      </div>
+
+      {/* Header */}
+      <div className="border-b border-zinc-700 pb-6 mb-6">
+        <div className="flex items-center justify-between">
           <div>
-            <span className="text-zinc-200 font-medium">Pricing Dispute Letter</span>
-            <p className="text-zinc-500 text-[10px]">Generate formal dispute correspondence</p>
+            <h1 className="text-2xl font-bold text-zinc-100">{estimate.title || 'Estimate'}</h1>
+            <p className="text-sm text-zinc-400 mt-1">{estimate.estimateNumber}</p>
           </div>
-        </button>
+          <div className="text-right">
+            <p className="text-3xl font-bold text-zinc-100">${fmtCurrency(totals.grand)}</p>
+            <p className="text-xs text-zinc-500 mt-1 capitalize">{estimate.status}</p>
+          </div>
+        </div>
       </div>
 
-      {/* Results area */}
-      <div className="flex-1 overflow-y-auto p-3">
-        {loading && (
-          <div className="flex items-center justify-center py-8">
-            <Loader2 className="w-5 h-5 text-blue-500 animate-spin" />
-            <span className="ml-2 text-xs text-zinc-400">Analyzing...</span>
+      {/* Customer + Property */}
+      <div className="grid grid-cols-2 gap-8 mb-8">
+        <div>
+          <h3 className="text-xs uppercase tracking-wider text-zinc-500 mb-2">Customer</h3>
+          <p className="text-sm text-zinc-200">{estimate.customerName || '—'}</p>
+          {estimate.customerEmail && <p className="text-xs text-zinc-400">{estimate.customerEmail}</p>}
+          {estimate.customerPhone && <p className="text-xs text-zinc-400">{estimate.customerPhone}</p>}
+        </div>
+        <div>
+          <h3 className="text-xs uppercase tracking-wider text-zinc-500 mb-2">Property</h3>
+          <p className="text-sm text-zinc-200">{estimate.propertyAddress || '—'}</p>
+          <p className="text-xs text-zinc-400">{[estimate.propertyCity, estimate.propertyState, estimate.propertyZip].filter(Boolean).join(', ')}</p>
+        </div>
+      </div>
+
+      {/* Insurance */}
+      {estimate.estimateType === 'insurance' && (
+        <div className="bg-purple-500/5 border border-purple-500/10 rounded-xl p-5 mb-8">
+          <h3 className="text-xs uppercase tracking-wider text-purple-400 mb-3">Insurance Details</h3>
+          <div className="grid grid-cols-3 gap-4 text-xs">
+            <div><span className="text-zinc-500">Claim:</span> <span className="text-zinc-200 ml-1">{estimate.claimNumber || '—'}</span></div>
+            <div><span className="text-zinc-500">Policy:</span> <span className="text-zinc-200 ml-1">{estimate.policyNumber || '—'}</span></div>
+            <div><span className="text-zinc-500">Carrier:</span> <span className="text-zinc-200 ml-1">{estimate.carrierName || '—'}</span></div>
+            <div><span className="text-zinc-500">Adjuster:</span> <span className="text-zinc-200 ml-1">{estimate.adjusterName || '—'}</span></div>
+            <div><span className="text-zinc-500">Deductible:</span> <span className="text-zinc-200 ml-1">${fmtCurrency(estimate.deductible)}</span></div>
+            <div><span className="text-zinc-500">Date of Loss:</span> <span className="text-zinc-200 ml-1">{estimate.dateOfLoss ? new Date(estimate.dateOfLoss).toLocaleDateString() : '—'}</span></div>
           </div>
-        )}
+        </div>
+      )}
 
-        {error && (
-          <div className="px-3 py-2 bg-red-500/10 border border-red-500/20 rounded text-xs text-red-400">
-            {error}
+      {/* Line Items by Area */}
+      {areas.map((area) => {
+        const areaLines = areaLineItems.get(area.id) || [];
+        if (areaLines.length === 0) return null;
+        const areaTotal = areaLines.reduce((sum, l) => sum + l.lineTotal, 0);
+        return (
+          <div key={area.id} className="mb-6">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-medium text-zinc-200">{area.name}</h3>
+              <span className="text-sm text-zinc-400">${fmtCurrency(areaTotal)}</span>
+            </div>
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="text-zinc-500 border-b border-zinc-800">
+                  <th className="text-left py-1.5 font-medium">Code</th>
+                  <th className="text-left py-1.5 font-medium">Description</th>
+                  <th className="text-center py-1.5 font-medium">Action</th>
+                  <th className="text-right py-1.5 font-medium">Qty</th>
+                  <th className="text-right py-1.5 font-medium">Unit $</th>
+                  <th className="text-right py-1.5 font-medium">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {areaLines.map((line) => (
+                  <tr key={line.id} className="border-b border-zinc-800/50">
+                    <td className="py-1.5 font-mono text-blue-400">{line.zaftoCode || '—'}</td>
+                    <td className="py-1.5 text-zinc-300">{line.description}</td>
+                    <td className="py-1.5 text-center text-zinc-500 capitalize">{line.actionType}</td>
+                    <td className="py-1.5 text-right text-zinc-300">{line.quantity} {line.unitCode}</td>
+                    <td className="py-1.5 text-right text-zinc-300">${fmtCurrency(line.unitPrice)}</td>
+                    <td className="py-1.5 text-right text-zinc-200 font-medium">${fmtCurrency(line.lineTotal)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
+        );
+      })}
+
+      {/* Totals */}
+      <div className="border-t border-zinc-700 pt-4 mt-8 space-y-2">
+        <div className="flex justify-between text-sm"><span className="text-zinc-400">Subtotal</span><span className="text-zinc-200">${fmtCurrency(totals.subtotal)}</span></div>
+        <div className="flex justify-between text-sm"><span className="text-zinc-400">Overhead ({estimate.overheadPercent}%)</span><span className="text-zinc-200">${fmtCurrency(totals.overhead)}</span></div>
+        <div className="flex justify-between text-sm"><span className="text-zinc-400">Profit ({estimate.profitPercent}%)</span><span className="text-zinc-200">${fmtCurrency(totals.profit)}</span></div>
+        {totals.tax > 0 && (
+          <div className="flex justify-between text-sm"><span className="text-zinc-400">Tax ({estimate.taxPercent}%)</span><span className="text-zinc-200">${fmtCurrency(totals.tax)}</span></div>
         )}
-
-        {/* Gap Detection Results */}
-        {result && activeAction === 'gap_detection' && (() => {
-          const gaps = result as GapDetectionResult;
-          return (
-            <div className="space-y-3">
-              <p className="text-xs text-zinc-400">{gaps.overallAssessment}</p>
-              {gaps.missingItems.length > 0 && (
-                <div>
-                  <h4 className="text-[10px] uppercase tracking-wider text-zinc-500 mb-2">Missing Items</h4>
-                  {gaps.missingItems.map((item, i) => (
-                    <div key={i} className="px-2 py-2 bg-zinc-800/30 rounded mb-1.5">
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-[10px] font-mono text-blue-400">{item.code}</span>
-                        <span className={cn(
-                          'text-[10px] px-1 py-0.5 rounded',
-                          item.priority === 'HIGH' ? 'bg-red-500/10 text-red-400' :
-                          item.priority === 'MEDIUM' ? 'bg-amber-500/10 text-amber-400' :
-                          'bg-zinc-700 text-zinc-400'
-                        )}>
-                          {item.priority}
-                        </span>
-                      </div>
-                      <p className="text-xs text-zinc-300 mt-0.5">{item.description}</p>
-                      <p className="text-[10px] text-zinc-500 mt-0.5">{item.reason}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-              {gaps.unusualItems.length > 0 && (
-                <div>
-                  <h4 className="text-[10px] uppercase tracking-wider text-zinc-500 mb-2">Unusual Items</h4>
-                  {gaps.unusualItems.map((item, i) => (
-                    <div key={i} className="px-2 py-2 bg-amber-500/5 border border-amber-500/10 rounded mb-1.5">
-                      <span className="text-[10px] font-mono text-amber-400">Line {item.lineNumber}: {item.code}</span>
-                      <p className="text-xs text-zinc-300 mt-0.5">{item.issue}</p>
-                      <p className="text-[10px] text-zinc-500">{item.recommendation}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          );
-        })()}
-
-        {/* Photo Analysis Results */}
-        {result && activeAction === 'photo_analysis' && (() => {
-          const photo = result as PhotoAnalysisResult;
-          return (
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-zinc-200 font-medium capitalize">{photo.damageType} damage</span>
-                <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-700 text-zinc-400">{photo.severity}</span>
-              </div>
-              <p className="text-xs text-zinc-400">{photo.notes}</p>
-              {photo.suggestedItems.length > 0 && (
-                <div>
-                  <h4 className="text-[10px] uppercase tracking-wider text-zinc-500 mb-2">Suggested Items</h4>
-                  {photo.suggestedItems.map((item, i) => (
-                    <div key={i} className="px-2 py-2 bg-zinc-800/30 rounded mb-1.5">
-                      <span className="text-[10px] font-mono text-blue-400">{item.code}</span>
-                      <p className="text-xs text-zinc-300 mt-0.5">{item.description}</p>
-                      <p className="text-[10px] text-zinc-500">{item.reason}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-              {photo.investigations.length > 0 && (
-                <div>
-                  <h4 className="text-[10px] uppercase tracking-wider text-zinc-500 mb-2">Investigate</h4>
-                  <ul className="space-y-1">
-                    {photo.investigations.map((inv, i) => (
-                      <li key={i} className="text-xs text-zinc-400 flex items-start gap-1.5">
-                        <AlertCircle className="w-3 h-3 text-amber-400 mt-0.5 flex-shrink-0" />
-                        {inv}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-          );
-        })()}
-
-        {/* Supplement Results */}
-        {result && activeAction === 'supplement' && (() => {
-          const supp = result as SupplementResult;
-          return (
-            <div className="space-y-3">
-              <div>
-                <h4 className="text-[10px] uppercase tracking-wider text-zinc-500 mb-2">Narrative</h4>
-                <p className="text-xs text-zinc-300 whitespace-pre-wrap">{supp.narrative}</p>
-              </div>
-              {supp.additionalItems.length > 0 && (
-                <div>
-                  <h4 className="text-[10px] uppercase tracking-wider text-zinc-500 mb-2">Additional Items</h4>
-                  {supp.additionalItems.map((item, i) => (
-                    <div key={i} className="px-2 py-2 bg-zinc-800/30 rounded mb-1.5">
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-[10px] font-mono text-blue-400">{item.code}</span>
-                        <span className="text-[10px] text-zinc-500">{item.quantity} {item.unit}</span>
-                      </div>
-                      <p className="text-xs text-zinc-300 mt-0.5">{item.description}</p>
-                      <p className="text-[10px] text-zinc-500">{item.reason}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-zinc-500">Estimated Additional Cost</span>
-                <span className="text-zinc-200 font-medium">${fmt(supp.estimatedAdditionalCost)}</span>
-              </div>
-            </div>
-          );
-        })()}
-
-        {/* Dispute Letter Results */}
-        {result && activeAction === 'dispute_letter' && (() => {
-          const letter = result as DisputeLetterResult;
-          return (
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <h4 className="text-xs font-medium text-zinc-200">{letter.subject}</h4>
-                <button
-                  onClick={() => navigator.clipboard.writeText(letter.letterText)}
-                  className="text-[10px] text-blue-400 hover:underline"
-                >
-                  Copy
-                </button>
-              </div>
-              <pre className="text-xs text-zinc-300 whitespace-pre-wrap bg-zinc-800/50 rounded p-3 max-h-[300px] overflow-y-auto">{letter.letterText}</pre>
-              {letter.keyPoints.length > 0 && (
-                <div>
-                  <h4 className="text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Key Points</h4>
-                  <ul className="space-y-0.5">
-                    {letter.keyPoints.map((pt, i) => (
-                      <li key={i} className="text-[10px] text-zinc-400">• {pt}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              <p className="text-[10px] text-zinc-500">{letter.suggestedFollowUp}</p>
-            </div>
-          );
-        })()}
-
-        {!loading && !error && !result && (
-          <div className="text-center py-8 text-zinc-600 text-xs">
-            <Zap className="w-8 h-8 mx-auto mb-2 opacity-30" />
-            <p>Select an action above</p>
-            <p className="mt-1 text-zinc-700">Z Assist analyzes your estimate with AI</p>
+        <div className="flex justify-between text-lg font-bold pt-2 border-t border-zinc-700">
+          <span className="text-zinc-100">Grand Total</span>
+          <span className="text-zinc-100">${fmtCurrency(totals.grand)}</span>
+        </div>
+        {estimate.estimateType === 'insurance' && estimate.deductible > 0 && (
+          <div className="flex justify-between text-sm pt-2 border-t border-zinc-700/50">
+            <span className="text-purple-400">Net Claim (after ${fmtCurrency(estimate.deductible)} deductible)</span>
+            <span className="text-purple-300 font-medium">${fmtCurrency(Math.max(0, totals.grand - estimate.deductible))}</span>
           </div>
         )}
       </div>
+
+      {/* Notes */}
+      {estimate.notes && (
+        <div className="mt-8">
+          <h3 className="text-xs uppercase tracking-wider text-zinc-500 mb-2">Notes</h3>
+          <p className="text-sm text-zinc-300 whitespace-pre-wrap">{estimate.notes}</p>
+        </div>
+      )}
     </div>
   );
 }

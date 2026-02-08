@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
@@ -37,8 +37,6 @@ import {
   Cpu,
   Rocket,
   Clock,
-  PanelLeftClose,
-  PanelLeftOpen,
   Award,
   Building2,
   Home,
@@ -52,6 +50,7 @@ import {
   Calculator,
   Umbrella,
   TrendingUp,
+  Menu,
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { ZMark } from '@/components/z-console/z-mark';
@@ -68,31 +67,30 @@ interface NavItem {
 
 interface NavGroup {
   label: string;
+  key: string;
+  railIcon: any | null; // null = special rendering (ZMark)
   items: NavItem[];
 }
 
 const navigationGroups: NavGroup[] = [
   {
-    label: 'OPERATIONS',
+    label: 'WORK',
+    key: 'work',
+    railIcon: Briefcase,
     items: [
-      { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
       { name: 'Leads', href: '/dashboard/leads', icon: Target },
       { name: 'Bids', href: '/dashboard/bids', icon: FileText },
+      { name: 'Estimates', href: '/dashboard/estimates', icon: Calculator },
       { name: 'Jobs', href: '/dashboard/jobs', icon: Briefcase },
-      { name: 'Walkthroughs', href: '/dashboard/walkthroughs', icon: ClipboardList },
       { name: 'Change Orders', href: '/dashboard/change-orders', icon: ArrowRightLeft },
+      { name: 'Walkthroughs', href: '/dashboard/walkthroughs', icon: ClipboardList },
       { name: 'Invoices', href: '/dashboard/invoices', icon: Receipt },
     ],
   },
   {
-    label: 'INSURANCE',
-    items: [
-      { name: 'Claims', href: '/dashboard/insurance', icon: Umbrella },
-      { name: 'Estimate Writer', href: '/dashboard/estimates', icon: Calculator },
-    ],
-  },
-  {
     label: 'SCHEDULING',
+    key: 'scheduling',
+    railIcon: Calendar,
     items: [
       { name: 'Calendar', href: '/dashboard/calendar', icon: Calendar },
       { name: 'Inspections', href: '/dashboard/inspections', icon: ClipboardCheck },
@@ -102,6 +100,8 @@ const navigationGroups: NavGroup[] = [
   },
   {
     label: 'CUSTOMERS',
+    key: 'customers',
+    railIcon: Users,
     items: [
       { name: 'Customers', href: '/dashboard/customers', icon: Users },
       { name: 'Communications', href: '/dashboard/communications', icon: MessageSquare },
@@ -110,7 +110,17 @@ const navigationGroups: NavGroup[] = [
     ],
   },
   {
-    label: 'RESOURCES',
+    label: 'INSURANCE',
+    key: 'insurance',
+    railIcon: Umbrella,
+    items: [
+      { name: 'Claims', href: '/dashboard/insurance', icon: Umbrella },
+    ],
+  },
+  {
+    label: 'TEAM & RESOURCES',
+    key: 'resources',
+    railIcon: HardHat,
     items: [
       { name: 'Team', href: '/dashboard/team', icon: Users },
       { name: 'Certifications', href: '/dashboard/certifications', icon: Award, permission: PERMISSIONS.CERTIFICATIONS_VIEW },
@@ -122,6 +132,8 @@ const navigationGroups: NavGroup[] = [
   },
   {
     label: 'OFFICE',
+    key: 'office',
+    railIcon: BookOpen,
     items: [
       { name: 'ZBooks', href: '/dashboard/books', icon: DollarSign },
       { name: 'Price Book', href: '/dashboard/price-book', icon: BookOpen },
@@ -134,6 +146,8 @@ const navigationGroups: NavGroup[] = [
   },
   {
     label: 'PROPERTIES',
+    key: 'properties',
+    railIcon: Building2,
     items: [
       { name: 'Portfolio', href: '/dashboard/properties', icon: Building2 },
       { name: 'Units', href: '/dashboard/properties/units', icon: Home },
@@ -148,6 +162,8 @@ const navigationGroups: NavGroup[] = [
   },
   {
     label: 'Z INTELLIGENCE',
+    key: 'z-intelligence',
+    railIcon: null, // Uses ZMark component
     items: [
       { name: 'Z AI', href: '/dashboard/z', icon: ZMark },
       { name: 'Z Voice', href: '/dashboard/z-voice', icon: Mic },
@@ -159,9 +175,26 @@ const navigationGroups: NavGroup[] = [
   },
 ];
 
+// Mobile collapsible group state
+const MOBILE_STORAGE_KEY = 'zafto_sidebar_groups';
+const DEFAULT_MOBILE_OPEN: Record<string, boolean> = { work: true };
+
+function loadMobileGroupState(): Record<string, boolean> {
+  if (typeof window === 'undefined') return DEFAULT_MOBILE_OPEN;
+  try {
+    const stored = localStorage.getItem(MOBILE_STORAGE_KEY);
+    if (stored) return JSON.parse(stored);
+  } catch { /* ignore */ }
+  return DEFAULT_MOBILE_OPEN;
+}
+
+function saveMobileGroupState(state: Record<string, boolean>) {
+  try {
+    localStorage.setItem(MOBILE_STORAGE_KEY, JSON.stringify(state));
+  } catch { /* ignore */ }
+}
+
 interface SidebarProps {
-  pinned: boolean;
-  onPinnedChange: (pinned: boolean) => void;
   mobileOpen: boolean;
   onMobileClose: () => void;
   user: User | null;
@@ -169,8 +202,6 @@ interface SidebarProps {
 }
 
 export function Sidebar({
-  pinned,
-  onPinnedChange,
   mobileOpen,
   onMobileClose,
   user,
@@ -178,41 +209,90 @@ export function Sidebar({
 }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const [hovered, setHovered] = useState(false);
-
-  const expanded = pinned || hovered;
+  const [activeGroup, setActiveGroup] = useState<string | null>(null);
+  const [mobileGroups, setMobileGroups] = useState<Record<string, boolean>>(DEFAULT_MOBILE_OPEN);
+  const railRef = useRef<HTMLElement>(null);
+  const detailRef = useRef<HTMLElement>(null);
 
   const initials = user?.email
     ? user.email.substring(0, 2).toUpperCase()
     : 'U';
 
-  const renderNavItem = (item: NavItem) => {
-    const isActive = pathname === item.href ||
-      (item.href !== '/dashboard' && pathname.startsWith(item.href + '/'));
+  // Load mobile group state
+  useEffect(() => {
+    setMobileGroups(loadMobileGroupState());
+  }, []);
 
+  // Close detail panel on route change
+  useEffect(() => {
+    setActiveGroup(null);
+  }, [pathname]);
+
+  // Click outside to close detail panel
+  useEffect(() => {
+    if (!activeGroup) return;
+    const handler = (e: MouseEvent) => {
+      const target = e.target as Node;
+      if (railRef.current?.contains(target) || detailRef.current?.contains(target)) return;
+      setActiveGroup(null);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [activeGroup]);
+
+  // Escape key to close detail panel
+  useEffect(() => {
+    if (!activeGroup) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setActiveGroup(null);
+    };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, [activeGroup]);
+
+  const handleRailClick = useCallback((key: string) => {
+    setActiveGroup(prev => prev === key ? null : key);
+  }, []);
+
+  const toggleMobileGroup = useCallback((key: string) => {
+    setMobileGroups(prev => {
+      const next = { ...prev, [key]: !prev[key] };
+      saveMobileGroupState(next);
+      return next;
+    });
+  }, []);
+
+  const isItemActive = (item: NavItem) =>
+    pathname === item.href ||
+    (item.href !== '/dashboard' && pathname.startsWith(item.href + '/'));
+
+  const groupHasActiveChild = (group: NavGroup) =>
+    group.items.some(isItemActive);
+
+  const currentGroup = navigationGroups.find(g => g.key === activeGroup) || null;
+
+  // ── Render helpers ──
+
+  const renderDetailItem = (item: NavItem) => {
+    const active = isItemActive(item);
     const link = (
       <Link
         key={item.name}
         href={item.href}
-        title={!expanded ? item.name : undefined}
-        onClick={onMobileClose}
+        onClick={() => { setActiveGroup(null); onMobileClose(); }}
         className={cn(
-          'group relative flex items-center rounded-md text-[13px] font-medium transition-colors',
-          expanded ? 'gap-3 px-3 py-[7px]' : 'justify-center px-0 py-[7px]',
-          isActive
-            ? 'text-accent'
+          'flex items-center gap-3 px-3 py-[7px] rounded-md text-[13px] font-medium transition-colors',
+          active
+            ? 'text-accent bg-accent/5'
             : 'text-muted hover:text-main hover:bg-surface-hover',
         )}
       >
-        {isActive && (
-          <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-4 bg-accent rounded-r" />
+        {item.icon === ZMark ? (
+          <ZMark size={15} className={cn('flex-shrink-0', active && 'text-accent')} />
+        ) : (
+          <item.icon size={16} className="flex-shrink-0" />
         )}
-        <item.icon size={18} className="flex-shrink-0" />
-        {expanded && (
-          <span className="whitespace-nowrap overflow-hidden sidebar-label">
-            {item.name}
-          </span>
-        )}
+        <span>{item.name}</span>
       </Link>
     );
 
@@ -223,110 +303,48 @@ export function Sidebar({
         </PermissionGate>
       );
     }
-
     return <div key={item.name}>{link}</div>;
   };
 
-  const sidebarContent = (
-    <>
-      {/* Navigation */}
-      <nav className="flex-1 py-3 overflow-y-auto scrollbar-hide">
-        {navigationGroups.map((group) => (
-          <div key={group.label} className="mb-1">
-            {expanded && (
-              <p className="px-4 mb-1 mt-2 first:mt-0 text-[10px] font-semibold uppercase tracking-[0.08em] text-muted/40 sidebar-label">
-                {group.label}
-              </p>
-            )}
-            {!expanded && group !== navigationGroups[0] && (
-              <div className="mx-3 my-2 border-t border-main/50" />
-            )}
-            <div className={cn('space-y-[1px]', expanded ? 'px-2' : 'px-1.5')}>
-              {group.items.map(renderNavItem)}
-            </div>
-          </div>
-        ))}
-      </nav>
-
-      {/* Bottom section */}
-      <div className="border-t border-main">
-        {/* Settings */}
-        <div className={cn('py-1.5', expanded ? 'px-2' : 'px-1.5')}>
-          {(() => {
-            const isActive = pathname === '/dashboard/settings';
-            return (
-              <Link
-                href="/dashboard/settings"
-                title={!expanded ? 'Settings' : undefined}
-                className={cn(
-                  'relative flex items-center rounded-md text-[13px] font-medium transition-colors',
-                  expanded ? 'gap-3 px-3 py-[7px]' : 'justify-center py-[7px]',
-                  isActive
-                    ? 'text-accent'
-                    : 'text-muted hover:text-main hover:bg-surface-hover',
-                )}
-              >
-                {isActive && (
-                  <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-4 bg-accent rounded-r" />
-                )}
-                <Settings size={18} className="flex-shrink-0" />
-                {expanded && <span className="sidebar-label">Settings</span>}
-              </Link>
-            );
-          })()}
-          <button
-            onClick={onSignOut}
-            title={!expanded ? 'Sign out' : undefined}
-            className={cn(
-              'w-full relative flex items-center rounded-md text-[13px] font-medium text-muted hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors',
-              expanded ? 'gap-3 px-3 py-[7px]' : 'justify-center py-[7px]',
-            )}
-          >
-            <LogOut size={18} className="flex-shrink-0" />
-            {expanded && <span className="sidebar-label">Sign out</span>}
-          </button>
-        </div>
-
-        {/* User */}
-        {user && (
-          <div className={cn(
-            'border-t border-main py-2',
-            expanded ? 'px-3' : 'px-1.5',
-          )}>
-            {expanded ? (
-              <button
-                onClick={() => router.push('/dashboard/settings')}
-                className="flex items-center gap-3 w-full px-2 py-1.5 rounded-md hover:bg-surface-hover transition-colors"
-              >
-                <div className="w-7 h-7 rounded-full bg-accent-light flex items-center justify-center flex-shrink-0">
-                  <span className="text-accent text-xs font-medium">{initials}</span>
-                </div>
-                <div className="flex-1 text-left min-w-0">
-                  <p className="text-[13px] font-medium text-main truncate sidebar-label">
-                    {user.email}
-                  </p>
-                  <p className="text-[11px] text-muted sidebar-label">Owner</p>
-                </div>
-              </button>
-            ) : (
-              <button
-                onClick={() => router.push('/dashboard/settings')}
-                title={user.email || 'Profile'}
-                className="flex justify-center w-full py-1"
-              >
-                <div className="w-7 h-7 rounded-full bg-accent-light flex items-center justify-center">
-                  <span className="text-accent text-xs font-medium">{initials}</span>
-                </div>
-              </button>
-            )}
-          </div>
+  const renderMobileItem = (item: NavItem) => {
+    const active = isItemActive(item);
+    const link = (
+      <Link
+        key={item.name}
+        href={item.href}
+        onClick={onMobileClose}
+        className={cn(
+          'flex items-center gap-3 px-3 py-[7px] rounded-md text-[13px] font-medium transition-colors',
+          active
+            ? 'text-accent bg-accent/5'
+            : 'text-muted hover:text-main hover:bg-surface-hover',
         )}
-      </div>
-    </>
-  );
+      >
+        {item.icon === ZMark ? (
+          <ZMark size={15} className={cn('flex-shrink-0', active && 'text-accent')} />
+        ) : (
+          <item.icon size={16} className="flex-shrink-0" />
+        )}
+        <span>{item.name}</span>
+      </Link>
+    );
+
+    if (item.permission) {
+      return (
+        <PermissionGate key={item.name} permission={item.permission as any}>
+          {link}
+        </PermissionGate>
+      );
+    }
+    return <div key={item.name}>{link}</div>;
+  };
 
   return (
     <>
+      {/* ═══════════════════════════════════════════
+          MOBILE SIDEBAR — Full overlay drawer
+          ═══════════════════════════════════════════ */}
+
       {/* Mobile backdrop */}
       {mobileOpen && (
         <div
@@ -335,7 +353,7 @@ export function Sidebar({
         />
       )}
 
-      {/* Mobile sidebar — full width, overlay */}
+      {/* Mobile sidebar */}
       <aside
         className={cn(
           'fixed top-0 left-0 z-50 h-full w-[280px] bg-surface border-r border-main flex flex-col',
@@ -345,9 +363,8 @@ export function Sidebar({
       >
         {/* Mobile header */}
         <div className="flex items-center justify-between h-14 px-4 border-b border-main">
-          <Link href="/dashboard" className="flex items-center gap-2" onClick={onMobileClose}>
-            <Logo size={24} className="text-main" animated={false} />
-            <span className="text-base font-semibold text-main">Zafto</span>
+          <Link href="/dashboard" className="flex items-center" onClick={onMobileClose}>
+            <span className="text-[17px] font-semibold tracking-[0.04em] text-main">ZAFTO</span>
           </Link>
           <button
             className="p-1.5 text-muted hover:text-main rounded-md hover:bg-surface-hover transition-colors"
@@ -357,49 +374,220 @@ export function Sidebar({
           </button>
         </div>
 
-        {sidebarContent}
+        {/* Mobile navigation — collapsible groups */}
+        <nav className="flex-1 py-3 overflow-y-auto scrollbar-hide">
+          {/* Dashboard — always pinned */}
+          <div className="px-2 mb-1">
+            <Link
+              href="/dashboard"
+              onClick={onMobileClose}
+              className={cn(
+                'flex items-center gap-3 px-3 py-[7px] rounded-md text-[13px] font-medium transition-colors',
+                pathname === '/dashboard'
+                  ? 'text-accent bg-accent/5'
+                  : 'text-muted hover:text-main hover:bg-surface-hover',
+              )}
+            >
+              <LayoutDashboard size={18} className="flex-shrink-0" />
+              <span>Dashboard</span>
+            </Link>
+          </div>
+
+          {/* Collapsible groups for mobile */}
+          {navigationGroups.map(group => {
+            const isOpen = mobileGroups[group.key] ?? false;
+            const hasActive = groupHasActiveChild(group);
+
+            return (
+              <div key={group.key} className="mb-0.5">
+                <button
+                  onClick={() => toggleMobileGroup(group.key)}
+                  className={cn(
+                    'flex items-center justify-between w-full px-4 py-1.5 mt-1',
+                    'text-[10px] font-semibold uppercase tracking-[0.08em] transition-colors',
+                    hasActive && !isOpen ? 'text-accent/60' : 'text-muted/40',
+                    'hover:text-muted/70',
+                  )}
+                >
+                  <span>{group.label}</span>
+                  <ChevronDown
+                    size={12}
+                    className={cn(
+                      'transition-transform duration-150 flex-shrink-0',
+                      isOpen ? 'rotate-0' : '-rotate-90',
+                    )}
+                  />
+                </button>
+                <div
+                  className={cn(
+                    'overflow-hidden transition-all duration-150 ease-out',
+                    isOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0',
+                  )}
+                >
+                  <div className="px-2 space-y-[1px]">
+                    {group.items.map(renderMobileItem)}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </nav>
+
+        {/* Mobile footer */}
+        <div className="border-t border-main p-2 space-y-0.5">
+          <Link
+            href="/dashboard/settings"
+            onClick={onMobileClose}
+            className={cn(
+              'flex items-center gap-3 px-3 py-[7px] rounded-md text-[13px] font-medium transition-colors',
+              pathname === '/dashboard/settings'
+                ? 'text-accent'
+                : 'text-muted hover:text-main hover:bg-surface-hover',
+            )}
+          >
+            <Settings size={18} className="flex-shrink-0" />
+            <span>Settings</span>
+          </Link>
+          <button
+            onClick={onSignOut}
+            className="w-full flex items-center gap-3 px-3 py-[7px] rounded-md text-[13px] font-medium text-muted hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
+          >
+            <LogOut size={18} className="flex-shrink-0" />
+            <span>Sign out</span>
+          </button>
+        </div>
       </aside>
 
-      {/* Desktop sidebar — collapsible icon rail */}
+      {/* ═══════════════════════════════════════════
+          DESKTOP — Dual-rail (Supabase-style)
+          Icon rail (48px) + slide-out detail panel
+          ═══════════════════════════════════════════ */}
+
+      {/* Icon Rail — always visible */}
       <aside
-        onMouseEnter={() => { if (!pinned) setHovered(true); }}
-        onMouseLeave={() => { if (!pinned) setHovered(false); }}
-        className={cn(
-          'fixed top-0 left-0 z-40 h-full bg-surface border-r flex flex-col',
-          'transition-[width] duration-200 ease-out',
-          'hidden lg:flex',
-          expanded ? 'w-[220px]' : 'w-12',
-          !pinned && hovered && 'shadow-2xl z-50',
-          // Border: subtle when collapsed, normal when expanded
-          expanded ? 'border-main' : 'border-main/50',
-        )}
+        ref={railRef}
+        className="fixed top-0 left-0 z-40 h-full w-12 bg-surface border-r border-main/50 flex-col hidden lg:flex"
       >
-        {/* Desktop header */}
-        <div className={cn(
-          'flex items-center h-14 border-b border-main flex-shrink-0',
-          expanded ? 'px-4 justify-between' : 'justify-center',
-        )}>
-          <Link href="/dashboard" className="flex items-center gap-2.5">
+        {/* Logo */}
+        <div className="h-14 flex items-center justify-center border-b border-main flex-shrink-0">
+          <Link href="/dashboard">
             <Logo size={22} className="text-main flex-shrink-0" animated={false} />
-            {expanded && (
-              <span className="text-[15px] font-semibold text-main whitespace-nowrap sidebar-label">
-                Zafto
-              </span>
-            )}
           </Link>
-          {expanded && (
+        </div>
+
+        {/* Dashboard — direct link, always visible */}
+        <div className="px-1.5 pt-2 pb-1">
+          <Link
+            href="/dashboard"
+            title="Dashboard"
+            className={cn(
+              'flex items-center justify-center py-2 rounded-md transition-colors',
+              pathname === '/dashboard'
+                ? 'text-accent bg-accent/10'
+                : 'text-muted hover:text-main hover:bg-surface-hover',
+            )}
+          >
+            <LayoutDashboard size={18} />
+          </Link>
+        </div>
+
+        {/* Divider */}
+        <div className="mx-2.5 border-t border-main/50" />
+
+        {/* Group icons */}
+        <div className="flex-1 py-1.5 px-1.5 space-y-0.5 overflow-y-auto scrollbar-hide">
+          {navigationGroups.map(group => {
+            const isOpen = activeGroup === group.key;
+            const hasActive = groupHasActiveChild(group);
+            const RailIcon = group.railIcon;
+
+            return (
+              <button
+                key={group.key}
+                onClick={() => handleRailClick(group.key)}
+                title={group.label}
+                className={cn(
+                  'w-full flex items-center justify-center py-2 rounded-md transition-colors',
+                  isOpen
+                    ? 'bg-accent/10 text-accent'
+                    : hasActive
+                      ? 'text-accent'
+                      : 'text-muted hover:text-main hover:bg-surface-hover',
+                )}
+              >
+                {RailIcon ? (
+                  <RailIcon size={18} />
+                ) : (
+                  <ZMark size={16} className={cn(isOpen || hasActive ? 'text-accent' : '')} />
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Divider */}
+        <div className="mx-2.5 border-t border-main/50" />
+
+        {/* Bottom: Settings + Sign Out + User */}
+        <div className="px-1.5 py-2 space-y-0.5">
+          <Link
+            href="/dashboard/settings"
+            title="Settings"
+            className={cn(
+              'flex items-center justify-center py-2 rounded-md transition-colors',
+              pathname === '/dashboard/settings'
+                ? 'text-accent bg-accent/10'
+                : 'text-muted hover:text-main hover:bg-surface-hover',
+            )}
+          >
+            <Settings size={18} />
+          </Link>
+          <button
+            onClick={onSignOut}
+            title="Sign out"
+            className="w-full flex items-center justify-center py-2 rounded-md text-muted hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
+          >
+            <LogOut size={18} />
+          </button>
+          {user && (
             <button
-              onClick={() => onPinnedChange(!pinned)}
-              className="p-1 text-muted hover:text-main rounded-md hover:bg-surface-hover transition-colors"
-              title={pinned ? 'Collapse sidebar' : 'Pin sidebar open'}
+              onClick={() => router.push('/dashboard/settings')}
+              title={user.email || 'Profile'}
+              className="w-full flex justify-center py-1"
             >
-              {pinned ? <PanelLeftClose size={16} /> : <PanelLeftOpen size={16} />}
+              <div className="w-7 h-7 rounded-full bg-accent-light flex items-center justify-center">
+                <span className="text-accent text-[10px] font-medium">{initials}</span>
+              </div>
             </button>
           )}
         </div>
-
-        {sidebarContent}
       </aside>
+
+      {/* Detail Panel — slides out when a group is selected */}
+      {activeGroup && currentGroup && (
+        <aside
+          ref={detailRef}
+          className="fixed top-0 left-12 z-[45] h-full w-[220px] bg-surface border-r border-main shadow-xl hidden lg:flex flex-col sidebar-detail-enter"
+        >
+          {/* Panel header */}
+          <div className="h-14 flex items-center justify-between px-4 border-b border-main flex-shrink-0">
+            <span className="text-[13px] font-semibold tracking-[0.02em] text-main">
+              {currentGroup.label}
+            </span>
+            <button
+              onClick={() => setActiveGroup(null)}
+              className="p-1 text-muted hover:text-main rounded-md hover:bg-surface-hover transition-colors"
+            >
+              <X size={14} />
+            </button>
+          </div>
+
+          {/* Panel items */}
+          <nav className="flex-1 py-2 px-2 overflow-y-auto scrollbar-hide space-y-[1px]">
+            {currentGroup.items.map(renderDetailItem)}
+          </nav>
+        </aside>
+      )}
     </>
   );
 }

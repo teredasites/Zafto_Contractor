@@ -176,6 +176,105 @@ export function mapChangeOrder(row: Record<string, unknown>): ChangeOrderData {
   };
 }
 
+// ==================== ESTIMATES ====================
+
+export type EstimateStatus = 'draft' | 'sent' | 'approved' | 'declined' | 'revised' | 'completed';
+
+export const ESTIMATE_STATUS_LABELS: Record<EstimateStatus, string> = {
+  draft: 'Draft',
+  sent: 'Pending Review',
+  approved: 'Approved',
+  declined: 'Declined',
+  revised: 'Revised',
+  completed: 'Completed',
+};
+
+export interface EstimateData {
+  id: string;
+  jobId: string | null;
+  estimateNumber: string;
+  title: string;
+  estimateType: 'regular' | 'insurance';
+  status: EstimateStatus;
+  customerName: string;
+  propertyAddress: string;
+  subtotal: number;
+  overheadAmount: number;
+  profitAmount: number;
+  taxAmount: number;
+  grandTotal: number;
+  notes: string;
+  validUntil: string | null;
+  sentAt: string | null;
+  approvedAt: string | null;
+  declinedAt: string | null;
+  createdAt: string;
+}
+
+export interface EstimateAreaData {
+  id: string;
+  name: string;
+  floorSf: number;
+  sortOrder: number;
+}
+
+export interface EstimateLineItemData {
+  id: string;
+  areaId: string | null;
+  description: string;
+  actionType: string;
+  quantity: number;
+  unitCode: string;
+  unitPrice: number;
+  lineTotal: number;
+}
+
+export function mapEstimate(row: Record<string, unknown>): EstimateData {
+  return {
+    id: row.id as string,
+    jobId: row.job_id as string | null,
+    estimateNumber: (row.estimate_number as string) || '',
+    title: (row.title as string) || '',
+    estimateType: (row.estimate_type as 'regular' | 'insurance') || 'regular',
+    status: (row.status as EstimateStatus) || 'draft',
+    customerName: (row.customer_name as string) || '',
+    propertyAddress: (row.property_address as string) || '',
+    subtotal: Number(row.subtotal || 0),
+    overheadAmount: Number(row.overhead_amount || 0),
+    profitAmount: Number(row.profit_amount || 0),
+    taxAmount: Number(row.tax_amount || 0),
+    grandTotal: Number(row.grand_total || 0),
+    notes: (row.notes as string) || '',
+    validUntil: row.valid_until as string | null,
+    sentAt: row.sent_at as string | null,
+    approvedAt: row.approved_at as string | null,
+    declinedAt: row.declined_at as string | null,
+    createdAt: (row.created_at as string) || '',
+  };
+}
+
+export function mapEstimateArea(row: Record<string, unknown>): EstimateAreaData {
+  return {
+    id: row.id as string,
+    name: (row.name as string) || '',
+    floorSf: Number(row.floor_sf || 0),
+    sortOrder: Number(row.sort_order || 0),
+  };
+}
+
+export function mapEstimateLineItem(row: Record<string, unknown>): EstimateLineItemData {
+  return {
+    id: row.id as string,
+    areaId: row.area_id as string | null,
+    description: (row.description as string) || '',
+    actionType: (row.action_type as string) || 'replace',
+    quantity: Number(row.quantity || 1),
+    unitCode: (row.unit_code as string) || 'EA',
+    unitPrice: Number(row.unit_price || 0),
+    lineTotal: Number(row.line_total || 0),
+  };
+}
+
 export function formatCurrency(amount: number): string {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
 }

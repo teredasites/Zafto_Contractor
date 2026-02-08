@@ -15,6 +15,8 @@ import {
   CreditCard,
   TrendingDown,
   FolderOpen,
+  Code2,
+  Calculator,
   LogOut,
   Sun,
   Moon,
@@ -110,6 +112,26 @@ const navSections: NavSection[] = [
         label: 'Churn',
         href: '/dashboard/churn',
         icon: <TrendingDown className="h-4 w-4" />,
+      },
+    ],
+  },
+  {
+    title: 'DATA',
+    items: [
+      {
+        label: 'Estimates',
+        href: '/dashboard/estimates',
+        icon: <Calculator className="h-4 w-4" />,
+      },
+      {
+        label: 'Code Contributions',
+        href: '/dashboard/code-contributions',
+        icon: <Code2 className="h-4 w-4" />,
+      },
+      {
+        label: 'Pricing Engine',
+        href: '/dashboard/pricing-engine',
+        icon: <DollarSign className="h-4 w-4" />,
       },
     ],
   },

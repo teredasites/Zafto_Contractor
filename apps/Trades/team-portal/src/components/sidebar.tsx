@@ -5,7 +5,7 @@ import Link from 'next/link';
 import {
   LayoutDashboard, Briefcase, Clock, Calendar, Camera, FileText,
   Package, CheckSquare, FileSignature, Bell, Settings, Wrench,
-  Receipt, ChevronLeft, Menu, Sun, Moon, LogOut, X, Award, Building2,
+  Receipt, ChevronLeft, Menu, Sun, Moon, LogOut, X, Award, Building2, Calculator,
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { useTheme } from '@/components/theme-provider';
@@ -32,6 +32,7 @@ const navItems = [
     { name: 'Change Orders', href: '/dashboard/change-orders', icon: FileSignature },
   ]},
   { label: 'BUSINESS', items: [
+    { name: 'Estimates', href: '/dashboard/estimates', icon: Calculator },
     { name: 'Bids', href: '/dashboard/bids', icon: Receipt },
     { name: 'Certifications', href: '/dashboard/certifications', icon: Award },
     { name: 'Notifications', href: '/dashboard/notifications', icon: Bell },

@@ -11,5 +11,9 @@ const templateConfig = EnvConfig(
   supabaseAnonKey: 'YOUR_ANON_KEY',
   powerSyncUrl: 'https://YOUR_POWERSYNC_INSTANCE.powersync.journeyapps.com',
   sentryDsn: 'https://YOUR_SENTRY_DSN@sentry.io/YOUR_PROJECT_ID',
+  livekitUrl: 'wss://YOUR_LIVEKIT_PROJECT.livekit.cloud',
+  livekitApiKey: 'YOUR_LIVEKIT_API_KEY',
+  signalwireSpaceUrl: 'YOUR_SPACE.signalwire.com',
+  signalwireProjectId: 'YOUR_SIGNALWIRE_PROJECT_ID',
   environment: Environment.dev, // Change to staging or prod as appropriate
 );

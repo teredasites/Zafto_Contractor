@@ -25,10 +25,15 @@ export function ZConsole() {
     closeArtifact,
     setConsoleState,
     showDemoArtifact,
+    chatWidth,
+    artifactWidth,
+    setChatWidth,
+    setArtifactWidth,
   } = useZConsole();
 
   const messages = currentThread?.messages || [];
   const artifact = currentThread?.artifact;
+  const isArtifactOpen = consoleState === 'artifact';
 
   const handleQuickAction = (action: ZQuickAction) => {
     sendMessage(action.prompt);
@@ -41,8 +46,8 @@ export function ZConsole() {
         <ZPulse onClick={toggleConsole} hasUnread={false} />
       )}
 
-      {/* Chat panel — when open */}
-      {consoleState === 'open' && (
+      {/* Chat panel — when open OR when artifact is active (stays visible, slides left) */}
+      {(consoleState === 'open' || consoleState === 'artifact') && (
         <ZChatPanel
           messages={messages}
           threads={threads}
@@ -56,21 +61,23 @@ export function ZConsole() {
           onNewThread={startNewThread}
           onQuickAction={handleQuickAction}
           onShowDemo={showDemoArtifact}
+          width={chatWidth}
+          onWidthChange={setChatWidth}
+          rightOffset={isArtifactOpen ? artifactWidth : 0}
         />
       )}
 
-      {/* Artifact split — when artifact is active */}
+      {/* Artifact panel — slides in at right:0, pushes chat left */}
       {consoleState === 'artifact' && artifact && (
         <ZArtifactSplit
           artifact={artifact}
-          messages={messages}
-          isThinking={isThinking}
-          onSend={sendMessage}
           onApprove={approveArtifact}
           onReject={rejectArtifact}
           onSaveDraft={saveDraftArtifact}
           onVersionSelect={selectArtifactVersion}
           onCloseArtifact={closeArtifact}
+          width={artifactWidth}
+          onWidthChange={setArtifactWidth}
         />
       )}
     </>
