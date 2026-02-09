@@ -30,7 +30,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { StatusBadge, Badge } from '@/components/ui/badge';
 import { formatCurrency, formatDate, formatDateTime, cn, getStatusColor } from '@/lib/utils';
-import { useBid } from '@/lib/hooks/use-bids';
+import { useBid, useBids } from '@/lib/hooks/use-bids';
 import type { Bid, BidOption } from '@/types';
 
 // Timeline event type
@@ -48,8 +48,10 @@ export default function BidDetailPage() {
   const bidId = params.id as string;
 
   const { bid, loading } = useBid(bidId);
+  const { sendBid, deleteBid, convertToJob } = useBids();
   const [activeOptionIndex, setActiveOptionIndex] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
 
   // Set active option when bid loads
   useEffect(() => {
@@ -161,20 +163,32 @@ export default function BidDetailPage() {
                 <Edit size={16} />
                 Edit
               </Button>
-              <Button>
+              <Button disabled={actionLoading} onClick={async () => {
+                if (!confirm('Mark this bid as sent to customer?')) return;
+                setActionLoading(true);
+                try { await sendBid(bid.id); window.location.reload(); } catch (e) { alert(e instanceof Error ? e.message : 'Failed to send'); }
+                setActionLoading(false);
+              }}>
                 <Send size={16} />
                 Send to Customer
               </Button>
             </>
           )}
           {bid.status === 'accepted' && !bid.depositPaid && (
-            <Button>
+            <Button onClick={() => alert('Deposit requests require Stripe integration — coming in Phase G')}>
               <DollarSign size={16} />
               Request Deposit
             </Button>
           )}
           {(bid.status === 'accepted' || bid.depositPaid) && bid.status !== 'converted' && (
-            <Button>
+            <Button disabled={actionLoading} onClick={async () => {
+              if (!confirm('Convert this bid to a job?')) return;
+              setActionLoading(true);
+              try {
+                const jobId = await convertToJob(bid.id);
+                router.push(`/dashboard/jobs/${jobId}`);
+              } catch (e) { alert(e instanceof Error ? e.message : 'Failed to convert'); setActionLoading(false); }
+            }}>
               <Briefcase size={16} />
               Convert to Job
             </Button>
@@ -197,20 +211,20 @@ export default function BidDetailPage() {
             </Button>
             {menuOpen && (
               <div className="absolute right-0 top-full mt-1 w-48 bg-surface border border-main rounded-lg shadow-lg py-1 z-10">
-                <button className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
+                <button onClick={() => { setMenuOpen(false); alert('PDF export coming in Phase G'); }} className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
                   <Download size={16} />
                   Download PDF
                 </button>
-                <button className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
+                <button onClick={() => { setMenuOpen(false); router.push(`/dashboard/bids/new?duplicate=${bid.id}`); }} className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
                   <Copy size={16} />
                   Duplicate
                 </button>
-                <button className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
+                <button onClick={() => { setMenuOpen(false); navigator.clipboard.writeText(`${window.location.origin}/portal/bids/${bid.id}`); alert('Link copied to clipboard'); }} className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
                   <ExternalLink size={16} />
                   Client Portal Link
                 </button>
                 <hr className="my-1 border-main" />
-                <button className="w-full px-4 py-2 text-left text-sm hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 flex items-center gap-2">
+                <button onClick={async () => { setMenuOpen(false); if (confirm('Delete this bid?')) { await deleteBid(bid.id); router.push('/dashboard/bids'); } }} className="w-full px-4 py-2 text-left text-sm hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 flex items-center gap-2">
                   <Trash2 size={16} />
                   Delete
                 </button>

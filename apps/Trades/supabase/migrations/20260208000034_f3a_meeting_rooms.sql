@@ -229,8 +229,8 @@ CREATE POLICY "async_videos_update" ON async_videos FOR UPDATE
 -- ============================================================================
 CREATE TRIGGER set_booking_types_updated_at
   BEFORE UPDATE ON meeting_booking_types
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
 CREATE TRIGGER set_meetings_updated_at
   BEFORE UPDATE ON meetings
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();

@@ -1,6 +1,6 @@
 # ZAFTO MASTER BUILD PLAN — NO DRIFT
 ## Single Source of Truth — Every Feature, Every Phase, Every Decision
-### Last Updated: February 7, 2026 (Session 80)
+### Last Updated: February 9, 2026 (Session 94)
 
 ---
 
@@ -65,7 +65,7 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 
 ---
 
-## CURRENT STATE (February 7, 2026 — Session 80)
+## CURRENT STATE (February 9, 2026 — Session 93)
 
 | What | Built | Wired | End-to-End |
 |------|:-----:|:-----:|:----------:|
@@ -82,10 +82,13 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | Property Management | YES | YES (11 hooks, 14 pages, 10 Flutter screens) | YES |
 | Insurance/Restoration | YES | YES (7 tables, all 5 apps) | YES |
 | **Phase E AI (PREMATURE)** | **YES (code exists)** | **PAUSED** | **NOT TESTED — AI goes LAST** |
-| **D8 Estimate Engine** | **NOT STARTED** | **NO** | **NEXT** |
-| **Phase F Platform** | **NOT STARTED** | **NO** | After D8 |
+| **D8 Estimate Engine** | **YES** | **YES (D8a-D8j)** | **DONE (S85-S89)** |
+| **Phase F Platform** | **YES (code)** | **YES (hooks+pages)** | **ALL CODE COMPLETE (S90)** |
+| **Phase T: TPA Module** | **SPEC'D** | **NO** | Builds after Phase G |
+| **Phase P: ZScan** | **SPEC'D** | **NO** | Builds after Phase T |
+| **Phase SK: Sketch Engine** | **SPEC'D** | **NO** | Builds after Phase P |
 
-**Phases A-D7 ALL COMPLETE. R1 App Remake COMPLETE. Phase E AI was started prematurely (S78-S80) — code exists but is PAUSED. Correct next step: D8 (Estimate Engine) → Firebase Migration → Phase F (Platform Completion) → G (QA) → E (AI layer built LAST) → F2 (Website Builder) + F8 (Ops Portal) truly last.**
+**ALL PHASES A-F COMPLETE. ~169 tables. 53 Edge Functions. 107 CRM routes. Phase G (QA) is NEXT, then T (TPA), then P (ZScan), then SK (Sketch Engine), then E (AI LAST). F2 + F8 build after AI.**
 
 ---
 
@@ -166,7 +169,7 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 
 ### PHASE F: PLATFORM COMPLETION
 
-**Build order: F1→F3→F4→F5→F6→F7→F9→F10. Then G, then E. F2+F8 build LAST (after AI).**
+**Build order: F1→F3→F4→F5→F6→F7→F9→F10. Then G, then T (TPA Module), then P (ZScan), then SK (Sketch Engine), then E. F2+F8 build LAST (after AI).**
 
 | # | Task | Hours | Details |
 |---|------|:-----:|---------|
@@ -188,21 +191,71 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | G3 | Performance optimization | ~20-30 | Load testing, query optimization, caching |
 | G4 | Security hardening | ~4 | Email migration, Bitwarden changeover, 2FA, YubiKeys |
 
-### PHASE E: AI LAYER (REBUILD — after G)
+### PHASE T: TPA PROGRAM MANAGEMENT MODULE (after G)
 
 | # | Task | Hours | Details |
 |---|------|:-----:|---------|
-| E-review | Audit all premature E work | TBD | Deep spec session with owner. AI must know every feature, table, screen. Rebuild with full platform context. |
+| T1 | TPA Foundation | ~8 | Core tables (tpa_programs, tpa_assignments, tpa_scorecards), feature flag, CRM settings. |
+| T2 | Assignment Tracking | ~12 | Assignment lifecycle, SLA countdown, supplement/doc requirement tables. |
+| T3 | Water Damage Assessment + Moisture | ~12 | IICRC S500 classifications, moisture mapping, psychrometric monitoring. |
+| T4 | Equipment Deployment + Calculator | ~10 | IICRC equipment formulas, billing clock, deployment tracking. |
+| T5 | Documentation Validation | ~8 | Completeness checking, COC generation, configurable checklists per TPA. |
+| T6 | Financial Analytics | ~8 | Per-TPA profitability, referral fee tracking, AR aging, margin analysis. |
+| T7 | Supplement Workflow + Scorecard | ~8 | Supplement S1/S2/S3 tracking, TPA performance scoring over time. |
+| T8 | Restoration Line Items + Export | ~10 | ZAFTO line item DB with Xactimate mapping, FML/DXF/PDF export. |
+| T9 | Portal Integration | ~8 | Team portal (SLA badges, equipment), ops portal (TPA analytics), CRM sidebar. |
+| T10 | Polish + Build Verification | ~4 | Feature flag toggle test, IICRC formula verification, legal disclaimers. |
+
+*Full spec: `Expansion/39_TPA_MODULE_SPEC.md` | Legal: `memory/tpa-legal-assessment.md`*
+
+### PHASE P: PROPERTY INTELLIGENCE ENGINE (ZScan) — after T
+
+| # | Task | Hours | Details |
+|---|------|:-----:|---------|
+| P1 | Foundation + Google Solar | ~10 | Core tables (property_scans, roof_measurements, roof_facets), Google Solar API, CRM card. |
+| P2 | Property Data + Parcel | ~8 | ATTOM + Regrid + Microsoft footprints + USGS elevation. Full property report. |
+| P3 | Walls + Trade Data | ~10 | Wall derivation, 10 trade pipelines (roofing/siding/gutters/solar/painting/landscaping/fencing/concrete/HVAC/electrical). |
+| P4 | Estimate Integration | ~8 | ZScan → D8 estimate engine. Auto-populate estimates from scans. |
+| P5 | Material Ordering | ~8 | Measurements → material list → Unwrangle/ABC Supply pricing → one-click order. |
+| P6 | Mobile + Verification | ~10 | Mobile scan screen, swipeable results, on-site verification workflow. |
+| P7 | Portal Integration | ~8 | Team/Client/CRM portal integration. Pre-scan for leads. PDF export. |
+| P8 | Polish + Build | ~6 | Caching, rate limiting, attribution, disclaimers, clean builds. |
+
+*Full spec: `Expansion/40_PROPERTY_INTELLIGENCE_SPEC.md` | API research: `memory/property-intelligence-research.md`*
+
+### PHASE SK: CAD-GRADE SKETCH ENGINE (after P)
+
+| # | Task | Hours | Details |
+|---|------|:-----:|---------|
+| SK1 | Unified Data Model + Migration | ~16 | Merge property_floor_plans + bid_sketches. FloorPlanDataV2 schema. 3 new tables + 2 ALTER. |
+| SK2 | Flutter Editor Upgrades Part 1 | ~16 | Wall editing after draw, thickness control, fixture rotation, imperial/metric toggle. |
+| SK3 | Flutter Editor Upgrades Part 2 | ~12 | Arc walls, copy/paste, multi-select lasso, smart auto-dimensions. |
+| SK4 | Trade Layers System | ~20 | Electrical (15), plumbing (12), HVAC (10), damage (4). Layer panel + per-trade toolbars. |
+| SK5 | LiDAR Scanning (Apple RoomPlan) | ~20 | Swift platform channel, 3D→2D converter, guided scan UX, non-LiDAR fallback. |
+| SK6 | Web CRM Canvas Editor (Konva.js) | ~24 | TypeScript port of geometry engine. Full canvas editor replacing sketch-bid form. |
+| SK7 | Sync Pipeline | ~12 | Hive offline-first, Supabase real-time, thumbnail generation, conflict resolution. |
+| SK8 | Auto-Estimate Pipeline | ~16 | Geometry→measurements→estimate areas→D8 line items. "Generate Estimate" button. |
+| SK9 | Export Pipeline | ~12 | PDF (title block + plan + schedule), PNG (hi-res), DXF (AutoCAD), FML (open format). |
+| SK10 | 3D Visualization (three.js) | ~16 | Wall extrusion, door/window openings, orbit controls, 2D/3D toggle. Web CRM only. |
+| SK11 | Polish + Testing + Button Audit | ~12 | Round-trip tests, performance (60fps web, 30fps mobile), every-button audit. |
+
+*Full spec: `Expansion/46_SKETCH_ENGINE_SPEC.md`*
+
+### PHASE E: AI LAYER (REBUILD — after G + T + P + SK)
+
+| # | Task | Hours | Details |
+|---|------|:-----:|---------|
+| E-review | Audit all premature E work | TBD | Deep spec session with owner. AI must know every feature, table, screen — including TPA module + ZScan + Sketch Engine. Rebuild with full platform context. |
 | E1-E4 | Full AI implementation | TBD | Universal AI, Z Console, Command Center, Growth Advisor. Every feature AI-enhanced. |
 
-### POST-AI: FINAL FEATURES
+### >>> LAUNCH <<<
+
+### POST-LAUNCH FEATURES
 
 | # | Task | Hours | Details |
 |---|------|:-----:|---------|
-| F2 | Website Builder V2 | ~60-90 | Cloudflare Registrar, templates, **AI content generation**, booking widget, SEO. Builds after AI so AI generates content. $19.99/mo add-on. |
-| F8 | Ops Portal Phases 2-4 | ~111 | Marketing engine, treasury, legal, dev terminal, analytics. 54 additional pages. TRULY LAST — internal tool, doesn't affect product. |
-
-### >>> LAUNCH <<<
+| F2 | Website Builder V2 | ~60-90 | **DEFERRED POST-LAUNCH (S94 owner directive).** Too much maintenance for solo dev (hosting, custom domains, WYSIWYG, SSL, SEO support). Revisit with real contractor feedback + AI layer. Consider white-label (Duda) or template-only approach. |
+| F8 | Ops Portal Phases 2-4 | ~111 | Marketing engine, treasury, legal, dev terminal, analytics. 54 additional pages. Internal tool, doesn't affect product. |
 
 ---
 
@@ -316,6 +369,8 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | Ops Portal Phases 2-4 | Locked/34 | ~111 | F8 |
 | Multi-Channel Hiring System | Expansion/28 | ~18-22 | F9 |
 | ZDocs + ZSheets (PDF-first) | Master Plan | TBD | F10 |
+| **ZScan / Property Intelligence Engine** | **Expansion/40** | **~68** | **P** |
+| **CAD-Grade Sketch Engine** | **Expansion/46** | **~176** | **SK** |
 
 ---
 
@@ -481,7 +536,7 @@ See Circuit Blueprint for complete schema mapping.
 12. **Offline-first** — PowerSync (SQLite <-> PostgreSQL)
 13. **Progressive disclosure** — Clean by default, complexity activates per-need
 14. **Nothing ships without human approval** — Every AI artifact needs contractor review
-15. **BUILD ORDER: A → B → C → D → F → G → E** — Platform first. Debug second. AI last.
+15. **BUILD ORDER: A → B → C → D → F → G → T → P → E** — Platform first. Debug second. TPA module third. ZScan fourth. AI last.
 
 ---
 

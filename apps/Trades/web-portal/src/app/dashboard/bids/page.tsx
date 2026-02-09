@@ -37,7 +37,7 @@ export default function BidsPage() {
   const { loading: permLoading } = usePermissions();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
-  const { bids, loading } = useBids();
+  const { bids, loading, sendBid, deleteBid } = useBids();
   const { stats: dashStats } = useStats();
   const stats = dashStats.bids;
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -160,15 +160,32 @@ export default function BidsPage() {
               {selectedIds.size} selected
             </span>
             <div className="w-px h-6 bg-main" />
-            <Button variant="secondary" size="sm">
+            <Button variant="secondary" size="sm" onClick={async () => {
+              if (!confirm(`Mark ${selectedIds.size} bid(s) as sent?`)) return;
+              for (const id of selectedIds) { try { await sendBid(id); } catch {} }
+              setSelectedIds(new Set());
+            }}>
               <Send size={14} />
               Send All
             </Button>
-            <Button variant="secondary" size="sm">
+            <Button variant="secondary" size="sm" onClick={() => {
+              const rows = bids.filter(b => selectedIds.has(b.id));
+              const csv = ['Title,Customer,Status,Total,Created'].concat(
+                rows.map(b => `"${b.title}","${b.customerName}","${b.status}",${b.total},"${b.createdAt}"`)
+              ).join('\n');
+              const blob = new Blob([csv], { type: 'text/csv' });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a'); a.href = url; a.download = 'bids-export.csv'; a.click();
+              URL.revokeObjectURL(url);
+            }}>
               <Download size={14} />
               Export
             </Button>
-            <Button variant="secondary" size="sm" className="text-red-600 hover:text-red-700">
+            <Button variant="secondary" size="sm" className="text-red-600 hover:text-red-700" onClick={async () => {
+              if (!confirm(`Delete ${selectedIds.size} bid(s)? This cannot be undone.`)) return;
+              for (const id of selectedIds) { try { await deleteBid(id); } catch {} }
+              setSelectedIds(new Set());
+            }}>
               <Trash2 size={14} />
               Delete
             </Button>
@@ -230,6 +247,11 @@ export default function BidsPage() {
                       setSelectedIds(newSet);
                     }}
                     onClick={() => router.push(`/dashboard/bids/${bid.id}`)}
+                    onView={() => router.push(`/dashboard/bids/${bid.id}`)}
+                    onSend={async () => { await sendBid(bid.id); }}
+                    onDelete={async () => {
+                      if (confirm('Delete this bid?')) await deleteBid(bid.id);
+                    }}
                   />
                 ))}
               </div>
@@ -241,7 +263,7 @@ export default function BidsPage() {
   );
 }
 
-function BidRow({ bid, isSelected, onSelect, onClick }: { bid: Bid; isSelected: boolean; onSelect: (selected: boolean) => void; onClick: () => void }) {
+function BidRow({ bid, isSelected, onSelect, onClick, onView, onSend, onDelete }: { bid: Bid; isSelected: boolean; onSelect: (selected: boolean) => void; onClick: () => void; onView: () => void; onSend: () => Promise<void>; onDelete: () => Promise<void> }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -296,20 +318,20 @@ function BidRow({ bid, isSelected, onSelect, onClick }: { bid: Bid; isSelected: 
           </button>
           {menuOpen && (
             <div className="absolute right-0 top-full mt-1 w-48 bg-surface border border-main rounded-lg shadow-lg py-1 z-10">
-              <button className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
+              <button onClick={(e) => { e.stopPropagation(); setMenuOpen(false); onView(); }} className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
                 <Eye size={16} />
                 View
               </button>
-              <button className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
+              <button onClick={async (e) => { e.stopPropagation(); setMenuOpen(false); await onSend(); }} className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
                 <Send size={16} />
                 Send
               </button>
-              <button className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
+              <button onClick={(e) => { e.stopPropagation(); setMenuOpen(false); alert('PDF export coming in Phase G'); }} className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
                 <Download size={16} />
                 Download PDF
               </button>
               <hr className="my-1 border-main" />
-              <button className="w-full px-4 py-2 text-left text-sm hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 flex items-center gap-2">
+              <button onClick={async (e) => { e.stopPropagation(); setMenuOpen(false); await onDelete(); }} className="w-full px-4 py-2 text-left text-sm hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 flex items-center gap-2">
                 <Trash2 size={16} />
                 Delete
               </button>

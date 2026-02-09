@@ -1,9 +1,12 @@
 'use client';
+
 import { useState } from 'react';
-import { Shield, ArrowRight, Mail, CheckCircle2, Lock, Eye, EyeOff } from 'lucide-react';
+import { ArrowRight, Mail, CheckCircle2, Lock, Eye, EyeOff, Sun, Moon, Shield } from 'lucide-react';
 import { signInWithMagicLink, signInWithPassword } from '@/lib/auth';
+import { useTheme } from '@/components/theme-provider';
 
 export default function LoginPage() {
+  const { theme, toggleTheme } = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -36,57 +39,80 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: 'var(--bg-secondary)' }}>
-      <div className="w-full max-w-sm">
-        {/* Logo */}
+    <div className="min-h-screen flex items-center justify-center relative overflow-hidden p-6"
+      style={{ background: 'var(--bg-secondary, var(--bg))' }}>
+
+      {/* Soft gradient */}
+      <div className="absolute top-[-300px] left-1/2 -translate-x-1/2 w-[800px] h-[600px] rounded-full opacity-[0.07] blur-[120px] pointer-events-none"
+        style={{ background: 'var(--accent, #635bff)' }} />
+
+      {/* Theme toggle */}
+      <button onClick={toggleTheme}
+        className="absolute top-5 right-5 z-10 p-2 rounded-lg transition-colors text-muted hover:text-main">
+        {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+      </button>
+
+      <div className="relative z-10 w-full max-w-[400px]">
+        {/* Header */}
         <div className="text-center mb-8">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="48" height="48" className="mx-auto mb-4" style={{ color: 'var(--text)' }}>
-            <defs><filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="0.4" result="blur" /><feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge></filter></defs>
-            <g transform="translate(50, 50)" filter="url(#glow)">
-              <path d="M-22,-22 L22,-22 L-22,22 L22,22" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" opacity="0.08" transform="translate(6,6)"><animate attributeName="opacity" values="0.08;0.15;0.08" dur="2s" repeatCount="indefinite" /></path>
-              <path d="M-22,-22 L22,-22 L-22,22 L22,22" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" opacity="0.18" transform="translate(3,3)"><animate attributeName="opacity" values="0.18;0.3;0.18" dur="2s" repeatCount="indefinite" begin="0.3s" /></path>
-              <path d="M-22,-22 L22,-22 L-22,22 L22,22" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"><animate attributeName="stroke-width" values="3.5;4;3.5" dur="2s" repeatCount="indefinite" begin="0.6s" /></path>
-            </g>
-          </svg>
-          <h1 className="text-xl font-semibold" style={{ color: 'var(--text)' }}>Client Portal</h1>
+          <div className="inline-flex items-center gap-2.5 mb-5">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="36" height="36" style={{ color: 'var(--text)' }}>
+              <g transform="translate(50,50)">
+                <path d="M-22,-22 L22,-22 L-22,22 L22,22" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" opacity="0.08" transform="translate(6,6)"><animate attributeName="opacity" values="0.08;0.15;0.08" dur="2s" repeatCount="indefinite"/></path>
+                <path d="M-22,-22 L22,-22 L-22,22 L22,22" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" opacity="0.18" transform="translate(3,3)"><animate attributeName="opacity" values="0.18;0.3;0.18" dur="2s" repeatCount="indefinite" begin="0.3s"/></path>
+                <path d="M-22,-22 L22,-22 L-22,22 L22,22" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"><animate attributeName="stroke-width" values="3.5;4;3.5" dur="2s" repeatCount="indefinite" begin="0.6s"/></path>
+              </g>
+            </svg>
+            <span className="text-lg font-semibold tracking-tight" style={{ color: 'var(--text)' }}>Zafto</span>
+          </div>
+          <h1 className="text-[22px] font-semibold tracking-tight" style={{ color: 'var(--text)' }}>Client Portal</h1>
           <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>View your projects, invoices & property</p>
         </div>
 
-        {/* Form Card */}
-        <div className="rounded-xl p-6 border" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border-light)' }}>
+        {/* Card */}
+        <div className="rounded-xl p-6 border" style={{ background: 'var(--surface)', borderColor: 'var(--border-light, var(--border))' }}>
           {sent ? (
-            <div className="text-center space-y-3 py-4">
-              <div className="w-12 h-12 rounded-full mx-auto flex items-center justify-center" style={{ backgroundColor: 'var(--success-light)' }}>
-                <CheckCircle2 size={24} style={{ color: 'var(--success)' }} />
+            <div className="text-center space-y-4 py-4">
+              <div className="w-14 h-14 rounded-full mx-auto flex items-center justify-center"
+                style={{ background: 'rgba(34,197,94,0.1)' }}>
+                <CheckCircle2 size={28} className="text-green-500" />
               </div>
-              <h2 className="text-sm font-semibold" style={{ color: 'var(--text)' }}>Check your email</h2>
-              <p className="text-xs leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-                We sent a sign-in link to <strong style={{ color: 'var(--text)' }}>{email}</strong>. Click the link in your email to access your portal.
-              </p>
-              <button onClick={() => { setSent(false); setEmail(''); }} className="text-xs font-medium mt-2" style={{ color: 'var(--accent)' }}>
+              <div>
+                <h2 className="text-base font-semibold" style={{ color: 'var(--text)' }}>Check your email</h2>
+                <p className="text-sm mt-2 leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                  We sent a sign-in link to <strong style={{ color: 'var(--text)' }}>{email}</strong>
+                </p>
+              </div>
+              <button onClick={() => { setSent(false); setEmail(''); }}
+                className="text-sm font-medium" style={{ color: 'var(--accent)' }}>
                 Use a different email
               </button>
             </div>
           ) : (
             <form onSubmit={handleLogin} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>Email</label>
-                <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@email.com" required
-                  className="w-full px-3.5 py-2.5 rounded-lg text-sm outline-none transition-colors border"
-                  style={{ backgroundColor: 'var(--bg)', borderColor: 'var(--border)', color: 'var(--text)' }}
-                />
+              <div className="space-y-1.5">
+                <label className="block text-[13px] font-medium" style={{ color: 'var(--text-secondary, var(--text))' }}>Email</label>
+                <input type="email" value={email} onChange={e => setEmail(e.target.value)}
+                  className="w-full h-11 px-3.5 rounded-lg text-sm transition-all outline-none border"
+                  style={{ background: 'var(--bg)', borderColor: 'var(--border)', color: 'var(--text)' }}
+                  onFocus={(e) => { e.target.style.borderColor = 'var(--accent)'; e.target.style.boxShadow = '0 0 0 3px rgba(99,91,255,0.1)'; }}
+                  onBlur={(e) => { e.target.style.borderColor = 'var(--border)'; e.target.style.boxShadow = 'none'; }}
+                  placeholder="you@email.com" required />
               </div>
 
               {usePassword && (
-                <div>
-                  <label className="block text-sm font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>Password</label>
+                <div className="space-y-1.5">
+                  <label className="block text-[13px] font-medium" style={{ color: 'var(--text-secondary, var(--text))' }}>Password</label>
                   <div className="relative">
-                    <input type={showPassword ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} placeholder="Enter password" required
-                      className="w-full px-3.5 py-2.5 pr-10 rounded-lg text-sm outline-none transition-colors border"
-                      style={{ backgroundColor: 'var(--bg)', borderColor: 'var(--border)', color: 'var(--text)' }}
-                    />
+                    <input type={showPassword ? 'text' : 'password'} value={password}
+                      onChange={e => setPassword(e.target.value)}
+                      className="w-full h-11 px-3.5 pr-10 rounded-lg text-sm transition-all outline-none border"
+                      style={{ background: 'var(--bg)', borderColor: 'var(--border)', color: 'var(--text)' }}
+                      onFocus={(e) => { e.target.style.borderColor = 'var(--accent)'; e.target.style.boxShadow = '0 0 0 3px rgba(99,91,255,0.1)'; }}
+                      onBlur={(e) => { e.target.style.borderColor = 'var(--border)'; e.target.style.boxShadow = 'none'; }}
+                      placeholder="Enter password" required />
                     <button type="button" onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 opacity-50 hover:opacity-100 transition-opacity"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 transition-colors"
                       style={{ color: 'var(--text-muted)' }}>
                       {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                     </button>
@@ -95,14 +121,15 @@ export default function LoginPage() {
               )}
 
               {error && (
-                <p className="text-xs px-3 py-2 rounded-lg" style={{ backgroundColor: 'var(--error-light)', color: 'var(--error)' }}>
+                <div className="px-3.5 py-3 rounded-lg text-sm"
+                  style={{ background: 'rgba(239,68,68,0.08)', color: '#ef4444' }}>
                   {error}
-                </p>
+                </div>
               )}
 
               <button type="submit" disabled={loading || !email || (usePassword && !password)}
-                className="w-full py-2.5 rounded-lg text-white text-sm font-semibold flex items-center justify-center gap-2 transition-all disabled:opacity-50"
-                style={{ backgroundColor: 'var(--accent)' }}>
+                className="w-full h-11 rounded-lg text-white text-sm font-medium flex items-center justify-center gap-2 transition-all disabled:opacity-50 hover:brightness-110"
+                style={{ background: 'var(--accent)' }}>
                 {loading ? (
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 ) : usePassword ? (
@@ -120,32 +147,30 @@ export default function LoginPage() {
                 )}
               </button>
 
-              <p className="text-xs text-center" style={{ color: 'var(--text-muted)' }}>
+              <div className="text-center pt-1">
                 {usePassword ? (
-                  <button type="button" onClick={() => setUsePassword(false)} style={{ color: 'var(--accent)' }} className="font-medium">
+                  <button type="button" onClick={() => setUsePassword(false)}
+                    className="text-[13px] font-medium" style={{ color: 'var(--accent)' }}>
                     Use magic link instead
                   </button>
                 ) : (
-                  <>
-                    No password needed. We&apos;ll send a secure link to your email.
-                    <br />
-                    <button type="button" onClick={() => setUsePassword(true)} style={{ color: 'var(--accent)' }} className="font-medium mt-1 inline-block">
-                      Sign in with password
-                    </button>
-                  </>
+                  <button type="button" onClick={() => setUsePassword(true)}
+                    className="text-[13px] font-medium" style={{ color: 'var(--accent)' }}>
+                    Sign in with password
+                  </button>
                 )}
-              </p>
+              </div>
             </form>
           )}
         </div>
 
         {/* Footer */}
         <div className="text-center mt-6 space-y-2">
-          <p className="text-xs flex items-center justify-center gap-1.5" style={{ color: 'var(--text-muted)' }}>
+          <p className="text-[12px] flex items-center justify-center gap-1.5" style={{ color: 'var(--text-muted)' }}>
             <Shield size={12} /> Secured by ZAFTO
           </p>
-          <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
-            Don&apos;t have an account? Your contractor will send you an invite.
+          <p className="text-[12px]" style={{ color: 'var(--text-muted)', opacity: 0.6 }}>
+            Your contractor will send you an invite to get started
           </p>
         </div>
       </div>
