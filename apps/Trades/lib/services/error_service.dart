@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 // Conditional import for SocketException
 import 'platform_stub.dart' if (dart.library.io) 'dart:io';
 
@@ -152,15 +152,12 @@ class ErrorService {
     }
 
     try {
-      await FirebaseCrashlytics.instance.recordError(
+      await Sentry.captureException(
         error,
-        stackTrace,
-        reason: reason,
-        fatal: fatal,
+        stackTrace: stackTrace,
       );
     } catch (e) {
-      // Crashlytics itself failed - just print
-      debugPrint('Failed to log to Crashlytics: $e');
+      debugPrint('Failed to log to Sentry: $e');
     }
   }
 
