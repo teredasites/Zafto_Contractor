@@ -88,7 +88,7 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | **Phase P: ZScan** | **SPEC'D** | **NO** | Builds after Phase T |
 | **Phase SK: Sketch Engine** | **SPEC'D** | **NO** | Builds after Phase P |
 
-**ALL PHASES A-F COMPLETE. ~169 tables. 53 Edge Functions. 107 CRM routes. Phase G (QA) is NEXT, then T (TPA), then P (ZScan), then SK (Sketch Engine), then E (AI LAST). F2 + F8 build after AI.**
+**ALL PHASES A-F COMPLETE. ~169 tables. 53 Edge Functions. 107 CRM routes. Phase T (TPA) is NEXT, then P (ZScan), then SK (Sketch Engine), then G (QA/Harden everything), then E (AI LAST). F2 + F8 post-launch.**
 
 ---
 
@@ -169,7 +169,7 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 
 ### PHASE F: PLATFORM COMPLETION
 
-**Build order: F1→F3→F4→F5→F6→F7→F9→F10. Then G, then T (TPA Module), then P (ZScan), then SK (Sketch Engine), then E. F2+F8 build LAST (after AI).**
+**Build order: F1→F3→F4→F5→F6→F7→F9→F10. Then T (TPA Module), then P (ZScan), then SK (Sketch Engine), then G (QA/Harden everything), then E. F2+F8 post-launch.**
 
 | # | Task | Hours | Details |
 |---|------|:-----:|---------|
@@ -191,7 +191,7 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | G3 | Performance optimization | ~20-30 | Load testing, query optimization, caching |
 | G4 | Security hardening | ~4 | Email migration, Bitwarden changeover, 2FA, YubiKeys |
 
-### PHASE T: TPA PROGRAM MANAGEMENT MODULE (after G)
+### PHASE T: TPA PROGRAM MANAGEMENT MODULE (NEXT — after F)
 
 | # | Task | Hours | Details |
 |---|------|:-----:|---------|
@@ -241,7 +241,7 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 
 *Full spec: `Expansion/46_SKETCH_ENGINE_SPEC.md`*
 
-### PHASE E: AI LAYER (REBUILD — after G + T + P + SK)
+### PHASE E: AI LAYER (REBUILD — after T + P + SK + G)
 
 | # | Task | Hours | Details |
 |---|------|:-----:|---------|
@@ -536,7 +536,7 @@ See Circuit Blueprint for complete schema mapping.
 12. **Offline-first** — PowerSync (SQLite <-> PostgreSQL)
 13. **Progressive disclosure** — Clean by default, complexity activates per-need
 14. **Nothing ships without human approval** — Every AI artifact needs contractor review
-15. **BUILD ORDER: A → B → C → D → F → G → T → P → E** — Platform first. Debug second. TPA module third. ZScan fourth. AI last.
+15. **BUILD ORDER: A → B → C → D → F → T → P → SK → G → E** — Platform first. Build all features (T+P+SK). QA/Harden everything at once. AI last.
 
 ---
 

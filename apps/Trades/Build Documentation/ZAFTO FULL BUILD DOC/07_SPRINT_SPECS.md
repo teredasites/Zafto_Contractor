@@ -6561,7 +6561,7 @@ Execute in sequence:
 ## PHASE E: AI LAYER — **PAUSED (S80 OWNER DIRECTIVE)**
 
 **STATUS: ALL PHASE E WORK IS PAUSED.** AI was built prematurely in S78-S80. Code is committed but DORMANT.
-**AI goes TRULY LAST.** Must come after ALL of Phase F (Platform Completion) + Phase G (QA/Hardening).
+**AI goes TRULY LAST.** Must come after ALL of Phase F (Platform Completion) + Phase T (TPA) + Phase P (ZScan) + Phase SK (Sketch Engine) + Phase G (QA/Hardening).
 **Reason:** AI must know every feature, every table, every screen, every workflow — so it can do literally anything within the program. Building AI before the platform is complete means AI won't know about Phone System, Website Builder, Meeting Rooms, ZDocs, Marketplace, Business OS, Hiring, etc.
 **When to resume:** After Phase F + G are COMPLETE. Owner will initiate a deep AI spec session first. All premature E work will be audited/rebuilt with full platform context.
 **Correct build order: A(DONE) → B(DONE) → C(DONE) → D(DONE) → R1(DONE) → F(NEXT) → G → E(LAST)**
@@ -7725,7 +7725,7 @@ Include <content>{markdown}</content> for rendered display.
 
 ---
 
-## PHASE G: DEBUG, QA & HARDENING
+## PHASE G: DEBUG, QA & HARDENING (AFTER T + P + SK — harden everything at once)
 *Final quality pass before launch.*
 
 ### Sprint G1: Full Platform Debug
@@ -7815,6 +7815,234 @@ Include <content>{markdown}</content> for rendered display.
 - [ ] Google Play Developer account creation
 - [ ] TestFlight distribution setup (after iOS code signing)
 - [ ] Play Store internal testing track setup (after Android keystore)
+
+### Sprint G6: TPA Module QA
+**Goal:** Verify all TPA features work end-to-end after Phase T build.
+
+**G6a: TPA Database & Data Integrity**
+- [ ] All ~17 TPA tables exist and have RLS enabled
+- [ ] company_id isolation verified on all TPA tables
+- [ ] Feature flag (`companies.features.tpa_enabled`) gates TPA sidebar section correctly
+- [ ] TPA assignment status workflow transitions verified (each status → valid next statuses)
+- [ ] SLA countdown timers calculate correctly (contact, inspect, upload, complete deadlines)
+- [ ] Referral fee calculations match program settings
+
+**G6b: TPA CRM Pages — Full Button-Click Audit**
+- [ ] TPA Command Center: all filters work, assignment cards clickable, status badges accurate
+- [ ] TPA Assignment Detail: every action button works (accept, schedule, upload, submit, supplement)
+- [ ] TPA Program Settings: create/edit/archive programs, SLA presets save correctly
+- [ ] TPA Profitability Dashboard: per-program metrics calculate from real data
+- [ ] TPA Scorecard: score entries create/display correctly, trend charts render
+- [ ] TPA Document Validation: required docs checklist enforces per-program requirements
+- [ ] IICRC compliance fields: moisture readings, drying logs, equipment placement formulas validate
+
+**G6c: TPA Integration Points**
+- [ ] TPA assignment → creates job with `is_tpa_job=true` + correct `tpa_program_id`
+- [ ] TPA job → estimate links via `tpa_assignment_id` on estimates table
+- [ ] TPA supplement workflow: supplement number auto-increments, linked to original estimate
+- [ ] D8 estimate engine works with TPA-generated estimates
+- [ ] TPA-specific line items (IICRC codes) map correctly to estimate categories
+- [ ] All 3 TPA Edge Functions respond correctly (test with sample data)
+
+**G6d: TPA Portal Pages**
+- [ ] Team portal: TPA assignment view works for field techs
+- [ ] Client portal: TPA job visibility (if applicable to homeowner)
+- [ ] Ops portal: TPA analytics page shows aggregate data
+- [ ] Mobile app: TPA screens (if built) connect to live data
+
+---
+
+### Sprint G7: ZScan / Property Intelligence QA
+**Goal:** Verify all ZScan features work end-to-end after Phase P build.
+
+**G7a: ZScan Database & API Verification**
+- [ ] All ~8 ZScan tables exist and have RLS enabled
+- [ ] company_id isolation verified on all ZScan tables
+- [ ] Google Solar API integration returns valid Building Insights data
+- [ ] ATTOM Property API returns property metadata (if key configured)
+- [ ] Regrid parcel boundary data imports correctly
+- [ ] Microsoft Building Footprints fallback works when Solar API insufficient
+
+**G7b: ZScan Measurement Accuracy**
+- [ ] Roof measurement pipeline: pitch detection, facet area calculation, ridge/hip/valley LF
+- [ ] Siding measurement: wall SF minus openings
+- [ ] Gutter measurement: eave/rake LF from roof geometry
+- [ ] Solar potential: panel placement, annual kWh estimate
+- [ ] Waste factor engine: per-trade percentages applied correctly
+- [ ] Material quantity calculator: measurements → order quantities
+
+**G7c: ZScan CRM Pages — Full Button-Click Audit**
+- [ ] Property scan initiation: address lookup → API call → results display
+- [ ] Scan results page: all measurement tabs render correctly
+- [ ] Material ordering: Unwrangle/ABC Supply integration (if keys configured)
+- [ ] On-site verification workflow: field tech confirms/adjusts measurements
+- [ ] Export/share scan results
+- [ ] All 4 ZScan Edge Functions respond correctly
+
+**G7d: ZScan Integration Points**
+- [ ] ZScan → bid generation (measurements populate bid line items)
+- [ ] ZScan → estimate (measurements flow to D8 estimate engine)
+- [ ] ZScan → job (property data attached to job record)
+- [ ] Multiple scans per property (history preserved)
+
+---
+
+### Sprint G8: Sketch Engine QA
+**Goal:** Verify all Sketch Engine features work end-to-end after Phase SK build.
+
+**G8a: Sketch Engine Database & Sync**
+- [ ] `property_floor_plans` table has all V2 columns (job_id, estimate_id, status, sync_version)
+- [ ] `floor_plan_layers` table: trade layer CRUD works
+- [ ] `floor_plan_rooms` table: room boundary + computed measurements accurate
+- [ ] `floor_plan_estimate_links` bridge table: room ↔ estimate area links work
+- [ ] Offline sync: Hive cache saves locally, syncs when online
+- [ ] Conflict resolution: server version wins, user prompted on conflict
+- [ ] Thumbnail generation: plans render to PNG in storage bucket
+
+**G8b: Flutter Mobile Editor — Full Tool Audit**
+- [ ] Wall drawing: straight walls snap to grid + endpoints
+- [ ] Wall editing: tap to select, drag endpoints, split wall, change thickness
+- [ ] Arc walls: Bezier drawing + thickness + door/window attachment
+- [ ] Doors: all door types (7) place on walls correctly, swing direction
+- [ ] Windows: place on walls, set width/height/sill height
+- [ ] Fixtures: all 25+ fixtures place + rotate (two-finger gesture)
+- [ ] Multi-select: lasso + shift-tap, move/delete/copy group
+- [ ] Copy/paste: single elements + groups, across floors
+- [ ] Undo/redo: every action reversible
+- [ ] Unit toggle: imperial ↔ metric, all dimensions convert live
+- [ ] Smart dimensions: auto-generated wall lengths + room area labels
+
+**G8c: Trade Layers — Every Symbol**
+- [ ] Electrical layer: all 15 symbols place correctly (receptacles, switches, lights, panel, junction)
+- [ ] Wire paths: circuit runs draw along walls, color-coded by circuit
+- [ ] Plumbing layer: all 12 symbols place correctly (fixtures + pipes)
+- [ ] Pipe routing: hot/cold/drain/gas with diameter labels
+- [ ] HVAC layer: all 10 symbols place correctly (equipment + distribution)
+- [ ] Duct routing: supply/return with CFM labels
+- [ ] Damage layer: affected area zones (Class 1-4 color coding), moisture readings, containment barriers, source arrows
+- [ ] IICRC category overlay: Cat 1 blue, Cat 2 yellow, Cat 3 red
+- [ ] Layer panel: visibility toggle, lock toggle, opacity slider — all work for each layer
+
+**G8d: LiDAR Scanning (iPhone)**
+- [ ] LiDAR capability detection: shows "Manual entry" fallback on non-LiDAR devices
+- [ ] RoomPlan scanning UX: instructions overlay, real-time preview
+- [ ] 3D→2D projection: wall positions/lengths match physical room (±2 inches)
+- [ ] Multi-room scanning: room boundaries auto-detected
+- [ ] Scanned plan fully editable after import
+- [ ] Manual room entry fallback: generates rectangular rooms from dimensions
+
+**G8e: Web CRM Canvas Editor (Konva.js)**
+- [ ] All drawing tools work: wall, arc wall, door, window, fixture, label, dimension
+- [ ] All trade layer tools match mobile parity
+- [ ] Pan (space+drag/middle-click) and zoom (scroll wheel) smooth at 60fps
+- [ ] Property inspector panel: shows selected element properties, editable
+- [ ] Keyboard shortcuts: Ctrl+Z, Ctrl+Y, Ctrl+C/V, Delete, Escape
+- [ ] Snap to grid, snap to endpoints, angle snap (15° increments)
+- [ ] Mini-map renders in corner for large plans
+- [ ] Ruler along top and left edges
+- [ ] Real-time sync: edit on web → appears on mobile (and vice versa)
+
+**G8f: Auto-Estimate Pipeline**
+- [ ] "Generate Estimate" creates estimate from floor plan
+- [ ] Room measurements: floor SF (shoelace formula), wall SF, ceiling SF, baseboard LF accurate
+- [ ] Door/window count per room correct
+- [ ] Line item suggestions match room type + trade + damage data
+- [ ] D8 estimate engine pricing lookup works with generated areas
+- [ ] User can review and adjust before finalizing
+
+**G8g: Export Pipeline**
+- [ ] PDF export: title block, floor plan drawing, room schedule, trade legend — all render
+- [ ] PNG export: 2x and 4x scale options produce clean raster
+- [ ] DXF export: opens in AutoCAD (or free DXF viewer) with correct geometry
+- [ ] FML export: valid XML, opens in Symbility/Cotality (or validates against schema)
+
+**G8h: 3D Visualization**
+- [ ] 2D↔3D toggle switch works
+- [ ] Wall extrusion: 3D prisms at correct wall height
+- [ ] Door/window openings: boolean subtraction visible
+- [ ] Floor plane with material texture
+- [ ] Trade elements rendered as 3D icons
+- [ ] Orbit controls: rotate, pan, zoom smooth
+- [ ] Room labels floating above rooms
+
+**G8i: Stress Testing**
+- [ ] 50-room floor plan with all trade layers: 60fps web, 30fps mobile
+- [ ] Large plan pan/zoom performance acceptable
+- [ ] Undo/redo stack handles 100+ actions without lag
+
+---
+
+### Sprint G9: Full Platform Button-Click Audit
+**Goal:** Every button on every page across ALL portals + mobile app — clicked and verified. S93 lesson: hooks have the functions but UI never calls them.
+
+**G9a: Web CRM — All 107 Routes**
+- [ ] Every sidebar nav link works (no 404s)
+- [ ] Every action button on every page triggers the correct function
+- [ ] Every modal opens, submits, and closes correctly
+- [ ] Every dropdown menu item works
+- [ ] Every status change button updates the DB and UI
+- [ ] Every delete button shows confirmation and actually deletes
+- [ ] Every export/download button produces output
+- [ ] Every form submits with company_id and all required fields
+- [ ] Error states display to user (not swallowed silently)
+
+**G9b: Team Portal — All 36 Routes**
+- [ ] Every nav link works
+- [ ] Every action button works
+- [ ] Every form submits correctly
+- [ ] Permission gates: role-restricted pages show access denied for wrong roles
+
+**G9c: Client Portal — All 38 Routes**
+- [ ] Every nav link works
+- [ ] Magic link auth flow: send link → click → signed in on original tab
+- [ ] Password auth flow: enter credentials → signed in
+- [ ] Every action button works
+- [ ] Client-facing data: only shows THEIR jobs/invoices/property
+
+**G9d: Ops Portal — All 24 Routes**
+- [ ] Every nav link works
+- [ ] super_admin gate: non-super_admin gets access denied
+- [ ] Every analytics page renders with real data (or graceful empty state)
+- [ ] Every action button works
+
+**G9e: Flutter Mobile — All 33 R1 Screens + 18 Field Tools**
+- [ ] Every screen navigates correctly from AppShell
+- [ ] Every form submits to Supabase
+- [ ] Every field tool saves data correctly
+- [ ] Role switching works (owner → admin → tech)
+- [ ] Offline mode: data saves to Hive, syncs when online
+
+---
+
+### Sprint G10: Cross-Feature Integration Testing
+**Goal:** Verify the full end-to-end workflows that span multiple features.
+
+**G10a: Sketch → Estimate → Invoice Pipeline**
+- [ ] Draw floor plan (mobile or web) → generate estimate → review line items → create invoice → send to client
+- [ ] Client receives invoice in client portal
+- [ ] Payment recorded → job marked complete
+
+**G10b: TPA → Estimate → Xactimate Pipeline**
+- [ ] Receive TPA assignment → create job → draw sketch → generate estimate with IICRC codes
+- [ ] Export estimate to FML format
+- [ ] Supplement workflow: original + supplement estimates linked
+- [ ] TPA profitability calculates correctly (revenue - referral fee - costs)
+
+**G10c: ZScan → Bid → Job Pipeline**
+- [ ] Scan property address → get measurements → create bid with measurement data
+- [ ] Bid accepted → convert to job → schedule → complete → invoice
+
+**G10d: Real-Time Sync Verification**
+- [ ] Create job on CRM → appears on team portal in <5s
+- [ ] Update job on mobile → appears on CRM in <5s
+- [ ] Client portal shows job status change in real-time
+- [ ] Ops portal analytics update with new data
+
+**G10e: Multi-App Data Consistency**
+- [ ] Same job shows identical data across CRM + team + client + ops + mobile
+- [ ] Invoice totals match across all portals
+- [ ] Customer info consistent across all views
+- [ ] Photo uploads visible everywhere (mobile → CRM → client portal)
 
 ---
 
@@ -8480,7 +8708,7 @@ Include <content>{markdown}</content> for rendered display.
 
 ---
 
-## PHASE E: AI LAYER — REBUILD (after Phase G + Phase T + Phase P + Phase SK)
+## PHASE E: AI LAYER — REBUILD (after Phase T + Phase P + Phase SK + Phase G)
 *Deep spec session with owner required before starting. AI must know every feature, every table, every screen — including TPA module + ZScan + Sketch Engine.*
 
 ### Sprint E-review: Audit premature E work

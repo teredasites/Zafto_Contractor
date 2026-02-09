@@ -3,7 +3,7 @@
 
 **Last Updated:** February 9, 2026 (Session 95 — All 4 apps deployed to Vercel + Cloudflare custom domains. Login pages redesigned (Stripe quality, animated Z logo, dark mode). team.zafto.app → team.zafto.cloud. Supabase auth config fixed for production.)
 **Current Phase:** BUILD — **Phases A-D + F ALL COMPLETE.** R1 DONE. FM code done. Phase E PAUSED. ~169 tables. 48 migrations. 53 Edge Functions. 107 CRM routes. 36 team routes. 38 client routes. 24 ops routes. **Codemagic Android debug build PASSING. Phase T (TPA Module) SPEC'D. Phase P (ZScan) SPEC'D. Phase SK (Sketch Engine) SPEC'D.**
-**Next Action:** Phase G (QA/Hardening) → Phase T (TPA Module) → Phase P (ZScan) → Phase SK (Sketch Engine) → Phase E (AI).
+**Next Action:** Phase T (TPA Module) → Phase P (ZScan) → Phase SK (Sketch Engine) → Phase G (QA/Hardening of ALL features) → Phase E (AI).
 
 ---
 
@@ -11,7 +11,7 @@
 
 | Field | Value |
 |-------|-------|
-| **Phase** | BUILD — **Phases A-D + F ALL COMPLETE.** R1 DONE. FM code done. Phase E PAUSED. ~169 tables. 48 migrations. 53 Edge Functions. 107 CRM routes. 36 team routes. 38 client routes. 24 ops routes. **Codemagic Android PASSING (S91). Phase T (TPA Module) SPEC'D (S92). Phase P (ZScan) SPEC'D (S93). Phase SK (Sketch Engine) SPEC'D (S94).** Next: Phase G (QA) → Phase T → Phase P → Phase SK → Phase E. |
+| **Phase** | BUILD — **Phases A-D + F ALL COMPLETE.** R1 DONE. FM code done. Phase E PAUSED. ~169 tables. 48 migrations. 53 Edge Functions. 107 CRM routes. 36 team routes. 38 client routes. 24 ops routes. **Codemagic Android PASSING (S91). Phase T (TPA Module) SPEC'D (S92). Phase P (ZScan) SPEC'D (S93). Phase SK (Sketch Engine) SPEC'D (S94).** Next: Phase T (NEXT) → Phase P → Phase SK → Phase G (QA after all building) → Phase E. |
 | **Mobile App (Flutter)** | **R1 App Remake (S78):** 33 role-based screens, design system (8 widgets), AppShell with role switching. **E3c (S80):** ai_service.dart + z_chat_sheet.dart + ai_photo_analyzer.dart, Z FAB in AppShell. **E5f (S79):** Estimate entry screens. **E6b (S79):** 12 walkthrough screens + 4 annotation files + 4 sketch editor files. ALL core business wired. ALL 18 field tools wired. D2 Insurance: 3 screens. D5f Properties: 10 screens. `dart analyze` passes 0 errors. |
 | **Web CRM (Next.js)** | **107 routes built.** 70+ hook files + 22 Z Console files. Auth+middleware DONE. UI Polish DONE. **F-phase (S90):** 30+ new hooks + pages for phone, fax, meetings, async-videos, team-chat, inspection-engine, osha-standards, moisture-readings, drying-logs, site-surveys, sketch-bid, fleet, payroll, hr, email, documents (rewired), vendors (rewired), purchase-orders (rewired), marketplace, hiring, zdocs. All wired to Supabase via real-time hooks. Sidebar: collapsible groups, 8 sections, ZDocs in OFFICE. **S93 CRM button fix:** 24 dead buttons across bids/invoices/reports/sketch-bid pages wired to existing hook functions. Sketch-bid page rewritten with working modals + company_id fix. `npm run build` passes (107 routes, 0 errors). |
 | **Client Portal (Next.js)** | **38 routes. 18+ hooks.** Magic link auth. **F7 (S90):** ZAFTO Home platform — use-home hook + my-home/equipment/service-history/maintenance pages. **F1 (S90):** SMS messaging page. **F3 (S90):** Meetings + booking pages. **F-expansion (S90):** Documents, Get Quotes, Find a Pro pages. `npm run build` passes (38 routes, 0 errors). `client.zafto.cloud`. |
@@ -89,11 +89,11 @@
 | 32 | F7: ZAFTO Home | ~140-180 | **DONE (S90)** — 5 tables, client portal hook + 4 pages. |
 | 33 | F9: Hiring System | ~18-22 | **DONE (S90)** — 3 tables, CRM hook+page. |
 | 34 | F10: ZDocs | TBD | **DONE (S90)** — 3 tables, 1 EF, CRM hook+page, portal expansion pages. |
-| 35 | G: Debug, QA & Hardening | ~100-200 | **NEXT** |
-| 36 | T: TPA Program Management Module | ~80 | **SPEC'D (S92)** — 17 tables, 3 EFs, 10 sprints. Expansion/39_TPA_MODULE_SPEC.md |
-| 37 | P: ZScan / Property Intelligence Engine | ~68 | **SPEC'D (S93)** — 8 tables, 4 EFs, 8 sprints. Expansion/40_PROPERTY_INTELLIGENCE_SPEC.md |
-| 38 | SK: CAD-Grade Sketch Engine | ~176 | **SPEC'D (S94)** — 3 tables, ~46 files, 11 sprints. LiDAR scan, trade layers, Konva web editor, auto-estimate, export, 3D view. Expansion/46_SKETCH_ENGINE_SPEC.md |
-| 39 | E: AI Layer Rebuild | TBD | PENDING — Deep spec session, full platform knowledge (after G+T+P+SK) |
+| 35 | T: TPA Program Management Module | ~80 | **SPEC'D (S92) — NEXT** — 17 tables, 3 EFs, 10 sprints. Expansion/39_TPA_MODULE_SPEC.md |
+| 36 | P: ZScan / Property Intelligence Engine | ~68 | **SPEC'D (S93)** — 8 tables, 4 EFs, 8 sprints. Expansion/40_PROPERTY_INTELLIGENCE_SPEC.md |
+| 37 | SK: CAD-Grade Sketch Engine | ~176 | **SPEC'D (S94)** — 3 tables, ~46 files, 11 sprints. LiDAR scan, trade layers, Konva web editor, auto-estimate, export, 3D view. Expansion/46_SKETCH_ENGINE_SPEC.md |
+| 38 | G: Debug, QA & Hardening | ~100-200 | PENDING — After ALL building (T+P+SK). Expanded G6-G10 for TPA/ZScan/Sketch testing. |
+| 39 | E: AI Layer Rebuild | TBD | PENDING — Deep spec session, full platform knowledge (after T+P+SK+G) |
 | 40 | **LAUNCH** | — | — |
 | — | *POST-LAUNCH: F2 Website Builder (~60-90h), F8 Ops Portal 2-4 (~111h)* | — | F2 deferred S94 (maintenance burden). F8 internal tooling. |
 
