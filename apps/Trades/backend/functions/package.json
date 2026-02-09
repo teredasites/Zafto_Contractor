@@ -13,10 +13,13 @@
   },
   "main": "index.js",
   "dependencies": {
-    "firebase-admin": "^11.11.0",
+    "firebase-admin": "^12.0.0",
     "firebase-functions": "^4.5.0",
     "@anthropic-ai/sdk": "^0.17.0",
     "stripe": "^14.0.0"
+  },
+  "overrides": {
+    "protobufjs": ">=7.2.5"
   },
   "devDependencies": {
     "firebase-functions-test": "^3.1.0"
