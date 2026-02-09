@@ -1,6 +1,6 @@
 # ZAFTO SESSION HANDOFF
 ## THE ONLY DOC YOU READ FIRST — EVERY SESSION
-### Last Updated: February 9, 2026 (Session 94)
+### Last Updated: February 9, 2026 (Session 95)
 
 ---
 
@@ -19,11 +19,11 @@
 | Field | Value |
 |-------|-------|
 | **Sprint** | **PHASE F COMPLETE (code).** F1-F10 ALL DONE. FM manual steps remain. Phase G (QA) is NEXT. **Phase T (TPA Module) + Phase P (ZScan) + Phase SK (Sketch Engine) ALL SPEC'D — build after G.** |
-| **Sub-step** | Phase F finished. Codemagic CI/CD set up. TPA Module spec'd (S92). ZScan spec'd (S93). Sketch Engine spec'd (S94). Home warranty module researched (S93). Next: Phase G (QA/Hardening) → Phase T (TPA) → Phase P (ZScan) → Phase SK (Sketch Engine) → Phase E (AI). |
+| **Sub-step** | Phase F finished. All 4 apps LIVE on Vercel + Cloudflare. Codemagic CI/CD set up. TPA Module spec'd (S92). ZScan spec'd (S93). Sketch Engine spec'd (S94). All portals deployed + branded (S95). Next: Phase G (QA/Hardening) → Phase T (TPA) → Phase P (ZScan) → Phase SK (Sketch Engine) → Phase E (AI). |
 | **Sprint Specs Location** | `07_SPRINT_SPECS.md` → Phase G (next unchecked: G1b). Phase T added (10 sprints, ~80 hours). Phase P added (8 sprints, ~68 hours). Phase SK added (11 sprints, ~176 hours). |
 | **Status** | Phases A-D + F ALL DONE. R1 DONE. FM code done. Phase E PAUSED. ~169 tables. 48 migration files. 53 Edge Functions. **107 CRM pages. 33 team pages. 36 client pages. 26 ops pages.** Codemagic Android debug build PASSING. **Phase T (TPA Module) spec complete — 17 tables, 3 EFs, 10 sprints. Phase P (ZScan) spec complete — 8 tables, 4 EFs, 8 sprints. Phase SK (Sketch Engine) spec complete — 3 tables, 11 sprints, ~176 hours.** |
-| **Last Completed** | S94: CAD-grade Sketch Engine spec'd — Expansion/46_SKETCH_ENGINE_SPEC.md created, SK1-SK11 sprint specs added, all docs updated. S93: CRM dead button audit + fix (24 buttons across 4 pages). Sketch-bid page fully rewritten (working modals, company_id fix). ZScan deep research + expansion spec + sprint specs. Home warranty module deep research + legal assessment. Contractor verticals research (9 trades). S92: TPA Module deep research + legal assessment + expansion spec + sprint specs. |
-| **Session Count** | 94 |
+| **Last Completed** | S95: All 4 apps deployed to Vercel with custom domains on Cloudflare (zafto.cloud, team.zafto.cloud, client.zafto.cloud, ops.zafto.cloud). All login pages redesigned (Stripe/Vercel quality). Animated Z offset echo logo unified across all portals. Dark mode default (CRM/Team/Ops), light (Client). Supabase auth config fixed (site_url, redirect URLs, email templates). Admin account: Robert → Damian Tereda. S94: Sketch Engine spec'd. S93: CRM dead button fix. ZScan spec'd. |
+| **Session Count** | 95 |
 | **Tables** | ~169 (Phase T will add ~17, Phase P will add ~8, Phase SK will add ~3) |
 | **Migration Files** | 48 (Phase T will add ~8, Phase P will add ~4, Phase SK will add ~1) |
 
@@ -130,6 +130,36 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 ---
 
 ## SESSION LOG (History — do NOT use for execution decisions, use CURRENT EXECUTION POINT above)
+
+### Session 95 (Feb 9) — Vercel Deployment + Login Redesign + Cloudflare DNS
+
+**S95: All 4 Apps Deployed to Production (Vercel + Cloudflare):**
+- Deployed all 4 Next.js apps to Vercel with production builds.
+- Configured Cloudflare DNS: A records pointing to Vercel IP `76.76.21.21` for all 4 domains.
+- Custom domains: `zafto.cloud` (CRM), `team.zafto.cloud` (Team), `client.zafto.cloud` (Client), `ops.zafto.cloud` (Ops).
+- **DNS switch:** `team.zafto.app` → `team.zafto.cloud` (`.app` reserved for marketing site).
+- Cleaned up old Porkbun DNS records on zafto.cloud (deleted 2 A records, www CNAME, wildcard CNAME).
+
+**S95: Login Pages Redesigned (Stripe/Vercel Quality):**
+- CRM: Split-panel layout (dark branding left, form right), show/hide password, theme toggle.
+- Team: Centered card, emerald accent, clean form.
+- Ops: Centered card, blue accent, "Founder OS" branding.
+- Client: Centered card, indigo accent, magic link + password toggle.
+- All 4: Animated Z offset echo logo (no boxes, `currentColor` for dark/light), subtle grid backgrounds, accent glow orbs, Sun/Moon theme toggle.
+
+**S95: Dark Mode Defaults:**
+- CRM, Team, Ops: Default to dark mode.
+- Client Portal: Default to light mode (homeowner-facing).
+- Created `client-portal/src/components/theme-provider.tsx` (new file).
+- Fixed `useTheme()` SSR crash: returns defaults instead of throwing when context is undefined during prerender.
+
+**S95: Supabase Auth Config Fixed:**
+- Updated `site_url` from `http://localhost:3000` to `https://zafto.cloud`.
+- Added 12 redirect URLs to `uri_allow_list` (all portals + Vercel URLs + localhost).
+- Branded magic link email template (Stripe-quality HTML with Z logo).
+- Admin account name changed: "Robert Tereda" → "Damian Tereda".
+
+---
 
 ### Session 94 (Feb 9) — CAD-Grade Sketch Engine Spec
 

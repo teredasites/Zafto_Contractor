@@ -1,7 +1,7 @@
 # ZAFTO LIVE STATUS
 ## UPDATE THIS EVERY SESSION
 
-**Last Updated:** February 9, 2026 (Session 94 — CAD-grade Sketch Engine spec'd (11 sprints, ~176 hrs). Expansion/46_SKETCH_ENGINE_SPEC.md created. Sprint specs SK1-SK11 added.)
+**Last Updated:** February 9, 2026 (Session 95 — All 4 apps deployed to Vercel + Cloudflare custom domains. Login pages redesigned (Stripe quality, animated Z logo, dark mode). team.zafto.app → team.zafto.cloud. Supabase auth config fixed for production.)
 **Current Phase:** BUILD — **Phases A-D + F ALL COMPLETE.** R1 DONE. FM code done. Phase E PAUSED. ~169 tables. 48 migrations. 53 Edge Functions. 107 CRM routes. 36 team routes. 38 client routes. 24 ops routes. **Codemagic Android debug build PASSING. Phase T (TPA Module) SPEC'D. Phase P (ZScan) SPEC'D. Phase SK (Sketch Engine) SPEC'D.**
 **Next Action:** Phase G (QA/Hardening) → Phase T (TPA Module) → Phase P (ZScan) → Phase SK (Sketch Engine) → Phase E (AI).
 
@@ -15,7 +15,7 @@
 | **Mobile App (Flutter)** | **R1 App Remake (S78):** 33 role-based screens, design system (8 widgets), AppShell with role switching. **E3c (S80):** ai_service.dart + z_chat_sheet.dart + ai_photo_analyzer.dart, Z FAB in AppShell. **E5f (S79):** Estimate entry screens. **E6b (S79):** 12 walkthrough screens + 4 annotation files + 4 sketch editor files. ALL core business wired. ALL 18 field tools wired. D2 Insurance: 3 screens. D5f Properties: 10 screens. `dart analyze` passes 0 errors. |
 | **Web CRM (Next.js)** | **107 routes built.** 70+ hook files + 22 Z Console files. Auth+middleware DONE. UI Polish DONE. **F-phase (S90):** 30+ new hooks + pages for phone, fax, meetings, async-videos, team-chat, inspection-engine, osha-standards, moisture-readings, drying-logs, site-surveys, sketch-bid, fleet, payroll, hr, email, documents (rewired), vendors (rewired), purchase-orders (rewired), marketplace, hiring, zdocs. All wired to Supabase via real-time hooks. Sidebar: collapsible groups, 8 sections, ZDocs in OFFICE. **S93 CRM button fix:** 24 dead buttons across bids/invoices/reports/sketch-bid pages wired to existing hook functions. Sketch-bid page rewritten with working modals + company_id fix. `npm run build` passes (107 routes, 0 errors). |
 | **Client Portal (Next.js)** | **38 routes. 18+ hooks.** Magic link auth. **F7 (S90):** ZAFTO Home platform — use-home hook + my-home/equipment/service-history/maintenance pages. **F1 (S90):** SMS messaging page. **F3 (S90):** Meetings + booking pages. **F-expansion (S90):** Documents, Get Quotes, Find a Pro pages. `npm run build` passes (38 routes, 0 errors). `client.zafto.cloud`. |
-| **Employee Field Portal (Next.js)** | **36 routes. 21+ hooks. PWA-ready.** `team.zafto.app`. **F1 (S90):** Phone page. **F3 (S90):** Meetings page. **F5 (S90):** Pay stubs, my vehicle, training, my documents pages + MY STUFF sidebar section. `npm run build` passes (36 routes, 0 errors). |
+| **Employee Field Portal (Next.js)** | **36 routes. 21+ hooks. PWA-ready.** `team.zafto.cloud`. **F1 (S90):** Phone page. **F3 (S90):** Meetings page. **F5 (S90):** Pay stubs, my vehicle, training, my documents pages + MY STUFF sidebar section. `npm run build` passes (36 routes, 0 errors). |
 | **Ops Portal (Next.js)** | **24 dashboard routes. `npm run build` passes (0 errors).** `ops.zafto.cloud`. Deep navy/teal theme. super_admin role gate. **F1/F3 (S90):** Phone analytics + meeting analytics pages. **F5-F9 (S90):** Payroll/fleet/hiring/email/marketplace analytics pages + PLATFORM sidebar section. |
 | **Field Tools** | **19 total. ALL wired.** 14 original (B2a-d) + 2 new (B3a: Materials+DailyLog) + 3 new (B3b: PunchList+ChangeOrders+JobCompletion). 0 remaining. |
 | **Database** | Supabase (PostgreSQL). 2 projects (dev + prod). **~169 tables** across 48 migration files. Phases A-D: 102 tables. F-phase: +67 tables (F1 phone 9, F3 meetings 5, F4 field toolkit 10, F5 lead/CPA/payroll/fleet/procurement/HR/email/docs 25, F6 marketplace 5, F7 ZAFTO Home 5, F9 hiring 3, F10 ZDocs 3). RLS + audit on all. Supabase CLI linked to dev. Seed data: 55 COA accounts, 26 tax categories, 77 Xactimate codes, 14 walkthrough templates, 86 estimate categories, 216 items, 5,616 pricing rows. |
@@ -135,7 +135,7 @@
 | `00_HANDOFF.md` | COMPLETE — updated every session |
 | `01_MASTER_BUILD_PLAN.md` | COMPLETE (Session 35) |
 | `02_CIRCUIT_BLUEPRINT.md` | COMPLETE — updated S91 (Codemagic CI/CD, Dependabot) |
-| `03_LIVE_STATUS.md` | COMPLETE (this file — updated S93) |
+| `03_LIVE_STATUS.md` | COMPLETE (this file — updated S95) |
 | `04_EXPANSION_SPECS.md` | COMPLETE (Session 36 — all 14 specs consolidated) |
 | `05_EXECUTION_PLAYBOOK.md` | COMPLETE (Session 37 — session protocol, methodology, quality gates) |
 | `06_ARCHITECTURE_PATTERNS.md` | COMPLETE (Session 37 — 14 code patterns with full examples) |

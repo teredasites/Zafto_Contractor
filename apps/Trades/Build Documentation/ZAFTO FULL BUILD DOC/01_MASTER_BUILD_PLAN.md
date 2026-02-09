@@ -58,14 +58,14 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 
 **URLs:**
 - `zafto.app` — Marketing landing page
-- `team.zafto.app` — Employee Field Portal (techs, apprentices, field crews)
+- `team.zafto.cloud` — Employee Field Portal (techs, apprentices, field crews)
 - `zafto.cloud` — Contractor CRM (owner, admin, office manager)
 - `client.zafto.cloud` — Client/Homeowner Portal
 - `ops.zafto.cloud` — Founder OS (internal, super_admin)
 
 ---
 
-## CURRENT STATE (February 9, 2026 — Session 93)
+## CURRENT STATE (February 9, 2026 — Session 95)
 
 | What | Built | Wired | End-to-End |
 |------|:-----:|:-----:|:----------:|
