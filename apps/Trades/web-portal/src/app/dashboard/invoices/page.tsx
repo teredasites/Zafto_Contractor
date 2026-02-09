@@ -30,7 +30,7 @@ export default function InvoicesPage() {
   const router = useRouter();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
-  const { invoices, loading: invoicesLoading } = useInvoices();
+  const { invoices, loading: invoicesLoading, sendInvoice, recordPayment, deleteInvoice } = useInvoices();
   const { stats: dashStats } = useStats();
   const stats = dashStats.invoices;
 
@@ -197,6 +197,15 @@ export default function InvoicesPage() {
                       key={invoice.id}
                       invoice={invoice}
                       onClick={() => router.push(`/dashboard/invoices/${invoice.id}`)}
+                      onSendReminder={async () => { await sendInvoice(invoice.id); }}
+                      onRecordPayment={async () => {
+                        const amtStr = prompt(`Record payment for ${invoice.invoiceNumber}\nAmount due: $${invoice.amountDue}\n\nEnter payment amount:`);
+                        if (!amtStr) return;
+                        const amt = parseFloat(amtStr);
+                        if (isNaN(amt) || amt <= 0) { alert('Invalid amount'); return; }
+                        await recordPayment(invoice.id, amt, 'manual');
+                      }}
+                      onDelete={async () => { if (confirm('Delete this invoice?')) await deleteInvoice(invoice.id); }}
                     />
                   ))}
                 </tbody>
@@ -209,7 +218,7 @@ export default function InvoicesPage() {
   );
 }
 
-function InvoiceRow({ invoice, onClick }: { invoice: Invoice; onClick: () => void }) {
+function InvoiceRow({ invoice, onClick, onSendReminder, onRecordPayment, onDelete }: { invoice: Invoice; onClick: () => void; onSendReminder: () => Promise<void>; onRecordPayment: () => Promise<void>; onDelete: () => Promise<void> }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const isOverdue = invoice.status === 'overdue';
 
@@ -261,15 +270,15 @@ function InvoiceRow({ invoice, onClick }: { invoice: Invoice; onClick: () => voi
           </button>
           {menuOpen && (
             <div className="absolute right-0 top-full mt-1 w-48 bg-surface border border-main rounded-lg shadow-lg py-1 z-10">
-              <button className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
+              <button onClick={async (e) => { e.stopPropagation(); setMenuOpen(false); await onSendReminder(); }} className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
                 <Mail size={16} />
                 Send Reminder
               </button>
-              <button className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
+              <button onClick={async (e) => { e.stopPropagation(); setMenuOpen(false); await onRecordPayment(); }} className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
                 <CreditCard size={16} />
                 Record Payment
               </button>
-              <button className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
+              <button onClick={(e) => { e.stopPropagation(); setMenuOpen(false); alert('PDF export coming in Phase G'); }} className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
                 <Download size={16} />
                 Download PDF
               </button>

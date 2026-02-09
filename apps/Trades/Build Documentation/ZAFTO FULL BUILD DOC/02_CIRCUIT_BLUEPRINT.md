@@ -1,6 +1,6 @@
 # ZAFTO CIRCUIT BLUEPRINT
 ## Living Wiring Diagram — What Connects, What Doesn't, What's Missing
-### Last Updated: February 8, 2026 (Session 90 — Phase F ALL CODE COMPLETE. ~173 tables. 48 migrations. 53 Edge Functions. 5 apps all build clean.)
+### Last Updated: February 9, 2026 (Session 93 — Phase T (TPA) + Phase P (ZScan) spec'd. No code changes since S91.)
 
 ---
 
@@ -171,7 +171,7 @@ DEFERRED -- Specified but intentionally postponed
 | ai_service.dart | LIVE Supabase | **DONE (E3c S80)** -- AiService (Edge Function client) + AiChatNotifier (chat state) + providers. Calls z-intelligence, ai-troubleshoot, ai-photo-diagnose Edge Functions. |
 | walkthrough_service.dart | LIVE Supabase | **DONE (E6b S79)** -- Walkthrough CRUD + rooms + photos. 7 Riverpod providers. |
 | estimate_engine_service.dart | LIVE Supabase | **DONE (D8c S86)** -- Full estimate CRUD, area management, line item operations, auto-numbering, totals recalc. 5 screens: list, builder, room editor, line item picker, preview. |
-| firestore_service.dart | Firebase | Content layer -- being removed |
+| firestore_service.dart | Firebase | Content layer -- being removed. 13 files still import cloud_firestore (Phase G cleanup). |
 | location_tracking_service.dart | Local | **4 compile errors -- missing battery_plus package.** |
 
 **Repositories:** auth, customer, job, invoice, bid, time_entry, photo, compliance, receipt, signature, mileage, voice_note, insurance_claim, claim_supplement, moisture_reading, drying_log, restoration_equipment, tpi_inspection, certification, zbooks_account, zbooks_journal, zbooks_expense, property, tenant, lease, rent, pm_maintenance, inspection, asset, walkthrough, estimate, estimate_engine (32 total)
@@ -618,6 +618,8 @@ Tech opens app -> Taps "Field Tools"
 - [x] C3: Ops Portal Phase 1 (16 pages, 6 tables) -- **DONE S59**
 - [ ] C4: Security hardening -- PENDING
 - [x] C5: Incident Response Plan -- **DONE S59**
+- [x] Codemagic CI/CD -- **PARTIAL (S91)** -- Android debug build PASSING (95 MB .aab). iOS compiles but needs code signing (Apple Developer API key in Codemagic). Bundle ID: app.zafto.mobile. Kotlin 2.2.0, sentry_flutter 9.x. No codemagic.yaml (UI workflow). Android release keystore NOT created.
+- [x] Dependabot -- **DONE (S91)** -- 0 vulnerabilities. protobufjs override >=7.2.5, firebase-admin 12.x.
 
 ### Phase D: Revenue Engine -- COMPLETE
 - [x] D1: Job Type System -- **DONE S62** (3 types across all 5 apps)
@@ -637,7 +639,16 @@ Tech opens app -> Taps "Field Tools"
 - [x] D7a: Certifications Modular -- **DONE S67-68** (certification_types + certification_audit_log — 2 tables, 43 total. 25 seeded system types. Configurable per company. Immutable audit trail. All 3 surfaces use dynamic DB types with enum fallback.)
 - [x] D2f: Certificate of Completion -- **DONE S68** (Flutter: job_completion_screen.dart enhanced — detects insurance_claim jobs, adds 4 extra checks: moisture at target, equipment removed, drying complete, TPI final passed. Auto-transitions claim to work_complete. Web CRM: 7th "Completion" tab on claim detail with pre-flight checklist + status transition buttons.)
 
-### Phase E: AI Layer -- PAUSED (S80 owner directive — AI goes TRULY LAST, after F+G)
+### Phase T: TPA Module -- SPEC'D (S92)
+- [ ] T1-T10: 17 tables, 3 Edge Functions, ~80 hours. Builds after Phase G.
+- Spec: `Expansion/39_TPA_MODULE_SPEC.md`
+
+### Phase P: ZScan/Property Intelligence -- SPEC'D (S93)
+- [ ] P1-P8: 8 tables, 4 Edge Functions, ~68 hours. Builds after Phase T.
+- Spec: `Expansion/40_PROPERTY_INTELLIGENCE_SPEC.md`
+- API keys needed: GOOGLE_SOLAR_API_KEY, ATTOM_API_KEY, REGRID_API_KEY
+
+### Phase E: AI Layer -- PAUSED (S80 owner directive — AI goes TRULY LAST, after F+G+T+P)
 - [x] E1: Universal AI Architecture -- **DONE (S78)** -- z_threads + z_messages tables, z-intelligence Edge Function (14 tools), Supabase AI API client.
 - [x] E2: Z Console Wiring -- **DONE (S78)** -- Web CRM Z Console connected to z-intelligence Edge Function. 2 hooks (use-z-intelligence.ts, use-z-api.ts). Provider updated.
 - [x] E3a: AI Troubleshooting Edge Functions -- **DONE (S80)** -- 4 functions (ai-troubleshoot, ai-photo-diagnose, ai-parts-identify, ai-repair-guide). 1,311 lines. All deployed.
@@ -661,7 +672,7 @@ Tech opens app -> Taps "Field Tools"
 - [ ] F2: Website Builder V2 -- NOT BUILT -- After AI. Cloudflare Registrar, templates, AI content.
 - [ ] F8: Ops Portal Phases 2-4 -- NOT BUILT -- After AI. Marketing, treasury, legal, dev terminal.
 
-### Phase G: QA & Hardening -- NEXT
+### Phase G: QA & Hardening -- NEXT (then T → P → E)
 - [x] G1a: Consolidated Build Verification -- All 5 apps build clean (S90).
 - [ ] G1b-e: Dead code cleanup, route verification, DB wiring audit, EF audit.
 - [ ] G2: Security audit (RLS, auth, input validation).

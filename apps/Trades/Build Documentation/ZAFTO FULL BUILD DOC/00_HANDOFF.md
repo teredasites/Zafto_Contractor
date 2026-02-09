@@ -1,6 +1,6 @@
 # ZAFTO SESSION HANDOFF
 ## THE ONLY DOC YOU READ FIRST — EVERY SESSION
-### Last Updated: February 8, 2026 (Session 90)
+### Last Updated: February 9, 2026 (Session 94)
 
 ---
 
@@ -18,20 +18,20 @@
 
 | Field | Value |
 |-------|-------|
-| **Sprint** | **PHASE F COMPLETE (code).** F1-F10 ALL DONE. FM manual steps remain. Phase G (QA) is NEXT. |
-| **Sub-step** | Phase F finished. All portals built and verified. Next: Phase G (QA/Hardening). |
-| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → Phase G. All F1-F10 code items checked. |
-| **Status** | Phases A-D + F ALL DONE. R1 DONE. FM code done. Phase E PAUSED. ~173 tables. 48 migration files. 53 Edge Functions. **107 CRM pages. 33 team pages. 36 client pages. 26 ops pages.** |
-| **Last Completed** | S90: Phase F COMPLETE. F10 ZDocs + all portal expansion pages. All 4 portals build clean. |
-| **Session Count** | 90 |
-| **Tables** | ~169 |
-| **Migration Files** | 48 |
+| **Sprint** | **PHASE F COMPLETE (code).** F1-F10 ALL DONE. FM manual steps remain. Phase G (QA) is NEXT. **Phase T (TPA Module) + Phase P (ZScan) + Phase SK (Sketch Engine) ALL SPEC'D — build after G.** |
+| **Sub-step** | Phase F finished. Codemagic CI/CD set up. TPA Module spec'd (S92). ZScan spec'd (S93). Sketch Engine spec'd (S94). Home warranty module researched (S93). Next: Phase G (QA/Hardening) → Phase T (TPA) → Phase P (ZScan) → Phase SK (Sketch Engine) → Phase E (AI). |
+| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → Phase G (next unchecked: G1b). Phase T added (10 sprints, ~80 hours). Phase P added (8 sprints, ~68 hours). Phase SK added (11 sprints, ~176 hours). |
+| **Status** | Phases A-D + F ALL DONE. R1 DONE. FM code done. Phase E PAUSED. ~169 tables. 48 migration files. 53 Edge Functions. **107 CRM pages. 33 team pages. 36 client pages. 26 ops pages.** Codemagic Android debug build PASSING. **Phase T (TPA Module) spec complete — 17 tables, 3 EFs, 10 sprints. Phase P (ZScan) spec complete — 8 tables, 4 EFs, 8 sprints. Phase SK (Sketch Engine) spec complete — 3 tables, 11 sprints, ~176 hours.** |
+| **Last Completed** | S94: CAD-grade Sketch Engine spec'd — Expansion/46_SKETCH_ENGINE_SPEC.md created, SK1-SK11 sprint specs added, all docs updated. S93: CRM dead button audit + fix (24 buttons across 4 pages). Sketch-bid page fully rewritten (working modals, company_id fix). ZScan deep research + expansion spec + sprint specs. Home warranty module deep research + legal assessment. Contractor verticals research (9 trades). S92: TPA Module deep research + legal assessment + expansion spec + sprint specs. |
+| **Session Count** | 94 |
+| **Tables** | ~169 (Phase T will add ~17, Phase P will add ~8, Phase SK will add ~3) |
+| **Migration Files** | 48 (Phase T will add ~8, Phase P will add ~4, Phase SK will add ~1) |
 
 ## CRITICAL: AI GOES LAST — BUILD ORDER CORRECTED (S80)
 
 **Owner directive (S80):** Phase E (AI Layer) was started prematurely. AI must be built AFTER every platform feature exists (Phase F) and is debugged (Phase G). AI needs to know every feature like the back of its hand — every table, every screen, every workflow — so it can do literally anything a user asks within the program. Deep AI spec session required before resuming Phase E.
 
-**Correct build order: A(DONE) → B(DONE) → C(DONE) → D(DONE — including D8 Estimate Engine) → R1(DONE) → FM(CODE DONE, manual pending) → F(ALL CODE COMPLETE) → G(NEXT) → E(LAST)**
+**Correct build order: A(DONE) → B(DONE) → C(DONE) → D(DONE — including D8 Estimate Engine) → R1(DONE) → FM(CODE DONE, manual pending) → F(ALL CODE COMPLETE) → G(NEXT) → T(TPA MODULE, SPEC'D) → P(ZSCAN, SPEC'D) → SK(SKETCH ENGINE, SPEC'D) → E(LAST). F2 (Website Builder) DEFERRED TO POST-LAUNCH (S94 owner directive). F8 (Ops Portal 2-4) also post-launch.**
 
 **Phase E premature work (committed, dormant in codebase):**
 - E1-E2: z-intelligence EF (14 tools), Z Console wired, z_threads/z_messages tables (S78)
@@ -59,9 +59,14 @@
 
 | Gap | Status | Sprint | Details |
 |-----|--------|--------|---------|
-| **Phase E AI (PAUSED)** | **DORMANT** | E | Code committed S78-S80. NOT to be resumed until after F+G. Deep spec session required. |
+| **Phase E AI (PAUSED)** | **DORMANT** | E | Code committed S78-S80. NOT to be resumed until after F+G+T+P. Deep spec session required. |
+| **Phase T: TPA Module** | **SPEC'D** | T | Full spec in `Expansion/39_TPA_MODULE_SPEC.md`. ~17 tables, 3 EFs, ~80 hours. Legal assessment in `memory/tpa-legal-assessment.md`. Builds after Phase G. |
+| **Phase P: ZScan/Property Intelligence** | **SPEC'D** | P | Full spec in `Expansion/40_PROPERTY_INTELLIGENCE_SPEC.md`. ~8 tables, 4 EFs, ~68 hours. API research in `memory/property-intelligence-research.md`. Builds after Phase T. |
+| **Phase SK: Sketch Engine** | **SPEC'D** | SK | Full spec in `Expansion/46_SKETCH_ENGINE_SPEC.md`. ~3 tables, ~176 hours, 11 sprints (SK1-SK11). LiDAR scan (Apple RoomPlan), trade layers (electrical/plumbing/HVAC/damage), Konva.js web editor, auto-estimate pipeline, export (PDF/PNG/DXF/FML), 3D visualization (three.js). Builds after Phase P. |
+| **Home Warranty Module** | **RESEARCHED** | — | Deep workflow research in `memory/home-warranty-contractor-workflow.md`. Legal assessment in `memory/home-warranty-legal-assessment.md`. Expansion spec + sprint specs NOT yet written. |
+| **CRM Dead Buttons** | **FIXED (S93)** | — | 24 dead buttons across bids, invoices, reports, sketch-bid pages. All wired to existing hook functions. Sketch-bid missing company_id on INSERT fixed. Build passes. |
 | F1: Phone System | **DONE** | F1 | 9 tables, 5 EFs, CRM+team+client+ops pages built. Manual deploy pending. |
-| F2: Website Builder V2 | NOT BUILT | F2 | After AI. Cloudflare Registrar, templates, AI content. |
+| F2: Website Builder V2 | **DEFERRED POST-LAUNCH** | F2 | Owner directive S94: scrapped from pre-launch scope. Too much maintenance overhead for solo dev. Revisit post-launch with real contractor feedback + AI layer done. |
 | F3: Meeting Room System | **DONE** | F3 | 5 tables, 4 EFs, CRM+team+client+ops pages built. Manual deploy pending. |
 | F4: Mobile Field Toolkit | **DONE** | F4 | 10 tables, 3 EFs, CRM pages. Flutter mobile deferred. |
 | F5: Business OS Expansion | **DONE** | F5 | 8 migrations (25+ tables), 3 EFs, 8 CRM hooks+pages. CPA portal + route optimization deferred. |
@@ -71,6 +76,7 @@
 | F9: Hiring System | **DONE** | F9 | 3 tables, CRM hook+page. Checkr/E-Verify API deferred. |
 | F10: ZDocs + ZSheets | **DONE** | F10 | 3 tables, 1 EF, CRM hook+page, all portal expansion pages. |
 | FM: Firebase Migration | **CODE DONE** | FM | Manual steps: retrieve Firebase secrets, deploy, update webhook URLs. |
+| Codemagic CI/CD | **PARTIAL** | S91 | Android debug build PASSING. iOS needs Apple code signing in Codemagic. No `codemagic.yaml` — using UI workflow. Android release keystore not created. |
 | C4: Security Hardening | PENDING | C4 | Email migration, passwords, YubiKeys. Pre-launch. |
 | PowerSync Offline | NOT STARTED | — | SQLite <-> PostgreSQL offline sync. Phase G. |
 | D6: company_documents table | NOT BUILT | D6a | Table + UI deferred. |
@@ -124,6 +130,137 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 ---
 
 ## SESSION LOG (History — do NOT use for execution decisions, use CURRENT EXECUTION POINT above)
+
+### Session 94 (Feb 9) — CAD-Grade Sketch Engine Spec
+
+**S94: CAD-Grade Sketch Engine (SPEC COMPLETE):**
+- Owner identified critical gap: existing sketch editor functional (1,329 lines, wall drawing, 7 door types, 25 fixtures) but doesn't replace professional sketch tools. No wall editing after draw, no trade layers, no LiDAR, no export, no auto-estimate, web CRM has zero canvas.
+- Competitive research: magicplan, Xactimate Sketch, HOVER, ArcSite — none do the full pipeline (LiDAR scan → floor plan → multi-trade overlays → auto-estimate → export → job management → invoice) in one platform with mobile-to-web sync.
+- Identified two disconnected table systems: `property_floor_plans` (geometric, E6a) + `bid_sketches`/`sketch_rooms` (business, F4f). D8 estimate engine has zero connection to either. Unified around property_floor_plans as single source of truth.
+- Architecture decisions: Apple RoomPlan (Swift platform channel) for LiDAR, Konva.js (not tldraw/fabric.js) for web canvas, three.js for 3D visualization, FloorPlanDataV2 JSONB schema with V1 backward compat.
+- Trade layer system: Electrical (15 symbols), Plumbing (12), HVAC (10), Damage (4 tools with IICRC classification). All toggleable overlays with visibility/lock/opacity.
+- Auto-estimate pipeline: geometry → room measurements (shoelace formula) → estimate_areas → line item suggestions based on room type + trade → D8 pricing engine.
+- Export: PDF (title block + plan + room schedule + legend), PNG (hi-res), DXF (AutoCAD interop), FML (open format for Symbility/Cotality). ESX export deferred pending legal.
+- Created `Expansion/46_SKETCH_ENGINE_SPEC.md`: ~3 new tables, ~46 new files (21 Flutter, 25 web), 1 migration.
+- Sprint specs SK1-SK11 (~176 hours) written to `07_SPRINT_SPECS.md`.
+- Build order updated: G → T → P → SK → E → F2 → F8.
+- All docs updated: 00_HANDOFF.md, 01_MASTER_BUILD_PLAN.md, 03_LIVE_STATUS.md, 07_SPRINT_SPECS.md.
+
+---
+
+### Session 93 (Feb 9) — ZScan Property Intelligence Spec + Home Warranty Research + Contractor Verticals
+
+**S93: ZScan / Property Intelligence Engine (SPEC COMPLETE):**
+- Owner requested "EagleView but better" — satellite-powered property measurement tool.
+- Deep API research: Google Solar API ($0.01/call Building Insights, $0.075 Data Layers), ATTOM Property API, Regrid (149M parcels), Microsoft Building Footprints (1.4B free), USGS 3DEP (free LIDAR), Nearmap (post-traction Tier 2), HOVER API ($25/job with ESX export), Estated API.
+- Created `Expansion/40_PROPERTY_INTELLIGENCE_SPEC.md` (~952 lines): 8 new tables, 4 Edge Functions, 10 trade-specific measurement pipelines (roofing, siding, gutters, solar, painting, landscaping, fencing, concrete, HVAC, electrical).
+- Competitive matrix vs EagleView ($18-91/report), Roofr ($13-39), HOVER ($25/job) — ZScan = $0 included.
+- Waste factor engine, material ordering pipeline (Unwrangle + ABC Supply), on-site verification workflow.
+- Phase P sprint specs (P1-P8, ~68 hours) written to `07_SPRINT_SPECS.md`.
+- API research saved to `memory/property-intelligence-research.md`.
+- Build order updated: G → T → P → E → F2 → F8.
+
+**S93: Home Warranty Module Deep Research (RESEARCH COMPLETE, SPEC PENDING):**
+- Owner-initiated expansion research: home warranty contractor management module.
+- Deep workflow research: 9-step dispatch-to-payment lifecycle for all 7 major warranty companies (AHS, Choice, Cinch, First American, 2-10, ORHP, Fidelity). Saved to `memory/home-warranty-contractor-workflow.md` (783 lines).
+- Legal risk assessment: LOW risk (no Xactimate equivalent, no proprietary format risk, contractor's own data). Antitrust warning (RealPage/Optimal Blue precedent — NEVER aggregate cross-contractor data). Saved to `memory/home-warranty-legal-assessment.md`.
+- Architecture overlap with TPA module: ~90% (same portal aggregation, payment tracking, scoring mechanics).
+- **Expansion spec NOT yet written.** Sprint specs NOT yet added to `07_SPRINT_SPECS.md`.
+
+**S93: Contractor Verticals Deep Research (COMPLETE):**
+- Researched 9 contractor software verticals: home warranty, fire protection, HVAC, roofing, electrical, plumbing, general contractors (sub perspective), pest control, landscaping.
+- Key findings: portal fatigue universal across all trades, ServiceTitan is common enemy ($250-400/tech/mo), 80% of pest control has ZERO software, home warranty module is highest-ROI expansion.
+- Opportunity matrix saved to `memory/contractor-verticals-research.md`.
+- Architecture principle: Build portal aggregation engine ONCE (TPA module), then stamp out vertical-specific adapters.
+
+**S93: CRM Dead Button Audit + Fix (COMPLETE):**
+- Owner reported: "New Sketch" button does nothing, many CRM pages have dead buttons and silent failures.
+- **Root cause found:** `use-sketch-bid.ts` hook's `createSketch()` and `addRoom()` both missing `company_id` on INSERT — required NOT NULL column with no default. Insert fails silently (caught error but no UI feedback).
+- **Root cause 2:** Floor level values in UI (`'2nd'`, `'3rd'`) didn't match DB CHECK constraint (`'upper'`, `'exterior'`). Fixed to match.
+- **Sketch + Bid page fully rewritten:** Working New Sketch modal → creates sketch → auto-opens detail view. Working Add Room modal with room type (10 options), floor level, L×W×H dimensions, live sqft calculation. Status flow buttons (Draft→In Progress→Completed). Summary bar (rooms, sqft, damaged, estimated). Error display in both modals.
+- **Full CRM button audit — 24 dead buttons found, all fixed:**
+  - `bids/page.tsx`: 7 dead buttons → wired batch Send All, Export CSV, Delete. Dropdown View, Send, Delete wired. PDF = Phase G alert.
+  - `bids/[id]/page.tsx`: 7 dead buttons → wired Send to Customer (`sendBid`), Convert to Job (`convertToJob` → navigates to new job), Duplicate, Client Portal Link (clipboard copy), Delete. Request Deposit + PDF = Phase G alert.
+  - `invoices/page.tsx`: 3 dead buttons → wired Send Reminder (`sendInvoice`), Record Payment (prompt for amount → `recordPayment`), PDF = Phase G alert.
+  - `reports/page.tsx`: 1 dead button → wired Export CSV (monthly revenue data).
+- **All hooks already had the mutation functions** (`sendBid`, `deleteBid`, `convertToJob`, `sendInvoice`, `recordPayment`, `deleteInvoice`) — they just were never called from the UI pages.
+- Build verified: `npm run build` PASSES (92/92 pages, 0 type errors).
+
+---
+
+### Session 92 (Feb 9) — TPA Module Deep Research + Spec + Legal Assessment
+
+**S92: TPA (Third Party Administrator) Deep Research (COMPLETE):**
+- Owner-initiated research into TPA managed repair networks (Contractor Connection, Accuserve, Sedgwick, Alacrity, OnCORE, Westhill, etc.).
+- 6 parallel research agents: TPA landscape, contractor pain points, software gaps, IICRC standards, Xactimate codes/workflows, legal risks.
+- Key findings: contractors pay $1,500-5,000+/month for 8-15 separate tools. Pain points: referral fees (5-20%), payment delays (80% wait 30+ days), 1-2 hours/job on documentation, 8-15 separate logins.
+- Identified 7 features with ZERO competition: multi-TPA command center, per-TPA profitability analytics, documentation completeness validation, scorecard tracking, AI supplement intelligence, equipment-to-billing automation, AI estimate writing.
+- Saved to `memory/tpa-research.md` (comprehensive industry landscape).
+
+**S92: TPA Industry Standards Research (COMPLETE):**
+- IICRC S500 (Water): Categories 1-3, Classes 1-4, equipment placement formulas (dehu PPD, air movers per LF/SF, scrubber ACH), drying goals, psychrometric monitoring.
+- IICRC S520 (Mold): Conditions 1-3, containment levels, negative air.
+- IICRC S700 (Fire/Smoke): Restoration Work Plan requirements.
+- Xactimate structure: category codes (WTR, DRY, CLN), line item fields, ESX file format, XactAnalysis workflow, O&P standards.
+- TPA job lifecycle: 10-step workflow from assignment receive through payment closeout.
+- Saved to `memory/tpa-industry-standards.md` (comprehensive reference).
+
+**S92: TPA Legal Assessment (COMPLETE):**
+- 2 legal research agents: format legality (ESX/FML), module legal risks (trademarks, scraping, IICRC, UPPA, antitrust).
+- 6 critical rules established: never install Xactimate on dev machines, never scrape TPA portals, never copy Xactimate pricing, never aggregate cross-contractor fees (RealPage antitrust), frame as "contractor scope of work" not "insurance claim estimate" (UPPA felony in FL), IP attorney before shipping ESX export.
+- FML confirmed as OPEN FORMAT (Floorplanner) — safe to generate.
+- ESX import (reading) = LOW risk. ESX export needs Verisk partnership or IP attorney.
+- Trademark usage OK with nominative fair use disclaimer.
+- IICRC formulas OK — publicly available calculation sheets.
+- Saved to `memory/tpa-legal-assessment.md` (complete risk matrix with pre-launch legal checklist).
+
+**S92: TPA Module Expansion Spec (COMPLETE):**
+- Created `Expansion/39_TPA_MODULE_SPEC.md`: ~15 new database tables, 3 Edge Functions, ~10 CRM pages, ~5 mobile screens, ~3 team portal pages, ~1 ops portal page, ~10 hooks.
+- Architecture: company-level feature flag (`features.tpa_enabled`), contextual integration into existing screens, not a separate app.
+- Full water mitigation workflow matching real industry TPA job lifecycle (10 steps).
+- IICRC S500 equipment calculator formulas built in.
+- ZAFTO's own line item codes with Xactimate mapping table for export interop.
+- Legal disclaimers specified for all third-party references.
+- 10-sprint build plan (T1-T10, ~80 hours total).
+
+**S92: Sprint Specs Updated:**
+- Phase T (TPA Module) added to `07_SPRINT_SPECS.md` between Phase G and Phase E rebuild.
+- 10 sprints with full checkbox checklists (T1-T10).
+- Build order updated: G → T → E → F2 → F8 → LAUNCH.
+
+---
+
+### Session 91 (Feb 9) — Codemagic CI/CD + Dependabot Fixes
+
+**S91: Codemagic CI/CD Setup (Android PASSING, iOS needs code signing):**
+- Set up Codemagic CI/CD for Flutter builds (iOS + Android from cloud Mac Mini M2).
+- Fixed 5 build failures across iterations:
+  1. `env_dev.dart` gitignored → replaced with inline `String.fromEnvironment()` defaults in main.dart
+  2. `DefaultFirebaseOptions` undefined → removed all Firebase imports from main.dart
+  3. `FirebaseCrashlytics` → replaced with Sentry in error_service.dart
+  4. `record_linux` 0.7.2 incompatible → upgraded record 5.x to 6.2.0
+  5. Kotlin version mismatch (Codemagic has kotlin-stdlib 2.2.0) → set Kotlin 2.2.0 + sentry_flutter 9.x
+- Firebase package cleanup: removed firebase_crashlytics, firebase_analytics, firebase_auth, firebase_storage from pubspec.yaml. Kept firebase_core/cloud_firestore/cloud_functions (13 files still import Firestore — Phase G cleanup).
+- Bundle ID set to `app.zafto.mobile` across iOS + Android.
+- Android `android/` directory recreated (was missing entirely).
+- iOS Podfile committed with minimum deployment target 15.0 (cloud_firestore 6.x requires it).
+- **Android debug build: PASSING** (95.53 MB .aab artifact on Codemagic).
+- **iOS: Compiles but fails on code signing** — needs Apple Developer API key in Codemagic Distribution settings.
+- `flutter analyze`: 0 errors (2,755 warnings/infos — all non-blocking).
+
+**S91: Dependabot Vulnerability Fixes (0 vulnerabilities):**
+- Both alerts were in legacy Firebase backend (`apps/Trades/backend/functions/`).
+- `protobufjs`: added npm override to >=7.2.5 (fixes critical prototype pollution via nested google-gax dep).
+- `fast-xml-parser`: upgraded firebase-admin 11.x → 12.x (pulls @google-cloud/storage with fast-xml-parser 5.x, fixes high severity RangeError DoS).
+- `npm audit`: 0 vulnerabilities confirmed.
+- All 4 portals + Flutter + Supabase edge functions were NOT affected (clean).
+
+**S91: Commits:**
+- `ee32404` — Codemagic build fix (Kotlin 2.2.0 + sentry 9.x + Firebase cleanup)
+- `e2e17a2` — Dependabot vulnerability fixes
+- `959a41f` — iOS Podfile with deployment target 15.0
+
+---
 
 ### Session 90 (Feb 8) — PHASE F COMPLETE + Portal Expansion
 

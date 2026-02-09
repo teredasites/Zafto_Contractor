@@ -155,9 +155,16 @@ export function useSketchBid() {
 
   const createSketch = async (sketch: { title: string; jobId?: string; estimateId?: string; address?: string; description?: string }) => {
     const supabase = getSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+    const companyId = user.app_metadata?.company_id;
+    if (!companyId) throw new Error('No company associated with your account');
+
     const { data, error: insertError } = await supabase
       .from('bid_sketches')
       .insert({
+        company_id: companyId,
+        created_by_user_id: user.id,
         title: sketch.title,
         job_id: sketch.jobId || null,
         estimate_id: sketch.estimateId || null,
@@ -173,10 +180,16 @@ export function useSketchBid() {
 
   const addRoom = async (sketchId: string, room: { roomName: string; roomType: string; floorLevel?: string; lengthFt?: number; widthFt?: number; heightFt?: number }) => {
     const supabase = getSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+    const companyId = user.app_metadata?.company_id;
+    if (!companyId) throw new Error('No company associated with your account');
+
     const sqft = room.lengthFt && room.widthFt ? room.lengthFt * room.widthFt : null;
     const { error: insertError } = await supabase
       .from('sketch_rooms')
       .insert({
+        company_id: companyId,
         sketch_id: sketchId,
         room_name: room.roomName,
         room_type: room.roomType,

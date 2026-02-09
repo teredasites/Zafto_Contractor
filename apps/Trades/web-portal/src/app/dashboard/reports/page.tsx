@@ -88,7 +88,15 @@ export default function ReportsPage() {
             </select>
             <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted pointer-events-none" />
           </div>
-          <Button variant="secondary">
+          <Button variant="secondary" onClick={() => {
+            if (!data) return;
+            const rows = data.monthlyRevenue.map(m => `${m.date},${m.revenue},${m.expenses},${m.profit}`);
+            const csv = 'Month,Revenue,Expenses,Profit\n' + rows.join('\n');
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = `report-${activeReport}-${dateRange}.csv`; a.click();
+            URL.revokeObjectURL(url);
+          }}>
             <Download size={16} />
             Export
           </Button>

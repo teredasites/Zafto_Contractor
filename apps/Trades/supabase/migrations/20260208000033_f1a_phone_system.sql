@@ -325,12 +325,12 @@ CREATE POLICY "phone_faxes_update" ON phone_faxes FOR UPDATE
 -- ============================================================================
 CREATE TRIGGER set_phone_config_updated_at
   BEFORE UPDATE ON phone_config
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
 CREATE TRIGGER set_phone_lines_updated_at
   BEFORE UPDATE ON phone_lines
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
 CREATE TRIGGER set_phone_templates_updated_at
   BEFORE UPDATE ON phone_message_templates
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();

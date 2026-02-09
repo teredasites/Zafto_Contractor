@@ -224,16 +224,16 @@ CREATE POLICY "osha_standards_select" ON osha_standards FOR SELECT
 -- ============================================================================
 CREATE TRIGGER set_walkie_channels_updated_at
   BEFORE UPDATE ON walkie_talkie_channels
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
 CREATE TRIGGER set_inspection_templates_updated_at
   BEFORE UPDATE ON inspection_templates
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
 CREATE TRIGGER set_inspection_results_updated_at
   BEFORE UPDATE ON inspection_results
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
 CREATE TRIGGER set_osha_standards_updated_at
   BEFORE UPDATE ON osha_standards
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();

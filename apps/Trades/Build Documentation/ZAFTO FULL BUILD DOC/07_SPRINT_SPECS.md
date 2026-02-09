@@ -7736,7 +7736,9 @@ Include <content>{markdown}</content> for rendered display.
 - [x] Team Portal: `npm run build` — 0 errors, 34 routes
 - [x] Client Portal: `npm run build` — 0 errors, 38 routes
 - [x] Ops Portal: `npm run build` — 0 errors, 27 routes
-- [x] Flutter: `dart analyze` — 0 errors, 373 warnings (unused imports), 2381 info (deprecated withOpacity)
+- [x] Flutter: `dart analyze` — 0 errors, 2755 warnings/infos (deprecated withOpacity, unused imports)
+- [x] Codemagic CI/CD: Android debug build PASSING (S91) — 95.53 MB .aab artifact
+- [x] Dependabot: 0 vulnerabilities (S91) — protobufjs + fast-xml-parser fixed in legacy Firebase backend
 
 **G1b: Dead Code & Mock Data Cleanup**
 - [ ] Audit all hooks for remaining mock/fake data
@@ -7802,19 +7804,698 @@ Include <content>{markdown}</content> for rendered display.
 - [ ] Rate limiting on auth endpoints
 - [ ] Deploy pending migrations: `npx supabase db push`
 
+### Sprint G5: CI/CD & Release Readiness (S91 foundation)
+- [x] Codemagic account set up — Android debug build PASSING (S91)
+- [ ] iOS code signing — add Apple Developer API key to Codemagic Distribution
+- [ ] Android release keystore — generate, upload to Codemagic
+- [ ] Create `codemagic.yaml` for reproducible builds (currently using UI workflow)
+- [ ] Set `--dart-define` environment variables in Codemagic (SUPABASE_URL, SUPABASE_ANON_KEY, SENTRY_DSN)
+- [ ] Remove 13 remaining cloud_firestore imports (Phase G cleanup)
+- [ ] Remove firebase_core/cloud_firestore/cloud_functions from pubspec.yaml after cleanup
+- [ ] Google Play Developer account creation
+- [ ] TestFlight distribution setup (after iOS code signing)
+- [ ] Play Store internal testing track setup (after Android keystore)
+
 ---
 
-## PHASE E: AI LAYER — REBUILD (after Phase G)
-*Deep spec session with owner required before starting. AI must know every feature, every table, every screen.*
+## PHASE T: TPA PROGRAM MANAGEMENT MODULE (~80 hours)
+*Optional module for restoration/insurance contractors. Feature flag: company.features.tpa_enabled*
+*Full spec: `Expansion/39_TPA_MODULE_SPEC.md` | Legal: `memory/tpa-legal-assessment.md` | Research: `memory/tpa-research.md`*
+
+---
+
+### Sprint T1: TPA Foundation (~8 hours)
+**Goal:** Core TPA tables, feature flag, CRM settings page.
+
+**T1a: Database — Core TPA Tables**
+- [ ] Migration: `tpa_programs` table (company enrollment, SLA settings, referral fees, portal reference) + RLS
+- [ ] Migration: `tpa_assignments` table (dispatched jobs with full SLA tracking, status workflow, financials) + RLS
+- [ ] Migration: `tpa_scorecards` table (periodic score entries per TPA program) + RLS
+- [ ] Migration: `companies.features` JSONB column (`ALTER TABLE companies ADD COLUMN features jsonb DEFAULT '{}'`)
+- [ ] Add `tpa_assignment_id`, `tpa_program_id`, `is_tpa_job` columns to `jobs` table
+- [ ] Add `tpa_assignment_id`, `supplement_number` columns to `estimates` table
+- [ ] Deploy migration: `npx supabase db push`
+
+**T1b: CRM — TPA Settings + Feature Flag**
+- [ ] CRM hook: `use-tpa-programs.ts` (CRUD, real-time subscription)
+- [ ] CRM page: `/dashboard/settings/tpa-programs` — manage enrolled TPA programs
+- [ ] Feature flag logic: conditionally show "INSURANCE PROGRAMS" sidebar section when `features.tpa_enabled = true`
+- [ ] TPA program create/edit form: name, type, carrier names, referral fee, SLA settings, portal URL, contacts
+- [ ] `npm run build` passes
+
+---
+
+### Sprint T2: Assignment Tracking (~12 hours)
+**Goal:** TPA assignment lifecycle — create, track, SLA countdown.
+
+**T2a: Database — Supplements + Documentation Tables**
+- [ ] Migration: `tpa_supplements` table (supplement tracking with status workflow: draft → submitted → approved/denied) + RLS
+- [ ] Migration: `tpa_doc_requirements` table (configurable per-TPA documentation checklists) + RLS
+- [ ] Migration: `tpa_photo_compliance` table (photo-to-checklist linking, phase tagging) + RLS
+- [ ] Deploy migration
+
+**T2b: CRM — Assignment Management**
+- [ ] CRM hook: `use-tpa-assignments.ts` (CRUD, real-time, SLA deadline auto-calculation)
+- [ ] CRM page: `/dashboard/tpa/assignments` — table view with SLA status badges (green/yellow/red)
+- [ ] CRM page: `/dashboard/tpa/assignments/[id]` — detail view with timeline, milestones, documentation status
+- [ ] Assignment create form: manual entry (TPA program, assignment/claim/policy numbers, carrier, adjuster, policyholder, loss type/date, property address)
+- [ ] SLA auto-calculation: first_contact_deadline = assigned_at + sla_first_contact_minutes, etc.
+- [ ] Job integration: link assignment to existing job or auto-create job with type=insurance_claim
+- [ ] `npm run build` passes
+
+---
+
+### Sprint T3: Water Damage Assessment + Moisture (~12 hours)
+**Goal:** IICRC S500-compliant water damage classification, moisture mapping, psychrometric monitoring.
+
+**T3a: Database — Assessment + Monitoring Tables**
+- [ ] Migration: `water_damage_assessments` table (IICRC category 1-3, class 1-4, source, affected areas, pre-existing) + RLS
+- [ ] Migration: `moisture_readings` table (daily MC readings at mapped locations, reference standards, drying goals) + RLS
+- [ ] Migration: `psychrometric_logs` table (indoor/outdoor temp+RH, GPP, dew point, dehu inlet/outlet) + RLS
+- [ ] Migration: `contents_inventory` table (room-by-room item tracking: move/block/pack-out/dispose, condition, destination, pre-loss value, photo_ids, packed_by/at, returned_at — billable service, 10-30% of water mitigation invoices) + RLS
+- [ ] Deploy migration
+
+**T3b: Mobile — Water Damage + Moisture Screens**
+- [ ] Mobile: Water damage assessment screen (category picker 1-3 with descriptions, class picker 1-4, source, affected rooms/materials, sqft)
+- [ ] Mobile: Enhanced moisture reading screen (numbered location grid, material type, MC reading, reference standard, drying goal indicator, color coding: red/yellow/green)
+- [ ] Mobile: Psychrometric log entry (temp + RH → auto-calculate GPP via formula, dew point calculation, indoor vs outdoor comparison)
+- [ ] Mobile: Contents inventory screen (room-by-room item list: description, qty, condition, action: move/block/pack-out/dispose, destination, photos, packed_by)
+- [ ] `dart analyze` passes
+
+**T3c: CRM — Monitoring Dashboard**
+- [ ] CRM hook: `use-moisture-readings.ts` (readings over time per job, drying progress)
+- [ ] CRM page: Moisture/drying monitoring view on job detail (readings chart, location grid, "all dry" validation)
+- [ ] `npm run build` passes
+
+---
+
+### Sprint T4: Equipment Deployment + Calculator (~10 hours)
+**Goal:** IICRC equipment placement formulas, billing clock, deployment tracking.
+
+**T4a: Database — Equipment Tables**
+- [ ] Migration: `equipment_deployments` table (type, serial, AHAM rating, room, placement, billing clock: placed_at → removed_at) + RLS
+- [ ] Migration: `equipment_calculations` table (room dimensions, class, dehu/air mover/scrubber formula results, variance notes) + RLS
+- [ ] Migration: `equipment_inventory` table (warehouse inventory — equipment_type, name, serial_number, asset_tag, AHAM PPD/CFM ratings, purchase_date/price, daily_rental_rate, status: available/deployed/maintenance/retired/lost, current_job_id, maintenance tracking) + RLS
+- [ ] Deploy migration
+
+**T4b: Edge Function — Equipment Calculator**
+- [ ] Edge Function: `tpa-equipment-calculator` — IICRC S500 formulas:
+  - Dehu: cubic_ft / chart_factor = PPD needed / unit_ppd = units (round UP)
+  - Air movers: wall_lf/14 + floor_sf/50-70 + ceiling_sf/100-150 + insets (round UP)
+  - Air scrubbers: cubic_ft * target_ach / 60 / scrubber_cfm = units (round UP)
+  - Returns formula breakdown for adjuster justification
+- [ ] Deploy Edge Function
+
+**T4c: Mobile — Equipment Screens**
+- [ ] Mobile: IICRC equipment calculator screen (input: room L x W x H, water class, dehu type → output: counts with formula breakdown)
+- [ ] Mobile: Equipment deployment screen (place equipment with serial number, start billing clock; remove equipment, auto-calculate billable days)
+- [ ] Mobile: Equipment warehouse inventory check (show available vs deployed equipment before placement)
+- [ ] `dart analyze` passes
+
+**T4d: CRM — Equipment Tracking**
+- [ ] CRM hook: `use-equipment-deployments.ts`
+- [ ] CRM hook: `use-equipment-inventory.ts` (warehouse inventory CRUD — available/deployed/maintenance status)
+- [ ] CRM: Equipment deployment tracking on job detail page (deployed equipment list, billing summary)
+- [ ] CRM: Equipment inventory management page (warehouse view — what's available, what's deployed where, maintenance schedule)
+- [ ] `npm run build` passes
+
+---
+
+### Sprint T5: Documentation Validation (~8 hours)
+**Goal:** Pre-submission documentation completeness checking, COC generation.
+
+**T5a: Database — Certificate of Completion**
+- [ ] Migration: `certificates_of_completion` table (signatures, scope summary, PDF, lien waiver, satisfaction survey) + RLS
+- [ ] Deploy migration
+
+**T5b: Edge Function — Documentation Validator**
+- [ ] Edge Function: `tpa-documentation-validator` — given job_id, check all documentation against TPA program requirements, return missing items + compliance percentage + deadline status
+- [ ] Deploy Edge Function
+
+**T5c: Seed Data — Documentation Checklists**
+- [ ] Seed: Default water mitigation checklist (20+ items across 5 phases: initial inspection, during work, daily monitoring, completion, closeout)
+- [ ] Seed: Default fire restoration checklist
+- [ ] Seed: Default mold remediation checklist
+- [ ] Seed: Default roofing claim checklist
+- [ ] Seed: IICRC equipment chart factors (Class 1-4 for LGR, conventional, desiccant)
+
+**T5d: Mobile + CRM — Documentation UI**
+- [ ] Mobile: Documentation checklist overlay on TPA jobs (shows required items by phase, completion count: "6 of 12 initial inspection photos")
+- [ ] Mobile: Photo phase tagging on upload (before/during/after/equipment/moisture/source/exterior/contents/pre_existing)
+- [ ] CRM: Documentation completeness dashboard per assignment
+- [ ] `dart analyze` + `npm run build` pass
+
+---
+
+### Sprint T6: Financial Analytics (~8 hours)
+**Goal:** Per-TPA profitability, referral fee tracking, AR aging.
+
+**T6a: Database — Financial Summary**
+- [ ] Migration: `tpa_program_financials` table (monthly rollup: revenue, referral fees, labor/material/equipment costs, margins, AR, supplement performance, scoring) + RLS
+- [ ] Deploy migration
+
+**T6b: Edge Function — Financial Rollup**
+- [ ] Edge Function: `tpa-financial-rollup` — monthly aggregation from tpa_assignments + jobs + ZBooks data, calculate gross/net margins, avg payment days, supplement recovery rate
+- [ ] Deploy Edge Function
+
+**T6c: CRM — TPA Dashboard**
+- [ ] CRM hook: `use-tpa-financials.ts`
+- [ ] CRM page: `/dashboard/tpa` — TPA Dashboard (program cards with active count + avg score + cycle time, assignment pipeline: received → in progress → estimate → payment → paid, SLA violations count, financial summary per program)
+- [ ] CRM: Per-TPA P&L report (integrates with ZBooks job costing)
+- [ ] Referral fee auto-calculation on job close (based on tpa_program.referral_fee_percent)
+- [ ] `npm run build` passes
+
+---
+
+### Sprint T7: Supplement Workflow + Scorecard (~8 hours)
+**Goal:** Supplement discovery/tracking, TPA performance scoring over time.
+
+**T7a: CRM — Supplement Tracking**
+- [ ] CRM hook: `use-tpa-supplements.ts`
+- [ ] CRM: Supplement tracking UI on assignment detail (create supplement S1/S2/S3, document reason, link photos + line items, track status: draft → submitted → approved/denied)
+- [ ] Mobile: Supplement discovery workflow (flag additional scope from field with photos + readings)
+
+**T7b: CRM — Scorecards**
+- [ ] CRM hook: `use-tpa-scorecards.ts`
+- [ ] CRM page: `/dashboard/tpa/scorecards` — enter/view scores per TPA program, trend line charts over time, alert thresholds (contractor sets warning level, system alerts when approaching)
+- [ ] `dart analyze` + `npm run build` pass
+
+---
+
+### Sprint T8: Restoration Line Items + Export (~10 hours)
+**Goal:** ZAFTO's own line item database with Xactimate code mapping, format exports.
+
+**T8a: Database — Line Items**
+- [ ] Migration: `restoration_line_items` table (ZAFTO codes Z-WTR-xxx, own descriptions + pricing, Xactimate category/selector mapping for export) + RLS
+- [ ] Seed: ~50 initial restoration line items (Water Extraction, Demolition, Drying Equipment, Cleaning/Treatment, Monitoring, Contents, Hazmat, Temporary Repairs, Reconstruction)
+
+**T8b: Estimate Engine Integration**
+- [ ] Add Xactimate code mapping column to estimate line items for export reference
+- [ ] Integrate restoration_line_items into estimate builder line item picker (additional category)
+
+**T8c: Format Exports**
+- [ ] FML floor plan export (open format, JSON-based, Symbility/Cotality compatible)
+- [ ] DXF floor plan export (universal CAD format)
+- [ ] PDF documentation package export (photos + moisture readings + psychrometric logs + equipment + estimate → single PDF)
+- [ ] ESX import capability (read contractor's own ESX files into ZAFTO via existing import-esx EF)
+- [ ] `dart analyze` + `npm run build` pass
+
+---
+
+### Sprint T9: Portal Integration (~8 hours)
+**Goal:** TPA features in team portal + ops portal.
+
+**T9a: Team Portal**
+- [ ] Team Portal hooks: `use-tpa-jobs.ts` (SLA data for assigned TPA jobs), `use-equipment.ts` (field equipment management)
+- [ ] Team Portal: SLA countdown badges on TPA job cards
+- [ ] Team Portal: Documentation checklist view (required items + completion count)
+- [ ] Team Portal: Equipment deployment quick-add from field
+- [ ] `npm run build` passes
+
+**T9b: Ops Portal**
+- [ ] Ops Portal: TPA analytics page (assignment volume, SLA compliance, program performance across all companies)
+- [ ] Ops Portal sidebar: TPA link in PLATFORM section
+- [ ] `npm run build` passes
+
+**T9c: CRM Sidebar**
+- [ ] CRM sidebar: "INSURANCE PROGRAMS" collapsible section (conditional on `features.tpa_enabled`)
+  - TPA Dashboard
+  - Assignments
+  - Scorecards
+  - Program Settings
+- [ ] `npm run build` passes
+
+---
+
+### Sprint T10: Polish + Build Verification (~4 hours)
+**Goal:** Full verification, feature flag toggle, disclaimer text.
+
+- [ ] All portals build clean: `npm run build` (CRM, team, client, ops)
+- [ ] Mobile: `dart analyze` passes
+- [ ] Feature flag toggle: verify ALL TPA UI hidden when `features.tpa_enabled = false`
+- [ ] Feature flag toggle: verify ALL TPA UI visible when `features.tpa_enabled = true`
+- [ ] Documentation checklist validation end-to-end: create assignment → upload photos → validate → confirm counts
+- [ ] IICRC calculator accuracy: verify against published IICRC S500 equipment placement formulas
+- [ ] Legal disclaimers present on all pages referencing TPA/carrier/Xactimate names
+- [ ] Estimate engine disclaimer: "Estimates represent contractor's scope of work and pricing"
+- [ ] IICRC disclaimer: "Based on publicly available IICRC formulas"
+- [ ] Commit: `[T1-T10] TPA Program Management Module — 17 tables, 3 EFs, feature flag`
+
+---
+
+## PHASE P: PROPERTY INTELLIGENCE ENGINE (ZScan) — after Phase T
+*Spec: Expansion/40_PROPERTY_INTELLIGENCE_SPEC.md*
+*8 tables, 4 Edge Functions, 8 sprints (~68 hours)*
+*Satellite-powered property measurements: address in → instant roof/wall/lot/solar data → estimate → material order*
+*$0/scan vs EagleView $18-91/report. 10 trade pipelines. On-site verification workflow.*
+
+---
+
+### Sprint P1: Foundation + Google Solar API (~10 hours)
+**Goal:** Core tables + Google Solar integration for roof segments, pitch, area, sun hours.
+**Prereqs:** Phase T complete. Google Cloud Solar API enabled. API key in Supabase secrets.
+**Tables:** property_scans, roof_measurements, roof_facets
+**Edge Functions:** zscan-property-lookup, zscan-roof-calculator
+
+- [ ] Migration: `property_scans` table (id, company_id, job_id nullable, address fields, lat/lng, status enum [pending/scanning/complete/partial/failed], scan_sources JSONB, confidence_score, cached_until, created_by, timestamps) + RLS (company isolation)
+- [ ] Migration: `roof_measurements` table (id, scan_id FK, total_area_sqft, total_area_squares, pitch_primary, pitch_distribution JSONB, ridge_length_ft, hip_length_ft, valley_length_ft, eave_length_ft, rake_length_ft, facet_count, complexity_score, predominant_shape enum [gable/hip/flat/gambrel/mansard/mixed], predominant_material, condition_score nullable, penetration_count, data_source, raw_response JSONB) + RLS
+- [ ] Migration: `roof_facets` table (id, roof_measurement_id FK, facet_number, area_sqft, pitch_degrees, azimuth_degrees, annual_sun_hours, shade_factor, shape_type, vertices JSONB) + RLS
+- [ ] Edge Function: `zscan-property-lookup` — accepts address → geocode → call Google Solar buildingInsights.findClosest → parse roof segments → insert property_scans + roof_measurements + roof_facets → return structured data
+- [ ] Edge Function: `zscan-roof-calculator` — accepts roof_measurement_id → calculate edge lengths from facet geometry → calculate total edges (ridge, hip, valley, eave, rake) → update roof_measurements → calculate complexity score
+- [ ] Google Cloud Console: Enable Solar API, create restricted API key, add to Supabase secrets as `GOOGLE_SOLAR_API_KEY`
+- [ ] CRM: Auto-trigger property scan on job creation (fire-and-forget, non-blocking)
+- [ ] CRM: Basic "Property Intelligence" card on job detail page — satellite thumbnail, roof area (squares), primary pitch, facet count, year built placeholder
+- [ ] Error handling: Address not found, no solar data available, API rate limit exceeded
+- [ ] Verify: Create test job with known address → scan triggers → roof data populates → card displays on job detail
+
+---
+
+### Sprint P2: Property Data + Parcel Boundaries (~8 hours)
+**Goal:** ATTOM property records + Regrid parcel boundaries + Microsoft building footprints + USGS elevation.
+**Tables:** parcel_boundaries, property_features
+
+- [ ] Migration: `parcel_boundaries` table (id, scan_id FK, apn, boundary_geojson JSONB, lot_area_sqft, lot_width_ft, lot_depth_ft, zoning, zoning_description, owner_name, owner_type, data_source) + RLS
+- [ ] Migration: `property_features` table (id, scan_id FK, year_built, stories, living_sqft, lot_sqft, beds, baths_full, baths_half, construction_type, wall_type, roof_type_record, heating_type, cooling_type, pool_type, garage_spaces, assessed_value, last_sale_price, last_sale_date, elevation_ft, terrain_slope_pct, tree_coverage_pct, building_height_ft, data_sources JSONB, raw_attom JSONB, raw_regrid JSONB) + RLS
+- [ ] ATTOM API integration in `zscan-property-lookup`: call /property/expandedprofile → parse building object (sqft, stories, beds, baths, construction, wall type, heating, cooling) + lot object (lot size, pool, depth, frontage) + assessment (assessed value) + sale history (last sale)
+- [ ] Regrid API integration in `zscan-property-lookup`: call address search → parse parcel polygon (GeoJSON), APN, zoning, lot dimensions, owner info → insert parcel_boundaries
+- [ ] Microsoft Building Footprints: Pre-loaded lookup or API call for building polygon → calculate building footprint area → cross-reference with Google Solar footprint
+- [ ] USGS 3DEP elevation lookup: call National Map API → elevation, terrain slope → insert into property_features
+- [ ] Supabase secrets: Add `ATTOM_API_KEY`, `REGRID_API_KEY`
+- [ ] CRM: Full Property Report page — Roof tab (facet diagram, pitch labels, area per facet, edges) + Lot tab (parcel boundary on Mapbox map, lot dimensions, zoning)
+- [ ] Data source badges on property card: "Google Solar ✓" "ATTOM ✓" "Regrid ✓" (only show badges for sources that returned data)
+- [ ] Confidence indicator logic: High (all 3+ sources agree), Moderate (tree obstruction or partial data), Low (single source only — verify on site)
+- [ ] Verify: Scan address → all 4 APIs called → property_features + parcel_boundaries populated → full report page renders
+
+---
+
+### Sprint P3: Wall Measurements + Trade Bid Data (~10 hours)
+**Goal:** Derive wall measurements from property data. Build trade-specific bid data engine for 10 trades.
+**Tables:** wall_measurements, trade_bid_data
+**Edge Function:** zscan-trade-estimator
+
+- [ ] Migration: `wall_measurements` table (id, scan_id FK, total_wall_area_sqft, total_siding_area_sqft, per_face JSONB [{direction, width_ft, height_ft, area_sqft, window_count_est, door_count_est, net_area_sqft}], stories, avg_wall_height_ft, window_area_est_sqft, door_area_est_sqft, trim_linear_ft, fascia_linear_ft, soffit_sqft, data_source, confidence) + RLS
+- [ ] Migration: `trade_bid_data` table (id, scan_id FK, trade enum [roofing/siding/gutters/solar/painting/landscaping/fencing/concrete/hvac/electrical], measurements JSONB, material_list JSONB [{item, quantity, unit, waste_pct, total_with_waste}], waste_factor_pct, complexity_score, notes, recommended_crew_size, estimated_labor_hours, data_sources JSONB) + RLS
+- [ ] Wall derivation logic in `zscan-roof-calculator`: building_footprint_perimeter × stories × avg_wall_height (8ft standard, 9ft if year_built > 2000) − estimated_window_area (15% of wall area standard) − estimated_door_area (2 doors × 21sqft) = net siding area. Per-face breakdown from building footprint orientation.
+- [ ] Edge Function: `zscan-trade-estimator` — accepts scan_id + trade → read property_scans + roof_measurements + wall_measurements + property_features → calculate trade-specific bid data:
+  - [ ] **Roofing pipeline:** total_area_squares, pitch_factor, waste_factor (gable 10-14%, hip 15-17%), material_list [shingles_bundles, underlayment_rolls, ridge_cap, starter_strip, flashing, nails, drip_edge_ft, ice_shield_rolls]
+  - [ ] **Siding pipeline:** net_wall_area_sqft, material_list [siding_squares, j_channel_ft, corner_posts, starter_strip, utility_trim, nails], waste 10-12%
+  - [ ] **Gutters pipeline:** eave_length_ft + rake_overhangs, material_list [gutter_ft, downspout_ft, elbows, end_caps, hangers, outlets], corner count from facets
+  - [ ] **Solar pipeline:** usable_roof_area (south/west-facing facets with >4 sun hours), max_panel_count, estimated_kw, estimated_kwh_annual, shade_analysis per facet
+  - [ ] **Painting pipeline:** exterior_paint_sqft (walls + trim + fascia + soffit), interior_estimate (living_sqft × 3.5 wall factor), gallons_exterior, gallons_interior, primer_gallons
+  - [ ] **Landscaping pipeline:** lot_sqft - building_footprint - hardscape_est = softscape_area, fence_perimeter_ft (lot perimeter - building frontage), tree_count_est, mulch_yards, sod_sqft
+  - [ ] **Fencing pipeline:** lot_perimeter_ft - front_setback, post_count (every 8ft), rail_count, picket_count or panel_count, concrete_bags for posts
+  - [ ] **Concrete pipeline:** driveway_est_sqft (from aerial), sidewalk_est_sqft, patio_est_sqft, total_yards, rebar_sheets, form_lumber_ft
+  - [ ] **HVAC pipeline:** living_sqft → tonnage_estimate (400-600 sqft/ton by climate zone), duct_linear_ft_est, return_count_est
+  - [ ] **Electrical pipeline:** living_sqft → circuit_count_est, panel_amp_recommendation, outlet_count_est (1 per 12ft wall)
+- [ ] Waste factor engine: base_waste + complexity_adjustment (from complexity_score 1-10)
+- [ ] CRM: Walls tab on property report (per-face diagram, areas, window/door counts)
+- [ ] CRM: Trade Data tab (dropdown per trade → material list with quantities, waste factors, crew size, labor hours)
+- [ ] CRM hook: `use-property-scan.ts` (CRUD + real-time subscription for scan status updates)
+- [ ] Verify: Scan address → trade data generated for all 10 trades → material lists accurate → CRM displays all tabs
+
+---
+
+### Sprint P4: Estimate Integration (~8 hours)
+**Goal:** Connect ZScan data directly into D8 estimate engine. Auto-populate estimates from scans.
+
+- [ ] "Import from ZScan" button on estimate create/edit page
+- [ ] On click: read trade_bid_data for job's scan → map material_list items to estimate line items → pre-populate estimate with quantities, descriptions, units
+- [ ] Contractor can adjust any imported values before saving
+- [ ] Migration: Add `property_scan_id` column to `jobs` table (FK nullable, references property_scans)
+- [ ] Migration: Add `property_scan_id` column to `estimates` table (FK nullable, references property_scans)
+- [ ] Auto-populate estimate line items from trade_bid_data material list
+- [ ] Material list generation: measurements → item list with quantities (including waste factor)
+- [ ] CRM: Solar tab on property report (sun hours heatmap per facet, shade analysis, panel layout suggestion, estimated kWh)
+- [ ] CRM: "Create Estimate from Scan" button on property report → opens estimate editor pre-filled with selected trade's material list
+- [ ] Estimate line items display ZScan source badge: "📡 From ZScan" on auto-populated lines
+- [ ] Verify: Scan property → select trade → "Create Estimate" → estimate opens pre-filled → contractor adjusts → saves → estimate links to scan
+
+---
+
+### Sprint P5: Material Ordering Pipeline (~8 hours)
+**Goal:** ZScan measurements → material list → supplier pricing → one-click order.
+**Edge Function:** zscan-material-order
+
+- [ ] Edge Function: `zscan-material-order` — accepts trade_bid_data material list → map items to Unwrangle product search → query real-time pricing from HD/Lowe's/ABC Supply → return supplier comparison
+- [ ] Material list → supplier SKU mapping logic (generic item names → closest product matches)
+- [ ] Real-time pricing comparison UI: table showing item, quantity, HD price, Lowe's price, ABC price, best price highlighted
+- [ ] "Order Materials" button on estimate detail page (only if estimate has property_scan_id)
+- [ ] Supplier selection workflow: contractor picks supplier per item (or "all from one supplier")
+- [ ] Order placement via Unwrangle API (HD/Lowe's) and ABC Supply API
+- [ ] Delivery tracking: order status stored on job, linked to material_orders table (existing from F1)
+- [ ] CRM: Material ordering modal with pricing comparison grid
+- [ ] Verify: Estimate with ZScan data → "Order Materials" → supplier prices shown → select → order placed → delivery tracking visible
+
+---
+
+### Sprint P6: Mobile + On-Site Verification (~10 hours)
+**Goal:** Mobile property scan + swipeable results + on-site verification workflow.
+**Table:** scan_history
+
+- [ ] Mobile screen: `property_scan_screen.dart` — address search bar (autocomplete via Mapbox geocoder) + "Use Current Location" + "Scan" button
+- [ ] Mobile: Loading animation during scan (satellite imagery rendering effect)
+- [ ] Mobile: Swipeable result cards — Roof → Walls → Lot → Solar → Trade Data (each card shows key measurements for that category)
+- [ ] Mobile: On-site verification workflow screen — checklist of key measurements from ZScan:
+  - Each measurement shows: label, ZScan value, [Confirm ✓] / [Adjust ✏️] buttons
+  - "Roof area: 35.2 SQ" → [Confirm] [Adjust: ___]
+  - Adjusted measurements update property_scans record
+  - Track verification_status: unverified → verified → adjusted
+- [ ] Migration: `scan_history` table (id, scan_id FK, action enum [created/updated/verified/adjusted/re_scanned], field_changed, old_value, new_value, performed_by, performed_at, device, notes) + RLS
+- [ ] Scan audit trail: every scan, verification, and adjustment logged to scan_history
+- [ ] Verification badge on scan: "Measurements verified on site by [tech name] on [date]"
+- [ ] Mobile: "Share Report" — generate PDF property report (satellite image + key measurements + trade data) via existing PDF generation pattern
+- [ ] Mobile model: `property_scan.dart` (PropertyScan, RoofMeasurement, RoofFacet, WallMeasurement, TradeBidData)
+- [ ] Mobile repository: `property_scan_repository.dart` (CRUD for scans + related data)
+- [ ] Mobile service: `property_scan_service.dart` (auth-enriched, triggers edge function calls)
+- [ ] Verify: Open mobile → enter address → scan → swipe through results → tap "Verify on site" → confirm/adjust measurements → verification badge shows → share PDF
+
+---
+
+### Sprint P7: Portal Integration (~8 hours)
+**Goal:** ZScan data visible in Team Portal, Client Portal, CRM sidebar. Pre-scan for leads.
+
+- [ ] Team Portal: Property scan view on assigned job detail page (read-only measurements card)
+- [ ] Team Portal: On-site verification workflow (same confirm/adjust UI as mobile, for tablet-based field use)
+- [ ] Team Portal hook: `use-property-scan.ts` (same hook pattern as CRM)
+- [ ] Client Portal: Property overview card on project page — satellite image, key measurements, "Your property" section (customer-friendly labels: "Roof Size: ~35 squares" not "35.2 SQ")
+- [ ] Client Portal: Property overview stripped of internal data (no cost estimates, no material lists, no crew size — just measurements and property info)
+- [ ] CRM: Pre-scan for leads — scan property WITHOUT creating a job first. Creates property_scans with job_id=null. Can be linked to job later.
+- [ ] CRM: Property intelligence data included in bid/proposal PDF export (satellite image + key measurements section)
+- [ ] CRM sidebar: "Property Intelligence" collapsible section under existing job management
+  - Property Scans (list view)
+  - Full Reports
+  - Scan Settings (default trade pipelines, cache duration)
+- [ ] Verify: All 4 portals display scan data correctly → team portal verification works → client sees friendly view → lead pre-scan creates unlinked scan → PDF includes property data
+
+---
+
+### Sprint P8: Polish + Build Verification (~6 hours)
+**Goal:** Error handling, caching, rate limiting, attribution, disclaimers, clean builds.
+
+- [ ] All portals build clean: `npm run build` (CRM, team, client, ops)
+- [ ] Mobile: `dart analyze` passes
+- [ ] Google Solar API error handling: address not found (show "No satellite data available" gracefully), no data for address, API quota exceeded (queue and retry), invalid response
+- [ ] ATTOM API error handling: property not found, partial data (some fields null)
+- [ ] Regrid API error handling: no parcel data, boundary mismatch
+- [ ] Partial scan handling: if some APIs succeed and others fail, save partial data with clear indicators of what's missing. Don't block the whole scan.
+- [ ] Caching: 30-day cache per address per company (`cached_until` on property_scans). Re-scan only on explicit request or cache expiry.
+- [ ] Rate limiting: Queue system for API calls. Max 600 QPM Google Solar. Max concurrent ATTOM/Regrid calls.
+- [ ] Attribution compliance: Google Maps attribution on all map displays, Regrid attribution on parcel boundaries, "Property data from public records" disclaimer
+- [ ] Legal disclaimers on every property report: "Measurements are estimates from satellite imagery and public records. Verify on site before ordering materials."
+- [ ] Legal disclaimer on material ordering: "Quantities calculated from estimated measurements. Verify before ordering."
+- [ ] Feature flag: `features.property_intelligence_enabled` — all ZScan UI hidden when false
+- [ ] Cost tracking: Log API costs per scan for monitoring ($0.075/Google Solar + ATTOM per-call + Regrid per-call)
+- [ ] Commit: `[P1-P8] Property Intelligence Engine (ZScan) — 8 tables, 4 EFs, 10 trade pipelines`
+
+---
+
+## PHASE SK: CAD-GRADE SKETCH ENGINE (~176 hours) — after Phase P
+*Spec: Expansion/46_SKETCH_ENGINE_SPEC.md*
+*3 new tables, 1 migration, ~46 new files (21 Flutter, 25 Web CRM)*
+*LiDAR scan → multi-trade layers → auto-estimate → export → 3D visualization → real-time mobile-to-web sync*
+*Replaces: magicplan, Xactimate Sketch, ArcSite. No competitor does the full pipeline.*
+
+---
+
+### Sprint SK1: Unified Data Model + Migration (~16 hours)
+**Goal:** Merge two disconnected table systems (property_floor_plans + bid_sketches) into single source of truth. Create FloorPlanDataV2 schema. Bridge to D8 estimate engine.
+**Prereqs:** Phase P complete. All existing floor plan and sketch data stable.
+**Tables:** ALTER property_floor_plans, CREATE floor_plan_layers, floor_plan_rooms, floor_plan_estimate_links, ALTER bid_sketches
+**Migration:** `sk1_unified_sketch_model.sql`
+
+- [ ] Migration: ALTER `property_floor_plans` — add `job_id UUID REFERENCES jobs(id)`, `estimate_id UUID REFERENCES estimates(id)`, `status TEXT CHECK (status IN ('draft','scanning','processing','complete','archived')) DEFAULT 'draft'`, `sync_version INTEGER DEFAULT 1`, `last_synced_at TIMESTAMPTZ`
+- [ ] Migration: CREATE `floor_plan_layers` (id, floor_plan_id FK CASCADE, company_id FK, layer_type CHECK ('electrical','plumbing','hvac','damage','custom'), layer_name, layer_data JSONB DEFAULT '{}', visible BOOLEAN DEFAULT true, locked BOOLEAN DEFAULT false, opacity NUMERIC DEFAULT 1.0, sort_order INTEGER DEFAULT 0, timestamps) + RLS (company isolation)
+- [ ] Migration: CREATE `floor_plan_rooms` (id, floor_plan_id FK CASCADE, company_id FK, name, boundary_points JSONB, boundary_wall_ids JSONB, floor_area_sf NUMERIC, wall_area_sf NUMERIC, perimeter_lf NUMERIC, ceiling_height_inches INTEGER DEFAULT 96, floor_material, damage_class CHECK, iicrc_category CHECK, room_type CHECK 14 values, metadata JSONB, timestamps) + RLS
+- [ ] Migration: CREATE `floor_plan_estimate_links` (id, floor_plan_id FK CASCADE, room_id FK CASCADE, estimate_id FK CASCADE, estimate_area_id FK CASCADE, auto_generated BOOLEAN DEFAULT true, company_id FK, created_at) + RLS
+- [ ] Migration: ALTER `bid_sketches` — add `floor_plan_id UUID REFERENCES property_floor_plans(id)`
+- [ ] Dart model: Update `lib/models/floor_plan.dart` — add job_id, estimate_id, status, sync_version, last_synced_at fields + fromJson/toJson
+- [ ] Dart model: Create `lib/models/floor_plan_layer.dart` — FloorPlanLayer class
+- [ ] Dart model: Create `lib/models/floor_plan_room.dart` — FloorPlanRoom class
+- [ ] Dart model: Update `lib/models/floor_plan_elements.dart` — add FloorPlanDataV2 wrapper class with version detection (V1 backward compat: no `version` field → treat as V2 with empty tradeLayers). Add ArcWall, TradeElement, TradeGroup, TradePath, DamageZone, DamageBarrier, TradeLayerData, DamageLayerData types.
+- [ ] Verify: Migration applies clean. V1 FloorPlanData still parses. V2 schema serializes/deserializes correctly. `dart analyze` passes.
+
+---
+
+### Sprint SK2: Flutter Editor Upgrades Part 1 (~16 hours)
+**Goal:** Wall editing after drawing, wall thickness control, fixture rotation, unit toggle (imperial/metric).
+**Prereqs:** SK1 complete (V2 data model).
+
+- [ ] Wall selection mode: Tap wall → selection handles appear at endpoints (blue circles)
+- [ ] Wall endpoint dragging: Drag handle → wall stretches, connected walls follow (chain constraint solver)
+- [ ] Wall properties: Double-tap wall → bottom sheet with thickness (4"/6"/8"/12"/custom), height, material
+- [ ] Wall split: Long-press wall → insert midpoint, splits wall into two segments
+- [ ] Wall thickness rendering: Update `sketch_painter.dart` — render walls as filled rectangles (not single lines). Interior vs exterior presets.
+- [ ] Bottom toolbar: Thickness picker (4", 6", 8", 12", custom input)
+- [ ] Fixture rotation: Two-finger rotate gesture on selected fixture
+- [ ] Fixture rotation handle: Circular arrow icon appears on selected fixture, drag to rotate
+- [ ] Fixture rotation snap: Snap to 0/45/90/135/180/225/270/315 degrees
+- [ ] Unit toggle: Imperial (ft/in) ↔ Metric (m/cm) toggle button in toolbar
+- [ ] Unit conversion: All dimensions, labels, measurements convert live on toggle
+- [ ] Unit persistence: Stored in FloorPlanDataV2.units, persists per plan
+- [ ] Update `sketch_editor_screen.dart` — wall selection mode, thickness picker, unit toggle
+- [ ] Update `sketch_painter.dart` — thick wall rendering, selection handles, rotation handles
+- [ ] Update `floor_plan_elements.dart` — Wall.thickness, Wall.height, Wall.material, FixturePlacement.rotation updates
+- [ ] Verify: Draw walls → tap to select → drag endpoints → double-tap to change thickness → rotate fixtures → toggle units → all renders correctly. `dart analyze` passes.
+
+---
+
+### Sprint SK3: Flutter Editor Upgrades Part 2 (~12 hours)
+**Goal:** Arc walls, copy/paste, multi-select with lasso, smart auto-dimensions.
+**Prereqs:** SK2 complete.
+
+- [ ] Arc wall tool: New tool in toolbar ("Arc Wall" icon)
+- [ ] Arc wall drawing: Tap start, tap end, drag control point for curvature (quadratic Bezier)
+- [ ] Arc wall rendering: Update `sketch_painter.dart` — Bezier curve with thickness fill
+- [ ] Arc wall door/window attachment: Position along curve parameter t (0.0 to 1.0)
+- [ ] Arc wall room detection: Approximate as polyline for area calculation (shoelace formula)
+- [ ] Copy/paste: Select element(s) → "Copy" button appears in toolbar
+- [ ] Paste behavior: Places at screen center with offset, enters drag-to-position mode
+- [ ] Cross-floor copy: Copy room layout from floor 1, paste on floor 2
+- [ ] Multi-select lasso: New lasso tool — draw freeform selection boundary
+- [ ] Multi-select shift-tap: Tap additional elements while holding (or toggle button on mobile)
+- [ ] Group operations: Move group, delete group, copy group
+- [ ] Alignment helpers: Align left, align top, distribute evenly (toolbar buttons on multi-select)
+- [ ] Smart auto-dimensions: Wall lengths auto-labeled on draw (dimension lines appear automatically)
+- [ ] Room area auto-label: Area label auto-placed at centroid of detected rooms
+- [ ] Room perimeter: Total perimeter shown in room properties bottom sheet
+- [ ] New commands in `floor_plan_elements.dart`: ArcWall class, CopyCommand, PasteCommand, MultiSelectCommand, LassoSelectCommand
+- [ ] Verify: Draw arc walls → copy/paste elements → lasso select → group move → auto-dimensions appear → area labels at centroids. `dart analyze` passes.
+
+---
+
+### Sprint SK4: Trade Layers System (~20 hours)
+**Goal:** 4 trade overlay layers (electrical 15 symbols, plumbing 12, HVAC 10, damage 4 tools) with layer management UI.
+**Prereqs:** SK2+SK3 complete (editing foundation).
+
+- [ ] Create `lib/models/trade_layer.dart` — TradeElement (id, position, rotation, type, symbol, properties JSONB), TradePath (id, points[], type, properties), TradeGroup (id, name, elementIds[], color), DamageZone (id, boundary[], damageClass, iicrcCategory, opacity), MoistureReading (id, position, value, severity), ContainmentBarrier (id, start, end)
+- [ ] Create SVG symbol assets: 62 total — Electrical receptacles (4), switches (4), lights (5), equipment (2), Plumbing fixtures (7), pipes (4 colors), HVAC equipment (5), HVAC distribution (5), Damage icons
+- [ ] Create `lib/painters/trade_layer_painter.dart` — CustomPainter for trade overlay rendering (composited on top of base floor plan)
+- [ ] Electrical layer tools: Place receptacles, switches, lights, panels, junction boxes. Draw wire paths (auto-route along nearest wall). Circuit grouping with color coding.
+- [ ] Plumbing layer tools: Place fixtures (sink, toilet, shower, tub, washer, water heater, hose bib). Draw pipe runs (hot=red, cold=blue, drain=gray, gas=yellow). Diameter labels on pipes.
+- [ ] HVAC layer tools: Place equipment (furnace, condenser, air handler, mini-split, ERV). Draw ducts (supply, return). Place registers, thermostats, dampers. CFM labels on ducts.
+- [ ] Damage layer tools: Draw affected area zones (polygon with opacity, Class 1-4 color: green/yellow/orange/red). Place moisture reading points (value + severity color). Draw containment barrier lines (dashed red). Place source arrows.
+- [ ] IICRC category overlay: Cat 1 = blue tint, Cat 2 = yellow tint, Cat 3 = red tint on damage zones
+- [ ] Create `lib/widgets/sketch/layer_panel.dart` — Collapsible sidebar with: layer list, visibility toggle (eye icon), lock toggle (lock icon), opacity slider, active layer highlight
+- [ ] Create `lib/widgets/sketch/trade_toolbar.dart` — Per-trade toolbars that swap based on active layer selection
+- [ ] Active layer selector: Drawing tools change based on which layer is active. Base layer = walls/doors/windows/fixtures. Trade layer = trade-specific tools.
+- [ ] Layer data persistence: Each layer's elements saved to FloorPlanDataV2.tradeLayers and/or floor_plan_layers table
+- [ ] Update `sketch_editor_screen.dart` — layer switching, trade tool modes, layer panel toggle
+- [ ] Update `sketch_painter.dart` — compose base layer + active trade layers (respect visibility/opacity)
+- [ ] Verify: Switch between layers → place trade elements → toggle visibility → lock layers → adjust opacity → damage zones render with IICRC colors → wire/pipe paths route along walls. `dart analyze` passes.
+
+---
+
+### Sprint SK5: LiDAR Scanning — Apple RoomPlan Integration (~20 hours)
+**Goal:** iPhone LiDAR scanning via Apple RoomPlan, 3D→2D conversion, guided scanning UX, non-LiDAR fallback.
+**Prereqs:** SK4 complete (layer system ready for scanned data import).
+
+- [ ] Create `ios/Runner/RoomPlanService.swift` — native Swift class wrapping `RoomCaptureSession` + `RoomCaptureView`. Session delegate captures `CapturedRoom` on completion. Serializes room data (walls, doors, windows, objects with 3D transforms) to JSON. Sends via FlutterMethodChannel.
+- [ ] Platform channel setup: Register `MethodChannel('com.zafto.roomplan')` in `AppDelegate.swift`
+- [ ] Create `lib/services/roomplan_bridge.dart` — Dart side of MethodChannel. Methods: `checkAvailability()`, `startScan()`, `stopScan()`, `getCapturedRoom()`. Event channel for real-time scan progress.
+- [ ] Create `lib/services/roomplan_converter.dart` — Converts CapturedRoom JSON → FloorPlanDataV2. 3D→2D projection: extract X and Z from 4x4 transform matrix (Y = height). Scale meters → inches (x39.3701). Wall endpoints: center ± (length/2) along orientation vector. Height → Wall.height. Door/window → parametric position along parent wall.
+- [ ] Create `lib/widgets/sketch/lidar_scan_screen.dart` — Full scanning UX overlay:
+  - Check device capability (`ARWorldTrackingConfiguration.supportsSceneReconstruction(.mesh)`)
+  - Instructions overlay: "Slowly walk through the room. Point at all walls, doors, and windows."
+  - Real-time preview of detected walls/openings (from RoomPlan native UI)
+  - "Done" button → processing spinner → FloorPlanDataV2 generated
+  - Transitions to sketch editor with scanned plan loaded
+- [ ] Multi-room scanning: Scan room → save → scan next → auto-merge based on shared wall detection. Or walk through multiple rooms in single session (RoomPlan native).
+- [ ] Create `lib/widgets/sketch/manual_room_entry.dart` — Fallback for non-LiDAR devices (Android, older iPhones). Room-by-room entry: name, width, length, height. Generates rectangular rooms in grid layout. User edits walls/doors/windows manually after.
+- [ ] "LiDAR Scan" button in sketch editor toolbar (only visible on iOS with LiDAR)
+- [ ] "Manual Entry" button always visible as alternative
+- [ ] Scanned plan is fully editable after import (walls snap to scanned positions but can be moved)
+- [ ] Save scanned plan: FloorPlanDataV2 with `lidarMetadata` populated (source, scanDate, deviceModel, accuracy)
+- [ ] No new packages needed in pubspec.yaml (platform channels built-in)
+- [ ] Verify: On LiDAR iPhone → tap "LiDAR Scan" → scan room → "Done" → editor opens with accurate floor plan → walls/doors/windows match physical room (±2 inches). On non-LiDAR device → "Manual Entry" flow works. `dart analyze` passes.
+
+---
+
+### Sprint SK6: Web CRM Canvas Editor — Konva.js (~24 hours)
+**Goal:** Full Konva.js-based canvas editor on web CRM. TypeScript port of geometry engine. Feature parity with Flutter editor.
+**Prereqs:** SK1 complete (V2 data model). SK4 preferred (trade layer types defined).
+**Packages:** `konva`, `react-konva`
+
+- [ ] Install packages: `npm install konva react-konva` in web-portal
+- [ ] Create `src/lib/sketch-engine/types.ts` — TypeScript interfaces ported from `floor_plan_elements.dart` (Wall, Door, Window, Fixture, Room, Label, Dimension, ArcWall, TradeElement, TradePath, DamageZone, FloorPlanDataV2)
+- [ ] Create `src/lib/sketch-engine/geometry.ts` — Port SketchGeometry class: angle snapping, endpoint snapping, point-to-segment distance, line intersection, room detection (DFS cycle + shoelace area)
+- [ ] Create `src/lib/sketch-engine/commands.ts` — Port UndoRedoManager + command pattern (AddWallCommand, RemoveWallCommand, MoveWallCommand, AddDoorCommand, etc.)
+- [ ] Create `src/lib/sketch-engine/renderers/wall-renderer.ts` — Konva shapes for walls (Line for thin, Rect for thick, custom Shape for arc)
+- [ ] Create `src/lib/sketch-engine/renderers/door-renderer.ts` — Konva shapes for 7 door types with swing arcs
+- [ ] Create `src/lib/sketch-engine/renderers/window-renderer.ts` — Konva shapes for windows (3-line symbol)
+- [ ] Create `src/lib/sketch-engine/renderers/fixture-renderer.ts` — Konva shapes for 25 fixture types
+- [ ] Create `src/lib/sketch-engine/renderers/trade-renderer.ts` — Konva shapes for trade layer elements (62 symbols)
+- [ ] Create `src/lib/sketch-engine/renderers/damage-renderer.ts` — Konva shapes for damage zones, moisture points, barriers
+- [ ] Create `src/components/sketch-editor/SketchCanvas.tsx` — Main Konva Stage component. Base Layer + Trade Layers + UI Layer. Pan (middle-click/space+drag), zoom (scroll wheel), grid rendering.
+- [ ] Create `src/components/sketch-editor/Toolbar.tsx` — Drawing tools (wall, arc wall, door, window, fixture, label, dimension, select, lasso), trade layer tools, undo/redo, zoom controls
+- [ ] Create `src/components/sketch-editor/LayerPanel.tsx` — Layer management: visibility, lock, opacity, active layer
+- [ ] Create `src/components/sketch-editor/PropertyInspector.tsx` — Right sidebar: selected element properties (wall thickness/height, fixture type/rotation, room name/type)
+- [ ] Create `src/components/sketch-editor/MiniMap.tsx` — Corner mini-map for large plan navigation
+- [ ] Keyboard shortcuts: Ctrl+Z undo, Ctrl+Y redo, Ctrl+C copy, Ctrl+V paste, Delete remove, Escape deselect, Space+drag pan
+- [ ] Snap system: Grid snap, wall endpoint snap, angle snap (15-degree increments)
+- [ ] Ruler: Top and left edge rulers showing measurements in current unit
+- [ ] Create `src/lib/hooks/use-floor-plan.ts` — Supabase CRUD for property_floor_plans + floor_plan_layers + floor_plan_rooms. Real-time subscription on plan row. Debounced save (500ms). Conflict detection via sync_version.
+- [ ] Replace `src/app/dashboard/sketch-bid/page.tsx` — Remove existing form-only UI. Replace with full canvas editor importing SketchCanvas + Toolbar + LayerPanel + PropertyInspector.
+- [ ] Verify: Open sketch-bid page → canvas loads → draw walls/doors/windows → switch layers → place trade elements → save → refresh → data persists → undo/redo works → keyboard shortcuts work. `npm run build` passes.
+
+---
+
+### Sprint SK7: Sync Pipeline — Offline-First + Real-Time (~12 hours)
+**Goal:** Hive-based offline cache on mobile, Supabase real-time sync, thumbnail generation, conflict resolution.
+**Prereqs:** SK1 complete. SK2+ preferred (editing works).
+
+- [ ] Create `lib/repositories/floor_plan_repository.dart` — Supabase CRUD for property_floor_plans + floor_plan_layers + floor_plan_rooms. Select with joins. Insert/update with company_id. Delete cascade.
+- [ ] Create `lib/services/floor_plan_sync_service.dart` — Offline-first sync:
+  - New Hive box: `floor_plans_cache` (register in Hive init)
+  - Every edit saves to Hive immediately (zero-latency UX)
+  - Background sync: ConnectivityService detects online → push pending changes
+  - Sync version: increment local version on edit, send with POST
+  - Conflict: if server sync_version > local → prompt user (merge or overwrite)
+  - Queue pending changes while offline, flush on reconnect
+- [ ] Create `lib/services/floor_plan_thumbnail_service.dart` — Render plan to 512x512 PNG using RepaintBoundary + toImage(). Upload to `floor-plan-thumbnails` Supabase storage bucket. Update property_floor_plans.thumbnail_path.
+- [ ] Web real-time: Supabase channel subscription on `property_floor_plans` row in `use-floor-plan.ts`. On remote update → re-render canvas.
+- [ ] Web thumbnail: Konva `stage.toDataURL()` → upload to storage on save.
+- [ ] Supabase storage: Create `floor-plan-thumbnails` bucket (if not exists) with company-scoped RLS.
+- [ ] Hive box registration: Add `floor_plans_cache` to Hive initialization in app startup.
+- [ ] Verify: Edit on mobile (offline) → go online → plan appears on web → edit on web → mobile receives update → thumbnails generated in storage bucket → conflict scenario tested (edit same plan on both → conflict prompt appears).
+
+---
+
+### Sprint SK8: Auto-Estimate Pipeline (~16 hours)
+**Goal:** Geometry-derived measurements → D8 estimate areas → suggested line items. "Generate Estimate" button on sketch editor.
+**Prereqs:** SK1 (rooms), SK4 (trade data) complete. D8 estimate engine operational.
+
+- [ ] Create `lib/services/room_measurement_calculator.dart` — Per-room calculations from FloorPlanDataV2:
+  - Floor SF: shoelace formula on room boundary polygon
+  - Wall SF: sum(wall_length x wall_height) for boundary walls, minus door/window opening areas
+  - Ceiling SF: same as floor SF (flat ceiling assumption, adjustable per room)
+  - Baseboard LF: perimeter minus door widths
+  - Door count + Window count: from room boundary walls
+  - Paint SF: wall SF + ceiling SF (configurable: walls only, ceiling only, both)
+- [ ] Create `lib/services/estimate_area_generator.dart` — For each FloorPlanRoom: create estimate_areas row with computed measurements. Link via floor_plan_estimate_links bridge table. Sets auto_generated=true.
+- [ ] Create `lib/services/line_item_suggester.dart` — Maps measurements + trade data to estimate line items:
+  - Room type + trade: bathroom + plumbing → toilet, sink, shower rough-in
+  - Damage layer data: Class 3 water damage → demo drywall, dry structure, replace drywall
+  - Trade layer elements: 5 receptacles → 5x receptacle rough-in line items
+  - Uses estimate_items table for pricing lookup
+- [ ] "Generate Estimate" button on Flutter sketch editor toolbar
+- [ ] Generate estimate flow: Creates estimates row linked to floor plan → for each room creates estimate_areas → suggests line items → opens estimate editor with pre-filled data
+- [ ] User review: Line items are suggestions — user adjusts quantities/prices before finalizing
+- [ ] Create `web-portal/src/lib/sketch-engine/measurement-calculator.ts` — TypeScript port of room measurement calculator
+- [ ] Create `web-portal/src/lib/sketch-engine/estimate-generator.ts` — TypeScript port of estimate area generator + line item suggester
+- [ ] Create `web-portal/src/components/sketch-editor/GenerateEstimateModal.tsx` — Modal: select rooms to include, select trade, preview measurements, "Generate" button → navigates to estimate editor
+- [ ] Update D8 estimate hooks to accept floor-plan-generated areas (accept property_floor_plan_id on estimate creation)
+- [ ] Verify: Draw floor plan with rooms + trade elements → "Generate Estimate" → estimate created with correct measurements per room → line items match trade elements → pricing from D8 engine → user can edit → save. Both mobile and web.
+
+---
+
+### Sprint SK9: Export Pipeline (~12 hours)
+**Goal:** Export floor plans to PDF, PNG, DXF (AutoCAD), and FML (open format for Symbility/Cotality).
+**Prereqs:** SK4 (trade layers render), SK6 (web canvas renders).
+
+- [ ] Create `lib/services/sketch_export_service.dart` — Orchestrates all export formats. Export menu UI (bottom sheet with format selection).
+- [ ] PDF export (Flutter): Title block (company name, project address, date, scale) + floor plan rendering (all visible layers) + room schedule table (name, dimensions, area, perimeter) + trade symbol legend. Uses existing `pdf` + `printing` packages.
+- [ ] PNG export (Flutter): High-resolution raster via RepaintBoundary.toImage(). Scale options: 1x, 2x, 4x pixel ratio. Share via share_plus.
+- [ ] Create `lib/services/dxf_writer.dart` — DXF format generator (ASCII format, well-documented):
+  - Walls → LINE/LWPOLYLINE entities
+  - Rooms → HATCH fills
+  - Doors/windows → INSERT block references
+  - Trade elements → separate DXF layers (ELECTRICAL, PLUMBING, HVAC, DAMAGE)
+  - Standard DXF header with units (INSUNITS)
+- [ ] Create `lib/services/fml_writer.dart` — FML (Floor Markup Language) generator:
+  - XML-based open format (Floorplanner origin — NOT Verisk/Xactimate)
+  - Rooms, walls, openings, dimensions
+  - Safe for Symbility/Cotality integration
+  - NOT accepted by Xactimate (ESX export deferred pending legal)
+- [ ] Web PDF export: Create `src/lib/sketch-engine/export/pdf-export.ts` — Konva stage.toDataURL() → jsPDF with title block + room schedule
+- [ ] Web PNG export: Create `src/lib/sketch-engine/export/png-export.ts` — Konva stage.toDataURL({ pixelRatio: 4 })
+- [ ] Web DXF export: Create `src/lib/sketch-engine/export/dxf-export.ts` — TypeScript port of DXF writer
+- [ ] Web FML export: Create `src/lib/sketch-engine/export/fml-export.ts` — TypeScript port of FML writer
+- [ ] Create `src/components/sketch-editor/ExportModal.tsx` — Export format selection modal (PDF, PNG, DXF, FML) with preview and download
+- [ ] Export menu in Flutter sketch editor: Add export button → bottom sheet with format options → generate → share/save
+- [ ] Verify: Export floor plan with trade layers → PDF opens correctly (title block + plan + schedule) → PNG is high-res → DXF opens in AutoCAD/LibreCAD → FML validates as XML. Both mobile and web.
+
+---
+
+### Sprint SK10: 3D Visualization — three.js (~16 hours)
+**Goal:** Toggle between 2D (Konva) and 3D (three.js) views on web CRM. Wall extrusion, openings, orbit controls.
+**Prereqs:** SK6 complete (web canvas operational).
+**Packages:** `three`, `@react-three/fiber`, `@react-three/drei`
+
+- [ ] Install packages: `npm install three @react-three/fiber @react-three/drei` in web-portal
+- [ ] Create `src/lib/sketch-engine/three-converter.ts` — FloorPlanDataV2 → three.js scene:
+  - Walls: Extrude 2D wall rectangles to 3D prisms at wall height
+  - Door/window openings: Boolean subtraction (CSG) from wall geometry
+  - Floor plane: Flat mesh at y=0 with material texture
+  - Trade elements: 3D icons/sprites positioned at element locations
+  - Room labels: Text sprites floating above room centroids
+- [ ] Create `src/components/sketch-editor/ThreeDView.tsx` — React Three Fiber Canvas:
+  - Scene with ambient + directional lighting
+  - OrbitControls (rotate, pan, zoom)
+  - Wall materials: interior=white, exterior=gray
+  - Floor material: light wood texture
+  - Optional: LiDAR point cloud as background reference
+- [ ] Create `src/components/sketch-editor/ViewToggle.tsx` — 2D/3D toggle button. Smooth transition. Preserves camera position mapping between views.
+- [ ] Integration: ViewToggle sits in sketch editor toolbar. Toggles between SketchCanvas (Konva) and ThreeDView (three.js). Both read same FloorPlanDataV2 data.
+- [ ] Verify: Draw floor plan in 2D → toggle to 3D → walls extruded correctly → doors/windows cut out → orbit around → toggle back to 2D → data unchanged. `npm run build` passes.
+
+---
+
+### Sprint SK11: Polish + Testing + Button Audit (~12 hours)
+**Goal:** Round-trip testing, performance optimization, every-button audit on both mobile and web.
+**Prereqs:** All SK1-SK10 complete.
+
+- [ ] Round-trip test: Create plan on mobile → verify appears on web with full fidelity (walls, doors, windows, fixtures, trade elements, labels, dimensions)
+- [ ] LiDAR accuracy test: Scan room with LiDAR → measure physical room → compare dimensions (target: ±2 inches tolerance)
+- [ ] Cross-platform edit test: Edit on web → verify sync to mobile → edit on mobile → verify sync to web
+- [ ] Auto-estimate test: Generate estimate from sketch → verify line items match room measurements → verify pricing from D8
+- [ ] Export test: PDF opens in viewer (title block + plan + schedule correct). PNG is high-res. DXF opens in AutoCAD/LibreCAD. FML validates as XML.
+- [ ] Performance: Stress test with 50-room floor plan + all trade layers active. Target: 60fps pan/zoom on web, 30fps on mobile. Konva optimization: `listening: false` on static shapes, batch layer updates. Flutter optimization: RepaintBoundary per trade layer.
+- [ ] Button audit (Flutter sketch editor): Every toolbar button clicked and verified. Every layer control works. Every export format produces valid output. Every trade symbol renders. LiDAR scan button + manual entry button both work.
+- [ ] Button audit (Web sketch editor): Every toolbar button clicked and verified. Every keyboard shortcut works. Layer panel toggles/locks/opacity all work. Property inspector updates on selection. Mini-map reflects current view. Ruler displays correct measurements.
+- [ ] 3D view audit: All wall types render. Door/window openings correct. Orbit controls smooth. View toggle preserves state.
+- [ ] Offline audit: Disable network on mobile → edit plan → verify Hive saves → re-enable → verify sync completes → no data loss
+- [ ] Error handling: Invalid floor plan data (corrupt JSON) → graceful error, not crash. Network failure during sync → queued for retry. LiDAR scan interrupted → partial data saved.
+- [ ] All builds pass: `dart analyze` (0 errors), `npm run build` for all 4 web portals (CRM, team, client, ops)
+- [ ] Commit: `[SK1-SK11] CAD-Grade Sketch Engine — 3 tables, LiDAR scan, trade layers, Konva web editor, auto-estimate, export, 3D view`
+
+---
+
+## PHASE E: AI LAYER — REBUILD (after Phase G + Phase T + Phase P + Phase SK)
+*Deep spec session with owner required before starting. AI must know every feature, every table, every screen — including TPA module + ZScan + Sketch Engine.*
 
 ### Sprint E-review: Audit premature E work
-### Sprint E1-E4: Full AI implementation (rebuilt with complete platform knowledge)
+### Sprint E1-E4: Full AI implementation (rebuilt with complete platform knowledge — including TPA module + ZScan + Sketch Engine + all Phase F features)
 
 ---
 
-## POST-AI: FINAL FEATURES
+### >>> LAUNCH <<<
 
-### Sprint F2: Website Builder V2 (~60-90 hrs) — AFTER AI
+---
+
+## POST-LAUNCH FEATURES
+
+### Sprint F2: Website Builder V2 (~60-90 hrs) — DEFERRED POST-LAUNCH (S94 owner directive)
+*Scrapped from pre-launch scope. Too much maintenance overhead (hosting, custom domains, WYSIWYG, SSL, SEO support burden). Revisit post-launch with real contractor feedback + completed AI layer. Consider white-label (Duda API) or template-only auto-generated approach.*
 - [ ] Cloudflare Registrar for custom domains
 - [ ] Trade-specific templates
 - [ ] AI content generation (service pages, blog — needs Phase E)
@@ -7825,7 +8506,7 @@ Include <content>{markdown}</content> for rendered display.
 - [ ] $19.99/mo add-on
 - [ ] Commit: `[F2] Website Builder — AI content, templates, booking`
 
-### Sprint F8: Ops Portal Phases 2-4 (~111 hrs) — TRULY LAST
+### Sprint F8: Ops Portal Phases 2-4 (~111 hrs) — POST-LAUNCH
 - [ ] Marketing engine (growth CRM, content, campaigns)
 - [ ] Treasury (revenue analytics, churn, LTV)
 - [ ] Legal (contracts, compliance, disputes)
@@ -7836,10 +8517,6 @@ Include <content>{markdown}</content> for rendered display.
 - [ ] Advanced analytics
 - [ ] 54 additional pages
 - [ ] Commit: `[F8] Ops Portal 2-4 — marketing, treasury, legal, dev`
-
----
-
-### >>> LAUNCH <<<
 
 ---
 
