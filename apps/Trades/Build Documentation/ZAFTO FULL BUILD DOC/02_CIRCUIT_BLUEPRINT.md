@@ -1,6 +1,6 @@
 # ZAFTO CIRCUIT BLUEPRINT
 ## Living Wiring Diagram — What Connects, What Doesn't, What's Missing
-### Last Updated: February 9, 2026 (Session 93 — Phase T (TPA) + Phase P (ZScan) spec'd. No code changes since S91.)
+### Last Updated: February 9, 2026 (Session 95 — All 4 apps deployed to Vercel with custom domains on Cloudflare. team.zafto.app → team.zafto.cloud. Login pages redesigned. Z logo unified.)
 
 ---
 
@@ -69,8 +69,8 @@ You don't rough-in a house without a print. This is the print. Maps every pipe, 
 | R1+E3  | | 68     | | 22      | | 21     | | 2      |
 | +E5+E6 | | hooks  | | hooks   | | hooks  | | hooks  |
 +--------+ +--------+ +---------+ +--------+ +--------+
- zafto.app  zafto.     team.       client.    ops.zafto
- (mobile)   cloud      zafto.app   zafto.     .cloud
+ zafto.app  zafto.     team.zafto  client.    ops.zafto
+ (mobile)   cloud      .cloud      zafto.     .cloud
                                    cloud
 ```
 
