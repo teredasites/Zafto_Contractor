@@ -4,14 +4,11 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'firebase_options.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'core/supabase_client.dart';
-import 'core/env_dev.dart';
+import 'core/env.dart';
 import 'theme/theme_provider.dart';
 import 'theme/zafto_theme_builder.dart';
 import 'screens/home_screen_v2.dart';
@@ -20,19 +17,38 @@ import 'screens/onboarding/company_setup_screen.dart';
 import 'services/auth_service.dart';
 import 'services/exam_prep/progress_tracker.dart';
 
-/// ZAFTO - Multi-Trade Professional Platform
-///
-/// Design System v2.6 - LOCKED January 28, 2026
+// ZAFTO - Multi-Trade Professional Platform
+// Design System v2.6 - LOCKED January 28, 2026
+
+// Build env config from dart-define or defaults (dev)
+const _envConfig = EnvConfig(
+  supabaseUrl: String.fromEnvironment('SUPABASE_URL',
+      defaultValue: 'https://onidzgatvndkhtiubbcw.supabase.co'),
+  supabaseAnonKey: String.fromEnvironment('SUPABASE_ANON_KEY',
+      defaultValue: ''),
+  powerSyncUrl: String.fromEnvironment('POWERSYNC_URL',
+      defaultValue: ''),
+  sentryDsn: String.fromEnvironment('SENTRY_DSN',
+      defaultValue: ''),
+  livekitUrl: String.fromEnvironment('LIVEKIT_URL',
+      defaultValue: ''),
+  livekitApiKey: String.fromEnvironment('LIVEKIT_API_KEY',
+      defaultValue: ''),
+  signalwireSpaceUrl: String.fromEnvironment('SIGNALWIRE_SPACE_URL',
+      defaultValue: ''),
+  signalwireProjectId: String.fromEnvironment('SIGNALWIRE_PROJECT_ID',
+      defaultValue: ''),
+  environment: Environment.dev,
+);
 
 void main() async {
   await SentryFlutter.init(
     (options) {
-      options.dsn = devConfig.sentryDsn;
-      options.environment = devConfig.environment.name;
+      options.dsn = _envConfig.sentryDsn;
+      options.environment = _envConfig.environment.name;
       options.tracesSampleRate = 1.0;
       options.attachScreenshot = true;
       options.beforeSend = (event, hint) {
-        // Attach user context from current Supabase session if available
         try {
           final user = currentUser;
           if (user != null) {
@@ -40,30 +56,19 @@ void main() async {
               user: SentryUser(id: user.id),
             );
           }
-        } catch (_) {
-          // Supabase may not be initialized yet — skip
-        }
+        } catch (_) {}
         return event;
       };
     },
     appRunner: () async {
       // Initialize Supabase (primary backend)
-      await initSupabase(devConfig);
-
-      // Initialize Firebase (kept for AI Cloud Functions — remove after Edge Function migration)
-      await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      );
+      await initSupabase(_envConfig);
 
       if (!kIsWeb) {
         FlutterError.onError = (details) {
-          FirebaseCrashlytics.instance.recordFlutterFatalError(details);
-          // Also report to Sentry
           Sentry.captureException(details.exception, stackTrace: details.stack);
         };
         PlatformDispatcher.instance.onError = (error, stack) {
-          FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-          // Also report to Sentry
           Sentry.captureException(error, stackTrace: stack);
           return true;
         };
