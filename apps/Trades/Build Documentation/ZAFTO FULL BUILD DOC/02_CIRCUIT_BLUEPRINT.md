@@ -672,7 +672,7 @@ Tech opens app -> Taps "Field Tools"
 - [ ] F2: Website Builder V2 -- NOT BUILT -- After AI. Cloudflare Registrar, templates, AI content.
 - [ ] F8: Ops Portal Phases 2-4 -- NOT BUILT -- After AI. Marketing, treasury, legal, dev terminal.
 
-### Phase G: QA & Hardening -- NEXT (then T → P → E)
+### Phase G: QA & Hardening -- AFTER T + P + SK (harden everything at once)
 - [x] G1a: Consolidated Build Verification -- All 5 apps build clean (S90).
 - [ ] G1b-e: Dead code cleanup, route verification, DB wiring audit, EF audit.
 - [ ] G2: Security audit (RLS, auth, input validation).
