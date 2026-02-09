@@ -65,7 +65,7 @@ dependencies:
   sensors_plus: ^4.0.2
 
   # Audio (Voice Notes)
-  record: ^5.1.2
+  record: ^6.2.0
   audioplayers: ^6.1.0
 
   # Supabase (replacing Firebase for backend)
