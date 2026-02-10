@@ -1,6 +1,6 @@
 # ZAFTO CIRCUIT BLUEPRINT
 ## Living Wiring Diagram — What Connects, What Doesn't, What's Missing
-### Last Updated: February 9, 2026 (Session 95 — All 4 apps deployed to Vercel with custom domains on Cloudflare. team.zafto.app → team.zafto.cloud. Login pages redesigned. Z logo unified.)
+### Last Updated: February 9, 2026 (Session 96 — Phase U (Unification & Feature Completion) added to build order. Build order: T → P → SK → U → G → E → LAUNCH.)
 
 ---
 
@@ -639,8 +639,8 @@ Tech opens app -> Taps "Field Tools"
 - [x] D7a: Certifications Modular -- **DONE S67-68** (certification_types + certification_audit_log — 2 tables, 43 total. 25 seeded system types. Configurable per company. Immutable audit trail. All 3 surfaces use dynamic DB types with enum fallback.)
 - [x] D2f: Certificate of Completion -- **DONE S68** (Flutter: job_completion_screen.dart enhanced — detects insurance_claim jobs, adds 4 extra checks: moisture at target, equipment removed, drying complete, TPI final passed. Auto-transitions claim to work_complete. Web CRM: 7th "Completion" tab on claim detail with pre-flight checklist + status transition buttons.)
 
-### Phase T: TPA Module -- SPEC'D (S92)
-- [ ] T1-T10: 17 tables, 3 Edge Functions, ~80 hours. Builds after Phase G.
+### Phase T: TPA Module -- SPEC'D (S92) -- NEXT
+- [ ] T1-T10: 17 tables, 3 Edge Functions, ~80 hours. Builds FIRST.
 - Spec: `Expansion/39_TPA_MODULE_SPEC.md`
 
 ### Phase P: ZScan/Property Intelligence -- SPEC'D (S93)
@@ -648,7 +648,10 @@ Tech opens app -> Taps "Field Tools"
 - Spec: `Expansion/40_PROPERTY_INTELLIGENCE_SPEC.md`
 - API keys needed: GOOGLE_SOLAR_API_KEY, ATTOM_API_KEY, REGRID_API_KEY
 
-### Phase E: AI Layer -- PAUSED (S80 owner directive — AI goes TRULY LAST, after F+G+T+P)
+### Phase U: Unification & Feature Completion -- PLANNED (S96)
+- [ ] U1-U9: ~120 hours, 9 sprints. Portal unification (merge team+client into web-portal at zafto.cloud), Supabase-style nav redesign, permission engine, ZBooks completion, dashboard restoration, PDF/email/dead buttons, payment flow, cross-system metrics, polish. Builds after Phase SK, before Phase G.
+
+### Phase E: AI Layer -- PAUSED (S80 owner directive — AI goes TRULY LAST, after T+P+SK+U+G)
 - [x] E1: Universal AI Architecture -- **DONE (S78)** -- z_threads + z_messages tables, z-intelligence Edge Function (14 tools), Supabase AI API client.
 - [x] E2: Z Console Wiring -- **DONE (S78)** -- Web CRM Z Console connected to z-intelligence Edge Function. 2 hooks (use-z-intelligence.ts, use-z-api.ts). Provider updated.
 - [x] E3a: AI Troubleshooting Edge Functions -- **DONE (S80)** -- 4 functions (ai-troubleshoot, ai-photo-diagnose, ai-parts-identify, ai-repair-guide). 1,311 lines. All deployed.
@@ -672,7 +675,7 @@ Tech opens app -> Taps "Field Tools"
 - [ ] F2: Website Builder V2 -- NOT BUILT -- After AI. Cloudflare Registrar, templates, AI content.
 - [ ] F8: Ops Portal Phases 2-4 -- NOT BUILT -- After AI. Marketing, treasury, legal, dev terminal.
 
-### Phase G: QA & Hardening -- AFTER T + P + SK (harden everything at once)
+### Phase G: QA & Hardening -- AFTER T + P + SK + U (harden everything at once)
 - [x] G1a: Consolidated Build Verification -- All 5 apps build clean (S90).
 - [ ] G1b-e: Dead code cleanup, route verification, DB wiring audit, EF audit.
 - [ ] G2: Security audit (RLS, auth, input validation).

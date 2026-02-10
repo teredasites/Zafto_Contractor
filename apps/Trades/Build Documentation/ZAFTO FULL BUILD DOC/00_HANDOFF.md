@@ -18,10 +18,10 @@
 
 | Field | Value |
 |-------|-------|
-| **Sprint** | **PHASE F COMPLETE (code).** F1-F10 ALL DONE. FM manual steps remain. Phase T (TPA Module) is NEXT. **Phase T + Phase P (ZScan) + Phase SK (Sketch Engine) ALL SPEC'D — build first, then G (QA) hardens everything at once.** |
-| **Sub-step** | Phase F finished. All 4 apps LIVE on Vercel + Cloudflare. Codemagic CI/CD set up. TPA Module spec'd (S92). ZScan spec'd (S93). Sketch Engine spec'd (S94). All portals deployed + branded (S95). Next: Phase T (TPA) → Phase P (ZScan) → Phase SK (Sketch Engine) → Phase G (QA/Hardening of ALL features) → Phase E (AI). |
-| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → Phase T (next unchecked: T1). Phase P added (8 sprints, ~68 hours). Phase SK added (11 sprints, ~176 hours). Phase G expanded with T/P/SK testing (G6-G10). |
-| **Status** | Phases A-D + F ALL DONE. R1 DONE. FM code done. Phase E PAUSED. ~169 tables. 48 migration files. 53 Edge Functions. **107 CRM pages. 33 team pages. 36 client pages. 26 ops pages.** Codemagic Android debug build PASSING. **Phase T (TPA Module) spec complete — 17 tables, 3 EFs, 10 sprints. Phase P (ZScan) spec complete — 8 tables, 4 EFs, 8 sprints. Phase SK (Sketch Engine) spec complete — 3 tables, 11 sprints, ~176 hours.** |
+| **Sprint** | **PHASE F COMPLETE (code).** F1-F10 ALL DONE. FM manual steps remain. Phase T (TPA Module) is NEXT. **Phase T + Phase P (ZScan) + Phase SK (Sketch Engine) ALL SPEC'D. Phase U (Unification & Feature Completion) added (9 sprints, ~120 hrs). Build order: T → P → SK → U → G → E → LAUNCH.** |
+| **Sub-step** | Phase F finished. All 4 apps LIVE on Vercel + Cloudflare. Codemagic CI/CD set up. TPA Module spec'd (S92). ZScan spec'd (S93). Sketch Engine spec'd (S94). All portals deployed + branded (S95). Phase U (Unification & Feature Completion) added (S96). Next: Phase T (TPA) → Phase P (ZScan) → Phase SK (Sketch Engine) → Phase U (Unification) → Phase G (QA/Hardening of ALL features) → Phase E (AI) → LAUNCH. |
+| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → Phase T (next unchecked: T1). Phase P added (8 sprints, ~68 hours). Phase SK added (11 sprints, ~176 hours). Phase U added (9 sprints, ~120 hours). Phase G expanded with T/P/SK/U testing. |
+| **Status** | Phases A-D + F ALL DONE. R1 DONE. FM code done. Phase E PAUSED. ~169 tables. 48 migration files. 53 Edge Functions. **107 CRM pages. 33 team pages. 36 client pages. 26 ops pages.** Codemagic Android debug build PASSING. **Phase T (TPA Module) spec complete — 17 tables, 3 EFs, 10 sprints. Phase P (ZScan) spec complete — 8 tables, 4 EFs, 8 sprints. Phase SK (Sketch Engine) spec complete — 3 tables, 11 sprints, ~176 hours. Phase U (Unification & Feature Completion) — 9 sprints, ~120 hours.** |
 | **Last Completed** | S95: All 4 apps deployed to Vercel with custom domains on Cloudflare (zafto.cloud, team.zafto.cloud, client.zafto.cloud, ops.zafto.cloud). All login pages redesigned (Stripe/Vercel quality). Animated Z offset echo logo unified across all portals. Dark mode default (CRM/Team/Ops), light (Client). Supabase auth config fixed (site_url, redirect URLs, email templates). Admin account: Robert → Damian Tereda. S94: Sketch Engine spec'd. S93: CRM dead button fix. ZScan spec'd. |
 | **Session Count** | 95 |
 | **Tables** | ~169 (Phase T will add ~17, Phase P will add ~8, Phase SK will add ~3) |
@@ -31,7 +31,7 @@
 
 **Owner directive (S80):** Phase E (AI Layer) was started prematurely. AI must be built AFTER every platform feature exists (Phase F) and is debugged (Phase G). AI needs to know every feature like the back of its hand — every table, every screen, every workflow — so it can do literally anything a user asks within the program. Deep AI spec session required before resuming Phase E.
 
-**Correct build order: A(DONE) → B(DONE) → C(DONE) → D(DONE — including D8 Estimate Engine) → R1(DONE) → FM(CODE DONE, manual pending) → F(ALL CODE COMPLETE) → T(TPA MODULE, NEXT) → P(ZSCAN, SPEC'D) → SK(SKETCH ENGINE, SPEC'D) → G(QA/HARDEN EVERYTHING) → E(AI LAST). F2 (Website Builder) DEFERRED TO POST-LAUNCH (S94 owner directive). F8 (Ops Portal 2-4) also post-launch.**
+**Correct build order: A(DONE) → B(DONE) → C(DONE) → D(DONE — including D8 Estimate Engine) → R1(DONE) → FM(CODE DONE, manual pending) → F(ALL CODE COMPLETE) → T(TPA MODULE, NEXT) → P(ZSCAN, SPEC'D) → SK(SKETCH ENGINE, SPEC'D) → U(UNIFICATION & FEATURE COMPLETION) → G(QA/HARDEN EVERYTHING) → E(AI LAST) → LAUNCH. F2 (Website Builder) DEFERRED TO POST-LAUNCH (S94 owner directive). F8 (Ops Portal 2-4) also post-launch.**
 
 **Phase E premature work (committed, dormant in codebase):**
 - E1-E2: z-intelligence EF (14 tools), Z Console wired, z_threads/z_messages tables (S78)
@@ -62,8 +62,9 @@
 | **Phase T: TPA Module** | **SPEC'D — NEXT** | T | Full spec in `Expansion/39_TPA_MODULE_SPEC.md`. ~17 tables, 3 EFs, ~80 hours. Legal assessment in `memory/tpa-legal-assessment.md`. Builds FIRST. |
 | **Phase P: ZScan/Property Intelligence** | **SPEC'D** | P | Full spec in `Expansion/40_PROPERTY_INTELLIGENCE_SPEC.md`. ~8 tables, 4 EFs, ~68 hours. API research in `memory/property-intelligence-research.md`. Builds after Phase T. |
 | **Phase SK: Sketch Engine** | **SPEC'D** | SK | Full spec in `Expansion/46_SKETCH_ENGINE_SPEC.md`. ~3 tables, ~176 hours, 11 sprints (SK1-SK11). LiDAR scan (Apple RoomPlan), trade layers (electrical/plumbing/HVAC/damage), Konva.js web editor, auto-estimate pipeline, export (PDF/PNG/DXF/FML), 3D visualization (three.js). Builds after Phase P. |
-| **Phase G: QA/Hardening** | **AFTER ALL BUILDING** | G | Comprehensive QA of ALL features (A-F + T + P + SK). Button-click audit, security, performance, cross-feature integration testing. G6-G10 added for T/P/SK testing. |
-| **Phase E AI (PAUSED)** | **DORMANT** | E | Code committed S78-S80. NOT to be resumed until after T+P+SK+G. Deep spec session required. |
+| **Phase U: Unification & Feature Completion** | **PLANNED** | U | 9 sprints (U1-U9, ~120 hrs). Portal unification (merge team+client into web-portal at zafto.cloud), Supabase-style nav redesign, permission engine, ZBooks completion, dashboard restoration, PDF/email/dead buttons, payment flow, cross-system metrics, polish. |
+| **Phase G: QA/Hardening** | **AFTER ALL BUILDING** | G | Comprehensive QA of ALL features (A-F + T + P + SK + U). Button-click audit, security, performance, cross-feature integration testing. |
+| **Phase E AI (PAUSED)** | **DORMANT** | E | Code committed S78-S80. NOT to be resumed until after T+P+SK+U+G. Deep spec session required. |
 | **Home Warranty Module** | **RESEARCHED** | — | Deep workflow research in `memory/home-warranty-contractor-workflow.md`. Legal assessment in `memory/home-warranty-legal-assessment.md`. Expansion spec + sprint specs NOT yet written. |
 | **CRM Dead Buttons** | **FIXED (S93)** | — | 24 dead buttons across bids, invoices, reports, sketch-bid pages. All wired to existing hook functions. Sketch-bid missing company_id on INSERT fixed. Build passes. |
 | F1: Phone System | **DONE** | F1 | 9 tables, 5 EFs, CRM+team+client+ops pages built. Manual deploy pending. |
@@ -88,7 +89,7 @@
 
 ## DRIFT PREVENTION RULES (ENFORCED — VIOLATION = DRIFT)
 
-1. **AI GOES TRULY LAST** — Phase E is PAUSED. Do NOT resume AI work until ALL of T + P + SK + G are complete. AI must know every feature. Owner will initiate a deep spec session before any AI work resumes. This is the #1 rule.
+1. **AI GOES TRULY LAST** — Phase E is PAUSED. Do NOT resume AI work until ALL of T + P + SK + U + G are complete. AI must know every feature. Owner will initiate a deep spec session before any AI work resumes. This is the #1 rule.
 2. **SEQUENTIAL EXECUTION** — Execute sprint sub-steps IN ORDER per `07_SPRINT_SPECS.md`. Never skip ahead.
 3. **CHECK OFF AS YOU GO** — Mark `[x]` in `07_SPRINT_SPECS.md` for each item completed. If it's not checked, it's not done.
 4. **NO OUT-OF-ORDER WORK** — If user requests work from a later sprint, discuss it first. If proceeding, add steps to sprint specs BEFORE coding.

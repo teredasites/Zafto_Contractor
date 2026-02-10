@@ -7725,8 +7725,8 @@ Include <content>{markdown}</content> for rendered display.
 
 ---
 
-## PHASE G: DEBUG, QA & HARDENING (AFTER T + P + SK — harden everything at once)
-*Final quality pass before launch.*
+## PHASE G: DEBUG, QA & HARDENING (AFTER T + P + SK + U — harden everything at once)
+*Final quality pass before launch. Every feature built, every button wired, every metric verified. This phase is PURE testing and fixing — no new features.*
 
 ### Sprint G1: Full Platform Debug
 **Goal:** Verify every build compiles clean, every route is accessible, every hook connects to real data.
@@ -8708,7 +8708,164 @@ Include <content>{markdown}</content> for rendered display.
 
 ---
 
-## PHASE E: AI LAYER — REBUILD (after Phase T + Phase P + Phase SK + Phase G)
+## PHASE U: UNIFICATION & FEATURE COMPLETION (after SK, before G)
+*Merge all portals into one app at zafto.cloud. Build missing features, fix gaps, wire dead buttons, enterprise customization. Everything must be COMPLETE before Phase G hardening.*
+
+**Build order: T → P → SK → U → G → E → LAUNCH**
+
+### Sprint U1: Portal Unification (~20 hrs)
+*Merge team-portal + client-portal INTO web-portal. Single app at zafto.cloud with role-based routing.*
+
+- [ ] Middleware rewrite: detect user role from `users` table, route to appropriate dashboard section. Roles: owner, admin, office_manager → /dashboard (full CRM). technician, apprentice → /field (team portal view). client → /portal (customer view). cpa → /books (ZBooks only). super_admin → redirect to ops.zafto.cloud.
+- [ ] Copy all team-portal pages into web-portal under `/field/*` route group. Preserve all hooks, components, mappers.
+- [ ] Copy all client-portal pages into web-portal under `/portal/*` route group. Preserve all hooks, components, mappers.
+- [ ] Shared component library: consolidate duplicate UI components (Card, Badge, Button, Input, Avatar, etc.) between all 3 portals into single `/components/ui/` directory.
+- [ ] Layout per role: `/dashboard/layout.tsx` (CRM nav), `/field/layout.tsx` (field tech nav), `/portal/layout.tsx` (customer nav), `/books/layout.tsx` (CPA nav — ZBooks pages only).
+- [ ] Auth context: single `useAuth()` provider with `profile.role` that determines which layout + routes are accessible.
+- [ ] Sunset team.zafto.cloud and client.zafto.cloud login pages — redirect both to zafto.cloud. Keep DNS active for redirects.
+- [ ] Verify: log in as owner → see CRM. Log in as technician → see field view. Log in as customer → see portal. Log in as CPA → see ZBooks.
+- [ ] `npm run build` passes with all merged pages, zero TypeScript errors.
+- [ ] Commit: `[U1] Portal Unification — 3 apps merged into zafto.cloud with role-based routing`
+
+### Sprint U2: Navigation Redesign + Z Button (~12 hrs)
+*Copy Supabase nav style exactly. Rethink Z AI button placement.*
+
+- [ ] Sidebar nav redesign (CRM): copy Supabase Dashboard nav pattern — left sidebar with icon + text label for each item. Always show text labels (not icon-only). Section dividers with section headers. Subtle hover states. Collapse button at bottom of sidebar. Collapsed state shows icons with tooltip on hover. Active item highlighted with accent color left border.
+- [ ] Nav sections (CRM): Overview (Dashboard), Business (Jobs, Bids, Invoices, Estimates, Customers, Leads), Finance (ZBooks, Banking, Payroll, Reports), Operations (Calendar, Schedule, Team, Fleet, Hiring, Marketplace), Tools (Sketch-Bid, Walkthroughs, Field Tools, Documents), Property (Properties, Leases, Maintenance, Assets), Settings.
+- [ ] Sidebar nav (Field tech): simplified nav — Dashboard, My Jobs, Schedule, Time Clock, Field Tools, Documents, Training, Certifications, My Vehicle, Phone, Meetings.
+- [ ] Sidebar nav (Customer): simplified nav — Home, Projects, Invoices, Bids, Messages, Meetings, My Home, Documents, Get Quotes, Find a Pro.
+- [ ] Sidebar nav (CPA): minimal nav — Overview, Chart of Accounts, Journal Entries, Banking, Reconciliation, Reports, Tax & 1099, Fiscal Periods.
+- [ ] Z AI button rethink: move from bottom-right FAB to sidebar bottom (above user profile). Show as a persistent "Z Assistant" entry in sidebar with pulsing indicator. When clicked, opens side panel (existing ZConsole architecture). More visible, more accessible, integrated into nav flow. Also accessible via Ctrl+J shortcut (existing).
+- [ ] Mobile responsive: sidebar becomes bottom tab bar on mobile. Z button in tab bar.
+- [ ] Dark/light mode: nav adapts to theme correctly. Icons use `currentColor`.
+- [ ] Verify: every nav link works. Every icon is clearly identifiable. Collapsed mode shows tooltips.
+- [ ] `npm run build` passes.
+- [ ] Commit: `[U2] Nav Redesign — Supabase-style sidebar, Z button in nav, role-based nav sections`
+
+### Sprint U3: Permission Engine + Enterprise Customization (~16 hrs)
+*Deep role/permission system for regular contractors AND enterprise companies.*
+
+- [ ] Permission model: `company_permissions` table — FK to `companies`, JSON column `permissions` with feature-level toggles. Default permissions per tier (starter/professional/enterprise).
+- [ ] Permission categories: Business (create_bids, send_bids, create_invoices, send_invoices, create_jobs, assign_jobs, view_financials, manage_customers, manage_leads, view_reports). Operations (manage_team, manage_fleet, manage_hiring, manage_payroll, approve_change_orders, approve_expenses). Tools (use_sketch_editor, use_field_tools, use_estimates, use_walkthroughs, access_marketplace). Finance (view_zbooks, manage_banking, manage_reconciliation, approve_payments, view_tax_reports, manage_fiscal_periods). Admin (manage_roles, manage_branches, manage_api_keys, manage_settings, manage_certifications, invite_users, manage_subscriptions).
+- [ ] Role presets (regular contractors): Owner (all), Admin (all except manage_subscriptions), Office Manager (business + operations), Technician (view_jobs, use_field_tools, clock_in_out), Apprentice (view_jobs, use_field_tools, clock_in_out — no financials), CPA (finance only).
+- [ ] Enterprise features (gated by tier): Multi-branch management, custom roles, approval workflows (bids > $X need admin approval, change orders need owner approval, expenses need manager approval), API access, white-labeling, advanced audit log, SSO/SAML, custom form templates, advanced reporting (WIP, AIA billing, construction draws), data export (CSV/PDF).
+- [ ] UI: Settings → Roles & Permissions page. Table of roles with permission checkboxes. Enterprise features show lock icon for non-enterprise tiers with upgrade prompt.
+- [ ] Permission middleware: `usePermission('create_bids')` hook — returns boolean. Used in UI to show/hide buttons and nav items. Server-side: RLS policies check permissions via `requesting_user_permissions()` function.
+- [ ] Company tier flag: ALTER `companies` table ADD `tier TEXT CHECK (tier IN ('starter', 'professional', 'enterprise')) DEFAULT 'professional'`.
+- [ ] Good/Better/Best pricing: company setting `bid_pricing_tiers: boolean`. When off, bids show single price column. When on, shows Good/Better/Best columns with different scope/material selections per tier. Setting in company settings page.
+- [ ] Verify: owner can see everything. Technician cannot see financials. CPA sees only ZBooks. Enterprise features gated. Good/Better/Best toggles correctly.
+- [ ] `npm run build` + `dart analyze` pass.
+- [ ] Commit: `[U3] Permission Engine — role-based permissions, enterprise tiers, Good/Better/Best setting`
+
+### Sprint U4: ZBooks Completion (~16 hrs)
+*Ensure ZBooks covers EVERYTHING a contractor needs. Enterprise features separated cleanly.*
+
+**Regular contractor accounting (ALL tiers):**
+- [ ] Chart of Accounts: standard COA pre-loaded (assets, liabilities, equity, revenue, expenses). Add/edit/delete accounts. Account type enforcement.
+- [ ] Invoicing integration: invoice send → auto-post journal entry (DR Accounts Receivable, CR Revenue). Payment received → DR Cash, CR AR.
+- [ ] Bill pay: enter vendor bills, schedule payments, track AP aging. Vendor 1099 classification.
+- [ ] Bank reconciliation: import bank transactions (Plaid), match to GL entries, identify unmatched items. Reconciliation report.
+- [ ] Expense tracking: receipt capture → expense categorization. Job-level expense allocation. Expense reports.
+- [ ] Financial statements: P&L (by date range), Balance Sheet (as of date), Cash Flow Statement. PDF export.
+- [ ] Tax preparation: 1099-NEC generation for vendors > $600. Tax report by category. CSV export for CPA.
+- [ ] Fiscal periods: monthly close, year-end close. Period locking (no edits to closed periods).
+
+**Enterprise accounting (enterprise tier only):**
+- [ ] Job costing: revenue/cost/profit per job. WIP (Work in Progress) reporting. Over/under billing analysis.
+- [ ] Construction draws: AIA G702/G703 billing format. Progress billing schedules. Retainage tracking.
+- [ ] Multi-branch P&L: consolidated + per-branch financial statements.
+- [ ] Approval workflows: expenses > $X need manager approval. Vendor payments > $Y need owner approval.
+- [ ] Budget vs Actual: job-level budgeting. Variance reporting. Alerts when budget threshold exceeded.
+- [ ] Audit trail: immutable log of every GL entry change. Required for SOC 2.
+- [ ] CPA portal view: read-only ZBooks access scoped to company. Export to QuickBooks (IIF format). CSV export.
+
+**Separation pattern:**
+- [ ] Enterprise features gated by `company.tier === 'enterprise'`. Non-enterprise sees clean "Upgrade to Enterprise" prompt on locked features.
+- [ ] No enterprise UI clutter in starter/professional views. Enterprise tabs/sections hidden entirely.
+- [ ] Verify: regular contractor sees clean, simple accounting. Enterprise sees full construction accounting suite. CPA sees read-only financials.
+- [ ] `npm run build` passes.
+- [ ] Commit: `[U4] ZBooks Completion — full contractor accounting, enterprise construction features, CPA view`
+
+### Sprint U5: Dashboard Restoration + Reports (~12 hrs)
+*Restore missing dashboard widgets. Replace mock data with live queries.*
+
+- [ ] Employee tracking map: restore the small map widget on CRM dashboard showing real-time GPS locations of clocked-in team members from `time_entries` + `users` tables. Uses Mapbox (already configured). Shows pins with employee name + current job.
+- [ ] Pie charts restoration: replace `mockRevenueData`, `mockJobsByStatus`, `mockRevenueByCategory` with live Supabase queries. Revenue by month (from paid invoices). Jobs by status (from jobs table). Revenue by trade category (from invoices + jobs). Use existing charting library or add lightweight one (recharts or chart.js).
+- [ ] Dashboard stats: verify all stat cards pull real data — total revenue (paid invoices), active jobs (status=in_progress), pending bids (status=draft/sent), outstanding invoices (status=due/overdue).
+- [ ] Reports page: replace ALL hardcoded mock data with live queries. Revenue reports (by date range, by customer, by trade). Job reports (completion rate, avg duration, team performance). Invoice reports (aging, collection rate, outstanding). Expense reports (by category, by job, by vendor).
+- [ ] Dashboard quick actions: create job, create bid, create invoice, clock team member in — all functional (not just links).
+- [ ] Verify: every number on dashboard matches actual DB data. Pie charts render with real data. Map shows clocked-in employees. Reports generate accurate live data.
+- [ ] `npm run build` passes.
+- [ ] Commit: `[U5] Dashboard Restoration — employee map, live pie charts, real reports, accurate stats`
+
+### Sprint U6: PDF Generation + Email Sending (~16 hrs)
+*Build PDF export for bids, invoices, estimates. Wire email sending for all "Send" buttons.*
+
+- [ ] PDF generation service: server-side PDF rendering using `@react-pdf/renderer` or `jspdf` + custom templates. Clean professional layout with company logo, address, terms.
+- [ ] Bid PDF: company header, customer info, scope items, pricing (with optional Good/Better/Best columns), terms & conditions, signature line, total. "Download PDF" button replaces `alert('coming in Phase G')`.
+- [ ] Invoice PDF: company header, customer info, line items, subtotal, tax, total, payment terms, due date, bank details / pay online link. Invoice number + date prominent.
+- [ ] Estimate PDF: company header, property address, room-by-room breakdown, line items with quantities + pricing, O&P, grand total. Insurance mode shows RCV/ACV columns.
+- [ ] Email sending: wire `sendgrid-email` edge function to all "Send" buttons. Bid send: generates PDF → attaches to email → sends to customer email → updates bid status to 'sent'. Invoice send: same pattern. Estimate send: same pattern.
+- [ ] Email templates: professional HTML email templates for bid/invoice/estimate delivery. Company branding. "View Online" link to client portal.
+- [ ] Dead button wiring: fix ALL 26+ dead buttons identified in S93/S95 audit. Every hook function must be called by its UI button. Specifically: sendBid, deleteBid, convertToJob, sendInvoice, recordPayment, sendReminder, duplicateBid, duplicateInvoice, archiveJob, exportCSV.
+- [ ] Verify: click every "Send" button → email arrives. Click every "Download PDF" → file downloads. Click every "Delete" → item deletes with confirmation. No dead buttons remain.
+- [ ] `npm run build` passes.
+- [ ] Commit: `[U6] PDF + Email — bid/invoice/estimate PDF, SendGrid wiring, all dead buttons fixed`
+
+### Sprint U7: Payment Flow + Shell Pages (~12 hrs)
+*Real Stripe payment form. Build or remove the 9 shell CRM pages.*
+
+- [ ] Client payment form: replace `prompt()` payment recording with proper Stripe Elements form. Credit card, ACH bank transfer, check recording. Payment amount, date, method, reference number. Updates invoice status (partial/paid). Posts GL entry automatically.
+- [ ] Client portal payments: replace hardcoded 6 fake payments with real queries from `payments` table. Show payment history, method, amount, invoice reference. "Pay Now" button → Stripe checkout for outstanding invoices.
+- [ ] Shell page decisions — BUILD these (they have backing tables):
+  - [ ] Documents: wire to `documents` table + Supabase Storage. Upload, categorize (contracts, permits, certificates, insurance, photos), share with team/customers. Download via signed URL.
+  - [ ] Communications: wire to `phone_calls` + `phone_messages` + `emails` tables. Unified inbox showing all customer communications (calls, SMS, emails). Click to call/text via SignalWire.
+  - [ ] Certifications: wire to `certifications` + `certification_types` tables. Team cert tracking, expiry alerts, renewal reminders. Upload cert documents. Company-wide compliance dashboard.
+  - [ ] Equipment: wire to `restoration_equipment` table. Equipment inventory, deployment tracking, maintenance schedules. For restoration companies.
+  - [ ] Permits: wire to `compliance_records` (type=permit). Permit tracking per job. Status (applied, approved, expired). Upload permit documents.
+  - [ ] Warranties: wire to warranty-related compliance records. Warranty tracking per job/customer. Expiry alerts. Warranty document storage.
+  - [ ] Service Agreements: wire to a new `service_agreements` table or compliance_records. Recurring service contracts. Auto-renewal tracking. Agreement document storage.
+- [ ] Shell page decisions — REMOVE from nav (no backing tables, not needed pre-launch):
+  - [ ] Inventory (overlaps with Equipment + Materials Tracker)
+  - [ ] Price Book (embedded in bids/new page, not standalone)
+- [ ] Property health score: replace hardcoded "--" in client portal with real calculation based on equipment age, service history, maintenance compliance.
+- [ ] Verify: payment flow end-to-end works. All former shell pages have real data or are removed from nav.
+- [ ] `npm run build` passes.
+- [ ] Commit: `[U7] Payments + Shell Pages — Stripe form, 7 shell pages built, 2 removed, property health`
+
+### Sprint U8: Cross-System Metric Verification (~8 hrs)
+*Every number, every chart, every stat must be 100% accurate and consistent across all views.*
+
+- [ ] Revenue consistency: dashboard revenue = ZBooks revenue account total = sum of paid invoices = reports revenue figure. Test with known data.
+- [ ] Job metrics: dashboard active jobs = jobs list active filter count = team portal assigned jobs (scoped to user). Completion rate = completed / total.
+- [ ] Invoice metrics: outstanding amount = sum of (due + overdue + partial) invoices. Aging buckets (0-30, 31-60, 61-90, 90+) match reports page.
+- [ ] Bid metrics: conversion rate = won bids / total bids. Pipeline value = sum of open bid amounts.
+- [ ] Time tracking: total hours on dashboard = sum of time_entries for period. Matches payroll calculations.
+- [ ] Estimate metrics: average estimate value = sum / count. Conversion to job = estimates with converted_job_id / total.
+- [ ] Lead metrics: pipeline stages match lead counts. Conversion funnel percentages accurate.
+- [ ] GL verification: balance sheet balances (assets = liabilities + equity). P&L ties to GL. Journal entries have equal debits and credits.
+- [ ] Cross-portal consistency: CRM invoice total for customer X = client portal outstanding for customer X. CRM job status = team portal job status.
+- [ ] Verify: create test scenario with known values. Check every metric across every view. All numbers match exactly.
+- [ ] Commit: `[U8] Cross-System Metrics — all metrics verified accurate across all views and portals`
+
+### Sprint U9: Polish + Missing Features (~8 hrs)
+*Final feature gaps, UX polish, and cleanup before hardening.*
+
+- [ ] Ops portal actions: add create/edit/delete capabilities for super-admin. Company management (edit tier, suspend, activate). User management (edit role, disable, force password reset). Ticket management (assign, respond, close). Knowledge base CRUD.
+- [ ] Meeting permission scoping: filter meetings by participant list, not show all company meetings to all users.
+- [ ] Forgot password flow: wire "Forgot password?" button to Supabase `resetPasswordForEmail()`. Show confirmation. Handle password reset callback URL.
+- [ ] Remember me / session persistence: "Keep me signed in" checkbox. Long vs short session expiry.
+- [ ] Loading states: ensure every page has proper loading skeleton (not just spinner). Matches Supabase Dashboard loading pattern.
+- [ ] Empty states: every page with no data shows a helpful empty state with icon + "No X yet" + CTA button to create first item. Not just blank page.
+- [ ] Error boundaries: every page wrapped in error boundary. Shows "Something went wrong" with retry button. Not white screen of death.
+- [ ] Mobile responsiveness audit: every CRM page, every field tech page, every customer page renders properly on mobile viewport.
+- [ ] Verify: forgot password works end-to-end. Every page has loading + empty + error states. Mobile layouts clean.
+- [ ] All builds pass: `npm run build` for web portal (CRM + team + client merged), ops portal.
+- [ ] Commit: `[U9] Polish — ops actions, auth flows, loading/empty/error states, mobile audit`
+
+---
+
+## PHASE E: AI LAYER — REBUILD (after Phase T + Phase P + Phase SK + Phase U + Phase G)
 *Deep spec session with owner required before starting. AI must know every feature, every table, every screen — including TPA module + ZScan + Sketch Engine.*
 
 ### Sprint E-review: Audit premature E work
