@@ -3,8 +3,8 @@ import { ThemeProvider } from '@/components/theme-provider'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Zafto - Contractor Dashboard',
-  description: 'Manage your bids, jobs, invoices, and team from anywhere.',
+  title: 'Zafto',
+  description: 'One platform for every trade. Bids, jobs, invoices, field tools, and team management.',
 }
 
 export default function RootLayout({

@@ -84,11 +84,12 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | **Phase E AI (PREMATURE)** | **YES (code exists)** | **PAUSED** | **NOT TESTED — AI goes LAST** |
 | **D8 Estimate Engine** | **YES** | **YES (D8a-D8j)** | **DONE (S85-S89)** |
 | **Phase F Platform** | **YES (code)** | **YES (hooks+pages)** | **ALL CODE COMPLETE (S90)** |
-| **Phase T: TPA Module** | **SPEC'D** | **NO** | Builds after Phase G |
+| **Phase T: TPA Module** | **SPEC'D** | **NO** | NEXT — builds first |
 | **Phase P: ZScan** | **SPEC'D** | **NO** | Builds after Phase T |
 | **Phase SK: Sketch Engine** | **SPEC'D** | **NO** | Builds after Phase P |
+| **Phase U: Unification** | **PLANNED** | **NO** | Builds after Phase SK — portal merge, nav redesign, feature completion |
 
-**ALL PHASES A-F COMPLETE. ~169 tables. 53 Edge Functions. 107 CRM routes. Phase T (TPA) is NEXT, then P (ZScan), then SK (Sketch Engine), then G (QA/Harden everything), then E (AI LAST). F2 + F8 post-launch.**
+**ALL PHASES A-F COMPLETE. ~169 tables. 53 Edge Functions. 107 CRM routes. Phase T (TPA) is NEXT, then P (ZScan), then SK (Sketch Engine), then U (Unification & Feature Completion), then G (QA/Harden everything), then E (AI LAST) → LAUNCH. F2 + F8 post-launch.**
 
 ---
 
@@ -138,7 +139,7 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | D7 | Certification System | ~12 | Modular cert types, immutable audit log, dynamic type registry |
 | D8 | Estimate Engine | ~100+ | Two-mode: Regular Bids (all contractors, PDF) + Insurance Estimates (ESX). Own code DB, crowdsource, regional pricing. See `SPRINT/07_ESTIMATE_ENGINE_SPEC.md` |
 
-### PHASE E: AI LAYER — MOVED TO AFTER PHASE F + G (AI GOES TRULY LAST)
+### PHASE E: AI LAYER — MOVED TO AFTER PHASE U + G (AI GOES TRULY LAST)
 
 **STATUS: PAUSED.** Some E work was built prematurely in S78-S80 (Edge Functions, hooks, UI). Code committed but DORMANT. AI must be built LAST after every platform feature exists so it can know and control the entire system. Deep AI spec session required before resuming.
 
@@ -149,7 +150,7 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 - E5: Xactimate estimate engine (5 tables, 6 Edge Functions, UI across all apps) — **SUPERSEDED by D8 (clean-room estimate engine). E5 code dormant. D8 uses independent spec: `SPRINT/07_ESTIMATE_ENGINE_SPEC.md`**
 - E6: Bid walkthrough engine (5 tables, 4 Edge Functions, 12 Flutter screens)
 
-**When we return to Phase E (after F+G):**
+**When we return to Phase E (after T+P+SK+U+G):**
 
 | # | Task | Hours | Details |
 |---|------|:-----:|---------|
@@ -169,7 +170,7 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 
 ### PHASE F: PLATFORM COMPLETION
 
-**Build order: F1→F3→F4→F5→F6→F7→F9→F10. Then T (TPA Module), then P (ZScan), then SK (Sketch Engine), then G (QA/Harden everything), then E. F2+F8 post-launch.**
+**Build order: F1→F3→F4→F5→F6→F7→F9→F10. Then T (TPA Module), then P (ZScan), then SK (Sketch Engine), then U (Unification & Feature Completion), then G (QA/Harden everything), then E → LAUNCH. F2+F8 post-launch.**
 
 | # | Task | Hours | Details |
 |---|------|:-----:|---------|
@@ -241,11 +242,25 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 
 *Full spec: `Expansion/46_SKETCH_ENGINE_SPEC.md`*
 
-### PHASE E: AI LAYER (REBUILD — after T + P + SK + G)
+### PHASE U: UNIFICATION & FEATURE COMPLETION (after SK, before G)
 
 | # | Task | Hours | Details |
 |---|------|:-----:|---------|
-| E-review | Audit all premature E work | TBD | Deep spec session with owner. AI must know every feature, table, screen — including TPA module + ZScan + Sketch Engine. Rebuild with full platform context. |
+| U1 | Portal Unification | ~16 | Merge team+client portals into web-portal at zafto.cloud. Single codebase, role-based routing. |
+| U2 | Nav Redesign | ~14 | Supabase-style sidebar across all portals. Z button rethink. |
+| U3 | Permission Engine + Enterprise Customization | ~16 | Granular permission system. Enterprise feature toggles. |
+| U4 | ZBooks Completion | ~14 | Complete ZBooks to replace QuickBooks. Bank sync, reconciliation, full GL. |
+| U5 | Dashboard Restoration + Reports | ~12 | Live data dashboards replacing mock data. Real-time reports. |
+| U6 | PDF Generation + Email Sending + Dead Buttons | ~14 | Invoice/bid/estimate PDF generation. SendGrid email delivery. Wire remaining dead buttons. |
+| U7 | Payment Flow + Shell Pages | ~12 | Stripe payment flow completion. Fill remaining shell pages with real functionality. |
+| U8 | Cross-System Metric Verification | ~10 | Verify data flows correctly across all 5 apps. Metric consistency checks. |
+| U9 | Polish + Missing Features | ~12 | Final polish pass. Fill any remaining gaps before QA phase. |
+
+### PHASE E: AI LAYER (REBUILD — after T + P + SK + U + G)
+
+| # | Task | Hours | Details |
+|---|------|:-----:|---------|
+| E-review | Audit all premature E work | TBD | Deep spec session with owner. AI must know every feature, table, screen — including TPA module + ZScan + Sketch Engine + Phase U unification. Rebuild with full platform context. |
 | E1-E4 | Full AI implementation | TBD | Universal AI, Z Console, Command Center, Growth Advisor. Every feature AI-enhanced. |
 
 ### >>> LAUNCH <<<
@@ -523,7 +538,7 @@ See Circuit Blueprint for complete schema mapping.
 ## CRITICAL RULES
 
 1. **NO DRIFT** — Update these docs, never create new ones
-2. **AI goes TRULY LAST** — After ALL of Phase F + G. Not after D. After EVERYTHING. AI must know every feature, every table, every screen. Deep spec session before building. NEVER again start AI before platform is complete.
+2. **AI goes TRULY LAST** — After ALL of T + P + SK + U + G. Not after D. After EVERYTHING. AI must know every feature, every table, every screen. Deep spec session before building. NEVER again start AI before platform is complete.
 3. **ZAFTO wordmark** — NOT just the Z. Z is for AI/premium.
 4. **ZBooks** — Not "ZAFTO Books"
 5. **Stripe feel** — Premium, clean, professional everywhere
@@ -536,7 +551,7 @@ See Circuit Blueprint for complete schema mapping.
 12. **Offline-first** — PowerSync (SQLite <-> PostgreSQL)
 13. **Progressive disclosure** — Clean by default, complexity activates per-need
 14. **Nothing ships without human approval** — Every AI artifact needs contractor review
-15. **BUILD ORDER: A → B → C → D → F → T → P → SK → G → E** — Platform first. Build all features (T+P+SK). QA/Harden everything at once. AI last.
+15. **BUILD ORDER: A → B → C → D → F → T → P → SK → U → G → E → LAUNCH** — Platform first. Build all features (T+P+SK). Unify portals + complete features (U). QA/Harden everything at once (G). AI last (E).
 
 ---
 
