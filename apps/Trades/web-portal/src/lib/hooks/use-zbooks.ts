@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { getSupabase } from '@/lib/supabase';
 
 // ============================================================
-// ZBooks Hook — Journal entry queries, COA queries, GL data
+// Ledger Hook — Journal entry queries, COA queries, GL data
 // ============================================================
 
 export interface JournalEntryData {

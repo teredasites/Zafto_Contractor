@@ -2045,7 +2045,7 @@ Scheduling:
   /dashboard/time-clock       — Time entries list, approval workflow
 
 Customers:
-  /dashboard/communications   — Placeholder (wire in F1 Phone System)
+  /dashboard/communications   — Placeholder (wire in F1 Calls)
   /dashboard/service-agreements — Placeholder (store in JSONB on customer)
   /dashboard/warranties       — Placeholder (wire in D3 Insurance)
 
@@ -2057,7 +2057,7 @@ Resources:
   /dashboard/purchase-orders  — Placeholder
 
 Office:
-  /dashboard/books            — Placeholder (wire in D4 ZBooks)
+  /dashboard/books            — Placeholder (wire in D4 Ledger)
   /dashboard/price-book       — Placeholder (JSONB or dedicated table later)
   /dashboard/documents        — Photos + files from Storage
   /dashboard/reports          — Computed from real data (revenue, time, materials)
@@ -3825,13 +3825,13 @@ All use existing tables + JSONB metadata — no new tables except warranty_compa
 
 ---
 
-### Sprint D4: ZBooks (~78 hrs)
+### Sprint D4: Ledger (~78 hrs)
 **Status: SPEC COMPLETE — Ready for execution**
 **Spec Written: Session 70 (Feb 7, 2026)**
 
 Full GAAP-compliant double-entry accounting system for trades contractors. Replaces QuickBooks for 95% of contractor needs. Two tiers: Standard (all subscribers) and Enterprise (behind enterprise paywall).
 
-**Branding:** "ZBooks" — never "ZAFTO Books." Premium Z-feature branding.
+**Branding:** "Ledger" — never "ZAFTO Books." Premium Z-feature branding.
 
 ---
 
@@ -3850,13 +3850,13 @@ Full GAAP-compliant double-entry accounting system for trades contractors. Repla
 - Financial report exports include generation timestamp + user who generated.
 
 **Access Control:**
-- RLS on every ZBooks table — `company_id` tenant isolation.
+- RLS on every Ledger table — `company_id` tenant isolation.
 - Role-gated access:
   - **Owner/Admin**: Full read/write on all financial data.
   - **Office Manager**: Read/write on expenses, invoices, bank reconciliation. Read-only on GL/statements.
   - **CPA**: Read-only on all financial data. No mutations. Access logged.
   - **Technician**: Can create expenses/receipts only. Cannot see company financials.
-  - **Client**: Zero access to ZBooks.
+  - **Client**: Zero access to Ledger.
 - Fiscal period lock prevents backdating transactions into closed periods.
 - Bank credentials (Plaid tokens) stored server-side only, never exposed to frontend.
 
@@ -4257,7 +4257,7 @@ updated_at TIMESTAMPTZ DEFAULT now()
 **Status: DONE (Session 70)**
 **Est: 6 hours**
 
-**Goal:** Build the core accounting engine. When operational events happen (invoice created, payment received, expense recorded), the system auto-generates balanced journal entries. This is the heart of ZBooks.
+**Goal:** Build the core accounting engine. When operational events happen (invoice created, payment received, expense recorded), the system auto-generates balanced journal entries. This is the heart of Ledger.
 
 **Auto-posting rules (source_type → journal entry):**
 
@@ -4328,7 +4328,7 @@ updated_at TIMESTAMPTZ DEFAULT now()
 - System accounts (is_system=true) are read-only
 - Search/filter by account type
 
-**Flutter screen: Settings → ZBooks → Chart of Accounts**
+**Flutter screen: Settings → Ledger → Chart of Accounts**
 - Read-only list view grouped by type
 - Account balances visible
 - No add/edit on mobile (admin function — CRM only)
@@ -4411,7 +4411,7 @@ updated_at TIMESTAMPTZ DEFAULT now()
 4. `plaid-get-balance` — fetches current balance, updates bank_accounts.current_balance
 
 **Web CRM UI:**
-- "Connect Bank Account" button on ZBooks dashboard
+- "Connect Bank Account" button on Ledger dashboard
 - Plaid Link modal integration (Plaid's drop-in UI)
 - Connected accounts list with balance, last synced, sync button
 - Disconnect account (deactivate, revoke Plaid access)
@@ -4652,7 +4652,7 @@ updated_at TIMESTAMPTZ DEFAULT now()
 
 ---
 
-#### D4l: ZBooks Dashboard (Rewrite)
+#### D4l: Ledger Dashboard (Rewrite)
 **Status: DONE (Session 70)**
 **Est: 4 hours**
 
@@ -4685,7 +4685,7 @@ updated_at TIMESTAMPTZ DEFAULT now()
 - Unreconciled accounts (last reconciliation > 30 days ago)
 
 **Navigation:**
-- Quick links to all ZBooks sub-pages: Accounts, Expenses, Vendors, Payments, Reports, Bank, Reconciliation, 1099, Tax, Recurring, Periods
+- Quick links to all Ledger sub-pages: Accounts, Expenses, Vendors, Payments, Reports, Bank, Reconciliation, 1099, Tax, Recurring, Periods
 
 **Checklist D4l:**
 - [x] KPI cards with real GL data
@@ -4701,7 +4701,7 @@ updated_at TIMESTAMPTZ DEFAULT now()
 
 ---
 
-#### D4m: Flutter Mobile — ZBooks Features
+#### D4m: Flutter Mobile — Ledger Features
 **Status: DONE (Session 70)**
 **Est: 4 hours**
 
@@ -4709,7 +4709,7 @@ updated_at TIMESTAMPTZ DEFAULT now()
 
 **Screens to build:**
 
-**1. ZBooks Hub (from Settings or Home → More)**
+**1. Ledger Hub (from Settings or Home → More)**
 - Financial summary card: cash position, AR, AP, net income MTD
 - Quick actions: Record Expense, Capture Receipt
 - Recent expenses list (own expenses for techs, all for owner)
@@ -4743,7 +4743,7 @@ updated_at TIMESTAMPTZ DEFAULT now()
 - `zbooks_service.dart` (providers: expenseListProvider, vendorListProvider, financialSummaryProvider)
 
 **Checklist D4m:**
-- [x] ZBooks hub screen (summary + quick actions)
+- [x] Ledger hub screen (summary + quick actions)
 - [x] Quick expense entry screen
 - [x] Receipt capture screen (camera → upload)
 - [x] Expense list screen with filters
@@ -4761,7 +4761,7 @@ updated_at TIMESTAMPTZ DEFAULT now()
 **CPA role already exists in RBAC (D6). This step wires CPA-specific financial views.**
 
 **Web CRM — CPA role restrictions:**
-- Read-only access to all ZBooks pages (no create/edit/delete buttons rendered)
+- Read-only access to all Ledger pages (no create/edit/delete buttons rendered)
 - Can view: P&L, Balance Sheet, Cash Flow, Trial Balance, GL Detail, AR/AP Aging, 1099 Report, Tax Summary
 - Cannot view: bank account credentials, Plaid tokens
 - Cannot perform: bank reconciliation, expense approval, journal posting, period close
@@ -4769,7 +4769,7 @@ updated_at TIMESTAMPTZ DEFAULT now()
 
 **CPA-specific features:**
 - "Export Package" button: generates zip with P&L + Balance Sheet + Trial Balance + 1099 summary for selected date range
-- Export watermark: "Generated by [user] on [date] via ZAFTO ZBooks"
+- Export watermark: "Generated by [user] on [date] via ZAFTO Ledger"
 - Downloadable CSV of any report table
 
 **Team Portal — CPA access:**
@@ -4779,7 +4779,7 @@ updated_at TIMESTAMPTZ DEFAULT now()
 - CPA has NO access to client portal
 
 **Checklist D4n:**
-- [x] CPA role renders read-only ZBooks pages (no mutation buttons)
+- [x] CPA role renders read-only Ledger pages (no mutation buttons)
 - [x] CPA access logging to zbooks_audit_log
 - [x] Export Package (P&L + Balance Sheet + Trial Balance + 1099 as CSVs)
 - [x] Export watermark with user + timestamp
@@ -4941,7 +4941,7 @@ Execute strictly in order:
 9. **D4i** — Tax/1099 (depends on D4e vendor payments + D4h reports)
 10. **D4j** — Recurring transactions (depends on D4c engine)
 11. **D4k** — Fiscal periods UI (depends on D4c posting logic)
-12. **D4l** — ZBooks dashboard rewrite (depends on all above)
+12. **D4l** — Ledger dashboard rewrite (depends on all above)
 13. **D4m** — Flutter mobile (depends on D4a+D4b tables + D4e patterns)
 14. **D4n** — CPA portal (depends on D4h reports)
 15. **D4o** — Enterprise branch financials (depends on D4h, enterprise gate)
@@ -4954,9 +4954,9 @@ Execute strictly in order:
 ### Sprint D5: Property Management System (~120 hrs)
 **Status: PENDING — Full spec written Session 70. Ready to execute.**
 
-Contractor-owned property management that ALSO serves standalone PM companies. Tenant mgmt, leases, rent collection (Stripe), maintenance requests → auto-create ZAFTO jobs, asset health records, inspections, unit turn workflow. THE MOAT — no competitor combines contractor tools + PM. ZBooks Schedule E per property. ~19 new tables. ~80 total.
+Contractor-owned property management that ALSO serves standalone PM companies. Tenant mgmt, leases, rent collection (Stripe), maintenance requests → auto-create ZAFTO jobs, asset health records, inspections, unit turn workflow. THE MOAT — no competitor combines contractor tools + PM. Ledger Schedule E per property. ~19 new tables. ~80 total.
 
-**Architecture:** NOT a mode switch. One app with sectioned navigation. `companies.features` JSONB controls visibility: `{ contracting: true/false, property_management: true/false }`. Jobs flow between both worlds. ZBooks unifies accounting (Schedule C contractor + Schedule E rental).
+**Architecture:** NOT a mode switch. One app with sectioned navigation. `companies.features` JSONB controls visibility: `{ contracting: true/false, property_management: true/false }`. Jobs flow between both worlds. Ledger unifies accounting (Schedule C contractor + Schedule E rental).
 
 **UI Pattern:** Web CRM sidebar gets new "PROPERTIES" section (Portfolio, Units, Tenants, Leases, Rent, Maintenance, Inspections, Assets). Flutter gets Properties Hub on home screen + properties_hub_screen.dart. Client portal (client.zafto.cloud) adds tenant flows (rent payment, maintenance requests, lease view). Team portal adds property maintenance assignment view.
 
@@ -5592,21 +5592,21 @@ web-portal/src/app/dashboard/properties/turns/page.tsx        — Unit turns boa
 
 ---
 
-#### D5e: Web CRM — Dashboard Integration + ZBooks Schedule E
+#### D5e: Web CRM — Dashboard Integration + Ledger Schedule E
 **Status: DONE (Session 71)** | **Est: ~6 hrs**
 
 **Steps:**
 - [x] Update Dashboard page — add "Rental Portfolio" section (occupancy, rent due/collected, maintenance count, lease expirations). Conditionally shown when PM enabled.
-- [x] Update ZBooks Reports — add Schedule E per-property P&L report. 15 IRS categories. Date range filter.
-- [x] Update ZBooks Reports — combined view: Schedule C (contractor) + Schedule E (all properties) + total
-- [x] Update ZBooks Expenses — add property_id selector for allocating expenses to properties
-- [x] Update ZBooks Expenses — add "Split Expense" flow: allocate % to contractor biz vs specific property
-- [x] Update ZBooks CPA Export — add Schedule E package per property
+- [x] Update Ledger Reports — add Schedule E per-property P&L report. 15 IRS categories. Date range filter.
+- [x] Update Ledger Reports — combined view: Schedule C (contractor) + Schedule E (all properties) + total
+- [x] Update Ledger Expenses — add property_id selector for allocating expenses to properties
+- [x] Update Ledger Expenses — add "Split Expense" flow: allocate % to contractor biz vs specific property
+- [x] Update Ledger CPA Export — add Schedule E package per property
 - [x] Update Calendar — maintenance jobs show alongside client jobs, color-coded (e.g., green for PM jobs)
 - [x] Update Jobs list — add "source" filter: All / Client Jobs / Maintenance Jobs
 - [x] Add REPS hour tracker widget — pull time_entries tagged as property work, show progress toward 750 hours
 - [x] `npm run build` passes
-- [x] Commit: `[D5e] Dashboard + ZBooks Schedule E + expense allocation` ✓ 6bbcb93
+- [x] Commit: `[D5e] Dashboard + Ledger Schedule E + expense allocation` ✓ 6bbcb93
 
 ---
 
@@ -5694,7 +5694,7 @@ client-portal/src/app/portal/home/page.tsx           — Update: show rent due +
 1. Tenant taps "Pay Rent" → calls Stripe createPaymentIntent Edge Function
 2. Stripe Checkout or embedded Elements UI → tenant enters payment
 3. Webhook confirms payment → insert rent_payments row → update rent_charges.paid_amount + status
-4. Auto-create ZBooks journal entry: debit Cash, credit Rental Income (for that property)
+4. Auto-create Ledger journal entry: debit Cash, credit Rental Income (for that property)
 5. Confirmation shown to tenant + emailed receipt
 
 **Steps:**
@@ -5752,14 +5752,14 @@ team-portal/src/app/dashboard/properties/page.tsx    — Maintenance requests as
 - [x] Create Edge Function: `pm-asset-reminders` — runs daily, sends notifications for assets with upcoming service dates
 - [x] Wire maintenance request → job creation (self-assign flow): Flutter handleItMyself fixed (propertyId/unitId/maintenanceRequestId), CRM createJobFromRequest added
 - [x] Wire job completion → maintenance request update: Flutter completeMaintenanceJob method, CRM hook updates request status
-- [x] Wire rent payment → ZBooks: auto-creates journal entry (debit Cash, credit Rental Income) with property tagging
+- [x] Wire rent payment → Ledger: auto-creates journal entry (debit Cash, credit Rental Income) with property tagging
 - [x] Wire expense allocation: already done in D5e (property_id + schedule_e_category + property_allocation_pct on expense_records)
 - [x] Wire inspection items → maintenance: CRM createRepairFromInspection function added to use-pm-inspections.ts
 - [x] Wire unit turn → job creation: CRM createJobFromTurnTask function added to use-unit-turns.ts
 - [x] Wire asset service record → job: CRM recordServiceFromJob function added to use-assets.ts
 - [x] Wire lease termination → unit turn: CRM terminateLease auto-creates unit_turn with move_out_date
 - [x] `dart analyze` passes (0 errors) + `npm run build` passes (all 5 portals)
-- [ ] Commit: `[D5i] Integration wiring — rent auto-charge, maintenance→job, ZBooks journal entries`
+- [ ] Commit: `[D5i] Integration wiring — rent auto-charge, maintenance→job, Ledger journal entries`
 
 ---
 
@@ -5772,7 +5772,7 @@ team-portal/src/app/dashboard/properties/page.tsx    — Maintenance requests as
 - [x] Seed: rent_charges for current month, 1 rent_payment (completed), 1 overdue
 - [x] Write model tests: Property, Unit, Tenant, Lease, RentCharge, RentPayment, MaintenanceRequest, Inspection, PropertyAsset (fromJson/toJson round-trip)
 - [x] Test self-assign flow: maintenance_request → job created with correct property_id/unit_id (wired in pm_maintenance_service.dart handleItMyself)
-- [x] Test rent payment → ZBooks journal entry created (wired in use-rent.ts recordPayment)
+- [x] Test rent payment → Ledger journal entry created (wired in use-rent.ts recordPayment)
 - [x] Test expense allocation: expense with property_id gets tax_schedule = schedule_e (wired in pm-mappers.ts)
 - [x] Test late fee: charge after grace period auto-generated (wired in pm-rent-charge Edge Function)
 - [x] Test unit history: query all jobs + inspections + tenants for a unit (wired in use-pm-jobs.ts getJobPropertyContext)
@@ -5789,7 +5789,7 @@ Execute in sequence:
 2. **D5b** — Maintenance + inspections + assets tables (migration 2)
 3. **D5c** — Unit turns + job linkage (migration 3)
 4. **D5d** — Web CRM hooks + 14 pages (depends on D5a-c)
-5. **D5e** — Dashboard + ZBooks Schedule E (depends on D5d)
+5. **D5e** — Dashboard + Ledger Schedule E (depends on D5d)
 6. **D5f** — Flutter screens + services (depends on D5a-c)
 7. **D5g** — Client Portal tenant flows (depends on D5a-c + Stripe)
 8. **D5h** — Team Portal maintenance view (depends on D5a-c)
@@ -5932,14 +5932,14 @@ Execute in sequence:
 
 ---
 
-### Sprint D8: Estimate Engine (~100+ hrs)
+### Sprint D8: Estimates (~100+ hrs)
 **Source:** `SPRINT/07_ESTIMATE_ENGINE_SPEC.md` (Clean-room production spec — S85)
 **Goal:** Two-mode estimate engine. Mode 1: Regular Bids for ALL contractors (ZAFTO's own item database, PDF output). Mode 2: Insurance Estimates with ESX export (optional premium feature, industry-standard ZIP+XML format). Independent code database, crowdsource engine, regional pricing.
 **Depends on:** D2 (Insurance Infrastructure), D1 (Job Type System)
 **Status: PENDING**
 **SUPERSEDES:** E5 (premature Xactimate estimate engine). E5 code is dormant. D8 is a clean-room rebuild with independent architecture. Zero references to proprietary tools, decryption, or reverse engineering.
 
-#### D8a: Database — Estimate Engine Core Tables (~6 hrs)
+#### D8a: Database — Estimates Core Tables (~6 hrs)
 
 **New migration:** `20260208_d8_estimate_engine.sql`
 
@@ -6464,7 +6464,7 @@ Execute in sequence:
 **Status: DONE — Screens (Session 78)**
 - [x] Owner home screen (revenue, attention items, schedule, activity)
 - [x] Jobs tab (pipeline, filters, search)
-- [x] Money tab (invoices + bids + ZBooks)
+- [x] Money tab (invoices + bids + Ledger)
 - [x] Calendar tab (day/week/month, assignments)
 - [x] More menu (customers, team, insurance, properties, reports, leads, settings)
 - [x] Commit: `[R1b-R1h] All 7 role experiences — 33 screens`
@@ -6561,8 +6561,8 @@ Execute in sequence:
 ## PHASE E: AI LAYER — **PAUSED (S80 OWNER DIRECTIVE)**
 
 **STATUS: ALL PHASE E WORK IS PAUSED.** AI was built prematurely in S78-S80. Code is committed but DORMANT.
-**AI goes TRULY LAST.** Must come after ALL of Phase F (Platform Completion) + Phase T (TPA) + Phase P (ZScan) + Phase SK (Sketch Engine) + Phase G (QA/Hardening).
-**Reason:** AI must know every feature, every table, every screen, every workflow — so it can do literally anything within the program. Building AI before the platform is complete means AI won't know about Phone System, Website Builder, Meeting Rooms, ZDocs, Marketplace, Business OS, Hiring, etc.
+**AI goes TRULY LAST.** Must come after ALL of Phase F (Platform Completion) + Phase T (TPA) + Phase P (Recon) + Phase SK (Sketch Engine) + Phase G (QA/Hardening).
+**Reason:** AI must know every feature, every table, every screen, every workflow — so it can do literally anything within the program. Building AI before the platform is complete means AI won't know about Calls, Website Builder, Meetings, ZForge, Marketplace, Integrations, Hiring, etc.
 **When to resume:** After Phase F + G are COMPLETE. Owner will initiate a deep AI spec session first. All premature E work will be audited/rebuilt with full platform context.
 **Correct build order: A(DONE) → B(DONE) → C(DONE) → D(DONE) → R1(DONE) → F(NEXT) → G → E(LAST)**
 
@@ -6574,7 +6574,7 @@ Execute in sequence:
 **Status: DONE (Session 78)**
 
 **Goal:** Build the shared AI infrastructure that all Z Intelligence features depend on.
-**Depends on:** B4e (Z Console UI shell), B1-B6 (real data flowing).
+**Depends on:** B4e (Dashboard UI shell), B1-B6 (real data flowing).
 
 #### E1a: Database Schema (z_threads + z_artifacts tables)
 
@@ -6817,13 +6817,13 @@ When user sends edit request with active artifact:
 
 ---
 
-### Sprint E2: Z Console → Claude API Wiring
+### Sprint E2: Dashboard → Claude API Wiring
 **Status: DONE (Session 78) — Built as part of E1 implementation**
 
-**Goal:** Replace all mock responses in the Z Console with real Claude API calls. Wire tool use to live Supabase data. Full artifact lifecycle.
+**Goal:** Replace all mock responses in the Dashboard with real Claude API calls. Wire tool use to live Supabase data. Full artifact lifecycle.
 **Depends on:** E1 (infrastructure), B4e (UI shell already built).
 
-**Existing Z Console architecture (built in B4e):**
+**Existing Dashboard architecture (built in B4e):**
 - 22 files: 5 lib/z-intelligence/ + 17 components/z-console/
 - 3 states: collapsed (ZPulse) → open (ZChatPanel 420px) → artifact (ZArtifactSplit min(60vw,800px))
 - Provider: useReducer with 12 action types, localStorage persistence
@@ -7021,7 +7021,7 @@ Include <content>{markdown}</content> for rendered display.
 ### Sprint E3: Employee Portal AI + Mobile AI
 **Source:** E1 infrastructure (z-intelligence Edge Function, z_threads/z_artifacts tables)
 **Goal:** Wire AI into team portal troubleshooting center + mobile app Z button + basic client portal AI.
-**Depends on:** E1 (AI infra DONE), E2 (Z Console wiring DONE).
+**Depends on:** E1 (AI infra DONE), E2 (Dashboard wiring DONE).
 
 #### E3a: AI Troubleshooting Center — Edge Functions (~6 hrs) — DONE (S80)
 - [x] Edge Function: `ai-troubleshoot` — multi-trade diagnostics (314 lines, 20 trades, NEC/IRC/IPC/IMC code maps)
@@ -7070,7 +7070,7 @@ Include <content>{markdown}</content> for rendered display.
 ### Sprint E4: Growth Advisor + Advanced AI
 **Source:** E1 (z-intelligence Edge Function), E3 (troubleshooting functions), existing job/invoice/bid data.
 **Goal:** AI-powered business intelligence — revenue insights, bid optimization, equipment lifecycle, growth automation.
-**Depends on:** E1 (DONE), E3 (DONE), D4 ZBooks (DONE), D5 Property Management (DONE).
+**Depends on:** E1 (DONE), E3 (DONE), D4 Ledger (DONE), D5 Property Management (DONE).
 
 #### E4a: Revenue Intelligence Edge Functions (~6 hrs)
 - [ ] Edge Function: `ai-revenue-insights` — analyze invoices/jobs for profit margins, trends, recommendations
@@ -7115,7 +7115,7 @@ Include <content>{markdown}</content> for rendered display.
 
 ---
 
-### Sprint E5: Xactimate Estimate Engine — **SUPERSEDED BY D8**
+### Sprint E5: Xactimate Estimates — **SUPERSEDED BY D8**
 **Source:** `Expansion/25_XACTIMATE_ESTIMATE_ENGINE.md` — REPLACED by `SPRINT/07_ESTIMATE_ENGINE_SPEC.md`
 **Goal:** Replace $300/mo Xactimate with built-in estimate writing, independent pricing, and AI-powered scope analysis.
 **Depends on:** E1 (AI infra), D2a (insurance tables already deployed), legal review (for ESX export).
@@ -7414,7 +7414,7 @@ Include <content>{markdown}</content> for rendered display.
 
 ---
 
-### Sprint F1: Phone System — SignalWire (~40-55 hrs)
+### Sprint F1: Calls — SignalWire (~40-55 hrs)
 **Source:** `04_EXPANSION_SPECS.md` F1 section
 **API:** SignalWire (Voice, SMS, Fax, Video). Keys already stored in Supabase secrets + env files.
 
@@ -7447,7 +7447,7 @@ Include <content>{markdown}</content> for rendered display.
 - [x] AI receptionist: signalwire-ai-receptionist EF (STT → Claude Haiku → TTS, lead capture)
 - [x] Voicemail → recording + storage — in signalwire-webhook EF (AI transcription = Phase E)
 - [x] Business hours routing — phone_config.business_hours checked in signalwire-voice EF
-- [ ] Call escalation to video (deferred to F3 Meeting Rooms)
+- [ ] Call escalation to video (deferred to F3 Meetings)
 
 **F1e: Portal Integration + Testing (~8 hrs)**
 - [x] Team Portal: incoming call notifications, SMS from field — phone hook + /dashboard/phone page (28 routes)
@@ -7458,7 +7458,7 @@ Include <content>{markdown}</content> for rendered display.
 
 ---
 
-### Sprint F3: Meeting Room System — LiveKit (~70 hrs)
+### Sprint F3: Meetings — LiveKit (~70 hrs)
 **Source:** `04_EXPANSION_SPECS.md` F3 section
 **API:** LiveKit (WebRTC SFU). Keys already stored in Supabase secrets + env files.
 
@@ -7559,7 +7559,7 @@ Include <content>{markdown}</content> for rendered display.
 
 ---
 
-### Sprint F5: Business OS + Lead Aggregation (~180+ hrs)
+### Sprint F5: Integrations + Lead Aggregation (~180+ hrs)
 **Source:** `04_EXPANSION_SPECS.md` F5 section
 **APIs:** SendGrid, Google Business Profile (free), Meta Business (free), Nextdoor (free), Yelp Fusion (free), Google LSA, BuildZoom (free), Gusto Embedded, Samsara/Geotab
 
@@ -7574,8 +7574,8 @@ Include <content>{markdown}</content> for rendered display.
 
 **F5b: CPA Portal (~20 hrs)**
 - [x] Tables: cpa_access_tokens, cpa_activity_log (migration 38) — token-based read-only access for accountants
-- [ ] Read-only ZBooks access for accountants — needs CPA portal app or role-gated CRM
-- [ ] GL, P&L, Balance Sheet, Cash Flow reports — needs ZBooks report generation
+- [ ] Read-only Ledger access for accountants — needs CPA portal app or role-gated CRM
+- [ ] GL, P&L, Balance Sheet, Cash Flow reports — needs Ledger report generation
 - [ ] Bank reconciliation review
 - [ ] 1099 preparation + export
 - [ ] Separate subdomain or role-gated CRM access
@@ -7629,7 +7629,7 @@ Include <content>{markdown}</content> for rendered display.
 - [ ] DocuSign integration for e-signatures — needs DocuSign API
 - [x] Version history — documents page shows version info from hook data, tables support versioning
 - [x] All 5 apps build clean — Web CRM 103 routes, Client Portal 33 routes
-- [ ] Commit: `[F5] Business OS — 9 systems, lead aggregation, enterprise backbone`
+- [ ] Commit: `[F5] Integrations — 9 systems, lead aggregation, enterprise backbone`
 
 ---
 
@@ -7652,7 +7652,7 @@ Include <content>{markdown}</content> for rendered display.
 
 ---
 
-### Sprint F7: ZAFTO Home Platform (~140-180 hrs)
+### Sprint F7: Home Portal (~140-180 hrs)
 **Source:** `04_EXPANSION_SPECS.md` F7 section
 
 **F7a: Database**
@@ -7669,7 +7669,7 @@ Include <content>{markdown}</content> for rendered display.
 - [ ] Premium ($7.99/mo): AI property advisor, predictive maintenance, contractor matching — deferred to Phase E + RevenueCat
 - [ ] R1f deferred items: home_scan_logs, home_maintenance_reminders tables — separate from F7 tables
 - [ ] Home Scanner mobile feature (camera → AI equipment identification) — deferred to Flutter + Phase E
-- [ ] Commit: `[F7] ZAFTO Home — homeowner property intelligence platform`
+- [ ] Commit: `[F7] Home Portal — homeowner property intelligence platform`
 
 ---
 
@@ -7694,7 +7694,7 @@ Include <content>{markdown}</content> for rendered display.
 
 ---
 
-### Sprint F10: ZDocs + ZSheets (TBD hrs) — SECOND TO LAST
+### Sprint F10: ZForge (TBD hrs) — SECOND TO LAST
 **Source:** `04_EXPANSION_SPECS.md` F10 section
 
 **F10a: Database + Edge Function**
@@ -7705,7 +7705,7 @@ Include <content>{markdown}</content> for rendered display.
 **F10b: CRM Page**
 - [x] Hook: use-zdocs (templates + renders + signature requests, real-time, mutations: createTemplate, deleteTemplate, duplicateTemplate, renderDocument, sendForSignature, deleteRender)
 - [x] Page: /dashboard/zdocs (3 tabs: Templates grid, Generated Documents table, Signatures tracking)
-- [x] Sidebar: ZDocs added to OFFICE group
+- [x] Sidebar: ZForge added to OFFICE group
 
 **F10c: Feature Checklist**
 - [x] PDF-first document suite (NOT Google Docs — trade-focused)
@@ -7715,13 +7715,13 @@ Include <content>{markdown}</content> for rendered display.
 - [ ] DocuSign/PandaDoc integration — deferred (built-in signature system works for now)
 - [x] Version history + audit trail — zdocs_renders tracks every generation with data_snapshot JSONB
 - [x] Build AFTER all features locked so templates cover every document type — F1-F9 all complete
-- [ ] Commit: `[F10] ZDocs — PDF-first document suite`
+- [ ] Commit: `[F10] ZForge — PDF-first document suite`
 
 **F10d: Portal Expansion (All Portals)**
 - [x] Team Portal: 4 hooks (use-pay-stubs, use-my-vehicle, use-my-training, use-my-documents) + 4 pages (/dashboard/pay-stubs, /dashboard/my-vehicle, /dashboard/training, /dashboard/my-documents) + sidebar MY STUFF section — 36 total routes, build clean
 - [x] Client Portal: 3 hooks (use-home-documents, use-quotes, use-find-a-pro) + 3 pages (/my-home/documents, /get-quotes, /find-a-pro) + sidebar links — 38 total routes, build clean
 - [x] Ops Portal: 5 analytics pages (payroll-analytics, fleet-analytics, hiring-analytics, email-analytics, marketplace-analytics) + sidebar PLATFORM section — 24 dashboard routes, build clean
-- [x] Web CRM: 107 total routes, build clean (ZDocs = newest)
+- [x] Web CRM: 107 total routes, build clean (ZForge = newest)
 
 ---
 
@@ -7772,7 +7772,7 @@ Include <content>{markdown}</content> for rendered display.
 **Goal:** Verify RLS, auth, input sanitization across entire platform.
 
 **G2a: RLS Policy Review**
-- [ ] Audit all ~169 tables for RLS enabled
+- [ ] Audit all ~173 tables for RLS enabled
 - [ ] Verify company_id isolation on multi-tenant tables
 - [ ] Verify user_id isolation on personal data tables
 - [ ] Check for tables with overly permissive policies
@@ -7785,7 +7785,7 @@ Include <content>{markdown}</content> for rendered display.
 
 **G2c: Input Validation**
 - [ ] Check for SQL injection vectors in dynamic queries
-- [ ] Check for XSS vectors in user-rendered content (ZDocs templates)
+- [ ] Check for XSS vectors in user-rendered content (ZForge templates)
 - [ ] Verify file upload size/type restrictions
 
 ---
@@ -7816,7 +7816,7 @@ Include <content>{markdown}</content> for rendered display.
 - [ ] TestFlight distribution setup (after iOS code signing)
 - [ ] Play Store internal testing track setup (after Android keystore)
 
-### Sprint G6: TPA Module QA
+### Sprint G6: Programs QA
 **Goal:** Verify all TPA features work end-to-end after Phase T build.
 
 **G6a: TPA Database & Data Integrity**
@@ -7852,18 +7852,18 @@ Include <content>{markdown}</content> for rendered display.
 
 ---
 
-### Sprint G7: ZScan / Property Intelligence QA
-**Goal:** Verify all ZScan features work end-to-end after Phase P build.
+### Sprint G7: Recon / Property Intelligence QA
+**Goal:** Verify all Recon features work end-to-end after Phase P build.
 
-**G7a: ZScan Database & API Verification**
-- [ ] All ~8 ZScan tables exist and have RLS enabled
-- [ ] company_id isolation verified on all ZScan tables
+**G7a: Recon Database & API Verification**
+- [ ] All ~8 Recon tables exist and have RLS enabled
+- [ ] company_id isolation verified on all Recon tables
 - [ ] Google Solar API integration returns valid Building Insights data
 - [ ] ATTOM Property API returns property metadata (if key configured)
 - [ ] Regrid parcel boundary data imports correctly
 - [ ] Microsoft Building Footprints fallback works when Solar API insufficient
 
-**G7b: ZScan Measurement Accuracy**
+**G7b: Recon Measurement Accuracy**
 - [ ] Roof measurement pipeline: pitch detection, facet area calculation, ridge/hip/valley LF
 - [ ] Siding measurement: wall SF minus openings
 - [ ] Gutter measurement: eave/rake LF from roof geometry
@@ -7871,18 +7871,18 @@ Include <content>{markdown}</content> for rendered display.
 - [ ] Waste factor engine: per-trade percentages applied correctly
 - [ ] Material quantity calculator: measurements → order quantities
 
-**G7c: ZScan CRM Pages — Full Button-Click Audit**
+**G7c: Recon CRM Pages — Full Button-Click Audit**
 - [ ] Property scan initiation: address lookup → API call → results display
 - [ ] Scan results page: all measurement tabs render correctly
 - [ ] Material ordering: Unwrangle/ABC Supply integration (if keys configured)
 - [ ] On-site verification workflow: field tech confirms/adjusts measurements
 - [ ] Export/share scan results
-- [ ] All 4 ZScan Edge Functions respond correctly
+- [ ] All 4 Recon Edge Functions respond correctly
 
-**G7d: ZScan Integration Points**
-- [ ] ZScan → bid generation (measurements populate bid line items)
-- [ ] ZScan → estimate (measurements flow to D8 estimate engine)
-- [ ] ZScan → job (property data attached to job record)
+**G7d: Recon Integration Points**
+- [ ] Recon → bid generation (measurements populate bid line items)
+- [ ] Recon → estimate (measurements flow to D8 estimate engine)
+- [ ] Recon → job (property data attached to job record)
 - [ ] Multiple scans per property (history preserved)
 
 ---
@@ -8028,7 +8028,7 @@ Include <content>{markdown}</content> for rendered display.
 - [ ] Supplement workflow: original + supplement estimates linked
 - [ ] TPA profitability calculates correctly (revenue - referral fee - costs)
 
-**G10c: ZScan → Bid → Job Pipeline**
+**G10c: Recon → Bid → Job Pipeline**
 - [ ] Scan property address → get measurements → create bid with measurement data
 - [ ] Bid accepted → convert to job → schedule → complete → invoice
 
@@ -8183,13 +8183,13 @@ Include <content>{markdown}</content> for rendered display.
 - [ ] Deploy migration
 
 **T6b: Edge Function — Financial Rollup**
-- [ ] Edge Function: `tpa-financial-rollup` — monthly aggregation from tpa_assignments + jobs + ZBooks data, calculate gross/net margins, avg payment days, supplement recovery rate
+- [ ] Edge Function: `tpa-financial-rollup` — monthly aggregation from tpa_assignments + jobs + Ledger data, calculate gross/net margins, avg payment days, supplement recovery rate
 - [ ] Deploy Edge Function
 
 **T6c: CRM — TPA Dashboard**
 - [ ] CRM hook: `use-tpa-financials.ts`
 - [ ] CRM page: `/dashboard/tpa` — TPA Dashboard (program cards with active count + avg score + cycle time, assignment pipeline: received → in progress → estimate → payment → paid, SLA violations count, financial summary per program)
-- [ ] CRM: Per-TPA P&L report (integrates with ZBooks job costing)
+- [ ] CRM: Per-TPA P&L report (integrates with Ledger job costing)
 - [ ] Referral fee auto-calculation on job close (based on tpa_program.referral_fee_percent)
 - [ ] `npm run build` passes
 
@@ -8217,7 +8217,7 @@ Include <content>{markdown}</content> for rendered display.
 - [ ] Migration: `restoration_line_items` table (ZAFTO codes Z-WTR-xxx, own descriptions + pricing, Xactimate category/selector mapping for export) + RLS
 - [ ] Seed: ~50 initial restoration line items (Water Extraction, Demolition, Drying Equipment, Cleaning/Treatment, Monitoring, Contents, Hazmat, Temporary Repairs, Reconstruction)
 
-**T8b: Estimate Engine Integration**
+**T8b: Estimates Integration**
 - [ ] Add Xactimate code mapping column to estimate line items for export reference
 - [ ] Integrate restoration_line_items into estimate builder line item picker (additional category)
 
@@ -8267,65 +8267,72 @@ Include <content>{markdown}</content> for rendered display.
 - [ ] Legal disclaimers present on all pages referencing TPA/carrier/Xactimate names
 - [ ] Estimate engine disclaimer: "Estimates represent contractor's scope of work and pricing"
 - [ ] IICRC disclaimer: "Based on publicly available IICRC formulas"
-- [ ] Commit: `[T1-T10] TPA Program Management Module — 17 tables, 3 EFs, feature flag`
+- [ ] Commit: `[T1-T10] Programs Module — 17 tables, 3 EFs, feature flag`
 
 ---
 
-## PHASE P: PROPERTY INTELLIGENCE ENGINE (ZScan) — after Phase T
+## PHASE P: PROPERTY INTELLIGENCE ENGINE (Recon) — after Phase T
 *Spec: Expansion/40_PROPERTY_INTELLIGENCE_SPEC.md*
-*8 tables, 4 Edge Functions, 8 sprints (~68 hours)*
+*11 tables, 6 Edge Functions, 10 sprints (~96 hours)*
 *Satellite-powered property measurements: address in → instant roof/wall/lot/solar data → estimate → material order*
-*$0/scan vs EagleView $18-91/report. 10 trade pipelines. On-site verification workflow.*
+*$0/scan vs EagleView $18-91/report. 10 trade pipelines. Lead scoring. Batch area scanning. Storm intelligence.*
+*On-site verification workflow. Supplement checklist. Multi-structure detection. Confidence scoring.*
 
 ---
 
-### Sprint P1: Foundation + Google Solar API (~10 hours)
-**Goal:** Core tables + Google Solar integration for roof segments, pitch, area, sun hours.
+### Sprint P1: Foundation + Google Solar + Confidence Engine (~12 hours)
+**Goal:** Core tables + Google Solar integration + confidence scoring + imagery date transparency.
 **Prereqs:** Phase T complete. Google Cloud Solar API enabled. API key in Supabase secrets.
 **Tables:** property_scans, roof_measurements, roof_facets
-**Edge Functions:** zscan-property-lookup, zscan-roof-calculator
+**Edge Functions:** recon-property-lookup, recon-roof-calculator
 
-- [ ] Migration: `property_scans` table (id, company_id, job_id nullable, address fields, lat/lng, status enum [pending/scanning/complete/partial/failed], scan_sources JSONB, confidence_score, cached_until, created_by, timestamps) + RLS (company isolation)
+- [ ] Migration: `property_scans` table (id, company_id, job_id nullable, address fields, lat/lng, status enum [pending/scanning/complete/partial/failed], scan_sources JSONB, confidence_score, imagery_date, imagery_source, cached_until, created_by, timestamps) + RLS (company isolation)
 - [ ] Migration: `roof_measurements` table (id, scan_id FK, total_area_sqft, total_area_squares, pitch_primary, pitch_distribution JSONB, ridge_length_ft, hip_length_ft, valley_length_ft, eave_length_ft, rake_length_ft, facet_count, complexity_score, predominant_shape enum [gable/hip/flat/gambrel/mansard/mixed], predominant_material, condition_score nullable, penetration_count, data_source, raw_response JSONB) + RLS
 - [ ] Migration: `roof_facets` table (id, roof_measurement_id FK, facet_number, area_sqft, pitch_degrees, azimuth_degrees, annual_sun_hours, shade_factor, shape_type, vertices JSONB) + RLS
-- [ ] Edge Function: `zscan-property-lookup` — accepts address → geocode → call Google Solar buildingInsights.findClosest → parse roof segments → insert property_scans + roof_measurements + roof_facets → return structured data
-- [ ] Edge Function: `zscan-roof-calculator` — accepts roof_measurement_id → calculate edge lengths from facet geometry → calculate total edges (ridge, hip, valley, eave, rake) → update roof_measurements → calculate complexity score
+- [ ] Edge Function: `recon-property-lookup` — accepts address → geocode → call Google Solar buildingInsights.findClosest → parse roof segments → insert property_scans + roof_measurements + roof_facets → return structured data
+- [ ] Edge Function: `recon-roof-calculator` — accepts roof_measurement_id → calculate edge lengths from facet geometry → calculate total edges (ridge, hip, valley, eave, rake) → update roof_measurements → calculate complexity score
 - [ ] Google Cloud Console: Enable Solar API, create restricted API key, add to Supabase secrets as `GOOGLE_SOLAR_API_KEY`
+- [ ] Confidence score calculation: `base_score - tree_penalty - imagery_age_penalty - complexity_penalty + verification_bonus` (base=95 Google Solar, 70 footprint-only; tree_penalty = overhang% × 0.5 max -25; imagery_age = months × 1.5 max -20; complexity = facets>12 ? 5 : 0 + stories>2 ? 5 : 0; verification = +10 if on-site verified)
+- [ ] Imagery date extraction: parse capture date from Google Solar response + Mapbox tile metadata
+- [ ] Confidence badge rendering: High (80-100) / Moderate (50-79) / Low (0-49) with explanation text
+- [ ] Imagery age warning: flag if satellite imagery > 18 months old ("Imagery may not reflect recent changes. Verify on site.")
 - [ ] CRM: Auto-trigger property scan on job creation (fire-and-forget, non-blocking)
-- [ ] CRM: Basic "Property Intelligence" card on job detail page — satellite thumbnail, roof area (squares), primary pitch, facet count, year built placeholder
+- [ ] CRM: Property intelligence card on job detail — satellite thumbnail, roof area, pitch, confidence badge, imagery date
 - [ ] Error handling: Address not found, no solar data available, API rate limit exceeded
-- [ ] Verify: Create test job with known address → scan triggers → roof data populates → card displays on job detail
+- [ ] Verify: Create test job with known address → scan triggers → roof data populates → confidence badge + imagery date display correctly
 
 ---
 
-### Sprint P2: Property Data + Parcel Boundaries (~8 hours)
-**Goal:** ATTOM property records + Regrid parcel boundaries + Microsoft building footprints + USGS elevation.
-**Tables:** parcel_boundaries, property_features
+### Sprint P2: Property Data + Parcel + Multi-Structure Detection (~10 hours)
+**Goal:** ATTOM property records + Regrid parcel boundaries + Microsoft building footprints + USGS elevation + multi-structure detection.
+**Tables:** parcel_boundaries, property_features, property_structures
 
 - [ ] Migration: `parcel_boundaries` table (id, scan_id FK, apn, boundary_geojson JSONB, lot_area_sqft, lot_width_ft, lot_depth_ft, zoning, zoning_description, owner_name, owner_type, data_source) + RLS
 - [ ] Migration: `property_features` table (id, scan_id FK, year_built, stories, living_sqft, lot_sqft, beds, baths_full, baths_half, construction_type, wall_type, roof_type_record, heating_type, cooling_type, pool_type, garage_spaces, assessed_value, last_sale_price, last_sale_date, elevation_ft, terrain_slope_pct, tree_coverage_pct, building_height_ft, data_sources JSONB, raw_attom JSONB, raw_regrid JSONB) + RLS
-- [ ] ATTOM API integration in `zscan-property-lookup`: call /property/expandedprofile → parse building object (sqft, stories, beds, baths, construction, wall type, heating, cooling) + lot object (lot size, pool, depth, frontage) + assessment (assessed value) + sale history (last sale)
-- [ ] Regrid API integration in `zscan-property-lookup`: call address search → parse parcel polygon (GeoJSON), APN, zoning, lot dimensions, owner info → insert parcel_boundaries
-- [ ] Microsoft Building Footprints: Pre-loaded lookup or API call for building polygon → calculate building footprint area → cross-reference with Google Solar footprint
+- [ ] Migration: `property_structures` table (id, property_scan_id FK CASCADE, structure_type CHECK ['primary','secondary','accessory','other'], label TEXT, footprint_sqft, footprint_geojson JSONB, estimated_stories, estimated_roof_area_sqft, estimated_wall_area_sqft, has_roof_measurement BOOLEAN DEFAULT false, notes, created_at) + RLS
+- [ ] ATTOM API integration in `recon-property-lookup`: call /property/expandedprofile → parse building object (sqft, stories, beds, baths, construction, wall type, heating, cooling) + lot object (lot size, pool, depth, frontage) + assessment (assessed value) + sale history (last sale)
+- [ ] Regrid API integration in `recon-property-lookup`: call address search → parse parcel polygon (GeoJSON), APN, zoning, lot dimensions, owner info → insert parcel_boundaries
+- [ ] Microsoft Building Footprints integration: fetch ALL building polygons within parcel boundary → spatial intersection → classify primary (largest footprint), secondary (garage/workshop), accessory (shed/gazebo) → insert property_structures per building
+- [ ] Per-structure measurements: roof area estimate per building footprint, wall area per structure
 - [ ] USGS 3DEP elevation lookup: call National Map API → elevation, terrain slope → insert into property_features
 - [ ] Supabase secrets: Add `ATTOM_API_KEY`, `REGRID_API_KEY`
-- [ ] CRM: Full Property Report page — Roof tab (facet diagram, pitch labels, area per facet, edges) + Lot tab (parcel boundary on Mapbox map, lot dimensions, zoning)
+- [ ] CRM: Full Property Report page — Roof tab (facet diagram, pitch labels, area per facet, edges) + Lot tab (parcel boundary on Mapbox map, lot dimensions, zoning) + Structure selector (toggle per structure: include/exclude from measurements)
+- [ ] CRM: "Bid all structures" vs "Primary only" mode toggle
 - [ ] Data source badges on property card: "Google Solar ✓" "ATTOM ✓" "Regrid ✓" (only show badges for sources that returned data)
-- [ ] Confidence indicator logic: High (all 3+ sources agree), Moderate (tree obstruction or partial data), Low (single source only — verify on site)
-- [ ] Verify: Scan address → all 4 APIs called → property_features + parcel_boundaries populated → full report page renders
+- [ ] Verify: Scan address → all APIs called → multi-structure detection finds all buildings → property_features + parcel_boundaries + property_structures populated → report page renders with structure selector
 
 ---
 
 ### Sprint P3: Wall Measurements + Trade Bid Data (~10 hours)
 **Goal:** Derive wall measurements from property data. Build trade-specific bid data engine for 10 trades.
 **Tables:** wall_measurements, trade_bid_data
-**Edge Function:** zscan-trade-estimator
+**Edge Function:** recon-trade-estimator
 
-- [ ] Migration: `wall_measurements` table (id, scan_id FK, total_wall_area_sqft, total_siding_area_sqft, per_face JSONB [{direction, width_ft, height_ft, area_sqft, window_count_est, door_count_est, net_area_sqft}], stories, avg_wall_height_ft, window_area_est_sqft, door_area_est_sqft, trim_linear_ft, fascia_linear_ft, soffit_sqft, data_source, confidence) + RLS
+- [ ] Migration: `wall_measurements` table (id, scan_id FK, structure_id FK nullable REFERENCES property_structures, total_wall_area_sqft, total_siding_area_sqft, per_face JSONB [{direction, width_ft, height_ft, area_sqft, window_count_est, door_count_est, net_area_sqft}], stories, avg_wall_height_ft, window_area_est_sqft, door_area_est_sqft, trim_linear_ft, fascia_linear_ft, soffit_sqft, data_source, confidence) + RLS
 - [ ] Migration: `trade_bid_data` table (id, scan_id FK, trade enum [roofing/siding/gutters/solar/painting/landscaping/fencing/concrete/hvac/electrical], measurements JSONB, material_list JSONB [{item, quantity, unit, waste_pct, total_with_waste}], waste_factor_pct, complexity_score, notes, recommended_crew_size, estimated_labor_hours, data_sources JSONB) + RLS
-- [ ] Wall derivation logic in `zscan-roof-calculator`: building_footprint_perimeter × stories × avg_wall_height (8ft standard, 9ft if year_built > 2000) − estimated_window_area (15% of wall area standard) − estimated_door_area (2 doors × 21sqft) = net siding area. Per-face breakdown from building footprint orientation.
-- [ ] Edge Function: `zscan-trade-estimator` — accepts scan_id + trade → read property_scans + roof_measurements + wall_measurements + property_features → calculate trade-specific bid data:
-  - [ ] **Roofing pipeline:** total_area_squares, pitch_factor, waste_factor (gable 10-14%, hip 15-17%), material_list [shingles_bundles, underlayment_rolls, ridge_cap, starter_strip, flashing, nails, drip_edge_ft, ice_shield_rolls]
+- [ ] Wall derivation logic in `recon-roof-calculator`: building_footprint_perimeter × stories × avg_wall_height (8ft standard, 9ft if year_built > 2000) − estimated_window_area (15% of wall area standard) − estimated_door_area (2 doors × 21sqft) = net siding area. Per-face breakdown from building footprint orientation. Generate per-structure if multiple structures.
+- [ ] Edge Function: `recon-trade-estimator` — accepts scan_id + trade → read property_scans + roof_measurements + wall_measurements + property_features + property_structures → calculate trade-specific bid data:
+  - [ ] **Roofing pipeline:** total_area_squares (all structures or selected), pitch_factor, waste_factor (gable 10-14%, hip 15-17%), material_list [shingles_bundles, underlayment_rolls, ridge_cap, starter_strip, flashing, nails, drip_edge_ft, ice_shield_rolls]
   - [ ] **Siding pipeline:** net_wall_area_sqft, material_list [siding_squares, j_channel_ft, corner_posts, starter_strip, utility_trim, nails], waste 10-12%
   - [ ] **Gutters pipeline:** eave_length_ft + rake_overhangs, material_list [gutter_ft, downspout_ft, elbows, end_caps, hangers, outlets], corner count from facets
   - [ ] **Solar pipeline:** usable_roof_area (south/west-facing facets with >4 sun hours), max_panel_count, estimated_kw, estimated_kwh_annual, shade_analysis per facet
@@ -8339,14 +8346,14 @@ Include <content>{markdown}</content> for rendered display.
 - [ ] CRM: Walls tab on property report (per-face diagram, areas, window/door counts)
 - [ ] CRM: Trade Data tab (dropdown per trade → material list with quantities, waste factors, crew size, labor hours)
 - [ ] CRM hook: `use-property-scan.ts` (CRUD + real-time subscription for scan status updates)
-- [ ] Verify: Scan address → trade data generated for all 10 trades → material lists accurate → CRM displays all tabs
+- [ ] Verify: Scan address → trade data generated for all 10 trades → per-structure breakdown where multiple structures → material lists accurate → CRM displays all tabs
 
 ---
 
-### Sprint P4: Estimate Integration (~8 hours)
-**Goal:** Connect ZScan data directly into D8 estimate engine. Auto-populate estimates from scans.
+### Sprint P4: Estimate Integration + Supplement Checklist (~10 hours)
+**Goal:** Connect Recon → D8 estimate engine. Auto-populate estimates. Insurance supplement checklist.
 
-- [ ] "Import from ZScan" button on estimate create/edit page
+- [ ] "Import from Recon" button on estimate create/edit page
 - [ ] On click: read trade_bid_data for job's scan → map material_list items to estimate line items → pre-populate estimate with quantities, descriptions, units
 - [ ] Contractor can adjust any imported values before saving
 - [ ] Migration: Add `property_scan_id` column to `jobs` table (FK nullable, references property_scans)
@@ -8355,16 +8362,55 @@ Include <content>{markdown}</content> for rendered display.
 - [ ] Material list generation: measurements → item list with quantities (including waste factor)
 - [ ] CRM: Solar tab on property report (sun hours heatmap per facet, shade analysis, panel layout suggestion, estimated kWh)
 - [ ] CRM: "Create Estimate from Scan" button on property report → opens estimate editor pre-filled with selected trade's material list
-- [ ] Estimate line items display ZScan source badge: "📡 From ZScan" on auto-populated lines
-- [ ] Verify: Scan property → select trade → "Create Estimate" → estimate opens pre-filled → contractor adjusts → saves → estimate links to scan
+- [ ] Estimate line items display Recon source badge on auto-populated lines
+- [ ] Insurance supplement checklist: auto-detect commonly missed items from roof measurements:
+  - Starter shingles (eave_lf + rake_lf > 0 → starter required, ~60% missed)
+  - Ridge cap (ridge_lf > 0 → ridge cap required, ~40% missed)
+  - Drip edge (eave_lf + rake_lf → drip edge on all edges, ~35% missed)
+  - Ice & water shield (eave_lf × 3ft + valley_lf × 3ft → I&W area, ~45% missed)
+  - Step flashing (chimney_count > 0 OR wall_adjacencies > 0, ~55% missed)
+  - Pipe boots (vent_count > 0 → pipe collar replacement, ~30% missed)
+  - Satellite dish R&R (satellite_dish_count > 0, ~50% missed)
+  - O&P (total_cost > $10K threshold → overhead & profit, ~70% missed)
+  - Gable returns (facets with rake edges adjacent to wall, ~50% missed)
+  - Wall flashing (wall-adjacent roof edges → step/wall flashing, ~55% missed)
+- [ ] Supplement checklist UI: checklist view with detected items, quantities, estimated supplement value ($X - $Y range)
+- [ ] TPA integration: when TPA claim has Recon data, auto-attach supplement checklist to claim documentation
+- [ ] Compare Recon measurements vs adjuster's scope: flag discrepancies (e.g., "Adjuster: 32 squares. Recon: 35.2 squares (±3-5%)")
+- [ ] Verify: Scan property → select trade → "Create Estimate" → estimate opens pre-filled → supplement checklist generates → TPA claim attaches supplement
 
 ---
 
-### Sprint P5: Material Ordering Pipeline (~8 hours)
-**Goal:** ZScan measurements → material list → supplier pricing → one-click order.
-**Edge Function:** zscan-material-order
+### Sprint P5: Lead Scoring + Batch Area Scanning (~10 hours)
+**Goal:** Lead pre-qualification from property data. Batch scanning by drawing polygon on map.
+**Tables:** property_lead_scores, area_scans
+**Edge Functions:** recon-lead-score, recon-area-scan
 
-- [ ] Edge Function: `zscan-material-order` — accepts trade_bid_data material list → map items to Unwrangle product search → query real-time pricing from HD/Lowe's/ABC Supply → return supplier comparison
+- [ ] Migration: `property_lead_scores` table (id, property_scan_id FK CASCADE, company_id FK CASCADE, area_scan_id FK nullable REFERENCES area_scans ON DELETE SET NULL, overall_score INTEGER CHECK 0-100, grade CHECK ['hot','warm','cold'], roof_age_years, roof_age_score, property_value_score, owner_tenure_score, condition_score, permit_score, storm_damage_probability, scoring_factors JSONB, timestamps) + RLS
+- [ ] Migration: `area_scans` table (id, company_id FK CASCADE, polygon_geojson JSONB, scan_type CHECK ['prospecting','storm_response','canvassing'], storm_event_id TEXT nullable, total_parcels INTEGER DEFAULT 0, scanned_parcels INTEGER DEFAULT 0, hot_leads INTEGER DEFAULT 0, warm_leads INTEGER DEFAULT 0, cold_leads INTEGER DEFAULT 0, status CHECK ['pending','scanning','complete','failed'], created_by FK, timestamps) + RLS
+- [ ] Lead scoring engine: compute overall_score (0-100) and grade (hot/warm/cold) from ATTOM data:
+  - roof_age_score: year_built < 2005 = high (roof likely 15+ years), 2005-2015 = moderate, >2015 = low
+  - property_value_score: higher value = higher willingness to invest
+  - owner_tenure_score: owner-occupied + >5 years = higher (invested in property)
+  - condition_score: visible deterioration indicators from satellite + property records
+  - permit_score: no recent roof/siding permits = higher probability of needing work
+  - storm_damage_probability: cross-reference with NOAA data if available
+- [ ] Edge Function: `recon-lead-score` — accepts property_scan_id → compute and store lead score
+- [ ] CRM: Lead score badge on property intelligence card (Hot/Warm/Cold with score number)
+- [ ] CRM: Pre-scan for leads — scan address in Leads section without creating job → lead score displayed → one-click convert to Job
+- [ ] Edge Function: `recon-area-scan` — accepts polygon GeoJSON → query Regrid for all parcels within polygon → queue batch scans (rate-limited: 10/s Google Solar, 5/s ATTOM) → compute lead scores → rank results → update area_scan progress
+- [ ] CRM: Area scan page — Mapbox draw polygon tool → scan area → progress bar (scanned/total) → ranked lead list
+- [ ] Area scan results: sortable table (address, lead score, roof age, property value, owner name) + map view with color-coded markers (red=hot, yellow=warm, gray=cold)
+- [ ] Export: CSV download of area scan results with all property data
+- [ ] Verify: Draw polygon → batch scan starts → progress updates → ranked lead list appears → CSV export works → pre-scan converts to job
+
+---
+
+### Sprint P6: Material Ordering Pipeline (~8 hours)
+**Goal:** Recon measurements → material list → supplier pricing → one-click order.
+**Edge Function:** recon-material-order
+
+- [ ] Edge Function: `recon-material-order` — accepts trade_bid_data material list → map items to Unwrangle product search → query real-time pricing from HD/Lowe's/ABC Supply → return supplier comparison
 - [ ] Material list → supplier SKU mapping logic (generic item names → closest product matches)
 - [ ] Real-time pricing comparison UI: table showing item, quantity, HD price, Lowe's price, ABC price, best price highlighted
 - [ ] "Order Materials" button on estimate detail page (only if estimate has property_scan_id)
@@ -8372,68 +8418,92 @@ Include <content>{markdown}</content> for rendered display.
 - [ ] Order placement via Unwrangle API (HD/Lowe's) and ABC Supply API
 - [ ] Delivery tracking: order status stored on job, linked to material_orders table (existing from F1)
 - [ ] CRM: Material ordering modal with pricing comparison grid
-- [ ] Verify: Estimate with ZScan data → "Order Materials" → supplier prices shown → select → order placed → delivery tracking visible
+- [ ] Verify: Estimate with Recon data → "Order Materials" → supplier prices shown → select → order placed → delivery tracking visible
 
 ---
 
-### Sprint P6: Mobile + On-Site Verification (~10 hours)
-**Goal:** Mobile property scan + swipeable results + on-site verification workflow.
+### Sprint P7: Mobile + On-Site Verification (~10 hours)
+**Goal:** Mobile property scan + swipeable results + on-site verification + lead score display.
 **Table:** scan_history
 
 - [ ] Mobile screen: `property_scan_screen.dart` — address search bar (autocomplete via Mapbox geocoder) + "Use Current Location" + "Scan" button
 - [ ] Mobile: Loading animation during scan (satellite imagery rendering effect)
-- [ ] Mobile: Swipeable result cards — Roof → Walls → Lot → Solar → Trade Data (each card shows key measurements for that category)
-- [ ] Mobile: On-site verification workflow screen — checklist of key measurements from ZScan:
-  - Each measurement shows: label, ZScan value, [Confirm ✓] / [Adjust ✏️] buttons
+- [ ] Mobile: Swipeable result cards — Roof → Walls → Lot → Solar → Trade Data → Lead Score (each card shows key measurements for that category)
+- [ ] Mobile: On-site verification workflow screen — checklist of key measurements from Recon:
+  - Each measurement shows: label, Recon value, [Confirm] / [Adjust] buttons
   - "Roof area: 35.2 SQ" → [Confirm] [Adjust: ___]
-  - Adjusted measurements update property_scans record
+  - Adjusted measurements update property_scans record + recalculate confidence (+10 verification bonus)
   - Track verification_status: unverified → verified → adjusted
 - [ ] Migration: `scan_history` table (id, scan_id FK, action enum [created/updated/verified/adjusted/re_scanned], field_changed, old_value, new_value, performed_by, performed_at, device, notes) + RLS
 - [ ] Scan audit trail: every scan, verification, and adjustment logged to scan_history
 - [ ] Verification badge on scan: "Measurements verified on site by [tech name] on [date]"
-- [ ] Mobile: "Share Report" — generate PDF property report (satellite image + key measurements + trade data) via existing PDF generation pattern
-- [ ] Mobile model: `property_scan.dart` (PropertyScan, RoofMeasurement, RoofFacet, WallMeasurement, TradeBidData)
-- [ ] Mobile repository: `property_scan_repository.dart` (CRUD for scans + related data)
-- [ ] Mobile service: `property_scan_service.dart` (auth-enriched, triggers edge function calls)
-- [ ] Verify: Open mobile → enter address → scan → swipe through results → tap "Verify on site" → confirm/adjust measurements → verification badge shows → share PDF
+- [ ] Mobile: "Share Report" — generate PDF property report (satellite image + key measurements + trade data + lead score + confidence badge) via existing PDF generation pattern
+- [ ] Mobile Dart models: property_scan.dart (PropertyScan, RoofMeasurement, RoofFacet, WallMeasurement, TradeBidData, PropertyLeadScore)
+- [ ] Mobile repository: property_scan_repository.dart (CRUD for scans + related data)
+- [ ] Mobile Riverpod providers: property_scan_provider (AsyncNotifier)
+- [ ] Verify: Open mobile → enter address → scan → swipe through results (including lead score) → tap "Verify on site" → confirm/adjust → verification badge shows → share PDF
 
 ---
 
-### Sprint P7: Portal Integration (~8 hours)
-**Goal:** ZScan data visible in Team Portal, Client Portal, CRM sidebar. Pre-scan for leads.
+### Sprint P8: Portal Integration (~8 hours)
+**Goal:** Recon data visible in Team Portal, Client Portal, CRM sidebar. Pre-scan for leads.
 
-- [ ] Team Portal: Property scan view on assigned job detail page (read-only measurements card)
+- [ ] Team Portal: Property scan view on assigned job detail page (read-only measurements card + lead score badge)
 - [ ] Team Portal: On-site verification workflow (same confirm/adjust UI as mobile, for tablet-based field use)
 - [ ] Team Portal hook: `use-property-scan.ts` (same hook pattern as CRM)
 - [ ] Client Portal: Property overview card on project page — satellite image, key measurements, "Your property" section (customer-friendly labels: "Roof Size: ~35 squares" not "35.2 SQ")
-- [ ] Client Portal: Property overview stripped of internal data (no cost estimates, no material lists, no crew size — just measurements and property info)
-- [ ] CRM: Pre-scan for leads — scan property WITHOUT creating a job first. Creates property_scans with job_id=null. Can be linked to job later.
+- [ ] Client Portal: Property overview stripped of internal data (no cost estimates, no material lists, no crew size, no lead score — just measurements and property info)
 - [ ] CRM: Property intelligence data included in bid/proposal PDF export (satellite image + key measurements section)
-- [ ] CRM sidebar: "Property Intelligence" collapsible section under existing job management
+- [ ] CRM sidebar: "Recon" section under Operations
   - Property Scans (list view)
-  - Full Reports
+  - Area Scans (list view with polygon map previews)
   - Scan Settings (default trade pipelines, cache duration)
-- [ ] Verify: All 4 portals display scan data correctly → team portal verification works → client sees friendly view → lead pre-scan creates unlinked scan → PDF includes property data
+- [ ] Ops Portal: Recon analytics (total scans, lead conversion rate, accuracy feedback, API cost tracking)
+- [ ] Verify: All 4 portals display scan data correctly → team portal verification works → client sees friendly view → PDF includes property data → ops analytics render
 
 ---
 
-### Sprint P8: Polish + Build Verification (~6 hours)
-**Goal:** Error handling, caching, rate limiting, attribution, disclaimers, clean builds.
+### Sprint P9: Storm Assessment + Area Intelligence (~10 hours)
+**Goal:** NOAA weather integration, damage probability model, storm heat maps, canvass optimization.
+**Edge Function:** recon-storm-assess
+
+- [ ] NOAA Storm Events Database integration: fetch historical storm events by county/date (hail size, wind speed, GPS coordinates) — FREE public API
+- [ ] NOAA NEXRAD Radar integration: historical radar data for hail detection — FREE
+- [ ] SPC Storm Reports integration: severe weather reports with GPS coordinates — FREE
+- [ ] Storm damage probability model: `P(damage) = f(hail_size, wind_speed, roof_age, roof_type, roof_condition)`:
+  - Hail >= 1" + roof age > 15 years + shingle roof = HIGH probability
+  - Hail < 0.75" + roof age < 10 years + metal roof = LOW probability
+  - Wind >= 60 mph + age > 20 years = HIGH probability
+- [ ] Edge Function: `recon-storm-assess` — accepts area polygon + storm date → cross-reference NOAA data → compute per-parcel damage probability → rank parcels
+- [ ] CRM: Storm assessment mode on area scan page — enter storm date + draw area → heat map with damage probability per parcel
+- [ ] Heat map visualization: Mapbox fill-extrusion layer with red (high) / yellow (moderate) / green (low) damage probability
+- [ ] Canvass optimization: door-knock list sorted by damage probability → optimal driving route (Mapbox Directions API)
+- [ ] Lead list export: CSV/PDF with ranked properties, owner info, contact data, damage probability
+- [ ] Storm history on property reports: "This property has been in the path of X documented hail events since [year]"
+- [ ] Integration: storm assessment → area scan → lead scores → TPA claim creation pipeline (Recon scan → TPA claim → supplement checklist auto-attached)
+- [ ] Verify: Enter storm date + draw area → NOAA data fetched → heat map renders → ranked canvass list → route optimization → CSV export → TPA claim creation from storm lead
+
+---
+
+### Sprint P10: Polish + Build Verification + Accuracy Benchmarking (~8 hours)
+**Goal:** Error handling, caching, rate limiting, attribution, disclaimers, accuracy validation, clean builds.
 
 - [ ] All portals build clean: `npm run build` (CRM, team, client, ops)
-- [ ] Mobile: `dart analyze` passes
-- [ ] Google Solar API error handling: address not found (show "No satellite data available" gracefully), no data for address, API quota exceeded (queue and retry), invalid response
+- [ ] Mobile: `dart analyze` passes (0 errors)
+- [ ] Google Solar API error handling: address not found, no coverage, rate limit (queue and retry)
 - [ ] ATTOM API error handling: property not found, partial data (some fields null)
 - [ ] Regrid API error handling: no parcel data, boundary mismatch
 - [ ] Partial scan handling: if some APIs succeed and others fail, save partial data with clear indicators of what's missing. Don't block the whole scan.
 - [ ] Caching: 30-day cache per address per company (`cached_until` on property_scans). Re-scan only on explicit request or cache expiry.
-- [ ] Rate limiting: Queue system for API calls. Max 600 QPM Google Solar. Max concurrent ATTOM/Regrid calls.
-- [ ] Attribution compliance: Google Maps attribution on all map displays, Regrid attribution on parcel boundaries, "Property data from public records" disclaimer
+- [ ] Rate limiting: Queue system for API calls. Max 600 QPM Google Solar. Max concurrent ATTOM/Regrid calls. Batch scan rate limiting (10/s Google, 5/s ATTOM, 5/s Regrid).
+- [ ] Attribution compliance: Google Maps attribution on all map displays, Regrid attribution on parcel boundaries, Microsoft Building Footprints attribution, "Property data from public records" disclaimer
 - [ ] Legal disclaimers on every property report: "Measurements are estimates from satellite imagery and public records. Verify on site before ordering materials."
 - [ ] Legal disclaimer on material ordering: "Quantities calculated from estimated measurements. Verify before ordering."
-- [ ] Feature flag: `features.property_intelligence_enabled` — all ZScan UI hidden when false
+- [ ] Feature flag: `features.property_intelligence_enabled` — all Recon UI hidden when false
 - [ ] Cost tracking: Log API costs per scan for monitoring ($0.075/Google Solar + ATTOM per-call + Regrid per-call)
-- [ ] Commit: `[P1-P8] Property Intelligence Engine (ZScan) — 8 tables, 4 EFs, 10 trade pipelines`
+- [ ] Accuracy benchmarking: scan 20+ properties with known measurements (from EagleView reports or manual measurement) → document accuracy per metric → publish accuracy guarantee target (95%+ roof area)
+- [ ] Lead scoring validation: verify scoring correlates with actual close rates (backtest against existing job data if available)
+- [ ] Commit: `[P1-P10] ZAFTO Recon — property intelligence engine, 10 trade pipelines, lead scoring, area scanning, storm assessment, supplement checklist`
 
 ---
 
@@ -8708,22 +8778,224 @@ Include <content>{markdown}</content> for rendered display.
 
 ---
 
-## PHASE U: UNIFICATION & FEATURE COMPLETION (after SK, before G)
-*Merge all portals into one app at zafto.cloud. Build missing features, fix gaps, wire dead buttons, enterprise customization. Everything must be COMPLETE before Phase G hardening.*
+## PHASE GC: GANTT & CPM SCHEDULING ENGINE (after SK, before U)
+*Full Critical Path Method (CPM) scheduling engine with Gantt charts, resource leveling, baseline management, P6/MS Project import/export, and real-time collaboration. 12 new tables, 4+ Edge Functions, ~124 hours across 11 sprints. See `Expansion/48_GANTT_CPM_SCHEDULER_SPEC.md` for full spec.*
 
-**Build order: T → P → SK → U → G → E → LAUNCH**
+**Build order: T → P → SK → GC → U → G → E → LAUNCH**
+
+### Sprint GC1: Database Schema + Work Calendars (~8 hrs)
+*Create all 12 schedule tables, RLS policies, indexes, triggers, Dart models, and TypeScript types.*
+
+- [ ] Create migration `supabase/migrations/20260211000049_gc1_schedule_engine.sql` — 12 tables: `schedule_projects`, `schedule_tasks`, `schedule_dependencies`, `schedule_baselines`, `schedule_baseline_tasks`, `schedule_resources`, `schedule_task_resources`, `schedule_calendars`, `schedule_calendar_exceptions`, `schedule_task_changes`, `schedule_task_locks`, `schedule_views`
+- [ ] All tables: `company_id` FK to `companies(id)` with `ON DELETE CASCADE`, RLS enabled, standard 4-policy set (select/insert/update/delete) scoped by `requesting_company_id()`
+- [ ] Child tables (`schedule_tasks`, `schedule_dependencies`, `schedule_baselines`, etc.) use `EXISTS` subquery RLS through parent `schedule_projects.company_id`
+- [ ] Immutable audit tables (`schedule_task_changes`): SELECT + INSERT policies only, no UPDATE/DELETE
+- [ ] Lock table (`schedule_task_locks`): DELETE policy allows `user_id = auth.uid() OR expires_at < now()` (owner or expired)
+- [ ] All indexes: FKs, compound indexes on `(project_id, status)`, `(project_id, is_critical)`, `(project_id, planned_start, planned_finish)`, partial indexes where relevant
+- [ ] All triggers: `update_updated_at()` on every table with `updated_at`, `audit_trigger_fn()` on business tables
+- [ ] Seed default calendars: "Standard 5-Day" (Mon-Fri 7:00-15:30), "6-Day" (Mon-Sat), "7-Day" via `schedule_calendars` insert
+- [ ] Seed common US holidays as `schedule_calendar_exceptions`: New Year, MLK, Presidents, Memorial, Independence, Labor, Columbus, Veterans, Thanksgiving, Christmas
+- [ ] Create Dart models in `lib/models/`: `schedule_project.dart`, `schedule_task.dart`, `schedule_dependency.dart`, `schedule_resource.dart`, `schedule_task_resource.dart`, `schedule_baseline.dart`, `schedule_baseline_task.dart`, `schedule_calendar.dart`, `schedule_calendar_exception.dart`, `schedule_view.dart` — all immutable, `toJson()`/`fromJson()`, `copyWith()`, `Equatable`
+- [ ] Create Dart repositories in `lib/repositories/`: `schedule_project_repository.dart`, `schedule_task_repository.dart`, `schedule_dependency_repository.dart`, `schedule_resource_repository.dart`, `schedule_baseline_repository.dart` — abstract + concrete, typed errors from `core/errors.dart`
+- [ ] Create TypeScript types in `web-portal/src/lib/types/scheduling.ts` — interfaces matching all 12 tables
+- [ ] Verify: `dart analyze` passes (0 errors), migration applies cleanly to dev, all RLS policies tested with `requesting_company_id()` mock
+- [ ] Commit: `[GC1] Schedule engine foundation — 12 tables, RLS, Dart models, TS types`
+
+---
+
+### Sprint GC2: CPM Engine — Forward & Backward Pass (~12 hrs)
+*Build the CPM calculation Edge Function: topological sort, forward pass (ES/EF), backward pass (LS/LF), float calculation, critical path identification.*
+
+- [ ] Create Edge Function `supabase/functions/schedule-calculate-cpm/index.ts` — accepts `{ project_id: UUID }`, authenticates via JWT, validates company ownership
+- [ ] Fetch all tasks + dependencies + calendar for project via `supabase.from('schedule_tasks').select('*').eq('project_id', id)`
+- [ ] Topological sort: Kahn's algorithm on dependency graph. Detect circular dependencies → return `{ error: 'Circular dependency detected', cycle: [task_ids] }` before any calculation
+- [ ] Forward pass: iterate in topological order. For each task: `ES = max(predecessor finish + lag)` per dependency type. `EF = ES + duration` (in working days per calendar). Root tasks: `ES = project.start_date`
+- [ ] Dependency type logic: FS → `ES(succ) = EF(pred) + lag`. FF → `EF(succ) = EF(pred) + lag`. SS → `ES(succ) = ES(pred) + lag`. SF → `EF(succ) = ES(pred) + lag`
+- [ ] Backward pass: iterate in reverse topological order. For each task: `LF = min(successor start - lag)` per dependency type. `LS = LF - duration`. Terminal tasks: `LF = project.finish_date` (or max EF if no project finish)
+- [ ] Float calculation: `total_float = LS - ES = LF - EF`. `free_float = min(successor ES) - EF`. `is_critical = (total_float == 0)`
+- [ ] Calendar-aware date math: `addWorkDays(date, days, calendar)` skips weekends + holidays. `subtractWorkDays(date, days, calendar)` same in reverse. `workDaysBetween(start, end, calendar)` counts working days
+- [ ] Constraint application (8 types): ASAP (default, no adjustment). ALAP (set `LS = LF - duration`). MSO (`ES = constraint_date`). MFO (`EF = constraint_date`). SNET (`ES = max(ES, constraint_date)`). SNLT (`ES = min(ES, constraint_date)`). FNET (`EF = max(EF, constraint_date)`). FNLT (`EF = min(EF, constraint_date)`). Negative float after constraint → return warning
+- [ ] Summary task roll-up: `ES = min(child ES)`, `EF = max(child EF)`, `duration = workDaysBetween(ES, EF)`, `percent_complete = avg(child percent_complete weighted by duration)`
+- [ ] Batch UPDATE: `UPDATE schedule_tasks SET early_start, early_finish, late_start, late_finish, total_float, free_float, is_critical WHERE project_id = $1` — single transaction
+- [ ] Broadcast via Supabase Realtime: `{ type: 'cpm_recalc', project_id, critical_path: [task_ids], affected_task_ids: [ids] }`
+- [ ] Debounce: if called multiple times within 500ms for same project, only execute final call (use PostgreSQL advisory lock or in-memory debounce)
+- [ ] Performance: 1000 tasks with 2000 dependencies must complete in < 500ms
+- [ ] Unit tests: 20+ test cases — linear chain, parallel paths, all 4 dep types, all 8 constraints, circular rejection, calendar with holidays, summary roll-up
+- [ ] Verify: `npx supabase functions deploy schedule-calculate-cpm`, test via curl with sample project
+- [ ] Commit: `[GC2] CPM engine — forward/backward pass, float, critical path, 8 constraints`
+
+---
+
+### Sprint GC3: Resource Management + Leveling Edge Function (~12 hrs)
+*Resource CRUD, assignment to tasks, over-allocation detection, and priority-based heuristic leveling algorithm.*
+
+- [ ] Create Edge Function `supabase/functions/schedule-level-resources/index.ts` — accepts `{ project_id: UUID, options: { respect_critical_path: boolean, leveling_order: 'priority' | 'float' } }`
+- [ ] Resource usage timeline builder: for each resource, build daily usage array (hours per day) from task assignments × allocation units × task duration
+- [ ] Over-allocation detection: flag days where `sum(task hours for resource) > resource.max_units × calendar.hours_per_day`
+- [ ] Priority-based heuristic leveling: for each over-allocated day (chronological), sort conflicting tasks by priority (critical path first → highest priority → lowest total float). Delay lowest-priority non-critical task to next available slot. Re-run CPM after each delay
+- [ ] Circuit breaker: max 1000 iterations. If still over-allocated after 1000, return partial result with warnings
+- [ ] Crew-based resources: `max_units = 1.0` means one person. `max_units = 0.5` means half-time. Support fractional allocation
+- [ ] Equipment single-use: equipment resources with `max_units = 1.0` cannot be shared across overlapping tasks
+- [ ] Resource histogram data generation: return `{ resource_id, daily_usage: [{ date, hours, capacity, over_allocated }] }` for visualization
+- [ ] Dart model updates: ensure `schedule_resource.dart` and `schedule_task_resource.dart` handle all fields including `cost_per_hour`, `overtime_rate`, `max_units`
+- [ ] Dart repository: `schedule_resource_repository.dart` — CRUD for resources, assignments, bulk assignment
+- [ ] Web hook: `web-portal/src/lib/hooks/use-schedule-resources.ts` — `{ resources, taskResources, loading, error, assignResource, removeResource, levelResources, histogram }`
+- [ ] Verify: `npx supabase functions deploy schedule-level-resources`, test with 3 resources assigned to 10 overlapping tasks → leveling resolves all over-allocations
+- [ ] Commit: `[GC3] Resource management + leveling — assignment, histogram, auto-level Edge Function`
+
+---
+
+### Sprint GC4: Flutter Gantt Screens (~16 hrs)
+*Build the mobile Gantt chart interface with interactive task bars, dependency arrows, gestures, and offline progress updates.*
+
+- [ ] Add `legacy_gantt_chart` (or `gantt_chart_v2`) to `pubspec.yaml` — MIT license, canvas-based, handles 10K+ tasks
+- [ ] Create `lib/screens/scheduling/schedule_list_screen.dart` — list of schedule projects with status cards (active, on hold, completed). FAB to create new. Pull-to-refresh. Search/filter by status
+- [ ] Create `lib/screens/scheduling/schedule_gantt_screen.dart` — full Gantt view with: left pane (task table: name, duration, start, finish, % complete) + right pane (timeline with task bars). Task bars color-coded by trade. Dependency arrows drawn between tasks. Critical path tasks highlighted in red. Today line (vertical red). Baseline overlay (ghost bars if baseline selected)
+- [ ] Create `lib/screens/scheduling/schedule_task_detail_screen.dart` — bottom sheet on task tap. Fields: name, duration, start/finish (date pickers), constraint type/date, trade, % complete (slider), predecessors list, resource assignments, notes, change log. Save button calls `schedule_task_repository.update()` then triggers CPM recalc
+- [ ] Create `lib/screens/scheduling/schedule_resource_screen.dart` — resource list with assignment counts. Resource histogram chart (bar chart showing daily hours). Over-allocation days highlighted in red. Tap resource → see all assigned tasks across all projects
+- [ ] Riverpod providers in `lib/providers/`: `schedule_project_provider.dart` (AsyncNotifierProvider), `schedule_tasks_provider.dart` (StreamProvider.family by project_id), `schedule_dependencies_provider.dart` (StreamProvider.family), `schedule_resources_provider.dart` (StreamProvider)
+- [ ] Touch gestures: pinch-to-zoom (day/week/month granularity). Horizontal drag to pan timeline. Long-press task → context menu (edit, delete, add dependency, mark complete). Drag task bar horizontally → reschedule (call CPM recalc on drop)
+- [ ] Dependency creation: tap connector dot on task end → drag to another task's start → create FS dependency. Popup to select type (FS/FF/SS/SF) and lag
+- [ ] Critical path toggle: switch in toolbar to highlight/unhighlight critical path. When on, critical tasks in red, non-critical in gray
+- [ ] Offline progress updates: technician can update `percent_complete` while offline → queue in Hive → sync when back online via PowerSync
+- [ ] Navigation: add "Scheduling" to main drawer (between Calendar and Field Tools). Badge showing overdue tasks count
+- [ ] Verify: `dart analyze` passes (0 errors). Manual test on Android emulator: create project → add 5 tasks → add dependencies → view Gantt → drag task → see CPM recalc. iOS simulator: same flow
+- [ ] Commit: `[GC4] Flutter Gantt — schedule list, interactive Gantt, task detail, resource histogram`
+
+---
+
+### Sprint GC5: Web CRM Gantt Pages (~16 hrs)
+*Build the web Gantt editor with DHTMLX Gantt PRO (or custom Canvas), keyboard shortcuts, column configuration, and baseline display.*
+
+- [ ] Install DHTMLX Gantt PRO in `web-portal/` — `npm install dhtmlx-gantt` (PRO license $699/dev one-time). Configure in `src/lib/gantt-config.ts`: scale, columns, critical path plugin, baseline plugin, keyboard nav plugin
+- [ ] Create `web-portal/src/app/dashboard/scheduling/page.tsx` — Scheduling Dashboard. List all schedule projects as cards with: name, job link, status badge, progress bar, next milestone, critical path health indicator. "New Schedule" button. Filter by status/trade
+- [ ] Create `web-portal/src/app/dashboard/scheduling/[id]/page.tsx` — Project Gantt page. Full-screen DHTMLX Gantt with: left task table (configurable columns: WBS, Name, Duration, Start, Finish, Predecessors, Resources, % Complete) + right timeline (task bars, dependency arrows, milestones, summary bars). Toolbar: zoom controls (day/week/month/quarter/year), critical path toggle, baseline selector, filter by trade/resource, import/export buttons, undo/redo
+- [ ] Create `web-portal/src/app/dashboard/scheduling/[id]/resources/page.tsx` — Resource Allocation page. Resource list with utilization bars. Resource histogram (stacked bar chart). Over-allocation warnings. Click resource → filter Gantt to show only their tasks. "Auto Level" button calls `schedule-level-resources` Edge Function
+- [ ] Create hooks in `web-portal/src/lib/hooks/`: `use-schedule.ts` (project CRUD + real-time subscription), `use-schedule-tasks.ts` (task CRUD + real-time, family by project_id), `use-schedule-dependencies.ts` (dependency CRUD + real-time), `use-schedule-resources.ts` (resources + assignments + histogram data)
+- [ ] DHTMLX ↔ Supabase data adapter: `src/lib/gantt-adapter.ts` — bidirectional sync. On Gantt edit event → call Supabase mutation → on success, broadcast via Realtime. On Realtime event → update Gantt data store. Handle conflict: if task locked by another user, revert Gantt edit and show toast
+- [ ] Keyboard shortcuts: `Ctrl+Z` undo, `Ctrl+Y` redo, `Delete` remove selected task/dependency, `Tab` next task, `Enter` open task editor, `Ctrl+N` new task, `Ctrl+S` save baseline, `+`/`-` zoom
+- [ ] Column customization: right-click column header → show/hide columns, drag to reorder. Saved per user in `schedule_views` table
+- [ ] Baseline display: DHTMLX baseline plugin shows ghost bars below current task bars. Color: gray for on-time, red for behind, green for ahead. Toggle on/off from toolbar
+- [ ] Verify: `npm run build` passes (0 errors). Manual test: create project → add 20 tasks → add dependencies → view critical path → drag to reschedule → see CPM recalc → save baseline → modify schedule → compare baseline
+- [ ] Commit: `[GC5] Web Gantt editor — DHTMLX PRO, keyboard nav, column config, baseline overlay`
+
+---
+
+### Sprint GC6: Baseline Management + Comparison Views (~8 hrs)
+*Baseline capture Edge Function, Flutter baseline screen, web baseline comparison page with variance reporting.*
+
+- [ ] Create Edge Function `supabase/functions/schedule-baseline-capture/index.ts` — accepts `{ project_id: UUID, name: string, notes: string }`. Validates baseline_number <= 5 (max 5 per project). Snapshots all task `planned_start`, `planned_finish`, `duration`, `budgeted_cost` into `schedule_baseline_tasks`. Returns baseline_id
+- [ ] Create `lib/screens/scheduling/schedule_baseline_screen.dart` — list existing baselines (name, date saved, saved by). "Save Baseline" button → name input → call Edge Function. Tap baseline → overlay on Gantt (dual bars: current above, baseline below). Date variance table: task name, baseline start, baseline finish, current start, current finish, start variance (days), finish variance (days). Color: green=ahead, red=behind, gray=unchanged
+- [ ] Create `web-portal/src/app/dashboard/scheduling/[id]/baselines/page.tsx` — Baseline Comparison page. Dropdown to select baseline (1-5). Split view: left = baseline Gantt (frozen), right = current Gantt. Variance table below with sortable columns. Export variance report to CSV/PDF
+- [ ] Earned Value calculations: BCWS (Budgeted Cost of Work Scheduled), BCWP (Budgeted Cost of Work Performed), ACWP (Actual Cost of Work Performed). SPI = BCWP/BCWS, CPI = BCWP/ACWP. Display on project dashboard card
+- [ ] Hook: `web-portal/src/lib/hooks/use-schedule-baselines.ts` — `{ baselines, loading, error, saveBaseline, deleteBaseline, getVarianceReport }`
+- [ ] Riverpod provider: `lib/providers/schedule_baselines_provider.dart` — AsyncNotifierProvider for baseline CRUD
+- [ ] Verify: create schedule with 10 tasks → save baseline → modify 3 tasks (slip 2, advance 1) → compare → variance report shows correct deltas → EVM metrics calculate correctly
+- [ ] Commit: `[GC6] Baselines — capture, comparison, variance report, earned value metrics`
+
+---
+
+### Sprint GC7: P6/MS Project Import/Export (~12 hrs)
+*Import/export Edge Functions for P6 XER, MS Project XML, CSV, PDF, and PNG formats.*
+
+- [ ] Create Edge Function `supabase/functions/schedule-import/index.ts` — accepts `{ project_id: UUID, format: 'xer' | 'msp_xml' | 'csv', file_path: string }`. Downloads file from Supabase Storage. Parses format. Maps external task IDs to ZAFTO UUIDs. Creates tasks, dependencies, resources, assignments. Runs CPM calculation. Returns `{ tasks_imported, dependencies_imported, resources_imported, warnings[] }`
+- [ ] XER parser: use `fast-xml-parser` (MIT). Map P6 `TASK` → `schedule_tasks`, `TASKPRED` → `schedule_dependencies`, `RSRC` → `schedule_resources`, `CALENDAR` → `schedule_calendars`. Handle P6-specific fields: `task_code`, `wbs_id`, `rsrc_id` mapping tables
+- [ ] MS Project XML parser: map `<Task>` → `schedule_tasks`, `<PredecessorLink>` → `schedule_dependencies`, `<Resource>` → `schedule_resources`, `<Assignment>` → `schedule_task_resources`. Handle MS Project `UID` → ZAFTO `id` mapping
+- [ ] CSV import: column mapping UI (user maps CSV columns to ZAFTO fields). Required: Name, Start, Finish. Optional: Duration, Predecessors, Resources
+- [ ] Create Edge Function `supabase/functions/schedule-export/index.ts` — accepts `{ project_id: UUID, format: 'xer' | 'msp_xml' | 'csv' | 'pdf' | 'png', options: object }`. Fetches full schedule data. Generates format-specific output. Uploads to Supabase Storage (temp bucket, 24hr expiry). Returns signed download URL
+- [ ] XER export: generate P6-compatible XML with all task data, dependencies, resources, calendars
+- [ ] CSV export: `Name, WBS, Duration, Start, Finish, Predecessors, Resources, % Complete, Total Float, Critical`
+- [ ] PDF export: use `pdf-lib` to render Gantt chart to PDF with title block (company name, project name, date, page number), timeline, task bars, dependency arrows, legend, notes section
+- [ ] Flutter: import/export buttons on `schedule_gantt_screen.dart` toolbar. Import: `file_picker` package → upload to Storage → call import EF. Export: call export EF → share sheet with download URL
+- [ ] Web CRM: import button (drag-and-drop file upload + format selector) + export button (format dropdown + download) on Project Gantt toolbar
+- [ ] Import validation: circular dependency check post-import, date range validation, summary of what was imported + any warnings
+- [ ] Round-trip test: create schedule in ZAFTO → export XER → import into Primavera (or validate XER schema) → export from P6 → import back into ZAFTO → compare task counts and dates
+- [ ] Verify: `npx supabase functions deploy schedule-import schedule-export`. Test with real P6 XER sample file and MS Project XML sample
+- [ ] Commit: `[GC7] Import/export — P6 XER, MS Project XML, CSV, PDF, PNG`
+
+---
+
+### Sprint GC8: Portal Views + Real-Time Collaboration (~12 hrs)
+*Team/Client/Ops portal schedule views and real-time multi-user editing with micro-locks.*
+
+- [ ] Team Portal: create `team-portal/src/app/schedule/page.tsx` — list of projects where current user has assigned tasks. Progress cards with task counts, next deadline, completion %. Create `team-portal/src/app/schedule/[id]/page.tsx` — read-only Gantt with progress update: tap task → slider to set % complete → save. Hook: `src/lib/hooks/use-team-schedule.ts`
+- [ ] Client Portal: create `client-portal/src/app/project/[id]/timeline/page.tsx` — milestone timeline view (simplified, no full Gantt). Shows: project name, overall progress bar, milestone list (name, planned date, status: upcoming/completed/overdue), current phase indicator. Status badge: "On Schedule" (green) / "Ahead" (blue) / "Behind" (red with explanation). Hook: `src/lib/hooks/use-client-timeline.ts`
+- [ ] Ops Portal: create `ops-portal/src/app/analytics/scheduling/page.tsx` — multi-company scheduling analytics. Metrics: projects on time %, average delay days, resource utilization %, most common bottleneck trades. Charts: schedule health by month, resource utilization heatmap. Hook: `src/lib/hooks/use-ops-scheduling-analytics.ts`
+- [ ] Real-time collaboration (Web CRM): Supabase Realtime channel per project — `schedule:${project_id}`. Events: `task_update` (field changes), `task_lock` (lock acquired), `task_unlock` (lock released), `cpm_recalc` (CPM results), `presence` (user joined/left)
+- [ ] Micro-lock system: on task edit start → INSERT into `schedule_task_locks` (task_id, user_id, user_name, expires_at=now+30s). If lock exists for another user → reject edit, show toast "Task locked by [name]". On edit complete → DELETE lock. Auto-extend lock every 15s while editing. Stale locks cleaned by cron
+- [ ] User presence on Gantt: show avatar pills of connected users in toolbar. Cursor position sharing (optional, web only) — broadcast cursor coordinates, render colored cursor dots for other users
+- [ ] Create Edge Function `supabase/functions/schedule-clean-locks/index.ts` — DELETE FROM schedule_task_locks WHERE expires_at < now(). Called by Supabase cron every 60 seconds
+- [ ] Conflict resolution UI (web): if two users try to edit same field within lock window, show diff modal — "John changed duration to 5 days. You changed it to 3 days. Keep yours / Accept John's / Cancel"
+- [ ] Verify: open same project in 2 browser tabs. Edit task in tab 1 → see update in tab 2 within 500ms. Try to edit same task in tab 2 → see "locked by" message. Lock expires after 30s. Team portal: update progress → Gantt updates. Client portal: milestone timeline reflects current state
+- [ ] Commit: `[GC8] Portal views + real-time collab — team/client/ops portals, micro-locks, presence`
+
+---
+
+### Sprint GC9: Multi-Project Portfolio + Cross-Project Resources (~8 hrs)
+*Portfolio view showing all active projects on one timeline with cross-project resource conflict detection.*
+
+- [ ] Create `web-portal/src/app/dashboard/scheduling/portfolio/page.tsx` — Multi-Project Portfolio view. All active projects on one timeline as summary bars. Expand project → see tasks. Cross-project milestones. Filter by status, trade, date range. Color-code by project health (green/yellow/red based on critical path float)
+- [ ] Cross-project resource detection: when assigning a resource to a task, check all other projects for overlapping assignments. Warning: "Electrician Crew A is double-booked Feb 15-18 (Job #1234 + Job #5678)". Resolution options: reassign to different resource, delay one task, split task across days
+- [ ] Portfolio dashboard cards: projects on track / behind / ahead counts. Upcoming milestones (next 2 weeks). Resource utilization summary (company-wide). Bottleneck resources (most over-allocated)
+- [ ] Portfolio-level critical path (optional): identify the critical path across all projects considering shared resources. Show which project delays cascade into other projects
+- [ ] Hook: `web-portal/src/lib/hooks/use-schedule-portfolio.ts` — `{ projects, portfolioCriticalPath, crossProjectConflicts, milestones, resourceUtilization }`
+- [ ] Flutter: add portfolio summary card to scheduling list screen — "3 active projects, 2 on track, 1 behind" with tap to expand
+- [ ] Verify: create 3 projects with shared resources → detect cross-project conflict → resolve by reassignment → portfolio view shows all 3 on timeline → milestones display correctly
+- [ ] Commit: `[GC9] Portfolio view — multi-project timeline, cross-project resource detection`
+
+---
+
+### Sprint GC10: ZAFTO Integration Wiring (~12 hrs)
+*Wire scheduling into jobs, estimates, team, field tools, Ledger, phone, and meetings.*
+
+- [ ] Jobs ↔ Schedule: on job detail screen (Flutter `lib/screens/jobs/job_detail_screen.dart` + Web `web-portal/src/app/dashboard/jobs/[id]/page.tsx`), add mini-Gantt widget showing job's schedule timeline. "View Full Schedule" button → navigate to Gantt. Auto-create schedule_project when job has estimate. Job status change → update linked schedule task status
+- [ ] Estimates → Schedule: create Edge Function `supabase/functions/schedule-generate-from-estimate/index.ts` — accepts `{ job_id: UUID }`. Reads estimate line items grouped by trade. Creates schedule tasks from groups with trade-default durations (electrical rough: 2 days, plumbing rough: 1.5 days, etc.). Auto-creates FS dependencies in standard trade sequence: demo → rough-in → inspection → close-in → finish. Runs CPM. Returns schedule_project_id. "Generate Schedule" button on estimate detail screen
+- [ ] Team → Resources: when creating schedule resources, show ZAFTO team members as selectable. Map `schedule_resources.user_id` → `users.id`. Employee time-off (from future HR module) → auto-create `schedule_calendar_exceptions`. Show employee's schedule across all projects on their profile
+- [ ] Field Tools → Progress: create Edge Function `supabase/functions/schedule-sync-progress/index.ts` — listens for daily log submissions. If daily log mentions task progress → suggest % complete update. Photo tagged to a task → attach as evidence. Punch list item resolved → mark linked task substep as complete. Push notification: "Update progress on [task name]?"
+- [ ] Ledger → Cost Loading: `schedule_tasks.budgeted_cost` feeds into job cost budget. `schedule_tasks.actual_cost` updated from expense allocations. Earned Value calculations (PV, EV, AC, SPI, CPI) displayed on project dashboard. Milestone completion → trigger invoice generation suggestion
+- [ ] Phone/Meetings → Schedule: schedule reminders via existing notification system — 24h before task start, 48h before milestone. Coordination meeting suggestions when multiple trades overlap. Delay notification to affected parties when critical task slips
+- [ ] Mini Gantt widget: reusable component showing compact Gantt for a single job. Flutter: `lib/widgets/mini_gantt_widget.dart`. Web: `web-portal/src/components/scheduling/MiniGantt.tsx`. Shows task bars, critical path, progress. Tap to navigate to full Gantt
+- [ ] End-to-end verify: create estimate → "Generate Schedule" → tasks appear with dependencies → assign team members as resources → technician updates progress from mobile → costs flow to Ledger → client sees milestone timeline on portal → PM sees updated Gantt
+- [ ] Commit: `[GC10] Integration wiring — jobs, estimates, team, field, Ledger, phone/meetings`
+
+---
+
+### Sprint GC11: Polish + Testing + Integration Audit (~10 hrs)
+*Comprehensive testing, performance optimization, button audit across all platforms.*
+
+- [ ] CPM engine test suite: forward/backward pass correctness for linear chains (5-task, 20-task, 100-task). All 4 dependency types (FS, FF, SS, SF) with positive lag, negative lag (lead), and zero lag. All 8 constraint types individually and in combination. Circular dependency rejection (3-node cycle, self-reference). Summary task roll-up (nested 3 levels). Calendar-aware date math (skip weekends, skip holidays, handle overtime calendar). Performance: 1000 tasks + 2000 deps < 500ms
+- [ ] Resource leveling test suite: over-allocation detection (2 resources, 5 overlapping tasks). Leveling preserves critical path (critical task never delayed). Equipment single-use enforcement. Crew partial allocation (50% assignments). Cross-project resource detection
+- [ ] Import/export test suite: P6 XER round-trip (export → validate XER schema → reimport → compare). MS Project XML import (sample file with 50 tasks). CSV export correctness (verify column values match). PDF export (opens in viewer, title block correct, bars rendered)
+- [ ] Real-time collaboration test: 2 users editing same schedule simultaneously. Lock acquisition/release within 1s. Lock expiry after 30s. Conflict resolution UI shows correct diff. Presence indicators update within 2s
+- [ ] Integration test: estimate → schedule generation → correct tasks/dependencies created. Job status change → schedule status reflects. Field progress update → Gantt updates. Ledger cost tracking → EVM metrics correct. Client portal milestone timeline → accurate. Phone reminder → fires 24h before
+- [ ] Performance: Gantt render 500 tasks < 1s (web). Gantt render 100 tasks at 30fps (mobile). CPM recalc after single task edit < 2s (including network). Resource histogram render < 500ms
+- [ ] Flutter audit: `dart analyze` (0 errors). All 5 screens render correctly. Every button clicks and produces expected result. All 4 states handled (loading, error, empty, data). Offline progress update queues and syncs
+- [ ] Web CRM audit: `npm run build` passes (0 errors). All 5 pages render correctly. Keyboard shortcuts all work. Column customization saves. DHTMLX Gantt renders all task types (task, milestone, summary). Dependency arrows draw correctly
+- [ ] Team Portal audit: `npm run build` passes. Schedule list loads. Progress update saves. Read-only Gantt renders
+- [ ] Client Portal audit: `npm run build` passes. Milestone timeline renders. Status badge correct. No edit controls visible
+- [ ] Ops Portal audit: `npm run build` passes. Analytics dashboard loads. Metrics calculate correctly
+- [ ] Button audit: every import/export button works (all 5 formats). Every toolbar button works. Every context menu item works. "Generate Schedule" from estimate works. Mini Gantt widget renders on job detail
+- [ ] All builds pass: `dart analyze` (0 errors), `npm run build` for web-portal, team-portal, client-portal, ops-portal (0 errors each)
+- [ ] Commit: `[GC1-GC11] Gantt & CPM Scheduling Engine — 12 tables, 4+ Edge Functions, full CPM, resource leveling, P6/MSP import/export, real-time collaboration, portfolio view`
+
+---
+
+## PHASE U: UNIFICATION & FEATURE COMPLETION (after GC, before G)
+*Merge all portals into one app at zafto.cloud. Build missing features, fix gaps, wire dead buttons, enterprise customization, embedded financing (Wisetack + Stripe Capital). Everything must be COMPLETE before Phase G hardening. 10 sprints (U1-U10, ~128 hrs).*
+
+**Build order: T → P → SK → GC → U → G → E → LAUNCH**
 
 ### Sprint U1: Portal Unification (~20 hrs)
 *Merge team-portal + client-portal INTO web-portal. Single app at zafto.cloud with role-based routing.*
 
-- [ ] Middleware rewrite: detect user role from `users` table, route to appropriate dashboard section. Roles: owner, admin, office_manager → /dashboard (full CRM). technician, apprentice → /field (team portal view). client → /portal (customer view). cpa → /books (ZBooks only). super_admin → redirect to ops.zafto.cloud.
+- [ ] Middleware rewrite: detect user role from `users` table, route to appropriate dashboard section. Roles: owner, admin, office_manager → /dashboard (full CRM). technician, apprentice → /field (team portal view). client → /portal (customer view). cpa → /books (Ledger only). super_admin → redirect to ops.zafto.cloud.
 - [ ] Copy all team-portal pages into web-portal under `/field/*` route group. Preserve all hooks, components, mappers.
 - [ ] Copy all client-portal pages into web-portal under `/portal/*` route group. Preserve all hooks, components, mappers.
 - [ ] Shared component library: consolidate duplicate UI components (Card, Badge, Button, Input, Avatar, etc.) between all 3 portals into single `/components/ui/` directory.
-- [ ] Layout per role: `/dashboard/layout.tsx` (CRM nav), `/field/layout.tsx` (field tech nav), `/portal/layout.tsx` (customer nav), `/books/layout.tsx` (CPA nav — ZBooks pages only).
+- [ ] Layout per role: `/dashboard/layout.tsx` (CRM nav), `/field/layout.tsx` (field tech nav), `/portal/layout.tsx` (customer nav), `/books/layout.tsx` (CPA nav — Ledger pages only).
 - [ ] Auth context: single `useAuth()` provider with `profile.role` that determines which layout + routes are accessible.
 - [ ] Sunset team.zafto.cloud and client.zafto.cloud login pages — redirect both to zafto.cloud. Keep DNS active for redirects.
-- [ ] Verify: log in as owner → see CRM. Log in as technician → see field view. Log in as customer → see portal. Log in as CPA → see ZBooks.
+- [ ] Verify: log in as owner → see CRM. Log in as technician → see field view. Log in as customer → see portal. Log in as CPA → see Ledger.
 - [ ] `npm run build` passes with all merged pages, zero TypeScript errors.
 - [ ] Commit: `[U1] Portal Unification — 3 apps merged into zafto.cloud with role-based routing`
 
@@ -8731,7 +9003,7 @@ Include <content>{markdown}</content> for rendered display.
 *Copy Supabase nav style exactly. Rethink Z AI button placement.*
 
 - [ ] Sidebar nav redesign (CRM): copy Supabase Dashboard nav pattern — left sidebar with icon + text label for each item. Always show text labels (not icon-only). Section dividers with section headers. Subtle hover states. Collapse button at bottom of sidebar. Collapsed state shows icons with tooltip on hover. Active item highlighted with accent color left border.
-- [ ] Nav sections (CRM): Overview (Dashboard), Business (Jobs, Bids, Invoices, Estimates, Customers, Leads), Finance (ZBooks, Banking, Payroll, Reports), Operations (Calendar, Schedule, Team, Fleet, Hiring, Marketplace), Tools (Sketch-Bid, Walkthroughs, Field Tools, Documents), Property (Properties, Leases, Maintenance, Assets), Settings.
+- [ ] Nav sections (CRM): Overview (Dashboard), Business (Jobs, Bids, Invoices, Estimates, Customers, Leads), Finance (Ledger, Banking, Payroll, Reports), Operations (Calendar, Schedule, Team, Fleet, Hiring, Marketplace), Tools (Sketch-Bid, Walkthroughs, Field Tools, Documents), Property (Properties, Leases, Maintenance, Assets), Settings.
 - [ ] Sidebar nav (Field tech): simplified nav — Dashboard, My Jobs, Schedule, Time Clock, Field Tools, Documents, Training, Certifications, My Vehicle, Phone, Meetings.
 - [ ] Sidebar nav (Customer): simplified nav — Home, Projects, Invoices, Bids, Messages, Meetings, My Home, Documents, Get Quotes, Find a Pro.
 - [ ] Sidebar nav (CPA): minimal nav — Overview, Chart of Accounts, Journal Entries, Banking, Reconciliation, Reports, Tax & 1099, Fiscal Periods.
@@ -8753,12 +9025,12 @@ Include <content>{markdown}</content> for rendered display.
 - [ ] Permission middleware: `usePermission('create_bids')` hook — returns boolean. Used in UI to show/hide buttons and nav items. Server-side: RLS policies check permissions via `requesting_user_permissions()` function.
 - [ ] Company tier flag: ALTER `companies` table ADD `tier TEXT CHECK (tier IN ('starter', 'professional', 'enterprise')) DEFAULT 'professional'`.
 - [ ] Good/Better/Best pricing: company setting `bid_pricing_tiers: boolean`. When off, bids show single price column. When on, shows Good/Better/Best columns with different scope/material selections per tier. Setting in company settings page.
-- [ ] Verify: owner can see everything. Technician cannot see financials. CPA sees only ZBooks. Enterprise features gated. Good/Better/Best toggles correctly.
+- [ ] Verify: owner can see everything. Technician cannot see financials. CPA sees only Ledger. Enterprise features gated. Good/Better/Best toggles correctly.
 - [ ] `npm run build` + `dart analyze` pass.
 - [ ] Commit: `[U3] Permission Engine — role-based permissions, enterprise tiers, Good/Better/Best setting`
 
-### Sprint U4: ZBooks Completion (~16 hrs)
-*Ensure ZBooks covers EVERYTHING a contractor needs. Enterprise features separated cleanly.*
+### Sprint U4: Ledger Completion (~16 hrs)
+*Ensure Ledger covers EVERYTHING a contractor needs. Enterprise features separated cleanly.*
 
 **Regular contractor accounting (ALL tiers):**
 - [ ] Chart of Accounts: standard COA pre-loaded (assets, liabilities, equity, revenue, expenses). Add/edit/delete accounts. Account type enforcement.
@@ -8777,14 +9049,14 @@ Include <content>{markdown}</content> for rendered display.
 - [ ] Approval workflows: expenses > $X need manager approval. Vendor payments > $Y need owner approval.
 - [ ] Budget vs Actual: job-level budgeting. Variance reporting. Alerts when budget threshold exceeded.
 - [ ] Audit trail: immutable log of every GL entry change. Required for SOC 2.
-- [ ] CPA portal view: read-only ZBooks access scoped to company. Export to QuickBooks (IIF format). CSV export.
+- [ ] CPA portal view: read-only Ledger access scoped to company. Export to QuickBooks (IIF format). CSV export.
 
 **Separation pattern:**
 - [ ] Enterprise features gated by `company.tier === 'enterprise'`. Non-enterprise sees clean "Upgrade to Enterprise" prompt on locked features.
 - [ ] No enterprise UI clutter in starter/professional views. Enterprise tabs/sections hidden entirely.
 - [ ] Verify: regular contractor sees clean, simple accounting. Enterprise sees full construction accounting suite. CPA sees read-only financials.
 - [ ] `npm run build` passes.
-- [ ] Commit: `[U4] ZBooks Completion — full contractor accounting, enterprise construction features, CPA view`
+- [ ] Commit: `[U4] Ledger Completion — full contractor accounting, enterprise construction features, CPA view`
 
 ### Sprint U5: Dashboard Restoration + Reports (~12 hrs)
 *Restore missing dashboard widgets. Replace mock data with live queries.*
@@ -8836,7 +9108,7 @@ Include <content>{markdown}</content> for rendered display.
 ### Sprint U8: Cross-System Metric Verification (~8 hrs)
 *Every number, every chart, every stat must be 100% accurate and consistent across all views.*
 
-- [ ] Revenue consistency: dashboard revenue = ZBooks revenue account total = sum of paid invoices = reports revenue figure. Test with known data.
+- [ ] Revenue consistency: dashboard revenue = Ledger revenue account total = sum of paid invoices = reports revenue figure. Test with known data.
 - [ ] Job metrics: dashboard active jobs = jobs list active filter count = team portal assigned jobs (scoped to user). Completion rate = completed / total.
 - [ ] Invoice metrics: outstanding amount = sum of (due + overdue + partial) invoices. Aging buckets (0-30, 31-60, 61-90, 90+) match reports page.
 - [ ] Bid metrics: conversion rate = won bids / total bids. Pipeline value = sum of open bid amounts.
@@ -8858,18 +9130,357 @@ Include <content>{markdown}</content> for rendered display.
 - [ ] Loading states: ensure every page has proper loading skeleton (not just spinner). Matches Supabase Dashboard loading pattern.
 - [ ] Empty states: every page with no data shows a helpful empty state with icon + "No X yet" + CTA button to create first item. Not just blank page.
 - [ ] Error boundaries: every page wrapped in error boundary. Shows "Something went wrong" with retry button. Not white screen of death.
+- [ ] Remove Level & Plumb: delete level_plumb_screen.dart from Flutter, remove from field tools hub/navigation in all apps (mobile, team portal, CRM). Remove any related menu items, routes, and imports. Feature deemed unnecessary.
+- [ ] Portal parity audit: verify employee portal (team) and customer portal (client) have all tools/views they need relative to what exists in CRM. Ensure data flows correctly between all portals — jobs, invoices, bids, schedules, messages, documents all connected.
 - [ ] Mobile responsiveness audit: every CRM page, every field tech page, every customer page renders properly on mobile viewport.
 - [ ] Verify: forgot password works end-to-end. Every page has loading + empty + error states. Mobile layouts clean.
-- [ ] All builds pass: `npm run build` for web portal (CRM + team + client merged), ops portal.
-- [ ] Commit: `[U9] Polish — ops actions, auth flows, loading/empty/error states, mobile audit`
+- [ ] All builds pass: `npm run build` for web portal (CRM + team + client merged), ops portal. `dart analyze` for Flutter.
+- [ ] Commit: `[U9] Polish — remove level/plumb, portal parity, ops actions, auth flows, loading/empty/error states, mobile audit`
+
+### Sprint U10: Embedded Financing — Wisetack + Stripe Capital (~8 hrs)
+*Add customer financing (BNPL) and contractor instant pay. Zero lending risk — Zafto is a referral/technology partner only. Licensed lenders handle all compliance, underwriting, and collections.*
+
+**Customer Financing (Wisetack integration):**
+- [ ] Apply for Wisetack SaaS partnership at wisetack.com/partnerships. Sign partnership agreement (Wisetack provides — defines Zafto as technology/referral partner, not lender).
+- [ ] Integrate Wisetack API into estimate flow: add "Pay Over Time" / "Finance This Project" button on estimate detail page (web CRM) and estimate PDF sent to customers.
+- [ ] Client portal estimate view: add "Apply for Financing" button that opens Wisetack hosted application (iframe or redirect — per Wisetack docs). 30-second application, real-time approval.
+- [ ] Webhook integration: listen for Wisetack webhooks (application_approved, funded, payment_received). Update invoice status when Wisetack funds the contractor. Log financing events to `payment_intents` or new `financing_events` table.
+- [ ] Contractor dashboard: show financing stats — total financed amount, number of financed jobs, avg financed job size. Card on Job Cost Radar or Revenue Insights page.
+- [ ] UI disclosure (required): all financing screens display "Financing provided by Wisetack and its lending partners. Zafto does not make credit decisions." Use language provided by Wisetack.
+- [ ] Privacy policy update: add clause covering data sharing with financial partners for financing purposes.
+- [ ] Verify: create test estimate → customer sees "Finance" option → Wisetack application flow works → contractor gets paid notification.
+
+**Contractor Instant Pay (Stripe Capital integration):**
+- [ ] Enable Stripe Capital in Stripe Connect dashboard (no-code tier — Stripe auto-emails financing offers to eligible connected accounts). This is a 1-click setup.
+- [ ] Embedded components tier (optional): add Stripe Capital pre-built UI component to contractor settings or dashboard page showing available financing offers. Uses `stripe.js` embedded component.
+- [ ] Webhook: listen for `capital.financing_offer.updated` and `capital.financing_transaction.changed` events. Display offer status in Zafto dashboard.
+- [ ] Verify: Stripe Capital section appears for eligible contractors. Offers display correctly. No Zafto branding implies Zafto is the lender.
+
+**Legal/Compliance (minimal — partners handle everything):**
+- [ ] Wisetack partnership agreement signed and filed.
+- [ ] UI disclosures in place on all financing touchpoints.
+- [ ] Privacy policy updated.
+- [ ] Post-launch TODO: schedule fintech attorney review ($2-5K one-time) to confirm referral/technology partner classification in all 50 states. Not required for launch.
+- [ ] `npm run build` passes.
+- [ ] Commit: `[U10] Embedded Financing — Wisetack customer BNPL + Stripe Capital contractor instant pay`
 
 ---
 
 ## PHASE E: AI LAYER — REBUILD (after Phase T + Phase P + Phase SK + Phase U + Phase G)
-*Deep spec session with owner required before starting. AI must know every feature, every table, every screen — including TPA module + ZScan + Sketch Engine.*
+*Deep spec session with owner required before starting. AI must know every feature, every table, every screen — including TPA module + Recon + Sketch Engine.*
 
-### Sprint E-review: Audit premature E work
-### Sprint E1-E4: Full AI implementation (rebuilt with complete platform knowledge — including TPA module + ZScan + Sketch Engine + all Phase F features)
+### Sprint E-review: Audit premature E work (~8 hours)
+*Deep spec session with owner. Review all S78-S80 AI code. Verify compatibility with T+P+SK+U features. Identify what needs rebuilding vs keeping.*
+
+- [ ] Inventory all premature E code: z-intelligence EF (14 tools), Dashboard (22 files), ai-troubleshoot (4 EFs), ai-photo-diagnose, ai-parts-identify, ai-repair-guide, ai-service.dart, z_chat_sheet.dart, E4 growth advisor (5 EFs + 4 hooks + 4 pages uncommitted), E5 Xactimate (5 tables, 6 EFs — superseded by D8), E6 walkthrough (5 tables, 4 EFs, 12 screens)
+- [ ] Test z-intelligence EF with ANTHROPIC_API_KEY set — verify all 14 tools function
+- [ ] Test ai-troubleshoot + ai-photo-diagnose + ai-parts-identify + ai-repair-guide EFs
+- [ ] Evaluate E5 code: confirm superseded by D8 Estimates. Document what to keep vs remove.
+- [ ] Evaluate E6 walkthrough code: verify compatibility with SK (Sketch Engine) FloorPlanDataV2 schema
+- [ ] Review E4 growth advisor: deploy uncommitted code or rebuild with full platform knowledge
+- [ ] Map AI touchpoints for Programs, Recon, Sketch Engine, Plan Review — document what AI needs to know
+- [ ] Produce E-REBUILD-PLAN.md: prioritized list of AI features to build/rebuild, integration points, estimated hours
+- [ ] Commit: `[E-review] AI audit — premature E code inventory, rebuild plan`
+
+---
+
+### Sprint BA1: Plan Review — Data Model + File Ingestion (~16 hours)
+*Spec: Expansion/47_BLUEPRINT_ANALYZER_SPEC.md*
+*Goal: Foundation tables, file upload pipeline, scale detection. Blueprint uploads accepted and stored.*
+*Prereqs: Phase E-review complete. SK (Sketch Engine) FloorPlanDataV2 schema exists. D8 Estimates tables exist.*
+
+**BA1a: Database — 6 tables + indexes (~4 hours)**
+- [ ] Migration: `blueprint_analyses` table — id UUID PK, company_id FK companies, job_id FK jobs nullable, created_by FK users, status TEXT CHECK (uploading/queued/processing/review/complete/failed), file_path TEXT, file_name TEXT, file_size_bytes BIGINT, sheet_count INT DEFAULT 1, scale_detected NUMERIC, scale_unit TEXT CHECK (imperial/metric), processing_started_at TIMESTAMPTZ, processing_completed_at TIMESTAMPTZ, ai_model_version TEXT, confidence_score NUMERIC, floor_plan_id FK property_floor_plans nullable, estimate_id FK estimates nullable, metadata JSONB DEFAULT '{}', created_at/updated_at TIMESTAMPTZ, deleted_at TIMESTAMPTZ nullable
+- [ ] Migration: `blueprint_sheets` table — id UUID PK, analysis_id FK blueprint_analyses ON DELETE CASCADE, page_number INT, discipline TEXT CHECK (general/civil/architectural/structural/mechanical/electrical/plumbing/fire_protection), sheet_name TEXT, scale NUMERIC, thumbnail_path TEXT, detection_data JSONB DEFAULT '{}', created_at TIMESTAMPTZ
+- [ ] Migration: `blueprint_rooms` table — id UUID PK, analysis_id FK, sheet_id FK blueprint_sheets ON DELETE CASCADE, name TEXT, room_type TEXT, boundary_points JSONB, floor_area_sf NUMERIC, wall_area_sf NUMERIC, ceiling_area_sf NUMERIC, perimeter_lf NUMERIC, ceiling_height_inches INT DEFAULT 96, confidence NUMERIC, verified BOOLEAN DEFAULT false, created_at TIMESTAMPTZ
+- [ ] Migration: `blueprint_elements` table — id UUID PK, analysis_id FK, sheet_id FK, room_id FK nullable, element_type TEXT, element_subtype TEXT, trade TEXT CHECK (general/electrical/plumbing/hvac/fire_protection/finish/structural), position JSONB, dimensions JSONB, quantity INT DEFAULT 1, csi_code TEXT, confidence NUMERIC, verified BOOLEAN DEFAULT false, metadata JSONB DEFAULT '{}', created_at TIMESTAMPTZ
+- [ ] Migration: `blueprint_takeoff_items` table — id UUID PK, analysis_id FK, csi_division TEXT, csi_code TEXT, description TEXT, quantity NUMERIC, unit TEXT CHECK (SF/LF/EA/CY/SY/SQ/BF/LB/TON/GAL/HR/LS), unit_material_cost NUMERIC, unit_labor_cost NUMERIC, extended_cost NUMERIC, trade TEXT, room_id FK nullable, source TEXT DEFAULT 'ai' CHECK (ai/manual/adjusted), waste_factor NUMERIC DEFAULT 0, notes TEXT, created_at TIMESTAMPTZ
+- [ ] Migration: `blueprint_revisions` table — id UUID PK, company_id FK, analysis_v1_id FK blueprint_analyses, analysis_v2_id FK blueprint_analyses, sheet_page INT, changes JSONB DEFAULT '[]', change_summary TEXT, scope_impact JSONB, created_at TIMESTAMPTZ
+- [ ] Indexes: company_id on blueprint_analyses, job_id on blueprint_analyses, analysis_id on sheets/rooms/elements/takeoff_items, trade on elements, csi_division on takeoff_items
+- [ ] RLS: company-scoped on blueprint_analyses + blueprint_revisions. Cascade via FK for child tables (sheets/rooms/elements/takeoff_items inherit company scope through analysis join)
+- [ ] Audit trigger: `update_updated_at()` on blueprint_analyses
+- [ ] Soft delete: `deleted_at` on blueprint_analyses (parent cascade handles children)
+
+**BA1b: File Upload Edge Function (~4 hours)**
+- [ ] Edge Function: `blueprint-upload` — accept multipart file upload (PDF/DXF/DWG/DWF/TIFF/JPEG/PNG/IFC)
+- [ ] Validate file type + size (max 200MB for large plan sets)
+- [ ] Upload to Supabase Storage `blueprints` bucket (PRIVATE, company-scoped path: `{company_id}/{analysis_id}/{filename}`)
+- [ ] Create `blueprint_analyses` record with status='uploading'
+- [ ] For PDF: split pages with PyMuPDF metadata extraction → create `blueprint_sheets` records per page
+- [ ] Auto-detect discipline from sheet naming convention (A-xxx=architectural, E-xxx=electrical, P-xxx=plumbing, M-xxx=mechanical, S-xxx=structural, FP-xxx=fire_protection)
+- [ ] Generate page thumbnails → store in Storage
+- [ ] Update status to 'queued' when upload complete
+- [ ] Auth: verify company_id from JWT, validate user has upload permission
+
+**BA1c: Scale Detection Module (~4 hours)**
+- [ ] Title block parser: OCR title block region for scale notation ("1/4" = 1'-0"", "1:50", "Scale: 1/8")
+- [ ] Scale bar detector: find graphical scale bars, measure pixel length, cross-reference with labeled distance
+- [ ] Dimension cross-verification: find annotated dimensions (e.g., "12'-6""), measure pixel length of dimension line, compute pixels-per-foot
+- [ ] Multi-method confidence: if all 3 methods agree = HIGH confidence. 2 agree = MODERATE. 1 only = LOW (flag for manual verification)
+- [ ] Manual override: allow user to set/correct scale on any sheet
+- [ ] Store scale on blueprint_sheets (per-sheet, since different sheets may have different scales)
+
+**BA1d: Client Upload UI (~4 hours)**
+- [ ] Flutter: camera capture with perspective correction (OpenCV or ML Kit document scanner)
+- [ ] Flutter: file picker for PDF/image uploads from device
+- [ ] Flutter: upload progress indicator, multi-file queue
+- [ ] Web CRM: drag-and-drop upload zone on job detail page → calls blueprint-upload EF
+- [ ] Web CRM: upload progress bar, multi-file support, sheet preview thumbnails after upload
+- [ ] CRM hook: `use-blueprint-analyzer.ts` — upload, status polling, real-time subscription on processing status
+- [ ] Verify: upload PDF → record created → file in Storage → pages split → thumbnails generated → status shows 'queued'
+- [ ] `dart analyze` + `npm run build` pass
+- [ ] Commit: `[BA1] Plan Review foundation — 6 tables, upload pipeline, scale detection`
+
+---
+
+### Sprint BA2: CV Pipeline Setup + Wall/Room Detection (~20 hours)
+*Goal: Deploy GPU inference service. MitUNet wall/room segmentation trained and serving. Rooms detected with measurements.*
+
+**BA2a: Inference Service Setup (~6 hours)**
+- [ ] RunPod Serverless account: create endpoint with A100 40GB worker ($1.89-2.49/hr)
+- [ ] Docker container: PyTorch + MitUNet + ONNX runtime + FastAPI wrapper
+- [ ] API endpoint: POST /segment — accepts base64 image → returns segmentation mask (rooms, walls, corridors)
+- [ ] API endpoint: POST /health — model loaded, GPU available, latency check
+- [ ] Pre-warmed worker configuration (min 0, max 3 workers, 15s cold start target)
+- [ ] Edge Function: `blueprint-process` — orchestrator that calls RunPod endpoint, handles retries + timeout + error states
+- [ ] Processing queue: update blueprint_analyses status (queued → processing → review/complete/failed)
+- [ ] Supabase real-time: client subscribes to blueprint_analyses.status for live progress updates
+- [ ] Supabase secrets: `RUNPOD_API_KEY`, `RUNPOD_ENDPOINT_ID`
+
+**BA2b: MitUNet Training + Wall Segmentation (~8 hours)**
+- [ ] Download CUbiCasa5K dataset (5,000 annotated floor plans — open access, primary benchmark)
+- [ ] Download RPLAN dataset (80,000 annotated residential floor plans)
+- [ ] Download ResPlan dataset (17,000 vector-based floor plans with room connectivity graphs — Aug 2025, GitHub + Kaggle)
+- [ ] Download MLSTRUCT-FP dataset (multi-unit floor plans)
+- [ ] MitUNet architecture: multi-scale feature aggregation with transformer blocks. Target: 87%+ mIoU on CubiCasa5K validation set
+- [ ] Training pipeline: data augmentation (rotation, flip, scale, noise), learning rate scheduling, early stopping
+- [ ] Wall pixel classification: interior wall, exterior wall, fire-rated wall, opening (door/window placeholder)
+- [ ] Wall vectorization: convert pixel mask → line segments with thickness (using Hough transform + RANSAC)
+- [ ] Export trained model to ONNX for RunPod deployment
+- [ ] Fallback: if MitUNet mIoU < 85%, switch to U-Net++ (proven architecture, easier to tune)
+
+**BA2c: Room Detection + Measurements (~6 hours)**
+- [ ] Room boundary extraction: wall topology → closed polygons via flood fill on segmentation mask
+- [ ] Room type classification: bedroom, bathroom, kitchen, hallway, living room, dining, garage, mechanical, closet, utility — based on room proportions + fixture presence
+- [ ] Measurement engine: shoelace formula for floor area (SF), perimeter sum for linear footage (LF)
+- [ ] Wall area calculation: perimeter × ceiling height (default 96", adjustable) minus detected openings
+- [ ] Ceiling area: same as floor area (flat ceiling assumption, user can override for vaulted)
+- [ ] Scale application: pixel measurements × scale factor → real-world dimensions (feet/inches or meters)
+- [ ] Store results in `blueprint_rooms` table: boundary_points (polygon vertices), floor_area_sf, wall_area_sf, ceiling_area_sf, perimeter_lf, confidence score
+- [ ] Processing status updates via Supabase real-time (per-sheet progress: "Analyzing sheet 3 of 12...")
+- [ ] Verify: upload test floor plan PDF → rooms detected → measurements calculated → results in blueprint_rooms → match expected values within 5%
+- [ ] Commit: `[BA2] CV pipeline — RunPod setup, MitUNet wall/room segmentation, measurement engine`
+
+---
+
+### Sprint BA3: Object Detection — Doors, Windows, Fixtures (~16 hours)
+*Goal: YOLO11 trained for construction symbols. Doors, windows, and general fixtures detected with positions.*
+
+**BA3a: YOLO11 Model Training (~8 hours)**
+- [ ] YOLO11 setup (Ultralytics ecosystem, PyTorch). 22% fewer params than v8 at higher mAP. Evaluate YOLOv12 as drop-in replacement once ecosystem matures.
+- [ ] Fine-tune on construction symbol dataset: doors (swing, sliding, pocket, bi-fold, garage), windows (single, double, casement, bay, skylight), cabinets, appliances (fridge, stove, dishwasher, washer, dryer), stairs, elevators, ramps
+- [ ] Custom training data: annotate 500+ construction plan sheets with bounding boxes (LabelImg/CVAT format)
+- [ ] Data augmentation: rotation (0/90/180/270°), scale variation, noise injection, partial occlusion simulation
+- [ ] Validation split: 80/10/10 train/val/test
+- [ ] Target: 80%+ mAP@0.5 on validation set for door/window/fixture detection
+- [ ] Export to ONNX for RunPod deployment alongside segmentation model
+
+**BA3b: Door + Window Detection (~4 hours)**
+- [ ] Door detection attributes: type (standard, sliding, pocket, bi-fold, garage, double), width (from symbol + scale), swing direction (arc direction), fire-rated (if marked)
+- [ ] Window detection attributes: type (single-hung, double-hung, casement, fixed, sliding, bay, skylight), width, height, sill height
+- [ ] Associate doors/windows with parent room (spatial overlap with room boundary polygon)
+- [ ] Associate doors/windows with parent wall (proximity to wall line segment)
+- [ ] Store in `blueprint_elements` with element_type='door'/'window', dimensions JSONB, room_id FK
+
+**BA3c: Construction OCR (~4 hours)**
+- [ ] CRAFT text detection: locate all text regions on sheet (handles rotated, curved, overlapping text)
+- [ ] PARSEq text recognition: read detected text regions → strings
+- [ ] Construction-specific post-processing: dimension format parsing ("12'-6"", "3.81m", "4'-0\" A.F.F."), room label extraction, annotation reading
+- [ ] Dimension association: link dimension text to nearest geometric element (wall, opening, room)
+- [ ] Room label association: link room name text to enclosing room polygon
+- [ ] Store dimension text in blueprint_elements metadata, room labels update blueprint_rooms.name
+- [ ] Confidence scoring: high if text is clean vector, lower for scanned/degraded
+- [ ] Verify: upload test plan with known door/window counts → detection matches within 90% → dimensions correct → room labels read
+- [ ] `dart analyze` + `npm run build` pass
+- [ ] Commit: `[BA3] Object detection — YOLO11 doors/windows/fixtures, construction OCR`
+
+---
+
+### Sprint BA4: Trade Symbol Detection — MEP (~20 hours)
+*Goal: Detect electrical, plumbing, HVAC, and fire protection symbols. Trade-specific classification with CSI codes.*
+
+**BA4a: Electrical Symbol Detection (~6 hours)**
+- [ ] Detect 15 electrical symbol types: receptacle (standard, GFCI, 240V, floor), switch (single, 3-way, dimmer), light (ceiling, recessed, pendant, track, can), panel, junction box, smoke detector, CO detector, fan
+- [ ] Fine-tune YOLO11 with electrical plan training data (200+ annotated sheets)
+- [ ] Symbol-to-CSI mapping: receptacle → 26 27 26, switch → 26 27 26, light → 26 51 XX, panel → 26 24 16
+- [ ] Circuit designation parsing: read circuit numbers from nearby text (OCR association)
+- [ ] Store in blueprint_elements with trade='electrical', csi_code, element_type/subtype
+- [ ] Validate: test against 10 electrical plans → 90%+ detection rate on common symbols
+
+**BA4b: Plumbing Symbol Detection (~5 hours)**
+- [ ] Detect 12 plumbing symbol types: toilet, sink (kitchen, bath, utility), shower, tub, washer box, water heater, hose bib, floor drain, cleanout, gas line
+- [ ] Fine-tune model with plumbing plan training data (100+ annotated sheets)
+- [ ] Symbol-to-CSI mapping: toilet → 22 42 16, sink → 22 42 XX, shower → 22 42 33
+- [ ] DFU assignment: each fixture gets drainage fixture unit rating per IPC code
+- [ ] Store in blueprint_elements with trade='plumbing', csi_code, metadata (dfu_rating)
+
+**BA4c: HVAC + Fire Protection Symbol Detection (~5 hours)**
+- [ ] Detect 10 HVAC types: supply diffuser, return grille, thermostat, condenser, air handler, mini-split, ERV, duct runs (supply, return, exhaust)
+- [ ] Detect 5 fire protection types: sprinkler heads (upright, pendant, sidewall), pull stations, horn/strobe, FDC, standpipe
+- [ ] Symbol-to-CSI mapping: diffuser → 23 37 XX, sprinkler → 21 13 XX
+- [ ] Store in blueprint_elements with trade='hvac'/'fire_protection'
+
+**BA4d: Trade Aggregation + Confidence (~4 hours)**
+- [ ] Aggregate counts per trade per room: "Kitchen: 8 receptacles, 4 switches, 6 lights, 1 panel"
+- [ ] Aggregate counts per sheet: total device counts by trade
+- [ ] Confidence scoring per detection: based on model confidence + symbol clarity + scale accuracy
+- [ ] Flag low-confidence detections for manual review (< 0.7 confidence threshold)
+- [ ] Train on custom MEP plan dataset (mark as training data collection task — ongoing)
+- [ ] Verify: upload combined MEP plan set → all 4 trades detected → counts match manual count within 90%
+- [ ] Commit: `[BA4] Trade symbol detection — electrical, plumbing, HVAC, fire protection, CSI mapping`
+
+---
+
+### Sprint BA5: Trade Intelligence + Assembly Expansion (~16 hours)
+*Goal: Not just counting — understanding trade logic. Assembly expansion from elements to material lists.*
+
+**BA5a: Electrical Intelligence (~4 hours)**
+- [ ] Circuit grouping: group outlets/switches/lights by circuit designation from OCR
+- [ ] Wire run estimation: calculate LF of wire from panel to each device based on routing paths (Manhattan distance along walls + 20% routing factor)
+- [ ] Panel schedule generation: map detected devices to panel, calculate load (VA per device × count)
+- [ ] NEC validation flags: flag if circuit device count exceeds NEC 210.23 recommendations (e.g., > 13 receptacles on 20A circuit)
+- [ ] Conduit routing estimation: conduit LF based on device locations + routing rules (wall runs, ceiling runs, underground)
+
+**BA5b: Plumbing Intelligence (~3 hours)**
+- [ ] Fixture schedule generation: list all detected fixtures with DFU ratings per IPC
+- [ ] Pipe run estimation: calculate LF of supply (hot+cold) and drain based on fixture locations + routing
+- [ ] Fitting count estimation: elbows, tees, couplings based on routing (1 fitting per direction change)
+- [ ] Water heater sizing: based on fixture count + type (per UPC Table 610.3)
+- [ ] Drain sizing: based on total DFU per branch/main (per IPC Table 710.1)
+
+**BA5c: HVAC + Painting + Flooring + Roofing Intelligence (~4 hours)**
+- [ ] HVAC: diffuser/grille counting with CFM assignment by room SF (1 CFM/SF residential, 1.5 commercial)
+- [ ] HVAC: duct run estimation from equipment to diffusers, tonnage verification (400-600 SF/ton by climate)
+- [ ] Painting: net wall area (gross wall SF minus door/window openings), ceiling SF per room, baseboard/crown LF (perimeter minus door widths)
+- [ ] Flooring: room area with waste factor by material type (tile 10%, hardwood 7%, carpet 5%, LVP 8%), transition strip LF between rooms, base molding LF
+- [ ] Roofing (if plan includes roof plan): pitch-adjusted area, ridge/hip/valley/rake/eave LF, waste factor (gable 10%, hip 17%)
+
+**BA5d: Assembly Expansion Engine (~5 hours)**
+- [ ] Assembly definitions: wall type → full material breakdown (e.g., "Type A partition, 500 LF" → metal studs 16" OC, 5/8" drywall both sides, R-19 insulation, joint tape, screws, corner bead, labor hours)
+- [ ] CSI MasterFormat line item generation: every expanded item gets a CSI code (division + section + subsection)
+- [ ] Quantity calculation with waste factors per material type
+- [ ] Store expanded items in `blueprint_takeoff_items` with source='ai', quantities, units, csi_code, waste_factor
+- [ ] Takeoff summary: per-trade totals, per-room breakdown, per-CSI-division rollup
+- [ ] Verify: upload multi-trade plan → trade intelligence generates reasonable quantities → assembly expansion produces correct material counts
+- [ ] Commit: `[BA5] Trade intelligence — circuit grouping, DFU calc, assembly expansion, CSI line items`
+
+---
+
+### Sprint BA6: Estimate + Material Order Generation (~12 hours)
+*Goal: Blueprint → auto-generated D8 estimate with line items → material order with live pricing.*
+
+**BA6a: D8 Estimates Integration (~6 hours)**
+- [ ] "Generate Estimate from Blueprint" button on blueprint viewer (web CRM + Flutter)
+- [ ] Connect to D8 Estimates: blueprint_takeoff_items → estimate_areas + estimate_line_items
+- [ ] Map blueprint rooms to estimate areas (1:1 relationship)
+- [ ] Map blueprint takeoff items to estimate line items (CSI code → estimate_items catalog lookup)
+- [ ] Apply regional pricing from estimate_pricing table (MSA-based, from D8i pricing-ingest)
+- [ ] Apply waste factors from trade intelligence (BA5)
+- [ ] Create estimate record linked to blueprint analysis (blueprint_analyses.estimate_id FK)
+- [ ] User review: estimate opens in D8 builder with all line items pre-populated, user can adjust/add/remove
+- [ ] Estimate ↔ blueprint traceability: click any estimate line → highlights source element on blueprint viewer
+
+**BA6b: Material Order Generation (~3 hours)**
+- [ ] Aggregate estimate line items into material list: combine across rooms, round up quantities
+- [ ] Live pricing via Unwrangle API: lookup current prices at HD, Lowe's, 50+ retailers
+- [ ] HD Pro Xtra integration: generate purchase order for Pro Xtra account (existing F5 procurement integration)
+- [ ] Generate purchase order record (linked to job, with delivery address from job record)
+- [ ] "Generate Material Order" button on estimate page → creates PO → attaches to job
+
+**BA6c: UI Integration (~3 hours)**
+- [ ] CRM: "Generate Estimate" button on blueprint analysis detail page
+- [ ] CRM: "Generate Material Order" button on estimate page (visible when estimate has blueprint source)
+- [ ] Flutter: "Estimate" action button on blueprint viewer screen
+- [ ] Success flow: blueprint → estimate → material order → all linked and traceable
+- [ ] Error handling: missing pricing data → flag items for manual pricing, API failures → retry with exponential backoff
+- [ ] Verify: upload blueprint → generate estimate → line items match takeoff → generate material order → PO created with live pricing
+- [ ] `dart analyze` + `npm run build` pass
+- [ ] Commit: `[BA6] Estimate + material order generation — D8 integration, Unwrangle pricing, PO creation`
+
+---
+
+### Sprint BA7: Revision Comparison + Floor Plan Generation (~16 hours)
+*Goal: The $31B/year feature — catch every change between drawing versions. Generate Sketch Engine floor plans.*
+
+**BA7a: Revision Comparison Engine (~8 hours)**
+- [ ] Upload V1 and V2 of same sheet — match by sheet name/number or user selection
+- [ ] Pixel-level diff: overlay aligned images, compute difference mask
+- [ ] AI semantic diff: compare detected elements between versions (element-by-element matching by position + type)
+- [ ] Change categorization: added (green), removed (red), moved (yellow), dimension changed (orange), note changed (blue)
+- [ ] Structured change log: list every change with location (room/area), category, severity (minor/moderate/critical)
+- [ ] Scope impact calculation: for each change, compute quantity delta on affected takeoff items (e.g., "2 outlets added in Kitchen → +60 LF wire, +2 EA receptacles")
+- [ ] Auto-adjust estimate: if estimate exists, create revision delta showing cost impact of changes
+- [ ] Store in `blueprint_revisions` table: changes JSONB array, change_summary text, scope_impact JSONB
+- [ ] "Works even when architects don't cloud changes" — catches everything by comparing AI detections, not relying on revision clouds
+
+**BA7b: Visual Comparison UI (~4 hours)**
+- [ ] Web CRM: side-by-side view (V1 left, V2 right) with synchronized pan/zoom
+- [ ] Web CRM: overlay view with red/green highlighting on changes
+- [ ] Web CRM: change log panel (structured list, click to zoom to change location)
+- [ ] Web CRM: scope impact summary card ("3 walls moved, 2 outlets added, 1 door removed → +$1,247 estimate impact")
+- [ ] Flutter: swipe between V1/V2, change indicators on plan
+- [ ] Notification: "Rev 2 of Sheet A-201 uploaded — 6 changes detected, 2 critical"
+
+**BA7c: Floor Plan Generation → Sketch Engine (~4 hours)**
+- [ ] Convert detected geometry to FloorPlanDataV2 schema (from SK1 unified data model)
+- [ ] Walls → FloorPlanDataV2.walls array (start/end points, thickness, type)
+- [ ] Doors/windows → FloorPlanDataV2.openings array (position, width, type)
+- [ ] Rooms → FloorPlanDataV2.rooms array (boundary, label, area, type)
+- [ ] Trade symbols → trade layer elements (electrical layer, plumbing layer, HVAC layer, damage layer)
+- [ ] Create property_floor_plans record → link to blueprint_analyses.floor_plan_id
+- [ ] "Open in Sketch Engine" button on blueprint viewer → opens floor plan in SK editor (web Konva or Flutter)
+- [ ] LiDAR overlay capability: if LiDAR scan exists for same property, show comparison overlay
+- [ ] Verify: upload blueprint → generate floor plan → opens in Sketch Engine → rooms/walls/fixtures match → trade layers populated
+- [ ] Commit: `[BA7] Revision comparison + floor plan generation — change detection, scope impact, SK integration`
+
+---
+
+### Sprint BA8: UI Polish + Review Mode + Testing (~12 hours)
+*Goal: Production-quality UX. Every detection reviewable. Export working. Performance validated.*
+
+**BA8a: Review Mode (~4 hours)**
+- [ ] Every AI detection shown with confidence badge (green ≥90%, yellow 70-89%, red <70%)
+- [ ] Click any detection to: confirm (mark verified=true), correct (edit type/dimensions/position), remove (soft delete)
+- [ ] Corrections stored for future model retraining (feedback loop — corrections table or metadata)
+- [ ] Bulk confirm: "Verify All" button for high-confidence detections (≥95%)
+- [ ] Manual add: place new elements that AI missed (click on plan to add fixture/symbol/room)
+- [ ] Review progress indicator: "47 of 52 elements verified (90%)"
+
+**BA8b: Full-Screen Plan Viewer (~4 hours)**
+- [ ] Web CRM: full-screen plan viewer with pan/zoom, measurement overlay, detection boxes
+- [ ] Web CRM: split-view — blueprint on left, takeoff quantities panel on right
+- [ ] Web CRM: multi-sheet navigation — discipline tabs + thumbnail sidebar
+- [ ] Web CRM: keyboard shortcuts — Ctrl+Z undo, Delete remove, Tab next element, Space confirm
+- [ ] Flutter: pan/zoom with touch gestures, tap for measurement popup, offline cached results
+- [ ] Flutter: multi-sheet swipe navigation with discipline indicators
+- [ ] Interactive: click any room → show room detail card (area, perimeter, elements, trade items)
+
+**BA8c: Export + Performance + Testing (~4 hours)**
+- [ ] Export: PDF report (floor plan + room schedule + takeoff quantities + estimate summary)
+- [ ] Export: Excel/CSV (full takeoff data with CSI codes, quantities, costs)
+- [ ] Export: DXF (CAD-compatible drawing with layers)
+- [ ] Performance target: < 30 seconds per sheet for AI analysis (monitor RunPod latency)
+- [ ] Performance: large plan sets (50+ sheets) — process in parallel, show per-sheet progress
+- [ ] Accuracy audit: test against 50 real contractor blueprints across all trades — document accuracy per trade
+- [ ] Edge cases: scanned plans (raster), low-quality photos, plans with stamps/redlines, reduced-size plans
+- [ ] Button audit: every button clicks, every export downloads, every flow completes end-to-end
+- [ ] Error handling: graceful degradation if CV model fails on specific sheet (skip, continue, flag for manual)
+- [ ] All builds pass: `npm run build` for CRM + team + client + ops portals. `dart analyze` for Flutter.
+- [ ] Commit: `[BA8] Plan Review polish — review mode, viewer, export, performance, testing`
+
+---
+
+### Sprint E1-E4: Full AI implementation (rebuilt with complete platform knowledge — including TPA module + Recon + Sketch Engine + Plan Review + all Phase F features)
 
 ---
 
@@ -8906,3 +9517,423 @@ Include <content>{markdown}</content> for rendered display.
 ---
 
 CLAUDE: Execute sprints in order. Update status as you complete each one. Never skip a sprint.
+
+
+---
+
+## PHASE BV: BIM VIEWER — POST-LAUNCH EXPANSION
+*Enterprise-grade IFC/DXF/DWG model viewer. Upload → View 2D/3D → Extract Quantities → Auto-Estimate → Job.*
+*Depends on: SK10 (three.js renderer), Phase E (AI layer), D8 (Estimates), Supabase Storage.*
+
+### Why This Exists
+
+Contractors receive CAD/BIM files from architects/engineers constantly on commercial jobs. Today they either install Autodesk's 1.46GB viewer, upload sensitive plans to random free websites, or ask the architect to re-export as PDF (losing all 3D data and metadata). Then they manually read dimensions and type everything into their estimate tool — throwing away the structured data already in the model.
+
+IFC files contain IfcQuantityArea, IfcQuantityLength, IfcQuantityVolume, material specs, manufacturer data, and classification codes for EVERY element. A single IFC file has 90%+ of what a contractor needs for takeoff — if they can read it.
+
+No contractor platform has a native BIM viewer for small-mid contractors. Procore has BIM but requires Navisworks plugin and enterprise pricing. ServiceTitan, Buildertrend, Jobber — nothing. ZAFTO puts this in a $19.99/month app.
+
+### Format Coverage
+
+| Format | % of Plans Received | Free Stack? | ZAFTO Coverage |
+|--------|:------------------:|:-----------:|:--------------:|
+| PDF blueprints | ~75-80% | N/A | ✅ Plan Review (BA) |
+| DWG (AutoCAD) | ~12-18% | ❌ proprietary | ⏳ Server-side convert (BV5) |
+| DXF (open CAD) | ~3-5% | ✅ MIT | ✅ BIM Viewer (BV2) |
+| IFC (open BIM) | ~2-5% | ✅ MIT (web-ifc) | ✅ BIM Viewer (BV1) |
+| RVT (Revit) | ~1-2% | ❌ proprietary | ❌ Deferred |
+
+BA + BIM Viewer = ~90% coverage. Add DWG server-side conversion = ~98%.
+
+### Tech Stack — 100% MIT, $0 Licensing
+
+| Component | Library | License | Role |
+|-----------|---------|---------|------|
+| IFC parser | web-ifc (That Open Engine) | MIT | WASM-based IFC 2x3/4 parser, native speed |
+| Three.js integration | web-ifc-three | MIT | Official IFCLoader for three.js |
+| BIM components | @thatopen/components | MIT | Clipping, measurement, model tree, floor plans |
+| 3D renderer | three.js | MIT | Already in SK10 spec — shared renderer |
+| DXF parser | dxf-parser + custom | MIT | Parse DXF entities → three.js geometry |
+| DWG conversion | LibreDWG / ODA CLI (server) | GPL/Commercial | Server-side DWG→DXF for viewing (BV5) |
+
+**Why NOT xeokit:** AGPL3 license requires open-sourcing entire codebase OR paying commercial license for SaaS. Legal minefield. That Open Engine MIT stack gives same capabilities, $0 cost, zero legal risk.
+
+### Competitive Landscape
+
+| Feature | Autodesk Viewer | BIMvision | Procore BIM | **ZAFTO BV** |
+|---------|:-:|:-:|:-:|:-:|
+| IFC viewing | ✅ | ✅ | Via Navisworks | **✅** |
+| DWG/DXF viewing | ✅ | ❌ | Via plugin | **✅** |
+| Clipping planes | ✅ | ✅ | ✅ | **✅** |
+| Measurement tools | ✅ | ✅ | ✅ | **✅** |
+| Property inspector | ✅ | ✅ | ✅ | **✅** |
+| Quantity extraction | ❌ | ❌ | Manual | **✅ Auto** |
+| → Direct to estimate | ❌ | ❌ | ❌ | **✅** |
+| → Direct to job | ❌ | ❌ | ❌ | **✅** |
+| Floor plan extraction | ❌ | ❌ | ❌ | **✅ → Sketch Engine** |
+| Trade-specific mapping | ❌ | ❌ | ❌ | **✅** |
+| CRM/job attachment | ❌ | ❌ | ✅ (enterprise) | **✅** |
+| Mobile native | ❌ | ❌ | ❌ | **✅ Flutter** |
+| Price | Free/$$$| Free | $$$$ | **$19.99/mo** |
+
+**ZAFTO's moat:** View IFC → extract quantities → auto-estimate → create job → order materials → invoice. Nobody else has this pipeline.
+
+### Integration Architecture
+
+BIM Viewer is NOT a separate app — it's an extension of SK10 (Sketch Engine three.js) + BA (Plan Review). Same three.js renderer, same measurement tools, same estimate pipeline.
+
+**Shared Infrastructure:**
+- SK10 three.js scene → BIM models render into same canvas
+- SK6 Konva.js → 2D floor plans extracted from BIM display here
+- FloorPlanDataV2 → BIM viewer extracts floor plans from IFC, converts to same data model
+- BA pipeline → BIM adds 3D model path alongside PDF blueprint path
+- D8 Estimates → BIM extracts quantities (IfcQuantity*) → auto-map to trade line items
+- Supabase Storage → models upload to `bim-models` bucket (same pattern as blueprint PDFs)
+- E layer AI → property extraction, element classification, smart quantity mapping
+
+### Database — New Tables
+
+```sql
+-- BIM model storage and metadata
+CREATE TABLE bim_models (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  job_id UUID REFERENCES jobs(id),
+  name TEXT NOT NULL,
+  file_path TEXT NOT NULL,          -- Supabase Storage path
+  file_format TEXT NOT NULL,        -- 'ifc', 'dxf', 'dwg'
+  file_size_bytes BIGINT,
+  ifc_schema TEXT,                  -- 'IFC2X3', 'IFC4' etc
+  uploaded_by UUID REFERENCES profiles(id),
+  uploaded_at TIMESTAMPTZ DEFAULT NOW(),
+  status TEXT DEFAULT 'processing', -- processing, ready, error
+  metadata JSONB DEFAULT '{}'::jsonb,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Extracted elements from IFC models
+CREATE TABLE bim_elements (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  model_id UUID NOT NULL REFERENCES bim_models(id) ON DELETE CASCADE,
+  ifc_type TEXT NOT NULL,           -- IfcWall, IfcDoor, IfcPipeSegment etc
+  ifc_global_id TEXT,               -- IFC GlobalId
+  name TEXT,
+  description TEXT,
+  level TEXT,                       -- floor/story name
+  material TEXT,
+  classification TEXT,              -- Uniclass, OmniClass code
+  quantities JSONB DEFAULT '{}'::jsonb,  -- {area: 12.5, length: 3.2, volume: 0.8}
+  properties JSONB DEFAULT '{}'::jsonb,  -- all IFC property sets
+  geometry_bounds JSONB,            -- bounding box for spatial queries
+  trade_mapping TEXT,               -- electrical, plumbing, hvac, etc
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Saved viewpoints (BCF-compatible)
+CREATE TABLE bim_viewpoints (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  model_id UUID NOT NULL REFERENCES bim_models(id) ON DELETE CASCADE,
+  created_by UUID REFERENCES profiles(id),
+  title TEXT NOT NULL,
+  description TEXT,
+  camera_position JSONB NOT NULL,   -- {x, y, z, target_x, target_y, target_z}
+  clipping_planes JSONB,            -- array of plane definitions
+  visible_elements JSONB,           -- array of element IDs shown
+  annotations JSONB,                -- markup data
+  screenshot_path TEXT,             -- thumbnail in storage
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- RLS
+ALTER TABLE bim_models ENABLE ROW LEVEL SECURITY;
+ALTER TABLE bim_elements ENABLE ROW LEVEL SECURITY;
+ALTER TABLE bim_viewpoints ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Company members access own models" ON bim_models
+  FOR ALL USING (company_id IN (SELECT company_id FROM profiles WHERE id = auth.uid()));
+CREATE POLICY "Elements via model access" ON bim_elements
+  FOR ALL USING (model_id IN (SELECT id FROM bim_models WHERE company_id IN (SELECT company_id FROM profiles WHERE id = auth.uid())));
+CREATE POLICY "Viewpoints via model access" ON bim_viewpoints
+  FOR ALL USING (model_id IN (SELECT id FROM bim_models WHERE company_id IN (SELECT company_id FROM profiles WHERE id = auth.uid())));
+
+-- Indexes
+CREATE INDEX idx_bim_models_company ON bim_models(company_id);
+CREATE INDEX idx_bim_models_job ON bim_models(job_id);
+CREATE INDEX idx_bim_elements_model ON bim_elements(model_id);
+CREATE INDEX idx_bim_elements_type ON bim_elements(ifc_type);
+CREATE INDEX idx_bim_elements_trade ON bim_elements(trade_mapping);
+CREATE INDEX idx_bim_viewpoints_model ON bim_viewpoints(model_id);
+```
+
+---
+
+### Sprint BV1: IFC Viewer Core (~16 hrs)
+**Status: PENDING**
+**Depends on: SK10 complete (three.js foundation)**
+
+#### Objective
+Load and render IFC files in 3D using That Open Engine's MIT stack. Basic orbit/pan/zoom, model tree, element selection with property display.
+
+#### Prerequisites
+- SK10 three.js scene operational
+- Supabase Storage bucket `bim-models` created
+- npm packages: `web-ifc`, `web-ifc-three`, `@thatopen/components`
+
+#### Files
+```
+web-portal/src/features/bim/
+├── BimViewer.tsx              — Main viewer component (three.js canvas + UI shell)
+├── BimToolbar.tsx             — View controls toolbar
+├── components/
+│   ├── ModelTree.tsx          — IFC spatial hierarchy browser
+│   ├── PropertyPanel.tsx      — Element property inspector
+│   ├── ViewCube.tsx           — Orientation cube (top-right)
+│   └── LoadingOverlay.tsx     — Model loading progress
+├── hooks/
+│   ├── useIfcLoader.ts        — web-ifc + web-ifc-three loader hook
+│   ├── useBimScene.ts         — three.js scene management (extends SK10)
+│   └── useElementPicker.ts    — Raycasting element selection
+├── services/
+│   ├── bimStorageService.ts   — Upload/download models to Supabase Storage
+│   └── ifcParserService.ts    — IFC metadata extraction (properties, quantities)
+└── types/
+    └── bim.types.ts           — BimModel, BimElement, BimViewpoint types
+```
+
+#### Steps
+- [ ] Install web-ifc, web-ifc-three, @thatopen/components. Copy web-ifc WASM files to public/
+- [ ] Create BimViewer.tsx — full-screen three.js canvas, reuse SK10 renderer setup (OrbitControls, ambient + directional light, grid)
+- [ ] Implement useIfcLoader — load .ifc file via web-ifc WASM parser, generate three.js mesh hierarchy, add to scene
+- [ ] Implement ModelTree — parse IFC spatial structure (IfcProject → IfcSite → IfcBuilding → IfcStorey → elements), render collapsible tree, click node → highlight + fly-to in 3D
+- [ ] Implement useElementPicker — raycaster on click, highlight selected element (outline pass), show properties in PropertyPanel
+- [ ] Implement PropertyPanel — display IFC property sets (Pset_*), quantity sets (Qto_*), material, type, classification for selected element
+- [ ] Implement bimStorageService — upload IFC to Supabase Storage `bim-models/{company_id}/{model_id}.ifc`, download for viewing
+- [ ] Create BimToolbar — home view, fit all, wireframe toggle, X-ray mode (global transparency)
+- [ ] Implement ViewCube — clickable orientation cube (top, front, left, right, iso views)
+- [ ] Loading overlay with progress bar (web-ifc reports % parsed)
+- [ ] Create DB tables (bim_models, bim_elements, bim_viewpoints) with RLS
+- [ ] On model load complete: extract all elements → insert into bim_elements table with ifc_type, quantities, properties
+- [ ] Route: /bim/:modelId — load model from storage, render in viewer
+- [ ] Also accessible from job detail page: "3D Models" tab → list attached models → click to open viewer
+- [ ] Verify: upload sample IFC file (example: Duplex.ifc from IFC wiki), renders in 3D, can orbit/pan/zoom, click elements shows properties, model tree navigable
+- [ ] Commit: `[BV1] IFC Viewer Core — web-ifc + three.js, model tree, property inspector, element selection`
+
+---
+
+### Sprint BV2: DXF Viewer + Clipping Planes (~14 hrs)
+**Status: PENDING**
+**Depends on: BV1 complete**
+
+#### Objective
+Add DXF file viewing (2D CAD drawings rendered in 3D space), implement clipping planes for section cuts through IFC models, and add layer visibility toggles.
+
+#### Files
+```
+web-portal/src/features/bim/
+├── loaders/
+│   └── dxfLoader.ts           — Parse DXF → three.js geometry (lines, arcs, circles, polylines)
+├── components/
+│   ├── ClippingControls.tsx   — X/Y/Z clipping plane controls with drag handles
+│   ├── LayerPanel.tsx         — Layer/discipline visibility toggles
+│   └── SectionView.tsx        — 2D section cut view from clipping plane
+└── hooks/
+    ├── useClippingPlanes.ts   — three.js clipping plane management
+    └── useDxfLoader.ts        — DXF parsing + rendering hook
+```
+
+#### Steps
+- [ ] Install dxf-parser. Create dxfLoader.ts — parse DXF entities (LINE, ARC, CIRCLE, LWPOLYLINE, POLYLINE, INSERT, DIMENSION, TEXT, MTEXT), generate three.js Line/Shape geometry per entity, respect layer colors
+- [ ] DXF layer support — parse layer table, create LayerPanel with visibility checkboxes per layer, toggle three.js object visibility
+- [ ] DXF renders in 3D space (flat on XY plane) — same orbit/pan/zoom controls, fit-to-extent on load
+- [ ] Implement useClippingPlanes — three.js renderer.clippingPlanes, create X/Y/Z plane with draggable position along axis
+- [ ] ClippingControls UI — toggle X/Y/Z planes, slider for position, flip direction button, color-coded handles (red=X, green=Y, blue=Z)
+- [ ] Section fill — when clipping plane cuts through solid IFC geometry, render filled cross-section (stencil buffer technique or @thatopen/components built-in)
+- [ ] For IFC models: LayerPanel shows discipline categories (Architectural, Structural, MEP, Fire Protection) — parsed from IFC element types. Toggle entire discipline visibility
+- [ ] IFC storey filter — dropdown to isolate single floor (hide all elements not on selected IfcBuildingStorey)
+- [ ] Verify: load sample DXF (floor plan), renders with correct layers. Load IFC, enable X clipping plane, drag through building, see section cut. Toggle disciplines on/off
+- [ ] Commit: `[BV2] DXF Viewer + Clipping Planes — DXF parser, section cuts, layer toggles, discipline filter`
+
+---
+
+### Sprint BV3: Measurement Tools + Annotations (~14 hrs)
+**Status: PENDING**
+**Depends on: BV2 complete**
+
+#### Objective
+Professional measurement tools (point-to-point distance, area, angle, volume) with vertex snapping, plus markup/annotation system and BCF-compatible viewpoint save/load.
+
+#### Files
+```
+web-portal/src/features/bim/
+├── tools/
+│   ├── MeasureDistance.ts      — Point-to-point distance measurement
+│   ├── MeasureArea.ts         — Area measurement (polygon selection)
+│   ├── MeasureAngle.ts        — Angle measurement (3-point)
+│   ├── MeasureVolume.ts       — Volume from element quantities
+│   └── SnapEngine.ts          — Vertex/edge/midpoint/face snapping
+├── components/
+│   ├── MeasureToolbar.tsx     — Tool selection (distance, area, angle, clear)
+│   ├── MeasureOverlay.tsx     — Dimension labels rendered in 3D space
+│   ├── AnnotationLayer.tsx    — 2D markup overlay (draw, text, arrows)
+│   └── ViewpointManager.tsx   — Save/load viewpoints with thumbnails
+└── hooks/
+    ├── useSnapEngine.ts       — Snap detection on mouse move
+    └── useAnnotations.ts      — Annotation state management
+```
+
+#### Steps
+- [ ] SnapEngine — on mouse move, raycast to find nearest vertex/edge midpoint/face center within threshold. Show snap indicator (colored dot: vertex=green, midpoint=blue, edge=yellow)
+- [ ] MeasureDistance — click point A (snapped), click point B (snapped), render line between them with dimension label in 3D (three.js CSS2DRenderer for labels). Display in meters + feet/inches. Store measurements in local state
+- [ ] MeasureArea — click polygon points (minimum 3), close on first point or double-click, render filled polygon overlay, calculate area, display label at centroid
+- [ ] MeasureAngle — click 3 points (vertex at point 2), render angle arc, display degrees
+- [ ] MeasureVolume — select IFC element, read IfcQuantityVolume from properties, display. If not available, calculate from bounding box
+- [ ] MeasureToolbar — tool mode selector (distance, area, angle), clear all, unit toggle (metric/imperial), measurement list panel
+- [ ] AnnotationLayer — HTML canvas overlay on three.js, draw freehand (red pen), add text labels, add arrow callouts. Annotations stored as JSON (strokes + labels + positions)
+- [ ] ViewpointManager — save current camera position + clipping state + visible elements + annotations as a viewpoint. Capture screenshot thumbnail via renderer.domElement.toDataURL(). Store in bim_viewpoints table
+- [ ] Viewpoint restore — click saved viewpoint → animate camera to saved position, restore clipping/visibility/annotations
+- [ ] BCF export stub — viewpoints follow BCF (BIM Collaboration Format) data structure for future interoperability
+- [ ] Verify: open IFC model, measure wall-to-wall distance with vertex snap, measure room area, save viewpoint with annotation, restore viewpoint
+- [ ] Commit: `[BV3] Measurement + Annotations — distance/area/angle tools, snap engine, markup, viewpoints`
+
+---
+
+### Sprint BV4: Quantity Extraction + Estimate Pipeline (~16 hrs)
+**Status: PENDING**
+**Depends on: BV3 complete, D8 Estimates operational**
+
+#### Objective
+Extract structured quantities from IFC models, map elements to trade-specific line items, and push directly to D8 Estimates for auto-estimate generation. The killer feature — model to estimate in one click.
+
+#### Files
+```
+web-portal/src/features/bim/
+├── extraction/
+│   ├── quantityExtractor.ts   — Parse all IfcQuantity* from model elements
+│   ├── tradeMapper.ts         — Map IFC types → trade categories (electrical, plumbing, hvac, etc)
+│   ├── lineItemMapper.ts      — Map quantities → D8 estimate line items
+│   └── extractionReport.ts    — Generate summary report of extracted quantities
+├── components/
+│   ├── QuantityTable.tsx      — Tabular view of all extracted quantities by trade
+│   ├── TradeBreakdown.tsx     — Quantities grouped by trade with totals
+│   ├── EstimatePreview.tsx    — Preview auto-generated estimate before creating
+│   └── ExtractionWizard.tsx   — Step-by-step: select trades → review quantities → generate estimate
+└── hooks/
+    └── useQuantityExtraction.ts — Extraction state + pipeline management
+```
+
+#### Steps
+- [ ] quantityExtractor — iterate all bim_elements for a model, extract: element count by type, total area (IfcQuantityArea), total length (IfcQuantityLength), total volume (IfcQuantityVolume), material quantities. Group by IfcBuildingStorey
+- [ ] tradeMapper — mapping rules: IfcWall/IfcSlab/IfcRoof/IfcDoor/IfcWindow → GC/Remodeler. IfcFlowSegment[pipe]/IfcSanitaryTerminal/IfcValve → Plumbing. IfcCableCarrierSegment/IfcOutlet/IfcSwitchingDevice/IfcLightFixture → Electrical. IfcFlowSegment[duct]/IfcAirTerminal/IfcCompressor → HVAC. IfcSolarDevice → Solar. IfcRoof/IfcCovering[roofing] → Roofing
+- [ ] QuantityTable — sortable table: Element Type | Count | Total Area | Total Length | Material | Trade. Filter by trade, floor, element type
+- [ ] TradeBreakdown — accordion per trade, total quantities, estimated material needs
+- [ ] lineItemMapper — for active trade context, map extracted quantities to D8 estimate line items (e.g., 47 IfcOutlet → 47x "Install Duplex Receptacle" line items with quantity pre-filled)
+- [ ] EstimatePreview — show generated line items with quantities + unit costs (from D8 rate library), total estimate. Allow editing before creating
+- [ ] ExtractionWizard — step 1: select which trades to extract. Step 2: review quantity table. Step 3: map to estimate line items. Step 4: preview estimate. Step 5: create estimate + optionally create job
+- [ ] "Generate Estimate from Model" button on BIM viewer toolbar — opens ExtractionWizard
+- [ ] Store extraction results — update bim_elements.trade_mapping, save extraction report to bim_models.metadata
+- [ ] E layer integration point — AI reviews extraction, suggests corrections, identifies unmapped elements, recommends missing line items
+- [ ] Verify: load IFC with MEP elements, extract quantities, see trade breakdown, generate estimate with correct line items and quantities, create job from estimate
+- [ ] Commit: `[BV4] Quantity Extraction + Estimate Pipeline — IFC→quantities→trade mapping→auto-estimate→job`
+
+---
+
+### Sprint BV5: DWG Server-Side Conversion + Floor Plan Extraction (~16 hrs)
+**Status: PENDING**
+**Depends on: BV2 complete (DXF viewer)**
+
+#### Objective
+Server-side DWG→DXF conversion so contractors can view AutoCAD files (12-18% of plans received) without proprietary client-side libraries. Plus IFC floor plan extraction → Sketch Engine FloorPlanDataV2 for 2D editing.
+
+#### Files
+```
+supabase/functions/
+├── convert-dwg/
+│   └── index.ts               — Edge function: receive DWG, convert to DXF via LibreDWG/ODA CLI, return
+└── extract-floor-plan/
+    └── index.ts               — Edge function: extract 2D floor plan from IFC at specified storey
+
+web-portal/src/features/bim/
+├── conversion/
+│   ├── dwgConversionService.ts — Upload DWG → call edge function → receive DXF → load in viewer
+│   └── conversionStatus.tsx    — Upload progress + conversion status UI
+├── extraction/
+│   ├── floorPlanExtractor.ts  — IFC storey → 2D plan (walls, doors, windows projected to XY)
+│   └── floorPlanConverter.ts  — Convert extracted plan → FloorPlanDataV2 (Sketch Engine format)
+└── components/
+    └── FloorPlanExport.tsx    — "Open in Sketch Engine" button with storey selector
+```
+
+#### Steps
+- [ ] Research + select DWG conversion approach: Option A — LibreDWG (GPL, runs in Docker). Option B — ODA File Converter CLI (free for non-commercial, commercial license needed). Option C — Unwrangle API (cloud, per-file cost). Decision: start with Unwrangle API for speed (API key exists), migrate to ODA CLI for cost at scale
+- [ ] convert-dwg edge function — accept DWG file upload, call Unwrangle API (or local ODA CLI) to convert DWG→DXF, store DXF in Supabase Storage alongside original DWG, update bim_models record with converted file path
+- [ ] dwgConversionService — on DWG upload: show "Converting..." status, call edge function, on complete load converted DXF in BV2 viewer. Store both original DWG and converted DXF
+- [ ] Conversion status tracking — bim_models.status: 'uploading' → 'converting' → 'ready' or 'error'. Show appropriate UI state
+- [ ] floorPlanExtractor — for loaded IFC model, select IfcBuildingStorey, project all wall/door/window/stair geometry onto XY plane at that storey elevation, generate 2D line geometry
+- [ ] floorPlanConverter — map extracted 2D geometry to FloorPlanDataV2 format: walls become wall segments, doors become door symbols, windows become window markers. Preserve dimensions
+- [ ] FloorPlanExport — storey selector dropdown → preview extracted 2D plan → "Open in Sketch Engine" button → navigates to Sketch Engine with FloorPlanDataV2 pre-loaded
+- [ ] Bidirectional: Sketch Engine can also open BIM viewer for loaded model (link between 2D and 3D views)
+- [ ] Verify: upload DWG file → converts to DXF → renders in viewer. Load IFC → select 2nd floor → extract floor plan → opens in Sketch Engine with walls/doors/windows
+- [ ] Commit: `[BV5] DWG Conversion + Floor Plan Extraction — server-side DWG→DXF, IFC→FloorPlanDataV2→Sketch Engine`
+
+---
+
+### Sprint BV6: Mobile Viewer + Multi-Model Federation + Polish (~16 hrs)
+**Status: PENDING**
+**Depends on: BV1-BV5 complete**
+
+#### Objective
+Flutter mobile/tablet BIM viewer (simplified touch controls), multi-model federation (load arch + struct + MEP together), performance optimization for large models, and production polish.
+
+#### Files
+```
+lib/features/bim/
+├── bim_viewer_screen.dart     — Flutter BIM viewer (flutter_gl + three_dart or WebView bridge)
+├── bim_model_list_screen.dart — List models attached to job
+├── bim_touch_controls.dart    — Touch orbit/pan/zoom/select gestures
+└── bim_property_sheet.dart    — Bottom sheet for selected element properties
+
+web-portal/src/features/bim/
+├── federation/
+│   ├── modelFederation.ts     — Load multiple models into same scene with offset/alignment
+│   └── federationPanel.tsx    — Model list with per-model visibility toggle, color coding
+├── performance/
+│   ├── lodManager.ts          — Level-of-detail for large models (simplify distant geometry)
+│   ├── frustumCuller.ts       — Only render visible elements (extends three.js frustum culling)
+│   └── streamingLoader.ts     — Progressive IFC loading (show structure first, detail later)
+└── components/
+    ├── Minimap.tsx            — Overhead navigation thumbnail
+    ├── ExplodedView.tsx       — Separate building elements with slider
+    └── ScreenshotExport.tsx   — Capture viewport → save to job/share
+```
+
+#### Steps
+- [ ] Multi-model federation — load multiple IFC files into same three.js scene. federationPanel shows loaded models with color-coded bounding boxes, per-model visibility toggle, per-model transparency slider
+- [ ] Model alignment — basic origin alignment (auto-detect if models share coordinate system via IfcSite lat/long). Manual offset controls if needed
+- [ ] Performance: LOD manager — for models >50K elements, generate simplified geometry for distant view, swap to full detail on zoom-in
+- [ ] Performance: streaming loader — parse IFC spatial structure first (instant model tree), then progressively load geometry by storey (top to bottom). User sees building form in seconds, full detail in background
+- [ ] Performance: instancing — detect repeated elements (e.g., 500 identical windows), use three.js InstancedMesh to render as single draw call
+- [ ] Minimap — PiP overhead view (orthographic camera, 200x200px, bottom-left), shows current viewport frustum as rectangle, click to navigate
+- [ ] ExplodedView — slider control, elements separate along their floor normal vectors. Useful for inspecting sandwich walls, ceiling assemblies, MEP in wall cavities
+- [ ] ScreenshotExport — capture current view as PNG, save to Supabase Storage linked to job. Option to add to job photos, share via client portal
+- [ ] Flutter mobile viewer — evaluate two approaches: (a) WebView bridge loading web BIM viewer, or (b) native flutter_gl with three_dart port. Start with WebView bridge for feature parity, optimize later
+- [ ] Flutter touch controls — single finger orbit, two finger pan, pinch zoom, tap to select element, long press for properties. Gesture conflict resolution with page scroll
+- [ ] Flutter model list — show models attached to current job, tap to open viewer, upload button (camera or file picker)
+- [ ] Responsive web — BIM viewer adapts to sidebar collapsed/expanded, toolbar repositions for narrow viewports
+- [ ] Accessibility — keyboard navigation (arrow keys orbit, +/- zoom, Tab through model tree), screen reader labels for all controls
+- [ ] Verify: load 3 IFC models (arch + struct + MEP) together, toggle individual visibility, exploded view works, minimap navigates, mobile viewer loads same model with touch controls
+- [ ] Commit: `[BV6] Mobile + Federation + Polish — multi-model, LOD, streaming, Flutter viewer, exploded view, minimap`
+
+---
+
+### BV Sprint Summary
+
+| Sprint | Focus | Est Hours | Key Deliverable |
+|--------|-------|:---------:|-----------------|
+| BV1 | IFC Viewer Core | ~16 | Load/render IFC, model tree, properties, element selection |
+| BV2 | DXF + Clipping | ~14 | DXF viewer, section cuts, layer/discipline toggles |
+| BV3 | Measurement + Annotations | ~14 | Distance/area/angle tools, snap, markup, viewpoints |
+| BV4 | Quantity → Estimate | ~16 | IFC quantities → trade mapping → D8 auto-estimate |
+| BV5 | DWG Convert + Floor Plans | ~16 | Server-side DWG→DXF, IFC→FloorPlanDataV2→Sketch Engine |
+| BV6 | Mobile + Federation | ~16 | Flutter viewer, multi-model, LOD, exploded view |
+| **Total** | | **~92 hrs** | **Full BIM pipeline: view → measure → extract → estimate → job** |

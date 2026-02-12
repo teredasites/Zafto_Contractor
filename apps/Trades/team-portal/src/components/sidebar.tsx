@@ -25,7 +25,7 @@ const navItems = [
   { label: 'CLOCK & TOOLS', items: [
     { name: 'Time Clock', href: '/dashboard/time-clock', icon: Clock },
     { name: 'Field Tools', href: '/dashboard/field-tools', icon: Wrench },
-    { name: 'Phone', href: '/dashboard/phone', icon: Phone },
+    { name: 'Calls', href: '/dashboard/phone', icon: Phone },
     { name: 'Meetings', href: '/dashboard/meetings', icon: Video },
   ]},
   { label: 'DOCUMENTATION', items: [

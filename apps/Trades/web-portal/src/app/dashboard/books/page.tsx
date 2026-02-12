@@ -42,7 +42,7 @@ const EXPENSE_COLORS = [
   '#06b6d4', '#ef4444', '#84cc16', '#f97316', '#64748b',
 ];
 
-// Navigation tabs for ZBooks
+// Navigation tabs for Ledger
 const BOOKS_TABS = [
   { label: 'Overview', href: '/dashboard/books', active: true },
   { label: 'Chart of Accounts', href: '/dashboard/books/accounts', active: false },
@@ -55,7 +55,7 @@ const BOOKS_TABS = [
   { label: 'Periods', href: '/dashboard/books/periods', active: false },
 ];
 
-// Quick links for ZBooks sub-pages
+// Quick links for Ledger sub-pages
 const QUICK_LINKS = [
   { label: 'Chart of Accounts', href: '/dashboard/books/accounts', icon: BookOpen },
   { label: 'Expenses', href: '/dashboard/books/expenses', icon: Receipt },
@@ -187,7 +187,7 @@ export default function BooksPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-main">ZBooks</h1>
+          <h1 className="text-2xl font-semibold text-main">Ledger</h1>
           <p className="text-muted mt-1">Financial dashboard</p>
         </div>
         <div className="flex items-center gap-3">
@@ -205,7 +205,7 @@ export default function BooksPage() {
         </div>
       </div>
 
-      {/* ZBooks Navigation Tabs */}
+      {/* Ledger Navigation Tabs */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1">
         {BOOKS_TABS.map((tab) => (
           <button

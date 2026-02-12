@@ -111,7 +111,7 @@ const PAGE_CONTEXTS: Record<string, PageContext> = {
     ],
   },
   '/dashboard/books': {
-    label: 'ZBooks',
+    label: 'Ledger',
     actions: [
       quickAction('books-1', 'DollarSign', 'P&L summary', 'Show me profit and loss this month'),
       quickAction('books-2', 'Receipt', 'Unpaid bills', 'What bills are due this week?'),

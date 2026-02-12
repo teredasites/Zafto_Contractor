@@ -6,7 +6,7 @@ import { getSupabase } from '@/lib/supabase';
 // ============================================================
 // Fiscal Period Management & Year-End Close Hook
 // D4k — Period lifecycle, year-end closing journal entries,
-// and audit log queries for ZBooks fiscal period management.
+// and audit log queries for Ledger fiscal period management.
 // ============================================================
 
 export interface FiscalPeriodData {

@@ -168,7 +168,7 @@ export function useRent() {
 
     if (updateErr) throw updateErr;
 
-    // Wire: rent payment → ZBooks journal entry (debit Cash, credit Rental Income)
+    // Wire: rent payment → Ledger journal entry (debit Cash, credit Rental Income)
     try {
       // Fetch the charge's property for journal tagging
       const { data: fullCharge } = await supabase
@@ -225,7 +225,7 @@ export function useRent() {
       }
     } catch {
       // Non-critical — payment still recorded even if journal fails
-      console.error('Failed to create ZBooks journal entry for rent payment');
+      console.error('Failed to create Ledger journal entry for rent payment');
     }
 
     return paymentResult.id;

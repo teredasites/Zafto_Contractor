@@ -29,7 +29,7 @@ import type {
 
 // TODO: TierGate -- enterprise subscription only
 
-// ZBooks Navigation
+// Ledger Navigation
 const zbooksNav = [
   { label: 'Overview', href: '/dashboard/books', active: false },
   { label: 'Chart of Accounts', href: '/dashboard/books/accounts', active: false },
@@ -216,7 +216,7 @@ export default function BranchFinancialsPage() {
         </div>
       </div>
 
-      {/* ZBooks Navigation Tabs */}
+      {/* Ledger Navigation Tabs */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1">
         {zbooksNav.map((tab) => (
           <button

@@ -566,7 +566,7 @@ export default function RecurringPage() {
         </Button>
       </div>
 
-      {/* ZBooks Navigation */}
+      {/* Ledger Navigation */}
       <div className="flex items-center gap-2">
         {zbooksNav.map((tab) => (
           <button

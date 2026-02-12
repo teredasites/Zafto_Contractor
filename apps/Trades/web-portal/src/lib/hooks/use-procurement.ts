@@ -5,7 +5,7 @@ import { getSupabase } from '@/lib/supabase';
 
 // ============================================================
 // Procurement Hook — Vendor Directory, PO Line Items, Receiving
-// NOTE: This is SEPARATE from use-vendors.ts (ZBooks accounting vendors).
+// NOTE: This is SEPARATE from use-vendors.ts (Ledger accounting vendors).
 // This hooks into vendor_directory (procurement) + po_line_items + receiving_records.
 // ============================================================
 

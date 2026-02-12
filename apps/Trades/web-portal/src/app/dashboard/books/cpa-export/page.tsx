@@ -26,7 +26,7 @@ import { getSupabase } from '@/lib/supabase';
 import { useCPAAccess } from '@/lib/hooks/use-cpa-access';
 import type { ExportPackageData } from '@/lib/hooks/use-cpa-access';
 
-// ZBooks Navigation
+// Ledger Navigation
 const zbooksNav = [
   { label: 'Overview', href: '/dashboard/books', active: false },
   { label: 'Chart of Accounts', href: '/dashboard/books/accounts', active: false },
@@ -260,7 +260,7 @@ export default function CPAExportPage() {
         </div>
       </div>
 
-      {/* ZBooks Navigation */}
+      {/* Ledger Navigation */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1">
         {zbooksNav.map((tab) => (
           <button

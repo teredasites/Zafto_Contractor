@@ -3,8 +3,8 @@
 import { getSupabase } from '@/lib/supabase';
 
 // ============================================================
-// ZBooks GL Engine — Auto-posting journal entries
-// This is the heart of ZBooks double-entry bookkeeping.
+// Ledger GL Engine — Auto-posting journal entries
+// This is the heart of Ledger double-entry bookkeeping.
 // Every financial event creates balanced journal entries.
 // ============================================================
 

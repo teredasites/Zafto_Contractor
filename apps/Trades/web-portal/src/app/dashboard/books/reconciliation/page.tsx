@@ -27,7 +27,7 @@ import {
 import type { ReconciliationData, ReconciliationTransaction } from '@/lib/hooks/use-reconciliation';
 import type { BankAccountData } from '@/lib/hooks/use-banking';
 
-// ZBooks Navigation
+// Ledger Navigation
 const zbooksNav = [
   { label: 'Overview', href: '/dashboard/books', active: false },
   { label: 'Chart of Accounts', href: '/dashboard/books/accounts', active: false },
@@ -235,7 +235,7 @@ export default function ReconciliationPage() {
         </div>
       </div>
 
-      {/* ZBooks Navigation */}
+      {/* Ledger Navigation */}
       <div className="flex items-center gap-2">
         {zbooksNav.map((tab) => (
           <button

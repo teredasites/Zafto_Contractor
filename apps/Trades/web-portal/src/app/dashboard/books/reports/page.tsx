@@ -26,7 +26,7 @@ import type { AccountBalance, AgingRow, JournalDetail } from '@/lib/hooks/use-fi
 import { useAccounts } from '@/lib/hooks/use-accounts';
 import { useProperties } from '@/lib/hooks/use-properties';
 
-// ZBooks Navigation
+// Ledger Navigation
 const zbooksNav = [
   { label: 'Overview', href: '/dashboard/books', active: false },
   { label: 'Banking', href: '/dashboard/books/banking', active: false },
@@ -367,7 +367,7 @@ export default function FinancialReportsPage() {
         </Button>
       </div>
 
-      {/* ZBooks Navigation */}
+      {/* Ledger Navigation */}
       <div className="flex items-center gap-2">
         {zbooksNav.map((tab) => (
           <button
@@ -765,7 +765,7 @@ export default function FinancialReportsPage() {
                   <CardContent className="p-12 text-center text-muted">
                     <Building size={40} className="mx-auto mb-2 opacity-50" />
                     <p>No property income or expenses found for this period</p>
-                    <p className="text-xs mt-1">Allocate expenses to properties in ZBooks Expenses</p>
+                    <p className="text-xs mt-1">Allocate expenses to properties in Ledger Expenses</p>
                   </CardContent>
                 </Card>
               )}
