@@ -41,7 +41,7 @@ import type {
 } from '@/lib/hooks/use-construction-accounting';
 
 // ────────────────────────────────────────────
-// ZBooks Navigation
+// Ledger Navigation
 // ────────────────────────────────────────────
 
 const zbooksNav = [
@@ -235,7 +235,7 @@ export default function ConstructionAccountingPage() {
         </div>
       </div>
 
-      {/* ZBooks Navigation */}
+      {/* Ledger Navigation */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1">
         {zbooksNav.map((tab) => (
           <button

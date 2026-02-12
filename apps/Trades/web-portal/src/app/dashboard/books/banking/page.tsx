@@ -30,7 +30,7 @@ import {
 } from '@/lib/hooks/use-banking';
 import type { BankAccountData, BankTransactionData } from '@/lib/hooks/use-banking';
 
-// ZBooks Navigation (shared across ZBooks sub-pages)
+// Ledger Navigation (shared across Ledger sub-pages)
 const zbooksNav = [
   { label: 'Overview', href: '/dashboard/books', active: false },
   { label: 'Chart of Accounts', href: '/dashboard/books/accounts', active: false },
@@ -386,7 +386,7 @@ export default function BankingPage() {
         <PlaidLinkButton onSuccess={handlePlaidSuccess} />
       </div>
 
-      {/* ZBooks Navigation */}
+      {/* Ledger Navigation */}
       <div className="flex items-center gap-2">
         {zbooksNav.map((tab) => (
           <button

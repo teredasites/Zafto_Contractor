@@ -1,0 +1,145 @@
+# ZAFTO — Claude Code Instructions
+
+## What Is This
+Complete business-in-a-box for trades contractors. "Stripe for blue-collar." One subscription replaces 12+ tools. Multi-trade platform. Owner: Damian Tereda — Tereda Software LLC.
+
+## Stack
+- **Mobile**: Flutter/Dart, Riverpod state management, PowerSync offline-first (planned)
+- **Web CRM**: Next.js 15, React 19, TypeScript, Tailwind CSS — `web-portal/` (107 routes)
+- **Team Portal**: Next.js 15 — `team-portal/` (36 routes) — field employee PWA at team.zafto.cloud
+- **Client Portal**: Next.js 15 — `client-portal/` (38 routes) — homeowner portal at client.zafto.cloud
+- **Ops Portal**: Next.js 15 — `ops-portal/` (26 routes) — founder dashboard at ops.zafto.cloud
+- **Backend**: Supabase (PostgreSQL + Auth + Storage + Realtime + Edge Functions). NO Firebase (fully migrated).
+- **Hosting**: Vercel (all 4 Next.js apps), Cloudflare DNS
+- **CI/CD**: Codemagic (Flutter), GitHub Actions
+- **Icons**: Lucide only. No emojis anywhere.
+- **Typography**: Inter
+- **Git**: github.com/teredasites/Zafto_Contractor.git — push ONLY to TeredaDeveloper repos
+
+## Directory Map
+```
+├── lib/                    # Flutter app
+│   ├── core/               # env.dart, supabase_client.dart, errors.dart
+│   ├── models/             # Dart models (35+ Supabase models)
+│   ├── repositories/       # 32 repos (PowerSync/Supabase)
+│   ├── providers/          # Riverpod providers
+│   ├── screens/            # All Flutter screens (R1: 33 role screens)
+│   │   ├── estimates/      # D8 estimate engine (5 screens)
+│   │   ├── properties/     # D5 property mgmt (10 screens)
+│   │   ├── walkthrough/    # E6 walkthrough (12 screens)
+│   │   └── zbooks/         # D4 accounting (3 screens)
+│   └── widgets/            # Shared widgets (LoadingState, EmptyState, ErrorState)
+├── web-portal/             # CRM (Next.js) — zafto.cloud
+│   └── src/lib/hooks/      # 68 use-*.ts hook files + mappers.ts
+├── team-portal/            # Employee portal (Next.js) — team.zafto.cloud
+│   └── src/lib/hooks/      # 22 hook files
+├── client-portal/          # Client portal (Next.js) — client.zafto.cloud
+│   └── src/lib/hooks/      # 21 hook files
+├── ops-portal/             # Founder ops (Next.js) — ops.zafto.cloud
+├── supabase/
+│   ├── functions/          # 53 Edge Functions (Deno/TypeScript)
+│   └── migrations/         # 48 migration files
+├── Build Documentation/    # DO NOT DELETE — full build docs
+│   └── ZAFTO FULL BUILD DOC/
+│       ├── 00_HANDOFF.md       # Entry point — read FIRST every session
+│       ├── 01_MASTER_BUILD_PLAN.md
+│       ├── 02_CIRCUIT_BLUEPRINT.md
+│       ├── 03_LIVE_STATUS.md
+│       ├── 06_ARCHITECTURE_PATTERNS.md  # 14 code patterns — follow exactly
+│       └── 07_SPRINT_SPECS.md           # Execution tracker — checklists
+└── android/, ios/, web/, windows/       # Platform dirs
+```
+
+## Current State (Session 97)
+- **~173 tables**, 48 migrations, 53 Edge Functions
+- **Phases A-F ALL COMPLETE**. R1 done. FM code done. Phase E PAUSED.
+- **Build order**: T (Programs, NEXT) → P (Recon) → SK (Sketch Engine) → GC (Schedule) → U (Unification) → G (QA) → E (E-review → BA1-BA8 Plan Review → E1-E4, AI LAST) → LAUNCH
+- **Plan Review SPEC'D** (S97): AI blueprint reading + automated takeoff. 6 tables, 3 EFs, 8 sprints (~128 hrs). Research validated.
+- **F2 (Website Builder) + F8 (Ops 2-4) deferred post-launch**
+
+## Critical Rules — NEVER VIOLATE
+
+1. **AI GOES LAST** — Phase E is PAUSED. Do NOT resume AI work until ALL of T+P+SK+U+G are complete.
+2. **SEQUENTIAL EXECUTION** — Follow `07_SPRINT_SPECS.md` checklists in order. Never skip.
+3. **CHECK OFF AS YOU GO** — Mark `[x]` in sprint specs for each completed item.
+4. **VERIFY BEFORE CLAIMING DONE** — Run `dart analyze`, `npm run build` per portal. Prove it.
+5. **UPDATE DOCS AT SESSION END** — Update 07_SPRINT_SPECS.md, 00_HANDOFF.md, 03_LIVE_STATUS.md.
+6. **NEVER CREATE PARALLEL DOCS** — One doc set. Update in place.
+7. **HANDOFF IS THE ENTRY POINT** — Start at 00_HANDOFF.md every session.
+8. **NO Co-Authored-By** — Never include `Co-Authored-By: Claude` in commits.
+
+## Build & Verify Commands
+```bash
+# Flutter
+"C:/tools/flutter/bin/flutter.bat" analyze          # 0 errors required
+"C:/tools/flutter/bin/flutter.bat" test              # Run tests
+"C:/tools/flutter/bin/flutter.bat" build apk --debug # Android debug
+
+# Web CRM
+cd web-portal && npm run build      # Must pass with 0 errors
+
+# Team Portal
+cd team-portal && npm run build
+
+# Client Portal
+cd client-portal && npm run build
+
+# Ops Portal
+cd ops-portal && npm run build
+
+# Supabase
+npx supabase functions deploy <name>   # Deploy single EF
+npx supabase db push                   # Push migrations
+```
+
+## Code Patterns (from 06_ARCHITECTURE_PATTERNS.md)
+
+### Dart Models
+- One model per file in `lib/models/`, immutable (`final` fields, `const` constructor)
+- `toJson()` uses `snake_case` keys matching Supabase columns
+- `fromJson()` reads `snake_case` from Supabase. Dart fields are `camelCase`
+- Always include: `copyWith()`, `Equatable`, computed getters
+
+### Dart Repositories
+- One repo per table in `lib/repositories/`
+- Abstract interface + concrete implementation
+- Returns domain models, not raw maps. Throws typed errors from `core/errors.dart`
+
+### Riverpod Providers
+- Repository = `Provider` (singleton). Data = `StreamProvider`/`AsyncNotifierProvider` (reactive)
+- `autoDispose` for screen-scoped. `.family` for parameterized (by ID)
+- NEVER `ref.read` inside `build()` — use `ref.watch`
+
+### Flutter Screens
+- Every screen handles 4 states: loading, error, empty, data
+- Use `ConsumerWidget`, `ref.watch()` for data, `ref.read()` for actions
+
+### Next.js Hooks (Web)
+- All hooks in `src/lib/hooks/use-*.ts`, client-side (`'use client'`)
+- Supabase client via `createClient()` from `src/lib/supabase.ts`
+- Real-time subscriptions on `postgres_changes` channel
+- Return `{ data, loading, error, mutations... }`
+
+### Supabase RLS
+- Every table has `company_id`. RLS enabled on all. JWT `app_metadata.company_id` for scoping.
+- Separate policies: SELECT, INSERT, UPDATE, DELETE
+- `auth.company_id()` + `auth.user_role()` helper functions
+- Audit trigger (`audit_trigger_fn`) on every business table
+
+### Edge Functions
+- Deno/TypeScript in `supabase/functions/<name>/index.ts`
+- Auth via `supabase.auth.getUser()` from request Authorization header
+- Always validate company_id from JWT
+
+### General
+- Soft delete everywhere (`deleted_at timestamptz`). Never physical delete business data.
+- All timestamps: `timestamptz` (UTC), ISO 8601 strings, `update_updated_at()` trigger
+- Commit format: `[PHASE] Description` (e.g., `[T1] TPA foundation tables`)
+
+## Key Architecture Facts
+- **RBAC roles**: owner, admin, office_manager, technician, apprentice, cpa, super_admin
+- **5 apps, 1 database** — RLS handles all multi-tenancy
+- **Supabase auth** — JWT with `app_metadata.company_id` and `app_metadata.role`
+- **Magic link** auth for client portal, password for others
+- **7 storage buckets** (all private): photos, signatures, voice-notes, receipts, documents, avatars, company-logos
+- **Design**: "Stripe for Trades" — premium, clean, information-dense. CRM=dark, Client=light.

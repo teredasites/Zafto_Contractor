@@ -1,6 +1,6 @@
 # ZAFTO MASTER BUILD PLAN — NO DRIFT
 ## Single Source of Truth — Every Feature, Every Phase, Every Decision
-### Last Updated: February 9, 2026 (Session 94)
+### Last Updated: February 11, 2026 (Session 97)
 
 ---
 
@@ -19,7 +19,7 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | Principle | Rule |
 |-----------|------|
 | Logo | "ZAFTO" wordmark (like Stripe uses "stripe"). NOT just the Z. |
-| Z mark | Reserved for AI/premium features: Z Intelligence, ZBooks, Z Console |
+| Z mark | Reserved for AI/premium features: Z Intelligence, Ledger, Dashboard |
 | CRM accent | Per Design System v2.6 |
 | Client Portal accent | Stripe purple `#635bff` |
 | Ops Portal accent | Deep navy/teal (distinct from both) |
@@ -65,31 +65,33 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 
 ---
 
-## CURRENT STATE (February 9, 2026 — Session 95)
+## CURRENT STATE (February 11, 2026 — Session 97)
 
 | What | Built | Wired | End-to-End |
 |------|:-----:|:-----:|:----------:|
 | Mobile App (R1 remake — 33 role screens) | YES | YES | YES (Supabase) |
-| Mobile Field Tools (18 total) | YES | YES (B2+B3) | YES (all 18 wired) |
-| Web CRM (71 routes) | YES | YES (39+ hooks) | YES (Supabase) |
-| Client Portal (29 routes) | YES | YES (11 hooks) | YES (Supabase) |
-| Employee Field Portal (25 routes) | YES | YES (14 hooks) | YES (Supabase) |
-| Ops Portal Phase 1 (17 routes) | YES | YES | YES (Supabase) |
-| Database (Supabase) | 92 tables deployed to dev | RLS + audit on all | 28 migrations |
-| Edge Functions | 26 deployed | All active | Needs ANTHROPIC_API_KEY |
+| Mobile Field Tools (19 total) | YES | YES (B2+B3) | YES (all 19 wired) |
+| Web CRM (107 routes, 68 hooks) | YES | YES | YES (Supabase) |
+| Client Portal (38 routes, 21 hooks) | YES | YES | YES (Supabase) |
+| Employee Field Portal (36 routes, 22 hooks) | YES | YES | YES (Supabase) |
+| Ops Portal (26 routes) | YES | YES | YES (Supabase) |
+| Database (Supabase) | ~173 tables | RLS + audit on all | 48 migrations |
+| Edge Functions | 53 directories | 32 pre-F + 21 F/FM | Needs ANTHROPIC_API_KEY |
 | RBAC | Enforced | Middleware on all portals | RLS per table |
-| ZBooks (QB replacement) | YES | YES (13 hooks, 13 pages, 5 EFs) | YES |
-| Property Management | YES | YES (11 hooks, 14 pages, 10 Flutter screens) | YES |
+| Ledger (QB replacement) | YES | YES (13 hooks, 13 pages, 5 EFs) | YES |
+| Property Management | YES | YES (11 hooks, 14 pages, 10 Flutter screens) | YES (D5, S71-S77, 18 tables) |
 | Insurance/Restoration | YES | YES (7 tables, all 5 apps) | YES |
+| D8 Estimates | YES | YES (D8a-D8j, 10 tables, 5 EFs) | DONE (S85-S89) |
+| Phase F Platform (F1-F10) | YES (code) | YES (hooks+pages) | ALL CODE COMPLETE (S90) |
 | **Phase E AI (PREMATURE)** | **YES (code exists)** | **PAUSED** | **NOT TESTED — AI goes LAST** |
-| **D8 Estimate Engine** | **YES** | **YES (D8a-D8j)** | **DONE (S85-S89)** |
-| **Phase F Platform** | **YES (code)** | **YES (hooks+pages)** | **ALL CODE COMPLETE (S90)** |
-| **Phase T: TPA Module** | **SPEC'D** | **NO** | NEXT — builds first |
-| **Phase P: ZScan** | **SPEC'D** | **NO** | Builds after Phase T |
+| **Phase T: Programs** | **SPEC'D** | **NO** | **NEXT — builds first** |
+| **Phase P: Recon** | **SPEC'D** | **NO** | Builds after Phase T |
 | **Phase SK: Sketch Engine** | **SPEC'D** | **NO** | Builds after Phase P |
-| **Phase U: Unification** | **PLANNED** | **NO** | Builds after Phase SK — portal merge, nav redesign, feature completion |
+| **Phase GC: Schedule** | **SPEC'D** | **NO** | Builds after Phase SK — full CPM scheduling, ~124 hrs, 11 sprints |
+| **Phase U: Unification** | **PLANNED** | **NO** | Builds after Phase GC — portal merge, nav redesign, feature completion |
+| **Plan Review** | **SPEC'D (S97)** | **NO** | Phase E feature (BA1-BA8, ~128 hrs) |
 
-**ALL PHASES A-F COMPLETE. ~169 tables. 53 Edge Functions. 107 CRM routes. Phase T (TPA) is NEXT, then P (ZScan), then SK (Sketch Engine), then U (Unification & Feature Completion), then G (QA/Harden everything), then E (AI LAST) → LAUNCH. F2 + F8 post-launch.**
+**ALL PHASES A-F COMPLETE. ~173 tables. 53 Edge Functions. 107 CRM routes. 36 team routes. 38 client routes. 26 ops routes. Phase T (TPA) is NEXT, then P (Recon), then SK (Sketch Engine), then GC (Schedule), then U (Unification & Feature Completion), then G (QA/Harden everything), then E (AI LAST: E-review → BA1-BA8 → E1-E4) → LAUNCH. F2 + F8 post-launch.**
 
 ---
 
@@ -112,7 +114,7 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | B2 | Wire W2: Field Tools | ~26 | 14 tools: capture → PowerSync offline → Supabase + Storage |
 | B3 | Wire W3: Missing Tools | ~22 | Materials Tracker, Daily Log, Punch List, Change Orders, Job Completion |
 | B4 | Wire W4: Web CRM + Polish | ~30-36 | 40 pages read real Supabase data, field data flows to CRM. B4d: UI polish (collapsible sidebar, visual restraint, chart upgrade, Supabase-level professionalism). B4e: Z Intelligence chat panel + artifact system UI shell. |
-| B5 | Wire W5: Employee Field Portal | ~20-25 | team.zafto.app — jobs, schedule, time clock, field tools, materials, change orders, AI troubleshooting. Permission-gated by owner. No sensitive financials. |
+| B5 | Wire W5: Employee Field Portal | ~20-25 | team.zafto.cloud — jobs, schedule, time clock, field tools, materials, change orders, AI troubleshooting. Permission-gated by owner. No sensitive financials. |
 | B6 | Wire W6: Client Portal | ~13 | 21 pages read real data, Equipment Passport, Live Tracker |
 | B7 | Wire W7: Polish | ~19 | Screen registry, Cmd+K for business, notifications, offline sync |
 
@@ -133,21 +135,21 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | D1 | Job Type System | ~69 | Standard + insurance_claim + warranty_dispatch. Progressive disclosure. |
 | D2 | Restoration/Insurance Module | ~78 | 9th trade, Xactimate/ESX, carrier mgmt, moisture/drying logs |
 | D3 | Insurance Verticals | ~107 | Storm, reconstruction, commercial, warranty network (JSONB, no new tables) |
-| D4 | ZBooks (QB replacement) | TBD | Full accounting: chart of accounts, receipt scan, P&L, bank sync (Plaid), CPA portal |
+| D4 | Ledger (QB replacement) | TBD | Full accounting: chart of accounts, receipt scan, P&L, bank sync (Plaid), CPA portal |
 | D5 | Property Management System | TBD | NEW — Contractor-owned properties. Tenant mgmt, leases, rent, maintenance loop. THE MOAT. |
 | D6 | Enterprise Foundation | ~20 | Multi-location, custom roles, form templates, API keys, certifications |
 | D7 | Certification System | ~12 | Modular cert types, immutable audit log, dynamic type registry |
-| D8 | Estimate Engine | ~100+ | Two-mode: Regular Bids (all contractors, PDF) + Insurance Estimates (ESX). Own code DB, crowdsource, regional pricing. See `SPRINT/07_ESTIMATE_ENGINE_SPEC.md` |
+| D8 | Estimates | ~100+ | Two-mode: Regular Bids (all contractors, PDF) + Insurance Estimates (ESX). Own code DB, crowdsource, regional pricing. See `07_SPRINT_SPECS.md (D8a-D8j)` |
 
 ### PHASE E: AI LAYER — MOVED TO AFTER PHASE U + G (AI GOES TRULY LAST)
 
 **STATUS: PAUSED.** Some E work was built prematurely in S78-S80 (Edge Functions, hooks, UI). Code committed but DORMANT. AI must be built LAST after every platform feature exists so it can know and control the entire system. Deep AI spec session required before resuming.
 
 **Premature E work (exists in codebase, dormant):**
-- E1-E2: z-intelligence Edge Function (14 tools), Z Console wired, z_threads/z_messages tables
+- E1-E2: z-intelligence Edge Function (14 tools), Dashboard wired, z_threads/z_messages tables
 - E3: 4 troubleshooting Edge Functions, team portal troubleshoot page, Flutter AI chat, client portal widget
 - E4: 5 growth advisor Edge Functions, 4 CRM pages (not deployed)
-- E5: Xactimate estimate engine (5 tables, 6 Edge Functions, UI across all apps) — **SUPERSEDED by D8 (clean-room estimate engine). E5 code dormant. D8 uses independent spec: `SPRINT/07_ESTIMATE_ENGINE_SPEC.md`**
+- E5: Xactimate estimate engine (5 tables, 6 Edge Functions, UI across all apps) — **SUPERSEDED by D8 (clean-room estimate engine). E5 code dormant. D8 uses independent spec: `07_SPRINT_SPECS.md (D8a-D8j)`**
 - E6: Bid walkthrough engine (5 tables, 4 Edge Functions, 12 Flutter screens)
 
 **When we return to Phase E (after T+P+SK+U+G):**
@@ -155,8 +157,8 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | # | Task | Hours | Details |
 |---|------|:-----:|---------|
 | E1 | Universal AI Architecture | ~300-400 | 6-layer AI: Identity, Knowledge, Memory, Session, Compounding, RBAC. Must understand EVERY feature. Deep spec session first. |
-| E2 | Z Console + Artifacts | ~90-120 | 3-state persistent AI console. Template-based artifacts. Human approval required. |
-| E3 | Unified Command Center | ~100-150 | Lead inbox, pipeline, service catalog, showcases, reviews |
+| E2 | Dashboard + Artifacts | ~90-120 | 3-state persistent AI console. Template-based artifacts. Human approval required. |
+| E3 | Dashboard | ~100-150 | Lead inbox, pipeline, service catalog, showcases, reviews |
 | E4 | Growth Advisor | ~88 | AI revenue expansion engine. Curated opportunity KB. |
 | E-review | Audit premature E work | TBD | Review/rebuild all S78-S80 AI code with full platform context. Ensure AI knows every F-phase feature. |
 
@@ -164,24 +166,24 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 
 | # | Task | Hours | Details |
 |---|------|:-----:|---------|
-| D8 | Estimate Engine | ~100+ | Two-mode (Regular Bids + Insurance ESX). Own code DB, crowdsource, regional pricing. Clean-room. See `07_SPRINT_SPECS.md` D8a-D8j. |
+| D8 | Estimates | ~100+ | Two-mode (Regular Bids + Insurance ESX). Own code DB, crowdsource, regional pricing. Clean-room. See `07_SPRINT_SPECS.md` D8a-D8j. |
 | FM | Firebase→Supabase Migration | ~8-12 | Migrate 11 Cloud Functions (Stripe payments, RevenueCat, AI scans) from `backend/functions/` to Supabase Edge Functions. |
 | R1j | Mobile Backend Rewire | ~8-12 | Connect R1's 33 new screens to existing Phase B wired data (jobs, invoices, customers, field tools). |
 
 ### PHASE F: PLATFORM COMPLETION
 
-**Build order: F1→F3→F4→F5→F6→F7→F9→F10. Then T (TPA Module), then P (ZScan), then SK (Sketch Engine), then U (Unification & Feature Completion), then G (QA/Harden everything), then E → LAUNCH. F2+F8 post-launch.**
+**Build order: F1→F3→F4→F5→F6→F7→F9→F10. Then T (Programs), then P (Recon), then SK (Sketch Engine), then U (Unification & Feature Completion), then G (QA/Harden everything), then E → LAUNCH. F2+F8 post-launch.**
 
 | # | Task | Hours | Details |
 |---|------|:-----:|---------|
-| F1 | Phone System (SignalWire) | ~40-55 | Business phone, AI receptionist, SMS, **fax send/receive**, call recording, E2E encryption. SignalWire SWML AI agent framework. |
-| F3 | Meeting Room System (LiveKit) | ~70 | Context-aware video (knows job/estimate/customer), 6 meeting types, freeze-frame annotate, AI transcription, booking, async video. |
+| F1 | Calls (SignalWire) | ~40-55 | Business phone, AI receptionist, SMS, **fax send/receive**, call recording, E2E encryption. SignalWire SWML AI agent framework. |
+| F3 | Meetings (LiveKit) | ~70 | Context-aware video (knows job/estimate/customer), 6 meeting types, freeze-frame annotate, AI transcription, booking, async video. |
 | F4 | Mobile Field Toolkit + Sketch/Bid | ~120-140 | 24 tools (walkie-talkie/PTT, restoration, inspections). **Sketch + Bid Flow** (room photos → dimensions → AI code suggestion → price book → bid PDF/ESX). **OSHA API** (free — safety standards, compliance auto-populate). R1c/R1e deferred items. |
-| F5 | Business OS + Lead Aggregation | ~180+ | 9 systems (CPA Portal, Payroll, Fleet, Route, Procurement, HR, Email, Phone, Docs). **Lead API aggregation** (Google Business Profile, Google LSA, Meta/Facebook, Nextdoor, Yelp, BuildZoom — all free). Single inbox for all lead sources. |
+| F5 | Integrations + Lead Aggregation | ~180+ | 9 systems (CPA Portal, Payroll, Fleet, Route, Procurement, HR, Email, Phone, Docs). **Lead API aggregation** (Google Business Profile, Google LSA, Meta/Facebook, Nextdoor, Yelp, BuildZoom — all free). Single inbox for all lead sources. |
 | F6 | Marketplace | ~80-120 | Equipment AI diagnostics, pre-qualified lead gen, contractor bidding. Camera scan → AI model identification → contractor match. |
-| F7 | ZAFTO Home Platform | ~140-180 | Homeowner property intelligence. Free: equipment passport, service history, docs. Premium ($7.99/mo): AI advisor, predictive maintenance, contractor matching. R1f deferred items. |
+| F7 | Home Portal | ~140-180 | Homeowner property intelligence. Free: equipment passport, service history, docs. Premium ($7.99/mo): AI advisor, predictive maintenance, contractor matching. R1f deferred items. |
 | F9 | Hiring System | ~18-22 | Multi-channel (Indeed/LinkedIn/ZipRecruiter), applicant pipeline, Checkr background checks, E-Verify (free), onboarding integration. |
-| F10 | ZDocs + ZSheets | TBD | PDF-first document suite. Templates for all trade documents. E-signatures (DocuSign). SECOND TO LAST. |
+| F10 | ZForge | TBD | PDF-first document suite. Templates for all trade documents. E-signatures (DocuSign). SECOND TO LAST. |
 
 ### PHASE G: DEBUG, QA & HARDENING
 
@@ -209,18 +211,20 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 
 *Full spec: `Expansion/39_TPA_MODULE_SPEC.md` | Legal: `memory/tpa-legal-assessment.md`*
 
-### PHASE P: PROPERTY INTELLIGENCE ENGINE (ZScan) — after T
+### PHASE P: PROPERTY INTELLIGENCE ENGINE (Recon) — after T
 
 | # | Task | Hours | Details |
 |---|------|:-----:|---------|
-| P1 | Foundation + Google Solar | ~10 | Core tables (property_scans, roof_measurements, roof_facets), Google Solar API, CRM card. |
-| P2 | Property Data + Parcel | ~8 | ATTOM + Regrid + Microsoft footprints + USGS elevation. Full property report. |
-| P3 | Walls + Trade Data | ~10 | Wall derivation, 10 trade pipelines (roofing/siding/gutters/solar/painting/landscaping/fencing/concrete/HVAC/electrical). |
-| P4 | Estimate Integration | ~8 | ZScan → D8 estimate engine. Auto-populate estimates from scans. |
-| P5 | Material Ordering | ~8 | Measurements → material list → Unwrangle/ABC Supply pricing → one-click order. |
-| P6 | Mobile + Verification | ~10 | Mobile scan screen, swipeable results, on-site verification workflow. |
-| P7 | Portal Integration | ~8 | Team/Client/CRM portal integration. Pre-scan for leads. PDF export. |
-| P8 | Polish + Build | ~6 | Caching, rate limiting, attribution, disclaimers, clean builds. |
+| P1 | Foundation + Google Solar + Confidence Engine | ~12 | Core tables (property_scans, roof_measurements, roof_facets), Google Solar API, confidence scoring, imagery date transparency, CRM card. |
+| P2 | Property Data + Parcel + Multi-Structure | ~10 | ATTOM + Regrid + Microsoft footprints + USGS elevation + multi-structure detection. Full property report with structure selector. |
+| P3 | Walls + Trade Data | ~10 | Wall derivation, 10 trade pipelines (roofing/siding/gutters/solar/painting/landscaping/fencing/concrete/HVAC/electrical). Per-structure measurements. |
+| P4 | Estimate Integration + Supplement Checklist | ~10 | Recon → D8 estimate engine. Auto-populate estimates. Insurance supplement checklist (auto-detect missed items: starter, ridge cap, drip edge, I&W, flashing, pipe boots, O&P). TPA integration. |
+| P5 | Lead Scoring + Batch Area Scanning | ~10 | Lead pre-qualification (0-100 score, Hot/Warm/Cold). Batch area scan (draw polygon → scan all parcels → ranked lead list). CSV export. |
+| P6 | Material Ordering | ~8 | Measurements → material list → Unwrangle/ABC Supply pricing → one-click order. |
+| P7 | Mobile + Verification | ~10 | Mobile scan screen, swipeable results, on-site verification workflow, lead score display. |
+| P8 | Portal Integration | ~8 | Team/Client/CRM/Ops portal integration. Recon sidebar section. Analytics. |
+| P9 | Storm Assessment + Area Intelligence | ~10 | NOAA weather data, damage probability model, storm heat maps, canvass optimization, TPA claim pipeline. |
+| P10 | Polish + Build + Accuracy Benchmarking | ~8 | Caching, rate limiting, attribution, disclaimers, accuracy benchmarking (20+ properties), clean builds. |
 
 *Full spec: `Expansion/40_PROPERTY_INTELLIGENCE_SPEC.md` | API research: `memory/property-intelligence-research.md`*
 
@@ -249,7 +253,7 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | U1 | Portal Unification | ~16 | Merge team+client portals into web-portal at zafto.cloud. Single codebase, role-based routing. |
 | U2 | Nav Redesign | ~14 | Supabase-style sidebar across all portals. Z button rethink. |
 | U3 | Permission Engine + Enterprise Customization | ~16 | Granular permission system. Enterprise feature toggles. |
-| U4 | ZBooks Completion | ~14 | Complete ZBooks to replace QuickBooks. Bank sync, reconciliation, full GL. |
+| U4 | Ledger Completion | ~14 | Complete Ledger to replace QuickBooks. Bank sync, reconciliation, full GL. |
 | U5 | Dashboard Restoration + Reports | ~12 | Live data dashboards replacing mock data. Real-time reports. |
 | U6 | PDF Generation + Email Sending + Dead Buttons | ~14 | Invoice/bid/estimate PDF generation. SendGrid email delivery. Wire remaining dead buttons. |
 | U7 | Payment Flow + Shell Pages | ~12 | Stripe payment flow completion. Fill remaining shell pages with real functionality. |
@@ -260,8 +264,9 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 
 | # | Task | Hours | Details |
 |---|------|:-----:|---------|
-| E-review | Audit all premature E work | TBD | Deep spec session with owner. AI must know every feature, table, screen — including TPA module + ZScan + Sketch Engine + Phase U unification. Rebuild with full platform context. |
-| E1-E4 | Full AI implementation | TBD | Universal AI, Z Console, Command Center, Growth Advisor. Every feature AI-enhanced. |
+| E-review | Audit all premature E work | ~8 | Deep spec session with owner. AI must know every feature, table, screen — including TPA module + Recon + Sketch Engine + Phase U unification. Rebuild with full platform context. |
+| BA1-BA8 | Plan Review | ~128 | AI blueprint reading + automated takeoff. 6 tables, 3 EFs. Hybrid CV+LLM pipeline (MitUNet segmentation + YOLOv12 detection + Claude intelligence). RunPod Serverless GPU. Trade intelligence, assembly expansion, estimate + material order generation, revision comparison, SK floor plan generation. Spec: `Expansion/47_BLUEPRINT_ANALYZER_SPEC.md` |
+| E1-E4 | Full AI implementation | TBD | Universal AI, Dashboard, Command Center, Growth Advisor. Every feature AI-enhanced. Rebuilt with full platform knowledge including BA. |
 
 ### >>> LAUNCH <<<
 
@@ -279,117 +284,128 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 ### Mobile App Features
 | Feature | Status | Phase |
 |---------|--------|-------|
-| Home Dashboard | UI only, mock data | B1 |
-| Bids (list/detail/create) | UI only, Hive local | B1 |
-| Jobs (list/detail/create) | UI only, Hive local | B1 |
-| Invoices (list/detail/create) | UI only, Hive local | B1 |
-| Customers (list/detail) | UI only, Hive local | B1 |
-| Calendar | UI only, mock data | B1 |
-| Time Clock + GPS | UI only, local state | B1 |
-| RBAC (role.dart models) | Models exist, not enforced | B1 |
-| Onboarding | UI only, no company creation | B1 |
-| Command Palette (Cmd+K) | Only searches old registry | B6 |
-| AI Chat | Works (Cloud Function) | E1 |
-| AI Scanner (5 functions) | Works (Cloud Functions) | E1 |
-| Contract Analyzer | Works (Cloud Function) | E1 |
+| Home Dashboard | **DONE** — R1 remake, role-based | B1 |
+| Bids (list/detail/create) | **DONE** — Supabase wired | B1 |
+| Jobs (list/detail/create) | **DONE** — Supabase wired | B1 |
+| Invoices (list/detail/create) | **DONE** — Supabase wired | B1 |
+| Customers (list/detail) | **DONE** — Supabase wired | B1 |
+| Calendar | **DONE** — Supabase wired | B1 |
+| Time Clock + GPS | **DONE** — Supabase wired | B1 |
+| RBAC (role.dart models) | **DONE** — Enforced, 7 roles | B1 |
+| Onboarding | **DONE** — Company creation wired | B1 |
+| Command Palette (Cmd+K) | **DONE** — Business context wired | B6 |
+| AI Chat | DONE (S80) — PAUSED (Phase E) | E1 |
+| AI Scanner (5 functions) | DONE (S80) — PAUSED (Phase E) | E1 |
+| Contract Analyzer | DONE (S80) — PAUSED (Phase E) | E1 |
 
-### Field Tools (14) — ALL UI SHELLS
+### Field Tools (19) — ALL WIRED TO SUPABASE
 | # | Tool | Status | Phase |
 |---|------|--------|-------|
-| 1 | Job Site Photos | UI only, data evaporates | B2 |
-| 2 | Before/After | UI only, data evaporates | B2 |
-| 3 | Defect Markup | UI only, data evaporates | B2 |
-| 4 | Voice Notes | UI only, fake playback | B2 |
-| 5 | Mileage Tracker | UI only, data evaporates | B2 |
-| 6 | LOTO Logger | UI only, no save | B2 |
-| 7 | Incident Report | UI only, fake submit | B2 |
-| 8 | Safety Briefing | UI only, no records | B2 |
-| 9 | Sun Position | Standalone utility (OK) | — |
-| 11 | Confined Space Timer | UI only, no OSHA logging | B2 |
-| 12 | Client Signature | UI only, fake save | B2 |
-| 13 | Receipt Scanner | UI only, fake OCR | B2 |
-| 14 | Level & Plumb | UI only, no save | B2 |
+| 1 | Job Site Photos | **DONE** — Supabase + Storage | B2 |
+| 2 | Before/After | **DONE** — Supabase + Storage | B2 |
+| 3 | Defect Markup | **DONE** — Supabase + Storage | B2 |
+| 4 | Voice Notes | **DONE** — Supabase + Storage | B2 |
+| 5 | Mileage Tracker | **DONE** — Supabase wired | B2 |
+| 6 | LOTO Logger | **DONE** — Supabase wired | B2 |
+| 7 | Incident Report | **DONE** — Supabase wired | B2 |
+| 8 | Safety Briefing | **DONE** — Supabase wired | B2 |
+| 9 | Sun Position | **DONE** — Standalone utility | — |
+| 10 | Level & Plumb | **DONE** — Supabase wired | B2 |
+| 11 | Confined Space Timer | **DONE** — Supabase wired | B2 |
+| 12 | Client Signature | **DONE** — Supabase + Storage | B2 |
+| 13 | Receipt Scanner | **DONE** — Supabase + Storage | B2 |
+| 14 | Materials/Equipment Tracker | **DONE** — Built from scratch | B3 |
+| 15 | Daily Job Log | **DONE** — Built from scratch | B3 |
+| 16 | Punch List / Task Checklist | **DONE** — Built from scratch | B3 |
+| 17 | Change Order Capture | **DONE** — Built from scratch | B3 |
+| 18 | Job Completion Workflow | **DONE** — Built from scratch | B3 |
+| 19 | Field Tool Hub | **DONE** — All tools accessible | B2 |
 
-### Missing Tools (Build from scratch)
-| Tool | Purpose | Phase |
-|------|---------|-------|
-| Materials/Equipment Tracker | Log what was installed | B3 |
-| Daily Job Log | Task-level documentation | B3 |
-| Punch List / Task Checklist | Multi-task job tracking | B3 |
-| Change Order Capture | Scope change documentation | B3 |
-| Job Completion Workflow | Required steps before closing | B3 |
+### Web CRM (107 routes, 68 hooks) — ALL WIRED TO SUPABASE
+| Group | Routes | Status | Phase |
+|-------|:------:|--------|-------|
+| Operations (Dashboard, Leads, Bids, Jobs, Change Orders, Invoices) | 12 | **DONE** | B4 |
+| Scheduling (Calendar, Inspections, Permits, Time Clock) | 4 | **DONE** | B4 |
+| Customers (List, Detail, Create, Comms, Agreements, Warranties) | 6 | **DONE** | B4 |
+| Resources (Team, Equipment, Inventory, Vendors, Purchase Orders) | 5 | **DONE** | B4 |
+| Office (Ledger, Price Book, Documents, Reports, Automations, ZForge) | 6+ | **DONE** | B4/D4/F10 |
+| Insurance/Claims | 4+ | **DONE** | D2/D3 |
+| Certifications | 2+ | **DONE** | D7 |
+| Property Management | 14 | **DONE** | D5 |
+| Estimates | 5+ | **DONE** | D8 |
+| Walkthroughs | 3+ | **DONE** | E6 |
+| F-phase (Phone, Meetings, Toolkit, Integrations, Marketplace, Hiring) | 30+ | **DONE** | F1-F10 |
+| Z Intelligence (AI panels) | 6 | DONE — PAUSED (Phase E) | E1 |
+| Settings + Auth | 2 | **DONE** | B4 |
 
-### Web CRM (40 pages) — ALL MOCK DATA
-| Group | Pages | Phase |
-|-------|:-----:|-------|
-| Operations (Dashboard, Leads, Bids x3, Jobs x3, Change Orders, Invoices x3) | 12 | B4 |
-| Scheduling (Calendar, Inspections, Permits, Time Clock) | 4 | B4 |
-| Customers (Customers x3, Comms, Service Agreements, Warranties) | 6 | B4 |
-| Resources (Team, Equipment, Inventory, Vendors, Purchase Orders) | 5 | B4 |
-| Office (ZBooks, Price Book, Documents, Reports, Automations) | 5 | B4/D4 |
-| Z Intelligence (AI, Voice, Bid Brain, Job Cost Radar, Equip Memory, Revenue Autopilot) | 6 | E1 |
-| Settings + Auth | 2 | B4 |
+### Client Portal (38 routes, 21 hooks) — ALL WIRED TO SUPABASE
+| Tab | Routes | Status | Phase |
+|-----|:------:|--------|-------|
+| Auth + Home | 2 | **DONE** — Magic link auth | B6 |
+| Projects (List, Detail, Estimate, Agreement, Live Tracker) | 5 | **DONE** | B6 |
+| Payments (Invoices, Detail, History, Methods) | 4 | **DONE** | B6 |
+| My Home (Profile, Equipment, Service History, Maintenance) | 4+ | **DONE** | B6/F7 |
+| Menu (Messages, Documents, Request, Referrals, Review, Settings) | 6 | **DONE** | B6 |
+| F-phase (SMS, Meetings, Booking, Home Portal, Get Quotes, Find a Pro) | 8+ | **DONE** | F1/F3/F7 |
+| Walkthroughs + Estimates | 3+ | **DONE** | E6/D8 |
 
-### Client Portal (21 pages) — ALL MOCK DATA
-| Tab | Pages | Phase |
-|-----|:-----:|-------|
-| Auth + Home | 2 | B6 |
-| Projects (List, Detail, Estimate, Agreement, Live Tracker) | 5 | B6 |
-| Payments (Invoices, Detail, History, Methods) | 4 | B6 |
-| My Home (Profile, Equipment List, Equipment Detail) | 3 | B6 |
-| Menu (Messages, Documents, Request Service, Referrals, Review Builder, Settings) | 6 | B6 |
+### Employee Field Portal (team.zafto.cloud) — 36 ROUTES, ALL WIRED
+| Group | Routes | Status | Phase |
+|-------|:------:|--------|-------|
+| Auth + Dashboard (login, home, schedule view) | 3 | **DONE** | B5 |
+| Jobs (assigned jobs, job detail, time clock, GPS check-in) | 4 | **DONE** | B5 |
+| Field Tools (photos, voice notes, signatures, receipts, level — web versions) | 5 | **DONE** | B5 |
+| Documents (change orders, daily logs, punch lists, materials log) | 4 | **DONE** | B5 |
+| AI Troubleshooting Center | 3 | DONE — PAUSED (Phase E) | E1 |
+| Collaboration (meetings, team chat, notifications) | 3 | **DONE** | B5/F3 |
+| F-phase (Phone, Pay Stubs, My Vehicle, Training, My Documents) | 5+ | **DONE** | F1/F5 |
+| Bids (field bid creation, estimate builder) | 2 | **DONE** | B5 |
+| Settings (profile, preferences, notification settings) | 1 | **DONE** | B5 |
 
-### Employee Field Portal (team.zafto.app) — NOT BUILT
-| Group | Pages | Phase |
-|-------|:-----:|-------|
-| Auth + Dashboard (login, home, schedule view) | 3 | B5 |
-| Jobs (assigned jobs, job detail, time clock, GPS check-in) | 4 | B5 |
-| Field Tools (photos, voice notes, signatures, receipts, level — web versions) | 5 | B5 |
-| Documents (change orders, daily logs, punch lists, materials log) | 4 | B5 |
-| AI Troubleshooting Center (multi-trade diagnostics, code lookup, photo diagnosis, step-by-step repair guides, parts ID) | 3 | E1 |
-| Collaboration (meeting rooms, team chat, notifications) | 3 | B5/F3 |
-| Bids (field bid creation, AI bid assist, estimate builder) | 2 | B5/E1 |
-| Settings (profile, preferences, notification settings) | 1 | B5 |
-
-### Ops Portal (72 pages) — SPEC ONLY
-| Section | Pages | Phase |
-|---------|:-----:|-------|
-| Command Center, Inbox, Accounts, Support, Health, Revenue, Services, AI | 18 | C3 |
-| Marketing Engine, Growth CRM, Treasury, AI Sandbox | 23 | F8 |
-| Legal, Dev Terminal, Ads, SEO, Vault, Referrals, Analytics | 23 | F8 |
-| Marketplace Ops | 8 | F8 |
+### Ops Portal (26 routes Phase 1 DONE, 54 routes Phases 2-4 POST-LAUNCH)
+| Section | Routes | Status | Phase |
+|---------|:------:|--------|-------|
+| Command Center, Inbox, Accounts, Support, Health, Revenue, Services, AI | 18 | **DONE** | C3 |
+| Phone/Meeting Analytics, Payroll, Fleet, Hiring, Email, Marketplace analytics | 8 | **DONE** | F1-F9 |
+| Marketing Engine, Growth CRM, Treasury, AI Sandbox | 23 | POST-LAUNCH | F8 |
+| Legal, Dev Terminal, Ads, SEO, Vault, Referrals, Analytics | 23 | POST-LAUNCH | F8 |
+| Marketplace Ops | 8 | POST-LAUNCH | F8 |
 
 ### Expansion Features — EVERY ONE ACCOUNTED FOR
-| Feature | Source | Hours | Phase |
-|---------|--------|:-----:|-------|
-| Job Type System (3 types) | Locked/37 | ~69 | D1 |
-| Restoration/Insurance Module | Locked/36 | ~78 | D2 |
-| Insurance Verticals (4) | Expansion/38 | ~107 | D3 |
-| ZBooks (full accounting, QB replacement) | Expansion/16 App G-J | TBD | D4 |
-| **Property Management System** | **NEW** | **TBD** | **D5** |
-| Enterprise Foundation | Expansion | ~20 | D6 |
-| Certification System | Expansion | ~12 | D7 |
-| **Estimate Engine (Two-Mode)** | **SPRINT/07_ESTIMATE_ENGINE_SPEC.md** | **~100+** | **D8** |
-| Universal AI Architecture (6 layers) | Expansion/35 | TBD | E1 |
-| Z Console + Artifacts | Expansion/41 | TBD | E2 |
-| Unified Command Center (7 concepts) | Expansion/40 | TBD | E3 |
-| Growth Advisor | Expansion/39 | ~88 | E4 |
-| Phone System (SignalWire VoIP/SMS/Fax) | Expansion/31 | ~40-55 | F1 |
-| Website Builder V2 | Expansion/28 | TBD | F2 |
-| Meeting Room System | Expansion/42 | ~55-70 | F3 |
-| Mobile Field Toolkit (24 tools) | Expansion/43 | ~89-107 | F4 |
-| Business OS Expansion (9 systems) | Expansion/27 | TBD | F5 |
-| Marketplace | Expansion/33 | TBD | F6 |
-| ZAFTO Home Platform | Expansion/16 | TBD | F7 |
-| Ops Portal Phases 2-4 | Locked/34 | ~111 | F8 |
-| Multi-Channel Hiring System | Expansion/28 | ~18-22 | F9 |
-| ZDocs + ZSheets (PDF-first) | Master Plan | TBD | F10 |
-| **ZScan / Property Intelligence Engine** | **Expansion/40** | **~68** | **P** |
-| **CAD-Grade Sketch Engine** | **Expansion/46** | **~176** | **SK** |
+| Feature | Source | Hours | Status | Phase |
+|---------|--------|:-----:|--------|-------|
+| Job Type System (3 types) | Locked/37 | ~69 | **DONE** (S62) | D1 |
+| Restoration/Insurance Module | Locked/36 | ~78 | **DONE** (S63-64,68) | D2 |
+| Insurance Verticals (4) | Expansion/38 | ~107 | **DONE** (S69) | D3 |
+| Ledger (full accounting) | 07_SPRINT_SPECS D4a-D4p | ~80+ | **DONE** (S70) | D4 |
+| Property Management System | 07_SPRINT_SPECS D5a-D5j | ~80+ | **DONE** (S71-S77, 18 tables) | D5 |
+| Enterprise Foundation | Expansion | ~20 | **DONE** (S65-66) | D6 |
+| Certification System | Expansion | ~12 | **DONE** (S67-68) | D7 |
+| Estimates (Two-Mode) | 07_SPRINT_SPECS D8a-D8j | ~100+ | **DONE** (S85-S89, 10 tables, 5 EFs) | D8 |
+| Universal AI Architecture (6 layers) | Expansion/35 | TBD | PAUSED (Phase E) | E1 |
+| Dashboard + Artifacts | Expansion/41 | TBD | PAUSED (Phase E) | E2 |
+| Dashboard (7 concepts) | Expansion/40_UNIFIED_COMMAND_CENTER | TBD | PAUSED (Phase E) | E3 |
+| Growth Advisor | Expansion/39_GROWTH_ADVISOR | ~88 | PAUSED (Phase E, uncommitted) | E4 |
+| Calls (SignalWire VoIP/SMS/Fax) | Expansion/31 | ~40-55 | **DONE** (S90) | F1 |
+| Website Builder V2 | Expansion/28_WEBSITE_BUILDER_V2 | TBD | POST-LAUNCH (S94 directive) | F2 |
+| Meetings | Expansion/42 | ~55-70 | **DONE** (S90) | F3 |
+| Mobile Field Toolkit (24 tools) | Expansion/43 | ~89-107 | **DONE** (S90) | F4 |
+| Integrations (9 systems) | Expansion/27 | ~180+ | **DONE** (S90) | F5 |
+| Marketplace | Expansion/33 | ~80-120 | **DONE** (S90) | F6 |
+| Home Portal | Expansion/16_ZAFTO_HOME_PLATFORM | ~140-180 | **DONE** (S90) | F7 |
+| Ops Portal Phases 2-4 | Locked/34 | ~111 | POST-LAUNCH | F8 |
+| Multi-Channel Hiring System | Expansion/44_HIRING_SYSTEM | ~18-22 | **DONE** (S90) | F9 |
+| ZForge (PDF-first) | Master Plan | TBD | **DONE** (S90) | F10 |
+| **Programs Module** | **Expansion/39_TPA_MODULE_SPEC** | **~80** | **SPEC'D — NEXT** | **T** |
+| **Recon / Property Intelligence** | **Expansion/40_PROPERTY_INTELLIGENCE_SPEC** | **~96** | **SPEC'D** | **P** |
+| **CAD-Grade Sketch Engine** | **Expansion/46_SKETCH_ENGINE_SPEC** | **~176** | **SPEC'D** | **SK** |
+| **Gantt & CPM Scheduling Engine** | **Expansion/48_GANTT_CPM_SCHEDULER_SPEC** | **~124** | **SPEC'D (S97)** | **GC** |
+| **Unification & Feature Completion** | **NEEDS SPEC SESSION** | **~120** | **PLANNED** | **U** |
+| **Plan Review (AI Takeoff)** | **Expansion/47_BLUEPRINT_ANALYZER_SPEC** | **~128** | **SPEC'D (S97)** | **E/BA** |
 
 ---
 
-## EMPLOYEE FIELD PORTAL (team.zafto.app)
+## EMPLOYEE FIELD PORTAL (team.zafto.cloud)
 
 ### What It Is
 A full-powered web portal for field employees (technicians, apprentices, crew leads). Not a dumbed-down view — a purpose-built field operations suite. Everything a tech needs in the field, nothing they shouldn't see.
@@ -413,7 +429,7 @@ A full-powered web portal for field employees (technicians, apprentices, crew le
 | Change Orders | Create/submit change orders from field, capture scope changes with photos + signatures |
 | Materials Log | Log materials/equipment used per job, scan barcodes, track quantities |
 | Bid Creation | Build estimates in the field, add line items, capture photos for scope |
-| Meeting Rooms | Join team meetings, safety briefings, training sessions |
+| Meetings | Join team meetings, safety briefings, training sessions |
 | Notifications | Push + in-app: new job assignments, schedule changes, messages from office |
 | Profile/Settings | Personal info, notification preferences, theme, language |
 
@@ -435,7 +451,7 @@ Owner/admin sets per-role or per-user:
 - Whether they can create bids (or just view)
 - Whether they can approve change orders (or just create/submit)
 - Access to AI troubleshooting (tier-gated by subscription)
-- Meeting room access
+- Meetings access
 - Customer contact info visibility
 
 ### Tech Stack
@@ -449,39 +465,29 @@ Owner/admin sets per-role or per-user:
 
 ---
 
-## PROPERTY MANAGEMENT SYSTEM (NEW — Spec needed)
+## PROPERTY MANAGEMENT SYSTEM — DONE (D5, S71-S77)
 
 ### The Moat
 Most property management software (AppFolio, Buildium, TenantCloud) is built for property managers who HIRE contractors. ZAFTO is built for contractors who ARE the property owner. The maintenance loop closes internally:
 
 **Tenant submits maintenance request → becomes a job in ZAFTO → contractor assigns to crew or does it themselves → no middleman, no external platform.**
 
-### Core Features (to be spec'd)
+### Built (18 tables, 14 CRM pages, 11 hooks, 10 Flutter screens, 3 EFs)
 - Tenant management (lease terms, contact info, payment history)
 - Lease tracking (start/end dates, renewal alerts, rent increases)
-- Rent collection (Stripe, auto-charge, late fees, receipts)
+- Rent collection (Stripe integration deferred to Phase U payment flow)
 - Maintenance requests → auto-create ZAFTO jobs
 - Property financials (income/expenses per property, NOI, cap rate)
 - Vacancy tracking + listing
-- Tenant screening (credit/background check integration)
 - Move-in/move-out inspections (ties to field tools)
 - Property inspections (ties to Mobile Field Toolkit)
 - Multi-property portfolio dashboard
-- Tax documents (1099 for contractors, Schedule E data for ZBooks)
-
-### Scaling
-- Solo landlord (1-5 units): Simple view, basic features
-- Small portfolio (5-50 units): Full property management
-- Large portfolio (50-500+ units): Multi-property analytics, team assignments, maintenance routing
 
 ### Integration with ZAFTO
-- ZBooks: Rental income/expenses auto-categorize
-- Phone System: Tenant communication via business line
-- Website Builder: Property listing pages
+- Ledger: Rental income/expenses auto-categorize
+- Calls: Tenant communication via business line
 - Field Tools: Inspection documentation
-- Z Intelligence: Maintenance cost predictions, vacancy forecasting
-
-**NEEDS DEDICATED SPEC SESSION. Do NOT build without full spec.**
+- Z Intelligence: Maintenance cost predictions, vacancy forecasting (Phase E)
 
 ---
 
@@ -492,18 +498,18 @@ Most property management software (AppFolio, Buildium, TenantCloud) is built for
 | Dashboard, Jobs, Invoices, Customers | Y | Y | Y | Y |
 | PDF invoices, Price book | Y | Y | Y | Y |
 | Command palette | Y | Y | Y | Y |
-| ZBooks (full accounting) | Y | Y | Y | Y |
-| Z Console (persistent AI) | Y | Y | Y | Y |
+| Ledger (full accounting) | Y | Y | Y | Y |
+| Dashboard (persistent AI) | Y | Y | Y | Y |
 | Team members | 1 | 5 | 15 | Unlimited |
 | AI bid generator | 5/mo | 50/mo | Unlimited | Unlimited |
 | Dispatch board + Live map | — | — | Y | Y |
-| Phone System lines | 1 | 5 | 15 | Unlimited |
+| Calls lines | 1 | 5 | 15 | Unlimited |
 | Fax (send/receive) | Y | Y | Y | Y |
 | Website Builder | — | $19.99/mo | $19.99/mo | Included |
-| Estimate Engine (Regular Bids) | Y | Y | Y | Y |
+| Estimates (Regular Bids) | Y | Y | Y | Y |
 | Insurance Claims Module + ESX Export | — | Y | Y | Y |
 | Property Management | — | 10 units | 100 units | Unlimited |
-| Meeting Rooms | Y | Y | Y | Y |
+| Meetings | Y | Y | Y | Y |
 | Custom roles | — | — | — | Y |
 | API access | — | — | — | Y |
 
@@ -538,20 +544,20 @@ See Circuit Blueprint for complete schema mapping.
 ## CRITICAL RULES
 
 1. **NO DRIFT** — Update these docs, never create new ones
-2. **AI goes TRULY LAST** — After ALL of T + P + SK + U + G. Not after D. After EVERYTHING. AI must know every feature, every table, every screen. Deep spec session before building. NEVER again start AI before platform is complete.
+2. **AI goes TRULY LAST** — After ALL of T + P + SK + GC + U + G. Not after D. After EVERYTHING. AI must know every feature, every table, every screen. Deep spec session before building. NEVER again start AI before platform is complete.
 3. **ZAFTO wordmark** — NOT just the Z. Z is for AI/premium.
-4. **ZBooks** — Not "ZAFTO Books"
+4. **Ledger** — Not "ZAFTO Books"
 5. **Stripe feel** — Premium, clean, professional everywhere
 6. **RLS on every table** — Tenant isolation at database level
 7. **Test during wiring** — Not separately
 8. **Circuit Blueprint is LIVING** — Update as connections are made
 9. **Property Management** — DONE (D5, S71-S77). 18 tables, full moat.
-10. **MS Office: SCRAPPED** — ZDocs/ZSheets only, build LAST (F10)
+10. **MS Office: SCRAPPED** — ZForge only, build LAST (F10)
 11. **Static content: REMOVED** — Claude AI handles natively
 12. **Offline-first** — PowerSync (SQLite <-> PostgreSQL)
 13. **Progressive disclosure** — Clean by default, complexity activates per-need
 14. **Nothing ships without human approval** — Every AI artifact needs contractor review
-15. **BUILD ORDER: A → B → C → D → F → T → P → SK → U → G → E → LAUNCH** — Platform first. Build all features (T+P+SK). Unify portals + complete features (U). QA/Harden everything at once (G). AI last (E).
+15. **BUILD ORDER: A → B → C → D → F → T → P → SK → GC → U → G → E (E-review → BA1-BA8 → E1-E4) → LAUNCH** — Platform first. Build all features (T+P+SK+GC). Unify portals + complete features (U). QA/Harden everything at once (G). AI last (E), including Plan Review (BA).
 
 ---
 

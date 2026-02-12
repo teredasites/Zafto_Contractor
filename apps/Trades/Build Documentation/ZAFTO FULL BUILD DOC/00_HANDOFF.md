@@ -1,6 +1,6 @@
 # ZAFTO SESSION HANDOFF
 ## THE ONLY DOC YOU READ FIRST — EVERY SESSION
-### Last Updated: February 9, 2026 (Session 95)
+### Last Updated: February 11, 2026 (Session 97)
 
 ---
 
@@ -18,23 +18,23 @@
 
 | Field | Value |
 |-------|-------|
-| **Sprint** | **PHASE F COMPLETE (code).** F1-F10 ALL DONE. FM manual steps remain. Phase T (TPA Module) is NEXT. **Phase T + Phase P (ZScan) + Phase SK (Sketch Engine) ALL SPEC'D. Phase U (Unification & Feature Completion) added (9 sprints, ~120 hrs). Build order: T → P → SK → U → G → E → LAUNCH.** |
-| **Sub-step** | Phase F finished. All 4 apps LIVE on Vercel + Cloudflare. Codemagic CI/CD set up. TPA Module spec'd (S92). ZScan spec'd (S93). Sketch Engine spec'd (S94). All portals deployed + branded (S95). Phase U (Unification & Feature Completion) added (S96). Next: Phase T (TPA) → Phase P (ZScan) → Phase SK (Sketch Engine) → Phase U (Unification) → Phase G (QA/Hardening of ALL features) → Phase E (AI) → LAUNCH. |
-| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → Phase T (next unchecked: T1). Phase P added (8 sprints, ~68 hours). Phase SK added (11 sprints, ~176 hours). Phase U added (9 sprints, ~120 hours). Phase G expanded with T/P/SK/U testing. |
-| **Status** | Phases A-D + F ALL DONE. R1 DONE. FM code done. Phase E PAUSED. ~169 tables. 48 migration files. 53 Edge Functions. **107 CRM pages. 33 team pages. 36 client pages. 26 ops pages.** Codemagic Android debug build PASSING. **Phase T (TPA Module) spec complete — 17 tables, 3 EFs, 10 sprints. Phase P (ZScan) spec complete — 8 tables, 4 EFs, 8 sprints. Phase SK (Sketch Engine) spec complete — 3 tables, 11 sprints, ~176 hours. Phase U (Unification & Feature Completion) — 9 sprints, ~120 hours.** |
-| **Last Completed** | S95: All 4 apps deployed to Vercel with custom domains on Cloudflare (zafto.cloud, team.zafto.cloud, client.zafto.cloud, ops.zafto.cloud). All login pages redesigned (Stripe/Vercel quality). Animated Z offset echo logo unified across all portals. Dark mode default (CRM/Team/Ops), light (Client). Supabase auth config fixed (site_url, redirect URLs, email templates). Admin account: Robert → Damian Tereda. S94: Sketch Engine spec'd. S93: CRM dead button fix. ZScan spec'd. |
-| **Session Count** | 95 |
-| **Tables** | ~169 (Phase T will add ~17, Phase P will add ~8, Phase SK will add ~3) |
-| **Migration Files** | 48 (Phase T will add ~8, Phase P will add ~4, Phase SK will add ~1) |
+| **Sprint** | **PHASE F COMPLETE (code).** F1-F10 ALL DONE. FM manual steps remain. Phase T (Programs) is NEXT. **Phase T + Phase P (Recon) + Phase SK (Sketch Engine) ALL SPEC'D. Phase U (Unification & Feature Completion) added (9 sprints, ~120 hrs). Plan Review spec'd + sprint checklists written (S97, BA1-BA8, ~128 hrs). Build order: T → P → SK → GC (Schedule) → U → G → E (includes BA) → LAUNCH.** |
+| **Sub-step** | Phase F finished. All 4 apps LIVE on Vercel + Cloudflare. Plan Review spec'd (S97). Phase GC (Schedule) spec'd (S97). Phase U added (S96). Next: Phase T (TPA) → Phase P (Recon) → Phase SK (Sketch Engine) → Phase GC (Schedule) → Phase U (Unification) → Phase G (QA/Hardening) → Phase E (AI, includes Plan Review BA1-BA8) → LAUNCH. |
+| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → Phase T (next unchecked: T1). Phase P (10 sprints, ~96 hours — expanded S97: lead scoring, batch area scanning, storm intelligence, supplement checklist, multi-structure detection, confidence scoring). Phase SK (11 sprints, ~176 hours). **Phase GC (11 sprints, ~124 hours). Spec: `Expansion/48_GANTT_CPM_SCHEDULER_SPEC.md`.** Phase U (9 sprints, ~120 hours). **Phase E expanded: E-review + BA1-BA8 (~128 hrs) + E1-E4. Plan Review sprint checklists fully written.** |
+| **Status** | Phases A-D + F ALL DONE. R1 DONE. FM code done. Phase E PAUSED. ~173 tables. 48 migration files. 53 Edge Functions. **107 CRM pages. 36 team pages. 38 client pages. 26 ops pages.** Codemagic Android debug build PASSING. **Phase T (Programs) spec complete — 17 tables, 3 EFs, 10 sprints. Phase P (Recon) spec complete — 11 tables, 6 EFs, 10 sprints, ~96 hours (expanded S97: lead scoring, batch area scanning, storm intelligence, supplement checklist, multi-structure detection, confidence scoring). Phase SK (Sketch Engine) spec complete — 3 tables, 11 sprints, ~176 hours. Phase U (Unification & Feature Completion) — 9 sprints, ~120 hours. Plan Review spec complete — 6 tables, 3 EFs, 8 sprints, ~128 hours. Research validated (CV models, competitors, deployment costs).** |
+| **Last Completed** | S97: Plan Review spec'd (47_BLUEPRINT_ANALYZER_SPEC.md). BA1-BA8 sprint checklists written into 07_SPRINT_SPECS.md. Research validated: MitUNet (87.84% mIoU), YOLOv12, RunPod ($2/hr A100), PlanSwift 2026 cloud+AI, Bluebeam Max with Claude, 12 competitors analyzed. S96: Phase U added. CLAUDE.md created. S95: All 4 apps deployed to Vercel/Cloudflare. Login pages redesigned. |
+| **Session Count** | 97 |
+| **Tables** | ~173 (Phase T will add ~17, Phase P will add ~11, Phase SK will add ~3, Phase E/BA will add ~6) |
+| **Migration Files** | 48 (Phase T will add ~8, Phase P will add ~5, Phase SK will add ~1, Phase E/BA will add ~1) |
 
 ## CRITICAL: AI GOES LAST — BUILD ORDER CORRECTED (S80)
 
 **Owner directive (S80):** Phase E (AI Layer) was started prematurely. AI must be built AFTER every platform feature exists (Phase F) and is debugged (Phase G). AI needs to know every feature like the back of its hand — every table, every screen, every workflow — so it can do literally anything a user asks within the program. Deep AI spec session required before resuming Phase E.
 
-**Correct build order: A(DONE) → B(DONE) → C(DONE) → D(DONE — including D8 Estimate Engine) → R1(DONE) → FM(CODE DONE, manual pending) → F(ALL CODE COMPLETE) → T(TPA MODULE, NEXT) → P(ZSCAN, SPEC'D) → SK(SKETCH ENGINE, SPEC'D) → U(UNIFICATION & FEATURE COMPLETION) → G(QA/HARDEN EVERYTHING) → E(AI LAST) → LAUNCH. F2 (Website Builder) DEFERRED TO POST-LAUNCH (S94 owner directive). F8 (Ops Portal 2-4) also post-launch.**
+**Correct build order: A(DONE) → B(DONE) → C(DONE) → D(DONE — including D8 Estimates) → R1(DONE) → FM(CODE DONE, manual pending) → F(ALL CODE COMPLETE) → T(TPA MODULE, NEXT) → P(ZSCAN, SPEC'D) → SK(SKETCH ENGINE, SPEC'D) → GC(GANTT/CPM SCHEDULER, SPEC'D) → U(UNIFICATION & FEATURE COMPLETION) → G(QA/HARDEN EVERYTHING) → E(AI LAST: E-review → BA1-BA8 Plan Review → E1-E4) → LAUNCH. F2 (Website Builder) DEFERRED TO POST-LAUNCH (S94 owner directive). F8 (Ops Portal 2-4) also post-launch.**
 
 **Phase E premature work (committed, dormant in codebase):**
-- E1-E2: z-intelligence EF (14 tools), Z Console wired, z_threads/z_messages tables (S78)
+- E1-E2: z-intelligence EF (14 tools), Dashboard wired, z_threads/z_messages tables (S78)
 - E3: 4 troubleshooting EFs, team portal troubleshoot page, Flutter AI chat, client portal widget (S80)
 - E4: 5 growth advisor EFs + 4 CRM pages (S80, not deployed)
 - E5: Xactimate estimate engine — 5 tables, 6 EFs, UI across all apps (S79)
@@ -44,7 +44,7 @@
 
 **Phase D summary (ALL DONE):**
 - D1: Job Type System (S62). D2: Insurance/Restoration (S63-S64, S68). D3: Insurance Verticals (S69).
-- D4: ZBooks (S70) — 15 tables, 13 hooks, 13 pages, 5 EFs, 3 Flutter screens.
+- D4: Ledger (S70) — 15 tables, 13 hooks, 13 pages, 5 EFs, 3 Flutter screens.
 - D5: Property Management (S71-S77) — 18 tables, 14 CRM pages, 11 hooks, 10 Flutter screens, 3 EFs.
 - D6: Enterprise Foundation (S65-66). D7a: Certifications (S67-68).
 - R1: Flutter App Remake (S78) — 33 role screens, design system, AppShell.
@@ -59,24 +59,26 @@
 
 | Gap | Status | Sprint | Details |
 |-----|--------|--------|---------|
-| **Phase T: TPA Module** | **SPEC'D — NEXT** | T | Full spec in `Expansion/39_TPA_MODULE_SPEC.md`. ~17 tables, 3 EFs, ~80 hours. Legal assessment in `memory/tpa-legal-assessment.md`. Builds FIRST. |
-| **Phase P: ZScan/Property Intelligence** | **SPEC'D** | P | Full spec in `Expansion/40_PROPERTY_INTELLIGENCE_SPEC.md`. ~8 tables, 4 EFs, ~68 hours. API research in `memory/property-intelligence-research.md`. Builds after Phase T. |
+| **Phase T: Programs** | **SPEC'D — NEXT** | T | Full spec in `Expansion/39_TPA_MODULE_SPEC.md`. ~17 tables, 3 EFs, ~80 hours. Legal assessment in `memory/tpa-legal-assessment.md`. Builds FIRST. |
+| **Phase P: Recon/Property Intelligence** | **SPEC'D** | P | Full spec in `Expansion/40_PROPERTY_INTELLIGENCE_SPEC.md`. ~11 tables, 6 EFs, ~96 hours, 10 sprints. Lead scoring, batch area scanning, storm intelligence, supplement checklist, multi-structure detection, confidence scoring. API research in `memory/property-intelligence-research.md`. Builds after Phase T. |
 | **Phase SK: Sketch Engine** | **SPEC'D** | SK | Full spec in `Expansion/46_SKETCH_ENGINE_SPEC.md`. ~3 tables, ~176 hours, 11 sprints (SK1-SK11). LiDAR scan (Apple RoomPlan), trade layers (electrical/plumbing/HVAC/damage), Konva.js web editor, auto-estimate pipeline, export (PDF/PNG/DXF/FML), 3D visualization (three.js). Builds after Phase P. |
-| **Phase U: Unification & Feature Completion** | **PLANNED** | U | 9 sprints (U1-U9, ~120 hrs). Portal unification (merge team+client into web-portal at zafto.cloud), Supabase-style nav redesign, permission engine, ZBooks completion, dashboard restoration, PDF/email/dead buttons, payment flow, cross-system metrics, polish. |
+| **Phase GC: Schedule** | **SPEC'D** | GC | Full spec in `Expansion/48_GANTT_CPM_SCHEDULER_SPEC.md`. ~12 tables, 4 EFs, ~124 hours, 11 sprints (GC1-GC11). Full CPM scheduling engine with critical path, resource leveling, P6/MS Project import/export, real-time collaboration. DHTMLX Gantt PRO (web) + legacy_gantt_chart (Flutter). Builds after Phase SK. |
+| **Phase U: Unification & Feature Completion** | **PLANNED** | U | 10 sprints (U1-U10, ~128 hrs). Portal unification (merge team+client into web-portal at zafto.cloud), Supabase-style nav redesign, permission engine, Ledger completion, dashboard restoration, PDF/email/dead buttons, payment flow, cross-system metrics, polish, **embedded financing (Wisetack customer BNPL + Stripe Capital contractor instant pay — U10, ~8 hrs, zero lending risk, referral/tech partner model)**. |
 | **Phase G: QA/Hardening** | **AFTER ALL BUILDING** | G | Comprehensive QA of ALL features (A-F + T + P + SK + U). Button-click audit, security, performance, cross-feature integration testing. |
-| **Phase E AI (PAUSED)** | **DORMANT** | E | Code committed S78-S80. NOT to be resumed until after T+P+SK+U+G. Deep spec session required. |
+| **Plan Review** | **SPEC'D (S97)** | E/BA | Full spec in `Expansion/47_BLUEPRINT_ANALYZER_SPEC.md`. AI-powered blueprint reading + automated takeoff. ~6 tables, 3 EFs, 8 sprints (BA1-BA8, ~128 hrs). Hybrid CV+LLM pipeline (MitUNet + YOLOv12 + Claude). RunPod serverless GPU. Research validated. Builds within Phase E (after E-review). |
+| **Phase E AI (PAUSED)** | **DORMANT** | E | Code committed S78-S80. NOT to be resumed until after T+P+SK+GC+U+G. Deep spec session required. E-review + BA1-BA8 + E1-E4 sprint checklists all written. |
 | **Home Warranty Module** | **RESEARCHED** | — | Deep workflow research in `memory/home-warranty-contractor-workflow.md`. Legal assessment in `memory/home-warranty-legal-assessment.md`. Expansion spec + sprint specs NOT yet written. |
 | **CRM Dead Buttons** | **FIXED (S93)** | — | 24 dead buttons across bids, invoices, reports, sketch-bid pages. All wired to existing hook functions. Sketch-bid missing company_id on INSERT fixed. Build passes. |
-| F1: Phone System | **DONE** | F1 | 9 tables, 5 EFs, CRM+team+client+ops pages built. Manual deploy pending. |
+| F1: Calls | **DONE** | F1 | 9 tables, 5 EFs, CRM+team+client+ops pages built. Manual deploy pending. |
 | F2: Website Builder V2 | **DEFERRED POST-LAUNCH** | F2 | Owner directive S94: scrapped from pre-launch scope. Too much maintenance overhead for solo dev. Revisit post-launch with real contractor feedback + AI layer done. |
-| F3: Meeting Room System | **DONE** | F3 | 5 tables, 4 EFs, CRM+team+client+ops pages built. Manual deploy pending. |
+| F3: Meetings | **DONE** | F3 | 5 tables, 4 EFs, CRM+team+client+ops pages built. Manual deploy pending. |
 | F4: Mobile Field Toolkit | **DONE** | F4 | 10 tables, 3 EFs, CRM pages. Flutter mobile deferred. |
-| F5: Business OS Expansion | **DONE** | F5 | 8 migrations (25+ tables), 3 EFs, 8 CRM hooks+pages. CPA portal + route optimization deferred. |
+| F5: Integrations | **DONE** | F5 | 8 migrations (25+ tables), 3 EFs, 8 CRM hooks+pages. CPA portal + route optimization deferred. |
 | F6: Marketplace | **DONE** | F6 | 5 tables, 1 EF, CRM+client pages. AI scan = Phase E. |
-| F7: ZAFTO Home Platform | **DONE** | F7 | 5 tables, client portal hook + 4 pages. Premium tier = Phase E + RevenueCat. |
+| F7: Home Portal | **DONE** | F7 | 5 tables, client portal hook + 4 pages. Premium tier = Phase E + RevenueCat. |
 | F8: Ops Portal Phases 2-4 | NOT BUILT | F8 | After AI. Marketing engine, treasury, legal, dev terminal. |
 | F9: Hiring System | **DONE** | F9 | 3 tables, CRM hook+page. Checkr/E-Verify API deferred. |
-| F10: ZDocs + ZSheets | **DONE** | F10 | 3 tables, 1 EF, CRM hook+page, all portal expansion pages. |
+| F10: ZForge | **DONE** | F10 | 3 tables, 1 EF, CRM hook+page, all portal expansion pages. |
 | FM: Firebase Migration | **CODE DONE** | FM | Manual steps: retrieve Firebase secrets, deploy, update webhook URLs. |
 | Codemagic CI/CD | **PARTIAL** | S91 | Android debug build PASSING. iOS needs Apple code signing in Codemagic. No `codemagic.yaml` — using UI workflow. Android release keystore not created. |
 | C4: Security Hardening | PENDING | C4 | Email migration, passwords, YubiKeys. Pre-launch. |
@@ -89,19 +91,19 @@
 
 ## DRIFT PREVENTION RULES (ENFORCED — VIOLATION = DRIFT)
 
-1. **AI GOES TRULY LAST** — Phase E is PAUSED. Do NOT resume AI work until ALL of T + P + SK + U + G are complete. AI must know every feature. Owner will initiate a deep spec session before any AI work resumes. This is the #1 rule.
+1. **AI GOES TRULY LAST** — Phase E is PAUSED. Do NOT resume AI work until ALL of T + P + SK + GC + U + G are complete. AI must know every feature. Owner will initiate a deep spec session before any AI work resumes. This is the #1 rule.
 2. **SEQUENTIAL EXECUTION** — Execute sprint sub-steps IN ORDER per `07_SPRINT_SPECS.md`. Never skip ahead.
 3. **CHECK OFF AS YOU GO** — Mark `[x]` in `07_SPRINT_SPECS.md` for each item completed. If it's not checked, it's not done.
 4. **NO OUT-OF-ORDER WORK** — If user requests work from a later sprint, discuss it first. If proceeding, add steps to sprint specs BEFORE coding.
 5. **VERIFY BEFORE CLAIMING DONE** — Run `dart analyze`, `npm run build` (all portals), targeted code checks. No "should work" — prove it.
-5. **UPDATE THESE DOCS AT SESSION END:**
+6. **UPDATE THESE DOCS AT SESSION END:**
    - `07_SPRINT_SPECS.md` — check off completed items, add new items if scope expanded
    - THIS doc (`00_HANDOFF.md`) — update CURRENT EXECUTION POINT table + add session log entry
    - `03_LIVE_STATUS.md` — update quick status snapshot
    - `02_CIRCUIT_BLUEPRINT.md` — update if any wiring changed
-6. **NEVER CREATE PARALLEL DOCS** — One doc set. Update in place. No new tracking files.
-7. **SPRINT SPECS IS THE EXECUTION TRACKER** — Not this doc. This doc points TO the sprint specs. The sprint specs have the checklists.
-8. **HANDOFF IS THE ENTRY POINT** — Not the sprint specs, not the memory file, not CLAUDE.md. Start here, always.
+7. **NEVER CREATE PARALLEL DOCS** — One doc set. Update in place. No new tracking files.
+8. **SPRINT SPECS IS THE EXECUTION TRACKER** — Not this doc. This doc points TO the sprint specs. The sprint specs have the checklists.
+9. **HANDOFF IS THE ENTRY POINT** — Not the sprint specs, not the memory file, not CLAUDE.md. Start here, always.
 
 ---
 
@@ -111,12 +113,15 @@
 |-----|---------|-------------|
 | `00_HANDOFF.md` (THIS) | Entry point. Current position. Rules. Session log. | FIRST — every session |
 | `07_SPRINT_SPECS.md` | Execution tracker. Every step. Every checklist. | SECOND — find current sub-step |
-| `01_MASTER_BUILD_PLAN.md` | High-level build order. Feature inventory. | When planning new sprints |
-| `02_CIRCUIT_BLUEPRINT.md` | Wiring diagram. What connects to what. | When wiring changes |
+| `01_MASTER_BUILD_PLAN.md` | High-level build order. Feature inventory. Architecture. | When planning new sprints |
+| `02_CIRCUIT_BLUEPRINT.md` | Wiring diagram. What connects to what. All tables/EFs. | When wiring changes |
 | `03_LIVE_STATUS.md` | Quick status snapshot. Table counts. Build state. | Quick reference |
+| `04_EXPANSION_SPECS.md` | All 14 expansion + locked specs consolidated. | When referencing older specs |
 | `05_EXECUTION_PLAYBOOK.md` | Session protocol. Quality gates. | Reference |
 | `06_ARCHITECTURE_PATTERNS.md` | 14 code patterns with examples. | When implementing |
-| Expansion specs (38_, etc.) | Detailed feature specs. | When executing that sprint |
+| `08_INCIDENT_RESPONSE.md` | Severity levels, breach response, key rotation, rollback. | Reference / incidents |
+| `Expansion/` folder | Detailed feature specs (39_TPA, 40_PROPERTY_INTELLIGENCE, 46_SKETCH_ENGINE, 47_BLUEPRINT_ANALYZER, etc.) | When executing that sprint |
+| `memory/` files | Research notes (TPA legal, property intelligence, Xactimate, API costs, etc.) | Reference / context |
 
 ---
 
@@ -132,6 +137,30 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 ---
 
 ## SESSION LOG (History — do NOT use for execution decisions, use CURRENT EXECUTION POINT above)
+
+### Session 97 (Feb 11) — Plan Review Spec + Sprint Checklists + Research Validation
+
+**S97: Plan Review Spec Created:**
+- Full feature spec: `Expansion/47_BLUEPRINT_ANALYZER_SPEC.md` (680+ lines).
+- AI-powered blueprint reading + automated takeoff engine. Hybrid CV+LLM pipeline.
+- 6 new tables: blueprint_analyses, blueprint_sheets, blueprint_rooms, blueprint_elements, blueprint_takeoff_items, blueprint_revisions.
+- 3 Edge Functions: blueprint-upload, blueprint-process, blueprint-compare.
+- 8 sprints (BA1-BA8, ~128 hours). Phase E feature (builds after E-review).
+
+**S97: Research Validated (3 deep research agents):**
+- CV models: MitUNet (87.84% mIoU CubiCasa5K — outperforms U-Net++), YOLOv12 (attention-centric, better small object detection vs v8).
+- Deployment: RunPod Serverless ($1.89-2.49/hr A100, 40-50% cheaper than Modal). ~$0.02-0.05/sheet at scale.
+- Competitors: Togal ($2,700-3,588/yr, "basic measurement tool"), STACK ($1,899-5,499/yr), PlanSwift 2026 now cloud+AI, Bluebeam Max early 2026 with Anthropic Claude, Bild AI (YC), Kreo Caddie, ConX (Houzz acquisition). XactAI confirmed NOT takeoff. $3K-5K/yr competitor floor validated.
+
+**S97: BA1-BA8 Sprint Checklists Written:**
+- Full execution checklists added to `07_SPRINT_SPECS.md` inside Phase E section (after E-review, before E1-E4).
+- ~200 checklist items across 8 sprints covering: data model, file ingestion, CV pipeline (RunPod), MitUNet segmentation, YOLOv12 detection, trade intelligence, assembly expansion, estimate integration, revision comparison, floor plan generation (SK integration), review mode, export, testing.
+
+**S96: Phase U + CLAUDE.md (prior session):**
+- Phase U (Unification & Feature Completion) added: 9 sprints (U1-U9, ~120 hours).
+- CLAUDE.md created at repo root for Claude Code context.
+
+---
 
 ### Session 95 (Feb 9) — Vercel Deployment + Login Redesign + Cloudflare DNS
 
@@ -180,15 +209,16 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 
 ---
 
-### Session 93 (Feb 9) — ZScan Property Intelligence Spec + Home Warranty Research + Contractor Verticals
+### Session 93 (Feb 9) — Recon Property Intelligence Spec + Home Warranty Research + Contractor Verticals
 
-**S93: ZScan / Property Intelligence Engine (SPEC COMPLETE):**
+**S93: Recon / Property Intelligence Engine (SPEC COMPLETE):**
 - Owner requested "EagleView but better" — satellite-powered property measurement tool.
 - Deep API research: Google Solar API ($0.01/call Building Insights, $0.075 Data Layers), ATTOM Property API, Regrid (149M parcels), Microsoft Building Footprints (1.4B free), USGS 3DEP (free LIDAR), Nearmap (post-traction Tier 2), HOVER API ($25/job with ESX export), Estated API.
-- Created `Expansion/40_PROPERTY_INTELLIGENCE_SPEC.md` (~952 lines): 8 new tables, 4 Edge Functions, 10 trade-specific measurement pipelines (roofing, siding, gutters, solar, painting, landscaping, fencing, concrete, HVAC, electrical).
-- Competitive matrix vs EagleView ($18-91/report), Roofr ($13-39), HOVER ($25/job) — ZScan = $0 included.
+- Created `Expansion/40_PROPERTY_INTELLIGENCE_SPEC.md` (~952 lines, expanded S97 to ~1200+ lines): originally 8 tables, 4 Edge Functions. **S97 expanded to 11 tables, 6 Edge Functions, P1-P10 (~96 hours)** — added lead scoring engine, batch area scanning, confidence scoring with imagery date transparency, multi-structure detection, insurance supplement checklist, storm intelligence with NOAA data + damage probability model.
+- 10 trade-specific measurement pipelines (roofing, siding, gutters, solar, painting, landscaping, fencing, concrete, HVAC, electrical).
+- Competitive matrix vs EagleView ($18-91/report), Roofr ($13-39), HOVER ($25/job), GAF QuickMeasure — Recon = $0 included. 6 features no competitor offers.
 - Waste factor engine, material ordering pipeline (Unwrangle + ABC Supply), on-site verification workflow.
-- Phase P sprint specs (P1-P8, ~68 hours) written to `07_SPRINT_SPECS.md`.
+- Phase P sprint specs (P1-P10, ~96 hours) written to `07_SPRINT_SPECS.md` (expanded S97 from original P1-P8).
 - API research saved to `memory/property-intelligence-research.md`.
 - Build order updated: G → T → P → E → F2 → F8.
 
@@ -220,7 +250,7 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 
 ---
 
-### Session 92 (Feb 9) — TPA Module Deep Research + Spec + Legal Assessment
+### Session 92 (Feb 9) — Programs Deep Research + Spec + Legal Assessment
 
 **S92: TPA (Third Party Administrator) Deep Research (COMPLETE):**
 - Owner-initiated research into TPA managed repair networks (Contractor Connection, Accuserve, Sedgwick, Alacrity, OnCORE, Westhill, etc.).
@@ -246,7 +276,7 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 - IICRC formulas OK — publicly available calculation sheets.
 - Saved to `memory/tpa-legal-assessment.md` (complete risk matrix with pre-launch legal checklist).
 
-**S92: TPA Module Expansion Spec (COMPLETE):**
+**S92: Programs Expansion Spec (COMPLETE):**
 - Created `Expansion/39_TPA_MODULE_SPEC.md`: ~15 new database tables, 3 Edge Functions, ~10 CRM pages, ~5 mobile screens, ~3 team portal pages, ~1 ops portal page, ~10 hooks.
 - Architecture: company-level feature flag (`features.tpa_enabled`), contextual integration into existing screens, not a separate app.
 - Full water mitigation workflow matching real industry TPA job lifecycle (10 steps).
@@ -256,7 +286,7 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 - 10-sprint build plan (T1-T10, ~80 hours total).
 
 **S92: Sprint Specs Updated:**
-- Phase T (TPA Module) added to `07_SPRINT_SPECS.md` between Phase G and Phase E rebuild.
+- Phase T (Programs) added to `07_SPRINT_SPECS.md` between Phase G and Phase E rebuild.
 - 10 sprints with full checkbox checklists (T1-T10).
 - Build order updated: G → T → E → F2 → F8 → LAUNCH.
 
@@ -297,13 +327,13 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 ### Session 90 (Feb 8) — PHASE F COMPLETE + Portal Expansion
 
 **S90: Phase F ALL CODE COMPLETE:**
-- F10 ZDocs finished: migration 48 (3 tables), zdocs-render EF (6 actions, 5 system templates), use-zdocs hook, /dashboard/zdocs page (3 tabs).
+- F10 ZForge finished: migration 48 (3 tables), zdocs-render EF (6 actions, 5 system templates), use-zdocs hook, /dashboard/zdocs page (3 tabs).
 - Web CRM: 107 routes. use-zdocs hook with real-time + 7 mutations. Templates grid + Generated Documents table + Signatures tracking.
 - Team Portal: 4 new hooks (use-pay-stubs, use-my-vehicle, use-my-training, use-my-documents) + 4 new pages + MY STUFF sidebar section. 36 routes.
 - Client Portal: 3 new hooks (use-home-documents, use-quotes, use-find-a-pro) + 3 new pages + nav links. Fixed TS implicit any errors. 38 routes.
-- Ops Portal: 5 new analytics pages (payroll, fleet, hiring, email, marketplace) + PLATFORM sidebar section. 24 dashboard routes.
+- Ops Portal: 5 new analytics pages (payroll, fleet, hiring, email, marketplace) + PLATFORM sidebar section. 26 dashboard routes.
 - ALL 4 portals build clean. Zero errors.
-- F-phase totals: 17 migrations (67+ tables), 21 Edge Functions, 40+ CRM hooks, 107 CRM routes, 36 team routes, 38 client routes, 24 ops routes.
+- F-phase totals: 17 migrations (71 tables including FM payments), 21 Edge Functions, 40+ CRM hooks, 107 CRM routes, 36 team routes, 38 client routes, 26 ops routes.
 - Sprint specs fully updated. Phase G (QA/Hardening) is NEXT.
 
 ### Session 89 (Feb 8) — ESX Legal Assessment + Insurance Research + D8j
@@ -337,12 +367,12 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 - Team Portal: use-estimates.ts hook (createFieldEstimate, addArea, addLineItem, recalculate) + estimates list page + estimate detail page. Sidebar updated. 27 routes (+2).
 - Client Portal: use-estimates.ts hook (approve/reject with ownership checks) + estimate review page rewritten from mock to production (604 lines). Digital signature (typed name + agreement checkbox). 29 routes.
 - Ops Portal: estimate analytics dashboard (6 stat cards, type breakdown, filter tabs, recent estimates table, code DB health section). Sidebar updated. 20 routes (+1).
-- All 5 apps build clean. D8 Estimate Engine COMPLETE (all 10 sub-steps: D8a-D8j).
+- All 5 apps build clean. D8 Estimates COMPLETE (all 10 sub-steps: D8a-D8j).
 - Files: team-portal (mappers.ts, use-estimates.ts, estimates/page.tsx, estimates/[id]/page.tsx, sidebar.tsx), client-portal (mappers.ts, use-estimates.ts, estimate/page.tsx), ops-portal (estimates/page.tsx, sidebar.tsx).
 
 ---
 
-### Session 87-88 (Feb 8) — D8e-D8i: Estimate Engine (continued)
+### Session 87-88 (Feb 8) — D8e-D8i: Estimates (continued)
 
 **S87: D8e+D8f+D8g — PDF Export + ESX Import/Export (ALL DONE):**
 - export-estimate-pdf EF: 3 templates (standard/detailed/summary), company branding, insurance details, print CSS. Wired into Web CRM (PDF button + 3 template buttons in preview) + Flutter (functions.invoke → temp file → Share.shareXFiles).
@@ -368,7 +398,7 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 
 ---
 
-### Session 85-86 (Feb 7-8) — D8: Estimate Engine
+### Session 85-86 (Feb 7-8) — D8: Estimates
 
 **S85: Doc updates + planning.**
 - Updated all build docs with finalized Phase F build order.
@@ -376,7 +406,7 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 - Finalized build order: D8 → Firebase Migration → F1→F3→F4→F5→F6→F7→F9→F10→G→E→F2→F8.
 - Audited API keys across all apps (Stripe/RevenueCat/Anthropic in Firebase backend need migration).
 
-**S86: D8a — Estimate Engine Database (DONE):**
+**S86: D8a — Estimates Database (DONE):**
 - 10 tables: estimate_categories, estimate_units, estimate_items, estimate_pricing, estimate_labor_components, code_contributions, estimates, estimate_areas, estimate_line_items, estimate_photos.
 - Enterprise RLS, GIN indexes, audit trigger, partial indexes. Migration made idempotent.
 - Fixed COALESCE in UNIQUE constraint (PostgreSQL limitation) and index name collision with E5.
@@ -564,13 +594,9 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 
 ---
 
-### Session 80 (Feb 7) — E3: Employee Portal AI + Mobile AI
+### Session 79 (Feb 7) — E5 + E6: Xactimate Estimates + Bid Walkthrough Engine
 
----
-
-### Session 79 (Feb 7) — E5 + E6: Xactimate Estimate Engine + Bid Walkthrough Engine
-
-**E5: Xactimate Estimate Engine (DONE — built in S79 continuation):**
+**E5: Xactimate Estimates (DONE — built in S79 continuation):**
 - E5a-E5d: DB tables (xactimate_codes, pricing_entries, estimate_templates, etc.), models, repos, services
 - E5e-E5f: Flutter estimate entry screens, Web CRM estimate pages
 - E5g-E5i: Pricing pipeline Edge Functions, portal viewers
@@ -655,7 +681,7 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 - Dual-mode: mock (default) or live API (NEXT_PUBLIC_Z_INTELLIGENCE_ENABLED)
 - ANTHROPIC_API_KEY secret NOT set yet (user action required)
 
-**E2: Z Console → Claude API Wiring (DONE):**
+**E2: Dashboard → Claude API Wiring (DONE):**
 - Built as part of E1 — api-client.ts replaces mock engine, provider wired to sendToZ
 - Slash commands handled via system prompt (Claude routes naturally)
 - Artifact lifecycle: generate/edit/approve/reject/save draft all functional
@@ -671,7 +697,7 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 - Wired handleItMyself in pm_maintenance_service.dart (creates job with PM linkage)
 - Added completeMaintenanceJob (updates request + job status atomically)
 - Wired CRM integration: createJobFromRequest, createRepairFromInspection, createJobFromTurnTask
-- Wired rent payment → ZBooks journal entry (debit Cash, credit Rental Income, property-tagged)
+- Wired rent payment → Ledger journal entry (debit Cash, credit Rental Income, property-tagged)
 - Wired lease termination → auto-create unit turn
 - Added recordServiceFromJob standalone function in use-assets.ts
 
@@ -699,9 +725,9 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 
 ---
 
-### Session 75 (Feb 7) — Xactimate Estimate Engine Spec (DOCS ONLY)
+### Session 75 (Feb 7) — Xactimate Estimates Spec (DOCS ONLY)
 
-**Xactimate Estimate Engine — Expansion Spec (DONE):**
+**Xactimate Estimates — Expansion Spec (DONE):**
 - Created `Expansion/25_XACTIMATE_ESTIMATE_ENGINE.md` — comprehensive spec covering:
   - Problem statement (Verisk monopoly, $300/mo, 30-50% suppressed pricing)
   - Product architecture (4 engines: Estimate Writer, Pricing DB, ESX Import/Export, PDF Output)
@@ -767,9 +793,9 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 
 ### Session 72 (Feb 7) — D5e-D5f: Dashboard Schedule E + Flutter Properties Hub
 
-**D5e: Dashboard + ZBooks Schedule E (DONE — commit 6bbcb93):**
+**D5e: Dashboard + Ledger Schedule E (DONE — commit 6bbcb93):**
 - Dashboard integration: property stats card, CRM properties hook
-- ZBooks Schedule E: expense property allocation columns, expense hook updated
+- Ledger Schedule E: expense property allocation columns, expense hook updated
 - Migration: expense_records gets property_id, schedule_e_category, property_allocation_pct
 
 **D5f: Flutter Properties Hub + Screens (DONE — commit 499019f):**
@@ -831,14 +857,14 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 - Fixed dangling doc comments: `///` → `//` in both invoice screens
 - `dart analyze` 0 issues, `npm run build` passes
 
-**Next Steps:** D3g (Carrier Communication Log) → D3h → D3i → D3j → D3k → D3l → D3m → D3n → D4 (ZBooks).
+**Next Steps:** D3g (Carrier Communication Log) → D3h → D3i → D3j → D3k → D3l → D3m → D3n → D4 (Ledger).
 
-**D4 ZBooks Spec (DONE):**
+**D4 Ledger Spec (DONE):**
 - Wrote comprehensive D4 spec (16 sub-steps D4a-D4p, ~78 hours) into sprint specs
 - Tier 1 (all contractors): GAAP double-entry, audit trail, Schedule C tax mapping, 1099 compliance
 - Tier 2 (enterprise): WIP tracking, AIA billing, retention, bonding, multi-entity
 
-**D4a: Core ZBooks Tables — Migration 000018 (DONE):**
+**D4a: Core Ledger Tables — Migration 000018 (DONE):**
 - 6 tables: chart_of_accounts, fiscal_periods, journal_entries, journal_entry_lines, tax_categories, zbooks_audit_log
 - 55 COA accounts seeded via `seed_chart_of_accounts()` trigger on company creation
 - 26 tax categories seeded via `seed_tax_categories()` trigger
@@ -923,16 +949,16 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 - `use-fiscal-periods.ts` hook: Auto-generate 12 monthly periods, close/reopen individual periods, year-end close (verifies all periods closed, creates closing JEs to Retained Earnings 3200), audit log
 - Web CRM `/dashboard/books/periods`: Year selector, period list with close/reopen, year-end close modal with requirements checklist, audit trail
 
-**D4l: ZBooks Dashboard Rewrite (DONE):**
+**D4l: Ledger Dashboard Rewrite (DONE):**
 - Rewrote `books/page.tsx` dashboard with live data from useBanking, useFinancialStatements, useReconciliation hooks
 - 5 KPI cards, P&L bar chart placeholder, expense donut chart placeholder, 4 alert cards, quick links grid
 
-**D4m: Flutter Mobile ZBooks (DONE):**
+**D4m: Flutter Mobile Ledger (DONE):**
 - Models: `expense_record.dart` (enums: category/payment/OCR/status), `vendor.dart`
 - Repositories: `expense_repository.dart`, `vendor_repository.dart` (full CRUD + soft delete)
 - Services: `expense_service.dart` (ExpenseService + VendorService with auth-enriched CRUD + Riverpod providers)
 - `zbooks_hub_screen.dart`: Financial summary card, quick actions, recent expenses list, COA link
-- Wired ZBooks into home_screen_v2.dart More menu (bookOpen icon → ZBooksHubScreen)
+- Wired Ledger into home_screen_v2.dart More menu (bookOpen icon → ZBooksHubScreen)
 - `dart analyze` 0 new issues
 
 **D4n: CPA Portal Access (DONE):**
@@ -998,7 +1024,7 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 - `client-portal npm run build`: Passes (22 routes, 0 errors)
 - Migration 000015: Deployed to dev
 
-**Next Steps:** D3e (Warranty Networks) → D4 (ZBooks) → Phase E (AI Layer).
+**Next Steps:** D3e (Warranty Networks) → D4 (Ledger) → Phase E (AI Layer).
 
 ---
 
@@ -1081,7 +1107,7 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 - `team-portal npm run build`: Passes (24 routes, 0 errors)
 - `client-portal npm run build`: Passes (22 routes, 0 errors)
 
-**Next Steps:** D3 (Insurance Verticals) → D4 (ZBooks) → Phase E (AI Layer).
+**Next Steps:** D3 (Insurance Verticals) → D4 (Ledger) → Phase E (AI Layer).
 
 ---
 
@@ -1527,7 +1553,7 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 
 **Phase E (AI Layer) fully documented in 07_SPRINT_SPECS.md:**
 - **E1: Universal AI Architecture** — z_threads + z_artifacts tables (full SQL), Claude API Edge Function proxy (SSE streaming), 14 tool definitions (Supabase query specs), response parser + artifact detection protocol, system prompt template, rate limiting design, web CRM hooks (use-z-threads, use-z-artifacts), provider update plan.
-- **E2: Z Console → Claude API Wiring** — Replace mock engine with streaming SSE client, slash command → tool routing table, artifact lifecycle (generate → edit → approve → convert to real bid/invoice), context-aware system prompts per page, error handling matrix, 15-item verification checklist.
+- **E2: Dashboard → Claude API Wiring** — Replace mock engine with streaming SSE client, slash command → tool routing table, artifact lifecycle (generate → edit → approve → convert to real bid/invoice), context-aware system prompts per page, error handling matrix, 15-item verification checklist.
 - **E3: Employee Portal AI + Mobile AI** — Outlined (troubleshooting center, photo diagnosis, code lookup, voice transcription, receipt OCR).
 - **E4: Growth Advisor** — Outlined (revenue intelligence, bid brain, equipment memory, revenue autopilot).
 
@@ -1612,7 +1638,7 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 
 ---
 
-### Session 54 (Feb 6) — Sprint B4e: Z Console + Artifact System UI Shell COMPLETE
+### Session 54 (Feb 6) — Sprint B4e: Dashboard + Artifact System UI Shell COMPLETE
 
 **Persistent AI console that lives across ALL 39 dashboard pages. Never unmounts, never loses state. Split-screen artifact system for bids, invoices, reports. `npm run build` passes (39 pages, 0 errors).**
 
@@ -1660,7 +1686,7 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 - `.z-message-in` — message fade-in
 - `.z-prose` — full markdown styling (both normal and artifact-pane variants)
 
-**Three Z Console states:**
+**Three Dashboard states:**
 | State | Desktop | How |
 |-------|---------|-----|
 | Pulse | 56px floating Z button, bottom-right, emerald glow | Click or Cmd+J to open |
@@ -1751,7 +1777,7 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 - `dashboard/reports/page.tsx` — useReports(). 4 report tabs (Revenue, Jobs, Team, Invoices). Loading spinner. Real data from aggregated queries.
 - `dashboard/job-cost-radar/page.tsx` — useJobCosts(). Risk-based job cost tracking. Portfolio health stats. Materials/spend breakdown. Change order impact. Alert system.
 - `dashboard/page.tsx` — useReports() for chart data (revenueData, jobsByStatusData, revenueByCategoryData). All 3 mock chart data arrays replaced with real aggregations.
-- `dashboard/books/page.tsx` — useReports() for profit trend chart. Transactions/bankAccounts replaced with empty arrays (ZBooks Phase F — no bank/transaction tables yet).
+- `dashboard/books/page.tsx` — useReports() for profit trend chart. Transactions/bankAccounts replaced with empty arrays (Ledger Phase F — no bank/transaction tables yet).
 - `dashboard/z/page.tsx` — savedThreads replaced with empty array (AI Phase E — no threads table yet).
 
 **Files deleted:**
@@ -1761,7 +1787,7 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 - Leads table: Dedicated `leads` table with full CRM pipeline (not shoehorned into jobs). Source tracking (9 sources), stage workflow (6 stages), follow-up scheduling, conversion tracking (converted_to_job_id FK to jobs).
 - Reports hook: Aggregates from 4 tables in parallel (invoices, jobs, users, job_materials). Monthly revenue from paid invoices. Expenses from material costs. Revenue by category from first job tag.
 - Job cost radar: Risk assessment formula based on budget burn rate vs completion %. Projected margin calculates from burn-rate extrapolation. Alerts auto-generated for overruns, burn rate gaps, change orders.
-- ZBooks/Z pages: Kept structurally intact but with empty data arrays. UI renders gracefully with no data. Will light up when Phase F (ZBooks) and Phase E (AI) tables are created.
+- Ledger/Z pages: Kept structurally intact but with empty data arrays. UI renders gracefully with no data. Will light up when Phase F (Ledger) and Phase E (AI) tables are created.
 
 **Verification:** `npm run build` — 39 pages compiled, ZERO errors. `mock-data.ts` deleted with zero breakage.
 
@@ -1833,7 +1859,7 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 - `dashboard/team/page.tsx` — useTeam + useJobs. Dispatch board + team grid.
 
 **Pages intentionally keeping mock data (not B4b scope):**
-- `books/page.tsx` — ZBooks financial data (no table wired yet)
+- `books/page.tsx` — Ledger financial data (no table wired yet)
 - `reports/page.tsx` — Chart aggregation data (complex queries deferred)
 - `z/page.tsx` — AI threads (Phase E)
 - `dashboard/page.tsx` — Chart data only (mockRevenueData, mockJobsByStatus, mockRevenueByCategory)
@@ -2317,22 +2343,24 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 
 **Design decisions confirmed:**
 - "ZAFTO" wordmark (Stripe-style), not just Z
-- Z reserved for AI/premium (Z Intelligence, ZBooks, Z Console)
-- ZBooks (not "ZAFTO Books")
+- Z reserved for AI/premium (Z Intelligence, Ledger, Dashboard)
+- Ledger (not "ZAFTO Books")
 - AI goes LAST after all functionality confirmed
 - Stripe feel everywhere
 
 ---
 
-## NEXT SESSION PRIORITIES
+## NEXT SESSION PRIORITIES (Updated S97)
 
-1. **Phase C2** — QA with real data (requires creating test accounts, seeding data, manual testing). Needs human interaction for Supabase dashboard auth user creation.
-2. **Phase C4** — Security hardening (email migration, password changeover, 2FA, YubiKeys). Manual account work.
-3. **Phase D** — Revenue Engine (job types, insurance, ZBooks, property management). ~217+ hours.
-4. **Phase E** — AI Layer (Z Console → Claude API wiring, employee portal AI, growth advisor). ~300-400 hours.
-5. **Execute Sprint A3e** — PowerSync setup (account, sync rules, Flutter packages) — can defer until before field testing.
+1. **Phase T (Programs)** — NEXT to build. Full spec in `Expansion/39_TPA_MODULE_SPEC.md`. ~80 hours, 10 sprints, ~17 tables, 3 EFs.
+2. **Phase P (Recon / Property Intelligence)** — After T. Full spec in `Expansion/40_PROPERTY_INTELLIGENCE_SPEC.md`. ~96 hours, 10 sprints. Lead scoring, batch area scanning, storm intelligence, supplement checklist, multi-structure detection, confidence scoring.
+3. **Phase SK (Sketch Engine)** — After P. Full spec in `Expansion/46_SKETCH_ENGINE_SPEC.md`. ~176 hours, 11 sprints.
+4. **Phase GC (Schedule)** — After SK. Full spec in `Expansion/48_GANTT_CPM_SCHEDULER_SPEC.md`. ~124 hours, 11 sprints.
+5. **Phase U (Unification & Feature Completion)** — After GC. 9 sprints, ~120 hours. Needs full spec session.
+6. **Phase G (QA/Hardening)** — After U. Full platform debug, security, performance.
+7. **Phase E (AI Layer)** — LAST. E-review → BA1-BA8 Plan Review → E1-E4. Deep spec session required.
 
-**B1-B7 + C1 + C3 + C5 ALL COMPLETE. 5 apps total (Flutter + Web CRM + Team Portal + Client Portal + Ops Portal). 28 tables deployed. 8 migration files. Sentry in 4 apps. 4 CI workflows. 154 model tests. 76 commands in registry. Notifications with real-time. 29 of 39 CRM pages wired. Employee Field Portal: 21 pages + 8 hooks. Client Portal: 6 pages + 5 hooks + magic link auth. Ops Portal: 16 pages + login. Incident response plan written. 11 CRM hook files + 22 Z Console files. Phase E AI specs: E1+E2 fully detailed. ~10 remaining CRM + ~13 client portal pages = future-phase placeholders.**
+**Phases A-F ALL COMPLETE. R1 DONE. FM code done. ~173 tables. 48 migrations. 53 Edge Functions. 107 CRM routes. 36 team routes. 38 client routes. 26 ops routes. 4 CI workflows. All 19 field tools wired. Codemagic Android debug PASSING.**
 
 ---
 
@@ -2356,92 +2384,43 @@ ls apps/Trades/lib/models/business/  # Should be cleaned up eventually
 
 ---
 
-## VERIFIED CODEBASE STATE (as of Session 35)
+## VERIFIED CODEBASE STATE
 
-### Flutter Mobile App
+**NOTE: This section was a S35 snapshot. The data below reflects current state as of S97. For detailed wiring status, see `02_CIRCUIT_BLUEPRINT.md`.**
+
+### Current State (S97)
 | Metric | Value |
 |--------|-------|
-| Total Dart files | 1,517 |
-| Calculator screens | 1,194 (across 11 trades) |
-| Diagram screens | 111 |
-| Business screens | ~15 (jobs, bids, invoices, customers, calendar, time clock) |
-| Field tools | 14 (+ hub = 15 files) |
-| Services | 35 files |
-| Models | 22 files (DUPLICATE: job.dart, invoice.dart, customer.dart exist in both models/ and models/business/) |
-| Firebase references | 161 across 36 files |
-| Supabase references | 0 |
-| TODO: BACKEND comments | 40+ |
-| screen_registry.dart | 10,128 lines (monolithic, needs splitting) |
-| home_screen_v2.dart | 1,859+ lines (has BACKEND HOOKUP CHECKLIST) |
-| State management | Riverpod (primary), Provider (AI module) |
-| Local storage | Hive + SharedPreferences |
-| Firebase projects in code | **THREE:** `zafto-5c3f2` (firebase_config.dart), `zafto-2b563` (firebase_options.dart), `zafto-electrical` (iOS plist) |
-
-**Critical issues:**
-- Duplicate job models: `lib/models/job.dart` (476 lines, Sprint 3.6) vs `lib/models/business/job.dart` (156 lines, Sprint 5.0)
-- Same duplication for invoice and customer models
-- Firebase credentials hardcoded in `firebase_config.dart`
-- PhotoService (492 lines, complete) exists but nothing uses it
-- All 14 field tools have `// TODO: BACKEND` — data evaporates on close
-
-### Web Portal CRM (Next.js)
-| Metric | Value |
-|--------|-------|
-| Total files | 66 TypeScript/TSX |
-| Dashboard pages | 30 routes |
-| Mock data file | mock-data.ts (820 lines) |
-| Firebase references | Yes (firebase.ts, auth.ts, firestore.ts) |
-| Supabase references | 0 |
-| TODO comments | 12 (Firestore save/query operations) |
-| @ts-nocheck files | 3 (firebase.ts, auth.ts, firestore.ts) |
-| Framework | Next.js 15.0.0, React 19.0.0 |
-| CSS | Tailwind v3.4 |
-| Icons | Lucide React 0.469.0 |
-| Accent | #635bff (Stripe purple) |
-| Auth | Firebase email/password (configured, not fully tested) |
-| RBAC | permission-gate.tsx (424 lines, 40+ permissions) |
-| Code quality | 7.5/10 |
-
-### Client Portal (Next.js)
-| Metric | Value |
-|--------|-------|
-| Total pages | 25 routes |
-| Components | 2 (logo.tsx, theme-toggle.tsx) |
-| Firebase references | 0 |
-| Supabase references | 0 |
-| Backend connection | NONE — completely static mockup |
-| Auth | Fake setTimeout redirect, no real auth |
-| Framework | Next.js 16.1.6, React 19.2.3 |
-| CSS | Tailwind v4 (CSS-first, no config file) |
-| Runtime dependencies | 4 (next, react, react-dom, lucide-react) |
-| Accent | #635bff (Stripe purple) |
-| Dark mode | Yes (localStorage: zafto-client-theme) |
-| Code quality | Clean but zero integration |
+| **Flutter Mobile App** | 33 role-based screens (R1), 19 field tools wired, 35+ Supabase models, 32 repositories, Riverpod state. `dart analyze`: 0 errors. |
+| **Web CRM** | 107 routes, 68 hooks, Supabase auth + RLS, `npm run build`: 0 errors. `zafto.cloud`. |
+| **Team Portal** | 36 routes, 22 hooks, PWA-ready, `npm run build`: 0 errors. `team.zafto.cloud`. |
+| **Client Portal** | 38 routes, 21 hooks, magic link auth, `npm run build`: 0 errors. `client.zafto.cloud`. |
+| **Ops Portal** | 26 routes, super_admin role gate, `npm run build`: 0 errors. `ops.zafto.cloud`. |
+| **Database** | ~173 Supabase PostgreSQL tables, 48 migrations, RLS + audit on all. |
+| **Edge Functions** | 53 directories (32 pre-F + 21 F-phase/FM). 5 E4 uncommitted. |
+| **Firebase refs remaining** | 13 files still import cloud_firestore (Phase G cleanup). |
+| **Storage** | 7 private buckets (photos, signatures, voice-notes, receipts, documents, avatars, company-logos). |
+| **CI/CD** | Codemagic Android debug PASSING. iOS needs code signing. 4 GitHub Actions workflows. |
+| **Sentry** | SDK wired in all 4 web apps + Flutter. DSN is EMPTY — needs setup. |
 
 ---
 
 ## ACCOUNT INVENTORY
 
-| Account | Email | Status |
-|---------|-------|--------|
-| MS 365 Business Basic | admin@zafto.onmicrosoft.com (global admin) | ACTIVE |
-| admin@zafto.app | — | ACTIVE |
-| robert@zafto.app | — | ACTIVE |
-| support@zafto.app | — | ACTIVE |
-| legal@zafto.app | — | ACTIVE |
-| info@zafto.app | — | ACTIVE |
-| Supabase (dev) | admin@zafto.app | ACTIVE (US East, empty) |
-| Supabase (prod) | admin@zafto.app | ACTIVE (US East, empty) |
-| Sentry | admin@zafto.app | ACTIVE (free tier) |
-| RevenueCat | admin@zafto.app | ACTIVE |
-| Stripe | needs migration to admin@zafto.app | ACTIVE |
-| GitHub (TeredaDeveloper) | needs migration to admin@zafto.app | ACTIVE |
-| Apple Developer | needs migration to admin@zafto.app | ACTIVE |
-| Anthropic | needs migration to admin@zafto.app | ACTIVE |
-| Cloudflare | needs migration to admin@zafto.app | ACTIVE |
-| Bitwarden | needs migration to admin@zafto.app | ACTIVE |
-| Google Play | — | NOT CREATED (needed for launch — both iOS + Android) |
-| ProtonMail | — | NOT CREATED (pre-launch) |
+**See `03_LIVE_STATUS.md` ACCOUNTS STATUS section for the canonical, up-to-date account list. Key accounts below for quick reference:**
+
+| Account | Status |
+|---------|--------|
+| MS 365 Business Basic | ACTIVE (5 emails on zafto.app) |
+| Supabase | ACTIVE (2 projects: dev + prod) |
+| Sentry | ACTIVE (free tier, DSN empty) |
+| Stripe | ACTIVE (needs migration to admin@zafto.app) |
+| GitHub (TeredaDeveloper) | ACTIVE (needs migration to admin@zafto.app) |
+| Codemagic | ACTIVE (Android debug PASSING) |
+| Cloudflare | ACTIVE (DNS for *.zafto.cloud) |
+| Google Play | NOT CREATED (needed for launch) |
+| ProtonMail | NOT CREATED (break-glass recovery) |
+| YubiKeys | NOT PURCHASED |
 
 ---
 
@@ -2449,16 +2428,19 @@ ls apps/Trades/lib/models/business/  # Should be cleaned up eventually
 
 | File | Purpose | When to Read |
 |------|---------|-------------|
-| `00_HANDOFF.md` | THIS FILE — session resume | Every session start |
-| `01_MASTER_BUILD_PLAN.md` | Complete no-drift build plan | When planning work |
-| `02_CIRCUIT_BLUEPRINT.md` | Living wiring diagram | Before any wiring |
+| `00_HANDOFF.md` | THIS FILE — session resume, entry point | Every session start |
+| `01_MASTER_BUILD_PLAN.md` | Complete no-drift build plan, architecture | When planning work |
+| `02_CIRCUIT_BLUEPRINT.md` | Living wiring diagram, all tables/EFs/services | Before any wiring |
 | `03_LIVE_STATUS.md` | Quick status snapshot | Quick state check |
-| `04_EXPANSION_SPECS.md` | All expansion features | When building expansion |
+| `04_EXPANSION_SPECS.md` | All 14 expansion + locked specs consolidated | When referencing older specs |
 | `05_EXECUTION_PLAYBOOK.md` | Session protocol, methodology, quality gates | Every session start (before coding) |
 | `06_ARCHITECTURE_PATTERNS.md` | 14 code patterns with examples | Before writing any code |
 | `07_SPRINT_SPECS.md` | Every sprint, every step, every verification | When executing a sprint |
+| `08_INCIDENT_RESPONSE.md` | Severity levels, breach response, rollback | Reference / incidents |
+| `Expansion/` | Feature specs (39_TPA, 40_PROPERTY_INTELLIGENCE, 46_SKETCH_ENGINE, 47_BLUEPRINT_ANALYZER, etc.) | When executing that sprint |
+| `Locked/` | Finalized specs (11_DESIGN_SYSTEM, 29_DB_MIGRATION, 30_SECURITY, 32_DEVOPS, 34_OPS_PORTAL, 36_RESTORATION, 37_JOB_TYPE) | Reference only — do not modify |
 
-**Old docs in `Build Documentation/` root, `Locked/`, `Expansion/`, `_archive/` are REFERENCE ONLY. Do not update them. Everything lives here now.**
+**Canonical doc location: `Build Documentation/ZAFTO FULL BUILD DOC/`. Old docs in `Build Documentation/` root are REFERENCE ONLY. Do not update them.**
 
 ---
 
@@ -2467,7 +2449,7 @@ ls apps/Trades/lib/models/business/  # Should be cleaned up eventually
 1. **NO DRIFT** — Update these docs, never create new parallel docs
 2. **AI goes LAST** — Wire everything, confirm it works, then add AI
 3. **ZAFTO wordmark** — Not just the Z. Z is for AI/premium features.
-4. **ZBooks** — Not "ZAFTO Books"
+4. **Ledger** — Not "ZAFTO Books"
 5. **Stripe feel** — Premium, clean, professional
 6. **Database: Supabase PostgreSQL** — No Firebase
 7. **Offline-first** — PowerSync (SQLite <-> PostgreSQL)

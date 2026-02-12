@@ -4,19 +4,17 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   ArrowRight, AlertCircle, Eye, EyeOff, Lock, Shield,
-  Fingerprint, Mail, Sun, Moon, CheckCircle2,
+  Fingerprint, Mail, Sun, Moon, CheckCircle2, ExternalLink,
 } from 'lucide-react';
 import { signIn, onAuthChange } from '@/lib/auth';
 import { useTheme } from '@/components/theme-provider';
 import Image from 'next/image';
 
-type PortalType = 'contractor' | 'employee' | 'customer' | 'cpa';
+type PortalType = 'team' | 'customer';
 
 const portalConfig: Record<PortalType, { label: string; desc: string }> = {
-  contractor: { label: 'Contractor', desc: 'Manage bids, jobs, invoices & team' },
-  employee: { label: 'Employee', desc: 'Schedule, time clock & field tools' },
-  customer: { label: 'Customer', desc: 'Projects, invoices & communication' },
-  cpa: { label: 'CPA', desc: 'Financial reports & accounting access' },
+  team: { label: 'Team', desc: 'Manage bids, jobs, invoices, scheduling & field tools' },
+  customer: { label: 'Customer', desc: 'View projects, invoices & communication' },
 };
 
 export default function LoginPage() {
@@ -28,7 +26,7 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [checkingAuth, setCheckingAuth] = useState(true);
-  const [selectedPortal, setSelectedPortal] = useState<PortalType>('contractor');
+  const [selectedPortal, setSelectedPortal] = useState<PortalType>('team');
   const [magicLinkSent, setMagicLinkSent] = useState(false);
   const [magicLinkLoading, setMagicLinkLoading] = useState(false);
 
@@ -41,15 +39,40 @@ export default function LoginPage() {
     }
   }, []);
 
+  // After auth, route by role — all same-domain, no cross-subdomain issues
+  const routeByRole = async (userId: string) => {
+    try {
+      const { getSupabase } = await import('@/lib/supabase');
+      const supabase = getSupabase();
+      const { data: profile } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', userId)
+        .single();
+
+      const role = profile?.role || '';
+
+      if (role === 'cpa') {
+        router.push('/dashboard/books');
+      } else {
+        router.push('/dashboard');
+      }
+    } catch {
+      // Fallback — middleware will handle unauthorized roles
+      router.push('/dashboard');
+    }
+  };
+
   useEffect(() => {
     const unsubscribe = onAuthChange((user) => {
       if (user) {
-        router.push('/dashboard');
+        routeByRole(user.id);
       } else {
         setCheckingAuth(false);
       }
     });
     return () => unsubscribe();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -63,7 +86,7 @@ export default function LoginPage() {
       setError(loginError);
       setIsLoading(false);
     } else if (user) {
-      router.push('/dashboard');
+      await routeByRole(user.id);
     }
   };
 
@@ -114,32 +137,18 @@ export default function LoginPage() {
           priority
           sizes="100vw"
         />
-        {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
 
         {/* Header bar */}
         <div className="absolute top-0 left-0 right-0 p-5 sm:p-6 flex items-center justify-between z-10">
-          <div className="flex items-center gap-2.5">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="32" height="32" className="text-white">
-              <g transform="translate(50,50)">
-                <path d="M-22,-22 L22,-22 L-22,22 L22,22" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" opacity="0.08" transform="translate(6,6)">
-                  <animate attributeName="opacity" values="0.08;0.15;0.08" dur="2s" repeatCount="indefinite"/>
-                </path>
-                <path d="M-22,-22 L22,-22 L-22,22 L22,22" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" opacity="0.18" transform="translate(3,3)">
-                  <animate attributeName="opacity" values="0.18;0.3;0.18" dur="2s" repeatCount="indefinite" begin="0.3s"/>
-                </path>
-                <path d="M-22,-22 L22,-22 L-22,22 L22,22" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
-                  <animate attributeName="stroke-width" values="3.5;4;3.5" dur="2s" repeatCount="indefinite" begin="0.6s"/>
-                </path>
-              </g>
-            </svg>
-            <span className="text-lg font-semibold text-white tracking-tight">Zafto</span>
-          </div>
+          <span className="text-xl font-bold text-white tracking-tight">zafto</span>
           <button
             onClick={toggleTheme}
-            className="p-2 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-white/70 hover:text-white transition-all"
+            style={{ background: 'rgba(255,255,255,0.15)' }}
           >
-            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+            {theme === 'dark' ? <Sun size={14} /> : <Moon size={14} />}
+            <span className="text-[11px] font-medium">{theme === 'dark' ? 'Light' : 'Dark'}</span>
           </button>
         </div>
 
@@ -174,16 +183,16 @@ export default function LoginPage() {
               <p className="text-[13px] text-muted mt-1">Sign in to your account</p>
             </div>
 
-            {/* Portal Selector */}
+            {/* Portal Selector — 2 tabs */}
             <div
-              className="grid grid-cols-4 gap-1 p-1 rounded-xl mb-5"
+              className="grid grid-cols-2 gap-1 p-1 rounded-xl mb-5"
               style={{ background: 'var(--bg-secondary)' }}
             >
               {(Object.keys(portalConfig) as PortalType[]).map((portal) => (
                 <button
                   key={portal}
                   onClick={() => setSelectedPortal(portal)}
-                  className="relative py-2 px-1 rounded-lg text-[11px] sm:text-xs font-medium transition-all"
+                  className="relative py-2 px-3 rounded-lg text-xs font-medium transition-all"
                   style={{
                     background: selectedPortal === portal ? 'var(--accent)' : 'transparent',
                     color: selectedPortal === portal ? '#fff' : 'var(--text-muted)',
@@ -211,7 +220,29 @@ export default function LoginPage() {
               </div>
             )}
 
-            {magicLinkSent ? (
+            {selectedPortal === 'customer' ? (
+              /* Customer Portal — redirect to client.zafto.cloud */
+              <div className="text-center py-6">
+                <div
+                  className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4"
+                  style={{ background: 'var(--accent-light)' }}
+                >
+                  <ExternalLink size={24} className="text-accent" />
+                </div>
+                <h3 className="text-base font-semibold text-main">Customer Portal</h3>
+                <p className="text-[13px] text-muted mt-2 max-w-[280px] mx-auto">
+                  Access your projects, invoices, and messages through the customer portal.
+                </p>
+                <a
+                  href="https://client.zafto.cloud"
+                  className="mt-5 inline-flex items-center gap-2 h-11 px-6 rounded-lg text-white text-sm font-semibold transition-all hover:brightness-110"
+                  style={{ background: 'var(--accent)' }}
+                >
+                  Go to Customer Portal
+                  <ArrowRight size={16} />
+                </a>
+              </div>
+            ) : magicLinkSent ? (
               /* Magic Link Confirmation */
               <div className="text-center py-6">
                 <div
@@ -347,8 +378,16 @@ export default function LoginPage() {
                   )}
                 </button>
 
+                {/* Field employee link */}
+                <p className="text-center text-[12px] text-muted mt-5">
+                  Field employee?{' '}
+                  <a href="https://team.zafto.cloud" className="text-accent font-medium hover:underline">
+                    Sign in at team.zafto.cloud
+                  </a>
+                </p>
+
                 {/* Contact sales */}
-                <p className="text-center text-[13px] text-muted mt-5">
+                <p className="text-center text-[13px] text-muted mt-3">
                   Need an account?{' '}
                   <a href="mailto:admin@zafto.app" className="text-accent font-medium hover:underline">
                     Contact sales

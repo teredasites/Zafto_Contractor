@@ -1,12 +1,19 @@
 # ZAFTO CIRCUIT BLUEPRINT
 ## Living Wiring Diagram — What Connects, What Doesn't, What's Missing
-### Last Updated: February 9, 2026 (Session 96 — Phase U (Unification & Feature Completion) added to build order. Build order: T → P → SK → U → G → E → LAUNCH.)
+### Last Updated: February 11, 2026 (Session 97 — Plan Review spec'd (BA1-BA8, ~128 hrs). Phase GC (Schedule) added (~124 hrs). Build order: T → P → SK → GC → U → G → E (E-review → BA → E1-E4) → LAUNCH.)
 
 ---
 
 ## PURPOSE
 
 You don't rough-in a house without a print. This is the print. Maps every pipe, every broken connection, and every missing piece across all 5 apps + Supabase. **UPDATE THIS AS WIRING PROGRESSES.**
+
+**Related docs:**
+- `00_HANDOFF.md` — Session entry point, current execution pointer, session log
+- `01_MASTER_BUILD_PLAN.md` — High-level build order, feature inventory, architecture
+- `03_LIVE_STATUS.md` — Quick status snapshot (overlaps with this doc for status; this doc is authoritative for **wiring details**, Live Status is authoritative for **build order and sprint tracking**)
+- `06_ARCHITECTURE_PATTERNS.md` — 14 code patterns to follow when implementing
+- `07_SPRINT_SPECS.md` — Execution checklists for each sprint
 
 ---
 
@@ -64,7 +71,7 @@ You don't rough-in a house without a print. This is the print. Maps every pipe, 
 | MOBILE | | WEB    | | TEAM    | | CLIENT | | OPS    |
 | APP    | | CRM    | | PORTAL  | | PORTAL | | PORTAL |
 | Flutter| | Next15 | | Next15  | | Next15 | | Next15 |
-| 33 role| | 107    | | 33      | | 36     | | 26     |
+| 33 role| | 107    | | 36      | | 38     | | 26     |
 | screens| | pages  | | pages   | | pages  | | pages  |
 | R1+E3  | | 68     | | 22      | | 21     | | 2      |
 | +E5+E6 | | hooks  | | hooks   | | hooks  | | hooks  |
@@ -175,12 +182,12 @@ DEFERRED -- Specified but intentionally postponed
 | location_tracking_service.dart | Local | **4 compile errors -- missing battery_plus package.** |
 
 **Repositories:** auth, customer, job, invoice, bid, time_entry, photo, compliance, receipt, signature, mileage, voice_note, insurance_claim, claim_supplement, moisture_reading, drying_log, restoration_equipment, tpi_inspection, certification, zbooks_account, zbooks_journal, zbooks_expense, property, tenant, lease, rent, pm_maintenance, inspection, asset, walkthrough, estimate, estimate_engine (32 total)
-**Models:** Photo, ComplianceRecord, Receipt, Signature, MileageTrip, VoiceNote, Job (with JobType enum), Customer, Invoice, Bid, TimeEntry, Notification, InsuranceClaim, ClaimSupplement, MoistureReading, DryingLog, RestorationEquipment, TpiInspection, Certification, CertificationTypeConfig, ZBooksAccount, ZBooksJournalEntry, ZBooksExpense, Property, Unit, Tenant, Lease, MaintenanceRequest, PropertyAsset, PmInspection, UnitTurn, Walkthrough, WalkthroughRoom, WalkthroughPhoto, WalkthroughTemplate, FloorPlan, XactimateCode, EstimateLine (35 Supabase models)
-**ZBooks Flutter Screens (D4m S70):** zbooks_hub_screen.dart, journal_entry_screen.dart, expense_entry_screen.dart — all in lib/screens/zbooks/
+**Models:** Photo, ComplianceRecord, Receipt, Signature, MileageTrip, VoiceNote, Job (with JobType enum), Customer, Invoice, Bid, TimeEntry, Notification, InsuranceClaim, ClaimSupplement, MoistureReading, DryingLog, RestorationEquipment, TpiInspection, Certification, CertificationTypeConfig, LedgerAccount, LedgerJournalEntry, LedgerExpense, Property, Unit, Tenant, Lease, MaintenanceRequest, PropertyAsset, PmInspection, UnitTurn, Walkthrough, WalkthroughRoom, WalkthroughPhoto, WalkthroughTemplate, FloorPlan, XactimateCode, EstimateLine (35 Supabase models)
+**Ledger Flutter Screens (D4m S70):** zbooks_hub_screen.dart, journal_entry_screen.dart, expense_entry_screen.dart — all in lib/screens/zbooks/
 **PM Flutter Screens (D5f S72):** 10 screens in lib/screens/properties/ — properties_hub, property_detail (5-tab), unit_detail, tenant_detail, lease_detail, rent, maintenance, inspection, asset, unit_turn
 **R1 Flutter App Remake (S78):** 33 role-based screens. Design system (8 widgets). AppShell with role switching. Owner (5), Tech (5), Office+Inspector+CPA (10), Client+Tenant (8), walkthrough start+capture+summary+room_detail_sheet (4). Z FAB on AppShell.
 **E3 Mobile AI (S80):** ai_service.dart (AiService + AiChatNotifier + providers), z_chat_sheet.dart (bottom sheet chat), ai_photo_analyzer.dart (vision defect detection). Z FAB tap → chat, long-press → quick actions.
-**D8 Estimate Engine (S86):** 5 Flutter screens in lib/screens/estimates/ (list, builder, room editor, line item picker, preview). Models: estimate.dart + estimate_item.dart. Repo: estimate_engine_repository.dart. Service: estimate_engine_service.dart. Quick Actions: quick_actions_service.dart.
+**D8 Estimates (S86):** 5 Flutter screens in lib/screens/estimates/ (list, builder, room editor, line item picker, preview). Models: estimate.dart + estimate_item.dart. Repo: estimate_engine_repository.dart. Service: estimate_engine_service.dart. Quick Actions: quick_actions_service.dart.
 **E5 Xactimate (S79):** Dormant Flutter estimate screens (E5-era, superseded by D8c)
 **E6 Walkthrough (S79):** 12 screens in lib/screens/walkthrough/ — list, start, capture, summary, room_detail_sheet + 4 annotation files + 4 sketch editor files
 **State widgets (B7 S57):** ZaftoLoadingState, ZaftoEmptyState -- reusable across all screens
@@ -199,7 +206,7 @@ DEFERRED -- Specified but intentionally postponed
 
 ### 1B. WEB CRM -- NEXT.JS (107 pages at zafto.cloud)
 
-**107 page.tsx files. 68 hook files + 22 Z Console files. mock-data.ts DELETED. Firebase fully removed. `npm run build` passes (104 routes, 0 errors).**
+**107 page.tsx files. 68 hook files + 22 Dashboard files. mock-data.ts DELETED. Firebase fully removed. `npm run build` passes (104 routes, 0 errors).**
 
 | Group | Pages | Backend | Notes |
 |-------|:-----:|:-------:|-------|
@@ -216,20 +223,20 @@ DEFERRED -- Specified but intentionally postponed
 | Insurance (List, Detail) | 2 | LIVE Supabase | **DONE (D2b-D2g S63-S64)** -- use-insurance.ts hook. Claims pipeline + 6-tab detail. |
 | Certifications | 1 | LIVE Supabase | **DONE (D7a S67-S68)** -- use-enterprise.ts hook. |
 | Warranties | 1 | LIVE Supabase | **DONE** -- use-verticals.ts hook. |
-| ZBooks (13 pages) | 13 | LIVE Supabase | **DONE (D4 S70)** -- 13 hooks, 13 pages. GL engine. Double-entry. 5 EFs. |
+| Ledger (13 pages) | 13 | LIVE Supabase | **DONE (D4 S70)** -- 13 hooks, 13 pages. GL engine. Double-entry. 5 EFs. |
 | Properties (14 pages) | 14 | LIVE Supabase | **DONE (D5b-D5d S71)** -- 11 hooks + 14 pages. Sidebar PROPERTIES section. |
 | Estimates (4 pages) | 4 | LIVE Supabase | **DONE (D8d S86)** -- List, editor, import, pricing. use-estimates.ts hook. |
 | Walkthroughs (3 pages) | 3 | LIVE Supabase | **DONE (E6f S79)** -- List, detail, bid view. use-walkthroughs.ts hook. |
 | Revenue Insights (E4) | 1 | LIVE Supabase | **DONE (E4b S80)** -- use-revenue-insights.ts. UNCOMMITTED. |
 | Growth / Revenue Autopilot (E4) | 1 | LIVE Supabase | **DONE (E4e S80)** -- use-growth-actions.ts. UNCOMMITTED. |
-| Z (AI Chat + Voice) | 2 | LIVE Supabase | **Z Console (B4e S54):** 22 files. z-voice page. **E2 (S78):** Wired to z-intelligence EF. |
-| **F1: Phone System (S90)** | 3 | LIVE Supabase | **DONE** -- phone/, phone/sms/, phone/fax/ pages. use-phone.ts + use-fax.ts hooks. SignalWire integration. |
+| Z (AI Chat + Voice) | 2 | LIVE Supabase | **Dashboard (B4e S54):** 22 files. z-voice page. **E2 (S78):** Wired to z-intelligence EF. |
+| **F1: Calls (S90)** | 3 | LIVE Supabase | **DONE** -- phone/, phone/sms/, phone/fax/ pages. use-phone.ts + use-fax.ts hooks. SignalWire integration. |
 | **F3: Meetings (S90)** | 4 | LIVE Supabase | **DONE** -- meetings/, meetings/room/, meetings/booking-types/, meetings/async-videos/ pages. use-meetings.ts + use-async-videos.ts hooks. LiveKit integration. |
 | **F4: Field Toolkit (S90)** | 8 | LIVE Supabase | **DONE** -- inspection-engine, osha-standards, moisture-readings, drying-logs, equipment, site-surveys, sketch-bid, team-chat pages. 6 hooks (use-inspection-engine, use-osha-standards, use-restoration-tools, use-site-surveys, use-sketch-bid, use-team-chat). |
-| **F5: Business OS (S90)** | 7 | LIVE Supabase | **DONE** -- payroll, fleet, hr, email, documents, vendors (rewired), purchase-orders (rewired) pages. 7 hooks (use-payroll, use-fleet, use-hr, use-email, use-documents, use-procurement, use-vendors rewired). |
+| **F5: Integrations (S90)** | 7 | LIVE Supabase | **DONE** -- payroll, fleet, hr, email, documents, vendors (rewired), purchase-orders (rewired) pages. 7 hooks (use-payroll, use-fleet, use-hr, use-email, use-documents, use-procurement, use-vendors rewired). |
 | **F6: Marketplace (S90)** | 1 | LIVE Supabase | **DONE** -- marketplace/ page. use-marketplace.ts hook. |
 | **F9: Hiring (S90)** | 1 | LIVE Supabase | **DONE** -- hiring/ page. use-hiring.ts hook. (was under F5 grouping). |
-| **F10: ZDocs (S90)** | 1 | LIVE Supabase | **DONE** -- zdocs/ page. use-zdocs.ts hook (real-time + 7 mutations). 3 tabs: templates, generated, signatures. |
+| **F10: ZForge (S90)** | 1 | LIVE Supabase | **DONE** -- zdocs/ page. use-zdocs.ts hook (real-time + 7 mutations). 3 tabs: templates, generated, signatures. |
 | Remaining Placeholders | 5 | MOCK | permits, communications, service-agreements, bid-brain, equipment-memory — no backing tables. |
 | Office Placeholders | 3 | MOCK | price-book, automations, inventory — future-phase. |
 
@@ -238,7 +245,7 @@ DEFERRED -- Specified but intentionally postponed
 - `permission-gate.tsx` (424 lines) -- RBAC with 40+ permissions
 - `types/index.ts` -- TypeScript interfaces (Job, InsuranceMetadata, WarrantyMetadata, etc.)
 - **68 hook files total:** mappers.ts (1) + 67 use-*.ts files in src/lib/hooks/. Full list: use-accounts, use-approvals, use-assets, use-async-videos, use-banking, use-bid-optimizer, use-bids, use-branch-financials, use-change-orders, use-construction-accounting, use-cpa-access, use-customers, use-documents, use-email, use-enterprise, use-equipment-insights, use-estimate-engine, use-estimates, use-expenses, use-fax, use-financial-statements, use-fiscal-periods, use-fleet, use-growth-actions, use-hiring, use-hr, use-inspection-engine, use-inspections, use-insurance, use-invoices, use-job-costs, use-jobs, use-leads, use-leases, use-marketplace, use-meetings, use-osha-standards, use-payroll, use-phone, use-pm-inspections, use-pm-maintenance, use-procurement, use-properties, use-reconciliation, use-recurring, use-rent, use-reports, use-restoration-tools, use-revenue-insights, use-scope-assist, use-site-surveys, use-sketch-bid, use-stats, use-tax-compliance, use-team-chat, use-tenants, use-unit-turns, use-units, use-vendors, use-verticals, use-walkthrough-templates, use-walkthroughs, use-z-artifacts, use-z-threads, use-zbooks-engine, use-zbooks, use-zdocs. + use-company.ts in src/hooks/.
-- 22 Z Console files: 5 in src/lib/z-intelligence/ + 17 in src/components/z-console/
+- 22 Dashboard files: 5 in src/lib/z-intelligence/ + 17 in src/components/z-console/
 - firebase.ts DELETED (B4a S49). auth.ts + firestore.ts rewritten for Supabase.
 - **UI Polish (B4d S53):** Collapsible sidebar (366 lines), skeleton loading (7 pages), chart bezier curves + draw-in animation, stagger animations, dark mode depth layers.
 - **Sentry (C1a S58):** @sentry/nextjs wired. global-error.tsx. Auth wired.
@@ -264,7 +271,7 @@ DEFERRED -- Specified but intentionally postponed
 | Menu | 1 | LIVE Supabase | **Updated (D5g S73)** -- tenant services section. |
 | **F1: Messages (S90)** | 1 | LIVE Supabase | **DONE** -- SMS messaging page. use-messages.ts hook. SignalWire. |
 | **F3: Meetings + Book (S90)** | 2 | LIVE Supabase | **DONE** -- meetings/ + book/ pages. use-meetings.ts hook. LiveKit. |
-| **F7: My Home (S90)** | 5 | LIVE Supabase | **DONE** -- my-home/, my-home/equipment/, my-home/equipment/[id]/, my-home/service-history/, my-home/maintenance/, my-home/documents/ pages. use-home.ts + use-home-documents.ts hooks. ZAFTO Home platform. |
+| **F7: My Home (S90)** | 5 | LIVE Supabase | **DONE** -- my-home/, my-home/equipment/, my-home/equipment/[id]/, my-home/service-history/, my-home/maintenance/, my-home/documents/ pages. use-home.ts + use-home-documents.ts hooks. Home Portal. |
 | **F-expansion: Documents (S90)** | 1 | LIVE Supabase | **DONE** -- documents/ page (portal-level). Separate from my-home/documents. |
 | **F-expansion: Get Quotes (S90)** | 1 | LIVE Supabase | **DONE** -- get-quotes/ page. use-quotes.ts hook. |
 | **F-expansion: Find a Pro (S90)** | 1 | LIVE Supabase | **DONE** -- find-a-pro/ page. use-contractors.ts hook. Marketplace consumer side. |
@@ -380,7 +387,7 @@ DEFERRED -- Specified but intentionally postponed
 | B4b: CRM Core Pages | DONE (S50) | 12 core pages wired. 6 hooks. Real-time. |
 | B4c: CRM Remaining | DONE (S51-S52) | 13 more pages. 11 hooks total. mock-data.ts DELETED. |
 | B4d: UI Polish | DONE (S53) | Collapsible sidebar, skeleton loading, chart animations, dark mode. |
-| B4e: Z Console | DONE (S54) | Persistent AI console. 22 files. 3 states. Mock AI flows. |
+| B4e: Dashboard | DONE (S54) | Persistent AI console. 22 files. 3 states. Mock AI flows. |
 | B5: Employee Portal | DONE (S55) | 21 pages, 8 hooks, PWA-ready. |
 | B6: Client Portal | DONE (S56) | Magic link auth, 6 pages wired, 5 hooks. |
 | B7: Polish | DONE (S57) | 76 commands in registry. Notifications. State widgets. |
@@ -402,8 +409,8 @@ DEFERRED -- Specified but intentionally postponed
 | D1: Job Type System | DONE (S62) | 3 types (standard/insurance_claim/warranty_dispatch). Type metadata (InsuranceMetadata/WarrantyMetadata). Full UI across Flutter + 4 web portals. Calendar colors. Conditional forms. All 5 apps build clean. |
 | D2: Insurance/Restoration | D2a-D2h DONE (S63-S64, S68). | 7 new tables deployed (36 total). Flutter: 18 new files + insurance completion checklist. Web CRM: 3 new files + completion tab. Team Portal: use-insurance.ts + job detail restoration progress. Client Portal: use-insurance.ts + claim timeline. |
 | D3: Insurance Verticals | D3a-D3d DONE (S69) | Phase 1+2 COMPLETE. claim_category + JSONB vertical data. Storm/Recon/Commercial typed models + category forms across Flutter + Web CRM. Phase 3 deferred (6+ months). |
-| D4: ZBooks | **ALL DONE (S70)** | 16 sub-steps (D4a-D4p). GL engine. Double-entry. 15 new tables. 13 hooks. 13 web pages. 5 Edge Functions. 3 Flutter screens (hub, journal entry, expenses). CPA portal access. Construction accounting (AIA G702/G703 progress billing + retention). 55 COA accounts + 26 tax categories seeded. zbooks_audit_log INSERT-only. |
-| D5: Property Management | **ALL DONE (S71-S77)** | 18 new tables (79 total). 4 migrations. Web CRM: 14 pages, 11 hooks, sidebar section. Flutter: 10 screens, 7 repos, 3 services, 5 models. Client Portal: 5 tenant hooks, 6 new pages, home+menu tenant-aware. Team Portal: 3 PM hooks, properties page, job detail PM context. 3 Edge Functions (rent-charge, lease-reminders, asset-reminders). 157 model tests. Seed data. Integration wiring: maintenance→job, rent→ZBooks journal, lease termination→unit turn, job completion→request update, inspection→repair job, turn task→job. |
+| D4: Ledger | **ALL DONE (S70)** | 16 sub-steps (D4a-D4p). GL engine. Double-entry. 15 new tables. 13 hooks. 13 web pages. 5 Edge Functions. 3 Flutter screens (hub, journal entry, expenses). CPA portal access. Construction accounting (AIA G702/G703 progress billing + retention). 55 COA accounts + 26 tax categories seeded. zbooks_audit_log INSERT-only. |
+| D5: Property Management | **ALL DONE (S71-S77)** | 18 new tables (79 total). 4 migrations. Web CRM: 14 pages, 11 hooks, sidebar section. Flutter: 10 screens, 7 repos, 3 services, 5 models. Client Portal: 5 tenant hooks, 6 new pages, home+menu tenant-aware. Team Portal: 3 PM hooks, properties page, job detail PM context. 3 Edge Functions (rent-charge, lease-reminders, asset-reminders). 157 model tests. Seed data. Integration wiring: maintenance→job, rent→Ledger journal, lease termination→unit turn, job completion→request update, inspection→repair job, turn task→job. |
 | D6: Enterprise Foundation | DONE (S65-66) | 5 new tables: branches, custom_roles, form_templates, certifications, api_keys. Multi-location, custom roles, configurable compliance forms, cert tracking, API key management. |
 | D7a: Certifications | DONE (S67-68) | Cert tracker across Flutter + Web CRM + Team Portal. Modular types: certification_types table (25 system defaults, company-custom). Immutable audit log: certification_audit_log (INSERT-only). All 3 surfaces use dynamic types from DB with enum fallback. |
 
@@ -416,7 +423,7 @@ DEFERRED -- Specified but intentionally postponed
 Tech clocks in (GPS) -> Selects job -> Opens field tools (auto-linked to job)
     -> Takes photos -> saved to job + Storage
     -> Logs safety briefing -> saved to compliance
-    -> Scans receipt -> flows to job costs + ZBooks
+    -> Scans receipt -> flows to job costs + Ledger
     -> Captures signature -> attached to job
     -> Marks tasks -> job progress updates
         -> Office sees real-time: photos, costs, progress
@@ -443,10 +450,10 @@ Tech opens app -> Taps "Field Tools"
 
 ### Remaining Broken Pipes
 
-**Pipe 1: Receipt Scanner -> OCR -> ZBooks**
+**Pipe 1: Receipt Scanner -> OCR -> Ledger**
 - Receipt images saved. OCR not wired (Phase E).
-- ZBooks fully built (D4 S70): GL engine, expenses, vendors, bank reconciliation, reports all LIVE.
-- REMAINING: receipt-ocr Edge Function (Claude Vision) -> auto-categorization -> auto-create expense entries in ZBooks.
+- Ledger fully built (D4 S70): GL engine, expenses, vendors, bank reconciliation, reports all LIVE.
+- REMAINING: receipt-ocr Edge Function (Claude Vision) -> auto-categorization -> auto-create expense entries in Ledger.
 
 **Pipe 2: Time Clock GPS -> CRM Map**
 - GPS pings captured in location_pings JSONB on time_entries.
@@ -477,7 +484,7 @@ Tech opens app -> Taps "Field Tools"
 - CRM: createJobFromRequest, createRepairFromInspection, createJobFromTurnTask — all wired.
 - Job model has propertyId, unitId, maintenanceRequestId fields (D5i S77).
 - completeMaintenanceJob updates request status + job status atomically.
-- Rent payment → ZBooks journal entry (debit Cash, credit Rental Income, property-tagged).
+- Rent payment → Ledger journal entry (debit Cash, credit Rental Income, property-tagged).
 - Lease termination → auto-create unit turn with move_out_date.
 - Job completion from inspection → repair job auto-created.
 - 3 Edge Functions: pm-rent-charge (daily rent + late fees), pm-lease-reminders (90/60/30 days), pm-asset-reminders (14 days).
@@ -502,25 +509,25 @@ Tech opens app -> Taps "Field Tools"
 **D3 Insurance Verticals (0 new tables -- migration 000015+000016+000017):** claim_category column + JSONB data on insurance_claims. warranty_dispatch_companies table. jobs.source column.
 **D6 Enterprise (5 -- migration 000013):** branches, custom_roles, form_templates, certifications, api_keys
 **D7a Certifications Modular (2 -- migration 000014):** certification_types (25 seeded system defaults), certification_audit_log (INSERT-only)
-**D4 ZBooks Core (6 -- migration 000018):** chart_of_accounts (55 seeded), journal_entries, journal_entry_lines, fiscal_periods, zbooks_audit_log (INSERT-only), tax_categories (26 seeded)
-**D4 ZBooks Banking/Expense/Vendor (7 -- migration 000019):** bank_accounts, bank_transactions, bank_reconciliations, expenses, vendors, vendor_payments, recurring_templates
-**D4 ZBooks Construction (2 -- migration 000020):** progress_billings (AIA G702/G703), retention_tracking
+**D4 Ledger Core (6 -- migration 000018):** chart_of_accounts (55 seeded), journal_entries, journal_entry_lines, fiscal_periods, zbooks_audit_log (INSERT-only), tax_categories (26 seeded)
+**D4 Ledger Banking/Expense/Vendor (7 -- migration 000019):** bank_accounts, bank_transactions, bank_reconciliations, expenses, vendors, vendor_payments, recurring_templates
+**D4 Ledger Construction (2 -- migration 000020):** progress_billings (AIA G702/G703), retention_tracking
 **D5 Property Management (18 -- migrations 000021-000024):** properties, units, tenants, leases, rent_charges, rent_payments, maintenance_requests, work_order_actions, pm_inspections, pm_inspection_items, property_assets, asset_service_records, pm_documents, unit_turns, unit_turn_tasks, vendors (PM), vendor_contacts, vendor_assignments. + expense_records gets property_id/schedule_e_category/property_allocation_pct columns (D5e).
 **E1 AI Layer (2 -- migration 000025):** z_threads, z_messages
 **E5 Xactimate (5 -- migrations 000026-000027):** xactimate_codes (77 seeded), pricing_entries, pricing_contributions, estimate_templates, esx_imports.
 **E6 Walkthrough (5 -- migration 000028):** walkthroughs, walkthrough_rooms, walkthrough_photos, walkthrough_templates (14 seeded), property_floor_plans
-**D8 Estimate Engine (11 -- migrations 000029-000031):** estimate_categories (86 seeded), estimate_units (16 seeded), estimate_items (216 seeded), estimate_pricing (5,616 rows seeded: national + 25 MSAs), estimate_labor_components (28 seeded), code_contributions, estimates, estimate_areas, estimate_line_items, estimate_photos, msa_regions (25 MSAs). fn_zip_to_msa + fn_get_item_pricing Postgres functions.
+**D8 Estimates (11 -- migrations 000029-000031):** estimate_categories (86 seeded), estimate_units (16 seeded), estimate_items (216 seeded), estimate_pricing (5,616 rows seeded: national + 25 MSAs), estimate_labor_components (28 seeded), code_contributions, estimates, estimate_areas, estimate_line_items, estimate_photos, msa_regions (25 MSAs). fn_zip_to_msa + fn_get_item_pricing Postgres functions.
 
 **--- F-PHASE + FM TABLES (+71) ---**
 **FM Payments (6 -- migration 000032):** payment_intents, payments, payment_failures, user_credits, scan_logs, credit_purchases
-**F1 Phone System (9 -- migration 000033):** phone_lines, call_logs, sms_messages, fax_documents, voicemails, call_recordings, auto_attendant_configs, phone_contacts, call_analytics
-**F3 Meeting Rooms (5 -- migration 000034):** meeting_rooms, meetings, meeting_participants, meeting_recordings, booking_types
+**F1 Calls (9 -- migration 000033):** phone_lines, call_logs, sms_messages, fax_documents, voicemails, call_recordings, auto_attendant_configs, phone_contacts, call_analytics
+**F3 Meetings (5 -- migration 000034):** meeting_rooms, meetings, meeting_participants, meeting_recordings, booking_types
 **F4 Field Toolkit (10 -- migrations 000035-000036):** inspection_templates, inspection_results, osha_standards, moisture_profiles, drying_protocols, equipment_inventory, site_surveys, survey_measurements, sketch_bids, walkie_channels
-**F5 Business OS (25+ -- migrations 000037-000044):** lead_sources, lead_assignments, cpa_portal_access, cpa_reports, payroll_runs, payroll_items, tax_filings, fleet_vehicles, fleet_maintenance_logs, fleet_fuel_logs, fleet_gps_logs, purchase_orders, purchase_order_items, vendor_catalogs, hr_employees, hr_time_off, hr_documents, hr_performance, email_accounts, email_messages, email_templates, email_campaigns, document_folders, document_files, document_shares
+**F5 Integrations (25+ -- migrations 000037-000044):** lead_sources, lead_assignments, cpa_portal_access, cpa_reports, payroll_runs, payroll_items, tax_filings, fleet_vehicles, fleet_maintenance_logs, fleet_fuel_logs, fleet_gps_logs, purchase_orders, purchase_order_items, vendor_catalogs, hr_employees, hr_time_off, hr_documents, hr_performance, email_accounts, email_messages, email_templates, email_campaigns, document_folders, document_files, document_shares
 **F6 Marketplace (5 -- migration 000045):** marketplace_listings, marketplace_reviews, marketplace_messages, marketplace_categories, marketplace_saved
-**F7 ZAFTO Home (5 -- migration 000046):** home_profiles, home_equipment, home_service_history, home_maintenance_schedules, home_documents
+**F7 Home Portal (5 -- migration 000046):** home_profiles, home_equipment, home_service_history, home_maintenance_schedules, home_documents
 **F9 Hiring (3 -- migration 000047):** job_postings, job_applications, hiring_pipelines
-**F10 ZDocs (3 -- migration 000048):** zdoc_templates, zdoc_generated, zdoc_signatures
+**F10 ZForge (3 -- migration 000048):** zdoc_templates, zdoc_generated, zdoc_signatures
 
 **Total: ~173 tables. 48 migration files. RLS on all. Audit triggers on all mutable tables. ~18 F-phase migrations NOT YET DEPLOYED (need `npx supabase db push`). Pre-F migrations all synced (local=remote).**
 
@@ -581,8 +588,8 @@ Tech opens app -> Taps "Field Tools"
 - [x] Empty equipment/inventory/documents pages -- **DONE B4c S52**
 - [x] Dashboard chart data from real aggregations -- **DONE S52**
 - [x] UI Polish -- **DONE B4d S53** (sidebar, skeletons, animations)
-- [x] Z Console + Artifact System -- **DONE B4e S54** (22 files, persistent)
-- [x] ZBooks reads real bank/transaction data -- **DONE (D4 S70)** -- 13 hooks, 13 pages, 5 Edge Functions, GL engine, double-entry
+- [x] Dashboard + Artifact System -- **DONE B4e S54** (22 files, persistent)
+- [x] Ledger reads real bank/transaction data -- **DONE (D4 S70)** -- 13 hooks, 13 pages, 5 Edge Functions, GL engine, double-entry
 
 ### W5: Employee Field Portal -- DONE (B5 S55)
 - [x] Scaffold team-portal (Next.js 15, React 19, TypeScript, Tailwind CSS)
@@ -627,10 +634,10 @@ Tech opens app -> Taps "Field Tools"
 - [x] D2f: Certificate of Completion -- **DONE S68**
 - [x] D2h: Team/Client Portal Insurance Views -- **DONE (S68)** -- Team: restoration progress + inline recording. Client: claim timeline + status steps.
 - [x] D3: Insurance Verticals -- **D3a-D3d DONE (S69)** -- claim_category + JSONB vertical data. Phase 3 deferred.
-- [x] D4: ZBooks -- **ALL DONE (S70)** -- 16 sub-steps. 15 new tables. 13 hooks. 13 pages. 5 Edge Functions. 3 Flutter screens.
+- [x] D4: Ledger -- **ALL DONE (S70)** -- 16 sub-steps. 15 new tables. 13 hooks. 13 pages. 5 Edge Functions. 3 Flutter screens.
 - [x] D5a-D5c: PM Database + Web CRM Hooks + Pages -- **DONE (S71)** -- 18 tables, 11 hooks, 14 pages, sidebar PROPERTIES section.
 - [x] D5d: PM Dashboard Integration -- **DONE (S71)** -- Property stats on CRM dashboard.
-- [x] D5e: ZBooks Schedule E + Expense Allocation -- **DONE (S72)** -- expense→property allocation columns, Schedule E categories.
+- [x] D5e: Ledger Schedule E + Expense Allocation -- **DONE (S72)** -- expense→property allocation columns, Schedule E categories.
 - [x] D5f: Flutter Properties Hub + Screens -- **DONE (S72)** -- 5 models, 7 repos, 3 services, 10 screens. Home screen + command palette wired.
 - [x] D5g: Client Portal Tenant Flows -- **DONE (S73)** -- 5 hooks, 6 pages, home+menu updated. 29 routes. Stripe deferred to Phase E.
 - [x] D5h: Team Portal PM View -- **DONE (S76)** -- Properties page, job detail PM context, 3 hooks.
@@ -639,39 +646,51 @@ Tech opens app -> Taps "Field Tools"
 - [x] D7a: Certifications Modular -- **DONE S67-68** (certification_types + certification_audit_log — 2 tables, 43 total. 25 seeded system types. Configurable per company. Immutable audit trail. All 3 surfaces use dynamic DB types with enum fallback.)
 - [x] D2f: Certificate of Completion -- **DONE S68** (Flutter: job_completion_screen.dart enhanced — detects insurance_claim jobs, adds 4 extra checks: moisture at target, equipment removed, drying complete, TPI final passed. Auto-transitions claim to work_complete. Web CRM: 7th "Completion" tab on claim detail with pre-flight checklist + status transition buttons.)
 
-### Phase T: TPA Module -- SPEC'D (S92) -- NEXT
+### Phase T: Programs -- SPEC'D (S92) -- NEXT
 - [ ] T1-T10: 17 tables, 3 Edge Functions, ~80 hours. Builds FIRST.
 - Spec: `Expansion/39_TPA_MODULE_SPEC.md`
 
-### Phase P: ZScan/Property Intelligence -- SPEC'D (S93)
-- [ ] P1-P8: 8 tables, 4 Edge Functions, ~68 hours. Builds after Phase T.
+### Phase P: Recon/Property Intelligence -- SPEC'D (S93, expanded S97)
+- [ ] P1-P10: 11 tables, 6 Edge Functions, ~96 hours. Lead scoring, batch area scanning, storm intelligence, supplement checklist, multi-structure detection, confidence scoring. Builds after Phase T.
 - Spec: `Expansion/40_PROPERTY_INTELLIGENCE_SPEC.md`
 - API keys needed: GOOGLE_SOLAR_API_KEY, ATTOM_API_KEY, REGRID_API_KEY
 
 ### Phase U: Unification & Feature Completion -- PLANNED (S96)
-- [ ] U1-U9: ~120 hours, 9 sprints. Portal unification (merge team+client into web-portal at zafto.cloud), Supabase-style nav redesign, permission engine, ZBooks completion, dashboard restoration, PDF/email/dead buttons, payment flow, cross-system metrics, polish. Builds after Phase SK, before Phase G.
+- [ ] U1-U9: ~120 hours, 9 sprints. Portal unification (merge team+client into web-portal at zafto.cloud), Supabase-style nav redesign, permission engine, Ledger completion, dashboard restoration, PDF/email/dead buttons, payment flow, cross-system metrics, polish. Builds after Phase SK, before Phase G.
+
+### Phase SK: CAD-Grade Sketch Engine -- SPEC'D (S94)
+- [ ] SK1-SK11: ~176 hours, 11 sprints. 3 tables, ~46 files. LiDAR scan (Apple RoomPlan), trade layers, Konva.js web editor, auto-estimate pipeline, export, 3D view.
+- Spec: `Expansion/46_SKETCH_ENGINE_SPEC.md`
+
+### Plan Review (Phase E/BA) -- SPEC'D (S97)
+- [ ] BA1-BA8: 6 tables (blueprint_analyses, blueprint_sheets, blueprint_rooms, blueprint_elements, blueprint_takeoff_items, blueprint_revisions), 3 EFs (blueprint-upload, blueprint-process, blueprint-compare), ~128 hours.
+- Hybrid CV+LLM: MitUNet segmentation + YOLOv12 detection + Claude intelligence. RunPod Serverless GPU.
+- Trade-specific takeoff: electrical (circuits, wire runs, NEC), plumbing (DFU, pipe runs), HVAC (CFM, duct runs), painting, flooring, roofing.
+- Integrations: D8 Estimates (auto-estimate), SK Sketch Engine (floor plan generation), Unwrangle (material ordering), TPA (damage mapping).
+- Revision comparison: semantic diff between drawing versions, scope impact calculation.
+- Spec: `Expansion/47_BLUEPRINT_ANALYZER_SPEC.md`
 
 ### Phase E: AI Layer -- PAUSED (S80 owner directive — AI goes TRULY LAST, after T+P+SK+U+G)
 - [x] E1: Universal AI Architecture -- **DONE (S78)** -- z_threads + z_messages tables, z-intelligence Edge Function (14 tools), Supabase AI API client.
-- [x] E2: Z Console Wiring -- **DONE (S78)** -- Web CRM Z Console connected to z-intelligence Edge Function. 2 hooks (use-z-intelligence.ts, use-z-api.ts). Provider updated.
+- [x] E2: Dashboard Wiring -- **DONE (S78)** -- Web CRM Dashboard connected to z-intelligence Edge Function. 2 hooks (use-z-intelligence.ts, use-z-api.ts). Provider updated.
 - [x] E3a: AI Troubleshooting Edge Functions -- **DONE (S80)** -- 4 functions (ai-troubleshoot, ai-photo-diagnose, ai-parts-identify, ai-repair-guide). 1,311 lines. All deployed.
 - [x] E3b: Team Portal AI Troubleshooting -- **DONE (S80)** -- use-ai-troubleshoot.ts + troubleshoot/page.tsx (1,364 lines, 5-tab UI).
 - [x] E3c: Mobile Z Button + AI Chat -- **DONE (S80)** -- ai_service.dart + z_chat_sheet.dart + ai_photo_analyzer.dart. Z FAB in AppShell.
 - [x] E3d: Client Portal AI Chat Widget -- **DONE (S80)** -- use-ai-assistant.ts + ai-chat-widget.tsx. Floating Z + slide-up panel.
-- [x] E5: Xactimate Estimate Engine -- **DONE (S79)** -- 5 tables, estimate writer (Web CRM + Flutter), PDF output, AI parsing, scope assistant, crowd-sourced pricing. 6 Edge Functions.
+- [x] E5: Xactimate Estimates -- **DONE (S79)** -- 5 tables, estimate writer (Web CRM + Flutter), PDF output, AI parsing, scope assistant, crowd-sourced pricing. 6 Edge Functions.
 - [x] E6: Bid Walkthrough Engine -- **DONE (S79)** -- 5 tables, 12 Flutter screens, annotation system (7 tools), sketch editor (floor plans), CRM/portal viewers, AI bid generation. 4 Edge Functions.
 - [ ] E4a-e: Growth Advisor -- **IN PROGRESS (S80)** -- 5 Edge Functions written (2,133 lines), 4 hooks (756 lines), 4 CRM pages (2,263 lines). All files created locally. NOT committed, NOT deployed. Web CRM builds clean with new pages.
 
 ### Phase F: Platform Completion -- ALL CODE COMPLETE (S89-S90)
 - [x] FM: Firebase→Supabase Migration -- **CODE DONE (S89)** -- 6 tables, 4 EFs (stripe-payments, stripe-webhook, revenuecat-webhook, subscription-credits). Manual steps remain.
-- [x] F1: Phone System -- **DONE (S90)** -- 9 tables, 5 EFs (SignalWire). CRM: 3 pages + 2 hooks. Team: 1 page + 1 hook. Client: 1 page + 1 hook. Ops: 1 page + 1 hook.
-- [x] F3: Meeting Rooms -- **DONE (S90)** -- 5 tables, 4 EFs (LiveKit). CRM: 4 pages + 2 hooks. Team: 1 page + 1 hook. Client: 2 pages + 1 hook. Ops: 1 page + 1 hook.
+- [x] F1: Calls -- **DONE (S90)** -- 9 tables, 5 EFs (SignalWire). CRM: 3 pages + 2 hooks. Team: 1 page + 1 hook. Client: 1 page + 1 hook. Ops: 1 page + 1 hook.
+- [x] F3: Meetings -- **DONE (S90)** -- 5 tables, 4 EFs (LiveKit). CRM: 4 pages + 2 hooks. Team: 1 page + 1 hook. Client: 2 pages + 1 hook. Ops: 1 page + 1 hook.
 - [x] F4: Mobile Field Toolkit -- **DONE (S90)** -- 10 tables, 3 EFs (osha-data-sync, equipment-scanner, walkie-talkie). CRM: 8 pages + 6 hooks. Flutter mobile deferred.
-- [x] F5: Business OS Expansion -- **DONE (S90)** -- 25+ tables (8 migrations), 3 EFs (lead-aggregator, payroll-engine, sendgrid-email). CRM: 7 pages + 7 hooks. Team: 4 pages + 4 hooks (MY STUFF). Ops: 3 analytics pages.
+- [x] F5: Integrations -- **DONE (S90)** -- 25+ tables (8 migrations), 3 EFs (lead-aggregator, payroll-engine, sendgrid-email). CRM: 7 pages + 7 hooks. Team: 4 pages + 4 hooks (MY STUFF). Ops: 3 analytics pages.
 - [x] F6: Marketplace -- **DONE (S90)** -- 5 tables, 1 EF. CRM: 1 page + 1 hook. Client: 2 pages + 2 hooks. Ops: 1 analytics page.
-- [x] F7: ZAFTO Home Platform -- **DONE (S90)** -- 5 tables. Client: 5 pages + 2 hooks. Premium tier deferred to Phase E + RevenueCat.
+- [x] F7: Home Portal -- **DONE (S90)** -- 5 tables. Client: 5 pages + 2 hooks. Premium tier deferred to Phase E + RevenueCat.
 - [x] F9: Hiring System -- **DONE (S90)** -- 3 tables. CRM: 1 page + 1 hook. Ops: 1 analytics page. Checkr/E-Verify API integration deferred.
-- [x] F10: ZDocs + ZSheets -- **DONE (S90)** -- 3 tables, 1 EF (zdocs-render). CRM: 1 page + 1 hook. DocuSign integration deferred.
+- [x] F10: ZForge -- **DONE (S90)** -- 3 tables, 1 EF (zdocs-render). CRM: 1 page + 1 hook. DocuSign integration deferred.
 - [ ] F2: Website Builder V2 -- NOT BUILT -- After AI. Cloudflare Registrar, templates, AI content.
 - [ ] F8: Ops Portal Phases 2-4 -- NOT BUILT -- After AI. Marketing, treasury, legal, dev terminal.
 
@@ -736,7 +755,7 @@ Tech opens app -> Taps "Field Tools"
 | export-estimate-pdf | D8 branded PDF export — 3 templates, company branding | D8e |
 | import-esx | D8 ESX import — ZIP+XML parser, XACTDOC schema, code mapping | D8f |
 
-**D8 Estimate Engine (3):**
+**D8 Estimates (3):**
 | Function | Purpose | Phase |
 |----------|---------|-------|
 | export-esx | XACTDOC XML generation, ZIP+photos packaging | D8g |
@@ -759,7 +778,7 @@ Tech opens app -> Taps "Field Tools"
 | ai-parts-identify | Text+photo part ID (dual mode) | E3a |
 | ai-repair-guide | Skill-adaptive repair guide (3 skill levels) | E3a |
 
-**F1: Phone System — SignalWire (5):**
+**F1: Calls — SignalWire (5):**
 | Function | Purpose | Phase |
 |----------|---------|-------|
 | signalwire-voice | VoIP call management | F1 |
@@ -768,7 +787,7 @@ Tech opens app -> Taps "Field Tools"
 | signalwire-webhook | SignalWire event processing | F1 |
 | signalwire-ai-receptionist | AI-powered call handling | F1 |
 
-**F3: Meeting Rooms — LiveKit (4):**
+**F3: Meetings — LiveKit (4):**
 | Function | Purpose | Phase |
 |----------|---------|-------|
 | meeting-room | Video room management | F3 |
@@ -783,7 +802,7 @@ Tech opens app -> Taps "Field Tools"
 | team-chat | Team messaging | F4 |
 | osha-data-sync | OSHA standards database sync | F4 |
 
-**F5: Business OS (3):**
+**F5: Integrations (3):**
 | Function | Purpose | Phase |
 |----------|---------|-------|
 | lead-aggregator | Multi-source lead intake (Angi, Thumbtack, etc.) | F5/F6 |

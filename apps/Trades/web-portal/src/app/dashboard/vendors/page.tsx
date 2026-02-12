@@ -316,7 +316,7 @@ function SupplierDirectoryTab({ search, setSearch }: { search: string; setSearch
 }
 
 // ============================================================
-// Accounting Vendors Tab (vendors via use-vendors / ZBooks)
+// Accounting Vendors Tab (vendors via use-vendors / Ledger)
 // ============================================================
 
 function AccountingVendorsTab({ search, setSearch }: { search: string; setSearch: (v: string) => void }) {
