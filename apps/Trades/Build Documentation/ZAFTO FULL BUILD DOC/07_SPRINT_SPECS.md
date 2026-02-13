@@ -6568,7 +6568,35 @@ Execute in sequence:
 
 **Premature work below is COMMITTED and DORMANT. Do not continue, extend, or deploy.**
 **API:** Claude API (Anthropic) via Supabase Edge Functions (Deno). No direct browser→Claude calls.
-**Model:** Claude Sonnet 4.5 for speed, Claude Opus 4.6 for complex artifact generation.
+**Model:** Claude Opus 4.6 for all user-facing AI features. Sonnet 4.5 only for trivial background tasks (classification, routing). Anything the user sees = Opus.
+
+---
+
+### Sprint E0: AI Usage Metering Infrastructure (NEW — build FIRST before any AI goes live)
+**Goal:** Tier-based AI usage tracking + dollar top-up system. No credits, no tokens, no scan counts. Must be in place before any AI feature is enabled for users.
+
+**E0a: Database + Backend**
+- [ ] Migration: `ai_usage` table (id, company_id FK, billing_period_start DATE, billing_period_end DATE, usage_cost_cents INTEGER DEFAULT 0, tier_threshold_cents INTEGER, top_up_balance_cents INTEGER DEFAULT 0, is_unlimited BOOLEAN DEFAULT false, timestamps) + RLS
+- [ ] Migration: `ai_usage_log` table (id, company_id FK, user_id FK, feature TEXT CHECK [z_intelligence, blueprint_analyzer, ai_scanner, recon_ai, photo_analysis, trade_tools], tokens_input INTEGER, tokens_output INTEGER, cost_cents INTEGER, model TEXT, edge_function TEXT, created_at) + RLS
+- [ ] Migration: `ai_top_ups` table (id, company_id FK, user_id FK, amount_cents INTEGER CHECK (amount_cents IN (1000, 2500, 5000, 10000, 50000, 100000)), payment_intent_id TEXT, status CHECK [pending, completed, failed], created_at) + RLS
+- [ ] Edge Function: `ai-usage-check` — called before every AI request. Returns { allowed: boolean, reason?: string }. Logic: if company.tier = business/enterprise → always allowed. Else: check usage_cost_cents < tier_threshold_cents + top_up_balance_cents. If exceeded → return allowed: false.
+- [ ] Edge Function: `ai-usage-log` — called after every AI response. Logs tokens used, cost calculated from model pricing, updates ai_usage.usage_cost_cents.
+- [ ] Edge Function: `ai-top-up` — accepts amount ($10/$25/$50/$100/$500/$1000) → creates Stripe PaymentIntent (web) or RevenueCat IAP (mobile) → on success: adds amount to ai_usage.top_up_balance_cents.
+- [ ] Wire usage check into ALL AI Edge Functions: z-intelligence, ai-photo-diagnose, blueprint-process, and any future AI EFs. Pattern: check usage → if blocked return 402 with upgrade message → if allowed proceed → log usage after response.
+- [ ] Tier threshold defaults: Solo = TBD cents/month, Team = TBD cents/month, Business/Enterprise = unlimited (is_unlimited = true). Exact values set during Phase G cost calibration. **Cost basis: Opus 4.6 ($5/1M input, $25/1M output) — average interaction ~$0.10-0.25. Sonnet 4.5 ($3/$15) for background-only tasks.**
+- [ ] Monthly reset: pg_cron job resets usage_cost_cents to 0 on billing_period_end. top_up_balance carries over (they paid for it).
+- [ ] DEPRECATE old system: Drop or ignore `user_credits`, `credit_purchases`, `scan_logs` tables. Remove `subscription-credits` EF. Kill RevenueCat IAP products `zafto_credits_*`.
+
+**E0b: UI — All Apps**
+- [ ] Settings page component: "AI Usage" section with clean visual usage bar. Bar fills from left to right. No numbers, no percentages, no "X of Y." Just a bar with color gradient (green → yellow → red as it fills).
+- [ ] When bar is full (usage exceeded): AI features show blocking overlay: "You've reached your AI usage for this month." Below: 6 dollar buttons in clean grid: **$10 | $25 | $50 | $100 | $500 | $1,000**. Below buttons: "Or upgrade your plan for higher monthly limits" link. User is NEVER forced to upgrade.
+- [ ] After top-up: meter refills proportionally, blocking overlay dismissed, AI features immediately available.
+- [ ] Business/Enterprise tiers: No meter shown in Settings. AI section just says "Unlimited AI — included in your plan."
+- [ ] Mobile (Flutter): Same UI pattern in Settings screen. Top-up via RevenueCat IAP (6 products: $10/$25/$50/$100/$500/$1000).
+- [ ] Web portals (CRM/Team/Client): Same UI pattern. Top-up via Stripe PaymentIntent.
+- [ ] Ops Portal: AI economics dashboard — cost per company, top-up revenue, margin per tier, power user alerts, total Anthropic spend vs AI revenue.
+
+---
 
 ### Sprint E1: Universal AI Architecture
 **Status: DONE (Session 78)**
@@ -7740,12 +7768,18 @@ Include <content>{markdown}</content> for rendered display.
 - [x] Codemagic CI/CD: Android debug build PASSING (S91) — 95.53 MB .aab artifact
 - [x] Dependabot: 0 vulnerabilities (S91) — protobufjs + fast-xml-parser fixed in legacy Firebase backend
 
-**G1b: Dead Code & Mock Data Cleanup**
-- [ ] Audit all hooks for remaining mock/fake data
+**G1b: Dead Code & Mock Data Cleanup (Specific Files from S98 Audit)**
+- [ ] Verify mock data removed: `web-portal/src/app/dashboard/communications/page.tsx` (50 mockCommunications — should be wired in U7)
+- [ ] Verify mock data removed: `web-portal/src/app/dashboard/automations/page.tsx` (mockAutomations — should be wired in U7)
+- [ ] Verify mock data removed: `web-portal/src/app/dashboard/bid-brain/page.tsx` (mockInsights — Phase E, should show "Coming soon" not fake data)
+- [ ] Verify mock data removed: `ops-portal/src/app/dashboard/system-status/page.tsx` (hardcoded services — should be wired in U7)
+- [ ] Remove all `console.log` debug statements across: bids/new, bids/[id], invoices/new, invoices/[id], settings, team pages (should be wired in U6)
 - [ ] Remove any unused imports across all portals
-- [ ] Remove console.log/console.error debug statements
-- [ ] Verify no hardcoded test credentials or placeholder API keys in source
-- [ ] Check for TODO/FIXME/HACK comments that need resolution
+- [ ] Verify no hardcoded test credentials or placeholder API keys in source (grep for `sk_test_`, `pk_test_`, `placeholder`, `your-api-key`, `TODO: replace`)
+- [ ] Remove stale Firebase reference: `invoices/[id]/page.tsx:451` says "Firestore" — must reference Supabase after U6 fix
+- [ ] Check for and remove all `setTimeout` fake delays used to simulate backend calls (bids/new:639, team:597)
+- [ ] Verify all TODO/FIXME/HACK comments either have matching sprint items or are intentional Phase E deferrals
+- [ ] Verify no fake data shown to users anywhere: contract analyzer, AI tools, bid brain — all Phase E deferred features show clear "Coming soon" message
 
 **G1c: Route & Navigation Verification**
 - [ ] Every sidebar nav item links to an existing route (web CRM)
@@ -7783,10 +7817,16 @@ Include <content>{markdown}</content> for rendered display.
 - [ ] Client Portal auth middleware covers all portal routes
 - [ ] Ops Portal super_admin role gate enforced
 
-**G2c: Input Validation**
+**G2c: Input Validation & Webhook Security**
 - [ ] Check for SQL injection vectors in dynamic queries
 - [ ] Check for XSS vectors in user-rendered content (ZForge templates)
 - [ ] Verify file upload size/type restrictions
+- [ ] **RevenueCat webhook signature** — verify `revenuecat-webhook` EF checks `X-RevenueCat-Webhook-Auth-Token` header (should be fixed in U6, verify here)
+- [ ] **Stripe webhook signature** — verify `stripe-webhook` EF uses `Stripe.webhooks.constructEvent()` with webhook secret (already implemented — confirm still working)
+- [ ] **All Edge Functions CORS** — verify consistent CORS headers across all 53 EFs (allowed origins: zafto.cloud, team.zafto.cloud, client.zafto.cloud, ops.zafto.cloud)
+- [ ] **JWT expiry handling** — verify all portals refresh tokens before expiry (middleware refreshes on every request via `createServerClient()` cookie handling)
+- [ ] **Rate limiting on auth** — verify Supabase auth rate limits are configured (default: 30 signups/hour, 30 OTP/hour)
+- [ ] **Client portal IDOR check** — verify customer_id scoping prevents customer A from seeing customer B's invoices/projects (RLS policy audit on `client_portal_users` → `customers` → data tables)
 
 ---
 
@@ -7859,8 +7899,8 @@ Include <content>{markdown}</content> for rendered display.
 - [ ] All ~8 Recon tables exist and have RLS enabled
 - [ ] company_id isolation verified on all Recon tables
 - [ ] Google Solar API integration returns valid Building Insights data
-- [ ] ATTOM Property API returns property metadata (if key configured)
-- [ ] Regrid parcel boundary data imports correctly
+- [ ] ATTOM Property API returns property metadata **if key configured** (graceful skip if not — verify no errors when ATTOM_API_KEY absent)
+- [ ] Regrid parcel boundary data imports correctly **if key configured** (verify manual parcel draw fallback works when REGRID_API_KEY absent)
 - [ ] Microsoft Building Footprints fallback works when Solar API insufficient
 
 **G7b: Recon Measurement Accuracy**
@@ -8043,6 +8083,75 @@ Include <content>{markdown}</content> for rendered display.
 - [ ] Invoice totals match across all portals
 - [ ] Customer info consistent across all views
 - [ ] Photo uploads visible everywhere (mobile → CRM → client portal)
+
+**G10f: Load & Stress Testing (Pre-AI Baseline)**
+*Establish performance baseline BEFORE Phase E adds AI load. These metrics become the comparison target for post-AI stress testing.*
+- [ ] **Concurrent user simulation** — Use k6 or Artillery to simulate 500+ concurrent users across all portals. Scenarios: CRM users creating/editing jobs, team portal users clocking in/out, client portal users viewing invoices, ops portal viewing analytics. Target: <2s response time at p95 under 500 concurrent users.
+- [ ] **Real-time channel stress** — Simulate 100 users subscribed to same `jobs` real-time channel. Rapid-fire INSERT/UPDATE operations. Verify: all clients receive updates within 5s, no dropped messages, Supabase Realtime doesn't throttle.
+- [ ] **Database connection pool** — Verify Supabase connection pooler (PgBouncer) handles 500+ concurrent connections. Monitor: pool exhaustion errors, query timeout rates, transaction deadlocks.
+- [ ] **Edge Function concurrency** — Hit `stripe-payments`, `sendgrid-email`, `z-intelligence` EFs with 50 concurrent requests each. Verify: no cold-start timeouts >10s, no 503 errors, proper error responses under load.
+- [ ] **Storage upload stress** — Simulate 20 concurrent photo uploads (each 5MB) to `photos` bucket. Verify: all uploads complete, signed URLs generated, no storage quota issues.
+- [ ] **Supabase row-level throughput** — INSERT 10,000 rows into `jobs` table for a single company, then query with RLS. Verify: SELECT returns all rows <500ms, pagination works, real-time doesn't lag.
+- [ ] **Cross-portal consistency under load** — While 100 CRM users are editing jobs, verify team portal and client portal still show correct data with <5s latency.
+- [ ] **Offline→Online sync burst** — Simulate 10 Flutter devices coming online simultaneously after offline period, each with 50 queued writes. Verify: PowerSync handles burst without data loss or conflicts.
+- [ ] **Memory/CPU profiling** — Monitor Supabase project resource usage during stress test. Document baseline metrics for comparison after Phase E adds AI load.
+- [ ] **Document baseline metrics** — Record: avg response time, p95 response time, error rate, DB CPU%, DB memory%, Realtime message throughput, Storage IO. These become the comparison baseline for post-Phase E stress testing.
+
+**G10g: UX Flow Audit (Enterprise Readiness)**
+*Every flow must be intuitive enough for a contractor with zero training. Test with fresh eyes.*
+- [ ] **First-time user flow** — New company signup → onboarding → first job creation → first invoice → first payment. Every step must be intuitive with zero documentation. Time the flow — target: <10 minutes for complete first transaction.
+- [ ] **Button discoverability audit** — For every major workflow (create bid, send invoice, record payment, assign job, clock in/out), verify the primary action button is visible without scrolling and uses consistent placement (top-right for page actions, bottom for form submissions).
+- [ ] **Navigation audit** — Can a user find every feature within 2 clicks from the sidebar? Are section labels clear to someone who's never used the software? Test with fresh eyes.
+- [ ] **Error recovery flow** — For every form: what happens on network error mid-submit? Is data preserved? Is the error message helpful? Can user retry without re-entering data?
+- [ ] **Empty state audit** — Every page with potential zero data: does it show helpful empty state with clear CTA? Not blank white page. Not just a spinner that never resolves.
+- [ ] **Loading state audit** — Every page: does it show skeleton loaders (not spinners) during data fetch? Does it feel fast? Target: meaningful content visible within 500ms.
+- [ ] **Mobile responsiveness** — Every CRM page, every field tech page, every customer page renders properly on 375px viewport (iPhone SE). No horizontal scroll. Touch targets >=44px.
+- [ ] **Role switching flow** — Owner logs in → sees CRM. Switches to technician view (if applicable) → sees field view. All data scoped correctly per role.
+- [ ] **Cross-browser** — Chrome, Safari, Firefox, Edge. All portals render correctly. No CSS breakage.
+- [ ] **Accessibility baseline** — Tab order logical on all forms. Focus indicators visible. Color contrast >=4.5:1 on all text. Screen reader can navigate sidebar + forms.
+
+**G10h: Form Validation Stress Test (S99 Owner Finding)**
+*Owner found that "dd" can be entered in price fields, email fields, etc. Zero validation. Test EVERY input field on EVERY form.*
+- [ ] **Negative testing — ALL Flutter forms** — For each form: enter letters in numeric fields, garbage in email fields, empty required fields, past dates in future-date fields, special chars in name fields. Every input must either reject, format, or warn. Zero fields accept arbitrary garbage.
+- [ ] **Negative testing — ALL CRM forms** — Same exercise for all web forms. Try "dd" in every price/amount/email/phone field. Must be rejected with inline error.
+- [ ] **Negative testing — ALL portal forms** — Team portal time entry, client portal service request, ops portal ticket creation. All validated.
+- [ ] **Double-submit testing** — Rapidly click every submit button. Must not create duplicate records. Button must disable after first click.
+- [ ] **SQL injection testing** — Enter `'; DROP TABLE jobs; --` in text fields. Verify parameterized queries prevent injection (Supabase handles this, but verify).
+- [ ] **XSS testing** — Enter `<script>alert('xss')</script>` in text fields. Verify output is escaped in all views (React handles this, but verify raw HTML rendering).
+- [ ] **Server-side validation** — Bypass client validation (use browser devtools or curl). Send invalid data directly to Supabase. Verify CHECK constraints and RLS policies reject it.
+
+**G10i: Form Depth Verification (S99 Audit)**
+*Verify all U11 form depth fixes are complete and functional. Every field that exists in a model must be exposed in UI.*
+- [ ] **Flutter form audit** — For each form (customer, job, bid, invoice, expense, employee): count fields in model vs fields in UI. Ratio must be >=90%. Document any intentionally hidden fields with justification.
+- [ ] **CRM form audit** — Same exercise for all web CRM forms. Verify multi-contact customer support works. Verify multi-rate taxation works. Verify all hardcoded values now read from company_config.
+- [ ] **Portal form audit** — Verify team portal GPS captures on clock-in, internal messaging sends/receives, time off requests submit. Verify client portal shows real job data (zero mock data remaining). Verify ops portal shows real or honest "not configured" state.
+- [ ] **Data flow test** — Create customer on Flutter → verify all fields appear on CRM. Create job on CRM → verify all fields appear on team portal. Create bid on CRM → verify customer sees all fields on client portal.
+
+**G10i: Template & Customization Verification (S99 Audit)**
+*Verify U12 template engine works end-to-end across all document types.*
+- [ ] **Template CRUD** — Create, edit, duplicate, delete templates for each type (bid/invoice/estimate/agreement). Verify default template selection works per trade.
+- [ ] **Custom fields** — Add custom field to customer, job, invoice. Verify field appears on create form, saves to DB, shows on detail view, appears in reports.
+- [ ] **Custom statuses** — Change job statuses for a company. Verify new statuses appear in job dropdowns, kanban boards, reports, filters. Verify default fallback works for companies with null custom statuses.
+- [ ] **Template PDF** — Generate PDF from template-based bid. Verify template formatting, variable substitution, logo placement, terms rendering all correct.
+- [ ] **Multi-tax verification** — Create invoice with 3 line items, each different tax rate. Verify subtotals, tax amounts, and grand total calculate correctly.
+
+**G10j: i18n Verification (S99 Audit)**
+*Verify U13 internationalization works across all 10 languages in all apps.*
+- [ ] **Language switcher** — Change language in settings → entire app switches immediately (no page reload needed on web, hot reload on Flutter).
+- [ ] **String completeness** — For each of 10 languages: run script to find untranslated strings. Target: 0 untranslated strings.
+- [ ] **PDF export** — Generate bid PDF in each of 10 languages. Verify: correct text, correct number formatting, correct date formatting, no character rendering issues.
+- [ ] **Email templates** — Send test email in each language. Verify subject, body, and action buttons are localized.
+- [ ] **Layout integrity** — Some languages (Russian, Polish) produce longer strings than English. Verify no text overflow, no button label clipping, no layout breakage.
+- [ ] **CJK rendering** — Chinese, Korean: verify all characters render in forms, PDFs, emails. No tofu (□) characters.
+- [ ] **Input validation** — Enter names with special characters (Polish: Łukasz Kowalski, Vietnamese: Nguyễn Văn, Russian: Иванов). Verify: stored correctly, displayed correctly, searchable.
+
+**G10k: Trade Coverage Verification (S99 Audit)**
+*Verify U14 universal trade support covers all major trade types.*
+- [ ] **Bid template coverage** — Verify bid templates exist for >=20 trade types. Each template has: relevant line items, correct units, trade-specific terms.
+- [ ] **Estimate category coverage** — Verify estimate categories cover all major trades with appropriate sub-categories and line items.
+- [ ] **Completion checklist coverage** — Verify trade-specific completion checklists exist for >=10 major trades.
+- [ ] **Unit coverage** — Verify bid builder has >=25 measurement units covering all trades (including board_foot, bundle, roll, pallet, panel, sheet, yard, box, bag, can).
+- [ ] **Onboarding flow** — Create new company as: electrician, plumber, roofer, painter, GC. Verify each gets appropriate default templates, categories, and checklists.
 
 ---
 
@@ -8278,6 +8387,13 @@ Include <content>{markdown}</content> for rendered display.
 *$0/scan vs EagleView $18-91/report. 10 trade pipelines. Lead scoring. Batch area scanning. Storm intelligence.*
 *On-site verification workflow. Supplement checklist. Multi-structure detection. Confidence scoring.*
 
+**⚠️ COST PRINCIPLE (applies to ALL expansion phases):**
+*Launch with $0/month API stack. Use only free and freemium APIs (free tiers) at launch. Paid APIs (ATTOM, Regrid, Nearmap, etc.) are POST-REVENUE additions — only integrate when monthly subscription revenue justifies the cost. Every feature must have a free-tier fallback that still delivers value. Enterprise-priced APIs with no free tier (Nearmap, Beam AI, SiteRecon, Hover) are NOT on the roadmap until post-traction. This is a standing rule for Phase P, Phase SK, Phase E, and all future expansions.*
+
+**Day 1 Free Stack:** Google Solar API (10K/mo free), Microsoft Building Footprints (free), USGS 3DEP (free), NOAA Storm (free), OpenStreetMap (free), Mapbox (200K tiles/mo free, already integrated).
+**Post-Revenue Additions:** ATTOM (~$500/mo — property records, lead scoring fuel), Regrid (~$80K/yr enterprise — parcel boundaries for batch scanning). Add when MRR justifies.
+**Killed:** Nearmap AI (enterprise-only), Beam AI (no API), SiteRecon (no public API), Hover ($999/yr min). Not viable for cost-conscious launch.
+
 ---
 
 ### Sprint P1: Foundation + Google Solar + Confidence Engine (~12 hours)
@@ -8304,22 +8420,27 @@ Include <content>{markdown}</content> for rendered display.
 ---
 
 ### Sprint P2: Property Data + Parcel + Multi-Structure Detection (~10 hours)
-**Goal:** ATTOM property records + Regrid parcel boundaries + Microsoft building footprints + USGS elevation + multi-structure detection.
+**Goal:** Microsoft building footprints + USGS elevation + multi-structure detection. ATTOM/Regrid integrations built but GATED behind feature flags (enabled post-revenue).
 **Tables:** parcel_boundaries, property_features, property_structures
 
+**P2a: FREE Sources (Day 1 — $0/month)**
 - [ ] Migration: `parcel_boundaries` table (id, scan_id FK, apn, boundary_geojson JSONB, lot_area_sqft, lot_width_ft, lot_depth_ft, zoning, zoning_description, owner_name, owner_type, data_source) + RLS
 - [ ] Migration: `property_features` table (id, scan_id FK, year_built, stories, living_sqft, lot_sqft, beds, baths_full, baths_half, construction_type, wall_type, roof_type_record, heating_type, cooling_type, pool_type, garage_spaces, assessed_value, last_sale_price, last_sale_date, elevation_ft, terrain_slope_pct, tree_coverage_pct, building_height_ft, data_sources JSONB, raw_attom JSONB, raw_regrid JSONB) + RLS
 - [ ] Migration: `property_structures` table (id, property_scan_id FK CASCADE, structure_type CHECK ['primary','secondary','accessory','other'], label TEXT, footprint_sqft, footprint_geojson JSONB, estimated_stories, estimated_roof_area_sqft, estimated_wall_area_sqft, has_roof_measurement BOOLEAN DEFAULT false, notes, created_at) + RLS
-- [ ] ATTOM API integration in `recon-property-lookup`: call /property/expandedprofile → parse building object (sqft, stories, beds, baths, construction, wall type, heating, cooling) + lot object (lot size, pool, depth, frontage) + assessment (assessed value) + sale history (last sale)
-- [ ] Regrid API integration in `recon-property-lookup`: call address search → parse parcel polygon (GeoJSON), APN, zoning, lot dimensions, owner info → insert parcel_boundaries
-- [ ] Microsoft Building Footprints integration: fetch ALL building polygons within parcel boundary → spatial intersection → classify primary (largest footprint), secondary (garage/workshop), accessory (shed/gazebo) → insert property_structures per building
+- [ ] Microsoft Building Footprints integration (FREE): fetch ALL building polygons near geocoded address → classify primary (largest footprint), secondary (garage/workshop), accessory (shed/gazebo) → insert property_structures per building
 - [ ] Per-structure measurements: roof area estimate per building footprint, wall area per structure
-- [ ] USGS 3DEP elevation lookup: call National Map API → elevation, terrain slope → insert into property_features
-- [ ] Supabase secrets: Add `ATTOM_API_KEY`, `REGRID_API_KEY`
-- [ ] CRM: Full Property Report page — Roof tab (facet diagram, pitch labels, area per facet, edges) + Lot tab (parcel boundary on Mapbox map, lot dimensions, zoning) + Structure selector (toggle per structure: include/exclude from measurements)
+- [ ] USGS 3DEP elevation lookup (FREE): call National Map API → elevation, terrain slope → insert into property_features
+- [ ] CRM: Full Property Report page — Roof tab (facet diagram, pitch labels, area per facet, edges) + Lot tab (parcel boundary on Mapbox map OR manual draw if no Regrid, lot dimensions) + Structure selector (toggle per structure: include/exclude from measurements)
 - [ ] CRM: "Bid all structures" vs "Primary only" mode toggle
-- [ ] Data source badges on property card: "Google Solar ✓" "ATTOM ✓" "Regrid ✓" (only show badges for sources that returned data)
-- [ ] Verify: Scan address → all APIs called → multi-structure detection finds all buildings → property_features + parcel_boundaries + property_structures populated → report page renders with structure selector
+- [ ] **FREE FALLBACK: Manual parcel draw** — if Regrid not enabled, user draws property boundary on Mapbox map (draw tools are free). System calculates lot_area_sqft from drawn polygon. Stores in parcel_boundaries with data_source='user_drawn'.
+- [ ] Data source badges on property card: show badges only for sources that returned data (e.g., "Google Solar", "USGS", "Microsoft Footprints")
+
+**P2b: PAID Sources (Post-Revenue — enable when MRR justifies)**
+- [ ] ATTOM API integration in `recon-property-lookup`: call /property/expandedprofile → parse building object (sqft, stories, beds, baths, construction, wall type, heating, cooling) + lot object (lot size, pool, depth, frontage) + assessment (assessed value) + sale history (last sale). **GATED: only call if `ATTOM_API_KEY` Supabase secret exists.**
+- [ ] Regrid API integration in `recon-property-lookup`: call address search → parse parcel polygon (GeoJSON), APN, zoning, lot dimensions, owner info → insert parcel_boundaries. **GATED: only call if `REGRID_API_KEY` Supabase secret exists. Falls back to manual parcel draw.**
+- [ ] Supabase secrets: `ATTOM_API_KEY`, `REGRID_API_KEY` — DO NOT add until paid subscription active. Feature auto-enables when key is present.
+- [ ] Graceful degradation: if ATTOM unavailable → property_features populated from Google Solar only (roof data) + USGS (elevation) + user-entered data. If Regrid unavailable → manual parcel draw fallback.
+- [ ] Verify: Scan address WITHOUT paid APIs → free sources populate data → manual parcel draw works → report page renders. THEN: Add test API keys → verify ATTOM + Regrid data enriches the scan.
 
 ---
 
@@ -8388,17 +8509,14 @@ Include <content>{markdown}</content> for rendered display.
 
 - [ ] Migration: `property_lead_scores` table (id, property_scan_id FK CASCADE, company_id FK CASCADE, area_scan_id FK nullable REFERENCES area_scans ON DELETE SET NULL, overall_score INTEGER CHECK 0-100, grade CHECK ['hot','warm','cold'], roof_age_years, roof_age_score, property_value_score, owner_tenure_score, condition_score, permit_score, storm_damage_probability, scoring_factors JSONB, timestamps) + RLS
 - [ ] Migration: `area_scans` table (id, company_id FK CASCADE, polygon_geojson JSONB, scan_type CHECK ['prospecting','storm_response','canvassing'], storm_event_id TEXT nullable, total_parcels INTEGER DEFAULT 0, scanned_parcels INTEGER DEFAULT 0, hot_leads INTEGER DEFAULT 0, warm_leads INTEGER DEFAULT 0, cold_leads INTEGER DEFAULT 0, status CHECK ['pending','scanning','complete','failed'], created_by FK, timestamps) + RLS
-- [ ] Lead scoring engine: compute overall_score (0-100) and grade (hot/warm/cold) from ATTOM data:
-  - roof_age_score: year_built < 2005 = high (roof likely 15+ years), 2005-2015 = moderate, >2015 = low
-  - property_value_score: higher value = higher willingness to invest
-  - owner_tenure_score: owner-occupied + >5 years = higher (invested in property)
-  - condition_score: visible deterioration indicators from satellite + property records
-  - permit_score: no recent roof/siding permits = higher probability of needing work
-  - storm_damage_probability: cross-reference with NOAA data if available
-- [ ] Edge Function: `recon-lead-score` — accepts property_scan_id → compute and store lead score
-- [ ] CRM: Lead score badge on property intelligence card (Hot/Warm/Cold with score number)
+- [ ] Lead scoring engine: compute overall_score (0-100) and grade (hot/warm/cold). **Works with free data sources at launch, improves when ATTOM added:**
+  - **FREE signals (Day 1):** roof_area (from Google Solar — larger roof = larger job), roof_complexity (facet count, hip vs gable), building_age_estimate (from USGS building data if available), storm_proximity (NOAA cross-reference), property_size (from Microsoft Footprints)
+  - **ATTOM-enhanced signals (post-revenue):** year_built → roof_age_score, assessed_value → property_value_score, last_sale_date → owner_tenure_score, construction_type → condition_score, permit_history → permit_score
+  - Scoring weights auto-adjust based on available data sources. More sources = higher confidence. Badge shows "Basic Score" (free only) vs "Full Score" (with ATTOM).
+- [ ] Edge Function: `recon-lead-score` — accepts property_scan_id → compute and store lead score from whatever data sources are available
+- [ ] CRM: Lead score badge on property intelligence card (Hot/Warm/Cold with score number + data confidence indicator)
 - [ ] CRM: Pre-scan for leads — scan address in Leads section without creating job → lead score displayed → one-click convert to Job
-- [ ] Edge Function: `recon-area-scan` — accepts polygon GeoJSON → query Regrid for all parcels within polygon → queue batch scans (rate-limited: 10/s Google Solar, 5/s ATTOM) → compute lead scores → rank results → update area_scan progress
+- [ ] Edge Function: `recon-area-scan` — accepts polygon GeoJSON → **if Regrid enabled:** query Regrid for all parcels within polygon. **If Regrid not enabled:** use Microsoft Building Footprints to identify structures within drawn polygon + geocode addresses. Queue batch scans (rate-limited: 10/s Google Solar) → compute lead scores → rank results → update area_scan progress
 - [ ] CRM: Area scan page — Mapbox draw polygon tool → scan area → progress bar (scanned/total) → ranked lead list
 - [ ] Area scan results: sortable table (address, lead score, roof age, property value, owner name) + map view with color-coded markers (red=hot, yellow=warm, gray=cold)
 - [ ] Export: CSV download of area scan results with all property data
@@ -8491,16 +8609,16 @@ Include <content>{markdown}</content> for rendered display.
 - [ ] All portals build clean: `npm run build` (CRM, team, client, ops)
 - [ ] Mobile: `dart analyze` passes (0 errors)
 - [ ] Google Solar API error handling: address not found, no coverage, rate limit (queue and retry)
-- [ ] ATTOM API error handling: property not found, partial data (some fields null)
-- [ ] Regrid API error handling: no parcel data, boundary mismatch
+- [ ] ATTOM API error handling: property not found, partial data (some fields null), **or API key not configured (graceful skip)**
+- [ ] Regrid API error handling: no parcel data, boundary mismatch, **or API key not configured (fallback to manual parcel draw)**
 - [ ] Partial scan handling: if some APIs succeed and others fail, save partial data with clear indicators of what's missing. Don't block the whole scan.
 - [ ] Caching: 30-day cache per address per company (`cached_until` on property_scans). Re-scan only on explicit request or cache expiry.
-- [ ] Rate limiting: Queue system for API calls. Max 600 QPM Google Solar. Max concurrent ATTOM/Regrid calls. Batch scan rate limiting (10/s Google, 5/s ATTOM, 5/s Regrid).
+- [ ] Rate limiting: Queue system for API calls. Max 600 QPM Google Solar. If ATTOM/Regrid enabled: max concurrent calls (5/s each). Batch scan rate limiting (10/s Google Solar, 5/s ATTOM if enabled, 5/s Regrid if enabled).
 - [ ] Attribution compliance: Google Maps attribution on all map displays, Regrid attribution on parcel boundaries, Microsoft Building Footprints attribution, "Property data from public records" disclaimer
 - [ ] Legal disclaimers on every property report: "Measurements are estimates from satellite imagery and public records. Verify on site before ordering materials."
 - [ ] Legal disclaimer on material ordering: "Quantities calculated from estimated measurements. Verify before ordering."
 - [ ] Feature flag: `features.property_intelligence_enabled` — all Recon UI hidden when false
-- [ ] Cost tracking: Log API costs per scan for monitoring ($0.075/Google Solar + ATTOM per-call + Regrid per-call)
+- [ ] Cost tracking: Log API costs per scan for monitoring. **Day 1: $0/scan (free APIs only).** Post-revenue with ATTOM+Regrid: ~$0.01-0.05/scan. Dashboard in ops portal shows monthly API spend.
 - [ ] Accuracy benchmarking: scan 20+ properties with known measurements (from EagleView reports or manual measurement) → document accuracy per metric → publish accuracy guarantee target (95%+ roof area)
 - [ ] Lead scoring validation: verify scoring correlates with actual close rates (backtest against existing job data if available)
 - [ ] Commit: `[P1-P10] ZAFTO Recon — property intelligence engine, 10 trade pipelines, lead scoring, area scanning, storm assessment, supplement checklist`
@@ -8981,7 +9099,7 @@ Include <content>{markdown}</content> for rendered display.
 ---
 
 ## PHASE U: UNIFICATION & FEATURE COMPLETION (after GC, before G)
-*Merge all portals into one app at zafto.cloud. Build missing features, fix gaps, wire dead buttons, enterprise customization, embedded financing (Wisetack + Stripe Capital). Everything must be COMPLETE before Phase G hardening. 10 sprints (U1-U10, ~128 hrs).*
+*Merge all portals into one app at zafto.cloud. Build missing features, fix gaps, wire dead buttons, enterprise customization, embedded financing (Wisetack + Stripe Capital). S99 expansion: form depth engine, template/customization system, i18n (10 languages), universal trade support, S98 recovered features (remote-in, data integrity, GPS sketch). Everything must be COMPLETE before Phase G hardening. 15 sprints (U1-U15, ~276 hrs).*
 
 **Build order: T → P → SK → GC → U → G → E → LAUNCH**
 
@@ -9080,9 +9198,21 @@ Include <content>{markdown}</content> for rendered display.
 - [ ] Email sending: wire `sendgrid-email` edge function to all "Send" buttons. Bid send: generates PDF → attaches to email → sends to customer email → updates bid status to 'sent'. Invoice send: same pattern. Estimate send: same pattern.
 - [ ] Email templates: professional HTML email templates for bid/invoice/estimate delivery. Company branding. "View Online" link to client portal.
 - [ ] Dead button wiring: fix ALL 26+ dead buttons identified in S93/S95 audit. Every hook function must be called by its UI button. Specifically: sendBid, deleteBid, convertToJob, sendInvoice, recordPayment, sendReminder, duplicateBid, duplicateInvoice, archiveJob, exportCSV.
-- [ ] Verify: click every "Send" button → email arrives. Click every "Download PDF" → file downloads. Click every "Delete" → item deletes with confirmation. No dead buttons remain.
+
+**U6b: Critical Broken Workflows (S98 Audit Findings)**
+- [ ] **CRITICAL FIX: Bid save broken** — `web-portal/src/app/dashboard/bids/new/page.tsx:677` calls `console.log()` instead of `supabase.from('bids').insert()`. Wire to `useBids().createBid()` with `company_id` from JWT `app_metadata`. Must follow hook pattern: `getSupabase() → auth.getUser() → insert with company_id → real-time updates list`.
+- [ ] **CRITICAL FIX: AI bid generation fake** — `web-portal/src/app/dashboard/bids/new/page.tsx:639` uses `setTimeout(1500ms)` with hardcoded suggestions. Defer to Phase E (AI goes last) but replace fake delay with clear "AI features coming soon" message. No fake UX.
+- [ ] **CRITICAL FIX: Invoice save broken** — `web-portal/src/app/dashboard/invoices/new/page.tsx:108` calls `console.log()` instead of persisting. Wire to `useInvoices().createInvoice()` with auto-numbering (`INV-YYYY-NNNN` pattern already in hook).
+- [ ] **CRITICAL FIX: Payment recording broken** — `web-portal/src/app/dashboard/invoices/[id]/page.tsx:451` says `// TODO: Record payment to Firestore` (stale Firebase reference). Wire to `useInvoices().recordPayment()` which already exists and auto-posts GL journal entry.
+- [ ] **CRITICAL FIX: Team invite not sent** — `web-portal/src/app/dashboard/settings/page.tsx:513` logs email/role but doesn't call `supabase.auth.admin.inviteUserByEmail()`. Wire to Supabase Auth invite flow → create user record in `users` table with `company_id` + `role`.
+- [ ] **CRITICAL FIX: Team SMS/push unimplemented** — `web-portal/src/app/dashboard/team/page.tsx:597` fakes with `setTimeout(500ms)`. Wire to `signalwire-sms` Edge Function (already deployed, pattern: `supabase.functions.invoke('signalwire-sms', { body: { action: 'send', ... } })`).
+- [ ] **CRITICAL FIX: Bid duplicate doesn't copy** — `web-portal/src/app/dashboard/bids/[id]/page.tsx:197` navigates but doesn't clone. Wire: fetch existing bid → `createBid()` with new ID + `(Copy)` suffix + status reset to draft.
+- [ ] **FIX: Subscription tier gates missing** — `web-portal/src/app/dashboard/books/branches/page.tsx:30` and `construction/page.tsx:3` have `// TODO: TierGate` comments. Wire to `company.tier` check from U3 permission engine. Show "Upgrade to Enterprise" prompt for non-enterprise.
+- [ ] **SECURITY FIX: RevenueCat webhook unauthenticated** — `supabase/functions/revenuecat-webhook/index.ts:21` skips signature verification. Implement `X-RevenueCat-Webhook-Auth-Token` header check against stored `REVENUECAT_WEBHOOK_SECRET` Supabase secret.
+
+- [ ] Verify: click every "Send" button → email arrives. Click every "Download PDF" → file downloads. Click every "Delete" → item deletes with confirmation. No dead buttons remain. No `console.log()` saves remain. No fake `setTimeout()` delays remain.
 - [ ] `npm run build` passes.
-- [ ] Commit: `[U6] PDF + Email — bid/invoice/estimate PDF, SendGrid wiring, all dead buttons fixed`
+- [ ] Commit: `[U6] PDF + Email — bid/invoice/estimate PDF, SendGrid wiring, all dead buttons fixed, S98 critical fixes`
 
 ### Sprint U7: Payment Flow + Shell Pages (~12 hrs)
 *Real Stripe payment form. Build or remove the 9 shell CRM pages.*
@@ -9101,9 +9231,15 @@ Include <content>{markdown}</content> for rendered display.
   - [ ] Inventory (overlaps with Equipment + Materials Tracker)
   - [ ] Price Book (embedded in bids/new page, not standalone)
 - [ ] Property health score: replace hardcoded "--" in client portal with real calculation based on equipment age, service history, maintenance compliance.
-- [ ] Verify: payment flow end-to-end works. All former shell pages have real data or are removed from nav.
+
+**U7b: Wire Remaining Shell Pages to Real Data (S98 Audit Findings)**
+- [ ] **Wire Communications page to real data** — `web-portal/src/app/dashboard/communications/page.tsx` has 50 hardcoded `mockCommunications`. Replace with unified query: `phone_calls` + `phone_messages` (from `use-phone.ts`) + `email_sends` (from `use-email.ts`). The `sendgrid-email` Edge Function already exists (351 lines, fully functional). Connect the UI to the existing hooks. Follow real-time pattern: `.channel('comms-changes').on('postgres_changes', ...)` on all 3 tables.
+- [ ] **Wire Automations page to real backend** — `web-portal/src/app/dashboard/automations/page.tsx` has `mockAutomations` array with trigger/action builders. Build lightweight automation engine: `automations` table (trigger_type, trigger_config JSONB, action_type, action_config JSONB, enabled boolean, company_id FK, RLS 4-policy set, audit trigger, soft delete). Triggers: `job_status_changed`, `invoice_overdue`, `lead_idle`. Actions: send_email (via sendgrid-email EF), send_sms (via signalwire-sms EF), create_task. Cron via Supabase pg_cron extension. Hook: `use-automations.ts` with CRUD + real-time.
+- [ ] **Wire Ops System Status to real health checks** — `ops-portal/src/app/dashboard/system-status/page.tsx:106-110` hardcodes all 10 services as "Not Configured". Wire to actual health endpoints: Supabase (`/rest/v1/` ping), Stripe (`/v1/balance` with API key), Sentry (API status), SendGrid (API status). Store results in `system_health_checks` table (service_name, status, latency_ms, last_checked_at, company_id). Refresh on page load + 60s interval. super_admin only.
+
+- [ ] Verify: payment flow end-to-end works. All former shell pages have real data or are removed from nav. Communications shows real calls/SMS/emails. Automations can be created and triggered. Ops system status shows live service health.
 - [ ] `npm run build` passes.
-- [ ] Commit: `[U7] Payments + Shell Pages — Stripe form, 7 shell pages built, 2 removed, property health`
+- [ ] Commit: `[U7] Payments + Shell Pages — Stripe form, 7 shell pages built, 2 removed, property health, comms/automations/system-status wired`
 
 ### Sprint U8: Cross-System Metric Verification (~8 hrs)
 *Every number, every chart, every stat must be 100% accurate and consistent across all views.*
@@ -9133,9 +9269,31 @@ Include <content>{markdown}</content> for rendered display.
 - [ ] Remove Level & Plumb: delete level_plumb_screen.dart from Flutter, remove from field tools hub/navigation in all apps (mobile, team portal, CRM). Remove any related menu items, routes, and imports. Feature deemed unnecessary.
 - [ ] Portal parity audit: verify employee portal (team) and customer portal (client) have all tools/views they need relative to what exists in CRM. Ensure data flows correctly between all portals — jobs, invoices, bids, schedules, messages, documents all connected.
 - [ ] Mobile responsiveness audit: every CRM page, every field tech page, every customer page renders properly on mobile viewport.
-- [ ] Verify: forgot password works end-to-end. Every page has loading + empty + error states. Mobile layouts clean.
+
+**U9b: Flutter Properties Module Completion (S98 Audit — 6+ unwired CRUD operations)**
+- [ ] **Wire unit turn task status** — `lib/screens/properties/unit_turn_screen.dart:440-451` has 4 TODO markers for pending/completed/skipped status updates. Wire to `supabase.from('unit_turn_tasks').update({ status: X })` using existing `property_service.dart` pattern.
+- [ ] **Wire lease CRUD** — `lib/screens/properties/lease_detail_screen.dart:333,379` has TODO for renew + terminate. Renew: `supabase.from('leases').insert()` new lease with prev lease reference. Terminate: `update({ terminated_at, termination_reason })`.
+- [ ] **Wire maintenance team/vendor pickers** — `lib/screens/properties/maintenance_screen.dart:248,253` needs team member picker (query `users` table, role IN technician/apprentice) and vendor picker (query `vendors` table).
+- [ ] **Wire inspection creation** — `lib/screens/properties/inspection_screen.dart:262` needs `supabase.from('pm_inspections').insert()` with type, unit_id, scheduled_date.
+- [ ] **Wire asset service records** — `lib/screens/properties/asset_screen.dart:238` needs `supabase.from('asset_service_records').insert()` with asset_id, service_type, date, notes.
+- [ ] **Wire Add Property button** — `lib/screens/properties/properties_hub_screen.dart:58` needs navigation to property create screen (or inline create dialog).
+- [ ] **Wire tenant detail service method** — `lib/screens/properties/tenant_detail_screen.dart:42` uses direct Supabase query. Add `getTenant(id)` to `property_service.dart` for consistency with repository pattern.
+- [ ] **Wire rent service** — `lib/services/rent_service.dart:76` returns hardcoded 0 for monthly charges. Wire to `supabase.from('rent_charges').select()` filtered by unit + current month.
+
+**U9c: Remove Fake Service Responses (S98 Audit — No fake data shown to users)**
+- [ ] **Contract analyzer returns fake text** — `lib/services/contract_analyzer_service.dart:204,218,237` returns placeholder strings ("Contract text will be extracted from N images"). Replace with clear "OCR available after Phase E" message + disable the "Analyze" button. Do NOT show fake analysis results.
+- [ ] **AI tools return placeholder data** — `lib/services/ai/ai_tools.dart:114,148` returns `[{ 'title': 'Result 1', 'value': '123' }]`. Same fix: clear Phase E deferral message, no fake data displayed to user.
+- [ ] **AI subscription check bypassed** — `lib/services/ai/ai_conversation_service.dart:114` says "assume all users have access for development". Add proper tier check against `company.tier` and subscription status via RevenueCat. Gate AI features behind subscription.
+- [ ] **Image compression disabled** — `lib/services/image_compress_io.dart:6` returns original bytes. Implement compression using `flutter_image_compress` package (already in ecosystem). Target 80% quality, max 1920px width.
+- [ ] **Purchase verification bypassed** — `lib/services/purchase_service.dart:240` trusts client without server validation. Add server-side receipt verification via RevenueCat API (`/v1/receipts` endpoint).
+- [ ] **Sync service job docs empty** — `lib/services/sync_service.dart:243` has empty case for job documents. Wire to `supabase.from('documents').select().eq('job_id', jobId)`.
+
+**U9d: Web Portal Notification System (S98 Audit — Flutter has it, web doesn't)**
+- [ ] **Build web notification system** — Flutter has real-time notifications via `notification_service.dart` + `notification_repository.dart` + Supabase RealtimeChannel. Web portals have ZERO notification system. Build: `web-portal/src/lib/hooks/use-notifications.ts` with same pattern (query `notifications` table, subscribe to `postgres_changes` on INSERT, unread count badge). Add notification bell icon to all portal headers (CRM, team, client). Same Supabase `notifications` table used by Flutter — architecture stays consistent across all 5 apps.
+
+- [ ] Verify: forgot password works end-to-end. Every page has loading + empty + error states. Mobile layouts clean. All Properties CRUD operations persist. No fake data shown anywhere. Notification bell shows unread count in real-time.
 - [ ] All builds pass: `npm run build` for web portal (CRM + team + client merged), ops portal. `dart analyze` for Flutter.
-- [ ] Commit: `[U9] Polish — remove level/plumb, portal parity, ops actions, auth flows, loading/empty/error states, mobile audit`
+- [ ] Commit: `[U9] Polish — remove level/plumb, portal parity, Properties completion, fake service removal, web notifications, ops actions, auth flows, loading/empty/error states, mobile audit`
 
 ### Sprint U10: Embedded Financing — Wisetack + Stripe Capital (~8 hrs)
 *Add customer financing (BNPL) and contractor instant pay. Zero lending risk — Zafto is a referral/technology partner only. Licensed lenders handle all compliance, underwriting, and collections.*
@@ -9163,6 +9321,191 @@ Include <content>{markdown}</content> for rendered display.
 - [ ] Post-launch TODO: schedule fintech attorney review ($2-5K one-time) to confirm referral/technology partner classification in all 50 states. Not required for launch.
 - [ ] `npm run build` passes.
 - [ ] Commit: `[U10] Embedded Financing — Wisetack customer BNPL + Stripe Capital contractor instant pay`
+
+### Sprint U11: Form Depth Engine — All Apps (~24 hrs)
+*S99 Audit finding: forms across Flutter + CRM collect 40-60% of needed fields. Models have fields the UI doesn't expose. Every form must collect what a real contractor needs. "Not one-size-fits-all" — owner directive.*
+
+**U11a: Flutter Form Depth Fixes (~10 hrs)**
+- [ ] **Customer Create** — wire 8 missing fields to UI: `customer_type` (residential/commercial/property_manager/HOA/developer/GC), `tags` (multi-select chip picker), `access_instructions` (gate code, key location, parking), `preferred_technician` (dropdown from team), `email_opt_in`/`sms_opt_in` (toggles), `referred_by` (lead source picker), `preferred_contact_method` (phone/email/text). All fields exist in model but NOT in `customer_create_screen.dart`.
+- [ ] **Job Create** — wire 10 missing fields: `trade_type` (dropdown, currently only in model), `priority` (low/normal/high/urgent picker), `assigned_user_ids` (multi-select team picker), `team_id` (dropdown), `estimated_duration` (hours/minutes), `internal_notes` (separate from customer-visible notes), `source` (currently hardcoded to 'direct' at line 31 — make dynamic), `po_number` (for commercial jobs), `scope_of_work` (structured, not just text), `special_requirements` (accessibility, hazards, permits needed).
+- [ ] **Bid Create** — add 12 missing features: warranty terms (period + coverage), financing option display, payment terms (deposit %, schedule), completion timeline, bid validity/expiration (configurable days), pricing strategy (cost+%, markup%), allowance items, change order allowance, labor vs material split visibility, competitor info field, required approvals/signoffs, exclusions checklist.
+- [ ] **Invoice Create** — add 10 missing fields: `invoice_number` (visible, auto or manual), `invoice_date` (not assumed today), `po_number`, `payment_terms` (Net 15/30/60/Due on Receipt picker), `early_payment_discount` (% + days), `late_fee` (% or flat), `job_id` link (exists in model, not in form), `estimate_id` link, `retainage_percent` (for construction), `payment_methods` (accepted methods list).
+- [ ] **Expense Entry** — fix 5 gaps: `tax_amount` (currently hardcoded to 0 at line 145), `billable` flag (pass-through to customer), `vendor_name`, `po_number`, `reimbursable` flag (personal vs company card). Wire OCR status display (currently says 'pending' but never processes).
+- [ ] **Add Employee Screen** — BUILD FROM SCRATCH (currently does NOT exist): employee name, email, phone, address, date of hire, employment type (FT/PT/contract/seasonal), emergency contact (name/phone/relation), trade specialties (multi-select), certification level (apprentice/journeyman/master), pay rate (hourly/salary + amount), role assignment (technician/apprentice/admin). This is a P0 blocker — business can't add team members.
+- [ ] **Form Validation (Flutter)** — ZERO validation currently exists. Fix ALL forms:
+  - [ ] Price/amount fields: numeric-only keyboard, reject non-numeric input, min 0, format as currency on blur.
+  - [ ] Email fields: validate format (contains @, has domain). Show inline error "Invalid email" on blur.
+  - [ ] Phone fields: numeric + dash/parens only. Format as (xxx) xxx-xxxx on blur. Reject letters.
+  - [ ] Required fields: name, email (where applicable), amount fields. Show red border + "Required" message if empty on submit.
+  - [ ] Date fields: use date picker only (no free text). Validate future dates where appropriate (scheduled jobs, bid expiry).
+  - [ ] Address fields: separate city/state/zip (not one combined field). State as dropdown (50 states). Zip as 5-digit numeric.
+  - [ ] Duplicate detection: warn if customer with same name+phone already exists before saving.
+  - [ ] Prevent double-submit: disable submit button after first tap until response. Show loading indicator.
+- [ ] Verify: every Flutter form shows all available model fields. No field exists in model but is hidden from UI. No garbage data accepted.
+- [ ] `dart analyze` passes.
+
+**U11b: Web CRM Form Depth Fixes (~8 hrs)**
+- [ ] **Customer New** — add multi-contact support: primary contact (name/email/phone/role), billing contact (separate, optional), emergency contact. Add separate billing address vs service address. Add `customer_type` classification (homeowner/property_manager/HOA/developer/GC/real_estate). Add custom fields area (contractor adds their own fields). Add document storage links (insurance certs, W9s, contracts).
+- [ ] **Job New** — add structured scope: line-item scope builder (description + qty + unit), scope templates by trade, included/excluded markers, change order tracking link. Add labor estimates (hours × rate, by role). Add material estimates (name/qty/unit price/total/supplier). Add permits section (permit type, status, inspection checkpoints). Add photo organization (before/during/after, by room/area). Add related documents tab.
+- [ ] **Invoice New** — add multi-rate taxation: per-line-item tax rate override (materials 0%, labor taxable, permits different rate). Add configurable invoice numbering (prefix/suffix/separator/reset). Add payment terms dropdown. Add deposit/retainer tracking. Add line item categories with default tax treatment. Add email template selection.
+- [ ] **Bids New** — expand template system: save custom templates (name + line items + terms), per-trade template library, bid format variations (detailed/simple/tiered), warranty terms section, exclusions section, change order terms, bid expiration setting, revision tracking (v1/v2/v3).
+- [ ] **Team Page** — add visible employee data: certifications (license #, expiration, renewal alerts), pay rate, trade specialties, equipment/vehicle assignment, availability/schedule, performance metrics (jobs completed, avg value, satisfaction rating).
+- [ ] **Form Validation (CRM)** — ZERO validation on web forms. "dd" accepted in price fields, email fields, everywhere. Fix ALL forms:
+  - [ ] Price/amount fields: `type="number"` + `min="0"` + `step="0.01"`. Reject non-numeric. Format as currency display.
+  - [ ] Email fields: HTML5 email validation + custom regex check on blur. Inline error message.
+  - [ ] Phone fields: mask input as (xxx) xxx-xxxx. Reject letters. `type="tel"`.
+  - [ ] Required fields: enforce on all create forms. Red asterisk on label. Prevent submit if empty. Scroll to first error.
+  - [ ] Tax rate: numeric 0-100, 2 decimal places max. Reject "dd" or letters.
+  - [ ] Quantity fields: positive integers or decimals only. Cannot be negative.
+  - [ ] Date fields: use `<input type="date">` or date picker component. No free text dates.
+  - [ ] Select fields: use dropdown/select components instead of free text where options are known (job status, priority, trade type, lead source, state).
+  - [ ] Duplicate detection: warn before saving customer if name+phone or name+email already exists in company.
+  - [ ] Prevent double-submit: disable button on submit, re-enable on error. Show spinner during save.
+  - [ ] Server-side validation: Edge Functions + RLS policies must ALSO validate (never trust client). Check constraints on DB columns for status enums, positive amounts, valid email format.
+- [ ] Verify: every CRM form captures what a real contractor needs. Test creating a job as: electrician, plumber, HVAC tech, roofer, painter, GC. Try entering "dd" in every field type — must be rejected.
+- [ ] `npm run build` passes.
+
+**U11c: Portal Form Depth Fixes (~6 hrs)**
+- [ ] **Team Portal — GPS Verification** — Add geolocation capture on time clock punch-in/out. Store lat/lng in `time_entries` table (add columns if needed). Geofence validation: compare clock-in location to job address. Flag if >500m away. Display GPS icon on time entries (green=verified, red=outside geofence).
+- [ ] **Team Portal — Internal Messaging** — Build team chat: `use-team-messages.ts` hook, query new `team_messages` table (or use existing `phone_messages` with internal flag). Real-time subscription. Threaded by job or general channel. Office manager can broadcast to all techs.
+- [ ] **Team Portal — Time Off Requests** — Build time-off request form: date range, type (vacation/sick/personal/other), notes. Manager approval workflow. Display on schedule. `time_off_requests` table with status (pending/approved/denied).
+- [ ] **Team Portal — Receipt Scanner Fix** — Wire receipt photo upload to Supabase Storage `receipts` bucket. Call OCR edge function (or queue for Phase E). At minimum: save receipt image, link to expense entry, show upload success. Don't leave at console.log.
+- [ ] **Client Portal — Job Tracker** — REPLACE ALL MOCK DATA. Query real job status from `jobs` table. Show real assigned technician from `users` table. Show real ETA (calculated from technician GPS + estimated drive time, or just show "Scheduled for [time]"). Real-time subscription on job status changes. Remove hardcoded crew members, hardcoded 12-min ETA, hardcoded status steps.
+- [ ] **Client Portal — Service History** — Wire to real `jobs` table filtered by customer. Show completed jobs with date, description, amount, photos. Not just a placeholder list.
+- [ ] **Ops Portal — Revenue Dashboard** — Wire to Stripe API (or Supabase `payments` table for now). Show real MRR from actual subscriptions. Show real transaction history. If Stripe not yet connected, show "Connect Stripe" CTA, NOT fake $0 data.
+- [ ] **Ops Portal — System Status** — Wire at least Supabase health check (ping /rest/v1/) and show real status. Other services show "Not Configured" with setup instructions. Don't show all services as "Unknown".
+- [ ] Verify: team portal GPS captures location, internal messaging works, time off submits. Client tracker shows real data. Ops portal shows real revenue or honest "not configured" state.
+- [ ] All portal builds pass.
+- [ ] Commit: `[U11] Form Depth — all Flutter/CRM/portal forms expanded, employee creation, GPS verification, internal messaging, mock data replaced`
+
+### Sprint U12: Template & Customization Engine (~16 hrs)
+*S99 Owner directive: "highly customizable templates for bids agreements etc... not a one size fits all." Contractors must be able to customize what they send to customers and what data they track.*
+
+**U12a: Template System Architecture (~4 hrs)**
+- [ ] Migration: `document_templates` table — id UUID PK, company_id FK, template_type TEXT CHECK (bid/invoice/estimate/agreement/change_order/warranty_card/lien_waiver/safety_form), name TEXT, description TEXT, content JSONB (structured template: sections, fields, terms, logo placement), is_default BOOLEAN DEFAULT false, trade_type TEXT nullable (null=all trades), created_by FK users, usage_count INT DEFAULT 0, created_at/updated_at TIMESTAMPTZ, deleted_at TIMESTAMPTZ nullable. RLS: company_id scoped. Audit trigger.
+- [ ] Migration: `custom_fields` table — id UUID PK, company_id FK, entity_type TEXT CHECK (customer/job/bid/invoice/expense/employee), field_name TEXT, field_label TEXT, field_type TEXT CHECK (text/number/date/boolean/select/multi_select/file), options JSONB nullable (for select types), required BOOLEAN DEFAULT false, display_order INT, created_at TIMESTAMPTZ. RLS: company_id scoped.
+- [ ] Migration: `company_config` table (or add columns to `companies`) — custom_job_statuses JSONB DEFAULT null (null=use defaults), custom_lead_sources JSONB DEFAULT null, custom_bid_statuses JSONB DEFAULT null, custom_invoice_statuses JSONB DEFAULT null, custom_priority_levels JSONB DEFAULT null, default_tax_rate NUMERIC, tax_rates JSONB (array of {name, rate, applies_to}), default_payment_terms TEXT, invoice_number_format TEXT DEFAULT 'INV-{YYYY}-{NNNN}', bid_number_format TEXT DEFAULT 'BID-{YYMMDD}-{NNN}', bid_validity_days INT DEFAULT 30.
+- [ ] Hook: `use-templates.ts` — CRUD for document templates. List by type/trade. Clone template. Default template per type.
+- [ ] Hook: `use-custom-fields.ts` — CRUD for custom fields. Render dynamic form fields. Save custom field values to entity's metadata JSONB column.
+- [ ] Hook: `use-company-config.ts` — Read/write company configuration. Cached client-side with SWR.
+
+**U12b: Template Management UI (~4 hrs)**
+- [ ] Settings → Templates page: list all templates by type. Create/edit/duplicate/delete. Set default per type + trade.
+- [ ] Template editor: visual builder with sections (header, scope, line items, terms, signature, footer). Drag-and-drop section ordering. WYSIWYG text editing for terms/conditions. Variable insertion (`{{customer_name}}`, `{{project_address}}`, `{{total}}`, etc.). Logo/branding placement. Preview mode showing populated template.
+- [ ] Seed data: create 10+ starter templates covering major trades: electrical panel upgrade bid, plumbing repair estimate, HVAC install proposal, roofing bid, general remodel bid, painting estimate, concrete/paving bid, fencing estimate, standard invoice, service agreement.
+- [ ] Template selection on create forms: when creating bid/invoice/estimate, show "Choose Template" picker. Selected template pre-populates sections, line items, terms, and formatting.
+
+**U12c: Custom Fields UI (~4 hrs)**
+- [ ] Settings → Custom Fields page: manage custom fields per entity type. Add/edit/reorder/delete fields. Field type selection with preview.
+- [ ] Dynamic form rendering: custom fields appear at bottom of create/edit forms (customer, job, bid, invoice). Stored in entity's `metadata` JSONB column. Displayed in detail views.
+- [ ] Custom fields on reports: allow filtering/grouping by custom field values.
+
+**U12d: Configurable Statuses & Settings (~4 hrs)**
+- [ ] Settings → Statuses page: configure custom job statuses, invoice statuses, bid statuses, lead sources, priority levels per company. Falls back to defaults if null.
+- [ ] Settings → Tax Rates page: manage multiple tax rates (name, rate, applies_to). Set default rate. Override per line item on invoices/bids.
+- [ ] Settings → Numbering page: configure invoice/bid/estimate number format (prefix, separator, sequence, year format, reset period).
+- [ ] Settings → Payment Terms page: configure default payment terms, late fee policy, early payment discount.
+- [ ] Wire ALL hardcoded values in CRM to company_config: tax rate (currently 6.35%), job types, lead sources (currently 9 hardcoded), bid option names (currently "Option A/B/C"), line item units (currently 13 hardcoded), line item categories (currently 7 hardcoded).
+- [ ] Verify: create template → use on bid → PDF uses template formatting. Add custom field → appears on forms → saves to DB → shows in detail view. Change job statuses → new statuses appear everywhere. Change tax rate → new rate used on invoices.
+- [ ] `npm run build` + `dart analyze` pass.
+- [ ] Commit: `[U12] Template Engine — document templates, custom fields, configurable statuses/tax/numbering, 10+ starter templates`
+
+### Sprint U13: i18n — Top 10 Contractor Languages (~24 hrs)
+*S98/S99 Owner directive: full internationalization for top 10 languages in trades. Research: English, Spanish, Portuguese (BR), Polish, Chinese (Mandarin), Haitian Creole, Russian, Korean, Vietnamese, Tagalog/Filipino. Sources: BLS, Census, CPWR, OSHA occupational data.*
+
+**U13a: i18n Infrastructure (~8 hrs)**
+- [ ] **Flutter i18n setup**: add `flutter_localizations` + `intl` packages. Create `l10n.yaml` config. Generate ARB files for all 10 locales: `app_en.arb`, `app_es.arb`, `app_pt.arb`, `app_pl.arb`, `app_zh.arb`, `app_ht.arb`, `app_ru.arb`, `app_ko.arb`, `app_vi.arb`, `app_tl.arb`. Extract all hardcoded strings from 33 role screens + 19 field tools into ARB keys.
+- [ ] **Next.js i18n setup**: install `next-intl` package across web-portal (will become unified CRM+team+client after U1) and ops-portal. Configure `i18n.ts` with 10 locales. Create `messages/` directory with JSON locale files. Wrap all pages with `NextIntlClientProvider`. Extract all hardcoded strings from 107+ routes into locale keys.
+- [ ] **Edge Functions i18n**: create `locales/` directory in shared function code. Locale-aware error messages, email templates, PDF exports. Accept `Accept-Language` header or user preference from `users.preferred_locale` column.
+- [ ] **User preference**: ADD `preferred_locale TEXT DEFAULT 'en'` to `users` table. Language picker in Settings (all apps). Flag icons for visual selection. Auto-detect from browser/device on first visit.
+- [ ] **Company default locale**: ADD `default_locale TEXT DEFAULT 'en'` to `companies` table. Company-wide default, individual users can override.
+
+**U13b: String Extraction + English Base (~4 hrs)**
+- [ ] Extract ALL user-visible strings from Flutter (estimate 2000+ strings across 33 screens + 19 tools + 35 calculators + widgets).
+- [ ] Extract ALL user-visible strings from web-portal (estimate 3000+ strings across 107 routes + 68 hooks + components).
+- [ ] Extract strings from ops-portal (26 routes).
+- [ ] Extract strings from Edge Functions (53 functions — error messages, email subjects/bodies, PDF text).
+- [ ] Create English base files as source of truth. Every string has a semantic key (e.g., `jobs.create.title`, `bids.status.accepted`, `common.save`).
+
+**U13c: Translation — Professional Quality (~8 hrs)**
+- [ ] **Spanish** (app_es.arb / es.json) — largest non-English contractor population. Must be perfect.
+- [ ] **Portuguese (Brazilian)** (app_pt.arb / pt-BR.json) — significant in construction, especially FL/MA/NJ.
+- [ ] **Polish** (app_pl.arb / pl.json) — huge in trades (Chicago, NYC, Northeast). Often overlooked.
+- [ ] **Chinese (Simplified)** (app_zh.arb / zh.json) — growing contractor population, especially West Coast.
+- [ ] **Haitian Creole** (app_ht.arb / ht.json) — significant in FL/NY construction.
+- [ ] **Russian** (app_ru.arb / ru.json) — notable in construction (NY, CA, WA, OR).
+- [ ] **Korean** (app_ko.arb / ko.json) — significant in construction/trades (LA, NY, NJ).
+- [ ] **Vietnamese** (app_vi.arb / vi.json) — growing in construction trades.
+- [ ] **Tagalog/Filipino** (app_tl.arb / tl.json) — notable in construction (CA, HI, NV).
+- [ ] Quality: use professional translation service or native-speaker review. Construction/trades terminology must be accurate (not generic translations). Terms like "bid," "change order," "punch list," "rough-in" need trade-correct translations.
+- [ ] PDF exports: all bid/invoice/estimate PDFs render in user's locale. Number formatting, date formatting, currency formatting locale-aware.
+- [ ] Email templates: all automated emails sent in recipient's preferred locale.
+
+**U13d: RTL + Font Support (~4 hrs)**
+- [ ] Verify all 10 languages render correctly (no font issues, no character clipping).
+- [ ] Polish, Russian, Vietnamese have special characters — verify input fields accept them.
+- [ ] Chinese, Korean need CJK font support — verify across all apps.
+- [ ] Number formatting: commas vs periods for decimals (varies by locale).
+- [ ] Date formatting: MM/DD/YYYY vs DD/MM/YYYY vs YYYY-MM-DD per locale.
+- [ ] Currency: USD primary, but display formatting varies (e.g., $1,234.56 vs 1.234,56 $).
+- [ ] Verify: switch language → entire app (including PDF exports, emails, error messages) displays in selected language. No untranslated strings. No layout breakage.
+- [ ] `dart analyze` + `npm run build` (all portals) pass.
+- [ ] Commit: `[U13] i18n — 10 languages, full app + PDF + email localization, Flutter ARB + Next.js next-intl`
+
+### Sprint U14: Universal Trade Support Audit (~12 hrs)
+*S98/S99 Finding: current bid tools, estimate categories, and line items may be biased toward restoration/electrical. Must work for ALL trades: full home remodel, tiles, pavers, lawns, roofing, gutters, pavement, fencing, painting, concrete, HVAC, plumbing, solar, landscaping, flooring, drywall, and more. Competitor gap: nobody handles 16+ trades in one account.*
+
+**U14a: Estimate Category & Line Item Audit (~4 hrs)**
+- [ ] Audit `estimate_categories` seed data — document which trades are covered vs missing.
+- [ ] Audit `estimate_items` seed data — document line items per trade. Identify gaps.
+- [ ] Add categories for ALL major trades: Electrical, Plumbing, HVAC, Roofing, Gutters, Painting (interior + exterior), Concrete (foundations, flatwork, decorative), Paving (asphalt, pavers, brick), Fencing (wood, vinyl, chain-link, iron), Landscaping (hardscape + softscape), Flooring (hardwood, tile, LVP, carpet), Drywall (hang, tape, finish, texture), Solar (panels, inverters, battery), Insulation (blown, batt, spray foam), Windows & Doors, Siding, Masonry/Brick, Fire/Smoke Restoration, Water/Mold Restoration, General Remodel.
+- [ ] Each trade category needs: standard line items, proper measurement units, typical material options, standard labor categories.
+
+**U14b: Bid Template Library (~4 hrs)**
+- [ ] Create bid templates for top 20 trade types (see list above). Each template includes: standard scope sections, common line items with typical units/pricing, trade-specific terms & conditions, warranty language, exclusions.
+- [ ] Template seed data: ship with app. Contractors can clone and customize.
+- [ ] Trade-specific units: add missing units to bid builder — board_foot (lumber), bundle (shingles), roll (insulation), pallet, panel, sheet, yard (fabric/carpet), box (tile), bag (concrete mix), can (spray foam). Currently only 13 units — expand to 25+.
+- [ ] Trade-specific sections on bids: electrical (panel specs, wire gauge, code compliance), plumbing (fixture descriptions, pipe material), HVAC (tonnage, SEER, duct specs), roofing (material type, slope, underlayment), concrete (PSI strength, rebar, finish type), painting (prep, coats, finish type), solar (panel wattage, inverter specs, battery capacity).
+
+**U14c: Job Type & Workflow Customization (~4 hrs)**
+- [ ] Add trade-specific job types beyond standard/insurance/warranty: service call, installation, repair, maintenance, inspection, emergency, project (multi-phase), consultation, warranty callback.
+- [ ] Trade-specific completion checklists: electrical (panel labeled, GFCI tested, arc-fault tested, permit posted, final inspection scheduled), plumbing (pressure test, drain test, inspection passed), HVAC (system balanced, filters installed, thermostat programmed, refrigerant logged), roofing (flashing sealed, drip edge, ridge vent, cleanup complete), painting (primer verified, coats applied, touch-up complete, masking removed).
+- [ ] Smart defaults: when contractor selects their trade type during onboarding, pre-load relevant categories, templates, checklists, units. Don't make a roofer sift through electrical line items.
+- [ ] Verify: create bids for 5 different trades — each has appropriate templates, line items, units, and terms. Job completion checklist changes per trade type.
+- [ ] `npm run build` + `dart analyze` pass.
+- [ ] Commit: `[U14] Universal Trade Support — 20+ trade categories, bid templates, trade-specific units/checklists/workflows`
+
+### Sprint U15: S98 Lost Feature Specs (~16 hrs)
+*Features from crashed S98 session that need to be built. See memory/s98-lost-features.md.*
+
+**U15a: Remote-In Support Tool (~6 hrs)**
+- [ ] Ops portal: "View as Company" feature for super_admin. Select any company from companies table → assume their `company_id` in JWT context → see their CRM exactly as they see it. Similar to Stripe's "View as customer" or Supabase admin impersonation.
+- [ ] Implementation: `impersonate-company` Edge Function — super_admin sends company_id → returns temporary JWT with that company's `app_metadata.company_id` + `app_metadata.role = 'super_admin_impersonating'`. 30-minute expiry. Original admin JWT stored for return.
+- [ ] Audit trail: `admin_audit_log` table — records every impersonation session: who, which company, start/end timestamps, actions taken. Immutable (INSERT only, no UPDATE/DELETE).
+- [ ] UI indicator: when impersonating, show red banner at top of all pages: "Viewing as [Company Name] — Remote Support Mode" with "End Session" button.
+- [ ] Safety: impersonating user CANNOT modify company subscription, billing, or auth settings. Read + fix data only. Cannot invite/remove users.
+- [ ] Verify: super_admin can view any company's dashboard. All actions logged. Banner shows. Session expires after 30 min.
+
+**U15b: Data Integrity Verification (~4 hrs)**
+- [ ] Audit ALL INSERT operations across all apps: verify every job has valid `company_id` + `job_id`. Every photo links to correct job. Every expense links to correct job. Every time entry links to correct job + user. Every invoice links to correct job + customer.
+- [ ] Orphan detection query: find records with null FKs that shouldn't be null (`photos` without `job_id`, `time_entries` without `job_id`, `expenses` without `job_id` if linked to job).
+- [ ] Referential integrity check: build SQL script that verifies all FK relationships are valid. Run as G-phase validation.
+- [ ] CRM data health dashboard (ops portal): show orphan counts, broken FK counts, companies with data issues. Actionable — click to see and fix.
+
+**U15c: GPS-Enhanced Sketch Data Collection (~6 hrs)**
+- [ ] During walkthrough/photo capture, collect device GPS + compass heading + timestamp for each photo.
+- [ ] Store GPS data in photo metadata (extend `photos` table or metadata JSONB): `{ lat, lng, heading, altitude, accuracy, floor_level }`.
+- [ ] Photo clustering: group photos by GPS proximity to infer rooms/areas.
+- [ ] Future SK integration: GPS path data + photo locations passed to sketch engine as hints for room layout inference. (Full implementation in SK phase — this sprint collects the data.)
+- [ ] Indoor positioning: use WiFi/BLE signal strength changes + accelerometer step counting to estimate indoor movement between rooms. Store movement data as `walkthrough_path` JSONB on walkthrough record.
+- [ ] Verify: take 5 photos during walkthrough → each has GPS metadata → photos auto-cluster by room proximity.
+- [ ] `dart analyze` passes.
+- [ ] Commit: `[U15] S98 Features — remote-in support, data integrity audit, GPS-enhanced walkthrough data`
+
+---
+
+**PHASE U UPDATED TOTAL: U1-U15 = ~276 hrs (was ~128 hrs)**
+*S99 audit revealed significant depth gaps. Additional 148 hrs covers: form depth (24), templates (16), i18n (24), trade support (12), S98 features (16), plus expanded existing sprints.*
 
 ---
 
@@ -9481,6 +9824,22 @@ Include <content>{markdown}</content> for rendered display.
 ---
 
 ### Sprint E1-E4: Full AI implementation (rebuilt with complete platform knowledge — including TPA module + Recon + Sketch Engine + Plan Review + all Phase F features)
+
+---
+
+### POST-PHASE E: AI Stress Test + Full Regression (~16 hrs)
+*After ALL Phase E work (E-review + BA1-BA8 + E1-E4) is complete. AI adds significant load to Edge Functions, real-time channels, and database queries. Must re-validate everything against G10f baseline metrics.*
+
+**Note: This sprint cannot be fully spec'd until Phase E is complete. The checklist below is a TEMPLATE — update with specific AI features once E is built.**
+
+- [ ] **AI Edge Function load test** — z-intelligence (14 tools), all AI troubleshooting EFs, blueprint-process (GPU inference). Simulate 50 concurrent AI requests. Verify: queue management works, no timeouts, graceful degradation under load.
+- [ ] **AI + normal traffic combined** — Run G10f stress scenarios WHILE AI features are active. Verify: AI doesn't degrade core business features. Response times stay within G10f baseline +/- 20%.
+- [ ] **Real-time with AI updates** — AI processes (blueprint analysis, estimate generation) create DB writes that trigger real-time updates. Verify: subscribers don't get flooded with intermediate AI state changes.
+- [ ] **RunPod GPU scaling** — Blueprint analyzer uses RunPod Serverless. Simulate 10 concurrent blueprint uploads. Verify: auto-scaling works, cold start <30s, inference completes <60s per sheet.
+- [ ] **AI token cost monitoring** — Track Anthropic API token usage during stress test. Verify: cost per AI interaction within budget ($0.50 max per interaction). Rate limiting prevents runaway costs.
+- [ ] **Full regression** — Re-run entire G9 button-click audit + G10a-G10e integration tests after AI is live. Verify: zero regressions in core business features.
+- [ ] **Document final metrics** — Compare against G10f pre-AI baseline. Publish: AI overhead (%), additional latency, cost per user, scaling limits. These are the production launch metrics.
+- [ ] Commit: `[POST-E] AI stress test + full regression — baseline comparison, GPU scaling, cost monitoring`
 
 ---
 

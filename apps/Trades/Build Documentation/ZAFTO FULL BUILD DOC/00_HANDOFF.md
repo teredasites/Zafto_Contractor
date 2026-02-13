@@ -1,6 +1,6 @@
 # ZAFTO SESSION HANDOFF
 ## THE ONLY DOC YOU READ FIRST — EVERY SESSION
-### Last Updated: February 11, 2026 (Session 97)
+### Last Updated: February 13, 2026 (Session 99)
 
 ---
 
@@ -18,12 +18,12 @@
 
 | Field | Value |
 |-------|-------|
-| **Sprint** | **PHASE F COMPLETE (code).** F1-F10 ALL DONE. FM manual steps remain. Phase T (Programs) is NEXT. **Phase T + Phase P (Recon) + Phase SK (Sketch Engine) ALL SPEC'D. Phase U (Unification & Feature Completion) added (9 sprints, ~120 hrs). Plan Review spec'd + sprint checklists written (S97, BA1-BA8, ~128 hrs). Build order: T → P → SK → GC (Schedule) → U → G → E (includes BA) → LAUNCH.** |
+| **Sprint** | **PHASE F COMPLETE (code).** F1-F10 ALL DONE. FM manual steps remain. Phase T (Programs) is NEXT. **Phase T + Phase P (Recon) + Phase SK (Sketch Engine) ALL SPEC'D. Phase U (Unification & Feature Completion) expanded S99: 15 sprints, ~276 hrs (was 9/~120h). Plan Review spec'd + sprint checklists written (S97, BA1-BA8, ~128 hrs). Build order: T → P → SK → GC (Schedule) → U → G → E (includes BA) → LAUNCH.** |
 | **Sub-step** | Phase F finished. All 4 apps LIVE on Vercel + Cloudflare. Plan Review spec'd (S97). Phase GC (Schedule) spec'd (S97). Phase U added (S96). Next: Phase T (TPA) → Phase P (Recon) → Phase SK (Sketch Engine) → Phase GC (Schedule) → Phase U (Unification) → Phase G (QA/Hardening) → Phase E (AI, includes Plan Review BA1-BA8) → LAUNCH. |
-| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → Phase T (next unchecked: T1). Phase P (10 sprints, ~96 hours — expanded S97: lead scoring, batch area scanning, storm intelligence, supplement checklist, multi-structure detection, confidence scoring). Phase SK (11 sprints, ~176 hours). **Phase GC (11 sprints, ~124 hours). Spec: `Expansion/48_GANTT_CPM_SCHEDULER_SPEC.md`.** Phase U (9 sprints, ~120 hours). **Phase E expanded: E-review + BA1-BA8 (~128 hrs) + E1-E4. Plan Review sprint checklists fully written.** |
-| **Status** | Phases A-D + F ALL DONE. R1 DONE. FM code done. Phase E PAUSED. ~173 tables. 48 migration files. 53 Edge Functions. **107 CRM pages. 36 team pages. 38 client pages. 26 ops pages.** Codemagic Android debug build PASSING. **Phase T (Programs) spec complete — 17 tables, 3 EFs, 10 sprints. Phase P (Recon) spec complete — 11 tables, 6 EFs, 10 sprints, ~96 hours (expanded S97: lead scoring, batch area scanning, storm intelligence, supplement checklist, multi-structure detection, confidence scoring). Phase SK (Sketch Engine) spec complete — 3 tables, 11 sprints, ~176 hours. Phase U (Unification & Feature Completion) — 9 sprints, ~120 hours. Plan Review spec complete — 6 tables, 3 EFs, 8 sprints, ~128 hours. Research validated (CV models, competitors, deployment costs).** |
-| **Last Completed** | S97: Plan Review spec'd (47_BLUEPRINT_ANALYZER_SPEC.md). BA1-BA8 sprint checklists written into 07_SPRINT_SPECS.md. Research validated: MitUNet (87.84% mIoU), YOLOv12, RunPod ($2/hr A100), PlanSwift 2026 cloud+AI, Bluebeam Max with Claude, 12 competitors analyzed. S96: Phase U added. CLAUDE.md created. S95: All 4 apps deployed to Vercel/Cloudflare. Login pages redesigned. |
-| **Session Count** | 97 |
+| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → Phase T (next unchecked: T1). Phase P (10 sprints, ~96 hours). Phase SK (11 sprints, ~176 hours). **Phase GC (11 sprints, ~124 hours).** Phase U (15 sprints, ~276 hours — expanded S99: U11 Form Depth, U12 Templates, U13 i18n, U14 Trade Support, U15 Lost Features). **Phase E: E-review + BA1-BA8 (~128 hrs) + E1-E4.** Phase G: G1-G10 + G10h-G10k (validation/depth/i18n/trade QA items added S99). |
+| **Status** | Phases A-D + F ALL DONE. R1 DONE. FM code done. Phase E PAUSED. ~173 tables. 48 migration files. 53 Edge Functions. **107 CRM pages. 36 team pages. 38 client pages. 26 ops pages.** Codemagic Android debug build PASSING. **Phase T spec complete — 17 tables, 3 EFs, 10 sprints. Phase P spec complete — 11 tables, 6 EFs, 10 sprints, ~96h. Phase SK spec complete — 3 tables, 11 sprints, ~176h. Phase GC spec complete — 12 tables, 4 EFs, 11 sprints, ~124h. Phase U expanded (S99) — 15 sprints, ~276h. Includes form validation (zero validation currently), template engine, i18n (10 languages), universal trade support, S98 lost features recovery. Phase G expanded (S99) — G10h-G10k QA items for validation stress testing + depth + i18n + trade verification. Plan Review spec complete — 6 tables, 3 EFs, 8 sprints, ~128h. Full depth audit complete (S99): competitor research (9 platforms), contractor complaints (20 ranked), market gaps (12 identified).** |
+| **Last Completed** | S99: Full depth audit (all 5 apps), competitor research (9 platforms), contractor complaint research (20 complaints, 10 switching triggers), Phase U expanded to 15 sprints (~276h) with U11-U15 (Form Depth, Templates, i18n, Trade Support, Lost Features), G10h-G10k QA items added, form validation requirements documented. S98: Full-stack audit (31 gaps, 65 items), API cost strategy ($0/mo launch), AI monetization locked. S97: Plan Review spec'd. S96: Phase U added. |
+| **Session Count** | 99 |
 | **Tables** | ~173 (Phase T will add ~17, Phase P will add ~11, Phase SK will add ~3, Phase E/BA will add ~6) |
 | **Migration Files** | 48 (Phase T will add ~8, Phase P will add ~5, Phase SK will add ~1, Phase E/BA will add ~1) |
 
@@ -63,7 +63,7 @@
 | **Phase P: Recon/Property Intelligence** | **SPEC'D** | P | Full spec in `Expansion/40_PROPERTY_INTELLIGENCE_SPEC.md`. ~11 tables, 6 EFs, ~96 hours, 10 sprints. Lead scoring, batch area scanning, storm intelligence, supplement checklist, multi-structure detection, confidence scoring. API research in `memory/property-intelligence-research.md`. Builds after Phase T. |
 | **Phase SK: Sketch Engine** | **SPEC'D** | SK | Full spec in `Expansion/46_SKETCH_ENGINE_SPEC.md`. ~3 tables, ~176 hours, 11 sprints (SK1-SK11). LiDAR scan (Apple RoomPlan), trade layers (electrical/plumbing/HVAC/damage), Konva.js web editor, auto-estimate pipeline, export (PDF/PNG/DXF/FML), 3D visualization (three.js). Builds after Phase P. |
 | **Phase GC: Schedule** | **SPEC'D** | GC | Full spec in `Expansion/48_GANTT_CPM_SCHEDULER_SPEC.md`. ~12 tables, 4 EFs, ~124 hours, 11 sprints (GC1-GC11). Full CPM scheduling engine with critical path, resource leveling, P6/MS Project import/export, real-time collaboration. DHTMLX Gantt PRO (web) + legacy_gantt_chart (Flutter). Builds after Phase SK. |
-| **Phase U: Unification & Feature Completion** | **PLANNED** | U | 10 sprints (U1-U10, ~128 hrs). Portal unification (merge team+client into web-portal at zafto.cloud), Supabase-style nav redesign, permission engine, Ledger completion, dashboard restoration, PDF/email/dead buttons, payment flow, cross-system metrics, polish, **embedded financing (Wisetack customer BNPL + Stripe Capital contractor instant pay — U10, ~8 hrs, zero lending risk, referral/tech partner model)**. |
+| **Phase U: Unification & Feature Completion** | **PLANNED** | U | 15 sprints (U1-U15, ~276 hrs). Portal unification, Supabase-style nav redesign, permission engine, Ledger completion, dashboard restoration, PDF/email/dead buttons, payment flow, cross-system metrics, polish, embedded financing (U10), **Form Depth Engine (U11, ~24h) — smart validation + form expansion across all apps, Template & Customization Engine (U12, ~16h) — configurable bids/invoices/agreements + custom fields/statuses, i18n 10 Languages (U13, ~24h) — EN/ES/PT-BR/PL/ZH/HT/RU/KO/VI/TL, Universal Trade Support (U14, ~12h) — 20+ trade categories with trade-specific workflows, S98 Lost Features (U15, ~16h) — remote-in support, data integrity audit, GPS-enhanced walkthrough data**. |
 | **Phase G: QA/Hardening** | **AFTER ALL BUILDING** | G | Comprehensive QA of ALL features (A-F + T + P + SK + U). Button-click audit, security, performance, cross-feature integration testing. |
 | **Plan Review** | **SPEC'D (S97)** | E/BA | Full spec in `Expansion/47_BLUEPRINT_ANALYZER_SPEC.md`. AI-powered blueprint reading + automated takeoff. ~6 tables, 3 EFs, 8 sprints (BA1-BA8, ~128 hrs). Hybrid CV+LLM pipeline (MitUNet + YOLOv12 + Claude). RunPod serverless GPU. Research validated. Builds within Phase E (after E-review). |
 | **Phase E AI (PAUSED)** | **DORMANT** | E | Code committed S78-S80. NOT to be resumed until after T+P+SK+GC+U+G. Deep spec session required. E-review + BA1-BA8 + E1-E4 sprint checklists all written. |
@@ -137,6 +137,95 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 ---
 
 ## SESSION LOG (History — do NOT use for execution decisions, use CURRENT EXECUTION POINT above)
+
+### Session 99 (Feb 13) — Full Depth Audit + Competitor Research + Phase U Expansion
+
+**S99: Full Depth Audit (5 parallel agents):**
+- Deep audit of all 5 apps (Flutter, Web CRM, Team Portal, Client Portal, Ops Portal) — every form, every field, every feature evaluated for completeness.
+- Flutter: 15 findings (5 P0 blockers, 5 P1 shallow forms, 5 P2 missing features), ~72h remediation.
+- Web CRM: 10 categories of hardcoded values, 12 entirely missing features.
+- Team Portal: 6 deep / 6 shallow gaps (GPS, comms, time off all missing).
+- Client Portal: 5 deep / 6 shallow (job tracker 100% mock data).
+- Ops Portal: 1 deep / 8+ shallow (revenue/subs all $0, Stripe not connected).
+- Cross-app: 62% of portal features incomplete.
+
+**S99: Competitor Research (9 platforms scored):**
+- Depth scores: ServiceTitan 84/90, Buildertrend 61, Jobber 47, HCP 43, FieldPulse 39.
+- 12 market gaps NOBODY does well (multi-trade, offline-first, affordable depth, integrated accounting, client portal depth, trade calculators, AI plan review).
+- ZAFTO unique advantages mapped: first mover in multi-trade, trade calculators, exam prep, AI plan review.
+- Premium pricing unlocks identified ($200-400/mo tier justification features).
+
+**S99: Contractor Complaint Research (Trustpilot/Capterra/G2/BBB/Reddit/forums):**
+- Top 20 complaints ranked by frequency. Top 3: pricing too high, contract lock-in, customer support collapsed.
+- Top 10 switching triggers. #1: true all-in-one that works.
+- Key stats: 70% contractors experience payment delays, 52% rework from miscommunication ($31.3B/yr), 75% lose money from buddy punching.
+
+**S99: Phase U Expanded (9 → 15 sprints, ~120h → ~276h):**
+- U11: Form Depth Engine (~24h) — smart validation + form expansion across all apps. Includes: numeric-only for prices, email format validation, phone masking, required field enforcement, duplicate detection, double-submit prevention.
+- U12: Template & Customization Engine (~16h) — configurable bid/invoice/agreement templates, custom fields, custom statuses, custom line item categories.
+- U13: i18n 10 Languages (~24h) — EN, ES, PT-BR, PL, ZH, HT, RU, KO, VI, TL.
+- U14: Universal Trade Support (~12h) — 20+ trade categories, trade-specific bid templates, trade-specific workflows.
+- U15: S98 Lost Features (~16h) — remote-in support, data integrity audit, GPS-enhanced walkthrough data.
+
+**S99: Phase G Expanded (+4 QA items):**
+- G10h: Form Validation Stress Test — attempt invalid input on every form field in every app.
+- G10i: Form Depth Verification — verify all form fields match database schema.
+- G10j: i18n Verification — test all 10 languages across all apps.
+- G10k: Trade Coverage Verification — test all 20+ trade categories.
+
+**S99: Memory Files Created/Updated:**
+- `full-app-audit-s99.md` — complete depth audit of all 5 apps.
+- `competitor-research-s99.md` — 9 competitor depth scores + market gaps.
+- `contractor-complaints-s99.md` — top 20 complaints + switching triggers + stats.
+- `zafto-system-knowledge.md` — updated with all S99 findings.
+
+---
+
+### Session 98 (Feb 13) — Full-Stack Audit + Sprint Spec Gap Documentation + API Cost Strategy
+
+**S98: Full-Stack Code Audit (3 parallel agents):**
+- Audited entire codebase: Flutter app, 4 web portals, 53 Edge Functions, all hooks.
+- Found **31 real gaps** not previously captured in sprint specs.
+- 10 HIGH: core CRM console.log saves (bid/invoice/payment), fake AI, unauthenticated webhook.
+- 4 MEDIUM: shell pages with mock data (Communications, Automations, Bid Brain, System Status).
+- 8 Flutter Properties: unwired CRUD (unit turns, leases, inspections, assets, rent service).
+- 6 fake services: contract analyzer, AI tools, subscription check, compression, purchase verification.
+- 1 missing system: web portal notifications (Flutter has it, web doesn't).
+
+**S98: Sprint Specs Updated (~65 new checklist items):**
+- U6: +9 critical broken workflow items. U7: +3 shell page wirings. U9: +18 items (Properties, fake services, web notifications).
+- G1b: Specific audit file list. G2c: +6 security items. G10: +20 stress test + UX audit items.
+- Post-E: AI stress test + regression template added.
+
+**S98: Architecture Verified:**
+- Traced auth → middleware → hooks → Supabase → RLS → real-time across all 5 apps.
+- All additions follow existing 14 code patterns from 06_ARCHITECTURE_PATTERNS.md.
+- Circuit blueprint 10 broken pipes documented and assigned to sprints.
+
+**S98: API Cost Strategy Established (standing rule for all phases):**
+- Researched pricing for 14 property data APIs. Established free-first launch strategy.
+- **$0/month launch stack:** Google Solar (10K free), Microsoft Footprints (free), USGS (free), NOAA (free), Mapbox (already have), OpenStreetMap (free).
+- **Post-revenue additions:** ATTOM (~$500/mo), Regrid (~$80K/yr). Built but GATED behind feature flags.
+- **Killed from roadmap:** Nearmap AI (enterprise-only), Beam AI (no API), SiteRecon (no public API), Hover ($999/yr min).
+- Updated: 01_MASTER_BUILD_PLAN.md (global API cost principle), 07_SPRINT_SPECS.md (P2 split into free/paid, P5 lead scoring free fallback, P10 cost tracking), 40_PROPERTY_INTELLIGENCE_SPEC.md (tier restructure, lead scoring two-tier).
+- **Rule applies to ALL expansion phases** — Phase P, SK, E, and any future work.
+- Apple Developer Organization + Google Play accounts confirmed active — app store launches green-lit.
+
+**S98: AI Monetization Model Locked:**
+- **KILLED:** Credits, tokens, scan counts, packages, per-use pricing. All of it. Gone.
+- **MODEL:** AI is a tier feature. Each tier includes AI usage. Visual meter in Settings (no numbers). When exceeded: buy more in dollar amounts ($10/$25/$50/$100/$500/$1,000) — meter refills, AI turns back on. Never forced to upgrade. Business/Enterprise = unlimited.
+- **MODEL CHOICE:** Opus 4.6 for all user-facing AI (Z Intelligence, Blueprint Analyzer, AI Scanner, trade tools). Sonnet 4.5 only for trivial background routing/classification the user never sees.
+- Added Sprint E0 (AI Usage Metering Infrastructure) to Phase E — builds before any AI goes live.
+- Updated: 01_MASTER_BUILD_PLAN.md (AI Monetization standing rule), 07_SPRINT_SPECS.md (E0 sprint added), 47_BLUEPRINT_ANALYZER_SPEC.md (pricing section updated).
+- Old `user_credits`/`credit_purchases`/`scan_logs` tables + `subscription-credits` EF + RevenueCat IAP credit products = DEPRECATED.
+
+**S98: Recon Multi-Trade Audit (3 parallel agents):**
+- Audited Phase P spec for multi-trade strength beyond roofing.
+- Coverage: Roofing 95%, Gutters 90%, Solar 85%, Siding 70-80%, Landscaping 60-65%, HVAC 60%, Fencing 55%, Electrical 50%, Painting 45-50%, Concrete/Paving 40%, Plumbing 0%.
+- Identified roofing-centric bias in: lead scoring (roof_age weight), storm intelligence (roof-only damage model), supplement checklist (roofing line items only).
+- Multi-trade spec expansion pending — needs trade-specific lead scoring profiles, multi-trade storm damage models, non-roofing supplement items.
+
+---
 
 ### Session 97 (Feb 11) — Plan Review Spec + Sprint Checklists + Research Validation
 

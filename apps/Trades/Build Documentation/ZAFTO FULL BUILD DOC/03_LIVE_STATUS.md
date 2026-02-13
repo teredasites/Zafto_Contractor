@@ -1,9 +1,9 @@
 # ZAFTO LIVE STATUS
 ## UPDATE THIS EVERY SESSION
 
-**Last Updated:** February 11, 2026 (Session 97 — Plan Review spec'd + BA1-BA8 sprint checklists written. Research validated: MitUNet, YOLOv12, RunPod, 12 competitors. S96: Phase U added, CLAUDE.md created.)
-**Current Phase:** BUILD — **Phases A-D + F ALL COMPLETE.** R1 DONE. FM code done. Phase E PAUSED. ~173 tables. 48 migrations. 53 Edge Functions. 107 CRM routes. 36 team routes. 38 client routes. 26 ops routes. **Phase T (Programs) SPEC'D. Phase P (Recon) SPEC'D. Phase SK (Sketch Engine) SPEC'D. Phase U PLANNED. Plan Review SPEC'D (S97).**
-**Next Action:** Phase T (Programs) → Phase P (Recon) → Phase SK (Sketch Engine) → Phase GC (Schedule) → Phase U (Unification) → Phase G (QA/Hardening) → Phase E (AI: E-review → BA1-BA8 Plan Review → E1-E4) → LAUNCH.
+**Last Updated:** February 13, 2026 (Session 99 — Full depth audit of ALL 5 apps: Flutter 15 shallow features, CRM 10 hardcoded value categories + 12 missing features, Portals 62% incomplete. Competitor research (9 platforms). Contractor complaint research (20 top complaints). Phase U expanded U11-U15: form depth engine, template/customization engine, i18n (10 languages), universal trade support, S98 lost features. G-phase expanded G10h-G10k: validation stress test, form depth verification, i18n verification, trade coverage. Form validation requirement added. ~148 hrs added to Phase U. S98: Full-stack audit (31 gaps, 65 items), API cost strategy ($0/mo launch), AI monetization locked. S97: Plan Review spec'd. S96: Phase U added.)
+**Current Phase:** BUILD — **Phases A-D + F ALL COMPLETE.** R1 DONE. FM code done. Phase E PAUSED. ~173 tables. 48 migrations. 53 Edge Functions. 107 CRM routes. 36 team routes. 38 client routes. 26 ops routes. **Phase T (Programs) SPEC'D. Phase P (Recon) SPEC'D. Phase SK (Sketch Engine) SPEC'D. Phase U EXPANDED (S96+S99, U1-U15 ~276 hrs). Phase G EXPANDED (S99). Plan Review SPEC'D (S97).**
+**Next Action:** Phase T (Programs) → Phase P (Recon) → Phase SK (Sketch Engine) → Phase GC (Schedule) → Phase U (Unification, ~276 hrs) → Phase G (QA/Hardening) → Phase E (AI: E-review → BA1-BA8 Plan Review → E1-E4) → LAUNCH.
 
 ---
 
@@ -93,7 +93,7 @@
 | 36 | P: Recon / Property Intelligence Engine | ~96 | **SPEC'D (S93, expanded S97)** — 11 tables, 6 EFs, 10 sprints. Lead scoring, batch area scanning, storm intelligence, supplement checklist, multi-structure detection, confidence scoring. Expansion/40_PROPERTY_INTELLIGENCE_SPEC.md |
 | 37 | SK: CAD-Grade Sketch Engine | ~176 | **SPEC'D (S94)** — 3 tables, ~46 files, 11 sprints. LiDAR scan, trade layers, Konva web editor, auto-estimate, export, 3D view. Expansion/46_SKETCH_ENGINE_SPEC.md |
 | 37a | GC: Gantt & CPM Scheduling Engine | ~124 | **SPEC'D (S97)** — 12 tables, 4 EFs, 11 sprints (GC1-GC11). Full CPM, resource leveling, P6/MS Project import/export, real-time collab. Expansion/48_GANTT_CPM_SCHEDULER_SPEC.md |
-| 38 | U: Unification & Feature Completion | ~120 | **PLANNED (S96)** — 9 sprints (U1-U9). Portal unification (merge team+client into web-portal at zafto.cloud), Supabase-style nav redesign, permission engine, Ledger completion, dashboard restoration, PDF/email/dead buttons, payment flow, cross-system metrics, polish. |
+| 38 | U: Unification & Feature Completion | ~276 | **EXPANDED (S96+S99)** — 15 sprints (U1-U15). Portal unification, nav redesign, permission engine, Ledger completion, dashboard restoration, PDF/email/dead buttons, payment flow, cross-system metrics, polish, **form depth engine (U11)**, **template/customization engine (U12)**, **i18n 10 languages (U13)**, **universal trade support (U14)**, **S98 lost features — remote-in, data integrity, GPS sketch (U15)**. S99 audit added ~148 hrs for depth/customization/i18n. |
 | 39 | G: Debug, QA & Hardening | ~100-200 | PENDING — After ALL building (T+P+SK+U). Full button-click audit, security, performance, cross-feature integration testing. |
 | 39a | E/BA: Plan Review (AI Takeoff) | ~128 | **SPEC'D (S97)** — 6 tables, 3 EFs, 8 sprints (BA1-BA8). MitUNet + YOLOv12 + Claude. RunPod GPU. Expansion/47_BLUEPRINT_ANALYZER_SPEC.md |
 | 40 | E: AI Layer Rebuild | TBD | PENDING — Deep spec session, full platform knowledge (after T+P+SK+U+G). E-review → BA1-BA8 → E1-E4. |
@@ -142,7 +142,7 @@
 | `04_EXPANSION_SPECS.md` | COMPLETE (Session 36 — all 14 specs consolidated) |
 | `05_EXECUTION_PLAYBOOK.md` | COMPLETE (Session 37 — session protocol, methodology, quality gates) |
 | `06_ARCHITECTURE_PATTERNS.md` | COMPLETE (Session 37 — 14 code patterns with full examples) |
-| `07_SPRINT_SPECS.md` | COMPLETE — 9,000+ lines, Phases A through E fully detailed (includes BA1-BA8 Plan Review checklists, S97. Phase P expanded to P1-P10 with lead scoring, batch scanning, storm intelligence, supplement checklist, multi-structure detection, confidence scoring.) |
+| `07_SPRINT_SPECS.md` | COMPLETE — 10,000+ lines, Phases A through E fully detailed (includes BA1-BA8 Plan Review checklists S97, Phase U expanded U11-U15 S99, Phase G expanded G10h-G10k S99, Phase P expanded P1-P10 S97.) |
 
 ---
 
