@@ -17,6 +17,9 @@ class SketchPainter extends CustomPainter {
   final Offset? snapIndicator;
   final Offset? ghostDimensionStart;
   final double scale;
+  final MeasurementUnit units;
+  final Set<String> multiSelectedIds;
+  final List<Offset>? lassoPoints;
 
   // Colors
   static const _gridColor = Color(0xFFE5E7EB);
@@ -43,6 +46,9 @@ class SketchPainter extends CustomPainter {
     this.snapIndicator,
     this.ghostDimensionStart,
     this.scale = 4.0,
+    this.units = MeasurementUnit.imperial,
+    this.multiSelectedIds = const {},
+    this.lassoPoints,
   });
 
   @override
@@ -50,14 +56,18 @@ class SketchPainter extends CustomPainter {
     _drawGrid(canvas, size);
     _drawRooms(canvas);
     _drawWalls(canvas);
+    _drawArcWalls(canvas);
     _drawDoors(canvas);
     _drawWindows(canvas);
     _drawFixtures(canvas);
     _drawLabels(canvas);
     _drawDimensions(canvas);
     _drawGhostWall(canvas);
+    _drawLasso(canvas);
     _drawSnapIndicator(canvas);
   }
+
+  bool _isMultiSelected(String id) => multiSelectedIds.contains(id);
 
   // =========================================================================
   // GRID
@@ -147,11 +157,11 @@ class SketchPainter extends CustomPainter {
         color: _roomLabelColor,
         bold: true,
       );
-      // Area label below name
+      // Area label below name — unit-aware
       if (room.area > 0) {
         _drawText(
           canvas,
-          '${room.area.toStringAsFixed(0)} sq ft',
+          _formatArea(room.area),
           Offset(center.dx, center.dy + 14),
           fontSize: 9,
           color: _roomLabelColor,
@@ -167,7 +177,8 @@ class SketchPainter extends CustomPainter {
   void _drawWalls(Canvas canvas) {
     for (final wall in planData.walls) {
       final isSelected =
-          selectedElementType == 'wall' && selectedElementId == wall.id;
+          (selectedElementType == 'wall' && selectedElementId == wall.id) ||
+              _isMultiSelected(wall.id);
       _drawSingleWall(canvas, wall, isSelected: isSelected);
     }
   }
@@ -214,12 +225,125 @@ class SketchPainter extends CustomPainter {
     canvas.drawPath(path, fillPaint);
     canvas.drawPath(path, outlinePaint);
 
-    // Draw endpoint dots
-    final dotPaint = Paint()
-      ..color = isSelected ? _selectionColor : _wallColor
+    // Draw endpoint dots (small when unselected, large handles when selected)
+    if (isSelected) {
+      // Selection handles — white border circle + blue fill (draggable)
+      final handleBorderPaint = Paint()
+        ..color = Colors.white
+        ..style = PaintingStyle.fill;
+      final handleFillPaint = Paint()
+        ..color = _selectionColor
+        ..style = PaintingStyle.fill;
+      canvas.drawCircle(start, 8.0, handleBorderPaint);
+      canvas.drawCircle(start, 6.0, handleFillPaint);
+      canvas.drawCircle(end, 8.0, handleBorderPaint);
+      canvas.drawCircle(end, 6.0, handleFillPaint);
+
+      // Wall thickness label (centered on wall)
+      final mid = Offset((start.dx + end.dx) / 2, (start.dy + end.dy) / 2);
+      final dx = end.dx - start.dx;
+      final dy = end.dy - start.dy;
+      final wallLen = sqrt(dx * dx + dy * dy);
+      if (wallLen > 0) {
+        final perpX = -dy / wallLen * 18;
+        final perpY = dx / wallLen * 18;
+        _drawText(
+          canvas,
+          _formatDim(wall.thickness),
+          Offset(mid.dx + perpX, mid.dy + perpY),
+          fontSize: 9,
+          color: _selectionColor,
+          bold: true,
+        );
+      }
+    } else {
+      final dotPaint = Paint()
+        ..color = _wallColor
+        ..style = PaintingStyle.fill;
+      canvas.drawCircle(start, 3.0, dotPaint);
+      canvas.drawCircle(end, 3.0, dotPaint);
+    }
+  }
+
+  // =========================================================================
+  // ARC WALLS
+  // =========================================================================
+
+  void _drawArcWalls(Canvas canvas) {
+    for (final arc in planData.arcWalls) {
+      final isSelected =
+          (selectedElementType == 'arcWall' && selectedElementId == arc.id) ||
+              _isMultiSelected(arc.id);
+      _drawSingleArcWall(canvas, arc, isSelected: isSelected);
+    }
+  }
+
+  void _drawSingleArcWall(Canvas canvas, ArcWall arc,
+      {bool isSelected = false}) {
+    final center = _toCanvas(arc.center);
+    final outerRadius = (arc.radius + arc.thickness / 2) * scale;
+    final innerRadius = (arc.radius - arc.thickness / 2) * scale;
+
+    final fillPaint = Paint()
+      ..color = isSelected
+          ? _selectionColor.withValues(alpha: 0.3)
+          : _wallFillColor
       ..style = PaintingStyle.fill;
-    canvas.drawCircle(start, 3.0, dotPaint);
-    canvas.drawCircle(end, 3.0, dotPaint);
+
+    final outlinePaint = Paint()
+      ..color = isSelected ? _selectionColor : _wallColor
+      ..strokeWidth = isSelected ? 2.0 : 1.0
+      ..style = PaintingStyle.stroke;
+
+    // Build arc path as thick band (outer arc + inner arc reversed)
+    final outerRect = Rect.fromCircle(center: center, radius: outerRadius);
+    final innerRect = Rect.fromCircle(center: center, radius: innerRadius);
+
+    final path = Path()
+      ..addArc(outerRect, arc.startAngle, arc.sweepAngle);
+    // Connect outer end to inner end
+    final innerEndAngle = arc.startAngle + arc.sweepAngle;
+    path.lineTo(
+      center.dx + innerRadius * cos(innerEndAngle),
+      center.dy + innerRadius * sin(innerEndAngle),
+    );
+    // Inner arc in reverse
+    path.arcTo(innerRect, innerEndAngle, -arc.sweepAngle, false);
+    path.close();
+
+    canvas.drawPath(path, fillPaint);
+    canvas.drawPath(path, outlinePaint);
+
+    // Endpoint dots
+    if (isSelected) {
+      final startOuter = Offset(
+        center.dx + outerRadius * cos(arc.startAngle),
+        center.dy + outerRadius * sin(arc.startAngle),
+      );
+      final endOuter = Offset(
+        center.dx + outerRadius * cos(arc.startAngle + arc.sweepAngle),
+        center.dy + outerRadius * sin(arc.startAngle + arc.sweepAngle),
+      );
+      final handleBorder = Paint()
+        ..color = Colors.white
+        ..style = PaintingStyle.fill;
+      final handleFill = Paint()
+        ..color = _selectionColor
+        ..style = PaintingStyle.fill;
+      canvas.drawCircle(startOuter, 7, handleBorder);
+      canvas.drawCircle(startOuter, 5, handleFill);
+      canvas.drawCircle(endOuter, 7, handleBorder);
+      canvas.drawCircle(endOuter, 5, handleFill);
+
+      // Arc length label
+      final midAngle = arc.startAngle + arc.sweepAngle / 2;
+      final labelPos = Offset(
+        center.dx + (arc.radius * scale + 18) * cos(midAngle),
+        center.dy + (arc.radius * scale + 18) * sin(midAngle),
+      );
+      _drawText(canvas, _formatDim(arc.arcLength), labelPos,
+          fontSize: 9, color: _selectionColor, bold: true);
+    }
   }
 
   // =========================================================================
@@ -572,7 +696,8 @@ class SketchPainter extends CustomPainter {
   void _drawFixtures(Canvas canvas) {
     for (final fixture in planData.fixtures) {
       final isSelected =
-          selectedElementType == 'fixture' && selectedElementId == fixture.id;
+          (selectedElementType == 'fixture' && selectedElementId == fixture.id) ||
+              _isMultiSelected(fixture.id);
       _drawSingleFixture(canvas, fixture, isSelected: isSelected);
     }
   }
@@ -677,6 +802,53 @@ class SketchPainter extends CustomPainter {
     }
 
     canvas.restore();
+
+    // Selection: rotation handle + bounding circle
+    if (isSelected) {
+      // Bounding circle (selection indicator)
+      final selectPaint = Paint()
+        ..color = _selectionColor.withValues(alpha: 0.3)
+        ..strokeWidth = 1.5
+        ..style = PaintingStyle.stroke;
+      canvas.drawCircle(pos, 18 * scale, selectPaint);
+
+      // Rotation handle — small circle with arc arrow above fixture
+      final handleCenter = Offset(pos.dx, pos.dy - 22 * scale);
+      final handleBg = Paint()
+        ..color = Colors.white
+        ..style = PaintingStyle.fill;
+      final handleFill = Paint()
+        ..color = _selectionColor
+        ..style = PaintingStyle.fill;
+      final handleArc = Paint()
+        ..color = Colors.white
+        ..strokeWidth = 1.5
+        ..style = PaintingStyle.stroke
+        ..strokeCap = StrokeCap.round;
+
+      canvas.drawCircle(handleCenter, 9, handleBg);
+      canvas.drawCircle(handleCenter, 7, handleFill);
+      // Arc arrow icon inside handle
+      canvas.drawArc(
+        Rect.fromCircle(center: handleCenter, radius: 4),
+        -pi / 2,
+        pi * 1.3,
+        false,
+        handleArc,
+      );
+
+      // Rotation degree label
+      if (fixture.rotation != 0) {
+        _drawText(
+          canvas,
+          '${fixture.rotation.round()}°',
+          Offset(pos.dx + 22 * scale, pos.dy - 22 * scale),
+          fontSize: 8,
+          color: _selectionColor,
+          bold: true,
+        );
+      }
+    }
 
     // Label below fixture
     if (fixture.label != null && fixture.label!.isNotEmpty) {
@@ -1067,9 +1239,11 @@ class SketchPainter extends CustomPainter {
     // Arrow at start pointing from end to start
     _drawArrowhead(canvas, start, dirAngle, arrowLen, arrowAngle, paint);
 
-    // Label
+    // Label — use unit-aware formatting
     final mid = Offset((start.dx + end.dx) / 2, (start.dy + end.dy) / 2);
-    final labelText = dim.formattedDistance;
+    final labelText = (dim.isManual && dim.label.isNotEmpty)
+        ? dim.label
+        : _formatDim(dim.distanceInches);
 
     // White background behind text
     final bgPaint = Paint()
@@ -1139,16 +1313,7 @@ class SketchPainter extends CustomPainter {
       final perpX = -dy / len * 14;
       final perpY = dx / len * 14;
 
-      final feet = dist ~/ 12;
-      final inches = (dist % 12).round();
-      String dimText;
-      if (feet == 0) {
-        dimText = '$inches"';
-      } else if (inches == 0) {
-        dimText = "$feet'";
-      } else {
-        dimText = "$feet' $inches\"";
-      }
+      final dimText = _formatDim(dist);
 
       _drawText(
         canvas,
@@ -1159,6 +1324,36 @@ class SketchPainter extends CustomPainter {
         bold: true,
       );
     }
+  }
+
+  // =========================================================================
+  // LASSO SELECTION
+  // =========================================================================
+
+  void _drawLasso(Canvas canvas) {
+    if (lassoPoints == null || lassoPoints!.length < 2) return;
+
+    final paint = Paint()
+      ..color = _selectionColor.withValues(alpha: 0.6)
+      ..strokeWidth = 1.5
+      ..style = PaintingStyle.stroke
+      ..strokeJoin = StrokeJoin.round;
+
+    final fillPaint = Paint()
+      ..color = _selectionColor.withValues(alpha: 0.08)
+      ..style = PaintingStyle.fill;
+
+    final path = Path();
+    final first = _toCanvas(lassoPoints!.first);
+    path.moveTo(first.dx, first.dy);
+    for (int i = 1; i < lassoPoints!.length; i++) {
+      final p = _toCanvas(lassoPoints![i]);
+      path.lineTo(p.dx, p.dy);
+    }
+    path.close();
+
+    canvas.drawPath(path, fillPaint);
+    canvas.drawPath(path, paint);
   }
 
   // =========================================================================
@@ -1236,6 +1431,29 @@ class SketchPainter extends CustomPainter {
     );
   }
 
+  // Format inches to current unit system
+  String _formatDim(double inches) {
+    if (units == MeasurementUnit.metric) {
+      final cm = inches * 2.54;
+      if (cm >= 100) return '${(cm / 100).toStringAsFixed(2)} m';
+      return '${cm.toStringAsFixed(1)} cm';
+    }
+    final feet = inches ~/ 12;
+    final rem = (inches % 12).round();
+    if (feet == 0) return '$rem"';
+    if (rem == 0) return "$feet'";
+    return "$feet' $rem\"";
+  }
+
+  // Format area to current unit system
+  String _formatArea(double sqFt) {
+    if (units == MeasurementUnit.metric) {
+      final sqM = sqFt * 0.092903;
+      return '${sqM.toStringAsFixed(1)} m\u00B2';
+    }
+    return '${sqFt.round()} sq ft';
+  }
+
   @override
   bool shouldRepaint(covariant SketchPainter oldDelegate) {
     return planData != oldDelegate.planData ||
@@ -1244,6 +1462,9 @@ class SketchPainter extends CustomPainter {
         ghostWall != oldDelegate.ghostWall ||
         snapIndicator != oldDelegate.snapIndicator ||
         ghostDimensionStart != oldDelegate.ghostDimensionStart ||
-        scale != oldDelegate.scale;
+        scale != oldDelegate.scale ||
+        units != oldDelegate.units ||
+        multiSelectedIds != oldDelegate.multiSelectedIds ||
+        lassoPoints != oldDelegate.lassoPoints;
   }
 }
