@@ -190,6 +190,11 @@ const navSections: NavSection[] = [
         href: '/dashboard/marketplace-analytics',
         icon: <ShoppingBag className="h-4 w-4" />,
       },
+      {
+        label: 'TPA Analytics',
+        href: '/dashboard/tpa',
+        icon: <Building2 className="h-4 w-4" />,
+      },
     ],
   },
 ];

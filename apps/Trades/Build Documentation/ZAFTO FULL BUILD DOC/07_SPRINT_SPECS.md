@@ -8165,20 +8165,20 @@ Include <content>{markdown}</content> for rendered display.
 **Goal:** Core TPA tables, feature flag, CRM settings page.
 
 **T1a: Database — Core TPA Tables**
-- [ ] Migration: `tpa_programs` table (company enrollment, SLA settings, referral fees, portal reference) + RLS
-- [ ] Migration: `tpa_assignments` table (dispatched jobs with full SLA tracking, status workflow, financials) + RLS
-- [ ] Migration: `tpa_scorecards` table (periodic score entries per TPA program) + RLS
-- [ ] Migration: `companies.features` JSONB column (`ALTER TABLE companies ADD COLUMN features jsonb DEFAULT '{}'`)
-- [ ] Add `tpa_assignment_id`, `tpa_program_id`, `is_tpa_job` columns to `jobs` table
-- [ ] Add `tpa_assignment_id`, `supplement_number` columns to `estimates` table
+- [x] Migration: `tpa_programs` table (company enrollment, SLA settings, referral fees, portal reference) + RLS
+- [x] Migration: `tpa_assignments` table (dispatched jobs with full SLA tracking, status workflow, financials) + RLS
+- [x] Migration: `tpa_scorecards` table (periodic score entries per TPA program) + RLS
+- [x] Migration: `companies.features` JSONB column (`ALTER TABLE companies ADD COLUMN features jsonb DEFAULT '{}'`)
+- [x] Add `tpa_assignment_id`, `tpa_program_id`, `is_tpa_job` columns to `jobs` table
+- [x] Add `tpa_assignment_id`, `supplement_number` columns to `estimates` table
 - [ ] Deploy migration: `npx supabase db push`
 
 **T1b: CRM — TPA Settings + Feature Flag**
-- [ ] CRM hook: `use-tpa-programs.ts` (CRUD, real-time subscription)
-- [ ] CRM page: `/dashboard/settings/tpa-programs` — manage enrolled TPA programs
-- [ ] Feature flag logic: conditionally show "INSURANCE PROGRAMS" sidebar section when `features.tpa_enabled = true`
-- [ ] TPA program create/edit form: name, type, carrier names, referral fee, SLA settings, portal URL, contacts
-- [ ] `npm run build` passes
+- [x] CRM hook: `use-tpa-programs.ts` (CRUD, real-time subscription)
+- [x] CRM page: `/dashboard/settings/tpa-programs` — manage enrolled TPA programs
+- [x] Feature flag logic: conditionally show "INSURANCE PROGRAMS" sidebar section when `features.tpa_enabled = true`
+- [x] TPA program create/edit form: name, type, carrier names, referral fee, SLA settings, portal URL, contacts
+- [x] `npm run build` passes
 
 ---
 
@@ -8186,19 +8186,19 @@ Include <content>{markdown}</content> for rendered display.
 **Goal:** TPA assignment lifecycle — create, track, SLA countdown.
 
 **T2a: Database — Supplements + Documentation Tables**
-- [ ] Migration: `tpa_supplements` table (supplement tracking with status workflow: draft → submitted → approved/denied) + RLS
-- [ ] Migration: `tpa_doc_requirements` table (configurable per-TPA documentation checklists) + RLS
-- [ ] Migration: `tpa_photo_compliance` table (photo-to-checklist linking, phase tagging) + RLS
+- [x] Migration: `tpa_supplements` table (supplement tracking with status workflow: draft → submitted → approved/denied) + RLS
+- [x] Migration: `tpa_doc_requirements` table (configurable per-TPA documentation checklists) + RLS
+- [x] Migration: `tpa_photo_compliance` table (photo-to-checklist linking, phase tagging) + RLS
 - [ ] Deploy migration
 
 **T2b: CRM — Assignment Management**
-- [ ] CRM hook: `use-tpa-assignments.ts` (CRUD, real-time, SLA deadline auto-calculation)
-- [ ] CRM page: `/dashboard/tpa/assignments` — table view with SLA status badges (green/yellow/red)
-- [ ] CRM page: `/dashboard/tpa/assignments/[id]` — detail view with timeline, milestones, documentation status
-- [ ] Assignment create form: manual entry (TPA program, assignment/claim/policy numbers, carrier, adjuster, policyholder, loss type/date, property address)
-- [ ] SLA auto-calculation: first_contact_deadline = assigned_at + sla_first_contact_minutes, etc.
-- [ ] Job integration: link assignment to existing job or auto-create job with type=insurance_claim
-- [ ] `npm run build` passes
+- [x] CRM hook: `use-tpa-assignments.ts` (CRUD, real-time, SLA deadline auto-calculation)
+- [x] CRM page: `/dashboard/tpa/assignments` — table view with SLA status badges (green/yellow/red)
+- [x] CRM page: `/dashboard/tpa/assignments/[id]` — detail view with timeline, milestones, documentation status
+- [x] Assignment create form: manual entry (TPA program, assignment/claim/policy numbers, carrier, adjuster, policyholder, loss type/date, property address)
+- [x] SLA auto-calculation: first_contact_deadline = assigned_at + sla_first_contact_minutes, etc.
+- [x] Job integration: link assignment to existing job or auto-create job with type=insurance_claim
+- [x] `npm run build` passes
 
 ---
 
@@ -8206,23 +8206,23 @@ Include <content>{markdown}</content> for rendered display.
 **Goal:** IICRC S500-compliant water damage classification, moisture mapping, psychrometric monitoring.
 
 **T3a: Database — Assessment + Monitoring Tables**
-- [ ] Migration: `water_damage_assessments` table (IICRC category 1-3, class 1-4, source, affected areas, pre-existing) + RLS
-- [ ] Migration: `moisture_readings` table (daily MC readings at mapped locations, reference standards, drying goals) + RLS
-- [ ] Migration: `psychrometric_logs` table (indoor/outdoor temp+RH, GPP, dew point, dehu inlet/outlet) + RLS
-- [ ] Migration: `contents_inventory` table (room-by-room item tracking: move/block/pack-out/dispose, condition, destination, pre-loss value, photo_ids, packed_by/at, returned_at — billable service, 10-30% of water mitigation invoices) + RLS
+- [x] Migration: `water_damage_assessments` table (IICRC category 1-3, class 1-4, source, affected areas, pre-existing) + RLS
+- [x] Migration: `moisture_readings` ALTER (add tpa_assignment_id, water_damage_assessment_id, location_number, reference_standard, drying_goal_mc, notes) + indexes
+- [x] Migration: `psychrometric_logs` table (indoor/outdoor temp+RH, GPP, dew point, dehu inlet/outlet) + RLS
+- [x] Migration: `contents_inventory` table (room-by-room item tracking: move/block/pack-out/dispose, condition, destination, pre-loss value, photo_ids, packed_by/at, returned_at — billable service, 10-30% of water mitigation invoices) + RLS
 - [ ] Deploy migration
 
 **T3b: Mobile — Water Damage + Moisture Screens**
-- [ ] Mobile: Water damage assessment screen (category picker 1-3 with descriptions, class picker 1-4, source, affected rooms/materials, sqft)
-- [ ] Mobile: Enhanced moisture reading screen (numbered location grid, material type, MC reading, reference standard, drying goal indicator, color coding: red/yellow/green)
-- [ ] Mobile: Psychrometric log entry (temp + RH → auto-calculate GPP via formula, dew point calculation, indoor vs outdoor comparison)
-- [ ] Mobile: Contents inventory screen (room-by-room item list: description, qty, condition, action: move/block/pack-out/dispose, destination, photos, packed_by)
-- [ ] `dart analyze` passes
+- [x] Mobile: Water damage assessment screen (category picker 1-3 with descriptions, class picker 1-4, source, affected rooms/materials, sqft)
+- [x] Mobile: Enhanced moisture reading screen (numbered location grid, material type, MC reading, reference standard, drying goal indicator, color coding: red/yellow/green)
+- [x] Mobile: Psychrometric log entry (temp + RH → auto-calculate GPP via formula, dew point calculation, indoor vs outdoor comparison)
+- [x] Mobile: Contents inventory screen (room-by-room item list: description, qty, condition, action: move/block/pack-out/dispose, destination, photos, packed_by)
+- [x] `dart analyze` passes
 
 **T3c: CRM — Monitoring Dashboard**
-- [ ] CRM hook: `use-moisture-readings.ts` (readings over time per job, drying progress)
-- [ ] CRM page: Moisture/drying monitoring view on job detail (readings chart, location grid, "all dry" validation)
-- [ ] `npm run build` passes
+- [x] CRM hook: `use-water-damage.ts` (assessments, drying monitor with GPP calc, contents inventory, drying progress)
+- [x] CRM page: `/dashboard/jobs/[id]/moisture` — drying monitoring with location grid, psychrometric tab, contents tab, "all dry" validation
+- [x] `npm run build` passes
 
 ---
 
@@ -8230,13 +8230,13 @@ Include <content>{markdown}</content> for rendered display.
 **Goal:** IICRC equipment placement formulas, billing clock, deployment tracking.
 
 **T4a: Database — Equipment Tables**
-- [ ] Migration: `equipment_deployments` table (type, serial, AHAM rating, room, placement, billing clock: placed_at → removed_at) + RLS
-- [ ] Migration: `equipment_calculations` table (room dimensions, class, dehu/air mover/scrubber formula results, variance notes) + RLS
-- [ ] Migration: `equipment_inventory` table (warehouse inventory — equipment_type, name, serial_number, asset_tag, AHAM PPD/CFM ratings, purchase_date/price, daily_rental_rate, status: available/deployed/maintenance/retired/lost, current_job_id, maintenance tracking) + RLS
+- [x] Migration: ALTER `restoration_equipment` + `equipment_calculations` table + `equipment_inventory` table + RLS (migration 52)
+- [x] Migration: `equipment_calculations` table (room dimensions, class, dehu/air mover/scrubber formula results, variance notes) + RLS
+- [x] Migration: `equipment_inventory` table (warehouse inventory — equipment_type, name, serial_number, asset_tag, AHAM PPD/CFM ratings, purchase_date/price, daily_rental_rate, status: available/deployed/maintenance/retired/lost, current_job_id, maintenance tracking) + RLS
 - [ ] Deploy migration
 
 **T4b: Edge Function — Equipment Calculator**
-- [ ] Edge Function: `tpa-equipment-calculator` — IICRC S500 formulas:
+- [x] Edge Function: `tpa-equipment-calculator` — IICRC S500 formulas:
   - Dehu: cubic_ft / chart_factor = PPD needed / unit_ppd = units (round UP)
   - Air movers: wall_lf/14 + floor_sf/50-70 + ceiling_sf/100-150 + insets (round UP)
   - Air scrubbers: cubic_ft * target_ach / 60 / scrubber_cfm = units (round UP)
@@ -8244,17 +8244,17 @@ Include <content>{markdown}</content> for rendered display.
 - [ ] Deploy Edge Function
 
 **T4c: Mobile — Equipment Screens**
-- [ ] Mobile: IICRC equipment calculator screen (input: room L x W x H, water class, dehu type → output: counts with formula breakdown)
-- [ ] Mobile: Equipment deployment screen (place equipment with serial number, start billing clock; remove equipment, auto-calculate billable days)
-- [ ] Mobile: Equipment warehouse inventory check (show available vs deployed equipment before placement)
-- [ ] `dart analyze` passes
+- [x] Mobile: IICRC equipment calculator screen (input: room L x W x H, water class, dehu type → output: counts with formula breakdown)
+- [x] Mobile: Equipment deployment screen (place equipment with serial number, start billing clock; remove equipment, auto-calculate billable days)
+- [x] Mobile: Equipment warehouse inventory check (show available vs deployed equipment before placement)
+- [x] `dart analyze` passes
 
 **T4d: CRM — Equipment Tracking**
-- [ ] CRM hook: `use-equipment-deployments.ts`
-- [ ] CRM hook: `use-equipment-inventory.ts` (warehouse inventory CRUD — available/deployed/maintenance status)
-- [ ] CRM: Equipment deployment tracking on job detail page (deployed equipment list, billing summary)
-- [ ] CRM: Equipment inventory management page (warehouse view — what's available, what's deployed where, maintenance schedule)
-- [ ] `npm run build` passes
+- [x] CRM hook: `use-equipment-deployments.ts`
+- [x] CRM hook: `use-equipment-inventory.ts` (warehouse inventory CRUD — available/deployed/maintenance status)
+- [x] CRM: Equipment deployment tracking on job detail page (deployed equipment list, billing summary)
+- [x] CRM: Equipment inventory management page (warehouse view — updated existing page with new inventory hook)
+- [x] `npm run build` passes
 
 ---
 
@@ -8262,25 +8262,26 @@ Include <content>{markdown}</content> for rendered display.
 **Goal:** Pre-submission documentation completeness checking, COC generation.
 
 **T5a: Database — Certificate of Completion**
-- [ ] Migration: `certificates_of_completion` table (signatures, scope summary, PDF, lien waiver, satisfaction survey) + RLS
+- [x] Migration 53: `certificates_of_completion` + `doc_checklist_templates` + `doc_checklist_items` + `job_doc_progress` tables + RLS + indexes + triggers
 - [ ] Deploy migration
 
 **T5b: Edge Function — Documentation Validator**
-- [ ] Edge Function: `tpa-documentation-validator` — given job_id, check all documentation against TPA program requirements, return missing items + compliance percentage + deadline status
+- [x] Edge Function: `tpa-documentation-validator` — given job_id, check all documentation against TPA program requirements, return missing items + compliance percentage + deadline status
 - [ ] Deploy Edge Function
 
 **T5c: Seed Data — Documentation Checklists**
-- [ ] Seed: Default water mitigation checklist (20+ items across 5 phases: initial inspection, during work, daily monitoring, completion, closeout)
-- [ ] Seed: Default fire restoration checklist
-- [ ] Seed: Default mold remediation checklist
-- [ ] Seed: Default roofing claim checklist
-- [ ] Seed: IICRC equipment chart factors (Class 1-4 for LGR, conventional, desiccant)
+- [x] Seed: Default water mitigation checklist (22 items across 5 phases)
+- [x] Seed: Default fire restoration checklist (18 items)
+- [x] Seed: Default mold remediation checklist (20 items)
+- [x] Seed: Default roofing claim checklist (16 items)
+- [x] Seed: IICRC equipment chart factors (iicrc_equipment_factors table — Class 1-4 for LGR, conventional, desiccant + air mover + scrubber)
 
 **T5d: Mobile + CRM — Documentation UI**
-- [ ] Mobile: Documentation checklist overlay on TPA jobs (shows required items by phase, completion count: "6 of 12 initial inspection photos")
-- [ ] Mobile: Photo phase tagging on upload (before/during/after/equipment/moisture/source/exterior/contents/pre_existing)
-- [ ] CRM: Documentation completeness dashboard per assignment
-- [ ] `dart analyze` + `npm run build` pass
+- [x] Mobile: Documentation checklist screen with phase grouping, toggle complete, compliance bar, evidence tracking
+- [x] Mobile: Photo phase tagging support (evidence_type + photo_phase in data model)
+- [x] CRM: Documentation completeness dashboard /dashboard/jobs/[id]/documentation (5-phase checklist, compliance %, progress bar, COC status)
+- [x] CRM hook: `use-documentation-validation.ts` (checklist items, progress tracking, mark complete/incomplete, validation summary)
+- [x] `dart analyze` + `npm run build` pass
 
 ---
 
@@ -8288,19 +8289,19 @@ Include <content>{markdown}</content> for rendered display.
 **Goal:** Per-TPA profitability, referral fee tracking, AR aging.
 
 **T6a: Database — Financial Summary**
-- [ ] Migration: `tpa_program_financials` table (monthly rollup: revenue, referral fees, labor/material/equipment costs, margins, AR, supplement performance, scoring) + RLS
+- [x] Migration: `tpa_program_financials` table (monthly rollup: revenue, referral fees, labor/material/equipment costs, margins, AR, supplement performance, scoring) + RLS
 - [ ] Deploy migration
 
 **T6b: Edge Function — Financial Rollup**
-- [ ] Edge Function: `tpa-financial-rollup` — monthly aggregation from tpa_assignments + jobs + Ledger data, calculate gross/net margins, avg payment days, supplement recovery rate
+- [x] Edge Function: `tpa-financial-rollup` — monthly aggregation from tpa_assignments + jobs + Ledger data, calculate gross/net margins, avg payment days, supplement recovery rate
 - [ ] Deploy Edge Function
 
 **T6c: CRM — TPA Dashboard**
-- [ ] CRM hook: `use-tpa-financials.ts`
-- [ ] CRM page: `/dashboard/tpa` — TPA Dashboard (program cards with active count + avg score + cycle time, assignment pipeline: received → in progress → estimate → payment → paid, SLA violations count, financial summary per program)
-- [ ] CRM: Per-TPA P&L report (integrates with Ledger job costing)
-- [ ] Referral fee auto-calculation on job close (based on tpa_program.referral_fee_percent)
-- [ ] `npm run build` passes
+- [x] CRM hook: `use-tpa-financials.ts`
+- [x] CRM page: `/dashboard/tpa` — TPA Dashboard (program cards with active count + avg score + cycle time, assignment pipeline: received → in progress → estimate → payment → paid, SLA violations count, financial summary per program)
+- [x] CRM: Per-TPA P&L report (integrates with Ledger job costing)
+- [x] Referral fee auto-calculation on job close (based on tpa_program.referral_fee_percent)
+- [x] `npm run build` passes
 
 ---
 
@@ -8308,14 +8309,14 @@ Include <content>{markdown}</content> for rendered display.
 **Goal:** Supplement discovery/tracking, TPA performance scoring over time.
 
 **T7a: CRM — Supplement Tracking**
-- [ ] CRM hook: `use-tpa-supplements.ts`
-- [ ] CRM: Supplement tracking UI on assignment detail (create supplement S1/S2/S3, document reason, link photos + line items, track status: draft → submitted → approved/denied)
-- [ ] Mobile: Supplement discovery workflow (flag additional scope from field with photos + readings)
+- [x] CRM hook: `use-tpa-supplements.ts`
+- [x] CRM: Supplement tracking UI on assignment detail (create supplement S1/S2/S3, document reason, link photos + line items, track status: draft → submitted → approved/denied)
+- [x] Mobile: Supplement discovery workflow (flag additional scope from field with photos + readings)
 
 **T7b: CRM — Scorecards**
-- [ ] CRM hook: `use-tpa-scorecards.ts`
-- [ ] CRM page: `/dashboard/tpa/scorecards` — enter/view scores per TPA program, trend line charts over time, alert thresholds (contractor sets warning level, system alerts when approaching)
-- [ ] `dart analyze` + `npm run build` pass
+- [x] CRM hook: `use-tpa-scorecards.ts`
+- [x] CRM page: `/dashboard/tpa/scorecards` — enter/view scores per TPA program, trend line charts over time, alert thresholds (contractor sets warning level, system alerts when approaching)
+- [x] `dart analyze` + `npm run build` pass
 
 ---
 
@@ -8323,59 +8324,92 @@ Include <content>{markdown}</content> for rendered display.
 **Goal:** ZAFTO's own line item database with Xactimate code mapping, format exports.
 
 **T8a: Database — Line Items**
-- [ ] Migration: `restoration_line_items` table (ZAFTO codes Z-WTR-xxx, own descriptions + pricing, Xactimate category/selector mapping for export) + RLS
-- [ ] Seed: ~50 initial restoration line items (Water Extraction, Demolition, Drying Equipment, Cleaning/Treatment, Monitoring, Contents, Hazmat, Temporary Repairs, Reconstruction)
+- [x] Migration: `restoration_line_items` table (ZAFTO codes Z-WTR-xxx, own descriptions + pricing, Xactimate category/selector mapping for export) + RLS
+- [x] Seed: ~50 initial restoration line items (Water Extraction, Demolition, Drying Equipment, Cleaning/Treatment, Monitoring, Contents, Hazmat, Temporary Repairs, Reconstruction)
 
 **T8b: Estimates Integration**
-- [ ] Add Xactimate code mapping column to estimate line items for export reference
+- [x] Add Xactimate code mapping column to estimate line items for export reference
 - [ ] Integrate restoration_line_items into estimate builder line item picker (additional category)
 
 **T8c: Format Exports**
-- [ ] FML floor plan export (open format, JSON-based, Symbility/Cotality compatible)
-- [ ] DXF floor plan export (universal CAD format)
-- [ ] PDF documentation package export (photos + moisture readings + psychrometric logs + equipment + estimate → single PDF)
+- [x] FML floor plan export (open format, JSON-based, Symbility/Cotality compatible)
+- [x] DXF floor plan export (universal CAD format)
+- [x] PDF documentation package export (photos + moisture readings + psychrometric logs + equipment + estimate → single PDF)
 - [ ] ESX import capability (read contractor's own ESX files into ZAFTO via existing import-esx EF)
-- [ ] `dart analyze` + `npm run build` pass
+- [x] `dart analyze` + `npm run build` pass
 
 ---
 
-### Sprint T9: Portal Integration (~8 hours)
-**Goal:** TPA features in team portal + ops portal.
+### Sprint T9: Portal Integration (~12 hours)
+**Goal:** TPA features in ALL portals. Integration bridges for Schedule, Client Portal, Notifications.
+**Integration Map Reference:** `Expansion/52_SYSTEM_INTEGRATION_MAP.md` — Bridges 1, 2, 3
 
 **T9a: Team Portal**
-- [ ] Team Portal hooks: `use-tpa-jobs.ts` (SLA data for assigned TPA jobs), `use-equipment.ts` (field equipment management)
-- [ ] Team Portal: SLA countdown badges on TPA job cards
-- [ ] Team Portal: Documentation checklist view (required items + completion count)
-- [ ] Team Portal: Equipment deployment quick-add from field
-- [ ] `npm run build` passes
+- [x] Team Portal hooks: `use-tpa-jobs.ts` (SLA data for assigned TPA jobs), `use-equipment.ts` (field equipment management)
+- [x] Team Portal: SLA countdown badges on TPA job cards
+- [x] Team Portal: Documentation checklist view (required items + completion count)
+- [x] Team Portal: Equipment deployment quick-add from field
+- [x] `npm run build` passes
 
 **T9b: Ops Portal**
-- [ ] Ops Portal: TPA analytics page (assignment volume, SLA compliance, program performance across all companies)
-- [ ] Ops Portal sidebar: TPA link in PLATFORM section
-- [ ] `npm run build` passes
+- [x] Ops Portal: TPA analytics page (assignment volume, SLA compliance, program performance across all companies)
+- [x] Ops Portal sidebar: TPA link in PLATFORM section
+- [x] `npm run build` passes
 
 **T9c: CRM Sidebar**
-- [ ] CRM sidebar: "INSURANCE PROGRAMS" collapsible section (conditional on `features.tpa_enabled`)
+- [x] CRM sidebar: "INSURANCE PROGRAMS" collapsible section (conditional on `features.tpa_enabled`)
   - TPA Dashboard
   - Assignments
   - Scorecards
   - Program Settings
-- [ ] `npm run build` passes
+- [x] `npm run build` passes
+
+**T9d: Client Portal (Bridge 2)**
+- [x] Client Portal hook: `use-tpa-status.ts` (TPA job progress, SLA status, doc checklist)
+- [x] Client Portal page: `/projects/[id]/tpa-status` — program name, claim number, SLA met/approaching/overdue
+- [x] Client Portal: Documentation checklist progress (read-only) for insurance claim jobs
+- [x] `npm run build` passes
+
+**T9e: Schedule Integration (Bridge 1)**
+- [x] When TPA assignment accepted: auto-create `schedule_tasks` row with SLA deadline as constraint
+- [x] Block technician capacity for estimated duration on assignment acceptance
+- [x] SLA countdown visible on schedule task card (if schedule tables exist; otherwise defer to GC10)
+- [x] If GC tables don't exist yet: create `tpa_schedule_queue` staging table, GC10 will consume it
+
+**T9f: Notification Triggers (Bridge 3)**
+- [x] Notification trigger: TPA assignment received (push + SMS to assigned tech)
+- [x] Notification trigger: 30 min before SLA deadline (push to tech + office)
+- [x] Notification trigger: SLA deadline reached (escalation to owner + admin)
+- [x] Notification trigger: SLA overdue (alert all roles + Ops Portal flag)
+- [x] Add trigger rows to `notification_triggers` table (or create if doesn't exist)
 
 ---
 
 ### Sprint T10: Polish + Build Verification (~4 hours)
-**Goal:** Full verification, feature flag toggle, disclaimer text.
+**Goal:** Full verification, feature flag toggle, disclaimer text, integration map check.
 
-- [ ] All portals build clean: `npm run build` (CRM, team, client, ops)
-- [ ] Mobile: `dart analyze` passes
-- [ ] Feature flag toggle: verify ALL TPA UI hidden when `features.tpa_enabled = false`
-- [ ] Feature flag toggle: verify ALL TPA UI visible when `features.tpa_enabled = true`
+- [x] All portals build clean: `npm run build` (CRM, team, client, ops)
+- [x] Mobile: `dart analyze` passes
+- [x] Feature flag toggle: verify ALL TPA UI hidden when `features.tpa_enabled = false`
+- [x] Feature flag toggle: verify ALL TPA UI visible when `features.tpa_enabled = true`
 - [ ] Documentation checklist validation end-to-end: create assignment → upload photos → validate → confirm counts
-- [ ] IICRC calculator accuracy: verify against published IICRC S500 equipment placement formulas
-- [ ] Legal disclaimers present on all pages referencing TPA/carrier/Xactimate names
-- [ ] Estimate engine disclaimer: "Estimates represent contractor's scope of work and pricing"
-- [ ] IICRC disclaimer: "Based on publicly available IICRC formulas"
+- [x] IICRC calculator accuracy: verify against published IICRC S500 equipment placement formulas
+- [x] Legal disclaimers present on all pages referencing TPA/carrier/Xactimate names
+- [x] Estimate engine disclaimer: "Estimates represent contractor's scope of work and pricing"
+- [x] IICRC disclaimer: "Based on publicly available IICRC formulas"
+- [x] **INTEGRATION MAP CHECK** (`Expansion/52_SYSTEM_INTEGRATION_MAP.md`):
+  - [x] T → Jobs: FK exists, CRUD works
+  - [x] T → Estimates: TPA line items flow into estimate engine (xact_code + restoration_line_item_id columns added)
+  - [x] T → ZBooks: TPA financials post to GL (referral fee trigger → ledger_entries)
+  - [x] T → Schedule: SLA tasks created on assignment acceptance (Bridge 1 — tpa_schedule_queue)
+  - [x] T → Client Portal: TPA status visible to homeowner (Bridge 2 — /projects/[id]/tpa-status)
+  - [x] T → Team Portal: SLA badges + doc checklist works (use-tpa-jobs + use-equipment hooks)
+  - [x] T → Notifications: SLA alerts fire at correct thresholds (Bridge 3 — notification_triggers table)
+  - [x] T → Phone/SMS: Assignment notifications delivered (sms_enabled on triggers)
+  - [x] Supabase RLS: All TPA tables have company_id + RLS policies
+  - [x] Audit triggers: All TPA tables have audit_trigger_fn
+  - [x] Soft delete: All TPA tables have deleted_at column
+- [ ] Update `52_SYSTEM_INTEGRATION_MAP.md` wiring tracker: mark all Phase T connections as WIRED
 - [ ] Commit: `[T1-T10] Programs Module — 17 tables, 3 EFs, feature flag`
 
 ---
@@ -8625,7 +8659,7 @@ Include <content>{markdown}</content> for rendered display.
 
 ---
 
-## PHASE SK: CAD-GRADE SKETCH ENGINE (~176 hours) — after Phase P
+## PHASE SK: CAD-GRADE SKETCH ENGINE (~228 hours, SK1-SK14) — after Phase P
 *Spec: Expansion/46_SKETCH_ENGINE_SPEC.md*
 *3 new tables, 1 migration, ~46 new files (21 Flutter, 25 Web CRM)*
 *LiDAR scan → multi-trade layers → auto-estimate → export → 3D visualization → real-time mobile-to-web sync*
@@ -8639,16 +8673,20 @@ Include <content>{markdown}</content> for rendered display.
 **Tables:** ALTER property_floor_plans, CREATE floor_plan_layers, floor_plan_rooms, floor_plan_estimate_links, ALTER bid_sketches
 **Migration:** `sk1_unified_sketch_model.sql`
 
-- [ ] Migration: ALTER `property_floor_plans` — add `job_id UUID REFERENCES jobs(id)`, `estimate_id UUID REFERENCES estimates(id)`, `status TEXT CHECK (status IN ('draft','scanning','processing','complete','archived')) DEFAULT 'draft'`, `sync_version INTEGER DEFAULT 1`, `last_synced_at TIMESTAMPTZ`
+- [ ] Migration: ALTER `property_floor_plans` — add `job_id UUID REFERENCES jobs(id)`, `estimate_id UUID REFERENCES estimates(id)`, `status TEXT CHECK (status IN ('draft','scanning','processing','complete','archived')) DEFAULT 'draft'`, `sync_version INTEGER DEFAULT 1`, `last_synced_at TIMESTAMPTZ`, `floor_number INTEGER DEFAULT 1` (multi-floor support: 0=basement, 1=first floor, 2=second, etc.)
+- [ ] Migration: CREATE `floor_plan_snapshots` (id UUID PK, floor_plan_id FK CASCADE, company_id FK, plan_data JSONB NOT NULL, snapshot_reason TEXT CHECK ('manual','auto','pre_change_order','pre_edit'), snapshot_label TEXT, created_by UUID FK users, created_at TIMESTAMPTZ DEFAULT now()) + RLS (company isolation). Auto-snapshot on significant edits for version history. Index on (floor_plan_id, created_at DESC)
+- [ ] Migration: CREATE `floor_plan_photo_pins` (id UUID PK, floor_plan_id FK CASCADE, company_id FK, photo_id UUID FK photos nullable, photo_path TEXT, position_x NUMERIC NOT NULL, position_y NUMERIC NOT NULL, room_id UUID FK floor_plan_rooms nullable, label TEXT, created_by UUID FK users, created_at TIMESTAMPTZ DEFAULT now()) + RLS. Links walkthrough/job photos to specific locations on the floor plan
 - [ ] Migration: CREATE `floor_plan_layers` (id, floor_plan_id FK CASCADE, company_id FK, layer_type CHECK ('electrical','plumbing','hvac','damage','custom'), layer_name, layer_data JSONB DEFAULT '{}', visible BOOLEAN DEFAULT true, locked BOOLEAN DEFAULT false, opacity NUMERIC DEFAULT 1.0, sort_order INTEGER DEFAULT 0, timestamps) + RLS (company isolation)
 - [ ] Migration: CREATE `floor_plan_rooms` (id, floor_plan_id FK CASCADE, company_id FK, name, boundary_points JSONB, boundary_wall_ids JSONB, floor_area_sf NUMERIC, wall_area_sf NUMERIC, perimeter_lf NUMERIC, ceiling_height_inches INTEGER DEFAULT 96, floor_material, damage_class CHECK, iicrc_category CHECK, room_type CHECK 14 values, metadata JSONB, timestamps) + RLS
 - [ ] Migration: CREATE `floor_plan_estimate_links` (id, floor_plan_id FK CASCADE, room_id FK CASCADE, estimate_id FK CASCADE, estimate_area_id FK CASCADE, auto_generated BOOLEAN DEFAULT true, company_id FK, created_at) + RLS
 - [ ] Migration: ALTER `bid_sketches` — add `floor_plan_id UUID REFERENCES property_floor_plans(id)`
-- [ ] Dart model: Update `lib/models/floor_plan.dart` — add job_id, estimate_id, status, sync_version, last_synced_at fields + fromJson/toJson
+- [ ] Dart model: Update `lib/models/floor_plan.dart` — add job_id, estimate_id, status, sync_version, last_synced_at, floor_number fields + fromJson/toJson
+- [ ] Dart model: Create `lib/models/floor_plan_snapshot.dart` — FloorPlanSnapshot class (id, floor_plan_id, plan_data, snapshot_reason, snapshot_label, created_by, created_at)
+- [ ] Dart model: Create `lib/models/floor_plan_photo_pin.dart` — FloorPlanPhotoPin class (id, floor_plan_id, photo_id, photo_path, position_x, position_y, room_id, label, created_by)
 - [ ] Dart model: Create `lib/models/floor_plan_layer.dart` — FloorPlanLayer class
 - [ ] Dart model: Create `lib/models/floor_plan_room.dart` — FloorPlanRoom class
 - [ ] Dart model: Update `lib/models/floor_plan_elements.dart` — add FloorPlanDataV2 wrapper class with version detection (V1 backward compat: no `version` field → treat as V2 with empty tradeLayers). Add ArcWall, TradeElement, TradeGroup, TradePath, DamageZone, DamageBarrier, TradeLayerData, DamageLayerData types.
-- [ ] Verify: Migration applies clean. V1 FloorPlanData still parses. V2 schema serializes/deserializes correctly. `dart analyze` passes.
+- [ ] Verify: Migration applies clean. V1 FloorPlanData still parses. V2 schema serializes/deserializes correctly. floor_plan_snapshots + floor_plan_photo_pins tables exist with correct RLS. `dart analyze` passes.
 
 ---
 
@@ -8792,7 +8830,15 @@ Include <content>{markdown}</content> for rendered display.
 - [ ] Web thumbnail: Konva `stage.toDataURL()` → upload to storage on save.
 - [ ] Supabase storage: Create `floor-plan-thumbnails` bucket (if not exists) with company-scoped RLS.
 - [ ] Hive box registration: Add `floor_plans_cache` to Hive initialization in app startup.
-- [ ] Verify: Edit on mobile (offline) → go online → plan appears on web → edit on web → mobile receives update → thumbnails generated in storage bucket → conflict scenario tested (edit same plan on both → conflict prompt appears).
+- [ ] **S101 — Version History Snapshots:** Create `lib/services/floor_plan_snapshot_service.dart` — auto-snapshot plan_data JSONB on: (1) first edit of each session, (2) before change order applied, (3) manual "Save Version" button. Max 50 snapshots per plan (oldest auto-pruned). Debounce: no more than 1 auto-snapshot per 10 minutes.
+- [ ] **S101 — Snapshot UI (Flutter):** "History" button in sketch editor toolbar → bottom sheet showing snapshot timeline (date, label, created_by). Tap snapshot → preview (read-only render). "Restore" button → confirms → overwrites current plan_data with snapshot, creates new snapshot of current state before overwrite (safety net).
+- [ ] **S101 — Snapshot UI (Web):** History panel in sketch editor sidebar. Same timeline view. Preview renders snapshot in read-only Konva stage. Restore with confirmation.
+- [ ] **S101 — Snapshot Hook:** `web-portal/src/lib/hooks/use-floor-plan-snapshots.ts` — `{ snapshots, loading, createSnapshot, restoreSnapshot, deleteSnapshot }`. Supabase CRUD on `floor_plan_snapshots` table.
+- [ ] **S101 — Multi-Floor Selector (Flutter):** Floor switcher in sketch editor toolbar — dropdown showing floor labels ("Basement", "1st Floor", "2nd Floor", etc.). "Add Floor" button creates new `property_floor_plans` row with same property_id + incremented floor_number. Switching floors loads that floor's plan_data.
+- [ ] **S101 — Multi-Floor Selector (Web):** Floor tabs above Konva canvas. Same logic — each floor is a separate `property_floor_plans` row linked by property_id. Tab bar shows floor labels with add/remove floor controls.
+- [ ] **S101 — Photo Pin Placement (Flutter):** "Pin Photo" button in toolbar → tap location on plan → camera opens (or photo picker) → photo saved to `floor_plan_photo_pins` with x,y coords + optional room_id (auto-detected from tap location). Photo pins render as camera icons on plan. Tap pin → shows photo thumbnail + full-screen option.
+- [ ] **S101 — Photo Pin Placement (Web):** Same flow — click location → upload photo or select from existing job photos → pin placed. Renders as camera icon. Click to preview. Hook: extend `use-floor-plan.ts` with photo pin CRUD.
+- [ ] Verify: Edit on mobile (offline) → go online → plan appears on web → edit on web → mobile receives update → thumbnails generated in storage bucket → conflict scenario tested (edit same plan on both → conflict prompt appears). Version history: create plan → edit → verify snapshot auto-created → restore old version → verify plan reverts. Multi-floor: add 2nd floor → switch between floors → verify separate plan data. Photo pins: place pin → verify photo saved with correct x,y → tap to view.
 
 ---
 
@@ -8846,9 +8892,11 @@ Include <content>{markdown}</content> for rendered display.
 - [ ] Web PNG export: Create `src/lib/sketch-engine/export/png-export.ts` — Konva stage.toDataURL({ pixelRatio: 4 })
 - [ ] Web DXF export: Create `src/lib/sketch-engine/export/dxf-export.ts` — TypeScript port of DXF writer
 - [ ] Web FML export: Create `src/lib/sketch-engine/export/fml-export.ts` — TypeScript port of FML writer
-- [ ] Create `src/components/sketch-editor/ExportModal.tsx` — Export format selection modal (PDF, PNG, DXF, FML) with preview and download
+- [ ] **S101 — SVG export (Web):** `npm install react-konva-to-svg` in web-portal. Create `src/lib/sketch-engine/export/svg-export.ts` — uses `react-konva-to-svg` to convert Konva Stage to SVG string. Preserves layers, colors, dimensions, labels. Output as `.svg` file download. MIT license, $0 cost.
+- [ ] **S101 — SVG export (Flutter):** Create SVG string from FloorPlanDataV2 using custom writer (walls → `<line>`/`<polyline>`, rooms → `<polygon>`, fixtures → `<use>` with SVG symbol refs, dimensions → `<text>`). No external package needed — SVG is just XML string building.
+- [ ] Create `src/components/sketch-editor/ExportModal.tsx` — Export format selection modal (PDF, PNG, DXF, FML, SVG) with preview and download
 - [ ] Export menu in Flutter sketch editor: Add export button → bottom sheet with format options → generate → share/save
-- [ ] Verify: Export floor plan with trade layers → PDF opens correctly (title block + plan + schedule) → PNG is high-res → DXF opens in AutoCAD/LibreCAD → FML validates as XML. Both mobile and web.
+- [ ] Verify: Export floor plan with trade layers → PDF opens correctly (title block + plan + schedule) → PNG is high-res → DXF opens in AutoCAD/LibreCAD → FML validates as XML → SVG opens in browser/Inkscape with correct layers and dimensions. Both mobile and web.
 
 ---
 
@@ -8891,8 +8939,77 @@ Include <content>{markdown}</content> for rendered display.
 - [ ] 3D view audit: All wall types render. Door/window openings correct. Orbit controls smooth. View toggle preserves state.
 - [ ] Offline audit: Disable network on mobile → edit plan → verify Hive saves → re-enable → verify sync completes → no data loss
 - [ ] Error handling: Invalid floor plan data (corrupt JSON) → graceful error, not crash. Network failure during sync → queued for retry. LiDAR scan interrupted → partial data saved.
+- [ ] **S101 — Team Portal Sketch Viewer:** Create `team-portal/src/app/jobs/[id]/floor-plan/page.tsx` — read-only floor plan viewer for field technicians. Renders plan using Konva Stage (read-only mode: no editing tools, no toolbar). Shows all layers with toggle. Shows photo pins (tap to view). Floor selector if multi-floor. Hook: `team-portal/src/lib/hooks/use-floor-plan-viewer.ts` — read-only Supabase query on `property_floor_plans` + `floor_plan_layers` + `floor_plan_photo_pins` by job_id. RLS scoped by company_id (already works). Link from job detail page: "View Floor Plan" button (only shows if floor plan exists for job).
+- [ ] **S101 — Client Portal Sketch Viewer:** Create `client-portal/src/app/project/[id]/floor-plan/page.tsx` — simplified read-only viewer for homeowners. Shows base floor plan only (walls, doors, windows, rooms with labels). NO trade layers visible (proprietary contractor data). Shows photo pins if contractor has enabled sharing. Floor selector if multi-floor. Hook: `client-portal/src/lib/hooks/use-client-floor-plan.ts` — read-only query, filters out trade layer data. Light theme styling. Link from project timeline page.
+- [ ] **S101 — Portal Viewer Tests:** Team portal: open job with floor plan → plan renders correctly → toggle layers → tap photo pin → see photo. Client portal: open project → plan renders (base only, no trade layers) → floor selector works. Both portals: job without floor plan → "View Floor Plan" button hidden (not broken).
 - [ ] All builds pass: `dart analyze` (0 errors), `npm run build` for all 4 web portals (CRM, team, client, ops)
-- [ ] Commit: `[SK1-SK11] CAD-Grade Sketch Engine — 3 tables, LiDAR scan, trade layers, Konva web editor, auto-estimate, export, 3D view`
+- [ ] Commit: `[SK1-SK11] CAD-Grade Sketch Engine — 6 tables, LiDAR scan, trade layers, Konva web editor, auto-estimate, export, 3D view, version history, multi-floor, photo pins, portal viewers`
+
+---
+
+### Sprint SK12: Site Plan Mode — Exterior Trades (~20 hours)
+**Goal:** Add outdoor/site plan drawing mode for roofing, fencing, landscaping, concrete, siding, solar, gutters, and all exterior trades. Currently the sketch engine is interior-only (floor plans). This sprint makes it work for 7+ trades that work outdoors.
+**Prereqs:** SK1-SK11 complete (core sketch engine working).
+
+**S100 Audit Finding:** Sketch engine scores 9/10 for interior electrical/plumbing/HVAC but 0/10 for roofing, fencing, landscaping, concrete, siding, solar, gutters. 7+ of 12 common trades work outdoors — site plan mode is critical for multi-trade coverage.
+
+- [ ] **Site plan canvas mode**: New drawing mode (toggle from floor plan). Top-down property view with property boundary, driveway, structures, trees, lawn areas. Scale: imperial (feet) default, metric option. Grid snap: 1ft increments
+- [ ] **Photo background import**: Allow importing satellite/aerial photo as background layer (from Recon/Property Intelligence if available, or manual upload). Opacity slider (10-100%). Lock layer to prevent accidental moves. Crop/rotate tools for alignment
+- [ ] **Property boundary tool**: Draw lot lines (polyline with area calculation). Display lot dimensions on each edge. Auto-calculate total lot area (sq ft and acres). Support irregular shapes (not just rectangles)
+- [ ] **Structure outline tool**: Draw building footprints (rectangles + L-shapes + custom polygon). Auto-calculate roof area from footprint + pitch input. Label each structure (Main House, Garage, Shed, Pool House, etc.)
+- [ ] **Roof plan overlay**: Switch to roof plan view for any structure. Draw roof planes (hip, gable, valley, ridge). Input pitch per plane (e.g., 6/12). Auto-calculate: total roof area, ridge length, valley length, eave length, hip length. Waste factor input (default 10%). Display results as measurement callouts
+- [ ] **Linear feature tools**: Fence lines (with post spacing auto-calc: total length ÷ spacing = post count + 1). Retaining walls (length × height × depth = cubic yards). Gutters (perimeter length, downspout count). Drip edge (eave length). Solar panel rows (array layout tool with panel dimensions)
+- [ ] **Area feature tools**: Concrete pads/driveways (area × depth = cubic yards, auto-add 5% waste). Lawn/sod areas (sq ft). Paver patios (area ÷ paver size = paver count + 10% cut waste). Landscape beds (mulch: area × depth = cubic yards). Gravel areas (area × depth = tons, using 1.4 tons/cubic yard)
+- [ ] **Elevation markers**: Drop pins with elevation values (for grading/drainage). Show grade direction arrows. Calculate slope between two points (rise/run as percentage)
+- [ ] **Site plan symbols library**: Trees (deciduous, evergreen, palm — with canopy radius). Shrubs/bushes. Utility boxes (electric meter, gas meter, water shutoff). AC units. Mailbox. Light poles. Irrigation heads. Downspouts. Cleanouts. Hose bibs
+- [ ] **Layer system for site plans**: Property boundary layer, structures layer, roof layer, fencing layer, hardscape layer, landscape layer, utilities layer, grading layer. Each togglable/lockable/opacity-adjustable, same pattern as interior trade layers
+- [ ] **Site plan ↔ floor plan linking**: If a structure is drawn in site plan, tapping it opens the interior floor plan (if one exists). Bidirectional: changes to structure footprint in site plan update the floor plan boundary, and vice versa
+- [ ] All builds pass: `dart analyze` (0 errors), `npm run build` for web portals
+- [ ] Commit: `[SK12] Site plan mode — exterior property drawing, roof overlay, linear/area tools`
+
+---
+
+### Sprint SK13: Trade-Specific Measurements & Templates (~16 hours)
+**Goal:** Add trade-specific measurement formulas, material calculators, and pre-built templates so contractors don't start from scratch. Every trade should have its own measurement language built into the sketch tool.
+**Prereqs:** SK12 complete (site plan mode available).
+
+**S100 Audit Finding:** Missing trade-specific measurements (cubic yards, roof squares, post count, board feet). Interior trades have fixture symbols but no formulas. Exterior trades have nothing. Templates would dramatically reduce time-to-value for contractors.
+
+- [ ] **Roofing measurements**: Roof squares (area ÷ 100). Ridge caps (ridge length ÷ cap coverage). Starter strip (eave length). Ice & water shield (eave length × 3ft + valley length × 3ft). Drip edge (eave + rake length). Step flashing (wall intersection length). Pipe boots (count). Vent count by attic sq ft
+- [ ] **Fencing measurements**: Total linear feet. Post count (length ÷ spacing + 1). Rail count (posts × rails_per_section). Picket/board count (length ÷ picket_width). Gate count and width. Concrete per post (bags based on hole diameter × depth). Post height options (4ft, 6ft, 8ft)
+- [ ] **Concrete measurements**: Cubic yards (L×W×D ÷ 27). Add waste factor. Rebar: linear feet of #4 rebar at 12" or 18" spacing (grid calc). Wire mesh: sq ft. Expansion joints: every 10ft of linear pour. Forms: linear feet of edge. Vapor barrier: sq ft + 6" overlap
+- [ ] **Landscaping measurements**: Mulch cubic yards (area × depth ÷ 27). Topsoil cubic yards. Sod pallets (area ÷ 450 sq ft per pallet). Seed bags (area ÷ coverage per bag). Plant count by spacing. Edging linear feet. Irrigation zones (area ÷ zone coverage). Sprinkler heads by zone
+- [ ] **Siding measurements**: Squares (area ÷ 100). Subtract window/door openings. Starter strip (perimeter). J-channel (window/door perimeter). Corner posts (corner count × height). Soffit (overhang area). Fascia (eave + rake length). House wrap (wall area + 6" overlap)
+- [ ] **Solar measurements**: Panel count (available roof area ÷ panel dimensions). Array kW (panels × panel wattage). Racking linear feet. Conduit runs (roof to inverter distance). Inverter sizing (array kW × 1.2). Estimated annual production (kW × sun hours × 365 × 0.8 efficiency)
+- [ ] **Gutter measurements**: Linear feet of gutter. Downspout count (1 per 30-40 ft of gutter). Downspout extensions. Inside/outside corners. End caps. Hangers (1 per 2ft). Splash blocks
+- [ ] **Painting measurements**: Wall sq ft (perimeter × height − openings). Ceiling sq ft. Gallons (sq ft ÷ 350 coverage per gallon × coats). Trim linear feet. Primer gallons. Caulk tubes (linear feet ÷ 30ft per tube)
+- [ ] **Interior trade formula upgrades**: Electrical: circuit count by room type + NEC load calc. Plumbing: fixture unit count + DFU drain sizing. HVAC: Manual J load (simplified BTU/sq ft). Drywall: sheets (wall area ÷ 32 sq ft per 4×8 sheet, + 10% waste). Tape/mud: 1 box per 7-8 sheets
+- [ ] **Pre-built templates by trade**: Roofing job (basic shingle re-roof), Fence job (standard 6ft privacy fence), Concrete job (standard driveway), Kitchen remodel, Bathroom remodel, Basement finish, Deck build, Room addition, Landscape design, Solar installation. Each template: pre-drawn layout + measurement callouts + linked estimate categories from D8
+- [ ] **Template library management**: Save custom templates per company. Share templates in marketplace (Phase F6). Search/filter by trade category. Template thumbnail preview
+- [ ] **Measurement export to estimate**: One-click "Generate Estimate" from any site plan/floor plan. All calculated measurements → line items in D8 estimate engine. Map each measurement to appropriate estimate category. Pre-fill quantities from sketch. Contractor adjusts pricing only
+- [ ] All builds pass: `dart analyze` (0 errors), `npm run build` for web portals
+- [ ] Commit: `[SK13] Trade-specific measurements — 8 trades, formulas, templates, estimate export`
+
+---
+
+### Sprint SK14: Field UX + Multi-User + Advanced Features (~16 hours)
+**Goal:** Make the sketch tool usable in actual field conditions (outdoors, gloves, sunlight) and add collaboration features for crews. Without field UX, the tool is office-only.
+**Prereqs:** SK13 complete (trade measurements available).
+
+**S100 Audit Finding:** Missing field UX (glove mode, sunlight mode, voice input). Missing multi-user collaboration. Missing ARCore for Android (only Apple LiDAR). These gaps make the tool impractical for field use.
+
+- [ ] **Glove mode (Flutter)**: Increase all touch targets to minimum 56dp (from 48dp default). Thicker toolbar buttons. Larger drag handles. Long-press instead of right-click for context menus. Disable accidental multi-touch zoom (require intentional two-finger pinch). Toggle in Settings
+- [ ] **Sunlight mode (Flutter)**: High-contrast color scheme (black lines on white, bold outlines). Increase line thickness 2×. Larger dimension labels (18sp minimum). Yellow-on-black measurement callouts. Auto-detect ambient light sensor → suggest sunlight mode when brightness > threshold. Toggle in toolbar
+- [ ] **Voice input for dimensions (Flutter)**: Tap measurement field → speak dimension ("twelve feet six inches" or "twelve point five"). Use platform speech-to-text (no API cost). Parse common patterns: "X feet Y inches", "X by Y", "X point Y". Fallback: manual keyboard entry. Confirmation beep on successful parse
+- [ ] **Quick-measure mode (Flutter)**: Tap two points on the screen → immediately shows distance between them. No need to draw a wall first. Useful for quick field measurements. Shows distance in feet-inches and decimal feet. Double-tap to add as a dimension annotation
+- [ ] **ARCore Android LiDAR support**: Detect if device supports depth sensing (ARCore Depth API). If supported, offer "Scan Room" option on Android (currently Apple-only via RoomPlan). Use ARCore depth frames to estimate room dimensions. Lower accuracy than Apple LiDAR but better than nothing. Graceful fallback: if no depth sensor, show "Manual Entry Only" with clear explanation
+- [ ] **Multi-user collaboration (Web)**: Supabase Realtime channel per sketch. Broadcast cursor position + active tool. Show other users' cursors with name label (different colors). Operational Transform or CRDT for concurrent edits (use Yjs library for conflict resolution). Presence indicator: show who's viewing/editing. Lock indicator: show which element is being edited by whom
+- [ ] **Multi-user collaboration (Flutter)**: Same Realtime channel. Show read-only view of other users' cursors. Editing locks: if someone is editing an element, others see a lock icon. Pull-to-refresh to sync latest state
+- [ ] **Undo/redo stack improvements**: Per-user undo stack in collaboration mode (your undo doesn't undo other people's work). Persist undo history to local storage (survive page refresh). Show undo history panel (optional, collapsed by default). Undo limit: 100 actions
+- [ ] **Offline queue improvements (Flutter)**: When offline, all sketch operations queue to Hive. Visual indicator: "Offline — changes saved locally" banner. When reconnected: batch sync with conflict detection. If server has newer version: show diff and let user choose (keep mine / keep theirs / merge)
+- [ ] **Snap-to-guide enhancements**: Smart guides (align to existing walls, doors, windows). Perpendicular snap (90° angles highlighted). Equal spacing guides (when placing fixtures). Centerline snap. Grid snap toggle (1", 6", 12", custom)
+- [ ] All builds pass: `dart analyze` (0 errors), `npm run build` for web portals
+- [ ] Commit: `[SK14] Field UX — glove/sunlight/voice, ARCore, multi-user collab, offline queue`
 
 ---
 
@@ -9237,9 +9354,61 @@ Include <content>{markdown}</content> for rendered display.
 - [ ] **Wire Automations page to real backend** — `web-portal/src/app/dashboard/automations/page.tsx` has `mockAutomations` array with trigger/action builders. Build lightweight automation engine: `automations` table (trigger_type, trigger_config JSONB, action_type, action_config JSONB, enabled boolean, company_id FK, RLS 4-policy set, audit trigger, soft delete). Triggers: `job_status_changed`, `invoice_overdue`, `lead_idle`. Actions: send_email (via sendgrid-email EF), send_sms (via signalwire-sms EF), create_task. Cron via Supabase pg_cron extension. Hook: `use-automations.ts` with CRUD + real-time.
 - [ ] **Wire Ops System Status to real health checks** — `ops-portal/src/app/dashboard/system-status/page.tsx:106-110` hardcodes all 10 services as "Not Configured". Wire to actual health endpoints: Supabase (`/rest/v1/` ping), Stripe (`/v1/balance` with API key), Sentry (API status), SendGrid (API status). Store results in `system_health_checks` table (service_name, status, latency_ms, last_checked_at, company_id). Refresh on page load + 60s interval. super_admin only.
 
-- [ ] Verify: payment flow end-to-end works. All former shell pages have real data or are removed from nav. Communications shows real calls/SMS/emails. Automations can be created and triggered. Ops system status shows live service health.
+**U7c: Stripe Connect Onboarding (~8 hrs) — S100 CRITICAL GAP**
+*Without Stripe Connect, contractors cannot accept payments from customers. This is the revenue foundation.*
+- [ ] Stripe Connect account type decision: Express accounts (simplest onboarding, Stripe handles KYC/payouts). Platform takes application_fee_percent on each payment.
+- [ ] Company onboarding flow: after company creation, prompt "Connect your bank account to accept payments" → redirect to Stripe Connect onboarding URL via `stripe-payments` Edge Function new action `create_connect_account`.
+- [ ] Edge Function: `stripe-payments` action `create_connect_account` — creates Stripe Connect Express account, returns onboarding URL. Stores `stripe_account_id` on `companies` table.
+- [ ] Edge Function: `stripe-payments` action `check_connect_status` — returns account status (onboarding_incomplete, active, restricted, disabled). Used by CRM settings page.
+- [ ] CRM Settings > Payments page: show Stripe Connect status, payout schedule, link to Stripe Express Dashboard.
+- [ ] Update `stripe-payments` `create` action: use `stripe_account_id` from company for all payment intents (payments go to contractor, not platform). Set `application_fee_amount` for platform revenue.
+- [ ] Client portal "Pay Now" button: create Checkout Session via `stripe-payments` EF with `invoice` type. On success, auto-call `recordPayment()` which auto-posts GL journal entry. Redirect back to invoice page with success message.
+- [ ] Deposit collection: on bid acceptance, if company has `require_deposit` enabled, show deposit payment form (configurable % of bid total). Creates `bid_deposit` payment intent.
+- [ ] Webhook handling: `stripe-webhook` EF already handles `payment_intent.succeeded`. Verify it updates invoice status and triggers notification to contractor.
+- [ ] Verify: full payment flow — contractor connects Stripe → sends invoice → customer clicks Pay Now → payment processed → invoice marked paid → GL entry posted → contractor receives payout.
+
+**U7d: Review Request System (~6 hrs) — S100 CRITICAL GAP**
+*Google reviews are the #1 growth driver for local contractors. No AI needed — just template-based SMS/email after job completion.*
+- [ ] `review_requests` table: id, company_id, job_id, customer_id, channel (sms/email/both), template_id, status (pending/sent/opened/completed/skipped), sent_at, opened_at, completed_at, review_url, review_platform (google/yelp/facebook/custom), rating_received (1-5 nullable), created_at, updated_at, deleted_at. RLS 4-policy set. Audit trigger.
+- [ ] `review_settings` JSONB column on `companies` table: { enabled, delay_days (default 3), default_channel, google_review_url, yelp_review_url, facebook_review_url, auto_send (boolean), minimum_rating_to_request (default: always), template_sms, template_email }.
+- [ ] CRM Settings > Reviews page: configure review URLs (paste Google Business review link), set delay, choose channel, customize templates. Preview template with variable substitution.
+- [ ] Automation trigger: when `jobs.status` changes to `completed`, wait `delay_days`, then auto-create review_request record with status `pending`. pg_cron job checks pending requests daily and fires send.
+- [ ] `review-request` Edge Function: sends SMS via SignalWire and/or email via SendGrid. Template variables: {customer_name}, {company_name}, {job_title}, {review_url}. Updates status to `sent`.
+- [ ] CRM > Reviews dashboard page: requests sent (count), reviews received (count), avg rating, conversion rate (sent → completed), list of recent requests with status. Manual "Send Review Request" button on job detail page.
+- [ ] Client portal: after job marked complete, show "How was your experience?" card with 5-star rating + optional comment. If 4-5 stars → redirect to Google review page. If 1-3 stars → submit feedback privately (company sees it, not public).
+- [ ] NPS tracking: store client portal ratings in review_requests table. Dashboard shows NPS over time.
+- [ ] Verify: complete a job → 3 days later review request SMS sent → customer rates 5 stars → redirected to Google → review_request marked completed.
+
+**U7e: Service Agreements Module (~12 hrs) — S100 HIGH PRIORITY**
+*Recurring revenue is 30-50% of service company revenue. HVAC/plumbing/electrical maintenance contracts.*
+- [ ] `service_agreements` table: id, company_id, customer_id, property_id (nullable), agreement_number (auto: SA-YYYY-NNN), plan_name, plan_type (maintenance/warranty/inspection/custom), trade_type, frequency (monthly/quarterly/biannual/annual), price, billing_frequency (monthly/quarterly/annual/upfront), included_services JSONB (array of { service_name, description, included_qty }), coverage_limits JSONB, start_date, end_date, next_visit_date, next_billing_date, auto_renew boolean, renewal_terms text, cancellation_policy text, status (draft/active/expired/cancelled/suspended), notes, created_by_user_id, created_at, updated_at, deleted_at. RLS 4-policy set. Audit trigger.
+- [ ] `service_agreement_visits` table: id, agreement_id, job_id (FK to jobs), scheduled_date, completed_date, status (scheduled/completed/missed/rescheduled), notes. Tracks actual visits against agreement.
+- [ ] CRM hook: `use-service-agreements.ts` — CRUD with real-time subscriptions. Auto-generate agreement number. Auto-create next visit job based on frequency. Renewal reminder 30 days before expiry.
+- [ ] CRM page: `/dashboard/service-agreements/page.tsx` — list all agreements with status badges, next visit date, billing status. Create/edit modal with all fields. Agreement detail page with visit history.
+- [ ] Auto-job creation: pg_cron daily job — for all active agreements where `next_visit_date <= today + 7 days` AND no job exists for that visit, auto-create a job with: title = "{plan_name} - {customer_name}", type = "maintenance", customer_id, property_id, scheduled_start = next_visit_date. Update `next_visit_date` based on frequency. Insert into `service_agreement_visits`.
+- [ ] Auto-billing: pg_cron monthly — for all active agreements where `next_billing_date <= today`, auto-create invoice with agreement price. Update `next_billing_date`. Send invoice via existing flow.
+- [ ] Client portal: "My Agreements" page — view active agreements, upcoming visits, coverage details, billing history. "Request Service" button for covered items.
+- [ ] Team portal: "Today's Maintenance" view — list of maintenance/agreement jobs scheduled for today.
+- [ ] Agreement templates per trade: HVAC (quarterly tune-up), Plumbing (annual inspection), Electrical (annual safety check), General (monthly property maintenance).
+- [ ] Dashboard widget: MRR from agreements, total active agreements, renewal rate, upcoming renewals.
+- [ ] Verify: create agreement → auto-creates first visit job → complete job → next visit auto-scheduled → billing auto-generated → client portal shows agreement.
+
+**U7f: Automation Engine Backend (~8 hrs) — S100 CRITICAL GAP**
+*The automations page shows 8 beautiful rules with zero backend. Build the execution engine.*
+- [ ] `automations` table: id, company_id, name, description, trigger_type, trigger_config JSONB, delay_minutes (0 = immediate), actions JSONB (array of { type, config }), enabled boolean, last_run_at, run_count, created_by_user_id, created_at, updated_at, deleted_at. RLS 4-policy set. Audit trigger.
+- [ ] `automation_executions` table: id, automation_id, trigger_event JSONB, actions_executed JSONB, status (success/partial/failed), error_message, executed_at. Immutable log.
+- [ ] Trigger types: `job_status_changed` (config: { from_status, to_status }), `invoice_overdue` (config: { days_overdue }), `lead_idle` (config: { idle_hours }), `bid_status_changed` (config: { to_status }), `customer_created`, `job_completed`, `estimate_approved`, `time_based` (config: { cron_expression }).
+- [ ] Action types: `send_email` (config: { template, to: customer/owner/assigned/team }), `send_sms` (config: { template, to }), `create_task` (config: { title, assign_to }), `update_status` (config: { table, status }), `create_job` (config: { from: bid/estimate }), `notify_team` (config: { role, message }), `create_invoice` (config: { from: job }).
+- [ ] `automation-engine` Edge Function: receives trigger event, queries matching enabled automations, executes actions in sequence, logs to automation_executions. Called by DB triggers or pg_cron.
+- [ ] Database triggers: `AFTER UPDATE` on `jobs`, `invoices`, `bids`, `estimates`, `leads` — calls `automation-engine` EF via `pg_net` extension (async HTTP from Postgres).
+- [ ] pg_cron jobs: check `invoice_overdue` daily, check `lead_idle` hourly, execute `time_based` automations per their cron schedule.
+- [ ] Wire existing automations page to real data: replace `mockAutomations` with queries to `automations` table. Create/edit/delete/toggle automations via `use-automations.ts` hook.
+- [ ] Default automations seeded on company creation: "Job Complete → Review Request" (enabled), "Invoice 30 Days Overdue → Reminder" (enabled), "Lead Untouched 48hrs → Alert" (enabled), "Bid Accepted → Create Job" (enabled), "New Customer → Welcome Email" (draft).
+- [ ] Verify: create automation "Invoice Overdue 30 days → send email" → make invoice 30 days old → pg_cron fires → email sent → execution logged → run count incremented.
+
+- [ ] Verify: payment flow end-to-end works. All former shell pages have real data or are removed from nav. Communications shows real calls/SMS/emails. Automations can be created and triggered. Ops system status shows live service health. Stripe Connect works. Review requests send. Service agreements auto-create visits.
 - [ ] `npm run build` passes.
-- [ ] Commit: `[U7] Payments + Shell Pages — Stripe form, 7 shell pages built, 2 removed, property health, comms/automations/system-status wired`
+- [ ] Commit: `[U7] Payments + Shell Pages + Stripe Connect + Reviews + Service Agreements + Automation Engine`
 
 ### Sprint U8: Cross-System Metric Verification (~8 hrs)
 *Every number, every chart, every stat must be 100% accurate and consistent across all views.*
@@ -9504,8 +9673,268 @@ Include <content>{markdown}</content> for rendered display.
 
 ---
 
-**PHASE U UPDATED TOTAL: U1-U15 = ~276 hrs (was ~128 hrs)**
-*S99 audit revealed significant depth gaps. Additional 148 hrs covers: form depth (24), templates (16), i18n (24), trade support (12), S98 features (16), plus expanded existing sprints.*
+### Sprint U16: Contractor Onboarding Wizard (~8 hrs) — S100 CRITICAL GAP
+*New contractors face a blank dashboard. This wizard walks them through setup in <10 minutes.*
+
+- [ ] Onboarding wizard component: full-screen stepper shown on first login when `company.onboarding_complete = false`.
+- [ ] **Step 1: Company Profile** — name, address, phone, email, logo upload, website URL. Pre-filled from auth signup where possible.
+- [ ] **Step 2: Trade Selection** — pick primary trade(s) from 20+ categories (electrical, plumbing, HVAC, roofing, painting, landscaping, fencing, concrete, general, restoration, solar, siding, gutters, flooring, framing, insulation, fire restoration, mold remediation, commercial, residential). Determines default templates, categories, line items, checklists per U14.
+- [ ] **Step 3: Connect Payments** — Stripe Connect Express onboarding (from U7c). "Connect your bank account to accept online payments." Skip option available.
+- [ ] **Step 4: Invite Team** — optional. Add first employee(s) by email + role. Skip if solo operator.
+- [ ] **Step 5: Add First Customer** — name, phone, email, address. "Import from CSV" link (U19). Skip option.
+- [ ] **Step 6: Create First Job** — guided job creation with pre-selected trade templates. Shows how bids, invoices, scheduling work.
+- [ ] **Step 7: Review & Go** — summary of what was set up. "You're ready!" with link to dashboard.
+- [ ] Set `company.onboarding_complete = true` on finish or skip-all. Show "Resume Setup" banner on dashboard if incomplete.
+- [ ] Track onboarding completion metrics in ops portal: % of companies completing each step, average time to complete, drop-off points.
+- [ ] Verify: new company signup → wizard appears → complete all 7 steps → dashboard shows real data → target <10 minutes.
+- [ ] `npm run build` passes.
+- [ ] Commit: `[U16] Contractor Onboarding Wizard — 7-step guided setup, trade selection, Stripe Connect, first customer/job`
+
+### Sprint U17: Data Flow Wiring — Automated Downstream Propagation (~16 hrs) — S100 CRITICAL GAP
+*Currently data stays where it's entered. This sprint wires the automatic flow between systems.*
+
+**U17a: Pre-Job Pipeline Wiring (~6 hrs)**
+- [ ] `convertEstimateToBid()` in `use-bids.ts`: read estimate + line items + areas → create bid with scope_of_work from estimate notes, line items collapsed to option groups, O&P, tax, grand total, customer_id, job_id carried over. One-click "Send as Bid" button on estimate detail page.
+- [ ] `createEstimateFromWalkthrough()` in `use-estimates.ts`: read walkthrough rooms (name, dimensions, condition_rating, photo_count) → create estimate areas with pre-populated dimensions. Room dimensions map directly: `dimensions.length` → `length_ft`, `dimensions.width` → `width_ft`, `dimensions.height` → `height_ft`. Auto-compute perimeter_lf, floor_sf, wall_sf, ceiling_sf. "Generate Estimate" button on walkthrough detail page.
+- [ ] Estimate Approved → Auto-Job: Supabase trigger on `estimates` table — when `status` changes to `approved`, auto-create job with customer_id, property_id, title = estimate title, estimated_amount = estimate total, source = 'estimate', estimate_id linked. Send notification to company owner/assigned user.
+- [ ] Lead → Customer conversion: when `leads.stage` changes to `won`, auto-create customer record if no matching customer exists (match by email or phone). Set `leads.converted_to_job_id` if job also created.
+- [ ] Add `lead_id UUID REFERENCES leads(id)` to `estimates`, `bids`, and `jobs` tables. When creating estimate/bid from lead context, populate lead_id. Enables full attribution: Source → Lead → Estimate → Job → Invoice → Revenue.
+
+**U17b: Post-Job Pipeline Wiring (~4 hrs)**
+- [ ] Job Completion → Invoice Draft: when `jobs.status` changes to `completed`, auto-create draft invoice with customer_id, job_id, title = job title, amount = estimated_amount (or actual_amount if set), line items from job scope. Surface "Review & Send Invoice" prompt on job completion screen. DO NOT auto-send — draft for contractor review.
+- [ ] Client Signature → Status Update: Supabase trigger on `signatures` table — when signature inserted with `purpose='job_completion'`, update `jobs.status` to `completed` + set `completed_at`. When `purpose='invoice_approval'`, set `invoices.signed_at`.
+- [ ] Approved Change Order → Budget Update: when `change_orders.status` changes to `approved`, add `change_orders.amount` to `jobs.estimated_amount`. Track original_estimate vs revised_estimate. Surface "Original: $X → Revised: $Y (+$Z in COs)" on job detail.
+- [ ] Speed-to-Lead Auto-Response: wire `auto_respond` in lead-aggregator EF's `tryAutoAssign()` — check assignment rule's `auto_respond` flag → if true, send SMS via SignalWire ("Hi {name}, thanks for contacting {company}! We received your request and will reach out within 15 minutes.") + email via SendGrid. Populate `response_time_minutes` on first manual contact.
+
+**U17c: Job Costing Fix + Customer Intelligence (~6 hrs)**
+- [ ] Fix Job Cost Radar: `use-job-costs.ts` must query `time_entries` by `job_id`, compute `hours * hourly_rate`, add to `actualSpend`. Currently ignores labor (40-60% of costs). Job Cost Radar formula: `actualSpend = laborCost + materialCost + expenseCost + changeOrderCost`.
+- [ ] Expense → Job Cost auto-link: when expense has `job_id`, auto-surface in Job Cost Radar. No separate entry needed.
+- [ ] Customer Payment Behavior: add computed fields to customer detail page — `avg_days_to_pay` (mean of invoice `paid_at - sent_at`), `on_time_rate` (% paid within terms), `total_lifetime_spend`, `job_count`, `first_job_date`. Flag: "VIP" (top 10% spend), "Slow Payer" (avg >30 days), "New" (<2 jobs).
+- [ ] Customer Communication Timeline: unified chronological view on customer detail page — queries `phone_calls`, `phone_messages`, `emails`, `meetings`, `jobs`, `invoices`, `bids` by customer_id. Renders as timeline with icons per type. Most recent first.
+- [ ] Verify: walkthrough → estimate (one click) → bid (one click) → customer approves → job auto-created → work completed → invoice auto-drafted → payment → ledger → review request. Full pipeline, zero re-entry.
+- [ ] `npm run build` passes.
+- [ ] Commit: `[U17] Data Flow Wiring — estimate↔bid conversion, auto-job, auto-invoice, speed-to-lead, job costing fix, customer intelligence`
+
+### Sprint U18: Dispatch Board for Service Companies (~10 hrs) — S100 HIGH PRIORITY
+*Phase GC is a project scheduler (Gantt/CPM). This is a daily dispatch board for service calls.*
+
+- [ ] CRM page: `/dashboard/dispatch/page.tsx` — real-time dispatch board. Left panel: unassigned jobs (today + tomorrow, sorted by priority/time). Right panel: tech cards showing availability, current assignment, GPS location (when available).
+- [ ] Drag-and-drop: drag unassigned job onto tech card → sets `assigned_user_ids` + `status = 'dispatched'` + sends push notification to tech.
+- [ ] Tech availability: query `time_entries` (who's clocked in), `jobs` (who's assigned to what today), `users` (active techs). Show: Available (green), On Job (yellow), Off (gray).
+- [ ] Map view toggle: plot all today's jobs + tech locations on Mapbox map. Jobs as pins (color by status), techs as avatar dots (if GPS available from time_entries.location_pings).
+- [ ] ETA calculation: when tech is dispatched, calculate drive time from tech's last known location to job address using Mapbox Directions API (free tier: 100K requests/mo). Show ETA on job card.
+- [ ] Customer notification: when job dispatched, auto-send SMS to customer: "{tech_name} is on the way! Estimated arrival: {eta}. Track: {tracking_link}". Tracking link = client portal job detail page.
+- [ ] Sidebar nav: add "Dispatch" under Operations section, between Calendar and Schedule.
+- [ ] Real-time: Supabase channel subscription on `jobs` + `time_entries` tables. Board updates live as techs clock in/out or jobs change status.
+- [ ] Verify: create 5 service call jobs → dispatch 3 to techs → techs receive notification → customer receives ETA SMS → board shows correct status.
+- [ ] `npm run build` passes.
+- [ ] Commit: `[U18] Dispatch Board — drag-drop assignment, tech availability, map view, ETA, customer SMS`
+
+### Sprint U19: Data Import / Migration Tools (~8 hrs) — S100 HIGH PRIORITY
+*Every contractor switching from Jobber/HCP/ServiceTitan needs to bring their data.*
+
+- [ ] CRM page: `/dashboard/settings/import/page.tsx` — data import wizard.
+- [ ] **CSV Import Engine**: upload CSV → column mapping UI (drag source columns to target fields) → preview first 10 rows → validate → import. Support for: customers, jobs, invoices, contacts, estimates.
+- [ ] **Customer import**: map columns to: name, email, phone, address, city, state, zip, company_name, notes, tags. Duplicate detection by email or phone (show "merge or skip" prompt). Batch insert with `company_id` from auth.
+- [ ] **Job import**: map to: title, description, customer (match by name/email), status, scheduled_start, scheduled_end, estimated_amount, actual_amount, address. Status mapping from source system (Jobber/HCP status names → ZAFTO statuses).
+- [ ] **Invoice import**: map to: customer, amount, status, date, due_date, paid_amount. Auto-generate invoice numbers. Auto-post GL entries for paid invoices.
+- [ ] Import progress: show progress bar, success count, error count, error details (row number + reason). Download error log as CSV.
+- [ ] Import history: log all imports with timestamp, type, row count, user. Undo last import (soft delete all records from that batch via `import_batch_id`).
+- [ ] QuickBooks export support: accept QBO/IIF export files for customer + vendor + chart of accounts import.
+- [ ] Verify: export 50 customers from Jobber CSV → import into ZAFTO → all 50 appear → duplicate detection works → undo works.
+- [ ] `npm run build` passes.
+- [ ] Commit: `[U19] Data Import — CSV import wizard, column mapping, duplicate detection, QBO support, batch undo`
+
+### Sprint U20: Subcontractor Management (~12 hrs) — S100 MEDIUM PRIORITY
+*GCs are a target market. They need to manage subs on every project.*
+
+- [ ] `subcontractors` table: id, company_id, name, company_name, email, phone, trade_types (array), license_number, license_state, license_expiry, insurance_carrier, insurance_policy_number, insurance_expiry, w9_on_file boolean, notes, status (active/inactive/suspended), rating (1-5), total_jobs_assigned, total_paid, created_at, updated_at, deleted_at. RLS 4-policy set. Audit trigger.
+- [ ] `job_subcontractors` table: id, job_id, subcontractor_id, scope_description, agreed_amount, paid_amount, status (assigned/in_progress/completed/disputed), start_date, end_date, notes. Bridge table for sub assignment to job scopes.
+- [ ] CRM hook: `use-subcontractors.ts` — CRUD, real-time, assign sub to job, track payments, compliance alerts.
+- [ ] CRM page: `/dashboard/subcontractors/page.tsx` — sub directory with search/filter by trade, status, compliance. Sub detail page with: job history, payment history, compliance documents, rating.
+- [ ] Job detail integration: "Subcontractors" tab on job detail page — assign subs to specific scopes, track their status, record sub invoices/payments.
+- [ ] Sub compliance alerts: expiring insurance (30-day warning), expiring license, missing W-9. Dashboard widget for GCs: "3 subs have expiring insurance this month."
+- [ ] Sub payment tracking: when paying a sub, record in `job_subcontractors.paid_amount` + create expense record linked to job. Auto-post GL entry (DR: Subcontractor Expense, CR: Cash/AP).
+- [ ] 1099 data: year-end query — all subs paid >$600 in calendar year. Export as CSV for accountant.
+- [ ] Verify: add 3 subs → assign to job → track payments → compliance alert fires → 1099 data exports.
+- [ ] `npm run build` passes.
+- [ ] Commit: `[U20] Subcontractor Management — sub directory, job assignment, compliance, payment tracking, 1099`
+
+### Sprint U21: Calendar Sync + Notification Triggers (~8 hrs) — S100 MEDIUM PRIORITY
+
+**U21a: Google Calendar Sync (~4 hrs)**
+- [ ] Google Calendar API integration (free, $0/mo): OAuth2 flow in CRM settings → "Connect Google Calendar" button. Store refresh_token encrypted in `companies` or `users` table.
+- [ ] `google-calendar-sync` Edge Function: two-way sync. ZAFTO job scheduled/updated → create/update Google Calendar event. Google Calendar event created → optionally create ZAFTO job/reminder.
+- [ ] Sync scope: only jobs with `scheduled_start` date. Event title = job title, location = job address, description = customer name + phone + scope.
+- [ ] User-level sync: each user can connect their own Google Calendar. Tech sees their assigned jobs. Owner sees all jobs.
+- [ ] Verify: schedule job in ZAFTO → appears in Google Calendar → move event in Google → updates ZAFTO.
+
+**U21b: Action-Required Notification Triggers (~4 hrs)**
+- [ ] `notification-triggers` Edge Function (pg_cron, runs daily at 7am company timezone):
+  - Invoices past `due_date` with status != paid → notify owner "Invoice {number} overdue by {days} days"
+  - Bids past `valid_until` with status = sent → notify creator "Bid {number} expired without response"
+  - Jobs past `scheduled_end` with status = in_progress → notify assigned tech + owner "Job {title} past deadline"
+  - Certifications expiring within 30 days → notify employee + owner "Certification {name} expires {date}"
+  - Service agreements with `next_visit_date` in 7 days and no scheduled job → notify office "Agreement {number} visit due"
+  - Time entries with clock_in but no clock_out after 12 hours → notify manager "Possible missed clock-out for {user}"
+- [ ] Each notification includes action link: "View Invoice", "View Bid", etc.
+- [ ] User notification preferences: `notification_preferences` JSONB on users table — toggle per trigger type (in_app, email, sms). Default all to in_app only.
+- [ ] Verify: create overdue invoice → next morning notification appears → click takes to invoice.
+- [ ] `npm run build` passes.
+- [ ] Commit: `[U21] Calendar Sync + Notification Triggers — Google Calendar 2-way, 6 automated alert types`
+
+### Sprint U22: Isolated Feature Wiring (~12 hrs) — S100 MEDIUM PRIORITY
+*10 features exist but connect to nothing. Wire them into the machine.*
+
+- [ ] **Phone → Lead**: inbound SignalWire call from unknown number → auto-create lead with source='phone_call', phone=caller_number, stage='new'. If number matches existing customer, link to customer instead. Show caller info popup in CRM.
+- [ ] **Phone → Customer Timeline**: all calls + SMS auto-appear on customer communication timeline (U17c). Call duration, recording link (if enabled), direction (in/out).
+- [ ] **Meetings → Job/Calendar**: when creating a meeting, optionally link to job_id. Meeting appears on job detail timeline. Meeting auto-syncs to Google Calendar (U21a).
+- [ ] **Fleet → Ledger**: vehicle maintenance expenses auto-create expense records with `category = 'vehicle_maintenance'`, posting GL entry. Fuel purchases same.
+- [ ] **Fleet → Dispatch**: when dispatching (U18), show which vehicle is assigned to which tech. Vehicle location from GPS if available.
+- [ ] **Hiring → User**: when applicant is hired (status='hired'), offer "Create User Account" button → pre-fills employee invite with applicant's name, email, phone, trade. Creates user + sends invite.
+- [ ] **Site Survey → Estimate**: "Generate Estimate from Survey" button on site survey detail. Maps survey measurements to estimate areas.
+- [ ] **Documents → Auto-Attach**: when estimate/invoice/bid PDF is generated, auto-save to `documents` table with entity_type + entity_id. Customer can see in client portal Documents section.
+- [ ] **Email → Actually Send**: wire "Send Invoice" / "Send Bid" / "Send Estimate" buttons to actually send via `sendgrid-email` Edge Function (not just update status flags). Email contains PDF attachment + payment link (for invoices).
+- [ ] **OSHA → Job Safety**: when creating job, if trade requires OSHA compliance, auto-attach relevant safety checklist from OSHA standards. Team portal shows safety requirements before starting work.
+- [ ] Verify: make a phone call → lead auto-created → convert to customer → create job → link meeting → assign fleet vehicle → complete job → invoice auto-attached to documents → email actually sends.
+- [ ] `npm run build` passes.
+- [ ] Commit: `[U22] Feature Wiring — phone→lead, fleet→ledger, hiring→user, email sends, OSHA→jobs, documents auto-attach`
+
+---
+
+### Sprint U23: Phone System Configuration — Full Admin UI (~16 hrs) — S103
+*Every contractor configures their phone system exactly how they want it. Visual builders, trade presets, real-time AI with live data access. No database editing — everything through the UI.*
+
+**U23a: Phone Settings Foundation (~4 hrs)**
+- [ ] CRM page: `/dashboard/settings/phone` — tabbed layout: General, Hours, Routing, AI Receptionist, Templates, Recording
+- [ ] Hook: `use-phone-config.ts` — CRUD on `phone_config` table, real-time subscription for live preview
+- [ ] Hook: `use-phone-lines.ts` — manage company phone numbers, assign to users
+- [ ] Hook: `use-ring-groups.ts` — CRUD on `phone_ring_groups`, member management
+- [ ] **General tab:**
+  - [ ] Company caller ID name (what customers see when you call them)
+  - [ ] Phone line manager: list all lines, assign each to a user or "Main Line" (unassigned = company main)
+  - [ ] Voicemail settings: transcription on/off, email notification on voicemail, auto-text "Sorry I missed your call" toggle
+  - [ ] Hold music: upload custom or pick from 5 built-in options (stored in Supabase Storage `company-assets` bucket)
+- [ ] `npm run build` passes
+- [ ] Commit: `[U23a] Phone config foundation — settings page, hooks, general tab`
+
+**U23b: Business Hours + After-Hours (~3 hrs)**
+- [ ] **Hours tab:**
+  - [ ] Visual weekly grid: Mon-Sun, each day has open/close time pickers + "Closed" toggle
+  - [ ] "Copy Monday to all weekdays" shortcut button
+  - [ ] Holiday manager: add date + name ("Christmas", "Thanksgiving"). Recurring toggle (repeats annually). Import US federal holidays one-click.
+  - [ ] Lunch break: optional per-day break window (e.g., 12-1pm — calls route to voicemail during break)
+  - [ ] After-hours behavior picker:
+    - Voicemail only (default)
+    - AI Receptionist answers
+    - Forward to emergency on-call number
+    - Forward to answering service (external number)
+    - Custom: different behavior per day/time
+  - [ ] **On-call schedule editor:** weekly rotation calendar. Drag team members into on-call slots. Primary + backup. Override for specific dates. Auto-rotates weekly/biweekly.
+  - [ ] Preview: "It's Tuesday 8pm — here's what happens when a customer calls" simulation
+- [ ] Saves to `phone_config.business_hours`, `phone_config.holidays`, `phone_on_call_schedule`
+- [ ] Commit: `[U23b] Phone hours — weekly grid, holidays, after-hours routing, on-call rotation`
+
+**U23c: Call Routing Builder (~4 hrs)**
+- [ ] **Routing tab:**
+  - [ ] **Visual call flow builder** — step-by-step flow (not code):
+    1. Call comes in → Greeting plays
+    2. Route by: IVR Menu / Ring Group / Direct to Person / AI Receptionist
+    3. If no answer after X seconds → Fallback (voicemail / next person / ring group)
+    4. If voicemail → Transcribe + notify
+  - [ ] **IVR Menu builder:**
+    - Add menu options: key (1-9), label ("Service Calls"), action (ring user / ring group / voicemail / AI receptionist / external number / submenu)
+    - Drag to reorder. Max 2 levels deep (main menu + 1 submenu).
+    - Preview: plays TTS of the menu so contractor hears exactly what customer hears
+    - "Press 0 for operator" always available (routes to owner by default)
+  - [ ] **Ring group manager:**
+    - Create ring groups: name (e.g., "Service Team", "Sales", "Emergency")
+    - Add members from team roster (dropdown from `users` table, role IN technician/admin/office_manager)
+    - Ring strategy: simultaneous (all phones ring) / sequential (one at a time, 15s each) / round-robin (rotate who rings first)
+    - Max ring time before fallback (15/30/45/60 seconds)
+    - Fallback: voicemail / next ring group / external number
+  - [ ] **Direct routing rules:**
+    - If caller is known customer → ring their assigned technician first (lookup `customers.preferred_technician_id`)
+    - If caller is from a TPA/insurance program → route to TPA-assigned tech
+    - If caller number matches an active job → ring the job's assigned tech
+    - Toggle each rule on/off. Priority order: TPA > Active Job > Preferred Tech > Default routing
+  - [ ] Saves to `phone_config.menu_options`, `phone_ring_groups`
+  - [ ] Commit: `[U23c] Call routing — visual flow builder, IVR menu, ring groups, smart routing rules`
+
+**U23d: AI Receptionist Configuration (~4 hrs)**
+- [ ] **AI Receptionist tab:**
+  - [ ] Master toggle: AI Receptionist ON/OFF (saves to `phone_config.ai_receptionist_enabled`)
+  - [ ] **When AI answers:** during business hours / after hours only / always / overflow only (rings X seconds, then AI picks up)
+  - [ ] **Company profile for AI** (what the AI knows about the business):
+    - Company name, trade(s), service area (cities/zip codes)
+    - Services offered: multi-select from company's job types (pulled from `job_types` table). AI says "Yes, we do water heater installation" or "Sorry, we don't offer that service"
+    - Business hours (auto-pulled from Hours tab — AI says "We're open Monday through Friday, 7am to 5pm")
+    - Pricing guidance: per-service toggle "AI can quote price ranges" with min/max per service. Or "We provide free estimates" (AI directs to booking)
+  - [ ] **Personality & tone:**
+    - Preset personalities: Professional, Friendly, Casual, Bilingual (English + Spanish)
+    - Custom greeting text (or "Use AI-generated greeting based on company profile")
+    - Language: primary + secondary language. AI detects caller language and switches.
+    - Voice: male / female / neutral (TTS voice selection)
+    - Speed: normal / slow (for older callers or non-native speakers)
+  - [ ] **AI capabilities toggles** (each one on/off):
+    - [ ] Check schedule availability ("Are you free Thursday?" — queries `schedule_tasks` for open slots)
+    - [ ] Book appointments (creates lead + tentative schedule task, sends confirmation SMS)
+    - [ ] Look up job status ("What's the status of my roof repair?" — matches caller phone to customer, finds active job)
+    - [ ] Provide ETAs ("When will the tech arrive?" — reads `schedule_tasks.scheduled_start` for today's jobs)
+    - [ ] Take messages (records name + number + message → creates lead or note on existing customer)
+    - [ ] Transfer to team member ("Can I speak to John?" — transfers to matching user's phone line)
+    - [ ] Emergency routing ("My pipe burst!" — detects urgency keywords → routes to on-call immediately, skips menu)
+  - [ ] **Real-time data access** (what the AI can see — all read-only, company_id scoped):
+    - `jobs` — active jobs, status, assigned tech, scheduled dates
+    - `customers` — match caller by phone, show name/history to AI
+    - `schedule_tasks` — availability for booking
+    - `users` — team members for transfer routing
+    - `job_types` — services the company offers
+    - `phone_config` — business hours for accurate answers
+  - [ ] **Test mode:** "Call Preview" button — simulates an inbound call in the browser. Contractor types what a fake caller says, sees AI response in real-time. Tests routing, schedule lookup, personality. No actual phone call needed.
+  - [ ] **AI conversation log:** view past AI conversations (transcripts from `phone_calls` where `answered_by = 'ai'`). Star good/bad responses. Feedback loop for improving prompts.
+  - [ ] Saves to `phone_config.ai_receptionist_config` JSONB
+  - [ ] Commit: `[U23d] AI Receptionist config — personality, capabilities, real-time data, test mode`
+
+**U23e: SMS Templates + Recording + Trade Presets (~3 hrs)**
+- [ ] **Templates tab:**
+  - [ ] SMS template manager: CRUD on `phone_message_templates`
+  - [ ] Built-in templates: "Appointment Reminder", "On My Way", "Job Complete", "Invoice Sent", "Estimate Follow-Up", "Review Request"
+  - [ ] Template variables: `{customer_name}`, `{tech_name}`, `{job_title}`, `{appointment_date}`, `{appointment_time}`, `{company_name}`, `{estimate_total}`, `{invoice_link}`, `{review_link}`
+  - [ ] Auto-send rules: "Send appointment reminder 24h before", "Send 'On My Way' when tech marks en route", "Send review request 2 days after job completion"
+  - [ ] Preview: shows rendered template with sample data
+- [ ] **Recording tab:**
+  - [ ] Call recording mode: Off / All Calls / Inbound Only / On-Demand (tech presses button during call)
+  - [ ] Recording retention: 30 / 60 / 90 / 365 days (auto-delete from Storage after retention period)
+  - [ ] Two-party consent warning: if company is in a two-party consent state (CA, FL, etc.), show warning + auto-enable "This call may be recorded" announcement at call start
+  - [ ] State lookup: auto-detect from company address whether one-party or two-party consent applies
+- [ ] **Trade Presets** — one-click phone setup for common trades:
+  - [ ] "Plumber" preset: emergency routing ON (pipe burst/flood keywords), after-hours AI ON, IVR: 1=Service Call, 2=New Estimate, 3=Billing
+  - [ ] "Electrician" preset: AI answers with safety disclaimer, IVR: 1=Emergency (no power/sparking), 2=Service, 3=New Construction
+  - [ ] "HVAC" preset: seasonal greeting (summer: "AC issues?", winter: "Heating emergency?"), AI checks equipment warranty
+  - [ ] "General Contractor" preset: IVR deeper menu (1=New Project, 2=Existing Project Status, 3=Billing, 4=Subcontractor), AI can look up project schedule
+  - [ ] "Restoration" preset: 24/7 AI ON, emergency always rings, urgency detection highest sensitivity, auto-create TPA assignment on emergency call
+  - [ ] Preset applies: greeting, IVR menu, routing rules, AI personality, after-hours behavior. Contractor can customize after applying.
+- [ ] `npm run build` passes
+- [ ] Commit: `[U23e] Templates, recording, trade presets — SMS auto-send, consent detection, 5 trade presets`
+
+**U23f: Phone Config Integration Check (~2 hrs)**
+- [ ] **INTEGRATION MAP CHECK** (`Expansion/52_SYSTEM_INTEGRATION_MAP.md`):
+  - [ ] Phone Config → Jobs: smart routing by active job works
+  - [ ] Phone Config → Customers: caller ID match works
+  - [ ] Phone Config → Schedule: AI availability check works
+  - [ ] Phone Config → Team Portal: techs see their line assignment, on-call status
+  - [ ] Phone Config → Notifications: voicemail/missed call alerts fire
+  - [ ] Phone Config → TPA: TPA call routing works when TPA module active
+- [ ] Mobile: `dart analyze` passes (phone config is CRM-only, no Flutter changes needed)
+- [ ] All portals: `npm run build` passes
+- [ ] Update `52_SYSTEM_INTEGRATION_MAP.md` wiring tracker
+- [ ] Commit: `[U23] Phone System Configuration — routing builder, AI receptionist config, trade presets, templates`
+
+---
+
+**PHASE U UPDATED TOTAL: U1-U23 = ~448 hrs (was ~432 hrs)**
+*S103 added U23 Phone System Configuration (~16 hrs): settings page, hours/holidays, visual call flow builder, IVR menu builder, ring group manager, AI receptionist full config (personality + capabilities + real-time data + test mode), SMS templates with auto-send rules, recording consent detection, 5 trade presets.*
 
 ---
 
@@ -9820,6 +10249,115 @@ Include <content>{markdown}</content> for rendered display.
 - [ ] Error handling: graceful degradation if CV model fails on specific sheet (skip, continue, flag for manual)
 - [ ] All builds pass: `npm run build` for CRM + team + client + ops portals. `dart analyze` for Flutter.
 - [ ] Commit: `[BA8] Plan Review polish — review mode, viewer, export, performance, testing`
+
+---
+
+### Sprint E5: Voice Command Engine — "Z Assistant" (~40 hrs) — S103
+*In-app voice assistant. Tap mic → speak → AI understands → executes any action in the system. No Siri/Google wake words (Apple/Google block third-party wake words). This is Zafto's own voice interface built on top of Z Intelligence.*
+
+**E5a: Voice Infrastructure (~8 hrs)**
+- [ ] Flutter: `lib/services/voice/voice_command_service.dart` — manages mic recording, STT, intent routing
+- [ ] Speech-to-Text: use `speech_to_text` Flutter package (MIT, free, uses device OS speech recognition — no API cost)
+  - [ ] iOS: Apple Speech framework (built into iOS, free, offline capable)
+  - [ ] Android: Google Speech Services (built into Android, free, offline capable)
+  - [ ] Language detection: auto-detect from device locale, support all 10 i18n languages
+- [ ] **Z Button integration:** add mic icon to existing Z FAB (floating action button in AppShell)
+  - [ ] Tap Z → shows options: Chat (existing) + Voice (new)
+  - [ ] Hold Z → instant voice mode (press-and-hold to talk, release to send)
+  - [ ] Visual feedback: pulsing ring animation while listening, waveform visualization
+- [ ] Permission flow: request microphone permission on first use, explain why ("Z Assistant uses your microphone to understand voice commands")
+- [ ] Audio processing: capture → STT → text string → send to Claude for intent parsing
+- [ ] Silence detection: auto-stop recording after 2 seconds of silence
+- [ ] Error handling: "I didn't catch that" if STT confidence < 0.4, "No microphone access" if permission denied
+- [ ] `dart analyze` passes
+- [ ] Commit: `[E5a] Voice infrastructure — STT, Z button mic mode, press-and-hold, silence detection`
+
+**E5b: Intent Engine (~10 hrs)**
+- [ ] Edge Function: `voice-command` — receives text from STT, uses Claude to parse intent + extract parameters
+- [ ] **Intent categories** (what the voice assistant can do):
+  - [ ] **Navigation**: "Open my jobs" → navigate to jobs screen. "Show me the schedule" → navigate to schedule. "Go to settings" → navigate to settings. Maps to screen registry.
+  - [ ] **Create**: "Create a new job for John Smith" → creates job, pre-fills customer. "Add a customer named Maria Garcia, phone 555-1234" → creates customer record.
+  - [ ] **Send**: "Send the invoice for the Johnson kitchen job" → finds invoice by job name match → sends via email/SMS. "Text John Smith that I'm on my way" → sends SMS via SignalWire.
+  - [ ] **Update**: "Mark the Smith job as complete" → updates job status. "Clock me in" → starts time clock entry. "Clock me out" → stops time clock.
+  - [ ] **Query**: "What's on my schedule today?" → reads today's schedule tasks, speaks them back. "How much does John Smith owe?" → queries outstanding invoices. "What's the status of job 1234?" → reads job status.
+  - [ ] **Calculate**: "What's the voltage drop for 200 feet of 10 gauge wire at 30 amps?" → runs calculator, speaks result.
+  - [ ] **Photo**: "Take a photo for the Smith job" → opens camera, auto-attaches to job.
+- [ ] **Intent parsing prompt** — Claude extracts:
+  ```json
+  {
+    "intent": "send_invoice",
+    "confidence": 0.92,
+    "entities": { "customer": "Johnson", "job_hint": "kitchen" },
+    "requires_confirmation": true,
+    "ambiguous": false
+  }
+  ```
+- [ ] **Disambiguation**: if multiple matches (e.g., two "Smith" customers), ask "Did you mean John Smith on Oak Street or Jane Smith on Maple?" — TTS speaks options, user responds.
+- [ ] **Confirmation gate**: destructive/outward actions ALWAYS confirm before executing:
+  - "I'll send the $3,400 invoice to John Smith at john@email.com. Should I send it?" → user says "Yes" → executes
+  - "I'll mark the Smith kitchen remodel as complete. Confirm?" → user confirms
+  - Read-only queries (status checks, schedule lookups) execute immediately without confirmation
+- [ ] **Context awareness**: intent engine knows which screen user is on. "Send this invoice" on invoice detail screen → sends that specific invoice. "Add a note" on job detail → adds note to that job.
+- [ ] Claude model: Haiku 4.5 for speed (voice needs <1s response). System prompt includes: company's job types, team member names, recent job titles for fuzzy matching.
+- [ ] Commit: `[E5b] Intent engine — 7 intent categories, disambiguation, confirmation gate, context awareness`
+
+**E5c: Action Execution Layer (~8 hrs)**
+- [ ] `lib/services/voice/voice_action_executor.dart` — routes parsed intents to actual Supabase operations
+- [ ] **Action registry**: maps intent types to repository methods:
+  ```dart
+  'create_job' → jobRepository.createJob(...)
+  'send_invoice' → invoiceRepository.sendInvoice(...) + signalwire-sms/sendgrid-email EF
+  'update_job_status' → jobRepository.updateStatus(...)
+  'start_time_clock' → timeClockRepository.clockIn(...)
+  'query_schedule' → scheduleRepository.getTodayTasks(...)
+  'navigate' → navigationService.navigateTo(screenId)
+  ```
+- [ ] **Security**: voice commands execute with same RBAC as the logged-in user. Technician can't voice-command "Delete all invoices" — permission denied same as tapping the button. No privilege escalation.
+- [ ] **Audit trail**: every voice command logged to `z_messages` table with `source: 'voice'`. Full traceability: who said what, what was executed, result.
+- [ ] **Rollback**: for create/update actions, voice executor stores the previous state. "Undo" or "Undo that" within 30 seconds reverses the last action.
+- [ ] **Rate limiting**: max 20 voice commands per minute (prevents accidental rapid-fire). Cooldown message if exceeded.
+- [ ] **Offline mode**: if no internet, queue voice commands for execution when reconnected. Notify user: "You're offline. I'll do that when you're back online."
+- [ ] TTS response: after executing, speak confirmation back. "Invoice sent to John Smith." / "Job marked as complete." / "You have 3 jobs scheduled today: Smith kitchen at 8am, Garcia bathroom at 11am, Park electrical at 2pm."
+- [ ] `dart analyze` passes
+- [ ] Commit: `[E5c] Action executor — registry, RBAC enforcement, audit trail, undo, offline queue, TTS response`
+
+**E5d: Web CRM Voice (~6 hrs)**
+- [ ] Web CRM: add mic button to command palette (Cmd+K) — "Voice Search" option
+- [ ] Hook: `use-voice-command.ts` — Web Speech API (built into Chrome/Edge/Safari, free, no API)
+- [ ] Same intent engine (calls `voice-command` Edge Function)
+- [ ] Same confirmation gate pattern
+- [ ] Same action execution (routes to existing hooks: use-jobs, use-invoices, use-customers, etc.)
+- [ ] Visual: floating mic indicator when listening, transcript shown in real-time
+- [ ] Keyboard shortcut: Cmd+Shift+V (or Ctrl+Shift+V) to toggle voice mode
+- [ ] Team Portal: same voice button on mobile header (field techs use voice heavily — hands dirty/gloves)
+- [ ] Client Portal: NO voice commands (customers don't need to command the system)
+- [ ] `npm run build` passes for CRM + team portal
+- [ ] Commit: `[E5d] Web voice — command palette mic, Web Speech API, team portal voice`
+
+**E5e: Voice Polish + Testing (~8 hrs)**
+- [ ] **Multi-language voice**: STT + TTS in all 10 i18n languages. Test: Spanish command → Spanish response. User's app language setting determines voice language.
+- [ ] **Noise handling**: construction site noise tolerance. Test with background noise (drill, saw, traffic). STT confidence threshold tuned for noisy environments (lower threshold = more attempts, higher = more "I didn't catch that").
+- [ ] **Speed optimization**: end-to-end voice-to-action must complete in <3 seconds (STT ~0.5s + Claude intent ~0.5s + action ~0.5s + TTS ~0.5s + network ~1s buffer). Profile and optimize. If slow: pre-load team/customer names for local fuzzy matching before hitting Claude.
+- [ ] **Accessibility**: voice commands work as alternative input for users who can't easily type on mobile. Screen reader compatibility. Haptic feedback on command recognition.
+- [ ] **Usage analytics**: track voice command usage per intent type. Which commands are used most? Which fail most? Feed into prompt improvement.
+- [ ] **Edge cases tested:**
+  - [ ] Two customers with same name → disambiguation works
+  - [ ] Job with no invoice → "There's no invoice for that job yet. Want me to create one?"
+  - [ ] Command for a feature the user's role can't access → "You don't have permission to do that"
+  - [ ] Command referencing a job/customer that doesn't exist → "I couldn't find a customer named X. Did you mean...?"
+  - [ ] Rapid sequential commands → queued, executed in order
+  - [ ] Cancel mid-command → "Cancelled" (no action taken)
+- [ ] All builds pass: `npm run build` CRM + team. `dart analyze` Flutter.
+- [ ] **INTEGRATION MAP CHECK** (`Expansion/52_SYSTEM_INTEGRATION_MAP.md`):
+  - [ ] Voice → Jobs: create/update/query works
+  - [ ] Voice → Estimates: query works
+  - [ ] Voice → Invoices: send works with confirmation
+  - [ ] Voice → Schedule: query today's tasks works
+  - [ ] Voice → Time Clock: clock in/out works
+  - [ ] Voice → Customers: create/query works
+  - [ ] Voice → Phone/SMS: "text customer" works via SignalWire
+  - [ ] Voice → Navigation: all major screens reachable by voice
+- [ ] Commit: `[E5] Voice Command Engine — Z Assistant, 7 intent types, multi-language, <3s response, noise tolerant`
 
 ---
 
@@ -10296,3 +10834,654 @@ web-portal/src/features/bim/
 | BV5 | DWG Convert + Floor Plans | ~16 | Server-side DWG→DXF, IFC→FloorPlanDataV2→Sketch Engine |
 | BV6 | Mobile + Federation | ~16 | Flutter viewer, multi-model, LOD, exploded view |
 | **Total** | | **~92 hrs** | **Full BIM pipeline: view → measure → extract → estimate → job** |
+
+---
+
+## ══════════════════════════════════════════════════════════
+## PHASE W — WARRANTY & LIFECYCLE INTELLIGENCE (Post-U)
+## Spec: `Expansion/49_BUSINESS_INTELLIGENCE_ENGINES.md` (Engines 1+9)
+## ══════════════════════════════════════════════════════════
+## ~56 hours | 5+ext tables | 2 Edge Functions
+
+### W1 — Warranty Intelligence Foundation (~6h)
+
+#### Objective
+Warranty tracking tables, models, RLS. Extend home_equipment with warranty fields.
+
+#### Steps
+- [ ] Migration: ALTER home_equipment — add warranty_start_date, warranty_end_date, warranty_type, warranty_provider, warranty_document_path, serial_number, model_number, manufacturer, installed_by_job_id, installed_by_company_id, recall_status
+- [ ] Migration: CREATE warranty_outreach_log — id, company_id, equipment_id, customer_id, outreach_type, outreach_trigger, message_content, sent_at, response_status, resulting_job_id, created_by + RLS
+- [ ] Migration: CREATE warranty_claims — id, company_id, equipment_id, job_id, claim_date, claim_reason, claim_status, manufacturer_claim_number, resolution_notes, replacement_equipment_id + RLS
+- [ ] Migration: CREATE product_recalls — id, manufacturer, model_pattern, recall_title, recall_description, recall_date, severity, source_url, affected_serial_range + RLS (public read)
+- [ ] Dart model: warranty_outreach_log.dart
+- [ ] Dart model: warranty_claim.dart
+- [ ] Dart model: product_recall.dart
+- [ ] Repository: warranty_intelligence_repository.dart
+- [ ] Verify: `dart analyze` 0 errors, migration applies cleanly
+- [ ] Commit: `[W1] Warranty Intelligence foundation — tables, models, RLS`
+
+### W2 — Warranty Flutter Screens (~8h)
+
+#### Steps
+- [ ] Screen: warranty_portfolio_screen.dart — list all installed equipment with warranty status (green ≥6mo, yellow 3-6mo, red <3mo)
+- [ ] Screen: warranty_detail_screen.dart — product detail, warranty docs, outreach history, claim history
+- [ ] Provider: warranty_intelligence_provider.dart — AsyncNotifier for portfolio data
+- [ ] Job completion flow: add "Log Installed Equipment" optional step after completing any job
+- [ ] Verify: Flutter analyze clean, screens handle all 4 states
+- [ ] Commit: `[W2] Warranty Intelligence Flutter — portfolio + detail screens`
+
+### W3 — Warranty Web CRM (~8h)
+
+#### Steps
+- [ ] CRM page: web-portal/src/app/warranty-intelligence/page.tsx — dashboard (expiring soon, outreach pipeline, revenue from warranty callbacks)
+- [ ] CRM page: web-portal/src/app/warranty-intelligence/[id]/page.tsx — equipment detail with warranty info
+- [ ] Hook: use-warranty-intelligence.ts — CRUD + real-time
+- [ ] Product recall display: show active recalls matching company's installed equipment
+- [ ] Verify: `npm run build` 0 errors
+- [ ] Commit: `[W3] Warranty Intelligence CRM — dashboard + equipment detail`
+
+### W4 — Warranty Client Portal + Outreach Engine (~6h)
+
+#### Steps
+- [ ] Client portal page: client-portal/src/app/warranties/page.tsx — homeowner "My Warranties" view
+- [ ] Hook: use-warranty-portfolio.ts (client portal, read-only)
+- [ ] Edge Function: warranty-outreach-scheduler — CRON daily: scan equipment approaching expiry, trigger SMS/email via SignalWire at 6mo/3mo/1mo
+- [ ] Verify: client portal build clean, outreach triggers correctly in test
+- [ ] Commit: `[W4] Warranty outreach scheduler + Client Portal warranty view`
+
+### W5 — Warranty Testing + Recall Seeding (~4h)
+
+#### Steps
+- [ ] Seed product_recalls with 50+ real recalls from CPSC API (free)
+- [ ] Test: warranty portfolio shows correct status colors
+- [ ] Test: outreach scheduler sends SMS for equipment expiring within each threshold
+- [ ] Test: recall matching finds affected equipment by model_pattern
+- [ ] Test: warranty claim creation + status lifecycle
+- [ ] Verify: all tests pass
+- [ ] Commit: `[W5] Warranty Intelligence testing + recall database seeding`
+
+---
+
+### W6 — Predictive Maintenance Foundation (~6h)
+
+#### Objective
+Equipment lifecycle data + prediction engine tables.
+
+#### Steps
+- [ ] Migration: CREATE equipment_lifecycle_data — id, equipment_category, manufacturer, avg_lifespan_years, maintenance_interval_months, common_failure_modes (JSONB), seasonal_maintenance, source + RLS (public read)
+- [ ] Migration: CREATE maintenance_predictions — id, company_id, equipment_id, customer_id, prediction_type, predicted_date, confidence_score, recommended_action, estimated_cost, outreach_status, resulting_job_id + RLS
+- [ ] Dart model: equipment_lifecycle_data.dart
+- [ ] Dart model: maintenance_prediction.dart
+- [ ] Seed: 50+ equipment lifecycle entries (water heaters, AC condensers, furnaces, panels, roofs, etc.)
+- [ ] Verify: migration clean, models parse correctly
+- [ ] Commit: `[W6] Predictive Maintenance foundation — lifecycle data + predictions table`
+
+### W7 — Predictive Maintenance Engine + UI (~8h)
+
+#### Steps
+- [ ] Edge Function: predictive-maintenance-engine — CRON monthly: scan all home_equipment, calculate age vs lifecycle curves, generate predictions for equipment approaching maintenance or end-of-life
+- [ ] CRM page: web-portal/src/app/maintenance-pipeline/page.tsx — upcoming maintenance opportunities, revenue forecast
+- [ ] Hook: use-maintenance-predictions.ts
+- [ ] Verify: predictions generate correctly for test data
+- [ ] Commit: `[W7] Predictive Maintenance engine + CRM pipeline dashboard`
+
+### W8 — Predictive Maintenance Portal + Outreach (~6h)
+
+#### Steps
+- [ ] Client portal: extend my-home/maintenance page to show "Recommended Maintenance" from predictions
+- [ ] Outreach: predictive maintenance engine triggers outreach via warranty-outreach-scheduler (reuse existing)
+- [ ] Flutter: add "Maintenance Opportunities" section to customer detail screen
+- [ ] Test: full flow — equipment installed → time passes → prediction generated → outreach sent → customer books → job created
+- [ ] Verify: all portals build clean
+- [ ] Commit: `[W8] Predictive Maintenance portal views + outreach integration`
+
+---
+
+## ══════════════════════════════════════════════════════════
+## PHASE J — JOB INTELLIGENCE (Post-W)
+## Spec: `Expansion/49_BUSINESS_INTELLIGENCE_ENGINES.md` (Engines 2+7)
+## ══════════════════════════════════════════════════════════
+## ~64 hours | 5 tables | 1 Edge Function
+
+### J1 — Job Cost Autopsy Foundation (~8h)
+
+#### Steps
+- [ ] Migration: CREATE job_cost_autopsies — id, company_id, job_id (UNIQUE), estimated vs actual fields (labor_hours, labor_cost, material_cost, drive_time, callbacks, change_orders), gross_profit, gross_margin_pct, variance_pct, job_type, trade_type, primary_tech_id, completed_at + RLS
+- [ ] Migration: CREATE autopsy_insights — id, company_id, insight_type, insight_key, insight_data (JSONB), sample_size, confidence_score, period_start, period_end + RLS
+- [ ] Migration: CREATE estimate_adjustments — id, company_id, job_type, trade_type, adjustment_type, suggested_multiplier, based_on_jobs, status + RLS
+- [ ] Dart models: job_cost_autopsy.dart, autopsy_insight.dart, estimate_adjustment.dart
+- [ ] Repository: job_intelligence_repository.dart
+- [ ] Verify: migration clean, 0 errors
+- [ ] Commit: `[J1] Job Cost Autopsy foundation — tables, models, RLS`
+
+### J2 — Autopsy Generator Engine (~8h)
+
+#### Steps
+- [ ] Edge Function: job-cost-autopsy-generator — trigger on job.status = 'completed': pull time_entries, receipts, mileage for job. Calculate actual costs. Compare to estimate snapshot. Generate autopsy record.
+- [ ] DB trigger: after job status change to 'completed', invoke autopsy generator
+- [ ] Monthly CRON: regenerate autopsy_insights — aggregate by job_type, by tech, by season
+- [ ] Monthly CRON: generate estimate_adjustments where variance pattern is consistent (>5 jobs, >10% variance)
+- [ ] Verify: autopsy generates correctly from test job data
+- [ ] Commit: `[J2] Job Cost Autopsy generator + insights aggregation engine`
+
+### J3 — Autopsy Flutter + Smart Pricing Foundation (~8h)
+
+#### Steps
+- [ ] Flutter screen: job_autopsy_screen.dart — per-job breakdown with estimated vs actual bar chart, variance callouts
+- [ ] Flutter screen: autopsy_dashboard_screen.dart — aggregate profitability by job type, by tech, by month
+- [ ] Migration: CREATE pricing_rules — id, company_id, rule_type, rule_config (JSONB), active + RLS
+- [ ] Migration: CREATE pricing_suggestions — id, company_id, estimate_id, job_id, base_price, suggested_price, factors_applied (JSONB), final_price, accepted, job_won + RLS
+- [ ] Dart models: pricing_rule.dart, pricing_suggestion.dart
+- [ ] Verify: Flutter analyze clean
+- [ ] Commit: `[J3] Job Autopsy Flutter screens + Smart Pricing tables`
+
+### J4 — Job Intelligence Web CRM (~8h)
+
+#### Steps
+- [ ] CRM page: web-portal/src/app/job-intelligence/page.tsx — profitability dashboard (trends, top/bottom job types, tech performance)
+- [ ] CRM page: web-portal/src/app/job-intelligence/[jobId]/page.tsx — per-job autopsy detail
+- [ ] CRM page: web-portal/src/app/job-intelligence/adjustments/page.tsx — estimate adjustment suggestions (accept/dismiss)
+- [ ] Hook: use-job-intelligence.ts
+- [ ] Verify: `npm run build` 0 errors
+- [ ] Commit: `[J4] Job Intelligence CRM — dashboard, autopsy detail, adjustments`
+
+### J5 — Smart Pricing Engine (~8h)
+
+#### Steps
+- [ ] Pricing calculation module: evaluate rules (demand, distance, seasonal, urgency) against current schedule and job params
+- [ ] Estimate UI integration: "Suggested price" card with factor breakdown, accept/override
+- [ ] Settings page: configure pricing rules per trade, set caps/thresholds
+- [ ] Verify: pricing suggestions calculate correctly for test scenarios
+- [ ] Commit: `[J5] Smart Pricing engine — rule evaluation + estimate integration`
+
+### J6 — Smart Pricing Analytics + Testing (~6h)
+
+#### Steps
+- [ ] Pricing analytics: close rate at different price points, revenue impact of pricing suggestions
+- [ ] CRM page: web-portal/src/app/pricing-analytics/page.tsx
+- [ ] Test: full autopsy flow — estimate → job → complete → autopsy generated → insights aggregated → adjustment suggested
+- [ ] Test: pricing rules evaluate correctly across all rule types
+- [ ] Test: edge cases (jobs with no estimate, partial time data, jobs with change orders)
+- [ ] Verify: all builds clean
+- [ ] Commit: `[J6] Smart Pricing analytics + full Job Intelligence testing`
+
+---
+
+## ══════════════════════════════════════════════════════════
+## PHASE L — LEGAL, PERMITS & COMPLIANCE (Post-J)
+## Spec: `Expansion/49_BUSINESS_INTELLIGENCE_ENGINES.md` (Engines 3+8)
+## Spec: `Expansion/50_BUSINESS_COMPLETION_SYSTEMS.md` (Systems 1+3)
+## ══════════════════════════════════════════════════════════
+## ~120 hours | 12+ext tables | 3 Edge Functions
+
+### L1 — Permit Intelligence Foundation (~10h)
+
+#### Steps
+- [ ] Migration: CREATE permit_jurisdictions — id, jurisdiction_name, type, state_code, county_fips, city_name, building_dept_phone/url, online_submission_url, avg_turnaround_days, contributed_by, verified + RLS (public read, auth insert)
+- [ ] Migration: CREATE permit_requirements — id, jurisdiction_id FK, work_type, trade_type, permit_required, permit_type, estimated_fee, inspections_required (JSONB), typical_documents, contributed_by, verified + RLS
+- [ ] Migration: CREATE job_permits — id, company_id, job_id, jurisdiction_id, permit_type, permit_number, dates (application, approval, expiration), fee, status + RLS
+- [ ] Migration: CREATE permit_inspections — id, company_id, job_permit_id FK, inspection_type, dates, inspector_name, result, failure_reason, correction_notes, photos + RLS
+- [ ] Dart models: permit_jurisdiction.dart, permit_requirement.dart, job_permit.dart, permit_inspection.dart
+- [ ] Repository: permit_intelligence_repository.dart
+- [ ] Seed: top 50 US cities jurisdiction data
+- [ ] Verify: migration clean, seeds apply
+- [ ] Commit: `[L1] Permit Intelligence foundation — 4 tables, models, top-50 city seeding`
+
+### L2 — Permit Engine + Jurisdiction Lookup (~8h)
+
+#### Steps
+- [ ] Edge Function: permit-requirement-lookup — geocode address (Nominatim free), match to jurisdiction, return requirements
+- [ ] PostGIS setup: jurisdiction polygons for accurate matching (start with state boundaries, extend to city/county)
+- [ ] Jurisdiction contribution UI (Web): contractors add/update jurisdiction data for their area
+- [ ] Verify: lookup returns correct jurisdiction for test addresses
+- [ ] Commit: `[L2] Permit Engine — geocode lookup + jurisdiction matching + community contribution`
+
+### L3 — Permit UI + Compliance Foundation (~8h)
+
+#### Steps
+- [ ] Flutter: job_permits_screen.dart — per-job permit tracker with status timeline
+- [ ] Flutter: inspection_result_screen.dart — log pass/fail, photos, corrections
+- [ ] Migration: ALTER certifications — add compliance_category, issuing_authority, policy_number, coverage_amount, renewal_cost, auto_renew, document_path
+- [ ] Migration: CREATE compliance_requirements — id, trade_type, job_type_pattern, required_compliance_category, required_certification_type, regulatory_reference, penalty_description + RLS (public read)
+- [ ] Migration: CREATE compliance_packets — id, company_id, packet_name, requested_by, documents (JSONB), generated_at, shared_via + RLS
+- [ ] Verify: Flutter analyze clean
+- [ ] Commit: `[L3] Permit Flutter UI + Compliance foundation tables`
+
+### L4 — Permits Web CRM + Compliance Dashboard (~8h)
+
+#### Steps
+- [ ] CRM: web-portal/src/app/permits/page.tsx — all active permits, sorted by deadline
+- [ ] CRM: web-portal/src/app/permits/[jobId]/page.tsx — per-job detail + inspection timeline
+- [ ] CRM: web-portal/src/app/permits/jurisdictions/page.tsx — browse/contribute jurisdiction data
+- [ ] CRM: web-portal/src/app/compliance/page.tsx — all company compliance at a glance (licenses, insurance, bonds, OSHA, EPA, vehicle regs)
+- [ ] Hook: use-permits.ts, use-compliance.ts
+- [ ] Verify: `npm run build` 0 errors
+- [ ] Commit: `[L4] Permits + Compliance CRM pages`
+
+### L5 — Lien Engine Foundation (~10h)
+
+#### Steps
+- [ ] Migration: CREATE lien_rules_by_state — id, state_code UNIQUE, preliminary_notice_required, deadlines, recipients, notarization, special_rules + RLS (public read)
+- [ ] Migration: CREATE lien_tracking — id, company_id, job_id, customer_id, property_address, state_code FK, dates (first_work, last_work, completion), notice/lien dates and statuses, document_paths + RLS
+- [ ] Migration: CREATE lien_document_templates — id, state_code, document_type, template_content (HTML), placeholders (JSONB) + RLS (public read)
+- [ ] Seed: all 50 states + DC lien rules from publicly available statutes
+- [ ] Seed: document templates for top 10 states (CA, TX, FL, NY, PA, IL, OH, GA, NC, MI)
+- [ ] Dart models: lien_rule.dart, lien_tracking.dart
+- [ ] Verify: migration clean, all 51 jurisdiction rules seeded
+- [ ] Commit: `[L5] Mechanic's Lien Engine — tables, 50-state rules, templates`
+
+### L6 — Lien Document Generation + Monitor (~8h)
+
+#### Steps
+- [ ] Document generator: HTML template → pdf-lib PDF with company branding, job data auto-filled, property info, amounts
+- [ ] Edge Function: lien-deadline-monitor — CRON daily: check all active lien records, alert at 30/14/7/3/1 days before each deadline
+- [ ] Flutter: lien_dashboard_screen.dart — active liens sorted by deadline, status colors
+- [ ] Flutter: lien_detail_screen.dart — timeline, generate documents, track status changes
+- [ ] Verify: document generates correctly with test data, deadlines calculate properly
+- [ ] Commit: `[L6] Lien document generation + deadline monitoring`
+
+### L7 — Lien + Compliance Web CRM (~6h)
+
+#### Steps
+- [ ] CRM: web-portal/src/app/lien-protection/page.tsx — dashboard: at-risk, approaching deadlines, total protected $
+- [ ] CRM: web-portal/src/app/lien-protection/[jobId]/page.tsx — per-job lien detail + doc generation
+- [ ] CRM: web-portal/src/app/lien-protection/rules/page.tsx — browse state rules reference
+- [ ] Hook: use-lien-protection.ts
+- [ ] Verify: `npm run build` 0 errors
+- [ ] Commit: `[L7] Lien Protection CRM pages + hook`
+
+### L8 — CE Tracker + Compliance Packets (~8h)
+
+#### Steps
+- [ ] Migration: ALTER certification_types — add ce_credits_required, renewal_period_months, state_code, governing_body, ce_categories (JSONB)
+- [ ] Migration: CREATE ce_credit_log — id, company_id, user_id, certification_id FK, course_name, provider, credit_hours, ce_category, completion_date, certificate_document_path, verified + RLS
+- [ ] Migration: CREATE license_renewals — id, company_id, certification_id FK, user_id, renewal_due_date, ce_credits_required/completed/remaining, status, fees + RLS
+- [ ] Compliance packet generator: select certs/docs → generate combined PDF → share via link/email
+- [ ] Edge Function: compliance-scanner — CRON weekly: check all certs for approaching expiry, check CE credits remaining, check job assignments vs compliance requirements
+- [ ] Verify: CE tracking works, packet generates
+- [ ] Commit: `[L8] CE Tracker + Compliance scanner + packet generator`
+
+### L9 — Compliance UI (Team + Client Portal) + Testing (~6h)
+
+#### Steps
+- [ ] Team Portal: employee sees their compliance status, CE hours remaining, upload CE certificates
+- [ ] Client Portal: customer sees permit status for their project
+- [ ] Compliance check on job assignment: "This job requires EPA lead-safe cert — Tech Mike has it, Tech Dave doesn't"
+- [ ] Test: lien deadlines calculate correctly across multiple states
+- [ ] Test: compliance scanner catches approaching expirations
+- [ ] Test: CE credit tracking accumulates correctly
+- [ ] Test: permit lookup returns correct data for test addresses
+- [ ] Verify: all portal builds clean
+- [ ] Commit: `[L9] Compliance portal views + full Phase L testing`
+
+---
+
+## ══════════════════════════════════════════════════════════
+## PHASE U EXTENSIONS — BUSINESS COMPLETION + ENGINES
+## Spec: `Expansion/49_BUSINESS_INTELLIGENCE_ENGINES.md` (Engines 5, 6, 10)
+## Spec: `Expansion/50_BUSINESS_COMPLETION_SYSTEMS.md` (Systems 2, 4, 5, 6)
+## ══════════════════════════════════════════════════════════
+## Additions to Phase U: ~196 hours total
+
+### U-REP1 — Reputation Autopilot Foundation (~6h)
+
+#### Steps
+- [ ] Migration: CREATE review_requests — id, company_id, job_id, customer_id, sent_via, sent_at, satisfaction_response, routed_to, external_review_confirmed, private_feedback + RLS
+- [ ] Migration: CREATE review_tracking — id, company_id, platform, reviewer_name, rating, review_text, review_date, linked_job_id, linked_tech_id, response_text, source + RLS
+- [ ] Migration: CREATE review_analytics — id, company_id, period_month, total_reviews, avg_rating, platform_breakdown (JSONB), top_tech_id + RLS
+- [ ] Dart models: review_request.dart, review_tracking.dart
+- [ ] Verify: migration clean
+- [ ] Commit: `[U-REP1] Reputation Autopilot foundation — 3 tables`
+
+### U-REP2 — Review Request Flow (~8h)
+
+#### Steps
+- [ ] Edge Function: review-request-engine — trigger: job completed + invoice paid + configurable delay. Send SMS with satisfaction link.
+- [ ] Satisfaction gate: 1-5 rating → 4-5 routes to Google/Yelp link, 1-3 routes to private feedback form
+- [ ] CRM: review request configuration (delay hours, platforms, auto-enable)
+- [ ] Verify: SMS sends correctly, routing works
+- [ ] Commit: `[U-REP2] Review request flow — trigger, satisfaction gate, platform routing`
+
+### U-REP3 — Reputation Dashboard (~6h)
+
+#### Steps
+- [ ] CRM: web-portal/src/app/reviews/page.tsx — review velocity chart, star average, per-platform breakdown, per-tech scores
+- [ ] CRM: manual review entry (paste review from Google/Yelp, link to job/tech)
+- [ ] Hook: use-reviews.ts
+- [ ] Team Portal: tech sees their review scores
+- [ ] Monthly analytics aggregation
+- [ ] Verify: dashboard renders correctly
+- [ ] Commit: `[U-REP3] Reputation dashboard + Team Portal review scores`
+
+---
+
+### U-SUB1 — Subcontractor Network Foundation (~8h)
+
+#### Steps
+- [ ] Migration: CREATE subcontractor_profiles — id, company_id, trade_types, service_area (lat/lng + radius), rates, verification status, avg_rating + RLS
+- [ ] Migration: CREATE sub_bid_requests — id, requesting_company_id, job_id, trade_type, scope, budget_range, status + RLS
+- [ ] Migration: CREATE sub_bid_responses — id, bid_request_id FK, sub_company_id, bid_amount, availability, status + RLS
+- [ ] Migration: CREATE sub_ratings — id, rated_company_id, rating_company_id, job_id, quality/timeliness/communication/overall ratings, would_hire_again + RLS
+- [ ] Dart models: sub_profile.dart, sub_bid_request.dart, sub_bid_response.dart, sub_rating.dart
+- [ ] Verify: migration clean
+- [ ] Commit: `[U-SUB1] Subcontractor Network foundation — 4 tables`
+
+### U-SUB2 — Sub Discovery + Bid Request (~8h)
+
+#### Steps
+- [ ] Sub profile registration flow (company creates sub profile with trades, service area, rates)
+- [ ] Sub discovery: search by trade + location (PostGIS radius query)
+- [ ] Bid request creation: from within a job, select trade, describe scope, attach documents (floor plans, etc.)
+- [ ] Bid request notification to matching subs
+- [ ] Verify: search returns subs within radius for correct trade
+- [ ] Commit: `[U-SUB2] Sub discovery + bid request creation`
+
+### U-SUB3 — Sub Bid Response + Award (~8h)
+
+#### Steps
+- [ ] Sub receives bid request notification, views scope + documents, submits bid
+- [ ] GC views all bid responses side-by-side (scope-adjusted comparison)
+- [ ] Award bid → sub notified → sub assigned to job
+- [ ] Sub agreement auto-generated from template
+- [ ] Verify: full bid cycle works
+- [ ] Commit: `[U-SUB3] Sub bid response + comparison + award`
+
+### U-SUB4 — Sub Payment + Rating (~6h)
+
+#### Steps
+- [ ] Sub payment tracking tied to main job billing (sub invoices → GC approves → payment scheduled)
+- [ ] Lien waiver collection from subs (integrate with Lien Engine from Phase L)
+- [ ] Rating system: after sub completes work, GC rates quality/timeliness/communication
+- [ ] Sub performance dashboard: average ratings, total jobs, on-time percentage
+- [ ] Verify: payment flow tracks correctly, ratings aggregate
+- [ ] Commit: `[U-SUB4] Sub payment tracking + ratings + performance dashboard`
+
+---
+
+### U-FIN1 — Customer Financing Foundation (~6h)
+
+#### Steps
+- [ ] Migration: CREATE financing_offers — id, company_id, estimate_id, invoice_id, customer_id, job_id, provider, amount, term_months, monthly_payment, apr, customer_action, provider_application_id, funded_amount, dealer_fee + RLS
+- [ ] Migration: CREATE financing_settings — id, company_id UNIQUE, enabled, provider merchant IDs, auto_offer_threshold, show_monthly_payment + RLS
+- [ ] Dart models: financing_offer.dart, financing_settings.dart
+- [ ] Verify: migration clean
+- [ ] Commit: `[U-FIN1] Customer Financing foundation — tables + settings`
+
+### U-FIN2 — Financing Integration (~12h)
+
+#### Steps
+- [ ] Settings page: enable financing, configure provider credentials, set auto-offer threshold
+- [ ] Estimate integration: "Monthly payment: $149/mo" displayed on estimates over threshold
+- [ ] Edge Function: financing-offer-proxy — proxy API calls to Wisetack/GreenSky/Hearth with stored merchant creds
+- [ ] Client Portal: financing application form, status tracking
+- [ ] Financing analytics: close rate with/without financing, average ticket impact
+- [ ] Hook: use-financing.ts
+- [ ] Verify: API proxy returns valid pre-qualification, portal build clean
+- [ ] Commit: `[U-FIN2] Financing provider integration + estimate display + Client Portal`
+
+---
+
+### U-MAT1 — Material Procurement Foundation (~6h)
+
+#### Steps
+- [ ] Migration: ALTER purchase_order_items — add estimated_unit_price, actual_unit_price, markup_pct, supplier_name, supplier_sku
+- [ ] Migration: CREATE material_price_history — id, company_id, material_name, category, unit, supplier_name, unit_price, recorded_date, source + RLS
+- [ ] Migration: CREATE job_material_lists — id, company_id, job_id, estimate_id, line_items (JSONB), totals, status + RLS
+- [ ] Dart models: material_price_history.dart, job_material_list.dart
+- [ ] Verify: migration clean
+- [ ] Commit: `[U-MAT1] Material Procurement foundation — tables + PO extension`
+
+### U-MAT2 — Material List + Price Tracking (~10h)
+
+#### Steps
+- [ ] Material list auto-generation from estimate line items
+- [ ] Price history recording on every purchase/receipt
+- [ ] Unwrangle API integration: HD/Lowe's price lookup (API key already stored)
+- [ ] Supplier comparison view: same material from different suppliers
+- [ ] PO generation from material list
+- [ ] CRM: material cost dashboard, price trends
+- [ ] Hook: use-materials-procurement.ts
+- [ ] Verify: material list generates from test estimate, price history records
+- [ ] Commit: `[U-MAT2] Material list generation + price tracking + supplier comparison`
+
+---
+
+### U-LOG1 — Daily Job Log Foundation (~8h)
+
+#### Steps
+- [ ] Migration: CREATE daily_job_logs — id, company_id, job_id, log_date, weather fields, crew (JSONB), work_description, materials_used (JSONB), visitors (JSONB), safety_incidents (JSONB), delays (JSONB), photos, signature, status + RLS
+- [ ] UNIQUE constraint: (company_id, job_id, log_date)
+- [ ] Migration: CREATE daily_log_templates — id, company_id, template_name, trade_type, defaults + RLS
+- [ ] Edge Function: daily-log-auto-populate — on create: fetch weather from Open-Meteo, populate crew from time entries, link photos from that day
+- [ ] Dart model: daily_job_log.dart
+- [ ] Verify: migration clean, auto-populate works
+- [ ] Commit: `[U-LOG1] Daily Job Log foundation — tables + auto-populate engine`
+
+### U-LOG2 — Daily Log Flutter + Team Portal (~8h)
+
+#### Steps
+- [ ] Flutter: daily_log_screen.dart — pre-populated form, tech adds work description + materials + safety talk
+- [ ] Flutter: daily_log_history_screen.dart — browse past logs per job, timeline view
+- [ ] Team Portal: team-portal/src/app/daily-log/page.tsx — field tech daily log entry
+- [ ] Hook (team): use-daily-log.ts
+- [ ] Verify: Flutter analyze clean, team portal builds
+- [ ] Commit: `[U-LOG2] Daily Job Log Flutter + Team Portal entry`
+
+### U-LOG3 — Daily Log CRM + Client Portal (~8h)
+
+#### Steps
+- [ ] CRM: web-portal/src/app/daily-logs/page.tsx — all logs across jobs
+- [ ] CRM: web-portal/src/app/daily-logs/[jobId]/page.tsx — per-job log timeline
+- [ ] Client Portal: client-portal/src/app/project/[id]/daily-logs/page.tsx — owner views daily progress
+- [ ] Hooks: use-daily-logs.ts (CRM), use-daily-logs-viewer.ts (client)
+- [ ] PDF export: generate daily log report for a date range
+- [ ] Verify: all portal builds clean
+- [ ] Commit: `[U-LOG3] Daily Job Log CRM + Client Portal + PDF export`
+
+---
+
+### U-CO1 — Change Order Engine Foundation (~6h)
+
+#### Steps
+- [ ] Check existing: verify if change_orders table exists (use-change-orders.ts hooks exist — check what they connect to)
+- [ ] Migration (if needed): CREATE change_orders — id, company_id, job_id, change_order_number, title, description, reason, cost_impact, original/revised contract amounts, schedule_impact_days, photos, status, customer signature + RLS
+- [ ] Migration (if needed): CREATE change_order_items — id, change_order_id FK, description, quantity, unit, unit_price, total, item_type + RLS
+- [ ] Dart models: change_order.dart, change_order_item.dart
+- [ ] Verify: migration clean
+- [ ] Commit: `[U-CO1] Change Order Engine foundation`
+
+### U-CO2 — Change Order Flutter + CRM (~8h)
+
+#### Steps
+- [ ] Flutter: CO creation screen — add line items, attach photos (before/after), submit for review
+- [ ] CRM: CO management — create, track cumulative impact, document generation
+- [ ] Edge Function: change-order-notify — SMS/email customer when CO submitted for review
+- [ ] CRM dashboard shows: original contract → all COs → current contract total
+- [ ] Verify: CO creation and notification work
+- [ ] Commit: `[U-CO2] Change Order Flutter + CRM + notification`
+
+### U-CO3 — Change Order Client Portal (~4h)
+
+#### Steps
+- [ ] Client Portal: client-portal/src/app/project/[id]/change-orders/page.tsx — view CO details, line items, photos
+- [ ] Digital approval: customer signs CO in portal (reuse signature component)
+- [ ] CO status updates in real-time across all portals
+- [ ] Test: full CO lifecycle — create → notify → customer reviews → approves/rejects → contract updated
+- [ ] Verify: client portal build clean
+- [ ] Commit: `[U-CO3] Change Order Client Portal approval + testing`
+
+---
+
+## ══════════════════════════════════════════════════════════
+## PHASE GC EXTENSION — WEATHER-AWARE SCHEDULING
+## Spec: `Expansion/49_BUSINESS_INTELLIGENCE_ENGINES.md` (Engine 5)
+## ══════════════════════════════════════════════════════════
+## Added to Phase GC: ~20 hours
+
+### GC-WX1 — Weather Rules + Alert Tables (~6h)
+
+#### Steps
+- [ ] Migration: CREATE weather_rules — id, company_id (NULL=system default), trade_type, job_type_pattern, rule_name, condition_json (JSONB), severity, message_template, active + RLS
+- [ ] Migration: CREATE weather_alerts — id, company_id, job_id, scheduled_date, rule_id FK, weather_data (JSONB), alert_level, alert_message, acknowledged, action_taken + RLS
+- [ ] Seed: default weather rules for 10 trades (roofing: no rain/high wind, concrete: temp min, painting: no rain, etc.)
+- [ ] Dart models: weather_rule.dart, weather_alert.dart
+- [ ] Verify: migration clean, rules seeded
+- [ ] Commit: `[GC-WX1] Weather-Aware Scheduling foundation — rules + alerts tables`
+
+### GC-WX2 — Weather Scanner Engine (~6h)
+
+#### Steps
+- [ ] Edge Function: weather-schedule-scanner — CRON daily 6AM: fetch 5-day forecast for all scheduled job locations via Open-Meteo (free, no API key). Evaluate rules. Create weather_alerts for at-risk jobs.
+- [ ] Open-Meteo integration: batch forecast requests by location (group nearby jobs)
+- [ ] Rule evaluation engine: match weather data against rule conditions
+- [ ] Verify: scanner creates correct alerts for test data
+- [ ] Commit: `[GC-WX2] Weather scanner engine — Open-Meteo + rule evaluation`
+
+### GC-WX3 — Weather UI + Reschedule (~8h)
+
+#### Steps
+- [ ] Schedule view overlay: weather icons on calendar dates (sun, cloud, rain, snow)
+- [ ] Alert management: acknowledge alerts, mark action (proceed/reschedule/cancel)
+- [ ] Reschedule flow: suggest alternative dates with clear weather
+- [ ] Customer notification on weather-related reschedule
+- [ ] Flutter: weather indicator on job detail screen
+- [ ] Verify: weather overlay renders, reschedule flow works
+- [ ] Commit: `[GC-WX3] Weather UI overlay + alert management + reschedule flow`
+
+---
+
+## ══════════════════════════════════════════════════════════
+## PHASE U-TT — TRADE-SPECIFIC TOOLS (during Phase U)
+## Spec: `Expansion/51_TRADE_SPECIFIC_TOOLS.md`
+## ══════════════════════════════════════════════════════════
+## ~109 hours | 1 shared table | 19 tools across 7 trades
+
+### U-TT1 — Trade Tools Infrastructure (~12h)
+
+#### Steps
+- [ ] Migration: CREATE trade_tool_records — id, company_id, job_id, property_id, customer_id, tool_type (discriminator), trade_type, record_data (JSONB), document_path, status, signed_by, signature_path, submitted_to + RLS
+- [ ] PDF generation engine: pdf-lib based, company branding, auto-fill from record_data, digital signature field
+- [ ] Flutter base screen: TradeToolFormScreen — dynamic form renderer based on tool_type schema
+- [ ] Web base component: TradeToolForm — same dynamic form for CRM
+- [ ] Dart model: trade_tool_record.dart (with typed accessors per tool_type)
+- [ ] Repository: trade_tool_repository.dart
+- [ ] Hook: use-trade-tools.ts
+- [ ] PDF templates: base layout with company header, job info, content area, signature footer
+- [ ] Verify: base form renders, PDF generates from test data
+- [ ] Commit: `[U-TT1] Trade Tools infrastructure — shared table, PDF engine, base form`
+
+### U-TT2 — HVAC Tools (~22h)
+
+#### Steps
+- [ ] Refrigerant Tracking Log form + PDF template (EPA-compliant format)
+- [ ] Auto-fill tech EPA 608 cert number from certifications table
+- [ ] Equipment Matching Tool form + AHRI directory link
+- [ ] Manual J Worksheet form (room-by-room heat gain/loss)
+- [ ] Manual J calculation engine (simplified residential ACCA method)
+- [ ] Manual J PDF output (inspector-expected format)
+- [ ] Disclaimer on Manual J: "For reference — verify with ACCA-approved software for complex designs"
+- [ ] Verify: all 3 HVAC tools generate correct PDFs
+- [ ] Commit: `[U-TT2] HVAC Trade Tools — refrigerant log, equipment match, Manual J`
+
+### U-TT3 — Plumbing + Electrical Tools (~28h)
+
+#### Steps
+- [ ] Backflow Prevention Test Tracker form + PDF (water authority format)
+- [ ] Auto-schedule: backflow creates annual recurring reminder per device per property
+- [ ] Gas Pressure Test Log form + PDF (inspector format)
+- [ ] Water Heater Sizing Worksheet form + calculation + PDF
+- [ ] Panel Schedule Generator form (circuit entry UI) + PDF (two-column panel layout)
+- [ ] Panel Schedule PDF: match physical panel layout (odd left, even right)
+- [ ] Service Upgrade Worksheet form + load calculation + utility checklist + PDF
+- [ ] Verify: all 5 tools generate correct PDFs, backflow scheduling works
+- [ ] Commit: `[U-TT3] Plumbing + Electrical Trade Tools — backflow, gas test, water heater, panel schedule, service upgrade`
+
+### U-TT4 — Roofing + GC Tools (~28h)
+
+#### Steps
+- [ ] Ventilation Calculator form + calculation + PDF
+- [ ] Waste Factor Calculator form + by-roof-type presets + PDF
+- [ ] AIA Billing (G702/G703) form + PDF (standard AIA format with schedule of values)
+- [ ] AIA: auto-calculate current payment due, retainage, balance to finish
+- [ ] Punch List Manager form (room-by-room, photo per item, assignee, status tracking)
+- [ ] Punch List: track completion percentage, generate summary report PDF
+- [ ] RFI Tracker form + log view + PDF
+- [ ] Bid Leveling Sheet form (add bidders, compare, scope-adjust) + PDF
+- [ ] Verify: all 6 tools generate correct PDFs, AIA calculations accurate
+- [ ] Commit: `[U-TT4] Roofing + GC Trade Tools — ventilation, waste factor, AIA billing, punch list, RFI, bid leveling`
+
+### U-TT5 — Restoration + Painting + Landscaping (~27h)
+
+#### Steps
+- [ ] Air Mover Placement Calculator form + IICRC S500 rules + placement diagram + PDF
+- [ ] Category/Class Documentation form + photo evidence per room + PDF (insurance-ready)
+- [ ] Surface Area Calculator form (room-by-room, deductions) + PDF with totals
+- [ ] VOC Compliance Checker form + jurisdiction rules + PDF
+- [ ] Irrigation Zone Designer form + zone/head/pipe calculations + PDF
+- [ ] Verify: all 5 tools generate correct PDFs, IICRC calculations match S500 standards
+- [ ] Commit: `[U-TT5] Restoration + Painting + Landscaping Trade Tools`
+
+### U-TT6 — Trade Tools Integration Testing (~8h)
+
+#### Steps
+- [ ] Test: all 19 tools across Flutter + Web CRM
+- [ ] Test: PDFs open correctly in all major PDF viewers
+- [ ] Test: trade_tool_records saves/loads correctly per tool_type
+- [ ] Test: PDF branding uses correct company logo + info
+- [ ] Test: digital signature captures and embeds in PDF
+- [ ] Test: tools accessible from job detail screen (filtered by trade)
+- [ ] Polish: PDF templates match industry-standard formatting
+- [ ] Verify: all builds clean across all 5 apps
+- [ ] Commit: `[U-TT6] Trade Tools integration testing + PDF polish`
+
+---
+
+## ══════════════════════════════════════════════════════════
+## PHASE P EXTENSION — PROPERTY DIGITAL TWIN
+## Spec: `Expansion/49_BUSINESS_INTELLIGENCE_ENGINES.md` (Engine 4)
+## ══════════════════════════════════════════════════════════
+## Added to Phase P: ~28 hours
+
+### P-DT1 — Digital Twin Tables (~8h)
+
+#### Steps
+- [ ] Migration: ALTER properties — add property_intelligence_score, year_built, square_footage, lot_size_sqft, construction_type, electrical_service_amps, electrical_panel_type, plumbing_type, hvac_system_type, roof_type, roof_age_years, known_issues (JSONB), data_sources
+- [ ] Migration: ALTER home_service_history — add performed_by_company_name, trade_type, work_summary, is_shared
+- [ ] Migration: CREATE property_intelligence_layers — id, property_id FK, trade_type, layer_data (JSONB), source_job_id, source_company_id, contributed_by, verified + RLS
+- [ ] Migration: CREATE property_data_sharing — id, property_id, homeowner_user_id, shared_with_company_id, share_level + RLS
+- [ ] Migration: CREATE property_age_alerts — id, alert_rule_name, condition_json, alert_message, severity, trade_type, recommendation + RLS (public read)
+- [ ] Seed: property age alerts (aluminum wiring pre-1978, polybutylene pipe 1978-1995, cast iron drain pre-1970, etc.)
+- [ ] Dart models: property_intelligence_layer.dart, property_data_sharing.dart, property_age_alert.dart
+- [ ] Verify: migration clean, age alerts seeded
+- [ ] Commit: `[P-DT1] Property Digital Twin foundation — intelligence layers + age alerts`
+
+### P-DT2 — Intelligence Layer Contribution (~8h)
+
+#### Steps
+- [ ] Edge Function: property-intelligence-score — recalculate score when new data added (count of layers, completeness of fields)
+- [ ] Flutter: job completion → "Add Property Intelligence" optional step (what did you learn about this property?)
+- [ ] Flutter: property detail screen enhancement — show trade layers, age alerts, intelligence score
+- [ ] Web CRM: property detail shows all intelligence layers, contributed by which company, verified status
+- [ ] Verify: intelligence score updates on contribution
+- [ ] Commit: `[P-DT2] Intelligence layer contribution flow + property detail enhancement`
+
+### P-DT3 — Data Sharing + Age Alerts (~8h)
+
+#### Steps
+- [ ] Client Portal: homeowner manages data sharing preferences (who can see their property data)
+- [ ] Client Portal: property intelligence view — all known data about their property, layers, history
+- [ ] Age alert system: when opening a property record, check property facts against alert rules, display warnings
+- [ ] Example: "This property was built in 1975 — may have aluminum wiring. Inspect before quoting electrical work."
+- [ ] Verify: sharing permissions enforced in RLS, age alerts display correctly
+- [ ] Commit: `[P-DT3] Property data sharing + age alert system`
+
+### P-DT4 — Digital Twin Testing (~4h)
+
+#### Steps
+- [ ] Test: multiple companies can contribute layers to same property
+- [ ] Test: sharing permissions work (homeowner controls access)
+- [ ] Test: intelligence score increases with more data
+- [ ] Test: age alerts trigger correctly for test properties
+- [ ] Test: property detail shows combined intelligence from all sources
+- [ ] Verify: all builds clean
+- [ ] Commit: `[P-DT4] Property Digital Twin testing`

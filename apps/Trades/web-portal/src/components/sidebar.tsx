@@ -65,11 +65,13 @@ import {
   Mail,
   Truck,
   GraduationCap,
+  FileBarChart,
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { ZMark } from '@/components/z-console/z-mark';
 import { PermissionGate, PERMISSIONS } from '@/components/permission-gate';
 import { cn } from '@/lib/utils';
+import { useCompanyFeatures } from '@/lib/hooks/use-tpa-programs';
 import type { User } from '@supabase/supabase-js';
 
 interface NavItem {
@@ -84,6 +86,7 @@ interface NavGroup {
   key: string;
   railIcon: any | null; // null = special rendering (ZMark)
   items: NavItem[];
+  featureFlag?: string; // company.features key — group hidden when flag is false/missing
 }
 
 const navigationGroups: NavGroup[] = [
@@ -140,6 +143,18 @@ const navigationGroups: NavGroup[] = [
       { name: 'Drying Logs', href: '/dashboard/drying-logs', icon: Wind },
       { name: 'Site Surveys', href: '/dashboard/site-surveys', icon: MapPin },
       { name: 'Sketch + Bid', href: '/dashboard/sketch-bid', icon: PenTool },
+    ],
+  },
+  {
+    label: 'INSURANCE PROGRAMS',
+    key: 'tpa',
+    railIcon: Shield,
+    featureFlag: 'tpa_enabled',
+    items: [
+      { name: 'TPA Dashboard', href: '/dashboard/tpa', icon: BarChart3 },
+      { name: 'Programs', href: '/dashboard/settings/tpa-programs', icon: Shield },
+      { name: 'Assignments', href: '/dashboard/tpa/assignments', icon: ClipboardList },
+      { name: 'Scorecards', href: '/dashboard/tpa/scorecards', icon: FileBarChart },
     ],
   },
   {
@@ -246,6 +261,13 @@ export function Sidebar({
   const [mobileGroups, setMobileGroups] = useState<Record<string, boolean>>(DEFAULT_MOBILE_OPEN);
   const railRef = useRef<HTMLElement>(null);
   const detailRef = useRef<HTMLElement>(null);
+  const { features } = useCompanyFeatures();
+
+  // Filter navigation groups based on feature flags
+  const visibleGroups = navigationGroups.filter(group => {
+    if (!group.featureFlag) return true;
+    return features[group.featureFlag] === true;
+  });
 
   const initials = user?.email
     ? user.email.substring(0, 2).toUpperCase()
@@ -302,7 +324,7 @@ export function Sidebar({
   const groupHasActiveChild = (group: NavGroup) =>
     group.items.some(isItemActive);
 
-  const currentGroup = navigationGroups.find(g => g.key === activeGroup) || null;
+  const currentGroup = visibleGroups.find(g => g.key === activeGroup) || null;
 
   // ── Render helpers ──
 
@@ -427,7 +449,7 @@ export function Sidebar({
           </div>
 
           {/* Collapsible groups for mobile */}
-          {navigationGroups.map(group => {
+          {visibleGroups.map(group => {
             const isOpen = mobileGroups[group.key] ?? false;
             const hasActive = groupHasActiveChild(group);
 
@@ -529,7 +551,7 @@ export function Sidebar({
 
         {/* Group icons */}
         <div className="flex-1 py-1.5 px-1.5 space-y-0.5 overflow-y-auto scrollbar-hide">
-          {navigationGroups.map(group => {
+          {visibleGroups.map(group => {
             const isOpen = activeGroup === group.key;
             const hasActive = groupHasActiveChild(group);
             const RailIcon = group.railIcon;

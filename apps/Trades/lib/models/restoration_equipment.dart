@@ -10,6 +10,7 @@ enum EquipmentType {
   thermalCamera,
   hydroxylGenerator,
   negativeAirMachine,
+  injectidry,
   other;
 
   String get dbValue {
@@ -30,6 +31,8 @@ enum EquipmentType {
         return 'hydroxyl_generator';
       case EquipmentType.negativeAirMachine:
         return 'negative_air_machine';
+      case EquipmentType.injectidry:
+        return 'injectidry';
       case EquipmentType.other:
         return 'other';
     }
@@ -53,6 +56,8 @@ enum EquipmentType {
         return 'Hydroxyl Generator';
       case EquipmentType.negativeAirMachine:
         return 'Negative Air Machine';
+      case EquipmentType.injectidry:
+        return 'Injectidry';
       case EquipmentType.other:
         return 'Other';
     }
@@ -77,6 +82,8 @@ enum EquipmentType {
         return EquipmentType.hydroxylGenerator;
       case 'negative_air_machine':
         return EquipmentType.negativeAirMachine;
+      case 'injectidry':
+        return EquipmentType.injectidry;
       case 'other':
         return EquipmentType.other;
       default:
