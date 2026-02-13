@@ -55,6 +55,7 @@ export interface Estimate {
   completedAt: string | null;
   templateId: string | null;
   propertyScanId: string | null;
+  propertyFloorPlanId: string | null;
   createdBy: string;
   createdAt: string;
   updatedAt: string;
@@ -165,6 +166,7 @@ function mapEstimate(row: Record<string, unknown>): Estimate {
     completedAt: row.completed_at as string | null,
     templateId: row.template_id as string | null,
     propertyScanId: row.property_scan_id as string | null,
+    propertyFloorPlanId: row.property_floor_plan_id as string | null,
     createdBy: (row.created_by as string) || '',
     createdAt: (row.created_at as string) || '',
     updatedAt: (row.updated_at as string) || '',
@@ -181,8 +183,8 @@ function mapArea(row: Record<string, unknown>): EstimateArea {
     lengthFt: Number(row.length_ft || 0),
     widthFt: Number(row.width_ft || 0),
     heightFt: Number(row.height_ft || 8),
-    perimeterLf: Number(row.perimeter_lf || 0),
-    floorSf: Number(row.floor_sf || 0),
+    perimeterLf: Number(row.perimeter_ft || 0),
+    floorSf: Number(row.area_sf || 0),
     wallSf: Number(row.wall_sf || 0),
     ceilingSf: Number(row.ceiling_sf || 0),
     windowCount: Number(row.window_count || 0),
@@ -312,6 +314,7 @@ export function useEstimates() {
     adjusterName?: string;
     deductible?: number;
     dateOfLoss?: string;
+    propertyFloorPlanId?: string;
   }): Promise<string | null> => {
     try {
       const supabase = getSupabase();
@@ -371,6 +374,7 @@ export function useEstimates() {
           adjuster_name: data.adjusterName || '',
           deductible: data.deductible || 0,
           date_of_loss: data.dateOfLoss || null,
+          property_floor_plan_id: data.propertyFloorPlanId || null,
         })
         .select('id')
         .single();

@@ -8856,27 +8856,27 @@ Include <content>{markdown}</content> for rendered display.
 **Goal:** Geometry-derived measurements → D8 estimate areas → suggested line items. "Generate Estimate" button on sketch editor.
 **Prereqs:** SK1 (rooms), SK4 (trade data) complete. D8 estimate engine operational.
 
-- [ ] Create `lib/services/room_measurement_calculator.dart` — Per-room calculations from FloorPlanDataV2:
+- [x] Create `lib/services/room_measurement_calculator.dart` — Per-room calculations from FloorPlanDataV2:
   - Floor SF: shoelace formula on room boundary polygon
   - Wall SF: sum(wall_length x wall_height) for boundary walls, minus door/window opening areas
   - Ceiling SF: same as floor SF (flat ceiling assumption, adjustable per room)
   - Baseboard LF: perimeter minus door widths
   - Door count + Window count: from room boundary walls
   - Paint SF: wall SF + ceiling SF (configurable: walls only, ceiling only, both)
-- [ ] Create `lib/services/estimate_area_generator.dart` — For each FloorPlanRoom: create estimate_areas row with computed measurements. Link via floor_plan_estimate_links bridge table. Sets auto_generated=true.
-- [ ] Create `lib/services/line_item_suggester.dart` — Maps measurements + trade data to estimate line items:
+- [x] Create `lib/services/estimate_area_generator.dart` — For each FloorPlanRoom: create estimate_areas row with computed measurements. Link via floor_plan_estimate_links bridge table. Sets auto_generated=true.
+- [x] Create `lib/services/line_item_suggester.dart` — Maps measurements + trade data to estimate line items:
   - Room type + trade: bathroom + plumbing → toilet, sink, shower rough-in
   - Damage layer data: Class 3 water damage → demo drywall, dry structure, replace drywall
   - Trade layer elements: 5 receptacles → 5x receptacle rough-in line items
   - Uses estimate_items table for pricing lookup
-- [ ] "Generate Estimate" button on Flutter sketch editor toolbar
-- [ ] Generate estimate flow: Creates estimates row linked to floor plan → for each room creates estimate_areas → suggests line items → opens estimate editor with pre-filled data
-- [ ] User review: Line items are suggestions — user adjusts quantities/prices before finalizing
-- [ ] Create `web-portal/src/lib/sketch-engine/measurement-calculator.ts` — TypeScript port of room measurement calculator
-- [ ] Create `web-portal/src/lib/sketch-engine/estimate-generator.ts` — TypeScript port of estimate area generator + line item suggester
-- [ ] Create `web-portal/src/components/sketch-editor/GenerateEstimateModal.tsx` — Modal: select rooms to include, select trade, preview measurements, "Generate" button → navigates to estimate editor
-- [ ] Update D8 estimate hooks to accept floor-plan-generated areas (accept property_floor_plan_id on estimate creation)
-- [ ] Verify: Draw floor plan with rooms + trade elements → "Generate Estimate" → estimate created with correct measurements per room → line items match trade elements → pricing from D8 engine → user can edit → save. Both mobile and web.
+- [x] "Generate Estimate" button on Flutter sketch editor toolbar
+- [x] Generate estimate flow: Creates estimates row linked to floor plan → for each room creates estimate_areas → suggests line items → opens estimate editor with pre-filled data
+- [x] User review: Line items are suggestions — user adjusts quantities/prices before finalizing
+- [x] Create `web-portal/src/lib/sketch-engine/measurement-calculator.ts` — TypeScript port of room measurement calculator
+- [x] Create `web-portal/src/lib/sketch-engine/estimate-generator.ts` — TypeScript port of estimate area generator + line item suggester
+- [x] Create `web-portal/src/components/sketch-editor/GenerateEstimateModal.tsx` — Modal: select rooms to include, select trade, preview measurements, "Generate" button → navigates to estimate editor
+- [x] Update D8 estimate hooks to accept floor-plan-generated areas (accept property_floor_plan_id on estimate creation)
+- [x] Verify: Draw floor plan with rooms + trade elements → "Generate Estimate" → estimate created with correct measurements per room → line items match trade elements → pricing from D8 engine → user can edit → save. Both mobile and web.
 
 ---
 
