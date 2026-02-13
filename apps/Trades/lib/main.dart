@@ -92,6 +92,9 @@ void main() async {
       // Session 23 Time Clock boxes
       await Hive.openBox<String>('time_entries');
       await Hive.openBox<String>('time_entries_sync_meta');
+      // SK7 Floor Plan offline cache
+      await Hive.openBox<String>('floor_plans_cache');
+      await Hive.openBox<String>('floor_plans_sync_meta');
 
       // Initialize exam progress tracker (CRITICAL - must be after Hive init)
       await ProgressTracker().initialize();

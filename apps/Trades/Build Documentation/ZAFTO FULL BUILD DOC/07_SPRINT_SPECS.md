@@ -8827,28 +8827,28 @@ Include <content>{markdown}</content> for rendered display.
 **Goal:** Hive-based offline cache on mobile, Supabase real-time sync, thumbnail generation, conflict resolution.
 **Prereqs:** SK1 complete. SK2+ preferred (editing works).
 
-- [ ] Create `lib/repositories/floor_plan_repository.dart` — Supabase CRUD for property_floor_plans + floor_plan_layers + floor_plan_rooms. Select with joins. Insert/update with company_id. Delete cascade.
-- [ ] Create `lib/services/floor_plan_sync_service.dart` — Offline-first sync:
+- [x] Create `lib/repositories/floor_plan_repository.dart` — Supabase CRUD for property_floor_plans + floor_plan_layers + floor_plan_rooms. Select with joins. Insert/update with company_id. Delete cascade.
+- [x] Create `lib/services/floor_plan_sync_service.dart` — Offline-first sync:
   - New Hive box: `floor_plans_cache` (register in Hive init)
   - Every edit saves to Hive immediately (zero-latency UX)
   - Background sync: ConnectivityService detects online → push pending changes
   - Sync version: increment local version on edit, send with POST
   - Conflict: if server sync_version > local → prompt user (merge or overwrite)
   - Queue pending changes while offline, flush on reconnect
-- [ ] Create `lib/services/floor_plan_thumbnail_service.dart` — Render plan to 512x512 PNG using RepaintBoundary + toImage(). Upload to `floor-plan-thumbnails` Supabase storage bucket. Update property_floor_plans.thumbnail_path.
-- [ ] Web real-time: Supabase channel subscription on `property_floor_plans` row in `use-floor-plan.ts`. On remote update → re-render canvas.
-- [ ] Web thumbnail: Konva `stage.toDataURL()` → upload to storage on save.
-- [ ] Supabase storage: Create `floor-plan-thumbnails` bucket (if not exists) with company-scoped RLS.
-- [ ] Hive box registration: Add `floor_plans_cache` to Hive initialization in app startup.
-- [ ] **S101 — Version History Snapshots:** Create `lib/services/floor_plan_snapshot_service.dart` — auto-snapshot plan_data JSONB on: (1) first edit of each session, (2) before change order applied, (3) manual "Save Version" button. Max 50 snapshots per plan (oldest auto-pruned). Debounce: no more than 1 auto-snapshot per 10 minutes.
-- [ ] **S101 — Snapshot UI (Flutter):** "History" button in sketch editor toolbar → bottom sheet showing snapshot timeline (date, label, created_by). Tap snapshot → preview (read-only render). "Restore" button → confirms → overwrites current plan_data with snapshot, creates new snapshot of current state before overwrite (safety net).
-- [ ] **S101 — Snapshot UI (Web):** History panel in sketch editor sidebar. Same timeline view. Preview renders snapshot in read-only Konva stage. Restore with confirmation.
-- [ ] **S101 — Snapshot Hook:** `web-portal/src/lib/hooks/use-floor-plan-snapshots.ts` — `{ snapshots, loading, createSnapshot, restoreSnapshot, deleteSnapshot }`. Supabase CRUD on `floor_plan_snapshots` table.
-- [ ] **S101 — Multi-Floor Selector (Flutter):** Floor switcher in sketch editor toolbar — dropdown showing floor labels ("Basement", "1st Floor", "2nd Floor", etc.). "Add Floor" button creates new `property_floor_plans` row with same property_id + incremented floor_number. Switching floors loads that floor's plan_data.
-- [ ] **S101 — Multi-Floor Selector (Web):** Floor tabs above Konva canvas. Same logic — each floor is a separate `property_floor_plans` row linked by property_id. Tab bar shows floor labels with add/remove floor controls.
-- [ ] **S101 — Photo Pin Placement (Flutter):** "Pin Photo" button in toolbar → tap location on plan → camera opens (or photo picker) → photo saved to `floor_plan_photo_pins` with x,y coords + optional room_id (auto-detected from tap location). Photo pins render as camera icons on plan. Tap pin → shows photo thumbnail + full-screen option.
-- [ ] **S101 — Photo Pin Placement (Web):** Same flow — click location → upload photo or select from existing job photos → pin placed. Renders as camera icon. Click to preview. Hook: extend `use-floor-plan.ts` with photo pin CRUD.
-- [ ] Verify: Edit on mobile (offline) → go online → plan appears on web → edit on web → mobile receives update → thumbnails generated in storage bucket → conflict scenario tested (edit same plan on both → conflict prompt appears). Version history: create plan → edit → verify snapshot auto-created → restore old version → verify plan reverts. Multi-floor: add 2nd floor → switch between floors → verify separate plan data. Photo pins: place pin → verify photo saved with correct x,y → tap to view.
+- [x] Create `lib/services/floor_plan_thumbnail_service.dart` — Render plan to 512x512 PNG using RepaintBoundary + toImage(). Upload to `floor-plan-thumbnails` Supabase storage bucket. Update property_floor_plans.thumbnail_path.
+- [x] Web real-time: Supabase channel subscription on `property_floor_plans` row in `use-floor-plan.ts`. On remote update → re-render canvas.
+- [x] Web thumbnail: Konva `stage.toDataURL()` → upload to storage on save.
+- [x] Supabase storage: Create `floor-plan-thumbnails` bucket (if not exists) with company-scoped RLS.
+- [x] Hive box registration: Add `floor_plans_cache` to Hive initialization in app startup.
+- [x] **S101 — Version History Snapshots:** Create `lib/services/floor_plan_snapshot_service.dart` — auto-snapshot plan_data JSONB on: (1) first edit of each session, (2) before change order applied, (3) manual "Save Version" button. Max 50 snapshots per plan (oldest auto-pruned). Debounce: no more than 1 auto-snapshot per 10 minutes.
+- [x] **S101 — Snapshot UI (Flutter):** "History" button in sketch editor toolbar → bottom sheet showing snapshot timeline (date, label, created_by). Tap snapshot → preview (read-only render). "Restore" button → confirms → overwrites current plan_data with snapshot, creates new snapshot of current state before overwrite (safety net).
+- [x] **S101 — Snapshot UI (Web):** History panel in sketch editor sidebar. Same timeline view. Preview renders snapshot in read-only Konva stage. Restore with confirmation.
+- [x] **S101 — Snapshot Hook:** `web-portal/src/lib/hooks/use-floor-plan-snapshots.ts` — `{ snapshots, loading, createSnapshot, restoreSnapshot, deleteSnapshot }`. Supabase CRUD on `floor_plan_snapshots` table.
+- [x] **S101 — Multi-Floor Selector (Flutter):** Floor switcher in sketch editor toolbar — dropdown showing floor labels ("Basement", "1st Floor", "2nd Floor", etc.). "Add Floor" button creates new `property_floor_plans` row with same property_id + incremented floor_number. Switching floors loads that floor's plan_data.
+- [x] **S101 — Multi-Floor Selector (Web):** Floor tabs above Konva canvas. Same logic — each floor is a separate `property_floor_plans` row linked by property_id. Tab bar shows floor labels with add/remove floor controls.
+- [x] **S101 — Photo Pin Placement (Flutter):** "Pin Photo" button in toolbar → tap location on plan → camera opens (or photo picker) → photo saved to `floor_plan_photo_pins` with x,y coords + optional room_id (auto-detected from tap location). Photo pins render as camera icons on plan. Tap pin → shows photo thumbnail + full-screen option.
+- [x] **S101 — Photo Pin Placement (Web):** Same flow — click location → upload photo or select from existing job photos → pin placed. Renders as camera icon. Click to preview. Hook: extend `use-floor-plan.ts` with photo pin CRUD.
+- [x] Verify: Edit on mobile (offline) → go online → plan appears on web → edit on web → mobile receives update → thumbnails generated in storage bucket → conflict scenario tested (edit same plan on both → conflict prompt appears). Version history: create plan → edit → verify snapshot auto-created → restore old version → verify plan reverts. Multi-floor: add 2nd floor → switch between floors → verify separate plan data. Photo pins: place pin → verify photo saved with correct x,y → tap to view.
 
 ---
 

@@ -1,7 +1,8 @@
 'use client';
 
-// ZAFTO Sketch & Bid Page — SK6 Canvas Editor + Listing
+// ZAFTO Sketch & Bid Page — SK7 Canvas Editor + Listing
 // Full Konva.js canvas editor backed by property_floor_plans table.
+// SK7: History panel, multi-floor tabs, photo pin integration.
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import dynamic from 'next/dynamic';
@@ -12,6 +13,8 @@ import {
   ArrowLeft,
   Save,
   Ruler as RulerIcon,
+  History,
+  Camera,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -22,6 +25,8 @@ import {
   useFloorPlanList,
   type FloorPlanListItem,
 } from '@/lib/hooks/use-floor-plan';
+import { useFloorPlanSnapshots } from '@/lib/hooks/use-floor-plan-snapshots';
+import { useFloorPlanPhotoPins } from '@/lib/hooks/use-floor-plan-photo-pins';
 import {
   createEmptyFloorPlan,
   createEmptySelection,
@@ -48,6 +53,7 @@ import Toolbar from '@/components/sketch-editor/Toolbar';
 import LayerPanel from '@/components/sketch-editor/LayerPanel';
 import PropertyInspector from '@/components/sketch-editor/PropertyInspector';
 import MiniMap from '@/components/sketch-editor/MiniMap';
+import HistoryPanel from '@/components/sketch-editor/HistoryPanel';
 import {
   HorizontalRuler,
   VerticalRuler,
@@ -269,6 +275,23 @@ function EditorView({
   const { plan, loading, error, saving, savePlanData } =
     useFloorPlan(planId);
 
+  // SK7: Snapshots
+  const {
+    snapshots,
+    loading: snapshotsLoading,
+    createSnapshot,
+    restoreSnapshot,
+    deleteSnapshot,
+  } = useFloorPlanSnapshots(planId);
+
+  // SK7: Photo pins
+  const {
+    pins: photoPins,
+    createPin,
+    uploadPhotoToPin,
+    getPhotoUrl,
+  } = useFloorPlanPhotoPins(planId);
+
   const [planData, setPlanData] = useState<FloorPlanData>(
     createEmptyFloorPlan(),
   );
@@ -279,10 +302,13 @@ function EditorView({
     createDefaultEditorState(),
   );
   const [showLayers, setShowLayers] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
+  const [pinMode, setPinMode] = useState(false);
   const [canvasSize, setCanvasSize] = useState({ width: 800, height: 600 });
 
   const undoManagerRef = useRef(new UndoRedoManager());
   const containerRef = useRef<HTMLDivElement>(null);
+
   // Load plan data when fetched
   useEffect(() => {
     if (plan?.planData) {
@@ -326,6 +352,7 @@ function EditorView({
   const handleToolChange = useCallback((tool: SketchTool) => {
     setEditorState((prev) => ({ ...prev, activeTool: tool }));
     setSelection(createEmptySelection());
+    setPinMode(false);
   }, []);
 
   const handleUndo = useCallback(() => {
@@ -348,6 +375,32 @@ function EditorView({
       handleEditorStateChange({ panOffset: newPanOffset });
     },
     [editorState.zoom, canvasSize, handleEditorStateChange],
+  );
+
+  // SK7: Handle snapshot restore — updates local planData
+  const handleRestoreSnapshot = useCallback(
+    async (snapshot: Parameters<typeof restoreSnapshot>[0]) => {
+      const restored = await restoreSnapshot(snapshot);
+      if (restored) {
+        setPlanData(restored);
+      }
+      return restored;
+    },
+    [restoreSnapshot],
+  );
+
+  // SK7: Photo pin placement via canvas click
+  const handleCanvasClickForPin = useCallback(
+    async (canvasX: number, canvasY: number) => {
+      if (!pinMode) return;
+      await createPin({
+        positionX: canvasX,
+        positionY: canvasY,
+        pinType: 'photo',
+      });
+      setPinMode(false);
+    },
+    [pinMode, createPin],
   );
 
   // Layer management
@@ -489,6 +542,33 @@ function EditorView({
             </>
           )}
         </div>
+
+        {/* SK7: Photo pin toggle */}
+        <button
+          onClick={() => setPinMode(!pinMode)}
+          className={`p-1.5 rounded transition-colors ${
+            pinMode
+              ? 'bg-emerald-100 text-emerald-600 border border-emerald-300'
+              : 'hover:bg-gray-100 text-gray-400'
+          }`}
+          title={pinMode ? 'Cancel pin placement' : 'Place photo pin'}
+        >
+          <Camera size={14} />
+        </button>
+
+        {/* SK7: History toggle */}
+        <button
+          onClick={() => setShowHistory(!showHistory)}
+          className={`p-1.5 rounded transition-colors ${
+            showHistory
+              ? 'bg-blue-100 text-blue-600 border border-blue-300'
+              : 'hover:bg-gray-100 text-gray-400'
+          }`}
+          title="Version history"
+        >
+          <History size={14} />
+        </button>
+
         {/* Unit toggle */}
         <button
           onClick={() =>
@@ -507,8 +587,17 @@ function EditorView({
         <div className="text-xs text-gray-400">
           {planData.walls.length}W {planData.doors.length}D{' '}
           {planData.windows.length}Wi {planData.rooms.length}R
+          {photoPins.length > 0 && <> {photoPins.length}P</>}
         </div>
       </div>
+
+      {/* Pin mode indicator */}
+      {pinMode && (
+        <div className="bg-emerald-50 border-b border-emerald-200 px-3 py-1.5 text-xs text-emerald-700 flex items-center gap-2">
+          <Camera size={12} />
+          Click on the canvas to place a photo pin. Press Escape to cancel.
+        </div>
+      )}
 
       {/* Canvas area with rulers */}
       <div className="flex-1 flex flex-col overflow-hidden">
@@ -584,8 +673,26 @@ function EditorView({
               </div>
             )}
 
+            {/* SK7: History panel (right, below layers) */}
+            {showHistory && (
+              <div
+                className="absolute right-3 z-10"
+                style={{ top: showLayers ? 280 : 12 }}
+              >
+                <HistoryPanel
+                  snapshots={snapshots}
+                  loading={snapshotsLoading}
+                  currentPlanData={planData}
+                  onCreateSnapshot={createSnapshot}
+                  onRestoreSnapshot={handleRestoreSnapshot}
+                  onDeleteSnapshot={deleteSnapshot}
+                  onClose={() => setShowHistory(false)}
+                />
+              </div>
+            )}
+
             {/* Property inspector */}
-            {selection.selectedId && (
+            {selection.selectedId && !showHistory && (
               <div className="absolute top-3 right-3 z-10" style={{ top: showLayers ? 280 : 12 }}>
                 <PropertyInspector
                   planData={planData}
@@ -615,6 +722,16 @@ function EditorView({
                 onNavigate={handleMiniMapNavigate}
               />
             </div>
+
+            {/* Photo pin count badge (bottom-left) */}
+            {photoPins.length > 0 && (
+              <div className="absolute bottom-3 left-3 z-10 bg-white/90 backdrop-blur border border-gray-200 rounded-lg px-2.5 py-1.5 shadow-sm">
+                <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                  <Camera size={12} className="text-emerald-500" />
+                  <span>{photoPins.length} photo pin{photoPins.length !== 1 ? 's' : ''}</span>
+                </div>
+              </div>
+            )}
 
             {/* Canvas */}
             <SketchCanvas
