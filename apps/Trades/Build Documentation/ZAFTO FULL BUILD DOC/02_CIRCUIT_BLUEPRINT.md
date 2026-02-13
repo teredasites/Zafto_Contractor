@@ -678,10 +678,14 @@ Tech opens app -> Taps "Field Tools"
 - [ ] T1-T10: Deploy migrations + EFs (npx supabase db push)
 - Spec: `Expansion/39_TPA_MODULE_SPEC.md`
 
-### Phase P: Recon/Property Intelligence -- SPEC'D (S93, expanded S97)
-- [ ] P1-P10: 11 tables, 6 Edge Functions, ~96 hours. Lead scoring, batch area scanning, storm intelligence, supplement checklist, multi-structure detection, confidence scoring. Builds after Phase T.
+### Phase P: Recon/Property Intelligence -- COMPLETE (S105)
+- [x] P1-P10: 11 tables, 7 Edge Functions. DONE. property_scans, roof_measurements, roof_facets, property_features, property_structures, parcel_boundaries, wall_measurements, trade_bid_data, property_lead_scores, area_scans, scan_history + company_feature_flags, scan_cache, api_cost_log, api_rate_limits.
+- [x] 7 EFs: recon-property-lookup, recon-roof-calculator, recon-trade-estimator, recon-lead-score, recon-area-scan, recon-material-order (GATED), recon-storm-assess
+- [x] 5 CRM routes: /dashboard/recon, /dashboard/recon/[id] (5 tabs: Roof, Walls, Trades, Solar, Storm), /dashboard/recon/area-scans (list + new + detail)
+- [x] 1 ops route: /dashboard/api-costs. CRM hooks: use-property-scan, use-area-scan, use-storm-assess. Team/Client hooks: use-property-scan
+- [x] Flutter: property_scan.dart + repo + providers + 2 screens (scan + verification). 2 migrations.
 - Spec: `Expansion/40_PROPERTY_INTELLIGENCE_SPEC.md`
-- API keys needed: GOOGLE_SOLAR_API_KEY, ATTOM_API_KEY, REGRID_API_KEY
+- API keys: GOOGLE_SOLAR_API_KEY configured. ATTOM_API_KEY + REGRID_API_KEY + UNWRANGLE_API_KEY GATED (post-revenue).
 
 ### Phase U: Unification & Feature Completion -- PLANNED (S96)
 - [ ] U1-U9: ~120 hours, 9 sprints. Portal unification (merge team+client into web-portal at zafto.cloud), Supabase-style nav redesign, permission engine, Ledger completion, dashboard restoration, PDF/email/dead buttons, payment flow, cross-system metrics, polish. Builds after Phase SK, before Phase G.

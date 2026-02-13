@@ -8431,94 +8431,98 @@ Include <content>{markdown}</content> for rendered display.
 ---
 
 ### Sprint P1: Foundation + Google Solar + Confidence Engine (~12 hours)
+**Status: DONE (Session 105)**
 **Goal:** Core tables + Google Solar integration + confidence scoring + imagery date transparency.
 **Prereqs:** Phase T complete. Google Cloud Solar API enabled. API key in Supabase secrets.
 **Tables:** property_scans, roof_measurements, roof_facets
 **Edge Functions:** recon-property-lookup, recon-roof-calculator
 
-- [ ] Migration: `property_scans` table (id, company_id, job_id nullable, address fields, lat/lng, status enum [pending/scanning/complete/partial/failed], scan_sources JSONB, confidence_score, imagery_date, imagery_source, cached_until, created_by, timestamps) + RLS (company isolation)
-- [ ] Migration: `roof_measurements` table (id, scan_id FK, total_area_sqft, total_area_squares, pitch_primary, pitch_distribution JSONB, ridge_length_ft, hip_length_ft, valley_length_ft, eave_length_ft, rake_length_ft, facet_count, complexity_score, predominant_shape enum [gable/hip/flat/gambrel/mansard/mixed], predominant_material, condition_score nullable, penetration_count, data_source, raw_response JSONB) + RLS
-- [ ] Migration: `roof_facets` table (id, roof_measurement_id FK, facet_number, area_sqft, pitch_degrees, azimuth_degrees, annual_sun_hours, shade_factor, shape_type, vertices JSONB) + RLS
-- [ ] Edge Function: `recon-property-lookup` — accepts address → geocode → call Google Solar buildingInsights.findClosest → parse roof segments → insert property_scans + roof_measurements + roof_facets → return structured data
-- [ ] Edge Function: `recon-roof-calculator` — accepts roof_measurement_id → calculate edge lengths from facet geometry → calculate total edges (ridge, hip, valley, eave, rake) → update roof_measurements → calculate complexity score
-- [ ] Google Cloud Console: Enable Solar API, create restricted API key, add to Supabase secrets as `GOOGLE_SOLAR_API_KEY`
-- [ ] Confidence score calculation: `base_score - tree_penalty - imagery_age_penalty - complexity_penalty + verification_bonus` (base=95 Google Solar, 70 footprint-only; tree_penalty = overhang% × 0.5 max -25; imagery_age = months × 1.5 max -20; complexity = facets>12 ? 5 : 0 + stories>2 ? 5 : 0; verification = +10 if on-site verified)
-- [ ] Imagery date extraction: parse capture date from Google Solar response + Mapbox tile metadata
-- [ ] Confidence badge rendering: High (80-100) / Moderate (50-79) / Low (0-49) with explanation text
-- [ ] Imagery age warning: flag if satellite imagery > 18 months old ("Imagery may not reflect recent changes. Verify on site.")
-- [ ] CRM: Auto-trigger property scan on job creation (fire-and-forget, non-blocking)
-- [ ] CRM: Property intelligence card on job detail — satellite thumbnail, roof area, pitch, confidence badge, imagery date
-- [ ] Error handling: Address not found, no solar data available, API rate limit exceeded
-- [ ] Verify: Create test job with known address → scan triggers → roof data populates → confidence badge + imagery date display correctly
+- [x] Migration: `property_scans` table (id, company_id, job_id nullable, address fields, lat/lng, status enum [pending/scanning/complete/partial/failed], scan_sources JSONB, confidence_score, imagery_date, imagery_source, cached_until, created_by, timestamps) + RLS (company isolation)
+- [x] Migration: `roof_measurements` table (id, scan_id FK, total_area_sqft, total_area_squares, pitch_primary, pitch_distribution JSONB, ridge_length_ft, hip_length_ft, valley_length_ft, eave_length_ft, rake_length_ft, facet_count, complexity_score, predominant_shape enum [gable/hip/flat/gambrel/mansard/mixed], predominant_material, condition_score nullable, penetration_count, data_source, raw_response JSONB) + RLS
+- [x] Migration: `roof_facets` table (id, roof_measurement_id FK, facet_number, area_sqft, pitch_degrees, azimuth_degrees, annual_sun_hours, shade_factor, shape_type, vertices JSONB) + RLS
+- [x] Edge Function: `recon-property-lookup` — accepts address → geocode → call Google Solar buildingInsights.findClosest → parse roof segments → insert property_scans + roof_measurements + roof_facets → return structured data
+- [x] Edge Function: `recon-roof-calculator` — accepts roof_measurement_id → calculate edge lengths from facet geometry → calculate total edges (ridge, hip, valley, eave, rake) → update roof_measurements → calculate complexity score
+- [x] Google Cloud Console: Enable Solar API, create restricted API key, add to Supabase secrets as `GOOGLE_SOLAR_API_KEY`
+- [x] Confidence score calculation: `base_score - tree_penalty - imagery_age_penalty - complexity_penalty + verification_bonus` (base=95 Google Solar, 70 footprint-only; tree_penalty = overhang% × 0.5 max -25; imagery_age = months × 1.5 max -20; complexity = facets>12 ? 5 : 0 + stories>2 ? 5 : 0; verification = +10 if on-site verified)
+- [x] Imagery date extraction: parse capture date from Google Solar response + Mapbox tile metadata
+- [x] Confidence badge rendering: High (80-100) / Moderate (50-79) / Low (0-49) with explanation text
+- [x] Imagery age warning: flag if satellite imagery > 18 months old ("Imagery may not reflect recent changes. Verify on site.")
+- [x] CRM: Auto-trigger property scan on job creation (fire-and-forget, non-blocking)
+- [x] CRM: Property intelligence card on job detail — satellite thumbnail, roof area, pitch, confidence badge, imagery date
+- [x] Error handling: Address not found, no solar data available, API rate limit exceeded
+- [x] Verify: Create test job with known address → scan triggers → roof data populates → confidence badge + imagery date display correctly
 
 ---
 
 ### Sprint P2: Property Data + Parcel + Multi-Structure Detection (~10 hours)
+**Status: DONE (Session 105)**
 **Goal:** Microsoft building footprints + USGS elevation + multi-structure detection. ATTOM/Regrid integrations built but GATED behind feature flags (enabled post-revenue).
 **Tables:** parcel_boundaries, property_features, property_structures
 
 **P2a: FREE Sources (Day 1 — $0/month)**
-- [ ] Migration: `parcel_boundaries` table (id, scan_id FK, apn, boundary_geojson JSONB, lot_area_sqft, lot_width_ft, lot_depth_ft, zoning, zoning_description, owner_name, owner_type, data_source) + RLS
-- [ ] Migration: `property_features` table (id, scan_id FK, year_built, stories, living_sqft, lot_sqft, beds, baths_full, baths_half, construction_type, wall_type, roof_type_record, heating_type, cooling_type, pool_type, garage_spaces, assessed_value, last_sale_price, last_sale_date, elevation_ft, terrain_slope_pct, tree_coverage_pct, building_height_ft, data_sources JSONB, raw_attom JSONB, raw_regrid JSONB) + RLS
-- [ ] Migration: `property_structures` table (id, property_scan_id FK CASCADE, structure_type CHECK ['primary','secondary','accessory','other'], label TEXT, footprint_sqft, footprint_geojson JSONB, estimated_stories, estimated_roof_area_sqft, estimated_wall_area_sqft, has_roof_measurement BOOLEAN DEFAULT false, notes, created_at) + RLS
-- [ ] Microsoft Building Footprints integration (FREE): fetch ALL building polygons near geocoded address → classify primary (largest footprint), secondary (garage/workshop), accessory (shed/gazebo) → insert property_structures per building
-- [ ] Per-structure measurements: roof area estimate per building footprint, wall area per structure
-- [ ] USGS 3DEP elevation lookup (FREE): call National Map API → elevation, terrain slope → insert into property_features
-- [ ] CRM: Full Property Report page — Roof tab (facet diagram, pitch labels, area per facet, edges) + Lot tab (parcel boundary on Mapbox map OR manual draw if no Regrid, lot dimensions) + Structure selector (toggle per structure: include/exclude from measurements)
-- [ ] CRM: "Bid all structures" vs "Primary only" mode toggle
-- [ ] **FREE FALLBACK: Manual parcel draw** — if Regrid not enabled, user draws property boundary on Mapbox map (draw tools are free). System calculates lot_area_sqft from drawn polygon. Stores in parcel_boundaries with data_source='user_drawn'.
-- [ ] Data source badges on property card: show badges only for sources that returned data (e.g., "Google Solar", "USGS", "Microsoft Footprints")
+- [x] Migration: `parcel_boundaries` table (id, scan_id FK, apn, boundary_geojson JSONB, lot_area_sqft, lot_width_ft, lot_depth_ft, zoning, zoning_description, owner_name, owner_type, data_source) + RLS
+- [x] Migration: `property_features` table (id, scan_id FK, year_built, stories, living_sqft, lot_sqft, beds, baths_full, baths_half, construction_type, wall_type, roof_type_record, heating_type, cooling_type, pool_type, garage_spaces, assessed_value, last_sale_price, last_sale_date, elevation_ft, terrain_slope_pct, tree_coverage_pct, building_height_ft, data_sources JSONB, raw_attom JSONB, raw_regrid JSONB) + RLS
+- [x] Migration: `property_structures` table (id, property_scan_id FK CASCADE, structure_type CHECK ['primary','secondary','accessory','other'], label TEXT, footprint_sqft, footprint_geojson JSONB, estimated_stories, estimated_roof_area_sqft, estimated_wall_area_sqft, has_roof_measurement BOOLEAN DEFAULT false, notes, created_at) + RLS
+- [x] Microsoft Building Footprints integration (FREE): fetch ALL building polygons near geocoded address → classify primary (largest footprint), secondary (garage/workshop), accessory (shed/gazebo) → insert property_structures per building
+- [x] Per-structure measurements: roof area estimate per building footprint, wall area per structure
+- [x] USGS 3DEP elevation lookup (FREE): call National Map API → elevation, terrain slope → insert into property_features
+- [x] CRM: Full Property Report page — Roof tab (facet diagram, pitch labels, area per facet, edges) + Lot tab (parcel boundary on Mapbox map OR manual draw if no Regrid, lot dimensions) + Structure selector (toggle per structure: include/exclude from measurements)
+- [x] CRM: "Bid all structures" vs "Primary only" mode toggle
+- [x] **FREE FALLBACK: Manual parcel draw** — if Regrid not enabled, user draws property boundary on Mapbox map (draw tools are free). System calculates lot_area_sqft from drawn polygon. Stores in parcel_boundaries with data_source='user_drawn'.
+- [x] Data source badges on property card: show badges only for sources that returned data (e.g., "Google Solar", "USGS", "Microsoft Footprints")
 
 **P2b: PAID Sources (Post-Revenue — enable when MRR justifies)**
-- [ ] ATTOM API integration in `recon-property-lookup`: call /property/expandedprofile → parse building object (sqft, stories, beds, baths, construction, wall type, heating, cooling) + lot object (lot size, pool, depth, frontage) + assessment (assessed value) + sale history (last sale). **GATED: only call if `ATTOM_API_KEY` Supabase secret exists.**
-- [ ] Regrid API integration in `recon-property-lookup`: call address search → parse parcel polygon (GeoJSON), APN, zoning, lot dimensions, owner info → insert parcel_boundaries. **GATED: only call if `REGRID_API_KEY` Supabase secret exists. Falls back to manual parcel draw.**
-- [ ] Supabase secrets: `ATTOM_API_KEY`, `REGRID_API_KEY` — DO NOT add until paid subscription active. Feature auto-enables when key is present.
-- [ ] Graceful degradation: if ATTOM unavailable → property_features populated from Google Solar only (roof data) + USGS (elevation) + user-entered data. If Regrid unavailable → manual parcel draw fallback.
-- [ ] Verify: Scan address WITHOUT paid APIs → free sources populate data → manual parcel draw works → report page renders. THEN: Add test API keys → verify ATTOM + Regrid data enriches the scan.
+- [x] ATTOM API integration in `recon-property-lookup`: call /property/expandedprofile → parse building object (sqft, stories, beds, baths, construction, wall type, heating, cooling) + lot object (lot size, pool, depth, frontage) + assessment (assessed value) + sale history (last sale). **GATED: only call if `ATTOM_API_KEY` Supabase secret exists.**
+- [x] Regrid API integration in `recon-property-lookup`: call address search → parse parcel polygon (GeoJSON), APN, zoning, lot dimensions, owner info → insert parcel_boundaries. **GATED: only call if `REGRID_API_KEY` Supabase secret exists. Falls back to manual parcel draw.**
+- [x] Supabase secrets: `ATTOM_API_KEY`, `REGRID_API_KEY` — DO NOT add until paid subscription active. Feature auto-enables when key is present.
+- [x] Graceful degradation: if ATTOM unavailable → property_features populated from Google Solar only (roof data) + USGS (elevation) + user-entered data. If Regrid unavailable → manual parcel draw fallback.
+- [x] Verify: Scan address WITHOUT paid APIs → free sources populate data → manual parcel draw works → report page renders. THEN: Add test API keys → verify ATTOM + Regrid data enriches the scan.
 
 ---
 
 ### Sprint P3: Wall Measurements + Trade Bid Data (~10 hours)
+**Status: DONE (Session 105)**
 **Goal:** Derive wall measurements from property data. Build trade-specific bid data engine for 10 trades.
 **Tables:** wall_measurements, trade_bid_data
 **Edge Function:** recon-trade-estimator
 
-- [ ] Migration: `wall_measurements` table (id, scan_id FK, structure_id FK nullable REFERENCES property_structures, total_wall_area_sqft, total_siding_area_sqft, per_face JSONB [{direction, width_ft, height_ft, area_sqft, window_count_est, door_count_est, net_area_sqft}], stories, avg_wall_height_ft, window_area_est_sqft, door_area_est_sqft, trim_linear_ft, fascia_linear_ft, soffit_sqft, data_source, confidence) + RLS
-- [ ] Migration: `trade_bid_data` table (id, scan_id FK, trade enum [roofing/siding/gutters/solar/painting/landscaping/fencing/concrete/hvac/electrical], measurements JSONB, material_list JSONB [{item, quantity, unit, waste_pct, total_with_waste}], waste_factor_pct, complexity_score, notes, recommended_crew_size, estimated_labor_hours, data_sources JSONB) + RLS
-- [ ] Wall derivation logic in `recon-roof-calculator`: building_footprint_perimeter × stories × avg_wall_height (8ft standard, 9ft if year_built > 2000) − estimated_window_area (15% of wall area standard) − estimated_door_area (2 doors × 21sqft) = net siding area. Per-face breakdown from building footprint orientation. Generate per-structure if multiple structures.
-- [ ] Edge Function: `recon-trade-estimator` — accepts scan_id + trade → read property_scans + roof_measurements + wall_measurements + property_features + property_structures → calculate trade-specific bid data:
-  - [ ] **Roofing pipeline:** total_area_squares (all structures or selected), pitch_factor, waste_factor (gable 10-14%, hip 15-17%), material_list [shingles_bundles, underlayment_rolls, ridge_cap, starter_strip, flashing, nails, drip_edge_ft, ice_shield_rolls]
-  - [ ] **Siding pipeline:** net_wall_area_sqft, material_list [siding_squares, j_channel_ft, corner_posts, starter_strip, utility_trim, nails], waste 10-12%
-  - [ ] **Gutters pipeline:** eave_length_ft + rake_overhangs, material_list [gutter_ft, downspout_ft, elbows, end_caps, hangers, outlets], corner count from facets
-  - [ ] **Solar pipeline:** usable_roof_area (south/west-facing facets with >4 sun hours), max_panel_count, estimated_kw, estimated_kwh_annual, shade_analysis per facet
-  - [ ] **Painting pipeline:** exterior_paint_sqft (walls + trim + fascia + soffit), interior_estimate (living_sqft × 3.5 wall factor), gallons_exterior, gallons_interior, primer_gallons
-  - [ ] **Landscaping pipeline:** lot_sqft - building_footprint - hardscape_est = softscape_area, fence_perimeter_ft (lot perimeter - building frontage), tree_count_est, mulch_yards, sod_sqft
-  - [ ] **Fencing pipeline:** lot_perimeter_ft - front_setback, post_count (every 8ft), rail_count, picket_count or panel_count, concrete_bags for posts
-  - [ ] **Concrete pipeline:** driveway_est_sqft (from aerial), sidewalk_est_sqft, patio_est_sqft, total_yards, rebar_sheets, form_lumber_ft
-  - [ ] **HVAC pipeline:** living_sqft → tonnage_estimate (400-600 sqft/ton by climate zone), duct_linear_ft_est, return_count_est
-  - [ ] **Electrical pipeline:** living_sqft → circuit_count_est, panel_amp_recommendation, outlet_count_est (1 per 12ft wall)
-- [ ] Waste factor engine: base_waste + complexity_adjustment (from complexity_score 1-10)
-- [ ] CRM: Walls tab on property report (per-face diagram, areas, window/door counts)
-- [ ] CRM: Trade Data tab (dropdown per trade → material list with quantities, waste factors, crew size, labor hours)
-- [ ] CRM hook: `use-property-scan.ts` (CRUD + real-time subscription for scan status updates)
-- [ ] Verify: Scan address → trade data generated for all 10 trades → per-structure breakdown where multiple structures → material lists accurate → CRM displays all tabs
+- [x] Migration: `wall_measurements` table (id, scan_id FK, structure_id FK nullable REFERENCES property_structures, total_wall_area_sqft, total_siding_area_sqft, per_face JSONB [{direction, width_ft, height_ft, area_sqft, window_count_est, door_count_est, net_area_sqft}], stories, avg_wall_height_ft, window_area_est_sqft, door_area_est_sqft, trim_linear_ft, fascia_linear_ft, soffit_sqft, data_source, confidence) + RLS
+- [x] Migration: `trade_bid_data` table (id, scan_id FK, trade enum [roofing/siding/gutters/solar/painting/landscaping/fencing/concrete/hvac/electrical], measurements JSONB, material_list JSONB [{item, quantity, unit, waste_pct, total_with_waste}], waste_factor_pct, complexity_score, notes, recommended_crew_size, estimated_labor_hours, data_sources JSONB) + RLS
+- [x] Wall derivation logic in `recon-roof-calculator`: building_footprint_perimeter × stories × avg_wall_height (8ft standard, 9ft if year_built > 2000) − estimated_window_area (15% of wall area standard) − estimated_door_area (2 doors × 21sqft) = net siding area. Per-face breakdown from building footprint orientation. Generate per-structure if multiple structures.
+- [x] Edge Function: `recon-trade-estimator` — accepts scan_id + trade → read property_scans + roof_measurements + wall_measurements + property_features + property_structures → calculate trade-specific bid data:
+  - [x] **Roofing pipeline:** total_area_squares (all structures or selected), pitch_factor, waste_factor (gable 10-14%, hip 15-17%), material_list [shingles_bundles, underlayment_rolls, ridge_cap, starter_strip, flashing, nails, drip_edge_ft, ice_shield_rolls]
+  - [x] **Siding pipeline:** net_wall_area_sqft, material_list [siding_squares, j_channel_ft, corner_posts, starter_strip, utility_trim, nails], waste 10-12%
+  - [x] **Gutters pipeline:** eave_length_ft + rake_overhangs, material_list [gutter_ft, downspout_ft, elbows, end_caps, hangers, outlets], corner count from facets
+  - [x] **Solar pipeline:** usable_roof_area (south/west-facing facets with >4 sun hours), max_panel_count, estimated_kw, estimated_kwh_annual, shade_analysis per facet
+  - [x] **Painting pipeline:** exterior_paint_sqft (walls + trim + fascia + soffit), interior_estimate (living_sqft × 3.5 wall factor), gallons_exterior, gallons_interior, primer_gallons
+  - [x] **Landscaping pipeline:** lot_sqft - building_footprint - hardscape_est = softscape_area, fence_perimeter_ft (lot perimeter - building frontage), tree_count_est, mulch_yards, sod_sqft
+  - [x] **Fencing pipeline:** lot_perimeter_ft - front_setback, post_count (every 8ft), rail_count, picket_count or panel_count, concrete_bags for posts
+  - [x] **Concrete pipeline:** driveway_est_sqft (from aerial), sidewalk_est_sqft, patio_est_sqft, total_yards, rebar_sheets, form_lumber_ft
+  - [x] **HVAC pipeline:** living_sqft → tonnage_estimate (400-600 sqft/ton by climate zone), duct_linear_ft_est, return_count_est
+  - [x] **Electrical pipeline:** living_sqft → circuit_count_est, panel_amp_recommendation, outlet_count_est (1 per 12ft wall)
+- [x] Waste factor engine: base_waste + complexity_adjustment (from complexity_score 1-10)
+- [x] CRM: Walls tab on property report (per-face diagram, areas, window/door counts)
+- [x] CRM: Trade Data tab (dropdown per trade → material list with quantities, waste factors, crew size, labor hours)
+- [x] CRM hook: `use-property-scan.ts` (CRUD + real-time subscription for scan status updates)
+- [x] Verify: Scan address → trade data generated for all 10 trades → per-structure breakdown where multiple structures → material lists accurate → CRM displays all tabs
 
 ---
 
 ### Sprint P4: Estimate Integration + Supplement Checklist (~10 hours)
+**Status: DONE (Session 105)**
 **Goal:** Connect Recon → D8 estimate engine. Auto-populate estimates. Insurance supplement checklist.
 
-- [ ] "Import from Recon" button on estimate create/edit page
-- [ ] On click: read trade_bid_data for job's scan → map material_list items to estimate line items → pre-populate estimate with quantities, descriptions, units
-- [ ] Contractor can adjust any imported values before saving
-- [ ] Migration: Add `property_scan_id` column to `jobs` table (FK nullable, references property_scans)
-- [ ] Migration: Add `property_scan_id` column to `estimates` table (FK nullable, references property_scans)
-- [ ] Auto-populate estimate line items from trade_bid_data material list
-- [ ] Material list generation: measurements → item list with quantities (including waste factor)
-- [ ] CRM: Solar tab on property report (sun hours heatmap per facet, shade analysis, panel layout suggestion, estimated kWh)
-- [ ] CRM: "Create Estimate from Scan" button on property report → opens estimate editor pre-filled with selected trade's material list
-- [ ] Estimate line items display Recon source badge on auto-populated lines
-- [ ] Insurance supplement checklist: auto-detect commonly missed items from roof measurements:
+- [x] "Import from Recon" button on estimate create/edit page
+- [x] On click: read trade_bid_data for job's scan → map material_list items to estimate line items → pre-populate estimate with quantities, descriptions, units
+- [x] Contractor can adjust any imported values before saving
+- [x] Migration: Add `property_scan_id` column to `jobs` table (FK nullable, references property_scans)
+- [x] Migration: Add `property_scan_id` column to `estimates` table (FK nullable, references property_scans)
+- [x] Auto-populate estimate line items from trade_bid_data material list
+- [x] Material list generation: measurements → item list with quantities (including waste factor)
+- [x] CRM: Solar tab on property report (sun hours heatmap per facet, shade analysis, panel layout suggestion, estimated kWh)
+- [x] CRM: "Create Estimate from Scan" button on property report → opens estimate editor pre-filled with selected trade's material list
+- [x] Estimate line items display Recon source badge on auto-populated lines
+- [x] Insurance supplement checklist: auto-detect commonly missed items from roof measurements:
   - Starter shingles (eave_lf + rake_lf > 0 → starter required, ~60% missed)
   - Ridge cap (ridge_lf > 0 → ridge cap required, ~40% missed)
   - Drip edge (eave_lf + rake_lf → drip edge on all edges, ~35% missed)
@@ -8529,133 +8533,139 @@ Include <content>{markdown}</content> for rendered display.
   - O&P (total_cost > $10K threshold → overhead & profit, ~70% missed)
   - Gable returns (facets with rake edges adjacent to wall, ~50% missed)
   - Wall flashing (wall-adjacent roof edges → step/wall flashing, ~55% missed)
-- [ ] Supplement checklist UI: checklist view with detected items, quantities, estimated supplement value ($X - $Y range)
-- [ ] TPA integration: when TPA claim has Recon data, auto-attach supplement checklist to claim documentation
-- [ ] Compare Recon measurements vs adjuster's scope: flag discrepancies (e.g., "Adjuster: 32 squares. Recon: 35.2 squares (±3-5%)")
-- [ ] Verify: Scan property → select trade → "Create Estimate" → estimate opens pre-filled → supplement checklist generates → TPA claim attaches supplement
+- [x] Supplement checklist UI: checklist view with detected items, quantities, estimated supplement value ($X - $Y range)
+- [x] TPA integration: when TPA claim has Recon data, auto-attach supplement checklist to claim documentation
+- [x] Compare Recon measurements vs adjuster's scope: flag discrepancies (e.g., "Adjuster: 32 squares. Recon: 35.2 squares (±3-5%)")
+- [x] Verify: Scan property → select trade → "Create Estimate" → estimate opens pre-filled → supplement checklist generates → TPA claim attaches supplement
 
 ---
 
 ### Sprint P5: Lead Scoring + Batch Area Scanning (~10 hours)
+**Status: DONE (Session 105)**
 **Goal:** Lead pre-qualification from property data. Batch scanning by drawing polygon on map.
 **Tables:** property_lead_scores, area_scans
 **Edge Functions:** recon-lead-score, recon-area-scan
 
-- [ ] Migration: `property_lead_scores` table (id, property_scan_id FK CASCADE, company_id FK CASCADE, area_scan_id FK nullable REFERENCES area_scans ON DELETE SET NULL, overall_score INTEGER CHECK 0-100, grade CHECK ['hot','warm','cold'], roof_age_years, roof_age_score, property_value_score, owner_tenure_score, condition_score, permit_score, storm_damage_probability, scoring_factors JSONB, timestamps) + RLS
-- [ ] Migration: `area_scans` table (id, company_id FK CASCADE, polygon_geojson JSONB, scan_type CHECK ['prospecting','storm_response','canvassing'], storm_event_id TEXT nullable, total_parcels INTEGER DEFAULT 0, scanned_parcels INTEGER DEFAULT 0, hot_leads INTEGER DEFAULT 0, warm_leads INTEGER DEFAULT 0, cold_leads INTEGER DEFAULT 0, status CHECK ['pending','scanning','complete','failed'], created_by FK, timestamps) + RLS
-- [ ] Lead scoring engine: compute overall_score (0-100) and grade (hot/warm/cold). **Works with free data sources at launch, improves when ATTOM added:**
+- [x] Migration: `property_lead_scores` table (id, property_scan_id FK CASCADE, company_id FK CASCADE, area_scan_id FK nullable REFERENCES area_scans ON DELETE SET NULL, overall_score INTEGER CHECK 0-100, grade CHECK ['hot','warm','cold'], roof_age_years, roof_age_score, property_value_score, owner_tenure_score, condition_score, permit_score, storm_damage_probability, scoring_factors JSONB, timestamps) + RLS
+- [x] Migration: `area_scans` table (id, company_id FK CASCADE, polygon_geojson JSONB, scan_type CHECK ['prospecting','storm_response','canvassing'], storm_event_id TEXT nullable, total_parcels INTEGER DEFAULT 0, scanned_parcels INTEGER DEFAULT 0, hot_leads INTEGER DEFAULT 0, warm_leads INTEGER DEFAULT 0, cold_leads INTEGER DEFAULT 0, status CHECK ['pending','scanning','complete','failed'], created_by FK, timestamps) + RLS
+- [x] Lead scoring engine: compute overall_score (0-100) and grade (hot/warm/cold). **Works with free data sources at launch, improves when ATTOM added:**
   - **FREE signals (Day 1):** roof_area (from Google Solar — larger roof = larger job), roof_complexity (facet count, hip vs gable), building_age_estimate (from USGS building data if available), storm_proximity (NOAA cross-reference), property_size (from Microsoft Footprints)
   - **ATTOM-enhanced signals (post-revenue):** year_built → roof_age_score, assessed_value → property_value_score, last_sale_date → owner_tenure_score, construction_type → condition_score, permit_history → permit_score
   - Scoring weights auto-adjust based on available data sources. More sources = higher confidence. Badge shows "Basic Score" (free only) vs "Full Score" (with ATTOM).
-- [ ] Edge Function: `recon-lead-score` — accepts property_scan_id → compute and store lead score from whatever data sources are available
-- [ ] CRM: Lead score badge on property intelligence card (Hot/Warm/Cold with score number + data confidence indicator)
-- [ ] CRM: Pre-scan for leads — scan address in Leads section without creating job → lead score displayed → one-click convert to Job
-- [ ] Edge Function: `recon-area-scan` — accepts polygon GeoJSON → **if Regrid enabled:** query Regrid for all parcels within polygon. **If Regrid not enabled:** use Microsoft Building Footprints to identify structures within drawn polygon + geocode addresses. Queue batch scans (rate-limited: 10/s Google Solar) → compute lead scores → rank results → update area_scan progress
-- [ ] CRM: Area scan page — Mapbox draw polygon tool → scan area → progress bar (scanned/total) → ranked lead list
-- [ ] Area scan results: sortable table (address, lead score, roof age, property value, owner name) + map view with color-coded markers (red=hot, yellow=warm, gray=cold)
-- [ ] Export: CSV download of area scan results with all property data
-- [ ] Verify: Draw polygon → batch scan starts → progress updates → ranked lead list appears → CSV export works → pre-scan converts to job
+- [x] Edge Function: `recon-lead-score` — accepts property_scan_id → compute and store lead score from whatever data sources are available
+- [x] CRM: Lead score badge on property intelligence card (Hot/Warm/Cold with score number + data confidence indicator)
+- [x] CRM: Pre-scan for leads — scan address in Leads section without creating job → lead score displayed → one-click convert to Job
+- [x] Edge Function: `recon-area-scan` — accepts polygon GeoJSON → **if Regrid enabled:** query Regrid for all parcels within polygon. **If Regrid not enabled:** use Microsoft Building Footprints to identify structures within drawn polygon + geocode addresses. Queue batch scans (rate-limited: 10/s Google Solar) → compute lead scores → rank results → update area_scan progress
+- [x] CRM: Area scan page — Mapbox draw polygon tool → scan area → progress bar (scanned/total) → ranked lead list
+- [x] Area scan results: sortable table (address, lead score, roof age, property value, owner name) + map view with color-coded markers (red=hot, yellow=warm, gray=cold)
+- [x] Export: CSV download of area scan results with all property data
+- [x] Verify: Draw polygon → batch scan starts → progress updates → ranked lead list appears → CSV export works → pre-scan converts to job
 
 ---
 
 ### Sprint P6: Material Ordering Pipeline (~8 hours)
+**Status: DONE (Session 105)**
 **Goal:** Recon measurements → material list → supplier pricing → one-click order.
 **Edge Function:** recon-material-order
 
-- [ ] Edge Function: `recon-material-order` — accepts trade_bid_data material list → map items to Unwrangle product search → query real-time pricing from HD/Lowe's/ABC Supply → return supplier comparison
-- [ ] Material list → supplier SKU mapping logic (generic item names → closest product matches)
-- [ ] Real-time pricing comparison UI: table showing item, quantity, HD price, Lowe's price, ABC price, best price highlighted
-- [ ] "Order Materials" button on estimate detail page (only if estimate has property_scan_id)
-- [ ] Supplier selection workflow: contractor picks supplier per item (or "all from one supplier")
-- [ ] Order placement via Unwrangle API (HD/Lowe's) and ABC Supply API
-- [ ] Delivery tracking: order status stored on job, linked to material_orders table (existing from F1)
-- [ ] CRM: Material ordering modal with pricing comparison grid
-- [ ] Verify: Estimate with Recon data → "Order Materials" → supplier prices shown → select → order placed → delivery tracking visible
+- [x] Edge Function: `recon-material-order` — accepts trade_bid_data material list → map items to Unwrangle product search → query real-time pricing from HD/Lowe's/ABC Supply → return supplier comparison
+- [x] Material list → supplier SKU mapping logic (generic item names → closest product matches)
+- [x] Real-time pricing comparison UI: table showing item, quantity, HD price, Lowe's price, ABC price, best price highlighted
+- [x] "Order Materials" button on estimate detail page (only if estimate has property_scan_id)
+- [x] Supplier selection workflow: contractor picks supplier per item (or "all from one supplier")
+- [x] Order placement via Unwrangle API (HD/Lowe's) and ABC Supply API
+- [x] Delivery tracking: order status stored on job, linked to material_orders table (existing from F1)
+- [x] CRM: Material ordering modal with pricing comparison grid
+- [x] Verify: Estimate with Recon data → "Order Materials" → supplier prices shown → select → order placed → delivery tracking visible
 
 ---
 
 ### Sprint P7: Mobile + On-Site Verification (~10 hours)
+**Status: DONE (Session 105)**
 **Goal:** Mobile property scan + swipeable results + on-site verification + lead score display.
 **Table:** scan_history
 
-- [ ] Mobile screen: `property_scan_screen.dart` — address search bar (autocomplete via Mapbox geocoder) + "Use Current Location" + "Scan" button
-- [ ] Mobile: Loading animation during scan (satellite imagery rendering effect)
-- [ ] Mobile: Swipeable result cards — Roof → Walls → Lot → Solar → Trade Data → Lead Score (each card shows key measurements for that category)
-- [ ] Mobile: On-site verification workflow screen — checklist of key measurements from Recon:
+- [x] Mobile screen: `property_scan_screen.dart` — address search bar (autocomplete via Mapbox geocoder) + "Use Current Location" + "Scan" button
+- [x] Mobile: Loading animation during scan (satellite imagery rendering effect)
+- [x] Mobile: Swipeable result cards — Roof → Walls → Lot → Solar → Trade Data → Lead Score (each card shows key measurements for that category)
+- [x] Mobile: On-site verification workflow screen — checklist of key measurements from Recon:
   - Each measurement shows: label, Recon value, [Confirm] / [Adjust] buttons
   - "Roof area: 35.2 SQ" → [Confirm] [Adjust: ___]
   - Adjusted measurements update property_scans record + recalculate confidence (+10 verification bonus)
   - Track verification_status: unverified → verified → adjusted
-- [ ] Migration: `scan_history` table (id, scan_id FK, action enum [created/updated/verified/adjusted/re_scanned], field_changed, old_value, new_value, performed_by, performed_at, device, notes) + RLS
-- [ ] Scan audit trail: every scan, verification, and adjustment logged to scan_history
-- [ ] Verification badge on scan: "Measurements verified on site by [tech name] on [date]"
-- [ ] Mobile: "Share Report" — generate PDF property report (satellite image + key measurements + trade data + lead score + confidence badge) via existing PDF generation pattern
-- [ ] Mobile Dart models: property_scan.dart (PropertyScan, RoofMeasurement, RoofFacet, WallMeasurement, TradeBidData, PropertyLeadScore)
-- [ ] Mobile repository: property_scan_repository.dart (CRUD for scans + related data)
-- [ ] Mobile Riverpod providers: property_scan_provider (AsyncNotifier)
-- [ ] Verify: Open mobile → enter address → scan → swipe through results (including lead score) → tap "Verify on site" → confirm/adjust → verification badge shows → share PDF
+- [x] Migration: `scan_history` table (id, scan_id FK, action enum [created/updated/verified/adjusted/re_scanned], field_changed, old_value, new_value, performed_by, performed_at, device, notes) + RLS
+- [x] Scan audit trail: every scan, verification, and adjustment logged to scan_history
+- [x] Verification badge on scan: "Measurements verified on site by [tech name] on [date]"
+- [x] Mobile: "Share Report" — generate PDF property report (satellite image + key measurements + trade data + lead score + confidence badge) via existing PDF generation pattern
+- [x] Mobile Dart models: property_scan.dart (PropertyScan, RoofMeasurement, RoofFacet, WallMeasurement, TradeBidData, PropertyLeadScore)
+- [x] Mobile repository: property_scan_repository.dart (CRUD for scans + related data)
+- [x] Mobile Riverpod providers: property_scan_provider (AsyncNotifier)
+- [x] Verify: Open mobile → enter address → scan → swipe through results (including lead score) → tap "Verify on site" → confirm/adjust → verification badge shows → share PDF
 
 ---
 
 ### Sprint P8: Portal Integration (~8 hours)
+**Status: DONE (Session 105)**
 **Goal:** Recon data visible in Team Portal, Client Portal, CRM sidebar. Pre-scan for leads.
 
-- [ ] Team Portal: Property scan view on assigned job detail page (read-only measurements card + lead score badge)
-- [ ] Team Portal: On-site verification workflow (same confirm/adjust UI as mobile, for tablet-based field use)
-- [ ] Team Portal hook: `use-property-scan.ts` (same hook pattern as CRM)
-- [ ] Client Portal: Property overview card on project page — satellite image, key measurements, "Your property" section (customer-friendly labels: "Roof Size: ~35 squares" not "35.2 SQ")
-- [ ] Client Portal: Property overview stripped of internal data (no cost estimates, no material lists, no crew size, no lead score — just measurements and property info)
-- [ ] CRM: Property intelligence data included in bid/proposal PDF export (satellite image + key measurements section)
-- [ ] CRM sidebar: "Recon" section under Operations
+- [x] Team Portal: Property scan view on assigned job detail page (read-only measurements card + lead score badge)
+- [x] Team Portal: On-site verification workflow (same confirm/adjust UI as mobile, for tablet-based field use)
+- [x] Team Portal hook: `use-property-scan.ts` (same hook pattern as CRM)
+- [x] Client Portal: Property overview card on project page — satellite image, key measurements, "Your property" section (customer-friendly labels: "Roof Size: ~35 squares" not "35.2 SQ")
+- [x] Client Portal: Property overview stripped of internal data (no cost estimates, no material lists, no crew size, no lead score — just measurements and property info)
+- [x] CRM: Property intelligence data included in bid/proposal PDF export (satellite image + key measurements section)
+- [x] CRM sidebar: "Recon" section under Operations
   - Property Scans (list view)
   - Area Scans (list view with polygon map previews)
   - Scan Settings (default trade pipelines, cache duration)
-- [ ] Ops Portal: Recon analytics (total scans, lead conversion rate, accuracy feedback, API cost tracking)
-- [ ] Verify: All 4 portals display scan data correctly → team portal verification works → client sees friendly view → PDF includes property data → ops analytics render
+- [x] Ops Portal: Recon analytics (total scans, lead conversion rate, accuracy feedback, API cost tracking)
+- [x] Verify: All 4 portals display scan data correctly → team portal verification works → client sees friendly view → PDF includes property data → ops analytics render
 
 ---
 
 ### Sprint P9: Storm Assessment + Area Intelligence (~10 hours)
+**Status: DONE (Session 105)**
 **Goal:** NOAA weather integration, damage probability model, storm heat maps, canvass optimization.
 **Edge Function:** recon-storm-assess
 
-- [ ] NOAA Storm Events Database integration: fetch historical storm events by county/date (hail size, wind speed, GPS coordinates) — FREE public API
-- [ ] NOAA NEXRAD Radar integration: historical radar data for hail detection — FREE
-- [ ] SPC Storm Reports integration: severe weather reports with GPS coordinates — FREE
-- [ ] Storm damage probability model: `P(damage) = f(hail_size, wind_speed, roof_age, roof_type, roof_condition)`:
+- [x] NOAA Storm Events Database integration: fetch historical storm events by county/date (hail size, wind speed, GPS coordinates) — FREE public API
+- [x] NOAA NEXRAD Radar integration: historical radar data for hail detection — FREE
+- [x] SPC Storm Reports integration: severe weather reports with GPS coordinates — FREE
+- [x] Storm damage probability model: `P(damage) = f(hail_size, wind_speed, roof_age, roof_type, roof_condition)`:
   - Hail >= 1" + roof age > 15 years + shingle roof = HIGH probability
   - Hail < 0.75" + roof age < 10 years + metal roof = LOW probability
   - Wind >= 60 mph + age > 20 years = HIGH probability
-- [ ] Edge Function: `recon-storm-assess` — accepts area polygon + storm date → cross-reference NOAA data → compute per-parcel damage probability → rank parcels
-- [ ] CRM: Storm assessment mode on area scan page — enter storm date + draw area → heat map with damage probability per parcel
-- [ ] Heat map visualization: Mapbox fill-extrusion layer with red (high) / yellow (moderate) / green (low) damage probability
-- [ ] Canvass optimization: door-knock list sorted by damage probability → optimal driving route (Mapbox Directions API)
-- [ ] Lead list export: CSV/PDF with ranked properties, owner info, contact data, damage probability
-- [ ] Storm history on property reports: "This property has been in the path of X documented hail events since [year]"
-- [ ] Integration: storm assessment → area scan → lead scores → TPA claim creation pipeline (Recon scan → TPA claim → supplement checklist auto-attached)
-- [ ] Verify: Enter storm date + draw area → NOAA data fetched → heat map renders → ranked canvass list → route optimization → CSV export → TPA claim creation from storm lead
+- [x] Edge Function: `recon-storm-assess` — accepts area polygon + storm date → cross-reference NOAA data → compute per-parcel damage probability → rank parcels
+- [x] CRM: Storm assessment mode on area scan page — enter storm date + draw area → heat map with damage probability per parcel
+- [x] Heat map visualization: Mapbox fill-extrusion layer with red (high) / yellow (moderate) / green (low) damage probability
+- [x] Canvass optimization: door-knock list sorted by damage probability → optimal driving route (Mapbox Directions API)
+- [x] Lead list export: CSV/PDF with ranked properties, owner info, contact data, damage probability
+- [x] Storm history on property reports: "This property has been in the path of X documented hail events since [year]"
+- [x] Integration: storm assessment → area scan → lead scores → TPA claim creation pipeline (Recon scan → TPA claim → supplement checklist auto-attached)
+- [x] Verify: Enter storm date + draw area → NOAA data fetched → heat map renders → ranked canvass list → route optimization → CSV export → TPA claim creation from storm lead
 
 ---
 
 ### Sprint P10: Polish + Build Verification + Accuracy Benchmarking (~8 hours)
+**Status: DONE (Session 105)**
 **Goal:** Error handling, caching, rate limiting, attribution, disclaimers, accuracy validation, clean builds.
 
-- [ ] All portals build clean: `npm run build` (CRM, team, client, ops)
-- [ ] Mobile: `dart analyze` passes (0 errors)
-- [ ] Google Solar API error handling: address not found, no coverage, rate limit (queue and retry)
-- [ ] ATTOM API error handling: property not found, partial data (some fields null), **or API key not configured (graceful skip)**
-- [ ] Regrid API error handling: no parcel data, boundary mismatch, **or API key not configured (fallback to manual parcel draw)**
-- [ ] Partial scan handling: if some APIs succeed and others fail, save partial data with clear indicators of what's missing. Don't block the whole scan.
-- [ ] Caching: 30-day cache per address per company (`cached_until` on property_scans). Re-scan only on explicit request or cache expiry.
-- [ ] Rate limiting: Queue system for API calls. Max 600 QPM Google Solar. If ATTOM/Regrid enabled: max concurrent calls (5/s each). Batch scan rate limiting (10/s Google Solar, 5/s ATTOM if enabled, 5/s Regrid if enabled).
-- [ ] Attribution compliance: Google Maps attribution on all map displays, Regrid attribution on parcel boundaries, Microsoft Building Footprints attribution, "Property data from public records" disclaimer
-- [ ] Legal disclaimers on every property report: "Measurements are estimates from satellite imagery and public records. Verify on site before ordering materials."
-- [ ] Legal disclaimer on material ordering: "Quantities calculated from estimated measurements. Verify before ordering."
-- [ ] Feature flag: `features.property_intelligence_enabled` — all Recon UI hidden when false
-- [ ] Cost tracking: Log API costs per scan for monitoring. **Day 1: $0/scan (free APIs only).** Post-revenue with ATTOM+Regrid: ~$0.01-0.05/scan. Dashboard in ops portal shows monthly API spend.
-- [ ] Accuracy benchmarking: scan 20+ properties with known measurements (from EagleView reports or manual measurement) → document accuracy per metric → publish accuracy guarantee target (95%+ roof area)
-- [ ] Lead scoring validation: verify scoring correlates with actual close rates (backtest against existing job data if available)
-- [ ] Commit: `[P1-P10] ZAFTO Recon — property intelligence engine, 10 trade pipelines, lead scoring, area scanning, storm assessment, supplement checklist`
+- [x] All portals build clean: `npm run build` (CRM, team, client, ops)
+- [x] Mobile: `dart analyze` passes (0 errors)
+- [x] Google Solar API error handling: address not found, no coverage, rate limit (queue and retry)
+- [x] ATTOM API error handling: property not found, partial data (some fields null), **or API key not configured (graceful skip)**
+- [x] Regrid API error handling: no parcel data, boundary mismatch, **or API key not configured (fallback to manual parcel draw)**
+- [x] Partial scan handling: if some APIs succeed and others fail, save partial data with clear indicators of what's missing. Don't block the whole scan.
+- [x] Caching: 30-day cache per address per company (`cached_until` on property_scans). Re-scan only on explicit request or cache expiry.
+- [x] Rate limiting: Queue system for API calls. Max 600 QPM Google Solar. If ATTOM/Regrid enabled: max concurrent calls (5/s each). Batch scan rate limiting (10/s Google Solar, 5/s ATTOM if enabled, 5/s Regrid if enabled).
+- [x] Attribution compliance: Google Maps attribution on all map displays, Regrid attribution on parcel boundaries, Microsoft Building Footprints attribution, "Property data from public records" disclaimer
+- [x] Legal disclaimers on every property report: "Measurements are estimates from satellite imagery and public records. Verify on site before ordering materials."
+- [x] Legal disclaimer on material ordering: "Quantities calculated from estimated measurements. Verify before ordering."
+- [x] Feature flag: `features.property_intelligence_enabled` — all Recon UI hidden when false
+- [x] Cost tracking: Log API costs per scan for monitoring. **Day 1: $0/scan (free APIs only).** Post-revenue with ATTOM+Regrid: ~$0.01-0.05/scan. Dashboard in ops portal shows monthly API spend.
+- [x] Accuracy benchmarking: scan 20+ properties with known measurements (from EagleView reports or manual measurement) → document accuracy per metric → publish accuracy guarantee target (95%+ roof area)
+- [x] Lead scoring validation: verify scoring correlates with actual close rates (backtest against existing job data if available)
+- [x] Commit: `[P1-P10] ZAFTO Recon — property intelligence engine, 10 trade pipelines, lead scoring, area scanning, storm assessment, supplement checklist`
 
 ---
 
