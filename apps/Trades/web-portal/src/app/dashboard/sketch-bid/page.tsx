@@ -1,8 +1,9 @@
 'use client';
 
-// ZAFTO Sketch & Bid Page — SK7 Canvas Editor + Listing
+// ZAFTO Sketch & Bid Page — SK8 Canvas Editor + Listing
 // Full Konva.js canvas editor backed by property_floor_plans table.
 // SK7: History panel, multi-floor tabs, photo pin integration.
+// SK8: Generate Estimate modal (room measurements → D8 estimate areas + line items).
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import dynamic from 'next/dynamic';
@@ -15,6 +16,7 @@ import {
   Ruler as RulerIcon,
   History,
   Camera,
+  Calculator,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -54,6 +56,7 @@ import LayerPanel from '@/components/sketch-editor/LayerPanel';
 import PropertyInspector from '@/components/sketch-editor/PropertyInspector';
 import MiniMap from '@/components/sketch-editor/MiniMap';
 import HistoryPanel from '@/components/sketch-editor/HistoryPanel';
+import GenerateEstimateModal from '@/components/sketch-editor/GenerateEstimateModal';
 import {
   HorizontalRuler,
   VerticalRuler,
@@ -304,6 +307,7 @@ function EditorView({
   const [showLayers, setShowLayers] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [pinMode, setPinMode] = useState(false);
+  const [showEstimateModal, setShowEstimateModal] = useState(false);
   const [canvasSize, setCanvasSize] = useState({ width: 800, height: 600 });
 
   const undoManagerRef = useRef(new UndoRedoManager());
@@ -543,6 +547,16 @@ function EditorView({
           )}
         </div>
 
+        {/* SK8: Generate Estimate */}
+        <button
+          onClick={() => setShowEstimateModal(true)}
+          disabled={planData.rooms.length === 0}
+          className="p-1.5 rounded transition-colors hover:bg-gray-100 text-gray-400 disabled:opacity-30 disabled:cursor-not-allowed"
+          title={planData.rooms.length === 0 ? 'Draw rooms first' : 'Generate estimate from rooms'}
+        >
+          <Calculator size={14} />
+        </button>
+
         {/* SK7: Photo pin toggle */}
         <button
           onClick={() => setPinMode(!pinMode)}
@@ -748,6 +762,20 @@ function EditorView({
           </div>
         </div>
       </div>
+
+      {/* SK8: Generate Estimate Modal */}
+      {showEstimateModal && (
+        <GenerateEstimateModal
+          planData={planData}
+          floorPlanId={planId}
+          onClose={() => setShowEstimateModal(false)}
+          onGenerated={(estimateId) => {
+            setShowEstimateModal(false);
+            // Navigate to estimate editor
+            window.location.href = `/dashboard/estimates/${estimateId}`;
+          }}
+        />
+      )}
     </div>
   );
 }
