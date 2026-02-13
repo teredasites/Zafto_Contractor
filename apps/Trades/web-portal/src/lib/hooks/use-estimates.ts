@@ -54,6 +54,7 @@ export interface Estimate {
   declinedAt: string | null;
   completedAt: string | null;
   templateId: string | null;
+  propertyScanId: string | null;
   createdBy: string;
   createdAt: string;
   updatedAt: string;
@@ -163,6 +164,7 @@ function mapEstimate(row: Record<string, unknown>): Estimate {
     declinedAt: row.declined_at as string | null,
     completedAt: row.completed_at as string | null,
     templateId: row.template_id as string | null,
+    propertyScanId: row.property_scan_id as string | null,
     createdBy: (row.created_by as string) || '',
     createdAt: (row.created_at as string) || '',
     updatedAt: (row.updated_at as string) || '',
@@ -562,12 +564,89 @@ export function useEstimate(estimateId: string | null) {
     });
   }, [estimateId, estimate, lineItems, updateEstimate]);
 
+  // ── Import from Recon ──
+  // Reads trade_bid_data for a given scan_id + trade, creates line items from material list
+
+  const importFromRecon = useCallback(async (scanId: string, trade: string) => {
+    if (!estimateId) return 0;
+    const supabase = getSupabase();
+
+    // Fetch trade bid data
+    const { data: bidData, error: bidErr } = await supabase
+      .from('trade_bid_data')
+      .select('*')
+      .eq('scan_id', scanId)
+      .eq('trade', trade)
+      .limit(1)
+      .maybeSingle();
+
+    if (bidErr || !bidData) {
+      console.error('No trade bid data found for', trade);
+      return 0;
+    }
+
+    const materialList = (bidData.material_list as Array<{
+      item: string;
+      quantity: number;
+      unit: string;
+      waste_pct: number;
+      total_with_waste: number;
+    }>) || [];
+
+    if (materialList.length === 0) return 0;
+
+    // Link scan to estimate
+    await supabase
+      .from('estimates')
+      .update({ property_scan_id: scanId })
+      .eq('id', estimateId);
+
+    // Build line items from material list
+    const currentCount = lineItems.length;
+    const unitMap: Record<string, string> = {
+      SQ: 'EA', bundles: 'EA', rolls: 'EA', pcs: 'EA', panels: 'EA',
+      set: 'EA', unit: 'EA', systems: 'EA', LF: 'LF', ft: 'LF',
+      sqft: 'SF', 'sq ft': 'SF', 'cubic yards': 'EA', 'bags (50lb)': 'EA',
+      gallons: 'EA', quarts: 'EA', tubes: 'EA', lbs: 'EA', sheets: 'EA',
+    };
+
+    const rows = materialList.map((mat, i) => ({
+      estimate_id: estimateId,
+      area_id: null,
+      item_id: null,
+      zafto_code: '',
+      description: `${mat.item} (Recon: ${trade})`,
+      action_type: 'replace',
+      quantity: mat.total_with_waste,
+      unit_code: unitMap[mat.unit] || 'EA',
+      material_cost: 0,
+      labor_cost: 0,
+      equipment_cost: 0,
+      unit_price: 0,
+      line_total: 0,
+      sort_order: currentCount + i,
+      notes: `Auto-imported from Recon scan. Original qty: ${mat.quantity} ${mat.unit}, waste: ${mat.waste_pct}%`,
+    }));
+
+    const { error: insertErr } = await supabase
+      .from('estimate_line_items')
+      .insert(rows);
+
+    if (insertErr) {
+      console.error('Import from Recon failed:', insertErr);
+      return 0;
+    }
+
+    await fetchAll();
+    return materialList.length;
+  }, [estimateId, lineItems, fetchAll]);
+
   return {
     estimate, areas, lineItems, loading, error,
     fetchAll, updateEstimate,
     addArea, updateArea, deleteArea,
     addLineItem, updateLineItem, deleteLineItem,
-    recalculateTotals,
+    recalculateTotals, importFromRecon,
   };
 }
 

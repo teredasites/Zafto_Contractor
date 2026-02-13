@@ -29,6 +29,7 @@ import {
   Briefcase,
   Mail,
   ShoppingBag,
+  Satellite,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Logo } from '@/components/logo';
@@ -99,6 +100,11 @@ const navSections: NavSection[] = [
         label: 'Errors',
         href: '/dashboard/errors',
         icon: <AlertTriangle className="h-4 w-4" />,
+      },
+      {
+        label: 'API Costs',
+        href: '/dashboard/api-costs',
+        icon: <Satellite className="h-4 w-4" />,
       },
     ],
   },

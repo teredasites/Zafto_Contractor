@@ -66,6 +66,7 @@ import {
   Truck,
   GraduationCap,
   FileBarChart,
+  Satellite,
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { ZMark } from '@/components/z-console/z-mark';
@@ -155,6 +156,15 @@ const navigationGroups: NavGroup[] = [
       { name: 'Programs', href: '/dashboard/settings/tpa-programs', icon: Shield },
       { name: 'Assignments', href: '/dashboard/tpa/assignments', icon: ClipboardList },
       { name: 'Scorecards', href: '/dashboard/tpa/scorecards', icon: FileBarChart },
+    ],
+  },
+  {
+    label: 'RECON',
+    key: 'recon',
+    railIcon: Satellite,
+    items: [
+      { name: 'Property Scans', href: '/dashboard/recon', icon: Satellite },
+      { name: 'Area Scans', href: '/dashboard/recon/area-scans', icon: MapPin },
     ],
   },
   {

@@ -26,6 +26,9 @@ import {
   Plus,
   Package,
   Shield,
+  Satellite,
+  Ruler,
+  AlertTriangle,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -34,6 +37,8 @@ import { Avatar, AvatarGroup } from '@/components/ui/avatar';
 import { formatCurrency, formatDate, formatDateTime, cn } from '@/lib/utils';
 import { useJob, useTeam } from '@/lib/hooks/use-jobs';
 import { useClaimByJob } from '@/lib/hooks/use-insurance';
+import { usePropertyScan } from '@/lib/hooks/use-property-scan';
+import { useLeadScore } from '@/lib/hooks/use-area-scan';
 import { JOB_TYPE_LABELS, JOB_TYPE_COLORS } from '@/lib/hooks/mappers';
 import type { Job, JobType, JobNote, InsuranceMetadata, WarrantyMetadata, PaymentSource } from '@/types';
 import { getSupabase } from '@/lib/supabase';
@@ -297,6 +302,9 @@ export default function JobDetailPage() {
               </Button>
             </CardContent>
           </Card>
+
+          {/* Property Intelligence */}
+          <PropertyIntelligenceCard job={job} />
 
           {/* Team */}
           <Card>
@@ -787,6 +795,257 @@ function UpgradeTrackingSummary({ jobId }: { jobId: string }) {
         <div className="flex justify-between pt-2 border-t border-main font-semibold">
           <span>Total</span>
           <span>{formatCurrency(grandTotal)}</span>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// ============================================================================
+// PROPERTY INTELLIGENCE CARD
+// ============================================================================
+
+const CONFIDENCE_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
+  high: { label: 'High Confidence', color: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-500/10' },
+  moderate: { label: 'Moderate Confidence', color: 'text-amber-600 dark:text-amber-400', bg: 'bg-amber-500/10' },
+  low: { label: 'Low Confidence', color: 'text-red-600 dark:text-red-400', bg: 'bg-red-500/10' },
+};
+
+const SHAPE_LABELS: Record<string, string> = {
+  gable: 'Gable', hip: 'Hip', flat: 'Flat', gambrel: 'Gambrel', mansard: 'Mansard', mixed: 'Complex/Mixed',
+};
+
+function PropertyIntelligenceCard({ job }: { job: Job }) {
+  const router = useRouter();
+  const fullAddress = [job.address.street, job.address.city, job.address.state, job.address.zip].filter(Boolean).join(', ');
+  const { scan, roof, loading, error, triggerScan } = usePropertyScan(job.id, 'job');
+  const { leadScore } = useLeadScore(scan?.id || '');
+  const [scanning, setScanning] = useState(false);
+
+  const handleScan = async () => {
+    if (!fullAddress) return;
+    setScanning(true);
+    await triggerScan(fullAddress, job.id);
+    setScanning(false);
+  };
+
+  // Loading state
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2">
+            <Satellite size={18} className="text-muted" />
+            Property Intelligence
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-center py-4">
+            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-accent" />
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // No scan yet — offer to run one
+  if (!scan) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2">
+            <Satellite size={18} className="text-muted" />
+            Property Intelligence
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <p className="text-sm text-muted">
+            No satellite scan data available for this property.
+          </p>
+          <Button
+            variant="secondary"
+            size="sm"
+            className="w-full"
+            onClick={handleScan}
+            disabled={scanning || !fullAddress}
+          >
+            {scanning ? (
+              <>
+                <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-current mr-2" />
+                Scanning...
+              </>
+            ) : (
+              <>
+                <Satellite size={14} />
+                Run Property Scan
+              </>
+            )}
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Scan in progress
+  if (scan.status === 'scanning' || scan.status === 'pending') {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2">
+            <Satellite size={18} className="text-accent" />
+            Property Intelligence
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="flex items-center gap-2 text-sm text-accent">
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-accent" />
+            Scanning property...
+          </div>
+          <p className="text-xs text-muted">Satellite data is being processed. This usually takes a few seconds.</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Scan failed
+  if (scan.status === 'failed') {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2">
+            <Satellite size={18} className="text-red-500" />
+            Property Intelligence
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <p className="text-sm text-red-500">Scan failed. The address may not have satellite coverage.</p>
+          <Button variant="secondary" size="sm" className="w-full" onClick={handleScan} disabled={scanning}>
+            <Satellite size={14} />
+            Retry Scan
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Scan complete or partial — show data
+  const conf = CONFIDENCE_CONFIG[scan.confidenceGrade] || CONFIDENCE_CONFIG.low;
+  const imageryOld = scan.imageryAgeMonths != null && scan.imageryAgeMonths > 18;
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base flex items-center gap-2">
+          <Satellite size={18} className="text-accent" />
+          Property Intelligence
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        {/* Confidence Badge + Lead Score */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <div className={cn('inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium', conf.bg, conf.color)}>
+            <div className={cn('w-1.5 h-1.5 rounded-full', scan.confidenceGrade === 'high' ? 'bg-emerald-500' : scan.confidenceGrade === 'moderate' ? 'bg-amber-500' : 'bg-red-500')} />
+            {conf.label} ({scan.confidenceScore}%)
+          </div>
+          {leadScore && (
+            <div className={cn(
+              'inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium',
+              leadScore.grade === 'hot' ? 'bg-red-500/10 text-red-400' :
+              leadScore.grade === 'warm' ? 'bg-orange-500/10 text-orange-400' :
+              'bg-blue-500/10 text-blue-400'
+            )}>
+              Lead: {leadScore.overallScore} ({leadScore.grade})
+            </div>
+          )}
+        </div>
+
+        {/* Roof Data */}
+        {roof && (
+          <div className="space-y-2 text-sm">
+            <div className="flex justify-between">
+              <span className="text-muted">Roof Area</span>
+              <span className="text-main font-medium">{roof.totalAreaSqft.toLocaleString()} sq ft ({roof.totalAreaSquares} sq)</span>
+            </div>
+            {roof.pitchPrimary && (
+              <div className="flex justify-between">
+                <span className="text-muted">Primary Pitch</span>
+                <span className="text-main font-medium">{roof.pitchPrimary}</span>
+              </div>
+            )}
+            {roof.predominantShape && (
+              <div className="flex justify-between">
+                <span className="text-muted">Shape</span>
+                <span className="text-main font-medium">{SHAPE_LABELS[roof.predominantShape] || roof.predominantShape}</span>
+              </div>
+            )}
+            <div className="flex justify-between">
+              <span className="text-muted">Facets</span>
+              <span className="text-main font-medium">{roof.facetCount}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted">Complexity</span>
+              <span className="text-main font-medium">{roof.complexityScore}/10</span>
+            </div>
+            {(roof.ridgeLengthFt > 0 || roof.eaveLengthFt > 0) && (
+              <div className="pt-2 border-t border-main space-y-1.5">
+                <p className="text-xs font-medium text-muted uppercase tracking-wider">Edge Lengths</p>
+                {roof.ridgeLengthFt > 0 && <div className="flex justify-between"><span className="text-muted">Ridge</span><span className="text-main">{roof.ridgeLengthFt} ft</span></div>}
+                {roof.hipLengthFt > 0 && <div className="flex justify-between"><span className="text-muted">Hip</span><span className="text-main">{roof.hipLengthFt} ft</span></div>}
+                {roof.valleyLengthFt > 0 && <div className="flex justify-between"><span className="text-muted">Valley</span><span className="text-main">{roof.valleyLengthFt} ft</span></div>}
+                {roof.eaveLengthFt > 0 && <div className="flex justify-between"><span className="text-muted">Eave</span><span className="text-main">{roof.eaveLengthFt} ft</span></div>}
+                {roof.rakeLengthFt > 0 && <div className="flex justify-between"><span className="text-muted">Rake</span><span className="text-main">{roof.rakeLengthFt} ft</span></div>}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Imagery Info */}
+        {scan.imageryDate && (
+          <div className="text-sm">
+            <div className="flex justify-between">
+              <span className="text-muted">Imagery Date</span>
+              <span className="text-main">{new Date(scan.imageryDate).toLocaleDateString()}</span>
+            </div>
+            {scan.imagerySource && (
+              <div className="flex justify-between mt-1">
+                <span className="text-muted">Source</span>
+                <span className="text-main capitalize">{scan.imagerySource.replace('_', ' ')}</span>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Imagery Age Warning */}
+        {imageryOld && (
+          <div className="flex items-start gap-2 p-2.5 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 text-xs">
+            <AlertTriangle size={14} className="mt-0.5 shrink-0" />
+            <span>Imagery may not reflect recent changes ({scan.imageryAgeMonths} months old). Verify on site.</span>
+          </div>
+        )}
+
+        {/* Partial scan warning */}
+        {scan.status === 'partial' && (
+          <div className="flex items-start gap-2 p-2.5 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 text-xs">
+            <AlertTriangle size={14} className="mt-0.5 shrink-0" />
+            <span>Partial data — some sources were unavailable. Roof measurements may be estimated.</span>
+          </div>
+        )}
+
+        {/* Action buttons */}
+        <div className="flex gap-2">
+          <Button
+            variant="secondary"
+            size="sm"
+            className="flex-1"
+            onClick={() => router.push(`/dashboard/recon/${scan.id}`)}
+          >
+            <Ruler size={14} />
+            Full Report
+          </Button>
+          <Button variant="secondary" size="sm" onClick={handleScan} disabled={scanning}>
+            <Satellite size={14} />
+            {scanning ? '...' : 'Rescan'}
+          </Button>
         </div>
       </CardContent>
     </Card>

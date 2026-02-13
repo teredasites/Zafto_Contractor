@@ -123,13 +123,13 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | Phase F Platform (F1-F10) | YES (code) | YES (hooks+pages) | ALL CODE COMPLETE (S90) |
 | **Phase E AI (PREMATURE)** | **YES (code exists)** | **PAUSED** | **NOT TESTED — AI goes LAST** |
 | **Phase T: Programs** | **COMPLETE** | **YES** | **S104: T1-T10 done. 11 migrations, 58 EFs, ~192 tables, all portals** |
-| **Phase P: Recon** | **SPEC'D** | **NO** | **NEXT — builds after Phase T** |
-| **Phase SK: Sketch Engine** | **SPEC'D** | **NO** | Builds after Phase P |
+| **Phase P: Recon** | **COMPLETE** | **YES** | **S105: P1-P10 done. 11 tables, 7 EFs, 5 CRM routes, 1 ops route, Flutter screens** |
+| **Phase SK: Sketch Engine** | **SPEC'D** | **NO** | **NEXT — builds after Phase P** |
 | **Phase GC: Schedule** | **SPEC'D** | **NO** | Builds after Phase SK — full CPM scheduling, ~124 hrs, 11 sprints |
 | **Phase U: Unification** | **PLANNED** | **NO** | Builds after Phase GC — portal merge, nav redesign, feature completion |
 | **Plan Review** | **SPEC'D (S97)** | **NO** | Phase E feature (BA1-BA8, ~128 hrs) |
 
-**ALL PHASES A-F + T COMPLETE. ~192 tables. 58 Edge Functions. 116 CRM routes. 36 team routes. 39 client routes. 27 ops routes. Phase P (Recon) is NEXT, then SK (Sketch Engine), then GC (Schedule), then U (Unification & Feature Completion), then G (QA/Harden everything), then E (AI LAST: E-review → BA1-BA8 → E1-E4) → LAUNCH. F2 + F8 post-launch.**
+**ALL PHASES A-F + T + P COMPLETE. ~179 tables. 60 Edge Functions. 121 CRM routes. 36 team routes. 39 client routes. 28 ops routes. Phase SK (Sketch Engine) is NEXT, then GC (Schedule), then U (Unification & Feature Completion), then G (QA/Harden everything), then E (AI LAST: E-review → BA1-BA8 → E1-E4) → LAUNCH. F2 + F8 post-launch.**
 
 ---
 

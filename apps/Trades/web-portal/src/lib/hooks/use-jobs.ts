@@ -84,6 +84,22 @@ export function useJobs() {
       .single();
 
     if (err) throw err;
+
+    // Fire-and-forget: auto-trigger property scan if address exists
+    const address = [data.address?.street, data.address?.city, data.address?.state, data.address?.zip].filter(Boolean).join(', ');
+    if (address) {
+      supabase.auth.getSession().then(({ data: sessionData }: { data: { session: { access_token: string } | null } }) => {
+        const token = sessionData.session?.access_token;
+        if (token) {
+          fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/recon-property-lookup`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+            body: JSON.stringify({ address, job_id: result.id }),
+          }).catch(() => { /* non-blocking — scan failure doesn't affect job creation */ });
+        }
+      });
+    }
+
     return result.id;
   };
 

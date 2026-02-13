@@ -6,7 +6,7 @@ import {
   ArrowLeft, Plus, Trash2, Search, X, ChevronDown, ChevronRight, Save,
   DollarSign, Package, Wrench, Zap, FileText, Home,
   Calculator, Layers, AlertCircle, Loader2, Shield, Send, Eye,
-  Ruler, Pencil, Check, Download,
+  Ruler, Pencil, Check, Download, Satellite, ShoppingCart,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getSupabase } from '@/lib/supabase';
@@ -41,7 +41,7 @@ export default function EstimateEditorPage() {
   const {
     estimate, areas, lineItems, loading, error,
     updateEstimate, addArea, updateArea, deleteArea,
-    addLineItem, updateLineItem, deleteLineItem, recalculateTotals,
+    addLineItem, updateLineItem, deleteLineItem, recalculateTotals, importFromRecon,
   } = useEstimate(estimateId);
 
   const { items: codeItems, loading: itemsLoading, searchItems } = useEstimateItems();
@@ -57,6 +57,9 @@ export default function EstimateEditorPage() {
   const [editingHeader, setEditingHeader] = useState(false);
   const [editingInsurance, setEditingInsurance] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [showReconImport, setShowReconImport] = useState(false);
+  const [reconImporting, setReconImporting] = useState(false);
+  const [showMaterialOrder, setShowMaterialOrder] = useState(false);
   const searchTimer = useRef<ReturnType<typeof setTimeout>>(null);
 
   // Group line items by area
@@ -294,6 +297,22 @@ export default function EstimateEditorPage() {
                 <button onClick={handleSend} className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-white bg-blue-600 rounded-lg hover:bg-blue-500">
                   <Send className="w-3.5 h-3.5" />
                   Send
+                </button>
+              )}
+              <button
+                onClick={() => setShowReconImport(!showReconImport)}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-emerald-300 bg-emerald-500/10 border border-emerald-500/20 rounded-lg hover:bg-emerald-500/20"
+              >
+                <Satellite className="w-3.5 h-3.5" />
+                Import from Recon
+              </button>
+              {estimate.propertyScanId && (
+                <button
+                  onClick={() => setShowMaterialOrder(!showMaterialOrder)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-orange-300 bg-orange-500/10 border border-orange-500/20 rounded-lg hover:bg-orange-500/20"
+                >
+                  <ShoppingCart className="w-3.5 h-3.5" />
+                  Order Materials
                 </button>
               )}
               <button
@@ -545,6 +564,190 @@ export default function EstimateEditorPage() {
           </div>
         </div>
       )}
+
+      {/* ── Recon Import Panel ── */}
+      {showReconImport && estimate && (
+        <ReconImportPanel
+          jobId={estimate.jobId}
+          onImport={async (scanId: string, trade: string) => {
+            setReconImporting(true);
+            const count = await importFromRecon(scanId, trade);
+            setReconImporting(false);
+            if (count > 0) {
+              await recalculateTotals();
+              setShowReconImport(false);
+            }
+          }}
+          importing={reconImporting}
+          onClose={() => setShowReconImport(false)}
+        />
+      )}
+
+      {/* ── Material Order Panel ── */}
+      {showMaterialOrder && estimate?.propertyScanId && (
+        <MaterialOrderPanel
+          scanId={estimate.propertyScanId}
+          onClose={() => setShowMaterialOrder(false)}
+        />
+      )}
+    </div>
+  );
+}
+
+// ── Recon Import Panel ──
+
+function ReconImportPanel({
+  jobId,
+  onImport,
+  importing,
+  onClose,
+}: {
+  jobId: string | null;
+  onImport: (scanId: string, trade: string) => void;
+  importing: boolean;
+  onClose: () => void;
+}) {
+  const [scans, setScans] = useState<Array<{ id: string; address: string; status: string; confidence_score: number }>>([]);
+  const [trades, setTrades] = useState<Array<{ trade: string; material_count: number }>>([]);
+  const [selectedScan, setSelectedScan] = useState<string | null>(null);
+  const [loadingScans, setLoadingScans] = useState(true);
+
+  useEffect(() => {
+    const load = async () => {
+      const supabase = getSupabase();
+
+      // If job-linked, get that scan first
+      if (jobId) {
+        const { data } = await supabase
+          .from('property_scans')
+          .select('id, address, status, confidence_score')
+          .eq('job_id', jobId)
+          .is('deleted_at', null)
+          .order('created_at', { ascending: false })
+          .limit(1);
+
+        if (data && data.length > 0) {
+          setScans(data);
+          setSelectedScan(data[0].id);
+          setLoadingScans(false);
+          return;
+        }
+      }
+
+      // Otherwise, show all company scans
+      const { data } = await supabase
+        .from('property_scans')
+        .select('id, address, status, confidence_score')
+        .is('deleted_at', null)
+        .in('status', ['complete', 'partial'])
+        .order('created_at', { ascending: false })
+        .limit(20);
+
+      setScans(data || []);
+      if (data && data.length > 0) setSelectedScan(data[0].id);
+      setLoadingScans(false);
+    };
+    load();
+  }, [jobId]);
+
+  // Load trades when scan is selected
+  useEffect(() => {
+    if (!selectedScan) return;
+    const load = async () => {
+      const supabase = getSupabase();
+      const { data } = await supabase
+        .from('trade_bid_data')
+        .select('trade, material_list')
+        .eq('scan_id', selectedScan);
+
+      setTrades((data || []).map((d: Record<string, unknown>) => ({
+        trade: d.trade as string,
+        material_count: ((d.material_list as unknown[]) || []).length,
+      })));
+    };
+    load();
+  }, [selectedScan]);
+
+  const TRADE_NAMES: Record<string, string> = {
+    roofing: 'Roofing', siding: 'Siding', gutters: 'Gutters', solar: 'Solar',
+    painting: 'Painting', landscaping: 'Landscaping', fencing: 'Fencing',
+    concrete: 'Concrete', hvac: 'HVAC', electrical: 'Electrical',
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+      <div className="bg-zinc-900 border border-zinc-700 rounded-xl w-[480px] max-h-[80vh] overflow-y-auto">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-zinc-800">
+          <div className="flex items-center gap-2">
+            <Satellite className="w-4 h-4 text-emerald-400" />
+            <span className="text-sm font-semibold text-zinc-100">Import from Recon</span>
+          </div>
+          <button onClick={onClose} className="p-1 text-zinc-500 hover:text-zinc-300">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        <div className="p-5 space-y-4">
+          {loadingScans ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="w-5 h-5 animate-spin text-zinc-500" />
+            </div>
+          ) : scans.length === 0 ? (
+            <p className="text-sm text-zinc-500 text-center py-8">
+              No property scans available. Create a job and run a scan first.
+            </p>
+          ) : (
+            <>
+              {/* Scan selector */}
+              <div>
+                <label className="text-xs text-zinc-400 mb-1.5 block">Property Scan</label>
+                <select
+                  value={selectedScan || ''}
+                  onChange={e => setSelectedScan(e.target.value)}
+                  className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-sm text-zinc-100"
+                >
+                  {scans.map(s => (
+                    <option key={s.id} value={s.id}>
+                      {s.address} ({s.confidence_score}% confidence)
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Trade buttons */}
+              {trades.length > 0 ? (
+                <div>
+                  <label className="text-xs text-zinc-400 mb-1.5 block">Select trade to import materials</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {trades.map(t => (
+                      <button
+                        key={t.trade}
+                        onClick={() => selectedScan && onImport(selectedScan, t.trade)}
+                        disabled={importing}
+                        className="flex items-center justify-between px-3 py-2.5 bg-zinc-800 border border-zinc-700 rounded-lg hover:border-emerald-500/50 hover:bg-emerald-500/5 transition-colors text-left"
+                      >
+                        <span className="text-sm text-zinc-200">{TRADE_NAMES[t.trade] || t.trade}</span>
+                        <span className="text-[10px] text-zinc-500">{t.material_count} items</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ) : selectedScan ? (
+                <p className="text-sm text-zinc-500 text-center py-4">
+                  No trade data generated for this scan. Run trade estimation first.
+                </p>
+              ) : null}
+
+              {importing && (
+                <div className="flex items-center gap-2 text-sm text-emerald-400">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Importing materials...
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
@@ -1148,6 +1351,234 @@ function EstimatePreview({
           <p className="text-sm text-zinc-300 whitespace-pre-wrap">{estimate.notes}</p>
         </div>
       )}
+    </div>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════
+// Material Order Panel — pricing comparison from Recon data
+// ════════════════════════════════════════════════════════════════
+
+interface PricedMaterial {
+  item: string;
+  quantity: number;
+  unit: string;
+  total_with_waste: number;
+  suppliers: Array<{
+    supplier: string;
+    sku: string | null;
+    product_name: string | null;
+    unit_price: number | null;
+    total_price: number | null;
+    in_stock: boolean | null;
+    url: string | null;
+  }>;
+  best_price: number | null;
+  best_supplier: string | null;
+}
+
+function MaterialOrderPanel({ scanId, onClose }: { scanId: string; onClose: () => void }) {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [pricingAvailable, setPricingAvailable] = useState(false);
+  const [trades, setTrades] = useState<Record<string, PricedMaterial[]>>({});
+  const [selectedTrade, setSelectedTrade] = useState<string | null>(null);
+
+  const fetchPricing = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const supabase = getSupabase();
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('Not authenticated');
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/recon-material-order`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({ scan_id: scanId }),
+        }
+      );
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to load pricing');
+
+      setPricingAvailable(data.pricing_available);
+      setTrades(data.trades || {});
+
+      const tradeKeys = Object.keys(data.trades || {});
+      if (tradeKeys.length > 0 && !selectedTrade) {
+        setSelectedTrade(tradeKeys[0]);
+      }
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Failed to load material pricing');
+    } finally {
+      setLoading(false);
+    }
+  }, [scanId, selectedTrade]);
+
+  useEffect(() => { fetchPricing(); }, [fetchPricing]);
+
+  const tradeKeys = Object.keys(trades);
+  const currentMaterials = selectedTrade ? trades[selectedTrade] || [] : [];
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+      <div className="bg-zinc-900 border border-zinc-700/50 rounded-xl w-full max-w-4xl max-h-[85vh] flex flex-col shadow-2xl">
+        {/* Header */}
+        <div className="flex items-center justify-between px-5 py-4 border-b border-zinc-700/50">
+          <div className="flex items-center gap-2">
+            <ShoppingCart size={18} className="text-orange-400" />
+            <span className="text-sm font-semibold text-zinc-100">Material Pricing</span>
+            {!pricingAvailable && !loading && (
+              <span className="text-[10px] text-yellow-400 bg-yellow-500/10 border border-yellow-500/20 px-2 py-0.5 rounded">
+                Manual pricing mode
+              </span>
+            )}
+          </div>
+          <button onClick={onClose} className="p-1 text-zinc-400 hover:text-zinc-200">
+            <X size={16} />
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto p-5">
+          {loading ? (
+            <div className="flex items-center justify-center py-16">
+              <Loader2 size={20} className="animate-spin text-zinc-400" />
+              <span className="ml-2 text-sm text-zinc-400">Loading material data...</span>
+            </div>
+          ) : error ? (
+            <div className="flex items-center justify-center py-16 text-red-400 gap-2">
+              <AlertCircle size={16} />
+              <span className="text-sm">{error}</span>
+            </div>
+          ) : tradeKeys.length === 0 ? (
+            <div className="text-center py-16">
+              <Package size={32} className="mx-auto text-zinc-600 mb-2" />
+              <p className="text-sm text-zinc-400">No trade data found for this property scan.</p>
+              <p className="text-xs text-zinc-500 mt-1">Run a property scan with trade estimation first.</p>
+            </div>
+          ) : (
+            <>
+              {/* Trade selector */}
+              <div className="flex gap-1 mb-4 overflow-x-auto pb-1">
+                {tradeKeys.map(trade => (
+                  <button
+                    key={trade}
+                    onClick={() => setSelectedTrade(trade)}
+                    className={cn(
+                      'px-3 py-1.5 rounded-md text-xs font-medium whitespace-nowrap transition-colors',
+                      selectedTrade === trade
+                        ? 'bg-orange-500/20 text-orange-300 border border-orange-500/30'
+                        : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 border border-transparent'
+                    )}
+                  >
+                    {trade.charAt(0).toUpperCase() + trade.slice(1)}
+                  </button>
+                ))}
+              </div>
+
+              {!pricingAvailable && (
+                <div className="flex items-start gap-2 p-3 rounded-lg bg-yellow-500/5 border border-yellow-500/20 text-yellow-400 text-xs mb-4">
+                  <AlertCircle size={14} className="mt-0.5 shrink-0" />
+                  <div>
+                    <p className="font-medium">Supplier pricing not configured</p>
+                    <p className="text-yellow-500/70 mt-0.5">
+                      Material quantities are from Recon measurements. Configure supplier API keys in Settings to see real-time pricing from Home Depot and Lowe&apos;s.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Material list table */}
+              <div className="border border-zinc-700/50 rounded-lg overflow-hidden">
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="bg-zinc-800/50 text-zinc-400">
+                      <th className="text-left px-3 py-2 font-medium">Material</th>
+                      <th className="text-right px-3 py-2 font-medium">Qty</th>
+                      <th className="text-right px-3 py-2 font-medium">Unit</th>
+                      <th className="text-right px-3 py-2 font-medium">W/ Waste</th>
+                      {pricingAvailable && (
+                        <>
+                          <th className="text-right px-3 py-2 font-medium">HD Price</th>
+                          <th className="text-right px-3 py-2 font-medium">Lowe&apos;s</th>
+                          <th className="text-right px-3 py-2 font-medium">Best</th>
+                        </>
+                      )}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-zinc-800/50">
+                    {currentMaterials.map((mat, i) => {
+                      const hd = mat.suppliers.find(s => s.supplier === 'homedepot');
+                      const lowes = mat.suppliers.find(s => s.supplier === 'lowes');
+                      return (
+                        <tr key={i} className="hover:bg-zinc-800/30">
+                          <td className="px-3 py-2 text-zinc-200">{mat.item}</td>
+                          <td className="px-3 py-2 text-right text-zinc-300">{mat.quantity}</td>
+                          <td className="px-3 py-2 text-right text-zinc-400">{mat.unit}</td>
+                          <td className="px-3 py-2 text-right text-zinc-300">{mat.total_with_waste}</td>
+                          {pricingAvailable && (
+                            <>
+                              <td className={cn(
+                                'px-3 py-2 text-right',
+                                mat.best_supplier === 'homedepot' ? 'text-green-400 font-medium' : 'text-zinc-300'
+                              )}>
+                                {hd?.total_price != null ? `$${hd.total_price.toFixed(2)}` : '-'}
+                              </td>
+                              <td className={cn(
+                                'px-3 py-2 text-right',
+                                mat.best_supplier === 'lowes' ? 'text-green-400 font-medium' : 'text-zinc-300'
+                              )}>
+                                {lowes?.total_price != null ? `$${lowes.total_price.toFixed(2)}` : '-'}
+                              </td>
+                              <td className="px-3 py-2 text-right text-green-400 font-medium">
+                                {mat.best_price != null ? `$${mat.best_price.toFixed(2)}` : '-'}
+                              </td>
+                            </>
+                          )}
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                  {pricingAvailable && currentMaterials.length > 0 && (
+                    <tfoot>
+                      <tr className="bg-zinc-800/30 border-t border-zinc-700/50">
+                        <td colSpan={4} className="px-3 py-2 text-right text-zinc-400 font-medium">Total</td>
+                        <td className="px-3 py-2 text-right text-zinc-200 font-medium">
+                          ${currentMaterials.reduce((sum, m) => {
+                            const hd = m.suppliers.find(s => s.supplier === 'homedepot');
+                            return sum + (hd?.total_price || 0);
+                          }, 0).toFixed(2)}
+                        </td>
+                        <td className="px-3 py-2 text-right text-zinc-200 font-medium">
+                          ${currentMaterials.reduce((sum, m) => {
+                            const lowes = m.suppliers.find(s => s.supplier === 'lowes');
+                            return sum + (lowes?.total_price || 0);
+                          }, 0).toFixed(2)}
+                        </td>
+                        <td className="px-3 py-2 text-right text-green-400 font-semibold">
+                          ${currentMaterials.reduce((sum, m) => sum + (m.best_price || 0), 0).toFixed(2)}
+                        </td>
+                      </tr>
+                    </tfoot>
+                  )}
+                </table>
+              </div>
+
+              {/* Disclaimer */}
+              <p className="text-[10px] text-zinc-500 mt-3">
+                Quantities calculated from satellite-estimated measurements. Verify before ordering. Prices shown are retail and may vary by location.
+              </p>
+            </>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
