@@ -29,6 +29,44 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 
 ---
 
+## API COST PRINCIPLE — STANDING RULE FOR ALL PHASES
+
+**Launch with $0/month external API costs.** Use only free and freemium APIs (within free tiers) at launch. Paid APIs are post-revenue additions — only integrate when monthly subscription revenue justifies the cost.
+
+| Rule | Detail |
+|------|--------|
+| **Free-first** | Every feature must have a free-tier fallback that still delivers value |
+| **Feature flags** | Paid API integrations are built but GATED behind Supabase secret presence (no key = graceful skip) |
+| **No enterprise APIs at launch** | APIs with no free tier and enterprise-only pricing are NOT on the roadmap until post-traction |
+| **Cost tracking** | Every API call logged with cost. Ops portal dashboard shows monthly API spend |
+| **Upgrade path** | Adding a paid API key auto-enables the enriched features — no code changes needed |
+
+**This applies to:** Phase P (Recon), Phase SK (Sketch Engine), Phase E (AI), and ALL future expansion phases.
+
+---
+
+## AI MONETIZATION MODEL — STANDING RULE
+
+**AI is a tier feature, not a separate product.** No credits, no tokens, no scan counts, no packages. AI just works.
+
+| Rule | Detail |
+|------|--------|
+| **No credits/tokens/packages** | KILLED. No credit packs, no tokens, no "buy 50 scans," no game currency. None of that. |
+| **No visible counts** | User never sees "74 of 100 remaining." No numbers. No scan limits on pricing page. |
+| **Usage meter** | Settings shows a clean visual usage bar (no numbers). Fills up with use. Resets monthly with billing cycle. |
+| **Tier thresholds** | Each tier has an internal cost threshold (invisible to user). Solo < Team < Business. Exact thresholds set during Phase G when real token costs are measurable. |
+| **Cutoff behavior** | When threshold exceeded: AI features blocked, everything else works. User sees: "You've reached your AI usage for this month." Then two options: buy more or upgrade. |
+| **Buy more AI usage** | Clean dollar amounts, no units: **$10 \| $25 \| $50 \| $100 \| $500 \| $1,000**. User taps a dollar amount, meter refills proportionally, AI turns back on. No token counts, no "you purchased X credits." Just dollars in, AI back on. Internal system maps dollars to AI capacity based on Sonnet token costs + margin. User never sees that math. |
+| **Upgrade option** | Below the dollar buttons: "Or upgrade your plan for higher monthly limits." Links to plan upgrade flow. User is never FORCED to upgrade — buying more usage is always an option. |
+| **Business/Enterprise** | Unlimited AI. No meter shown. Never restricted. |
+| **Internal tracking** | Ops portal tracks AI cost per company, dollar top-up revenue, margin per customer. User never sees this. |
+| **Model choice** | **Opus 4.6** for all AI features (Z Intelligence, Blueprint Analyzer, AI Scanner, trade tools). Sonnet 4.5 only for trivial background tasks (classification, routing). Anything the user sees or that generates revenue documents = Opus. No compromises. |
+| **Old system** | The `user_credits`, `credit_purchases`, `scan_logs` tables and `subscription-credits` EF from FM migration are DEPRECATED. Will be replaced during Phase E with tier-based usage tracking + dollar top-ups. RevenueCat IAP credit products (`zafto_credits_*`) are KILLED. |
+
+**This replaces ALL previous credit/scan-count/package pricing models across all docs and code.**
+
+---
+
 ## ARCHITECTURE
 
 ```
