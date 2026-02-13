@@ -1,6 +1,6 @@
 # ZAFTO SESSION HANDOFF
 ## THE ONLY DOC YOU READ FIRST — EVERY SESSION
-### Last Updated: February 13, 2026 (Session 99)
+### Last Updated: February 13, 2026 (Session 104)
 
 ---
 
@@ -9,8 +9,9 @@
 1. **Read THIS doc completely** — understand current position, known gaps, rules
 2. **Open `07_SPRINT_SPECS.md`** — go to the CURRENT EXECUTION POINT listed below
 3. **Read the current sprint's checklist** — understand what's done [x] and what's next [ ]
-4. **Verify code matches** — run targeted checks (dart analyze, npm run build, grep for key files)
-5. **Resume from the NEXT UNCHECKED `[ ]` ITEM** — not from memory, not from vibes, from the checklist
+4. **Check `Expansion/52_SYSTEM_INTEGRATION_MAP.md`** — verify current phase's required connections are in sprint spec
+5. **Verify code matches** — run targeted checks (dart analyze, npm run build, grep for key files)
+6. **Resume from the NEXT UNCHECKED `[ ]` ITEM** — not from memory, not from vibes, from the checklist
 
 ---
 
@@ -18,20 +19,20 @@
 
 | Field | Value |
 |-------|-------|
-| **Sprint** | **PHASE F COMPLETE (code).** F1-F10 ALL DONE. FM manual steps remain. Phase T (Programs) is NEXT. **Phase T + Phase P (Recon) + Phase SK (Sketch Engine) ALL SPEC'D. Phase U (Unification & Feature Completion) expanded S99: 15 sprints, ~276 hrs (was 9/~120h). Plan Review spec'd + sprint checklists written (S97, BA1-BA8, ~128 hrs). Build order: T → P → SK → GC (Schedule) → U → G → E (includes BA) → LAUNCH.** |
-| **Sub-step** | Phase F finished. All 4 apps LIVE on Vercel + Cloudflare. Plan Review spec'd (S97). Phase GC (Schedule) spec'd (S97). Phase U added (S96). Next: Phase T (TPA) → Phase P (Recon) → Phase SK (Sketch Engine) → Phase GC (Schedule) → Phase U (Unification) → Phase G (QA/Hardening) → Phase E (AI, includes Plan Review BA1-BA8) → LAUNCH. |
-| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → Phase T (next unchecked: T1). Phase P (10 sprints, ~96 hours). Phase SK (11 sprints, ~176 hours). **Phase GC (11 sprints, ~124 hours).** Phase U (15 sprints, ~276 hours — expanded S99: U11 Form Depth, U12 Templates, U13 i18n, U14 Trade Support, U15 Lost Features). **Phase E: E-review + BA1-BA8 (~128 hrs) + E1-E4.** Phase G: G1-G10 + G10h-G10k (validation/depth/i18n/trade QA items added S99). |
-| **Status** | Phases A-D + F ALL DONE. R1 DONE. FM code done. Phase E PAUSED. ~173 tables. 48 migration files. 53 Edge Functions. **107 CRM pages. 36 team pages. 38 client pages. 26 ops pages.** Codemagic Android debug build PASSING. **Phase T spec complete — 17 tables, 3 EFs, 10 sprints. Phase P spec complete — 11 tables, 6 EFs, 10 sprints, ~96h. Phase SK spec complete — 3 tables, 11 sprints, ~176h. Phase GC spec complete — 12 tables, 4 EFs, 11 sprints, ~124h. Phase U expanded (S99) — 15 sprints, ~276h. Includes form validation (zero validation currently), template engine, i18n (10 languages), universal trade support, S98 lost features recovery. Phase G expanded (S99) — G10h-G10k QA items for validation stress testing + depth + i18n + trade verification. Plan Review spec complete — 6 tables, 3 EFs, 8 sprints, ~128h. Full depth audit complete (S99): competitor research (9 platforms), contractor complaints (20 ranked), market gaps (12 identified).** |
-| **Last Completed** | S99: Full depth audit (all 5 apps), competitor research (9 platforms), contractor complaint research (20 complaints, 10 switching triggers), Phase U expanded to 15 sprints (~276h) with U11-U15 (Form Depth, Templates, i18n, Trade Support, Lost Features), G10h-G10k QA items added, form validation requirements documented. S98: Full-stack audit (31 gaps, 65 items), API cost strategy ($0/mo launch), AI monetization locked. S97: Plan Review spec'd. S96: Phase U added. |
-| **Session Count** | 99 |
-| **Tables** | ~173 (Phase T will add ~17, Phase P will add ~11, Phase SK will add ~3, Phase E/BA will add ~6) |
-| **Migration Files** | 48 (Phase T will add ~8, Phase P will add ~5, Phase SK will add ~1, Phase E/BA will add ~1) |
+| **Sprint** | **PHASE T COMPLETE.** T1-T10 all code done. 11 migrations (49-59), 58 EFs, ~192 tables. 8 CRM hooks, 3 CRM pages, 5 Flutter screens, 2 team hooks, 1 client hook. All 4 portals build clean. Next: Phase P (Recon). **Phase P (Recon) + Phase SK (Sketch Engine, expanded S100 SK12-SK14) ALL SPEC'D. Phase U (Unification) expanded S100: 22 sprints, ~432 hrs. Phase SK expanded S100: 14 sprints, ~228 hrs. Plan Review spec'd (S97, BA1-BA8, ~128 hrs). Build order: P → SK → GC → U → G → E (includes BA) → LAUNCH.** |
+| **Sub-step** | Phase T finished. All 4 apps LIVE on Vercel + Cloudflare. Next: Phase P (Recon) → Phase SK (Sketch Engine, ~228h) → Phase GC (Schedule) → Phase U (Unification, ~432h) → Phase G (QA/Hardening) → Phase E (AI, includes Plan Review BA1-BA8) → LAUNCH. |
+| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → Phase T (next unchecked: T1). Phase P (10 sprints, ~96 hours). Phase SK (14 sprints, ~228 hours — expanded S100: SK12 Site Plan, SK13 Trade Measurements, SK14 Field UX). **Phase GC (11 sprints, ~124 hours).** Phase U (22 sprints, ~432 hours — S100: U7c-f Stripe/Reviews/Agreements/Automation, U16-U22 Onboarding/DataFlow/Dispatch/Import/Subs/Calendar/IsolatedFeatures). **Phase E: E-review + BA1-BA8 (~128 hrs) + E1-E4.** Phase G: G1-G10 + G10h-G10k (validation/depth/i18n/trade QA items added S99). |
+| **Status** | Phases A-D + F + T ALL DONE. R1 DONE. FM code done. Phase E PAUSED. ~192 tables. 59 migration files. 58 Edge Functions. **116 CRM pages. 36 team pages. 39 client pages. 27 ops pages.** Codemagic Android debug build PASSING. **Phase T spec complete — 17 tables, 3 EFs, 10 sprints. Phase P spec complete — 11 tables, 6 EFs, 10 sprints, ~96h. Phase SK spec complete — 3 tables, 11 sprints, ~176h. Phase GC spec complete — 12 tables, 4 EFs, 11 sprints, ~124h. Phase U expanded (S99) — 15 sprints, ~276h. Includes form validation (zero validation currently), template engine, i18n (10 languages), universal trade support, S98 lost features recovery. Phase G expanded (S99) — G10h-G10k QA items for validation stress testing + depth + i18n + trade verification. Plan Review spec complete — 6 tables, 3 EFs, 8 sprints, ~128h. Full depth audit complete (S99): competitor research (9 platforms), contractor complaints (20 ranked), market gaps (12 identified).** |
+| **Last Completed** | S104: **PHASE T COMPLETE (T1-T10).** T1: 3 tables + ALTER 3. T2: 3 tables. T3: water_damage + psych logs + contents + CRM + Flutter. T4: equipment + IICRC calculator + CRM + Flutter. T5: documentation validation (4 tables + EF + seed 76 items). T6: tpa_program_financials + rollup EF + TPA Dashboard + P&L + referral fee trigger. T7: supplements hook + scorecards hook + scorecards page + Flutter supplement screen. T8: restoration_line_items (50 seeded) + export EF (FML/DXF/PDF). T9: Team hooks, Ops TPA analytics, CRM sidebar, Client TPA status, schedule queue, notification triggers. T10: All builds clean. ~192 tables. 59 migrations. 58 EFs. 116 CRM routes. S103: Full system audit. S102: 3 expansion specs. |
+| **Session Count** | 104 |
+| **Tables** | ~192 built. Expansion adds ~40 new tables: Phase P +11 +5(DT), Phase SK +6, Phase GC +2(WX), Phase U extensions +13, Phase W +5, Phase J +5, Phase L +12, Trade Tools +1 shared, Phase E/BA +6 |
+| **Migration Files** | 59 (Phase P will add ~5, Phase SK will add ~1, Phase GC will add ~3, Phase E/BA will add ~1) |
 
 ## CRITICAL: AI GOES LAST — BUILD ORDER CORRECTED (S80)
 
 **Owner directive (S80):** Phase E (AI Layer) was started prematurely. AI must be built AFTER every platform feature exists (Phase F) and is debugged (Phase G). AI needs to know every feature like the back of its hand — every table, every screen, every workflow — so it can do literally anything a user asks within the program. Deep AI spec session required before resuming Phase E.
 
-**Correct build order: A(DONE) → B(DONE) → C(DONE) → D(DONE — including D8 Estimates) → R1(DONE) → FM(CODE DONE, manual pending) → F(ALL CODE COMPLETE) → T(TPA MODULE, NEXT) → P(ZSCAN, SPEC'D) → SK(SKETCH ENGINE, SPEC'D) → GC(GANTT/CPM SCHEDULER, SPEC'D) → U(UNIFICATION & FEATURE COMPLETION) → G(QA/HARDEN EVERYTHING) → E(AI LAST: E-review → BA1-BA8 Plan Review → E1-E4) → LAUNCH. F2 (Website Builder) DEFERRED TO POST-LAUNCH (S94 owner directive). F8 (Ops Portal 2-4) also post-launch.**
+**Correct build order: A(DONE) → B(DONE) → C(DONE) → D(DONE — including D8 Estimates) → R1(DONE) → FM(CODE DONE, manual pending) → F(ALL CODE COMPLETE) → T(COMPLETE) → P(ZSCAN + DIGITAL TWIN EXT, SPEC'D, NEXT) → SK(SKETCH ENGINE, SPEC'D) → GC(GANTT/CPM + WEATHER EXT, SPEC'D) → U(UNIFICATION + REP + SUB + FIN + MAT + LOG + CO + TT EXTENSIONS) → W(WARRANTY + PREDICTIVE MAINTENANCE) → J(JOB INTELLIGENCE + SMART PRICING) → L(PERMITS + COMPLIANCE + LIENS + CE) → G(QA/HARDEN EVERYTHING) → E(AI LAST: E-review → BA1-BA8 Plan Review → E1-E4) → LAUNCH. F2 (Website Builder) DEFERRED TO POST-LAUNCH (S94 owner directive). F8 (Ops Portal 2-4) also post-launch.**
 
 **Phase E premature work (committed, dormant in codebase):**
 - E1-E2: z-intelligence EF (14 tools), Dashboard wired, z_threads/z_messages tables (S78)
@@ -61,9 +62,9 @@
 |-----|--------|--------|---------|
 | **Phase T: Programs** | **SPEC'D — NEXT** | T | Full spec in `Expansion/39_TPA_MODULE_SPEC.md`. ~17 tables, 3 EFs, ~80 hours. Legal assessment in `memory/tpa-legal-assessment.md`. Builds FIRST. |
 | **Phase P: Recon/Property Intelligence** | **SPEC'D** | P | Full spec in `Expansion/40_PROPERTY_INTELLIGENCE_SPEC.md`. ~11 tables, 6 EFs, ~96 hours, 10 sprints. Lead scoring, batch area scanning, storm intelligence, supplement checklist, multi-structure detection, confidence scoring. API research in `memory/property-intelligence-research.md`. Builds after Phase T. |
-| **Phase SK: Sketch Engine** | **SPEC'D** | SK | Full spec in `Expansion/46_SKETCH_ENGINE_SPEC.md`. ~3 tables, ~176 hours, 11 sprints (SK1-SK11). LiDAR scan (Apple RoomPlan), trade layers (electrical/plumbing/HVAC/damage), Konva.js web editor, auto-estimate pipeline, export (PDF/PNG/DXF/FML), 3D visualization (three.js). Builds after Phase P. |
+| **Phase SK: Sketch Engine** | **EXPANDED (S101)** | SK | Full spec in `Expansion/46_SKETCH_ENGINE_SPEC.md` + sprint specs SK12-SK14. **~6 tables (was ~3), ~240 hours (was ~228), 14 sprints (SK1-SK14).** SK1-SK11: LiDAR scan, trade layers, Konva.js web editor, auto-estimate, export, 3D view. **S101 additions: multi-floor support (floor_number field + floor selector UI), version history snapshots (floor_plan_snapshots table), photo pin placement (floor_plan_photo_pins table), SVG export, team portal read-only viewer, client portal read-only viewer.** SK12: Site plan mode. SK13: Trade-specific measurements. SK14: Field UX + ARCore + multi-user collab. Deep research: `memory/sketch-engine-deep-research-s101.md`. $0/month API costs confirmed. Builds after Phase P. |
 | **Phase GC: Schedule** | **SPEC'D** | GC | Full spec in `Expansion/48_GANTT_CPM_SCHEDULER_SPEC.md`. ~12 tables, 4 EFs, ~124 hours, 11 sprints (GC1-GC11). Full CPM scheduling engine with critical path, resource leveling, P6/MS Project import/export, real-time collaboration. DHTMLX Gantt PRO (web) + legacy_gantt_chart (Flutter). Builds after Phase SK. |
-| **Phase U: Unification & Feature Completion** | **PLANNED** | U | 15 sprints (U1-U15, ~276 hrs). Portal unification, Supabase-style nav redesign, permission engine, Ledger completion, dashboard restoration, PDF/email/dead buttons, payment flow, cross-system metrics, polish, embedded financing (U10), **Form Depth Engine (U11, ~24h) — smart validation + form expansion across all apps, Template & Customization Engine (U12, ~16h) — configurable bids/invoices/agreements + custom fields/statuses, i18n 10 Languages (U13, ~24h) — EN/ES/PT-BR/PL/ZH/HT/RU/KO/VI/TL, Universal Trade Support (U14, ~12h) — 20+ trade categories with trade-specific workflows, S98 Lost Features (U15, ~16h) — remote-in support, data integrity audit, GPS-enhanced walkthrough data**. |
+| **Phase U: Unification & Feature Completion** | **EXPANDED (S100)** | U | 22 sprints (U1-U22, ~432 hrs). U1-U10: Portal unification, nav redesign, permission engine, Ledger completion, dashboard restoration, PDF/email/dead buttons, payment flow (expanded: **U7c Stripe Connect ~8h, U7d Review System ~6h, U7e Service Agreements ~12h, U7f Automation Engine Backend ~8h**), cross-system metrics, polish, embedded financing. U11-U15: Form depth, templates, i18n, trade support, S98 lost features. **U16-U22 (S100 additions): Onboarding Wizard (~8h), Data Flow Wiring (~16h — walkthrough→estimate→bid→job→invoice chain), Dispatch Board (~10h), Data Import (~8h — Jobber/HCP migration), Subcontractor Management (~12h), Calendar Sync + Notifications (~8h — Google/Outlook), Isolated Feature Wiring (~12h — phone/meetings/fleet/hiring connect to core).** |
 | **Phase G: QA/Hardening** | **AFTER ALL BUILDING** | G | Comprehensive QA of ALL features (A-F + T + P + SK + U). Button-click audit, security, performance, cross-feature integration testing. |
 | **Plan Review** | **SPEC'D (S97)** | E/BA | Full spec in `Expansion/47_BLUEPRINT_ANALYZER_SPEC.md`. AI-powered blueprint reading + automated takeoff. ~6 tables, 3 EFs, 8 sprints (BA1-BA8, ~128 hrs). Hybrid CV+LLM pipeline (MitUNet + YOLOv12 + Claude). RunPod serverless GPU. Research validated. Builds within Phase E (after E-review). |
 | **Phase E AI (PAUSED)** | **DORMANT** | E | Code committed S78-S80. NOT to be resumed until after T+P+SK+GC+U+G. Deep spec session required. E-review + BA1-BA8 + E1-E4 sprint checklists all written. |
@@ -86,6 +87,8 @@
 | D6: company_documents table | NOT BUILT | D6a | Table + UI deferred. |
 | D6: Flutter enterprise screens | NOT BUILT | D6b | Branch/roles/forms/API key screens for mobile. |
 | External API integrations | PENDING | F-phase | Gusto (payroll), Checkr (background checks), E-Verify, DocuSign, Samsara/Geotab (fleet GPS), Unwrangle (supplier pricing). API keys needed. |
+| SK: Bluetooth Laser Meter | **DEFERRED (S101)** | Post-launch | MagicPlan PrecisionLink supports 20+ devices (Bosch, Leica, DeWalt, Hilti, Stabila). HIGH bug risk — requires physical hardware testing, manufacturer BLE SDKs, device-specific pairing flows. Not confident in first-pass quality. Defer to post-launch hardware sprint with real device testing. Research in `memory/sketch-engine-deep-research-s101.md`. |
+| SK → GC Scheduler Link | **DEFERRED to U-phase (S101)** | U17/U22 | Room data from sketch could auto-suggest scheduling tasks (e.g., "wire kitchen = 6 hrs"). Can't wire to Phase GC until it exists. Natural fit for U17 (data flow wiring) or U22 (isolated feature wiring). |
 
 ---
 
@@ -137,6 +140,71 @@ These sprints were executed out of the original D1→D2→D3→D4→D5 order:
 ---
 
 ## SESSION LOG (History — do NOT use for execution decisions, use CURRENT EXECUTION POINT above)
+
+### Session 100 (Feb 13) — Comprehensive Build Plan Audit + All Holes Addressed
+
+**S100: Comprehensive 4-Agent Audit (system connectivity, sketch engine, lead pipeline, data flow):**
+- System connectivity: ~35% — data enters correctly but doesn't flow forward automatically.
+- Lead pipeline: ~46% — architecture strong, automation engine = all mock data.
+- Sketch engine: 4.5/10 as multi-trade tool (9/10 for interior electrical/plumbing/HVAC, 0/10 for exterior trades).
+- 12 major holes found, 10 isolated features that connect to nothing, ~150-180 additional hours needed.
+
+**S100: 12 Major Holes Identified & Addressed:**
+1. No Stripe Connect onboarding — contractors can't get paid → U7c
+2. No onboarding wizard — blank dashboard, high churn → U16
+3. Automation engine = all mock data, zero backend → U7f
+4. No review request system (non-AI) → U7d
+5. Service agreements barely spec'd → U7e
+6. No dispatch board → U18
+7. No data import tools (can't migrate from Jobber/HCP) → U19
+8. Change order workflow never fully built → U17
+9. No customer communication timeline → U17
+10. No subcontractor management → U20
+11. No calendar sync (Google/Outlook) → U21
+12. Sketch engine = interior only → SK12-SK14
+
+**S100: Broken Data Flow Chains Identified → U17:**
+- Walkthrough → Estimate (identical fields, no transfer function)
+- Estimate → Bid (no conversion function)
+- Estimate Approved → Job (customer approves, nothing happens)
+- Job Completed → Invoice (no auto-draft)
+- Job Cost Radar ignores time_entries (40-60% of costs)
+- Client Signature → Status (fire and forget)
+- Speed-to-lead auto_respond flag exists but never executes
+
+**S100: Lead Pipeline Assessment (5th agent):**
+- Fully wired sources: Manual CRM entry, AI Receptionist (SignalWire+Claude), Webhook normalizers (Angi/Thumbtack/Meta/Nextdoor)
+- Stub sources: Google Business (placeholder), Yelp (reviews only), Google LSA (placeholder)
+- Auto-assignment: REAL code, functional, minor round-robin counter bug (global vs per-rule)
+- **Verdict: Adequate for launch with 3 pre-launch fixes:**
+  1. Notifications write-only (records created but never delivered) — 4-8h fix
+  2. `deleteLead` does hard DELETE (violates soft-delete rule) — 15min fix
+  3. CRM manual leads bypass aggregator (no analytics, no auto-assignment) — 2-4h fix
+- Post-launch: Google Business/Yelp/LSA stubs fine, webhook signature verification, phone-call-to-lead auto-creation
+
+**S100: Phase SK Expanded (11 → 14 sprints, ~176h → ~228h):**
+- SK12: Site Plan Mode — exterior trades (~20h). Property boundary, roof plan overlay, linear/area tools, elevation markers, site plan symbols.
+- SK13: Trade-Specific Measurements & Templates (~16h). 8+ trade formulas (roofing/fencing/concrete/landscaping/siding/solar/gutters/painting). Pre-built templates by trade. One-click estimate generation.
+- SK14: Field UX + Multi-User + Advanced (~16h). Glove mode, sunlight mode, voice input, ARCore Android, multi-user collab (Yjs), offline queue improvements.
+
+**S100: Phase U Expanded (15 → 22 sprints, ~276h → ~432h):**
+- U7c: Stripe Connect Onboarding (~8h)
+- U7d: Review Request System (~6h)
+- U7e: Service Agreements (~12h)
+- U7f: Automation Engine Backend (~8h)
+- U16: Contractor Onboarding Wizard (~8h)
+- U17: Data Flow Wiring — walkthrough→estimate→bid→job→invoice chain (~16h)
+- U18: Dispatch Board (~10h)
+- U19: Data Import Tools — Jobber/HCP migration (~8h)
+- U20: Subcontractor Management (~12h)
+- U21: Calendar Sync + Notification Delivery (~8h)
+- U22: Isolated Feature Wiring — phone/meetings/fleet/hiring connect to core (~12h)
+
+**S100: Memory Files Created/Updated:**
+- `s100-build-audit.md` — comprehensive audit findings summary.
+- `zafto-system-knowledge.md` — Phase U/SK hour updates.
+
+---
 
 ### Session 99 (Feb 13) — Full Depth Audit + Competitor Research + Phase U Expansion
 

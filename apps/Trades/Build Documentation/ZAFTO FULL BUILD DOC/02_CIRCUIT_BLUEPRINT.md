@@ -646,8 +646,36 @@ Tech opens app -> Taps "Field Tools"
 - [x] D7a: Certifications Modular -- **DONE S67-68** (certification_types + certification_audit_log — 2 tables, 43 total. 25 seeded system types. Configurable per company. Immutable audit trail. All 3 surfaces use dynamic DB types with enum fallback.)
 - [x] D2f: Certificate of Completion -- **DONE S68** (Flutter: job_completion_screen.dart enhanced — detects insurance_claim jobs, adds 4 extra checks: moisture at target, equipment removed, drying complete, TPI final passed. Auto-transitions claim to work_complete. Web CRM: 7th "Completion" tab on claim detail with pre-flight checklist + status transition buttons.)
 
-### Phase T: Programs -- SPEC'D (S92) -- NEXT
-- [ ] T1-T10: 17 tables, 3 Edge Functions, ~80 hours. Builds FIRST.
+### Phase T: Programs -- IN PROGRESS (S104)
+- [x] T1: Migration 49 (tpa_programs, tpa_assignments, tpa_scorecards + ALTER companies.features + ALTER jobs + ALTER estimates) + RLS + indexes + audit triggers
+- [x] T1: CRM hook use-tpa-programs.ts (CRUD + real-time + useCompanyFeatures + toggleTpaFeature)
+- [x] T1: CRM page /dashboard/settings/tpa-programs (full CRUD form: program identity, financial terms, SLA thresholds, portal/contacts)
+- [x] T1: Sidebar INSURANCE PROGRAMS section with featureFlag gating (shows when company.features.tpa_enabled = true)
+- [x] T2: Migration 50 (tpa_supplements, tpa_doc_requirements, tpa_photo_compliance) + RLS + indexes + audit triggers
+- [x] T2: CRM hook use-tpa-assignments.ts (CRUD + real-time + SLA auto-calc + status workflow + createJobFromAssignment)
+- [x] T2: CRM pages /dashboard/tpa/assignments (list + SLA badges) + /dashboard/tpa/assignments/[id] (detail + SLA dashboard + timeline)
+- [x] T3: Migration 51 (water_damage_assessments, psychrometric_logs, contents_inventory + ALTER moisture_readings) + RLS + indexes + triggers
+- [x] T3: CRM hook use-water-damage.ts (3 hooks: assessments, drying monitor w/ GPP calc, contents inventory)
+- [x] T3: CRM page /dashboard/jobs/[id]/moisture (4-tab monitoring: overview, readings, psychrometric, contents)
+- [x] T3: Flutter 4 screens (water_damage_assessment, moisture_reading_entry, psychrometric_log, contents_inventory)
+- [x] T4: Migration 52 (ALTER restoration_equipment + equipment_calculations + equipment_inventory) + RLS + indexes + triggers
+- [x] T4: EF tpa-equipment-calculator (IICRC S500: dehu/AM/scrubber per-room formulas + save_results)
+- [x] T4: CRM hooks use-equipment-deployments.ts + use-equipment-inventory.ts (deploy/remove/billing + warehouse CRUD)
+- [x] T4: CRM page /dashboard/jobs/[id]/equipment (3-tab: deployed, IICRC calculator, history + deploy modal + calc modal)
+- [x] T4: Flutter 3 screens (iicrc_calculator, equipment_deployment, equipment_inventory)
+- [x] T5: Migration 53 (certificates_of_completion + doc_checklist_templates + doc_checklist_items + job_doc_progress) + RLS + triggers
+- [x] T5: Migration 54 (seed data: 4 checklist templates, 76 items, iicrc_equipment_factors reference table)
+- [x] T5: EF tpa-documentation-validator (job compliance check: missing items, % complete, deadline status)
+- [x] T5: CRM hook use-documentation-validation.ts + /dashboard/jobs/[id]/documentation (5-phase checklist, compliance bar)
+- [x] T5: Flutter documentation_checklist_screen (phase grouping, toggle items, compliance %)
+- [x] T6: Migration 55 (tpa_program_financials monthly rollup) + Migration 56 (referral fee trigger → ledger_entries)
+- [x] T6: EF tpa-financial-rollup + CRM use-tpa-financials.ts + /dashboard/tpa (Dashboard + P&L + pipeline)
+- [x] T7: CRM use-tpa-supplements.ts + use-tpa-scorecards.ts + /dashboard/tpa/scorecards + Flutter supplement_discovery_screen
+- [x] T8: Migration 57 (restoration_line_items 50 seeded + xact mapping) + EF restoration-export (FML/DXF/PDF)
+- [x] T9: Team hooks (use-tpa-jobs + use-equipment), Ops /dashboard/tpa + sidebar, CRM sidebar TPA Dashboard
+- [x] T9: Client /projects/[id]/tpa-status + Migration 58 (tpa_schedule_queue) + Migration 59 (notification_triggers)
+- [x] T10: All 4 portals build clean, dart analyze 0 errors
+- [ ] T1-T10: Deploy migrations + EFs (npx supabase db push)
 - Spec: `Expansion/39_TPA_MODULE_SPEC.md`
 
 ### Phase P: Recon/Property Intelligence -- SPEC'D (S93, expanded S97)
