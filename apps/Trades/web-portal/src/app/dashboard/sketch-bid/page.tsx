@@ -1,629 +1,636 @@
 'use client';
 
-import { useState } from 'react';
+// ZAFTO Sketch & Bid Page — SK6 Canvas Editor + Listing
+// Full Konva.js canvas editor backed by property_floor_plans table.
+
+import { useState, useCallback, useRef, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import {
   Plus,
   PenTool,
   Loader2,
-  Briefcase,
-  MapPin,
-  Ruler,
-  Home,
-  ChevronRight,
-  FileText,
-  Square,
-  X,
-  Trash2,
-  Edit3,
-  ArrowRight,
-  Camera,
-  LayoutGrid,
-  AlertTriangle,
-  Droplets,
-  Check,
-  Move,
+  ArrowLeft,
+  Save,
+  Ruler as RulerIcon,
 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { SearchInput, Select } from '@/components/ui/input';
 import { CommandPalette } from '@/components/command-palette';
-import { useSketchBid, type BidSketch, type SketchRoom } from '@/lib/hooks/use-sketch-bid';
-import { formatDate, cn } from '@/lib/utils';
+import {
+  useFloorPlan,
+  useFloorPlanList,
+  type FloorPlanListItem,
+} from '@/lib/hooks/use-floor-plan';
+import {
+  createEmptyFloorPlan,
+  createEmptySelection,
+  createDefaultEditorState,
+} from '@/lib/sketch-engine/types';
+import type {
+  FloorPlanData,
+  SelectionState,
+  EditorState,
+  SketchTool,
+  TradeLayerType,
+  TradeLayer,
+  Point,
+} from '@/lib/sketch-engine/types';
+import { UndoRedoManager } from '@/lib/sketch-engine/commands';
+import { formatDate } from '@/lib/utils';
 
-const statusConfig: Record<string, { label: string; color: string; bgColor: string }> = {
-  draft: { label: 'Draft', color: 'text-zinc-400', bgColor: 'bg-zinc-800' },
-  in_progress: { label: 'In Progress', color: 'text-amber-400', bgColor: 'bg-amber-900/30' },
-  completed: { label: 'Completed', color: 'text-emerald-400', bgColor: 'bg-emerald-900/30' },
-  submitted: { label: 'Submitted', color: 'text-blue-400', bgColor: 'bg-blue-900/30' },
+// Dynamic import for Konva (SSR incompatible)
+const SketchCanvas = dynamic(
+  () => import('@/components/sketch-editor/SketchCanvas'),
+  { ssr: false, loading: () => <CanvasLoadingPlaceholder /> },
+);
+import Toolbar from '@/components/sketch-editor/Toolbar';
+import LayerPanel from '@/components/sketch-editor/LayerPanel';
+import PropertyInspector from '@/components/sketch-editor/PropertyInspector';
+import MiniMap from '@/components/sketch-editor/MiniMap';
+import {
+  HorizontalRuler,
+  VerticalRuler,
+  RulerCorner,
+  RULER_THICKNESS,
+} from '@/components/sketch-editor/Ruler';
+
+function CanvasLoadingPlaceholder() {
+  return (
+    <div className="flex-1 flex items-center justify-center bg-gray-50">
+      <div className="text-center">
+        <Loader2 className="h-6 w-6 animate-spin text-gray-400 mx-auto" />
+        <p className="text-xs text-gray-400 mt-2">Loading canvas...</p>
+      </div>
+    </div>
+  );
+}
+
+// =============================================================================
+// STATUS CONFIG
+// =============================================================================
+
+const statusConfig: Record<
+  string,
+  { label: string; color: string; bgColor: string }
+> = {
+  draft: {
+    label: 'Draft',
+    color: 'text-zinc-400',
+    bgColor: 'bg-zinc-800',
+  },
+  in_progress: {
+    label: 'In Progress',
+    color: 'text-amber-400',
+    bgColor: 'bg-amber-900/30',
+  },
+  completed: {
+    label: 'Completed',
+    color: 'text-emerald-400',
+    bgColor: 'bg-emerald-900/30',
+  },
+  submitted: {
+    label: 'Submitted',
+    color: 'text-blue-400',
+    bgColor: 'bg-blue-900/30',
+  },
 };
 
-const roomTypes = [
-  { value: 'room', label: 'Room', icon: Home },
-  { value: 'hallway', label: 'Hallway', icon: Move },
-  { value: 'bathroom', label: 'Bathroom', icon: Droplets },
-  { value: 'kitchen', label: 'Kitchen', icon: LayoutGrid },
-  { value: 'garage', label: 'Garage', icon: Square },
-  { value: 'basement', label: 'Basement', icon: Square },
-  { value: 'attic', label: 'Attic', icon: Home },
-  { value: 'closet', label: 'Closet', icon: Square },
-  { value: 'utility', label: 'Utility', icon: Square },
-  { value: 'exterior', label: 'Exterior', icon: MapPin },
-];
+// =============================================================================
+// MAIN PAGE
+// =============================================================================
 
-const floorLevels = [
-  { value: 'basement', label: 'Basement' },
-  { value: 'main', label: 'Main Floor' },
-  { value: 'upper', label: 'Upper Floor' },
-  { value: 'attic', label: 'Attic' },
-  { value: 'exterior', label: 'Exterior' },
-];
+export default function SketchBidPage() {
+  const [activeView, setActiveView] = useState<'list' | 'editor'>('list');
+  const [activePlanId, setActivePlanId] = useState<string | null>(null);
 
-const damageClasses = [
-  { value: '1', label: 'Class 1 — Least damage, slow evaporation' },
-  { value: '2', label: 'Class 2 — Significant, fast evaporation' },
-  { value: '3', label: 'Class 3 — Greatest, fastest evaporation' },
-  { value: '4', label: 'Class 4 — Specialty drying (hardwood, plaster, concrete)' },
-];
+  const openEditor = (planId: string) => {
+    setActivePlanId(planId);
+    setActiveView('editor');
+  };
 
-const damageCategories = [
-  { value: '1', label: 'Category 1 — Clean water' },
-  { value: '2', label: 'Category 2 — Gray water (contaminants)' },
-  { value: '3', label: 'Category 3 — Black water (sewage/flooding)' },
-];
+  const closeEditor = () => {
+    setActiveView('list');
+    setActivePlanId(null);
+  };
 
-const roomTypeIcons: Record<string, typeof Home> = Object.fromEntries(roomTypes.map(r => [r.value, r.icon]));
+  if (activeView === 'editor' && activePlanId) {
+    return <EditorView planId={activePlanId} onClose={closeEditor} />;
+  }
 
-function SketchCard({ sketch, onExpand }: { sketch: BidSketch; onExpand: () => void }) {
-  const status = statusConfig[sketch.status] || statusConfig.draft;
+  return <ListView onOpenEditor={openEditor} />;
+}
+
+// =============================================================================
+// LIST VIEW — Reads from property_floor_plans
+// =============================================================================
+
+function ListView({
+  onOpenEditor,
+}: {
+  onOpenEditor: (planId: string) => void;
+}) {
+  const { plans, loading, error } = useFloorPlanList();
+  const { createPlan } = useFloorPlan(null);
+  const [creating, setCreating] = useState(false);
+
+  const handleCreate = async () => {
+    setCreating(true);
+    try {
+      const planId = await createPlan({ name: 'New Floor Plan' });
+      if (planId) {
+        onOpenEditor(planId);
+      }
+    } finally {
+      setCreating(false);
+    }
+  };
+
   return (
-    <Card className="bg-zinc-900 border-zinc-800 hover:border-zinc-600 transition-all cursor-pointer group" onClick={onExpand}>
+    <div className="p-6 space-y-6">
+      <CommandPalette />
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-bold text-zinc-100">
+            Sketch & Bid
+          </h1>
+          <p className="text-sm text-zinc-400 mt-1">
+            Floor plans, room measurements, and bid estimates
+          </p>
+        </div>
+        <Button
+          onClick={handleCreate}
+          disabled={creating}
+          className="bg-emerald-600 hover:bg-emerald-500 text-white"
+        >
+          {creating ? (
+            <Loader2 className="h-4 w-4 animate-spin mr-2" />
+          ) : (
+            <Plus className="h-4 w-4 mr-2" />
+          )}
+          New Floor Plan
+        </Button>
+      </div>
+
+      {/* Loading */}
+      {loading && (
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
+        </div>
+      )}
+
+      {/* Error */}
+      {error && (
+        <div className="bg-red-900/20 border border-red-800 rounded-lg p-4 text-sm text-red-400">
+          {error}
+        </div>
+      )}
+
+      {/* Floor plan list */}
+      {!loading && !error && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {plans.map((plan) => (
+            <PlanCard
+              key={plan.id}
+              plan={plan}
+              onOpen={() => onOpenEditor(plan.id)}
+            />
+          ))}
+          {plans.length === 0 && (
+            <div className="col-span-full text-center py-12">
+              <PenTool className="h-8 w-8 text-zinc-600 mx-auto mb-3" />
+              <p className="text-sm text-zinc-400">
+                No floor plans yet. Create one to get started.
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function PlanCard({
+  plan,
+  onOpen,
+}: {
+  plan: FloorPlanListItem;
+  onOpen: () => void;
+}) {
+  const status = statusConfig[plan.status] || statusConfig.draft;
+
+  return (
+    <Card
+      className="bg-zinc-900 border-zinc-800 hover:border-zinc-600 transition-all cursor-pointer group"
+      onClick={onOpen}
+    >
       <CardContent className="p-4">
         <div className="flex items-start justify-between">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
               <PenTool className="h-4 w-4 text-emerald-400 flex-shrink-0" />
-              <h3 className="text-sm font-medium text-zinc-100 truncate">{sketch.title}</h3>
+              <h3 className="text-sm font-medium text-zinc-100 truncate">
+                {plan.name}
+              </h3>
             </div>
-            {sketch.jobTitle && (
-              <div className="flex items-center gap-1 mt-1.5">
-                <Briefcase className="h-3 w-3 text-zinc-500" />
-                <span className="text-xs text-zinc-500">{sketch.jobTitle}</span>
-              </div>
-            )}
-            {sketch.address && (
-              <div className="flex items-center gap-1 mt-0.5">
-                <MapPin className="h-3 w-3 text-zinc-500" />
-                <span className="text-xs text-zinc-500 truncate">{sketch.address}</span>
-              </div>
-            )}
-          </div>
-          <div className="flex items-center gap-2 ml-2">
-            <Badge className={cn('text-xs border-0', status.color, status.bgColor)}>{status.label}</Badge>
-            <ChevronRight className="h-4 w-4 text-zinc-600 group-hover:text-zinc-400 transition-colors" />
-          </div>
-        </div>
-        <div className="flex items-center gap-4 mt-3 text-xs text-zinc-500">
-          <span className="flex items-center gap-1"><Home className="h-3 w-3" />{sketch.totalRooms} rooms</span>
-          <span className="flex items-center gap-1"><Ruler className="h-3 w-3" />{sketch.totalSqft.toLocaleString()} sqft</span>
-          <span>{formatDate(sketch.createdAt)}</span>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-function NewSketchModal({ onClose, onCreate }: { onClose: () => void; onCreate: (data: { title: string; address?: string; description?: string }) => Promise<void> }) {
-  const [title, setTitle] = useState('');
-  const [address, setAddress] = useState('');
-  const [description, setDescription] = useState('');
-  const [saving, setSaving] = useState(false);
-  const [formError, setFormError] = useState<string | null>(null);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!title.trim()) return;
-    setSaving(true);
-    setFormError(null);
-    try {
-      await onCreate({ title: title.trim(), address: address.trim() || undefined, description: description.trim() || undefined });
-      onClose();
-    } catch (err) {
-      setFormError(err instanceof Error ? err.message : 'Failed to create sketch');
-      setSaving(false);
-    }
-  };
-
-  return (
-    <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div onClick={e => e.stopPropagation()}><Card className="w-full max-w-lg bg-zinc-900 border-zinc-700">
-        <CardHeader className="flex flex-row items-center justify-between pb-3">
-          <CardTitle className="text-lg text-zinc-100">New Sketch</CardTitle>
-          <Button variant="ghost" size="sm" onClick={onClose}><X className="h-4 w-4" /></Button>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-zinc-300 mb-1.5">Sketch Title *</label>
-              <input
-                autoFocus
-                value={title}
-                onChange={e => setTitle(e.target.value)}
-                placeholder="e.g. Water Damage — 123 Main St"
-                className="w-full px-3 py-2 rounded-lg bg-zinc-800 border border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-zinc-300 mb-1.5">Address</label>
-              <input
-                value={address}
-                onChange={e => setAddress(e.target.value)}
-                placeholder="123 Main St, City, State"
-                className="w-full px-3 py-2 rounded-lg bg-zinc-800 border border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-zinc-300 mb-1.5">Description</label>
-              <textarea
-                value={description}
-                onChange={e => setDescription(e.target.value)}
-                placeholder="Brief description of the scope..."
-                rows={2}
-                className="w-full px-3 py-2 rounded-lg bg-zinc-800 border border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 text-sm resize-none"
-              />
-            </div>
-            {formError && (
-              <div className="p-2.5 rounded-lg bg-red-900/20 border border-red-900/50 text-red-400 text-sm">{formError}</div>
-            )}
-            <div className="flex justify-end gap-2 pt-2">
-              <Button type="button" variant="ghost" size="sm" onClick={onClose}>Cancel</Button>
-              <Button type="submit" size="sm" disabled={!title.trim() || saving}>
-                {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1" /> : <Plus className="h-3.5 w-3.5 mr-1" />}
-                Create Sketch
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card></div>
-    </div>
-  );
-}
-
-function AddRoomModal({ sketchId, onClose, onAdd }: { sketchId: string; onClose: () => void; onAdd: (sketchId: string, room: { roomName: string; roomType: string; floorLevel?: string; lengthFt?: number; widthFt?: number; heightFt?: number }) => Promise<void> }) {
-  const [roomName, setRoomName] = useState('');
-  const [roomType, setRoomType] = useState('room');
-  const [floorLevel, setFloorLevel] = useState('main');
-  const [lengthFt, setLengthFt] = useState('');
-  const [widthFt, setWidthFt] = useState('');
-  const [heightFt, setHeightFt] = useState('8');
-  const [saving, setSaving] = useState(false);
-  const [formError, setFormError] = useState<string | null>(null);
-
-  const sqft = lengthFt && widthFt ? (parseFloat(lengthFt) * parseFloat(widthFt)).toFixed(0) : null;
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!roomName.trim()) return;
-    setSaving(true);
-    setFormError(null);
-    try {
-      await onAdd(sketchId, {
-        roomName: roomName.trim(),
-        roomType,
-        floorLevel,
-        lengthFt: lengthFt ? parseFloat(lengthFt) : undefined,
-        widthFt: widthFt ? parseFloat(widthFt) : undefined,
-        heightFt: heightFt ? parseFloat(heightFt) : undefined,
-      });
-      onClose();
-    } catch (err) {
-      setFormError(err instanceof Error ? err.message : 'Failed to add room');
-      setSaving(false);
-    }
-  };
-
-  return (
-    <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div onClick={e => e.stopPropagation()}><Card className="w-full max-w-lg bg-zinc-900 border-zinc-700">
-        <CardHeader className="flex flex-row items-center justify-between pb-3">
-          <CardTitle className="text-lg text-zinc-100">Add Room</CardTitle>
-          <Button variant="ghost" size="sm" onClick={onClose}><X className="h-4 w-4" /></Button>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-zinc-300 mb-1.5">Room Name *</label>
-              <input
-                autoFocus
-                value={roomName}
-                onChange={e => setRoomName(e.target.value)}
-                placeholder="e.g. Master Bedroom, Kitchen, Hallway"
-                className="w-full px-3 py-2 rounded-lg bg-zinc-800 border border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 text-sm"
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-1.5">Room Type</label>
-                <select value={roomType} onChange={e => setRoomType(e.target.value)} className="w-full px-3 py-2 rounded-lg bg-zinc-800 border border-zinc-700 text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50">
-                  {roomTypes.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-1.5">Floor Level</label>
-                <select value={floorLevel} onChange={e => setFloorLevel(e.target.value)} className="w-full px-3 py-2 rounded-lg bg-zinc-800 border border-zinc-700 text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50">
-                  {floorLevels.map(f => <option key={f.value} value={f.value}>{f.label}</option>)}
-                </select>
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-zinc-300 mb-1.5">Dimensions (feet)</label>
-              <div className="grid grid-cols-3 gap-3">
-                <div>
-                  <input
-                    type="number"
-                    step="0.1"
-                    value={lengthFt}
-                    onChange={e => setLengthFt(e.target.value)}
-                    placeholder="Length"
-                    className="w-full px-3 py-2 rounded-lg bg-zinc-800 border border-zinc-700 text-zinc-100 placeholder:text-zinc-500 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
-                  />
-                  <span className="text-[10px] text-zinc-500 mt-0.5 block">Length</span>
-                </div>
-                <div>
-                  <input
-                    type="number"
-                    step="0.1"
-                    value={widthFt}
-                    onChange={e => setWidthFt(e.target.value)}
-                    placeholder="Width"
-                    className="w-full px-3 py-2 rounded-lg bg-zinc-800 border border-zinc-700 text-zinc-100 placeholder:text-zinc-500 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
-                  />
-                  <span className="text-[10px] text-zinc-500 mt-0.5 block">Width</span>
-                </div>
-                <div>
-                  <input
-                    type="number"
-                    step="0.1"
-                    value={heightFt}
-                    onChange={e => setHeightFt(e.target.value)}
-                    placeholder="Height"
-                    className="w-full px-3 py-2 rounded-lg bg-zinc-800 border border-zinc-700 text-zinc-100 placeholder:text-zinc-500 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
-                  />
-                  <span className="text-[10px] text-zinc-500 mt-0.5 block">Height</span>
-                </div>
-              </div>
-              {sqft && (
-                <div className="mt-2 px-3 py-1.5 rounded bg-emerald-900/20 border border-emerald-900/30 text-emerald-400 text-sm flex items-center gap-2">
-                  <Ruler className="h-3.5 w-3.5" />
-                  <span>{sqft} sqft</span>
-                </div>
-              )}
-            </div>
-            {formError && (
-              <div className="p-2.5 rounded-lg bg-red-900/20 border border-red-900/50 text-red-400 text-sm">{formError}</div>
-            )}
-            <div className="flex justify-end gap-2 pt-2">
-              <Button type="button" variant="ghost" size="sm" onClick={onClose}>Cancel</Button>
-              <Button type="submit" size="sm" disabled={!roomName.trim() || saving}>
-                {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1" /> : <Plus className="h-3.5 w-3.5 mr-1" />}
-                Add Room
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card></div>
-    </div>
-  );
-}
-
-function SketchDetail({
-  sketch,
-  rooms,
-  roomsLoading,
-  onClose,
-  onAddRoom,
-  onUpdateStatus,
-}: {
-  sketch: BidSketch;
-  rooms: SketchRoom[];
-  roomsLoading: boolean;
-  onClose: () => void;
-  onAddRoom: () => void;
-  onUpdateStatus: (status: string) => void;
-}) {
-  const status = statusConfig[sketch.status] || statusConfig.draft;
-  const totalEstimated = rooms.reduce((sum, r) => sum + r.estimatedTotal, 0);
-  const totalSqft = rooms.reduce((sum, r) => sum + (r.sqft || 0), 0);
-  const damagedRooms = rooms.filter(r => r.hasDamage).length;
-
-  return (
-    <Card className="bg-zinc-900 border-zinc-700">
-      <CardHeader className="pb-3">
-        <div className="flex items-start justify-between">
-          <div>
-            <div className="flex items-center gap-3">
-              <CardTitle className="text-lg text-zinc-100">{sketch.title}</CardTitle>
-              <Badge className={cn('text-xs border-0', status.color, status.bgColor)}>{status.label}</Badge>
-            </div>
-            <p className="text-sm text-zinc-500 mt-1">
-              {sketch.address || 'No address'}{sketch.description ? ` — ${sketch.description}` : ''}
+            <p className="text-xs text-zinc-500 mt-1">
+              Floor {plan.floorLevel}
             </p>
           </div>
-          <div className="flex items-center gap-2">
-            {sketch.status === 'draft' && (
-              <Button size="sm" variant="secondary" onClick={() => onUpdateStatus('in_progress')}>
-                <ArrowRight className="h-3.5 w-3.5 mr-1" />Start
-              </Button>
-            )}
-            {sketch.status === 'in_progress' && (
-              <Button size="sm" variant="secondary" onClick={() => onUpdateStatus('completed')}>
-                <Check className="h-3.5 w-3.5 mr-1" />Mark Complete
-              </Button>
-            )}
-            <Button size="sm" variant="ghost" onClick={onClose}><X className="h-4 w-4" /></Button>
-          </div>
+          <Badge className={`${status.bgColor} ${status.color} text-xs`}>
+            {status.label}
+          </Badge>
         </div>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {/* Summary bar */}
-        <div className="grid grid-cols-4 gap-3">
-          <div className="px-3 py-2 rounded-lg bg-zinc-800/70 text-center">
-            <p className="text-lg font-bold text-zinc-100">{rooms.length}</p>
-            <p className="text-[10px] text-zinc-500 uppercase tracking-wider">Rooms</p>
-          </div>
-          <div className="px-3 py-2 rounded-lg bg-zinc-800/70 text-center">
-            <p className="text-lg font-bold text-zinc-100">{totalSqft.toLocaleString()}</p>
-            <p className="text-[10px] text-zinc-500 uppercase tracking-wider">Total sqft</p>
-          </div>
-          <div className="px-3 py-2 rounded-lg bg-zinc-800/70 text-center">
-            <p className="text-lg font-bold text-amber-400">{damagedRooms}</p>
-            <p className="text-[10px] text-zinc-500 uppercase tracking-wider">Damaged</p>
-          </div>
-          <div className="px-3 py-2 rounded-lg bg-zinc-800/70 text-center">
-            <p className="text-lg font-bold text-emerald-400">{totalEstimated > 0 ? `$${totalEstimated.toLocaleString()}` : '—'}</p>
-            <p className="text-[10px] text-zinc-500 uppercase tracking-wider">Estimated</p>
-          </div>
+        <div className="flex items-center gap-3 mt-3 text-xs text-zinc-500">
+          <span>
+            <RulerIcon className="h-3 w-3 inline mr-1" />
+            {plan.wallCount} walls
+          </span>
+          <span>{plan.roomCount} rooms</span>
+          <span className="ml-auto">{formatDate(plan.updatedAt)}</span>
         </div>
-
-        {/* Rooms list */}
-        {roomsLoading ? (
-          <div className="flex items-center justify-center py-8 text-zinc-500">
-            <Loader2 className="h-5 w-5 animate-spin mr-2" />Loading rooms...
-          </div>
-        ) : rooms.length === 0 ? (
-          <div className="text-center py-8 border border-dashed border-zinc-700 rounded-lg">
-            <Home className="h-10 w-10 mx-auto mb-3 text-zinc-600" />
-            <p className="text-sm text-zinc-400 mb-1">No rooms added yet</p>
-            <p className="text-xs text-zinc-500 mb-4">Add rooms with dimensions to build your sketch</p>
-            <Button size="sm" onClick={onAddRoom}><Plus className="h-3.5 w-3.5 mr-1" />Add First Room</Button>
-          </div>
-        ) : (
-          <div className="space-y-2">
-            {rooms.map(room => {
-              const RoomIcon = roomTypeIcons[room.roomType] || Home;
-              return (
-                <div key={room.id} className="flex items-center gap-3 p-3 rounded-lg bg-zinc-800/50 hover:bg-zinc-800 transition-colors group">
-                  <div className={cn('p-2 rounded-lg', room.hasDamage ? 'bg-red-900/20' : 'bg-zinc-700/50')}>
-                    <RoomIcon className={cn('h-4 w-4', room.hasDamage ? 'text-red-400' : 'text-zinc-400')} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-zinc-200">{room.roomName}</span>
-                      <Badge className="text-[10px] bg-zinc-700 text-zinc-400 border-0">{room.roomType}</Badge>
-                      <Badge className="text-[10px] bg-zinc-700 text-zinc-400 border-0">{room.floorLevel}</Badge>
-                      {room.hasDamage && (
-                        <Badge className="text-[10px] bg-red-900/30 text-red-400 border-0 flex items-center gap-0.5">
-                          <AlertTriangle className="h-2.5 w-2.5" />Damage
-                          {room.damageClass ? ` C${room.damageClass}` : ''}
-                          {room.damageCategory ? `/Cat${room.damageCategory}` : ''}
-                        </Badge>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-3 mt-1 text-xs text-zinc-500">
-                      {room.lengthFt && room.widthFt && (
-                        <span className="flex items-center gap-1"><Ruler className="h-3 w-3" />{room.lengthFt} × {room.widthFt} ft</span>
-                      )}
-                      {room.sqft && <span className="font-medium text-zinc-400">{room.sqft} sqft</span>}
-                      {room.heightFt && <span>H: {room.heightFt} ft</span>}
-                      <span>{room.windowCount}W / {room.doorCount}D</span>
-                      {room.linkedItems.length > 0 && (
-                        <span className="flex items-center gap-1"><FileText className="h-3 w-3" />{room.linkedItems.length} items</span>
-                      )}
-                      {room.photos.length > 0 && (
-                        <span className="flex items-center gap-1"><Camera className="h-3 w-3" />{room.photos.length}</span>
-                      )}
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    {room.estimatedTotal > 0 && (
-                      <span className="text-sm font-semibold text-emerald-400">${room.estimatedTotal.toLocaleString()}</span>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-
-            {totalEstimated > 0 && (
-              <div className="flex items-center justify-between pt-3 border-t border-zinc-700">
-                <span className="text-sm font-medium text-zinc-300">Total Estimated</span>
-                <span className="text-lg font-bold text-emerald-400">${totalEstimated.toLocaleString()}</span>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Action bar */}
-        {rooms.length > 0 && (
-          <div className="flex items-center gap-2 pt-2">
-            <Button size="sm" onClick={onAddRoom}><Plus className="h-3.5 w-3.5 mr-1" />Add Room</Button>
-          </div>
-        )}
       </CardContent>
     </Card>
   );
 }
 
-export default function SketchBidPage() {
-  const { sketches, drafts, inProgress, completed, loading, error, getRooms, createSketch, addRoom, updateSketchStatus } = useSketchBid();
-  const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [selectedSketch, setSelectedSketch] = useState<BidSketch | null>(null);
-  const [selectedRooms, setSelectedRooms] = useState<SketchRoom[]>([]);
-  const [roomsLoading, setRoomsLoading] = useState(false);
-  const [showNewSketch, setShowNewSketch] = useState(false);
-  const [showAddRoom, setShowAddRoom] = useState(false);
+// =============================================================================
+// EDITOR VIEW — Full canvas editor backed by property_floor_plans
+// =============================================================================
 
-  const handleExpand = async (sketch: BidSketch) => {
-    setSelectedSketch(sketch);
-    setRoomsLoading(true);
-    try {
-      const rooms = await getRooms(sketch.id);
-      setSelectedRooms(rooms);
-    } catch {
-      setSelectedRooms([]);
-    } finally {
-      setRoomsLoading(false);
+function EditorView({
+  planId,
+  onClose,
+}: {
+  planId: string;
+  onClose: () => void;
+}) {
+  const { plan, loading, error, saving, savePlanData } =
+    useFloorPlan(planId);
+
+  const [planData, setPlanData] = useState<FloorPlanData>(
+    createEmptyFloorPlan(),
+  );
+  const [selection, setSelection] = useState<SelectionState>(
+    createEmptySelection(),
+  );
+  const [editorState, setEditorState] = useState<EditorState>(
+    createDefaultEditorState(),
+  );
+  const [showLayers, setShowLayers] = useState(false);
+  const [canvasSize, setCanvasSize] = useState({ width: 800, height: 600 });
+
+  const undoManagerRef = useRef(new UndoRedoManager());
+  const containerRef = useRef<HTMLDivElement>(null);
+  // Load plan data when fetched
+  useEffect(() => {
+    if (plan?.planData) {
+      setPlanData(plan.planData);
     }
-  };
+  }, [plan]);
 
-  const handleCreateSketch = async (data: { title: string; address?: string; description?: string }) => {
-    const newSketch = await createSketch(data);
-    await handleExpand(newSketch);
-  };
+  // Track container size
+  useEffect(() => {
+    const updateSize = () => {
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        setCanvasSize({
+          width: Math.max(rect.width, 400),
+          height: Math.max(rect.height, 300),
+        });
+      }
+    };
 
-  const handleAddRoom = async (sketchId: string, room: { roomName: string; roomType: string; floorLevel?: string; lengthFt?: number; widthFt?: number; heightFt?: number }) => {
-    await addRoom(sketchId, room);
-    const rooms = await getRooms(sketchId);
-    setSelectedRooms(rooms);
-  };
+    updateSize();
+    window.addEventListener('resize', updateSize);
+    return () => window.removeEventListener('resize', updateSize);
+  }, []);
 
-  const handleStatusUpdate = async (status: string) => {
-    if (!selectedSketch) return;
-    await updateSketchStatus(selectedSketch.id, status);
-    setSelectedSketch({ ...selectedSketch, status });
-  };
+  // Save on plan data change
+  const handlePlanDataChange = useCallback(
+    (data: FloorPlanData) => {
+      setPlanData(data);
+      savePlanData(data);
+    },
+    [savePlanData],
+  );
 
-  const filtered = sketches.filter(s => {
-    if (statusFilter !== 'all' && s.status !== statusFilter) return false;
-    if (search) {
-      const q = search.toLowerCase();
-      return s.title.toLowerCase().includes(q) || (s.jobTitle || '').toLowerCase().includes(q) || (s.address || '').toLowerCase().includes(q);
-    }
-    return true;
-  });
+  const handleEditorStateChange = useCallback(
+    (updates: Partial<EditorState>) => {
+      setEditorState((prev) => ({ ...prev, ...updates }));
+    },
+    [],
+  );
+
+  const handleToolChange = useCallback((tool: SketchTool) => {
+    setEditorState((prev) => ({ ...prev, activeTool: tool }));
+    setSelection(createEmptySelection());
+  }, []);
+
+  const handleUndo = useCallback(() => {
+    const result = undoManagerRef.current.undo(planData);
+    handlePlanDataChange(result);
+  }, [planData, handlePlanDataChange]);
+
+  const handleRedo = useCallback(() => {
+    const result = undoManagerRef.current.redo(planData);
+    handlePlanDataChange(result);
+  }, [planData, handlePlanDataChange]);
+
+  // MiniMap navigation — pan viewport to clicked point
+  const handleMiniMapNavigate = useCallback(
+    (point: Point) => {
+      const newPanOffset = {
+        x: -(point.x * editorState.zoom - canvasSize.width / 2),
+        y: -(point.y * editorState.zoom - canvasSize.height / 2),
+      };
+      handleEditorStateChange({ panOffset: newPanOffset });
+    },
+    [editorState.zoom, canvasSize, handleEditorStateChange],
+  );
+
+  // Layer management
+  const handleAddLayer = useCallback(
+    (type: TradeLayerType) => {
+      const layer: TradeLayer = {
+        id: `layer_${Date.now()}`,
+        type,
+        name: `${type.charAt(0).toUpperCase() + type.slice(1)} Layer`,
+        visible: true,
+        locked: false,
+        opacity: 1.0,
+        tradeData:
+          type !== 'damage'
+            ? { elements: [], paths: [] }
+            : undefined,
+        damageData:
+          type === 'damage'
+            ? {
+                zones: [],
+                moistureReadings: [],
+                containmentLines: [],
+                barriers: [],
+              }
+            : undefined,
+      };
+      handlePlanDataChange({
+        ...planData,
+        tradeLayers: [...planData.tradeLayers, layer],
+      });
+    },
+    [planData, handlePlanDataChange],
+  );
+
+  const handleToggleVisibility = useCallback(
+    (layerId: string) => {
+      handlePlanDataChange({
+        ...planData,
+        tradeLayers: planData.tradeLayers.map((l) =>
+          l.id === layerId ? { ...l, visible: !l.visible } : l,
+        ),
+      });
+    },
+    [planData, handlePlanDataChange],
+  );
+
+  const handleToggleLock = useCallback(
+    (layerId: string) => {
+      handlePlanDataChange({
+        ...planData,
+        tradeLayers: planData.tradeLayers.map((l) =>
+          l.id === layerId ? { ...l, locked: !l.locked } : l,
+        ),
+      });
+    },
+    [planData, handlePlanDataChange],
+  );
+
+  const handleOpacityChange = useCallback(
+    (layerId: string, opacity: number) => {
+      handlePlanDataChange({
+        ...planData,
+        tradeLayers: planData.tradeLayers.map((l) =>
+          l.id === layerId ? { ...l, opacity } : l,
+        ),
+      });
+    },
+    [planData, handlePlanDataChange],
+  );
+
+  const handleRemoveLayer = useCallback(
+    (layerId: string) => {
+      handlePlanDataChange({
+        ...planData,
+        tradeLayers: planData.tradeLayers.filter((l) => l.id !== layerId),
+      });
+      if (editorState.activeLayerId === layerId) {
+        setEditorState((prev) => ({ ...prev, activeLayerId: null }));
+      }
+    },
+    [planData, editorState.activeLayerId, handlePlanDataChange],
+  );
+
+  if (loading) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <Loader2 className="h-6 w-6 animate-spin text-gray-400 mx-auto" />
+          <p className="text-xs text-gray-400 mt-2">
+            Loading floor plan...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <p className="text-sm text-red-500">{error}</p>
+          <button
+            onClick={onClose}
+            className="text-sm text-blue-500 mt-2 underline"
+          >
+            Go back
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <>
-      <CommandPalette />
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-zinc-100">Sketch + Bid</h1>
-            <p className="text-sm text-zinc-500 mt-1">Room capture, measurements, damage mapping, and bid generation</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button size="sm" onClick={() => setShowNewSketch(true)}>
-              <Plus className="h-3.5 w-3.5 mr-1" />New Sketch
-            </Button>
-          </div>
+    <div className="h-screen flex flex-col bg-white">
+      {/* Editor top bar */}
+      <div className="h-12 border-b border-gray-200 flex items-center px-3 gap-3 bg-white/95 backdrop-blur">
+        <button
+          onClick={onClose}
+          className="p-1.5 rounded hover:bg-gray-100 text-gray-500"
+        >
+          <ArrowLeft size={16} />
+        </button>
+        <div className="flex-1 min-w-0">
+          <h2 className="text-sm font-semibold text-gray-800 truncate">
+            {plan?.name || 'Floor Plan'}
+          </h2>
         </div>
-
+        <div className="flex items-center gap-2 text-xs text-gray-400">
+          {saving && (
+            <>
+              <Loader2 className="h-3 w-3 animate-spin" />
+              <span>Saving...</span>
+            </>
+          )}
+          {!saving && plan && (
+            <>
+              <Save className="h-3 w-3" />
+              <span>Saved</span>
+            </>
+          )}
+        </div>
+        {/* Unit toggle */}
+        <button
+          onClick={() =>
+            handleEditorStateChange({
+              units:
+                editorState.units === 'imperial'
+                  ? 'metric'
+                  : 'imperial',
+            })
+          }
+          className="px-2 py-0.5 text-xs font-medium text-blue-600 bg-blue-50 rounded border border-blue-200"
+        >
+          {editorState.units === 'imperial' ? 'ft/in' : 'm/cm'}
+        </button>
         {/* Stats */}
-        <div className="grid grid-cols-4 gap-4">
-          <Card className="bg-zinc-900 border-zinc-800 hover:border-zinc-700 transition-colors">
-            <CardContent className="p-4">
-              <p className="text-xs text-zinc-500 uppercase tracking-wider">Total Sketches</p>
-              <p className="text-2xl font-bold text-zinc-100 mt-1">{sketches.length}</p>
-            </CardContent>
-          </Card>
-          <Card className="bg-zinc-900 border-zinc-800 hover:border-zinc-700 transition-colors">
-            <CardContent className="p-4">
-              <p className="text-xs text-zinc-500 uppercase tracking-wider">Drafts</p>
-              <p className="text-2xl font-bold text-zinc-400 mt-1">{drafts.length}</p>
-            </CardContent>
-          </Card>
-          <Card className="bg-zinc-900 border-zinc-800 hover:border-zinc-700 transition-colors">
-            <CardContent className="p-4">
-              <p className="text-xs text-zinc-500 uppercase tracking-wider">In Progress</p>
-              <p className="text-2xl font-bold text-amber-400 mt-1">{inProgress.length}</p>
-            </CardContent>
-          </Card>
-          <Card className="bg-zinc-900 border-zinc-800 hover:border-zinc-700 transition-colors">
-            <CardContent className="p-4">
-              <p className="text-xs text-zinc-500 uppercase tracking-wider">Completed</p>
-              <p className="text-2xl font-bold text-emerald-400 mt-1">{completed.length}</p>
-            </CardContent>
-          </Card>
+        <div className="text-xs text-gray-400">
+          {planData.walls.length}W {planData.doors.length}D{' '}
+          {planData.windows.length}Wi {planData.rooms.length}R
         </div>
-
-        {/* Filters */}
-        <div className="flex items-center gap-3">
-          <div className="w-64">
-            <SearchInput placeholder="Search sketches..." value={search} onChange={setSearch} />
-          </div>
-          <Select
-            value={statusFilter}
-            onChange={e => setStatusFilter(e.target.value)}
-            options={[
-              { value: 'all', label: 'All Statuses' },
-              { value: 'draft', label: 'Draft' },
-              { value: 'in_progress', label: 'In Progress' },
-              { value: 'completed', label: 'Completed' },
-              { value: 'submitted', label: 'Submitted' },
-            ]}
-          />
-        </div>
-
-        {error && (
-          <div className="p-3 rounded-lg bg-red-900/20 border border-red-900/50 text-red-400 text-sm">{error}</div>
-        )}
-
-        {/* Detail view */}
-        {selectedSketch && (
-          <SketchDetail
-            sketch={selectedSketch}
-            rooms={selectedRooms}
-            roomsLoading={roomsLoading}
-            onClose={() => { setSelectedSketch(null); setSelectedRooms([]); }}
-            onAddRoom={() => setShowAddRoom(true)}
-            onUpdateStatus={handleStatusUpdate}
-          />
-        )}
-
-        {/* Sketch list */}
-        {loading ? (
-          <div className="flex items-center justify-center py-12 text-zinc-500">
-            <Loader2 className="h-5 w-5 animate-spin mr-2" />Loading sketches...
-          </div>
-        ) : filtered.length === 0 ? (
-          <Card className="bg-zinc-900 border-zinc-800">
-            <CardContent className="p-12 text-center">
-              <PenTool className="h-12 w-12 mx-auto mb-4 text-zinc-600" />
-              <h3 className="text-lg font-medium text-zinc-200 mb-2">No sketches yet</h3>
-              <p className="text-zinc-500 text-sm mb-6 max-w-md mx-auto">
-                Create a sketch to capture room dimensions, map damage areas, and generate accurate bids from measured data.
-              </p>
-              <Button onClick={() => setShowNewSketch(true)}>
-                <Plus className="h-4 w-4 mr-1.5" />Create Your First Sketch
-              </Button>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {filtered.map(sketch => (
-              <SketchCard key={sketch.id} sketch={sketch} onExpand={() => handleExpand(sketch)} />
-            ))}
-          </div>
-        )}
       </div>
 
-      {/* Modals */}
-      {showNewSketch && (
-        <NewSketchModal onClose={() => setShowNewSketch(false)} onCreate={handleCreateSketch} />
-      )}
-      {showAddRoom && selectedSketch && (
-        <AddRoomModal sketchId={selectedSketch.id} onClose={() => setShowAddRoom(false)} onAdd={handleAddRoom} />
-      )}
-    </>
+      {/* Canvas area with rulers */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Top row: corner piece + horizontal ruler */}
+        <div className="flex flex-shrink-0" style={{ height: RULER_THICKNESS }}>
+          <RulerCorner />
+          <div className="flex-1 overflow-hidden">
+            <HorizontalRuler
+              width={canvasSize.width}
+              zoom={editorState.zoom}
+              panOffsetX={editorState.panOffset.x}
+              units={editorState.units}
+            />
+          </div>
+        </div>
+
+        {/* Bottom row: vertical ruler + canvas */}
+        <div className="flex-1 flex overflow-hidden">
+          <div className="flex-shrink-0" style={{ width: RULER_THICKNESS }}>
+            <VerticalRuler
+              height={canvasSize.height}
+              zoom={editorState.zoom}
+              panOffsetY={editorState.panOffset.y}
+              units={editorState.units}
+            />
+          </div>
+
+          {/* Canvas container */}
+          <div className="flex-1 relative overflow-hidden" ref={containerRef}>
+            {/* Left toolbar */}
+            <div className="absolute top-3 left-3 z-10">
+              <Toolbar
+                editorState={editorState}
+                canUndo={undoManagerRef.current.canUndo}
+                canRedo={undoManagerRef.current.canRedo}
+                onToolChange={handleToolChange}
+                onUndo={handleUndo}
+                onRedo={handleRedo}
+                onZoomIn={() =>
+                  handleEditorStateChange({
+                    zoom: Math.min(editorState.zoom * 1.2, 5),
+                  })
+                }
+                onZoomOut={() =>
+                  handleEditorStateChange({
+                    zoom: Math.max(editorState.zoom / 1.2, 0.1),
+                  })
+                }
+                onToggleGrid={() =>
+                  handleEditorStateChange({
+                    showGrid: !editorState.showGrid,
+                  })
+                }
+                onToggleLayers={() => setShowLayers(!showLayers)}
+              />
+            </div>
+
+            {/* Layer panel (right) */}
+            {showLayers && (
+              <div className="absolute top-3 right-3 z-10">
+                <LayerPanel
+                  layers={planData.tradeLayers}
+                  activeLayerId={editorState.activeLayerId}
+                  onActiveLayerChange={(id) =>
+                    handleEditorStateChange({ activeLayerId: id })
+                  }
+                  onToggleVisibility={handleToggleVisibility}
+                  onToggleLock={handleToggleLock}
+                  onOpacityChange={handleOpacityChange}
+                  onAddLayer={handleAddLayer}
+                  onRemoveLayer={handleRemoveLayer}
+                />
+              </div>
+            )}
+
+            {/* Property inspector */}
+            {selection.selectedId && (
+              <div className="absolute top-3 right-3 z-10" style={{ top: showLayers ? 280 : 12 }}>
+                <PropertyInspector
+                  planData={planData}
+                  selection={selection}
+                  units={editorState.units}
+                  undoManager={undoManagerRef.current}
+                  onPlanDataChange={handlePlanDataChange}
+                  onClose={() =>
+                    setSelection({
+                      ...selection,
+                      selectedId: null,
+                      selectedType: null,
+                    })
+                  }
+                />
+              </div>
+            )}
+
+            {/* MiniMap (bottom-right) */}
+            <div className="absolute bottom-3 right-3 z-10">
+              <MiniMap
+                planData={planData}
+                viewportOffset={editorState.panOffset}
+                viewportSize={canvasSize}
+                zoom={editorState.zoom}
+                canvasSize={4000}
+                onNavigate={handleMiniMapNavigate}
+              />
+            </div>
+
+            {/* Canvas */}
+            <SketchCanvas
+              planData={planData}
+              editorState={editorState}
+              selection={selection}
+              onPlanDataChange={handlePlanDataChange}
+              onSelectionChange={setSelection}
+              onEditorStateChange={handleEditorStateChange}
+              undoManager={undoManagerRef.current}
+              width={canvasSize.width}
+              height={canvasSize.height}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

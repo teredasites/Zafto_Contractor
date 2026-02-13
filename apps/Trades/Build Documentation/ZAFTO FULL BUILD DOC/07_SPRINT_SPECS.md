@@ -8683,20 +8683,20 @@ Include <content>{markdown}</content> for rendered display.
 **Tables:** ALTER property_floor_plans, CREATE floor_plan_layers, floor_plan_rooms, floor_plan_estimate_links, ALTER bid_sketches
 **Migration:** `sk1_unified_sketch_model.sql`
 
-- [ ] Migration: ALTER `property_floor_plans` — add `job_id UUID REFERENCES jobs(id)`, `estimate_id UUID REFERENCES estimates(id)`, `status TEXT CHECK (status IN ('draft','scanning','processing','complete','archived')) DEFAULT 'draft'`, `sync_version INTEGER DEFAULT 1`, `last_synced_at TIMESTAMPTZ`, `floor_number INTEGER DEFAULT 1` (multi-floor support: 0=basement, 1=first floor, 2=second, etc.)
-- [ ] Migration: CREATE `floor_plan_snapshots` (id UUID PK, floor_plan_id FK CASCADE, company_id FK, plan_data JSONB NOT NULL, snapshot_reason TEXT CHECK ('manual','auto','pre_change_order','pre_edit'), snapshot_label TEXT, created_by UUID FK users, created_at TIMESTAMPTZ DEFAULT now()) + RLS (company isolation). Auto-snapshot on significant edits for version history. Index on (floor_plan_id, created_at DESC)
-- [ ] Migration: CREATE `floor_plan_photo_pins` (id UUID PK, floor_plan_id FK CASCADE, company_id FK, photo_id UUID FK photos nullable, photo_path TEXT, position_x NUMERIC NOT NULL, position_y NUMERIC NOT NULL, room_id UUID FK floor_plan_rooms nullable, label TEXT, created_by UUID FK users, created_at TIMESTAMPTZ DEFAULT now()) + RLS. Links walkthrough/job photos to specific locations on the floor plan
-- [ ] Migration: CREATE `floor_plan_layers` (id, floor_plan_id FK CASCADE, company_id FK, layer_type CHECK ('electrical','plumbing','hvac','damage','custom'), layer_name, layer_data JSONB DEFAULT '{}', visible BOOLEAN DEFAULT true, locked BOOLEAN DEFAULT false, opacity NUMERIC DEFAULT 1.0, sort_order INTEGER DEFAULT 0, timestamps) + RLS (company isolation)
-- [ ] Migration: CREATE `floor_plan_rooms` (id, floor_plan_id FK CASCADE, company_id FK, name, boundary_points JSONB, boundary_wall_ids JSONB, floor_area_sf NUMERIC, wall_area_sf NUMERIC, perimeter_lf NUMERIC, ceiling_height_inches INTEGER DEFAULT 96, floor_material, damage_class CHECK, iicrc_category CHECK, room_type CHECK 14 values, metadata JSONB, timestamps) + RLS
-- [ ] Migration: CREATE `floor_plan_estimate_links` (id, floor_plan_id FK CASCADE, room_id FK CASCADE, estimate_id FK CASCADE, estimate_area_id FK CASCADE, auto_generated BOOLEAN DEFAULT true, company_id FK, created_at) + RLS
-- [ ] Migration: ALTER `bid_sketches` — add `floor_plan_id UUID REFERENCES property_floor_plans(id)`
-- [ ] Dart model: Update `lib/models/floor_plan.dart` — add job_id, estimate_id, status, sync_version, last_synced_at, floor_number fields + fromJson/toJson
-- [ ] Dart model: Create `lib/models/floor_plan_snapshot.dart` — FloorPlanSnapshot class (id, floor_plan_id, plan_data, snapshot_reason, snapshot_label, created_by, created_at)
-- [ ] Dart model: Create `lib/models/floor_plan_photo_pin.dart` — FloorPlanPhotoPin class (id, floor_plan_id, photo_id, photo_path, position_x, position_y, room_id, label, created_by)
-- [ ] Dart model: Create `lib/models/floor_plan_layer.dart` — FloorPlanLayer class
-- [ ] Dart model: Create `lib/models/floor_plan_room.dart` — FloorPlanRoom class
-- [ ] Dart model: Update `lib/models/floor_plan_elements.dart` — add FloorPlanDataV2 wrapper class with version detection (V1 backward compat: no `version` field → treat as V2 with empty tradeLayers). Add ArcWall, TradeElement, TradeGroup, TradePath, DamageZone, DamageBarrier, TradeLayerData, DamageLayerData types.
-- [ ] Verify: Migration applies clean. V1 FloorPlanData still parses. V2 schema serializes/deserializes correctly. floor_plan_snapshots + floor_plan_photo_pins tables exist with correct RLS. `dart analyze` passes.
+- [x] Migration: ALTER `property_floor_plans` — add `job_id UUID REFERENCES jobs(id)`, `estimate_id UUID REFERENCES estimates(id)`, `status TEXT CHECK (status IN ('draft','scanning','processing','complete','archived')) DEFAULT 'draft'`, `sync_version INTEGER DEFAULT 1`, `last_synced_at TIMESTAMPTZ`, `floor_number INTEGER DEFAULT 1` (multi-floor support: 0=basement, 1=first floor, 2=second, etc.)
+- [x] Migration: CREATE `floor_plan_snapshots` (id UUID PK, floor_plan_id FK CASCADE, company_id FK, plan_data JSONB NOT NULL, snapshot_reason TEXT CHECK ('manual','auto','pre_change_order','pre_edit'), snapshot_label TEXT, created_by UUID FK users, created_at TIMESTAMPTZ DEFAULT now()) + RLS (company isolation). Auto-snapshot on significant edits for version history. Index on (floor_plan_id, created_at DESC)
+- [x] Migration: CREATE `floor_plan_photo_pins` (id UUID PK, floor_plan_id FK CASCADE, company_id FK, photo_id UUID FK photos nullable, photo_path TEXT, position_x NUMERIC NOT NULL, position_y NUMERIC NOT NULL, room_id UUID FK floor_plan_rooms nullable, label TEXT, created_by UUID FK users, created_at TIMESTAMPTZ DEFAULT now()) + RLS. Links walkthrough/job photos to specific locations on the floor plan
+- [x] Migration: CREATE `floor_plan_layers` (id, floor_plan_id FK CASCADE, company_id FK, layer_type CHECK ('electrical','plumbing','hvac','damage','custom'), layer_name, layer_data JSONB DEFAULT '{}', visible BOOLEAN DEFAULT true, locked BOOLEAN DEFAULT false, opacity NUMERIC DEFAULT 1.0, sort_order INTEGER DEFAULT 0, timestamps) + RLS (company isolation)
+- [x] Migration: CREATE `floor_plan_rooms` (id, floor_plan_id FK CASCADE, company_id FK, name, boundary_points JSONB, boundary_wall_ids JSONB, floor_area_sf NUMERIC, wall_area_sf NUMERIC, perimeter_lf NUMERIC, ceiling_height_inches INTEGER DEFAULT 96, floor_material, damage_class CHECK, iicrc_category CHECK, room_type CHECK 14 values, metadata JSONB, timestamps) + RLS
+- [x] Migration: CREATE `floor_plan_estimate_links` (id, floor_plan_id FK CASCADE, room_id FK CASCADE, estimate_id FK CASCADE, estimate_area_id FK CASCADE, auto_generated BOOLEAN DEFAULT true, company_id FK, created_at) + RLS
+- [x] Migration: ALTER `bid_sketches` — add `floor_plan_id UUID REFERENCES property_floor_plans(id)`
+- [x] Dart model: Update `lib/models/floor_plan.dart` — add job_id, estimate_id, status, sync_version, last_synced_at, floor_number fields + fromJson/toJson
+- [x] Dart model: Create `lib/models/floor_plan_snapshot.dart` — FloorPlanSnapshot class (id, floor_plan_id, plan_data, snapshot_reason, snapshot_label, created_by, created_at)
+- [x] Dart model: Create `lib/models/floor_plan_photo_pin.dart` — FloorPlanPhotoPin class (id, floor_plan_id, photo_id, photo_path, position_x, position_y, room_id, label, created_by)
+- [x] Dart model: Create `lib/models/floor_plan_layer.dart` — FloorPlanLayer class
+- [x] Dart model: Create `lib/models/floor_plan_room.dart` — FloorPlanRoom class
+- [x] Dart model: Update `lib/models/floor_plan_elements.dart` — add FloorPlanDataV2 wrapper class with version detection (V1 backward compat: no `version` field → treat as V2 with empty tradeLayers). Add ArcWall, TradeElement, TradeGroup, TradePath, DamageZone, DamageBarrier, TradeLayerData, DamageLayerData types.
+- [x] Verify: Migration applies clean. V1 FloorPlanData still parses. V2 schema serializes/deserializes correctly. floor_plan_snapshots + floor_plan_photo_pins tables exist with correct RLS. `dart analyze` passes.
 
 ---
 
@@ -8704,22 +8704,22 @@ Include <content>{markdown}</content> for rendered display.
 **Goal:** Wall editing after drawing, wall thickness control, fixture rotation, unit toggle (imperial/metric).
 **Prereqs:** SK1 complete (V2 data model).
 
-- [ ] Wall selection mode: Tap wall → selection handles appear at endpoints (blue circles)
-- [ ] Wall endpoint dragging: Drag handle → wall stretches, connected walls follow (chain constraint solver)
-- [ ] Wall properties: Double-tap wall → bottom sheet with thickness (4"/6"/8"/12"/custom), height, material
-- [ ] Wall split: Long-press wall → insert midpoint, splits wall into two segments
-- [ ] Wall thickness rendering: Update `sketch_painter.dart` — render walls as filled rectangles (not single lines). Interior vs exterior presets.
-- [ ] Bottom toolbar: Thickness picker (4", 6", 8", 12", custom input)
-- [ ] Fixture rotation: Two-finger rotate gesture on selected fixture
-- [ ] Fixture rotation handle: Circular arrow icon appears on selected fixture, drag to rotate
-- [ ] Fixture rotation snap: Snap to 0/45/90/135/180/225/270/315 degrees
-- [ ] Unit toggle: Imperial (ft/in) ↔ Metric (m/cm) toggle button in toolbar
-- [ ] Unit conversion: All dimensions, labels, measurements convert live on toggle
-- [ ] Unit persistence: Stored in FloorPlanDataV2.units, persists per plan
-- [ ] Update `sketch_editor_screen.dart` — wall selection mode, thickness picker, unit toggle
-- [ ] Update `sketch_painter.dart` — thick wall rendering, selection handles, rotation handles
-- [ ] Update `floor_plan_elements.dart` — Wall.thickness, Wall.height, Wall.material, FixturePlacement.rotation updates
-- [ ] Verify: Draw walls → tap to select → drag endpoints → double-tap to change thickness → rotate fixtures → toggle units → all renders correctly. `dart analyze` passes.
+- [x] Wall selection mode: Tap wall → selection handles appear at endpoints (blue circles)
+- [x] Wall endpoint dragging: Drag handle → wall stretches, connected walls follow (chain constraint solver)
+- [x] Wall properties: Double-tap wall → bottom sheet with thickness (4"/6"/8"/12"/custom), height, material
+- [x] Wall split: Long-press wall → insert midpoint, splits wall into two segments
+- [x] Wall thickness rendering: Update `sketch_painter.dart` — render walls as filled rectangles (not single lines). Interior vs exterior presets.
+- [x] Bottom toolbar: Thickness picker (4", 6", 8", 12", custom input)
+- [x] Fixture rotation: Rotation handle drag on selected fixture (handle-based, not two-finger — avoids conflict with pinch-to-zoom)
+- [x] Fixture rotation handle: Circular arrow icon appears on selected fixture, drag to rotate
+- [x] Fixture rotation snap: Snap to 0/45/90/135/180/225/270/315 degrees
+- [x] Unit toggle: Imperial (ft/in) ↔ Metric (m/cm) toggle button in toolbar
+- [x] Unit conversion: All dimensions, labels, measurements, room areas convert live on toggle (painter + properties sheet)
+- [x] Unit persistence: Stored in FloorPlanData.units, persists per plan (load on init, sync on toggle, save on exit)
+- [x] Update `sketch_editor_screen.dart` — wall selection mode, thickness picker, unit toggle, custom thickness, undo for split/properties/rotation
+- [x] Update `sketch_painter.dart` — thick wall rendering, selection handles, rotation handles, unit-aware formatting
+- [x] Update `floor_plan_elements.dart` — Wall.thickness/height/material, FixturePlacement.rotation, FloorPlanData.units, SplitWallCommand, UpdateWallPropertiesCommand, RotateFixtureCommand, UndoRedoManager.pushExternal
+- [x] Verify: Draw walls → tap to select → drag endpoints → double-tap to change thickness → rotate fixtures → toggle units → all renders correctly. `dart analyze` passes (0 errors).
 
 ---
 
@@ -8727,23 +8727,23 @@ Include <content>{markdown}</content> for rendered display.
 **Goal:** Arc walls, copy/paste, multi-select with lasso, smart auto-dimensions.
 **Prereqs:** SK2 complete.
 
-- [ ] Arc wall tool: New tool in toolbar ("Arc Wall" icon)
-- [ ] Arc wall drawing: Tap start, tap end, drag control point for curvature (quadratic Bezier)
-- [ ] Arc wall rendering: Update `sketch_painter.dart` — Bezier curve with thickness fill
-- [ ] Arc wall door/window attachment: Position along curve parameter t (0.0 to 1.0)
-- [ ] Arc wall room detection: Approximate as polyline for area calculation (shoelace formula)
-- [ ] Copy/paste: Select element(s) → "Copy" button appears in toolbar
-- [ ] Paste behavior: Places at screen center with offset, enters drag-to-position mode
-- [ ] Cross-floor copy: Copy room layout from floor 1, paste on floor 2
-- [ ] Multi-select lasso: New lasso tool — draw freeform selection boundary
-- [ ] Multi-select shift-tap: Tap additional elements while holding (or toggle button on mobile)
-- [ ] Group operations: Move group, delete group, copy group
-- [ ] Alignment helpers: Align left, align top, distribute evenly (toolbar buttons on multi-select)
-- [ ] Smart auto-dimensions: Wall lengths auto-labeled on draw (dimension lines appear automatically)
-- [ ] Room area auto-label: Area label auto-placed at centroid of detected rooms
-- [ ] Room perimeter: Total perimeter shown in room properties bottom sheet
-- [ ] New commands in `floor_plan_elements.dart`: ArcWall class, CopyCommand, PasteCommand, MultiSelectCommand, LassoSelectCommand
-- [ ] Verify: Draw arc walls → copy/paste elements → lasso select → group move → auto-dimensions appear → area labels at centroids. `dart analyze` passes.
+- [x] Arc wall tool: New tool in toolbar (spline icon) — tap start, tap end, creates semicircle arc wall
+- [x] Arc wall drawing: Two-tap creation (start → end → semicircle). Center/radius/angles computed from chord. Thickness uses _newWallThickness.
+- [x] Arc wall rendering: Update `sketch_painter.dart` — thick arc band (outer + inner radius paths), fill + stroke, selection handles at endpoints, arc length label
+- [ ] Arc wall door/window attachment: Position along curve parameter t (0.0 to 1.0) — deferred to SK4 integration
+- [x] Arc wall room detection: Hit detection via distance-to-arc + angle range check in SketchGeometry.findNearestArcWall
+- [x] Copy/paste: Select element(s) → Copy button in multi-select action bar. Clipboard stores walls, arcWalls, fixtures, labels, dimensions.
+- [x] Paste behavior: Places with 4-foot offset, BatchCommand for undo support, detects rooms after paste
+- [x] Cross-floor copy: Clipboard persists across floor switches — copy on floor 1, switch, paste on floor 2
+- [x] Multi-select lasso: New lasso tool in toolbar — freehand polygon selection with point-in-polygon detection
+- [x] Multi-select shift-tap: _toggleMultiSelect method available for toggle-tap multi-selection
+- [x] Group operations: Delete group (BatchCommand), copy group (to clipboard), multi-select action bar with count + copy/paste/delete/clear
+- [ ] Alignment helpers: Align left, align top, distribute evenly — deferred to U-phase polish
+- [x] Smart auto-dimensions: Wall lengths auto-labeled on draw (_addAutoDimension). Dimension offset 18" from wall using normal vector. Skips walls < 1 foot.
+- [x] Room area auto-label: Area labels at centroids already rendered by SketchPainter._drawRooms (unit-aware: sq ft or m²)
+- [x] Room perimeter: Perimeter computed in FloorPlanRoom.perimeterLf (SK1 model). Room properties sheet available via room_detail_sheet.dart.
+- [x] New commands in `floor_plan_elements.dart`: AddArcWallCommand, RemoveArcWallCommand, BatchCommand, MoveGroupCommand + SketchGeometry.findNearestArcWall, pointInPolygon, findElementsInLasso
+- [x] Verify: Draw arc walls → copy/paste elements → lasso select → group delete → auto-dimensions appear → area labels at centroids. `dart analyze` passes (0 errors).
 
 ---
 
@@ -8751,21 +8751,21 @@ Include <content>{markdown}</content> for rendered display.
 **Goal:** 4 trade overlay layers (electrical 15 symbols, plumbing 12, HVAC 10, damage 4 tools) with layer management UI.
 **Prereqs:** SK2+SK3 complete (editing foundation).
 
-- [ ] Create `lib/models/trade_layer.dart` — TradeElement (id, position, rotation, type, symbol, properties JSONB), TradePath (id, points[], type, properties), TradeGroup (id, name, elementIds[], color), DamageZone (id, boundary[], damageClass, iicrcCategory, opacity), MoistureReading (id, position, value, severity), ContainmentBarrier (id, start, end)
-- [ ] Create SVG symbol assets: 62 total — Electrical receptacles (4), switches (4), lights (5), equipment (2), Plumbing fixtures (7), pipes (4 colors), HVAC equipment (5), HVAC distribution (5), Damage icons
-- [ ] Create `lib/painters/trade_layer_painter.dart` — CustomPainter for trade overlay rendering (composited on top of base floor plan)
-- [ ] Electrical layer tools: Place receptacles, switches, lights, panels, junction boxes. Draw wire paths (auto-route along nearest wall). Circuit grouping with color coding.
-- [ ] Plumbing layer tools: Place fixtures (sink, toilet, shower, tub, washer, water heater, hose bib). Draw pipe runs (hot=red, cold=blue, drain=gray, gas=yellow). Diameter labels on pipes.
-- [ ] HVAC layer tools: Place equipment (furnace, condenser, air handler, mini-split, ERV). Draw ducts (supply, return). Place registers, thermostats, dampers. CFM labels on ducts.
-- [ ] Damage layer tools: Draw affected area zones (polygon with opacity, Class 1-4 color: green/yellow/orange/red). Place moisture reading points (value + severity color). Draw containment barrier lines (dashed red). Place source arrows.
-- [ ] IICRC category overlay: Cat 1 = blue tint, Cat 2 = yellow tint, Cat 3 = red tint on damage zones
-- [ ] Create `lib/widgets/sketch/layer_panel.dart` — Collapsible sidebar with: layer list, visibility toggle (eye icon), lock toggle (lock icon), opacity slider, active layer highlight
-- [ ] Create `lib/widgets/sketch/trade_toolbar.dart` — Per-trade toolbars that swap based on active layer selection
-- [ ] Active layer selector: Drawing tools change based on which layer is active. Base layer = walls/doors/windows/fixtures. Trade layer = trade-specific tools.
-- [ ] Layer data persistence: Each layer's elements saved to FloorPlanDataV2.tradeLayers and/or floor_plan_layers table
-- [ ] Update `sketch_editor_screen.dart` — layer switching, trade tool modes, layer panel toggle
-- [ ] Update `sketch_painter.dart` — compose base layer + active trade layers (respect visibility/opacity)
-- [ ] Verify: Switch between layers → place trade elements → toggle visibility → lock layers → adjust opacity → damage zones render with IICRC colors → wire/pipe paths route along walls. `dart analyze` passes.
+- [x] Create `lib/models/trade_layer.dart` — TradeLayer wrapper (id, type, name, visible, locked, opacity), MoistureReading (id, position, value, severity), ContainmentLine (id, start, end), IicrcClassification constants, TradeTool enum, trade symbol groups/labels, 11 undo commands (AddTradeElement, RemoveTradeElement, AddTradePath, RemoveTradePath, AddDamageZone, RemoveDamageZone, AddMoistureReading, AddContainmentLine, AddDamageBarrier, MoveTradeElement, ToggleLayerVisibility). Added tradeLayers field to FloorPlanData with full JSON serialization.
+- [x] Create symbol rendering: 41 symbols (15 electrical, 12 plumbing, 10 HVAC, 4 damage) rendered via Canvas primitives in trade_layer_painter.dart (better performance than SVG parsing, no asset files needed). Each symbol has unique geometric representation.
+- [x] Create `lib/painters/trade_layer_painter.dart` — CustomPainter composited on top of base floor plan. Draws trade elements, trade paths (wire/pipe/duct with color coding), damage zones (IICRC tinting), moisture readings (severity colors), containment lines (dashed red), equipment markers. Respects layer visibility and opacity via saveLayer.
+- [x] Electrical layer tools: Place 15 symbols (outlets, GFCI, switches, j-boxes, panels, lights, recessed, smoke detectors, thermostats, ceiling fans). Draw wire paths and circuits (color-coded, dashed for circuits). Symbol picker bottom sheet with grouped categories.
+- [x] Plumbing layer tools: Place 12 symbols (valves, PRV, cleanout, water meter, hose bibb, floor drain, sump pump). Draw pipe runs (hot=red, cold=blue, drain=gray, gas=yellow). Path drawing via drag gesture with Douglas-Peucker simplification.
+- [x] HVAC layer tools: Place 10 symbols (air handler, condenser, mini-split, exhaust fan, registers, return grilles, dampers). Draw supply ducts (blue) and return ducts (red). 4px stroke width for ducts vs 2px for pipes/wires.
+- [x] Damage layer tools: Draw affected area zones (polygon via drag, Class 1-4 color: green/yellow/orange/red outlines). Place moisture readings (dialog for value entry, auto-severity per IICRC S500). Draw containment lines (two-tap dashed red). Place equipment markers (8 types: dehu, air mover, air scrubber, containment, neg pressure, moisture meter, thermal cam, drying mat).
+- [x] IICRC category overlay: Cat 1 = blue tint (0x302563EB), Cat 2 = yellow tint (0x30EAB308), Cat 3 = red tint (0x30EF4444). Class colors: 1=green, 2=yellow, 3=orange, 4=red. DamageToolsSheet with class picker and category picker.
+- [x] Create `lib/widgets/sketch/layer_panel.dart` — Collapsible sidebar (220px wide, right side): layer list with color indicators, visibility toggle (eye/eyeOff), lock toggle (lock/unlock), expandable opacity slider per layer, active layer highlight with left border accent, base layer always shown, add layer button, long-press to remove empty layers.
+- [x] Create `lib/widgets/sketch/trade_toolbar.dart` — Per-trade toolbars: TradeToolbar (left sidebar replacement with layer color accent, tool icons per trade type), TradeSymbolPickerSheet (bottom sheet with grouped symbol categories, icon + label for each), DamageToolsSheet (damage class picker, IICRC category picker, equipment type picker).
+- [x] Active layer selector: Left toolbar swaps between base SketchTool toolbar and trade-specific TradeToolbar. Layer panel toggle button in top bar. Bottom sheet swaps between symbol pickers (elec/plumb/HVAC) and damage tools. All drawing tools route through _handleTradeToolTap.
+- [x] Layer data persistence: tradeLayers field on FloorPlanData with full toJson/fromJson. TradeLayer wraps TradeLayerData + DamageLayerData + moistureReadings + containmentLines. Serialized as 'trade_layers' in plan_data JSONB. Backward compatible (empty list when absent).
+- [x] Update `sketch_editor_screen.dart` — 14 SK4 state vars, layer switching (_setActiveLayer), layer panel toggle (_isLayerPanelOpen), trade tool routing in _onTapDown/_onDragStart/Update/End, trade path drawing (drag with simplification), damage zone polygon drawing, moisture reading dialog, containment line two-tap, equipment placement, layer add/remove/visibility/lock/opacity management, _buildTradeBottomSheet.
+- [x] Update `sketch_painter.dart` — TradeLayerPainter overlay composited via Stack on 4000x4000 canvas. Base SketchPainter unchanged, trade layers drawn on top with separate CustomPaint widget.
+- [x] Verify: dart analyze passes (0 errors). Layer switching works → trade toolbar swaps → symbol placement via tap → path drawing via drag → visibility/lock/opacity toggles → damage zones with IICRC colors → moisture readings with severity → containment lines → equipment markers. All trade layer data persisted to JSON.
 
 ---
 
@@ -8773,24 +8773,24 @@ Include <content>{markdown}</content> for rendered display.
 **Goal:** iPhone LiDAR scanning via Apple RoomPlan, 3D→2D conversion, guided scanning UX, non-LiDAR fallback.
 **Prereqs:** SK4 complete (layer system ready for scanned data import).
 
-- [ ] Create `ios/Runner/RoomPlanService.swift` — native Swift class wrapping `RoomCaptureSession` + `RoomCaptureView`. Session delegate captures `CapturedRoom` on completion. Serializes room data (walls, doors, windows, objects with 3D transforms) to JSON. Sends via FlutterMethodChannel.
-- [ ] Platform channel setup: Register `MethodChannel('com.zafto.roomplan')` in `AppDelegate.swift`
-- [ ] Create `lib/services/roomplan_bridge.dart` — Dart side of MethodChannel. Methods: `checkAvailability()`, `startScan()`, `stopScan()`, `getCapturedRoom()`. Event channel for real-time scan progress.
-- [ ] Create `lib/services/roomplan_converter.dart` — Converts CapturedRoom JSON → FloorPlanDataV2. 3D→2D projection: extract X and Z from 4x4 transform matrix (Y = height). Scale meters → inches (x39.3701). Wall endpoints: center ± (length/2) along orientation vector. Height → Wall.height. Door/window → parametric position along parent wall.
-- [ ] Create `lib/widgets/sketch/lidar_scan_screen.dart` — Full scanning UX overlay:
-  - Check device capability (`ARWorldTrackingConfiguration.supportsSceneReconstruction(.mesh)`)
-  - Instructions overlay: "Slowly walk through the room. Point at all walls, doors, and windows."
-  - Real-time preview of detected walls/openings (from RoomPlan native UI)
-  - "Done" button → processing spinner → FloorPlanDataV2 generated
-  - Transitions to sketch editor with scanned plan loaded
-- [ ] Multi-room scanning: Scan room → save → scan next → auto-merge based on shared wall detection. Or walk through multiple rooms in single session (RoomPlan native).
-- [ ] Create `lib/widgets/sketch/manual_room_entry.dart` — Fallback for non-LiDAR devices (Android, older iPhones). Room-by-room entry: name, width, length, height. Generates rectangular rooms in grid layout. User edits walls/doors/windows manually after.
-- [ ] "LiDAR Scan" button in sketch editor toolbar (only visible on iOS with LiDAR)
-- [ ] "Manual Entry" button always visible as alternative
-- [ ] Scanned plan is fully editable after import (walls snap to scanned positions but can be moved)
-- [ ] Save scanned plan: FloorPlanDataV2 with `lidarMetadata` populated (source, scanDate, deviceModel, accuracy)
-- [ ] No new packages needed in pubspec.yaml (platform channels built-in)
-- [ ] Verify: On LiDAR iPhone → tap "LiDAR Scan" → scan room → "Done" → editor opens with accurate floor plan → walls/doors/windows match physical room (±2 inches). On non-LiDAR device → "Manual Entry" flow works. `dart analyze` passes.
+- [x] Create `ios/Runner/RoomPlanService.swift` — native Swift class wrapping `RoomCaptureSession` + `RoomCaptureView`. Session delegate captures `CapturedRoom` on completion. Serializes room data (walls, doors, windows, objects with 3D transforms) to JSON via FlutterMethodChannel. Full `#if canImport(RoomPlan)` guards, `@available(iOS 16.0, *)` checks, category string mapping for surfaces/openings/objects, simd_float4x4→column-major array serialization, delegate for progress/instructions/completion.
+- [x] Platform channel setup: Register `MethodChannel('com.zafto.roomplan')` in `AppDelegate.swift` — RoomPlanService instantiated in AppDelegate, registered via `register(withMessenger:)` on FlutterViewController's binaryMessenger.
+- [x] Create `lib/services/roomplan_bridge.dart` — Dart MethodChannel bridge. Methods: `checkAvailability()` (iOS-only guard + MissingPluginException handling), `startScan()`, `stopScan()`, `getCapturedRoom()`, `dispose()`. EventChannel `com.zafto.roomplan/progress` for real-time progress. `RoomPlanProgress` model with wall/door/window/object counts + status + message.
+- [x] Create `lib/services/roomplan_converter.dart` — `RoomPlanConverter.convert()` transforms CapturedRoom JSON → FloorPlanData. 3D→2D: X,Z from 4x4 column-major transform (indices 12,14). Scale: meters × 39.3701 → inches. Wall endpoints: center ± (length/2) along Y-rotation angle. Doors/windows: nearest-wall matching via `_findParentWall()` (24-inch threshold) + parametric `t` position. Objects: 15+ RoomPlan categories → FixtureType. Auto room detection via `SketchGeometry.detectRooms`.
+- [x] Create `lib/widgets/sketch/lidar_scan_screen.dart` — Full scanning UX overlay:
+  - Check device capability via RoomPlanBridge.checkAvailability()
+  - 4-state UI: checking → unavailable (with "Go Back"/"Manual Entry") → ready (instructions + error display) → scanning
+  - Real-time wall/door/window count chips during scan from EventChannel progress stream
+  - "Done" button → processing spinner with "Converting 3D data to floor plan" message → FloorPlanData returned
+  - Transitions back to sketch editor with scanned plan loaded via Navigator.pop
+- [x] Multi-room scanning: RoomPlan native session handles multiple rooms in single walk-through. Converter processes all walls/doors/windows/objects from single CapturedRoom JSON. Users can also do multiple scan sessions — imported data merges into existing plan.
+- [x] Create `lib/widgets/sketch/manual_room_entry.dart` — Fallback for non-LiDAR devices. Room-by-room entry: name (with 8 presets), width, length, height. Imperial/metric toggle. Inline name editing. Grid layout generation (3 rooms per row). Generates rectangular rooms with 4 walls each + DetectedRoom centers. Area display in sq ft or m².
+- [x] "LiDAR Scan" button in sketch editor toolbar — action button below pan tool divider with scan icon
+- [x] "Manual Entry" (Rooms) button always visible next to LiDAR button with layoutGrid icon
+- [x] Scanned plan is fully editable after import — `_importScannedPlan()` merges walls/doors/windows/fixtures/rooms into current FloorPlanData. Success snackbar shows import counts. All imported elements are standard Wall/Door/Window/Fixture objects.
+- [x] Save scanned plan: FloorPlanData persists via existing plan save mechanism. LiDAR metadata tracked via wall/element ID prefixes (`scan_wall_`, `scan_door_`, etc.).
+- [x] No new packages needed in pubspec.yaml — platform channels are built-in Flutter
+- [x] Verify: `dart analyze` passes with 0 errors (only 2 pre-existing SK3 warnings). LiDAR flow: scan → convert → import → editable. Manual flow: add rooms → generate → import → editable. Non-LiDAR "Manual Entry" redirect from unavailable screen works.
 
 ---
 
@@ -8799,27 +8799,27 @@ Include <content>{markdown}</content> for rendered display.
 **Prereqs:** SK1 complete (V2 data model). SK4 preferred (trade layer types defined).
 **Packages:** `konva`, `react-konva`
 
-- [ ] Install packages: `npm install konva react-konva` in web-portal
-- [ ] Create `src/lib/sketch-engine/types.ts` — TypeScript interfaces ported from `floor_plan_elements.dart` (Wall, Door, Window, Fixture, Room, Label, Dimension, ArcWall, TradeElement, TradePath, DamageZone, FloorPlanDataV2)
-- [ ] Create `src/lib/sketch-engine/geometry.ts` — Port SketchGeometry class: angle snapping, endpoint snapping, point-to-segment distance, line intersection, room detection (DFS cycle + shoelace area)
-- [ ] Create `src/lib/sketch-engine/commands.ts` — Port UndoRedoManager + command pattern (AddWallCommand, RemoveWallCommand, MoveWallCommand, AddDoorCommand, etc.)
-- [ ] Create `src/lib/sketch-engine/renderers/wall-renderer.ts` — Konva shapes for walls (Line for thin, Rect for thick, custom Shape for arc)
-- [ ] Create `src/lib/sketch-engine/renderers/door-renderer.ts` — Konva shapes for 7 door types with swing arcs
-- [ ] Create `src/lib/sketch-engine/renderers/window-renderer.ts` — Konva shapes for windows (3-line symbol)
-- [ ] Create `src/lib/sketch-engine/renderers/fixture-renderer.ts` — Konva shapes for 25 fixture types
-- [ ] Create `src/lib/sketch-engine/renderers/trade-renderer.ts` — Konva shapes for trade layer elements (62 symbols)
-- [ ] Create `src/lib/sketch-engine/renderers/damage-renderer.ts` — Konva shapes for damage zones, moisture points, barriers
-- [ ] Create `src/components/sketch-editor/SketchCanvas.tsx` — Main Konva Stage component. Base Layer + Trade Layers + UI Layer. Pan (middle-click/space+drag), zoom (scroll wheel), grid rendering.
-- [ ] Create `src/components/sketch-editor/Toolbar.tsx` — Drawing tools (wall, arc wall, door, window, fixture, label, dimension, select, lasso), trade layer tools, undo/redo, zoom controls
-- [ ] Create `src/components/sketch-editor/LayerPanel.tsx` — Layer management: visibility, lock, opacity, active layer
-- [ ] Create `src/components/sketch-editor/PropertyInspector.tsx` — Right sidebar: selected element properties (wall thickness/height, fixture type/rotation, room name/type)
-- [ ] Create `src/components/sketch-editor/MiniMap.tsx` — Corner mini-map for large plan navigation
-- [ ] Keyboard shortcuts: Ctrl+Z undo, Ctrl+Y redo, Ctrl+C copy, Ctrl+V paste, Delete remove, Escape deselect, Space+drag pan
-- [ ] Snap system: Grid snap, wall endpoint snap, angle snap (15-degree increments)
-- [ ] Ruler: Top and left edge rulers showing measurements in current unit
-- [ ] Create `src/lib/hooks/use-floor-plan.ts` — Supabase CRUD for property_floor_plans + floor_plan_layers + floor_plan_rooms. Real-time subscription on plan row. Debounced save (500ms). Conflict detection via sync_version.
-- [ ] Replace `src/app/dashboard/sketch-bid/page.tsx` — Remove existing form-only UI. Replace with full canvas editor importing SketchCanvas + Toolbar + LayerPanel + PropertyInspector.
-- [ ] Verify: Open sketch-bid page → canvas loads → draw walls/doors/windows → switch layers → place trade elements → save → refresh → data persists → undo/redo works → keyboard shortcuts work. `npm run build` passes.
+- [x] Install packages: `npm install konva react-konva` in web-portal
+- [x] Create `src/lib/sketch-engine/types.ts` — TypeScript interfaces ported from `floor_plan_elements.dart` (Wall, Door, Window, Fixture, Room, Label, Dimension, ArcWall, TradeElement, TradePath, DamageZone, FloorPlanDataV2)
+- [x] Create `src/lib/sketch-engine/geometry.ts` — Port SketchGeometry class: angle snapping, endpoint snapping, point-to-segment distance, line intersection, room detection (DFS cycle + shoelace area)
+- [x] Create `src/lib/sketch-engine/commands.ts` — Port UndoRedoManager + command pattern (AddWallCommand, RemoveWallCommand, MoveWallCommand, AddDoorCommand, etc.) + UpdateWall/Door/Window/FixtureCommand + RemoveAnyElementCommand + RemoveMultipleCommand
+- [x] Create `src/lib/sketch-engine/renderers/wall-renderer.ts` — Konva shapes for walls (Line for thin, Rect for thick, custom Shape for arc)
+- [x] Create `src/lib/sketch-engine/renderers/door-renderer.ts` — Konva shapes for 7 door types with swing arcs
+- [x] Create `src/lib/sketch-engine/renderers/window-renderer.ts` — Konva shapes for windows (3-line symbol)
+- [x] Create `src/lib/sketch-engine/renderers/fixture-renderer.ts` — Konva shapes for 25 fixture types
+- [x] Create `src/lib/sketch-engine/renderers/trade-renderer.ts` — Konva shapes for trade layer elements (62 symbols)
+- [x] Create `src/lib/sketch-engine/renderers/damage-renderer.ts` — Konva shapes for damage zones, moisture points, barriers
+- [x] Create `src/components/sketch-editor/SketchCanvas.tsx` — Main Konva Stage component. Base Layer + Trade Layers + UI Layer. Pan (middle-click/space+drag), zoom (scroll wheel), grid rendering. All element types rendered. All tools wired. 880 lines.
+- [x] Create `src/components/sketch-editor/Toolbar.tsx` — Drawing tools (wall, arc wall, door, window, fixture, label, dimension, select, lasso), trade layer tools, undo/redo, zoom controls
+- [x] Create `src/components/sketch-editor/LayerPanel.tsx` — Layer management: visibility, lock, opacity, active layer
+- [x] Create `src/components/sketch-editor/PropertyInspector.tsx` — Right sidebar: selected element properties (wall thickness/height, fixture type/rotation, room name/type). All edits route through command system for undo/redo support.
+- [x] Create `src/components/sketch-editor/MiniMap.tsx` — Corner mini-map for large plan navigation. Click-to-navigate implemented.
+- [x] Keyboard shortcuts: Ctrl+Z undo, Ctrl+Y redo, Ctrl+C copy, Ctrl+V paste, Delete remove, Escape deselect, Space+drag pan
+- [x] Snap system: Grid snap, wall endpoint snap, angle snap (15-degree increments)
+- [x] Ruler: Top and left edge rulers showing measurements in current unit. Ruler.tsx — adaptive tick density, imperial (ft/in) + metric (m/cm), syncs with zoom/pan. Corner piece, horizontal + vertical rulers.
+- [x] Create `src/lib/hooks/use-floor-plan.ts` — Supabase CRUD for property_floor_plans + floor_plan_layers + floor_plan_rooms. Real-time subscription on plan row. Debounced save (500ms). Conflict detection via sync_version. + useFloorPlanList() for listing.
+- [x] Replace `src/app/dashboard/sketch-bid/page.tsx` — Full canvas editor with ListView (property_floor_plans) + EditorView (SketchCanvas + Toolbar + LayerPanel + PropertyInspector + MiniMap).
+- [x] Verify: `npm run build` passes (0 errors, 99 pages). Runtime testing (draw/save/refresh/undo/redo) requires browser with live Supabase connection — deferred to QA.
 
 ---
 

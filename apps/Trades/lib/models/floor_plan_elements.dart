@@ -5,6 +5,8 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'trade_layer.dart';
+
 // =============================================================================
 // ENUMS
 // =============================================================================
@@ -151,6 +153,7 @@ class Wall {
   final Offset start;
   final Offset end;
   final double thickness;
+  final double height; // inches (default 96 = 8ft)
   final String? material;
 
   const Wall({
@@ -158,6 +161,7 @@ class Wall {
     required this.start,
     required this.end,
     this.thickness = 6.0,
+    this.height = 96.0,
     this.material,
   });
 
@@ -190,6 +194,7 @@ class Wall {
     Offset? start,
     Offset? end,
     double? thickness,
+    double? height,
     String? material,
   }) {
     return Wall(
@@ -197,6 +202,7 @@ class Wall {
       start: start ?? this.start,
       end: end ?? this.end,
       thickness: thickness ?? this.thickness,
+      height: height ?? this.height,
       material: material ?? this.material,
     );
   }
@@ -206,6 +212,7 @@ class Wall {
         'start': {'x': start.dx, 'y': start.dy},
         'end': {'x': end.dx, 'y': end.dy},
         'thickness': thickness,
+        'height': height,
         if (material != null) 'material': material,
       };
 
@@ -223,6 +230,7 @@ class Wall {
         (e['y'] as num).toDouble(),
       ),
       thickness: (json['thickness'] as num?)?.toDouble() ?? 6.0,
+      height: (json['height'] as num?)?.toDouble() ?? 96.0,
       material: json['material'] as String?,
     );
   }
@@ -612,44 +620,64 @@ class DetectedRoom {
 
 class FloorPlanData {
   final List<Wall> walls;
+  final List<ArcWall> arcWalls;
   final List<DoorPlacement> doors;
   final List<WindowPlacement> windows;
   final List<FixturePlacement> fixtures;
   final List<FloorLabel> labels;
   final List<DimensionLine> dimensions;
   final List<DetectedRoom> rooms;
+  final List<TradeLayer> tradeLayers; // SK4: trade overlay layers
   final double scale; // pixels per unit (inch)
+  final MeasurementUnit units;
 
   const FloorPlanData({
     this.walls = const [],
+    this.arcWalls = const [],
     this.doors = const [],
     this.windows = const [],
     this.fixtures = const [],
     this.labels = const [],
     this.dimensions = const [],
     this.rooms = const [],
+    this.tradeLayers = const [],
     this.scale = 4.0,
+    this.units = MeasurementUnit.imperial,
   });
+
+  // Find a trade layer by ID
+  TradeLayer? tradeLayerById(String id) {
+    for (final l in tradeLayers) {
+      if (l.id == id) return l;
+    }
+    return null;
+  }
 
   FloorPlanData copyWith({
     List<Wall>? walls,
+    List<ArcWall>? arcWalls,
     List<DoorPlacement>? doors,
     List<WindowPlacement>? windows,
     List<FixturePlacement>? fixtures,
     List<FloorLabel>? labels,
     List<DimensionLine>? dimensions,
     List<DetectedRoom>? rooms,
+    List<TradeLayer>? tradeLayers,
     double? scale,
+    MeasurementUnit? units,
   }) {
     return FloorPlanData(
       walls: walls ?? this.walls,
+      arcWalls: arcWalls ?? this.arcWalls,
       doors: doors ?? this.doors,
       windows: windows ?? this.windows,
       fixtures: fixtures ?? this.fixtures,
       labels: labels ?? this.labels,
       dimensions: dimensions ?? this.dimensions,
       rooms: rooms ?? this.rooms,
+      tradeLayers: tradeLayers ?? this.tradeLayers,
       scale: scale ?? this.scale,
+      units: units ?? this.units,
     );
   }
 
@@ -663,26 +691,38 @@ class FloorPlanData {
 
   Map<String, dynamic> toJson() => {
         'walls': walls.map((e) => e.toJson()).toList(),
+        'arc_walls': arcWalls.map((e) => e.toJson()).toList(),
         'doors': doors.map((e) => e.toJson()).toList(),
         'windows': windows.map((e) => e.toJson()).toList(),
         'fixtures': fixtures.map((e) => e.toJson()).toList(),
         'labels': labels.map((e) => e.toJson()).toList(),
         'dimensions': dimensions.map((e) => e.toJson()).toList(),
         'rooms': rooms.map((e) => e.toJson()).toList(),
+        if (tradeLayers.isNotEmpty)
+          'trade_layers': tradeLayers.map((e) => e.toJson()).toList(),
         'scale': scale,
+        'units': units.name,
       };
 
   factory FloorPlanData.fromJson(Map<String, dynamic> json) {
     return FloorPlanData(
       walls: _parseList(json['walls'], Wall.fromJson),
+      arcWalls: _parseList(json['arc_walls'], ArcWall.fromJson),
       doors: _parseList(json['doors'], DoorPlacement.fromJson),
       windows: _parseList(json['windows'], WindowPlacement.fromJson),
       fixtures: _parseList(json['fixtures'], FixturePlacement.fromJson),
       labels: _parseList(json['labels'], FloorLabel.fromJson),
       dimensions: _parseList(json['dimensions'], DimensionLine.fromJson),
       rooms: _parseList(json['rooms'], DetectedRoom.fromJson),
+      tradeLayers: _parseList(json['trade_layers'], TradeLayer.fromJson),
       scale: (json['scale'] as num?)?.toDouble() ?? 4.0,
+      units: _parseUnits(json['units'] as String?),
     );
+  }
+
+  static MeasurementUnit _parseUnits(String? value) {
+    if (value == 'metric') return MeasurementUnit.metric;
+    return MeasurementUnit.imperial;
   }
 
   static List<T> _parseList<T>(
@@ -703,12 +743,14 @@ class FloorPlanData {
 enum SketchTool {
   select,
   wall,
+  arcWall,
   door,
   window,
   fixture,
   label,
   dimension,
   erase,
+  lasso,
   pan,
 }
 
@@ -1102,6 +1144,256 @@ class EraseElementCommand extends SketchCommand {
   }
 }
 
+// SK2: Split wall into two segments (undoable)
+class SplitWallCommand extends SketchCommand {
+  final Wall originalWall;
+  final Wall wall1;
+  final Wall wall2;
+  final List<DoorPlacement> originalDoors;
+  final List<DoorPlacement> updatedDoors;
+  final List<WindowPlacement> originalWindows;
+  final List<WindowPlacement> updatedWindows;
+
+  SplitWallCommand({
+    required this.originalWall,
+    required this.wall1,
+    required this.wall2,
+    required this.originalDoors,
+    required this.updatedDoors,
+    required this.originalWindows,
+    required this.updatedWindows,
+  });
+
+  @override
+  FloorPlanData execute(FloorPlanData data) {
+    final walls =
+        data.walls.where((w) => w.id != originalWall.id).toList()
+          ..addAll([wall1, wall2]);
+    return data.copyWith(walls: walls, doors: updatedDoors, windows: updatedWindows);
+  }
+
+  @override
+  FloorPlanData undo(FloorPlanData data) {
+    final walls = data.walls
+        .where((w) => w.id != wall1.id && w.id != wall2.id)
+        .toList()
+      ..add(originalWall);
+    return data.copyWith(walls: walls, doors: originalDoors, windows: originalWindows);
+  }
+}
+
+// SK2: Update wall properties (thickness, height, material) — undoable
+class UpdateWallPropertiesCommand extends SketchCommand {
+  final String wallId;
+  final double oldThickness;
+  final double newThickness;
+  final double oldHeight;
+  final double newHeight;
+  final String? oldMaterial;
+  final String? newMaterial;
+
+  UpdateWallPropertiesCommand({
+    required this.wallId,
+    required this.oldThickness,
+    required this.newThickness,
+    required this.oldHeight,
+    required this.newHeight,
+    required this.oldMaterial,
+    required this.newMaterial,
+  });
+
+  @override
+  FloorPlanData execute(FloorPlanData data) {
+    return data.copyWith(
+      walls: data.walls.map((w) {
+        if (w.id == wallId) {
+          return w.copyWith(
+            thickness: newThickness,
+            height: newHeight,
+            material: newMaterial,
+          );
+        }
+        return w;
+      }).toList(),
+    );
+  }
+
+  @override
+  FloorPlanData undo(FloorPlanData data) {
+    return data.copyWith(
+      walls: data.walls.map((w) {
+        if (w.id == wallId) {
+          return w.copyWith(
+            thickness: oldThickness,
+            height: oldHeight,
+            material: oldMaterial,
+          );
+        }
+        return w;
+      }).toList(),
+    );
+  }
+}
+
+// SK2: Rotate fixture — undoable
+class RotateFixtureCommand extends SketchCommand {
+  final String fixtureId;
+  final double oldRotation;
+  final double newRotation;
+
+  RotateFixtureCommand({
+    required this.fixtureId,
+    required this.oldRotation,
+    required this.newRotation,
+  });
+
+  @override
+  FloorPlanData execute(FloorPlanData data) {
+    return data.copyWith(
+      fixtures: data.fixtures.map((f) {
+        if (f.id == fixtureId) return f.copyWith(rotation: newRotation);
+        return f;
+      }).toList(),
+    );
+  }
+
+  @override
+  FloorPlanData undo(FloorPlanData data) {
+    return data.copyWith(
+      fixtures: data.fixtures.map((f) {
+        if (f.id == fixtureId) return f.copyWith(rotation: oldRotation);
+        return f;
+      }).toList(),
+    );
+  }
+}
+
+// SK3: Arc wall commands
+class AddArcWallCommand extends SketchCommand {
+  final ArcWall arcWall;
+  AddArcWallCommand(this.arcWall);
+
+  @override
+  FloorPlanData execute(FloorPlanData data) {
+    return data.copyWith(arcWalls: [...data.arcWalls, arcWall]);
+  }
+
+  @override
+  FloorPlanData undo(FloorPlanData data) {
+    return data.copyWith(
+      arcWalls: data.arcWalls.where((a) => a.id != arcWall.id).toList(),
+    );
+  }
+}
+
+class RemoveArcWallCommand extends SketchCommand {
+  final ArcWall arcWall;
+  RemoveArcWallCommand(this.arcWall);
+
+  @override
+  FloorPlanData execute(FloorPlanData data) {
+    return data.copyWith(
+      arcWalls: data.arcWalls.where((a) => a.id != arcWall.id).toList(),
+    );
+  }
+
+  @override
+  FloorPlanData undo(FloorPlanData data) {
+    return data.copyWith(arcWalls: [...data.arcWalls, arcWall]);
+  }
+}
+
+// SK3: Batch command for paste/group operations
+class BatchCommand extends SketchCommand {
+  final List<SketchCommand> commands;
+  BatchCommand(this.commands);
+
+  @override
+  FloorPlanData execute(FloorPlanData data) {
+    var result = data;
+    for (final cmd in commands) {
+      result = cmd.execute(result);
+    }
+    return result;
+  }
+
+  @override
+  FloorPlanData undo(FloorPlanData data) {
+    var result = data;
+    for (final cmd in commands.reversed) {
+      result = cmd.undo(result);
+    }
+    return result;
+  }
+}
+
+// SK3: Move group of elements
+class MoveGroupCommand extends SketchCommand {
+  final Set<String> elementIds;
+  final Map<String, String> elementTypes; // id -> type
+  final Offset delta;
+
+  MoveGroupCommand({
+    required this.elementIds,
+    required this.elementTypes,
+    required this.delta,
+  });
+
+  @override
+  FloorPlanData execute(FloorPlanData data) => _applyDelta(data, delta);
+
+  @override
+  FloorPlanData undo(FloorPlanData data) =>
+      _applyDelta(data, Offset(-delta.dx, -delta.dy));
+
+  FloorPlanData _applyDelta(FloorPlanData data, Offset d) {
+    return data.copyWith(
+      walls: data.walls.map((w) {
+        if (elementIds.contains(w.id)) {
+          return w.copyWith(
+            start: Offset(w.start.dx + d.dx, w.start.dy + d.dy),
+            end: Offset(w.end.dx + d.dx, w.end.dy + d.dy),
+          );
+        }
+        return w;
+      }).toList(),
+      fixtures: data.fixtures.map((f) {
+        if (elementIds.contains(f.id)) {
+          return f.copyWith(
+            position: Offset(f.position.dx + d.dx, f.position.dy + d.dy),
+          );
+        }
+        return f;
+      }).toList(),
+      labels: data.labels.map((l) {
+        if (elementIds.contains(l.id)) {
+          return l.copyWith(
+            position: Offset(l.position.dx + d.dx, l.position.dy + d.dy),
+          );
+        }
+        return l;
+      }).toList(),
+      dimensions: data.dimensions.map((dim) {
+        if (elementIds.contains(dim.id)) {
+          return dim.copyWith(
+            start: Offset(dim.start.dx + d.dx, dim.start.dy + d.dy),
+            end: Offset(dim.end.dx + d.dx, dim.end.dy + d.dy),
+          );
+        }
+        return dim;
+      }).toList(),
+      arcWalls: data.arcWalls.map((a) {
+        if (elementIds.contains(a.id)) {
+          return a.copyWith(
+            center: Offset(a.center.dx + d.dx, a.center.dy + d.dy),
+          );
+        }
+        return a;
+      }).toList(),
+    );
+  }
+}
+
 // =============================================================================
 // UNDO/REDO MANAGER
 // =============================================================================
@@ -1137,6 +1429,16 @@ class UndoRedoManager {
     final command = _redoStack.removeLast();
     _undoStack.add(command);
     return command.execute(data);
+  }
+
+  // Record a command that was already applied externally (e.g. during drag).
+  // Does NOT re-execute — just pushes onto undo stack for reversibility.
+  void pushExternal(SketchCommand command) {
+    _undoStack.add(command);
+    _redoStack.clear();
+    if (_undoStack.length > _maxHistory) {
+      _undoStack.removeAt(0);
+    }
   }
 
   void clear() {
@@ -1311,6 +1613,93 @@ class SketchGeometry {
     return nearest;
   }
 
+  // Find nearest arc wall to a point
+  static ArcWall? findNearestArcWall(
+    Offset point,
+    List<ArcWall> arcWalls, {
+    double threshold = 16.0,
+  }) {
+    ArcWall? nearest;
+    double bestDist = threshold;
+    for (final arc in arcWalls) {
+      // Distance from point to arc: distance from center minus radius
+      final distToCenter = (point - arc.center).distance;
+      final distToArc = (distToCenter - arc.radius).abs();
+      // Also check the point is within the sweep angle range
+      final angle = atan2(point.dy - arc.center.dy, point.dx - arc.center.dx);
+      double normalAngle = angle - arc.startAngle;
+      if (normalAngle < 0) normalAngle += 2 * pi;
+      if (normalAngle < 0) normalAngle += 2 * pi;
+      final sweep = arc.sweepAngle.abs();
+      if (normalAngle <= sweep && distToArc < bestDist) {
+        bestDist = distToArc;
+        nearest = arc;
+      }
+    }
+    return nearest;
+  }
+
+  // Check if a point is inside a polygon (lasso selection)
+  static bool pointInPolygon(Offset point, List<Offset> polygon) {
+    if (polygon.length < 3) return false;
+    bool inside = false;
+    int j = polygon.length - 1;
+    for (int i = 0; i < polygon.length; i++) {
+      if ((polygon[i].dy > point.dy) != (polygon[j].dy > point.dy) &&
+          point.dx <
+              (polygon[j].dx - polygon[i].dx) *
+                      (point.dy - polygon[i].dy) /
+                      (polygon[j].dy - polygon[i].dy) +
+                  polygon[i].dx) {
+        inside = !inside;
+      }
+      j = i;
+    }
+    return inside;
+  }
+
+  // Find all elements inside a lasso polygon
+  static Map<String, String> findElementsInLasso(
+    List<Offset> lassoPoints,
+    FloorPlanData data,
+  ) {
+    final result = <String, String>{}; // id -> type
+    for (final w in data.walls) {
+      final mid = Offset(
+        (w.start.dx + w.end.dx) / 2,
+        (w.start.dy + w.end.dy) / 2,
+      );
+      if (pointInPolygon(mid, lassoPoints)) {
+        result[w.id] = 'wall';
+      }
+    }
+    for (final a in data.arcWalls) {
+      if (pointInPolygon(a.center, lassoPoints)) {
+        result[a.id] = 'arcWall';
+      }
+    }
+    for (final f in data.fixtures) {
+      if (pointInPolygon(f.position, lassoPoints)) {
+        result[f.id] = 'fixture';
+      }
+    }
+    for (final l in data.labels) {
+      if (pointInPolygon(l.position, lassoPoints)) {
+        result[l.id] = 'label';
+      }
+    }
+    for (final d in data.dimensions) {
+      final mid = Offset(
+        (d.start.dx + d.end.dx) / 2,
+        (d.start.dy + d.end.dy) / 2,
+      );
+      if (pointInPolygon(mid, lassoPoints)) {
+        result[d.id] = 'dimension';
+      }
+    }
+    return result;
+  }
+
   // Find any element near point. Returns (type, id) or null.
   static (String, String)? findElementAt(
     Offset point,
@@ -1350,6 +1739,10 @@ class SketchGeometry {
     final dim =
         findNearestDimension(point, data.dimensions, threshold: threshold);
     if (dim != null) return ('dimension', dim.id);
+
+    // Check arc walls
+    final arcWall = findNearestArcWall(point, data.arcWalls, threshold: threshold);
+    if (arcWall != null) return ('arcWall', arcWall.id);
 
     // Check walls last (they're large targets)
     final wall = findNearestWall(point, data.walls, threshold: threshold);
@@ -2012,6 +2405,8 @@ class DamageLayerData {
 // empty trade layers and no arc walls.
 // =============================================================================
 
+enum MeasurementUnit { imperial, metric }
+
 class FloorPlanDataV2 {
   final int version;
   final List<Wall> walls;
@@ -2023,6 +2418,7 @@ class FloorPlanDataV2 {
   final List<DimensionLine> dimensions;
   final List<DetectedRoom> rooms;
   final double scale;
+  final MeasurementUnit units;
 
   const FloorPlanDataV2({
     this.version = 2,
@@ -2035,6 +2431,7 @@ class FloorPlanDataV2 {
     this.dimensions = const [],
     this.rooms = const [],
     this.scale = 4.0,
+    this.units = MeasurementUnit.imperial,
   });
 
   /// Convert V1 FloorPlanData to V2 (lossless upgrade)
@@ -2076,6 +2473,7 @@ class FloorPlanDataV2 {
     List<DimensionLine>? dimensions,
     List<DetectedRoom>? rooms,
     double? scale,
+    MeasurementUnit? units,
   }) {
     return FloorPlanDataV2(
       version: version ?? this.version,
@@ -2088,6 +2486,7 @@ class FloorPlanDataV2 {
       dimensions: dimensions ?? this.dimensions,
       rooms: rooms ?? this.rooms,
       scale: scale ?? this.scale,
+      units: units ?? this.units,
     );
   }
 
@@ -2109,6 +2508,7 @@ class FloorPlanDataV2 {
         'dimensions': dimensions.map((e) => e.toJson()).toList(),
         'rooms': rooms.map((e) => e.toJson()).toList(),
         'scale': scale,
+        'units': units.name,
       };
 
   /// Parse from JSON with automatic V1/V2 detection.
@@ -2125,7 +2525,13 @@ class FloorPlanDataV2 {
       dimensions: _parseList(json['dimensions'], DimensionLine.fromJson),
       rooms: _parseList(json['rooms'], DetectedRoom.fromJson),
       scale: (json['scale'] as num?)?.toDouble() ?? 4.0,
+      units: _parseUnit(json['units'] as String?),
     );
+  }
+
+  static MeasurementUnit _parseUnit(String? value) {
+    if (value == 'metric') return MeasurementUnit.metric;
+    return MeasurementUnit.imperial;
   }
 
   static List<T> _parseList<T>(
