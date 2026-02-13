@@ -1491,3 +1491,650 @@ class SketchGeometry {
     return area.abs() / 2.0;
   }
 }
+
+// =============================================================================
+// V2 TYPES — SK1 Sketch Engine Extension
+// Arc walls, trade elements, damage zones, layer data structures
+// =============================================================================
+
+/// Arc wall — curved wall segment defined by center, radius, and angles
+class ArcWall {
+  final String id;
+  final Offset center;
+  final double radius;
+  final double startAngle; // radians
+  final double sweepAngle; // radians
+  final double thickness;
+  final String? material;
+
+  const ArcWall({
+    required this.id,
+    required this.center,
+    required this.radius,
+    this.startAngle = 0.0,
+    this.sweepAngle = 3.14159,
+    this.thickness = 6.0,
+    this.material,
+  });
+
+  // Approximate chord length for measurement display
+  double get chordLength {
+    final halfAngle = sweepAngle.abs() / 2;
+    return 2 * radius * sin(halfAngle);
+  }
+
+  // Arc length
+  double get arcLength => radius * sweepAngle.abs();
+
+  ArcWall copyWith({
+    String? id,
+    Offset? center,
+    double? radius,
+    double? startAngle,
+    double? sweepAngle,
+    double? thickness,
+    String? material,
+  }) {
+    return ArcWall(
+      id: id ?? this.id,
+      center: center ?? this.center,
+      radius: radius ?? this.radius,
+      startAngle: startAngle ?? this.startAngle,
+      sweepAngle: sweepAngle ?? this.sweepAngle,
+      thickness: thickness ?? this.thickness,
+      material: material ?? this.material,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'center': {'x': center.dx, 'y': center.dy},
+        'radius': radius,
+        'start_angle': startAngle,
+        'sweep_angle': sweepAngle,
+        'thickness': thickness,
+        if (material != null) 'material': material,
+      };
+
+  factory ArcWall.fromJson(Map<String, dynamic> json) {
+    final c = json['center'] as Map<String, dynamic>;
+    return ArcWall(
+      id: json['id'] as String,
+      center: Offset(
+        (c['x'] as num).toDouble(),
+        (c['y'] as num).toDouble(),
+      ),
+      radius: (json['radius'] as num).toDouble(),
+      startAngle: (json['start_angle'] as num?)?.toDouble() ?? 0.0,
+      sweepAngle: (json['sweep_angle'] as num?)?.toDouble() ?? 3.14159,
+      thickness: (json['thickness'] as num?)?.toDouble() ?? 6.0,
+      material: json['material'] as String?,
+    );
+  }
+}
+
+// =============================================================================
+// TRADE ELEMENT — symbol placed on a trade layer
+// =============================================================================
+
+enum TradeSymbolType {
+  // Electrical (15 symbols)
+  outlet120v, outlet240v, gfciOutlet, switchSingle, switchThreeWay,
+  switchDimmer, junctionBox, panelMain, panelSub, lightFixture,
+  lightRecessed, lightSwitch, smokeDetector, thermostat, ceilingFan,
+  // Plumbing (12 symbols)
+  pipeHot, pipeCold, pipeDrain, pipeVent, cleanout,
+  shutoffValve, prv, waterMeter, seweLine, hosebibb,
+  floorDrain, sumpPump,
+  // HVAC (10 symbols)
+  supplyDuct, returnDuct, flexDuct, register, returnGrille,
+  damper, airHandler, condenser, miniSplit, exhaustFan,
+  // Damage (4 symbols)
+  waterDamage, fireDamage, moldPresent, asbestosWarning,
+}
+
+class TradeElement {
+  final String id;
+  final Offset position;
+  final TradeSymbolType symbolType;
+  final double rotation;
+  final String? label;
+  final Map<String, dynamic> properties;
+
+  const TradeElement({
+    required this.id,
+    required this.position,
+    required this.symbolType,
+    this.rotation = 0.0,
+    this.label,
+    this.properties = const {},
+  });
+
+  TradeElement copyWith({
+    String? id,
+    Offset? position,
+    TradeSymbolType? symbolType,
+    double? rotation,
+    String? label,
+    Map<String, dynamic>? properties,
+  }) {
+    return TradeElement(
+      id: id ?? this.id,
+      position: position ?? this.position,
+      symbolType: symbolType ?? this.symbolType,
+      rotation: rotation ?? this.rotation,
+      label: label ?? this.label,
+      properties: properties ?? this.properties,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'position': {'x': position.dx, 'y': position.dy},
+        'symbol_type': symbolType.name,
+        'rotation': rotation,
+        if (label != null) 'label': label,
+        if (properties.isNotEmpty) 'properties': properties,
+      };
+
+  factory TradeElement.fromJson(Map<String, dynamic> json) {
+    final p = json['position'] as Map<String, dynamic>;
+    return TradeElement(
+      id: json['id'] as String,
+      position: Offset(
+        (p['x'] as num).toDouble(),
+        (p['y'] as num).toDouble(),
+      ),
+      symbolType: TradeSymbolType.values.firstWhere(
+        (t) => t.name == json['symbol_type'],
+        orElse: () => TradeSymbolType.outlet120v,
+      ),
+      rotation: (json['rotation'] as num?)?.toDouble() ?? 0.0,
+      label: json['label'] as String?,
+      properties:
+          (json['properties'] as Map<String, dynamic>?) ?? const {},
+    );
+  }
+}
+
+// =============================================================================
+// TRADE PATH — line/polyline on a trade layer (pipes, ducts, wiring runs)
+// =============================================================================
+
+class TradePath {
+  final String id;
+  final List<Offset> points;
+  final String pathType; // 'wire', 'pipe_hot', 'pipe_cold', 'duct_supply', etc.
+  final double strokeWidth;
+  final int colorValue;
+  final bool isDashed;
+  final String? label;
+
+  const TradePath({
+    required this.id,
+    required this.points,
+    required this.pathType,
+    this.strokeWidth = 2.0,
+    this.colorValue = 0xFF000000,
+    this.isDashed = false,
+    this.label,
+  });
+
+  double get totalLength {
+    double len = 0;
+    for (int i = 0; i < points.length - 1; i++) {
+      len += (points[i + 1] - points[i]).distance;
+    }
+    return len;
+  }
+
+  TradePath copyWith({
+    String? id,
+    List<Offset>? points,
+    String? pathType,
+    double? strokeWidth,
+    int? colorValue,
+    bool? isDashed,
+    String? label,
+  }) {
+    return TradePath(
+      id: id ?? this.id,
+      points: points ?? this.points,
+      pathType: pathType ?? this.pathType,
+      strokeWidth: strokeWidth ?? this.strokeWidth,
+      colorValue: colorValue ?? this.colorValue,
+      isDashed: isDashed ?? this.isDashed,
+      label: label ?? this.label,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'points': points
+            .map((p) => {'x': p.dx, 'y': p.dy})
+            .toList(),
+        'path_type': pathType,
+        'stroke_width': strokeWidth,
+        'color': colorValue,
+        'is_dashed': isDashed,
+        if (label != null) 'label': label,
+      };
+
+  factory TradePath.fromJson(Map<String, dynamic> json) {
+    return TradePath(
+      id: json['id'] as String,
+      points: _parseOffsetList(json['points']),
+      pathType: json['path_type'] as String? ?? 'wire',
+      strokeWidth: (json['stroke_width'] as num?)?.toDouble() ?? 2.0,
+      colorValue: json['color'] as int? ?? 0xFF000000,
+      isDashed: json['is_dashed'] as bool? ?? false,
+      label: json['label'] as String?,
+    );
+  }
+
+  static List<Offset> _parseOffsetList(dynamic list) {
+    if (list == null) return [];
+    return (list as List<dynamic>).map((e) {
+      final m = e as Map<String, dynamic>;
+      return Offset(
+        (m['x'] as num).toDouble(),
+        (m['y'] as num).toDouble(),
+      );
+    }).toList();
+  }
+}
+
+// =============================================================================
+// DAMAGE ZONE — polygonal area marking damage extent
+// =============================================================================
+
+class DamageZone {
+  final String id;
+  final List<Offset> boundary;
+  final String damageType; // 'water', 'fire', 'mold', 'impact', 'structural'
+  final String severity; // 'minor', 'moderate', 'severe', 'catastrophic'
+  final String? damageClass; // IICRC 1-4
+  final String? iicrcCategory; // IICRC 1-3
+  final String? notes;
+  final int colorValue;
+
+  const DamageZone({
+    required this.id,
+    required this.boundary,
+    required this.damageType,
+    this.severity = 'moderate',
+    this.damageClass,
+    this.iicrcCategory,
+    this.notes,
+    this.colorValue = 0x40F44336, // semi-transparent red
+  });
+
+  double get areaSqInches {
+    if (boundary.length < 3) return 0;
+    double area = 0;
+    for (int i = 0; i < boundary.length; i++) {
+      final j = (i + 1) % boundary.length;
+      area += boundary[i].dx * boundary[j].dy;
+      area -= boundary[j].dx * boundary[i].dy;
+    }
+    return area.abs() / 2.0;
+  }
+
+  double get areaSqFt => areaSqInches / 144.0;
+
+  DamageZone copyWith({
+    String? id,
+    List<Offset>? boundary,
+    String? damageType,
+    String? severity,
+    String? damageClass,
+    String? iicrcCategory,
+    String? notes,
+    int? colorValue,
+  }) {
+    return DamageZone(
+      id: id ?? this.id,
+      boundary: boundary ?? this.boundary,
+      damageType: damageType ?? this.damageType,
+      severity: severity ?? this.severity,
+      damageClass: damageClass ?? this.damageClass,
+      iicrcCategory: iicrcCategory ?? this.iicrcCategory,
+      notes: notes ?? this.notes,
+      colorValue: colorValue ?? this.colorValue,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'boundary': boundary
+            .map((p) => {'x': p.dx, 'y': p.dy})
+            .toList(),
+        'damage_type': damageType,
+        'severity': severity,
+        if (damageClass != null) 'damage_class': damageClass,
+        if (iicrcCategory != null) 'iicrc_category': iicrcCategory,
+        if (notes != null) 'notes': notes,
+        'color': colorValue,
+      };
+
+  factory DamageZone.fromJson(Map<String, dynamic> json) {
+    return DamageZone(
+      id: json['id'] as String,
+      boundary: _parseOffsetList(json['boundary']),
+      damageType: json['damage_type'] as String? ?? 'water',
+      severity: json['severity'] as String? ?? 'moderate',
+      damageClass: json['damage_class'] as String?,
+      iicrcCategory: json['iicrc_category'] as String?,
+      notes: json['notes'] as String?,
+      colorValue: json['color'] as int? ?? 0x40F44336,
+    );
+  }
+
+  static List<Offset> _parseOffsetList(dynamic list) {
+    if (list == null) return [];
+    return (list as List<dynamic>).map((e) {
+      final m = e as Map<String, dynamic>;
+      return Offset(
+        (m['x'] as num).toDouble(),
+        (m['y'] as num).toDouble(),
+      );
+    }).toList();
+  }
+}
+
+// =============================================================================
+// DAMAGE BARRIER — equipment placement markers (dehu, air mover, etc.)
+// =============================================================================
+
+enum BarrierType {
+  dehumidifier, airMover, airScrubber, containmentBarrier,
+  negativePressure, moistureMeter, thermalCamera, dryingMat,
+}
+
+class DamageBarrier {
+  final String id;
+  final Offset position;
+  final BarrierType barrierType;
+  final double rotation;
+  final String? label;
+  final String? equipmentId;
+
+  const DamageBarrier({
+    required this.id,
+    required this.position,
+    required this.barrierType,
+    this.rotation = 0.0,
+    this.label,
+    this.equipmentId,
+  });
+
+  DamageBarrier copyWith({
+    String? id,
+    Offset? position,
+    BarrierType? barrierType,
+    double? rotation,
+    String? label,
+    String? equipmentId,
+  }) {
+    return DamageBarrier(
+      id: id ?? this.id,
+      position: position ?? this.position,
+      barrierType: barrierType ?? this.barrierType,
+      rotation: rotation ?? this.rotation,
+      label: label ?? this.label,
+      equipmentId: equipmentId ?? this.equipmentId,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'position': {'x': position.dx, 'y': position.dy},
+        'barrier_type': barrierType.name,
+        'rotation': rotation,
+        if (label != null) 'label': label,
+        if (equipmentId != null) 'equipment_id': equipmentId,
+      };
+
+  factory DamageBarrier.fromJson(Map<String, dynamic> json) {
+    final p = json['position'] as Map<String, dynamic>;
+    return DamageBarrier(
+      id: json['id'] as String,
+      position: Offset(
+        (p['x'] as num).toDouble(),
+        (p['y'] as num).toDouble(),
+      ),
+      barrierType: BarrierType.values.firstWhere(
+        (t) => t.name == json['barrier_type'],
+        orElse: () => BarrierType.dehumidifier,
+      ),
+      rotation: (json['rotation'] as num?)?.toDouble() ?? 0.0,
+      label: json['label'] as String?,
+      equipmentId: json['equipment_id'] as String?,
+    );
+  }
+}
+
+// =============================================================================
+// TRADE LAYER DATA — structured data stored in floor_plan_layers.layer_data
+// =============================================================================
+
+class TradeLayerData {
+  final List<TradeElement> elements;
+  final List<TradePath> paths;
+
+  const TradeLayerData({
+    this.elements = const [],
+    this.paths = const [],
+  });
+
+  TradeLayerData copyWith({
+    List<TradeElement>? elements,
+    List<TradePath>? paths,
+  }) {
+    return TradeLayerData(
+      elements: elements ?? this.elements,
+      paths: paths ?? this.paths,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'elements': elements.map((e) => e.toJson()).toList(),
+        'paths': paths.map((e) => e.toJson()).toList(),
+      };
+
+  factory TradeLayerData.fromJson(Map<String, dynamic> json) {
+    return TradeLayerData(
+      elements: _parseList(json['elements'], TradeElement.fromJson),
+      paths: _parseList(json['paths'], TradePath.fromJson),
+    );
+  }
+
+  static List<T> _parseList<T>(
+    dynamic list,
+    T Function(Map<String, dynamic>) parser,
+  ) {
+    if (list == null) return [];
+    return (list as List<dynamic>)
+        .map((e) => parser(e as Map<String, dynamic>))
+        .toList();
+  }
+}
+
+// =============================================================================
+// DAMAGE LAYER DATA — structured data for damage overlay layer
+// =============================================================================
+
+class DamageLayerData {
+  final List<DamageZone> zones;
+  final List<DamageBarrier> barriers;
+
+  const DamageLayerData({
+    this.zones = const [],
+    this.barriers = const [],
+  });
+
+  DamageLayerData copyWith({
+    List<DamageZone>? zones,
+    List<DamageBarrier>? barriers,
+  }) {
+    return DamageLayerData(
+      zones: zones ?? this.zones,
+      barriers: barriers ?? this.barriers,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'zones': zones.map((e) => e.toJson()).toList(),
+        'barriers': barriers.map((e) => e.toJson()).toList(),
+      };
+
+  factory DamageLayerData.fromJson(Map<String, dynamic> json) {
+    return DamageLayerData(
+      zones: _parseList(json['zones'], DamageZone.fromJson),
+      barriers: _parseList(json['barriers'], DamageBarrier.fromJson),
+    );
+  }
+
+  static List<T> _parseList<T>(
+    dynamic list,
+    T Function(Map<String, dynamic>) parser,
+  ) {
+    if (list == null) return [];
+    return (list as List<dynamic>)
+        .map((e) => parser(e as Map<String, dynamic>))
+        .toList();
+  }
+}
+
+// =============================================================================
+// FLOOR PLAN DATA V2 — Extended container with trade layers and arc walls
+// Backward compatible: V1 data (no 'version' field) is treated as V2 with
+// empty trade layers and no arc walls.
+// =============================================================================
+
+class FloorPlanDataV2 {
+  final int version;
+  final List<Wall> walls;
+  final List<ArcWall> arcWalls;
+  final List<DoorPlacement> doors;
+  final List<WindowPlacement> windows;
+  final List<FixturePlacement> fixtures;
+  final List<FloorLabel> labels;
+  final List<DimensionLine> dimensions;
+  final List<DetectedRoom> rooms;
+  final double scale;
+
+  const FloorPlanDataV2({
+    this.version = 2,
+    this.walls = const [],
+    this.arcWalls = const [],
+    this.doors = const [],
+    this.windows = const [],
+    this.fixtures = const [],
+    this.labels = const [],
+    this.dimensions = const [],
+    this.rooms = const [],
+    this.scale = 4.0,
+  });
+
+  /// Convert V1 FloorPlanData to V2 (lossless upgrade)
+  factory FloorPlanDataV2.fromV1(FloorPlanData v1) {
+    return FloorPlanDataV2(
+      walls: v1.walls,
+      doors: v1.doors,
+      windows: v1.windows,
+      fixtures: v1.fixtures,
+      labels: v1.labels,
+      dimensions: v1.dimensions,
+      rooms: v1.rooms,
+      scale: v1.scale,
+    );
+  }
+
+  /// Downgrade to V1 for backward compatibility (loses arc walls)
+  FloorPlanData toV1() {
+    return FloorPlanData(
+      walls: walls,
+      doors: doors,
+      windows: windows,
+      fixtures: fixtures,
+      labels: labels,
+      dimensions: dimensions,
+      rooms: rooms,
+      scale: scale,
+    );
+  }
+
+  FloorPlanDataV2 copyWith({
+    int? version,
+    List<Wall>? walls,
+    List<ArcWall>? arcWalls,
+    List<DoorPlacement>? doors,
+    List<WindowPlacement>? windows,
+    List<FixturePlacement>? fixtures,
+    List<FloorLabel>? labels,
+    List<DimensionLine>? dimensions,
+    List<DetectedRoom>? rooms,
+    double? scale,
+  }) {
+    return FloorPlanDataV2(
+      version: version ?? this.version,
+      walls: walls ?? this.walls,
+      arcWalls: arcWalls ?? this.arcWalls,
+      doors: doors ?? this.doors,
+      windows: windows ?? this.windows,
+      fixtures: fixtures ?? this.fixtures,
+      labels: labels ?? this.labels,
+      dimensions: dimensions ?? this.dimensions,
+      rooms: rooms ?? this.rooms,
+      scale: scale ?? this.scale,
+    );
+  }
+
+  Wall? wallById(String id) {
+    for (final w in walls) {
+      if (w.id == id) return w;
+    }
+    return null;
+  }
+
+  Map<String, dynamic> toJson() => {
+        'version': version,
+        'walls': walls.map((e) => e.toJson()).toList(),
+        'arc_walls': arcWalls.map((e) => e.toJson()).toList(),
+        'doors': doors.map((e) => e.toJson()).toList(),
+        'windows': windows.map((e) => e.toJson()).toList(),
+        'fixtures': fixtures.map((e) => e.toJson()).toList(),
+        'labels': labels.map((e) => e.toJson()).toList(),
+        'dimensions': dimensions.map((e) => e.toJson()).toList(),
+        'rooms': rooms.map((e) => e.toJson()).toList(),
+        'scale': scale,
+      };
+
+  /// Parse from JSON with automatic V1/V2 detection.
+  /// If 'version' field is absent, treats as V1 data (empty arc_walls).
+  factory FloorPlanDataV2.fromJson(Map<String, dynamic> json) {
+    return FloorPlanDataV2(
+      version: json['version'] as int? ?? 1,
+      walls: _parseList(json['walls'], Wall.fromJson),
+      arcWalls: _parseList(json['arc_walls'], ArcWall.fromJson),
+      doors: _parseList(json['doors'], DoorPlacement.fromJson),
+      windows: _parseList(json['windows'], WindowPlacement.fromJson),
+      fixtures: _parseList(json['fixtures'], FixturePlacement.fromJson),
+      labels: _parseList(json['labels'], FloorLabel.fromJson),
+      dimensions: _parseList(json['dimensions'], DimensionLine.fromJson),
+      rooms: _parseList(json['rooms'], DetectedRoom.fromJson),
+      scale: (json['scale'] as num?)?.toDouble() ?? 4.0,
+    );
+  }
+
+  static List<T> _parseList<T>(
+    dynamic list,
+    T Function(Map<String, dynamic>) parser,
+  ) {
+    if (list == null) return [];
+    return (list as List<dynamic>)
+        .map((e) => parser(e as Map<String, dynamic>))
+        .toList();
+  }
+}
