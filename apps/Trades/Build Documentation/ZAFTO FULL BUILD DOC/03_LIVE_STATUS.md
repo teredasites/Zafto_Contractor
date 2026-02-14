@@ -1,9 +1,9 @@
 # ZAFTO LIVE STATUS
 ## UPDATE THIS EVERY SESSION
 
-**Last Updated:** February 13, 2026 (Session 111 — **Phase U IN PROGRESS (U2-U7 done, U7 partial).** S111 crashed before doc updates. U1 SCRAPPED (owner directive). U2: Nav Redesign. U3: Permission Engine. U4: Ledger Completion. U5: Dashboard Restoration. U6: PDF + Email + S98 fixes. U7: Payment Flow + Shell Pages (tables/hooks/Stripe Connect foundation committed, deep workflow items remaining). 4 new migrations, 2 new EFs, 5 new hooks, ~4,552 net new lines.)
-**Current Phase:** BUILD — **Phases A-D + F + T + P + SK + GC ALL COMPLETE. Phase U IN PROGRESS (U2-U7 done).** R1 DONE. FM code done. Phase E PAUSED. ~199 tables. 66 migrations. 70 Edge Functions. 125 CRM routes. 36 team routes. 39 client routes. 28 ops routes.
-**Next Action:** Phase U continues (U7 deep items remaining, then U8-U22 ~340 hrs) → Phase W (Warranty+Lifecycle, ~56 hrs) → Phase J (Job Intelligence, ~64 hrs) → Phase L (Legal/Permits/Compliance, ~120 hrs) → Phase G (QA/Hardening) → Phase E (AI: E-review → BA1-BA8 Plan Review → E1-E4) → LAUNCH.
+**Last Updated:** February 14, 2026 (Session 112 — **Phase U IN PROGRESS (U2-U9 partial).** S112: Sidebar hover-expand (3 modes). U7b: removed dead mock data from Communications + Automations, wired Automations CRUD. U8: Cross-system metric verification — fixed useStats (revenue today/week/month/lastMonth/MoM change, completedThisMonth, job status casing, bid conversion excluding drafts), Revenue by Job Type filtered to paid invoices only, ops portal honest metrics. U9: Ops CRUD (company tier/suspend, user role/disable/reset, KB delete), forgot password on all 3 login pages. All 4 portals deployed.)
+**Current Phase:** BUILD — **Phases A-D + F + T + P + SK + GC ALL COMPLETE. Phase U IN PROGRESS (U2-U9 partial).** R1 DONE. FM code done. Phase E PAUSED. ~199 tables. 66 migrations. 70 Edge Functions. 125 CRM routes. 36 team routes. 39 client routes. 28 ops routes.
+**Next Action:** Phase U continues (U9b-d remaining, then U10-U22 ~320 hrs) → Phase W (Warranty+Lifecycle, ~56 hrs) → Phase J (Job Intelligence, ~64 hrs) → Phase L (Legal/Permits/Compliance, ~120 hrs) → Phase G (QA/Hardening) → Phase E (AI: E-review → BA1-BA8 Plan Review → E1-E4) → LAUNCH.
 
 ---
 

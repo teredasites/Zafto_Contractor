@@ -14,8 +14,11 @@ import {
   FileText,
   Clock,
   Loader2,
+  Bell,
+  Check,
 } from 'lucide-react';
 import { ZMark } from '@/components/z-console/z-mark';
+import { useNotifications } from '@/lib/hooks/use-notifications';
 import { AuthProvider, useAuth } from '@/components/auth-provider';
 import { PermissionProvider } from '@/components/permission-gate';
 import { Sidebar, useSidebarWidth } from '@/components/sidebar';
@@ -176,6 +179,7 @@ function DashboardShell({
 
               <ProModeToggle />
               <ThemeToggle />
+              <NotificationBell />
               <ActiveWorkDropdown />
             </div>
           </div>
@@ -193,7 +197,126 @@ function DashboardShell({
   );
 }
 
-// ── Active Work dropdown — replaces non-functional bell ──
+// ── Notification Bell ──
+function NotificationBell() {
+  const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [open]);
+
+  const getEntityPath = (n: { entityType: string | null; entityId: string | null }) => {
+    if (!n.entityType || !n.entityId) return null;
+    const map: Record<string, string> = {
+      job: '/dashboard/jobs',
+      invoice: '/dashboard/invoices',
+      bid: '/dashboard/bids',
+      customer: '/dashboard/customers',
+      estimate: '/dashboard/estimates',
+    };
+    return map[n.entityType] || null;
+  };
+
+  const timeAgo = (dateStr: string) => {
+    const diff = Date.now() - new Date(dateStr).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return 'now';
+    if (mins < 60) return `${mins}m`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `${hrs}h`;
+    const days = Math.floor(hrs / 24);
+    return `${days}d`;
+  };
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => setOpen(!open)}
+        className={cn(
+          'relative p-2 rounded-lg transition-colors',
+          open ? 'bg-accent/10 text-accent' : 'text-muted hover:text-main hover:bg-surface-hover',
+        )}
+      >
+        <Bell size={16} />
+        {unreadCount > 0 && (
+          <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center">
+            {unreadCount > 99 ? '99+' : unreadCount}
+          </span>
+        )}
+      </button>
+
+      {open && (
+        <div className="absolute right-0 top-full mt-2 w-80 bg-surface border border-main rounded-xl shadow-xl z-50 overflow-hidden animate-fade-in">
+          <div className="px-4 py-3 border-b border-main flex items-center justify-between">
+            <div>
+              <p className="text-[13px] font-semibold text-main">Notifications</p>
+              <p className="text-[11px] text-muted">{unreadCount > 0 ? `${unreadCount} unread` : 'All caught up'}</p>
+            </div>
+            {unreadCount > 0 && (
+              <button
+                onClick={() => markAllAsRead()}
+                className="text-[11px] font-medium text-accent hover:underline flex items-center gap-1"
+              >
+                <Check size={12} />
+                Mark all read
+              </button>
+            )}
+          </div>
+
+          <div className="max-h-[360px] overflow-y-auto">
+            {notifications.length === 0 ? (
+              <div className="py-10 text-center">
+                <Bell size={24} className="mx-auto mb-2 text-muted" />
+                <p className="text-[13px] text-muted">No notifications yet</p>
+              </div>
+            ) : (
+              <div className="p-1.5">
+                {notifications.map((n) => (
+                  <button
+                    key={n.id}
+                    onClick={() => {
+                      if (!n.isRead) markAsRead(n.id);
+                      const path = getEntityPath(n);
+                      if (path) {
+                        setOpen(false);
+                        router.push(path);
+                      }
+                    }}
+                    className={cn(
+                      'w-full flex items-start gap-3 px-3 py-2.5 rounded-lg text-left transition-colors',
+                      n.isRead ? 'hover:bg-surface-hover' : 'bg-accent/5 hover:bg-accent/10',
+                    )}
+                  >
+                    {!n.isRead && (
+                      <div className="w-2 h-2 rounded-full bg-accent flex-shrink-0 mt-1.5" />
+                    )}
+                    <div className={cn('flex-1 min-w-0', n.isRead && 'ml-5')}>
+                      <p className={cn('text-[13px] truncate', n.isRead ? 'text-muted' : 'font-medium text-main')}>
+                        {n.title}
+                      </p>
+                      <p className="text-[12px] text-muted truncate">{n.body}</p>
+                    </div>
+                    <span className="text-[11px] text-muted flex-shrink-0 mt-0.5">{timeAgo(n.createdAt)}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Active Work dropdown ──
 function ActiveWorkDropdown() {
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState<{ id: string; type: string; title: string; status: string; customer: string }[]>([]);

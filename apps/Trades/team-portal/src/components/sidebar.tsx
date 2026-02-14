@@ -12,6 +12,7 @@ import {
 import { Logo } from '@/components/logo';
 import { useTheme } from '@/components/theme-provider';
 import { useAuth } from '@/components/auth-provider';
+import { useNotifications } from '@/lib/hooks/use-notifications';
 import { signOut } from '@/lib/auth';
 import { cn, getInitials } from '@/lib/utils';
 
@@ -113,6 +114,7 @@ export function Sidebar() {
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
   const { profile } = useAuth();
+  const { unreadCount } = useNotifications();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeGroup, setActiveGroup] = useState<string | null>(null);
   const [hoveredGroup, setHoveredGroup] = useState<string | null>(null);
@@ -366,6 +368,29 @@ export function Sidebar() {
               </div>
             )}
           </button>
+
+          {/* Notifications */}
+          <Link
+            href="/dashboard/notifications"
+            onMouseEnter={() => setHoveredGroup('__notifications')}
+            onMouseLeave={handleRailHoverLeave}
+            className={cn(
+              'relative flex items-center justify-center py-2 rounded-md transition-colors',
+              pathname === '/dashboard/notifications' ? 'text-accent bg-accent/10' : 'text-muted hover:text-main hover:bg-surface-hover',
+            )}
+          >
+            <Bell size={18} />
+            {unreadCount > 0 && (
+              <span className="absolute top-0.5 right-1 min-w-[14px] h-3.5 px-0.5 rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center">
+                {unreadCount > 99 ? '99+' : unreadCount}
+              </span>
+            )}
+            {hoveredGroup === '__notifications' && (
+              <div className="absolute left-full ml-3 px-3 py-1.5 bg-surface border border-main rounded-lg shadow-xl z-50 whitespace-nowrap sidebar-flyout-enter pointer-events-none">
+                <span className="text-[13px] font-medium text-main">Notifications{unreadCount > 0 ? ` (${unreadCount})` : ''}</span>
+              </div>
+            )}
+          </Link>
 
           {/* Settings */}
           <Link
