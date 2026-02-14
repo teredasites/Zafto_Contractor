@@ -100,6 +100,7 @@ export function useInvoices() {
       .single();
 
     if (err) throw err;
+    fetchInvoices();
     return result.id;
   };
 
@@ -126,6 +127,7 @@ export function useInvoices() {
 
     const { error: err } = await supabase.from('invoices').update(updateData).eq('id', id);
     if (err) throw err;
+    fetchInvoices();
   };
 
   const recordPayment = async (id: string, amount: number, method: string) => {
@@ -154,6 +156,7 @@ export function useInvoices() {
 
     // Auto-post journal entry: DR Cash/Bank, CR Accounts Receivable
     await createPaymentJournal(id, amount, method);
+    fetchInvoices();
   };
 
   const sendInvoice = async (id: string) => {
@@ -175,6 +178,7 @@ export function useInvoices() {
     } catch {
       // Email send is best-effort — don't fail the status update
     }
+    fetchInvoices();
   };
 
   const deleteInvoice = async (id: string) => {
@@ -184,6 +188,7 @@ export function useInvoices() {
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id);
     if (err) throw err;
+    fetchInvoices();
   };
 
   // Create draft invoice from completed job

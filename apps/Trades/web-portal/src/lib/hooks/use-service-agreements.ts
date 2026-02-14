@@ -137,6 +137,7 @@ export function useServiceAgreements() {
       .single();
 
     if (err) throw err;
+    fetchAgreements();
     return result.id;
   };
 
@@ -163,13 +164,15 @@ export function useServiceAgreements() {
 
     const { error: err } = await supabase.from('service_agreements').update(updates).eq('id', id);
     if (err) throw err;
+    fetchAgreements();
   };
 
   const deleteAgreement = async (id: string) => {
     const supabase = getSupabase();
     const { error: err } = await supabase.from('service_agreements').update({ deleted_at: new Date().toISOString() }).eq('id', id);
     if (err) throw err;
+    fetchAgreements();
   };
 
-  return { agreements, loading, error, createAgreement, updateAgreement, deleteAgreement };
+  return { agreements, loading, error, createAgreement, updateAgreement, deleteAgreement, refetch: fetchAgreements };
 }

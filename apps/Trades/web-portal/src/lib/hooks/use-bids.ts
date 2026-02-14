@@ -95,6 +95,7 @@ export function useBids() {
       .single();
 
     if (err) throw err;
+    fetchBids();
     return result.id;
   };
 
@@ -119,6 +120,7 @@ export function useBids() {
 
     const { error: err } = await supabase.from('bids').update(updateData).eq('id', id);
     if (err) throw err;
+    fetchBids();
   };
 
   const sendBid = async (id: string) => {
@@ -137,6 +139,7 @@ export function useBids() {
     } catch {
       // Email send is best-effort — don't fail the status update
     }
+    fetchBids();
   };
 
   const acceptBid = async (id: string) => {
@@ -146,6 +149,7 @@ export function useBids() {
       .update({ status: 'accepted', accepted_at: new Date().toISOString() })
       .eq('id', id);
     if (err) throw err;
+    fetchBids();
   };
 
   const rejectBid = async (id: string, reason?: string) => {
@@ -159,6 +163,7 @@ export function useBids() {
       })
       .eq('id', id);
     if (err) throw err;
+    fetchBids();
   };
 
   const convertToJob = async (bidId: string): Promise<string> => {
@@ -203,6 +208,7 @@ export function useBids() {
       .update({ status: 'accepted', job_id: job.id })
       .eq('id', bidId);
 
+    fetchBids();
     return job.id;
   };
 
@@ -213,6 +219,7 @@ export function useBids() {
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id);
     if (err) throw err;
+    fetchBids();
   };
 
   // Convert estimate to bid — reads estimate + line items, creates bid
@@ -287,6 +294,7 @@ export function useBids() {
       .select('id')
       .single();
     if (bidErr) throw bidErr;
+    fetchBids();
     return bid?.id || null;
   };
 

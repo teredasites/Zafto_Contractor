@@ -85,6 +85,8 @@ export function useLeads() {
       .single();
 
     if (err) throw err;
+    // Explicitly refetch as backup for real-time
+    fetchLeads();
     return result.id;
   };
 
@@ -96,6 +98,7 @@ export function useLeads() {
     if (stage === 'lost') updateData.lost_at = new Date().toISOString();
     const { error: err } = await supabase.from('leads').update(updateData).eq('id', id);
     if (err) throw err;
+    fetchLeads();
   };
 
   const updateLead = async (id: string, data: Partial<LeadData>) => {
@@ -112,12 +115,14 @@ export function useLeads() {
     if (data.assignedToUserId !== undefined) updateData.assigned_to_user_id = data.assignedToUserId;
     const { error: err } = await supabase.from('leads').update(updateData).eq('id', id);
     if (err) throw err;
+    fetchLeads();
   };
 
   const deleteLead = async (id: string) => {
     const supabase = getSupabase();
     const { error: err } = await supabase.from('leads').delete().eq('id', id);
     if (err) throw err;
+    fetchLeads();
   };
 
   // Convert lead to customer — checks for existing match by email/phone
