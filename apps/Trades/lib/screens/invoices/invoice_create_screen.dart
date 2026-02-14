@@ -27,9 +27,15 @@ class _InvoiceCreateScreenState extends ConsumerState<InvoiceCreateScreen> {
   final _emailController = TextEditingController();
   final _notesController = TextEditingController();
   final _taxController = TextEditingController();
+  final _poNumberController = TextEditingController();
+  final _lateFeeController = TextEditingController();
+  final _retainageController = TextEditingController();
+  final _discountController = TextEditingController();
   final List<_LineItemData> _lineItems = [];
   double _taxRate = 0;
+  DateTime _invoiceDate = DateTime.now();
   DateTime _dueDate = DateTime.now().add(const Duration(days: 30));
+  String _paymentTerms = 'net_30';
   bool _isSaving = false;
   bool _isInsuranceJob = false;
 
@@ -90,12 +96,20 @@ class _InvoiceCreateScreenState extends ConsumerState<InvoiceCreateScreen> {
     _emailController.dispose();
     _notesController.dispose();
     _taxController.dispose();
+    _poNumberController.dispose();
+    _lateFeeController.dispose();
+    _retainageController.dispose();
+    _discountController.dispose();
     super.dispose();
   }
 
   double get _subtotal => _lineItems.fold(0, (sum, item) => sum + item.total);
-  double get _taxAmount => _subtotal * (_taxRate / 100);
-  double get _total => _subtotal + _taxAmount;
+  double get _discount => double.tryParse(_discountController.text) ?? 0;
+  double get _discountedSubtotal => _subtotal - _discount;
+  double get _taxAmount => _discountedSubtotal * (_taxRate / 100);
+  double get _retainagePercent => double.tryParse(_retainageController.text) ?? 0;
+  double get _retainageAmount => (_discountedSubtotal + _taxAmount) * (_retainagePercent / 100);
+  double get _total => _discountedSubtotal + _taxAmount - _retainageAmount;
 
   @override
   Widget build(BuildContext context) {
@@ -119,6 +133,14 @@ class _InvoiceCreateScreenState extends ConsumerState<InvoiceCreateScreen> {
             _buildTextField(colors, 'Customer Name *', _customerController, 'e.g. John Smith', LucideIcons.user),
             const SizedBox(height: 12),
             _buildTextField(colors, 'Email (optional)', _emailController, 'customer@email.com', LucideIcons.mail),
+            const SizedBox(height: 12),
+            _buildTextField(colors, 'PO Number', _poNumberController, 'Purchase order #', LucideIcons.hash),
+            const SizedBox(height: 24),
+            _buildSection(colors, 'DATES & TERMS'),
+            const SizedBox(height: 8),
+            _buildInvoiceDatePicker(colors),
+            const SizedBox(height: 12),
+            _buildPaymentTermsSelector(colors),
             const SizedBox(height: 24),
             _buildSection(colors, 'LINE ITEMS'),
             const SizedBox(height: 8),
@@ -303,6 +325,29 @@ class _InvoiceCreateScreenState extends ConsumerState<InvoiceCreateScreen> {
         children: [
           _buildTotalRow(colors, 'Subtotal', '\$${_subtotal.toStringAsFixed(2)}'),
           const SizedBox(height: 8),
+          // Discount
+          Row(
+            children: [
+              Text('Discount', style: TextStyle(fontSize: 14, color: colors.textSecondary)),
+              const SizedBox(width: 8),
+              Text('\$', style: TextStyle(color: colors.textSecondary, fontSize: 14)),
+              SizedBox(
+                width: 70,
+                child: TextField(
+                  controller: _discountController,
+                  keyboardType: TextInputType.number,
+                  style: TextStyle(color: colors.textPrimary, fontSize: 14),
+                  textAlign: TextAlign.center,
+                  decoration: InputDecoration(hintText: '0.00', hintStyle: TextStyle(color: colors.textQuaternary), border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: colors.borderDefault)), isDense: true, contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6)),
+                  onChanged: (_) => setState(() {}),
+                ),
+              ),
+              const Spacer(),
+              if (_discount > 0) Text('-\$${_discount.toStringAsFixed(2)}', style: TextStyle(fontSize: 14, color: colors.accentSuccess)),
+            ],
+          ),
+          const SizedBox(height: 8),
+          // Tax
           Row(
             children: [
               Text('Tax', style: TextStyle(fontSize: 14, color: colors.textSecondary)),
@@ -323,10 +368,57 @@ class _InvoiceCreateScreenState extends ConsumerState<InvoiceCreateScreen> {
               Text('\$${_taxAmount.toStringAsFixed(2)}', style: TextStyle(fontSize: 14, color: colors.textPrimary)),
             ],
           ),
+          const SizedBox(height: 8),
+          // Retainage (construction)
+          Row(
+            children: [
+              Text('Retainage', style: TextStyle(fontSize: 14, color: colors.textSecondary)),
+              const SizedBox(width: 8),
+              SizedBox(
+                width: 50,
+                child: TextField(
+                  controller: _retainageController,
+                  keyboardType: TextInputType.number,
+                  style: TextStyle(color: colors.textPrimary, fontSize: 14),
+                  textAlign: TextAlign.center,
+                  decoration: InputDecoration(hintText: '0', hintStyle: TextStyle(color: colors.textQuaternary), border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: colors.borderDefault)), isDense: true, contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6)),
+                  onChanged: (_) => setState(() {}),
+                ),
+              ),
+              Text('%', style: TextStyle(color: colors.textSecondary)),
+              const Spacer(),
+              if (_retainageAmount > 0) Text('-\$${_retainageAmount.toStringAsFixed(2)}', style: TextStyle(fontSize: 14, color: colors.textTertiary)),
+            ],
+          ),
+          const SizedBox(height: 8),
+          // Late fee
+          Row(
+            children: [
+              Text('Late Fee', style: TextStyle(fontSize: 14, color: colors.textSecondary)),
+              const SizedBox(width: 8),
+              Text('\$', style: TextStyle(color: colors.textSecondary, fontSize: 14)),
+              SizedBox(
+                width: 70,
+                child: TextField(
+                  controller: _lateFeeController,
+                  keyboardType: TextInputType.number,
+                  style: TextStyle(color: colors.textPrimary, fontSize: 14),
+                  textAlign: TextAlign.center,
+                  decoration: InputDecoration(hintText: '0.00', hintStyle: TextStyle(color: colors.textQuaternary), border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: colors.borderDefault)), isDense: true, contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6)),
+                  onChanged: (_) => setState(() {}),
+                ),
+              ),
+              Text('/day', style: TextStyle(fontSize: 12, color: colors.textTertiary)),
+            ],
+          ),
           const SizedBox(height: 12),
           Divider(color: colors.borderSubtle),
           const SizedBox(height: 12),
-          _buildTotalRow(colors, 'Total', '\$${_total.toStringAsFixed(2)}', isBold: true),
+          _buildTotalRow(colors, 'Total Due', '\$${_total.toStringAsFixed(2)}', isBold: true),
+          if (_retainageAmount > 0) ...[
+            const SizedBox(height: 4),
+            _buildTotalRow(colors, 'Retainage Held', '\$${_retainageAmount.toStringAsFixed(2)}'),
+          ],
         ],
       ),
     );
@@ -358,6 +450,85 @@ class _InvoiceCreateScreenState extends ConsumerState<InvoiceCreateScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildInvoiceDatePicker(ZaftoColors colors) {
+    return GestureDetector(
+      onTap: () async {
+        final date = await showDatePicker(
+          context: context,
+          initialDate: _invoiceDate,
+          firstDate: DateTime.now().subtract(const Duration(days: 365)),
+          lastDate: DateTime.now().add(const Duration(days: 30)),
+        );
+        if (date != null) setState(() => _invoiceDate = date);
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(color: colors.bgElevated, borderRadius: BorderRadius.circular(12), border: Border.all(color: colors.borderDefault)),
+        child: Row(
+          children: [
+            Icon(LucideIcons.calendar, size: 20, color: colors.textTertiary),
+            const SizedBox(width: 12),
+            Text('Invoice Date: ${_invoiceDate.month}/${_invoiceDate.day}/${_invoiceDate.year}', style: TextStyle(color: colors.textPrimary)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPaymentTermsSelector(ZaftoColors colors) {
+    const terms = [
+      ('due_on_receipt', 'Due on Receipt'),
+      ('net_15', 'Net 15'),
+      ('net_30', 'Net 30'),
+      ('net_45', 'Net 45'),
+      ('net_60', 'Net 60'),
+    ];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Payment Terms', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: colors.textSecondary)),
+        const SizedBox(height: 8),
+        Container(
+          decoration: BoxDecoration(color: colors.bgElevated, borderRadius: BorderRadius.circular(12), border: Border.all(color: colors.borderDefault)),
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Row(
+            children: [
+              Icon(LucideIcons.clock, size: 20, color: colors.textTertiary),
+              const SizedBox(width: 12),
+              Expanded(
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: _paymentTerms,
+                    isExpanded: true,
+                    dropdownColor: colors.bgElevated,
+                    style: TextStyle(color: colors.textPrimary, fontSize: 14),
+                    items: terms.map((t) => DropdownMenuItem(value: t.$1, child: Text(t.$2))).toList(),
+                    onChanged: (v) {
+                      if (v == null) return;
+                      setState(() {
+                        _paymentTerms = v;
+                        // Auto-adjust due date
+                        final days = switch (v) {
+                          'due_on_receipt' => 0,
+                          'net_15' => 15,
+                          'net_30' => 30,
+                          'net_45' => 45,
+                          'net_60' => 60,
+                          _ => 30,
+                        };
+                        _dueDate = _invoiceDate.add(Duration(days: days));
+                      });
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
