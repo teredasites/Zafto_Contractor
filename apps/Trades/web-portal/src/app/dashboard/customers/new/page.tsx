@@ -23,7 +23,7 @@ import { useCustomers } from '@/lib/hooks/use-customers';
 
 export default function NewCustomerPage() {
   const router = useRouter();
-  const { createCustomer } = useCustomers();
+  const { createCustomer, customers } = useCustomers();
   const [saving, setSaving] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -91,6 +91,22 @@ export default function NewCustomerPage() {
       return;
     }
     setErrors({});
+
+    // Duplicate detection — check existing customers by phone or email
+    const phone = formatPhone(formData.phone);
+    const email = formData.email?.trim().toLowerCase();
+    const duplicate = customers.find((c) => {
+      if (phone && c.phone === phone) return true;
+      if (email && c.email?.toLowerCase() === email) return true;
+      return false;
+    });
+    if (duplicate) {
+      const match = phone && duplicate.phone === phone ? 'phone number' : 'email';
+      const proceed = window.confirm(
+        `A customer named "${duplicate.firstName} ${duplicate.lastName}" already has this ${match}. Add anyway?`
+      );
+      if (!proceed) return;
+    }
 
     try {
       setSaving(true);

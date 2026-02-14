@@ -61,6 +61,7 @@ export interface TimeEntryData {
   totalHours: number;
   notes: string;
   jobTitle?: string;
+  locationPings: Array<{ lat: number; lng: number; timestamp: string; type: string }>;
 }
 
 export interface MaterialData {
@@ -561,6 +562,7 @@ export function mapTimeEntry(row: Record<string, unknown>): TimeEntryData {
     totalHours: Math.round(totalHours * 100) / 100,
     notes: (row.notes as string) || '',
     jobTitle: (row.jobs as Record<string, unknown>)?.title as string || undefined,
+    locationPings: Array.isArray(row.location_pings) ? row.location_pings as Array<{ lat: number; lng: number; timestamp: string; type: string }> : [],
   };
 }
 

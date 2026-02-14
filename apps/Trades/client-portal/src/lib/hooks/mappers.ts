@@ -28,6 +28,9 @@ export interface ProjectData {
   state: string;
   jobType: JobType;
   typeMetadata: Record<string, unknown>;
+  assignedUserIds: string[];
+  scheduledStart: string | null;
+  rawStatus: string;
 }
 
 export interface InvoiceData {
@@ -123,6 +126,9 @@ export function mapProject(row: Record<string, unknown>): ProjectData {
     state: row.state as string || '',
     jobType: ((row.job_type as string) || 'standard') as JobType,
     typeMetadata: (row.type_metadata as Record<string, unknown>) || {},
+    assignedUserIds: Array.isArray(row.assigned_user_ids) ? row.assigned_user_ids as string[] : [],
+    scheduledStart: (row.scheduled_start as string) || null,
+    rawStatus: (row.status as string) || 'draft',
   };
 }
 
