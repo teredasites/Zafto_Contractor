@@ -40,6 +40,7 @@ import {
   AlertTriangle,
   X,
   Upload,
+  Calendar,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -56,6 +57,7 @@ import { useApprovals } from '@/lib/hooks/use-approvals';
 import type { ApprovalThresholdData } from '@/lib/hooks/pm-mappers';
 import type { Branch, CustomRole, FormTemplate, Certification } from '@/lib/hooks/use-enterprise';
 import { useCustomFields, type CustomField, type EntityType, type FieldType } from '@/lib/hooks/use-custom-fields';
+import { useNotificationPreferences, useGoogleCalendar, TRIGGER_LABELS, type NotificationPreferences } from '@/lib/hooks/use-notifications';
 import {
   useCompanyConfig,
   type TaxRate,
@@ -1024,7 +1026,56 @@ function NotificationSettings() {
           />
         </CardContent>
       </Card>
+
+      <AutomatedTriggersCard />
     </div>
+  );
+}
+
+function AutomatedTriggersCard() {
+  const { prefs, updatePrefs } = useNotificationPreferences();
+
+  const togglePref = (key: string, channel: 'in_app' | 'email' | 'sms') => {
+    const current = prefs[key as keyof NotificationPreferences];
+    const updated = { ...prefs, [key]: { ...current, [channel]: !current[channel] } };
+    updatePrefs(updated);
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Automated Alerts</CardTitle>
+        <CardDescription>Configure which automated triggers notify you and how</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-3">
+          <div className="grid grid-cols-4 gap-4 text-xs text-muted pb-2 border-b border-border">
+            <div>Trigger</div>
+            <div className="text-center">In-App</div>
+            <div className="text-center">Email</div>
+            <div className="text-center">SMS</div>
+          </div>
+          {Object.entries(TRIGGER_LABELS).map(([key, label]) => {
+            const p = prefs[key as keyof NotificationPreferences];
+            return (
+              <div key={key} className="grid grid-cols-4 gap-4 items-center text-sm py-1">
+                <div className="text-main">{label}</div>
+                {(['in_app', 'email', 'sms'] as const).map((ch) => (
+                  <div key={ch} className="flex justify-center">
+                    <button
+                      onClick={() => togglePref(key, ch)}
+                      className={`w-8 h-5 rounded-full transition-colors ${p[ch] ? 'bg-accent' : 'bg-surface-hover'}`}
+                    >
+                      <div className={`w-3.5 h-3.5 rounded-full bg-white transition-transform ${p[ch] ? 'translate-x-3.5' : 'translate-x-0.5'}`} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            );
+          })}
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -1357,16 +1408,59 @@ function SecuritySettings() {
 }
 
 function IntegrationSettings() {
+  const gcal = useGoogleCalendar();
+
   const integrations = [
-    { name: 'QuickBooks', description: 'Sync invoices and payments', connected: false, icon: '📊' },
-    { name: 'Stripe', description: 'Accept card payments', connected: true, icon: '💳' },
-    { name: 'Google Calendar', description: 'Sync your schedule', connected: false, icon: '📅' },
-    { name: 'Twilio', description: 'Send SMS notifications', connected: true, icon: '📱' },
-    { name: 'Plaid', description: 'Connect bank accounts', connected: true, icon: '🏦' },
+    { name: 'QuickBooks', description: 'Sync invoices and payments', connected: false },
+    { name: 'Stripe', description: 'Accept card payments', connected: true },
+    { name: 'Twilio', description: 'Send SMS notifications', connected: true },
+    { name: 'Plaid', description: 'Connect bank accounts', connected: true },
   ];
 
   return (
     <div className="space-y-6">
+      {/* Google Calendar — real integration */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Calendar size={18} /> Google Calendar
+          </CardTitle>
+          <CardDescription>Two-way sync between ZAFTO jobs and Google Calendar</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {gcal.connected ? (
+            <>
+              <div className="flex items-center gap-3">
+                <Badge variant="success">Connected</Badge>
+                {gcal.email && <span className="text-sm text-muted">{gcal.email}</span>}
+              </div>
+              <div className="flex items-center gap-2">
+                <Button variant="secondary" size="sm" onClick={() => gcal.syncNow()}>Sync Now</Button>
+                <Button variant="ghost" size="sm" onClick={() => gcal.disconnect()}>Disconnect</Button>
+              </div>
+            </>
+          ) : (
+            <div>
+              <p className="text-sm text-muted mb-3">Connect your Google Calendar to sync scheduled jobs automatically.</p>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => {
+                  const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '';
+                  const redirect = `${window.location.origin}/api/auth/google-callback`;
+                  const scope = 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.email';
+                  const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirect)}&response_type=code&scope=${encodeURIComponent(scope)}&access_type=offline&prompt=consent`;
+                  window.location.href = url;
+                }}
+              >
+                Connect Google Calendar
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Other integrations */}
       <Card>
         <CardHeader>
           <CardTitle>Connected Apps</CardTitle>
@@ -1376,14 +1470,9 @@ function IntegrationSettings() {
           <div className="divide-y divide-main">
             {integrations.map((integration) => (
               <div key={integration.name} className="flex items-center justify-between px-6 py-4">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-secondary rounded-lg flex items-center justify-center text-xl">
-                    {integration.icon}
-                  </div>
-                  <div>
-                    <p className="font-medium text-main">{integration.name}</p>
-                    <p className="text-sm text-muted">{integration.description}</p>
-                  </div>
+                <div>
+                  <p className="font-medium text-main">{integration.name}</p>
+                  <p className="text-sm text-muted">{integration.description}</p>
                 </div>
                 {integration.connected ? (
                   <div className="flex items-center gap-3">
