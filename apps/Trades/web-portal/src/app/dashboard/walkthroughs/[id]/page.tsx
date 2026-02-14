@@ -29,6 +29,7 @@ import {
   ExternalLink,
   Grid3x3,
   Ruler,
+  Calculator,
   type LucideIcon,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -45,6 +46,7 @@ import {
   type FloorPlan,
   type FloorPlanData,
 } from '@/lib/hooks/use-walkthroughs';
+import { useEstimates } from '@/lib/hooks/use-estimates';
 
 // ── Status badges ──
 
@@ -101,12 +103,14 @@ export default function WalkthroughDetailPage() {
 
   const { walkthrough, loading: walkthroughLoading, error: walkthroughError } = useWalkthrough(walkthroughId);
   const { rooms, photos, floorPlans, fetchRooms, fetchPhotos, fetchFloorPlans, archiveWalkthrough } = useWalkthroughs();
+  const { createEstimateFromWalkthrough } = useEstimates();
 
   const [activeTab, setActiveTab] = useState<TabKey>('rooms');
   const [expandedRooms, setExpandedRooms] = useState<Set<string>>(new Set());
   const [lightboxPhoto, setLightboxPhoto] = useState<WalkthroughPhoto | null>(null);
   const [photoRoomFilter, setPhotoRoomFilter] = useState<string>('all');
   const [archiving, setArchiving] = useState(false);
+  const [generatingEstimate, setGeneratingEstimate] = useState(false);
 
   // Fetch related data when walkthrough loads
   useEffect(() => {
@@ -166,6 +170,22 @@ export default function WalkthroughDetailPage() {
       router.push('/dashboard/walkthroughs');
     } catch {
       setArchiving(false);
+    }
+  };
+
+  // ── Generate Estimate from walkthrough ──
+  const handleGenerateEstimate = async () => {
+    if (generatingEstimate) return;
+    setGeneratingEstimate(true);
+    try {
+      const estimateId = await createEstimateFromWalkthrough(walkthroughId);
+      if (estimateId) {
+        router.push(`/dashboard/estimates/${estimateId}`);
+      }
+    } catch {
+      // Error handled by hook
+    } finally {
+      setGeneratingEstimate(false);
     }
   };
 
@@ -254,6 +274,16 @@ export default function WalkthroughDetailPage() {
           </div>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleGenerateEstimate}
+            loading={generatingEstimate}
+            disabled={generatingEstimate}
+          >
+            <Calculator size={14} />
+            Generate Estimate
+          </Button>
           <Button
             variant="outline"
             size="sm"
