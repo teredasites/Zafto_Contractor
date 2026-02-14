@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../theme/zafto_colors.dart';
 import '../../theme/theme_provider.dart';
 import '../../models/customer.dart';
@@ -190,7 +191,7 @@ class _CustomerCreateScreenState extends ConsumerState<CustomerCreateScreen> {
                 const SizedBox(width: 12),
                 Expanded(flex: 1, child: _buildTextField(colors, 'State', _stateController, 'FL', LucideIcons.map)),
                 const SizedBox(width: 12),
-                Expanded(flex: 2, child: _buildTextField(colors, 'ZIP', _zipController, '32801', LucideIcons.hash, keyboardType: TextInputType.number)),
+                Expanded(flex: 2, child: _buildTextField(colors, 'ZIP', _zipController, '32801', LucideIcons.hash, keyboardType: TextInputType.number, inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(5)])),
               ],
             ),
             const SizedBox(height: 16),
@@ -437,7 +438,7 @@ class _CustomerCreateScreenState extends ConsumerState<CustomerCreateScreen> {
 
   // ====================== EXISTING WIDGETS ======================
 
-  Widget _buildTextField(ZaftoColors colors, String label, TextEditingController controller, String hint, IconData icon, {int maxLines = 1, TextInputType? keyboardType}) {
+  Widget _buildTextField(ZaftoColors colors, String label, TextEditingController controller, String hint, IconData icon, {int maxLines = 1, TextInputType? keyboardType, List<TextInputFormatter>? inputFormatters}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -453,6 +454,7 @@ class _CustomerCreateScreenState extends ConsumerState<CustomerCreateScreen> {
             controller: controller,
             maxLines: maxLines,
             keyboardType: keyboardType,
+            inputFormatters: inputFormatters,
             style: TextStyle(color: colors.textPrimary),
             decoration: InputDecoration(
               hintText: hint,
@@ -500,6 +502,47 @@ class _CustomerCreateScreenState extends ConsumerState<CustomerCreateScreen> {
     if (email.isNotEmpty && (!email.contains('@') || !email.contains('.'))) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please enter a valid email address')));
       return;
+    }
+
+    // Duplicate detection (on create only)
+    if (!_isEditMode) {
+      final phone = _phoneController.text.trim();
+      if (phone.isNotEmpty || email.isNotEmpty) {
+        try {
+          final supabase = Supabase.instance.client;
+          var query = supabase.from('customers').select('id, name').eq('company_id', supabase.auth.currentUser?.appMetadata['company_id'] ?? '').is_('deleted_at', null);
+          if (phone.isNotEmpty) {
+            query = query.eq('phone', phone);
+          } else if (email.isNotEmpty) {
+            query = query.eq('email', email);
+          }
+          final matches = await query.limit(1);
+          if (matches is List && matches.isNotEmpty) {
+            final existingName = matches[0]['name'] as String? ?? 'Unknown';
+            if (mounted) {
+              final proceed = await showDialog<bool>(
+                context: context,
+                builder: (ctx) {
+                  final colors = ref.read(zaftoColorsProvider);
+                  return AlertDialog(
+                    backgroundColor: colors.bgElevated,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    title: Text('Possible Duplicate', style: TextStyle(color: colors.textPrimary)),
+                    content: Text('A customer named "$existingName" already has this ${phone.isNotEmpty ? "phone number" : "email"}. Continue anyway?', style: TextStyle(color: colors.textSecondary)),
+                    actions: [
+                      TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text('Cancel', style: TextStyle(color: colors.textTertiary))),
+                      TextButton(onPressed: () => Navigator.pop(ctx, true), child: Text('Add Anyway', style: TextStyle(color: colors.accentPrimary))),
+                    ],
+                  );
+                },
+              );
+              if (proceed != true) return;
+            }
+          }
+        } catch (_) {
+          // Non-blocking — skip duplicate check if query fails
+        }
+      }
     }
 
     setState(() => _isSaving = true);
