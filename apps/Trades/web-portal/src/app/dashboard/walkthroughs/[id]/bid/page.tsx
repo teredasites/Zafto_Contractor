@@ -82,16 +82,7 @@ export default function BidGenerationPage() {
 
   const { walkthrough, loading, error } = useWalkthrough(walkthroughId);
   const [selectedFormat, setSelectedFormat] = useState<string>('standard');
-  const [generating, setGenerating] = useState(false);
-  const [generated, setGenerated] = useState(false);
-
-  const handleGenerate = async () => {
-    setGenerating(true);
-    // Placeholder: This will call an Edge Function in Phase E6g
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setGenerating(false);
-    setGenerated(true);
-  };
+  // Phase E6g: AI bid generation is deferred — generate button disabled
 
   // ── Loading ──
   if (loading) {
@@ -224,27 +215,17 @@ export default function BidGenerationPage() {
           Selected: <span className="text-main font-medium">{BID_FORMATS.find((f) => f.id === selectedFormat)?.name}</span>
         </p>
         <Button
-          onClick={handleGenerate}
-          loading={generating}
-          disabled={generated}
+          disabled
           className="min-w-[180px]"
         >
-          {generated ? (
-            <>
-              <CheckCircle size={16} />
-              Generated
-            </>
-          ) : (
-            <>
-              <Zap size={16} />
-              Generate Bid
-            </>
-          )}
+          <Zap size={16} />
+          Coming Soon
         </Button>
       </div>
 
       {/* Preview area / Coming soon */}
-      {generated && (
+      {/* Phase E6g deferred */}
+      {(
         <Card>
           <CardContent className="py-16 text-center">
             <Zap size={48} className="mx-auto mb-4 text-[var(--accent)] opacity-60" />

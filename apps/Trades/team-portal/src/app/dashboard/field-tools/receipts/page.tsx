@@ -18,7 +18,7 @@ export default function ReceiptsPage() {
     if (files && files.length > 0) {
       // Phase E: Upload to Supabase Storage, run receipt OCR Edge Function
       // Saves with ocr_status='pending' until AI processes the receipt
-      console.log('Receipt captured:', files[0].name);
+      // TODO: Phase E — upload to Supabase Storage, run receipt OCR Edge Function
     }
   };
 

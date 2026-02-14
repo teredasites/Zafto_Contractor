@@ -18,7 +18,7 @@ export default function PhotosPage() {
     if (files && files.length > 0) {
       // Phase E: Upload to Supabase Storage via web adapter
       // For now, just acknowledge the selection
-      console.log('Photo selected:', files[0].name);
+      // TODO: Phase E — upload to Supabase Storage via web adapter
     }
   };
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   TrendingDown,
   DollarSign,
@@ -19,68 +19,13 @@ interface ChurnMetric {
 }
 
 export default function ChurnAnalysisPage() {
-  const [metrics, setMetrics] = useState<ChurnMetric[]>([
-    {
-      label: 'Monthly Churn',
-      value: '--',
-      icon: <TrendingDown className="h-5 w-5" />,
-      loading: true,
-    },
-    {
-      label: 'Revenue Churn',
-      value: '--',
-      icon: <DollarSign className="h-5 w-5" />,
-      loading: true,
-    },
-    {
-      label: 'At-Risk Accounts',
-      value: '--',
-      icon: <AlertTriangle className="h-5 w-5" />,
-      loading: true,
-    },
-    {
-      label: 'Recovered',
-      value: '--',
-      icon: <RefreshCw className="h-5 w-5" />,
-      loading: true,
-    },
+  const [metrics] = useState<ChurnMetric[]>([
+    { label: 'Monthly Churn', value: '0%', icon: <TrendingDown className="h-5 w-5" />, loading: false },
+    { label: 'Revenue Churn', value: '0%', icon: <DollarSign className="h-5 w-5" />, loading: false },
+    { label: 'At-Risk Accounts', value: '0', icon: <AlertTriangle className="h-5 w-5" />, loading: false },
+    { label: 'Recovered', value: '0', icon: <RefreshCw className="h-5 w-5" />, loading: false },
   ]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // All zeros — no subscription data yet
-    const timer = setTimeout(() => {
-      setMetrics([
-        {
-          label: 'Monthly Churn',
-          value: '0%',
-          icon: <TrendingDown className="h-5 w-5" />,
-          loading: false,
-        },
-        {
-          label: 'Revenue Churn',
-          value: '0%',
-          icon: <DollarSign className="h-5 w-5" />,
-          loading: false,
-        },
-        {
-          label: 'At-Risk Accounts',
-          value: '0',
-          icon: <AlertTriangle className="h-5 w-5" />,
-          loading: false,
-        },
-        {
-          label: 'Recovered',
-          value: '0',
-          icon: <RefreshCw className="h-5 w-5" />,
-          loading: false,
-        },
-      ]);
-      setLoading(false);
-    }, 400);
-
-    return () => clearTimeout(timer);
-  }, []);
+  const [loading] = useState(false);
 
   return (
     <div className="space-y-8 animate-fade-in">

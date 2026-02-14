@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   AlertTriangle,
   Bug,
@@ -40,68 +40,13 @@ const SENTRY_ENV_VARS = [
 ];
 
 export default function ErrorDashboardPage() {
-  const [metrics, setMetrics] = useState<ErrorMetric[]>([
-    {
-      label: 'Total Errors',
-      value: '--',
-      icon: <Bug className="h-5 w-5" />,
-      loading: true,
-    },
-    {
-      label: 'Unresolved',
-      value: '--',
-      icon: <AlertTriangle className="h-5 w-5" />,
-      loading: true,
-    },
-    {
-      label: 'Error Rate',
-      value: '--',
-      icon: <TrendingUp className="h-5 w-5" />,
-      loading: true,
-    },
-    {
-      label: 'Affected Users',
-      value: '--',
-      icon: <Users className="h-5 w-5" />,
-      loading: true,
-    },
+  const [metrics] = useState<ErrorMetric[]>([
+    { label: 'Total Errors', value: '0', icon: <Bug className="h-5 w-5" />, loading: false },
+    { label: 'Unresolved', value: '0', icon: <AlertTriangle className="h-5 w-5" />, loading: false },
+    { label: 'Error Rate', value: '0%', icon: <TrendingUp className="h-5 w-5" />, loading: false },
+    { label: 'Affected Users', value: '0', icon: <Users className="h-5 w-5" />, loading: false },
   ]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // All zeros — Sentry not connected yet
-    const timer = setTimeout(() => {
-      setMetrics([
-        {
-          label: 'Total Errors',
-          value: '0',
-          icon: <Bug className="h-5 w-5" />,
-          loading: false,
-        },
-        {
-          label: 'Unresolved',
-          value: '0',
-          icon: <AlertTriangle className="h-5 w-5" />,
-          loading: false,
-        },
-        {
-          label: 'Error Rate',
-          value: '0%',
-          icon: <TrendingUp className="h-5 w-5" />,
-          loading: false,
-        },
-        {
-          label: 'Affected Users',
-          value: '0',
-          icon: <Users className="h-5 w-5" />,
-          loading: false,
-        },
-      ]);
-      setLoading(false);
-    }, 400);
-
-    return () => clearTimeout(timer);
-  }, []);
+  const [loading] = useState(false);
 
   return (
     <div className="space-y-8 animate-fade-in">
