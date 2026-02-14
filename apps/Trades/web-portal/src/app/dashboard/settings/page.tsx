@@ -38,6 +38,7 @@ import {
   CheckCircle2,
   XCircle,
   AlertTriangle,
+  X,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -53,8 +54,19 @@ import { useBranches, useCustomRoles, useFormTemplates, useCertifications, useAp
 import { useApprovals } from '@/lib/hooks/use-approvals';
 import type { ApprovalThresholdData } from '@/lib/hooks/pm-mappers';
 import type { Branch, CustomRole, FormTemplate, Certification } from '@/lib/hooks/use-enterprise';
+import { useCustomFields, type CustomField, type EntityType, type FieldType } from '@/lib/hooks/use-custom-fields';
+import {
+  useCompanyConfig,
+  type TaxRate,
+  DEFAULT_JOB_STATUSES,
+  DEFAULT_LEAD_SOURCES,
+  DEFAULT_BID_STATUSES,
+  DEFAULT_INVOICE_STATUSES,
+  DEFAULT_PRIORITY_LEVELS,
+} from '@/lib/hooks/use-company-config';
+import { useZDocs, type ZDocsTemplate } from '@/lib/hooks/use-zdocs';
 
-type SettingsTab = 'profile' | 'company' | 'team' | 'billing' | 'payments' | 'notifications' | 'appearance' | 'security' | 'integrations' | 'branches' | 'roles' | 'trades' | 'forms' | 'apikeys';
+type SettingsTab = 'profile' | 'company' | 'team' | 'billing' | 'payments' | 'notifications' | 'appearance' | 'security' | 'integrations' | 'branches' | 'roles' | 'trades' | 'forms' | 'apikeys' | 'templates' | 'custom_fields' | 'business';
 
 const coreTabs: { id: SettingsTab; label: string; icon: React.ReactNode }[] = [
   { id: 'profile', label: 'Profile', icon: <User size={18} /> },
@@ -66,6 +78,9 @@ const coreTabs: { id: SettingsTab; label: string; icon: React.ReactNode }[] = [
   { id: 'appearance', label: 'Appearance', icon: <Palette size={18} /> },
   { id: 'security', label: 'Security', icon: <Shield size={18} /> },
   { id: 'integrations', label: 'Integrations', icon: <Link size={18} /> },
+  { id: 'templates', label: 'Templates', icon: <FileText size={18} /> },
+  { id: 'custom_fields', label: 'Custom Fields', icon: <Layers size={18} /> },
+  { id: 'business', label: 'Business Config', icon: <DollarSign size={18} /> },
 ];
 
 const enterpriseTabs: { id: SettingsTab; label: string; icon: React.ReactNode; minTier: 'team' | 'business' | 'enterprise' }[] = [
@@ -164,6 +179,9 @@ export default function SettingsPage() {
           {activeTab === 'trades' && <TradeModulesSettings />}
           {activeTab === 'forms' && <ComplianceFormsSettings />}
           {activeTab === 'apikeys' && <ApiKeysSettings />}
+          {activeTab === 'templates' && <TemplatesSettings />}
+          {activeTab === 'custom_fields' && <CustomFieldsSettings />}
+          {activeTab === 'business' && <BusinessConfigSettings />}
         </div>
       </div>
     </div>
@@ -1048,6 +1066,43 @@ function AppearanceSettings() {
               />
             ))}
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Language Selector */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Language</CardTitle>
+          <CardDescription>Choose your preferred language. Affects all UI text.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+            {[
+              { code: 'en', name: 'English', flag: 'US' },
+              { code: 'es', name: 'Espa\u00f1ol', flag: 'MX' },
+              { code: 'pt-BR', name: 'Portugu\u00eas', flag: 'BR' },
+              { code: 'pl', name: 'Polski', flag: 'PL' },
+              { code: 'zh', name: '\u4e2d\u6587', flag: 'CN' },
+              { code: 'ht', name: 'Krey\u00f2l', flag: 'HT' },
+              { code: 'ru', name: '\u0420\u0443\u0441\u0441\u043a\u0438\u0439', flag: 'RU' },
+              { code: 'ko', name: '\ud55c\uad6d\uc5b4', flag: 'KR' },
+              { code: 'vi', name: 'Ti\u1ebfng Vi\u1ec7t', flag: 'VN' },
+              { code: 'tl', name: 'Tagalog', flag: 'PH' },
+            ].map((lang) => (
+              <button
+                key={lang.code}
+                className={cn(
+                  'px-3 py-2 rounded-lg border text-sm font-medium transition-colors text-left',
+                  lang.code === 'en'
+                    ? 'border-accent bg-accent-light text-accent'
+                    : 'border-main text-muted hover:text-main hover:border-accent/50'
+                )}
+              >
+                <span className="text-xs text-muted mr-1">{lang.flag}</span> {lang.name}
+              </button>
+            ))}
+          </div>
+          <p className="text-xs text-muted mt-3">More translations coming soon. Language preference saved to your profile.</p>
         </CardContent>
       </Card>
 
@@ -2035,6 +2090,690 @@ function ApprovalWorkflowToggles({
           </div>
         );
       })}
+    </div>
+  );
+}
+
+// ============================================================
+// TEMPLATES SETTINGS (U12b)
+// ============================================================
+const TEMPLATE_TYPES = [
+  { value: 'bid', label: 'Bid' },
+  { value: 'estimate', label: 'Estimate' },
+  { value: 'invoice', label: 'Invoice' },
+  { value: 'proposal', label: 'Proposal' },
+  { value: 'contract', label: 'Contract' },
+  { value: 'agreement', label: 'Agreement' },
+  { value: 'change_order', label: 'Change Order' },
+  { value: 'lien_waiver', label: 'Lien Waiver' },
+  { value: 'warranty', label: 'Warranty' },
+  { value: 'scope_of_work', label: 'Scope of Work' },
+  { value: 'safety_plan', label: 'Safety Plan' },
+  { value: 'daily_report', label: 'Daily Report' },
+  { value: 'other', label: 'Other' },
+];
+
+function TemplatesSettings() {
+  const { templates, loading, createTemplate, updateTemplate, deleteTemplate, duplicateTemplate } = useZDocs();
+  const [filterType, setFilterType] = useState<string>('all');
+  const [showCreate, setShowCreate] = useState(false);
+  const [newName, setNewName] = useState('');
+  const [newType, setNewType] = useState('bid');
+  const [newDesc, setNewDesc] = useState('');
+
+  const filtered = filterType === 'all'
+    ? templates
+    : templates.filter((t: ZDocsTemplate) => t.templateType === filterType);
+
+  const handleCreate = async () => {
+    if (!newName.trim()) return;
+    try {
+      await createTemplate({
+        name: newName.trim(),
+        templateType: newType,
+        description: newDesc.trim() || undefined,
+        contentHtml: '<h1>{{company_name}}</h1><h2>' + newName.trim() + '</h2><p>Prepared for: {{customer_name}}</p><hr/><h3>Scope of Work</h3><p>{{scope_description}}</p>{{line_items_table}}<h3>Total: {{total}}</h3>',
+        variables: [
+          { name: 'company_name', label: 'Company Name', type: 'text', defaultValue: '' },
+          { name: 'customer_name', label: 'Customer Name', type: 'text', defaultValue: '' },
+          { name: 'scope_description', label: 'Scope', type: 'textarea', defaultValue: '' },
+          { name: 'total', label: 'Total', type: 'currency', defaultValue: '0.00' },
+        ],
+      });
+      setShowCreate(false);
+      setNewName('');
+      setNewType('bid');
+      setNewDesc('');
+    } catch { /* error handled by hook */ }
+  };
+
+  if (loading) {
+    return (
+      <Card>
+        <CardContent className="py-12">
+          <div className="flex items-center justify-center gap-2 text-muted">
+            <RefreshCw size={16} className="animate-spin" />
+            <span>Loading templates...</span>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Document Templates</CardTitle>
+              <CardDescription>Manage bid, invoice, estimate, and agreement templates</CardDescription>
+            </div>
+            <Button onClick={() => setShowCreate(!showCreate)}>
+              <Plus size={16} className="mr-1" /> New Template
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Create form */}
+          {showCreate && (
+            <div className="p-4 bg-secondary rounded-lg space-y-3 border border-main">
+              <div className="grid grid-cols-2 gap-3">
+                <Input label="Template Name" placeholder="My Custom Bid" value={newName} onChange={(e) => setNewName(e.target.value)} required />
+                <div>
+                  <label className="text-xs font-medium text-muted mb-1 block">Type</label>
+                  <select value={newType} onChange={(e) => setNewType(e.target.value)} className="w-full px-3 py-2 bg-primary border border-main rounded-lg text-sm text-main focus:outline-none focus:ring-2 focus:ring-accent/50">
+                    {TEMPLATE_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
+                  </select>
+                </div>
+              </div>
+              <Input label="Description" placeholder="What this template is for..." value={newDesc} onChange={(e) => setNewDesc(e.target.value)} />
+              <div className="flex gap-2 justify-end">
+                <Button variant="secondary" size="sm" onClick={() => setShowCreate(false)}>Cancel</Button>
+                <Button size="sm" onClick={handleCreate} disabled={!newName.trim()}>Create Template</Button>
+              </div>
+            </div>
+          )}
+
+          {/* Filter */}
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted">Filter:</span>
+            <button onClick={() => setFilterType('all')} className={cn('px-2 py-1 rounded text-xs', filterType === 'all' ? 'bg-accent text-white' : 'bg-secondary text-muted hover:text-main')}>All ({templates.length})</button>
+            {TEMPLATE_TYPES.slice(0, 6).map((t) => {
+              const count = templates.filter((tmpl: ZDocsTemplate) => tmpl.templateType === t.value).length;
+              if (count === 0) return null;
+              return (
+                <button key={t.value} onClick={() => setFilterType(t.value)} className={cn('px-2 py-1 rounded text-xs', filterType === t.value ? 'bg-accent text-white' : 'bg-secondary text-muted hover:text-main')}>
+                  {t.label} ({count})
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Template list */}
+          {filtered.length === 0 ? (
+            <div className="py-8 text-center text-muted text-sm">No templates found. Create one to get started.</div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {filtered.map((tmpl: ZDocsTemplate) => (
+                <div key={tmpl.id} className="p-4 bg-secondary rounded-lg border border-main hover:border-accent/30 transition-colors">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <h4 className="font-medium text-main text-sm">{tmpl.name}</h4>
+                      <p className="text-xs text-muted mt-0.5">{tmpl.description || 'No description'}</p>
+                      <div className="flex gap-2 mt-2">
+                        <Badge variant="default">{tmpl.templateType}</Badge>
+                        {tmpl.isSystem && <Badge variant="secondary">System</Badge>}
+                      </div>
+                    </div>
+                    <div className="flex gap-1">
+                      <button onClick={() => duplicateTemplate(tmpl.id)} className="p-1.5 text-muted hover:text-main rounded hover:bg-surface-hover" title="Duplicate">
+                        <Layers size={14} />
+                      </button>
+                      {!tmpl.isSystem && (
+                        <button onClick={() => deleteTemplate(tmpl.id)} className="p-1.5 text-muted hover:text-red-500 rounded hover:bg-surface-hover" title="Delete">
+                          <Trash2 size={14} />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 mt-3 text-xs text-muted">
+                    <span>{tmpl.variables?.length || 0} variables</span>
+                    <span>{tmpl.requiresSignature ? 'Signature required' : 'No signature'}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+// ============================================================
+// CUSTOM FIELDS SETTINGS (U12c)
+// ============================================================
+const ENTITY_TYPES: { value: EntityType; label: string }[] = [
+  { value: 'customer', label: 'Customer' },
+  { value: 'job', label: 'Job' },
+  { value: 'bid', label: 'Bid' },
+  { value: 'invoice', label: 'Invoice' },
+  { value: 'expense', label: 'Expense' },
+  { value: 'employee', label: 'Employee' },
+];
+
+const FIELD_TYPES: { value: FieldType; label: string }[] = [
+  { value: 'text', label: 'Text' },
+  { value: 'textarea', label: 'Long Text' },
+  { value: 'number', label: 'Number' },
+  { value: 'date', label: 'Date' },
+  { value: 'boolean', label: 'Yes/No' },
+  { value: 'select', label: 'Dropdown' },
+  { value: 'multi_select', label: 'Multi-Select' },
+  { value: 'email', label: 'Email' },
+  { value: 'phone', label: 'Phone' },
+  { value: 'url', label: 'URL' },
+];
+
+function CustomFieldsSettings() {
+  const { fields, fieldsByEntity, loading, createField, updateField, deleteField } = useCustomFields();
+  const [activeEntity, setActiveEntity] = useState<EntityType>('customer');
+  const [showAdd, setShowAdd] = useState(false);
+  const [newLabel, setNewLabel] = useState('');
+  const [newType, setNewType] = useState<FieldType>('text');
+  const [newRequired, setNewRequired] = useState(false);
+  const [newOptions, setNewOptions] = useState('');
+
+  const handleAdd = async () => {
+    if (!newLabel.trim()) return;
+    const fieldName = newLabel.trim().toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+    try {
+      await createField({
+        entityType: activeEntity,
+        fieldName,
+        fieldLabel: newLabel.trim(),
+        fieldType: newType,
+        options: (newType === 'select' || newType === 'multi_select')
+          ? newOptions.split(',').map((o) => o.trim()).filter(Boolean)
+          : undefined,
+        required: newRequired,
+      });
+      setShowAdd(false);
+      setNewLabel('');
+      setNewType('text');
+      setNewRequired(false);
+      setNewOptions('');
+    } catch { /* error handled by hook */ }
+  };
+
+  const currentFields = fieldsByEntity[activeEntity] || [];
+
+  if (loading) {
+    return (
+      <Card>
+        <CardContent className="py-12">
+          <div className="flex items-center justify-center gap-2 text-muted">
+            <RefreshCw size={16} className="animate-spin" />
+            <span>Loading custom fields...</span>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Custom Fields</CardTitle>
+              <CardDescription>Add custom data fields to customers, jobs, bids, and more. Values stored in each record&apos;s metadata.</CardDescription>
+            </div>
+            <Button onClick={() => setShowAdd(!showAdd)}>
+              <Plus size={16} className="mr-1" /> Add Field
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Entity type tabs */}
+          <div className="flex gap-1 border-b border-main pb-2">
+            {ENTITY_TYPES.map((et) => {
+              const count = (fieldsByEntity[et.value] || []).length;
+              return (
+                <button
+                  key={et.value}
+                  onClick={() => { setActiveEntity(et.value); setShowAdd(false); }}
+                  className={cn(
+                    'px-3 py-1.5 rounded-t text-sm font-medium transition-colors',
+                    activeEntity === et.value
+                      ? 'bg-accent text-white'
+                      : 'text-muted hover:text-main hover:bg-surface-hover'
+                  )}
+                >
+                  {et.label} {count > 0 && <span className="ml-1 text-xs opacity-70">({count})</span>}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Add field form */}
+          {showAdd && (
+            <div className="p-4 bg-secondary rounded-lg space-y-3 border border-main">
+              <div className="grid grid-cols-2 gap-3">
+                <Input label="Field Label" placeholder="e.g. License Number" value={newLabel} onChange={(e) => setNewLabel(e.target.value)} required />
+                <div>
+                  <label className="text-xs font-medium text-muted mb-1 block">Field Type</label>
+                  <select value={newType} onChange={(e) => setNewType(e.target.value as FieldType)} className="w-full px-3 py-2 bg-primary border border-main rounded-lg text-sm text-main focus:outline-none focus:ring-2 focus:ring-accent/50">
+                    {FIELD_TYPES.map((ft) => <option key={ft.value} value={ft.value}>{ft.label}</option>)}
+                  </select>
+                </div>
+              </div>
+              {(newType === 'select' || newType === 'multi_select') && (
+                <Input label="Options (comma-separated)" placeholder="Option A, Option B, Option C" value={newOptions} onChange={(e) => setNewOptions(e.target.value)} />
+              )}
+              <label className="flex items-center gap-2 text-sm text-main cursor-pointer">
+                <input type="checkbox" checked={newRequired} onChange={(e) => setNewRequired(e.target.checked)} className="rounded border-main" />
+                Required field
+              </label>
+              <div className="flex gap-2 justify-end">
+                <Button variant="secondary" size="sm" onClick={() => setShowAdd(false)}>Cancel</Button>
+                <Button size="sm" onClick={handleAdd} disabled={!newLabel.trim()}>Add Field</Button>
+              </div>
+            </div>
+          )}
+
+          {/* Field list */}
+          {currentFields.length === 0 ? (
+            <div className="py-8 text-center text-muted text-sm">
+              No custom fields for {ENTITY_TYPES.find((e) => e.value === activeEntity)?.label || activeEntity}. Click &quot;Add Field&quot; to create one.
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {currentFields.map((field, idx) => (
+                <div key={field.id} className="flex items-center justify-between p-3 bg-secondary rounded-lg border border-main">
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs text-muted w-6">{idx + 1}.</span>
+                    <div>
+                      <span className="text-sm font-medium text-main">{field.fieldLabel}</span>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <Badge variant="secondary">{FIELD_TYPES.find((ft) => ft.value === field.fieldType)?.label || field.fieldType}</Badge>
+                        {field.required && <Badge variant="default">Required</Badge>}
+                        {field.options && field.options.length > 0 && (
+                          <span className="text-xs text-muted">{field.options.length} options</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex gap-1">
+                    <button
+                      onClick={() => updateField(field.id, { isActive: !field.isActive })}
+                      className={cn('p-1.5 rounded hover:bg-surface-hover', field.isActive ? 'text-accent' : 'text-muted')}
+                      title={field.isActive ? 'Disable' : 'Enable'}
+                    >
+                      {field.isActive ? <CheckCircle2 size={14} /> : <XCircle size={14} />}
+                    </button>
+                    <button onClick={() => deleteField(field.id)} className="p-1.5 text-muted hover:text-red-500 rounded hover:bg-surface-hover" title="Delete">
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {fields.length > 0 && (
+            <p className="text-xs text-muted">Total custom fields: {fields.length} across all entities</p>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+// ============================================================
+// BUSINESS CONFIG SETTINGS (U12d)
+// ============================================================
+function BusinessConfigSettings() {
+  const { config, loading, saving, updateConfig, jobStatuses, leadSources, bidStatuses, invoiceStatuses, priorityLevels } = useCompanyConfig();
+  const [editSection, setEditSection] = useState<string | null>(null);
+
+  // Tax rates
+  const [taxRates, setTaxRates] = useState<TaxRate[]>([]);
+  const [newTaxName, setNewTaxName] = useState('');
+  const [newTaxRate, setNewTaxRate] = useState('');
+  const [newTaxApplies, setNewTaxApplies] = useState('all');
+
+  // Numbering
+  const [invFormat, setInvFormat] = useState('');
+  const [bidFormat, setBidFormat] = useState('');
+  const [bidValidity, setBidValidity] = useState('');
+
+  // Payment
+  const [paymentTerms, setPaymentTerms] = useState('');
+  const [lateFee, setLateFee] = useState('');
+  const [earlyDiscount, setEarlyDiscount] = useState('');
+
+  // Status editing
+  const [statusEdit, setStatusEdit] = useState<{ type: string; values: string[] } | null>(null);
+  const [newStatus, setNewStatus] = useState('');
+
+  // Initialize from config when loaded
+  useEffect(() => {
+    if (!loading) {
+      setTaxRates(config.taxRates.length > 0 ? config.taxRates : [{ name: 'Sales Tax', rate: config.defaultTaxRate, appliesTo: 'all' }]);
+      setInvFormat(config.invoiceNumberFormat);
+      setBidFormat(config.bidNumberFormat);
+      setBidValidity(String(config.bidValidityDays));
+      setPaymentTerms(config.defaultPaymentTerms);
+      setLateFee(String(config.lateFeeRate));
+      setEarlyDiscount(String(config.earlyPaymentDiscount));
+    }
+  }, [loading, config]);
+
+  const handleSaveTaxRates = async () => {
+    const defaultRate = taxRates.length > 0 ? taxRates[0].rate : 0;
+    await updateConfig({ taxRates, defaultTaxRate: defaultRate });
+    setEditSection(null);
+  };
+
+  const handleAddTaxRate = () => {
+    if (!newTaxName.trim() || !newTaxRate) return;
+    setTaxRates([...taxRates, { name: newTaxName.trim(), rate: Number(newTaxRate), appliesTo: newTaxApplies }]);
+    setNewTaxName('');
+    setNewTaxRate('');
+    setNewTaxApplies('all');
+  };
+
+  const handleSaveNumbering = async () => {
+    await updateConfig({
+      invoiceNumberFormat: invFormat,
+      bidNumberFormat: bidFormat,
+      bidValidityDays: Number(bidValidity) || 30,
+    });
+    setEditSection(null);
+  };
+
+  const handleSavePayment = async () => {
+    await updateConfig({
+      defaultPaymentTerms: paymentTerms,
+      lateFeeRate: Number(lateFee) || 0,
+      earlyPaymentDiscount: Number(earlyDiscount) || 0,
+    });
+    setEditSection(null);
+  };
+
+  const handleSaveStatuses = async () => {
+    if (!statusEdit) return;
+    const key = {
+      job: 'customJobStatuses',
+      lead: 'customLeadSources',
+      bid: 'customBidStatuses',
+      invoice: 'customInvoiceStatuses',
+      priority: 'customPriorityLevels',
+    }[statusEdit.type] as keyof typeof config;
+
+    await updateConfig({ [key]: statusEdit.values.length > 0 ? statusEdit.values : null } as Partial<typeof config>);
+    setStatusEdit(null);
+  };
+
+  const handleAddStatus = () => {
+    if (!newStatus.trim() || !statusEdit) return;
+    const slug = newStatus.trim().toLowerCase().replace(/\s+/g, '_');
+    if (!statusEdit.values.includes(slug)) {
+      setStatusEdit({ ...statusEdit, values: [...statusEdit.values, slug] });
+    }
+    setNewStatus('');
+  };
+
+  if (loading) {
+    return (
+      <Card>
+        <CardContent className="py-12">
+          <div className="flex items-center justify-center gap-2 text-muted">
+            <RefreshCw size={16} className="animate-spin" />
+            <span>Loading configuration...</span>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Tax Rates */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-base">Tax Rates</CardTitle>
+              <CardDescription>Manage tax rates for invoices and bids</CardDescription>
+            </div>
+            {editSection !== 'tax' && (
+              <Button variant="secondary" size="sm" onClick={() => setEditSection('tax')}>
+                <Edit size={14} className="mr-1" /> Edit
+              </Button>
+            )}
+          </div>
+        </CardHeader>
+        <CardContent>
+          {editSection === 'tax' ? (
+            <div className="space-y-3">
+              {taxRates.map((tr, i) => (
+                <div key={i} className="flex items-center gap-3 p-2 bg-secondary rounded">
+                  <span className="text-sm text-main flex-1">{tr.name}</span>
+                  <span className="text-sm font-mono text-main">{tr.rate}%</span>
+                  <Badge variant="secondary">{tr.appliesTo}</Badge>
+                  <button onClick={() => setTaxRates(taxRates.filter((_, idx) => idx !== i))} className="p-1 text-muted hover:text-red-500">
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              ))}
+              <div className="flex items-end gap-2">
+                <div className="flex-1">
+                  <Input label="Name" placeholder="State Tax" value={newTaxName} onChange={(e) => setNewTaxName(e.target.value)} />
+                </div>
+                <div className="w-24">
+                  <Input label="Rate %" type="number" placeholder="6.35" value={newTaxRate} onChange={(e) => setNewTaxRate(e.target.value)} />
+                </div>
+                <div className="w-32">
+                  <label className="text-xs font-medium text-muted mb-1 block">Applies To</label>
+                  <select value={newTaxApplies} onChange={(e) => setNewTaxApplies(e.target.value)} className="w-full px-3 py-2 bg-primary border border-main rounded-lg text-sm text-main focus:outline-none focus:ring-2 focus:ring-accent/50">
+                    <option value="all">All</option>
+                    <option value="materials">Materials</option>
+                    <option value="labor">Labor</option>
+                    <option value="equipment">Equipment</option>
+                  </select>
+                </div>
+                <Button variant="secondary" size="sm" onClick={handleAddTaxRate} disabled={!newTaxName.trim() || !newTaxRate}>
+                  <Plus size={14} />
+                </Button>
+              </div>
+              <div className="flex gap-2 justify-end pt-2">
+                <Button variant="secondary" size="sm" onClick={() => setEditSection(null)}>Cancel</Button>
+                <Button size="sm" onClick={handleSaveTaxRates} disabled={saving}>{saving ? 'Saving...' : 'Save Tax Rates'}</Button>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {(config.taxRates.length > 0 ? config.taxRates : [{ name: 'Sales Tax', rate: config.defaultTaxRate, appliesTo: 'all' }]).map((tr, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <span className="text-sm text-main">{tr.name}</span>
+                  <span className="text-sm font-mono text-accent font-medium">{tr.rate}%</span>
+                  <Badge variant="secondary">{tr.appliesTo}</Badge>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Numbering & Formatting */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-base">Numbering & Formatting</CardTitle>
+              <CardDescription>Configure invoice/bid number formats and bid validity</CardDescription>
+            </div>
+            {editSection !== 'numbering' && (
+              <Button variant="secondary" size="sm" onClick={() => setEditSection('numbering')}>
+                <Edit size={14} className="mr-1" /> Edit
+              </Button>
+            )}
+          </div>
+        </CardHeader>
+        <CardContent>
+          {editSection === 'numbering' ? (
+            <div className="space-y-4">
+              <Input label="Invoice Number Format" placeholder="INV-{YYYY}-{NNNN}" value={invFormat} onChange={(e) => setInvFormat(e.target.value)} />
+              <Input label="Bid Number Format" placeholder="BID-{YYMMDD}-{NNN}" value={bidFormat} onChange={(e) => setBidFormat(e.target.value)} />
+              <Input label="Bid Validity (days)" type="number" placeholder="30" value={bidValidity} onChange={(e) => setBidValidity(e.target.value)} />
+              <p className="text-xs text-muted">Variables: {'{YYYY}'} = year, {'{YY}'} = 2-digit year, {'{MM}'} = month, {'{DD}'} = day, {'{NNNN}'} = sequence number, {'{NNN}'} = 3-digit sequence</p>
+              <div className="flex gap-2 justify-end">
+                <Button variant="secondary" size="sm" onClick={() => setEditSection(null)}>Cancel</Button>
+                <Button size="sm" onClick={handleSaveNumbering} disabled={saving}>{saving ? 'Saving...' : 'Save'}</Button>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-muted">Invoice format</span>
+                <span className="text-main font-mono">{config.invoiceNumberFormat}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted">Bid format</span>
+                <span className="text-main font-mono">{config.bidNumberFormat}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted">Bid validity</span>
+                <span className="text-main">{config.bidValidityDays} days</span>
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Payment Terms */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-base">Payment Terms</CardTitle>
+              <CardDescription>Default payment terms, late fees, and early payment discounts</CardDescription>
+            </div>
+            {editSection !== 'payment' && (
+              <Button variant="secondary" size="sm" onClick={() => setEditSection('payment')}>
+                <Edit size={14} className="mr-1" /> Edit
+              </Button>
+            )}
+          </div>
+        </CardHeader>
+        <CardContent>
+          {editSection === 'payment' ? (
+            <div className="space-y-4">
+              <div>
+                <label className="text-xs font-medium text-muted mb-1 block">Default Payment Terms</label>
+                <select value={paymentTerms} onChange={(e) => setPaymentTerms(e.target.value)} className="w-full px-3 py-2 bg-secondary border border-main rounded-lg text-sm text-main focus:outline-none focus:ring-2 focus:ring-accent/50">
+                  <option value="due_on_receipt">Due on Receipt</option>
+                  <option value="net_15">Net 15</option>
+                  <option value="net_30">Net 30</option>
+                  <option value="net_45">Net 45</option>
+                  <option value="net_60">Net 60</option>
+                </select>
+              </div>
+              <Input label="Late Fee Rate (%/month)" type="number" step="0.1" placeholder="1.5" value={lateFee} onChange={(e) => setLateFee(e.target.value)} />
+              <Input label="Early Payment Discount (%)" type="number" step="0.1" placeholder="2" value={earlyDiscount} onChange={(e) => setEarlyDiscount(e.target.value)} />
+              <div className="flex gap-2 justify-end">
+                <Button variant="secondary" size="sm" onClick={() => setEditSection(null)}>Cancel</Button>
+                <Button size="sm" onClick={handleSavePayment} disabled={saving}>{saving ? 'Saving...' : 'Save'}</Button>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-muted">Default terms</span>
+                <span className="text-main">{config.defaultPaymentTerms.replace('_', ' ')}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted">Late fee</span>
+                <span className="text-main">{config.lateFeeRate}% / month</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted">Early payment discount</span>
+                <span className="text-main">{config.earlyPaymentDiscount}%</span>
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Configurable Statuses */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Custom Statuses</CardTitle>
+          <CardDescription>Customize statuses for jobs, bids, invoices, leads, and priorities. Null/empty = use system defaults.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {[
+            { type: 'job', label: 'Job Statuses', values: jobStatuses, defaults: DEFAULT_JOB_STATUSES },
+            { type: 'bid', label: 'Bid Statuses', values: bidStatuses, defaults: DEFAULT_BID_STATUSES },
+            { type: 'invoice', label: 'Invoice Statuses', values: invoiceStatuses, defaults: DEFAULT_INVOICE_STATUSES },
+            { type: 'lead', label: 'Lead Sources', values: leadSources, defaults: DEFAULT_LEAD_SOURCES },
+            { type: 'priority', label: 'Priority Levels', values: priorityLevels, defaults: DEFAULT_PRIORITY_LEVELS },
+          ].map((section) => (
+            <div key={section.type} className="p-3 bg-secondary rounded-lg border border-main">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="text-sm font-medium text-main">{section.label}</h4>
+                <button
+                  onClick={() => setStatusEdit(statusEdit?.type === section.type ? null : { type: section.type, values: [...section.values] })}
+                  className="text-xs text-accent hover:underline"
+                >
+                  {statusEdit?.type === section.type ? 'Cancel' : 'Edit'}
+                </button>
+              </div>
+
+              {statusEdit?.type === section.type ? (
+                <div className="space-y-2">
+                  <div className="flex flex-wrap gap-1">
+                    {statusEdit.values.map((s) => (
+                      <span key={s} className="inline-flex items-center gap-1 px-2 py-1 bg-primary rounded text-xs text-main">
+                        {s.replace(/_/g, ' ')}
+                        <button onClick={() => setStatusEdit({ ...statusEdit, values: statusEdit.values.filter((v) => v !== s) })} className="text-muted hover:text-red-500">
+                          <X size={10} />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                  <div className="flex gap-2">
+                    <input
+                      value={newStatus}
+                      onChange={(e) => setNewStatus(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddStatus())}
+                      placeholder="Add status..."
+                      className="flex-1 px-2 py-1 bg-primary border border-main rounded text-sm text-main placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-accent"
+                    />
+                    <Button variant="secondary" size="sm" onClick={handleAddStatus} disabled={!newStatus.trim()}>
+                      <Plus size={12} />
+                    </Button>
+                  </div>
+                  <div className="flex gap-2 justify-end">
+                    <button onClick={() => setStatusEdit({ ...statusEdit, values: section.defaults })} className="text-xs text-muted hover:text-main">Reset to defaults</button>
+                    <Button size="sm" onClick={handleSaveStatuses} disabled={saving}>{saving ? 'Saving...' : 'Save'}</Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-wrap gap-1">
+                  {section.values.map((s) => (
+                    <span key={s} className="px-2 py-0.5 bg-primary rounded text-xs text-muted">{s.replace(/_/g, ' ')}</span>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </CardContent>
+      </Card>
     </div>
   );
 }
