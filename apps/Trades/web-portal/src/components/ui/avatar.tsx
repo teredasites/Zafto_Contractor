@@ -1,6 +1,9 @@
 'use client';
 
+import Image from 'next/image';
 import { cn, getInitials } from '@/lib/utils';
+
+const pixelSizes = { sm: 24, md: 32, lg: 40, xl: 48 } as const;
 
 interface AvatarProps {
   src?: string;
@@ -26,16 +29,21 @@ export function Avatar({ src, name, size = 'md', className, showStatus, isOnline
     xl: 'w-3.5 h-3.5 right-0.5 bottom-0.5',
   };
 
+  const px = pixelSizes[size];
+
   return (
     <div className={cn('relative inline-flex', className)}>
       {src ? (
-        <img
+        <Image
           src={src}
           alt={name}
+          width={px}
+          height={px}
           className={cn(
             'rounded-full object-cover',
             sizes[size]
           )}
+          unoptimized
         />
       ) : (
         <div

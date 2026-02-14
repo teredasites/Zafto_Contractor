@@ -302,34 +302,94 @@ export function useDataImport() {
       }
 
       if (insertRows.length > 0) {
-        // Handle duplicate detection for customers
+        // Handle duplicate detection for customers (batch query instead of N+1)
         if (importType === 'customers') {
-          for (const record of insertRows) {
-            const rowNum = i + insertRows.indexOf(record) + 1;
-            try {
-              const dupResult = await checkCustomerDuplicate(supabase, companyId, record.email, record.phone);
-              if (dupResult) {
-                // Skip duplicates — count as error with info message
-                errorCount++;
-                errors.push({
-                  row_number: rowNum,
-                  row_data: record,
-                  error_message: `Duplicate: matches existing customer (${dupResult})`,
-                  field_name: 'email/phone',
-                });
-                continue;
-              }
-              const { error: insErr } = await supabase.from(importType).insert(record);
-              if (insErr) throw insErr;
-              successCount++;
-            } catch (e: unknown) {
+          const emails = insertRows
+            .map(r => (typeof r.email === 'string' ? r.email.trim() : ''))
+            .filter(Boolean);
+          const phones = insertRows
+            .map(r => (typeof r.phone === 'string' ? r.phone.trim() : ''))
+            .filter(Boolean);
+
+          const dupEmails = new Set<string>();
+          const dupPhones = new Set<string>();
+
+          // Batch check emails (1 query instead of N)
+          if (emails.length > 0) {
+            const { data: emailMatches } = await supabase
+              .from('customers')
+              .select('email')
+              .eq('company_id', companyId)
+              .in('email', emails)
+              .is('deleted_at', null);
+            for (const m of emailMatches || []) {
+              if (m.email) dupEmails.add(m.email.toLowerCase());
+            }
+          }
+
+          // Batch check phones (1 query instead of N)
+          if (phones.length > 0) {
+            const { data: phoneMatches } = await supabase
+              .from('customers')
+              .select('phone')
+              .eq('company_id', companyId)
+              .in('phone', phones)
+              .is('deleted_at', null);
+            for (const m of phoneMatches || []) {
+              if (m.phone) dupPhones.add(m.phone);
+            }
+          }
+
+          // Filter duplicates and collect non-duplicates for batch insert
+          const cleanRows: Record<string, unknown>[] = [];
+          for (let idx = 0; idx < insertRows.length; idx++) {
+            const record = insertRows[idx];
+            const rowNum = i + idx + 1;
+            const email = typeof record.email === 'string' ? record.email.trim().toLowerCase() : '';
+            const phone = typeof record.phone === 'string' ? record.phone.trim() : '';
+
+            if (email && dupEmails.has(email)) {
               errorCount++;
               errors.push({
                 row_number: rowNum,
                 row_data: record,
-                error_message: e instanceof Error ? e.message : 'Insert error',
-                field_name: null,
+                error_message: `Duplicate: matches existing customer (email: ${record.email})`,
+                field_name: 'email/phone',
               });
+            } else if (phone && dupPhones.has(phone)) {
+              errorCount++;
+              errors.push({
+                row_number: rowNum,
+                row_data: record,
+                error_message: `Duplicate: matches existing customer (phone: ${record.phone})`,
+                field_name: 'email/phone',
+              });
+            } else {
+              cleanRows.push(record);
+            }
+          }
+
+          // Batch insert non-duplicates
+          if (cleanRows.length > 0) {
+            const { error: insErr } = await supabase.from(importType).insert(cleanRows);
+            if (insErr) {
+              // Fallback: insert one by one to find the bad row
+              for (let k = 0; k < cleanRows.length; k++) {
+                const { error: singleErr } = await supabase.from(importType).insert(cleanRows[k]);
+                if (singleErr) {
+                  errorCount++;
+                  errors.push({
+                    row_number: i + insertRows.indexOf(cleanRows[k]) + 1,
+                    row_data: cleanRows[k],
+                    error_message: singleErr.message,
+                    field_name: null,
+                  });
+                } else {
+                  successCount++;
+                }
+              }
+            } else {
+              successCount += cleanRows.length;
             }
           }
         } else {
@@ -513,33 +573,3 @@ function applyMapping(
   return result;
 }
 
-async function checkCustomerDuplicate(
-  supabase: ReturnType<typeof getSupabase>,
-  companyId: string,
-  email: unknown,
-  phone: unknown
-): Promise<string | null> {
-  if (email && typeof email === 'string' && email.trim()) {
-    const { data } = await supabase
-      .from('customers')
-      .select('id')
-      .eq('company_id', companyId)
-      .eq('email', email.trim())
-      .is('deleted_at', null)
-      .limit(1)
-      .single();
-    if (data) return `email: ${email}`;
-  }
-  if (phone && typeof phone === 'string' && phone.trim()) {
-    const { data } = await supabase
-      .from('customers')
-      .select('id')
-      .eq('company_id', companyId)
-      .eq('phone', phone.trim())
-      .is('deleted_at', null)
-      .limit(1)
-      .single();
-    if (data) return `phone: ${phone}`;
-  }
-  return null;
-}
