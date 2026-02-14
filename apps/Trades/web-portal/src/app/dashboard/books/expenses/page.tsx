@@ -152,7 +152,11 @@ export default function ExpensesPage() {
           </div>
           <div className="divide-y divide-main">
             {filtered.length === 0 && (
-              <div className="px-6 py-12 text-center text-sm text-muted">No expenses found</div>
+              <div className="px-6 py-16 text-center">
+                <Receipt size={40} className="mx-auto mb-3 text-muted opacity-50" />
+                <p className="text-sm font-medium text-main">No expenses found</p>
+                <p className="text-xs text-muted mt-1">Record your first expense to start tracking costs</p>
+              </div>
             )}
             {filtered.map((expense) => {
               const sc = statusConfig[expense.status] || statusConfig.draft;
@@ -341,11 +345,11 @@ function ExpenseModal({ vendors, properties, onSave, onClose }: {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-main mb-1">Amount *</label>
-              <Input type="number" step="0.01" min="0.01" value={amount} onChange={(e) => setAmount(e.target.value)} required />
+              <Input type="number" step="0.01" min="0.01" value={amount} onChange={(e) => setAmount(e.target.value.replace(/[^0-9.]/g, ''))} required />
             </div>
             <div>
               <label className="block text-sm font-medium text-main mb-1">Tax Amount</label>
-              <Input type="number" step="0.01" min="0" value={taxAmount} onChange={(e) => setTaxAmount(e.target.value)} />
+              <Input type="number" step="0.01" min="0" value={taxAmount} onChange={(e) => setTaxAmount(e.target.value.replace(/[^0-9.]/g, ''))} />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">

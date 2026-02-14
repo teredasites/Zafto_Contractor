@@ -201,6 +201,12 @@ export default function InventoryPage() {
               </tr>
             </thead>
             <tbody>
+              {filteredItems.length === 0 && (
+                <tr><td colSpan={7} className="px-6 py-16 text-center">
+                  <p className="text-sm font-medium text-main">No inventory items found</p>
+                  <p className="text-xs text-muted mt-1">Add materials and supplies to track your inventory</p>
+                </td></tr>
+              )}
               {filteredItems.map((item) => {
                 const isLowStock = item.quantity <= item.minQuantity;
                 const isOutOfStock = item.quantity === 0;

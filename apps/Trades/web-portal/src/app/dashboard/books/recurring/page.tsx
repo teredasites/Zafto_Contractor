@@ -409,7 +409,7 @@ function TemplateModal({
               step="0.01"
               min="0.01"
               value={amount}
-              onChange={(e) => setAmount(e.target.value)}
+              onChange={(e) => setAmount(e.target.value.replace(/[^0-9.]/g, ''))}
               className="w-full px-3 py-2 rounded-lg border border-main bg-surface text-main text-sm"
               required
             />

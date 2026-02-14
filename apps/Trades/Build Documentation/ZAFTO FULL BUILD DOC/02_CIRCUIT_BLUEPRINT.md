@@ -1,6 +1,6 @@
 # ZAFTO CIRCUIT BLUEPRINT
 ## Living Wiring Diagram — What Connects, What Doesn't, What's Missing
-### Last Updated: February 13, 2026 (Session 110 — Phase GC COMPLETE. GC1-GC11 done. 12 tables, 10 EFs, 9 CRM pages. Next: Phase U → G → E → LAUNCH.)
+### Last Updated: February 14, 2026 (Session 113 — Phases W+J+L COMPLETE. Phase G automated (G1-G5) DONE. G2: RLS migration (user_sessions, login_attempts, iicrc_equipment_factors). G4: security headers on all 4 portals. G5: codemagic.yaml, dead Firebase service removed. Next: G6-G10 manual QA → E → LAUNCH.)
 
 ---
 
@@ -178,7 +178,7 @@ DEFERRED -- Specified but intentionally postponed
 | ai_service.dart | LIVE Supabase | **DONE (E3c S80)** -- AiService (Edge Function client) + AiChatNotifier (chat state) + providers. Calls z-intelligence, ai-troubleshoot, ai-photo-diagnose Edge Functions. |
 | walkthrough_service.dart | LIVE Supabase | **DONE (E6b S79)** -- Walkthrough CRUD + rooms + photos. 7 Riverpod providers. |
 | estimate_engine_service.dart | LIVE Supabase | **DONE (D8c S86)** -- Full estimate CRUD, area management, line item operations, auto-numbering, totals recalc. 5 screens: list, builder, room editor, line item picker, preview. |
-| firestore_service.dart | Firebase | Content layer -- being removed. 13 files still import cloud_firestore (Phase G cleanup). |
+| firestore_service.dart | Firebase | Content layer -- being removed. 12 files still import cloud_firestore (business_firestore_service.dart deleted in G5). 6 active services + 6 models need full migration before pubspec cleanup. |
 | location_tracking_service.dart | Local | **4 compile errors -- missing battery_plus package.** |
 
 **Repositories:** auth, customer, job, invoice, bid, time_entry, photo, compliance, receipt, signature, mileage, voice_note, insurance_claim, claim_supplement, moisture_reading, drying_log, restoration_equipment, tpi_inspection, certification, zbooks_account, zbooks_journal, zbooks_expense, property, tenant, lease, rent, pm_maintenance, inspection, asset, walkthrough, estimate, estimate_engine (32 total)
@@ -213,7 +213,7 @@ DEFERRED -- Specified but intentionally postponed
 | Operations (Dashboard, Bids x4, Jobs x3, Invoices x3) | 11 | LIVE Supabase | **DONE (B4b S50)** -- useJobs/useBids/useInvoices/useCustomers/useStats hooks. Real-time subscriptions. **D1 (S62):** JobTypeBadge, type filter, conditional metadata. Calendar color-coded. Bids: +optimize page (E4c). |
 | Customers (List, Detail, New) | 3 | LIVE Supabase | **DONE (B4b S50 + B4c S51)** -- useCustomers + useCustomer(id). |
 | Scheduling (Calendar, Time Clock) | 2 | LIVE Supabase | **DONE (B4b S50)** -- useSchedule + useTeam. |
-| Resources (Team) | 1 | LIVE Supabase | **DONE (B4b S50)** -- useTeam + useJobs. Dispatch board. |
+| Resources (Team) | 1 | LIVE Supabase | **DONE (B4b S50)** -- useTeam + useJobs. Dispatch board. **U18 (S114):** Enhanced with drag-drop, haversine ETA, customer SMS, map view. |
 | Change Orders | 1 | LIVE Supabase | **DONE (B4c S51)** -- useChangeOrders hook. |
 | Inspections | 1 | LIVE Supabase | **DONE (B4c S51)** -- useInspections hook. |
 | Settings (+ Walkthrough Workflows) | 2 | LIVE Supabase | **DONE (B4c S51)** -- useTeam for members. **E6h (S79):** Walkthrough workflows settings. |
@@ -226,11 +226,11 @@ DEFERRED -- Specified but intentionally postponed
 | Ledger (13 pages) | 13 | LIVE Supabase | **DONE (D4 S70)** -- 13 hooks, 13 pages. GL engine. Double-entry. 5 EFs. |
 | Properties (14 pages) | 14 | LIVE Supabase | **DONE (D5b-D5d S71)** -- 11 hooks + 14 pages. Sidebar PROPERTIES section. |
 | Estimates (4 pages) | 4 | LIVE Supabase | **DONE (D8d S86)** -- List, editor, import, pricing. use-estimates.ts hook. |
-| Walkthroughs (3 pages) | 3 | LIVE Supabase | **DONE (E6f S79)** -- List, detail, bid view. use-walkthroughs.ts hook. |
+| Walkthroughs (3 pages) | 3 | LIVE Supabase | **DONE (E6f S79)** -- List, detail, bid view. use-walkthroughs.ts hook. **U15c (S114):** use-photo-clusters.ts hook (GPS proximity clustering). |
 | Revenue Insights (E4) | 1 | LIVE Supabase | **DONE (E4b S80)** -- use-revenue-insights.ts. UNCOMMITTED. |
 | Growth / Revenue Autopilot (E4) | 1 | LIVE Supabase | **DONE (E4e S80)** -- use-growth-actions.ts. UNCOMMITTED. |
 | Z (AI Chat + Voice) | 2 | LIVE Supabase | **Dashboard (B4e S54):** 22 files. z-voice page. **E2 (S78):** Wired to z-intelligence EF. |
-| **F1: Calls (S90)** | 3 | LIVE Supabase | **DONE** -- phone/, phone/sms/, phone/fax/ pages. use-phone.ts + use-fax.ts hooks. SignalWire integration. |
+| **F1: Calls (S90)** | 3 | LIVE Supabase | **DONE** -- phone/, phone/sms/, phone/fax/ pages. use-phone.ts + use-fax.ts hooks. SignalWire integration. **U23 (S114):** settings/phone/ page (6 tabs). use-phone-config.ts + use-phone-lines.ts + use-ring-groups.ts hooks. 5 trade presets. |
 | **F3: Meetings (S90)** | 4 | LIVE Supabase | **DONE** -- meetings/, meetings/room/, meetings/booking-types/, meetings/async-videos/ pages. use-meetings.ts + use-async-videos.ts hooks. LiveKit integration. |
 | **F4: Field Toolkit (S90)** | 8 | LIVE Supabase | **DONE** -- inspection-engine, osha-standards, moisture-readings, drying-logs, equipment, site-surveys, sketch-bid, team-chat pages. 6 hooks (use-inspection-engine, use-osha-standards, use-restoration-tools, use-site-surveys, use-sketch-bid, use-team-chat). |
 | **F5: Integrations (S90)** | 7 | LIVE Supabase | **DONE** -- payroll, fleet, hr, email, documents, vendors (rewired), purchase-orders (rewired) pages. 7 hooks (use-payroll, use-fleet, use-hr, use-email, use-documents, use-procurement, use-vendors rewired). |
@@ -697,7 +697,7 @@ Tech opens app -> Taps "Field Tools"
 - [x] U7: Payment Flow + Shell Pages — Stripe Connect, permits/SAs/reviews tables, 5 hooks, system health, deep workflows (review requests, SA auto-billing, automation engine backend)
 - [x] U8: Cross-System Metric Verification — 3 parallel audits, revenue paid-only filter, bid conversion fix, ops honest metrics
 - [ ] U9: Polish + Missing Features — PARTIAL (ops CRUD + forgot password done, remaining: loading/empty/error states audit, Flutter properties, notifications)
-- [ ] U10-U22: ~280 hours remaining. Embedded financing, form depth, templates, i18n, trade support, onboarding, data flow wiring, dispatch board, data import, subs, calendar sync, isolated feature wiring.
+- [x] U10-U23: ALL COMPLETE (S114). i18n, universal trade, GPS walkthrough, dispatch board, data import, subs, calendar sync, phone system config. ~448 hrs total.
 - **New tables (S111):** job_budgets, permits, service_agreements, service_agreement_visits, review_requests, system_health_checks, automations + approval expansion + stripe_connect fields
 - **New EFs (S111):** export-bid-pdf, export-invoice-pdf
 - **New hooks (S111):** use-automations, use-job-budgets, use-permits, use-service-agreements, use-warranties

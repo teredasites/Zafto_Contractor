@@ -299,7 +299,7 @@ function PaymentModal({ vendors, onSave, onClose }: {
             </div>
             <div>
               <label className="block text-sm font-medium text-main mb-1">Amount *</label>
-              <Input type="number" step="0.01" min="0.01" value={amount} onChange={(e) => setAmount(e.target.value)} required />
+              <Input type="number" step="0.01" min="0.01" value={amount} onChange={(e) => setAmount(e.target.value.replace(/[^0-9.]/g, ''))} required />
             </div>
           </div>
           <div>

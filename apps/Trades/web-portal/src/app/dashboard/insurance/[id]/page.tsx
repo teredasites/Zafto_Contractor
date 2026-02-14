@@ -810,17 +810,17 @@ function SupplementsTab({
           <div className="grid grid-cols-3 gap-3">
             <div>
               <label className="text-xs text-muted-foreground mb-1 block">Amount ($)</label>
-              <input type="number" placeholder="0" value={amount} onChange={(e) => setAmount(e.target.value)}
+              <input type="number" step="0.01" min="0" placeholder="0" value={amount} onChange={(e) => setAmount(e.target.value.replace(/[^0-9.]/g, ''))}
                 className="w-full px-3 py-1.5 text-sm rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
             </div>
             <div>
               <label className="text-xs text-muted-foreground mb-1 block">RCV</label>
-              <input type="number" placeholder="Optional" value={rcvAmount} onChange={(e) => setRcvAmount(e.target.value)}
+              <input type="number" step="0.01" min="0" placeholder="Optional" value={rcvAmount} onChange={(e) => setRcvAmount(e.target.value.replace(/[^0-9.]/g, ''))}
                 className="w-full px-3 py-1.5 text-sm rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
             </div>
             <div>
               <label className="text-xs text-muted-foreground mb-1 block">ACV</label>
-              <input type="number" placeholder="Optional" value={acvAmount} onChange={(e) => setAcvAmount(e.target.value)}
+              <input type="number" step="0.01" min="0" placeholder="Optional" value={acvAmount} onChange={(e) => setAcvAmount(e.target.value.replace(/[^0-9.]/g, ''))}
                 className="w-full px-3 py-1.5 text-sm rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
             </div>
           </div>

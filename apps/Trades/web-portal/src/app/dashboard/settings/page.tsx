@@ -2735,7 +2735,7 @@ function BusinessConfigSettings() {
                   <Input label="Name" placeholder="State Tax" value={newTaxName} onChange={(e) => setNewTaxName(e.target.value)} />
                 </div>
                 <div className="w-24">
-                  <Input label="Rate %" type="number" placeholder="6.35" value={newTaxRate} onChange={(e) => setNewTaxRate(e.target.value)} />
+                  <Input label="Rate %" type="number" step="0.01" min="0" max="100" placeholder="6.35" value={newTaxRate} onChange={(e) => setNewTaxRate(e.target.value.replace(/[^0-9.]/g, ''))} />
                 </div>
                 <div className="w-32">
                   <label className="text-xs font-medium text-muted mb-1 block">Applies To</label>
@@ -2789,7 +2789,7 @@ function BusinessConfigSettings() {
             <div className="space-y-4">
               <Input label="Invoice Number Format" placeholder="INV-{YYYY}-{NNNN}" value={invFormat} onChange={(e) => setInvFormat(e.target.value)} />
               <Input label="Bid Number Format" placeholder="BID-{YYMMDD}-{NNN}" value={bidFormat} onChange={(e) => setBidFormat(e.target.value)} />
-              <Input label="Bid Validity (days)" type="number" placeholder="30" value={bidValidity} onChange={(e) => setBidValidity(e.target.value)} />
+              <Input label="Bid Validity (days)" type="number" min="1" max="365" placeholder="30" value={bidValidity} onChange={(e) => setBidValidity(e.target.value.replace(/[^0-9]/g, ''))} />
               <p className="text-xs text-muted">Variables: {'{YYYY}'} = year, {'{YY}'} = 2-digit year, {'{MM}'} = month, {'{DD}'} = day, {'{NNNN}'} = sequence number, {'{NNN}'} = 3-digit sequence</p>
               <div className="flex gap-2 justify-end">
                 <Button variant="secondary" size="sm" onClick={() => setEditSection(null)}>Cancel</Button>
@@ -2843,8 +2843,8 @@ function BusinessConfigSettings() {
                   <option value="net_60">Net 60</option>
                 </select>
               </div>
-              <Input label="Late Fee Rate (%/month)" type="number" step="0.1" placeholder="1.5" value={lateFee} onChange={(e) => setLateFee(e.target.value)} />
-              <Input label="Early Payment Discount (%)" type="number" step="0.1" placeholder="2" value={earlyDiscount} onChange={(e) => setEarlyDiscount(e.target.value)} />
+              <Input label="Late Fee Rate (%/month)" type="number" step="0.1" min="0" max="100" placeholder="1.5" value={lateFee} onChange={(e) => setLateFee(e.target.value.replace(/[^0-9.]/g, ''))} />
+              <Input label="Early Payment Discount (%)" type="number" step="0.1" min="0" max="100" placeholder="2" value={earlyDiscount} onChange={(e) => setEarlyDiscount(e.target.value.replace(/[^0-9.]/g, ''))} />
               <div className="flex gap-2 justify-end">
                 <Button variant="secondary" size="sm" onClick={() => setEditSection(null)}>Cancel</Button>
                 <Button size="sm" onClick={handleSavePayment} disabled={saving}>{saving ? 'Saving...' : 'Save'}</Button>
