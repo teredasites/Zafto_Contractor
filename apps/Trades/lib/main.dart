@@ -3,12 +3,14 @@ import 'dart:ui';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'core/supabase_client.dart';
 import 'core/env.dart';
+import 'l10n/app_localizations.dart';
 import 'theme/theme_provider.dart';
 import 'theme/zafto_theme_builder.dart';
 import 'screens/home_screen_v2.dart';
@@ -135,6 +137,13 @@ class ZaftoApp extends ConsumerWidget {
       theme: themeData,
       darkTheme: themeData,
       themeMode: ThemeMode.system,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: AppLocalizations.supportedLocales,
       home: const _AppEntry(),
     );
   }
