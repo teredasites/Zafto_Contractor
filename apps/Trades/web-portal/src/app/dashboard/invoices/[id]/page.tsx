@@ -27,7 +27,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { StatusBadge, Badge } from '@/components/ui/badge';
 import { formatCurrency, formatDate, formatDateTime, cn } from '@/lib/utils';
-import { useInvoice } from '@/lib/hooks/use-invoices';
+import { useInvoice, useInvoices } from '@/lib/hooks/use-invoices';
+import { getSupabase } from '@/lib/supabase';
 import type { Invoice, InvoiceLineItem } from '@/types';
 
 export default function InvoiceDetailPage() {
@@ -36,8 +37,10 @@ export default function InvoiceDetailPage() {
   const invoiceId = params.id as string;
 
   const { invoice, loading } = useInvoice(invoiceId);
+  const { sendInvoice, createInvoice, deleteInvoice } = useInvoices();
   const [menuOpen, setMenuOpen] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
 
   if (loading) {
     return (
@@ -92,14 +95,66 @@ export default function InvoiceDetailPage() {
         </div>
         <div className="flex items-center gap-2">
           {invoice.status === 'draft' && (
-            <Button>
+            <Button disabled={actionLoading} onClick={async () => {
+              const custEmail = invoice.customer?.email;
+              if (!custEmail) { alert('No customer email on file.'); return; }
+              if (!confirm(`Send invoice to ${custEmail}?`)) return;
+              setActionLoading(true);
+              try {
+                const supabase = getSupabase();
+                const { data: { session } } = await supabase.auth.getSession();
+                if (!session) throw new Error('Not authenticated');
+                const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+                const pdfRes = await fetch(`${baseUrl}/functions/v1/export-invoice-pdf?invoice_id=${invoice.id}`, {
+                  headers: { 'Authorization': `Bearer ${session.access_token}`, 'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '' },
+                });
+                const pdfHtml = pdfRes.ok ? await pdfRes.text() : '';
+                await supabase.functions.invoke('sendgrid-email', {
+                  body: {
+                    action: 'send',
+                    to_email: custEmail,
+                    to_name: `${invoice.customer?.firstName || ''} ${invoice.customer?.lastName || ''}`.trim(),
+                    subject: `Invoice ${invoice.invoiceNumber || ''} — $${invoice.total?.toFixed(2) || '0.00'} Due`,
+                    body_html: pdfHtml || `<p>Your invoice is ready. Amount due: $${invoice.amountDue?.toFixed(2) || '0.00'}</p>`,
+                    email_type: 'invoice_send',
+                    related_type: 'invoice',
+                    related_id: invoice.id,
+                  },
+                });
+                await sendInvoice(invoice.id);
+                window.location.reload();
+              } catch (e) { alert(e instanceof Error ? e.message : 'Failed to send'); }
+              setActionLoading(false);
+            }}>
               <Send size={16} />
               Send Invoice
             </Button>
           )}
           {(invoice.status === 'sent' || invoice.status === 'overdue') && (
             <>
-              <Button variant="secondary">
+              <Button variant="secondary" disabled={actionLoading} onClick={async () => {
+                const custEmail = invoice.customer?.email;
+                if (!custEmail) { alert('No customer email on file.'); return; }
+                if (!confirm(`Send payment reminder to ${custEmail}?`)) return;
+                setActionLoading(true);
+                try {
+                  const supabase = getSupabase();
+                  await supabase.functions.invoke('sendgrid-email', {
+                    body: {
+                      action: 'send',
+                      to_email: custEmail,
+                      to_name: `${invoice.customer?.firstName || ''} ${invoice.customer?.lastName || ''}`.trim(),
+                      subject: `Payment Reminder: Invoice ${invoice.invoiceNumber || ''} — $${invoice.amountDue?.toFixed(2) || '0.00'} Due`,
+                      body_html: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;"><h2>Payment Reminder</h2><p>This is a friendly reminder that invoice <strong>${invoice.invoiceNumber || ''}</strong> has an outstanding balance of <strong>$${invoice.amountDue?.toFixed(2) || '0.00'}</strong>.</p><p>Due date: ${invoice.dueDate ? new Date(invoice.dueDate).toLocaleDateString() : 'N/A'}</p><p>If you have already sent payment, please disregard this notice.</p></div>`,
+                      email_type: 'invoice_reminder',
+                      related_type: 'invoice',
+                      related_id: invoice.id,
+                    },
+                  });
+                  alert('Reminder sent successfully');
+                } catch (e) { alert(e instanceof Error ? e.message : 'Failed to send'); }
+                setActionLoading(false);
+              }}>
                 <Mail size={16} />
                 Send Reminder
               </Button>
@@ -123,24 +178,77 @@ export default function InvoiceDetailPage() {
               <>
                 <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />
                 <div className="absolute right-0 top-full mt-1 w-48 bg-surface border border-main rounded-lg shadow-lg py-1 z-50">
-                  <button className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
+                  <button onClick={() => { setMenuOpen(false); router.push(`/dashboard/invoices/new?edit=${invoice.id}`); }} className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
                     <Edit size={16} />
                     Edit Invoice
                   </button>
-                  <button className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
+                  <button onClick={async () => {
+                    setMenuOpen(false);
+                    const supabase = getSupabase();
+                    const { data: { session } } = await supabase.auth.getSession();
+                    if (!session) return;
+                    const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+                    const res = await fetch(`${baseUrl}/functions/v1/export-invoice-pdf?invoice_id=${invoice.id}`, {
+                      headers: {
+                        'Authorization': `Bearer ${session.access_token}`,
+                        'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
+                      },
+                    });
+                    if (!res.ok) return;
+                    const html = await res.text();
+                    const blob = new Blob([html], { type: 'text/html' });
+                    window.open(URL.createObjectURL(blob), '_blank');
+                  }} className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
                     <Download size={16} />
                     Download PDF
                   </button>
-                  <button className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
+                  <button onClick={async () => {
+                    setMenuOpen(false);
+                    const supabase = getSupabase();
+                    const { data: { session } } = await supabase.auth.getSession();
+                    if (!session) return;
+                    const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+                    const res = await fetch(`${baseUrl}/functions/v1/export-invoice-pdf?invoice_id=${invoice.id}`, {
+                      headers: { 'Authorization': `Bearer ${session.access_token}`, 'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '' },
+                    });
+                    if (!res.ok) return;
+                    const html = await res.text();
+                    const w = window.open('', '_blank');
+                    if (w) { w.document.write(html); w.document.close(); w.print(); }
+                  }} className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
                     <Printer size={16} />
                     Print
                   </button>
-                  <button className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
+                  <button onClick={async () => {
+                    setMenuOpen(false);
+                    try {
+                      await createInvoice({
+                        customerId: invoice.customerId,
+                        jobId: invoice.jobId || undefined,
+                        lineItems: invoice.lineItems,
+                        subtotal: invoice.subtotal,
+                        taxRate: invoice.taxRate,
+                        tax: invoice.tax,
+                        total: invoice.total,
+                        dueDate: invoice.dueDate,
+                        notes: invoice.notes,
+                        status: 'draft',
+                      } as Partial<Invoice>);
+                      router.push('/dashboard/invoices');
+                    } catch (e) { alert(e instanceof Error ? e.message : 'Failed to duplicate'); }
+                  }} className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
                     <Copy size={16} />
                     Duplicate
                   </button>
                   <hr className="my-1 border-main" />
-                  <button className="w-full px-4 py-2 text-left text-sm hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 flex items-center gap-2">
+                  <button onClick={async () => {
+                    setMenuOpen(false);
+                    if (!confirm('Void this invoice? This cannot be undone.')) return;
+                    try {
+                      await deleteInvoice(invoice.id);
+                      router.push('/dashboard/invoices');
+                    } catch (e) { alert(e instanceof Error ? e.message : 'Failed to void'); }
+                  }} className="w-full px-4 py-2 text-left text-sm hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 flex items-center gap-2">
                     <Trash2 size={16} />
                     Void Invoice
                   </button>
@@ -445,12 +553,23 @@ function RecordPaymentModal({ invoice, onClose }: { invoice: Invoice; onClose: (
   const [amount, setAmount] = useState(invoice.amountDue.toString());
   const [method, setMethod] = useState('card');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+  const [saving, setSaving] = useState(false);
+  const { recordPayment } = useInvoices();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Record payment to Firestore
-    console.log('Recording payment:', { amount, method, date });
-    onClose();
+    const paymentAmount = parseFloat(amount);
+    if (isNaN(paymentAmount) || paymentAmount <= 0) return;
+
+    setSaving(true);
+    try {
+      await recordPayment(invoice.id, paymentAmount, method);
+      onClose();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to record payment');
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (

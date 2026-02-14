@@ -28,6 +28,7 @@ import { DataTable } from '@/components/ui/data-table';
 import { CommandPalette } from '@/components/command-palette';
 import { cn, formatCurrency } from '@/lib/utils';
 import { useTeam } from '@/lib/hooks/use-jobs';
+import { getSupabase } from '@/lib/supabase';
 
 // Time entry status
 type TimeEntryStatus = 'active' | 'completed' | 'approved' | 'rejected';
@@ -181,19 +182,28 @@ export default function TimeClockPage() {
     setCurrentWeek(newDate);
   };
 
-  const handleApprove = (entryId: string) => {
-    // In production, this would update Firestore
-    console.log('Approving entry:', entryId);
+  const handleApprove = async (entryId: string) => {
+    const supabase = getSupabase();
+    await supabase.from('time_entries').update({ status: 'approved', approved_at: new Date().toISOString() }).eq('id', entryId);
   };
 
-  const handleReject = (entryId: string) => {
-    // In production, this would update Firestore
-    console.log('Rejecting entry:', entryId);
+  const handleReject = async (entryId: string) => {
+    const supabase = getSupabase();
+    await supabase.from('time_entries').update({ status: 'rejected' }).eq('id', entryId);
   };
 
   const handleExport = () => {
-    // In production, this would generate CSV/PDF
-    console.log('Exporting timesheet data');
+    const headers = ['Employee', 'Date', 'Clock In', 'Clock Out', 'Hours', 'Break (min)', 'Status', 'Job', 'Notes'];
+    const rows = weekEntries.map(e => [
+      e.userName, e.date.toLocaleDateString(), formatTime(e.clockIn),
+      e.clockOut ? formatTime(e.clockOut) : '-', e.totalHours?.toFixed(2) || '-',
+      e.breakMinutes.toString(), e.status, e.jobTitle || '-', e.notes || '',
+    ]);
+    const csv = [headers.join(','), ...rows.map(r => r.map(c => `"${c}"`).join(','))].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = `timesheet-${currentWeek.toISOString().slice(0, 10)}.csv`; a.click();
+    URL.revokeObjectURL(url);
   };
 
   const formatTime = (date: Date) => {
@@ -530,10 +540,15 @@ export default function TimeClockPage() {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <Button variant="secondary" size="sm">
+                <Button variant="secondary" size="sm" onClick={() => setView('list')}>
                   Review All
                 </Button>
-                <Button size="sm" onClick={() => console.log('Approving all pending')}>
+                <Button size="sm" onClick={async () => {
+                  if (!confirm('Approve all pending time entries?')) return;
+                  const pending = weekEntries.filter(e => e.status === 'completed');
+                  for (const entry of pending) { await handleApprove(entry.id); }
+                  window.location.reload();
+                }}>
                   <Check size={16} />
                   Approve All
                 </Button>

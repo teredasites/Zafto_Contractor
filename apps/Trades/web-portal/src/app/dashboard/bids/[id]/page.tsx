@@ -31,6 +31,7 @@ import { Button } from '@/components/ui/button';
 import { StatusBadge, Badge } from '@/components/ui/badge';
 import { formatCurrency, formatDate, formatDateTime, cn, getStatusColor } from '@/lib/utils';
 import { useBid, useBids } from '@/lib/hooks/use-bids';
+import { getSupabase } from '@/lib/supabase';
 import type { Bid, BidOption } from '@/types';
 
 // Timeline event type
@@ -48,7 +49,7 @@ export default function BidDetailPage() {
   const bidId = params.id as string;
 
   const { bid, loading } = useBid(bidId);
-  const { sendBid, deleteBid, convertToJob } = useBids();
+  const { sendBid, deleteBid, convertToJob, createBid } = useBids();
   const [activeOptionIndex, setActiveOptionIndex] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
@@ -164,9 +165,35 @@ export default function BidDetailPage() {
                 Edit
               </Button>
               <Button disabled={actionLoading} onClick={async () => {
-                if (!confirm('Mark this bid as sent to customer?')) return;
+                if (!bid.customerEmail) { alert('No customer email on file. Please add an email address first.'); return; }
+                if (!confirm(`Send bid to ${bid.customerEmail}?`)) return;
                 setActionLoading(true);
-                try { await sendBid(bid.id); window.location.reload(); } catch (e) { alert(e instanceof Error ? e.message : 'Failed to send'); }
+                try {
+                  // Generate PDF HTML
+                  const supabase = getSupabase();
+                  const { data: { session } } = await supabase.auth.getSession();
+                  if (!session) throw new Error('Not authenticated');
+                  const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+                  const pdfRes = await fetch(`${baseUrl}/functions/v1/export-bid-pdf?bid_id=${bid.id}`, {
+                    headers: { 'Authorization': `Bearer ${session.access_token}`, 'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '' },
+                  });
+                  const pdfHtml = pdfRes.ok ? await pdfRes.text() : '';
+                  // Send email via sendgrid-email EF
+                  await supabase.functions.invoke('sendgrid-email', {
+                    body: {
+                      action: 'send',
+                      to_email: bid.customerEmail,
+                      to_name: bid.customerName || '',
+                      subject: `Bid ${bid.bidNumber || ''}: ${bid.title || 'Your Bid'}`,
+                      body_html: pdfHtml || `<p>Please find your bid attached. View it online at: ${window.location.origin}/portal/bids/${bid.id}</p>`,
+                      email_type: 'bid_send',
+                      related_type: 'bid',
+                      related_id: bid.id,
+                    },
+                  });
+                  await sendBid(bid.id);
+                  window.location.reload();
+                } catch (e) { alert(e instanceof Error ? e.message : 'Failed to send'); }
                 setActionLoading(false);
               }}>
                 <Send size={16} />
@@ -193,10 +220,29 @@ export default function BidDetailPage() {
               Convert to Job
             </Button>
           )}
-          <Button variant="secondary" onClick={() => {
-            // TODO: Duplicate bid and navigate to new bid
-            console.log('Duplicating bid:', bid.id);
-            router.push(`/dashboard/bids/new?duplicate=${bid.id}`);
+          <Button variant="secondary" onClick={async () => {
+            try {
+              setActionLoading(true);
+              const newId = await createBid({
+                customerId: bid.customerId || undefined,
+                customerName: bid.customerName ? `${bid.customerName} (Copy)` : undefined,
+                customerEmail: bid.customerEmail || undefined,
+                title: `${bid.title} (Copy)`,
+                scopeOfWork: bid.scopeOfWork || undefined,
+                options: bid.options || [],
+                addOns: bid.addOns || [],
+                taxRate: bid.taxRate,
+                tax: bid.tax,
+                subtotal: bid.subtotal,
+                total: bid.total,
+                termsAndConditions: bid.termsAndConditions || undefined,
+              });
+              router.push(`/dashboard/bids/${newId}`);
+            } catch (e) {
+              alert(e instanceof Error ? e.message : 'Failed to duplicate');
+            } finally {
+              setActionLoading(false);
+            }
           }}>
             <Copy size={16} />
             Duplicate
@@ -211,7 +257,23 @@ export default function BidDetailPage() {
             </Button>
             {menuOpen && (
               <div className="absolute right-0 top-full mt-1 w-48 bg-surface border border-main rounded-lg shadow-lg py-1 z-10">
-                <button onClick={() => { setMenuOpen(false); alert('PDF export coming in Phase G'); }} className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
+                <button onClick={async () => {
+                  setMenuOpen(false);
+                  const supabase = getSupabase();
+                  const { data: { session } } = await supabase.auth.getSession();
+                  if (!session) return;
+                  const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+                  const res = await fetch(`${baseUrl}/functions/v1/export-bid-pdf?bid_id=${bid.id}`, {
+                    headers: {
+                      'Authorization': `Bearer ${session.access_token}`,
+                      'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
+                    },
+                  });
+                  if (!res.ok) return;
+                  const html = await res.text();
+                  const blob = new Blob([html], { type: 'text/html' });
+                  window.open(URL.createObjectURL(blob), '_blank');
+                }} className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
                   <Download size={16} />
                   Download PDF
                 </button>
