@@ -177,6 +177,70 @@ export function useInvoices() {
     if (err) throw err;
   };
 
+  // Create draft invoice from completed job
+  const createInvoiceFromJob = async (jobId: string): Promise<string | null> => {
+    const supabase = getSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+    const companyId = user.app_metadata?.company_id;
+    if (!companyId) throw new Error('No company');
+
+    // Fetch job
+    const { data: job, error: jobErr } = await supabase
+      .from('jobs')
+      .select('*, customers(name, email, phone)')
+      .eq('id', jobId)
+      .single();
+    if (jobErr || !job) throw new Error('Job not found');
+
+    // Generate invoice number
+    const year = new Date().getFullYear();
+    const { count } = await supabase
+      .from('invoices')
+      .select('id', { count: 'exact', head: true })
+      .eq('company_id', companyId);
+    const seq = String((count || 0) + 1).padStart(4, '0');
+    const invoiceNumber = `INV-${year}-${seq}`;
+
+    const amount = (job.actual_cost as number) || (job.estimated_value as number) || 0;
+    const customer = job.customers as Record<string, unknown> | null;
+
+    const { data: inv, error: invErr } = await supabase
+      .from('invoices')
+      .insert({
+        company_id: companyId,
+        invoice_number: invoiceNumber,
+        customer_id: job.customer_id || null,
+        job_id: jobId,
+        customer: customer ? {
+          name: customer.name,
+          email: customer.email,
+          phone: customer.phone,
+        } : null,
+        title: (job.title as string) || 'Job Invoice',
+        status: 'draft',
+        line_items: [{
+          description: (job.title as string) || 'Services rendered',
+          quantity: 1,
+          unit: 'job',
+          unitPrice: amount,
+          category: 'labor',
+        }],
+        subtotal: amount,
+        tax_rate: 0,
+        tax: 0,
+        total: amount,
+        amount_due: amount,
+        amount_paid: 0,
+        due_date: new Date(Date.now() + 30 * 86400000).toISOString(),
+      })
+      .select('id')
+      .single();
+    if (invErr) throw invErr;
+    fetchInvoices();
+    return inv?.id || null;
+  };
+
   return {
     invoices,
     loading,
@@ -185,6 +249,7 @@ export function useInvoices() {
     updateInvoice,
     recordPayment,
     sendInvoice,
+    createInvoiceFromJob,
     deleteInvoice,
     refetch: fetchInvoices,
   };

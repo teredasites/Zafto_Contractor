@@ -206,6 +206,81 @@ export function useBids() {
     if (err) throw err;
   };
 
+  // Convert estimate to bid — reads estimate + line items, creates bid
+  const convertEstimateToBid = async (estimateId: string): Promise<string | null> => {
+    const supabase = getSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+    const companyId = user.app_metadata?.company_id;
+    if (!companyId) throw new Error('No company');
+
+    // Fetch estimate
+    const { data: estimate, error: estErr } = await supabase
+      .from('estimates')
+      .select('*')
+      .eq('id', estimateId)
+      .single();
+    if (estErr || !estimate) throw new Error('Estimate not found');
+
+    // Fetch estimate line items
+    const { data: lineItems } = await supabase
+      .from('estimate_line_items')
+      .select('*')
+      .eq('estimate_id', estimateId)
+      .is('deleted_at', null)
+      .order('sort_order', { ascending: true });
+
+    // Build bid options from line items
+    const options = [{
+      name: 'Option A',
+      description: estimate.title || 'From Estimate',
+      lineItems: (lineItems || []).map((li: Record<string, unknown>) => ({
+        description: (li.description as string) || '',
+        quantity: (li.quantity as number) || 1,
+        unit: (li.unit_code as string) || 'each',
+        unitPrice: ((li.material_cost as number) || 0) + ((li.labor_cost as number) || 0) + ((li.equipment_cost as number) || 0),
+        category: 'materials',
+      })),
+    }];
+
+    const subtotal = (estimate.subtotal as number) || 0;
+    const taxRate = (estimate.tax_percent as number) || 0;
+    const tax = subtotal * (taxRate / 100);
+
+    // Generate bid number
+    const today = new Date();
+    const dateStr = today.toISOString().slice(2, 10).replace(/-/g, '');
+    const { count } = await supabase
+      .from('bids')
+      .select('id', { count: 'exact', head: true })
+      .eq('company_id', companyId);
+    const seq = String((count || 0) + 1).padStart(3, '0');
+    const bidNumber = `BID-${dateStr}-${seq}`;
+
+    const { data: bid, error: bidErr } = await supabase
+      .from('bids')
+      .insert({
+        company_id: companyId,
+        bid_number: bidNumber,
+        customer_id: estimate.customer_id || null,
+        job_id: estimate.job_id || null,
+        lead_id: estimate.lead_id || null,
+        title: estimate.title || 'From Estimate',
+        status: 'draft',
+        scope_of_work: estimate.notes || '',
+        options: options,
+        subtotal,
+        tax_rate: taxRate,
+        tax,
+        total: (estimate.grand_total as number) || subtotal + tax,
+        valid_until: new Date(Date.now() + 30 * 86400000).toISOString(),
+      })
+      .select('id')
+      .single();
+    if (bidErr) throw bidErr;
+    return bid?.id || null;
+  };
+
   return {
     bids,
     loading,
@@ -216,6 +291,7 @@ export function useBids() {
     acceptBid,
     rejectBid,
     convertToJob,
+    convertEstimateToBid,
     deleteBid,
     refetch: fetchBids,
   };

@@ -397,7 +397,79 @@ export function useEstimates() {
     else fetchEstimates();
   }, [fetchEstimates]);
 
-  return { estimates, loading, error, fetchEstimates, createEstimate, deleteEstimate };
+  // Create estimate from walkthrough — reads rooms, creates estimate + areas
+  const createEstimateFromWalkthrough = useCallback(async (walkthroughId: string): Promise<string | null> => {
+    const supabase = getSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return null;
+    const companyId = user.app_metadata?.company_id;
+    if (!companyId) return null;
+
+    // Fetch walkthrough
+    const { data: wt, error: wtErr } = await supabase
+      .from('walkthroughs')
+      .select('*')
+      .eq('id', walkthroughId)
+      .single();
+    if (wtErr || !wt) throw new Error('Walkthrough not found');
+
+    // Fetch walkthrough rooms
+    const { data: rooms } = await supabase
+      .from('walkthrough_rooms')
+      .select('*')
+      .eq('walkthrough_id', walkthroughId)
+      .order('sort_order', { ascending: true });
+
+    // Create estimate
+    const { data: est, error: estErr } = await supabase
+      .from('estimates')
+      .insert({
+        company_id: companyId,
+        title: (wt.name as string) || 'From Walkthrough',
+        estimate_type: 'regular',
+        customer_id: wt.customer_id || null,
+        job_id: wt.job_id || null,
+        property_address: wt.address || null,
+        property_city: wt.city || null,
+        property_state: wt.state || null,
+        property_zip: wt.zip_code || null,
+        status: 'draft',
+        created_by: user.id,
+      })
+      .select('id')
+      .single();
+    if (estErr || !est) throw new Error('Failed to create estimate');
+
+    // Create estimate areas from rooms
+    if (rooms && rooms.length > 0) {
+      const areaInserts = rooms.map((room: Record<string, unknown>, idx: number) => {
+        const dims = room.dimensions as Record<string, number> | null;
+        const length = dims?.length || 0;
+        const width = dims?.width || 0;
+        const height = dims?.height || 8;
+        return {
+          estimate_id: est.id,
+          company_id: companyId,
+          name: (room.name as string) || `Room ${idx + 1}`,
+          description: (room.notes as string) || null,
+          length_ft: length,
+          width_ft: width,
+          height_ft: height,
+          perimeter_lf: 2 * (length + width),
+          floor_sf: length * width,
+          wall_sf: 2 * (length + width) * height,
+          ceiling_sf: length * width,
+          sort_order: idx,
+        };
+      });
+      await supabase.from('estimate_areas').insert(areaInserts);
+    }
+
+    fetchEstimates();
+    return est.id;
+  }, [fetchEstimates]);
+
+  return { estimates, loading, error, fetchEstimates, createEstimate, createEstimateFromWalkthrough, deleteEstimate };
 }
 
 // ── Hook: Single Estimate with Areas + Line Items ──
