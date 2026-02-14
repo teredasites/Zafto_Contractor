@@ -11,6 +11,7 @@ import {
   Building,
   BookOpen,
   Scale,
+  Briefcase,
   Download,
   CheckCircle,
   AlertCircle,
@@ -34,7 +35,7 @@ const zbooksNav = [
   { label: 'Reports', href: '/dashboard/books/reports', active: true },
 ];
 
-type ReportTab = 'pnl' | 'balance_sheet' | 'cash_flow' | 'ar_aging' | 'ap_aging' | 'gl_detail' | 'trial_balance' | 'schedule_e';
+type ReportTab = 'pnl' | 'balance_sheet' | 'cash_flow' | 'ar_aging' | 'ap_aging' | 'gl_detail' | 'trial_balance' | 'schedule_e' | 'job_costing';
 
 const reportTabs: { key: ReportTab; label: string; icon: typeof TrendingUp }[] = [
   { key: 'pnl', label: 'P&L', icon: TrendingUp },
@@ -45,6 +46,7 @@ const reportTabs: { key: ReportTab; label: string; icon: typeof TrendingUp }[] =
   { key: 'gl_detail', label: 'GL Detail', icon: BookOpen },
   { key: 'trial_balance', label: 'Trial Balance', icon: FileText },
   { key: 'schedule_e', label: 'Schedule E', icon: Building },
+  { key: 'job_costing', label: 'Job Costing', icon: Briefcase },
 ];
 
 function getDateRange(period: string): { start: string; end: string } {
@@ -182,6 +184,23 @@ interface ScheduleEData {
   totalNet: number;
 }
 
+interface JobCostingLine {
+  jobId: string;
+  jobName: string;
+  revenue: number;
+  costs: number;
+  profit: number;
+  margin: number;
+}
+
+interface JobCostingData {
+  jobs: JobCostingLine[];
+  totalRevenue: number;
+  totalCosts: number;
+  totalProfit: number;
+  overallMargin: number;
+}
+
 const SCHEDULE_E_CATEGORIES: { key: string; label: string }[] = [
   { key: 'advertising', label: 'Advertising' },
   { key: 'auto_and_travel', label: 'Auto and travel' },
@@ -233,6 +252,7 @@ export default function FinancialReportsPage() {
   const [glData, setGlData] = useState<{ entries: JournalDetail[]; openingBalance: number; closingBalance: number } | null>(null);
   const [tbData, setTbData] = useState<Awaited<ReturnType<typeof fetchTrialBalance>> | null>(null);
   const [scheduleEData, setScheduleEData] = useState<ScheduleEData | null>(null);
+  const [jobCostingData, setJobCostingData] = useState<JobCostingData | null>(null);
   const [reportLoading, setReportLoading] = useState(false);
 
   const runReport = async () => {
@@ -337,6 +357,65 @@ export default function FinancialReportsPage() {
         });
         break;
       }
+      case 'job_costing': {
+        const supabase = getSupabase();
+
+        // Revenue: invoices linked to jobs
+        const { data: invData } = await supabase
+          .from('invoices')
+          .select('job_id, total, jobs!inner(id, name)')
+          .not('job_id', 'is', null)
+          .in('status', ['sent', 'paid', 'partial', 'overdue'])
+          .gte('issue_date', range.start)
+          .lte('issue_date', range.end);
+
+        // Costs: expenses linked to jobs
+        const { data: costData } = await supabase
+          .from('expense_records')
+          .select('job_id, amount, jobs!inner(id, name)')
+          .not('job_id', 'is', null)
+          .in('status', ['approved', 'posted'])
+          .gte('expense_date', range.start)
+          .lte('expense_date', range.end);
+
+        // Aggregate by job
+        const jobMap = new Map<string, { name: string; revenue: number; costs: number }>();
+
+        for (const row of (invData || []) as Record<string, unknown>[]) {
+          const jid = row.job_id as string;
+          const jobObj = row.jobs as { name: string } | null;
+          if (!jobMap.has(jid)) {
+            jobMap.set(jid, { name: jobObj?.name || 'Unknown Job', revenue: 0, costs: 0 });
+          }
+          jobMap.get(jid)!.revenue += Number(row.total || 0);
+        }
+
+        for (const row of (costData || []) as Record<string, unknown>[]) {
+          const jid = row.job_id as string;
+          const jobObj = row.jobs as { name: string } | null;
+          if (!jobMap.has(jid)) {
+            jobMap.set(jid, { name: jobObj?.name || 'Unknown Job', revenue: 0, costs: 0 });
+          }
+          jobMap.get(jid)!.costs += Number(row.amount || 0);
+        }
+
+        const jobLines: JobCostingLine[] = [...jobMap.entries()].map(([jobId, { name, revenue, costs }]) => {
+          const profit = revenue - costs;
+          const margin = revenue > 0 ? (profit / revenue) * 100 : 0;
+          return { jobId, jobName: name, revenue, costs, profit, margin };
+        });
+
+        // Sort by revenue descending
+        jobLines.sort((a, b) => b.revenue - a.revenue);
+
+        const totalRevenue = jobLines.reduce((s, j) => s + j.revenue, 0);
+        const totalCosts = jobLines.reduce((s, j) => s + j.costs, 0);
+        const totalProfit = totalRevenue - totalCosts;
+        const overallMargin = totalRevenue > 0 ? (totalProfit / totalRevenue) * 100 : 0;
+
+        setJobCostingData({ jobs: jobLines, totalRevenue, totalCosts, totalProfit, overallMargin });
+        break;
+      }
     }
     setReportLoading(false);
   };
@@ -347,7 +426,7 @@ export default function FinancialReportsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
 
-  const needsDateRange = ['pnl', 'cash_flow', 'gl_detail', 'schedule_e'].includes(activeTab);
+  const needsDateRange = ['pnl', 'cash_flow', 'gl_detail', 'schedule_e', 'job_costing'].includes(activeTab);
   const needsAsOfDate = ['balance_sheet', 'trial_balance'].includes(activeTab);
   const needsAccountSelect = activeTab === 'gl_detail';
 
@@ -769,6 +848,106 @@ export default function FinancialReportsPage() {
                   </CardContent>
                 </Card>
               )}
+            </div>
+          )}
+
+          {/* Job Costing P&L */}
+          {activeTab === 'job_costing' && jobCostingData && (
+            <div className="space-y-6">
+              {/* Summary Cards */}
+              <div className="grid grid-cols-4 gap-4">
+                <Card><CardContent className="p-4 text-center">
+                  <p className="text-xs text-muted uppercase">Total Revenue</p>
+                  <p className="text-xl font-semibold text-main mt-1 tabular-nums">{formatCurrency(jobCostingData.totalRevenue)}</p>
+                </CardContent></Card>
+                <Card><CardContent className="p-4 text-center">
+                  <p className="text-xs text-muted uppercase">Total Costs</p>
+                  <p className="text-xl font-semibold text-main mt-1 tabular-nums">{formatCurrency(jobCostingData.totalCosts)}</p>
+                </CardContent></Card>
+                <Card><CardContent className="p-4 text-center">
+                  <p className="text-xs text-muted uppercase">Total Profit</p>
+                  <p className={cn('text-xl font-semibold mt-1 tabular-nums', jobCostingData.totalProfit >= 0 ? 'text-emerald-600' : 'text-red-500')}>
+                    {formatCurrency(jobCostingData.totalProfit)}
+                  </p>
+                </CardContent></Card>
+                <Card><CardContent className="p-4 text-center">
+                  <p className="text-xs text-muted uppercase">Overall Margin</p>
+                  <p className={cn('text-xl font-semibold mt-1 tabular-nums', jobCostingData.overallMargin >= 0 ? 'text-emerald-600' : 'text-red-500')}>
+                    {jobCostingData.overallMargin.toFixed(1)}%
+                  </p>
+                </CardContent></Card>
+              </div>
+
+              {/* Per-Job Table */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Job-Level Profitability</CardTitle>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-default">
+                        <th className="text-left px-3 py-2 text-muted font-medium">Job</th>
+                        <th className="text-right px-3 py-2 text-muted font-medium">Revenue</th>
+                        <th className="text-right px-3 py-2 text-muted font-medium">Costs</th>
+                        <th className="text-right px-3 py-2 text-muted font-medium">Profit</th>
+                        <th className="text-right px-3 py-2 text-muted font-medium">Margin</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {jobCostingData.jobs.length === 0 ? (
+                        <tr>
+                          <td colSpan={5} className="px-3 py-8 text-center text-muted">
+                            <Briefcase size={32} className="mx-auto mb-2 opacity-50" />
+                            <p>No job revenue or costs found for this period</p>
+                            <p className="text-xs mt-1">Create invoices and log expenses against jobs to see profitability</p>
+                          </td>
+                        </tr>
+                      ) : (
+                        <>
+                          {jobCostingData.jobs.map(job => (
+                            <tr key={job.jobId} className="border-b border-default last:border-b-0 hover:bg-secondary/50">
+                              <td className="px-3 py-2 text-main font-medium">{job.jobName}</td>
+                              <td className="px-3 py-2 text-right tabular-nums text-main">{formatCurrency(job.revenue)}</td>
+                              <td className="px-3 py-2 text-right tabular-nums text-main">{formatCurrency(job.costs)}</td>
+                              <td className={cn('px-3 py-2 text-right tabular-nums font-medium', job.profit >= 0 ? 'text-emerald-600' : 'text-red-500')}>
+                                {formatCurrency(job.profit)}
+                              </td>
+                              <td className="px-3 py-2 text-right">
+                                <div className="flex items-center justify-end gap-2">
+                                  <div className="w-16 h-1.5 bg-secondary rounded-full overflow-hidden">
+                                    <div
+                                      className={cn(
+                                        'h-full rounded-full transition-all',
+                                        job.margin < 0 ? 'bg-red-500' : job.margin < 15 ? 'bg-amber-400' : 'bg-emerald-500'
+                                      )}
+                                      style={{ width: `${Math.min(Math.max(job.margin, 0), 100)}%` }}
+                                    />
+                                  </div>
+                                  <span className={cn('text-xs tabular-nums w-12 text-right', job.margin < 0 ? 'text-red-500' : 'text-muted')}>
+                                    {job.margin.toFixed(1)}%
+                                  </span>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                          <tr className="border-t-2 border-default font-bold">
+                            <td className="px-3 py-3 text-main">Totals</td>
+                            <td className="px-3 py-3 text-right tabular-nums text-main">{formatCurrency(jobCostingData.totalRevenue)}</td>
+                            <td className="px-3 py-3 text-right tabular-nums text-main">{formatCurrency(jobCostingData.totalCosts)}</td>
+                            <td className={cn('px-3 py-3 text-right tabular-nums', jobCostingData.totalProfit >= 0 ? 'text-emerald-600' : 'text-red-500')}>
+                              {formatCurrency(jobCostingData.totalProfit)}
+                            </td>
+                            <td className={cn('px-3 py-3 text-right tabular-nums', jobCostingData.overallMargin >= 0 ? 'text-emerald-600' : 'text-red-500')}>
+                              {jobCostingData.overallMargin.toFixed(1)}%
+                            </td>
+                          </tr>
+                        </>
+                      )}
+                    </tbody>
+                  </table>
+                </CardContent>
+              </Card>
             </div>
           )}
         </>

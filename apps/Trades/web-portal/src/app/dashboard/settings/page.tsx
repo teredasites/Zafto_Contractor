@@ -44,6 +44,8 @@ import { getSupabase } from '@/lib/supabase';
 import { useTeam } from '@/lib/hooks/use-jobs';
 import { usePermissions, TierGate, PERMISSIONS, ROLE_PERMISSIONS, type Permission } from '@/components/permission-gate';
 import { useBranches, useCustomRoles, useFormTemplates, useCertifications, useApiKeys } from '@/lib/hooks/use-enterprise';
+import { useApprovals } from '@/lib/hooks/use-approvals';
+import type { ApprovalThresholdData } from '@/lib/hooks/pm-mappers';
 import type { Branch, CustomRole, FormTemplate, Certification } from '@/lib/hooks/use-enterprise';
 
 type SettingsTab = 'profile' | 'company' | 'team' | 'billing' | 'notifications' | 'appearance' | 'security' | 'integrations' | 'branches' | 'roles' | 'trades' | 'forms' | 'apikeys';
@@ -1211,6 +1213,7 @@ function BranchesSettings() {
 function RolesSettings() {
   const { roles, loading, createRole, updateRole, deleteRole } = useCustomRoles();
   const { isBusinessOrHigher, isEnterprise } = usePermissions();
+  const { thresholds, createThreshold, updateThreshold } = useApprovals();
   const [expandedRole, setExpandedRole] = useState<string | null>(null);
 
   const permissionCategories = [
@@ -1442,26 +1445,11 @@ function RolesSettings() {
               <Button variant="secondary" className="mt-4">Upgrade Plan</Button>
             </div>
           ) : (
-            <div className="space-y-4">
-              <ToggleItem
-                label="Bid approval threshold"
-                description="Bids over a set amount require admin or owner approval before sending"
-                checked={false}
-                onChange={() => {}}
-              />
-              <ToggleItem
-                label="Change order approval"
-                description="Change orders require owner approval before execution"
-                checked={false}
-                onChange={() => {}}
-              />
-              <ToggleItem
-                label="Expense approval"
-                description="Expenses over a set amount require manager approval"
-                checked={false}
-                onChange={() => {}}
-              />
-            </div>
+            <ApprovalWorkflowToggles
+              thresholds={thresholds}
+              createThreshold={createThreshold}
+              updateThreshold={updateThreshold}
+            />
           )}
         </CardContent>
       </Card>
@@ -1716,6 +1704,79 @@ function ToggleItem({
           )}
         />
       </button>
+    </div>
+  );
+}
+
+const APPROVAL_ENTITY_TYPES = [
+  { entityType: 'bid', label: 'Bid approval threshold', description: 'Bids over a set amount require admin or owner approval before sending', defaultAmount: 5000 },
+  { entityType: 'change_order', label: 'Change order approval', description: 'Change orders require owner approval before execution', defaultAmount: 1000 },
+  { entityType: 'expense', label: 'Expense approval', description: 'Expenses over a set amount require manager approval', defaultAmount: 2500 },
+] as const;
+
+function ApprovalWorkflowToggles({
+  thresholds,
+  createThreshold,
+  updateThreshold,
+}: {
+  thresholds: ApprovalThresholdData[];
+  createThreshold: (data: { entityType: string; thresholdAmount: number; requiresRole: string }) => Promise<string>;
+  updateThreshold: (id: string, data: { thresholdAmount?: number; requiresRole?: string; isActive?: boolean }) => Promise<void>;
+}) {
+  const [amounts, setAmounts] = useState<Record<string, string>>({});
+
+  const getThreshold = (entityType: string) =>
+    thresholds.find((t) => t.entityType === entityType && t.isActive);
+
+  const handleToggle = async (entityType: string, defaultAmount: number) => {
+    const existing = getThreshold(entityType);
+    if (existing) {
+      await updateThreshold(existing.id, { isActive: false });
+    } else {
+      const amt = amounts[entityType] ? Number(amounts[entityType]) : defaultAmount;
+      await createThreshold({ entityType, thresholdAmount: amt, requiresRole: 'owner' });
+    }
+  };
+
+  const handleAmountBlur = async (entityType: string) => {
+    const existing = getThreshold(entityType);
+    const newAmt = Number(amounts[entityType]);
+    if (existing && newAmt > 0 && newAmt !== existing.thresholdAmount) {
+      await updateThreshold(existing.id, { thresholdAmount: newAmt });
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      {APPROVAL_ENTITY_TYPES.map(({ entityType, label, description, defaultAmount }) => {
+        const threshold = getThreshold(entityType);
+        const isActive = !!threshold;
+        return (
+          <div key={entityType} className="space-y-2">
+            <ToggleItem
+              label={label}
+              description={description}
+              checked={isActive}
+              onChange={() => handleToggle(entityType, defaultAmount)}
+            />
+            {isActive && (
+              <div className="ml-0 pl-4 border-l-2 border-accent/30 flex items-center gap-3">
+                <label className="text-xs text-muted whitespace-nowrap">Threshold $</label>
+                <input
+                  type="number"
+                  min={0}
+                  step={100}
+                  value={amounts[entityType] ?? String(threshold.thresholdAmount)}
+                  onChange={(e) => setAmounts((prev) => ({ ...prev, [entityType]: e.target.value }))}
+                  onBlur={() => handleAmountBlur(entityType)}
+                  className="w-28 px-2 py-1 bg-secondary border border-default rounded text-sm text-main tabular-nums focus:outline-none focus:ring-1 focus:ring-accent"
+                />
+                <span className="text-xs text-muted">Requires: {threshold.requiresRole}</span>
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }

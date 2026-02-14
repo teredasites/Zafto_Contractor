@@ -24,6 +24,7 @@ import {
   Repeat,
   Loader2,
   BookOpen,
+  Scale,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -67,6 +68,7 @@ const QUICK_LINKS = [
   { label: 'Tax & 1099', href: '/dashboard/books/tax-settings', icon: FileText },
   { label: 'Recurring', href: '/dashboard/books/recurring', icon: Repeat },
   { label: 'Periods', href: '/dashboard/books/periods', icon: CalendarCheck },
+  { label: 'Budget vs Actual', href: '/dashboard/books/budgets', icon: Scale },
 ];
 
 interface PnLData {
