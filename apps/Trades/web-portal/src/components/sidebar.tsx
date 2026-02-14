@@ -63,6 +63,9 @@ import {
   GraduationCap,
   FileBarChart,
   Satellite,
+  PanelLeft,
+  PanelLeftClose,
+  Check,
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { ZMark } from '@/components/z-console/z-mark';
@@ -283,6 +286,27 @@ function saveMobileGroupState(state: Record<string, boolean>) {
   try { localStorage.setItem(MOBILE_STORAGE_KEY, JSON.stringify(state)); } catch { /* */ }
 }
 
+// ── Sidebar mode persistence ──
+
+type SidebarMode = 'expanded' | 'collapsed' | 'hover';
+const SIDEBAR_MODE_KEY = 'zafto_sidebar_mode';
+
+function loadSidebarMode(): SidebarMode {
+  if (typeof window === 'undefined') return 'hover';
+  try {
+    const stored = localStorage.getItem(SIDEBAR_MODE_KEY) as SidebarMode | null;
+    if (stored && ['expanded', 'collapsed', 'hover'].includes(stored)) return stored;
+  } catch { /* */ }
+  return 'hover';
+}
+
+function saveSidebarMode(mode: SidebarMode) {
+  try {
+    localStorage.setItem(SIDEBAR_MODE_KEY, mode);
+    window.dispatchEvent(new Event('sidebarModeChange'));
+  } catch { /* */ }
+}
+
 // ── Sidebar ──
 
 interface SidebarProps {
@@ -298,9 +322,14 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
   const [activeGroup, setActiveGroup] = useState<string | null>(null);
   const [hoveredGroup, setHoveredGroup] = useState<string | null>(null);
   const [mobileGroups, setMobileGroups] = useState<Record<string, boolean>>({ business: true });
+  const [sidebarMode, setSidebarMode] = useState<SidebarMode>('hover');
+  const [railHovered, setRailHovered] = useState(false);
+  const [controlOpen, setControlOpen] = useState(false);
   const railRef = useRef<HTMLElement>(null);
   const detailRef = useRef<HTMLDivElement>(null);
+  const controlRef = useRef<HTMLDivElement>(null);
   const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const railHoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { features } = useCompanyFeatures();
   const { profile } = useAuth();
 
@@ -315,9 +344,35 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
 
   const initials = user?.email ? user.email.substring(0, 2).toUpperCase() : 'U';
 
-  // Hydrate mobile state
+  // Is the sidebar currently showing expanded (wide) view?
+  const isWide = sidebarMode === 'expanded' || (sidebarMode === 'hover' && railHovered);
+  const sidebarWidth = isWide ? 220 : 48;
+
+  // Hydrate sidebar mode + mobile state
   useEffect(() => {
+    setSidebarMode(loadSidebarMode());
     setMobileGroups(loadMobileGroupState());
+  }, []);
+
+  const handleSetMode = useCallback((mode: SidebarMode) => {
+    setSidebarMode(mode);
+    saveSidebarMode(mode);
+    setControlOpen(false);
+    if (mode !== 'hover') setRailHovered(false);
+    if (mode === 'expanded') setActiveGroup(null);
+  }, []);
+
+  // Rail hover handlers for "hover" mode
+  const handleRailMouseEnter = useCallback(() => {
+    if (railHoverTimeoutRef.current) clearTimeout(railHoverTimeoutRef.current);
+    setRailHovered(true);
+  }, []);
+
+  const handleRailMouseLeave = useCallback(() => {
+    railHoverTimeoutRef.current = setTimeout(() => {
+      setRailHovered(false);
+      setActiveGroup(null);
+    }, 200);
   }, []);
 
   // Close detail panel on route change
@@ -325,6 +380,18 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
     setActiveGroup(null);
     setHoveredGroup(null);
   }, [pathname]);
+
+  // Close sidebar control popup on click outside
+  useEffect(() => {
+    if (!controlOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (controlRef.current && !controlRef.current.contains(e.target as Node)) {
+        setControlOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [controlOpen]);
 
   // Click outside to close detail panel
   useEffect(() => {
@@ -348,10 +415,11 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
     return () => document.removeEventListener('keydown', handler);
   }, [activeGroup]);
 
-  // Cleanup hover timeout
+  // Cleanup hover timeouts
   useEffect(() => {
     return () => {
       if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+      if (railHoverTimeoutRef.current) clearTimeout(railHoverTimeoutRef.current);
     };
   }, []);
 
@@ -559,19 +627,28 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
       </aside>
 
       {/* ═══════════════════════════════════════════
-          DESKTOP — Supabase-style rail + flyout
-          48px icon rail + hover label + click detail
+          DESKTOP — Adaptive sidebar (expanded / collapsed / hover)
+          Collapsed = 48px icon rail + click flyout
+          Expanded = 220px sidebar with inline labels
+          Hover = 48px → 220px on mouseenter
           ═══════════════════════════════════════════ */}
 
-      {/* Icon Rail — always visible */}
       <aside
         ref={railRef}
-        className="fixed top-0 left-0 z-40 h-full w-12 bg-surface border-r border-main/50 flex-col hidden lg:flex"
+        onMouseEnter={sidebarMode === 'hover' ? handleRailMouseEnter : undefined}
+        onMouseLeave={sidebarMode === 'hover' ? handleRailMouseLeave : undefined}
+        className={cn(
+          'fixed top-0 left-0 z-40 h-full bg-surface border-r border-main/50 flex-col hidden lg:flex transition-[width] duration-200 ease-out overflow-hidden',
+        )}
+        style={{ width: sidebarWidth }}
       >
         {/* Logo */}
-        <div className="h-12 flex items-center justify-center border-b border-main flex-shrink-0">
-          <Link href="/dashboard">
+        <div className="h-12 flex items-center border-b border-main flex-shrink-0 px-3 gap-2 min-w-0">
+          <Link href="/dashboard" className="flex items-center gap-2 min-w-0">
             <Logo size={20} className="text-accent flex-shrink-0" animated={false} />
+            {isWide && (
+              <span className="text-[15px] font-semibold tracking-[0.02em] text-main whitespace-nowrap">ZAFTO</span>
+            )}
           </Link>
         </div>
 
@@ -579,10 +656,11 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
         <div className="px-1.5 pt-2 pb-1">
           <Link
             href="/dashboard"
-            onMouseEnter={() => setHoveredGroup('__dashboard')}
-            onMouseLeave={handleRailHoverLeave}
+            onMouseEnter={!isWide ? () => setHoveredGroup('__dashboard') : undefined}
+            onMouseLeave={!isWide ? handleRailHoverLeave : undefined}
             className={cn(
-              'relative flex items-center justify-center py-2 rounded-md transition-colors group',
+              'relative flex items-center py-2 rounded-md transition-colors group',
+              isWide ? 'px-3 gap-3' : 'justify-center',
               pathname === '/dashboard'
                 ? 'text-accent bg-accent/10'
                 : 'text-muted hover:text-main hover:bg-surface-hover',
@@ -591,10 +669,10 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
             {pathname === '/dashboard' && (
               <span className="absolute left-0 top-1 bottom-1 w-[2px] rounded-full bg-accent" />
             )}
-            <LayoutDashboard size={18} />
-            {/* Hover label */}
-            {hoveredGroup === '__dashboard' && !activeGroup && (
-              <div className="absolute left-full ml-3 px-3 py-1.5 bg-surface border border-main rounded-lg shadow-xl z-50 whitespace-nowrap sidebar-flyout-enter">
+            <LayoutDashboard size={18} className="flex-shrink-0" />
+            {isWide && <span className="text-[13px] font-medium whitespace-nowrap">Dashboard</span>}
+            {!isWide && hoveredGroup === '__dashboard' && !activeGroup && (
+              <div className="absolute left-full ml-3 px-3 py-1.5 bg-surface border border-main rounded-lg shadow-xl z-50 whitespace-nowrap sidebar-flyout-enter pointer-events-none">
                 <span className="text-[13px] font-medium text-main">Dashboard</span>
               </div>
             )}
@@ -604,7 +682,7 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
         {/* Divider */}
         <div className="mx-2.5 border-t border-main/40" />
 
-        {/* Group icons */}
+        {/* Group icons / expanded groups */}
         <div className="flex-1 py-1.5 px-1.5 space-y-0.5 overflow-y-auto scrollbar-hide">
           {visibleGroups.map(group => {
             const isOpen = activeGroup === group.key;
@@ -612,6 +690,50 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
             const isHovered = hoveredGroup === group.key;
             const RailIcon = group.railIcon;
 
+            // ── Wide mode: collapsible group with inline items ──
+            if (isWide) {
+              return (
+                <div key={group.key} className="mb-0.5">
+                  <button
+                    onClick={() => setActiveGroup(prev => prev === group.key ? null : group.key)}
+                    className={cn(
+                      'flex items-center justify-between w-full px-3 py-1.5 mt-1',
+                      'text-[10px] font-semibold uppercase tracking-[0.08em] transition-colors',
+                      hasActive && !isOpen ? 'text-accent/60' : 'text-muted/40',
+                      'hover:text-muted/70',
+                    )}
+                  >
+                    <div className="flex items-center gap-2 min-w-0">
+                      {RailIcon ? (
+                        <RailIcon size={12} className="flex-shrink-0" />
+                      ) : (
+                        <ZMark size={10} className="flex-shrink-0" />
+                      )}
+                      <span className="whitespace-nowrap">{group.label}</span>
+                    </div>
+                    <ChevronDown
+                      size={12}
+                      className={cn(
+                        'transition-transform duration-150 flex-shrink-0',
+                        isOpen ? 'rotate-0' : '-rotate-90',
+                      )}
+                    />
+                  </button>
+                  <div
+                    className={cn(
+                      'overflow-hidden transition-all duration-150 ease-out',
+                      isOpen ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0',
+                    )}
+                  >
+                    <div className="px-1 space-y-[1px]">
+                      {group.items.map(item => renderDetailItem(item))}
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+
+            // ── Narrow mode: icon rail with click flyout ──
             return (
               <div key={group.key} className="relative">
                 <button
@@ -637,11 +759,9 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
                   )}
                 </button>
 
-                {/* Hover flyout label — shows on hover when no detail panel is open, OR always on hover */}
+                {/* Hover tooltip — narrow mode only */}
                 {isHovered && !isOpen && (
-                  <div
-                    className="absolute left-full top-1/2 -translate-y-1/2 ml-3 px-3 py-1.5 bg-surface border border-main rounded-lg shadow-xl z-50 whitespace-nowrap sidebar-flyout-enter pointer-events-none"
-                  >
+                  <div className="absolute left-full top-1/2 -translate-y-1/2 ml-3 px-3 py-1.5 bg-surface border border-main rounded-lg shadow-xl z-50 whitespace-nowrap sidebar-flyout-enter pointer-events-none">
                     <span className="text-[13px] font-medium text-main">{group.label}</span>
                   </div>
                 )}
@@ -653,23 +773,26 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
         {/* Divider */}
         <div className="mx-2.5 border-t border-main/40" />
 
-        {/* Bottom: Z Assistant + Settings + Sign Out + User */}
+        {/* Bottom: Z Assistant + Settings + Sidebar Control + Sign Out + User */}
         <div className="px-1.5 py-2 space-y-0.5">
           {/* Z Assistant with pulsing dot */}
           <Link
             href="/dashboard/z"
-            onMouseEnter={() => setHoveredGroup('__z')}
-            onMouseLeave={handleRailHoverLeave}
+            onMouseEnter={!isWide ? () => setHoveredGroup('__z') : undefined}
+            onMouseLeave={!isWide ? handleRailHoverLeave : undefined}
             className={cn(
-              'relative flex items-center justify-center py-2 rounded-md transition-colors group',
+              'relative flex items-center py-2 rounded-md transition-colors group',
+              isWide ? 'px-3 gap-3' : 'justify-center',
               pathname.startsWith('/dashboard/z')
                 ? 'text-accent bg-accent/10'
                 : 'text-muted hover:text-main hover:bg-surface-hover',
             )}
           >
-            <ZMark size={16} />
-            <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-            {hoveredGroup === '__z' && (
+            <ZMark size={16} className="flex-shrink-0" />
+            {!isWide && <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />}
+            {isWide && <span className="text-[13px] font-medium whitespace-nowrap">Z Assistant</span>}
+            {isWide && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-accent animate-pulse flex-shrink-0" />}
+            {!isWide && hoveredGroup === '__z' && (
               <div className="absolute left-full ml-3 px-3 py-1.5 bg-surface border border-main rounded-lg shadow-xl z-50 whitespace-nowrap sidebar-flyout-enter pointer-events-none">
                 <span className="text-[13px] font-medium text-main">Z Assistant</span>
               </div>
@@ -679,32 +802,102 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
           {/* Settings */}
           <Link
             href="/dashboard/settings"
-            onMouseEnter={() => setHoveredGroup('__settings')}
-            onMouseLeave={handleRailHoverLeave}
+            onMouseEnter={!isWide ? () => setHoveredGroup('__settings') : undefined}
+            onMouseLeave={!isWide ? handleRailHoverLeave : undefined}
             className={cn(
-              'relative flex items-center justify-center py-2 rounded-md transition-colors group',
+              'relative flex items-center py-2 rounded-md transition-colors group',
+              isWide ? 'px-3 gap-3' : 'justify-center',
               pathname === '/dashboard/settings'
                 ? 'text-accent bg-accent/10'
                 : 'text-muted hover:text-main hover:bg-surface-hover',
             )}
           >
-            <Settings size={18} />
-            {hoveredGroup === '__settings' && (
+            <Settings size={18} className="flex-shrink-0" />
+            {isWide && <span className="text-[13px] font-medium whitespace-nowrap">Settings</span>}
+            {!isWide && hoveredGroup === '__settings' && (
               <div className="absolute left-full ml-3 px-3 py-1.5 bg-surface border border-main rounded-lg shadow-xl z-50 whitespace-nowrap sidebar-flyout-enter pointer-events-none">
                 <span className="text-[13px] font-medium text-main">Settings</span>
               </div>
             )}
           </Link>
 
+          {/* Sidebar Control */}
+          <div ref={controlRef} className="relative">
+            <button
+              onClick={() => setControlOpen(prev => !prev)}
+              onMouseEnter={!isWide ? () => setHoveredGroup('__control') : undefined}
+              onMouseLeave={!isWide ? handleRailHoverLeave : undefined}
+              className={cn(
+                'relative w-full flex items-center py-2 rounded-md transition-colors',
+                isWide ? 'px-3 gap-3' : 'justify-center',
+                controlOpen
+                  ? 'text-accent bg-accent/10'
+                  : 'text-muted hover:text-main hover:bg-surface-hover',
+              )}
+            >
+              {sidebarMode === 'expanded' ? (
+                <PanelLeftClose size={18} className="flex-shrink-0" />
+              ) : (
+                <PanelLeft size={18} className="flex-shrink-0" />
+              )}
+              {isWide && <span className="text-[13px] font-medium whitespace-nowrap">Sidebar</span>}
+              {!isWide && hoveredGroup === '__control' && !controlOpen && (
+                <div className="absolute left-full ml-3 px-3 py-1.5 bg-surface border border-main rounded-lg shadow-xl z-50 whitespace-nowrap sidebar-flyout-enter pointer-events-none">
+                  <span className="text-[13px] font-medium text-main">Sidebar control</span>
+                </div>
+              )}
+            </button>
+
+            {/* Sidebar control popup */}
+            {controlOpen && (
+              <div className={cn(
+                'absolute bottom-0 z-50 w-52 bg-surface border border-main rounded-xl shadow-xl overflow-hidden sidebar-flyout-enter',
+                isWide ? 'left-full ml-2' : 'left-full ml-3',
+              )}>
+                <div className="px-3 py-2 border-b border-main">
+                  <p className="text-[12px] font-semibold text-main">Sidebar control</p>
+                </div>
+                <div className="p-1.5 space-y-0.5">
+                  {([
+                    { mode: 'expanded' as const, label: 'Expanded', icon: PanelLeft },
+                    { mode: 'collapsed' as const, label: 'Collapsed', icon: PanelLeftClose },
+                    { mode: 'hover' as const, label: 'Expand on hover', icon: PanelLeft },
+                  ]).map(opt => (
+                    <button
+                      key={opt.mode}
+                      onClick={() => handleSetMode(opt.mode)}
+                      className={cn(
+                        'w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[13px] font-medium transition-colors',
+                        sidebarMode === opt.mode
+                          ? 'text-accent bg-accent/5'
+                          : 'text-muted hover:text-main hover:bg-surface-hover',
+                      )}
+                    >
+                      <opt.icon size={15} className="flex-shrink-0" />
+                      <span className="flex-1 text-left">{opt.label}</span>
+                      {sidebarMode === opt.mode && (
+                        <Check size={14} className="text-accent flex-shrink-0" />
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* Sign out */}
           <button
             onClick={onSignOut}
-            onMouseEnter={() => setHoveredGroup('__signout')}
-            onMouseLeave={handleRailHoverLeave}
-            className="relative w-full flex items-center justify-center py-2 rounded-md text-muted hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
+            onMouseEnter={!isWide ? () => setHoveredGroup('__signout') : undefined}
+            onMouseLeave={!isWide ? handleRailHoverLeave : undefined}
+            className={cn(
+              'relative w-full flex items-center py-2 rounded-md text-muted hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors',
+              isWide ? 'px-3 gap-3' : 'justify-center',
+            )}
           >
-            <LogOut size={18} />
-            {hoveredGroup === '__signout' && (
+            <LogOut size={18} className="flex-shrink-0" />
+            {isWide && <span className="text-[13px] font-medium whitespace-nowrap">Sign out</span>}
+            {!isWide && hoveredGroup === '__signout' && (
               <div className="absolute left-full ml-3 px-3 py-1.5 bg-surface border border-main rounded-lg shadow-xl z-50 whitespace-nowrap sidebar-flyout-enter pointer-events-none">
                 <span className="text-[13px] font-medium text-main">Sign out</span>
               </div>
@@ -715,14 +908,20 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
           {user && (
             <button
               onClick={() => router.push('/dashboard/settings')}
-              onMouseEnter={() => setHoveredGroup('__user')}
-              onMouseLeave={handleRailHoverLeave}
-              className="relative w-full flex justify-center py-1"
+              onMouseEnter={!isWide ? () => setHoveredGroup('__user') : undefined}
+              onMouseLeave={!isWide ? handleRailHoverLeave : undefined}
+              className={cn(
+                'relative w-full flex items-center py-1',
+                isWide ? 'px-3 gap-3' : 'justify-center',
+              )}
             >
-              <div className="w-7 h-7 rounded-full bg-accent/10 flex items-center justify-center hover:bg-accent/20 transition-colors">
+              <div className="w-7 h-7 rounded-full bg-accent/10 flex items-center justify-center hover:bg-accent/20 transition-colors flex-shrink-0">
                 <span className="text-accent text-[10px] font-semibold">{initials}</span>
               </div>
-              {hoveredGroup === '__user' && (
+              {isWide && (
+                <span className="text-[12px] text-muted truncate">{user.email || 'Profile'}</span>
+              )}
+              {!isWide && hoveredGroup === '__user' && (
                 <div className="absolute left-full ml-3 px-3 py-1.5 bg-surface border border-main rounded-lg shadow-xl z-50 whitespace-nowrap sidebar-flyout-enter pointer-events-none">
                   <span className="text-[13px] font-medium text-main">{user.email || 'Profile'}</span>
                 </div>
@@ -733,11 +932,11 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
       </aside>
 
       {/* ═══════════════════════════════════════════
-          DETAIL PANEL — slides out when a group is clicked
+          DETAIL PANEL — slides out when a group is clicked (collapsed mode only)
           Shows all sub-items for the selected category
           ═══════════════════════════════════════════ */}
 
-      {activeGroup && currentDetailGroup && (
+      {!isWide && activeGroup && currentDetailGroup && (
         <div
           ref={detailRef}
           className="fixed top-0 left-12 z-[45] h-full w-[220px] bg-surface border-r border-main shadow-xl hidden lg:flex flex-col sidebar-detail-enter"
@@ -763,4 +962,31 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
       )}
     </>
   );
+}
+
+// ── Hook for layout to read sidebar width ──
+// Returns the pixel width the main content should be offset by.
+// Only "expanded" mode pushes content; "hover" overlays on top (no push).
+export function useSidebarWidth(): number {
+  const [width, setWidth] = useState(48);
+
+  useEffect(() => {
+    const mode = loadSidebarMode();
+    setWidth(mode === 'expanded' ? 220 : 48);
+
+    // Listen for storage changes (same tab)
+    const handler = () => {
+      const m = loadSidebarMode();
+      setWidth(m === 'expanded' ? 220 : 48);
+    };
+    window.addEventListener('storage', handler);
+    // Also listen for custom event from sidebar mode change
+    window.addEventListener('sidebarModeChange', handler);
+    return () => {
+      window.removeEventListener('storage', handler);
+      window.removeEventListener('sidebarModeChange', handler);
+    };
+  }, []);
+
+  return width;
 }
