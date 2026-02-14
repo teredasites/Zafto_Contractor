@@ -18,7 +18,7 @@ import {
 import { ZMark } from '@/components/z-console/z-mark';
 import { AuthProvider, useAuth } from '@/components/auth-provider';
 import { PermissionProvider } from '@/components/permission-gate';
-import { Sidebar } from '@/components/sidebar';
+import { Sidebar, useSidebarWidth } from '@/components/sidebar';
 import { ZConsoleProvider, ZConsole, useZConsole } from '@/components/z-console';
 import { cn } from '@/lib/utils';
 
@@ -97,6 +97,7 @@ function DashboardShell({
   const { profile } = useAuth();
   const isArtifact = consoleState === 'artifact';
   const isChatOpen = consoleState === 'open';
+  const sidebarPx = useSidebarWidth();
 
   const companyName = profile?.companyName || null;
 
@@ -109,12 +110,13 @@ function DashboardShell({
         onSignOut={onSignOut}
       />
 
-      {/* Main content — always offset by 48px rail, compresses when artifact open */}
+      {/* Main content — offset by sidebar width, compresses when artifact open */}
       <div
-        className="transition-[padding,margin] duration-[280ms] ease-out lg:pl-12"
+        className="transition-[padding,margin] duration-[280ms] ease-out"
         style={{
+          paddingLeft: `${sidebarPx}px`,
           marginRight: isArtifact ? `${chatWidth + artifactWidth}px` : '0px',
-          transition: 'margin-right 280ms cubic-bezier(0.32, 0.72, 0, 1), padding 200ms ease-out',
+          transition: 'margin-right 280ms cubic-bezier(0.32, 0.72, 0, 1), padding-left 200ms ease-out',
         }}
       >
         {/* Top bar */}
