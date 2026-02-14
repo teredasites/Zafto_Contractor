@@ -13,6 +13,7 @@ import {
   PauseCircle,
   Clock,
   Archive,
+  LayoutDashboard,
 } from 'lucide-react';
 import { useScheduleProjects } from '@/lib/hooks/use-schedule';
 import type { ScheduleProject, ScheduleProjectStatus } from '@/lib/types/scheduling';
@@ -85,13 +86,24 @@ export default function SchedulingPage() {
           <h1 className="text-xl font-semibold text-primary">Scheduling</h1>
           <p className="text-sm text-secondary mt-1">Gantt charts, CPM, and resource management</p>
         </div>
-        <button
-          onClick={() => setShowNewModal(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-accent text-on-accent rounded-lg hover:bg-accent/90 text-sm font-medium transition-colors"
-        >
-          <Plus className="w-4 h-4" />
-          New Schedule
-        </button>
+        <div className="flex items-center gap-2">
+          {projects.length >= 2 && (
+            <button
+              onClick={() => router.push('/dashboard/scheduling/portfolio')}
+              className="flex items-center gap-2 px-4 py-2 bg-surface border border-main rounded-lg hover:border-accent/30 text-sm font-medium text-secondary hover:text-primary transition-colors"
+            >
+              <LayoutDashboard className="w-4 h-4" />
+              Portfolio
+            </button>
+          )}
+          <button
+            onClick={() => setShowNewModal(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-accent text-on-accent rounded-lg hover:bg-accent/90 text-sm font-medium transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            New Schedule
+          </button>
+        </div>
       </div>
 
       {/* Stats */}
