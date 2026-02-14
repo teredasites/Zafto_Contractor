@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import {
   ArrowLeft,
@@ -10,9 +10,11 @@ import {
   Package,
   BarChart3,
   AlertTriangle,
+  User,
 } from 'lucide-react';
 import { useScheduleResources, useResourceLeveling } from '@/lib/hooks/use-schedule-resources';
 import { useScheduleProject } from '@/lib/hooks/use-schedule';
+import { getSupabase } from '@/lib/supabase';
 import type { ScheduleResource, ResourceType } from '@/lib/types/scheduling';
 
 const RESOURCE_TYPE_CONFIG: Record<ResourceType, { label: string; icon: typeof HardHat; color: string; bg: string }> = {
@@ -35,6 +37,22 @@ export default function ResourcesPage() {
   const [newName, setNewName] = useState('');
   const [newType, setNewType] = useState<ResourceType>('labor');
   const [creating, setCreating] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState<string>('');
+  const [teamMembers, setTeamMembers] = useState<{ id: string; full_name: string; role: string }[]>([]);
+
+  useEffect(() => {
+    const fetchTeam = async () => {
+      try {
+        const supabase = getSupabase();
+        const { data } = await supabase
+          .from('users')
+          .select('id, full_name, role')
+          .order('full_name');
+        if (data) setTeamMembers(data as { id: string; full_name: string; role: string }[]);
+      } catch { /* ignore */ }
+    };
+    fetchTeam();
+  }, []);
 
   const filtered = typeFilter === 'all'
     ? resources
@@ -44,9 +62,14 @@ export default function ResourcesPage() {
     if (!newName.trim() || creating) return;
     setCreating(true);
     try {
-      await createResource({ name: newName.trim(), resource_type: newType });
+      await createResource({
+        name: newName.trim(),
+        resource_type: newType,
+        ...(selectedUserId ? { user_id: selectedUserId } : {}),
+      });
       setShowAdd(false);
       setNewName('');
+      setSelectedUserId('');
     } catch {
       // Error in hook
     } finally {
@@ -209,13 +232,13 @@ export default function ResourcesPage() {
               autoFocus
               className="w-full px-4 py-2.5 bg-base border border-main rounded-lg text-sm text-primary placeholder:text-quaternary focus:outline-none focus:border-accent mb-3"
             />
-            <div className="flex gap-2 mb-4">
+            <div className="flex gap-2 mb-3">
               {(['labor', 'equipment', 'material'] as ResourceType[]).map((t) => {
                 const config = RESOURCE_TYPE_CONFIG[t];
                 return (
                   <button
                     key={t}
-                    onClick={() => setNewType(t)}
+                    onClick={() => { setNewType(t); if (t !== 'labor') setSelectedUserId(''); }}
                     className={`flex-1 py-2 rounded-lg text-xs font-medium transition-colors ${
                       newType === t ? 'bg-accent text-on-accent' : 'bg-surface-alt text-secondary hover:text-primary'
                     }`}
@@ -225,6 +248,27 @@ export default function ResourcesPage() {
                 );
               })}
             </div>
+            {newType === 'labor' && teamMembers.length > 0 && (
+              <div className="mb-3">
+                <label className="text-xs text-secondary mb-1 block">Link Team Member</label>
+                <select
+                  value={selectedUserId}
+                  onChange={(e) => {
+                    setSelectedUserId(e.target.value);
+                    if (e.target.value) {
+                      const member = teamMembers.find(m => m.id === e.target.value);
+                      if (member && !newName) setNewName(member.full_name || '');
+                    }
+                  }}
+                  className="w-full px-3 py-2 bg-base border border-main rounded-lg text-sm text-primary focus:outline-none focus:border-accent"
+                >
+                  <option value="">None (manual entry)</option>
+                  {teamMembers.map((m) => (
+                    <option key={m.id} value={m.id}>{m.full_name} ({m.role?.replace('_', ' ')})</option>
+                  ))}
+                </select>
+              </div>
+            )}
             <div className="flex justify-end gap-3">
               <button onClick={() => setShowAdd(false)} className="px-4 py-2 text-sm text-secondary">Cancel</button>
               <button onClick={handleCreate} disabled={!newName.trim() || creating} className="px-4 py-2 bg-accent text-on-accent rounded-lg text-sm font-medium disabled:opacity-50">
