@@ -26,6 +26,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { SearchInput, Select } from '@/components/ui/input';
 import { CommandPalette } from '@/components/command-palette';
+import DOMPurify from 'dompurify';
 import { formatDate, cn } from '@/lib/utils';
 import {
   useZDocs,
@@ -37,6 +38,17 @@ import {
   ZDOCS_ENTITY_TYPES,
   ZDOCS_ENTITY_TYPE_LABELS,
 } from '@/lib/hooks/use-zdocs';
+
+// Sanitize HTML to prevent XSS from rendered templates
+function sanitizeHtml(html: string): string {
+  return DOMPurify.sanitize(html, {
+    ALLOWED_TAGS: ['p', 'br', 'b', 'i', 'u', 'strong', 'em', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+      'ul', 'ol', 'li', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'div', 'span', 'hr', 'img', 'a',
+      'blockquote', 'pre', 'code', 'sub', 'sup', 'small'],
+    ALLOWED_ATTR: ['class', 'style', 'href', 'src', 'alt', 'width', 'height', 'colspan', 'rowspan', 'target'],
+    ALLOW_DATA_ATTR: false,
+  });
+}
 
 // ==================== STATUS CONFIGS ====================
 
@@ -548,7 +560,7 @@ function DocumentsTab({
                         <div className="mt-3 border border-main rounded-lg overflow-hidden">
                           <div
                             className="p-4 bg-white text-black text-sm max-h-64 overflow-y-auto"
-                            dangerouslySetInnerHTML={{ __html: render.renderedHtml }}
+                            dangerouslySetInnerHTML={{ __html: sanitizeHtml(render.renderedHtml) }}
                           />
                         </div>
                       )}
