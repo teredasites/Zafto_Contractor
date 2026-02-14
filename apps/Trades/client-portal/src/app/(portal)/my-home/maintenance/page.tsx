@@ -1,8 +1,9 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Calendar, CheckCircle2, Clock, Pause, Loader2, Bell, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Calendar, CheckCircle2, Clock, Pause, Loader2, Bell, AlertTriangle, Wrench, Thermometer, Shield } from 'lucide-react';
 import { useHome, type MaintenanceSchedule } from '@/lib/hooks/use-home';
+import { useMaintenancePredictions, type MaintenancePrediction } from '@/lib/hooks/use-maintenance-predictions';
 
 const frequencyLabels: Record<string, string> = {
   monthly: 'Monthly',
@@ -30,8 +31,17 @@ function isDueSoon(schedule: MaintenanceSchedule): boolean {
   return due <= thirtyDays && !isOverdue(schedule);
 }
 
+const predictionTypeIcons: Record<string, { icon: typeof Wrench; color: string; label: string }> = {
+  maintenance_due: { icon: Wrench, color: 'text-blue-600', label: 'Maintenance Due' },
+  end_of_life: { icon: AlertTriangle, color: 'text-red-600', label: 'Replacement Recommended' },
+  seasonal_check: { icon: Thermometer, color: 'text-amber-600', label: 'Seasonal Check' },
+  filter_replacement: { icon: Shield, color: 'text-cyan-600', label: 'Filter Replacement' },
+  inspection_recommended: { icon: CheckCircle2, color: 'text-green-600', label: 'Inspection' },
+};
+
 export default function MaintenancePage() {
   const { maintenanceSchedules, loading, completeMaintenanceTask } = useHome();
+  const { predictions, loading: predictionsLoading } = useMaintenancePredictions();
   const [completing, setCompleting] = useState<string | null>(null);
 
   const overdue = maintenanceSchedules.filter(isOverdue);
@@ -158,6 +168,50 @@ export default function MaintenancePage() {
             </div>
           )}
         </>
+      )}
+
+      {/* Recommended Maintenance from Predictions */}
+      {!predictionsLoading && predictions.length > 0 && (
+        <div>
+          <h3 className="font-bold text-sm text-purple-700 mb-2 flex items-center gap-1">
+            <Bell size={14} /> Recommended Maintenance
+          </h3>
+          <div className="space-y-2">
+            {predictions.slice(0, 5).map(prediction => {
+              const config = predictionTypeIcons[prediction.predictionType] || predictionTypeIcons.maintenance_due;
+              const PIcon = config.icon;
+              return (
+                <div key={prediction.id} className="bg-white rounded-xl border border-purple-100 shadow-sm p-4">
+                  <div className="flex items-start gap-3">
+                    <div className={`p-1.5 rounded-lg bg-purple-50 ${config.color}`}>
+                      <PIcon size={14} />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-900">{prediction.recommendedAction}</p>
+                      <p className="text-xs text-gray-500 mt-0.5">
+                        {prediction.equipmentName}
+                        {prediction.equipmentManufacturer && ` — ${prediction.equipmentManufacturer}`}
+                      </p>
+                      <div className="flex items-center gap-3 mt-1.5">
+                        <span className={`text-xs font-medium ${prediction.daysUntil < 0 ? 'text-red-600' : prediction.daysUntil <= 14 ? 'text-amber-600' : 'text-gray-500'}`}>
+                          {prediction.daysUntil < 0
+                            ? `${Math.abs(prediction.daysUntil)}d overdue`
+                            : prediction.daysUntil === 0
+                              ? 'Today'
+                              : `In ${prediction.daysUntil} days`}
+                        </span>
+                        <span className="text-[10px] text-purple-500 bg-purple-50 px-1.5 py-0.5 rounded-full">{config.label}</span>
+                      </div>
+                    </div>
+                    <Link href="/request" className="text-[10px] text-orange-500 font-medium hover:text-orange-600 shrink-0">
+                      Schedule
+                    </Link>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       )}
     </div>
   );

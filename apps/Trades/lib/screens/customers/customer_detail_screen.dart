@@ -13,6 +13,7 @@ import '../../models/invoice.dart';
 import '../../services/customer_service.dart';
 import '../../services/job_service.dart';
 import '../../services/invoice_service.dart';
+import '../../core/supabase_client.dart';
 import '../jobs/job_detail_screen.dart';
 import '../jobs/job_create_screen.dart';
 import '../invoices/invoice_detail_screen.dart';
@@ -29,6 +30,7 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen> {
   Customer? _customer;
   List<Job> _jobs = [];
   List<Invoice> _invoices = [];
+  List<Map<String, dynamic>> _predictions = [];
   bool _isLoading = true;
 
   @override
@@ -50,10 +52,27 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen> {
     final customerJobs = allJobs.where((j) => j.customerName == customer?.name).toList();
     final customerInvoices = allInvoices.where((i) => i.customerName == customer?.name).toList();
 
+    // Load maintenance predictions for this customer
+    List<Map<String, dynamic>> predictions = [];
+    try {
+      final predRes = await supabase
+          .from('maintenance_predictions')
+          .select('*, home_equipment(name, manufacturer)')
+          .eq('customer_id', widget.customerId)
+          .isFilter('deleted_at', null)
+          .neq('outreach_status', 'completed')
+          .order('predicted_date')
+          .limit(5);
+      predictions = List<Map<String, dynamic>>.from(predRes as List);
+    } catch (_) {
+      // Predictions table may not exist yet — graceful degradation
+    }
+
     setState(() {
       _customer = customer;
       _jobs = customerJobs;
       _invoices = customerInvoices;
+      _predictions = predictions;
       _isLoading = false;
     });
   }
@@ -94,6 +113,12 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen> {
                 if (_invoices.isEmpty) _buildEmptySection(colors, 'No invoices yet', LucideIcons.fileText)
                 else ..._invoices.take(3).map((i) => _buildInvoiceItem(colors, i)),
                 if (_invoices.length > 3) _buildSeeAllButton(colors, 'See all ${_invoices.length} invoices', () {}),
+                if (_predictions.isNotEmpty) ...[
+                  const SizedBox(height: 24),
+                  _buildSectionHeader(colors, 'MAINTENANCE OPPORTUNITIES', _predictions.length),
+                  const SizedBox(height: 12),
+                  ..._predictions.map((p) => _buildPredictionItem(colors, p)),
+                ],
                 const SizedBox(height: 24),
                 _buildNewJobButton(colors),
                 const SizedBox(height: 40),
@@ -361,5 +386,68 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen> {
   String _formatAmount(double amount) {
     if (amount >= 1000) return '${(amount / 1000).toStringAsFixed(1)}k';
     return amount.toStringAsFixed(0);
+  }
+
+  Widget _buildPredictionItem(ZaftoColors colors, Map<String, dynamic> prediction) {
+    final type = prediction['prediction_type'] as String? ?? 'maintenance_due';
+    final action = prediction['recommended_action'] as String? ?? '';
+    final dateStr = prediction['predicted_date'] as String?;
+    final equipment = prediction['home_equipment'] as Map<String, dynamic>?;
+    final eqName = equipment?['name'] as String? ?? 'Equipment';
+    final confidence = (prediction['confidence_score'] as num?)?.toDouble() ?? 0.5;
+
+    final daysUntil = dateStr != null
+        ? DateTime.parse(dateStr).difference(DateTime.now()).inDays
+        : 0;
+
+    final icon = switch (type) {
+      'end_of_life' => LucideIcons.alertTriangle,
+      'seasonal_check' => LucideIcons.thermometer,
+      'filter_replacement' => LucideIcons.shield,
+      'inspection_recommended' => LucideIcons.checkCircle,
+      _ => LucideIcons.wrench,
+    };
+
+    final urgencyColor = daysUntil < 0
+        ? Colors.red
+        : daysUntil <= 14
+            ? Colors.amber
+            : colors.textTertiary;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: colors.bgElevated,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: colors.borderSubtle),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, size: 18, color: colors.accentPrimary),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(action,
+                      style: TextStyle(fontSize: 13, color: colors.textPrimary, fontWeight: FontWeight.w500),
+                      maxLines: 2, overflow: TextOverflow.ellipsis),
+                  const SizedBox(height: 2),
+                  Text('$eqName  •  ${(confidence * 100).round()}% confidence',
+                      style: TextStyle(fontSize: 11, color: colors.textTertiary)),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              daysUntil < 0 ? '${daysUntil.abs()}d ago' : daysUntil == 0 ? 'Today' : '${daysUntil}d',
+              style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: urgencyColor),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
