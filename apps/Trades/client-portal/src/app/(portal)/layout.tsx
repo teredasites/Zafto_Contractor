@@ -36,7 +36,7 @@ function PortalShell({ children }: { children: React.ReactNode }) {
     if (href === '/home') return pathname === '/home';
     if (href === '/messages') return pathname.startsWith('/messages');
     if (href === '/meetings') return pathname.startsWith('/meetings') || pathname.startsWith('/book');
-    if (href === '/menu') return pathname === '/menu' || ['/documents', '/request', '/referrals', '/review', '/settings', '/rent', '/lease', '/maintenance', '/inspections', '/get-quotes', '/find-a-pro'].some(p => pathname.startsWith(p));
+    if (href === '/menu') return pathname === '/menu' || ['/documents', '/request', '/referrals', '/review', '/settings', '/rent', '/lease', '/maintenance', '/inspections', '/get-quotes', '/find-a-pro', '/agreements'].some(p => pathname.startsWith(p));
     return pathname.startsWith(href);
   };
 
