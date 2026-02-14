@@ -29,6 +29,7 @@ import {
   ExternalLink,
   Grid3x3,
   Ruler,
+  type LucideIcon,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -86,7 +87,7 @@ const TYPE_LABELS: Record<string, string> = {
 
 type TabKey = 'rooms' | 'photos' | 'floor_plan' | 'notes';
 
-const TABS: { key: TabKey; label: string; icon: React.ElementType }[] = [
+const TABS: { key: TabKey; label: string; icon: LucideIcon }[] = [
   { key: 'rooms', label: 'Rooms', icon: DoorOpen },
   { key: 'photos', label: 'Photos', icon: Camera },
   { key: 'floor_plan', label: 'Floor Plan', icon: Layers },

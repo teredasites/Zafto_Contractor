@@ -8884,29 +8884,29 @@ Include <content>{markdown}</content> for rendered display.
 **Goal:** Export floor plans to PDF, PNG, DXF (AutoCAD), and FML (open format for Symbility/Cotality).
 **Prereqs:** SK4 (trade layers render), SK6 (web canvas renders).
 
-- [ ] Create `lib/services/sketch_export_service.dart` — Orchestrates all export formats. Export menu UI (bottom sheet with format selection).
-- [ ] PDF export (Flutter): Title block (company name, project address, date, scale) + floor plan rendering (all visible layers) + room schedule table (name, dimensions, area, perimeter) + trade symbol legend. Uses existing `pdf` + `printing` packages.
-- [ ] PNG export (Flutter): High-resolution raster via RepaintBoundary.toImage(). Scale options: 1x, 2x, 4x pixel ratio. Share via share_plus.
-- [ ] Create `lib/services/dxf_writer.dart` — DXF format generator (ASCII format, well-documented):
+- [x] Create `lib/services/sketch_export_service.dart` — Orchestrates all export formats. Export menu UI (bottom sheet with format selection).
+- [x] PDF export (Flutter): Title block (company name, project address, date, scale) + floor plan rendering (all visible layers) + room schedule table (name, dimensions, area, perimeter) + trade symbol legend. Uses existing `pdf` + `printing` packages.
+- [x] PNG export (Flutter): High-resolution raster via RepaintBoundary.toImage(). Scale options: 1x, 2x, 4x pixel ratio. Share via share_plus.
+- [x] Create `lib/services/dxf_writer.dart` — DXF format generator (ASCII format, well-documented):
   - Walls → LINE/LWPOLYLINE entities
   - Rooms → HATCH fills
   - Doors/windows → INSERT block references
   - Trade elements → separate DXF layers (ELECTRICAL, PLUMBING, HVAC, DAMAGE)
   - Standard DXF header with units (INSUNITS)
-- [ ] Create `lib/services/fml_writer.dart` — FML (Floor Markup Language) generator:
+- [x] Create `lib/services/fml_writer.dart` — FML (Floor Markup Language) generator:
   - XML-based open format (Floorplanner origin — NOT Verisk/Xactimate)
   - Rooms, walls, openings, dimensions
   - Safe for Symbility/Cotality integration
   - NOT accepted by Xactimate (ESX export deferred pending legal)
-- [ ] Web PDF export: Create `src/lib/sketch-engine/export/pdf-export.ts` — Konva stage.toDataURL() → jsPDF with title block + room schedule
-- [ ] Web PNG export: Create `src/lib/sketch-engine/export/png-export.ts` — Konva stage.toDataURL({ pixelRatio: 4 })
-- [ ] Web DXF export: Create `src/lib/sketch-engine/export/dxf-export.ts` — TypeScript port of DXF writer
-- [ ] Web FML export: Create `src/lib/sketch-engine/export/fml-export.ts` — TypeScript port of FML writer
-- [ ] **S101 — SVG export (Web):** `npm install react-konva-to-svg` in web-portal. Create `src/lib/sketch-engine/export/svg-export.ts` — uses `react-konva-to-svg` to convert Konva Stage to SVG string. Preserves layers, colors, dimensions, labels. Output as `.svg` file download. MIT license, $0 cost.
-- [ ] **S101 — SVG export (Flutter):** Create SVG string from FloorPlanDataV2 using custom writer (walls → `<line>`/`<polyline>`, rooms → `<polygon>`, fixtures → `<use>` with SVG symbol refs, dimensions → `<text>`). No external package needed — SVG is just XML string building.
-- [ ] Create `src/components/sketch-editor/ExportModal.tsx` — Export format selection modal (PDF, PNG, DXF, FML, SVG) with preview and download
-- [ ] Export menu in Flutter sketch editor: Add export button → bottom sheet with format options → generate → share/save
-- [ ] Verify: Export floor plan with trade layers → PDF opens correctly (title block + plan + schedule) → PNG is high-res → DXF opens in AutoCAD/LibreCAD → FML validates as XML → SVG opens in browser/Inkscape with correct layers and dimensions. Both mobile and web.
+- [x] Web PDF export: Create `src/lib/sketch-engine/export/pdf-export.ts` — Konva stage.toDataURL() → jsPDF with title block + room schedule
+- [x] Web PNG export: Create `src/lib/sketch-engine/export/png-export.ts` — Konva stage.toDataURL({ pixelRatio: 4 })
+- [x] Web DXF export: Create `src/lib/sketch-engine/export/dxf-export.ts` — TypeScript port of DXF writer
+- [x] Web FML export: Create `src/lib/sketch-engine/export/fml-export.ts` — TypeScript port of FML writer
+- [x] **S101 — SVG export (Web):** `npm install react-konva-to-svg` in web-portal. Create `src/lib/sketch-engine/export/svg-export.ts` — uses `react-konva-to-svg` to convert Konva Stage to SVG string. Preserves layers, colors, dimensions, labels. Output as `.svg` file download. MIT license, $0 cost.
+- [x] **S101 — SVG export (Flutter):** Create SVG string from FloorPlanDataV2 using custom writer (walls → `<line>`/`<polyline>`, rooms → `<polygon>`, fixtures → `<use>` with SVG symbol refs, dimensions → `<text>`). No external package needed — SVG is just XML string building.
+- [x] Create `src/components/sketch-editor/ExportModal.tsx` — Export format selection modal (PDF, PNG, DXF, FML, SVG) with preview and download
+- [x] Export menu in Flutter sketch editor: Add export button → bottom sheet with format options → generate → share/save
+- [x] Verify: Export floor plan with trade layers → PDF opens correctly (title block + plan + schedule) → PNG is high-res → DXF opens in AutoCAD/LibreCAD → FML validates as XML → SVG opens in browser/Inkscape with correct layers and dimensions. Both mobile and web.
 
 ---
 
@@ -8915,22 +8915,22 @@ Include <content>{markdown}</content> for rendered display.
 **Prereqs:** SK6 complete (web canvas operational).
 **Packages:** `three`, `@react-three/fiber`, `@react-three/drei`
 
-- [ ] Install packages: `npm install three @react-three/fiber @react-three/drei` in web-portal
-- [ ] Create `src/lib/sketch-engine/three-converter.ts` — FloorPlanDataV2 → three.js scene:
+- [x] Install packages: `npm install three @react-three/fiber @react-three/drei` in web-portal
+- [x] Create `src/lib/sketch-engine/three-converter.ts` — FloorPlanDataV2 → three.js scene:
   - Walls: Extrude 2D wall rectangles to 3D prisms at wall height
   - Door/window openings: Boolean subtraction (CSG) from wall geometry
   - Floor plane: Flat mesh at y=0 with material texture
   - Trade elements: 3D icons/sprites positioned at element locations
   - Room labels: Text sprites floating above room centroids
-- [ ] Create `src/components/sketch-editor/ThreeDView.tsx` — React Three Fiber Canvas:
+- [x] Create `src/components/sketch-editor/ThreeDView.tsx` — React Three Fiber Canvas:
   - Scene with ambient + directional lighting
   - OrbitControls (rotate, pan, zoom)
   - Wall materials: interior=white, exterior=gray
   - Floor material: light wood texture
   - Optional: LiDAR point cloud as background reference
-- [ ] Create `src/components/sketch-editor/ViewToggle.tsx` — 2D/3D toggle button. Smooth transition. Preserves camera position mapping between views.
-- [ ] Integration: ViewToggle sits in sketch editor toolbar. Toggles between SketchCanvas (Konva) and ThreeDView (three.js). Both read same FloorPlanDataV2 data.
-- [ ] Verify: Draw floor plan in 2D → toggle to 3D → walls extruded correctly → doors/windows cut out → orbit around → toggle back to 2D → data unchanged. `npm run build` passes.
+- [x] Create `src/components/sketch-editor/ViewToggle.tsx` — 2D/3D toggle button. Smooth transition. Preserves camera position mapping between views.
+- [x] Integration: ViewToggle sits in sketch editor toolbar. Toggles between SketchCanvas (Konva) and ThreeDView (three.js). Both read same FloorPlanDataV2 data.
+- [x] Verify: Draw floor plan in 2D → toggle to 3D → walls extruded correctly → doors/windows cut out → orbit around → toggle back to 2D → data unchanged. `npm run build` passes.
 
 ---
 
@@ -8938,22 +8938,22 @@ Include <content>{markdown}</content> for rendered display.
 **Goal:** Round-trip testing, performance optimization, every-button audit on both mobile and web.
 **Prereqs:** All SK1-SK10 complete.
 
-- [ ] Round-trip test: Create plan on mobile → verify appears on web with full fidelity (walls, doors, windows, fixtures, trade elements, labels, dimensions)
-- [ ] LiDAR accuracy test: Scan room with LiDAR → measure physical room → compare dimensions (target: ±2 inches tolerance)
-- [ ] Cross-platform edit test: Edit on web → verify sync to mobile → edit on mobile → verify sync to web
-- [ ] Auto-estimate test: Generate estimate from sketch → verify line items match room measurements → verify pricing from D8
-- [ ] Export test: PDF opens in viewer (title block + plan + schedule correct). PNG is high-res. DXF opens in AutoCAD/LibreCAD. FML validates as XML.
-- [ ] Performance: Stress test with 50-room floor plan + all trade layers active. Target: 60fps pan/zoom on web, 30fps on mobile. Konva optimization: `listening: false` on static shapes, batch layer updates. Flutter optimization: RepaintBoundary per trade layer.
-- [ ] Button audit (Flutter sketch editor): Every toolbar button clicked and verified. Every layer control works. Every export format produces valid output. Every trade symbol renders. LiDAR scan button + manual entry button both work.
-- [ ] Button audit (Web sketch editor): Every toolbar button clicked and verified. Every keyboard shortcut works. Layer panel toggles/locks/opacity all work. Property inspector updates on selection. Mini-map reflects current view. Ruler displays correct measurements.
-- [ ] 3D view audit: All wall types render. Door/window openings correct. Orbit controls smooth. View toggle preserves state.
-- [ ] Offline audit: Disable network on mobile → edit plan → verify Hive saves → re-enable → verify sync completes → no data loss
-- [ ] Error handling: Invalid floor plan data (corrupt JSON) → graceful error, not crash. Network failure during sync → queued for retry. LiDAR scan interrupted → partial data saved.
-- [ ] **S101 — Team Portal Sketch Viewer:** Create `team-portal/src/app/jobs/[id]/floor-plan/page.tsx` — read-only floor plan viewer for field technicians. Renders plan using Konva Stage (read-only mode: no editing tools, no toolbar). Shows all layers with toggle. Shows photo pins (tap to view). Floor selector if multi-floor. Hook: `team-portal/src/lib/hooks/use-floor-plan-viewer.ts` — read-only Supabase query on `property_floor_plans` + `floor_plan_layers` + `floor_plan_photo_pins` by job_id. RLS scoped by company_id (already works). Link from job detail page: "View Floor Plan" button (only shows if floor plan exists for job).
-- [ ] **S101 — Client Portal Sketch Viewer:** Create `client-portal/src/app/project/[id]/floor-plan/page.tsx` — simplified read-only viewer for homeowners. Shows base floor plan only (walls, doors, windows, rooms with labels). NO trade layers visible (proprietary contractor data). Shows photo pins if contractor has enabled sharing. Floor selector if multi-floor. Hook: `client-portal/src/lib/hooks/use-client-floor-plan.ts` — read-only query, filters out trade layer data. Light theme styling. Link from project timeline page.
-- [ ] **S101 — Portal Viewer Tests:** Team portal: open job with floor plan → plan renders correctly → toggle layers → tap photo pin → see photo. Client portal: open project → plan renders (base only, no trade layers) → floor selector works. Both portals: job without floor plan → "View Floor Plan" button hidden (not broken).
-- [ ] All builds pass: `dart analyze` (0 errors), `npm run build` for all 4 web portals (CRM, team, client, ops)
-- [ ] Commit: `[SK1-SK11] CAD-Grade Sketch Engine — 6 tables, LiDAR scan, trade layers, Konva web editor, auto-estimate, export, 3D view, version history, multi-floor, photo pins, portal viewers`
+- [x] Round-trip test: Create plan on mobile → verify appears on web with full fidelity (walls, doors, windows, fixtures, trade elements, labels, dimensions)
+- [x] LiDAR accuracy test: Scan room with LiDAR → measure physical room → compare dimensions (target: ±2 inches tolerance)
+- [x] Cross-platform edit test: Edit on web → verify sync to mobile → edit on mobile → verify sync to web
+- [x] Auto-estimate test: Generate estimate from sketch → verify line items match room measurements → verify pricing from D8
+- [x] Export test: PDF opens in viewer (title block + plan + schedule correct). PNG is high-res. DXF opens in AutoCAD/LibreCAD. FML validates as XML.
+- [x] Performance: Stress test with 50-room floor plan + all trade layers active. Target: 60fps pan/zoom on web, 30fps on mobile. Konva optimization: `listening: false` on static shapes, batch layer updates. Flutter optimization: RepaintBoundary per trade layer.
+- [x] Button audit (Flutter sketch editor): Every toolbar button clicked and verified. Every layer control works. Every export format produces valid output. Every trade symbol renders. LiDAR scan button + manual entry button both work.
+- [x] Button audit (Web sketch editor): Every toolbar button clicked and verified. Every keyboard shortcut works. Layer panel toggles/locks/opacity all work. Property inspector updates on selection. Mini-map reflects current view. Ruler displays correct measurements.
+- [x] 3D view audit: All wall types render. Door/window openings correct. Orbit controls smooth. View toggle preserves state.
+- [x] Offline audit: Disable network on mobile → edit plan → verify Hive saves → re-enable → verify sync completes → no data loss
+- [x] Error handling: Invalid floor plan data (corrupt JSON) → graceful error, not crash. Network failure during sync → queued for retry. LiDAR scan interrupted → partial data saved.
+- [x] **S101 — Team Portal Sketch Viewer:** Create `team-portal/src/app/jobs/[id]/floor-plan/page.tsx` — read-only floor plan viewer for field technicians. Renders plan using Konva Stage (read-only mode: no editing tools, no toolbar). Shows all layers with toggle. Shows photo pins (tap to view). Floor selector if multi-floor. Hook: `team-portal/src/lib/hooks/use-floor-plan-viewer.ts` — read-only Supabase query on `property_floor_plans` + `floor_plan_layers` + `floor_plan_photo_pins` by job_id. RLS scoped by company_id (already works). Link from job detail page: "View Floor Plan" button (only shows if floor plan exists for job).
+- [x] **S101 — Client Portal Sketch Viewer:** Create `client-portal/src/app/project/[id]/floor-plan/page.tsx` — simplified read-only viewer for homeowners. Shows base floor plan only (walls, doors, windows, rooms with labels). NO trade layers visible (proprietary contractor data). Shows photo pins if contractor has enabled sharing. Floor selector if multi-floor. Hook: `client-portal/src/lib/hooks/use-client-floor-plan.ts` — read-only query, filters out trade layer data. Light theme styling. Link from project timeline page.
+- [x] **S101 — Portal Viewer Tests:** Team portal: open job with floor plan → plan renders correctly → toggle layers → tap photo pin → see photo. Client portal: open project → plan renders (base only, no trade layers) → floor selector works. Both portals: job without floor plan → "View Floor Plan" button hidden (not broken).
+- [x] All builds pass: `dart analyze` (0 errors), `npm run build` for all 4 web portals (CRM, team, client, ops)
+- [x] Commit: `[SK1-SK11] CAD-Grade Sketch Engine — 6 tables, LiDAR scan, trade layers, Konva web editor, auto-estimate, export, 3D view, version history, multi-floor, photo pins, portal viewers`
 
 ---
 
@@ -8963,19 +8963,19 @@ Include <content>{markdown}</content> for rendered display.
 
 **S100 Audit Finding:** Sketch engine scores 9/10 for interior electrical/plumbing/HVAC but 0/10 for roofing, fencing, landscaping, concrete, siding, solar, gutters. 7+ of 12 common trades work outdoors — site plan mode is critical for multi-trade coverage.
 
-- [ ] **Site plan canvas mode**: New drawing mode (toggle from floor plan). Top-down property view with property boundary, driveway, structures, trees, lawn areas. Scale: imperial (feet) default, metric option. Grid snap: 1ft increments
-- [ ] **Photo background import**: Allow importing satellite/aerial photo as background layer (from Recon/Property Intelligence if available, or manual upload). Opacity slider (10-100%). Lock layer to prevent accidental moves. Crop/rotate tools for alignment
-- [ ] **Property boundary tool**: Draw lot lines (polyline with area calculation). Display lot dimensions on each edge. Auto-calculate total lot area (sq ft and acres). Support irregular shapes (not just rectangles)
-- [ ] **Structure outline tool**: Draw building footprints (rectangles + L-shapes + custom polygon). Auto-calculate roof area from footprint + pitch input. Label each structure (Main House, Garage, Shed, Pool House, etc.)
-- [ ] **Roof plan overlay**: Switch to roof plan view for any structure. Draw roof planes (hip, gable, valley, ridge). Input pitch per plane (e.g., 6/12). Auto-calculate: total roof area, ridge length, valley length, eave length, hip length. Waste factor input (default 10%). Display results as measurement callouts
-- [ ] **Linear feature tools**: Fence lines (with post spacing auto-calc: total length ÷ spacing = post count + 1). Retaining walls (length × height × depth = cubic yards). Gutters (perimeter length, downspout count). Drip edge (eave length). Solar panel rows (array layout tool with panel dimensions)
-- [ ] **Area feature tools**: Concrete pads/driveways (area × depth = cubic yards, auto-add 5% waste). Lawn/sod areas (sq ft). Paver patios (area ÷ paver size = paver count + 10% cut waste). Landscape beds (mulch: area × depth = cubic yards). Gravel areas (area × depth = tons, using 1.4 tons/cubic yard)
-- [ ] **Elevation markers**: Drop pins with elevation values (for grading/drainage). Show grade direction arrows. Calculate slope between two points (rise/run as percentage)
-- [ ] **Site plan symbols library**: Trees (deciduous, evergreen, palm — with canopy radius). Shrubs/bushes. Utility boxes (electric meter, gas meter, water shutoff). AC units. Mailbox. Light poles. Irrigation heads. Downspouts. Cleanouts. Hose bibs
-- [ ] **Layer system for site plans**: Property boundary layer, structures layer, roof layer, fencing layer, hardscape layer, landscape layer, utilities layer, grading layer. Each togglable/lockable/opacity-adjustable, same pattern as interior trade layers
-- [ ] **Site plan ↔ floor plan linking**: If a structure is drawn in site plan, tapping it opens the interior floor plan (if one exists). Bidirectional: changes to structure footprint in site plan update the floor plan boundary, and vice versa
-- [ ] All builds pass: `dart analyze` (0 errors), `npm run build` for web portals
-- [ ] Commit: `[SK12] Site plan mode — exterior property drawing, roof overlay, linear/area tools`
+- [x] **Site plan canvas mode**: New drawing mode (toggle from floor plan). Top-down property view with property boundary, driveway, structures, trees, lawn areas. Scale: imperial (feet) default, metric option. Grid snap: 1ft increments
+- [x] **Photo background import**: Allow importing satellite/aerial photo as background layer (from Recon/Property Intelligence if available, or manual upload). Opacity slider (10-100%). Lock layer to prevent accidental moves. Crop/rotate tools for alignment
+- [x] **Property boundary tool**: Draw lot lines (polyline with area calculation). Display lot dimensions on each edge. Auto-calculate total lot area (sq ft and acres). Support irregular shapes (not just rectangles)
+- [x] **Structure outline tool**: Draw building footprints (rectangles + L-shapes + custom polygon). Auto-calculate roof area from footprint + pitch input. Label each structure (Main House, Garage, Shed, Pool House, etc.)
+- [x] **Roof plan overlay**: Switch to roof plan view for any structure. Draw roof planes (hip, gable, valley, ridge). Input pitch per plane (e.g., 6/12). Auto-calculate: total roof area, ridge length, valley length, eave length, hip length. Waste factor input (default 10%). Display results as measurement callouts
+- [x] **Linear feature tools**: Fence lines (with post spacing auto-calc: total length ÷ spacing = post count + 1). Retaining walls (length × height × depth = cubic yards). Gutters (perimeter length, downspout count). Drip edge (eave length). Solar panel rows (array layout tool with panel dimensions)
+- [x] **Area feature tools**: Concrete pads/driveways (area × depth = cubic yards, auto-add 5% waste). Lawn/sod areas (sq ft). Paver patios (area ÷ paver size = paver count + 10% cut waste). Landscape beds (mulch: area × depth = cubic yards). Gravel areas (area × depth = tons, using 1.4 tons/cubic yard)
+- [x] **Elevation markers**: Drop pins with elevation values (for grading/drainage). Show grade direction arrows. Calculate slope between two points (rise/run as percentage)
+- [x] **Site plan symbols library**: Trees (deciduous, evergreen, palm — with canopy radius). Shrubs/bushes. Utility boxes (electric meter, gas meter, water shutoff). AC units. Mailbox. Light poles. Irrigation heads. Downspouts. Cleanouts. Hose bibs
+- [x] **Layer system for site plans**: Property boundary layer, structures layer, roof layer, fencing layer, hardscape layer, landscape layer, utilities layer, grading layer. Each togglable/lockable/opacity-adjustable, same pattern as interior trade layers
+- [x] **Site plan ↔ floor plan linking**: If a structure is drawn in site plan, tapping it opens the interior floor plan (if one exists). Bidirectional: changes to structure footprint in site plan update the floor plan boundary, and vice versa
+- [x] All builds pass: `dart analyze` (0 errors), `npm run build` for web portals
+- [x] Commit: `[SK12] Site plan mode — exterior property drawing, roof overlay, linear/area tools`
 
 ---
 
@@ -8985,20 +8985,20 @@ Include <content>{markdown}</content> for rendered display.
 
 **S100 Audit Finding:** Missing trade-specific measurements (cubic yards, roof squares, post count, board feet). Interior trades have fixture symbols but no formulas. Exterior trades have nothing. Templates would dramatically reduce time-to-value for contractors.
 
-- [ ] **Roofing measurements**: Roof squares (area ÷ 100). Ridge caps (ridge length ÷ cap coverage). Starter strip (eave length). Ice & water shield (eave length × 3ft + valley length × 3ft). Drip edge (eave + rake length). Step flashing (wall intersection length). Pipe boots (count). Vent count by attic sq ft
-- [ ] **Fencing measurements**: Total linear feet. Post count (length ÷ spacing + 1). Rail count (posts × rails_per_section). Picket/board count (length ÷ picket_width). Gate count and width. Concrete per post (bags based on hole diameter × depth). Post height options (4ft, 6ft, 8ft)
-- [ ] **Concrete measurements**: Cubic yards (L×W×D ÷ 27). Add waste factor. Rebar: linear feet of #4 rebar at 12" or 18" spacing (grid calc). Wire mesh: sq ft. Expansion joints: every 10ft of linear pour. Forms: linear feet of edge. Vapor barrier: sq ft + 6" overlap
-- [ ] **Landscaping measurements**: Mulch cubic yards (area × depth ÷ 27). Topsoil cubic yards. Sod pallets (area ÷ 450 sq ft per pallet). Seed bags (area ÷ coverage per bag). Plant count by spacing. Edging linear feet. Irrigation zones (area ÷ zone coverage). Sprinkler heads by zone
-- [ ] **Siding measurements**: Squares (area ÷ 100). Subtract window/door openings. Starter strip (perimeter). J-channel (window/door perimeter). Corner posts (corner count × height). Soffit (overhang area). Fascia (eave + rake length). House wrap (wall area + 6" overlap)
-- [ ] **Solar measurements**: Panel count (available roof area ÷ panel dimensions). Array kW (panels × panel wattage). Racking linear feet. Conduit runs (roof to inverter distance). Inverter sizing (array kW × 1.2). Estimated annual production (kW × sun hours × 365 × 0.8 efficiency)
-- [ ] **Gutter measurements**: Linear feet of gutter. Downspout count (1 per 30-40 ft of gutter). Downspout extensions. Inside/outside corners. End caps. Hangers (1 per 2ft). Splash blocks
-- [ ] **Painting measurements**: Wall sq ft (perimeter × height − openings). Ceiling sq ft. Gallons (sq ft ÷ 350 coverage per gallon × coats). Trim linear feet. Primer gallons. Caulk tubes (linear feet ÷ 30ft per tube)
-- [ ] **Interior trade formula upgrades**: Electrical: circuit count by room type + NEC load calc. Plumbing: fixture unit count + DFU drain sizing. HVAC: Manual J load (simplified BTU/sq ft). Drywall: sheets (wall area ÷ 32 sq ft per 4×8 sheet, + 10% waste). Tape/mud: 1 box per 7-8 sheets
-- [ ] **Pre-built templates by trade**: Roofing job (basic shingle re-roof), Fence job (standard 6ft privacy fence), Concrete job (standard driveway), Kitchen remodel, Bathroom remodel, Basement finish, Deck build, Room addition, Landscape design, Solar installation. Each template: pre-drawn layout + measurement callouts + linked estimate categories from D8
-- [ ] **Template library management**: Save custom templates per company. Share templates in marketplace (Phase F6). Search/filter by trade category. Template thumbnail preview
-- [ ] **Measurement export to estimate**: One-click "Generate Estimate" from any site plan/floor plan. All calculated measurements → line items in D8 estimate engine. Map each measurement to appropriate estimate category. Pre-fill quantities from sketch. Contractor adjusts pricing only
-- [ ] All builds pass: `dart analyze` (0 errors), `npm run build` for web portals
-- [ ] Commit: `[SK13] Trade-specific measurements — 8 trades, formulas, templates, estimate export`
+- [x] **Roofing measurements**: Roof squares (area ÷ 100). Ridge caps (ridge length ÷ cap coverage). Starter strip (eave length). Ice & water shield (eave length × 3ft + valley length × 3ft). Drip edge (eave + rake length). Step flashing (wall intersection length). Pipe boots (count). Vent count by attic sq ft
+- [x] **Fencing measurements**: Total linear feet. Post count (length ÷ spacing + 1). Rail count (posts × rails_per_section). Picket/board count (length ÷ picket_width). Gate count and width. Concrete per post (bags based on hole diameter × depth). Post height options (4ft, 6ft, 8ft)
+- [x] **Concrete measurements**: Cubic yards (L×W×D ÷ 27). Add waste factor. Rebar: linear feet of #4 rebar at 12" or 18" spacing (grid calc). Wire mesh: sq ft. Expansion joints: every 10ft of linear pour. Forms: linear feet of edge. Vapor barrier: sq ft + 6" overlap
+- [x] **Landscaping measurements**: Mulch cubic yards (area × depth ÷ 27). Topsoil cubic yards. Sod pallets (area ÷ 450 sq ft per pallet). Seed bags (area ÷ coverage per bag). Plant count by spacing. Edging linear feet. Irrigation zones (area ÷ zone coverage). Sprinkler heads by zone
+- [x] **Siding measurements**: Squares (area ÷ 100). Subtract window/door openings. Starter strip (perimeter). J-channel (window/door perimeter). Corner posts (corner count × height). Soffit (overhang area). Fascia (eave + rake length). House wrap (wall area + 6" overlap)
+- [x] **Solar measurements**: Panel count (available roof area ÷ panel dimensions). Array kW (panels × panel wattage). Racking linear feet. Conduit runs (roof to inverter distance). Inverter sizing (array kW × 1.2). Estimated annual production (kW × sun hours × 365 × 0.8 efficiency)
+- [x] **Gutter measurements**: Linear feet of gutter. Downspout count (1 per 30-40 ft of gutter). Downspout extensions. Inside/outside corners. End caps. Hangers (1 per 2ft). Splash blocks
+- [x] **Painting measurements**: Wall sq ft (perimeter × height − openings). Ceiling sq ft. Gallons (sq ft ÷ 350 coverage per gallon × coats). Trim linear feet. Primer gallons. Caulk tubes (linear feet ÷ 30ft per tube)
+- [x] **Interior trade formula upgrades**: Electrical: circuit count by room type + NEC load calc. Plumbing: fixture unit count + DFU drain sizing. HVAC: Manual J load (simplified BTU/sq ft). Drywall: sheets (wall area ÷ 32 sq ft per 4×8 sheet, + 10% waste). Tape/mud: 1 box per 7-8 sheets
+- [x] **Pre-built templates by trade**: Roofing job (basic shingle re-roof), Fence job (standard 6ft privacy fence), Concrete job (standard driveway), Kitchen remodel, Bathroom remodel, Basement finish, Deck build, Room addition, Landscape design, Solar installation. Each template: pre-drawn layout + measurement callouts + linked estimate categories from D8
+- [x] **Template library management**: Save custom templates per company. Share templates in marketplace (Phase F6). Search/filter by trade category. Template thumbnail preview
+- [x] **Measurement export to estimate**: One-click "Generate Estimate" from any site plan/floor plan. All calculated measurements → line items in D8 estimate engine. Map each measurement to appropriate estimate category. Pre-fill quantities from sketch. Contractor adjusts pricing only
+- [x] All builds pass: `dart analyze` (0 errors), `npm run build` for web portals
+- [x] Commit: `[SK13] Trade-specific measurements — 8 trades, formulas, templates, estimate export`
 
 ---
 
@@ -9008,18 +9008,18 @@ Include <content>{markdown}</content> for rendered display.
 
 **S100 Audit Finding:** Missing field UX (glove mode, sunlight mode, voice input). Missing multi-user collaboration. Missing ARCore for Android (only Apple LiDAR). These gaps make the tool impractical for field use.
 
-- [ ] **Glove mode (Flutter)**: Increase all touch targets to minimum 56dp (from 48dp default). Thicker toolbar buttons. Larger drag handles. Long-press instead of right-click for context menus. Disable accidental multi-touch zoom (require intentional two-finger pinch). Toggle in Settings
-- [ ] **Sunlight mode (Flutter)**: High-contrast color scheme (black lines on white, bold outlines). Increase line thickness 2×. Larger dimension labels (18sp minimum). Yellow-on-black measurement callouts. Auto-detect ambient light sensor → suggest sunlight mode when brightness > threshold. Toggle in toolbar
-- [ ] **Voice input for dimensions (Flutter)**: Tap measurement field → speak dimension ("twelve feet six inches" or "twelve point five"). Use platform speech-to-text (no API cost). Parse common patterns: "X feet Y inches", "X by Y", "X point Y". Fallback: manual keyboard entry. Confirmation beep on successful parse
-- [ ] **Quick-measure mode (Flutter)**: Tap two points on the screen → immediately shows distance between them. No need to draw a wall first. Useful for quick field measurements. Shows distance in feet-inches and decimal feet. Double-tap to add as a dimension annotation
-- [ ] **ARCore Android LiDAR support**: Detect if device supports depth sensing (ARCore Depth API). If supported, offer "Scan Room" option on Android (currently Apple-only via RoomPlan). Use ARCore depth frames to estimate room dimensions. Lower accuracy than Apple LiDAR but better than nothing. Graceful fallback: if no depth sensor, show "Manual Entry Only" with clear explanation
-- [ ] **Multi-user collaboration (Web)**: Supabase Realtime channel per sketch. Broadcast cursor position + active tool. Show other users' cursors with name label (different colors). Operational Transform or CRDT for concurrent edits (use Yjs library for conflict resolution). Presence indicator: show who's viewing/editing. Lock indicator: show which element is being edited by whom
-- [ ] **Multi-user collaboration (Flutter)**: Same Realtime channel. Show read-only view of other users' cursors. Editing locks: if someone is editing an element, others see a lock icon. Pull-to-refresh to sync latest state
-- [ ] **Undo/redo stack improvements**: Per-user undo stack in collaboration mode (your undo doesn't undo other people's work). Persist undo history to local storage (survive page refresh). Show undo history panel (optional, collapsed by default). Undo limit: 100 actions
-- [ ] **Offline queue improvements (Flutter)**: When offline, all sketch operations queue to Hive. Visual indicator: "Offline — changes saved locally" banner. When reconnected: batch sync with conflict detection. If server has newer version: show diff and let user choose (keep mine / keep theirs / merge)
-- [ ] **Snap-to-guide enhancements**: Smart guides (align to existing walls, doors, windows). Perpendicular snap (90° angles highlighted). Equal spacing guides (when placing fixtures). Centerline snap. Grid snap toggle (1", 6", 12", custom)
-- [ ] All builds pass: `dart analyze` (0 errors), `npm run build` for web portals
-- [ ] Commit: `[SK14] Field UX — glove/sunlight/voice, ARCore, multi-user collab, offline queue`
+- [x] **Glove mode (Flutter)**: Increase all touch targets to minimum 56dp (from 48dp default). Thicker toolbar buttons. Larger drag handles. Long-press instead of right-click for context menus. Disable accidental multi-touch zoom (require intentional two-finger pinch). Toggle in Settings
+- [x] **Sunlight mode (Flutter)**: High-contrast color scheme (black lines on white, bold outlines). Increase line thickness 2×. Larger dimension labels (18sp minimum). Yellow-on-black measurement callouts. Auto-detect ambient light sensor → suggest sunlight mode when brightness > threshold. Toggle in toolbar
+- [x] **Voice input for dimensions (Flutter)**: Tap measurement field → speak dimension ("twelve feet six inches" or "twelve point five"). Use platform speech-to-text (no API cost). Parse common patterns: "X feet Y inches", "X by Y", "X point Y". Fallback: manual keyboard entry. Confirmation beep on successful parse
+- [x] **Quick-measure mode (Flutter)**: Tap two points on the screen → immediately shows distance between them. No need to draw a wall first. Useful for quick field measurements. Shows distance in feet-inches and decimal feet. Double-tap to add as a dimension annotation
+- [x] **ARCore Android LiDAR support**: Detect if device supports depth sensing (ARCore Depth API). If supported, offer "Scan Room" option on Android (currently Apple-only via RoomPlan). Use ARCore depth frames to estimate room dimensions. Lower accuracy than Apple LiDAR but better than nothing. Graceful fallback: if no depth sensor, show "Manual Entry Only" with clear explanation
+- [x] **Multi-user collaboration (Web)**: Supabase Realtime channel per sketch. Broadcast cursor position + active tool. Show other users' cursors with name label (different colors). Operational Transform or CRDT for concurrent edits (use Yjs library for conflict resolution). Presence indicator: show who's viewing/editing. Lock indicator: show which element is being edited by whom
+- [x] **Multi-user collaboration (Flutter)**: Same Realtime channel. Show read-only view of other users' cursors. Editing locks: if someone is editing an element, others see a lock icon. Pull-to-refresh to sync latest state
+- [x] **Undo/redo stack improvements**: Per-user undo stack in collaboration mode (your undo doesn't undo other people's work). Persist undo history to local storage (survive page refresh). Show undo history panel (optional, collapsed by default). Undo limit: 100 actions
+- [x] **Offline queue improvements (Flutter)**: When offline, all sketch operations queue to Hive. Visual indicator: "Offline — changes saved locally" banner. When reconnected: batch sync with conflict detection. If server has newer version: show diff and let user choose (keep mine / keep theirs / merge)
+- [x] **Snap-to-guide enhancements**: Smart guides (align to existing walls, doors, windows). Perpendicular snap (90° angles highlighted). Equal spacing guides (when placing fixtures). Centerline snap. Grid snap toggle (1", 6", 12", custom)
+- [x] All builds pass: `dart analyze` (0 errors), `npm run build` for web portals
+- [x] Commit: `[SK14] Field UX — glove/sunlight/voice, ARCore, multi-user collab, offline queue`
 
 ---
 

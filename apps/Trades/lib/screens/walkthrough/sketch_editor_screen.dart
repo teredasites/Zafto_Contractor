@@ -19,6 +19,7 @@ import '../../widgets/sketch/layer_panel.dart';
 import '../../widgets/sketch/lidar_scan_screen.dart';
 import '../../widgets/sketch/manual_room_entry.dart';
 import '../../widgets/sketch/trade_toolbar.dart';
+import '../../services/sketch_export_service.dart';
 import 'sketch_painter.dart';
 import 'symbol_library_sheet.dart';
 
@@ -342,6 +343,18 @@ class _SketchEditorScreenState extends ConsumerState<SketchEditorScreen> {
                   : colors.textQuaternary,
             ),
             onPressed: _undoRedo.canRedo ? _redo : null,
+          ),
+          // SK9: Export
+          IconButton(
+            icon: Icon(LucideIcons.download, size: 18, color: colors.textSecondary),
+            onPressed: _planData.walls.isEmpty
+                ? null
+                : () => SketchExportService.showExportSheet(
+                      context: context,
+                      plan: _planData,
+                      tradeLayers: _planData.tradeLayers,
+                      floorNumber: _currentFloorIndex + 1,
+                    ),
           ),
           // Save
           IconButton(

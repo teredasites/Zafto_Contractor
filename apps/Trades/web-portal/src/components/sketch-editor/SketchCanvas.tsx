@@ -61,6 +61,7 @@ interface SketchCanvasProps {
   undoManager: UndoRedoManager;
   width: number;
   height: number;
+  externalStageRef?: React.RefObject<Konva.Stage | null>;
 }
 
 const CANVAS_SIZE = 4000;
@@ -123,8 +124,10 @@ export default function SketchCanvas({
   undoManager,
   width,
   height,
+  externalStageRef,
 }: SketchCanvasProps) {
-  const stageRef = useRef<Konva.Stage>(null);
+  const internalStageRef = useRef<Konva.Stage>(null);
+  const stageRef = externalStageRef ?? internalStageRef;
   const [isPanning, setIsPanning] = useState(false);
   const [drawStart, setDrawStart] = useState<Point | null>(null);
   const [ghostEnd, setGhostEnd] = useState<Point | null>(null);
@@ -858,7 +861,7 @@ export default function SketchCanvas({
       style={{ cursor: isPanning ? 'grab' : editorState.activeTool === 'erase' ? 'crosshair' : 'default' }}
     >
       {/* Grid Layer */}
-      <Layer listening={false}>{renderGrid()}</Layer>
+      <Layer listening={false} perfectDrawEnabled={false}>{renderGrid()}</Layer>
 
       {/* Base Elements Layer */}
       <Layer>
@@ -876,7 +879,7 @@ export default function SketchCanvas({
       <Layer>{renderTradeLayers()}</Layer>
 
       {/* UI Overlay Layer */}
-      <Layer listening={false}>
+      <Layer listening={false} perfectDrawEnabled={false}>
         {renderGhost()}
         {renderSnapIndicator()}
         {renderLasso()}

@@ -234,6 +234,194 @@ export interface TradeLayer {
 }
 
 // =============================================================================
+// SITE PLAN TYPES (SK12) — Exterior property drawing
+// =============================================================================
+
+export type SitePlanTool =
+  | 'select'
+  | 'boundary'
+  | 'structure'
+  | 'roofPlane'
+  | 'fence'
+  | 'retainingWall'
+  | 'gutter'
+  | 'solarRow'
+  | 'concrete'
+  | 'lawn'
+  | 'paver'
+  | 'landscape'
+  | 'gravel'
+  | 'elevation'
+  | 'symbol'
+  | 'measure'
+  | 'label'
+  | 'pan'
+  | 'erase';
+
+export type RoofPlaneType = 'hip' | 'gable' | 'valley' | 'flat' | 'shed' | 'gambrel' | 'mansard';
+
+export type LinearFeatureType =
+  | 'fence' | 'retainingWall' | 'gutter' | 'dripEdge'
+  | 'solarRow' | 'edging' | 'downspout';
+
+export type AreaFeatureType =
+  | 'concrete' | 'lawn' | 'paver' | 'landscape'
+  | 'gravel' | 'pool' | 'deck' | 'driveway';
+
+export type SiteSymbolType =
+  | 'treeDeciduous' | 'treeEvergreen' | 'treePalm'
+  | 'shrub' | 'utilityBox' | 'acUnit' | 'mailbox'
+  | 'lightPole' | 'irrigationHead' | 'downspoutSymbol'
+  | 'cleanoutSite' | 'hoseBib' | 'gasMeter' | 'electricMeter' | 'waterShutoff';
+
+export type SitePlanLayerType =
+  | 'boundary' | 'structures' | 'roof' | 'fencing'
+  | 'hardscape' | 'landscape' | 'utilities' | 'grading';
+
+export interface PropertyBoundary {
+  id: string;
+  points: Point[];
+  totalArea: number; // sq ft (auto-calculated from polygon)
+}
+
+export interface StructureOutline {
+  id: string;
+  points: Point[];
+  label: string; // 'Main House', 'Garage', 'Shed', etc.
+  roofPitch?: number; // e.g. 6 for 6/12
+  floorPlanId?: string; // links to interior floor plan (SK12 item 11)
+}
+
+export interface RoofPlane {
+  id: string;
+  structureId: string;
+  points: Point[];
+  pitch: number; // rise per 12 inches run
+  type: RoofPlaneType;
+  wasteFactor: number; // 0-1 (default 0.10)
+}
+
+export interface LinearFeature {
+  id: string;
+  type: LinearFeatureType;
+  points: Point[];
+  height?: number; // feet (fence height, wall height)
+  postSpacing?: number; // feet (fences)
+  depth?: number; // inches (retaining wall depth)
+}
+
+export interface AreaFeature {
+  id: string;
+  type: AreaFeatureType;
+  points: Point[];
+  depth?: number; // inches (concrete slab, mulch, gravel)
+  material?: string; // specific material name
+}
+
+export interface ElevationMarker {
+  id: string;
+  position: Point;
+  elevation: number; // feet above reference datum
+}
+
+export interface SiteSymbol {
+  id: string;
+  type: SiteSymbolType;
+  position: Point;
+  rotation: number;
+  label?: string;
+  canopyRadius?: number; // feet (trees only)
+}
+
+export interface SitePlanLayer {
+  id: string;
+  type: SitePlanLayerType;
+  name: string;
+  visible: boolean;
+  locked: boolean;
+  opacity: number;
+}
+
+export interface SitePlanData {
+  boundary: PropertyBoundary | null;
+  structures: StructureOutline[];
+  roofPlanes: RoofPlane[];
+  linearFeatures: LinearFeature[];
+  areaFeatures: AreaFeature[];
+  elevationMarkers: ElevationMarker[];
+  symbols: SiteSymbol[];
+  layers: SitePlanLayer[];
+  labels: FloorLabel[]; // reuse FloorLabel for site annotations
+  dimensions: DimensionLine[]; // reuse DimensionLine for measurements
+  backgroundImageUrl?: string;
+  backgroundOpacity: number;
+  scale: number;
+  units: MeasurementUnit;
+}
+
+export function createEmptySitePlan(): SitePlanData {
+  return {
+    boundary: null,
+    structures: [],
+    roofPlanes: [],
+    linearFeatures: [],
+    areaFeatures: [],
+    elevationMarkers: [],
+    symbols: [],
+    layers: [
+      { id: 'l-bound', type: 'boundary', name: 'Property Boundary', visible: true, locked: false, opacity: 1 },
+      { id: 'l-struct', type: 'structures', name: 'Structures', visible: true, locked: false, opacity: 1 },
+      { id: 'l-roof', type: 'roof', name: 'Roof Plans', visible: true, locked: false, opacity: 1 },
+      { id: 'l-fence', type: 'fencing', name: 'Fencing', visible: true, locked: false, opacity: 1 },
+      { id: 'l-hard', type: 'hardscape', name: 'Hardscape', visible: true, locked: false, opacity: 1 },
+      { id: 'l-land', type: 'landscape', name: 'Landscape', visible: true, locked: false, opacity: 1 },
+      { id: 'l-util', type: 'utilities', name: 'Utilities', visible: true, locked: false, opacity: 1 },
+      { id: 'l-grade', type: 'grading', name: 'Grading', visible: true, locked: false, opacity: 1 },
+    ],
+    labels: [],
+    dimensions: [],
+    backgroundOpacity: 0.5,
+    scale: 4.0,
+    units: 'imperial',
+  };
+}
+
+// Site plan editor state
+export interface SiteEditorState {
+  activeTool: SitePlanTool;
+  activeLayerId: string | null;
+  isDrawing: boolean;
+  ghostPoints: Point[]; // polygon being drawn
+  snapIndicator: Point | null;
+  zoom: number;
+  panOffset: Point;
+  showGrid: boolean;
+  gridSize: number; // 12 = 1 foot
+  pendingSymbolType: SiteSymbolType | null;
+  pendingLinearType: LinearFeatureType | null;
+  pendingAreaType: AreaFeatureType | null;
+  units: MeasurementUnit;
+}
+
+export function createDefaultSiteEditorState(): SiteEditorState {
+  return {
+    activeTool: 'select',
+    activeLayerId: null,
+    isDrawing: false,
+    ghostPoints: [],
+    snapIndicator: null,
+    zoom: 1.0,
+    panOffset: { x: 0, y: 0 },
+    showGrid: true,
+    gridSize: 12,
+    pendingSymbolType: null,
+    pendingLinearType: null,
+    pendingAreaType: null,
+    units: 'imperial',
+  };
+}
+
+// =============================================================================
 // FLOOR PLAN DATA — Top-level container
 // =============================================================================
 

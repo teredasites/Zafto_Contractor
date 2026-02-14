@@ -5,7 +5,7 @@
 // SK7: History panel, multi-floor tabs, photo pin integration.
 // SK8: Generate Estimate modal (room measurements → D8 estimate areas + line items).
 
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef, useEffect, type RefObject } from 'react';
 import dynamic from 'next/dynamic';
 import {
   Plus,
@@ -17,7 +17,10 @@ import {
   History,
   Camera,
   Calculator,
+  Download,
+  LayoutTemplate,
 } from 'lucide-react';
+import type Konva from 'konva';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -33,6 +36,8 @@ import {
   createEmptyFloorPlan,
   createEmptySelection,
   createDefaultEditorState,
+  createEmptySitePlan,
+  createDefaultSiteEditorState,
 } from '@/lib/sketch-engine/types';
 import type {
   FloorPlanData,
@@ -42,6 +47,10 @@ import type {
   TradeLayerType,
   TradeLayer,
   Point,
+  SitePlanData,
+  SiteEditorState,
+  SitePlanTool,
+  SiteSymbolType,
 } from '@/lib/sketch-engine/types';
 import { UndoRedoManager } from '@/lib/sketch-engine/commands';
 import { formatDate } from '@/lib/utils';
@@ -57,6 +66,30 @@ import PropertyInspector from '@/components/sketch-editor/PropertyInspector';
 import MiniMap from '@/components/sketch-editor/MiniMap';
 import HistoryPanel from '@/components/sketch-editor/HistoryPanel';
 import GenerateEstimateModal from '@/components/sketch-editor/GenerateEstimateModal';
+import ExportModal from '@/components/sketch-editor/ExportModal';
+import ViewToggle from '@/components/sketch-editor/ViewToggle';
+import PlanModeToggle, { type PlanMode } from '@/components/sketch-editor/PlanModeToggle';
+import SitePlanToolbar from '@/components/sketch-editor/SitePlanToolbar';
+import SitePlanLayerPanel from '@/components/sketch-editor/SitePlanLayerPanel';
+import SitePropertyInspector from '@/components/sketch-editor/SitePropertyInspector';
+import SiteBackgroundImport from '@/components/sketch-editor/SiteBackgroundImport';
+import TemplatePicker from '@/components/sketch-editor/TemplatePicker';
+import {
+  applyFloorPlanTemplate,
+  applySitePlanTemplate,
+  type SketchTemplate,
+} from '@/lib/sketch-engine/templates';
+
+// Dynamic import for Three.js (SSR incompatible, heavy bundle)
+const ThreeDView = dynamic(
+  () => import('@/components/sketch-editor/ThreeDView'),
+  { ssr: false, loading: () => <CanvasLoadingPlaceholder /> },
+);
+// Dynamic import for Site Plan Canvas (Konva, SSR incompatible)
+const SitePlanCanvas = dynamic(
+  () => import('@/components/sketch-editor/SitePlanCanvas'),
+  { ssr: false, loading: () => <CanvasLoadingPlaceholder /> },
+);
 import {
   HorizontalRuler,
   VerticalRuler,
@@ -308,15 +341,36 @@ function EditorView({
   const [showHistory, setShowHistory] = useState(false);
   const [pinMode, setPinMode] = useState(false);
   const [showEstimateModal, setShowEstimateModal] = useState(false);
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [is3DView, setIs3DView] = useState(false);
+  const [planMode, setPlanMode] = useState<PlanMode>('floor');
+  const [sitePlanData, setSitePlanData] = useState<SitePlanData>(createEmptySitePlan());
+  const [siteEditorState, setSiteEditorState] = useState<SiteEditorState>(createDefaultSiteEditorState());
+  const [siteSelectedId, setSiteSelectedId] = useState<string | null>(null);
+  const [siteSelectedType, setSiteSelectedType] = useState<string | null>(null);
+  const [showSiteLayers, setShowSiteLayers] = useState(false);
+  const [showTemplatePicker, setShowTemplatePicker] = useState(false);
   const [canvasSize, setCanvasSize] = useState({ width: 800, height: 600 });
 
   const undoManagerRef = useRef(new UndoRedoManager());
   const containerRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<Konva.Stage>(null) as RefObject<Konva.Stage | null>;
 
-  // Load plan data when fetched
+  // Load plan data when fetched (with validation for corrupt data)
   useEffect(() => {
     if (plan?.planData) {
-      setPlanData(plan.planData);
+      try {
+        const d = plan.planData;
+        if (d && Array.isArray(d.walls) && Array.isArray(d.rooms)) {
+          setPlanData(d);
+        } else {
+          console.error('[SketchBid] Invalid plan data structure, using empty plan');
+          setPlanData(createEmptyFloorPlan());
+        }
+      } catch {
+        console.error('[SketchBid] Failed to load plan data, using empty plan');
+        setPlanData(createEmptyFloorPlan());
+      }
     }
   }, [plan]);
 
@@ -488,6 +542,104 @@ function EditorView({
     [planData, editorState.activeLayerId, handlePlanDataChange],
   );
 
+  // ── Template handler (SK13) ──
+  const handleApplyTemplate = useCallback(
+    (template: SketchTemplate) => {
+      const fp = applyFloorPlanTemplate(template);
+      if (fp) {
+        handlePlanDataChange(fp);
+        setPlanMode('floor');
+      }
+      const sp = applySitePlanTemplate(template);
+      if (sp) {
+        setSitePlanData(sp);
+        if (!fp) setPlanMode('site');
+      }
+      setShowTemplatePicker(false);
+    },
+    [handlePlanDataChange],
+  );
+
+  // ── Site plan handlers (SK12) ──
+  const handleSitePlanChange = useCallback(
+    (data: SitePlanData) => {
+      setSitePlanData(data);
+      // Auto-save alongside floor plan
+      savePlanData({ ...planData, sitePlan: data } as FloorPlanData & { sitePlan: SitePlanData });
+    },
+    [planData, savePlanData],
+  );
+
+  const handleSiteEditorStateChange = useCallback(
+    (partial: Partial<SiteEditorState>) => {
+      setSiteEditorState((prev) => ({ ...prev, ...partial }));
+    },
+    [],
+  );
+
+  const handleSiteSelectElement = useCallback(
+    (id: string | null, type: string | null) => {
+      setSiteSelectedId(id);
+      setSiteSelectedType(type);
+    },
+    [],
+  );
+
+  const handleSiteToolChange = useCallback(
+    (tool: SitePlanTool) => {
+      setSiteEditorState((prev) => ({
+        ...prev,
+        activeTool: tool,
+        ghostPoints: [],
+        pendingSymbolType: tool === 'symbol' ? prev.pendingSymbolType : null,
+      }));
+    },
+    [],
+  );
+
+  const handleSiteSymbolTypeChange = useCallback(
+    (type: SiteSymbolType) => {
+      setSiteEditorState((prev) => ({ ...prev, pendingSymbolType: type }));
+    },
+    [],
+  );
+
+  const handleSiteToggleVisibility = useCallback(
+    (layerId: string) => {
+      setSitePlanData((prev) => ({
+        ...prev,
+        layers: prev.layers.map((l) =>
+          l.id === layerId ? { ...l, visible: !l.visible } : l,
+        ),
+      }));
+    },
+    [],
+  );
+
+  const handleSiteToggleLock = useCallback(
+    (layerId: string) => {
+      setSitePlanData((prev) => ({
+        ...prev,
+        layers: prev.layers.map((l) =>
+          l.id === layerId ? { ...l, locked: !l.locked } : l,
+        ),
+      }));
+    },
+    [],
+  );
+
+  const handleSiteOpacityChange = useCallback(
+    (layerId: string, opacity: number) => {
+      setSitePlanData((prev) => ({
+        ...prev,
+        layers: prev.layers.map((l) =>
+          l.id === layerId ? { ...l, opacity } : l,
+        ),
+      }));
+    },
+    [],
+  );
+
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center bg-gray-50">
@@ -547,6 +699,15 @@ function EditorView({
           )}
         </div>
 
+        {/* SK13: Template picker */}
+        <button
+          onClick={() => setShowTemplatePicker(true)}
+          className="p-1.5 rounded transition-colors hover:bg-gray-100 text-gray-400"
+          title="Start from template"
+        >
+          <LayoutTemplate size={14} />
+        </button>
+
         {/* SK8: Generate Estimate */}
         <button
           onClick={() => setShowEstimateModal(true)}
@@ -555,6 +716,16 @@ function EditorView({
           title={planData.rooms.length === 0 ? 'Draw rooms first' : 'Generate estimate from rooms'}
         >
           <Calculator size={14} />
+        </button>
+
+        {/* SK9: Export */}
+        <button
+          onClick={() => setShowExportModal(true)}
+          disabled={planData.walls.length === 0}
+          className="p-1.5 rounded transition-colors hover:bg-gray-100 text-gray-400 disabled:opacity-30 disabled:cursor-not-allowed"
+          title={planData.walls.length === 0 ? 'Draw a floor plan first' : 'Export floor plan'}
+        >
+          <Download size={14} />
         </button>
 
         {/* SK7: Photo pin toggle */}
@@ -583,6 +754,20 @@ function EditorView({
           <History size={14} />
         </button>
 
+        {/* SK12: Floor/Site plan mode toggle */}
+        <PlanModeToggle
+          mode={planMode}
+          onModeChange={(mode) => { setPlanMode(mode); setIs3DView(false); }}
+        />
+
+        {/* SK10: 2D/3D view toggle (floor plan only) */}
+        {planMode === 'floor' && (
+          <ViewToggle
+            is3D={is3DView}
+            onToggle={() => setIs3DView(!is3DView)}
+          />
+        )}
+
         {/* Unit toggle */}
         <button
           onClick={() =>
@@ -599,9 +784,18 @@ function EditorView({
         </button>
         {/* Stats */}
         <div className="text-xs text-gray-400">
-          {planData.walls.length}W {planData.doors.length}D{' '}
-          {planData.windows.length}Wi {planData.rooms.length}R
-          {photoPins.length > 0 && <> {photoPins.length}P</>}
+          {planMode === 'floor' ? (
+            <>
+              {planData.walls.length}W {planData.doors.length}D{' '}
+              {planData.windows.length}Wi {planData.rooms.length}R
+              {photoPins.length > 0 && <> {photoPins.length}P</>}
+            </>
+          ) : (
+            <>
+              {sitePlanData.structures.length}S {sitePlanData.linearFeatures.length}LF{' '}
+              {sitePlanData.areaFeatures.length}AF {sitePlanData.symbols.length}Sym
+            </>
+          )}
         </div>
       </div>
 
@@ -641,124 +835,217 @@ function EditorView({
 
           {/* Canvas container */}
           <div className="flex-1 relative overflow-hidden" ref={containerRef}>
-            {/* Left toolbar */}
-            <div className="absolute top-3 left-3 z-10">
-              <Toolbar
-                editorState={editorState}
-                canUndo={undoManagerRef.current.canUndo}
-                canRedo={undoManagerRef.current.canRedo}
-                onToolChange={handleToolChange}
-                onUndo={handleUndo}
-                onRedo={handleRedo}
-                onZoomIn={() =>
-                  handleEditorStateChange({
-                    zoom: Math.min(editorState.zoom * 1.2, 5),
-                  })
-                }
-                onZoomOut={() =>
-                  handleEditorStateChange({
-                    zoom: Math.max(editorState.zoom / 1.2, 0.1),
-                  })
-                }
-                onToggleGrid={() =>
-                  handleEditorStateChange({
-                    showGrid: !editorState.showGrid,
-                  })
-                }
-                onToggleLayers={() => setShowLayers(!showLayers)}
-              />
-            </div>
-
-            {/* Layer panel (right) */}
-            {showLayers && (
-              <div className="absolute top-3 right-3 z-10">
-                <LayerPanel
-                  layers={planData.tradeLayers}
-                  activeLayerId={editorState.activeLayerId}
-                  onActiveLayerChange={(id) =>
-                    handleEditorStateChange({ activeLayerId: id })
-                  }
-                  onToggleVisibility={handleToggleVisibility}
-                  onToggleLock={handleToggleLock}
-                  onOpacityChange={handleOpacityChange}
-                  onAddLayer={handleAddLayer}
-                  onRemoveLayer={handleRemoveLayer}
-                />
-              </div>
-            )}
-
-            {/* SK7: History panel (right, below layers) */}
-            {showHistory && (
-              <div
-                className="absolute right-3 z-10"
-                style={{ top: showLayers ? 280 : 12 }}
-              >
-                <HistoryPanel
-                  snapshots={snapshots}
-                  loading={snapshotsLoading}
-                  currentPlanData={planData}
-                  onCreateSnapshot={createSnapshot}
-                  onRestoreSnapshot={handleRestoreSnapshot}
-                  onDeleteSnapshot={deleteSnapshot}
-                  onClose={() => setShowHistory(false)}
-                />
-              </div>
-            )}
-
-            {/* Property inspector */}
-            {selection.selectedId && !showHistory && (
-              <div className="absolute top-3 right-3 z-10" style={{ top: showLayers ? 280 : 12 }}>
-                <PropertyInspector
-                  planData={planData}
-                  selection={selection}
-                  units={editorState.units}
-                  undoManager={undoManagerRef.current}
-                  onPlanDataChange={handlePlanDataChange}
-                  onClose={() =>
-                    setSelection({
-                      ...selection,
-                      selectedId: null,
-                      selectedType: null,
-                    })
-                  }
-                />
-              </div>
-            )}
-
-            {/* MiniMap (bottom-right) */}
-            <div className="absolute bottom-3 right-3 z-10">
-              <MiniMap
-                planData={planData}
-                viewportOffset={editorState.panOffset}
-                viewportSize={canvasSize}
-                zoom={editorState.zoom}
-                canvasSize={4000}
-                onNavigate={handleMiniMapNavigate}
-              />
-            </div>
-
-            {/* Photo pin count badge (bottom-left) */}
-            {photoPins.length > 0 && (
-              <div className="absolute bottom-3 left-3 z-10 bg-white/90 backdrop-blur border border-gray-200 rounded-lg px-2.5 py-1.5 shadow-sm">
-                <div className="flex items-center gap-1.5 text-xs text-gray-500">
-                  <Camera size={12} className="text-emerald-500" />
-                  <span>{photoPins.length} photo pin{photoPins.length !== 1 ? 's' : ''}</span>
+            {planMode === 'floor' ? (
+              <>
+                {/* Floor plan 2D overlays — hidden in 3D mode */}
+                {!is3DView && (<>
+                <div className="absolute top-3 left-3 z-10">
+                  <Toolbar
+                    editorState={editorState}
+                    canUndo={undoManagerRef.current.canUndo}
+                    canRedo={undoManagerRef.current.canRedo}
+                    onToolChange={handleToolChange}
+                    onUndo={handleUndo}
+                    onRedo={handleRedo}
+                    onZoomIn={() =>
+                      handleEditorStateChange({
+                        zoom: Math.min(editorState.zoom * 1.2, 5),
+                      })
+                    }
+                    onZoomOut={() =>
+                      handleEditorStateChange({
+                        zoom: Math.max(editorState.zoom / 1.2, 0.1),
+                      })
+                    }
+                    onToggleGrid={() =>
+                      handleEditorStateChange({
+                        showGrid: !editorState.showGrid,
+                      })
+                    }
+                    onToggleLayers={() => setShowLayers(!showLayers)}
+                  />
                 </div>
-              </div>
-            )}
 
-            {/* Canvas */}
-            <SketchCanvas
-              planData={planData}
-              editorState={editorState}
-              selection={selection}
-              onPlanDataChange={handlePlanDataChange}
-              onSelectionChange={setSelection}
-              onEditorStateChange={handleEditorStateChange}
-              undoManager={undoManagerRef.current}
-              width={canvasSize.width}
-              height={canvasSize.height}
-            />
+                {showLayers && (
+                  <div className="absolute top-3 right-3 z-10">
+                    <LayerPanel
+                      layers={planData.tradeLayers}
+                      activeLayerId={editorState.activeLayerId}
+                      onActiveLayerChange={(id) =>
+                        handleEditorStateChange({ activeLayerId: id })
+                      }
+                      onToggleVisibility={handleToggleVisibility}
+                      onToggleLock={handleToggleLock}
+                      onOpacityChange={handleOpacityChange}
+                      onAddLayer={handleAddLayer}
+                      onRemoveLayer={handleRemoveLayer}
+                    />
+                  </div>
+                )}
+
+                {showHistory && (
+                  <div
+                    className="absolute right-3 z-10"
+                    style={{ top: showLayers ? 280 : 12 }}
+                  >
+                    <HistoryPanel
+                      snapshots={snapshots}
+                      loading={snapshotsLoading}
+                      currentPlanData={planData}
+                      onCreateSnapshot={createSnapshot}
+                      onRestoreSnapshot={handleRestoreSnapshot}
+                      onDeleteSnapshot={deleteSnapshot}
+                      onClose={() => setShowHistory(false)}
+                    />
+                  </div>
+                )}
+
+                {selection.selectedId && !showHistory && (
+                  <div className="absolute top-3 right-3 z-10" style={{ top: showLayers ? 280 : 12 }}>
+                    <PropertyInspector
+                      planData={planData}
+                      selection={selection}
+                      units={editorState.units}
+                      undoManager={undoManagerRef.current}
+                      onPlanDataChange={handlePlanDataChange}
+                      onClose={() =>
+                        setSelection({
+                          ...selection,
+                          selectedId: null,
+                          selectedType: null,
+                        })
+                      }
+                    />
+                  </div>
+                )}
+
+                <div className="absolute bottom-3 right-3 z-10">
+                  <MiniMap
+                    planData={planData}
+                    viewportOffset={editorState.panOffset}
+                    viewportSize={canvasSize}
+                    zoom={editorState.zoom}
+                    canvasSize={4000}
+                    onNavigate={handleMiniMapNavigate}
+                  />
+                </div>
+
+                {photoPins.length > 0 && (
+                  <div className="absolute bottom-3 left-3 z-10 bg-white/90 backdrop-blur border border-gray-200 rounded-lg px-2.5 py-1.5 shadow-sm">
+                    <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                      <Camera size={12} className="text-emerald-500" />
+                      <span>{photoPins.length} photo pin{photoPins.length !== 1 ? 's' : ''}</span>
+                    </div>
+                  </div>
+                )}
+                </>)}
+
+                {/* Floor plan canvas: 3D or 2D */}
+                {is3DView ? (
+                  <ThreeDView
+                    planData={planData}
+                    width={canvasSize.width}
+                    height={canvasSize.height}
+                  />
+                ) : (
+                  <SketchCanvas
+                    planData={planData}
+                    editorState={editorState}
+                    selection={selection}
+                    onPlanDataChange={handlePlanDataChange}
+                    onSelectionChange={setSelection}
+                    onEditorStateChange={handleEditorStateChange}
+                    undoManager={undoManagerRef.current}
+                    width={canvasSize.width}
+                    height={canvasSize.height}
+                    externalStageRef={stageRef}
+                  />
+                )}
+              </>
+            ) : (
+              <>
+                {/* SK12: Site plan overlays */}
+                <div className="absolute top-3 left-3 z-10">
+                  <SitePlanToolbar
+                    activeTool={siteEditorState.activeTool}
+                    canUndo={false}
+                    canRedo={false}
+                    onToolChange={handleSiteToolChange}
+                    onSymbolTypeChange={handleSiteSymbolTypeChange}
+                    onUndo={() => {}}
+                    onRedo={() => {}}
+                    onZoomIn={() =>
+                      handleSiteEditorStateChange({
+                        zoom: Math.min(siteEditorState.zoom * 1.2, 5),
+                      })
+                    }
+                    onZoomOut={() =>
+                      handleSiteEditorStateChange({
+                        zoom: Math.max(siteEditorState.zoom / 1.2, 0.1),
+                      })
+                    }
+                    onToggleGrid={() =>
+                      handleSiteEditorStateChange({
+                        showGrid: !siteEditorState.showGrid,
+                      })
+                    }
+                  />
+                </div>
+
+                {/* Site background import (bottom-left) */}
+                <div className="absolute bottom-3 left-3 z-10">
+                  <SiteBackgroundImport
+                    backgroundImageUrl={sitePlanData.backgroundImageUrl}
+                    backgroundOpacity={sitePlanData.backgroundOpacity}
+                    onImageChange={(url) =>
+                      handleSitePlanChange({ ...sitePlanData, backgroundImageUrl: url })
+                    }
+                    onOpacityChange={(opacity) =>
+                      handleSitePlanChange({ ...sitePlanData, backgroundOpacity: opacity })
+                    }
+                  />
+                </div>
+
+                {/* Site layer panel (right) */}
+                <div className="absolute top-3 right-3 z-10">
+                  <SitePlanLayerPanel
+                    layers={sitePlanData.layers}
+                    activeLayerId={siteEditorState.activeLayerId}
+                    onActiveLayerChange={(id) =>
+                      handleSiteEditorStateChange({ activeLayerId: id })
+                    }
+                    onToggleVisibility={handleSiteToggleVisibility}
+                    onToggleLock={handleSiteToggleLock}
+                    onOpacityChange={handleSiteOpacityChange}
+                  />
+                </div>
+
+                {/* Site property inspector */}
+                {siteSelectedId && (
+                  <div className="absolute top-3 right-60 z-10">
+                    <SitePropertyInspector
+                      sitePlan={sitePlanData}
+                      selectedId={siteSelectedId}
+                      selectedType={siteSelectedType}
+                      onSitePlanChange={handleSitePlanChange}
+                      onClose={() => handleSiteSelectElement(null, null)}
+                    />
+                  </div>
+                )}
+
+                {/* Site plan canvas */}
+                <SitePlanCanvas
+                  sitePlan={sitePlanData}
+                  editorState={siteEditorState}
+                  selectedId={siteSelectedId}
+                  canvasWidth={canvasSize.width}
+                  canvasHeight={canvasSize.height}
+                  onSitePlanChange={handleSitePlanChange}
+                  onSelectElement={handleSiteSelectElement}
+                  onEditorStateChange={handleSiteEditorStateChange}
+                />
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -774,6 +1061,24 @@ function EditorView({
             // Navigate to estimate editor
             window.location.href = `/dashboard/estimates/${estimateId}`;
           }}
+        />
+      )}
+
+      {/* SK9: Export Modal */}
+      {showExportModal && (
+        <ExportModal
+          planData={planData}
+          stageRef={stageRef}
+          floorNumber={1}
+          onClose={() => setShowExportModal(false)}
+        />
+      )}
+
+      {/* SK13: Template Picker */}
+      {showTemplatePicker && (
+        <TemplatePicker
+          onSelect={handleApplyTemplate}
+          onClose={() => setShowTemplatePicker(false)}
         />
       )}
     </div>
