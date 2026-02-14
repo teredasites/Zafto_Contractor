@@ -50,6 +50,8 @@ interface TechStatus {
   currentJobTitle: string | null;
   lastLocation: { lat: number; lng: number } | null;
   clockInTime: string | null;
+  vehicleName: string | null;
+  vehiclePlate: string | null;
 }
 
 // ============================================================
@@ -115,12 +117,35 @@ export default function DispatchPage() {
         .is('clock_out', null)
         .order('clock_in', { ascending: false });
 
+      // Fetch vehicle assignments for techs
+      const userIds = (usersData || []).map((u: Record<string, unknown>) => u.id as string);
+      const { data: vehicleData } = userIds.length > 0
+        ? await supabase
+            .from('vehicles')
+            .select('id, name, license_plate, assigned_to_user_id')
+            .in('assigned_to_user_id', userIds)
+        : { data: null };
+
+      const vehicleByUser = new Map<string, { name: string; plate: string }>();
+      for (const v of (vehicleData || [])) {
+        const veh = v as Record<string, unknown>;
+        const uid = veh.assigned_to_user_id as string;
+        if (uid) {
+          vehicleByUser.set(uid, {
+            name: (veh.name as string) || 'Vehicle',
+            plate: (veh.license_plate as string) || '',
+          });
+        }
+      }
+
       // Build tech status
       const techMap = new Map<string, TechStatus>();
       for (const u of (usersData || [])) {
         const user = u as Record<string, unknown>;
-        techMap.set(user.id as string, {
-          id: user.id as string,
+        const uid = user.id as string;
+        const vehicle = vehicleByUser.get(uid);
+        techMap.set(uid, {
+          id: uid,
           fullName: (user.full_name as string) || (user.email as string),
           email: (user.email as string) || '',
           role: (user.role as string) || 'technician',
@@ -129,6 +154,8 @@ export default function DispatchPage() {
           currentJobTitle: null,
           lastLocation: null,
           clockInTime: null,
+          vehicleName: vehicle?.name || null,
+          vehiclePlate: vehicle?.plate || null,
         });
       }
 
@@ -423,6 +450,7 @@ export default function DispatchPage() {
                       <p className="text-sm font-medium text-main truncate">{tech.fullName}</p>
                       <p className="text-xs text-muted">
                         Clocked in {tech.clockInTime ? formatRelativeTime(tech.clockInTime) : ''}
+                        {tech.vehicleName && ` · ${tech.vehicleName}`}
                       </p>
                     </div>
                   </div>
@@ -446,7 +474,10 @@ export default function DispatchPage() {
                     <Avatar name={tech.fullName} size="sm" />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-main truncate">{tech.fullName}</p>
-                      <p className="text-xs text-muted truncate">{tech.currentJobTitle}</p>
+                      <p className="text-xs text-muted truncate">
+                        {tech.currentJobTitle}
+                        {tech.vehicleName && ` · ${tech.vehicleName}`}
+                      </p>
                     </div>
                     {tech.currentJobId && (
                       <button
@@ -477,7 +508,10 @@ export default function DispatchPage() {
                     <Avatar name={tech.fullName} size="sm" />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-main truncate">{tech.fullName}</p>
-                      <p className="text-xs text-muted">{tech.role}</p>
+                      <p className="text-xs text-muted">
+                        {tech.role}
+                        {tech.vehicleName && ` · ${tech.vehicleName}`}
+                      </p>
                     </div>
                   </div>
                 ))}

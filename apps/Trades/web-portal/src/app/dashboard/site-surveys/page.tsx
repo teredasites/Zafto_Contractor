@@ -22,6 +22,7 @@ import { Badge } from '@/components/ui/badge';
 import { SearchInput, Select } from '@/components/ui/input';
 import { CommandPalette } from '@/components/command-palette';
 import { useSiteSurveys, type SiteSurvey } from '@/lib/hooks/use-site-surveys';
+import { useRouter } from 'next/navigation';
 import { formatDate, cn } from '@/lib/utils';
 
 const statusConfig: Record<string, { label: string; color: string; bgColor: string; icon: typeof Clock }> = {
@@ -90,8 +91,35 @@ function SurveyRow({ survey, onSelect, isSelected }: { survey: SiteSurvey; onSel
 }
 
 function SurveyDetail({ survey }: { survey: SiteSurvey }) {
+  const router = useRouter();
+  const { createEstimateFromSurvey } = useSiteSurveys();
+  const [generating, setGenerating] = useState(false);
+
+  const handleGenerateEstimate = async () => {
+    if (generating) return;
+    setGenerating(true);
+    try {
+      const estimateId = await createEstimateFromSurvey(survey.id);
+      if (estimateId) {
+        router.push(`/dashboard/estimates/${estimateId}`);
+      }
+    } catch {
+      // Error handled by hook
+    } finally {
+      setGenerating(false);
+    }
+  };
+
   return (
     <div className="p-4 bg-zinc-800/30 border-b border-zinc-800 space-y-4">
+      {/* Actions */}
+      <div className="flex items-center gap-2">
+        <Button size="sm" onClick={handleGenerateEstimate} disabled={generating}>
+          {generating ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1" /> : <FileText className="h-3.5 w-3.5 mr-1" />}
+          {generating ? 'Generating...' : 'Generate Estimate'}
+        </Button>
+      </div>
+
       {/* Property overview */}
       <div className="grid grid-cols-3 gap-4">
         <div>

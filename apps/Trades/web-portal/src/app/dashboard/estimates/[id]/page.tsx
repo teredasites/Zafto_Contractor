@@ -209,11 +209,20 @@ export default function EstimateEditorPage() {
     window.open(blobUrl, '_blank');
   }, [estimateId]);
 
-  // Send estimate
+  // Send estimate via email (updates status + calls SendGrid EF)
   const handleSend = useCallback(async () => {
     await recalculateTotals();
     await updateEstimate({ status: 'sent', sent_at: new Date().toISOString() });
-  }, [recalculateTotals, updateEstimate]);
+    // Actually send the email via SendGrid
+    try {
+      const supabase = getSupabase();
+      await supabase.functions.invoke('sendgrid-email', {
+        body: { action: 'send_estimate', entityId: estimateId },
+      });
+    } catch {
+      // Best-effort — status already updated
+    }
+  }, [recalculateTotals, updateEstimate, estimateId]);
 
   // Convert estimate to bid
   const handleConvertToBid = useCallback(async () => {
