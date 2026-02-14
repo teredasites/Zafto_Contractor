@@ -1,0 +1,13 @@
+{
+  "common": {"save":"I-save","cancel":"Kanselahin","close":"Isara","back":"Bumalik","loading":"Naglo-load...","error":"May nangyaring mali","success":"Tagumpay","yes":"Oo","no":"Hindi","submit":"Isumite","noResults":"Walang resulta","tryAgain":"Subukan muli","viewAll":"Tingnan lahat","download":"I-download","print":"I-print"},
+  "nav": {"home":"Home","projects":"Mga Proyekto","payments":"Mga Bayad","messages":"Mga Mensahe","documents":"Mga Dokumento","schedule":"Iskedyul","myHome":"Bahay Ko","meetings":"Mga Meeting","reviews":"Mga Review","menu":"Menu"},
+  "auth": {"signIn":"Mag-sign in","signOut":"Mag-sign out","email":"Email","magicLink":"Ipadala ang login link","checkEmail":"Tingnan ang email para sa login link"},
+  "projects": {"title":"Mga Proyekto Ko","projectDetails":"Detalye ng Proyekto","status":"Estado","progress":"Progreso","startDate":"Petsa ng Simula","estimatedCompletion":"Tinatayang Katapusan","crew":"Crew","updates":"Mga Update","photos":"Mga Larawan","documents":"Mga Dokumento","noProjects":"Walang aktibong proyekto","statuses":{"scheduled":"Naka-iskedyul","in_progress":"Ginagawa","on_hold":"Naka-hold","completed":"Tapos na"}},
+  "payments": {"title":"Mga Bayad","invoices":"Mga Invoice","payNow":"Magbayad Ngayon","paymentHistory":"Kasaysayan ng Bayad","amountDue":"Halagang Dapat Bayaran","dueDate":"Takdang Araw","paid":"Bayad Na","pending":"Pending","overdue":"Overdue","totalOwed":"Kabuuang Utang","noInvoices":"Walang invoice"},
+  "messages": {"title":"Mga Mensahe","newMessage":"Bagong Mensahe","noMessages":"Wala pang mensahe","typeMessage":"Mag-type ng mensahe...","send":"Ipadala"},
+  "documents": {"title":"Mga Dokumento","contracts":"Mga Kontrata","invoices":"Mga Invoice","photos":"Mga Larawan","warranties":"Mga Warranty","permits":"Mga Permit","noDocuments":"Wala pang dokumento"},
+  "myHome": {"title":"Bahay Ko","propertyDetails":"Detalye ng Property","maintenanceSchedule":"Iskedyul ng Maintenance","warrantyInfo":"Impormasyon ng Warranty","serviceHistory":"Kasaysayan ng Serbisyo"},
+  "schedule": {"title":"Iskedyul","upcoming":"Paparating","noAppointments":"Walang naka-iskedyul na appointment","requestReschedule":"Humiling ng Reschedule"},
+  "reviews": {"title":"Mag-iwan ng Review","rating":"Rating","comment":"Komento","submitReview":"Isumite ang Review","thankYou":"Salamat sa iyong review!"},
+  "settings": {"language":"Wika","languageDescription":"Pumili ng gustong wika"}
+}

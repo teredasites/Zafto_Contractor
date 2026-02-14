@@ -1,9 +1,9 @@
-// ZAFTO Web CRM — Auth + RBAC Middleware
-// Sprint B4a | Session 48 | RBAC added Session 55
+// ZAFTO Web CRM — Auth + RBAC + i18n Middleware
+// Sprint B4a | Session 48 | RBAC added Session 55 | i18n added U13
 //
 // Protects /dashboard/* routes. Verifies auth AND role.
 // Allowed roles: owner, admin, office_manager, cpa, super_admin
-// Refreshes auth tokens on each request.
+// Sets NEXT_LOCALE cookie from user preferred_locale.
 
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
@@ -24,7 +24,7 @@ export async function middleware(request: NextRequest) {
           return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) =>
+          cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value)
           );
           supabaseResponse = NextResponse.next({
@@ -52,10 +52,10 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(url);
     }
 
-    // Verify role from users table
+    // Verify role + read locale preference from users table (single query)
     const { data: profile } = await supabase
       .from('users')
-      .select('role')
+      .select('role, preferred_locale')
       .eq('id', user.id)
       .single();
 
@@ -64,6 +64,17 @@ export async function middleware(request: NextRequest) {
       url.pathname = '/';
       url.searchParams.set('error', 'unauthorized');
       return NextResponse.redirect(url);
+    }
+
+    // Set locale cookie from user preference (if different from current)
+    const userLocale = profile.preferred_locale || 'en';
+    const currentLocale = request.cookies.get('NEXT_LOCALE')?.value;
+    if (userLocale !== currentLocale) {
+      supabaseResponse.cookies.set('NEXT_LOCALE', userLocale, {
+        path: '/',
+        maxAge: 60 * 60 * 24 * 365,
+        sameSite: 'lax',
+      });
     }
   }
 

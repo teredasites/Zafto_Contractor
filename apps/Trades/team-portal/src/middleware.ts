@@ -42,10 +42,10 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(url);
     }
 
-    // Verify role from users table
+    // Verify role + read locale preference from users table
     const { data: profile } = await supabase
       .from('users')
-      .select('role')
+      .select('role, preferred_locale')
       .eq('id', user.id)
       .single();
 
@@ -54,6 +54,17 @@ export async function middleware(request: NextRequest) {
       url.pathname = '/';
       url.searchParams.set('error', 'unauthorized');
       return NextResponse.redirect(url);
+    }
+
+    // Set locale cookie from user preference
+    const userLocale = profile.preferred_locale || 'en';
+    const currentLocale = request.cookies.get('NEXT_LOCALE')?.value;
+    if (userLocale !== currentLocale) {
+      supabaseResponse.cookies.set('NEXT_LOCALE', userLocale, {
+        path: '/',
+        maxAge: 60 * 60 * 24 * 365,
+        sameSite: 'lax',
+      });
     }
   }
 

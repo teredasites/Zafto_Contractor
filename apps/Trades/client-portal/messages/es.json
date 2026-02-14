@@ -1,0 +1,110 @@
+{
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "close": "Cerrar",
+    "back": "Atr\u00e1s",
+    "loading": "Cargando...",
+    "error": "Algo sali\u00f3 mal",
+    "success": "\u00c9xito",
+    "yes": "S\u00ed",
+    "no": "No",
+    "submit": "Enviar",
+    "noResults": "No se encontraron resultados",
+    "tryAgain": "Intentar de nuevo",
+    "viewAll": "Ver todos",
+    "download": "Descargar",
+    "print": "Imprimir"
+  },
+  "nav": {
+    "home": "Inicio",
+    "projects": "Proyectos",
+    "payments": "Pagos",
+    "messages": "Mensajes",
+    "documents": "Documentos",
+    "schedule": "Calendario",
+    "myHome": "Mi casa",
+    "meetings": "Reuniones",
+    "reviews": "Rese\u00f1as",
+    "menu": "Men\u00fa"
+  },
+  "auth": {
+    "signIn": "Iniciar sesi\u00f3n",
+    "signOut": "Cerrar sesi\u00f3n",
+    "email": "Correo electr\u00f3nico",
+    "magicLink": "Enviar enlace de acceso",
+    "checkEmail": "Revise su correo para el enlace de acceso"
+  },
+  "projects": {
+    "title": "Mis proyectos",
+    "projectDetails": "Detalles del proyecto",
+    "status": "Estado",
+    "progress": "Progreso",
+    "startDate": "Fecha de inicio",
+    "estimatedCompletion": "Finalizaci\u00f3n estimada",
+    "crew": "Equipo",
+    "updates": "Actualizaciones",
+    "photos": "Fotos",
+    "documents": "Documentos",
+    "noProjects": "Sin proyectos activos",
+    "statuses": {
+      "scheduled": "Programado",
+      "in_progress": "En progreso",
+      "on_hold": "En espera",
+      "completed": "Completado"
+    }
+  },
+  "payments": {
+    "title": "Pagos",
+    "invoices": "Facturas",
+    "payNow": "Pagar ahora",
+    "paymentHistory": "Historial de pagos",
+    "amountDue": "Monto pendiente",
+    "dueDate": "Fecha de vencimiento",
+    "paid": "Pagado",
+    "pending": "Pendiente",
+    "overdue": "Vencido",
+    "totalOwed": "Total adeudado",
+    "noInvoices": "Sin facturas"
+  },
+  "messages": {
+    "title": "Mensajes",
+    "newMessage": "Nuevo mensaje",
+    "noMessages": "A\u00fan no hay mensajes",
+    "typeMessage": "Escribe un mensaje...",
+    "send": "Enviar"
+  },
+  "documents": {
+    "title": "Documentos",
+    "contracts": "Contratos",
+    "invoices": "Facturas",
+    "photos": "Fotos",
+    "warranties": "Garant\u00edas",
+    "permits": "Permisos",
+    "noDocuments": "A\u00fan no hay documentos"
+  },
+  "myHome": {
+    "title": "Mi casa",
+    "propertyDetails": "Detalles de la propiedad",
+    "maintenanceSchedule": "Calendario de mantenimiento",
+    "warrantyInfo": "Informaci\u00f3n de garant\u00eda",
+    "serviceHistory": "Historial de servicio"
+  },
+  "schedule": {
+    "title": "Calendario",
+    "upcoming": "Pr\u00f3ximos",
+    "noAppointments": "Sin citas programadas",
+    "requestReschedule": "Solicitar reprogramaci\u00f3n"
+  },
+  "reviews": {
+    "title": "Dejar una rese\u00f1a",
+    "rating": "Calificaci\u00f3n",
+    "comment": "Comentario",
+    "submitReview": "Enviar rese\u00f1a",
+    "thankYou": "\u00a1Gracias por su rese\u00f1a!"
+  },
+  "settings": {
+    "language": "Idioma",
+    "languageDescription": "Elige tu idioma preferido"
+  }
+}

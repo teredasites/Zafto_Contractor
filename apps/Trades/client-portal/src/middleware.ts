@@ -45,7 +45,7 @@ export async function middleware(request: NextRequest) {
     // Check if user has a client_portal_users record
     const { data: clientProfile } = await supabase
       .from('client_portal_users')
-      .select('id')
+      .select('id, preferred_locale')
       .eq('auth_user_id', user.id)
       .single();
 
@@ -53,7 +53,7 @@ export async function middleware(request: NextRequest) {
       // Fallback: allow super_admin from users table (for testing)
       const { data: adminProfile } = await supabase
         .from('users')
-        .select('role')
+        .select('role, preferred_locale')
         .eq('id', user.id)
         .single();
 
@@ -61,6 +61,20 @@ export async function middleware(request: NextRequest) {
         const redirectUrl = new URL('/', request.url);
         redirectUrl.searchParams.set('error', 'unauthorized');
         return NextResponse.redirect(redirectUrl);
+      }
+
+      // Set locale from admin profile
+      const adminLocale = adminProfile.preferred_locale || 'en';
+      const currentLocale = request.cookies.get('NEXT_LOCALE')?.value;
+      if (adminLocale !== currentLocale) {
+        response.cookies.set('NEXT_LOCALE', adminLocale, { path: '/', maxAge: 60 * 60 * 24 * 365, sameSite: 'lax' });
+      }
+    } else {
+      // Set locale from client profile
+      const clientLocale = clientProfile.preferred_locale || 'en';
+      const currentLocale = request.cookies.get('NEXT_LOCALE')?.value;
+      if (clientLocale !== currentLocale) {
+        response.cookies.set('NEXT_LOCALE', clientLocale, { path: '/', maxAge: 60 * 60 * 24 * 365, sameSite: 'lax' });
       }
     }
   }

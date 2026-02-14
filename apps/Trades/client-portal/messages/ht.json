@@ -1,0 +1,13 @@
+{
+  "common": {"save":"Anrejistre","cancel":"Anile","close":"F\u00e8men","back":"Tounen","loading":"Chajman...","error":"Gen yon pwoblem","success":"Sikse","yes":"Wi","no":"Non","submit":"Soum\u00e8t","noResults":"Pa jwenn rezilta","tryAgain":"Eseye ank\u00f2","viewAll":"W\u00e8 tout","download":"Telechaje","print":"Enprime"},
+  "nav": {"home":"Lakay","projects":"Pwoj\u00e8","payments":"Peman","messages":"Mesaj","documents":"Dokiman","schedule":"Or\u00e8","myHome":"Kay mwen","meetings":"Reyinyon","reviews":"Evalyasyon","menu":"Meni"},
+  "auth": {"signIn":"Konekte","signOut":"Dekonekte","email":"Im\u00e8l","magicLink":"Voye lyen koneksyon","checkEmail":"Tcheke im\u00e8l ou pou lyen koneksyon an"},
+  "projects": {"title":"Pwoj\u00e8 mwen","projectDetails":"Detay pwoj\u00e8","status":"Eta","progress":"Pwogrè","startDate":"Dat k\u00f2mansman","estimatedCompletion":"Fini estime","crew":"Ekip","updates":"Miz ajou","photos":"Foto","documents":"Dokiman","noProjects":"Pa gen pwoj\u00e8 aktif","statuses":{"scheduled":"Planifye","in_progress":"An kou","on_hold":"An atant","completed":"Fini"}},
+  "payments": {"title":"Peman","invoices":"Fakti","payNow":"Peye kounye a","paymentHistory":"Istorik peman","amountDue":"Montan pou peye","dueDate":"Dat limit","paid":"Peye","pending":"An atant","overdue":"An reta","totalOwed":"Total dwe","noInvoices":"Pa gen fakti"},
+  "messages": {"title":"Mesaj","newMessage":"Nouvo mesaj","noMessages":"Pa gen mesaj ank\u00f2","typeMessage":"Ekri yon mesaj...","send":"Voye"},
+  "documents": {"title":"Dokiman","contracts":"Kontra","invoices":"Fakti","photos":"Foto","warranties":"Garanti","permits":"P\u00e8mi","noDocuments":"Pa gen dokiman ank\u00f2"},
+  "myHome": {"title":"Kay mwen","propertyDetails":"Detay pwopriyete","maintenanceSchedule":"Kalandriye antretyen","warrantyInfo":"Enf\u00f2masyon garanti","serviceHistory":"Istorik s\u00e8vis"},
+  "schedule": {"title":"Or\u00e8","upcoming":"K ap vini","noAppointments":"Pa gen randevou","requestReschedule":"Mande chanjman dat"},
+  "reviews": {"title":"Kite yon evalyasyon","rating":"N\u00f2t","comment":"Kom\u00e8nte","submitReview":"Soum\u00e8t evalyasyon","thankYou":"M\u00e8si pou evalyasyon ou!"},
+  "settings": {"language":"Lang","languageDescription":"Chwazi lang ou prefere"}
+}
