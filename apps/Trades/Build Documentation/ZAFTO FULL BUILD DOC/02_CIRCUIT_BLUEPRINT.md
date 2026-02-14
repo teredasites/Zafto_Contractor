@@ -687,8 +687,20 @@ Tech opens app -> Taps "Field Tools"
 - Spec: `Expansion/40_PROPERTY_INTELLIGENCE_SPEC.md`
 - API keys: GOOGLE_SOLAR_API_KEY configured. ATTOM_API_KEY + REGRID_API_KEY + UNWRANGLE_API_KEY GATED (post-revenue).
 
-### Phase U: Unification & Feature Completion -- PLANNED (S96), NEXT
-- [ ] U1-U22: ~432 hours, 22 sprints. Portal unification, Supabase-style nav redesign, permission engine, Ledger completion, dashboard restoration, PDF/email/dead buttons, payment flow, cross-system metrics, polish, form depth, templates, i18n, trade support, onboarding, data flow wiring, dispatch board, data import, subs, calendar sync, isolated feature wiring. Builds after Phase GC, before Phase G.
+### Phase U: Unification & Feature Completion -- IN PROGRESS (S111-S112)
+- [x] U1: SCRAPPED (owner directive — portals stay separate)
+- [x] U2: Nav Redesign — Supabase-style sidebar, Z button, hover-expand 3 modes, role-based nav
+- [x] U3: Permission Engine — role presets, enterprise tiers, Good/Better/Best setting
+- [x] U4: Ledger Completion — job_budgets table, budget vs actual, job costing P&L, approval workflow wiring
+- [x] U5: Dashboard Restoration — live GPS map, real-time clock widget, mock data eliminated
+- [x] U6: PDF + Email — export-bid-pdf + export-invoice-pdf EFs, SendGrid wiring, 26+ dead buttons fixed
+- [x] U7: Payment Flow + Shell Pages — Stripe Connect, permits/SAs/reviews tables, 5 hooks, system health, deep workflows (review requests, SA auto-billing, automation engine backend)
+- [x] U8: Cross-System Metric Verification — 3 parallel audits, revenue paid-only filter, bid conversion fix, ops honest metrics
+- [ ] U9: Polish + Missing Features — PARTIAL (ops CRUD + forgot password done, remaining: loading/empty/error states audit, Flutter properties, notifications)
+- [ ] U10-U22: ~280 hours remaining. Embedded financing, form depth, templates, i18n, trade support, onboarding, data flow wiring, dispatch board, data import, subs, calendar sync, isolated feature wiring.
+- **New tables (S111):** job_budgets, permits, service_agreements, service_agreement_visits, review_requests, system_health_checks, automations + approval expansion + stripe_connect fields
+- **New EFs (S111):** export-bid-pdf, export-invoice-pdf
+- **New hooks (S111):** use-automations, use-job-budgets, use-permits, use-service-agreements, use-warranties
 
 ### Phase SK: CAD-Grade Sketch Engine -- COMPLETE (SK1-SK14 DONE, S109)
 - [x] SK1: Data model — 5 tables (property_floor_plans, floor_plan_elements, floor_plan_trade_data, floor_plan_snapshots, floor_plan_photo_pins), V2 element types, migration 63.

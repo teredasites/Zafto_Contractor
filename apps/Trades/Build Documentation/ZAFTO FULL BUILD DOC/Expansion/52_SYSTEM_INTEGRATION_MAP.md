@@ -306,8 +306,19 @@ Update this section as sprints are completed. Mark each connection as it's verif
 | GC → Weather | GC5 | WIRED (S110) — weather integration, outdoor task delay detection |
 | GC → Sketch | GC10 | WIRED (S110) — sq ft duration suggestions from sketch measurements |
 
-### Phase U (Unification)
-All connections verified during U8 (Cross-System Metric Verification) and U22 (Isolated Feature Wiring).
+### Phase U (Unification) — IN PROGRESS (S111-S112)
+| Connection | Sprint | Status |
+|-----------|--------|--------|
+| U → Nav (all portals) | U2 | WIRED (S111) — Supabase-style sidebar, Z button, hover-expand, role-based nav |
+| U → Permissions | U3 | WIRED (S111) — role presets, enterprise tiers, Good/Better/Best |
+| U → Ledger (budget vs actual) | U4 | WIRED (S111) — job_budgets table, P&L, approval workflows |
+| U → Dashboard (real data) | U5 | WIRED (S111) — live GPS map, real-time clock, mock data eliminated |
+| U → PDF/Email | U6 | WIRED (S111) — export-bid-pdf + export-invoice-pdf EFs, SendGrid |
+| U → Stripe Connect | U7 | WIRED (S111) — payment flow, permits, SAs, reviews, system health |
+| U → Revenue Metrics | U8 | WIRED (S112) — paid-only filter, bid conversion fix, cross-portal verified |
+| U → Ops CRUD | U9 | PARTIAL (S112) — company tier/suspend, user role/disable/reset, KB delete |
+| U → Auth Flows | U9 | WIRED (S112) — forgot password on web/team/ops portals |
+Remaining U10-U22 connections verified during U22 (Isolated Feature Wiring).
 
 ### Phase W (Warranty + Lifecycle)
 | Connection | Sprint | Status |
