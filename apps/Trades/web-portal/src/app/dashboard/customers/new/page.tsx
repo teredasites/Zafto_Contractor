@@ -203,7 +203,11 @@ export default function NewCustomerPage() {
                     type="tel"
                     placeholder="(860) 555-0123"
                     value={formData.phone}
-                    onChange={(e) => { setFormData({ ...formData, phone: e.target.value }); setErrors((prev) => { const { phone, ...rest } = prev; return rest; }); }}
+                    onChange={(e) => {
+                      const digits = e.target.value.replace(/\D/g, '').slice(0, 10);
+                      const formatted = digits.length > 6 ? `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}` : digits.length > 3 ? `(${digits.slice(0,3)}) ${digits.slice(3)}` : digits;
+                      setFormData({ ...formData, phone: formatted }); setErrors((prev) => { const { phone: _, ...rest } = prev; return rest; });
+                    }}
                     icon={<Phone size={16} />}
                     required
                   />
