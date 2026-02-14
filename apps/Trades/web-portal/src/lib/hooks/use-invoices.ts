@@ -166,6 +166,15 @@ export function useInvoices() {
 
     // Auto-post journal entry: DR Accounts Receivable, CR Revenue
     await createInvoiceJournal(id);
+
+    // U22: Actually send email via SendGrid EF (with PDF + payment link)
+    try {
+      await supabase.functions.invoke('sendgrid-email', {
+        body: { action: 'send_invoice', entityId: id },
+      });
+    } catch {
+      // Email send is best-effort — don't fail the status update
+    }
   };
 
   const deleteInvoice = async (id: string) => {

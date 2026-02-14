@@ -155,7 +155,43 @@ export function useJobs() {
     if (err) throw err;
   };
 
-  return { jobs, loading, error, createJob, updateJob, updateJobStatus, deleteJob, refetch: fetchJobs };
+  // U22: OSHA → Job Safety — attach safety checklist based on trade
+  const attachSafetyChecklist = async (jobId: string, tradeType: string) => {
+    const supabase = getSupabase();
+
+    // Look up OSHA standards for this trade
+    const { data: standards } = await supabase
+      .from('osha_standards')
+      .select('standard_number, title, description')
+      .contains('applicable_trades', [tradeType])
+      .eq('frequently_cited', true)
+      .limit(10);
+
+    if (standards && standards.length > 0) {
+      const checklist = standards.map((s: Record<string, unknown>) => ({
+        standard: s.standard_number,
+        title: s.title,
+        description: s.description,
+        acknowledged: false,
+      }));
+
+      await supabase.from('jobs').update({ safety_checklist: checklist }).eq('id', jobId);
+    }
+  };
+
+  // U22: Acknowledge safety for job
+  const acknowledgeSafety = async (jobId: string) => {
+    const supabase = getSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    await supabase.from('jobs').update({
+      safety_acknowledged_at: new Date().toISOString(),
+      safety_acknowledged_by: user.id,
+    }).eq('id', jobId);
+  };
+
+  return { jobs, loading, error, createJob, updateJob, updateJobStatus, deleteJob, attachSafetyChecklist, acknowledgeSafety, refetch: fetchJobs };
 }
 
 export function useJob(id: string | undefined) {

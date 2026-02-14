@@ -241,7 +241,80 @@ export function usePhone() {
     await supabase.from('phone_voicemails').update({ is_read: true }).eq('id', id);
   };
 
-  return { calls, voicemails, lines, loading, error, refetch: fetchData, markVoicemailRead };
+  // U22: Inbound call from unknown → auto-create lead
+  const autoCreateLeadFromCall = async (callerNumber: string, direction: 'inbound' | 'outbound', durationSeconds?: number) => {
+    const supabase = getSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const companyId = user.app_metadata?.company_id;
+    if (!companyId) return;
+
+    // Check if number matches existing customer
+    const { data: existingCustomer } = await supabase
+      .from('customers')
+      .select('id, name')
+      .eq('company_id', companyId)
+      .eq('phone', callerNumber)
+      .is('deleted_at', null)
+      .limit(1)
+      .single();
+
+    // Log to communication timeline
+    await supabase.from('customer_communications').insert({
+      company_id: companyId,
+      customer_id: existingCustomer?.id || null,
+      direction,
+      channel: 'call',
+      from_number: direction === 'inbound' ? callerNumber : null,
+      to_number: direction === 'outbound' ? callerNumber : null,
+      duration_seconds: durationSeconds || null,
+      status: 'completed',
+    });
+
+    // If unknown caller, auto-create lead
+    if (!existingCustomer && direction === 'inbound') {
+      await supabase.from('leads').insert({
+        company_id: companyId,
+        created_by_user_id: user.id,
+        name: `Caller ${callerNumber}`,
+        phone: callerNumber,
+        source: 'phone_call',
+        stage: 'new',
+        value: 0,
+      });
+    }
+  };
+
+  // U22: Log SMS to communication timeline
+  const logSmsToTimeline = async (customerPhone: string, body: string, direction: 'inbound' | 'outbound') => {
+    const supabase = getSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const companyId = user.app_metadata?.company_id;
+    if (!companyId) return;
+
+    const { data: customer } = await supabase
+      .from('customers')
+      .select('id')
+      .eq('company_id', companyId)
+      .eq('phone', customerPhone)
+      .is('deleted_at', null)
+      .limit(1)
+      .single();
+
+    await supabase.from('customer_communications').insert({
+      company_id: companyId,
+      customer_id: customer?.id || null,
+      direction,
+      channel: 'sms',
+      from_number: direction === 'inbound' ? customerPhone : null,
+      to_number: direction === 'outbound' ? customerPhone : null,
+      message_body: body,
+      status: 'delivered',
+    });
+  };
+
+  return { calls, voicemails, lines, loading, error, refetch: fetchData, markVoicemailRead, autoCreateLeadFromCall, logSmsToTimeline };
 }
 
 // ============================================================================

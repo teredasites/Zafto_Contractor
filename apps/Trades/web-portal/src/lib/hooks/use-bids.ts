@@ -128,6 +128,15 @@ export function useBids() {
       .update({ status: 'sent', sent_at: new Date().toISOString() })
       .eq('id', id);
     if (err) throw err;
+
+    // U22: Actually send email via SendGrid EF
+    try {
+      await supabase.functions.invoke('sendgrid-email', {
+        body: { action: 'send_bid', entityId: id },
+      });
+    } catch {
+      // Email send is best-effort — don't fail the status update
+    }
   };
 
   const acceptBid = async (id: string) => {

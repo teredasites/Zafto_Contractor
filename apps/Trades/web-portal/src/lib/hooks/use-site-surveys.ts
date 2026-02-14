@@ -158,9 +158,60 @@ export function useSiteSurveys() {
   const inProgress = surveys.filter(s => s.status === 'in_progress');
   const completed = surveys.filter(s => s.status === 'completed' || s.status === 'submitted');
 
+  // U22: Site Survey → Estimate
+  const createEstimateFromSurvey = async (surveyId: string): Promise<string | null> => {
+    const supabase = getSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+    const companyId = user.app_metadata?.company_id;
+    if (!companyId) throw new Error('No company');
+
+    const survey = surveys.find((s) => s.id === surveyId);
+    if (!survey) throw new Error('Survey not found');
+
+    // Create estimate
+    const { data: estimate, error: estErr } = await supabase
+      .from('estimates')
+      .insert({
+        company_id: companyId,
+        created_by_user_id: user.id,
+        job_id: survey.jobId || null,
+        site_survey_id: surveyId,
+        title: `Estimate from Survey: ${survey.title}`,
+        status: 'draft',
+        total_sqft: survey.totalSqft || 0,
+        notes: survey.notes || null,
+      })
+      .select('id')
+      .single();
+
+    if (estErr) throw estErr;
+    if (!estimate) return null;
+
+    // Map measurements to estimate areas
+    if (survey.measurements && survey.measurements.length > 0) {
+      const areas = survey.measurements.map((m, i) => ({
+        company_id: companyId,
+        estimate_id: estimate.id,
+        name: m.area || `Area ${i + 1}`,
+        length_ft: m.length || 0,
+        width_ft: m.width || 0,
+        height_ft: m.height || 8,
+        floor_sf: (m.length || 0) * (m.width || 0),
+        wall_sf: m.height ? 2 * (m.length + m.width) * m.height : 0,
+        notes: m.notes || null,
+        sort_order: i,
+      }));
+
+      await supabase.from('estimate_areas').insert(areas);
+    }
+
+    return estimate.id;
+  };
+
   return {
     surveys, drafts, inProgress, completed,
     loading, error, fetchSurveys,
-    createSurvey, updateSurvey,
+    createSurvey, updateSurvey, createEstimateFromSurvey,
   };
 }

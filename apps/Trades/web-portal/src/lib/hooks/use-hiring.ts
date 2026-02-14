@@ -602,6 +602,34 @@ export function useHiring() {
     return applicants.filter((a) => a.stage === 'hired' && a.hiredAt && new Date(a.hiredAt) >= startOfYear).length;
   }, [applicants]);
 
+  // U22: Create user account from hired applicant
+  const createUserFromApplicant = async (applicantId: string, role: string = 'technician') => {
+    const supabase = getSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+    const companyId = user.app_metadata?.company_id;
+    if (!companyId) throw new Error('No company');
+
+    const applicant = applicants.find((a) => a.id === applicantId);
+    if (!applicant) throw new Error('Applicant not found');
+    if (applicant.stage !== 'hired') throw new Error('Applicant must be hired first');
+
+    // Invite user via Edge Function (sends email invite)
+    const { data: result, error: invErr } = await supabase.functions.invoke('invite-team-member', {
+      body: {
+        email: applicant.email,
+        firstName: applicant.firstName,
+        lastName: applicant.lastName,
+        phone: applicant.phone,
+        role,
+        tradeSpecialties: applicant.tradeSpecialties,
+      },
+    });
+
+    if (invErr) throw new Error(invErr.message || 'Failed to invite');
+    return result;
+  };
+
   return {
     postings,
     applicants,
@@ -624,6 +652,8 @@ export function useHiring() {
     inPipeline,
     interviewsThisWeek,
     hiredCount,
+    // U22: Hiring → User — create user account from hired applicant
+    createUserFromApplicant,
     // Refetch
     refetch: fetchAll,
   };

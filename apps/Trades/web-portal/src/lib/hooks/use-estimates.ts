@@ -469,7 +469,25 @@ export function useEstimates() {
     return est.id;
   }, [fetchEstimates]);
 
-  return { estimates, loading, error, fetchEstimates, createEstimate, createEstimateFromWalkthrough, deleteEstimate };
+  // U22: Send estimate email via SendGrid
+  const sendEstimate = async (id: string) => {
+    const supabase = getSupabase();
+    const { error: err } = await supabase
+      .from('estimates')
+      .update({ status: 'sent', sent_at: new Date().toISOString() })
+      .eq('id', id);
+    if (err) throw err;
+
+    try {
+      await supabase.functions.invoke('sendgrid-email', {
+        body: { action: 'send_estimate', entityId: id },
+      });
+    } catch {
+      // Best-effort
+    }
+  };
+
+  return { estimates, loading, error, fetchEstimates, createEstimate, createEstimateFromWalkthrough, sendEstimate, deleteEstimate };
 }
 
 // ── Hook: Single Estimate with Areas + Line Items ──

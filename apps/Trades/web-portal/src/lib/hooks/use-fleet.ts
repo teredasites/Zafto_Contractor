@@ -402,6 +402,51 @@ export function useFleet() {
     return fuelTotal + maintenanceTotal;
   }, [fuelLogs, maintenance]);
 
+  // U22: Fleet → Ledger — auto-create expense from maintenance/fuel
+  const createExpenseFromMaintenance = async (maintenanceId: string) => {
+    const supabase = getSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const companyId = user.app_metadata?.company_id;
+    const record = maintenance.find((m) => m.id === maintenanceId);
+    if (!record || !record.totalCost) return;
+
+    await supabase.from('expenses').insert({
+      company_id: companyId,
+      created_by_user_id: user.id,
+      category: 'vehicle_maintenance',
+      description: `${record.title} — ${record.vehicleId}`,
+      amount: record.totalCost,
+      date: record.completedDate || new Date().toISOString(),
+      vendor_name: record.vendorName || null,
+    });
+  };
+
+  const createExpenseFromFuel = async (fuelLogId: string) => {
+    const supabase = getSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const companyId = user.app_metadata?.company_id;
+    const record = fuelLogs.find((f) => f.id === fuelLogId);
+    if (!record || !record.totalCost) return;
+
+    await supabase.from('expenses').insert({
+      company_id: companyId,
+      created_by_user_id: user.id,
+      category: 'fuel',
+      description: `Fuel — ${record.gallons}gal`,
+      amount: record.totalCost,
+      date: record.fuelDate || new Date().toISOString(),
+    });
+  };
+
+  // U22: Fleet → Dispatch — assign vehicle to tech
+  const assignVehicleToUser = async (vehicleId: string, userId: string | null) => {
+    const supabase = getSupabase();
+    const { error: err } = await supabase.from('vehicles').update({ assigned_to_user_id: userId }).eq('id', vehicleId);
+    if (err) throw err;
+  };
+
   return {
     vehicles,
     maintenance,
@@ -416,6 +461,9 @@ export function useFleet() {
     activeVehicles,
     maintenanceDue,
     totalFleetCost,
+    createExpenseFromMaintenance,
+    createExpenseFromFuel,
+    assignVehicleToUser,
     refetch: fetchData,
   };
 }
