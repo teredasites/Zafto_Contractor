@@ -540,7 +540,46 @@ function TeamMemberCard({ member }: { member: TeamMember }) {
 
 function InviteModal({ onClose }: { onClose: () => void }) {
   const [email, setEmail] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [phone, setPhone] = useState('');
   const [role, setRole] = useState('field_tech');
+  const [trade, setTrade] = useState('');
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleInvite = async () => {
+    if (!email.trim()) { setError('Email is required'); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError('Invalid email address'); return; }
+    if (!firstName.trim()) { setError('First name is required'); return; }
+    setError('');
+    setSending(true);
+    try {
+      const { getSupabase } = await import('@/lib/supabase');
+      const supabase = getSupabase();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+      const companyId = user.app_metadata?.company_id;
+
+      // Create invite record
+      await supabase.from('team_invites').insert({
+        company_id: companyId,
+        email: email.trim().toLowerCase(),
+        first_name: firstName.trim(),
+        last_name: lastName.trim(),
+        phone: phone.trim() || null,
+        role,
+        trade: trade || null,
+        invited_by: user.id,
+        status: 'pending',
+      });
+      onClose();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to send invite');
+    } finally {
+      setSending(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
@@ -549,15 +588,49 @@ function InviteModal({ onClose }: { onClose: () => void }) {
           <CardTitle>Invite Team Member</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
+          {error && (
+            <div className="px-3 py-2.5 rounded-lg text-sm bg-red-500/10 text-red-500">{error}</div>
+          )}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm font-medium text-main mb-1.5">First Name</label>
+              <input
+                type="text"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                placeholder="John"
+                className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted focus:border-accent focus:ring-1 focus:ring-accent"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-main mb-1.5">Last Name</label>
+              <input
+                type="text"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                placeholder="Smith"
+                className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted focus:border-accent focus:ring-1 focus:ring-accent"
+              />
+            </div>
+          </div>
           <div>
-            <label className="block text-sm font-medium text-main mb-1.5">
-              Email Address
-            </label>
+            <label className="block text-sm font-medium text-main mb-1.5">Email Address</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="team@company.com"
+              className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted focus:border-accent focus:ring-1 focus:ring-accent"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-main mb-1.5">Phone</label>
+            <input
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="(860) 555-0123"
               className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted focus:border-accent focus:ring-1 focus:ring-accent"
             />
           </div>
@@ -565,20 +638,39 @@ function InviteModal({ onClose }: { onClose: () => void }) {
             label="Role"
             options={[
               { value: 'admin', label: 'Admin - Full access except billing' },
-              { value: 'office', label: 'Office - Customers, bids, jobs, invoices' },
+              { value: 'office_manager', label: 'Office Manager - Customers, bids, jobs, invoices' },
               { value: 'field_tech', label: 'Field Tech - Assigned jobs + field tools' },
+              { value: 'apprentice', label: 'Apprentice - Limited field access' },
               { value: 'subcontractor', label: 'Subcontractor - Their assigned work only' },
             ]}
             value={role}
             onChange={(e) => setRole(e.target.value)}
           />
+          <Select
+            label="Trade Specialty"
+            options={[
+              { value: '', label: 'Select trade...' },
+              { value: 'electrical', label: 'Electrical' },
+              { value: 'plumbing', label: 'Plumbing' },
+              { value: 'hvac', label: 'HVAC' },
+              { value: 'roofing', label: 'Roofing' },
+              { value: 'solar', label: 'Solar' },
+              { value: 'gc', label: 'General Contractor' },
+              { value: 'remodeler', label: 'Remodeler' },
+              { value: 'landscaping', label: 'Landscaping' },
+              { value: 'painting', label: 'Painting' },
+              { value: 'other', label: 'Other' },
+            ]}
+            value={trade}
+            onChange={(e) => setTrade(e.target.value)}
+          />
           <div className="flex items-center gap-3 pt-4">
             <Button variant="secondary" className="flex-1" onClick={onClose}>
               Cancel
             </Button>
-            <Button className="flex-1">
+            <Button className="flex-1" onClick={handleInvite} disabled={sending}>
               <Mail size={16} />
-              Send Invite
+              {sending ? 'Sending...' : 'Send Invite'}
             </Button>
           </div>
         </CardContent>
