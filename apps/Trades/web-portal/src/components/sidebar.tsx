@@ -67,6 +67,7 @@ import {
   PanelLeftClose,
   Check,
   Radio,
+  ShieldAlert,
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { ZMark } from '@/components/z-console/z-mark';
@@ -111,6 +112,7 @@ const navigationGroups: NavGroup[] = [
       { name: 'Customers', href: '/dashboard/customers', icon: Users },
       { name: 'Service Agreements', href: '/dashboard/service-agreements', icon: Handshake },
       { name: 'Warranties', href: '/dashboard/warranties', icon: Shield },
+      { name: 'Warranty Intel', href: '/dashboard/warranty-intelligence', icon: ShieldAlert },
       { name: 'Reviews', href: '/dashboard/reviews', icon: Star },
     ],
   },
