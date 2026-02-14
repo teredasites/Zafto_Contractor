@@ -13,6 +13,7 @@ import {
   Save,
   Power,
   PowerOff,
+  Eye,
 } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { StatusBadge } from '@/components/ui/badge';
@@ -51,6 +52,7 @@ export default function CompanyDetailPage() {
   const [editTier, setEditTier] = useState('');
   const [saving, setSaving] = useState(false);
   const [toggling, setToggling] = useState(false);
+  const [impersonating, setImpersonating] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -126,6 +128,42 @@ export default function CompanyDetailPage() {
     setToggling(false);
   };
 
+  const handleImpersonate = async () => {
+    if (!company || impersonating) return;
+    setImpersonating(true);
+    try {
+      const supabase = getSupabase();
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('No session');
+
+      const res = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/impersonate-company`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ company_id: company.id, action: 'start' }),
+      });
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error || 'Failed to start impersonation');
+
+      // Store session info in localStorage for banner
+      localStorage.setItem('zafto_impersonation', JSON.stringify({
+        companyId: company.id,
+        companyName: company.name,
+        sessionId: result.session_id,
+        startedAt: new Date().toISOString(),
+      }));
+
+      // Refresh to pick up new JWT claims
+      window.location.href = '/dashboard/companies';
+    } catch (err) {
+      console.error('Impersonation error:', err);
+    } finally {
+      setImpersonating(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="space-y-8 animate-fade-in">
@@ -176,6 +214,16 @@ export default function CompanyDetailPage() {
           <p className="text-sm text-[var(--text-secondary)] mt-0.5">
             Company details and team members
           </p>
+        </div>
+        <div className="ml-auto">
+          <Button
+            onClick={handleImpersonate}
+            loading={impersonating}
+            className="bg-amber-600 hover:bg-amber-700 text-white"
+          >
+            <Eye className="h-4 w-4 mr-1.5" />
+            View as Company
+          </Button>
         </div>
       </div>
 
