@@ -10,9 +10,13 @@ import '../../theme/theme_provider.dart';
 import '../../models/job.dart';
 import '../../services/job_service.dart';
 import '../../services/insurance_claim_service.dart';
+import '../../providers/schedule_project_provider.dart';
+import '../../providers/schedule_tasks_provider.dart';
+import '../../widgets/mini_gantt_widget.dart';
 import 'job_create_screen.dart';
 import '../invoices/invoice_create_screen.dart';
 import '../insurance/claim_detail_screen.dart';
+import '../scheduling/schedule_gantt_screen.dart';
 
 class JobDetailScreen extends ConsumerStatefulWidget {
   final String jobId;
@@ -77,6 +81,8 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                 ],
                 const SizedBox(height: 16),
                 _buildAmountCard(colors),
+                const SizedBox(height: 16),
+                _buildScheduleCard(colors),
                 if (_job!.description?.isNotEmpty == true) ...[
                   const SizedBox(height: 16),
                   _buildNotesCard(colors),
@@ -353,6 +359,119 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
           ],
         ],
       ),
+    );
+  }
+
+  Widget _buildScheduleCard(ZaftoColors colors) {
+    final schedulesAsync = ref.watch(scheduleProjectsByJobProvider(widget.jobId));
+
+    return schedulesAsync.when(
+      loading: () => const SizedBox.shrink(),
+      error: (_, __) => const SizedBox.shrink(),
+      data: (schedules) {
+        if (schedules.isEmpty) {
+          return Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: colors.bgElevated,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: colors.borderSubtle),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(LucideIcons.ganttChart, size: 16, color: colors.accentPrimary),
+                    const SizedBox(width: 8),
+                    Text('Schedule', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: colors.textPrimary)),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Text('No schedule linked to this job', style: TextStyle(fontSize: 13, color: colors.textTertiary)),
+              ],
+            ),
+          );
+        }
+
+        final schedule = schedules.first;
+        final tasksAsync = ref.watch(scheduleTasksProvider(schedule.id));
+
+        return Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: colors.bgElevated,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: colors.borderSubtle),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(LucideIcons.ganttChart, size: 16, color: colors.accentPrimary),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(schedule.name, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: colors.textPrimary), overflow: TextOverflow.ellipsis),
+                  ),
+                  Text(
+                    '${schedule.overallPercentComplete.toStringAsFixed(0)}%',
+                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: colors.accentPrimary),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              // Progress bar
+              ClipRRect(
+                borderRadius: BorderRadius.circular(4),
+                child: LinearProgressIndicator(
+                  value: schedule.overallPercentComplete / 100,
+                  backgroundColor: colors.fillDefault,
+                  valueColor: AlwaysStoppedAnimation(schedule.isComplete ? colors.accentSuccess : colors.accentPrimary),
+                  minHeight: 4,
+                ),
+              ),
+              const SizedBox(height: 10),
+              // Mini Gantt
+              tasksAsync.when(
+                loading: () => SizedBox(height: 80, child: Center(child: CircularProgressIndicator(strokeWidth: 2, color: colors.accentPrimary))),
+                error: (_, __) => const SizedBox.shrink(),
+                data: (tasks) => MiniGanttWidget(
+                  tasks: tasks.map((t) => MiniGanttTask(
+                    id: t.id,
+                    name: t.name,
+                    start: t.earlyStart ?? t.plannedStart,
+                    finish: t.earlyFinish ?? t.plannedFinish,
+                    percentComplete: t.percentComplete,
+                    isCritical: t.isCritical,
+                    isMilestone: t.isMilestone,
+                  )).toList(),
+                  colors: colors,
+                  height: 100,
+                  onTap: () => Navigator.push(context, MaterialPageRoute(
+                    builder: (_) => ScheduleGanttScreen(projectId: schedule.id, projectName: schedule.name),
+                  )),
+                ),
+              ),
+              const SizedBox(height: 8),
+              // View full schedule button
+              GestureDetector(
+                onTap: () => Navigator.push(context, MaterialPageRoute(
+                  builder: (_) => ScheduleGanttScreen(projectId: schedule.id, projectName: schedule.name),
+                )),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('View Full Schedule', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: colors.accentPrimary)),
+                    const SizedBox(width: 4),
+                    Icon(LucideIcons.chevronRight, size: 14, color: colors.accentPrimary),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 

@@ -18,11 +18,13 @@ import {
   Bookmark,
   Upload,
   Download,
+  DollarSign,
 } from 'lucide-react';
 import { useScheduleProject } from '@/lib/hooks/use-schedule';
 import { useScheduleTasks } from '@/lib/hooks/use-schedule-tasks';
 import { useScheduleDependencies } from '@/lib/hooks/use-schedule-dependencies';
 import { useScheduleImportExport } from '@/lib/hooks/use-schedule-import-export';
+import { useScheduleCosts } from '@/lib/hooks/use-schedule-costs';
 import type { ScheduleTask, ScheduleDependency } from '@/lib/types/scheduling';
 
 type ZoomLevel = 'day' | 'week' | 'month';
@@ -47,10 +49,12 @@ export default function GanttPage() {
   const { tasks, loading: tasksLoading, createTask, updateTask, deleteTask, updateProgress, triggerCpmRecalc } = useScheduleTasks(projectId);
   const { dependencies } = useScheduleDependencies(projectId);
   const { importing, exporting, importSchedule, exportSchedule, detectFormat, importResult, exportResult, error: ieError, clearResults } = useScheduleImportExport(projectId);
+  const { costs } = useScheduleCosts(projectId);
 
   const [zoom, setZoom] = useState<ZoomLevel>('week');
   const [showCritical, setShowCritical] = useState(true);
   const [showImport, setShowImport] = useState(false);
+  const [showEvm, setShowEvm] = useState(false);
   const [showExport, setShowExport] = useState(false);
   const [showDeps, setShowDeps] = useState(true);
   const [selectedTask, setSelectedTask] = useState<string | null>(null);
@@ -192,6 +196,16 @@ export default function GanttPage() {
             <Bookmark className="w-4 h-4 text-secondary" />
           </button>
 
+          {costs && costs.total_budgeted > 0 && (
+            <button
+              onClick={() => setShowEvm(!showEvm)}
+              className={`p-1.5 rounded-md ${showEvm ? 'bg-accent/10 text-accent' : 'hover:bg-surface-alt text-secondary'}`}
+              title="Cost / Earned Value"
+            >
+              <DollarSign className="w-4 h-4" />
+            </button>
+          )}
+
           <div className="w-px h-5 bg-main mx-1" />
 
           <button onClick={() => setShowImport(true)} disabled={importing} className="p-1.5 hover:bg-surface-alt rounded-md" title="Import Schedule">
@@ -215,6 +229,49 @@ export default function GanttPage() {
           </button>
         </div>
       </div>
+
+      {/* EVM Bar */}
+      {showEvm && costs && costs.total_budgeted > 0 && (
+        <div className="flex items-center gap-6 px-4 py-2 border-b border-main bg-surface text-xs">
+          <span className="text-secondary font-medium">EVM</span>
+          <div className="flex items-center gap-1">
+            <span className="text-tertiary">Budget:</span>
+            <span className="font-semibold text-primary">${costs.total_budgeted.toLocaleString()}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <span className="text-tertiary">Actual:</span>
+            <span className={`font-semibold ${costs.cost_variance < 0 ? 'text-error' : 'text-primary'}`}>
+              ${costs.total_actual.toLocaleString()}
+            </span>
+          </div>
+          <div className="flex items-center gap-1">
+            <span className="text-tertiary">EV:</span>
+            <span className="font-semibold text-primary">${costs.ev.toLocaleString()}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <span className="text-tertiary">SPI:</span>
+            <span className={`font-semibold ${costs.spi < 0.9 ? 'text-error' : costs.spi < 1 ? 'text-warning' : 'text-success'}`}>
+              {costs.spi.toFixed(2)}
+            </span>
+          </div>
+          <div className="flex items-center gap-1">
+            <span className="text-tertiary">CPI:</span>
+            <span className={`font-semibold ${costs.cpi < 0.9 ? 'text-error' : costs.cpi < 1 ? 'text-warning' : 'text-success'}`}>
+              {costs.cpi.toFixed(2)}
+            </span>
+          </div>
+          <div className="flex items-center gap-1">
+            <span className="text-tertiary">EAC:</span>
+            <span className="font-semibold text-primary">${costs.eac.toLocaleString()}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <span className="text-tertiary">VAC:</span>
+            <span className={`font-semibold ${costs.vac < 0 ? 'text-error' : 'text-success'}`}>
+              ${costs.vac.toLocaleString()}
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Gantt body */}
       {tasks.length === 0 ? (

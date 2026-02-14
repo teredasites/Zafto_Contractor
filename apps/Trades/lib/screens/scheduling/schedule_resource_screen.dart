@@ -255,6 +255,25 @@ class _ScheduleResourceScreenState extends ConsumerState<ScheduleResourceScreen>
     final colors = ref.read(zaftoColorsProvider);
     final nameController = TextEditingController();
     ResourceType selectedType = ResourceType.labor;
+    String? selectedUserId;
+
+    // Fetch team members for linking
+    List<Map<String, dynamic>> teamMembers = [];
+    try {
+      final supabase = Supabase.instance.client;
+      final user = supabase.auth.currentUser;
+      final companyId = user?.appMetadata['company_id'] as String?;
+      if (companyId != null) {
+        final resp = await supabase
+            .from('users')
+            .select('id, full_name, role')
+            .eq('company_id', companyId)
+            .order('full_name');
+        teamMembers = List<Map<String, dynamic>>.from(resp);
+      }
+    } catch (_) {}
+
+    if (!mounted) return;
 
     final result = await showModalBottomSheet<Map<String, dynamic>>(
       context: context,
@@ -273,21 +292,6 @@ class _ScheduleResourceScreenState extends ConsumerState<ScheduleResourceScreen>
             children: [
               Text('Add Resource', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: colors.textPrimary)),
               const SizedBox(height: 16),
-              TextField(
-                controller: nameController,
-                autofocus: true,
-                style: TextStyle(color: colors.textPrimary),
-                decoration: InputDecoration(
-                  labelText: 'Resource Name',
-                  labelStyle: TextStyle(color: colors.textTertiary),
-                  filled: true,
-                  fillColor: colors.bgBase,
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: colors.borderSubtle)),
-                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: colors.borderSubtle)),
-                  focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: colors.accentPrimary)),
-                ),
-              ),
-              const SizedBox(height: 12),
               Text('Type', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: colors.textTertiary)),
               const SizedBox(height: 8),
               Row(
@@ -295,7 +299,13 @@ class _ScheduleResourceScreenState extends ConsumerState<ScheduleResourceScreen>
                   final isActive = selectedType == type;
                   return Expanded(
                     child: GestureDetector(
-                      onTap: () => setModalState(() => selectedType = type),
+                      onTap: () => setModalState(() {
+                        selectedType = type;
+                        if (type != ResourceType.labor) {
+                          selectedUserId = null;
+                          // user deselected
+                        }
+                      }),
                       child: Container(
                         margin: const EdgeInsets.only(right: 8),
                         padding: const EdgeInsets.symmetric(vertical: 10),
@@ -317,6 +327,79 @@ class _ScheduleResourceScreenState extends ConsumerState<ScheduleResourceScreen>
                   );
                 }).toList(),
               ),
+              const SizedBox(height: 12),
+              // Link team member (labor only)
+              if (selectedType == ResourceType.labor && teamMembers.isNotEmpty) ...[
+                Text('Link Team Member', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: colors.textTertiary)),
+                const SizedBox(height: 8),
+                SizedBox(
+                  height: 120,
+                  child: ListView.builder(
+                    itemCount: teamMembers.length,
+                    itemBuilder: (ctx, i) {
+                      final member = teamMembers[i];
+                      final memberId = member['id'] as String;
+                      final memberName = member['full_name'] as String? ?? 'Unknown';
+                      final memberRole = member['role'] as String? ?? '';
+                      final isSelected = selectedUserId == memberId;
+                      return GestureDetector(
+                        onTap: () => setModalState(() {
+                          if (isSelected) {
+                            selectedUserId = null;
+                            // user deselected
+                            nameController.text = '';
+                          } else {
+                            selectedUserId = memberId;
+                            // user selected
+                            nameController.text = memberName;
+                          }
+                        }),
+                        child: Container(
+                          margin: const EdgeInsets.only(bottom: 4),
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: isSelected ? colors.accentPrimary.withValues(alpha: 0.15) : colors.fillDefault,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: isSelected ? colors.accentPrimary : Colors.transparent),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(LucideIcons.user, size: 14, color: isSelected ? colors.accentPrimary : colors.textTertiary),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(memberName, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: colors.textPrimary)),
+                                    if (memberRole.isNotEmpty)
+                                      Text(memberRole.replaceAll('_', ' '), style: TextStyle(fontSize: 11, color: colors.textTertiary)),
+                                  ],
+                                ),
+                              ),
+                              if (isSelected) Icon(LucideIcons.check, size: 14, color: colors.accentPrimary),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 8),
+              ],
+              TextField(
+                controller: nameController,
+                autofocus: selectedType != ResourceType.labor || teamMembers.isEmpty,
+                style: TextStyle(color: colors.textPrimary),
+                decoration: InputDecoration(
+                  labelText: selectedUserId != null ? 'Display Name' : 'Resource Name',
+                  labelStyle: TextStyle(color: colors.textTertiary),
+                  filled: true,
+                  fillColor: colors.bgBase,
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: colors.borderSubtle)),
+                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: colors.borderSubtle)),
+                  focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: colors.accentPrimary)),
+                ),
+              ),
               const SizedBox(height: 16),
               SizedBox(
                 width: double.infinity,
@@ -324,7 +407,11 @@ class _ScheduleResourceScreenState extends ConsumerState<ScheduleResourceScreen>
                   onPressed: () {
                     final n = nameController.text.trim();
                     if (n.isNotEmpty) {
-                      Navigator.pop(ctx, {'name': n, 'type': selectedType.name});
+                      Navigator.pop(ctx, {
+                        'name': n,
+                        'type': selectedType.name,
+                        if (selectedUserId != null) 'user_id': selectedUserId,
+                      });
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -359,6 +446,7 @@ class _ScheduleResourceScreenState extends ConsumerState<ScheduleResourceScreen>
           (r) => r.name == result['type'],
           orElse: () => ResourceType.labor,
         ),
+        userId: result['user_id'] as String?,
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
       );

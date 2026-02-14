@@ -29,6 +29,8 @@ import {
   Satellite,
   Ruler,
   AlertTriangle,
+  GanttChart,
+  ChevronRight,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -39,7 +41,9 @@ import { useJob, useTeam } from '@/lib/hooks/use-jobs';
 import { useClaimByJob } from '@/lib/hooks/use-insurance';
 import { usePropertyScan } from '@/lib/hooks/use-property-scan';
 import { useLeadScore } from '@/lib/hooks/use-area-scan';
+import { useJobSchedule } from '@/lib/hooks/use-job-schedule';
 import { JOB_TYPE_LABELS, JOB_TYPE_COLORS } from '@/lib/hooks/mappers';
+import { MiniGantt } from '@/components/scheduling/MiniGantt';
 import type { Job, JobType, JobNote, InsuranceMetadata, WarrantyMetadata, PaymentSource } from '@/types';
 import { getSupabase } from '@/lib/supabase';
 
@@ -52,6 +56,7 @@ export default function JobDetailPage() {
 
   const { job, loading } = useJob(jobId);
   const { team } = useTeam();
+  const { schedule, tasks: scheduleTasks } = useJobSchedule(jobId);
   const [activeTab, setActiveTab] = useState<TabType>('overview');
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -302,6 +307,44 @@ export default function JobDetailPage() {
               </Button>
             </CardContent>
           </Card>
+
+          {/* Schedule */}
+          {schedule && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base flex items-center gap-2">
+                  <GanttChart size={18} className="text-muted" />
+                  Schedule
+                  <span className="ml-auto text-sm font-semibold text-accent">{schedule.overall_percent_complete?.toFixed(0) || 0}%</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="mb-3 h-1.5 bg-surface-alt rounded-full overflow-hidden">
+                  <div className="h-full rounded-full bg-accent transition-all" style={{ width: `${Math.min(schedule.overall_percent_complete || 0, 100)}%` }} />
+                </div>
+                <MiniGantt
+                  tasks={scheduleTasks.map((t) => ({
+                    id: t.id,
+                    name: t.name,
+                    start: t.early_start || t.planned_start,
+                    finish: t.early_finish || t.planned_finish,
+                    percent_complete: t.percent_complete || 0,
+                    is_critical: t.is_critical || false,
+                    is_milestone: t.task_type === 'milestone',
+                  }))}
+                  height={100}
+                  onClick={() => router.push(`/dashboard/scheduling/${schedule.id}`)}
+                />
+                <button
+                  onClick={() => router.push(`/dashboard/scheduling/${schedule.id}`)}
+                  className="flex items-center justify-center gap-1 w-full mt-3 text-sm font-medium text-accent hover:text-accent/80 transition-colors"
+                >
+                  View Full Schedule
+                  <ChevronRight size={14} />
+                </button>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Property Intelligence */}
           <PropertyIntelligenceCard job={job} />
