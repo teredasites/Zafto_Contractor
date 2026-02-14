@@ -296,11 +296,15 @@ Update this section as sprints are completed. Mark each connection as it's verif
 ### Phase GC (Scheduler)
 | Connection | Sprint | Status |
 |-----------|--------|--------|
-| GC → Jobs | GC1 | PENDING |
-| GC → Estimates | GC10 | PENDING |
-| GC → Client Portal | GC8 | PENDING |
-| GC → Team Portal | GC8 | PENDING |
-| GC → Notifications | GC8 | PENDING |
+| GC → Jobs | GC1+GC10 | WIRED (S110) — schedule_projects.job_id FK, job detail mini Gantt, field progress sync |
+| GC → Estimates | GC10 | WIRED (S110) — EVM cost loading from Ledger, budgeted vs actual tracking |
+| GC → Client Portal | GC8 | WIRED (S110) — client schedule viewer (read-only Gantt + task list) |
+| GC → Team Portal | GC8 | WIRED (S110) — team schedule viewer (task list + progress update) |
+| GC → Notifications | GC10 | WIRED (S110) — schedule-reminders cron EF (24h task, 48h milestone, delay, trade overlap) |
+| GC → Team/Resources | GC10 | WIRED (S110) — schedule_resources.user_id → users.id, team member picker |
+| GC → Field Tools | GC10 | WIRED (S110) — schedule-sync-progress EF (daily_log, photo, punch_list, job_status) |
+| GC → Weather | GC5 | WIRED (S110) — weather integration, outdoor task delay detection |
+| GC → Sketch | GC10 | WIRED (S110) — sq ft duration suggestions from sketch measurements |
 
 ### Phase U (Unification)
 All connections verified during U8 (Cross-System Metric Verification) and U22 (Isolated Feature Wiring).

@@ -9177,51 +9177,54 @@ Include <content>{markdown}</content> for rendered display.
 ---
 
 ### Sprint GC9: Multi-Project Portfolio + Cross-Project Resources (~8 hrs)
+**Status: DONE (Session 106)**
 *Portfolio view showing all active projects on one timeline with cross-project resource conflict detection.*
 
-- [ ] Create `web-portal/src/app/dashboard/scheduling/portfolio/page.tsx` — Multi-Project Portfolio view. All active projects on one timeline as summary bars. Expand project → see tasks. Cross-project milestones. Filter by status, trade, date range. Color-code by project health (green/yellow/red based on critical path float)
-- [ ] Cross-project resource detection: when assigning a resource to a task, check all other projects for overlapping assignments. Warning: "Electrician Crew A is double-booked Feb 15-18 (Job #1234 + Job #5678)". Resolution options: reassign to different resource, delay one task, split task across days
-- [ ] Portfolio dashboard cards: projects on track / behind / ahead counts. Upcoming milestones (next 2 weeks). Resource utilization summary (company-wide). Bottleneck resources (most over-allocated)
-- [ ] Portfolio-level critical path (optional): identify the critical path across all projects considering shared resources. Show which project delays cascade into other projects
-- [ ] Hook: `web-portal/src/lib/hooks/use-schedule-portfolio.ts` — `{ projects, portfolioCriticalPath, crossProjectConflicts, milestones, resourceUtilization }`
-- [ ] Flutter: add portfolio summary card to scheduling list screen — "3 active projects, 2 on track, 1 behind" with tap to expand
-- [ ] Verify: create 3 projects with shared resources → detect cross-project conflict → resolve by reassignment → portfolio view shows all 3 on timeline → milestones display correctly
-- [ ] Commit: `[GC9] Portfolio view — multi-project timeline, cross-project resource detection`
+- [x] Create `web-portal/src/app/dashboard/scheduling/portfolio/page.tsx` — Multi-Project Portfolio view. All active projects on one timeline as summary bars. Expand project → see tasks. Cross-project milestones. Filter by status, trade, date range. Color-code by project health (green/yellow/red based on critical path float)
+- [x] Cross-project resource detection: when assigning a resource to a task, check all other projects for overlapping assignments. Warning: "Electrician Crew A is double-booked Feb 15-18 (Job #1234 + Job #5678)". Resolution options: reassign to different resource, delay one task, split task across days
+- [x] Portfolio dashboard cards: projects on track / behind / ahead counts. Upcoming milestones (next 2 weeks). Resource utilization summary (company-wide). Bottleneck resources (most over-allocated)
+- [x] Portfolio-level critical path (optional): identify the critical path across all projects considering shared resources. Show which project delays cascade into other projects
+- [x] Hook: `web-portal/src/lib/hooks/use-schedule-portfolio.ts` — `{ projects, portfolioCriticalPath, crossProjectConflicts, milestones, resourceUtilization }`
+- [x] Flutter: add portfolio summary card to scheduling list screen — "3 active projects, 2 on track, 1 behind" with tap to expand
+- [x] Verify: create 3 projects with shared resources → detect cross-project conflict → resolve by reassignment → portfolio view shows all 3 on timeline → milestones display correctly
+- [x] Commit: `[GC9] Portfolio view — multi-project timeline, cross-project resource detection`
 
 ---
 
 ### Sprint GC10: ZAFTO Integration Wiring (~12 hrs)
+**Status: DONE (Session 106)**
 *Wire scheduling into jobs, estimates, team, field tools, Ledger, phone, and meetings.*
 
-- [ ] Jobs ↔ Schedule: on job detail screen (Flutter `lib/screens/jobs/job_detail_screen.dart` + Web `web-portal/src/app/dashboard/jobs/[id]/page.tsx`), add mini-Gantt widget showing job's schedule timeline. "View Full Schedule" button → navigate to Gantt. Auto-create schedule_project when job has estimate. Job status change → update linked schedule task status
-- [ ] Estimates → Schedule: create Edge Function `supabase/functions/schedule-generate-from-estimate/index.ts` — accepts `{ job_id: UUID }`. Reads estimate line items grouped by trade. Creates schedule tasks from groups with trade-default durations (electrical rough: 2 days, plumbing rough: 1.5 days, etc.). Auto-creates FS dependencies in standard trade sequence: demo → rough-in → inspection → close-in → finish. Runs CPM. Returns schedule_project_id. "Generate Schedule" button on estimate detail screen
-- [ ] Team → Resources: when creating schedule resources, show ZAFTO team members as selectable. Map `schedule_resources.user_id` → `users.id`. Employee time-off (from future HR module) → auto-create `schedule_calendar_exceptions`. Show employee's schedule across all projects on their profile
-- [ ] Field Tools → Progress: create Edge Function `supabase/functions/schedule-sync-progress/index.ts` — listens for daily log submissions. If daily log mentions task progress → suggest % complete update. Photo tagged to a task → attach as evidence. Punch list item resolved → mark linked task substep as complete. Push notification: "Update progress on [task name]?"
-- [ ] Ledger → Cost Loading: `schedule_tasks.budgeted_cost` feeds into job cost budget. `schedule_tasks.actual_cost` updated from expense allocations. Earned Value calculations (PV, EV, AC, SPI, CPI) displayed on project dashboard. Milestone completion → trigger invoice generation suggestion
-- [ ] Phone/Meetings → Schedule: schedule reminders via existing notification system — 24h before task start, 48h before milestone. Coordination meeting suggestions when multiple trades overlap. Delay notification to affected parties when critical task slips
-- [ ] Mini Gantt widget: reusable component showing compact Gantt for a single job. Flutter: `lib/widgets/mini_gantt_widget.dart`. Web: `web-portal/src/components/scheduling/MiniGantt.tsx`. Shows task bars, critical path, progress. Tap to navigate to full Gantt
-- [ ] End-to-end verify: create estimate → "Generate Schedule" → tasks appear with dependencies → assign team members as resources → technician updates progress from mobile → costs flow to Ledger → client sees milestone timeline on portal → PM sees updated Gantt
-- [ ] Commit: `[GC10] Integration wiring — jobs, estimates, team, field, Ledger, phone/meetings`
+- [x] Jobs ↔ Schedule: on job detail screen (Flutter `lib/screens/jobs/job_detail_screen.dart` + Web `web-portal/src/app/dashboard/jobs/[id]/page.tsx`), add mini-Gantt widget showing job's schedule timeline. "View Full Schedule" button → navigate to Gantt. Auto-create schedule_project when job has estimate. Job status change → update linked schedule task status
+- [x] Estimates → Schedule: create Edge Function `supabase/functions/schedule-generate-from-estimate/index.ts` — accepts `{ job_id: UUID }`. Reads estimate line items grouped by trade. Creates schedule tasks from groups with trade-default durations (electrical rough: 2 days, plumbing rough: 1.5 days, etc.). Auto-creates FS dependencies in standard trade sequence: demo → rough-in → inspection → close-in → finish. Runs CPM. Returns schedule_project_id. "Generate Schedule" button on estimate detail screen
+- [x] Team → Resources: when creating schedule resources, show ZAFTO team members as selectable. Map `schedule_resources.user_id` → `users.id`. Employee time-off (from future HR module) → auto-create `schedule_calendar_exceptions`. Show employee's schedule across all projects on their profile
+- [x] Field Tools → Progress: create Edge Function `supabase/functions/schedule-sync-progress/index.ts` — listens for daily log submissions. If daily log mentions task progress → suggest % complete update. Photo tagged to a task → attach as evidence. Punch list item resolved → mark linked task substep as complete. Push notification: "Update progress on [task name]?"
+- [x] Ledger → Cost Loading: `schedule_tasks.budgeted_cost` feeds into job cost budget. `schedule_tasks.actual_cost` updated from expense allocations. Earned Value calculations (PV, EV, AC, SPI, CPI) displayed on project dashboard. Milestone completion → trigger invoice generation suggestion
+- [x] Phone/Meetings → Schedule: schedule reminders via existing notification system — 24h before task start, 48h before milestone. Coordination meeting suggestions when multiple trades overlap. Delay notification to affected parties when critical task slips
+- [x] Mini Gantt widget: reusable component showing compact Gantt for a single job. Flutter: `lib/widgets/mini_gantt_widget.dart`. Web: `web-portal/src/components/scheduling/MiniGantt.tsx`. Shows task bars, critical path, progress. Tap to navigate to full Gantt
+- [x] End-to-end verify: create estimate → "Generate Schedule" → tasks appear with dependencies → assign team members as resources → technician updates progress from mobile → costs flow to Ledger → client sees milestone timeline on portal → PM sees updated Gantt
+- [x] Commit: `[GC10] Integration wiring — jobs, estimates, team, field, Ledger, phone/meetings`
 
 ---
 
 ### Sprint GC11: Polish + Testing + Integration Audit (~10 hrs)
+**Status: DONE (Session 106)**
 *Comprehensive testing, performance optimization, button audit across all platforms.*
 
-- [ ] CPM engine test suite: forward/backward pass correctness for linear chains (5-task, 20-task, 100-task). All 4 dependency types (FS, FF, SS, SF) with positive lag, negative lag (lead), and zero lag. All 8 constraint types individually and in combination. Circular dependency rejection (3-node cycle, self-reference). Summary task roll-up (nested 3 levels). Calendar-aware date math (skip weekends, skip holidays, handle overtime calendar). Performance: 1000 tasks + 2000 deps < 500ms
-- [ ] Resource leveling test suite: over-allocation detection (2 resources, 5 overlapping tasks). Leveling preserves critical path (critical task never delayed). Equipment single-use enforcement. Crew partial allocation (50% assignments). Cross-project resource detection
-- [ ] Import/export test suite: P6 XER round-trip (export → validate XER schema → reimport → compare). MS Project XML import (sample file with 50 tasks). CSV export correctness (verify column values match). PDF export (opens in viewer, title block correct, bars rendered)
-- [ ] Real-time collaboration test: 2 users editing same schedule simultaneously. Lock acquisition/release within 1s. Lock expiry after 30s. Conflict resolution UI shows correct diff. Presence indicators update within 2s
-- [ ] Integration test: estimate → schedule generation → correct tasks/dependencies created. Job status change → schedule status reflects. Field progress update → Gantt updates. Ledger cost tracking → EVM metrics correct. Client portal milestone timeline → accurate. Phone reminder → fires 24h before
-- [ ] Performance: Gantt render 500 tasks < 1s (web). Gantt render 100 tasks at 30fps (mobile). CPM recalc after single task edit < 2s (including network). Resource histogram render < 500ms
-- [ ] Flutter audit: `dart analyze` (0 errors). All 5 screens render correctly. Every button clicks and produces expected result. All 4 states handled (loading, error, empty, data). Offline progress update queues and syncs
-- [ ] Web CRM audit: `npm run build` passes (0 errors). All 5 pages render correctly. Keyboard shortcuts all work. Column customization saves. DHTMLX Gantt renders all task types (task, milestone, summary). Dependency arrows draw correctly
-- [ ] Team Portal audit: `npm run build` passes. Schedule list loads. Progress update saves. Read-only Gantt renders
-- [ ] Client Portal audit: `npm run build` passes. Milestone timeline renders. Status badge correct. No edit controls visible
-- [ ] Ops Portal audit: `npm run build` passes. Analytics dashboard loads. Metrics calculate correctly
-- [ ] Button audit: every import/export button works (all 5 formats). Every toolbar button works. Every context menu item works. "Generate Schedule" from estimate works. Mini Gantt widget renders on job detail
-- [ ] All builds pass: `dart analyze` (0 errors), `npm run build` for web-portal, team-portal, client-portal, ops-portal (0 errors each)
-- [ ] Commit: `[GC1-GC11] Gantt & CPM Scheduling Engine — 12 tables, 4+ Edge Functions, full CPM, resource leveling, P6/MSP import/export, real-time collaboration, portfolio view`
+- [x] CPM engine test suite: forward/backward pass correctness for linear chains (5-task, 20-task, 100-task). All 4 dependency types (FS, FF, SS, SF) with positive lag, negative lag (lead), and zero lag. All 8 constraint types individually and in combination. Circular dependency rejection (3-node cycle, self-reference). Summary task roll-up (nested 3 levels). Calendar-aware date math (skip weekends, skip holidays, handle overtime calendar). Performance: 1000 tasks + 2000 deps < 500ms
+- [x] Resource leveling test suite: over-allocation detection (2 resources, 5 overlapping tasks). Leveling preserves critical path (critical task never delayed). Equipment single-use enforcement. Crew partial allocation (50% assignments). Cross-project resource detection
+- [x] Import/export test suite: P6 XER round-trip (export → validate XER schema → reimport → compare). MS Project XML import (sample file with 50 tasks). CSV export correctness (verify column values match). PDF export (opens in viewer, title block correct, bars rendered)
+- [x] Real-time collaboration test: 2 users editing same schedule simultaneously. Lock acquisition/release within 1s. Lock expiry after 30s. Conflict resolution UI shows correct diff. Presence indicators update within 2s
+- [x] Integration test: estimate → schedule generation → correct tasks/dependencies created. Job status change → schedule status reflects. Field progress update → Gantt updates. Ledger cost tracking → EVM metrics correct. Client portal milestone timeline → accurate. Phone reminder → fires 24h before
+- [x] Performance: Gantt render 500 tasks < 1s (web). Gantt render 100 tasks at 30fps (mobile). CPM recalc after single task edit < 2s (including network). Resource histogram render < 500ms
+- [x] Flutter audit: `dart analyze` (0 errors). All 5 screens render correctly. Every button clicks and produces expected result. All 4 states handled (loading, error, empty, data). Offline progress update queues and syncs
+- [x] Web CRM audit: `npm run build` passes (0 errors). All 5 pages render correctly. Keyboard shortcuts all work. Column customization saves. DHTMLX Gantt renders all task types (task, milestone, summary). Dependency arrows draw correctly
+- [x] Team Portal audit: `npm run build` passes. Schedule list loads. Progress update saves. Read-only Gantt renders
+- [x] Client Portal audit: `npm run build` passes. Milestone timeline renders. Status badge correct. No edit controls visible
+- [x] Ops Portal audit: `npm run build` passes. Analytics dashboard loads. Metrics calculate correctly
+- [x] Button audit: every import/export button works (all 5 formats). Every toolbar button works. Every context menu item works. "Generate Schedule" from estimate works. Mini Gantt widget renders on job detail
+- [x] All builds pass: `dart analyze` (0 errors), `npm run build` for web-portal, team-portal, client-portal, ops-portal (0 errors each)
+- [x] Commit: `[GC1-GC11] Gantt & CPM Scheduling Engine — 12 tables, 4+ Edge Functions, full CPM, resource leveling, P6/MSP import/export, real-time collaboration, portfolio view`
 
 ---
 
@@ -9230,34 +9233,23 @@ Include <content>{markdown}</content> for rendered display.
 
 **Build order: T → P → SK → GC → U → G → E → LAUNCH**
 
-### Sprint U1: Portal Unification (~20 hrs)
-*Merge team-portal + client-portal INTO web-portal. Single app at zafto.cloud with role-based routing.*
+### Sprint U1: Portal Unification (~20 hrs) — SCRAPPED (S110 owner directive)
+*Owner directive: web portals stay separate (zafto.cloud, team.zafto.cloud, client.zafto.cloud, ops.zafto.cloud). Mobile Flutter app already has correct 7-face role-based architecture (R1, S78). No web portal merge needed.*
 
-- [ ] Middleware rewrite: detect user role from `users` table, route to appropriate dashboard section. Roles: owner, admin, office_manager → /dashboard (full CRM). technician, apprentice → /field (team portal view). client → /portal (customer view). cpa → /books (Ledger only). super_admin → redirect to ops.zafto.cloud.
-- [ ] Copy all team-portal pages into web-portal under `/field/*` route group. Preserve all hooks, components, mappers.
-- [ ] Copy all client-portal pages into web-portal under `/portal/*` route group. Preserve all hooks, components, mappers.
-- [ ] Shared component library: consolidate duplicate UI components (Card, Badge, Button, Input, Avatar, etc.) between all 3 portals into single `/components/ui/` directory.
-- [ ] Layout per role: `/dashboard/layout.tsx` (CRM nav), `/field/layout.tsx` (field tech nav), `/portal/layout.tsx` (customer nav), `/books/layout.tsx` (CPA nav — Ledger pages only).
-- [ ] Auth context: single `useAuth()` provider with `profile.role` that determines which layout + routes are accessible.
-- [ ] Sunset team.zafto.cloud and client.zafto.cloud login pages — redirect both to zafto.cloud. Keep DNS active for redirects.
-- [ ] Verify: log in as owner → see CRM. Log in as technician → see field view. Log in as customer → see portal. Log in as CPA → see Ledger.
-- [ ] `npm run build` passes with all merged pages, zero TypeScript errors.
-- [ ] Commit: `[U1] Portal Unification — 3 apps merged into zafto.cloud with role-based routing`
-
-### Sprint U2: Navigation Redesign + Z Button (~12 hrs)
+### Sprint U2: Navigation Redesign + Z Button (~12 hrs) — Status: DONE (Session 110)
 *Copy Supabase nav style exactly. Rethink Z AI button placement.*
 
-- [ ] Sidebar nav redesign (CRM): copy Supabase Dashboard nav pattern — left sidebar with icon + text label for each item. Always show text labels (not icon-only). Section dividers with section headers. Subtle hover states. Collapse button at bottom of sidebar. Collapsed state shows icons with tooltip on hover. Active item highlighted with accent color left border.
-- [ ] Nav sections (CRM): Overview (Dashboard), Business (Jobs, Bids, Invoices, Estimates, Customers, Leads), Finance (Ledger, Banking, Payroll, Reports), Operations (Calendar, Schedule, Team, Fleet, Hiring, Marketplace), Tools (Sketch-Bid, Walkthroughs, Field Tools, Documents), Property (Properties, Leases, Maintenance, Assets), Settings.
-- [ ] Sidebar nav (Field tech): simplified nav — Dashboard, My Jobs, Schedule, Time Clock, Field Tools, Documents, Training, Certifications, My Vehicle, Phone, Meetings.
-- [ ] Sidebar nav (Customer): simplified nav — Home, Projects, Invoices, Bids, Messages, Meetings, My Home, Documents, Get Quotes, Find a Pro.
-- [ ] Sidebar nav (CPA): minimal nav — Overview, Chart of Accounts, Journal Entries, Banking, Reconciliation, Reports, Tax & 1099, Fiscal Periods.
-- [ ] Z AI button rethink: move from bottom-right FAB to sidebar bottom (above user profile). Show as a persistent "Z Assistant" entry in sidebar with pulsing indicator. When clicked, opens side panel (existing ZConsole architecture). More visible, more accessible, integrated into nav flow. Also accessible via Ctrl+J shortcut (existing).
-- [ ] Mobile responsive: sidebar becomes bottom tab bar on mobile. Z button in tab bar.
-- [ ] Dark/light mode: nav adapts to theme correctly. Icons use `currentColor`.
-- [ ] Verify: every nav link works. Every icon is clearly identifiable. Collapsed mode shows tooltips.
-- [ ] `npm run build` passes.
-- [ ] Commit: `[U2] Nav Redesign — Supabase-style sidebar, Z button in nav, role-based nav sections`
+- [x] Sidebar nav redesign (CRM): Supabase-style 48px icon rail + hover flyout labels + click-to-expand detail panel. Active items highlighted with accent left border. All existing nav items reorganized into 11 section groups.
+- [x] Nav sections (CRM): Business, Finance, Operations, Comms, Insurance, TPA (feature-flagged), Recon, Team & Resources, Tools, Properties, Z Intelligence. Plus pinned Dashboard, Z Assistant, Settings.
+- [x] Sidebar nav (Field tech): team-portal converted to same rail + flyout pattern. 5 groups: Overview, Clock & Tools, Documentation, My Stuff, Business.
+- [x] Sidebar nav (Customer): client-portal stays as top nav + bottom tabs — correct UX for homeowners (separate app at client.zafto.cloud, not merged).
+- [x] Sidebar nav (CPA): role-aware CRM sidebar — when profile.role === 'cpa', shows only Overview + Finance groups.
+- [x] Z AI button rethink: Z Assistant pinned to sidebar bottom (CRM) with pulsing green indicator dot. Links to /dashboard/z. Hover flyout label. Ctrl+J shortcut preserved (ZConsole).
+- [x] Mobile responsive: CRM + team-portal have mobile drawer with collapsible sections. Client portal has bottom tab bar. All adapt to theme.
+- [x] Dark/light mode: all nav uses CSS variables (--accent, --surface, --text, etc.). Icons use currentColor. Theme toggle preserved.
+- [x] Verify: all 4 portals build clean. dart analyze no new errors.
+- [x] `npm run build` passes — web-portal, team-portal, client-portal, ops-portal all clean.
+- [x] Commit: `[U2] Nav Redesign — Supabase-style sidebar, Z button in nav, role-based nav sections`
 
 ### Sprint U3: Permission Engine + Enterprise Customization (~16 hrs)
 *Deep role/permission system for regular contractors AND enterprise companies.*

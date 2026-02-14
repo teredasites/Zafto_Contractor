@@ -57,10 +57,7 @@ import {
   Droplets,
   Wind,
   PenTool,
-  Ruler,
   MapPin,
-  Car,
-  Banknote as BanknoteIcon,
   UserCog,
   Mail,
   Truck,
@@ -72,28 +69,34 @@ import { Logo } from '@/components/logo';
 import { ZMark } from '@/components/z-console/z-mark';
 import { PermissionGate, PERMISSIONS } from '@/components/permission-gate';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/components/auth-provider';
 import { useCompanyFeatures } from '@/lib/hooks/use-tpa-programs';
 import type { User } from '@supabase/supabase-js';
+
+// ── Types ──
 
 interface NavItem {
   name: string;
   href: string;
-  icon: any;
+  icon: any; // LucideIcon or null (for ZMark)
   permission?: string;
 }
 
 interface NavGroup {
   label: string;
   key: string;
-  railIcon: any | null; // null = special rendering (ZMark)
+  railIcon: any; // Icon shown on the rail
   items: NavItem[];
-  featureFlag?: string; // company.features key — group hidden when flag is false/missing
+  featureFlag?: string;
 }
+
+// ── Navigation groups ──
+// Each group = one icon on the rail. Click → detail panel with sub-items.
 
 const navigationGroups: NavGroup[] = [
   {
-    label: 'WORK',
-    key: 'work',
+    label: 'Business',
+    key: 'business',
     railIcon: Briefcase,
     items: [
       { name: 'Leads', href: '/dashboard/leads', icon: Target },
@@ -101,41 +104,54 @@ const navigationGroups: NavGroup[] = [
       { name: 'Estimates', href: '/dashboard/estimates', icon: Calculator },
       { name: 'Jobs', href: '/dashboard/jobs', icon: Briefcase },
       { name: 'Change Orders', href: '/dashboard/change-orders', icon: ArrowRightLeft },
-      { name: 'Walkthroughs', href: '/dashboard/walkthroughs', icon: ClipboardList },
       { name: 'Invoices', href: '/dashboard/invoices', icon: Receipt },
-    ],
-  },
-  {
-    label: 'SCHEDULING',
-    key: 'scheduling',
-    railIcon: Calendar,
-    items: [
-      { name: 'Calendar', href: '/dashboard/calendar', icon: Calendar },
-      { name: 'Meetings', href: '/dashboard/meetings', icon: Video },
-      { name: 'Inspections', href: '/dashboard/inspections', icon: ClipboardCheck },
-      { name: 'Inspection Engine', href: '/dashboard/inspection-engine', icon: Shield },
-      { name: 'OSHA Standards', href: '/dashboard/osha-standards', icon: FileCheck2 },
-      { name: 'Permits', href: '/dashboard/permits', icon: FileCheck2 },
-      { name: 'Time Clock', href: '/dashboard/time-clock', icon: Clock, permission: PERMISSIONS.TIMECLOCK_VIEW_ALL },
-    ],
-  },
-  {
-    label: 'CUSTOMERS',
-    key: 'customers',
-    railIcon: Users,
-    items: [
       { name: 'Customers', href: '/dashboard/customers', icon: Users },
-      { name: 'Communications', href: '/dashboard/communications', icon: MessageSquare },
-      { name: 'Team Chat', href: '/dashboard/team-chat', icon: MessageSquare },
-      { name: 'Calls', href: '/dashboard/phone', icon: Phone },
-      { name: 'Messages', href: '/dashboard/phone/sms', icon: MessageSquare },
-      { name: 'Fax', href: '/dashboard/phone/fax', icon: Printer },
       { name: 'Service Agreements', href: '/dashboard/service-agreements', icon: Handshake },
       { name: 'Warranties', href: '/dashboard/warranties', icon: Shield },
     ],
   },
   {
-    label: 'INSURANCE',
+    label: 'Finance',
+    key: 'finance',
+    railIcon: DollarSign,
+    items: [
+      { name: 'Ledger', href: '/dashboard/books', icon: DollarSign },
+      { name: 'Price Book', href: '/dashboard/price-book', icon: BookOpen },
+      { name: 'Reports', href: '/dashboard/reports', icon: BarChart3 },
+      { name: 'Revenue', href: '/dashboard/revenue-insights', icon: TrendingUp },
+      { name: 'Payroll', href: '/dashboard/payroll', icon: Banknote, permission: PERMISSIONS.FINANCIALS_VIEW },
+    ],
+  },
+  {
+    label: 'Operations',
+    key: 'operations',
+    railIcon: Calendar,
+    items: [
+      { name: 'Calendar', href: '/dashboard/calendar', icon: Calendar },
+      { name: 'Schedule', href: '/dashboard/scheduling', icon: ClipboardList },
+      { name: 'Meetings', href: '/dashboard/meetings', icon: Video },
+      { name: 'Time Clock', href: '/dashboard/time-clock', icon: Clock, permission: PERMISSIONS.TIMECLOCK_VIEW_ALL },
+      { name: 'Inspections', href: '/dashboard/inspections', icon: ClipboardCheck },
+      { name: 'Inspection Engine', href: '/dashboard/inspection-engine', icon: Shield },
+      { name: 'OSHA Standards', href: '/dashboard/osha-standards', icon: FileCheck2 },
+      { name: 'Permits', href: '/dashboard/permits', icon: FileCheck2 },
+    ],
+  },
+  {
+    label: 'Comms',
+    key: 'comms',
+    railIcon: MessageSquare,
+    items: [
+      { name: 'Communications', href: '/dashboard/communications', icon: MessageSquare },
+      { name: 'Team Chat', href: '/dashboard/team-chat', icon: MessageSquare },
+      { name: 'Calls', href: '/dashboard/phone', icon: Phone },
+      { name: 'Messages', href: '/dashboard/phone/sms', icon: MessageSquare },
+      { name: 'Fax', href: '/dashboard/phone/fax', icon: Printer },
+      { name: 'Email', href: '/dashboard/email', icon: Mail },
+    ],
+  },
+  {
+    label: 'Insurance',
     key: 'insurance',
     railIcon: Umbrella,
     items: [
@@ -147,7 +163,7 @@ const navigationGroups: NavGroup[] = [
     ],
   },
   {
-    label: 'INSURANCE PROGRAMS',
+    label: 'TPA Programs',
     key: 'tpa',
     railIcon: Shield,
     featureFlag: 'tpa_enabled',
@@ -159,7 +175,7 @@ const navigationGroups: NavGroup[] = [
     ],
   },
   {
-    label: 'RECON',
+    label: 'Recon',
     key: 'recon',
     railIcon: Satellite,
     items: [
@@ -168,8 +184,8 @@ const navigationGroups: NavGroup[] = [
     ],
   },
   {
-    label: 'TEAM & RESOURCES',
-    key: 'resources',
+    label: 'Team',
+    key: 'team',
     railIcon: HardHat,
     items: [
       { name: 'Team', href: '/dashboard/team', icon: Users },
@@ -180,30 +196,25 @@ const navigationGroups: NavGroup[] = [
       { name: 'Purchase Orders', href: '/dashboard/purchase-orders', icon: ShoppingCart },
       { name: 'Fleet', href: '/dashboard/fleet', icon: Truck },
       { name: 'HR', href: '/dashboard/hr', icon: UserCog },
-      { name: 'Payroll', href: '/dashboard/payroll', icon: BanknoteIcon, permission: PERMISSIONS.FINANCIALS_VIEW },
       { name: 'Training', href: '/dashboard/hr', icon: GraduationCap },
       { name: 'Hiring', href: '/dashboard/hiring', icon: UserCog },
       { name: 'Marketplace', href: '/dashboard/marketplace', icon: Store },
     ],
   },
   {
-    label: 'OFFICE',
-    key: 'office',
-    railIcon: BookOpen,
+    label: 'Tools',
+    key: 'tools',
+    railIcon: Wrench,
     items: [
-      { name: 'Ledger', href: '/dashboard/books', icon: DollarSign },
-      { name: 'Price Book', href: '/dashboard/price-book', icon: BookOpen },
+      { name: 'Walkthroughs', href: '/dashboard/walkthroughs', icon: ClipboardList },
       { name: 'ZForge', href: '/dashboard/zdocs', icon: FileText },
       { name: 'Documents', href: '/dashboard/documents', icon: FolderOpen },
-      { name: 'Reports', href: '/dashboard/reports', icon: BarChart3 },
-      { name: 'Revenue', href: '/dashboard/revenue-insights', icon: TrendingUp },
       { name: 'Automations', href: '/dashboard/automations', icon: Zap },
       { name: 'Growth', href: '/dashboard/growth', icon: Rocket },
-      { name: 'Email', href: '/dashboard/email', icon: Mail },
     ],
   },
   {
-    label: 'PROPERTIES',
+    label: 'Properties',
     key: 'properties',
     railIcon: Building2,
     items: [
@@ -219,11 +230,11 @@ const navigationGroups: NavGroup[] = [
     ],
   },
   {
-    label: 'Z INTELLIGENCE',
+    label: 'Z Intelligence',
     key: 'z-intelligence',
-    railIcon: null, // Uses ZMark component
+    railIcon: null, // ZMark component
     items: [
-      { name: 'Z AI', href: '/dashboard/z', icon: ZMark },
+      { name: 'Z AI', href: '/dashboard/z', icon: null },
       { name: 'Z Voice', href: '/dashboard/z-voice', icon: Mic },
       { name: 'Bid Brain', href: '/dashboard/bid-brain', icon: Brain },
       { name: 'Job Cost Radar', href: '/dashboard/job-cost-radar', icon: Radar },
@@ -233,24 +244,49 @@ const navigationGroups: NavGroup[] = [
   },
 ];
 
-// Mobile collapsible group state
+// ── CPA-only nav (minimal — finance only) ──
+
+const cpaGroups: NavGroup[] = [
+  {
+    label: 'Overview',
+    key: 'cpa-overview',
+    railIcon: LayoutDashboard,
+    items: [
+      { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+    ],
+  },
+  {
+    label: 'Finance',
+    key: 'cpa-finance',
+    railIcon: DollarSign,
+    items: [
+      { name: 'Ledger', href: '/dashboard/books', icon: DollarSign },
+      { name: 'Price Book', href: '/dashboard/price-book', icon: BookOpen },
+      { name: 'Reports', href: '/dashboard/reports', icon: BarChart3 },
+      { name: 'Revenue', href: '/dashboard/revenue-insights', icon: TrendingUp },
+      { name: 'Payroll', href: '/dashboard/payroll', icon: Banknote },
+    ],
+  },
+];
+
+// ── Mobile state persistence ──
+
 const MOBILE_STORAGE_KEY = 'zafto_sidebar_groups';
-const DEFAULT_MOBILE_OPEN: Record<string, boolean> = { work: true };
 
 function loadMobileGroupState(): Record<string, boolean> {
-  if (typeof window === 'undefined') return DEFAULT_MOBILE_OPEN;
+  if (typeof window === 'undefined') return { business: true };
   try {
     const stored = localStorage.getItem(MOBILE_STORAGE_KEY);
     if (stored) return JSON.parse(stored);
-  } catch { /* ignore */ }
-  return DEFAULT_MOBILE_OPEN;
+  } catch { /* */ }
+  return { business: true };
 }
 
 function saveMobileGroupState(state: Record<string, boolean>) {
-  try {
-    localStorage.setItem(MOBILE_STORAGE_KEY, JSON.stringify(state));
-  } catch { /* ignore */ }
+  try { localStorage.setItem(MOBILE_STORAGE_KEY, JSON.stringify(state)); } catch { /* */ }
 }
+
+// ── Sidebar ──
 
 interface SidebarProps {
   mobileOpen: boolean;
@@ -259,31 +295,30 @@ interface SidebarProps {
   onSignOut: () => void;
 }
 
-export function Sidebar({
-  mobileOpen,
-  onMobileClose,
-  user,
-  onSignOut,
-}: SidebarProps) {
+export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [activeGroup, setActiveGroup] = useState<string | null>(null);
-  const [mobileGroups, setMobileGroups] = useState<Record<string, boolean>>(DEFAULT_MOBILE_OPEN);
+  const [hoveredGroup, setHoveredGroup] = useState<string | null>(null);
+  const [mobileGroups, setMobileGroups] = useState<Record<string, boolean>>({ business: true });
   const railRef = useRef<HTMLElement>(null);
-  const detailRef = useRef<HTMLElement>(null);
+  const detailRef = useRef<HTMLDivElement>(null);
+  const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { features } = useCompanyFeatures();
+  const { profile } = useAuth();
 
-  // Filter navigation groups based on feature flags
-  const visibleGroups = navigationGroups.filter(group => {
-    if (!group.featureFlag) return true;
-    return features[group.featureFlag] === true;
+  // Select groups based on role — CPA sees finance-only nav
+  const baseGroups = profile?.role === 'cpa' ? cpaGroups : navigationGroups;
+
+  // Filter groups by feature flags
+  const visibleGroups = baseGroups.filter(g => {
+    if (!g.featureFlag) return true;
+    return features[g.featureFlag] === true;
   });
 
-  const initials = user?.email
-    ? user.email.substring(0, 2).toUpperCase()
-    : 'U';
+  const initials = user?.email ? user.email.substring(0, 2).toUpperCase() : 'U';
 
-  // Load mobile group state
+  // Hydrate mobile state
   useEffect(() => {
     setMobileGroups(loadMobileGroupState());
   }, []);
@@ -291,6 +326,7 @@ export function Sidebar({
   // Close detail panel on route change
   useEffect(() => {
     setActiveGroup(null);
+    setHoveredGroup(null);
   }, [pathname]);
 
   // Click outside to close detail panel
@@ -305,7 +341,7 @@ export function Sidebar({
     return () => document.removeEventListener('mousedown', handler);
   }, [activeGroup]);
 
-  // Escape key to close detail panel
+  // Escape to close
   useEffect(() => {
     if (!activeGroup) return;
     const handler = (e: KeyboardEvent) => {
@@ -315,8 +351,28 @@ export function Sidebar({
     return () => document.removeEventListener('keydown', handler);
   }, [activeGroup]);
 
+  // Cleanup hover timeout
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    };
+  }, []);
+
   const handleRailClick = useCallback((key: string) => {
     setActiveGroup(prev => prev === key ? null : key);
+    setHoveredGroup(null);
+  }, []);
+
+  const handleRailHoverEnter = useCallback((key: string) => {
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    // Only show hover label if no detail panel is open, OR show it alongside
+    setHoveredGroup(key);
+  }, []);
+
+  const handleRailHoverLeave = useCallback(() => {
+    hoverTimeoutRef.current = setTimeout(() => {
+      setHoveredGroup(null);
+    }, 150);
   }, []);
 
   const toggleMobileGroup = useCallback((key: string) => {
@@ -334,58 +390,32 @@ export function Sidebar({
   const groupHasActiveChild = (group: NavGroup) =>
     group.items.some(isItemActive);
 
-  const currentGroup = visibleGroups.find(g => g.key === activeGroup) || null;
+  // Which panel is showing? Active click panel takes priority
+  const currentDetailGroup = activeGroup
+    ? visibleGroups.find(g => g.key === activeGroup) || null
+    : null;
 
-  // ── Render helpers ──
-
-  const renderDetailItem = (item: NavItem) => {
+  // ── Render a nav item in the detail panel ──
+  const renderDetailItem = (item: NavItem, onClose?: () => void) => {
     const active = isItemActive(item);
+    const isZ = item.icon === null;
+
     const link = (
       <Link
         key={item.name}
         href={item.href}
-        onClick={() => { setActiveGroup(null); onMobileClose(); }}
+        onClick={() => { setActiveGroup(null); onClose?.(); }}
         className={cn(
-          'flex items-center gap-3 px-3 py-[7px] rounded-md text-[13px] font-medium transition-colors',
+          'flex items-center gap-3 px-3 py-[7px] rounded-md text-[13px] font-medium transition-colors relative',
           active
             ? 'text-accent bg-accent/5'
             : 'text-muted hover:text-main hover:bg-surface-hover',
         )}
       >
-        {item.icon === ZMark ? (
-          <ZMark size={15} className={cn('flex-shrink-0', active && 'text-accent')} />
-        ) : (
-          <item.icon size={16} className="flex-shrink-0" />
+        {active && (
+          <span className="absolute left-0 top-1.5 bottom-1.5 w-[2px] rounded-full bg-accent" />
         )}
-        <span>{item.name}</span>
-      </Link>
-    );
-
-    if (item.permission) {
-      return (
-        <PermissionGate key={item.name} permission={item.permission as any}>
-          {link}
-        </PermissionGate>
-      );
-    }
-    return <div key={item.name}>{link}</div>;
-  };
-
-  const renderMobileItem = (item: NavItem) => {
-    const active = isItemActive(item);
-    const link = (
-      <Link
-        key={item.name}
-        href={item.href}
-        onClick={onMobileClose}
-        className={cn(
-          'flex items-center gap-3 px-3 py-[7px] rounded-md text-[13px] font-medium transition-colors',
-          active
-            ? 'text-accent bg-accent/5'
-            : 'text-muted hover:text-main hover:bg-surface-hover',
-        )}
-      >
-        {item.icon === ZMark ? (
+        {isZ ? (
           <ZMark size={15} className={cn('flex-shrink-0', active && 'text-accent')} />
         ) : (
           <item.icon size={16} className="flex-shrink-0" />
@@ -407,10 +437,9 @@ export function Sidebar({
   return (
     <>
       {/* ═══════════════════════════════════════════
-          MOBILE SIDEBAR — Full overlay drawer
+          MOBILE — Full overlay drawer
           ═══════════════════════════════════════════ */}
 
-      {/* Mobile backdrop */}
       {mobileOpen && (
         <div
           className="fixed inset-0 bg-black/20 dark:bg-black/50 z-40 lg:hidden"
@@ -418,7 +447,6 @@ export function Sidebar({
         />
       )}
 
-      {/* Mobile sidebar */}
       <aside
         className={cn(
           'fixed top-0 left-0 z-50 h-full w-[280px] bg-surface border-r border-main flex flex-col',
@@ -427,9 +455,10 @@ export function Sidebar({
         )}
       >
         {/* Mobile header */}
-        <div className="flex items-center justify-between h-14 px-4 border-b border-main">
-          <Link href="/dashboard" className="flex items-center" onClick={onMobileClose}>
-            <span className="text-[17px] font-semibold tracking-[0.04em] text-main">ZAFTO</span>
+        <div className="flex items-center justify-between h-12 px-4 border-b border-main">
+          <Link href="/dashboard" className="flex items-center gap-2" onClick={onMobileClose}>
+            <Logo size={18} className="text-accent" animated={false} />
+            <span className="text-[15px] font-semibold tracking-[0.02em] text-main">ZAFTO</span>
           </Link>
           <button
             className="p-1.5 text-muted hover:text-main rounded-md hover:bg-surface-hover transition-colors"
@@ -439,29 +468,33 @@ export function Sidebar({
           </button>
         </div>
 
-        {/* Mobile navigation — collapsible groups */}
-        <nav className="flex-1 py-3 overflow-y-auto scrollbar-hide">
-          {/* Dashboard — always pinned */}
+        {/* Mobile nav */}
+        <nav className="flex-1 py-2 overflow-y-auto scrollbar-hide">
+          {/* Dashboard — pinned */}
           <div className="px-2 mb-1">
             <Link
               href="/dashboard"
               onClick={onMobileClose}
               className={cn(
-                'flex items-center gap-3 px-3 py-[7px] rounded-md text-[13px] font-medium transition-colors',
+                'flex items-center gap-3 px-3 py-[7px] rounded-md text-[13px] font-medium transition-colors relative',
                 pathname === '/dashboard'
                   ? 'text-accent bg-accent/5'
                   : 'text-muted hover:text-main hover:bg-surface-hover',
               )}
             >
-              <LayoutDashboard size={18} className="flex-shrink-0" />
+              {pathname === '/dashboard' && (
+                <span className="absolute left-0 top-1.5 bottom-1.5 w-[2px] rounded-full bg-accent" />
+              )}
+              <LayoutDashboard size={16} className="flex-shrink-0" />
               <span>Dashboard</span>
             </Link>
           </div>
 
-          {/* Collapsible groups for mobile */}
+          {/* Collapsible groups */}
           {visibleGroups.map(group => {
             const isOpen = mobileGroups[group.key] ?? false;
             const hasActive = groupHasActiveChild(group);
+            const RailIcon = group.railIcon;
 
             return (
               <div key={group.key} className="mb-0.5">
@@ -474,7 +507,14 @@ export function Sidebar({
                     'hover:text-muted/70',
                   )}
                 >
-                  <span>{group.label}</span>
+                  <div className="flex items-center gap-2">
+                    {RailIcon ? (
+                      <RailIcon size={12} className="flex-shrink-0" />
+                    ) : (
+                      <ZMark size={10} className="flex-shrink-0" />
+                    )}
+                    <span>{group.label}</span>
+                  </div>
                   <ChevronDown
                     size={12}
                     className={cn(
@@ -486,11 +526,11 @@ export function Sidebar({
                 <div
                   className={cn(
                     'overflow-hidden transition-all duration-150 ease-out',
-                    isOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0',
+                    isOpen ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0',
                   )}
                 >
                   <div className="px-2 space-y-[1px]">
-                    {group.items.map(renderMobileItem)}
+                    {group.items.map(item => renderDetailItem(item, onMobileClose))}
                   </div>
                 </div>
               </div>
@@ -505,27 +545,25 @@ export function Sidebar({
             onClick={onMobileClose}
             className={cn(
               'flex items-center gap-3 px-3 py-[7px] rounded-md text-[13px] font-medium transition-colors',
-              pathname === '/dashboard/settings'
-                ? 'text-accent'
-                : 'text-muted hover:text-main hover:bg-surface-hover',
+              pathname === '/dashboard/settings' ? 'text-accent' : 'text-muted hover:text-main hover:bg-surface-hover',
             )}
           >
-            <Settings size={18} className="flex-shrink-0" />
+            <Settings size={16} className="flex-shrink-0" />
             <span>Settings</span>
           </Link>
           <button
             onClick={onSignOut}
             className="w-full flex items-center gap-3 px-3 py-[7px] rounded-md text-[13px] font-medium text-muted hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
           >
-            <LogOut size={18} className="flex-shrink-0" />
+            <LogOut size={16} className="flex-shrink-0" />
             <span>Sign out</span>
           </button>
         </div>
       </aside>
 
       {/* ═══════════════════════════════════════════
-          DESKTOP — Dual-rail (Supabase-style)
-          Icon rail (48px) + slide-out detail panel
+          DESKTOP — Supabase-style rail + flyout
+          48px icon rail + hover label + click detail
           ═══════════════════════════════════════════ */}
 
       {/* Icon Rail — always visible */}
@@ -534,110 +572,183 @@ export function Sidebar({
         className="fixed top-0 left-0 z-40 h-full w-12 bg-surface border-r border-main/50 flex-col hidden lg:flex"
       >
         {/* Logo */}
-        <div className="h-14 flex items-center justify-center border-b border-main flex-shrink-0">
+        <div className="h-12 flex items-center justify-center border-b border-main flex-shrink-0">
           <Link href="/dashboard">
-            <Logo size={22} className="text-main flex-shrink-0" animated={false} />
+            <Logo size={20} className="text-accent flex-shrink-0" animated={false} />
           </Link>
         </div>
 
-        {/* Dashboard — direct link, always visible */}
+        {/* Dashboard — direct link */}
         <div className="px-1.5 pt-2 pb-1">
           <Link
             href="/dashboard"
-            title="Dashboard"
+            onMouseEnter={() => setHoveredGroup('__dashboard')}
+            onMouseLeave={handleRailHoverLeave}
             className={cn(
-              'flex items-center justify-center py-2 rounded-md transition-colors',
+              'relative flex items-center justify-center py-2 rounded-md transition-colors group',
               pathname === '/dashboard'
                 ? 'text-accent bg-accent/10'
                 : 'text-muted hover:text-main hover:bg-surface-hover',
             )}
           >
+            {pathname === '/dashboard' && (
+              <span className="absolute left-0 top-1 bottom-1 w-[2px] rounded-full bg-accent" />
+            )}
             <LayoutDashboard size={18} />
+            {/* Hover label */}
+            {hoveredGroup === '__dashboard' && !activeGroup && (
+              <div className="absolute left-full ml-3 px-3 py-1.5 bg-surface border border-main rounded-lg shadow-xl z-50 whitespace-nowrap sidebar-flyout-enter">
+                <span className="text-[13px] font-medium text-main">Dashboard</span>
+              </div>
+            )}
           </Link>
         </div>
 
         {/* Divider */}
-        <div className="mx-2.5 border-t border-main/50" />
+        <div className="mx-2.5 border-t border-main/40" />
 
         {/* Group icons */}
         <div className="flex-1 py-1.5 px-1.5 space-y-0.5 overflow-y-auto scrollbar-hide">
           {visibleGroups.map(group => {
             const isOpen = activeGroup === group.key;
             const hasActive = groupHasActiveChild(group);
+            const isHovered = hoveredGroup === group.key;
             const RailIcon = group.railIcon;
 
             return (
-              <button
-                key={group.key}
-                onClick={() => handleRailClick(group.key)}
-                title={group.label}
-                className={cn(
-                  'w-full flex items-center justify-center py-2 rounded-md transition-colors',
-                  isOpen
-                    ? 'bg-accent/10 text-accent'
-                    : hasActive
-                      ? 'text-accent'
-                      : 'text-muted hover:text-main hover:bg-surface-hover',
+              <div key={group.key} className="relative">
+                <button
+                  onClick={() => handleRailClick(group.key)}
+                  onMouseEnter={() => handleRailHoverEnter(group.key)}
+                  onMouseLeave={handleRailHoverLeave}
+                  className={cn(
+                    'w-full flex items-center justify-center py-2 rounded-md transition-colors relative',
+                    isOpen
+                      ? 'bg-accent/10 text-accent'
+                      : hasActive
+                        ? 'text-accent'
+                        : 'text-muted hover:text-main hover:bg-surface-hover',
+                  )}
+                >
+                  {(isOpen || hasActive) && (
+                    <span className="absolute left-0 top-1 bottom-1 w-[2px] rounded-full bg-accent" />
+                  )}
+                  {RailIcon ? (
+                    <RailIcon size={18} />
+                  ) : (
+                    <ZMark size={16} className={cn((isOpen || hasActive) && 'text-accent')} />
+                  )}
+                </button>
+
+                {/* Hover flyout label — shows on hover when no detail panel is open, OR always on hover */}
+                {isHovered && !isOpen && (
+                  <div
+                    className="absolute left-full top-1/2 -translate-y-1/2 ml-3 px-3 py-1.5 bg-surface border border-main rounded-lg shadow-xl z-50 whitespace-nowrap sidebar-flyout-enter pointer-events-none"
+                  >
+                    <span className="text-[13px] font-medium text-main">{group.label}</span>
+                  </div>
                 )}
-              >
-                {RailIcon ? (
-                  <RailIcon size={18} />
-                ) : (
-                  <ZMark size={16} className={cn(isOpen || hasActive ? 'text-accent' : '')} />
-                )}
-              </button>
+              </div>
             );
           })}
         </div>
 
         {/* Divider */}
-        <div className="mx-2.5 border-t border-main/50" />
+        <div className="mx-2.5 border-t border-main/40" />
 
-        {/* Bottom: Settings + Sign Out + User */}
+        {/* Bottom: Z Assistant + Settings + Sign Out + User */}
         <div className="px-1.5 py-2 space-y-0.5">
+          {/* Z Assistant with pulsing dot */}
+          <Link
+            href="/dashboard/z"
+            onMouseEnter={() => setHoveredGroup('__z')}
+            onMouseLeave={handleRailHoverLeave}
+            className={cn(
+              'relative flex items-center justify-center py-2 rounded-md transition-colors group',
+              pathname.startsWith('/dashboard/z')
+                ? 'text-accent bg-accent/10'
+                : 'text-muted hover:text-main hover:bg-surface-hover',
+            )}
+          >
+            <ZMark size={16} />
+            <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+            {hoveredGroup === '__z' && (
+              <div className="absolute left-full ml-3 px-3 py-1.5 bg-surface border border-main rounded-lg shadow-xl z-50 whitespace-nowrap sidebar-flyout-enter pointer-events-none">
+                <span className="text-[13px] font-medium text-main">Z Assistant</span>
+              </div>
+            )}
+          </Link>
+
+          {/* Settings */}
           <Link
             href="/dashboard/settings"
-            title="Settings"
+            onMouseEnter={() => setHoveredGroup('__settings')}
+            onMouseLeave={handleRailHoverLeave}
             className={cn(
-              'flex items-center justify-center py-2 rounded-md transition-colors',
+              'relative flex items-center justify-center py-2 rounded-md transition-colors group',
               pathname === '/dashboard/settings'
                 ? 'text-accent bg-accent/10'
                 : 'text-muted hover:text-main hover:bg-surface-hover',
             )}
           >
             <Settings size={18} />
+            {hoveredGroup === '__settings' && (
+              <div className="absolute left-full ml-3 px-3 py-1.5 bg-surface border border-main rounded-lg shadow-xl z-50 whitespace-nowrap sidebar-flyout-enter pointer-events-none">
+                <span className="text-[13px] font-medium text-main">Settings</span>
+              </div>
+            )}
           </Link>
+
+          {/* Sign out */}
           <button
             onClick={onSignOut}
-            title="Sign out"
-            className="w-full flex items-center justify-center py-2 rounded-md text-muted hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
+            onMouseEnter={() => setHoveredGroup('__signout')}
+            onMouseLeave={handleRailHoverLeave}
+            className="relative w-full flex items-center justify-center py-2 rounded-md text-muted hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
           >
             <LogOut size={18} />
+            {hoveredGroup === '__signout' && (
+              <div className="absolute left-full ml-3 px-3 py-1.5 bg-surface border border-main rounded-lg shadow-xl z-50 whitespace-nowrap sidebar-flyout-enter pointer-events-none">
+                <span className="text-[13px] font-medium text-main">Sign out</span>
+              </div>
+            )}
           </button>
+
+          {/* User avatar */}
           {user && (
             <button
               onClick={() => router.push('/dashboard/settings')}
-              title={user.email || 'Profile'}
-              className="w-full flex justify-center py-1"
+              onMouseEnter={() => setHoveredGroup('__user')}
+              onMouseLeave={handleRailHoverLeave}
+              className="relative w-full flex justify-center py-1"
             >
-              <div className="w-7 h-7 rounded-full bg-accent-light flex items-center justify-center">
-                <span className="text-accent text-[10px] font-medium">{initials}</span>
+              <div className="w-7 h-7 rounded-full bg-accent/10 flex items-center justify-center hover:bg-accent/20 transition-colors">
+                <span className="text-accent text-[10px] font-semibold">{initials}</span>
               </div>
+              {hoveredGroup === '__user' && (
+                <div className="absolute left-full ml-3 px-3 py-1.5 bg-surface border border-main rounded-lg shadow-xl z-50 whitespace-nowrap sidebar-flyout-enter pointer-events-none">
+                  <span className="text-[13px] font-medium text-main">{user.email || 'Profile'}</span>
+                </div>
+              )}
             </button>
           )}
         </div>
       </aside>
 
-      {/* Detail Panel — slides out when a group is selected */}
-      {activeGroup && currentGroup && (
-        <aside
+      {/* ═══════════════════════════════════════════
+          DETAIL PANEL — slides out when a group is clicked
+          Shows all sub-items for the selected category
+          ═══════════════════════════════════════════ */}
+
+      {activeGroup && currentDetailGroup && (
+        <div
           ref={detailRef}
           className="fixed top-0 left-12 z-[45] h-full w-[220px] bg-surface border-r border-main shadow-xl hidden lg:flex flex-col sidebar-detail-enter"
         >
           {/* Panel header */}
-          <div className="h-14 flex items-center justify-between px-4 border-b border-main flex-shrink-0">
+          <div className="h-12 flex items-center justify-between px-4 border-b border-main flex-shrink-0">
             <span className="text-[13px] font-semibold tracking-[0.02em] text-main">
-              {currentGroup.label}
+              {currentDetailGroup.label}
             </span>
             <button
               onClick={() => setActiveGroup(null)}
@@ -649,9 +760,9 @@ export function Sidebar({
 
           {/* Panel items */}
           <nav className="flex-1 py-2 px-2 overflow-y-auto scrollbar-hide space-y-[1px]">
-            {currentGroup.items.map(renderDetailItem)}
+            {currentDetailGroup.items.map(item => renderDetailItem(item))}
           </nav>
-        </aside>
+        </div>
       )}
     </>
   );
