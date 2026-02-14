@@ -30,6 +30,8 @@ import {
   ClipboardList,
   Key,
   Award,
+  Lock,
+  Layers,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -40,7 +42,7 @@ import { CommandPalette } from '@/components/command-palette';
 import { cn, formatRelativeTime } from '@/lib/utils';
 import { getSupabase } from '@/lib/supabase';
 import { useTeam } from '@/lib/hooks/use-jobs';
-import { usePermissions, TierGate } from '@/components/permission-gate';
+import { usePermissions, TierGate, PERMISSIONS, ROLE_PERMISSIONS, type Permission } from '@/components/permission-gate';
 import { useBranches, useCustomRoles, useFormTemplates, useCertifications, useApiKeys } from '@/lib/hooks/use-enterprise';
 import type { Branch, CustomRole, FormTemplate, Certification } from '@/lib/hooks/use-enterprise';
 
@@ -310,6 +312,8 @@ function CompanySettings() {
           <Button>Save Changes</Button>
         </CardContent>
       </Card>
+
+      <GoodBetterBestCard />
     </div>
   );
 }
@@ -879,6 +883,88 @@ function ProModeCard() {
   );
 }
 
+function GoodBetterBestCard() {
+  const [enabled, setEnabled] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('zafto_gbb_pricing') === 'true';
+    }
+    return false;
+  });
+
+  const handleToggle = async () => {
+    const newValue = !enabled;
+    setEnabled(newValue);
+    localStorage.setItem('zafto_gbb_pricing', String(newValue));
+    try {
+      const supabase = getSupabase();
+      const { data: company } = await supabase
+        .from('companies')
+        .select('settings')
+        .single();
+      const settings = (company?.settings as Record<string, unknown>) || {};
+      await supabase
+        .from('companies')
+        .update({ settings: { ...settings, bid_pricing_tiers: newValue } })
+        .not('id', 'is', null);
+    } catch {
+      setEnabled(!newValue);
+      localStorage.setItem('zafto_gbb_pricing', String(!newValue));
+    }
+  };
+
+  return (
+    <Card className={cn('transition-colors', enabled && 'border-accent/50 bg-accent/5')}>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className={cn('p-2.5 rounded-xl transition-colors', enabled ? 'bg-accent/20' : 'bg-secondary')}>
+              <Layers size={22} className={enabled ? 'text-accent' : 'text-muted'} />
+            </div>
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                Good / Better / Best Pricing
+                {enabled && (
+                  <span className="px-2 py-0.5 text-[10px] font-bold bg-accent text-white rounded">ON</span>
+                )}
+              </CardTitle>
+              <CardDescription>
+                {enabled
+                  ? 'Bids show three pricing columns for clients to choose from'
+                  : 'Single price column on bids'}
+              </CardDescription>
+            </div>
+          </div>
+          <button
+            onClick={handleToggle}
+            className={cn(
+              'w-11 h-6 rounded-full transition-colors relative flex-shrink-0',
+              enabled ? 'bg-accent' : 'bg-slate-300 dark:bg-slate-600'
+            )}
+          >
+            <span
+              className={cn(
+                'absolute top-1 w-4 h-4 bg-white rounded-full shadow-sm transition-all duration-200',
+                enabled ? 'left-6' : 'left-1'
+              )}
+            />
+          </button>
+        </div>
+      </CardHeader>
+      {enabled && (
+        <CardContent>
+          <div className="flex items-start gap-3 p-3 rounded-lg bg-secondary/50">
+            <Info size={16} className="text-muted mt-0.5 flex-shrink-0" />
+            <p className="text-sm text-muted">
+              When enabled, bids show Good, Better, and Best columns with different scope
+              and material options per tier. Clients choose the option that fits their budget.
+            </p>
+          </div>
+        </CardContent>
+      )}
+    </Card>
+  );
+}
+
 function SecuritySettings() {
   return (
     <div className="space-y-6">
@@ -1124,48 +1210,164 @@ function BranchesSettings() {
 
 function RolesSettings() {
   const { roles, loading, createRole, updateRole, deleteRole } = useCustomRoles();
+  const { isBusinessOrHigher, isEnterprise } = usePermissions();
+  const [expandedRole, setExpandedRole] = useState<string | null>(null);
+
+  const permissionCategories = [
+    { label: 'Jobs', perms: [PERMISSIONS.JOBS_VIEW_ALL, PERMISSIONS.JOBS_CREATE, PERMISSIONS.JOBS_EDIT_ALL, PERMISSIONS.JOBS_DELETE, PERMISSIONS.JOBS_ASSIGN] },
+    { label: 'Bids', perms: [PERMISSIONS.BIDS_VIEW_ALL, PERMISSIONS.BIDS_CREATE, PERMISSIONS.BIDS_EDIT_ALL, PERMISSIONS.BIDS_SEND, PERMISSIONS.BIDS_APPROVE] },
+    { label: 'Invoices', perms: [PERMISSIONS.INVOICES_VIEW_ALL, PERMISSIONS.INVOICES_CREATE, PERMISSIONS.INVOICES_EDIT, PERMISSIONS.INVOICES_SEND, PERMISSIONS.INVOICES_APPROVE] },
+    { label: 'Customers', perms: [PERMISSIONS.CUSTOMERS_VIEW_ALL, PERMISSIONS.CUSTOMERS_CREATE, PERMISSIONS.CUSTOMERS_EDIT, PERMISSIONS.CUSTOMERS_DELETE] },
+    { label: 'Team', perms: [PERMISSIONS.TEAM_VIEW, PERMISSIONS.TEAM_INVITE, PERMISSIONS.TEAM_EDIT, PERMISSIONS.TEAM_REMOVE] },
+    { label: 'Finance', perms: [PERMISSIONS.FINANCIALS_VIEW, PERMISSIONS.FINANCIALS_MANAGE, PERMISSIONS.PAYROLL_VIEW, PERMISSIONS.PAYROLL_MANAGE] },
+    { label: 'Admin', perms: [PERMISSIONS.COMPANY_SETTINGS, PERMISSIONS.BILLING_MANAGE, PERMISSIONS.ROLES_MANAGE, PERMISSIONS.AUDIT_VIEW] },
+    { label: 'Clock', perms: [PERMISSIONS.TIMECLOCK_OWN, PERMISSIONS.TIMECLOCK_VIEW_ALL, PERMISSIONS.TIMECLOCK_MANAGE] },
+    { label: 'Schedule', perms: [PERMISSIONS.SCHEDULING_VIEW, PERMISSIONS.SCHEDULING_MANAGE, PERMISSIONS.DISPATCH_VIEW, PERMISSIONS.DISPATCH_MANAGE] },
+  ];
+
+  const builtInRoles = [
+    { key: 'owner', label: 'Owner', color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300', desc: 'Full access to everything' },
+    { key: 'admin', label: 'Admin', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300', desc: 'Everything except billing' },
+    { key: 'office_manager', label: 'Office Mgr', color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300', desc: 'Operations & scheduling' },
+    { key: 'technician', label: 'Technician', color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300', desc: 'Assigned jobs & field tools' },
+    { key: 'apprentice', label: 'Apprentice', color: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300', desc: 'Field work, no financials' },
+    { key: 'cpa', label: 'CPA', color: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300', desc: 'Financials & reports only' },
+  ];
+
+  const getAccessLevel = (roleKey: string, categoryPerms: string[]): 'full' | 'partial' | 'own' | 'none' => {
+    const rolePerms = ROLE_PERMISSIONS[roleKey] || [];
+    const matching = categoryPerms.filter((p) => rolePerms.includes(p as Permission));
+    if (matching.length === 0) return 'none';
+    if (matching.length === categoryPerms.length) return 'full';
+    const category = categoryPerms[0]?.split('.')[0];
+    const hasOwn = rolePerms.some((p) => p.startsWith(category + '.') && p.includes('.own'));
+    if (hasOwn && matching.length <= 2) return 'own';
+    return 'partial';
+  };
 
   const allPermissions = [
     { group: 'Jobs', keys: ['jobs.view.own', 'jobs.view.all', 'jobs.create', 'jobs.edit.own', 'jobs.edit.all', 'jobs.delete', 'jobs.assign'] },
+    { group: 'Bids', keys: ['bids.view.own', 'bids.view.all', 'bids.create', 'bids.edit.own', 'bids.edit.all', 'bids.send', 'bids.approve', 'bids.delete'] },
     { group: 'Invoices', keys: ['invoices.view.own', 'invoices.view.all', 'invoices.create', 'invoices.edit', 'invoices.send', 'invoices.approve', 'invoices.void'] },
     { group: 'Customers', keys: ['customers.view.own', 'customers.view.all', 'customers.create', 'customers.edit', 'customers.delete'] },
     { group: 'Team', keys: ['team.view', 'team.invite', 'team.edit', 'team.remove'] },
-    { group: 'Operations', keys: ['dispatch.view', 'dispatch.manage', 'reports.view', 'reports.export'] },
+    { group: 'Finance', keys: ['financials.view', 'financials.manage', 'payroll.view', 'payroll.manage'] },
     { group: 'Admin', keys: ['company.settings', 'billing.manage', 'roles.manage', 'audit.view'] },
     { group: 'Time Clock', keys: ['timeclock.own', 'timeclock.view.all', 'timeclock.manage'] },
+    { group: 'Schedule', keys: ['scheduling.view', 'scheduling.manage', 'dispatch.view', 'dispatch.manage'] },
+    { group: 'Properties', keys: ['properties.view', 'properties.create', 'properties.edit', 'properties.delete'] },
+    { group: 'Reports', keys: ['reports.view', 'reports.export'] },
     { group: 'Enterprise', keys: ['branches.view', 'branches.manage', 'certifications.view', 'certifications.manage', 'forms.view', 'forms.manage', 'api_keys.manage'] },
+    { group: 'Fleet', keys: ['fleet.view', 'fleet.manage'] },
   ];
 
   return (
     <div className="space-y-6">
+      {/* Default Role Permissions Matrix */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Default Role Permissions</CardTitle>
+          <CardDescription>Built-in roles with default access levels. Assign roles to team members to control what they can see and do.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto -mx-6">
+            <table className="w-full text-sm min-w-[700px]">
+              <thead>
+                <tr className="border-b border-main">
+                  <th className="text-left py-3 pl-6 pr-4 font-medium text-muted text-[11px] uppercase tracking-wider w-36">Role</th>
+                  {permissionCategories.map((cat) => (
+                    <th key={cat.label} className="text-center py-3 px-1 font-medium text-muted text-[11px] uppercase tracking-wider">{cat.label}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {builtInRoles.map((role) => (
+                  <tr key={role.key} className="border-b border-light last:border-0 hover:bg-surface-hover/50 transition-colors">
+                    <td className="py-3 pl-6 pr-4">
+                      <span className={cn('px-2 py-0.5 text-[11px] font-medium rounded-full whitespace-nowrap', role.color)}>{role.label}</span>
+                      <p className="text-[11px] text-muted mt-0.5">{role.desc}</p>
+                    </td>
+                    {permissionCategories.map((cat) => {
+                      const level = getAccessLevel(role.key, cat.perms);
+                      return (
+                        <td key={cat.label} className="text-center py-3 px-1">
+                          {level === 'full' ? (
+                            <Check size={15} className="mx-auto text-emerald-500" />
+                          ) : level === 'partial' ? (
+                            <div className="mx-auto w-3.5 h-3.5 rounded-full border-2 border-amber-400 bg-amber-400/20" />
+                          ) : level === 'own' ? (
+                            <span className="text-[10px] font-medium text-amber-600">Own</span>
+                          ) : (
+                            <span className="text-muted/40">{'\u2014'}</span>
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="flex items-center gap-5 mt-4 pt-3 border-t border-light text-[11px] text-muted">
+            <div className="flex items-center gap-1.5"><Check size={13} className="text-emerald-500" /> Full</div>
+            <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full border-2 border-amber-400 bg-amber-400/20" /> Partial</div>
+            <div className="flex items-center gap-1.5"><span className="font-medium text-amber-600">Own</span> Own only</div>
+            <div className="flex items-center gap-1.5"><span className="text-muted/40">{'\u2014'}</span> None</div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Custom Roles — Business tier+ */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>Roles & Permissions</CardTitle>
-              <CardDescription>Create custom roles with granular permission control</CardDescription>
+              <div className="flex items-center gap-2">
+                <CardTitle>Custom Roles</CardTitle>
+                {!isBusinessOrHigher && (
+                  <span className="flex items-center gap-1 px-2 py-0.5 text-[10px] font-semibold bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300 rounded-full">
+                    <Lock size={10} />
+                    Business
+                  </span>
+                )}
+              </div>
+              <CardDescription>Create custom roles with granular permission control beyond the defaults</CardDescription>
             </div>
-            <Button onClick={() => createRole({ name: 'New Role', baseRole: 'technician', permissions: {} })}>
-              <Plus size={16} className="mr-2" />
-              Create Role
-            </Button>
+            {isBusinessOrHigher && (
+              <Button onClick={() => createRole({ name: 'New Role', baseRole: 'technician', permissions: {} })}>
+                <Plus size={16} className="mr-2" />
+                Create Role
+              </Button>
+            )}
           </div>
         </CardHeader>
         <CardContent>
-          {loading ? (
+          {!isBusinessOrHigher ? (
+            <div className="text-center py-8">
+              <Lock size={32} className="mx-auto mb-3 text-muted opacity-40" />
+              <p className="font-medium text-main">Custom Roles</p>
+              <p className="text-sm text-muted mt-1 max-w-md mx-auto">
+                Create roles tailored to your team structure with per-permission control. Available on Business plan and above.
+              </p>
+              <Button variant="secondary" className="mt-4">Upgrade Plan</Button>
+            </div>
+          ) : loading ? (
             <div className="space-y-3">
               {[1, 2, 3].map((i) => <div key={i} className="h-16 bg-secondary rounded-lg animate-pulse" />)}
             </div>
           ) : roles.length === 0 ? (
             <div className="text-center py-8 text-muted">
               <UserCog size={32} className="mx-auto mb-2 opacity-40" />
-              <p>No custom roles. Default role-based permissions are active.</p>
+              <p>No custom roles yet. Default role-based permissions are active.</p>
             </div>
           ) : (
             <div className="space-y-4">
               {roles.map((role) => (
                 <div key={role.id} className="border border-main rounded-lg">
-                  <div className="flex items-center justify-between p-4">
+                  <div
+                    className="flex items-center justify-between p-4 cursor-pointer hover:bg-surface-hover/50 transition-colors rounded-t-lg"
+                    onClick={() => setExpandedRole(expandedRole === role.id ? null : role.id)}
+                  >
                     <div>
                       <p className="font-medium text-main">{role.name}</p>
                       <p className="text-sm text-muted">
@@ -1174,39 +1376,91 @@ function RolesSettings() {
                     </div>
                     <div className="flex items-center gap-2">
                       {role.isSystemRole && <Badge variant="secondary">System</Badge>}
-                      <Button variant="ghost" size="sm" onClick={() => deleteRole(role.id)}>
+                      <ChevronRight size={16} className={cn('text-muted transition-transform', expandedRole === role.id && 'rotate-90')} />
+                      <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); deleteRole(role.id); }}>
                         <Trash2 size={14} />
                       </Button>
                     </div>
                   </div>
-                  <div className="border-t border-main p-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                      {allPermissions.map((group) => (
-                        <div key={group.group}>
-                          <p className="text-xs font-semibold text-muted uppercase mb-2">{group.group}</p>
-                          <div className="space-y-1">
-                            {group.keys.map((key) => (
-                              <label key={key} className="flex items-center gap-2 text-sm cursor-pointer">
-                                <input
-                                  type="checkbox"
-                                  checked={role.permissions[key] === true}
-                                  onChange={() => {
-                                    const newPerms = { ...role.permissions, [key]: !role.permissions[key] };
-                                    updateRole(role.id, { permissions: newPerms });
-                                  }}
-                                  className="rounded border-gray-300"
-                                  disabled={role.isSystemRole}
-                                />
-                                <span className="text-main">{key.split('.').pop()}</span>
-                              </label>
-                            ))}
+                  {expandedRole === role.id && (
+                    <div className="border-t border-main p-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        {allPermissions.map((group) => (
+                          <div key={group.group}>
+                            <p className="text-xs font-semibold text-muted uppercase mb-2">{group.group}</p>
+                            <div className="space-y-1">
+                              {group.keys.map((key) => (
+                                <label key={key} className="flex items-center gap-2 text-sm cursor-pointer">
+                                  <input
+                                    type="checkbox"
+                                    checked={role.permissions[key] === true}
+                                    onChange={() => {
+                                      const newPerms = { ...role.permissions, [key]: !role.permissions[key] };
+                                      updateRole(role.id, { permissions: newPerms });
+                                    }}
+                                    className="rounded border-gray-300"
+                                    disabled={role.isSystemRole}
+                                  />
+                                  <span className="text-main">{key.split('.').slice(1).join(' ')}</span>
+                                </label>
+                              ))}
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Approval Workflows — Enterprise tier */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <CardTitle>Approval Workflows</CardTitle>
+            {!isEnterprise && (
+              <span className="flex items-center gap-1 px-2 py-0.5 text-[10px] font-semibold bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 rounded-full">
+                <Lock size={10} />
+                Enterprise
+              </span>
+            )}
+          </div>
+          <CardDescription>Require approval for high-value actions before they go out</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {!isEnterprise ? (
+            <div className="text-center py-8">
+              <Lock size={32} className="mx-auto mb-3 text-muted opacity-40" />
+              <p className="font-medium text-main">Approval Workflows</p>
+              <p className="text-sm text-muted mt-1 max-w-md mx-auto">
+                Require admin approval for bids over a threshold, change orders, and large expenses. Available on Enterprise plan.
+              </p>
+              <Button variant="secondary" className="mt-4">Upgrade Plan</Button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <ToggleItem
+                label="Bid approval threshold"
+                description="Bids over a set amount require admin or owner approval before sending"
+                checked={false}
+                onChange={() => {}}
+              />
+              <ToggleItem
+                label="Change order approval"
+                description="Change orders require owner approval before execution"
+                checked={false}
+                onChange={() => {}}
+              />
+              <ToggleItem
+                label="Expense approval"
+                description="Expenses over a set amount require manager approval"
+                checked={false}
+                onChange={() => {}}
+              />
             </div>
           )}
         </CardContent>
