@@ -307,6 +307,8 @@ export default function NewBidPage() {
   // Settings
   const [taxRate, setTaxRate] = useState(6.35);
   const [depositPercent, setDepositPercent] = useState(50);
+  const [discountType, setDiscountType] = useState<'none' | 'percent' | 'flat'>('none');
+  const [discountValue, setDiscountValue] = useState(0);
   const [internalNotes, setInternalNotes] = useState('');
   const [termsAndConditions, setTermsAndConditions] = useState(defaultTerms);
 
@@ -640,7 +642,10 @@ export default function NewBidPage() {
   const selectedAddOnsTotal = addOns
     .filter((a) => a.isSelected)
     .reduce((sum, a) => sum + a.price, 0);
-  const grandTotal = activeOption.total + selectedAddOnsTotal;
+  const discountAmount = discountType === 'percent'
+    ? (activeOption.total + selectedAddOnsTotal) * (discountValue / 100)
+    : discountType === 'flat' ? discountValue : 0;
+  const grandTotal = Math.max(0, activeOption.total + selectedAddOnsTotal - discountAmount);
   const depositAmount = grandTotal * (depositPercent / 100);
 
   // Check if bid is expiring soon
@@ -1566,9 +1571,8 @@ Example:
                     type="number"
                     value={taxRate}
                     onChange={(e) => {
-                      const newRate = parseFloat(e.target.value) || 0;
+                      const newRate = Math.max(0, Math.min(100, parseFloat(e.target.value) || 0));
                       setTaxRate(newRate);
-                      // Recalculate all options
                       setOptions((prev) => prev.map((opt) => calculateOptionTotals(opt)));
                     }}
                     step="0.01"
@@ -1583,7 +1587,7 @@ Example:
                   <input
                     type="number"
                     value={depositPercent}
-                    onChange={(e) => setDepositPercent(parseFloat(e.target.value) || 0)}
+                    onChange={(e) => setDepositPercent(Math.max(0, Math.min(100, parseFloat(e.target.value) || 0)))}
                     min="0"
                     max="100"
                     className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main focus:border-accent focus:ring-1 focus:ring-accent"
@@ -1597,6 +1601,39 @@ Example:
                 )}
               </div>
             </div>
+
+            {/* Discount */}
+            <div className="space-y-3">
+              <label className="block text-sm font-medium text-main">Discount</label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <select
+                  value={discountType}
+                  onChange={(e) => { setDiscountType(e.target.value as 'none' | 'percent' | 'flat'); if (e.target.value === 'none') setDiscountValue(0); }}
+                  className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main focus:border-accent focus:ring-1 focus:ring-accent"
+                >
+                  <option value="none">No Discount</option>
+                  <option value="percent">Percentage (%)</option>
+                  <option value="flat">Flat Amount ($)</option>
+                </select>
+                {discountType !== 'none' && (
+                  <div className="relative">
+                    <input
+                      type="number"
+                      value={discountValue}
+                      onChange={(e) => setDiscountValue(Math.max(0, parseFloat(e.target.value) || 0))}
+                      step={discountType === 'percent' ? '1' : '0.01'}
+                      min="0"
+                      max={discountType === 'percent' ? '100' : undefined}
+                      className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main focus:border-accent focus:ring-1 focus:ring-accent"
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted">
+                      {discountType === 'percent' ? '%' : '$'}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+
             <div className="space-y-1.5">
               <label className="block text-sm font-medium text-main">Internal Notes</label>
               <textarea
