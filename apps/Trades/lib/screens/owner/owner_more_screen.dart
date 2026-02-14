@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 import 'package:zafto/theme/zafto_colors.dart';
 import 'package:zafto/theme/zafto_theme_builder.dart';
+import 'package:zafto/screens/scheduling/schedule_list_screen.dart';
 
 class OwnerMoreScreen extends ConsumerWidget {
   const OwnerMoreScreen({super.key});
@@ -43,6 +45,16 @@ class OwnerMoreScreen extends ConsumerWidget {
             colors,
             icon: Icons.apartment_outlined,
             title: 'Properties',
+          ),
+          _buildMenuItem(
+            context,
+            colors,
+            icon: LucideIcons.ganttChart,
+            title: 'Scheduling',
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const ScheduleListScreen()),
+            ),
           ),
           _buildMenuItem(
             context,
@@ -108,11 +120,12 @@ class OwnerMoreScreen extends ConsumerWidget {
     ZaftoColors colors, {
     required IconData icon,
     required String title,
+    VoidCallback? onTap,
   }) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () {
+        onTap: onTap ?? () {
           // Navigation placeholder
         },
         child: Padding(
