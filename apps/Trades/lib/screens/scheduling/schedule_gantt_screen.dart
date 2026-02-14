@@ -140,6 +140,10 @@ class _ScheduleGanttScreenState extends ConsumerState<ScheduleGanttScreen> {
                   _addTask(context);
                 case 'recalc':
                   _triggerCpmRecalc();
+                case 'import':
+                  _importSchedule(context);
+                case 'export':
+                  _exportSchedule(context);
               }
             },
             itemBuilder: (context) => [
@@ -176,6 +180,21 @@ class _ScheduleGanttScreenState extends ConsumerState<ScheduleGanttScreen> {
                   Icon(LucideIcons.refreshCw, size: 16, color: colors.textSecondary),
                   const SizedBox(width: 8),
                   Text('Recalculate CPM', style: TextStyle(color: colors.textPrimary)),
+                ],
+              )),
+              const PopupMenuDivider(),
+              PopupMenuItem(value: 'import', child: Row(
+                children: [
+                  Icon(LucideIcons.upload, size: 16, color: colors.textSecondary),
+                  const SizedBox(width: 8),
+                  Text('Import', style: TextStyle(color: colors.textPrimary)),
+                ],
+              )),
+              PopupMenuItem(value: 'export', child: Row(
+                children: [
+                  Icon(LucideIcons.download, size: 16, color: colors.textSecondary),
+                  const SizedBox(width: 8),
+                  Text('Export', style: TextStyle(color: colors.textPrimary)),
                 ],
               )),
             ],
@@ -584,6 +603,122 @@ class _ScheduleGanttScreenState extends ConsumerState<ScheduleGanttScreen> {
         );
       }
     }
+  }
+
+  Future<void> _importSchedule(BuildContext context) async {
+    HapticFeedback.mediumImpact();
+    final colors = ref.read(zaftoColorsProvider);
+
+    final format = await showModalBottomSheet<String>(
+      context: context,
+      backgroundColor: colors.bgElevated,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (ctx) => Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Import Schedule', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: colors.textPrimary)),
+            const SizedBox(height: 4),
+            Text('Select file format', style: TextStyle(fontSize: 13, color: colors.textTertiary)),
+            const SizedBox(height: 16),
+            _buildFormatOption(ctx, colors, 'P6 XER (.xer)', 'Primavera P6 format', 'xer'),
+            _buildFormatOption(ctx, colors, 'MS Project (.xml)', 'Microsoft Project XML', 'msp_xml'),
+            _buildFormatOption(ctx, colors, 'CSV (.csv)', 'Spreadsheet format', 'csv'),
+          ],
+        ),
+      ),
+    );
+
+    if (format == null || !mounted) return;
+
+    // In a real implementation, we'd use file_picker here.
+    // For now, show a message about file selection.
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Import from $format: Select a file from your device to upload')),
+    );
+  }
+
+  Future<void> _exportSchedule(BuildContext context) async {
+    HapticFeedback.mediumImpact();
+    final colors = ref.read(zaftoColorsProvider);
+
+    final format = await showModalBottomSheet<String>(
+      context: context,
+      backgroundColor: colors.bgElevated,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (ctx) => Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Export Schedule', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: colors.textPrimary)),
+            const SizedBox(height: 4),
+            Text('Choose export format', style: TextStyle(fontSize: 13, color: colors.textTertiary)),
+            const SizedBox(height: 16),
+            _buildFormatOption(ctx, colors, 'CSV', 'Spreadsheet-compatible', 'csv'),
+            _buildFormatOption(ctx, colors, 'MS Project XML', 'Microsoft Project', 'msp_xml'),
+            _buildFormatOption(ctx, colors, 'Primavera P6 XER', 'Oracle Primavera', 'xer'),
+            _buildFormatOption(ctx, colors, 'PDF Report', 'Printable schedule', 'pdf'),
+          ],
+        ),
+      ),
+    );
+
+    if (format == null || !mounted) return;
+
+    try {
+      final supabase = Supabase.instance.client;
+      final response = await supabase.functions.invoke(
+        'schedule-export',
+        body: {'project_id': widget.projectId, 'format': format},
+      );
+
+      final data = response.data as Map<String, dynamic>?;
+      if (data == null) throw Exception('No response data');
+
+      final filename = data['filename'] as String? ?? 'export';
+      final tasksExported = data['tasks_exported'] as int? ?? 0;
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Exported $tasksExported tasks as $filename')),
+        );
+      }
+      // In production, use url_launcher or share_plus to open/share the URL
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Export failed: $e')),
+        );
+      }
+    }
+  }
+
+  Widget _buildFormatOption(BuildContext ctx, ZaftoColors colors, String title, String subtitle, String value) {
+    return InkWell(
+      onTap: () => Navigator.pop(ctx, value),
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        margin: const EdgeInsets.only(bottom: 8),
+        decoration: BoxDecoration(
+          border: Border.all(color: colors.borderSubtle),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: colors.textPrimary)),
+            const SizedBox(height: 2),
+            Text(subtitle, style: TextStyle(fontSize: 12, color: colors.textTertiary)),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildEmptyState(ZaftoColors colors) {
