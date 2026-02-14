@@ -14,11 +14,21 @@ serve(async (req) => {
   const SUPABASE_SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
   const SW_PROJECT = Deno.env.get('SIGNALWIRE_PROJECT_KEY') ?? ''
   const SW_TOKEN = Deno.env.get('SIGNALWIRE_API_TOKEN') ?? ''
+  const SW_WEBHOOK_SECRET = Deno.env.get('SIGNALWIRE_WEBHOOK_SECRET') ?? ''
   const swAuth = btoa(`${SW_PROJECT}:${SW_TOKEN}`)
+
+  // Verify webhook secret to prevent forged requests
+  const url = new URL(req.url)
+  if (SW_WEBHOOK_SECRET) {
+    const providedSecret = url.searchParams.get('secret')
+    if (providedSecret !== SW_WEBHOOK_SECRET) {
+      console.error('Invalid SignalWire webhook secret')
+      return new Response('Unauthorized', { status: 401 })
+    }
+  }
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY)
 
-  const url = new URL(req.url)
   const webhookType = url.searchParams.get('type')
 
   try {
