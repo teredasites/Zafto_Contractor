@@ -3,9 +3,11 @@
 // condition rating, and navigation between rooms.
 
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../theme/zafto_colors.dart';
@@ -45,9 +47,83 @@ class _WalkthroughCaptureScreenState
   List<String> _tags = [];
   bool _isCapturing = false;
   Timer? _autoSaveTimer;
+  Timer? _pathTrackingTimer;
   bool _hasUnsavedChanges = false;
+  bool _gpsAvailable = false;
 
   final _imagePicker = ImagePicker();
+  final List<Map<String, dynamic>> _pathBreadcrumbs = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _initGps();
+  }
+
+  /// Check GPS availability and start path tracking
+  Future<void> _initGps() async {
+    try {
+      final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) return;
+
+      var permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        return;
+      }
+
+      _gpsAvailable = true;
+
+      // Start path breadcrumb tracking: capture GPS every 10 seconds
+      _pathTrackingTimer = Timer.periodic(
+        const Duration(seconds: 10),
+        (_) => _capturePathBreadcrumb(),
+      );
+
+      // Capture initial breadcrumb
+      _capturePathBreadcrumb();
+    } catch (e) {
+      debugPrint('[WalkthroughCapture] GPS init failed: $e');
+    }
+  }
+
+  /// Capture a GPS breadcrumb for walkthrough path tracking
+  Future<void> _capturePathBreadcrumb() async {
+    if (!_gpsAvailable) return;
+    try {
+      final pos = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+        timeLimit: const Duration(seconds: 5),
+      );
+      _pathBreadcrumbs.add({
+        'lat': pos.latitude,
+        'lng': pos.longitude,
+        'heading': pos.heading,
+        'altitude': pos.altitude,
+        'accuracy': pos.accuracy,
+        'ts': DateTime.now().toIso8601String(),
+      });
+    } catch (_) {
+      // Non-critical — skip this breadcrumb
+    }
+  }
+
+  /// Get current GPS position for a photo. Returns null if unavailable.
+  Future<Position?> _getCurrentPosition() async {
+    if (!_gpsAvailable) return null;
+    try {
+      return await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+        timeLimit: const Duration(seconds: 5),
+      );
+    } catch (e) {
+      debugPrint('[WalkthroughCapture] GPS capture failed: $e');
+      return null;
+    }
+  }
 
   @override
   void dispose() {
@@ -57,7 +133,26 @@ class _WalkthroughCaptureScreenState
     _heightController.dispose();
     _tagController.dispose();
     _autoSaveTimer?.cancel();
+    _pathTrackingTimer?.cancel();
+    _savePathBreadcrumbs();
     super.dispose();
+  }
+
+  /// Persist collected path breadcrumbs to the walkthrough record
+  Future<void> _savePathBreadcrumbs() async {
+    if (_pathBreadcrumbs.isEmpty) return;
+    try {
+      final service = ref.read(walkthroughServiceProvider);
+      final walkthrough = await service.getWalkthrough(widget.walkthroughId);
+      final existingPath = List<Map<String, dynamic>>.from(walkthrough.walkthroughPath);
+      existingPath.addAll(_pathBreadcrumbs);
+      await service.updateWalkthrough(
+        widget.walkthroughId,
+        walkthrough.copyWith(walkthroughPath: existingPath),
+      );
+    } catch (e) {
+      debugPrint('[WalkthroughCapture] Failed to save path: $e');
+    }
   }
 
   @override
@@ -707,6 +802,24 @@ class _WalkthroughCaptureScreenState
                   ),
                 ),
               ),
+            // GPS indicator
+            if (photo.hasGps)
+              Positioned(
+                top: 4,
+                right: 4,
+                child: Container(
+                  padding: const EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                    color: Colors.green.withValues(alpha: 0.8),
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                  child: const Icon(
+                    LucideIcons.mapPin,
+                    size: 8,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
           ],
         ),
       ),
@@ -1226,6 +1339,9 @@ class _WalkthroughCaptureScreenState
     setState(() => _isCapturing = true);
 
     try {
+      // Start GPS capture in parallel with camera
+      final gpsFuture = _getCurrentPosition();
+
       final image = await _imagePicker.pickImage(
         source: ImageSource.camera,
         imageQuality: 85,
@@ -1237,6 +1353,9 @@ class _WalkthroughCaptureScreenState
         if (mounted) setState(() => _isCapturing = false);
         return;
       }
+
+      // Await GPS result (should be ready by now)
+      final position = await gpsFuture;
 
       final bytes = await image.readAsBytes();
       final fileName =
@@ -1256,16 +1375,23 @@ class _WalkthroughCaptureScreenState
         roomId: room.id,
         storagePath: storagePath,
         photoType: 'camera',
+        gpsLatitude: position?.latitude,
+        gpsLongitude: position?.longitude,
+        compassHeading: position?.heading,
+        altitude: position?.altitude,
+        accuracy: position?.accuracy,
+        floorLevel: room.floorLevel > 0 ? 'Floor ${room.floorLevel}' : null,
       );
 
       ref.invalidate(
           walkthroughPhotosProvider(widget.walkthroughId));
 
       if (mounted) {
+        final gpsTag = position != null ? ' (GPS tagged)' : '';
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Photo captured and uploaded'),
-            duration: Duration(seconds: 2),
+          SnackBar(
+            content: Text('Photo captured and uploaded$gpsTag'),
+            duration: const Duration(seconds: 2),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -1292,6 +1418,9 @@ class _WalkthroughCaptureScreenState
 
       setState(() => _isCapturing = true);
 
+      // Get GPS at pick time (gallery photos lose EXIF GPS in most pickers)
+      final position = await _getCurrentPosition();
+
       final bytes = await image.readAsBytes();
       final fileName =
           'walkthrough_${widget.walkthroughId}_${room.id}_${DateTime.now().millisecondsSinceEpoch}.jpg';
@@ -1310,6 +1439,12 @@ class _WalkthroughCaptureScreenState
         roomId: room.id,
         storagePath: storagePath,
         photoType: 'gallery',
+        gpsLatitude: position?.latitude,
+        gpsLongitude: position?.longitude,
+        compassHeading: position?.heading,
+        altitude: position?.altitude,
+        accuracy: position?.accuracy,
+        floorLevel: room.floorLevel > 0 ? 'Floor ${room.floorLevel}' : null,
       );
 
       ref.invalidate(
@@ -1604,6 +1739,8 @@ class _WalkthroughCaptureScreenState
 
   void _finishWalkthrough() {
     _saveCurrentRoom();
+    _pathTrackingTimer?.cancel();
+    _savePathBreadcrumbs();
     Navigator.push(
       context,
       MaterialPageRoute(

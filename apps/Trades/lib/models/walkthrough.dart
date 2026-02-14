@@ -27,6 +27,7 @@ class Walkthrough {
   final Map<String, dynamic>? weatherConditions;
   final int totalRooms;
   final int totalPhotos;
+  final List<Map<String, dynamic>> walkthroughPath;
   final Map<String, dynamic> metadata;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -56,6 +57,7 @@ class Walkthrough {
     this.weatherConditions,
     this.totalRooms = 0,
     this.totalPhotos = 0,
+    this.walkthroughPath = const [],
     this.metadata = const {},
     required this.createdAt,
     required this.updatedAt,
@@ -109,6 +111,7 @@ class Walkthrough {
         if (weatherConditions != null) 'weather_conditions': weatherConditions,
         'total_rooms': totalRooms,
         'total_photos': totalPhotos,
+        if (walkthroughPath.isNotEmpty) 'walkthrough_path': walkthroughPath,
         'metadata': metadata,
       };
 
@@ -132,6 +135,7 @@ class Walkthrough {
         'weather_conditions': weatherConditions,
         'total_rooms': totalRooms,
         'total_photos': totalPhotos,
+        'walkthrough_path': walkthroughPath,
         'metadata': metadata,
         'updated_at': DateTime.now().toIso8601String(),
       };
@@ -162,6 +166,7 @@ class Walkthrough {
       weatherConditions: json['weather_conditions'] as Map<String, dynamic>?,
       totalRooms: json['total_rooms'] as int? ?? 0,
       totalPhotos: json['total_photos'] as int? ?? 0,
+      walkthroughPath: _parsePathList(json['walkthrough_path']),
       metadata: (json['metadata'] as Map<String, dynamic>?) ?? const {},
       createdAt: _parseDate(json['created_at']),
       updatedAt: _parseDate(json['updated_at']),
@@ -193,6 +198,7 @@ class Walkthrough {
     Map<String, dynamic>? weatherConditions,
     int? totalRooms,
     int? totalPhotos,
+    List<Map<String, dynamic>>? walkthroughPath,
     Map<String, dynamic>? metadata,
   }) {
     return Walkthrough(
@@ -220,6 +226,7 @@ class Walkthrough {
       weatherConditions: weatherConditions ?? this.weatherConditions,
       totalRooms: totalRooms ?? this.totalRooms,
       totalPhotos: totalPhotos ?? this.totalPhotos,
+      walkthroughPath: walkthroughPath ?? this.walkthroughPath,
       metadata: metadata ?? this.metadata,
       createdAt: createdAt,
       updatedAt: updatedAt,
@@ -230,6 +237,16 @@ class Walkthrough {
     if (value == null) return DateTime.now();
     if (value is DateTime) return value;
     return DateTime.tryParse(value.toString()) ?? DateTime.now();
+  }
+
+  static List<Map<String, dynamic>> _parsePathList(dynamic value) {
+    if (value == null) return const [];
+    if (value is List) {
+      return value
+          .whereType<Map<String, dynamic>>()
+          .toList();
+    }
+    return const [];
   }
 
   static DateTime? _parseNullableDate(dynamic value) {
