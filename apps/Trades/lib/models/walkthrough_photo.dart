@@ -1,6 +1,6 @@
 // ZAFTO Walkthrough Photo Model — Supabase Backend
 // Maps to `walkthrough_photos` table. Each photo belongs to a walkthrough
-// and optionally a room. Supports captions, annotations, and AI analysis.
+// and optionally a room. Supports captions, annotations, GPS data, and AI analysis.
 
 class WalkthroughPhoto {
   final String id;
@@ -14,6 +14,15 @@ class WalkthroughPhoto {
   final Map<String, dynamic>? aiAnalysis;
   final int? sortOrder;
   final Map<String, dynamic> metadata;
+
+  // GPS & sensor data
+  final double? gpsLatitude;
+  final double? gpsLongitude;
+  final double? compassHeading;
+  final double? altitude;
+  final double? accuracy;
+  final String? floorLevel;
+
   final DateTime createdAt;
 
   const WalkthroughPhoto({
@@ -28,8 +37,17 @@ class WalkthroughPhoto {
     this.aiAnalysis,
     this.sortOrder,
     this.metadata = const {},
+    this.gpsLatitude,
+    this.gpsLongitude,
+    this.compassHeading,
+    this.altitude,
+    this.accuracy,
+    this.floorLevel,
     required this.createdAt,
   });
+
+  /// Whether this photo has valid GPS coordinates
+  bool get hasGps => gpsLatitude != null && gpsLongitude != null;
 
   Map<String, dynamic> toInsertJson() => {
         'walkthrough_id': walkthroughId,
@@ -42,6 +60,12 @@ class WalkthroughPhoto {
         if (aiAnalysis != null) 'ai_analysis': aiAnalysis,
         if (sortOrder != null) 'sort_order': sortOrder,
         'metadata': metadata,
+        if (gpsLatitude != null) 'gps_latitude': gpsLatitude,
+        if (gpsLongitude != null) 'gps_longitude': gpsLongitude,
+        if (compassHeading != null) 'compass_heading': compassHeading,
+        if (altitude != null) 'altitude': altitude,
+        if (accuracy != null) 'accuracy': accuracy,
+        if (floorLevel != null) 'floor_level': floorLevel,
       };
 
   factory WalkthroughPhoto.fromJson(Map<String, dynamic> json) {
@@ -57,6 +81,12 @@ class WalkthroughPhoto {
       aiAnalysis: json['ai_analysis'] as Map<String, dynamic>?,
       sortOrder: json['sort_order'] as int?,
       metadata: (json['metadata'] as Map<String, dynamic>?) ?? const {},
+      gpsLatitude: (json['gps_latitude'] as num?)?.toDouble(),
+      gpsLongitude: (json['gps_longitude'] as num?)?.toDouble(),
+      compassHeading: (json['compass_heading'] as num?)?.toDouble(),
+      altitude: (json['altitude'] as num?)?.toDouble(),
+      accuracy: (json['accuracy'] as num?)?.toDouble(),
+      floorLevel: json['floor_level'] as String?,
       createdAt: _parseDate(json['created_at']),
     );
   }
@@ -73,6 +103,12 @@ class WalkthroughPhoto {
     Map<String, dynamic>? aiAnalysis,
     int? sortOrder,
     Map<String, dynamic>? metadata,
+    double? gpsLatitude,
+    double? gpsLongitude,
+    double? compassHeading,
+    double? altitude,
+    double? accuracy,
+    String? floorLevel,
   }) {
     return WalkthroughPhoto(
       id: id ?? this.id,
@@ -86,6 +122,12 @@ class WalkthroughPhoto {
       aiAnalysis: aiAnalysis ?? this.aiAnalysis,
       sortOrder: sortOrder ?? this.sortOrder,
       metadata: metadata ?? this.metadata,
+      gpsLatitude: gpsLatitude ?? this.gpsLatitude,
+      gpsLongitude: gpsLongitude ?? this.gpsLongitude,
+      compassHeading: compassHeading ?? this.compassHeading,
+      altitude: altitude ?? this.altitude,
+      accuracy: accuracy ?? this.accuracy,
+      floorLevel: floorLevel ?? this.floorLevel,
       createdAt: createdAt,
     );
   }

@@ -231,6 +231,12 @@ class WalkthroughService {
     Map<String, dynamic>? annotations,
     int? sortOrder,
     Map<String, dynamic> metadata = const {},
+    double? gpsLatitude,
+    double? gpsLongitude,
+    double? compassHeading,
+    double? altitude,
+    double? accuracy,
+    String? floorLevel,
   }) {
     final photo = WalkthroughPhoto(
       walkthroughId: walkthroughId,
@@ -242,6 +248,12 @@ class WalkthroughService {
       annotations: annotations,
       sortOrder: sortOrder,
       metadata: metadata,
+      gpsLatitude: gpsLatitude,
+      gpsLongitude: gpsLongitude,
+      compassHeading: compassHeading,
+      altitude: altitude,
+      accuracy: accuracy,
+      floorLevel: floorLevel,
       createdAt: DateTime.now(),
     );
 
