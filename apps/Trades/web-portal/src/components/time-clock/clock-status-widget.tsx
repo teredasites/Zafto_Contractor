@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Clock,
@@ -15,7 +15,8 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { cn, formatRelativeTime } from '@/lib/utils';
+import { cn } from '@/lib/utils';
+import { getSupabase } from '@/lib/supabase';
 import type { TeamMember } from '@/types';
 
 // Time entry type for clocked-in users
@@ -34,34 +35,60 @@ interface TimeEntry {
   jobTitle?: string;
 }
 
-// Mock time entries - in production these come from Firestore
-const mockTimeEntries: TimeEntry[] = [
-  {
-    id: 'time_1',
-    userId: 'team_1',
-    clockIn: new Date(Date.now() - 3 * 60 * 60 * 1000), // 3 hours ago
-    status: 'active',
-    location: { latitude: 41.3083, longitude: -72.9279, address: '1200 Chapel St, New Haven' },
-    jobId: 'job_1',
-    jobTitle: 'Emergency - No Power Unit 4B',
-  },
-  {
-    id: 'time_2',
-    userId: 'team_2',
-    clockIn: new Date(Date.now() - 5.5 * 60 * 60 * 1000), // 5.5 hours ago
-    status: 'on_break',
-    location: { latitude: 41.3150, longitude: -72.9200, address: '500 Main St, New Haven' },
-    jobId: 'job_2',
-    jobTitle: 'Office Lighting Retrofit',
-  },
-  {
-    id: 'time_3',
-    userId: 'team_3',
-    clockIn: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-    status: 'active',
-    location: { latitude: 41.7658, longitude: -72.6734, address: 'En route - Hartford' },
-  },
-];
+function useActiveTimeEntries() {
+  const [entries, setEntries] = useState<TimeEntry[]>([]);
+
+  const fetchEntries = useCallback(async () => {
+    try {
+      const supabase = getSupabase();
+      const { data } = await supabase
+        .from('time_entries')
+        .select('id, user_id, clock_in, status, location_pings, job_id, jobs(name)')
+        .in('status', ['active', 'on_break'])
+        .order('clock_in', { ascending: false });
+
+      if (data) {
+        setEntries(
+          data.map((row: Record<string, unknown>) => {
+            const pings = row.location_pings as { lat: number; lng: number; address?: string }[] | null;
+            const latest = pings && pings.length > 0 ? pings[pings.length - 1] : null;
+            const jobObj = row.jobs as { name: string } | null;
+            return {
+              id: row.id as string,
+              userId: row.user_id as string,
+              clockIn: new Date(row.clock_in as string),
+              status: (row.status as string) === 'on_break' ? 'on_break' as const : 'active' as const,
+              location: latest ? { latitude: latest.lat, longitude: latest.lng, address: latest.address } : undefined,
+              jobId: (row.job_id as string) || undefined,
+              jobTitle: jobObj?.name || undefined,
+            };
+          })
+        );
+      }
+    } catch {
+      // Fail silently — widget is non-critical
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchEntries();
+
+    // Real-time subscription
+    const supabase = getSupabase();
+    const channel = supabase
+      .channel('clock-status-widget')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'time_entries' }, () => {
+        fetchEntries();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [fetchEntries]);
+
+  return entries;
+}
 
 interface ClockStatusWidgetProps {
   teamMembers: TeamMember[];
@@ -75,9 +102,10 @@ export function ClockStatusWidget({
   variant = 'compact',
 }: ClockStatusWidgetProps) {
   const router = useRouter();
+  const timeEntries = useActiveTimeEntries();
 
   // Get clocked-in users with their team member info
-  const clockedInUsers = mockTimeEntries
+  const clockedInUsers = timeEntries
     .filter((entry) => entry.status !== 'completed')
     .map((entry) => {
       const member = teamMembers.find((m) => m.id === entry.userId);
@@ -85,13 +113,13 @@ export function ClockStatusWidget({
     })
     .filter((item) => item.member);
 
-  const activeCount = mockTimeEntries.filter((e) => e.status === 'active').length;
-  const onBreakCount = mockTimeEntries.filter((e) => e.status === 'on_break').length;
+  const activeCount = timeEntries.filter((e) => e.status === 'active').length;
+  const onBreakCount = timeEntries.filter((e) => e.status === 'on_break').length;
 
-  // Calculate total hours today (mock)
-  const totalHoursToday = mockTimeEntries.reduce((sum, entry) => {
+  // Calculate total hours today
+  const totalHoursToday = timeEntries.reduce((sum, entry) => {
     const elapsed = (Date.now() - entry.clockIn.getTime()) / (1000 * 60 * 60);
-    return sum + Math.min(elapsed, 8); // Cap at 8 hours per person for display
+    return sum + Math.min(elapsed, 12); // Cap at 12 hours per person for display
   }, 0);
 
   const formatElapsedTime = (clockIn: Date) => {
@@ -289,6 +317,13 @@ export function ClockStatusWidget({
           ))}
         </div>
 
+        {clockedInUsers.length === 0 && (
+          <div className="text-center py-6">
+            <Users size={32} className="mx-auto mb-2 text-muted/50" />
+            <p className="text-sm text-muted">No one clocked in</p>
+          </div>
+        )}
+
         {/* Summary footer */}
         <div className="mt-4 pt-4 border-t border-main flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -309,7 +344,8 @@ export function ClockStatusWidget({
 
 // Export a simpler stat indicator for use in headers/nav
 export function ClockStatusIndicator({ teamMembers }: { teamMembers: TeamMember[] }) {
-  const activeCount = mockTimeEntries.filter((e) => e.status === 'active').length;
+  const timeEntries = useActiveTimeEntries();
+  const activeCount = timeEntries.filter((e) => e.status === 'active').length;
 
   if (activeCount === 0) return null;
 

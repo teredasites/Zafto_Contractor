@@ -5,7 +5,7 @@ import Map, { Marker, Popup, NavigationControl, GeolocateControl } from 'react-m
 import { MapPin, Navigation, Clock, Phone, ChevronRight, Radio, Briefcase } from 'lucide-react';
 import { Avatar } from './avatar';
 import { cn, formatRelativeTime } from '@/lib/utils';
-import type { TeamMember, Job } from '@/types';
+import type { TeamMember, Job, Address } from '@/types';
 
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
@@ -24,19 +24,20 @@ interface TeamMapProps {
   className?: string;
 }
 
-// Mock coordinates for demo - in production these come from team GPS via Firestore
-const mockLocations: Record<string, { lat: number; lng: number; address: string; jobTitle?: string }> = {
-  team_1: { lat: 41.3083, lng: -72.9279, address: '1200 Chapel St, New Haven', jobTitle: 'Emergency - No Power Unit 4B' },
-  team_2: { lat: 41.3150, lng: -72.9200, address: '500 Main St, New Haven', jobTitle: 'Office Lighting Retrofit' },
-  team_3: { lat: 41.7658, lng: -72.6734, address: 'En route - Hartford' },
-};
+// Helper to get member location from the TeamMember.location field (populated from active time entries)
+function getMemberLocation(member: TeamMember): { lat: number; lng: number } | null {
+  if (member.location?.lat && member.location?.lng) {
+    return { lat: member.location.lat, lng: member.location.lng };
+  }
+  return null;
+}
 
-// Job site coordinates
-const jobLocations: Record<string, { lat: number; lng: number }> = {
-  job_1: { lat: 41.3150, lng: -72.9200 },
-  job_2: { lat: 41.3083, lng: -72.9279 },
-  job_3: { lat: 41.7637, lng: -72.6851 },
-};
+// Helper to get job location from the job address coordinates
+function getJobLocation(job: Job): { lat: number; lng: number } | null {
+  const addr = job.address as Address & { lat?: number; lng?: number };
+  if (addr?.lat && addr?.lng) return { lat: addr.lat, lng: addr.lng };
+  return null;
+}
 
 export function TeamMap({ members, jobs = [], variant = 'compact', onMemberClick, onJobClick, className }: TeamMapProps) {
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
@@ -68,7 +69,7 @@ export function TeamMap({ members, jobs = [], variant = 'compact', onMemberClick
     onMemberClick?.(member);
 
     // Fly to member location
-    const location = mockLocations[member.id];
+    const location = getMemberLocation(member);
     if (location && mapRef.current) {
       mapRef.current.flyTo({
         center: [location.lng, location.lat],
@@ -84,7 +85,7 @@ export function TeamMap({ members, jobs = [], variant = 'compact', onMemberClick
     onJobClick?.(job);
 
     // Fly to job location
-    const location = jobLocations[job.id];
+    const location = getJobLocation(job);
     if (location && mapRef.current) {
       mapRef.current.flyTo({
         center: [location.lng, location.lat],
@@ -115,7 +116,6 @@ export function TeamMap({ members, jobs = [], variant = 'compact', onMemberClick
         {/* Team Status List - still show without map */}
         <div className="mt-3 space-y-2">
           {onlineMembers.slice(0, 3).map((member) => {
-            const location = mockLocations[member.id];
             return (
               <div
                 key={member.id}
@@ -124,7 +124,7 @@ export function TeamMap({ members, jobs = [], variant = 'compact', onMemberClick
                 <Avatar name={member.name} size="sm" />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-main truncate">{member.name}</p>
-                  <p className="text-xs text-muted truncate">{location?.jobTitle || 'Available'}</p>
+                  <p className="text-xs text-muted truncate">{getMemberLocation(member) ? 'On Site' : 'Available'}</p>
                 </div>
               </div>
             );
@@ -151,7 +151,7 @@ export function TeamMap({ members, jobs = [], variant = 'compact', onMemberClick
           >
             {/* Team Member Markers */}
             {onlineMembers.map((member) => {
-              const location = mockLocations[member.id];
+              const location = getMemberLocation(member);
               if (!location) return null;
 
               return (
@@ -178,10 +178,10 @@ export function TeamMap({ members, jobs = [], variant = 'compact', onMemberClick
             })}
 
             {/* Selected Member Popup */}
-            {selectedMember && mockLocations[selectedMember.id] && (
+            {selectedMember && getMemberLocation(selectedMember) && (
               <Popup
-                longitude={mockLocations[selectedMember.id].lng}
-                latitude={mockLocations[selectedMember.id].lat}
+                longitude={getMemberLocation(selectedMember)!.lng}
+                latitude={getMemberLocation(selectedMember)!.lat}
                 anchor="bottom"
                 onClose={() => setSelectedMember(null)}
                 closeButton={false}
@@ -192,9 +192,7 @@ export function TeamMap({ members, jobs = [], variant = 'compact', onMemberClick
                     <Avatar name={selectedMember.name} size="sm" showStatus isOnline />
                     <div>
                       <p className="text-sm font-medium">{selectedMember.name}</p>
-                      <p className="text-xs text-gray-500">
-                        {mockLocations[selectedMember.id]?.jobTitle || 'Available'}
-                      </p>
+                      <p className="text-xs text-gray-500">In Field</p>
                     </div>
                   </div>
                 </div>
@@ -206,7 +204,7 @@ export function TeamMap({ members, jobs = [], variant = 'compact', onMemberClick
         {/* Team Status List */}
         <div className="mt-3 space-y-2">
           {onlineMembers.slice(0, 3).map((member) => {
-            const location = mockLocations[member.id];
+            const hasLocation = !!getMemberLocation(member);
             return (
               <button
                 key={member.id}
@@ -221,7 +219,7 @@ export function TeamMap({ members, jobs = [], variant = 'compact', onMemberClick
                   <p className="text-sm font-medium text-main truncate">{member.name}</p>
                   <div className="flex items-center gap-1 text-xs text-muted">
                     <MapPin size={10} />
-                    <span className="truncate">{location?.jobTitle || 'Available'}</span>
+                    <span className="truncate">{hasLocation ? 'On Site' : 'Available'}</span>
                   </div>
                 </div>
                 <ChevronRight size={14} className="text-muted flex-shrink-0" />
@@ -254,7 +252,7 @@ export function TeamMap({ members, jobs = [], variant = 'compact', onMemberClick
 
         {/* Job Site Markers */}
         {jobs.filter(j => j.status === 'scheduled' || j.status === 'in_progress').map((job) => {
-          const location = jobLocations[job.id];
+          const location = getJobLocation(job);
           if (!location) return null;
 
           return (
@@ -285,7 +283,7 @@ export function TeamMap({ members, jobs = [], variant = 'compact', onMemberClick
           const isOnline = member.lastActive && new Date().getTime() - new Date(member.lastActive).getTime() < 30 * 60 * 1000;
           if (!isOnline || member.role !== 'field_tech') return null;
 
-          const location = mockLocations[member.id];
+          const location = getMemberLocation(member);
           if (!location) return null;
 
           return (
@@ -306,7 +304,7 @@ export function TeamMap({ members, jobs = [], variant = 'compact', onMemberClick
                 {/* Status indicator */}
                 <span className={cn(
                   'absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full border-2 border-white',
-                  location?.jobTitle ? 'bg-emerald-500' : 'bg-amber-500'
+                  'bg-emerald-500'
                 )} />
                 {/* Live pulse */}
                 <span className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-emerald-500 rounded-full animate-ping opacity-50" />
@@ -316,10 +314,10 @@ export function TeamMap({ members, jobs = [], variant = 'compact', onMemberClick
         })}
 
         {/* Selected Member Popup */}
-        {selectedMember && mockLocations[selectedMember.id] && (
+        {selectedMember && getMemberLocation(selectedMember) && (
           <Popup
-            longitude={mockLocations[selectedMember.id].lng}
-            latitude={mockLocations[selectedMember.id].lat}
+            longitude={getMemberLocation(selectedMember)!.lng}
+            latitude={getMemberLocation(selectedMember)!.lat}
             anchor="bottom"
             onClose={() => setSelectedMember(null)}
             closeButton={true}
@@ -336,25 +334,15 @@ export function TeamMap({ members, jobs = [], variant = 'compact', onMemberClick
               </div>
 
               <div className="mt-3 space-y-2">
-                {mockLocations[selectedMember.id]?.jobTitle && (
-                  <div className="flex items-start gap-2">
-                    <div className="p-1.5 bg-emerald-100 rounded">
-                      <Radio size={12} className="text-emerald-600" />
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500">Current Job</p>
-                      <p className="text-sm font-medium text-gray-900">{mockLocations[selectedMember.id].jobTitle}</p>
-                    </div>
-                  </div>
-                )}
-
                 <div className="flex items-start gap-2">
                   <div className="p-1.5 bg-blue-100 rounded">
                     <MapPin size={12} className="text-blue-600" />
                   </div>
                   <div>
                     <p className="text-xs text-gray-500">Location</p>
-                    <p className="text-sm text-gray-900">{mockLocations[selectedMember.id]?.address}</p>
+                    <p className="text-sm text-gray-900">
+                      {getMemberLocation(selectedMember)!.lat.toFixed(4)}, {getMemberLocation(selectedMember)!.lng.toFixed(4)}
+                    </p>
                   </div>
                 </div>
 
@@ -365,7 +353,7 @@ export function TeamMap({ members, jobs = [], variant = 'compact', onMemberClick
                   <div>
                     <p className="text-xs text-gray-500">Last Updated</p>
                     <p className="text-sm text-gray-900">
-                      {selectedMember.lastActive ? formatRelativeTime(selectedMember.lastActive) : 'Unknown'}
+                      {selectedMember.location?.timestamp ? formatRelativeTime(selectedMember.location.timestamp) : selectedMember.lastActive ? formatRelativeTime(selectedMember.lastActive) : 'Unknown'}
                     </p>
                   </div>
                 </div>
@@ -382,7 +370,7 @@ export function TeamMap({ members, jobs = [], variant = 'compact', onMemberClick
                   </a>
                 )}
                 <a
-                  href={`https://www.google.com/maps/dir/?api=1&destination=${mockLocations[selectedMember.id]?.lat},${mockLocations[selectedMember.id]?.lng}`}
+                  href={`https://www.google.com/maps/dir/?api=1&destination=${getMemberLocation(selectedMember)!.lat},${getMemberLocation(selectedMember)!.lng}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex-1 flex items-center justify-center gap-2 py-2 px-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium text-gray-700"
@@ -396,10 +384,10 @@ export function TeamMap({ members, jobs = [], variant = 'compact', onMemberClick
         )}
 
         {/* Selected Job Popup */}
-        {selectedJob && jobLocations[selectedJob.id] && (
+        {selectedJob && getJobLocation(selectedJob) && (
           <Popup
-            longitude={jobLocations[selectedJob.id].lng}
-            latitude={jobLocations[selectedJob.id].lat}
+            longitude={getJobLocation(selectedJob)!.lng}
+            latitude={getJobLocation(selectedJob)!.lat}
             anchor="bottom"
             onClose={() => setSelectedJob(null)}
             closeButton={true}
@@ -438,7 +426,7 @@ export function TeamMap({ members, jobs = [], variant = 'compact', onMemberClick
 
               <div className="mt-3 pt-3 border-t border-gray-200">
                 <a
-                  href={`https://www.google.com/maps/dir/?api=1&destination=${jobLocations[selectedJob.id]?.lat},${jobLocations[selectedJob.id]?.lng}`}
+                  href={`https://www.google.com/maps/dir/?api=1&destination=${getJobLocation(selectedJob)!.lat},${getJobLocation(selectedJob)!.lng}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full flex items-center justify-center gap-2 py-2 px-3 bg-accent text-white rounded-lg hover:bg-accent-hover transition-colors text-sm font-medium"
