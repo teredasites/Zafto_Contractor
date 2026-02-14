@@ -1,22 +1,20 @@
 'use client';
 import { useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Check, CreditCard, Download, Shield, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Check, CreditCard, Download, Shield, AlertCircle, Loader2 } from 'lucide-react';
 import { useInvoice } from '@/lib/hooks/use-invoices';
 import { formatCurrency, formatDate } from '@/lib/hooks/mappers';
-
-// Placeholder saved cards — real Stripe payment methods wired later
-const savedCards = [
-  { id: 'card-1', brand: 'Visa', last4: '4242', expiry: '08/27', isDefault: true },
-  { id: 'card-2', brand: 'Mastercard', last4: '8888', expiry: '12/26', isDefault: false },
-];
+import { getSupabase } from '@/lib/supabase';
 
 export default function InvoiceDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const searchParams = useSearchParams();
+  const paymentStatus = searchParams.get('status');
   const { invoice, loading } = useInvoice(id);
-  const [paid, setPaid] = useState(false);
-  const [selectedCard, setSelectedCard] = useState('card-1');
+  const [paid, setPaid] = useState(paymentStatus === 'success');
+  const [paying, setPaying] = useState(false);
+  const [payError, setPayError] = useState<string | null>(null);
 
   // Loading skeleton
   if (loading) {
@@ -126,33 +124,58 @@ export default function InvoiceDetailPage() {
         </div>
       </div>
 
-      {/* Pay Now — demo UI (Stripe integration later) */}
+      {/* Pay Now — Stripe Checkout */}
       {!paid && showPaySection && (
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 space-y-4">
-          <h3 className="font-bold text-sm text-gray-900">Select Payment Method</h3>
-          <div className="space-y-2">
-            {savedCards.map(card => (
-              <label key={card.id} onClick={() => setSelectedCard(card.id)}
-                className="flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all"
-                style={selectedCard === card.id ? { borderColor: 'var(--accent)', backgroundColor: 'color-mix(in srgb, var(--accent) 8%, transparent)' } : { borderColor: '#f3f4f6' }}>
-                <CreditCard size={18} style={selectedCard === card.id ? { color: 'var(--accent)' } : { color: '#9ca3af' }} />
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-900">{card.brand} ··{card.last4}</p>
-                  <p className="text-[10px] text-gray-400">Expires {card.expiry}{card.isDefault ? ' · Default' : ''}</p>
-                </div>
-                <div className="w-4 h-4 rounded-full border-2 flex items-center justify-center"
-                  style={selectedCard === card.id ? { borderColor: 'var(--accent)', backgroundColor: 'var(--accent)' } : { borderColor: '#d1d5db' }}>
-                  {selectedCard === card.id && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
-                </div>
-              </label>
-            ))}
+          <h3 className="font-bold text-sm text-gray-900">Pay Invoice</h3>
+          <div className="p-3 bg-gray-50 rounded-xl">
+            <div className="flex items-center gap-3">
+              <CreditCard size={18} className="text-gray-400" />
+              <div>
+                <p className="text-sm font-medium text-gray-900">Credit Card, Debit Card, or Bank Transfer</p>
+                <p className="text-[10px] text-gray-400">You&apos;ll be redirected to Stripe&apos;s secure checkout</p>
+              </div>
+            </div>
           </div>
-          <button onClick={() => setPaid(true)}
-            className="w-full py-3.5 text-white font-bold rounded-xl transition-all text-sm"
-            style={{ backgroundColor: 'var(--accent)' }}
-            onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--accent-hover)')}
-            onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--accent)')}>
-            Pay {formatCurrency(invoice.amount)} Now
+          {payError && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-xl">
+              <p className="text-xs text-red-600">{payError}</p>
+            </div>
+          )}
+          <button
+            onClick={async () => {
+              setPaying(true);
+              setPayError(null);
+              try {
+                const supabase = getSupabase();
+                const { data: { user } } = await supabase.auth.getUser();
+                const { data, error } = await supabase.functions.invoke('stripe-payments', {
+                  body: {
+                    action: 'create_checkout_session',
+                    invoiceId: invoice.id,
+                    amount: Math.round(invoice.amount * 100),
+                    customerEmail: user?.email,
+                    successUrl: `${window.location.origin}/payments/${invoice.id}?status=success`,
+                    cancelUrl: `${window.location.origin}/payments/${invoice.id}?status=cancelled`,
+                  },
+                });
+                if (error) throw new Error(error.message || 'Payment failed');
+                if (data?.checkoutUrl) {
+                  window.location.href = data.checkoutUrl;
+                }
+              } catch (err) {
+                setPayError(err instanceof Error ? err.message : 'Payment could not be initiated. Please try again.');
+              } finally {
+                setPaying(false);
+              }
+            }}
+            disabled={paying}
+            className="w-full py-3.5 text-white font-bold rounded-xl transition-all text-sm flex items-center justify-center gap-2"
+            style={{ backgroundColor: paying ? '#9ca3af' : 'var(--accent)' }}
+            onMouseEnter={e => { if (!paying) e.currentTarget.style.backgroundColor = 'var(--accent-hover)'; }}
+            onMouseLeave={e => { if (!paying) e.currentTarget.style.backgroundColor = 'var(--accent)'; }}
+          >
+            {paying ? <><Loader2 size={16} className="animate-spin" /> Processing...</> : <>Pay {formatCurrency(invoice.amount)} Now</>}
           </button>
           <p className="text-center text-[10px] text-gray-400 flex items-center justify-center gap-1">
             <Shield size={10} /> Payments secured by Stripe

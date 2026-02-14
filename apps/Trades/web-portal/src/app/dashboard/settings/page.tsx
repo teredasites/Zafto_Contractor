@@ -32,6 +32,12 @@ import {
   Award,
   Lock,
   Layers,
+  DollarSign,
+  ExternalLink,
+  RefreshCw,
+  CheckCircle2,
+  XCircle,
+  AlertTriangle,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -48,13 +54,14 @@ import { useApprovals } from '@/lib/hooks/use-approvals';
 import type { ApprovalThresholdData } from '@/lib/hooks/pm-mappers';
 import type { Branch, CustomRole, FormTemplate, Certification } from '@/lib/hooks/use-enterprise';
 
-type SettingsTab = 'profile' | 'company' | 'team' | 'billing' | 'notifications' | 'appearance' | 'security' | 'integrations' | 'branches' | 'roles' | 'trades' | 'forms' | 'apikeys';
+type SettingsTab = 'profile' | 'company' | 'team' | 'billing' | 'payments' | 'notifications' | 'appearance' | 'security' | 'integrations' | 'branches' | 'roles' | 'trades' | 'forms' | 'apikeys';
 
 const coreTabs: { id: SettingsTab; label: string; icon: React.ReactNode }[] = [
   { id: 'profile', label: 'Profile', icon: <User size={18} /> },
   { id: 'company', label: 'Company', icon: <Building size={18} /> },
   { id: 'team', label: 'Team', icon: <Users size={18} /> },
   { id: 'billing', label: 'Billing', icon: <CreditCard size={18} /> },
+  { id: 'payments', label: 'Payments', icon: <Shield size={18} /> },
   { id: 'notifications', label: 'Notifications', icon: <Bell size={18} /> },
   { id: 'appearance', label: 'Appearance', icon: <Palette size={18} /> },
   { id: 'security', label: 'Security', icon: <Shield size={18} /> },
@@ -147,6 +154,7 @@ export default function SettingsPage() {
           {activeTab === 'company' && <CompanySettings />}
           {activeTab === 'team' && <TeamSettings />}
           {activeTab === 'billing' && <BillingSettings />}
+          {activeTab === 'payments' && <PaymentsSettings />}
           {activeTab === 'notifications' && <NotificationSettings />}
           {activeTab === 'appearance' && <AppearanceSettings />}
           {activeTab === 'security' && <SecuritySettings />}
@@ -692,6 +700,222 @@ function BillingSettings() {
                 </div>
               </div>
             ))}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+function PaymentsSettings() {
+  const [connectStatus, setConnectStatus] = useState<{
+    connected: boolean;
+    status: string;
+    details: { chargesEnabled?: boolean; payoutsEnabled?: boolean; detailsSubmitted?: boolean; requirements?: string[]; dashboardUrl?: string } | null;
+  } | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [connecting, setConnecting] = useState(false);
+
+  useEffect(() => {
+    checkStatus();
+  }, []);
+
+  const checkStatus = async () => {
+    setLoading(true);
+    try {
+      const supabase = getSupabase();
+      const { data, error } = await supabase.functions.invoke('stripe-payments', {
+        body: { action: 'check_connect_status' },
+      });
+      if (!error && data) setConnectStatus(data);
+    } catch {
+      // Stripe not configured — show not connected
+      setConnectStatus({ connected: false, status: 'not_connected', details: null });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const startOnboarding = async () => {
+    setConnecting(true);
+    try {
+      const supabase = getSupabase();
+      const { data, error } = await supabase.functions.invoke('stripe-payments', {
+        body: {
+          action: 'create_connect_account',
+          returnUrl: `${window.location.origin}/dashboard/settings?tab=payments&connect=success`,
+          refreshUrl: `${window.location.origin}/dashboard/settings?tab=payments&connect=refresh`,
+        },
+      });
+      if (!error && data?.onboardingUrl) {
+        window.location.href = data.onboardingUrl;
+      }
+    } catch {
+      // Handle error gracefully
+    } finally {
+      setConnecting(false);
+    }
+  };
+
+  const statusConfig: Record<string, { icon: React.ReactNode; color: string; label: string }> = {
+    active: { icon: <CheckCircle2 size={20} />, color: 'text-emerald-500', label: 'Connected & Active' },
+    onboarding_incomplete: { icon: <AlertTriangle size={20} />, color: 'text-amber-500', label: 'Onboarding Incomplete' },
+    restricted: { icon: <XCircle size={20} />, color: 'text-red-500', label: 'Restricted' },
+    disabled: { icon: <XCircle size={20} />, color: 'text-red-500', label: 'Disabled' },
+    not_connected: { icon: <DollarSign size={20} />, color: 'text-muted', label: 'Not Connected' },
+  };
+
+  const currentStatus = statusConfig[connectStatus?.status || 'not_connected'] || statusConfig.not_connected;
+
+  return (
+    <div className="space-y-6">
+      {/* Stripe Connect */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Accept Payments via Stripe</CardTitle>
+          <CardDescription>Connect your bank account to accept card payments and ACH transfers from customers</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {loading ? (
+            <div className="space-y-3">
+              <div className="h-20 bg-secondary rounded-xl animate-pulse" />
+              <div className="h-12 bg-secondary rounded-xl animate-pulse" />
+            </div>
+          ) : (
+            <>
+              {/* Status Display */}
+              <div className={cn(
+                'flex items-center gap-4 p-4 rounded-xl border',
+                connectStatus?.connected
+                  ? 'border-emerald-200 bg-emerald-50 dark:border-emerald-800 dark:bg-emerald-900/20'
+                  : 'border-main bg-secondary'
+              )}>
+                <div className={currentStatus.color}>{currentStatus.icon}</div>
+                <div className="flex-1">
+                  <p className="font-medium text-main">{currentStatus.label}</p>
+                  <p className="text-sm text-muted">
+                    {connectStatus?.connected
+                      ? 'Payments from customers are routed directly to your bank account'
+                      : connectStatus?.status === 'onboarding_incomplete'
+                      ? 'Complete your Stripe onboarding to start accepting payments'
+                      : 'Connect Stripe to accept card and ACH payments from your customers'}
+                  </p>
+                </div>
+                <Button variant="ghost" size="sm" onClick={checkStatus}>
+                  <RefreshCw size={14} />
+                </Button>
+              </div>
+
+              {/* Action Buttons */}
+              {!connectStatus?.connected && (
+                <Button onClick={startOnboarding} disabled={connecting} className="w-full">
+                  {connecting ? (
+                    <><RefreshCw size={16} className="animate-spin" /> Connecting...</>
+                  ) : connectStatus?.status === 'onboarding_incomplete' ? (
+                    <><ExternalLink size={16} /> Continue Onboarding</>
+                  ) : (
+                    <><DollarSign size={16} /> Connect Stripe Account</>
+                  )}
+                </Button>
+              )}
+
+              {/* Connected Account Details */}
+              {connectStatus?.connected && connectStatus.details && (
+                <div className="space-y-3">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="p-3 bg-secondary rounded-lg">
+                      <p className="text-xs text-muted">Card Payments</p>
+                      <p className="font-medium text-main flex items-center gap-1.5 mt-0.5">
+                        {connectStatus.details.chargesEnabled ? <CheckCircle2 size={14} className="text-emerald-500" /> : <XCircle size={14} className="text-red-500" />}
+                        {connectStatus.details.chargesEnabled ? 'Enabled' : 'Disabled'}
+                      </p>
+                    </div>
+                    <div className="p-3 bg-secondary rounded-lg">
+                      <p className="text-xs text-muted">Payouts</p>
+                      <p className="font-medium text-main flex items-center gap-1.5 mt-0.5">
+                        {connectStatus.details.payoutsEnabled ? <CheckCircle2 size={14} className="text-emerald-500" /> : <XCircle size={14} className="text-red-500" />}
+                        {connectStatus.details.payoutsEnabled ? 'Enabled' : 'Disabled'}
+                      </p>
+                    </div>
+                  </div>
+                  {connectStatus.details.dashboardUrl && (
+                    <a
+                      href={connectStatus.details.dashboardUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-sm text-accent hover:underline"
+                    >
+                      <ExternalLink size={14} />
+                      Open Stripe Express Dashboard
+                    </a>
+                  )}
+                </div>
+              )}
+
+              {/* Outstanding Requirements */}
+              {connectStatus?.details?.requirements && connectStatus.details.requirements.length > 0 && (
+                <div className="p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
+                  <p className="text-sm font-medium text-amber-700 dark:text-amber-300 mb-1">Action Required</p>
+                  <ul className="text-xs text-amber-600 dark:text-amber-400 space-y-0.5">
+                    {connectStatus.details.requirements.map((req, i) => (
+                      <li key={i}>- {req.replace(/_/g, ' ')}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Payment Settings */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Payment Preferences</CardTitle>
+          <CardDescription>Configure how you accept payments from customers</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <ToggleItem
+            label="Accept credit/debit cards"
+            description="Visa, Mastercard, Amex via Stripe"
+            checked={true}
+            onChange={() => {}}
+          />
+          <ToggleItem
+            label="Accept ACH bank transfers"
+            description="Lower fees, 3-5 business day processing"
+            checked={true}
+            onChange={() => {}}
+          />
+          <ToggleItem
+            label="Record manual payments"
+            description="Track check, cash, and other offline payments"
+            checked={true}
+            onChange={() => {}}
+          />
+        </CardContent>
+      </Card>
+
+      {/* Platform Fee Info */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Processing Fees</CardTitle>
+          <CardDescription>Transparent pricing with no hidden charges</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            <div className="flex justify-between py-2 border-b border-light">
+              <span className="text-sm text-muted">Card payments</span>
+              <span className="text-sm font-medium text-main">2.9% + 30c</span>
+            </div>
+            <div className="flex justify-between py-2 border-b border-light">
+              <span className="text-sm text-muted">ACH bank transfer</span>
+              <span className="text-sm font-medium text-main">0.8% (max $5)</span>
+            </div>
+            <div className="flex justify-between py-2">
+              <span className="text-sm text-muted">Manual payment recording</span>
+              <span className="text-sm font-medium text-main">Free</span>
+            </div>
           </div>
         </CardContent>
       </Card>

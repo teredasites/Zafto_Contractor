@@ -1,6 +1,6 @@
 // Supabase Edge Function: stripe-payments
-// Migrated from Firebase createPaymentIntent + getPaymentStatus
-// POST { action: 'create' | 'status', ... }
+// Actions: create | status | create_connect_account | check_connect_status | create_checkout_session
+// POST { action, ... }
 
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
@@ -62,8 +62,14 @@ serve(async (req) => {
       return await handleCreate(supabase, user, userData.company_id, body)
     } else if (action === 'status') {
       return await handleStatus(supabase, userData.company_id, body)
+    } else if (action === 'create_connect_account') {
+      return await handleCreateConnectAccount(supabase, user, userData.company_id, body)
+    } else if (action === 'check_connect_status') {
+      return await handleCheckConnectStatus(supabase, userData.company_id)
+    } else if (action === 'create_checkout_session') {
+      return await handleCreateCheckoutSession(supabase, user, userData.company_id, body)
     } else {
-      return new Response(JSON.stringify({ error: 'Invalid action. Use "create" or "status".' }), {
+      return new Response(JSON.stringify({ error: 'Invalid action' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
@@ -128,10 +134,30 @@ async function handleCreate(
 
   const stripe = new Stripe(stripeKey, { apiVersion: '2023-10-16' })
 
+  // Check if company has Stripe Connect — route payment to contractor's account
+  const { data: companyData } = await supabase
+    .from('companies')
+    .select('stripe_account_id, stripe_connect_status')
+    .eq('id', companyId)
+    .single()
+
+  const connectedAccountId = companyData?.stripe_connect_status === 'active'
+    ? companyData?.stripe_account_id
+    : null
+
+  const platformFeePercent = 2.9 // Zafto platform fee %
+  const applicationFeeAmount = connectedAccountId
+    ? Math.round(amount * platformFeePercent / 100)
+    : undefined
+
   const paymentIntent = await stripe.paymentIntents.create({
     amount,
     currency,
     automatic_payment_methods: { enabled: true },
+    ...(connectedAccountId ? {
+      transfer_data: { destination: connectedAccountId },
+      application_fee_amount: applicationFeeAmount,
+    } : {}),
     metadata: {
       type,
       referenceId,
@@ -207,6 +233,256 @@ async function handleStatus(
     currency: data.currency,
     createdAt: data.created_at,
     succeededAt: data.succeeded_at,
+  }), {
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+  })
+}
+
+// ============================================================================
+// CREATE STRIPE CONNECT ACCOUNT (Express onboarding)
+// ============================================================================
+async function handleCreateConnectAccount(
+  supabase: ReturnType<typeof createClient>,
+  user: { id: string; email?: string },
+  companyId: string,
+  body: Record<string, unknown>,
+) {
+  const stripeKey = Deno.env.get('STRIPE_SECRET_KEY')
+  if (!stripeKey) {
+    return new Response(JSON.stringify({ error: 'Stripe not configured' }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
+  }
+
+  const stripe = new Stripe(stripeKey, { apiVersion: '2023-10-16' })
+
+  // Check if company already has a Connect account
+  const { data: company } = await supabase
+    .from('companies')
+    .select('stripe_account_id, stripe_connect_status, name')
+    .eq('id', companyId)
+    .single()
+
+  let accountId = company?.stripe_account_id
+
+  if (!accountId) {
+    // Create new Express account
+    const account = await stripe.accounts.create({
+      type: 'express',
+      email: user.email,
+      metadata: { companyId, source: 'zafto' },
+      business_profile: {
+        name: company?.name || undefined,
+        product_description: 'Trade contractor services',
+      },
+      capabilities: {
+        card_payments: { requested: true },
+        transfers: { requested: true },
+      },
+    })
+    accountId = account.id
+
+    // Store account ID on company
+    await supabase.from('companies').update({
+      stripe_account_id: accountId,
+      stripe_connect_status: 'onboarding_incomplete',
+    }).eq('id', companyId)
+  }
+
+  // Generate onboarding link
+  const { returnUrl, refreshUrl } = body as { returnUrl?: string; refreshUrl?: string }
+  const accountLink = await stripe.accountLinks.create({
+    account: accountId,
+    refresh_url: refreshUrl || `${Deno.env.get('APP_URL') || 'https://zafto.cloud'}/dashboard/settings?tab=billing&connect=refresh`,
+    return_url: returnUrl || `${Deno.env.get('APP_URL') || 'https://zafto.cloud'}/dashboard/settings?tab=billing&connect=success`,
+    type: 'account_onboarding',
+  })
+
+  return new Response(JSON.stringify({
+    success: true,
+    accountId,
+    onboardingUrl: accountLink.url,
+  }), {
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+  })
+}
+
+// ============================================================================
+// CHECK STRIPE CONNECT STATUS
+// ============================================================================
+async function handleCheckConnectStatus(
+  supabase: ReturnType<typeof createClient>,
+  companyId: string,
+) {
+  const stripeKey = Deno.env.get('STRIPE_SECRET_KEY')
+  if (!stripeKey) {
+    return new Response(JSON.stringify({ error: 'Stripe not configured' }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
+  }
+
+  const { data: company } = await supabase
+    .from('companies')
+    .select('stripe_account_id, stripe_connect_status')
+    .eq('id', companyId)
+    .single()
+
+  if (!company?.stripe_account_id) {
+    return new Response(JSON.stringify({
+      connected: false,
+      status: 'not_connected',
+      details: null,
+    }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
+  }
+
+  const stripe = new Stripe(stripeKey, { apiVersion: '2023-10-16' })
+  const account = await stripe.accounts.retrieve(company.stripe_account_id)
+
+  // Determine status
+  let connectStatus = 'onboarding_incomplete'
+  if (account.charges_enabled && account.payouts_enabled) {
+    connectStatus = 'active'
+  } else if (account.requirements?.disabled_reason) {
+    connectStatus = 'restricted'
+  }
+
+  // Update company record if status changed
+  if (connectStatus !== company.stripe_connect_status) {
+    await supabase.from('companies').update({
+      stripe_connect_status: connectStatus,
+      ...(connectStatus === 'active' ? { stripe_connect_onboarded_at: new Date().toISOString() } : {}),
+    }).eq('id', companyId)
+  }
+
+  return new Response(JSON.stringify({
+    connected: connectStatus === 'active',
+    status: connectStatus,
+    details: {
+      chargesEnabled: account.charges_enabled,
+      payoutsEnabled: account.payouts_enabled,
+      detailsSubmitted: account.details_submitted,
+      requirements: account.requirements?.currently_due || [],
+      dashboardUrl: `https://dashboard.stripe.com/${account.id}`,
+    },
+  }), {
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+  })
+}
+
+// ============================================================================
+// CREATE CHECKOUT SESSION (for client portal Pay Now)
+// ============================================================================
+async function handleCreateCheckoutSession(
+  supabase: ReturnType<typeof createClient>,
+  user: { id: string; email?: string },
+  companyId: string,
+  body: Record<string, unknown>,
+) {
+  const { invoiceId, amount, customerEmail, successUrl, cancelUrl } = body as {
+    invoiceId: string
+    amount: number
+    customerEmail?: string
+    successUrl?: string
+    cancelUrl?: string
+  }
+
+  if (!invoiceId || !amount || amount < 50) {
+    return new Response(JSON.stringify({ error: 'invoiceId and amount (min 50 cents) required' }), {
+      status: 400,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
+  }
+
+  const stripeKey = Deno.env.get('STRIPE_SECRET_KEY')
+  if (!stripeKey) {
+    return new Response(JSON.stringify({ error: 'Stripe not configured' }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
+  }
+
+  const stripe = new Stripe(stripeKey, { apiVersion: '2023-10-16' })
+
+  // Fetch invoice details
+  const { data: invoice } = await supabase
+    .from('invoices')
+    .select('invoice_number, customer_name, total, company_id')
+    .eq('id', invoiceId)
+    .single()
+
+  // Fetch company's Connect account for payment routing
+  const { data: companyData } = await supabase
+    .from('companies')
+    .select('stripe_account_id, stripe_connect_status, name')
+    .eq('id', companyId)
+    .single()
+
+  const connectedAccountId = companyData?.stripe_connect_status === 'active'
+    ? companyData?.stripe_account_id
+    : null
+
+  const platformFeePercent = 2.9
+  const applicationFeeAmount = connectedAccountId
+    ? Math.round(amount * platformFeePercent / 100)
+    : undefined
+
+  const baseUrl = Deno.env.get('CLIENT_PORTAL_URL') || 'https://client.zafto.cloud'
+
+  const session = await stripe.checkout.sessions.create({
+    mode: 'payment',
+    line_items: [{
+      price_data: {
+        currency: 'usd',
+        product_data: {
+          name: `Invoice ${invoice?.invoice_number || invoiceId}`,
+          description: `Payment to ${companyData?.name || 'contractor'}`,
+        },
+        unit_amount: amount,
+      },
+      quantity: 1,
+    }],
+    customer_email: customerEmail || user.email || undefined,
+    success_url: successUrl || `${baseUrl}/payments/${invoiceId}?status=success`,
+    cancel_url: cancelUrl || `${baseUrl}/payments/${invoiceId}?status=cancelled`,
+    metadata: {
+      type: 'invoice',
+      referenceId: invoiceId,
+      companyId,
+      userId: user.id,
+      source: 'zafto_client_portal',
+    },
+    ...(connectedAccountId ? {
+      payment_intent_data: {
+        transfer_data: { destination: connectedAccountId },
+        application_fee_amount: applicationFeeAmount,
+      },
+    } : {}),
+  })
+
+  // Log the payment intent
+  if (session.payment_intent) {
+    await supabase.from('payment_intents').insert({
+      company_id: companyId,
+      stripe_payment_intent_id: session.payment_intent as string,
+      user_id: user.id,
+      customer_id: null,
+      payment_type: 'invoice',
+      reference_id: invoiceId,
+      amount,
+      currency: 'usd',
+      status: 'pending',
+      receipt_email: customerEmail || user.email || null,
+    })
+  }
+
+  return new Response(JSON.stringify({
+    success: true,
+    checkoutUrl: session.url,
+    sessionId: session.id,
   }), {
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   })

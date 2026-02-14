@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Search,
   Mail,
@@ -25,6 +25,7 @@ import { SearchInput, Select } from '@/components/ui/input';
 import { Avatar } from '@/components/ui/avatar';
 import { CommandPalette } from '@/components/command-palette';
 import { formatDate, formatRelativeTime, cn } from '@/lib/utils';
+import { getSupabase } from '@/lib/supabase';
 
 type MessageType = 'email' | 'sms' | 'call';
 type MessageDirection = 'inbound' | 'outbound';
@@ -129,13 +130,103 @@ const mockCommunications: Communication[] = [
 ];
 
 export default function CommunicationsPage() {
+  const [comms, setComms] = useState<Communication[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
   const [directionFilter, setDirectionFilter] = useState('all');
   const [selectedComm, setSelectedComm] = useState<Communication | null>(null);
   const [showComposeModal, setShowComposeModal] = useState(false);
 
-  const filteredComms = mockCommunications.filter((comm) => {
+  const fetchComms = useCallback(async () => {
+    const supabase = getSupabase();
+    const results: Communication[] = [];
+
+    // Fetch emails
+    const { data: emails } = await supabase
+      .from('email_sends')
+      .select('id, to_email, to_name, from_email, subject, body_preview, status, email_type, related_type, related_id, created_at')
+      .order('created_at', { ascending: false })
+      .limit(100);
+
+    for (const e of emails || []) {
+      results.push({
+        id: `email-${e.id}`,
+        type: 'email',
+        direction: 'outbound',
+        customerId: '',
+        customerName: (e.to_name as string) || (e.to_email as string) || '',
+        customerEmail: e.to_email as string,
+        subject: e.subject as string,
+        body: (e.body_preview as string) || '',
+        status: (e.status as Communication['status']) || 'sent',
+        timestamp: new Date(e.created_at as string),
+      });
+    }
+
+    // Fetch SMS messages
+    const { data: smsMessages } = await supabase
+      .from('phone_messages')
+      .select('id, direction, phone_number, contact_name, body, status, created_at')
+      .order('created_at', { ascending: false })
+      .limit(100);
+
+    for (const m of smsMessages || []) {
+      results.push({
+        id: `sms-${m.id}`,
+        type: 'sms',
+        direction: (m.direction as string) === 'inbound' ? 'inbound' : 'outbound',
+        customerId: '',
+        customerName: (m.contact_name as string) || (m.phone_number as string) || '',
+        customerPhone: m.phone_number as string,
+        body: (m.body as string) || '',
+        status: (m.status as Communication['status']) || 'sent',
+        timestamp: new Date(m.created_at as string),
+      });
+    }
+
+    // Fetch phone calls
+    const { data: calls } = await supabase
+      .from('phone_calls')
+      .select('id, direction, phone_number, contact_name, status, duration_seconds, created_at')
+      .order('created_at', { ascending: false })
+      .limit(100);
+
+    for (const c of calls || []) {
+      results.push({
+        id: `call-${c.id}`,
+        type: 'call',
+        direction: (c.direction as string) === 'inbound' ? 'inbound' : 'outbound',
+        customerId: '',
+        customerName: (c.contact_name as string) || (c.phone_number as string) || '',
+        customerPhone: c.phone_number as string,
+        body: `Call ${(c.direction as string) === 'inbound' ? 'from' : 'to'} ${(c.contact_name as string) || (c.phone_number as string)}`,
+        status: (c.status as Communication['status']) || 'sent',
+        duration: c.duration_seconds as number | undefined,
+        timestamp: new Date(c.created_at as string),
+      });
+    }
+
+    // Sort by timestamp descending
+    results.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+    setComms(results);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    fetchComms();
+
+    const supabase = getSupabase();
+    const channel = supabase.channel('comms-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'email_sends' }, () => fetchComms())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'phone_messages' }, () => fetchComms())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'phone_calls' }, () => fetchComms())
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, [fetchComms]);
+
+  const filteredComms = comms.filter((comm) => {
     const matchesSearch =
       comm.customerName.toLowerCase().includes(search.toLowerCase()) ||
       comm.body.toLowerCase().includes(search.toLowerCase()) ||
@@ -159,12 +250,12 @@ export default function CommunicationsPage() {
   ];
 
   // Stats
-  const todayCount = mockCommunications.filter((c) => {
+  const todayCount = comms.filter((c) => {
     const today = new Date();
     return c.timestamp.toDateString() === today.toDateString();
   }).length;
-  const unreadCount = mockCommunications.filter((c) => c.direction === 'inbound' && c.status === 'received').length;
-  const sentCount = mockCommunications.filter((c) => c.direction === 'outbound').length;
+  const unreadCount = comms.filter((c) => c.direction === 'inbound' && c.status === 'received').length;
+  const sentCount = comms.filter((c) => c.direction === 'outbound').length;
 
   const getTypeIcon = (type: MessageType) => {
     switch (type) {
@@ -244,7 +335,7 @@ export default function CommunicationsPage() {
                 <Mail size={20} className="text-purple-600 dark:text-purple-400" />
               </div>
               <div>
-                <p className="text-2xl font-semibold text-main">{mockCommunications.length}</p>
+                <p className="text-2xl font-semibold text-main">{comms.length}</p>
                 <p className="text-sm text-muted">Total</p>
               </div>
             </div>

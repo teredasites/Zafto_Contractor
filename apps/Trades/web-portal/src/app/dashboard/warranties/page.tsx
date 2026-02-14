@@ -32,6 +32,7 @@ import { SearchInput, Select } from '@/components/ui/input';
 import { CommandPalette } from '@/components/command-palette';
 import { formatCurrency, formatDate, cn } from '@/lib/utils';
 import { getSupabase } from '@/lib/supabase';
+import { useWarranties, type WarrantyData } from '@/lib/hooks/use-warranties';
 
 type WarrantyStatus = 'active' | 'expiring_soon' | 'expired' | 'claimed';
 type WarrantyType = 'labor' | 'equipment' | 'manufacturer' | 'extended';
@@ -187,7 +188,38 @@ function getDaysRemaining(endDate: Date): number {
 
 type TabType = 'warranties' | 'dispatches';
 
+function toWarranty(d: WarrantyData): Warranty {
+  const now = Date.now();
+  const end = d.endDate ? new Date(d.endDate).getTime() : now + 365 * 86400000;
+  const thirtyDays = 30 * 86400000;
+  let status: WarrantyStatus = d.status === 'claimed' ? 'claimed' : d.status === 'expired' ? 'expired' : 'active';
+  if (status === 'active' && end < now) status = 'expired';
+  if (status === 'active' && end - now < thirtyDays) status = 'expiring_soon';
+
+  return {
+    id: d.id,
+    type: (d.warrantyType === 'parts' ? 'equipment' : d.warrantyType === 'full' ? 'extended' : d.warrantyType) as WarrantyType,
+    status,
+    description: d.description || d.title || '',
+    customerName: d.customerName || '',
+    customerId: d.customerId || '',
+    jobId: d.jobId || '',
+    jobName: d.jobName || '',
+    startDate: d.startDate ? new Date(d.startDate) : new Date(d.createdAt),
+    endDate: d.endDate ? new Date(d.endDate) : new Date(Date.now() + 365 * 86400000),
+    laborDuration: d.durationMonths ? `${d.durationMonths} months` : undefined,
+    notes: d.notes || undefined,
+    claimHistory: (d.claims || []).map(c => ({
+      date: new Date(c.date),
+      description: c.description,
+      cost: c.cost || 0,
+      status: c.status === 'open' ? 'pending' as const : c.status === 'resolved' ? 'approved' as const : 'denied' as const,
+    })),
+  };
+}
+
 export default function WarrantiesPage() {
+  const { warranties: rawWarranties, loading: warrantiesLoading } = useWarranties();
   const [activeTab, setActiveTab] = useState<TabType>('warranties');
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -195,7 +227,9 @@ export default function WarrantiesPage() {
   const [showNewModal, setShowNewModal] = useState(false);
   const [selectedWarranty, setSelectedWarranty] = useState<Warranty | null>(null);
 
-  const filteredWarranties = mockWarranties.filter((w) => {
+  const allWarranties = rawWarranties.map(toWarranty);
+
+  const filteredWarranties = allWarranties.filter((w) => {
     const matchesSearch =
       w.description.toLowerCase().includes(search.toLowerCase()) ||
       w.customerName.toLowerCase().includes(search.toLowerCase()) ||
@@ -206,10 +240,10 @@ export default function WarrantiesPage() {
     return matchesSearch && matchesStatus && matchesType;
   });
 
-  const activeCount = mockWarranties.filter((w) => w.status === 'active').length;
-  const expiringCount = mockWarranties.filter((w) => w.status === 'expiring_soon').length;
-  const claimsCount = mockWarranties.reduce((sum, w) => sum + w.claimHistory.filter((c) => c.status === 'pending').length, 0);
-  const totalCovered = mockWarranties.filter((w) => ['active', 'expiring_soon'].includes(w.status)).length;
+  const activeCount = allWarranties.filter((w) => w.status === 'active').length;
+  const expiringCount = allWarranties.filter((w) => w.status === 'expiring_soon').length;
+  const claimsCount = allWarranties.reduce((sum, w) => sum + w.claimHistory.filter((c) => c.status === 'pending').length, 0);
+  const totalCovered = allWarranties.filter((w) => ['active', 'expiring_soon'].includes(w.status)).length;
 
   return (
     <div className="space-y-6">

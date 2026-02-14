@@ -29,6 +29,7 @@ import { Badge } from '@/components/ui/badge';
 import { SearchInput, Select } from '@/components/ui/input';
 import { CommandPalette } from '@/components/command-palette';
 import { formatDate, cn } from '@/lib/utils';
+import { usePermits, type PermitData } from '@/lib/hooks/use-permits';
 
 type PermitStatus = 'draft' | 'applied' | 'in_review' | 'approved' | 'inspection_scheduled' | 'passed' | 'failed' | 'expired';
 type PermitType = 'electrical' | 'plumbing' | 'mechanical' | 'building' | 'roofing' | 'solar' | 'demolition' | 'other';
@@ -150,14 +151,40 @@ const mockPermits: Permit[] = [
   },
 ];
 
+function toPermit(d: PermitData): Permit {
+  return {
+    id: d.id,
+    permitNumber: d.permitNumber || undefined,
+    type: d.permitType as PermitType,
+    status: d.status as PermitStatus,
+    description: d.description || '',
+    jobId: d.jobId || '',
+    jobName: d.jobName || '',
+    customerId: d.customerId || '',
+    customerName: d.customerName || '',
+    address: d.address || '',
+    jurisdiction: d.jurisdiction || '',
+    appliedDate: d.appliedDate ? new Date(d.appliedDate) : undefined,
+    approvedDate: d.approvedDate ? new Date(d.approvedDate) : undefined,
+    expirationDate: d.expirationDate ? new Date(d.expirationDate) : undefined,
+    fee: d.fee,
+    inspections: (d.inspections || []).map(i => ({ ...i, date: new Date(i.date) })),
+    documents: (d.documents || []).map(doc => ({ ...doc, uploadedAt: new Date(doc.uploadedAt) })),
+    notes: d.notes || undefined,
+  };
+}
+
 export default function PermitsPage() {
+  const { permits: rawPermits, loading } = usePermits();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
   const [showNewModal, setShowNewModal] = useState(false);
   const [selectedPermit, setSelectedPermit] = useState<Permit | null>(null);
 
-  const filteredPermits = mockPermits.filter((p) => {
+  const allPermits = rawPermits.map(toPermit);
+
+  const filteredPermits = allPermits.filter((p) => {
     const matchesSearch =
       p.description.toLowerCase().includes(search.toLowerCase()) ||
       p.customerName.toLowerCase().includes(search.toLowerCase()) ||
@@ -168,10 +195,10 @@ export default function PermitsPage() {
     return matchesSearch && matchesStatus && matchesType;
   });
 
-  const pendingCount = mockPermits.filter((p) => ['applied', 'in_review'].includes(p.status)).length;
-  const activeCount = mockPermits.filter((p) => ['approved', 'inspection_scheduled'].includes(p.status)).length;
-  const failedCount = mockPermits.filter((p) => p.status === 'failed').length;
-  const upcomingInspections = mockPermits.flatMap((p) => p.inspections.filter((i) => i.result === 'scheduled')).length;
+  const pendingCount = allPermits.filter((p) => ['applied', 'in_review'].includes(p.status)).length;
+  const activeCount = allPermits.filter((p) => ['approved', 'inspection_scheduled'].includes(p.status)).length;
+  const failedCount = allPermits.filter((p) => p.status === 'failed').length;
+  const upcomingInspections = allPermits.flatMap((p) => p.inspections.filter((i) => i.result === 'scheduled')).length;
 
   return (
     <div className="space-y-6">

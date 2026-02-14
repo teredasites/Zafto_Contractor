@@ -1,18 +1,60 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, CreditCard, Building2, Plus, Check, Trash2, Star } from 'lucide-react';
+import { ArrowLeft, CreditCard, Building2, Plus, Trash2, Star, Shield, Loader2 } from 'lucide-react';
+import { getSupabase } from '@/lib/supabase';
 
 interface PaymentMethod { id: string; type: 'card' | 'bank'; brand?: string; last4: string; label: string; expiry?: string; isDefault: boolean; }
 
-const mockMethods: PaymentMethod[] = [
-  { id: 'pm-1', type: 'card', brand: 'Visa', last4: '4242', label: 'Visa ending in 4242', expiry: '08/28', isDefault: true },
-  { id: 'pm-2', type: 'bank', last4: '9876', label: 'Chase checking ••9876', isDefault: false },
-];
-
 export default function PaymentMethodsPage() {
-  const [methods] = useState(mockMethods);
-  const [showAdd, setShowAdd] = useState(false);
+  const [methods, setMethods] = useState<PaymentMethod[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchMethods = useCallback(async () => {
+    try {
+      const supabase = getSupabase();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const customerId = user.user_metadata?.customer_id;
+      if (!customerId) return;
+
+      // Fetch payment methods used in past payments
+      const { data: payments } = await supabase
+        .from('invoices')
+        .select('payment_method, payment_reference')
+        .eq('customer_id', customerId)
+        .eq('status', 'paid')
+        .not('payment_method', 'is', null)
+        .order('paid_at', { ascending: false });
+
+      // Deduplicate by payment method
+      const seen = new Set<string>();
+      const unique: PaymentMethod[] = [];
+      (payments || []).forEach((p: Record<string, unknown>, i: number) => {
+        const method = p.payment_method as string;
+        if (!method || seen.has(method)) return;
+        seen.add(method);
+        const isCard = method.includes('card') || method.includes('visa') || method.includes('mastercard') || method.includes('amex') || method === 'stripe';
+        const isBank = method.includes('ach') || method.includes('bank');
+        unique.push({
+          id: `pm-${i}`,
+          type: isBank ? 'bank' : 'card',
+          brand: isCard ? 'Card' : isBank ? 'Bank' : method,
+          last4: (p.payment_reference as string)?.slice(-4) || '****',
+          label: method.charAt(0).toUpperCase() + method.slice(1).replace(/_/g, ' '),
+          isDefault: i === 0,
+        });
+      });
+
+      setMethods(unique);
+    } catch {
+      // Graceful degradation
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { fetchMethods(); }, [fetchMethods]);
 
   return (
     <div className="space-y-5">
@@ -21,52 +63,49 @@ export default function PaymentMethodsPage() {
           <ArrowLeft size={16} /> Back to Payments
         </Link>
         <h1 className="text-xl font-bold text-gray-900">Payment Methods</h1>
-        <p className="text-sm text-gray-500 mt-0.5">{methods.length} saved methods</p>
+        <p className="text-sm text-gray-500 mt-0.5">
+          {loading ? 'Loading...' : `${methods.length} saved method${methods.length !== 1 ? 's' : ''}`}
+        </p>
       </div>
 
-      <div className="space-y-3">
-        {methods.map(m => (
-          <div key={m.id} className={`bg-white rounded-xl border-2 p-4 ${m.isDefault ? 'border-orange-200' : 'border-gray-100'}`}>
-            <div className="flex items-center gap-3">
-              <div className={`p-2.5 rounded-xl ${m.isDefault ? 'bg-orange-50' : 'bg-gray-50'}`}>
-                {m.type === 'card' ? <CreditCard size={18} className={m.isDefault ? 'text-orange-600' : 'text-gray-500'} /> : <Building2 size={18} className={m.isDefault ? 'text-orange-600' : 'text-gray-500'} />}
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center gap-2">
-                  <p className="text-sm font-medium text-gray-900">{m.label}</p>
-                  {m.isDefault && <span className="text-[10px] px-1.5 py-0.5 bg-orange-100 text-orange-600 rounded font-medium flex items-center gap-0.5"><Star size={8} /> Default</span>}
-                </div>
-                {m.expiry && <p className="text-xs text-gray-400 mt-0.5">Expires {m.expiry}</p>}
-              </div>
-              <div className="flex items-center gap-2">
-                {!m.isDefault && <button className="text-xs text-gray-400 hover:text-orange-500 font-medium">Set Default</button>}
-                <button className="p-1.5 text-gray-300 hover:text-red-500 transition-colors"><Trash2 size={14} /></button>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {showAdd ? (
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 space-y-4">
-          <h3 className="font-bold text-sm text-gray-900">Add Payment Method</h3>
-          <div className="space-y-3">
-            <div><label className="block text-xs font-medium text-gray-700 mb-1">Card Number</label><input placeholder="1234 5678 9012 3456" className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 outline-none text-sm" /></div>
-            <div className="grid grid-cols-2 gap-3">
-              <div><label className="block text-xs font-medium text-gray-700 mb-1">Expiry</label><input placeholder="MM/YY" className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 outline-none text-sm" /></div>
-              <div><label className="block text-xs font-medium text-gray-700 mb-1">CVC</label><input placeholder="123" className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 outline-none text-sm" /></div>
-            </div>
-          </div>
-          <div className="flex gap-3">
-            <button onClick={() => setShowAdd(false)} className="flex-1 py-2.5 border border-gray-200 text-gray-600 font-medium rounded-xl text-sm hover:bg-gray-50">Cancel</button>
-            <button onClick={() => setShowAdd(false)} className="flex-1 py-2.5 bg-orange-500 text-white font-bold rounded-xl text-sm hover:bg-orange-600">Save Card</button>
-          </div>
+      {loading ? (
+        <div className="flex justify-center py-12">
+          <Loader2 size={24} className="animate-spin text-gray-300" />
+        </div>
+      ) : methods.length === 0 ? (
+        <div className="bg-white rounded-xl border border-gray-100 p-8 text-center">
+          <CreditCard size={32} className="text-gray-200 mx-auto mb-3" />
+          <p className="text-sm font-medium text-gray-900">No payment methods on file</p>
+          <p className="text-xs text-gray-500 mt-1">Payment methods are saved automatically when you make a payment</p>
         </div>
       ) : (
-        <button onClick={() => setShowAdd(true)} className="w-full py-3 border-2 border-dashed border-gray-200 rounded-xl text-sm font-medium text-gray-500 hover:border-orange-300 hover:text-orange-500 flex items-center justify-center gap-2 transition-all">
-          <Plus size={16} /> Add Payment Method
-        </button>
+        <div className="space-y-3">
+          {methods.map(m => (
+            <div key={m.id} className={`bg-white rounded-xl border-2 p-4 ${m.isDefault ? 'border-orange-200' : 'border-gray-100'}`}>
+              <div className="flex items-center gap-3">
+                <div className={`p-2.5 rounded-xl ${m.isDefault ? 'bg-orange-50' : 'bg-gray-50'}`}>
+                  {m.type === 'card' ? <CreditCard size={18} className={m.isDefault ? 'text-orange-600' : 'text-gray-500'} /> : <Building2 size={18} className={m.isDefault ? 'text-orange-600' : 'text-gray-500'} />}
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-medium text-gray-900">{m.label}</p>
+                    {m.isDefault && <span className="text-[10px] px-1.5 py-0.5 bg-orange-100 text-orange-600 rounded font-medium flex items-center gap-0.5"><Star size={8} /> Default</span>}
+                  </div>
+                  {m.last4 && <p className="text-xs text-gray-400 mt-0.5">Ending in {m.last4}</p>}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       )}
+
+      {/* Info about Stripe-managed payment methods */}
+      <div className="flex items-start gap-2 p-3 bg-gray-50 rounded-xl">
+        <Shield size={14} className="text-gray-400 mt-0.5 flex-shrink-0" />
+        <p className="text-[11px] text-gray-500">
+          Payment methods are securely managed by Stripe. When you pay an invoice, you can use a new card or bank account directly in the checkout flow.
+        </p>
+      </div>
     </div>
   );
 }
