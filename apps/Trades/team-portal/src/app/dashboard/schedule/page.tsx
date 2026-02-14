@@ -83,11 +83,19 @@ export default function SchedulePage() {
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Header */}
-      <div>
-        <h1 className="text-xl font-semibold text-main">Schedule</h1>
-        <p className="text-sm text-muted mt-0.5">
-          {totalScheduled} job{totalScheduled !== 1 ? 's' : ''} in the next 7 days
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-semibold text-main">Schedule</h1>
+          <p className="text-sm text-muted mt-0.5">
+            {totalScheduled} job{totalScheduled !== 1 ? 's' : ''} in the next 7 days
+          </p>
+        </div>
+        <Link
+          href="/dashboard/schedule/time-off"
+          className="text-sm text-accent hover:underline font-medium"
+        >
+          Request Time Off
+        </Link>
       </div>
 
       {/* Week View */}
