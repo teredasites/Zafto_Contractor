@@ -76,19 +76,43 @@ const createOption = (name: string, sortOrder: number, isRecommended = false): B
 
 // Unit options
 const unitOptions = [
+  // Common
   { value: 'each', label: 'Each' },
   { value: 'hour', label: 'Hour' },
   { value: 'day', label: 'Day' },
-  { value: 'sq ft', label: 'Sq Ft' },
-  { value: 'lf', label: 'Linear Ft' },
+  { value: 'week', label: 'Week' },
+  { value: 'month', label: 'Month' },
   { value: 'job', label: 'Job/Flat' },
+  { value: 'trip', label: 'Trip' },
+  { value: 'book_hour', label: 'Book Hour' },
+  // Area & Length
+  { value: 'sq ft', label: 'Sq Ft' },
+  { value: 'sq yd', label: 'Sq Yard' },
+  { value: 'lf', label: 'Linear Ft' },
   { value: 'sq', label: 'Square (100 sf)' },
+  // Volume & Weight
+  { value: 'cu ft', label: 'Cu Ft' },
   { value: 'cu yd', label: 'Cu Yard' },
   { value: 'gallon', label: 'Gallon' },
   { value: 'lb', label: 'Pound' },
   { value: 'ton', label: 'Ton' },
-  { value: 'trip', label: 'Trip' },
-  { value: 'book_hour', label: 'Book Hour' },
+  // Trade-Specific
+  { value: 'board_ft', label: 'Board Foot' },
+  { value: 'bundle', label: 'Bundle' },
+  { value: 'roll', label: 'Roll' },
+  { value: 'pallet', label: 'Pallet' },
+  { value: 'panel', label: 'Panel' },
+  { value: 'sheet', label: 'Sheet' },
+  { value: 'yard', label: 'Yard (fabric)' },
+  { value: 'box', label: 'Box' },
+  { value: 'bag', label: 'Bag' },
+  { value: 'can', label: 'Can' },
+  { value: 'pair', label: 'Pair' },
+  { value: 'set', label: 'Set' },
+  { value: 'lot', label: 'Lot' },
+  { value: 'circuit', label: 'Circuit' },
+  { value: 'fixture', label: 'Fixture' },
+  { value: 'opening', label: 'Opening' },
 ];
 
 // Category options
@@ -99,6 +123,11 @@ const categoryOptions = [
   { value: 'permits', label: 'Permits' },
   { value: 'subcontractor', label: 'Subcontractor' },
   { value: 'fee', label: 'Fee' },
+  { value: 'disposal', label: 'Disposal/Haul-off' },
+  { value: 'rental', label: 'Rental' },
+  { value: 'overhead', label: 'Overhead' },
+  { value: 'warranty', label: 'Warranty' },
+  { value: 'inspection', label: 'Inspection' },
   { value: 'other', label: 'Other' },
 ];
 
