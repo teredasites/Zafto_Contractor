@@ -3,7 +3,7 @@
 import { Suspense, useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import {
-  Play, Square, Pause, Clock, Briefcase, ChevronDown,
+  Play, Square, Pause, Clock, Briefcase, ChevronDown, MapPin,
 } from 'lucide-react';
 import { useTimeClock } from '@/lib/hooks/use-time-clock';
 import { useMyJobs } from '@/lib/hooks/use-jobs';
@@ -115,6 +115,12 @@ function TimeClockContent() {
                   <p className="text-xs text-muted">
                     Started at {formatTime(activeEntry.clockIn)}
                   </p>
+                  {activeEntry.locationPings.length > 0 && (
+                    <div className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-100 dark:bg-green-900/30 rounded-full">
+                      <MapPin size={12} className="text-green-600 dark:text-green-400" />
+                      <span className="text-xs text-green-700 dark:text-green-300">GPS Verified</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Clock Out Button */}
@@ -247,6 +253,9 @@ function TimeClockContent() {
                         <p className="text-xs text-muted truncate">{entry.jobTitle}</p>
                       )}
                     </div>
+                    {entry.locationPings.length > 0 && (
+                      <MapPin size={14} className="text-green-500 flex-shrink-0" />
+                    )}
                     <div className="text-right flex-shrink-0">
                       <p className="text-sm font-medium text-main">{entry.totalHours.toFixed(1)} hrs</p>
                       {entry.breakMinutes > 0 && (
