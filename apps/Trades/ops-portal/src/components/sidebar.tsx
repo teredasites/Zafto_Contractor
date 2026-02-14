@@ -30,6 +30,7 @@ import {
   Mail,
   ShoppingBag,
   Satellite,
+  Database,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Logo } from '@/components/logo';
@@ -100,6 +101,11 @@ const navSections: NavSection[] = [
         label: 'Errors',
         href: '/dashboard/errors',
         icon: <AlertTriangle className="h-4 w-4" />,
+      },
+      {
+        label: 'Data Health',
+        href: '/dashboard/data-health',
+        icon: <Database className="h-4 w-4" />,
       },
       {
         label: 'API Costs',
