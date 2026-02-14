@@ -29,6 +29,9 @@ export default function LoginPage() {
   const [selectedPortal, setSelectedPortal] = useState<PortalType>('team');
   const [magicLinkSent, setMagicLinkSent] = useState(false);
   const [magicLinkLoading, setMagicLinkLoading] = useState(false);
+  const [resetMode, setResetMode] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
 
   // Check for redirect error param
   useEffect(() => {
@@ -87,6 +90,29 @@ export default function LoginPage() {
       setIsLoading(false);
     } else if (user) {
       await routeByRole(user.id);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      setError('Enter your email address first');
+      return;
+    }
+    setResetLoading(true);
+    setError('');
+    try {
+      const { getSupabase } = await import('@/lib/supabase');
+      const supabase = getSupabase();
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/dashboard/settings`,
+      });
+      if (resetError) throw resetError;
+      setResetSent(true);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to send reset email';
+      setError(message);
+    } finally {
+      setResetLoading(false);
     }
   };
 
@@ -242,6 +268,70 @@ export default function LoginPage() {
                   <ArrowRight size={16} />
                 </a>
               </div>
+            ) : resetSent ? (
+              /* Password Reset Confirmation */
+              <div className="text-center py-6">
+                <div
+                  className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4"
+                  style={{ background: 'var(--accent-light)' }}
+                >
+                  <CheckCircle2 size={26} className="text-accent" />
+                </div>
+                <h3 className="text-base font-semibold text-main">Check your email</h3>
+                <p className="text-[13px] text-muted mt-2 max-w-[280px] mx-auto">
+                  We sent a password reset link to{' '}
+                  <strong className="text-main">{email}</strong>
+                </p>
+                <button
+                  onClick={() => { setResetSent(false); setResetMode(false); }}
+                  className="mt-5 text-[13px] text-accent font-medium hover:underline"
+                >
+                  Back to sign in
+                </button>
+              </div>
+            ) : resetMode ? (
+              /* Forgot Password Form */
+              <div className="space-y-4">
+                <div className="text-center mb-2">
+                  <h3 className="text-base font-semibold text-main">Reset your password</h3>
+                  <p className="text-[13px] text-muted mt-1">
+                    Enter your email and we&apos;ll send a reset link
+                  </p>
+                </div>
+                <div className="space-y-1.5">
+                  <label htmlFor="reset-email" className="block text-[13px] font-medium text-main">
+                    Email address
+                  </label>
+                  <input
+                    id="reset-email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full h-11 px-3.5 rounded-lg text-sm transition-all outline-none border text-main placeholder:text-muted"
+                    style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border)' }}
+                    placeholder="you@company.com"
+                    required
+                  />
+                </div>
+                <button
+                  onClick={handleForgotPassword}
+                  disabled={resetLoading || !email}
+                  className="w-full h-11 rounded-lg text-white text-sm font-semibold flex items-center justify-center gap-2 transition-all disabled:opacity-50 hover:brightness-110"
+                  style={{ background: 'var(--accent)' }}
+                >
+                  {resetLoading ? (
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    'Send reset link'
+                  )}
+                </button>
+                <button
+                  onClick={() => setResetMode(false)}
+                  className="w-full text-center text-[13px] text-accent font-medium hover:underline"
+                >
+                  Back to sign in
+                </button>
+              </div>
             ) : magicLinkSent ? (
               /* Magic Link Confirmation */
               <div className="text-center py-6">
@@ -297,7 +387,11 @@ export default function LoginPage() {
                       <label htmlFor="password" className="block text-[13px] font-medium text-main">
                         Password
                       </label>
-                      <button type="button" className="text-[11px] font-medium text-accent hover:underline">
+                      <button
+                        type="button"
+                        onClick={() => setResetMode(true)}
+                        className="text-[11px] font-medium text-accent hover:underline"
+                      >
                         Forgot password?
                       </button>
                     </div>

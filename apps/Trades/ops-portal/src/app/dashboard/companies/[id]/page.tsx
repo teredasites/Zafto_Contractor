@@ -10,6 +10,9 @@ import {
   Briefcase,
   Calendar,
   Mail,
+  Save,
+  Power,
+  PowerOff,
 } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { StatusBadge } from '@/components/ui/badge';
@@ -45,6 +48,9 @@ export default function CompanyDetailPage() {
   const [jobsCount, setJobsCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [editTier, setEditTier] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [toggling, setToggling] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -65,6 +71,7 @@ export default function CompanyDetailPage() {
         return;
       }
       setCompany(companyData as Company);
+      setEditTier((companyData as Company).subscription_tier || '');
 
       // Fetch company users
       const { data: usersData } = await supabase
@@ -89,6 +96,35 @@ export default function CompanyDetailPage() {
 
     fetchData();
   }, [id]);
+
+  const handleSaveTier = async () => {
+    if (!company || saving) return;
+    setSaving(true);
+    const supabase = getSupabase();
+    const { error: err } = await supabase
+      .from('companies')
+      .update({ subscription_tier: editTier })
+      .eq('id', company.id);
+    if (!err) {
+      setCompany((prev) => prev ? { ...prev, subscription_tier: editTier } : prev);
+    }
+    setSaving(false);
+  };
+
+  const handleToggleStatus = async () => {
+    if (!company || toggling) return;
+    setToggling(true);
+    const supabase = getSupabase();
+    const newStatus = company.subscription_status === 'suspended' ? 'active' : 'suspended';
+    const { error: err } = await supabase
+      .from('companies')
+      .update({ subscription_status: newStatus })
+      .eq('id', company.id);
+    if (!err) {
+      setCompany((prev) => prev ? { ...prev, subscription_status: newStatus } : prev);
+    }
+    setToggling(false);
+  };
 
   if (loading) {
     return (
@@ -201,19 +237,42 @@ export default function CompanyDetailPage() {
             </div>
             <div>
               <p className="text-xs text-[var(--text-secondary)] mb-1">Plan</p>
-              <p className="text-sm font-medium text-[var(--text-primary)] capitalize">
-                {company.subscription_tier || '--'}
-              </p>
+              <div className="flex items-center gap-2 mt-1">
+                <select
+                  value={editTier}
+                  onChange={(e) => setEditTier(e.target.value)}
+                  className="appearance-none rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-1.5 text-sm text-[var(--text-primary)] focus:border-[var(--accent)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 transition-colors"
+                >
+                  <option value="good">Good</option>
+                  <option value="better">Better</option>
+                  <option value="best">Best</option>
+                  <option value="enterprise">Enterprise</option>
+                </select>
+                {editTier !== company.subscription_tier && (
+                  <Button className="px-3 py-1.5 text-xs" onClick={handleSaveTier} loading={saving}>
+                    <Save className="h-3.5 w-3.5" />
+                    Save
+                  </Button>
+                )}
+              </div>
             </div>
             <div>
               <p className="text-xs text-[var(--text-secondary)] mb-1">Status</p>
-              <StatusBadge status={company.subscription_status || 'unknown'} />
-            </div>
-            <div>
-              <p className="text-xs text-[var(--text-secondary)] mb-1">
-                Subscription Status
-              </p>
-              <StatusBadge status={company.subscription_status || 'unknown'} />
+              <div className="flex items-center gap-2 mt-1">
+                <StatusBadge status={company.subscription_status || 'unknown'} />
+                <Button
+                  className="px-3 py-1.5 text-xs"
+                  variant={company.subscription_status === 'suspended' ? 'primary' : 'danger'}
+                  onClick={handleToggleStatus}
+                  loading={toggling}
+                >
+                  {company.subscription_status === 'suspended' ? (
+                    <><Power className="h-3.5 w-3.5" /> Activate</>
+                  ) : (
+                    <><PowerOff className="h-3.5 w-3.5" /> Suspend</>
+                  )}
+                </Button>
+              </div>
             </div>
             {company.email && (
               <div>

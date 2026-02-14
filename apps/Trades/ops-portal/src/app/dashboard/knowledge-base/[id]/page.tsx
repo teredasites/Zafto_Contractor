@@ -9,6 +9,7 @@ import {
   Eye,
   ThumbsUp,
   Inbox,
+  Trash2,
 } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -47,6 +48,7 @@ export default function KBArticleEditorPage() {
 
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
@@ -138,6 +140,23 @@ export default function KBArticleEditorPage() {
     setSaving(false);
   };
 
+  const handleDelete = async () => {
+    if (isNew || deleting) return;
+    if (!confirm('Delete this article? This cannot be undone.')) return;
+    setDeleting(true);
+    const supabase = getSupabase();
+    const { error: err } = await supabase
+      .from('knowledge_base')
+      .delete()
+      .eq('id', id);
+    if (!err) {
+      router.push('/dashboard/knowledge-base');
+    } else {
+      setSaveError(err.message);
+    }
+    setDeleting(false);
+  };
+
   if (loading) {
     return (
       <div className="space-y-8 animate-fade-in">
@@ -170,10 +189,18 @@ export default function KBArticleEditorPage() {
             {isNew ? 'New Article' : 'Edit Article'}
           </h1>
         </div>
-        <Button onClick={handleSave} loading={saving} disabled={!title.trim()}>
-          <Save className="h-4 w-4" />
-          {isNew ? 'Create' : 'Save'}
-        </Button>
+        <div className="flex items-center gap-2">
+          {!isNew && (
+            <Button variant="danger" onClick={handleDelete} loading={deleting}>
+              <Trash2 className="h-4 w-4" />
+              Delete
+            </Button>
+          )}
+          <Button onClick={handleSave} loading={saving} disabled={!title.trim()}>
+            <Save className="h-4 w-4" />
+            {isNew ? 'Create' : 'Save'}
+          </Button>
+        </div>
       </div>
 
       {/* Save feedback */}
