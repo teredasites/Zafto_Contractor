@@ -42,6 +42,7 @@ import { Badge } from '@/components/ui/badge';
 import { formatCurrency, cn } from '@/lib/utils';
 import { useCustomers } from '@/lib/hooks/use-customers';
 import { useBids } from '@/lib/hooks/use-bids';
+import { useCompanyConfig } from '@/lib/hooks/use-company-config';
 import type { BidOption, BidLineItem, BidAddOn, LineItemCategory, Customer } from '@/types';
 
 // Generate unique IDs
@@ -287,6 +288,14 @@ export default function NewBidPage() {
   const { company } = useCompany();
   const { customers } = useCustomers();
   const { createBid } = useBids();
+  const { config } = useCompanyConfig();
+
+  // Wire default tax rate from company config
+  useEffect(() => {
+    if (config && taxRate === 6.35) {
+      setTaxRate(config.defaultTaxRate);
+    }
+  }, [config]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Customer selection
   const [customerSearch, setCustomerSearch] = useState('');

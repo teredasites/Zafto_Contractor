@@ -20,10 +20,12 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { isValidEmail, isValidPhone, formatPhone } from '@/lib/validation';
 import { useCustomers } from '@/lib/hooks/use-customers';
+import { useCompanyConfig } from '@/lib/hooks/use-company-config';
 
 export default function NewCustomerPage() {
   const router = useRouter();
   const { createCustomer, customers } = useCustomers();
+  const { config } = useCompanyConfig();
   const [saving, setSaving] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -51,16 +53,11 @@ export default function NewCustomerPage() {
   const [newTag, setNewTag] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  const defaultSources = ['referral', 'google', 'website', 'yelp', 'facebook', 'instagram', 'nextdoor', 'other'];
+  const sources = config?.customLeadSources || defaultSources;
   const sourceOptions = [
     { value: '', label: 'Select source...' },
-    { value: 'referral', label: 'Referral' },
-    { value: 'google', label: 'Google' },
-    { value: 'website', label: 'Website' },
-    { value: 'yelp', label: 'Yelp' },
-    { value: 'facebook', label: 'Facebook' },
-    { value: 'instagram', label: 'Instagram' },
-    { value: 'nextdoor', label: 'Nextdoor' },
-    { value: 'other', label: 'Other' },
+    ...sources.map((s) => ({ value: s, label: s.charAt(0).toUpperCase() + s.slice(1) })),
   ];
 
   const suggestedTags = ['residential', 'commercial', 'vip', 'property-manager', 'repeat', 'priority'];

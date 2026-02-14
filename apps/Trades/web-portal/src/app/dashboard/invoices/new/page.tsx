@@ -23,6 +23,7 @@ import { clampTaxRate } from '@/lib/validation';
 import { useCustomers } from '@/lib/hooks/use-customers';
 import { useJobs } from '@/lib/hooks/use-jobs';
 import { useInvoices } from '@/lib/hooks/use-invoices';
+import { useCompanyConfig } from '@/lib/hooks/use-company-config';
 
 type PaymentSource = 'standard' | 'carrier' | 'deductible' | 'upgrade';
 
@@ -63,7 +64,15 @@ export default function NewInvoicePage() {
   const { customers } = useCustomers();
   const { jobs } = useJobs();
   const { createInvoice } = useInvoices();
+  const { config } = useCompanyConfig();
   const [saving, setSaving] = useState(false);
+
+  // Wire default tax rate from company config
+  useEffect(() => {
+    if (config && formData.taxRate === 6.35) {
+      setFormData((prev) => ({ ...prev, taxRate: config.defaultTaxRate }));
+    }
+  }, [config]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const selectedCustomer = customers.find((c) => c.id === formData.customerId);
   const selectedJob = jobs.find((j) => j.id === formData.jobId);
