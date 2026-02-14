@@ -120,5 +120,74 @@ export function useLeads() {
     if (err) throw err;
   };
 
-  return { leads, loading, error, createLead, updateLeadStage, updateLead, deleteLead, refetch: fetchLeads };
+  // Convert lead to customer — checks for existing match by email/phone
+  const convertLeadToCustomer = async (leadId: string): Promise<string | null> => {
+    const supabase = getSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+    const companyId = user.app_metadata?.company_id;
+    if (!companyId) throw new Error('No company');
+
+    const lead = leads.find((l) => l.id === leadId);
+    if (!lead) throw new Error('Lead not found');
+
+    // Check for existing customer by email or phone
+    let existingCustomer: Record<string, unknown> | null = null;
+    if (lead.email) {
+      const { data } = await supabase
+        .from('customers')
+        .select('id')
+        .eq('company_id', companyId)
+        .eq('email', lead.email)
+        .is('deleted_at', null)
+        .single();
+      if (data) existingCustomer = data;
+    }
+    if (!existingCustomer && lead.phone) {
+      const { data } = await supabase
+        .from('customers')
+        .select('id')
+        .eq('company_id', companyId)
+        .eq('phone', lead.phone)
+        .is('deleted_at', null)
+        .single();
+      if (data) existingCustomer = data;
+    }
+
+    let customerId: string;
+    if (existingCustomer) {
+      customerId = existingCustomer.id as string;
+    } else {
+      // Create new customer from lead
+      const { data: newCustomer, error: custErr } = await supabase
+        .from('customers')
+        .insert({
+          company_id: companyId,
+          name: lead.name,
+          email: lead.email || null,
+          phone: lead.phone || null,
+          source: lead.source || 'lead',
+          address: lead.address || null,
+        })
+        .select('id')
+        .single();
+      if (custErr || !newCustomer) throw new Error('Failed to create customer');
+      customerId = newCustomer.id;
+    }
+
+    // Update lead with conversion info
+    await supabase
+      .from('leads')
+      .update({
+        stage: 'won',
+        won_at: new Date().toISOString(),
+        converted_to_customer_id: customerId,
+      })
+      .eq('id', leadId);
+
+    fetchLeads();
+    return customerId;
+  };
+
+  return { leads, loading, error, createLead, updateLeadStage, updateLead, convertLeadToCustomer, deleteLead, refetch: fetchLeads };
 }
