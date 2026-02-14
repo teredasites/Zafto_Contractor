@@ -12,6 +12,7 @@ import '../../services/ui_mode_service.dart';
 import '../../models/company.dart';
 import '../onboarding/state_selection_screen.dart';
 import '../certifications/certifications_screen.dart';
+import '../team/add_employee_screen.dart';
 
 /// Settings Screen - Design System v2.6
 class SettingsScreen extends ConsumerStatefulWidget {
@@ -91,6 +92,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           _buildSectionHeader(colors, 'CERTIFICATIONS & LICENSES'),
           const SizedBox(height: 12),
           _buildCertificationsCard(colors),
+
+          const SizedBox(height: 32),
+          _buildSectionHeader(colors, 'TEAM'),
+          const SizedBox(height: 12),
+          _buildTeamCard(colors),
 
           const SizedBox(height: 32),
           _buildSectionHeader(colors, 'PREFERENCES'),
@@ -462,6 +468,56 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildTeamCard(ZaftoColors colors) {
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.selectionClick();
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const AddEmployeeScreen()),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: colors.bgElevated,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: colors.borderSubtle),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: colors.accentPrimary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(LucideIcons.userPlus, size: 20, color: colors.accentPrimary),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Invite Team Member',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: colors.textPrimary),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'Add employees, set roles & trade specialties',
+                    style: TextStyle(fontSize: 12, color: colors.textSecondary),
+                  ),
+                ],
+              ),
+            ),
+            Icon(LucideIcons.chevronRight, size: 20, color: colors.textTertiary),
+          ],
+        ),
       ),
     );
   }

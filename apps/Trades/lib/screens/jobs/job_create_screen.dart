@@ -25,10 +25,17 @@ class _JobCreateScreenState extends ConsumerState<JobCreateScreen> {
   final _addressController = TextEditingController();
   final _amountController = TextEditingController();
   final _notesController = TextEditingController();
+  final _internalNotesController = TextEditingController();
+  final _poNumberController = TextEditingController();
+  final _scopeController = TextEditingController();
+  final _specialRequirementsController = TextEditingController();
+  final _estimatedHoursController = TextEditingController();
   DateTime? _scheduledDate;
   bool _isSaving = false;
   JobType _jobType = JobType.standard;
   String _source = 'direct';
+  JobPriority _priority = JobPriority.normal;
+  String _tradeType = 'electrical';
 
   // Insurance metadata controllers
   final _insuranceCompanyController = TextEditingController();
@@ -62,9 +69,13 @@ class _JobCreateScreenState extends ConsumerState<JobCreateScreen> {
     _addressController.text = job.address;
     _amountController.text = job.estimatedAmount > 0 ? job.estimatedAmount.toString() : '';
     _notesController.text = job.description ?? '';
+    _internalNotesController.text = job.internalNotes ?? '';
+    _estimatedHoursController.text = job.estimatedDuration != null ? (job.estimatedDuration! / 60).toStringAsFixed(1) : '';
     _scheduledDate = job.scheduledStart;
     _jobType = job.jobType;
     _source = job.source;
+    _priority = job.priority;
+    _tradeType = job.tradeType;
     if (job.isInsuranceClaim) {
       _insuranceCompanyController.text = job.typeMetadata['insuranceCompany'] as String? ?? '';
       _claimNumberController.text = job.typeMetadata['claimNumber'] as String? ?? '';
@@ -96,6 +107,11 @@ class _JobCreateScreenState extends ConsumerState<JobCreateScreen> {
     _adjusterPhoneController.dispose();
     _deductibleController.dispose();
     _stormEventController.dispose();
+    _internalNotesController.dispose();
+    _poNumberController.dispose();
+    _scopeController.dispose();
+    _specialRequirementsController.dispose();
+    _estimatedHoursController.dispose();
     _warrantyCompanyController.dispose();
     _dispatchNumberController.dispose();
     _authLimitController.dispose();
@@ -133,6 +149,10 @@ class _JobCreateScreenState extends ConsumerState<JobCreateScreen> {
             const SizedBox(height: 16),
             _buildJobTypeSelector(colors),
             const SizedBox(height: 16),
+            _buildPrioritySelector(colors),
+            const SizedBox(height: 16),
+            _buildTradeTypeSelector(colors),
+            const SizedBox(height: 16),
             if (_jobType == JobType.insuranceClaim) ...[
               _buildInsuranceFields(colors),
               const SizedBox(height: 16),
@@ -147,11 +167,25 @@ class _JobCreateScreenState extends ConsumerState<JobCreateScreen> {
             const SizedBox(height: 16),
             _buildTextField(colors, 'Address', _addressController, 'e.g. 123 Main St', LucideIcons.mapPin),
             const SizedBox(height: 16),
-            _buildAmountField(colors),
+            _buildTextField(colors, 'PO Number', _poNumberController, 'Purchase order #', LucideIcons.hash),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(child: _buildAmountField(colors)),
+                const SizedBox(width: 12),
+                Expanded(child: _buildEstimatedDurationField(colors)),
+              ],
+            ),
             const SizedBox(height: 16),
             _buildDatePicker(colors),
             const SizedBox(height: 16),
-            _buildTextField(colors, 'Notes', _notesController, 'Additional details...', LucideIcons.fileText, maxLines: 3),
+            _buildTextField(colors, 'Scope of Work', _scopeController, 'Detailed scope description...', LucideIcons.clipboardList, maxLines: 3),
+            const SizedBox(height: 16),
+            _buildTextField(colors, 'Notes (visible to customer)', _notesController, 'Additional details...', LucideIcons.fileText, maxLines: 3),
+            const SizedBox(height: 16),
+            _buildTextField(colors, 'Internal Notes (team only)', _internalNotesController, 'Private notes for your team...', LucideIcons.lock, maxLines: 2),
+            const SizedBox(height: 16),
+            _buildTextField(colors, 'Special Requirements', _specialRequirementsController, 'Permits, hazards, accessibility...', LucideIcons.alertTriangle, maxLines: 2),
             const SizedBox(height: 32),
             _buildSaveButton(colors),
           ],
@@ -358,6 +392,124 @@ class _JobCreateScreenState extends ConsumerState<JobCreateScreen> {
               visualDensity: VisualDensity.compact,
             );
           }).toList(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPrioritySelector(ZaftoColors colors) {
+    const priorities = [
+      (JobPriority.low, 'Low', LucideIcons.arrowDown),
+      (JobPriority.normal, 'Normal', LucideIcons.minus),
+      (JobPriority.high, 'High', LucideIcons.arrowUp),
+      (JobPriority.urgent, 'Urgent', LucideIcons.alertTriangle),
+    ];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Priority', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: colors.textSecondary)),
+        const SizedBox(height: 8),
+        Row(
+          children: priorities.map((p) {
+            final isSelected = _priority == p.$1;
+            final isUrgent = p.$1 == JobPriority.urgent;
+            return Expanded(
+              child: GestureDetector(
+                onTap: () {
+                  HapticFeedback.selectionClick();
+                  setState(() => _priority = p.$1);
+                },
+                child: Container(
+                  margin: EdgeInsets.only(right: p.$1 != JobPriority.urgent ? 6 : 0),
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? (isUrgent ? const Color(0xFFEF4444).withValues(alpha: 0.15) : colors.accentPrimary.withValues(alpha: 0.15))
+                        : colors.bgElevated,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: isSelected ? (isUrgent ? const Color(0xFFEF4444) : colors.accentPrimary) : colors.borderDefault),
+                  ),
+                  child: Column(
+                    children: [
+                      Icon(p.$3, size: 16, color: isSelected ? (isUrgent ? const Color(0xFFEF4444) : colors.accentPrimary) : colors.textTertiary),
+                      const SizedBox(height: 4),
+                      Text(p.$2, style: TextStyle(fontSize: 11, fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400, color: isSelected ? (isUrgent ? const Color(0xFFEF4444) : colors.accentPrimary) : colors.textSecondary)),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTradeTypeSelector(ZaftoColors colors) {
+    const trades = [
+      ('electrical', 'Electrical'), ('plumbing', 'Plumbing'), ('hvac', 'HVAC'),
+      ('roofing', 'Roofing'), ('painting', 'Painting'), ('general', 'General'),
+      ('carpentry', 'Carpentry'), ('drywall', 'Drywall'), ('flooring', 'Flooring'),
+    ];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Trade Type', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: colors.textSecondary)),
+        const SizedBox(height: 8),
+        Container(
+          decoration: BoxDecoration(
+            color: colors.bgElevated,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: colors.borderDefault),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Row(
+            children: [
+              Icon(LucideIcons.wrench, size: 20, color: colors.textTertiary),
+              const SizedBox(width: 12),
+              Expanded(
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: _tradeType,
+                    isExpanded: true,
+                    dropdownColor: colors.bgElevated,
+                    style: TextStyle(color: colors.textPrimary, fontSize: 14),
+                    items: trades.map((t) => DropdownMenuItem(value: t.$1, child: Text(t.$2))).toList(),
+                    onChanged: (v) { if (v != null) setState(() => _tradeType = v); },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEstimatedDurationField(ZaftoColors colors) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Est. Duration (hrs)', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: colors.textSecondary)),
+        const SizedBox(height: 8),
+        Container(
+          decoration: BoxDecoration(
+            color: colors.bgElevated,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: colors.borderDefault),
+          ),
+          child: TextField(
+            controller: _estimatedHoursController,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            style: TextStyle(color: colors.textPrimary),
+            decoration: InputDecoration(
+              hintText: '2.0',
+              hintStyle: TextStyle(color: colors.textQuaternary),
+              prefixIcon: Icon(LucideIcons.clock, size: 20, color: colors.textTertiary),
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            ),
+          ),
         ),
       ],
     );
@@ -587,14 +739,19 @@ class _JobCreateScreenState extends ConsumerState<JobCreateScreen> {
     
     if (_isEditMode) {
       // Update existing job
+      final estHours = double.tryParse(_estimatedHoursController.text);
       final updated = widget.editJob!.copyWith(
         title: _titleController.text.trim(),
         customerName: _customerController.text.trim().isNotEmpty ? _customerController.text.trim() : '',
         address: _addressController.text.trim().isNotEmpty ? _addressController.text.trim() : '',
         estimatedAmount: double.tryParse(_amountController.text) ?? 0,
+        estimatedDuration: estHours != null ? (estHours * 60).round() : null,
         description: _notesController.text.trim().isNotEmpty ? _notesController.text.trim() : null,
+        internalNotes: _internalNotesController.text.trim().isNotEmpty ? _internalNotesController.text.trim() : null,
         scheduledStart: _scheduledDate,
         jobType: _jobType,
+        priority: _priority,
+        tradeType: _tradeType,
         typeMetadata: _buildTypeMetadata(),
         source: _source,
         tags: _buildTags(),
@@ -610,16 +767,21 @@ class _JobCreateScreenState extends ConsumerState<JobCreateScreen> {
     } else {
       // Create new job
       final service = ref.read(jobServiceProvider);
+      final estHrs = double.tryParse(_estimatedHoursController.text);
       final job = Job(
         id: service.generateId(),
         title: _titleController.text.trim(),
         customerName: _customerController.text.trim().isNotEmpty ? _customerController.text.trim() : '',
         address: _addressController.text.trim().isNotEmpty ? _addressController.text.trim() : '',
         estimatedAmount: double.tryParse(_amountController.text) ?? 0,
+        estimatedDuration: estHrs != null ? (estHrs * 60).round() : null,
         description: _notesController.text.trim().isNotEmpty ? _notesController.text.trim() : null,
+        internalNotes: _internalNotesController.text.trim().isNotEmpty ? _internalNotesController.text.trim() : null,
         scheduledStart: _scheduledDate,
         status: _scheduledDate != null ? JobStatus.scheduled : JobStatus.draft,
         jobType: _jobType,
+        priority: _priority,
+        tradeType: _tradeType,
         typeMetadata: _buildTypeMetadata(),
         source: _source,
         tags: _buildTags(),
