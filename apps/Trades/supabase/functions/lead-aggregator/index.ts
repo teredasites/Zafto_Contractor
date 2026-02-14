@@ -199,6 +199,56 @@ async function tryAutoAssign(
         }
       }
 
+      // Speed-to-Lead Auto-Response
+      if (rule.auto_respond) {
+        const contactName = (lead.contact_name as string) || 'there'
+        const firstName = contactName.split(' ')[0]
+
+        // Fetch company name for the auto-response template
+        const { data: company } = await supabase
+          .from('companies')
+          .select('company_name')
+          .eq('id', companyId)
+          .single()
+        const companyName = company?.company_name || 'our team'
+
+        const autoMessage = `Hi ${firstName}, thanks for contacting ${companyName}! We received your request and will reach out within 15 minutes.`
+
+        // Record auto-response SMS (actual sending via SignalWire when configured)
+        if (lead.phone) {
+          await supabase.from('phone_messages').insert({
+            company_id: companyId,
+            customer_id: null,
+            lead_id: lead.id as string,
+            direction: 'outbound',
+            from_number: 'auto',
+            to_number: lead.phone as string,
+            body: autoMessage,
+            status: 'queued',
+          }).then(() => {}).catch(() => {})
+        }
+
+        // Record auto-response email (actual sending via SendGrid when configured)
+        if (lead.email) {
+          await supabase.from('emails').insert({
+            company_id: companyId,
+            customer_id: null,
+            lead_id: lead.id as string,
+            direction: 'outbound',
+            to_address: lead.email as string,
+            subject: `Thanks for reaching out to ${companyName}`,
+            body: autoMessage,
+            status: 'queued',
+          }).then(() => {}).catch(() => {})
+        }
+
+        // Mark instant response time
+        await supabase
+          .from('leads')
+          .update({ response_time_minutes: 0 })
+          .eq('id', lead.id as string)
+      }
+
       break // First matching rule wins
     }
   }
