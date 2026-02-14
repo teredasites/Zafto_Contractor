@@ -79,7 +79,7 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  if (user && pathname === '/') {
+  if (user && pathname === '/' && !request.nextUrl.searchParams.has('error')) {
     return NextResponse.redirect(new URL('/home', request.url));
   }
 
