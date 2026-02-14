@@ -66,10 +66,14 @@ export function useCustomers() {
         city: data.address?.city || null,
         state: data.address?.state || null,
         zip_code: data.address?.zip || null,
-        type: 'residential',
+        type: data.customerType || 'residential',
         tags: data.tags || [],
         notes: data.notes || null,
         referred_by: data.source || null,
+        alternate_phone: data.alternatePhone || null,
+        access_instructions: data.accessInstructions || null,
+        email_opt_in: data.emailOptIn ?? true,
+        sms_opt_in: data.smsOptIn ?? false,
       })
       .select('id')
       .single();

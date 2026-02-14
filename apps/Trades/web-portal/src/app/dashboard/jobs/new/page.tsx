@@ -15,6 +15,9 @@ import {
   X,
   Shield,
   FileCheck,
+  Clock,
+  FileText,
+  Wrench,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -38,7 +41,12 @@ export default function NewJobPage() {
     customerId: customerId || '',
     jobType: 'standard' as JobType,
     priority: 'normal',
+    tradeType: 'electrical',
     estimatedValue: '',
+    estimatedHours: '',
+    poNumber: '',
+    scopeOfWork: '',
+    internalNotes: '',
     scheduledDate: '',
     scheduledTime: '',
     useCustomerAddress: true,
@@ -126,10 +134,13 @@ export default function NewJobPage() {
         typeMetadata: buildTypeMetadata(),
         status: 'lead',
         priority: formData.priority as 'low' | 'normal' | 'high' | 'urgent',
+        tradeType: formData.tradeType || undefined,
         address: formData.useCustomerAddress && selectedCustomer
           ? selectedCustomer.address
           : formData.address,
         estimatedValue: formData.estimatedValue ? parseFloat(formData.estimatedValue) : 0,
+        estimatedDuration: formData.estimatedHours ? Math.round(parseFloat(formData.estimatedHours) * 60) : undefined,
+        internalNotes: formData.internalNotes || undefined,
         scheduledStart,
         assignedTo: assignedMembers,
         customer: selectedCustomer,
@@ -207,6 +218,26 @@ export default function NewJobPage() {
                     { value: 'urgent', label: 'Urgent' },
                   ]}
                 />
+                <Select
+                  label="Trade Type"
+                  value={formData.tradeType}
+                  onChange={(e) => setFormData({ ...formData, tradeType: e.target.value })}
+                  options={[
+                    { value: 'electrical', label: 'Electrical' },
+                    { value: 'plumbing', label: 'Plumbing' },
+                    { value: 'hvac', label: 'HVAC' },
+                    { value: 'solar', label: 'Solar' },
+                    { value: 'roofing', label: 'Roofing' },
+                    { value: 'painting', label: 'Painting' },
+                    { value: 'carpentry', label: 'Carpentry' },
+                    { value: 'flooring', label: 'Flooring' },
+                    { value: 'landscaping', label: 'Landscaping' },
+                    { value: 'general', label: 'General' },
+                    { value: 'other', label: 'Other' },
+                  ]}
+                />
+              </div>
+              <div className="grid grid-cols-3 gap-4">
                 <Input
                   label="Estimated Value"
                   type="number"
@@ -214,6 +245,20 @@ export default function NewJobPage() {
                   value={formData.estimatedValue}
                   onChange={(e) => setFormData({ ...formData, estimatedValue: e.target.value })}
                   icon={<DollarSign size={16} />}
+                />
+                <Input
+                  label="Estimated Hours"
+                  type="number"
+                  placeholder="0"
+                  value={formData.estimatedHours}
+                  onChange={(e) => setFormData({ ...formData, estimatedHours: e.target.value })}
+                  icon={<Clock size={16} />}
+                />
+                <Input
+                  label="PO Number"
+                  placeholder="PO-00000"
+                  value={formData.poNumber}
+                  onChange={(e) => setFormData({ ...formData, poNumber: e.target.value })}
                 />
               </div>
 
@@ -471,6 +516,41 @@ export default function NewJobPage() {
                   )}
                 </div>
               )}
+            </CardContent>
+          </Card>
+
+          {/* Scope & Notes */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base flex items-center gap-2">
+                <FileText size={18} className="text-muted" />
+                Scope & Notes
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-main mb-1.5">Scope of Work</label>
+                <textarea
+                  value={formData.scopeOfWork}
+                  onChange={(e) => setFormData({ ...formData, scopeOfWork: e.target.value })}
+                  placeholder="Detailed scope: materials needed, labor breakdown, specific tasks..."
+                  className="w-full px-4 py-3 bg-secondary border border-main rounded-lg resize-none text-main placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent/50"
+                  rows={4}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-main mb-1.5">
+                  Internal Notes
+                  <span className="text-xs text-muted ml-2">(team only — not visible to customer)</span>
+                </label>
+                <textarea
+                  value={formData.internalNotes}
+                  onChange={(e) => setFormData({ ...formData, internalNotes: e.target.value })}
+                  placeholder="Access codes, special tools needed, safety notes..."
+                  className="w-full px-4 py-3 bg-secondary border border-main rounded-lg resize-none text-main placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent/50"
+                  rows={3}
+                />
+              </div>
             </CardContent>
           </Card>
 

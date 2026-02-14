@@ -77,6 +77,9 @@ export function useJobs() {
         scheduled_start: data.scheduledStart ? new Date(data.scheduledStart).toISOString() : null,
         scheduled_end: data.scheduledEnd ? new Date(data.scheduledEnd).toISOString() : null,
         estimated_amount: data.estimatedValue || null,
+        estimated_duration: data.estimatedDuration || null,
+        trade_type: data.tradeType || null,
+        internal_notes: data.internalNotes || null,
         assigned_user_ids: data.assignedTo || [],
         tags: data.tags || [],
       })
