@@ -145,6 +145,8 @@ const navigationGroups: NavGroup[] = [
       { name: 'Inspection Engine', href: '/dashboard/inspection-engine', icon: Shield },
       { name: 'OSHA Standards', href: '/dashboard/osha-standards', icon: FileCheck2 },
       { name: 'Permits', href: '/dashboard/permits', icon: FileCheck2 },
+      { name: 'Jurisdictions', href: '/dashboard/permits/jurisdictions', icon: MapPin },
+      { name: 'Compliance', href: '/dashboard/compliance', icon: Shield },
       { name: 'Maintenance Pipeline', href: '/dashboard/maintenance-pipeline', icon: Wrench },
     ],
   },
