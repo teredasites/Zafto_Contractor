@@ -9253,47 +9253,49 @@ Include <content>{markdown}</content> for rendered display.
 
 ### Sprint U3: Permission Engine + Enterprise Customization (~16 hrs)
 *Deep role/permission system for regular contractors AND enterprise companies.*
+**Status: DONE (Session 110)**
 
-- [ ] Permission model: `company_permissions` table — FK to `companies`, JSON column `permissions` with feature-level toggles. Default permissions per tier (starter/professional/enterprise).
-- [ ] Permission categories: Business (create_bids, send_bids, create_invoices, send_invoices, create_jobs, assign_jobs, view_financials, manage_customers, manage_leads, view_reports). Operations (manage_team, manage_fleet, manage_hiring, manage_payroll, approve_change_orders, approve_expenses). Tools (use_sketch_editor, use_field_tools, use_estimates, use_walkthroughs, access_marketplace). Finance (view_zbooks, manage_banking, manage_reconciliation, approve_payments, view_tax_reports, manage_fiscal_periods). Admin (manage_roles, manage_branches, manage_api_keys, manage_settings, manage_certifications, invite_users, manage_subscriptions).
-- [ ] Role presets (regular contractors): Owner (all), Admin (all except manage_subscriptions), Office Manager (business + operations), Technician (view_jobs, use_field_tools, clock_in_out), Apprentice (view_jobs, use_field_tools, clock_in_out — no financials), CPA (finance only).
-- [ ] Enterprise features (gated by tier): Multi-branch management, custom roles, approval workflows (bids > $X need admin approval, change orders need owner approval, expenses need manager approval), API access, white-labeling, advanced audit log, SSO/SAML, custom form templates, advanced reporting (WIP, AIA billing, construction draws), data export (CSV/PDF).
-- [ ] UI: Settings → Roles & Permissions page. Table of roles with permission checkboxes. Enterprise features show lock icon for non-enterprise tiers with upgrade prompt.
-- [ ] Permission middleware: `usePermission('create_bids')` hook — returns boolean. Used in UI to show/hide buttons and nav items. Server-side: RLS policies check permissions via `requesting_user_permissions()` function.
-- [ ] Company tier flag: ALTER `companies` table ADD `tier TEXT CHECK (tier IN ('starter', 'professional', 'enterprise')) DEFAULT 'professional'`.
-- [ ] Good/Better/Best pricing: company setting `bid_pricing_tiers: boolean`. When off, bids show single price column. When on, shows Good/Better/Best columns with different scope/material selections per tier. Setting in company settings page.
-- [ ] Verify: owner can see everything. Technician cannot see financials. CPA sees only Ledger. Enterprise features gated. Good/Better/Best toggles correctly.
-- [ ] `npm run build` + `dart analyze` pass.
-- [ ] Commit: `[U3] Permission Engine — role-based permissions, enterprise tiers, Good/Better/Best setting`
+- [x] Permission model: `company_permissions` table — FK to `companies`, JSON column `permissions` with feature-level toggles. Default permissions per tier (starter/professional/enterprise).
+- [x] Permission categories: Business (create_bids, send_bids, create_invoices, send_invoices, create_jobs, assign_jobs, view_financials, manage_customers, manage_leads, view_reports). Operations (manage_team, manage_fleet, manage_hiring, manage_payroll, approve_change_orders, approve_expenses). Tools (use_sketch_editor, use_field_tools, use_estimates, use_walkthroughs, access_marketplace). Finance (view_zbooks, manage_banking, manage_reconciliation, approve_payments, view_tax_reports, manage_fiscal_periods). Admin (manage_roles, manage_branches, manage_api_keys, manage_settings, manage_certifications, invite_users, manage_subscriptions).
+- [x] Role presets (regular contractors): Owner (all), Admin (all except manage_subscriptions), Office Manager (business + operations), Technician (view_jobs, use_field_tools, clock_in_out), Apprentice (view_jobs, use_field_tools, clock_in_out — no financials), CPA (finance only).
+- [x] Enterprise features (gated by tier): Multi-branch management, custom roles, approval workflows (bids > $X need admin approval, change orders need owner approval, expenses need manager approval), API access, white-labeling, advanced audit log, SSO/SAML, custom form templates, advanced reporting (WIP, AIA billing, construction draws), data export (CSV/PDF).
+- [x] UI: Settings → Roles & Permissions page. Table of roles with permission checkboxes. Enterprise features show lock icon for non-enterprise tiers with upgrade prompt.
+- [x] Permission middleware: `usePermission('create_bids')` hook — returns boolean. Used in UI to show/hide buttons and nav items. Server-side: RLS policies check permissions via `requesting_user_permissions()` function.
+- [x] Company tier flag: ALTER `companies` table ADD `tier TEXT CHECK (tier IN ('starter', 'professional', 'enterprise')) DEFAULT 'professional'`.
+- [x] Good/Better/Best pricing: company setting `bid_pricing_tiers: boolean`. When off, bids show single price column. When on, shows Good/Better/Best columns with different scope/material selections per tier. Setting in company settings page.
+- [x] Verify: owner can see everything. Technician cannot see financials. CPA sees only Ledger. Enterprise features gated. Good/Better/Best toggles correctly.
+- [x] `npm run build` + `dart analyze` pass.
+- [x] Commit: `[U3] Permission Engine — role-based permissions, enterprise tiers, Good/Better/Best setting`
 
 ### Sprint U4: Ledger Completion (~16 hrs)
 *Ensure Ledger covers EVERYTHING a contractor needs. Enterprise features separated cleanly.*
+Status: DONE (Session 110)
 
 **Regular contractor accounting (ALL tiers):**
-- [ ] Chart of Accounts: standard COA pre-loaded (assets, liabilities, equity, revenue, expenses). Add/edit/delete accounts. Account type enforcement.
-- [ ] Invoicing integration: invoice send → auto-post journal entry (DR Accounts Receivable, CR Revenue). Payment received → DR Cash, CR AR.
-- [ ] Bill pay: enter vendor bills, schedule payments, track AP aging. Vendor 1099 classification.
-- [ ] Bank reconciliation: import bank transactions (Plaid), match to GL entries, identify unmatched items. Reconciliation report.
-- [ ] Expense tracking: receipt capture → expense categorization. Job-level expense allocation. Expense reports.
-- [ ] Financial statements: P&L (by date range), Balance Sheet (as of date), Cash Flow Statement. PDF export.
-- [ ] Tax preparation: 1099-NEC generation for vendors > $600. Tax report by category. CSV export for CPA.
-- [ ] Fiscal periods: monthly close, year-end close. Period locking (no edits to closed periods).
+- [x] Chart of Accounts: standard COA pre-loaded (assets, liabilities, equity, revenue, expenses). Add/edit/delete accounts. Account type enforcement.
+- [x] Invoicing integration: invoice send → auto-post journal entry (DR Accounts Receivable, CR Revenue). Payment received → DR Cash, CR AR.
+- [x] Bill pay: enter vendor bills, schedule payments, track AP aging. Vendor 1099 classification.
+- [x] Bank reconciliation: import bank transactions (Plaid), match to GL entries, identify unmatched items. Reconciliation report.
+- [x] Expense tracking: receipt capture → expense categorization. Job-level expense allocation. Expense reports.
+- [x] Financial statements: P&L (by date range), Balance Sheet (as of date), Cash Flow Statement. PDF export.
+- [x] Tax preparation: 1099-NEC generation for vendors > $600. Tax report by category. CSV export for CPA.
+- [x] Fiscal periods: monthly close, year-end close. Period locking (no edits to closed periods).
 
 **Enterprise accounting (enterprise tier only):**
-- [ ] Job costing: revenue/cost/profit per job. WIP (Work in Progress) reporting. Over/under billing analysis.
-- [ ] Construction draws: AIA G702/G703 billing format. Progress billing schedules. Retainage tracking.
-- [ ] Multi-branch P&L: consolidated + per-branch financial statements.
-- [ ] Approval workflows: expenses > $X need manager approval. Vendor payments > $Y need owner approval.
-- [ ] Budget vs Actual: job-level budgeting. Variance reporting. Alerts when budget threshold exceeded.
-- [ ] Audit trail: immutable log of every GL entry change. Required for SOC 2.
-- [ ] CPA portal view: read-only Ledger access scoped to company. Export to QuickBooks (IIF format). CSV export.
+- [x] Job costing: revenue/cost/profit per job. WIP (Work in Progress) reporting. Over/under billing analysis.
+- [x] Construction draws: AIA G702/G703 billing format. Progress billing schedules. Retainage tracking.
+- [x] Multi-branch P&L: consolidated + per-branch financial statements.
+- [x] Approval workflows: expenses > $X need manager approval. Vendor payments > $Y need owner approval.
+- [x] Budget vs Actual: job-level budgeting. Variance reporting. Alerts when budget threshold exceeded.
+- [x] Audit trail: immutable log of every GL entry change. Required for SOC 2.
+- [x] CPA portal view: read-only Ledger access scoped to company. Export to QuickBooks (IIF format). CSV export.
 
 **Separation pattern:**
-- [ ] Enterprise features gated by `company.tier === 'enterprise'`. Non-enterprise sees clean "Upgrade to Enterprise" prompt on locked features.
-- [ ] No enterprise UI clutter in starter/professional views. Enterprise tabs/sections hidden entirely.
-- [ ] Verify: regular contractor sees clean, simple accounting. Enterprise sees full construction accounting suite. CPA sees read-only financials.
-- [ ] `npm run build` passes.
-- [ ] Commit: `[U4] Ledger Completion — full contractor accounting, enterprise construction features, CPA view`
+- [x] Enterprise features gated by `company.tier === 'enterprise'`. Non-enterprise sees clean "Upgrade to Enterprise" prompt on locked features.
+- [x] No enterprise UI clutter in starter/professional views. Enterprise tabs/sections hidden entirely.
+- [x] Verify: regular contractor sees clean, simple accounting. Enterprise sees full construction accounting suite. CPA sees read-only financials.
+- [x] `npm run build` passes.
+- [x] Commit: `[U4] Ledger Completion — full contractor accounting, enterprise construction features, CPA view`
 
 ### Sprint U5: Dashboard Restoration + Reports (~12 hrs)
 *Restore missing dashboard widgets. Replace mock data with live queries.*
