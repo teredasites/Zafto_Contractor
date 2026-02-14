@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { MessageSquare, FileText, Wrench, Share2, Star, Settings, ChevronRight, Shield, HelpCircle, Phone, CreditCard, ClipboardList, Home, ClipboardCheck, Video, CalendarPlus, DollarSign, Users } from 'lucide-react';
+import { MessageSquare, FileText, Wrench, Share2, Star, Settings, ChevronRight, Shield, HelpCircle, Phone, CreditCard, ClipboardList, Home, ClipboardCheck, Video, CalendarPlus, DollarSign, Users, Handshake } from 'lucide-react';
 import { useTenant } from '@/lib/hooks/use-tenant';
 
 interface MenuItem {
@@ -18,6 +18,7 @@ const baseMenuItems: MenuItem[] = [
   { label: 'Meetings', desc: 'Video calls & consultations', href: '/meetings', icon: Video, color: 'text-violet-600', bg: 'bg-purple-50' },
   { label: 'Book a Meeting', desc: 'Schedule a consultation', href: '/book', icon: CalendarPlus, color: 'text-indigo-600', bg: 'bg-indigo-50' },
   { label: 'Documents', desc: '10 files', href: '/documents', icon: FileText, color: 'text-purple-600', bg: 'bg-purple-50' },
+  { label: 'My Agreements', desc: 'Service plans & maintenance', href: '/agreements', icon: Handshake, color: 'text-teal-600', bg: 'bg-teal-50' },
   { label: 'Request Service', desc: 'Standard or emergency', href: '/request', icon: Wrench, color: 'text-orange-600', bg: 'bg-orange-50' },
   { label: 'Get Quotes', desc: 'Compare bids from local pros', href: '/get-quotes', icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50' },
   { label: 'Find a Pro', desc: 'Browse verified contractors', href: '/find-a-pro', icon: Users, color: 'text-cyan-600', bg: 'bg-cyan-50' },

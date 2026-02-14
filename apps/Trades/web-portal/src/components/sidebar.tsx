@@ -58,6 +58,7 @@ import {
   MapPin,
   UserCog,
   Mail,
+  Star,
   Truck,
   GraduationCap,
   FileBarChart,
@@ -106,6 +107,7 @@ const navigationGroups: NavGroup[] = [
       { name: 'Customers', href: '/dashboard/customers', icon: Users },
       { name: 'Service Agreements', href: '/dashboard/service-agreements', icon: Handshake },
       { name: 'Warranties', href: '/dashboard/warranties', icon: Shield },
+      { name: 'Reviews', href: '/dashboard/reviews', icon: Star },
     ],
   },
   {
