@@ -173,7 +173,7 @@ export interface BidAddOn {
 }
 
 // ==================== JOB TYPES ====================
-export type JobType = 'standard' | 'insurance_claim' | 'warranty_dispatch';
+export type JobType = 'standard' | 'insurance_claim' | 'warranty_dispatch' | 'service_call' | 'installation' | 'repair' | 'maintenance' | 'inspection' | 'emergency' | 'project' | 'consultation' | 'warranty_callback';
 
 export interface InsuranceMetadata {
   claimNumber: string;

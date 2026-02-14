@@ -165,12 +165,30 @@ export const JOB_TYPE_LABELS: Record<JobType, string> = {
   standard: 'Standard',
   insurance_claim: 'Insurance Claim',
   warranty_dispatch: 'Warranty Dispatch',
+  service_call: 'Service Call',
+  installation: 'Installation',
+  repair: 'Repair',
+  maintenance: 'Maintenance',
+  inspection: 'Inspection',
+  emergency: 'Emergency',
+  project: 'Project',
+  consultation: 'Consultation',
+  warranty_callback: 'Warranty Callback',
 };
 
 export const JOB_TYPE_COLORS: Record<JobType, { bg: string; text: string; dot: string }> = {
   standard: { bg: 'bg-blue-100 dark:bg-blue-900/30', text: 'text-blue-700 dark:text-blue-300', dot: 'bg-blue-500' },
   insurance_claim: { bg: 'bg-amber-100 dark:bg-amber-900/30', text: 'text-amber-700 dark:text-amber-300', dot: 'bg-amber-500' },
   warranty_dispatch: { bg: 'bg-purple-100 dark:bg-purple-900/30', text: 'text-purple-700 dark:text-purple-300', dot: 'bg-purple-500' },
+  service_call: { bg: 'bg-teal-100 dark:bg-teal-900/30', text: 'text-teal-700 dark:text-teal-300', dot: 'bg-teal-500' },
+  installation: { bg: 'bg-green-100 dark:bg-green-900/30', text: 'text-green-700 dark:text-green-300', dot: 'bg-green-500' },
+  repair: { bg: 'bg-orange-100 dark:bg-orange-900/30', text: 'text-orange-700 dark:text-orange-300', dot: 'bg-orange-500' },
+  maintenance: { bg: 'bg-cyan-100 dark:bg-cyan-900/30', text: 'text-cyan-700 dark:text-cyan-300', dot: 'bg-cyan-500' },
+  inspection: { bg: 'bg-indigo-100 dark:bg-indigo-900/30', text: 'text-indigo-700 dark:text-indigo-300', dot: 'bg-indigo-500' },
+  emergency: { bg: 'bg-red-100 dark:bg-red-900/30', text: 'text-red-700 dark:text-red-300', dot: 'bg-red-500' },
+  project: { bg: 'bg-violet-100 dark:bg-violet-900/30', text: 'text-violet-700 dark:text-violet-300', dot: 'bg-violet-500' },
+  consultation: { bg: 'bg-slate-100 dark:bg-slate-900/30', text: 'text-slate-700 dark:text-slate-300', dot: 'bg-slate-500' },
+  warranty_callback: { bg: 'bg-fuchsia-100 dark:bg-fuchsia-900/30', text: 'text-fuchsia-700 dark:text-fuchsia-300', dot: 'bg-fuchsia-500' },
 };
 
 // ==================== ENTITY MAPPERS ====================
