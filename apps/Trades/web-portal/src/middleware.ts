@@ -53,33 +53,44 @@ export async function middleware(request: NextRequest) {
     }
 
     // Verify role + read locale preference from users table (single query)
-    const { data: profile } = await supabase
+    const { data: profile, error: profileError } = await supabase
       .from('users')
       .select('role, preferred_locale')
       .eq('id', user.id)
       .single();
 
-    if (!profile || !CRM_ALLOWED_ROLES.includes(profile.role)) {
+    // If the users table query fails (RLS, network, no row), check JWT metadata as fallback
+    if (profileError || !profile) {
+      const jwtRole = user.app_metadata?.role as string | undefined;
+      if (!jwtRole || !CRM_ALLOWED_ROLES.includes(jwtRole)) {
+        const url = request.nextUrl.clone();
+        url.pathname = '/';
+        url.searchParams.set('error', 'unauthorized');
+        return NextResponse.redirect(url);
+      }
+      // JWT role is valid — allow through without locale check
+    } else if (!CRM_ALLOWED_ROLES.includes(profile.role)) {
       const url = request.nextUrl.clone();
       url.pathname = '/';
       url.searchParams.set('error', 'unauthorized');
       return NextResponse.redirect(url);
-    }
-
-    // Set locale cookie from user preference (if different from current)
-    const userLocale = profile.preferred_locale || 'en';
-    const currentLocale = request.cookies.get('NEXT_LOCALE')?.value;
-    if (userLocale !== currentLocale) {
-      supabaseResponse.cookies.set('NEXT_LOCALE', userLocale, {
-        path: '/',
-        maxAge: 60 * 60 * 24 * 365,
-        sameSite: 'lax',
-      });
+    } else {
+      // Role is valid — set locale cookie from user preference
+      const userLocale = profile.preferred_locale || 'en';
+      const currentLocale = request.cookies.get('NEXT_LOCALE')?.value;
+      if (userLocale !== currentLocale) {
+        supabaseResponse.cookies.set('NEXT_LOCALE', userLocale, {
+          path: '/',
+          maxAge: 60 * 60 * 24 * 365,
+          sameSite: 'lax',
+        });
+      }
     }
   }
 
   // If on login page and already authenticated, redirect to dashboard.
-  if (request.nextUrl.pathname === '/' && user) {
+  // But NOT if they were just kicked back for an auth error (prevents redirect loop).
+  if (request.nextUrl.pathname === '/' && user && !request.nextUrl.searchParams.has('error')) {
     const url = request.nextUrl.clone();
     url.pathname = '/dashboard';
     return NextResponse.redirect(url);
