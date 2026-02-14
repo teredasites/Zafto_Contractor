@@ -11,6 +11,10 @@ import {
   Calendar,
   Mail,
   Clock,
+  Save,
+  Ban,
+  CheckCircle2,
+  KeyRound,
 } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { StatusBadge, Badge } from '@/components/ui/badge';
@@ -27,6 +31,7 @@ interface UserDetail {
   created_at: string;
   phone?: string;
   last_login_at?: string;
+  is_disabled?: boolean;
 }
 
 interface CompanyInfo {
@@ -53,6 +58,11 @@ export default function UserDetailPage() {
   const [loading, setLoading] = useState(true);
   const [activityLoading, setActivityLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [editRole, setEditRole] = useState('');
+  const [savingRole, setSavingRole] = useState(false);
+  const [togglingDisable, setTogglingDisable] = useState(false);
+  const [resettingPw, setResettingPw] = useState(false);
+  const [pwResetSent, setPwResetSent] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -75,6 +85,7 @@ export default function UserDetailPage() {
       }
       const userRow = userData as UserDetail;
       setUser(userRow);
+      setEditRole(userRow.role || 'technician');
 
       // Fetch company if user has one
       if (userRow.company_id) {
@@ -107,6 +118,49 @@ export default function UserDetailPage() {
 
     fetchData();
   }, [id]);
+
+  const handleSaveRole = async () => {
+    if (!user || savingRole) return;
+    setSavingRole(true);
+    const supabase = getSupabase();
+    const { error: err } = await supabase
+      .from('users')
+      .update({ role: editRole })
+      .eq('id', user.id);
+    if (!err) {
+      setUser((prev) => prev ? { ...prev, role: editRole } : prev);
+    }
+    setSavingRole(false);
+  };
+
+  const handleToggleDisable = async () => {
+    if (!user || togglingDisable) return;
+    setTogglingDisable(true);
+    const supabase = getSupabase();
+    const newDisabled = !user.is_disabled;
+    const { error: err } = await supabase
+      .from('users')
+      .update({ is_disabled: newDisabled })
+      .eq('id', user.id);
+    if (!err) {
+      setUser((prev) => prev ? { ...prev, is_disabled: newDisabled } : prev);
+    }
+    setTogglingDisable(false);
+  };
+
+  const handlePasswordReset = async () => {
+    if (!user || resettingPw) return;
+    setResettingPw(true);
+    const supabase = getSupabase();
+    const { error: err } = await supabase.auth.resetPasswordForEmail(user.email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    if (!err) {
+      setPwResetSent(true);
+      setTimeout(() => setPwResetSent(false), 5000);
+    }
+    setResettingPw(false);
+  };
 
   if (loading) {
     return (
@@ -200,7 +254,27 @@ export default function UserDetailPage() {
                 <p className="text-xs text-[var(--text-secondary)] mb-0.5">
                   Role
                 </p>
-                <StatusBadge status={user.role || 'unknown'} />
+                <div className="flex items-center gap-2 mt-0.5">
+                  <select
+                    value={editRole}
+                    onChange={(e) => setEditRole(e.target.value)}
+                    className="appearance-none rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-1.5 text-sm text-[var(--text-primary)] focus:border-[var(--accent)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 transition-colors"
+                  >
+                    <option value="owner">Owner</option>
+                    <option value="admin">Admin</option>
+                    <option value="office_manager">Office Manager</option>
+                    <option value="technician">Technician</option>
+                    <option value="apprentice">Apprentice</option>
+                    <option value="cpa">CPA</option>
+                    <option value="super_admin">Super Admin</option>
+                  </select>
+                  {editRole !== user.role && (
+                    <Button className="px-3 py-1.5 text-xs" onClick={handleSaveRole} loading={savingRole}>
+                      <Save className="h-3.5 w-3.5" />
+                      Save
+                    </Button>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -260,6 +334,42 @@ export default function UserDetailPage() {
               </div>
             )}
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Admin Actions */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Admin Actions</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-wrap gap-3">
+            <Button
+              variant={user.is_disabled ? 'primary' : 'danger'}
+              onClick={handleToggleDisable}
+              loading={togglingDisable}
+            >
+              {user.is_disabled ? (
+                <><CheckCircle2 className="h-4 w-4" /> Enable Account</>
+              ) : (
+                <><Ban className="h-4 w-4" /> Disable Account</>
+              )}
+            </Button>
+            <Button variant="ghost" onClick={handlePasswordReset} loading={resettingPw}>
+              <KeyRound className="h-4 w-4" />
+              Send Password Reset
+            </Button>
+          </div>
+          {pwResetSent && (
+            <p className="text-xs text-emerald-500 mt-2">
+              Password reset email sent to {user.email}
+            </p>
+          )}
+          {user.is_disabled && (
+            <p className="text-xs text-red-500 mt-2">
+              This account is disabled. The user cannot log in.
+            </p>
+          )}
         </CardContent>
       </Card>
 

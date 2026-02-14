@@ -14,6 +14,27 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
+
+  const handleForgotPassword = async () => {
+    if (!email) { setError('Enter your email first'); return; }
+    setResetLoading(true);
+    setError('');
+    try {
+      const { getSupabase } = await import('@/lib/supabase');
+      const supabase = getSupabase();
+      const { error: err } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/dashboard`,
+      });
+      if (err) throw err;
+      setResetSent(true);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to send reset email');
+    } finally {
+      setResetLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,7 +109,13 @@ export default function LoginPage() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-[13px] font-medium text-main">Password</label>
+              <div className="flex items-center justify-between">
+                <label className="block text-[13px] font-medium text-main">Password</label>
+                <button type="button" onClick={handleForgotPassword} disabled={resetLoading}
+                  className="text-[11px] font-medium text-accent hover:underline disabled:opacity-50">
+                  {resetLoading ? 'Sending...' : 'Forgot password?'}
+                </button>
+              </div>
               <div className="relative">
                 <input type={showPassword ? 'text' : 'password'} value={password}
                   onChange={e => setPassword(e.target.value)}
@@ -119,6 +146,12 @@ export default function LoginPage() {
           </form>
         </div>
 
+        {resetSent && (
+          <div className="mt-4 px-4 py-3 rounded-lg text-center text-[13px]"
+            style={{ background: 'rgba(16,185,129,0.08)', color: 'var(--accent)' }}>
+            Password reset link sent to <strong>{email}</strong>
+          </div>
+        )}
         <p className="text-center text-[12px] text-muted mt-6">
           Contact your administrator if you need access
         </p>

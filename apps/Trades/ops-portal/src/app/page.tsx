@@ -17,6 +17,8 @@ function LoginForm() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [checking, setChecking] = useState(true);
+  const [resetSent, setResetSent] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
 
   useEffect(() => {
     const checkSession = async () => {
@@ -43,6 +45,23 @@ function LoginForm() {
       setError('Access denied. This portal requires super_admin privileges.');
     }
   }, [searchParams]);
+
+  const handleForgotPassword = async () => {
+    if (!email) { setError('Enter your email first'); return; }
+    setResetLoading(true);
+    setError('');
+    try {
+      const { error: err } = await getSupabase().auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/dashboard`,
+      });
+      if (err) throw err;
+      setResetSent(true);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to send reset email');
+    } finally {
+      setResetLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -130,7 +149,14 @@ function LoginForm() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-[13px] font-medium" style={{ color: 'var(--text)' }}>Password</label>
+              <div className="flex items-center justify-between">
+                <label className="block text-[13px] font-medium" style={{ color: 'var(--text)' }}>Password</label>
+                <button type="button" onClick={handleForgotPassword} disabled={resetLoading}
+                  className="text-[11px] font-medium hover:underline disabled:opacity-50"
+                  style={{ color: 'var(--accent)' }}>
+                  {resetLoading ? 'Sending...' : 'Forgot password?'}
+                </button>
+              </div>
               <div className="relative">
                 <input type={showPassword ? 'text' : 'password'} value={password}
                   onChange={e => setPassword(e.target.value)}
@@ -162,6 +188,12 @@ function LoginForm() {
           </form>
         </div>
 
+        {resetSent && (
+          <div className="mt-4 px-4 py-3 rounded-lg text-center text-[13px]"
+            style={{ background: 'rgba(91,123,247,0.08)', color: 'var(--accent)' }}>
+            Password reset link sent to <strong>{email}</strong>
+          </div>
+        )}
         <p className="text-center text-[12px] mt-6" style={{ color: 'var(--text-secondary)', opacity: 0.5 }}>
           Restricted access &middot; Unauthorized use is prohibited
         </p>
