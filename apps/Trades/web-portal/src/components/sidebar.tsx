@@ -69,6 +69,7 @@ import {
   Radio,
   ShieldAlert,
   Scale,
+  Package,
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { ZMark } from '@/components/z-console/z-mark';
@@ -148,6 +149,8 @@ const navigationGroups: NavGroup[] = [
       { name: 'Permits', href: '/dashboard/permits', icon: FileCheck2 },
       { name: 'Jurisdictions', href: '/dashboard/permits/jurisdictions', icon: MapPin },
       { name: 'Compliance', href: '/dashboard/compliance', icon: Shield },
+      { name: 'CE Tracking', href: '/dashboard/compliance/ce-tracking', icon: GraduationCap },
+      { name: 'Compliance Packets', href: '/dashboard/compliance/packets', icon: Package },
       { name: 'Lien Protection', href: '/dashboard/lien-protection', icon: Scale },
       { name: 'Maintenance Pipeline', href: '/dashboard/maintenance-pipeline', icon: Wrench },
     ],
