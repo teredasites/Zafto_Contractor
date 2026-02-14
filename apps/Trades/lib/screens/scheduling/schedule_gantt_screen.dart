@@ -16,6 +16,7 @@ import '../../models/schedule_task.dart';
 import '../../models/schedule_dependency.dart';
 import '../../providers/schedule_tasks_provider.dart';
 import 'schedule_task_detail_screen.dart';
+import 'schedule_baseline_screen.dart';
 import 'schedule_resource_screen.dart';
 
 // ── Zoom levels ──
@@ -126,6 +127,13 @@ class _ScheduleGanttScreenState extends ConsumerState<ScheduleGanttScreen> {
                   Navigator.push(context, MaterialPageRoute(
                     builder: (_) => ScheduleResourceScreen(projectId: widget.projectId),
                   ));
+                case 'baselines':
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (_) => ScheduleBaselineScreen(
+                      projectId: widget.projectId,
+                      projectName: widget.projectName,
+                    ),
+                  ));
                 case 'dependencies':
                   setState(() => _showDependencies = !_showDependencies);
                 case 'add_task':
@@ -147,6 +155,13 @@ class _ScheduleGanttScreenState extends ConsumerState<ScheduleGanttScreen> {
                   Icon(LucideIcons.users, size: 16, color: colors.textSecondary),
                   const SizedBox(width: 8),
                   Text('Resources', style: TextStyle(color: colors.textPrimary)),
+                ],
+              )),
+              PopupMenuItem(value: 'baselines', child: Row(
+                children: [
+                  Icon(LucideIcons.bookmark, size: 16, color: colors.textSecondary),
+                  const SizedBox(width: 8),
+                  Text('Baselines', style: TextStyle(color: colors.textPrimary)),
                 ],
               )),
               PopupMenuItem(value: 'dependencies', child: Row(
