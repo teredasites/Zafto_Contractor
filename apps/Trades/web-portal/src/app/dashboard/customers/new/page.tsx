@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/button';
 import { Input, Select } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { isValidEmail, isValidPhone, formatPhone } from '@/lib/validation';
 import { useCustomers } from '@/lib/hooks/use-customers';
 
 export default function NewCustomerPage() {
@@ -42,6 +43,7 @@ export default function NewCustomerPage() {
 
   const [tags, setTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState('');
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const sourceOptions = [
     { value: '', label: 'Select source...' },
@@ -70,13 +72,27 @@ export default function NewCustomerPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const newErrors: Record<string, string> = {};
+
+    if (!formData.firstName.trim()) newErrors.firstName = 'First name is required';
+    if (!formData.lastName.trim()) newErrors.lastName = 'Last name is required';
+    if (!formData.phone.trim()) newErrors.phone = 'Phone is required';
+    if (formData.phone && !isValidPhone(formData.phone)) newErrors.phone = 'Invalid phone number';
+    if (formData.email && !isValidEmail(formData.email)) newErrors.email = 'Invalid email address';
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+    setErrors({});
+
     try {
       setSaving(true);
       await createCustomer({
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email || undefined,
-        phone: formData.phone,
+        firstName: formData.firstName.trim(),
+        lastName: formData.lastName.trim(),
+        email: formData.email?.trim() || undefined,
+        phone: formatPhone(formData.phone),
         address: formData.address,
         tags,
         notes: formData.notes || undefined,
@@ -84,7 +100,7 @@ export default function NewCustomerPage() {
       });
       router.push('/dashboard/customers');
     } catch (err) {
-      console.error('Failed to create customer:', err);
+      setErrors({ submit: err instanceof Error ? err.message : 'Failed to create customer' });
     } finally {
       setSaving(false);
     }
@@ -118,40 +134,57 @@ export default function NewCustomerPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              {errors.submit && (
+                <div className="px-3.5 py-3 rounded-lg text-sm bg-red-500/10 text-red-500">
+                  {errors.submit}
+                </div>
+              )}
               <div className="grid grid-cols-2 gap-4">
-                <Input
-                  label="First Name"
-                  placeholder="John"
-                  value={formData.firstName}
-                  onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                  required
-                />
-                <Input
-                  label="Last Name"
-                  placeholder="Smith"
-                  value={formData.lastName}
-                  onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                  required
-                />
+                <div>
+                  <Input
+                    label="First Name"
+                    placeholder="John"
+                    value={formData.firstName}
+                    onChange={(e) => { setFormData({ ...formData, firstName: e.target.value }); setErrors((prev) => { const { firstName, ...rest } = prev; return rest; }); }}
+                    required
+                  />
+                  {errors.firstName && <p className="text-xs text-red-500 mt-1">{errors.firstName}</p>}
+                </div>
+                <div>
+                  <Input
+                    label="Last Name"
+                    placeholder="Smith"
+                    value={formData.lastName}
+                    onChange={(e) => { setFormData({ ...formData, lastName: e.target.value }); setErrors((prev) => { const { lastName, ...rest } = prev; return rest; }); }}
+                    required
+                  />
+                  {errors.lastName && <p className="text-xs text-red-500 mt-1">{errors.lastName}</p>}
+                </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <Input
-                  label="Email"
-                  type="email"
-                  placeholder="john@email.com"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  icon={<Mail size={16} />}
-                />
-                <Input
-                  label="Phone"
-                  type="tel"
-                  placeholder="(860) 555-0123"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  icon={<Phone size={16} />}
-                  required
-                />
+                <div>
+                  <Input
+                    label="Email"
+                    type="email"
+                    placeholder="john@email.com"
+                    value={formData.email}
+                    onChange={(e) => { setFormData({ ...formData, email: e.target.value }); setErrors((prev) => { const { email, ...rest } = prev; return rest; }); }}
+                    icon={<Mail size={16} />}
+                  />
+                  {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
+                </div>
+                <div>
+                  <Input
+                    label="Phone"
+                    type="tel"
+                    placeholder="(860) 555-0123"
+                    value={formData.phone}
+                    onChange={(e) => { setFormData({ ...formData, phone: e.target.value }); setErrors((prev) => { const { phone, ...rest } = prev; return rest; }); }}
+                    icon={<Phone size={16} />}
+                    required
+                  />
+                  {errors.phone && <p className="text-xs text-red-500 mt-1">{errors.phone}</p>}
+                </div>
               </div>
             </CardContent>
           </Card>

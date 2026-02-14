@@ -19,6 +19,7 @@ import { Button } from '@/components/ui/button';
 import { Input, Select } from '@/components/ui/input';
 import { Avatar } from '@/components/ui/avatar';
 import { formatCurrency, cn } from '@/lib/utils';
+import { clampTaxRate } from '@/lib/validation';
 import { useCustomers } from '@/lib/hooks/use-customers';
 import { useJobs } from '@/lib/hooks/use-jobs';
 import { useInvoices } from '@/lib/hooks/use-invoices';
@@ -44,8 +45,10 @@ export default function NewInvoicePage() {
     jobId: jobId || '',
     dueDate: '',
     taxRate: 6.35,
+    paymentTerms: 'net_30' as string,
     notes: '',
   });
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const [lineItems, setLineItems] = useState<LineItem[]>([
     { id: '1', description: '', quantity: 1, unitPrice: 0, paymentSource: 'standard' },
@@ -108,13 +111,26 @@ export default function NewInvoicePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const newErrors: Record<string, string> = {};
+
+    if (!formData.customerId) newErrors.customer = 'Customer is required';
+    if (!formData.dueDate) newErrors.dueDate = 'Due date is required';
+    const emptyItems = lineItems.filter((li) => !li.description.trim());
+    if (emptyItems.length > 0) newErrors.lineItems = 'All line items need a description';
+    if (lineItems.every((li) => li.unitPrice <= 0)) newErrors.amount = 'At least one item must have a price';
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+    setErrors({});
     setSaving(true);
     try {
-      const selectedCustomer = customers.find((c) => c.id === formData.customerId);
+      const cust = customers.find((c) => c.id === formData.customerId);
       await createInvoice({
         customerId: formData.customerId || undefined,
         jobId: formData.jobId || undefined,
-        customer: selectedCustomer || undefined,
+        customer: cust || undefined,
         lineItems: lineItems.map((li) => ({
           id: li.id,
           description: li.description,
@@ -165,6 +181,7 @@ export default function NewInvoicePage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
+              {errors.customer && <p className="text-xs text-red-500 mb-2">{errors.customer}</p>}
               {selectedCustomer ? (
                 <div className="flex items-center justify-between p-4 bg-secondary rounded-lg">
                   <div className="flex items-center gap-3">
@@ -359,6 +376,12 @@ export default function NewInvoicePage() {
                 </tbody>
               </table>
 
+              {(errors.lineItems || errors.amount) && (
+                <div className="px-6 py-2">
+                  {errors.lineItems && <p className="text-xs text-red-500">{errors.lineItems}</p>}
+                  {errors.amount && <p className="text-xs text-red-500">{errors.amount}</p>}
+                </div>
+              )}
               {/* Totals */}
               <div className="px-6 py-4 border-t border-main">
                 <div className="flex justify-end">
@@ -375,7 +398,7 @@ export default function NewInvoicePage() {
                           step="0.01"
                           min="0"
                           value={formData.taxRate}
-                          onChange={(e) => setFormData({ ...formData, taxRate: parseFloat(e.target.value) || 0 })}
+                          onChange={(e) => setFormData({ ...formData, taxRate: clampTaxRate(parseFloat(e.target.value) || 0) })}
                           className="w-16 px-2 py-1 bg-secondary border border-main rounded text-main text-right text-sm focus:outline-none focus:ring-2 focus:ring-accent/50"
                         />
                         <span className="text-muted">%</span>
@@ -420,6 +443,29 @@ export default function NewInvoicePage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              <div>
+                <label className="block text-[13px] font-medium text-main mb-1.5">Payment Terms</label>
+                <select
+                  value={formData.paymentTerms}
+                  onChange={(e) => {
+                    const terms = e.target.value;
+                    setFormData((prev) => {
+                      const daysMap: Record<string, number> = { due_on_receipt: 0, net_15: 15, net_30: 30, net_45: 45, net_60: 60 };
+                      const days = daysMap[terms] ?? 30;
+                      const due = new Date();
+                      due.setDate(due.getDate() + days);
+                      return { ...prev, paymentTerms: terms, dueDate: due.toISOString().split('T')[0] };
+                    });
+                  }}
+                  className="w-full px-3 py-2.5 bg-secondary border border-main rounded-lg text-main text-sm focus:outline-none focus:ring-2 focus:ring-accent/50"
+                >
+                  <option value="due_on_receipt">Due on Receipt</option>
+                  <option value="net_15">Net 15</option>
+                  <option value="net_30">Net 30</option>
+                  <option value="net_45">Net 45</option>
+                  <option value="net_60">Net 60</option>
+                </select>
+              </div>
               <Input
                 label="Due Date"
                 type="date"
@@ -427,6 +473,7 @@ export default function NewInvoicePage() {
                 onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
                 required
               />
+              {errors.dueDate && <p className="text-xs text-red-500">{errors.dueDate}</p>}
               <p className="text-xs text-muted">
                 Invoice number will be auto-generated
               </p>
@@ -460,8 +507,8 @@ export default function NewInvoicePage() {
 
           {/* Actions */}
           <div className="space-y-3">
-            <Button type="submit" className="w-full">
-              Create Invoice
+            <Button type="submit" className="w-full" disabled={saving}>
+              {saving ? 'Creating...' : 'Create Invoice'}
             </Button>
             <Button type="button" variant="secondary" className="w-full">
               Save as Draft
