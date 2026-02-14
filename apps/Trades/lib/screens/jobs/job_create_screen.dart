@@ -237,7 +237,8 @@ class _JobCreateScreenState extends ConsumerState<JobCreateScreen> {
           ),
           child: TextField(
             controller: _amountController,
-            keyboardType: TextInputType.number,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[\d.]'))],
             style: TextStyle(color: colors.textPrimary),
             decoration: InputDecoration(
               hintText: '0.00',
