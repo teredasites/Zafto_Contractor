@@ -660,11 +660,11 @@ function RevenueByTypeWidget({ jobs, invoices }: { jobs: { id: string; jobType: 
     jobTypeMap.set(job.id, job.jobType);
   }
 
-  // Sum invoice totals by job type
+  // Sum invoice totals by job type (only paid invoices = real revenue)
   const typeRevenue: Record<string, number> = {};
   const typeCount: Record<string, number> = {};
   for (const inv of invoices) {
-    if (!inv.jobId) continue;
+    if (!inv.jobId || inv.status !== 'paid') continue;
     const jt = jobTypeMap.get(inv.jobId) || 'standard';
     typeRevenue[jt] = (typeRevenue[jt] || 0) + inv.total;
     typeCount[jt] = (typeCount[jt] || 0) + 1;

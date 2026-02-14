@@ -23,26 +23,40 @@ export function useStats() {
       setError(null);
       const supabase = getSupabase();
 
+      // Date boundaries
+      const now = new Date();
+      const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+      const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+      const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString();
+      const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59).toISOString();
+      // Week start (Monday)
+      const dayOfWeek = now.getDay();
+      const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+      const weekStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() - mondayOffset).toISOString();
+
       // Parallel queries for all stats
-      const [jobsRes, bidsRes, invoicesRes, paidRes] = await Promise.all([
+      const [jobsRes, bidsRes, invoicesRes, paidRecentRes, paidLastMonthRes, completedThisMonthRes] = await Promise.all([
         supabase.from('jobs').select('status'),
         supabase.from('bids').select('status, total'),
         supabase.from('invoices').select('status, total, amount_due, paid_at'),
-        supabase
-          .from('invoices')
-          .select('total, paid_at')
-          .eq('status', 'paid')
-          .gte('paid_at', new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString()),
+        // Paid invoices from start of last month to now (covers today, week, this month)
+        supabase.from('invoices').select('total, paid_at').eq('status', 'paid').gte('paid_at', lastMonthStart),
+        // Paid invoices last month only (for MoM comparison)
+        supabase.from('invoices').select('total, paid_at').eq('status', 'paid').gte('paid_at', lastMonthStart).lte('paid_at', lastMonthEnd),
+        // Jobs completed this month
+        supabase.from('jobs').select('id').eq('status', 'completed').gte('completed_at', thisMonthStart),
       ]);
 
       const jobs: { status: string }[] = jobsRes.data || [];
       const bids: { status: string; total: number }[] = bidsRes.data || [];
       const invoices: { status: string; total: number; amount_due: number; paid_at: string | null }[] = invoicesRes.data || [];
-      const paidThisMonth: { total: number; paid_at: string | null }[] = paidRes.data || [];
+      const paidRecent: { total: number; paid_at: string | null }[] = paidRecentRes.data || [];
+      const paidLastMonth: { total: number; paid_at: string | null }[] = paidLastMonthRes.data || [];
+      const completedThisMonthJobs: { id: string }[] = completedThisMonthRes.data || [];
 
       // Job stats
       const jobScheduled = jobs.filter((j) => j.status === 'scheduled').length;
-      const jobInProgress = jobs.filter((j) => j.status === 'inProgress' || j.status === 'dispatched' || j.status === 'enRoute').length;
+      const jobInProgress = jobs.filter((j) => j.status === 'inProgress' || j.status === 'dispatched' || j.status === 'enRoute' || j.status === 'in_progress' || j.status === 'en_route').length;
       const jobCompleted = jobs.filter((j) => j.status === 'completed').length;
 
       // Bid stats
@@ -50,8 +64,9 @@ export function useStats() {
       const bidSent = bids.filter((b) => b.status === 'sent' || b.status === 'viewed').length;
       const bidAccepted = bids.filter((b) => b.status === 'accepted').length;
       const bidTotalValue = bids.reduce((sum, b) => sum + (Number(b.total) || 0), 0);
-      const bidTotal = bids.length || 1;
-      const bidConversion = bidTotal > 0 ? Math.round((bidAccepted / bidTotal) * 100) : 0;
+      // Conversion rate: accepted / (sent + viewed + accepted + rejected) — excludes drafts
+      const bidSentOrBeyond = bids.filter((b) => b.status !== 'draft').length;
+      const bidConversion = bidSentOrBeyond > 0 ? Math.round((bidAccepted / bidSentOrBeyond) * 100) : 0;
 
       // Invoice stats
       const invDraft = invoices.filter((i) => i.status === 'draft' || i.status === 'pendingApproval').length;
@@ -61,8 +76,23 @@ export function useStats() {
         .filter((i) => i.status === 'overdue')
         .reduce((sum, i) => sum + (Number(i.amount_due) || 0), 0);
 
-      // Revenue stats
-      const monthRevenue = paidThisMonth.reduce((sum, i) => sum + (Number(i.total) || 0), 0);
+      // Revenue stats — compute all periods from paidRecent
+      const revenueToday = paidRecent
+        .filter((i) => i.paid_at && i.paid_at >= todayStart)
+        .reduce((sum, i) => sum + (Number(i.total) || 0), 0);
+      const revenueThisWeek = paidRecent
+        .filter((i) => i.paid_at && i.paid_at >= weekStart)
+        .reduce((sum, i) => sum + (Number(i.total) || 0), 0);
+      const revenueThisMonth = paidRecent
+        .filter((i) => i.paid_at && i.paid_at >= thisMonthStart)
+        .reduce((sum, i) => sum + (Number(i.total) || 0), 0);
+      const revenueLastMonth = paidLastMonth.reduce((sum, i) => sum + (Number(i.total) || 0), 0);
+      const paidThisMonthCount = paidRecent.filter((i) => i.paid_at && i.paid_at >= thisMonthStart).length;
+
+      // Month-over-month change
+      const monthOverMonthChange = revenueLastMonth > 0
+        ? Math.round(((revenueThisMonth - revenueLastMonth) / revenueLastMonth) * 100)
+        : revenueThisMonth > 0 ? 100 : 0;
 
       setStats({
         bids: {
@@ -76,21 +106,21 @@ export function useStats() {
           scheduled: jobScheduled,
           inProgress: jobInProgress,
           completed: jobCompleted,
-          completedThisMonth: jobCompleted,
+          completedThisMonth: completedThisMonthJobs.length,
         },
         invoices: {
           draft: invDraft,
           sent: invSent,
           overdue: invOverdue,
           overdueAmount: invOverdueAmount,
-          paidThisMonth: paidThisMonth.length,
+          paidThisMonth: paidThisMonthCount,
         },
         revenue: {
-          today: 0,
-          thisWeek: 0,
-          thisMonth: monthRevenue,
-          lastMonth: 0,
-          monthOverMonthChange: 0,
+          today: revenueToday,
+          thisWeek: revenueThisWeek,
+          thisMonth: revenueThisMonth,
+          lastMonth: revenueLastMonth,
+          monthOverMonthChange,
         },
       });
     } catch (e: unknown) {
