@@ -1,0 +1,107 @@
+# Codemagic CI/CD Configuration — Zafto Trades
+# Replaces UI-based workflow with reproducible YAML config
+# Docs: https://docs.codemagic.io/yaml/yaml-getting-started/
+
+workflows:
+  # ============================================================
+  # Android Debug Build (existing — migrated from UI workflow)
+  # ============================================================
+  android-debug:
+    name: Android Debug
+    max_build_duration: 30
+    instance_type: mac_mini_m2
+    environment:
+      flutter: stable
+      vars:
+        SUPABASE_URL: $SUPABASE_URL
+        SUPABASE_ANON_KEY: $SUPABASE_ANON_KEY
+        SENTRY_DSN: $SENTRY_DSN
+    scripts:
+      - name: Get Flutter packages
+        script: flutter pub get
+      - name: Analyze code
+        script: flutter analyze --no-fatal-infos
+      - name: Build Android Debug APK
+        script: |
+          flutter build apk --debug \
+            --dart-define=SUPABASE_URL=$SUPABASE_URL \
+            --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY \
+            --dart-define=SENTRY_DSN=$SENTRY_DSN
+    artifacts:
+      - build/app/outputs/flutter-apk/app-debug.apk
+
+  # ============================================================
+  # Android Release Build (requires keystore — Damian to set up)
+  # ============================================================
+  android-release:
+    name: Android Release
+    max_build_duration: 45
+    instance_type: mac_mini_m2
+    environment:
+      flutter: stable
+      android_signing:
+        - zafto_keystore
+      groups:
+        - zafto_credentials
+      vars:
+        SUPABASE_URL: $SUPABASE_URL
+        SUPABASE_ANON_KEY: $SUPABASE_ANON_KEY
+        SENTRY_DSN: $SENTRY_DSN
+    scripts:
+      - name: Get Flutter packages
+        script: flutter pub get
+      - name: Analyze code
+        script: flutter analyze --no-fatal-infos
+      - name: Run tests
+        script: flutter test
+      - name: Build Android Release AAB
+        script: |
+          flutter build appbundle --release \
+            --dart-define=SUPABASE_URL=$SUPABASE_URL \
+            --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY \
+            --dart-define=SENTRY_DSN=$SENTRY_DSN
+    artifacts:
+      - build/app/outputs/bundle/**/*.aab
+    publishing:
+      google_play:
+        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+        track: internal
+
+  # ============================================================
+  # iOS Release Build (requires Apple Developer — Damian to set up)
+  # ============================================================
+  ios-release:
+    name: iOS Release
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      flutter: stable
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.teredasoftware.zafto
+      groups:
+        - zafto_credentials
+      vars:
+        SUPABASE_URL: $SUPABASE_URL
+        SUPABASE_ANON_KEY: $SUPABASE_ANON_KEY
+        SENTRY_DSN: $SENTRY_DSN
+    scripts:
+      - name: Get Flutter packages
+        script: flutter pub get
+      - name: Analyze code
+        script: flutter analyze --no-fatal-infos
+      - name: Install CocoaPods
+        script: cd ios && pod install
+      - name: Build iOS
+        script: |
+          flutter build ipa --release \
+            --dart-define=SUPABASE_URL=$SUPABASE_URL \
+            --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY \
+            --dart-define=SENTRY_DSN=$SENTRY_DSN \
+            --export-options-plist=/Users/builder/export_options.plist
+    artifacts:
+      - build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
