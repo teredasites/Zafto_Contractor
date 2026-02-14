@@ -54,27 +54,10 @@ interface Assembly {
   category: string;
 }
 
-// Mock data
-const mockLaborRates: LaborRate[] = [
-  { id: 'l1', name: 'Standard Labor', description: 'Regular hourly rate', rate: 125, unit: 'hour', category: 'General' },
-  { id: 'l2', name: 'Overtime Labor', description: 'Time and a half', rate: 187.50, unit: 'hour', category: 'General' },
-  { id: 'l3', name: 'Emergency Rate', description: 'After hours/weekend', rate: 200, unit: 'hour', category: 'Emergency' },
-  { id: 'l4', name: 'Apprentice Rate', description: 'Training rate', rate: 65, unit: 'hour', category: 'General' },
-  { id: 'l5', name: 'Service Call', description: 'Minimum service fee', rate: 95, unit: 'job', category: 'Service' },
-];
-
-const mockMaterials: Material[] = [
-  { id: 'm1', name: '2x4 LED Panel', description: '4000K, 40W', cost: 45, price: 85, markup: 88.9, unit: 'each', category: 'Lighting', sku: 'LED-2X4-40W' },
-  { id: 'm2', name: '200A Main Panel', description: 'Square D Homeline', cost: 280, price: 450, markup: 60.7, unit: 'each', category: 'Panels', sku: 'PNL-200A-SQD' },
-  { id: 'm3', name: '12/2 Romex (250ft)', description: 'NM-B Cable', cost: 95, price: 145, markup: 52.6, unit: 'roll', category: 'Wire', sku: 'WIRE-12-2-250' },
-  { id: 'm4', name: 'GFCI Outlet', description: '20A, White', cost: 18, price: 35, markup: 94.4, unit: 'each', category: 'Devices', sku: 'DEV-GFCI-20' },
-  { id: 'm5', name: 'Whole-Home Surge Protector', description: 'Eaton Type 2', cost: 180, price: 350, markup: 94.4, unit: 'each', category: 'Protection', sku: 'SURGE-WH-01' },
-];
-
-const mockAssemblies: Assembly[] = [
-  { id: 'a1', name: 'GFCI Installation', description: 'Complete GFCI outlet install', items: [{ type: 'material', id: 'm4', quantity: 1 }, { type: 'labor', id: 'l1', quantity: 0.5 }], totalCost: 80.50, totalPrice: 135, category: 'Outlets' },
-  { id: 'a2', name: 'LED Panel Swap', description: 'Replace fluorescent with LED', items: [{ type: 'material', id: 'm1', quantity: 1 }, { type: 'labor', id: 'l1', quantity: 0.5 }], totalCost: 107.50, totalPrice: 175, category: 'Lighting' },
-];
+// Price book data — will be wired to Supabase when price_book tables are created
+const laborRates: LaborRate[] = [];
+const materials: Material[] = [];
+const assemblies: Assembly[] = [];
 
 export default function PriceBookPage() {
   const [activeTab, setActiveTab] = useState<TabType>('labor');
@@ -82,14 +65,14 @@ export default function PriceBookPage() {
   const [categoryFilter, setCategoryFilter] = useState('all');
 
   const tabs: { id: TabType; label: string; icon: React.ReactNode; count: number }[] = [
-    { id: 'labor', label: 'Labor Rates', icon: <Clock size={16} />, count: mockLaborRates.length },
-    { id: 'materials', label: 'Materials', icon: <Package size={16} />, count: mockMaterials.length },
-    { id: 'assemblies', label: 'Assemblies', icon: <Wrench size={16} />, count: mockAssemblies.length },
+    { id: 'labor', label: 'Labor Rates', icon: <Clock size={16} />, count: laborRates.length },
+    { id: 'materials', label: 'Materials', icon: <Package size={16} />, count: materials.length },
+    { id: 'assemblies', label: 'Assemblies', icon: <Wrench size={16} />, count: assemblies.length },
   ];
 
-  const laborCategories = [...new Set(mockLaborRates.map((l) => l.category))];
-  const materialCategories = [...new Set(mockMaterials.map((m) => m.category))];
-  const assemblyCategories = [...new Set(mockAssemblies.map((a) => a.category))];
+  const laborCategories = [...new Set(laborRates.map((l) => l.category))];
+  const materialCategories = [...new Set(materials.map((m) => m.category))];
+  const assemblyCategories = [...new Set(assemblies.map((a) => a.category))];
 
   const currentCategories = activeTab === 'labor' ? laborCategories : activeTab === 'materials' ? materialCategories : assemblyCategories;
 
@@ -168,13 +151,13 @@ export default function PriceBookPage() {
 
       {/* Content */}
       {activeTab === 'labor' && (
-        <LaborRatesTab rates={mockLaborRates} search={search} categoryFilter={categoryFilter} />
+        <LaborRatesTab rates={laborRates} search={search} categoryFilter={categoryFilter} />
       )}
       {activeTab === 'materials' && (
-        <MaterialsTab materials={mockMaterials} search={search} categoryFilter={categoryFilter} />
+        <MaterialsTab materials={materials} search={search} categoryFilter={categoryFilter} />
       )}
       {activeTab === 'assemblies' && (
-        <AssembliesTab assemblies={mockAssemblies} search={search} categoryFilter={categoryFilter} />
+        <AssembliesTab assemblies={assemblies} search={search} categoryFilter={categoryFilter} />
       )}
     </div>
   );

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   CreditCard,
   Users,
@@ -19,68 +19,13 @@ interface SubMetric {
 }
 
 export default function SubscriptionsPage() {
-  const [metrics, setMetrics] = useState<SubMetric[]>([
-    {
-      label: 'Active',
-      value: '--',
-      icon: <Users className="h-5 w-5" />,
-      loading: true,
-    },
-    {
-      label: 'Trial',
-      value: '--',
-      icon: <CreditCard className="h-5 w-5" />,
-      loading: true,
-    },
-    {
-      label: 'Cancelled',
-      value: '--',
-      icon: <UserMinus className="h-5 w-5" />,
-      loading: true,
-    },
-    {
-      label: 'Past Due',
-      value: '--',
-      icon: <AlertCircle className="h-5 w-5" />,
-      loading: true,
-    },
+  const [metrics] = useState<SubMetric[]>([
+    { label: 'Active', value: '0', icon: <Users className="h-5 w-5" />, loading: false },
+    { label: 'Trial', value: '0', icon: <CreditCard className="h-5 w-5" />, loading: false },
+    { label: 'Cancelled', value: '0', icon: <UserMinus className="h-5 w-5" />, loading: false },
+    { label: 'Past Due', value: '0', icon: <AlertCircle className="h-5 w-5" />, loading: false },
   ]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // All zeros — Stripe not connected yet
-    const timer = setTimeout(() => {
-      setMetrics([
-        {
-          label: 'Active',
-          value: '0',
-          icon: <Users className="h-5 w-5" />,
-          loading: false,
-        },
-        {
-          label: 'Trial',
-          value: '0',
-          icon: <CreditCard className="h-5 w-5" />,
-          loading: false,
-        },
-        {
-          label: 'Cancelled',
-          value: '0',
-          icon: <UserMinus className="h-5 w-5" />,
-          loading: false,
-        },
-        {
-          label: 'Past Due',
-          value: '0',
-          icon: <AlertCircle className="h-5 w-5" />,
-          loading: false,
-        },
-      ]);
-      setLoading(false);
-    }, 400);
-
-    return () => clearTimeout(timer);
-  }, []);
+  const [loading] = useState(false);
 
   return (
     <div className="space-y-8 animate-fade-in">
