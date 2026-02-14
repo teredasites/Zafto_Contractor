@@ -28,6 +28,19 @@ enum TradeType {
   concrete,
   hvac,
   electrical,
+  plumbing,
+  flooring,
+  drywall,
+  insulation,
+  framing,
+  demolition,
+  waterRestoration,
+  fireRestoration,
+  moldRemediation,
+  masonry,
+  paving,
+  windowsDoors,
+  generalRemodel,
 }
 
 enum VerificationStatus { unverified, verified, adjusted }

@@ -49,6 +49,18 @@ class _LineItemPickerScreenState extends ConsumerState<LineItemPickerScreen> {
     ('INS', 'Insulation'),
     ('SDG', 'Siding'),
     ('HVC', 'HVAC'),
+    ('SLR', 'Solar'),
+    ('FNC', 'Fencing'),
+    ('PVG', 'Paving'),
+    ('GRM', 'Remodel'),
+    ('WND', 'Windows'),
+    ('FRS', 'Fire/Smoke'),
+    ('MLB', 'Mold'),
+    ('GUT', 'Gutters'),
+    ('LND', 'Landscape'),
+    ('CNC', 'Concrete'),
+    ('MAS', 'Masonry'),
+    ('TRM', 'Trim'),
   ];
 
   @override

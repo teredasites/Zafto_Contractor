@@ -42,6 +42,7 @@ import { Badge } from '@/components/ui/badge';
 import { formatCurrency, cn } from '@/lib/utils';
 import { useCustomers } from '@/lib/hooks/use-customers';
 import { useBids } from '@/lib/hooks/use-bids';
+import { useBidTemplates } from '@/lib/hooks/use-bid-templates';
 import { useCompanyConfig } from '@/lib/hooks/use-company-config';
 import type { BidOption, BidLineItem, BidAddOn, LineItemCategory, Customer } from '@/types';
 
@@ -132,7 +133,7 @@ const categoryOptions = [
   { value: 'other', label: 'Other' },
 ];
 
-// Trade options
+// Trade options — 25+ trades for universal support
 const tradeOptions = [
   { value: '', label: 'Select Trade' },
   { value: 'electrical', label: 'Electrical' },
@@ -141,11 +142,28 @@ const tradeOptions = [
   { value: 'solar', label: 'Solar' },
   { value: 'roofing', label: 'Roofing' },
   { value: 'general_contractor', label: 'General Contractor' },
-  { value: 'remodeler', label: 'Remodeler' },
+  { value: 'general_remodel', label: 'General Remodel' },
+  { value: 'painting', label: 'Painting' },
+  { value: 'concrete', label: 'Concrete' },
+  { value: 'fencing', label: 'Fencing' },
   { value: 'landscaping', label: 'Landscaping' },
+  { value: 'flooring', label: 'Flooring' },
+  { value: 'drywall', label: 'Drywall' },
+  { value: 'siding', label: 'Siding' },
+  { value: 'gutters', label: 'Gutters' },
+  { value: 'insulation', label: 'Insulation' },
+  { value: 'windows_doors', label: 'Windows & Doors' },
+  { value: 'paving', label: 'Paving' },
+  { value: 'demolition', label: 'Demolition' },
+  { value: 'water_restoration', label: 'Water Restoration' },
+  { value: 'fire_restoration', label: 'Fire/Smoke Restoration' },
+  { value: 'mold_remediation', label: 'Mold Remediation' },
+  { value: 'masonry', label: 'Masonry/Brick' },
+  { value: 'framing', label: 'Framing' },
   { value: 'auto_mechanic', label: 'Auto Mechanic' },
   { value: 'welding', label: 'Welding' },
   { value: 'pool_spa', label: 'Pool/Spa' },
+  { value: 'other', label: 'Other' },
 ];
 
 // Scope templates - just descriptions for AI to generate line items from
@@ -288,6 +306,7 @@ export default function NewBidPage() {
   const { company } = useCompany();
   const { customers } = useCustomers();
   const { createBid } = useBids();
+  const { templates, getTemplatesByTrade, incrementUseCount } = useBidTemplates();
   const { config } = useCompanyConfig();
 
   // Wire default tax rate from company config
@@ -444,6 +463,84 @@ export default function NewBidPage() {
     if (!title) setTitle(template.name); // Only if title is empty
     setScopeOfWork(template.scope);
 
+    setShowTemplates(false);
+  };
+
+  // Apply bid template — pre-fills line items, scope, terms, tax, deposit
+  const applyBidTemplate = (templateId: string) => {
+    const tmpl = templates.find((t) => t.id === templateId);
+    if (!tmpl) return;
+
+    // Set trade and title
+    setTrade(tmpl.tradeType);
+    if (!title) setTitle(tmpl.name);
+
+    // Set scope and terms
+    if (tmpl.defaultScopeOfWork) setScopeOfWork(tmpl.defaultScopeOfWork);
+    if (tmpl.defaultTerms) setTermsAndConditions(tmpl.defaultTerms);
+    if (tmpl.defaultTaxRate) setTaxRate(tmpl.defaultTaxRate);
+    if (tmpl.defaultDepositPercent) setDepositPercent(tmpl.defaultDepositPercent);
+
+    // Set validity days
+    if (tmpl.defaultValidityDays) {
+      const date = new Date();
+      date.setDate(date.getDate() + tmpl.defaultValidityDays);
+      setValidUntil(date.toISOString().split('T')[0]);
+    }
+
+    // Convert template line items to bid line items
+    const lineItems: BidLineItem[] = tmpl.lineItems.map((item, idx) => ({
+      id: generateId(),
+      description: item.description,
+      quantity: item.defaultQuantity,
+      unit: item.unit,
+      unitCost: 0,
+      unitPrice: item.defaultUnitPrice,
+      total: item.defaultQuantity * item.defaultUnitPrice,
+      category: (item.category || 'labor') as LineItemCategory,
+      isTaxable: item.category === 'materials',
+      sortOrder: idx,
+    }));
+
+    // Set up Good/Better/Best if template supports it
+    if (tmpl.hasGoodBetterBest) {
+      setUseMultipleOptions(true);
+      const goodOption = createOption(tmpl.goodDescription || 'Good', 0, false);
+      goodOption.lineItems = lineItems;
+
+      const betterItems = lineItems.map((item) => ({
+        ...item,
+        id: generateId(),
+        unitPrice: Math.round(item.unitPrice * tmpl.betterMultiplier * 100) / 100,
+        total: Math.round(item.quantity * item.unitPrice * tmpl.betterMultiplier * 100) / 100,
+      }));
+      const betterOption = createOption(tmpl.betterDescription || 'Better', 1, true);
+      betterOption.lineItems = betterItems;
+
+      const bestItems = lineItems.map((item) => ({
+        ...item,
+        id: generateId(),
+        unitPrice: Math.round(item.unitPrice * tmpl.bestMultiplier * 100) / 100,
+        total: Math.round(item.quantity * item.unitPrice * tmpl.bestMultiplier * 100) / 100,
+      }));
+      const bestOption = createOption(tmpl.bestDescription || 'Best', 2, false);
+      bestOption.lineItems = bestItems;
+
+      setOptions([
+        calculateOptionTotals(goodOption),
+        calculateOptionTotals(betterOption),
+        calculateOptionTotals(bestOption),
+      ]);
+      setActiveOptionIndex(1); // Default to "Better" (recommended)
+    } else {
+      const option = createOption('Standard', 0, true);
+      option.lineItems = lineItems;
+      setOptions([calculateOptionTotals(option)]);
+      setActiveOptionIndex(0);
+    }
+
+    // Track usage
+    incrementUseCount(templateId);
     setShowTemplates(false);
   };
 
@@ -1730,14 +1827,14 @@ Example:
         </div>
       </div>
 
-      {/* Scope Templates Modal */}
+      {/* Templates Modal — Scope Templates + Bid Templates */}
       {showTemplates && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-surface border border-main rounded-xl shadow-2xl w-full max-w-3xl max-h-[80vh] overflow-hidden">
             <div className="flex items-center justify-between p-4 border-b border-main">
               <div>
-                <h2 className="text-lg font-semibold text-main">Scope Templates</h2>
-                <p className="text-sm text-muted">Pre-written scope descriptions - customize then use AI to generate line items</p>
+                <h2 className="text-lg font-semibold text-main">Templates</h2>
+                <p className="text-sm text-muted">Start from a template with pre-built line items, scope, and terms</p>
               </div>
               <button
                 onClick={() => setShowTemplates(false)}
@@ -1746,25 +1843,69 @@ Example:
                 <X size={18} className="text-muted" />
               </button>
             </div>
-            <div className="p-4 overflow-y-auto max-h-[60vh]">
-              <div className="grid grid-cols-2 gap-4">
-                {scopeTemplates.filter(t => t.id !== 'blank').map((template) => (
-                  <button
-                    key={template.id}
-                    onClick={() => applyTemplate(template.id)}
-                    className="p-4 text-left border border-main rounded-lg hover:border-accent hover:bg-surface-hover transition-colors"
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="font-medium text-main">{template.name}</div>
-                      {template.trade && (
-                        <Badge variant="secondary" size="sm">
-                          {tradeOptions.find((t) => t.value === template.trade)?.label}
-                        </Badge>
-                      )}
-                    </div>
-                    <div className="text-xs text-muted line-clamp-3">{template.scope.slice(0, 120)}...</div>
-                  </button>
-                ))}
+            <div className="p-4 overflow-y-auto max-h-[60vh] space-y-6">
+              {/* Bid Templates — with line items pre-filled */}
+              {templates.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-semibold text-main mb-3 flex items-center gap-2">
+                    <Layers size={14} />
+                    Bid Templates — Pre-Built Line Items
+                  </h3>
+                  <div className="grid grid-cols-2 gap-3">
+                    {templates.map((tmpl) => (
+                      <button
+                        key={tmpl.id}
+                        onClick={() => applyBidTemplate(tmpl.id)}
+                        className="p-3 text-left border border-main rounded-lg hover:border-accent hover:bg-surface-hover transition-colors"
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <div className="font-medium text-main text-sm">{tmpl.name}</div>
+                          <Badge variant="secondary" size="sm">
+                            {tmpl.lineItems.length} items
+                          </Badge>
+                        </div>
+                        {tmpl.description && (
+                          <div className="text-xs text-muted line-clamp-2 mb-1">{tmpl.description}</div>
+                        )}
+                        <div className="flex items-center gap-2">
+                          {tmpl.hasGoodBetterBest && (
+                            <Badge variant="secondary" size="sm">Good/Better/Best</Badge>
+                          )}
+                          {tmpl.isSystem && (
+                            <Badge variant="secondary" size="sm">System</Badge>
+                          )}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Scope Templates — text only */}
+              <div>
+                <h3 className="text-sm font-semibold text-main mb-3 flex items-center gap-2">
+                  <FileText size={14} />
+                  Scope Templates — Description Only
+                </h3>
+                <div className="grid grid-cols-2 gap-3">
+                  {scopeTemplates.filter(t => t.id !== 'blank').map((template) => (
+                    <button
+                      key={template.id}
+                      onClick={() => applyTemplate(template.id)}
+                      className="p-3 text-left border border-main rounded-lg hover:border-accent hover:bg-surface-hover transition-colors"
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="font-medium text-main text-sm">{template.name}</div>
+                        {template.trade && (
+                          <Badge variant="secondary" size="sm">
+                            {tradeOptions.find((t) => t.value === template.trade)?.label}
+                          </Badge>
+                        )}
+                      </div>
+                      <div className="text-xs text-muted line-clamp-2">{template.scope.slice(0, 120)}...</div>
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
