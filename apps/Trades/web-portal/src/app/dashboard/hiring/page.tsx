@@ -25,6 +25,7 @@ import {
   Video,
   Phone,
   Building2,
+  UserPlus,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -149,6 +150,7 @@ export default function HiringPage() {
     inPipeline,
     interviewsThisWeek,
     hiredCount,
+    createUserFromApplicant,
   } = useHiring();
 
   const [activeTab, setActiveTab] = useState<TabId>('postings');
@@ -315,6 +317,7 @@ export default function HiringPage() {
           search={search}
           setSearch={setSearch}
           onUpdateStage={updateApplicantStage}
+          onCreateUser={createUserFromApplicant}
         />
       )}
       {activeTab === 'interviews' && (
@@ -581,12 +584,14 @@ function PipelineTab({
   search,
   setSearch,
   onUpdateStage,
+  onCreateUser,
 }: {
   applicants: Applicant[];
   postings: JobPosting[];
   search: string;
   setSearch: (v: string) => void;
   onUpdateStage: (id: string, stage: ApplicantStage) => Promise<void>;
+  onCreateUser?: (applicantId: string, role?: string) => Promise<void>;
 }) {
   const [stageFilter, setStageFilter] = useState('all');
   const [postingFilter, setPostingFilter] = useState('all');
@@ -716,6 +721,7 @@ function PipelineTab({
                       daysInStage={getDaysInStage(applicant)}
                       moveOptions={moveOptions}
                       onStageChange={handleStageChange}
+                      onCreateUser={onCreateUser}
                     />
                   ))}
                   {stageApplicants.length === 0 && (
@@ -738,6 +744,7 @@ function PipelineTab({
               daysInStage={getDaysInStage(applicant)}
               moveOptions={moveOptions}
               onStageChange={handleStageChange}
+              onCreateUser={onCreateUser}
               listMode
             />
           ))}
@@ -758,17 +765,32 @@ function ApplicantCard({
   daysInStage,
   moveOptions,
   onStageChange,
+  onCreateUser,
   listMode = false,
 }: {
   applicant: Applicant;
   daysInStage: number;
   moveOptions: { value: string; label: string }[];
   onStageChange: (id: string, stage: string) => void;
+  onCreateUser?: (applicantId: string, role?: string) => Promise<void>;
   listMode?: boolean;
 }) {
+  const [creatingUser, setCreatingUser] = useState(false);
   const fullName = `${applicant.firstName} ${applicant.lastName}`.trim();
   const config = stageConfig[applicant.stage];
   const srcConfig = sourceLabels[applicant.source] || applicant.source;
+
+  const handleCreateUser = async () => {
+    if (!onCreateUser || creatingUser) return;
+    setCreatingUser(true);
+    try {
+      await onCreateUser(applicant.id);
+    } catch {
+      // Error handled by hook
+    } finally {
+      setCreatingUser(false);
+    }
+  };
 
   return (
     <Card className={cn(listMode && 'mb-0')}>
@@ -800,6 +822,18 @@ function ApplicantCard({
             </span>
           )}
         </div>
+
+        {/* Create User Account button for hired applicants */}
+        {applicant.stage === 'hired' && onCreateUser && (
+          <button
+            onClick={handleCreateUser}
+            disabled={creatingUser}
+            className="w-full mb-2 py-1.5 px-3 text-xs font-medium rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 disabled:opacity-50 transition-colors flex items-center justify-center gap-1.5"
+          >
+            <UserPlus size={12} />
+            {creatingUser ? 'Creating Account...' : 'Create User Account'}
+          </button>
+        )}
 
         <div className="flex items-center justify-between">
           <span className="text-xs text-muted flex items-center gap-1">

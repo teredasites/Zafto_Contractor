@@ -152,6 +152,22 @@ export function useOshaStandards() {
     []
   );
 
+  /** Get a safety checklist for a specific trade type (for auto-populating on job creation) */
+  const getSafetyChecklistByTrade = useCallback(
+    (trade: string): { title: string; standardNumber: string; required: boolean }[] => {
+      const tradeKey = trade.toLowerCase();
+      const relevant = standards.filter(
+        (s) => s.tradeTags.some((t) => t.toLowerCase() === tradeKey) || s.isFrequentlyCited
+      );
+      return relevant.slice(0, 10).map((s) => ({
+        title: s.title,
+        standardNumber: s.standardNumber,
+        required: s.isFrequentlyCited,
+      }));
+    },
+    [standards]
+  );
+
   return {
     standards,
     filteredStandards,
@@ -159,6 +175,7 @@ export function useOshaStandards() {
     error,
     syncStandards,
     lookupViolations,
+    getSafetyChecklistByTrade,
     tradeFilter,
     setTradeFilter,
     searchQuery,
