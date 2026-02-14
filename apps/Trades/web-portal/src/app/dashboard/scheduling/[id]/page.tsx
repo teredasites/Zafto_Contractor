@@ -15,6 +15,7 @@ import {
   Trash2,
   CheckCircle2,
   Link2,
+  Bookmark,
 } from 'lucide-react';
 import { useScheduleProject } from '@/lib/hooks/use-schedule';
 import { useScheduleTasks } from '@/lib/hooks/use-schedule-tasks';
@@ -179,6 +180,10 @@ export default function GanttPage() {
 
           <button onClick={() => router.push(`/dashboard/scheduling/${projectId}/resources`)} className="p-1.5 hover:bg-surface-alt rounded-md" title="Resources">
             <Users className="w-4 h-4 text-secondary" />
+          </button>
+
+          <button onClick={() => router.push(`/dashboard/scheduling/${projectId}/baselines`)} className="p-1.5 hover:bg-surface-alt rounded-md" title="Baselines">
+            <Bookmark className="w-4 h-4 text-secondary" />
           </button>
 
           <button onClick={triggerCpmRecalc} className="p-1.5 hover:bg-surface-alt rounded-md" title="Recalculate CPM">
