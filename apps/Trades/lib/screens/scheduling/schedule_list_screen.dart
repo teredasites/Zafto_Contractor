@@ -57,6 +57,10 @@ class _ScheduleListScreenState extends ConsumerState<ScheduleListScreen> {
       ),
       body: Column(
         children: [
+          // Portfolio summary card (only shows when projects exist)
+          projectsAsync.whenOrNull(
+            data: (projects) => projects.length >= 2 ? _buildPortfolioSummary(colors, projects) : null,
+          ) ?? const SizedBox.shrink(),
           _buildFilterChips(colors),
           const SizedBox(height: 8),
           Expanded(
@@ -151,6 +155,97 @@ class _ScheduleListScreenState extends ConsumerState<ScheduleListScreen> {
           .toList();
     }
     return result;
+  }
+
+  Widget _buildPortfolioSummary(ZaftoColors colors, List<ScheduleProject> projects) {
+    // Compute health from project status + percent completion
+    final activeProjects = projects.where((p) => p.status == ScheduleProjectStatus.active).toList();
+    if (activeProjects.isEmpty) return const SizedBox.shrink();
+
+    final complete = activeProjects.where((p) => p.overallPercentComplete >= 100).length;
+    final behindCount = activeProjects.where((p) =>
+        p.plannedFinish != null && p.plannedFinish!.isBefore(DateTime.now()) && p.overallPercentComplete < 100
+    ).length;
+    final onTrack = activeProjects.length - behindCount - complete;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: colors.bgElevated,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: colors.borderSubtle),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(LucideIcons.layoutDashboard, size: 16, color: colors.accentPrimary),
+                const SizedBox(width: 8),
+                Text(
+                  'Portfolio Overview',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: colors.textPrimary),
+                ),
+                const Spacer(),
+                Text(
+                  '${activeProjects.length} active',
+                  style: TextStyle(fontSize: 12, color: colors.textTertiary),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                _buildStatPill(colors, '$onTrack', 'On Track', colors.accentSuccess),
+                const SizedBox(width: 8),
+                _buildStatPill(colors, '$behindCount', 'Behind', colors.accentError),
+                const SizedBox(width: 8),
+                _buildStatPill(colors, '$complete', 'Done', colors.accentInfo),
+              ],
+            ),
+            // Aggregate progress bar
+            const SizedBox(height: 10),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: activeProjects.isEmpty
+                    ? 0
+                    : activeProjects.fold<double>(0, (s, p) => s + p.overallPercentComplete) / (activeProjects.length * 100),
+                backgroundColor: colors.fillDefault,
+                valueColor: AlwaysStoppedAnimation(colors.accentPrimary),
+                minHeight: 4,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Avg. progress: ${activeProjects.isEmpty ? 0 : (activeProjects.fold<double>(0, (s, p) => s + p.overallPercentComplete) / activeProjects.length).toStringAsFixed(0)}%',
+              style: TextStyle(fontSize: 11, color: colors.textQuaternary),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatPill(ZaftoColors colors, String value, String label, Color color) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Column(
+          children: [
+            Text(value, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: color)),
+            const SizedBox(height: 2),
+            Text(label, style: TextStyle(fontSize: 10, fontWeight: FontWeight.w500, color: color)),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildProjectsList(ZaftoColors colors, List<ScheduleProject> projects) {
