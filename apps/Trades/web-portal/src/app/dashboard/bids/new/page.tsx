@@ -42,6 +42,7 @@ import { Badge } from '@/components/ui/badge';
 import { formatCurrency, cn } from '@/lib/utils';
 import { useCustomers } from '@/lib/hooks/use-customers';
 import { useBids } from '@/lib/hooks/use-bids';
+import { isValidEmail } from '@/lib/validation';
 import { useBidTemplates } from '@/lib/hooks/use-bid-templates';
 import { useCompanyConfig } from '@/lib/hooks/use-company-config';
 import type { BidOption, BidLineItem, BidAddOn, LineItemCategory, Customer } from '@/types';
@@ -790,6 +791,11 @@ export default function NewBidPage() {
 
   // Save as draft
   const saveDraft = async () => {
+    const emailToCheck = selectedCustomer?.email || customerEmail;
+    if (emailToCheck && !isValidEmail(emailToCheck)) {
+      alert('Please enter a valid email address');
+      return;
+    }
     setSaving(true);
     try {
       await createBid({
