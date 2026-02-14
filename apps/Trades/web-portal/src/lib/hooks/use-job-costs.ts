@@ -15,7 +15,9 @@ export interface JobCostData {
   projectedTotal: number;
   percentComplete: number;
   percentBudgetUsed: number;
+  laborActual: number;
   materialsActual: number;
+  expenseActual: number;
   changeOrdersTotal: number;
   risk: RiskLevel;
   alerts: string[];
@@ -90,20 +92,43 @@ export function useJobCosts() {
         return;
       }
 
-      // Fetch materials and change orders for active jobs
-      const [materialsRes, changeOrdersRes] = await Promise.all([
+      // Fetch labor (time entries), materials, expenses, and change orders for active jobs
+      const [timeRes, materialsRes, expensesRes, changeOrdersRes] = await Promise.all([
+        supabase.from('time_entries').select('job_id, total_minutes, hourly_rate, labor_cost').in('job_id', jobIds).neq('status', 'rejected'),
         supabase.from('job_materials').select('job_id, total_cost').in('job_id', jobIds),
+        supabase.from('expense_records').select('job_id, amount').in('job_id', jobIds).neq('status', 'void'),
         supabase.from('change_orders').select('job_id, amount, status').in('job_id', jobIds),
       ]);
 
+      const timeEntries: Record<string, unknown>[] = timeRes.data || [];
       const materials: Record<string, unknown>[] = materialsRes.data || [];
+      const expenses: Record<string, unknown>[] = expensesRes.data || [];
       const changeOrders: Record<string, unknown>[] = changeOrdersRes.data || [];
+
+      // Aggregate labor cost by job: prefer pre-computed labor_cost, fall back to (minutes/60) * rate
+      const laborByJob: Record<string, number> = {};
+      for (const te of timeEntries) {
+        const jid = te.job_id as string;
+        if (!jid) continue;
+        const precomputed = Number(te.labor_cost || 0);
+        const cost = precomputed > 0
+          ? precomputed
+          : (Number(te.total_minutes || 0) / 60) * Number(te.hourly_rate || 0);
+        laborByJob[jid] = (laborByJob[jid] || 0) + cost;
+      }
 
       // Aggregate materials by job
       const materialsByJob: Record<string, number> = {};
       for (const m of materials) {
         const jid = m.job_id as string;
         materialsByJob[jid] = (materialsByJob[jid] || 0) + Number(m.total_cost || 0);
+      }
+
+      // Aggregate expenses by job
+      const expensesByJob: Record<string, number> = {};
+      for (const ex of expenses) {
+        const jid = ex.job_id as string;
+        if (jid) expensesByJob[jid] = (expensesByJob[jid] || 0) + Number(ex.amount || 0);
       }
 
       // Aggregate approved change orders by job
@@ -120,9 +145,13 @@ export function useJobCosts() {
         const jid = job.id as string;
         const bidAmount = Number(job.estimated_amount || 0);
         const actualAmount = Number(job.actual_amount || 0);
+        const laborCost = laborByJob[jid] || 0;
         const matCost = materialsByJob[jid] || 0;
+        const expCost = expensesByJob[jid] || 0;
         const coCost = coByJob[jid] || 0;
-        const actualSpend = actualAmount > 0 ? actualAmount : matCost;
+        // Full cost formula: labor + materials + expenses + change orders
+        const computedSpend = laborCost + matCost + expCost;
+        const actualSpend = actualAmount > 0 ? actualAmount : computedSpend;
 
         // Approximate percent complete from actual vs estimated
         const percentComplete = bidAmount > 0 ? Math.min(Math.round((actualSpend / bidAmount) * 100), 95) : 0;
@@ -151,7 +180,9 @@ export function useJobCosts() {
           projectedTotal,
           percentComplete,
           percentBudgetUsed,
+          laborActual: laborCost,
           materialsActual: matCost,
+          expenseActual: expCost,
           changeOrdersTotal: coCost,
           risk: assessRisk(percentComplete, percentBudgetUsed, projectedMargin),
           alerts: [],

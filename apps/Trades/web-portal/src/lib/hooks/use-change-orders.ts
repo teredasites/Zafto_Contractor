@@ -115,6 +115,10 @@ export function useChangeOrders() {
     }
     const { error: err } = await supabase.from('change_orders').update(updateData).eq('id', id);
     if (err) throw err;
+
+    // DB trigger fn_apply_change_order_to_job handles updating job.estimated_amount
+    // on approval. Refetch to reflect updated data.
+    fetchChangeOrders();
   };
 
   return { changeOrders, loading, error, createChangeOrder, updateChangeOrderStatus, refetch: fetchChangeOrders };

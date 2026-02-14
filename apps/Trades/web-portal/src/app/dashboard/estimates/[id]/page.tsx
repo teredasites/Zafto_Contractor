@@ -14,6 +14,7 @@ import {
   useEstimate, useEstimateItems, fmtCurrency,
   type EstimateArea, type EstimateLineItem, type EstimateItem,
 } from '@/lib/hooks/use-estimates';
+import { useBids } from '@/lib/hooks/use-bids';
 
 const ACTION_TYPES = [
   { value: 'remove', label: 'Remove' },
@@ -45,6 +46,8 @@ export default function EstimateEditorPage() {
   } = useEstimate(estimateId);
 
   const { items: codeItems, loading: itemsLoading, searchItems } = useEstimateItems();
+  const { convertEstimateToBid } = useBids();
+  const [convertingToBid, setConvertingToBid] = useState(false);
 
   // UI State
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -212,6 +215,22 @@ export default function EstimateEditorPage() {
     await updateEstimate({ status: 'sent', sent_at: new Date().toISOString() });
   }, [recalculateTotals, updateEstimate]);
 
+  // Convert estimate to bid
+  const handleConvertToBid = useCallback(async () => {
+    if (convertingToBid) return;
+    setConvertingToBid(true);
+    try {
+      const bidId = await convertEstimateToBid(estimateId);
+      if (bidId) {
+        router.push(`/dashboard/bids/${bidId}`);
+      }
+    } catch {
+      // Error handled by hook
+    } finally {
+      setConvertingToBid(false);
+    }
+  }, [convertEstimateToBid, estimateId, router, convertingToBid]);
+
   // ── Loading ──
   if (loading) {
     return (
@@ -299,6 +318,14 @@ export default function EstimateEditorPage() {
                   Send
                 </button>
               )}
+              <button
+                onClick={handleConvertToBid}
+                disabled={convertingToBid}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-amber-300 bg-amber-500/10 border border-amber-500/20 rounded-lg hover:bg-amber-500/20 disabled:opacity-50"
+              >
+                {convertingToBid ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <FileText className="w-3.5 h-3.5" />}
+                {convertingToBid ? 'Converting...' : 'Convert to Bid'}
+              </button>
               <button
                 onClick={() => setShowReconImport(!showReconImport)}
                 className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-emerald-300 bg-emerald-500/10 border border-emerald-500/20 rounded-lg hover:bg-emerald-500/20"
