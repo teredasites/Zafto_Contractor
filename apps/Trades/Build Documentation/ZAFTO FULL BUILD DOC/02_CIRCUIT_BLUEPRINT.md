@@ -690,8 +690,17 @@ Tech opens app -> Taps "Field Tools"
 ### Phase U: Unification & Feature Completion -- PLANNED (S96)
 - [ ] U1-U9: ~120 hours, 9 sprints. Portal unification (merge team+client into web-portal at zafto.cloud), Supabase-style nav redesign, permission engine, Ledger completion, dashboard restoration, PDF/email/dead buttons, payment flow, cross-system metrics, polish. Builds after Phase SK, before Phase G.
 
-### Phase SK: CAD-Grade Sketch Engine -- SPEC'D (S94)
-- [ ] SK1-SK11: ~176 hours, 11 sprints. 3 tables, ~46 files. LiDAR scan (Apple RoomPlan), trade layers, Konva.js web editor, auto-estimate pipeline, export, 3D view.
+### Phase SK: CAD-Grade Sketch Engine -- COMPLETE (SK1-SK14 DONE, S109)
+- [x] SK1: Data model — 5 tables (property_floor_plans, floor_plan_elements, floor_plan_trade_data, floor_plan_snapshots, floor_plan_photo_pins), V2 element types, migration 63.
+- [x] SK2-SK5: Flutter LiDAR scan, trade layers, damage overlays. SK6: Konva.js web canvas editor (full implementation).
+- [x] SK7: Sync pipeline — offline-first Hive cache, snapshots, photo pins, thumbnails. 9 files.
+- [x] SK8: Auto-Estimate Pipeline — room_measurement_calculator.dart, estimate_area_generator.dart, line_item_suggester.dart, GenerateEstimateModal.tsx, TS ports. floor_plan_estimate_links bridge table (migration 67). 10 files, 1803 lines.
+- [x] SK9: Export Pipeline — dxf_writer.dart, fml_writer.dart, sketch_export_service.dart (Flutter). pdf-export.ts, png-export.ts, dxf-export.ts, fml-export.ts, svg-export.ts, export-utils.ts (Web). ExportModal.tsx.
+- [x] SK10: 3D Visualization — three-converter.ts, ThreeDView.tsx (R3F), ViewToggle.tsx. R3F JSX type fix (React.ElementType → LucideIcon).
+- [x] SK11: Polish — perfectDrawEnabled perf optimization, corrupt data error handling.
+- [x] SK12: Site Plan Mode — site-geometry.ts, SitePlanCanvas.tsx, SitePlanToolbar.tsx (17 tools), SitePlanLayerPanel.tsx (8 layers), PlanModeToggle.tsx, SitePropertyInspector.tsx, SiteBackgroundImport.tsx. ~150 lines site plan types in types.ts.
+- [x] SK13: Trade Measurements & Templates — trade-formulas.ts (8 trades), templates.ts (10 built-in), TemplatePicker.tsx.
+- [x] SK14: Collaboration + Snap Guides — collaboration.ts (cursors, presence, element locks), snap-guides.ts (alignment, perpendicular, centerline, equal spacing, grid).
 - Spec: `Expansion/46_SKETCH_ENGINE_SPEC.md`
 
 ### Plan Review (Phase E/BA) -- SPEC'D (S97)

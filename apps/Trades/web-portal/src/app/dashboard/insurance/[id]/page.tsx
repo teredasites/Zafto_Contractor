@@ -7,6 +7,7 @@ import {
   FileText, Droplets, ThermometerSun, Wrench, ClipboardCheck, ChevronRight,
   AlertTriangle, Plus, Send, Trash2, Check, CheckCircle, XCircle, Award, Camera, PenTool, Clock,
   CloudLightning, HardHat,
+  type LucideIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useClaim, updateClaimStatus, createSupplement, updateSupplementStatus, deleteSupplement } from '@/lib/hooks/use-insurance';
@@ -16,7 +17,7 @@ import type { ClaimStatus, InsuranceClaimData, MoistureReadingData, DryingLogDat
 
 type TabId = 'overview' | 'supplements' | 'tpi' | 'moisture' | 'drying' | 'equipment' | 'completion';
 
-const TABS: { id: TabId; label: string; icon: React.ElementType }[] = [
+const TABS: { id: TabId; label: string; icon: LucideIcon }[] = [
   { id: 'overview', label: 'Overview', icon: Shield },
   { id: 'supplements', label: 'Supplements', icon: FileText },
   { id: 'tpi', label: 'TPI', icon: ClipboardCheck },
@@ -515,7 +516,7 @@ function StatCard({ label, value }: { label: string; value: string }) {
   );
 }
 
-function EmptyTab({ icon: Icon, label }: { icon: React.ElementType; label: string }) {
+function EmptyTab({ icon: Icon, label }: { icon: LucideIcon; label: string }) {
   return (
     <div className="flex flex-col items-center justify-center py-16 text-center">
       <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center mb-3">
@@ -909,7 +910,7 @@ interface CompletionCheck {
   id: string;
   title: string;
   subtitle: string;
-  icon: React.ElementType;
+  icon: LucideIcon;
   passed: boolean;
   detail: string;
 }

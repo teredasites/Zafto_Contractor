@@ -138,7 +138,7 @@ export function ZMarkdown({ content }: { content: string }) {
     const headerMatch = line.match(/^(#{1,4})\s+(.+)/);
     if (headerMatch) {
       const level = headerMatch[1].length;
-      const Tag = `h${level}` as keyof React.JSX.IntrinsicElements;
+      const Tag = `h${level}` as 'h1' | 'h2' | 'h3' | 'h4';
       elements.push(<Tag key={key++}>{parseInline(headerMatch[2])}</Tag>);
       i++;
       continue;

@@ -124,12 +124,12 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | **Phase E AI (PREMATURE)** | **YES (code exists)** | **PAUSED** | **NOT TESTED — AI goes LAST** |
 | **Phase T: Programs** | **COMPLETE** | **YES** | **S104: T1-T10 done. 11 migrations, 58 EFs, ~192 tables, all portals** |
 | **Phase P: Recon** | **COMPLETE** | **YES** | **S105: P1-P10 done. 11 tables, 7 EFs, 5 CRM routes, 1 ops route, Flutter screens** |
-| **Phase SK: Sketch Engine** | **SPEC'D** | **NO** | **NEXT — builds after Phase P** |
+| **Phase SK: Sketch Engine** | **COMPLETE** | **YES** | **S109: SK1-SK14 all done. 6 tables, 62 migrations. Export (PDF/PNG/DXF/FML/SVG), 3D view, site plan mode (exterior trades), trade formulas (8 trades), templates, snap guides, collaboration foundation. Auto-estimate wired to D8.** |
 | **Phase GC: Schedule** | **SPEC'D** | **NO** | Builds after Phase SK — full CPM scheduling, ~124 hrs, 11 sprints |
 | **Phase U: Unification** | **PLANNED** | **NO** | Builds after Phase GC — portal merge, nav redesign, feature completion |
 | **Plan Review** | **SPEC'D (S97)** | **NO** | Phase E feature (BA1-BA8, ~128 hrs) |
 
-**ALL PHASES A-F + T + P COMPLETE. ~179 tables. 60 Edge Functions. 121 CRM routes. 36 team routes. 39 client routes. 28 ops routes. Phase SK (Sketch Engine) is NEXT, then GC (Schedule), then U (Unification & Feature Completion), then G (QA/Harden everything), then E (AI LAST: E-review → BA1-BA8 → E1-E4) → LAUNCH. F2 + F8 post-launch.**
+**ALL PHASES A-F + T + P + SK COMPLETE. ~180 tables. 62 migrations. 60 Edge Functions. 121 CRM routes. 36 team routes. 39 client routes. 28 ops routes. Next: GC (Schedule), then U (Unification & Feature Completion), then G (QA/Harden everything), then E (AI LAST: E-review → BA1-BA8 → E1-E4) → LAUNCH. F2 + F8 post-launch.**
 
 ---
 
@@ -436,7 +436,7 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | ZForge (PDF-first) | Master Plan | TBD | **DONE** (S90) | F10 |
 | **Programs Module** | **Expansion/39_TPA_MODULE_SPEC** | **~80** | **SPEC'D — NEXT** | **T** |
 | **Recon / Property Intelligence** | **Expansion/40_PROPERTY_INTELLIGENCE_SPEC** | **~96** | **SPEC'D** | **P** |
-| **CAD-Grade Sketch Engine** | **Expansion/46_SKETCH_ENGINE_SPEC** | **~176** | **SPEC'D** | **SK** |
+| **CAD-Grade Sketch Engine** | **Expansion/46_SKETCH_ENGINE_SPEC** | **~176** | **IN PROGRESS (SK1-SK8 done)** | **SK** |
 | **Gantt & CPM Scheduling Engine** | **Expansion/48_GANTT_CPM_SCHEDULER_SPEC** | **~124** | **SPEC'D (S97)** | **GC** |
 | **Unification & Feature Completion** | **NEEDS SPEC SESSION** | **~120** | **PLANNED** | **U** |
 | **Plan Review (AI Takeoff)** | **Expansion/47_BLUEPRINT_ANALYZER_SPEC** | **~128** | **SPEC'D (S97)** | **E/BA** |

@@ -21,6 +21,7 @@ import {
   ZoomOut,
   Grid3x3,
   Layers,
+  type LucideIcon,
 } from 'lucide-react';
 import type { SketchTool, EditorState } from '@/lib/sketch-engine/types';
 
@@ -37,7 +38,7 @@ interface ToolbarProps {
   onToggleLayers: () => void;
 }
 
-const TOOLS: { tool: SketchTool; icon: React.ElementType; label: string }[] = [
+const TOOLS: { tool: SketchTool; icon: LucideIcon; label: string }[] = [
   { tool: 'select', icon: MousePointer, label: 'Select' },
   { tool: 'wall', icon: Minus, label: 'Wall' },
   { tool: 'arcWall', icon: Spline, label: 'Arc Wall' },

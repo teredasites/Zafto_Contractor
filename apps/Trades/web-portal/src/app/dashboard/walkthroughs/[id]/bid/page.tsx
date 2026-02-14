@@ -17,6 +17,7 @@ import {
   MapPin,
   Loader2,
   AlertCircle,
+  type LucideIcon,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -30,7 +31,7 @@ interface BidFormat {
   id: string;
   name: string;
   description: string;
-  icon: React.ElementType;
+  icon: LucideIcon;
   recommended?: boolean;
 }
 

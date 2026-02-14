@@ -17,6 +17,7 @@ import {
   AlertTriangle,
   ChevronDown,
   ChevronRight,
+  type LucideIcon,
 } from 'lucide-react';
 import type { TradeLayer, TradeLayerType } from '@/lib/sketch-engine/types';
 
@@ -31,7 +32,7 @@ interface LayerPanelProps {
   onRemoveLayer: (id: string) => void;
 }
 
-const LAYER_ICONS: Record<TradeLayerType, React.ElementType> = {
+const LAYER_ICONS: Record<TradeLayerType, LucideIcon> = {
   electrical: Zap,
   plumbing: Droplet,
   hvac: Wind,
