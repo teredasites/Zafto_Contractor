@@ -38,6 +38,7 @@ import { StatusBadge, Badge } from '@/components/ui/badge';
 import { Avatar, AvatarGroup } from '@/components/ui/avatar';
 import { formatCurrency, formatDate, formatDateTime, cn } from '@/lib/utils';
 import { useJob, useTeam } from '@/lib/hooks/use-jobs';
+import { useInvoices } from '@/lib/hooks/use-invoices';
 import { useClaimByJob } from '@/lib/hooks/use-insurance';
 import { usePropertyScan } from '@/lib/hooks/use-property-scan';
 import { useLeadScore } from '@/lib/hooks/use-area-scan';
@@ -56,9 +57,38 @@ export default function JobDetailPage() {
 
   const { job, loading } = useJob(jobId);
   const { team } = useTeam();
+  const { createInvoiceFromJob } = useInvoices();
   const { schedule, tasks: scheduleTasks } = useJobSchedule(jobId);
   const [activeTab, setActiveTab] = useState<TabType>('overview');
   const [menuOpen, setMenuOpen] = useState(false);
+  const [completing, setCompleting] = useState(false);
+
+  const handleComplete = async () => {
+    if (completing || !job) return;
+    setCompleting(true);
+    try {
+      const supabase = getSupabase();
+      await supabase.from('jobs').update({ status: 'completed', completed_at: new Date().toISOString() }).eq('id', jobId);
+
+      // Prompt to auto-generate invoice
+      const shouldInvoice = window.confirm(
+        'Job marked as completed. Would you like to generate a draft invoice for this job?'
+      );
+      if (shouldInvoice) {
+        const invoiceId = await createInvoiceFromJob(jobId);
+        if (invoiceId) {
+          router.push(`/dashboard/invoices/${invoiceId}`);
+          return;
+        }
+      }
+      // Refresh page
+      router.refresh();
+    } catch {
+      // Error silenced — job may still update via DB
+    } finally {
+      setCompleting(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -134,9 +164,9 @@ export default function JobDetailPage() {
                 <PauseCircle size={16} />
                 Pause
               </Button>
-              <Button>
+              <Button onClick={handleComplete} disabled={completing}>
                 <CheckCircle size={16} />
-                Complete
+                {completing ? 'Completing...' : 'Complete'}
               </Button>
             </>
           )}
