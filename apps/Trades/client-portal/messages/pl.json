@@ -1,0 +1,13 @@
+{
+  "common": {"save":"Zapisz","cancel":"Anuluj","close":"Zamknij","back":"Wstecz","loading":"\u0141adowanie...","error":"Co\u015b posz\u0142o nie tak","success":"Sukces","yes":"Tak","no":"Nie","submit":"Wy\u015blij","noResults":"Brak wynik\u00f3w","tryAgain":"Spr\u00f3buj ponownie","viewAll":"Poka\u017c wszystko","download":"Pobierz","print":"Drukuj"},
+  "nav": {"home":"Strona g\u0142\u00f3wna","projects":"Projekty","payments":"P\u0142atno\u015bci","messages":"Wiadomo\u015bci","documents":"Dokumenty","schedule":"Harmonogram","myHome":"M\u00f3j dom","meetings":"Spotkania","reviews":"Opinie","menu":"Menu"},
+  "auth": {"signIn":"Zaloguj si\u0119","signOut":"Wyloguj si\u0119","email":"E-mail","magicLink":"Wy\u015blij link logowania","checkEmail":"Sprawd\u017a e-mail w poszukiwaniu linku logowania"},
+  "projects": {"title":"Moje projekty","projectDetails":"Szczeg\u00f3\u0142y projektu","status":"Status","progress":"Post\u0119p","startDate":"Data rozpocz\u0119cia","estimatedCompletion":"Planowane zako\u0144czenie","crew":"Ekipa","updates":"Aktualizacje","photos":"Zdj\u0119cia","documents":"Dokumenty","noProjects":"Brak aktywnych projekt\u00f3w","statuses":{"scheduled":"Zaplanowane","in_progress":"W toku","on_hold":"Wstrzymane","completed":"Zako\u0144czone"}},
+  "payments": {"title":"P\u0142atno\u015bci","invoices":"Faktury","payNow":"Zap\u0142a\u0107 teraz","paymentHistory":"Historia p\u0142atno\u015bci","amountDue":"Kwota do zap\u0142aty","dueDate":"Termin p\u0142atno\u015bci","paid":"Zap\u0142acone","pending":"Oczekuj\u0105ce","overdue":"Zaleg\u0142e","totalOwed":"Ca\u0142kowite zad\u0142u\u017cenie","noInvoices":"Brak faktur"},
+  "messages": {"title":"Wiadomo\u015bci","newMessage":"Nowa wiadomo\u015b\u0107","noMessages":"Brak wiadomo\u015bci","typeMessage":"Napisz wiadomo\u015b\u0107...","send":"Wy\u015blij"},
+  "documents": {"title":"Dokumenty","contracts":"Umowy","invoices":"Faktury","photos":"Zdj\u0119cia","warranties":"Gwarancje","permits":"Pozwolenia","noDocuments":"Brak dokument\u00f3w"},
+  "myHome": {"title":"M\u00f3j dom","propertyDetails":"Szczeg\u00f3\u0142y nieruchomo\u015bci","maintenanceSchedule":"Harmonogram konserwacji","warrantyInfo":"Informacje o gwarancji","serviceHistory":"Historia us\u0142ug"},
+  "schedule": {"title":"Harmonogram","upcoming":"Nadchodz\u0105ce","noAppointments":"Brak zaplanowanych wizyt","requestReschedule":"Poprosi\u0107 o zmian\u0119 terminu"},
+  "reviews": {"title":"Zostaw opini\u0119","rating":"Ocena","comment":"Komentarz","submitReview":"Wy\u015blij opini\u0119","thankYou":"Dzi\u0119kujemy za opini\u0119!"},
+  "settings": {"language":"J\u0119zyk","languageDescription":"Wybierz preferowany j\u0119zyk"}
+}

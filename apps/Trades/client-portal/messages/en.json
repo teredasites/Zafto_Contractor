@@ -1,0 +1,110 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "close": "Close",
+    "back": "Back",
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "success": "Success",
+    "yes": "Yes",
+    "no": "No",
+    "submit": "Submit",
+    "noResults": "No results found",
+    "tryAgain": "Try again",
+    "viewAll": "View all",
+    "download": "Download",
+    "print": "Print"
+  },
+  "nav": {
+    "home": "Home",
+    "projects": "Projects",
+    "payments": "Payments",
+    "messages": "Messages",
+    "documents": "Documents",
+    "schedule": "Schedule",
+    "myHome": "My Home",
+    "meetings": "Meetings",
+    "reviews": "Reviews",
+    "menu": "Menu"
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signOut": "Sign Out",
+    "email": "Email",
+    "magicLink": "Send Magic Link",
+    "checkEmail": "Check your email for the login link"
+  },
+  "projects": {
+    "title": "My Projects",
+    "projectDetails": "Project Details",
+    "status": "Status",
+    "progress": "Progress",
+    "startDate": "Start Date",
+    "estimatedCompletion": "Estimated Completion",
+    "crew": "Crew",
+    "updates": "Updates",
+    "photos": "Photos",
+    "documents": "Documents",
+    "noProjects": "No active projects",
+    "statuses": {
+      "scheduled": "Scheduled",
+      "in_progress": "In Progress",
+      "on_hold": "On Hold",
+      "completed": "Completed"
+    }
+  },
+  "payments": {
+    "title": "Payments",
+    "invoices": "Invoices",
+    "payNow": "Pay Now",
+    "paymentHistory": "Payment History",
+    "amountDue": "Amount Due",
+    "dueDate": "Due Date",
+    "paid": "Paid",
+    "pending": "Pending",
+    "overdue": "Overdue",
+    "totalOwed": "Total Owed",
+    "noInvoices": "No invoices"
+  },
+  "messages": {
+    "title": "Messages",
+    "newMessage": "New Message",
+    "noMessages": "No messages yet",
+    "typeMessage": "Type a message...",
+    "send": "Send"
+  },
+  "documents": {
+    "title": "Documents",
+    "contracts": "Contracts",
+    "invoices": "Invoices",
+    "photos": "Photos",
+    "warranties": "Warranties",
+    "permits": "Permits",
+    "noDocuments": "No documents yet"
+  },
+  "myHome": {
+    "title": "My Home",
+    "propertyDetails": "Property Details",
+    "maintenanceSchedule": "Maintenance Schedule",
+    "warrantyInfo": "Warranty Information",
+    "serviceHistory": "Service History"
+  },
+  "schedule": {
+    "title": "Schedule",
+    "upcoming": "Upcoming",
+    "noAppointments": "No upcoming appointments",
+    "requestReschedule": "Request Reschedule"
+  },
+  "reviews": {
+    "title": "Leave a Review",
+    "rating": "Rating",
+    "comment": "Comment",
+    "submitReview": "Submit Review",
+    "thankYou": "Thank you for your review!"
+  },
+  "settings": {
+    "language": "Language",
+    "languageDescription": "Choose your preferred language"
+  }
+}

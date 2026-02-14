@@ -50,6 +50,7 @@ import { Badge } from '@/components/ui/badge';
 import { CommandPalette } from '@/components/command-palette';
 import { cn, formatRelativeTime } from '@/lib/utils';
 import { getSupabase } from '@/lib/supabase';
+import { locales, localeNames, localeFlags, type Locale } from '@/lib/i18n-config';
 import { useTeam } from '@/lib/hooks/use-jobs';
 import { usePermissions, TierGate, PERMISSIONS, ROLE_PERMISSIONS, type Permission } from '@/components/permission-gate';
 import { useBranches, useCustomRoles, useFormTemplates, useCertifications, useApiKeys } from '@/lib/hooks/use-enterprise';
@@ -203,6 +204,36 @@ export default function SettingsPage() {
 }
 
 function ProfileSettings() {
+  const [selectedLocale, setSelectedLocale] = useState<Locale>('en');
+  const [savingLocale, setSavingLocale] = useState(false);
+
+  useEffect(() => {
+    const cookie = document.cookie.split('; ').find(c => c.startsWith('NEXT_LOCALE='));
+    if (cookie) {
+      const val = cookie.split('=')[1] as Locale;
+      if (locales.includes(val)) setSelectedLocale(val);
+    }
+  }, []);
+
+  const handleLocaleChange = async (locale: Locale) => {
+    setSelectedLocale(locale);
+    setSavingLocale(true);
+    try {
+      const supabase = getSupabase();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await supabase.from('users').update({ preferred_locale: locale }).eq('id', user.id);
+      }
+      document.cookie = `NEXT_LOCALE=${locale}; path=/; max-age=${60 * 60 * 24 * 365}; samesite=lax`;
+      window.location.reload();
+    } catch {
+      // Revert on error
+      setSelectedLocale(selectedLocale);
+    } finally {
+      setSavingLocale(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <Card>
@@ -232,6 +263,34 @@ function ProfileSettings() {
           </div>
 
           <Button>Save Changes</Button>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Language</CardTitle>
+          <CardDescription>Choose your preferred language. The entire app will switch to your selection.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+            {locales.map((loc) => (
+              <button
+                key={loc}
+                onClick={() => handleLocaleChange(loc)}
+                disabled={savingLocale}
+                className={cn(
+                  'flex items-center gap-2 px-3 py-2.5 rounded-lg border text-sm transition-all text-left',
+                  selectedLocale === loc
+                    ? 'border-accent bg-accent/10 text-accent font-medium'
+                    : 'border-main bg-secondary hover:bg-surface-hover text-main'
+                )}
+              >
+                <span className="text-base">{localeFlags[loc]}</span>
+                <span className="truncate">{localeNames[loc]}</span>
+                {selectedLocale === loc && <Check size={14} className="ml-auto flex-shrink-0" />}
+              </button>
+            ))}
+          </div>
         </CardContent>
       </Card>
     </div>
