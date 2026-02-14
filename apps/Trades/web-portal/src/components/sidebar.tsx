@@ -487,7 +487,7 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
         href={item.href}
         onClick={() => { setActiveGroup(null); onClose?.(); }}
         className={cn(
-          'flex items-center gap-3 px-3 py-[7px] rounded-md text-[13px] font-medium transition-colors relative',
+          'flex items-center gap-3 px-3 py-[7px] rounded-md text-[14px] font-medium transition-colors relative',
           active
             ? 'text-accent bg-accent/5'
             : 'text-muted hover:text-main hover:bg-surface-hover',
@@ -497,9 +497,9 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
           <span className="absolute left-0 top-1.5 bottom-1.5 w-[2px] rounded-full bg-accent" />
         )}
         {isZ ? (
-          <ZMark size={15} className={cn('flex-shrink-0', active && 'text-accent')} />
+          <ZMark size={17} className={cn('flex-shrink-0', active && 'text-accent')} />
         ) : (
-          <item.icon size={16} className="flex-shrink-0" />
+          <item.icon size={18} className="flex-shrink-0" />
         )}
         <span>{item.name}</span>
       </Link>
@@ -557,7 +557,7 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
               href="/dashboard"
               onClick={onMobileClose}
               className={cn(
-                'flex items-center gap-3 px-3 py-[7px] rounded-md text-[13px] font-medium transition-colors relative',
+                'flex items-center gap-3 px-3 py-[7px] rounded-md text-[14px] font-medium transition-colors relative',
                 pathname === '/dashboard'
                   ? 'text-accent bg-accent/5'
                   : 'text-muted hover:text-main hover:bg-surface-hover',
@@ -583,21 +583,21 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
                   onClick={() => toggleMobileGroup(group.key)}
                   className={cn(
                     'flex items-center justify-between w-full px-4 py-1.5 mt-1',
-                    'text-[10px] font-semibold uppercase tracking-[0.08em] transition-colors',
+                    'text-[12px] font-semibold uppercase tracking-[0.06em] transition-colors',
                     hasActive && !isOpen ? 'text-accent/60' : 'text-muted/40',
                     'hover:text-muted/70',
                   )}
                 >
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2.5">
                     {RailIcon ? (
-                      <RailIcon size={12} className="flex-shrink-0" />
+                      <RailIcon size={14} className="flex-shrink-0" />
                     ) : (
-                      <ZMark size={10} className="flex-shrink-0" />
+                      <ZMark size={12} className="flex-shrink-0" />
                     )}
                     <span>{group.label}</span>
                   </div>
                   <ChevronDown
-                    size={12}
+                    size={13}
                     className={cn(
                       'transition-transform duration-150 flex-shrink-0',
                       isOpen ? 'rotate-0' : '-rotate-90',
@@ -625,7 +625,7 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
             href="/dashboard/settings"
             onClick={onMobileClose}
             className={cn(
-              'flex items-center gap-3 px-3 py-[7px] rounded-md text-[13px] font-medium transition-colors',
+              'flex items-center gap-3 px-3 py-[7px] rounded-md text-[14px] font-medium transition-colors',
               pathname === '/dashboard/settings' ? 'text-accent' : 'text-muted hover:text-main hover:bg-surface-hover',
             )}
           >
@@ -634,7 +634,7 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
           </Link>
           <button
             onClick={onSignOut}
-            className="w-full flex items-center gap-3 px-3 py-[7px] rounded-md text-[13px] font-medium text-muted hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
+            className="w-full flex items-center gap-3 px-3 py-[7px] rounded-md text-[14px] font-medium text-muted hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
           >
             <LogOut size={16} className="flex-shrink-0" />
             <span>Sign out</span>
@@ -685,11 +685,11 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
             {pathname === '/dashboard' && (
               <span className="absolute left-0 top-1 bottom-1 w-[2px] rounded-full bg-accent" />
             )}
-            <LayoutDashboard size={18} className="flex-shrink-0" />
-            {isWide && <span className="text-[13px] font-medium whitespace-nowrap">Dashboard</span>}
+            <LayoutDashboard size={20} className="flex-shrink-0" />
+            {isWide && <span className="text-[14px] font-medium whitespace-nowrap">Dashboard</span>}
             {!isWide && hoveredGroup === '__dashboard' && !activeGroup && (
               <div className="absolute left-full ml-3 px-3 py-1.5 bg-surface border border-main rounded-lg shadow-xl z-50 whitespace-nowrap sidebar-flyout-enter pointer-events-none">
-                <span className="text-[13px] font-medium text-main">Dashboard</span>
+                <span className="text-[14px] font-medium text-main">Dashboard</span>
               </div>
             )}
           </Link>
@@ -714,21 +714,21 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
                     onClick={() => setActiveGroup(prev => prev === group.key ? null : group.key)}
                     className={cn(
                       'flex items-center justify-between w-full px-3 py-1.5 mt-1',
-                      'text-[10px] font-semibold uppercase tracking-[0.08em] transition-colors',
+                      'text-[12px] font-semibold uppercase tracking-[0.06em] transition-colors',
                       hasActive && !isOpen ? 'text-accent/60' : 'text-muted/40',
                       'hover:text-muted/70',
                     )}
                   >
-                    <div className="flex items-center gap-2 min-w-0">
+                    <div className="flex items-center gap-2.5 min-w-0">
                       {RailIcon ? (
-                        <RailIcon size={12} className="flex-shrink-0" />
+                        <RailIcon size={14} className="flex-shrink-0" />
                       ) : (
-                        <ZMark size={10} className="flex-shrink-0" />
+                        <ZMark size={12} className="flex-shrink-0" />
                       )}
                       <span className="whitespace-nowrap">{group.label}</span>
                     </div>
                     <ChevronDown
-                      size={12}
+                      size={13}
                       className={cn(
                         'transition-transform duration-150 flex-shrink-0',
                         isOpen ? 'rotate-0' : '-rotate-90',
@@ -769,16 +769,16 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
                     <span className="absolute left-0 top-1 bottom-1 w-[2px] rounded-full bg-accent" />
                   )}
                   {RailIcon ? (
-                    <RailIcon size={18} />
+                    <RailIcon size={20} />
                   ) : (
-                    <ZMark size={16} className={cn((isOpen || hasActive) && 'text-accent')} />
+                    <ZMark size={18} className={cn((isOpen || hasActive) && 'text-accent')} />
                   )}
                 </button>
 
                 {/* Hover tooltip — narrow mode only */}
                 {isHovered && !isOpen && (
                   <div className="absolute left-full top-1/2 -translate-y-1/2 ml-3 px-3 py-1.5 bg-surface border border-main rounded-lg shadow-xl z-50 whitespace-nowrap sidebar-flyout-enter pointer-events-none">
-                    <span className="text-[13px] font-medium text-main">{group.label}</span>
+                    <span className="text-[14px] font-medium text-main">{group.label}</span>
                   </div>
                 )}
               </div>
@@ -791,30 +791,6 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
 
         {/* Bottom: Z Assistant + Settings + Sidebar Control + Sign Out + User */}
         <div className="px-1.5 py-2 space-y-0.5">
-          {/* Z Assistant with pulsing dot */}
-          <Link
-            href="/dashboard/z"
-            onMouseEnter={!isWide ? () => setHoveredGroup('__z') : undefined}
-            onMouseLeave={!isWide ? handleRailHoverLeave : undefined}
-            className={cn(
-              'relative flex items-center py-2 rounded-md transition-colors group',
-              isWide ? 'px-3 gap-3' : 'justify-center',
-              pathname.startsWith('/dashboard/z')
-                ? 'text-accent bg-accent/10'
-                : 'text-muted hover:text-main hover:bg-surface-hover',
-            )}
-          >
-            <ZMark size={16} className="flex-shrink-0" />
-            {!isWide && <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />}
-            {isWide && <span className="text-[13px] font-medium whitespace-nowrap">Z Assistant</span>}
-            {isWide && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-accent animate-pulse flex-shrink-0" />}
-            {!isWide && hoveredGroup === '__z' && (
-              <div className="absolute left-full ml-3 px-3 py-1.5 bg-surface border border-main rounded-lg shadow-xl z-50 whitespace-nowrap sidebar-flyout-enter pointer-events-none">
-                <span className="text-[13px] font-medium text-main">Z Assistant</span>
-              </div>
-            )}
-          </Link>
-
           {/* Settings */}
           <Link
             href="/dashboard/settings"
@@ -828,11 +804,11 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
                 : 'text-muted hover:text-main hover:bg-surface-hover',
             )}
           >
-            <Settings size={18} className="flex-shrink-0" />
-            {isWide && <span className="text-[13px] font-medium whitespace-nowrap">Settings</span>}
+            <Settings size={20} className="flex-shrink-0" />
+            {isWide && <span className="text-[14px] font-medium whitespace-nowrap">Settings</span>}
             {!isWide && hoveredGroup === '__settings' && (
               <div className="absolute left-full ml-3 px-3 py-1.5 bg-surface border border-main rounded-lg shadow-xl z-50 whitespace-nowrap sidebar-flyout-enter pointer-events-none">
-                <span className="text-[13px] font-medium text-main">Settings</span>
+                <span className="text-[14px] font-medium text-main">Settings</span>
               </div>
             )}
           </Link>
@@ -856,10 +832,10 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
               ) : (
                 <PanelLeft size={18} className="flex-shrink-0" />
               )}
-              {isWide && <span className="text-[13px] font-medium whitespace-nowrap">Sidebar</span>}
+              {isWide && <span className="text-[14px] font-medium whitespace-nowrap">Sidebar</span>}
               {!isWide && hoveredGroup === '__control' && !controlOpen && (
                 <div className="absolute left-full ml-3 px-3 py-1.5 bg-surface border border-main rounded-lg shadow-xl z-50 whitespace-nowrap sidebar-flyout-enter pointer-events-none">
-                  <span className="text-[13px] font-medium text-main">Sidebar control</span>
+                  <span className="text-[14px] font-medium text-main">Sidebar control</span>
                 </div>
               )}
             </button>
@@ -883,7 +859,7 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
                       key={opt.mode}
                       onClick={() => handleSetMode(opt.mode)}
                       className={cn(
-                        'w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[13px] font-medium transition-colors',
+                        'w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[14px] font-medium transition-colors',
                         sidebarMode === opt.mode
                           ? 'text-accent bg-accent/5'
                           : 'text-muted hover:text-main hover:bg-surface-hover',
@@ -912,10 +888,10 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
             )}
           >
             <LogOut size={18} className="flex-shrink-0" />
-            {isWide && <span className="text-[13px] font-medium whitespace-nowrap">Sign out</span>}
+            {isWide && <span className="text-[14px] font-medium whitespace-nowrap">Sign out</span>}
             {!isWide && hoveredGroup === '__signout' && (
               <div className="absolute left-full ml-3 px-3 py-1.5 bg-surface border border-main rounded-lg shadow-xl z-50 whitespace-nowrap sidebar-flyout-enter pointer-events-none">
-                <span className="text-[13px] font-medium text-main">Sign out</span>
+                <span className="text-[14px] font-medium text-main">Sign out</span>
               </div>
             )}
           </button>
@@ -939,7 +915,7 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
               )}
               {!isWide && hoveredGroup === '__user' && (
                 <div className="absolute left-full ml-3 px-3 py-1.5 bg-surface border border-main rounded-lg shadow-xl z-50 whitespace-nowrap sidebar-flyout-enter pointer-events-none">
-                  <span className="text-[13px] font-medium text-main">{user.email || 'Profile'}</span>
+                  <span className="text-[14px] font-medium text-main">{user.email || 'Profile'}</span>
                 </div>
               )}
             </button>
@@ -959,7 +935,7 @@ export function Sidebar({ mobileOpen, onMobileClose, user, onSignOut }: SidebarP
         >
           {/* Panel header */}
           <div className="h-12 flex items-center justify-between px-4 border-b border-main flex-shrink-0">
-            <span className="text-[13px] font-semibold tracking-[0.02em] text-main">
+            <span className="text-[14px] font-semibold tracking-[0.02em] text-main">
               {currentDetailGroup.label}
             </span>
             <button

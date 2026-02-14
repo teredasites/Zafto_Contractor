@@ -133,6 +133,7 @@ export function useWarranties() {
       .single();
 
     if (err) throw err;
+    fetchWarranties();
     return result.id;
   };
 
@@ -157,13 +158,15 @@ export function useWarranties() {
 
     const { error: err } = await supabase.from('warranties').update(updates).eq('id', id);
     if (err) throw err;
+    fetchWarranties();
   };
 
   const deleteWarranty = async (id: string) => {
     const supabase = getSupabase();
     const { error: err } = await supabase.from('warranties').update({ deleted_at: new Date().toISOString() }).eq('id', id);
     if (err) throw err;
+    fetchWarranties();
   };
 
-  return { warranties, loading, error, createWarranty, updateWarranty, deleteWarranty };
+  return { warranties, loading, error, createWarranty, updateWarranty, deleteWarranty, refetch: fetchWarranties };
 }

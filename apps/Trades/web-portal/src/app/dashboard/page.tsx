@@ -49,6 +49,8 @@ import { useRent } from '@/lib/hooks/use-rent';
 import { useReports } from '@/lib/hooks/use-reports';
 import { useUnits } from '@/lib/hooks/use-units';
 import { JOB_TYPE_LABELS, JOB_TYPE_COLORS } from '@/lib/hooks/mappers';
+import { useZConsole } from '@/components/z-console';
+import { ZMark } from '@/components/z-console/z-mark';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -371,7 +373,26 @@ export default function DashboardPage() {
 
         {/* Right Column - Activity, Charts, Quick Actions */}
         <div className="space-y-5">
-          {/* PRO MODE: 2-column grid for widgets */}
+          {/* Z Intelligence — inline dashboard widget */}
+          <DashboardZWidget />
+
+          {/* Team Live Map — always visible */}
+          <Card>
+            <CardHeader className="p-4 pb-2">
+              <CardTitle className="text-sm flex items-center gap-2">
+                <Radio size={14} className="text-emerald-500" />
+                Team Live
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-4 pt-0">
+              <TeamMapWidget
+                members={team}
+                onViewAll={() => router.push('/dashboard/team')}
+              />
+            </CardContent>
+          </Card>
+
+          {/* PRO MODE: widgets grid */}
           <ProModeGate>
             <div className="grid grid-cols-2 gap-4">
               {/* Time Clock Widget */}
@@ -379,22 +400,6 @@ export default function DashboardPage() {
                 teamMembers={team}
                 variant="compact"
               />
-
-              {/* Team Live Map Widget */}
-              <Card>
-                <CardHeader className="p-4 pb-2">
-                  <CardTitle className="text-sm flex items-center gap-2">
-                    <Radio size={14} className="text-emerald-500" />
-                    Team Live
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-4 pt-0">
-                  <TeamMapWidget
-                    members={team}
-                    onViewAll={() => router.push('/dashboard/team')}
-                  />
-                </CardContent>
-              </Card>
 
               {/* Jobs by Status Chart */}
               <Card>
@@ -859,4 +864,133 @@ function ActivityIcon({ type }: { type: string }) {
   const { icon, color } = icons[type] || { icon: <Clock size={14} />, color: 'text-muted' };
 
   return <span className={color}>{icon}</span>;
+}
+
+// ── Dashboard Z Intelligence Widget ──────────────────
+function DashboardZWidget() {
+  const {
+    currentThread,
+    isThinking,
+    quickActions,
+    sendMessage,
+    setConsoleState,
+    consoleState,
+  } = useZConsole();
+  const [inputValue, setInputValue] = useState('');
+
+  const messages = currentThread?.messages || [];
+  const recentMessages = messages.slice(-4);
+
+  const handleSend = () => {
+    const trimmed = inputValue.trim();
+    if (!trimmed || isThinking) return;
+    sendMessage(trimmed);
+    setInputValue('');
+    if (consoleState === 'collapsed') {
+      setConsoleState('open');
+    }
+  };
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm flex items-center gap-2">
+          <ZMark size={16} />
+          Z Intelligence
+        </CardTitle>
+        <kbd className="text-[10px] text-muted bg-secondary px-1.5 py-0.5 rounded border border-main">
+          ⌘J
+        </kbd>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        {/* Recent messages preview */}
+        {recentMessages.length > 0 && (
+          <div className="max-h-[160px] overflow-y-auto space-y-2 scrollbar-hide">
+            {recentMessages.map((msg) => (
+              <div
+                key={msg.id}
+                className={cn(
+                  'text-xs p-2 rounded-lg',
+                  msg.role === 'user'
+                    ? 'bg-accent/5 text-main ml-4'
+                    : 'bg-secondary text-main mr-4',
+                )}
+              >
+                <p className="line-clamp-2">{msg.content}</p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Quick actions — shown when no conversation */}
+        {messages.length === 0 && quickActions.length > 0 && (
+          <div className="flex flex-wrap gap-1.5">
+            {quickActions.slice(0, 4).map((action) => (
+              <button
+                key={action.id}
+                onClick={() => {
+                  sendMessage(action.prompt);
+                  if (consoleState === 'collapsed') setConsoleState('open');
+                }}
+                className="text-[11px] px-2.5 py-1 rounded-full bg-secondary border border-main text-muted hover:text-main hover:border-accent/40 transition-colors"
+              >
+                {action.label}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Input */}
+        <div className="flex items-center gap-2">
+          <input
+            type="text"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSend();
+              }
+            }}
+            placeholder="Ask Z anything..."
+            className="flex-1 text-[13px] bg-secondary border border-main rounded-lg px-3 py-2 text-main placeholder:text-muted outline-none focus:border-accent/40 transition-colors"
+          />
+          <button
+            onClick={handleSend}
+            disabled={!inputValue.trim() || isThinking}
+            className={cn(
+              'p-2 rounded-lg transition-colors flex-shrink-0',
+              inputValue.trim()
+                ? 'bg-accent text-white hover:bg-accent/90'
+                : 'bg-secondary text-muted cursor-not-allowed',
+            )}
+          >
+            <Send size={14} />
+          </button>
+        </div>
+
+        {/* Thinking indicator */}
+        {isThinking && (
+          <div className="flex items-center gap-2 text-[11px] text-emerald-500">
+            <span className="inline-flex gap-0.5">
+              <span className="w-1 h-1 rounded-full bg-emerald-500 animate-bounce" style={{ animationDelay: '0ms' }} />
+              <span className="w-1 h-1 rounded-full bg-emerald-500 animate-bounce" style={{ animationDelay: '150ms' }} />
+              <span className="w-1 h-1 rounded-full bg-emerald-500 animate-bounce" style={{ animationDelay: '300ms' }} />
+            </span>
+            Z is thinking...
+          </div>
+        )}
+
+        {/* Full console link */}
+        {messages.length > 0 && (
+          <button
+            onClick={() => setConsoleState(consoleState === 'collapsed' ? 'open' : consoleState)}
+            className="text-[11px] text-accent hover:underline"
+          >
+            Open full conversation
+          </button>
+        )}
+      </CardContent>
+    </Card>
+  );
 }

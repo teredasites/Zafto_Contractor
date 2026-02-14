@@ -415,8 +415,19 @@ function NewLeadModal({ onClose, onCreate }: {
   const [notes, setNotes] = useState('');
   const [saving, setSaving] = useState(false);
 
+  const [emailError, setEmailError] = useState('');
+
+  const validateEmail = (val: string) => {
+    if (!val) return true;
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+  };
+
   const handleSubmit = async () => {
     if (!name.trim()) return;
+    if (email.trim() && !validateEmail(email.trim())) {
+      setEmailError('Please enter a valid email address');
+      return;
+    }
     setSaving(true);
     try {
       await onCreate({
@@ -458,10 +469,12 @@ function NewLeadModal({ onClose, onCreate }: {
               <input
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => { setEmail(e.target.value); setEmailError(''); }}
+                onBlur={() => { if (email.trim() && !validateEmail(email.trim())) setEmailError('Please enter a valid email address'); }}
                 placeholder="john@email.com"
-                className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted focus:border-accent focus:ring-1 focus:ring-accent"
+                className={`w-full px-4 py-2.5 bg-main border rounded-lg text-main placeholder:text-muted focus:ring-1 ${emailError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-main focus:border-accent focus:ring-accent'}`}
               />
+              {emailError && <p className="text-xs text-red-500 mt-1">{emailError}</p>}
             </div>
             <div>
               <label className="block text-sm font-medium text-main mb-1.5">Phone</label>

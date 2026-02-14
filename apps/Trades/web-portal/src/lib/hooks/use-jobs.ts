@@ -103,6 +103,7 @@ export function useJobs() {
       });
     }
 
+    fetchJobs();
     return result.id;
   };
 
@@ -135,6 +136,7 @@ export function useJobs() {
 
     const { error: err } = await supabase.from('jobs').update(updateData).eq('id', id);
     if (err) throw err;
+    fetchJobs();
   };
 
   const updateJobStatus = async (id: string, status: JobStatus) => {
@@ -147,6 +149,7 @@ export function useJobs() {
 
     const { error: err } = await supabase.from('jobs').update(updateData).eq('id', id);
     if (err) throw err;
+    fetchJobs();
   };
 
   const deleteJob = async (id: string) => {
@@ -156,6 +159,7 @@ export function useJobs() {
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id);
     if (err) throw err;
+    fetchJobs();
   };
 
   // U22: OSHA → Job Safety — attach safety checklist based on trade

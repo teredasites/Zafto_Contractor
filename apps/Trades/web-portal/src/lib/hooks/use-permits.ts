@@ -140,6 +140,7 @@ export function usePermits() {
       .single();
 
     if (err) throw err;
+    fetchPermits();
     return result.id;
   };
 
@@ -164,13 +165,15 @@ export function usePermits() {
 
     const { error: err } = await supabase.from('permits').update(updates).eq('id', id);
     if (err) throw err;
+    fetchPermits();
   };
 
   const deletePermit = async (id: string) => {
     const supabase = getSupabase();
     const { error: err } = await supabase.from('permits').update({ deleted_at: new Date().toISOString() }).eq('id', id);
     if (err) throw err;
+    fetchPermits();
   };
 
-  return { permits, loading, error, createPermit, updatePermit, deletePermit };
+  return { permits, loading, error, createPermit, updatePermit, deletePermit, refetch: fetchPermits };
 }

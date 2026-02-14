@@ -96,10 +96,10 @@ function DashboardShell({
   user: User;
   onSignOut: () => void;
 }) {
-  const { consoleState, chatWidth, artifactWidth, setConsoleState, showStorageArtifact } = useZConsole();
+  const router = useRouter();
+  const { consoleState, chatWidth, artifactWidth, setConsoleState } = useZConsole();
   const { profile } = useAuth();
   const isArtifact = consoleState === 'artifact';
-  const isChatOpen = consoleState === 'open';
   const sidebarPx = useSidebarWidth();
 
   const companyName = profile?.companyName || null;
@@ -148,33 +148,48 @@ function DashboardShell({
             {/* Right side: search + actions */}
             <div className="flex items-center gap-2">
               {/* Search - Command Palette Trigger */}
-              <button className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-secondary border border-main rounded-lg w-48 hover:border-accent/40 transition-colors">
+              <button
+                onClick={() => {
+                  document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true, bubbles: true }));
+                }}
+                className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-secondary border border-main rounded-lg w-56 hover:border-accent/40 transition-colors"
+              >
                 <Search size={15} className="text-muted" />
-                <span className="text-[13px] text-muted flex-1 text-left">Search...</span>
+                <span className="text-[13px] text-muted flex-1 text-left">Search or jump to...</span>
                 <kbd className="hidden md:inline text-[11px] text-muted bg-main px-1.5 py-0.5 rounded border border-main">
                   ⌘K
                 </kbd>
               </button>
 
-              {/* Artifact/Files toggle */}
+              {/* Documents / Files */}
+              <button
+                onClick={() => router.push('/dashboard/documents')}
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[13px] font-medium text-muted hover:text-main hover:bg-surface-hover transition-all"
+                title="Documents & Files"
+              >
+                <FolderOpen size={16} />
+                <span className="hidden sm:inline">Files</span>
+              </button>
+
+              {/* Z Intelligence toggle */}
               <button
                 onClick={() => {
-                  if (consoleState === 'artifact') {
+                  if (consoleState === 'collapsed') {
                     setConsoleState('open');
                   } else {
-                    showStorageArtifact();
+                    setConsoleState('collapsed');
                   }
                 }}
                 className={cn(
                   'flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[13px] font-medium transition-all',
-                  isArtifact
-                    ? 'bg-accent text-white'
+                  consoleState !== 'collapsed'
+                    ? 'bg-emerald-500/10 text-emerald-500'
                     : 'text-muted hover:text-main hover:bg-surface-hover',
                 )}
-                title="Open artifact workspace"
+                title="Z Intelligence (⌘J)"
               >
-                <FolderOpen size={16} />
-                <span className="hidden sm:inline">Files</span>
+                <ZMark size={16} />
+                <span className="hidden sm:inline">Z</span>
               </button>
 
               <ProModeToggle />

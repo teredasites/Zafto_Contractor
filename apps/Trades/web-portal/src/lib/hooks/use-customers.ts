@@ -79,6 +79,7 @@ export function useCustomers() {
       .single();
 
     if (err) throw err;
+    fetchCustomers();
     return result.id;
   };
 
@@ -102,6 +103,7 @@ export function useCustomers() {
 
     const { error: err } = await supabase.from('customers').update(updateData).eq('id', id);
     if (err) throw err;
+    fetchCustomers();
   };
 
   const deleteCustomer = async (id: string) => {
@@ -111,6 +113,7 @@ export function useCustomers() {
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id);
     if (err) throw err;
+    fetchCustomers();
   };
 
   return { customers, loading, error, createCustomer, updateCustomer, deleteCustomer, refetch: fetchCustomers };

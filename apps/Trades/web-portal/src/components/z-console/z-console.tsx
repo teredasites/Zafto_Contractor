@@ -41,10 +41,7 @@ export function ZConsole() {
 
   return (
     <>
-      {/* Pulse — always rendered when collapsed */}
-      {consoleState === 'collapsed' && (
-        <ZPulse onClick={toggleConsole} hasUnread={false} />
-      )}
+      {/* No floating FAB — Z is accessed via top bar button or dashboard widget */}
 
       {/* Chat panel — when open OR when artifact is active (stays visible, slides left) */}
       {(consoleState === 'open' || consoleState === 'artifact') && (
