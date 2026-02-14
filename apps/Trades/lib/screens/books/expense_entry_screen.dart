@@ -42,7 +42,10 @@ class ExpenseEntryScreen extends ConsumerStatefulWidget {
 class _ExpenseEntryScreenState extends ConsumerState<ExpenseEntryScreen> {
   final _descController = TextEditingController();
   final _amountController = TextEditingController();
+  final _taxController = TextEditingController();
   final _notesController = TextEditingController();
+  final _vendorController = TextEditingController();
+  final _poNumberController = TextEditingController();
 
   String _category = 'materials';
   String _paymentMethod = 'credit_card';
@@ -50,12 +53,17 @@ class _ExpenseEntryScreenState extends ConsumerState<ExpenseEntryScreen> {
   Uint8List? _receiptBytes;
   String? _receiptFileName;
   bool _saving = false;
+  bool _billable = false;
+  bool _reimbursable = false;
 
   @override
   void dispose() {
     _descController.dispose();
     _amountController.dispose();
+    _taxController.dispose();
     _notesController.dispose();
+    _vendorController.dispose();
+    _poNumberController.dispose();
     super.dispose();
   }
 
@@ -137,15 +145,21 @@ class _ExpenseEntryScreenState extends ConsumerState<ExpenseEntryScreen> {
       final dateStr =
           '${_expenseDate.year}-${_expenseDate.month.toString().padLeft(2, '0')}-${_expenseDate.day.toString().padLeft(2, '0')}';
 
+      final taxAmount = double.tryParse(_taxController.text.trim()) ?? 0;
+
       await supabase.from('expense_records').insert({
         'company_id': companyId,
         'expense_date': dateStr,
         'description': desc,
         'amount': amount,
-        'tax_amount': 0,
-        'total': amount,
+        'tax_amount': taxAmount,
+        'total': amount + taxAmount,
         'category': _category,
         'payment_method': _paymentMethod,
+        'vendor_name': _vendorController.text.trim().isNotEmpty ? _vendorController.text.trim() : null,
+        'po_number': _poNumberController.text.trim().isNotEmpty ? _poNumberController.text.trim() : null,
+        'is_billable': _billable,
+        'is_reimbursable': _reimbursable,
         'receipt_storage_path': storagePath,
         'receipt_url': receiptUrl,
         'ocr_status': storagePath != null ? 'pending' : 'none',
@@ -299,6 +313,103 @@ class _ExpenseEntryScreenState extends ConsumerState<ExpenseEntryScreen> {
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: BorderSide.none),
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            // Tax amount
+            TextField(
+              controller: _taxController,
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
+              style: TextStyle(color: colors.textPrimary, fontSize: 15),
+              decoration: InputDecoration(
+                labelText: 'Tax Amount',
+                labelStyle: TextStyle(color: colors.textSecondary),
+                prefixText: '\$ ',
+                prefixStyle: TextStyle(color: colors.textSecondary),
+                filled: true,
+                fillColor: colors.bgInset,
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none),
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            // Vendor name
+            TextField(
+              controller: _vendorController,
+              style: TextStyle(color: colors.textPrimary, fontSize: 15),
+              decoration: InputDecoration(
+                labelText: 'Vendor / Supplier',
+                labelStyle: TextStyle(color: colors.textSecondary),
+                prefixIcon: Icon(LucideIcons.store, size: 18, color: colors.textTertiary),
+                filled: true,
+                fillColor: colors.bgInset,
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none),
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            // PO Number
+            TextField(
+              controller: _poNumberController,
+              style: TextStyle(color: colors.textPrimary, fontSize: 15),
+              decoration: InputDecoration(
+                labelText: 'PO Number',
+                labelStyle: TextStyle(color: colors.textSecondary),
+                prefixIcon: Icon(LucideIcons.hash, size: 18, color: colors.textTertiary),
+                filled: true,
+                fillColor: colors.bgInset,
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none),
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            // Billable & Reimbursable toggles
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              decoration: BoxDecoration(
+                color: colors.bgInset,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Icon(LucideIcons.receipt, size: 18, color: colors.textTertiary),
+                      const SizedBox(width: 10),
+                      Expanded(child: Text('Billable to Customer', style: TextStyle(fontSize: 14, color: colors.textPrimary))),
+                      Switch.adaptive(
+                        value: _billable,
+                        onChanged: (v) => setState(() => _billable = v),
+                        activeColor: colors.accentPrimary,
+                      ),
+                    ],
+                  ),
+                  Divider(height: 1, color: colors.borderSubtle),
+                  Row(
+                    children: [
+                      Icon(LucideIcons.creditCard, size: 18, color: colors.textTertiary),
+                      const SizedBox(width: 10),
+                      Expanded(child: Text('Reimbursable (personal card)', style: TextStyle(fontSize: 14, color: colors.textPrimary))),
+                      Switch.adaptive(
+                        value: _reimbursable,
+                        onChanged: (v) => setState(() => _reimbursable = v),
+                        activeColor: colors.accentPrimary,
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
 
