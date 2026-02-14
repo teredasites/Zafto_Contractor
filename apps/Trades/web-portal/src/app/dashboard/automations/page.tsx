@@ -88,136 +88,15 @@ const actionConfig: Record<ActionType, { label: string; icon: typeof Mail }> = {
   create_followup: { label: 'Create Follow-up', icon: Star },
 };
 
-const mockAutomations: Automation[] = [
-  {
-    id: 'a1',
-    name: 'Job Complete → Review Request',
-    description: 'Send a review request email 3 days after a job is marked complete',
-    status: 'active',
-    trigger: { type: 'job_status', label: 'Job marked as Complete', condition: 'status = complete' },
-    delay: '3 days',
-    actions: [
-      { type: 'send_email', label: 'Send review request email', config: { template: 'review_request', to: 'customer' } },
-    ],
-    lastRun: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-    runCount: 47,
-    createdAt: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000),
-  },
-  {
-    id: 'a2',
-    name: 'Invoice 30 Days Overdue → Reminder',
-    description: 'Send payment reminder when invoice is 30 days past due',
-    status: 'active',
-    trigger: { type: 'invoice_overdue', label: 'Invoice unpaid for 30 days', condition: 'days_overdue >= 30' },
-    actions: [
-      { type: 'send_email', label: 'Send payment reminder email', config: { template: 'payment_reminder', to: 'customer' } },
-      { type: 'notify_team', label: 'Alert office manager', config: { role: 'office_manager' } },
-    ],
-    lastRun: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
-    runCount: 23,
-    createdAt: new Date(Date.now() - 120 * 24 * 60 * 60 * 1000),
-  },
-  {
-    id: 'a3',
-    name: 'Lead Untouched 48hrs → Alert',
-    description: 'Alert sales team when a new lead has no activity for 48 hours',
-    status: 'active',
-    trigger: { type: 'lead_idle', label: 'Lead idle for 48 hours', condition: 'last_activity > 48h' },
-    actions: [
-      { type: 'notify_team', label: 'Alert assigned salesperson', config: { role: 'assigned' } },
-      { type: 'send_sms', label: 'SMS to sales manager', config: { to: 'sales_manager' } },
-    ],
-    lastRun: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
-    runCount: 56,
-    createdAt: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000),
-  },
-  {
-    id: 'a4',
-    name: 'Bid Accepted → Create Job',
-    description: 'Automatically create a job when a bid is accepted by the customer',
-    status: 'active',
-    trigger: { type: 'bid_event', label: 'Bid status changed to Accepted', condition: 'status = accepted' },
-    actions: [
-      { type: 'update_status', label: 'Create job from bid', config: { action: 'create_job' } },
-      { type: 'notify_team', label: 'Notify project manager', config: { role: 'project_manager' } },
-      { type: 'send_email', label: 'Send confirmation to customer', config: { template: 'bid_accepted', to: 'customer' } },
-    ],
-    lastRun: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-    runCount: 18,
-    createdAt: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000),
-  },
-  {
-    id: 'a5',
-    name: 'New Customer → Welcome Sequence',
-    description: 'Send welcome email and create onboarding task for new customers',
-    status: 'active',
-    trigger: { type: 'customer_event', label: 'New customer created', condition: 'event = created' },
-    actions: [
-      { type: 'send_email', label: 'Send welcome email', config: { template: 'welcome', to: 'customer' } },
-      { type: 'create_task', label: 'Create onboarding checklist', config: { template: 'onboarding' } },
-    ],
-    lastRun: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
-    runCount: 31,
-    createdAt: new Date(Date.now() - 100 * 24 * 60 * 60 * 1000),
-  },
-  {
-    id: 'a6',
-    name: 'Weekly Job Report',
-    description: 'Send weekly summary of all active jobs to the owner every Monday at 8 AM',
-    status: 'active',
-    trigger: { type: 'time_based', label: 'Every Monday at 8:00 AM', condition: 'cron: 0 8 * * 1' },
-    actions: [
-      { type: 'send_email', label: 'Send weekly job report', config: { template: 'weekly_report', to: 'owner' } },
-    ],
-    lastRun: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
-    runCount: 14,
-    createdAt: new Date(Date.now() - 100 * 24 * 60 * 60 * 1000),
-  },
-  {
-    id: 'a7',
-    name: 'Invoice 60 Days → Collections Notice',
-    description: 'Send formal collections notice for invoices 60+ days overdue',
-    status: 'paused',
-    trigger: { type: 'invoice_overdue', label: 'Invoice unpaid for 60 days', condition: 'days_overdue >= 60' },
-    actions: [
-      { type: 'send_email', label: 'Send collections notice', config: { template: 'collections', to: 'customer' } },
-      { type: 'create_task', label: 'Create collections follow-up task', config: { template: 'collections_followup' } },
-      { type: 'notify_team', label: 'Alert owner', config: { role: 'owner' } },
-    ],
-    lastRun: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-    runCount: 5,
-    createdAt: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000),
-  },
-  {
-    id: 'a8',
-    name: 'Warranty Expiring → Renewal Offer',
-    description: 'Send renewal offer 30 days before warranty expires',
-    status: 'draft',
-    trigger: { type: 'time_based', label: 'Warranty expiring in 30 days', condition: 'warranty_days_remaining <= 30' },
-    delay: 'immediate',
-    actions: [
-      { type: 'send_email', label: 'Send warranty renewal offer', config: { template: 'warranty_renewal', to: 'customer' } },
-      { type: 'create_followup', label: 'Schedule follow-up call', config: { days: '7' } },
-    ],
-    runCount: 0,
-    createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
-  },
-  {
-    id: 'a9',
-    name: 'Permit Approved → Notify Crew',
-    description: 'When a permit is approved, notify the assigned crew to schedule the work',
-    status: 'active',
-    trigger: { type: 'job_status', label: 'Permit status changed to Approved', condition: 'permit_status = approved' },
-    actions: [
-      { type: 'notify_team', label: 'Notify assigned crew lead', config: { role: 'crew_lead' } },
-      { type: 'send_sms', label: 'SMS crew members', config: { to: 'assigned_crew' } },
-      { type: 'create_task', label: 'Schedule job start', config: { template: 'schedule_start' } },
-    ],
-    lastRun: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
-    runCount: 12,
-    createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-  },
-];
+// Delay label helper
+const delayLabels: Record<string, string> = {
+  '0': 'No delay',
+  '60': '1 hour',
+  '1440': '24 hours',
+  '4320': '3 days',
+  '10080': '7 days',
+  '43200': '30 days',
+};
 
 function toAutomation(d: AutomationData): Automation {
   const triggerLabel = d.triggerConfig?.label as string || d.triggerConfig?.condition as string || d.triggerType;
@@ -241,7 +120,7 @@ function toAutomation(d: AutomationData): Automation {
 }
 
 export default function AutomationsPage() {
-  const { automations: rawAutomations, loading } = useAutomations();
+  const { automations: rawAutomations, loading, createAutomation, updateAutomation, deleteAutomation, toggleAutomation } = useAutomations();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [triggerFilter, setTriggerFilter] = useState('all');
@@ -447,13 +326,41 @@ export default function AutomationsPage() {
       </div>
 
       {/* Modals */}
-      {selectedAutomation && <AutomationDetailModal automation={selectedAutomation} onClose={() => setSelectedAutomation(null)} />}
-      {showNewModal && <NewAutomationModal onClose={() => setShowNewModal(false)} />}
+      {selectedAutomation && (
+        <AutomationDetailModal
+          automation={selectedAutomation}
+          onClose={() => setSelectedAutomation(null)}
+          onToggle={async () => {
+            const isActive = selectedAutomation.status === 'active';
+            await toggleAutomation(selectedAutomation.id, !isActive);
+            setSelectedAutomation(null);
+          }}
+          onDelete={async () => {
+            await deleteAutomation(selectedAutomation.id);
+            setSelectedAutomation(null);
+          }}
+        />
+      )}
+      {showNewModal && (
+        <NewAutomationModal
+          onClose={() => setShowNewModal(false)}
+          onCreate={async (data) => {
+            await createAutomation(data);
+            setShowNewModal(false);
+          }}
+        />
+      )}
     </div>
   );
 }
 
-function AutomationDetailModal({ automation, onClose }: { automation: Automation; onClose: () => void }) {
+function AutomationDetailModal({ automation, onClose, onToggle, onDelete }: {
+  automation: Automation;
+  onClose: () => void;
+  onToggle: () => Promise<void>;
+  onDelete: () => Promise<void>;
+}) {
+  const [busy, setBusy] = useState(false);
   const sConfig = statusConfig[automation.status];
   const tConfig = triggerConfig[automation.trigger.type];
   const TriggerIcon = tConfig.icon;
@@ -534,11 +441,17 @@ function AutomationDetailModal({ automation, onClose }: { automation: Automation
           <div className="flex items-center gap-3 pt-4">
             <Button variant="secondary" className="flex-1" onClick={onClose}>Close</Button>
             {automation.status === 'active' ? (
-              <Button variant="secondary" className="flex-1"><Pause size={16} />Pause</Button>
+              <Button variant="secondary" className="flex-1" disabled={busy} onClick={async () => { setBusy(true); await onToggle(); }}>
+                <Pause size={16} />Pause
+              </Button>
             ) : (
-              <Button className="flex-1"><Play size={16} />Activate</Button>
+              <Button className="flex-1" disabled={busy} onClick={async () => { setBusy(true); await onToggle(); }}>
+                <Play size={16} />Activate
+              </Button>
             )}
-            <Button className="flex-1"><Settings size={16} />Edit</Button>
+            <Button variant="secondary" className="flex-1 text-red-600 hover:text-red-700" disabled={busy} onClick={async () => { setBusy(true); await onDelete(); }}>
+              <ZapOff size={16} />Delete
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -546,7 +459,42 @@ function AutomationDetailModal({ automation, onClose }: { automation: Automation
   );
 }
 
-function NewAutomationModal({ onClose }: { onClose: () => void }) {
+function NewAutomationModal({ onClose, onCreate }: { onClose: () => void; onCreate: (data: Partial<AutomationData>) => Promise<void> }) {
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [triggerType, setTriggerType] = useState('');
+  const [condition, setCondition] = useState('');
+  const [delayMinutes, setDelayMinutes] = useState('0');
+  const [actionType, setActionType] = useState('');
+  const [busy, setBusy] = useState(false);
+
+  const canCreate = name.trim() && triggerType && actionType;
+
+  const handleCreate = async () => {
+    if (!canCreate) return;
+    setBusy(true);
+    try {
+      await onCreate({
+        name: name.trim(),
+        description: description.trim() || null,
+        status: 'draft' as AutomationStatus,
+        triggerType: triggerType as TriggerType,
+        triggerConfig: condition ? { condition, label: condition } : {},
+        delayMinutes: Number(delayMinutes) || 0,
+        actions: [{
+          type: actionType as ActionType,
+          label: actionConfig[actionType as ActionType]?.label || actionType,
+          config: {},
+        }],
+      });
+    } catch (err) {
+      console.error('Failed to create automation:', err);
+      setBusy(false);
+    }
+  };
+
+  const inputCls = 'w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted focus:border-accent focus:ring-1 focus:ring-accent';
+
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-lg max-h-[90vh] overflow-y-auto">
@@ -556,15 +504,15 @@ function NewAutomationModal({ onClose }: { onClose: () => void }) {
         <CardContent className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-main mb-1.5">Name *</label>
-            <input type="text" placeholder="e.g., Job Complete → Review Request" className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted focus:border-accent focus:ring-1 focus:ring-accent" />
+            <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="e.g., Job Complete -> Review Request" className={inputCls} />
           </div>
           <div>
             <label className="block text-sm font-medium text-main mb-1.5">Description</label>
-            <textarea rows={2} placeholder="What does this automation do?" className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted resize-none focus:border-accent focus:ring-1 focus:ring-accent" />
+            <textarea rows={2} value={description} onChange={e => setDescription(e.target.value)} placeholder="What does this automation do?" className={cn(inputCls, 'resize-none')} />
           </div>
           <div>
             <label className="block text-sm font-medium text-main mb-1.5">Trigger *</label>
-            <select className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main">
+            <select value={triggerType} onChange={e => setTriggerType(e.target.value)} className={inputCls}>
               <option value="">Select trigger...</option>
               <option value="job_status">Job Status Change</option>
               <option value="invoice_overdue">Invoice Overdue</option>
@@ -576,22 +524,22 @@ function NewAutomationModal({ onClose }: { onClose: () => void }) {
           </div>
           <div>
             <label className="block text-sm font-medium text-main mb-1.5">Condition</label>
-            <input type="text" placeholder="e.g., status = complete" className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted focus:border-accent focus:ring-1 focus:ring-accent" />
+            <input type="text" value={condition} onChange={e => setCondition(e.target.value)} placeholder="e.g., status = complete" className={inputCls} />
           </div>
           <div>
             <label className="block text-sm font-medium text-main mb-1.5">Delay (optional)</label>
-            <select className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main">
-              <option value="">No delay (immediate)</option>
-              <option value="1h">1 hour</option>
-              <option value="24h">24 hours</option>
-              <option value="3d">3 days</option>
-              <option value="7d">7 days</option>
-              <option value="30d">30 days</option>
+            <select value={delayMinutes} onChange={e => setDelayMinutes(e.target.value)} className={inputCls}>
+              <option value="0">No delay (immediate)</option>
+              <option value="60">1 hour</option>
+              <option value="1440">24 hours</option>
+              <option value="4320">3 days</option>
+              <option value="10080">7 days</option>
+              <option value="43200">30 days</option>
             </select>
           </div>
           <div>
             <label className="block text-sm font-medium text-main mb-1.5">Action *</label>
-            <select className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main">
+            <select value={actionType} onChange={e => setActionType(e.target.value)} className={inputCls}>
               <option value="">Select action...</option>
               <option value="send_email">Send Email</option>
               <option value="send_sms">Send SMS</option>
@@ -603,7 +551,9 @@ function NewAutomationModal({ onClose }: { onClose: () => void }) {
           </div>
           <div className="flex items-center gap-3 pt-4">
             <Button variant="secondary" className="flex-1" onClick={onClose}>Cancel</Button>
-            <Button className="flex-1"><Plus size={16} />Create Automation</Button>
+            <Button className="flex-1" disabled={!canCreate || busy} onClick={handleCreate}>
+              <Plus size={16} />{busy ? 'Creating...' : 'Create Automation'}
+            </Button>
           </div>
         </CardContent>
       </Card>

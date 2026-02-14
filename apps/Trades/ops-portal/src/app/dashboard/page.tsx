@@ -135,20 +135,23 @@ export default function CommandCenterPage() {
         },
         {
           label: 'Platform Errors',
-          value: '0',
+          value: '--',
           icon: <AlertTriangle className="h-5 w-5" />,
+          change: 'No error tracking yet',
           loading: false,
         },
         {
           label: 'MRR',
-          value: '$0',
+          value: '--',
           icon: <DollarSign className="h-5 w-5" />,
+          change: 'Billing not connected',
           loading: false,
         },
         {
           label: 'AI Cost MTD',
-          value: '$0',
+          value: '--',
           icon: <Cpu className="h-5 w-5" />,
+          change: 'AI phase not started',
           loading: false,
         },
       ]);
