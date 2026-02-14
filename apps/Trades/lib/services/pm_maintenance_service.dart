@@ -138,6 +138,23 @@ class PmMaintenanceService {
   }
 
   // ============================================================
+  // TEAM ASSIGNMENT
+  // ============================================================
+
+  // Assign a maintenance request to a team member
+  Future<void> assignToTeamMember(String requestId, String userId) async {
+    await _repo.assignRequest(requestId, userId);
+    await _repo.addAction(WorkOrderAction(
+      id: '',
+      maintenanceRequestId: requestId,
+      actionType: WorkOrderActionType.assigned,
+      performedBy: _authState.user?.uid ?? '',
+      details: 'Assigned to team member $userId',
+      createdAt: DateTime.now(),
+    ));
+  }
+
+  // ============================================================
   // VENDOR ASSIGNMENT
   // ============================================================
 
@@ -248,6 +265,15 @@ class MaintenanceRequestsNotifier
   Future<void> handleIt(String requestId) async {
     try {
       await _service.handleItMyself(requestId);
+      await load();
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+    }
+  }
+
+  Future<void> assignTeam(String requestId, String userId) async {
+    try {
+      await _service.assignToTeamMember(requestId, userId);
       await load();
     } catch (e, st) {
       state = AsyncValue.error(e, st);

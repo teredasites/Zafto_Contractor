@@ -44,7 +44,6 @@ import '../screens/field_tools/incident_report_screen.dart';
 import '../screens/field_tools/safety_briefing_screen.dart';
 import '../screens/field_tools/confined_space_timer_screen.dart';
 
-import '../screens/field_tools/level_plumb_screen.dart';
 import '../screens/certifications/certifications_screen.dart';
 
 class CommandPalette extends ConsumerStatefulWidget {
@@ -184,9 +183,6 @@ class _CommandPaletteState extends ConsumerState<CommandPalette> {
         nav.push(MaterialPageRoute(builder: (_) => const SafetyBriefingScreen()));
       case 'tool_confined_space':
         nav.push(MaterialPageRoute(builder: (_) => const ConfinedSpaceTimerScreen()));
-      case 'tool_level_plumb':
-        nav.push(MaterialPageRoute(builder: (_) => const LevelPlumbScreen()));
-
       // Notifications
       case 'notifications':
         nav.push(MaterialPageRoute(builder: (_) => const NotificationsScreen()));

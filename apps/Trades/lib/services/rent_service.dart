@@ -10,6 +10,8 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../models/property.dart';
+import '../repositories/lease_repository.dart';
 import '../repositories/rent_repository.dart';
 import 'auth_service.dart';
 
@@ -73,9 +75,40 @@ class RentService {
   // 2. For each, check if a charge already exists for this month
   // 3. If not, create one
   Future<int> generateMonthlyCharges(DateTime forMonth) async {
-    // TODO: Implement when leases table is wired
-    // Simplified placeholder — returns count of generated charges
-    return 0;
+    final leaseRepo = LeaseRepository();
+    final leases = await leaseRepo.getLeases(status: LeaseStatus.active);
+    final companyId = _authState.companyId ?? '';
+    int created = 0;
+
+    for (final lease in leases) {
+      // Check if charge already exists for this month
+      final existing = await _repo.getRentCharges(
+        propertyId: lease.propertyId,
+        status: 'pending',
+      );
+      final alreadyCharged = existing.any((c) =>
+          c.dueDate.year == forMonth.year &&
+          c.dueDate.month == forMonth.month &&
+          c.leaseId == lease.id);
+      if (alreadyCharged) continue;
+
+      final dueDate = DateTime(forMonth.year, forMonth.month, lease.paymentDueDay ?? 1);
+      await _repo.createRentCharge(RentCharge(
+        id: '',
+        companyId: companyId,
+        leaseId: lease.id,
+        propertyId: lease.propertyId,
+        unitId: lease.unitId,
+        tenantId: lease.tenantId,
+        amount: lease.monthlyRent,
+        dueDate: dueDate,
+        paidAmount: 0,
+        status: 'pending',
+        createdAt: DateTime.now(),
+      ));
+      created++;
+    }
+    return created;
   }
 
   // Record a payment against a rent charge

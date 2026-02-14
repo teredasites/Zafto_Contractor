@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../models/property.dart';
+import '../../repositories/tenant_repository.dart';
 import '../../theme/zafto_colors.dart';
 import '../../theme/theme_provider.dart';
 
@@ -35,15 +36,13 @@ class _TenantDetailScreenState extends ConsumerState<TenantDetailScreen> {
 
   Future<void> _loadTenant() async {
     try {
-      // Tenant is fetched via the property service's underlying repository.
-      // PropertyService does not expose a getTenant method directly,
-      // so we query via Supabase through the repository pattern.
-      // For now we use a direct Supabase query via the service layer.
-      // TODO: Add getTenant(id) to PropertyService when tenant CRUD is wired.
+      final repo = TenantRepository();
+      final tenant = await repo.getTenant(widget.tenantId);
       if (mounted) {
         setState(() {
+          _tenant = tenant;
           _isLoading = false;
-          _error = 'Tenant detail loading not yet wired';
+          if (tenant == null) _error = 'Tenant not found';
         });
       }
     } catch (e) {

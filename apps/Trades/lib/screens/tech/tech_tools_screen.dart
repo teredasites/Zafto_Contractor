@@ -16,7 +16,6 @@ import 'package:zafto/screens/field_tools/confined_space_timer_screen.dart';
 import 'package:zafto/screens/field_tools/receipt_scanner_screen.dart';
 import 'package:zafto/screens/field_tools/mileage_tracker_screen.dart';
 import 'package:zafto/screens/field_tools/client_signature_screen.dart';
-import 'package:zafto/screens/field_tools/level_plumb_screen.dart';
 import 'package:zafto/screens/field_tools/sun_position_screen.dart';
 import 'package:zafto/screens/field_tools/materials_tracker_screen.dart';
 import 'package:zafto/screens/field_tools/daily_log_screen.dart';
@@ -159,15 +158,6 @@ class TechToolsScreen extends ConsumerWidget {
             ]),
             const SizedBox(height: 16),
             _buildCategory(context, colors, 'MEASUREMENT', [
-              _ToolItem(
-                icon: Icons.straighten_outlined,
-                title: 'Level & Plumb',
-                subtitle: 'Digital level and plumb tool',
-                onTap: () => _navigate(
-                  context,
-                  const LevelPlumbScreen(),
-                ),
-              ),
               _ToolItem(
                 icon: Icons.wb_sunny_outlined,
                 title: 'Sun Position',

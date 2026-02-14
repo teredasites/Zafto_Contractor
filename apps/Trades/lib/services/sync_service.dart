@@ -240,7 +240,9 @@ class SyncService {
         break;
 
       case SyncDataType.jobDocuments:
-        // TODO: Implement job documents sync
+        // Job documents are stored in Supabase storage + documents table.
+        // This sync path is unused — documents sync directly via Supabase real-time.
+        debugPrint('[SyncService] jobDocuments sync skipped — handled by Supabase directly');
         break;
     }
   }

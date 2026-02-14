@@ -199,142 +199,31 @@ class ContractAnalyzerService {
   }
 
   /// Extract text from images using OCR
-  /// TODO: Integrate with Cloud Vision or on-device ML Kit
+  /// Requires Phase E AI integration
   Future<String> _extractTextFromImages(List<String> imagePaths) async {
-    // For now, return placeholder - will integrate with OCR service
-    // Options:
-    // 1. Google Cloud Vision API
-    // 2. Firebase ML Kit (on-device)
-    // 3. Claude's vision capability via Cloud Function
-
-    await Future.delayed(const Duration(seconds: 1)); // Simulate processing
-    return 'Contract text will be extracted from ${imagePaths.length} images';
+    throw UnsupportedError(
+      'Contract OCR is not yet available. AI-powered contract analysis will be enabled in a future update.',
+    );
   }
 
   /// Extract text from PDF
-  /// TODO: Integrate with PDF text extraction
+  /// Requires Phase E AI integration
   Future<String> _extractTextFromPdf(String pdfPath) async {
-    // Will use pdf_text or similar package
-    await Future.delayed(const Duration(seconds: 1)); // Simulate processing
-    return 'Contract text will be extracted from PDF';
+    throw UnsupportedError(
+      'Contract PDF extraction is not yet available. AI-powered contract analysis will be enabled in a future update.',
+    );
   }
 
-  /// Analyze contract text with AI (Opus 4.5)
-  /// TODO: Call Cloud Function for production
+  /// Analyze contract text with AI
+  /// Requires Phase E AI integration
   Future<ContractAnalysis> _analyzeContractText({
     required String text,
     required String fileName,
     String? pdfPath,
     List<String>? imagePaths,
   }) async {
-    // In production, this will call a Cloud Function that uses Opus 4.5
-    // The Cloud Function will:
-    // 1. Receive the contract text
-    // 2. Send to Claude API with specialized prompt
-    // 3. Parse structured response
-    // 4. Return analysis
-
-    // For now, generate a demo analysis to build/test UI
-    await Future.delayed(const Duration(seconds: 2)); // Simulate API call
-
-    final id = _uuid.v4();
-
-    // Demo analysis - shows what the AI would return
-    return ContractAnalysis(
-      id: id,
-      fileName: fileName,
-      customerName: 'Demo General Contractor',
-      projectName: 'Commercial Office Build-Out',
-      contractValue: 125000.00,
-      analyzedAt: DateTime.now(),
-      contractType: ContractType.subcontractor,
-      riskScore: 7,
-      summary: 'This subcontractor agreement contains several provisions that significantly favor the general contractor. The pay-when-paid clause creates cash flow risk, and the broad indemnification language exposes you to liability beyond your scope of work. Consider negotiating these terms before signing.',
-      redFlags: [
-        RedFlag(
-          id: '${id}_rf1',
-          title: 'Pay-When-Paid Clause',
-          description: 'Payment is contingent on the GC receiving payment from the owner. This transfers financial risk to you.',
-          excerpt: '"Subcontractor shall be paid within 30 days of Contractor receiving corresponding payment from Owner."',
-          location: 'Section 5.2',
-          severity: IssueSeverity.high,
-          suggestedChange: 'Request modification to "payment within 30 days of invoice approval" regardless of owner payment status.',
-        ),
-        RedFlag(
-          id: '${id}_rf2',
-          title: 'Broad Indemnification',
-          description: 'The indemnification clause requires you to indemnify the GC even for their own negligence in some states.',
-          excerpt: '"Subcontractor shall indemnify, defend, and hold harmless Contractor from any and all claims..."',
-          location: 'Section 12.1',
-          severity: IssueSeverity.critical,
-          suggestedChange: 'Limit indemnification to claims arising from your own negligence or work.',
-        ),
-        RedFlag(
-          id: '${id}_rf3',
-          title: 'One-Sided Termination',
-          description: 'Contractor can terminate for convenience with 5 days notice, but you cannot.',
-          excerpt: '"Contractor may terminate this Agreement for any reason upon five (5) days written notice."',
-          location: 'Section 15.1',
-          severity: IssueSeverity.medium,
-          suggestedChange: 'Request mutual termination rights with equal notice periods.',
-        ),
-      ],
-      missingProtections: [
-        MissingProtection(
-          id: '${id}_mp1',
-          title: 'Change Order Process',
-          description: 'No clear process for change order pricing and approval timelines.',
-          severity: IssueSeverity.high,
-          recommendedLanguage: 'Add: "Change orders shall be priced within 5 business days and approved/rejected within 10 business days. Work shall not commence until written approval is received."',
-        ),
-        MissingProtection(
-          id: '${id}_mp2',
-          title: 'Delay Compensation',
-          description: 'No provisions for compensation if you are delayed by others.',
-          severity: IssueSeverity.medium,
-          recommendedLanguage: 'Add: "Subcontractor shall be entitled to additional time and compensation for delays caused by Contractor, Owner, or other trades."',
-        ),
-        MissingProtection(
-          id: '${id}_mp3',
-          title: 'Retainage Release',
-          description: 'No timeline specified for retainage release after substantial completion.',
-          severity: IssueSeverity.medium,
-          recommendedLanguage: 'Add: "Retainage shall be released within 30 days of substantial completion of Subcontractor\'s work."',
-        ),
-      ],
-      recommendations: [
-        ContractRecommendation(
-          id: '${id}_rec1',
-          title: 'Negotiate Payment Terms',
-          description: 'The pay-when-paid clause is the biggest risk. Push for payment within 30 days of invoice regardless of owner payment.',
-          actionItem: 'Send email to GC requesting payment term modification',
-          isUrgent: true,
-        ),
-        ContractRecommendation(
-          id: '${id}_rec2',
-          title: 'Limit Indemnification',
-          description: 'Have your attorney review the indemnification clause. In many states, indemnification for the other party\'s negligence is unenforceable.',
-          actionItem: 'Forward to attorney for review',
-          isUrgent: true,
-        ),
-        ContractRecommendation(
-          id: '${id}_rec3',
-          title: 'Add Change Order Language',
-          description: 'Protect yourself from scope creep by requiring written change orders before additional work.',
-          actionItem: 'Propose change order addendum',
-          isUrgent: false,
-        ),
-        ContractRecommendation(
-          id: '${id}_rec4',
-          title: 'Document Project Conditions',
-          description: 'Given the one-sided termination clause, document all work and communications carefully.',
-          actionItem: 'Set up project documentation folder',
-          isUrgent: false,
-        ),
-      ],
-      rawText: text,
-      pdfPath: pdfPath,
-      imagePaths: imagePaths,
+    throw UnsupportedError(
+      'AI contract analysis is not yet available. This feature will be enabled in a future update.',
     );
   }
 

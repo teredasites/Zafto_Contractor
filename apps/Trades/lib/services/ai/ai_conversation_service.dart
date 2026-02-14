@@ -111,9 +111,9 @@ class AIConversationService extends StateNotifier<AIConversationState> {
 
   /// Check if user has Pro subscription
   Future<bool> _checkProSubscription() async {
-    // For now, assume all users have access for development
-    // In production, check company.tier or user subscription
-    return true;
+    // AI features are not yet available — Phase E is paused.
+    // When enabled, this will check company.tier and subscription status.
+    return false;
   }
 
   /// Get the personalized assistant name

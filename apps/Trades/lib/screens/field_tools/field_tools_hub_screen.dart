@@ -20,7 +20,6 @@ import 'sun_position_screen.dart';
 import 'confined_space_timer_screen.dart';
 import 'client_signature_screen.dart';
 import 'receipt_scanner_screen.dart';
-import 'level_plumb_screen.dart';
 import 'materials_tracker_screen.dart';
 import 'daily_log_screen.dart';
 import 'punch_list_screen.dart';
@@ -208,14 +207,6 @@ class FieldToolsHubScreen extends ConsumerWidget {
             subtitle: 'Solar angles for panel placement',
             color: Colors.orange,
             onTap: () => _openTool(context, SunPositionScreen(jobId: jobId)),
-          ),
-          _buildToolCard(
-            context, colors,
-            icon: LucideIcons.ruler,
-            title: 'Level & Plumb',
-            subtitle: 'Digital bubble level with calibration',
-            color: Colors.lime,
-            onTap: () => _openTool(context, LevelPlumbScreen(jobId: jobId)),
           ),
           const SizedBox(height: 40),
         ],

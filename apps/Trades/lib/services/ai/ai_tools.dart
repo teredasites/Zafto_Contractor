@@ -110,14 +110,10 @@ final searchCalculatorsTool = AITool(
     'required': ['query'],
   },
   execute: (args) async {
-    // This will be implemented by the service layer
-    // For now, return placeholder
     return {
-      'results': [
-        {'id': 'voltage_drop', 'name': 'Voltage Drop Calculator', 'category': 'wire'},
-        {'id': 'conduit_fill', 'name': 'Conduit Fill Calculator', 'category': 'conduit'},
-      ],
-      'count': 2,
+      'error': 'AI calculator search is not yet available. This feature will be enabled in a future update.',
+      'results': <Map<String, dynamic>>[],
+      'count': 0,
     };
   },
 );
@@ -141,30 +137,10 @@ final runCalculationTool = AITool(
     'required': ['calculator_id', 'inputs'],
   },
   execute: (args) async {
-    final calculatorId = args['calculator_id'] as String;
-    final inputs = args['inputs'] as Map<String, dynamic>;
-
-    // This will call the actual calculation service
-    // For now, return placeholder based on calculator type
-    switch (calculatorId) {
-      case 'voltage_drop':
-        return {
-          'success': true,
-          'calculator': 'Voltage Drop',
-          'inputs': inputs,
-          'result': {
-            'voltageDropPercent': 2.84,
-            'voltageDropVolts': 3.41,
-            'passes': true,
-            'recommendation': 'Within NEC 3% limit for branch circuits',
-          },
-        };
-      default:
-        return {
-          'success': false,
-          'error': 'Calculator not found: $calculatorId',
-        };
-    }
+    return {
+      'success': false,
+      'error': 'AI-powered calculations are not yet available. This feature will be enabled in a future update.',
+    };
   },
 );
 

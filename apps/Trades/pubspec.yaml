@@ -57,9 +57,6 @@ dependencies:
   uuid: ^4.2.1
   file_picker: ^8.0.0
 
-  # Sensors (Level & Plumb)
-  sensors_plus: ^4.0.2
-
   # Audio (Voice Notes)
   record: ^6.2.0
   audioplayers: ^6.1.0

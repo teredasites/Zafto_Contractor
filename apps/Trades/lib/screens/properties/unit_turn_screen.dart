@@ -435,21 +435,52 @@ class _UnitTurnScreenState extends ConsumerState<UnitTurnScreen> {
     );
   }
 
-  void _toggleTask(String turnId, String taskId, TurnTaskStatus currentStatus) {
-    if (currentStatus == TurnTaskStatus.completed) {
-      // TODO: Mark as pending via Supabase update
-    } else {
-      // TODO: Mark as completed via Supabase update
+  void _toggleTask(String turnId, String taskId, TurnTaskStatus currentStatus) async {
+    final newStatus = currentStatus == TurnTaskStatus.completed
+        ? TurnTaskStatus.pending
+        : TurnTaskStatus.completed;
+    try {
+      await Supabase.instance.client
+          .from('unit_turn_tasks')
+          .update({
+            'status': newStatus.name,
+            if (newStatus == TurnTaskStatus.completed)
+              'completed_at': DateTime.now().toUtc().toIso8601String()
+            else
+              'completed_at': null,
+          })
+          .eq('id', taskId);
+      ref.invalidate(_unitTurnsProvider);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to update task: $e')),
+        );
+      }
     }
   }
 
-  void _skipTask(String turnId, String taskId) {
-    // TODO: Mark task as skipped via Supabase update
+  void _skipTask(String turnId, String taskId) async {
+    try {
+      await Supabase.instance.client
+          .from('unit_turn_tasks')
+          .update({'status': TurnTaskStatus.skipped.name})
+          .eq('id', taskId);
+      ref.invalidate(_unitTurnsProvider);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to skip task: $e')),
+        );
+      }
+    }
   }
 
   void _createJobFromTask(UnitTurn turn, UnitTurnTask task) {
-    // TODO: Create maintenance job from this turn task
-    // Pre-fill: property, unit, task description
+    // Navigate to job creation with pre-filled data
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Job creation from turn tasks coming in U17 Data Flow Wiring')),
+    );
   }
 }
 

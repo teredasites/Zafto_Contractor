@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../models/property_asset.dart';
+import '../../repositories/asset_repository.dart';
 import '../../theme/zafto_colors.dart';
 import '../../theme/theme_provider.dart';
 
@@ -232,10 +233,32 @@ class _AssetScreenState extends ConsumerState<AssetScreen> {
                     borderRadius: BorderRadius.circular(14),
                   ),
                 ),
-                onPressed: () {
+                onPressed: () async {
                   HapticFeedback.selectionClick();
                   Navigator.pop(ctx);
-                  // TODO: Call add service record via repository
+                  try {
+                    final repo = AssetRepository();
+                    await repo.addServiceRecord(AssetServiceRecord(
+                      assetId: asset.id,
+                      serviceType: ServiceType.routine,
+                      serviceDate: DateTime.now(),
+                      description: descriptionController.text.trim(),
+                      cost: double.tryParse(costController.text.trim()),
+                      createdAt: DateTime.now(),
+                    ));
+                    ref.invalidate(_propertyAssetsProvider);
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Service record saved')),
+                      );
+                    }
+                  } catch (e) {
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Failed to save record: $e')),
+                      );
+                    }
+                  }
                 },
                 child: const Text(
                   'Save Record',

@@ -55,9 +55,98 @@ class _PropertiesHubScreenState extends ConsumerState<PropertiesHubScreen> {
         backgroundColor: colors.accentPrimary,
         onPressed: () {
           HapticFeedback.selectionClick();
-          // TODO: Navigate to add property screen
+          _showCreatePropertyDialog(ref.read(zaftoColorsProvider));
         },
         child: Icon(LucideIcons.plus, color: colors.textOnAccent),
+      ),
+    );
+  }
+
+  void _showCreatePropertyDialog(ZaftoColors colors) {
+    final nameController = TextEditingController();
+    final addressController = TextEditingController();
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: colors.bgElevated,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => Padding(
+        padding: EdgeInsets.fromLTRB(
+            20, 20, 20, 20 + MediaQuery.of(ctx).viewInsets.bottom),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Add Property',
+                style: TextStyle(
+                    color: colors.textPrimary,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 18)),
+            const SizedBox(height: 20),
+            TextField(
+              controller: nameController,
+              style: TextStyle(color: colors.textPrimary),
+              decoration: InputDecoration(
+                labelText: 'Property Name',
+                labelStyle: TextStyle(color: colors.textTertiary),
+                filled: true,
+                fillColor: colors.bgBase,
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14)),
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: addressController,
+              style: TextStyle(color: colors.textPrimary),
+              decoration: InputDecoration(
+                labelText: 'Address',
+                labelStyle: TextStyle(color: colors.textTertiary),
+                filled: true,
+                fillColor: colors.bgBase,
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14)),
+              ),
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: colors.accentPrimary,
+                  foregroundColor: colors.textOnAccent,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14)),
+                ),
+                onPressed: () async {
+                  final name = nameController.text.trim();
+                  if (name.isEmpty) return;
+                  Navigator.pop(ctx);
+                  try {
+                    await ref.read(propertiesProvider.notifier).add(
+                          Property(
+                            name: name,
+                            address: addressController.text.trim(),
+                          ),
+                        );
+                  } catch (e) {
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Failed to create property: $e')),
+                      );
+                    }
+                  }
+                },
+                child: const Text('Create Property',
+                    style: TextStyle(
+                        fontWeight: FontWeight.w600, fontSize: 15)),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

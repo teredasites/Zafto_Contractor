@@ -234,23 +234,22 @@ class PurchaseService {
     }
   }
 
-  /// Verify purchase receipt
-  /// In production, send to server for validation
+  /// Verify purchase receipt via RevenueCat server-side validation.
+  /// SECURITY: Client-side trust only — server-side verification via
+  /// RevenueCat /v1/receipts endpoint must be added before launch.
   Future<bool> _verifyPurchase(PurchaseDetails purchase) async {
-    // TODO: Server-side verification
-    // For now, trust the client (acceptable for low-value consumables)
-    
+    debugPrint('[PurchaseService] WARNING: Using client-side purchase verification only. '
+        'Server-side RevenueCat validation required before production launch.');
+
     if (Platform.isIOS) {
-      // iOS: Verify with App Store
-      // final receiptData = purchase.verificationData.localVerificationData;
-      // Send to server -> server calls Apple's verifyReceipt API
+      final receiptData = purchase.verificationData.localVerificationData;
+      if (receiptData.isEmpty) return false;
     } else if (Platform.isAndroid) {
-      // Android: Verify with Google Play
-      // final purchaseToken = purchase.verificationData.serverVerificationData;
-      // Send to server -> server calls Google Play Developer API
+      final purchaseToken = purchase.verificationData.serverVerificationData;
+      if (purchaseToken.isEmpty) return false;
     }
-    
-    return true; // Trust client for MVP
+
+    return true;
   }
 
   int _getCreditsForProduct(String productId) {

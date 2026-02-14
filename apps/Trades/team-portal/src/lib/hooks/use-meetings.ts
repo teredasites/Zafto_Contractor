@@ -91,9 +91,11 @@ export function useMeetings() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) { setLoading(false); return; }
 
+      // Filter to only meetings where current user is a participant
       const { data, error: err } = await supabase
         .from('meetings')
-        .select('*, meeting_participants(id)')
+        .select('*, meeting_participants!inner(id, user_id)')
+        .eq('meeting_participants.user_id', user.id)
         .order('scheduled_at', { ascending: true, nullsFirst: false });
 
       if (err) throw err;
