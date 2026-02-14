@@ -66,6 +66,7 @@ import {
   PanelLeft,
   PanelLeftClose,
   Check,
+  Radio,
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { ZMark } from '@/components/z-console/z-mark';
@@ -129,6 +130,7 @@ const navigationGroups: NavGroup[] = [
     key: 'operations',
     railIcon: Calendar,
     items: [
+      { name: 'Dispatch', href: '/dashboard/dispatch', icon: Radio },
       { name: 'Calendar', href: '/dashboard/calendar', icon: Calendar },
       { name: 'Schedule', href: '/dashboard/scheduling', icon: ClipboardList },
       { name: 'Meetings', href: '/dashboard/meetings', icon: Video },
