@@ -131,6 +131,7 @@ const navigationGroups: NavGroup[] = [
     railIcon: Calendar,
     items: [
       { name: 'Dispatch', href: '/dashboard/dispatch', icon: Radio },
+      { name: 'Subcontractors', href: '/dashboard/subcontractors', icon: HardHat },
       { name: 'Calendar', href: '/dashboard/calendar', icon: Calendar },
       { name: 'Schedule', href: '/dashboard/scheduling', icon: ClipboardList },
       { name: 'Meetings', href: '/dashboard/meetings', icon: Video },
