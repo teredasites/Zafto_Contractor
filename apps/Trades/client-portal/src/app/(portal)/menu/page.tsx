@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { MessageSquare, FileText, Wrench, Share2, Star, Settings, ChevronRight, Shield, HelpCircle, Phone, CreditCard, ClipboardList, Home, ClipboardCheck, Video, CalendarPlus, DollarSign, Users, Handshake } from 'lucide-react';
+import { MessageSquare, FileText, Wrench, Share2, Star, Settings, ChevronRight, Shield, HelpCircle, Phone, CreditCard, ClipboardList, Home, ClipboardCheck, Video, CalendarPlus, DollarSign, Users, Handshake, FileCheck2 } from 'lucide-react';
 import { useTenant } from '@/lib/hooks/use-tenant';
 
 interface MenuItem {
@@ -24,6 +24,7 @@ const baseMenuItems: MenuItem[] = [
   { label: 'Find a Pro', desc: 'Browse verified contractors', href: '/find-a-pro', icon: Users, color: 'text-cyan-600', bg: 'bg-cyan-50' },
   { label: 'Referrals', desc: 'Share & earn $50', href: '/referrals', icon: Share2, color: 'text-green-600', bg: 'bg-green-50' },
   { label: 'Leave a Review', desc: 'Bathroom Remodel — 3 days ago', href: '/review', icon: Star, color: 'text-yellow-600', bg: 'bg-yellow-50' },
+  { label: 'Permits', desc: 'Track permit status & inspections', href: '/permits', icon: FileCheck2, color: 'text-sky-600', bg: 'bg-sky-50' },
   { label: 'Settings', desc: 'Profile, notifications, security', href: '/settings', icon: Settings, color: 'text-gray-600', bg: 'bg-gray-100' },
 ];
 

@@ -7,7 +7,7 @@ import {
   LayoutDashboard, Briefcase, Clock, Calendar, Camera, FileText,
   Package, CheckSquare, FileSignature, Bell, Settings, Wrench,
   Receipt, Menu, Sun, Moon, LogOut, X, Award, Building2, Calculator, Phone, Video,
-  DollarSign, Car, GraduationCap, FolderOpen, Hammer,
+  DollarSign, Car, GraduationCap, FolderOpen, Hammer, Shield,
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { useTheme } from '@/components/theme-provider';
@@ -87,6 +87,7 @@ const navigationGroups: NavGroup[] = [
       { name: 'Estimates', href: '/dashboard/estimates', icon: Calculator },
       { name: 'Bids', href: '/dashboard/bids', icon: Receipt },
       { name: 'Certifications', href: '/dashboard/certifications', icon: Award },
+      { name: 'Compliance', href: '/dashboard/compliance', icon: Shield },
       { name: 'Notifications', href: '/dashboard/notifications', icon: Bell },
     ],
   },
