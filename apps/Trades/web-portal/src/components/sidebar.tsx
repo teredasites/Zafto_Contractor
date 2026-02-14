@@ -125,6 +125,7 @@ const navigationGroups: NavGroup[] = [
       { name: 'Reports', href: '/dashboard/reports', icon: BarChart3 },
       { name: 'Revenue', href: '/dashboard/revenue-insights', icon: TrendingUp },
       { name: 'Payroll', href: '/dashboard/payroll', icon: Banknote, permission: PERMISSIONS.FINANCIALS_VIEW },
+      { name: 'Job Intelligence', href: '/dashboard/job-intelligence', icon: FileBarChart },
     ],
   },
   {
