@@ -767,9 +767,9 @@ export default function NewBidPage() {
     });
   };
 
-  // AI generate line items — deferred to Phase E (AI goes last)
+  // AI generate line items — Phase E feature
   const aiGenerateLineItems = async () => {
-    alert('AI-powered line item generation is coming soon. Add line items manually for now.');
+    alert('AI-powered line item generation requires the AI module to be enabled. Add line items manually for now.');
   };
 
   // Calculate grand total

@@ -254,9 +254,9 @@ export default function PayrollAnalyticsPage() {
         <CardContent>
           <div className="flex flex-col items-center justify-center py-16 text-[var(--text-secondary)]">
             <BarChart3 className="h-10 w-10 mb-3 opacity-30" />
-            <p className="text-sm font-medium">Chart coming soon</p>
+            <p className="text-sm font-medium">No payroll data yet</p>
             <p className="text-xs mt-1 opacity-70">
-              Payroll volume trends will be visualized here
+              Payroll volume trends will be visualized here once data is available
             </p>
           </div>
         </CardContent>

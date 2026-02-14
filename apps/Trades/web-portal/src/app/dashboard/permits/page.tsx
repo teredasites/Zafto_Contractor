@@ -86,71 +86,6 @@ const typeConfig: Record<PermitType, { label: string; color: string; bgColor: st
   other: { label: 'Other', color: 'text-gray-700 dark:text-gray-300', bgColor: 'bg-gray-100 dark:bg-gray-900/30' },
 };
 
-const mockPermits: Permit[] = [
-  {
-    id: 'p1', permitNumber: 'EP-2026-4421', type: 'electrical', status: 'inspection_scheduled',
-    description: 'Electrical permit - Full home rewire, 200A panel upgrade',
-    jobId: 'j1', jobName: 'Full Home Rewire - 123 Oak Ave', customerId: 'c1', customerName: 'Robert Chen',
-    address: '123 Oak Ave, Hartford, CT 06101', jurisdiction: 'City of Hartford',
-    appliedDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), approvedDate: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000),
-    expirationDate: new Date(Date.now() + 150 * 24 * 60 * 60 * 1000), fee: 350,
-    inspections: [
-      { id: 'i1', date: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000), inspector: 'Tom Harris', result: 'pass', notes: 'Rough-in inspection passed' },
-      { id: 'i2', date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), result: 'scheduled', notes: 'Final inspection' },
-    ],
-    documents: [
-      { name: 'permit_application.pdf', type: 'application', uploadedAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) },
-      { name: 'electrical_plans.pdf', type: 'plans', uploadedAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) },
-    ],
-  },
-  {
-    id: 'p2', permitNumber: 'PP-2026-3287', type: 'plumbing', status: 'approved',
-    description: 'Plumbing permit - Water heater replacement, gas line',
-    jobId: 'j3', jobName: 'Water Heater Replacement - 789 Industrial', customerId: 'c3', customerName: 'Mike Thompson',
-    address: '789 Industrial Blvd, Manchester, CT 06040', jurisdiction: 'Town of Manchester',
-    appliedDate: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000), approvedDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-    expirationDate: new Date(Date.now() + 173 * 24 * 60 * 60 * 1000), fee: 200,
-    inspections: [], documents: [{ name: 'plumbing_permit.pdf', type: 'permit', uploadedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) }],
-  },
-  {
-    id: 'p3', type: 'roofing', status: 'applied',
-    description: 'Roofing permit - Full tear-off and re-roof, architectural shingles',
-    jobId: 'j5', jobName: 'Full Roof Replacement - 555 Birch Ln', customerId: 'c5', customerName: 'David Wilson',
-    address: '555 Birch Ln, Glastonbury, CT 06033', jurisdiction: 'Town of Glastonbury',
-    appliedDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), fee: 275,
-    inspections: [], documents: [{ name: 'roof_plans.pdf', type: 'plans', uploadedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000) }],
-  },
-  {
-    id: 'p4', permitNumber: 'MP-2025-9912', type: 'mechanical', status: 'failed',
-    description: 'Mechanical permit - HVAC system replacement, ductwork modification',
-    jobId: 'j2', jobName: 'HVAC Install - 456 Elm St', customerId: 'c2', customerName: 'Sarah Martinez',
-    address: '456 Elm St, West Hartford, CT 06107', jurisdiction: 'Town of West Hartford',
-    appliedDate: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000), approvedDate: new Date(Date.now() - 35 * 24 * 60 * 60 * 1000),
-    expirationDate: new Date(Date.now() + 140 * 24 * 60 * 60 * 1000), fee: 325,
-    inspections: [
-      { id: 'i3', date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), inspector: 'Jim Wallace', result: 'fail',
-        notes: 'Ductwork not properly sealed', corrections: ['Seal all duct joints with mastic', 'Re-insulate supply plenum'] },
-    ],
-    documents: [],
-  },
-  {
-    id: 'p5', permitNumber: 'BP-2025-7789', type: 'building', status: 'passed',
-    description: 'Building permit - Commercial build-out, new walls and electrical',
-    jobId: 'j7', jobName: 'Store Buildout - 100 Main St', customerId: 'c5', customerName: 'David Wilson',
-    address: '100 Main St, Hartford, CT 06103', jurisdiction: 'City of Hartford',
-    appliedDate: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000), approvedDate: new Date(Date.now() - 75 * 24 * 60 * 60 * 1000),
-    expirationDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), fee: 850,
-    inspections: [
-      { id: 'i4', date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), inspector: 'Tom Harris', result: 'pass', notes: 'Framing inspection' },
-      { id: 'i5', date: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000), inspector: 'Jim Wallace', result: 'pass', notes: 'Final inspection - all passed' },
-    ],
-    documents: [
-      { name: 'building_plans.pdf', type: 'plans', uploadedAt: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000) },
-      { name: 'certificate_of_occupancy.pdf', type: 'certificate', uploadedAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000) },
-    ],
-  },
-];
-
 function toPermit(d: PermitData): Permit {
   return {
     id: d.id,
@@ -175,7 +110,7 @@ function toPermit(d: PermitData): Permit {
 }
 
 export default function PermitsPage() {
-  const { permits: rawPermits, loading } = usePermits();
+  const { permits: rawPermits, loading, createPermit } = usePermits();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
@@ -199,6 +134,18 @@ export default function PermitsPage() {
   const activeCount = allPermits.filter((p) => ['approved', 'inspection_scheduled'].includes(p.status)).length;
   const failedCount = allPermits.filter((p) => p.status === 'failed').length;
   const upcomingInspections = allPermits.flatMap((p) => p.inspections.filter((i) => i.result === 'scheduled')).length;
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div><div className="skeleton h-7 w-32 mb-2" /><div className="skeleton h-4 w-52" /></div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[...Array(4)].map((_, i) => <div key={i} className="bg-surface border border-main rounded-xl p-4"><div className="skeleton h-6 w-12 mb-1" /><div className="skeleton h-3 w-24" /></div>)}
+        </div>
+        <div className="bg-surface border border-main rounded-xl p-6"><div className="skeleton h-4 w-48 mb-4" /><div className="skeleton h-3 w-full mb-2" /><div className="skeleton h-3 w-full mb-2" /><div className="skeleton h-3 w-3/4" /></div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -251,6 +198,13 @@ export default function PermitsPage() {
               </tr>
             </thead>
             <tbody>
+              {filteredPermits.length === 0 && (
+                <tr><td colSpan={7} className="px-6 py-12 text-center">
+                  <FileCheck size={40} className="mx-auto mb-3 text-muted opacity-40" />
+                  <p className="text-sm font-medium text-main">No permits found</p>
+                  <p className="text-xs text-muted mt-1">{allPermits.length === 0 ? 'Create your first permit to start tracking applications and inspections' : 'Try adjusting your search or filters'}</p>
+                </td></tr>
+              )}
               {filteredPermits.map((permit) => {
                 const sConfig = statusConfig[permit.status];
                 const tConfig = typeConfig[permit.type];
@@ -285,7 +239,7 @@ export default function PermitsPage() {
       </Card>
 
       {selectedPermit && <PermitDetailModal permit={selectedPermit} onClose={() => setSelectedPermit(null)} />}
-      {showNewModal && <NewPermitModal onClose={() => setShowNewModal(false)} />}
+      {showNewModal && <NewPermitModal onClose={() => setShowNewModal(false)} onCreate={createPermit} />}
     </div>
   );
 }
@@ -384,7 +338,10 @@ function PermitDetailModal({ permit, onClose }: { permit: Permit; onClose: () =>
   );
 }
 
-function NewPermitModal({ onClose }: { onClose: () => void }) {
+function NewPermitModal({ onClose, onCreate }: { onClose: () => void; onCreate: (data: Record<string, unknown>) => Promise<string> }) {
+  const [form, setForm] = useState({ permitType: 'electrical', description: '', jurisdiction: '', address: '', fee: '', appliedDate: '', notes: '' });
+  const [saving, setSaving] = useState(false);
+  const update = (field: string, value: string) => setForm(prev => ({ ...prev, [field]: value }));
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-lg max-h-[90vh] overflow-y-auto">
@@ -392,7 +349,7 @@ function NewPermitModal({ onClose }: { onClose: () => void }) {
         <CardContent className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-main mb-1.5">Permit Type *</label>
-            <select className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main">
+            <select value={form.permitType} onChange={e => update('permitType', e.target.value)} className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main">
               <option value="electrical">Electrical</option>
               <option value="plumbing">Plumbing</option>
               <option value="mechanical">Mechanical / HVAC</option>
@@ -405,41 +362,51 @@ function NewPermitModal({ onClose }: { onClose: () => void }) {
           </div>
           <div>
             <label className="block text-sm font-medium text-main mb-1.5">Description *</label>
-            <input type="text" placeholder="200A panel upgrade, new circuits for kitchen" className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted focus:border-accent focus:ring-1 focus:ring-accent" />
+            <input type="text" value={form.description} onChange={e => update('description', e.target.value)} placeholder="200A panel upgrade, new circuits for kitchen" className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted focus:border-accent focus:ring-1 focus:ring-accent" />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Job *</label>
-              <select className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main">
-                <option value="">Select job</option><option value="j1">Full Home Rewire</option><option value="j2">HVAC Install</option><option value="j3">Water Heater Replacement</option>
-              </select>
+              <label className="block text-sm font-medium text-main mb-1.5">Jurisdiction *</label>
+              <input type="text" value={form.jurisdiction} onChange={e => update('jurisdiction', e.target.value)} placeholder="City of Hartford" className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-main mb-1.5">Jurisdiction *</label>
-              <input type="text" placeholder="City of Hartford" className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted" />
+              <label className="block text-sm font-medium text-main mb-1.5">Job Site Address</label>
+              <input type="text" value={form.address} onChange={e => update('address', e.target.value)} placeholder="123 Oak Ave, Hartford, CT" className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted" />
             </div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-main mb-1.5">Job Site Address</label>
-            <input type="text" placeholder="123 Oak Ave, Hartford, CT 06101" className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted" />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-main mb-1.5">Permit Fee</label>
-              <input type="number" placeholder="350" className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted" />
+              <input type="number" value={form.fee} onChange={e => update('fee', e.target.value.replace(/[^0-9.]/g, ''))} min="0" step="0.01" placeholder="350" className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted" />
             </div>
             <div>
               <label className="block text-sm font-medium text-main mb-1.5">Application Date</label>
-              <input type="date" className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main" />
+              <input type="date" value={form.appliedDate} onChange={e => update('appliedDate', e.target.value)} className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main" />
             </div>
           </div>
           <div>
             <label className="block text-sm font-medium text-main mb-1.5">Notes</label>
-            <textarea rows={3} placeholder="Additional details, special requirements..." className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted resize-none" />
+            <textarea rows={3} value={form.notes} onChange={e => update('notes', e.target.value)} placeholder="Additional details, special requirements..." className="w-full px-4 py-2.5 bg-main border border-main rounded-lg text-main placeholder:text-muted resize-none" />
           </div>
           <div className="flex items-center gap-3 pt-4">
             <Button variant="secondary" className="flex-1" onClick={onClose}>Cancel</Button>
-            <Button className="flex-1"><Plus size={16} />Create Permit</Button>
+            <Button className="flex-1" disabled={saving || !form.description || !form.jurisdiction} onClick={async () => {
+              setSaving(true);
+              try {
+                await onCreate({
+                  permit_type: form.permitType,
+                  description: form.description,
+                  jurisdiction: form.jurisdiction,
+                  address: form.address || null,
+                  fee: form.fee ? parseFloat(form.fee) : 0,
+                  applied_date: form.appliedDate || null,
+                  notes: form.notes || null,
+                  status: 'draft',
+                });
+                onClose();
+              } catch (e) { alert(e instanceof Error ? e.message : 'Failed to create'); }
+              setSaving(false);
+            }}><Plus size={16} />{saving ? 'Creating...' : 'Create Permit'}</Button>
           </div>
         </CardContent>
       </Card>

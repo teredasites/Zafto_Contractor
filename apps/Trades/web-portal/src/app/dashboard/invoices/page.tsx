@@ -23,6 +23,7 @@ import { SearchInput, Select } from '@/components/ui/input';
 import { CommandPalette } from '@/components/command-palette';
 import { formatCurrency, formatDate, cn } from '@/lib/utils';
 import { useInvoices } from '@/lib/hooks/use-invoices';
+import { getSupabase } from '@/lib/supabase';
 import { useStats } from '@/lib/hooks/use-stats';
 import type { Invoice } from '@/types';
 
@@ -206,6 +207,21 @@ export default function InvoicesPage() {
                         await recordPayment(invoice.id, amt, 'manual');
                       }}
                       onDelete={async () => { if (confirm('Delete this invoice?')) await deleteInvoice(invoice.id); }}
+                      onDownloadPdf={async () => {
+                        try {
+                          const supabase = getSupabase();
+                          const { data: { session } } = await supabase.auth.getSession();
+                          if (!session) { alert('Not authenticated'); return; }
+                          const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+                          const res = await fetch(`${baseUrl}/functions/v1/export-invoice-pdf?invoice_id=${invoice.id}`, {
+                            headers: { 'Authorization': `Bearer ${session.access_token}`, 'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '' },
+                          });
+                          if (!res.ok) throw new Error(await res.text());
+                          const html = await res.text();
+                          const w = window.open('', '_blank');
+                          if (w) { w.document.write(html); w.document.close(); }
+                        } catch (e) { alert(e instanceof Error ? e.message : 'Failed to download PDF'); }
+                      }}
                     />
                   ))}
                 </tbody>
@@ -218,7 +234,7 @@ export default function InvoicesPage() {
   );
 }
 
-function InvoiceRow({ invoice, onClick, onSendReminder, onRecordPayment, onDelete }: { invoice: Invoice; onClick: () => void; onSendReminder: () => Promise<void>; onRecordPayment: () => Promise<void>; onDelete: () => Promise<void> }) {
+function InvoiceRow({ invoice, onClick, onSendReminder, onRecordPayment, onDelete, onDownloadPdf }: { invoice: Invoice; onClick: () => void; onSendReminder: () => Promise<void>; onRecordPayment: () => Promise<void>; onDelete: () => Promise<void>; onDownloadPdf: () => Promise<void> }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const isOverdue = invoice.status === 'overdue';
 
@@ -278,7 +294,7 @@ function InvoiceRow({ invoice, onClick, onSendReminder, onRecordPayment, onDelet
                 <CreditCard size={16} />
                 Record Payment
               </button>
-              <button onClick={(e) => { e.stopPropagation(); setMenuOpen(false); alert('PDF export coming in Phase G'); }} className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
+              <button onClick={async (e) => { e.stopPropagation(); setMenuOpen(false); await onDownloadPdf(); }} className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
                 <Download size={16} />
                 Download PDF
               </button>

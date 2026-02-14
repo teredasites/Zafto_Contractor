@@ -202,7 +202,9 @@ export default function BidDetailPage() {
             </>
           )}
           {bid.status === 'accepted' && !bid.depositPaid && (
-            <Button onClick={() => alert('Deposit requests require Stripe integration — coming in Phase G')}>
+            <Button onClick={() => {
+              router.push(`/dashboard/invoices/new?customer_id=${bid.customerId || ''}&bid_id=${bid.id}&type=deposit&amount=${Math.round((bid.total || 0) * 0.5)}`);
+            }}>
               <DollarSign size={16} />
               Request Deposit
             </Button>

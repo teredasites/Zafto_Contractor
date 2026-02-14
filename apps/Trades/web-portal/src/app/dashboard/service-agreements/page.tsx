@@ -61,95 +61,6 @@ const frequencyLabels: Record<BillingFrequency, string> = {
   annual: 'Annual',
 };
 
-const mockAgreements: ServiceAgreement[] = [
-  {
-    id: '1',
-    name: 'HVAC Maintenance Plan - Premium',
-    customerId: 'c1',
-    customerName: 'Thompson Auto Shop',
-    customerEmail: 'mike@thompsonauto.com',
-    type: 'HVAC Maintenance',
-    status: 'active',
-    startDate: new Date('2024-01-01'),
-    endDate: new Date('2024-12-31'),
-    amount: 299,
-    billingFrequency: 'monthly',
-    nextBillingDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000),
-    nextServiceDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-    servicesIncluded: ['2 annual tune-ups', 'Priority scheduling', '15% parts discount', 'No overtime charges'],
-    autoRenew: true,
-    notes: 'Commercial customer - 3 units covered',
-  },
-  {
-    id: '2',
-    name: 'Electrical Safety Inspection',
-    customerId: 'c2',
-    customerName: 'Sarah Martinez',
-    customerEmail: 'sarah.m@gmail.com',
-    type: 'Electrical Inspection',
-    status: 'active',
-    startDate: new Date('2024-03-15'),
-    endDate: new Date('2025-03-14'),
-    amount: 199,
-    billingFrequency: 'annual',
-    nextBillingDate: new Date('2025-03-15'),
-    nextServiceDate: new Date('2025-03-01'),
-    servicesIncluded: ['Annual safety inspection', 'Panel inspection', 'GFCI/AFCI testing', 'Written report'],
-    autoRenew: true,
-  },
-  {
-    id: '3',
-    name: 'Generator Maintenance',
-    customerId: 'c3',
-    customerName: 'Robert Chen',
-    customerEmail: 'robert.chen@email.com',
-    type: 'Generator Service',
-    status: 'active',
-    startDate: new Date('2024-02-01'),
-    endDate: new Date('2025-01-31'),
-    amount: 149,
-    billingFrequency: 'quarterly',
-    nextBillingDate: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000),
-    nextServiceDate: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000),
-    servicesIncluded: ['Quarterly inspection', 'Oil change', 'Load testing', 'Battery check'],
-    autoRenew: false,
-  },
-  {
-    id: '4',
-    name: 'HVAC Basic Plan',
-    customerId: 'c4',
-    customerName: 'Jennifer Davis',
-    customerEmail: 'jdavis@email.com',
-    type: 'HVAC Maintenance',
-    status: 'pending',
-    startDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-    endDate: new Date(Date.now() + 372 * 24 * 60 * 60 * 1000),
-    amount: 199,
-    billingFrequency: 'annual',
-    nextBillingDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-    servicesIncluded: ['1 annual tune-up', '10% parts discount'],
-    autoRenew: true,
-    notes: 'Waiting for signed contract',
-  },
-  {
-    id: '5',
-    name: 'Plumbing Service Agreement',
-    customerId: 'c5',
-    customerName: 'Wilson Retail Group',
-    customerEmail: 'dwilson@wilsonretail.com',
-    type: 'Plumbing Maintenance',
-    status: 'expired',
-    startDate: new Date('2023-01-01'),
-    endDate: new Date('2023-12-31'),
-    amount: 399,
-    billingFrequency: 'monthly',
-    nextBillingDate: new Date('2024-01-01'),
-    servicesIncluded: ['Monthly inspections', 'Priority service', 'Parts included'],
-    autoRenew: false,
-    notes: 'Did not renew - contact for follow-up',
-  },
-];
-
 function toAgreement(d: ServiceAgreementData): ServiceAgreement {
   const status: AgreementStatus = d.status === 'pending_renewal' ? 'pending' : (d.status as AgreementStatus) || 'active';
   const nextBilling = d.nextServiceDate ? new Date(d.nextServiceDate) : new Date(Date.now() + 30 * 86400000);
@@ -307,15 +218,25 @@ export default function ServiceAgreementsPage() {
       </div>
 
       {/* Agreements List */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {filteredAgreements.map((agreement) => (
-          <AgreementCard
-            key={agreement.id}
-            agreement={agreement}
-            onClick={() => setSelectedAgreement(agreement)}
-          />
-        ))}
-      </div>
+      {filteredAgreements.length === 0 ? (
+        <Card>
+          <CardContent className="p-12 text-center">
+            <FileText size={40} className="mx-auto mb-3 text-muted opacity-40" />
+            <p className="text-sm font-medium text-main">No service agreements found</p>
+            <p className="text-xs text-muted mt-1">{allAgreements.length === 0 ? 'Create your first service agreement to track recurring maintenance contracts' : 'Try adjusting your search or filters'}</p>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {filteredAgreements.map((agreement) => (
+            <AgreementCard
+              key={agreement.id}
+              agreement={agreement}
+              onClick={() => setSelectedAgreement(agreement)}
+            />
+          ))}
+        </div>
+      )}
 
       {/* New Modal */}
       {showNewModal && (

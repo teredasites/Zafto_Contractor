@@ -28,7 +28,7 @@ export default function RentChargeDetailPage() {
   const { charge, payments, loading } = useRentPayments(id);
 
   const handlePayNow = () => {
-    alert('Online payment coming soon. Contact your landlord for payment options.');
+    alert('Online payments are not yet configured. Please contact your property manager for payment options.');
   };
 
   // Loading skeleton
