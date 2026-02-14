@@ -31,12 +31,18 @@ export default function NewCustomerPage() {
     lastName: '',
     email: '',
     phone: '',
+    alternatePhone: '',
     address: {
       street: '',
       city: '',
       state: '',
       zip: '',
     },
+    customerType: 'residential' as 'residential' | 'commercial',
+    accessInstructions: '',
+    preferredContactMethod: 'phone' as 'phone' | 'email' | 'text',
+    emailOptIn: true,
+    smsOptIn: false,
     source: '',
     notes: '',
   });
@@ -93,7 +99,12 @@ export default function NewCustomerPage() {
         lastName: formData.lastName.trim(),
         email: formData.email?.trim() || undefined,
         phone: formatPhone(formData.phone),
+        alternatePhone: formData.alternatePhone?.trim() || undefined,
         address: formData.address,
+        customerType: formData.customerType,
+        accessInstructions: formData.accessInstructions?.trim() || undefined,
+        emailOptIn: formData.emailOptIn,
+        smsOptIn: formData.smsOptIn,
         tags,
         notes: formData.notes || undefined,
         source: formData.source || undefined,
@@ -189,6 +200,32 @@ export default function NewCustomerPage() {
             </CardContent>
           </Card>
 
+          {/* Customer Type */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Customer Type</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex gap-3">
+                {(['residential', 'commercial'] as const).map((type) => (
+                  <button
+                    key={type}
+                    type="button"
+                    onClick={() => setFormData({ ...formData, customerType: type })}
+                    className={cn(
+                      'flex-1 py-3 px-4 rounded-lg border text-sm font-medium transition-colors',
+                      formData.customerType === type
+                        ? 'border-accent bg-accent/10 text-accent'
+                        : 'border-main bg-secondary text-muted hover:text-main'
+                    )}
+                  >
+                    {type === 'residential' ? 'Residential' : 'Commercial'}
+                  </button>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Address */}
           <Card>
             <CardHeader>
@@ -223,6 +260,69 @@ export default function NewCustomerPage() {
                   value={formData.address.zip}
                   onChange={(e) => setFormData({ ...formData, address: { ...formData.address, zip: e.target.value } })}
                 />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Access & Communication */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Access & Communication</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Input
+                label="Access Instructions"
+                placeholder="Gate code, key location, parking..."
+                value={formData.accessInstructions}
+                onChange={(e) => setFormData({ ...formData, accessInstructions: e.target.value })}
+              />
+              <Input
+                label="Alternate Phone"
+                type="tel"
+                placeholder="(555) 987-6543"
+                value={formData.alternatePhone}
+                onChange={(e) => setFormData({ ...formData, alternatePhone: e.target.value })}
+                icon={<Phone size={16} />}
+              />
+              <div>
+                <label className="text-xs text-muted font-medium mb-2 block">Preferred Contact Method</label>
+                <div className="flex gap-2">
+                  {(['phone', 'email', 'text'] as const).map((method) => (
+                    <button
+                      key={method}
+                      type="button"
+                      onClick={() => setFormData({ ...formData, preferredContactMethod: method })}
+                      className={cn(
+                        'flex-1 py-2 px-3 rounded-lg border text-xs font-medium transition-colors',
+                        formData.preferredContactMethod === method
+                          ? 'border-accent bg-accent/10 text-accent'
+                          : 'border-main bg-secondary text-muted hover:text-main'
+                      )}
+                    >
+                      {method === 'text' ? 'Text/SMS' : method.charAt(0).toUpperCase() + method.slice(1)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="flex items-center justify-between pt-2 border-t border-main">
+                <span className="text-sm text-main">Email marketing opt-in</span>
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, emailOptIn: !formData.emailOptIn })}
+                  className={cn('w-10 h-5 rounded-full transition-colors relative', formData.emailOptIn ? 'bg-accent' : 'bg-gray-600')}
+                >
+                  <div className={cn('w-4 h-4 bg-white rounded-full absolute top-0.5 transition-transform', formData.emailOptIn ? 'translate-x-5' : 'translate-x-0.5')} />
+                </button>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-main">SMS opt-in</span>
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, smsOptIn: !formData.smsOptIn })}
+                  className={cn('w-10 h-5 rounded-full transition-colors relative', formData.smsOptIn ? 'bg-accent' : 'bg-gray-600')}
+                >
+                  <div className={cn('w-4 h-4 bg-white rounded-full absolute top-0.5 transition-transform', formData.smsOptIn ? 'translate-x-5' : 'translate-x-0.5')} />
+                </button>
               </div>
             </CardContent>
           </Card>

@@ -46,6 +46,10 @@ export default function NewInvoicePage() {
     dueDate: '',
     taxRate: 6.35,
     paymentTerms: 'net_30' as string,
+    poNumber: '',
+    discount: '',
+    retainagePercent: '',
+    lateFeePerDay: '',
     notes: '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -106,8 +110,12 @@ export default function NewInvoicePage() {
   };
 
   const subtotal = lineItems.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);
-  const tax = subtotal * (formData.taxRate / 100);
-  const total = subtotal + tax;
+  const discountAmount = formData.discount ? parseFloat(formData.discount) || 0 : 0;
+  const discountedSubtotal = Math.max(0, subtotal - discountAmount);
+  const tax = discountedSubtotal * (formData.taxRate / 100);
+  const retainagePercent = formData.retainagePercent ? parseFloat(formData.retainagePercent) || 0 : 0;
+  const retainageAmount = (discountedSubtotal + tax) * (retainagePercent / 100);
+  const total = discountedSubtotal + tax - retainageAmount;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -474,6 +482,35 @@ export default function NewInvoicePage() {
                 required
               />
               {errors.dueDate && <p className="text-xs text-red-500">{errors.dueDate}</p>}
+              <Input
+                label="PO Number"
+                placeholder="PO-00000"
+                value={formData.poNumber}
+                onChange={(e) => setFormData({ ...formData, poNumber: e.target.value })}
+              />
+              <Input
+                label="Discount ($)"
+                type="number"
+                placeholder="0.00"
+                value={formData.discount}
+                onChange={(e) => setFormData({ ...formData, discount: e.target.value })}
+                icon={<DollarSign size={16} />}
+              />
+              <Input
+                label="Retainage (%)"
+                type="number"
+                placeholder="0"
+                value={formData.retainagePercent}
+                onChange={(e) => setFormData({ ...formData, retainagePercent: e.target.value })}
+              />
+              <Input
+                label="Late Fee ($/day)"
+                type="number"
+                placeholder="0.00"
+                value={formData.lateFeePerDay}
+                onChange={(e) => setFormData({ ...formData, lateFeePerDay: e.target.value })}
+                icon={<DollarSign size={16} />}
+              />
               <p className="text-xs text-muted">
                 Invoice number will be auto-generated
               </p>
@@ -494,14 +531,29 @@ export default function NewInvoicePage() {
                 <span className="text-muted">Subtotal</span>
                 <span className="text-main">{formatCurrency(subtotal)}</span>
               </div>
+              {discountAmount > 0 && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted">Discount</span>
+                  <span className="text-green-500">-{formatCurrency(discountAmount)}</span>
+                </div>
+              )}
               <div className="flex justify-between text-sm">
-                <span className="text-muted">Tax</span>
+                <span className="text-muted">Tax ({formData.taxRate}%)</span>
                 <span className="text-main">{formatCurrency(tax)}</span>
               </div>
+              {retainageAmount > 0 && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted">Retainage ({retainagePercent}%)</span>
+                  <span className="text-amber-500">-{formatCurrency(retainageAmount)}</span>
+                </div>
+              )}
               <div className="flex justify-between font-semibold text-lg pt-2 border-t border-main">
-                <span>Total</span>
+                <span>Total Due</span>
                 <span>{formatCurrency(total)}</span>
               </div>
+              {retainageAmount > 0 && (
+                <p className="text-xs text-muted">Retainage held: {formatCurrency(retainageAmount)}</p>
+              )}
             </CardContent>
           </Card>
 

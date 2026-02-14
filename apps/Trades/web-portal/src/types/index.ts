@@ -51,6 +51,12 @@ export interface Customer {
   tags: string[];
   notes?: string;
   source?: string;
+  customerType?: 'residential' | 'commercial';
+  alternatePhone?: string;
+  accessInstructions?: string;
+  preferredContactMethod?: 'phone' | 'email' | 'text';
+  emailOptIn?: boolean;
+  smsOptIn?: boolean;
   totalRevenue: number;
   jobCount: number;
   createdAt: Date;
@@ -220,6 +226,9 @@ export interface Job {
   teamMembers?: TeamMember[];
   estimatedValue: number;
   actualCost: number;
+  estimatedDuration?: number;
+  tradeType?: string;
+  internalNotes?: string;
   notes: JobNote[];
   photos: JobPhoto[];
   source: string;
