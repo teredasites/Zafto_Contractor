@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../models/property.dart';
+import '../../repositories/lease_repository.dart';
 import '../../theme/zafto_colors.dart';
 import '../../theme/theme_provider.dart';
 
@@ -35,11 +36,13 @@ class _LeaseDetailScreenState extends ConsumerState<LeaseDetailScreen> {
 
   Future<void> _loadLease() async {
     try {
-      // TODO: Add getLease(id) to PropertyService when lease CRUD is wired.
+      final repo = LeaseRepository();
+      final lease = await repo.getLease(widget.leaseId);
       if (mounted) {
         setState(() {
+          _lease = lease;
           _isLoading = false;
-          _error = 'Lease detail loading not yet wired';
+          if (lease == null) _error = 'Lease not found';
         });
       }
     } catch (e) {
@@ -328,9 +331,27 @@ class _LeaseDetailScreenState extends ConsumerState<LeaseDetailScreen> {
                 label: 'Renew Lease',
                 icon: LucideIcons.refreshCw,
                 isPrimary: true,
-                onTap: () {
+                onTap: () async {
                   HapticFeedback.selectionClick();
-                  // TODO: Renew lease flow
+                  if (_lease == null) return;
+                  final newEnd = _lease!.endDate?.add(const Duration(days: 365));
+                  if (newEnd == null) return;
+                  try {
+                    final repo = LeaseRepository();
+                    await repo.renewLease(widget.leaseId, newEnd);
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Lease renewed for 1 year')),
+                      );
+                      _loadLease();
+                    }
+                  } catch (e) {
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Failed to renew lease: $e')),
+                      );
+                    }
+                  }
                 },
               ),
             ),
@@ -374,9 +395,24 @@ class _LeaseDetailScreenState extends ConsumerState<LeaseDetailScreen> {
                 style: TextStyle(color: colors.textSecondary)),
           ),
           TextButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(ctx);
-              // TODO: Call terminate lease service
+              try {
+                final repo = LeaseRepository();
+                await repo.terminateLease(widget.leaseId, 'Terminated by owner');
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Lease terminated')),
+                  );
+                  _loadLease();
+                }
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Failed to terminate lease: $e')),
+                  );
+                }
+              }
             },
             child: Text('Terminate',
                 style: TextStyle(color: colors.accentError)),

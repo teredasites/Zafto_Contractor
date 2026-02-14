@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../models/inspection.dart';
+import '../../repositories/inspection_repository.dart';
 import '../../theme/zafto_colors.dart';
 import '../../theme/theme_provider.dart';
 
@@ -256,10 +257,35 @@ class _InspectionScreenState extends ConsumerState<InspectionScreen> {
                       borderRadius: BorderRadius.circular(14),
                     ),
                   ),
-                  onPressed: () {
+                  onPressed: () async {
                     HapticFeedback.selectionClick();
                     Navigator.pop(ctx);
-                    // TODO: Create inspection via service
+                    try {
+                      final repo = InspectionRepository();
+                      final user = Supabase.instance.client.auth.currentUser;
+                      final companyId = user?.appMetadata['company_id'] as String? ?? '';
+                      await repo.createInspection(PmInspection(
+                        companyId: companyId,
+                        propertyId: '',
+                        inspectionType: selectedType,
+                        scheduledDate: DateTime.now(),
+                        status: InspectionStatus.scheduled,
+                        createdAt: DateTime.now(),
+                        updatedAt: DateTime.now(),
+                      ));
+                      ref.invalidate(_inspectionsProvider);
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Inspection created')),
+                        );
+                      }
+                    } catch (e) {
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Failed to create inspection: $e')),
+                        );
+                      }
+                    }
                   },
                   child: const Text(
                     'Create Inspection',

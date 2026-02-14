@@ -1,11 +1,11 @@
 /// Image compression for native platforms
-/// NOTE: Disabled for web compatibility - image package uses dart:io
+/// NOTE: Pass-through — the `image` package was removed (crashes web compilation).
+/// flutter_image_compress requires native NDK and platform-specific testing.
+/// Images upload correctly at full resolution. Compression will be added when
+/// PowerSync offline storage pipeline is built (requires bandwidth-aware sync).
 import 'dart:typed_data';
 
-/// Compress image bytes (native only) - currently passes through
-/// TODO: Re-enable when we have a web-compatible compression solution
+/// Compress image bytes — currently returns original bytes (web-safe).
 Future<Uint8List> compressImageBytes(Uint8List bytes) async {
-  // Skip compression for now - return original bytes
-  // The image package causes dart:io issues on web compilation
   return bytes;
 }

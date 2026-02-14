@@ -39,7 +39,6 @@ import 'field_tools/loto_logger_screen.dart';
 import 'field_tools/confined_space_timer_screen.dart';
 
 import 'field_tools/sun_position_screen.dart';
-import 'field_tools/level_plumb_screen.dart';
 import 'calendar/calendar_screen.dart';
 import 'contract_analyzer/contract_analyzer_hub_screen.dart';
 import 'properties/properties_hub_screen.dart';
@@ -1764,7 +1763,6 @@ class _FeatureCarousel extends StatelessWidget {
       _FeatureItem(icon: LucideIcons.lock, title: 'LOTO Logger', subtitle: 'Lockout/Tagout', onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LOTOLoggerScreen()))),
       _FeatureItem(icon: LucideIcons.box, title: 'Confined Space', subtitle: 'Entry tracking', onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ConfinedSpaceTimerScreen()))),
       _FeatureItem(icon: LucideIcons.sun, title: 'Sun Position', subtitle: 'Solar angles', onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SunPositionScreen()))),
-      _FeatureItem(icon: LucideIcons.ruler, title: 'Level & Plumb', subtitle: 'Digital level', onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LevelPlumbScreen()))),
     ];
 
     return SizedBox(

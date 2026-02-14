@@ -6,7 +6,6 @@ import {
   Mic,
   PenTool,
   Receipt,
-  Ruler,
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -43,14 +42,6 @@ const tools = [
     icon: Receipt,
     color: 'text-amber-500',
     bgColor: 'bg-amber-500/10',
-  },
-  {
-    name: 'Level & Plumb',
-    description: 'Digital level and plumb measurements using device sensors',
-    href: '/dashboard/field-tools/level',
-    icon: Ruler,
-    color: 'text-cyan-500',
-    bgColor: 'bg-cyan-500/10',
   },
 ];
 

@@ -789,15 +789,6 @@ void _registerAllCommands(CommandRegistry registry) {
       icon: LucideIcons.box,
       keywords: ['confined', 'space', 'entry', 'air', 'permit', 'osha'],
     ),
-    // Utilities
-    AppCommand(
-      id: 'tool_level_plumb',
-      title: 'Level & Plumb',
-      subtitle: 'Digital level with calibration',
-      type: CommandType.fieldTool,
-      icon: LucideIcons.ruler,
-      keywords: ['level', 'plumb', 'bubble', 'calibration', 'angle'],
-    ),
   ]);
 
   // === NOTIFICATIONS ===

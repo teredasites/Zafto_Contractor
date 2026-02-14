@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 import '../../models/maintenance_request.dart';
 import '../../services/pm_maintenance_service.dart';
 import '../../theme/zafto_colors.dart';
@@ -243,14 +245,113 @@ class _MaintenanceScreenState extends ConsumerState<MaintenanceScreen> {
     ref.read(maintenanceRequestsProvider.notifier).handleIt(request.id);
   }
 
-  void _assignToTeam(MaintenanceRequest request) {
+  void _assignToTeam(MaintenanceRequest request) async {
     HapticFeedback.selectionClick();
-    // TODO: Show team member picker
+    final colors = ref.read(zaftoColorsProvider);
+    try {
+      final users = await Supabase.instance.client
+          .from('users')
+          .select('id, display_name, role')
+          .inFilter('role', ['technician', 'apprentice'])
+          .order('display_name');
+      if (!mounted) return;
+      final selected = await showModalBottomSheet<String>(
+        context: context,
+        backgroundColor: colors.bgElevated,
+        builder: (ctx) => Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text('Assign to Team Member',
+                  style: TextStyle(
+                      color: colors.textPrimary,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16)),
+            ),
+            if ((users as List).isEmpty)
+              Padding(
+                padding: const EdgeInsets.all(24),
+                child: Text('No technicians found',
+                    style: TextStyle(color: colors.textSecondary)),
+              )
+            else
+              ...users.map<Widget>((u) => ListTile(
+                    leading: Icon(LucideIcons.user, color: colors.textSecondary),
+                    title: Text(u['display_name'] ?? 'Unknown',
+                        style: TextStyle(color: colors.textPrimary)),
+                    subtitle: Text(u['role'] ?? '',
+                        style: TextStyle(color: colors.textTertiary, fontSize: 12)),
+                    onTap: () => Navigator.pop(ctx, u['id'] as String),
+                  )),
+            const SizedBox(height: 16),
+          ],
+        ),
+      );
+      if (selected != null) {
+        ref.read(maintenanceRequestsProvider.notifier).assignTeam(request.id, selected);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to load team: $e')),
+        );
+      }
+    }
   }
 
-  void _dispatchVendor(MaintenanceRequest request) {
+  void _dispatchVendor(MaintenanceRequest request) async {
     HapticFeedback.selectionClick();
-    // TODO: Show vendor picker
+    final colors = ref.read(zaftoColorsProvider);
+    try {
+      final vendors = await Supabase.instance.client
+          .from('vendors')
+          .select('id, name, trade')
+          .order('name');
+      if (!mounted) return;
+      final selected = await showModalBottomSheet<String>(
+        context: context,
+        backgroundColor: colors.bgElevated,
+        builder: (ctx) => Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text('Dispatch to Vendor',
+                  style: TextStyle(
+                      color: colors.textPrimary,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16)),
+            ),
+            if ((vendors as List).isEmpty)
+              Padding(
+                padding: const EdgeInsets.all(24),
+                child: Text('No vendors found',
+                    style: TextStyle(color: colors.textSecondary)),
+              )
+            else
+              ...vendors.map<Widget>((v) => ListTile(
+                    leading: Icon(LucideIcons.truck, color: colors.textSecondary),
+                    title: Text(v['name'] ?? 'Unknown',
+                        style: TextStyle(color: colors.textPrimary)),
+                    subtitle: Text(v['trade'] ?? '',
+                        style: TextStyle(color: colors.textTertiary, fontSize: 12)),
+                    onTap: () => Navigator.pop(ctx, v['id'] as String),
+                  )),
+            const SizedBox(height: 16),
+          ],
+        ),
+      );
+      if (selected != null) {
+        ref.read(maintenanceRequestsProvider.notifier).assignVendor(request.id, selected);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to load vendors: $e')),
+        );
+      }
+    }
   }
 }
 
