@@ -38,9 +38,18 @@ class _BidCreateScreenState extends ConsumerState<BidCreateScreen> {
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   final _scopeController = TextEditingController();
+  final _warrantyPeriodController = TextEditingController(text: '1');
+  final _warrantyCoverageController = TextEditingController();
+  final _completionDaysController = TextEditingController();
+  final _exclusionsController = TextEditingController();
+  final _competitorController = TextEditingController();
+  final _changeOrderAllowanceController = TextEditingController();
   String _selectedTrade = 'electrical';
   double _taxRate = 0.0;
   double _depositPercent = 50.0;
+  int _validityDays = 30;
+  String _warrantyUnit = 'year';
+  String _paymentSchedule = 'deposit_completion';
   bool _isSaving = false;
 
   bool get _isEditMode => widget.editBid != null;
@@ -95,6 +104,12 @@ class _BidCreateScreenState extends ConsumerState<BidCreateScreen> {
     _emailController.dispose();
     _phoneController.dispose();
     _scopeController.dispose();
+    _warrantyPeriodController.dispose();
+    _warrantyCoverageController.dispose();
+    _completionDaysController.dispose();
+    _exclusionsController.dispose();
+    _competitorController.dispose();
+    _changeOrderAllowanceController.dispose();
     super.dispose();
   }
 
@@ -164,7 +179,7 @@ class _BidCreateScreenState extends ConsumerState<BidCreateScreen> {
             const SizedBox(height: 24),
 
             // Bid settings
-            _buildSectionHeader(colors, 'Bid Settings'),
+            _buildSectionHeader(colors, 'Pricing & Tax'),
             const SizedBox(height: 8),
             Row(
               children: [
@@ -173,6 +188,51 @@ class _BidCreateScreenState extends ConsumerState<BidCreateScreen> {
                 Expanded(child: _buildPercentField(colors, 'Deposit %', _depositPercent, (v) => setState(() => _depositPercent = v))),
               ],
             ),
+            const SizedBox(height: 16),
+            _buildTextField(colors, 'Change Order Allowance (\$)', _changeOrderAllowanceController, '0.00', LucideIcons.plusCircle),
+            const SizedBox(height: 24),
+
+            // Payment schedule
+            _buildSectionHeader(colors, 'Payment Schedule'),
+            const SizedBox(height: 8),
+            _buildPaymentScheduleSelector(colors),
+            const SizedBox(height: 24),
+
+            // Timeline
+            _buildSectionHeader(colors, 'Timeline & Validity'),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(child: _buildTextField(colors, 'Est. Completion (days)', _completionDaysController, '14', LucideIcons.clock)),
+                const SizedBox(width: 12),
+                Expanded(child: _buildValiditySelector(colors)),
+              ],
+            ),
+            const SizedBox(height: 24),
+
+            // Warranty
+            _buildSectionHeader(colors, 'Warranty'),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                SizedBox(
+                  width: 80,
+                  child: _buildTextField(colors, 'Period', _warrantyPeriodController, '1', LucideIcons.shieldCheck),
+                ),
+                const SizedBox(width: 8),
+                Expanded(child: _buildWarrantyUnitSelector(colors)),
+              ],
+            ),
+            const SizedBox(height: 12),
+            _buildTextField(colors, 'Warranty Coverage Details', _warrantyCoverageController, 'Parts and labor for defects in workmanship...', LucideIcons.fileText, maxLines: 2),
+            const SizedBox(height: 24),
+
+            // Exclusions
+            _buildSectionHeader(colors, 'Exclusions & Notes'),
+            const SizedBox(height: 8),
+            _buildTextField(colors, 'Exclusions', _exclusionsController, 'Items NOT included in this bid...', LucideIcons.xCircle, maxLines: 3),
+            const SizedBox(height: 16),
+            _buildTextField(colors, 'Competitor / Reference', _competitorController, 'Competing bids, reference numbers...', LucideIcons.users),
             const SizedBox(height: 32),
             _buildNextButton(colors),
             const SizedBox(height: 16),
@@ -280,6 +340,88 @@ class _BidCreateScreenState extends ConsumerState<BidCreateScreen> {
               suffixStyle: TextStyle(color: colors.textSecondary),
               border: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPaymentScheduleSelector(ZaftoColors colors) {
+    const schedules = [
+      ('deposit_completion', '50/50 (Deposit + Completion)'),
+      ('deposit_progress_completion', '33/33/33 (Deposit + Progress + Final)'),
+      ('full_upfront', '100% Upfront'),
+      ('on_completion', '100% On Completion'),
+      ('custom', 'Custom Schedule'),
+    ];
+    return Container(
+      decoration: BoxDecoration(color: colors.bgElevated, borderRadius: BorderRadius.circular(12), border: Border.all(color: colors.borderDefault)),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Row(
+        children: [
+          Icon(LucideIcons.wallet, size: 20, color: colors.textTertiary),
+          const SizedBox(width: 12),
+          Expanded(
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                value: _paymentSchedule,
+                isExpanded: true,
+                dropdownColor: colors.bgElevated,
+                style: TextStyle(color: colors.textPrimary, fontSize: 13),
+                items: schedules.map((s) => DropdownMenuItem(value: s.$1, child: Text(s.$2))).toList(),
+                onChanged: (v) { if (v != null) setState(() => _paymentSchedule = v); },
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildValiditySelector(ZaftoColors colors) {
+    const options = [15, 30, 45, 60, 90];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Bid Valid For', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: colors.textSecondary)),
+        const SizedBox(height: 8),
+        Container(
+          decoration: BoxDecoration(color: colors.bgElevated, borderRadius: BorderRadius.circular(12), border: Border.all(color: colors.borderDefault)),
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<int>(
+              value: _validityDays,
+              isExpanded: true,
+              dropdownColor: colors.bgElevated,
+              style: TextStyle(color: colors.textPrimary, fontSize: 14),
+              items: options.map((d) => DropdownMenuItem(value: d, child: Text('$d days'))).toList(),
+              onChanged: (v) { if (v != null) setState(() => _validityDays = v); },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildWarrantyUnitSelector(ZaftoColors colors) {
+    const units = [('year', 'Year(s)'), ('month', 'Month(s)'), ('day', 'Day(s)')];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Unit', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: colors.textSecondary)),
+        const SizedBox(height: 8),
+        Container(
+          decoration: BoxDecoration(color: colors.bgElevated, borderRadius: BorderRadius.circular(12), border: Border.all(color: colors.borderDefault)),
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              value: _warrantyUnit,
+              isExpanded: true,
+              dropdownColor: colors.bgElevated,
+              style: TextStyle(color: colors.textPrimary, fontSize: 14),
+              items: units.map((u) => DropdownMenuItem(value: u.$1, child: Text(u.$2))).toList(),
+              onChanged: (v) { if (v != null) setState(() => _warrantyUnit = v); },
             ),
           ),
         ),
