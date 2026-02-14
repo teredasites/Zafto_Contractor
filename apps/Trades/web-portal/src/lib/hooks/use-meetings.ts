@@ -181,9 +181,16 @@ export function useMeetings() {
   const active = meetings.filter(m => m.status === 'in_progress');
   const past = meetings.filter(m => m.status === 'completed');
 
+  // U22: Link existing meeting to job
+  const linkMeetingToJob = async (meetingId: string, jobId: string) => {
+    const supabase = getSupabase();
+    const { error: err } = await supabase.from('meetings').update({ job_id: jobId }).eq('id', meetingId);
+    if (err) throw err;
+  };
+
   return {
     meetings, upcoming, active, past, bookingTypes,
     loading, error, refetch: fetchData,
-    createMeeting, joinMeeting, endMeeting,
+    createMeeting, joinMeeting, endMeeting, linkMeetingToJob,
   };
 }

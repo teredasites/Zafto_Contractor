@@ -459,6 +459,48 @@ export function useDocuments() {
     );
   }, [documents]);
 
+  // U22: Auto-attach generated PDF to documents
+  const autoAttachDocument = async (input: {
+    entityType: string;
+    entityId: string;
+    name: string;
+    storagePath: string;
+    documentType: string;
+    customerId?: string;
+    jobId?: string;
+  }) => {
+    const supabase = getSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+    const companyId = user.app_metadata?.company_id;
+    if (!companyId) throw new Error('No company');
+
+    const { error: err } = await supabase.from('documents').insert({
+      company_id: companyId,
+      name: input.name,
+      file_type: 'pdf',
+      mime_type: 'application/pdf',
+      storage_path: input.storagePath,
+      document_type: input.documentType,
+      entity_type: input.entityType,
+      entity_id: input.entityId,
+      customer_id: input.customerId || null,
+      job_id: input.jobId || null,
+      status: 'active',
+      is_latest: true,
+      version: 1,
+    });
+    if (err) throw err;
+  };
+
+  // U22: Get documents by entity
+  const getDocumentsByEntity = (entityType: string, entityId: string) => {
+    return documents.filter((d) =>
+      (d as unknown as Record<string, unknown>).entity_type === entityType &&
+      (d as unknown as Record<string, unknown>).entity_id === entityId
+    );
+  };
+
   return {
     documents,
     folders,
@@ -472,11 +514,13 @@ export function useDocuments() {
     archiveDocument,
     createTemplate,
     updateTemplate,
+    autoAttachDocument,
     // Computed
     totalDocuments,
     byType,
     recentlyUploaded,
     pendingSignatures,
+    getDocumentsByEntity,
     // Refetch
     refetch: fetchDocuments,
   };
