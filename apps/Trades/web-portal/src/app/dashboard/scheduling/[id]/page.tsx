@@ -16,10 +16,13 @@ import {
   CheckCircle2,
   Link2,
   Bookmark,
+  Upload,
+  Download,
 } from 'lucide-react';
 import { useScheduleProject } from '@/lib/hooks/use-schedule';
 import { useScheduleTasks } from '@/lib/hooks/use-schedule-tasks';
 import { useScheduleDependencies } from '@/lib/hooks/use-schedule-dependencies';
+import { useScheduleImportExport } from '@/lib/hooks/use-schedule-import-export';
 import type { ScheduleTask, ScheduleDependency } from '@/lib/types/scheduling';
 
 type ZoomLevel = 'day' | 'week' | 'month';
@@ -43,9 +46,12 @@ export default function GanttPage() {
   const { project, loading: projLoading } = useScheduleProject(projectId);
   const { tasks, loading: tasksLoading, createTask, updateTask, deleteTask, updateProgress, triggerCpmRecalc } = useScheduleTasks(projectId);
   const { dependencies } = useScheduleDependencies(projectId);
+  const { importing, exporting, importSchedule, exportSchedule, detectFormat, importResult, exportResult, error: ieError, clearResults } = useScheduleImportExport(projectId);
 
   const [zoom, setZoom] = useState<ZoomLevel>('week');
   const [showCritical, setShowCritical] = useState(true);
+  const [showImport, setShowImport] = useState(false);
+  const [showExport, setShowExport] = useState(false);
   const [showDeps, setShowDeps] = useState(true);
   const [selectedTask, setSelectedTask] = useState<string | null>(null);
   const [showAddTask, setShowAddTask] = useState(false);
@@ -184,6 +190,16 @@ export default function GanttPage() {
 
           <button onClick={() => router.push(`/dashboard/scheduling/${projectId}/baselines`)} className="p-1.5 hover:bg-surface-alt rounded-md" title="Baselines">
             <Bookmark className="w-4 h-4 text-secondary" />
+          </button>
+
+          <div className="w-px h-5 bg-main mx-1" />
+
+          <button onClick={() => setShowImport(true)} disabled={importing} className="p-1.5 hover:bg-surface-alt rounded-md" title="Import Schedule">
+            <Upload className={`w-4 h-4 ${importing ? 'text-accent animate-pulse' : 'text-secondary'}`} />
+          </button>
+
+          <button onClick={() => setShowExport(true)} disabled={exporting} className="p-1.5 hover:bg-surface-alt rounded-md" title="Export Schedule">
+            <Download className={`w-4 h-4 ${exporting ? 'text-accent animate-pulse' : 'text-secondary'}`} />
           </button>
 
           <button onClick={triggerCpmRecalc} className="p-1.5 hover:bg-surface-alt rounded-md" title="Recalculate CPM">
@@ -445,6 +461,152 @@ export default function GanttPage() {
               <button onClick={() => setShowAddTask(false)} className="px-4 py-2 text-sm text-secondary">Cancel</button>
               <button onClick={handleAddTask} disabled={!newTaskName.trim()} className="px-4 py-2 bg-accent text-on-accent rounded-lg text-sm font-medium disabled:opacity-50">Add</button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Import modal */}
+      {showImport && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => { setShowImport(false); clearResults(); }}>
+          <div className="bg-surface border border-main rounded-xl p-6 w-full max-w-lg" onClick={(e) => e.stopPropagation()}>
+            <h2 className="text-lg font-semibold text-primary mb-1">Import Schedule</h2>
+            <p className="text-xs text-tertiary mb-4">Supports P6 XER, MS Project XML, and CSV</p>
+
+            {ieError && (
+              <div className="p-3 bg-error/5 border border-error/20 rounded-lg mb-3">
+                <p className="text-xs text-error">{ieError}</p>
+              </div>
+            )}
+
+            {importResult ? (
+              <div className="space-y-3">
+                <div className="p-4 bg-success/5 border border-success/20 rounded-lg">
+                  <p className="text-sm font-medium text-primary mb-2">Import Complete</p>
+                  <div className="grid grid-cols-2 gap-2 text-xs text-secondary">
+                    <span>Tasks: {importResult.tasks_imported}</span>
+                    <span>Dependencies: {importResult.dependencies_imported}</span>
+                    <span>Resources: {importResult.resources_imported}</span>
+                    <span>Assignments: {importResult.assignments_imported}</span>
+                  </div>
+                </div>
+                {importResult.warnings.length > 0 && (
+                  <div className="p-3 bg-warning/5 border border-warning/20 rounded-lg">
+                    <p className="text-xs font-medium text-warning mb-1">Warnings:</p>
+                    <ul className="space-y-1">
+                      {importResult.warnings.map((w, i) => (
+                        <li key={i} className="text-xs text-secondary">{w}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                <button onClick={() => { setShowImport(false); clearResults(); }} className="w-full py-2 bg-accent text-on-accent rounded-lg text-sm font-medium">
+                  Done
+                </button>
+              </div>
+            ) : (
+              <div>
+                <label className="block w-full p-8 border-2 border-dashed border-main rounded-xl text-center cursor-pointer hover:border-accent/50 transition-colors mb-4">
+                  <Upload className="w-8 h-8 text-tertiary mx-auto mb-2" />
+                  <p className="text-sm text-secondary mb-1">Drop file here or click to browse</p>
+                  <p className="text-xs text-tertiary">.xer, .xml, .csv</p>
+                  <input
+                    type="file"
+                    accept=".xer,.xml,.csv"
+                    className="hidden"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      const format = detectFormat(file.name);
+                      if (!format) return;
+                      await importSchedule(file, format);
+                    }}
+                    disabled={importing}
+                  />
+                </label>
+                {importing && (
+                  <div className="flex items-center justify-center gap-2 text-sm text-secondary">
+                    <div className="animate-spin w-4 h-4 border-2 border-accent border-t-transparent rounded-full" />
+                    Importing...
+                  </div>
+                )}
+                <div className="flex justify-end mt-2">
+                  <button onClick={() => { setShowImport(false); clearResults(); }} className="px-4 py-2 text-sm text-secondary">Cancel</button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Export modal */}
+      {showExport && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => { setShowExport(false); clearResults(); }}>
+          <div className="bg-surface border border-main rounded-xl p-6 w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+            <h2 className="text-lg font-semibold text-primary mb-1">Export Schedule</h2>
+            <p className="text-xs text-tertiary mb-4">Download in your preferred format</p>
+
+            {ieError && (
+              <div className="p-3 bg-error/5 border border-error/20 rounded-lg mb-3">
+                <p className="text-xs text-error">{ieError}</p>
+              </div>
+            )}
+
+            {exportResult ? (
+              <div className="space-y-3">
+                <div className="p-4 bg-success/5 border border-success/20 rounded-lg text-center">
+                  <p className="text-sm font-medium text-primary mb-2">Export Ready</p>
+                  <p className="text-xs text-secondary mb-3">{exportResult.filename} ({exportResult.tasks_exported} tasks)</p>
+                  <a
+                    href={exportResult.download_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-accent text-on-accent rounded-lg text-sm font-medium"
+                  >
+                    <Download className="w-4 h-4" />
+                    Download
+                  </a>
+                </div>
+                <button onClick={() => { setShowExport(false); clearResults(); }} className="w-full py-2 text-sm text-secondary">
+                  Close
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {([
+                  { fmt: 'csv' as const, label: 'CSV', desc: 'Spreadsheet-compatible' },
+                  { fmt: 'msp_xml' as const, label: 'MS Project XML', desc: 'Microsoft Project compatible' },
+                  { fmt: 'xer' as const, label: 'Primavera P6 XER', desc: 'Oracle Primavera compatible' },
+                  { fmt: 'pdf' as const, label: 'PDF Report', desc: 'Printable schedule report' },
+                ]).map(({ fmt, label, desc }) => (
+                  <button
+                    key={fmt}
+                    onClick={async () => {
+                      const result = await exportSchedule(fmt);
+                      if (result?.download_url && fmt === 'pdf') {
+                        window.open(result.download_url, '_blank');
+                      }
+                    }}
+                    disabled={exporting}
+                    className="w-full flex items-center gap-3 p-3 border border-main rounded-lg hover:bg-surface-alt transition-colors text-left disabled:opacity-50"
+                  >
+                    <Download className="w-4 h-4 text-secondary flex-shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium text-primary">{label}</p>
+                      <p className="text-xs text-tertiary">{desc}</p>
+                    </div>
+                  </button>
+                ))}
+                {exporting && (
+                  <div className="flex items-center justify-center gap-2 py-2 text-sm text-secondary">
+                    <div className="animate-spin w-4 h-4 border-2 border-accent border-t-transparent rounded-full" />
+                    Exporting...
+                  </div>
+                )}
+                <div className="flex justify-end pt-1">
+                  <button onClick={() => { setShowExport(false); clearResults(); }} className="px-4 py-2 text-sm text-secondary">Cancel</button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
