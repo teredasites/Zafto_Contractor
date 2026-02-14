@@ -346,7 +346,11 @@ function VendorModal({ vendor, onSave, onClose }: {
             </div>
             <div>
               <label className="block text-sm font-medium text-main mb-1">Phone</label>
-              <Input value={phone} onChange={(e) => setPhone(e.target.value)} />
+              <Input type="tel" placeholder="(555) 123-4567" value={phone} onChange={(e) => {
+                const digits = e.target.value.replace(/\D/g, '').slice(0, 10);
+                const formatted = digits.length > 6 ? `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}` : digits.length > 3 ? `(${digits.slice(0,3)}) ${digits.slice(3)}` : digits;
+                setPhone(formatted);
+              }} />
             </div>
           </div>
           <div>
