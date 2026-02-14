@@ -1,6 +1,6 @@
 # ZAFTO CIRCUIT BLUEPRINT
 ## Living Wiring Diagram — What Connects, What Doesn't, What's Missing
-### Last Updated: February 11, 2026 (Session 97 — Plan Review spec'd (BA1-BA8, ~128 hrs). Phase GC (Schedule) added (~124 hrs). Build order: T → P → SK → GC → U → G → E (E-review → BA → E1-E4) → LAUNCH.)
+### Last Updated: February 13, 2026 (Session 110 — Phase GC COMPLETE. GC1-GC11 done. 12 tables, 10 EFs, 9 CRM pages. Next: Phase U → G → E → LAUNCH.)
 
 ---
 
@@ -687,8 +687,8 @@ Tech opens app -> Taps "Field Tools"
 - Spec: `Expansion/40_PROPERTY_INTELLIGENCE_SPEC.md`
 - API keys: GOOGLE_SOLAR_API_KEY configured. ATTOM_API_KEY + REGRID_API_KEY + UNWRANGLE_API_KEY GATED (post-revenue).
 
-### Phase U: Unification & Feature Completion -- PLANNED (S96)
-- [ ] U1-U9: ~120 hours, 9 sprints. Portal unification (merge team+client into web-portal at zafto.cloud), Supabase-style nav redesign, permission engine, Ledger completion, dashboard restoration, PDF/email/dead buttons, payment flow, cross-system metrics, polish. Builds after Phase SK, before Phase G.
+### Phase U: Unification & Feature Completion -- PLANNED (S96), NEXT
+- [ ] U1-U22: ~432 hours, 22 sprints. Portal unification, Supabase-style nav redesign, permission engine, Ledger completion, dashboard restoration, PDF/email/dead buttons, payment flow, cross-system metrics, polish, form depth, templates, i18n, trade support, onboarding, data flow wiring, dispatch board, data import, subs, calendar sync, isolated feature wiring. Builds after Phase GC, before Phase G.
 
 ### Phase SK: CAD-Grade Sketch Engine -- COMPLETE (SK1-SK14 DONE, S109)
 - [x] SK1: Data model — 5 tables (property_floor_plans, floor_plan_elements, floor_plan_trade_data, floor_plan_snapshots, floor_plan_photo_pins), V2 element types, migration 63.
@@ -702,6 +702,21 @@ Tech opens app -> Taps "Field Tools"
 - [x] SK13: Trade Measurements & Templates — trade-formulas.ts (8 trades), templates.ts (10 built-in), TemplatePicker.tsx.
 - [x] SK14: Collaboration + Snap Guides — collaboration.ts (cursors, presence, element locks), snap-guides.ts (alignment, perpendicular, centerline, equal spacing, grid).
 - Spec: `Expansion/46_SKETCH_ENGINE_SPEC.md`
+
+### Phase GC: Gantt & CPM Scheduling -- COMPLETE (GC1-GC11 DONE, S110)
+- [x] GC1: Data model — 5 tables (schedule_projects, schedule_tasks, schedule_dependencies, schedule_resources, schedule_assignments), 3 migrations.
+- [x] GC2: CPM Engine — critical path calculation, forward/backward pass, float computation, longest-path algorithm.
+- [x] GC3: Resource Leveling — capacity constraints, over-allocation detection, auto-leveling, utilization tracking.
+- [x] GC4: DHTMLX Gantt Web — full CRM Gantt editor, task CRUD, dependency linking, drag/resize, critical path highlighting.
+- [x] GC5: Weather Integration — weather_delays table, outdoor task detection, delay impact on CPM, auto-reschedule suggestions.
+- [x] GC6: Import/Export — P6 XML import, MS Project XML import, CSV export, template save/load.
+- [x] GC7: Flutter Gantt — legacy_gantt_chart.dart, task list, progress tracking, offline-first.
+- [x] GC8: Portal Views — team portal (task list + progress update), client portal (read-only Gantt + milestones), real-time sync.
+- [x] GC9: Portfolio View — multi-project dashboard, cross-project resource detection, health stats (on_track/behind/complete).
+- [x] GC10: Integration Wiring — mini Gantt widgets (Flutter + React), job detail schedule card, team→resource mapping, field progress sync EF, EVM cost loading, schedule reminders cron EF.
+- [x] GC11: Polish & Testing — dart analyze clean, all 4 portals build clean, navigation audit (9 pages, 15 refs, 0 dead links).
+- Edge Functions: schedule-calculate, schedule-import, schedule-export, schedule-weather-check, schedule-level-resources, schedule-baseline, schedule-sync-realtime, schedule-sync-progress, schedule-recalc-cpm, schedule-reminders (~10 EFs).
+- Spec: `Expansion/48_GANTT_CPM_SCHEDULER_SPEC.md`
 
 ### Plan Review (Phase E/BA) -- SPEC'D (S97)
 - [ ] BA1-BA8: 6 tables (blueprint_analyses, blueprint_sheets, blueprint_rooms, blueprint_elements, blueprint_takeoff_items, blueprint_revisions), 3 EFs (blueprint-upload, blueprint-process, blueprint-compare), ~128 hours.

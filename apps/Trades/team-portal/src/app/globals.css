@@ -82,3 +82,24 @@ input, button, select, textarea { font-size: inherit; }
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
+
+/* Sidebar detail panel slide-in */
+@keyframes sidebarDetailSlideIn {
+  from { transform: translateX(-8px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+.sidebar-detail-enter {
+  animation: sidebarDetailSlideIn 150ms ease-out forwards;
+}
+
+/* Sidebar hover flyout label */
+@keyframes sidebarFlyoutIn {
+  from { transform: translateX(-4px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+.sidebar-flyout-enter {
+  animation: sidebarFlyoutIn 100ms ease-out forwards;
+}
+
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+.scrollbar-hide::-webkit-scrollbar { display: none; }

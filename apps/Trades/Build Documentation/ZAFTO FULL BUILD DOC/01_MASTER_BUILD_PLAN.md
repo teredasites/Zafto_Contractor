@@ -125,11 +125,11 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | **Phase T: Programs** | **COMPLETE** | **YES** | **S104: T1-T10 done. 11 migrations, 58 EFs, ~192 tables, all portals** |
 | **Phase P: Recon** | **COMPLETE** | **YES** | **S105: P1-P10 done. 11 tables, 7 EFs, 5 CRM routes, 1 ops route, Flutter screens** |
 | **Phase SK: Sketch Engine** | **COMPLETE** | **YES** | **S109: SK1-SK14 all done. 6 tables, 62 migrations. Export (PDF/PNG/DXF/FML/SVG), 3D view, site plan mode (exterior trades), trade formulas (8 trades), templates, snap guides, collaboration foundation. Auto-estimate wired to D8.** |
-| **Phase GC: Schedule** | **SPEC'D** | **NO** | Builds after Phase SK — full CPM scheduling, ~124 hrs, 11 sprints |
+| **Phase GC: Schedule** | **COMPLETE** | **YES** | **S110: GC1-GC11 all done. 12 tables, 10 EFs (schedule-*), 9 CRM pages, Flutter screens, Mini Gantt widgets, CPM/resource leveling, EVM cost loading, weather integration, portfolio view, field sync, reminders cron.** |
 | **Phase U: Unification** | **PLANNED** | **NO** | Builds after Phase GC — portal merge, nav redesign, feature completion |
 | **Plan Review** | **SPEC'D (S97)** | **NO** | Phase E feature (BA1-BA8, ~128 hrs) |
 
-**ALL PHASES A-F + T + P + SK COMPLETE. ~180 tables. 62 migrations. 60 Edge Functions. 121 CRM routes. 36 team routes. 39 client routes. 28 ops routes. Next: GC (Schedule), then U (Unification & Feature Completion), then G (QA/Harden everything), then E (AI LAST: E-review → BA1-BA8 → E1-E4) → LAUNCH. F2 + F8 post-launch.**
+**ALL PHASES A-F + T + P + SK + GC COMPLETE. ~192 tables. 62 migrations. 68 Edge Functions. 125 CRM routes. 36 team routes. 39 client routes. 28 ops routes. Next: U (Unification & Feature Completion), then G (QA/Harden everything), then E (AI LAST: E-review → BA1-BA8 → E1-E4) → LAUNCH. F2 + F8 post-launch.**
 
 ---
 
