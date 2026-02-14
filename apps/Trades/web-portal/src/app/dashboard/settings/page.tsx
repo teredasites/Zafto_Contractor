@@ -39,6 +39,7 @@ import {
   XCircle,
   AlertTriangle,
   X,
+  Upload,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -158,6 +159,17 @@ export default function SettingsPage() {
                     ))}
                   </>
                 )}
+
+                <div className="pt-3 pb-1 px-3">
+                  <p className="text-[11px] font-semibold text-muted uppercase tracking-wider">Data</p>
+                </div>
+                <a
+                  href="/dashboard/settings/import"
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted hover:text-main hover:bg-surface-hover transition-colors"
+                >
+                  <Upload size={18} />
+                  Import Data
+                </a>
               </nav>
             </CardContent>
           </Card>
