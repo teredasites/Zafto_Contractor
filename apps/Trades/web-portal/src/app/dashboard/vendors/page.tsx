@@ -113,8 +113,20 @@ function SupplierDirectoryTab({ search, setSearch }: { search: string; setSearch
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-40">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent" />
+      <div className="space-y-6 animate-fade-in">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[...Array(4)].map((_, i) => (
+            <Card key={i}><CardContent className="p-4"><div className="skeleton h-3 w-20 mb-3" /><div className="skeleton h-7 w-16" /></CardContent></Card>
+          ))}
+        </div>
+        <div className="bg-surface border border-main rounded-xl divide-y divide-main">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="px-6 py-4 flex items-center gap-4">
+              <div className="flex-1"><div className="skeleton h-4 w-40 mb-2" /><div className="skeleton h-3 w-32" /></div>
+              <div className="skeleton h-5 w-16 rounded-full" />
+            </div>
+          ))}
+        </div>
       </div>
     );
   }

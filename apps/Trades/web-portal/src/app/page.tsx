@@ -29,6 +29,7 @@ export default function LoginPage() {
   const [selectedPortal, setSelectedPortal] = useState<PortalType>('team');
   const [magicLinkSent, setMagicLinkSent] = useState(false);
   const [magicLinkLoading, setMagicLinkLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
   const [resetMode, setResetMode] = useState(false);
   const [resetSent, setResetSent] = useState(false);
   const [resetLoading, setResetLoading] = useState(false);
@@ -39,6 +40,23 @@ export default function LoginPage() {
     const params = new URLSearchParams(window.location.search);
     if (params.get('error') === 'unauthorized') {
       setError('You do not have permission to access that page');
+    }
+
+    // "Keep me signed in" enforcement: if user didn't check "Remember me"
+    // and browser was closed (sessionStorage cleared), sign them out.
+    const remembered = localStorage.getItem('zafto_remember');
+    const sessionActive = sessionStorage.getItem('zafto_session_active');
+    if (!remembered && !sessionActive) {
+      // No remember flag and no session flag — may need to sign out
+      // Only sign out if there's an active Supabase session
+      import('@/lib/supabase').then(({ getSupabase }) => {
+        const supabase = getSupabase();
+        supabase.auth.getSession().then(({ data }: { data: { session: unknown } }) => {
+          if (data.session) {
+            supabase.auth.signOut();
+          }
+        });
+      });
     }
   }, []);
 
@@ -89,6 +107,13 @@ export default function LoginPage() {
       setError(loginError);
       setIsLoading(false);
     } else if (user) {
+      // "Keep me signed in" — store session flag
+      if (rememberMe) {
+        localStorage.setItem('zafto_remember', '1');
+      } else {
+        localStorage.removeItem('zafto_remember');
+        sessionStorage.setItem('zafto_session_active', '1');
+      }
       await routeByRole(user.id);
     }
   };
@@ -423,6 +448,18 @@ export default function LoginPage() {
                         {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                       </button>
                     </div>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <label className="flex items-center gap-2 cursor-pointer select-none">
+                      <input
+                        type="checkbox"
+                        checked={rememberMe}
+                        onChange={(e) => setRememberMe(e.target.checked)}
+                        className="w-3.5 h-3.5 rounded border-zinc-600 accent-emerald-500"
+                      />
+                      <span className="text-xs text-muted">Keep me signed in</span>
+                    </label>
                   </div>
 
                   <button
