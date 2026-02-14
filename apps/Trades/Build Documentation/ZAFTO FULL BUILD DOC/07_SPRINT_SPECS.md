@@ -7832,10 +7832,10 @@ Include <content>{markdown}</content> for rendered display.
 ---
 
 ### Sprint G3: Performance Optimization
-- [ ] Bundle size analysis (identify >500kB routes)
-- [ ] Lazy load heavy components (charts, editors)
-- [ ] Image optimization (next/image usage)
-- [ ] Database query optimization (N+1 queries, missing indexes)
+- [x] Bundle size analysis (identify >500kB routes) — web-portal shared chunk 1.6MB (no heavy chart library, just large app), others clean
+- [x] Lazy load heavy components (charts, editors) — no chart libraries found; images unoptimized=true (Vercel free tier)
+- [x] Image optimization (next/image usage) — avatar component converted to next/image, 14 raw <img> identified (dynamic Supabase URLs)
+- [x] Database query optimization (N+1 queries, missing indexes) — fixed critical N+1 in use-data-import.ts customer duplicate detection (was 2N+1 queries per import, now 2 batch queries)
 
 ---
 
