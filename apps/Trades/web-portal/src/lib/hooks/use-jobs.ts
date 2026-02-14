@@ -220,7 +220,7 @@ export function useSchedule() {
   return { schedule, loading, error };
 }
 
-// Team members from users table
+// Team members from users table — enriched with GPS from active time entries
 export function useTeam() {
   const [team, setTeam] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
@@ -231,14 +231,51 @@ export function useTeam() {
       setLoading(true);
       setError(null);
       const supabase = getSupabase();
-      const { data, error: err } = await supabase
-        .from('users')
-        .select('*')
-        .eq('is_active', true)
-        .order('full_name');
 
-      if (err) throw err;
-      setTeam((data || []).map(mapTeamMember));
+      // Fetch users and active time entries in parallel
+      const [usersRes, entriesRes] = await Promise.all([
+        supabase
+          .from('users')
+          .select('*')
+          .eq('is_active', true)
+          .order('full_name'),
+        supabase
+          .from('time_entries')
+          .select('user_id, location_pings, clock_in')
+          .eq('status', 'active'),
+      ]);
+
+      if (usersRes.error) throw usersRes.error;
+
+      // Build location map from active time entries
+      const locationMap = new Map<string, { lat: number; lng: number; timestamp: Date }>();
+      if (!entriesRes.error && entriesRes.data) {
+        for (const entry of entriesRes.data) {
+          const pings = entry.location_pings as { lat: number; lng: number; timestamp?: string }[] | null;
+          if (pings && pings.length > 0) {
+            const latest = pings[pings.length - 1];
+            if (latest.lat && latest.lng) {
+              locationMap.set(entry.user_id as string, {
+                lat: latest.lat,
+                lng: latest.lng,
+                timestamp: latest.timestamp ? new Date(latest.timestamp) : new Date(entry.clock_in as string),
+              });
+            }
+          }
+        }
+      }
+
+      // Map users and enrich with location
+      const members = (usersRes.data || []).map((row: Record<string, unknown>) => {
+        const member = mapTeamMember(row);
+        const loc = locationMap.get(member.id);
+        if (loc) {
+          member.location = loc;
+        }
+        return member;
+      });
+
+      setTeam(members);
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : 'Failed to load team';
       setError(msg);
