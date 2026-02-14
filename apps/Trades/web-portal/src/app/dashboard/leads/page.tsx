@@ -288,6 +288,12 @@ export default function LeadsPage() {
                 </tr>
               </thead>
               <tbody>
+                {filteredLeads.length === 0 && (
+                  <tr><td colSpan={7} className="px-6 py-16 text-center">
+                    <p className="text-sm font-medium text-main">No leads found</p>
+                    <p className="text-xs text-muted mt-1">Add your first lead or adjust your filters</p>
+                  </td></tr>
+                )}
                 {filteredLeads.map((lead) => {
                   const config = stageConfig[lead.stage as LeadStage] || stageConfig.new;
                   return (

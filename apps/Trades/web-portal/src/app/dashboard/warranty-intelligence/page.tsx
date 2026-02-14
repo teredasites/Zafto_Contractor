@@ -754,7 +754,7 @@ function ClaimModal({
             <input
               type="number"
               value={amount}
-              onChange={e => setAmount(e.target.value)}
+              onChange={e => setAmount(e.target.value.replace(/[^0-9.]/g, ''))}
               placeholder="0.00"
               step="0.01"
               min="0"

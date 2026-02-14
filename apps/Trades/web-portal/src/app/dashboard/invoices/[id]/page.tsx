@@ -590,7 +590,8 @@ function RecordPaymentModal({ invoice, onClose }: { invoice: Invoice; onClose: (
                     type="number"
                     step="0.01"
                     value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
+                    min="0"
+                    onChange={(e) => setAmount(e.target.value.replace(/[^0-9.]/g, ''))}
                     className="w-full pl-10 pr-4 py-2.5 bg-secondary border border-main rounded-lg text-main focus:outline-none focus:ring-2 focus:ring-accent/50"
                   />
                 </div>

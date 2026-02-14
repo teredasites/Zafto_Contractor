@@ -1378,7 +1378,7 @@ function NewRetentionModal({
               min="0"
               max="100"
               value={rate}
-              onChange={(e) => setRate(e.target.value)}
+              onChange={(e) => setRate(e.target.value.replace(/[^0-9.]/g, ''))}
             />
           </div>
           <div>

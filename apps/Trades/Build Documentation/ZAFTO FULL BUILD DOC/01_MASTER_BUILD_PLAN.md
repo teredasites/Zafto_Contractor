@@ -126,10 +126,14 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | **Phase P: Recon** | **COMPLETE** | **YES** | **S105: P1-P10 done. 11 tables, 7 EFs, 5 CRM routes, 1 ops route, Flutter screens** |
 | **Phase SK: Sketch Engine** | **COMPLETE** | **YES** | **S109: SK1-SK14 all done. 6 tables, 62 migrations. Export (PDF/PNG/DXF/FML/SVG), 3D view, site plan mode (exterior trades), trade formulas (8 trades), templates, snap guides, collaboration foundation. Auto-estimate wired to D8.** |
 | **Phase GC: Schedule** | **COMPLETE** | **YES** | **S110: GC1-GC11 all done. 12 tables, 10 EFs (schedule-*), 9 CRM pages, Flutter screens, Mini Gantt widgets, CPM/resource leveling, EVM cost loading, weather integration, portfolio view, field sync, reminders cron.** |
-| **Phase U: Unification** | **IN PROGRESS** | **PARTIAL** | **S111-S112: U1 scrapped, U2-U8 DONE, U9 PARTIAL. Nav redesign, permission engine, ledger completion, dashboard restoration, PDF/email, payment flow, metric verification, ops CRUD, forgot password. ~U10-U22 remaining.** |
+| **Phase U: Unification** | **COMPLETE** | **YES** | **S111-S114: U1-U23 ALL DONE. Nav redesign, permission engine, ledger completion, dashboard restoration, PDF/email, payment flow, metric verification, ops CRUD, forgot password, i18n, universal trade, GPS walkthrough, dispatch board, data import, subcontractors, calendar sync, phone system config (6-tab settings, 3 hooks, 5 trade presets). ~448 hrs total.** |
+| **Phase W: Warranty** | **COMPLETE** | **YES** | **S113 chain: W1 warranty intelligence, hooks + pages across 4 portals.** |
+| **Phase J: Job Intelligence** | **COMPLETE** | **YES** | **S113 chain: J1-J2 smart pricing + job analytics, hooks + pages.** |
+| **Phase L: Legal/Permits** | **COMPLETE** | **YES** | **S113 chain: L1-L9 permit intelligence, jurisdictions, compliance, liens, CE tracker. 5 migrations.** |
+| **Phase G: QA/Hardening** | **IN PROGRESS** | **PARTIAL** | **S113: G1-G5 automated sprints DONE. G6-G10 manual QA PENDING.** |
 | **Plan Review** | **SPEC'D (S97)** | **NO** | Phase E feature (BA1-BA8, ~128 hrs) |
 
-**ALL PHASES A-F + T + P + SK + GC COMPLETE. Phase U IN PROGRESS (U2-U9). ~199 tables. 66 migrations. 70 Edge Functions. 125 CRM routes. 36 team routes. 39 client routes. 28 ops routes. Next: finish U (U10-U22), then G (QA/Harden everything), then E (AI LAST: E-review → BA1-BA8 → E1-E4) → LAUNCH. F2 + F8 post-launch.**
+**ALL PHASES A-F + T + P + SK + GC + W + J + L COMPLETE. Phase G automated DONE (G1-G5), manual QA pending (G6-G10). ~199 tables. 67 migrations. 70 Edge Functions. 125 CRM routes. 36 team routes. 39 client routes. 28 ops routes. Next: G6-G10 manual QA → E (AI LAST: E-review → BA1-BA8 → E1-E4) → LAUNCH. F2 + F8 post-launch.**
 
 ---
 

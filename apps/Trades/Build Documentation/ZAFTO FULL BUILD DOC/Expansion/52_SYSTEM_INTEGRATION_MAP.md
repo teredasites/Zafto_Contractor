@@ -306,7 +306,7 @@ Update this section as sprints are completed. Mark each connection as it's verif
 | GC → Weather | GC5 | WIRED (S110) — weather integration, outdoor task delay detection |
 | GC → Sketch | GC10 | WIRED (S110) — sq ft duration suggestions from sketch measurements |
 
-### Phase U (Unification) — IN PROGRESS (S111-S112)
+### Phase U (Unification) — COMPLETE (S111-S114)
 | Connection | Sprint | Status |
 |-----------|--------|--------|
 | U → Nav (all portals) | U2 | WIRED (S111) — Supabase-style sidebar, Z button, hover-expand, role-based nav |
@@ -316,39 +316,56 @@ Update this section as sprints are completed. Mark each connection as it's verif
 | U → PDF/Email | U6 | WIRED (S111) — export-bid-pdf + export-invoice-pdf EFs, SendGrid |
 | U → Stripe Connect | U7 | WIRED (S111) — payment flow, permits, SAs, reviews, system health |
 | U → Revenue Metrics | U8 | WIRED (S112) — paid-only filter, bid conversion fix, cross-portal verified |
-| U → Ops CRUD | U9 | PARTIAL (S112) — company tier/suspend, user role/disable/reset, KB delete |
+| U → Ops CRUD | U9 | WIRED (S112) — company tier/suspend, user role/disable/reset, KB delete |
 | U → Auth Flows | U9 | WIRED (S112) — forgot password on web/team/ops portals |
-Remaining U10-U22 connections verified during U22 (Isolated Feature Wiring).
+| U → i18n | U13 | WIRED (S114) — Flutter ARB localization, 10 languages |
+| U → Trade Support | U14 | WIRED (S114) — universal trade type system, 16+ trades |
+| U → GPS Walkthrough | U15c | WIRED (S114) — altitude, accuracy, path tracking, photo clustering |
+| U → Dispatch Board | U18 | WIRED (S114) — drag-drop assignment, haversine ETA, customer SMS, map view |
+| U → Data Import | U19 | WIRED (pre-S114) — CSV/IIF parser, duplicate detection, batch undo |
+| U → Subcontractors | U20 | WIRED (pre-S114) — subs management, 1099 export |
+| U → Calendar Sync | U21 | WIRED (pre-S114) — Google Calendar, notification triggers |
+| U → Phone Config | U23 | WIRED (S114) — 6-tab settings page, 3 hooks, 5 trade presets, IVR builder, ring groups, AI receptionist config |
 
-### Phase W (Warranty + Lifecycle)
+### Phase W (Warranty + Lifecycle) — COMPLETE (S113 chain)
 | Connection | Sprint | Status |
 |-----------|--------|--------|
-| W → Jobs | W1 | PENDING |
-| W → Estimates | W1 | PENDING |
-| W → ZBooks | W3 | PENDING |
-| W → Client Portal | W4 | PENDING |
-| W → Notifications | W4 | PENDING |
-| W → Phone/SMS | W4 | PENDING |
+| W → Jobs | W1 | WIRED (S113) — warranty_claims.job_id FK, job detail warranty tab |
+| W → Estimates | W1 | WIRED (S113) — warranty data flows to estimate context |
+| W → ZBooks | W1 | WIRED (S113) — warranty cost tracking in ledger hooks |
+| W → Client Portal | W1 | WIRED (S113) — warranty intelligence page in client portal |
+| W → Notifications | W1 | WIRED (S113) — outreach log for expiry/maintenance/recall alerts |
+| W → CRM | W1 | WIRED (S113) — warranty intelligence dashboard, equipment lifecycle |
 
-### Phase J (Job Intelligence)
+### Phase J (Job Intelligence) — COMPLETE (S113 chain)
 | Connection | Sprint | Status |
 |-----------|--------|--------|
-| J → Jobs | J1 | PENDING |
-| J → Estimates | J1 | PENDING |
-| J → ZBooks | J2 | PENDING |
-| J → Schedule | J5 | PENDING |
-| J → Client Portal | J4 (Bridge 8) | PENDING |
+| J → Jobs | J1 | WIRED (S113) — smart pricing hooks, job analytics |
+| J → Estimates | J1 | WIRED (S113) — pricing intelligence feeds estimate engine |
+| J → ZBooks | J2 | WIRED (S113) — financial analytics integration |
+| J → Schedule | J2 | WIRED (S113) — job timeline intelligence |
+| J → Client Portal | J2 | WIRED (S113) — job analytics visible in client portal |
 
-### Phase L (Permits + Compliance)
+### Phase L (Permits + Compliance) — COMPLETE (S113 chain)
 | Connection | Sprint | Status |
 |-----------|--------|--------|
-| L → Jobs | L1 | PENDING |
-| L → Estimates | L2 | PENDING |
-| L → Schedule | L2 | PENDING |
-| L → Client Portal | L9 | PENDING |
-| L → Team Portal | L9 | PENDING |
-| L → Notifications | L8 | PENDING |
-| L → Sketch Engine | L2 | PENDING |
+| L → Jobs | L1 | WIRED (S113) — permit_applications.job_id FK, job detail permits tab |
+| L → Jurisdictions | L2 | WIRED (S113) — jurisdiction lookup, PostGIS boundary matching |
+| L → Compliance | L3 | WIRED (S113) — compliance_checklist_items per job, auto-requirements |
+| L → Client Portal | L9 | WIRED (S113) — permits + compliance views in client portal |
+| L → Team Portal | L9 | WIRED (S113) — field compliance checklist in team portal |
+| L → Liens | L5 | WIRED (S113) — lien_filings + lien_payments, deadline tracking |
+| L → CE Tracker | L8 | WIRED (S113) — ce_courses + ce_credits + ce_requirements per employee |
+
+### Phase G (QA/Hardening) — IN PROGRESS (S113)
+| Connection | Sprint | Status |
+|-----------|--------|--------|
+| G → RLS (all tables) | G2 | WIRED (S113) — 263/266 tables with RLS, 3 gaps fixed via migration |
+| G → Security Headers | G4 | WIRED (S113) — X-Frame-Options, X-Content-Type-Options, etc. on all 4 portals |
+| G → CI/CD | G5 | WIRED (S113) — codemagic.yaml with 3 workflows |
+| G → XSS Protection | G2 | WIRED (S113) — DOMPurify in ZDocs rendering |
+| G → Webhook Security | G2 | WIRED (S113) — SignalWire webhook secret verification added |
+| G → Manual QA | G6-G10 | PENDING — requires running app + manual testing |
 
 ---
 

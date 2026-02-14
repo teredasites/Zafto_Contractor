@@ -1,6 +1,6 @@
 # ZAFTO SESSION HANDOFF
 ## THE ONLY DOC YOU READ FIRST — EVERY SESSION
-### Last Updated: February 14, 2026 (Session 112 — U7d-U7f deep workflows, U8 metric verification, U9 ops CRUD + forgot password)
+### Last Updated: February 14, 2026 (Session 114 — PHASE U COMPLETE (U1-U23). U15c GPS walkthrough, U18 dispatch board, U23 phone system config)
 
 ---
 
@@ -19,14 +19,14 @@
 
 | Field | Value |
 |-------|-------|
-| **Sprint** | **PHASE U IN PROGRESS (S111-S112).** U1 SCRAPPED (owner directive — portals stay separate). U2-U6 DONE. U7 DONE (Stripe Connect, permits/SAs/reviews tables, deep workflows: review request system, SA auto-billing, automation engine backend). U8 DONE (cross-system metric verification — 3 parallel audits, revenue paid-only filter, bid conversion fix, ops honest metrics). U9 PARTIAL (ops CRUD: company tier/suspend, user role/disable/reset, KB delete; forgot password flows on all 3 portals). Next: U9 remaining → U10-U22. |
-| **Sub-step** | U9 PARTIAL — ops CRUD + forgot password done. Remaining: meeting permission scoping, remember me/session persistence, loading states audit, empty states audit, error boundaries, Flutter properties module completion (U9b), remove fake service responses (U9c), web notification system (U9d). Then U10-U22. |
-| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → Phase U (current: U7 partial, then U8-U22 ~340 hrs remaining). Phase G: G1-G10 + G10h-G10k. Phase E: E-review + BA1-BA8 (~128 hrs) + E1-E4. |
-| **Status** | Phases A-D + F + T + P + SK + GC ALL DONE. Phase U IN PROGRESS (U2-U9). R1 DONE. FM code done. Phase E PAUSED. ~199 tables. 66 migration files. 70 Edge Functions. **125 CRM pages. 36 team pages. 39 client pages. 28 ops pages.** Codemagic Android debug build PASSING. **Phase U progress: U1 scrapped, U2-U8 DONE, U9 PARTIAL. 4 new migrations, 2 new EFs, 5 new hooks, ~5,200+ net new lines. U8: revenue calculations verified (paid-only filtering, bid conversion fix). U9: ops portal CRUD wired (company tier/suspend, user role/disable/reset, KB delete), forgot password on all 3 portals.** |
-| **Last Completed** | S112: **U7d-U7f deep workflows + U8 metric verification + U9 ops CRUD/forgot password.** U7d: review request system (templates, email triggers). U7e: service agreement deep workflows (auto-billing, auto-job). U7f: automation engine backend (DB triggers, execution). U8: 3 parallel audits, revenue paid-only filter, bid conversion fix. U9: ops company/user/KB CRUD, forgot password all portals. S111 (CRASHED): U2-U7 foundations. S110: Phase GC complete. S109: Phase SK complete. |
-| **Session Count** | 112 |
-| **Tables** | ~199 built (U4: job_budgets + approval expansion, U7: permits, service_agreements, service_agreement_visits, review_requests, stripe_connect fields, system_health_checks, automations). Expansion adds ~18 new tables: Phase U remaining +6, Phase W +5, Phase J +5, Phase L +12, Trade Tools +1, Phase E/BA +6 |
-| **Migration Files** | 66 (4 added in S111: u4a_job_budgets, u4b_approval_expansion, u7_permits_service_agreements, u7c_stripe_connect_reviews) |
+| **Sprint** | **PHASE U COMPLETE (S114). PHASE G IN PROGRESS (S113).** G1-G5 automated sprints DONE. G6-G10 manual QA PENDING. |
+| **Sub-step** | G6-G10 are manual QA sprints requiring running app + button-click verification. Cannot be automated. Phase E remains PAUSED (AI goes last). |
+| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → Phase G (G1-G5 DONE, G6-G10 manual). Phase E: E-review + BA1-BA8 (~128 hrs) + E1-E4. |
+| **Status** | Phases A-D + F + T + P + SK + GC + U + W + J + L ALL DONE. Phase G automated DONE (G1-G5). R1 DONE. FM code done. Phase E PAUSED. ~199 tables. 67 migration files. 70 Edge Functions. **125 CRM pages. 36 team pages. 39 client pages. 28 ops pages.** Codemagic Android debug PASSING. codemagic.yaml created. |
+| **Last Completed** | S114: **PHASE U COMPLETE (U1-U23).** U15c: GPS-enhanced walkthrough data (altitude, accuracy, path tracking, breadcrumbs). U18: Dispatch board enhancements (HTML5 drag-drop, haversine ETA, customer SMS, map view). U19/U20/U21: verified already built from prior sessions. U23: Phone System Configuration — settings page with 6 tabs (General/Hours/Routing/AI Receptionist/Templates/Recording), 3 new hooks (use-phone-config, use-phone-lines, use-ring-groups), 5 trade presets (Plumber/Electrician/HVAC/GC/Restoration). All 4 portals build clean. S113 prior: Phase L COMPLETE + Phase G automated (G1-G5). |
+| **Session Count** | 114 |
+| **Tables** | ~199 (no new tables in S114 — all U-phase work was UI/hooks). Phase L added: permit_applications, compliance_checklist_items, lien_filings, lien_payments, ce_courses, ce_credits, ce_requirements + extended jurisdictions + compliance_requirements. |
+| **Migration Files** | 67 (1 added in S113: g2_rls_gaps) + 5 from L-phase chain + 1 from U15c (u15c_gps_enhanced_photos) |
 
 ## CRITICAL: AI GOES LAST — BUILD ORDER CORRECTED (S80)
 

@@ -502,22 +502,27 @@ export default function NewInvoicePage() {
                 type="number"
                 placeholder="0.00"
                 value={formData.discount}
-                onChange={(e) => setFormData({ ...formData, discount: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, discount: e.target.value.replace(/[^0-9.]/g, '') })}
                 icon={<DollarSign size={16} />}
               />
               <Input
                 label="Retainage (%)"
                 type="number"
+                min="0"
+                max="100"
+                step="0.5"
                 placeholder="0"
                 value={formData.retainagePercent}
-                onChange={(e) => setFormData({ ...formData, retainagePercent: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, retainagePercent: e.target.value.replace(/[^0-9.]/g, '') })}
               />
               <Input
                 label="Late Fee ($/day)"
                 type="number"
+                min="0"
+                step="0.01"
                 placeholder="0.00"
                 value={formData.lateFeePerDay}
-                onChange={(e) => setFormData({ ...formData, lateFeePerDay: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, lateFeePerDay: e.target.value.replace(/[^0-9.]/g, '') })}
                 icon={<DollarSign size={16} />}
               />
               <p className="text-xs text-muted">
