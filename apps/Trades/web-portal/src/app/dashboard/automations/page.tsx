@@ -35,6 +35,7 @@ import { Badge } from '@/components/ui/badge';
 import { SearchInput, Select } from '@/components/ui/input';
 import { CommandPalette } from '@/components/command-palette';
 import { formatDate, cn } from '@/lib/utils';
+import { useAutomations, type AutomationData } from '@/lib/hooks/use-automations';
 
 type AutomationStatus = 'active' | 'paused' | 'draft';
 type TriggerType = 'job_status' | 'invoice_overdue' | 'lead_idle' | 'time_based' | 'customer_event' | 'bid_event';
@@ -218,14 +219,38 @@ const mockAutomations: Automation[] = [
   },
 ];
 
+function toAutomation(d: AutomationData): Automation {
+  const triggerLabel = d.triggerConfig?.label as string || d.triggerConfig?.condition as string || d.triggerType;
+  const triggerCondition = d.triggerConfig?.condition as string || '';
+  return {
+    id: d.id,
+    name: d.name,
+    description: d.description || '',
+    status: d.status as AutomationStatus,
+    trigger: {
+      type: d.triggerType as TriggerType,
+      label: triggerLabel,
+      condition: triggerCondition,
+    },
+    delay: d.delayMinutes > 0 ? `${d.delayMinutes} min` : undefined,
+    actions: d.actions.map(a => ({ type: a.type, label: a.label, config: a.config })),
+    lastRun: d.lastRunAt ? new Date(d.lastRunAt) : undefined,
+    runCount: d.runCount,
+    createdAt: new Date(d.createdAt),
+  };
+}
+
 export default function AutomationsPage() {
+  const { automations: rawAutomations, loading } = useAutomations();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [triggerFilter, setTriggerFilter] = useState('all');
   const [selectedAutomation, setSelectedAutomation] = useState<Automation | null>(null);
   const [showNewModal, setShowNewModal] = useState(false);
 
-  const filteredAutomations = mockAutomations.filter((a) => {
+  const allAutomations = rawAutomations.map(toAutomation);
+
+  const filteredAutomations = allAutomations.filter((a) => {
     const matchesSearch =
       a.name.toLowerCase().includes(search.toLowerCase()) ||
       a.description.toLowerCase().includes(search.toLowerCase());
@@ -234,10 +259,10 @@ export default function AutomationsPage() {
     return matchesSearch && matchesStatus && matchesTrigger;
   });
 
-  const activeCount = mockAutomations.filter((a) => a.status === 'active').length;
-  const pausedCount = mockAutomations.filter((a) => a.status === 'paused').length;
-  const totalExecutions = mockAutomations.reduce((sum, a) => sum + a.runCount, 0);
-  const draftCount = mockAutomations.filter((a) => a.status === 'draft').length;
+  const activeCount = allAutomations.filter((a) => a.status === 'active').length;
+  const pausedCount = allAutomations.filter((a) => a.status === 'paused').length;
+  const totalExecutions = allAutomations.reduce((sum, a) => sum + a.runCount, 0);
+  const draftCount = allAutomations.filter((a) => a.status === 'draft').length;
 
   return (
     <div className="space-y-6">

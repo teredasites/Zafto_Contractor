@@ -23,6 +23,7 @@ import { SearchInput, Select, Input } from '@/components/ui/input';
 import { Avatar } from '@/components/ui/avatar';
 import { CommandPalette } from '@/components/command-palette';
 import { formatCurrency, formatDate, cn } from '@/lib/utils';
+import { useServiceAgreements, type ServiceAgreementData } from '@/lib/hooks/use-service-agreements';
 
 type AgreementStatus = 'active' | 'pending' | 'expired' | 'cancelled';
 type BillingFrequency = 'monthly' | 'quarterly' | 'semi_annual' | 'annual';
@@ -149,13 +150,39 @@ const mockAgreements: ServiceAgreement[] = [
   },
 ];
 
+function toAgreement(d: ServiceAgreementData): ServiceAgreement {
+  const status: AgreementStatus = d.status === 'pending_renewal' ? 'pending' : (d.status as AgreementStatus) || 'active';
+  const nextBilling = d.nextServiceDate ? new Date(d.nextServiceDate) : new Date(Date.now() + 30 * 86400000);
+  return {
+    id: d.id,
+    name: d.title,
+    customerId: d.customerId || '',
+    customerName: d.customerName || '',
+    customerEmail: '',
+    type: d.agreementType,
+    status,
+    startDate: d.startDate ? new Date(d.startDate) : new Date(d.createdAt),
+    endDate: d.endDate ? new Date(d.endDate) : new Date(Date.now() + 365 * 86400000),
+    amount: d.billingAmount,
+    billingFrequency: d.billingFrequency as BillingFrequency,
+    nextBillingDate: nextBilling,
+    nextServiceDate: d.nextServiceDate ? new Date(d.nextServiceDate) : undefined,
+    servicesIncluded: (d.services || []).filter(s => s.included).map(s => s.name),
+    autoRenew: d.renewalType === 'auto',
+    notes: d.notes || undefined,
+  };
+}
+
 export default function ServiceAgreementsPage() {
+  const { agreements: rawAgreements, loading } = useServiceAgreements();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [showNewModal, setShowNewModal] = useState(false);
   const [selectedAgreement, setSelectedAgreement] = useState<ServiceAgreement | null>(null);
 
-  const filteredAgreements = mockAgreements.filter((agreement) => {
+  const allAgreements = rawAgreements.map(toAgreement);
+
+  const filteredAgreements = allAgreements.filter((agreement) => {
     const matchesSearch =
       agreement.name.toLowerCase().includes(search.toLowerCase()) ||
       agreement.customerName.toLowerCase().includes(search.toLowerCase());
@@ -172,8 +199,8 @@ export default function ServiceAgreementsPage() {
   ];
 
   // Stats
-  const activeCount = mockAgreements.filter((a) => a.status === 'active').length;
-  const monthlyRecurring = mockAgreements
+  const activeCount = allAgreements.filter((a) => a.status === 'active').length;
+  const monthlyRecurring = allAgreements
     .filter((a) => a.status === 'active')
     .reduce((sum, a) => {
       switch (a.billingFrequency) {
@@ -184,10 +211,10 @@ export default function ServiceAgreementsPage() {
         default: return sum;
       }
     }, 0);
-  const upcomingServices = mockAgreements.filter((a) =>
+  const upcomingServices = allAgreements.filter((a) =>
     a.nextServiceDate && a.nextServiceDate.getTime() - Date.now() < 30 * 24 * 60 * 60 * 1000
   ).length;
-  const expiringCount = mockAgreements.filter((a) =>
+  const expiringCount = allAgreements.filter((a) =>
     a.status === 'active' && a.endDate.getTime() - Date.now() < 60 * 24 * 60 * 60 * 1000
   ).length;
 

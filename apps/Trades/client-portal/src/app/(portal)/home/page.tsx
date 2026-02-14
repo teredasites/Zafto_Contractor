@@ -10,6 +10,7 @@ import { useChangeOrders } from '@/lib/hooks/use-change-orders';
 import { useTenant } from '@/lib/hooks/use-tenant';
 import { useRentCharges } from '@/lib/hooks/use-rent-payments';
 import { useMaintenanceRequests } from '@/lib/hooks/use-maintenance';
+import { useHome } from '@/lib/hooks/use-home';
 import { formatCurrency, formatDate } from '@/lib/hooks/mappers';
 import { formatAddress, leaseStatusLabel } from '@/lib/hooks/tenant-mappers';
 
@@ -81,6 +82,7 @@ export default function HomePage() {
   const { tenant, lease, property, unit } = useTenant();
   const { balance, overdueCount } = useRentCharges();
   const { activeCount: maintenanceActive } = useMaintenanceRequests();
+  const { equipment, healthScore, maintenanceDue } = useHome();
 
   const [dismissed, setDismissed] = useState<Set<string>>(new Set());
 
@@ -363,9 +365,9 @@ export default function HomePage() {
           </div>
           <div className="grid grid-cols-3 gap-3">
             {[
-              { label: 'Health Score', value: '--', valueColor: 'var(--success)' },
-              { label: 'Equipment', value: '--', valueColor: 'var(--text)' },
-              { label: 'Next Service', value: '--', valueColor: 'var(--text)' },
+              { label: 'Health Score', value: healthScore !== null ? `${healthScore}%` : '--', valueColor: healthScore !== null && healthScore >= 70 ? 'var(--success)' : healthScore !== null && healthScore >= 40 ? 'var(--warning)' : 'var(--text-muted)' },
+              { label: 'Equipment', value: equipment.length > 0 ? String(equipment.length) : '--', valueColor: 'var(--text)' },
+              { label: 'Next Service', value: maintenanceDue.length > 0 ? formatDate(maintenanceDue[0].nextDueDate) || '--' : '--', valueColor: 'var(--text)' },
             ].map(stat => (
               <div key={stat.label} className="rounded-lg p-3 text-center" style={{ backgroundColor: 'var(--bg-secondary)' }}>
                 <p className="text-lg font-bold" style={{ color: stat.valueColor }}>{stat.value}</p>
