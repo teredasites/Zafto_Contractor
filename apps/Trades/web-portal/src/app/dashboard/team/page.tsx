@@ -37,6 +37,7 @@ import { TeamMap } from '@/components/ui/team-map';
 import { CommandPalette } from '@/components/command-palette';
 import { formatRelativeTime, formatCurrency, formatDate, formatTime, cn } from '@/lib/utils';
 import { useJobs, useTeam } from '@/lib/hooks/use-jobs';
+import { getSupabase } from '@/lib/supabase';
 import type { TeamMember, UserRole, Job } from '@/types';
 
 const roleColors: Record<UserRole, { bg: string; text: string }> = {
@@ -110,8 +111,8 @@ export default function TeamPage() {
   };
 
   const handleMemberClick = (member: TeamMember) => {
-    // Could navigate to member detail or show assignment modal
-    console.log('Member clicked:', member.name);
+    setSelectedMemberForMessage(member);
+    setShowMessageModal(true);
   };
 
   const handleSendMessage = (member: TeamMember) => {
@@ -594,11 +595,20 @@ function MessageModal({ member, onClose }: { member: TeamMember; onClose: () => 
   const handleSend = async () => {
     if (!message.trim()) return;
     setSending(true);
-    // TODO: Integrate with SMS/push notification service
-    console.log('Sending message to:', member.name, 'Type:', messageType, 'Message:', message);
-    await new Promise((r) => setTimeout(r, 500));
-    setSending(false);
-    onClose();
+    try {
+      if (messageType === 'sms' && member.phone) {
+        const supabase = getSupabase();
+        await supabase.functions.invoke('signalwire-sms', {
+          body: { action: 'send', to: member.phone, message: message.trim() },
+        });
+      }
+      // Push notifications deferred to mobile app integration
+      onClose();
+    } catch {
+      alert('Failed to send message. Please try again.');
+    } finally {
+      setSending(false);
+    }
   };
 
   const quickMessages = [

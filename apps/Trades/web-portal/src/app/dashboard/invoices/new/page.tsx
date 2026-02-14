@@ -21,6 +21,7 @@ import { Avatar } from '@/components/ui/avatar';
 import { formatCurrency, cn } from '@/lib/utils';
 import { useCustomers } from '@/lib/hooks/use-customers';
 import { useJobs } from '@/lib/hooks/use-jobs';
+import { useInvoices } from '@/lib/hooks/use-invoices';
 
 type PaymentSource = 'standard' | 'carrier' | 'deductible' | 'upgrade';
 
@@ -54,6 +55,8 @@ export default function NewInvoicePage() {
   const [showCustomerSearch, setShowCustomerSearch] = useState(false);
   const { customers } = useCustomers();
   const { jobs } = useJobs();
+  const { createInvoice } = useInvoices();
+  const [saving, setSaving] = useState(false);
 
   const selectedCustomer = customers.find((c) => c.id === formData.customerId);
   const selectedJob = jobs.find((j) => j.id === formData.jobId);
@@ -103,11 +106,35 @@ export default function NewInvoicePage() {
   const tax = subtotal * (formData.taxRate / 100);
   const total = subtotal + tax;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Save to Supabase
-    console.log('Creating invoice:', { ...formData, lineItems, subtotal, tax, total });
-    router.push('/dashboard/invoices');
+    setSaving(true);
+    try {
+      const selectedCustomer = customers.find((c) => c.id === formData.customerId);
+      await createInvoice({
+        customerId: formData.customerId || undefined,
+        jobId: formData.jobId || undefined,
+        customer: selectedCustomer || undefined,
+        lineItems: lineItems.map((li) => ({
+          id: li.id,
+          description: li.description,
+          quantity: li.quantity,
+          unitPrice: li.unitPrice,
+          total: li.quantity * li.unitPrice,
+        })),
+        subtotal,
+        taxRate: formData.taxRate,
+        tax,
+        total,
+        dueDate: formData.dueDate ? new Date(formData.dueDate) : undefined,
+        notes: formData.notes || undefined,
+      });
+      router.push('/dashboard/invoices');
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to create invoice');
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (

@@ -26,8 +26,7 @@ import type {
   BranchPerformance,
   BranchComparison,
 } from '@/lib/hooks/use-branch-financials';
-
-// TODO: TierGate -- enterprise subscription only
+import { TierGate } from '@/components/permission-gate';
 
 // Ledger Navigation
 const zbooksNav = [
@@ -164,6 +163,24 @@ export default function BranchFinancialsPage() {
   const selectedBranch = branches.find(b => b.id === selectedBranchId);
 
   return (
+    <TierGate minimumTier="enterprise" fallback={
+      <div className="space-y-8 animate-fade-in">
+        <div>
+          <h1 className="text-2xl font-semibold text-main">Branch Financials</h1>
+          <p className="text-[13px] text-muted mt-1">Multi-branch P&L and performance comparison</p>
+        </div>
+        <Card>
+          <CardContent className="text-center py-12">
+            <Building2 size={40} className="mx-auto mb-3 text-muted opacity-40" />
+            <h3 className="text-lg font-semibold text-main">Enterprise Feature</h3>
+            <p className="text-sm text-muted mt-2 max-w-md mx-auto">
+              Multi-branch financial reporting with consolidated P&L, performance comparison, and branch benchmarking is available on the Enterprise plan.
+            </p>
+            <Button variant="secondary" className="mt-6">Upgrade Plan</Button>
+          </CardContent>
+        </Card>
+      </div>
+    }>
     <div className="space-y-6 animate-fade-in">
       <CommandPalette />
 
@@ -722,5 +739,6 @@ export default function BranchFinancialsPage() {
         </Card>
       )}
     </div>
+    </TierGate>
   );
 }

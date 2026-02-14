@@ -513,12 +513,46 @@ function PermissionRow({ role, permissions, roleColors }: { role: string; permis
 function InviteModal({ onClose, roleLabels }: { onClose: () => void; roleLabels: Record<string, string> }) {
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('field_tech');
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Send invite
-    console.log('Inviting:', { email, role });
-    onClose();
+    if (!email.trim()) return;
+
+    setSending(true);
+    setError(null);
+    try {
+      const supabase = getSupabase();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+
+      const companyId = user.app_metadata?.company_id;
+      if (!companyId) throw new Error('No company associated');
+
+      // Invite user via Edge Function (handles Supabase Auth invite + user record creation)
+      const { error: fnErr } = await supabase.functions.invoke('invite-team-member', {
+        body: { email: email.trim(), role, companyId },
+      });
+
+      if (fnErr) {
+        // Fallback: create user record directly if EF doesn't exist
+        const { error: insertErr } = await supabase.from('users').insert({
+          email: email.trim(),
+          role,
+          company_id: companyId,
+          is_active: false,
+          invited_by: user.id,
+          invited_at: new Date().toISOString(),
+        });
+        if (insertErr) throw insertErr;
+      }
+      onClose();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to send invite');
+    } finally {
+      setSending(false);
+    }
   };
 
   return (

@@ -18,8 +18,15 @@ serve(async (req) => {
     return new Response('Method not allowed', { status: 405 })
   }
 
-  // TODO: Verify RevenueCat webhook signature when shared secret is configured
-  // const signature = req.headers.get('x-revenuecat-signature')
+  // Verify RevenueCat webhook auth token
+  const webhookSecret = Deno.env.get('REVENUECAT_WEBHOOK_SECRET')
+  if (webhookSecret) {
+    const authToken = req.headers.get('x-revenuecat-webhook-auth-token')
+    if (authToken !== webhookSecret) {
+      console.error('Invalid RevenueCat webhook auth token')
+      return new Response('Unauthorized', { status: 401 })
+    }
+  }
 
   const supabase = createClient(
     Deno.env.get('SUPABASE_URL') ?? '',

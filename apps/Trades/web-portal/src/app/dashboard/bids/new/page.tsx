@@ -41,6 +41,7 @@ import { Input, Select } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { formatCurrency, cn } from '@/lib/utils';
 import { useCustomers } from '@/lib/hooks/use-customers';
+import { useBids } from '@/lib/hooks/use-bids';
 import type { BidOption, BidLineItem, BidAddOn, LineItemCategory, Customer } from '@/types';
 
 // Generate unique IDs
@@ -256,6 +257,7 @@ export default function NewBidPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { company } = useCompany();
   const { customers } = useCustomers();
+  const { createBid } = useBids();
 
   // Customer selection
   const [customerSearch, setCustomerSearch] = useState('');
@@ -628,34 +630,9 @@ export default function NewBidPage() {
     });
   };
 
-  // AI generate line items
+  // AI generate line items — deferred to Phase E (AI goes last)
   const aiGenerateLineItems = async () => {
-    if (!scopeOfWork.trim()) {
-      alert('Please enter a scope of work first');
-      return;
-    }
-
-    setAiGenerating(true);
-    // TODO: Integrate with AI API
-    // For now, simulate with a delay
-    await new Promise((r) => setTimeout(r, 1500));
-
-    // Mock AI-generated items based on scope
-    const mockItems: BidLineItem[] = [
-      { ...createLineItem(0), description: 'Labor - Project Completion', quantity: 8, unit: 'hour', unitPrice: 95, total: 760, category: 'labor' },
-      { ...createLineItem(1), description: 'Materials (as specified)', quantity: 1, unit: 'job', unitPrice: 500, total: 500, category: 'materials' },
-      { ...createLineItem(2), description: 'Cleanup & Disposal', quantity: 1, unit: 'job', unitPrice: 150, total: 150, category: 'labor' },
-    ];
-
-    setOptions((prev) => {
-      const updated = [...prev];
-      const option = { ...updated[activeOptionIndex] };
-      option.lineItems = [...option.lineItems, ...mockItems];
-      updated[activeOptionIndex] = calculateOptionTotals(option);
-      return updated;
-    });
-
-    setAiGenerating(false);
+    alert('AI-powered line item generation is coming soon. Add line items manually for now.');
   };
 
   // Calculate grand total
@@ -674,24 +651,37 @@ export default function NewBidPage() {
   // Save as draft
   const saveDraft = async () => {
     setSaving(true);
-    // TODO: Save to Firestore
-    console.log('Saving bid...', {
-      customer: selectedCustomer || { name: customerName, email: customerEmail, phone: customerPhone },
-      title,
-      scopeOfWork,
-      trade,
-      validUntil,
-      options,
-      addOns,
-      photos,
-      taxRate,
-      depositPercent,
-      termsAndConditions,
-      internalNotes,
-    });
-    await new Promise((r) => setTimeout(r, 500));
-    setSaving(false);
-    router.push('/dashboard/bids');
+    try {
+      await createBid({
+        customerId: selectedCustomer?.id || undefined,
+        customerName: selectedCustomer
+          ? `${selectedCustomer.firstName} ${selectedCustomer.lastName}`.trim()
+          : customerName,
+        customerEmail: selectedCustomer?.email || customerEmail || undefined,
+        customerAddress: selectedCustomer?.address || undefined,
+        title,
+        scopeOfWork,
+        options: options.map((opt) => ({
+          ...opt,
+          lineItems: opt.lineItems.map((li) => ({
+            ...li,
+            total: li.quantity * li.unitPrice,
+          })),
+        })),
+        addOns,
+        taxRate,
+        tax: activeOption.subtotal * (taxRate / 100),
+        subtotal: activeOption.subtotal,
+        total: grandTotal,
+        validUntil: validUntil ? new Date(validUntil) : undefined,
+        termsAndConditions,
+      });
+      router.push('/dashboard/bids');
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to save bid');
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
