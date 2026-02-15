@@ -1,6 +1,6 @@
 # ZAFTO SESSION HANDOFF
 ## THE ONLY DOC YOU READ FIRST — EVERY SESSION
-### Last Updated: February 14, 2026 (Session 115 — CRITICAL FIX: 10 migration bugs, RLS fix, Sketch Engine rename, UI overhaul, all pushed to Supabase + Vercel)
+### Last Updated: February 15, 2026 (Session 120 — S118-S120: Tech App complete buildout — real job list, contact+directions, timesheet, schedule day/week view, walkthrough wired to real providers, role override system, rent payment fix. Crash recovery from S119.)
 
 ---
 
@@ -19,12 +19,12 @@
 
 | Field | Value |
 |-------|-------|
-| **Sprint** | **D5-PV COMPLETE (S117). PHASE U COMPLETE (S114). PHASE G IN PROGRESS (S113-S115).** G1-G5 automated sprints DONE. G10 DONE (S114-S115). G6-G9 manual QA PENDING. |
+| **Sprint** | **D5-PV COMPLETE (S117). Tech App COMPLETE (S118-S120). PHASE U COMPLETE (S114). PHASE G IN PROGRESS (S113-S115).** G1-G5 automated sprints DONE. G10 DONE (S114-S115). G6-G9 manual QA PENDING. |
 | **Sub-step** | G6-G9 manual QA pending. Phase E remains PAUSED (AI goes last). |
 | **Sprint Specs Location** | `07_SPRINT_SPECS.md` → Phase G (G1-G5 DONE, G10 DONE, G6-G9 manual). D5-PV (Payment Verification) DONE. Phase E: E-review + BA1-BA8 (~128 hrs) + E1-E4. |
-| **Status** | Phases A-D + F + T + P + SK + GC + U + W + J + L ALL DONE. D5-PV DONE. Phase G: G1-G5 automated DONE, G10 DONE. R1 DONE. FM code done. Phase E PAUSED. ~201 tables. 52 migration files. 70 Edge Functions. **125 CRM pages. 36 team pages. 39 client pages. 28 ops pages.** |
-| **Last Completed** | S117: **Payment Verification & Government Programs (D5-PV).** New migration: ALTER rent_payments (14 payment methods + verification workflow columns), 2 new tables (government_payment_programs for Section 8/VASH/HCV, payment_verification_log immutable audit trail), ALTER invoices (offline payment tracking). Client portal: tenant self-report form + proof upload. Web CRM: owner verify/dispute/reject + government program CRUD. Flutter: models + repository methods. Notification types added to both portals. |
-| **Session Count** | 117 |
+| **Status** | Phases A-D + F + T + P + SK + GC + U + W + J + L ALL DONE. D5-PV DONE. Tech App DONE. Phase G: G1-G5 automated DONE, G10 DONE. R1 DONE. FM code done. Phase E PAUSED. ~201 tables. 52 migration files. 70 Edge Functions. **125 CRM pages. 36 team pages. 39 client pages. 28 ops pages.** |
+| **Last Completed** | S120: **Tech App Complete Buildout (S118-S120).** S117-S118: Payment verification + tech app redesign + UI alignment. S119: Real job list (jobsProvider), job detail contact+directions, timesheet screen with weekly hours/overtime. S120 (crash recovery): Schedule screen (day/week view, date filtering, status-colored job cards, tap-to-detail), walkthrough screen (walkthroughsProvider, start CTA, recent list with status badges), role override system (roleOverrideProvider), rent payment companyId/tenantId fix. All tech screens handle 4 states. |
+| **Session Count** | 120 |
 | **Tables** | ~201 (+2 from S117: government_payment_programs, payment_verification_log). Also ALTER rent_payments + invoices. |
 | **Migration Files** | 52 total (added: 20260215000102_payment_verification.sql — payment verification + government programs) |
 

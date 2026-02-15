@@ -1,7 +1,7 @@
 # ZAFTO LIVE STATUS
 ## UPDATE THIS EVERY SESSION
 
-**Last Updated:** February 15, 2026 (Session 117 — **Payment Verification & Government Programs (D5-PV).** New migration: ALTER rent_payments (14 payment methods, verification workflow), 2 new tables (government_payment_programs, payment_verification_log). Client portal: tenant offline payment reporting + proof upload. Web CRM: owner verify/dispute/reject + government program CRUD. Flutter: models + repo methods. 6 new notification types across both portals. ~201 tables.)
+**Last Updated:** February 15, 2026 (Session 120 — **S118-S120: Tech App Complete Buildout.** S117-S118: Payment verification + Tech app redesign + UI alignment. S119: Real job list (jobsProvider), contact+directions on job detail, timesheet screen with weekly hours. S120: Schedule screen (day/week view, real data, date filtering, status-colored job cards), walkthrough screen (walkthroughsProvider wired, start CTA, recent list with status badges), role override system for testing, rent payment companyId/tenantId fix. All tech screens handle loading/error/empty/data states. ~201 tables.)
 **Current Phase:** BUILD — **Phases A-D + F + T + P + SK + GC + U + W + J + L ALL COMPLETE. D5-PV DONE (S117). Phase G IN PROGRESS (G1-G5 automated DONE, G6-G10 manual QA PENDING).** R1 DONE. FM code done. Phase E PAUSED. ~201 tables. 68 migrations. 70 Edge Functions. 125 CRM routes. 36 team routes. 39 client routes. 28 ops routes.
 **Next Action:** Phase G manual QA (G6-G10, requires running app) → Phase E (AI: E-review → BA1-BA8 Plan Review → E1-E4) → LAUNCH.
 
@@ -12,7 +12,7 @@
 | Field | Value |
 |-------|-------|
 | **Phase** | BUILD — **Phases A-D + F + T + P + SK + GC + U + W + J + L ALL COMPLETE. Phase G IN PROGRESS (G1-G5 automated DONE).** R1 DONE. FM code done. Phase E PAUSED. ~201 tables. 68 migrations. 70 Edge Functions. 125 CRM routes. 36 team routes. 39 client routes. 28 ops routes. **D5-PV COMPLETE (S117): Payment verification + government programs. Phase U COMPLETE (S114): U1-U23 all done. Phase G automated (S113): G1-G5. G6-G10 manual QA PENDING.** Next: G6-G10 manual QA → E → LAUNCH. |
-| **Mobile App (Flutter)** | **R1 App Remake (S78):** 33 role-based screens, design system (8 widgets), AppShell with role switching. **E3c (S80):** ai_service.dart + z_chat_sheet.dart + ai_photo_analyzer.dart, Z FAB in AppShell. **E5f (S79):** Estimate entry screens. **E6b (S79):** 12 walkthrough screens + 4 annotation files + 4 sketch editor files. ALL core business wired. ALL 18 field tools wired. D2 Insurance: 3 screens. D5f Properties: 10 screens. `dart analyze` passes 0 errors. |
+| **Mobile App (Flutter)** | **R1 App Remake (S78):** 33 role-based screens, design system (8 widgets), AppShell with role switching. **E3c (S80):** ai_service.dart + z_chat_sheet.dart + ai_photo_analyzer.dart, Z FAB in AppShell. **E5f (S79):** Estimate entry screens. **E6b (S79):** 12 walkthrough screens + 4 annotation files + 4 sketch editor files. ALL core business wired. ALL 18 field tools wired. D2 Insurance: 3 screens. D5f Properties: 10 screens. **Tech App (S119-S120):** Real job list from jobsProvider, job detail with contact+directions, timesheet with weekly hours, schedule screen (day/week view + date filtering + status-colored cards), walkthrough screen (real walkthroughsProvider + start CTA + recent list), role override system. `dart analyze` passes 0 errors. |
 | **Web CRM (Next.js)** | **125 routes built.** 78 hook files + 27 Dashboard files. Auth+middleware DONE. UI Polish DONE. **F-phase (S90):** 30+ hooks + pages for phone, fax, meetings, team-chat, inspection-engine, osha-standards, fleet, payroll, hr, email, marketplace, hiring, zdocs. **T-phase (S104):** TPA hooks + pages. **P-phase (S105):** use-property-scan + use-area-scan + use-storm-assess hooks. Recon pages: /dashboard/recon (list + detail with 5 tabs), /dashboard/recon/area-scans (list + new + detail). All wired to Supabase via real-time hooks. `npm run build` passes (121 routes, 0 errors). |
 | **Client Portal (Next.js)** | **38 routes. 18+ hooks.** Magic link auth. **F7 (S90):** Home Portal — use-home hook + my-home/equipment/service-history/maintenance pages. **F1 (S90):** SMS messaging page. **F3 (S90):** Meetings + booking pages. **F-expansion (S90):** Documents, Get Quotes, Find a Pro pages. `npm run build` passes (38 routes, 0 errors). `client.zafto.cloud`. |
 | **Employee Field Portal (Next.js)** | **36 routes. 21+ hooks. PWA-ready.** `team.zafto.cloud`. **F1 (S90):** Phone page. **F3 (S90):** Meetings page. **F5 (S90):** Pay stubs, my vehicle, training, my documents pages + MY STUFF sidebar section. `npm run build` passes (36 routes, 0 errors). |
@@ -139,7 +139,7 @@
 | `00_HANDOFF.md` | COMPLETE — updated every session |
 | `01_MASTER_BUILD_PLAN.md` | COMPLETE (updated S97) |
 | `02_CIRCUIT_BLUEPRINT.md` | COMPLETE — updated S91 (Codemagic CI/CD, Dependabot) |
-| `03_LIVE_STATUS.md` | COMPLETE (this file — updated S115) |
+| `03_LIVE_STATUS.md` | COMPLETE (this file — updated S120) |
 | `04_EXPANSION_SPECS.md` | COMPLETE (Session 36 — all 14 specs consolidated) |
 | `05_EXECUTION_PLAYBOOK.md` | COMPLETE (Session 37 — session protocol, methodology, quality gates) |
 | `06_ARCHITECTURE_PATTERNS.md` | COMPLETE (Session 37 — 14 code patterns with full examples) |
