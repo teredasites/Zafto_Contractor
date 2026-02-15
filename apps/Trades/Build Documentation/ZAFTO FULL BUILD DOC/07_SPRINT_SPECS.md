@@ -12413,6 +12413,130 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - [ ] All builds pass
 - [ ] Commit: `[DEPTH26] Property blueprint lookup — address-to-sketch, building footprints, satellite import, property data enrichment`
 
+### DEPTH27 — Bulletproof Crash Recovery & Zero-Loss Auto-Save System (~32h)
+**Goal:** No user ever loses a single keystroke, brush stroke, line item, or setting change — regardless of crash, power loss, phone death, browser kill, OS force-close, network loss, or device switch. The most resilient state persistence system in any trades app. Period.
+
+**Architecture — 4-Layer Persistence Stack (redundant, any single layer recovers 100%):**
+
+**Layer 1: Real-Time Memory Buffer (instant)**
+- [ ] In-memory state diff tracking — every change creates a delta object (what changed, when, where)
+- [ ] Debounced flush to Layer 2 every 3 seconds during active editing (configurable per feature)
+- [ ] Immediate flush on any "significant action" (add line item, place wall, save button, toggle setting)
+- [ ] Web: React context + useRef for zero-render-cost tracking
+- [ ] Flutter: Riverpod StateNotifier with `didUpdateState` hook for auto-capture
+
+**Layer 2: Local Persistent Storage (survives crashes, restarts, power loss)**
+- [ ] **Web portals**: IndexedDB via `idb-keyval` (lightweight, async, crash-safe) — NOT localStorage (5MB limit, sync, blocks UI)
+- [ ] **Flutter mobile**: Hive boxes (already in stack) — one box per feature domain (`sketch_drafts`, `bid_drafts`, `invoice_drafts`, `form_drafts`, `settings_drafts`)
+- [ ] Each draft record stores: `{ id, feature, screen_route, company_id, user_id, state_json, created_at, updated_at, version, checksum }`
+- [ ] **Write-ahead log (WAL) pattern**: write change intent BEFORE applying to UI state — if crash happens mid-operation, WAL replays on restart
+- [ ] **Checksum validation (SHA-256)**: every saved draft includes checksum of state_json. On restore, verify checksum matches. If corrupted, fall back to previous version (Layer 2 keeps last 5 versions per draft)
+- [ ] **Atomic writes**: use IndexedDB transactions (web) / Hive transactions (Flutter) — no partial writes that corrupt state
+- [ ] **Storage quota management**: max 50MB per user across all drafts. LRU eviction of drafts older than 30 days. Show warning at 80% capacity
+
+**Layer 3: Supabase Cloud Sync (survives device loss, enables cross-device recovery)**
+- [ ] New table: `draft_recovery` — `id, company_id, user_id, feature (sketch|bid|invoice|estimate|walkthrough|inspection|form|settings), screen_route, state_json (JSONB), state_size_bytes, device_id, device_type (web|ios|android), app_version, created_at, updated_at, version (integer, auto-increment), is_active (boolean), recovered_at, expired_at`
+- [ ] RLS: users can only access their own company's drafts. Owners/admins can see all company drafts (for support/recovery)
+- [ ] Cloud sync every 60 seconds during active editing (configurable) — batched, compressed, delta-only (not full state)
+- [ ] Sync on `beforeunload` (web), `AppLifecycleState.paused` (Flutter), `visibilitychange` (web)
+- [ ] **Conflict resolution**: if draft exists on server AND locally with different `updated_at`, keep the NEWER one. If same timestamp, keep the one with higher `version` number. If ambiguous, keep BOTH and let user choose ("You have unsaved work from 2 devices — which one?")
+- [ ] Auto-expire cloud drafts after 7 days of inactivity (soft delete → `expired_at` set, recoverable for 30 more days, then hard delete)
+- [ ] **Bandwidth-conscious**: compress state_json with LZ-string before upload. Only sync if state actually changed (compare checksums). Skip sync on metered/slow connections unless user forces it
+- [ ] Edge Function: `draft-recovery-sync` — handles upsert, conflict detection, expiry cleanup (CRON: daily)
+- [ ] Edge Function: `draft-recovery-list` — returns active drafts for user across all devices (for cross-device recovery UI)
+
+**Layer 4: Periodic Snapshot Archive (disaster recovery, legal compliance)**
+- [ ] For high-value documents (estimates > $1,000, signed invoices, completed inspections), auto-snapshot to Supabase Storage as JSON file
+- [ ] Naming: `drafts/{company_id}/{user_id}/{feature}/{date}/{id}.json`
+- [ ] Retained for 90 days minimum (configurable per company in settings)
+- [ ] Not real-time — triggered on "meaningful milestones" (estimate total changes, inspection section completed, invoice line items added)
+
+**Feature-Specific State Serialization:**
+
+- [ ] **Sketch Engine**: Serialize entire Konva stage to JSON (`stage.toJSON()`). Includes all layers, shapes, groups, transforms, custom attributes (measurements, labels, material types). Also save: current tool, zoom level, pan position, active layer, ruler visibility, grid snap settings. Estimated state size: 50KB-2MB per sketch depending on complexity
+- [ ] **Bids/Estimates**: Serialize all line items (description, qty, unit, rate, markup, tax, total), notes, scope of work text, terms, selected template, customer info, property info, photos attached (as references, not binary), section ordering, custom columns, trade-specific fields. Include cursor position / active field for seamless resume
+- [ ] **Invoices**: All line items, payment terms, due date, notes, deposit amounts, discount, tax config, linked job/estimate, selected template, payment schedule entries
+- [ ] **Walkthrough/Inspection**: Current step index, all completed steps with data, photos (as storage refs), notes per step, deficiency entries, GPS coordinates captured, timer state (elapsed time), checklist progress (which items checked)
+- [ ] **Settings/Permissions**: Diff-based — only store changed settings vs. server state. On restore, replay changes. Show user: "You had unsaved settings changes — apply them?"
+- [ ] **Forms (any screen)**: Generic form state capture — iterate all controlled inputs, serialize name:value pairs. Works on customer creation, job creation, team member forms, any screen with `<form>` (web) or form fields (Flutter)
+- [ ] **Calendar/Scheduler**: Unsaved event edits, drag-in-progress positions, resource assignments not yet saved
+- [ ] **Ledger/Accounting**: Journal entry drafts, reconciliation progress, chart of accounts edits
+- [ ] **Customer/Job records**: Any unsaved edits to existing records (inline edits, modal edits, detail page edits)
+
+**Recovery UX — Zero-Friction Restoration:**
+
+- [ ] **Auto-detect on app launch**: Check IndexedDB/Hive for any active drafts. Check Supabase for any cloud drafts newer than local (cross-device scenario)
+- [ ] **Smart toast notification** (not modal — non-blocking): "Recovered unsaved [sketch/bid/invoice] from [2 hours ago / yesterday / Monday]. Tap to resume." Toast persists for 30 seconds, then minimizes to a floating recovery pill at bottom of screen
+- [ ] **Recovery pill**: Small persistent indicator showing "1 unsaved draft" / "3 unsaved drafts" — tappable, expands to list all recoverable items with preview (sketch thumbnail, bid total + customer name, invoice #, etc.)
+- [ ] **One-tap resume**: Tap draft → navigate to exact screen → restore exact state → cursor/tool in exact position. User picks up precisely where they left off
+- [ ] **Multi-draft management**: If user has multiple unsaved drafts, show list sorted by recency. Each shows: feature icon, title/identifier, last edited time, device it was on, size. Swipe to discard
+- [ ] **"Never lose this" pin**: User can pin critical drafts — pinned drafts never auto-expire, always show in recovery pill, sync to cloud immediately on every change (not debounced)
+- [ ] **Discard confirmation**: Discarding a recovered draft requires confirmation ("This sketch has 47 unsaved changes from 3 hours ago. Discard permanently?")
+- [ ] **Recovery from different device**: User logs in on new device/browser → cloud drafts detected → same recovery pill UX. "You have an unsaved sketch from your iPhone — open it here?"
+
+**Crash Detection & Lifecycle Hooks:**
+
+- [ ] **Web — `beforeunload`**: Save all dirty state to IndexedDB + trigger cloud sync. Set `session_active = false` flag
+- [ ] **Web — `visibilitychange` (hidden)**: Save to IndexedDB immediately (user switched tab, phone locked screen with browser open). Pause cloud sync timer
+- [ ] **Web — `visibilitychange` (visible)**: Resume cloud sync timer. Check for newer cloud drafts (another device may have edited)
+- [ ] **Web — Service Worker `sync` event**: If `beforeunload` cloud sync failed (offline), Service Worker retries when connection restored (Background Sync API)
+- [ ] **Web — `navigator.sendBeacon`**: Last-resort sync on page unload — sends compressed draft to cloud endpoint even if page is being destroyed. Fire-and-forget, no response needed
+- [ ] **Flutter — `AppLifecycleState.paused`**: Save all dirty state to Hive + trigger cloud sync
+- [ ] **Flutter — `AppLifecycleState.detached`**: Emergency save to Hive (app being killed by OS). No cloud sync (no time)
+- [ ] **Flutter — `AppLifecycleState.resumed`**: Check for newer cloud drafts. Resume sync timer. Verify local state integrity (checksum)
+- [ ] **Flutter — `WidgetsBindingObserver.didChangeAppLifecycleState`**: Wire into AppShell (already exists) as global lifecycle handler
+- [ ] **Crash detection (unclean shutdown)**: On launch, check for `session_active = true` flag without corresponding `session_active = false`. If found → previous session crashed → trigger recovery flow
+- [ ] **Network loss detection**: `navigator.onLine` (web) / `connectivity_plus` (Flutter). When offline: increase local save frequency to every 1 second, queue cloud syncs for when connection returns, show subtle offline indicator
+
+**Performance & Battery Optimization:**
+
+- [ ] **Debounced saves**: Never save more frequently than every 3 seconds locally, 60 seconds to cloud. Resets on each change (trailing debounce)
+- [ ] **Delta compression**: Cloud sync sends only changes since last sync, not full state. Reduces bandwidth 80-95%
+- [ ] **Lazy serialization**: Don't serialize full state on every keystroke. Serialize only the changed field/component. Merge into full state on save
+- [ ] **Background thread (Flutter)**: Hive writes and JSON serialization run in isolate — zero UI jank
+- [ ] **Web Worker (web)**: IndexedDB writes and checksum computation run in Web Worker — zero main thread blocking
+- [ ] **Battery awareness (mobile)**: If battery < 10%, increase save frequency (device may die soon). If battery < 5%, force immediate cloud sync of all dirty state
+- [ ] **Idle detection**: If no user input for 5 minutes, do one final save and pause all timers. Resume on next interaction
+
+**Edge Cases & Bulletproofing:**
+
+- [ ] **IndexedDB full**: Graceful fallback to localStorage (web). Show warning. Evict oldest non-pinned drafts
+- [ ] **Hive corruption**: If Hive box fails to open, delete and recreate. Log to Sentry. Cloud drafts still available as backup
+- [ ] **Supabase down**: All local persistence still works. Cloud sync retries with exponential backoff (5s, 10s, 30s, 60s, 5min cap)
+- [ ] **Very large state (>5MB sketch)**: Chunk into multiple IndexedDB/Hive records. Reassemble on restore. Compress with LZ-string
+- [ ] **Concurrent edits (same draft, 2 tabs/devices)**: Detect via `version` field mismatch on cloud sync. Show merge dialog: "This [bid] was edited on another device. Keep this version, keep other version, or keep both as separate drafts?"
+- [ ] **Migration between app versions**: state_json includes `schema_version` field. If restored draft has older schema, run migration transform before applying (e.g., new field added to bid → set default value)
+- [ ] **User logs out**: Prompt "You have X unsaved drafts. Save to cloud before logging out?" If yes → force sync. If no → keep in cloud from last sync. Local drafts cleared on logout (security)
+- [ ] **Company data wipe (admin action)**: Admin can clear all company drafts from cloud. Local drafts on individual devices persist until next login (then cleared)
+- [ ] **Incognito/private browsing (web)**: IndexedDB may be cleared on tab close in some browsers. Detect private mode → increase cloud sync frequency to every 10 seconds → warn user "Private browsing mode — drafts sync to cloud more frequently for protection"
+- [ ] **Multiple browser tabs (same user)**: Use BroadcastChannel API to coordinate — only one tab owns the cloud sync timer. All tabs save locally independently. Tab claiming ownership notifies others via broadcast
+
+**Shared Infrastructure (reusable across all features):**
+
+- [ ] `DraftManager` class/service — singleton, initialized at app startup. Provides: `saveDraft(feature, key, state)`, `loadDraft(feature, key)`, `listDrafts(feature?)`, `deleteDraft(feature, key)`, `pinDraft(feature, key)`, `onDraftRecovered(callback)`
+- [ ] `useDraftRecovery(feature, key)` hook (web) — drop-in hook for any page. Returns `{ draft, hasDraft, restoreDraft, discardDraft, saveDraft, isPinned, togglePin }`
+- [ ] `DraftRecoveryMixin` (Flutter) — mixin for any screen's State class. Provides same API. Override `serializeState()` and `deserializeState(json)` per screen
+- [ ] `<DraftRecoveryBanner>` component (web) / `DraftRecoveryBanner` widget (Flutter) — drop-in UI element that shows recovery toast/pill. Place once in app shell, works globally
+- [ ] `DraftRecoveryProvider` (Riverpod) — exposes all active drafts, recovery state, sync status to any widget
+- [ ] Unit tests: save/restore round-trip for every feature type, corruption recovery, checksum validation, conflict resolution, version migration, concurrent edit detection, storage quota enforcement, WAL replay
+- [ ] Integration tests: kill app mid-edit → relaunch → verify recovery. Simulate offline → edit → come online → verify sync. Multi-device conflict scenario
+
+**Wiring into existing features:**
+
+- [ ] **Sketch Engine** (`sketch-engine/page.tsx` + `SketchCanvas.tsx`): Wire `useDraftRecovery('sketch', sketchId)`. Serialize via `stageRef.current.toJSON()`. Restore via `Konva.Node.create(json)`. Auto-save on every shape add/move/delete/resize, tool change, layer change
+- [ ] **Bid/Estimate screens** (web + Flutter): Wire into estimate creation/edit forms. Serialize all line items + metadata. Restore exact form state including active tab, scroll position
+- [ ] **Invoice screens** (web + Flutter): Same pattern as bids. Include payment schedule, deposit config, linked job
+- [ ] **Walkthrough** (Flutter): Serialize step progress, photos (as storage refs), notes, GPS, timer elapsed. Critical — walkthroughs happen in the field where phones die
+- [ ] **Inspection checklists** (Flutter): Serialize every checked item, score, deficiency entry, photo ref. Inspector may spend hours on a single inspection
+- [ ] **Settings pages** (all portals): Diff-based — capture changed settings only. Restore shows "You have unsaved settings changes" banner with apply/discard
+- [ ] **Customer/Job/Property creation forms** (all portals): Generic form serialization. Any form with >2 fields gets auto-draft protection
+- [ ] **Ledger journal entries** (web): Serialize debit/credit lines, memo, date, accounts. Accountants do NOT want to re-enter journal entries
+- [ ] **Scheduler** (web): Serialize task edits, resource assignments, date changes not yet saved
+- [ ] **Any modal/dialog with form inputs**: Wire globally — if a modal has inputs and user dismisses accidentally, draft is preserved. Next time they open same modal, offer restore
+- [ ] All 4 web portals wired (CRM, team, client, ops) + Flutter mobile
+- [ ] All builds pass (`npm run build` x4, `dart analyze`)
+- [ ] Commit: `[DEPTH27] Bulletproof crash recovery — 4-layer persistence stack, zero-loss auto-save, cross-device recovery, WAL, conflict resolution`
+
 ---
 
 ## PHASE SEC: SECURITY HARDENING & OPTIONAL SECURITY FEATURES (S125 audit findings)
@@ -12923,11 +13047,11 @@ When inspector takes a photo during inspection execution, add search bar to atta
 | **FIELD** | FIELD1-FIELD4 | ~56h | Missing field features: messaging, equipment checkout, team portal stubs, BLE laser meter integration |
 | **REST** | REST1-REST2 | ~20h | Restoration gaps: fire tools, mold remediation (IICRC S520) |
 | **NICHE** | NICHE1-NICHE2 | ~16h | Missing trade modules: pest control, service trades |
-| **DEPTH** | DEPTH1-DEPTH26 | ~346h | Full depth audit + corrections + contractor needs validation + commercial building support + property blueprint lookup across every feature area |
+| **DEPTH** | DEPTH1-DEPTH27 | ~378h | Full depth audit + corrections + contractor needs validation + commercial building support + property blueprint lookup + bulletproof crash recovery across every feature area |
 | **SEC** | SEC1-SEC10 | ~92h | Security fortress: critical fixes, 2FA, biometrics, enterprise options, Hellhound, headers, WAF, dependency scanning, security pentest, legal pentest |
 | **ZERO** | ZERO1-ZERO9 | ~86h | Zero-defect validation: property testing, state machines, chaos engineering, 50K load test, fuzz testing, mutation testing, edge case gauntlet, triple-scan |
 | **LAUNCH** | LAUNCH1-LAUNCH7 | ~72h | Monitoring, legal, payments, i18n, accessibility, testing, App Store + onboarding wizard |
-| **Total** | **60 sprints** | **~688h** | — |
+| **Total** | **61 sprints** | **~720h** | — |
 
 **Execution order:** SEC1 + SEC6 + SEC7 + SEC8 (critical security — site is live) → LAUNCH1 (monitoring — need Sentry before building more) → FIELD → REST → NICHE → DEPTH1 through DEPTH23 → SEC2-SEC5 (2FA, biometrics, enterprise security, Hellhound) → LAUNCH2-LAUNCH6 (legal, payments, i18n, accessibility, testing) → Phase G (QA) → Phase JUR → Phase E (AI) → **SEC9 (security pentest)** → **SEC10 (legal pentest)** → **ZERO1-ZERO9 (zero-defect validation — break everything, fix everything, prove it's flawless)** → LAUNCH7 (App Store + onboarding wizard — DEAD LAST) → SHIP
 
@@ -12940,6 +13064,7 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - DEPTH24: Contractor needs validation — competitor matrix, review mining, workflow validation
 - DEPTH25: Commercial building support — 120+ commercial symbols, 16 building templates, flat roof, fire protection, ADA compliance (~24h)
 - DEPTH26: Property blueprint lookup — address-to-sketch auto-generation, building footprints, satellite import, property data enrichment (~16h)
+- DEPTH27: Bulletproof crash recovery — 4-layer persistence stack (memory buffer → IndexedDB/Hive → Supabase cloud → snapshot archive), zero-loss auto-save, cross-device recovery, WAL pattern, conflict resolution, all features wired (~32h)
 - SEC1: Critical security fixes (storage RLS, rate limiting, marketplace policy) — runs FIRST
 - SEC2-SEC4: Optional security features (2FA, biometrics, enterprise security) — runs after DEPTH audits
 - SEC5: Hellhound deception system (canary endpoints, honeytokens, bot traps, auto-block, tarpit)
