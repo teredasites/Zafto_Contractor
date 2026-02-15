@@ -1,6 +1,6 @@
 # ZAFTO SESSION HANDOFF
 ## THE ONLY DOC YOU READ FIRST — EVERY SESSION
-### Last Updated: February 15, 2026 (Session 125 — S125: FULL DEPTH AUDIT + SECURITY + ZERO-DEFECT SPRINT SPECS. Recovered crashed session work. Wrote 56 new sprints (~612h): FIELD1-3 (field gaps), REST1-2 (restoration), NICHE1-2 (trade modules), DEPTH1-24 (full depth audit + contractor needs validation), SEC1-9 (security fortress: critical fixes, 2FA, biometrics, Hellhound deception, headers, WAF, dependency scanning, full pentest), ZERO1-9 (zero-defect validation: property testing, state machines, chaos engineering, 50K load test, fuzzing, mutation testing, triple-scan), LAUNCH1-7 (monitoring, legal, payments, i18n, accessibility, testing, App Store + onboarding wizard). Docs-only session — no code changes.)
+### Last Updated: February 15, 2026 (Session 126 — S126: SKETCH ENGINE FIXES + COMMERCIAL EXPANSION. Fixed sketch engine full-screen (React portal + ResizeObserver), eraser/select on doors/windows (Konva node traversal). Deployed to zafto.cloud. Expanded SK12 (90+ residential symbols), SK13 (material type picker, 20 templates). Created DEPTH25 commercial (~24h, 120+ symbols, 16 building types) and DEPTH26 blueprint lookup (~16h, free APIs). 60 sprints, ~688h.)
 
 ---
 
@@ -19,12 +19,12 @@
 
 | Field | Value |
 |-------|-------|
-| **Sprint** | **S125: DOCS-ONLY SESSION.** Full depth audit + security + zero-defect sprint specs written. 56 new sprints (~612h) added to 07_SPRINT_SPECS.md. No code changes. Phase G still IN PROGRESS (G6-G9 manual QA PENDING). |
+| **Sprint** | **S126: SKETCH ENGINE FIXES + COMMERCIAL EXPANSION.** Fixed sketch engine full-screen + eraser bugs. Expanded SK12/SK13 specs. Created DEPTH25 (commercial) + DEPTH26 (blueprint lookup). 60 sprints (~688h) total. Phase G still IN PROGRESS (G6-G9 manual QA PENDING). |
 | **Sub-step** | **SEC1 next (critical security fixes — site is live), then LAUNCH1 (monitoring), then FIELD1 (team messaging).** Full execution order in PHASE AUDIT SUMMARY section of 07_SPRINT_SPECS.md. |
-| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → New phases: FIELD (line ~11792), REST (~11856), NICHE (~11887), DEPTH (~11913), SEC (~12261), ZERO (~12458), LAUNCH (~12598). Summary table at PHASE AUDIT SUMMARY (~12602). |
-| **Status** | Phases A-D + F + T + P + SK + GC + U + W + J + L ALL DONE. D5-PV DONE. Tech App DONE. **Phase INS FULLY COMPLETE (S124, INS1-INS10).** Phase G: G1-G5 automated DONE, G10 DONE. R1 DONE. FM code done. Phase E PAUSED. ~201 tables. 53 migration files. 70 Edge Functions. **126 CRM pages. 36 team pages. 39 client pages. 29 ops pages.** **S125: 56 new sprints spec'd (~612h) — depth audit, security fortress, zero-defect validation, launch prep.** |
-| **Last Completed** | S125: **SPRINT SPEC SESSION (docs only).** Recovered S124 crash remnants (210 lines). Wrote 56 sprints across 7 new phases: FIELD1-3 (field gaps ~36h), REST1-2 (restoration ~20h), NICHE1-2 (trade modules ~16h), DEPTH1-24 (depth audit + contractor needs validation ~306h), SEC1-9 (security fortress ~76h), ZERO1-9 (zero-defect validation ~86h), LAUNCH1-7 (pre-launch requirements ~72h). Live security scan: 3 medium vulns found (storage RLS, rate limiting, marketplace write policy). Post-quantum TLS verified via Cloudflare. |
-| **Session Count** | 125 |
+| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → Phases: FIELD (~11792), REST (~11856), NICHE (~11887), DEPTH (~11913, includes DEPTH25 commercial ~12369, DEPTH26 blueprint ~12393), SEC (~12261), ZERO (~12458), LAUNCH (~12598). Summary table at PHASE AUDIT SUMMARY (~12602). |
+| **Status** | Phases A-D + F + T + P + SK + GC + U + W + J + L ALL DONE. D5-PV DONE. Tech App DONE. **Phase INS FULLY COMPLETE (S124, INS1-INS10).** Phase G: G1-G5 automated DONE, G10 DONE. R1 DONE. FM code done. Phase E PAUSED. ~201 tables. 53 migration files. 70 Edge Functions. **126 CRM pages. 36 team pages. 39 client pages. 29 ops pages.** **S126: Sketch engine full-screen + eraser fixed, deployed. SK12/SK13 expanded. DEPTH25 (commercial 120+ symbols) + DEPTH26 (blueprint lookup) spec'd. 60 sprints, ~688h.** |
+| **Last Completed** | S126: **SKETCH ENGINE FIXES + SPEC EXPANSION.** Fixed full-screen editor (React portal to escape dashboard layout, ResizeObserver+RAF canvas sizing, z-9999). Fixed eraser/select on doors/windows (Konva node tree traversal to parent Group). Deployed to zafto.cloud. Expanded SK12 with 90+ residential symbols (10 categories). Expanded SK13 with material type picker (14 roofing, 12 siding, 9 fence + formulas + 20 templates). Created DEPTH25 (~24h, commercial building support, 120+ symbols, 16 building types). Created DEPTH26 (~16h, property blueprint lookup using free APIs — MS Building Footprints, OSM, Nominatim, procedural generation). Commercial research: 1,400+ elements across 16 building types. |
+| **Session Count** | 126 |
 | **Tables** | ~201 (+2 from S117: government_payment_programs, payment_verification_log). Also ALTER rent_payments + invoices + pm_inspection_items (code_refs). |
 | **Migration Files** | 53 total (added: 20260215000103_inspection_code_refs.sql — code_refs column on pm_inspection_items) |
 
