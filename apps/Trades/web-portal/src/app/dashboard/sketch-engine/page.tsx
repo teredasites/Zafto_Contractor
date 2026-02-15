@@ -6,6 +6,7 @@
 // SK8: Generate Estimate modal (room measurements → D8 estimate areas + line items).
 
 import { useState, useCallback, useRef, useEffect, type RefObject } from 'react';
+import { createPortal } from 'react-dom';
 import dynamic from 'next/dynamic';
 import {
   Plus,
@@ -165,6 +166,12 @@ const SK_FEATURES = [
 export default function SketchEnginePage() {
   const [activeView, setActiveView] = useState<'list' | 'editor'>('list');
   const [activePlanId, setActivePlanId] = useState<string | null>(null);
+  const [portalTarget, setPortalTarget] = useState<HTMLElement | null>(null);
+
+  // Resolve portal target on mount (document.body)
+  useEffect(() => {
+    setPortalTarget(document.body);
+  }, []);
 
   const openEditor = (planId: string) => {
     setActivePlanId(planId);
@@ -176,8 +183,12 @@ export default function SketchEnginePage() {
     setActivePlanId(null);
   };
 
-  if (activeView === 'editor' && activePlanId) {
-    return <EditorView planId={activePlanId} onClose={closeEditor} />;
+  // Render editor via portal to escape dashboard layout CSS containment
+  if (activeView === 'editor' && activePlanId && portalTarget) {
+    return createPortal(
+      <EditorView planId={activePlanId} onClose={closeEditor} />,
+      portalTarget,
+    );
   }
 
   return <ListView onOpenEditor={openEditor} />;
@@ -443,21 +454,42 @@ function EditorView({
     }
   }, [plan]);
 
-  // Track container size
+  // Track container size — compute from window since editor is a full-screen overlay.
+  // Top bar = 48px (h-12), ruler = 22px (RULER_THICKNESS), vertical ruler = 22px.
   useEffect(() => {
     const updateSize = () => {
+      // Primary: measure from container if available and has real dimensions
       if (containerRef.current) {
         const rect = containerRef.current.getBoundingClientRect();
-        setCanvasSize({
-          width: Math.max(rect.width, 400),
-          height: Math.max(rect.height, 300),
-        });
+        if (rect.width > 100 && rect.height > 100) {
+          setCanvasSize({ width: rect.width, height: rect.height });
+          return;
+        }
       }
+      // Fallback: compute from window (full-screen overlay layout)
+      setCanvasSize({
+        width: Math.max(window.innerWidth - RULER_THICKNESS, 400),
+        height: Math.max(window.innerHeight - 48 - RULER_THICKNESS, 300),
+      });
     };
 
     updateSize();
+    // Re-measure after a frame to catch portal layout completion
+    const raf = requestAnimationFrame(updateSize);
     window.addEventListener('resize', updateSize);
-    return () => window.removeEventListener('resize', updateSize);
+
+    // ResizeObserver for robust tracking
+    let observer: ResizeObserver | null = null;
+    if (containerRef.current) {
+      observer = new ResizeObserver(updateSize);
+      observer.observe(containerRef.current);
+    }
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('resize', updateSize);
+      observer?.disconnect();
+    };
   }, []);
 
   // Save on plan data change
@@ -711,7 +743,7 @@ function EditorView({
 
   if (loading) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-50">
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-gray-50" style={{ width: '100vw', height: '100vh' }}>
         <div className="text-center">
           <Loader2 className="h-6 w-6 animate-spin text-gray-400 mx-auto" />
           <p className="text-xs text-gray-400 mt-2">
@@ -724,7 +756,7 @@ function EditorView({
 
   if (error) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-50">
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-gray-50" style={{ width: '100vw', height: '100vh' }}>
         <div className="text-center">
           <p className="text-sm text-red-500">{error}</p>
           <button
@@ -739,7 +771,7 @@ function EditorView({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-white">
+    <div className="fixed inset-0 z-[9999] flex flex-col bg-white" style={{ width: '100vw', height: '100vh' }}>
       {/* Editor top bar */}
       <div className="h-12 border-b border-gray-200 flex items-center px-3 gap-3 bg-white/95 backdrop-blur">
         <button
