@@ -271,18 +271,18 @@ class _InspectorInspectScreenState extends ConsumerState<InspectorInspectScreen>
                               value: (inspection.score ?? 0) / 100,
                               backgroundColor: colors.bgInset,
                               valueColor: AlwaysStoppedAnimation(
-                                inspection.score >= 70 ? colors.accentSuccess : colors.accentError,
+                                (inspection.score ?? 0) >= 70 ? colors.accentSuccess : colors.accentError,
                               ),
                             ),
                           ),
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          '${inspection.score}%',
+                          '${inspection.score ?? 0}%',
                           style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
-                            color: inspection.score >= 70 ? colors.accentSuccess : colors.accentError,
+                            color: (inspection.score ?? 0) >= 70 ? colors.accentSuccess : colors.accentError,
                           ),
                         ),
                       ],
@@ -404,6 +404,36 @@ class _InspectorInspectScreenState extends ConsumerState<InspectorInspectScreen>
         return LucideIcons.checkCircle;
       case InspectionStatus.cancelled:
         return LucideIcons.xCircle;
+    }
+  }
+
+  String _typeLabel(InspectionType type) {
+    switch (type) {
+      case InspectionType.moveIn:
+        return 'Move-In';
+      case InspectionType.moveOut:
+        return 'Move-Out';
+      case InspectionType.routine:
+        return 'Routine';
+      case InspectionType.annual:
+        return 'Annual';
+      case InspectionType.maintenance:
+        return 'Maintenance';
+      case InspectionType.safety:
+        return 'Safety';
+    }
+  }
+
+  String _statusLabel(InspectionStatus status) {
+    switch (status) {
+      case InspectionStatus.scheduled:
+        return 'Scheduled';
+      case InspectionStatus.inProgress:
+        return 'In Progress';
+      case InspectionStatus.completed:
+        return 'Completed';
+      case InspectionStatus.cancelled:
+        return 'Cancelled';
     }
   }
 }
