@@ -13259,6 +13259,120 @@ When inspector takes a photo during inspection execution, add search bar to atta
 
 ---
 
+## PHASE FLIP: FLIP-IT ANALYSIS ENGINE (S127 — flagship feature)
+**Purpose:** Comprehensive house-flipping analysis engine for contractors AND realtors. Aggregates deals from every source (foreclosures, auctions, MLS, pre-foreclosures, tax liens, estate sales, FSBO), runs appraisal-grade ARV calculation, builds a full financial model with every cost down to the dollar, and shows a profit degradation timeline so users know exactly when a flip becomes a liability. Connects users to hard money lenders and local investors. Zafto's killer differentiator: contractors can self-bid rehab scope through the estimate engine — no other flip tool has that. Day-one accuracy is non-negotiable — this feature must fire immediately with real data, not stale estimates. Available in: Flutter app, web-portal (CRM), realtor portal.
+
+**Competition:** PropStream ($99/mo — data only, no rehab), FlipperForce ($79-499/mo — project mgmt, no deal sourcing), DealCheck ($20/mo — calculator only), Privy ($149/mo — MLS-only, no contractor tools), REIPro ($97/mo — marketing focus). ALL fragmented — none combine deal sourcing + ARV + rehab estimation + financial model + profit timeline + contractor bidding + investor connections. Zafto connects every piece.
+
+**Free data sources (all $0/month at launch):**
+- FHFA House Price Index API (free, quarterly, state/metro level appreciation rates)
+- Redfin Data Center (free CSV downloads — median prices, days on market, price drops, by ZIP)
+- Census Bureau ACS API (free — income, demographics, housing stats, vacancy rates by tract)
+- FEMA OpenFEMA API (free — flood zones, disaster declarations, risk scores)
+- RentCast API (free tier: 50 calls/month — rental estimates, comps, market stats)
+- GreatSchools API (free for non-commercial — school ratings by address)
+- WalkScore API (free tier: 5K/day — walkability, transit, bike scores)
+- Zillow Research (free public datasets — ZHVI, ZORI, market heat index by ZIP)
+- BLS CPI/PPI (free — construction cost inflation by region)
+- FRED (free — mortgage rates, housing starts, economic indicators)
+- County assessor sites (free — tax records, assessed values, ownership history)
+- HUD Fair Market Rents (free — rental benchmarks by county)
+
+### FLIP1 — Deal Aggregation & Property Intelligence Layer (~16h)
+**Goal:** Build the deal sourcing engine that finds every potential flip opportunity. Pulls from multiple channels, deduplicates, scores each deal, and presents a unified deal feed. Contractor/realtor sees one list of every opportunity near them, ranked by potential.
+
+**Deal Source Connectors:**
+- [ ] **Foreclosure aggregator**: Pull from county recorder sites (public record), HUD HomeStore (hudhomestore.gov — free API), Fannie Mae HomePath (homepath.fanniemae.com), Freddie Mac HomeSteps. Parse: address, list price, property type, sq ft, beds/baths, days listed, photos if available. Cron job: check daily for new listings by user's saved ZIP codes/radius
+- [ ] **Auction aggregator**: Auction.com (public listings page), Hubzu, Xome auction listings, county sheriff sale calendars. Parse: auction date, opening bid, property details, deposit requirements, inspection window. Alert: "3 new auctions within 15 miles in the next 14 days"
+- [ ] **Pre-foreclosure feed**: Lis pendens filings from county clerk (public record), NOD (Notice of Default) filings. Parse: owner name, property address, lender, amount owed, filing date, estimated equity. Note: pre-foreclosure = highest margin potential (buy direct from owner before auction)
+- [ ] **Tax lien/deed sales**: County tax sale calendars, delinquent tax lists (public record). Parse: parcel ID, assessed value, taxes owed, sale date, redemption period. "Tax lien investing 101" reference guide built in
+- [ ] **Estate/probate sales**: Probate court filings (public record), estate sale listing aggregation. Often below-market, motivated sellers
+- [ ] **FSBO/off-market**: Craigslist FSBO feed (public), Facebook Marketplace listings (public), driving-for-dollars integration (user marks properties in Zafto while driving → adds to deal pipeline)
+- [ ] **MLS integration** (realtor portal only): Realtor users with MLS access can push listings into Flip-It for analysis. Non-MLS users see only public data sources
+
+**Property Intelligence Layer:**
+- [ ] **Property data enrichment**: For every deal, auto-pull: county assessor data (assessed value, tax history, last sale price/date, lot size, year built, legal description), permit history (recent permits = recent work done, no permits = deferred maintenance), lien search (tax liens, mechanic's liens, HOA liens), ownership history (how many owners, how long held, corporate vs individual), flood zone check (FEMA API), school district rating (GreatSchools API), walkability score (WalkScore API), neighborhood demographics (Census API)
+- [ ] **Satellite/street view integration**: Pull latest satellite image and street view photo for quick visual assessment without visiting. Flag: "Street view from 2024 — verify condition in person"
+- [ ] **Deal deduplication**: Same property listed on auction.com AND HUD HomeStore → merge into one deal record with all sources linked. "This property appears in 2 sources — lowest asking: $145,000 (HUD), auction opens at $120,000"
+- [ ] **Smart alerts**: User sets criteria (ZIP codes, max price, min sq ft, property types, max rehab budget). System sends push notification + email when matching deals appear. "New foreclosure at 456 Oak St — $89,000, 1,450 sq ft, 3/2, matches your criteria. Est. ARV: $185,000. Potential profit: $38,000-52,000"
+
+- [ ] All builds pass: `flutter analyze`, `npm run build` for web-portal
+- [ ] Commit: `[FLIP1] Deal aggregation — foreclosure/auction/pre-foreclosure/tax lien/estate/FSBO feeds, property intelligence enrichment, deduplication, smart deal alerts`
+
+### FLIP2 — ARV Engine & Comp Analysis (~12h)
+**Goal:** Build an appraisal-grade After Repair Value (ARV) calculator. This is THE most critical number in flipping — if ARV is wrong, everything downstream is wrong. Use multiple valuation methods, weight them, and show confidence score. Must rival what an appraiser would produce.
+
+**Comp Selection Engine:**
+- [ ] **Automated comp pull**: Given subject property, find comparables: same ZIP or within 0.5 miles, sold within 6 months (prefer 3 months), similar sq ft (±20%), similar bed/bath count (±1), similar year built (±15 years), similar lot size (±30%), same property type. Data sources: Redfin (free CSV data by ZIP), county recorder (deed transfers = public record), Zillow Research datasets. Rank comps by similarity score (closer match = higher weight)
+- [ ] **Manual comp adjustments** (appraiser-style): For each comp, adjust for differences: sq ft difference × $/sq ft adjustment, bedroom count difference × $5,000-15,000, bathroom count × $5,000-10,000, garage (yes/no) × $10,000-20,000, pool × $10,000-25,000, lot size premium/discount, condition adjustment (updated vs dated), location adjustment (busy road, cul-de-sac, water view). Show adjustment grid: comp address, sale price, each adjustment, adjusted value. Standard appraisal format — familiar to any realtor
+- [ ] **Multi-method ARV**: Calculate ARV using 3 methods, show all: (1) Comp-adjusted median (weighted average of adjusted comps), (2) Price-per-sqft method (median $/sq ft of comps × subject sq ft), (3) AVM cross-reference (pull Zillow Zestimate, Redfin estimate, county assessed × sales ratio — free data). Final ARV = weighted blend. Show confidence score: High (3+ tight comps within 3 months), Medium (2-3 comps, some adjustments needed), Low (few comps, significant adjustments — proceed with caution)
+- [ ] **ARV sensitivity analysis**: "If ARV is 5% lower than estimated ($X), profit drops to $Y. If 10% lower ($X), profit drops to $Y. Break-even ARV: $Z." Shows user exactly how much room for error they have
+- [ ] **Neighborhood appreciation overlay**: FHFA HPI data (free API) — annual appreciation rate for metro area. Zillow ZHVI data — monthly appreciation for ZIP. "This ZIP has appreciated 4.2% annually over 5 years. If you hold 6 months, ARV may increase ~2.1% ($X)." Also show: declining markets flagged red, stagnant markets flagged yellow
+
+- [ ] All builds pass: `flutter analyze`, `npm run build` for web-portal
+- [ ] Commit: `[FLIP2] ARV engine — automated comp pull, appraiser-style adjustments, multi-method valuation, sensitivity analysis, neighborhood appreciation overlay`
+
+### FLIP3 — Full Financial Model & Profit Degradation Timeline (~16h)
+**Goal:** Build the complete financial model that accounts for EVERY cost in a flip — purchase, rehab, financing, holding, selling, and overhead. Then show a month-by-month profit degradation timeline so the user sees exactly when their flip turns from profit to loss. This is the "oh shit" chart that keeps flippers disciplined.
+
+**Purchase Costs:**
+- [ ] **Acquisition cost breakdown**: Purchase price (from deal or user input), closing costs (title search, title insurance, recording fees, attorney fees — auto-estimate by state, user-adjustable), inspection cost ($300-500 default), appraisal cost ($400-600 default), earnest money deposit (typically 1-3%), assignment fee (if wholesale deal), auction premium/buyer's premium (typically 5-10% at auction), back taxes owed (from property intelligence layer), outstanding liens (from property intelligence layer). Total acquisition = purchase + all closing + all liens/taxes
+
+**Rehab Cost Engine (Zafto's killer differentiator):**
+- [ ] **Integrated estimate builder**: User can build rehab estimate three ways: (1) Quick estimate — select rehab level (cosmetic $15-25/sq ft, moderate $25-45/sq ft, full gut $45-75/sq ft, new construction $100+/sq ft) × property sq ft = rough rehab estimate, (2) Room-by-room builder — select rooms, select work items per room (from Zafto's 300+ labor task database in DEPTH29), materials auto-priced from DEPTH31/32 data, (3) Full Zafto estimate — create actual estimate in Zafto estimate engine, import total into Flip-It. Methods 2 and 3 use REAL contractor pricing, not investor guesses — this is what makes Zafto's flip tool 10x more accurate than DealCheck or FlipperForce
+- [ ] **Rehab contingency**: Auto-add 10-20% contingency (user-adjustable). "Every flip has surprises. The average over-budget is 15%. We've added 15% ($X) to your rehab estimate." Breakdown: structural surprises (foundation, framing, roof), hidden damage (mold, termites, water damage, asbestos), permit-required upgrades (electrical panel, plumbing), material price increases during hold period
+- [ ] **Contractor bidding integration**: User can post rehab scope as a project on Zafto marketplace → get bids from rated contractors. "3 contractors bid on your rehab: $42,000 (4.8★), $38,500 (4.6★), $51,000 (4.9★)." Or: user IS the contractor (self-bid using their own labor rates from Zafto)
+
+**Financing Costs:**
+- [ ] **Hard money loan calculator**: Loan amount (typically 65-75% of ARV or 80-90% of purchase), interest rate (10-15%, pulled from FRED for current baseline + typical hard money spread), points (1-3 points = 1-3% of loan amount), origination fee, draw schedule (for rehab funds — lender releases in stages), term (6-18 months). Monthly payment calculation. Total financing cost over projected hold period
+- [ ] **Conventional loan option**: For buy-and-hold-while-rehabbing strategy. 30-year rate from FRED API. Down payment (typically 20-25% for investment), PMI if applicable, monthly payment
+- [ ] **Cash purchase option**: No financing costs, but show opportunity cost: "Your $150,000 cash could earn $X in a money market at current 4.5% rate over your 6-month hold period"
+- [ ] **Refinance/BRRRR calculator**: Buy → Rehab → Rent → Refinance → Repeat. Calculate: post-rehab appraisal value (= ARV), max cash-out refi (typically 75% LTV), cash remaining in deal after refi, monthly rental income (from RentCast API), monthly mortgage payment on refi, monthly cash flow, cash-on-cash return. "After BRRRR: $12,000 left in deal, $285/month cash flow, 28.5% cash-on-cash return"
+
+**Holding Costs (monthly burn):**
+- [ ] **Monthly holding cost calculator**: Mortgage/hard money payment, property taxes (from county assessor ÷ 12), insurance (investor policy estimate: $1,200-2,400/year for vacant rehab, by state), utilities (electric, gas, water — estimate by sq ft and season), lawn maintenance (if city requires), HOA fees (from property data), vacancy insurance (if required by lender), security/alarm (vacant property = theft risk). Total monthly hold = sum of all. "Every month you hold this property costs you $2,847"
+
+**Selling Costs:**
+- [ ] **Disposition cost calculator**: Realtor commission (standard 5-6%, user-adjustable — Zafto realtor portal users get built-in connection), seller closing costs (title insurance, transfer tax by state, attorney fees, prorations), staging cost (optional, $2,000-5,000 estimate), photography/marketing ($200-500), home warranty for buyer (optional, $400-600), buyer concessions (negotiate — typically 2-3% of sale price), capital gains tax estimate (short-term = ordinary income rate if held < 1 year, long-term rate if held > 1 year — user inputs their tax bracket)
+
+**Profit Degradation Timeline (THE flagship chart):**
+- [ ] **Month-by-month profit erosion**: Generate timeline from Month 0 (purchase) through Month 24. Each month shows: cumulative holding costs, cumulative financing costs, total invested to date, projected sale price (ARV ± appreciation), projected net profit, profit margin %. Chart: green zone (profitable) → yellow zone (thin margin) → red zone (loss). "At current burn rate, this flip breaks even at Month 11. After Month 11, every day costs you $95"
+- [ ] **Break-even point**: Exact month + day when total costs = ARV minus selling costs. Highlighted prominently. "You have 10 months and 12 days of padding before this flip becomes a loss"
+- [ ] **Profit scenarios**: Show 3 lines on chart: (1) Best case — sell at ARV in estimated timeline, (2) Expected case — sell at 95% ARV, 2 months late, (3) Worst case — sell at 90% ARV, 4 months late. "Best: $52,000 profit. Expected: $31,000. Worst: $8,000. Below worst case, you're losing money"
+- [ ] **Holding cost alerts**: As rehab progresses (tracked in Zafto project management), send alerts: "Month 3 of 6-month target. You've spent $28,000 of $42,000 rehab budget. On track." → "Month 7 — you're past your 6-month target. Holding costs have eaten $4,200 of profit. Current projected profit: $28,800 (was $33,000). Consider: price reduction to sell faster?"
+- [ ] **ARV market drift**: During hold period, update ARV estimate monthly using latest Redfin/Zillow data. "Market update: comparable sales in your ZIP dropped 2.3% this month. Updated ARV: $178,000 (was $182,000). Projected profit impact: -$4,000"
+
+**Deal Summary Dashboard:**
+- [ ] **One-page deal analysis**: Purchase: $X | Rehab: $X | Total investment: $X | ARV: $X | Total costs (acquisition + rehab + financing + holding + selling): $X | **Projected profit: $X** | **ROI: X%** | **Cash-on-cash: X%** | Break-even hold: X months | Confidence: High/Medium/Low
+- [ ] **Deal comparison**: Side-by-side compare up to 4 deals. "Deal A: $38K profit, 6-month hold, High confidence. Deal B: $52K profit, 9-month hold, Medium confidence. Deal C: $22K profit, 4-month hold, High confidence." Rank by: highest profit, highest ROI, shortest hold, highest confidence, or custom weighting
+- [ ] **PDF export**: Generate professional flip analysis report (1-2 pages). Branded with user's company. Shareable with: partners, investors, hard money lenders (they want to see your analysis before funding). Include: property photo, deal summary, comp grid, financial model, profit timeline chart, neighborhood stats
+- [ ] **Go/No-Go scorecard**: Auto-grade the deal across 8 criteria: ARV confidence (comp quality), rehab estimate confidence (detailed vs rough), profit margin (>20% = green, 10-20% = yellow, <10% = red), hold time risk, market trend (appreciating vs declining), financing cost burden, neighborhood quality, exit strategy options. Overall: STRONG BUY / PROCEED WITH CAUTION / PASS. "This deal scores 7.2/10 — Proceed with Caution. Weak points: medium ARV confidence (only 2 comps), declining neighborhood trend"
+
+- [ ] All builds pass: `flutter analyze`, `npm run build` for web-portal
+- [ ] Commit: `[FLIP3] Financial model — full cost engine (purchase/rehab/financing/holding/selling), profit degradation timeline, break-even calc, deal comparison, Go/No-Go scorecard, PDF export`
+
+### FLIP4 — Hard Money Lender Directory & Investor Connections (~8h)
+**Goal:** Connect flippers with funding. Hard money lender directory (searchable by state, rates, terms, min/max loan). Local investor connection board — NOT an investor app, just a public-facing deal showcase where investors can browse and contact project owners. Reduces risk for both parties: flipper gets capital partner, investor gets vetted deal with Zafto's analysis backing it.
+
+**Hard Money Lender Directory:**
+- [ ] **Lender database**: Seed with top national hard money lenders and major regional lenders (~100+ lenders). Fields: company name, states served, loan types (fix & flip, bridge, BRRRR, ground-up, commercial), min/max loan amount, typical LTV (% of ARV), interest rate range, points, origination fees, min credit score, min experience (some require 2+ flips), draw schedule type, typical close time (days), contact info, website, notes. Data source: public websites of known lenders (Lima One, Kiavi, RCN Capital, Visio, CoreVest, Fund That Flip, Groundfloor, etc.)
+- [ ] **Search & filter**: Find lenders by: state, loan amount needed, property type, experience level (first-time flipper friendly?), max rate willing to pay, close time needed. "Show me lenders in Florida that fund first-time flippers up to $200K with rates under 13%"
+- [ ] **Lender comparison**: Side-by-side compare up to 4 lenders. Total cost of borrowing for THIS specific deal (auto-calculated from FLIP3 financial model): "Lender A: $12,400 total financing cost over 6 months. Lender B: $14,800. Lender C: $10,200 but requires 3+ flip experience"
+- [ ] **Pre-qualification helper**: Generate deal package for lender submission: Zafto flip analysis report (from FLIP3), contractor's Zafto profile (completed projects, ratings, experience), rehab scope/budget, projected timeline. "Send this package to accelerate your loan approval"
+- [ ] **Community-contributed updates**: Users can submit rate updates, reviews, and corrections for lenders. Moderated. "Last verified: Feb 2026. 3 Zafto users have used this lender. Average rating: 4.2★"
+
+**Local Investor Connection Board:**
+- [ ] **Deal showcase (public-facing)**: Flipper/contractor can publish a deal to the Zafto investor board: property summary (address, photos, key stats), Zafto flip analysis snapshot (ARV, rehab cost, projected profit — sanitized, no proprietary data), investment needed (how much capital, what terms offered: equity split, preferred return, loan terms), flipper's Zafto profile (ratings, completed projects, trades). Published deals are browsable without Zafto account. Contact requires Zafto account (free for investors to sign up — view-only)
+- [ ] **Investor search**: Investors can search deals by: location (city/ZIP/radius), investment range ($50K-$500K), property type, projected ROI range, flipper experience level. "Show me deals within 30 miles of Orlando, $100K-200K investment, projected 20%+ ROI"
+- [ ] **Connection flow**: Investor finds deal → clicks "Express Interest" → flipper gets notification → they connect via Zafto messaging (basic — not a full messaging app, just deal-specific thread). NO money flows through Zafto. We facilitate the introduction, they handle the deal. Disclaimer: "Zafto is not a securities platform. All investment decisions are between the parties. Consult a real estate attorney"
+- [ ] **Partnership protection**: Standard partnership agreement templates (reference only — NOT legal advice): equity split agreement, preferred return structure, profit sharing, exit clauses, dispute resolution. "These templates are starting points. We strongly recommend both parties have an attorney review your agreement." Available as downloadable DOCX/PDF
+- [ ] **Investor dashboard** (for signed-up investors): Track deals they've expressed interest in, conversations with flippers, bookmarked deals, saved searches with alerts. Minimal — this is NOT an investor app, just enough to facilitate connections
+
+- [ ] All builds pass: `flutter analyze`, `npm run build` for web-portal
+- [ ] Commit: `[FLIP4] Hard money lender directory (~100+ lenders), investor connection board, deal showcase, partnership templates, pre-qualification helper`
+
+---
+
 ## PHASE SEC: SECURITY HARDENING & OPTIONAL SECURITY FEATURES (S125 audit findings)
 **Purpose:** Fix the 3 medium-priority security gaps found during the S125 live-site audit, then build optional security features that contractors can opt into. Multi-tenant SaaS with financial data, legal documents, employee PII, and client info — security must be enterprise-grade. Contractors handling insurance claims and government contracts may be REQUIRED to have 2FA/MFA by their carrier or agency. Make it available, not mandatory (contractor's choice).
 
@@ -13773,9 +13887,10 @@ When inspector takes a photo during inspection execution, add search bar to atta
 | **LAUNCH** | LAUNCH1-LAUNCH7 | ~72h | Monitoring, legal, payments, i18n, accessibility, testing, App Store + onboarding wizard |
 | **REALTOR** | REALTOR1-REALTOR3 | ~48h | Free realtor portal: auth, contractor directory, work order marketplace, bidding, ratings, project management, recon/sketch/PM access, reverse lead referrals |
 | **INTEG** | INTEG1 | ~12h | National portal submission API: per-company format templates, one-click export, verification bundles, compliance scoring, chargeback defense |
-| **Total** | **74 sprints** | **~1,026h** | — |
+| **FLIP** | FLIP1-FLIP4 | ~52h | Flip-It analysis engine: deal aggregation (foreclosure/auction/pre-foreclosure/tax lien/estate/FSBO), appraisal-grade ARV with comp adjustments, full financial model (every cost), profit degradation timeline, hard money lender directory (~100+), investor connection board |
+| **Total** | **78 sprints** | **~1,078h** | — |
 
-**Execution order:** SEC1 + SEC6 + SEC7 + SEC8 (critical security — site is live) → LAUNCH1 (monitoring — need Sentry before building more) → FIELD → REST → NICHE → DEPTH1 through DEPTH27 → DEPTH28 (recon mega-expansion) → DEPTH29 (estimate engine overhaul) → DEPTH30 (recon-to-estimate pipeline) → DEPTH31 (crowdsourced material pricing) → DEPTH32 (Material Finder — affiliate feeds, generates revenue) → DEPTH33 (data privacy/AI consent) → **DEPTH34 (property preservation — PP work orders, winterization, boiler troubleshooter, debris estimation, smart photos)** → **DEPTH35 (mold remediation — IICRC S520, moisture mapping, clearance pipeline)** → **DEPTH36 (disposal/dump finder — cheapest per ton, all waste types, scrap value)** → **REALTOR1 (portal foundation — auth, directory, work orders)** → **REALTOR2 (marketplace — bidding, ratings, project management)** → **REALTOR3 (free tools — recon, sketch, PM, lead referrals)** → **INTEG1 (national portal submission API)** → SEC2-SEC5 (2FA, biometrics, enterprise security, Hellhound) → LAUNCH2-LAUNCH6 (legal, payments, i18n, accessibility, testing) → Phase G (QA) → Phase JUR → Phase E (AI) → **SEC9 (security pentest)** → **SEC10 (legal pentest)** → **ZERO1-ZERO9 (zero-defect validation — break everything, fix everything, prove it's flawless)** → LAUNCH7 (App Store + onboarding wizard — DEAD LAST) → SHIP
+**Execution order:** SEC1 + SEC6 + SEC7 + SEC8 (critical security — site is live) → LAUNCH1 (monitoring — need Sentry before building more) → FIELD → REST → NICHE → DEPTH1 through DEPTH27 → DEPTH28 (recon mega-expansion) → DEPTH29 (estimate engine overhaul) → DEPTH30 (recon-to-estimate pipeline) → DEPTH31 (crowdsourced material pricing) → DEPTH32 (Material Finder — affiliate feeds, generates revenue) → DEPTH33 (data privacy/AI consent) → **DEPTH34 (property preservation — PP work orders, winterization, boiler troubleshooter, debris estimation, smart photos)** → **DEPTH35 (mold remediation — IICRC S520, moisture mapping, clearance pipeline)** → **DEPTH36 (disposal/dump finder — cheapest per ton, all waste types, scrap value)** → **REALTOR1 (portal foundation — auth, directory, work orders)** → **REALTOR2 (marketplace — bidding, ratings, project management)** → **REALTOR3 (free tools — recon, sketch, PM, lead referrals)** → **INTEG1 (national portal submission API)** → **FLIP1 (deal aggregation + property intelligence)** → **FLIP2 (ARV engine + comp analysis)** → **FLIP3 (financial model + profit degradation timeline)** → **FLIP4 (hard money lender directory + investor connections)** → SEC2-SEC5 (2FA, biometrics, enterprise security, Hellhound) → LAUNCH2-LAUNCH6 (legal, payments, i18n, accessibility, testing) → Phase G (QA) → Phase JUR → Phase E (AI) → **SEC9 (security pentest)** → **SEC10 (legal pentest)** → **ZERO1-ZERO9 (zero-defect validation — break everything, fix everything, prove it's flawless)** → LAUNCH7 (App Store + onboarding wizard — DEAD LAST) → SHIP
 
 **Module coverage guarantee:**
 - DEPTH1-6: Horizontal audit by category (core biz, field tools, property, financial, CRM, calculators)
@@ -13796,6 +13911,10 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - DEPTH34: Property preservation module — PP work orders (25+ service types), configurable smart photo system (Quick/Standard/Full Protection modes with GPS+timestamp), national company profiles (Safeguard/MCS/Cyprexx/NFR/Xome with per-company photo naming + submission deadlines + pay schedules), winterization assistant (dry/wet/steam procedures + DIY pressure test gauge + 30-min timer + antifreeze calc), boiler/furnace troubleshooter (all major models, error code lookup, interactive flowcharts, age decoder), sump pump installation assistant, stripped property repair estimators (copper/PEX repipe, electrical rewire, HVAC replacement, water heater), debris estimation calculator (room-by-room + sq ft quick estimate + 5-level hoarding scale + weight calc + dumpster recommender + recon integration), chargeback tracking + dispute system, payment tracking across nationals with aging, utility/fuel coordination (oil refill, gas/electric turn-on scheduling), vendor application helper, REO realtor finder, securing reference (bank lock codes, supply sourcing), board-up calculator (~52h)
 - DEPTH35: Mold remediation module — assessment intake + moisture mapping (heat map overlay on floor plan), IICRC S520 remediation levels 1-3 (auto-determined from assessment), containment + remediation task checklists, equipment tracking (dehumidifiers, air scrubbers, negative air), lab sample tracking + clearance testing, clearance certificate generator (PDF), state licensing requirement database (all 50 states), scope of work templates by scenario, insurance claim formatted output, mold disposal reference (~28h)
 - DEPTH36: Disposal & dump finder — facility database (all waste types: C&D, concrete, hazmat, mold, asbestos, tires, e-waste, appliances), nearest + cheapest per-ton search by property address, scrap/recycling value finder (copper, aluminum, steel prices), route optimization (property → dump → next property), dump receipt photo capture + cost analytics. Universal tool for ALL trades, not just PP (~8h)
+- FLIP1: Deal aggregation — foreclosure/auction/pre-foreclosure/tax lien/estate/FSBO feeds, property intelligence enrichment, deduplication, smart alerts (~16h)
+- FLIP2: ARV engine — automated comp pull, appraiser-style adjustments, multi-method valuation, sensitivity analysis, neighborhood appreciation overlay (~12h)
+- FLIP3: Full financial model — every cost (purchase/rehab/financing/holding/selling), profit degradation timeline (month-by-month burn → break-even → loss), deal comparison, Go/No-Go scorecard, PDF export (~16h)
+- FLIP4: Hard money lender directory (~100+ lenders seeded), investor connection board (public deal showcase), partnership templates, pre-qualification helper (~8h)
 - SEC1: Critical security fixes (storage RLS, rate limiting, marketplace policy) — runs FIRST
 - SEC2-SEC4: Optional security features (2FA, biometrics, enterprise security) — runs after DEPTH audits
 - SEC5: Hellhound deception system (canary endpoints, honeytokens, bot traps, auto-block, tarpit)
