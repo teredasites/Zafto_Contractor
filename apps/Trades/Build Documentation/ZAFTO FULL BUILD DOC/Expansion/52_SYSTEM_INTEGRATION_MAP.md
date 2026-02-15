@@ -348,7 +348,7 @@ Update this section as sprints are completed. Mark each connection as it's verif
 | Tech → Role System | S120 | WIRED — roleOverrideProvider (override > JWT auth > fallback), role_switcher_screen uses override |
 | Tech → Contact | S119 | WIRED — job_detail_screen: Call (tel:), Text (sms:), Directions (maps URL) via url_launcher |
 
-### Phase INS (Inspector Deep Buildout) — COMPLETE (S121-S123)
+### Phase INS (Inspector Deep Buildout) — COMPLETE (S121-S124)
 | Connection | Sprint | Status |
 |-----------|--------|--------|
 | INS → Inspection Templates | INS1-INS2+INS9 | WIRED (S121-S123) — template-driven checklists (25 templates, 1,147 items, 173 sections), 19 inspection types, weighted scoring, section grouping. INS9: depth rewrite 13→25 templates with real building code refs |
