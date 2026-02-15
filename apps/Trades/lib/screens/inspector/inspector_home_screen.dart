@@ -683,15 +683,36 @@ class _InspectorHomeScreenState extends ConsumerState<InspectorHomeScreen> {
   }
 
   String _inspectionTypeLabel(InspectionType type) {
-    switch (type) {
-      case InspectionType.moveIn: return 'Move-In';
-      case InspectionType.moveOut: return 'Move-Out';
-      case InspectionType.routine: return 'Routine';
-      case InspectionType.annual: return 'Annual';
-      case InspectionType.maintenance: return 'Maintenance';
-      case InspectionType.safety: return 'Safety';
-    }
+    return _typeLabels[type] ?? type.name;
   }
+
+  static const _typeLabels = <InspectionType, String>{
+    InspectionType.moveIn: 'Move-In',
+    InspectionType.moveOut: 'Move-Out',
+    InspectionType.routine: 'Routine',
+    InspectionType.annual: 'Annual',
+    InspectionType.maintenance: 'Maintenance',
+    InspectionType.safety: 'Safety',
+    InspectionType.roughIn: 'Rough-In',
+    InspectionType.framing: 'Framing',
+    InspectionType.foundation: 'Foundation',
+    InspectionType.finalInspection: 'Final',
+    InspectionType.permit: 'Permit',
+    InspectionType.codeCompliance: 'Code Compliance',
+    InspectionType.qcHoldPoint: 'QC Hold Point',
+    InspectionType.reInspection: 'Re-Inspection',
+    InspectionType.swppp: 'SWPPP',
+    InspectionType.environmental: 'Environmental',
+    InspectionType.ada: 'ADA',
+    InspectionType.insuranceDamage: 'Insurance Damage',
+    InspectionType.tpi: 'TPI',
+    InspectionType.preConstruction: 'Pre-Construction',
+    InspectionType.roofing: 'Roofing',
+    InspectionType.fireLifeSafety: 'Fire/Life Safety',
+    InspectionType.electrical: 'Electrical',
+    InspectionType.plumbing: 'Plumbing',
+    InspectionType.hvac: 'HVAC',
+  };
 
   String _inspectionStatusLabel(InspectionStatus status) {
     switch (status) {
