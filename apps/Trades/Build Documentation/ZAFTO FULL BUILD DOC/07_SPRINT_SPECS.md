@@ -12458,6 +12458,8 @@ When inspector takes a photo during inspection execution, add search bar to atta
 
 **Position in build order:** Runs AFTER SEC9 (pentest), BEFORE LAUNCH7 (App Store). Pentest finds security bugs. ZERO finds logic bugs, performance bugs, edge cases, and data integrity issues. Both must pass clean before shipping.
 
+**MANDATORY: TRIPLE-SCAN RULE FOR NEW FEATURES.** Any feature, screen, hook, table, Edge Function, or code change added between S125 (when these sprints were written) and when ZERO phase executes MUST be: (1) Inventoried — git log diff to find all new code since S125 commit `cc8981a`, (2) Added to the relevant ZERO sprint checklists (property tests, state machines, chaos scenarios, fuzz targets, load test scripts, edge case gauntlet), (3) Scanned THREE FULL PASSES — not one pass, not two, THREE. First pass finds obvious bugs. Second pass finds bugs exposed by fixing the first pass. Third pass is the verification pass that confirms zero regressions from all fixes. If ANY new feature fails any pass, it does not ship. This triple-scan is non-negotiable — features added late are the highest-risk code because they had the least testing time.
+
 ### ZERO1 — Test Infrastructure & Staging Environment (~8h)
 **Goal:** Build the foundation that all other ZERO sprints run on. Dedicated staging environment that mirrors production exactly. Test runner framework. Seed data factories. CI/CD integration so tests run on every commit automatically. Nothing ships without passing.
 - [ ] **Supabase staging project** — Create dedicated staging Supabase project (separate from dev and prod). Mirror ALL tables, RLS policies, Edge Functions, storage buckets. This is the target for all automated tests — never test against prod
@@ -12576,6 +12578,17 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - [ ] **Financial precision gauntlet** — Create invoices with: $0.001 line items (sub-cent), $9,999,999.99 totals (max reasonable), 15.375% tax rate (odd percentage), 100 line items with $0.01 each (rounding accumulation test), negative line items (credits), mixed currency symbols. Verify: totals are mathematically correct to the penny, PDF shows correct amounts, ledger balances
 - [ ] **Empty state gauntlet** — New company with ZERO data: visit every single screen. Verify: every screen shows a helpful empty state (not blank, not error, not spinner forever). Every "create first" CTA works. No null pointer errors from missing data
 - [ ] Commit: `[ZERO8] Data volume & edge case gauntlet — extreme scale, Unicode, boundaries, financial precision`
+
+### ZERO9 — Triple-Scan: New Feature Inventory & 3-Pass Verification (~10h)
+**Goal:** MANDATORY FINAL GATE. Any code added between S125 and ZERO execution gets scanned three times. First pass finds bugs. Second pass finds bugs created by fixing first-pass bugs. Third pass proves zero regressions. This sprint runs LAST in ZERO phase — after ZERO1-ZERO8 have established the full test suite. It ensures nothing slipped through.
+- [ ] **Inventory new code** — git diff `cc8981a`..HEAD — list every new file, modified file, new table, new Edge Function, new route, new screen, new model, new hook added since S125. Create master checklist of ALL new code
+- [ ] **Map new code to ZERO sprints** — For each new feature: assign to ZERO2 (property tests needed), ZERO3 (state machine if has status), ZERO4 (chaos scenario), ZERO5 (add to load test scripts), ZERO6 (add to fuzz targets), ZERO8 (add to edge case gauntlet). If a feature wasn't covered by any ZERO sprint, it has ZERO test coverage — write tests immediately
+- [ ] **PASS 1: Full test suite against new code** — Run ALL tests (property, state machine, chaos, load, fuzz, mutation, gauntlet) with focus on new features. Document every failure. Fix every bug found. Log: feature name, bug description, root cause, fix applied
+- [ ] **PASS 2: Regression scan after Pass 1 fixes** — Every fix from Pass 1 could introduce new bugs. Re-run full test suite. Focus on: areas adjacent to fixes, features that share code with fixed features, database queries that changed, UI components that were modified. Document every NEW failure (not from Pass 1). Fix all. This pass typically finds 20-30% as many bugs as Pass 1
+- [ ] **PASS 3: Final verification** — Clean run of full test suite. ZERO failures required. If ANY test fails → fix → restart Pass 3 from scratch. Pass 3 does not end until there is a complete clean run with zero failures across ALL ZERO test suites. This is the "prove it" pass
+- [ ] **Triple-scan report** — Document: Pass 1 (N bugs found, N fixed), Pass 2 (N regression bugs found, N fixed), Pass 3 (clean run confirmed, timestamp, commit hash). This report is the quality certificate. Save to `Build Documentation/ZAFTO FULL BUILD DOC/Expansion/TRIPLE_SCAN_REPORT_S[session].md`
+- [ ] **Sign-off gate** — After Pass 3 clean run: snapshot the commit hash. This exact commit is what goes to App Store. ANY code change after this hash requires re-running Pass 3. No exceptions
+- [ ] Commit: `[ZERO9] Triple-scan complete — [P1: X bugs] [P2: X regressions] [P3: clean run verified]`
 
 ---
 
@@ -12698,9 +12711,9 @@ When inspector takes a photo during inspection execution, add search bar to atta
 | **NICHE** | NICHE1-NICHE2 | ~16h | Missing trade modules: pest control, service trades |
 | **DEPTH** | DEPTH1-DEPTH23 | ~292h | Full depth audit + corrections across every feature area |
 | **SEC** | SEC1-SEC9 | ~76h | Security fortress: critical fixes, 2FA, biometrics, enterprise options, Hellhound, headers, WAF, dependency scanning, full pentest |
-| **ZERO** | ZERO1-ZERO8 | ~76h | Zero-defect validation: property testing, state machines, chaos engineering, 50K load test, fuzz testing, mutation testing, edge case gauntlet |
+| **ZERO** | ZERO1-ZERO9 | ~86h | Zero-defect validation: property testing, state machines, chaos engineering, 50K load test, fuzz testing, mutation testing, edge case gauntlet, triple-scan |
 | **LAUNCH** | LAUNCH1-LAUNCH7 | ~72h | Monitoring, legal, payments, i18n, accessibility, testing, App Store + onboarding wizard |
-| **Total** | **54 sprints** | **~588h** | — |
+| **Total** | **55 sprints** | **~598h** | — |
 
 **Execution order:** SEC1 + SEC6 + SEC7 + SEC8 (critical security — site is live) → LAUNCH1 (monitoring — need Sentry before building more) → FIELD → REST → NICHE → DEPTH1 through DEPTH23 → SEC2-SEC5 (2FA, biometrics, enterprise security, Hellhound) → LAUNCH2-LAUNCH6 (legal, payments, i18n, accessibility, testing) → Phase G (QA) → Phase JUR → Phase E (AI) → **SEC9 (full pentest)** → **ZERO1-ZERO8 (zero-defect validation — break everything, fix everything, prove it's flawless)** → LAUNCH7 (App Store + onboarding wizard — DEAD LAST) → SHIP
 
