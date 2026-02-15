@@ -13314,6 +13314,52 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - Socrata/SODA API (free, 1K req/hr — city-level permits + code violations for 200+ cities: Chicago, NYC, LA, SF, Miami, etc.)
 - State court record searches (free — judgment lien lookups by name/address)
 
+**Data Architecture — Self-Maintaining Engine (near-zero maintenance):**
+The engine is designed to stay accurate indefinitely without manual data entry or spreadsheet updates. Three-tier data system:
+
+**Tier 1 — LIVE API CALLS (real-time, pulled fresh every analysis):**
+No caching, always current. Runs when user analyzes a property:
+- FRED API → current mortgage rates, prime rate (updates daily)
+- County assessor sites → property tax amount, assessed value, last sale price/date, ownership
+- FEMA OpenFEMA → flood zone for this specific address
+- USPS Address API → vacancy status
+- Socrata/SODA API → open permits, code violations for this address (200+ cities)
+- EPA Envirofacts → environmental hazards within radius of property
+- RentCast API → rental estimate for this property (BRRRR calc)
+
+**Tier 2 — SCHEDULED REFRESH (cron jobs, automatic, no human involved):**
+Background jobs pull bulk data on schedule. Stored in Supabase, refreshed automatically:
+- Redfin Data Center CSVs → comp data by ZIP (cron: **monthly** download + parse)
+- FHFA House Price Index → appreciation rates by metro (cron: **quarterly** after FHFA publishes)
+- Zillow Research datasets → ZHVI, ZORI, market heat by ZIP (cron: **monthly**)
+- BLS CPI/PPI → construction cost index by region (cron: **monthly** after BLS publishes)
+- FBI Crime Data → crime rates by jurisdiction (cron: **annually** after FBI publishes UCR)
+- Census ACS → demographics, income, housing stats by tract (cron: **annually** after Census publishes)
+- HUD Fair Market Rents → rental benchmarks by county (cron: **annually** after HUD publishes)
+- Deal source scraping → new foreclosure/auction listings (cron: **daily**)
+Each cron job: pull data → validate → upsert into Supabase → log success/failure → alert ops dashboard on failure. If a cron fails, data keeps working from last successful pull (flagged as stale with date).
+
+**Tier 3 — SEED DATA (loaded once, updated on rare legislative changes):**
+Static reference data that changes only when laws change. Stored in Supabase `flip_reference_data` table:
+- State closing cost database (50 states + DC): transfer tax rates, title insurance rate type (promulgated/filed/unregulated), attorney required (yes/no), recording fee ranges, mansion tax thresholds
+- EPA radon zones by county (geological — effectively permanent)
+- Lead paint risk (pre-1978 year built cutoff — permanent)
+- HOA super-lien states list (17 states — changes via legislation, rare)
+- GreatSchools rating data (cached from API, refreshed annually)
+- WalkScore data (cached from API, refreshed quarterly)
+- Hard money lender directory (~100+ lenders — community-updated, moderated)
+- REIA chapter directory (~200+ chapters — community-updated)
+Maintenance: **~2-3 state tax law changes per year across all 50 states.** When a state changes transfer tax rate (tracked via Google Alerts on state DOR announcements), update one row in the table. Takes 5 minutes. Everything else is permanent or auto-refreshed by Tier 2.
+
+**Self-healing & monitoring:**
+- Every API call logged with status code + response time in `api_health_log` table (already exists from DEPTH28 API fleet monitoring spec)
+- If a Tier 1 API fails at analysis time: graceful degradation — show "⚠ [source] unavailable, using last cached value from [date]" instead of crashing
+- If a Tier 2 cron fails: retry 3x with backoff → if still failing, alert ops dashboard + email → data still works from last successful pull, flagged stale
+- Data freshness displayed on every analysis: "Analysis generated Feb 15, 2026. Data freshness: Comps (Feb 1), Rates (today), Taxes (2025 assessment), Crime (2025 UCR)"
+- Ops dashboard shows all data source health: last successful refresh, staleness, error rate
+
+**Bottom line: Zero day-to-day maintenance. Engine self-updates from 18+ free APIs. The only human action is ~2-3 state tax law updates per year (5 min each) and fixing any API endpoint changes (if a free source changes their URL format). No spreadsheets, no manual data entry, no "someone needs to check the numbers." The numbers check themselves.**
+
 ### FLIP1 — Deal Aggregation & Property Intelligence Layer (~16h)
 **Goal:** Build the deal sourcing engine that finds every potential flip opportunity. Pulls from multiple channels, deduplicates, scores each deal, and presents a unified deal feed. Contractor/realtor sees one list of every opportunity near them, ranked by potential.
 
