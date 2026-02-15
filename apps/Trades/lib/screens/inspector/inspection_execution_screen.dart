@@ -8,6 +8,7 @@ import 'package:zafto/theme/theme_provider.dart';
 import 'package:zafto/models/inspection.dart';
 import 'package:zafto/services/inspection_service.dart';
 import 'package:zafto/repositories/inspection_repository.dart';
+import 'package:zafto/screens/inspector/inspection_report_screen.dart';
 
 // ============================================================
 // Inspection Execution Screen
@@ -1062,7 +1063,19 @@ class _InspectionExecutionScreenState
       await ref.read(inspectionsProvider.notifier).refresh();
 
       if (mounted) {
-        Navigator.pop(context, true);
+        // Fetch updated inspection for report screen
+        final updated =
+            await service.getInspection(_inspectionId!);
+        if (mounted && updated != null) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => InspectionReportScreen(inspection: updated),
+            ),
+          );
+        } else if (mounted) {
+          Navigator.pop(context, true);
+        }
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
