@@ -11722,6 +11722,73 @@ When inspector takes a photo during inspection execution, add search bar to atta
 
 ---
 
+### INS10 — Quick Checklist + Hive Offline Safety Net (~6h)
+**Goal:** Simple check/uncheck checklist mode (vs formal inspection), Hive local storage for offline safety, reusable offline caching pattern for all features.
+- [x] Add `quickChecklist` to `InspectionType` enum + `isQuickChecklist` computed getter
+- [x] Create `lib/services/checklist_cache_service.dart` — Hive-backed cache (cache/get/delete/sync tracking, CachedChecklist model, Riverpod providers)
+- [x] Create `lib/core/hive_cache_mixin.dart` — reusable mixin for any repository (cacheItem, getCachedItem, getAllCached, fetchWithCache, writeWithCache)
+- [x] Create `lib/widgets/zafto/offline_banner.dart` — connectivity-aware sync status indicator (hidden when synced, amber for pending, red for offline)
+- [x] Add `checklists` + `checklist_sync_meta` Hive boxes in `main.dart`
+- [x] Quick mode UI in `inspection_execution_screen.dart` — checkbox instead of pass/fail/NA, strikethrough on check, optional notes, auto-save to Hive on every toggle
+- [x] `_autoSaveToHive()` and `_saveQuickChecklist()` methods — Hive first, then Supabase
+- [x] "Quick Checklist" entry point on `inspector_home_screen.dart` (quick tools carousel)
+- [x] "Quick Checklist" tool on `inspector_tools_screen.dart` (INSPECTION section, first item)
+- [x] `quickChecklistMode` parameter on `InspectionTemplatesScreen` — changes title, adds "Start Checklist" button
+- [x] `_launchFromTemplate()` in templates screen — launches execution with quickChecklist type
+- [x] `dart analyze` passes 0 errors
+- [x] Commit: `[INS10] Quick Checklist mode + Hive offline safety net`
+
+---
+
+### OFFLINE1 — Core Business Hive Cache (~8h)
+**Goal:** Apply HiveCacheMixin to the 5 core business repositories. Boxes already exist in main.dart — just need to wire the caching pattern.
+- [ ] Apply `HiveCacheMixin` to `job_repository.dart` (jobs box already open)
+- [ ] Apply to `customer_repository.dart` (customers box already open)
+- [ ] Apply to `invoice_repository.dart` (invoices box already open)
+- [ ] Apply to `bid_repository.dart` (bids box already open)
+- [ ] Apply to `time_entry_repository.dart` (time_entries box already open)
+- [ ] Extend `SyncService` with job/customer/invoice/bid/timeEntry data types
+- [ ] Wire `OfflineBanner` into `AppShell` (all roles see sync status)
+- [ ] Verify offline create → online sync for all 5 types
+- [ ] `dart analyze` passes 0 errors
+- [ ] Commit: `[OFFLINE1] Core business Hive cache — jobs, customers, invoices, bids, time entries`
+
+### OFFLINE2 — Field Tools + Inspector Hive Cache (~6h)
+**Goal:** Offline safety for field operations and inspection data.
+- [ ] Apply `HiveCacheMixin` to `inspection_repository.dart`
+- [ ] Apply to `daily_log_repository.dart`
+- [ ] Apply to `photo_repository.dart` (metadata cache, not blobs)
+- [ ] Apply to `receipt_repository.dart`
+- [ ] Apply to `punch_list_repository.dart`
+- [ ] Apply to `change_order_repository.dart`
+- [ ] Apply to `mileage_repository.dart`
+- [ ] Queue photo uploads for retry on connectivity
+- [ ] `dart analyze` passes 0 errors
+- [ ] Commit: `[OFFLINE2] Field tools + inspector Hive cache`
+
+### OFFLINE3 — Properties + Scheduling + Remaining (~6h)
+**Goal:** Complete Hive coverage for all remaining data types.
+- [ ] Apply `HiveCacheMixin` to `property_repository.dart`
+- [ ] Apply to `estimate_repository.dart`
+- [ ] Apply to `walkthrough_repository.dart`
+- [ ] Apply to `schedule_task_repository.dart`
+- [ ] Apply to `insurance_claim_repository.dart`
+- [ ] Apply to `certification_repository.dart`
+- [ ] Full offline smoke test — airplane mode workflow
+- [ ] `dart analyze` passes 0 errors
+- [ ] Commit: `[OFFLINE3] Properties + scheduling + remaining Hive cache`
+
+### OFFLINE4 — Web Portal Offline (Service Workers) (~8h)
+**Goal:** Offline capability for the 3 web portals using service workers + IndexedDB.
+- [ ] Web CRM: service worker for critical pages (dashboard, jobs, customers)
+- [ ] Team Portal: offline job list + time clock queue (critical for field workers)
+- [ ] Client Portal: offline project view + documents
+- [ ] IndexedDB cache for hook data (use-jobs, use-customers, etc.)
+- [ ] Offline indicator component for all portals
+- [ ] Commit: `[OFFLINE4] Web portal offline — service workers + IndexedDB`
+
+---
+
 ### Phase INS Integration Checklist
 - [ ] Inspector screens wired to template-driven checklists (not hardcoded)
 - [ ] Deficiency data flows: inspector captures → office reviews → tech assigned → re-inspection verifies

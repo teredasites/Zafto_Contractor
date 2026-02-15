@@ -1,6 +1,6 @@
 # ZAFTO SESSION HANDOFF
 ## THE ONLY DOC YOU READ FIRST — EVERY SESSION
-### Last Updated: February 15, 2026 (Session 123 — S123: INS9 COMPLETE. Part A: Template depth rewrite — 25 templates, 1,147 items with real NEC/IRC/IBC/OSHA/NFPA/IECC/IPC/IMC/ADA code refs. 12 new templates added. Part B: CodeReferenceSearchSheet widget, codeRefs field on PmInspectionItem, multi-select code ref picker wired into execution screen, migration for code_refs column.)
+### Last Updated: February 15, 2026 (Session 124 — S124: INS10 COMPLETE. Quick Checklist mode (simple check/uncheck vs formal pass/fail/NA), Hive offline safety net (ChecklistCacheService, HiveCacheMixin, OfflineBanner), entry points on home+tools screens, template picker with "Start Checklist" button. OFFLINE1-4 sprints added to sprint specs for full Hive coverage across all features.)
 
 ---
 
@@ -19,12 +19,12 @@
 
 | Field | Value |
 |-------|-------|
-| **Sprint** | **INS9 DONE (S123). Phase INS FULLY COMPLETE (S121-S123, INS1-INS9). Tech App COMPLETE (S118-S120). PHASE G IN PROGRESS (S113-S115).** G1-G5 automated DONE. G10 DONE. G6-G9 manual QA PENDING. |
-| **Sub-step** | **Phase G manual QA next (G6-G9).** Phase INS fully complete including depth rewrite. Phase E remains PAUSED (AI goes last). |
-| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → Phase INS (INS1-INS9 ALL DONE). Phase G (G1-G5 DONE, G10 DONE, G6-G9 manual). Phase E: E-review + BA1-BA8 (~128 hrs) + E1-E4. |
-| **Status** | Phases A-D + F + T + P + SK + GC + U + W + J + L ALL DONE. D5-PV DONE. Tech App DONE. **Phase INS FULLY COMPLETE (S123, INS1-INS9).** Phase G: G1-G5 automated DONE, G10 DONE. R1 DONE. FM code done. Phase E PAUSED. ~201 tables. 53 migration files. 70 Edge Functions. **126 CRM pages. 36 team pages. 39 client pages. 29 ops pages.** |
-| **Last Completed** | S123: **INS9 COMPLETE.** Part A: Template depth rewrite — 25 templates (was 13), 1,147 items (was 247) with real code refs across NEC/IRC/IBC/OSHA/NFPA/IECC/IPC/IMC/ADA. 12 new templates: Move-Out, Electrical Final, Plumbing Final, HVAC Final, Insulation & Energy, Drywall, Pre-Construction Survey, Solar PV, Water Damage & Mold, Commercial Annual, Pre-Pour/Pre-Slab, Low Voltage/Cabling. Part B: CodeReferenceSearchSheet multi-select widget, codeRefs field on PmInspectionItem model, code_refs migration, wired into execution screen with badge UI. |
-| **Session Count** | 123 |
+| **Sprint** | **INS10 DONE (S124). Phase INS FULLY COMPLETE (S121-S124, INS1-INS10). OFFLINE1-4 sprints PLANNED. Phase G IN PROGRESS (S113-S115).** G1-G5 automated DONE. G10 DONE. G6-G9 manual QA PENDING. |
+| **Sub-step** | **OFFLINE1 next (core business Hive cache), then Phase G manual QA (G6-G9).** Phase INS fully complete. Phase E remains PAUSED (AI goes last). |
+| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → Phase INS (INS1-INS10 ALL DONE). OFFLINE1-4 PLANNED. Phase G (G1-G5 DONE, G10 DONE, G6-G9 manual). Phase E: E-review + BA1-BA8 (~128 hrs) + E1-E4. |
+| **Status** | Phases A-D + F + T + P + SK + GC + U + W + J + L ALL DONE. D5-PV DONE. Tech App DONE. **Phase INS FULLY COMPLETE (S124, INS1-INS10).** Phase G: G1-G5 automated DONE, G10 DONE. R1 DONE. FM code done. Phase E PAUSED. ~201 tables. 53 migration files. 70 Edge Functions. **126 CRM pages. 36 team pages. 39 client pages. 29 ops pages.** |
+| **Last Completed** | S124: **INS10 COMPLETE.** Quick Checklist mode — simple check/uncheck UI in execution screen (vs pass/fail/NA for formal inspections). Hive offline safety net — ChecklistCacheService (Hive-backed), HiveCacheMixin (reusable for any repo), OfflineBanner widget (connectivity-aware). Entry points: home screen quick tools, tools screen INSPECTION section, template picker with "Start Checklist" button. OFFLINE1-4 sprints added (~28h total) for full Hive coverage across all features + web portal service workers. |
+| **Session Count** | 124 |
 | **Tables** | ~201 (+2 from S117: government_payment_programs, payment_verification_log). Also ALTER rent_payments + invoices + pm_inspection_items (code_refs). |
 | **Migration Files** | 53 total (added: 20260215000103_inspection_code_refs.sql — code_refs column on pm_inspection_items) |
 
