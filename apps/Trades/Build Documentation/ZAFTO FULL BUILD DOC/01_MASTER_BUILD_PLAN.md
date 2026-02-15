@@ -133,7 +133,7 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | **Phase G: QA/Hardening** | **IN PROGRESS** | **PARTIAL** | **S113: G1-G5 automated sprints DONE. G6-G10 manual QA PENDING.** |
 | **Plan Review** | **SPEC'D (S97)** | **NO** | Phase E feature (BA1-BA8, ~128 hrs) |
 
-**ALL PHASES A-F + T + P + SK + GC + W + J + L COMPLETE. Phase G automated DONE (G1-G5), manual QA pending (G6-G10). ~199 tables. 67 migrations. 70 Edge Functions. 125 CRM routes. 36 team routes. 39 client routes. 28 ops routes. Next: G6-G10 manual QA → E (AI LAST: E-review → BA1-BA8 → E1-E4) → LAUNCH. F2 + F8 post-launch.**
+**ALL PHASES A-F + T + P + SK + GC + U + W + J + L COMPLETE. D5-PV DONE (S117). Tech App DONE (S118-S120). Phase G automated DONE (G1-G5), manual QA pending (G6-G10). ~201 tables. 68 migrations. 70 Edge Functions. 125 CRM routes. 36 team routes. 39 client routes. 28 ops routes. Next: G6-G10 manual QA → E (AI LAST: E-review → BA1-BA8 → E1-E4) → LAUNCH. F2 + F8 post-launch.**
 
 ---
 

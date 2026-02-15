@@ -339,6 +339,15 @@ Update this section as sprints are completed. Mark each connection as it's verif
 | D5-PV → Flutter Mobile | D5-PV4 | WIRED (S117) — RentPayment model rewrite, GovernmentPaymentProgram model, verification repo methods |
 | D5-PV → Notifications | D5-PV5 | WIRED (S117) — 6 types: payment_reported, payment_verified, payment_disputed, payment_rejected, hap_payment_due, recertification_upcoming |
 
+### Tech App Buildout (S119-S120)
+| Connection | Sprint | Status |
+|-----------|--------|--------|
+| Tech → Jobs | S119-S120 | WIRED — tech_jobs_screen reads jobsProvider, tech_schedule_screen filters by scheduledStart, tap→JobDetailScreen |
+| Tech → Walkthrough | S120 | WIRED — tech_walkthrough_screen reads walkthroughsProvider, CTA→WalkthroughStartScreen, recent list→CaptureScreen/SummaryScreen |
+| Tech → Time Clock | S119 | WIRED — tech_home_screen CLOCK IN button→TimeClockScreen, My Hours→TechTimesheetScreen |
+| Tech → Role System | S120 | WIRED — roleOverrideProvider (override > JWT auth > fallback), role_switcher_screen uses override |
+| Tech → Contact | S119 | WIRED — job_detail_screen: Call (tel:), Text (sms:), Directions (maps URL) via url_launcher |
+
 ### Phase W (Warranty + Lifecycle) — COMPLETE (S113 chain)
 | Connection | Sprint | Status |
 |-----------|--------|--------|
