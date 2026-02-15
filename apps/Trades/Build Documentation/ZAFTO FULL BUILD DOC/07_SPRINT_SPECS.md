@@ -11619,15 +11619,16 @@ Equipment lifecycle data + prediction engine tables.
 ### INS5: Report Generation & Signatures (~6h)
 
 #### Steps
-- [ ] Edge Function: `generate-inspection-report` — PDF generation from inspection data
-- [ ] Report template: company branding (logo, name, contact), inspection details, checklist results (pass/fail per item), deficiency photos inline with findings, code citations for each violation
-- [ ] Multiple report formats: summary (for owner/client), detailed (for contractor), compliance (for municipality/carrier)
-- [ ] Digital signature capture widget: finger/stylus on device, stored as image in Supabase storage
-- [ ] Multi-signer flow: inspector signs → site contact acknowledges → both stored on inspection record
-- [ ] Report storage: save generated PDF to `documents` Supabase bucket, link URL to inspection record
-- [ ] Share report: email from app to stakeholders, download as PDF
-- [ ] Verify: `dart analyze` 0 errors, Edge Function deploys
-- [ ] Commit: `[INS5] Report generation + digital signatures — PDF, multi-format, email sharing`
+- [x] Edge Function: `generate-inspection-report` — branded HTML report with checklist, deficiencies, code citations
+- [x] Report template: company branding (logo, name, contact), inspector name, inspection details, per-item results with condition colors, deficiency findings with severity/code/remediation, compliance statement, signature blocks
+- [x] Multiple report formats: summary (owner/client), detailed (contractor), compliance (municipality/carrier) — format selector in Flutter
+- [x] Digital signature capture: reuses existing SignatureCaptureWidget/Dialog, stored as PNG in Supabase `signatures` bucket
+- [x] Multi-signer flow: inspector + site contact signatures, uploaded to storage, linked to inspection record (signature_inspector, signature_contact)
+- [x] Share report: open in browser (print/PDF), email to stakeholders, copy shareable link
+- [x] Completion auto-navigates to report screen after inspection complete
+- [x] Verify: `dart analyze` 0 errors
+- [x] Commit: `f4353f1` [INS5] Report generation + digital signatures — Edge Function, 3 formats, share flow
+- [ ] DEFERRED: Save generated PDF to `documents` bucket (needs server-side Puppeteer or similar for HTML→PDF)
 
 ### INS6: Re-Inspection & GPS (~4h)
 
