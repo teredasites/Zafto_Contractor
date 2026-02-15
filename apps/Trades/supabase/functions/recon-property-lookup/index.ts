@@ -180,11 +180,11 @@ serve(async (req) => {
     }
 
     // ========================================================================
-    // CHECK CACHE (30-day)
+    // CHECK CACHE (30-day) — skip if previous scan had no solar/roof data
     // ========================================================================
     const { data: cached } = await supabase
       .from('property_scans')
-      .select('id, cached_until')
+      .select('id, cached_until, raw_google_solar')
       .eq('company_id', companyId)
       .eq('address', address)
       .gt('cached_until', new Date().toISOString())
@@ -193,7 +193,20 @@ serve(async (req) => {
       .maybeSingle()
 
     if (cached) {
-      return jsonResponse({ scan_id: cached.id, cached: true })
+      // Invalidate cache if previous scan was incomplete (no solar/roof data)
+      const solarJson = cached.raw_google_solar as Record<string, unknown> | null
+      const hasSolar = solarJson &&
+        typeof solarJson === 'object' &&
+        Object.keys(solarJson).length > 0
+
+      if (hasSolar) {
+        return jsonResponse({ scan_id: cached.id, cached: true })
+      }
+      // Cache miss — previous scan was incomplete, expire stale record and re-scan
+      await supabase
+        .from('property_scans')
+        .update({ cached_until: new Date(0).toISOString() })
+        .eq('id', cached.id)
     }
 
     // ========================================================================
@@ -358,7 +371,7 @@ serve(async (req) => {
             else if (facets.length === 4) shape = 'hip'
             else if (facets.length === 1) shape = 'flat'
 
-            const { data: rm } = await supabase
+            const { data: rm, error: rmErr } = await supabase
               .from('roof_measurements')
               .insert({
                 scan_id: scanId,
@@ -375,13 +388,21 @@ serve(async (req) => {
               .select('id')
               .single()
 
+            if (rmErr) {
+              console.error('roof_measurements insert failed:', rmErr.message, rmErr.details)
+            }
+
             if (rm) {
               roofMeasurementId = rm.id
-              const facetRows = facets.map((f) => ({
-                roof_measurement_id: rm.id,
-                ...f,
-              }))
-              await supabase.from('roof_facets').insert(facetRows)
+              const { error: facetErr } = await supabase.from('roof_facets').insert(
+                facets.map((f) => ({
+                  roof_measurement_id: rm.id,
+                  ...f,
+                }))
+              )
+              if (facetErr) {
+                console.error('roof_facets insert failed:', facetErr.message, facetErr.details)
+              }
             }
           }
         }
@@ -752,6 +773,8 @@ serve(async (req) => {
       sources,
       structure_count: structures.length,
       roof_area_sqft: Math.round(totalRoofAreaSqft * 100) / 100,
+      has_roof_measurement: roofMeasurementId != null,
+      roof_measurement_id: roofMeasurementId,
       imagery_date: imageryDate?.toISOString().split('T')[0] || null,
       elevation_ft: elevationFt,
     })
