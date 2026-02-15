@@ -1,6 +1,7 @@
 // ZAFTO 3D Scene Converter — FloorPlanData → Three.js geometry (SK10)
 // Converts 2D floor plan data into 3D extruded wall meshes, floor plane,
-// door/window openings, trade element sprites, and room labels.
+// door/window openings (proper wall segmentation), trade element sprites,
+// and room labels.
 
 import * as THREE from 'three';
 import type {
@@ -16,8 +17,10 @@ import { positionOnWall, wallLength } from './geometry';
 const WALL_COLOR_INTERIOR = 0xf5f5f5;
 const WALL_COLOR_EXTERIOR = 0xcccccc;
 const FLOOR_COLOR = 0xe8dcc8; // light wood
-const DOOR_COLOR = 0x9966cc;
-const WINDOW_COLOR = 0x88ddee;
+const DOOR_COLOR = 0x8b6914; // wood brown for door panel
+const DOOR_FRAME_COLOR = 0x5c4a1e; // darker frame
+const WINDOW_GLASS_COLOR = 0x88ccee; // light blue glass
+const WINDOW_FRAME_COLOR = 0xdddddd; // light gray frame
 
 interface SceneData {
   walls: THREE.Mesh[];
@@ -29,9 +32,22 @@ interface SceneData {
   fixtures: THREE.Mesh[];
 }
 
+// Normalized opening info for wall segmentation
+interface OpeningInfo {
+  type: 'door' | 'window';
+  centerDist: number; // inches from wall start
+  width: number;
+  height: number;
+  bottomY: number; // 0 for doors, sillHeight for windows
+  id: string;
+}
+
 /**
  * Convert a 2D FloorPlanData into Three.js meshes ready to add to a scene.
  * Y-axis is up (height). X/Z map to the 2D x/y coordinates.
+ *
+ * Walls are segmented around door/window openings so openings appear as
+ * actual gaps in the wall geometry (no CSG needed).
  */
 export function convertToThreeScene(plan: FloorPlanData): SceneData {
   const result: SceneData = {
@@ -46,26 +62,33 @@ export function convertToThreeScene(plan: FloorPlanData): SceneData {
 
   if (plan.walls.length === 0) return result;
 
-  // --- Walls ---
-  for (const wall of plan.walls) {
-    const mesh = createWallMesh(wall);
-    result.walls.push(mesh);
-  }
+  // Build wall → openings lookup
+  const wallDoors = new Map<string, DoorPlacement[]>();
+  const wallWindows = new Map<string, WindowPlacement[]>();
 
-  // --- Door openings (visual indicators — not CSG subtraction for performance) ---
   for (const door of plan.doors) {
-    const wall = plan.walls.find((w) => w.id === door.wallId);
-    if (!wall) continue;
-    const mesh = createDoorMesh(door, wall);
-    if (mesh) result.doors.push(mesh);
+    const list = wallDoors.get(door.wallId) || [];
+    list.push(door);
+    wallDoors.set(door.wallId, list);
+  }
+  for (const win of plan.windows) {
+    const list = wallWindows.get(win.wallId) || [];
+    list.push(win);
+    wallWindows.set(win.wallId, list);
   }
 
-  // --- Window openings ---
-  for (const win of plan.windows) {
-    const wall = plan.walls.find((w) => w.id === win.wallId);
-    if (!wall) continue;
-    const mesh = createWindowMesh(win, wall);
-    if (mesh) result.windows.push(mesh);
+  // Create walls with proper openings
+  for (const wall of plan.walls) {
+    const doors = wallDoors.get(wall.id) || [];
+    const windows = wallWindows.get(wall.id) || [];
+    const { wallMeshes, doorMeshes, windowMeshes } = createWallWithOpenings(
+      wall,
+      doors,
+      windows,
+    );
+    result.walls.push(...wallMeshes);
+    result.doors.push(...doorMeshes);
+    result.windows.push(...windowMeshes);
   }
 
   // --- Floor plane ---
@@ -73,8 +96,7 @@ export function convertToThreeScene(plan: FloorPlanData): SceneData {
 
   // --- Room labels ---
   for (const room of plan.rooms) {
-    const sprite = createRoomLabel(room);
-    result.roomLabels.push(sprite);
+    result.roomLabels.push(createRoomLabel(room));
   }
 
   // --- Fixtures ---
@@ -91,23 +113,297 @@ export function convertToThreeScene(plan: FloorPlanData): SceneData {
   for (const tl of plan.tradeLayers) {
     if (!tl.visible || !tl.tradeData) continue;
     for (const elem of tl.tradeData.elements) {
-      const sprite = createTradeSprite(elem.position.x, elem.position.y, tl.type, elem.label ?? elem.type);
-      result.tradeElements.push(sprite);
+      result.tradeElements.push(
+        createTradeSprite(
+          elem.position.x,
+          elem.position.y,
+          tl.type,
+          elem.label ?? elem.type,
+        ),
+      );
     }
   }
 
   return result;
 }
 
-function createWallMesh(wall: Wall): THREE.Mesh {
-  const dx = wall.end.x - wall.start.x;
-  const dy = wall.end.y - wall.start.y;
-  const len = Math.sqrt(dx * dx + dy * dy);
-  const height = wall.height || 96; // default 8 feet
-  const thickness = wall.thickness || 6;
+// =============================================================================
+// WALL SEGMENTATION — proper openings for doors and windows
+// =============================================================================
 
-  // Wall as a box: length × height × thickness
-  const geometry = new THREE.BoxGeometry(len, height, thickness);
+/**
+ * Creates wall geometry with proper cutouts for doors and windows.
+ *
+ * Instead of one solid box per wall, this splits the wall into segments:
+ * - Full-height segments between openings
+ * - Lintels above doors (wall from door top to ceiling)
+ * - Wall below windows (floor to sill height)
+ * - Wall above windows (window top to ceiling)
+ * - Door panel visuals (semi-transparent wood panel in the opening)
+ * - Window glass panes (transparent blue in the opening)
+ */
+function createWallWithOpenings(
+  wall: Wall,
+  doors: DoorPlacement[],
+  windows: WindowPlacement[],
+): {
+  wallMeshes: THREE.Mesh[];
+  doorMeshes: THREE.Mesh[];
+  windowMeshes: THREE.Mesh[];
+} {
+  const wallH = wall.height || 96;
+  const thick = wall.thickness || 6;
+  const len = wallLength(wall);
+  const angle = Math.atan2(
+    wall.end.y - wall.start.y,
+    wall.end.x - wall.start.x,
+  );
+
+  const wallMeshes: THREE.Mesh[] = [];
+  const doorMeshes: THREE.Mesh[] = [];
+  const windowMeshes: THREE.Mesh[] = [];
+
+  // Collect all openings into a unified sorted list
+  const openings: OpeningInfo[] = [];
+
+  for (const d of doors) {
+    openings.push({
+      type: 'door',
+      centerDist: d.position * len,
+      width: d.width || 36,
+      height: Math.min(80, wallH - 4),
+      bottomY: 0,
+      id: d.id,
+    });
+  }
+
+  for (const w of windows) {
+    const sill = w.sillHeight ?? 36;
+    openings.push({
+      type: 'window',
+      centerDist: w.position * len,
+      width: w.width || 36,
+      height: Math.min(48, wallH - sill - 4),
+      bottomY: sill,
+      id: w.id,
+    });
+  }
+
+  // No openings — return simple solid wall
+  if (openings.length === 0) {
+    wallMeshes.push(
+      makeWallSegment(wall, 0, len, 0, wallH, thick, angle),
+    );
+    return { wallMeshes, doorMeshes, windowMeshes };
+  }
+
+  // Sort by position along wall
+  openings.sort((a, b) => a.centerDist - b.centerDist);
+
+  // Walk along the wall, creating segments between openings
+  let cursor = 0; // current position in inches from wall start
+
+  for (const op of openings) {
+    const leftEdge = Math.max(0, op.centerDist - op.width / 2);
+    const rightEdge = Math.min(len, op.centerDist + op.width / 2);
+
+    // Full-height wall segment before this opening
+    if (leftEdge > cursor + 0.5) {
+      wallMeshes.push(
+        makeWallSegment(wall, cursor, leftEdge, 0, wallH, thick, angle),
+      );
+    }
+
+    if (op.type === 'door') {
+      // Lintel above the door (from door top to ceiling)
+      const lintelH = wallH - op.height;
+      if (lintelH > 1) {
+        wallMeshes.push(
+          makeWallSegment(
+            wall,
+            leftEdge,
+            rightEdge,
+            op.height,
+            wallH,
+            thick,
+            angle,
+          ),
+        );
+      }
+
+      // Door panel visual — semi-transparent wood-colored panel in the gap
+      const doorPos = positionOnWall(wall, op.centerDist / len);
+      const doorGeo = new THREE.BoxGeometry(op.width - 2, op.height - 2, 1.5);
+      const doorMat = new THREE.MeshStandardMaterial({
+        color: DOOR_COLOR,
+        transparent: true,
+        opacity: 0.5,
+        roughness: 0.7,
+        metalness: 0.0,
+        side: THREE.DoubleSide,
+      });
+      const doorMesh = new THREE.Mesh(doorGeo, doorMat);
+      doorMesh.position.set(doorPos.x, op.height / 2, doorPos.y);
+      doorMesh.rotation.y = -angle;
+      doorMesh.userData = { type: 'door', id: op.id };
+      doorMeshes.push(doorMesh);
+
+      // Door frame — thin outline around the opening
+      const frameThick = 2;
+      const frameMat = new THREE.MeshStandardMaterial({
+        color: DOOR_FRAME_COLOR,
+        roughness: 0.6,
+      });
+
+      // Left jamb
+      const leftJambGeo = new THREE.BoxGeometry(
+        frameThick,
+        op.height,
+        thick + 2,
+      );
+      const leftJamb = new THREE.Mesh(leftJambGeo, frameMat);
+      const leftJambPos = positionOnWall(wall, leftEdge / len);
+      leftJamb.position.set(leftJambPos.x, op.height / 2, leftJambPos.y);
+      leftJamb.rotation.y = -angle;
+      doorMeshes.push(leftJamb);
+
+      // Right jamb
+      const rightJambGeo = new THREE.BoxGeometry(
+        frameThick,
+        op.height,
+        thick + 2,
+      );
+      const rightJamb = new THREE.Mesh(rightJambGeo, frameMat);
+      const rightJambPos = positionOnWall(wall, rightEdge / len);
+      rightJamb.position.set(rightJambPos.x, op.height / 2, rightJambPos.y);
+      rightJamb.rotation.y = -angle;
+      doorMeshes.push(rightJamb);
+
+      // Header
+      const headerGeo = new THREE.BoxGeometry(op.width, frameThick, thick + 2);
+      const header = new THREE.Mesh(headerGeo, frameMat);
+      header.position.set(doorPos.x, op.height, doorPos.y);
+      header.rotation.y = -angle;
+      doorMeshes.push(header);
+    } else {
+      // WINDOW — wall below sill + wall above header + glass pane
+
+      // Wall below window sill
+      if (op.bottomY > 0.5) {
+        wallMeshes.push(
+          makeWallSegment(
+            wall,
+            leftEdge,
+            rightEdge,
+            0,
+            op.bottomY,
+            thick,
+            angle,
+          ),
+        );
+      }
+
+      // Wall above window header
+      const topOfWindow = op.bottomY + op.height;
+      if (topOfWindow < wallH - 0.5) {
+        wallMeshes.push(
+          makeWallSegment(
+            wall,
+            leftEdge,
+            rightEdge,
+            topOfWindow,
+            wallH,
+            thick,
+            angle,
+          ),
+        );
+      }
+
+      // Glass pane — transparent blue
+      const winPos = positionOnWall(wall, op.centerDist / len);
+      const glassGeo = new THREE.BoxGeometry(op.width - 2, op.height - 2, 1);
+      const glassMat = new THREE.MeshStandardMaterial({
+        color: WINDOW_GLASS_COLOR,
+        transparent: true,
+        opacity: 0.3,
+        roughness: 0.1,
+        metalness: 0.3,
+        side: THREE.DoubleSide,
+      });
+      const glassMesh = new THREE.Mesh(glassGeo, glassMat);
+      glassMesh.position.set(
+        winPos.x,
+        op.bottomY + op.height / 2,
+        winPos.y,
+      );
+      glassMesh.rotation.y = -angle;
+      glassMesh.userData = { type: 'window', id: op.id };
+      windowMeshes.push(glassMesh);
+
+      // Window frame
+      const frameMat = new THREE.MeshStandardMaterial({
+        color: WINDOW_FRAME_COLOR,
+        roughness: 0.5,
+      });
+      const frameThick = 2;
+
+      // Sill
+      const sillGeo = new THREE.BoxGeometry(
+        op.width + 2,
+        frameThick,
+        thick + 3,
+      );
+      const sill = new THREE.Mesh(sillGeo, frameMat);
+      sill.position.set(winPos.x, op.bottomY, winPos.y);
+      sill.rotation.y = -angle;
+      windowMeshes.push(sill);
+
+      // Header
+      const headerGeo = new THREE.BoxGeometry(
+        op.width + 2,
+        frameThick,
+        thick + 1,
+      );
+      const winHeader = new THREE.Mesh(headerGeo, frameMat);
+      winHeader.position.set(winPos.x, op.bottomY + op.height, winPos.y);
+      winHeader.rotation.y = -angle;
+      windowMeshes.push(winHeader);
+    }
+
+    cursor = rightEdge;
+  }
+
+  // Wall segment after the last opening
+  if (cursor < len - 0.5) {
+    wallMeshes.push(
+      makeWallSegment(wall, cursor, len, 0, wallH, thick, angle),
+    );
+  }
+
+  return { wallMeshes, doorMeshes, windowMeshes };
+}
+
+/**
+ * Create a wall box segment from startDist to endDist (inches along the wall),
+ * from bottomY to topY (inches in height).
+ */
+function makeWallSegment(
+  wall: Wall,
+  startDist: number,
+  endDist: number,
+  bottomY: number,
+  topY: number,
+  thickness: number,
+  angle: number,
+): THREE.Mesh {
+  const len = wallLength(wall);
+  const segLen = endDist - startDist;
+  const segHeight = topY - bottomY;
+  const centerDist = (startDist + endDist) / 2;
+  const centerT = len > 0 ? centerDist / len : 0.5;
+  const pos = positionOnWall(wall, centerT);
+
+  const geometry = new THREE.BoxGeometry(segLen, segHeight, thickness);
   const material = new THREE.MeshStandardMaterial({
     color: WALL_COLOR_INTERIOR,
     roughness: 0.9,
@@ -115,72 +411,25 @@ function createWallMesh(wall: Wall): THREE.Mesh {
   });
 
   const mesh = new THREE.Mesh(geometry, material);
-
-  // Position at midpoint, rotated to match wall angle
-  const mx = (wall.start.x + wall.end.x) / 2;
-  const my = (wall.start.y + wall.end.y) / 2;
-  const angle = Math.atan2(dy, dx);
-
-  mesh.position.set(mx, height / 2, my);
+  mesh.position.set(pos.x, bottomY + segHeight / 2, pos.y);
   mesh.rotation.y = -angle;
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
   mesh.userData = { type: 'wall', id: wall.id };
 
   return mesh;
 }
 
-function createDoorMesh(door: DoorPlacement, wall: Wall): THREE.Mesh | null {
-  const pos = positionOnWall(wall, door.position);
-  const height = wall.height || 96;
-  const doorHeight = Math.min(80, height - 4); // 80" standard door
-  const len = wallLength(wall);
-  const dx = (wall.end.x - wall.start.x) / len;
-  const dy = (wall.end.y - wall.start.y) / len;
-  const angle = Math.atan2(dy, dx);
-
-  // Door represented as a thin colored box at the opening
-  const geometry = new THREE.BoxGeometry(door.width, doorHeight, 2);
-  const material = new THREE.MeshStandardMaterial({
-    color: DOOR_COLOR,
-    transparent: true,
-    opacity: 0.6,
-  });
-
-  const mesh = new THREE.Mesh(geometry, material);
-  mesh.position.set(pos.x, doorHeight / 2, pos.y);
-  mesh.rotation.y = -angle;
-  mesh.userData = { type: 'door', id: door.id };
-
-  return mesh;
-}
-
-function createWindowMesh(win: WindowPlacement, wall: Wall): THREE.Mesh | null {
-  const pos = positionOnWall(wall, win.position);
-  const wallH = wall.height || 96;
-  const sillHeight = win.sillHeight ?? 36; // 3 feet default sill
-  const windowHeight = Math.min(48, wallH - sillHeight - 4);
-  const len = wallLength(wall);
-  const dx = (wall.end.x - wall.start.x) / len;
-  const dy = (wall.end.y - wall.start.y) / len;
-  const angle = Math.atan2(dy, dx);
-
-  const geometry = new THREE.BoxGeometry(win.width, windowHeight, 2);
-  const material = new THREE.MeshStandardMaterial({
-    color: WINDOW_COLOR,
-    transparent: true,
-    opacity: 0.5,
-  });
-
-  const mesh = new THREE.Mesh(geometry, material);
-  mesh.position.set(pos.x, sillHeight + windowHeight / 2, pos.y);
-  mesh.rotation.y = -angle;
-  mesh.userData = { type: 'window', id: win.id };
-
-  return mesh;
-}
+// =============================================================================
+// FLOOR, LABELS, TRADE SPRITES (unchanged)
+// =============================================================================
 
 function createFloorPlane(plan: FloorPlanData): THREE.Mesh | null {
   // Calculate bounds from walls
-  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  let minX = Infinity,
+    minY = Infinity,
+    maxX = -Infinity,
+    maxY = -Infinity;
   for (const wall of plan.walls) {
     for (const pt of [wall.start, wall.end]) {
       if (pt.x < minX) minX = pt.x;
@@ -231,7 +480,10 @@ function createRoomLabel(room: DetectedRoom): THREE.Sprite {
   ctx.fillText(`${room.area.toFixed(0)} SF`, 128, 48);
 
   const texture = new THREE.CanvasTexture(canvas);
-  const material = new THREE.SpriteMaterial({ map: texture, depthTest: false });
+  const material = new THREE.SpriteMaterial({
+    map: texture,
+    depthTest: false,
+  });
   const sprite = new THREE.Sprite(material);
   sprite.position.set(room.center.x, 50, room.center.y); // float above floor
   sprite.scale.set(80, 20, 1);
@@ -240,7 +492,12 @@ function createRoomLabel(room: DetectedRoom): THREE.Sprite {
   return sprite;
 }
 
-function createTradeSprite(x: number, y: number, layerType: string, label: string): THREE.Sprite {
+function createTradeSprite(
+  x: number,
+  y: number,
+  layerType: string,
+  label: string,
+): THREE.Sprite {
   const colors: Record<string, string> = {
     electrical: '#3B82F6',
     plumbing: '#EF4444',
@@ -270,7 +527,10 @@ function createTradeSprite(x: number, y: number, layerType: string, label: strin
   ctx.fillText(label.charAt(0).toUpperCase(), 32, 32);
 
   const texture = new THREE.CanvasTexture(canvas);
-  const material = new THREE.SpriteMaterial({ map: texture, depthTest: false });
+  const material = new THREE.SpriteMaterial({
+    map: texture,
+    depthTest: false,
+  });
   const sprite = new THREE.Sprite(material);
   sprite.position.set(x, 48, y); // slightly above floor
   sprite.scale.set(12, 12, 1);
@@ -287,7 +547,10 @@ export function calculateCameraPosition(plan: FloorPlanData): {
   position: [number, number, number];
   target: [number, number, number];
 } {
-  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  let minX = Infinity,
+    minY = Infinity,
+    maxX = -Infinity,
+    maxY = -Infinity;
   for (const wall of plan.walls) {
     for (const pt of [wall.start, wall.end]) {
       if (pt.x < minX) minX = pt.x;
