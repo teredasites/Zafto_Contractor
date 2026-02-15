@@ -1,6 +1,36 @@
 -- W1: Warranty Intelligence Foundation
 -- Extend home_equipment with warranty fields + 3 new tables
 
+-- Create home_equipment if it doesn't exist yet (required for warranty tracking)
+CREATE TABLE IF NOT EXISTS home_equipment (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id uuid NOT NULL REFERENCES companies(id),
+  property_id uuid REFERENCES properties(id),
+  customer_id uuid REFERENCES customers(id),
+  equipment_type text NOT NULL DEFAULT 'other',
+  brand text,
+  model text,
+  install_date date,
+  condition text DEFAULT 'good',
+  notes text,
+  deleted_at timestamptz,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+
+ALTER TABLE home_equipment ENABLE ROW LEVEL SECURITY;
+
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'home_equipment' AND policyname = 'he_select') THEN
+    CREATE POLICY he_select ON home_equipment FOR SELECT USING (company_id = requesting_company_id());
+    CREATE POLICY he_insert ON home_equipment FOR INSERT WITH CHECK (company_id = requesting_company_id());
+    CREATE POLICY he_update ON home_equipment FOR UPDATE USING (company_id = requesting_company_id());
+    CREATE POLICY he_delete ON home_equipment FOR DELETE USING (company_id = requesting_company_id());
+  END IF;
+END $$;
+
+CREATE TRIGGER he_updated BEFORE UPDATE ON home_equipment FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+
 -- Extend home_equipment
 ALTER TABLE home_equipment ADD COLUMN IF NOT EXISTS warranty_start_date date;
 ALTER TABLE home_equipment ADD COLUMN IF NOT EXISTS warranty_end_date date;

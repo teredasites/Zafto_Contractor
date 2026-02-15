@@ -23,10 +23,10 @@ CREATE INDEX idx_job_budgets_job_category ON job_budgets(job_id, category);
 ALTER TABLE job_budgets ENABLE ROW LEVEL SECURITY;
 
 -- RLS policies (company-scoped)
-CREATE POLICY "job_budgets_select" ON job_budgets FOR SELECT USING (company_id = auth.company_id());
-CREATE POLICY "job_budgets_insert" ON job_budgets FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "job_budgets_update" ON job_budgets FOR UPDATE USING (company_id = auth.company_id());
-CREATE POLICY "job_budgets_delete" ON job_budgets FOR DELETE USING (company_id = auth.company_id());
+CREATE POLICY "job_budgets_select" ON job_budgets FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "job_budgets_insert" ON job_budgets FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "job_budgets_update" ON job_budgets FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "job_budgets_delete" ON job_budgets FOR DELETE USING (company_id = requesting_company_id());
 
 -- Updated_at trigger
 CREATE TRIGGER update_job_budgets_updated_at

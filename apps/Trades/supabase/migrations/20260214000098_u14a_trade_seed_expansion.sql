@@ -21,135 +21,139 @@ ON CONFLICT (code) DO NOTHING;
 -- ============================================================
 -- 2. Add missing estimate categories
 -- ============================================================
-INSERT INTO estimate_categories (code, name, description, labor_percent, material_percent, equipment_percent) VALUES
-  ('SLR', 'Solar', 'Solar panel installation, inverters, battery systems', 40, 50, 10),
-  ('FNC', 'Fencing', 'Fence installation — wood, vinyl, chain-link, iron', 55, 40, 5),
-  ('PVG', 'Paving', 'Asphalt, pavers, brick paving', 40, 45, 15),
-  ('GRM', 'General Remodel', 'Full home remodel, multi-trade projects', 55, 35, 10),
-  ('WND', 'Windows & Doors', 'Window and door replacement/installation', 40, 55, 5),
-  ('SPF', 'Spray Foam', 'Spray foam insulation (open/closed cell)', 45, 45, 10),
-  ('FRS', 'Fire/Smoke Restoration', 'Fire and smoke damage restoration', 50, 30, 20),
-  ('MLB', 'Mold Remediation', 'Mold assessment and remediation', 55, 20, 25),
-  ('TRM', 'Trim & Millwork', 'Interior trim, crown molding, baseboards', 60, 35, 5)
+INSERT INTO estimate_categories (code, name, labor_pct, material_pct, equipment_pct) VALUES
+  ('SLR', 'Solar', 40, 50, 10),
+  ('FNC', 'Fencing', 55, 40, 5),
+  ('PVG', 'Paving', 40, 45, 15),
+  ('GRM', 'General Remodel', 55, 35, 10),
+  ('WND', 'Windows & Doors', 40, 55, 5),
+  ('SPF', 'Spray Foam', 45, 45, 10),
+  ('FRS', 'Fire/Smoke Restoration', 50, 30, 20),
+  ('MLB', 'Mold Remediation', 55, 20, 25),
+  ('TRM', 'Trim & Millwork', 60, 35, 5)
 ON CONFLICT (code) DO NOTHING;
 
 -- ============================================================
 -- 3. Add line items for new categories
+-- Pricing is separate (estimate_pricing table) — items are descriptive only
 -- ============================================================
-INSERT INTO estimate_items (zafto_code, category_code, description, unit_code, default_unit_price, material_cost_default, labor_cost_default, equipment_cost_default) VALUES
+INSERT INTO estimate_items (zafto_code, category_id, description, unit_code, trade, is_common, source)
+SELECT v.zafto_code, ec.id, v.description, v.unit_code, v.trade, true, 'zafto'
+FROM (VALUES
   -- Solar (SLR)
-  ('Z-SLR-001', 'SLR', 'Solar Panel — 400W Monocrystalline', 'EA', 350.00, 250.00, 80.00, 20.00),
-  ('Z-SLR-002', 'SLR', 'Roof Racking System — Rail Mount', 'LF', 18.00, 12.00, 5.00, 1.00),
-  ('Z-SLR-003', 'SLR', 'String Inverter — 7.6kW', 'EA', 2200.00, 1800.00, 350.00, 50.00),
-  ('Z-SLR-004', 'SLR', 'Microinverter — Per Panel', 'EA', 280.00, 200.00, 60.00, 20.00),
-  ('Z-SLR-005', 'SLR', 'Battery Storage — 10kWh', 'EA', 8500.00, 7000.00, 1200.00, 300.00),
-  ('Z-SLR-006', 'SLR', 'AC/DC Disconnect Switch', 'EA', 185.00, 120.00, 55.00, 10.00),
-  ('Z-SLR-007', 'SLR', 'Conduit Run — EMT', 'LF', 8.50, 3.50, 4.00, 1.00),
-  ('Z-SLR-008', 'SLR', 'Meter/Net Metering Setup', 'EA', 450.00, 150.00, 250.00, 50.00),
-  ('Z-SLR-009', 'SLR', 'Roof Penetration Flashing', 'EA', 35.00, 15.00, 15.00, 5.00),
-  ('Z-SLR-010', 'SLR', 'Monitoring System Setup', 'EA', 200.00, 100.00, 80.00, 20.00),
-
+  ('Z-SLR-001', 'SLR', 'Solar Panel — 400W Monocrystalline', 'EA', 'solar'),
+  ('Z-SLR-002', 'SLR', 'Roof Racking System — Rail Mount', 'LF', 'solar'),
+  ('Z-SLR-003', 'SLR', 'String Inverter — 7.6kW', 'EA', 'solar'),
+  ('Z-SLR-004', 'SLR', 'Microinverter — Per Panel', 'EA', 'solar'),
+  ('Z-SLR-005', 'SLR', 'Battery Storage — 10kWh', 'EA', 'solar'),
+  ('Z-SLR-006', 'SLR', 'AC/DC Disconnect Switch', 'EA', 'solar'),
+  ('Z-SLR-007', 'SLR', 'Conduit Run — EMT', 'LF', 'solar'),
+  ('Z-SLR-008', 'SLR', 'Meter/Net Metering Setup', 'EA', 'solar'),
+  ('Z-SLR-009', 'SLR', 'Roof Penetration Flashing', 'EA', 'solar'),
+  ('Z-SLR-010', 'SLR', 'Monitoring System Setup', 'EA', 'solar'),
   -- Fencing (FNC)
-  ('Z-FNC-001', 'FNC', 'Wood Privacy Fence — 6ft Cedar', 'LF', 38.00, 22.00, 14.00, 2.00),
-  ('Z-FNC-002', 'FNC', 'Wood Picket Fence — 4ft', 'LF', 28.00, 16.00, 10.00, 2.00),
-  ('Z-FNC-003', 'FNC', 'Vinyl Privacy Fence — 6ft', 'LF', 42.00, 28.00, 12.00, 2.00),
-  ('Z-FNC-004', 'FNC', 'Chain Link Fence — 4ft', 'LF', 18.00, 10.00, 6.00, 2.00),
-  ('Z-FNC-005', 'FNC', 'Chain Link Fence — 6ft', 'LF', 24.00, 14.00, 8.00, 2.00),
-  ('Z-FNC-006', 'FNC', 'Wrought Iron Fence — 4ft', 'LF', 55.00, 35.00, 15.00, 5.00),
-  ('Z-FNC-007', 'FNC', 'Aluminum Fence Panel — 4ft', 'LF', 45.00, 30.00, 12.00, 3.00),
-  ('Z-FNC-008', 'FNC', 'Fence Post — Wood 4x4', 'EA', 25.00, 12.00, 10.00, 3.00),
-  ('Z-FNC-009', 'FNC', 'Fence Post — Steel', 'EA', 35.00, 20.00, 12.00, 3.00),
-  ('Z-FNC-010', 'FNC', 'Gate — Standard Walk', 'EA', 175.00, 100.00, 60.00, 15.00),
-  ('Z-FNC-011', 'FNC', 'Gate — Double Drive', 'EA', 450.00, 280.00, 140.00, 30.00),
-  ('Z-FNC-012', 'FNC', 'Fence Removal — Existing', 'LF', 5.00, 0.00, 4.00, 1.00),
-
+  ('Z-FNC-001', 'FNC', 'Wood Privacy Fence — 6ft Cedar', 'LF', 'fencing'),
+  ('Z-FNC-002', 'FNC', 'Wood Picket Fence — 4ft', 'LF', 'fencing'),
+  ('Z-FNC-003', 'FNC', 'Vinyl Privacy Fence — 6ft', 'LF', 'fencing'),
+  ('Z-FNC-004', 'FNC', 'Chain Link Fence — 4ft', 'LF', 'fencing'),
+  ('Z-FNC-005', 'FNC', 'Chain Link Fence — 6ft', 'LF', 'fencing'),
+  ('Z-FNC-006', 'FNC', 'Wrought Iron Fence — 4ft', 'LF', 'fencing'),
+  ('Z-FNC-007', 'FNC', 'Aluminum Fence Panel — 4ft', 'LF', 'fencing'),
+  ('Z-FNC-008', 'FNC', 'Fence Post — Wood 4x4', 'EA', 'fencing'),
+  ('Z-FNC-009', 'FNC', 'Fence Post — Steel', 'EA', 'fencing'),
+  ('Z-FNC-010', 'FNC', 'Gate — Standard Walk', 'EA', 'fencing'),
+  ('Z-FNC-011', 'FNC', 'Gate — Double Drive', 'EA', 'fencing'),
+  ('Z-FNC-012', 'FNC', 'Fence Removal — Existing', 'LF', 'fencing'),
   -- Paving (PVG)
-  ('Z-PVG-001', 'PVG', 'Asphalt Paving — Driveway', 'SF', 5.50, 2.50, 1.50, 1.50),
-  ('Z-PVG-002', 'PVG', 'Asphalt Seal Coat', 'SF', 0.85, 0.35, 0.30, 0.20),
-  ('Z-PVG-003', 'PVG', 'Concrete Pavers — Standard', 'SF', 14.00, 8.00, 4.50, 1.50),
-  ('Z-PVG-004', 'PVG', 'Brick Pavers — Herringbone', 'SF', 18.00, 10.00, 6.00, 2.00),
-  ('Z-PVG-005', 'PVG', 'Paver Base Prep — Gravel + Sand', 'SF', 3.50, 1.50, 1.00, 1.00),
-  ('Z-PVG-006', 'PVG', 'Edging — Paver Restraint', 'LF', 4.00, 2.00, 1.50, 0.50),
-  ('Z-PVG-007', 'PVG', 'Polymeric Sand — Joint Fill', 'SF', 1.20, 0.70, 0.30, 0.20),
-  ('Z-PVG-008', 'PVG', 'Asphalt Patch/Repair', 'SF', 8.00, 3.00, 3.00, 2.00),
-
+  ('Z-PVG-001', 'PVG', 'Asphalt Paving — Driveway', 'SF', 'paving'),
+  ('Z-PVG-002', 'PVG', 'Asphalt Seal Coat', 'SF', 'paving'),
+  ('Z-PVG-003', 'PVG', 'Concrete Pavers — Standard', 'SF', 'paving'),
+  ('Z-PVG-004', 'PVG', 'Brick Pavers — Herringbone', 'SF', 'paving'),
+  ('Z-PVG-005', 'PVG', 'Paver Base Prep — Gravel + Sand', 'SF', 'paving'),
+  ('Z-PVG-006', 'PVG', 'Edging — Paver Restraint', 'LF', 'paving'),
+  ('Z-PVG-007', 'PVG', 'Polymeric Sand — Joint Fill', 'SF', 'paving'),
+  ('Z-PVG-008', 'PVG', 'Asphalt Patch/Repair', 'SF', 'paving'),
   -- General Remodel (GRM)
-  ('Z-GRM-001', 'GRM', 'Project Management — Per Week', 'EA', 1500.00, 0.00, 1500.00, 0.00),
-  ('Z-GRM-002', 'GRM', 'Permit Filing + Fee', 'EA', 500.00, 350.00, 150.00, 0.00),
-  ('Z-GRM-003', 'GRM', 'Temporary Protection — Floors', 'SF', 0.75, 0.50, 0.20, 0.05),
-  ('Z-GRM-004', 'GRM', 'Temporary Protection — Walls', 'SF', 0.50, 0.30, 0.15, 0.05),
-  ('Z-GRM-005', 'GRM', 'Dust Barrier / Containment', 'EA', 350.00, 150.00, 180.00, 20.00),
-  ('Z-GRM-006', 'GRM', 'Dumpster Rental — 20yd', 'DA', 450.00, 400.00, 50.00, 0.00),
-  ('Z-GRM-007', 'GRM', 'Dumpster Rental — 30yd', 'DA', 550.00, 500.00, 50.00, 0.00),
-  ('Z-GRM-008', 'GRM', 'Final Clean — Post-Construction', 'SF', 0.50, 0.10, 0.35, 0.05),
-
+  ('Z-GRM-001', 'GRM', 'Project Management — Per Week', 'EA', 'general'),
+  ('Z-GRM-002', 'GRM', 'Permit Filing + Fee', 'EA', 'general'),
+  ('Z-GRM-003', 'GRM', 'Temporary Protection — Floors', 'SF', 'general'),
+  ('Z-GRM-004', 'GRM', 'Temporary Protection — Walls', 'SF', 'general'),
+  ('Z-GRM-005', 'GRM', 'Dust Barrier / Containment', 'EA', 'general'),
+  ('Z-GRM-006', 'GRM', 'Dumpster Rental — 20yd', 'DA', 'general'),
+  ('Z-GRM-007', 'GRM', 'Dumpster Rental — 30yd', 'DA', 'general'),
+  ('Z-GRM-008', 'GRM', 'Final Clean — Post-Construction', 'SF', 'general'),
   -- Windows & Doors (WND)
-  ('Z-WND-001', 'WND', 'Vinyl Window — Double Hung Standard', 'EA', 450.00, 300.00, 130.00, 20.00),
-  ('Z-WND-002', 'WND', 'Vinyl Window — Sliding', 'EA', 400.00, 260.00, 120.00, 20.00),
-  ('Z-WND-003', 'WND', 'Vinyl Window — Picture/Fixed', 'EA', 350.00, 230.00, 100.00, 20.00),
-  ('Z-WND-004', 'WND', 'Egress Window — Basement', 'EA', 2800.00, 1800.00, 800.00, 200.00),
-  ('Z-WND-005', 'WND', 'Entry Door — Fiberglass', 'EA', 1200.00, 800.00, 350.00, 50.00),
-  ('Z-WND-006', 'WND', 'Entry Door — Steel', 'EA', 900.00, 600.00, 250.00, 50.00),
-  ('Z-WND-007', 'WND', 'Sliding Patio Door', 'EA', 1500.00, 1000.00, 400.00, 100.00),
-  ('Z-WND-008', 'WND', 'French Door Set', 'EA', 2200.00, 1500.00, 600.00, 100.00),
-  ('Z-WND-009', 'WND', 'Storm Door', 'EA', 450.00, 300.00, 130.00, 20.00),
-  ('Z-WND-010', 'WND', 'Window Trim — Interior', 'LF', 6.00, 3.00, 2.50, 0.50),
-
+  ('Z-WND-001', 'WND', 'Vinyl Window — Double Hung Standard', 'EA', 'windows_doors'),
+  ('Z-WND-002', 'WND', 'Vinyl Window — Sliding', 'EA', 'windows_doors'),
+  ('Z-WND-003', 'WND', 'Vinyl Window — Picture/Fixed', 'EA', 'windows_doors'),
+  ('Z-WND-004', 'WND', 'Egress Window — Basement', 'EA', 'windows_doors'),
+  ('Z-WND-005', 'WND', 'Entry Door — Fiberglass', 'EA', 'windows_doors'),
+  ('Z-WND-006', 'WND', 'Entry Door — Steel', 'EA', 'windows_doors'),
+  ('Z-WND-007', 'WND', 'Sliding Patio Door', 'EA', 'windows_doors'),
+  ('Z-WND-008', 'WND', 'French Door Set', 'EA', 'windows_doors'),
+  ('Z-WND-009', 'WND', 'Storm Door', 'EA', 'windows_doors'),
+  ('Z-WND-010', 'WND', 'Window Trim — Interior', 'LF', 'windows_doors'),
   -- Fire/Smoke Restoration (FRS)
-  ('Z-FRS-001', 'FRS', 'Smoke/Soot Cleaning — Walls', 'SF', 3.50, 0.50, 2.50, 0.50),
-  ('Z-FRS-002', 'FRS', 'Smoke/Soot Cleaning — Ceiling', 'SF', 4.00, 0.50, 3.00, 0.50),
-  ('Z-FRS-003', 'FRS', 'Thermal Fogging — Odor', 'SF', 1.50, 0.50, 0.50, 0.50),
-  ('Z-FRS-004', 'FRS', 'Ozone Treatment — Room', 'EA', 350.00, 50.00, 100.00, 200.00),
-  ('Z-FRS-005', 'FRS', 'Contents Pack-Out', 'EA', 2500.00, 200.00, 2000.00, 300.00),
-  ('Z-FRS-006', 'FRS', 'Structural Char Removal', 'SF', 5.00, 0.50, 3.50, 1.00),
-  ('Z-FRS-007', 'FRS', 'Air Scrubber — HEPA', 'DA', 75.00, 0.00, 15.00, 60.00),
-  ('Z-FRS-008', 'FRS', 'Board-Up Service', 'EA', 500.00, 200.00, 250.00, 50.00),
-
+  ('Z-FRS-001', 'FRS', 'Smoke/Soot Cleaning — Walls', 'SF', 'fire_restoration'),
+  ('Z-FRS-002', 'FRS', 'Smoke/Soot Cleaning — Ceiling', 'SF', 'fire_restoration'),
+  ('Z-FRS-003', 'FRS', 'Thermal Fogging — Odor', 'SF', 'fire_restoration'),
+  ('Z-FRS-004', 'FRS', 'Ozone Treatment — Room', 'EA', 'fire_restoration'),
+  ('Z-FRS-005', 'FRS', 'Contents Pack-Out', 'EA', 'fire_restoration'),
+  ('Z-FRS-006', 'FRS', 'Structural Char Removal', 'SF', 'fire_restoration'),
+  ('Z-FRS-007', 'FRS', 'Air Scrubber — HEPA', 'DA', 'fire_restoration'),
+  ('Z-FRS-008', 'FRS', 'Board-Up Service', 'EA', 'fire_restoration'),
   -- Mold Remediation (MLB)
-  ('Z-MLB-001', 'MLB', 'Mold Assessment — Visual + Moisture', 'EA', 450.00, 50.00, 350.00, 50.00),
-  ('Z-MLB-002', 'MLB', 'Air Quality Testing', 'EA', 350.00, 100.00, 200.00, 50.00),
-  ('Z-MLB-003', 'MLB', 'Containment Setup — Full', 'EA', 800.00, 300.00, 400.00, 100.00),
-  ('Z-MLB-004', 'MLB', 'Mold Removal — Surface', 'SF', 8.00, 1.00, 5.50, 1.50),
-  ('Z-MLB-005', 'MLB', 'Mold Removal — Behind Walls', 'SF', 18.00, 2.00, 12.00, 4.00),
-  ('Z-MLB-006', 'MLB', 'HEPA Vacuuming', 'SF', 2.00, 0.20, 1.00, 0.80),
-  ('Z-MLB-007', 'MLB', 'Antimicrobial Treatment', 'SF', 2.50, 0.80, 1.20, 0.50),
-  ('Z-MLB-008', 'MLB', 'Post-Remediation Verification', 'EA', 400.00, 100.00, 250.00, 50.00),
-
+  ('Z-MLB-001', 'MLB', 'Mold Assessment — Visual + Moisture', 'EA', 'mold'),
+  ('Z-MLB-002', 'MLB', 'Air Quality Testing', 'EA', 'mold'),
+  ('Z-MLB-003', 'MLB', 'Containment Setup — Full', 'EA', 'mold'),
+  ('Z-MLB-004', 'MLB', 'Mold Removal — Surface', 'SF', 'mold'),
+  ('Z-MLB-005', 'MLB', 'Mold Removal — Behind Walls', 'SF', 'mold'),
+  ('Z-MLB-006', 'MLB', 'HEPA Vacuuming', 'SF', 'mold'),
+  ('Z-MLB-007', 'MLB', 'Antimicrobial Treatment', 'SF', 'mold'),
+  ('Z-MLB-008', 'MLB', 'Post-Remediation Verification', 'EA', 'mold'),
   -- Landscaping expanded items (LND already exists)
-  ('Z-LND-010', 'LND', 'Sod Installation', 'SF', 2.50, 1.50, 0.80, 0.20),
-  ('Z-LND-011', 'LND', 'Mulch — Bed Coverage', 'CY', 85.00, 45.00, 30.00, 10.00),
-  ('Z-LND-012', 'LND', 'Retaining Wall — Block', 'SF', 35.00, 18.00, 12.00, 5.00),
-  ('Z-LND-013', 'LND', 'French Drain', 'LF', 25.00, 10.00, 10.00, 5.00),
-  ('Z-LND-014', 'LND', 'Irrigation System — Per Zone', 'EA', 650.00, 350.00, 250.00, 50.00),
-  ('Z-LND-015', 'LND', 'Tree Removal — Small (<12in)', 'EA', 350.00, 0.00, 250.00, 100.00),
-  ('Z-LND-016', 'LND', 'Tree Removal — Large (>24in)', 'EA', 1500.00, 0.00, 900.00, 600.00),
-  ('Z-LND-017', 'LND', 'Grading — Rough', 'SF', 1.50, 0.00, 0.50, 1.00),
-
+  ('Z-LND-010', 'LND', 'Sod Installation', 'SF', 'landscaping'),
+  ('Z-LND-011', 'LND', 'Mulch — Bed Coverage', 'CY', 'landscaping'),
+  ('Z-LND-012', 'LND', 'Retaining Wall — Block', 'SF', 'landscaping'),
+  ('Z-LND-013', 'LND', 'French Drain', 'LF', 'landscaping'),
+  ('Z-LND-014', 'LND', 'Irrigation System — Per Zone', 'EA', 'landscaping'),
+  ('Z-LND-015', 'LND', 'Tree Removal — Small (<12in)', 'EA', 'landscaping'),
+  ('Z-LND-016', 'LND', 'Tree Removal — Large (>24in)', 'EA', 'landscaping'),
+  ('Z-LND-017', 'LND', 'Grading — Rough', 'SF', 'landscaping'),
   -- Gutters expanded items (GUT already exists)
-  ('Z-GUT-005', 'GUT', 'Seamless Aluminum Gutter — 5in', 'LF', 12.00, 6.00, 5.00, 1.00),
-  ('Z-GUT-006', 'GUT', 'Seamless Aluminum Gutter — 6in', 'LF', 15.00, 8.00, 6.00, 1.00),
-  ('Z-GUT-007', 'GUT', 'Copper Gutter — Half Round', 'LF', 40.00, 28.00, 10.00, 2.00),
-  ('Z-GUT-008', 'GUT', 'Gutter Guard — Mesh', 'LF', 10.00, 6.00, 3.50, 0.50),
-  ('Z-GUT-009', 'GUT', 'Downspout Extension', 'EA', 25.00, 12.00, 10.00, 3.00),
-  ('Z-GUT-010', 'GUT', 'Gutter Cleaning', 'LF', 2.50, 0.00, 2.00, 0.50)
-ON CONFLICT (zafto_code) DO NOTHING;
+  ('Z-GUT-005', 'GUT', 'Seamless Aluminum Gutter — 5in', 'LF', 'gutters'),
+  ('Z-GUT-006', 'GUT', 'Seamless Aluminum Gutter — 6in', 'LF', 'gutters'),
+  ('Z-GUT-007', 'GUT', 'Copper Gutter — Half Round', 'LF', 'gutters'),
+  ('Z-GUT-008', 'GUT', 'Gutter Guard — Mesh', 'LF', 'gutters'),
+  ('Z-GUT-009', 'GUT', 'Downspout Extension', 'EA', 'gutters'),
+  ('Z-GUT-010', 'GUT', 'Gutter Cleaning', 'LF', 'gutters')
+) AS v(zafto_code, cat_code, description, unit_code, trade)
+JOIN estimate_categories ec ON ec.code = v.cat_code
+WHERE NOT EXISTS (
+  SELECT 1 FROM estimate_items ei WHERE ei.zafto_code = v.zafto_code AND ei.company_id IS NULL
+);
 
 -- ============================================================
--- 4. Add labor rates for new trades
+-- 4. Add labor rates for new trades (estimate_labor_components)
 -- ============================================================
-INSERT INTO estimate_labor_rates (code, trade, description, base_rate, markup_rate, burden_percent) VALUES
-  ('SLR-BASE', 'solar', 'Solar installer', 26.00, 14.00, 32.0),
-  ('SLR-ELEC', 'solar', 'Solar electrician', 32.00, 16.00, 32.0),
-  ('FNC-BASE', 'fencing', 'Fence installer', 22.00, 12.00, 32.0),
-  ('PVG-BASE', 'paving', 'Paving crew', 24.00, 13.00, 32.0),
-  ('PVG-OPER', 'paving', 'Equipment operator', 28.00, 15.00, 32.0),
-  ('GRM-PM', 'general', 'Project manager', 35.00, 18.00, 32.0),
-  ('GRM-LEAD', 'general', 'Lead carpenter', 30.00, 16.00, 32.0),
-  ('FRS-BASE', 'fire_restoration', 'Fire restoration tech', 24.00, 13.00, 32.0),
-  ('FRS-CERT', 'fire_restoration', 'Certified fire restoration', 30.00, 16.00, 32.0),
-  ('MLB-BASE', 'mold', 'Mold remediation tech', 25.00, 14.00, 32.0),
-  ('MLB-CERT', 'mold', 'Certified mold specialist', 32.00, 17.00, 32.0)
-ON CONFLICT (code) DO NOTHING;
+INSERT INTO estimate_labor_components (code, trade, description, base_rate, markup, burden_pct, source)
+SELECT v.code, v.trade, v.description, v.base_rate, v.markup, v.burden_pct, 'public'
+FROM (VALUES
+  ('SLR-BASE', 'solar', 'Solar installer', 26.00::decimal, 14.00::decimal, 0.3200::decimal),
+  ('SLR-ELEC', 'solar', 'Solar electrician', 32.00, 16.00, 0.3200),
+  ('FNC-BASE', 'fencing', 'Fence installer', 22.00, 12.00, 0.3200),
+  ('PVG-BASE', 'paving', 'Paving crew', 24.00, 13.00, 0.3200),
+  ('PVG-OPER', 'paving', 'Equipment operator', 28.00, 15.00, 0.3200),
+  ('GRM-PM', 'general', 'Project manager', 35.00, 18.00, 0.3200),
+  ('GRM-LEAD', 'general', 'Lead carpenter', 30.00, 16.00, 0.3200),
+  ('FRS-BASE', 'fire_restoration', 'Fire restoration tech', 24.00, 13.00, 0.3200),
+  ('FRS-CERT', 'fire_restoration', 'Certified fire restoration', 30.00, 16.00, 0.3200),
+  ('MLB-BASE', 'mold', 'Mold remediation tech', 25.00, 14.00, 0.3200),
+  ('MLB-CERT', 'mold', 'Certified mold specialist', 32.00, 17.00, 0.3200)
+) AS v(code, trade, description, base_rate, markup, burden_pct)
+WHERE NOT EXISTS (
+  SELECT 1 FROM estimate_labor_components elc WHERE elc.code = v.code AND elc.company_id IS NULL
+);
 
 -- ============================================================
 -- 5. Add additional completion checklists for missing trades

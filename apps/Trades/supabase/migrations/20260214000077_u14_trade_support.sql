@@ -172,4 +172,6 @@ END;
 $$;
 
 -- Audit trigger
-SELECT audit_trigger_fn('completion_checklists');
+CREATE TRIGGER audit_completion_checklists
+  AFTER INSERT OR UPDATE OR DELETE ON completion_checklists
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();

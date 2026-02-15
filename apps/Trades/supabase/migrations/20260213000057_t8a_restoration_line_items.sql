@@ -87,6 +87,13 @@ CREATE TRIGGER rli_updated BEFORE UPDATE ON restoration_line_items FOR EACH ROW 
 CREATE TRIGGER rli_audit AFTER INSERT OR UPDATE OR DELETE ON restoration_line_items FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
 
 -- ============================================================================
+-- FIX UNIT CHECK: Add 'SQ' (roofing square) before seed data
+-- ============================================================================
+ALTER TABLE restoration_line_items DROP CONSTRAINT restoration_line_items_unit_check;
+ALTER TABLE restoration_line_items ADD CONSTRAINT restoration_line_items_unit_check
+  CHECK (unit IN ('SF', 'LF', 'SY', 'EA', 'HR', 'DY', 'WK', 'MO', 'CY', 'GAL', 'LS', 'SQ'));
+
+-- ============================================================================
 -- SEED: ~50 system restoration line items
 -- ============================================================================
 
@@ -161,12 +168,7 @@ INSERT INTO restoration_line_items (company_id, zafto_code, category, name, desc
 (NULL, 'Z-MLD-002', 'mold_remediation', 'Mold remediation - surface', 'HEPA vacuum + antimicrobial treatment of mold-affected surfaces', 'SF', 4.50, 'MLD', NULL, true, 91),
 (NULL, 'Z-MLD-003', 'mold_remediation', 'Mold remediation - structural', 'Remove and replace mold-damaged structural materials', 'SF', 8.00, 'MLD', NULL, true, 92);
 
--- SQ unit was used but not in check — add it
--- Note: SQ (roofing square = 100 SF) was used for tarp roof. This is handled as a known unit.
--- If needed, alter the CHECK constraint:
-ALTER TABLE restoration_line_items DROP CONSTRAINT restoration_line_items_unit_check;
-ALTER TABLE restoration_line_items ADD CONSTRAINT restoration_line_items_unit_check
-  CHECK (unit IN ('SF', 'LF', 'SY', 'EA', 'HR', 'DY', 'WK', 'MO', 'CY', 'GAL', 'LS', 'SQ'));
+-- SQ unit constraint already fixed above before seed data
 
 -- Also add xact_code_mapping column to estimate_line_items for export reference
 -- (Only if estimate_line_items table exists)

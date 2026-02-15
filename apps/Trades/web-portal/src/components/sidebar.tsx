@@ -177,7 +177,7 @@ const navigationGroups: NavGroup[] = [
       { name: 'Moisture Readings', href: '/dashboard/moisture-readings', icon: Droplets },
       { name: 'Drying Logs', href: '/dashboard/drying-logs', icon: Wind },
       { name: 'Site Surveys', href: '/dashboard/site-surveys', icon: MapPin },
-      { name: 'Sketch + Bid', href: '/dashboard/sketch-bid', icon: PenTool },
+      { name: 'Sketch Engine', href: '/dashboard/sketch-engine', icon: PenTool },
     ],
   },
   {

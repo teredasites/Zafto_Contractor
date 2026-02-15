@@ -1,6 +1,6 @@
 'use client';
 
-// ZAFTO Sketch & Bid Page — SK8 Canvas Editor + Listing
+// ZAFTO Sketch Engine — SK8 Canvas Editor + Listing
 // Full Konva.js canvas editor backed by property_floor_plans table.
 // SK7: History panel, multi-floor tabs, photo pin integration.
 // SK8: Generate Estimate modal (room measurements → D8 estimate areas + line items).
@@ -19,12 +19,17 @@ import {
   Calculator,
   Download,
   LayoutTemplate,
+  Layers,
+  Box,
+  RefreshCw,
+  Map,
+  Maximize2,
+  Grid3X3,
 } from 'lucide-react';
 import type Konva from 'konva';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { CommandPalette } from '@/components/command-palette';
 import {
   useFloorPlan,
   useFloorPlanList,
@@ -138,11 +143,26 @@ const statusConfig: Record<
   },
 };
 
+const SK_FEATURES = [
+  { icon: <PenTool className="h-5 w-5" />, label: 'Draw Tools', detail: 'Walls, doors, windows, rooms — click-to-draw precision', color: 'text-emerald-400 bg-emerald-500/10' },
+  { icon: <RulerIcon className="h-5 w-5" />, label: 'Auto Measurements', detail: 'Live sqft, perimeter, and wall area as you draw', color: 'text-blue-400 bg-blue-500/10' },
+  { icon: <Layers className="h-5 w-5" />, label: 'Trade Layers', detail: 'Electrical, plumbing, HVAC, damage overlays per trade', color: 'text-purple-400 bg-purple-500/10' },
+  { icon: <Box className="h-5 w-5" />, label: '3D Visualization', detail: 'Instant 3D walkthrough preview from your floor plan', color: 'text-orange-400 bg-orange-500/10' },
+  { icon: <Camera className="h-5 w-5" />, label: 'Photo Pins', detail: 'Pin geolocated jobsite photos directly on the plan', color: 'text-pink-400 bg-pink-500/10' },
+  { icon: <Map className="h-5 w-5" />, label: 'Site Plans', detail: 'Outdoor structures, fencing, landscaping, driveways', color: 'text-teal-400 bg-teal-500/10' },
+  { icon: <LayoutTemplate className="h-5 w-5" />, label: 'Templates', detail: 'Pre-built residential and commercial starting layouts', color: 'text-amber-400 bg-amber-500/10' },
+  { icon: <Calculator className="h-5 w-5" />, label: 'Auto Estimates', detail: 'Generate line-item estimates from room measurements', color: 'text-cyan-400 bg-cyan-500/10' },
+  { icon: <Maximize2 className="h-5 w-5" />, label: 'Rulers & Grid', detail: 'Imperial/metric rulers with snap-to-grid alignment', color: 'text-indigo-400 bg-indigo-500/10' },
+  { icon: <History className="h-5 w-5" />, label: 'Version History', detail: 'Named snapshots — restore any previous version', color: 'text-rose-400 bg-rose-500/10' },
+  { icon: <Grid3X3 className="h-5 w-5" />, label: 'Multi-Floor', detail: 'Separate floor tabs for multi-story buildings', color: 'text-lime-400 bg-lime-500/10' },
+  { icon: <Download className="h-5 w-5" />, label: 'Export', detail: 'PDF, PNG, and JSON output for clients and records', color: 'text-sky-400 bg-sky-500/10' },
+];
+
 // =============================================================================
 // MAIN PAGE
 // =============================================================================
 
-export default function SketchBidPage() {
+export default function SketchEnginePage() {
   const [activeView, setActiveView] = useState<'list' | 'editor'>('list');
   const [activePlanId, setActivePlanId] = useState<string | null>(null);
 
@@ -172,7 +192,7 @@ function ListView({
 }: {
   onOpenEditor: (planId: string) => void;
 }) {
-  const { plans, loading, error } = useFloorPlanList();
+  const { plans, loading, error, refetch } = useFloorPlanList();
   const { createPlan } = useFloorPlan(null);
   const [creating, setCreating] = useState(false);
 
@@ -190,63 +210,112 @@ function ListView({
 
   return (
     <div className="p-6 space-y-6">
-      <CommandPalette />
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold text-zinc-100">
-            Sketch & Bid
-          </h1>
-          <p className="text-sm text-zinc-400 mt-1">
-            Floor plans, room measurements, and bid estimates
-          </p>
+      {/* Hero Header */}
+      <div className="relative overflow-hidden rounded-xl border border-zinc-800 bg-gradient-to-br from-zinc-900 to-emerald-950/20 p-6">
+        <div className="relative z-10">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+                <PenTool size={20} className="text-emerald-400" />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-zinc-100">Sketch Engine</h1>
+                <p className="text-sm text-zinc-400">Professional floor plans, site plans, and auto-generated estimates</p>
+              </div>
+            </div>
+            <Button
+              onClick={handleCreate}
+              disabled={creating}
+              className="bg-emerald-600 hover:bg-emerald-500 text-white"
+            >
+              {creating ? (
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+              ) : (
+                <Plus className="h-4 w-4 mr-2" />
+              )}
+              New Floor Plan
+            </Button>
+          </div>
         </div>
-        <Button
-          onClick={handleCreate}
-          disabled={creating}
-          className="bg-emerald-600 hover:bg-emerald-500 text-white"
-        >
-          {creating ? (
-            <Loader2 className="h-4 w-4 animate-spin mr-2" />
-          ) : (
-            <Plus className="h-4 w-4 mr-2" />
-          )}
-          New Floor Plan
-        </Button>
+        <div className="absolute -right-8 -top-8 w-36 h-36 rounded-full bg-emerald-500/5" />
+        <div className="absolute -right-4 -bottom-10 w-28 h-28 rounded-full bg-emerald-500/5" />
+      </div>
+
+      {/* Error Banner (small, doesn't block content) */}
+      {error && (
+        <div className="flex items-center justify-between bg-red-900/20 border border-red-800/50 rounded-lg px-4 py-2.5">
+          <p className="text-sm text-red-400">{error}</p>
+          <button
+            onClick={refetch}
+            className="flex items-center gap-1.5 text-xs text-red-400 hover:text-red-300 transition-colors"
+          >
+            <RefreshCw size={12} />
+            Retry
+          </button>
+        </div>
+      )}
+
+      {/* Capabilities Grid — ALWAYS visible */}
+      <div>
+        <h2 className="text-sm font-medium text-zinc-400 mb-3 uppercase tracking-wider">Engine Capabilities</h2>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
+          {SK_FEATURES.map((feat) => {
+            const [textColor, bgColor] = feat.color.split(' ');
+            return (
+              <div key={feat.label} className="p-3 rounded-lg border border-zinc-800 bg-zinc-900/50 hover:border-zinc-700 transition-colors group">
+                <div className={`w-8 h-8 mx-auto mb-2 rounded-lg ${bgColor} flex items-center justify-center`}>
+                  <span className={textColor}>{feat.icon}</span>
+                </div>
+                <p className="text-xs font-medium text-zinc-200 text-center">{feat.label}</p>
+                <p className="text-[10px] text-zinc-500 mt-0.5 text-center leading-tight">{feat.detail}</p>
+              </div>
+            );
+          })}
+        </div>
       </div>
 
       {/* Loading */}
       {loading && (
-        <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
+        <div className="flex items-center justify-center py-8">
+          <Loader2 className="h-5 w-5 animate-spin text-zinc-500" />
+          <span className="ml-2 text-sm text-zinc-500">Loading floor plans...</span>
         </div>
       )}
 
-      {/* Error */}
-      {error && (
-        <div className="bg-red-900/20 border border-red-800 rounded-lg p-4 text-sm text-red-400">
-          {error}
+      {/* Your Floor Plans — shows when plans exist */}
+      {!loading && plans.length > 0 && (
+        <div>
+          <h2 className="text-sm font-medium text-zinc-400 mb-3 uppercase tracking-wider">
+            Your Floor Plans ({plans.length})
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {plans.map((plan) => (
+              <PlanCard
+                key={plan.id}
+                plan={plan}
+                onOpen={() => onOpenEditor(plan.id)}
+              />
+            ))}
+          </div>
         </div>
       )}
 
-      {/* Floor plan list */}
-      {!loading && !error && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {plans.map((plan) => (
-            <PlanCard
-              key={plan.id}
-              plan={plan}
-              onOpen={() => onOpenEditor(plan.id)}
-            />
-          ))}
-          {plans.length === 0 && (
-            <div className="col-span-full text-center py-12">
-              <PenTool className="h-8 w-8 text-zinc-600 mx-auto mb-3" />
-              <p className="text-sm text-zinc-400">
-                No floor plans yet. Create one to get started.
-              </p>
-            </div>
-          )}
+      {/* Empty State — only when no plans and no error */}
+      {!loading && !error && plans.length === 0 && (
+        <div className="text-center py-8 rounded-xl border border-dashed border-zinc-700 bg-zinc-900/30">
+          <PenTool className="h-10 w-10 text-emerald-500 mx-auto mb-3" />
+          <h3 className="text-base font-semibold text-zinc-100 mb-1">No floor plans yet</h3>
+          <p className="text-sm text-zinc-400 max-w-md mx-auto">
+            Create your first floor plan to start drawing walls, placing doors and windows, defining rooms, and generating estimates.
+          </p>
+          <button
+            onClick={handleCreate}
+            disabled={creating}
+            className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50"
+          >
+            {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
+            Create Your First Floor Plan
+          </button>
         </div>
       )}
     </div>
@@ -364,11 +433,11 @@ function EditorView({
         if (d && Array.isArray(d.walls) && Array.isArray(d.rooms)) {
           setPlanData(d);
         } else {
-          console.error('[SketchBid] Invalid plan data structure, using empty plan');
+          console.error('[SketchEngine] Invalid plan data structure, using empty plan');
           setPlanData(createEmptyFloorPlan());
         }
       } catch {
-        console.error('[SketchBid] Failed to load plan data, using empty plan');
+        console.error('[SketchEngine] Failed to load plan data, using empty plan');
         setPlanData(createEmptyFloorPlan());
       }
     }
@@ -948,6 +1017,32 @@ function EditorView({
                     height={canvasSize.height}
                   />
                 ) : (
+                  <>
+                  {planData.walls.length === 0 && (
+                    <div className="absolute inset-0 flex items-center justify-center z-[5] pointer-events-none">
+                      <div className="pointer-events-auto bg-white/95 backdrop-blur border border-gray-200 rounded-xl p-6 max-w-sm text-center shadow-lg">
+                        <PenTool className="h-8 w-8 text-emerald-500 mx-auto mb-3" />
+                        <h3 className="font-semibold text-gray-800 mb-2">Start Drawing</h3>
+                        <p className="text-sm text-gray-500 mb-4">
+                          Select the Wall tool from the toolbar on the left, then click on the canvas to draw walls. Close rooms to auto-calculate measurements.
+                        </p>
+                        <div className="flex gap-2 justify-center">
+                          <button
+                            onClick={() => handleToolChange('wall' as SketchTool)}
+                            className="px-3 py-1.5 bg-emerald-600 text-white text-sm rounded-md hover:bg-emerald-500 transition-colors"
+                          >
+                            Select Wall Tool
+                          </button>
+                          <button
+                            onClick={() => setShowTemplatePicker(true)}
+                            className="px-3 py-1.5 border border-gray-300 text-gray-700 text-sm rounded-md hover:bg-gray-50 transition-colors"
+                          >
+                            Use Template
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   <SketchCanvas
                     planData={planData}
                     editorState={editorState}
@@ -960,6 +1055,7 @@ function EditorView({
                     height={canvasSize.height}
                     externalStageRef={stageRef}
                   />
+                  </>
                 )}
               </>
             ) : (

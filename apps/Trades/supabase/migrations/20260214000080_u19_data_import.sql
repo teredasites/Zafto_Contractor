@@ -33,10 +33,15 @@ CREATE TABLE IF NOT EXISTS import_errors (
 );
 
 -- Add import_batch_id to importable tables for undo support
+-- Wrapped in DO blocks for tables that may not exist yet
 ALTER TABLE customers ADD COLUMN IF NOT EXISTS import_batch_id uuid REFERENCES import_batches(id);
 ALTER TABLE jobs ADD COLUMN IF NOT EXISTS import_batch_id uuid REFERENCES import_batches(id);
 ALTER TABLE invoices ADD COLUMN IF NOT EXISTS import_batch_id uuid REFERENCES import_batches(id);
-ALTER TABLE contacts ADD COLUMN IF NOT EXISTS import_batch_id uuid REFERENCES import_batches(id);
+DO $$ BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'contacts' AND table_schema = 'public') THEN
+    ALTER TABLE contacts ADD COLUMN IF NOT EXISTS import_batch_id uuid REFERENCES import_batches(id);
+  END IF;
+END $$;
 ALTER TABLE estimates ADD COLUMN IF NOT EXISTS import_batch_id uuid REFERENCES import_batches(id);
 ALTER TABLE vendors ADD COLUMN IF NOT EXISTS import_batch_id uuid REFERENCES import_batches(id);
 
