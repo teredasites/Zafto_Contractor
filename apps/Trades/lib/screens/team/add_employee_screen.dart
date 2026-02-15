@@ -218,18 +218,18 @@ class _AddEmployeeScreenState extends ConsumerState<AddEmployeeScreen> {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: colors.accentDanger.withValues(alpha: 0.1),
+        color: colors.accentError.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: colors.accentDanger.withValues(alpha: 0.3)),
+        border: Border.all(color: colors.accentError.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
-          Icon(LucideIcons.alertTriangle, size: 18, color: colors.accentDanger),
+          Icon(LucideIcons.alertTriangle, size: 18, color: colors.accentError),
           const SizedBox(width: 10),
-          Expanded(child: Text(_errorMessage!, style: TextStyle(fontSize: 13, color: colors.accentDanger))),
+          Expanded(child: Text(_errorMessage!, style: TextStyle(fontSize: 13, color: colors.accentError))),
           GestureDetector(
             onTap: () => setState(() => _errorMessage = null),
-            child: Icon(LucideIcons.x, size: 16, color: colors.accentDanger),
+            child: Icon(LucideIcons.x, size: 16, color: colors.accentError),
           ),
         ],
       ),
