@@ -12256,6 +12256,27 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - [ ] Build + execute corrections for any SHALLOW/STUB items found
 - [ ] Commit: `[DEPTH23] Codebase sweep — unlisted features discovered and corrected`
 
+### DEPTH24 — Contractor Needs Validation: Is What We Built What They Actually Need? (~14h)
+**Goal:** We built what we THINK contractors need. But do they? This sprint is deep market research AGAINST our actual feature set. Interview data, competitor analysis, trade forum complaints, subreddit analysis, app store reviews of competitors, contractor YouTube channels, trade association publications — cross-reference ALL of it against what Zafto actually offers. Find the gaps between "what we built" and "what contractors are desperate for." Every trade. Every company size. Every use case. If a plumber in Miami and an electrician in Chicago and a GC in Denver all need something we don't have — that's a critical gap.
+- [ ] **Competitor feature matrix** — Pull complete feature lists from: Jobber, HousecallPro, ServiceTitan, FieldPulse, Workiz, Buildertrend, CoConstruct, Procore, Contractor Foreman, CompanyCam, Joist, Invoice2go. Map every feature against Zafto's feature set. Identify: features they ALL have that we're missing (table stakes), features only premium competitors have that we DO have (differentiators), features none of them have that we have (unique advantages)
+- [ ] **App store review mining** — Read 200+ 1-star and 2-star reviews of Jobber, HCP, ServiceTitan, FieldPulse on iOS App Store and Google Play. Extract: what features are users BEGGING for? What's broken that made them leave? What workflow is nobody getting right? Cross-reference against Zafto — do we solve these complaints?
+- [ ] **Trade forum analysis** — Research contractor forums, subreddits (r/electricians, r/HVAC, r/plumbing, r/Construction, r/HomeInspectors, r/pestcontrol, r/Roofing, r/Landscaping), Facebook groups, Contractor Talk forum. Find: "I wish my software could..." posts, "I switched from X because..." posts, "Does anyone know an app that..." posts. Document the top 50 unmet needs
+- [ ] **Trade-specific workflow validation** — For EACH of the 16 trades Zafto supports: document the daily workflow of a typical contractor in that trade. Map every step of their day against Zafto features. Identify: where does Zafto help? Where does it get in the way? Where is there no feature at all? Trades: electrical, HVAC, plumbing, roofing, solar, restoration (water/fire/mold), GC, remodeler, landscaping, painting, pest control, locksmith, garage door, appliance repair, welding, pool/spa
+- [ ] **Company size validation** — Validate features against 4 company sizes: solo (1 person, truck + phone), small (2-5 crew, 1 office person), medium (10-25 employees, dedicated office staff), large (50-100+, multi-branch, multiple trades). Each size has different needs: solo needs speed, large needs reporting/permissions. Does Zafto serve ALL sizes well?
+- [ ] **Use case gap analysis** — Document every real-world use case a contractor encounters and verify Zafto handles it:
+  - Emergency call at 2am (water damage, lockout, HVAC failure) — can tech create job from phone in < 60 seconds?
+  - Insurance adjuster visits job site — can contractor pull up all documentation instantly?
+  - Customer disputes invoice — can office show detailed breakdown with photos + time logs?
+  - New employee starts Monday — can admin onboard them in < 10 minutes?
+  - Tax season — can CPA export everything QuickBooks needs in one click?
+  - Contractor applies for bank loan — can they generate professional P&L + revenue reports instantly?
+  - Homeowner calls about warranty — can office pull up warranty terms + original job + photos in < 30 seconds?
+  - Multi-day project with 3 subcontractors — can GC track all progress, costs, and communication in one place?
+- [ ] **"Switching trigger" analysis** — Reference `memory/contractor-complaints-s99.md` (top 20 complaints, switching triggers). For EACH complaint: verify Zafto solves it. If not → create correction item
+- [ ] **Feature gap report** — Compile all gaps found. Categorize: CRITICAL (every competitor has it, contractors expect it), IMPORTANT (top competitors have it, would prevent switching), NICE-TO-HAVE (differentiator, not expected). Create correction sprints for CRITICAL and IMPORTANT gaps
+- [ ] **Build corrections for critical gaps** — Any feature that ALL competitors have and we're missing = build it this sprint. No excuses. These are table-stakes features
+- [ ] Commit: `[DEPTH24] Contractor needs validation — competitor matrix, review mining, workflow validation, gap fixes`
+
 ---
 
 ## PHASE SEC: SECURITY HARDENING & OPTIONAL SECURITY FEATURES (S125 audit findings)
@@ -12709,11 +12730,11 @@ When inspector takes a photo during inspection execution, add search bar to atta
 | **FIELD** | FIELD1-FIELD3 | ~36h | Missing field features: messaging, equipment checkout, team portal stubs |
 | **REST** | REST1-REST2 | ~20h | Restoration gaps: fire tools, mold remediation (IICRC S520) |
 | **NICHE** | NICHE1-NICHE2 | ~16h | Missing trade modules: pest control, service trades |
-| **DEPTH** | DEPTH1-DEPTH23 | ~292h | Full depth audit + corrections across every feature area |
+| **DEPTH** | DEPTH1-DEPTH24 | ~306h | Full depth audit + corrections + contractor needs validation across every feature area |
 | **SEC** | SEC1-SEC9 | ~76h | Security fortress: critical fixes, 2FA, biometrics, enterprise options, Hellhound, headers, WAF, dependency scanning, full pentest |
 | **ZERO** | ZERO1-ZERO9 | ~86h | Zero-defect validation: property testing, state machines, chaos engineering, 50K load test, fuzz testing, mutation testing, edge case gauntlet, triple-scan |
 | **LAUNCH** | LAUNCH1-LAUNCH7 | ~72h | Monitoring, legal, payments, i18n, accessibility, testing, App Store + onboarding wizard |
-| **Total** | **55 sprints** | **~598h** | — |
+| **Total** | **56 sprints** | **~612h** | — |
 
 **Execution order:** SEC1 + SEC6 + SEC7 + SEC8 (critical security — site is live) → LAUNCH1 (monitoring — need Sentry before building more) → FIELD → REST → NICHE → DEPTH1 through DEPTH23 → SEC2-SEC5 (2FA, biometrics, enterprise security, Hellhound) → LAUNCH2-LAUNCH6 (legal, payments, i18n, accessibility, testing) → Phase G (QA) → Phase JUR → Phase E (AI) → **SEC9 (full pentest)** → **ZERO1-ZERO8 (zero-defect validation — break everything, fix everything, prove it's flawless)** → LAUNCH7 (App Store + onboarding wizard — DEAD LAST) → SHIP
 
