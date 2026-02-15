@@ -277,6 +277,8 @@ class _RentScreenState extends ConsumerState<RentScreen> {
                     Navigator.pop(ctx);
                     ref.read(rentChargesProvider.notifier).recordPayment(
                       chargeId: charge.id,
+                      companyId: charge.companyId,
+                      tenantId: charge.tenantId,
                       amount: amount,
                       paymentMethod: method,
                       reference: referenceController.text.isNotEmpty

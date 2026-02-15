@@ -112,7 +112,7 @@ class RoleSwitcherScreen extends ConsumerWidget {
     return GestureDetector(
       onTap: () {
         HapticFeedback.lightImpact();
-        ref.read(currentRoleProvider.notifier).state = role;
+        ref.read(roleOverrideProvider.notifier).state = role;
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (_) => AppShell(role: role)),

@@ -116,6 +116,8 @@ class RentService {
   // Record a payment against a rent charge
   Future<void> recordPayment({
     required String chargeId,
+    required String companyId,
+    required String tenantId,
     required double amount,
     required String paymentMethod,
     String? reference,
@@ -123,10 +125,13 @@ class RentService {
   }) async {
     final payment = RentPayment(
       id: '',
+      companyId: companyId,
       rentChargeId: chargeId,
+      tenantId: tenantId,
       amount: amount,
       paymentMethod: paymentMethod,
-      paymentReference: reference,
+      status: 'completed',
+      sourceReference: reference,
       paymentDate: DateTime.now(),
       notes: notes,
       createdAt: DateTime.now(),
@@ -179,6 +184,8 @@ class RentChargesNotifier extends StateNotifier<AsyncValue<List<RentCharge>>> {
 
   Future<void> recordPayment({
     required String chargeId,
+    required String companyId,
+    required String tenantId,
     required double amount,
     required String paymentMethod,
     String? reference,
@@ -187,6 +194,8 @@ class RentChargesNotifier extends StateNotifier<AsyncValue<List<RentCharge>>> {
     try {
       await _service.recordPayment(
         chargeId: chargeId,
+        companyId: companyId,
+        tenantId: tenantId,
         amount: amount,
         paymentMethod: paymentMethod,
         reference: reference,
