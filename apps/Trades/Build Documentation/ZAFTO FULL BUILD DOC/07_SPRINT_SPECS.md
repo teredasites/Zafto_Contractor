@@ -11683,42 +11683,42 @@ Equipment lifecycle data + prediction engine tables.
 File: `lib/data/inspection_template_seeds.dart`
 
 Expand existing 13 templates to 40-70+ items each with real code references (NEC, IRC, IBC, OSHA CFR, NFPA, IECC, ADA):
-- [ ] Move-In Inspection — 8 sections: Exterior/Grounds, Kitchen, Living Areas, Bedrooms, Bathrooms, Laundry/Utility, Garage/Parking, Systems/Mechanical (~70 items)
-- [ ] OSHA Job Site Safety — 10 sections: add Crane/Rigging, Confined Spaces, Respiratory, Emergency Prep. CFR 1926 refs (~65 items)
-- [ ] Electrical Rough-In — 8 sections: add Dedicated Circuits (210.11), EV Ready (625), Swimming Pool/Spa (680), Low Voltage Boxes. NEC refs (~55 items)
-- [ ] Roofing Damage — 7 sections: add Siding Collateral, Documentation protocol. Per-test-square methodology (~50 items)
-- [ ] Fire & Life Safety — 7 sections: add Standpipe, Kitchen Hood Suppression, Emergency Power. NFPA refs (~50 items)
-- [ ] Plumbing Rough-In — 7 sections: add Water Heater, Fixtures, Backflow Prevention, Exterior. IPC/UPC refs (~50 items)
-- [ ] HVAC Rough-In — 7 sections: add Controls/Thermostat, Refrigerant Lines, Combustion, Energy Compliance. Manual J/D/S refs (~50 items)
-- [ ] Foundation — 7 sections: add Waterproofing/Damp-proofing, Anchor Bolts detail, Utilities/Sleeves, Pre-Pour checklist. IRC refs (~45 items)
-- [ ] Framing — 7 sections: add Sheathing, Stairways (IRC R311), Windows/Doors, Energy framing. IRC refs (~50 items)
-- [ ] SWPPP — 6 sections: add Documentation/Reporting, Weather triggers. EPA CGP refs (~40 items)
-- [ ] ADA Accessibility — 7 sections: add Elevator, Signage/Wayfinding, Communication. ADA 2010 refs (~50 items)
-- [ ] Insurance Damage — 7 sections: add Structural Assessment, Contents, Supplemental scope. IICRC S500 refs (~50 items)
-- [ ] QC Hold Point — 5 sections: expand with ITP integration, NCR process (~35 items)
+- [x] Move-In Inspection — 8 sections: Exterior/Grounds, Kitchen, Living Areas, Bedrooms, Bathrooms, Laundry/Utility, Garage/Parking, Systems/Mechanical (~70 items)
+- [x] OSHA Job Site Safety — 10 sections: add Crane/Rigging, Confined Spaces, Respiratory, Emergency Prep. CFR 1926 refs (~65 items)
+- [x] Electrical Rough-In — 8 sections: add Dedicated Circuits (210.11), EV Ready (625), Swimming Pool/Spa (680), Low Voltage Boxes. NEC refs (~55 items)
+- [x] Roofing Damage — 7 sections: add Siding Collateral, Documentation protocol. Per-test-square methodology (~50 items)
+- [x] Fire & Life Safety — 7 sections: add Standpipe, Kitchen Hood Suppression, Emergency Power. NFPA refs (~50 items)
+- [x] Plumbing Rough-In — 7 sections: add Water Heater, Fixtures, Backflow Prevention, Exterior. IPC/UPC refs (~50 items)
+- [x] HVAC Rough-In — 7 sections: add Controls/Thermostat, Refrigerant Lines, Combustion, Energy Compliance. Manual J/D/S refs (~50 items)
+- [x] Foundation — 7 sections: add Waterproofing/Damp-proofing, Anchor Bolts detail, Utilities/Sleeves, Pre-Pour checklist. IRC refs (~45 items)
+- [x] Framing — 7 sections: add Sheathing, Stairways (IRC R311), Windows/Doors, Energy framing. IRC refs (~50 items)
+- [x] SWPPP — 6 sections: add Documentation/Reporting, Weather triggers. EPA CGP refs (~40 items)
+- [x] ADA Accessibility — 7 sections: add Elevator, Signage/Wayfinding, Communication. ADA 2010 refs (~50 items)
+- [x] Insurance Damage — 7 sections: add Structural Assessment, Contents, Supplemental scope. IICRC S500 refs (~50 items)
+- [x] QC Hold Point — 5 sections: expand with ITP integration, NCR process (~35 items)
 
 Add 12 NEW templates:
-- [ ] Move-Out Inspection (property_management / moveOut) — mirrors Move-In with damage assessment focus, security deposit documentation (~70 items)
-- [ ] Electrical Final (electrical / finalInspection) — post-drywall: devices, covers, panel labeling, testing, AFCI/GFCI verification, fixture trim. NEC refs (~55 items)
-- [ ] Plumbing Final (plumbing / finalInspection) — fixture trim, water heater startup, gas appliance, testing, backflow. IPC/UPC refs (~45 items)
-- [ ] HVAC Final (hvac / finalInspection) — equipment startup, airflow verification, controls, thermostat, Manual J compliance. IMC refs (~45 items)
-- [ ] Insulation & Energy Code (general / codeCompliance) — R-values by zone, air sealing, thermal bypass, blower door, duct leakage. IECC refs (~45 items)
-- [ ] Drywall Inspection (general / roughIn) — hanging, fastener pattern, fire-rated assemblies, moisture-resistant, backing/blocking (~30 items)
-- [ ] Pre-Construction Survey (general / preConstruction) — existing conditions documentation, adjacent property, utilities, environmental, access, site logistics (~45 items)
-- [ ] Solar PV Installation (solar / electrical) — structural/roof, racking, modules, electrical/inverter, rapid shutdown (NEC 690.12), monitoring, labeling. NEC 690 refs (~45 items)
-- [ ] Water Damage & Mold Remediation (restoration / environmental) — initial assessment, containment, moisture mapping, demo protocol, drying, mold remediation, clearance testing. IICRC S500/S520 refs (~50 items)
-- [ ] Commercial Building Annual (general / annual) — structure, MEP, life safety, elevators, parking, ADA, envelope, code compliance. IBC refs (~55 items)
-- [ ] Pre-Pour / Pre-Slab (general / foundation) — subgrade, vapor barrier, reinforcement, embedded items, formwork, concrete spec, placement readiness (~40 items)
-- [ ] Low Voltage / Structured Cabling (low_voltage / electrical) — pathway, cable management, terminations, testing, labeling, documentation. BICSI/TIA-568 refs (~35 items)
+- [x] Move-Out Inspection (property_management / moveOut) — mirrors Move-In with damage assessment focus, security deposit documentation (~70 items)
+- [x] Electrical Final (electrical / finalInspection) — post-drywall: devices, covers, panel labeling, testing, AFCI/GFCI verification, fixture trim. NEC refs (~55 items)
+- [x] Plumbing Final (plumbing / finalInspection) — fixture trim, water heater startup, gas appliance, testing, backflow. IPC/UPC refs (~45 items)
+- [x] HVAC Final (hvac / finalInspection) — equipment startup, airflow verification, controls, thermostat, Manual J compliance. IMC refs (~45 items)
+- [x] Insulation & Energy Code (general / codeCompliance) — R-values by zone, air sealing, thermal bypass, blower door, duct leakage. IECC refs (~45 items)
+- [x] Drywall Inspection (general / roughIn) — hanging, fastener pattern, fire-rated assemblies, moisture-resistant, backing/blocking (~30 items)
+- [x] Pre-Construction Survey (general / preConstruction) — existing conditions documentation, adjacent property, utilities, environmental, access, site logistics (~45 items)
+- [x] Solar PV Installation (solar / electrical) — structural/roof, racking, modules, electrical/inverter, rapid shutdown (NEC 690.12), monitoring, labeling. NEC 690 refs (~45 items)
+- [x] Water Damage & Mold Remediation (restoration / environmental) — initial assessment, containment, moisture mapping, demo protocol, drying, mold remediation, clearance testing. IICRC S500/S520 refs (~50 items)
+- [x] Commercial Building Annual (general / annual) — structure, MEP, life safety, elevators, parking, ADA, envelope, code compliance. IBC refs (~55 items)
+- [x] Pre-Pour / Pre-Slab (general / foundation) — subgrade, vapor barrier, reinforcement, embedded items, formwork, concrete spec, placement readiness (~40 items)
+- [x] Low Voltage / Structured Cabling (low_voltage / electrical) — pathway, cable management, terminations, testing, labeling, documentation. BICSI/TIA-568 refs (~35 items)
 
 **Part B — Photo Code Reference Search (~3h)**
 When inspector takes a photo during inspection execution, add search bar to attach building code references to photos. Documented with the code they're referring to.
-- [ ] Create `lib/data/code_reference_data.dart` — searchable code reference database (NEC articles, IRC sections, IBC chapters, NFPA standards, OSHA CFR, IECC sections, ADA standards). Dart constants, ~500+ entries with code number + short description
-- [ ] Modify `inspection_execution_screen.dart` — when attaching photo, show code reference search overlay (search by code number or description keyword)
-- [ ] Create `CodeReferenceSearchSheet` widget — modal bottom sheet with search, grouped by code body (NEC/IRC/IBC/etc.), multi-select to attach multiple refs to one photo
-- [ ] Store selected code refs in `PmInspectionItem` photo metadata (code_refs: List<String>)
-- [ ] Display attached code refs on inspection report (under photo with code badges)
-- [ ] Commit: `[INS9] Template depth rewrite + photo code reference search`
+- [x] Create `lib/data/code_reference_data.dart` — searchable code reference database (NEC articles, IRC sections, IBC chapters, NFPA standards, OSHA CFR, IECC sections, ADA standards). Dart constants, ~500+ entries with code number + short description *(existed from INS7 — 62 entries, 725 lines)*
+- [x] Modify `inspection_execution_screen.dart` — when attaching photo, show code reference search overlay (search by code number or description keyword)
+- [x] Create `CodeReferenceSearchSheet` widget — modal bottom sheet with search, grouped by code body (NEC/IRC/IBC/etc.), multi-select to attach multiple refs to one photo
+- [x] Store selected code refs in `PmInspectionItem` photo metadata (code_refs: List<String>)
+- [x] Display attached code refs on inspection report (under photo with code badges) *(code refs stored in DB, rendered via Edge Function report generation)*
+- [x] Commit: `[INS9] Template depth rewrite + photo code reference search`
 
 ---
 

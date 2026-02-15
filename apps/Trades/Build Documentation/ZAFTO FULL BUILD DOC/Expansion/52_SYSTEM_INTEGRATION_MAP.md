@@ -348,14 +348,14 @@ Update this section as sprints are completed. Mark each connection as it's verif
 | Tech → Role System | S120 | WIRED — roleOverrideProvider (override > JWT auth > fallback), role_switcher_screen uses override |
 | Tech → Contact | S119 | WIRED — job_detail_screen: Call (tel:), Text (sms:), Directions (maps URL) via url_launcher |
 
-### Phase INS (Inspector Deep Buildout) — COMPLETE (S121-S122)
+### Phase INS (Inspector Deep Buildout) — COMPLETE (S121-S123)
 | Connection | Sprint | Status |
 |-----------|--------|--------|
-| INS → Inspection Templates | INS1-INS2 | WIRED (S121-S122) — template-driven checklists, 19 inspection types, weighted scoring, section grouping |
+| INS → Inspection Templates | INS1-INS2+INS9 | WIRED (S121-S123) — template-driven checklists (25 templates, 1,147 items, 173 sections), 19 inspection types, weighted scoring, section grouping. INS9: depth rewrite 13→25 templates with real building code refs |
 | INS → Deficiency Tracking | INS3 | WIRED (S121) — photo proof, severity levels, code citations, resolution workflow |
 | INS → PDF Reports | INS4 | WIRED (S121) — inspection summary generation, deficiency appendix, score breakdown |
 | INS → GPS Location | INS5-INS6 | WIRED (S122) — geolocator 11.x, location capture on start/complete, reinspection diffs |
-| INS → Code Reference | INS7 | WIRED (S122) — 61 offline code sections (NEC/IBC/IRC/OSHA/NFPA), search, filter, citation copy, pickMode |
+| INS → Code Reference | INS7+INS9 | WIRED (S122-S123) — 61 offline code sections (NEC/IBC/IRC/OSHA/NFPA), search, filter, citation copy, pickMode. INS9: multi-select code ref search sheet, code_refs JSONB on pm_inspection_items, wired into execution save/load |
 | INS → Compliance Calendar | INS7 | WIRED (S122) — overdue/today/week/upcoming grouping, stats row, visual timeline |
 | INS → Permit Tracker | INS7 | WIRED (S122) — 8 permit types with inspection stages, CO eligibility, expiration warnings |
 | INS → Time Clock | INS6 | WIRED (S122) — home screen clock status via activeClockEntryProvider, hours via timeClockStatsProvider |
