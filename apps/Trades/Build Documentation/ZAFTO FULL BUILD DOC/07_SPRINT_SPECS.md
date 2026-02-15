@@ -12258,6 +12258,66 @@ When inspector takes a photo during inspection execution, add search bar to atta
 
 ---
 
+## PHASE SEC: SECURITY HARDENING & OPTIONAL SECURITY FEATURES (S125 audit findings)
+**Purpose:** Fix the 3 medium-priority security gaps found during the S125 live-site audit, then build optional security features that contractors can opt into. Multi-tenant SaaS with financial data, legal documents, employee PII, and client info — security must be enterprise-grade. Contractors handling insurance claims and government contracts may be REQUIRED to have 2FA/MFA by their carrier or agency. Make it available, not mandatory (contractor's choice).
+
+### SEC1 — Critical Security Fixes (~6h)
+**Goal:** Fix the 3 vulnerabilities found in the S125 security scan. These are not theoretical — zafto.app is live with login portals accessible. Fix before onboarding paying customers.
+- [ ] **Storage bucket RLS policies** — Create migration: `ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY`. Add SELECT/INSERT/UPDATE/DELETE policies for ALL 7 buckets (photos, signatures, voice-notes, receipts, documents, avatars, company-logos) + estimate-photos bucket. Scope by company_id in folder path: `(storage.foldername(name))[1]::uuid = requesting_company_id()`. Verify: authenticated user from Company A cannot access Company B's files via direct Supabase storage API
+- [ ] **Rate limiting on Edge Functions** — Create shared rate limit utility (`supabase/functions/_shared/rate-limiter.ts`). Implement per-user and per-company limits. Wire into priority EFs: `export-invoice-pdf` (10/min per user), `export-estimate-pdf` (10/min per user), `import-esx` (5/min per user), `equipment-scanner` (20/min per user), `lead-aggregator` (10/min per company), `code-verify` (30/min per user). Return 429 with retry-after header when exceeded
+- [ ] **Marketplace equipment_database write policy** — Migration: DROP the `equip_db_write` policy, recreate with role check: `WITH CHECK (true AND (SELECT requesting_user_role()) IN ('owner', 'admin', 'super_admin'))`. Verify: technician/apprentice cannot insert into equipment_database
+- [ ] Test all 3 fixes: attempt cross-company file access (should fail), hit rate limits (should get 429), attempt equipment insert as technician (should fail)
+- [ ] Commit: `[SEC1] Critical security fixes — storage RLS, rate limiting, marketplace write policy`
+
+### SEC2 — Two-Factor Authentication (2FA/MFA) (~12h)
+**Goal:** Optional 2FA for any user account. Supabase Auth supports TOTP (authenticator apps like Google Authenticator, Authy, 1Password) and phone-based OTP natively. Owner/admin can enforce 2FA for their company or let employees choose. Insurance carriers and government agencies increasingly require MFA for contractor systems handling claim data.
+- [ ] Enable Supabase MFA in project settings (TOTP factor type)
+- [ ] Flutter: `lib/screens/settings/security_settings_screen.dart` — 2FA setup flow: explain what 2FA is (simple language for contractors), QR code display for authenticator app enrollment, backup codes generation (10 codes, show once, downloadable), verify first TOTP code to confirm setup, disable 2FA option with password confirmation
+- [ ] Flutter: `lib/screens/auth/mfa_challenge_screen.dart` — After password login, prompt for TOTP code. "Enter the 6-digit code from your authenticator app." Backup code fallback link. Remember device option (30 days)
+- [ ] Flutter: `lib/services/mfa_service.dart` — Supabase MFA enrollment, challenge, verify, unenroll. Wraps `supabase.auth.mfa.*` methods
+- [ ] Web CRM: `src/lib/hooks/use-mfa.ts` — MFA enrollment, challenge, verify hooks using `@supabase/ssr`
+- [ ] Web CRM: `/dashboard/settings/security` page — 2FA setup with QR code, backup codes, disable option
+- [ ] Web CRM: `/auth/mfa` page — MFA challenge screen after login (TOTP input, backup code fallback, remember device checkbox)
+- [ ] Team Portal: `/auth/mfa` page — same challenge flow (field workers with 2FA enabled)
+- [ ] Team Portal: `/dashboard/settings` — add 2FA toggle in settings
+- [ ] Client Portal: `/auth/mfa` page — optional for homeowners (most won't use it, but available)
+- [ ] Ops Portal: `/auth/mfa` page — MANDATORY for super_admin (enforce in middleware)
+- [ ] Company-level 2FA policy: `companies` table — add `mfa_required boolean DEFAULT false`. If true, all users in company must enroll in 2FA on next login. Admin toggle in CRM settings
+- [ ] Migration: ALTER companies ADD COLUMN mfa_required boolean DEFAULT false
+- [ ] Backup codes: store hashed backup codes in Supabase Auth (built-in), show once on enrollment, allow regeneration from settings
+- [ ] "Remember this device" — Supabase MFA challenge factor, store trusted device for 30 days via auth session metadata
+- [ ] Commit: `[SEC2] Two-factor authentication — TOTP enrollment, challenge screens, company policy, all 5 apps`
+
+### SEC3 — Biometric Authentication (~8h)
+**Goal:** Optional biometric login for mobile app. Fingerprint (Touch ID / Android fingerprint) and face (Face ID / Android face unlock) for quick app access after initial password login. Contractors open the app 20-50 times a day in the field — biometric removes friction while keeping security. Uses device-level biometric APIs, NOT Supabase auth (biometric unlocks a locally stored auth token).
+- [ ] Flutter: Add `local_auth` package — provides fingerprint + face recognition on iOS and Android
+- [ ] Flutter: `lib/services/biometric_service.dart` — check device capability (`canCheckBiometrics`, `getAvailableBiometrics`), authenticate with biometric, manage biometric enrollment state in secure storage
+- [ ] Flutter: `lib/services/secure_token_service.dart` — store Supabase refresh token in Flutter Secure Storage (encrypted). Biometric unlock retrieves token and refreshes session. Token encrypted at rest, wiped on logout
+- [ ] Flutter: `lib/screens/auth/biometric_prompt_screen.dart` — "Unlock with fingerprint/face" screen shown on app cold start if biometric enabled. Fallback to password. Auto-show after 5 min inactivity (configurable)
+- [ ] Flutter: `lib/screens/settings/security_settings_screen.dart` — Add biometric toggle: "Use fingerprint/face to unlock app." Show which biometric types are available on device. Explain: "Your biometric data never leaves your device"
+- [ ] Biometric enrollment flow: after successful password login → prompt "Enable fingerprint/face unlock for faster access?" → user accepts → store encrypted token → next launch uses biometric
+- [ ] Timeout configuration: auto-lock after X minutes of inactivity (default 5 min, configurable: 1/5/15/30/never). When locked, show biometric prompt
+- [ ] Biometric failure handling: 3 failed attempts → fall back to password. Biometric hardware change (new fingerprint added to device) → require password re-auth before biometric works again
+- [ ] App backgrounding: when app goes to background for > timeout period, require biometric on return
+- [ ] Secure storage wipe: on logout, password change, or account deletion — wipe all locally stored tokens
+- [ ] Commit: `[SEC3] Biometric authentication — fingerprint/face unlock, secure token storage, auto-lock`
+
+### SEC4 — Advanced Security Options (~10h)
+**Goal:** Enterprise-grade optional security features for contractors who need them. Government contractors, large restoration companies working with insurance carriers, and multi-branch operations need audit trails, session management, IP restrictions, and login alerts. All optional — small one-truck operations shouldn't be burdened by enterprise security.
+- [ ] **Session management** — Flutter + Web: "Active Sessions" screen showing all logged-in devices (device name, browser, IP, last active, location estimate). "Log out other devices" button. "Log out everywhere" nuclear option. Uses Supabase `auth.sessions` + user_sessions table
+- [ ] **Login notifications** — Email alert on new device login: "Your Zafto account was accessed from [device] in [city, state] at [time]. If this wasn't you, secure your account immediately." Toggle per user in settings. Always on for owner/admin roles
+- [ ] **Login history** — Full login history screen: date, time, device, IP, location, success/failure. Filter by date range. Export to CSV. Uses login_attempts table (already exists, RLS already fixed in G2)
+- [ ] **Password requirements** — Company-level password policy settings: minimum length (default 8, max 128), require uppercase, require number, require special character, password expiry (optional: 30/60/90/never days), prevent reuse of last N passwords. Enforced at auth level
+- [ ] **IP allowlisting** — Optional: restrict CRM/portal access to specific IP ranges. Useful for office-only access to financial data. Company setting: `allowed_ips jsonb` on companies table. Middleware check on Next.js portals. Flutter exempt (mobile IPs change constantly)
+- [ ] **Auto-logout timeout** — Web portals: configurable session timeout (default 8 hours, options: 1h/4h/8h/24h). After timeout, redirect to login. Warning toast 5 minutes before expiry: "Your session expires in 5 minutes. Click to stay logged in."
+- [ ] **Account lockout** — After N failed login attempts (default 5), lock account for X minutes (default 15). Escalating lockout: 15 min → 30 min → 1 hour → require admin unlock. Lockout notification to company admin
+- [ ] **Data export / right to delete** — GDPR/CCPA compliance: user can request full data export (all their company data as JSON/CSV). User can request account deletion. Admin can export all company data. 30-day grace period on deletion
+- [ ] **Security audit log** — Dedicated screen in CRM (owner/admin only): all security events (logins, failed logins, permission changes, role changes, 2FA enrollment/removal, password changes, data exports, account deletions). Filterable, exportable, tamper-proof (append-only table, no UPDATE/DELETE policies)
+- [ ] Migration: ALTER companies ADD COLUMN password_policy jsonb DEFAULT '{}', ADD COLUMN allowed_ips jsonb DEFAULT '[]', ADD COLUMN session_timeout_hours integer DEFAULT 8, ADD COLUMN lockout_threshold integer DEFAULT 5
+- [ ] Commit: `[SEC4] Advanced security options — sessions, login alerts, IP allowlist, lockout, audit log`
+
+---
+
 ## PHASE AUDIT SUMMARY: FULL DEPTH PLAN (S125)
 
 **Purpose:** Complete re-audit of all features across all 5 apps. Gap phases build missing features. DEPTH phases audit and correct shallow/stub implementations. This is the quality gate before Phase G (QA) and Phase JUR (Jurisdiction).
@@ -12268,9 +12328,10 @@ When inspector takes a photo during inspection execution, add search bar to atta
 | **REST** | REST1-REST2 | ~20h | Restoration gaps: fire tools, mold remediation (IICRC S520) |
 | **NICHE** | NICHE1-NICHE2 | ~16h | Missing trade modules: pest control, service trades |
 | **DEPTH** | DEPTH1-DEPTH23 | ~292h | Full depth audit + corrections across every feature area |
-| **Total** | **30 sprints** | **~364h** | — |
+| **SEC** | SEC1-SEC4 | ~36h | Security hardening: critical fixes, 2FA/MFA, biometrics, enterprise security options |
+| **Total** | **34 sprints** | **~400h** | — |
 
-**Execution order:** FIELD → REST → NICHE → DEPTH1 through DEPTH22 → Phase G (QA) → Phase JUR → Phase E (AI) → LAUNCH
+**Execution order:** SEC1 (critical fixes FIRST) → FIELD → REST → NICHE → DEPTH1 through DEPTH23 → SEC2-SEC4 (optional security features) → Phase G (QA) → Phase JUR → Phase E (AI) → LAUNCH
 
 **Module coverage guarantee:**
 - DEPTH1-6: Horizontal audit by category (core biz, field tools, property, financial, CRM, calculators)
@@ -12278,8 +12339,10 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - DEPTH15-18: Specialized workflows (inventory, subcontractors, client portal, automations)
 - DEPTH19-22: Phase-specific modules (TPA/restoration, recon/inspector/sketch, warranty/legal/intelligence, F-phase features)
 - DEPTH23: Programmatic codebase sweep — catches anything built after S125 or missed by DEPTH1-22
+- SEC1: Critical security fixes (storage RLS, rate limiting, marketplace policy) — runs FIRST
+- SEC2-SEC4: Optional security features (2FA, biometrics, enterprise security) — runs after DEPTH audits
 
-**Every module in the system is now explicitly named in at least one DEPTH sprint. DEPTH23 is the safety net — it scans the actual codebase against these checklists and flags anything unlisted. No blind spots, even for future work.**
+**Every module in the system is now explicitly named in at least one DEPTH sprint. DEPTH23 is the safety net — it scans the actual codebase against these checklists and flags anything unlisted. SEC phase makes the platform a fortress — critical fixes first, then layered optional security that contractors can opt into. No blind spots, even for future work.**
 
 **Process per DEPTH sprint:**
 1. Audit the feature area across all 5 apps (Flutter, CRM, Team, Client, Ops)
