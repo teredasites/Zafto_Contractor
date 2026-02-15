@@ -12822,6 +12822,150 @@ When inspector takes a photo during inspection execution, add search bar to atta
 
 ---
 
+### DEPTH32 — Material Finder: The Contractor's Search Engine for Every Supplier, Every Trade (~36h)
+**Goal:** Build a flagship CRM tool — "Material Finder" — that searches across every supplier in a contractor's state and returns product results with pricing from cheapest to most expensive. Covers EVERY trade including niche: electrical, plumbing, HVAC, roofing, siding, painting, concrete, fencing, landscaping, pool, pest control, flooring, cabinets, tile, drywall, tools, equipment rentals, commercial. Uses affiliate product feeds ($0/month, LEGAL, generates revenue via commissions). Separate from DEPTH31 crowdsourced pricing — this is real-time supplier catalog search from day one at launch, no user data needed.
+
+**S126 Research Findings:** Affiliate product feeds are the EXACT mechanism Google Shopping and every price comparison site uses. Retailers WANT you to display their products (it drives sales for them). Home Depot provides daily product catalog feeds via Impact Radius. Lowe's via CJ Affiliate. Ferguson has 800K+ items via Impact. Amazon PA-API gives 100K free searches/day. Contractor+ already does this with HD/Lowe's/Ace/Build.com — proves the model works. ABC Supply + SRS Distribution have FREE first-party APIs. SiteOne (landscaping) has free partner API. McMaster-Carr has an official Product Information API.
+
+**How Price Changes, Inflation, and Regional Costs Are Handled:**
+- **Daily feed refresh**: Affiliate feeds update daily. When HD raises prices, your data updates next morning. No stale pricing
+- **Regional pricing**: BLS/FRED publishes Producer Price Index by region (4 US Census regions + 9 divisions). Apply regional multiplier to national averages. Crowdsourced receipt data (DEPTH31) provides metro-level actual pricing over time
+- **Inflation tracking**: BLS PPI tracks material-specific inflation monthly (lumber, steel, copper, concrete, etc.). Show 12-month trend per material category. Alert: "Copper pipe up 14% in 6 months — estimates using copper should account for escalation"
+- **State-level adjustments**: Construction cost indices vary by state (RSMeans publishes city cost indices, but paid). Free alternative: use BLS state-level wage data + PPI regional data to calculate state multiplier. Crowdsourced data (DEPTH31) self-corrects as users in different states submit receipts
+- **Real-time affiliate prices**: HD/Lowe's feeds show current online prices. These are national online prices — local store prices may vary ±5%. Clearly label: "Online price. In-store may vary."
+- **Wholesale vs retail indicator**: When showing results, clearly flag: "Retail price" (from affiliate feeds) vs "Wholesale/account price" (from ABC Supply/SRS APIs or crowdsourced data). Contractors know the difference — never mislead them
+
+**Part A: Affiliate Feed Ingestion Engine (~10h)**
+- [ ] **Affiliate program enrollment**: Apply and get accepted to:
+  - **Home Depot** via Impact Radius — daily product feed, 1-8% commission, full catalog (1M+ items covering ALL trades)
+  - **Lowe's** via CJ Affiliate — daily product feed, ~2% commission, full catalog
+  - **Ferguson Home** via Impact Radius — 800K+ items, 2-6% commission, plumbing/HVAC/electrical/lighting specialty
+  - **Amazon** via Product Advertising API — free, 100K searches/day, long-tail items, niche supplies, equipment
+  - **Ace Hardware** — affiliate program, full catalog, supplements HD/Lowe's for local availability
+  - **Harbor Freight** via CJ Affiliate — budget tools, equipment, shop supplies
+  - **Build.com** — 800K+ items, bath/kitchen/lighting specialty
+  - **Floor & Decor** — flooring specialty (tile, hardwood, LVP, laminate, stone, tools)
+  - **Lumber Liquidators/LL Flooring** — flooring specialty
+  - **Sherwin-Williams** — paint, stain, coatings (if affiliate available)
+  - **Menards** — regional big box (Midwest), full catalog
+  - Process: apply → get approved → download product feed → ingest into database. Timeline: 1-7 days per retailer for approval
+- [ ] **Feed ingestion pipeline**: Edge Function or pg_cron job runs nightly. For each affiliate feed: download CSV/XML from Impact/CJ dashboard or FTP → parse → upsert into `supplier_products` table. Handle: new products (insert), price changes (update), discontinued products (soft delete). Track price change history for trend analysis. Expected volume: 2-5M products across all feeds
+- [ ] **Product data schema**: New table `supplier_products` — id, supplier_id (FK to supplier_directory), external_product_id, name, description, brand, model_number, sku, upc, category_path (e.g., "Electrical > Wire > NM-B"), trade (auto-classified), material_category, price, sale_price, sale_end_date, in_stock (boolean), image_url, product_url (affiliate tracked link), affiliate_network (impact/cj/amazon/direct), commission_rate, last_feed_update, price_history (JSONB array of {date, price}), specs (JSONB — trade-specific attributes), created_at, updated_at. NO company_id — system-wide catalog. Indexes: full-text search on name+description+brand+sku, btree on trade+material_category+price
+- [ ] **Amazon PA-API integration**: For on-demand searches when affiliate feeds don't cover an item. Contractor searches → check local product DB first → if no results or < 3 results, query Amazon PA-API in real-time → merge results. Amazon covers the long tail: specialty tools, niche materials, safety equipment, testing instruments, commercial supplies. 100K free searches/day
+- [ ] **Affiliate link tracking**: Every product URL includes affiliate tracking parameters. When contractor clicks "Buy" or "View at [Supplier]", track: click_id, user_id, company_id, product_id, supplier, price_at_click, timestamp. Store in `affiliate_clicks` table. Monthly reconciliation with affiliate network dashboards to track commissions earned. This is REVENUE — not just a feature, it's a business model
+
+**Part B: Distributor API Integrations (~6h)**
+- [ ] **ABC Supply integration** (already spec'd in DEPTH31 — wire into Material Finder): When contractor has ABC Supply account linked, show ABC Supply pricing alongside retail for matching products. ABC Supply price is wholesale — will almost always be lower. Highlight: "Your ABC Supply price: $X (Save Y% vs retail)"
+- [ ] **SRS Distribution integration** (already spec'd in DEPTH31 — wire into Material Finder): Same pattern as ABC Supply for roofing/siding products
+- [ ] **SiteOne Landscape Supply integration**: Apply as software integration partner (Aspire, Arborgold, LMN already integrated — proven path). Free access to product catalog with location-specific pricing. Wire into Material Finder for landscaping supplies: plants, mulch, pavers, irrigation, hardscape, tools, fertilizer, seed, soil amendments
+- [ ] **McMaster-Carr integration**: Apply via eprocurement@mcmaster.com for Product Information API access. Client certificate auth. Pricing endpoint included. Industrial supplies, fasteners, raw materials, tools, safety equipment, plumbing fittings, electrical components. McMaster catalog is legendary for depth — 700K+ products
+- [ ] **Generic distributor connector** (from DEPTH31): Pluggable architecture. As more distributors open APIs, drop in connectors. Expected next wave: Graybar (electrical), Ferguson wholesale (not Ferguson Home retail), Winsupply (plumbing/HVAC), Johnstone Supply (HVAC)
+
+**Part C: Comprehensive Supplier Directory — EVERY Trade, EVERY Supplier (~8h)**
+- [ ] **Supplier directory expansion**: Expand `supplier_directory` from DEPTH31's 60+ to 200+ suppliers. For suppliers WITHOUT APIs or affiliate feeds: store name, website, trades served, locations, pricing type (retail/wholesale/account), and "Check Price" deep links to their product pages. The directory is the foundation — even suppliers we can't get automated pricing from are listed so contractors can find them.
+- [ ] **Supplier seed data — EXHAUSTIVE by trade (200+ suppliers)**:
+
+  **Electrical distributors (15+):** Graybar, Rexel/Platt/Consolidated Electrical (CED), WESCO/Anixter, City Electric Supply (CES), Border States Electric, Crescent Electric, Elliott Electric Supply, Sonepar/Springfield Electric, McNaughton-McKay, Mayer Electric, Kirby Risk, Werner Electric, Dealers Electrical Supply, Kendall Electric, Van Meter. Online: Galco Industrial Electronics, Gorilla Electric, Wire & Cable Your Way, ElecDirect
+
+  **Plumbing distributors (12+):** Ferguson Enterprises, Hajoca, Winsupply, F.W. Webb, Wolseley/Reece Group, Morrison Supply, Moore Supply, Standard Supply, Barnett Pipe & Supply, **Plimpton & Hills** (Milford CT — real plumbing/HVAC/waterworks distributor), Dakota Supply Group, First Supply. Online: SupplyHouse.com, PlumbersStock.com, QualityPlumbingSupply.com, FaucetDirect
+
+  **HVAC distributors (10+):** Carrier Enterprise, Johnstone Supply (400+ locations), Baker Distributing, RE Michel, ACR Group, FergusonDERA, Gemaire Distributors, US Air Conditioning Distributors, Lennox/Allied Air Enterprises, Trane Supply, Daikin Comfort Technologies. Online: AC Wholesalers, Alpine Home Air, HVACDirect.com
+
+  **Roofing/Exterior distributors (8+):** ABC Supply, SRS Distribution (includes Allied, Heritage, Roof Depot brands), Beacon Building Products, Gulfeagle Supply, US LBM, Bradco Supply, Midwest Roofing Supply, Roofing Supply Group. Online: **MFS Supply** (roofing/siding/gutters — Malvern PA), RoofingSupplyDirect.com, BestBuyMetals.com
+
+  **Lumber/Building Materials (10+):** 84 Lumber, Builders FirstSource, US LBM, Parr Lumber, McCoy's Building Supply, BMC, Stock Building Supply, Carter Lumber, Sutherland Lumber, BlueLinx (distribution), Pacific Coast Building Products. Online: LumberLiquidators/LL Flooring, WoodworkersSource
+
+  **Concrete/Masonry (6+):** Quikrete (direct/HD/Lowe's), SPEC MIX, Sakrete, BASF/Master Builders Solutions, Sika, LaHabra, Boral, US Concrete, Eagle Materials. Rebar: Harris Rebar, Pacific Steel Group, Commercial Metals Company
+
+  **Flooring (8+):** Floor & Decor (retail + pro), Shaw Direct (contractor program), Mohawk (contractor program), MSI (MS International — tile/stone/quartz), Daltile (commercial tile), Armstrong Flooring, Mannington, Karndean. Online: BuildDirect, FloorCity, FlooringInc.com
+
+  **Cabinets/Countertops (8+):** CabinetParts.com, Cabinets.com, RTA Store, CliqStudios, Wholesale Cabinet Center, The Cabinet Barn, KitchenCabinetKings, Surplus Building Materials. Countertops: Cambria, Caesarstone, MSI, Arizona Tile, Bedrosians
+
+  **Tile/Stone (6+):** MSI (MS International), Daltile, Bedrosians, Arizona Tile, Emser Tile, Florida Tile, Porcelanosa, Walker Zanger, Ann Sacks. Online: TileBar.com, Wayfair (via affiliate), Build.com (via affiliate)
+
+  **Drywall/Insulation (6+):** L&W Supply (USG), Interior Supply, Foundation Building Materials (FBM), Continental Building Products, National Gypsum, Georgia-Pacific Gypsum. Insulation: Owens Corning, Johns Manville, Knauf, CertainTeed, Icynene/Lapolla, Demilec
+
+  **Paint/Coatings (6+):** Sherwin-Williams (4,000+ stores, contractor accounts), Benjamin Moore (via independent dealers), PPG/Glidden (via dealers + HD), Dunn-Edwards (West Coast), Miller Paint (Pacific NW), Farrow & Ball. Online: PaintSupply.com, ThePaintStore.com
+
+  **Fencing (5+):** Master Halco/?"Ameristar Fence Products, Merchants Metals, Fortress Building Products, Xpanse (vinyl), Barrette Outdoor Living. Online: FenceSupplyOnline.com, HooverFence.com, DiscountFence.com
+
+  **Landscaping/Irrigation/Hardscape (8+):** SiteOne Landscape Supply (largest — API available), Ewing Irrigation, John Deere Landscapes, Horizon Distributors, Oldcastle APG (pavers/retaining walls), Belgard (pavers), Tremron, Unilock. Online: SprinklerWarehouse.com, IrrigationDirect.com, DrainageSolutions.us
+
+  **Pest Control Supplies (5+):** DoMyOwn.com, Solutions Pest & Lawn, DIY Pest Control, Pest Control Supplies (PCS), Univar Solutions (commercial — largest global distributor). Online: DominPestControl.com, BugSpray.com, PestControlSupplies.com, ePestSolutions
+
+  **Pool/Spa Supplies (6+):** POOLCORP/SCP Distributors (wholesale — contractor accounts only), Leslie's Pool Supplies (retail + wholesale), Pentair (direct), Hayward (direct), Fluidra (Zodiac/Jandy), Pool Supply Unlimited. Online: InTheSwim.com, PoolSupplyWorld.com, YourPoolHQ.com, Doheny's
+
+  **Tools/Safety (8+):** Grainger (400K+ items), Fastenal (3,000+ stores), McMaster-Carr (700K+ items — API available), MSC Industrial, Zoro (Grainger's online brand), Global Industrial, Northern Tool + Equipment, Acme Tools, Ohio Power Tool. Safety: Arbill, Magid, SafetyGlassesUSA, Conney Safety
+
+  **Equipment Rental (6+):** Sunbelt Rentals (#2 — 1,100 locations), United Rentals (#1 — 1,400 locations), Herc Rentals, BlueLine Rental, Maxim Crane Works (cranes), Neff Rentals, BET Equipment Rental. Online: BigRentz (aggregator), EquipmentShare
+
+  **Equipment Purchase — Heavy (6+):** John Deere, Caterpillar, Kubota, Bobcat, CASE Construction, Takeuchi, Wacker Neuson. Used: Ritchie Bros (IronPlanet), MachineryTrader, EquipmentTrader, Mascus
+
+  **Equipment Purchase — Lawn/Landscape (6+):** John Deere, Husqvarna, STIHL, Exmark, Toro, Scag, Gravely, Wright Manufacturing, Bad Boy Mowers, Ferris. Used: TractorHouse, FastLine
+
+  **Gutters/Downspout (4+):** Senox Corp, Spectra Metals, US Aluminum, Berger Building Products, Gutter Supply (GutterSupply.com), The SpoutOff
+
+  **Windows/Doors (8+):** Andersen Windows (dealer network), Pella, Marvin, JELD-WEN, Milgard, Simonton, MI Windows, PGT Innovations (impact), Therma-Tru (doors), Masonite (doors). Online: WindowParts.com, BuydoorsDirect.com, WindowWorld (franchise)
+
+  **Solar (5+):** CED Greentech (largest US solar distributor), BayWa r.e., Soligent, Rexel/Capitol Light, Krannich Solar, Corab Solar. Online: Renogy, SanTan Solar, UnboundSolar
+
+  **Fire Protection/Sprinkler (4+):** Viking Group, Tyco/Johnson Controls, Reliable Automatic Sprinkler, Potter Electric Signal, Victaulic, Anvil/Gruvlok. Distributors: HD Supply (fire protection division), Platt/Rexel
+
+  **Commercial HVAC/Controls (5+):** Trane Technologies, Carrier Commercial, Johnson Controls/York, Daikin Applied, Lennox Commercial. Controls: Honeywell, Siemens Building Technologies, Schneider Electric, Belimo, Distech Controls
+
+  **Waterproofing/Foundation (4+):** CETCO, Polyguard, Henry Company, Grace Construction Products (GCP Applied Technologies), Tremco, Sika Waterproofing, Carlisle Coatings & Waterproofing
+
+  **Sheetrock/Drywall accessories (4+):** USG (Sheetrock brand — via L&W Supply), National Gypsum (Gold Bond), Georgia-Pacific (DensGlass, DensArmor), CertainTeed (via distributors). Accessories: Trim-Tex (corner beads/trim), ClarkDietrich (steel framing/furring), Super Stud Building Products
+
+  **Welding/Metalwork (4+):** Airgas, Praxair/Linde, Lincoln Electric (direct + distributors), Miller/ITW Welding, ESAB. Online: WeldingSupply.com, CyberWeld.com, BakerGas.com
+
+- [ ] **Auto-discovery from receipts**: When DEPTH31 receipt OCR encounters a supplier NOT in the directory, auto-create entry with: name (from receipt header), address (from receipt), type (unknown — flag for classification). Over time, the directory grows from user data. A contractor in rural Montana using "Bob's Building Supply" — it gets added automatically
+
+**Part D: Material Finder CRM Tool — The Flagship Search Experience (~8h)**
+- [ ] **Dedicated "Material Finder" page** in CRM (`/dashboard/material-finder`): Full-screen search experience. Hero search bar: "Search 5M+ products across 200+ suppliers." Category quick-filters below: Electrical, Plumbing, HVAC, Roofing, Siding, Painting, Concrete, Fencing, Landscaping, Flooring, Cabinets, Tile, Tools, Equipment, Pool, Pest Control, Solar, Fire Protection, Commercial, Other
+- [ ] **Search engine**: PostgreSQL full-text search with pg_trgm for fuzzy matching. Contractor types "14-2 romex 250" → results show matching products from ALL suppliers sorted by price (cheapest first). Each result shows: product name, brand, supplier logo, price (with sale flag if applicable), "Retail" or "Wholesale" badge, star rating (if available), "Buy" button (affiliate link) or "Check Price" link (for suppliers without feed). Filter by: supplier, price range, brand, in-stock only, trade, material category. Sort by: price low→high, price high→low, relevance, rating
+- [ ] **Price comparison view**: Select a product → see it across ALL suppliers that carry it (matched by UPC, model number, or product name similarity). Table view: Supplier | Price | In Stock | Rating | Buy Link. Bar chart view: visual price comparison. Cheapest option highlighted green. "Save $X by buying from [Supplier]" callout
+- [ ] **State/regional pricing layer**: Show regional price adjustment: "National online price: $X. Estimated in-store price in [State]: $Y (based on [source])." Sources: BLS PPI regional index (free), crowdsourced receipt data (DEPTH31) by metro, contractor-entered overrides. Over time, regional accuracy improves as more data flows in
+- [ ] **Inflation tracker per material**: On product detail or material category page, show: "Price trend (12 months)" chart using BLS PPI data + affiliate feed price history. "This material is UP/DOWN X% from 12 months ago." "Current price is [above/below/near] the 12-month average." Alert system: "Material X has dropped 10% in 30 days — good time to purchase." Use FRED API (free) for macro PPI + affiliate feed price_history JSONB for product-specific tracking
+- [ ] **"Nearby suppliers" map**: For searched product, show map of suppliers near contractor's location that carry this item. Big box stores (HD, Lowe's, Ace) + distributor branches (ABC Supply, Ferguson, Graybar, etc.). Use Google Maps Places API (already have key, covered by $200 credit). Each pin shows: supplier name, distance, price (if known), hours, phone, "Get Directions" link
+- [ ] **Barcode/UPC scan** (Flutter mobile): Point camera at any product (on shelf, on receipt, in hand) → scan barcode → instant price comparison across all suppliers. Uses UPC from `supplier_products` table to match. Show: "You're looking at $X at [Current Store]. Same product is $Y at [Cheaper Supplier] (Save $Z)." This is the "in-the-aisle" killer feature
+- [ ] **Shopping list / material takeoff integration**: From an estimate (DEPTH29/30), export the material list to Material Finder. System finds best price for each item across all suppliers. Show: "Optimal split: buy these items from HD ($X), these from Ferguson ($Y), these from ABC Supply ($Z). Total: $W (save $V vs buying everything at one store)." Contractor can choose to optimize for: cheapest total, fewest suppliers (convenience), fastest delivery, or single-supplier loyalty
+- [ ] **Saved searches & price alerts**: Contractor can save a search (e.g., "14-2 Romex 250ft") and set a price alert: "Notify me when price drops below $80." System checks daily feed and sends push notification / email when threshold hit. Store in `price_alerts` table: id, company_id, user_id, product_query, target_price, current_price, alert_type (below_price/price_drop_pct/back_in_stock), active, triggered_at
+- [ ] **Recently viewed & favorites**: Track recently viewed products per user. Allow favoriting products for quick access. "Your favorites" section on Material Finder homepage
+- [ ] **Equipment rental search**: Separate tab: "Rent Equipment." Search across Sunbelt, United Rentals, Herc, BigRentz (aggregator). Since these don't have open APIs: deep-link to their search results pages. "Boom lift rentals near [City]" → links to Sunbelt/United search results for boom lifts in that zip code. Show estimated daily/weekly/monthly rates where publicly available
+- [ ] **Mobile-first design** (Flutter): Material Finder as a dedicated tab or prominent button on mobile. Barcode scanner front-and-center. Quick search. Swipeable product cards. "Add to estimate" button on every product
+
+**Part E: Regional Pricing & Inflation Engine (~4h)**
+- [ ] **BLS PPI regional data integration**: Nightly fetch from FRED API (free). Track PPI by region for: lumber (WPUSI012011), concrete (WPU133), steel (WPU101), copper (WPU102502), aluminum (WPU102301), asphalt/roofing (WPU13310201), plastic pipe (WPU072208), paint (WPU0652), electrical equipment (WPU117), plumbing fixtures (WPU105402), HVAC equipment (WPU1141). Store in `material_price_indices` table: series_id, category, region, date, value, pct_change_1mo, pct_change_12mo
+- [ ] **State cost multiplier**: Derived from BLS data: construction worker wage by state (QCEW data, free) + material PPI by region. Calculate: state_multiplier = (state_avg_wage / national_avg_wage * 0.6) + (regional_PPI / national_PPI * 0.4). Apply to national prices for state-level estimates. Store in `regional_cost_factors` table: state, metro_area, trade, multiplier, last_calculated, source
+- [ ] **Inflation alert system**: When any material PPI moves > 5% in 30 days: generate alert visible on dashboard + Material Finder. "ALERT: Lumber prices up 8% this month. Your estimates using lumber may need price adjustment." Auto-suggest: "Update estimate validity period to 15 days" (shorter window to account for volatility). Historical: show 5-year price chart for any material category
+- [ ] **Estimate price lock feature**: When contractor creates estimate with materials from Material Finder, record the exact price at time of estimate. If prices change before customer approves: show delta. "Material prices have increased $347 since this estimate was created 12 days ago. Update estimate?" One-click price refresh pulls current prices from feeds
+- [ ] All builds pass: `dart analyze`, `npm run build` × 4
+- [ ] Commit: `[DEPTH32] Material Finder — supplier search engine, affiliate feeds (HD/Lowe's/Ferguson/Amazon), 200+ suppliers, regional pricing, inflation tracking, barcode scan, price alerts`
+
+---
+
+### DEPTH33 — Data Privacy Controls & AI Training Consent (~4h)
+**Goal:** Implement proper data privacy controls including explicit opt-in consent for AI training data, receipt/pricing data sharing, and data collection transparency. GDPR/CCPA compliant. Clear, honest, no dark patterns.
+
+**S126 Context:** With DEPTH31 (crowdsourced pricing) and DEPTH32 (Material Finder), we're handling more user data. Need explicit consent for: (1) using anonymized receipt data in aggregate pricing, (2) using any data for AI model training, (3) data collection transparency. The user asked: "do we have to ask?" — YES, legally and ethically.
+
+- [ ] **Data consent schema**: New table `user_consent` — id, user_id, company_id, consent_type (enum: 'pricing_data_sharing', 'ai_training', 'analytics', 'marketing_emails', 'push_notifications'), granted (boolean), granted_at, revoked_at, consent_version (track TOS version), ip_address, user_agent. RLS: user can only see/modify their own consents. Audit trail — never delete consent records, only add new ones
+- [ ] **Consent prompts — clear, honest language**:
+  - **Pricing data sharing** (for DEPTH31): "Help all contractors get better prices. When you upload receipts, we anonymize your purchase data and combine it with data from other contractors to show market-average pricing. Your individual purchases are NEVER visible to anyone else. Only anonymized averages from 5+ companies are shown. You can opt out anytime." Toggle: ON/OFF. Default: OFF (opt-in, not opt-out)
+  - **AI training consent**: "Help Zafto get smarter. We may use anonymized, aggregated data to improve our AI features (like estimate suggestions and material recommendations). Your personal data, company data, and individual transactions are NEVER used directly. Only patterns from thousands of anonymous data points. You can opt out anytime without losing any features." Toggle: ON/OFF. Default: OFF (opt-in)
+  - **Analytics**: "Help us improve the app. We collect anonymous usage data (which features you use, how often) to make Zafto better. No personal or business data is included." Toggle: ON/OFF. Default: ON (standard, can opt out)
+- [ ] **Consent UI — Settings page**: All portals (CRM, team, client, ops): Settings → Privacy & Data → clear list of all consent toggles with plain-English explanations. Show current status. One-tap to change. Changes take effect immediately. Confirmation toast: "Your privacy preferences have been updated"
+- [ ] **First-run consent flow**: On first login after this feature ships: show privacy preferences screen BEFORE dashboard. Not a wall of legalese — clean cards with toggle switches. User MUST interact (not auto-dismissed) but can decline everything and still use all features. No features are gated behind consent (except: pricing intelligence requires pricing data sharing — fair exchange, clearly stated)
+- [ ] **Data deletion request**: Settings → Privacy → "Delete My Data" button. Shows what will be deleted: account, all company data, all uploaded receipts, all consent records. Requires confirmation (type company name). Triggers: soft-delete immediately → hard-delete after 30-day grace period (in case of accidental deletion). Email confirmation sent. GDPR Article 17 / CCPA compliant
+- [ ] **Privacy policy updates**: Update privacy policy page to clearly state: what data we collect, how it's used, what's shared (only anonymized aggregates), what's NEVER shared (individual transactions, personal info, company info), how to opt out, how to request deletion. Plain English, not legalese. Link from every consent toggle to relevant privacy policy section
+- [ ] **Backend enforcement**: If user has pricing_data_sharing = false: their receipt data is stored for THEIR use only, never included in aggregate calculations. If ai_training = false: their data is excluded from any AI training datasets. Enforce at the query level — aggregation queries filter by consent status. Audit: quarterly automated check that non-consented data is properly excluded
+- [ ] **"What data do you have on me?" export**: GDPR Article 15 / CCPA right. Settings → Privacy → "Export My Data" button. Generates JSON/CSV of all data associated with user: profile, company, receipts, estimates, scans, consent history. Delivered via secure download link (24hr expiry). Processing time: < 24 hours (async Edge Function)
+- [ ] All builds pass: `dart analyze`, `npm run build` × 4
+- [ ] Commit: `[DEPTH33] Data privacy controls — consent management, AI training opt-in, pricing data sharing opt-in, GDPR/CCPA compliance, data export, data deletion`
+
+---
+
 ## PHASE SEC: SECURITY HARDENING & OPTIONAL SECURITY FEATURES (S125 audit findings)
 **Purpose:** Fix the 3 medium-priority security gaps found during the S125 live-site audit, then build optional security features that contractors can opt into. Multi-tenant SaaS with financial data, legal documents, employee PII, and client info — security must be enterprise-grade. Contractors handling insurance claims and government contracts may be REQUIRED to have 2FA/MFA by their carrier or agency. Make it available, not mandatory (contractor's choice).
 
@@ -13330,13 +13474,13 @@ When inspector takes a photo during inspection execution, add search bar to atta
 | **FIELD** | FIELD1-FIELD4 | ~56h | Missing field features: messaging, equipment checkout, team portal stubs, BLE laser meter integration |
 | **REST** | REST1-REST2 | ~20h | Restoration gaps: fire tools, mold remediation (IICRC S520) |
 | **NICHE** | NICHE1-NICHE2 | ~16h | Missing trade modules: pest control, service trades |
-| **DEPTH** | DEPTH1-DEPTH31 | ~496h | Full depth audit + corrections + contractor needs validation + commercial building support + property blueprint lookup + bulletproof crash recovery + recon mega-expansion (all-trade scans, 24 free APIs) + estimate engine overhaul (material tiers, G/B/B, labor hours) + recon-to-estimate pipeline + crowdsourced material pricing intelligence (receipt OCR, 60+ suppliers, distributor APIs) |
+| **DEPTH** | DEPTH1-DEPTH33 | ~536h | Full depth audit + corrections + contractor needs validation + commercial building support + property blueprint lookup + bulletproof crash recovery + recon mega-expansion (all-trade scans, 24 free APIs) + estimate engine overhaul (material tiers, G/B/B, labor hours) + recon-to-estimate pipeline + crowdsourced material pricing (receipt OCR, 60+ suppliers) + Material Finder search engine (affiliate feeds, 200+ suppliers, regional pricing) + data privacy/AI consent |
 | **SEC** | SEC1-SEC10 | ~92h | Security fortress: critical fixes, 2FA, biometrics, enterprise options, Hellhound, headers, WAF, dependency scanning, security pentest, legal pentest |
 | **ZERO** | ZERO1-ZERO9 | ~86h | Zero-defect validation: property testing, state machines, chaos engineering, 50K load test, fuzz testing, mutation testing, edge case gauntlet, triple-scan |
 | **LAUNCH** | LAUNCH1-LAUNCH7 | ~72h | Monitoring, legal, payments, i18n, accessibility, testing, App Store + onboarding wizard |
-| **Total** | **65 sprints** | **~838h** | — |
+| **Total** | **67 sprints** | **~878h** | — |
 
-**Execution order:** SEC1 + SEC6 + SEC7 + SEC8 (critical security — site is live) → LAUNCH1 (monitoring — need Sentry before building more) → FIELD → REST → NICHE → DEPTH1 through DEPTH27 → DEPTH28 (recon mega-expansion) → DEPTH29 (estimate engine overhaul) → DEPTH30 (recon-to-estimate pipeline) → DEPTH31 (crowdsourced material pricing) → SEC2-SEC5 (2FA, biometrics, enterprise security, Hellhound) → LAUNCH2-LAUNCH6 (legal, payments, i18n, accessibility, testing) → Phase G (QA) → Phase JUR → Phase E (AI) → **SEC9 (security pentest)** → **SEC10 (legal pentest)** → **ZERO1-ZERO9 (zero-defect validation — break everything, fix everything, prove it's flawless)** → LAUNCH7 (App Store + onboarding wizard — DEAD LAST) → SHIP
+**Execution order:** SEC1 + SEC6 + SEC7 + SEC8 (critical security — site is live) → LAUNCH1 (monitoring — need Sentry before building more) → FIELD → REST → NICHE → DEPTH1 through DEPTH27 → DEPTH28 (recon mega-expansion) → DEPTH29 (estimate engine overhaul) → DEPTH30 (recon-to-estimate pipeline) → DEPTH31 (crowdsourced material pricing) → DEPTH32 (Material Finder — affiliate feeds, generates revenue) → DEPTH33 (data privacy/AI consent) → SEC2-SEC5 (2FA, biometrics, enterprise security, Hellhound) → LAUNCH2-LAUNCH6 (legal, payments, i18n, accessibility, testing) → Phase G (QA) → Phase JUR → Phase E (AI) → **SEC9 (security pentest)** → **SEC10 (legal pentest)** → **ZERO1-ZERO9 (zero-defect validation — break everything, fix everything, prove it's flawless)** → LAUNCH7 (App Store + onboarding wizard — DEAD LAST) → SHIP
 
 **Module coverage guarantee:**
 - DEPTH1-6: Horizontal audit by category (core biz, field tools, property, financial, CRM, calculators)
@@ -13352,6 +13496,8 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - DEPTH29: Estimate engine overhaul — material tier system with 200+ seed products, G/B/B auto-generation, built-in labor hour database (12 trades, 300+ tasks), live regeneration on any change, change orders as estimate diffs, crew performance learning, profit analysis (~40h)
 - DEPTH30: Recon-to-estimate pipeline — address → scan → auto-generated estimate with materials + labor + quantities, measurement-to-quantity mapping, material recommendations from property data, quick bid mode (under 60sec), multi-trade bundling, competitor pricing comparison (~16h)
 - DEPTH31: Crowdsourced material pricing intelligence — receipt/invoice OCR pipeline, 60+ suppliers seeded (big box + specialty distributors + supply houses + online + local), product normalization, anonymized pricing aggregation, supplier comparison, price trends, ABC Supply + SRS Distribution free API integration, bulk pricing detection, seasonal patterns, privacy-first anonymization (~28h)
+- DEPTH32: Material Finder — contractor's search engine for every supplier, every trade. Affiliate product feeds (HD/Lowe's/Ferguson/Amazon/Ace/Harbor Freight/Build.com/Floor&Decor), 200+ suppliers seeded across ALL trades (electrical, plumbing, HVAC, roofing, lumber, concrete, flooring, cabinets, tile, drywall, paint, fencing, landscaping, pest control, pool, tools, equipment, solar, fire protection, commercial, welding), regional pricing via BLS/FRED, inflation tracking, barcode scan, price comparison, shopping list optimization, price alerts, equipment rental search, affiliate commission revenue (~36h)
+- DEPTH33: Data privacy controls & AI training consent — GDPR/CCPA compliant consent management, explicit opt-in for pricing data sharing + AI training, data export (GDPR Art 15), data deletion (GDPR Art 17), privacy settings UI, backend enforcement, first-run consent flow (~4h)
 - SEC1: Critical security fixes (storage RLS, rate limiting, marketplace policy) — runs FIRST
 - SEC2-SEC4: Optional security features (2FA, biometrics, enterprise security) — runs after DEPTH audits
 - SEC5: Hellhound deception system (canary endpoints, honeytokens, bot traps, auto-block, tarpit)
