@@ -13269,6 +13269,23 @@ When inspector takes a photo during inspection execution, add search bar to atta
 
 **Competition:** PropStream ($99/mo — data only, no rehab), FlipperForce ($79-499/mo — project mgmt, no deal sourcing), DealCheck ($20/mo — calculator only), Privy ($149/mo — MLS-only, no contractor tools), REIPro ($97/mo — marketing focus). ALL fragmented — none combine deal sourcing + ARV + rehab estimation + financial model + profit timeline + contractor bidding + investor connections. Zafto connects every piece.
 
+**UX Pattern — "Carfax for Properties" (dump everything, simulate on top):**
+The Flip-It report works like a Carfax. User enters an address → they get EVERYTHING about that property, no questions asked. Not "what do you want to know?" — they get it all. Then a simulation layer lets them plan their specific strategy on top.
+
+The Carfax-style report has 4 sections (all auto-generated, all free data):
+1. **Property History** (like Carfax vehicle history): Ownership chain with sale prices/dates, tax assessment history, permit history (what's been done, what's open, what expired), lien/violation history, time-on-market history. "Sold 3 times since 2008. Last sale: $195K (2021). 2 permits: kitchen remodel (2019, closed), bathroom (2022, expired — unpermitted work?)"
+2. **Condition Report** (like Carfax damage report): Every issue found — structural, cosmetic, mechanical, environmental. Each item rated: Good / Fair / Poor / Critical. With AI photo analysis (FLIP5): visual condition from listing photos. Without photos: data-only assessment from permits, age, assessor notes. "Roof: ~7 years old (permit 2019), estimated 13-18 years remaining. HVAC: unknown age (no permit on record). Foundation: no data (needs in-person inspection). Lead paint: RISK — built 1972 (pre-1978)"
+3. **Financial Analysis** (unique to Flip-It): Full cost breakdown (purchase + rehab + financing + holding + selling), ARV with comps, profit projection, degradation timeline. All numbers sourced and dated. "Total investment: $223,400. ARV: $285,000. Projected profit: $38,600 (17.3% ROI). Break-even: month 9"
+4. **Risk Report** (like Carfax title check): Environmental (flood, radon, brownfield, lead), title (liens, judgments, HOA), market (appreciation trend, days on market, absorption rate), crime, permit issues. Overall risk score: LOW / MODERATE / HIGH / CRITICAL. "Risk: MODERATE — Zone X flood (good), radon Zone 2 (test recommended), no environmental liens, 1 open code violation ($800 fine), neighborhood appreciating 3.8%/yr"
+
+**Then the simulation layer** — user plans their specific deal ON TOP of the full report:
+- Toggle rehab items on/off: "I'd fix the kitchen and bathrooms but leave the flooring" → numbers update instantly
+- Swap in their contractor prices: "My tile guy is $4.50/sqft not $6.50" → profit recalculates
+- Change financing: "What if I use hard money vs cash?" → side-by-side comparison
+- Adjust hold time: "What if it takes 8 months instead of 6?" → degradation timeline shifts
+- Material tier: "Budget cabinets instead of mid-grade?" → savings shown
+Every toggle recalculates the full financial model in real-time. The base Carfax report never changes — the simulation is a layer on top.
+
 **What competitors do under the hood (and why they're beatable):**
 - **PropStream/Privy**: License bulk data from CoreLogic or ATTOM ($$$). Pre-computed AVMs (automated valuation models) — black box algorithms, user can't see the math. Comps are auto-selected, no manual adjustments. Good data, zero transparency, no rehab tools
 - **DealCheck/FlipperForce**: Pure calculators — user inputs ALL numbers manually. No data sourcing at all. Accuracy depends entirely on user's knowledge. Garbage in, garbage out
@@ -13351,12 +13368,13 @@ Static reference data that changes only when laws change. Stored in Supabase `fl
 - REIA chapter directory (~200+ chapters — community-updated)
 Maintenance: **~2-3 state tax law changes per year across all 50 states.** When a state changes transfer tax rate (tracked via Google Alerts on state DOR announcements), update one row in the table. Takes 5 minutes. Everything else is permanent or auto-refreshed by Tier 2.
 
-**Self-healing & monitoring:**
+**Self-healing & ops portal monitoring:**
 - Every API call logged with status code + response time in `api_health_log` table (already exists from DEPTH28 API fleet monitoring spec)
 - If a Tier 1 API fails at analysis time: graceful degradation — show "⚠ [source] unavailable, using last cached value from [date]" instead of crashing
-- If a Tier 2 cron fails: retry 3x with backoff → if still failing, alert ops dashboard + email → data still works from last successful pull, flagged stale
+- If a Tier 2 cron fails: retry 3x with backoff → if still failing, **push alert to ops portal + email** → data still works from last successful pull, flagged stale
 - Data freshness displayed on every analysis: "Analysis generated Feb 15, 2026. Data freshness: Comps (Feb 1), Rates (today), Taxes (2025 assessment), Crime (2025 UCR)"
-- Ops dashboard shows all data source health: last successful refresh, staleness, error rate
+- **Ops portal `/dashboard/flip-health` page**: Real-time health board for ALL Flip-It data sources. Per source: name, tier (1/2/3), status (GREEN/YELLOW/RED), last successful pull, data age, error count (24h), avg response time. YELLOW = data >2x expected refresh interval. RED = 3+ consecutive failures or data >5x stale. RED triggers push notification + email. "FRED API: GREEN — last pull 2 min ago, 14ms. Redfin CSVs: GREEN — refreshed Feb 1, next Mar 1. Socrata Chicago: YELLOW — last pull failed 6h ago, retrying, cached Feb 14"
+- **Ops portal alerts feed**: Flip-It failures appear in existing ops notification center. Filter by severity, tier, source. Historical failure log for debugging patterns
 
 **Bottom line: Zero day-to-day maintenance. Engine self-updates from 18+ free APIs. The only human action is ~2-3 state tax law updates per year (5 min each) and fixing any API endpoint changes (if a free source changes their URL format). No spreadsheets, no manual data entry, no "someone needs to check the numbers." The numbers check themselves.**
 
@@ -13484,7 +13502,7 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 - [ ] **Photo upload intake**: User uploads 10-50+ listing photos (from MLS, Zillow, Redfin, or their own). Also accepts: realtor-shared photos, inspector photos, drive-by photos. Drag-and-drop or bulk upload. App auto-categorizes: exterior front, exterior sides, exterior rear, kitchen, bathrooms, bedrooms, living areas, basement, attic, roof, garage, yard, mechanicals (HVAC, water heater, electrical panel)
 - [ ] **AI condition analysis per photo**: Claude Opus 4.6 analyzes each photo and identifies: flooring type + condition (hardwood scratched, carpet stained, tile cracked, vinyl peeling), kitchen condition (cabinet style + age, countertop material + condition, appliance age/brand, backsplash, lighting), bathroom condition (vanity, tub/shower, tile, fixtures, grout), wall condition (paint peeling, wallpaper, drywall damage, water stains), ceiling condition (popcorn, stains, cracks, sagging), window condition (single/double pane, condition, style), roof visible condition (missing shingles, moss, sagging), exterior (siding type + condition, foundation visible cracks, gutter condition), yard (overgrown, fence condition, driveway/walkway), mechanicals (panel age, water heater age, HVAC unit age — if visible). Per photo: identified items + condition grade (Good/Fair/Poor/Replace) + confidence level
 - [ ] **Consolidated condition report**: All photo analyses combined into single property condition report. Room-by-room breakdown: "Kitchen: cabinets (oak, dated but functional — Fair), countertops (laminate, stained — Poor, recommend replace), appliances (2010-era, working — Fair), flooring (vinyl, peeling corners — Poor). Estimated kitchen rehab: $8,500-12,000." Shows what Claude identified with confidence scores. Items it couldn't assess from photos flagged: "Could not determine: electrical panel condition (not visible in photos), plumbing condition (interior), insulation, foundation below grade"
-- [ ] **Selective scope builder — user picks what they want done**: After AI generates full condition report, user checks ONLY the items they want to rehab. NOT quoting everything — user decides their strategy. Options per item: "Replace" (new), "Repair" (fix existing), "Cosmetic" (paint/clean/refinish), "Skip" (leave as-is). Example: user checks kitchen countertops (Replace), all flooring (Replace with LVP), all paint (Cosmetic), bathroom 1 (full gut Replace), bathroom 2 (Skip — good enough). Unchecked items disappear from estimate. "You selected 14 of 23 items. Estimated rehab for YOUR scope: $34,200"
+- [ ] **Simulation layer — Carfax shows everything, user plans on top**: AI generates the FULL condition report showing every issue (Carfax style — nothing hidden). Then user toggles items on/off to build their specific rehab plan. Every item starts as "included" with full cost. User unchecks what they'd skip. Options per item: "Replace" (new), "Repair" (fix existing), "Cosmetic" (paint/clean/refinish), "Skip" (leave as-is). Financial model recalculates in real-time with every toggle. "Full rehab (everything): $52,400. YOUR plan (14 of 23 items): $34,200. You're skipping: bathroom 2, landscaping, garage door, exterior paint — savings: $18,200. Projected profit at your scope: $44,800"
 
 **Customizable Pricing (YOUR contractors, YOUR prices):**
 - [ ] **AI-generated baseline pricing**: Claude provides initial cost estimates based on national averages + regional adjustment (BLS CPI data by metro). Shown as "AI Estimated" with range: "$2,800-3,400 for kitchen countertops (granite, 35 LF)." These are starting points, NOT final numbers
