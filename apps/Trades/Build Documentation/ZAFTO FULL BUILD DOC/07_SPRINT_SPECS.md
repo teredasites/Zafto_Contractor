@@ -11997,6 +11997,125 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - [ ] Verify seed data is exhaustive — not "starter" sets
 - [ ] Commit: `[DEPTH6] Calculator & template depth corrections — formulas, seed data, coverage`
 
+### DEPTH7 — Communication & Notification Depth Audit + Corrections (~14h)
+**Goal:** Audit phone system (SignalWire), meetings (LiveKit), email, fax, notifications, and alerts across all apps. Every contractor needs reliable communication tools — missed calls = missed revenue. Notifications must be actionable, not spammy.
+- [ ] Audit phone system (F1) — call routing, voicemail, call recording, auto-attendant, caller ID, call log, click-to-call from job/customer, missed call notifications. Grade across CRM + team + client portal
+- [ ] Audit fax system — send/receive, document preview, fax from job (permits, insurance docs), fax log, retry on failure. Grade in CRM
+- [ ] Audit meetings (F3) — video quality, screen share, recording, scheduling integration with GC scheduler, meeting notes capture, participant management. Grade across CRM + team + client
+- [ ] Audit email system — send from CRM, templates per document type (invoice, estimate, contract, follow-up), email tracking (open/click), email thread per customer, bulk email. Grade in CRM
+- [ ] Audit push notifications (Flutter) — what triggers notifications? Are they actionable (tap → go to right screen)? Can user control which notifications they get? Do they work when app is closed?
+- [ ] Audit in-app notifications — notification center screen, read/unread, clear all, filter by type, notification preferences per user
+- [ ] Audit real-time alerts — job status changes, payment received, new lead, overdue invoice, schedule conflict, equipment overdue, permit expiring, inspection failed. Are these surfaced clearly?
+- [ ] Audit webhook/automation triggers — what events can trigger automated actions? Are they documented? Can office manager configure them?
+- [ ] Identify and list ALL shallow/stub features found
+- [ ] Build + execute corrections for each shallow feature
+- [ ] Commit: `[DEPTH7] Communication & notification depth corrections — phone, meetings, email, alerts`
+
+### DEPTH8 — Onboarding & First-Use Experience Audit + Corrections (~12h)
+**Goal:** A contractor downloads Zafto, creates an account — what do they see? First 5 minutes decide if they keep the app or delete it. Every trade type needs to feel like the app was built FOR them. Onboarding must set up their company, import existing data, and get them productive in one sitting.
+- [ ] Audit signup flow — what information is collected? Does it ask for trade type? Does it set up company profile? Is it fast (< 2 min)?
+- [ ] Audit first-launch experience — what does the dashboard look like with zero data? Are there helpful empty states or just blank screens? Is there a guided tour or tooltip walkthrough?
+- [ ] Audit trade selection — when a contractor picks "Electrician" vs "Plumber" vs "GC" vs "Restoration" — does the UI change? Are relevant tools/calcs surfaced? Are irrelevant ones hidden?
+- [ ] Audit sample data — does the app offer to create sample jobs/customers/invoices so the contractor can explore features? Can they clear sample data when ready to go live?
+- [ ] Audit company setup — logo upload, business info, license numbers, insurance certs, payment terms, tax rates, service area — is ALL of this in onboarding or buried in settings?
+- [ ] Audit team invitation — can owner invite technicians during onboarding? Is the team portal link provided? Is the QR code / magic link flow smooth?
+- [ ] Audit data import — can they import from Jobber, HCP, ServiceTitan, QuickBooks, Excel? Is there a CSV import wizard? Is mapping clear?
+- [ ] Audit first job creation — is creating the first job intuitive? Does it walk through customer → property → scope → estimate → schedule → assign?
+- [ ] Audit "time to value" — how many taps/clicks to complete the most common action per trade? (Electrician: create service call. GC: create project. Restoration: start water damage claim.)
+- [ ] Identify and list ALL shallow/stub features found
+- [ ] Build + execute corrections for each shallow feature
+- [ ] Commit: `[DEPTH8] Onboarding & first-use experience corrections — signup, trade setup, first job`
+
+### DEPTH9 — Trade Customization Depth Audit + Corrections (~16h)
+**Goal:** Zafto serves 16+ trades. Each trade has different terminology, workflows, document types, compliance requirements, and tools. "Job" means different things to an electrician (service call, panel upgrade, rough-in) vs a GC (project with phases) vs a restoration contractor (claim with documentation requirements). Audit that EVERY feature adapts to the selected trade.
+- [ ] Audit job types per trade — does each trade have specific job type options? Are they comprehensive? (Electrical: service call, panel upgrade, rough-in, trim-out, generator install, EV charger, solar, low voltage, fire alarm. HVAC: install, repair, maintenance, duct work, refrigeration. Plumbing: service call, repipe, sewer, water heater, gas line, fixture. Etc.)
+- [ ] Audit terminology — does the UI use trade-correct terms? "Work order" vs "service ticket" vs "project" vs "claim" — does it match what the trade expects?
+- [ ] Audit estimate templates — does each trade have relevant line item libraries? Material lists? Labor rates? Markup defaults? Are they comprehensive (not 5 items, but 50-200)?
+- [ ] Audit inspection checklists — do templates cover all 16 trades? Are items trade-specific (not generic "check condition")?
+- [ ] Audit calculators — are the RIGHT calculators shown for each trade? Is an electrician seeing wire sizing but NOT pipe sizing? Is a plumber seeing DFU calcs but NOT conduit fill?
+- [ ] Audit code references — NEC for electrical, IPC/UPC for plumbing, IMC for HVAC, IBC/IRC for GC, IICRC for restoration, NFPA for fire protection — all present and correct?
+- [ ] Audit document templates — do contracts, proposals, invoices, and reports use trade-appropriate language and sections?
+- [ ] Audit dashboard widgets — does the dashboard surface trade-relevant KPIs? (Restoration: active claims + moisture readings. Electrical: service calls today + material costs. GC: active projects + schedule status.)
+- [ ] Audit trade-specific tools — does each trade have the specialty tools they need beyond generic ones? (Restoration: moisture mapping + equipment tracking + drying goals. Electrical: load calculations + panel schedules. HVAC: Manual J + refrigerant tracking.)
+- [ ] Identify and list ALL shallow/stub features found
+- [ ] Build + execute corrections for each shallow feature
+- [ ] Commit: `[DEPTH9] Trade customization depth corrections — job types, terminology, templates, tools`
+
+### DEPTH10 — Search, Filtering & Navigation Depth Audit + Corrections (~10h)
+**Goal:** A contractor with 500 jobs, 1,200 customers, and 3 years of data needs to find things FAST. Search must be instant, filters must be comprehensive, and navigation must get them to any screen in 2-3 taps. Power users (office managers) live in search — it must be excellent.
+- [ ] Audit global search — does it search across jobs, customers, invoices, properties, addresses, phone numbers, notes? Is it instant (< 200ms)? Does it show recent searches? Fuzzy matching?
+- [ ] Audit job list filtering — by status, trade type, date range, assigned tech, customer, property, priority, job type, tag. Are filters combinable? Saveable?
+- [ ] Audit customer list filtering — by type (residential/commercial), status (active/inactive), trade, revenue tier, last service date, location/zip
+- [ ] Audit invoice filtering — by status (draft/sent/paid/overdue), date range, customer, amount range, payment method
+- [ ] Audit calendar filtering — by tech, job type, date range, status. Can you view day/week/month? Multiple tech schedules overlay?
+- [ ] Audit navigation depth — how many taps to reach: create new job? View today's schedule? Check unpaid invoices? Find a customer? Open a calculator?
+- [ ] Audit breadcrumbs/back navigation — does the user always know where they are? Can they go back without losing data? Is there a "recent" or "favorites" quick access?
+- [ ] Audit Cmd+K / quick actions (CRM) — does it cover all common actions? Is the command palette comprehensive?
+- [ ] Audit mobile navigation — bottom tabs, drawer menu, quick actions — is everything reachable? No buried features?
+- [ ] Identify and list ALL shallow/stub features found
+- [ ] Build + execute corrections for each shallow feature
+- [ ] Commit: `[DEPTH10] Search, filtering & navigation depth corrections — global search, filters, quick access`
+
+### DEPTH11 — Reports & Export Depth Audit + Corrections (~14h)
+**Goal:** Every piece of data in the system should be exportable and reportable. Contractors need reports for tax season, insurance audits, bank loan applications, and daily operations. CPAs need clean exports. Insurance adjusters need specific documentation formats. Reports must be professional-grade PDFs.
+- [ ] Audit financial reports — P&L statement, balance sheet, cash flow, accounts receivable aging, accounts payable, tax summary by category, job cost report, profitability by trade/tech/month. Are they accurate? PDF-exportable?
+- [ ] Audit job reports — job cost breakdown, labor vs material vs subcontractor, change order impact, schedule variance, completion percentage, photo documentation report
+- [ ] Audit customer reports — customer revenue summary, service history, outstanding balance, last contact date, lifetime value
+- [ ] Audit employee reports — timesheet summary, hours by job, overtime, productivity, utilization rate, mileage, expense totals
+- [ ] Audit insurance reports — claim documentation package (photos + moisture readings + equipment logs + scope), supplement justification, TPA compliance report
+- [ ] Audit compliance reports — OSHA incident log, safety training completion, certification expiry, permit status, inspection pass/fail rates
+- [ ] Audit export formats — PDF, CSV, Excel (.xlsx), QuickBooks export (IIF or QBO), Xactimate (READ ONLY — never generate .ESX), email attachment. Are all formats available where needed?
+- [ ] Audit scheduled reports — can office manager set up weekly P&L email? Monthly job summary? Daily cash flow? Automated report generation?
+- [ ] Audit report customization — date range picker, filter by trade/tech/customer, column selection, sort options, grouping options
+- [ ] Identify and list ALL shallow/stub features found
+- [ ] Build + execute corrections for each shallow feature
+- [ ] Commit: `[DEPTH11] Reports & export depth corrections — financial, job, compliance, multi-format`
+
+### DEPTH12 — Settings, Preferences & Admin Depth Audit + Corrections (~10h)
+**Goal:** Company settings must be comprehensive enough to run ANY trade business. Every contractor has different tax rates, payment terms, markup defaults, overtime rules, notification preferences, branding, and workflow configurations. Settings should eliminate the "this doesn't work for MY business" complaint.
+- [ ] Audit company settings — business name, address, logo, license numbers (multiple), insurance certs, tax ID, payment terms (net 15/30/45/60/custom), default markup percentage, sales tax rate(s), service area/radius
+- [ ] Audit user settings — profile, notification preferences (per type), language, timezone, theme (dark/light), default calendar view, default dashboard widgets
+- [ ] Audit role/permission settings — RBAC configuration, custom role creation, per-feature permissions, what can each role see/do/approve? Is the permission matrix visible to admins?
+- [ ] Audit trade settings — active trades, trade-specific defaults, calculator visibility per trade, template sets per trade, code reference sets per trade
+- [ ] Audit financial settings — chart of accounts customization, payment methods accepted, Stripe Connect setup, bank account linking, tax categories, expense categories
+- [ ] Audit scheduling settings — business hours, holiday calendar, overtime thresholds, drive time defaults, scheduling rules (min gap between jobs, max jobs per tech/day)
+- [ ] Audit document settings — invoice template customization, estimate template, contract template, email signature, company branding on PDFs, terms & conditions text
+- [ ] Audit integration settings — API keys, connected services, webhook configuration, import/export preferences
+- [ ] Audit data management — backup/export all company data, data retention settings, archived items, deleted items recovery
+- [ ] Identify and list ALL shallow/stub features found
+- [ ] Build + execute corrections for each shallow feature
+- [ ] Commit: `[DEPTH12] Settings & admin depth corrections — company, roles, trades, documents, integrations`
+
+### DEPTH13 — Offline & Performance Depth Audit + Corrections (~10h)
+**Goal:** Field workers are in basements, crawl spaces, attics, and rural areas with zero signal. Every critical field action must work offline — create job notes, take photos, fill checklists, log time, capture signatures. Data syncs when signal returns. No data loss, ever. Performance must be snappy — no 3-second loading screens for a list of 50 jobs.
+- [ ] Audit offline capability — which screens work offline today? Which ones crash or show blank? List every screen and its offline status (works/partial/broken)
+- [ ] Audit Hive cache coverage — which repositories have HiveCacheMixin? Which ones still need it? (INS10 added it for inspections — needs rollout to all repos per OFFLINE1-4 plan)
+- [ ] Audit data sync — when connectivity returns, does data sync automatically? Is there a sync status indicator? Can user force sync? Are conflicts handled (last-write-wins? merge? prompt user)?
+- [ ] Audit offline photo capture — photos taken offline, where are they queued? Do they upload when signal returns? Is there a pending upload indicator? Size limits?
+- [ ] Audit offline time tracking — can techs clock in/out offline? Do GPS stamps queue for upload? Is there an offline indicator on timesheet?
+- [ ] Audit app launch performance — cold start time, home screen load time, job list load time with 100+ jobs, customer list with 500+ customers. Target: < 2 seconds for any screen
+- [ ] Audit scroll performance — large lists (jobs, customers, invoices, calculators) — is there lazy loading/pagination? Does it jank on older phones?
+- [ ] Audit image loading — are photos cached? Thumbnails used for lists? Full-res only on detail view? Progressive loading?
+- [ ] Audit web portal performance — CRM page load times, data table performance with 1000+ rows, chart rendering, real-time subscription memory leaks
+- [ ] Identify and list ALL shallow/stub features found
+- [ ] Build + execute corrections for each shallow feature
+- [ ] Commit: `[DEPTH13] Offline & performance depth corrections — cache coverage, sync, load times`
+
+### DEPTH14 — Security & Permission Depth Audit + Corrections (~10h)
+**Goal:** Multi-tenant SaaS with financial data, personal information, and legal documents. Security failures = lawsuits + lost trust. Every endpoint, every screen, every action must enforce RLS + RBAC. Technicians must NOT see other companies' data. Apprentices must NOT approve change orders. CPAs must NOT delete jobs.
+- [ ] Audit RLS policies — verify every table has company_id scoping. Test: can a user from Company A see Company B's data? (Should be impossible)
+- [ ] Audit RBAC enforcement — for each role (owner, admin, office_manager, technician, apprentice, cpa, super_admin), verify correct access to: jobs (CRUD), customers (CRUD), invoices (CRUD), estimates (approve), change orders (approve), time entries (edit others), financial reports, settings, team management
+- [ ] Audit auth flows — password reset, magic link expiry, session timeout, concurrent sessions, token refresh, logout clears all cached data
+- [ ] Audit data exposure — are any API responses returning fields the requesting role shouldn't see? (salary data to technicians, customer SSN/EIN to apprentices, etc.)
+- [ ] Audit file access — storage bucket policies, signed URLs with expiry, can someone access another company's photos/documents by guessing URL?
+- [ ] Audit input validation — SQL injection tests on search fields, XSS tests on text inputs rendered in HTML, CSRF protections on forms, file upload type validation (no .exe uploads)
+- [ ] Audit Edge Function auth — every EF validates JWT, extracts company_id, enforces role. No unauthenticated endpoints for business data
+- [ ] Audit soft delete — is deleted data truly inaccessible to non-admin users? Can deleted items be recovered by admin? Is hard delete prevented?
+- [ ] Audit audit trail — are all critical actions logged? (Financial changes, permission changes, data deletions, login attempts) Is the audit log tamper-proof?
+- [ ] Identify and list ALL shallow/stub features found
+- [ ] Build + execute corrections for each shallow feature
+- [ ] Commit: `[DEPTH14] Security & permission depth corrections — RLS, RBAC, auth, input validation, audit`
+
 ---
 
 ## PHASE JUR: JURISDICTION AWARENESS — Pre-AI (S124 owner directive)
