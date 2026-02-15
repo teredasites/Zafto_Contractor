@@ -23,6 +23,8 @@ import 'package:zafto/screens/field_tools/daily_log_screen.dart';
 import 'package:zafto/screens/field_tools/materials_tracker_screen.dart';
 import 'package:zafto/screens/field_tools/punch_list_screen.dart';
 import 'package:zafto/screens/certifications/certifications_screen.dart';
+import 'package:zafto/screens/tech/tech_timesheet_screen.dart';
+import 'package:zafto/screens/time_clock/time_clock_screen.dart';
 
 // ============================================================
 // Tech Home Screen V2 — Premium Dashboard (Owner-Parity)
@@ -40,13 +42,6 @@ class TechHomeScreen extends ConsumerStatefulWidget {
 }
 
 class _TechHomeScreenState extends ConsumerState<TechHomeScreen> {
-  String _greeting() {
-    final hour = DateTime.now().hour;
-    if (hour < 12) return 'Good morning';
-    if (hour < 17) return 'Good afternoon';
-    return 'Good evening';
-  }
-
   void _openAIChat() {
     HapticFeedback.lightImpact();
     showZChatSheet(context);
@@ -175,19 +170,25 @@ class _TechHomeScreenState extends ConsumerState<TechHomeScreen> {
                   ],
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                decoration: BoxDecoration(
-                  color: colors.accentSuccess,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: const Text(
-                  'CLOCK IN',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                    letterSpacing: 0.5,
+              GestureDetector(
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  _push(const TimeClockScreen());
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: colors.accentSuccess,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Text(
+                    'CLOCK IN',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                      letterSpacing: 0.5,
+                    ),
                   ),
                 ),
               ),
@@ -335,12 +336,15 @@ class _TechHomeScreenState extends ConsumerState<TechHomeScreen> {
             ),
             const SizedBox(width: 10),
             Expanded(
-              child: _buildTile(
-                colors,
-                icon: LucideIcons.clock,
-                label: 'My Hours',
-                value: '0 / 40',
-                iconColor: colors.accentSuccess,
+              child: GestureDetector(
+                onTap: () => _push(const TechTimesheetScreen()),
+                child: _buildTile(
+                  colors,
+                  icon: LucideIcons.clock,
+                  label: 'My Hours',
+                  value: '0 / 40',
+                  iconColor: colors.accentSuccess,
+                ),
               ),
             ),
           ],
