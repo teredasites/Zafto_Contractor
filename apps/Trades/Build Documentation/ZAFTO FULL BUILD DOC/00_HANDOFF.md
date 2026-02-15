@@ -1,6 +1,6 @@
 # ZAFTO SESSION HANDOFF
 ## THE ONLY DOC YOU READ FIRST — EVERY SESSION
-### Last Updated: February 14, 2026 (Session 114 — PHASE U COMPLETE (U1-U23). U15c GPS walkthrough, U18 dispatch board, U23 phone system config)
+### Last Updated: February 14, 2026 (Session 115 — CRITICAL FIX: 10 migration bugs, RLS fix, Sketch Engine rename, UI overhaul, all pushed to Supabase + Vercel)
 
 ---
 
@@ -19,14 +19,14 @@
 
 | Field | Value |
 |-------|-------|
-| **Sprint** | **PHASE U COMPLETE (S114). PHASE G IN PROGRESS (S113).** G1-G5 automated sprints DONE. G6-G10 manual QA PENDING. |
-| **Sub-step** | G6-G10 are manual QA sprints requiring running app + button-click verification. Cannot be automated. Phase E remains PAUSED (AI goes last). |
-| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → Phase G (G1-G5 DONE, G6-G10 manual). Phase E: E-review + BA1-BA8 (~128 hrs) + E1-E4. |
-| **Status** | Phases A-D + F + T + P + SK + GC + U + W + J + L ALL DONE. Phase G automated DONE (G1-G5). R1 DONE. FM code done. Phase E PAUSED. ~199 tables. 67 migration files. 70 Edge Functions. **125 CRM pages. 36 team pages. 39 client pages. 28 ops pages.** Codemagic Android debug PASSING. codemagic.yaml created. |
-| **Last Completed** | S114: **PHASE U COMPLETE (U1-U23).** U15c: GPS-enhanced walkthrough data (altitude, accuracy, path tracking, breadcrumbs). U18: Dispatch board enhancements (HTML5 drag-drop, haversine ETA, customer SMS, map view). U19/U20/U21: verified already built from prior sessions. U23: Phone System Configuration — settings page with 6 tabs (General/Hours/Routing/AI Receptionist/Templates/Recording), 3 new hooks (use-phone-config, use-phone-lines, use-ring-groups), 5 trade presets (Plumber/Electrician/HVAC/GC/Restoration). All 4 portals build clean. S113 prior: Phase L COMPLETE + Phase G automated (G1-G5). |
-| **Session Count** | 114 |
-| **Tables** | ~199 (no new tables in S114 — all U-phase work was UI/hooks). Phase L added: permit_applications, compliance_checklist_items, lien_filings, lien_payments, ce_courses, ce_credits, ce_requirements + extended jurisdictions + compliance_requirements. |
-| **Migration Files** | 67 (1 added in S113: g2_rls_gaps) + 5 from L-phase chain + 1 from U15c (u15c_gps_enhanced_photos) |
+| **Sprint** | **PHASE U COMPLETE (S114). PHASE G IN PROGRESS (S113-S115).** G1-G5 automated sprints DONE. G10 DONE (S114-S115). G6-G9 manual QA PENDING. |
+| **Sub-step** | G6-G9 manual QA pending. Phase E remains PAUSED (AI goes last). |
+| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → Phase G (G1-G5 DONE, G10 DONE, G6-G9 manual). Phase E: E-review + BA1-BA8 (~128 hrs) + E1-E4. |
+| **Status** | Phases A-D + F + T + P + SK + GC + U + W + J + L ALL DONE. Phase G: G1-G5 automated DONE, G10 DONE. R1 DONE. FM code done. Phase E PAUSED. ~199 tables. 51 migration files pushed. 70 Edge Functions. **125 CRM pages. 36 team pages. 39 client pages. 28 ops pages.** All migrations applied to Supabase. |
+| **Last Completed** | S115: **CRITICAL FIX SESSION.** Fixed 10 migration files (auth.company_id→requesting_company_id, broken audit_trigger_fn calls, missing home_equipment table, wrong estimate_items/estimate_labor_components columns, contacts table safety). Fixed RLS on property_floor_plans+walkthroughs (users subquery→JWT). Renamed Sketch & Bid→Sketch Engine everywhere. Rewrote Sketch Engine + Recon pages (features always visible, error as banner). Added bg-card CSS variable. All 51 migrations pushed to Supabase. All 4 portals build clean. Pushed to Vercel. |
+| **Session Count** | 115 |
+| **Tables** | ~199 (no new tables in S115). bid_templates added in migration 099. |
+| **Migration Files** | 51 total pushed to Supabase (added: u14a_trade_seed_expansion, u14b_bid_templates, u15c_gps_enhanced_photos, fix_rls_floor_plans_walkthroughs) |
 
 ## CRITICAL: AI GOES LAST — BUILD ORDER CORRECTED (S80)
 

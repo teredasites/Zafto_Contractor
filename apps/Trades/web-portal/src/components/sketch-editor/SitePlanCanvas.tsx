@@ -246,6 +246,70 @@ export default function SitePlanCanvas({
         });
         return;
       }
+
+      if (tool === 'label') {
+        const lbl = {
+          id: generateId(),
+          position: worldPt,
+          text: 'Label',
+          fontSize: 14,
+        };
+        onSitePlanChange({
+          ...sitePlan,
+          labels: [...(sitePlan.labels ?? []), lbl],
+        });
+        onSelectElement(lbl.id, 'label');
+        return;
+      }
+
+      if (tool === 'erase') {
+        // Check all element arrays for the closest match to click point
+        const hitRadius = 18 / editorState.zoom;
+        const hitTest = (pts: Point[]) => pts.some(p => distance(p, worldPt) < hitRadius);
+
+        // Check structures
+        const hitStructure = sitePlan.structures.find(s => hitTest(s.points));
+        if (hitStructure) {
+          onSitePlanChange({ ...sitePlan, structures: sitePlan.structures.filter(s => s.id !== hitStructure.id) });
+          return;
+        }
+        // Check linear features
+        const hitLinear = sitePlan.linearFeatures.find(f => hitTest(f.points));
+        if (hitLinear) {
+          onSitePlanChange({ ...sitePlan, linearFeatures: sitePlan.linearFeatures.filter(f => f.id !== hitLinear.id) });
+          return;
+        }
+        // Check area features
+        const hitArea = sitePlan.areaFeatures.find(f => hitTest(f.points));
+        if (hitArea) {
+          onSitePlanChange({ ...sitePlan, areaFeatures: sitePlan.areaFeatures.filter(f => f.id !== hitArea.id) });
+          return;
+        }
+        // Check roof planes
+        const hitRoof = sitePlan.roofPlanes.find(r => hitTest(r.points));
+        if (hitRoof) {
+          onSitePlanChange({ ...sitePlan, roofPlanes: sitePlan.roofPlanes.filter(r => r.id !== hitRoof.id) });
+          return;
+        }
+        // Check elevation markers
+        const hitElev = sitePlan.elevationMarkers.find(m => distance(m.position, worldPt) < hitRadius);
+        if (hitElev) {
+          onSitePlanChange({ ...sitePlan, elevationMarkers: sitePlan.elevationMarkers.filter(m => m.id !== hitElev.id) });
+          return;
+        }
+        // Check symbols
+        const hitSym = sitePlan.symbols.find(s => distance(s.position, worldPt) < hitRadius);
+        if (hitSym) {
+          onSitePlanChange({ ...sitePlan, symbols: sitePlan.symbols.filter(s => s.id !== hitSym.id) });
+          return;
+        }
+        // Check labels
+        const hitLabel = (sitePlan.labels ?? []).find((l: { id: string; position: Point }) => distance(l.position, worldPt) < hitRadius);
+        if (hitLabel) {
+          onSitePlanChange({ ...sitePlan, labels: (sitePlan.labels ?? []).filter((l: { id: string }) => l.id !== hitLabel.id) });
+          return;
+        }
+      }
     },
     [editorState, sitePlan, canvasToWorld, generateId, isLayerLocked, onSitePlanChange, onSelectElement, onEditorStateChange, scale],
   );

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
@@ -26,6 +26,70 @@ import { formatDate, cn } from '@/lib/utils';
 import { usePropertyScans, type ConfidenceGrade } from '@/lib/hooks/use-property-scan';
 import { getSupabase } from '@/lib/supabase';
 
+// Mapbox Geocoding — address autocomplete
+const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+
+interface GeocodingSuggestion {
+  id: string;
+  place_name: string;
+  center: [number, number];
+}
+
+function useAddressAutocomplete() {
+  const [query, setQuery] = useState('');
+  const [suggestions, setSuggestions] = useState<GeocodingSuggestion[]>([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const search = useCallback((text: string) => {
+    setQuery(text);
+    if (timerRef.current) clearTimeout(timerRef.current);
+
+    if (!text.trim() || text.trim().length < 3 || !MAPBOX_TOKEN) {
+      setSuggestions([]);
+      setIsOpen(false);
+      return;
+    }
+
+    timerRef.current = setTimeout(async () => {
+      setLoading(true);
+      try {
+        const encoded = encodeURIComponent(text.trim());
+        const res = await fetch(
+          `https://api.mapbox.com/geocoding/v5/mapbox.places/${encoded}.json?access_token=${MAPBOX_TOKEN}&types=address&country=us&limit=5`
+        );
+        if (!res.ok) throw new Error('Geocoding failed');
+        const data = await res.json();
+        const results: GeocodingSuggestion[] = (data.features || []).map((f: { id: string; place_name: string; center: [number, number] }) => ({
+          id: f.id,
+          place_name: f.place_name,
+          center: f.center,
+        }));
+        setSuggestions(results);
+        setIsOpen(results.length > 0);
+      } catch {
+        setSuggestions([]);
+        setIsOpen(false);
+      } finally {
+        setLoading(false);
+      }
+    }, 300);
+  }, []);
+
+  const select = useCallback((suggestion: GeocodingSuggestion) => {
+    setQuery(suggestion.place_name);
+    setSuggestions([]);
+    setIsOpen(false);
+  }, []);
+
+  const close = useCallback(() => {
+    setIsOpen(false);
+  }, []);
+
+  return { query, setQuery: search, suggestions, isOpen, loading, select, close };
+}
+
 const CAPABILITIES = [
   { icon: <Home size={16} />, label: 'Roof Analysis', detail: 'Area, pitch, ridges, valleys, facets, material ID', color: 'text-emerald-400 bg-emerald-500/10' },
   { icon: <Layers size={16} />, label: 'Wall Measurements', detail: 'Siding area, trim, fascia, soffit per face', color: 'text-blue-400 bg-blue-500/10' },
@@ -47,15 +111,28 @@ export default function ReconPage() {
   const router = useRouter();
   const { scans, loading, error, refetch } = usePropertyScans();
   const [searchQuery, setSearchQuery] = useState('');
-  const [scanAddress, setScanAddress] = useState('');
   const [scanning, setScanning] = useState(false);
   const [scanError, setScanError] = useState<string | null>(null);
+  const autocomplete = useAddressAutocomplete();
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const handleScan = async () => {
-    const address = scanAddress.trim();
+  // Close dropdown on outside click
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        autocomplete.close();
+      }
+    }
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [autocomplete]);
+
+  const handleScan = async (addressOverride?: string) => {
+    const address = (addressOverride || autocomplete.query).trim();
     if (!address || scanning) return;
     setScanning(true);
     setScanError(null);
+    autocomplete.close();
     try {
       const supabase = getSupabase();
       const { data: { session } } = await supabase.auth.getSession();
@@ -76,7 +153,7 @@ export default function ReconPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Scan failed');
 
-      setScanAddress('');
+      autocomplete.setQuery('');
       refetch();
       if (data.scan_id) {
         router.push(`/dashboard/recon/${data.scan_id}`);
@@ -109,21 +186,48 @@ export default function ReconPage() {
             </div>
           </div>
 
-          {/* Address Input */}
+          {/* Address Input with Autocomplete */}
           <div className="mt-4 flex gap-3">
-            <div className="relative flex-1">
-              <MapPin size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" />
+            <div className="relative flex-1" ref={dropdownRef}>
+              <MapPin size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400 z-10" />
               <input
                 type="text"
-                placeholder="Enter property address (e.g. 123 Main St, Springfield, IL 62701)"
-                value={scanAddress}
-                onChange={(e) => setScanAddress(e.target.value)}
-                onKeyDown={(e) => { if (e.key === 'Enter') handleScan(); }}
+                placeholder="Start typing an address..."
+                value={autocomplete.query}
+                onChange={(e) => autocomplete.setQuery(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleScan(); if (e.key === 'Escape') autocomplete.close(); }}
+                onFocus={() => { if (autocomplete.suggestions.length > 0) autocomplete.close(); }}
                 disabled={scanning}
-                className="w-full pl-10 pr-4 py-3 rounded-lg border border-main bg-surface text-main text-sm placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50"
+                autoComplete="off"
+                style={{ color: 'var(--text)', backgroundColor: 'var(--surface)', caretColor: 'var(--accent)' }}
+                className="w-full pl-10 pr-4 py-3 rounded-lg border border-main text-sm placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50"
               />
+              {autocomplete.loading && (
+                <Loader2 size={14} className="absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-neutral-400" />
+              )}
+
+              {/* Autocomplete Dropdown */}
+              {autocomplete.isOpen && (
+                <div className="absolute top-full left-0 right-0 mt-1 rounded-lg border border-main overflow-hidden shadow-lg z-50"
+                     style={{ backgroundColor: 'var(--surface)' }}>
+                  {autocomplete.suggestions.map((s) => (
+                    <button
+                      key={s.id}
+                      onClick={() => {
+                        autocomplete.select(s);
+                        handleScan(s.place_name);
+                      }}
+                      className="w-full flex items-center gap-3 px-4 py-2.5 text-left text-sm hover:bg-accent/10 transition-colors"
+                      style={{ color: 'var(--text)' }}
+                    >
+                      <MapPin size={14} className="shrink-0 text-accent" />
+                      <span className="truncate">{s.place_name}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
-            <Button onClick={handleScan} disabled={!scanAddress.trim() || scanning} className="px-6">
+            <Button onClick={() => handleScan()} disabled={!autocomplete.query.trim() || scanning} className="px-6">
               {scanning ? (
                 <><Loader2 size={16} className="animate-spin mr-2" />Scanning...</>
               ) : (
@@ -134,6 +238,9 @@ export default function ReconPage() {
 
           {scanError && (
             <p className="mt-2 text-sm text-red-500">{scanError}</p>
+          )}
+          {!MAPBOX_TOKEN && (
+            <p className="mt-2 text-xs text-amber-500">Address autocomplete unavailable — NEXT_PUBLIC_MAPBOX_TOKEN not configured.</p>
           )}
         </div>
         <div className="absolute -right-8 -top-8 w-36 h-36 rounded-full bg-accent/5" />

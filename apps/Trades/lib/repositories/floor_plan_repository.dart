@@ -185,7 +185,7 @@ class FloorPlanRepository {
       var query = supabase
           .from('property_floor_plans')
           .select()
-          .is_('deleted_at', null);
+          .isFilter('deleted_at', null);
 
       if (propertyId != null) {
         query = query.eq('property_id', propertyId);

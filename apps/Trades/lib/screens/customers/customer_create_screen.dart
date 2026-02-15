@@ -510,7 +510,7 @@ class _CustomerCreateScreenState extends ConsumerState<CustomerCreateScreen> {
       if (phone.isNotEmpty || email.isNotEmpty) {
         try {
           final supabase = Supabase.instance.client;
-          var query = supabase.from('customers').select('id, name').eq('company_id', supabase.auth.currentUser?.appMetadata['company_id'] ?? '').is_('deleted_at', null);
+          var query = supabase.from('customers').select('id, name').eq('company_id', supabase.auth.currentUser?.appMetadata['company_id'] ?? '').isFilter('deleted_at', null);
           if (phone.isNotEmpty) {
             query = query.eq('phone', phone);
           } else if (email.isNotEmpty) {

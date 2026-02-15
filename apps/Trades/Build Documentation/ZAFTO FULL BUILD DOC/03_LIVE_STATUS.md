@@ -1,7 +1,7 @@
 # ZAFTO LIVE STATUS
 ## UPDATE THIS EVERY SESSION
 
-**Last Updated:** February 14, 2026 (Session 114 — **PHASE U COMPLETE (U1-U23).** S114: U15c GPS-enhanced walkthrough data (altitude/accuracy/path tracking). U18 Dispatch Board (drag-drop, ETA calculation, customer SMS notification, map view). U19/U20/U21 verified already built. U23 Phone System Configuration — settings page with 6 tabs (General, Hours, Routing, AI Receptionist, Templates, Recording), 3 new hooks (use-phone-config, use-phone-lines, use-ring-groups), 5 trade presets. All 4 portals build clean.)
+**Last Updated:** February 14, 2026 (Session 115 — **CRITICAL FIX SESSION.** Fixed 10 migration files (wrong function refs, broken audit triggers, missing tables, wrong column names). Fixed RLS on property_floor_plans/walkthroughs (broken subquery → JWT pattern). Renamed Sketch & Bid → Sketch Engine. Rewrote Sketch Engine + Recon pages (features always visible, error as banner). Added bg-card CSS variable. All 48→51 migrations pushed to Supabase. All 4 portals build clean. Pushed to Vercel.)
 **Current Phase:** BUILD — **Phases A-D + F + T + P + SK + GC + U + W + J + L ALL COMPLETE. Phase G IN PROGRESS (G1-G5 automated DONE, G6-G10 manual QA PENDING).** R1 DONE. FM code done. Phase E PAUSED. ~199 tables. 67 migrations. 70 Edge Functions. 125 CRM routes. 36 team routes. 39 client routes. 28 ops routes.
 **Next Action:** Phase G manual QA (G6-G10, requires running app) → Phase E (AI: E-review → BA1-BA8 Plan Review → E1-E4) → LAUNCH.
 
@@ -89,12 +89,12 @@
 | 32 | F7: Home Portal | ~140-180 | **DONE (S90)** — 5 tables, client portal hook + 4 pages. |
 | 33 | F9: Hiring System | ~18-22 | **DONE (S90)** — 3 tables, CRM hook+page. |
 | 34 | F10: ZForge | TBD | **DONE (S90)** — 3 tables, 1 EF, CRM hook+page, portal expansion pages. |
-| 35 | T: Programs Module | ~80 | **SPEC'D (S92) — NEXT** — 17 tables, 3 EFs, 10 sprints. Expansion/39_TPA_MODULE_SPEC.md |
-| 36 | P: Recon / Property Intelligence Engine | ~96 | **SPEC'D (S93, expanded S97)** — 11 tables, 6 EFs, 10 sprints. Lead scoring, batch area scanning, storm intelligence, supplement checklist, multi-structure detection, confidence scoring. Expansion/40_PROPERTY_INTELLIGENCE_SPEC.md |
+| 35 | T: Programs Module | ~80 | **COMPLETE** — 12-14 tables, 3 EFs, 4 CRM pages, 5 hooks. TPA programs, assignments, scorecards, supplements, water damage, equipment, financials, restoration line items. Expansion/39_TPA_MODULE_SPEC.md |
+| 36 | P: Recon / Property Intelligence Engine | ~96 | **COMPLETE** — 14-15 tables, 7 EFs, 5 CRM pages, 2+ hooks. Property scans, roof measurements, lead scoring, area scans, storm assessment, trade estimation. Google Solar + ATTOM + Regrid APIs. Expansion/40_PROPERTY_INTELLIGENCE_SPEC.md |
 | 37 | SK: CAD-Grade Sketch Engine | ~240 | **EXPANDED (S101)** — 6 tables (was 3), ~46+ files, 14 sprints (SK1-SK14). LiDAR scan, trade layers, Konva web editor, auto-estimate, export, 3D view + **S101: multi-floor support, version history snapshots, photo pin placement, SVG export, team/client portal viewers** + site plan mode (SK12), trade-specific measurements/templates (SK13), field UX/ARCore/multi-user (SK14). $0/mo API costs confirmed. MagicPlan comparison in `memory/sketch-engine-deep-research-s101.md`. Expansion/46_SKETCH_ENGINE_SPEC.md |
 | 37a | GC: Gantt & CPM Scheduling Engine | ~124 | **COMPLETE (S110)** — 12 tables, 8 EFs, 11 sprints (GC1-GC11). Full CPM, resource leveling, P6/MS Project import/export, real-time collab, portfolio view, mini-Gantt widgets, EVM cost tracking, team/client/ops portal views. Expansion/48_GANTT_CPM_SCHEDULER_SPEC.md |
-| 38 | U: Unification & Feature Completion | ~432 | **IN PROGRESS (S111)** — 22 sprints (U1-U22). U1 SCRAPPED (owner directive — portals stay separate). **U2 DONE: Nav Redesign (Supabase-style sidebar). U3 DONE: Permission Engine (role presets, enterprise tiers). U4 DONE: Ledger Completion (budget vs actual, job costing P&L). U5 DONE: Dashboard Restoration (live GPS, real-time clock). U6 DONE: PDF + Email (bid/invoice PDF, SendGrid, dead buttons fixed, S98 critical fixes). U7 PARTIAL: Payment Flow + Shell Pages (4 migrations, 5 hooks, Stripe Connect, system health committed — deep workflows U7d-f remaining).** U8-U22 PENDING (~340 hrs remaining). |
-| 39 | G: Debug, QA & Hardening | ~100-200 | PENDING — After ALL building (T+P+SK+U). Full button-click audit, security, performance, cross-feature integration testing. |
+| 38 | U: Unification & Feature Completion | ~432 | **COMPLETE (S114)** — U1-U23 all done. Nav redesign, permission engine, ledger, dashboard, PDF+Email, payments, shell pages, Stripe Connect, system health, all dead buttons wired. |
+| 39 | G: Debug, QA & Hardening | ~100-200 | **IN PROGRESS** — G1-G5 automated QA done (S113). G10 done (S114-S115). G6-G9 manual QA pending. S115: Fixed 10 migrations, RLS fix, Sketch Engine rename, UI overhaul. |
 | 39a | E/BA: Plan Review (AI Takeoff) | ~128 | **SPEC'D (S97)** — 6 tables, 3 EFs, 8 sprints (BA1-BA8). MitUNet + YOLOv12 + Claude. RunPod GPU. Expansion/47_BLUEPRINT_ANALYZER_SPEC.md |
 | 40 | E: AI Layer Rebuild | TBD | PENDING — Deep spec session, full platform knowledge (after T+P+SK+U+G). E-review → BA1-BA8 → E1-E4. |
 | 41 | **LAUNCH** | — | — |
@@ -138,7 +138,7 @@
 | `00_HANDOFF.md` | COMPLETE — updated every session |
 | `01_MASTER_BUILD_PLAN.md` | COMPLETE (updated S97) |
 | `02_CIRCUIT_BLUEPRINT.md` | COMPLETE — updated S91 (Codemagic CI/CD, Dependabot) |
-| `03_LIVE_STATUS.md` | COMPLETE (this file — updated S114) |
+| `03_LIVE_STATUS.md` | COMPLETE (this file — updated S115) |
 | `04_EXPANSION_SPECS.md` | COMPLETE (Session 36 — all 14 specs consolidated) |
 | `05_EXECUTION_PLAYBOOK.md` | COMPLETE (Session 37 — session protocol, methodology, quality gates) |
 | `06_ARCHITECTURE_PATTERNS.md` | COMPLETE (Session 37 — 14 code patterns with full examples) |
