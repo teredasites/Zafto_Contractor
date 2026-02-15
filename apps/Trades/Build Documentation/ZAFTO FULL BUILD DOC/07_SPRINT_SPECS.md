@@ -12453,6 +12453,132 @@ When inspector takes a photo during inspection execution, add search bar to atta
 
 ---
 
+## PHASE ZERO: ZERO-DEFECT VALIDATION SYSTEM (S125 owner directive)
+**Purpose:** Owner directive — "I'm looking for flawless." This phase builds an automated testing system that goes far beyond industry standard. Most SaaS companies do unit tests + manual QA. Aerospace and medical device software uses property-based testing, mutation testing, fuzzing, formal model checking, and chaos engineering to achieve near-zero defect rates. Zafto will use the same techniques. This is a one-man team's QA department — a machine that tries to break everything systematically, finds every edge case, and runs continuously. The goal: by the time LAUNCH7 (App Store) runs, the system has been attacked by its own tests millions of times and survived.
+
+**Position in build order:** Runs AFTER SEC9 (pentest), BEFORE LAUNCH7 (App Store). Pentest finds security bugs. ZERO finds logic bugs, performance bugs, edge cases, and data integrity issues. Both must pass clean before shipping.
+
+### ZERO1 — Test Infrastructure & Staging Environment (~8h)
+**Goal:** Build the foundation that all other ZERO sprints run on. Dedicated staging environment that mirrors production exactly. Test runner framework. Seed data factories. CI/CD integration so tests run on every commit automatically. Nothing ships without passing.
+- [ ] **Supabase staging project** — Create dedicated staging Supabase project (separate from dev and prod). Mirror ALL tables, RLS policies, Edge Functions, storage buckets. This is the target for all automated tests — never test against prod
+- [ ] **Seed data factory** — Create programmable data factory that generates realistic test data at any scale. `createTestCompany(numJobs, numCustomers, numInvoices, numEmployees)`. Generates: company + users (all 7 roles) + customers (residential + commercial mix) + jobs (all types per trade) + estimates + invoices + time entries + photos + inspections + properties + schedules. Realistic names, addresses, amounts, dates — not "Test Job 1"
+- [ ] **Scale seed profiles** — Pre-built profiles: `SOLO` (1 user, 50 jobs, 200 customers — one-truck electrician), `SMALL` (5 users, 500 jobs, 1K customers — small HVAC company), `MEDIUM` (25 users, 5K jobs, 10K customers — multi-crew restoration company), `LARGE` (100 users, 50K jobs, 50K customers, 3 years of data — multi-branch GC). Tests run against ALL profiles
+- [ ] **k6 load testing framework** — Install k6 locally (your i9 + 96GB can simulate 50K+ virtual users). Create base k6 scripts in `tests/load/`. Shared auth helper (login → get JWT → use in requests). Shared assertions (response time < threshold, status 200, body valid JSON)
+- [ ] **Flutter integration test runner** — Set up `integration_test/` directory. Configure test device (Android emulator or real device via ADB). Create test helpers: login as role, navigate to screen, fill form, verify state
+- [ ] **Playwright E2E framework** — Install Playwright for all 4 web portals. Create shared helpers: login, navigate, fill forms, verify data. Configure to run headless in CI/CD. Screenshot on failure for debugging
+- [ ] **Test result dashboard** — Create test result aggregator: how many tests ran, passed, failed, flaky. Track over time (is quality improving or regressing?). Store in `tests/results/`. Generate markdown report per run
+- [ ] **CI/CD gate** — GitHub Actions workflow: on every push → run all tests → if ANY fail → block merge. No exceptions. Broken tests = broken build = no deploy
+- [ ] Commit: `[ZERO1] Test infrastructure — staging env, data factory, k6, Playwright, CI/CD gate`
+
+### ZERO2 — Property-Based Testing: Invariants That Must Always Hold (~12h)
+**Goal:** Instead of writing individual test cases ("create job with name 'Kitchen Remodel' → succeeds"), define PROPERTIES that must hold for ALL possible inputs. The framework generates thousands of random inputs automatically and tests each one. This is how you find edge cases no human would think of. "For ANY string as a job name — including empty, 10,000 chars, Unicode, emoji, SQL injection, null bytes, RTL text — creating a job must either succeed or return a typed validation error. It must NEVER crash, return 500, or corrupt data."
+- [ ] **Install fast-check** (TypeScript) for all 4 portals — property-based testing library that generates random inputs
+- [ ] **Core entity properties** — For each core entity (job, customer, invoice, estimate, bid, change_order, time_entry, inspection), define properties:
+  - CREATE with any valid-shaped input → succeeds and returns matching data
+  - CREATE with invalid input → returns typed error, never 500
+  - READ after CREATE → returns exactly what was written (round-trip integrity)
+  - UPDATE with any field → only that field changes, others unchanged
+  - DELETE (soft) → record has deleted_at set, excluded from list queries
+  - No operation ever exposes data from another company (cross-tenant invariant)
+- [ ] **String properties** — For every text field in the system: test with empty string, single char, max length + 1, Unicode (Chinese, Arabic, emoji, combining chars, zero-width joiners), null bytes, HTML tags, SQL injection payloads, newlines, tabs, extremely long strings (100KB). Property: must accept valid strings and reject/truncate invalid without crashing
+- [ ] **Number properties** — For every numeric field: test with 0, -1, MAX_INT, MIN_INT, decimals with 20 places, NaN, Infinity, string disguised as number. Property: must accept valid range and reject invalid with typed error
+- [ ] **Date properties** — For every date field: test with past dates (1900), future dates (2100), epoch 0, null, invalid format, timezone edge cases (UTC-12, UTC+14, DST transitions). Property: must store and retrieve in UTC consistently
+- [ ] **Referential integrity properties** — For every foreign key: test with valid ID, invalid UUID, UUID from another company, null (if nullable), deleted record ID. Property: must enforce referential integrity and never create orphaned records
+- [ ] **Financial calculation properties** — For estimates/invoices: property: sum of line items × (1 + tax_rate) = total ± $0.01 (floating point tolerance). For ANY combination of line items, quantities, rates, discounts, and tax rates. Property: no negative totals possible from valid inputs. Property: markup calculations are commutative (order of operations doesn't change result)
+- [ ] **Pagination properties** — For every list endpoint: property: page 1 + page 2 + ... + page N = total count. No duplicates across pages. No missing records. Consistent ordering even during concurrent writes
+- [ ] Run 10,000 generated test cases per property (fast-check default). Target: ZERO failures across ALL properties
+- [ ] Commit: `[ZERO2] Property-based testing — invariants on all entities, strings, numbers, dates, financials`
+
+### ZERO3 — State Machine Testing: Every Possible Transition (~10h)
+**Goal:** Every entity with a status field is a state machine. Jobs go from draft → scheduled → in_progress → completed → invoiced. Invoices go from draft → sent → viewed → paid → void. Inspections go from scheduled → in_progress → completed → failed → reinspection. Define EVERY valid and invalid transition. Test ALL of them. If a job is "completed," it must NOT be possible to move it back to "draft" without going through "reopened" first. If an invoice is "paid," voiding it must create a credit note. Every impossible transition must be explicitly rejected.
+- [ ] **Map all state machines** — Document every entity with status fields and ALL valid transitions:
+  - Job: draft → scheduled → in_progress → on_hold → completed → invoiced → closed. Also: any → cancelled (with reason)
+  - Estimate: draft → sent → viewed → approved → rejected → revised → expired
+  - Invoice: draft → sent → viewed → partial_paid → paid → void → refunded
+  - Bid: draft → submitted → under_review → accepted → rejected → withdrawn
+  - Inspection: scheduled → in_progress → completed → passed → failed → reinspection_required
+  - Change Order: proposed → review → approved → rejected → executed
+  - Time Entry: clocked_in → clocked_out → submitted → approved → rejected → paid
+  - Work Order: created → assigned → acknowledged → in_progress → completed → verified
+  - Insurance Claim: filed → documented → submitted → supplement → approved → closed
+  - Permit: applied → submitted → under_review → approved → rejected → expired → renewed
+- [ ] **Generate exhaustive transition matrix** — For each state machine: test EVERY state × EVERY possible next_state (N²). Valid transitions: must succeed and update status. Invalid transitions: must return typed error with reason and NOT change status. Example: Job has 8 states → 64 transition combinations → test all 64
+- [ ] **Concurrent transition testing** — Two users attempt conflicting transitions simultaneously: User A completes a job while User B cancels it. One must succeed, one must fail gracefully. No inconsistent state. Test with parallel requests (Promise.all)
+- [ ] **Cascade effects** — When a job is cancelled: all pending invoices must be voided, scheduled tasks removed, assigned techs notified. Test that cascades execute completely (no partial cascades). When invoice is paid: job status updates, ledger entry created, customer balance updated — ALL must happen atomically
+- [ ] **Edge states** — Can a deleted job be transitioned? Can an archived customer have new jobs created? Can an expired estimate be approved? Every edge must be tested
+- [ ] **Time-dependent transitions** — Estimates expire after X days. Invoices become overdue after due_date. Permits expire. Warranties expire. Test: what happens at the exact transition moment? Test with clock manipulation
+- [ ] Commit: `[ZERO3] State machine testing — exhaustive transition matrices, concurrent conflicts, cascades`
+
+### ZERO4 — Chaos Engineering: Failure Injection at Scale (~10h)
+**Goal:** Deliberately break things and verify the system degrades gracefully. Supabase goes down for 60 seconds — does the app crash or show a friendly error? Network drops mid-file-upload — is the photo lost or queued for retry? Edge Function times out — does the user see an infinite spinner or a retry button? Real users WILL experience all of these. Test them all before they do.
+- [ ] **Supabase failure simulation** — Intercept Supabase client and simulate: (1) 100% request failure for 60 seconds (total outage), (2) 50% random failures (flaky connection), (3) 5-second response delay on all queries (slow database), (4) connection timeout (no response at all). For EACH scenario across Flutter + all 4 portals: verify error states shown (not blank screens), no data loss, automatic retry when service recovers, user can still access cached/offline data
+- [ ] **Edge Function chaos** — For each critical EF: simulate timeout (30 second hang), 500 error, malformed JSON response, empty response, partial response (connection dropped mid-stream). Verify: calling code handles every failure mode, user sees actionable error message, no cascading failures
+- [ ] **Storage failure** — Simulate: photo upload fails mid-transfer, storage returns 403, storage returns 503, signed URL expired during upload. Verify: upload retried automatically (or user prompted), no orphaned records in DB pointing to non-existent files, existing photos still display from cache
+- [ ] **Network chaos (Flutter)** — Simulate: airplane mode toggle during form submission, slow 2G connection (200ms+ latency, 50kbps), WiFi → cellular handoff during real-time subscription, complete network loss during time clock punch. Verify: no data loss, offline queue works, sync on reconnect, no duplicate submissions
+- [ ] **Memory pressure (Flutter)** — Test on low-end device profile (2GB RAM): open app → navigate through 20 screens → create job → upload 10 photos → run calculator → view schedule. Verify: no OOM crash, images properly disposed, providers cleaned up on screen exit
+- [ ] **Concurrent write chaos** — 50 users simultaneously: updating the same job, adding line items to the same estimate, sending messages in the same conversation, punching time on the same clock. Verify: no lost updates, no duplicate entries, final state is consistent, real-time subscribers all see the same final state
+- [ ] **Clock skew chaos** — Set device clock 1 hour ahead, 1 hour behind, 1 year ahead, to epoch 0. Verify: JWT still validates (or properly rejects), schedule displays correctly, time entries make sense, timestamps stored in UTC regardless of device clock
+- [ ] **Database connection exhaustion** — Open 200+ concurrent connections to staging Supabase (exceed PgBouncer pool). Verify: connection pooling handles it gracefully, requests queue rather than crash, error message if pool truly exhausted
+- [ ] **Cascade failure** — Kill Supabase AND storage simultaneously. Verify: app shows single unified "service unavailable" state, not multiple error dialogs stacked. Recovery: when services return, app recovers without user intervention
+- [ ] Commit: `[ZERO4] Chaos engineering — Supabase/EF/storage/network/memory/clock failure injection`
+
+### ZERO5 — Load Testing: 50,000 Concurrent Users (~10h)
+**Goal:** Simulate 50,000 concurrent users executing realistic workflows. Not 50K hitting the same endpoint — 50K doing different things simultaneously like real traffic. Find every bottleneck, every slow query, every connection pool limit, every rate limit, every memory leak. Your i9-14900K + 96GB RAM can generate this load locally with k6. Test against staging Supabase (Pro plan may need temporary upgrade for connection limits).
+- [ ] **User journey scripts (k6)** — Create realistic workflow scripts that simulate actual contractor usage patterns:
+  - `owner_workflow.js` — Login → view dashboard → check revenue → review estimates → approve change order → check schedule → view reports → logout (30% of traffic)
+  - `office_manager_workflow.js` — Login → create customer → create job → build estimate → send invoice → answer messages → schedule tech → logout (25%)
+  - `technician_workflow.js` — Login → view today's jobs → clock in → update job status → take photos → log materials → create daily log → clock out (35%)
+  - `client_workflow.js` — Magic link login → view project → check photos → pay invoice → send message → logout (10%)
+- [ ] **Ramp profile** — Phase 1: 0 → 1,000 users over 5 min (warmup). Phase 2: 1,000 → 10,000 over 10 min (load). Phase 3: 10,000 → 50,000 over 15 min (stress). Phase 4: sustain 50,000 for 30 min (endurance). Phase 5: 50,000 → 0 over 5 min (cooldown). Total: ~65 min test
+- [ ] **Performance thresholds (SLA)** — Define pass/fail criteria: p50 response time < 200ms, p95 < 1 second, p99 < 3 seconds, error rate < 0.1%, zero 500 errors on auth endpoints, zero data corruption at any load level. If ANY threshold breached → test FAILS → find and fix the bottleneck → rerun
+- [ ] **Database performance monitoring** — During load test: monitor Supabase dashboard for slow queries (> 500ms), connection pool utilization, active connections, cache hit ratio, dead tuples, table bloat. Export slow query log. Create indexes for any query > 100ms at load
+- [ ] **Vercel function monitoring** — During load test: monitor Vercel dashboard for cold starts, execution duration, memory usage, timeout rate. Identify any function hitting limits
+- [ ] **Real-time subscription stress** — 10,000 users subscribed to real-time channels simultaneously. User A updates a job → verify ALL subscribed users receive the event within 2 seconds. Measure: event delivery latency at scale, dropped events, memory usage of subscription manager
+- [ ] **File upload under load** — 1,000 concurrent photo uploads (1MB each). Verify: all succeed (or gracefully queue), storage not overwhelmed, no orphaned files, no duplicate files
+- [ ] **Search performance at scale** — With LARGE seed profile (50K jobs, 50K customers): search for common terms. Verify: results return < 500ms. Search for rare terms: < 1 second. Full-text search across all entities: < 2 seconds. Autocomplete: < 200ms
+- [ ] **Memory leak detection** — Run 50K user test for 30 min. Monitor: Vercel function memory over time (should be flat, not climbing). Flutter app memory during extended use (2+ hours, simulate via repeated navigation). Web portal browser memory (should not grow unbounded with real-time subscriptions)
+- [ ] **Spike test** — Ramp from 0 → 50,000 in 60 seconds (sudden viral spike). Verify: system doesn't crash, Vercel auto-scales, Supabase connection pooling absorbs the shock. Error rate acceptable during spike, recovery within 30 seconds after spike levels off
+- [ ] **Endurance test** — 5,000 users sustained for 4 hours. Monitor for: slow memory leaks, connection pool drift, gradual response time degradation, log file growth, DB table bloat from audit triggers
+- [ ] **Bottleneck report** — Document every bottleneck found: endpoint, current response time, cause, fix (index, query optimization, caching, connection pool tuning). Fix ALL bottlenecks. Rerun test to verify
+- [ ] Commit: `[ZERO5] Load testing — 50K concurrent users, spike test, endurance test, all bottlenecks fixed`
+
+### ZERO6 — Fuzz Testing: Millions of Random Inputs (~10h)
+**Goal:** Send millions of malformed, random, unexpected, and adversarial inputs to every endpoint in the system. Traditional tests check "does the happy path work." Fuzz testing checks "does ANYTHING make it crash." This is how Google finds bugs in Chrome — they fuzz every input with billions of random mutations. If any input to any endpoint returns 500 or causes unexpected behavior, it's a bug. Period.
+- [ ] **API endpoint fuzzer** — For every Edge Function and API route: generate random valid-structured payloads with mutated fields. Mutations: random string in number field, 0-byte string, 1MB string, nested objects 100 levels deep, arrays with 100K elements, Unicode category chaos (control chars, surrogate pairs, RTL overrides, zero-width chars), null, undefined, missing required fields, extra unknown fields. Send 10,000 mutated requests per endpoint. ANY 500 response = bug → fix immediately
+- [ ] **Form input fuzzer (Flutter)** — For every text input in the app: programmatically input fuzzed strings via integration tests. Verify: no crash, no unhandled exception, proper validation error shown. Test every form: job creation, customer creation, estimate line items, invoice, time entry, inspection checklist, message compose, settings, search
+- [ ] **Form input fuzzer (Web)** — Playwright-based: for every form in all 4 portals, fill with fuzzed data and submit. Verify: no unhandled JS error, no white screen, proper validation. Check: do error messages make sense (not "undefined" or raw stack trace)?
+- [ ] **File upload fuzzer** — Upload to every file-accepting endpoint: zero-byte file, 500MB file, file with wrong extension (.jpg that's actually .exe), file with null bytes in name, file with path traversal in name (../../etc/passwd.jpg), polyglot files (valid image + embedded script), corrupted JPEG/PNG/PDF headers, password-protected PDF, encrypted ZIP. Verify: all rejected gracefully, no server-side processing of malicious files
+- [ ] **JSON structure fuzzer** — For every endpoint accepting JSON: send deeply nested objects, circular references (if possible), duplicate keys, mixed types in arrays, BigInt values, special JSON values (NaN, Infinity, -0), UTF-8 BOM prefix, trailing commas, comments in JSON. Verify: parser rejects or handles gracefully
+- [ ] **Query parameter fuzzer** — For every endpoint with URL parameters: fuzz with URL-encoded special chars, array parameters (?id[]=1&id[]=2), parameter pollution (?id=1&id=2), extremely long query strings (>8KB), null bytes, path traversal, protocol smuggling
+- [ ] **Real-time subscription fuzzer** — Subscribe to channels with fuzzed channel names, fuzzed filter parameters, subscribe/unsubscribe rapidly (100x per second), subscribe to channels that don't exist, subscribe with expired JWT
+- [ ] **Crash log analysis** — After all fuzzing: analyze every crash/500/unhandled error. Categorize: input validation bug, null pointer, type error, timeout, OOM. Fix root cause (not just symptom). Re-fuzz to confirm fix
+- [ ] Commit: `[ZERO6] Fuzz testing — millions of random inputs, all crashes found and fixed`
+
+### ZERO7 — Mutation Testing: Prove Your Tests Actually Work (~8h)
+**Goal:** Your test suite says "all green." But are the tests actually catching bugs, or are they passing because they don't check anything meaningful? Mutation testing MODIFIES your source code (flips a condition, removes a line, changes a return value) and runs your tests. If tests still pass after a mutation → the test suite is weak and didn't catch a real bug. This forces your tests to be genuinely comprehensive, not just green for show.
+- [ ] **Install Stryker** (TypeScript mutation testing) for all 4 portals. Configure: mutate `src/lib/hooks/*.ts` (business logic), mutate `src/app/dashboard/**/*.tsx` (UI logic), exclude test files and config
+- [ ] **Mutation operators** — Enable all: arithmetic (+→-, *→/), conditional (>→>=, ==→!=), logical (&&→||), string (remove string, empty string), boolean (true→false), remove statements, return value mutations (return null instead of data), array mutations (empty array), optional chaining removal
+- [ ] **Run mutations on critical hooks** — Target highest-risk code: `use-jobs.ts`, `use-invoices.ts`, `use-estimates.ts`, `use-payments.ts`, `use-auth.ts`, `use-inspections.ts`. For each: generate 500+ mutants → run test suite against each mutant → calculate mutation score (% of mutants killed by tests)
+- [ ] **Target: >85% mutation score** — Industry average is ~60%. Anything below 85% means your tests have blind spots. For each surviving mutant: examine WHY the test suite didn't catch it → write additional test → re-run until killed
+- [ ] **Flutter mutation testing** — Use `mutation_test` package or manual approach: systematically modify Dart business logic (repositories, services, providers) and verify tests catch the change. Focus on: financial calculations, RLS scoping, status transitions, validation logic
+- [ ] **Edge Function mutations** — For critical EFs (payment, PDF export, auth): manually introduce bugs (skip auth check, wrong calculation, missing validation) → verify test suite catches each one. If test suite misses a mutation → write the missing test
+- [ ] **Mutation report** — Document: total mutants generated, killed, survived, mutation score per module. For surviving mutants: explain why (untestable code, missing test, acceptable gap). Target: zero surviving mutants in financial and auth code
+- [ ] Commit: `[ZERO7] Mutation testing — all critical code >85% mutation score, blind spots eliminated`
+
+### ZERO8 — Data Volume & Edge Case Gauntlet (~8h)
+**Goal:** Seed the staging environment with extreme data volumes and deliberately weird edge cases. Then run EVERY feature through the gauntlet. This catches the bugs that only appear at scale or with unusual data: the job list that loads fine with 50 jobs but freezes with 50,000. The invoice that works until the line item description is 4,000 characters. The calendar that breaks on February 29. The customer name that's a single Unicode emoji.
+- [ ] **Extreme volume seed** — Load staging with LARGE profile: 100 companies, each with 100 users, 50K jobs, 50K customers, 200K invoices, 500K time entries, 1M photos (metadata only — 1KB placeholder files), 100K estimates, 50K inspections, 3 years of date spread. Total: ~5M records in staging database
+- [ ] **Navigate every screen at scale** — With 50K-job company selected: open job list (must paginate, not load all), open customer list, open invoice list, open calendar (year view with 10K events), open dashboard (aggregate 50K jobs), open reports (P&L across 3 years). EVERY screen must load < 3 seconds. Any screen that fails → add database index or pagination → retest
+- [ ] **Boundary value testing** — For every field in every model: test at exact boundaries. String(255): test 254, 255, 256 chars. Integer: test 0, 1, -1, MAX_INT-1, MAX_INT. Date: test Jan 1, Dec 31, Feb 28, Feb 29 (leap year), Feb 29 (non-leap year). Currency: test $0.00, $0.01, $999,999.99, $1,000,000.00. Test at EVERY boundary
+- [ ] **Unicode gauntlet** — Create entities with names in ALL 10 supported languages: English, Spanish, Portuguese-BR, Polish (ąćęłńóśźż), Chinese (中文测试), Haitian Creole, Russian (кириллица), Korean (한국어), Vietnamese (Việt Nam), Tagalog. Plus: emoji names (🔨⚡🔧), RTL text (Arabic/Hebrew — not supported but shouldn't crash), combining characters (é vs é), zero-width joiners, mathematical symbols, musical notation. Verify: stored correctly, displayed correctly, searchable, sortable, PDF-exportable
+- [ ] **Extreme relationship chains** — Job with 500 line items on estimate. Invoice with 200 line items. Customer with 1,000 jobs. Property with 50 units. Schedule with 500 tasks. Inspection with 200 checklist items. Conversation with 10,000 messages. Verify: all render correctly, no timeout, no truncation of data
+- [ ] **Date edge cases** — Test across: DST transitions (March, November — clocks change), year boundaries (Dec 31 → Jan 1), leap year (Feb 29), timezone boundaries (UTC-12 to UTC+14), Unix epoch (Jan 1 1970), Y2K38 (Jan 19 2038 — 32-bit timestamp overflow). Verify: all dates stored/displayed correctly
+- [ ] **Financial precision gauntlet** — Create invoices with: $0.001 line items (sub-cent), $9,999,999.99 totals (max reasonable), 15.375% tax rate (odd percentage), 100 line items with $0.01 each (rounding accumulation test), negative line items (credits), mixed currency symbols. Verify: totals are mathematically correct to the penny, PDF shows correct amounts, ledger balances
+- [ ] **Empty state gauntlet** — New company with ZERO data: visit every single screen. Verify: every screen shows a helpful empty state (not blank, not error, not spinner forever). Every "create first" CTA works. No null pointer errors from missing data
+- [ ] Commit: `[ZERO8] Data volume & edge case gauntlet — extreme scale, Unicode, boundaries, financial precision`
+
+---
+
 ## PHASE LAUNCH: PRE-LAUNCH REQUIREMENTS (S125 gap analysis)
 **Purpose:** Non-feature work that BLOCKS a real launch. You can't charge money without legal docs, can't list on app stores without privacy policies, can't know when things break without monitoring, can't send invoices if emails go to spam, and can't accept payments through untested pipes. These are the boring-but-mandatory items that turn a development project into a real business.
 
@@ -12572,10 +12698,11 @@ When inspector takes a photo during inspection execution, add search bar to atta
 | **NICHE** | NICHE1-NICHE2 | ~16h | Missing trade modules: pest control, service trades |
 | **DEPTH** | DEPTH1-DEPTH23 | ~292h | Full depth audit + corrections across every feature area |
 | **SEC** | SEC1-SEC9 | ~76h | Security fortress: critical fixes, 2FA, biometrics, enterprise options, Hellhound, headers, WAF, dependency scanning, full pentest |
+| **ZERO** | ZERO1-ZERO8 | ~76h | Zero-defect validation: property testing, state machines, chaos engineering, 50K load test, fuzz testing, mutation testing, edge case gauntlet |
 | **LAUNCH** | LAUNCH1-LAUNCH7 | ~72h | Monitoring, legal, payments, i18n, accessibility, testing, App Store + onboarding wizard |
-| **Total** | **46 sprints** | **~512h** | — |
+| **Total** | **54 sprints** | **~588h** | — |
 
-**Execution order:** SEC1 + SEC6 + SEC7 + SEC8 (critical security — site is live) → LAUNCH1 (monitoring — need Sentry before building more) → FIELD → REST → NICHE → DEPTH1 through DEPTH23 → SEC2-SEC5 (2FA, biometrics, enterprise security, Hellhound) → LAUNCH2-LAUNCH6 (legal, payments, i18n, accessibility, testing) → Phase G (QA) → Phase JUR → Phase E (AI) → **SEC9 (full pentest — AFTER everything is built, leave no stone unturned, patch aggressively)** → LAUNCH7 (App Store + onboarding wizard — DEAD LAST) → SHIP
+**Execution order:** SEC1 + SEC6 + SEC7 + SEC8 (critical security — site is live) → LAUNCH1 (monitoring — need Sentry before building more) → FIELD → REST → NICHE → DEPTH1 through DEPTH23 → SEC2-SEC5 (2FA, biometrics, enterprise security, Hellhound) → LAUNCH2-LAUNCH6 (legal, payments, i18n, accessibility, testing) → Phase G (QA) → Phase JUR → Phase E (AI) → **SEC9 (full pentest)** → **ZERO1-ZERO8 (zero-defect validation — break everything, fix everything, prove it's flawless)** → LAUNCH7 (App Store + onboarding wizard — DEAD LAST) → SHIP
 
 **Module coverage guarantee:**
 - DEPTH1-6: Horizontal audit by category (core biz, field tools, property, financial, CRM, calculators)
@@ -12589,7 +12716,8 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - SEC6: Security headers + CSP (free armor — blocks XSS, clickjacking, MIME attacks)
 - SEC7: Cloudflare WAF + certificate monitoring (edge-level attack blocking)
 - SEC8: Dependency scanning + secret leak prevention (supply chain defense)
-- SEC9: Full penetration test (runs AFTER Phase E — final gate before ship, 8-phase OWASP/PTES methodology, aggressive patching)
+- SEC9: Full penetration test (runs AFTER Phase E — 8-phase OWASP/PTES methodology, aggressive patching)
+- ZERO1-ZERO8: Zero-defect validation system (property-based testing, state machine exhaustion, chaos engineering, 50K user load test, fuzz testing, mutation testing, data volume gauntlet — aerospace-grade quality)
 - LAUNCH1: Monitoring + email (need error tracking BEFORE building more)
 - LAUNCH2-6: Legal, payments, i18n, accessibility, testing — runs after DEPTH audits
 - LAUNCH7: App Store prep + onboarding wizard — DEAD LAST (needs final product complete)
