@@ -12548,7 +12548,7 @@ When inspector takes a photo during inspection execution, add search bar to atta
 
 ---
 
-### DEPTH28 — Property Recon Mega-Expansion: All Trades, All Data, All Free (~32h)
+### DEPTH28 — Property Recon Mega-Expansion: All Trades, All Data, All Free (~34h)
 **Goal:** Transform the property recon system from a roof-measurement tool into the most comprehensive property intelligence platform in the trades industry. ONE address → EVERYTHING a contractor needs for ANY trade. No competitor covers all trades in a single scan — this is Zafto's kill shot.
 
 **S126 Research Findings:** 24 competitors analyzed. EagleView/HOVER/Roofr cover roofing only. 14 trades have ZERO automated measurement tools (electrical, plumbing, HVAC, fencing, decking, foundation, tree service, demolition, masonry, stucco, pressure washing, drywall, garage doors, pool). Contractors manually hop between 5-10 websites before EVERY job (Google Maps, Zillow, county assessor, permit records, HOA lookup, utility providers). No single tool aggregates measurements + property intelligence + permit history + code requirements + HOA rules + utility info. Every one of these data sources is FREE.
@@ -12623,8 +12623,30 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - [ ] **Solar auto-scope**: Roof area available: [sqft per facet with azimuth]. Pitch: [per facet]. Shade: [percentage]. Annual production estimate: [kWh from PVWatts]. Roof condition: [age-based — replacement needed before panels?]. Panel capacity: [adequate/upgrade needed]. Utility: [provider + net metering status]. Incentives: [federal ITC + state/local from DSIRE database]
 - [ ] **Landscaping auto-scope**: Turf: [sqft]. Mulch beds: [sqft]. Hardscape: [sqft]. Trees: [count]. Irrigation: [probable]. Slope: [grade]. Soil: [type]. Sun exposure: [zones]. Seasonal needs: [climate-based]
 - [ ] **Multi-trade bundle**: If contractor selects multiple trades (or "all"), generate combined scope with cross-trade dependencies noted (e.g., "roof replacement should happen before solar install", "electrical upgrade needed before HVAC heat pump conversion")
+
+**Part E: API Fleet Management & Health Monitoring (~2h)**
+**Goal:** Automated monitoring of all 24+ external data sources. Zero-maintenance key management. Self-healing on transient failures. Alert before a contractor ever sees a broken scan.
+
+- [ ] **API registry table**: New table `api_registry` — id, name (e.g., "google_solar", "fema_nfhl", "open_meteo"), base_url, auth_type (none/api_key/oauth/bearer), key_env_var (name of Supabase secret, null if no key needed), rate_limit_per_minute, rate_limit_per_day, rate_limit_per_month, free_tier_limit (e.g., 10000 for Google Solar), current_month_usage (counter), status (healthy/degraded/down/over_limit), last_check_at, last_success_at, last_error_at, last_error_message, avg_response_ms (rolling 24h), uptime_percent_30d, created_at. RLS: super_admin only for writes, read-only for all authenticated (ops portal needs visibility)
+- [ ] **Seed data — all 24+ APIs registered**:
+  - **No key needed (15):** open_meteo, noaa_storm_events, fema_nfhl, usfs_wildfire, nlcd_tree_canopy, usgs_3dep, epa_radon, epa_envirofacts, osm_overpass, ms_building_footprints, overture_maps, nominatim, prism_climate, census_housing_chars, opentopography. auth_type=none, key_env_var=null
+  - **Existing keys (5):** google_solar, google_geocoding, google_street_view, google_aerial_view (all key_env_var=GOOGLE_CLOUD_API_KEY), mapbox (key_env_var=MAPBOX_ACCESS_TOKEN)
+  - **Free keys to create once (6+):** census_acs, fred_api, eia_open_data, nrel_solar, shovels_ai, homesage_ai, rentcast, regrid. Each with key_env_var pointing to its Supabase secret name
+- [ ] **Health check Edge Function** (`supabase/functions/api-health-check/index.ts`): Cron-triggered (Supabase pg_cron, every 6 hours). For each API in registry: send lightweight probe request (HEAD or minimal GET). Record response time, status code. Update api_registry: status (healthy if 2xx, degraded if slow >5s, down if 4xx/5xx/timeout), last_check_at, last_success_at, avg_response_ms. If status changes from healthy → down: log to `api_health_events` table (api_id, old_status, new_status, error_message, checked_at). Probe requests per API type:
+  - Google APIs: `GET /v1/buildingInsights:findClosest?location.latitude=40.7&location.longitude=-74.0` (known NYC coords, minimal response)
+  - Open-Meteo: `GET /v1/forecast?latitude=40.7&longitude=-74.0&current_weather=true` (no key, instant)
+  - FEMA: `GET /api/open/v2/FemaWebDisasterDeclarations?$top=1` (no key, 1 record)
+  - Census: `GET /data/2022/acs/acs5?get=B25001_001E&for=state:36` (1 field, 1 state)
+  - OSM Overpass: `GET /api/interpreter?data=[out:json];node(40.7,-74.0,40.71,-73.99);out%20count;` (count only, fast)
+  - NOAA: `GET /cdo-web/api/v2/datasets?limit=1` (1 dataset, proves key works)
+  - All others: similar minimal probe per API docs
+- [ ] **Usage tracking**: Every call to an external API from any Edge Function increments `current_month_usage` in api_registry via shared utility function `trackApiUsage(apiName: string)`. Reset counter on 1st of each month (pg_cron job). When usage hits 80% of free_tier_limit: log warning event. When usage hits 95%: log critical event + set status to "over_limit". When over_limit: Edge Functions check registry before calling API — if over_limit, skip that source and use fallback/cached data. NEVER exceed free tier limits — $0/month is non-negotiable
+- [ ] **Ops Portal dashboard widget**: On ops portal `/dashboard/api-costs` page (already exists from P-phase), add: API Fleet Status card — table showing all 24+ APIs with name, status (green/yellow/red dot), last check time, monthly usage vs limit (progress bar), avg response time. Click any row → detail view with 30-day uptime chart, error log, usage trend. Alert banner if any API is down or over 80% usage
+- [ ] **Self-healing patterns**: If an API returns 429 (rate limited): exponential backoff (1s, 2s, 4s, 8s, max 30s). If an API is down: use cached data if available (property_scans table has raw responses cached for 30 days), skip that data source gracefully (show "Data source temporarily unavailable" in scan result, not a hard error), try again on next health check. If a key becomes invalid (401/403): set status to "key_invalid", surface in ops dashboard with "API key needs renewal" message. NEVER crash a scan because one of 24 APIs is down — graceful degradation per source
+- [ ] **Key rotation helper** (for the ~6 keys that theoretically could need rotation): Ops portal button "Test Key" per API → calls health check for just that API → shows result. Ops portal field to update key value → stores in Supabase secrets via management API (super_admin only). In practice, government API keys don't rotate — this is a safety net, not regular maintenance
+- [ ] **Monthly health report** (pg_cron, 1st of month): Auto-generate summary: APIs called X times total, Y% average uptime, Z APIs had incidents, total API cost: $0.00. Insert into `api_health_reports` table. Surface on ops dashboard
 - [ ] All builds pass: `dart analyze`, `npm run build` × 4
-- [ ] Commit: `[DEPTH28] Property recon mega-expansion — all-trade scans, property intelligence, weather/storm data, free API stack, auto-scope generation`
+- [ ] Commit: `[DEPTH28] Property recon mega-expansion — all-trade scans, property intelligence, weather/storm data, free API stack, auto-scope generation, API fleet monitoring`
 
 ---
 
@@ -13249,11 +13271,11 @@ When inspector takes a photo during inspection execution, add search bar to atta
 | **FIELD** | FIELD1-FIELD4 | ~56h | Missing field features: messaging, equipment checkout, team portal stubs, BLE laser meter integration |
 | **REST** | REST1-REST2 | ~20h | Restoration gaps: fire tools, mold remediation (IICRC S520) |
 | **NICHE** | NICHE1-NICHE2 | ~16h | Missing trade modules: pest control, service trades |
-| **DEPTH** | DEPTH1-DEPTH30 | ~466h | Full depth audit + corrections + contractor needs validation + commercial building support + property blueprint lookup + bulletproof crash recovery + recon mega-expansion (all-trade scans, 24 free APIs) + estimate engine overhaul (material tiers, G/B/B, labor hours) + recon-to-estimate pipeline |
+| **DEPTH** | DEPTH1-DEPTH30 | ~468h | Full depth audit + corrections + contractor needs validation + commercial building support + property blueprint lookup + bulletproof crash recovery + recon mega-expansion (all-trade scans, 24 free APIs) + estimate engine overhaul (material tiers, G/B/B, labor hours) + recon-to-estimate pipeline |
 | **SEC** | SEC1-SEC10 | ~92h | Security fortress: critical fixes, 2FA, biometrics, enterprise options, Hellhound, headers, WAF, dependency scanning, security pentest, legal pentest |
 | **ZERO** | ZERO1-ZERO9 | ~86h | Zero-defect validation: property testing, state machines, chaos engineering, 50K load test, fuzz testing, mutation testing, edge case gauntlet, triple-scan |
 | **LAUNCH** | LAUNCH1-LAUNCH7 | ~72h | Monitoring, legal, payments, i18n, accessibility, testing, App Store + onboarding wizard |
-| **Total** | **64 sprints** | **~808h** | — |
+| **Total** | **64 sprints** | **~810h** | — |
 
 **Execution order:** SEC1 + SEC6 + SEC7 + SEC8 (critical security — site is live) → LAUNCH1 (monitoring — need Sentry before building more) → FIELD → REST → NICHE → DEPTH1 through DEPTH27 → DEPTH28 (recon mega-expansion) → DEPTH29 (estimate engine overhaul) → DEPTH30 (recon-to-estimate pipeline) → SEC2-SEC5 (2FA, biometrics, enterprise security, Hellhound) → LAUNCH2-LAUNCH6 (legal, payments, i18n, accessibility, testing) → Phase G (QA) → Phase JUR → Phase E (AI) → **SEC9 (security pentest)** → **SEC10 (legal pentest)** → **ZERO1-ZERO9 (zero-defect validation — break everything, fix everything, prove it's flawless)** → LAUNCH7 (App Store + onboarding wizard — DEAD LAST) → SHIP
 
@@ -13267,7 +13289,7 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - DEPTH25: Commercial building support — 120+ commercial symbols, 16 building templates, flat roof, fire protection, ADA compliance (~24h)
 - DEPTH26: Property blueprint lookup — address-to-sketch, roof plan, utility layers, tree canopy, flood zones, satellite import, 12+ free data sources (~20h)
 - DEPTH27: Bulletproof crash recovery — 4-layer persistence stack (memory buffer → IndexedDB/Hive → Supabase cloud → snapshot archive), zero-loss auto-save, cross-device recovery, WAL pattern, conflict resolution, all features wired (~32h)
-- DEPTH28: Property recon mega-expansion — all-trade scans (roofing, siding, painting, fencing, concrete, HVAC, electrical, plumbing, solar, landscaping, gutters, windows, insulation), property intelligence layer (permits, code, HOA, utilities, hazards), weather/storm intelligence, 24 free API stack, trade-specific auto-scope generation (~32h)
+- DEPTH28: Property recon mega-expansion — all-trade scans (roofing, siding, painting, fencing, concrete, HVAC, electrical, plumbing, solar, landscaping, gutters, windows, insulation), property intelligence layer (permits, code, HOA, utilities, hazards), weather/storm intelligence, 24 free API stack, trade-specific auto-scope generation, API fleet monitoring (~34h)
 - DEPTH29: Estimate engine overhaul — material tier system with 200+ seed products, G/B/B auto-generation, built-in labor hour database (12 trades, 300+ tasks), live regeneration on any change, change orders as estimate diffs, crew performance learning, profit analysis (~40h)
 - DEPTH30: Recon-to-estimate pipeline — address → scan → auto-generated estimate with materials + labor + quantities, measurement-to-quantity mapping, material recommendations from property data, quick bid mode (under 60sec), multi-trade bundling, competitor pricing comparison (~16h)
 - SEC1: Critical security fixes (storage RLS, rate limiting, marketplace policy) — runs FIRST
