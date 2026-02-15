@@ -711,7 +711,7 @@ function EditorView({
 
   if (loading) {
     return (
-      <div className="h-screen flex items-center justify-center bg-gray-50">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <Loader2 className="h-6 w-6 animate-spin text-gray-400 mx-auto" />
           <p className="text-xs text-gray-400 mt-2">
@@ -724,7 +724,7 @@ function EditorView({
 
   if (error) {
     return (
-      <div className="h-screen flex items-center justify-center bg-gray-50">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <p className="text-sm text-red-500">{error}</p>
           <button
@@ -739,7 +739,7 @@ function EditorView({
   }
 
   return (
-    <div className="h-screen flex flex-col bg-white">
+    <div className="fixed inset-0 z-50 flex flex-col bg-white">
       {/* Editor top bar */}
       <div className="h-12 border-b border-gray-200 flex items-center px-3 gap-3 bg-white/95 backdrop-blur">
         <button
