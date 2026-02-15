@@ -12174,6 +12174,69 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - [ ] Build + execute corrections for each shallow feature
 - [ ] Commit: `[DEPTH18] Automation & workflow depth corrections — triggers, actions, templates, SMS/email`
 
+### DEPTH19 — TPA Programs & Restoration Tools Depth Audit + Corrections (~14h)
+**Goal:** Phase T (TPA Programs) and restoration-specific tools have unique workflows that generic audits would miss. TPA programs involve carrier assignments, documentation requirements, scorecards, and supplement cycles that are fundamentally different from standard jobs. Restoration has drying logs, moisture readings, and equipment deployment tracking that electricians/plumbers never touch. Audit each independently.
+- [ ] Audit TPA program management — program list, carrier assignments, documentation checklists per carrier, scorecard tracking, compliance requirements. Is the CRM page functional or a stub?
+- [ ] Audit TPA assignment workflow — how does a new insurance claim become a TPA assignment? Assignment acceptance/rejection, SLA tracking, status progression, carrier communication
+- [ ] Audit TPA scorecards — performance metrics per carrier program, response time tracking, documentation completeness scoring, supplement approval rates, customer satisfaction tracking
+- [ ] Audit TPA supplement cycle — supplement submission, adjuster communication trail, line item negotiation, approval/denial tracking, revision history, financial impact to job
+- [ ] Audit TPA financial rollup — program profitability, average claim value, supplement recovery rate, documentation cost per claim, revenue by carrier
+- [ ] Audit water damage drying logs — daily moisture readings per room/material, equipment placement tracking (dehu/air mover locations), drying goals per material type, psychrometric calculations, IICRC S500 compliance
+- [ ] Audit moisture reading system — reading types (pin, pinless, thermal), material-specific targets, reading history graphed over time, dry standard references, photo documentation per reading point
+- [ ] Audit equipment deployment tracking — equipment inventory (dehumidifiers, air movers, air scrubbers, thermal foggers), placement per room, runtime hours, daily monitoring log, pickup scheduling, equipment cost per day for billing
+- [ ] Audit restoration line items — are the 50 seed items comprehensive? Do they cover water/fire/mold/biohazard? Do they align with Xactimate pricing categories? Are descriptions professional enough for carrier submission?
+- [ ] Identify and list ALL shallow/stub features found
+- [ ] Build + execute corrections for each shallow feature
+- [ ] Commit: `[DEPTH19] TPA & restoration tools depth corrections — programs, drying, moisture, equipment`
+
+### DEPTH20 — Recon, Inspector & Sketch Engine Module Depth Audit + Corrections (~14h)
+**Goal:** Phases P (Recon), INS (Inspector), and SK (Sketch Engine) are specialized modules with deep domain logic. Recon does property intelligence and lead scoring. Inspector has 19 inspection types with weighted checklists. Sketch Engine is a CAD-grade drawing tool. Each needs a dedicated audit pass — generic "property" or "field tools" audits won't catch the domain-specific depth issues.
+- [ ] Audit Recon property scan — data sources (Google Solar, ATTOM, Regrid), scan result quality, roof measurements, structure detection, confidence scoring. Do scan results actually help a contractor price a job?
+- [ ] Audit Recon lead scoring — scoring algorithm, score factors (property age, roof age, storm history, owner tenure, area median income), score accuracy, score-to-action workflow (high score → auto-create lead?)
+- [ ] Audit Recon area scanning — batch property analysis, geographic targeting, storm intelligence, competitive density mapping. Does it actually help a restoration company find work after a storm?
+- [ ] Audit Recon CRM integration — do scan results flow to property records? Lead scores to customer pipeline? Roof measurements to estimates? Storm data to job scheduling?
+- [ ] Audit Inspector template depth — are all 25 templates comprehensive for their type? Do checklist items have real code references? Are scoring weights sensible? Would a licensed inspector trust these templates?
+- [ ] Audit Inspector execution UX — is the checklist flow fast enough for a real inspection? Can inspectors skip/jump sections? Photo attachment per item? Deficiency creation in-flow? Quick Checklist vs formal mode — both tested?
+- [ ] Audit Inspector report generation — PDF quality, photo layout, deficiency summary, scoring breakdown, code reference citations, re-inspection comparison. Would a homebuyer/insurance company accept this report?
+- [ ] Audit Inspector compliance calendar — upcoming inspections, overdue items, permit inspection tracking, code reference lookup speed, jurisdiction-specific requirements
+- [ ] Audit Sketch Engine drawing tools — room creation, wall editing, door/window placement, measurement accuracy, trade layers (electrical/plumbing/HVAC), export quality (PDF/DXF/SVG)
+- [ ] Audit Sketch Engine web editor — Konva.js performance, multi-floor support, version history, photo pin placement, team/client portal read-only views
+- [ ] Identify and list ALL shallow/stub features found
+- [ ] Build + execute corrections for each shallow feature
+- [ ] Commit: `[DEPTH20] Recon, inspector & sketch engine depth corrections — scans, inspections, drawings`
+
+### DEPTH21 — Warranty, Job Intelligence & Legal Module Depth Audit + Corrections (~12h)
+**Goal:** Phases W (Warranty), J (Job Intelligence), and L (Legal/Permits/Compliance) were built as complete phases but may have shallow implementations. Warranty tracking is critical for customer retention (callbacks kill profit). Job Intelligence drives pricing decisions. Legal/permits/liens have real financial and legal consequences if wrong.
+- [ ] Audit warranty system — warranty creation per job, coverage terms, expiry tracking, warranty claim submission, claim resolution workflow, warranty certificate generation. Does it cover manufacturer warranties + labor warranties + extended warranties?
+- [ ] Audit predictive maintenance — maintenance prediction algorithm, equipment lifecycle tracking, maintenance schedule generation, customer notification when maintenance is due, recurring revenue opportunity tracking
+- [ ] Audit warranty intelligence (CRM) — warranty cost analysis, callback rate by tech/trade/job type, common failure modes, warranty reserve estimation
+- [ ] Audit Job Intelligence smart pricing — pricing recommendations based on historical data, market rates, job complexity, customer type. Does it actually help a contractor price competitively?
+- [ ] Audit Bid Brain — bid analysis, win/loss tracking, competitor pricing intelligence, margin optimization suggestions. Is it functional or a placeholder?
+- [ ] Audit job cost radar — real-time job cost tracking vs estimate, material cost overruns, labor hour overruns, change order impact. Does it alert on cost overruns in real time?
+- [ ] Audit permit system — permit application tracking per jurisdiction, fee estimation, required inspections per permit type, inspection scheduling integration with Phase GC, permit document storage
+- [ ] Audit lien management — preliminary notice deadlines by state, mechanic's lien filing deadlines, bond claim deadlines, lien waiver generation (conditional/unconditional, partial/final), notice tracking with proof of service
+- [ ] Audit compliance calendar — deadline tracking across all compliance types (permits, licenses, insurance, CE credits, OSHA, certifications), notification system, document management, compliance score per employee
+- [ ] Audit CE credit tracker — state requirements per trade, credit logging, course tracking, renewal deadlines, certificate storage and sharing
+- [ ] Identify and list ALL shallow/stub features found
+- [ ] Build + execute corrections for each shallow feature
+- [ ] Commit: `[DEPTH21] Warranty, job intelligence & legal depth corrections — claims, pricing, permits, liens`
+
+### DEPTH22 — F-Phase Feature Module Depth Audit + Corrections (~12h)
+**Goal:** Phase F built many features across multiple sprints (F1-F10). Some were built in a single session as part of a rapid expansion. Marketplace, hiring, fleet, OSHA tools, ZForge, and exam prep all exist but may be stubs that look complete because they have a route and a hook but no real depth. Every F-phase feature gets a pass.
+- [ ] Audit Marketplace (F6) — supplier directory, product listings, ordering flow, pricing visibility, trade-specific suppliers, contractor ratings/reviews of suppliers. Is it a real marketplace or a stub page?
+- [ ] Audit Hiring system (F9) — job posting creation, applicant tracking, interview scheduling, offer management, background check integration (Checkr stub), onboarding checklist for new hires. Functional or stub?
+- [ ] Audit Fleet management (F5) — vehicle list, assignment to technicians, GPS tracking integration (Samsara/Geotab stub), mileage tracking, maintenance scheduling, fuel expense tracking, insurance/registration document storage. Real system or stub page?
+- [ ] Audit OSHA tools (F4) — toolbox talk templates, incident reporting, safety checklist per trade, OSHA 300 log, near-miss reporting, PPE tracking, safety meeting documentation. Comprehensive or minimal?
+- [ ] Audit ZForge (F10) — custom form builder, field template creation, form sharing, form submission tracking, data export. Is the form builder functional?
+- [ ] Audit Exam Prep — question bank depth per trade, practice test flow, score tracking, explanation per answer, state-specific exam content, study mode vs test mode
+- [ ] Audit Certifications module — certification types per trade, expiry tracking, renewal reminders, document storage, verification status, team compliance dashboard
+- [ ] Audit Team Chat (F1-adjacent) — is there real-time team communication or just the phone system? How does it differ from FIELD1 team messaging spec?
+- [ ] Audit Review Management — Google/Yelp review request automation, review monitoring, response templates, review analytics, NPS tracking. Real system or stub?
+- [ ] Audit Document Management (ZDocs) — document types, version control, sharing permissions, e-signature integration, template library, folder organization, search within documents
+- [ ] Identify and list ALL shallow/stub features found
+- [ ] Build + execute corrections for each shallow feature
+- [ ] Commit: `[DEPTH22] F-phase module depth corrections — marketplace, hiring, fleet, OSHA, ZForge, exams`
+
 ---
 
 ## PHASE AUDIT SUMMARY: FULL DEPTH PLAN (S125)
@@ -12185,10 +12248,18 @@ When inspector takes a photo during inspection execution, add search bar to atta
 | **FIELD** | FIELD1-FIELD3 | ~36h | Missing field features: messaging, equipment checkout, team portal stubs |
 | **REST** | REST1-REST2 | ~20h | Restoration gaps: fire tools, mold remediation (IICRC S520) |
 | **NICHE** | NICHE1-NICHE2 | ~16h | Missing trade modules: pest control, service trades |
-| **DEPTH** | DEPTH1-DEPTH18 | ~232h | Full depth audit + corrections across every feature area |
-| **Total** | **25 sprints** | **~304h** | — |
+| **DEPTH** | DEPTH1-DEPTH22 | ~284h | Full depth audit + corrections across every feature area |
+| **Total** | **29 sprints** | **~356h** | — |
 
-**Execution order:** FIELD → REST → NICHE → DEPTH1 through DEPTH18 → Phase G (QA) → Phase JUR → Phase E (AI) → LAUNCH
+**Execution order:** FIELD → REST → NICHE → DEPTH1 through DEPTH22 → Phase G (QA) → Phase JUR → Phase E (AI) → LAUNCH
+
+**Module coverage guarantee:**
+- DEPTH1-6: Horizontal audit by category (core biz, field tools, property, financial, CRM, calculators)
+- DEPTH7-14: Cross-cutting concerns (comms, onboarding, trade customization, search, reports, settings, offline, security)
+- DEPTH15-18: Specialized workflows (inventory, subcontractors, client portal, automations)
+- DEPTH19-22: Phase-specific modules (TPA/restoration, recon/inspector/sketch, warranty/legal/intelligence, F-phase features)
+
+**Every module in the system is now explicitly named in at least one DEPTH sprint. No blind spots.**
 
 **Process per DEPTH sprint:**
 1. Audit the feature area across all 5 apps (Flutter, CRM, Team, Client, Ops)
