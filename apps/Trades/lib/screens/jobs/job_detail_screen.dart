@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../theme/zafto_colors.dart';
 import '../../theme/theme_provider.dart';
 import '../../models/job.dart';
@@ -75,6 +76,10 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                 _buildStatusSection(colors),
                 const SizedBox(height: 20),
                 _buildDetailsCard(colors),
+                if (_hasContactInfo()) ...[
+                  const SizedBox(height: 16),
+                  _buildContactCard(colors),
+                ],
                 if (_job!.jobType != JobType.standard && _job!.hasTypeMetadata) ...[
                   const SizedBox(height: 16),
                   _buildTypeMetadataCard(colors),
@@ -498,6 +503,154 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
         ],
       ),
     );
+  }
+
+  // ── Contact & Directions Card ──────────────────────────────
+  bool _hasContactInfo() {
+    final phone = _job!.customerPhone ?? '';
+    final email = _job!.customerEmail ?? '';
+    return phone.isNotEmpty || email.isNotEmpty || _job!.address.isNotEmpty;
+  }
+
+  Widget _buildContactCard(ZaftoColors colors) {
+    final phone = _job!.customerPhone ?? '';
+    final email = _job!.customerEmail ?? '';
+    final address = _job!.address;
+    final fullAddress = _job!.fullAddress;
+    final hasPhone = phone.isNotEmpty;
+    final hasEmail = email.isNotEmpty;
+    final hasAddress = address.isNotEmpty;
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: colors.bgElevated,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: colors.borderSubtle),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(LucideIcons.contact, size: 16, color: colors.accentPrimary),
+              const SizedBox(width: 8),
+              Text('Quick Actions', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: colors.textPrimary)),
+            ],
+          ),
+          const SizedBox(height: 14),
+          // Action buttons row
+          Row(
+            children: [
+              if (hasPhone)
+                Expanded(
+                  child: _buildQuickActionBtn(
+                    colors,
+                    icon: LucideIcons.phone,
+                    label: 'Call',
+                    color: colors.accentSuccess,
+                    onTap: () => _launchUrl('tel:$phone'),
+                  ),
+                ),
+              if (hasPhone && (hasEmail || hasAddress))
+                const SizedBox(width: 8),
+              if (hasPhone)
+                Expanded(
+                  child: _buildQuickActionBtn(
+                    colors,
+                    icon: LucideIcons.messageSquare,
+                    label: 'Text',
+                    color: colors.accentInfo,
+                    onTap: () => _launchUrl('sms:$phone'),
+                  ),
+                ),
+              if (hasPhone && hasAddress)
+                const SizedBox(width: 8),
+              if (hasAddress)
+                Expanded(
+                  child: _buildQuickActionBtn(
+                    colors,
+                    icon: LucideIcons.navigation,
+                    label: 'Directions',
+                    color: const Color(0xFF6366F1),
+                    onTap: () => _launchDirections(fullAddress),
+                  ),
+                ),
+            ],
+          ),
+          if (hasEmail) ...[
+            const SizedBox(height: 8),
+            GestureDetector(
+              onTap: () => _launchUrl('mailto:$email'),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                decoration: BoxDecoration(
+                  color: colors.fillDefault,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(LucideIcons.mail, size: 14, color: colors.textSecondary),
+                    const SizedBox(width: 6),
+                    Text(
+                      email,
+                      style: TextStyle(fontSize: 12, color: colors.textSecondary),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuickActionBtn(
+    ZaftoColors colors, {
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        onTap();
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, size: 20, color: color),
+            const SizedBox(height: 4),
+            Text(label, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: color)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _launchUrl(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    }
+  }
+
+  Future<void> _launchDirections(String address) async {
+    final encoded = Uri.encodeComponent(address);
+    // Try Google Maps first, falls back to Apple Maps on iOS
+    final googleUrl = Uri.parse('https://www.google.com/maps/dir/?api=1&destination=$encoded');
+    if (await canLaunchUrl(googleUrl)) {
+      await launchUrl(googleUrl, mode: LaunchMode.externalApplication);
+    }
   }
 
   Widget _buildActionsSection(ZaftoColors colors) {

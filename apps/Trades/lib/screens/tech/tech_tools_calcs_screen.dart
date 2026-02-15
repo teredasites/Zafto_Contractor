@@ -7,7 +7,6 @@ import 'package:zafto/theme/zafto_colors.dart';
 import 'package:zafto/theme/theme_provider.dart';
 import 'package:zafto/widgets/shared/matrix_rain_painter.dart';
 import 'package:zafto/screens/tools/tools_hub_screen.dart';
-import 'package:zafto/screens/field_tools/field_tools_hub_screen.dart';
 import 'package:zafto/screens/field_tools/job_site_photos_screen.dart';
 import 'package:zafto/screens/field_tools/voice_notes_screen.dart';
 import 'package:zafto/screens/field_tools/before_after_screen.dart';
