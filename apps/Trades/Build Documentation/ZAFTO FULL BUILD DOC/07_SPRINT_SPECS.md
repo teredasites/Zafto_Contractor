@@ -11789,6 +11789,216 @@ When inspector takes a photo during inspection execution, add search bar to atta
 
 ---
 
+## PHASE FIELD: FIELD APP GAPS (S124 audit)
+**Purpose:** Fill critical gaps identified in S124 field app audit. Field employees need team messaging, equipment checkout, and the team portal has 6+ stub pages that need real implementations. Every contractor type (GC, electrical, restoration, HVAC, plumbing, solar, landscaping, etc.) relies on these tools daily.
+
+### FIELD1 — Team Messaging System (~14h)
+**Goal:** Internal communication between field crews and office. #1 competitor complaint — techs have no way to message office/crew except phone calls. This sprint builds a real-time chat system across all 5 apps.
+- [ ] Create `messages` table: id, company_id, conversation_id, sender_id, content, message_type (text/image/file/system), read_by (jsonb array), created_at, deleted_at
+- [ ] Create `conversations` table: id, company_id, type (direct/group/job), title, participant_ids (jsonb), job_id (nullable), last_message_at, created_at
+- [ ] RLS: company_id scoped, participants can read/write their conversations only
+- [ ] Migration + audit triggers
+- [ ] Create `send-message` Edge Function: validate sender is participant, insert message, trigger Supabase Realtime
+- [ ] Create `mark-messages-read` Edge Function: bulk update read_by array
+- [ ] Flutter: `lib/models/message.dart` + `lib/models/conversation.dart`
+- [ ] Flutter: `lib/repositories/message_repository.dart` + conversation_repository
+- [ ] Flutter: `lib/screens/messages/conversations_list_screen.dart` — all conversations, unread badges, last message preview
+- [ ] Flutter: `lib/screens/messages/chat_screen.dart` — real-time chat with message bubbles, photo send, job link, typing indicator
+- [ ] Flutter: `lib/screens/messages/new_conversation_screen.dart` — pick team members or create group
+- [ ] Flutter: Add "Messages" tab to tech home + owner home + inspector home navigation
+- [ ] Flutter: Job detail screen — "Message about this job" quick action (creates/opens job conversation)
+- [ ] Web CRM: `use-messages.ts` hook with real-time subscription
+- [ ] Web CRM: `/dashboard/messages` page — conversation list + chat panel (split view)
+- [ ] Web CRM: Quick message from job detail page
+- [ ] Team Portal: `/dashboard/messages` page — mobile-optimized chat
+- [ ] Team Portal: Unread badge on nav
+- [ ] Push notification on new message (existing notification service)
+- [ ] Unread count provider (Riverpod) for badge across all screens
+- [ ] Commit: `[FIELD1] Team messaging — real-time chat, conversations, all 5 apps`
+
+### FIELD2 — Equipment & Tool Checkout (~10h)
+**Goal:** Tool/equipment borrow-return system. Contractors lose thousands yearly on untracked tools. Electricians, HVAC techs, plumbers, GCs — everyone needs this. QR code scan for fast checkout.
+- [ ] Create `equipment_items` table: id, company_id, name, category (hand_tool/power_tool/testing_equipment/safety_equipment/vehicle_mounted/specialty), serial_number, barcode, purchase_date, purchase_cost, condition (new/good/fair/poor/damaged/retired), current_holder_id, storage_location, photo_url, last_inspection_date, next_calibration_date, notes, deleted_at
+- [ ] Create `equipment_checkouts` table: id, company_id, equipment_item_id, checked_out_by, checked_out_at, expected_return_date, checked_in_at, checked_in_by, checkout_condition, checkin_condition, job_id (nullable), notes, photo_out_url, photo_in_url
+- [ ] RLS: company_id scoped, any employee can checkout, only admin/owner can manage inventory
+- [ ] Migration + audit triggers + indexes
+- [ ] Flutter: `lib/models/equipment_item.dart` + `lib/models/equipment_checkout.dart`
+- [ ] Flutter: `lib/repositories/equipment_repository.dart`
+- [ ] Flutter: `lib/screens/equipment/equipment_list_screen.dart` — browse all company tools, search, filter by category/status/holder
+- [ ] Flutter: `lib/screens/equipment/equipment_detail_screen.dart` — tool info, checkout history, condition log, photo
+- [ ] Flutter: `lib/screens/equipment/equipment_checkout_screen.dart` — QR/barcode scanner (mobile_scanner package), manual search fallback, condition photo on checkout
+- [ ] Flutter: `lib/screens/equipment/equipment_checkin_screen.dart` — scan to return, condition assessment, photo on return
+- [ ] Flutter: Add "Tool Checkout" to tech_tools_screen + field_tools_hub
+- [ ] Flutter: "My Tools" section on tech home — what I currently have checked out
+- [ ] Web CRM: `use-equipment.ts` hook (CRUD + checkout history)
+- [ ] Web CRM: `/dashboard/equipment` page — inventory management, checkout log, overdue alerts
+- [ ] Team Portal: `/dashboard/equipment` page — my checkouts + scan to checkout/return
+- [ ] Overdue alert: equipment not returned by expected_return_date → notification to admin
+- [ ] Commit: `[FIELD2] Equipment checkout — QR scan, borrow/return, condition tracking`
+
+### FIELD3 — Team Portal Stub Completion (~12h)
+**Goal:** Fill all 6 stub pages in the team portal. Field workers (all trades) need these pages functional — not empty shells.
+- [ ] `/dashboard/field-tools/photos` — Photo gallery: browse job photos by date/job, lightbox viewer, upload from browser, filter by before/during/after tag
+- [ ] `/dashboard/field-tools/voice-notes` — Voice note browser: list recordings by job, play in browser, show transcription if available, upload new
+- [ ] `/dashboard/field-tools/signatures` — Signature viewer: list captured signatures by job, view signature image, metadata (who signed, when, what document)
+- [ ] `/dashboard/field-tools/receipts` — Receipt browser: list receipts by job/date, view receipt image, show OCR data, filter by category, add new receipt (photo upload)
+- [ ] `/dashboard/compliance` — Compliance dashboard: safety certifications status, required training completion, OSHA requirements, upcoming deadlines, compliance score
+- [ ] `/dashboard/my-training` — Training records: completed courses, required courses, CE credits, certification renewals, training calendar
+- [ ] `/dashboard/my-documents` — Document vault: employment docs, certifications, licenses, tax forms, company policies, upload/download, expiry alerts
+- [ ] `/dashboard/change-orders` — Change order list: view COs for assigned jobs, status tracking, detail view with line items, approval status
+- [ ] `/dashboard/schedule/time-off` — Time off requests: submit PTO/sick/personal request, calendar view of approved time off, balance display, approval status tracking
+- [ ] `/dashboard/phone` — Company phone system: click-to-call contacts, recent calls, voicemail playback (integrates with SignalWire phone system from Phase U)
+- [ ] Update team portal navigation with badges for new pages
+- [ ] Commit: `[FIELD3] Team portal stub completion — 10 pages filled, all functional`
+
+---
+
+## PHASE REST: RESTORATION & REMEDIATION GAPS (S124 audit)
+**Purpose:** Fire restoration and mold remediation have TradeType enum values but share water damage workflows. Professional restoration contractors need dedicated tools for each damage type — the workflows, documentation requirements, and equipment differ significantly. Insurance adjusters expect damage-type-specific documentation.
+
+### REST1 — Fire Restoration Dedicated Tools (~10h)
+**Goal:** Fire/smoke damage has fundamentally different assessment and remediation workflows than water damage. Smoke travels differently, soot types require different cleaning methods, thermal fogging and ozone treatment need tracking, and content pack-out is a major workflow.
+- [ ] Flutter: `lib/screens/restoration/fire_damage_assessment_screen.dart` — Fire origin/cause documentation (not investigation — leave that to fire marshal), damage zones (direct flame, smoke, heat, water from suppression), structural assessment checklist
+- [ ] Flutter: `lib/screens/restoration/soot_classification_screen.dart` — Soot type identification (wet smoke, dry smoke, protein, fuel oil), affected surfaces per room, cleaning method recommendation per soot type, photo documentation per surface
+- [ ] Flutter: `lib/screens/restoration/content_packout_screen.dart` — Room-by-room contents inventory, item condition (salvageable/non-salvageable/questionable), pack-out box numbering, photo per item, storage location tracking, content cleaning method per item
+- [ ] Flutter: `lib/screens/restoration/odor_treatment_screen.dart` — Treatment method tracking (thermal fogging, ozone, hydroxyl, air scrubbing), treatment area/room, duration, equipment deployed, air quality readings pre/post treatment, re-treatment scheduling
+- [ ] Flutter: `lib/screens/restoration/board_up_screen.dart` — Emergency board-up documentation, openings secured (windows, doors, roof), materials used, photo before/after, temporary tarping, security measures
+- [ ] Models: `fire_damage_assessment.dart` (zone enum: direct_flame/smoke/heat/water_suppression, soot_type enum), `content_item.dart` (salvageability, cleaning method, box assignment)
+- [ ] Repository + service for fire restoration data
+- [ ] Seed data: common soot types with cleaning methods, thermal fogging protocols, content cleaning categories (electronics, soft goods, hard goods, documents, artwork)
+- [ ] Integration: fire assessment links to insurance claim, equipment deployment, drying log (water from fire suppression)
+- [ ] Commit: `[REST1] Fire restoration — soot classification, content packout, odor treatment, board-up`
+
+### REST2 — Mold Remediation Dedicated Tools (~10h)
+**Goal:** Mold remediation has strict protocols (IICRC S520), containment requirements, air sampling mandates, and clearance testing that differ from water damage. Many states require specific documentation for mold remediation. Insurance and legal liability require airtight records.
+- [ ] Flutter: `lib/screens/restoration/mold_assessment_screen.dart` — Mold type identification (visual categorization, not lab — note: always recommend lab confirmation), affected area measurement (sq ft), material types affected, moisture source identification, photo documentation, severity rating (1-4 per IICRC S520)
+- [ ] Flutter: `lib/screens/restoration/containment_setup_screen.dart` — Containment type (mini/full/negative pressure), poly sheeting setup documentation, negative air machine placement, air scrubber placement, HEPA vacuum zones, containment integrity checks (daily), decontamination chamber setup
+- [ ] Flutter: `lib/screens/restoration/air_sampling_screen.dart` — Pre-remediation air samples (location, volume, lab, chain of custody), post-remediation clearance samples, outdoor baseline sample, sample ID tracking, lab results entry, pass/fail thresholds per sample type
+- [ ] Flutter: `lib/screens/restoration/remediation_protocol_screen.dart` — Protocol selection (IICRC S520 level 1-4), step-by-step work plan with checkboxes, material removal scope (drywall cut lines, flooring removal area), HEPA vacuuming schedule, antimicrobial application tracking, PPE requirements per protocol level
+- [ ] Flutter: `lib/screens/restoration/clearance_testing_screen.dart` — Third-party clearance requirements, IH (industrial hygienist) coordination, visual inspection checklist, moisture verification, air sample results entry, clearance pass/fail determination, clearance certificate generation
+- [ ] Models: `mold_assessment.dart` (severity_level 1-4, mold_category, moisture_source), `air_sample.dart` (sample_type, location, volume, lab_id, result, pass_fail), `containment_log.dart` (type, integrity_checks, negative_pressure_readings)
+- [ ] Repository + service for mold remediation data
+- [ ] Seed data: IICRC S520 protocol levels with descriptions, common mold types, air sampling thresholds, PPE requirements per level, clearance criteria
+- [ ] Integration: mold assessment links to moisture readings (existing), equipment deployment (existing), insurance claim, compliance calendar
+- [ ] Commit: `[REST2] Mold remediation — IICRC S520 protocols, containment, air sampling, clearance`
+
+---
+
+## PHASE NICHE: MISSING TRADE MODULES (S124 audit)
+**Purpose:** Pest control, locksmith, garage door, and appliance repair contractors currently get only generic job management. Each trade has unique workflows, terminology, and tools. A pest control tech needs treatment logs and bait station maps, not drywall calculators.
+
+### NICHE1 — Pest Control Module (~8h)
+**Goal:** Pest control is a $23B industry with strict EPA/state regulations. Operators need treatment documentation, chemical usage logs (legally required), and recurring service scheduling. This module covers termite, general pest, mosquito, wildlife, and bed bug services.
+- [ ] Flutter: `lib/screens/pest_control/treatment_log_screen.dart` — Service type (general pest, termite, mosquito, bed bug, wildlife, fumigation), target pests, chemicals applied (product name, EPA reg number, active ingredient, amount, concentration), application method (spray, bait, trap, fog, dust, granular), areas treated (interior rooms, exterior zones, attic, crawl, garage), weather conditions, re-entry time
+- [ ] Flutter: `lib/screens/pest_control/bait_station_map_screen.dart` — Station locations on property sketch (integrates with sketch engine), station type (rodent, ant, termite monitor), station ID numbering, inspection date per station, activity level, bait consumption, replacement schedule
+- [ ] Flutter: `lib/screens/pest_control/wdi_report_screen.dart` — Wood Destroying Insect report (required for real estate transactions), NPMA-33 form fields, inspection findings per area, evidence types (live insects, damage, frass, shelter tubes, exit holes), graph 1/2 diagrams, recommendations
+- [ ] Flutter: `lib/screens/pest_control/recurring_service_screen.dart` — Service frequency (monthly, bi-monthly, quarterly), service agreement tracking, next service date, treatment history per property, auto-schedule integration with Phase GC scheduler
+- [ ] Models: `treatment_log.dart` (chemical_application with EPA fields, target_pests array, application_methods), `bait_station.dart` (location, type, activity_level, last_inspected), `wdi_report.dart` (NPMA-33 fields, findings per area)
+- [ ] Seed data: common pest control chemicals with EPA numbers, pest identification guide (top 30 pests with treatment recommendations), NPMA-33 form template, bait station types
+- [ ] Calculators: chemical dilution calculator, square footage treatment calculator, fumigation volume calculator
+- [ ] Commit: `[NICHE1] Pest control — treatment logs, bait stations, WDI/NPMA-33, recurring service`
+
+### NICHE2 — Service Trades Module (~8h)
+**Goal:** Locksmith, garage door, and appliance repair share a "service call" pattern — diagnose on-site, quote repair vs replace, complete same-day. Each needs trade-specific parts catalogs and diagnostic flows.
+- [ ] Flutter: `lib/screens/locksmith/locksmith_service_screen.dart` — Service type (lockout, rekey, install, repair, master key, safe, automotive, access control), lock type identification (pin tumbler, deadbolt, mortise, electronic, smart, padlock, cam), key code recording, master key system documentation, access control zone mapping
+- [ ] Flutter: `lib/screens/garage_door/garage_door_service_screen.dart` — Door type (sectional, roll-up, tilt, carriage, commercial), opener type (chain, belt, screw, jackshaft, direct drive), spring type (torsion, extension) with measurements (wire size, length, inside diameter), balance test documentation, safety reverse test (photo/video), force settings, travel limits
+- [ ] Flutter: `lib/screens/appliance/appliance_service_screen.dart` — Appliance type (refrigerator, washer, dryer, dishwasher, oven, range, microwave, HVAC unit, water heater, garbage disposal, ice maker), brand/model/serial capture (camera OCR), diagnostic code lookup, parts needed with model-specific part numbers, repair vs replace cost comparison calculator
+- [ ] Models: `locksmith_service.dart` (lock_types, service_types, key_codes), `garage_door_service.dart` (door_measurements, spring_specs, opener_type), `appliance_service.dart` (appliance_type, brand_model, diagnostic_codes)
+- [ ] Seed data: common lock types with rekey procedures, garage door spring sizing charts, common appliance error codes by brand (top 10 brands × top 5 codes = ~50 entries per appliance type)
+- [ ] Calculators: garage door spring calculator (wire size × length × ID = cycles), appliance repair vs replace ROI calculator, master key system bitting calculator
+- [ ] Commit: `[NICHE2] Service trades — locksmith, garage door, appliance repair diagnostic flows`
+
+---
+
+## PHASE DEPTH: FULL SOFTWARE DEPTH AUDIT + CORRECTIONS (S124 owner directive)
+**Purpose:** Owner directive — "a lot of features lack serious depth." Before continuing main build, audit EVERY feature across ALL 5 apps for depth. Every screen, hook, page, tool, calculator, template, and workflow must meet the "impress on first use" standard. Shallow features get corrected in-sprint before moving forward. This phase is the gatekeeper — nothing passes to QA (Phase G) until it has real depth.
+
+**Process per sprint:**
+1. Audit the feature area across all 5 apps (Flutter, CRM, Team, Client, Ops)
+2. Grade each feature: DEEP (ship-ready) / SHALLOW (needs work) / STUB (needs full build)
+3. Build correction items for SHALLOW and STUB features
+4. Execute corrections
+5. Verify depth meets "contractor would be impressed" standard
+
+### DEPTH1 — Core Business Depth Audit + Corrections (~16h)
+**Goal:** Audit and correct depth for: Jobs, Customers, Invoices, Estimates, Change Orders across all apps. These are used by EVERY contractor type daily.
+- [ ] Audit jobs across all 5 apps — list every field, action, workflow, and grade depth
+- [ ] Audit customers across all 5 apps — CRM contact management, customer portal experience
+- [ ] Audit invoices across all 5 apps — creation, line items, payment tracking, PDF generation, aging
+- [ ] Audit estimates across all 5 apps — templates, line item library, markup, approval flow
+- [ ] Audit change orders across all 5 apps — creation from field, approval chain, cost impact
+- [ ] Identify and list ALL shallow/stub features found
+- [ ] Build + execute corrections for each shallow feature
+- [ ] Verify: a GC, electrician, and restoration contractor would each find these features complete for their workflow
+- [ ] Commit: `[DEPTH1] Core business depth corrections — jobs, customers, invoices, estimates, COs`
+
+### DEPTH2 — Field Tools Depth Audit + Corrections (~16h)
+**Goal:** Audit and correct depth for: Time tracking, daily logs, photos, materials, receipts, safety, punch lists, voice notes, mileage across Flutter + team portal.
+- [ ] Audit time tracking — clock in/out, GPS, breaks, overtime calc, timesheet approval flow, export
+- [ ] Audit daily logs — all fields needed by GC/electrical/restoration/HVAC, photo attachments, crew tracking
+- [ ] Audit photo system — before/during/after workflow, annotation tools, gallery management, storage
+- [ ] Audit materials tracker — common materials per trade (seed data depth), vendor management, reorder alerts
+- [ ] Audit receipt scanner — OCR accuracy, category depth, expense report generation, tax categorization
+- [ ] Audit safety tools — OSHA compliance per trade, toolbox talk templates, incident severity tracking
+- [ ] Audit punch list — assignment workflow, client visibility (client portal), completion verification
+- [ ] Audit voice notes — transcription quality, job association, searchability
+- [ ] Audit mileage — IRS compliance, trip categorization, monthly/annual summaries
+- [ ] Identify and list ALL shallow/stub features found
+- [ ] Build + execute corrections for each shallow feature
+- [ ] Commit: `[DEPTH2] Field tools depth corrections — time, photos, materials, safety, punch lists`
+
+### DEPTH3 — Property & Scheduling Depth Audit + Corrections (~14h)
+**Goal:** Audit and correct depth for: Properties, walkthroughs, sketch engine, scheduling/Gantt, dispatch across all apps.
+- [ ] Audit property management — property types, unit management, tenant tracking, maintenance requests, property photos/docs
+- [ ] Audit walkthrough system — room types, measurement capture, photo workflow, report generation
+- [ ] Audit sketch engine — drawing tools, trade layers, measurements, export formats, template library
+- [ ] Audit scheduling — Gantt view, task dependencies, resource allocation, calendar sync, dispatch board
+- [ ] Audit dispatch — job assignment, route optimization, real-time tracking, status updates
+- [ ] Identify and list ALL shallow/stub features found
+- [ ] Build + execute corrections for each shallow feature
+- [ ] Commit: `[DEPTH3] Property & scheduling depth corrections`
+
+### DEPTH4 — Financial & Legal Depth Audit + Corrections (~14h)
+**Goal:** Audit and correct depth for: Accounting (ZBooks), permits, compliance, liens, insurance claims, contracts, CE tracking across all apps.
+- [ ] Audit ZBooks accounting — chart of accounts, P&L, balance sheet, bank reconciliation, payroll
+- [ ] Audit permit system — application tracking, fee estimation, inspection scheduling, renewal alerts
+- [ ] Audit compliance calendar — deadline tracking, notification system, document management
+- [ ] Audit lien management — preliminary notice tracking, mechanic's lien deadlines, bond claims
+- [ ] Audit insurance claims — claim lifecycle, supplement tracking, adjuster communication, TPA integration
+- [ ] Audit contracts — template library, clause management, e-signature, change tracking
+- [ ] Audit CE tracker — state requirements, credit logging, renewal deadlines, certificate storage
+- [ ] Identify and list ALL shallow/stub features found
+- [ ] Build + execute corrections for each shallow feature
+- [ ] Commit: `[DEPTH4] Financial & legal depth corrections — ZBooks, permits, liens, insurance, contracts`
+
+### DEPTH5 — CRM & Portal Depth Audit + Corrections (~14h)
+**Goal:** Audit and correct depth for: Web CRM pages, client portal experience, ops portal dashboards. The CRM is the office manager's daily tool — it must be comprehensive.
+- [ ] Audit CRM dashboard — KPIs, charts, actionable insights, customization
+- [ ] Audit CRM job management — pipeline view, status board, bulk actions, job costing
+- [ ] Audit CRM customer management — contact details, communication history, job history, notes, documents
+- [ ] Audit CRM reporting — P&L, revenue by trade/tech/month, job profitability, aging reports
+- [ ] Audit client portal — project visibility, payment, document access, communication, scheduling
+- [ ] Audit ops portal — company metrics, subscription management, support tools, analytics
+- [ ] Audit homeowner tools — what does the homeowner see? Is it clear, professional, trustworthy?
+- [ ] Identify and list ALL shallow/stub features found
+- [ ] Build + execute corrections for each shallow feature
+- [ ] Commit: `[DEPTH5] CRM & portal depth corrections — dashboards, reporting, client experience`
+
+### DEPTH6 — Calculator & Template Depth Audit + Corrections (~12h)
+**Goal:** Audit all 987 calculators and inspection templates for depth. Are seed data sets exhaustive? Do calculators cover edge cases? Are templates comprehensive for each trade?
+- [ ] Audit electrical calculators (207) — NEC compliance, edge cases, formula accuracy
+- [ ] Audit HVAC calculators (201) — Manual J alignment, equipment sizing, refrigerant calcs
+- [ ] Audit plumbing calculators (108) — code compliance, fixture unit counts, pipe sizing
+- [ ] Audit restoration tools — moisture targets current with IICRC standards, equipment rates market-accurate
+- [ ] Audit inspection templates (25) — item count per template, code reference accuracy, trade coverage gaps
+- [ ] Audit all other trade calculators — solar, roofing, landscaping, welding, pool, auto, GC, remodeler
+- [ ] Add missing calculators identified during audit
+- [ ] Expand thin templates (any template under 30 items needs review)
+- [ ] Verify seed data is exhaustive — not "starter" sets
+- [ ] Commit: `[DEPTH6] Calculator & template depth corrections — formulas, seed data, coverage`
+
+---
+
 ## PHASE JUR: JURISDICTION AWARENESS — Pre-AI (S124 owner directive)
 **Purpose:** Every code reference, inspection template, permit requirement, lien deadline, contract clause, insurance minimum, CE requirement, and tax rate must be filtered by the state/jurisdiction where work is being performed. Liability concern — contractors must see rules for THEIR state, not generic national defaults. This phase creates the jurisdiction data layer and retrofits all features before AI (Phase E) begins, so AI inherits jurisdiction-aware data automatically.
 
