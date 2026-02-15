@@ -344,18 +344,28 @@ export default function SketchCanvas({
       }
       // --- SELECT TOOL ---
       else if (tool === 'select') {
-        const target = e.target;
-        if (target && target.id && target.id() !== '') {
-          onSelectionChange({ ...selection, selectedId: target.id(), selectedType: target.className });
+        let node: Konva.Node = e.target;
+        // Traverse up to parent Group if the direct target has no ID
+        // (doors/windows are Groups wrapping Lines/Arcs — child shapes lack IDs)
+        while (node && (!node.id || node.id() === '') && node.parent && node.parent.className === 'Group') {
+          node = node.parent;
+        }
+        if (node && node.id && node.id() !== '') {
+          onSelectionChange({ ...selection, selectedId: node.id(), selectedType: node.className });
         } else {
           onSelectionChange({ selectedId: null, selectedType: null, multiSelectedIds: new Set(), multiSelectedTypes: new Map() });
         }
       }
       // --- ERASE TOOL (smart — any element) ---
       else if (tool === 'erase') {
-        const target = e.target;
-        if (target && target.id && target.id() !== '') {
-          const cmd = new RemoveAnyElementCommand(target.id());
+        let node: Konva.Node = e.target;
+        // Traverse up to parent Group if the direct target has no ID
+        // (doors/windows are Groups wrapping Lines/Arcs — child shapes lack IDs)
+        while (node && (!node.id || node.id() === '') && node.parent && node.parent.className === 'Group') {
+          node = node.parent;
+        }
+        if (node && node.id && node.id() !== '') {
+          const cmd = new RemoveAnyElementCommand(node.id());
           onPlanDataChange(undoManager.execute(cmd, planData));
         }
       }
