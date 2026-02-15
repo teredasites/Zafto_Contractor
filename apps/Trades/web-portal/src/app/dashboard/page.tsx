@@ -24,6 +24,8 @@ import {
   Plus,
   Radio,
   Shield,
+  Satellite,
+  PenTool,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { StatsCard } from '@/components/ui/stats-card';
@@ -31,7 +33,6 @@ import { StatusBadge } from '@/components/ui/badge';
 import { Avatar, AvatarGroup } from '@/components/ui/avatar';
 import { SimpleAreaChart, DonutChart, DonutLegend, SimpleBarChart } from '@/components/ui/charts';
 import { Button } from '@/components/ui/button';
-import { CommandPalette } from '@/components/command-palette';
 import { TeamMapWidget } from '@/components/ui/team-map';
 import { ClockStatusWidget } from '@/components/time-clock/clock-status-widget';
 import { usePermissions, ProModeGate } from '@/components/permission-gate';
@@ -148,9 +149,6 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-8 animate-fade-in">
-      {/* Command Palette */}
-      <CommandPalette />
-
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -213,6 +211,34 @@ export default function DashboardPage() {
         />
       </div>
       )}
+
+      {/* Flagship Features */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card className="cursor-pointer hover:border-accent transition-colors group" onClick={() => router.push('/dashboard/recon')}>
+          <CardContent className="p-5 flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
+              <Satellite size={24} className="text-accent" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="font-semibold text-main">Property Recon</h3>
+              <p className="text-sm text-muted">Scan any address for instant roof, wall, and trade measurements</p>
+            </div>
+            <ArrowRight size={18} className="text-muted group-hover:text-accent transition-colors" />
+          </CardContent>
+        </Card>
+        <Card className="cursor-pointer hover:border-accent transition-colors group" onClick={() => router.push('/dashboard/sketch-engine')}>
+          <CardContent className="p-5 flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center group-hover:bg-emerald-500/20 transition-colors">
+              <PenTool size={24} className="text-emerald-500" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="font-semibold text-main">Sketch Engine</h3>
+              <p className="text-sm text-muted">CAD floor plans with trade layers, 3D view, and auto-generated estimates</p>
+            </div>
+            <ArrowRight size={18} className="text-muted group-hover:text-emerald-500 transition-colors" />
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">

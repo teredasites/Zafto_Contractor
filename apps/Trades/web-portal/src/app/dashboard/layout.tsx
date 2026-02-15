@@ -22,6 +22,7 @@ import { useNotifications } from '@/lib/hooks/use-notifications';
 import { AuthProvider, useAuth } from '@/components/auth-provider';
 import { PermissionProvider } from '@/components/permission-gate';
 import { Sidebar, useSidebarWidth } from '@/components/sidebar';
+import { CommandPalette } from '@/components/command-palette';
 import { ZConsoleProvider, ZConsole, useZConsole } from '@/components/z-console';
 import { cn } from '@/lib/utils';
 
@@ -202,6 +203,7 @@ function DashboardShell({
 
         {/* Page content */}
         <main className="p-4 lg:p-8">
+          <CommandPalette />
           {children}
         </main>
       </div>

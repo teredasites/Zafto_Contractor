@@ -23,12 +23,12 @@ CREATE TABLE IF NOT EXISTS public.company_feature_flags (
 ALTER TABLE public.company_feature_flags ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "company_feature_flags_select" ON public.company_feature_flags
-  FOR SELECT USING (company_id = auth.company_id());
+  FOR SELECT USING (company_id = requesting_company_id());
 
 CREATE POLICY "company_feature_flags_manage" ON public.company_feature_flags
   FOR ALL USING (
-    company_id = auth.company_id()
-    AND auth.user_role() IN ('owner', 'admin', 'super_admin')
+    company_id = requesting_company_id()
+    AND requesting_user_role() IN ('owner', 'admin', 'super_admin')
   );
 
 CREATE INDEX IF NOT EXISTS idx_company_feature_flags_lookup
@@ -60,11 +60,10 @@ CREATE TABLE IF NOT EXISTS public.scan_cache (
 ALTER TABLE public.scan_cache ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "scan_cache_company" ON public.scan_cache
-  FOR ALL USING (company_id = auth.company_id());
+  FOR ALL USING (company_id = requesting_company_id());
 
 CREATE INDEX IF NOT EXISTS idx_scan_cache_lookup
-  ON public.scan_cache(company_id, address_hash)
-  WHERE expires_at > now();
+  ON public.scan_cache(company_id, address_hash);
 
 CREATE INDEX IF NOT EXISTS idx_scan_cache_expiry
   ON public.scan_cache(expires_at);
@@ -93,13 +92,13 @@ ALTER TABLE public.api_cost_log ENABLE ROW LEVEL SECURITY;
 -- Only super_admin and company owners can view cost logs
 CREATE POLICY "api_cost_log_select" ON public.api_cost_log
   FOR SELECT USING (
-    company_id = auth.company_id()
-    AND auth.user_role() IN ('owner', 'admin', 'super_admin')
+    company_id = requesting_company_id()
+    AND requesting_user_role() IN ('owner', 'admin', 'super_admin')
   );
 
 -- Service role inserts (Edge Functions use service role)
 CREATE POLICY "api_cost_log_insert" ON public.api_cost_log
-  FOR INSERT WITH CHECK (company_id = auth.company_id());
+  FOR INSERT WITH CHECK (company_id = requesting_company_id());
 
 CREATE INDEX IF NOT EXISTS idx_api_cost_log_company_date
   ON public.api_cost_log(company_id, created_at DESC);
@@ -125,7 +124,7 @@ CREATE TABLE IF NOT EXISTS public.api_rate_limits (
 ALTER TABLE public.api_rate_limits ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "api_rate_limits_company" ON public.api_rate_limits
-  FOR ALL USING (company_id = auth.company_id());
+  FOR ALL USING (company_id = requesting_company_id());
 
 -- ============================================================================
 -- 5. ADD storm_damage_probability TO property_lead_scores IF MISSING

@@ -190,4 +190,6 @@ END;
 $$;
 
 -- Audit trigger on custom_fields
-SELECT audit_trigger_fn('custom_fields');
+CREATE TRIGGER audit_custom_fields
+  AFTER INSERT OR UPDATE OR DELETE ON custom_fields
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();

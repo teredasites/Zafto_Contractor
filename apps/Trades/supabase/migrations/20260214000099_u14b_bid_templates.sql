@@ -54,7 +54,9 @@ CREATE TRIGGER bid_templates_updated_at
   BEFORE UPDATE ON bid_templates
   FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
-SELECT audit_trigger_fn('bid_templates');
+CREATE TRIGGER audit_bid_templates
+  AFTER INSERT OR UPDATE OR DELETE ON bid_templates
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
 
 -- ============================================================
 -- 2. Seed System Templates (20 trades)

@@ -19,6 +19,7 @@
   --accent: #10b981;
   --accent-hover: #059669;
   --accent-light: #ecfdf5;
+  --card: #ffffff;
 }
 
 /* Dark mode */
@@ -35,6 +36,7 @@
   --accent: #10b981;
   --accent-hover: #34d399;
   --accent-light: #0a1f17;
+  --card: #171717;
 }
 
 body {
@@ -66,6 +68,7 @@ table {
   .bg-accent { background-color: var(--accent); }
   .bg-accent-hover { background-color: var(--accent-hover); }
   .bg-accent-light { background-color: var(--accent-light); }
+  .bg-card { background-color: var(--card); }
   .bg-elevated { background-color: var(--surface-hover); }
 
   .border-main { border-color: var(--border); }
