@@ -9,6 +9,7 @@ import 'package:zafto/models/inspection.dart';
 import 'package:zafto/services/inspection_service.dart';
 import 'package:zafto/data/inspection_template_seeds.dart';
 import 'package:zafto/screens/inspector/create_template_screen.dart';
+import 'package:zafto/screens/inspector/inspection_execution_screen.dart';
 
 // ============================================================
 // Inspection Templates Screen
@@ -18,7 +19,14 @@ import 'package:zafto/screens/inspector/create_template_screen.dart';
 // ============================================================
 
 class InspectionTemplatesScreen extends ConsumerStatefulWidget {
-  const InspectionTemplatesScreen({super.key});
+  /// When true, selecting a template launches Quick Checklist mode
+  /// instead of a formal inspection.
+  final bool quickChecklistMode;
+
+  const InspectionTemplatesScreen({
+    super.key,
+    this.quickChecklistMode = false,
+  });
 
   @override
   ConsumerState<InspectionTemplatesScreen> createState() =>
@@ -56,7 +64,9 @@ class _InspectionTemplatesScreenState
         backgroundColor: colors.bgBase,
         elevation: 0,
         title: Text(
-          'Inspection Templates',
+          widget.quickChecklistMode
+              ? 'Pick a Checklist Template'
+              : 'Inspection Templates',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w700,
@@ -339,7 +349,7 @@ class _InspectionTemplatesScreenState
                       ),
                     ),
                   ),
-                  if (isSystem)
+                  if (isSystem && !widget.quickChecklistMode)
                     TextButton.icon(
                       onPressed: () => _cloneTemplate(template),
                       icon: Icon(LucideIcons.copy,
@@ -356,7 +366,44 @@ class _InspectionTemplatesScreenState
                 ],
               ),
             ),
-            const SizedBox(height: 8),
+            // "Start" button — launches execution screen
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              child: SizedBox(
+                width: double.infinity,
+                height: 46,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context); // close detail sheet
+                    _launchFromTemplate(template);
+                  },
+                  icon: Icon(
+                    widget.quickChecklistMode
+                        ? LucideIcons.listChecks
+                        : LucideIcons.play,
+                    size: 18,
+                  ),
+                  label: Text(
+                    widget.quickChecklistMode
+                        ? 'Start Checklist'
+                        : 'Start Inspection',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: colors.accentPrimary,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 4),
             Expanded(
               child: ListView.builder(
                 controller: scrollController,
@@ -428,6 +475,20 @@ class _InspectionTemplatesScreenState
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  void _launchFromTemplate(InspectionTemplate template) {
+    final type = widget.quickChecklistMode
+        ? InspectionType.quickChecklist
+        : template.inspectionType;
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => InspectionExecutionScreen(
+          template: template,
+          inspectionType: type,
         ),
       ),
     );

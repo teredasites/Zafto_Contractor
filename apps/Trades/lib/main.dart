@@ -97,6 +97,9 @@ void main() async {
       // SK7 Floor Plan offline cache
       await Hive.openBox<String>('floor_plans_cache');
       await Hive.openBox<String>('floor_plans_sync_meta');
+      // INS10 Quick Checklist offline cache
+      await Hive.openBox<String>('checklists');
+      await Hive.openBox<String>('checklist_sync_meta');
 
       // Initialize exam progress tracker (CRITICAL - must be after Hive init)
       await ProgressTracker().initialize();
