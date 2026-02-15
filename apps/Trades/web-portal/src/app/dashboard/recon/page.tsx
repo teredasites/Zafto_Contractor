@@ -174,7 +174,7 @@ export default function ReconPage() {
   return (
     <div className="space-y-6">
       {/* Hero — Property Scan */}
-      <div className="relative overflow-hidden rounded-xl border border-main bg-gradient-to-br from-surface to-accent/5 p-6">
+      <div className="relative rounded-xl border border-main bg-gradient-to-br from-surface to-accent/5 p-6">
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-1">
             <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
@@ -243,8 +243,8 @@ export default function ReconPage() {
             <p className="mt-2 text-xs text-amber-500">Address autocomplete unavailable — NEXT_PUBLIC_MAPBOX_TOKEN not configured.</p>
           )}
         </div>
-        <div className="absolute -right-8 -top-8 w-36 h-36 rounded-full bg-accent/5" />
-        <div className="absolute -right-4 -bottom-10 w-28 h-28 rounded-full bg-accent/5" />
+        <div className="absolute -right-8 -top-8 w-36 h-36 rounded-full bg-accent/5 pointer-events-none" style={{ clipPath: 'inset(0)' }} />
+        <div className="absolute -right-4 -bottom-10 w-28 h-28 rounded-full bg-accent/5 pointer-events-none" style={{ clipPath: 'inset(0)' }} />
       </div>
 
       {/* Capabilities Grid — ALWAYS visible */}
