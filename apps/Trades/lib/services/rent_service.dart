@@ -100,11 +100,13 @@ class RentService {
         propertyId: lease.propertyId,
         unitId: lease.unitId,
         tenantId: lease.tenantId,
+        chargeType: 'rent',
         amount: lease.monthlyRent,
         dueDate: dueDate,
         paidAmount: 0,
         status: 'pending',
         createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
       ));
       created++;
     }

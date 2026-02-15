@@ -155,7 +155,7 @@ class RoomMeasurementCalculator {
       }
 
       // Net wall area (subtract openings)
-      final netSf = math.max(0, grossSf - doorOpeningSf - windowOpeningSf);
+      final netSf = math.max(0.0, grossSf - doorOpeningSf - windowOpeningSf);
 
       wallDetails.add(WallMeasurement(
         wallId: wall.id,
@@ -176,7 +176,7 @@ class RoomMeasurementCalculator {
 
     // Baseboard LF = perimeter minus door widths (in feet)
     final perimeterLf = totalPerimeter / 12.0;
-    final baseboardLf = math.max(0, (totalPerimeter - totalDoorWidth) / 12.0);
+    final baseboardLf = math.max(0.0, (totalPerimeter - totalDoorWidth) / 12.0);
 
     // Average wall height from boundary walls
     final avgHeight = boundaryWalls.isEmpty

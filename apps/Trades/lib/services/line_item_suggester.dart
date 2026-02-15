@@ -8,6 +8,8 @@
 //   3. Trade layer elements → counted items (5 receptacles → 5x rough-in)
 //   4. Universal items: paint (wall+ceiling SF), flooring (floor SF), baseboard (LF)
 
+import 'dart:ui' show Offset;
+
 import '../core/errors.dart';
 import '../core/supabase_client.dart';
 import '../models/floor_plan_elements.dart';

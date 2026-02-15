@@ -3,8 +3,10 @@
 // Flutter: RepaintBoundary → toImage → upload to Supabase Storage.
 // Updates property_floor_plans.thumbnail_path.
 
+import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
@@ -67,7 +69,7 @@ class FloorPlanThumbnailService {
   }
 
   /// Capture bytes from RepaintBoundary at 512x512 resolution.
-  Future<List<int>?> _captureFromBoundary(GlobalKey key) async {
+  Future<Uint8List?> _captureFromBoundary(GlobalKey key) async {
     try {
       final boundary =
           key.currentContext?.findRenderObject() as RenderRepaintBoundary?;

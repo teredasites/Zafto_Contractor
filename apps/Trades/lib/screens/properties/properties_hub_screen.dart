@@ -129,7 +129,12 @@ class _PropertiesHubScreenState extends ConsumerState<PropertiesHubScreen> {
                     await ref.read(propertiesProvider.notifier).add(
                           Property(
                             name: name,
-                            address: addressController.text.trim(),
+                            addressLine1: addressController.text.trim(),
+                            city: '',
+                            state: '',
+                            zip: '',
+                            createdAt: DateTime.now(),
+                            updatedAt: DateTime.now(),
                           ),
                         );
                   } catch (e) {
