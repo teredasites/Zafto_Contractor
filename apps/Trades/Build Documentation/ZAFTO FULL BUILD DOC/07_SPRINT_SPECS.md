@@ -12372,6 +12372,84 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - [ ] **License audit** — Verify no GPL-licensed packages in the codebase (GPL requires open-sourcing your code if you distribute it). Run license checker on all package.json and pubspec.yaml
 - [ ] Commit: `[SEC8] Dependency scanning — Dependabot alerts, secret scanning, push protection, npm/pub audit`
 
+### SEC9 — Full Penetration Test: No Stone Unturned (~20h)
+**Goal:** RUNS AFTER PHASE E (AI) IS COMPLETE — the entire system is built, all features live, all security layers active. This is a professional-grade penetration test executed with full offensive mindset. Every endpoint, every input, every file, every auth flow, every API, every Edge Function, every storage bucket, every RLS policy, every webhook — attacked systematically. Findings are patched AGGRESSIVELY on the spot. Nothing ships until this sprint has zero critical and zero high findings. This is the final gate.
+
+**Methodology:** Follow OWASP Testing Guide v4 + PTES (Penetration Testing Execution Standard) + NIST SP 800-115. Test ALL 5 apps + Supabase backend + Edge Functions + Cloudflare config + Hellhound effectiveness.
+
+**Phase 1: Reconnaissance & Information Gathering (~2h)**
+- [ ] **Passive recon** — DNS enumeration on zafto.app, zafto.cloud, all subdomains (team., client., ops.). WHOIS data exposure check. Certificate Transparency log review for all issued certs. Google dorking for accidentally indexed pages/files. GitHub repo scan for leaked secrets in commit history (git log --all, not just HEAD)
+- [ ] **Active recon** — Port scan all domains (nmap equivalent — check for open ports beyond 443). Technology fingerprinting (identify exact Next.js version, Supabase version, Vercel infrastructure). Subdomain brute force to find forgotten dev/staging endpoints. Check for exposed Supabase dashboard, Vercel dashboard, or admin panels
+- [ ] **API discovery** — Enumerate all API endpoints across all 4 portals. Map every Edge Function URL. Check for undocumented/forgotten endpoints. Test for API versioning leaks (v1/v2/v3). Check OpenAPI/Swagger docs accidentally exposed
+- [ ] **Attack surface map** — Document every entry point: login forms, API endpoints, file uploads, webhook URLs, real-time subscriptions, storage bucket URLs, Edge Function URLs. This map drives all subsequent testing
+
+**Phase 2: Authentication & Session Testing (~3h)**
+- [ ] **Brute force resistance** — Attempt 100 rapid login attempts with wrong passwords. Verify: account lockout triggers (SEC4), Cloudflare rate limit triggers (SEC7), Hellhound detects the pattern (SEC5). Measure: at what attempt count does each layer respond?
+- [ ] **Password policy enforcement** — Attempt: create account with weak passwords (123456, password, company name). Verify: rejected by password policy. Test: password complexity requirements actually enforced, not just client-side validation
+- [ ] **Session fixation** — Capture session token before login → login → check if same token is reused (should be regenerated). Attempt: set a known session ID and see if post-login session uses it
+- [ ] **Session hijacking** — Capture a valid JWT. Attempt: replay from different IP/device. Verify: if "remember device" is not set, session should require MFA on new device. Test: token expiry actually enforced (don't accept expired JWTs)
+- [ ] **Token manipulation** — Decode JWT. Attempt: modify company_id claim → re-encode → send. Verify: signature validation rejects tampered tokens. Attempt: change role claim (technician → owner). Attempt: use anon key as service_role
+- [ ] **Magic link security** — Request magic link. Test: link expires after use. Test: link expires after timeout. Test: link cannot be reused. Test: rate limit on magic link requests (prevent email bombing)
+- [ ] **2FA bypass attempts** — Attempt: skip MFA challenge step by directly hitting post-auth endpoints. Attempt: brute force 6-digit TOTP (1M combinations, but time-based window limits this). Attempt: replay a used TOTP code. Verify: backup codes are single-use
+- [ ] **OAuth/SSO probe** — Check if any OAuth endpoints exist that shouldn't. Test for open redirects in auth callback URLs
+- [ ] Document all findings with severity (CRITICAL/HIGH/MEDIUM/LOW/INFO)
+
+**Phase 3: Authorization & Access Control Testing (~4h)**
+- [ ] **Horizontal privilege escalation (cross-tenant)** — Create 2 test companies (A and B). As Company A user: attempt to read Company B's jobs, customers, invoices, estimates, properties, inspections, documents, photos, schedules, financial data. Test EVERY table via direct Supabase API calls (not through UI — bypass frontend controls). This is the #1 most important test
+- [ ] **Vertical privilege escalation (cross-role)** — As technician: attempt to access owner-only endpoints (delete company, manage billing, view all financials, change roles, access security audit log). As apprentice: attempt to approve change orders, sign contracts, send invoices. As CPA: attempt to modify jobs, delete customers. Test every RBAC boundary
+- [ ] **IDOR (Insecure Direct Object Reference)** — For every endpoint that takes an ID parameter (job_id, customer_id, invoice_id, etc.): substitute another company's ID. Verify: RLS blocks access. Test: UUID guessing (are IDs sequential or random? Sequential = more guessable)
+- [ ] **Function-level access control** — Every Edge Function: call without JWT (should 401). Call with expired JWT (should 401). Call with valid JWT but wrong role (should 403). Call with valid JWT from wrong company (should return empty/403)
+- [ ] **Storage bucket access** — Attempt: access Company B's files via direct Supabase storage URL using Company A's JWT. Attempt: enumerate file paths in storage. Attempt: upload to another company's folder. Attempt: access files without authentication
+- [ ] **Real-time subscription leaks** — Subscribe to Supabase real-time channels for tables belonging to other companies. Verify: RLS filters apply to real-time events (Company A user does NOT receive Company B's INSERT/UPDATE events)
+- [ ] **Admin function abuse** — If super_admin endpoints exist: test if regular users can access them. Test: can a user escalate themselves to super_admin by modifying their JWT or profile?
+- [ ] Document all findings
+
+**Phase 4: Injection & Input Validation Testing (~3h)**
+- [ ] **SQL injection** — Test every search field, filter parameter, and text input across all 5 apps with payloads: `' OR 1=1 --`, `'; DROP TABLE jobs; --`, `UNION SELECT`, `1; WAITFOR DELAY '0:0:5'--`. Even though Supabase client parameterizes queries, test for any raw SQL construction in Edge Functions or RPC calls
+- [ ] **Cross-Site Scripting (XSS)** — Test every text input that renders on screen: job names, customer names, notes, addresses, descriptions, template names, message content. Payloads: `<script>alert(1)</script>`, `<img onerror=alert(1) src=x>`, `javascript:alert(1)`, SVG-based XSS. Test: stored XSS (save payload in DB → renders in another user's browser), reflected XSS (URL parameters), DOM-based XSS
+- [ ] **XSS in PDF generation** — Inject HTML/JS into fields that appear in PDF exports (invoice line items, estimate descriptions, company name, customer address). Verify: HTML escaping in `export-invoice-pdf` and `export-estimate-pdf` Edge Functions covers ALL rendered fields, not just the ones tested during development
+- [ ] **Command injection** — Test any endpoint that processes file uploads or external data: ESX import, photo upload, document upload. Payloads: filenames with `; rm -rf /`, `$(whoami)`, pipe characters. Test: uploaded file names are sanitized
+- [ ] **Path traversal** — Test file access endpoints with: `../../../etc/passwd`, `..%2f..%2f`, `....//....//`. Test: storage bucket file access cannot traverse to other folders/buckets
+- [ ] **Server-Side Request Forgery (SSRF)** — If any endpoint accepts URLs (webhook config, import from URL, profile picture URL): test with internal addresses `http://169.254.169.254/latest/meta-data/` (cloud metadata), `http://localhost:5432` (database), `http://127.0.0.1`. Verify: URL validation blocks internal/private addresses
+- [ ] **XML/JSON injection** — ESX import accepts XML: test with XML bombs (billion laughs), XXE (external entity) payloads. JSON endpoints: test with deeply nested objects, oversized payloads, type confusion (send string where number expected)
+- [ ] **Email header injection** — If any form sends email (contact, invite, share): inject `\r\nBcc: attacker@evil.com` in email fields. Verify: email headers are sanitized
+- [ ] Document all findings
+
+**Phase 5: Business Logic Testing (~3h)**
+- [ ] **Payment manipulation** — Attempt: modify invoice amount client-side before payment (if amount is sent from frontend). Attempt: replay a payment webhook to credit account twice. Attempt: modify Stripe checkout session to pay less. Verify: all amounts validated server-side against database
+- [ ] **Race conditions** — Attempt: submit same payment simultaneously from 2 tabs (double-charge or double-credit). Attempt: clock in twice simultaneously (double time entry). Attempt: approve same estimate from 2 sessions. Verify: idempotency on critical operations
+- [ ] **Workflow bypass** — Attempt: skip estimate approval step and create invoice directly. Attempt: mark job complete without required inspections. Attempt: bypass required fields by sending API calls directly (skip frontend validation). Verify: business rules enforced at backend level, not just UI
+- [ ] **Data integrity** — Attempt: create invoice with negative line items (credit fraud). Attempt: set hourly rate to $0 or negative. Attempt: create estimate with $0 markup on items. Attempt: backdate time entries. Verify: business validation catches edge cases
+- [ ] **File upload abuse** — Upload: 1GB file (test size limits), executable (.exe/.bat/.sh), polyglot file (valid JPEG header + embedded JS), file with null bytes in name, filename with special characters. Verify: type validation, size limits, filename sanitization all enforced server-side
+- [ ] **Feature abuse** — Attempt: use messaging system to send 10,000 messages (spam). Use export to dump entire database table. Use search to enumerate all customers/jobs. Verify: rate limits and data scoping prevent abuse
+- [ ] Document all findings
+
+**Phase 6: Infrastructure & Configuration Testing (~2h)**
+- [ ] **TLS/SSL verification** — Test all domains: TLS version (must be 1.2+, no SSLv3/TLS1.0/1.1), cipher suites (no weak ciphers), certificate validity, HSTS header present, certificate chain complete. Use testssl.sh or ssllabs.com. Target: A+ rating
+- [ ] **Security header verification** — Scan all 4 portals with securityheaders.com. Verify: CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy all present and correctly configured. Target: A+ on all domains
+- [ ] **Error handling** — Trigger errors on every endpoint: 404, 500, malformed requests. Verify: error responses don't leak stack traces, file paths, database schema, Supabase URL, or server version. Custom error pages, not default framework errors
+- [ ] **Verbose headers** — Check response headers for information disclosure: `X-Powered-By` (should be removed), `Server` header (should not reveal Vercel/Next.js version), Supabase version in API responses
+- [ ] **CORS verification** — Test CORS on all Edge Functions: send request from evil-domain.com. Verify: while CORS is `*`, authentication requirement makes this safe. Double-check: no endpoints return sensitive data without requiring JWT
+- [ ] **Cloudflare bypass** — Attempt: access Vercel directly (bypass Cloudflare WAF) by finding origin IP. Check DNS history, certificate transparency logs, response header fingerprinting. If origin is exposed → configure Vercel to only accept requests from Cloudflare IPs
+- [ ] **Supabase dashboard exposure** — Verify: Supabase dashboard is not accessible without proper auth. Check: are Supabase project URL and anon key the only things exposed? Verify: service_role key is NOT in any client-accessible location (re-verify SEC scan findings)
+- [ ] Document all findings
+
+**Phase 7: Hellhound Effectiveness Test (~1h)**
+- [ ] **Test Hellhound detection** — Run simulated attack tools against canary endpoints. Verify: all probes detected, fingerprinted, and logged. Verify: auto-blocking triggers after threshold. Verify: tarpit responses slow down scanner
+- [ ] **Test honeytoken monitoring** — Use a planted honeytoken against the Supabase API. Verify: instant detection and alert
+- [ ] **Test bot traps** — Submit login forms with hidden fields filled. Verify: flagged as bot, blocked, not processed by auth
+- [ ] **Test canary records** — Query database as service_role and verify canary records exist. Query as regular user and verify canary records are invisible. Attempt: craft a query that might leak canary records through aggregation or UNION
+- [ ] **Hellhound evasion** — Attempt to probe the system without triggering Hellhound: slow scanning (1 request per minute), rotating IPs, legitimate user-agents, avoiding known canary paths. Document any evasion techniques that work → improve Hellhound detection
+
+**Phase 8: Aggressive Patching & Verification (~2h)**
+- [ ] **Triage all findings** — Categorize: CRITICAL (data breach, auth bypass, RCE) → patch within 1 hour. HIGH (privilege escalation, significant data leak) → patch within 4 hours. MEDIUM (information disclosure, missing best practice) → patch within session. LOW/INFO → document for future sprint
+- [ ] **Patch every CRITICAL and HIGH finding** — Write fix, test fix, verify fix doesn't break existing functionality, commit with `[SEC9-FIX]` prefix
+- [ ] **Regression test** — After patching: re-run the specific test that found the vulnerability. Confirm: previously exploitable → now blocked
+- [ ] **Patch every MEDIUM finding** — Same process
+- [ ] **Generate pentest report** — Markdown document: executive summary, methodology, findings table (severity, description, affected component, reproduction steps, fix applied, verification), recommendations for ongoing security. Save to `Build Documentation/ZAFTO FULL BUILD DOC/Expansion/PENTEST_REPORT_S[session].md`
+- [ ] **Final verification scan** — Re-run full automated scan (security headers, TLS, CORS, canary endpoint check) to confirm no regressions from patching
+- [ ] Commit: `[SEC9] Full penetration test — [X] findings patched, [Y] critical, [Z] high, all resolved`
+
 ---
 
 ## PHASE LAUNCH: PRE-LAUNCH REQUIREMENTS (S125 gap analysis)
@@ -12492,11 +12570,11 @@ When inspector takes a photo during inspection execution, add search bar to atta
 | **REST** | REST1-REST2 | ~20h | Restoration gaps: fire tools, mold remediation (IICRC S520) |
 | **NICHE** | NICHE1-NICHE2 | ~16h | Missing trade modules: pest control, service trades |
 | **DEPTH** | DEPTH1-DEPTH23 | ~292h | Full depth audit + corrections across every feature area |
-| **SEC** | SEC1-SEC8 | ~56h | Security fortress: critical fixes, 2FA, biometrics, enterprise options, Hellhound deception, security headers, Cloudflare WAF, dependency scanning |
+| **SEC** | SEC1-SEC9 | ~76h | Security fortress: critical fixes, 2FA, biometrics, enterprise options, Hellhound, headers, WAF, dependency scanning, full pentest |
 | **LAUNCH** | LAUNCH1-LAUNCH7 | ~72h | Monitoring, legal, payments, i18n, accessibility, testing, App Store + onboarding wizard |
-| **Total** | **45 sprints** | **~492h** | — |
+| **Total** | **46 sprints** | **~512h** | — |
 
-**Execution order:** SEC1 + SEC6 + SEC7 + SEC8 (critical security — site is live) → LAUNCH1 (monitoring — need Sentry before building more) → FIELD → REST → NICHE → DEPTH1 through DEPTH23 → SEC2-SEC5 (2FA, biometrics, enterprise security, Hellhound) → LAUNCH2-LAUNCH6 (legal, payments, i18n, accessibility, testing) → Phase G (QA) → Phase JUR → Phase E (AI) → LAUNCH7 (App Store + onboarding wizard — DEAD LAST, needs final product) → SHIP
+**Execution order:** SEC1 + SEC6 + SEC7 + SEC8 (critical security — site is live) → LAUNCH1 (monitoring — need Sentry before building more) → FIELD → REST → NICHE → DEPTH1 through DEPTH23 → SEC2-SEC5 (2FA, biometrics, enterprise security, Hellhound) → LAUNCH2-LAUNCH6 (legal, payments, i18n, accessibility, testing) → Phase G (QA) → Phase JUR → Phase E (AI) → **SEC9 (full pentest — AFTER everything is built, leave no stone unturned, patch aggressively)** → LAUNCH7 (App Store + onboarding wizard — DEAD LAST) → SHIP
 
 **Module coverage guarantee:**
 - DEPTH1-6: Horizontal audit by category (core biz, field tools, property, financial, CRM, calculators)
@@ -12510,6 +12588,7 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - SEC6: Security headers + CSP (free armor — blocks XSS, clickjacking, MIME attacks)
 - SEC7: Cloudflare WAF + certificate monitoring (edge-level attack blocking)
 - SEC8: Dependency scanning + secret leak prevention (supply chain defense)
+- SEC9: Full penetration test (runs AFTER Phase E — final gate before ship, 8-phase OWASP/PTES methodology, aggressive patching)
 - LAUNCH1: Monitoring + email (need error tracking BEFORE building more)
 - LAUNCH2-6: Legal, payments, i18n, accessibility, testing — runs after DEPTH audits
 - LAUNCH7: App Store prep + onboarding wizard — DEAD LAST (needs final product complete)
