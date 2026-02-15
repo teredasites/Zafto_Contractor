@@ -12,6 +12,8 @@ import 'package:zafto/models/inspection.dart';
 import 'package:zafto/services/inspection_service.dart';
 import 'package:zafto/core/supabase_client.dart';
 import 'package:zafto/widgets/signature_capture_widget.dart';
+import 'package:zafto/widgets/inspector/template_picker_sheet.dart';
+import 'package:zafto/screens/inspector/inspection_execution_screen.dart';
 
 // ============================================================
 // Inspection Report Screen
@@ -210,6 +212,15 @@ class _InspectionReportScreenState
             'Copy shareable link to clipboard',
             colors.textSecondary,
             _copyLink,
+          ),
+          const SizedBox(height: 8),
+          _buildActionCard(
+            colors,
+            LucideIcons.refreshCw,
+            'Start Re-Inspection',
+            'Re-inspect failed/conditional items',
+            Colors.orange,
+            _startReinspection,
           ),
         ],
       ),
@@ -534,6 +545,30 @@ class _InspectionReportScreenState
         ),
       );
     }
+  }
+
+  Future<void> _startReinspection() async {
+    // Pick a template (or reuse the original)
+    final template = await showTemplatePicker(context);
+    if (template == null || !mounted) return;
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => InspectionExecutionScreen(
+          template: template,
+          inspectionType: widget.inspection.inspectionType,
+          // Link to parent inspection for re-inspection chain
+          inspection: PmInspection(
+            parentInspectionId: widget.inspection.id,
+            inspectionType: widget.inspection.inspectionType,
+            trade: widget.inspection.trade,
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
+          ),
+        ),
+      ),
+    );
   }
 
   Future<void> _captureSignature(bool isInspector) async {

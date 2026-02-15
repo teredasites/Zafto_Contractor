@@ -23,7 +23,9 @@ import 'package:zafto/screens/certifications/certifications_screen.dart';
 import 'package:zafto/screens/tech/tech_timesheet_screen.dart';
 import 'package:zafto/screens/time_clock/time_clock_screen.dart';
 import 'package:zafto/services/inspection_service.dart';
+import 'package:zafto/services/time_clock_service.dart';
 import 'package:zafto/models/inspection.dart';
+import 'package:zafto/models/time_entry.dart';
 
 // ============================================================
 // Inspector Home Screen — Premium Dashboard (Owner-Parity)
@@ -90,7 +92,16 @@ class _InspectorHomeScreenState extends ConsumerState<InspectorHomeScreen> {
         const CleanBrandHeader(subtitle: 'INSPECTOR'),
         const Spacer(),
         IconButton(
-          onPressed: () {},
+          onPressed: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: const Text('Notifications coming soon'),
+                backgroundColor: colors.bgElevated,
+                behavior: SnackBarBehavior.floating,
+                duration: const Duration(seconds: 2),
+              ),
+            );
+          },
           icon: Icon(LucideIcons.bell, color: colors.textSecondary, size: 20),
         ),
         const SizedBox(width: 4),
@@ -122,6 +133,15 @@ class _InspectorHomeScreenState extends ConsumerState<InspectorHomeScreen> {
 
   // ── Right Now Section ───────────────────────────────────────
   Widget _buildRightNow(ZaftoColors colors) {
+    final activeClock = ref.watch(activeClockEntryProvider);
+    final isClockedIn = activeClock != null;
+    final clockColor = isClockedIn ? colors.accentSuccess : colors.textTertiary;
+    final clockLabel = isClockedIn ? 'Clocked In' : 'Not Clocked In';
+    final clockSub = isClockedIn
+        ? 'Since ${DateFormat.jm().format(activeClock.clockIn)}'
+        : 'Tap to start your shift';
+    final btnLabel = isClockedIn ? 'VIEW' : 'CLOCK IN';
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -141,10 +161,10 @@ class _InspectorHomeScreenState extends ConsumerState<InspectorHomeScreen> {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: colors.accentSuccess.withValues(alpha: 0.1),
+                  color: clockColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(LucideIcons.clock, color: colors.accentSuccess, size: 22),
+                child: Icon(LucideIcons.clock, color: clockColor, size: 22),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -152,7 +172,7 @@ class _InspectorHomeScreenState extends ConsumerState<InspectorHomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Not Clocked In',
+                      clockLabel,
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
@@ -161,7 +181,7 @@ class _InspectorHomeScreenState extends ConsumerState<InspectorHomeScreen> {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'Slide to start your shift',
+                      clockSub,
                       style: TextStyle(
                         fontSize: 13,
                         color: colors.textTertiary,
@@ -181,9 +201,9 @@ class _InspectorHomeScreenState extends ConsumerState<InspectorHomeScreen> {
                     color: colors.accentSuccess,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: const Text(
-                    'CLOCK IN',
-                    style: TextStyle(
+                  child: Text(
+                    btnLabel,
+                    style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
                       color: Colors.white,
@@ -317,6 +337,8 @@ class _InspectorHomeScreenState extends ConsumerState<InspectorHomeScreen> {
   // ── Stats Tiles (2x2 Grid) ────────────────────────────────
   Widget _buildStatsTiles(ZaftoColors colors, AsyncValue<List<PmInspection>> inspectionsAsync) {
     final service = ref.read(inspectionServiceProvider);
+    final clockStats = ref.watch(timeClockStatsProvider);
+    final hoursStr = '${clockStats.totalHoursThisWeek.toStringAsFixed(1)} / 40';
     final weekCount = inspectionsAsync.maybeWhen(
       data: (list) => service.thisWeek(list).where((i) => i.status == InspectionStatus.completed).length,
       orElse: () => 0,
@@ -383,7 +405,7 @@ class _InspectorHomeScreenState extends ConsumerState<InspectorHomeScreen> {
                   colors,
                   icon: LucideIcons.clock,
                   label: 'My Hours',
-                  value: '0 / 40',
+                  value: hoursStr,
                   iconColor: colors.accentWarning,
                 ),
               ),

@@ -9,6 +9,7 @@ import 'package:zafto/models/inspection.dart';
 import 'package:zafto/services/inspection_service.dart';
 import 'package:zafto/repositories/inspection_repository.dart';
 import 'package:zafto/screens/inspector/inspection_report_screen.dart';
+import 'package:zafto/services/inspection_gps_service.dart';
 
 // ============================================================
 // Inspection Execution Screen
@@ -969,14 +970,18 @@ class _InspectionExecutionScreenState
 
       // Create or update the inspection
       if (_inspectionId == null) {
-        // New inspection
+        // New inspection — capture GPS check-in
         final now = DateTime.now();
+        final gps = await InspectionGpsService.getLatLng();
         final inspection = PmInspection(
           inspectionType: widget.inspectionType ?? InspectionType.routine,
           status: InspectionStatus.inProgress,
           notes: _overallNotes.isNotEmpty ? _overallNotes : null,
           templateId: widget.template?.id,
           trade: widget.template?.trade,
+          parentInspectionId: widget.inspection?.parentInspectionId,
+          gpsLat: gps?.lat,
+          gpsLng: gps?.lng,
           createdAt: now,
           updatedAt: now,
         );
@@ -1040,12 +1045,16 @@ class _InspectionExecutionScreenState
       // Create or update inspection
       if (_inspectionId == null) {
         final now = DateTime.now();
+        final gps = await InspectionGpsService.getLatLng();
         final inspection = PmInspection(
           inspectionType: widget.inspectionType ?? InspectionType.routine,
           status: InspectionStatus.inProgress,
           notes: _overallNotes.isNotEmpty ? _overallNotes : null,
           templateId: widget.template?.id,
           trade: widget.template?.trade,
+          parentInspectionId: widget.inspection?.parentInspectionId,
+          gpsLat: gps?.lat,
+          gpsLng: gps?.lng,
           createdAt: now,
           updatedAt: now,
         );
