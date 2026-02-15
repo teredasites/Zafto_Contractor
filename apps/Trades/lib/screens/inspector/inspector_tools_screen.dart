@@ -17,6 +17,7 @@ import 'package:zafto/screens/field_tools/daily_log_screen.dart';
 import 'package:zafto/screens/field_tools/punch_list_screen.dart';
 import 'package:zafto/screens/field_tools/receipt_scanner_screen.dart';
 import 'package:zafto/screens/field_tools/mileage_tracker_screen.dart';
+import 'package:zafto/screens/inspector/inspection_templates_screen.dart';
 
 // ============================================================
 // Inspector Tools Screen — Inspector-Specific & Shared Tools
@@ -52,6 +53,12 @@ class InspectorToolsScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 20),
               _buildSection(context, colors, 'INSPECTION', [
+                _ToolItem(
+                  LucideIcons.fileCheck,
+                  'Templates',
+                  'Inspection checklists by type & trade',
+                  () => _push(context, const InspectionTemplatesScreen()),
+                ),
                 _ToolItem(
                   LucideIcons.camera,
                   'Site Photos',
