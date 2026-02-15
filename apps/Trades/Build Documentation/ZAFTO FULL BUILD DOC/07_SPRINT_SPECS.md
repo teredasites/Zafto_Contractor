@@ -11789,6 +11789,62 @@ When inspector takes a photo during inspection execution, add search bar to atta
 
 ---
 
+## PHASE JUR: JURISDICTION AWARENESS — Pre-AI (S124 owner directive)
+**Purpose:** Every code reference, inspection template, permit requirement, lien deadline, contract clause, insurance minimum, CE requirement, and tax rate must be filtered by the state/jurisdiction where work is being performed. Liability concern — contractors must see rules for THEIR state, not generic national defaults. This phase creates the jurisdiction data layer and retrofits all features before AI (Phase E) begins, so AI inherits jurisdiction-aware data automatically.
+
+**Build order position:** After Phase G (QA) → **JUR** → Phase E (AI) → LAUNCH
+
+### JUR1 — Jurisdiction Foundation (~12h)
+**Goal:** Create the state code adoption data layer — the single source of truth for which codes each state has adopted.
+- [ ] Create `state_code_adoptions` table: state_code, code_family (NEC/IRC/IBC/IFC/IMC/IPC/IECC/NFPA/OSHA), adopted_edition (2018/2020/2021/2023), effective_date, amendments_url, notes, state_name, last_verified_at
+- [ ] Create `jurisdiction_overrides` table: for city/county-level overrides (NYC, Chicago, LA, etc. that have their own codes)
+- [ ] Seed all 50 states + DC + territories (~400+ rows) with current adopted code editions
+- [ ] Seed major city overrides (~20-30 cities with known local amendments)
+- [ ] Create `get-jurisdiction-info` Edge Function: given a state (or lat/lng from property), return all adopted codes + any city overrides
+- [ ] Add jurisdiction display to company settings (auto-detected from company address, editable)
+- [ ] Add jurisdiction display to property detail (auto-detected from property address)
+- [ ] Add disclaimer banner for features that reference codes: "Code references reflect [State] adoptions as of [date]. Verify with local AHJ."
+- [ ] RLS: state_code_adoptions is public read (reference data), jurisdiction_overrides is public read
+- [ ] Migration file + deploy
+- [ ] Commit: `[JUR1] Jurisdiction foundation — state_code_adoptions + city overrides + seed data`
+
+### JUR2 — Automated Jurisdiction Scanner (~10h)
+**Goal:** AI-powered weekly scanner that detects when states update their code adoptions, so data never goes stale.
+- [ ] Create `jurisdiction_scan_results` table: scan_date, state_code, code_family, detected_edition, current_edition, status (match/mismatch/unknown), source_url, raw_excerpt
+- [ ] Create `jurisdiction_scan_sources` table: state_code, source_url, source_type (ICC_map/state_website/legislation_tracker), css_selector_hint, last_successful_scan
+- [ ] Seed scan sources for all 50 states (ICC adoption map + state-specific pages)
+- [ ] Create `scan-jurisdiction-updates` Edge Function (cron weekly via pg_cron):
+  - Fetch each state's adoption page
+  - Parse/compare against current `state_code_adoptions` data
+  - Insert results into `jurisdiction_scan_results`
+  - Flag mismatches as "pending review"
+- [ ] Ops portal: Jurisdiction Scanner dashboard — shows scan results, mismatches, approve/reject changes
+- [ ] Ops portal: Manual override — admin can update adoptions directly
+- [ ] Ops portal: Scan history + audit trail
+- [ ] Email/notification alert to admin when mismatches detected
+- [ ] Human-in-the-loop: mismatches require admin approval before propagating to live data
+- [ ] Commit: `[JUR2] Jurisdiction scanner — weekly cron, ops dashboard, human-in-the-loop`
+
+### JUR3 — Full Feature Retrofit (~18h)
+**Goal:** Wire jurisdiction filtering into every feature that references codes, regulations, or location-specific rules.
+- [ ] Inspection templates: filter code references by state's adopted edition (e.g., show NEC 2020 refs in Ohio, NEC 2023 in Florida)
+- [ ] Code reference search: scope results to state-adopted editions
+- [ ] Permit requirements: state-specific permit types, fees, timelines
+- [ ] Lien law deadlines: state-specific preliminary notice, mechanic's lien, and bond claim deadlines (CRITICAL — ranges from 10 days to 120 days by state)
+- [ ] Contract templates: state-required clauses (right to cure, home improvement licensing disclosure, etc.)
+- [ ] Insurance minimums: state-required GL/WC minimums
+- [ ] Continuing education: state CE requirements for each trade license type
+- [ ] Sales tax rates: state + local rates for estimates/invoices
+- [ ] Prevailing wage rules: flag government jobs that require Davis-Bacon or state prevailing wage
+- [ ] Licensing requirements: state-specific license types per trade
+- [ ] CRM: jurisdiction badge on company dashboard showing active state + adopted codes
+- [ ] Client portal: show jurisdiction-appropriate code references in inspection reports
+- [ ] Team portal: jurisdiction context in field inspection checklists
+- [ ] AI context prep: create `get-jurisdiction-context` Edge Function that returns full jurisdiction data for AI prompts (Phase E will consume this)
+- [ ] Commit: `[JUR3] Full jurisdiction retrofit — all features filtered by state adoptions`
+
+---
+
 ### Phase INS Integration Checklist
 - [ ] Inspector screens wired to template-driven checklists (not hardcoded)
 - [ ] Deficiency data flows: inspector captures → office reviews → tech assigned → re-inspection verifies

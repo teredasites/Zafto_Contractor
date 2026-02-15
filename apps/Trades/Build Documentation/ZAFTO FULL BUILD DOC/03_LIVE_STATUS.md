@@ -3,7 +3,7 @@
 
 **Last Updated:** February 15, 2026 (Session 124 — **S124: INS10 Quick Checklist + Hive Safety Net.** Quick Checklist mode (simple check/uncheck vs formal pass/fail/NA), auto-save to Hive on every toggle. ChecklistCacheService + HiveCacheMixin (reusable offline pattern) + OfflineBanner widget. Entry points on home+tools. OFFLINE1-4 sprints added (~28h) for full Hive coverage. ~201 tables.)
 **Current Phase:** BUILD — **Phases A-D + F + T + P + SK + GC + U + W + J + L ALL COMPLETE. D5-PV DONE (S117). Phase INS COMPLETE (S121-S122, INS1-INS8). Phase G IN PROGRESS (G1-G5 automated DONE, G6-G10 manual QA PENDING).** R1 DONE. FM code done. Phase E PAUSED. ~201 tables. 68 migrations. 70 Edge Functions. 126 CRM routes. 36 team routes. 39 client routes. 29 ops routes.
-**Next Action:** Phase G manual QA (G6-G10) → Phase E (AI) → LAUNCH.
+**Next Action:** Phase G manual QA (G6-G10) → Phase JUR (Jurisdiction Awareness) → Phase E (AI) → LAUNCH.
 
 ---
 

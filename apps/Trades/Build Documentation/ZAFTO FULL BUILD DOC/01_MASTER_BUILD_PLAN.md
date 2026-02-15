@@ -132,9 +132,10 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | **Phase L: Legal/Permits** | **COMPLETE** | **YES** | **S113 chain: L1-L9 permit intelligence, jurisdictions, compliance, liens, CE tracker. 5 migrations.** |
 | **Phase INS: Inspector Deep Buildout** | **COMPLETE** | **YES** | **S121-S124: INS1-INS10 all done (~66h). 19 inspection types + Quick Checklist mode, template-driven checklists (25 templates, 1,147 items, 173 sections), weighted scoring, deficiency tracking w/ photos, PDF reports, GPS capture, reinspection diffs, code reference (61 NEC/IBC/IRC/OSHA/NFPA sections), compliance calendar, permit tracker, CRM hooks+pages, ops metrics, team inspections. INS10: Quick Checklist (check/uncheck), Hive offline safety net (ChecklistCacheService + HiveCacheMixin + OfflineBanner), OFFLINE1-4 sprints planned (~28h).** |
 | **Phase G: QA/Hardening** | **IN PROGRESS** | **PARTIAL** | **S113: G1-G5 automated sprints DONE. G6-G10 manual QA PENDING.** |
+| **Phase JUR: Jurisdiction Awareness** | **PLANNED (S124)** | **NO** | **Pre-AI. JUR1: state_code_adoptions table + seed (50 states × 8 code families). JUR2: AI-powered weekly adoption scanner (cron EF, ops portal alerts, human-in-the-loop approval). JUR3: Retrofit all features (templates, code refs, permits, liens, contracts, insurance, CE, tax rates, prevailing wage). ~40-50 hrs total.** |
 | **Plan Review** | **SPEC'D (S97)** | **NO** | Phase E feature (BA1-BA8, ~128 hrs) |
 
-**ALL PHASES A-F + T + P + SK + GC + U + W + J + L + INS COMPLETE. D5-PV DONE (S117). Tech App DONE (S118-S120). Phase INS DONE (S121-S124, INS1-INS10). Phase G automated DONE (G1-G5), manual QA pending (G6-G10). ~201 tables. 68 migrations. 70 Edge Functions. 126 CRM routes. 36 team routes. 39 client routes. 29 ops routes. Next: G6-G10 manual QA → E (AI LAST: E-review → BA1-BA8 → E1-E4) → LAUNCH. F2 + F8 post-launch.**
+**ALL PHASES A-F + T + P + SK + GC + U + W + J + L + INS COMPLETE. D5-PV DONE (S117). Tech App DONE (S118-S120). Phase INS DONE (S121-S124, INS1-INS10). Phase G automated DONE (G1-G5), manual QA pending (G6-G10). ~201 tables. 68 migrations. 70 Edge Functions. 126 CRM routes. 36 team routes. 39 client routes. 29 ops routes. Next: G6-G10 manual QA → JUR (Jurisdiction Awareness, pre-AI) → E (AI LAST: E-review → BA1-BA8 → E1-E4) → LAUNCH. F2 + F8 post-launch.**
 
 ---
 
