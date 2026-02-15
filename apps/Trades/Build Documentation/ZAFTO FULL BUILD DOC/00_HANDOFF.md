@@ -1,6 +1,6 @@
 # ZAFTO SESSION HANDOFF
 ## THE ONLY DOC YOU READ FIRST — EVERY SESSION
-### Last Updated: February 15, 2026 (Session 124 — S124: INS10 COMPLETE. Quick Checklist mode (simple check/uncheck vs formal pass/fail/NA), Hive offline safety net (ChecklistCacheService, HiveCacheMixin, OfflineBanner), entry points on home+tools screens, template picker with "Start Checklist" button. OFFLINE1-4 sprints added to sprint specs for full Hive coverage across all features.)
+### Last Updated: February 15, 2026 (Session 125 — S125: FULL DEPTH AUDIT + SECURITY + ZERO-DEFECT SPRINT SPECS. Recovered crashed session work. Wrote 56 new sprints (~612h): FIELD1-3 (field gaps), REST1-2 (restoration), NICHE1-2 (trade modules), DEPTH1-24 (full depth audit + contractor needs validation), SEC1-9 (security fortress: critical fixes, 2FA, biometrics, Hellhound deception, headers, WAF, dependency scanning, full pentest), ZERO1-9 (zero-defect validation: property testing, state machines, chaos engineering, 50K load test, fuzzing, mutation testing, triple-scan), LAUNCH1-7 (monitoring, legal, payments, i18n, accessibility, testing, App Store + onboarding wizard). Docs-only session — no code changes.)
 
 ---
 
@@ -19,12 +19,12 @@
 
 | Field | Value |
 |-------|-------|
-| **Sprint** | **INS10 DONE (S124). Phase INS FULLY COMPLETE (S121-S124, INS1-INS10). OFFLINE1-4 sprints PLANNED. Phase G IN PROGRESS (S113-S115).** G1-G5 automated DONE. G10 DONE. G6-G9 manual QA PENDING. |
-| **Sub-step** | **OFFLINE1 next (core business Hive cache), then Phase G manual QA (G6-G9).** Phase INS fully complete. Phase E remains PAUSED (AI goes last). |
-| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → Phase INS (INS1-INS10 ALL DONE). OFFLINE1-4 PLANNED. Phase G (G1-G5 DONE, G10 DONE, G6-G9 manual). Phase E: E-review + BA1-BA8 (~128 hrs) + E1-E4. |
-| **Status** | Phases A-D + F + T + P + SK + GC + U + W + J + L ALL DONE. D5-PV DONE. Tech App DONE. **Phase INS FULLY COMPLETE (S124, INS1-INS10).** Phase G: G1-G5 automated DONE, G10 DONE. R1 DONE. FM code done. Phase E PAUSED. ~201 tables. 53 migration files. 70 Edge Functions. **126 CRM pages. 36 team pages. 39 client pages. 29 ops pages.** |
-| **Last Completed** | S124: **INS10 COMPLETE.** Quick Checklist mode — simple check/uncheck UI in execution screen (vs pass/fail/NA for formal inspections). Hive offline safety net — ChecklistCacheService (Hive-backed), HiveCacheMixin (reusable for any repo), OfflineBanner widget (connectivity-aware). Entry points: home screen quick tools, tools screen INSPECTION section, template picker with "Start Checklist" button. OFFLINE1-4 sprints added (~28h total) for full Hive coverage across all features + web portal service workers. |
-| **Session Count** | 124 |
+| **Sprint** | **S125: DOCS-ONLY SESSION.** Full depth audit + security + zero-defect sprint specs written. 56 new sprints (~612h) added to 07_SPRINT_SPECS.md. No code changes. Phase G still IN PROGRESS (G6-G9 manual QA PENDING). |
+| **Sub-step** | **SEC1 next (critical security fixes — site is live), then LAUNCH1 (monitoring), then FIELD1 (team messaging).** Full execution order in PHASE AUDIT SUMMARY section of 07_SPRINT_SPECS.md. |
+| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → New phases: FIELD (line ~11792), REST (~11856), NICHE (~11887), DEPTH (~11913), SEC (~12261), ZERO (~12458), LAUNCH (~12598). Summary table at PHASE AUDIT SUMMARY (~12602). |
+| **Status** | Phases A-D + F + T + P + SK + GC + U + W + J + L ALL DONE. D5-PV DONE. Tech App DONE. **Phase INS FULLY COMPLETE (S124, INS1-INS10).** Phase G: G1-G5 automated DONE, G10 DONE. R1 DONE. FM code done. Phase E PAUSED. ~201 tables. 53 migration files. 70 Edge Functions. **126 CRM pages. 36 team pages. 39 client pages. 29 ops pages.** **S125: 56 new sprints spec'd (~612h) — depth audit, security fortress, zero-defect validation, launch prep.** |
+| **Last Completed** | S125: **SPRINT SPEC SESSION (docs only).** Recovered S124 crash remnants (210 lines). Wrote 56 sprints across 7 new phases: FIELD1-3 (field gaps ~36h), REST1-2 (restoration ~20h), NICHE1-2 (trade modules ~16h), DEPTH1-24 (depth audit + contractor needs validation ~306h), SEC1-9 (security fortress ~76h), ZERO1-9 (zero-defect validation ~86h), LAUNCH1-7 (pre-launch requirements ~72h). Live security scan: 3 medium vulns found (storage RLS, rate limiting, marketplace write policy). Post-quantum TLS verified via Cloudflare. |
+| **Session Count** | 125 |
 | **Tables** | ~201 (+2 from S117: government_payment_programs, payment_verification_log). Also ALTER rent_payments + invoices + pm_inspection_items (code_refs). |
 | **Migration Files** | 53 total (added: 20260215000103_inspection_code_refs.sql — code_refs column on pm_inspection_items) |
 
