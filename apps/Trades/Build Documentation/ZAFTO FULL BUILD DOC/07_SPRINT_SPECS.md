@@ -6541,19 +6541,18 @@ Execute in sequence:
 - [x] Commit: `[R1b-R1h] All 7 role experiences — 33 screens`
 
 ### R1e: Inspector Experience (~14 hrs)
-**Status: DONE — Screens (Session 78). DB tables + infrastructure deferred to R1j.**
-- [ ] Deploy inspection_templates + inspection_results + inspection_deficiencies tables — deferred to R1j
-- [ ] Seed system inspection templates — deferred to R1j
-- [x] Inspector home screen (today's inspections, stats)
-- [x] Active inspection screen (checklist with pass/fail/conditional per item)
-- [ ] Deficiency capture (fail → photo → annotate → code cite → severity) — deferred to R1j
-- [x] History + re-inspection linking
-- [x] Inspector tools screen (code lookup, measurements, floor plans, annotations)
-- [ ] Code lookup (Z-powered natural language) — deferred to Phase E
-- [ ] Floor plan integration (pin deficiencies) — deferred to R1j
-- [ ] Report generation (auto PDF) — deferred to R1j
-- [ ] Web CRM inspection hooks — deferred to R1j
+**Status: DONE — Screens (S78). S121: Premium UI redesign + real data wiring. Deep features → Phase INS (INS1-INS8, ~52h).**
+- [x] Inspector home screen (today's inspections, stats) — S78 shell, S121 premium redesign (AI brain card, stats tiles, quick tools, 4-state)
+- [x] Active inspection screen (checklist with pass/fail/conditional per item) — S78 shell, S121 real data + filter chips
+- [x] History + re-inspection linking — S78 shell, S121 search + result filtering + score badges
+- [x] Inspector tools screen — S78 shell, S121 organized sections (11 wired tools, 2 coming-soon)
+- [x] Inspector more screen — S121 structured sections (11 wired items)
+- [x] InspectionService + Riverpod providers — S121
 - [x] Commit: `[R1b-R1h] All 7 role experiences — 33 screens`
+- [x] Commit: `[S121] Inspector app redesign — premium UI parity + real data wiring`
+- [x] Commit: `[FIX] Inspector compile errors — AsyncValue.guard, nullable score, missing methods, imports`
+- **Deep features → Phase INS (INS1-INS8):** Templates, deficiency capture, code reference, report gen, GPS, signatures, re-inspection chains, permit integration, CRM hooks
+- **Deferred to Phase E:** Code lookup (AI-powered natural language)
 
 ### R1f: Homeowner/Client Experience (~12 hrs)
 **Status: DONE — Screens (Session 78). DB tables + AI features deferred.**
@@ -7473,11 +7472,7 @@ Include <content>{markdown}</content> for rendered display.
 **Deferred from R1 (S78):**
 - [ ] R1c: Rewire all 18 field tools to new design system nav
 - [ ] R1c: Quick actions menu (role/context/time aware)
-- [ ] R1e: Deploy inspection_templates + inspection_results + inspection_deficiencies tables
-- [ ] R1e: Seed system inspection templates
-- [ ] R1e: Deficiency capture (fail → photo → annotate → code cite → severity)
-- [ ] R1e: Floor plan integration (pin deficiencies)
-- [ ] R1e: Report generation (auto PDF)
+- [x] R1e: Inspector UI redesign + real data wiring — DONE S121 (moved deep features to Phase INS: INS1-INS8, ~52h)
 - [ ] R1f: Deploy home_scan_logs + home_maintenance_reminders tables
 - [ ] R1j: Permission override system (admin grants/restricts per user)
 - [ ] R1j: Deep linking from notifications
@@ -11534,3 +11529,156 @@ Equipment lifecycle data + prediction engine tables.
 - [ ] Test: property detail shows combined intelligence from all sources
 - [ ] Verify: all builds clean
 - [ ] Commit: `[P-DT4] Property Digital Twin testing`
+
+---
+
+## Phase INS: Inspector Deep Buildout (~52 hrs, 8 sprints)
+
+**Research:** `memory/inspector-deep-research-s121.md` — 13 inspector types, competitor analysis, compliance requirements, AI opportunities.
+**Prerequisite:** R1e UI redesign DONE (S121). Screens wired to `inspectionsProvider`. This phase adds the deep features.
+**Context:** No standalone inspection app (iAuditor, Spectora, Procore) gives inspectors full job context. Zafto's killer edge = inspector sees bids, estimates, walkthroughs, schedules, materials, change orders, TPA/restoration data. Inspectors currently operate in isolation — Zafto eliminates that.
+
+### 13 Inspector Types Supported
+1. Building/Code (municipal + third-party, IBC/IRC/NEC, stage-based)
+2. Property Management (move-in/out, routine, annual — already modeled)
+3. Insurance/Restoration (adjusters, TPI, damage scope, carrier compliance, Xactimate alignment, TPA module integration)
+4. Quality Control (internal pre-inspection, hold points, ITP plans)
+5. Safety/OSHA (competent person req, 5-year retention, toolbox talks)
+6. Environmental (SWPPP, storm-triggered, NPDES, BMP)
+7. Permit (tied to permit stages, triggers Certificate of Occupancy)
+8. ADA/Accessibility (Title II/III, barrier surveys, implementation plans)
+9. Roofing (hail/wind damage, moisture mapping, core sampling, thermal imaging)
+10. Fire/Life Safety (NFPA 72/25, sprinklers, fire doors, emergency lighting)
+11. Electrical (NEC rough-in/service/finish, AFCI/GFCI, panel/load calcs)
+12. Plumbing (pressure testing, backflow, fixture counts)
+13. HVAC (duct leakage, refrigerant, IECC energy code)
+
+---
+
+### INS1: Model & Schema Expansion (~6h)
+
+#### Steps
+- [ ] Expand `InspectionType` enum: add `roughIn`, `framing`, `foundation`, `finalInspection`, `reInspection`, `permit`, `codeCompliance`, `qcHoldPoint`, `swppp`, `ada`, `insuranceDamage`, `tpi`, `preConstruction`, `roofing`, `fireLifeSafety`, `electrical`, `plumbing`, `hvac`, `environmental`
+- [ ] Add fields to `PmInspection` model: `permit_id`, `parent_inspection_id`, `gps_lat`, `gps_lng`, `gps_checkout_lat`, `gps_checkout_lng`, `checkin_at`, `checkout_at`, `signature_inspector`, `signature_contact`, `code_citations` (JSON), `deficiency_count`, `report_url`, `template_id`, `trade`, `severity` (critical/major/minor/info), `weather_conditions`, `storm_event`
+- [ ] Create `InspectionDeficiency` model (`lib/models/inspection_deficiency.dart`): `id`, `inspection_id`, `item_id`, `code_section`, `code_title`, `severity` (critical/major/minor), `description`, `remediation`, `deadline`, `status` (open/assigned/inProgress/corrected/verified/closed), `photos`, `assigned_to`
+- [ ] Create `InspectionTemplate` model (`lib/models/inspection_template.dart`): `id`, `company_id`, `name`, `trade`, `inspection_type`, `sections` (JSON), `conditional_logic` (JSON), `scoring_weights` (JSON), `is_system` (bool)
+- [ ] Migration: `inspection_deficiencies` table with RLS (company_id scoping, SELECT/INSERT/UPDATE/DELETE policies)
+- [ ] Migration: `inspection_templates` table with RLS
+- [ ] ALTER `pm_inspections`: add new columns (`permit_id`, `parent_inspection_id`, `gps_lat/lng`, `checkin/checkout_at`, `signature_inspector/contact`, `code_citations`, `template_id`, `trade`, `severity`, `weather_conditions`, `storm_event`)
+- [ ] Create `InspectionDeficiencyRepository` (`lib/repositories/inspection_deficiency_repository.dart`)
+- [ ] Create `InspectionTemplateRepository` (`lib/repositories/inspection_template_repository.dart`)
+- [ ] Update `InspectionRepository` for new fields
+- [ ] Update `InspectionService` + providers for deficiencies and templates
+- [ ] Verify: `dart analyze` 0 errors
+- [ ] Commit: `[INS1] Inspector model & schema expansion — 13 types, deficiencies, templates`
+
+### INS2: Template System (~8h)
+
+#### Steps
+- [ ] Template CRUD service + Riverpod providers (`templateServiceProvider`, `templatesProvider`, `templateItemsProvider`)
+- [ ] Template list screen: browse/search templates by trade, type, system vs custom
+- [ ] Template builder UI: add sections, add items per section, set scoring weights, conditional logic (show/hide items based on responses)
+- [ ] Template cloning: duplicate system templates for customization
+- [ ] Seed system templates (Edge Function or migration): OSHA safety checklist, NEC electrical rough-in, NEC electrical final, property move-in/move-out, roofing damage assessment, fire/life safety (NFPA 72/25), ADA accessibility survey, SWPPP environmental, plumbing rough-in, HVAC commissioning, framing inspection, foundation inspection, QC hold point (generic)
+- [ ] Template selection flow: when starting new inspection, pick template → template populates checklist
+- [ ] Template versioning: track which version was used for each inspection
+- [ ] Verify: `dart analyze` 0 errors
+- [ ] Commit: `[INS2] Inspector template system — CRUD, builder UI, 13+ system templates`
+
+### INS3: Inspection Execution Flow (~8h)
+
+#### Steps
+- [ ] Full inspection detail screen: execute checklist item-by-item from selected template
+- [ ] Per-item actions: pass/fail/conditional/N-A with inline photo capture
+- [ ] Per-item notes field + code citation attachment
+- [ ] Auto-score calculation from weighted items (configurable pass threshold, default 70%)
+- [ ] Real-time progress indicator (items completed / total)
+- [ ] Save draft / resume later (inspection stays `inProgress`)
+- [ ] Complete inspection flow: review all items → set overall result → calculate final score
+- [ ] Wire "Start New Inspection" CTA on inspect screen (currently dead TODO)
+- [ ] Wire inspection card taps on inspect + history screens (currently dead TODOs)
+- [ ] Verify: all 4 states (loading, error, empty, data) handled
+- [ ] Verify: `dart analyze` 0 errors
+- [ ] Commit: `[INS3] Inspection execution flow — checklist UI, scoring, draft/resume`
+
+### INS4: Deficiency Tracking (~8h)
+
+#### Steps
+- [ ] Deficiency capture flow: on item fail → photo capture → annotate photo (arrows, circles, text) → select severity (critical/major/minor) → attach code citation → describe remediation needed → set deadline
+- [ ] Deficiency list view: filter by status (open/assigned/corrected/verified/closed), severity, trade
+- [ ] Deficiency detail screen: full info, photo evidence, status history, assignment
+- [ ] Assign deficiency to team member with deadline notification
+- [ ] Deficiency status workflow: open → assigned → in-progress → corrected → verified → closed
+- [ ] Deficiency count badge on inspection cards
+- [ ] Pattern tracking: flag repeat deficiencies across properties/projects (same code violation recurring)
+- [ ] Verify: `dart analyze` 0 errors
+- [ ] Commit: `[INS4] Deficiency tracking — capture flow, status workflow, assignment, patterns`
+
+### INS5: Report Generation & Signatures (~6h)
+
+#### Steps
+- [ ] Edge Function: `generate-inspection-report` — PDF generation from inspection data
+- [ ] Report template: company branding (logo, name, contact), inspection details, checklist results (pass/fail per item), deficiency photos inline with findings, code citations for each violation
+- [ ] Multiple report formats: summary (for owner/client), detailed (for contractor), compliance (for municipality/carrier)
+- [ ] Digital signature capture widget: finger/stylus on device, stored as image in Supabase storage
+- [ ] Multi-signer flow: inspector signs → site contact acknowledges → both stored on inspection record
+- [ ] Report storage: save generated PDF to `documents` Supabase bucket, link URL to inspection record
+- [ ] Share report: email from app to stakeholders, download as PDF
+- [ ] Verify: `dart analyze` 0 errors, Edge Function deploys
+- [ ] Commit: `[INS5] Report generation + digital signatures — PDF, multi-format, email sharing`
+
+### INS6: Re-Inspection & GPS (~4h)
+
+#### Steps
+- [ ] Re-inspection chain: `parent_inspection_id` linking — re-inspection references original
+- [ ] Carry-over: failed/conditional items from original pre-populated in re-inspection with previous status
+- [ ] Diff view: side-by-side comparison showing what changed between inspections
+- [ ] GPS check-in: capture lat/lng + timestamp on inspection start
+- [ ] GPS check-out: capture lat/lng + timestamp on inspection complete
+- [ ] Photo geotagging: every photo gets lat/lng metadata
+- [ ] Wire home screen "Not Clocked In" to real time clock provider (currently hardcoded)
+- [ ] Wire home screen "My Hours" tile to real timesheet data (currently hardcoded "0 / 40")
+- [ ] Wire notification bell on home screen (currently dead no-op)
+- [ ] Verify: `dart analyze` 0 errors
+- [ ] Commit: `[INS6] Re-inspection chains + GPS stamping + home screen wiring`
+
+### INS7: Code Reference & Permit Integration (~6h)
+
+#### Steps
+- [ ] Searchable code reference database: NEC articles, IBC sections, IRC chapters, OSHA standards (29 CFR 1926), NFPA codes
+- [ ] Offline-capable code lookup: cache code data locally for field use
+- [ ] Code citation linking: in deficiency capture, search and attach specific code section
+- [ ] Wire "Code Reference" tool on tools screen (currently "coming soon")
+- [ ] Permit-to-inspection mapping: each permit has required inspection stages
+- [ ] Inspection completion advances permit stage status
+- [ ] Certificate of Occupancy tracking: all required inspections passed → CO eligible
+- [ ] Compliance calendar: upcoming required inspections across all properties/projects with deadlines
+- [ ] Verify: `dart analyze` 0 errors
+- [ ] Commit: `[INS7] Code reference engine + permit integration + compliance calendar`
+
+### INS8: Web CRM Hooks & Analytics (~6h)
+
+#### Steps
+- [ ] CRM hook: `use-inspections.ts` — CRUD + real-time subscriptions on `pm_inspections` + `inspection_deficiencies`
+- [ ] CRM hook: `use-inspection-templates.ts` — template management
+- [ ] CRM page: `/dashboard/inspections` — inspection list, filters, assignment, scheduling
+- [ ] CRM page: `/dashboard/inspections/[id]` — inspection detail with checklist, deficiencies, report
+- [ ] CRM page: `/dashboard/inspections/templates` — template management UI
+- [ ] Inspector performance dashboard: pass rates, avg inspection time, deficiency detection rates, re-inspection rates per inspector
+- [ ] Common deficiency analytics: most frequent code violations, trends over time, by trade/property/inspector
+- [ ] Ops portal: `/dashboard/inspector-metrics` — platform-wide inspection analytics
+- [ ] Team portal: inspector can view their own inspection history and upcoming schedule
+- [ ] Client portal: property owner can view inspection reports for their properties
+- [ ] Verify: `npm run build` passes on CRM, team, client, ops portals
+- [ ] Commit: `[INS8] Inspection CRM hooks + analytics + portal views`
+
+---
+
+### Phase INS Integration Checklist
+- [ ] Inspector screens wired to template-driven checklists (not hardcoded)
+- [ ] Deficiency data flows: inspector captures → office reviews → tech assigned → re-inspection verifies
+- [ ] Inspection data feeds existing systems: estimate engine (failed items → repair estimates), schedule (re-inspections auto-scheduled), TPA module (carrier-required inspection docs)
+- [ ] All 13 inspector types have appropriate templates seeded
+- [ ] Offline mode works for inspection execution (PowerSync — may defer to Phase G)
+- [ ] All builds clean: `dart analyze`, `npm run build` on all 4 portals
+- [ ] Commit: `[INS-FINAL] Phase INS integration verification`
