@@ -12318,6 +12318,114 @@ When inspector takes a photo during inspection execution, add search bar to atta
 
 ---
 
+## PHASE LAUNCH: PRE-LAUNCH REQUIREMENTS (S125 gap analysis)
+**Purpose:** Non-feature work that BLOCKS a real launch. You can't charge money without legal docs, can't list on app stores without privacy policies, can't know when things break without monitoring, can't send invoices if emails go to spam, and can't accept payments through untested pipes. These are the boring-but-mandatory items that turn a development project into a real business.
+
+### LAUNCH1 — Monitoring & Email Deliverability (~6h)
+**Goal:** Two things that must work before a single paying customer exists: (1) know when something breaks, (2) emails actually arrive. Sentry DSN is currently EMPTY — the app is live with zero error tracking. Transactional emails (invoice sent, password reset, estimate approved) will land in spam without proper DNS records.
+- [ ] **Sentry setup** — Log into Sentry dashboard (account exists, admin@zafto.app). Create Flutter project → get DSN. Create Next.js project(s) → get DSN(s). One project per app or one shared — decide based on Sentry free tier limits
+- [ ] **Flutter Sentry wiring** — `lib/core/sentry_config.dart` already exists (S58). Fill in DSN from env. Verify: throw a test error → appears in Sentry dashboard within 60 seconds. Check breadcrumbs, stack traces, device info
+- [ ] **Web CRM Sentry** — Verify Sentry SDK wired (S58). Fill DSN in `.env.local`. Test: trigger a client-side error → appears in Sentry. Test: trigger an API route error → appears in Sentry. Check source maps upload for readable stack traces
+- [ ] **Team/Client/Ops portal Sentry** — Same as CRM. Fill DSN, test error capture, verify source maps
+- [ ] **Edge Function error reporting** — Add Sentry or logging to critical EFs (payment, PDF export, auth). At minimum: `console.error` with structured JSON that Supabase logs capture. Consider Sentry Deno SDK for EFs
+- [ ] **Alert rules** — Set up Sentry alert rules: email on first occurrence of new error, email on error spike (>10 same error in 5 min), weekly error digest to admin@zafto.app
+- [ ] **Email DNS records** — Add SPF record to zafto.app DNS (Cloudflare): `v=spf1 include:amazonses.com include:_spf.google.com ~all` (adjust for actual email provider). Add DKIM record. Add DMARC record: `v=DMARC1; p=quarantine; rua=mailto:admin@zafto.app`
+- [ ] **Transactional email provider** — Determine which service sends transactional emails (Supabase Auth emails, invoice notifications, estimate approvals). If Supabase built-in SMTP: configure custom SMTP in Supabase dashboard with proper FROM address (noreply@zafto.app). If external (Resend, Postmark, SES): set up and verify domain
+- [ ] **Email template branding** — All transactional emails must have Zafto logo, professional layout, unsubscribe link (CAN-SPAM), company footer. Supabase Auth emails (confirm, reset, magic link) must be customized from default Supabase templates
+- [ ] **Email deliverability test** — Send test emails to Gmail, Outlook, Yahoo, iCloud. Verify: not in spam, renders correctly on mobile, links work, images load
+- [ ] Commit: `[LAUNCH1] Monitoring + email — Sentry DSN live, alerts configured, SPF/DKIM/DMARC, email templates`
+
+### LAUNCH2 — Legal Documents & Compliance (~8h)
+**Goal:** Legal foundation required before accepting payments or listing on app stores. Apple and Google BOTH reject apps without a privacy policy. Stripe requires Terms of Service. CCPA/GDPR require data handling disclosures. These documents protect Tereda Software LLC from liability and establish the legal relationship with customers.
+- [ ] **Terms of Service** — Draft comprehensive ToS for zafto.app: service description, subscription terms, payment terms (billing cycle, refund policy, price changes), acceptable use policy, account termination, intellectual property (user data belongs to user, Zafto platform belongs to Tereda), limitation of liability, dispute resolution (arbitration clause), governing law (state), modification notice period (30 days). Host at zafto.app/terms
+- [ ] **Privacy Policy** — Draft CCPA/GDPR-compliant privacy policy: what data is collected (PII, usage data, device info, location, photos, documents), how data is used, data sharing (Supabase, Stripe, Sentry, analytics), data retention periods, user rights (access, delete, export — wired in SEC4), cookie policy, children's privacy (13+ age gate), contact for privacy requests (legal@zafto.app). Host at zafto.app/privacy
+- [ ] **Data Processing Agreement (DPA)** — Required for enterprise/government contractors. Template DPA covering: data processor role (Zafto processes on behalf of company), sub-processors list (Supabase, Stripe, Vercel, Sentry, SignalWire, LiveKit), security measures (encryption at rest/transit, RLS, RBAC, 2FA), breach notification (72 hours), data location (US), audit rights
+- [ ] **Acceptable Use Policy** — What users can/cannot do: no illegal content, no harassment via messaging system, no credential sharing, no reverse engineering, no automated scraping, account suspension for violations. Host at zafto.app/acceptable-use
+- [ ] **Cookie Policy** — What cookies are set (Supabase auth session, preferences), purpose, duration, how to opt out. Required for GDPR. Host at zafto.app/cookies
+- [ ] **Subscription Agreement** — Pricing tiers (if applicable), what's included (everything — no paywalls per owner directive), billing frequency, cancellation policy, data export on cancellation (30-day window), pro-rata refunds or not
+- [ ] **In-app consent flows** — Flutter: ToS + Privacy Policy acceptance checkbox on signup. Link to full documents. Record acceptance timestamp + version in user record. Web portals: cookie consent banner (GDPR). All portals: link to legal docs in footer
+- [ ] **Apple/Google compliance** — Apple requires: privacy policy URL in App Store Connect, privacy nutrition labels (what data collected, linked to identity or not, tracking or not). Google requires: privacy policy URL in Play Console, data safety section, permissions justification. Draft both questionnaire responses based on actual data collection
+- [ ] **DMCA / Takedown procedure** — Contact email for IP complaints (legal@zafto.app). Required by Digital Millennium Copyright Act for user-generated content (marketplace, documents, photos)
+- [ ] Commit: `[LAUNCH2] Legal documents — ToS, privacy policy, DPA, AUP, cookies, consent flows`
+
+### LAUNCH3 — Payment Flow End-to-End Testing (~8h)
+**Goal:** Real money will flow through this system. Stripe Connect (contractors receive payments from homeowners), subscriptions (contractors pay Zafto), and RevenueCat (mobile subscriptions) must all work flawlessly. A payment bug = lost revenue, chargebacks, or legal issues. Test EVERY payment path with Stripe test mode before going live.
+- [ ] **Stripe Connect onboarding** — Test full flow: contractor signs up → Stripe Connect onboarding (standard or express) → bank account linked → identity verified → payouts enabled. Verify: onboarding completion webhook fires → company record updated with stripe_account_id
+- [ ] **Customer payment flow** — Test: homeowner receives invoice via client portal → clicks "Pay" → Stripe Checkout/Elements → payment succeeds → invoice marked paid → contractor's Stripe account receives funds (minus platform fee). Test with card 4242424242424242
+- [ ] **Subscription flow** — Test: contractor signs up → selects plan → enters payment → subscription created → access granted. Test: subscription renewal (advance clock in Stripe test mode). Test: payment failure → grace period → access restricted → payment retry succeeds → access restored
+- [ ] **RevenueCat mobile** — Test: in-app purchase flow on iOS (sandbox) and Android (test track). Subscription created → webhook fires → user record updated → features unlocked. Test: cancellation, renewal, grace period, billing retry
+- [ ] **Failed payment handling** — Test: card declined (4000000000000002) → user notified → retry flow → dunning emails (1, 3, 7 days). Test: insufficient funds → different card → success. Test: card expired → update payment method flow
+- [ ] **Refund flow** — Test: full refund via CRM → Stripe refund processed → invoice status updated → accounting entry created in ZBooks. Test: partial refund. Verify: refund webhook fires correctly
+- [ ] **Platform fee calculation** — Verify Zafto's platform fee (percentage or flat) is correctly calculated on each payment. Verify fee shows in Stripe dashboard. Verify contractor sees net amount
+- [ ] **Payout schedule** — Verify contractor payout timing (Stripe standard: 2-day rolling). Verify payout appears in contractor's bank. Test: payout failure handling
+- [ ] **Tax calculation** — Stripe Tax or manual: verify sales tax is calculated correctly per jurisdiction. Verify tax shows on invoice PDF. Verify tax reporting data is accessible
+- [ ] **Webhook reliability** — Verify ALL payment webhooks are idempotent (processing same event twice doesn't create duplicate records). Test: replay a webhook → no duplicate invoice/payment/subscription
+- [ ] **Accounting integration** — Every payment, refund, fee, and payout must create corresponding entries in ZBooks ledger. Verify: P&L reflects actual revenue. Verify: balance sheet balances
+- [ ] Commit: `[LAUNCH3] Payment E2E testing — Stripe Connect, subscriptions, RevenueCat, refunds, webhooks`
+
+### LAUNCH4 — Internationalization (i18n) Infrastructure (~14h)
+**Goal:** Owner directive: top 10 languages (EN, ES, PT-BR, PL, ZH, HT, RU, KO, VI, TL). Zafto serves immigrant contractor communities — Polish plumbers, Haitian electricians, Vietnamese nail techs expanding into GC, Korean HVAC shops, Brazilian landscapers. English-only = losing 30-40% of the market in major metro areas. Build the translation infrastructure and ship English + Spanish first. Other languages follow as translation files are completed.
+- [ ] **Flutter i18n setup** — Add `flutter_localizations` and `intl` packages. Create `lib/l10n/` directory. Create `app_en.arb` (English base) and `app_es.arb` (Spanish). Configure `l10n.yaml` for code generation. Wire `MaterialApp.localizationsDelegates` and `supportedLocales`
+- [ ] **Extract all hardcoded strings (Flutter)** — Audit every screen file for hardcoded English strings. Replace with `AppLocalizations.of(context)!.keyName`. Estimate: 2,000-3,000 strings across ~100 screens. Create systematic extraction: screens → widgets → dialogs → snackbars → error messages
+- [ ] **Flutter ARB file structure** — Organize strings by feature area: `common_*` (buttons, labels), `auth_*`, `jobs_*`, `invoices_*`, `estimates_*`, `inspector_*`, `restoration_*`, `calculator_*`, `settings_*`. Include plurals and parameterized strings where needed
+- [ ] **Web CRM i18n setup** — Install `next-intl` or `react-i18next`. Create `messages/en.json` and `messages/es.json`. Configure Next.js middleware for locale detection. Wire translation provider in root layout
+- [ ] **Extract all hardcoded strings (Web CRM)** — Audit all 126 routes + components for hardcoded English. Replace with `t('key')` calls. Estimate: 1,500-2,500 strings
+- [ ] **Team/Client/Ops portal i18n** — Same setup as CRM for each portal. Shared translation keys where UI is similar. Portal-specific keys where they differ
+- [ ] **Language selector UI** — Flutter: language picker in settings screen (flag + language name in native script). Save preference to user profile (Supabase). Web portals: language dropdown in header or footer. Persist via cookie + user profile
+- [ ] **RTL support assessment** — None of the 10 target languages are RTL (Arabic, Hebrew not in list). Skip RTL for now, but ensure layout uses logical properties (start/end not left/right) for future RTL support
+- [ ] **Date/time/number/currency formatting** — Use `intl` package (Flutter) and `Intl` API (web) for locale-aware formatting. Dates: MM/DD/YYYY (US) vs DD/MM/YYYY (BR, PL). Numbers: 1,000.00 vs 1.000,00. Currency: always show symbol + amount in user's locale format
+- [ ] **Calculator string extraction** — Trade calculators have extensive labels, units, descriptions. Extract all to ARB/JSON files. Special attention: unit abbreviations (ft vs m, in vs cm, gal vs L) — some trades use imperial, some metric depending on locale
+- [ ] **Spanish translation (first pass)** — Translate all English strings to Spanish. Use professional-grade translation (not Google Translate) for trade-specific terminology. Electrical: "panel" = "tablero", "breaker" = "interruptor". HVAC: "tonnage" = "tonelaje". Restoration: "moisture" = "humedad". Get terminology RIGHT — contractors will notice bad translations instantly
+- [ ] **Seed data translation** — Inspection templates, calculator labels, code references, error messages — all seed data needs Spanish equivalents. This is substantial: 1,147 inspection items, 987+ calculator screens, 61 code reference sections
+- [ ] **Testing** — Switch app to Spanish, verify: no missing translations (no English fallback visible), no layout overflow from longer Spanish strings (Spanish is ~20% longer than English), dates/numbers format correctly, calculator results are correct regardless of locale
+- [ ] Commit: `[LAUNCH4] i18n infrastructure — Flutter + all 4 portals, EN + ES, locale-aware formatting`
+
+### LAUNCH5 — Accessibility (WCAG 2.1 AA) (~10h)
+**Goal:** Web portals must meet WCAG 2.1 AA. ADA lawsuits against SaaS companies are real and increasing — plaintiff attorneys send demand letters to non-compliant websites. Beyond legal risk: contractors with vision impairments, color blindness (8% of men), or motor disabilities need to use this software. Flutter mobile app has built-in accessibility via Material widgets but needs verification.
+- [ ] **Automated accessibility scan** — Run axe-core or Lighthouse accessibility audit on all 4 web portals. Document every violation by severity (critical, serious, moderate, minor). Target: 0 critical, 0 serious violations
+- [ ] **Color contrast** — Verify all text meets 4.5:1 contrast ratio (AA standard). Check: dark theme CRM (light text on dark background), light theme client portal. Pay special attention to: disabled states, placeholder text, secondary text, badge colors, status indicators. Use WebAIM contrast checker
+- [ ] **Keyboard navigation** — Every interactive element reachable via Tab key. Visible focus indicator on all focused elements (not just browser default — custom focus ring matching Zafto design). Enter/Space activates buttons. Escape closes modals/sheets. Arrow keys navigate lists/menus. Skip-to-content link on every page
+- [ ] **Screen reader compatibility** — Test with VoiceOver (Mac/iOS) and NVDA (Windows). Verify: all images have alt text, form inputs have labels, buttons have accessible names, dynamic content changes are announced (ARIA live regions), data tables have proper headers, charts have text alternatives
+- [ ] **ARIA landmarks and roles** — All pages have: `<main>`, `<nav>`, `<header>`, `<footer>` landmarks. Modals have `role="dialog"` + `aria-modal="true"`. Tab panels, accordions, and dropdown menus have correct ARIA roles and states
+- [ ] **Form accessibility** — Every form input has a visible label (not just placeholder). Error messages linked to inputs via `aria-describedby`. Required fields marked with `aria-required="true"`. Form validation errors announced to screen readers
+- [ ] **Color-blind safe design** — Don't rely on color alone to convey meaning. Status indicators (job status, payment status, inspection pass/fail) must have icons or text labels in addition to color. Test with color blindness simulators (protanopia, deuteranopia, tritanopia)
+- [ ] **Motion and animation** — Respect `prefers-reduced-motion` media query. Disable non-essential animations for users who have enabled reduced motion in OS settings. Loading spinners are fine, decorative transitions are not
+- [ ] **Flutter accessibility** — Verify Semantics widgets on custom widgets. Test TalkBack (Android) and VoiceOver (iOS) on key flows: login → view jobs → create estimate → send invoice. Fix any unlabeled buttons, missing hints, or incorrect traversal order
+- [ ] **Text scaling** — Web: verify layout doesn't break at 200% zoom (WCAG requirement). Flutter: verify layout with system font size set to largest. No text truncation that hides critical info
+- [ ] **Accessibility statement** — Create zafto.app/accessibility page: commitment to accessibility, conformance level (WCAG 2.1 AA), contact for accessibility issues, known limitations (if any)
+- [ ] Commit: `[LAUNCH5] Accessibility — WCAG 2.1 AA, keyboard nav, screen readers, color-blind safe, a11y statement`
+
+### LAUNCH6 — Testing Coverage & Safety Net (~12h)
+**Goal:** 154 model tests is a start but nowhere near enough for a production SaaS with ~200 tables, 70 EFs, and 230+ routes. One bad deploy could break invoicing, payment, or auth with no automated safety net. Build targeted tests for the highest-risk paths — not 100% coverage, but 100% coverage of the paths where a bug costs real money or locks users out.
+- [ ] **Auth flow tests** — Test: signup → login → token refresh → logout. Test: password reset flow. Test: magic link flow (client portal). Test: role-based access (owner sees everything, technician sees their jobs only, CPA sees financial only). Test: expired token → redirect to login
+- [ ] **Payment path tests** — Test: create invoice → send → customer pays → invoice marked paid → ledger entry created. Test: subscription charge → webhook → access updated. Test: refund → ledger reversal. These are the "lose real money" paths
+- [ ] **Job lifecycle tests** — Test: create job → add estimate → approve → schedule → assign tech → track time → complete → invoice → pay → close. End-to-end CRUD on the most-used workflow
+- [ ] **RLS tests** — Automated tests that verify: User from Company A cannot read/write Company B's data for EVERY table. Use Supabase test helpers with two test companies. This is the "data breach" safety net
+- [ ] **Edge Function tests** — Test critical EFs: `export-invoice-pdf` (generates valid PDF), `export-estimate-pdf`, `stripe-webhook` (processes events correctly), `stripe-payments` (creates charges). Use Deno test runner
+- [ ] **Flutter widget tests** — Test key screens: login screen, job list, estimate builder, invoice detail, time clock. Verify: loading state shown → data loaded → displays correctly. Verify: error state shows error widget, not crash
+- [ ] **Web CRM integration tests** — Playwright or Cypress E2E tests on critical CRM paths: login → dashboard loads → create customer → create job → create estimate → send invoice. Run against test Supabase instance
+- [ ] **Regression test suite** — Create a "smoke test" script that hits every major endpoint and verifies 200 responses. Run on every deploy (CI/CD). If any endpoint returns 500 → block deploy
+- [ ] **CI/CD integration** — Wire tests into GitHub Actions: Flutter tests run on push, Next.js tests run on push, EF tests run on push. Build fails if tests fail. No untested code reaches production
+- [ ] **Test data fixtures** — Create reusable test company + users + jobs + invoices fixture for all test suites. Seed data that covers common scenarios. Reset between test runs
+- [ ] Commit: `[LAUNCH6] Testing coverage — auth, payments, jobs, RLS, EFs, E2E, CI/CD integration`
+
+### LAUNCH7 — App Store Prep & Onboarding Wizard (~14h)
+**Goal:** RUNS LAST — after every feature is built, audited, and polished. The onboarding wizard teaches new users every feature. The app store listing showcases every feature. Both need the final product to be complete. Apple review takes 1-7 days and rejects for: missing privacy policy, misleading screenshots, crashes on review device, incomplete features (stub pages). Google is faster but stricter on permissions justification. Do this right — first impression in the store determines download conversion.
+- [ ] **Onboarding wizard (Flutter)** — `lib/screens/onboarding/onboarding_wizard_screen.dart`. Multi-step wizard after first login: (1) Welcome + trade selection (sets entire app context), (2) Company profile setup (name, logo, license #, insurance), (3) Team invitation (add employees, send magic links), (4) Feature tour (swipeable cards showing key features FOR THEIR TRADE — electrician sees wire sizing + panel schedules, restoration sees drying logs + moisture tracking, GC sees scheduling + subcontractor management), (5) First job walkthrough (guided creation of first job), (6) "You're ready!" with quick-start checklist
+- [ ] **Onboarding wizard (Web CRM)** — `/dashboard/onboarding` — similar flow for office manager first login: company setup → invite team → feature tour → create first customer + job → connect payment (Stripe) → "Ready to go"
+- [ ] **Feature tour content** — For each trade, curate the 8-10 most impressive features to showcase. Include real screenshots/animations within the tour. Show DEPTH — don't just say "invoicing" — show "professional invoices with your logo, line items, tax calculation, online payment, automatic reminders, aging reports." Make them think "this was built for ME"
+- [ ] **Apple App Store listing** — App Store Connect: app name ("Zafto — Contractor Business App" or similar), subtitle (30 chars), description (4000 chars — feature-rich, keyword-optimized), keywords (100 chars — contractor, electrician, HVAC, plumbing, restoration, invoicing, scheduling, estimates), categories (Business, Productivity), age rating (4+ — no objectionable content)
+- [ ] **App Store screenshots** — 6.7" (iPhone 15 Pro Max) + 6.5" (older) + 12.9" iPad Pro: 6-10 screenshots per size showing best features. Design in Figma: device frame + feature headline + actual app screenshot. Show: dashboard, job management, invoicing, scheduling, calculator, inspector, sketch engine. DIFFERENT screenshots per trade if App Store allows custom product pages
+- [ ] **App Store preview video** — Optional but high-converting: 15-30 second video showing the app in action. Record on device or use screen capture. Show: open app → view jobs → create estimate → schedule → track time → invoice. Professional voiceover or text overlay
+- [ ] **Google Play Store listing** — Play Console: title (50 chars), short description (80 chars), full description (4000 chars), feature graphic (1024x500), screenshots (phone + tablet), categories, content rating questionnaire, data safety section (match actual data collection), target audience
+- [ ] **Privacy questionnaire (Apple)** — App Privacy section: data types collected (contact info, location, photos, financial, usage), linked to identity or not, used for tracking or not. Must be accurate — Apple verifies and rejects for discrepancies
+- [ ] **Data safety section (Google)** — Similar to Apple privacy: data collected, shared, security practices, data deletion option. Must match Privacy Policy
+- [ ] **App review preparation** — Create demo account for Apple/Google reviewers: pre-populated with sample data so they can test features. Document login credentials in review notes. Test: every screen loads, no crashes, no placeholder content visible, all deep links work
+- [ ] **Pre-submission checklist** — Verify: app icon (all sizes), launch screen, no debug banners, no test API keys, production Supabase URL, Sentry DSN filled, analytics enabled, crash-free rate acceptable, no NSExceptionDomains needed, permissions descriptions (camera: "Take photos of job sites", location: "Track mileage and GPS-stamp inspections")
+- [ ] Commit: `[LAUNCH7] App Store prep + onboarding wizard — listings, screenshots, wizard, review prep`
+
+---
+
 ## PHASE AUDIT SUMMARY: FULL DEPTH PLAN (S125)
 
 **Purpose:** Complete re-audit of all features across all 5 apps. Gap phases build missing features. DEPTH phases audit and correct shallow/stub implementations. This is the quality gate before Phase G (QA) and Phase JUR (Jurisdiction).
@@ -12329,9 +12437,10 @@ When inspector takes a photo during inspection execution, add search bar to atta
 | **NICHE** | NICHE1-NICHE2 | ~16h | Missing trade modules: pest control, service trades |
 | **DEPTH** | DEPTH1-DEPTH23 | ~292h | Full depth audit + corrections across every feature area |
 | **SEC** | SEC1-SEC4 | ~36h | Security hardening: critical fixes, 2FA/MFA, biometrics, enterprise security options |
-| **Total** | **34 sprints** | **~400h** | — |
+| **LAUNCH** | LAUNCH1-LAUNCH7 | ~72h | Monitoring, legal, payments, i18n, accessibility, testing, App Store + onboarding wizard |
+| **Total** | **41 sprints** | **~472h** | — |
 
-**Execution order:** SEC1 (critical fixes FIRST) → FIELD → REST → NICHE → DEPTH1 through DEPTH23 → SEC2-SEC4 (optional security features) → Phase G (QA) → Phase JUR → Phase E (AI) → LAUNCH
+**Execution order:** SEC1 (critical fixes FIRST) → LAUNCH1 (monitoring — need this before building more) → FIELD → REST → NICHE → DEPTH1 through DEPTH23 → SEC2-SEC4 (optional security features) → LAUNCH2-LAUNCH6 (legal, payments, i18n, accessibility, testing) → Phase G (QA) → Phase JUR → Phase E (AI) → LAUNCH7 (App Store + onboarding wizard — DEAD LAST, needs final product) → SHIP
 
 **Module coverage guarantee:**
 - DEPTH1-6: Horizontal audit by category (core biz, field tools, property, financial, CRM, calculators)
@@ -12341,8 +12450,11 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - DEPTH23: Programmatic codebase sweep — catches anything built after S125 or missed by DEPTH1-22
 - SEC1: Critical security fixes (storage RLS, rate limiting, marketplace policy) — runs FIRST
 - SEC2-SEC4: Optional security features (2FA, biometrics, enterprise security) — runs after DEPTH audits
+- LAUNCH1: Monitoring + email (need error tracking BEFORE building more)
+- LAUNCH2-6: Legal, payments, i18n, accessibility, testing — runs after DEPTH audits
+- LAUNCH7: App Store prep + onboarding wizard — DEAD LAST (needs final product complete)
 
-**Every module in the system is now explicitly named in at least one DEPTH sprint. DEPTH23 is the safety net — it scans the actual codebase against these checklists and flags anything unlisted. SEC phase makes the platform a fortress — critical fixes first, then layered optional security that contractors can opt into. No blind spots, even for future work.**
+**Every module in the system is now explicitly named in at least one DEPTH sprint. DEPTH23 is the safety net — it scans the actual codebase against these checklists and flags anything unlisted. SEC phase makes the platform a fortress. LAUNCH phase handles every non-feature requirement for going live. LAUNCH7 runs dead last because the onboarding wizard and App Store listing need to showcase the FINAL product with all features built and polished. No blind spots, even for future work.**
 
 **Process per DEPTH sprint:**
 1. Audit the feature area across all 5 apps (Flutter, CRM, Team, Client, Ops)
