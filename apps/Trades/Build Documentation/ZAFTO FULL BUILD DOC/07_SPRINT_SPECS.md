@@ -11851,6 +11851,54 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - [ ] Update team portal navigation with badges for new pages
 - [ ] Commit: `[FIELD3] Team portal stub completion — 10 pages filled, all functional`
 
+### FIELD4 — Bluetooth Laser Meter Integration (~20h)
+**Goal:** Connect professional Bluetooth laser meters (Bosch, Leica, DeWalt, Hilti, Milwaukee, Stabila) to the Sketch Engine for instant measurement capture. Flagship feature — no competitor integrates measurement hardware into a full sketch→estimate→job pipeline. Bosch ships stable (SDK available), all others ship as beta with bug reporting. Must be tested across every platform, every edge case, every failure mode.
+
+**Architecture:**
+- Abstract `LaserMeterAdapter` interface — each device brand gets a pluggable adapter
+- BLE scanning, pairing, bonding, GATT subscription handled per-adapter
+- Measurement data normalized to inches (internal unit) regardless of device output format
+- Real-time measurement display on sketch canvas (live distance readout)
+- One-tap wall creation: point laser at two corners, measurements flow into wall endpoints
+
+**Flutter (Mobile — primary):**
+- [ ] Create `lib/services/laser_meter/laser_meter_adapter.dart` — abstract interface: `scan()`, `connect(deviceId)`, `disconnect()`, `onMeasurement(Stream<LaserMeasurement>)`, `onConnectionState(Stream<ConnectionState>)`, `deviceInfo`, `batteryLevel`
+- [ ] Create `LaserMeasurement` model: distance (inches), unit (original), timestamp, confidence, device_id, raw_bytes
+- [ ] Create `ConnectionState` enum: scanning, found, connecting, paired, bonded, ready, disconnected, error
+- [ ] Create `lib/services/laser_meter/bosch_adapter.dart` — Bosch GLM SDK integration: GATT service UUID `00001800-0000-1000-8000-00805f9b34fb` (Generic Access) + Bosch measurement characteristic, parse measurement packets (IEEE 754 float, little-endian, meters → inches conversion), handle button-press-triggered measurements, battery level characteristic read
+- [ ] Create `lib/services/laser_meter/generic_ble_adapter.dart` — Generic BLE adapter for unknown devices: scan all BLE peripherals, attempt common measurement GATT profiles, display raw data for debugging, beta badge
+- [ ] Create `lib/services/laser_meter/leica_adapter.dart` — Leica DISTO: known GATT profile (apply to Leica developer program if needed), measurement format parsing, continuous measurement mode support
+- [ ] Create `lib/services/laser_meter/dewalt_adapter.dart` — DeWalt BLE laser: GATT profile, measurement parsing
+- [ ] Create `lib/services/laser_meter/mock_adapter.dart` — Mock adapter for testing: configurable responses (valid measurements, errors, connection drops, rapid-fire, zero-length, negative, NaN, timeout, battery-dead-mid-measurement), latency simulation, deterministic + random modes
+- [ ] Create `lib/services/laser_meter/laser_meter_service.dart` — Orchestrator: scan for devices, auto-detect brand from BLE advertisement manufacturer data, instantiate correct adapter, manage connection lifecycle, emit measurements to Riverpod provider
+- [ ] Create `lib/providers/laser_meter_provider.dart` — Riverpod StateNotifierProvider: connection state, last measurement, measurement history (last 50), selected device, auto-reconnect logic
+- [ ] Integrate into Sketch Engine: toolbar button "Connect Laser" → device picker sheet → pair → live measurement overlay on canvas → tap wall endpoint to set distance
+- [ ] Flutter UI: `lib/widgets/laser_meter_sheet.dart` — Bottom sheet: scan results list (device name, brand icon, signal strength, battery %), connect/disconnect button, live measurement display (large font, updating in real-time), measurement history list, beta badge for non-Bosch devices
+- [ ] Flutter UI: `lib/widgets/laser_measurement_overlay.dart` — Canvas overlay: dashed line from last point to cursor with live distance readout, snap-to-endpoint, audio/haptic feedback on measurement received
+- [ ] Bug report for beta devices: auto-capture device model, firmware version, OS version, BLE logs (last 100 events), screenshot, user description → submit to Supabase `laser_meter_bug_reports` table
+
+**Web Portal (Konva.js editor):**
+- [ ] Create `web-portal/src/lib/sketch-engine/laser-meter.ts` — Web Bluetooth API integration: `navigator.bluetooth.requestDevice()` with filters for known laser meter services, GATT connection, measurement subscription, same adapter pattern as Flutter
+- [ ] Web Bluetooth is Chrome/Edge only (no Firefox/Safari) — show "Connect via mobile app" fallback for unsupported browsers with clear messaging
+- [ ] Live measurement display on Konva canvas: floating readout near cursor, auto-update on new measurement
+- [ ] Device picker modal with brand detection, signal strength, battery level
+
+**Database:**
+- [ ] Create `laser_meter_bug_reports` table: id, company_id, user_id, device_brand, device_model, firmware_version, os_version, app_version, description, ble_logs (jsonb), screenshot_url, status (open/investigating/resolved/wontfix), resolution_notes, created_at
+- [ ] RLS: users can insert their own reports, admins can read all for their company, super_admin reads all
+- [ ] Migration + audit trigger
+
+**Testing — EXHAUSTIVE (every edge case, every failure mode):**
+- [ ] **Mock adapter unit tests (50+ test cases):** valid measurement (1", 12", 120", 999"), metric measurement (1cm, 1m, 30m), zero-length measurement, negative measurement, NaN/Infinity, measurement during disconnection, rapid-fire measurements (10/sec for 30 sec), measurement with low battery warning, measurement timeout (device doesn't respond in 5 sec), corrupt packet (wrong byte length, invalid float), measurement overflow (>65535 inches), sub-inch precision (0.125" increments), unit mismatch (device sends meters, adapter expects feet)
+- [ ] **Connection lifecycle tests:** scan finds 0 devices, scan finds 5+ devices, connect succeeds, connect timeout (10 sec no response), connect rejected (device paired to another phone), bond succeeds, bond fails (wrong PIN), paired device goes out of range, device turns off mid-session, device battery dies mid-measurement, Bluetooth disabled on phone, Bluetooth permission denied, reconnect after brief disconnect, reconnect after device power cycle
+- [ ] **Platform tests:** iOS 16+ BLE (CoreBluetooth), iOS background BLE (app backgrounded during measurement), Android 12+ BLE permissions (BLUETOOTH_SCAN, BLUETOOTH_CONNECT, ACCESS_FINE_LOCATION), Android 13+ (no location needed for BLE), Android BLE on older devices (API 21-30), Web Bluetooth (Chrome 79+, Edge 79+), Web Bluetooth permission prompt handling, Web Bluetooth in HTTPS only (no HTTP)
+- [ ] **Cross-device edge tests:** Bosch GLM 50-27 CG (primary reference), Bosch GLM 50 C (older model, different firmware), Leica DISTO D2 (different GATT profile), DeWalt DW099S (different packet format), simultaneous connection attempts to 2 devices, switching between devices mid-session, device firmware update notification handling
+- [ ] **Integration tests:** measurement → wall creation (verify wall length matches measurement within 0.25" tolerance), measurement → room area calculation (verify area accuracy), measurement history persistence across app restart, measurement sync to web portal via Supabase realtime, laser connection state survives screen rotation, laser connection state survives app backgrounding (iOS/Android), laser measurement works with sketch engine undo/redo
+- [ ] **Chaos tests:** random BLE disconnects every 5-30 seconds (30 min endurance), corrupt every 10th BLE packet, 500ms latency injection on all BLE operations, simultaneous BLE + WiFi + GPS usage (resource contention), measurement flood (100 measurements in 10 seconds), app kill during active connection (verify reconnect on relaunch), airplane mode toggle during session
+- [ ] **Accessibility tests:** VoiceOver/TalkBack announces measurement value, high-contrast mode for measurement overlay, measurement overlay readable in direct sunlight (field conditions), large touch targets for device picker (glove mode compatible)
+- [ ] All mock tests run in CI (no hardware required). Physical device tests documented as manual QA checklist with expected results per device model.
+- [ ] Commit: `[FIELD4] Bluetooth laser meter integration — Bosch stable, multi-brand beta, exhaustive BLE testing`
+
 ---
 
 ## PHASE REST: RESTORATION & REMEDIATION GAPS (S124 audit)
@@ -12784,14 +12832,14 @@ When inspector takes a photo during inspection execution, add search bar to atta
 
 | Phase | Sprints | Est. Hours | Focus |
 |-------|---------|:----------:|-------|
-| **FIELD** | FIELD1-FIELD3 | ~36h | Missing field features: messaging, equipment checkout, team portal stubs |
+| **FIELD** | FIELD1-FIELD4 | ~56h | Missing field features: messaging, equipment checkout, team portal stubs, BLE laser meter integration |
 | **REST** | REST1-REST2 | ~20h | Restoration gaps: fire tools, mold remediation (IICRC S520) |
 | **NICHE** | NICHE1-NICHE2 | ~16h | Missing trade modules: pest control, service trades |
 | **DEPTH** | DEPTH1-DEPTH24 | ~306h | Full depth audit + corrections + contractor needs validation across every feature area |
 | **SEC** | SEC1-SEC10 | ~92h | Security fortress: critical fixes, 2FA, biometrics, enterprise options, Hellhound, headers, WAF, dependency scanning, security pentest, legal pentest |
 | **ZERO** | ZERO1-ZERO9 | ~86h | Zero-defect validation: property testing, state machines, chaos engineering, 50K load test, fuzz testing, mutation testing, edge case gauntlet, triple-scan |
 | **LAUNCH** | LAUNCH1-LAUNCH7 | ~72h | Monitoring, legal, payments, i18n, accessibility, testing, App Store + onboarding wizard |
-| **Total** | **57 sprints** | **~628h** | — |
+| **Total** | **58 sprints** | **~648h** | — |
 
 **Execution order:** SEC1 + SEC6 + SEC7 + SEC8 (critical security — site is live) → LAUNCH1 (monitoring — need Sentry before building more) → FIELD → REST → NICHE → DEPTH1 through DEPTH23 → SEC2-SEC5 (2FA, biometrics, enterprise security, Hellhound) → LAUNCH2-LAUNCH6 (legal, payments, i18n, accessibility, testing) → Phase G (QA) → Phase JUR → Phase E (AI) → **SEC9 (security pentest)** → **SEC10 (legal pentest)** → **ZERO1-ZERO9 (zero-defect validation — break everything, fix everything, prove it's flawless)** → LAUNCH7 (App Store + onboarding wizard — DEAD LAST) → SHIP
 
