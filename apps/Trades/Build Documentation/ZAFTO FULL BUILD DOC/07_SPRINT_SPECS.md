@@ -13138,6 +13138,127 @@ When inspector takes a photo during inspection execution, add search bar to atta
 
 ---
 
+## PHASE REALTOR: REALTOR PORTAL — Free Tools + Contractor Marketplace (S127)
+**Purpose:** Build a free realtor portal (realtor.zafto.cloud) that gives realtors genuinely valuable tools — floor plans, property intelligence, contractor coordination, property management — all free. Realtors currently spend $12K-60K/year on software. We give them 4 expensive tools for $0. In return, realtors become our contractor distribution channel: they tell their contractors to use Zafto, and those contractors become paying subscribers. Works for both PP/REO realtors (foreclosure services) and regular realtors (repairs, renovations, staging). NO existing software handles realtor-contractor coordination — this is a greenfield market.
+
+**Free tools for realtors (the hooks):**
+- Sketch Engine floor plans (realtors pay $200-300/property for Matterport — we give it free)
+- Recon property intelligence (realtors pay $90-500/month for ATTOM data — we give it free)
+- Property management for rental portfolios (realtors pay $52-400/month for Buildium/AppFolio — we give it free via existing D5)
+- Contractor directory + work order posting + project tracking (NOTHING exists for this — we're first)
+- Reverse lead generation: contractors refer homeowners to realtors on the platform (realtors pay $300-2,000/month for Zillow leads — we give them free warm referrals)
+
+**Realtor portal is FREE. Contractors pay their normal subscription. Realtors are the growth engine.**
+
+### REALTOR1 — Portal Foundation: Auth, Dashboard, Contractor Directory, Work Orders (~20h)
+**Goal:** Launch realtor.zafto.cloud with core functionality. Realtors can sign up, find contractors, post work orders, and manage projects. Same tech stack as other portals (Next.js 15, React 19, Tailwind, Supabase auth).
+
+**Auth & Onboarding:**
+- [ ] **Magic link auth** (same as client portal pattern). Email-based, no password. Realtor enters email → gets magic link → lands on dashboard. Supabase auth with `app_metadata.role = 'realtor'`
+- [ ] **Onboarding flow**: Name, brokerage, license number (optional, for verification badge later), service area (zip codes or county selection), specialization checkboxes (residential, commercial, REO/foreclosure, property management, luxury, multi-family), profile photo/logo. "Takes 60 seconds. You'll be finding contractors in 2 minutes."
+- [ ] **RBAC integration**: New role `realtor` in existing RBAC system. Realtors can see: contractor profiles (public data only — rating, services, coverage, portfolio), property data (recon), their own work orders and projects. Realtors CANNOT see: contractor financials, employee data, internal business data, other realtors' data. RLS policies enforce company_id scoping + role-based access
+
+**Dashboard:**
+- [ ] **Realtor dashboard**: Active projects (work orders in progress with status), recent activity feed, contractor favorites list, properties under management, quick actions (post work order, find contractor, run recon scan). Clean, professional design — light theme like client portal. NOT information-overloaded — realtors want simplicity
+- [ ] **Property portfolio view**: List of properties the realtor manages or has active work on. Per property: address, status (active listing, REO, rental, pre-listing prep), active work orders, total spent on services, photo gallery. Link to recon data and sketch if available
+
+**Contractor Directory:**
+- [ ] **Search + filter contractors**: Search by: service type (PP services, general contracting, electrical, plumbing, HVAC, painting, roofing, etc.), coverage area (zip code or radius from property), rating (stars), response time, capacity (available now vs booked), insurance status (verified GL), certifications. Results show: company name, owner, rating (X stars from Y reviews), services offered, coverage area, response time, member since, portfolio preview (3-4 best before/after photos). "47 contractors within 25 miles of 32801 offering property preservation services"
+- [ ] **Contractor profile view**: Full public profile — services list, coverage map, equipment, crew size, before/after portfolio, ratings + reviews from other realtors, certifications, insurance verification badge, response time stats. NO financial data, NO internal business data. Contractor controls what's public via their CRM settings
+- [ ] **Favorites list**: Realtor saves preferred contractors. Quick-assign from favorites on new work orders. "Your go-to contractors — tap to assign work"
+- [ ] **Direct messaging**: In-app messaging between realtor and contractor. Conversation history persisted. No phone number exchange needed (privacy for both sides). Push notifications for new messages
+
+**Work Order Posting:**
+- [ ] **Post work order**: Realtor creates work order: property address, service type(s) needed, description, urgency (routine / urgent / emergency), budget range (optional), desired completion date, photos of current condition (optional). Work order visible to: specific contractor (direct assign from favorites) OR contractors in the area matching service type (open bid)
+- [ ] **Direct assign vs open bid**: Direct assign: realtor picks specific contractor → contractor accepts/declines. Open bid: work order posted to matching contractors → contractors submit bids → realtor picks winner. Hybrid: post to 3-5 specific contractors for competitive bids
+- [ ] **Work order tracking**: Status flow: Posted → Accepted → In Progress → Documentation Submitted → Reviewed → Complete. Realtor sees real-time status. Photo documentation from contractor (GPS-verified) visible to realtor. Realtor can approve/request revisions before marking complete
+- [ ] **PP-specific work order templates**: Pre-built templates for common PP tasks: initial secure, winterization, cleanout (with CY estimate field), grass cut (with lot size), board-up (with opening count), occupancy inspection. Realtor fills in property address + selects template → pre-populated work order with standard requirements
+
+**Navigation & Structure:**
+- [ ] **Sidebar navigation**: Dashboard, Properties, Find Contractors, Work Orders, Messages, Recon (property intelligence), Sketch (floor plans), Documents, Settings. Clean, minimal — not overwhelming
+- [ ] **Mobile responsive**: PWA-ready like team portal. Realtors work from phones constantly. Touch-friendly, fast loading
+
+- [ ] All builds pass: `npm run build` for realtor-portal
+- [ ] Commit: `[REALTOR1] Realtor portal foundation — auth (magic link), dashboard, contractor directory (search/filter/favorites), work order posting (direct assign + open bid), PP templates, messaging, mobile-responsive PWA`
+
+### REALTOR2 — Marketplace Features: Bidding, Ratings, Project Management (~16h)
+**Goal:** Turn the portal from a directory into a marketplace. Contractors bid on work, realtors rate quality, project management tracks multi-step rehabs. This is the engine that makes the ecosystem self-reinforcing — better contractors get more work, realtors get reliable service.
+
+**Bidding System:**
+- [ ] **Contractor bid submission**: When a work order is "open bid", matching contractors see it in their CRM under "Available Work" section. Contractor submits: price, estimated completion time, brief note ("I can start tomorrow, have a crew of 3"). Realtor sees all bids side-by-side: contractor name, rating, price, timeline, portfolio preview
+- [ ] **Bid comparison view**: Side-by-side comparison for realtor: contractor A vs B vs C. Rating, price, estimated timeline, distance from property, reviews, insurance status, before/after portfolio. Realtor picks winner with one tap. Losing bidders get auto-notification ("Another contractor was selected for this project")
+- [ ] **Counter-offer**: Realtor can counter a bid: "Can you do it for $X instead of $Y?" Contractor accepts/declines/counters. Simple back-and-forth, not an auction. Max 2 rounds of counter-offers to keep it efficient
+- [ ] **Instant accept for standard rates**: For PP work with known HUD/Fannie rates, realtor can set "pay at standard rate" — contractor accepts the job at the posted rate, no bidding. Faster for routine work (grass cuts, inspections, rekeys)
+
+**Rating & Review System:**
+- [ ] **Realtor rates contractor**: After work order complete: 1-5 stars + optional written review. Categories: quality of work, communication, timeliness, documentation quality, professionalism. Rating feeds into contractor's public profile score. Only verified completed work orders generate ratings (can't fake reviews)
+- [ ] **Contractor rates realtor**: Contractors rate realtors too: payment speed, clear scope, responsiveness, fairness. This keeps realtors honest — contractors can avoid realtors known for slow payment or unreasonable demands. Visible to contractors when deciding whether to bid
+- [ ] **Rating dispute process**: Either party can flag a review as unfair. Zafto ops reviews disputed ratings (ops portal). Clearly fraudulent reviews removed. Legitimate negative reviews stay — transparency builds trust
+
+**Project Management (Multi-Step Rehabs):**
+- [ ] **Project creation**: For full rehabs (not single PP tasks), realtor creates a "project" with multiple work orders/phases. Example: REO rehab project — Phase 1: Secure + winterize. Phase 2: Cleanout. Phase 3: Repairs (plumbing, electrical, drywall). Phase 4: Paint + flooring. Phase 5: Final clean + photos. Each phase = separate work order, potentially different contractors
+- [ ] **Milestone tracking**: Each phase has: start date, target completion, actual completion, budget, actual cost, status. Visual progress bar. Realtor sees: "Phase 3 of 5 complete. $12,400 of $28,000 budget spent. On track for March 15 completion"
+- [ ] **Photo timeline**: All contractor-submitted photos across all phases in chronological order. Shows property transformation from foreclosed wreck to market-ready listing. Exportable as PDF report for bank or seller
+- [ ] **Budget tracking**: Per-project budget with actual vs estimated per phase. Alerts when approaching budget limit. "Phase 3 repairs are at 92% of budget with electrical still pending. Consider requesting additional funds before proceeding"
+
+**Notification System:**
+- [ ] **Realtor notifications**: New bid received, work order status changed, message from contractor, project milestone completed, payment reminder (if tracking). Push (PWA) + email digest (daily summary)
+- [ ] **Contractor notifications in CRM**: New work order available in your area, bid accepted/declined, new message from realtor, review received. Added to existing CRM notification system
+
+- [ ] All builds pass: `npm run build` for realtor-portal + `npm run build` for web-portal (CRM side changes)
+- [ ] Commit: `[REALTOR2] Marketplace features — bidding system (open bid, direct assign, counter-offer), rating/review system (both directions), project management (multi-phase rehabs, milestone tracking, budget tracking, photo timeline), notifications`
+
+### REALTOR3 — Free Tools: Recon, Sketch, Property Management, Lead Referrals (~12h)
+**Goal:** Wire the free tools that make realtors WANT to join. These are features realtors currently pay $300-1,000+/month for elsewhere. We give them free because each realtor using the platform brings 3-10 contractor subscribers.
+
+**Recon (Property Intelligence) Access:**
+- [ ] **Property scan for realtors**: Same recon engine contractors use, but realtor-oriented view. Input address → get: property details (sq ft, beds/baths, year built, lot size), roof condition/age/measurements, recent permits, tax assessment, zoning, flood zone, HOA status, neighborhood comps. "Know everything about a property before you list it or buy it"
+- [ ] **Pre-listing condition report**: Realtor runs recon scan on a property they're about to list. Generates a condition summary: estimated roof remaining life, permit history, known issues. Helps realtor price accurately and disclose properly. "This roof was replaced in 2018 (8 years ago). Estimated 12-17 years remaining. No open permits"
+- [ ] **Investment analysis**: For investor-realtors: purchase price + estimated repair costs (from contractor bids on platform) + ARV (after repair value from comps) = projected ROI. "Purchase: $180K. Repairs: $35K (based on 3 contractor bids). ARV: $275K. Projected gross profit: $60K (27% ROI)"
+
+**Sketch Engine (Floor Plans) Access:**
+- [ ] **Free floor plans for listings**: Realtor requests floor plan for a listing. Options: (1) Assign to contractor on platform who has Sketch Engine — contractor creates floor plan during site visit, realtor gets it automatically. (2) Realtor creates their own using web-based Sketch Engine (Konva editor). (3) Import from contractor's existing sketch for the property. "Professional floor plan for your listing — no Matterport needed, $0 cost"
+- [ ] **Floor plan export for MLS**: Export as PNG, SVG, or PDF for MLS upload. Clean, professional format with room labels, dimensions, square footage. Branded with realtor's logo (optional). "Download floor plan → upload to MLS in 30 seconds"
+
+**Property Management Access (D5):**
+- [ ] **Rental portfolio management**: Realtors managing rental properties get full D5 property management features: tenant records, lease tracking, maintenance requests, rent collection tracking, property inspections. "Manage your rental portfolio without paying $400/month for Buildium"
+- [ ] **Tenant → Client portal bridge**: Realtor's tenants access the existing client portal (client.zafto.cloud) for maintenance requests, document access, payment history. Realtor sees tenant requests in realtor portal. Can assign contractor from directory to handle maintenance. Full loop: tenant reports leak → realtor sees request → assigns plumber from directory → plumber fixes + documents → tenant sees completion → realtor approves
+
+**Reverse Lead Referral System:**
+- [ ] **Contractor → Realtor referrals**: Contractors meet homeowners every day (estimates, repairs, renovations). When a homeowner mentions buying/selling, contractor refers them to a realtor on the platform. Referral tracked: contractor name, homeowner contact (with consent), referral type (buying, selling, both), property address if selling. Realtor sees incoming referral. "New referral from Mike's Plumbing: Homeowner at 456 Oak St interested in selling. Contact: jane@email.com"
+- [ ] **Referral tracking**: Track referral → contact → listing/purchase → closing. Realtor sees ROI from contractor network: "12 referrals this quarter, 4 converted to listings, 2 closed = $18,000 in commission from free referrals." Contractors who send quality referrals get highlighted in the directory (good for their profile)
+- [ ] **Referral agreement templates**: Standard referral fee agreement template (if contractor expects referral fee — typically 10-25% of commission). Both parties sign digitally. Tracks payment status. Optional — not all referrals involve fees. "Mike's Plumbing referred a $350K listing. Agreed 20% referral fee = $2,100 on close"
+
+- [ ] All builds pass: `npm run build` for realtor-portal
+- [ ] Commit: `[REALTOR3] Free tools — recon property intelligence for realtors, sketch engine floor plans (free MLS-ready export), D5 property management for rental portfolios, tenant→client portal bridge, reverse lead referral system (contractor→realtor), referral tracking + agreement templates`
+
+---
+
+## PHASE INTEG: NATIONAL PORTAL INTEGRATION (S127)
+**Purpose:** Build submission API that pushes verified contractor documentation directly into national PP company portals. Contractors stop logging into 5 different portals. They complete work in Zafto → one-click submit to Safeguard/MCS/Cyprexx/NFR/Xome. This is the immediate-value integration play. Direct bank API is a post-launch enterprise effort.
+
+### INTEG1 — National Portal Submission API: One-Click Submit to Every National (~12h)
+**Goal:** Contractor completes PP work order in Zafto → clicks "Submit to [National]" → documentation packaged in that national's required format (photo naming, file structure, data fields) → pushed to their portal or formatted for manual upload. Start with export packages (formatted zip/PDF), upgrade to direct API integration as nationals partner.
+
+**Submission Package Generator:**
+- [ ] **Per-national format templates**: Each national has different requirements. Build format templates for: Safeguard (SafeView format — landscape photos, date-stamped, specific file naming), MCS/Stewart (Vendor360/Pruvan format — bold naming convention, chronological ordering, captioned), Cyprexx (portal.cyprexx.com format), NFR (portal.nfronline.com format), Xome (vendors.xome.com format). Template includes: photo naming convention, required photo list per service type, data fields required, file structure
+- [ ] **One-click export**: Contractor completes work order → selects national company → clicks "Generate Submission Package" → app creates: correctly named photos in correct order, completed work order form with all required fields, before/during/after documentation, GPS verification data, dump receipts (if applicable), pressure test records (if applicable). Exported as: organized ZIP file (ready to upload to portal) OR PDF documentation package (for email submission)
+- [ ] **Auto-fill portal fields**: For each national, map Zafto work order fields to their portal fields. When contractor opens national's portal to upload, they can copy-paste from Zafto's formatted summary. Long-term: direct API push (requires national partnership). Short-term: formatted export that makes manual portal submission take 2 minutes instead of 30
+
+**Verification Package:**
+- [ ] **Tamper-proof documentation bundle**: Every submission includes: GPS coordinates per photo (embedded EXIF + visible stamp), timestamp chain (chronological proof), device ID verification (photos taken from Zafto app, not uploaded from gallery), work order completion checklist (100% of required steps checked), before/during/after photo matching. Cryptographic hash of submission package for integrity verification. "This documentation package was generated by Zafto and has not been altered since submission"
+- [ ] **Compliance score**: Auto-score each submission: photo completeness (all required shots?), GPS verification (all photos at correct location?), timeline logic (before < during < after timestamps?), checklist completion (100%?), data completeness (all fields filled?). Score 0-100. Show to contractor before submission: "Your submission scores 94/100. Missing: lockbox photo (required by Safeguard). Add it to reach 100%"
+- [ ] **Chargeback defense packet**: When contractor receives a chargeback, auto-generate defense documentation: original submission with all photos, GPS proof of being on-site, timestamp proof of when work was done, checklist proof of completion, before/after comparison. One-click export as PDF for dispute submission. "Safeguard charged back $250 for 'incomplete winterization.' Your defense packet shows: all 11 steps completed with photos, pressure test held at 35 PSI for 32 minutes (screenshot attached), antifreeze in all 14 fixtures (photos attached)"
+
+**Multi-Portal Dashboard:**
+- [ ] **Unified submission tracker**: See all submissions across all nationals in one view. Per submission: national company, property address, service type, submission date, status (submitted / under review / approved / paid / chargebacked), payment amount, payment date. Filter by: company, status, date range. "This month: 23 submissions. 18 approved ($4,200), 3 under review ($780), 2 chargebacked ($450 — dispute packets ready)"
+- [ ] **Payment reconciliation**: Track expected payment dates per national (Safeguard: weekly, MCS: bi-weekly). Alert when payment is overdue: "MCS payment for 123 Main St is 5 days past expected date. Contact: accounting@mcs360.com." Monthly reconciliation report: expected vs received per company
+
+- [ ] All builds pass: `npm run build` for web-portal (CRM)
+- [ ] Commit: `[INTEG1] National portal submission API — per-national format templates (Safeguard/MCS/Cyprexx/NFR/Xome), one-click export packages, tamper-proof verification bundles, compliance scoring, chargeback defense packets, unified submission tracker, payment reconciliation`
+
+---
+
 ## PHASE SEC: SECURITY HARDENING & OPTIONAL SECURITY FEATURES (S125 audit findings)
 **Purpose:** Fix the 3 medium-priority security gaps found during the S125 live-site audit, then build optional security features that contractors can opt into. Multi-tenant SaaS with financial data, legal documents, employee PII, and client info — security must be enterprise-grade. Contractors handling insurance claims and government contracts may be REQUIRED to have 2FA/MFA by their carrier or agency. Make it available, not mandatory (contractor's choice).
 
@@ -13650,9 +13771,11 @@ When inspector takes a photo during inspection execution, add search bar to atta
 | **SEC** | SEC1-SEC10 | ~92h | Security fortress: critical fixes, 2FA, biometrics, enterprise options, Hellhound, headers, WAF, dependency scanning, security pentest, legal pentest |
 | **ZERO** | ZERO1-ZERO9 | ~86h | Zero-defect validation: property testing, state machines, chaos engineering, 50K load test, fuzz testing, mutation testing, edge case gauntlet, triple-scan |
 | **LAUNCH** | LAUNCH1-LAUNCH7 | ~72h | Monitoring, legal, payments, i18n, accessibility, testing, App Store + onboarding wizard |
-| **Total** | **70 sprints** | **~966h** | — |
+| **REALTOR** | REALTOR1-REALTOR3 | ~48h | Free realtor portal: auth, contractor directory, work order marketplace, bidding, ratings, project management, recon/sketch/PM access, reverse lead referrals |
+| **INTEG** | INTEG1 | ~12h | National portal submission API: per-company format templates, one-click export, verification bundles, compliance scoring, chargeback defense |
+| **Total** | **74 sprints** | **~1,026h** | — |
 
-**Execution order:** SEC1 + SEC6 + SEC7 + SEC8 (critical security — site is live) → LAUNCH1 (monitoring — need Sentry before building more) → FIELD → REST → NICHE → DEPTH1 through DEPTH27 → DEPTH28 (recon mega-expansion) → DEPTH29 (estimate engine overhaul) → DEPTH30 (recon-to-estimate pipeline) → DEPTH31 (crowdsourced material pricing) → DEPTH32 (Material Finder — affiliate feeds, generates revenue) → DEPTH33 (data privacy/AI consent) → **DEPTH34 (property preservation — PP work orders, winterization, boiler troubleshooter, debris estimation, smart photos)** → **DEPTH35 (mold remediation — IICRC S520, moisture mapping, clearance pipeline)** → **DEPTH36 (disposal/dump finder — cheapest per ton, all waste types, scrap value)** → SEC2-SEC5 (2FA, biometrics, enterprise security, Hellhound) → LAUNCH2-LAUNCH6 (legal, payments, i18n, accessibility, testing) → Phase G (QA) → Phase JUR → Phase E (AI) → **SEC9 (security pentest)** → **SEC10 (legal pentest)** → **ZERO1-ZERO9 (zero-defect validation — break everything, fix everything, prove it's flawless)** → LAUNCH7 (App Store + onboarding wizard — DEAD LAST) → SHIP
+**Execution order:** SEC1 + SEC6 + SEC7 + SEC8 (critical security — site is live) → LAUNCH1 (monitoring — need Sentry before building more) → FIELD → REST → NICHE → DEPTH1 through DEPTH27 → DEPTH28 (recon mega-expansion) → DEPTH29 (estimate engine overhaul) → DEPTH30 (recon-to-estimate pipeline) → DEPTH31 (crowdsourced material pricing) → DEPTH32 (Material Finder — affiliate feeds, generates revenue) → DEPTH33 (data privacy/AI consent) → **DEPTH34 (property preservation — PP work orders, winterization, boiler troubleshooter, debris estimation, smart photos)** → **DEPTH35 (mold remediation — IICRC S520, moisture mapping, clearance pipeline)** → **DEPTH36 (disposal/dump finder — cheapest per ton, all waste types, scrap value)** → **REALTOR1 (portal foundation — auth, directory, work orders)** → **REALTOR2 (marketplace — bidding, ratings, project management)** → **REALTOR3 (free tools — recon, sketch, PM, lead referrals)** → **INTEG1 (national portal submission API)** → SEC2-SEC5 (2FA, biometrics, enterprise security, Hellhound) → LAUNCH2-LAUNCH6 (legal, payments, i18n, accessibility, testing) → Phase G (QA) → Phase JUR → Phase E (AI) → **SEC9 (security pentest)** → **SEC10 (legal pentest)** → **ZERO1-ZERO9 (zero-defect validation — break everything, fix everything, prove it's flawless)** → LAUNCH7 (App Store + onboarding wizard — DEAD LAST) → SHIP
 
 **Module coverage guarantee:**
 - DEPTH1-6: Horizontal audit by category (core biz, field tools, property, financial, CRM, calculators)
