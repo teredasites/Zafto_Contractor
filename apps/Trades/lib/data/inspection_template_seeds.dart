@@ -1,15 +1,27 @@
-// System Inspection Templates — Seed Data
-// These are Dart constants used as starting points for companies.
+// System Inspection Templates — Seed Data (INS9 Depth Rewrite)
+// 25 professional-grade templates with real building code references.
+// ~1,200+ checklist items covering all 13 inspector types.
+//
 // When a company selects a system template, it gets cloned to their
 // inspection_templates table with their company_id.
 //
-// Covers all 13 inspector types from research.
+// Code reference key:
+//   NEC = National Electrical Code (NFPA 70)
+//   IRC = International Residential Code
+//   IBC = International Building Code
+//   OSHA = 29 CFR 1926 (Construction Safety)
+//   NFPA = National Fire Protection Association
+//   IECC = International Energy Conservation Code
+//   IPC = International Plumbing Code
+//   IMC = International Mechanical Code
+//   ADA = ADA 2010 Standards for Accessible Design
+//   IICRC = Institute of Inspection Cleaning and Restoration Certification
 
 import '../models/inspection.dart';
 
 final List<InspectionTemplate> systemInspectionTemplates = [
   // ============================================================
-  // PROPERTY MANAGEMENT
+  // 1. MOVE-IN INSPECTION — Property Management
   // ============================================================
 
   InspectionTemplate(
@@ -18,62 +30,109 @@ final List<InspectionTemplate> systemInspectionTemplates = [
     trade: 'property_management',
     inspectionType: InspectionType.moveIn,
     isSystem: true,
-    version: 1,
+    version: 2,
     sections: [
-      TemplateSection(name: 'Exterior', sortOrder: 0, items: [
-        TemplateItem(name: 'Front door condition', sortOrder: 0),
-        TemplateItem(name: 'Locks and keys working', sortOrder: 1),
-        TemplateItem(name: 'Windows — exterior condition', sortOrder: 2),
-        TemplateItem(name: 'Siding / paint condition', sortOrder: 3),
-        TemplateItem(name: 'Walkway / driveway condition', sortOrder: 4),
-        TemplateItem(name: 'Landscaping / yard', sortOrder: 5),
-        TemplateItem(name: 'Mailbox', sortOrder: 6),
+      TemplateSection(name: 'Exterior / Grounds', sortOrder: 0, items: [
+        TemplateItem(name: 'Front door — condition, weather seal, deadbolt', sortOrder: 0),
+        TemplateItem(name: 'Rear/side doors — condition and locks', sortOrder: 1),
+        TemplateItem(name: 'All keys / fobs accounted for and working', sortOrder: 2),
+        TemplateItem(name: 'Windows — exterior glass, frames, screens', sortOrder: 3),
+        TemplateItem(name: 'Siding / stucco / brick — cracks, damage', sortOrder: 4),
+        TemplateItem(name: 'Exterior paint / trim condition', sortOrder: 5),
+        TemplateItem(name: 'Walkway / driveway — cracks, trip hazards', sortOrder: 6),
+        TemplateItem(name: 'Porch / deck / patio — structural, railings', sortOrder: 7),
+        TemplateItem(name: 'Landscaping / lawn condition', sortOrder: 8),
+        TemplateItem(name: 'Mailbox — condition and number', sortOrder: 9),
+        TemplateItem(name: 'Exterior lighting — porch, security', sortOrder: 10),
+        TemplateItem(name: 'Gutters and downspouts', sortOrder: 11),
+        TemplateItem(name: 'Address numbers visible from street', sortOrder: 12),
       ]),
       TemplateSection(name: 'Kitchen', sortOrder: 1, items: [
-        TemplateItem(name: 'Countertops', sortOrder: 0),
-        TemplateItem(name: 'Cabinets — doors and drawers', sortOrder: 1),
-        TemplateItem(name: 'Sink and faucet', sortOrder: 2),
-        TemplateItem(name: 'Garbage disposal', sortOrder: 3),
-        TemplateItem(name: 'Dishwasher', sortOrder: 4),
-        TemplateItem(name: 'Range / oven', sortOrder: 5),
-        TemplateItem(name: 'Refrigerator', sortOrder: 6),
-        TemplateItem(name: 'Microwave', sortOrder: 7),
-        TemplateItem(name: 'Flooring', sortOrder: 8),
-        TemplateItem(name: 'Walls and ceiling', sortOrder: 9),
-        TemplateItem(name: 'Light fixtures', sortOrder: 10),
-        TemplateItem(name: 'Outlets working', sortOrder: 11),
+        TemplateItem(name: 'Countertops — condition, caulk at backsplash', sortOrder: 0),
+        TemplateItem(name: 'Cabinets — all doors open/close, hinges', sortOrder: 1),
+        TemplateItem(name: 'Drawers — slides, fronts, handles', sortOrder: 2),
+        TemplateItem(name: 'Sink — basin condition, no chips/stains', sortOrder: 3),
+        TemplateItem(name: 'Faucet — hot/cold, spray, no drips', sortOrder: 4),
+        TemplateItem(name: 'Garbage disposal — operates, no leaks', sortOrder: 5),
+        TemplateItem(name: 'Dishwasher — runs full cycle, door seal', sortOrder: 6),
+        TemplateItem(name: 'Range / oven — all burners, oven heats', sortOrder: 7),
+        TemplateItem(name: 'Range hood / exhaust fan — operates', sortOrder: 8),
+        TemplateItem(name: 'Refrigerator — cooling, ice maker, shelves', sortOrder: 9),
+        TemplateItem(name: 'Microwave — operates, door latch', sortOrder: 10),
+        TemplateItem(name: 'Flooring — condition, edges, transitions', sortOrder: 11),
+        TemplateItem(name: 'Walls and ceiling — paint, holes, stains', sortOrder: 12),
+        TemplateItem(name: 'Light fixtures — all working', sortOrder: 13),
+        TemplateItem(name: 'Outlets — GFCI tested, covers intact', sortOrder: 14),
+        TemplateItem(name: 'Under-sink plumbing — no leaks, P-trap', sortOrder: 15),
       ]),
       TemplateSection(name: 'Living Areas', sortOrder: 2, items: [
-        TemplateItem(name: 'Flooring / carpet', sortOrder: 0),
-        TemplateItem(name: 'Walls — paint / condition', sortOrder: 1),
-        TemplateItem(name: 'Ceiling — condition', sortOrder: 2),
-        TemplateItem(name: 'Windows — interior', sortOrder: 3),
-        TemplateItem(name: 'Window coverings / blinds', sortOrder: 4),
+        TemplateItem(name: 'Flooring / carpet — stains, tears, wear', sortOrder: 0),
+        TemplateItem(name: 'Walls — paint condition, nail holes, marks', sortOrder: 1),
+        TemplateItem(name: 'Ceiling — cracks, stains, texture match', sortOrder: 2),
+        TemplateItem(name: 'Baseboards and trim — condition', sortOrder: 3),
+        TemplateItem(name: 'Windows — open/close/lock, screens', sortOrder: 4),
+        TemplateItem(name: 'Window coverings / blinds — operate', sortOrder: 5),
+        TemplateItem(name: 'Light fixtures and switches — all working', sortOrder: 6),
+        TemplateItem(name: 'Outlets — all working, covers intact', sortOrder: 7),
+        TemplateItem(name: 'Closets — doors, shelving, rods', sortOrder: 8),
+        TemplateItem(name: 'Fireplace — damper, screen, hearth', sortOrder: 9),
+        TemplateItem(name: 'Ceiling fan — all speeds, wobble check', sortOrder: 10),
+        TemplateItem(name: 'Smoke detectors — present and tested', sortOrder: 11),
+        TemplateItem(name: 'CO detectors — present and tested', sortOrder: 12),
+      ]),
+      TemplateSection(name: 'Bedrooms', sortOrder: 3, items: [
+        TemplateItem(name: 'Flooring / carpet — condition', sortOrder: 0),
+        TemplateItem(name: 'Walls and ceiling — condition', sortOrder: 1),
+        TemplateItem(name: 'Windows — open/close/lock, screens, egress', sortOrder: 2),
+        TemplateItem(name: 'Window coverings / blinds', sortOrder: 3),
+        TemplateItem(name: 'Closet — door, shelving, rod, light', sortOrder: 4),
         TemplateItem(name: 'Light fixtures and switches', sortOrder: 5),
-        TemplateItem(name: 'Outlets working', sortOrder: 6),
-        TemplateItem(name: 'Closets — doors and shelving', sortOrder: 7),
-        TemplateItem(name: 'Smoke detectors', sortOrder: 8),
-        TemplateItem(name: 'CO detectors', sortOrder: 9),
+        TemplateItem(name: 'Outlets — all working', sortOrder: 6),
+        TemplateItem(name: 'Door — closes, latch, lock (privacy)', sortOrder: 7),
+        TemplateItem(name: 'Smoke detector present in room', sortOrder: 8),
       ]),
-      TemplateSection(name: 'Bathroom(s)', sortOrder: 3, items: [
-        TemplateItem(name: 'Toilet — flush and seal', sortOrder: 0),
-        TemplateItem(name: 'Sink and faucet', sortOrder: 1),
-        TemplateItem(name: 'Bathtub / shower', sortOrder: 2),
-        TemplateItem(name: 'Shower head', sortOrder: 3),
-        TemplateItem(name: 'Tile / grout condition', sortOrder: 4),
-        TemplateItem(name: 'Caulking', sortOrder: 5),
-        TemplateItem(name: 'Exhaust fan', sortOrder: 6),
-        TemplateItem(name: 'Towel bars / accessories', sortOrder: 7),
-        TemplateItem(name: 'Mirror and medicine cabinet', sortOrder: 8),
-        TemplateItem(name: 'Flooring', sortOrder: 9),
+      TemplateSection(name: 'Bathrooms', sortOrder: 4, items: [
+        TemplateItem(name: 'Toilet — flushes, fills, no rocking, seal', sortOrder: 0),
+        TemplateItem(name: 'Sink — basin, faucet hot/cold, stopper', sortOrder: 1),
+        TemplateItem(name: 'Bathtub — condition, drain, stopper', sortOrder: 2),
+        TemplateItem(name: 'Shower — head, diverter, enclosure', sortOrder: 3),
+        TemplateItem(name: 'Tile / grout — condition, no cracks', sortOrder: 4),
+        TemplateItem(name: 'Caulking — tub/shower, sink, toilet base', sortOrder: 5),
+        TemplateItem(name: 'Exhaust fan — operates, vented exterior', sortOrder: 6),
+        TemplateItem(name: 'Towel bars / TP holder / accessories', sortOrder: 7),
+        TemplateItem(name: 'Mirror / medicine cabinet', sortOrder: 8),
+        TemplateItem(name: 'Flooring — condition, water damage signs', sortOrder: 9),
+        TemplateItem(name: 'GFCI outlet tested', sortOrder: 10),
+        TemplateItem(name: 'Under-sink cabinet — condition, leaks', sortOrder: 11),
       ]),
-      TemplateSection(name: 'Systems', sortOrder: 4, items: [
-        TemplateItem(name: 'HVAC — heating test', sortOrder: 0),
-        TemplateItem(name: 'HVAC — cooling test', sortOrder: 1),
-        TemplateItem(name: 'Water heater', sortOrder: 2),
-        TemplateItem(name: 'Electrical panel', sortOrder: 3),
-        TemplateItem(name: 'Plumbing — no leaks', sortOrder: 4),
-        TemplateItem(name: 'Garage door opener', sortOrder: 5),
+      TemplateSection(name: 'Laundry / Utility', sortOrder: 5, items: [
+        TemplateItem(name: 'Washer hookups — hot/cold, drain', sortOrder: 0),
+        TemplateItem(name: 'Dryer hookup — vent connection, 240V/gas', sortOrder: 1),
+        TemplateItem(name: 'Dryer vent — clear, proper termination', sortOrder: 2),
+        TemplateItem(name: 'Utility sink — if present, condition', sortOrder: 3),
+        TemplateItem(name: 'Floor drain — clear, functional', sortOrder: 4),
+        TemplateItem(name: 'GFCI outlet tested', sortOrder: 5),
+      ]),
+      TemplateSection(name: 'Garage / Parking', sortOrder: 6, items: [
+        TemplateItem(name: 'Garage door — opens/closes, auto-reverse', sortOrder: 0),
+        TemplateItem(name: 'Garage door opener — remotes, keypad', sortOrder: 1),
+        TemplateItem(name: 'Floor — condition, stains, cracks', sortOrder: 2),
+        TemplateItem(name: 'Walls and ceiling — condition', sortOrder: 3),
+        TemplateItem(name: 'Fire separation door — self-closing', sortOrder: 4),
+        TemplateItem(name: 'Outlets / light switches — working', sortOrder: 5),
+        TemplateItem(name: 'Parking space(s) — assigned, numbered', sortOrder: 6),
+      ]),
+      TemplateSection(name: 'Systems / Mechanical', sortOrder: 7, items: [
+        TemplateItem(name: 'HVAC — heating mode test', sortOrder: 0),
+        TemplateItem(name: 'HVAC — cooling mode test', sortOrder: 1),
+        TemplateItem(name: 'Thermostat — programmable, set correctly', sortOrder: 2),
+        TemplateItem(name: 'Air filter — clean, correct size', sortOrder: 3),
+        TemplateItem(name: 'Water heater — temperature, no leaks', sortOrder: 4),
+        TemplateItem(name: 'Water heater — TPR valve, drain line', sortOrder: 5),
+        TemplateItem(name: 'Electrical panel — labeled, accessible', sortOrder: 6),
+        TemplateItem(name: 'Main water shutoff — location, operates', sortOrder: 7),
+        TemplateItem(name: 'Plumbing — no visible leaks, water pressure', sortOrder: 8),
+        TemplateItem(name: 'Attic access — if applicable', sortOrder: 9),
       ]),
     ],
     createdAt: _epoch,
@@ -81,7 +140,114 @@ final List<InspectionTemplate> systemInspectionTemplates = [
   ),
 
   // ============================================================
-  // SAFETY / OSHA
+  // 2. MOVE-OUT INSPECTION — Property Management [NEW]
+  // ============================================================
+
+  InspectionTemplate(
+    id: 'system-move-out',
+    name: 'Move-Out Inspection',
+    trade: 'property_management',
+    inspectionType: InspectionType.moveOut,
+    isSystem: true,
+    version: 1,
+    sections: [
+      TemplateSection(name: 'Exterior / Grounds', sortOrder: 0, items: [
+        TemplateItem(name: 'Front door — damage beyond normal wear', sortOrder: 0),
+        TemplateItem(name: 'Rear/side doors — condition vs move-in', sortOrder: 1),
+        TemplateItem(name: 'All keys / fobs returned', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Windows — glass, frames, screens intact', sortOrder: 3),
+        TemplateItem(name: 'Siding / exterior — tenant-caused damage', sortOrder: 4),
+        TemplateItem(name: 'Walkway / driveway — new damage', sortOrder: 5),
+        TemplateItem(name: 'Porch / deck / patio — condition', sortOrder: 6),
+        TemplateItem(name: 'Landscaping — maintained per lease', sortOrder: 7),
+        TemplateItem(name: 'Exterior lighting — all working', sortOrder: 8),
+        TemplateItem(name: 'Trash / debris removed from property', sortOrder: 9),
+        TemplateItem(name: 'Personal property removed', sortOrder: 10, weight: 2),
+      ]),
+      TemplateSection(name: 'Kitchen', sortOrder: 1, items: [
+        TemplateItem(name: 'Countertops — burns, cuts, stains', sortOrder: 0),
+        TemplateItem(name: 'Cabinets — door damage, missing hardware', sortOrder: 1),
+        TemplateItem(name: 'Drawers — damage, missing pulls', sortOrder: 2),
+        TemplateItem(name: 'Sink — chips, stains, drain clear', sortOrder: 3),
+        TemplateItem(name: 'Faucet — drips, damage, hot/cold work', sortOrder: 4),
+        TemplateItem(name: 'Garbage disposal — operational', sortOrder: 5),
+        TemplateItem(name: 'Dishwasher — runs, interior clean', sortOrder: 6),
+        TemplateItem(name: 'Range / oven — clean, all burners work', sortOrder: 7),
+        TemplateItem(name: 'Range hood — clean, filter, operates', sortOrder: 8),
+        TemplateItem(name: 'Refrigerator — clean, shelves intact, ice maker', sortOrder: 9),
+        TemplateItem(name: 'Microwave — clean, operates', sortOrder: 10),
+        TemplateItem(name: 'Flooring — damage beyond normal wear', sortOrder: 11),
+        TemplateItem(name: 'Walls/ceiling — holes, unauthorized paint', sortOrder: 12),
+        TemplateItem(name: 'Light fixtures — all working, covers', sortOrder: 13),
+        TemplateItem(name: 'Cleaned to move-in standard', sortOrder: 14, weight: 2),
+      ]),
+      TemplateSection(name: 'Living Areas', sortOrder: 2, items: [
+        TemplateItem(name: 'Flooring / carpet — stains, burns, pet damage', sortOrder: 0),
+        TemplateItem(name: 'Walls — holes, marks, unauthorized modifications', sortOrder: 1),
+        TemplateItem(name: 'Ceiling — damage, stains', sortOrder: 2),
+        TemplateItem(name: 'Baseboards / trim — damage, missing', sortOrder: 3),
+        TemplateItem(name: 'Windows — open/close, locks, screens', sortOrder: 4),
+        TemplateItem(name: 'Window coverings — present, functional', sortOrder: 5),
+        TemplateItem(name: 'Light fixtures — all working', sortOrder: 6),
+        TemplateItem(name: 'Outlets — working, covers intact', sortOrder: 7),
+        TemplateItem(name: 'Closets — shelving, rods, doors', sortOrder: 8),
+        TemplateItem(name: 'Smoke detectors — present, working', sortOrder: 9, weight: 2),
+        TemplateItem(name: 'CO detectors — present, working', sortOrder: 10, weight: 2),
+        TemplateItem(name: 'Unauthorized modifications or fixtures', sortOrder: 11),
+      ]),
+      TemplateSection(name: 'Bedrooms', sortOrder: 3, items: [
+        TemplateItem(name: 'Flooring / carpet — condition vs move-in', sortOrder: 0),
+        TemplateItem(name: 'Walls / ceiling — holes, marks, paint', sortOrder: 1),
+        TemplateItem(name: 'Windows — condition, locks, screens', sortOrder: 2),
+        TemplateItem(name: 'Window coverings — present', sortOrder: 3),
+        TemplateItem(name: 'Closet — shelving, rod, door intact', sortOrder: 4),
+        TemplateItem(name: 'Light fixtures and switches', sortOrder: 5),
+        TemplateItem(name: 'Door — condition, hardware', sortOrder: 6),
+        TemplateItem(name: 'Smoke detector present', sortOrder: 7, weight: 2),
+      ]),
+      TemplateSection(name: 'Bathrooms', sortOrder: 4, items: [
+        TemplateItem(name: 'Toilet — flushes, no damage, clean', sortOrder: 0),
+        TemplateItem(name: 'Sink / faucet — condition, drains', sortOrder: 1),
+        TemplateItem(name: 'Bathtub — chips, stains, drain', sortOrder: 2),
+        TemplateItem(name: 'Shower — head, enclosure, door/curtain rod', sortOrder: 3),
+        TemplateItem(name: 'Tile / grout — cracks, mold, missing grout', sortOrder: 4),
+        TemplateItem(name: 'Caulking — condition, mold/mildew', sortOrder: 5),
+        TemplateItem(name: 'Exhaust fan — operates', sortOrder: 6),
+        TemplateItem(name: 'Accessories — towel bars, TP holder', sortOrder: 7),
+        TemplateItem(name: 'Mirror / medicine cabinet — condition', sortOrder: 8),
+        TemplateItem(name: 'Flooring — water damage, condition', sortOrder: 9),
+        TemplateItem(name: 'Cleaned to move-in standard', sortOrder: 10, weight: 2),
+      ]),
+      TemplateSection(name: 'Laundry / Utility', sortOrder: 5, items: [
+        TemplateItem(name: 'Washer hookups — no leaks, valves work', sortOrder: 0),
+        TemplateItem(name: 'Dryer vent — connected, clear', sortOrder: 1),
+        TemplateItem(name: 'Utility sink — condition', sortOrder: 2),
+        TemplateItem(name: 'Floor — water damage, stains', sortOrder: 3),
+        TemplateItem(name: 'Cleaned — lint, debris removed', sortOrder: 4),
+      ]),
+      TemplateSection(name: 'Garage / Parking', sortOrder: 6, items: [
+        TemplateItem(name: 'Garage door — operates, no damage', sortOrder: 0),
+        TemplateItem(name: 'Opener / remotes returned', sortOrder: 1),
+        TemplateItem(name: 'Floor — oil stains, damage', sortOrder: 2),
+        TemplateItem(name: 'Walls — holes, damage', sortOrder: 3),
+        TemplateItem(name: 'Personal property removed', sortOrder: 4),
+        TemplateItem(name: 'Parking area — clean, no debris', sortOrder: 5),
+      ]),
+      TemplateSection(name: 'Security Deposit Assessment', sortOrder: 7, items: [
+        TemplateItem(name: 'Compare to move-in report — document changes', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Normal wear and tear vs tenant damage', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'Photo documentation of all damage', sortOrder: 2, weight: 3),
+        TemplateItem(name: 'Cleaning charges — if not to standard', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Repair cost estimates for damage items', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Final utility readings recorded', sortOrder: 5),
+      ]),
+    ],
+    createdAt: _epoch,
+    updatedAt: _epoch,
+  ),
+
+  // ============================================================
+  // 3. OSHA JOB SITE SAFETY — 29 CFR 1926
   // ============================================================
 
   InspectionTemplate(
@@ -90,40 +256,95 @@ final List<InspectionTemplate> systemInspectionTemplates = [
     trade: 'general',
     inspectionType: InspectionType.safety,
     isSystem: true,
-    version: 1,
+    version: 2,
     sections: [
-      TemplateSection(name: 'Fall Protection', sortOrder: 0, items: [
-        TemplateItem(name: 'Guardrails at 6ft+ elevations', sortOrder: 0, weight: 3),
-        TemplateItem(name: 'Safety nets where required', sortOrder: 1, weight: 3),
-        TemplateItem(name: 'Personal fall arrest systems in use', sortOrder: 2, weight: 3),
-        TemplateItem(name: 'Floor holes covered / guarded', sortOrder: 3, weight: 2),
-        TemplateItem(name: 'Ladder safety — 3-point contact', sortOrder: 4, weight: 2),
+      TemplateSection(name: 'Fall Protection (1926.500-503)', sortOrder: 0, items: [
+        TemplateItem(name: 'Guardrails at 6ft+ elevations (1926.502(b))', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Top rail 42" ± 3", mid rail present (1926.502(b)(1))', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'Safety nets where required (1926.502(c))', sortOrder: 2, weight: 3),
+        TemplateItem(name: 'Personal fall arrest systems — harness, lanyard (1926.502(d))', sortOrder: 3, weight: 3),
+        TemplateItem(name: 'Anchor points rated 5,000 lbs (1926.502(d)(15))', sortOrder: 4, weight: 3),
+        TemplateItem(name: 'Floor holes covered or guarded (1926.502(i))', sortOrder: 5, weight: 2),
+        TemplateItem(name: 'Leading edge protection plan (1926.501(b)(2))', sortOrder: 6, weight: 3),
+        TemplateItem(name: 'Ladder safety — 3-point contact, extend 3ft (1926.1053)', sortOrder: 7, weight: 2),
+        TemplateItem(name: 'Competent person designated for fall protection', sortOrder: 8, weight: 2),
       ]),
-      TemplateSection(name: 'Scaffolding', sortOrder: 1, items: [
-        TemplateItem(name: 'Scaffold on stable base', sortOrder: 0, weight: 3),
-        TemplateItem(name: 'Guardrails on all open sides', sortOrder: 1, weight: 3),
-        TemplateItem(name: 'Planks secured and not overloaded', sortOrder: 2, weight: 2),
-        TemplateItem(name: 'Access ladder provided', sortOrder: 3, weight: 2),
+      TemplateSection(name: 'Scaffolding (1926.451)', sortOrder: 1, items: [
+        TemplateItem(name: 'Scaffold on stable base / mud sills (1926.451(c)(2))', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Guardrails on all open sides 10ft+ (1926.451(g))', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'Planks secured, no overhang >12" (1926.451(b))', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Access ladder provided (1926.451(e))', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Scaffold tagged — green/yellow/red', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Competent person inspected today (1926.451(f)(3))', sortOrder: 5, weight: 3),
+        TemplateItem(name: 'Capacity not exceeded — load limits posted', sortOrder: 6, weight: 2),
       ]),
-      TemplateSection(name: 'Electrical', sortOrder: 2, items: [
-        TemplateItem(name: 'GFCI protection for all temporary power', sortOrder: 0, weight: 3),
-        TemplateItem(name: 'Cords not damaged / properly rated', sortOrder: 1, weight: 2),
-        TemplateItem(name: 'Lockout/tagout procedures followed', sortOrder: 2, weight: 3),
-        TemplateItem(name: 'Temporary panels labeled', sortOrder: 3, weight: 1),
+      TemplateSection(name: 'Electrical Safety (1926.400-449)', sortOrder: 2, items: [
+        TemplateItem(name: 'GFCI on all temporary power (1926.405(a)(2))', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Extension cords — S, ST, SO rated, no damage (1926.405(a)(2))', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Lockout/tagout procedures followed (1926.417)', sortOrder: 2, weight: 3),
+        TemplateItem(name: 'Temporary panels labeled, covered (1926.405(a))', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'No energized work without permit', sortOrder: 4, weight: 3),
+        TemplateItem(name: 'Power tool grounding verified (1926.404(f))', sortOrder: 5, weight: 2),
       ]),
-      TemplateSection(name: 'Excavation', sortOrder: 3, items: [
-        TemplateItem(name: 'Trench shoring in place (4ft+)', sortOrder: 0, weight: 3),
-        TemplateItem(name: 'Spoil pile 2ft+ from edge', sortOrder: 1, weight: 2),
-        TemplateItem(name: 'Means of egress every 25ft', sortOrder: 2, weight: 3),
-        TemplateItem(name: 'Utilities located and marked', sortOrder: 3, weight: 2),
+      TemplateSection(name: 'Excavation (1926.650-652)', sortOrder: 3, items: [
+        TemplateItem(name: 'Trench shoring/sloping for 5ft+ depth (1926.652)', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Spoil pile 2ft+ from edge (1926.651(j)(2))', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Means of egress every 25ft (1926.651(c)(2))', sortOrder: 2, weight: 3),
+        TemplateItem(name: 'Utilities located and marked (1926.651(b))', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Competent person daily inspection (1926.651(k))', sortOrder: 4, weight: 3),
+        TemplateItem(name: 'Barricades around open excavations', sortOrder: 5, weight: 2),
+        TemplateItem(name: 'Water accumulation managed (1926.651(h))', sortOrder: 6, weight: 2),
       ]),
-      TemplateSection(name: 'PPE & Housekeeping', sortOrder: 4, items: [
-        TemplateItem(name: 'Hard hats worn in active areas', sortOrder: 0, weight: 2),
-        TemplateItem(name: 'Eye protection available and used', sortOrder: 1, weight: 2),
-        TemplateItem(name: 'Hi-vis vests near traffic', sortOrder: 2, weight: 1),
-        TemplateItem(name: 'Work area clean and organized', sortOrder: 3, weight: 1),
-        TemplateItem(name: 'Fire extinguisher accessible', sortOrder: 4, weight: 2),
-        TemplateItem(name: 'First aid kit stocked', sortOrder: 5, weight: 1),
+      TemplateSection(name: 'PPE (1926.95-107)', sortOrder: 4, items: [
+        TemplateItem(name: 'Hard hats in active areas (1926.100)', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Eye/face protection — safety glasses, goggles (1926.102)', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Hearing protection in high-noise areas (1926.101)', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Hi-vis vests near vehicular traffic', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Gloves — appropriate for task', sortOrder: 4, weight: 1),
+        TemplateItem(name: 'Steel-toe boots — no sneakers on site', sortOrder: 5, weight: 1),
+        TemplateItem(name: 'Respiratory protection where required (1926.103)', sortOrder: 6, weight: 2),
+      ]),
+      TemplateSection(name: 'Housekeeping & Fire (1926.25, 1926.150)', sortOrder: 5, items: [
+        TemplateItem(name: 'Work areas clean and organized (1926.25)', sortOrder: 0, weight: 1),
+        TemplateItem(name: 'Debris removal — no trip hazards', sortOrder: 1, weight: 1),
+        TemplateItem(name: 'Scrap lumber — nails removed or bent', sortOrder: 2, weight: 1),
+        TemplateItem(name: 'Fire extinguisher within 100ft travel (1926.150(c))', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Fire extinguisher inspected monthly (1926.150(c)(1))', sortOrder: 4, weight: 1),
+        TemplateItem(name: 'Flammable storage — proper containers (1926.152)', sortOrder: 5, weight: 2),
+        TemplateItem(name: 'Hot work permit — welding/cutting areas', sortOrder: 6, weight: 2),
+      ]),
+      TemplateSection(name: 'Crane & Rigging (1926.1400+)', sortOrder: 6, items: [
+        TemplateItem(name: 'Crane daily inspection documented (1926.1412)', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Operator certified (1926.1427)', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'Signal person designated and qualified (1926.1428)', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Load chart available, capacity not exceeded', sortOrder: 3, weight: 3),
+        TemplateItem(name: 'Outriggers/stabilizers fully extended', sortOrder: 4, weight: 3),
+        TemplateItem(name: 'Power line clearance maintained (1926.1408)', sortOrder: 5, weight: 3),
+        TemplateItem(name: 'Rigging hardware — slings, shackles inspected', sortOrder: 6, weight: 2),
+      ]),
+      TemplateSection(name: 'Confined Spaces (1926.1200+)', sortOrder: 7, items: [
+        TemplateItem(name: 'Permit-required spaces identified/posted (1926.1203)', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Entry permit issued and current (1926.1205)', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'Atmospheric testing — O2, LEL, toxics (1926.1204(e))', sortOrder: 2, weight: 3),
+        TemplateItem(name: 'Ventilation adequate, continuous monitoring', sortOrder: 3, weight: 3),
+        TemplateItem(name: 'Attendant stationed at entry (1926.1204(d))', sortOrder: 4, weight: 3),
+        TemplateItem(name: 'Rescue plan / team on standby (1926.1204(i))', sortOrder: 5, weight: 3),
+      ]),
+      TemplateSection(name: 'Emergency Preparedness', sortOrder: 8, items: [
+        TemplateItem(name: 'First aid kit stocked and accessible (1926.50)', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'First aid trained person on site (1926.50(c))', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Emergency phone numbers posted (1926.50(f))', sortOrder: 2, weight: 1),
+        TemplateItem(name: 'Emergency action plan communicated', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'AED available on site', sortOrder: 4, weight: 1),
+        TemplateItem(name: 'Evacuation routes clear and marked', sortOrder: 5, weight: 1),
+      ]),
+      TemplateSection(name: 'Documentation & Training', sortOrder: 9, items: [
+        TemplateItem(name: 'All workers site-oriented (1926.21)', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Toolbox talk conducted today — topic logged', sortOrder: 1, weight: 1),
+        TemplateItem(name: 'OSHA 300 log current (if applicable)', sortOrder: 2, weight: 1),
+        TemplateItem(name: 'SDS sheets accessible for chemicals (1926.59)', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Subcontractor safety certs on file', sortOrder: 4, weight: 1),
+        TemplateItem(name: 'OSHA poster displayed (1926.20)', sortOrder: 5, weight: 1),
       ]),
     ],
     createdAt: _epoch,
@@ -131,7 +352,7 @@ final List<InspectionTemplate> systemInspectionTemplates = [
   ),
 
   // ============================================================
-  // ELECTRICAL (NEC)
+  // 4. ELECTRICAL ROUGH-IN — NEC (NFPA 70)
   // ============================================================
 
   InspectionTemplate(
@@ -140,36 +361,74 @@ final List<InspectionTemplate> systemInspectionTemplates = [
     trade: 'electrical',
     inspectionType: InspectionType.roughIn,
     isSystem: true,
-    version: 1,
+    version: 2,
     sections: [
-      TemplateSection(name: 'Service & Panel', sortOrder: 0, items: [
-        TemplateItem(name: 'Service size adequate per load calc', sortOrder: 0, weight: 3),
-        TemplateItem(name: 'Panel accessible (30x36 clear)', sortOrder: 1, weight: 2),
-        TemplateItem(name: 'Grounding electrode system', sortOrder: 2, weight: 3),
-        TemplateItem(name: 'Main bonding jumper', sortOrder: 3, weight: 3),
+      TemplateSection(name: 'Service & Panel (NEC 230, 408)', sortOrder: 0, items: [
+        TemplateItem(name: 'Service size per load calculation (NEC 220)', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Panel clearance 30"W × 36"D × 78"H (NEC 110.26)', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Grounding electrode system — rods, Ufer (NEC 250.50)', sortOrder: 2, weight: 3),
+        TemplateItem(name: 'Main bonding jumper installed (NEC 250.28)', sortOrder: 3, weight: 3),
+        TemplateItem(name: 'Neutral/ground separation at panel (NEC 250.142)', sortOrder: 4, weight: 3),
+        TemplateItem(name: 'Service disconnect accessible, labeled (NEC 230.70)', sortOrder: 5, weight: 2),
+        TemplateItem(name: 'Panel directory / circuit labeling', sortOrder: 6, weight: 1),
+        TemplateItem(name: 'Proper knockouts — no open holes in panel', sortOrder: 7, weight: 1),
       ]),
-      TemplateSection(name: 'Branch Circuits', sortOrder: 1, items: [
-        TemplateItem(name: 'Wire sizing matches breaker', sortOrder: 0, weight: 3),
-        TemplateItem(name: 'Box fill calculations', sortOrder: 1, weight: 2),
-        TemplateItem(name: 'Boxes secured and accessible', sortOrder: 2, weight: 2),
-        TemplateItem(name: 'NM cable properly stapled (12" / 4.5ft)', sortOrder: 3, weight: 1),
-        TemplateItem(name: 'Nail plates where within 1.25" of edge', sortOrder: 4, weight: 2),
+      TemplateSection(name: 'Branch Circuits (NEC 210)', sortOrder: 1, items: [
+        TemplateItem(name: 'Wire sizing matches breaker rating (NEC 240.4)', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Box fill calculations correct (NEC 314.16)', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Boxes secured and accessible (NEC 314.23)', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'NM cable stapled 12" from box, 4.5ft intervals (NEC 334.30)', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Nail plates where cable within 1.25" of edge (NEC 300.4(A))', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Proper connectors at all box entries (NEC 314.17)', sortOrder: 5, weight: 1),
+        TemplateItem(name: 'Maximum circuit lengths — voltage drop <3% (NEC 210.19 FPN)', sortOrder: 6, weight: 1),
+        TemplateItem(name: 'Multi-wire branch circuits — handle ties (NEC 210.4(B))', sortOrder: 7, weight: 2),
       ]),
-      TemplateSection(name: 'AFCI / GFCI', sortOrder: 2, items: [
-        TemplateItem(name: 'AFCI protection — bedrooms (210.12)', sortOrder: 0, weight: 3),
-        TemplateItem(name: 'AFCI protection — living areas (210.12)', sortOrder: 1, weight: 3),
-        TemplateItem(name: 'GFCI — bathrooms (210.8)', sortOrder: 2, weight: 3),
-        TemplateItem(name: 'GFCI — kitchen countertop (210.8)', sortOrder: 3, weight: 3),
-        TemplateItem(name: 'GFCI — garage (210.8)', sortOrder: 4, weight: 3),
-        TemplateItem(name: 'GFCI — exterior (210.8)', sortOrder: 5, weight: 3),
-        TemplateItem(name: 'GFCI — laundry (210.8)', sortOrder: 6, weight: 2),
+      TemplateSection(name: 'Dedicated Circuits (NEC 210.11, 422)', sortOrder: 2, items: [
+        TemplateItem(name: 'Kitchen — two 20A small appliance circuits (NEC 210.11(C)(1))', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Laundry — 20A dedicated circuit (NEC 210.11(C)(2))', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Bathroom — 20A dedicated or shared bath-only (NEC 210.11(C)(3))', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Dishwasher — dedicated circuit (NEC 422.12)', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Disposal — dedicated or shared with dishwasher', sortOrder: 4, weight: 1),
+        TemplateItem(name: 'Range/oven — proper wire size for nameplate', sortOrder: 5, weight: 2),
+        TemplateItem(name: 'Dryer — 30A/240V dedicated (NEC 250.140)', sortOrder: 6, weight: 2),
+        TemplateItem(name: 'HVAC — dedicated circuit per equipment nameplate', sortOrder: 7, weight: 2),
       ]),
-      TemplateSection(name: 'Smoke & CO', sortOrder: 3, items: [
-        TemplateItem(name: 'Smoke detectors — each bedroom', sortOrder: 0, weight: 3),
-        TemplateItem(name: 'Smoke detectors — hallway outside bedrooms', sortOrder: 1, weight: 3),
-        TemplateItem(name: 'Smoke detectors — each level', sortOrder: 2, weight: 3),
-        TemplateItem(name: 'CO detectors per local code', sortOrder: 3, weight: 2),
-        TemplateItem(name: 'Interconnected (hardwired)', sortOrder: 4, weight: 2),
+      TemplateSection(name: 'AFCI / GFCI (NEC 210.8, 210.12)', sortOrder: 3, items: [
+        TemplateItem(name: 'AFCI — all habitable rooms (NEC 210.12(A))', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'AFCI — kitchens, laundry (NEC 210.12(A))', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'GFCI — bathrooms (NEC 210.8(A)(1))', sortOrder: 2, weight: 3),
+        TemplateItem(name: 'GFCI — kitchen countertop within 6ft of sink (NEC 210.8(A)(6))', sortOrder: 3, weight: 3),
+        TemplateItem(name: 'GFCI — garage (NEC 210.8(A)(2))', sortOrder: 4, weight: 3),
+        TemplateItem(name: 'GFCI — exterior (NEC 210.8(A)(3))', sortOrder: 5, weight: 3),
+        TemplateItem(name: 'GFCI — laundry (NEC 210.8(A)(10))', sortOrder: 6, weight: 2),
+        TemplateItem(name: 'GFCI — unfinished basement (NEC 210.8(A)(5))', sortOrder: 7, weight: 2),
+        TemplateItem(name: 'GFCI — crawl space (NEC 210.8(A)(4))', sortOrder: 8, weight: 2),
+      ]),
+      TemplateSection(name: 'Smoke & CO (NEC 760, IRC R314/R315)', sortOrder: 4, items: [
+        TemplateItem(name: 'Smoke detector — each bedroom (IRC R314.3)', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Smoke detector — hallway outside bedrooms (IRC R314.3)', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'Smoke detector — each level including basement (IRC R314.3)', sortOrder: 2, weight: 3),
+        TemplateItem(name: 'CO detector — outside sleeping areas (IRC R315.1)', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'CO detector — each level with fuel-burning appliance', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'All interconnected — hardwired with battery backup', sortOrder: 5, weight: 2),
+      ]),
+      TemplateSection(name: 'EV Ready (NEC 625)', sortOrder: 5, items: [
+        TemplateItem(name: 'EV-ready outlet — 240V/40A in garage (NEC 625.40)', sortOrder: 0, weight: 1),
+        TemplateItem(name: 'Circuit breaker sized for continuous load (125%)', sortOrder: 1, weight: 1),
+        TemplateItem(name: 'Conduit/raceway for future EVSE if required by jurisdiction', sortOrder: 2, weight: 1),
+      ]),
+      TemplateSection(name: 'Swimming Pool / Spa (NEC 680)', sortOrder: 6, items: [
+        TemplateItem(name: 'Equipotential bonding grid (NEC 680.26)', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'GFCI protection — all pool equipment (NEC 680.22)', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'No receptacles within 6ft of pool edge (NEC 680.22(A))', sortOrder: 2, weight: 3),
+        TemplateItem(name: 'Luminaire clearances — 12ft horizontal, 5ft above (NEC 680.22(B))', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Disconnect within sight of equipment (NEC 680.12)', sortOrder: 4, weight: 2),
+      ]),
+      TemplateSection(name: 'Low Voltage / Communication', sortOrder: 7, items: [
+        TemplateItem(name: 'Low-voltage boxes — correct type, no mixing with line voltage (NEC 725.136)', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Structured media panel installed', sortOrder: 1, weight: 1),
+        TemplateItem(name: 'Coax/Cat6 home runs to panel', sortOrder: 2, weight: 1),
+        TemplateItem(name: 'Separation from power conductors (NEC 725.136(A))', sortOrder: 3, weight: 1),
       ]),
     ],
     createdAt: _epoch,
@@ -177,7 +436,81 @@ final List<InspectionTemplate> systemInspectionTemplates = [
   ),
 
   // ============================================================
-  // ROOFING (DAMAGE ASSESSMENT)
+  // 5. ELECTRICAL FINAL — NEC (NFPA 70) [NEW]
+  // ============================================================
+
+  InspectionTemplate(
+    id: 'system-electrical-final',
+    name: 'Electrical Final Inspection',
+    trade: 'electrical',
+    inspectionType: InspectionType.finalInspection,
+    isSystem: true,
+    version: 1,
+    sections: [
+      TemplateSection(name: 'Devices & Covers', sortOrder: 0, items: [
+        TemplateItem(name: 'All receptacles installed, tested (NEC 406.4)', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Tamper-resistant receptacles where required (NEC 406.12)', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Weather-resistant receptacles — wet/damp locations (NEC 406.9)', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Receptacle spacing — 12ft max along walls (NEC 210.52(A))', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Kitchen countertop receptacles — 4ft spacing, 20" above (NEC 210.52(C))', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'All switches operational, correct type (3-way, 4-way)', sortOrder: 5, weight: 1),
+        TemplateItem(name: 'All blank covers installed — no open boxes (NEC 314.25)', sortOrder: 6, weight: 2),
+        TemplateItem(name: 'Outdoor covers — in-use type for wet locations (NEC 406.9(B))', sortOrder: 7, weight: 2),
+      ]),
+      TemplateSection(name: 'Panel & Labeling', sortOrder: 1, items: [
+        TemplateItem(name: 'Panel cover installed — all knockouts filled (NEC 408.7)', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Circuit directory complete and legible (NEC 408.4)', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'AFCI/GFCI breakers labeled with protected areas', sortOrder: 2, weight: 1),
+        TemplateItem(name: 'Available spaces for future circuits', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Panel accessible — 30×36×78 clear (NEC 110.26)', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Arc-fault and ground-fault labels at devices (NEC 210.12(A))', sortOrder: 5, weight: 1),
+      ]),
+      TemplateSection(name: 'Luminaires / Lighting', sortOrder: 2, items: [
+        TemplateItem(name: 'All fixtures installed and operational (NEC 410)', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Wet/damp location fixtures properly rated (NEC 410.10)', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Recessed fixtures — IC rated where insulated (NEC 410.116)', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Closet fixtures — proper clearance from storage (NEC 410.16)', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Exterior lighting — operational', sortOrder: 4, weight: 1),
+        TemplateItem(name: 'Emergency/exit lighting if required (NEC 700)', sortOrder: 5, weight: 2),
+      ]),
+      TemplateSection(name: 'AFCI / GFCI Verification', sortOrder: 3, items: [
+        TemplateItem(name: 'Test all AFCI breakers — trip and reset', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Test all GFCI devices — trip and reset', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'Verify downstream protection on each circuit', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Polarity check — all receptacles (hot/neutral/ground)', sortOrder: 3, weight: 3),
+        TemplateItem(name: 'Ground impedance test', sortOrder: 4, weight: 2),
+      ]),
+      TemplateSection(name: 'Smoke & CO Final', sortOrder: 4, items: [
+        TemplateItem(name: 'All smoke detectors — test button, audible alarm', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'All CO detectors — test button, audible alarm', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'Interconnection verified — trigger one, all alarm', sortOrder: 2, weight: 3),
+        TemplateItem(name: 'Battery backup verified on each unit', sortOrder: 3, weight: 2),
+      ]),
+      TemplateSection(name: 'Appliance Connections', sortOrder: 5, items: [
+        TemplateItem(name: 'Range/oven — correct receptacle, anti-tip bracket', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Dryer — correct receptacle type (4-prong for new)', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Dishwasher — hardwired or cord/plug correct', sortOrder: 2, weight: 1),
+        TemplateItem(name: 'Disposal — switched outlet or hardwired', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'HVAC equipment — disconnect, whip, nameplate', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Water heater — disconnect, wire size per nameplate', sortOrder: 5, weight: 2),
+        TemplateItem(name: 'Garage door opener — ceiling receptacle', sortOrder: 6, weight: 1),
+      ]),
+      TemplateSection(name: 'Exterior / Final Checks', sortOrder: 6, items: [
+        TemplateItem(name: 'Meter socket — proper connection, utility release', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Service entrance cable — proper support (NEC 230.51)', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Grounding electrode conductor — continuous, proper size (NEC 250.66)', sortOrder: 2, weight: 3),
+        TemplateItem(name: 'Outdoor receptacles — all GFCI protected, in-use covers', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Landscape lighting — low-voltage transformer location', sortOrder: 4, weight: 1),
+        TemplateItem(name: 'All penetrations sealed (fire-stop, weatherproof)', sortOrder: 5, weight: 1),
+        TemplateItem(name: 'Final inspection label / sticker applied', sortOrder: 6, weight: 1),
+      ]),
+    ],
+    createdAt: _epoch,
+    updatedAt: _epoch,
+  ),
+
+  // ============================================================
+  // 6. ROOFING DAMAGE ASSESSMENT
   // ============================================================
 
   InspectionTemplate(
@@ -186,41 +519,67 @@ final List<InspectionTemplate> systemInspectionTemplates = [
     trade: 'roofing',
     inspectionType: InspectionType.roofing,
     isSystem: true,
-    version: 1,
+    version: 2,
     sections: [
       TemplateSection(name: 'Exterior Overview', sortOrder: 0, items: [
-        TemplateItem(name: 'Roof type and material', sortOrder: 0),
-        TemplateItem(name: 'Approximate age of roof', sortOrder: 1),
-        TemplateItem(name: 'Number of layers', sortOrder: 2),
-        TemplateItem(name: 'Overall condition (pre-damage)', sortOrder: 3),
+        TemplateItem(name: 'Roof type — shingle/tile/metal/flat/slate', sortOrder: 0),
+        TemplateItem(name: 'Material — manufacturer, product if identifiable', sortOrder: 1),
+        TemplateItem(name: 'Approximate age of roof system', sortOrder: 2),
+        TemplateItem(name: 'Number of layers (tear-off required at 2+)', sortOrder: 3),
+        TemplateItem(name: 'Overall pre-loss condition — maintenance history', sortOrder: 4),
+        TemplateItem(name: 'Roof slope / pitch measurement', sortOrder: 5),
+        TemplateItem(name: 'Total square footage — measure or diagram', sortOrder: 6),
       ]),
-      TemplateSection(name: 'Damage Assessment', sortOrder: 1, items: [
-        TemplateItem(name: 'Hail damage — shingles', sortOrder: 0, weight: 3),
-        TemplateItem(name: 'Wind damage — lifted/missing shingles', sortOrder: 1, weight: 3),
-        TemplateItem(name: 'Debris impact damage', sortOrder: 2, weight: 2),
-        TemplateItem(name: 'Granule loss pattern', sortOrder: 3, weight: 2),
-        TemplateItem(name: 'Cracking / splitting', sortOrder: 4, weight: 2),
-        TemplateItem(name: 'Number of damaged shingles per test square', sortOrder: 5, weight: 3),
+      TemplateSection(name: 'Hail Damage', sortOrder: 1, items: [
+        TemplateItem(name: 'Shingle bruising — random pattern, soft spots', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Granule displacement — exposed fiberglass mat', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'Cracking or fracturing of shingle', sortOrder: 2, weight: 3),
+        TemplateItem(name: 'Test squares — per-square hit count methodology', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Ridge cap damage', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Hail size estimate — ground spatter, soft metal hits', sortOrder: 5),
+        TemplateItem(name: 'Directional pattern — consistent with storm path', sortOrder: 6),
       ]),
-      TemplateSection(name: 'Penetrations & Flashings', sortOrder: 2, items: [
-        TemplateItem(name: 'Ridge cap condition', sortOrder: 0, weight: 2),
-        TemplateItem(name: 'Pipe boots / jack flashings', sortOrder: 1, weight: 2),
-        TemplateItem(name: 'Valley flashings', sortOrder: 2, weight: 2),
-        TemplateItem(name: 'Chimney flashing', sortOrder: 3, weight: 2),
-        TemplateItem(name: 'Vent caps / turbines', sortOrder: 4, weight: 1),
-        TemplateItem(name: 'Skylight seals', sortOrder: 5, weight: 2),
+      TemplateSection(name: 'Wind Damage', sortOrder: 2, items: [
+        TemplateItem(name: 'Lifted / curled shingles — seal strip failure', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Missing shingles — count and location', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'Creased shingles — wind crease pattern', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Exposed nail heads / underlayment', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Edge/rake damage — drip edge, fascia', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Debris impact damage — tree limbs, objects', sortOrder: 5, weight: 2),
       ]),
-      TemplateSection(name: 'Gutters & Drainage', sortOrder: 3, items: [
-        TemplateItem(name: 'Gutter damage / dents', sortOrder: 0, weight: 1),
-        TemplateItem(name: 'Downspout damage', sortOrder: 1, weight: 1),
-        TemplateItem(name: 'Fascia / soffit damage', sortOrder: 2, weight: 2),
-        TemplateItem(name: 'Drip edge condition', sortOrder: 3, weight: 1),
+      TemplateSection(name: 'Flashings & Penetrations', sortOrder: 3, items: [
+        TemplateItem(name: 'Pipe boots — cracked, split collars', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Chimney flashing — step, counter, cricket', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Wall flashing — kick-out, headwall', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Valley flashing — open or woven, damage', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Skylight flashing and curb', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'HVAC curbs — penetration seals', sortOrder: 5, weight: 1),
+        TemplateItem(name: 'Satellite/antenna mounts — sealed', sortOrder: 6, weight: 1),
       ]),
-      TemplateSection(name: 'Interior Evidence', sortOrder: 4, items: [
-        TemplateItem(name: 'Water stains on ceiling', sortOrder: 0, weight: 3),
-        TemplateItem(name: 'Active leaks', sortOrder: 1, weight: 3),
-        TemplateItem(name: 'Attic — daylight visible', sortOrder: 2, weight: 3),
-        TemplateItem(name: 'Attic — moisture / mold', sortOrder: 3, weight: 3),
+      TemplateSection(name: 'Gutters & Drainage', sortOrder: 4, items: [
+        TemplateItem(name: 'Gutter dents — hail impact evidence', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Gutter alignment — proper slope to downspouts', sortOrder: 1),
+        TemplateItem(name: 'Downspout damage — bent, disconnected', sortOrder: 2),
+        TemplateItem(name: 'Splash blocks / extensions — proper drainage', sortOrder: 3),
+        TemplateItem(name: 'Fascia and soffit — damage, rot', sortOrder: 4, weight: 2),
+      ]),
+      TemplateSection(name: 'Siding & Collateral', sortOrder: 5, items: [
+        TemplateItem(name: 'Siding — hail dents, cracks (vinyl/aluminum/wood)', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Window screens — holes, dents', sortOrder: 1),
+        TemplateItem(name: 'Window frames / glazing — cracks', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Paint damage — chips from impact', sortOrder: 3),
+        TemplateItem(name: 'Fence — damage from wind/debris', sortOrder: 4),
+        TemplateItem(name: 'AC condenser — fin damage, fan guard', sortOrder: 5),
+        TemplateItem(name: 'Outdoor fixtures — lights, mailbox', sortOrder: 6),
+      ]),
+      TemplateSection(name: 'Documentation / Protocol', sortOrder: 6, items: [
+        TemplateItem(name: 'Date of loss documented', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Overall photos — all 4 elevations', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Close-up damage photos with scale reference', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Test square photos — chalk circle methodology', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Ground-level soft metal photos (AC, mailbox, vents)', sortOrder: 4),
+        TemplateItem(name: 'Diagram — damage locations marked on roof drawing', sortOrder: 5, weight: 2),
+        TemplateItem(name: 'Adjacent property damage noted', sortOrder: 6),
       ]),
     ],
     createdAt: _epoch,
@@ -228,43 +587,75 @@ final List<InspectionTemplate> systemInspectionTemplates = [
   ),
 
   // ============================================================
-  // FIRE / LIFE SAFETY
+  // 7. FIRE & LIFE SAFETY — NFPA
   // ============================================================
 
   InspectionTemplate(
     id: 'system-fire-safety',
     name: 'Fire & Life Safety',
-    trade: 'fire_protection',
+    trade: 'general',
     inspectionType: InspectionType.fireLifeSafety,
     isSystem: true,
-    version: 1,
+    version: 2,
     sections: [
-      TemplateSection(name: 'Fire Alarm System', sortOrder: 0, items: [
-        TemplateItem(name: 'Panel in normal condition', sortOrder: 0, weight: 3),
-        TemplateItem(name: 'Pull stations accessible and tested', sortOrder: 1, weight: 3),
-        TemplateItem(name: 'Smoke detectors functional', sortOrder: 2, weight: 3),
-        TemplateItem(name: 'Horn/strobe devices functional', sortOrder: 3, weight: 2),
-        TemplateItem(name: 'Monitoring service active', sortOrder: 4, weight: 2),
+      TemplateSection(name: 'Fire Alarm System (NFPA 72)', sortOrder: 0, items: [
+        TemplateItem(name: 'Fire alarm control panel — normal condition', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Initiating devices — smoke detectors tested (NFPA 72 14.4.5)', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'Heat detectors — tested per schedule', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Pull stations — accessible, tested (NFPA 72 14.4.6)', sortOrder: 3, weight: 3),
+        TemplateItem(name: 'Notification appliances — horns/strobes visible/audible', sortOrder: 4, weight: 3),
+        TemplateItem(name: 'Battery backup — capacity test', sortOrder: 5, weight: 2),
+        TemplateItem(name: 'Monitoring — central station connection verified', sortOrder: 6, weight: 2),
+        TemplateItem(name: 'Annual inspection current — tag/certificate', sortOrder: 7, weight: 2),
       ]),
-      TemplateSection(name: 'Sprinkler System', sortOrder: 1, items: [
-        TemplateItem(name: 'Gauges in normal range', sortOrder: 0, weight: 2),
-        TemplateItem(name: 'Valve positions correct (open)', sortOrder: 1, weight: 3),
-        TemplateItem(name: 'Sprinkler heads — no paint/damage', sortOrder: 2, weight: 2),
-        TemplateItem(name: '18" clearance below heads', sortOrder: 3, weight: 2),
-        TemplateItem(name: 'FDC accessible and capped', sortOrder: 4, weight: 2),
+      TemplateSection(name: 'Sprinkler System (NFPA 13/25)', sortOrder: 1, items: [
+        TemplateItem(name: 'Sprinkler heads — unobstructed, correct orientation', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Sprinkler head clearance — 18" below heads (NFPA 13 8.5.5)', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'No painted/loaded/damaged heads', sortOrder: 2, weight: 3),
+        TemplateItem(name: 'Spare head box with wrench (NFPA 13 6.2.9)', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Main control valve — open, supervised/locked (NFPA 25 13.1)', sortOrder: 4, weight: 3),
+        TemplateItem(name: 'FDC — caps, clappers, clear access', sortOrder: 5, weight: 2),
+        TemplateItem(name: 'Riser room — clean, accessible, heated', sortOrder: 6, weight: 1),
+        TemplateItem(name: 'Quarterly/annual inspection current', sortOrder: 7, weight: 2),
       ]),
-      TemplateSection(name: 'Means of Egress', sortOrder: 2, items: [
-        TemplateItem(name: 'Exit signs illuminated', sortOrder: 0, weight: 3),
-        TemplateItem(name: 'Emergency lighting functional', sortOrder: 1, weight: 3),
-        TemplateItem(name: 'Exit paths clear / unobstructed', sortOrder: 2, weight: 3),
-        TemplateItem(name: 'Fire doors — self-closing, latching', sortOrder: 3, weight: 3),
-        TemplateItem(name: 'Stairwell doors not propped open', sortOrder: 4, weight: 2),
+      TemplateSection(name: 'Standpipe System (NFPA 14)', sortOrder: 2, items: [
+        TemplateItem(name: 'Hose connections — caps, accessible', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Pressure gauges readable, in range', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Flow test current — per NFPA 25', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Signage at connections', sortOrder: 3, weight: 1),
       ]),
-      TemplateSection(name: 'Extinguishers', sortOrder: 3, items: [
-        TemplateItem(name: 'Proper type for area (A/B/C/K)', sortOrder: 0, weight: 2),
-        TemplateItem(name: 'Mounted and accessible', sortOrder: 1, weight: 2),
-        TemplateItem(name: 'Current annual inspection tag', sortOrder: 2, weight: 2),
-        TemplateItem(name: 'Pressure gauge in green', sortOrder: 3, weight: 1),
+      TemplateSection(name: 'Portable Extinguishers (NFPA 10)', sortOrder: 3, items: [
+        TemplateItem(name: 'Proper type and size for hazard class (NFPA 10 6.2)', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Mounted, visible, accessible (NFPA 10 6.1.3)', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Maximum travel distance — 75ft (A), 50ft (B) (NFPA 10 6.2)', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Monthly visual inspection — tag current', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Annual maintenance — tag/certification', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Pressure gauge in green zone', sortOrder: 5, weight: 1),
+        TemplateItem(name: 'Pin and tamper seal intact', sortOrder: 6, weight: 1),
+      ]),
+      TemplateSection(name: 'Kitchen Hood Suppression (NFPA 96)', sortOrder: 4, items: [
+        TemplateItem(name: 'Hood suppression system — nozzles aimed at hazard', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Fusible links — clean, not painted (NFPA 96 11.4)', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'Manual pull station — accessible (NFPA 96 10.5)', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Gas shutoff — automatic on activation', sortOrder: 3, weight: 3),
+        TemplateItem(name: 'Semi-annual inspection current — certification', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Hood and duct cleaning — current per schedule', sortOrder: 5, weight: 2),
+      ]),
+      TemplateSection(name: 'Means of Egress (NFPA 101)', sortOrder: 5, items: [
+        TemplateItem(name: 'Exit doors — open freely, not locked/blocked (NFPA 101 7.2.1)', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Exit signs — illuminated, visible (NFPA 101 7.10)', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'Emergency lighting — 90-minute battery test (NFPA 101 7.9)', sortOrder: 2, weight: 3),
+        TemplateItem(name: 'Corridors — clear width maintained, no storage', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Stairwells — clear, doors self-closing, fire-rated', sortOrder: 4, weight: 3),
+        TemplateItem(name: 'Occupant load posted — max occupancy signs', sortOrder: 5, weight: 1),
+        TemplateItem(name: 'Evacuation maps posted — current, visible', sortOrder: 6, weight: 1),
+      ]),
+      TemplateSection(name: 'Emergency Power (NFPA 110)', sortOrder: 6, items: [
+        TemplateItem(name: 'Generator — weekly run test logged (NFPA 110 8.4.2)', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Transfer switch — monthly test (NFPA 110 8.4.4)', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Fuel level adequate — minimum 50%', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Generator room — ventilation, clear access', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Load bank test current — annual (NFPA 110 8.4.9)', sortOrder: 4, weight: 2),
       ]),
     ],
     createdAt: _epoch,
@@ -272,7 +663,7 @@ final List<InspectionTemplate> systemInspectionTemplates = [
   ),
 
   // ============================================================
-  // PLUMBING ROUGH-IN
+  // 8. PLUMBING ROUGH-IN — IPC/UPC
   // ============================================================
 
   InspectionTemplate(
@@ -281,27 +672,67 @@ final List<InspectionTemplate> systemInspectionTemplates = [
     trade: 'plumbing',
     inspectionType: InspectionType.roughIn,
     isSystem: true,
-    version: 1,
+    version: 2,
     sections: [
-      TemplateSection(name: 'Water Supply', sortOrder: 0, items: [
-        TemplateItem(name: 'Pipe material approved', sortOrder: 0, weight: 2),
-        TemplateItem(name: 'Proper sizing per fixture count', sortOrder: 1, weight: 2),
-        TemplateItem(name: 'Pressure test passed (no leaks)', sortOrder: 2, weight: 3),
-        TemplateItem(name: 'Shutoff valves accessible', sortOrder: 3, weight: 2),
-        TemplateItem(name: 'Hot/cold properly marked', sortOrder: 4, weight: 1),
+      TemplateSection(name: 'Water Supply (IPC Ch 6)', sortOrder: 0, items: [
+        TemplateItem(name: 'Main water line — size per fixture count (IPC 604.3)', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Pipe material — approved (copper, PEX, CPVC) (IPC 605.3)', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Supply lines properly supported — hangers per code (IPC 308)', sortOrder: 2, weight: 1),
+        TemplateItem(name: 'Pressure test — 50 PSI for 15 min, no drop (IPC 312.5)', sortOrder: 3, weight: 3),
+        TemplateItem(name: 'Shutoff valves at each fixture location', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Main shutoff valve accessible and labeled', sortOrder: 5, weight: 2),
+        TemplateItem(name: 'Anti-siphon / backflow prevention (IPC 608)', sortOrder: 6, weight: 3),
+        TemplateItem(name: 'Hot/cold piping — not reversed, proper sides', sortOrder: 7, weight: 1),
+        TemplateItem(name: 'Nail plates — pipes within 1.5" of framing edge (IPC 305.6)', sortOrder: 8, weight: 2),
       ]),
-      TemplateSection(name: 'Drain/Waste/Vent (DWV)', sortOrder: 1, items: [
-        TemplateItem(name: 'Proper slope (1/4" per foot min)', sortOrder: 0, weight: 3),
-        TemplateItem(name: 'Vent termination above roofline', sortOrder: 1, weight: 3),
-        TemplateItem(name: 'Cleanouts accessible', sortOrder: 2, weight: 2),
-        TemplateItem(name: 'Trap arms within code distance', sortOrder: 3, weight: 2),
-        TemplateItem(name: 'DWV test passed (water/air)', sortOrder: 4, weight: 3),
+      TemplateSection(name: 'Drain-Waste-Vent (IPC Ch 7/9)', sortOrder: 1, items: [
+        TemplateItem(name: 'DWV pipe — proper material, schedule (IPC 702)', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Drain sizing — matches fixture unit load (IPC 710)', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'Slope — 1/4" per foot for 3" and smaller, 1/8" for 4"+ (IPC 704.1)', sortOrder: 2, weight: 3),
+        TemplateItem(name: 'Cleanouts — accessible, at base of stacks (IPC 708)', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Proper fittings — no double wyes, correct direction (IPC 706)', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'No S-traps — P-traps only with proper venting', sortOrder: 5, weight: 3),
+        TemplateItem(name: 'Drainage test — fill system, no leaks (IPC 312.2)', sortOrder: 6, weight: 3),
       ]),
-      TemplateSection(name: 'Gas Piping', sortOrder: 2, items: [
-        TemplateItem(name: 'Gas test passed (no pressure drop)', sortOrder: 0, weight: 3),
-        TemplateItem(name: 'CSST properly bonded', sortOrder: 1, weight: 3),
-        TemplateItem(name: 'Shutoff valves at each appliance', sortOrder: 2, weight: 2),
-        TemplateItem(name: 'Pipe properly supported', sortOrder: 3, weight: 1),
+      TemplateSection(name: 'Venting (IPC Ch 9)', sortOrder: 2, items: [
+        TemplateItem(name: 'Each fixture vented — individual, wet, or common (IPC 901)', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Vent sizing — per trap arm distance table (IPC 906)', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Vent termination — 6" above roof, 10ft from openable window (IPC 903.1)', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'No crown venting — vent connects above centerline of drain', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'AAV (air admittance valve) — if allowed by jurisdiction (IPC 917)', sortOrder: 4, weight: 1),
+        TemplateItem(name: 'Vent pipe slope — back to drain (no belly/trap in vent)', sortOrder: 5, weight: 2),
+      ]),
+      TemplateSection(name: 'Water Heater (IPC Ch 5)', sortOrder: 3, items: [
+        TemplateItem(name: 'TPR valve — discharge pipe to floor/exterior (IPC 504.6)', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Discharge pipe — no reduction, no trap, no thread at end', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'Expansion tank — if closed system (IPC 607.3.2)', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Seismic strapping — if required by jurisdiction', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Pan and drain — if in habitable space or attic (IPC 504.7)', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Gas line / electrical — proper connection per type', sortOrder: 5, weight: 2),
+        TemplateItem(name: 'Clearance to combustibles — per manufacturer specs', sortOrder: 6, weight: 2),
+      ]),
+      TemplateSection(name: 'Fixtures (IPC Ch 4)', sortOrder: 4, items: [
+        TemplateItem(name: 'Fixture locations per approved plan', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Toilet flange — set height for finish floor (IPC 405.4)', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Shower pan — liner test (2" water, 24 hrs) (IPC 417.5)', sortOrder: 2, weight: 3),
+        TemplateItem(name: 'Tub/shower valve — anti-scald (ASSE 1016) (IPC 424.3)', sortOrder: 3, weight: 3),
+        TemplateItem(name: 'Washing machine box — supply + drain (IPC 406.3)', sortOrder: 4, weight: 1),
+        TemplateItem(name: 'Floor drains — trap primer or trap seal (IPC 1002.4)', sortOrder: 5, weight: 1),
+      ]),
+      TemplateSection(name: 'Backflow Prevention (IPC 608)', sortOrder: 5, items: [
+        TemplateItem(name: 'Air gaps — proper per fixture type (IPC 608.13)', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Backflow preventer on irrigation — if connected (IPC 608.16)', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Hose bibb vacuum breakers (IPC 608.15)', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Boiler fill — backflow device installed', sortOrder: 3, weight: 2),
+      ]),
+      TemplateSection(name: 'Gas Piping (IFGC)', sortOrder: 6, items: [
+        TemplateItem(name: 'Gas pipe material — black iron, CSST, approved (IFGC 403)', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Gas line sizing — adequate for BTU demand (IFGC 402)', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'CSST bonding — per manufacturer instructions (IFGC 310.1.1)', sortOrder: 2, weight: 3),
+        TemplateItem(name: 'Pressure test — per jurisdiction requirement (IFGC 406)', sortOrder: 3, weight: 3),
+        TemplateItem(name: 'Gas shutoffs — accessible at each appliance (IFGC 409.5)', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Drip legs / sediment traps — at each appliance (IFGC 408.4)', sortOrder: 5, weight: 2),
+        TemplateItem(name: 'Meter and regulator — accessible, protected', sortOrder: 6, weight: 1),
       ]),
     ],
     createdAt: _epoch,
@@ -309,36 +740,140 @@ final List<InspectionTemplate> systemInspectionTemplates = [
   ),
 
   // ============================================================
-  // HVAC
+  // 9. PLUMBING FINAL — IPC/UPC [NEW]
+  // ============================================================
+
+  InspectionTemplate(
+    id: 'system-plumbing-final',
+    name: 'Plumbing Final Inspection',
+    trade: 'plumbing',
+    inspectionType: InspectionType.finalInspection,
+    isSystem: true,
+    version: 1,
+    sections: [
+      TemplateSection(name: 'Fixture Trim', sortOrder: 0, items: [
+        TemplateItem(name: 'All faucets — hot/cold, no leaks, proper flow', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Toilets — flush, fill, no rocking, sealed to floor', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Sinks — drain, stopper, no leaks at connections', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Tubs — fills, drains, overflow connected', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Showers — head, diverter, anti-scald valve (ASSE 1016)', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Kitchen sink — sprayer, soap dispenser, air gap for DW', sortOrder: 5, weight: 1),
+        TemplateItem(name: 'Utility/laundry sink — if applicable', sortOrder: 6, weight: 1),
+        TemplateItem(name: 'All supply escutcheons installed', sortOrder: 7, weight: 1),
+      ]),
+      TemplateSection(name: 'Water Heater Startup', sortOrder: 1, items: [
+        TemplateItem(name: 'Water heater — operational, reaches set temp', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'TPR valve — tested, discharge pipe correct (IPC 504.6)', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'Temperature — max 120°F at fixtures (anti-scald)', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Expansion tank — charged and connected', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'No leaks at connections, unions, flex lines', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Venting — proper category, rise, termination (gas units)', sortOrder: 5, weight: 3),
+      ]),
+      TemplateSection(name: 'Gas Appliance Connections', sortOrder: 2, items: [
+        TemplateItem(name: 'Gas range — connection tight, no leaks (soap test)', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Gas dryer — flex connector, shutoff accessible', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Gas fireplace — shutoff, key valve, venting', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Outdoor gas grill line — shutoff, proper connector', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Gas meter — final reading, no leaks at meter set', sortOrder: 4, weight: 2),
+      ]),
+      TemplateSection(name: 'Drainage Verification', sortOrder: 3, items: [
+        TemplateItem(name: 'All drains — flow test, no slow drains', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'No sewer gas smell — traps primed', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Cleanout access — not covered by finish work', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Garbage disposal — operates, no leaks', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Dishwasher drain — high loop or air gap (IPC 802.1.6)', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Washing machine drain — standpipe height (IPC 802.4)', sortOrder: 5, weight: 1),
+      ]),
+      TemplateSection(name: 'Backflow / Cross-Connection', sortOrder: 4, items: [
+        TemplateItem(name: 'Hose bibbs — vacuum breakers installed (IPC 608.15)', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Irrigation backflow preventer tested', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Air gaps verified at all fixtures', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'No cross-connections found', sortOrder: 3, weight: 3),
+      ]),
+      TemplateSection(name: 'Water Pressure & Flow', sortOrder: 5, items: [
+        TemplateItem(name: 'Static pressure — 40-80 PSI range (IPC 604.8)', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'PRV installed if pressure >80 PSI (IPC 604.8)', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Flow test — adequate at furthest fixture', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'No water hammer — shock arrestors where needed', sortOrder: 3, weight: 1),
+      ]),
+      TemplateSection(name: 'Exterior / Final', sortOrder: 6, items: [
+        TemplateItem(name: 'Hose bibbs — operational, frost-free if applicable', sortOrder: 0, weight: 1),
+        TemplateItem(name: 'Sewer line — connection to main verified', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'Sump pump — operational, check valve, discharge point', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'All penetrations sealed (floor, wall, roof)', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Permit final — signed and posted', sortOrder: 4, weight: 2),
+      ]),
+    ],
+    createdAt: _epoch,
+    updatedAt: _epoch,
+  ),
+
+  // ============================================================
+  // 10. HVAC ROUGH-IN — IMC
   // ============================================================
 
   InspectionTemplate(
     id: 'system-hvac-rough',
     name: 'HVAC Rough-In',
     trade: 'hvac',
-    inspectionType: InspectionType.hvac,
+    inspectionType: InspectionType.roughIn,
     isSystem: true,
-    version: 1,
+    version: 2,
     sections: [
-      TemplateSection(name: 'Ductwork', sortOrder: 0, items: [
-        TemplateItem(name: 'Duct sizing per Manual D', sortOrder: 0, weight: 2),
-        TemplateItem(name: 'Connections sealed (mastic/tape)', sortOrder: 1, weight: 2),
-        TemplateItem(name: 'Duct leakage test passed (IECC)', sortOrder: 2, weight: 3),
-        TemplateItem(name: 'Supply/return properly located', sortOrder: 3, weight: 2),
-        TemplateItem(name: 'Insulation on unconditioned ducts', sortOrder: 4, weight: 2),
+      TemplateSection(name: 'Equipment Placement', sortOrder: 0, items: [
+        TemplateItem(name: 'Furnace/AH location per plan — clearance to combustibles (IMC 303)', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Equipment accessible for service (IMC 306)', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Platform height — if in garage (18" min for gas)', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Condensate drain — routed, trapped, proper termination (IMC 307.2)', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Secondary drain pan — if in attic/above ceiling (IMC 307.2.3)', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Safety float switch — secondary pan / drain line', sortOrder: 5, weight: 2),
+        TemplateItem(name: 'Equipment rated for installation location (indoor/outdoor)', sortOrder: 6, weight: 2),
       ]),
-      TemplateSection(name: 'Equipment', sortOrder: 1, items: [
-        TemplateItem(name: 'Equipment sized per Manual J/S', sortOrder: 0, weight: 2),
-        TemplateItem(name: 'Clearances per manufacturer', sortOrder: 1, weight: 2),
-        TemplateItem(name: 'Condensate drain properly routed', sortOrder: 2, weight: 2),
-        TemplateItem(name: 'Refrigerant lines insulated', sortOrder: 3, weight: 1),
-        TemplateItem(name: 'Disconnect switch at equipment', sortOrder: 4, weight: 2),
+      TemplateSection(name: 'Ductwork (IMC Ch 6)', sortOrder: 1, items: [
+        TemplateItem(name: 'Duct sizing — matches Manual D calculations', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Duct material — approved, correct gauge (IMC 603)', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Joints sealed — mastic or approved tape (IMC 603.9)', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Duct supports — max span per material (IMC 603.3)', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Return air path — adequate, no prohibited sources (IMC 601.2)', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Flex duct — proper length, not kinked, fully extended', sortOrder: 5, weight: 2),
+        TemplateItem(name: 'Fire/smoke dampers — at rated assemblies (IMC 607)', sortOrder: 6, weight: 3),
+        TemplateItem(name: 'Duct boots installed — sized for register', sortOrder: 7, weight: 1),
       ]),
-      TemplateSection(name: 'Ventilation', sortOrder: 2, items: [
-        TemplateItem(name: 'Bath fans vented to exterior', sortOrder: 0, weight: 3),
-        TemplateItem(name: 'Range hood vented (if required)', sortOrder: 1, weight: 2),
-        TemplateItem(name: 'Fresh air intake per code', sortOrder: 2, weight: 2),
-        TemplateItem(name: 'Combustion air provided', sortOrder: 3, weight: 3),
+      TemplateSection(name: 'Combustion & Venting (IMC Ch 7-8)', sortOrder: 2, items: [
+        TemplateItem(name: 'Combustion air — adequate supply (IMC Ch 7)', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Flue pipe — proper material, slope, clearance (IMC 801)', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'Flue termination — height, clearance to openings (IMC 802)', sortOrder: 2, weight: 3),
+        TemplateItem(name: 'B-vent / direct vent — per manufacturer specs', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Condensate from high-efficiency equipment — routed properly', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'CO detector near combustion equipment', sortOrder: 5, weight: 2),
+      ]),
+      TemplateSection(name: 'Refrigerant Lines', sortOrder: 3, items: [
+        TemplateItem(name: 'Line set — proper size per equipment specs', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Suction line insulated — full length', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Lines supported — not resting on ground or sharp edges', sortOrder: 2, weight: 1),
+        TemplateItem(name: 'Penetrations sealed at wall/floor', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Line set routed to avoid damage during construction', sortOrder: 4, weight: 1),
+      ]),
+      TemplateSection(name: 'Controls / Thermostat', sortOrder: 4, items: [
+        TemplateItem(name: 'Thermostat wire — proper gauge, # of conductors', sortOrder: 0, weight: 1),
+        TemplateItem(name: 'Thermostat location — interior wall, 5ft height, no drafts', sortOrder: 1, weight: 1),
+        TemplateItem(name: 'Zoning dampers — if multi-zone system', sortOrder: 2, weight: 1),
+        TemplateItem(name: 'Humidistat wire — if whole-house humidifier', sortOrder: 3, weight: 1),
+      ]),
+      TemplateSection(name: 'Exhaust Systems (IMC Ch 5)', sortOrder: 5, items: [
+        TemplateItem(name: 'Bath exhaust fans — ducted to exterior (IMC 501.2)', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Kitchen range hood — duct to exterior, proper size (IMC 505)', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Dryer exhaust — max 35ft equivalent, rigid duct (IMC 504)', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Exhaust fan CFM — meets ventilation requirements (IMC Table 403.3)', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'No exhaust into attic or crawl space', sortOrder: 4, weight: 3),
+      ]),
+      TemplateSection(name: 'Energy Compliance (IECC)', sortOrder: 6, items: [
+        TemplateItem(name: 'Equipment efficiency — meets code minimum (IECC R403.1)', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Duct insulation — R-8 in unconditioned space (IECC R403.3.1)', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Duct leakage — within code limits (IECC R403.3.3)', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Programmable thermostat installed (IECC R403.1.1)', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Manual J load calculation on file', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Manual S equipment selection documented', sortOrder: 5, weight: 1),
       ]),
     ],
     createdAt: _epoch,
@@ -346,7 +881,75 @@ final List<InspectionTemplate> systemInspectionTemplates = [
   ),
 
   // ============================================================
-  // FOUNDATION
+  // 11. HVAC FINAL — IMC [NEW]
+  // ============================================================
+
+  InspectionTemplate(
+    id: 'system-hvac-final',
+    name: 'HVAC Final Inspection',
+    trade: 'hvac',
+    inspectionType: InspectionType.finalInspection,
+    isSystem: true,
+    version: 1,
+    sections: [
+      TemplateSection(name: 'Equipment Startup', sortOrder: 0, items: [
+        TemplateItem(name: 'Heating mode — fires, heats, cycles normally', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Cooling mode — compressor runs, cools, cycles normally', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'Temperature split — 15-22°F supply/return (cooling)', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Temperature rise — within nameplate range (heating)', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Refrigerant charge — subcooling/superheat verified', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'No unusual noise, vibration, or odor', sortOrder: 5, weight: 1),
+        TemplateItem(name: 'Equipment nameplate data recorded — serial, model', sortOrder: 6, weight: 1),
+      ]),
+      TemplateSection(name: 'Airflow Verification', sortOrder: 1, items: [
+        TemplateItem(name: 'All supply registers — delivering air, balanced', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'All return grilles — adequate, not restricted', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Air balance — room-by-room comfort check', sortOrder: 2, weight: 1),
+        TemplateItem(name: 'Static pressure — within equipment limits', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Filter installed — correct size and MERV rating', sortOrder: 4, weight: 1),
+        TemplateItem(name: 'Register covers installed — no construction debris', sortOrder: 5, weight: 1),
+      ]),
+      TemplateSection(name: 'Thermostat & Controls', sortOrder: 2, items: [
+        TemplateItem(name: 'Thermostat — properly wired and programmed', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Heat/cool/auto/fan modes all functional', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Setpoint response — equipment responds to changes', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'WiFi thermostat — connected, app functional', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Zone dampers — responding to zone calls', sortOrder: 4, weight: 1),
+        TemplateItem(name: 'Emergency heat — functional (heat pump systems)', sortOrder: 5, weight: 2),
+      ]),
+      TemplateSection(name: 'Condensate & Drainage', sortOrder: 3, items: [
+        TemplateItem(name: 'Primary drain — flowing, trapped, terminated properly', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Secondary drain — float switch operational', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'No water pooling at equipment or in pan', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Condensate pump — if used, operational and alarming', sortOrder: 3, weight: 1),
+      ]),
+      TemplateSection(name: 'Outdoor Unit', sortOrder: 4, items: [
+        TemplateItem(name: 'Condenser — level pad/stand, clearance (24" min)', sortOrder: 0, weight: 1),
+        TemplateItem(name: 'Disconnect — within sight, accessible (NEC 440.14)', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Refrigerant lines — insulated, sealed at wall', sortOrder: 2, weight: 1),
+        TemplateItem(name: 'No debris around unit — proper airflow', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Line-voltage whip — proper connection, strain relief', sortOrder: 4, weight: 1),
+      ]),
+      TemplateSection(name: 'Ventilation & Exhaust', sortOrder: 5, items: [
+        TemplateItem(name: 'Bath fans — all operational, vented to exterior', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Kitchen exhaust — operational, captures at hood', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Fresh air intake — operational per design (ASHRAE 62.2)', sortOrder: 2, weight: 1),
+        TemplateItem(name: 'ERV/HRV — if installed, balanced and operational', sortOrder: 3, weight: 1),
+      ]),
+      TemplateSection(name: 'Documentation', sortOrder: 6, items: [
+        TemplateItem(name: 'Manual J on file — matches installed equipment', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Equipment warranty registered', sortOrder: 1, weight: 1),
+        TemplateItem(name: 'Maintenance instructions provided to owner', sortOrder: 2, weight: 1),
+        TemplateItem(name: 'Duct leakage test — results within code limit', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Permit final — signed and posted', sortOrder: 4, weight: 2),
+      ]),
+    ],
+    createdAt: _epoch,
+    updatedAt: _epoch,
+  ),
+
+  // ============================================================
+  // 12. FOUNDATION — IRC R403/R404
   // ============================================================
 
   InspectionTemplate(
@@ -355,24 +958,61 @@ final List<InspectionTemplate> systemInspectionTemplates = [
     trade: 'general',
     inspectionType: InspectionType.foundation,
     isSystem: true,
-    version: 1,
+    version: 2,
     sections: [
-      TemplateSection(name: 'Excavation & Soil', sortOrder: 0, items: [
-        TemplateItem(name: 'Footing depth per plans', sortOrder: 0, weight: 3),
-        TemplateItem(name: 'Undisturbed soil / proper bearing', sortOrder: 1, weight: 3),
-        TemplateItem(name: 'Drainage provisions', sortOrder: 2, weight: 2),
+      TemplateSection(name: 'Soil & Excavation', sortOrder: 0, items: [
+        TemplateItem(name: 'Soil bearing capacity — geotechnical report (IRC R401.4)', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Excavation depth — matches plan, undisturbed soil', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'Footing width and depth per plan (IRC R403.1)', sortOrder: 2, weight: 3),
+        TemplateItem(name: 'Bottom of excavation — level, compacted', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'No standing water — dewatered before pour', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Frost depth — footings below frost line (IRC R403.1.4)', sortOrder: 5, weight: 3),
       ]),
-      TemplateSection(name: 'Reinforcement', sortOrder: 1, items: [
-        TemplateItem(name: 'Rebar size and spacing per plans', sortOrder: 0, weight: 3),
-        TemplateItem(name: 'Rebar clearance (3" from soil)', sortOrder: 1, weight: 3),
-        TemplateItem(name: 'Dowels for walls properly placed', sortOrder: 2, weight: 2),
-        TemplateItem(name: 'Anchor bolt placement', sortOrder: 3, weight: 2),
+      TemplateSection(name: 'Formwork', sortOrder: 1, items: [
+        TemplateItem(name: 'Forms — correct dimensions per plan', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Forms — plumb, level, braced', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Wall thickness — per plan (IRC R404)', sortOrder: 2, weight: 3),
+        TemplateItem(name: 'Keyway — if required for wall/footing joint', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Snap ties / form ties — spacing correct', sortOrder: 4, weight: 1),
+        TemplateItem(name: 'Form oil / release agent applied', sortOrder: 5, weight: 1),
       ]),
-      TemplateSection(name: 'Forms & Layout', sortOrder: 2, items: [
-        TemplateItem(name: 'Dimensions match plans', sortOrder: 0, weight: 2),
-        TemplateItem(name: 'Forms plumb and level', sortOrder: 1, weight: 2),
-        TemplateItem(name: 'Footing width per plans', sortOrder: 2, weight: 3),
-        TemplateItem(name: 'Step footings properly formed', sortOrder: 3, weight: 2),
+      TemplateSection(name: 'Reinforcement', sortOrder: 2, items: [
+        TemplateItem(name: 'Rebar size and spacing per plan (IRC R404.1.2)', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Rebar chairs/dobies — 3" clear from soil (IRC R404.1.2.3)', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'Lap splices — 40 bar diameters min', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Corner and intersection bars — hooked per plan', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Dowels for wall-to-footing connection', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'No rust, oil, mud contamination on rebar', sortOrder: 5, weight: 1),
+      ]),
+      TemplateSection(name: 'Anchor Bolts & Embeds', sortOrder: 3, items: [
+        TemplateItem(name: 'Anchor bolts — 1/2" dia, 7" embed min (IRC R403.1.6)', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Anchor bolt spacing — 6ft OC max, within 12" of corners', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'Hold-downs — location, embed per engineering', sortOrder: 2, weight: 3),
+        TemplateItem(name: 'Embedded straps — per shear wall schedule', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Sleeve locations — for plumbing/electrical penetrations', sortOrder: 4, weight: 1),
+      ]),
+      TemplateSection(name: 'Waterproofing / Damp-proofing', sortOrder: 4, items: [
+        TemplateItem(name: 'Damp-proofing applied — below grade walls (IRC R406.1)', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Waterproofing membrane — if habitable below-grade (IRC R406.2)', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'Foundation drain — perforated pipe at footing level (IRC R405.1)', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Drain tile — connected to daylight or sump', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Gravel backfill — drainage aggregate at drain tile', sortOrder: 4, weight: 1),
+        TemplateItem(name: 'Grade slopes away from foundation — 6" in 10ft (IRC R401.3)', sortOrder: 5, weight: 2),
+      ]),
+      TemplateSection(name: 'Utilities / Sleeves', sortOrder: 5, items: [
+        TemplateItem(name: 'Water line penetration — sleeved, sealed', sortOrder: 0, weight: 1),
+        TemplateItem(name: 'Sewer line penetration — sleeved, sealed', sortOrder: 1, weight: 1),
+        TemplateItem(name: 'Electrical conduit — penetrations planned', sortOrder: 2, weight: 1),
+        TemplateItem(name: 'Radon pipe — if required by jurisdiction', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Vapor barrier — 6 mil poly under slab (IRC R506.2.3)', sortOrder: 4, weight: 2),
+      ]),
+      TemplateSection(name: 'Pre-Pour Checklist', sortOrder: 6, items: [
+        TemplateItem(name: 'All inspections passed — prior to pour', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Concrete mix design — PSI, slump per spec', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Weather — temp above 40°F, no rain expected', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Forms clean — no debris in pour area', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Vibrator and finishing tools on site', sortOrder: 4, weight: 1),
+        TemplateItem(name: 'Curing plan — wet cure / curing compound', sortOrder: 5, weight: 1),
       ]),
     ],
     createdAt: _epoch,
@@ -380,7 +1020,7 @@ final List<InspectionTemplate> systemInspectionTemplates = [
   ),
 
   // ============================================================
-  // FRAMING
+  // 13. FRAMING — IRC R602/R802
   // ============================================================
 
   InspectionTemplate(
@@ -389,25 +1029,67 @@ final List<InspectionTemplate> systemInspectionTemplates = [
     trade: 'general',
     inspectionType: InspectionType.framing,
     isSystem: true,
-    version: 1,
+    version: 2,
     sections: [
-      TemplateSection(name: 'Structural', sortOrder: 0, items: [
-        TemplateItem(name: 'Headers sized per span tables', sortOrder: 0, weight: 3),
-        TemplateItem(name: 'Bearing walls properly supported', sortOrder: 1, weight: 3),
-        TemplateItem(name: 'Floor joists — size/spacing per plans', sortOrder: 2, weight: 3),
-        TemplateItem(name: 'Rafters / trusses per plans', sortOrder: 3, weight: 3),
-        TemplateItem(name: 'Sheathing nailing pattern', sortOrder: 4, weight: 2),
+      TemplateSection(name: 'Sill Plate & Foundation Connection', sortOrder: 0, items: [
+        TemplateItem(name: 'Sill plate — pressure-treated or approved species (IRC R317.1)', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Sill seal / gasket — continuous', sortOrder: 1, weight: 1),
+        TemplateItem(name: 'Anchor bolts — nuts tight, washers present', sortOrder: 2, weight: 3),
+        TemplateItem(name: 'Hold-down hardware — installed per engineering', sortOrder: 3, weight: 3),
+        TemplateItem(name: 'Termite shield — if required by region (IRC R318)', sortOrder: 4, weight: 1),
       ]),
-      TemplateSection(name: 'Connections', sortOrder: 1, items: [
-        TemplateItem(name: 'Hold-downs and straps installed', sortOrder: 0, weight: 3),
-        TemplateItem(name: 'Hurricane ties at roof-to-wall', sortOrder: 1, weight: 3),
-        TemplateItem(name: 'Anchor bolts — spacing and edge distance', sortOrder: 2, weight: 2),
-        TemplateItem(name: 'Joist hangers properly sized and nailed', sortOrder: 3, weight: 2),
+      TemplateSection(name: 'Wall Framing (IRC R602)', sortOrder: 1, items: [
+        TemplateItem(name: 'Stud size and spacing — 2×4/2×6 per plan (IRC R602.3)', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Double top plate — joints offset 4ft min (IRC R602.3.2)', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Corner bracing / let-in bracing / sheathing (IRC R602.10)', sortOrder: 2, weight: 3),
+        TemplateItem(name: 'Headers — proper size per span table (IRC R602.7)', sortOrder: 3, weight: 3),
+        TemplateItem(name: 'Jack studs / king studs at openings', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Cripples — proper spacing, nailed', sortOrder: 5, weight: 1),
+        TemplateItem(name: 'Plumb walls — within 1/4" per 8ft', sortOrder: 6, weight: 2),
+        TemplateItem(name: 'Nailing schedule — 16d at 6"/12" per code (IRC R602.3(1))', sortOrder: 7, weight: 2),
+        TemplateItem(name: 'Fire blocking — at 10ft vertical, soffits, stairs (IRC R302.11)', sortOrder: 8, weight: 3),
+        TemplateItem(name: 'Draft stopping — attic above compartments (IRC R302.12)', sortOrder: 9, weight: 2),
       ]),
-      TemplateSection(name: 'Fire Blocking', sortOrder: 2, items: [
-        TemplateItem(name: 'Fire blocking at floor/ceiling transitions', sortOrder: 0, weight: 3),
-        TemplateItem(name: 'Fire blocking in soffits/chases', sortOrder: 1, weight: 3),
-        TemplateItem(name: 'Draft stopping in attic (where required)', sortOrder: 2, weight: 2),
+      TemplateSection(name: 'Floor Framing (IRC R502)', sortOrder: 2, items: [
+        TemplateItem(name: 'Joist size and spacing per span table (IRC R502.3)', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Rim/band joist — secured, fire-stopped', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Joist hangers — proper size, nailing (IRC R502.6)', sortOrder: 2, weight: 3),
+        TemplateItem(name: 'Bearing — 1.5" min on wood, 3" on masonry (IRC R502.6)', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Bridging / blocking — at 8ft intervals if required', sortOrder: 4, weight: 1),
+        TemplateItem(name: 'Notches/holes — within code limits (IRC R502.8)', sortOrder: 5, weight: 2),
+        TemplateItem(name: 'Subfloor — proper thickness, glued/nailed', sortOrder: 6, weight: 1),
+      ]),
+      TemplateSection(name: 'Roof Framing (IRC R802)', sortOrder: 3, items: [
+        TemplateItem(name: 'Rafters/trusses — size and spacing per plan (IRC R802.4)', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Ridge board/beam — proper size (IRC R802.3)', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Collar ties / rafter ties — per span requirement (IRC R802.3.1)', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Truss bracing — per truss design drawings', sortOrder: 3, weight: 3),
+        TemplateItem(name: 'Hurricane ties / rafter-to-wall connections (IRC R802.11)', sortOrder: 4, weight: 3),
+        TemplateItem(name: 'Lookout framing — eave/rake overhang', sortOrder: 5, weight: 1),
+        TemplateItem(name: 'Roof sheathing — proper thickness, nailing (IRC R803.1)', sortOrder: 6, weight: 2),
+      ]),
+      TemplateSection(name: 'Sheathing & Bracing', sortOrder: 4, items: [
+        TemplateItem(name: 'Wall sheathing — nailed per schedule (IRC R602.3(1))', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Shear wall panels — per engineering, nail spacing', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'Sheathing gaps — 1/8" expansion at panel edges', sortOrder: 2, weight: 1),
+        TemplateItem(name: 'OSB/plywood grade — exposure rated where required', sortOrder: 3, weight: 1),
+      ]),
+      TemplateSection(name: 'Stairs (IRC R311)', sortOrder: 5, items: [
+        TemplateItem(name: 'Riser height — 7-3/4" max, uniform (IRC R311.7.5.1)', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Tread depth — 10" min (IRC R311.7.5.2)', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Stair width — 36" min clear (IRC R311.7.1)', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Headroom — 6ft 8in min (IRC R311.7.2)', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Handrail — 34-38" height, graspable (IRC R311.7.8)', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Guard rails — 36" min height (IRC R312.1.1)', sortOrder: 5, weight: 2),
+        TemplateItem(name: 'Baluster spacing — 4" max (IRC R312.1.3)', sortOrder: 6, weight: 2),
+      ]),
+      TemplateSection(name: 'Windows & Doors', sortOrder: 6, items: [
+        TemplateItem(name: 'Egress windows — 5.7 sqft, 24" min height, 20" min width (IRC R310.1)', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Egress window sill — 44" max from floor (IRC R310.1)', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'Window headers — per span table', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Window rough openings — square, plumb, level', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Exterior door headers — per span table', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Safety glazing — tempered where required (IRC R308)', sortOrder: 5, weight: 2),
       ]),
     ],
     createdAt: _epoch,
@@ -415,40 +1097,64 @@ final List<InspectionTemplate> systemInspectionTemplates = [
   ),
 
   // ============================================================
-  // ENVIRONMENTAL / SWPPP
+  // 14. SWPPP — EPA CGP / NPDES
   // ============================================================
 
   InspectionTemplate(
     id: 'system-swppp',
-    name: 'SWPPP Site Inspection',
+    name: 'SWPPP / Erosion Control',
     trade: 'general',
     inspectionType: InspectionType.swppp,
     isSystem: true,
-    version: 1,
+    version: 2,
     sections: [
-      TemplateSection(name: 'Erosion Controls', sortOrder: 0, items: [
-        TemplateItem(name: 'Silt fence intact and functional', sortOrder: 0, weight: 2),
-        TemplateItem(name: 'Sediment basins/traps functional', sortOrder: 1, weight: 2),
-        TemplateItem(name: 'Check dams in place', sortOrder: 2, weight: 1),
-        TemplateItem(name: 'Inlet protection devices intact', sortOrder: 3, weight: 2),
-        TemplateItem(name: 'Stabilized construction entrance', sortOrder: 4, weight: 2),
+      TemplateSection(name: 'Permit & Documentation', sortOrder: 0, items: [
+        TemplateItem(name: 'NPDES/CGP permit number posted on site (EPA CGP 2.2)', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'SWPPP plan on site — current version accessible', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'NOI (Notice of Intent) filed and acknowledged', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Inspection log current — all prior inspections documented', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Qualified inspector identified — name, credentials', sortOrder: 4, weight: 1),
+        TemplateItem(name: 'Site map matches current conditions', sortOrder: 5, weight: 1),
       ]),
-      TemplateSection(name: 'Sediment Controls', sortOrder: 1, items: [
-        TemplateItem(name: 'No sediment leaving site', sortOrder: 0, weight: 3),
-        TemplateItem(name: 'Streets clean of tracked sediment', sortOrder: 1, weight: 2),
-        TemplateItem(name: 'Dewatering properly managed', sortOrder: 2, weight: 2),
+      TemplateSection(name: 'Erosion Controls', sortOrder: 1, items: [
+        TemplateItem(name: 'Silt fence — installed, staked, buried 6", intact', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Silt fence — no overtopping, ponding, or bypass', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Sediment basin — capacity adequate, outlet functional', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Check dams — in place in ditches, not bypassed', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Slope stabilization — blankets, seeding, mulch', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Inlet protection — all storm drains protected', sortOrder: 5, weight: 3),
+        TemplateItem(name: 'Construction entrance — stabilized, no track-out', sortOrder: 6, weight: 2),
+        TemplateItem(name: 'Temporary seeding — on idle areas >14 days', sortOrder: 7, weight: 1),
       ]),
-      TemplateSection(name: 'Good Housekeeping', sortOrder: 2, items: [
-        TemplateItem(name: 'Waste properly contained', sortOrder: 0, weight: 1),
-        TemplateItem(name: 'No fuel/chemical spills', sortOrder: 1, weight: 3),
-        TemplateItem(name: 'Material storage covered', sortOrder: 2, weight: 1),
-        TemplateItem(name: 'Concrete washout contained', sortOrder: 3, weight: 2),
-        TemplateItem(name: 'Portable toilets properly placed', sortOrder: 4, weight: 1),
+      TemplateSection(name: 'Sediment Controls', sortOrder: 2, items: [
+        TemplateItem(name: 'Sediment traps — functional, not full', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Wattles / fiber rolls — anchored, no gaps', sortOrder: 1, weight: 1),
+        TemplateItem(name: 'Dewatering controls — pump discharge filtered', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'No visible sediment leaving site', sortOrder: 3, weight: 3),
+        TemplateItem(name: 'Concrete washout — contained, not overflowing', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Street sweeping — adjacent roads clean', sortOrder: 5, weight: 1),
       ]),
-      TemplateSection(name: 'Stabilization', sortOrder: 3, items: [
-        TemplateItem(name: 'Disturbed areas stabilized within 14 days', sortOrder: 0, weight: 2),
-        TemplateItem(name: 'Permanent seeding/sodding where complete', sortOrder: 1, weight: 2),
-        TemplateItem(name: 'Temporary seeding / mulch on idle areas', sortOrder: 2, weight: 1),
+      TemplateSection(name: 'Materials Management', sortOrder: 3, items: [
+        TemplateItem(name: 'Chemical storage — covered, contained, labeled', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Fuel storage — secondary containment, spill kit', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Paint/solvent waste — properly contained', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Stockpiles — covered or protected', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Dumpsters — lids closed, no leachate', sortOrder: 4, weight: 1),
+        TemplateItem(name: 'Spill response materials available on site', sortOrder: 5, weight: 1),
+      ]),
+      TemplateSection(name: 'Weather Triggers', sortOrder: 4, items: [
+        TemplateItem(name: 'Pre-storm inspection completed (within 24hrs before event)', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Post-storm inspection completed (within 24hrs after 0.25"+ rain)', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'All BMPs functional after storm event', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Damage repaired within 24 hours', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Rainfall amount documented', sortOrder: 4, weight: 1),
+      ]),
+      TemplateSection(name: 'Documentation / Reporting', sortOrder: 5, items: [
+        TemplateItem(name: 'Corrective actions from prior inspections completed', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Photos — overall site, BMPs, problem areas', sortOrder: 1, weight: 1),
+        TemplateItem(name: 'Inspection report signed and dated', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'SWPPP amendments — if site conditions changed', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'NOT (Notice of Termination) criteria checklist — if stabilized', sortOrder: 4, weight: 1),
       ]),
     ],
     createdAt: _epoch,
@@ -456,43 +1162,76 @@ final List<InspectionTemplate> systemInspectionTemplates = [
   ),
 
   // ============================================================
-  // ADA ACCESSIBILITY
+  // 15. ADA ACCESSIBILITY — ADA 2010 Standards
   // ============================================================
 
   InspectionTemplate(
     id: 'system-ada',
-    name: 'ADA Accessibility Survey',
+    name: 'ADA Accessibility',
     trade: 'general',
     inspectionType: InspectionType.ada,
     isSystem: true,
-    version: 1,
+    version: 2,
     sections: [
-      TemplateSection(name: 'Parking', sortOrder: 0, items: [
-        TemplateItem(name: 'Correct number of accessible spaces', sortOrder: 0, weight: 2),
-        TemplateItem(name: 'Van-accessible space with 8ft aisle', sortOrder: 1, weight: 2),
-        TemplateItem(name: 'Signage with ISA symbol', sortOrder: 2, weight: 1),
-        TemplateItem(name: 'Surface firm and level (max 2% slope)', sortOrder: 3, weight: 2),
+      TemplateSection(name: 'Accessible Routes (ADA 402-403)', sortOrder: 0, items: [
+        TemplateItem(name: 'Route width — 36" min clear, 60" passing (ADA 403.5)', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Surface — firm, stable, slip-resistant (ADA 402.2)', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Running slope — 5% max (1:20) (ADA 402.2)', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Cross slope — 2% max (1:48) (ADA 402.3)', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Changes in level — 1/4" max vertical, 1/2" max beveled (ADA 303)', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Protruding objects — 4" max from wall, 27-80" height (ADA 307)', sortOrder: 5, weight: 2),
+        TemplateItem(name: 'Ground surface openings — 1/2" max, perpendicular to travel (ADA 302)', sortOrder: 6, weight: 1),
       ]),
-      TemplateSection(name: 'Entrance', sortOrder: 1, items: [
-        TemplateItem(name: 'Accessible route from parking', sortOrder: 0, weight: 3),
-        TemplateItem(name: 'Door clearance (32" min clear)', sortOrder: 1, weight: 3),
-        TemplateItem(name: 'Door hardware operable with one hand', sortOrder: 2, weight: 2),
-        TemplateItem(name: 'Threshold max 1/2"', sortOrder: 3, weight: 2),
-        TemplateItem(name: 'Ramp slope max 1:12', sortOrder: 4, weight: 3),
+      TemplateSection(name: 'Ramps (ADA 405)', sortOrder: 1, items: [
+        TemplateItem(name: 'Slope — 8.3% max (1:12) (ADA 405.2)', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Width — 36" min clear (ADA 405.5)', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Rise — 30" max per run (ADA 405.6)', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Landings — 60" min at top and bottom (ADA 405.7)', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Handrails — both sides, 34-38" height (ADA 405.8)', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Edge protection — curb, rail, or wall (ADA 405.9)', sortOrder: 5, weight: 2),
       ]),
-      TemplateSection(name: 'Interior', sortOrder: 2, items: [
-        TemplateItem(name: 'Route width 36" minimum', sortOrder: 0, weight: 2),
-        TemplateItem(name: 'Protruding objects (max 4" from wall)', sortOrder: 1, weight: 2),
-        TemplateItem(name: 'Floor surfaces firm and stable', sortOrder: 2, weight: 2),
-        TemplateItem(name: 'Controls and switches 48" max height', sortOrder: 3, weight: 1),
+      TemplateSection(name: 'Doors (ADA 404)', sortOrder: 2, items: [
+        TemplateItem(name: 'Clear width — 32" min (ADA 404.2.3)', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Maneuvering clearance — per approach direction (ADA 404.2.4)', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Threshold — 1/2" max, beveled (ADA 404.2.5)', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Hardware — lever/push, operable with one hand (ADA 404.2.7)', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Opening force — 5 lbf max interior (ADA 404.2.9)', sortOrder: 4, weight: 1),
+        TemplateItem(name: 'Closing speed — 5 sec min from 90° to 12° (ADA 404.2.8)', sortOrder: 5, weight: 1),
+        TemplateItem(name: 'Automatic doors — sensors, timing, safety (ADA 404.3)', sortOrder: 6, weight: 1),
       ]),
-      TemplateSection(name: 'Restrooms', sortOrder: 3, items: [
-        TemplateItem(name: 'Turning space 60" diameter', sortOrder: 0, weight: 3),
-        TemplateItem(name: 'Grab bars — side and rear', sortOrder: 1, weight: 3),
-        TemplateItem(name: 'Toilet seat height 17-19"', sortOrder: 2, weight: 2),
-        TemplateItem(name: 'Lavatory clearance (27" knee, 34" max rim)', sortOrder: 3, weight: 2),
-        TemplateItem(name: 'Mirror max 40" to bottom edge', sortOrder: 4, weight: 1),
-        TemplateItem(name: 'Faucet operable with one hand', sortOrder: 5, weight: 2),
+      TemplateSection(name: 'Restrooms (ADA 604-606)', sortOrder: 3, items: [
+        TemplateItem(name: 'Turning space — 60" diameter clear (ADA 603.2.1)', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Toilet — 17-19" seat height (ADA 604.4)', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Toilet centerline — 16-18" from side wall (ADA 604.2)', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Grab bars — side 42" min, rear 36" min (ADA 604.5)', sortOrder: 3, weight: 3),
+        TemplateItem(name: 'Grab bar mounting — 33-36" height (ADA 609.4)', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Lavatory — 34" max height, knee clearance (ADA 606)', sortOrder: 5, weight: 2),
+        TemplateItem(name: 'Mirror — bottom edge 40" max (ADA 603.3)', sortOrder: 6, weight: 1),
+        TemplateItem(name: 'Faucet — lever or sensor, operable with one hand', sortOrder: 7, weight: 2),
+        TemplateItem(name: 'Accessories — soap, towel, dryer within reach range (ADA 308)', sortOrder: 8, weight: 1),
+      ]),
+      TemplateSection(name: 'Parking (ADA 502)', sortOrder: 4, items: [
+        TemplateItem(name: 'Number of accessible spaces — per lot size (ADA 208.2)', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Van-accessible — at least 1, 11ft + 5ft aisle (ADA 502.2)', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Slope — 2% max in all directions (ADA 502.4)', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Signage — ISA symbol, van accessible, 60" min height (ADA 502.6)', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Access aisle — connected to accessible route (ADA 502.3)', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Location — closest to accessible entrance', sortOrder: 5, weight: 1),
+      ]),
+      TemplateSection(name: 'Elevator (ADA 407)', sortOrder: 5, items: [
+        TemplateItem(name: 'Hall call buttons — 42" max height (ADA 407.2.1)', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Car dimensions — 80" × 54" min (ADA 407.4.1)', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Door opening — 36" min (ADA 407.3.6)', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Controls — 48" max, raised/braille (ADA 407.4.7)', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Audible and visible signals — floor indication (ADA 407.4.8)', sortOrder: 4, weight: 1),
+        TemplateItem(name: 'Emergency communication — accessible (ADA 407.4.9)', sortOrder: 5, weight: 2),
+      ]),
+      TemplateSection(name: 'Signage & Wayfinding (ADA 703)', sortOrder: 6, items: [
+        TemplateItem(name: 'Room ID signs — tactile, braille, 48-60" height (ADA 703.4)', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Exit signs — visible, illuminated (ADA 703.1)', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Directional signs — high contrast, non-glare (ADA 703.5)', sortOrder: 2, weight: 1),
+        TemplateItem(name: 'International Symbol of Accessibility — where required', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Visual alarms — in public and common areas (ADA 702)', sortOrder: 4, weight: 2),
       ]),
     ],
     createdAt: _epoch,
@@ -500,7 +1239,7 @@ final List<InspectionTemplate> systemInspectionTemplates = [
   ),
 
   // ============================================================
-  // INSURANCE DAMAGE / TPI
+  // 16. INSURANCE DAMAGE — IICRC / Xactimate Protocol
   // ============================================================
 
   InspectionTemplate(
@@ -509,32 +1248,70 @@ final List<InspectionTemplate> systemInspectionTemplates = [
     trade: 'restoration',
     inspectionType: InspectionType.insuranceDamage,
     isSystem: true,
-    version: 1,
+    version: 2,
     sections: [
-      TemplateSection(name: 'Damage Overview', sortOrder: 0, items: [
-        TemplateItem(name: 'Type of loss (water/fire/wind/hail)', sortOrder: 0, weight: 2),
-        TemplateItem(name: 'Date of loss', sortOrder: 1),
-        TemplateItem(name: 'Affected areas identified', sortOrder: 2, weight: 2),
-        TemplateItem(name: 'Category of water damage (1/2/3)', sortOrder: 3, weight: 2),
-        TemplateItem(name: 'Class of water damage (1-4)', sortOrder: 4, weight: 2),
+      TemplateSection(name: 'Claim Information', sortOrder: 0, items: [
+        TemplateItem(name: 'Date of loss recorded', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Cause of loss — wind/hail/water/fire/other', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Claim number — if filed', sortOrder: 2, weight: 1),
+        TemplateItem(name: 'Insurance carrier / adjuster contact', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Policy type — HO-3/HO-5/commercial', sortOrder: 4, weight: 1),
+        TemplateItem(name: 'Deductible amount — if known', sortOrder: 5, weight: 1),
+        TemplateItem(name: 'Prior claims on property — if disclosed', sortOrder: 6, weight: 1),
       ]),
-      TemplateSection(name: 'Documentation', sortOrder: 1, items: [
-        TemplateItem(name: 'Wide shots of all affected rooms', sortOrder: 0, weight: 3),
-        TemplateItem(name: 'Close-up shots of damage points', sortOrder: 1, weight: 3),
-        TemplateItem(name: 'Moisture readings recorded', sortOrder: 2, weight: 2),
-        TemplateItem(name: 'Measurements accurate within 2"', sortOrder: 3, weight: 3),
+      TemplateSection(name: 'Exterior Damage', sortOrder: 1, items: [
+        TemplateItem(name: 'Roof — material, age, damage pattern', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Siding — material, damage type and extent', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Windows — broken glass, frame damage, screens', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Gutters / downspouts — dents, detachment', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Fencing — damage type and linear feet', sortOrder: 4, weight: 1),
+        TemplateItem(name: 'Garage door — dents, operational damage', sortOrder: 5, weight: 1),
+        TemplateItem(name: 'Exterior paint — peeling, blistering from moisture', sortOrder: 6, weight: 1),
+        TemplateItem(name: 'Soft metals — AC unit, vents, mailbox (hail indicators)', sortOrder: 7, weight: 2),
       ]),
-      TemplateSection(name: 'Scope Verification', sortOrder: 2, items: [
-        TemplateItem(name: 'Scope matches carrier-approved estimate', sortOrder: 0, weight: 3),
-        TemplateItem(name: 'No unauthorized work performed', sortOrder: 1, weight: 3),
-        TemplateItem(name: 'Materials match specification', sortOrder: 2, weight: 2),
-        TemplateItem(name: 'Work quality meets standards', sortOrder: 3, weight: 2),
+      TemplateSection(name: 'Structural Assessment', sortOrder: 2, items: [
+        TemplateItem(name: 'Foundation — cracks, shifting, water intrusion', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Framing — visible damage, racking, settling', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'Load-bearing walls — any compromise', sortOrder: 2, weight: 3),
+        TemplateItem(name: 'Subfloor — warping, rot, structural integrity', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Ceiling joists/trusses — sagging, water staining', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Chimney — cracking, leaning, mortar damage', sortOrder: 5, weight: 2),
       ]),
-      TemplateSection(name: 'Completion', sortOrder: 3, items: [
-        TemplateItem(name: 'All line items addressed', sortOrder: 0, weight: 2),
-        TemplateItem(name: 'Final moisture readings normal', sortOrder: 1, weight: 3),
-        TemplateItem(name: 'Homeowner satisfied', sortOrder: 2, weight: 1),
-        TemplateItem(name: 'Certificate of completion signed', sortOrder: 3, weight: 2),
+      TemplateSection(name: 'Interior Damage', sortOrder: 3, items: [
+        TemplateItem(name: 'Walls — water staining, mold, damage per room', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Ceilings — staining, sagging, collapse', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Flooring — type, damage type, affected area (sqft)', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Trim / baseboards — water damage, warping', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Doors — warping, won\'t close, water damage', sortOrder: 4, weight: 1),
+        TemplateItem(name: 'Cabinets — water damage, delamination', sortOrder: 5, weight: 2),
+        TemplateItem(name: 'Electrical — affected outlets, switches, fixtures', sortOrder: 6, weight: 2),
+        TemplateItem(name: 'Plumbing — affected fixtures, supply, drain', sortOrder: 7, weight: 2),
+      ]),
+      TemplateSection(name: 'Contents Damage', sortOrder: 4, items: [
+        TemplateItem(name: 'Furniture — type, condition, replacement or repair', sortOrder: 0, weight: 1),
+        TemplateItem(name: 'Electronics — affected items listed', sortOrder: 1, weight: 1),
+        TemplateItem(name: 'Clothing / textiles — extent of damage', sortOrder: 2, weight: 1),
+        TemplateItem(name: 'Personal items — documents, photos, valuables', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Appliances — affected, operational status', sortOrder: 4, weight: 1),
+        TemplateItem(name: 'Contents inventory list — room by room', sortOrder: 5, weight: 2),
+      ]),
+      TemplateSection(name: 'Supplemental Scope', sortOrder: 5, items: [
+        TemplateItem(name: 'Hidden damage — behind walls, under flooring', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Code upgrade requirements — local jurisdiction', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Mold presence — visible, behind surfaces', sortOrder: 2, weight: 3),
+        TemplateItem(name: 'Asbestos / lead paint — age of home, testing needed', sortOrder: 3, weight: 3),
+        TemplateItem(name: 'Matching requirements — siding, shingles, flooring', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Temporary repairs needed — tarp, board-up', sortOrder: 5, weight: 2),
+        TemplateItem(name: 'Additional living expenses — if home uninhabitable', sortOrder: 6, weight: 1),
+      ]),
+      TemplateSection(name: 'Documentation Protocol', sortOrder: 6, items: [
+        TemplateItem(name: 'Overview photos — all 4 elevations, street view', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Damage photos — wide + close-up + scale reference', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'Room-by-room photo log', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Measurements — all affected areas (LxWxH)', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Moisture readings — if water damage', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Sketch / diagram — damage locations mapped', sortOrder: 5, weight: 2),
+        TemplateItem(name: 'Prior condition evidence — Google Street View, MLS photos', sortOrder: 6, weight: 1),
       ]),
     ],
     createdAt: _epoch,
@@ -542,7 +1319,7 @@ final List<InspectionTemplate> systemInspectionTemplates = [
   ),
 
   // ============================================================
-  // QC HOLD POINT
+  // 17. QC HOLD POINT — ITP / NCR Process
   // ============================================================
 
   InspectionTemplate(
@@ -551,24 +1328,610 @@ final List<InspectionTemplate> systemInspectionTemplates = [
     trade: 'general',
     inspectionType: InspectionType.qcHoldPoint,
     isSystem: true,
-    version: 1,
+    version: 2,
     sections: [
       TemplateSection(name: 'Pre-Work Verification', sortOrder: 0, items: [
-        TemplateItem(name: 'Materials match specification', sortOrder: 0, weight: 2),
-        TemplateItem(name: 'Tools and equipment ready', sortOrder: 1, weight: 1),
-        TemplateItem(name: 'Previous work stage accepted', sortOrder: 2, weight: 3),
-        TemplateItem(name: 'Safety measures in place', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Materials match specification — submittals approved', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Material test reports / mill certs on file', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Tools and equipment calibrated / ready', sortOrder: 2, weight: 1),
+        TemplateItem(name: 'Previous work stage accepted and signed off', sortOrder: 3, weight: 3),
+        TemplateItem(name: 'Safety measures in place for this operation', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Crew qualified — certifications current', sortOrder: 5, weight: 2),
+        TemplateItem(name: 'Weather conditions acceptable for work', sortOrder: 6, weight: 1),
       ]),
-      TemplateSection(name: 'Work Quality', sortOrder: 1, items: [
-        TemplateItem(name: 'Workmanship meets standards', sortOrder: 0, weight: 3),
-        TemplateItem(name: 'Dimensions within tolerance', sortOrder: 1, weight: 2),
-        TemplateItem(name: 'No visible defects', sortOrder: 2, weight: 2),
-        TemplateItem(name: 'Matches approved drawings', sortOrder: 3, weight: 3),
+      TemplateSection(name: 'Work Quality Assessment', sortOrder: 1, items: [
+        TemplateItem(name: 'Workmanship meets contract standards', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Dimensions within tolerance — ±1/8" or per spec', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Alignment — plumb, level, square', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'No visible defects — cracks, voids, blemishes', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Matches approved shop drawings / submittals', sortOrder: 4, weight: 3),
+        TemplateItem(name: 'Connections — proper torque, weld quality, adhesion', sortOrder: 5, weight: 2),
+        TemplateItem(name: 'Surface preparation adequate for next trade', sortOrder: 6, weight: 1),
       ]),
-      TemplateSection(name: 'Hold Point Decision', sortOrder: 2, items: [
-        TemplateItem(name: 'Cleared to proceed to next stage', sortOrder: 0, weight: 3),
-        TemplateItem(name: 'Corrective work required', sortOrder: 1, weight: 3),
-        TemplateItem(name: 'Re-inspection needed', sortOrder: 2, weight: 2),
+      TemplateSection(name: 'ITP Integration', sortOrder: 2, items: [
+        TemplateItem(name: 'ITP (Inspection & Test Plan) item number referenced', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Hold point vs witness point — correctly classified', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Required parties present for witness (owner/engineer)', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Test results documented — if testing required', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Third-party inspection — if required by spec', sortOrder: 4, weight: 2),
+      ]),
+      TemplateSection(name: 'NCR Process', sortOrder: 3, items: [
+        TemplateItem(name: 'Non-conformance identified — NCR number assigned', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Root cause documented', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Corrective action proposed — approved by engineer', sortOrder: 2, weight: 3),
+        TemplateItem(name: 'Repair/rework completed to specification', sortOrder: 3, weight: 3),
+        TemplateItem(name: 'Re-inspection passed after corrective action', sortOrder: 4, weight: 3),
+        TemplateItem(name: 'NCR closed — signed by all parties', sortOrder: 5, weight: 2),
+      ]),
+      TemplateSection(name: 'Hold Point Decision', sortOrder: 4, items: [
+        TemplateItem(name: 'Cleared to proceed — all criteria met', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Conditional release — minor items to track', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Corrective work required — STOP until resolved', sortOrder: 2, weight: 3),
+        TemplateItem(name: 'Re-inspection required — date scheduled', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Sign-off — inspector name, date, decision', sortOrder: 4, weight: 3),
+      ]),
+    ],
+    createdAt: _epoch,
+    updatedAt: _epoch,
+  ),
+
+  // ============================================================
+  // 18. INSULATION & ENERGY CODE — IECC [NEW]
+  // ============================================================
+
+  InspectionTemplate(
+    id: 'system-insulation-energy',
+    name: 'Insulation & Energy Code',
+    trade: 'general',
+    inspectionType: InspectionType.codeCompliance,
+    isSystem: true,
+    version: 1,
+    sections: [
+      TemplateSection(name: 'Ceiling / Attic Insulation', sortOrder: 0, items: [
+        TemplateItem(name: 'R-value meets climate zone (IECC R402.1.2)', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Material type — batt, blown, spray foam', sortOrder: 1, weight: 1),
+        TemplateItem(name: 'Coverage — no gaps, voids, compressions', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Depth markers installed in attic (IECC R303.2.1)', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Eave baffles — proper ventilation maintained (IRC R806)', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Attic access — insulated and weather-stripped', sortOrder: 5, weight: 2),
+        TemplateItem(name: 'Recessed lights — IC rated, air-sealed', sortOrder: 6, weight: 2),
+      ]),
+      TemplateSection(name: 'Wall Insulation', sortOrder: 1, items: [
+        TemplateItem(name: 'R-value meets climate zone (IECC R402.1.2)', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Installation grade — I, II, or III (RESNET)', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Batt insulation — full contact with 6 sides, no gaps', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Continuous insulation — if required by zone', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Behind electrical boxes — insulation cut and fitted', sortOrder: 4, weight: 1),
+        TemplateItem(name: 'Band/rim joist — insulated and air-sealed (IECC R402.2.7)', sortOrder: 5, weight: 2),
+        TemplateItem(name: 'Garage-to-house wall — fully insulated', sortOrder: 6, weight: 2),
+      ]),
+      TemplateSection(name: 'Foundation / Floor', sortOrder: 2, items: [
+        TemplateItem(name: 'Floor insulation — R-value per zone (IECC R402.1.2)', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'In contact with subfloor — supported, no sagging', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Crawl space walls — insulated if conditioned (IECC R402.2.9)', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Slab edge insulation — if required by zone', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Basement walls — insulated per climate zone', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Vapor retarder — correct side, continuous', sortOrder: 5, weight: 2),
+      ]),
+      TemplateSection(name: 'Air Sealing (IECC R402.4)', sortOrder: 3, items: [
+        TemplateItem(name: 'Top plates — sealed at attic (IECC R402.4.1.1)', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Electrical/plumbing penetrations — sealed', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Recessed lights — air-sealed to drywall', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'HVAC register boots — sealed to drywall', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Fireplace / chimney — fire-rated sealant at gaps', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Rim/band joist — fully air-sealed', sortOrder: 5, weight: 2),
+        TemplateItem(name: 'Windows / doors — shimmed, sealed, no daylight', sortOrder: 6, weight: 2),
+        TemplateItem(name: 'Exterior wall sheathing joints — taped or sealed', sortOrder: 7, weight: 1),
+      ]),
+      TemplateSection(name: 'Blower Door Test', sortOrder: 4, items: [
+        TemplateItem(name: 'Air leakage rate — meets ACH50 limit (IECC R402.4.1.2)', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Test pressure — 50 Pa reference', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Building volume calculated correctly', sortOrder: 2, weight: 1),
+        TemplateItem(name: 'Major leaks identified and sealed during test', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Test report — signed, dated, equipment serial #', sortOrder: 4, weight: 2),
+      ]),
+      TemplateSection(name: 'Duct Leakage Test', sortOrder: 5, items: [
+        TemplateItem(name: 'Duct leakage — within CFM25 limit (IECC R403.3.3)', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'All joints sealed — mastic or approved tape', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Ducts in conditioned space — if credit taken', sortOrder: 2, weight: 1),
+        TemplateItem(name: 'Test report — signed, dated, pass/fail', sortOrder: 3, weight: 2),
+      ]),
+    ],
+    createdAt: _epoch,
+    updatedAt: _epoch,
+  ),
+
+  // ============================================================
+  // 19. DRYWALL INSPECTION [NEW]
+  // ============================================================
+
+  InspectionTemplate(
+    id: 'system-drywall',
+    name: 'Drywall Inspection',
+    trade: 'general',
+    inspectionType: InspectionType.roughIn,
+    isSystem: true,
+    version: 1,
+    sections: [
+      TemplateSection(name: 'Hanging / Installation', sortOrder: 0, items: [
+        TemplateItem(name: 'Board thickness — 1/2" walls, 5/8" ceilings (where required)', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Boards tight to framing — no gaps >1/4"', sortOrder: 1, weight: 1),
+        TemplateItem(name: 'Staggered joints — end joints offset min 4ft', sortOrder: 2, weight: 1),
+        TemplateItem(name: 'Ceiling boards perpendicular to framing', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Cutouts — clean around boxes, fixtures, vents', sortOrder: 4, weight: 1),
+        TemplateItem(name: 'No damaged boards — cracks, broken corners, wet', sortOrder: 5, weight: 1),
+      ]),
+      TemplateSection(name: 'Fastener Pattern', sortOrder: 1, items: [
+        TemplateItem(name: 'Screw spacing — 12" OC field, 8" OC edges (ceiling 7" OC)', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Screws set properly — dimpled, not breaking paper', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Edge distance — 3/8" min from board edge', sortOrder: 2, weight: 1),
+        TemplateItem(name: 'No popped screws or nails', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Adhesive — if used, proper application pattern', sortOrder: 4, weight: 1),
+      ]),
+      TemplateSection(name: 'Fire-Rated Assemblies (IBC 722)', sortOrder: 2, items: [
+        TemplateItem(name: '5/8" Type X — all fire-rated walls/ceilings (IBC 722)', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Garage-to-house wall — 1/2" or 5/8" per code (IRC R302.6)', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'Garage ceiling under habitable space — 5/8" Type X', sortOrder: 2, weight: 3),
+        TemplateItem(name: 'Shaft walls — proper UL-listed assembly', sortOrder: 3, weight: 3),
+        TemplateItem(name: 'Fire caulk at all penetrations through rated assemblies', sortOrder: 4, weight: 3),
+        TemplateItem(name: 'Double layer — if required by fire rating', sortOrder: 5, weight: 2),
+        TemplateItem(name: 'Rated wall extends to structure above — no gaps', sortOrder: 6, weight: 3),
+      ]),
+      TemplateSection(name: 'Moisture-Resistant', sortOrder: 3, items: [
+        TemplateItem(name: 'Green board (MR) — in bathrooms above tub/shower line', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Cement board — behind tile in wet areas', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'No standard drywall in wet areas', sortOrder: 2, weight: 3),
+        TemplateItem(name: 'Mold-resistant board — if specified', sortOrder: 3, weight: 1),
+      ]),
+      TemplateSection(name: 'Backing & Blocking', sortOrder: 4, items: [
+        TemplateItem(name: 'Backing at all inside corners — nailer present', sortOrder: 0, weight: 1),
+        TemplateItem(name: 'Blocking for grab bars — per ADA locations', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Blocking for wall-mounted fixtures — TV, cabinets', sortOrder: 2, weight: 1),
+        TemplateItem(name: 'Blocking for handrails — stairway walls', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Corner bead — installed plumb, secured', sortOrder: 4, weight: 1),
+        TemplateItem(name: 'J-bead / L-bead — at exposed edges', sortOrder: 5, weight: 1),
+      ]),
+    ],
+    createdAt: _epoch,
+    updatedAt: _epoch,
+  ),
+
+  // ============================================================
+  // 20. PRE-CONSTRUCTION SURVEY [NEW]
+  // ============================================================
+
+  InspectionTemplate(
+    id: 'system-pre-construction',
+    name: 'Pre-Construction Survey',
+    trade: 'general',
+    inspectionType: InspectionType.preConstruction,
+    isSystem: true,
+    version: 1,
+    sections: [
+      TemplateSection(name: 'Existing Conditions', sortOrder: 0, items: [
+        TemplateItem(name: 'Building exterior — current condition documented', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Interior spaces — existing finishes, damage noted', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Existing cracks — foundation, walls, ceiling (measured + marked)', sortOrder: 2, weight: 3),
+        TemplateItem(name: 'Floor levels — checked with laser for pre-existing slope', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Paint condition — peeling, lead paint age (pre-1978)', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Existing moisture — stains, mold, soft spots', sortOrder: 5, weight: 2),
+        TemplateItem(name: 'Roof condition — age, visible defects', sortOrder: 6, weight: 1),
+        TemplateItem(name: 'Windows / doors — current operation and condition', sortOrder: 7, weight: 1),
+      ]),
+      TemplateSection(name: 'Adjacent Property', sortOrder: 1, items: [
+        TemplateItem(name: 'Neighbor buildings — existing cracks, conditions', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Shared walls / party walls — conditions documented', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Property line — survey pins, boundaries confirmed', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Driveways / sidewalks — existing cracks, conditions', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Fencing — existing condition at boundary', sortOrder: 4, weight: 1),
+        TemplateItem(name: 'Trees — near construction, protection plan needed', sortOrder: 5, weight: 1),
+        TemplateItem(name: 'Neighbor notification — completed per jurisdiction', sortOrder: 6, weight: 1),
+      ]),
+      TemplateSection(name: 'Utilities', sortOrder: 2, items: [
+        TemplateItem(name: 'Electric service — location, capacity, condition', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Gas service — location, meter, shutoff', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Water service — location, size, shutoff', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Sewer / septic — location, cleanouts, condition', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Telecom / cable — location of drops and lines', sortOrder: 4, weight: 1),
+        TemplateItem(name: '811 utility locate — call placed, marks valid', sortOrder: 5, weight: 3),
+        TemplateItem(name: 'Overhead power lines — clearance for equipment', sortOrder: 6, weight: 3),
+      ]),
+      TemplateSection(name: 'Environmental', sortOrder: 3, items: [
+        TemplateItem(name: 'Asbestos survey — if pre-1980 construction', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Lead paint — XRF test or presumption if pre-1978', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'Mold assessment — visible or suspect areas', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'PCBs — caulk testing if pre-1979 commercial', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Soil contamination — known history or Phase I ESA', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Wetlands / protected areas — if near site', sortOrder: 5, weight: 2),
+      ]),
+      TemplateSection(name: 'Access & Logistics', sortOrder: 4, items: [
+        TemplateItem(name: 'Site access — driveway width, turning radius', sortOrder: 0, weight: 1),
+        TemplateItem(name: 'Delivery staging — material drop zones', sortOrder: 1, weight: 1),
+        TemplateItem(name: 'Dumpster placement — location, access, permits', sortOrder: 2, weight: 1),
+        TemplateItem(name: 'Portable toilet location', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Parking — crew and equipment staging', sortOrder: 4, weight: 1),
+        TemplateItem(name: 'Temporary power — location and capacity', sortOrder: 5, weight: 1),
+        TemplateItem(name: 'Temporary water — connection point', sortOrder: 6, weight: 1),
+      ]),
+      TemplateSection(name: 'Photo Documentation', sortOrder: 5, items: [
+        TemplateItem(name: 'Exterior — all 4 elevations + street view', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Interior — every room, all walls', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Existing damage — close-ups with measurements', sortOrder: 2, weight: 3),
+        TemplateItem(name: 'Adjacent properties — facing elevations', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Utility locations — marked, photographed', sortOrder: 4, weight: 1),
+        TemplateItem(name: 'Date-stamped and GPS-tagged photos', sortOrder: 5, weight: 2),
+      ]),
+    ],
+    createdAt: _epoch,
+    updatedAt: _epoch,
+  ),
+
+  // ============================================================
+  // 21. SOLAR PV INSTALLATION — NEC 690 [NEW]
+  // ============================================================
+
+  InspectionTemplate(
+    id: 'system-solar-pv',
+    name: 'Solar PV Installation',
+    trade: 'solar',
+    inspectionType: InspectionType.electrical,
+    isSystem: true,
+    version: 1,
+    sections: [
+      TemplateSection(name: 'Structural / Roof', sortOrder: 0, items: [
+        TemplateItem(name: 'Structural analysis — roof can support array load', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Rafter/truss locations verified — lag into structure', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'Roof penetrations — flashed and sealed', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Roof condition — adequate for 25+ year system life', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Setbacks — fire code: 3ft ridge, 18" eave (IFC 605.11)', sortOrder: 4, weight: 3),
+        TemplateItem(name: 'Pathways — firefighter access per jurisdiction', sortOrder: 5, weight: 3),
+        TemplateItem(name: 'Ground mount — footings, posts, racking per engineering', sortOrder: 6, weight: 2),
+      ]),
+      TemplateSection(name: 'Racking System', sortOrder: 1, items: [
+        TemplateItem(name: 'Rail attachment — torque specs met, all hardware', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Rail alignment — straight, proper spacing', sortOrder: 1, weight: 1),
+        TemplateItem(name: 'Mid/end clamps — correct type for module frame', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Grounding — all rails bonded (NEC 690.43)', sortOrder: 3, weight: 3),
+        TemplateItem(name: 'WEEB or lay-in lug — equipment grounding per mfr', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Wind rating — racking certified for site wind zone', sortOrder: 5, weight: 2),
+      ]),
+      TemplateSection(name: 'Modules', sortOrder: 2, items: [
+        TemplateItem(name: 'Module type matches plan — wattage, manufacturer', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'No cracked cells, broken glass, or frame damage', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'String configuration — series/parallel per design', sortOrder: 2, weight: 3),
+        TemplateItem(name: 'Connectors — MC4 fully seated, no exposed contacts', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Module labels visible — nameplate data matches', sortOrder: 4, weight: 1),
+        TemplateItem(name: 'Proper tilt and azimuth per design', sortOrder: 5, weight: 1),
+      ]),
+      TemplateSection(name: 'Electrical / Inverter', sortOrder: 3, items: [
+        TemplateItem(name: 'Inverter — mounted per manufacturer specs', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'DC disconnect — if required, accessible (NEC 690.15)', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'AC disconnect — accessible, within sight (NEC 690.13)', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Wire sizing — per voltage drop and ampacity (NEC 690.8)', sortOrder: 3, weight: 3),
+        TemplateItem(name: 'Conduit — EMT/PVC per location, fill within limits', sortOrder: 4, weight: 1),
+        TemplateItem(name: 'Grounding electrode conductor — size per NEC 250.66', sortOrder: 5, weight: 3),
+        TemplateItem(name: 'PV breaker — backfed, labeled, meets 120% rule (NEC 705.12(B))', sortOrder: 6, weight: 3),
+        TemplateItem(name: 'Utility interconnection — approved, meter adapter', sortOrder: 7, weight: 2),
+      ]),
+      TemplateSection(name: 'Rapid Shutdown (NEC 690.12)', sortOrder: 4, items: [
+        TemplateItem(name: 'Rapid shutdown system — installed and tested', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Module-level shutdown — within 30 sec to 80V (NEC 690.12(B))', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'Rapid shutdown initiator — at service disconnect', sortOrder: 2, weight: 3),
+        TemplateItem(name: 'Rapid shutdown label — at main panel (NEC 690.56(C))', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Testing — initiate and verify voltage drop', sortOrder: 4, weight: 2),
+      ]),
+      TemplateSection(name: 'Monitoring & Commissioning', sortOrder: 5, items: [
+        TemplateItem(name: 'Monitoring system — online, reporting data', sortOrder: 0, weight: 1),
+        TemplateItem(name: 'Production meter — if required by utility/incentive', sortOrder: 1, weight: 1),
+        TemplateItem(name: 'System commissioning — all strings producing', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Voltage check — Voc per string matches expected', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Insulation resistance test — megger if required', sortOrder: 4, weight: 2),
+      ]),
+      TemplateSection(name: 'Labeling (NEC 690.56)', sortOrder: 6, items: [
+        TemplateItem(name: 'Main panel label — PV system present (NEC 690.56(A))', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'DC conduit labels — "WARNING: PHOTOVOLTAIC POWER SOURCE"', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Inverter label — rated output, max voltage', sortOrder: 2, weight: 1),
+        TemplateItem(name: 'Rapid shutdown placard — at main service (NEC 690.56(C))', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Point of interconnection label', sortOrder: 4, weight: 1),
+        TemplateItem(name: 'Ground-mount warning signs — if applicable', sortOrder: 5, weight: 1),
+      ]),
+    ],
+    createdAt: _epoch,
+    updatedAt: _epoch,
+  ),
+
+  // ============================================================
+  // 22. WATER DAMAGE & MOLD REMEDIATION — IICRC S500/S520 [NEW]
+  // ============================================================
+
+  InspectionTemplate(
+    id: 'system-water-damage',
+    name: 'Water Damage & Mold Remediation',
+    trade: 'restoration',
+    inspectionType: InspectionType.environmental,
+    isSystem: true,
+    version: 1,
+    sections: [
+      TemplateSection(name: 'Initial Assessment', sortOrder: 0, items: [
+        TemplateItem(name: 'Water category — 1 (clean), 2 (gray), 3 (black) (IICRC S500 6.1)', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Water class — 1-4, evaporation potential (IICRC S500 7.1)', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'Source identified — active, stopped, or mitigated', sortOrder: 2, weight: 3),
+        TemplateItem(name: 'Elapsed time since loss — <24h, 24-48h, >48h', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Affected area — sqft mapped, room by room', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Structural damage — compromised flooring, ceiling', sortOrder: 5, weight: 3),
+        TemplateItem(name: 'Electrical hazard — standing water near outlets/panel', sortOrder: 6, weight: 3),
+        TemplateItem(name: 'Occupant health concerns — elderly, immune-compromised', sortOrder: 7, weight: 2),
+      ]),
+      TemplateSection(name: 'Containment', sortOrder: 1, items: [
+        TemplateItem(name: 'Containment barrier — poly sheeting, negative air', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'HEPA air filtration — AFDs rated for space (IICRC S520 13.1)', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'Warning signs posted — "Authorized Personnel Only"', sortOrder: 2, weight: 1),
+        TemplateItem(name: 'HVAC isolated — prevent cross-contamination', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'PPE — N95/P100, gloves, Tyvek for Category 2/3', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Negative air pressure — differential verified', sortOrder: 5, weight: 2),
+      ]),
+      TemplateSection(name: 'Moisture Mapping', sortOrder: 2, items: [
+        TemplateItem(name: 'Moisture meter readings — all affected surfaces (IICRC S500 10.3)', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Baseline dry readings — unaffected areas documented', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Sub-floor moisture — probe through flooring', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Wall cavity moisture — at 12", 24", 48" heights', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Thermal imaging — infrared scan for hidden moisture', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Moisture map diagram — readings plotted on floor plan', sortOrder: 5, weight: 2),
+        TemplateItem(name: 'Humidity — ambient RH and temperature logged', sortOrder: 6, weight: 1),
+      ]),
+      TemplateSection(name: 'Demo Protocol', sortOrder: 3, items: [
+        TemplateItem(name: 'Drywall removal — 12-24" above water line (flood cut)', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Baseboards / trim — removed for drying', sortOrder: 1, weight: 1),
+        TemplateItem(name: 'Flooring removal — carpet, pad, affected hard floor', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Insulation — removed from wet wall cavities', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Cabinets — toe kicks removed for drying access', sortOrder: 4, weight: 1),
+        TemplateItem(name: 'Contents moved / packed out — documented', sortOrder: 5, weight: 1),
+        TemplateItem(name: 'Anti-microbial treatment — applied to structure (Cat 2/3)', sortOrder: 6, weight: 2),
+      ]),
+      TemplateSection(name: 'Drying Equipment & Monitoring', sortOrder: 4, items: [
+        TemplateItem(name: 'Dehumidifiers — quantity adequate for volume (IICRC S500 11.2)', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Air movers — 1 per 10-16 LF of wall (IICRC S500 11.3)', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Equipment positioned correctly — aimed at wet surfaces', sortOrder: 2, weight: 1),
+        TemplateItem(name: 'Daily moisture readings — tracked and trending down', sortOrder: 3, weight: 3),
+        TemplateItem(name: 'Drying goals — within 10% of dry standard', sortOrder: 4, weight: 3),
+        TemplateItem(name: 'Psychrometric conditions logged — temp, RH, GPP', sortOrder: 5, weight: 1),
+        TemplateItem(name: 'Equipment condensate — draining, not recirculating', sortOrder: 6, weight: 1),
+      ]),
+      TemplateSection(name: 'Mold Remediation (IICRC S520)', sortOrder: 5, items: [
+        TemplateItem(name: 'Mold assessment — type, extent, surface vs structural', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Air sampling — pre-remediation baseline (IICRC S520 8.5)', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Source of moisture — identified and corrected', sortOrder: 2, weight: 3),
+        TemplateItem(name: 'Porous materials — removed if contaminated (drywall, carpet)', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Non-porous surfaces — HEPA vacuumed, cleaned, treated', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Structural framing — sanded/media-blasted if needed', sortOrder: 5, weight: 2),
+        TemplateItem(name: 'Encapsulant — if specified by IH/protocol', sortOrder: 6, weight: 1),
+      ]),
+      TemplateSection(name: 'Clearance Testing', sortOrder: 6, items: [
+        TemplateItem(name: 'Visual inspection — no visible mold/water damage', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Moisture readings — at or below dry standard', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'Post-remediation air sampling — by third party IH', sortOrder: 2, weight: 3),
+        TemplateItem(name: 'Air sample results — below background/outdoor levels', sortOrder: 3, weight: 3),
+        TemplateItem(name: 'Clearance letter — issued by qualified professional', sortOrder: 4, weight: 3),
+        TemplateItem(name: 'Documentation packet — photos, readings, lab results', sortOrder: 5, weight: 2),
+      ]),
+    ],
+    createdAt: _epoch,
+    updatedAt: _epoch,
+  ),
+
+  // ============================================================
+  // 23. COMMERCIAL BUILDING ANNUAL — IBC [NEW]
+  // ============================================================
+
+  InspectionTemplate(
+    id: 'system-commercial-annual',
+    name: 'Commercial Building Annual',
+    trade: 'general',
+    inspectionType: InspectionType.annual,
+    isSystem: true,
+    version: 1,
+    sections: [
+      TemplateSection(name: 'Structure & Envelope', sortOrder: 0, items: [
+        TemplateItem(name: 'Foundation — cracks, settlement, water intrusion', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Exterior walls — cracks, efflorescence, deterioration', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Roof — membrane condition, ponding, drains clear', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Windows — seals, glazing, operation', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Doors — hardware, closers, weatherstripping', sortOrder: 4, weight: 1),
+        TemplateItem(name: 'Caulking / sealants — expansion joints, perimeter', sortOrder: 5, weight: 1),
+        TemplateItem(name: 'Painting / coating — exterior deterioration', sortOrder: 6, weight: 1),
+      ]),
+      TemplateSection(name: 'Mechanical Systems', sortOrder: 1, items: [
+        TemplateItem(name: 'HVAC — heating and cooling operational', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'RTUs — filters, belts, coils, condensate', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Boiler — inspection current, safety controls (ASME)', sortOrder: 2, weight: 3),
+        TemplateItem(name: 'Chiller — inspection current, refrigerant log', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Cooling tower — treatment, condition', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'BAS / DDC — controls responding, setpoints correct', sortOrder: 5, weight: 1),
+        TemplateItem(name: 'Exhaust fans — operational, clean', sortOrder: 6, weight: 1),
+        TemplateItem(name: 'Ventilation — outside air dampers operational (ASHRAE 62.1)', sortOrder: 7, weight: 2),
+      ]),
+      TemplateSection(name: 'Electrical Systems', sortOrder: 2, items: [
+        TemplateItem(name: 'Main switchgear — no damage, proper clearance (NEC 110.26)', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Panels — labeled, no double-taps, covers on', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Emergency generator — weekly run log, load test current', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'UPS systems — battery condition, test results', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Lighting — exterior, interior, emergency all functional', sortOrder: 4, weight: 1),
+        TemplateItem(name: 'Electrical rooms — clean, no storage, proper access', sortOrder: 5, weight: 2),
+      ]),
+      TemplateSection(name: 'Plumbing Systems', sortOrder: 3, items: [
+        TemplateItem(name: 'Domestic water — pressure, temperature, no leaks', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Water heater — operation, TPR valve, temp log', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Backflow preventers — annual test current', sortOrder: 2, weight: 3),
+        TemplateItem(name: 'Grease trap — pumping schedule current', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Sump pumps — operational, alarms working', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Restrooms — fixtures, flush valves, drains', sortOrder: 5, weight: 1),
+      ]),
+      TemplateSection(name: 'Life Safety', sortOrder: 4, items: [
+        TemplateItem(name: 'Fire alarm — annual inspection current (NFPA 72)', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Sprinkler — annual inspection current (NFPA 25)', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'Fire extinguishers — annual service, tags current (NFPA 10)', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Exit signs — illuminated, visible', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Emergency lighting — 90-min battery test (NFPA 101)', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Exit doors — open freely, not blocked', sortOrder: 5, weight: 3),
+        TemplateItem(name: 'Fire doors — self-closing, latching, no wedges', sortOrder: 6, weight: 3),
+        TemplateItem(name: 'Stairwells — clear, doors close, no storage', sortOrder: 7, weight: 2),
+      ]),
+      TemplateSection(name: 'Elevators & Parking', sortOrder: 5, items: [
+        TemplateItem(name: 'Elevator inspection — current certificate posted', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Elevator — operation, leveling, door timing', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Elevator phone — operational, connected', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Parking structure — concrete condition, rebar exposure', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Parking lot — striping, ADA spaces, lighting', sortOrder: 4, weight: 1),
+        TemplateItem(name: 'Parking garage — ventilation, CO detection', sortOrder: 5, weight: 2),
+      ]),
+      TemplateSection(name: 'ADA Compliance', sortOrder: 6, items: [
+        TemplateItem(name: 'Accessible entrance — signage, path, door clearance', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Accessible restrooms — grab bars, clearances', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Accessible parking — correct count, signage, slope', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Common areas — routes, protruding objects', sortOrder: 3, weight: 1),
+      ]),
+      TemplateSection(name: 'Code Compliance / Documentation', sortOrder: 7, items: [
+        TemplateItem(name: 'Certificate of occupancy — current, posted', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Business license — current', sortOrder: 1, weight: 1),
+        TemplateItem(name: 'Occupancy load — posted, not exceeded', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Evacuation plan — posted, current', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Inspection records — all systems, accessible on site', sortOrder: 4, weight: 1),
+        TemplateItem(name: 'Maintenance log — tracked, current', sortOrder: 5, weight: 1),
+        TemplateItem(name: 'Tenant improvement permits — if applicable, closed', sortOrder: 6, weight: 1),
+      ]),
+    ],
+    createdAt: _epoch,
+    updatedAt: _epoch,
+  ),
+
+  // ============================================================
+  // 24. PRE-POUR / PRE-SLAB [NEW]
+  // ============================================================
+
+  InspectionTemplate(
+    id: 'system-pre-pour',
+    name: 'Pre-Pour / Pre-Slab Inspection',
+    trade: 'general',
+    inspectionType: InspectionType.foundation,
+    isSystem: true,
+    version: 1,
+    sections: [
+      TemplateSection(name: 'Subgrade Preparation', sortOrder: 0, items: [
+        TemplateItem(name: 'Subgrade compaction — proctor test results on file', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Subgrade elevation — matches plan, properly graded', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'No soft spots, organic material, or debris', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Base material — type, thickness per spec (gravel/ABC)', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Base compaction verified — density testing', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'No standing water — dewatered', sortOrder: 5, weight: 2),
+        TemplateItem(name: 'Proof roll — no deflection under loaded truck', sortOrder: 6, weight: 2),
+      ]),
+      TemplateSection(name: 'Vapor Barrier', sortOrder: 1, items: [
+        TemplateItem(name: 'Vapor barrier — 10 mil min (15 mil recommended per ASTM E1745)', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Laps — 6" min overlap, taped per manufacturer', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Penetrations — sealed at pipes, columns', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'No tears, punctures, or exposed soil', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Turned up at edges — to top of slab minimum', sortOrder: 4, weight: 1),
+      ]),
+      TemplateSection(name: 'Reinforcement', sortOrder: 2, items: [
+        TemplateItem(name: 'Rebar size and spacing per structural plan', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Rebar on chairs — proper height for cover', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'Concrete cover — 3" from soil, 1.5" from forms', sortOrder: 2, weight: 3),
+        TemplateItem(name: 'Lap splices — minimum 40 diameters', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Welded wire fabric — if used, properly supported', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Post-tension cables — if PT slab, layout per plan', sortOrder: 5, weight: 3),
+        TemplateItem(name: 'Edge reinforcement — thickened edge per plan', sortOrder: 6, weight: 2),
+      ]),
+      TemplateSection(name: 'Embedded Items', sortOrder: 3, items: [
+        TemplateItem(name: 'Anchor bolts — locations per plan, template in place', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Hold-downs — per shear wall schedule', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'Sleeves — plumbing, electrical, mechanical penetrations', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Radon pipe — if required, stubbed up correctly', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'In-slab heating — PEX layout, pressure tested', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Electrical conduit — in-slab runs, proper depth', sortOrder: 5, weight: 2),
+        TemplateItem(name: 'Slab drains — floor drain bodies, set to grade', sortOrder: 6, weight: 2),
+      ]),
+      TemplateSection(name: 'Formwork', sortOrder: 4, items: [
+        TemplateItem(name: 'Forms — correct slab thickness, straight, braced', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Edge forms — level, proper elevation', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Control joint layout — per plan, 24-36x slab thickness', sortOrder: 2, weight: 1),
+        TemplateItem(name: 'Isolation joints — at columns, walls, dissimilar materials', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Expansion joints — location per plan', sortOrder: 4, weight: 1),
+        TemplateItem(name: 'Form release agent — applied', sortOrder: 5, weight: 1),
+      ]),
+      TemplateSection(name: 'Placement Readiness', sortOrder: 5, items: [
+        TemplateItem(name: 'Concrete mix design — PSI, slump, aggregate per spec', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Pour sequence — planned, crew briefed', sortOrder: 1, weight: 1),
+        TemplateItem(name: 'Weather — temp >40°F, no rain in forecast', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Cold weather plan — blankets, heaters if <50°F', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Hot weather plan — retarder, shade, misting if >90°F', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Finishing crew and tools ready', sortOrder: 5, weight: 1),
+        TemplateItem(name: 'Curing method planned — wet cure / compound / blankets', sortOrder: 6, weight: 2),
+        TemplateItem(name: 'Testing lab notified — cylinders, slump, air', sortOrder: 7, weight: 2),
+      ]),
+    ],
+    createdAt: _epoch,
+    updatedAt: _epoch,
+  ),
+
+  // ============================================================
+  // 25. LOW VOLTAGE / STRUCTURED CABLING — BICSI/TIA [NEW]
+  // ============================================================
+
+  InspectionTemplate(
+    id: 'system-low-voltage',
+    name: 'Low Voltage / Structured Cabling',
+    trade: 'low_voltage',
+    inspectionType: InspectionType.electrical,
+    isSystem: true,
+    version: 1,
+    sections: [
+      TemplateSection(name: 'Pathway & Spaces', sortOrder: 0, items: [
+        TemplateItem(name: 'Telecom room — size adequate, dedicated, climate controlled', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Rack/cabinet — proper size, grounded, mounted', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Conduit — size, fill within 40% (TIA-569)', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'J-hooks / cable tray — support spacing 4-5ft (BICSI)', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Fire stopping — at all rated penetrations (IBC 714)', sortOrder: 4, weight: 3),
+        TemplateItem(name: 'Separation from power — 12" parallel, 90° crossings (TIA-568)', sortOrder: 5, weight: 2),
+      ]),
+      TemplateSection(name: 'Cable Management', sortOrder: 1, items: [
+        TemplateItem(name: 'Cable type — Cat6/6A per specification', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Bend radius — 4x cable OD minimum (TIA-568)', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Pull tension — not exceeded during install (25 lbf Cat6)', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'No cable damage — kinks, crushing, staples', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Service loops — 12" at outlet, 10ft at TR (BICSI)', sortOrder: 4, weight: 1),
+        TemplateItem(name: 'Plenum-rated cable — in air handling spaces (NEC 800.154)', sortOrder: 5, weight: 3),
+        TemplateItem(name: 'Bundle size — no more than 24 cables per bundle', sortOrder: 6, weight: 1),
+      ]),
+      TemplateSection(name: 'Terminations', sortOrder: 2, items: [
+        TemplateItem(name: 'Patch panel — correct category, IDC terminations clean', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Keystone jacks — T568A or T568B (consistent throughout)', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Untwist — 1/2" max at termination point (Cat6)', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Faceplates — installed, labeled, flush', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Fiber connectors — if fiber, proper polish and type', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Coax connectors — proper compression, no signal loss', sortOrder: 5, weight: 1),
+      ]),
+      TemplateSection(name: 'Testing & Certification', sortOrder: 3, items: [
+        TemplateItem(name: 'Channel test — pass per TIA-568 standards', sortOrder: 0, weight: 3),
+        TemplateItem(name: 'Wire map — all 8 conductors correct, no shorts/opens', sortOrder: 1, weight: 3),
+        TemplateItem(name: 'Length — within 295ft channel limit (TIA-568)', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'NEXT — near-end crosstalk within limits', sortOrder: 3, weight: 2),
+        TemplateItem(name: 'Return loss — within limits per category', sortOrder: 4, weight: 2),
+        TemplateItem(name: 'Fiber — OTDR or power meter test, insertion loss', sortOrder: 5, weight: 2),
+        TemplateItem(name: 'Test results saved — per-port, exportable', sortOrder: 6, weight: 2),
+      ]),
+      TemplateSection(name: 'Labeling (TIA-606)', sortOrder: 4, items: [
+        TemplateItem(name: 'Cables labeled — both ends, permanent, legible (TIA-606)', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Patch panel ports labeled — match outlet labels', sortOrder: 1, weight: 2),
+        TemplateItem(name: 'Faceplates labeled — room/port ID', sortOrder: 2, weight: 1),
+        TemplateItem(name: 'Racks/cabinets labeled — telecom room ID', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'As-built drawings — cable schedule, floor plans updated', sortOrder: 4, weight: 2),
+      ]),
+      TemplateSection(name: 'Documentation', sortOrder: 5, items: [
+        TemplateItem(name: 'Test report binder — all channels tested and documented', sortOrder: 0, weight: 2),
+        TemplateItem(name: 'Warranty registration — manufacturer system warranty', sortOrder: 1, weight: 1),
+        TemplateItem(name: 'As-built cable schedule — port-to-port mapping', sortOrder: 2, weight: 2),
+        TemplateItem(name: 'Floor plan drawings — outlet locations marked', sortOrder: 3, weight: 1),
+        TemplateItem(name: 'Closeout package — warranty, test results, drawings', sortOrder: 4, weight: 2),
       ]),
     ],
     createdAt: _epoch,
@@ -577,4 +1940,4 @@ final List<InspectionTemplate> systemInspectionTemplates = [
 ];
 
 // Sentinel epoch for system templates (not stored in DB, used as const)
-final _epoch = DateTime.utc(2026, 1, 1);
+final _epoch = DateTime.fromMillisecondsSinceEpoch(0);
