@@ -1,7 +1,7 @@
 # ZAFTO LIVE STATUS
 ## UPDATE THIS EVERY SESSION
 
-**Last Updated:** February 15, 2026 (Session 125 — **S125: FULL DEPTH AUDIT + SECURITY + ZERO-DEFECT SPRINT SPECS.** Docs-only session. Recovered crashed session. Wrote 56 new sprints (~612h) across 7 phases: FIELD (field gaps), REST (restoration), NICHE (trade modules), DEPTH (full depth audit + contractor needs validation), SEC (security fortress: 2FA, biometrics, Hellhound deception, WAF, pentest), ZERO (zero-defect: property testing, chaos eng, 50K load test, fuzzing, mutation testing, triple-scan), LAUNCH (monitoring, legal, payments, i18n, accessibility, App Store). Live security scan found 3 medium vulns. ~201 tables.)
+**Last Updated:** February 15, 2026 (Session 126 — **S126: SKETCH ENGINE FIXES + COMMERCIAL EXPANSION.** Fixed sketch engine full-screen (React portal to escape dashboard layout CSS containment, ResizeObserver+RAF canvas sizing). Fixed eraser/select not working on doors/windows (Konva node tree traversal to parent Group). Deployed to zafto.cloud. Expanded SK12 spec with 90+ residential symbols (water, sewer, gas, electrical, mechanical, landscape, roof, building access, site/safety, damage). Expanded SK13 with material type picker (14 roofing, 12 siding, 9 fence, 7 deck, 7 paver types + custom door/window + deck/pool/hardscape formulas + 20 templates). Created DEPTH25 (~24h): commercial building support — 120+ symbols, 16 building types. Created DEPTH26 (~16h): property blueprint lookup — address-to-sketch using free APIs (MS Building Footprints, OSM, Nominatim). Commercial research returned 1,400+ elements. 60 sprints, ~688h total.)
 **Current Phase:** BUILD — **Phases A-D + F + T + P + SK + GC + U + W + J + L ALL COMPLETE. D5-PV DONE (S117). Phase INS COMPLETE (S121-S122, INS1-INS8). Phase G IN PROGRESS (G1-G5 automated DONE, G6-G10 manual QA PENDING).** R1 DONE. FM code done. Phase E PAUSED. ~201 tables. 68 migrations. 70 Edge Functions. 126 CRM routes. 36 team routes. 39 client routes. 29 ops routes.
 **Next Action:** SEC1 (critical security fixes) → LAUNCH1 (monitoring) → FIELD1-3 → REST1-2 → NICHE1-2 → DEPTH1-24 → SEC2-9 → LAUNCH2-6 → Phase G (QA) → Phase JUR → Phase E (AI) → ZERO1-9 (zero-defect) → LAUNCH7 (App Store) → SHIP.
 
@@ -139,7 +139,7 @@
 | `00_HANDOFF.md` | COMPLETE — updated every session |
 | `01_MASTER_BUILD_PLAN.md` | COMPLETE (updated S97) |
 | `02_CIRCUIT_BLUEPRINT.md` | COMPLETE — updated S91 (Codemagic CI/CD, Dependabot) |
-| `03_LIVE_STATUS.md` | COMPLETE (this file — updated S124) |
+| `03_LIVE_STATUS.md` | COMPLETE (this file — updated S126) |
 | `04_EXPANSION_SPECS.md` | COMPLETE (Session 36 — all 14 specs consolidated) |
 | `05_EXECUTION_PLAYBOOK.md` | COMPLETE (Session 37 — session protocol, methodology, quality gates) |
 | `06_ARCHITECTURE_PATTERNS.md` | COMPLETE (Session 37 — 14 code patterns with full examples) |
