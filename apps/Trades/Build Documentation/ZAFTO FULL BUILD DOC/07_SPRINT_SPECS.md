@@ -12237,6 +12237,25 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - [ ] Build + execute corrections for each shallow feature
 - [ ] Commit: `[DEPTH22] F-phase module depth corrections — marketplace, hiring, fleet, OSHA, ZForge, exams`
 
+### DEPTH23 — Full Codebase Sweep: Unlisted & New Feature Discovery (~8h)
+**Goal:** Catch EVERYTHING that DEPTH1-22 missed. Features built between S125 and whenever this sprint executes won't be in any checklist. New screens, hooks, models, Edge Functions, routes, and tables added after this spec was written need to be found and audited. This sprint is a programmatic scan — not a human guess.
+- [ ] Scan `lib/screens/` — list every subdirectory. Cross-reference against DEPTH1-22 checklists. Flag any screen directory NOT mentioned in any DEPTH sprint
+- [ ] Scan `lib/models/` — list every model file. Cross-reference against DEPTH1-22. Flag any model NOT covered by any audit sprint
+- [ ] Scan `lib/repositories/` — list every repository. Flag any repo not covered
+- [ ] Scan `lib/providers/` — list every provider. Flag any provider not covered
+- [ ] Scan `web-portal/src/app/dashboard/` — list every route directory. Flag any CRM page not mentioned in any DEPTH sprint
+- [ ] Scan `web-portal/src/lib/hooks/` — list every hook file. Flag any hook not covered
+- [ ] Scan `team-portal/src/app/dashboard/` — list every route. Flag uncovered
+- [ ] Scan `client-portal/src/app/` — list every route. Flag uncovered
+- [ ] Scan `ops-portal/src/app/dashboard/` — list every route. Flag uncovered
+- [ ] Scan `supabase/functions/` — list every Edge Function directory. Flag any EF not mentioned in any audit sprint
+- [ ] Scan `supabase/migrations/` — extract all CREATE TABLE statements. Flag any table not referenced in any DEPTH sprint
+- [ ] Check git log since S125 — list every commit after `cde7106`. Identify new features, screens, tables, EFs added after audit specs were written
+- [ ] For each flagged item: determine which DEPTH sprint it SHOULD belong to, or create a new correction task
+- [ ] Audit every flagged item for depth — grade DEEP/SHALLOW/STUB
+- [ ] Build + execute corrections for any SHALLOW/STUB items found
+- [ ] Commit: `[DEPTH23] Codebase sweep — unlisted features discovered and corrected`
+
 ---
 
 ## PHASE AUDIT SUMMARY: FULL DEPTH PLAN (S125)
@@ -12248,8 +12267,8 @@ When inspector takes a photo during inspection execution, add search bar to atta
 | **FIELD** | FIELD1-FIELD3 | ~36h | Missing field features: messaging, equipment checkout, team portal stubs |
 | **REST** | REST1-REST2 | ~20h | Restoration gaps: fire tools, mold remediation (IICRC S520) |
 | **NICHE** | NICHE1-NICHE2 | ~16h | Missing trade modules: pest control, service trades |
-| **DEPTH** | DEPTH1-DEPTH22 | ~284h | Full depth audit + corrections across every feature area |
-| **Total** | **29 sprints** | **~356h** | — |
+| **DEPTH** | DEPTH1-DEPTH23 | ~292h | Full depth audit + corrections across every feature area |
+| **Total** | **30 sprints** | **~364h** | — |
 
 **Execution order:** FIELD → REST → NICHE → DEPTH1 through DEPTH22 → Phase G (QA) → Phase JUR → Phase E (AI) → LAUNCH
 
@@ -12258,8 +12277,9 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - DEPTH7-14: Cross-cutting concerns (comms, onboarding, trade customization, search, reports, settings, offline, security)
 - DEPTH15-18: Specialized workflows (inventory, subcontractors, client portal, automations)
 - DEPTH19-22: Phase-specific modules (TPA/restoration, recon/inspector/sketch, warranty/legal/intelligence, F-phase features)
+- DEPTH23: Programmatic codebase sweep — catches anything built after S125 or missed by DEPTH1-22
 
-**Every module in the system is now explicitly named in at least one DEPTH sprint. No blind spots.**
+**Every module in the system is now explicitly named in at least one DEPTH sprint. DEPTH23 is the safety net — it scans the actual codebase against these checklists and flags anything unlisted. No blind spots, even for future work.**
 
 **Process per DEPTH sprint:**
 1. Audit the feature area across all 5 apps (Flutter, CRM, Team, Client, Ops)
