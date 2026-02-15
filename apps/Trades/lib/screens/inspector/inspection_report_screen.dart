@@ -14,6 +14,7 @@ import 'package:zafto/core/supabase_client.dart';
 import 'package:zafto/widgets/signature_capture_widget.dart';
 import 'package:zafto/widgets/inspector/template_picker_sheet.dart';
 import 'package:zafto/screens/inspector/inspection_execution_screen.dart';
+import 'package:zafto/screens/inspector/create_template_screen.dart';
 
 // ============================================================
 // Inspection Report Screen
@@ -212,6 +213,15 @@ class _InspectionReportScreenState
             'Copy shareable link to clipboard',
             colors.textSecondary,
             _copyLink,
+          ),
+          const SizedBox(height: 8),
+          _buildActionCard(
+            colors,
+            LucideIcons.filePlus,
+            'Save as Template',
+            'Reuse this checklist for future inspections',
+            colors.accentSuccess,
+            _saveAsTemplate,
           ),
           const SizedBox(height: 8),
           _buildActionCard(
@@ -545,6 +555,54 @@ class _InspectionReportScreenState
         ),
       );
     }
+  }
+
+  Future<void> _saveAsTemplate() async {
+    final insp = widget.inspection;
+
+    // Load the inspection items to build template sections
+    var prefillSections = <TemplateSection>[];
+    try {
+      final items =
+          await ref.read(inspectionItemsProvider(insp.id).future);
+
+      // Group items by area (section name)
+      final sectionMap = <String, List<TemplateItem>>{};
+      for (final item in items) {
+        final area = item.area.isNotEmpty ? item.area : 'General';
+        sectionMap.putIfAbsent(area, () => []);
+        sectionMap[area]!.add(TemplateItem(
+          name: item.itemName,
+          sortOrder: item.sortOrder,
+          weight: 1,
+        ));
+      }
+
+      var sortIdx = 0;
+      for (final entry in sectionMap.entries) {
+        prefillSections.add(TemplateSection(
+          name: entry.key,
+          sortOrder: sortIdx++,
+          items: entry.value,
+        ));
+      }
+    } catch (_) {
+      // If we can't load items, open empty — inspector can fill manually
+    }
+
+    if (!mounted) return;
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => CreateTemplateScreen(
+          prefillSections:
+              prefillSections.isNotEmpty ? prefillSections : null,
+          prefillTrade: insp.trade,
+          prefillType: insp.inspectionType,
+        ),
+      ),
+    );
   }
 
   Future<void> _startReinspection() async {

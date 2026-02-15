@@ -8,6 +8,7 @@ import 'package:zafto/theme/theme_provider.dart';
 import 'package:zafto/models/inspection.dart';
 import 'package:zafto/services/inspection_service.dart';
 import 'package:zafto/data/inspection_template_seeds.dart';
+import 'package:zafto/screens/inspector/create_template_screen.dart';
 
 // ============================================================
 // Inspection Templates Screen
@@ -76,6 +77,21 @@ class _InspectionTemplatesScreenState
             Tab(text: 'My Templates'),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          final result = await Navigator.push<bool>(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const CreateTemplateScreen(),
+            ),
+          );
+          if (result == true) {
+            _tabController.animateTo(1); // switch to My Templates
+          }
+        },
+        backgroundColor: colors.accentPrimary,
+        child: const Icon(LucideIcons.plus, color: Colors.white),
       ),
       body: Column(
         children: [
