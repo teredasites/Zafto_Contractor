@@ -130,11 +130,11 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | **Phase W: Warranty** | **COMPLETE** | **YES** | **S113 chain: W1 warranty intelligence, hooks + pages across 4 portals.** |
 | **Phase J: Job Intelligence** | **COMPLETE** | **YES** | **S113 chain: J1-J2 smart pricing + job analytics, hooks + pages.** |
 | **Phase L: Legal/Permits** | **COMPLETE** | **YES** | **S113 chain: L1-L9 permit intelligence, jurisdictions, compliance, liens, CE tracker. 5 migrations.** |
-| **Phase INS: Inspector Deep Buildout** | **COMPLETE** | **YES** | **S121-S122: INS1-INS8 all done (~52h). 19 inspection types, template-driven checklists, weighted scoring, deficiency tracking w/ photos, PDF reports, GPS capture, reinspection diffs, code reference (61 NEC/IBC/IRC/OSHA/NFPA sections), compliance calendar, permit tracker, CRM templates hook+page, inspection detail, ops metrics, team inspections.** |
+| **Phase INS: Inspector Deep Buildout** | **COMPLETE** | **YES** | **S121-S123: INS1-INS9 all done (~60h). 19 inspection types, template-driven checklists (25 templates, 1,147 items, 173 sections), weighted scoring, deficiency tracking w/ photos, PDF reports, GPS capture, reinspection diffs, code reference (61 NEC/IBC/IRC/OSHA/NFPA sections), compliance calendar, permit tracker, CRM templates hook+page, inspection detail, ops metrics, team inspections. INS9: template depth rewrite (13→25), code ref search sheet (multi-select), code_refs JSONB column.** |
 | **Phase G: QA/Hardening** | **IN PROGRESS** | **PARTIAL** | **S113: G1-G5 automated sprints DONE. G6-G10 manual QA PENDING.** |
 | **Plan Review** | **SPEC'D (S97)** | **NO** | Phase E feature (BA1-BA8, ~128 hrs) |
 
-**ALL PHASES A-F + T + P + SK + GC + U + W + J + L + INS COMPLETE. D5-PV DONE (S117). Tech App DONE (S118-S120). Phase INS DONE (S121-S122). Phase G automated DONE (G1-G5), manual QA pending (G6-G10). ~201 tables. 68 migrations. 70 Edge Functions. 126 CRM routes. 36 team routes. 39 client routes. 29 ops routes. Next: G6-G10 manual QA → E (AI LAST: E-review → BA1-BA8 → E1-E4) → LAUNCH. F2 + F8 post-launch.**
+**ALL PHASES A-F + T + P + SK + GC + U + W + J + L + INS COMPLETE. D5-PV DONE (S117). Tech App DONE (S118-S120). Phase INS DONE (S121-S123, INS1-INS9). Phase G automated DONE (G1-G5), manual QA pending (G6-G10). ~201 tables. 68 migrations. 70 Edge Functions. 126 CRM routes. 36 team routes. 39 client routes. 29 ops routes. Next: G6-G10 manual QA → E (AI LAST: E-review → BA1-BA8 → E1-E4) → LAUNCH. F2 + F8 post-launch.**
 
 ---
 
