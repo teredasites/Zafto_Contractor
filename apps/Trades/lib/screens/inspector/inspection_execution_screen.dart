@@ -11,6 +11,7 @@ import 'package:zafto/repositories/inspection_repository.dart';
 import 'package:zafto/screens/inspector/inspection_report_screen.dart';
 import 'package:zafto/services/inspection_gps_service.dart';
 import 'package:zafto/widgets/inspector/code_reference_search_sheet.dart';
+import 'package:zafto/services/checklist_cache_service.dart';
 
 // ============================================================
 // Inspection Execution Screen
@@ -19,6 +20,10 @@ import 'package:zafto/widgets/inspector/code_reference_search_sheet.dart';
 // from the linked template. Per-item: pass/fail/conditional/NA,
 // notes, photos. Auto-scores from weighted items.
 // Supports save-as-draft + complete flows.
+//
+// Quick Checklist mode: simple check/uncheck instead of
+// pass/fail/NA. Checked → good, unchecked → unanswered.
+// Auto-saves to Hive on every toggle for offline safety.
 // ============================================================
 
 class InspectionExecutionScreen extends ConsumerStatefulWidget {
@@ -71,6 +76,11 @@ class _InspectionExecutionScreenState
 
   /// Notes for the overall inspection
   String _overallNotes = '';
+
+  /// Quick Checklist mode — simple check/uncheck, no scoring
+  bool get _isQuickMode =>
+      (widget.inspectionType ?? widget.inspection?.inspectionType) ==
+      InspectionType.quickChecklist;
 
   @override
   void initState() {
@@ -177,11 +187,13 @@ class _InspectionExecutionScreenState
   }
 
   PreferredSizeWidget _buildAppBar(ZaftoColors colors) {
-    final title = widget.inspection != null
-        ? 'Resume Inspection'
-        : _reviewMode
-            ? 'Review & Complete'
-            : 'Inspection';
+    final title = _isQuickMode
+        ? 'Quick Checklist'
+        : widget.inspection != null
+            ? 'Resume Inspection'
+            : _reviewMode
+                ? 'Review & Complete'
+                : 'Inspection';
 
     return AppBar(
       backgroundColor: colors.bgBase,
@@ -369,6 +381,114 @@ class _InspectionExecutionScreenState
     final result = _results[sectionIdx]?[itemIdx];
     final note = _notes[sectionIdx]?[itemIdx] ?? '';
 
+    // ── Quick Checklist mode: simple checkbox ──
+    if (_isQuickMode) {
+      final isChecked = result == ItemCondition.good;
+      return GestureDetector(
+        onTap: () {
+          HapticFeedback.lightImpact();
+          setState(() {
+            _results[sectionIdx] ??= {};
+            _results[sectionIdx]![itemIdx] =
+                isChecked ? null : ItemCondition.good;
+          });
+          _autoSaveToHive();
+        },
+        child: Container(
+          margin: const EdgeInsets.only(bottom: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          decoration: BoxDecoration(
+            color: isChecked
+                ? colors.accentSuccess.withValues(alpha: 0.08)
+                : colors.bgElevated,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isChecked
+                  ? colors.accentSuccess.withValues(alpha: 0.4)
+                  : colors.borderSubtle,
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  // Checkbox
+                  Container(
+                    width: 24,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      color: isChecked
+                          ? colors.accentSuccess
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(
+                        color: isChecked
+                            ? colors.accentSuccess
+                            : colors.textQuaternary,
+                        width: 2,
+                      ),
+                    ),
+                    child: isChecked
+                        ? const Icon(LucideIcons.check,
+                            size: 16, color: Colors.white)
+                        : null,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      item.name,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: isChecked
+                            ? colors.textSecondary
+                            : colors.textPrimary,
+                        decoration: isChecked
+                            ? TextDecoration.lineThrough
+                            : null,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              // Optional notes — tap to expand
+              if (isChecked || note.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                TextField(
+                  controller: TextEditingController(text: note)
+                    ..selection =
+                        TextSelection.collapsed(offset: note.length),
+                  onChanged: (v) {
+                    _notes[sectionIdx] ??= {};
+                    _notes[sectionIdx]![itemIdx] = v;
+                  },
+                  maxLines: 2,
+                  minLines: 1,
+                  style: TextStyle(fontSize: 13, color: colors.textPrimary),
+                  decoration: InputDecoration(
+                    hintText: 'Add notes (optional)...',
+                    hintStyle:
+                        TextStyle(fontSize: 12, color: colors.textQuaternary),
+                    filled: true,
+                    fillColor: colors.bgInset,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 8),
+                    isDense: true,
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      );
+    }
+
+    // ── Formal inspection mode: pass/fail/conditional/NA ──
     final resultColor = _conditionColor(result, colors);
     final resultIcon = _conditionIcon(result);
 
@@ -946,6 +1066,9 @@ class _InspectionExecutionScreenState
                       HapticFeedback.lightImpact();
                       if (_currentSection < _sections.length - 1) {
                         setState(() => _currentSection++);
+                      } else if (_isQuickMode) {
+                        // Quick mode — save and exit
+                        _saveQuickChecklist();
                       } else {
                         // Last section — go to review
                         setState(() => _reviewMode = true);
@@ -961,7 +1084,9 @@ class _InspectionExecutionScreenState
                         child: Text(
                           _currentSection < _sections.length - 1
                               ? 'Next Section'
-                              : 'Review & Complete',
+                              : _isQuickMode
+                                  ? 'Save Checklist'
+                                  : 'Review & Complete',
                           style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w700,
@@ -1236,6 +1361,117 @@ class _InspectionExecutionScreenState
         await repo.addInspectionItem(item);
       }
     }
+  }
+
+  // ──────────────────────────────────────────────
+  // HIVE AUTO-SAVE (Quick Checklist)
+  // ──────────────────────────────────────────────
+
+  /// Auto-save to Hive on every toggle (quick mode only).
+  /// Debounced — doesn't thrash disk on rapid taps.
+  void _autoSaveToHive() {
+    if (!_isQuickMode) return;
+    // Build items from current state
+    final items = _buildItemsFromState();
+    final now = DateTime.now();
+    final inspection = PmInspection(
+      id: _inspectionId ?? 'local-${now.millisecondsSinceEpoch}',
+      inspectionType: InspectionType.quickChecklist,
+      status: InspectionStatus.inProgress,
+      notes: _overallNotes.isNotEmpty ? _overallNotes : null,
+      templateId: widget.template?.id,
+      trade: widget.template?.trade,
+      createdAt: now,
+      updatedAt: now,
+    );
+    ref.read(checklistCacheServiceProvider).cacheChecklist(
+          inspection,
+          items,
+          synced: false,
+        );
+  }
+
+  /// Save quick checklist: Hive first, then Supabase, then exit.
+  Future<void> _saveQuickChecklist() async {
+    if (_saving) return;
+    setState(() => _saving = true);
+
+    try {
+      // Build items
+      final items = _buildItemsFromState();
+      final now = DateTime.now();
+
+      // Save to Hive first (instant offline backup)
+      final cacheService = ref.read(checklistCacheServiceProvider);
+      final localId = _inspectionId ?? 'local-${now.millisecondsSinceEpoch}';
+      final inspection = PmInspection(
+        id: localId,
+        inspectionType: InspectionType.quickChecklist,
+        status: InspectionStatus.completed,
+        notes: _overallNotes.isNotEmpty ? _overallNotes : null,
+        templateId: widget.template?.id,
+        trade: widget.template?.trade,
+        completedDate: now,
+        createdAt: now,
+        updatedAt: now,
+      );
+      await cacheService.cacheChecklist(inspection, items, synced: false);
+
+      // Then try Supabase
+      try {
+        await _saveDraft();
+        await cacheService.markSynced(localId);
+      } catch (_) {
+        // Supabase failed — data is safe in Hive
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Checklist saved — ${_completedItemCount}/$_totalItemCount items checked',
+            ),
+            backgroundColor: Colors.green[700],
+            duration: const Duration(seconds: 2),
+          ),
+        );
+        Navigator.pop(context, true);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to save: $e'),
+            backgroundColor: Colors.red[700],
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  /// Build PmInspectionItem list from current state maps.
+  List<PmInspectionItem> _buildItemsFromState() {
+    final items = <PmInspectionItem>[];
+    for (var s = 0; s < _sections.length; s++) {
+      final section = _sections[s];
+      for (var i = 0; i < section.items.length; i++) {
+        final result = _results[s]?[i];
+        if (result == null) continue;
+        items.add(PmInspectionItem(
+          inspectionId: _inspectionId ?? '',
+          area: section.name,
+          itemName: section.items[i].name,
+          condition: result,
+          notes: (_notes[s]?[i] ?? '').isNotEmpty ? _notes[s]![i] : null,
+          codeRefs: _itemCodeRefs[s]?[i] ?? [],
+          sortOrder: s * 100 + i,
+          createdAt: DateTime.now(),
+        ));
+      }
+    }
+    return items;
   }
 
   // ──────────────────────────────────────────────

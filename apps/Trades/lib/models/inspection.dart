@@ -44,6 +44,8 @@ enum InspectionType {
   electrical,
   plumbing,
   hvac,
+  // Quick Checklist (simple check/uncheck mode)
+  quickChecklist,
 }
 
 enum InspectionStatus {
@@ -384,6 +386,7 @@ class PmInspection {
   }
 
   // Computed getters
+  bool get isQuickChecklist => inspectionType == InspectionType.quickChecklist;
   bool get isReInspection => parentInspectionId != null;
   bool get hasGps => gpsLat != null && gpsLng != null;
   bool get hasReport => reportUrl != null;

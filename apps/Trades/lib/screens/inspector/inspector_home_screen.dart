@@ -26,6 +26,7 @@ import 'package:zafto/services/inspection_service.dart';
 import 'package:zafto/services/time_clock_service.dart';
 import 'package:zafto/models/inspection.dart';
 import 'package:zafto/models/time_entry.dart';
+import 'package:zafto/screens/inspector/inspection_templates_screen.dart';
 
 // ============================================================
 // Inspector Home Screen — Premium Dashboard (Owner-Parity)
@@ -270,6 +271,7 @@ class _InspectorHomeScreenState extends ConsumerState<InspectorHomeScreen> {
   // ── Quick Tools Carousel ────────────────────────────────────
   Widget _buildQuickToolsCarousel(ZaftoColors colors) {
     final tools = <_QuickTool>[
+      _QuickTool('Checklist', LucideIcons.listChecks, () => _push(const InspectionTemplatesScreen(quickChecklistMode: true))),
       _QuickTool('Photos', LucideIcons.camera, () => _push(const JobSitePhotosScreen())),
       _QuickTool('Markup', LucideIcons.penTool, () => _push(const DefectMarkupScreen())),
       _QuickTool('Voice Notes', LucideIcons.mic, () => _push(const VoiceNotesScreen())),

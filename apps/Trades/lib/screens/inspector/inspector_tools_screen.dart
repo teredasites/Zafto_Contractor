@@ -22,6 +22,8 @@ import 'package:zafto/screens/inspector/deficiency_list_screen.dart';
 import 'package:zafto/screens/inspector/code_reference_screen.dart';
 import 'package:zafto/screens/inspector/compliance_calendar_screen.dart';
 import 'package:zafto/screens/inspector/permit_inspection_tracker_screen.dart';
+import 'package:zafto/screens/inspector/inspection_execution_screen.dart';
+import 'package:zafto/models/inspection.dart';
 
 // ============================================================
 // Inspector Tools Screen — Inspector-Specific & Shared Tools
@@ -57,6 +59,12 @@ class InspectorToolsScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 20),
               _buildSection(context, colors, 'INSPECTION', [
+                _ToolItem(
+                  LucideIcons.listChecks,
+                  'Quick Checklist',
+                  'Simple check/uncheck list from any template',
+                  () => _openQuickChecklist(context),
+                ),
                 _ToolItem(
                   LucideIcons.fileCheck,
                   'Templates',
@@ -311,6 +319,18 @@ class InspectorToolsScreen extends ConsumerWidget {
   void _push(BuildContext context, Widget screen) {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (_) => screen),
+    );
+  }
+
+  void _openQuickChecklist(BuildContext context) {
+    // Navigate to template picker first — user picks a template,
+    // then we launch execution in quick checklist mode.
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => const InspectionTemplatesScreen(
+          quickChecklistMode: true,
+        ),
+      ),
     );
   }
 }
