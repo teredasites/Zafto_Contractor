@@ -18,6 +18,7 @@ import 'package:zafto/screens/field_tools/punch_list_screen.dart';
 import 'package:zafto/screens/field_tools/receipt_scanner_screen.dart';
 import 'package:zafto/screens/field_tools/mileage_tracker_screen.dart';
 import 'package:zafto/screens/inspector/inspection_templates_screen.dart';
+import 'package:zafto/screens/inspector/deficiency_list_screen.dart';
 
 // ============================================================
 // Inspector Tools Screen — Inspector-Specific & Shared Tools
@@ -58,6 +59,12 @@ class InspectorToolsScreen extends ConsumerWidget {
                   'Templates',
                   'Inspection checklists by type & trade',
                   () => _push(context, const InspectionTemplatesScreen()),
+                ),
+                _ToolItem(
+                  LucideIcons.alertTriangle,
+                  'Deficiencies',
+                  'Track issues across all inspections',
+                  () => _push(context, const DeficiencyListScreen()),
                 ),
                 _ToolItem(
                   LucideIcons.camera,
