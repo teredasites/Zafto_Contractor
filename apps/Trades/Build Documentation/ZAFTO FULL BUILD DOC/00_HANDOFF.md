@@ -1,6 +1,6 @@
 # ZAFTO SESSION HANDOFF
 ## THE ONLY DOC YOU READ FIRST — EVERY SESSION
-### Last Updated: February 15, 2026 (Session 121 — S121: Inspector app UI redesign + real data wiring. Crash recovery. 5 screens rewritten to premium pattern. Compile errors fixed. Deep inspector research saved (13 types, competitors, compliance). Phase INS sprint spec written: INS1-INS8, ~52h.)
+### Last Updated: February 15, 2026 (Session 122 — S122: Phase INS COMPLETE. INS6: home screen wiring (clock/hours/bell), geolocator API fix, exhaustive switch fix. INS7: Code Reference (61 NEC/IBC/IRC/OSHA/NFPA sections), Compliance Calendar, Permit Tracker. INS8: CRM templates hook+page, inspection detail, ops metrics, team inspections. All builds pass.)
 
 ---
 
@@ -19,12 +19,12 @@
 
 | Field | Value |
 |-------|-------|
-| **Sprint** | **Inspector UI Redesign DONE (S121). Tech App COMPLETE (S118-S120). Phase INS SPEC'D (INS1-INS8, ~52h). PHASE G IN PROGRESS (S113-S115).** G1-G5 automated DONE. G10 DONE. G6-G9 manual QA PENDING. |
-| **Sub-step** | Phase INS (Inspector Deep Buildout) spec'd — 8 sprints, ~52h. G6-G9 manual QA pending. Phase E remains PAUSED (AI goes last). |
-| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → Phase INS (INS1-INS8 — templates, deficiency tracking, reports, GPS, code reference, permits, CRM hooks). Phase G (G1-G5 DONE, G10 DONE, G6-G9 manual). Phase E: E-review + BA1-BA8 (~128 hrs) + E1-E4. |
-| **Status** | Phases A-D + F + T + P + SK + GC + U + W + J + L ALL DONE. D5-PV DONE. Tech App DONE. Inspector UI DONE (S121). Phase INS SPEC'D. Phase G: G1-G5 automated DONE, G10 DONE. R1 DONE. FM code done. Phase E PAUSED. ~201 tables. 52 migration files. 70 Edge Functions. **125 CRM pages. 36 team pages. 39 client pages. 28 ops pages.** |
-| **Last Completed** | S121: **Inspector app UI redesign + real data wiring (crash recovery).** 5 inspector screens rewritten to premium tech-app pattern. InspectionService + Riverpod providers. Compile errors fixed. Deep research saved (13 inspector types, competitors, AI opportunities). Phase INS sprint spec written (INS1-INS8, ~52h). |
-| **Session Count** | 121 |
+| **Sprint** | **INS9 NEXT (template depth rewrite + photo code refs). Phase INS core COMPLETE (S121-S122, INS1-INS8). Tech App COMPLETE (S118-S120). PHASE G IN PROGRESS (S113-S115).** G1-G5 automated DONE. G10 DONE. G6-G9 manual QA PENDING. |
+| **Sub-step** | **INS9 Part A:** Rewrite `lib/data/inspection_template_seeds.dart` — expand 13 existing + add 12 new templates (~1,200+ items, 25 total). **INS9 Part B:** Photo code reference search during inspection execution. Full spec in `07_SPRINT_SPECS.md` → INS9. |
+| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → **INS9 (NEXT)**. Phase INS (INS1-INS8 ALL DONE). Phase G (G1-G5 DONE, G10 DONE, G6-G9 manual). Phase E: E-review + BA1-BA8 (~128 hrs) + E1-E4. |
+| **Status** | Phases A-D + F + T + P + SK + GC + U + W + J + L ALL DONE. D5-PV DONE. Tech App DONE. **Phase INS COMPLETE (S122).** Phase G: G1-G5 automated DONE, G10 DONE. R1 DONE. FM code done. Phase E PAUSED. ~201 tables. 52 migration files. 70 Edge Functions. **126 CRM pages. 36 team pages. 39 client pages. 29 ops pages.** |
+| **Last Completed** | S122: **Phase INS COMPLETE (INS6-INS8).** INS6: home screen wiring (clock status, hours, bell), geolocator 11.x API fix, exhaustive InspectionType switch. INS7: Code Reference (61 NEC/IBC/IRC/OSHA/NFPA sections), Compliance Calendar, Permit Inspection Tracker, tools screen wired. INS8: CRM templates hook+page, inspection [id] detail, ops inspector metrics, team inspections. All 4 portal builds pass. |
+| **Session Count** | 122 |
 | **Tables** | ~201 (+2 from S117: government_payment_programs, payment_verification_log). Also ALTER rent_payments + invoices. |
 | **Migration Files** | 52 total (added: 20260215000102_payment_verification.sql — payment verification + government programs) |
 

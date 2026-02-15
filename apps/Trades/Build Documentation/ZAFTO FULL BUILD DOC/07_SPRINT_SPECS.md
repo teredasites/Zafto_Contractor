@@ -11662,18 +11662,63 @@ Equipment lifecycle data + prediction engine tables.
 ### INS8: Web CRM Hooks & Analytics (~6h)
 
 #### Steps
-- [ ] CRM hook: `use-inspections.ts` — CRUD + real-time subscriptions on `pm_inspections` + `inspection_deficiencies`
-- [ ] CRM hook: `use-inspection-templates.ts` — template management
-- [ ] CRM page: `/dashboard/inspections` — inspection list, filters, assignment, scheduling
-- [ ] CRM page: `/dashboard/inspections/[id]` — inspection detail with checklist, deficiencies, report
-- [ ] CRM page: `/dashboard/inspections/templates` — template management UI
-- [ ] Inspector performance dashboard: pass rates, avg inspection time, deficiency detection rates, re-inspection rates per inspector
-- [ ] Common deficiency analytics: most frequent code violations, trends over time, by trade/property/inspector
-- [ ] Ops portal: `/dashboard/inspector-metrics` — platform-wide inspection analytics
-- [ ] Team portal: inspector can view their own inspection history and upcoming schedule
-- [ ] Client portal: property owner can view inspection reports for their properties
-- [ ] Verify: `npm run build` passes on CRM, team, client, ops portals
-- [ ] Commit: `[INS8] Inspection CRM hooks + analytics + portal views`
+- [x] CRM hook: `use-inspections.ts` — already existed (compliance_records), `use-pm-inspections.ts` also existed (pm_inspections)
+- [x] CRM hook: `use-inspection-templates.ts` — CRUD + real-time for inspection_templates
+- [x] CRM page: `/dashboard/inspections` — already existed with list, filters, detail modal
+- [x] CRM page: `/dashboard/inspections/[id]` — full detail page with checklist, progress, actions
+- [x] CRM page: `/dashboard/inspections/templates` — template management with system/company tabs, detail modal
+- [x] Inspector performance dashboard: ops portal has pass rates, avg score, re-inspection rates, deficiencies by severity
+- [x] Common deficiency analytics: severity breakdown in ops portal inspector-metrics
+- [x] Ops portal: `/dashboard/inspector-metrics` — platform-wide inspection analytics
+- [x] Team portal: `/dashboard/inspections` — inspector's own history and upcoming schedule
+- [x] Client portal: already existed at `/(portal)/inspections` with use-inspections-tenant.ts
+- [x] Verify: `npm run build` passes on CRM, team, client, ops portals
+- [x] Commit: `[INS8] Inspection CRM hooks + analytics + portal views`
+
+### INS9: Template Depth Rewrite + Photo Code References (~8h)
+
+**Goal:** Rewrite `lib/data/inspection_template_seeds.dart` with professional-grade depth. Add photo code reference search during inspections. Current templates are ~30-40% depth (247 items across 13 templates). Target: ~1,200+ items across 25 templates that impress professional inspectors on first use.
+
+**Part A — Template Seed Rewrite (~5h)**
+File: `lib/data/inspection_template_seeds.dart`
+
+Expand existing 13 templates to 40-70+ items each with real code references (NEC, IRC, IBC, OSHA CFR, NFPA, IECC, ADA):
+- [ ] Move-In Inspection — 8 sections: Exterior/Grounds, Kitchen, Living Areas, Bedrooms, Bathrooms, Laundry/Utility, Garage/Parking, Systems/Mechanical (~70 items)
+- [ ] OSHA Job Site Safety — 10 sections: add Crane/Rigging, Confined Spaces, Respiratory, Emergency Prep. CFR 1926 refs (~65 items)
+- [ ] Electrical Rough-In — 8 sections: add Dedicated Circuits (210.11), EV Ready (625), Swimming Pool/Spa (680), Low Voltage Boxes. NEC refs (~55 items)
+- [ ] Roofing Damage — 7 sections: add Siding Collateral, Documentation protocol. Per-test-square methodology (~50 items)
+- [ ] Fire & Life Safety — 7 sections: add Standpipe, Kitchen Hood Suppression, Emergency Power. NFPA refs (~50 items)
+- [ ] Plumbing Rough-In — 7 sections: add Water Heater, Fixtures, Backflow Prevention, Exterior. IPC/UPC refs (~50 items)
+- [ ] HVAC Rough-In — 7 sections: add Controls/Thermostat, Refrigerant Lines, Combustion, Energy Compliance. Manual J/D/S refs (~50 items)
+- [ ] Foundation — 7 sections: add Waterproofing/Damp-proofing, Anchor Bolts detail, Utilities/Sleeves, Pre-Pour checklist. IRC refs (~45 items)
+- [ ] Framing — 7 sections: add Sheathing, Stairways (IRC R311), Windows/Doors, Energy framing. IRC refs (~50 items)
+- [ ] SWPPP — 6 sections: add Documentation/Reporting, Weather triggers. EPA CGP refs (~40 items)
+- [ ] ADA Accessibility — 7 sections: add Elevator, Signage/Wayfinding, Communication. ADA 2010 refs (~50 items)
+- [ ] Insurance Damage — 7 sections: add Structural Assessment, Contents, Supplemental scope. IICRC S500 refs (~50 items)
+- [ ] QC Hold Point — 5 sections: expand with ITP integration, NCR process (~35 items)
+
+Add 12 NEW templates:
+- [ ] Move-Out Inspection (property_management / moveOut) — mirrors Move-In with damage assessment focus, security deposit documentation (~70 items)
+- [ ] Electrical Final (electrical / finalInspection) — post-drywall: devices, covers, panel labeling, testing, AFCI/GFCI verification, fixture trim. NEC refs (~55 items)
+- [ ] Plumbing Final (plumbing / finalInspection) — fixture trim, water heater startup, gas appliance, testing, backflow. IPC/UPC refs (~45 items)
+- [ ] HVAC Final (hvac / finalInspection) — equipment startup, airflow verification, controls, thermostat, Manual J compliance. IMC refs (~45 items)
+- [ ] Insulation & Energy Code (general / codeCompliance) — R-values by zone, air sealing, thermal bypass, blower door, duct leakage. IECC refs (~45 items)
+- [ ] Drywall Inspection (general / roughIn) — hanging, fastener pattern, fire-rated assemblies, moisture-resistant, backing/blocking (~30 items)
+- [ ] Pre-Construction Survey (general / preConstruction) — existing conditions documentation, adjacent property, utilities, environmental, access, site logistics (~45 items)
+- [ ] Solar PV Installation (solar / electrical) — structural/roof, racking, modules, electrical/inverter, rapid shutdown (NEC 690.12), monitoring, labeling. NEC 690 refs (~45 items)
+- [ ] Water Damage & Mold Remediation (restoration / environmental) — initial assessment, containment, moisture mapping, demo protocol, drying, mold remediation, clearance testing. IICRC S500/S520 refs (~50 items)
+- [ ] Commercial Building Annual (general / annual) — structure, MEP, life safety, elevators, parking, ADA, envelope, code compliance. IBC refs (~55 items)
+- [ ] Pre-Pour / Pre-Slab (general / foundation) — subgrade, vapor barrier, reinforcement, embedded items, formwork, concrete spec, placement readiness (~40 items)
+- [ ] Low Voltage / Structured Cabling (low_voltage / electrical) — pathway, cable management, terminations, testing, labeling, documentation. BICSI/TIA-568 refs (~35 items)
+
+**Part B — Photo Code Reference Search (~3h)**
+When inspector takes a photo during inspection execution, add search bar to attach building code references to photos. Documented with the code they're referring to.
+- [ ] Create `lib/data/code_reference_data.dart` — searchable code reference database (NEC articles, IRC sections, IBC chapters, NFPA standards, OSHA CFR, IECC sections, ADA standards). Dart constants, ~500+ entries with code number + short description
+- [ ] Modify `inspection_execution_screen.dart` — when attaching photo, show code reference search overlay (search by code number or description keyword)
+- [ ] Create `CodeReferenceSearchSheet` widget — modal bottom sheet with search, grouped by code body (NEC/IRC/IBC/etc.), multi-select to attach multiple refs to one photo
+- [ ] Store selected code refs in `PmInspectionItem` photo metadata (code_refs: List<String>)
+- [ ] Display attached code refs on inspection report (under photo with code badges)
+- [ ] Commit: `[INS9] Template depth rewrite + photo code reference search`
 
 ---
 

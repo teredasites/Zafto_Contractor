@@ -348,6 +348,22 @@ Update this section as sprints are completed. Mark each connection as it's verif
 | Tech → Role System | S120 | WIRED — roleOverrideProvider (override > JWT auth > fallback), role_switcher_screen uses override |
 | Tech → Contact | S119 | WIRED — job_detail_screen: Call (tel:), Text (sms:), Directions (maps URL) via url_launcher |
 
+### Phase INS (Inspector Deep Buildout) — COMPLETE (S121-S122)
+| Connection | Sprint | Status |
+|-----------|--------|--------|
+| INS → Inspection Templates | INS1-INS2 | WIRED (S121-S122) — template-driven checklists, 19 inspection types, weighted scoring, section grouping |
+| INS → Deficiency Tracking | INS3 | WIRED (S121) — photo proof, severity levels, code citations, resolution workflow |
+| INS → PDF Reports | INS4 | WIRED (S121) — inspection summary generation, deficiency appendix, score breakdown |
+| INS → GPS Location | INS5-INS6 | WIRED (S122) — geolocator 11.x, location capture on start/complete, reinspection diffs |
+| INS → Code Reference | INS7 | WIRED (S122) — 61 offline code sections (NEC/IBC/IRC/OSHA/NFPA), search, filter, citation copy, pickMode |
+| INS → Compliance Calendar | INS7 | WIRED (S122) — overdue/today/week/upcoming grouping, stats row, visual timeline |
+| INS → Permit Tracker | INS7 | WIRED (S122) — 8 permit types with inspection stages, CO eligibility, expiration warnings |
+| INS → Time Clock | INS6 | WIRED (S122) — home screen clock status via activeClockEntryProvider, hours via timeClockStatsProvider |
+| INS → Web CRM | INS8 | WIRED (S122) — use-inspection-templates hook (CRUD+realtime), templates page, inspection [id] detail |
+| INS → Ops Portal | INS8 | WIRED (S122) — inspector-metrics page (platform-wide analytics, inspections by type, deficiencies by severity) |
+| INS → Team Portal | INS8 | WIRED (S122) — inspections page (upcoming/history, stats, pass rate, per-user filtering) |
+| INS → Tools Screen | INS7 | WIRED (S122) — Code Reference, Compliance Calendar, Permit Tracker in tools carousel |
+
 ### Phase W (Warranty + Lifecycle) — COMPLETE (S113 chain)
 | Connection | Sprint | Status |
 |-----------|--------|--------|
