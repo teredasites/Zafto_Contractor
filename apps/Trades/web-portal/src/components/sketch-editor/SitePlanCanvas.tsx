@@ -253,6 +253,7 @@ export default function SitePlanCanvas({
           position: worldPt,
           text: 'Label',
           fontSize: 14,
+          rotation: 0,
         };
         onSitePlanChange({
           ...sitePlan,
