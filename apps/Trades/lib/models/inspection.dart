@@ -446,6 +446,7 @@ class PmInspectionItem {
   final ItemCondition condition;
   final String? notes;
   final List<String> photos;
+  final List<String> codeRefs;
   final int sortOrder;
   final DateTime createdAt;
 
@@ -457,6 +458,7 @@ class PmInspectionItem {
     this.condition = ItemCondition.good,
     this.notes,
     this.photos = const [],
+    this.codeRefs = const [],
     this.sortOrder = 0,
     required this.createdAt,
   });
@@ -468,6 +470,7 @@ class PmInspectionItem {
         'condition': PmInspection.enumToDb(condition),
         if (notes != null) 'notes': notes,
         'photos': photos,
+        if (codeRefs.isNotEmpty) 'code_refs': codeRefs,
         'sort_order': sortOrder,
       };
 
@@ -477,6 +480,7 @@ class PmInspectionItem {
         'condition': PmInspection.enumToDb(condition),
         'notes': notes,
         'photos': photos,
+        'code_refs': codeRefs,
         'sort_order': sortOrder,
       };
 
@@ -498,6 +502,10 @@ class PmInspectionItem {
               ?.map((e) => e.toString())
               .toList() ??
           const [],
+      codeRefs: (json['code_refs'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          const [],
       sortOrder:
           (json['sort_order'] ?? json['sortOrder'] as num?)?.toInt() ?? 0,
       createdAt:
@@ -515,6 +523,7 @@ class PmInspectionItem {
     ItemCondition? condition,
     String? notes,
     List<String>? photos,
+    List<String>? codeRefs,
     int? sortOrder,
   }) {
     return PmInspectionItem(
@@ -525,6 +534,7 @@ class PmInspectionItem {
       condition: condition ?? this.condition,
       notes: notes ?? this.notes,
       photos: photos ?? this.photos,
+      codeRefs: codeRefs ?? this.codeRefs,
       sortOrder: sortOrder ?? this.sortOrder,
       createdAt: createdAt,
     );

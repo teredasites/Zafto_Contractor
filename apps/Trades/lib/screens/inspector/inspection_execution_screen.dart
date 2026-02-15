@@ -10,6 +10,7 @@ import 'package:zafto/services/inspection_service.dart';
 import 'package:zafto/repositories/inspection_repository.dart';
 import 'package:zafto/screens/inspector/inspection_report_screen.dart';
 import 'package:zafto/services/inspection_gps_service.dart';
+import 'package:zafto/widgets/inspector/code_reference_search_sheet.dart';
 
 // ============================================================
 // Inspection Execution Screen
@@ -50,6 +51,9 @@ class _InspectionExecutionScreenState
   /// Section index → item index → notes
   late Map<int, Map<int, String>> _notes;
 
+  /// Section index → item index → code references (e.g. "NEC 210.12")
+  late Map<int, Map<int, List<String>>> _itemCodeRefs;
+
   /// The template sections we're executing against
   List<TemplateSection> _sections = [];
 
@@ -73,6 +77,7 @@ class _InspectionExecutionScreenState
     super.initState();
     _results = {};
     _notes = {};
+    _itemCodeRefs = {};
 
     // If resuming existing inspection, load its template + items
     if (widget.inspection != null) {
@@ -99,9 +104,11 @@ class _InspectionExecutionScreenState
     for (var s = 0; s < _sections.length; s++) {
       _results[s] = {};
       _notes[s] = {};
+      _itemCodeRefs[s] = {};
       for (var i = 0; i < _sections[s].items.length; i++) {
         _results[s]![i] = null; // unanswered
         _notes[s]![i] = '';
+        _itemCodeRefs[s]![i] = [];
       }
     }
   }
@@ -134,6 +141,8 @@ class _InspectionExecutionScreenState
           _results[sIdx]![iIdx] = item.condition;
           _notes[sIdx] ??= {};
           _notes[sIdx]![iIdx] = item.notes ?? '';
+          _itemCodeRefs[sIdx] ??= {};
+          _itemCodeRefs[sIdx]![iIdx] = List<String>.from(item.codeRefs);
         }
       }
       if (mounted) setState(() {});
@@ -434,7 +443,7 @@ class _InspectionExecutionScreenState
             ],
           ),
 
-          // Notes expandable
+          // Notes + code reference expandable
           if (result != null) ...[
             const SizedBox(height: 10),
             TextField(
@@ -462,10 +471,106 @@ class _InspectionExecutionScreenState
                 isDense: true,
               ),
             ),
+            const SizedBox(height: 8),
+            // Code reference badges + add button
+            _buildCodeRefRow(colors, sectionIdx, itemIdx),
           ],
         ],
       ),
     );
+  }
+
+  Widget _buildCodeRefRow(
+      ZaftoColors colors, int sectionIdx, int itemIdx) {
+    final refs = _itemCodeRefs[sectionIdx]?[itemIdx] ?? [];
+    return Wrap(
+      spacing: 6,
+      runSpacing: 4,
+      children: [
+        // Existing code ref badges
+        for (final ref in refs)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: colors.accentPrimary.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(6),
+              border: Border.all(
+                color: colors.accentPrimary.withValues(alpha: 0.3),
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(LucideIcons.bookOpen,
+                    size: 12, color: colors.accentPrimary),
+                const SizedBox(width: 4),
+                Text(
+                  ref,
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: colors.accentPrimary,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                GestureDetector(
+                  onTap: () {
+                    HapticFeedback.lightImpact();
+                    setState(() {
+                      _itemCodeRefs[sectionIdx] ??= {};
+                      _itemCodeRefs[sectionIdx]![itemIdx] =
+                          refs.where((r) => r != ref).toList();
+                    });
+                  },
+                  child: Icon(LucideIcons.x,
+                      size: 12, color: colors.textTertiary),
+                ),
+              ],
+            ),
+          ),
+        // Add code ref button
+        GestureDetector(
+          onTap: () => _openCodeRefPicker(sectionIdx, itemIdx),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: colors.bgInset,
+              borderRadius: BorderRadius.circular(6),
+              border: Border.all(color: colors.borderSubtle),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(LucideIcons.plus, size: 12, color: colors.textTertiary),
+                const SizedBox(width: 4),
+                Text(
+                  'Code Ref',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                    color: colors.textTertiary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _openCodeRefPicker(int sectionIdx, int itemIdx) async {
+    final current = _itemCodeRefs[sectionIdx]?[itemIdx] ?? [];
+    final result = await showCodeReferenceSearchSheet(
+      context,
+      initialSelected: current,
+    );
+    if (result != null && mounted) {
+      setState(() {
+        _itemCodeRefs[sectionIdx] ??= {};
+        _itemCodeRefs[sectionIdx]![itemIdx] = result;
+      });
+    }
   }
 
   Widget _buildConditionBtn(
@@ -1116,12 +1221,14 @@ class _InspectionExecutionScreenState
         final result = _results[s]?[i];
         if (result == null) continue; // skip unanswered
 
+        final refs = _itemCodeRefs[s]?[i] ?? [];
         final item = PmInspectionItem(
           inspectionId: _inspectionId!,
           area: section.name,
           itemName: section.items[i].name,
           condition: result,
           notes: (_notes[s]?[i] ?? '').isNotEmpty ? _notes[s]![i] : null,
+          codeRefs: refs,
           sortOrder: s * 100 + i,
           createdAt: DateTime.now(),
         );
