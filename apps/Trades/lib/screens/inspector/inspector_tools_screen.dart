@@ -19,6 +19,9 @@ import 'package:zafto/screens/field_tools/receipt_scanner_screen.dart';
 import 'package:zafto/screens/field_tools/mileage_tracker_screen.dart';
 import 'package:zafto/screens/inspector/inspection_templates_screen.dart';
 import 'package:zafto/screens/inspector/deficiency_list_screen.dart';
+import 'package:zafto/screens/inspector/code_reference_screen.dart';
+import 'package:zafto/screens/inspector/compliance_calendar_screen.dart';
+import 'package:zafto/screens/inspector/permit_inspection_tracker_screen.dart';
 
 // ============================================================
 // Inspector Tools Screen — Inspector-Specific & Shared Tools
@@ -141,6 +144,21 @@ class InspectorToolsScreen extends ConsumerWidget {
                 ),
               ]),
               const SizedBox(height: 20),
+              _buildSection(context, colors, 'COMPLIANCE', [
+                _ToolItem(
+                  LucideIcons.calendar,
+                  'Compliance Calendar',
+                  'Upcoming required inspections & deadlines',
+                  () => _push(context, const ComplianceCalendarScreen()),
+                ),
+                _ToolItem(
+                  LucideIcons.fileStack,
+                  'Permit Tracker',
+                  'Permit-to-inspection stage mapping & CO tracking',
+                  () => _push(context, const PermitInspectionTrackerScreen()),
+                ),
+              ]),
+              const SizedBox(height: 20),
               _buildSection(context, colors, 'REFERENCE', [
                 _ToolItem(
                   LucideIcons.calculator,
@@ -151,9 +169,8 @@ class InspectorToolsScreen extends ConsumerWidget {
                 _ToolItem(
                   LucideIcons.bookOpen,
                   'Code Reference',
-                  'NEC, IBC, IRC code lookup (Phase SK)',
-                  null,
-                  comingSoon: true,
+                  'NEC, IBC, IRC, OSHA, NFPA code lookup',
+                  () => _push(context, const CodeReferenceScreen()),
                 ),
               ]),
               const SizedBox(height: 32),
