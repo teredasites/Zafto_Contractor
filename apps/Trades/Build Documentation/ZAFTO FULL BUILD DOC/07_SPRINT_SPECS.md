@@ -12316,6 +12316,62 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - [ ] Migration: ALTER companies ADD COLUMN password_policy jsonb DEFAULT '{}', ADD COLUMN allowed_ips jsonb DEFAULT '[]', ADD COLUMN session_timeout_hours integer DEFAULT 8, ADD COLUMN lockout_threshold integer DEFAULT 5
 - [ ] Commit: `[SEC4] Advanced security options — sessions, login alerts, IP allowlist, lockout, audit log`
 
+### SEC5 — Hellhound: Deception & Early Warning System (~8h)
+**Goal:** 7th security layer. Lightweight deception system that detects attackers BEFORE they reach the real 6-layer stack. Near-100% detection accuracy — legitimate users never touch honeypots, so any interaction is confirmed malicious. Zero false positives. Costs nothing to run. Gives early warning, attacker fingerprinting, and automatic blocking. Named "Hellhound" — it guards the gates.
+- [ ] **Canary endpoints** — Add fake routes to all 4 Next.js portals that legitimate users never visit but attackers/scanners always try. Return fake "interesting" responses to waste their time while logging everything. Routes: `/wp-admin`, `/wp-login.php`, `/admin`, `/administrator`, `/phpmyadmin`, `/.env`, `/.git/config`, `/api/v1/debug`, `/api/v1/users`, `/graphql`, `/console`, `/actuator`, `/server-status`. Each route: log IP, user-agent, headers, timestamp, request body → insert into `hellhound_events` table
+- [ ] **Honeytokens in source** — Plant fake credentials in HTML comments and JavaScript source maps that only someone reading your source code would find. Fake Supabase service_role key, fake Stripe secret key, fake AWS credentials. Each token is unique and monitored — if any token is used against any API → instant alert. Implementation: Edge Function `hellhound-token-monitor` that checks if incoming auth tokens match any planted honeytoken
+- [ ] **Hidden form fields (bot trap)** — Add invisible form fields to login and signup forms across all portals. CSS `opacity: 0; position: absolute; left: -9999px; height: 0;`. Human users never see or fill these. Bots auto-fill every field. If hidden field has a value on submit → it's a bot → log + block + don't even attempt auth (saves Supabase auth rate limits)
+- [ ] **Canary database records** — Insert fake "canary" records into key tables (jobs, customers, invoices) with a specific marker (e.g., `company_id` of a known canary UUID that no real company uses). These records should NEVER appear in any API response because RLS scopes by real company_id. If a canary record appears in any response → RLS has been bypassed → CRITICAL alert. Create Edge Function `hellhound-canary-check` that periodically verifies canary records are invisible
+- [ ] **Request fingerprinting** — On every canary endpoint hit: capture IP, user-agent, TLS fingerprint (JA3/JA4 if available via Cloudflare), request timing pattern, headers. Build attacker profile in `hellhound_attackers` table. If same fingerprint hits 3+ canary endpoints → confirmed scanner → add to block list
+- [ ] **Automatic IP blocking** — `hellhound_blocked_ips` table. Middleware on all 4 portals checks incoming IP against block list before processing. Hellhound auto-adds IPs that trigger canary endpoints. Block duration: 24h first offense, 7 days repeat, permanent on 3rd. Admin can review and unblock in CRM security dashboard
+- [ ] **Tarpit responses** — When a confirmed attacker hits canary endpoints, don't just 404 — respond with deliberately slow responses (5-10 second delay) and fake data that looks real. Waste their time. Fake user lists with generated names, fake API responses with plausible but useless data. This slows automated scanners dramatically
+- [ ] **Alert pipeline** — Hellhound events trigger: (1) Sentry alert tagged `hellhound` (real-time), (2) Email to admin@zafto.app for HIGH severity (canary DB breach, honeytoken used), (3) In-CRM notification for MEDIUM severity (canary endpoint hits, bot trap triggers). Daily digest of all Hellhound activity
+- [ ] **CRM Hellhound dashboard** — `/dashboard/security/hellhound` — owner/admin only. Live feed of detected threats. Attacker profiles with fingerprints. Blocked IP list with unblock option. Canary endpoint hit map. Bot trap catch rate. Honeytoken status (active/compromised). Export threat data
+- [ ] Migration: CREATE TABLE hellhound_events (id, event_type, ip_address, user_agent, fingerprint, endpoint, request_body, headers, severity, created_at). CREATE TABLE hellhound_attackers (id, fingerprint, ips jsonb, first_seen, last_seen, hit_count, blocked, block_until). CREATE TABLE hellhound_blocked_ips (id, ip_address, reason, blocked_at, expires_at, blocked_by). RLS: super_admin + company owner/admin read only. No public write (system inserts only via service_role)
+- [ ] Commit: `[SEC5] Hellhound — canary endpoints, honeytokens, bot traps, fingerprinting, auto-block, tarpit`
+
+### SEC6 — Security Headers & Content Security Policy (~4h)
+**Goal:** HTTP security headers are free armor — zero cost, zero downside, blocks entire classes of attacks automatically. CSP prevents XSS even if an attacker finds an injection point. HSTS forces HTTPS. X-Frame-Options prevents clickjacking (someone embedding Zafto in a malicious iframe). These headers take 30 minutes to configure but block attacks that sophisticated hackers rely on.
+- [ ] **Content Security Policy (CSP)** — Add strict CSP header to all 4 Next.js portals via `next.config.js` `headers()`. Define: `default-src 'self'`, `script-src 'self' 'unsafe-eval'` (needed for Next.js), `style-src 'self' 'unsafe-inline'`, `img-src 'self' blob: data: *.supabase.co`, `connect-src 'self' *.supabase.co *.sentry.io wss://*.supabase.co`, `frame-ancestors 'none'` (no iframing), `form-action 'self'`. Test: all pages load correctly with CSP, no console violations blocking real features
+- [ ] **HSTS (Strict Transport Security)** — `Strict-Transport-Security: max-age=31536000; includeSubDomains; preload`. Forces HTTPS on all connections. Submit zafto.app to HSTS preload list (hstspreload.org) so browsers enforce HTTPS before even making the first request
+- [ ] **X-Frame-Options** — `X-Frame-Options: DENY`. Prevents anyone from embedding Zafto portals in an iframe (clickjacking defense). Already covered by CSP `frame-ancestors 'none'` but belt-and-suspenders
+- [ ] **X-Content-Type-Options** — `X-Content-Type-Options: nosniff`. Prevents browsers from MIME-sniffing response content type. Stops attacks where attacker uploads a file that browser interprets as executable
+- [ ] **Referrer-Policy** — `Referrer-Policy: strict-origin-when-cross-origin`. Prevents full URL (with query params that might contain tokens) from leaking to external sites
+- [ ] **Permissions-Policy** — Restrict browser features: `Permissions-Policy: camera=(self), microphone=(self), geolocation=(self), payment=(self)`. Only Zafto pages can access camera/mic/GPS/payment — prevents malicious scripts from hijacking
+- [ ] **X-XSS-Protection** — `X-XSS-Protection: 0`. Modern best practice: disable browser's built-in XSS filter (it causes more problems than it solves) and rely on CSP instead
+- [ ] **Cache-Control on auth pages** — `Cache-Control: no-store, no-cache, must-revalidate` on login, MFA, and password reset pages. Prevents browser from caching sensitive pages (someone using shared computer can't hit back button to see login form with credentials)
+- [ ] **Vercel security headers** — Configure in `vercel.json` so headers apply at the edge before Next.js even processes the request. Covers static assets, redirects, and error pages
+- [ ] **Flutter HTTP client headers** — Verify Supabase Dart client sends proper headers. Add `X-Requested-With: ZaftoMobile` custom header to fingerprint legitimate app requests vs manual API calls
+- [ ] **Test with securityheaders.com** — Scan all 4 portals. Target: A+ rating on securityheaders.com for all domains (zafto.cloud, team.zafto.cloud, client.zafto.cloud, ops.zafto.cloud)
+- [ ] Commit: `[SEC6] Security headers — CSP, HSTS, X-Frame, permissions policy, A+ on securityheaders.com`
+
+### SEC7 — Cloudflare WAF & Certificate Monitoring (~4h)
+**Goal:** Cloudflare sits in front of everything — it's the first thing an attacker hits. The free tier includes basic WAF rules that block OWASP Top 10 attacks (SQL injection, XSS, path traversal) at the EDGE before requests even reach Vercel/Supabase. Certificate Transparency monitoring alerts you if someone tries to issue a fake SSL certificate for zafto.app (used in man-in-the-middle attacks). Both are free or near-free.
+- [ ] **Cloudflare WAF managed rules** — Log into Cloudflare dashboard. Enable OWASP Core Ruleset (free tier includes subset). Enable: SQL injection rules, XSS rules, PHP/generic attack rules, file inclusion rules. Set action: Block (not just log). Test: attempt common injection payloads against zafto.cloud → should get blocked by Cloudflare before reaching Vercel
+- [ ] **Cloudflare rate limiting** — Free tier: 1 rule. Create rule: rate limit login endpoints (`*/auth/*`) to 10 requests per minute per IP. Exceeding → 60 second block. This stops brute force before it reaches Supabase Auth
+- [ ] **Cloudflare Bot Fight Mode** — Enable in dashboard (free). Automatically challenges requests from known bot networks. Legitimate users see nothing. Bots get CAPTCHAs or blocks
+- [ ] **Cloudflare browser integrity check** — Enable. Blocks requests with suspicious HTTP headers commonly used by automated tools (missing headers, unusual user-agents). Free, no config needed
+- [ ] **Cloudflare Under Attack Mode** — Document procedure for emergency: if under active DDoS, enable "I'm Under Attack Mode" which adds JavaScript challenge to ALL requests (5-second delay for humans, blocks bots). Only use during active attacks — adds friction for real users
+- [ ] **Certificate Transparency monitoring** — Set up CT log monitoring for `zafto.app`, `*.zafto.app`, `zafto.cloud`, `*.zafto.cloud`. If any CA issues a certificate for these domains that wasn't requested by you → instant email alert. Free services: Cloudflare (built-in), crt.sh monitoring, Facebook CT monitoring
+- [ ] **Cloudflare firewall rules** — Free tier: 5 rules. Create: (1) Block known bad user-agents (sqlmap, nikto, dirbuster, gobuster), (2) Block requests to `/.env`, `/.git`, `/wp-admin` at Cloudflare edge (before Hellhound — dual layer), (3) Block non-US traffic to ops-portal (super_admin is US-only), (4) Challenge requests with no referer to API endpoints (common in automated attacks), (5) Reserve for emergency blocking
+- [ ] **Cloudflare Page Rules** — Cache static assets aggressively, never cache auth/API routes. Security level: High for all portals
+- [ ] **Cloudflare email obfuscation** — Enable email address obfuscation on marketing pages. Prevents email scraping bots from harvesting admin@zafto.app from public pages
+- [ ] **Test full stack** — Attempt: SQL injection payload in login form → blocked by Cloudflare WAF (never reaches Vercel). Attempt: 20 rapid login attempts → rate limited by Cloudflare (never reaches Supabase). Attempt: known bot user-agent → blocked. Verify: legitimate user workflow unaffected
+- [ ] Commit: `[SEC7] Cloudflare WAF + CT monitoring — managed rules, rate limiting, bot fight, firewall rules`
+
+### SEC8 — Dependency Scanning & Secret Leak Prevention (~4h)
+**Goal:** Supply chain attacks are the #1 rising threat. One compromised npm package can inject malware into all 4 portals. One accidentally committed API key can be scraped from GitHub within minutes (bots scan public repos 24/7). Automated scanning catches both before they become incidents. All free tools — GitHub provides these built-in.
+- [ ] **GitHub Dependabot alerts** — Verify Dependabot is enabled and alerting on ALL package ecosystems: npm (web-portal, team-portal, client-portal, ops-portal), pub (Flutter), pip (if any Python scripts). Check: are alerts being reviewed or ignored? Set up: email notification to admin@zafto.app on critical/high severity CVEs
+- [ ] **GitHub Dependabot security updates** — Enable automatic PR creation for security patches. Dependabot creates PRs that bump vulnerable packages. Review + merge weekly at minimum
+- [ ] **GitHub secret scanning** — Enable secret scanning on the repository. GitHub scans every commit for accidentally committed secrets (API keys, tokens, passwords). If found → alert + optionally revoke (GitHub partners with Stripe, AWS, etc. to auto-revoke leaked keys)
+- [ ] **GitHub push protection** — Enable push protection (blocks pushes that contain detected secrets BEFORE they reach the repo). This prevents the commit from ever existing — far better than detecting after the fact
+- [ ] **npm audit** — Add `npm audit` to CI/CD pipeline for all 4 portals. Build fails on critical/high severity vulnerabilities. `npm audit fix` for auto-fixable issues
+- [ ] **pub audit** — Run `dart pub outdated` and check for known vulnerabilities in Flutter dependencies. Add to CI/CD pipeline
+- [ ] **Lock file integrity** — Verify `package-lock.json` (all portals) and `pubspec.lock` (Flutter) are committed and used in CI/CD (`npm ci` not `npm install`). Prevents supply chain attacks where attacker publishes malicious version of a dependency
+- [ ] **Subresource Integrity (SRI)** — If loading any scripts from CDNs (unlikely with Next.js but verify), add SRI hashes. Ensures CDN-served scripts haven't been tampered with
+- [ ] **License audit** — Verify no GPL-licensed packages in the codebase (GPL requires open-sourcing your code if you distribute it). Run license checker on all package.json and pubspec.yaml
+- [ ] Commit: `[SEC8] Dependency scanning — Dependabot alerts, secret scanning, push protection, npm/pub audit`
+
 ---
 
 ## PHASE LAUNCH: PRE-LAUNCH REQUIREMENTS (S125 gap analysis)
@@ -12436,11 +12492,11 @@ When inspector takes a photo during inspection execution, add search bar to atta
 | **REST** | REST1-REST2 | ~20h | Restoration gaps: fire tools, mold remediation (IICRC S520) |
 | **NICHE** | NICHE1-NICHE2 | ~16h | Missing trade modules: pest control, service trades |
 | **DEPTH** | DEPTH1-DEPTH23 | ~292h | Full depth audit + corrections across every feature area |
-| **SEC** | SEC1-SEC4 | ~36h | Security hardening: critical fixes, 2FA/MFA, biometrics, enterprise security options |
+| **SEC** | SEC1-SEC8 | ~56h | Security fortress: critical fixes, 2FA, biometrics, enterprise options, Hellhound deception, security headers, Cloudflare WAF, dependency scanning |
 | **LAUNCH** | LAUNCH1-LAUNCH7 | ~72h | Monitoring, legal, payments, i18n, accessibility, testing, App Store + onboarding wizard |
-| **Total** | **41 sprints** | **~472h** | — |
+| **Total** | **45 sprints** | **~492h** | — |
 
-**Execution order:** SEC1 (critical fixes FIRST) → LAUNCH1 (monitoring — need this before building more) → FIELD → REST → NICHE → DEPTH1 through DEPTH23 → SEC2-SEC4 (optional security features) → LAUNCH2-LAUNCH6 (legal, payments, i18n, accessibility, testing) → Phase G (QA) → Phase JUR → Phase E (AI) → LAUNCH7 (App Store + onboarding wizard — DEAD LAST, needs final product) → SHIP
+**Execution order:** SEC1 + SEC6 + SEC7 + SEC8 (critical security — site is live) → LAUNCH1 (monitoring — need Sentry before building more) → FIELD → REST → NICHE → DEPTH1 through DEPTH23 → SEC2-SEC5 (2FA, biometrics, enterprise security, Hellhound) → LAUNCH2-LAUNCH6 (legal, payments, i18n, accessibility, testing) → Phase G (QA) → Phase JUR → Phase E (AI) → LAUNCH7 (App Store + onboarding wizard — DEAD LAST, needs final product) → SHIP
 
 **Module coverage guarantee:**
 - DEPTH1-6: Horizontal audit by category (core biz, field tools, property, financial, CRM, calculators)
@@ -12450,6 +12506,10 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - DEPTH23: Programmatic codebase sweep — catches anything built after S125 or missed by DEPTH1-22
 - SEC1: Critical security fixes (storage RLS, rate limiting, marketplace policy) — runs FIRST
 - SEC2-SEC4: Optional security features (2FA, biometrics, enterprise security) — runs after DEPTH audits
+- SEC5: Hellhound deception system (canary endpoints, honeytokens, bot traps, auto-block, tarpit)
+- SEC6: Security headers + CSP (free armor — blocks XSS, clickjacking, MIME attacks)
+- SEC7: Cloudflare WAF + certificate monitoring (edge-level attack blocking)
+- SEC8: Dependency scanning + secret leak prevention (supply chain defense)
 - LAUNCH1: Monitoring + email (need error tracking BEFORE building more)
 - LAUNCH2-6: Legal, payments, i18n, accessibility, testing — runs after DEPTH audits
 - LAUNCH7: App Store prep + onboarding wizard — DEAD LAST (needs final product complete)
