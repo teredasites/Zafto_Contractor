@@ -41,14 +41,12 @@ class _ContractAnalyzerHubScreenState extends ConsumerState<ContractAnalyzerHubS
   Widget build(BuildContext context) {
     final colors = ref.watch(zaftoColorsProvider);
     final analysesAsync = ref.watch(contractAnalysesProvider);
-    final freeScans = ref.watch(freeScansRemainingProvider);
-
     return Scaffold(
       backgroundColor: colors.bgBase,
       body: SafeArea(
         child: Column(
           children: [
-            _buildHeader(colors, freeScans),
+            _buildHeader(colors),
             _buildTabBar(colors),
             Expanded(
               child: analysesAsync.when(
@@ -73,7 +71,7 @@ class _ContractAnalyzerHubScreenState extends ConsumerState<ContractAnalyzerHubS
     );
   }
 
-  Widget _buildHeader(ZaftoColors colors, int freeScans) {
+  Widget _buildHeader(ZaftoColors colors) {
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -117,35 +115,6 @@ class _ContractAnalyzerHubScreenState extends ConsumerState<ContractAnalyzerHubS
                     Text(
                       'AI-powered contract review',
                       style: TextStyle(fontSize: 14, color: colors.textTertiary),
-                    ),
-                  ],
-                ),
-              ),
-              // Free scans indicator
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                decoration: BoxDecoration(
-                  color: freeScans > 0
-                      ? colors.accentSuccess.withOpacity(0.15)
-                      : colors.accentWarning.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      LucideIcons.sparkles,
-                      size: 14,
-                      color: freeScans > 0 ? colors.accentSuccess : colors.accentWarning,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      freeScans > 0 ? '$freeScans free' : 'Pro',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: freeScans > 0 ? colors.accentSuccess : colors.accentWarning,
-                      ),
                     ),
                   ],
                 ),

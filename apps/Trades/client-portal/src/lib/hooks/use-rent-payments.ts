@@ -7,6 +7,7 @@ import { useTenant } from './use-tenant';
 import {
   mapRentCharge, mapRentPayment,
   type RentChargeData, type RentPaymentData,
+  type PaymentMethodType,
 } from './tenant-mappers';
 
 export function useRentCharges() {
@@ -53,6 +54,7 @@ export function useRentCharges() {
 
 export function useRentPayments(chargeId: string) {
   const { user } = useAuth();
+  const { tenant } = useTenant();
   const [charge, setCharge] = useState<RentChargeData | null>(null);
   const [payments, setPayments] = useState<RentPaymentData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -74,5 +76,66 @@ export function useRentPayments(chargeId: string) {
     fetch();
   }, [chargeId, user]);
 
-  return { charge, payments, loading };
+  // Report an offline payment (tenant self-report → pending verification)
+  const reportPayment = async (report: {
+    amount: number;
+    paymentMethod: PaymentMethodType;
+    paymentDate: string;
+    reference?: string;
+    proofUrl?: string;
+    notes?: string;
+  }): Promise<{ success: boolean; error?: string }> => {
+    if (!user || !tenant || !charge) return { success: false, error: 'Not authenticated' };
+    const supabase = getSupabase();
+
+    const { error } = await supabase.from('rent_payments').insert({
+      company_id: charge.companyId,
+      rent_charge_id: chargeId,
+      tenant_id: tenant.id,
+      amount: report.amount,
+      payment_method: report.paymentMethod,
+      payment_date: report.paymentDate,
+      source_reference: report.reference || null,
+      proof_document_url: report.proofUrl || null,
+      notes: report.notes || null,
+      reported_by: user.id,
+      verification_status: 'pending_verification',
+      payment_source: 'tenant',
+      status: 'pending',
+    });
+
+    if (error) return { success: false, error: error.message };
+
+    // Refresh payments list
+    const { data: refreshed } = await supabase
+      .from('rent_payments')
+      .select('*')
+      .eq('rent_charge_id', chargeId)
+      .order('created_at', { ascending: false });
+    if (refreshed) setPayments(refreshed.map(mapRentPayment));
+
+    return { success: true };
+  };
+
+  // Upload proof document to storage
+  const uploadProof = async (file: File): Promise<string | null> => {
+    if (!user || !tenant) return null;
+    const supabase = getSupabase();
+    const ext = file.name.split('.').pop() || 'jpg';
+    const path = `${tenant.id}/payment-proof/${Date.now()}.${ext}`;
+
+    const { error } = await supabase.storage
+      .from('receipts')
+      .upload(path, file, { upsert: false });
+
+    if (error) return null;
+
+    const { data: urlData } = supabase.storage
+      .from('receipts')
+      .getPublicUrl(path);
+
+    return urlData?.publicUrl || path;
+  };
+
+  return { charge, payments, loading, reportPayment, uploadProof };
 }

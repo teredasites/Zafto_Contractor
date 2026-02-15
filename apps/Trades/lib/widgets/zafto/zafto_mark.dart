@@ -4,7 +4,7 @@ import 'dart:ui' as ui;
 /// ZAFTO Logo System
 ///
 /// Two variants:
-/// - ZaftoMark() - "ZAFTO TRADES" stacked text logo
+/// - ZaftoMark() - "ZAFTO CONTRACTOR" stacked text logo
 /// - ZaftoMark.zMark() - The Z glyph with offset echo (for AI assistant, icons)
 ///
 /// Usage:
@@ -20,7 +20,7 @@ class ZaftoMark extends StatefulWidget {
   final double glowIntensity;
   final bool _isZMark;
 
-  /// Full "ZAFTO TRADES" stacked logo
+  /// Full "ZAFTO CONTRACTOR" stacked logo
   const ZaftoMark({
     super.key,
     this.size = 40,
@@ -128,7 +128,7 @@ class _ZaftoMarkState extends State<ZaftoMark>
     );
   }
 
-  /// Builds the "ZAFTO TRADES" stacked text logo
+  /// Builds the "ZAFTO CONTRACTOR" stacked text logo
   Widget _buildTextLogo(double glowMultiplier) {
     final glowColor =
         widget.color.withValues(alpha: 0.4 * widget.glowIntensity * glowMultiplier);
@@ -165,7 +165,7 @@ class _ZaftoMarkState extends State<ZaftoMark>
         SizedBox(height: widget.size * 0.05),
         // TRADES - Secondary text
         Text(
-          'TRADES',
+          'CONTRACTOR',
           style: TextStyle(
             fontFamily: 'monospace',
             fontSize: fontSize * 0.48,
@@ -309,7 +309,7 @@ class ZaftoMarkHorizontal extends StatelessWidget {
         ),
         SizedBox(width: height * 0.2),
         Text(
-          'TRADES',
+          'CONTRACTOR',
           style: TextStyle(
             fontFamily: 'monospace',
             fontSize: subFontSize,

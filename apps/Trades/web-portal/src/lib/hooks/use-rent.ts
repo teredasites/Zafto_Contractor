@@ -2,8 +2,11 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { getSupabase } from '@/lib/supabase';
-import { mapRentCharge, mapRentPayment } from './pm-mappers';
-import type { RentChargeData, RentPaymentData } from './pm-mappers';
+import {
+  mapRentCharge, mapRentPayment, mapGovernmentProgram, mapVerificationLog,
+  type PaymentMethodType, type PaymentSource, type VerificationStatus,
+} from './pm-mappers';
+import type { RentChargeData, RentPaymentData, GovernmentProgramData, PaymentVerificationLogData } from './pm-mappers';
 
 export interface RentRoll {
   totalDue: number;
@@ -103,11 +106,16 @@ export function useRent() {
   const recordPayment = async (chargeId: string, data: {
     tenantId: string;
     amount: number;
-    paymentMethod: RentPaymentData['paymentMethod'];
+    paymentMethod: PaymentMethodType;
     stripePaymentIntentId?: string;
     processingFee?: number;
     feePaidBy?: RentPaymentData['feePaidBy'];
     notes?: string;
+    paymentSource?: PaymentSource;
+    sourceName?: string;
+    sourceReference?: string;
+    proofDocumentUrl?: string;
+    paymentDate?: string;
   }): Promise<string> => {
     const supabase = getSupabase();
     const { data: { user } } = await supabase.auth.getUser();
@@ -131,7 +139,7 @@ export function useRent() {
     const newPaidAmount = currentPaid + data.amount;
     const newStatus: RentChargeData['status'] = newPaidAmount >= totalAmount ? 'paid' : 'partial';
 
-    // Insert the payment record
+    // Insert the payment record (owner-recorded = auto_verified)
     const { data: paymentResult, error: payErr } = await supabase
       .from('rent_payments')
       .insert({
@@ -146,6 +154,12 @@ export function useRent() {
         status: 'completed',
         paid_at: new Date().toISOString(),
         notes: data.notes || null,
+        verification_status: 'auto_verified',
+        payment_source: data.paymentSource || 'tenant',
+        source_name: data.sourceName || null,
+        source_reference: data.sourceReference || null,
+        proof_document_url: data.proofDocumentUrl || null,
+        payment_date: data.paymentDate || new Date().toISOString().split('T')[0],
       })
       .select('id')
       .single();
@@ -370,6 +384,244 @@ export function useRent() {
     };
   };
 
+  // ==================== PAYMENT VERIFICATION ====================
+
+  const getPendingVerifications = async (): Promise<RentPaymentData[]> => {
+    const supabase = getSupabase();
+    const { data, error: err } = await supabase
+      .from('rent_payments')
+      .select('*, tenants(first_name, last_name)')
+      .eq('verification_status', 'pending_verification')
+      .order('created_at', { ascending: false });
+
+    if (err) throw err;
+    return (data || []).map(mapRentPayment);
+  };
+
+  const verifyPayment = async (paymentId: string, notes?: string): Promise<void> => {
+    const supabase = getSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+    const companyId = user.app_metadata?.company_id;
+
+    // Get the payment to find charge info
+    const { data: payment, error: fetchErr } = await supabase
+      .from('rent_payments')
+      .select('rent_charge_id, amount, verification_status')
+      .eq('id', paymentId)
+      .single();
+    if (fetchErr || !payment) throw fetchErr || new Error('Payment not found');
+
+    const oldStatus = payment.verification_status;
+
+    // Update payment to verified + completed
+    const { error: updateErr } = await supabase
+      .from('rent_payments')
+      .update({
+        verification_status: 'verified',
+        verified_by: user.id,
+        verified_at: new Date().toISOString(),
+        verification_notes: notes || null,
+        status: 'completed',
+        paid_at: new Date().toISOString(),
+      })
+      .eq('id', paymentId);
+    if (updateErr) throw updateErr;
+
+    // Update rent_charge paid amount
+    const { data: charge } = await supabase
+      .from('rent_charges')
+      .select('amount, paid_amount')
+      .eq('id', payment.rent_charge_id)
+      .single();
+
+    if (charge) {
+      const newPaid = (Number(charge.paid_amount) || 0) + Number(payment.amount);
+      const chargeTotal = Number(charge.amount) || 0;
+      await supabase.from('rent_charges').update({
+        paid_amount: newPaid,
+        status: newPaid >= chargeTotal ? 'paid' : 'partial',
+        ...(newPaid >= chargeTotal ? { paid_at: new Date().toISOString() } : {}),
+      }).eq('id', payment.rent_charge_id);
+    }
+
+    // Log to verification audit trail
+    await supabase.from('payment_verification_log').insert({
+      company_id: companyId,
+      payment_id: paymentId,
+      payment_context: 'rent',
+      action: 'verified',
+      performed_by: user.id,
+      old_status: oldStatus,
+      new_status: 'verified',
+      notes: notes || null,
+    });
+  };
+
+  const disputePayment = async (paymentId: string, notes: string): Promise<void> => {
+    const supabase = getSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+    const companyId = user.app_metadata?.company_id;
+
+    const { data: payment } = await supabase
+      .from('rent_payments')
+      .select('verification_status')
+      .eq('id', paymentId)
+      .single();
+
+    await supabase.from('rent_payments').update({
+      verification_status: 'disputed',
+      verification_notes: notes,
+    }).eq('id', paymentId);
+
+    await supabase.from('payment_verification_log').insert({
+      company_id: companyId,
+      payment_id: paymentId,
+      payment_context: 'rent',
+      action: 'disputed',
+      performed_by: user.id,
+      old_status: payment?.verification_status || 'pending_verification',
+      new_status: 'disputed',
+      notes,
+    });
+  };
+
+  const rejectPayment = async (paymentId: string, notes: string): Promise<void> => {
+    const supabase = getSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+    const companyId = user.app_metadata?.company_id;
+
+    const { data: payment } = await supabase
+      .from('rent_payments')
+      .select('verification_status')
+      .eq('id', paymentId)
+      .single();
+
+    await supabase.from('rent_payments').update({
+      verification_status: 'rejected',
+      verified_by: user.id,
+      verified_at: new Date().toISOString(),
+      verification_notes: notes,
+      status: 'failed',
+    }).eq('id', paymentId);
+
+    await supabase.from('payment_verification_log').insert({
+      company_id: companyId,
+      payment_id: paymentId,
+      payment_context: 'rent',
+      action: 'rejected',
+      performed_by: user.id,
+      old_status: payment?.verification_status || 'pending_verification',
+      new_status: 'rejected',
+      notes,
+    });
+  };
+
+  const getVerificationLog = async (paymentId: string): Promise<PaymentVerificationLogData[]> => {
+    const supabase = getSupabase();
+    const { data, error: err } = await supabase
+      .from('payment_verification_log')
+      .select('*')
+      .eq('payment_id', paymentId)
+      .order('created_at', { ascending: false });
+    if (err) throw err;
+    return (data || []).map(mapVerificationLog);
+  };
+
+  // ==================== GOVERNMENT PROGRAMS ====================
+
+  const getGovernmentPrograms = async (tenantId: string): Promise<GovernmentProgramData[]> => {
+    const supabase = getSupabase();
+    const { data, error: err } = await supabase
+      .from('government_payment_programs')
+      .select('*')
+      .eq('tenant_id', tenantId)
+      .is('deleted_at', null)
+      .order('created_at', { ascending: false });
+    if (err) throw err;
+    return (data || []).map(mapGovernmentProgram);
+  };
+
+  const createGovernmentProgram = async (program: Omit<GovernmentProgramData, 'id' | 'companyId' | 'createdAt' | 'updatedAt'>): Promise<string> => {
+    const supabase = getSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+    const companyId = user.app_metadata?.company_id;
+
+    const { data, error: err } = await supabase
+      .from('government_payment_programs')
+      .insert({
+        company_id: companyId,
+        tenant_id: program.tenantId,
+        program_type: program.programType,
+        program_name: program.programName,
+        authority_name: program.authorityName,
+        authority_contact_name: program.authorityContactName,
+        authority_phone: program.authorityPhone,
+        authority_email: program.authorityEmail,
+        authority_address: program.authorityAddress,
+        voucher_number: program.voucherNumber,
+        hap_contract_number: program.hapContractNumber,
+        monthly_hap_amount: program.monthlyHapAmount,
+        tenant_portion: program.tenantPortion,
+        utility_allowance: program.utilityAllowance,
+        payment_standard: program.paymentStandard,
+        effective_date: program.effectiveDate,
+        expiration_date: program.expirationDate,
+        recertification_date: program.recertificationDate,
+        inspection_date: program.inspectionDate,
+        next_inspection_date: program.nextInspectionDate,
+        is_active: program.isActive,
+        notes: program.notes,
+      })
+      .select('id')
+      .single();
+    if (err) throw err;
+    return data.id;
+  };
+
+  const updateGovernmentProgram = async (programId: string, updates: Partial<GovernmentProgramData>): Promise<void> => {
+    const supabase = getSupabase();
+    const updateData: Record<string, unknown> = {};
+    if (updates.programType !== undefined) updateData.program_type = updates.programType;
+    if (updates.programName !== undefined) updateData.program_name = updates.programName;
+    if (updates.authorityName !== undefined) updateData.authority_name = updates.authorityName;
+    if (updates.authorityContactName !== undefined) updateData.authority_contact_name = updates.authorityContactName;
+    if (updates.authorityPhone !== undefined) updateData.authority_phone = updates.authorityPhone;
+    if (updates.authorityEmail !== undefined) updateData.authority_email = updates.authorityEmail;
+    if (updates.authorityAddress !== undefined) updateData.authority_address = updates.authorityAddress;
+    if (updates.voucherNumber !== undefined) updateData.voucher_number = updates.voucherNumber;
+    if (updates.hapContractNumber !== undefined) updateData.hap_contract_number = updates.hapContractNumber;
+    if (updates.monthlyHapAmount !== undefined) updateData.monthly_hap_amount = updates.monthlyHapAmount;
+    if (updates.tenantPortion !== undefined) updateData.tenant_portion = updates.tenantPortion;
+    if (updates.utilityAllowance !== undefined) updateData.utility_allowance = updates.utilityAllowance;
+    if (updates.paymentStandard !== undefined) updateData.payment_standard = updates.paymentStandard;
+    if (updates.effectiveDate !== undefined) updateData.effective_date = updates.effectiveDate;
+    if (updates.expirationDate !== undefined) updateData.expiration_date = updates.expirationDate;
+    if (updates.recertificationDate !== undefined) updateData.recertification_date = updates.recertificationDate;
+    if (updates.inspectionDate !== undefined) updateData.inspection_date = updates.inspectionDate;
+    if (updates.nextInspectionDate !== undefined) updateData.next_inspection_date = updates.nextInspectionDate;
+    if (updates.isActive !== undefined) updateData.is_active = updates.isActive;
+    if (updates.notes !== undefined) updateData.notes = updates.notes;
+
+    const { error: err } = await supabase
+      .from('government_payment_programs')
+      .update(updateData)
+      .eq('id', programId);
+    if (err) throw err;
+  };
+
+  const deactivateGovernmentProgram = async (programId: string): Promise<void> => {
+    const supabase = getSupabase();
+    const { error: err } = await supabase
+      .from('government_payment_programs')
+      .update({ is_active: false, deleted_at: new Date().toISOString() })
+      .eq('id', programId);
+    if (err) throw err;
+  };
+
   return {
     charges,
     loading,
@@ -381,5 +633,16 @@ export function useRent() {
     getOverdueCharges,
     getRentRoll,
     refetch: fetchCharges,
+    // Payment verification
+    getPendingVerifications,
+    verifyPayment,
+    disputePayment,
+    rejectPayment,
+    getVerificationLog,
+    // Government programs
+    getGovernmentPrograms,
+    createGovernmentProgram,
+    updateGovernmentProgram,
+    deactivateGovernmentProgram,
   };
 }

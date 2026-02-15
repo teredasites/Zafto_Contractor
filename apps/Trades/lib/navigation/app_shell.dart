@@ -17,9 +17,9 @@ import 'package:zafto/screens/owner/owner_more_screen.dart';
 
 // Tech screens
 import 'package:zafto/screens/tech/tech_home_screen.dart';
-import 'package:zafto/screens/tech/tech_walkthrough_screen.dart';
+import 'package:zafto/screens/tech/tech_schedule_screen.dart';
 import 'package:zafto/screens/tech/tech_jobs_screen.dart';
-import 'package:zafto/screens/tech/tech_tools_screen.dart';
+import 'package:zafto/screens/tech/tech_tools_calcs_screen.dart';
 import 'package:zafto/screens/tech/tech_more_screen.dart';
 
 // Office screens
@@ -147,9 +147,9 @@ class _AppShellState extends ConsumerState<AppShell> {
       case UserRole.tech:
         return const [
           TechHomeScreen(),
-          TechWalkthroughScreen(),
+          TechScheduleScreen(),
           TechJobsScreen(),
-          TechToolsScreen(),
+          TechToolsCalcsScreen(),
           TechMoreScreen(),
         ];
       case UserRole.office:

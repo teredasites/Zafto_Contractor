@@ -53,9 +53,9 @@ List<TabConfig> getTabsForRole(UserRole role) {
           activeIcon: Icons.home,
         ),
         TabConfig(
-          label: 'Walkthrough',
-          icon: Icons.document_scanner_outlined,
-          activeIcon: Icons.document_scanner,
+          label: 'Schedule',
+          icon: Icons.calendar_today_outlined,
+          activeIcon: Icons.calendar_today,
         ),
         TabConfig(
           label: 'Jobs',

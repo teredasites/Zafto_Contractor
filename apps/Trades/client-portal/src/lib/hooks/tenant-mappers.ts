@@ -55,6 +55,7 @@ export interface UnitInfo {
 
 export interface RentChargeData {
   id: string;
+  companyId: string;
   leaseId: string;
   chargeType: string;
   description: string | null;
@@ -66,16 +67,62 @@ export interface RentChargeData {
   createdAt: string;
 }
 
+export type PaymentMethodType =
+  | 'ach' | 'credit_card' | 'debit_card' | 'cash' | 'check' | 'money_order'
+  | 'direct_deposit' | 'wire_transfer' | 'zelle' | 'venmo' | 'cashapp'
+  | 'housing_voucher' | 'government_direct' | 'other';
+
+export type VerificationStatus = 'auto_verified' | 'pending_verification' | 'verified' | 'disputed' | 'rejected';
+
+export type PaymentSource = 'tenant' | 'housing_authority' | 'government_program' | 'third_party' | 'other';
+
 export interface RentPaymentData {
   id: string;
   rentChargeId: string;
   amount: number;
-  paymentMethod: string;
+  paymentMethod: PaymentMethodType;
   processingFee: number;
   status: 'pending' | 'processing' | 'completed' | 'failed' | 'refunded';
   paidAt: string | null;
   notes: string | null;
   createdAt: string;
+  // Verification fields
+  reportedBy: string | null;
+  verificationStatus: VerificationStatus;
+  verifiedBy: string | null;
+  verifiedAt: string | null;
+  verificationNotes: string | null;
+  proofDocumentUrl: string | null;
+  // Payment source fields
+  paymentSource: PaymentSource;
+  sourceName: string | null;
+  sourceReference: string | null;
+  paymentDate: string | null;
+}
+
+export type GovernmentProgramType =
+  | 'section_8_hcv' | 'vash' | 'public_housing' | 'project_based_voucher'
+  | 'state_program' | 'local_program' | 'employer_assistance' | 'other';
+
+export interface GovernmentProgramData {
+  id: string;
+  tenantId: string;
+  programType: GovernmentProgramType;
+  programName: string;
+  authorityName: string | null;
+  authorityContactName: string | null;
+  authorityPhone: string | null;
+  authorityEmail: string | null;
+  voucherNumber: string | null;
+  hapContractNumber: string | null;
+  monthlyHapAmount: number | null;
+  tenantPortion: number | null;
+  utilityAllowance: number | null;
+  effectiveDate: string | null;
+  expirationDate: string | null;
+  recertificationDate: string | null;
+  isActive: boolean;
+  notes: string | null;
 }
 
 export type MaintenanceUrgency = 'routine' | 'urgent' | 'emergency';
@@ -212,6 +259,7 @@ export function mapRentCharge(row: Record<string, unknown>): RentChargeData {
 
   return {
     id: row.id as string,
+    companyId: row.company_id as string,
     leaseId: row.lease_id as string,
     chargeType: row.charge_type as string || 'rent',
     description: row.description as string || null,
@@ -229,12 +277,47 @@ export function mapRentPayment(row: Record<string, unknown>): RentPaymentData {
     id: row.id as string,
     rentChargeId: row.rent_charge_id as string,
     amount: (row.amount as number) || 0,
-    paymentMethod: row.payment_method as string || '',
+    paymentMethod: (row.payment_method as PaymentMethodType) || 'other',
     processingFee: (row.processing_fee as number) || 0,
     status: (row.status as RentPaymentData['status']) || 'pending',
     paidAt: row.paid_at as string || null,
     notes: row.notes as string || null,
     createdAt: row.created_at as string || '',
+    // Verification fields
+    reportedBy: row.reported_by as string || null,
+    verificationStatus: (row.verification_status as VerificationStatus) || 'auto_verified',
+    verifiedBy: row.verified_by as string || null,
+    verifiedAt: row.verified_at as string || null,
+    verificationNotes: row.verification_notes as string || null,
+    proofDocumentUrl: row.proof_document_url as string || null,
+    // Payment source
+    paymentSource: (row.payment_source as PaymentSource) || 'tenant',
+    sourceName: row.source_name as string || null,
+    sourceReference: row.source_reference as string || null,
+    paymentDate: row.payment_date as string || null,
+  };
+}
+
+export function mapGovernmentProgram(row: Record<string, unknown>): GovernmentProgramData {
+  return {
+    id: row.id as string,
+    tenantId: row.tenant_id as string,
+    programType: (row.program_type as GovernmentProgramType) || 'other',
+    programName: row.program_name as string || '',
+    authorityName: row.authority_name as string || null,
+    authorityContactName: row.authority_contact_name as string || null,
+    authorityPhone: row.authority_phone as string || null,
+    authorityEmail: row.authority_email as string || null,
+    voucherNumber: row.voucher_number as string || null,
+    hapContractNumber: row.hap_contract_number as string || null,
+    monthlyHapAmount: (row.monthly_hap_amount as number) || null,
+    tenantPortion: (row.tenant_portion as number) || null,
+    utilityAllowance: (row.utility_allowance as number) || null,
+    effectiveDate: row.effective_date as string || null,
+    expirationDate: row.expiration_date as string || null,
+    recertificationDate: row.recertification_date as string || null,
+    isActive: (row.is_active as boolean) ?? true,
+    notes: row.notes as string || null,
   };
 }
 
@@ -326,8 +409,39 @@ const PAYMENT_METHOD_LABELS: Record<string, string> = {
   cash: 'Cash',
   check: 'Check',
   money_order: 'Money Order',
+  direct_deposit: 'Direct Deposit',
+  wire_transfer: 'Wire Transfer',
+  zelle: 'Zelle',
+  venmo: 'Venmo',
+  cashapp: 'Cash App',
+  housing_voucher: 'Housing Voucher (Section 8)',
+  government_direct: 'Government Direct Payment',
   other: 'Other',
 };
+
+const VERIFICATION_STATUS_LABELS: Record<string, string> = {
+  auto_verified: 'Verified',
+  pending_verification: 'Pending Verification',
+  verified: 'Verified',
+  disputed: 'Disputed',
+  rejected: 'Rejected',
+};
+
+export function verificationStatusLabel(status: string): string {
+  return VERIFICATION_STATUS_LABELS[status] || status;
+}
+
+const PAYMENT_SOURCE_LABELS: Record<string, string> = {
+  tenant: 'Tenant',
+  housing_authority: 'Housing Authority',
+  government_program: 'Government Program',
+  third_party: 'Third Party',
+  other: 'Other',
+};
+
+export function paymentSourceLabel(source: string): string {
+  return PAYMENT_SOURCE_LABELS[source] || source;
+}
 
 export function paymentMethodLabel(method: string): string {
   return PAYMENT_METHOD_LABELS[method] || method;

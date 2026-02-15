@@ -203,6 +203,22 @@ void _registerAllCommands(CommandRegistry registry) {
       keywords: ['create', 'add', 'customer', 'client'],
     ),
     AppCommand(
+      id: 'action_new_bid',
+      title: 'New Bid',
+      subtitle: 'Create a new bid or estimate',
+      type: CommandType.action,
+      icon: LucideIcons.fileSignature,
+      keywords: ['create', 'add', 'bid', 'estimate', 'proposal'],
+    ),
+    AppCommand(
+      id: 'action_switch_role',
+      title: 'Switch Role',
+      subtitle: 'Change app view (tech, inspector, CPA...)',
+      type: CommandType.action,
+      icon: LucideIcons.arrowLeftRight,
+      keywords: ['switch', 'role', 'tech', 'technician', 'inspector', 'cpa', 'client', 'tenant', 'owner', 'admin', 'office', 'field', 'view'],
+    ),
+    AppCommand(
       id: 'action_scan',
       title: 'AI Scanner',
       subtitle: 'Scan equipment with AI',

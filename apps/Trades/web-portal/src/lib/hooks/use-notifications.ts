@@ -19,6 +19,12 @@ export type NotificationType =
   | 'time_entry_rejected'
   | 'customer_message'
   | 'dead_man_switch'
+  | 'payment_reported'
+  | 'payment_verified'
+  | 'payment_disputed'
+  | 'payment_rejected'
+  | 'hap_payment_due'
+  | 'recertification_upcoming'
   | 'system';
 
 export interface NotificationData {
