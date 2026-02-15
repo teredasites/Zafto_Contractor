@@ -12116,6 +12116,87 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - [ ] Build + execute corrections for each shallow feature
 - [ ] Commit: `[DEPTH14] Security & permission depth corrections — RLS, RBAC, auth, input validation, audit`
 
+### DEPTH15 — Inventory & Parts Management Depth Audit + Corrections (~12h)
+**Goal:** Contractors need to track parts in their truck, warehouse, and on order. Electricians carry $5K-$15K of wire/fittings/devices. HVAC techs carry $3K-$10K of capacitors/contactors/refrigerant. Losing track = lost money. The CRM has an `inventory` route and Flutter has a materials tracker field tool — audit whether these form a complete inventory system or are disconnected stubs.
+- [ ] Audit CRM inventory page — is it a full inventory management system or a stub? Parts catalog, stock levels, locations (truck/warehouse/job), reorder points, par levels
+- [ ] Audit materials tracker field tool (Flutter) — can techs track materials used on a job? Does it deduct from inventory? Is there a parts catalog per trade?
+- [ ] Audit purchase orders (CRM route exists) — PO creation, vendor management, receiving, PO-to-invoice matching, approval workflow
+- [ ] Audit vendor management — vendor list, contact info, pricing, lead times, preferred vendors per material category
+- [ ] Audit truck stock — does each tech/truck have an assigned inventory? Restock alerts when low? Transfer between trucks?
+- [ ] Audit barcode/QR scanning — can techs scan parts to add to job? Scan to receive shipment? Scan to check stock?
+- [ ] Audit material cost tracking — are material costs flowing to job costing? To invoices? To P&L? Is markup applied correctly?
+- [ ] Audit trade-specific parts catalogs — does each trade have a default parts list? (Electrical: wire gauges, breakers, outlets, boxes, fittings. HVAC: capacitors, contactors, motors, refrigerant, filters. Plumbing: fittings, valves, pipe sizes.)
+- [ ] Identify and list ALL shallow/stub features found
+- [ ] Build + execute corrections for each shallow feature
+- [ ] Commit: `[DEPTH15] Inventory & parts management depth corrections — stock, POs, vendors, truck inventory`
+
+### DEPTH16 — Subcontractor & Vendor Workflow Depth Audit + Corrections (~10h)
+**Goal:** GCs subcontract 60-80% of work. Even specialty contractors sub out adjacent trades. Subcontractor management must handle: invitation, qualification (insurance/license verification), bidding, scheduling, payment, lien waivers, and compliance. The CRM has a `subcontractors` route — audit if it's a real system or a stub list page.
+- [ ] Audit subcontractor list (CRM) — is it CRUD on a contact list or a full management system? Qualification status, insurance expiry, license verification, compliance score
+- [ ] Audit subcontractor invitation flow — can a GC invite a sub to bid on scope? Does the sub get a portal view? Can they submit bids through the system?
+- [ ] Audit subcontractor scheduling — can subs be assigned to schedule tasks in Phase GC scheduler? Do they see their schedule in team portal? Can they update progress?
+- [ ] Audit subcontractor payment — track what's owed to each sub per job, partial payments, retention holdback, lien waiver collection before payment, 1099 tracking at year-end
+- [ ] Audit insurance/license tracking — sub's GL insurance expiry, workers comp expiry, license status, auto-alert when documents expire, block scheduling if expired
+- [ ] Audit subcontractor communication — can office message subs through the system? Change order notifications? Schedule change notifications?
+- [ ] Audit W-9 / tax document collection — does the system track W-9 on file? 1099-NEC generation? Payment threshold alerts ($600)?
+- [ ] Identify and list ALL shallow/stub features found
+- [ ] Build + execute corrections for each shallow feature
+- [ ] Commit: `[DEPTH16] Subcontractor & vendor depth corrections — qualification, bidding, payment, compliance`
+
+### DEPTH17 — Client Experience & Homeowner Portal Depth Audit + Corrections (~12h)
+**Goal:** The client portal is the ONLY thing homeowners see. It must be professional, clear, and trustworthy. A homeowner checking project status at 10pm should see exactly where their project stands, what's been done, what's next, and what they owe — without calling the contractor. This is also a sales tool: homeowners who love the portal refer neighbors.
+- [ ] Audit client portal login — magic link flow, is it smooth? How long to get access? Does the homeowner understand what they're logging into?
+- [ ] Audit project dashboard — can the homeowner see their active project(s)? Status, schedule, photos, next steps? Is it visual and clear (not a data dump)?
+- [ ] Audit photo sharing — can homeowners see before/during/after photos? Photo timeline? Comments on photos?
+- [ ] Audit document access — can homeowners view/download their contract, estimate, invoices, permits, inspection reports, warranties? Are documents organized?
+- [ ] Audit payment flow — can homeowners pay invoices online? Payment history? Outstanding balance? Partial payment? Receipt?
+- [ ] Audit communication — can homeowners message the contractor? See message history? Get notified of updates? Schedule a callback?
+- [ ] Audit scheduling visibility — can homeowners see when the next visit is? Who's coming? Can they confirm/reschedule?
+- [ ] Audit warranty info — can homeowners see what's under warranty? Expiry dates? How to submit a warranty claim?
+- [ ] Audit maintenance reminders — does the portal remind homeowners of maintenance tasks? (Change HVAC filter, annual inspection, etc.)
+- [ ] Audit referral system — can homeowners refer neighbors? Is there a referral tracking/reward system?
+- [ ] Audit mobile responsiveness — is the client portal usable on a phone? (Most homeowners check on mobile)
+- [ ] Identify and list ALL shallow/stub features found
+- [ ] Build + execute corrections for each shallow feature
+- [ ] Commit: `[DEPTH17] Client portal depth corrections — project view, payments, communication, referrals`
+
+### DEPTH18 — Automation & Workflow Engine Depth Audit + Corrections (~10h)
+**Goal:** Office managers should not be manually sending follow-up emails, payment reminders, review requests, or schedule confirmations. The CRM has an `automations` route — audit if it's a real workflow engine or a stub page. Every competitor (Jobber, HCP, ServiceTitan) has workflow automation. Zafto needs it to compete.
+- [ ] Audit automations page (CRM) — is it a real rule builder or a stub? Can users create if/then rules? Triggers → conditions → actions?
+- [ ] Audit available triggers — job status change, invoice sent, payment received, estimate approved, new lead, appointment scheduled, job completed, review received, document signed
+- [ ] Audit available actions — send email, send SMS, create task, update job status, assign team member, create follow-up, send review request, generate invoice, schedule next visit
+- [ ] Audit pre-built automation templates — do common workflows come pre-configured? (Post-job review request, overdue invoice reminder, appointment confirmation, new lead follow-up, warranty expiry notification, maintenance reminder)
+- [ ] Audit automation log — can users see what automations ran? Success/failure? Debug why something didn't trigger?
+- [ ] Audit email templates within automations — are templates professional? Do they include company branding? Are they customizable? Do they use merge fields (customer name, job address, amount)?
+- [ ] Audit SMS automations — appointment reminders, job en-route notifications, payment confirmations via SMS. Does the SignalWire integration support automated SMS?
+- [ ] Audit scheduling automations — auto-schedule follow-up visits, recurring service schedules, seasonal maintenance campaigns
+- [ ] Identify and list ALL shallow/stub features found
+- [ ] Build + execute corrections for each shallow feature
+- [ ] Commit: `[DEPTH18] Automation & workflow depth corrections — triggers, actions, templates, SMS/email`
+
+---
+
+## PHASE AUDIT SUMMARY: FULL DEPTH PLAN (S125)
+
+**Purpose:** Complete re-audit of all features across all 5 apps. Gap phases build missing features. DEPTH phases audit and correct shallow/stub implementations. This is the quality gate before Phase G (QA) and Phase JUR (Jurisdiction).
+
+| Phase | Sprints | Est. Hours | Focus |
+|-------|---------|:----------:|-------|
+| **FIELD** | FIELD1-FIELD3 | ~36h | Missing field features: messaging, equipment checkout, team portal stubs |
+| **REST** | REST1-REST2 | ~20h | Restoration gaps: fire tools, mold remediation (IICRC S520) |
+| **NICHE** | NICHE1-NICHE2 | ~16h | Missing trade modules: pest control, service trades |
+| **DEPTH** | DEPTH1-DEPTH18 | ~232h | Full depth audit + corrections across every feature area |
+| **Total** | **25 sprints** | **~304h** | — |
+
+**Execution order:** FIELD → REST → NICHE → DEPTH1 through DEPTH18 → Phase G (QA) → Phase JUR → Phase E (AI) → LAUNCH
+
+**Process per DEPTH sprint:**
+1. Audit the feature area across all 5 apps (Flutter, CRM, Team, Client, Ops)
+2. Grade: DEEP (ship-ready) / SHALLOW (needs work) / STUB (needs full build)
+3. Build corrections for SHALLOW and STUB
+4. Execute corrections
+5. Verify: "Would a contractor be impressed?" If no, keep working.
+
 ---
 
 ## PHASE JUR: JURISDICTION AWARENESS — Pre-AI (S124 owner directive)
