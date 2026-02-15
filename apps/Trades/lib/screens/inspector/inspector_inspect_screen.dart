@@ -7,6 +7,8 @@ import 'package:zafto/theme/zafto_colors.dart';
 import 'package:zafto/theme/theme_provider.dart';
 import 'package:zafto/models/inspection.dart';
 import 'package:zafto/services/inspection_service.dart';
+import 'package:zafto/widgets/inspector/template_picker_sheet.dart';
+import 'package:zafto/screens/inspector/inspection_execution_screen.dart';
 
 // ============================================================
 // Inspector Inspect Screen — Active & Scheduled Inspections
@@ -139,9 +141,19 @@ class _InspectorInspectScreenState extends ConsumerState<InspectorInspectScreen>
 
   Widget _buildStartCTA(ZaftoColors colors) {
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
         HapticFeedback.lightImpact();
-        // TODO: Navigate to new inspection creation flow
+        final template = await showTemplatePicker(context);
+        if (template == null || !mounted) return;
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => InspectionExecutionScreen(
+              template: template,
+              inspectionType: template.inspectionType,
+            ),
+          ),
+        );
       },
       child: Container(
         padding: const EdgeInsets.all(20),
@@ -201,7 +213,15 @@ class _InspectorInspectScreenState extends ConsumerState<InspectorInspectScreen>
     return GestureDetector(
       onTap: () {
         HapticFeedback.lightImpact();
-        // TODO: Navigate to inspection detail
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => InspectionExecutionScreen(
+              inspection: inspection,
+              template: null, // will load from DB via templateId
+            ),
+          ),
+        );
       },
       child: Container(
         padding: const EdgeInsets.all(14),
