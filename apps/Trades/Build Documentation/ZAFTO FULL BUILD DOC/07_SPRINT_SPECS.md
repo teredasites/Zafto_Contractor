@@ -5782,6 +5782,58 @@ team-portal/src/app/dashboard/properties/page.tsx    — Maintenance requests as
 
 ---
 
+#### D5-PV: Payment Verification & Government Program Support
+**Status: DONE (Session 117)** | **Est: ~15-20 hrs**
+
+Real-world gap: when payments happen outside Stripe (check, cash, Zelle, Venmo, CashApp, direct deposit, wire, money order, government voucher), there's no way for the payer to report it or the receiver to verify it. Affects all payment flows: Tenant→Landlord (rent, Section 8 HAP), Customer→Contractor (invoices, bid deposits).
+
+**Sprint D5-PV1: Database Migration** (`20260215000102_payment_verification.sql`)
+- [x] Expand `rent_payments.payment_method` CHECK to 14 methods (ach, credit_card, debit_card, cash, check, money_order, direct_deposit, wire_transfer, zelle, venmo, cashapp, housing_voucher, government_direct, other)
+- [x] ALTER `rent_payments` — add verification columns: reported_by, verification_status, verified_by, verified_at, verification_notes, proof_document_url, payment_source, source_name, source_reference
+- [x] CREATE `government_payment_programs` table — Section 8 HCV, VASH, public housing, project-based vouchers, state/local programs, employer assistance. HAP amounts, voucher numbers, recertification dates, authority contacts
+- [x] CREATE `payment_verification_log` table — immutable audit trail (INSERT only, no UPDATE/DELETE). Actions: reported, verified, disputed, rejected, updated, proof_uploaded
+- [x] ALTER `invoices` — add offline payment tracking: last_payment_method, last_payment_source, last_payment_reference
+- [x] Indexes: pending verification queue, active programs by tenant, verification log by payment
+- [x] RLS: company_id scoping on all tables, tenant self-report INSERT policy (verification_status='pending_verification' + reported_by=auth.uid()), immutable log policies
+- [x] Audit triggers on government_payment_programs
+
+**Sprint D5-PV2: Client Portal — Tenant Payment Reporting**
+- [x] Add PaymentMethodType, VerificationStatus, PaymentSource types to `tenant-mappers.ts`
+- [x] Add GovernmentProgramData interface + mapper to `tenant-mappers.ts`
+- [x] Expand RentPaymentData with verification fields in `tenant-mappers.ts`
+- [x] Add `reportPayment()` mutation to `use-rent-payments.ts` — INSERTs with verification_status='pending_verification'
+- [x] Add `uploadProof()` — receipt/check photo upload to `receipts` storage bucket
+- [x] Add "Report Offline Payment" form on `rent/[id]/page.tsx`: method dropdown (9 offline methods), amount, date, reference, proof upload, notes
+- [x] Show verification status badges on payment history items
+- [x] `npm run build` passes (client-portal, 0 errors)
+
+**Sprint D5-PV3: Web CRM — Owner Verification Dashboard**
+- [x] Add PaymentMethodType, VerificationStatus, PaymentSource, GovernmentProgramType types to `pm-mappers.ts`
+- [x] Add GovernmentProgramData + PaymentVerificationLogData interfaces + mappers to `pm-mappers.ts`
+- [x] Expand RentPaymentData with verification + source + tenantName fields in `pm-mappers.ts`
+- [x] Add label records: paymentMethodLabels, verificationStatusLabels, paymentSourceLabels, governmentProgramLabels
+- [x] Expand `recordPayment()` params in `use-rent.ts`: paymentSource, sourceName, sourceReference, proofDocumentUrl, paymentDate
+- [x] Add `getPendingVerifications()` — queries pending payments with tenant join
+- [x] Add `verifyPayment()` — approves, updates charge paid_amount, creates audit log entry
+- [x] Add `disputePayment()` + `rejectPayment()` — status update + audit log
+- [x] Add `getVerificationLog()` — fetches audit trail for a payment
+- [x] Add government program CRUD: get, create, update, deactivate (soft delete)
+- [x] TypeScript strict check passes on modified files (0 errors)
+
+**Sprint D5-PV4: Flutter Mobile — Owner Verification**
+- [x] Rewrite `RentPayment` model in `rent_repository.dart` with all verification fields
+- [x] Add `GovernmentPaymentProgram` model with fromJson + programTypeLabels
+- [x] Add `getPendingVerifications()`, `verifyPayment()`, `disputePayment()`, `rejectPayment()`, `getGovernmentPrograms()` methods
+- [x] Computed getters: isPendingVerification, isVerified, isDisputed, isRejected, isSelfReported
+- [x] `dart analyze` passes (0 errors)
+
+**Sprint D5-PV5: Notifications Integration**
+- [x] Add 6 NotificationType values to `web-portal/use-notifications.ts`: payment_reported, payment_verified, payment_disputed, payment_rejected, hap_payment_due, recertification_upcoming
+- [x] Add same 6 types to `client-portal/use-notifications.ts`
+- [x] Commit: `[D5-PV] Payment verification + government programs — all apps wired`
+
+---
+
 #### D5 Execution Order
 
 Execute in sequence:
@@ -5795,9 +5847,10 @@ Execute in sequence:
 8. **D5h** — Team Portal maintenance view (depends on D5a-c)
 9. **D5i** — Integration wiring + Edge Functions (depends on D5d-h)
 10. **D5j** — Testing + seed data (depends on all above)
+11. **D5-PV** — Payment verification + government programs (depends on D5a-j)
 
-**Total estimated: ~120 hours across 10 sub-steps.**
-**New tables: 19 (+ 4 ALTER on existing tables)**
+**Total estimated: ~135-140 hours across 11 sub-steps.**
+**New tables: 21 (+ 5 ALTER on existing tables)**
 **Post-D5 total: ~80 tables, ~23 migration files**
 
 ---
@@ -8018,6 +8071,7 @@ Include <content>{markdown}</content> for rendered display.
 **Goal:** Every button on every page across ALL portals + mobile app — clicked and verified. S93 lesson: hooks have the functions but UI never calls them.
 
 **G9a: Web CRM — All 107 Routes**
+- [ ] **FIX: SitePlanCanvas.tsx** — FloorLabel type missing `rotation` property (build error from S116 crash, not blocking other portals)
 - [ ] Every sidebar nav link works (no 404s)
 - [ ] Every action button on every page triggers the correct function
 - [ ] Every modal opens, submits, and closes correctly

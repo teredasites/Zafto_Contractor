@@ -4,7 +4,7 @@ import 'dart:math' as math;
 /// ZAFTO Trades Header Logo with Hazard Stripes
 ///
 /// Premium industrial header with yellow/black diagonal hazard bars
-/// above and below the "ZAFTO TRADES" text.
+/// above and below the "ZAFTO CONTRACTOR" text.
 ///
 /// Design: Steel-cut precision aesthetic with warning stripe motif
 class ZaftoHazardHeader extends StatelessWidget {
@@ -41,7 +41,7 @@ class ZaftoHazardHeader extends StatelessWidget {
             ),
           ),
 
-          // ZAFTO TRADES text
+          // ZAFTO CONTRACTOR text
           SizedBox(
             height: textHeight,
             child: Row(
@@ -60,7 +60,7 @@ class ZaftoHazardHeader extends StatelessWidget {
                 ),
                 SizedBox(width: textHeight * 0.25),
                 Text(
-                  'TRADES',
+                  'CONTRACTOR',
                   style: TextStyle(
                     color: stripeColor,
                     fontSize: textHeight * 0.45,

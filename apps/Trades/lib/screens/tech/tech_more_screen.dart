@@ -1,120 +1,170 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 import 'package:zafto/theme/zafto_colors.dart';
-import 'package:zafto/theme/zafto_theme_builder.dart';
+import 'package:zafto/theme/theme_provider.dart';
+import 'package:zafto/widgets/shared/matrix_rain_painter.dart';
+import 'package:zafto/screens/tech/tech_walkthrough_screen.dart';
+import 'package:zafto/screens/field_tools/daily_log_screen.dart';
+import 'package:zafto/screens/field_tools/materials_tracker_screen.dart';
+import 'package:zafto/screens/field_tools/punch_list_screen.dart';
+import 'package:zafto/screens/field_tools/change_order_screen.dart';
+import 'package:zafto/screens/certifications/certifications_screen.dart';
+import 'package:zafto/screens/properties/properties_hub_screen.dart';
+import 'package:zafto/screens/settings/settings_screen.dart';
+
+// ============================================================
+// Tech More Screen — Expanded Feature Access
+//
+// Structured sections: FIELD, PERSONAL, ACCOUNT.
+// All onTap handlers wired to real screens. No dead buttons.
+// ============================================================
 
 class TechMoreScreen extends ConsumerWidget {
   const TechMoreScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final colors = Theme.of(context).extension<ZaftoColors>()!;
-
-    const menuItems = <_MenuItem>[
-      _MenuItem(
-        icon: Icons.receipt_long_outlined,
-        title: 'Receipts',
-      ),
-      _MenuItem(
-        icon: Icons.directions_car_outlined,
-        title: 'Mileage',
-      ),
-      _MenuItem(
-        icon: Icons.verified_outlined,
-        title: 'Certifications',
-      ),
-      _MenuItem(
-        icon: Icons.shield_outlined,
-        title: 'Insurance Field Work',
-      ),
-      _MenuItem(
-        icon: Icons.apartment_outlined,
-        title: 'Property Maintenance',
-      ),
-      _MenuItem(
-        icon: Icons.person_outline,
-        title: 'Profile & Settings',
-      ),
-    ];
+    final colors = ref.watch(zaftoColorsProvider);
 
     return Scaffold(
       backgroundColor: colors.bgBase,
-      appBar: AppBar(
-        title: const Text('More'),
-        backgroundColor: colors.bgBase,
-      ),
       body: SafeArea(
-        child: ListView.builder(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          itemCount: menuItems.length,
-          itemBuilder: (context, index) {
-            final item = menuItems[index];
-            return _buildMenuItem(context, colors, item, index == menuItems.length - 1);
-          },
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 16),
+              Text(
+                'More',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700,
+                  color: colors.textPrimary,
+                ),
+              ),
+              const SizedBox(height: 20),
+              _buildSection(context, colors, 'FIELD', [
+                _MenuItem(LucideIcons.video, 'Walkthrough', 'Record video walkthroughs', () => _push(context, const TechWalkthroughScreen())),
+                _MenuItem(LucideIcons.clipboardList, 'Daily Log', 'Record daily work progress', () => _push(context, const DailyLogScreen())),
+                _MenuItem(LucideIcons.box, 'Materials Tracker', 'Track materials used on site', () => _push(context, const MaterialsTrackerScreen())),
+                _MenuItem(LucideIcons.checkSquare, 'Punch List', 'Track remaining items', () => _push(context, const PunchListScreen())),
+                _MenuItem(LucideIcons.fileDiff, 'Change Orders', 'Document scope changes', () => _push(context, const ChangeOrderScreen())),
+              ]),
+              const SizedBox(height: 20),
+              _buildSection(context, colors, 'PERSONAL', [
+                _MenuItem(LucideIcons.award, 'Certifications', 'View your active certifications', () => _push(context, const CertificationsScreen())),
+                _MenuItem(LucideIcons.building, 'Properties', 'View assigned properties', () => _push(context, const PropertiesHubScreen())),
+              ]),
+              const SizedBox(height: 20),
+              _buildSection(context, colors, 'ACCOUNT', [
+                _MenuItem(LucideIcons.settings, 'Profile & Settings', 'Account, notifications, preferences', () => _push(context, const SettingsScreen())),
+              ]),
+              const SizedBox(height: 32),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildMenuItem(
+  Widget _buildSection(
     BuildContext context,
     ZaftoColors colors,
-    _MenuItem item,
-    bool isLast,
+    String title,
+    List<_MenuItem> items,
   ) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        InkWell(
-          onTap: () {},
-          borderRadius: BorderRadius.circular(ZaftoThemeBuilder.radiusMD),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 14),
-            child: Row(
-              children: [
-                Container(
-                  width: 36,
-                  height: 36,
-                  decoration: BoxDecoration(
-                    color: colors.fillDefault,
-                    borderRadius: BorderRadius.circular(
-                      ZaftoThemeBuilder.radiusSM,
-                    ),
-                  ),
-                  child: Icon(
-                    item.icon,
-                    size: 20,
-                    color: colors.textSecondary,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: Text(
+            title,
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 1.0,
+              color: colors.textTertiary,
+            ),
+          ),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            color: colors.bgElevated,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: colors.borderSubtle),
+          ),
+          child: Column(
+            children: [
+              for (int i = 0; i < items.length; i++) ...[
+                _buildMenuItem(context, colors, items[i]),
+                if (i < items.length - 1)
+                  Divider(height: 0.5, indent: 56, color: colors.borderSubtle),
+              ],
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMenuItem(BuildContext context, ZaftoColors colors, _MenuItem item) {
+    return InkWell(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        item.onTap();
+      },
+      borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        child: Row(
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: crmEmerald.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(item.icon, size: 18, color: crmEmerald),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
                     item.title,
                     style: TextStyle(
-                      fontFamily: 'SF Pro Text',
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
                       color: colors.textPrimary,
                     ),
                   ),
-                ),
-                Icon(
-                  Icons.chevron_right,
-                  size: 20,
-                  color: colors.textQuaternary,
-                ),
-              ],
+                  Text(
+                    item.subtitle,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: colors.textTertiary,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
+            Icon(LucideIcons.chevronRight, size: 16, color: colors.textQuaternary),
+          ],
         ),
-        if (!isLast)
-          Divider(
-            height: 1,
-            indent: 48,
-            color: colors.borderSubtle,
-          ),
-      ],
+      ),
+    );
+  }
+
+  void _push(BuildContext context, Widget screen) {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => screen),
     );
   }
 }
@@ -122,9 +172,7 @@ class TechMoreScreen extends ConsumerWidget {
 class _MenuItem {
   final IconData icon;
   final String title;
-
-  const _MenuItem({
-    required this.icon,
-    required this.title,
-  });
+  final String subtitle;
+  final VoidCallback onTap;
+  const _MenuItem(this.icon, this.title, this.subtitle, this.onTap);
 }

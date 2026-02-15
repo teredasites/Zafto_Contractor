@@ -45,6 +45,7 @@ import '../screens/field_tools/safety_briefing_screen.dart';
 import '../screens/field_tools/confined_space_timer_screen.dart';
 
 import '../screens/certifications/certifications_screen.dart';
+import '../screens/role_switcher_screen.dart';
 
 class CommandPalette extends ConsumerStatefulWidget {
   const CommandPalette({super.key});
@@ -125,6 +126,8 @@ class _CommandPaletteState extends ConsumerState<CommandPalette> {
         nav.push(MaterialPageRoute(builder: (_) => const CustomerCreateScreen()));
       case 'action_new_bid':
         nav.push(MaterialPageRoute(builder: (_) => const BidCreateScreen()));
+      case 'action_switch_role':
+        nav.pushReplacement(MaterialPageRoute(builder: (_) => const RoleSwitcherScreen()));
 
       // Business Hubs
       case 'jobs_hub':

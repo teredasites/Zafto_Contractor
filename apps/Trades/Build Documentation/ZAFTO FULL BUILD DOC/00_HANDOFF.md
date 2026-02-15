@@ -19,14 +19,14 @@
 
 | Field | Value |
 |-------|-------|
-| **Sprint** | **PHASE U COMPLETE (S114). PHASE G IN PROGRESS (S113-S115).** G1-G5 automated sprints DONE. G10 DONE (S114-S115). G6-G9 manual QA PENDING. |
+| **Sprint** | **D5-PV COMPLETE (S117). PHASE U COMPLETE (S114). PHASE G IN PROGRESS (S113-S115).** G1-G5 automated sprints DONE. G10 DONE (S114-S115). G6-G9 manual QA PENDING. |
 | **Sub-step** | G6-G9 manual QA pending. Phase E remains PAUSED (AI goes last). |
-| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → Phase G (G1-G5 DONE, G10 DONE, G6-G9 manual). Phase E: E-review + BA1-BA8 (~128 hrs) + E1-E4. |
-| **Status** | Phases A-D + F + T + P + SK + GC + U + W + J + L ALL DONE. Phase G: G1-G5 automated DONE, G10 DONE. R1 DONE. FM code done. Phase E PAUSED. ~199 tables. 51 migration files pushed. 70 Edge Functions. **125 CRM pages. 36 team pages. 39 client pages. 28 ops pages.** All migrations applied to Supabase. |
-| **Last Completed** | S115: **CRITICAL FIX SESSION.** Fixed 10 migration files (auth.company_id→requesting_company_id, broken audit_trigger_fn calls, missing home_equipment table, wrong estimate_items/estimate_labor_components columns, contacts table safety). Fixed RLS on property_floor_plans+walkthroughs (users subquery→JWT). Renamed Sketch & Bid→Sketch Engine everywhere. Rewrote Sketch Engine + Recon pages (features always visible, error as banner). Added bg-card CSS variable. All 51 migrations pushed to Supabase. All 4 portals build clean. Pushed to Vercel. |
-| **Session Count** | 115 |
-| **Tables** | ~199 (no new tables in S115). bid_templates added in migration 099. |
-| **Migration Files** | 51 total pushed to Supabase (added: u14a_trade_seed_expansion, u14b_bid_templates, u15c_gps_enhanced_photos, fix_rls_floor_plans_walkthroughs) |
+| **Sprint Specs Location** | `07_SPRINT_SPECS.md` → Phase G (G1-G5 DONE, G10 DONE, G6-G9 manual). D5-PV (Payment Verification) DONE. Phase E: E-review + BA1-BA8 (~128 hrs) + E1-E4. |
+| **Status** | Phases A-D + F + T + P + SK + GC + U + W + J + L ALL DONE. D5-PV DONE. Phase G: G1-G5 automated DONE, G10 DONE. R1 DONE. FM code done. Phase E PAUSED. ~201 tables. 52 migration files. 70 Edge Functions. **125 CRM pages. 36 team pages. 39 client pages. 28 ops pages.** |
+| **Last Completed** | S117: **Payment Verification & Government Programs (D5-PV).** New migration: ALTER rent_payments (14 payment methods + verification workflow columns), 2 new tables (government_payment_programs for Section 8/VASH/HCV, payment_verification_log immutable audit trail), ALTER invoices (offline payment tracking). Client portal: tenant self-report form + proof upload. Web CRM: owner verify/dispute/reject + government program CRUD. Flutter: models + repository methods. Notification types added to both portals. |
+| **Session Count** | 117 |
+| **Tables** | ~201 (+2 from S117: government_payment_programs, payment_verification_log). Also ALTER rent_payments + invoices. |
+| **Migration Files** | 52 total (added: 20260215000102_payment_verification.sql — payment verification + government programs) |
 
 ## CRITICAL: AI GOES LAST — BUILD ORDER CORRECTED (S80)
 
@@ -89,6 +89,7 @@
 | External API integrations | PENDING | F-phase | Gusto (payroll), Checkr (background checks), E-Verify, DocuSign, Samsara/Geotab (fleet GPS), Unwrangle (supplier pricing). API keys needed. |
 | SK: Bluetooth Laser Meter | **DEFERRED (S101)** | Post-launch | MagicPlan PrecisionLink supports 20+ devices (Bosch, Leica, DeWalt, Hilti, Stabila). HIGH bug risk — requires physical hardware testing, manufacturer BLE SDKs, device-specific pairing flows. Not confident in first-pass quality. Defer to post-launch hardware sprint with real device testing. Research in `memory/sketch-engine-deep-research-s101.md`. |
 | SK → GC Scheduler Link | **DEFERRED to U-phase (S101)** | U17/U22 | Room data from sketch could auto-suggest scheduling tasks (e.g., "wire kitchen = 6 hrs"). Can't wire to Phase GC until it exists. Natural fit for U17 (data flow wiring) or U22 (isolated feature wiring). |
+| **Calculator Save-to-Job** | **GAP (S116)** | Pre-launch | ~1,194 trade calculators (electrical, HVAC, plumbing, roofing, solar, welding, auto, GC, pool, landscaping, remodeler) have NO save functionality. Results are transient — calculate → display → gone. Infrastructure half-built: `ZaftoSaveToJobButton` widget exists (unused), `SavedCalculation` model exists in Hive (unused), `CalculationHistoryService` exists (unused), history screen exists (empty). Old infra syncs to Firestore (not Supabase). Need: Supabase `calculation_results` table, migrate from Hive/Firestore, wire `ZaftoSaveToJobButton` into all calculator screens, enable optional `job_id` linkage, populate history screen. Domain calculators (TPA equipment, Recon roof, SK room measurements) already save to Supabase correctly — only general trade calcs are affected. |
 
 ---
 

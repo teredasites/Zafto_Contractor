@@ -327,6 +327,18 @@ Update this section as sprints are completed. Mark each connection as it's verif
 | U → Calendar Sync | U21 | WIRED (pre-S114) — Google Calendar, notification triggers |
 | U → Phone Config | U23 | WIRED (S114) — 6-tab settings page, 3 hooks, 5 trade presets, IVR builder, ring groups, AI receptionist config |
 
+### Phase D5-PV (Payment Verification + Government Programs) — COMPLETE (S117)
+| Connection | Sprint | Status |
+|-----------|--------|--------|
+| D5-PV → Rent Payments | D5-PV1 | WIRED (S117) — ALTER rent_payments: 14 payment methods, verification workflow columns, payment source tracking |
+| D5-PV → Government Programs | D5-PV1 | WIRED (S117) — government_payment_programs table: Section 8 HCV, VASH, public housing, voucher tracking, HAP amounts, recertification dates |
+| D5-PV → Audit Trail | D5-PV1 | WIRED (S117) — payment_verification_log immutable table (INSERT only): reported/verified/disputed/rejected/updated/proof_uploaded |
+| D5-PV → Invoices | D5-PV1 | WIRED (S117) — ALTER invoices: last_payment_method, last_payment_source, last_payment_reference |
+| D5-PV → Client Portal | D5-PV2 | WIRED (S117) — tenant self-report form (9 offline methods), proof upload to receipts bucket, verification status badges |
+| D5-PV → Web CRM | D5-PV3 | WIRED (S117) — owner verify/dispute/reject, government program CRUD, expanded recordPayment, pending verification queue |
+| D5-PV → Flutter Mobile | D5-PV4 | WIRED (S117) — RentPayment model rewrite, GovernmentPaymentProgram model, verification repo methods |
+| D5-PV → Notifications | D5-PV5 | WIRED (S117) — 6 types: payment_reported, payment_verified, payment_disputed, payment_rejected, hap_payment_due, recertification_upcoming |
+
 ### Phase W (Warranty + Lifecycle) — COMPLETE (S113 chain)
 | Connection | Sprint | Status |
 |-----------|--------|--------|

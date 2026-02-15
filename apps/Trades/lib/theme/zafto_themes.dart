@@ -220,19 +220,19 @@ class ZaftoThemes {
   // DARK THEMES
   // ===========================================================================
 
-  /// 5. Dark - Classic dark mode (DEFAULT FOR LCD)
+  /// 5. Dark - CRM-aligned dark mode (DEFAULT)
   static const ZaftoColors dark = ZaftoColors(
     themeName: 'Dark',
     isDark: true,
-    bgBase: Color(0xFF0A0A0B),
-    bgElevated: Color(0xFF151516),
-    bgInset: Color(0xFF050506),
+    bgBase: Color(0xFF0D1117),
+    bgElevated: Color(0xFF161B22),
+    bgInset: Color(0xFF080C12),
     textPrimary: Color(0xF0FFFFFF),
     textSecondary: Color(0xADFFFFFF),
     textTertiary: Color(0x7AFFFFFF),
     textQuaternary: Color(0x52FFFFFF),
     accentPrimary: Color(0xFFFFFFFF),
-    accentSuccess: Color(0xFF32D74B),
+    accentSuccess: Color(0xFF10B981),
     accentWarning: Color(0xFFFF9F0A),
     accentError: Color(0xFFFF453A),
     accentInfo: Color(0xFF0A84FF),
@@ -242,7 +242,7 @@ class ZaftoThemes {
     fillDefault: Color(0x14FFFFFF),
     fillHover: Color(0x1FFFFFFF),
     fillPressed: Color(0x29FFFFFF),
-    navBg: Color(0xFF151516),
+    navBg: Color(0xFF161B22),
     navBorder: Color(0x33FFFFFF),
   );
 

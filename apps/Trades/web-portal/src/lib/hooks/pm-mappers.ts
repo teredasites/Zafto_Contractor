@@ -309,6 +309,49 @@ export function mapRentCharge(row: Record<string, unknown>): RentChargeData {
   };
 }
 
+// --- Payment Types ---
+export type PaymentMethodType =
+  | 'stripe' | 'ach' | 'credit_card' | 'debit_card' | 'cash' | 'check' | 'money_order'
+  | 'direct_deposit' | 'wire_transfer' | 'zelle' | 'venmo' | 'cashapp'
+  | 'housing_voucher' | 'government_direct' | 'other';
+
+export type VerificationStatus = 'auto_verified' | 'pending_verification' | 'verified' | 'disputed' | 'rejected';
+export type PaymentSource = 'tenant' | 'housing_authority' | 'government_program' | 'third_party' | 'other';
+
+export const paymentMethodLabels: Record<string, string> = {
+  stripe: 'Stripe',
+  ach: 'Bank Transfer (ACH)',
+  credit_card: 'Credit Card',
+  debit_card: 'Debit Card',
+  cash: 'Cash',
+  check: 'Check',
+  money_order: 'Money Order',
+  direct_deposit: 'Direct Deposit',
+  wire_transfer: 'Wire Transfer',
+  zelle: 'Zelle',
+  venmo: 'Venmo',
+  cashapp: 'Cash App',
+  housing_voucher: 'Housing Voucher (Section 8)',
+  government_direct: 'Government Direct Payment',
+  other: 'Other',
+};
+
+export const verificationStatusLabels: Record<string, string> = {
+  auto_verified: 'Verified',
+  pending_verification: 'Pending Verification',
+  verified: 'Verified',
+  disputed: 'Disputed',
+  rejected: 'Rejected',
+};
+
+export const paymentSourceLabels: Record<string, string> = {
+  tenant: 'Tenant',
+  housing_authority: 'Housing Authority',
+  government_program: 'Government Program',
+  third_party: 'Third Party',
+  other: 'Other',
+};
+
 // --- Rent Payment ---
 export interface RentPaymentData {
   id: string;
@@ -316,31 +359,163 @@ export interface RentPaymentData {
   rentChargeId: string;
   tenantId: string;
   amount: number;
-  paymentMethod: 'stripe' | 'ach' | 'check' | 'cash' | 'money_order' | 'other';
+  paymentMethod: PaymentMethodType;
   stripePaymentIntentId: string | null;
   processingFee: number;
   feePaidBy: 'landlord' | 'tenant';
-  status: 'pending' | 'completed' | 'failed' | 'refunded';
+  status: 'pending' | 'processing' | 'completed' | 'failed' | 'refunded';
   journalEntryId: string | null;
-  paidAt: Date;
+  paidAt: Date | null;
   notes: string | null;
   createdAt: Date;
+  // Verification fields
+  reportedBy: string | null;
+  verificationStatus: VerificationStatus;
+  verifiedBy: string | null;
+  verifiedAt: Date | null;
+  verificationNotes: string | null;
+  proofDocumentUrl: string | null;
+  // Payment source
+  paymentSource: PaymentSource;
+  sourceName: string | null;
+  sourceReference: string | null;
+  paymentDate: string | null;
+  // Joined
+  tenantName?: string;
 }
 
 export function mapRentPayment(row: Record<string, unknown>): RentPaymentData {
+  const tenant = row.tenants as Record<string, unknown> | null;
   return {
     id: row.id as string,
     companyId: row.company_id as string,
     rentChargeId: row.rent_charge_id as string,
     tenantId: row.tenant_id as string,
     amount: Number(row.amount) || 0,
-    paymentMethod: (row.payment_method as RentPaymentData['paymentMethod']) || 'other',
+    paymentMethod: (row.payment_method as PaymentMethodType) || 'other',
     stripePaymentIntentId: (row.stripe_payment_intent_id as string) || null,
     processingFee: Number(row.processing_fee) || 0,
     feePaidBy: (row.fee_paid_by as RentPaymentData['feePaidBy']) || 'landlord',
     status: (row.status as RentPaymentData['status']) || 'pending',
     journalEntryId: (row.journal_entry_id as string) || null,
-    paidAt: new Date(row.paid_at as string),
+    paidAt: row.paid_at ? new Date(row.paid_at as string) : null,
+    notes: (row.notes as string) || null,
+    createdAt: new Date(row.created_at as string),
+    // Verification
+    reportedBy: (row.reported_by as string) || null,
+    verificationStatus: (row.verification_status as VerificationStatus) || 'auto_verified',
+    verifiedBy: (row.verified_by as string) || null,
+    verifiedAt: row.verified_at ? new Date(row.verified_at as string) : null,
+    verificationNotes: (row.verification_notes as string) || null,
+    proofDocumentUrl: (row.proof_document_url as string) || null,
+    // Source
+    paymentSource: (row.payment_source as PaymentSource) || 'tenant',
+    sourceName: (row.source_name as string) || null,
+    sourceReference: (row.source_reference as string) || null,
+    paymentDate: (row.payment_date as string) || null,
+    // Joined
+    tenantName: tenant ? `${tenant.first_name} ${tenant.last_name}` : undefined,
+  };
+}
+
+// --- Government Payment Program ---
+export type GovernmentProgramType =
+  | 'section_8_hcv' | 'vash' | 'public_housing' | 'project_based_voucher'
+  | 'state_program' | 'local_program' | 'employer_assistance' | 'other';
+
+export const governmentProgramLabels: Record<string, string> = {
+  section_8_hcv: 'Section 8 (HCV)',
+  vash: 'VASH (Veterans)',
+  public_housing: 'Public Housing',
+  project_based_voucher: 'Project-Based Voucher',
+  state_program: 'State Program',
+  local_program: 'Local Program',
+  employer_assistance: 'Employer Assistance',
+  other: 'Other',
+};
+
+export interface GovernmentProgramData {
+  id: string;
+  companyId: string;
+  tenantId: string;
+  programType: GovernmentProgramType;
+  programName: string;
+  authorityName: string | null;
+  authorityContactName: string | null;
+  authorityPhone: string | null;
+  authorityEmail: string | null;
+  authorityAddress: string | null;
+  voucherNumber: string | null;
+  hapContractNumber: string | null;
+  monthlyHapAmount: number | null;
+  tenantPortion: number | null;
+  utilityAllowance: number | null;
+  paymentStandard: number | null;
+  effectiveDate: string | null;
+  expirationDate: string | null;
+  recertificationDate: string | null;
+  inspectionDate: string | null;
+  nextInspectionDate: string | null;
+  isActive: boolean;
+  notes: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export function mapGovernmentProgram(row: Record<string, unknown>): GovernmentProgramData {
+  return {
+    id: row.id as string,
+    companyId: row.company_id as string,
+    tenantId: row.tenant_id as string,
+    programType: (row.program_type as GovernmentProgramType) || 'other',
+    programName: row.program_name as string || '',
+    authorityName: (row.authority_name as string) || null,
+    authorityContactName: (row.authority_contact_name as string) || null,
+    authorityPhone: (row.authority_phone as string) || null,
+    authorityEmail: (row.authority_email as string) || null,
+    authorityAddress: (row.authority_address as string) || null,
+    voucherNumber: (row.voucher_number as string) || null,
+    hapContractNumber: (row.hap_contract_number as string) || null,
+    monthlyHapAmount: row.monthly_hap_amount ? Number(row.monthly_hap_amount) : null,
+    tenantPortion: row.tenant_portion ? Number(row.tenant_portion) : null,
+    utilityAllowance: row.utility_allowance ? Number(row.utility_allowance) : null,
+    paymentStandard: row.payment_standard ? Number(row.payment_standard) : null,
+    effectiveDate: (row.effective_date as string) || null,
+    expirationDate: (row.expiration_date as string) || null,
+    recertificationDate: (row.recertification_date as string) || null,
+    inspectionDate: (row.inspection_date as string) || null,
+    nextInspectionDate: (row.next_inspection_date as string) || null,
+    isActive: (row.is_active as boolean) ?? true,
+    notes: (row.notes as string) || null,
+    createdAt: new Date(row.created_at as string),
+    updatedAt: new Date(row.updated_at as string),
+  };
+}
+
+// --- Payment Verification Log ---
+export interface PaymentVerificationLogData {
+  id: string;
+  companyId: string;
+  paymentId: string;
+  paymentContext: 'rent' | 'invoice' | 'bid_deposit';
+  action: 'reported' | 'verified' | 'disputed' | 'rejected' | 'updated' | 'proof_uploaded';
+  performedBy: string;
+  oldStatus: string | null;
+  newStatus: string | null;
+  notes: string | null;
+  createdAt: Date;
+}
+
+export function mapVerificationLog(row: Record<string, unknown>): PaymentVerificationLogData {
+  return {
+    id: row.id as string,
+    companyId: row.company_id as string,
+    paymentId: row.payment_id as string,
+    paymentContext: (row.payment_context as PaymentVerificationLogData['paymentContext']) || 'rent',
+    action: (row.action as PaymentVerificationLogData['action']) || 'reported',
+    performedBy: row.performed_by as string,
+    oldStatus: (row.old_status as string) || null,
+    newStatus: (row.new_status as string) || null,
     notes: (row.notes as string) || null,
     createdAt: new Date(row.created_at as string),
   };

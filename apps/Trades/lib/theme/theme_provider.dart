@@ -51,7 +51,7 @@ class ThemeState {
 // =============================================================================
 
 class ThemeNotifier extends StateNotifier<ThemeState> {
-  ThemeNotifier() : super(const ThemeState(currentTheme: ZaftoTheme.oledBlack)) {
+  ThemeNotifier() : super(const ThemeState(currentTheme: ZaftoTheme.dark)) {
     _loadSavedTheme();
   }
 
@@ -69,7 +69,7 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
 
       final theme = ZaftoTheme.values.firstWhere(
         (t) => t.name == savedTheme,
-        orElse: () => ZaftoTheme.oledBlack,
+        orElse: () => ZaftoTheme.dark,
       );
 
       state = ThemeState(
@@ -78,7 +78,7 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
         isOledScreen: isOled,
       );
     } catch (e) {
-      state = const ThemeState(currentTheme: ZaftoTheme.oledBlack);
+      state = const ThemeState(currentTheme: ZaftoTheme.dark);
     }
   }
 

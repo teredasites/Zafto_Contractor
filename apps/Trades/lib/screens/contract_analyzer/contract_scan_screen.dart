@@ -700,12 +700,6 @@ class _ContractScanScreenState extends ConsumerState<ContractScanScreen> {
         fileName: 'Contract_${DateTime.now().millisecondsSinceEpoch}',
       );
 
-      // Update free scans
-      final freeScans = ref.read(freeScansRemainingProvider);
-      if (freeScans > 0) {
-        ref.read(freeScansRemainingProvider.notifier).state = freeScans - 1;
-      }
-
       // Refresh analyses list
       ref.read(contractAnalysesProvider.notifier).refresh();
 
@@ -744,12 +738,6 @@ class _ContractScanScreenState extends ConsumerState<ContractScanScreen> {
         pdfPath: path,
         fileName: fileName,
       );
-
-      // Update free scans
-      final freeScans = ref.read(freeScansRemainingProvider);
-      if (freeScans > 0) {
-        ref.read(freeScansRemainingProvider.notifier).state = freeScans - 1;
-      }
 
       // Refresh analyses list
       ref.read(contractAnalysesProvider.notifier).refresh();

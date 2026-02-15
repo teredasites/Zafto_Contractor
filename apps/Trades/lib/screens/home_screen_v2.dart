@@ -1,4 +1,3 @@
-import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,6 +10,9 @@ import '../services/bid_service.dart';
 import '../services/invoice_service.dart';
 import '../services/customer_service.dart';
 import '../widgets/command_palette.dart';
+import '../widgets/shared/matrix_rain_painter.dart';
+import '../widgets/shared/ai_brain_card.dart';
+import '../widgets/shared/clean_brand_header.dart';
 import '../navigation/screen_registry.dart';
 
 // Screen imports
@@ -48,13 +50,8 @@ import '../services/time_clock_service.dart';
 import '../models/scheduled_item.dart';
 import '../widgets/clock_button.dart';
 
-// Industrial colors - Caterpillar/DeWalt inspired
-const Color _industrialOrange = Color(0xFFE65100);
-const Color _industrialAmber = Color(0xFFFF8F00);
-const Color _industrialSlate = Color(0xFF1A1D21);
-const Color _industrialSteel = Color(0xFF2D3238);
-const Color _hazardYellow = Color(0xFFFFD600); // Trades yellow for hazard stripes
-const Color _aiRed = Color(0xFFE53935);
+// CRM-aligned palette — shared colors imported from widgets/shared/matrix_rain_painter.dart
+// crmEmerald (0xFF10B981) and brandAmber (0xFFFFB020) are now in shared constants
 
 /// ZAFTO Home Screen v2 - Phase 0.5 Design
 /// Matches zafto_mockup_v2.html exactly
@@ -123,9 +120,9 @@ class _HomeScreenV2State extends ConsumerState<HomeScreenV2> {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
         children: [
-          // Premium Hazard Stripe Logo
+          // Clean brand logo — CRM-aligned
           Expanded(
-            child: _HazardStripeHeader(),
+            child: CleanBrandHeader(),
           ),
           const SizedBox(width: 12),
           // Header icons - Clock, Bell, User
@@ -209,7 +206,7 @@ class _HomeScreenV2State extends ConsumerState<HomeScreenV2> {
   Widget _buildAIBar(ZaftoColors colors) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: _AIBrainCard(
+      child: AIBrainCard(
         colors: colors,
         onTap: _openAIChat,
         onLongPress: () {
@@ -421,8 +418,7 @@ class _HomeScreenV2State extends ConsumerState<HomeScreenV2> {
     final invoiceStats = ref.watch(invoiceStatsProvider);
     final customerCount = ref.watch(customerCountProvider);
 
-    // Monochrome hazard yellow - consistent with bottom nav and carousel
-    const hazardYellow = Color(0xFFFFD600);
+    final tileColor = colors.accentSuccess;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -436,7 +432,7 @@ class _HomeScreenV2State extends ConsumerState<HomeScreenV2> {
                 label: 'Bids',
                 value: '${bidStats.sentBids}',
                 sublabel: 'pending',
-                color: hazardYellow,
+                color: tileColor,
                 onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const BidsHubScreen())),
               )),
               const SizedBox(width: 12),
@@ -446,7 +442,7 @@ class _HomeScreenV2State extends ConsumerState<HomeScreenV2> {
                 label: 'Jobs',
                 value: '${jobStats.active}',
                 sublabel: 'active',
-                color: hazardYellow,
+                color: tileColor,
                 onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const JobsHubScreen())),
               )),
             ],
@@ -460,7 +456,7 @@ class _HomeScreenV2State extends ConsumerState<HomeScreenV2> {
                 label: 'Invoices',
                 value: '\$${_formatMoney(invoiceStats.totalOutstanding)}',
                 sublabel: 'unpaid',
-                color: hazardYellow,
+                color: tileColor,
                 onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const InvoicesHubScreen())),
               )),
               const SizedBox(width: 12),
@@ -470,7 +466,7 @@ class _HomeScreenV2State extends ConsumerState<HomeScreenV2> {
                 label: 'Customers',
                 value: '$customerCount',
                 sublabel: 'total',
-                color: hazardYellow,
+                color: tileColor,
                 onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CustomersHubScreen())),
               )),
             ],
@@ -533,7 +529,7 @@ class _HomeScreenV2State extends ConsumerState<HomeScreenV2> {
   // Power users know it's there, doesn't overwhelm new users
   // ============================================================================
   Widget _buildReferenceLibraryCard(ZaftoColors colors) {
-    const hazardYellow = Color(0xFFFFD600);
+    final cardAccent = colors.accentSuccess;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: GestureDetector(
@@ -554,10 +550,10 @@ class _HomeScreenV2State extends ConsumerState<HomeScreenV2> {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: hazardYellow.withOpacity(0.12),
+                  color: cardAccent.withOpacity(0.12),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(LucideIcons.library, size: 24, color: hazardYellow),
+                child: Icon(LucideIcons.library, size: 24, color: cardAccent),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -587,7 +583,7 @@ class _HomeScreenV2State extends ConsumerState<HomeScreenV2> {
   Widget _buildCalendarCard(ZaftoColors colors) {
     final todaySchedule = ref.watch(todayScheduleProvider);
     final itemCount = todaySchedule.length;
-    const hazardYellow = Color(0xFFFFD600);
+    final calAccent = colors.accentSuccess;
 
     // Get first scheduled item for preview
     String previewText;
@@ -621,10 +617,10 @@ class _HomeScreenV2State extends ConsumerState<HomeScreenV2> {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: hazardYellow.withOpacity(0.12),
+                  color: calAccent.withOpacity(0.12),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(LucideIcons.calendar, size: 24, color: hazardYellow),
+                child: Icon(LucideIcons.calendar, size: 24, color: calAccent),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -646,10 +642,10 @@ class _HomeScreenV2State extends ConsumerState<HomeScreenV2> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: hazardYellow.withOpacity(0.12),
+                    color: calAccent.withOpacity(0.12),
                     borderRadius: BorderRadius.circular(6),
                   ),
-                  child: Text('$itemCount', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: hazardYellow)),
+                  child: Text('$itemCount', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: calAccent)),
                 ),
                 const SizedBox(width: 8),
               ],
@@ -665,7 +661,7 @@ class _HomeScreenV2State extends ConsumerState<HomeScreenV2> {
   // FIELD TOOLS - iPhone hardware tools (camera, GPS, etc)
   // ============================================================================
   Widget _buildFieldToolsCard(ZaftoColors colors) {
-    const hazardYellow = Color(0xFFFFD600);
+    final ftAccent = colors.accentSuccess;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: GestureDetector(
@@ -686,10 +682,10 @@ class _HomeScreenV2State extends ConsumerState<HomeScreenV2> {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: hazardYellow.withOpacity(0.12),
+                  color: ftAccent.withOpacity(0.12),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(LucideIcons.smartphone, size: 24, color: hazardYellow),
+                child: Icon(LucideIcons.smartphone, size: 24, color: ftAccent),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -708,10 +704,10 @@ class _HomeScreenV2State extends ConsumerState<HomeScreenV2> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: hazardYellow.withOpacity(0.12),
+                  color: ftAccent.withOpacity(0.12),
                   borderRadius: BorderRadius.circular(6),
                 ),
-                child: Text('14', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: hazardYellow)),
+                child: Text('14', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: ftAccent)),
               ),
               const SizedBox(width: 8),
               Icon(LucideIcons.chevronRight, size: 20, color: colors.textQuaternary),
@@ -874,8 +870,9 @@ class _HomeScreenV2State extends ConsumerState<HomeScreenV2> {
 
   Widget _buildNavItem(ZaftoColors colors, int index, IconData icon, String label, VoidCallback onTap) {
     final isSelected = _currentNavIndex == index;
-    // Hazard yellow for all icons - matches header stripes
-    const hazardYellow = Color(0xFFFFD600);
+    final activeColor = colors.accentSuccess;
+    final inactiveColor = colors.textTertiary;
+    final itemColor = isSelected ? activeColor : inactiveColor;
     return GestureDetector(
       onTap: () {
         HapticFeedback.selectionClick();
@@ -891,9 +888,9 @@ class _HomeScreenV2State extends ConsumerState<HomeScreenV2> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 24, color: hazardYellow),
+            Icon(icon, size: 24, color: itemColor),
             const SizedBox(height: 4),
-            Text(label, style: TextStyle(fontSize: 10, fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500, color: hazardYellow)),
+            Text(label, style: TextStyle(fontSize: 10, fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500, color: itemColor)),
           ],
         ),
       ),
@@ -943,439 +940,8 @@ class _HomeScreenV2State extends ConsumerState<HomeScreenV2> {
   }
 }
 
-/// Premium Hazard Stripe Header Widget
-class _HazardStripeHeader extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 52,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Top hazard stripe bar
-          ClipRRect(
-            borderRadius: BorderRadius.circular(3),
-            child: SizedBox(
-              height: 6,
-              width: 200,
-              child: CustomPaint(
-                painter: _HazardStripePainter(),
-              ),
-            ),
-          ),
-          const SizedBox(height: 6),
-          // ZAFTO TRADES text
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                'ZAFTO',
-                style: TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.w900,
-                  color: Colors.white,
-                  letterSpacing: 1,
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
-              const SizedBox(width: 10),
-              const Text(
-                'TRADES',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w800,
-                  color: _industrialOrange,
-                  letterSpacing: 2,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 6),
-          // Bottom hazard stripe bar
-          ClipRRect(
-            borderRadius: BorderRadius.circular(3),
-            child: SizedBox(
-              height: 6,
-              width: 200,
-              child: CustomPaint(
-                painter: _HazardStripePainter(),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Paints diagonal hazard stripes (yellow/black pattern)
-class _HazardStripePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final blackPaint = Paint()..color = const Color(0xFF1A1A1A);
-    final yellowPaint = Paint()
-      ..color = _hazardYellow
-      ..strokeWidth = size.height * 0.8
-      ..style = PaintingStyle.stroke;
-
-    // Fill background black
-    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), blackPaint);
-
-    // Draw diagonal yellow stripes
-    final stripeSpacing = size.height * 2.5;
-    final numStripes = (size.width / stripeSpacing).ceil() + 4;
-
-    for (int i = -2; i < numStripes; i++) {
-      final x = i * stripeSpacing;
-      canvas.drawLine(
-        Offset(x, 0),
-        Offset(x + size.height * 1.5, size.height),
-        yellowPaint,
-      );
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-/// AI Brain Card - Premium Industrial Design with Screws & Matrix Animation
-class _AIBrainCard extends StatefulWidget {
-  final ZaftoColors colors;
-  final VoidCallback onTap;
-  final VoidCallback onLongPress;
-
-  const _AIBrainCard({
-    required this.colors,
-    required this.onTap,
-    required this.onLongPress,
-  });
-
-  @override
-  State<_AIBrainCard> createState() => _AIBrainCardState();
-}
-
-class _AIBrainCardState extends State<_AIBrainCard> with SingleTickerProviderStateMixin {
-  late AnimationController _matrixController;
-
-  @override
-  void initState() {
-    super.initState();
-    _matrixController = AnimationController(
-      duration: const Duration(seconds: 30),
-      vsync: this,
-    )..repeat();
-  }
-
-  @override
-  void dispose() {
-    _matrixController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: widget.onTap,
-      onLongPress: widget.onLongPress,
-      child: Container(
-        width: double.infinity,
-        height: 180,
-        decoration: BoxDecoration(
-          color: const Color(0xFF0D0D0D),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: const Color(0xFF2A2A2A), width: 1.5),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.5),
-              blurRadius: 16,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(15),
-          child: Stack(
-            children: [
-              // Matrix code rain background (isolated for performance)
-              RepaintBoundary(
-                child: AnimatedBuilder(
-                  animation: _matrixController,
-                  builder: (context, child) {
-                    return CustomPaint(
-                      painter: _MatrixRainPainter(
-                        progress: _matrixController.value,
-                      ),
-                      size: Size.infinite,
-                    );
-                  },
-                ),
-              ),
-              // Gradient overlay for depth
-              Container(
-                decoration: BoxDecoration(
-                  gradient: RadialGradient(
-                    center: Alignment.center,
-                    radius: 1.2,
-                    colors: [
-                      Colors.transparent,
-                      Colors.black.withValues(alpha: 0.4),
-                    ],
-                  ),
-                ),
-              ),
-              // Corner screws
-              _buildCornerScrew(8, 8), // top-left
-              _buildCornerScrew(null, 8, right: 8), // top-right
-              _buildCornerScrew(8, null, bottom: 8), // bottom-left
-              _buildCornerScrew(null, null, right: 8, bottom: 8), // bottom-right
-              // Main content
-              Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Industrial Z mark
-                    _buildIndustrialZMark(),
-                    const SizedBox(height: 16),
-                    // Ready to work
-                    const Text(
-                      'Ready to work',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      'Create a bid, start a job, or ask me anything',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white.withValues(alpha: 0.6),
-                        height: 1.4,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCornerScrew(double? left, double? top, {double? right, double? bottom}) {
-    return Positioned(
-      left: left,
-      top: top,
-      right: right,
-      bottom: bottom,
-      child: Container(
-        width: 14,
-        height: 14,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: const Color(0xFF1A1A1A),
-          border: Border.all(color: const Color(0xFF333333), width: 1.5),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.4),
-              blurRadius: 2,
-              offset: const Offset(0, 1),
-            ),
-          ],
-        ),
-        child: Center(
-          child: Container(
-            width: 6,
-            height: 1.5,
-            decoration: BoxDecoration(
-              color: const Color(0xFF444444),
-              borderRadius: BorderRadius.circular(1),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildIndustrialZMark() {
-    return SizedBox(
-      width: 72,
-      height: 72,
-      child: CustomPaint(
-        painter: _IndustrialZPainter(),
-      ),
-    );
-  }
-}
-
-/// Paints the industrial Z mark with glow effect
-class _IndustrialZPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.square
-      ..strokeJoin = StrokeJoin.miter;
-
-    final margin = size.width * 0.24;
-    final strokeWidth = size.width * 0.09;
-
-    Path createZ() {
-      return Path()
-        ..moveTo(margin, margin)
-        ..lineTo(size.width - margin, margin)
-        ..lineTo(margin, size.height - margin)
-        ..lineTo(size.width - margin, size.height - margin);
-    }
-
-    // Glow layer
-    paint.color = _hazardYellow.withValues(alpha: 0.25);
-    paint.strokeWidth = strokeWidth * 3;
-    paint.maskFilter = const MaskFilter.blur(BlurStyle.normal, 6);
-    canvas.drawPath(createZ(), paint);
-    paint.maskFilter = null;
-
-    // Main Z stroke
-    paint.color = _hazardYellow;
-    paint.strokeWidth = strokeWidth * 1.3;
-    canvas.drawPath(createZ(), paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-/// Matrix rain - vertical NEC codes (optimized)
-class _MatrixRainPainter extends CustomPainter {
-  final double progress;
-
-  static const List<String> _codes = [
-    'NEC210', 'NEC250', '#12AWG', 'GFCI', 'AFCI', '200A',
-    'UPC301', 'HVAC', 'CFM', 'R410A', 'SEER', '30A240',
-    'ART100', 'EMT¾', 'AWG10', 'IMC3', 'P=IR', '120V',
-  ];
-
-  // Pre-computed column data for consistent positioning
-  static const int _numColumns = 12; // Fixed number of well-spaced columns
-  static final List<_ColumnData> _columns = List.generate(_numColumns, (i) {
-    final seed = i * 73 + 17;
-    return _ColumnData(
-      code: _codes[i % _codes.length],
-      speed: 1.5 + (seed % 100) / 100.0, // 1.5 to 2.5 - visible movement
-      phase: (seed % 100) / 100.0,
-      xOffset: (seed % 10) - 5.0, // Slight random offset
-    );
-  });
-
-  _MatrixRainPainter({required this.progress});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    if (size.width <= 0 || size.height <= 0) return;
-
-    final colSpacing = size.width / (_numColumns + 1);
-    const charH = 16.0;
-
-    final textStyle = TextStyle(
-      color: _aiRed,
-      fontSize: 12,
-      fontWeight: FontWeight.w500,
-      fontFamily: 'monospace',
-    );
-
-    for (int c = 0; c < _numColumns; c++) {
-      final col = _columns[c];
-      final code = col.code;
-
-      // Base x position with spacing
-      final x = (c + 1) * colSpacing + col.xOffset;
-
-      // Calculate vertical position
-      final totalTravel = size.height + code.length * charH + 80;
-      final yOffset = ((progress * col.speed + col.phase) * totalTravel) % totalTravel;
-      final headY = yOffset - 40;
-
-      // Draw each character in the column
-      for (int i = 0; i < code.length; i++) {
-        final y = headY + i * charH;
-
-        // Skip if off screen
-        if (y < -charH || y > size.height + charH) continue;
-
-        // Calculate alpha with fade at edges
-        double alpha = i == 0 ? 0.85 : (0.65 - i * 0.08).clamp(0.12, 0.65);
-        if (y < 30) alpha *= (y + charH) / 40;
-        if (y > size.height - 35) alpha *= (size.height - y + 10) / 45;
-        if (alpha < 0.08) continue;
-
-        // Draw glow for lead characters (simpler approach)
-        if (i < 2 && alpha > 0.3) {
-          final glowPaint = Paint()
-            ..color = _aiRed.withValues(alpha: alpha * 0.3)
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4);
-          canvas.drawCircle(Offset(x + 4, y + 6), 8, glowPaint);
-        }
-
-        // Draw character using canvas directly (much faster than TextPainter)
-        final paragraph = _buildParagraph(
-          code[i],
-          textStyle.copyWith(
-            color: _aiRed.withValues(alpha: alpha),
-            fontWeight: i == 0 ? FontWeight.w700 : FontWeight.w500,
-          ),
-        );
-        canvas.drawParagraph(paragraph, Offset(x, y));
-      }
-    }
-  }
-
-  // Cache for paragraph builder
-  static ui.Paragraph _buildParagraph(String text, TextStyle style) {
-    final builder = ui.ParagraphBuilder(ui.ParagraphStyle(
-      textDirection: TextDirection.ltr,
-      fontSize: style.fontSize,
-      fontWeight: style.fontWeight,
-      fontFamily: style.fontFamily,
-    ))
-      ..pushStyle(ui.TextStyle(
-        color: style.color,
-        fontSize: style.fontSize,
-        fontWeight: style.fontWeight,
-        fontFamily: style.fontFamily,
-      ))
-      ..addText(text);
-    return builder.build()..layout(const ui.ParagraphConstraints(width: 20));
-  }
-
-  @override
-  bool shouldRepaint(covariant _MatrixRainPainter oldDelegate) {
-    return oldDelegate.progress != progress;
-  }
-}
-
-// Pre-computed column configuration
-class _ColumnData {
-  final String code;
-  final double speed;
-  final double phase;
-  final double xOffset;
-
-  const _ColumnData({
-    required this.code,
-    required this.speed,
-    required this.phase,
-    required this.xOffset,
-  });
-}
-
+// CleanBrandHeader, AIBrainCard, IndustrialZPainter, MatrixRainPainter
+// extracted to lib/widgets/shared/ for reuse across all role home screens
 
 /// Universal Search Sheet - Find anything in the app
 class _UniversalSearchSheet extends StatefulWidget {
@@ -1785,8 +1351,7 @@ class _FeatureCarousel extends StatelessWidget {
   }
 
   Widget _buildFeatureCard(BuildContext context, _FeatureItem feature) {
-    // Monochrome hazard yellow - matches bottom nav
-    const hazardYellow = Color(0xFFFFD600);
+    final iconColor = colors.accentSuccess;
 
     return GestureDetector(
       onTap: () {
@@ -1810,22 +1375,22 @@ class _FeatureCarousel extends StatelessWidget {
                   width: 36,
                   height: 36,
                   decoration: BoxDecoration(
-                    color: hazardYellow.withOpacity(0.12),
+                    color: iconColor.withOpacity(0.12),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(feature.icon, size: 18, color: hazardYellow),
+                  child: Icon(feature.icon, size: 18, color: iconColor),
                 ),
                 const Spacer(),
                 if (feature.hasAiBadge)
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
                     decoration: BoxDecoration(
-                      color: hazardYellow.withOpacity(0.15),
+                      color: iconColor.withOpacity(0.15),
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
                       'AI',
-                      style: TextStyle(fontSize: 9, fontWeight: FontWeight.w700, color: hazardYellow, letterSpacing: 0.5),
+                      style: TextStyle(fontSize: 9, fontWeight: FontWeight.w700, color: iconColor, letterSpacing: 0.5),
                     ),
                   ),
               ],
