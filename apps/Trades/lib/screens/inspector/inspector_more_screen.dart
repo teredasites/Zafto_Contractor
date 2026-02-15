@@ -5,6 +5,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import 'package:zafto/theme/zafto_colors.dart';
 import 'package:zafto/theme/theme_provider.dart';
+import 'package:zafto/widgets/shared/matrix_rain_painter.dart';
 import 'package:zafto/screens/field_tools/daily_log_screen.dart';
 import 'package:zafto/screens/field_tools/punch_list_screen.dart';
 import 'package:zafto/screens/field_tools/defect_markup_screen.dart';

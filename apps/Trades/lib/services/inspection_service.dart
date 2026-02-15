@@ -79,10 +79,10 @@ class InspectionService {
 
   // Computed helpers
   int passCount(List<PmInspection> inspections) =>
-      inspections.where((i) => i.score >= 70 && i.status == InspectionStatus.completed).length;
+      inspections.where((i) => (i.score ?? 0) >= 70 && i.status == InspectionStatus.completed).length;
 
   int failCount(List<PmInspection> inspections) =>
-      inspections.where((i) => i.score < 70 && i.status == InspectionStatus.completed).length;
+      inspections.where((i) => (i.score ?? 0) < 70 && i.status == InspectionStatus.completed).length;
 
   double passRate(List<PmInspection> inspections) {
     final completed = inspections.where((i) => i.status == InspectionStatus.completed).toList();
@@ -130,7 +130,7 @@ class InspectionsNotifier extends AsyncNotifier<List<PmInspection>> {
 
   Future<void> refresh() async {
     state = const AsyncValue.loading();
-    state = await AsyncGuard(() => build());
+    state = await AsyncValue.guard(() => build());
   }
 
   Future<void> create(PmInspection inspection) async {

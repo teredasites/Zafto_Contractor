@@ -88,10 +88,10 @@ class _InspectorHistoryScreenState extends ConsumerState<InspectorHistoryScreen>
     // Filter by result
     switch (_selectedFilter) {
       case 'Pass':
-        result = result.where((i) => i.score >= 70).toList();
+        result = result.where((i) => (i.score ?? 0) >= 70).toList();
         break;
       case 'Fail':
-        result = result.where((i) => i.score < 70 && i.score > 0).toList();
+        result = result.where((i) => (i.score ?? 0) < 70 && (i.score ?? 0) > 0).toList();
         break;
       case 'Conditional':
         result = result.where((i) =>
@@ -104,8 +104,8 @@ class _InspectorHistoryScreenState extends ConsumerState<InspectorHistoryScreen>
     if (_searchQuery.isNotEmpty) {
       final query = _searchQuery.toLowerCase();
       result = result.where((i) =>
-          i.inspectionType.label.toLowerCase().contains(query) ||
-          i.notes.toLowerCase().contains(query)).toList();
+          _typeLabel(i.inspectionType).toLowerCase().contains(query) ||
+          (i.notes ?? '').toLowerCase().contains(query)).toList();
     }
 
     // Sort newest first
@@ -200,7 +200,7 @@ class _InspectorHistoryScreenState extends ConsumerState<InspectorHistoryScreen>
   }
 
   Widget _buildHistoryCard(ZaftoColors colors, PmInspection inspection) {
-    final passed = inspection.score >= 70;
+    final passed = (inspection.score ?? 0) >= 70;
     final resultColor = passed ? colors.accentSuccess : colors.accentError;
     final resultLabel = passed ? 'PASS' : 'FAIL';
     final date = inspection.completedDate ?? inspection.createdAt;
@@ -230,7 +230,7 @@ class _InspectorHistoryScreenState extends ConsumerState<InspectorHistoryScreen>
               ),
               child: Center(
                 child: Text(
-                  '${inspection.score}',
+                  '${inspection.score ?? 0}',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
@@ -245,7 +245,7 @@ class _InspectorHistoryScreenState extends ConsumerState<InspectorHistoryScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    inspection.inspectionType.label,
+                    _typeLabel(inspection.inspectionType),
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -262,7 +262,7 @@ class _InspectorHistoryScreenState extends ConsumerState<InspectorHistoryScreen>
                       if (inspection.overallCondition != null) ...[
                         Text(' · ', style: TextStyle(fontSize: 12, color: colors.textQuaternary)),
                         Text(
-                          inspection.overallCondition!.label,
+                          _conditionLabel(inspection.overallCondition!),
                           style: TextStyle(fontSize: 12, color: colors.textTertiary),
                         ),
                       ],
@@ -362,5 +362,39 @@ class _InspectorHistoryScreenState extends ConsumerState<InspectorHistoryScreen>
         ],
       ),
     );
+  }
+
+  String _typeLabel(InspectionType type) {
+    switch (type) {
+      case InspectionType.moveIn:
+        return 'Move-In';
+      case InspectionType.moveOut:
+        return 'Move-Out';
+      case InspectionType.routine:
+        return 'Routine';
+      case InspectionType.annual:
+        return 'Annual';
+      case InspectionType.maintenance:
+        return 'Maintenance';
+      case InspectionType.safety:
+        return 'Safety';
+    }
+  }
+
+  String _conditionLabel(ItemCondition condition) {
+    switch (condition) {
+      case ItemCondition.excellent:
+        return 'Excellent';
+      case ItemCondition.good:
+        return 'Good';
+      case ItemCondition.fair:
+        return 'Fair';
+      case ItemCondition.poor:
+        return 'Poor';
+      case ItemCondition.damaged:
+        return 'Damaged';
+      case ItemCondition.missing:
+        return 'Missing';
+    }
   }
 }
