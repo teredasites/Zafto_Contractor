@@ -7,6 +7,7 @@ import 'package:zafto/theme/zafto_colors.dart';
 import 'package:zafto/theme/theme_provider.dart';
 import 'package:zafto/models/inspection.dart';
 import 'package:zafto/services/inspection_service.dart';
+import 'package:zafto/screens/inspector/inspection_execution_screen.dart';
 
 // ============================================================
 // Inspector History Screen — Completed Inspections
@@ -209,7 +210,14 @@ class _InspectorHistoryScreenState extends ConsumerState<InspectorHistoryScreen>
     return GestureDetector(
       onTap: () {
         HapticFeedback.lightImpact();
-        // TODO: Navigate to inspection detail/report
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => InspectionExecutionScreen(
+              inspection: inspection,
+            ),
+          ),
+        );
       },
       child: Container(
         padding: const EdgeInsets.all(14),
