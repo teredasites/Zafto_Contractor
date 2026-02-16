@@ -70,7 +70,7 @@ dependencies:
   sentry_flutter: ^9.0.0
 
   # Battery (Location Tracking)
-  battery_plus: ^6.0.3
+  battery_plus: ^7.0.0
 
   # Quick Actions (iOS 3D Touch / Android App Shortcuts)
   quick_actions: ^1.0.7
