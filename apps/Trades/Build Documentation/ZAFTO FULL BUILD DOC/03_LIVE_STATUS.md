@@ -1,9 +1,9 @@
 # ZAFTO LIVE STATUS
 ## UPDATE THIS EVERY SESSION
 
-**Last Updated:** February 15, 2026 (Session 128 — **S128: FLIP-IT REALITY ENGINE + DEEP RESEARCH.** Deep research on real-world flip failures (ATTOM: median leveraged flip loses $40K after all costs, 22% failure rate, ROI at 17-year low). FLIP4 reframed (deal packaging + distribution). **Created FLIP6 (~20h Reality Engine): true net P&L (full cost waterfall + tax calculator + financing comparison), risk intelligence (50% rule alert, code cascade predictor, contingency auto-set, over-improvement warning), deal qualification (3 exit strategies, opportunity cost, market health, tariff adjustment).** FLIP1-6 now ~92h. 80 sprints, ~1,118h total.)
+**Last Updated:** February 16, 2026 (Session 129 — **S129: FULL ZAFTO REALTOR PLATFORM SPEC.** Deep research (9 parallel Opus agents): competitor pricing, 30+ free APIs, MLS integration paths, brokerage management, CRM features, proptech flagships, trust account legal risk. **Created `Expansion/53_REALTOR_PLATFORM_SPEC.md` (~444h, 20 sprints RE1-RE20): full equal-depth platform to Zafto Contractor.** 3 flagship engines: Smart CMA Engine, Autonomous Transaction Engine, Seller Finder Engine. RBAC hierarchy (brokerage_owner → managing_broker → team_lead → realtor → tc → isa). Commission tracking (NOT trust accounts — legal risk). Cross-platform intelligence sharing with Zafto Contractor users. 6th portal: realtor.zafto.cloud (~85-100 routes). Same field tools/calculators for dispatched contractors/inspectors. **JUR4 added (~14h): realtor jurisdiction awareness — 50-state disclosures, agency rules, attorney states, commission regulations, license reciprocity.** REALTOR1-3 superseded by RE1-RE20. ~94 sprints, ~1,576h total.)
 **Current Phase:** BUILD — **Phases A-D + F + T + P + SK + GC + U + W + J + L ALL COMPLETE. D5-PV DONE (S117). Phase INS COMPLETE (S121-S122, INS1-INS8). Phase G IN PROGRESS (G1-G5 automated DONE, G6-G10 manual QA PENDING).** R1 DONE. FM code done. Phase E PAUSED. ~201 tables. 68 migrations. 70 Edge Functions. 126 CRM routes. 36 team routes. 39 client routes. 29 ops routes.
-**Next Action:** SEC1 (critical security fixes) → LAUNCH1 (monitoring) → FIELD1-4 → REST1-2 → NICHE1-2 → DEPTH1-33 → DEPTH34 (PP) → DEPTH35 (mold) → DEPTH36 (dump finder) → REALTOR1-3 (realtor portal) → INTEG1 (national portal API) → FLIP1-6 (Flip-It engine + Reality Engine + AI photo analysis) → SEC2-9 → LAUNCH2-6 → Phase G (QA) → Phase JUR → Phase E (AI) → SEC10 → ZERO1-9 → LAUNCH7 → SHIP.
+**Next Action:** SEC1+SEC6-8 → LAUNCH1 → FIELD1-4 → REST1-2 → NICHE1-2 → DEPTH1-33 → DEPTH34-36 → RE1-RE20 (full realtor platform, ~444h) → INTEG1 → FLIP1-6 → SEC2-5 → LAUNCH2-6 → Phase G (QA) → Phase JUR (incl JUR4 realtor jurisdiction, ~14h) → Phase E (AI) → SEC9-10 → ZERO1-9 → LAUNCH7 → SHIP.
 
 ---
 
@@ -143,7 +143,8 @@
 | `04_EXPANSION_SPECS.md` | COMPLETE (Session 36 — all 14 specs consolidated) |
 | `05_EXECUTION_PLAYBOOK.md` | COMPLETE (Session 37 — session protocol, methodology, quality gates) |
 | `06_ARCHITECTURE_PATTERNS.md` | COMPLETE (Session 37 — 14 code patterns with full examples) |
-| `07_SPRINT_SPECS.md` | COMPLETE — 11,500+ lines, 200 sprints (198 + U23 + E5), Phases A through L + E5 fully detailed. Integration bridges added S103. |
+| `07_SPRINT_SPECS.md` | COMPLETE — 11,500+ lines, ~200+ sprints, Phases A through L + E5 fully detailed. Integration bridges added S103. JUR4 (realtor jurisdiction) added S129. |
+| `Expansion/53_REALTOR_PLATFORM_SPEC.md` | CREATED S129 — Full Zafto Realtor Platform spec. 20 sprints (RE1-RE20), ~444h. 3 flagship engines, RBAC, commission, dispatch, CRM, cross-platform sharing. Supersedes REALTOR1-3. |
 | `Expansion/52_SYSTEM_INTEGRATION_MAP.md` | CREATED S103 — Master wiring document. Connectivity matrix, integration checklist, wiring tracker. MUST be referenced every sprint. |
 
 ---
