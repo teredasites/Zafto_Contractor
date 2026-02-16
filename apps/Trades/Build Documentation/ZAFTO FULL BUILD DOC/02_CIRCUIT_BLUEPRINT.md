@@ -1,6 +1,6 @@
 # ZAFTO CIRCUIT BLUEPRINT
 ## Living Wiring Diagram — What Connects, What Doesn't, What's Missing
-### Last Updated: February 14, 2026 (Session 113 — Phases W+J+L COMPLETE. Phase G automated (G1-G5) DONE. G2: RLS migration (user_sessions, login_attempts, iicrc_equipment_factors). G4: security headers on all 4 portals. G5: codemagic.yaml, dead Firebase service removed. Next: G6-G10 manual QA → E → LAUNCH.)
+### Last Updated: February 16, 2026 (Session 129 — Full Zafto Realtor Platform spec'd (53_REALTOR_PLATFORM_SPEC.md). RE1-RE20, ~444h, 20 sprints. JUR4 added (~14h realtor jurisdiction). Phase RE section added below.)
 
 ---
 
@@ -731,6 +731,15 @@ Tech opens app -> Taps "Field Tools"
 - [x] GC11: Polish & Testing — dart analyze clean, all 4 portals build clean, navigation audit (9 pages, 15 refs, 0 dead links).
 - Edge Functions: schedule-calculate, schedule-import, schedule-export, schedule-weather-check, schedule-level-resources, schedule-baseline, schedule-sync-realtime, schedule-sync-progress, schedule-recalc-cpm, schedule-reminders (~10 EFs).
 - Spec: `Expansion/48_GANTT_CPM_SCHEDULER_SPEC.md`
+
+### Phase RE: Realtor Platform -- SPEC'D (S129)
+- [ ] RE1-RE20: ~45-60 new tables, ~15+ Edge Functions, 6th portal (realtor.zafto.cloud, ~85-100 routes), ~444 hours.
+- 3 flagship engines: Smart CMA Engine (repair-aware comps), Autonomous Transaction Engine (deal lifecycle), Seller Finder Engine (pre-market leads from public data).
+- Brokerage RBAC: brokerage_owner, managing_broker, team_lead, realtor, tc, isa, office_admin + dispatched tech/inspector roles.
+- Commission tracking engine (NOT trust accounts). Cross-platform intelligence sharing with Zafto Contractor.
+- Dispatched contractors/inspectors get same field tools using realtor's AI budget.
+- JUR4 wires 50-state compliance: disclosures, agency rules, attorney states, commission regulations, license reciprocity.
+- Spec: `Expansion/53_REALTOR_PLATFORM_SPEC.md`
 
 ### Plan Review (Phase E/BA) -- SPEC'D (S97)
 - [ ] BA1-BA8: 6 tables (blueprint_analyses, blueprint_sheets, blueprint_rooms, blueprint_elements, blueprint_takeoff_items, blueprint_revisions), 3 EFs (blueprint-upload, blueprint-process, blueprint-compare), ~128 hours.

@@ -400,6 +400,30 @@ Update this section as sprints are completed. Mark each connection as it's verif
 | G → RLS (all tables) | G2 | WIRED (S113) — 263/266 tables with RLS, 3 gaps fixed via migration |
 | G → Security Headers | G4 | WIRED (S113) — X-Frame-Options, X-Content-Type-Options, etc. on all 4 portals |
 | G → CI/CD | G5 | WIRED (S113) — codemagic.yaml with 3 workflows |
+
+### Phase RE (Realtor Platform) — SPEC'D (S129)
+| Connection | Sprint | Status |
+|-----------|--------|--------|
+| RE → Auth (magic link + password) | RE1 | PENDING — brokerage RBAC (8 roles), company_type column, role-based routing |
+| RE → Recon (Property Intelligence) | RE2+RE5 | PENDING — realtors get full Recon scan, CMA engine consumes property data |
+| RE → Sketch Engine | RE7 | PENDING — realtors get LiDAR/AR sketch for staging, measurement |
+| RE → Estimates | RE5 | PENDING — CMA engine uses contractor estimation engine for repair cost accuracy |
+| RE → Jobs/Dispatch | RE3 | PENDING — dispatch engine creates work orders, contractor bid collection |
+| RE → Inspectors | RE3 | PENDING — realtor dispatches inspectors using same INS infrastructure |
+| RE → Commission Engine | RE4 | PENDING — commission plans, split tracking, 1099 generation |
+| RE → Transaction Engine | RE5+RE6 | PENDING — deal lifecycle: lead→listing→pending→closed, document management |
+| RE → CRM (contacts/pipeline) | RE2 | PENDING — contact database, deal pipeline, activity timeline |
+| RE → Lead Gen Pipeline | RE8 | PENDING — Socrata, public records, skip tracing, DNC compliance |
+| RE → Marketing Factory | RE9 | PENDING — listing materials, social templates, email campaigns |
+| RE → Seller Finder Engine | RE10 | PENDING — pre-market lead identification via public data signals |
+| RE → Brokerage Admin | RE11 | PENDING — agent roster, onboarding, compliance dashboard |
+| RE → Cross-Platform Sharing | RE12 | PENDING — Zafto Contractor ↔ Zafto Realtor intelligence sharing |
+| RE → Field Tools (contractor) | RE3 | PENDING — dispatched contractors get same 35+ calculators/tools |
+| RE → Jurisdiction (JUR4) | JUR4 | PENDING — 50-state disclosures, agency rules, attorney states, commission regs |
+| RE → AI (Phase E) | Phase E | PENDING — same AI chat/analysis as contractor side |
+| RE → Ops Portal | RE15 | PENDING — realtor metrics, platform health |
+| RE → Client Portal | RE14 | PENDING — buyer/seller portal with transaction tracking |
+| RE → Realtor Portal | RE1-RE20 | PENDING — 6th portal: realtor.zafto.cloud (~85-100 routes) |
 | G → XSS Protection | G2 | WIRED (S113) — DOMPurify in ZDocs rendering |
 | G → Webhook Security | G2 | WIRED (S113) — SignalWire webhook secret verification added |
 | G → Manual QA | G6-G10 | PENDING — requires running app + manual testing |
