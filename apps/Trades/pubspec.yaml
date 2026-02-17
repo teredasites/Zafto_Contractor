@@ -75,6 +75,9 @@ dependencies:
   # Quick Actions (iOS 3D Touch / Android App Shortcuts)
   quick_actions: ^1.0.7
 
+  # Bluetooth Low Energy (Laser Meters)
+  flutter_blue_plus: ^1.35.2
+
   # Utilities
   intl: ^0.20.2
   connectivity_plus: ^6.0.3

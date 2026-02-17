@@ -20,6 +20,7 @@ import '../../widgets/sketch/lidar_scan_screen.dart';
 import '../../widgets/sketch/manual_room_entry.dart';
 import '../../widgets/sketch/trade_toolbar.dart';
 import '../../services/sketch_export_service.dart';
+import '../../widgets/laser_meter_sheet.dart';
 import 'sketch_painter.dart';
 import 'symbol_library_sheet.dart';
 
@@ -477,6 +478,12 @@ class _SketchEditorScreenState extends ConsumerState<SketchEditorScreen> {
             LucideIcons.scan,
             'LiDAR',
             () => _launchLidarScan(colors),
+          ),
+          _buildActionButton(
+            colors,
+            LucideIcons.ruler,
+            'Laser',
+            () => _launchLaserMeter(),
           ),
           _buildActionButton(
             colors,
@@ -2938,6 +2945,19 @@ class _SketchEditorScreenState extends ConsumerState<SketchEditorScreen> {
     if (result is FloorPlanData) {
       _importScannedPlan(result);
     }
+  }
+
+  // FIELD4: Launch laser meter bottom sheet
+  void _launchLaserMeter() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.7,
+      ),
+      builder: (_) => const LaserMeterSheet(),
+    );
   }
 
   Future<void> _launchManualEntry() async {
