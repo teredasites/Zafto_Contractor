@@ -54,6 +54,7 @@ const navigationGroups: NavGroup[] = [
     items: [
       { name: 'Time Clock', href: '/dashboard/time-clock', icon: Clock },
       { name: 'Field Tools', href: '/dashboard/field-tools', icon: Wrench },
+      { name: 'Tool Checkout', href: '/dashboard/tool-checkout', icon: Package },
       { name: 'Calls', href: '/dashboard/phone', icon: Phone },
       { name: 'Meetings', href: '/dashboard/meetings', icon: Video },
     ],

@@ -5,6 +5,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:zafto/theme/zafto_colors.dart';
 import 'package:zafto/theme/zafto_theme_builder.dart';
 import 'package:zafto/screens/scheduling/schedule_list_screen.dart';
+import 'package:zafto/screens/equipment/equipment_list_screen.dart';
 
 class OwnerMoreScreen extends ConsumerWidget {
   const OwnerMoreScreen({super.key});
@@ -61,6 +62,16 @@ class OwnerMoreScreen extends ConsumerWidget {
             colors,
             icon: Icons.trending_up,
             title: 'Leads',
+          ),
+          _buildMenuItem(
+            context,
+            colors,
+            icon: Icons.handyman_outlined,
+            title: 'Tool Checkout',
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const EquipmentListScreen()),
+            ),
           ),
           const SizedBox(height: 8),
           Divider(height: 1, color: colors.borderSubtle),
