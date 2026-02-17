@@ -428,6 +428,36 @@ Update this section as sprints are completed. Mark each connection as it's verif
 | G → Webhook Security | G2 | WIRED (S113) — SignalWire webhook secret verification added |
 | G → Manual QA | G6-G10 | PENDING — requires running app + manual testing |
 
+### Phase SEC (Security Hardening) — COMPLETE (SEC1+SEC6-8, S131)
+| Connection | Sprint | Status |
+|-----------|--------|--------|
+| SEC → Storage RLS | SEC1 | WIRED (S131) — 8 buckets, company-scoped policies, delete protection |
+| SEC → Rate Limiter | SEC1 | WIRED (S131) — rate_limit_buckets table, atomic RPC, pg_cron cleanup |
+| SEC → EF Auth | SEC6-8 | WIRED (S131) — auth + CORS + request validation on all 94 EFs |
+
+### Phase FIELD (Field Operations) — COMPLETE (FIELD1-5, S131)
+| Connection | Sprint | Status |
+|-----------|--------|--------|
+| FIELD → Messaging | FIELD1 | WIRED (S131) — conversations + messages + members tables, Flutter screens, CRM/team pages |
+| FIELD → Equipment | FIELD2 | WIRED (S131) — equipment_items + checkouts, auto-holder trigger, Flutter + CRM + team pages |
+| FIELD → Team Photos/Voice/Sig | FIELD3 | WIRED (S131) — gallery upload, voice player, signature viewer in team portal |
+| FIELD → Laser Meter | FIELD4 | WIRED (S131) — 5 brand adapters, Web Bluetooth, Sketch Engine integration |
+| FIELD → BYOC Phone | FIELD5 | WIRED (S131) — company_phone_numbers, phone config, ops billing page |
+
+### Phase REST (Restoration Trades) — COMPLETE (REST1-2, S131)
+| Connection | Sprint | Status |
+|-----------|--------|--------|
+| REST → Fire Restoration | REST1 | WIRED (S131) — 6 tables, 1 EF, Flutter (4 screens, 2 models), CRM + team + client pages, 55 seed line items |
+| REST → Mold Remediation | REST2 | WIRED (S131) — 4 tables, 1 EF, Flutter (5 screens), CRM + team + client pages, IICRC S520, 50-state regs |
+
+### Phase NICHE (Niche Trade Modules) — COMPLETE (NICHE1-2, S131)
+| Connection | Sprint | Status |
+|-----------|--------|--------|
+| NICHE → Pest Control | NICHE1 | WIRED (S131) — 3 tables, 1 EF, Flutter (4 screens, 2 models), CRM + team + client pages, NPMA-33 WDI |
+| NICHE → Locksmith | NICHE2 | WIRED (S131) — locksmith_service_logs, Flutter model/repo/screen, CRM page + hook, in team + client combined views |
+| NICHE → Garage Door | NICHE2 | WIRED (S131) — garage_door_service_logs, Flutter model/repo/screen, CRM page + hook, in team + client combined views |
+| NICHE → Appliance Repair | NICHE2 | WIRED (S131) — appliance_service_logs, Flutter model/repo/screen, CRM page + hook, in team + client combined views |
+
 ---
 
 ## DOCUMENT MAINTENANCE
