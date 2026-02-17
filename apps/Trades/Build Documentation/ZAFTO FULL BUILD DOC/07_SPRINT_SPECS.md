@@ -12199,13 +12199,13 @@ Every DEPTH audit item MUST be evaluated per-app where relevant. Do NOT just che
 
 ### DEPTH1 — Core Business Depth Audit + Corrections (~16h)
 **Goal:** Audit and correct depth for: Jobs, Customers, Invoices, Estimates, Change Orders across all apps. These are used by EVERY contractor type daily.
-- [ ] Audit jobs across all 5 apps — list every field, action, workflow, and grade depth
-- [ ] Audit customers across all 5 apps — CRM contact management, customer portal experience
-- [ ] Audit invoices across all 5 apps — creation, line items, payment tracking, PDF generation, aging
-- [ ] Audit estimates across all 5 apps — templates, line item library, markup, approval flow
-- [ ] Audit change orders across all 5 apps — creation from field, approval chain, cost impact
-- [ ] Identify and list ALL shallow/stub features found
-- [ ] Build + execute corrections for each shallow feature
+- [x] Audit jobs across all 5 apps — list every field, action, workflow, and grade depth (S131: DB=A, Flutter=B+, CRM=A-, Team=B, Client=B-, Ops=D)
+- [x] Audit customers across all 5 apps — CRM contact management, customer portal experience (S131: DB=B+, Flutter=B-, CRM=B+, Team=F→fixed, Client=C+, Ops=D)
+- [x] Audit invoices across all 5 apps — creation, line items, payment tracking, PDF generation, aging (S131: DB=A-, Flutter=B+, CRM=A-, Team=D, Client=B+, Ops=F)
+- [x] Audit estimates across all 5 apps — templates, line item library, markup, approval flow (S131: DB=A, Flutter=A-, CRM=A+, Team=B, Client=A, Ops=A)
+- [x] Audit change orders across all 5 apps — creation from field, approval chain, cost impact (S131: DB=A, Flutter=A, CRM=A, Team=A-, Client=C+→fixed, Ops=F)
+- [x] Identify and list ALL shallow/stub features found (S131: 8 critical findings)
+- [x] Build + execute corrections for each shallow feature (S131: 3 batches — Flutter customer ID fix, CRM mapper, team contact card, client CO buttons, Tasks/Materials wired to DB, invoice ghost inputs persisted, customer edit/delete/create-job/create-invoice wired)
 - [ ] Verify: a GC, electrician, and restoration contractor would each find these features complete for their workflow
 - [ ] Commit: `[DEPTH1] Core business depth corrections — jobs, customers, invoices, estimates, COs`
 
