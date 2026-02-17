@@ -29,10 +29,12 @@ import { Button } from '@/components/ui/button';
 import { StatusBadge, Badge } from '@/components/ui/badge';
 import { Avatar } from '@/components/ui/avatar';
 import { formatCurrency, formatDate, cn } from '@/lib/utils';
-import { useCustomer } from '@/lib/hooks/use-customers';
+import { useCustomer, useCustomers } from '@/lib/hooks/use-customers';
 import { useBids } from '@/lib/hooks/use-bids';
 import { useJobs } from '@/lib/hooks/use-jobs';
 import { useInvoices } from '@/lib/hooks/use-invoices';
+import { Input, Select } from '@/components/ui/input';
+import { isValidEmail, isValidPhone, formatPhone } from '@/lib/validation';
 import { getSupabase } from '@/lib/supabase';
 import type { Customer } from '@/types';
 
@@ -72,12 +74,78 @@ export default function CustomerDetailPage() {
   const params = useParams();
   const customerId = params.id as string;
 
-  const { customer, loading } = useCustomer(customerId);
+  const { customer, loading, refetch } = useCustomer(customerId);
+  const { updateCustomer, deleteCustomer } = useCustomers();
   const { bids } = useBids();
   const { jobs } = useJobs();
   const { invoices } = useInvoices();
   const [activeTab, setActiveTab] = useState<TabType>('overview');
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [editData, setEditData] = useState({
+    firstName: '', lastName: '', email: '', phone: '', alternatePhone: '',
+    street: '', city: '', state: '', zip: '', notes: '',
+    customerType: 'residential' as 'residential' | 'commercial',
+    preferredContactMethod: 'phone' as 'phone' | 'email' | 'text',
+    accessInstructions: '',
+  });
+  const [editErrors, setEditErrors] = useState<Record<string, string>>({});
+
+  const startEditing = () => {
+    if (!customer) return;
+    setEditData({
+      firstName: customer.firstName, lastName: customer.lastName,
+      email: customer.email || '', phone: customer.phone || '',
+      alternatePhone: customer.alternatePhone || '',
+      street: customer.address?.street || '', city: customer.address?.city || '',
+      state: customer.address?.state || '', zip: customer.address?.zip || '',
+      notes: customer.notes || '',
+      customerType: customer.customerType || 'residential',
+      preferredContactMethod: customer.preferredContactMethod || 'phone',
+      accessInstructions: customer.accessInstructions || '',
+    });
+    setEditErrors({});
+    setIsEditing(true);
+    setMenuOpen(false);
+  };
+
+  const handleSaveEdit = async () => {
+    const errs: Record<string, string> = {};
+    if (!editData.firstName.trim()) errs.firstName = 'First name required';
+    if (!editData.lastName.trim()) errs.lastName = 'Last name required';
+    if (editData.email && !isValidEmail(editData.email)) errs.email = 'Invalid email';
+    if (editData.phone && !isValidPhone(editData.phone)) errs.phone = 'Invalid phone';
+    if (Object.keys(errs).length > 0) { setEditErrors(errs); return; }
+
+    try {
+      setSaving(true);
+      await updateCustomer(customerId, {
+        firstName: editData.firstName.trim(),
+        lastName: editData.lastName.trim(),
+        email: editData.email?.trim() || undefined,
+        phone: editData.phone ? formatPhone(editData.phone) : undefined,
+        address: { street: editData.street, city: editData.city, state: editData.state, zip: editData.zip },
+        notes: editData.notes || undefined,
+      });
+      setIsEditing(false);
+      refetch();
+    } catch (err) {
+      setEditErrors({ submit: err instanceof Error ? err.message : 'Failed to update' });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!window.confirm(`Delete ${customer?.firstName} ${customer?.lastName}? This cannot be undone.`)) return;
+    try {
+      await deleteCustomer(customerId);
+      router.push('/dashboard/customers');
+    } catch {
+      // silent
+    }
+  };
 
   if (loading) {
     return (
@@ -154,20 +222,20 @@ export default function CustomerDetailPage() {
               <>
                 <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />
                 <div className="absolute right-0 top-full mt-1 w-48 bg-surface border border-main rounded-lg shadow-lg py-1 z-50">
-                  <button className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
+                  <button onClick={startEditing} className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
                     <Edit size={16} />
                     Edit Customer
                   </button>
-                  <button className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
+                  <button onClick={() => { setMenuOpen(false); router.push(`/dashboard/jobs/new?customerId=${customer.id}`); }} className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
                     <Briefcase size={16} />
                     Create Job
                   </button>
-                  <button className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
+                  <button onClick={() => { setMenuOpen(false); router.push(`/dashboard/invoices/new?customerId=${customer.id}`); }} className="w-full px-4 py-2 text-left text-sm hover:bg-surface-hover flex items-center gap-2">
                     <Receipt size={16} />
                     Create Invoice
                   </button>
                   <hr className="my-1 border-main" />
-                  <button className="w-full px-4 py-2 text-left text-sm hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 flex items-center gap-2">
+                  <button onClick={handleDelete} className="w-full px-4 py-2 text-left text-sm hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 flex items-center gap-2">
                     <Trash2 size={16} />
                     Delete
                   </button>
@@ -177,6 +245,43 @@ export default function CustomerDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Edit Modal */}
+      {isEditing && (
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="text-base">Edit Customer</CardTitle>
+            <Button variant="ghost" size="icon" onClick={() => setIsEditing(false)}>
+              <span className="sr-only">Close</span>&times;
+            </Button>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Input label="First Name" value={editData.firstName} onChange={(e) => setEditData({ ...editData, firstName: e.target.value })} error={editErrors.firstName} />
+              <Input label="Last Name" value={editData.lastName} onChange={(e) => setEditData({ ...editData, lastName: e.target.value })} error={editErrors.lastName} />
+              <Input label="Email" type="email" value={editData.email} onChange={(e) => setEditData({ ...editData, email: e.target.value })} error={editErrors.email} />
+              <Input label="Phone" value={editData.phone} onChange={(e) => setEditData({ ...editData, phone: e.target.value })} error={editErrors.phone} />
+              <Input label="Alternate Phone" value={editData.alternatePhone} onChange={(e) => setEditData({ ...editData, alternatePhone: e.target.value })} />
+              <Select label="Type" value={editData.customerType} onChange={(e) => setEditData({ ...editData, customerType: e.target.value as 'residential' | 'commercial' })} options={[{ value: 'residential', label: 'Residential' }, { value: 'commercial', label: 'Commercial' }]} />
+              <Input label="Street" value={editData.street} onChange={(e) => setEditData({ ...editData, street: e.target.value })} />
+              <Input label="City" value={editData.city} onChange={(e) => setEditData({ ...editData, city: e.target.value })} />
+              <Input label="State" value={editData.state} onChange={(e) => setEditData({ ...editData, state: e.target.value })} />
+              <Input label="ZIP" value={editData.zip} onChange={(e) => setEditData({ ...editData, zip: e.target.value })} />
+              <div className="md:col-span-2">
+                <Input label="Access Instructions" value={editData.accessInstructions} onChange={(e) => setEditData({ ...editData, accessInstructions: e.target.value })} />
+              </div>
+              <div className="md:col-span-2">
+                <Input label="Notes" value={editData.notes} onChange={(e) => setEditData({ ...editData, notes: e.target.value })} />
+              </div>
+            </div>
+            {editErrors.submit && <p className="text-sm text-red-500 mt-2">{editErrors.submit}</p>}
+            <div className="flex items-center justify-end gap-3 mt-4">
+              <Button variant="ghost" onClick={() => setIsEditing(false)}>Cancel</Button>
+              <Button onClick={handleSaveEdit} disabled={saving}>{saving ? 'Saving...' : 'Save Changes'}</Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Tabs */}
       <div className="flex gap-1 p-1 bg-secondary rounded-lg w-fit">
