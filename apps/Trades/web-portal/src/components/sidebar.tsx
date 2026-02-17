@@ -209,6 +209,7 @@ const navigationGroups: NavGroup[] = [
       { name: 'Team', href: '/dashboard/team', icon: Users },
       { name: 'Certifications', href: '/dashboard/certifications', icon: Award, permission: PERMISSIONS.CERTIFICATIONS_VIEW },
       { name: 'Equipment', href: '/dashboard/equipment', icon: Wrench },
+      { name: 'Tool Checkout', href: '/dashboard/tool-checkout', icon: Package },
       { name: 'Vendors', href: '/dashboard/vendors', icon: Store },
       { name: 'Purchase Orders', href: '/dashboard/purchase-orders', icon: ShoppingCart },
       { name: 'Fleet', href: '/dashboard/fleet', icon: Truck },

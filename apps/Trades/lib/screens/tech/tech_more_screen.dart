@@ -16,6 +16,7 @@ import 'package:zafto/screens/properties/properties_hub_screen.dart';
 import 'package:zafto/screens/settings/settings_screen.dart';
 import 'package:zafto/screens/tech/tech_timesheet_screen.dart';
 import 'package:zafto/screens/time_clock/time_clock_screen.dart';
+import 'package:zafto/screens/equipment/equipment_list_screen.dart';
 
 // ============================================================
 // Tech More Screen — Expanded Feature Access
@@ -55,6 +56,7 @@ class TechMoreScreen extends ConsumerWidget {
                 _MenuItem(LucideIcons.box, 'Materials Tracker', 'Track materials used on site', () => _push(context, const MaterialsTrackerScreen())),
                 _MenuItem(LucideIcons.checkSquare, 'Punch List', 'Track remaining items', () => _push(context, const PunchListScreen())),
                 _MenuItem(LucideIcons.fileDiff, 'Change Orders', 'Document scope changes', () => _push(context, const ChangeOrderScreen())),
+                _MenuItem(LucideIcons.wrench, 'Tool Checkout', 'Check out and return company tools', () => _push(context, const EquipmentListScreen())),
               ]),
               const SizedBox(height: 20),
               _buildSection(context, colors, 'TIME & PAY', [
