@@ -8103,6 +8103,9 @@ Include <content>{markdown}</content> for rendered display.
 - [ ] Role switching works (owner → admin → tech)
 - [ ] Offline mode: data saves to Hive, syncs when online
 
+**S130 Owner Directive Addition — Full App Hallucination Audit:**
+- [ ] **Full Hallucination Audit**: After ALL building is complete, do a full audit to verify EVERYTHING Claude Code claimed to build actually exists, actually works, isn't a shell/stub, and all data is real. Go screen by screen, button by button, EF by EF, table by table. Verify: all ~201+ tables exist with RLS, all 70+ EFs deploy and return data, all 230+ portal routes render, all hooks return real data (not mock), all Flutter screens wire to Supabase (not Hive stubs), all field tools save correctly, all calculators produce correct results, all PDF exports generate, all signatures capture, all forms submit. NO claimed feature left unverified. If something was "built" but is actually a shell — flag it, don't skip it. This is the final trust-but-verify gate before launch.
+
 ---
 
 ### Sprint G10: Cross-Feature Integration Testing
@@ -9088,6 +9091,9 @@ Include <content>{markdown}</content> for rendered display.
 - [ ] **Hardscape measurement formulas**: Paver count (area ÷ paver size + 10% cut waste). Base material (area × depth in cubic yards). Joint sand (bags per sqft). Edge restraint LF. Compaction area
 - [ ] **Additional templates (10 more)**: Deck build (with stairs + railing), Pool installation, Paver patio, Fence replacement, Gutter replacement, Exterior paint job, Driveway replacement, Retaining wall, Landscape renovation, Outdoor kitchen. Total: 20 pre-built templates
 - [ ] All builds pass: `dart analyze` (0 errors), `npm run build` for web portals
+**S130 Owner Directive Additions:**
+- [ ] **Kitchen cabinet calculator / cabinet installer tools**: Cabinet calculators (linear feet of cabinets, door/drawer counts, hardware counts, countertop measurements from room dimensions). Cabinet overlay layer on sketch that auto-calculates based on room measurements. Standard cabinet sizes (12"/15"/18"/21"/24"/27"/30"/33"/36" base, 12"/15"/18"/24"/30"/36" wall). Upper/lower/pantry/island auto-layout suggestions. Hardware count (hinges, pulls, knobs per door/drawer). Countertop sq ft from cabinet layout. May overlap with remodeler trade tools — ensure no redundancy, complement existing.
+
 - [ ] Commit: `[SK13-EXP] Material types, custom doors/windows, deck/pool/hardscape formulas, 20 templates`
 
 ---
@@ -10124,6 +10130,9 @@ Status: DONE (Session 110)
 - [ ] Store results in `blueprint_rooms` table: boundary_points (polygon vertices), floor_area_sf, wall_area_sf, ceiling_area_sf, perimeter_lf, confidence score
 - [ ] Processing status updates via Supabase real-time (per-sheet progress: "Analyzing sheet 3 of 12...")
 - [ ] Verify: upload test floor plan PDF → rooms detected → measurements calculated → results in blueprint_rooms → match expected values within 5%
+**S130 Owner Directive Additions:**
+- [ ] **Blueprint training across ALL trades — no trade left behind**: Training dataset MUST include blueprints from EVERY trade we support: electrical, plumbing, HVAC, structural, fire protection, roofing, solar, landscape, civil, commercial, industrial, residential, multi-family. Also: mechanical, architectural, site plans, foundation plans, framing plans, reflected ceiling plans. Source diverse blueprint samples from: university archives, open permit offices, construction textbook diagrams, open-source plan sets, public permit records. The analyzer must recognize symbols and annotations from ALL trades, not just residential electrical/plumbing. Hundreds of training samples per trade minimum.
+
 - [ ] Commit: `[BA2] CV pipeline — RunPod setup, MitUNet wall/room segmentation, measurement engine`
 
 ---
@@ -11853,6 +11862,9 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - [ ] Team Portal: Unread badge on nav
 - [ ] Push notification on new message (existing notification service)
 - [ ] Unread count provider (Riverpod) for badge across all screens
+**S130 Owner Directive Addition:**
+- [ ] **Phone system — option to use existing cell/phone line**: Contractors don't want to change their business number. SignalWire supports BYOC (Bring Your Own Carrier). Implement call forwarding from contractor's existing number through our system. Or SIP trunk their existing number to route through SignalWire. Config in phone settings: "Use your existing number" toggle → enter number → verify ownership via confirmation call → all Zafto call features work through their existing number. No new number forced on anyone.
+
 - [ ] Commit: `[FIELD1] Team messaging — real-time chat, conversations, all 5 apps`
 
 ### FIELD2 — Equipment & Tool Checkout (~10h)
@@ -12056,6 +12068,10 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - [ ] Audit CE tracker — state requirements, credit logging, renewal deadlines, certificate storage
 - [ ] Identify and list ALL shallow/stub features found
 - [ ] Build + execute corrections for each shallow feature
+**S130 Owner Directive Additions:**
+- [ ] **CPA portal/app depth audit**: Full audit of what CPA role actually sees vs. what a real CPA needs — chart of accounts drill-down, journal entry review, trial balance, bank reconciliation workflow, client document requests, tax document prep workspace, period close workflow, adjusting entries, financial statement generation. If shallow, spec a dedicated CPA depth sprint.
+- [ ] **Multiple payment/bank integration options**: Abstract behind payment provider interface. Payments: Stripe + Square + PayPal Commerce (all free-to-integrate APIs, contractor pays transaction fees). Bank connections: Plaid (already wired, free tier). ACH direct through Plaid. Not just Stripe + Gusto — multiple options per system. Payroll tax tables are public (IRS/state DORs — free) — build our own payroll calculator, contractor picks their processor.
+
 - [ ] Commit: `[DEPTH4] Financial & legal depth corrections — ZBooks, permits, liens, insurance, contracts`
 
 ### DEPTH5 — CRM & Portal Depth Audit + Corrections (~14h)
@@ -12141,6 +12157,9 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - [ ] Audit mobile navigation — bottom tabs, drawer menu, quick actions — is everything reachable? No buried features?
 - [ ] Identify and list ALL shallow/stub features found
 - [ ] Build + execute corrections for each shallow feature
+**S130 Owner Directive Additions:**
+- [ ] **Search bars in ALL Flutter apps**: The contractor owner app has a search bar — tech app, inspector app, and all future apps (realtor, CPA) don't. Create universal `ZaftoSearchBar` widget in design system that searches across jobs, customers, invoices, properties etc. based on user role/permissions. Slots into `AppShell`. Every Flutter app gets it.
+
 - [ ] Commit: `[DEPTH10] Search, filtering & navigation depth corrections — global search, filters, quick access`
 
 ### DEPTH11 — Reports & Export Depth Audit + Corrections (~14h)
@@ -12171,6 +12190,9 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - [ ] Audit data management — backup/export all company data, data retention settings, archived items, deleted items recovery
 - [ ] Identify and list ALL shallow/stub features found
 - [ ] Build + execute corrections for each shallow feature
+**S130 Owner Directive Additions:**
+- [ ] **Customizable dashboard**: Settings page where users pick which tools/widgets appear on their dashboard. Drag/drop or toggle widgets. Store preferences in `user_settings` table (already exists). Not everyone uses the same features — let them pick.
+
 - [ ] Commit: `[DEPTH12] Settings & admin depth corrections — company, roles, trades, documents, integrations`
 
 ### DEPTH13 — Offline & Performance Depth Audit + Corrections (~10h)
@@ -12186,6 +12208,9 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - [ ] Audit web portal performance — CRM page load times, data table performance with 1000+ rows, chart rendering, real-time subscription memory leaks
 - [ ] Identify and list ALL shallow/stub features found
 - [ ] Build + execute corrections for each shallow feature
+**S130 Owner Directive Additions:**
+- [ ] **Offline sync failsafe — retry sync + Hive everywhere**: Standardize Hive as local cache layer across ALL Flutter apps (inspector already has this pattern: ChecklistCacheService + HiveCacheMixin + OfflineBanner from INS9). Add retry-sync-on-reconnect to every app. For web portals: IndexedDB + service worker for offline capability. Even with PowerSync, Hive acts as safety net for critical data (current job, open estimate, time clock entries). Standardize in `06_ARCHITECTURE_PATTERNS.md`.
+
 - [ ] Commit: `[DEPTH13] Offline & performance depth corrections — cache coverage, sync, load times`
 
 ### DEPTH14 — Security & Permission Depth Audit + Corrections (~10h)
@@ -12274,6 +12299,9 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - [ ] Audit restoration line items — are the 50 seed items comprehensive? Do they cover water/fire/mold/biohazard? Do they align with Xactimate pricing categories? Are descriptions professional enough for carrier submission?
 - [ ] Identify and list ALL shallow/stub features found
 - [ ] Build + execute corrections for each shallow feature
+**S130 Owner Directive Additions:**
+- [ ] **Restoration contractor integrations — deep expansion**: Restoration features are weak. Research and integrate FREE APIs: NOAA storm data, FEMA disaster declarations API, NWS alerts, OpenFEMA (claims data), SBA disaster loan lookup. Build our own contents pricing from public retail data. Look into Synchrony-style financing pipelines (contractor financing for homeowners). 100% accuracy required. ABSOLUTE BAN on Xactimate/ESX file generation — Verisk proprietary, legal risk. Build our own estimation formats that are better.
+
 - [ ] Commit: `[DEPTH19] TPA & restoration tools depth corrections — programs, drying, moisture, equipment`
 
 ### DEPTH20 — Recon, Inspector & Sketch Engine Module Depth Audit + Corrections (~14h)
@@ -12322,6 +12350,9 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - [ ] Audit Document Management (ZDocs) — document types, version control, sharing permissions, e-signature integration, template library, folder organization, search within documents
 - [ ] Identify and list ALL shallow/stub features found
 - [ ] Build + execute corrections for each shallow feature
+**S130 Owner Directive Additions:**
+- [ ] **Background check integration for hiring system**: Checkr API — contractor pays per-check ($35-80), we just facilitate. No free background check API exists (regulated data). Option A: contractor pays Checkr directly, we link to it ($0 to us). Option B: skip integration, contractor uses their own provider, we store the result/certificate. Either way, the hiring system needs a place to track background check status per candidate.
+
 - [ ] Commit: `[DEPTH22] F-phase module depth corrections — marketplace, hiring, fleet, OSHA, ZForge, exams`
 
 ### DEPTH23 — Full Codebase Sweep: Unlisted & New Feature Discovery (~8h)
@@ -12646,6 +12677,10 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - [ ] **Key rotation helper** (for the ~6 keys that theoretically could need rotation): Ops portal button "Test Key" per API → calls health check for just that API → shows result. Ops portal field to update key value → stores in Supabase secrets via management API (super_admin only). In practice, government API keys don't rotate — this is a safety net, not regular maintenance
 - [ ] **Monthly health report** (pg_cron, 1st of month): Auto-generate summary: APIs called X times total, Y% average uptime, Z APIs had incidents, total API cost: $0.00. Insert into `api_health_reports` table. Surface on ops dashboard
 - [ ] All builds pass: `dart analyze`, `npm run build` × 4
+**S130 Owner Directive Additions:**
+- [ ] **Train Recon against 1000s of public EagleView reports**: EagleView reports appear in public insurance claim files, county assessor records, and real estate listings. Build a calibration dataset: collect public reports, extract measurements, compare against our Recon calculations for the same addresses. Calibration benchmark. $0 API cost — just data collection + comparison engine. "Verified against 1,000+ professional aerial reports" = massive selling point.
+- [ ] **Storm Hunter tool for storm contractors**: Real-time severe weather alerts (NWS API — free), hail swath maps (NOAA Storm Prediction Center — free), historical storm paths, damage probability by area, "storm scoring" (hail size + wind speed + property density = revenue potential), route planning to affected areas, door-knocking territory mapping, integration with Recon (auto-scan properties in storm path for damage indicators). ALL weather data is free (NWS/NOAA/NEXRAD/FEMA). Must be insanely well thought out and actually work for their use case. Deep.
+
 - [ ] Commit: `[DEPTH28] Property recon mega-expansion — all-trade scans, property intelligence, weather/storm data, free API stack, auto-scope generation, API fleet monitoring`
 
 ---
@@ -12720,6 +12755,9 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - [ ] **Man-hours display on estimate**: Every estimate shows: total estimated man-hours, crew size, estimated days on site (man-hours ÷ crew ÷ work hours per day). Contractor can adjust crew size and see how it affects project duration. Customer-facing version shows estimated project duration ("2-3 days" not "16 man-hours")
 - [ ] **Profit analysis dashboard**: Per estimate: total revenue, material cost, labor cost (hours × burdened rate), overhead allocation, profit margin ($ and %). Per tier comparison: which tier is most profitable (not always the most expensive). Historical: average margin by trade, by material, by job size. Goal tracking: "Your average margin is 32% — industry average is 40%"
 - [ ] All builds pass: `dart analyze`, `npm run build` × 4
+**S130 Owner Directive Additions:**
+- [ ] **Price Book — known company prices for one-click use**: `price_book_items` table (company_id, name, category, unit_price, unit_of_measure, trade, last_updated). Management UI in CRM settings. "Pick from Price Book" button on every estimate/invoice line item screen. Auto-fills price. Company-specific known prices that persist across all estimates and invoices. Critical for daily use.
+
 - [ ] Commit: `[DEPTH29] Estimate engine overhaul — material tiers, G/B/B auto-generation, labor hour database, live regeneration, change orders, profit analysis`
 
 ---
@@ -13081,6 +13119,11 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - [ ] **Supply sourcing guide**: MFS Supply (mfssupply.com — largest PP supplier), US Hardware Supply (ushardwaresupply.com), Roper Lock (roperlock.com, since 1975). Price comparison: entry locks ~$9.60 (MFS) vs ~$8.60 (US Hardware). Combo (lock + deadbolt) ~$16.85. Padlocks, hasps, lockboxes (VaultLOCKS 3200 ~$12.99-$14.99). Winterization supplies: pink RV antifreeze ~$3-5/gal. Bulk ordering discounts
 - [ ] **Board-up calculator**: Input: number of openings, united inches per opening (width + height). Plywood thickness selector: 1/2" ($0.55/UI), 5/8" ($0.60/UI), 3/4" ($0.70/UI). Generates: plywood sheets needed (4×8 standard), screws/fasteners count, total cost, HUD allowable billing amount
 
+**S130 Owner Directive Additions — Winterization/Dewinterization DEPTH UPGRADE:**
+- [ ] **Winterization verification tool using phone tech**: Banks and realtors HATE when contractors don't do winterization right — causes pipe breaks during dewinterization. This is serious liability. Build a tool that uses phone camera to photo-document EVERY step (before/after of each drain point, water heater, toilets, traps, hose bibs). GPS stamp + timestamp each photo. Create a checklist that is PHYSICALLY IMPOSSIBLE TO SKIP — force photo capture before marking each step complete. Pressure test verification: timer + gauge reading photo required. Antifreeze volume calculation by property size. Video walkthrough option for extra documentation. Generate a "Winterization Certificate" PDF with all photos, timestamps, GPS, pressure test results. This is the proof that saves the contractor when a bank claims they didn't do it right.
+- [ ] **Dewinterization tool**: Full reverse process. Turn-on sequence (main valve → check each fixture → check for leaks at every point). Leak detection checklist with photo proof at each fixture. Antifreeze flush verification. Water heater relight procedure by model. Pressure test after full system restore. Same photo-forced-completion pattern as winterization. "Dewinterization Certificate" PDF. Both tools should work together — dewint references the original wint documentation for the same property.
+- [ ] **Wint/Dewint depth**: Not a toy. Must be serious enough that a preservation company can hand the certificate to a bank or realtor and it holds up. Every drain point accounted for, every photo timestamped and GPS'd, pressure test documented. The tool should know the difference between a 1-story ranch and a 3-story colonial (different drain point counts, different antifreeze volumes). Property type awareness.
+
 - [ ] All builds pass: `dart analyze`, `npm run build` × 4
 - [ ] Commit: `[DEPTH34] Property preservation module — PP work orders (25+ types), smart photo system (3 modes, GPS/timestamp, same-angle matching), national company profiles (Safeguard/MCS/Cyprexx/NFR/Xome), winterization assistant (dry/wet/steam + pressure test timer + antifreeze calc), boiler/furnace troubleshooter (all models, error codes, flowcharts), sump pump assistant, stripped property estimators (repipe/rewire/HVAC/water heater), debris estimation calculator (room-by-room, hoarding scale, weight, dumpster recommender, recon integration), utility/fuel coordination, vendor application helper, REO realtor finder, securing reference, board-up calculator`
 
@@ -13135,6 +13178,115 @@ When inspector takes a photo during inspection execution, add search bar to atta
 
 - [ ] All builds pass: `dart analyze`, `npm run build` × 4
 - [ ] Commit: `[DEPTH36] Disposal & dump finder — facility database (all waste types), nearest + cheapest search, scrap/recycling value finder, route optimization, receipt tracking + cost analytics`
+
+### DEPTH37 — Tablet & Mobile Responsive Overhaul + Auto-Detect (~20h)
+**Goal:** All 4 web portals (CRM, team, client, ops) must work perfectly on tablets and phones. Currently desktop-first with hover-dependent nav that breaks on touch. Auto-detect device type and load appropriate layout.
+
+- [ ] **Sidebar nav overhaul for touch devices**: Replace hover-to-expand sidebar with persistent sidebar on tablets (narrower, icon-only that expands on tap). On phones: bottom tab nav or slide-out hamburger that stays accessible. No hover-dependent interactions anywhere.
+- [ ] **Auto-detect device type**: CSS media queries + user-agent detection. Next.js server-side device detection via headers for initial render, client-side for dynamic adjustments. Three breakpoints: desktop (>1024px), tablet (768-1024px), mobile (<768px). Touch capability detection for interaction patterns.
+- [ ] **CRM portal tablet layout**: Test all 126 routes on tablet viewport. Data tables must scroll horizontally or stack. Forms must be usable with touch. Modals must not exceed viewport.
+- [ ] **Team portal mobile optimization**: Already PWA-ready — verify all 36 routes work on phone-size viewport. Field workers use phones, not laptops.
+- [ ] **Client portal mobile optimization**: Homeowners browse on phones. All 39 routes must be mobile-first.
+- [ ] **Ops portal tablet layout**: Founder may use iPad for monitoring. All 29 dashboard routes must render cleanly.
+- [ ] All builds pass: `dart analyze`, `npm run build` × 4
+- [ ] Commit: `[DEPTH37] Tablet & mobile responsive overhaul — touch-friendly nav, auto-detect device type, all 4 portals optimized for tablet + mobile viewports`
+
+### DEPTH38 — Time Clock Permission-Based Adjustment (~8h)
+**Goal:** Managers, office workers, foremen — anyone with the right permission level — can adjust employee clock-in/out times. Full audit trail.
+
+- [ ] **`edit_timeclock` permission**: Add to permission engine (U3). Configurable per role in company settings. Default: owner + admin + office_manager can adjust. Foreman can adjust their crew only.
+- [ ] **Time adjustment UI**: Select employee → select date → see clock entries → edit start/end times. Reason/notes field required (mandatory — can't adjust without explaining why). Before/after values logged.
+- [ ] **Audit trail**: `timeclock_adjustments` table (original_start, original_end, adjusted_start, adjusted_end, adjusted_by, reason, timestamp). Visible in employee's time history. Visible to owner in reports.
+- [ ] **Notifications**: Employee gets notified when their time is adjusted ("Your clock entry for [date] was adjusted by [manager]. Reason: [reason]").
+- [ ] **CRM + Team Portal**: Adjustment UI in CRM time management page. Employee sees adjustment history in team portal.
+- [ ] All builds pass: `dart analyze`, `npm run build` × 4
+- [ ] Commit: `[DEPTH38] Time clock permission-based adjustment — edit_timeclock permission, adjustment UI, audit trail, notifications`
+
+### DEPTH39 — Signature System: Project Linking + DocuSign Replacement (~24h)
+**Goal:** Two problems: (1) signatures don't link to projects, (2) we need our own signature system that's better than DocuSign. Build a complete e-signature system with $0 API cost.
+
+- [ ] **Signature-to-project linking**: Every signature capture must associate with a `job_id`, `bid_id`, `invoice_id`, `change_order_id`, or `contract_id`. Pull up any job and see all related signatures. Pull up any signature and see what it's attached to.
+- [ ] **Document templates with signature fields**: Create reusable document templates (contracts, change orders, lien waivers, completion certificates) with drag-and-drop signature/initial/date field placement.
+- [ ] **Email-based signing**: Send document link → recipient signs in browser (no account needed) → signed PDF generated. Magic link authentication for external signers.
+- [ ] **Multi-party signing workflows**: Define signing order (contractor signs first, then homeowner, then inspector). Track status per signer. Reminders for pending signatures.
+- [ ] **Signature audit trail**: Every signature logs: IP address, timestamp, device info, geolocation, browser/app. Tamper-evident — hash the signed document. ESIGN Act + UETA compliance.
+- [ ] **PDF generation with embedded signatures**: PDF-lib (free, open source). Signatures embedded in the document, not overlaid. Flattened PDF = can't be edited after signing.
+- [ ] **Signature dashboard**: CRM page showing all pending, completed, and expired signature requests. Filter by job, client, date, status.
+- [ ] All builds pass: `dart analyze`, `npm run build` × 4
+- [ ] Commit: `[DEPTH39] Signature system — project linking, document templates, email-based signing, multi-party workflows, audit trail, PDF generation, DocuSign replacement`
+
+### DEPTH40 — Universal Marketplace Aggregator + AI Research (~40h, Phase E dependent for AI layer)
+**Goal:** One place to shop across all marketplaces. AI does deep research on every listing — condition, known issues, fair price. For tools, trucks, tractors, mowers, supplies. State of the art. NOT a toy.
+
+**Non-AI infrastructure (build now):**
+- [ ] **Marketplace aggregation engine**: Craigslist RSS (free), Home Depot/Lowes affiliate APIs (free tier), Amazon Product API (free tier). For FB Marketplace + OfferUp (no public API): paste-a-link approach where user enters listing URL and system scrapes the page.
+- [ ] **CPSC Recalls API integration** (free): Every product checked against federal recall database automatically. Safety first.
+- [ ] **Listing normalization**: Regardless of source, every listing displayed with: title, price, condition, photos, seller info, location, distance from user.
+- [ ] **Search + filter**: By trade relevance (electrical tools, HVAC equipment, plumbing tools, etc.), price range, condition, distance, source marketplace.
+- [ ] **Save/watch functionality**: Save listings, price drop alerts, "similar items" suggestions.
+- [ ] **CRM marketplace page**: Browse + search interface. Job-context aware (working on HVAC job → HVAC tools/equipment surfaced first).
+
+**AI layer (Phase E — build later):**
+- [ ] **AI deep research per listing**: When user views a listing, AI pulls: manufacturer specs, known recalls, common failure points for that model/year, fair market value (completed sales data), reviews from multiple sources, parts availability, repair difficulty rating.
+- [ ] **Condition assessment**: AI analyzes listing photos for visible damage, wear patterns, missing parts. Confidence score.
+- [ ] **Price intelligence**: "This [tool] typically sells for $X-Y. This listing is [above/below/at] market value."
+
+- [ ] All builds pass: `dart analyze`, `npm run build` × 4
+- [ ] Commit: `[DEPTH40] Universal marketplace aggregator — multi-source aggregation, CPSC recalls, search/filter, AI research layer (Phase E)`
+
+### DEPTH41 — Backup Fortress: Multi-Location Redundancy + Immutable Backups (~12h)
+**Goal:** Zafto's data should NEVER be deletable by anyone — not the developer, not hackers. Multiple backup locations, automatic regeneration, distributed redundancy. Owner must never wake up worried about losing the system.
+
+- [ ] **Supabase native backups**: Daily automatic (included in Pro plan). Point-in-time recovery enabled. Verify configuration.
+- [ ] **Nightly pg_dump to Cloudflare R2**: Automated Edge Function or cron job. pg_dump of entire database → encrypt (AES-256) → upload to Cloudflare R2 bucket ($0 egress, ~$0.015/GB/month). Retention: 90 days rolling.
+- [ ] **Weekly encrypted backup to Backblaze B2**: Second geographic location. Encrypted pg_dump → Backblaze B2 ($0.005/GB/month). Retention: 1 year. Different cloud provider = different failure domain.
+- [ ] **Immutable backups**: Write-once policy on R2 + B2. Backups CANNOT be deleted for 30 days minimum, even by admin. Object Lock (B2) or lifecycle rules (R2).
+- [ ] **Storage bucket replication**: Supabase storage (photos, documents, signatures) mirrored to R2 nightly. If Supabase storage goes down, assets recoverable from R2.
+- [ ] **Backup verification**: Monthly automated restore test — spin up a test database from latest backup, verify table counts match, verify recent data exists, report results to ops portal. If verification fails → alert owner immediately.
+- [ ] **Ops portal backup dashboard**: /dashboard/backups page showing: last backup time, backup size, verification status (pass/fail), storage costs, recovery time estimate. GREEN/YELLOW/RED health indicators.
+- [ ] **Disaster recovery runbook**: Documented step-by-step procedure to restore from each backup location. Stored in ops portal (not just in build docs).
+- [ ] All builds pass: `dart analyze`, `npm run build` × 4
+- [ ] Commit: `[DEPTH41] Backup fortress — Supabase + R2 + B2 triple redundancy, immutable backups, monthly verification, ops dashboard`
+
+### DEPTH42 — Storage Tiering & Usage Metering (~8h)
+**Goal:** Contractors and realtors will bring gigs of data (photos, blueprints, videos). Implement tiered storage with metering. 5GB free, paid add-on for more. Cheap for user, healthy margin for us.
+
+- [ ] **`storage_usage` table**: company_id, total_bytes, photo_bytes, document_bytes, video_bytes, last_calculated, tier (free/paid). Updated on every upload/delete.
+- [ ] **Usage meter in settings**: Visual bar showing "X of 5GB used" with breakdown by category (photos, documents, videos, blueprints). Warning at 80%, hard limit at 100% for free tier.
+- [ ] **Paid storage tiers**: 5GB free (included). Additional 50GB blocks at $5/month each. Supabase cost: ~$1.05/50GB → $3.95 margin per block. Cloudflare R2 as overflow tier for heavy media (video walkthroughs, drone footage) at $0.015/GB/month.
+- [ ] **RevenueCat integration for storage upgrades**: In-app purchase flow for additional storage. Immediate activation on purchase.
+- [ ] **Upload gating**: When at limit, uploads blocked with clear message: "Storage full. Upgrade for $5/month to add 50GB." No silent failures.
+- [ ] **Ops portal storage analytics**: Per-company storage usage, total platform storage, growth trends, revenue from storage add-ons.
+- [ ] All builds pass: `dart analyze`, `npm run build` × 4
+- [ ] Commit: `[DEPTH42] Storage tiering — usage metering, 5GB free tier, paid add-ons via RevenueCat, upload gating, ops analytics`
+
+### DEPTH43 — Sketch Engine File Compatibility: Import/Export for All Major Formats (~16h)
+**Goal:** Ensure our sketch engine can export to AND import from major CAD/3D software. No contractor should be locked into our format.
+
+- [ ] **Export formats**: DXF (AutoCAD), SVG (universal vector), PDF (universal), glTF/GLB (3D — Three.js), OBJ (3D legacy). Already partially spec'd in SK — verify all work.
+- [ ] **Import formats**: DXF import (AutoCAD, SketchUp, Revit all export DXF), SVG import, PDF floor plan import (rasterize → trace). For 3D: glTF/GLB import, OBJ import.
+- [ ] **Compatibility report on import**: When importing a file from another software, show what converted successfully and what was lost (custom layers, blocks, annotations, materials). Honest transparency — don't silently drop data.
+- [ ] **Round-trip testing**: Export from Zafto → open in AutoCAD/SketchUp/Blender → verify fidelity. Import from AutoCAD/SketchUp → open in Zafto → verify fidelity. Document known limitations.
+- [ ] **File format detection**: Auto-detect format on upload. Show preview before committing import. User confirms which layers/elements to import.
+- [ ] All builds pass: `dart analyze`, `npm run build` × 4
+- [ ] Commit: `[DEPTH43] Sketch engine file compatibility — DXF/SVG/PDF/glTF/OBJ import + export, compatibility report, round-trip testing`
+
+### DEPTH44 — AI-Gated Features: Clock-Out Cutoff + Owner Controls + AI Ticket System (~12h, Phase E dependent)
+**Goal:** AI access controls tied to work hours + an AI-powered bug report/ticket system. Phase E dependent — spec now, build with AI layer.
+
+**AI Access Controls:**
+- [ ] **AI clock-out cutoff**: When `time_entries` shows user is clocked out, AI middleware blocks AI requests. Immediate — no grace period.
+- [ ] **Owner settings**: `ai_access_policy` on `company_settings` — options: "work_hours_only" (default), "always_on", "custom_schedule", "disabled". Per-employee override via `user_settings`.
+- [ ] **AI budget protection**: Owner sets monthly AI budget. Dashboard shows usage. Alerts at 80%/90%/100%. Hard cutoff at limit unless owner overrides.
+
+**AI Ticket System / Smart Bug Report:**
+- [ ] **"Report Issue" button**: Available on every screen in every app. User taps → captures current screen state, recent actions, device info, error logs.
+- [ ] **AI investigation**: AI reads user's current screen/state/recent actions → checks if the workflow they're attempting exists and they're doing it right → if user error: shows guided walkthrough with step-by-step highlighted pointers to correct workflow → if real bug: creates ticket.
+- [ ] **Ops portal ticket dashboard**: Real bugs reported with full context (screen, state, error, user actions, device info, AI analysis). Priority ranking. Status tracking. Keeps support tickets down by filtering user-error issues before they reach owner.
+- [ ] **NO auto-fix**: AI investigates and reports only. NEVER auto-patches production code. Too risky. Owner reviews every real bug ticket manually.
+
+- [ ] All builds pass: `dart analyze`, `npm run build` × 4
+- [ ] Commit: `[DEPTH44] AI-gated features — clock-out cutoff, owner controls, AI ticket system, bug report wizard (Phase E)`
 
 ---
 
@@ -13870,6 +14022,9 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 - [ ] **Hold harmless / indemnification** — Verify ToS includes robust indemnification: users indemnify Zafto for claims arising from their use of the platform, their violations of law, their content. Zafto's liability capped at subscription fees paid in last 12 months (standard SaaS limitation)
 - [ ] **Dispute resolution** — Verify: mandatory binding arbitration (AAA rules), class action waiver, 30-day opt-out window for new users (California requires this), small claims court exception, governing law specified (Delaware or company's home state)
 - [ ] **Legal shield report** — Document ALL findings, ALL patches applied, ALL disclaimers added, ALL compliance verifications. Save to `Build Documentation/ZAFTO FULL BUILD DOC/Expansion/LEGAL_AUDIT_REPORT_S[session].md`. This document IS the evidence that due diligence was performed — if anyone ever sues, this shows Tereda Software LLC actively identified and mitigated legal risks
+**S130 Owner Directive Additions — Legal Labeling Standard (from LEGAL SHOW CLAUDE.docx):**
+- [ ] **Legal labeling audit across ALL features**: Per legal analysis document — every calculator output MUST say "Estimate" or "Projection" or "For planning purposes." Every ledger entry says "Draft" until user confirms. Every AI output says "Suggestion." NEVER label anything "Tax-ready," "GAAP compliant," or "Official ledger." QuickBooks/external accounting stays "system of record" — Zafto is the "analysis/drafting layer." Pattern: Draft → Review → Push (user is the actor). Add "Generated logic diagram — verify before operational use" on all workflow/automation outputs. Position: "Zafto drafts and analyzes. Your accounting system remains the system of record." This makes CPAs comfortable, helps Plaid risk review, reduces liability surface. Add to `06_ARCHITECTURE_PATTERNS.md` as permanent build rule. Sweep EVERY screen for label violations. Ref: `C:\Users\Developer LLC\Desktop\LEGAL SHOW CLAUDE.docx`
+
 - [ ] Commit: `[SEC10] Legal penetration test — [X] exposures found, all patched, disclaimers added, compliance verified`
 
 ---
@@ -14130,7 +14285,7 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 | **FIELD** | FIELD1-FIELD4 | ~56h | Missing field features: messaging, equipment checkout, team portal stubs, BLE laser meter integration |
 | **REST** | REST1-REST2 | ~20h | Restoration gaps: fire tools, mold remediation (IICRC S520) |
 | **NICHE** | NICHE1-NICHE2 | ~16h | Missing trade modules: pest control, service trades |
-| **DEPTH** | DEPTH1-DEPTH36 | ~624h | Full depth audit + corrections + contractor needs validation + commercial building support + property blueprint lookup + bulletproof crash recovery + recon mega-expansion (all-trade scans, 24 free APIs) + estimate engine overhaul (material tiers, G/B/B, labor hours) + recon-to-estimate pipeline + crowdsourced material pricing (receipt OCR, 60+ suppliers) + Material Finder search engine (affiliate feeds, 200+ suppliers, regional pricing) + data privacy/AI consent + **property preservation module (PP work orders, smart photos, winterization assistant, boiler troubleshooter, debris estimation, national company profiles, chargeback tracking)** + **mold remediation (IICRC S520, moisture mapping, containment/clearance pipeline, lab tracking)** + **disposal/dump finder (cheapest per ton, all waste types, scrap value, receipt tracking)** |
+| **DEPTH** | DEPTH1-DEPTH44 | ~764h | Full depth audit + corrections + contractor needs validation + commercial building support + property blueprint lookup + bulletproof crash recovery + recon mega-expansion (all-trade scans, 24 free APIs, **+EagleView calibration, +Storm Hunter**) + estimate engine overhaul (material tiers, G/B/B, labor hours, **+Price Book**) + recon-to-estimate pipeline + crowdsourced material pricing (receipt OCR, 60+ suppliers) + Material Finder search engine (affiliate feeds, 200+ suppliers, regional pricing) + data privacy/AI consent + property preservation module (**+winterization phone-tech verification, +dewinterization tool**) + mold remediation + disposal/dump finder + **S130 additions: tablet/mobile responsive overhaul (~20h), time clock permission adjustment (~8h), signature system + DocuSign replacement (~24h), universal marketplace aggregator (~40h Phase E dep), backup fortress (~12h), storage tiering (~8h), sketch file compatibility (~16h), AI-gated features + ticket system (~12h Phase E dep)** |
 | **SEC** | SEC1-SEC10 | ~92h | Security fortress: critical fixes, 2FA, biometrics, enterprise options, Hellhound, headers, WAF, dependency scanning, security pentest, legal pentest |
 | **ZERO** | ZERO1-ZERO9 | ~86h | Zero-defect validation: property testing, state machines, chaos engineering, 50K load test, fuzz testing, mutation testing, edge case gauntlet, triple-scan |
 | **LAUNCH** | LAUNCH1-LAUNCH7 | ~72h | Monitoring, legal, payments, i18n, accessibility, testing, App Store + onboarding wizard |
@@ -14138,9 +14293,9 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 | **INTEG** | INTEG1 | ~12h | National portal submission API: per-company format templates, one-click export, verification bundles, compliance scoring, chargeback defense |
 | **FLIP** | FLIP1-FLIP6 | ~92h | Flip-It analysis engine: deal aggregation (7 sources), ARV engine (appraisal-grade), full financial model + profit degradation timeline, hard money lender directory (~100+), deal distribution (BP/Craigslist/FB/REIA), **deal packaging (PDF/DOCX/XLSX/PPTX/shareable link)**, AI photo analysis (Claude Opus 4.6 condition assessment, selective scope, customizable pricing, premium deep assessment: recon + 2D sketch + LiDAR 3D), **Reality Engine (true net P&L with full cost waterfall + tax calculator, risk intelligence: 50% rule alert + code cascade predictor + contingency auto-set + over-improvement warning, deal qualification: 3 exit strategies + opportunity cost + market health + tariff adjustment)** |
 | **JUR4** | JUR4 | ~14h | Realtor jurisdiction awareness — 50-state disclosures, agency rules (dual agency legality), attorney states, commission regulations, license reciprocity, document retention. Wires into Transaction Engine, Commission Engine, Brokerage Admin, Lead Gen |
-| **Total** | **~94 sprints** | **~1,576h** | — |
+| **Total** | **~102 sprints** | **~1,716h** | — |
 
-**Execution order:** SEC1 + SEC6 + SEC7 + SEC8 (critical security — site is live) → LAUNCH1 (monitoring — need Sentry before building more) → FIELD → REST → NICHE → DEPTH1 through DEPTH27 → DEPTH28 (recon mega-expansion) → DEPTH29 (estimate engine overhaul) → DEPTH30 (recon-to-estimate pipeline) → DEPTH31 (crowdsourced material pricing) → DEPTH32 (Material Finder — affiliate feeds, generates revenue) → DEPTH33 (data privacy/AI consent) → **DEPTH34 (property preservation — PP work orders, winterization, boiler troubleshooter, debris estimation, smart photos)** → **DEPTH35 (mold remediation — IICRC S520, moisture mapping, clearance pipeline)** → **DEPTH36 (disposal/dump finder — cheapest per ton, all waste types, scrap value)** → **RE1-RE20 (full Zafto Realtor Platform — 20 sprints, ~444h, see Expansion/53_REALTOR_PLATFORM_SPEC.md)** → **INTEG1 (national portal submission API)** → **FLIP1 (deal aggregation + property intelligence)** → **FLIP2 (ARV engine + comp analysis)** → **FLIP3 (financial model + profit degradation timeline)** → **FLIP4 (hard money lender directory + deal cross-post engine)** → **FLIP5 (AI photo analysis + premium deep assessment — Claude Opus 4.6, requires Phase E position but Flip-specific, builds AFTER main FLIP engine)** → SEC2-SEC5 (2FA, biometrics, enterprise security, Hellhound) → LAUNCH2-LAUNCH6 (legal, payments, i18n, accessibility, testing) → Phase G (QA) → Phase JUR (incl JUR4 realtor jurisdiction) → Phase E (AI) → **SEC9 (security pentest)** → **SEC10 (legal pentest)** → **ZERO1-ZERO9 (zero-defect validation — break everything, fix everything, prove it's flawless)** → LAUNCH7 (App Store + onboarding wizard — DEAD LAST) → SHIP
+**Execution order:** SEC1 + SEC6 + SEC7 + SEC8 (critical security — site is live) → LAUNCH1 (monitoring — need Sentry before building more) → FIELD → REST → NICHE → DEPTH1 through DEPTH27 → DEPTH28 (recon mega-expansion) → DEPTH29 (estimate engine overhaul) → DEPTH30 (recon-to-estimate pipeline) → DEPTH31 (crowdsourced material pricing) → DEPTH32 (Material Finder — affiliate feeds, generates revenue) → DEPTH33 (data privacy/AI consent) → **DEPTH34 (property preservation — PP work orders, winterization, boiler troubleshooter, debris estimation, smart photos)** → **DEPTH35 (mold remediation — IICRC S520, moisture mapping, clearance pipeline)** → **DEPTH36 (disposal/dump finder)** → **DEPTH37 (tablet/mobile responsive overhaul)** → **DEPTH38 (time clock permission adjustment)** → **DEPTH39 (signature system + DocuSign replacement)** → **DEPTH41 (backup fortress)** → **DEPTH42 (storage tiering)** → **DEPTH43 (sketch file compatibility)** → **RE1-RE20 (full Zafto Realtor Platform — 20 sprints, ~444h, see Expansion/53_REALTOR_PLATFORM_SPEC.md)** → **INTEG1 (national portal submission API)** → **FLIP1 (deal aggregation + property intelligence)** → **FLIP2 (ARV engine + comp analysis)** → **FLIP3 (financial model + profit degradation timeline)** → **FLIP4 (hard money lender directory + deal cross-post engine)** → **FLIP5 (AI photo analysis + premium deep assessment — Claude Opus 4.6, requires Phase E position but Flip-specific, builds AFTER main FLIP engine)** → SEC2-SEC5 (2FA, biometrics, enterprise security, Hellhound) → LAUNCH2-LAUNCH6 (legal, payments, i18n, accessibility, testing) → Phase G (QA) → Phase JUR (incl JUR4 realtor jurisdiction) → Phase E (AI) → **SEC9 (security pentest)** → **SEC10 (legal pentest)** → **ZERO1-ZERO9 (zero-defect validation — break everything, fix everything, prove it's flawless)** → LAUNCH7 (App Store + onboarding wizard — DEAD LAST) → SHIP
 
 **Module coverage guarantee:**
 - DEPTH1-6: Horizontal audit by category (core biz, field tools, property, financial, CRM, calculators)
@@ -14161,6 +14316,14 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 - DEPTH34: Property preservation module — PP work orders (25+ service types), configurable smart photo system (Quick/Standard/Full Protection modes with GPS+timestamp), national company profiles (Safeguard/MCS/Cyprexx/NFR/Xome with per-company photo naming + submission deadlines + pay schedules), winterization assistant (dry/wet/steam procedures + DIY pressure test gauge + 30-min timer + antifreeze calc), boiler/furnace troubleshooter (all major models, error code lookup, interactive flowcharts, age decoder), sump pump installation assistant, stripped property repair estimators (copper/PEX repipe, electrical rewire, HVAC replacement, water heater), debris estimation calculator (room-by-room + sq ft quick estimate + 5-level hoarding scale + weight calc + dumpster recommender + recon integration), chargeback tracking + dispute system, payment tracking across nationals with aging, utility/fuel coordination (oil refill, gas/electric turn-on scheduling), vendor application helper, REO realtor finder, securing reference (bank lock codes, supply sourcing), board-up calculator (~52h)
 - DEPTH35: Mold remediation module — assessment intake + moisture mapping (heat map overlay on floor plan), IICRC S520 remediation levels 1-3 (auto-determined from assessment), containment + remediation task checklists, equipment tracking (dehumidifiers, air scrubbers, negative air), lab sample tracking + clearance testing, clearance certificate generator (PDF), state licensing requirement database (all 50 states), scope of work templates by scenario, insurance claim formatted output, mold disposal reference (~28h)
 - DEPTH36: Disposal & dump finder — facility database (all waste types: C&D, concrete, hazmat, mold, asbestos, tires, e-waste, appliances), nearest + cheapest per-ton search by property address, scrap/recycling value finder (copper, aluminum, steel prices), route optimization (property → dump → next property), dump receipt photo capture + cost analytics. Universal tool for ALL trades, not just PP (~8h)
+- DEPTH37: Tablet & mobile responsive overhaul — touch-friendly nav (no hover), auto-detect device type, all 4 portals optimized for tablet + mobile viewports, persistent sidebar on tablets, bottom nav on phones (~20h) **(S130)**
+- DEPTH38: Time clock permission-based adjustment — edit_timeclock permission in permission engine, adjustment UI with mandatory reason field, full audit trail, employee notifications, CRM + team portal views (~8h) **(S130)**
+- DEPTH39: Signature system overhaul — project linking (every signature tied to job/bid/invoice/contract), document templates with signature fields, email-based signing (no account needed), multi-party signing workflows, ESIGN/UETA compliant audit trail, PDF-lib embedded signatures, DocuSign replacement at $0 API cost (~24h) **(S130)**
+- DEPTH40: Universal marketplace aggregator — Craigslist RSS + HD/Lowes/Amazon affiliate APIs + CPSC recalls, paste-a-link for FB/OfferUp, AI deep research layer (Phase E dep: model specs, recalls, fair price, condition assessment), trade-relevant search/filter, save/watch listings (~40h, AI layer Phase E) **(S130)**
+- DEPTH41: Backup fortress — Supabase native + Cloudflare R2 nightly + Backblaze B2 weekly, all encrypted AES-256, immutable backups (30-day lock), storage bucket replication, monthly automated restore verification, ops dashboard, disaster recovery runbook (~12h) **(S130)**
+- DEPTH42: Storage tiering — usage metering per company, 5GB free tier, $5/50GB paid add-on blocks via RevenueCat, upload gating at limit, Cloudflare R2 overflow for heavy media, ops analytics (~8h) **(S130)**
+- DEPTH43: Sketch engine file compatibility — DXF/SVG/PDF/glTF/OBJ import AND export, compatibility report on import (shows what converted vs lost), round-trip fidelity testing vs AutoCAD/SketchUp/Blender, auto-detect format on upload (~16h) **(S130)**
+- DEPTH44: AI-gated features — AI clock-out cutoff (blocked when not clocked in, owner override in settings), AI budget controls, AI ticket system (user reports issue → AI investigates → guides if user error → escalates if real bug → ops portal dashboard), NO auto-fix (investigate + report only) (~12h, Phase E dep) **(S130)**
 - FLIP1: Deal aggregation — foreclosure/auction/pre-foreclosure/tax lien/estate/FSBO feeds, property intelligence enrichment, deduplication, smart alerts (~16h)
 - FLIP2: ARV engine — automated comp pull, appraiser-style adjustments, multi-method valuation, sensitivity analysis, neighborhood appreciation overlay (~12h)
 - FLIP3: Full financial model — every cost (purchase/rehab/financing/holding/selling), profit degradation timeline (month-by-month burn → break-even → loss), deal comparison, Go/No-Go scorecard, PDF export (~16h)
