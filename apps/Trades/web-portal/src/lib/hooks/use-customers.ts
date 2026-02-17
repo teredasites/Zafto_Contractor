@@ -123,6 +123,7 @@ export function useCustomer(id: string | undefined) {
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [ver, setVer] = useState(0);
 
   useEffect(() => {
     if (!id) {
@@ -157,7 +158,9 @@ export function useCustomer(id: string | undefined) {
 
     fetchCustomer();
     return () => { ignore = true; };
-  }, [id]);
+  }, [id, ver]);
 
-  return { customer, loading, error };
+  const refetch = useCallback(() => setVer((v) => v + 1), []);
+
+  return { customer, loading, error, refetch };
 }
