@@ -1,16 +1,39 @@
 // ZAFTO Web CRM — Auth + RBAC + i18n Middleware
-// Sprint B4a | Session 48 | RBAC added Session 55 | i18n added U13
+// Sprint B4a | Session 48 | RBAC added Session 55 | i18n added U13 | Hellhound SEC7 S131
 //
 // Protects /dashboard/* routes. Verifies auth AND role.
 // Allowed roles: owner, admin, office_manager, cpa, super_admin
 // Sets NEXT_LOCALE cookie from user preferred_locale.
+// Hellhound: blocks common attack paths and malicious user-agents at application level.
 
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
 const CRM_ALLOWED_ROLES = ['owner', 'admin', 'office_manager', 'cpa', 'super_admin'];
 
+// Hellhound — application-level request filtering (defense-in-depth behind Cloudflare)
+const BLOCKED_PATHS = [
+  '/.env', '/.git', '/.svn', '/.htaccess', '/.htpasswd',
+  '/wp-admin', '/wp-login.php', '/wp-content', '/xmlrpc.php',
+  '/phpmyadmin', '/admin.php', '/server-status', '/server-info',
+  '/.well-known/security.txt', // we don't have one yet — block probes
+  '/cgi-bin', '/config.php', '/debug', '/trace',
+];
+const BLOCKED_UA_PATTERNS = /sqlmap|nikto|dirbuster|gobuster|nmap|nuclei|masscan|zgrab|httpx|subfinder|amass|wpscan|joomla|drupal/i;
+
 export async function middleware(request: NextRequest) {
+  // Hellhound: block known attack paths
+  const pathname = request.nextUrl.pathname.toLowerCase();
+  if (BLOCKED_PATHS.some(p => pathname.startsWith(p))) {
+    return new NextResponse(null, { status: 403 });
+  }
+
+  // Hellhound: block malicious user-agents
+  const ua = request.headers.get('user-agent') || '';
+  if (BLOCKED_UA_PATTERNS.test(ua)) {
+    return new NextResponse(null, { status: 403 });
+  }
+
   let supabaseResponse = NextResponse.next({
     request,
   });
