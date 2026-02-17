@@ -504,89 +504,202 @@ function TimelineItem({ label, date, completed, isLast = false }: { label: strin
 }
 
 function TasksTab({ job }: { job: Job }) {
-  const [tasks] = useState([
-    { id: '1', title: 'Site walkthrough', completed: true },
-    { id: '2', title: 'Turn off power at breaker', completed: true },
-    { id: '3', title: 'Remove old fixtures', completed: false },
-    { id: '4', title: 'Install new fixtures', completed: false },
-    { id: '5', title: 'Test all connections', completed: false },
-    { id: '6', title: 'Customer sign-off', completed: false },
-  ]);
+  const [tasks, setTasks] = useState<{ id: string; name: string; percent_complete: number; task_type: string; is_critical: boolean }[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    const fetchTasks = async () => {
+      try {
+        const supabase = getSupabase();
+        // Find schedule project for this job
+        const { data: project } = await supabase
+          .from('schedule_projects')
+          .select('id')
+          .eq('job_id', job.id)
+          .neq('status', 'archived')
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (!project || cancelled) { setTasks([]); return; }
+
+        const { data: taskData } = await supabase
+          .from('schedule_tasks')
+          .select('id, name, percent_complete, task_type, is_critical')
+          .eq('project_id', project.id)
+          .is('deleted_at', null)
+          .order('sort_order', { ascending: true });
+
+        if (!cancelled) setTasks(taskData || []);
+      } catch {
+        if (!cancelled) setTasks([]);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+    fetchTasks();
+    return () => { cancelled = true; };
+  }, [job.id]);
+
+  const completedCount = tasks.filter((t) => t.percent_complete >= 100).length;
+
+  if (loading) {
+    return (
+      <Card>
+        <CardContent className="flex items-center justify-center h-32">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-accent" />
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-base">Task Checklist</CardTitle>
-        <Button variant="secondary" size="sm">
-          <Plus size={14} />
-          Add Task
+        <div>
+          <CardTitle className="text-base">Task Checklist</CardTitle>
+          {tasks.length > 0 && (
+            <p className="text-xs text-muted mt-1">{completedCount}/{tasks.length} complete</p>
+          )}
+        </div>
+        <Button variant="secondary" size="sm" onClick={() => window.location.href = `/dashboard/scheduling?jobId=${job.id}`}>
+          <GanttChart size={14} />
+          Manage Schedule
         </Button>
       </CardHeader>
       <CardContent>
-        <div className="space-y-2">
-          {tasks.map((task) => (
-            <div
-              key={task.id}
-              className={cn(
-                'flex items-center gap-3 p-3 rounded-lg border transition-colors',
-                task.completed ? 'border-emerald-200 bg-emerald-50 dark:border-emerald-900 dark:bg-emerald-900/20' : 'border-main'
-              )}
-            >
-              <button className={cn(
-                'w-5 h-5 rounded border-2 flex items-center justify-center transition-colors',
-                task.completed ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-muted hover:border-accent'
-              )}>
-                {task.completed && <CheckCircle size={14} />}
-              </button>
-              <span className={cn('flex-1', task.completed && 'line-through text-muted')}>
-                {task.title}
-              </span>
-            </div>
-          ))}
-        </div>
+        {tasks.length === 0 ? (
+          <div className="text-center py-8">
+            <CheckSquare size={32} className="mx-auto text-muted mb-2" />
+            <p className="text-sm text-muted">No tasks yet</p>
+            <p className="text-xs text-muted mt-1">Create a schedule to add tasks</p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {tasks.map((task) => {
+              const completed = task.percent_complete >= 100;
+              return (
+                <div
+                  key={task.id}
+                  className={cn(
+                    'flex items-center gap-3 p-3 rounded-lg border transition-colors',
+                    completed ? 'border-emerald-200 bg-emerald-50 dark:border-emerald-900 dark:bg-emerald-900/20' : 'border-main',
+                    task.is_critical && !completed && 'border-red-300 dark:border-red-800'
+                  )}
+                >
+                  <div className={cn(
+                    'w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0',
+                    completed ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-muted'
+                  )}>
+                    {completed && <CheckCircle size={14} />}
+                  </div>
+                  <span className={cn('flex-1 text-sm', completed && 'line-through text-muted')}>
+                    {task.name}
+                  </span>
+                  {!completed && task.percent_complete > 0 && (
+                    <span className="text-xs text-accent font-medium">{Math.round(task.percent_complete)}%</span>
+                  )}
+                  {task.is_critical && !completed && (
+                    <AlertTriangle size={14} className="text-red-500 flex-shrink-0" />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
       </CardContent>
     </Card>
   );
 }
 
 function MaterialsTab({ job }: { job: Job }) {
-  const [materials] = useState([
-    { id: '1', name: '2x4 LED Panel', quantity: 48, unitPrice: 85, used: 24 },
-    { id: '2', name: 'Wire nuts (100 pack)', quantity: 2, unitPrice: 12, used: 1 },
-    { id: '3', name: '12/2 Romex (250ft)', quantity: 1, unitPrice: 145, used: 0 },
-  ]);
+  const [materials, setMaterials] = useState<{ id: string; name: string; category: string; quantity: number; unit: string; unit_cost: number; total_cost: number; is_billable: boolean }[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    const fetchMaterials = async () => {
+      try {
+        const supabase = getSupabase();
+        const { data } = await supabase
+          .from('job_materials')
+          .select('id, name, category, quantity, unit, unit_cost, total_cost, is_billable')
+          .eq('job_id', job.id)
+          .is('deleted_at', null)
+          .order('created_at', { ascending: true });
+
+        if (!cancelled) setMaterials(data || []);
+      } catch {
+        if (!cancelled) setMaterials([]);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+    fetchMaterials();
+    return () => { cancelled = true; };
+  }, [job.id]);
+
+  const totalCost = materials.reduce((sum, m) => sum + (Number(m.total_cost) || Number(m.unit_cost) * Number(m.quantity) || 0), 0);
+
+  if (loading) {
+    return (
+      <Card>
+        <CardContent className="flex items-center justify-center h-32">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-accent" />
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-base">Materials</CardTitle>
+        <div>
+          <CardTitle className="text-base">Materials</CardTitle>
+          {materials.length > 0 && (
+            <p className="text-xs text-muted mt-1">{materials.length} items &middot; {formatCurrency(totalCost)} total</p>
+          )}
+        </div>
         <Button variant="secondary" size="sm">
           <Plus size={14} />
           Add Material
         </Button>
       </CardHeader>
-      <CardContent className="p-0">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b border-main">
-              <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">Item</th>
-              <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Qty</th>
-              <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Used</th>
-              <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Price</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-main">
-            {materials.map((item) => (
-              <tr key={item.id}>
-                <td className="px-6 py-4 font-medium text-main">{item.name}</td>
-                <td className="px-6 py-4 text-right text-muted">{item.quantity}</td>
-                <td className="px-6 py-4 text-right text-muted">{item.used}</td>
-                <td className="px-6 py-4 text-right font-medium text-main">{formatCurrency(item.unitPrice)}</td>
+      {materials.length === 0 ? (
+        <CardContent>
+          <div className="text-center py-8">
+            <Package size={32} className="mx-auto text-muted mb-2" />
+            <p className="text-sm text-muted">No materials logged</p>
+            <p className="text-xs text-muted mt-1">Add materials to track costs</p>
+          </div>
+        </CardContent>
+      ) : (
+        <CardContent className="p-0">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-main">
+                <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">Item</th>
+                <th className="text-left text-xs font-medium text-muted uppercase px-6 py-3">Category</th>
+                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Qty</th>
+                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Unit Cost</th>
+                <th className="text-right text-xs font-medium text-muted uppercase px-6 py-3">Total</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </CardContent>
+            </thead>
+            <tbody className="divide-y divide-main">
+              {materials.map((item) => (
+                <tr key={item.id}>
+                  <td className="px-6 py-4 font-medium text-main">{item.name}</td>
+                  <td className="px-6 py-4 text-muted capitalize text-sm">{item.category}</td>
+                  <td className="px-6 py-4 text-right text-muted">{item.quantity} {item.unit}</td>
+                  <td className="px-6 py-4 text-right text-muted">{formatCurrency(Number(item.unit_cost) || 0)}</td>
+                  <td className="px-6 py-4 text-right font-medium text-main">{formatCurrency(Number(item.total_cost) || Number(item.unit_cost) * Number(item.quantity) || 0)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </CardContent>
+      )}
     </Card>
   );
 }

@@ -12043,40 +12043,134 @@ When inspector takes a photo during inspection execution, add search bar to atta
 
 ### NICHE2 — Service Trades Module (~8h)
 **Goal:** Locksmith, garage door, and appliance repair share a "service call" pattern — diagnose on-site, quote repair vs replace, complete same-day. Each needs trade-specific parts catalogs and diagnostic flows.
-- [ ] Flutter: `lib/screens/locksmith/locksmith_service_screen.dart` — Service type (lockout, rekey, install, repair, master key, safe, automotive, access control), lock type identification (pin tumbler, deadbolt, mortise, electronic, smart, padlock, cam), key code recording, master key system documentation, access control zone mapping
-- [ ] Flutter: `lib/screens/garage_door/garage_door_service_screen.dart` — Door type (sectional, roll-up, tilt, carriage, commercial), opener type (chain, belt, screw, jackshaft, direct drive), spring type (torsion, extension) with measurements (wire size, length, inside diameter), balance test documentation, safety reverse test (photo/video), force settings, travel limits
-- [ ] Flutter: `lib/screens/appliance/appliance_service_screen.dart` — Appliance type (refrigerator, washer, dryer, dishwasher, oven, range, microwave, HVAC unit, water heater, garbage disposal, ice maker), brand/model/serial capture (camera OCR), diagnostic code lookup, parts needed with model-specific part numbers, repair vs replace cost comparison calculator
-- [ ] Models: `locksmith_service.dart` (lock_types, service_types, key_codes), `garage_door_service.dart` (door_measurements, spring_specs, opener_type), `appliance_service.dart` (appliance_type, brand_model, diagnostic_codes)
-- [ ] Seed data: common lock types with rekey procedures, garage door spring sizing charts, common appliance error codes by brand (top 10 brands × top 5 codes = ~50 entries per appliance type)
-- [ ] Calculators: garage door spring calculator (wire size × length × ID = cycles), appliance repair vs replace ROI calculator, master key system bitting calculator
-- [ ] **S130 Audit Additions — Infrastructure + Splitting (MANDATORY):**
-- [ ] **NICHE2 covers THREE distinct trades — each gets its own subsection, database tables, and web portal coverage.**
+- [x] Flutter: `lib/screens/locksmith/locksmith_service_screen.dart` — Service type (lockout, rekey, install, repair, master key, safe, automotive, access control), lock type identification (pin tumbler, deadbolt, mortise, electronic, smart, padlock, cam), key code recording, master key system documentation, access control zone mapping
+- [x] Flutter: `lib/screens/garage_door/garage_door_service_screen.dart` — Door type (sectional, roll-up, tilt, carriage, commercial), opener type (chain, belt, screw, jackshaft, direct drive), spring type (torsion, extension) with measurements (wire size, length, inside diameter), balance test documentation, safety reverse test (photo/video), force settings, travel limits
+- [x] Flutter: `lib/screens/appliance/appliance_service_screen.dart` — Appliance type (refrigerator, washer, dryer, dishwasher, oven, range, microwave, HVAC unit, water heater, garbage disposal, ice maker), brand/model/serial capture (camera OCR), diagnostic code lookup, parts needed with model-specific part numbers, repair vs replace cost comparison calculator
+- [x] Models: `locksmith_service.dart` (lock_types, service_types, key_codes), `garage_door_service.dart` (door_measurements, spring_specs, opener_type), `appliance_service.dart` (appliance_type, brand_model, diagnostic_codes)
+- [x] Seed data: common lock types with rekey procedures, garage door spring sizing charts, common appliance error codes by brand (top 10 brands × top 5 codes = ~50 entries per appliance type)
+- [x] Calculators: garage door spring calculator (wire size × length × ID = cycles), appliance repair vs replace ROI calculator, master key system bitting calculator
+- [x] **S130 Audit Additions — Infrastructure + Splitting (MANDATORY):**
+- [x] **NICHE2 covers THREE distinct trades — each gets its own subsection, database tables, and web portal coverage.**
 
 **Subsection A — Locksmith (~6h):**
-- [ ] **Database table** — `locksmith_service_logs` (id, job_id, company_id, service_type enum [rekey, lockout, lock_change, master_key, safe, automotive_lockout, transponder_key, high_security, access_control], lock_brand, lock_type enum [deadbolt, knob, lever, padlock, mortise, rim, cam, electronic, smart, automotive], key_type enum [standard, restricted, high_security, transponder, proximity, smart], pins, bitting_code, master_key_system_id, vin_number, vehicle_year_make_model, photos jsonb, created_at, updated_at, deleted_at). RLS: company_id scoping.
-- [ ] **Web CRM hook + page** — `use-locksmith.ts`, `/dashboard/locksmith/page.tsx`: service log history, master key system management, key inventory tracking.
-- [ ] **Diagnostic flow** — Guided decision tree: lockout type (residential/commercial/automotive) -> lock identification (photo + brand/model lookup) -> service recommendation -> parts needed -> quote generation. Not just a form — an actual step-by-step diagnostic.
-- [ ] **Automotive locksmith depth** — VIN decoder integration (NHTSA free API) for vehicle identification, transponder key type lookup by year/make/model, programming procedure reference by vehicle.
-- [ ] **Repository** — `lib/repositories/locksmith_service_repository.dart`
+- [x] **Database table** — `locksmith_service_logs` (id, job_id, company_id, service_type enum [rekey, lockout, lock_change, master_key, safe, automotive_lockout, transponder_key, high_security, access_control], lock_brand, lock_type enum [deadbolt, knob, lever, padlock, mortise, rim, cam, electronic, smart, automotive], key_type enum [standard, restricted, high_security, transponder, proximity, smart], pins, bitting_code, master_key_system_id, vin_number, vehicle_year_make_model, photos jsonb, created_at, updated_at, deleted_at). RLS: company_id scoping.
+- [x] **Web CRM hook + page** — `use-locksmith.ts`, `/dashboard/locksmith/page.tsx`: service log history, master key system management, key inventory tracking.
+- [x] **Diagnostic flow** — Guided decision tree: lockout type (residential/commercial/automotive) -> lock identification (photo + brand/model lookup) -> service recommendation -> parts needed -> quote generation. Not just a form — an actual step-by-step diagnostic.
+- [x] **Automotive locksmith depth** — VIN decoder integration (NHTSA free API) for vehicle identification, transponder key type lookup by year/make/model, programming procedure reference by vehicle.
+- [x] **Repository** — `lib/repositories/locksmith_service_repository.dart`
 
 **Subsection B — Garage Door (~6h):**
-- [ ] **Database table** — `garage_door_service_logs` (id, job_id, company_id, door_type enum [sectional, roll_up, tilt_up, slide, commercial_rolling_steel], opener_brand, opener_model, spring_type enum [torsion, extension, torquemaster, ez_set], spring_wire_size, spring_length, spring_inside_diameter, cycles_rating, door_width_inches, door_height_inches, track_type, panel_material, insulation_r_value, safety_sensor_status, photos jsonb, created_at, updated_at, deleted_at). RLS: company_id scoping.
-- [ ] **Web CRM hook + page** — `use-garage-door.ts`, `/dashboard/garage-door/page.tsx`: service history, spring inventory, door specs per property.
-- [ ] **Diagnostic flow** — Guided: symptom (won't open / won't close / noisy / uneven / opener issue) -> visual inspection checklist -> component testing -> diagnosis -> parts + labor quote.
-- [ ] **Repository** — `lib/repositories/garage_door_service_repository.dart`
+- [x] **Database table** — `garage_door_service_logs` (id, job_id, company_id, door_type enum [sectional, roll_up, tilt_up, slide, commercial_rolling_steel], opener_brand, opener_model, spring_type enum [torsion, extension, torquemaster, ez_set], spring_wire_size, spring_length, spring_inside_diameter, cycles_rating, door_width_inches, door_height_inches, track_type, panel_material, insulation_r_value, safety_sensor_status, photos jsonb, created_at, updated_at, deleted_at). RLS: company_id scoping.
+- [x] **Web CRM hook + page** — `use-garage-door.ts`, `/dashboard/garage-door/page.tsx`: service history, spring inventory, door specs per property.
+- [x] **Diagnostic flow** — Guided: symptom (won't open / won't close / noisy / uneven / opener issue) -> visual inspection checklist -> component testing -> diagnosis -> parts + labor quote.
+- [x] **Repository** — `lib/repositories/garage_door_service_repository.dart`
 
 **Subsection C — Appliance Repair (~6h):**
-- [ ] **Database table** — `appliance_service_logs` (id, job_id, company_id, appliance_type enum [refrigerator, washer, dryer, dishwasher, oven, range, microwave, garbage_disposal, ice_maker, wine_cooler, trash_compactor, range_hood], brand, model_number, serial_number, manufacture_date, error_code, diagnosis, repair_performed, parts_used jsonb, repair_vs_replace_recommendation enum [repair, replace, customer_choice], estimated_remaining_life_years, photos jsonb, created_at, updated_at, deleted_at). RLS: company_id scoping. **NOTE: Removed "HVAC unit" and "water heater" — those belong to HVAC/plumbing trades.**
-- [ ] **Web CRM hook + page** — `use-appliance-repair.ts`, `/dashboard/appliance-repair/page.tsx`: service history, error code lookup, repair-vs-replace analytics per brand/model.
-- [ ] **Diagnostic flow** — Guided: appliance type -> brand -> model -> symptom selection (from seed data error codes) -> testing sequence -> component identification -> parts lookup -> repair-vs-replace ROI calculation.
-- [ ] **Repository** — `lib/repositories/appliance_service_repository.dart`
+- [x] **Database table** — `appliance_service_logs` (id, job_id, company_id, appliance_type enum [refrigerator, washer, dryer, dishwasher, oven, range, microwave, garbage_disposal, ice_maker, wine_cooler, trash_compactor, range_hood], brand, model_number, serial_number, manufacture_date, error_code, diagnosis, repair_performed, parts_used jsonb, repair_vs_replace_recommendation enum [repair, replace, customer_choice], estimated_remaining_life_years, photos jsonb, created_at, updated_at, deleted_at). RLS: company_id scoping. **NOTE: Removed "HVAC unit" and "water heater" — those belong to HVAC/plumbing trades.**
+- [x] **Web CRM hook + page** — `use-appliance-repair.ts`, `/dashboard/appliance-repair/page.tsx`: service history, error code lookup, repair-vs-replace analytics per brand/model.
+- [x] **Diagnostic flow** — Guided: appliance type -> brand -> model -> symptom selection (from seed data error codes) -> testing sequence -> component identification -> parts lookup -> repair-vs-replace ROI calculation.
+- [x] **Repository** — `lib/repositories/appliance_service_repository.dart`
 
 **All three subsections share:**
-- [ ] Team portal pages for field techs (one page per trade under `/dashboard/service/`)
-- [ ] Client portal visibility: homeowner sees service report, warranty info, maintenance tips
-- [ ] All 4 states on every screen (loading, error, empty, data)
-- [ ] Parts catalog with search, pricing, supplier links (wires into DEPTH32 Material Finder)
-- [ ] Commit: `[NICHE2] Service trades — locksmith, garage door, appliance repair diagnostic flows`
+- [x] Team portal pages for field techs (one page per trade under `/dashboard/service/`)
+- [x] Client portal visibility: homeowner sees service report, warranty info, maintenance tips
+- [x] All 4 states on every screen (loading, error, empty, data)
+- [x] Parts catalog with search, pricing, supplier links (wires into DEPTH32 Material Finder)
+- [x] Commit: `[NICHE2] Service trades — locksmith, garage door, appliance repair diagnostic flows`
+
+---
+
+### Phase MOV: Moving Company Module (~200h, 8 sprints MOV1-MOV8)
+*S131 Owner Request: Moving companies — LiDAR volume estimation from Sketch Engine, debris estimator repurpose for cubic yardage, full moving company workflow.*
+*~80% infrastructure reuse from Sketch Engine, Estimate Engine, CRM, Client Portal, Team Portal, Job Scheduling.*
+*~13 new tables. LiDAR scanning = first-in-industry feature (no competitor has on-device volume estimation).*
+
+#### MOV1 -- Moving Volume Estimator + LiDAR Scan Repurposing (~24h)
+- [ ] Extend RoomPlanConverter to return volume data (LxWxH bounding boxes) for each detected furniture item
+- [ ] Create MoveVolumeCalculator service: sum furniture volumes per room, packing overhead factor (1.2x), total CF
+- [ ] Create MoveVolumeEstimateScreen: LiDAR scan → detected items with volumes → room breakdown
+- [ ] Manual override: add/remove/adjust items when LiDAR misses closet/cabinet items
+- [ ] Room-by-room manual calculator fallback for non-LiDAR devices (item picker with preset volumes)
+- [ ] Truck sizing recommendation engine: total CF → truck size(s), 85% load factor, number of trucks
+- [ ] Crew sizing recommendation: volume + distance + stairs/elevator → crew size + estimated hours
+- [ ] CF/CY display toggle (contractors=CY, movers=CF)
+- [ ] Seed data: 120+ household items with average dimensions and weights
+
+#### MOV2 -- Moving Estimate Engine (~20h)
+- [ ] Moving estimate type: hourly, flat-rate, weight-based, cubic-footage-based
+- [ ] Auto-generate estimate from volume scan: labor hours x rate + materials + specialty + travel + fuel surcharge
+- [ ] Binding vs non-binding vs binding-not-to-exceed estimate modes with legal language
+- [ ] Line item templates: packing, loading, transport, unloading, unpacking, furniture protection, stair carry, long carry, elevator, shuttle
+- [ ] Specialty item surcharges: auto-add for pianos, safes, pool tables, hot tubs
+- [ ] Materials estimate: auto-calculate box counts and materials cost from room inventory
+- [ ] Distance/mileage calculator: geocoding for origin-to-destination distance
+- [ ] Minimum charge enforcement (2-4 hour minimums configurable)
+- [ ] Fuel surcharge calculator (configurable % or flat fee)
+- [ ] Travel time charge: portal-to-portal vs door-to-door toggle
+
+#### MOV3 -- Moving Inventory + Bill of Lading (~24h)
+- [ ] Room-by-room inventory: auto-populated from LiDAR scan, editable by crew
+- [ ] Item tagging system: color-coded room labels, sequential numbering
+- [ ] Condition codes: SC/D/CH/BR/SO/R/W/MI/PBO (industry standard)
+- [ ] Photo documentation: per-item condition photos at pickup and delivery
+- [ ] High-value inventory form: items over $100/lb, declared values, customer signature
+- [ ] Bill of lading generator: auto-populate from inventory, weight, origin/destination, valuation selection
+- [ ] Customer inventory review in client portal: see every item, pre-approve, special instructions
+- [ ] QR code per box/item: scan to see contents, destination room, condition notes
+- [ ] Delivery confirmation: customer checks off items, notes damage
+- [ ] Missing item flagging: pickup vs delivery inventory comparison
+
+#### MOV4 -- Valuation, Claims, and Compliance (~20h)
+- [ ] Valuation selection: released value ($0.60/lb) vs full value protection (configurable deductible)
+- [ ] FVP premium calculator: percentage of declared shipment value (1-3%)
+- [ ] Damage claim intake: customer via client portal with photos, description, weight, original value
+- [ ] Depreciation calculator: configurable rates by category (electronics 25%/yr, furniture 10%/yr, appliances 15%/yr)
+- [ ] Claim resolution workflow: acknowledge (30d) → investigate → offer (repair/replace/cash) → accept/reject → arbitration
+- [ ] Settlement tracking: offered, accepted, payment issued
+- [ ] DOT compliance document tracker: USDOT#, insurance certs, MC authority, expiration alerts
+- [ ] "Your Rights and Responsibilities" digital acknowledgment with e-signature
+- [ ] State licensing tracker: licensed states, renewal dates
+- [ ] Tariff schedule management: published rates (FMCSA requirement)
+
+#### MOV5 -- Packing Materials Calculator (~12h)
+- [ ] Box type seed data: small/medium/large/XL/dish pack/wardrobe/picture/mattress bag (dimensions, CF, cost)
+- [ ] Room-to-boxes algorithm: map items to box types and quantities
+- [ ] Packing paper estimation: 25 lbs per 2 dish packs + fragile items
+- [ ] Bubble wrap estimation: based on fragile item count
+- [ ] Tape estimation: 1 roll per 10 boxes
+- [ ] Mattress bag calculator: per bed count from scan
+- [ ] Materials cost totaling with configurable unit costs
+- [ ] Auto-add materials as estimate line items
+- [ ] Customer/full-service/fragile-only packing modes
+
+#### MOV6 -- Specialty Item Handling (~12h)
+- [ ] Specialty item seed data: pianos (6 types), pool tables (3 sizes), gun safes (4 weight classes), hot tubs, grandfather clocks, exercise equipment, wine collections
+- [ ] Equipment checklist generator: based on specialty items on job
+- [ ] Specialty surcharge auto-calculator: weight + stairs + access difficulty
+- [ ] Crew skill requirements: flag specialty-trained crew needed
+- [ ] Crating service estimation: custom crate dimensions + material cost for art/antiques
+
+#### MOV7 -- Storage Integration (~12h)
+- [ ] Storage-in-transit (SIT) tracking: dates, vault count, monthly charges
+- [ ] Vault sizing calculator: CF of shipment / vault capacity = vaults needed
+- [ ] Storage facility management: facility, vault#s, access schedule
+- [ ] Auto-add SIT charges to invoice as period extends
+- [ ] Customer notification: delivery scheduling, 7-day advance notice
+- [ ] Storage inventory: subset viewable in client portal
+- [ ] Portable container sizing: PODS recommendation from move volume
+- [ ] Storage cost comparison: vault vs unit vs container
+
+#### MOV8 -- Moving Reports + Analytics (~16h)
+- [ ] Revenue per truck per day/week/month
+- [ ] Estimate accuracy tracking: estimated hours vs actual, estimated weight vs actual
+- [ ] Crew productivity: CF moved/hour, items/hour
+- [ ] Claims ratio: claims/total moves, avg claim cost
+- [ ] Lead-to-booking conversion by source
+- [ ] Seasonal demand heatmap (peak: May-September)
+- [ ] Materials usage: actual vs estimated boxes/supplies
+- [ ] Customer satisfaction by crew
+- [ ] Fuel cost per move
+- [ ] Route optimization suggestions
 
 ---
 
@@ -14451,6 +14545,7 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 | **FIELD** | FIELD1-FIELD5 | ~66h | Missing field features: messaging, equipment checkout, team portal stubs, BLE laser meter integration, **BYOC phone integration (S130)** |
 | **REST** | REST1-REST2 | ~30h | Restoration gaps: fire tools + infrastructure (tables/RLS/web CRM/team portal/client portal/PDF), mold remediation (IICRC S520) + state regs + lab directory + chain of custody |
 | **NICHE** | NICHE1-NICHE2 | ~30h | Missing trade modules: pest control (full infrastructure + WDI/NPMA-33 PDF + recurring billing), service trades (locksmith + garage door + appliance — each with tables/RLS/web CRM/diagnostic flows) |
+| **MOV** | MOV1-MOV8 | ~200h | LiDAR volume estimation, moving estimates, inventory/BOL, valuation/claims, packing materials, specialty items, storage, analytics |
 | **DEPTH** | DEPTH1-DEPTH44 | ~764h | Full depth audit + corrections + contractor needs validation + commercial building support + property blueprint lookup + bulletproof crash recovery + recon mega-expansion (all-trade scans, 24 free APIs, **+EagleView calibration, +Storm Hunter**) + estimate engine overhaul (material tiers, G/B/B, labor hours, **+Price Book**) + recon-to-estimate pipeline + crowdsourced material pricing (receipt OCR, 60+ suppliers) + Material Finder search engine (affiliate feeds, 200+ suppliers, regional pricing) + data privacy/AI consent + property preservation module (**+winterization phone-tech verification, +dewinterization tool**) + mold remediation + disposal/dump finder + **S130 additions: tablet/mobile responsive overhaul (~20h), time clock permission adjustment (~8h), signature system + DocuSign replacement (~24h), universal marketplace aggregator (~40h Phase E dep), backup fortress (~12h), storage tiering (~8h), sketch file compatibility (~16h), AI-gated features + ticket system (~12h Phase E dep)** |
 | **SEC** | SEC1-SEC10 | ~92h | Security fortress: critical fixes, 2FA, biometrics, enterprise options, Hellhound, headers, WAF, dependency scanning, security pentest, legal pentest |
 | **ZERO** | ZERO1-ZERO9 | ~86h | Zero-defect validation: property testing, state machines, chaos engineering, 50K load test, fuzz testing, mutation testing, edge case gauntlet, triple-scan |
