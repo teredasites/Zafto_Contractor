@@ -1,15 +1,34 @@
 // ZAFTO Employee Field Portal — Auth + RBAC Middleware
-// Sprint B5 | RBAC added Session 55
+// Sprint B5 | RBAC added Session 55 | Hellhound SEC7 S131
 //
 // Protects /dashboard/* routes. Verifies auth AND role.
 // Allowed roles: owner, admin, office_manager, technician, super_admin
+// Hellhound: blocks common attack paths and malicious user-agents.
 
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
 const TEAM_ALLOWED_ROLES = ['owner', 'admin', 'office_manager', 'technician', 'apprentice', 'super_admin'];
 
+// Hellhound — application-level request filtering
+const BLOCKED_PATHS = [
+  '/.env', '/.git', '/.svn', '/.htaccess', '/.htpasswd',
+  '/wp-admin', '/wp-login.php', '/wp-content', '/xmlrpc.php',
+  '/phpmyadmin', '/admin.php', '/server-status', '/server-info',
+  '/cgi-bin', '/config.php', '/debug', '/trace',
+];
+const BLOCKED_UA_PATTERNS = /sqlmap|nikto|dirbuster|gobuster|nmap|nuclei|masscan|zgrab|httpx|subfinder|amass|wpscan/i;
+
 export async function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname.toLowerCase();
+  if (BLOCKED_PATHS.some(p => pathname.startsWith(p))) {
+    return new NextResponse(null, { status: 403 });
+  }
+  const ua = request.headers.get('user-agent') || '';
+  if (BLOCKED_UA_PATTERNS.test(ua)) {
+    return new NextResponse(null, { status: 403 });
+  }
+
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(

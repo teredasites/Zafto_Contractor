@@ -1,14 +1,33 @@
 // ZAFTO Client Portal — Auth + RBAC Middleware
-// Sprint B6 | RBAC added Session 55
+// Sprint B6 | RBAC added Session 55 | Hellhound SEC7 S131
 //
 // Protects all routes except / and /auth/*.
 // Verifies auth AND checks client_portal_users table.
 // Also allows super_admin from users table (for testing).
+// Hellhound: blocks common attack paths and malicious user-agents.
 
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
+// Hellhound — application-level request filtering
+const BLOCKED_PATHS = [
+  '/.env', '/.git', '/.svn', '/.htaccess', '/.htpasswd',
+  '/wp-admin', '/wp-login.php', '/wp-content', '/xmlrpc.php',
+  '/phpmyadmin', '/admin.php', '/server-status', '/server-info',
+  '/cgi-bin', '/config.php', '/debug', '/trace',
+];
+const BLOCKED_UA_PATTERNS = /sqlmap|nikto|dirbuster|gobuster|nmap|nuclei|masscan|zgrab|httpx|subfinder|amass|wpscan/i;
+
 export async function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname.toLowerCase();
+  if (BLOCKED_PATHS.some(p => pathname.startsWith(p))) {
+    return new NextResponse(null, { status: 403 });
+  }
+  const ua = request.headers.get('user-agent') || '';
+  if (BLOCKED_UA_PATTERNS.test(ua)) {
+    return new NextResponse(null, { status: 403 });
+  }
+
   let response = NextResponse.next({ request: { headers: request.headers } });
 
   const supabase = createServerClient(

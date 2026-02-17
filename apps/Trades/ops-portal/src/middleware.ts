@@ -1,7 +1,25 @@
+// Hellhound SEC7 S131 — application-level request filtering
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
+const BLOCKED_PATHS = [
+  '/.env', '/.git', '/.svn', '/.htaccess', '/.htpasswd',
+  '/wp-admin', '/wp-login.php', '/wp-content', '/xmlrpc.php',
+  '/phpmyadmin', '/admin.php', '/server-status', '/server-info',
+  '/cgi-bin', '/config.php', '/debug', '/trace',
+];
+const BLOCKED_UA_PATTERNS = /sqlmap|nikto|dirbuster|gobuster|nmap|nuclei|masscan|zgrab|httpx|subfinder|amass|wpscan/i;
+
 export async function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname.toLowerCase();
+  if (BLOCKED_PATHS.some(p => pathname.startsWith(p))) {
+    return new NextResponse(null, { status: 403 });
+  }
+  const ua = request.headers.get('user-agent') || '';
+  if (BLOCKED_UA_PATTERNS.test(ua)) {
+    return new NextResponse(null, { status: 403 });
+  }
+
   let supabaseResponse = NextResponse.next({
     request,
   });
