@@ -24,6 +24,10 @@ import {
   ToggleLeft,
   ToggleRight,
   Wrench,
+  Smartphone,
+  CheckCircle,
+  AlertTriangle,
+  ExternalLink,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -39,6 +43,7 @@ import {
   type AiReceptionistConfig,
 } from '@/lib/hooks/use-phone-config';
 import { usePhoneLines } from '@/lib/hooks/use-phone-lines';
+import { useByocPhone, formatPhoneDisplay, CARRIER_FORWARDING_INSTRUCTIONS, type CompanyPhoneNumber } from '@/lib/hooks/use-byoc-phone';
 import { useRingGroups } from '@/lib/hooks/use-ring-groups';
 
 // ============================================================
@@ -51,7 +56,8 @@ type TabId =
   | 'routing'
   | 'ai'
   | 'templates'
-  | 'recording';
+  | 'recording'
+  | 'byoc';
 
 const TABS: { id: TabId; label: string; icon: typeof Phone }[] = [
   { id: 'general', label: 'General', icon: Settings },
@@ -60,6 +66,7 @@ const TABS: { id: TabId; label: string; icon: typeof Phone }[] = [
   { id: 'ai', label: 'AI Receptionist', icon: Bot },
   { id: 'templates', label: 'Templates', icon: MessageSquare },
   { id: 'recording', label: 'Recording', icon: Mic },
+  { id: 'byoc', label: 'Your Number', icon: Smartphone },
 ];
 
 const DAYS: (keyof BusinessHours)[] = [
@@ -117,6 +124,7 @@ export default function PhoneSettingsPage() {
     updateGroup,
     deleteGroup,
   } = useRingGroups();
+  const byoc = useByocPhone();
 
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
@@ -238,6 +246,9 @@ export default function PhoneSettingsPage() {
           onSave={handleSave}
           updateRecording={updateRecording}
         />
+      )}
+      {activeTab === 'byoc' && (
+        <ByocTab byoc={byoc} showToast={showToast} />
       )}
 
       {/* Toast */}
@@ -1494,6 +1505,302 @@ function RecordingTab({
               </button>
             </div>
           ))}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+// ============================================================
+// BYOC Tab — Bring Your Own Carrier
+// ============================================================
+
+function ByocTab({
+  byoc,
+  showToast,
+}: {
+  byoc: ReturnType<typeof useByocPhone>;
+  showToast: (msg: string) => void;
+}) {
+  const [phone, setPhone] = useState('');
+  const [label, setLabel] = useState('');
+  const [fwdType, setFwdType] = useState<'call_forward' | 'sip_trunk' | 'port_in'>('call_forward');
+  const [carrier, setCarrier] = useState('other');
+  const [adding, setAdding] = useState(false);
+  const [verifyId, setVerifyId] = useState<string | null>(null);
+  const [code, setCode] = useState('');
+
+  const handleAdd = async () => {
+    if (!phone.trim()) return;
+    setAdding(true);
+    try {
+      await byoc.addNumber({
+        phoneNumber: phone,
+        displayLabel: label || undefined,
+        forwardingType: fwdType,
+        carrierDetected: carrier,
+      });
+      setPhone('');
+      setLabel('');
+      showToast('Number added. Send verification to activate.');
+    } catch (e) {
+      showToast(`Failed: ${e instanceof Error ? e.message : 'Unknown error'}`);
+    } finally {
+      setAdding(false);
+    }
+  };
+
+  const handleVerify = async (id: string) => {
+    try {
+      await byoc.sendVerification(id);
+      setVerifyId(id);
+      showToast('Verification code sent via SMS');
+    } catch (e) {
+      showToast(`Failed to send code: ${e instanceof Error ? e.message : ''}`);
+    }
+  };
+
+  const handleSubmitCode = async () => {
+    if (!verifyId || !code.trim()) return;
+    try {
+      const ok = await byoc.verifyCode(verifyId, code);
+      if (ok) {
+        setVerifyId(null);
+        setCode('');
+        showToast('Number verified successfully!');
+      } else {
+        showToast('Invalid code. Try again.');
+      }
+    } catch {
+      showToast('Verification failed');
+    }
+  };
+
+  const statusColor = (s: string) => {
+    if (s === 'verified') return 'text-emerald-500';
+    if (s === 'code_sent') return 'text-amber-500';
+    return 'text-muted';
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Info */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Smartphone size={18} />
+            Bring Your Own Number
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted">
+            Keep your existing business phone number and get all Zafto phone features —
+            call recording, IVR, voicemail transcription, and analytics. Choose from three
+            integration methods: call forwarding (easiest), SIP trunk (VoIP providers),
+            or number porting (permanent transfer).
+          </p>
+        </CardContent>
+      </Card>
+
+      {/* Existing numbers */}
+      {byoc.numbers.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Your Numbers</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {byoc.numbers.map((num) => (
+              <div
+                key={num.id}
+                className="p-4 bg-secondary rounded-lg border border-default"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono font-semibold text-main">
+                        {formatPhoneDisplay(num.phoneNumber)}
+                      </span>
+                      {num.isPrimary && (
+                        <Badge variant="secondary" className="text-xs">PRIMARY</Badge>
+                      )}
+                    </div>
+                    {num.displayLabel && (
+                      <p className="text-xs text-muted mt-0.5">{num.displayLabel}</p>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className={cn('text-xs font-medium flex items-center gap-1', statusColor(num.verificationStatus))}>
+                      {num.verificationStatus === 'verified' ? (
+                        <><CheckCircle size={12} /> Verified</>
+                      ) : num.verificationStatus === 'code_sent' ? (
+                        <><AlertTriangle size={12} /> Code Sent</>
+                      ) : (
+                        'Pending'
+                      )}
+                    </span>
+                    {num.verificationStatus !== 'verified' && (
+                      <Button size="sm" variant="outline" onClick={() => handleVerify(num.id)}>
+                        Verify
+                      </Button>
+                    )}
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="text-red-400 hover:text-red-300"
+                      onClick={async () => {
+                        await byoc.deleteNumber(num.id);
+                        showToast('Number removed');
+                      }}
+                    >
+                      <Trash2 size={14} />
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 mt-2 text-xs text-muted">
+                  <span>{num.forwardingType === 'sip_trunk' ? 'SIP Trunk' : num.forwardingType === 'port_in' ? 'Number Porting' : 'Call Forwarding'}</span>
+                  {num.carrierDetected && <span>· {num.carrierDetected}</span>}
+                  {num.callerIdName && <span>· Caller ID: {num.callerIdName}</span>}
+                </div>
+
+                {/* Forwarding instructions */}
+                {num.forwardingType === 'call_forward' && num.verificationStatus === 'verified' && num.forwardingInstructions && (
+                  <div className="mt-2 p-2 bg-surface rounded text-xs text-muted flex items-start gap-2">
+                    <ExternalLink size={12} className="mt-0.5 flex-shrink-0" />
+                    <span>{num.forwardingInstructions}</span>
+                  </div>
+                )}
+
+                {/* Port status */}
+                {num.forwardingType === 'port_in' && num.portStatus !== 'none' && (
+                  <div className="mt-2 flex items-center gap-2 text-xs">
+                    {['requested', 'foc_received', 'porting', 'complete'].map((step, i) => {
+                      const steps = ['requested', 'foc_received', 'porting', 'complete'];
+                      const currentIdx = steps.indexOf(num.portStatus);
+                      const done = i <= currentIdx;
+                      return (
+                        <div key={step} className="flex items-center gap-1">
+                          <div className={cn(
+                            'w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold',
+                            done ? 'bg-accent text-white' : 'bg-secondary text-muted border border-default'
+                          )}>
+                            {done ? '✓' : i + 1}
+                          </div>
+                          <span className={done ? 'text-main' : 'text-muted'}>
+                            {step === 'foc_received' ? 'FOC' : step.charAt(0).toUpperCase() + step.slice(1)}
+                          </span>
+                          {i < 3 && <ArrowRight size={10} className="text-muted mx-1" />}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Verification code entry */}
+      {verifyId && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base flex items-center gap-2">
+              <Shield size={16} />
+              Enter Verification Code
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted mb-3">
+              We sent a 6-digit code to your phone via SMS.
+            </p>
+            <div className="flex gap-3">
+              <input
+                type="text"
+                maxLength={6}
+                value={code}
+                onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
+                placeholder="000000"
+                className="flex-1 px-4 py-2 bg-secondary border border-default rounded-lg text-center text-2xl font-mono tracking-[0.3em] text-main"
+              />
+              <Button onClick={handleSubmitCode} disabled={code.length < 6}>
+                Verify
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Add number */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2">
+            <Plus size={16} />
+            Add Business Number
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-xs text-muted mb-1 block">Phone Number</label>
+              <input
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="(555) 123-4567"
+                className="w-full px-3 py-2 bg-secondary border border-default rounded-lg text-sm text-main"
+              />
+            </div>
+            <div>
+              <label className="text-xs text-muted mb-1 block">Label (optional)</label>
+              <input
+                type="text"
+                value={label}
+                onChange={(e) => setLabel(e.target.value)}
+                placeholder="Main Office"
+                className="w-full px-3 py-2 bg-secondary border border-default rounded-lg text-sm text-main"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-xs text-muted mb-1 block">Integration Method</label>
+              <select
+                value={fwdType}
+                onChange={(e) => setFwdType(e.target.value as typeof fwdType)}
+                className="w-full px-3 py-2 bg-secondary border border-default rounded-lg text-sm text-main"
+              >
+                <option value="call_forward">Call Forwarding (Easiest)</option>
+                <option value="sip_trunk">SIP Trunk (VoIP Providers)</option>
+                <option value="port_in">Port Number (Permanent)</option>
+              </select>
+            </div>
+            {fwdType === 'call_forward' && (
+              <div>
+                <label className="text-xs text-muted mb-1 block">Your Carrier</label>
+                <select
+                  value={carrier}
+                  onChange={(e) => setCarrier(e.target.value)}
+                  className="w-full px-3 py-2 bg-secondary border border-default rounded-lg text-sm text-main"
+                >
+                  {Object.entries(CARRIER_FORWARDING_INSTRUCTIONS).map(([key, val]) => (
+                    <option key={key} value={key}>{val.name}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+          </div>
+
+          <div className="p-3 bg-secondary rounded-lg text-xs text-muted">
+            {fwdType === 'call_forward' && 'Simplest option. Forward calls from your existing number to Zafto. Works with any carrier. Takes 2 minutes.'}
+            {fwdType === 'sip_trunk' && 'For VoIP providers (RingCentral, Vonage, 8x8, Grasshopper). Point your SIP trunk to our endpoint for full integration.'}
+            {fwdType === 'port_in' && 'Permanently transfer your number to Zafto. Takes 7-10 business days. Your old carrier will release the number.'}
+          </div>
+
+          <Button onClick={handleAdd} disabled={adding || !phone.trim()} className="w-full">
+            {adding ? 'Adding...' : 'Add Number'}
+          </Button>
         </CardContent>
       </Card>
     </div>
