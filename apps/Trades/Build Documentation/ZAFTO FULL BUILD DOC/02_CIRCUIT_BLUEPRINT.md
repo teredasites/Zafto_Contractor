@@ -239,6 +239,9 @@ DEFERRED -- Specified but intentionally postponed
 | **F6: Marketplace (S90)** | 1 | LIVE Supabase | **DONE** -- marketplace/ page. use-marketplace.ts hook. |
 | **F9: Hiring (S90)** | 1 | LIVE Supabase | **DONE** -- hiring/ page. use-hiring.ts hook. (was under F5 grouping). |
 | **F10: ZForge (S90)** | 1 | LIVE Supabase | **DONE** -- zdocs/ page. use-zdocs.ts hook (real-time + 7 mutations). 3 tabs: templates, generated, signatures. |
+| **REST1: Fire Restoration (S131)** | 1 | LIVE Supabase | **DONE** -- fire-restoration/ page. use-fire-restoration.ts hook. Assessment list + detail (damage areas, structural, smoke/odor, contents, line items). |
+| **REST2: Mold Remediation (S131)** | 1 | LIVE Supabase | **DONE** -- mold-remediation/ page. use-mold-remediation.ts hook (4 sub-hooks: assessments, chain of custody, state regs, labs). IICRC S520 levels. |
+| **NICHE1: Pest Control (S131)** | 1 | LIVE Supabase | **DONE** -- pest-control/ page. use-pest-control.ts hook (3 sub-hooks: treatment logs, bait stations, WDI reports). 3 tabs. |
 | Remaining Placeholders | 5 | MOCK | permits, communications, service-agreements, bid-brain, equipment-memory — no backing tables. |
 | Office Placeholders | 3 | MOCK | price-book, automations, inventory — future-phase. |
 
@@ -246,7 +249,7 @@ DEFERRED -- Specified but intentionally postponed
 - `mock-data.ts` -- **DELETED (S52)**. Zero imports remaining.
 - `permission-gate.tsx` (424 lines) -- RBAC with 40+ permissions
 - `types/index.ts` -- TypeScript interfaces (Job, InsuranceMetadata, WarrantyMetadata, etc.)
-- **68 hook files total:** mappers.ts (1) + 67 use-*.ts files in src/lib/hooks/. Full list: use-accounts, use-approvals, use-assets, use-async-videos, use-banking, use-bid-optimizer, use-bids, use-branch-financials, use-change-orders, use-construction-accounting, use-cpa-access, use-customers, use-documents, use-email, use-enterprise, use-equipment-insights, use-estimate-engine, use-estimates, use-expenses, use-fax, use-financial-statements, use-fiscal-periods, use-fleet, use-growth-actions, use-hiring, use-hr, use-inspection-engine, use-inspections, use-insurance, use-invoices, use-job-costs, use-jobs, use-leads, use-leases, use-marketplace, use-meetings, use-osha-standards, use-payroll, use-phone, use-pm-inspections, use-pm-maintenance, use-procurement, use-properties, use-reconciliation, use-recurring, use-rent, use-reports, use-restoration-tools, use-revenue-insights, use-scope-assist, use-site-surveys, use-sketch-bid, use-stats, use-tax-compliance, use-team-chat, use-tenants, use-unit-turns, use-units, use-vendors, use-verticals, use-walkthrough-templates, use-walkthroughs, use-z-artifacts, use-z-threads, use-zbooks-engine, use-zbooks, use-zdocs. + use-company.ts in src/hooks/.
+- **125 hook files total:** mappers.ts + pm-mappers.ts + 123 use-*.ts files in src/lib/hooks/. Key additions since S114: use-area-scan, use-automations, use-bid-templates, use-byoc-phone, use-ce-tracking, use-company-config, use-completion-checklists, use-compliance, use-custom-fields, use-data-import, use-documentation-validation, use-equipment-checkout, use-equipment-deployments, use-equipment-inventory, use-fire-restoration, use-floor-plan, use-floor-plan-photo-pins, use-floor-plan-snapshots, use-job-intelligence, use-job-schedule, use-lien-protection, use-maintenance-predictions, use-mold-remediation, use-notifications, use-permit-intelligence, use-pest-control, use-phone-config, use-phone-lines, use-photo-clusters, use-review-requests, use-ring-groups, use-schedule (+ 8 schedule sub-hooks), use-service-agreements, use-storm-assess, use-subcontractors, use-time-clock, use-tpa-assignments, use-tpa-financials, use-tpa-programs, use-tpa-scorecards, use-tpa-supplements, use-warranty-intelligence, use-water-damage. + use-company.ts in src/hooks/.
 - 22 Dashboard files: 5 in src/lib/z-intelligence/ + 17 in src/components/z-console/
 - firebase.ts DELETED (B4a S49). auth.ts + firestore.ts rewritten for Supabase.
 - **UI Polish (B4d S53):** Collapsible sidebar (366 lines), skeleton loading (7 pages), chart bezier curves + draw-in animation, stagger animations, dark mode depth layers.
@@ -255,9 +258,9 @@ DEFERRED -- Specified but intentionally postponed
 
 ---
 
-### 1C. CLIENT PORTAL -- NEXT.JS (36 pages at client.zafto.cloud)
+### 1C. CLIENT PORTAL -- NEXT.JS (44 pages at client.zafto.cloud)
 
-**Magic link auth. 36 page.tsx files. 21 hook files (mappers + tenant-mappers + 19 use-*.ts). `npm run build` passes (38 routes, 0 errors).**
+**Magic link auth. 44 page.tsx files. 28 hook files (mappers + tenant-mappers + 26 use-*.ts). `npm run build` passes (0 errors).**
 
 | Tab | Pages | Backend | Notes |
 |-----|:-----:|:-------:|-------|
@@ -280,10 +283,12 @@ DEFERRED -- Specified but intentionally postponed
 | Walkthroughs (List, Detail) | 2 | LIVE Supabase | **DONE (E6 S79)** -- use-walkthroughs.ts hook. |
 | Estimates | 1 | LIVE Supabase | **DONE (D8j S89)** -- use-estimates.ts hook. Approve/reject. |
 | AI Chat Widget (E3d S80) | — | LIVE Supabase | **DONE** -- Floating Z button + slide-up chat. use-ai-assistant.ts hook. Layout-level. |
+| **REST2: Mold Status (S131)** | 1 | LIVE Supabase | **DONE** -- mold-status/ page. Homeowner read-only: progress timeline, clearance results, spore reduction. |
+| **NICHE1: Pest Control (S131)** | 1 | LIVE Supabase | **DONE** -- pest-control/ page. Next service highlight, treatment history, re-entry warnings, safety info. |
 | Remaining (Request, Referrals, Review) | 3 | MOCK | Future-phase placeholders. |
 
 **Key files:**
-- **21 hook files total:** mappers.ts, tenant-mappers.ts, use-ai-assistant.ts, use-bids.ts, use-change-orders.ts, use-contractors.ts, use-estimates.ts, use-home.ts, use-home-documents.ts, use-inspections-tenant.ts, use-insurance.ts, use-invoices.ts, use-maintenance.ts, use-meetings.ts, use-messages.ts, use-projects.ts, use-quotes.ts, use-rent-payments.ts, use-tenant.ts, use-walkthroughs.ts
+- **28 hook files total:** mappers.ts, tenant-mappers.ts + 26 use-*.ts: use-ai-assistant, use-bids, use-change-orders, use-client-timeline, use-contractors, use-documents, use-estimates, use-home, use-home-documents, use-inspections-tenant, use-insurance, use-invoices, use-maintenance, use-maintenance-predictions, use-meetings, use-messages, use-notifications, use-permits, use-projects, use-property-scan, use-quotes, use-rent-payments, use-tenant, use-tpa-status, use-walkthroughs, use-warranty-portfolio
 - client_portal_users table (S60) -- links auth users to customers
 - tenants.auth_user_id (D5a S71) -- links auth users to tenants.
 - **Sentry (C1a S58):** @sentry/nextjs wired.
@@ -292,9 +297,9 @@ DEFERRED -- Specified but intentionally postponed
 
 ---
 
-### 1D. EMPLOYEE FIELD PORTAL -- NEXT.JS (33 pages at team.zafto.app)
+### 1D. EMPLOYEE FIELD PORTAL -- NEXT.JS (42 pages at team.zafto.app)
 
-**DONE (B5 S55, D7a S67-68, D5h S76, F-expansion S90). 22 hook files. PWA-ready. Field-optimized UI (big touch targets). `npm run build` passes (34 routes, 0 errors).**
+**DONE (B5 S55, D7a S67-68, D5h S76, F-expansion S90, REST/NICHE S131). 30 hook files. PWA-ready. Field-optimized UI (big touch targets). `npm run build` passes (0 errors).**
 
 | Group | Pages | Backend | Notes |
 |-------|:-----:|:-------:|-------|
@@ -322,8 +327,12 @@ DEFERRED -- Specified but intentionally postponed
 | **F5: Training (S90)** | 1 | LIVE Supabase | **DONE** -- training/ page. use-my-training.ts hook. |
 | **F5: My Documents (S90)** | 1 | LIVE Supabase | **DONE** -- my-documents/ page. use-my-documents.ts hook. |
 
+| **REST1: Fire Assessment (S131)** | 1 | LIVE Supabase | **DONE** -- fire-assessment/ page. Field tech fire damage assessment view. |
+| **REST2: Mold Assessment (S131)** | 1 | LIVE Supabase | **DONE** -- mold-assessment/ page. Field tech mold assessment, level/status badges. |
+| **NICHE1: Pest Treatment (S131)** | 1 | LIVE Supabase | **DONE** -- pest-treatment/ page. Treatment log view with stats. |
+
 **Key files:**
-- **22 hook files total:** mappers.ts, use-ai-troubleshoot.ts, use-bids.ts, use-certifications.ts, use-change-orders.ts, use-daily-log.ts, use-estimates.ts, use-insurance.ts, use-jobs.ts, use-maintenance-requests.ts, use-materials.ts, use-meetings.ts, use-my-documents.ts, use-my-training.ts, use-my-vehicle.ts, use-pay-stubs.ts, use-phone.ts, use-pm-jobs.ts, use-punch-list.ts, use-time-clock.ts, use-walkthroughs.ts
+- **30 hook files total:** mappers.ts + 29 use-*.ts: use-ai-troubleshoot, use-bids, use-certifications, use-change-orders, use-compliance-status, use-daily-log, use-equipment, use-estimates, use-insurance, use-jobs, use-maintenance-requests, use-materials, use-meetings, use-messages, use-my-documents, use-my-training, use-my-vehicle, use-notifications, use-pay-stubs, use-phone, use-pm-jobs, use-property-scan, use-punch-list, use-team-schedule, use-time-clock, use-time-off, use-tool-checkout, use-tpa-jobs, use-walkthroughs
 - PWA manifest (installable on phone home screen)
 - **Sidebar sections:** WORK, FIELD TOOLS, MY STUFF (new S90)
 - **Sentry (C1a S58):** @sentry/nextjs wired (instrumentation pattern).
@@ -332,9 +341,9 @@ DEFERRED -- Specified but intentionally postponed
 
 ---
 
-### 1E. OPS PORTAL -- NEXT.JS (26 pages at ops.zafto.cloud)
+### 1E. OPS PORTAL -- NEXT.JS (30 pages at ops.zafto.cloud)
 
-**DONE (C3 S59, D8h-i S88, F-expansion S90). super_admin role gate. Deep navy/teal theme. `npm run build` passes (27 routes, 0 errors). 2 hooks (use-phone-analytics, use-meeting-analytics).**
+**DONE (C3 S59, D8h-i S88, F-expansion S90, SEC S131). super_admin role gate. Deep navy/teal theme. `npm run build` passes (0 errors). 2 hooks (use-phone-analytics, use-meeting-analytics).**
 
 | Group | Pages | Backend | Notes |
 |-------|:-----:|:-------:|-------|
@@ -495,7 +504,7 @@ Tech opens app -> Taps "Field Tools"
 
 ## SECTION 3: DATABASE SCHEMA
 
-### Deployed Tables (~173 total -- dev Supabase, 48 migration files)
+### Deployed Tables (~212 total -- dev Supabase, 112 migration files)
 
 **--- PRE-F TABLES (102) ---**
 **Core (5 -- migration 000001):** companies, users, audit_log, user_sessions, login_attempts
@@ -531,7 +540,19 @@ Tech opens app -> Taps "Field Tools"
 **F9 Hiring (3 -- migration 000047):** job_postings, job_applications, hiring_pipelines
 **F10 ZForge (3 -- migration 000048):** zdoc_templates, zdoc_generated, zdoc_signatures
 
-**Total: ~173 tables. 48 migration files. RLS on all. Audit triggers on all mutable tables. ~18 F-phase migrations NOT YET DEPLOYED (need `npx supabase db push`). Pre-F migrations all synced (local=remote).**
+**--- POST-F TABLES (phases T, P, SK, GC, U, SEC, FIELD, REST, NICHE — migrations 000049-000112) ---**
+**T: Programs/TPA (14 -- migrations 000049-000059):** tpa_programs, tpa_assignments, tpa_scorecards, tpa_supplements, tpa_doc_requirements, tpa_photo_compliance, water_damage_assessments, psychrometric_logs, contents_inventory, equipment_calculations, equipment_inventory, certificates_of_completion, doc_checklist_templates, doc_checklist_items, job_doc_progress, tpa_program_financials, restoration_line_items, tpa_schedule_queue, notification_triggers, iicrc_equipment_factors
+**P: Recon (14 -- migrations 000060-000061):** property_scans, roof_measurements, roof_facets, property_features, property_structures, parcel_boundaries, wall_measurements, trade_bid_data, property_lead_scores, area_scans, scan_history, company_feature_flags, scan_cache, api_cost_log, api_rate_limits
+**SK: Sketch Engine (6 -- migrations 000063-000067):** property_floor_plans, floor_plan_elements, floor_plan_trade_data, floor_plan_snapshots, floor_plan_photo_pins, floor_plan_estimate_links
+**GC: Scheduling (5+ -- migrations 000068-000075):** schedule_projects, schedule_tasks, schedule_dependencies, schedule_resources, schedule_assignments, weather_delays + schedule views
+**U: Unification (7+ -- migrations 000076+):** job_budgets, permits, service_agreements, service_agreement_visits, review_requests, system_health_checks, automations + i18n, dispatch, calendar, subcontractors, data_import tables
+**SEC: Security (migrations 000095-000098):** security_events, failed_auth_attempts, rate_limit_buckets + RLS hardening + auth function fixes
+**FIELD: Field Ops (migrations 000099-000107):** tool_checkout_items, vehicle_inspections, safety_incidents, daily_briefings, equipment_certifications, job_intelligence_reports, predictive_maintenance_records, lien_tracking, compliance_certifications + permit_requirements
+**REST1: Fire Restoration (6 -- migration 000108):** fire_restoration_assessments, fire_damage_areas, structural_assessments, smoke_odor_assessments, contents_cleaning_items, fire_restoration_line_items
+**REST2: Mold Remediation (4 -- migration 000109):** mold_assessments, mold_samples, mold_state_regulations, mold_labs
+**NICHE1: Pest Control (3 -- migration 000111):** treatment_logs, bait_stations, wdi_reports
+
+**Total: ~212 tables. 112 migration files. RLS on all. Audit triggers on all mutable tables.**
 
 ### D1 Job Type Columns (Already Deployed)
 - `jobs.job_type` TEXT with CHECK constraint: 'standard', 'insurance_claim', 'warranty_dispatch'
@@ -773,6 +794,27 @@ Tech opens app -> Taps "Field Tools"
 - [ ] F2: Website Builder V2 -- NOT BUILT -- After AI. Cloudflare Registrar, templates, AI content.
 - [ ] F8: Ops Portal Phases 2-4 -- NOT BUILT -- After AI. Marketing, treasury, legal, dev terminal.
 
+### Phase SEC: Security Hardening -- COMPLETE (SEC1+SEC6-8 DONE, S131)
+- [x] SEC1: Critical security fixes — auth function hardening, RLS policy audit, rate limiting tables, failed auth tracking, security event logging
+- [x] SEC6: Input validation + sanitization across all portals
+- [x] SEC7: CORS + CSP headers, cookie security
+- [x] SEC8: Audit trail completeness — security_events table, auth monitoring
+
+### Phase FIELD: Field Operations -- COMPLETE (FIELD1-5 DONE, S131)
+- [x] FIELD1: BYOC Phone — use-byoc-phone.ts hook, phone line management, ring groups
+- [x] FIELD2: Compliance Engine — compliance-scanner EF, generate-inspection-report EF, use-compliance.ts + use-completion-checklists.ts hooks, equipment certifications tracking
+- [x] FIELD3: Job Intelligence — job-intelligence-cron EF, job-cost-autopsy-generator EF, predictive-maintenance-engine EF, use-job-intelligence.ts + use-maintenance-predictions.ts hooks
+- [x] FIELD4: Permit + Lien — permit-requirement-lookup EF, lien-deadline-monitor EF, use-permit-intelligence.ts + use-lien-protection.ts hooks
+- [x] FIELD5: Tool Checkout + Safety — use-equipment-checkout.ts hook, vehicle inspections, safety incidents, daily briefings
+
+### Phase REST: Restoration Trades -- IN PROGRESS (REST1-2 DONE, S131)
+- [x] REST1: Fire Restoration — 6 tables (fire_restoration_assessments, fire_damage_areas, structural_assessments, smoke_odor_assessments, contents_cleaning_items, fire_restoration_line_items). 1 EF (export-fire-assessment-pdf). Flutter: 4 screens, 2 models, 2 repos. CRM: 1 page + 1 hook. Team: 1 page. Client: fire timeline in projects. ~55 seed line items. NFPA 921 damage classification.
+- [x] REST2: Mold Remediation — 4 tables (mold_assessments, mold_samples, mold_state_regulations, mold_labs). 1 EF (export-mold-clearance-pdf). Flutter: 5 screens, 1 model, 1 repo. CRM: 1 page + 1 hook (4 sub-hooks). Team: 1 page. Client: 1 page. IICRC S520 levels 1-3. Chain of custody. 50-state regs. AIHA lab directory.
+
+### Phase NICHE: Niche Trade Modules -- IN PROGRESS (NICHE1 DONE, S131)
+- [x] NICHE1: Pest Control — 3 tables (treatment_logs, bait_stations, wdi_reports). 1 EF (export-wdi-report-pdf). Flutter: 2 models, 3 repos, 4 screens (treatment log, WDI report, bait station map, recurring services). CRM: 1 page + 1 hook (3 sub-hooks). Team: 1 page. Client: 1 page. 14 service types, 10 treatment methods, NPMA-33, 18 pest control line items seed data.
+- [ ] NICHE2: Service Trades (locksmith, garage door, appliance repair) — NOT STARTED
+
 ### Phase G: QA & Hardening -- AFTER T + P + SK + U (harden everything at once)
 - [x] G1a: Consolidated Build Verification -- All 5 apps build clean (S90).
 - [ ] G1b-e: Dead code cleanup, route verification, DB wiring audit, EF audit.
@@ -800,7 +842,7 @@ Tech opens app -> Taps "Field Tools"
 | getPaymentStatus | Check payment status | **REPLACED** by stripe-payments EF |
 **Manual steps remaining:** Retrieve Firebase secrets → set in Supabase → deploy EFs → update webhook URLs → test → delete Firebase code.
 
-### Supabase Edge Functions (53 directories total -- VERIFIED from codebase)
+### Supabase Edge Functions (94 directories total -- VERIFIED from codebase S131)
 
 **Banking/Accounting (5):**
 | Function | Purpose | Phase |
@@ -910,6 +952,77 @@ Tech opens app -> Taps "Field Tools"
 | ai-bid-optimizer | Win probability, competitive pricing | E4 |
 | ai-equipment-insights | Lifecycle analysis from property equipment | E4 |
 | ai-growth-actions | Follow-up, upsell, campaign suggestions | E4 |
+
+**T: Programs/TPA (3):**
+| Function | Purpose | Phase |
+|----------|---------|-------|
+| tpa-equipment-calculator | IICRC S500 equipment formulas | T4 |
+| tpa-documentation-validator | Job compliance check | T5 |
+| tpa-financial-rollup | Monthly TPA program P&L | T6 |
+
+**P: Recon (7):**
+| Function | Purpose | Phase |
+|----------|---------|-------|
+| recon-property-lookup | Property data lookup (ATTOM/Regrid) | P |
+| recon-roof-calculator | Roof measurement + area calc | P |
+| recon-trade-estimator | Trade-specific cost estimation | P |
+| recon-lead-score | Property lead scoring | P |
+| recon-area-scan | Neighborhood area scan | P |
+| recon-material-order | Material ordering (GATED) | P |
+| recon-storm-assess | Storm damage assessment | P |
+
+**GC: Scheduling (~10):**
+| Function | Purpose | Phase |
+|----------|---------|-------|
+| schedule-calculate-cpm | CPM forward/backward pass | GC2 |
+| schedule-level-resources | Resource leveling | GC3 |
+| schedule-import | P6/MSProject XML import | GC6 |
+| schedule-export | CSV/XML export | GC6 |
+| schedule-baseline-capture | Baseline snapshot | GC |
+| schedule-sync-progress | Field progress sync | GC10 |
+| schedule-reminders | Schedule notification cron | GC10 |
+| schedule-clean-locks | Collaboration lock cleanup | GC |
+
+**U: Unification (7):**
+| Function | Purpose | Phase |
+|----------|---------|-------|
+| export-bid-pdf | Branded bid PDF generation | U6 |
+| export-invoice-pdf | Branded invoice PDF generation | U6 |
+| automation-engine | Workflow automation runner | U7 |
+| review-request | Review request processing | U7 |
+| google-calendar-sync | Calendar sync | U17 |
+| send-message | Cross-portal messaging | U |
+| notification-triggers | Event-driven notifications | U |
+
+**SEC/FIELD: Security + Field Ops (8):**
+| Function | Purpose | Phase |
+|----------|---------|-------|
+| compliance-scanner | Compliance check runner | FIELD2 |
+| generate-inspection-report | Inspection PDF generation | FIELD2 |
+| job-intelligence-cron | Job health scoring cron | FIELD3 |
+| job-cost-autopsy-generator | Job cost analysis | FIELD3 |
+| predictive-maintenance-engine | Equipment failure prediction | FIELD3 |
+| permit-requirement-lookup | Jurisdiction permit lookup | FIELD4 |
+| lien-deadline-monitor | Lien deadline alerting | FIELD4 |
+| smart-pricing-engine | Dynamic pricing | FIELD |
+
+**REST/NICHE: Restoration + Niche Trades (4):**
+| Function | Purpose | Phase |
+|----------|---------|-------|
+| export-fire-assessment-pdf | Fire restoration assessment PDF | REST1 |
+| export-mold-clearance-pdf | Mold clearance certificate PDF | REST2 |
+| export-wdi-report-pdf | NPMA-33 WDI inspection report PDF | NICHE1 |
+| restoration-export | Restoration FML/DXF/PDF export | T8 |
+
+**Other (8):**
+| Function | Purpose | Phase |
+|----------|---------|-------|
+| impersonate-company | Ops portal company impersonation | SEC |
+| invite-team-member | Team invitation emails | U |
+| mark-messages-read | Mark messages as read | U |
+| signalwire-ai-receptionist | AI phone receptionist | F1 |
+| signalwire-webhook | SignalWire event handler | F1 |
+| warranty-outreach-scheduler | Warranty follow-up cron | FIELD |
 
 **NOTE:** send-notification does NOT have a directory. It needs to be created.
 
