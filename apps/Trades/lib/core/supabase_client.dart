@@ -19,6 +19,9 @@ Future<void> initSupabase(EnvConfig config) async {
     url: config.supabaseUrl,
     anonKey: config.supabaseAnonKey,
     debug: config.enableDebug,
+    headers: {
+      'X-Requested-With': 'ZaftoMobile',
+    },
   );
 }
 
