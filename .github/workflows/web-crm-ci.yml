@@ -35,6 +35,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Security audit
+        run: npm audit --audit-level=critical || true
+
       - name: Type check
         run: npx tsc --noEmit || true
 

@@ -6,12 +6,14 @@ on:
     paths:
       - 'apps/Trades/team-portal/**'
       - 'apps/Trades/client-portal/**'
+      - 'apps/Trades/ops-portal/**'
       - '.github/workflows/portals-ci.yml'
   push:
     branches: [main]
     paths:
       - 'apps/Trades/team-portal/**'
       - 'apps/Trades/client-portal/**'
+      - 'apps/Trades/ops-portal/**'
 
 concurrency:
   group: portals-${{ github.ref }}
@@ -36,6 +38,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Security audit
+        run: npm audit --audit-level=critical || true
 
       - name: Type check
         run: npx tsc --noEmit || true
@@ -64,6 +69,40 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Security audit
+        run: npm audit --audit-level=critical || true
+
+      - name: Type check
+        run: npx tsc --noEmit || true
+
+      - name: Build
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder-key-for-ci-build
+
+  ops-portal:
+    name: Ops Portal — Lint & Build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/Trades/ops-portal
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: apps/Trades/ops-portal/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Security audit
+        run: npm audit --audit-level=critical || true
 
       - name: Type check
         run: npx tsc --noEmit || true

@@ -43,3 +43,25 @@ updates:
     labels:
       - "dependencies"
       - "client-portal"
+
+  # Ops Portal (Next.js) dependencies
+  - package-ecosystem: "npm"
+    directory: "/apps/Trades/ops-portal"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "ops-portal"
+
+  # GitHub Actions — keep CI workflows up to date
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "ci"
