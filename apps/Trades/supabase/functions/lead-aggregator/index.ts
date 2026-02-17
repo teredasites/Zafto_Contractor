@@ -4,6 +4,7 @@
 
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { checkRateLimit, rateLimitResponse } from '../_shared/rate-limiter.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -18,6 +19,32 @@ serve(async (req) => {
   const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? ''
   const SUPABASE_SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY)
+
+  // Auth check — lead aggregator requires authenticated company user
+  const authHeader = req.headers.get('Authorization')
+  if (!authHeader) {
+    return new Response(JSON.stringify({ error: 'Missing authorization' }), {
+      status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
+  }
+  const token = authHeader.replace('Bearer ', '')
+  const { data: { user }, error: authError } = await supabase.auth.getUser(token)
+  if (authError || !user) {
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
+  }
+  const companyId = user.app_metadata?.company_id
+
+  // Rate limit: 10 requests per minute per company
+  if (companyId) {
+    const rateCheck = await checkRateLimit(supabase, {
+      key: `company:${companyId}:lead-aggregator`,
+      maxRequests: 10,
+      windowSeconds: 60,
+    })
+    if (!rateCheck.allowed) return rateLimitResponse(rateCheck.retryAfter!)
+  }
 
   try {
     const body = await req.json()
