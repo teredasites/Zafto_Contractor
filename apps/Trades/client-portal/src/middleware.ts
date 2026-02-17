@@ -50,7 +50,7 @@ export async function middleware(request: NextRequest) {
   );
 
   const { data: { user } } = await supabase.auth.getUser();
-  const pathname = request.nextUrl.pathname;
+  // pathname already defined above (line 22) for Hellhound checks
 
   // Public routes: login, auth callback
   const isPublicRoute = pathname === '/' || pathname.startsWith('/auth/');
