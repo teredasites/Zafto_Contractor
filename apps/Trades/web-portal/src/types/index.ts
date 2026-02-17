@@ -287,6 +287,12 @@ export interface Invoice {
   paidAt?: Date;
   paymentMethod?: string;
   notes?: string;
+  poNumber?: string;
+  retainagePercent?: number;
+  retainageAmount?: number;
+  lateFeePerDay?: number;
+  discountPercent?: number;
+  paymentTerms?: string;
   createdAt: Date;
   updatedAt: Date;
 }

@@ -161,6 +161,12 @@ export default function NewInvoicePage() {
         total,
         dueDate: formData.dueDate ? new Date(formData.dueDate) : undefined,
         notes: formData.notes || undefined,
+        poNumber: formData.poNumber || undefined,
+        retainagePercent: formData.retainagePercent ? parseFloat(formData.retainagePercent) : undefined,
+        retainageAmount: retainageAmount > 0 ? retainageAmount : undefined,
+        lateFeePerDay: formData.lateFeePerDay ? parseFloat(formData.lateFeePerDay) : undefined,
+        discountPercent: formData.discount ? parseFloat(formData.discount) : undefined,
+        paymentTerms: formData.paymentTerms || undefined,
       });
       router.push('/dashboard/invoices');
     } catch (err) {

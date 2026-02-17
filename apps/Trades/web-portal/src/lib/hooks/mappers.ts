@@ -320,6 +320,12 @@ export function mapInvoice(row: Record<string, unknown>): Invoice {
     paidAt: row.paid_at ? new Date(row.paid_at as string) : undefined,
     paymentMethod: (row.payment_method as string) || undefined,
     notes: (row.notes as string) || undefined,
+    poNumber: (row.po_number as string) || undefined,
+    retainagePercent: row.retainage_percent != null ? Number(row.retainage_percent) : undefined,
+    retainageAmount: row.retainage_amount != null ? Number(row.retainage_amount) : undefined,
+    lateFeePerDay: row.late_fee_per_day != null ? Number(row.late_fee_per_day) : undefined,
+    discountPercent: row.discount_percent != null ? Number(row.discount_percent) : undefined,
+    paymentTerms: (row.payment_terms as string) || undefined,
     createdAt: new Date(row.created_at as string),
     updatedAt: new Date(row.updated_at as string),
   };

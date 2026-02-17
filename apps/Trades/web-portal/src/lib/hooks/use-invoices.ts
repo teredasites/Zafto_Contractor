@@ -95,6 +95,12 @@ export function useInvoices() {
         status: 'draft',
         due_date: data.dueDate ? new Date(data.dueDate).toISOString() : null,
         notes: data.notes || null,
+        po_number: data.poNumber || null,
+        retainage_percent: data.retainagePercent || 0,
+        retainage_amount: data.retainageAmount || 0,
+        late_fee_per_day: data.lateFeePerDay || 0,
+        discount_percent: data.discountPercent || 0,
+        payment_terms: data.paymentTerms || 'net_30',
       })
       .select('id')
       .single();
