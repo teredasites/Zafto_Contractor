@@ -11,8 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/supabase_client.dart';
 import '../../models/message.dart';
 import '../../providers/messaging_provider.dart';
-import '../../widgets/error_state.dart';
-import '../../widgets/loading_state.dart';
+import '../../widgets/error_widgets.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
   final String conversationId;
@@ -99,8 +98,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           // Messages list
           Expanded(
             child: messagesAsync.when(
-              loading: () => const LoadingState(message: 'Loading messages...'),
-              error: (error, stack) => ErrorState(
+              loading: () => const ZaftoLoadingState(message: 'Loading messages...'),
+              error: (error, stack) => ErrorStateWidget(
                 message: 'Failed to load messages',
                 onRetry: () => ref.invalidate(messagesProvider(widget.conversationId)),
               ),

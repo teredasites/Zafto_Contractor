@@ -8,8 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../providers/messaging_provider.dart';
-import '../../widgets/error_state.dart';
-import '../../widgets/loading_state.dart';
+import '../../widgets/error_widgets.dart';
 import 'chat_screen.dart';
 
 class NewConversationScreen extends ConsumerStatefulWidget {
@@ -186,8 +185,8 @@ class _NewConversationScreenState extends ConsumerState<NewConversationScreen> {
           // Member list
           Expanded(
             child: membersAsync.when(
-              loading: () => const LoadingState(message: 'Loading team...'),
-              error: (error, stack) => ErrorState(
+              loading: () => const ZaftoLoadingState(message: 'Loading team...'),
+              error: (error, stack) => ErrorStateWidget(
                 message: 'Failed to load team members',
                 onRetry: () => ref.invalidate(teamMembersProvider),
               ),

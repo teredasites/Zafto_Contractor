@@ -8,6 +8,9 @@ import 'package:zafto/screens/role_switcher_screen.dart';
 import 'package:zafto/screens/ai/z_chat_sheet.dart';
 import 'package:zafto/services/quick_actions_service.dart';
 
+// Messages screen (shared across roles)
+import 'package:zafto/screens/messages/conversations_list_screen.dart';
+
 // Owner/Admin screens
 import 'package:zafto/screens/owner/owner_home_screen.dart';
 import 'package:zafto/screens/owner/owner_jobs_screen.dart';
@@ -142,6 +145,7 @@ class _AppShellState extends ConsumerState<AppShell> {
           OwnerJobsScreen(),
           OwnerMoneyScreen(),
           OwnerCalendarScreen(),
+          ConversationsListScreen(),
           OwnerMoreScreen(),
         ];
       case UserRole.tech:
@@ -150,6 +154,7 @@ class _AppShellState extends ConsumerState<AppShell> {
           TechScheduleScreen(),
           TechJobsScreen(),
           TechToolsCalcsScreen(),
+          ConversationsListScreen(),
           TechMoreScreen(),
         ];
       case UserRole.office:
@@ -166,6 +171,7 @@ class _AppShellState extends ConsumerState<AppShell> {
           InspectorInspectScreen(),
           InspectorHistoryScreen(),
           InspectorToolsScreen(),
+          ConversationsListScreen(),
           InspectorMoreScreen(),
         ];
       case UserRole.cpa:

@@ -11,9 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/supabase_client.dart';
 import '../../models/conversation.dart';
 import '../../providers/messaging_provider.dart';
-import '../../widgets/empty_state.dart';
-import '../../widgets/error_state.dart';
-import '../../widgets/loading_state.dart';
+import '../../widgets/error_widgets.dart';
 import 'chat_screen.dart';
 import 'new_conversation_screen.dart';
 
@@ -44,14 +42,14 @@ class ConversationsListScreen extends ConsumerWidget {
         child: const Icon(Icons.edit),
       ),
       body: conversationsAsync.when(
-        loading: () => const LoadingState(message: 'Loading conversations...'),
-        error: (error, stack) => ErrorState(
+        loading: () => const ZaftoLoadingState(message: 'Loading conversations...'),
+        error: (error, stack) => ErrorStateWidget(
           message: 'Failed to load conversations',
           onRetry: () => ref.invalidate(conversationListProvider),
         ),
         data: (conversations) {
           if (conversations.isEmpty) {
-            return EmptyState(
+            return ZaftoEmptyState(
               icon: Icons.chat_bubble_outline,
               title: 'No messages yet',
               subtitle: 'Start a conversation with your team',
