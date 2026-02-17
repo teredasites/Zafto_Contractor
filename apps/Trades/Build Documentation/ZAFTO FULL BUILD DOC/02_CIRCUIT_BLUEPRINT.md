@@ -242,6 +242,9 @@ DEFERRED -- Specified but intentionally postponed
 | **REST1: Fire Restoration (S131)** | 1 | LIVE Supabase | **DONE** -- fire-restoration/ page. use-fire-restoration.ts hook. Assessment list + detail (damage areas, structural, smoke/odor, contents, line items). |
 | **REST2: Mold Remediation (S131)** | 1 | LIVE Supabase | **DONE** -- mold-remediation/ page. use-mold-remediation.ts hook (4 sub-hooks: assessments, chain of custody, state regs, labs). IICRC S520 levels. |
 | **NICHE1: Pest Control (S131)** | 1 | LIVE Supabase | **DONE** -- pest-control/ page. use-pest-control.ts hook (3 sub-hooks: treatment logs, bait stations, WDI reports). 3 tabs. |
+| **NICHE2: Locksmith (S131)** | 1 | LIVE Supabase | **DONE** -- locksmith/ page. use-locksmith.ts hook (realtime + create). Stats, search, automotive filter. |
+| **NICHE2: Garage Door (S131)** | 1 | LIVE Supabase | **DONE** -- garage-door/ page. use-garage-door.ts hook (realtime + create). Stats, search, safety badges. |
+| **NICHE2: Appliance Repair (S131)** | 1 | LIVE Supabase | **DONE** -- appliance-repair/ page. use-appliance-repair.ts hook (realtime + create). Stats, search, repair vs replace. |
 | Remaining Placeholders | 5 | MOCK | permits, communications, service-agreements, bid-brain, equipment-memory — no backing tables. |
 | Office Placeholders | 3 | MOCK | price-book, automations, inventory — future-phase. |
 
@@ -249,7 +252,7 @@ DEFERRED -- Specified but intentionally postponed
 - `mock-data.ts` -- **DELETED (S52)**. Zero imports remaining.
 - `permission-gate.tsx` (424 lines) -- RBAC with 40+ permissions
 - `types/index.ts` -- TypeScript interfaces (Job, InsuranceMetadata, WarrantyMetadata, etc.)
-- **125 hook files total:** mappers.ts + pm-mappers.ts + 123 use-*.ts files in src/lib/hooks/. Key additions since S114: use-area-scan, use-automations, use-bid-templates, use-byoc-phone, use-ce-tracking, use-company-config, use-completion-checklists, use-compliance, use-custom-fields, use-data-import, use-documentation-validation, use-equipment-checkout, use-equipment-deployments, use-equipment-inventory, use-fire-restoration, use-floor-plan, use-floor-plan-photo-pins, use-floor-plan-snapshots, use-job-intelligence, use-job-schedule, use-lien-protection, use-maintenance-predictions, use-mold-remediation, use-notifications, use-permit-intelligence, use-pest-control, use-phone-config, use-phone-lines, use-photo-clusters, use-review-requests, use-ring-groups, use-schedule (+ 8 schedule sub-hooks), use-service-agreements, use-storm-assess, use-subcontractors, use-time-clock, use-tpa-assignments, use-tpa-financials, use-tpa-programs, use-tpa-scorecards, use-tpa-supplements, use-warranty-intelligence, use-water-damage. + use-company.ts in src/hooks/.
+- **128 hook files total:** mappers.ts + pm-mappers.ts + 126 use-*.ts files in src/lib/hooks/. Key additions since S114: use-appliance-repair, use-area-scan, use-automations, use-bid-templates, use-byoc-phone, use-ce-tracking, use-company-config, use-completion-checklists, use-compliance, use-custom-fields, use-data-import, use-documentation-validation, use-equipment-checkout, use-equipment-deployments, use-equipment-inventory, use-fire-restoration, use-floor-plan, use-floor-plan-photo-pins, use-floor-plan-snapshots, use-garage-door, use-job-intelligence, use-job-schedule, use-lien-protection, use-locksmith, use-maintenance-predictions, use-mold-remediation, use-notifications, use-permit-intelligence, use-pest-control, use-phone-config, use-phone-lines, use-photo-clusters, use-review-requests, use-ring-groups, use-schedule (+ 8 schedule sub-hooks), use-service-agreements, use-storm-assess, use-subcontractors, use-time-clock, use-tpa-assignments, use-tpa-financials, use-tpa-programs, use-tpa-scorecards, use-tpa-supplements, use-warranty-intelligence, use-water-damage. + use-company.ts in src/hooks/.
 - 22 Dashboard files: 5 in src/lib/z-intelligence/ + 17 in src/components/z-console/
 - firebase.ts DELETED (B4a S49). auth.ts + firestore.ts rewritten for Supabase.
 - **UI Polish (B4d S53):** Collapsible sidebar (366 lines), skeleton loading (7 pages), chart bezier curves + draw-in animation, stagger animations, dark mode depth layers.
@@ -285,6 +288,7 @@ DEFERRED -- Specified but intentionally postponed
 | AI Chat Widget (E3d S80) | — | LIVE Supabase | **DONE** -- Floating Z button + slide-up chat. use-ai-assistant.ts hook. Layout-level. |
 | **REST2: Mold Status (S131)** | 1 | LIVE Supabase | **DONE** -- mold-status/ page. Homeowner read-only: progress timeline, clearance results, spore reduction. |
 | **NICHE1: Pest Control (S131)** | 1 | LIVE Supabase | **DONE** -- pest-control/ page. Next service highlight, treatment history, re-entry warnings, safety info. |
+| **NICHE2: Service History (S131)** | 1 | LIVE Supabase | **DONE** -- service-history/ page. Combined locksmith + garage door + appliance records, sorted by date, trade badges. |
 | Remaining (Request, Referrals, Review) | 3 | MOCK | Future-phase placeholders. |
 
 **Key files:**
@@ -330,6 +334,7 @@ DEFERRED -- Specified but intentionally postponed
 | **REST1: Fire Assessment (S131)** | 1 | LIVE Supabase | **DONE** -- fire-assessment/ page. Field tech fire damage assessment view. |
 | **REST2: Mold Assessment (S131)** | 1 | LIVE Supabase | **DONE** -- mold-assessment/ page. Field tech mold assessment, level/status badges. |
 | **NICHE1: Pest Treatment (S131)** | 1 | LIVE Supabase | **DONE** -- pest-treatment/ page. Treatment log view with stats. |
+| **NICHE2: Service Trades (S131)** | 1 | LIVE Supabase | **DONE** -- service-trades/ page. Combined locksmith + garage door + appliance view with tab filter. |
 
 **Key files:**
 - **30 hook files total:** mappers.ts + 29 use-*.ts: use-ai-troubleshoot, use-bids, use-certifications, use-change-orders, use-compliance-status, use-daily-log, use-equipment, use-estimates, use-insurance, use-jobs, use-maintenance-requests, use-materials, use-meetings, use-messages, use-my-documents, use-my-training, use-my-vehicle, use-notifications, use-pay-stubs, use-phone, use-pm-jobs, use-property-scan, use-punch-list, use-team-schedule, use-time-clock, use-time-off, use-tool-checkout, use-tpa-jobs, use-walkthroughs
@@ -551,8 +556,9 @@ Tech opens app -> Taps "Field Tools"
 **REST1: Fire Restoration (6 -- migration 000108):** fire_restoration_assessments, fire_damage_areas, structural_assessments, smoke_odor_assessments, contents_cleaning_items, fire_restoration_line_items
 **REST2: Mold Remediation (4 -- migration 000109):** mold_assessments, mold_samples, mold_state_regulations, mold_labs
 **NICHE1: Pest Control (3 -- migration 000111):** treatment_logs, bait_stations, wdi_reports
+**NICHE2: Service Trades (3 -- migration 000112):** locksmith_service_logs, garage_door_service_logs, appliance_service_logs
 
-**Total: ~212 tables. 112 migration files. RLS on all. Audit triggers on all mutable tables.**
+**Total: ~215 tables. 113 migration files. RLS on all. Audit triggers on all mutable tables.**
 
 ### D1 Job Type Columns (Already Deployed)
 - `jobs.job_type` TEXT with CHECK constraint: 'standard', 'insurance_claim', 'warranty_dispatch'
@@ -811,9 +817,9 @@ Tech opens app -> Taps "Field Tools"
 - [x] REST1: Fire Restoration — 6 tables (fire_restoration_assessments, fire_damage_areas, structural_assessments, smoke_odor_assessments, contents_cleaning_items, fire_restoration_line_items). 1 EF (export-fire-assessment-pdf). Flutter: 4 screens, 2 models, 2 repos. CRM: 1 page + 1 hook. Team: 1 page. Client: fire timeline in projects. ~55 seed line items. NFPA 921 damage classification.
 - [x] REST2: Mold Remediation — 4 tables (mold_assessments, mold_samples, mold_state_regulations, mold_labs). 1 EF (export-mold-clearance-pdf). Flutter: 5 screens, 1 model, 1 repo. CRM: 1 page + 1 hook (4 sub-hooks). Team: 1 page. Client: 1 page. IICRC S520 levels 1-3. Chain of custody. 50-state regs. AIHA lab directory.
 
-### Phase NICHE: Niche Trade Modules -- IN PROGRESS (NICHE1 DONE, S131)
+### Phase NICHE: Niche Trade Modules -- ALL COMPLETE (NICHE1+NICHE2 DONE, S131)
 - [x] NICHE1: Pest Control — 3 tables (treatment_logs, bait_stations, wdi_reports). 1 EF (export-wdi-report-pdf). Flutter: 2 models, 3 repos, 4 screens (treatment log, WDI report, bait station map, recurring services). CRM: 1 page + 1 hook (3 sub-hooks). Team: 1 page. Client: 1 page. 14 service types, 10 treatment methods, NPMA-33, 18 pest control line items seed data.
-- [ ] NICHE2: Service Trades (locksmith, garage door, appliance repair) — NOT STARTED
+- [x] NICHE2: Service Trades — 3 tables (locksmith_service_logs, garage_door_service_logs, appliance_service_logs). Flutter: 3 models, 3 repos, 3 screens (locksmith, garage door, appliance). CRM: 3 pages (locksmith/, garage-door/, appliance-repair/) + 3 hooks (use-locksmith.ts, use-garage-door.ts, use-appliance-repair.ts). Team: service-trades/ combined page. Client: service-history/ combined page. Locksmith: 13 service types, 13 lock types, 10 key types, VIN/automotive. Garage door: 8 door types, 6 opener types, 5 spring types, safety tests, spring specs. Appliance: 14 types, error codes, repair vs replace (50% rule), warranty. 36 seed line items.
 
 ### Phase G: QA & Hardening -- AFTER T + P + SK + U (harden everything at once)
 - [x] G1a: Consolidated Build Verification -- All 5 apps build clean (S90).
