@@ -33,6 +33,8 @@ export interface JobData {
   id: string;
   title: string;
   customerName: string;
+  customerEmail: string;
+  customerPhone: string;
   address: string;
   city: string;
   state: string;
@@ -44,6 +46,7 @@ export interface JobData {
   scheduledStart: string | null;
   scheduledEnd: string | null;
   description: string;
+  internalNotes: string;
   assignedTo: string[];
   estimatedAmount: number;
   completedAt: string | null;
@@ -526,6 +529,8 @@ export function mapJob(row: Record<string, unknown>): JobData {
     id: row.id as string,
     title: (row.title as string) || 'Untitled Job',
     customerName: (row.customer_name as string) || '',
+    customerEmail: (row.customer_email as string) || '',
+    customerPhone: (row.customer_phone as string) || '',
     address: (row.address as string) || '',
     city: (row.city as string) || '',
     state: (row.state as string) || '',
@@ -537,6 +542,7 @@ export function mapJob(row: Record<string, unknown>): JobData {
     scheduledStart: (row.scheduled_start as string) || null,
     scheduledEnd: (row.scheduled_end as string) || null,
     description: (row.description as string) || '',
+    internalNotes: (row.internal_notes as string) || '',
     assignedTo: (row.assigned_user_ids as string[]) || [],
     estimatedAmount: (row.estimated_amount as number) || 0,
     completedAt: (row.completed_at as string) || null,
