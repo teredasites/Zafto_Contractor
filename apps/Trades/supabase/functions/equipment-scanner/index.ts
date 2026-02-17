@@ -1,5 +1,6 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0';
+import { checkRateLimit, rateLimitResponse } from '../_shared/rate-limiter.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -56,6 +57,16 @@ serve(async (req: Request) => {
       const { data: { user } } = await supabase.auth.getUser(token);
       userId = user?.id || null;
       companyId = user?.app_metadata?.company_id || null;
+
+      // Rate limit: 20 requests per minute per user
+      if (userId) {
+        const rateCheck = await checkRateLimit(supabase, {
+          key: `user:${userId}:equipment-scanner`,
+          maxRequests: 20,
+          windowSeconds: 60,
+        });
+        if (!rateCheck.allowed) return rateLimitResponse(rateCheck.retryAfter!);
+      }
     }
 
     switch (action) {

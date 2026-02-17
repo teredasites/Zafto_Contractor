@@ -7,6 +7,7 @@ import { serve } from 'https://deno.land/std@0.177.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { unzipSync } from 'https://esm.sh/fflate@0.8.2'
 import { XMLParser } from 'https://esm.sh/fast-xml-parser@4.3.6'
+import { checkRateLimit, rateLimitResponse } from '../_shared/rate-limiter.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -299,6 +300,16 @@ serve(async (req) => {
       status: 401,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
+  }
+
+  // Rate limit: 5 requests per minute per user (file imports are expensive)
+  const rateCheck = await checkRateLimit(supabase, {
+    key: `user:${user.id}:import-esx`,
+    maxRequests: 5,
+    windowSeconds: 60,
+  })
+  if (!rateCheck.allowed) {
+    return rateLimitResponse(rateCheck.retryAfter!)
   }
 
   try {
