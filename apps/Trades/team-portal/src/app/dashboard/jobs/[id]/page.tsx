@@ -172,6 +172,33 @@ export default function JobDetailPage() {
         </CardContent>
       </Card>
 
+      {/* Customer Contact */}
+      {(job.customerPhone || job.customerEmail) && (
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-semibold flex items-center gap-2"><User size={14} /> Customer</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <p className="text-sm font-medium text-main">{job.customerName}</p>
+            {job.customerPhone && (
+              <a href={`tel:${job.customerPhone}`} className="flex items-center gap-2 text-sm text-blue-500 hover:underline">
+                <Phone size={14} /> {job.customerPhone}
+              </a>
+            )}
+            {job.customerEmail && (
+              <a href={`mailto:${job.customerEmail}`} className="flex items-center gap-2 text-sm text-blue-500 hover:underline">
+                <Mail size={14} /> {job.customerEmail}
+              </a>
+            )}
+            {fullAddress && (
+              <a href={`https://maps.google.com/?q=${encodeURIComponent(fullAddress)}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-blue-500 hover:underline">
+                <MapPin size={14} /> Get Directions
+              </a>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
       {/* Type Metadata */}
       {job.jobType !== 'standard' && job.typeMetadata && Object.keys(job.typeMetadata).length > 0 && (
         <TypeMetadataSection jobType={job.jobType as JobType} metadata={job.typeMetadata} />

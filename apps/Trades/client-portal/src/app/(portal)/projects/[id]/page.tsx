@@ -48,7 +48,7 @@ function DetailSkeleton() {
 export default function ProjectDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { project, loading: projectLoading } = useProject(id);
-  const { orders, loading: ordersLoading } = useChangeOrders();
+  const { orders, loading: ordersLoading, approveOrder, rejectOrder } = useChangeOrders();
   const { invoices, loading: invoicesLoading } = useInvoices();
 
   const isInsurance = project?.jobType === 'insurance_claim';
@@ -266,14 +266,39 @@ export default function ProjectDetailPage() {
             <div className="bg-white rounded-xl border border-gray-100 p-4">
               <h3 className="font-semibold text-sm text-gray-900 mb-3">Change Orders</h3>
               {projectChangeOrders.map(co => (
-                <div key={co.id} className="flex items-center justify-between py-2">
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">{co.title}</p>
-                    <p className="text-xs text-gray-500">{co.orderNumber} · {co.status}</p>
+                <div key={co.id} className="border-b border-gray-50 last:border-0 py-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">{co.title}</p>
+                      <p className="text-xs text-gray-500">{co.orderNumber} · {co.description}</p>
+                    </div>
+                    <span className="text-sm font-bold" style={{ color: 'var(--accent)' }}>
+                      {co.amount >= 0 ? '+' : ''}{formatCurrency(co.amount)}
+                    </span>
                   </div>
-                  <span className="text-sm font-bold" style={{ color: 'var(--accent)' }}>
-                    {co.amount >= 0 ? '+' : ''}{formatCurrency(co.amount)}
-                  </span>
+                  {co.status === 'pending_approval' && (
+                    <div className="flex items-center gap-2 mt-2">
+                      <button
+                        onClick={() => approveOrder(co.id)}
+                        className="px-3 py-1.5 text-xs font-medium rounded-lg text-white"
+                        style={{ backgroundColor: 'var(--accent)' }}
+                      >
+                        Approve
+                      </button>
+                      <button
+                        onClick={() => rejectOrder(co.id)}
+                        className="px-3 py-1.5 text-xs font-medium rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50"
+                      >
+                        Decline
+                      </button>
+                    </div>
+                  )}
+                  {co.status === 'approved' && (
+                    <p className="text-xs text-green-600 font-medium mt-1">Approved</p>
+                  )}
+                  {co.status === 'rejected' && (
+                    <p className="text-xs text-red-500 font-medium mt-1">Declined</p>
+                  )}
                 </div>
               ))}
             </div>

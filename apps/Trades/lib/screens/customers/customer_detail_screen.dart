@@ -48,9 +48,13 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen> {
     final allJobs = await jobService.getAllJobs();
     final allInvoices = await invoiceService.getAllInvoices();
 
-    // Filter jobs and invoices by customer name (since we don't have customerId linked yet)
-    final customerJobs = allJobs.where((j) => j.customerName == customer?.name).toList();
-    final customerInvoices = allInvoices.where((i) => i.customerName == customer?.name).toList();
+    // Filter jobs and invoices by customer ID (with name fallback for legacy data)
+    final customerJobs = allJobs.where((j) =>
+        j.customerId == widget.customerId ||
+        (j.customerId == null && j.customerName == customer?.name)).toList();
+    final customerInvoices = allInvoices.where((i) =>
+        i.customerId == widget.customerId ||
+        (i.customerId == null && i.customerName == customer?.name)).toList();
 
     // Load maintenance predictions for this customer
     List<Map<String, dynamic>> predictions = [];
