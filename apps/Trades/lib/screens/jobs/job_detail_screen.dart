@@ -18,6 +18,8 @@ import 'job_create_screen.dart';
 import '../invoices/invoice_create_screen.dart';
 import '../insurance/claim_detail_screen.dart';
 import '../scheduling/schedule_gantt_screen.dart';
+import '../messages/chat_screen.dart';
+import '../../providers/messaging_provider.dart';
 
 class JobDetailScreen extends ConsumerStatefulWidget {
   final String jobId;
@@ -668,6 +670,11 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
             Expanded(child: _buildActionButton(colors, LucideIcons.camera, 'Add Photos', colors.textSecondary, () {})),
           ],
         ),
+        const SizedBox(height: 8),
+        SizedBox(
+          width: double.infinity,
+          child: _buildActionButton(colors, LucideIcons.messageSquare, 'Message Team', colors.accentPrimary, () => _openJobChat()),
+        ),
       ],
     );
   }
@@ -829,6 +836,38 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _openJobChat() async {
+    if (_job == null) return;
+    HapticFeedback.mediumImpact();
+
+    try {
+      // Create or find a job-scoped conversation for this job's assigned team
+      final jobTitle = _job!.title ?? 'Untitled Job';
+      final conv = await ref.read(messagingActionsProvider.notifier).createGroup(
+            title: jobTitle,
+            participantIds: _job!.assignedUserIds,
+            jobId: _job!.id,
+          );
+      if (mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ChatScreen(
+              conversationId: conv.id,
+              title: jobTitle,
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to open chat: $e')),
+        );
+      }
+    }
   }
 
   String _formatDate(DateTime date) {

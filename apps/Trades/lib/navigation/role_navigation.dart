@@ -39,6 +39,11 @@ List<TabConfig> getTabsForRole(UserRole role) {
           activeIcon: Icons.calendar_today,
         ),
         TabConfig(
+          label: 'Messages',
+          icon: Icons.chat_bubble_outline,
+          activeIcon: Icons.chat_bubble,
+        ),
+        TabConfig(
           label: 'More',
           icon: Icons.menu,
           activeIcon: Icons.menu,
@@ -66,6 +71,11 @@ List<TabConfig> getTabsForRole(UserRole role) {
           label: 'Tools',
           icon: Icons.build_outlined,
           activeIcon: Icons.build,
+        ),
+        TabConfig(
+          label: 'Messages',
+          icon: Icons.chat_bubble_outline,
+          activeIcon: Icons.chat_bubble,
         ),
         TabConfig(
           label: 'More',
@@ -124,6 +134,11 @@ List<TabConfig> getTabsForRole(UserRole role) {
           label: 'Tools',
           icon: Icons.build_outlined,
           activeIcon: Icons.build,
+        ),
+        TabConfig(
+          label: 'Messages',
+          icon: Icons.chat_bubble_outline,
+          activeIcon: Icons.chat_bubble,
         ),
         TabConfig(
           label: 'More',

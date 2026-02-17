@@ -7,7 +7,7 @@ import {
   LayoutDashboard, Briefcase, Clock, Calendar, Camera, FileText,
   Package, CheckSquare, FileSignature, Bell, Settings, Wrench,
   Receipt, Menu, Sun, Moon, LogOut, X, Award, Building2, Calculator, Phone, Video,
-  DollarSign, Car, GraduationCap, FolderOpen, Hammer, Shield,
+  DollarSign, Car, GraduationCap, FolderOpen, Hammer, Shield, MessageSquare,
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { useTheme } from '@/components/theme-provider';
@@ -41,6 +41,7 @@ const navigationGroups: NavGroup[] = [
     items: [
       { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
       { name: 'My Jobs', href: '/dashboard/jobs', icon: Briefcase },
+      { name: 'Messages', href: '/dashboard/messages', icon: MessageSquare },
       { name: 'Properties', href: '/dashboard/properties', icon: Building2 },
       { name: 'Schedule', href: '/dashboard/schedule', icon: Calendar },
       { name: 'Maintenance', href: '/dashboard/maintenance', icon: Hammer },
