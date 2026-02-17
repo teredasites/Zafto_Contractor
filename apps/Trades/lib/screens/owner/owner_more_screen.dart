@@ -6,6 +6,7 @@ import 'package:zafto/theme/zafto_colors.dart';
 import 'package:zafto/theme/zafto_theme_builder.dart';
 import 'package:zafto/screens/scheduling/schedule_list_screen.dart';
 import 'package:zafto/screens/equipment/equipment_list_screen.dart';
+import 'package:zafto/screens/settings/phone_settings_screen.dart';
 
 class OwnerMoreScreen extends ConsumerWidget {
   const OwnerMoreScreen({super.key});
@@ -99,6 +100,13 @@ class OwnerMoreScreen extends ConsumerWidget {
           Divider(height: 1, color: colors.borderSubtle),
           const SizedBox(height: 8),
           _buildSectionLabel(colors, 'SYSTEM'),
+          _buildMenuItem(
+            context,
+            colors,
+            icon: Icons.phone_outlined,
+            title: 'Phone Settings',
+            screen: const PhoneSettingsScreen(),
+          ),
           _buildMenuItem(
             context,
             colors,
