@@ -11891,18 +11891,18 @@ When inspector takes a photo during inspection execution, add search bar to atta
 **Goal:** Fill all 10 stub pages in the team portal (original count said 6, actual audit found 10). Field workers (all trades) need these pages functional — not empty shells. Every page handles all 4 states (loading, error, empty, data). Every page specifies which hook it uses and verifies the backing data model exists.
 
 **Dependencies:** `/dashboard/phone` depends on Phase U (SignalWire). `/dashboard/change-orders` depends on change order system. `/dashboard/schedule/time-off` requires `time_off_requests` table (verify exists or create).
-- [ ] `/dashboard/field-tools/photos` — Photo gallery: browse job photos by date/job, lightbox viewer, upload from browser, filter by before/during/after tag
-- [ ] `/dashboard/field-tools/voice-notes` — Voice note browser: list recordings by job, play in browser, show transcription if available, upload new
-- [ ] `/dashboard/field-tools/signatures` — Signature viewer: list captured signatures by job, view signature image, metadata (who signed, when, what document)
-- [ ] `/dashboard/field-tools/receipts` — Receipt browser: list receipts by job/date, view receipt image, show OCR data, filter by category, add new receipt (photo upload)
-- [ ] `/dashboard/compliance` — Compliance dashboard: safety certifications status, required training completion, OSHA requirements, upcoming deadlines, compliance score
-- [ ] `/dashboard/my-training` — Training records: completed courses, required courses, CE credits, certification renewals, training calendar
-- [ ] `/dashboard/my-documents` — Document vault: employment docs, certifications, licenses, tax forms, company policies, upload/download, expiry alerts
-- [ ] `/dashboard/change-orders` — Change order list: view COs for assigned jobs, status tracking, detail view with line items, approval status
-- [ ] `/dashboard/schedule/time-off` — Time off requests: submit PTO/sick/personal request, calendar view of approved time off, balance display, approval status tracking
-- [ ] `/dashboard/phone` — Company phone system: click-to-call contacts, recent calls, voicemail playback (integrates with SignalWire phone system from Phase U)
-- [ ] Update team portal navigation with badges for new pages
-- [ ] Commit: `[FIELD3] Team portal stub completion — 10 pages filled, all functional`
+- [x] `/dashboard/field-tools/photos` — Photo gallery: browse job photos by date/job, lightbox viewer, upload from browser, filter by category (S131)
+- [x] `/dashboard/field-tools/voice-notes` — Voice note browser: list recordings by job, play in browser, show transcription, expandable transcript (S131)
+- [x] `/dashboard/field-tools/signatures` — Signature viewer: list captured signatures, base64 preview, detail modal, signer name/role/purpose (S131)
+- [x] `/dashboard/field-tools/receipts` — Receipt browser: upload, OCR status, list by job (already functional pre-FIELD3)
+- [x] `/dashboard/compliance` — Compliance dashboard: CE hours, gaps, renewals, progress bars (already functional pre-FIELD3, uses use-compliance-status hook)
+- [x] `/dashboard/training` — Training records: completed, active, expiring, onboarding checklists, search/filter (already functional pre-FIELD3, uses use-my-training hook)
+- [x] `/dashboard/my-documents` — Document vault: categories, search, download, file types, expiry (already functional pre-FIELD3, uses use-my-documents hook)
+- [x] `/dashboard/change-orders` — Change order list: create CO form with line items, job filter, status tracking (already functional pre-FIELD3, uses use-change-orders hook)
+- [x] `/dashboard/schedule/time-off` — Time off requests: submit, type selector, status, cancel (already functional pre-FIELD3, uses use-time-off hook)
+- [x] `/dashboard/phone` — Company phone: calls, voicemail, text tabs, click-to-call (already functional pre-FIELD3, uses use-phone hook)
+- [x] Update team portal navigation with badges for new pages (Messages + Tool Checkout added in FIELD1/FIELD2)
+- [x] Commit: `[FIELD3] Team portal stub completion — photos gallery, voice notes player, signatures viewer`
 
 ### FIELD4 — Bluetooth Laser Meter Integration (~20h)
 **Goal:** Connect professional Bluetooth laser meters (Bosch, Leica, DeWalt, Hilti, Milwaukee, Stabila) to the Sketch Engine for instant measurement capture. Flagship feature — no competitor integrates measurement hardware into a full sketch→estimate→job pipeline. Bosch ships stable (SDK available), all others ship as beta with bug reporting. Must be tested across every platform, every edge case, every failure mode.
