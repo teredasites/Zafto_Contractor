@@ -11887,8 +11887,10 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - [ ] Overdue alert: equipment not returned by expected_return_date → notification to admin
 - [ ] Commit: `[FIELD2] Equipment checkout — QR scan, borrow/return, condition tracking`
 
-### FIELD3 — Team Portal Stub Completion (~12h)
-**Goal:** Fill all 6 stub pages in the team portal. Field workers (all trades) need these pages functional — not empty shells.
+### FIELD3 — Team Portal Stub Completion (~18h, S130 corrected from 12h)
+**Goal:** Fill all 10 stub pages in the team portal (original count said 6, actual audit found 10). Field workers (all trades) need these pages functional — not empty shells. Every page handles all 4 states (loading, error, empty, data). Every page specifies which hook it uses and verifies the backing data model exists.
+
+**Dependencies:** `/dashboard/phone` depends on Phase U (SignalWire). `/dashboard/change-orders` depends on change order system. `/dashboard/schedule/time-off` requires `time_off_requests` table (verify exists or create).
 - [ ] `/dashboard/field-tools/photos` — Photo gallery: browse job photos by date/job, lightbox viewer, upload from browser, filter by before/during/after tag
 - [ ] `/dashboard/field-tools/voice-notes` — Voice note browser: list recordings by job, play in browser, show transcription if available, upload new
 - [ ] `/dashboard/field-tools/signatures` — Signature viewer: list captured signatures by job, view signature image, metadata (who signed, when, what document)
@@ -11952,6 +11954,22 @@ When inspector takes a photo during inspection execution, add search bar to atta
 
 ---
 
+### FIELD5 — BYOC Phone Integration (~10h)
+**Goal:** Let contractors keep their existing business phone number while getting Zafto's full phone system features (call recording, IVR, voicemail transcription, call analytics). Bring Your Own Carrier — SIP trunking or call forwarding from their existing number into SignalWire. Currently bolted onto FIELD1 as a single checkbox; this sprint gives it the depth it deserves.
+
+**Dependencies:** Phase U (SignalWire phone system must be complete).
+
+- [ ] **Number verification flow** — Flutter + Web CRM: contractor enters their existing business number, system sends verification call/SMS, contractor confirms ownership. Store verified numbers in `company_phone_numbers` table (id, company_id, phone_number, verification_status enum [pending, verified, failed], verification_code, verified_at, forwarding_type enum [sip_trunk, call_forward, port_in], sip_credentials jsonb, created_at). RLS: company_id scoping.
+- [ ] **SIP trunk configuration** — For contractors with SIP-capable providers: generate SIP credentials via SignalWire BYOC API, provide SIP endpoint + username + password for their provider to point to. Test with major VoIP providers (RingCentral, Vonage, 8x8, Grasshopper).
+- [ ] **Call forwarding fallback** — For contractors without SIP capability: simple call forwarding from their number to their Zafto SignalWire number. One-tap setup with carrier-specific forwarding codes (*72 for most carriers). Auto-detect carrier and show correct instructions.
+- [ ] **Number porting option** — For contractors who want to fully move: initiate port-in request via SignalWire Number Porting API. Track porting status (submitted, FOC received, porting, complete). Estimated 7-10 business days. Show clear status in settings.
+- [ ] **Settings UI** — Flutter: `lib/screens/settings/phone_settings_screen.dart`. Web CRM: `/dashboard/settings/phone`. Team portal: read-only status. Show: current number, verification status, forwarding type, call routing rules, caller ID configuration.
+- [ ] **Caller ID management** — When contractor makes outbound calls via Zafto, display their original business number as caller ID (not the SignalWire number). SignalWire CNAM registration for their number.
+- [ ] **Testing** — Verify: inbound calls route correctly, outbound caller ID shows correct number, voicemail works, call recording works, IVR works, SMS routing works (if number supports it). Test across: Verizon, AT&T, T-Mobile, Spectrum, Comcast carrier numbers.
+- [ ] Commit: `[FIELD5] BYOC phone integration — SIP trunk, call forwarding, number porting, caller ID`
+
+---
+
 ## PHASE REST: RESTORATION & REMEDIATION GAPS (S124 audit)
 **Purpose:** Fire restoration and mold remediation have TradeType enum values but share water damage workflows. Professional restoration contractors need dedicated tools for each damage type — the workflows, documentation requirements, and equipment differ significantly. Insurance adjusters expect damage-type-specific documentation.
 
@@ -11966,6 +11984,14 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - [ ] Repository + service for fire restoration data
 - [ ] Seed data: common soot types with cleaning methods, thermal fogging protocols, content cleaning categories (electronics, soft goods, hard goods, documents, artwork)
 - [ ] Integration: fire assessment links to insurance claim, equipment deployment, drying log (water from fire suppression)
+- [ ] **S130 Audit Additions — Infrastructure (MANDATORY):**
+- [ ] **Database tables** — Create migration: `fire_assessments` (id, job_id, company_id, damage_type enum [structure, content, smoke, water_from_suppression], severity enum [minor, moderate, major, total_loss], origin_point, fire_department_report_number, insurance_claim_id FK, photos jsonb, notes, created_at, updated_at, deleted_at), `content_packout_items` (id, fire_assessment_id FK, company_id, item_description, category enum [electronics, soft_goods, hard_goods, documents, artwork, furniture, clothing, appliances], condition enum [salvageable, non_salvageable, needs_cleaning, needs_restoration], estimated_value, photo_urls jsonb, box_number, storage_location, returned_at, created_at, updated_at, deleted_at). RLS on both: company_id scoping. Audit triggers on both.
+- [ ] **Web CRM hook + page** — `web-portal/src/lib/hooks/use-fire-restoration.ts`: CRUD for fire assessments + content packout items, real-time subscription. `web-portal/src/app/dashboard/fire-restoration/page.tsx`: list view with filters (date, severity, job, insurance status). Detail view: assessment summary, packout inventory table, photo gallery, PDF export button.
+- [ ] **Team portal page** — `team-portal/src/app/dashboard/fire-assessment/page.tsx`: field tech view — assessment form, packout scanner, photo capture with before/after.
+- [ ] **Client portal visibility** — `client-portal/src/app/dashboard/content-packout/page.tsx`: homeowner view of their belongings — item list, condition, estimated return date, photo of each item. Read-only.
+- [ ] **PDF report generation** — Edge Function `export-fire-assessment-pdf`: generates insurance-grade fire assessment report (origin, spread pattern, soot classification per room, content inventory, photo plates). Must include adjuster-ready formatting.
+- [ ] **Repository** — `lib/repositories/fire_assessment_repository.dart`, `lib/repositories/content_packout_repository.dart` with typed errors, offline cache support.
+- [ ] **Photo documentation requirements** — Every assessment screen captures photos to `photos` storage bucket, tagged with assessment_id, room, and damage type. Minimum 4 photos per room (overview, close-up, measurement reference, damage detail).
 - [ ] Commit: `[REST1] Fire restoration — soot classification, content packout, odor treatment, board-up`
 
 ### REST2 — Mold Remediation Dedicated Tools (~10h)
@@ -11979,6 +12005,15 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - [ ] Repository + service for mold remediation data
 - [ ] Seed data: IICRC S520 protocol levels with descriptions, common mold types, air sampling thresholds, PPE requirements per level, clearance criteria
 - [ ] Integration: mold assessment links to moisture readings (existing), equipment deployment (existing), insurance claim, compliance calendar
+- [ ] **S130 Audit Additions — Infrastructure (MANDATORY):**
+- [ ] **Database tables** — Create migration: `mold_assessments` (id, job_id, company_id, iicrc_level enum [1, 2, 3], affected_area_sqft, mold_type, moisture_source, containment_type enum [none, limited, full], air_sampling_required boolean, clearance_status enum [pending, sampling, awaiting_results, passed, failed], lab_name, lab_sample_id, spore_count_before, spore_count_after, clearance_date, created_at, updated_at, deleted_at), `mold_chain_of_custody` (id, mold_assessment_id FK, company_id, sample_type enum [air, surface, bulk, tape_lift], sample_location, collected_by, collected_at, shipped_to_lab_at, lab_received_at, results_available_at, result_data jsonb, created_at). RLS on both: company_id scoping. Audit triggers.
+- [ ] **Web CRM hook + page** — `web-portal/src/lib/hooks/use-mold-remediation.ts`: CRUD for mold assessments + chain of custody, real-time. `web-portal/src/app/dashboard/mold-remediation/page.tsx`: list with filters (IICRC level, clearance status, date range). Detail: assessment, containment setup, air sampling results, clearance status timeline.
+- [ ] **Team portal page** — `team-portal/src/app/dashboard/mold-assessment/page.tsx`: field tech view — assessment intake, moisture readings integration, containment checklist, sample collection form.
+- [ ] **Client portal visibility** — `client-portal/src/app/dashboard/mold-status/page.tsx`: homeowner view — assessment summary, clearance status (PASS/FAIL with date), air quality results (simplified), next steps.
+- [ ] **Clearance certificate PDF** — Edge Function `export-mold-clearance-pdf`: generates clearance certificate with lab results, before/after spore counts, IICRC protocol followed, remediator info, IH info, date stamps.
+- [ ] **Repository** — `lib/repositories/mold_assessment_repository.dart`, `lib/repositories/mold_chain_of_custody_repository.dart`.
+- [ ] **State regulation seed data** — Seed table `mold_state_regulations`: state, license_required boolean, license_type, notification_threshold, tenant_notice_required boolean, notice_days, assessment_required_before_remediation boolean, clearance_testing_required boolean, allowable_spore_count. Start with all 50 states. Cross-reference Phase JUR for ongoing maintenance.
+- [ ] **Lab directory seed data** — Seed table `mold_labs`: name, address, aiha_accredited boolean, turnaround_days, sample_types_accepted, website, phone. Seed top 50 AIHA-accredited labs nationwide.
 - [ ] Commit: `[REST2] Mold remediation — IICRC S520 protocols, containment, air sampling, clearance`
 
 ---
@@ -11995,6 +12030,15 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - [ ] Models: `treatment_log.dart` (chemical_application with EPA fields, target_pests array, application_methods), `bait_station.dart` (location, type, activity_level, last_inspected), `wdi_report.dart` (NPMA-33 fields, findings per area)
 - [ ] Seed data: common pest control chemicals with EPA numbers, pest identification guide (top 30 pests with treatment recommendations), NPMA-33 form template, bait station types
 - [ ] Calculators: chemical dilution calculator, square footage treatment calculator, fumigation volume calculator
+- [ ] **S130 Audit Additions — Infrastructure (MANDATORY):**
+- [ ] **Database tables** — Create migration: `treatment_logs` (id, job_id, company_id, property_id FK, pest_type, treatment_type enum [spray, bait, trap, fumigation, heat, exclusion], chemical_name, epa_registration_number, application_rate, dilution_ratio, target_area_sqft, weather_conditions jsonb, applicator_id FK users, license_number, re_entry_time_hours, next_service_date, photos jsonb, created_at, updated_at, deleted_at), `bait_stations` (id, company_id, property_id FK, floor_plan_id FK, station_number, station_type enum [rodent, ant, cockroach, termite], location_description, x_coordinate, y_coordinate, last_serviced_at, bait_type, activity_level enum [none, low, moderate, high], created_at, updated_at, deleted_at), `wdi_reports` (id, job_id, company_id, property_id FK, report_type enum [npma_33, state_specific], inspector_name, inspector_license, inspection_date, findings jsonb, diagrams jsonb, infestation_found boolean, damage_found boolean, treatment_recommended boolean, report_pdf_url, created_at, updated_at, deleted_at). RLS on all: company_id scoping. Audit triggers.
+- [ ] **Web CRM hook + pages** — `web-portal/src/lib/hooks/use-pest-control.ts`: CRUD for treatment logs, bait stations, WDI reports. `web-portal/src/app/dashboard/pest-control/page.tsx`: treatment history with filters, bait station map viewer, WDI report list. Office staff can schedule recurring services, print WDI reports, track chemical inventory.
+- [ ] **Team portal page** — `team-portal/src/app/dashboard/pest-treatment/page.tsx`: field tech view — treatment log form, bait station check-in (scan QR on station), photo capture, chemical usage logging.
+- [ ] **Client portal page** — `client-portal/src/app/dashboard/pest-control/page.tsx`: homeowner view — treatment history, next service date, safety data sheets for chemicals used, bait station locations on property map.
+- [ ] **PDF generation** — Edge Function `export-wdi-report-pdf`: generates professional NPMA-33 Wood Destroying Insect Inspection Report, filled from `wdi_reports` data. Standard form layout that real estate agents and title companies accept. Also generates state-specific variants where required.
+- [ ] **Repository** — `lib/repositories/treatment_log_repository.dart`, `lib/repositories/bait_station_repository.dart`, `lib/repositories/wdi_report_repository.dart`.
+- [ ] **Recurring service billing** — Treatment logs with `next_service_date` auto-generate recurring invoices via automation engine (DEPTH18). Link treatment_log.job_id to invoicing system.
+- [ ] **Chemical usage annual report** — Aggregate chemical usage per year for EPA reporting requirements. Export as CSV for state pesticide regulatory agencies.
 - [ ] Commit: `[NICHE1] Pest control — treatment logs, bait stations, WDI/NPMA-33, recurring service`
 
 ### NICHE2 — Service Trades Module (~8h)
@@ -12005,6 +12049,33 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - [ ] Models: `locksmith_service.dart` (lock_types, service_types, key_codes), `garage_door_service.dart` (door_measurements, spring_specs, opener_type), `appliance_service.dart` (appliance_type, brand_model, diagnostic_codes)
 - [ ] Seed data: common lock types with rekey procedures, garage door spring sizing charts, common appliance error codes by brand (top 10 brands × top 5 codes = ~50 entries per appliance type)
 - [ ] Calculators: garage door spring calculator (wire size × length × ID = cycles), appliance repair vs replace ROI calculator, master key system bitting calculator
+- [ ] **S130 Audit Additions — Infrastructure + Splitting (MANDATORY):**
+- [ ] **NICHE2 covers THREE distinct trades — each gets its own subsection, database tables, and web portal coverage.**
+
+**Subsection A — Locksmith (~6h):**
+- [ ] **Database table** — `locksmith_service_logs` (id, job_id, company_id, service_type enum [rekey, lockout, lock_change, master_key, safe, automotive_lockout, transponder_key, high_security, access_control], lock_brand, lock_type enum [deadbolt, knob, lever, padlock, mortise, rim, cam, electronic, smart, automotive], key_type enum [standard, restricted, high_security, transponder, proximity, smart], pins, bitting_code, master_key_system_id, vin_number, vehicle_year_make_model, photos jsonb, created_at, updated_at, deleted_at). RLS: company_id scoping.
+- [ ] **Web CRM hook + page** — `use-locksmith.ts`, `/dashboard/locksmith/page.tsx`: service log history, master key system management, key inventory tracking.
+- [ ] **Diagnostic flow** — Guided decision tree: lockout type (residential/commercial/automotive) -> lock identification (photo + brand/model lookup) -> service recommendation -> parts needed -> quote generation. Not just a form — an actual step-by-step diagnostic.
+- [ ] **Automotive locksmith depth** — VIN decoder integration (NHTSA free API) for vehicle identification, transponder key type lookup by year/make/model, programming procedure reference by vehicle.
+- [ ] **Repository** — `lib/repositories/locksmith_service_repository.dart`
+
+**Subsection B — Garage Door (~6h):**
+- [ ] **Database table** — `garage_door_service_logs` (id, job_id, company_id, door_type enum [sectional, roll_up, tilt_up, slide, commercial_rolling_steel], opener_brand, opener_model, spring_type enum [torsion, extension, torquemaster, ez_set], spring_wire_size, spring_length, spring_inside_diameter, cycles_rating, door_width_inches, door_height_inches, track_type, panel_material, insulation_r_value, safety_sensor_status, photos jsonb, created_at, updated_at, deleted_at). RLS: company_id scoping.
+- [ ] **Web CRM hook + page** — `use-garage-door.ts`, `/dashboard/garage-door/page.tsx`: service history, spring inventory, door specs per property.
+- [ ] **Diagnostic flow** — Guided: symptom (won't open / won't close / noisy / uneven / opener issue) -> visual inspection checklist -> component testing -> diagnosis -> parts + labor quote.
+- [ ] **Repository** — `lib/repositories/garage_door_service_repository.dart`
+
+**Subsection C — Appliance Repair (~6h):**
+- [ ] **Database table** — `appliance_service_logs` (id, job_id, company_id, appliance_type enum [refrigerator, washer, dryer, dishwasher, oven, range, microwave, garbage_disposal, ice_maker, wine_cooler, trash_compactor, range_hood], brand, model_number, serial_number, manufacture_date, error_code, diagnosis, repair_performed, parts_used jsonb, repair_vs_replace_recommendation enum [repair, replace, customer_choice], estimated_remaining_life_years, photos jsonb, created_at, updated_at, deleted_at). RLS: company_id scoping. **NOTE: Removed "HVAC unit" and "water heater" — those belong to HVAC/plumbing trades.**
+- [ ] **Web CRM hook + page** — `use-appliance-repair.ts`, `/dashboard/appliance-repair/page.tsx`: service history, error code lookup, repair-vs-replace analytics per brand/model.
+- [ ] **Diagnostic flow** — Guided: appliance type -> brand -> model -> symptom selection (from seed data error codes) -> testing sequence -> component identification -> parts lookup -> repair-vs-replace ROI calculation.
+- [ ] **Repository** — `lib/repositories/appliance_service_repository.dart`
+
+**All three subsections share:**
+- [ ] Team portal pages for field techs (one page per trade under `/dashboard/service/`)
+- [ ] Client portal visibility: homeowner sees service report, warranty info, maintenance tips
+- [ ] All 4 states on every screen (loading, error, empty, data)
+- [ ] Parts catalog with search, pricing, supplier links (wires into DEPTH32 Material Finder)
 - [ ] Commit: `[NICHE2] Service trades — locksmith, garage door, appliance repair diagnostic flows`
 
 ---
@@ -12018,6 +12089,19 @@ When inspector takes a photo during inspection execution, add search bar to atta
 3. Build correction items for SHALLOW and STUB features
 4. Execute corrections
 5. Verify depth meets "contractor would be impressed" standard
+
+**S130 Audit Addition — Grading Rubric (MANDATORY for consistent evaluation):**
+- **DEEP** = All CRUD operations work end-to-end. All 4 states handled (loading, error, empty, data). Data flows correctly to/from related systems. Professional, polished UI. Edge cases handled. Works across all relevant apps. A real professional would use this on a real job.
+- **SHALLOW** = Basic CRUD works but missing: secondary workflows, proper error states, integration with related systems, trade-specific customization, or PDF/export output. Needs 4-16h of corrections.
+- **STUB** = Route/screen exists but is non-functional, shows placeholder content, has no data connection, or crashes. Needs full build — likely 16-40h depending on complexity. If STUB found, create an overflow sprint rather than trying to fix within the DEPTH sprint's hour budget.
+
+**S130 Audit Addition — Per-App Checklist Rule:**
+Every DEPTH audit item MUST be evaluated per-app where relevant. Do NOT just check the CRM and assume the other portals are fine. For each feature, check:
+- [ ] Flutter app: screens exist, data loads, actions work, offline behavior
+- [ ] Web CRM: pages exist, hooks connected, real-time updates, CRUD works
+- [ ] Team portal: field worker view exists and is functional
+- [ ] Client portal: homeowner/customer-facing view exists where appropriate
+- [ ] Ops portal: analytics/management view exists where appropriate
 
 ### DEPTH1 — Core Business Depth Audit + Corrections (~16h)
 **Goal:** Audit and correct depth for: Jobs, Customers, Invoices, Estimates, Change Orders across all apps. These are used by EVERY contractor type daily.
@@ -12213,7 +12297,7 @@ When inspector takes a photo during inspection execution, add search bar to atta
 
 - [ ] Commit: `[DEPTH13] Offline & performance depth corrections — cache coverage, sync, load times`
 
-### DEPTH14 — Security & Permission Depth Audit + Corrections (~10h)
+### DEPTH14 — Security & Permission Depth Audit + Corrections (~28h, S130 corrected from 10h)
 **Goal:** Multi-tenant SaaS with financial data, personal information, and legal documents. Security failures = lawsuits + lost trust. Every endpoint, every screen, every action must enforce RLS + RBAC. Technicians must NOT see other companies' data. Apprentices must NOT approve change orders. CPAs must NOT delete jobs.
 - [ ] Audit RLS policies — verify every table has company_id scoping. Test: can a user from Company A see Company B's data? (Should be impossible)
 - [ ] Audit RBAC enforcement — for each role (owner, admin, office_manager, technician, apprentice, cpa, super_admin), verify correct access to: jobs (CRUD), customers (CRUD), invoices (CRUD), estimates (approve), change orders (approve), time entries (edit others), financial reports, settings, team management
@@ -12226,6 +12310,14 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - [ ] Audit audit trail — are all critical actions logged? (Financial changes, permission changes, data deletions, login attempts) Is the audit log tamper-proof?
 - [ ] Identify and list ALL shallow/stub features found
 - [ ] Build + execute corrections for each shallow feature
+- [ ] **S130 Audit Additions — Scope Expansion (MANDATORY — 10h was wildly insufficient):**
+- [ ] **Permission matrix deliverable** — Create roles × entities × actions matrix (7 roles × 15+ entity types × 4 CRUD actions = 420+ cells). Test EVERY cell. Document expected vs actual. This is the gold standard for RBAC verification. Stored in `Build Documentation/security/permission-matrix.md`.
+- [ ] **Edge Function auth audit** — For EACH of the 70+ Edge Functions: verify (1) `supabase.auth.getUser()` is called, (2) company_id is extracted from JWT, (3) queries are scoped by company_id, (4) role checks are performed where needed. Create checklist with pass/fail per EF.
+- [ ] **Storage bucket policy audit** — For each of 7 storage buckets: verify RLS policies exist, verify company_id scoping in folder paths, verify no public access, verify file type restrictions, verify upload size limits.
+- [ ] **API rate limiting audit** — Verify every public-facing Edge Function has rate limiting (from SEC1 shared utility). List any unprotected endpoints.
+- [ ] **CORS policy audit** — For all 4 web portals: verify CORS headers restrict origins to *.zafto.cloud and zafto.app only. No wildcard origins.
+- [ ] **Dependency vulnerability scan** — Run `npm audit` on all 4 portals + `flutter pub outdated` + check for known CVEs. Fix all HIGH/CRITICAL. Document all MEDIUM with mitigation plan.
+- [ ] **Input sanitization sweep** — Grep all user inputs rendered in HTML across 4 portals. Verify XSS protection (DOMPurify or equivalent). Check for SQL injection in any raw queries (should be none — Supabase SDK parameterizes).
 - [ ] Commit: `[DEPTH14] Security & permission depth corrections — RLS, RBAC, auth, input validation, audit`
 
 ### DEPTH15 — Inventory & Parts Management Depth Audit + Corrections (~12h)
@@ -13260,7 +13352,7 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - [ ] All builds pass: `dart analyze`, `npm run build` × 4
 - [ ] Commit: `[DEPTH42] Storage tiering — usage metering, 5GB free tier, paid add-ons via RevenueCat, upload gating, ops analytics`
 
-### DEPTH43 — Sketch Engine File Compatibility: Import/Export for All Major Formats (~16h)
+### DEPTH43 — Sketch Engine File Compatibility: Import/Export for All Major Formats (~36h, S130 corrected from 16h)
 **Goal:** Ensure our sketch engine can export to AND import from major CAD/3D software. No contractor should be locked into our format.
 
 - [ ] **Export formats**: DXF (AutoCAD), SVG (universal vector), PDF (universal), glTF/GLB (3D — Three.js), OBJ (3D legacy). Already partially spec'd in SK — verify all work.
@@ -13269,7 +13361,12 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - [ ] **Round-trip testing**: Export from Zafto → open in AutoCAD/SketchUp/Blender → verify fidelity. Import from AutoCAD/SketchUp → open in Zafto → verify fidelity. Document known limitations.
 - [ ] **File format detection**: Auto-detect format on upload. Show preview before committing import. User confirms which layers/elements to import.
 - [ ] All builds pass: `dart analyze`, `npm run build` × 4
-- [ ] Commit: `[DEPTH43] Sketch engine file compatibility — DXF/SVG/PDF/glTF/OBJ import + export, compatibility report, round-trip testing`
+- [ ] **S130 Audit Additions (hour increase + scope notes):**
+- [ ] **Dependency: Requires Phase SK (Sketch Engine) complete.** This sprint cannot execute until the Sketch Engine is built and functional.
+- [ ] **DXF scope limitation for v1** — DXF parsing is notoriously complex (spec is thousands of pages). V1 supports: lines, arcs, circles, polylines, text, dimensions. Blocks, hatches, 3D solids deferred to future iteration. Document what IS and IS NOT supported in export compatibility report.
+- [ ] **IFC format (Industry Foundation Classes)** — Add IFC import/export for commercial contractors working with architects. IFC is the open BIM standard. More important than OBJ for the commercial building support (DEPTH25).
+- [ ] **Libraries** — DXF: `dxf-parser` (npm, free). SVG: native browser APIs. PDF: `pdf-lib` (free). glTF: `three.js` (free). IFC: `web-ifc` (free, open source). Document all library licenses (must be MIT/Apache, no GPL).
+- [ ] Commit: `[DEPTH43] Sketch engine file compatibility — DXF/SVG/PDF/glTF/OBJ/IFC import + export, compatibility report, round-trip testing`
 
 ### DEPTH44 — AI-Gated Features: Clock-Out Cutoff + Owner Controls + AI Ticket System (~12h, Phase E dependent)
 **Goal:** AI access controls tied to work hours + an AI-powered bug report/ticket system. Phase E dependent — spec now, build with AI layer.
@@ -13783,6 +13880,9 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 - [ ] **Rate limiting on Edge Functions** — Create shared rate limit utility (`supabase/functions/_shared/rate-limiter.ts`). Implement per-user and per-company limits. Wire into priority EFs: `export-invoice-pdf` (10/min per user), `export-estimate-pdf` (10/min per user), `import-esx` (5/min per user), `equipment-scanner` (20/min per user), `lead-aggregator` (10/min per company), `code-verify` (30/min per user). Return 429 with retry-after header when exceeded
 - [ ] **Marketplace equipment_database write policy** — Migration: DROP the `equip_db_write` policy, recreate with role check: `WITH CHECK (true AND (SELECT requesting_user_role()) IN ('owner', 'admin', 'super_admin'))`. Verify: technician/apprentice cannot insert into equipment_database
 - [ ] Test all 3 fixes: attempt cross-company file access (should fail), hit rate limits (should get 429), attempt equipment insert as technician (should fail)
+- [ ] **S130 Audit Additions:**
+- [ ] **Rate limiter persistence** — The rate limiter in `_shared/rate-limiter.ts` MUST use Supabase table-based state (NOT in-memory). In-memory rate limiting resets on Edge Function cold starts, creating a bypass. Create `rate_limit_entries` table (key text, count int, window_start timestamptz) with pg_cron cleanup every 5 minutes. $0/month — uses existing Supabase.
+- [ ] **Ops portal IP whitelist** — Add Cloudflare firewall rule: BLOCK all traffic to ops.zafto.cloud except owner's IP addresses. This is the FIRST security measure, done in SEC1 because the site is live. Full ops portal hardening in LAUNCH9, but the IP lock goes up NOW.
 - [ ] Commit: `[SEC1] Critical security fixes — storage RLS, rate limiting, marketplace write policy`
 
 ### SEC2 — Two-Factor Authentication (2FA/MFA) (~12h)
@@ -13889,7 +13989,7 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 - [ ] **License audit** — Verify no GPL-licensed packages in the codebase (GPL requires open-sourcing your code if you distribute it). Run license checker on all package.json and pubspec.yaml
 - [ ] Commit: `[SEC8] Dependency scanning — Dependabot alerts, secret scanning, push protection, npm/pub audit`
 
-### SEC9 — Full Penetration Test: No Stone Unturned (~20h)
+### SEC9 — Full Penetration Test: No Stone Unturned (~36h, S130 corrected from 20h)
 **Goal:** RUNS AFTER PHASE E (AI) IS COMPLETE — the entire system is built, all features live, all security layers active. This is a professional-grade penetration test executed with full offensive mindset. Every endpoint, every input, every file, every auth flow, every API, every Edge Function, every storage bucket, every RLS policy, every webhook — attacked systematically. Findings are patched AGGRESSIVELY on the spot. Nothing ships until this sprint has zero critical and zero high findings. This is the final gate.
 
 **Methodology:** Follow OWASP Testing Guide v4 + PTES (Penetration Testing Execution Standard) + NIST SP 800-115. Test ALL 5 apps + Supabase backend + Edge Functions + Cloudflare config + Hellhound effectiveness.
@@ -13965,6 +14065,12 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 - [ ] **Patch every MEDIUM finding** — Same process
 - [ ] **Generate pentest report** — Markdown document: executive summary, methodology, findings table (severity, description, affected component, reproduction steps, fix applied, verification), recommendations for ongoing security. Save to `Build Documentation/ZAFTO FULL BUILD DOC/Expansion/PENTEST_REPORT_S[session].md`
 - [ ] **Final verification scan** — Re-run full automated scan (security headers, TLS, CORS, canary endpoint check) to confirm no regressions from patching
+- [ ] **S130 Audit Additions (scope expansion — 20h was insufficient for 5 apps + 70 EFs + 201 tables):**
+- [ ] **WebSocket/real-time subscription auth testing** — Connect to Supabase real-time channels without JWT. Verify: connection rejected. Connect with valid JWT but subscribe to another company's channel. Verify: no data leaks. Test subscription filter bypass.
+- [ ] **RPC function security testing** — List all Supabase RPC functions. RPC calls bypass RLS — each must have explicit company_id checks in the function body. Test every RPC with cross-company parameters.
+- [ ] **Estimate-to-invoice manipulation testing** — Change line item prices between estimate approval and invoice generation. Change quantities. Add hidden line items. Verify: invoice reflects EXACTLY the approved estimate, no post-approval manipulation possible.
+- [ ] **Per-EF CORS testing** — Some Edge Functions may have different CORS settings than the portals. Test each EF for wildcard origins, credential leaks, and preflight bypass.
+- [ ] **Ops portal isolation testing** — Verify ops portal is completely unreachable from non-whitelisted IPs. Attempt direct Vercel URL bypass (ops-portal-xxx.vercel.app). Attempt Supabase direct access bypass. Verify Cloudflare Access tunnel has no bypass path.
 - [ ] Commit: `[SEC9] Full penetration test — [X] findings patched, [Y] critical, [Z] high, all resolved`
 
 ### SEC10 — Legal Penetration Test: Harvard-Grade Liability Audit (~16h)
@@ -14155,8 +14261,8 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 - [ ] **Empty state gauntlet** — New company with ZERO data: visit every single screen. Verify: every screen shows a helpful empty state (not blank, not error, not spinner forever). Every "create first" CTA works. No null pointer errors from missing data
 - [ ] Commit: `[ZERO8] Data volume & edge case gauntlet — extreme scale, Unicode, boundaries, financial precision`
 
-### ZERO9 — Triple-Scan: New Feature Inventory & 3-Pass Verification (~10h)
-**Goal:** MANDATORY FINAL GATE. Any code added between S125 and ZERO execution gets scanned three times. First pass finds bugs. Second pass finds bugs created by fixing first-pass bugs. Third pass proves zero regressions. This sprint runs LAST in ZERO phase — after ZERO1-ZERO8 have established the full test suite. It ensures nothing slipped through.
+### ZERO9 — Triple-Scan: New Feature Inventory & 3-Pass Verification (~24h, S130 corrected from 10h)
+**Goal:** MANDATORY FINAL GATE. Any code added between S125 and ZERO execution gets scanned three times. First pass finds bugs. Second pass finds bugs created by fixing first-pass bugs. Third pass proves zero regressions. This sprint runs LAST in ZERO phase — after ZERO1-ZERO9 have established the full test suite. It ensures nothing slipped through.
 - [ ] **Inventory new code** — git diff `cc8981a`..HEAD — list every new file, modified file, new table, new Edge Function, new route, new screen, new model, new hook added since S125. Create master checklist of ALL new code
 - [ ] **Map new code to ZERO sprints** — For each new feature: assign to ZERO2 (property tests needed), ZERO3 (state machine if has status), ZERO4 (chaos scenario), ZERO5 (add to load test scripts), ZERO6 (add to fuzz targets), ZERO8 (add to edge case gauntlet). If a feature wasn't covered by any ZERO sprint, it has ZERO test coverage — write tests immediately
 - [ ] **PASS 1: Full test suite against new code** — Run ALL tests (property, state machine, chaos, load, fuzz, mutation, gauntlet) with focus on new features. Document every failure. Fix every bug found. Log: feature name, bug description, root cause, fix applied
@@ -14213,7 +14319,7 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 - [ ] **Accounting integration** — Every payment, refund, fee, and payout must create corresponding entries in ZBooks ledger. Verify: P&L reflects actual revenue. Verify: balance sheet balances
 - [ ] Commit: `[LAUNCH3] Payment E2E testing — Stripe Connect, subscriptions, RevenueCat, refunds, webhooks`
 
-### LAUNCH4 — Internationalization (i18n) Infrastructure (~14h)
+### LAUNCH4 — Internationalization (i18n) Infrastructure (~40h, S130 corrected from 14h)
 **Goal:** Owner directive: top 10 languages (EN, ES, PT-BR, PL, ZH, HT, RU, KO, VI, TL). Zafto serves immigrant contractor communities — Polish plumbers, Haitian electricians, Vietnamese nail techs expanding into GC, Korean HVAC shops, Brazilian landscapers. English-only = losing 30-40% of the market in major metro areas. Build the translation infrastructure and ship English + Spanish first. Other languages follow as translation files are completed.
 - [ ] **Flutter i18n setup** — Add `flutter_localizations` and `intl` packages. Create `lib/l10n/` directory. Create `app_en.arb` (English base) and `app_es.arb` (Spanish). Configure `l10n.yaml` for code generation. Wire `MaterialApp.localizationsDelegates` and `supportedLocales`
 - [ ] **Extract all hardcoded strings (Flutter)** — Audit every screen file for hardcoded English strings. Replace with `AppLocalizations.of(context)!.keyName`. Estimate: 2,000-3,000 strings across ~100 screens. Create systematic extraction: screens → widgets → dialogs → snackbars → error messages
@@ -14228,9 +14334,14 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 - [ ] **Spanish translation (first pass)** — Translate all English strings to Spanish. Use professional-grade translation (not Google Translate) for trade-specific terminology. Electrical: "panel" = "tablero", "breaker" = "interruptor". HVAC: "tonnage" = "tonelaje". Restoration: "moisture" = "humedad". Get terminology RIGHT — contractors will notice bad translations instantly
 - [ ] **Seed data translation** — Inspection templates, calculator labels, code references, error messages — all seed data needs Spanish equivalents. This is substantial: 1,147 inspection items, 987+ calculator screens, 61 code reference sections
 - [ ] **Testing** — Switch app to Spanish, verify: no missing translations (no English fallback visible), no layout overflow from longer Spanish strings (Spanish is ~20% longer than English), dates/numbers format correctly, calculator results are correct regardless of locale
+- [ ] **S130 Audit Additions (scope expansion — 14h was roughly 1/3 of realistic effort):**
+- [ ] **Translation management process** — Set up Crowdin or Lokalise (free tier) for ongoing translation management. CI check: any PR that adds new user-facing strings must include translation keys. Missing translations flagged in build.
+- [ ] **Pluralization rules** — Implement per-language plural forms. Spanish: 2 forms (singular, plural). Russian: 3 forms. Chinese: 1 form (no plurals). Use ICU MessageFormat via `intl` package in Flutter, `next-intl` for Next.js.
+- [ ] **Fallback behavior** — If a translation is missing for the user's locale, fall back to English. Never show a raw key like `common.save_button`. Log missing translations to Sentry for tracking.
+- [ ] **PDF/email localization** — All generated PDFs (invoices, estimates, reports) must respect the user's locale: translated headers, locale-appropriate date/number formatting, correct currency symbols. Email templates also locale-aware.
 - [ ] Commit: `[LAUNCH4] i18n infrastructure — Flutter + all 4 portals, EN + ES, locale-aware formatting`
 
-### LAUNCH5 — Accessibility (WCAG 2.1 AA) (~10h)
+### LAUNCH5 — Accessibility (WCAG 2.1 AA) (~30h, S130 corrected from 10h)
 **Goal:** Web portals must meet WCAG 2.1 AA. ADA lawsuits against SaaS companies are real and increasing — plaintiff attorneys send demand letters to non-compliant websites. Beyond legal risk: contractors with vision impairments, color blindness (8% of men), or motor disabilities need to use this software. Flutter mobile app has built-in accessibility via Material widgets but needs verification.
 - [ ] **Automated accessibility scan** — Run axe-core or Lighthouse accessibility audit on all 4 web portals. Document every violation by severity (critical, serious, moderate, minor). Target: 0 critical, 0 serious violations
 - [ ] **Color contrast** — Verify all text meets 4.5:1 contrast ratio (AA standard). Check: dark theme CRM (light text on dark background), light theme client portal. Pay special attention to: disabled states, placeholder text, secondary text, badge colors, status indicators. Use WebAIM contrast checker
@@ -14243,6 +14354,12 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 - [ ] **Flutter accessibility** — Verify Semantics widgets on custom widgets. Test TalkBack (Android) and VoiceOver (iOS) on key flows: login → view jobs → create estimate → send invoice. Fix any unlabeled buttons, missing hints, or incorrect traversal order
 - [ ] **Text scaling** — Web: verify layout doesn't break at 200% zoom (WCAG requirement). Flutter: verify layout with system font size set to largest. No text truncation that hides critical info
 - [ ] **Accessibility statement** — Create zafto.app/accessibility page: commitment to accessibility, conformance level (WCAG 2.1 AA), contact for accessibility issues, known limitations (if any)
+- [ ] **S130 Audit Additions (scope expansion — 10h was roughly 1/3 of realistic effort for 230+ routes + Flutter):**
+- [ ] **PDF accessibility** — All generated PDFs (invoices, estimates, inspection reports, WDI reports) must be tagged PDFs with reading order, alt text on images, and proper heading structure. Use PDF-lib tagged content features.
+- [ ] **Email accessibility** — All transactional emails (SendGrid templates): alt text on all images, sufficient color contrast, semantic HTML (not just div soup), preheader text, readable without images.
+- [ ] **Skip navigation links** — All 4 web portals: add "Skip to main content" link as first focusable element. Visible on focus.
+- [ ] **Focus trap management** — All modals/dialogs across 4 portals: focus trapped inside modal when open, focus returns to trigger element on close, Escape key closes modal.
+- [ ] **Per-portal audit scope** — Web CRM: ~107 routes. Team portal: ~36 routes. Client portal: ~38 routes. Ops portal: ~26 routes. Flutter: ~95 screens. Total: ~300+ surfaces to audit. Automated tools (axe-core) for first pass, manual screen reader testing for top 30 most-used screens.
 - [ ] Commit: `[LAUNCH5] Accessibility — WCAG 2.1 AA, keyboard nav, screen readers, color-blind safe, a11y statement`
 
 ### LAUNCH6 — Testing Coverage & Safety Net (~12h)
@@ -14257,6 +14374,12 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 - [ ] **Regression test suite** — Create a "smoke test" script that hits every major endpoint and verifies 200 responses. Run on every deploy (CI/CD). If any endpoint returns 500 → block deploy
 - [ ] **CI/CD integration** — Wire tests into GitHub Actions: Flutter tests run on push, Next.js tests run on push, EF tests run on push. Build fails if tests fail. No untested code reaches production
 - [ ] **Test data fixtures** — Create reusable test company + users + jobs + invoices fixture for all test suites. Seed data that covers common scenarios. Reset between test runs
+- [ ] **S130 Audit Additions — ZERO Phase Relationship Clarification:**
+- [ ] **LAUNCH6 = permanent CI/CD test suite** that runs on EVERY push to prevent regressions. Covers the critical paths that must never break. These tests are PERMANENT infrastructure.
+- [ ] **ZERO1-ZERO9 = one-time pre-launch deep validation** that runs once before ship. Property-based testing, chaos engineering, mutation testing, load testing — these are intensive, slow, and run on-demand. ZERO uses LAUNCH6's test infrastructure (staging env from ZERO1) but goes far deeper.
+- [ ] **E2E tests for ALL 4 portals** — Not just Web CRM. Add: Team portal critical paths (clock in/out, daily log, photo capture). Client portal critical paths (view project, approve estimate, make payment). Ops portal critical paths (view dashboards, manage subscriptions).
+- [ ] **Coverage measurement** — Istanbul/c8 for TypeScript (target: 80% line coverage on hooks), lcov for Dart (target: 70% on repositories). Coverage gates in CI — PR fails if coverage drops.
+- [ ] **Flaky test detection** — If a test fails then passes on retry, flag it. After 3 flaky failures, quarantine the test and create a fix ticket. Never let flaky tests erode CI trust.
 - [ ] Commit: `[LAUNCH6] Testing coverage — auth, payments, jobs, RLS, EFs, E2E, CI/CD integration`
 
 ### LAUNCH7 — App Store Prep & Onboarding Wizard (~14h)
@@ -14272,7 +14395,48 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 - [ ] **Data safety section (Google)** — Similar to Apple privacy: data collected, shared, security practices, data deletion option. Must match Privacy Policy
 - [ ] **App review preparation** — Create demo account for Apple/Google reviewers: pre-populated with sample data so they can test features. Document login credentials in review notes. Test: every screen loads, no crashes, no placeholder content visible, all deep links work
 - [ ] **Pre-submission checklist** — Verify: app icon (all sizes), launch screen, no debug banners, no test API keys, production Supabase URL, Sentry DSN filled, analytics enabled, crash-free rate acceptable, no NSExceptionDomains needed, permissions descriptions (camera: "Take photos of job sites", location: "Track mileage and GPS-stamp inspections")
+- [ ] **S130 Audit Additions (MANDATORY):**
+- [ ] **Sign in with Apple** — REQUIRED by Apple if any third-party auth exists. Implement via `sign_in_with_apple` Flutter package + Supabase Apple OAuth provider. Configure Apple Developer account: Services ID, key, return URL. Add "Sign in with Apple" button on Flutter login screen (Apple HIG compliant: black button, SF Symbol logo, "Sign in with Apple" text). Also add to Web CRM login page. Apple will REJECT the app without this.
+- [ ] **Android App Bundle (AAB)** — Google Play no longer accepts APK for new apps. Build must output AAB: `flutter build appbundle --release`. Configure Google Play App Signing (upload key + signing key). Document key backup procedure.
+- [ ] **App signing setup** — Apple: create distribution certificate + provisioning profile in Apple Developer Portal. Google: enroll in Google Play App Signing, generate upload key. Store credentials in secure vault (NOT in git). Document the full signing chain for bus factor.
+- [ ] **Localized screenshots** — Generate App Store screenshots in English AND Spanish (top 2 languages). 6.7" (iPhone 15 Pro Max), 6.1" (iPhone 15 Pro), 5.5" (iPhone 8 Plus), iPad Pro 12.9". Google Play: phone + 7" tablet + 10" tablet.
+- [ ] **Staged rollout plan** — Google Play: release to 10% of users, monitor crash-free rate for 48 hours, if >99.5% expand to 25% -> 50% -> 100%. Apple: no staged rollout on initial release, but enable phased release for all subsequent updates.
 - [ ] Commit: `[LAUNCH7] App Store prep + onboarding wizard — listings, screenshots, wizard, review prep`
+
+---
+
+### LAUNCH8 — Production Deployment Runbook & Disaster Recovery (~12h)
+**Goal:** Create the complete production deployment procedure and disaster recovery plan. When you deploy 5 apps + 70 Edge Functions + run 48 migrations for the first time, there MUST be a tested, documented, step-by-step runbook. When something goes wrong in production, there MUST be a tested rollback procedure. No winging it.
+
+- [ ] **Deployment sequencing document** — Write the exact order: (1) Run Supabase migrations in dependency order (check foreign keys), (2) Deploy Edge Functions (batch deploy script), (3) Deploy web portals to Vercel (CRM first, then team/client/ops), (4) Submit Flutter app to stores. Document expected downtime windows. Create pre-deploy checklist (backup database, verify staging, tag release, notify users).
+- [ ] **Database migration safety** — Create `supabase/scripts/deploy-migrations.sh`: runs migrations one-at-a-time with rollback on failure. For each migration: check if it locks tables, estimate lock duration, add advisory lock timeout (5s max), log before/after row counts. Create rollback migrations for every forward migration (ALTER TABLE rollbacks, DROP INDEX rollbacks).
+- [ ] **Zero-downtime deployment** — Vercel handles this for web portals (atomic deploys). For Supabase: ensure migrations are backwards-compatible (add columns as nullable first, backfill, then add constraints in next deploy). Document the "expand and contract" pattern.
+- [ ] **Rollback procedure** — For each component: Vercel (instant rollback to previous deployment via dashboard), Supabase migrations (run rollback script), Edge Functions (redeploy previous version from git tag), Flutter app (can't rollback — must push hotfix update, so ALWAYS test thoroughly before submitting). Document rollback decision tree: who decides, what triggers it, communication plan.
+- [ ] **Disaster recovery testing** — Simulate: database restore from DEPTH41 backups (verify restore works, measure time), Vercel deployment failure (verify rollback works), Supabase outage (verify Flutter offline mode works, verify web portals show maintenance page), data corruption (verify point-in-time recovery).
+- [ ] **Maintenance page** — Create static maintenance page hosted on Cloudflare Pages (separate from Vercel — survives Vercel outage). Automatic redirect when Supabase health check fails. Shows: "Zafto is undergoing maintenance. Expected back: [time]. Your data is safe."
+- [ ] **Production environment checklist** — Verify BEFORE first deploy: all env vars set (Supabase URL, anon key, service key, Stripe keys, SignalWire keys, SendGrid key, Sentry DSN, RevenueCat key), all DNS records correct, SSL certificates valid, Cloudflare WAF active, monitoring active (LAUNCH1), legal pages live (LAUNCH2).
+- [ ] **CDN/caching strategy** — Cloudflare cache rules: static assets 1 year, API responses no-cache, images 30 days. Vercel ISR for marketing pages. Supabase: add `Cache-Control` headers to read-heavy Edge Functions (code references, seed data). Document cache invalidation procedure.
+- [ ] Commit: `[LAUNCH8] Production deployment runbook + disaster recovery + CDN caching`
+
+---
+
+### LAUNCH9 — Ops Portal Fortress & Incident Response (~10h)
+**Goal:** The ops portal (ops.zafto.cloud) is the keys to the kingdom. If compromised, EVERYTHING is compromised — user data, financials, platform controls. Security must be UNPARALLELED. IP-locked, hardware-key required, session audited, zero trust. Additionally, create the incident response runbook for production issues.
+
+**S130 Owner Directive: "Someone gets into that ops portal we're fucked." — Security is the #1 priority.**
+
+- [ ] **IP whitelist — HARD LOCK** — Ops portal ONLY loads from owner's IP addresses. Cloudflare firewall rule: BLOCK all traffic to ops.zafto.cloud except specific IP list. Store allowed IPs in Cloudflare dashboard (NOT in code). If owner's IP changes (ISP, travel): update via Cloudflare API from a separate authenticated endpoint, or use Cloudflare Access with hardware key (see below). The portal should not even RESPOND to requests from unauthorized IPs — no login page, no 403, just connection refused.
+- [ ] **Hardware security key (WebAuthn/FIDO2)** — Require YubiKey or similar hardware key for ops portal login. NOT just TOTP — hardware key is phishing-resistant. Implementation: Supabase MFA with WebAuthn, `@simplewebauthn/server` + `@simplewebauthn/browser`. Register hardware key during initial setup. No fallback to TOTP for ops portal (other portals can use TOTP).
+- [ ] **Cloudflare Access zero-trust tunnel** — Put ops portal behind Cloudflare Access. Requires: (1) email OTP to owner's email, (2) hardware key verification, (3) IP in allowlist. Three-factor authentication. Cloudflare Access free tier supports 50 users (only need 1).
+- [ ] **Session hardening** — Ops portal sessions: 1 hour max, no "remember me", re-authenticate for destructive actions (delete company, modify subscriptions, access financial data), single active session only (new login kills previous), session bound to IP (session invalidated if IP changes mid-session).
+- [ ] **Audit logging** — Every action in ops portal logged to immutable `ops_audit_log` table: user_id, action, target_entity, target_id, ip_address, user_agent, timestamp, request_body (sanitized — no passwords). Append-only (no UPDATE/DELETE policies, written via service_role trigger). Ops dashboard page shows real-time audit feed.
+- [ ] **Canary alerts** — If ANYONE attempts to access ops.zafto.cloud from a non-whitelisted IP: instant alert to owner (push notification + SMS + email). Log the attempt with full request details (IP, headers, user agent, path, timestamp). If 3+ attempts in 1 hour from same IP: auto-block in Cloudflare for 24 hours.
+- [ ] **Data access controls** — Ops portal can VIEW all company data (for support), but destructive operations (delete, suspend, modify subscription) require entering a separate admin PIN (not the login password). Pin stored as bcrypt hash, not in session.
+- [ ] **Ops portal feature scope** — Since owner is one-man band, ops portal IS the support system. Ensure these pages exist and are deep: subscription management, user lookup, company health dashboard, support ticket viewer (from DEPTH44 AI ticket system), financial overview (MRR, churn, LTV), deployment status, backup status (DEPTH41), error dashboard (Sentry integration from LAUNCH1), feature flags, announcement broadcaster.
+- [ ] **Incident response runbook** — Document in ops portal `/dashboard/runbook` page: Severity levels (P1: data loss/security breach, P2: feature outage, P3: degraded performance, P4: cosmetic). For each severity: detection method, response time target, escalation path (it's just you, but document the mental checklist), communication template (status page update, user email), post-mortem template. P1 response: (1) assess scope, (2) contain (kill sessions, block IPs, take offline if needed), (3) fix, (4) verify, (5) communicate, (6) post-mortem.
+- [ ] **Performance monitoring** — Ops portal dashboard page `/dashboard/performance`: Core Web Vitals for all 4 web portals (pulled from Cloudflare), API response time percentiles (p50, p95, p99) from Edge Function logs, database query performance (slow query log from Supabase), real-time active user count. Alert if p95 > 2s or error rate > 1%.
+- [ ] **Uptime monitoring** — Integrate free uptime monitor (UptimeRobot or Better Stack free tier): monitor all 5 domains (zafto.cloud, team.zafto.cloud, client.zafto.cloud, ops.zafto.cloud, zafto.app) + Supabase API endpoint. Alert via SMS + push within 60 seconds of downtime.
+- [ ] Commit: `[LAUNCH9] Ops portal fortress — IP lock, hardware key, zero trust, incident response, monitoring`
 
 ---
 
@@ -14282,20 +14446,20 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 
 | Phase | Sprints | Est. Hours | Focus |
 |-------|---------|:----------:|-------|
-| **FIELD** | FIELD1-FIELD4 | ~56h | Missing field features: messaging, equipment checkout, team portal stubs, BLE laser meter integration |
-| **REST** | REST1-REST2 | ~20h | Restoration gaps: fire tools, mold remediation (IICRC S520) |
-| **NICHE** | NICHE1-NICHE2 | ~16h | Missing trade modules: pest control, service trades |
+| **FIELD** | FIELD1-FIELD5 | ~66h | Missing field features: messaging, equipment checkout, team portal stubs, BLE laser meter integration, **BYOC phone integration (S130)** |
+| **REST** | REST1-REST2 | ~30h | Restoration gaps: fire tools + infrastructure (tables/RLS/web CRM/team portal/client portal/PDF), mold remediation (IICRC S520) + state regs + lab directory + chain of custody |
+| **NICHE** | NICHE1-NICHE2 | ~30h | Missing trade modules: pest control (full infrastructure + WDI/NPMA-33 PDF + recurring billing), service trades (locksmith + garage door + appliance — each with tables/RLS/web CRM/diagnostic flows) |
 | **DEPTH** | DEPTH1-DEPTH44 | ~764h | Full depth audit + corrections + contractor needs validation + commercial building support + property blueprint lookup + bulletproof crash recovery + recon mega-expansion (all-trade scans, 24 free APIs, **+EagleView calibration, +Storm Hunter**) + estimate engine overhaul (material tiers, G/B/B, labor hours, **+Price Book**) + recon-to-estimate pipeline + crowdsourced material pricing (receipt OCR, 60+ suppliers) + Material Finder search engine (affiliate feeds, 200+ suppliers, regional pricing) + data privacy/AI consent + property preservation module (**+winterization phone-tech verification, +dewinterization tool**) + mold remediation + disposal/dump finder + **S130 additions: tablet/mobile responsive overhaul (~20h), time clock permission adjustment (~8h), signature system + DocuSign replacement (~24h), universal marketplace aggregator (~40h Phase E dep), backup fortress (~12h), storage tiering (~8h), sketch file compatibility (~16h), AI-gated features + ticket system (~12h Phase E dep)** |
 | **SEC** | SEC1-SEC10 | ~92h | Security fortress: critical fixes, 2FA, biometrics, enterprise options, Hellhound, headers, WAF, dependency scanning, security pentest, legal pentest |
 | **ZERO** | ZERO1-ZERO9 | ~86h | Zero-defect validation: property testing, state machines, chaos engineering, 50K load test, fuzz testing, mutation testing, edge case gauntlet, triple-scan |
-| **LAUNCH** | LAUNCH1-LAUNCH7 | ~72h | Monitoring, legal, payments, i18n, accessibility, testing, App Store + onboarding wizard |
+| **LAUNCH** | LAUNCH1-LAUNCH9 | ~94h | Monitoring, legal, payments, i18n (~40h realistic), accessibility (~30h realistic), testing, App Store + onboarding wizard + Sign in with Apple + AAB, **production deployment runbook + disaster recovery + CDN (~12h, S130)**, **ops portal fortress + incident response + performance monitoring (~10h, S130)** |
 | **RE** | RE1-RE20 | ~444h | **FULL Zafto Realtor Platform (S129, supersedes REALTOR1-3).** Equal depth to Zafto Contractor. 3 flagship engines: Smart CMA (repair-aware comps), Autonomous Transaction Engine (deal lifecycle), Seller Finder Engine (pre-market leads from public data). Brokerage RBAC (8 roles). Commission tracking engine. Cross-platform intelligence sharing. Dispatched contractors/inspectors get same 35+ field tools. 6th portal: realtor.zafto.cloud (~85-100 routes). Lead gen pipeline (30+ free APIs). Marketing factory. Property management access. Full spec: `Expansion/53_REALTOR_PLATFORM_SPEC.md` |
 | **INTEG** | INTEG1 | ~12h | National portal submission API: per-company format templates, one-click export, verification bundles, compliance scoring, chargeback defense |
 | **FLIP** | FLIP1-FLIP6 | ~92h | Flip-It analysis engine: deal aggregation (7 sources), ARV engine (appraisal-grade), full financial model + profit degradation timeline, hard money lender directory (~100+), deal distribution (BP/Craigslist/FB/REIA), **deal packaging (PDF/DOCX/XLSX/PPTX/shareable link)**, AI photo analysis (Claude Opus 4.6 condition assessment, selective scope, customizable pricing, premium deep assessment: recon + 2D sketch + LiDAR 3D), **Reality Engine (true net P&L with full cost waterfall + tax calculator, risk intelligence: 50% rule alert + code cascade predictor + contingency auto-set + over-improvement warning, deal qualification: 3 exit strategies + opportunity cost + market health + tariff adjustment)** |
 | **JUR4** | JUR4 | ~14h | Realtor jurisdiction awareness — 50-state disclosures, agency rules (dual agency legality), attorney states, commission regulations, license reciprocity, document retention. Wires into Transaction Engine, Commission Engine, Brokerage Admin, Lead Gen |
-| **Total** | **~102 sprints** | **~1,716h** | — |
+| **Total** | **~109 sprints** | **~1,832h** | S130 audit additions: +FIELD5 (~10h), REST/NICHE infrastructure beefed up (+24h), LAUNCH8 (~12h), LAUNCH9 (~10h), Sign in with Apple + AAB + hour corrections. Realistic estimate with corrections: **~2,100h** |
 
-**Execution order:** SEC1 + SEC6 + SEC7 + SEC8 (critical security — site is live) → LAUNCH1 (monitoring — need Sentry before building more) → FIELD → REST → NICHE → DEPTH1 through DEPTH27 → DEPTH28 (recon mega-expansion) → DEPTH29 (estimate engine overhaul) → DEPTH30 (recon-to-estimate pipeline) → DEPTH31 (crowdsourced material pricing) → DEPTH32 (Material Finder — affiliate feeds, generates revenue) → DEPTH33 (data privacy/AI consent) → **DEPTH34 (property preservation — PP work orders, winterization, boiler troubleshooter, debris estimation, smart photos)** → **DEPTH35 (mold remediation — IICRC S520, moisture mapping, clearance pipeline)** → **DEPTH36 (disposal/dump finder)** → **DEPTH37 (tablet/mobile responsive overhaul)** → **DEPTH38 (time clock permission adjustment)** → **DEPTH39 (signature system + DocuSign replacement)** → **DEPTH41 (backup fortress)** → **DEPTH42 (storage tiering)** → **DEPTH43 (sketch file compatibility)** → **RE1-RE20 (full Zafto Realtor Platform — 20 sprints, ~444h, see Expansion/53_REALTOR_PLATFORM_SPEC.md)** → **INTEG1 (national portal submission API)** → **FLIP1 (deal aggregation + property intelligence)** → **FLIP2 (ARV engine + comp analysis)** → **FLIP3 (financial model + profit degradation timeline)** → **FLIP4 (hard money lender directory + deal cross-post engine)** → **FLIP5 (AI photo analysis + premium deep assessment — Claude Opus 4.6, requires Phase E position but Flip-specific, builds AFTER main FLIP engine)** → SEC2-SEC5 (2FA, biometrics, enterprise security, Hellhound) → LAUNCH2-LAUNCH6 (legal, payments, i18n, accessibility, testing) → Phase G (QA) → Phase JUR (incl JUR4 realtor jurisdiction) → Phase E (AI) → **SEC9 (security pentest)** → **SEC10 (legal pentest)** → **ZERO1-ZERO9 (zero-defect validation — break everything, fix everything, prove it's flawless)** → LAUNCH7 (App Store + onboarding wizard — DEAD LAST) → SHIP
+**Execution order (S130 audit-corrected):** SEC1 + SEC6 + SEC7 + SEC8 (critical security — site is live) → **LAUNCH1 (monitoring — need Sentry before building more)** → **LAUNCH9 (ops portal fortress + incident response — lock down command center IMMEDIATELY)** → FIELD1-FIELD5 (incl new BYOC phone) → REST → NICHE → DEPTH1 through DEPTH27 → DEPTH28 (recon mega-expansion) → DEPTH29 (estimate engine overhaul) → DEPTH30 (recon-to-estimate pipeline) → DEPTH31 (crowdsourced material pricing) → DEPTH32 (Material Finder) → DEPTH33 (data privacy/AI consent) → DEPTH34 (property preservation) → DEPTH35 (mold remediation) → DEPTH36 (disposal/dump finder) → DEPTH37 (tablet/mobile responsive) → DEPTH38 (time clock adjustment) → DEPTH39 (signature system + DocuSign replacement) → **DEPTH40 non-AI portion (marketplace aggregator infrastructure — paste-a-link, RSS feeds, affiliate APIs, search/filter UI)** → DEPTH41 (backup fortress) → DEPTH42 (storage tiering) → DEPTH43 (sketch file compatibility) → RE1-RE20 (full Zafto Realtor Platform — 20 sprints, ~444h) → INTEG1 (national portal submission API) → FLIP1-FLIP4 (deal aggregation, ARV engine, financial model, deal packaging) → SEC2-SEC5 (2FA, biometrics, enterprise security, Hellhound) → LAUNCH2-LAUNCH6 (legal, payments, i18n, accessibility, testing) → **LAUNCH8 (production deployment runbook + disaster recovery + CDN — must be ready BEFORE Phase G)** → Phase G (QA) → Phase JUR (incl JUR4 realtor jurisdiction) → Phase E (AI) → **FLIP5 (AI photo analysis — MOVED after Phase E, requires AI infrastructure)** → **DEPTH40 AI portion (marketplace AI recommendations)** → **DEPTH44 (AI-gated features + ticket system)** → SEC9 (security pentest) → SEC10 (legal pentest) → ZERO1-ZERO9 (zero-defect validation) → LAUNCH7 (App Store + onboarding wizard — DEAD LAST) → SHIP
 
 **MANDATORY BUILD RULE — APPLIES TO EVERY SPRINT (S130 Owner Directive):**
 > **ALL features must have FULL DEPTH and USAGE for ALL contractor and realtor use cases. NO empty shell scaffolding. NO bullshit features. EVERYTHING has to be deep. Every type of contractor (electrical, plumbing, HVAC, roofing, solar, painting, flooring, fencing, landscaping, pool, pest control, general contractor, remodeler, restoration, preservation, commercial, welding, auto body, fire protection, concrete, drywall, insulation, gutters, windows, siding, tree service, excavation, demolition, masonry, tile, cabinet, countertop, garage door, locksmith, chimney, foundation repair, waterproofing, septic, well drilling, irrigation, snow removal) and every type of realtor (residential buyer's agent, listing agent, dual agent, commercial, luxury, property manager, REO/foreclosure, short sale, new construction, land/lot, farm/ranch, military relocation, senior specialist, investment, team lead, managing broker, brokerage owner) MUST be covered. No exceptions. If a feature exists, it must work completely end-to-end for every trade and role that would use it. Every screen handles all 4 states (loading, error, empty, data). Every tool saves data, links to jobs, produces useful output. Every calculator is accurate and saves results. If it's not deep enough for a real professional to use on a real job site on day one, it's NOT DONE.**
@@ -14340,7 +14504,7 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 - SEC8: Dependency scanning + secret leak prevention (supply chain defense)
 - SEC9: Full penetration test (runs AFTER Phase E — 8-phase OWASP/PTES methodology, aggressive patching)
 - SEC10: Legal penetration test (Harvard-grade liability audit — 7-phase attack on every legal exposure, disclaimers, compliance, shield documentation)
-- ZERO1-ZERO8: Zero-defect validation system (property-based testing, state machine exhaustion, chaos engineering, 50K user load test, fuzz testing, mutation testing, data volume gauntlet — aerospace-grade quality)
+- ZERO1-ZERO9: Zero-defect validation system (property-based testing, state machine exhaustion, chaos engineering, 50K user load test, fuzz testing, mutation testing, data volume gauntlet, triple-scan verification — aerospace-grade quality)
 - LAUNCH1: Monitoring + email (need error tracking BEFORE building more)
 - LAUNCH2-6: Legal, payments, i18n, accessibility, testing — runs after DEPTH audits
 - LAUNCH7: App Store prep + onboarding wizard — DEAD LAST (needs final product complete)
