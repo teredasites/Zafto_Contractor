@@ -1,6 +1,7 @@
 # 52: SYSTEM INTEGRATION MAP
 
 > **Created:** Session 103 (February 2026)
+> **Last Updated:** Session 133 (February 18, 2026) — S132-S133 pure research. No new wiring. Pricing finalized. 9 Opus research agents completed. ECO3+ECO4+ECO7+ECO8 spec'd (~48h). BLS/Davis-Bacon/FRED APIs confirmed $0/month. CSI MasterFormat copyrighted — Zafto builds own codes.
 > **Purpose:** Master wiring document ensuring every system connects properly. Every sprint MUST check this map before marking complete.
 
 ---
@@ -458,6 +459,43 @@ Update this section as sprints are completed. Mark each connection as it's verif
 | NICHE → Garage Door | NICHE2 | WIRED (S131) — garage_door_service_logs, Flutter model/repo/screen, CRM page + hook, in team + client combined views |
 | NICHE → Appliance Repair | NICHE2 | WIRED (S131) — appliance_service_logs, Flutter model/repo/screen, CRM page + hook, in team + client combined views |
 
+### Phase DEPTH (Depth Audit) — DEPTH1 COMPLETE (S131)
+| Connection | Sprint | Status |
+|-----------|--------|--------|
+| DEPTH → Core Business | DEPTH1 | WIRED (S131) — customer ID fix, CRM mapper, team portal contact card, client CO buttons, Tasks→schedule_tasks, Materials→job_materials, invoice fields, customer edit/delete/create |
+
+### Phase INTEG — Ecosystem Integration (S132: INTEG2-8 ADDED)
+| Connection | Sprint | Status |
+|-----------|--------|--------|
+| INTEG → National Portals | INTEG1 | PENDING — per-national format templates, one-click export, verification bundles |
+| INTEG → Engine-to-Engine (VIZ↔SK, Trade Tools→Estimate) | INTEG2 | PENDING (S132) — VIZ↔SK bidirectional, VIZ→Estimate, Trade Tools→Estimate bridge, property_scans unification, material catalog unification |
+| INTEG → Client Portal Activation | INTEG3 | PENDING (S132) — estimate approval, invoice payment, VIZ 3D viewer, Recon intel, restoration progress, customer bridge |
+| INTEG → Weather Engine | INTEG4 | PENDING (S132) — NOAA scheduling overlay, dispatch weather layer, field tools context, shared storm processor |
+| INTEG → Three-Sided Marketplace | INTEG5 | PENDING (S132) — job completion effects, realtor dispatch VIZ/SK, post-close onboarding, reputation matching, seller leads |
+| INTEG → Deduplication | INTEG6 | PENDING (S132) — RE26/CLIENT3 maintenance unification, FLIP2/RE3 comp analysis, storm data single pipeline |
+| INTEG → Calculator Bridge | INTEG7 | PENDING (S132) — 1,139 calcs → estimate + sketch + permit connections |
+| INTEG → Free API Enrichment | INTEG8 | PENDING (S132) — BLS/PPI, FEMA, EPA, ENERGY STAR, Rewiring America, Census |
+
+### S132 Ecosystem Audit: 10 Critical Failures (see `memory/s132-ecosystem-audit.md`)
+| # | Failure | Impact |
+|---|---------|--------|
+| 1 | VIZ Engine is an island — 202h built, ZERO outbound connections | All 3 platforms can't see 3D |
+| 2 | 1,139 calculators are a dead end — results vanish | No business document integration |
+| 3 | Client portal is receive-only | No approve/pay/view in portal |
+| 4 | Sketch Engine is office-only — field workers can't access | LiDAR tool inaccessible to scanners |
+| 5 | Weather completely absent from production | Zero NOAA integration despite spec |
+| 6 | RE26/CLIENT3 duplicate maintenance engine | Two independent identical systems |
+| 7 | FLIP2/RE3 duplicate comp analysis | Two independent comp engines |
+| 8 | Storm data pulled independently by 4+ systems | Wasteful, inconsistent |
+| 9 | Job completion has zero downstream effects | Three-sided flywheel broken |
+| 10 | Integration map had zero RE/FLIP/CLIENT/VIZ rows | No developer checks these |
+
+### Pending Wiring Sections (S132 — to be built)
+**Realtor Platform (RE1-RE30):** 30 sprints, ~744h. Not yet built. Rows will be added as RE sprints complete.
+**Homeowner Platform (CLIENT1-17):** 17 sprints, ~378h. In masterfile. Rows will be added as CLIENT sprints complete.
+**FLIP-It Engine (FLIP1-6):** 6 sprints, ~92h. Not yet built. Rows will be added as FLIP sprints complete.
+**VIZ Engine (VIZ1-VIZ14):** 14 sprints, ~202h. In masterfile. Rows will be added as VIZ sprints complete.
+
 ---
 
 ## DOCUMENT MAINTENANCE
@@ -467,5 +505,6 @@ This document is updated:
 2. **When new systems are added** — add row to connectivity matrix
 3. **When gaps are discovered** — add to Critical Integration Bridges section
 4. **At session end** — verify tracker matches actual state
+5. **S132 addition:** When RE/FLIP/CLIENT/VIZ sprints complete, add wiring rows to tracker
 
 **Owner:** Every build session must reference this document.
