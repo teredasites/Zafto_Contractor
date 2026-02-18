@@ -13678,6 +13678,101 @@ Every DEPTH audit item MUST be evaluated per-app where relevant. Do NOT just che
 
 ---
 
+### INTEG2 — Engine-to-Engine Wiring (~48h) (S132 Ecosystem Audit)
+**Goal:** Wire the core engines (VIZ, Sketch, Estimates, Trade Tools, Recon) to each other. Currently isolated islands that don't share data. This is the foundation — every other integration depends on engines talking to each other.
+
+- [ ] **VIZ ↔ Sketch Engine bidirectional pipeline (~12h):** VIZ scans produce RoomPlan mesh → Sketch Engine imports as floor plan geometry (walls, rooms, dimensions). Sketch Engine exports room data → VIZ uses for 3D model constraints. Shared coordinate system. Property_scans table reconciliation (Recon's scan_results vs VIZ's scan data — unify with `scan_purpose` discriminator column). Bridge table `viz_sketch_links` (viz_scan_id, floor_plan_id, sync_status, last_synced_at)
+- [ ] **VIZ → Estimate Engine (~10h):** Renovation configuration in VIZ (material swaps, texture changes, room modifications) auto-generates estimate line items. `viz_estimate_links` bridge table. Material catalog entries map to estimate_items via `material_estimate_map` table. "Generate Estimate from VIZ Config" button on VIZ viewer
+- [ ] **Trade Tools → Estimate bridge (~10h):** `trade_tool_estimate_links` bridge table (tool_record_id, estimate_id, line_item_id). "Add to Estimate" button on every calculator result screen. Calculator output (qty, unit, material, labor hours) maps to estimate_items schema. Batch import: run 5 calculators → add all results to one estimate
+- [ ] **Resolve `property_scans` table collision (~6h):** Recon `property_scan_results` (S105) vs VIZ `property_scans` (spec'd). Add `scan_purpose` ENUM (recon/viz/combined) to unified table. Migrate Recon data. Update all Recon EFs and hooks to use unified table. RLS unchanged (company_id scoping)
+- [ ] **Material catalog unification (~8h):** VIZ `material_catalog` (PBR textures, rendering data) and DEPTH32 `supplier_directory` (pricing, availability) share a `material_id` FK. Unified `materials_master` table with `material_type` (viz_texture/supplier_product/both). VIZ references for rendering, DEPTH32 for pricing. No duplication
+- [ ] **Recon → Trade Tools measurement pre-fill (~2h):** Recon scan measurements (roof area, wall sqft, linear ft) auto-populate calculator input fields when launched from a property context. Property_id parameter pass-through
+- [ ] All builds pass: `dart analyze`, `npm run build` for all portals
+- [ ] Commit: `[INTEG2] Engine-to-engine wiring — VIZ↔SK bidirectional, VIZ→Estimate, Trade Tools→Estimate bridge, property_scans table unification, material catalog unification, Recon→Trade Tools pre-fill`
+
+---
+
+### INTEG3 — Client Portal Activation (~56h) (S132 Ecosystem Audit)
+**Goal:** Transform client portal from receive-only (PDF emails) to interactive business hub. Homeowners can approve estimates, pay invoices, view 3D scans, track restoration progress — all in-portal.
+
+- [ ] **Estimate → Client Portal digital approval (~12h):** Estimate detail page in client portal (line items, photos, notes, total). "Approve" / "Request Changes" / "Decline" buttons. Approval creates audit trail entry. Contractor notified instantly (Realtime subscription). Change request flow (free-text comment → contractor revises → re-submit). `estimate_approvals` table (estimate_id, status, approved_by, approved_at, comments). RLS: client sees only their property's estimates
+- [ ] **Invoice → Client Portal payment (~12h):** Invoice detail page in client portal (line items, payments made, balance due). "Pay Now" button → Stripe Checkout session (existing Stripe Connect from U7c). Partial payment support. Payment confirmation screen. Receipt auto-generated. `invoice_payments` table already exists — wire to client portal UI. Payment status real-time sync
+- [ ] **VIZ → Client Portal 3D viewer (~8h):** Embed VIZ 3D viewer (SPZ format) in client portal property page. Before/after toggle for renovation projects. Walkthrough mode (orbit + walk controls). Loading state with progress bar (SPZ files can be large). Shared viewer component with web-portal (extract to shared lib or copy)
+- [ ] **Recon → Client Portal property intelligence (~12h):** Property detail page shows Recon data: roof measurements, property features, structure info, lead score, area scans. "Your Property Report" section. Map view with parcel boundary. Solar potential (if scanned). Environmental data. Same data contractor sees, homeowner-friendly labels
+- [ ] **Restoration → Client Portal progress dashboard (~6h):** Real-time restoration job progress: current phase (demo, mitigation, rebuild), photos by phase, moisture readings trend chart, next scheduled visit, ETA to completion. Uses existing `restoration_*` tables. Realtime subscription for live updates
+- [ ] **Customer → Portal Bridge (~6h):** When contractor creates a customer in CRM, check if email matches an existing client portal user. If yes, auto-link. CRM shows "Portal Active" badge on customer card. If no portal account, "Invite to Portal" button sends magic link. `customers.portal_user_id` FK to `auth.users`
+- [ ] All builds pass: `npm run build` for client-portal, web-portal
+- [ ] Commit: `[INTEG3] Client portal activation — estimate digital approval, invoice in-portal payment, VIZ 3D viewer, Recon property intelligence, restoration progress dashboard, customer-portal bridge`
+
+---
+
+### INTEG4 — Weather Engine Activation (~40h) (S132 Ecosystem Audit)
+**Goal:** Activate weather data (NOAA/NWS — free, $0/month) across all built features. Currently zero weather integration in production despite GC5 weather spec.
+
+- [ ] **NOAA → Scheduling/Gantt overlay (~16h):** Weather forecast overlay on Gantt chart (7-day forecast for job site ZIP). Rain/wind/snow icons on task bars. Auto-flag outdoor tasks when weather is adverse (>50% precip, >25mph wind, <20°F). Suggested reschedule modal. `schedule_weather_flags` table (task_id, weather_date, condition, flagged_at, action_taken). NOAA Weather API (api.weather.gov — free, no key needed). Weather cache in `weather_forecasts` table (zip, date, forecast_json, fetched_at). 1 EF: `weather-forecast-fetch`
+- [ ] **NOAA → Dispatch weather layer (~12h):** Dispatch board map shows weather overlay (current conditions at each job site). Color-coded pins: green (clear), yellow (rain possible), red (severe). Weather alert banner when NWS issues warnings for any active job site ZIP. Uses same `weather_forecasts` cache table
+- [ ] **NOAA → Field Tools context tagging (~8h):** Daily log auto-populates weather field from NOAA (temp, conditions, wind). Photo metadata includes weather at capture time. Voice note transcription appends weather context. All field tool entries get `weather_snapshot` JSONB column (auto-filled, manual override)
+- [ ] **Shared storm event processing layer (~4h):** Unify storm data access across: Recon P9 (storm assessment), scheduling, dispatch, field tools. One `storm_events` table, one `storm-event-processor` EF. All consumers subscribe via FK or Realtime. Eliminates 4 systems independently pulling same NOAA data
+- [ ] All builds pass: `dart analyze`, `npm run build` for all portals
+- [ ] Commit: `[INTEG4] Weather engine activation — NOAA scheduling overlay, dispatch weather layer, field tools context tagging, shared storm event processor`
+
+---
+
+### INTEG5 — Three-Sided Marketplace Wiring (~52h) (S132 Ecosystem Audit)
+**Goal:** Wire the contractor ↔ realtor ↔ homeowner flywheel. When any party acts, the other two benefit. This is the "why Zafto wins" integration — no competitor connects all three sides.
+
+- [ ] **Job completion → Property improvement registry (~12h):** When contractor marks job complete, auto-create `property_improvements` record (property_id, job_id, scope, materials, before/after photos, completion_date, cost, contractor_id). Property page shows full improvement history. Feeds into property value recalculation. `property_improvements` table with RLS (contractor sees their work, homeowner sees their property, realtor sees properties they manage)
+- [ ] **Job completion → Equipment Passport update (~4h):** Job completion with equipment install (HVAC, water heater, electrical panel, etc.) auto-creates `equipment_passport` entry (make, model, serial, install_date, warranty_expiry, maintenance_schedule). Homeowner sees "Your Equipment" in client portal. Realtors see equipment age/condition in property reports
+- [ ] **Job completion → Property value recalculation (~4h):** Trigger RE3 Smart CMA / FLIP2 ARV engine to recalculate property value with improvement factored in. "Your property value increased ~$X from this improvement" notification to homeowner. Delta shown in property dashboard
+- [ ] **Realtor dispatch → Contractor receives VIZ/SK data (~10h):** When realtor dispatches contractor for repair (RE9), include: VIZ 3D scan (if exists), Sketch Engine floor plan, Recon property data, specific repair scope from realtor notes. Contractor opens dispatch notification → sees full property context. Eliminates "drive out and look at it" step for simple jobs
+- [ ] **Post-close → Homeowner onboarding trigger (~6h):** When realtor closes transaction (RE5), auto-create client portal account for buyer. Transfer property data (scans, floor plans, inspection reports, equipment list). Welcome email with magic link. "Your new home" dashboard pre-populated. Seller's maintenance schedule transfers. `client_onboarding_triggers` table
+- [ ] **Contractor reputation → Realtor matching (~6h):** Contractor job ratings, completion rate, on-time %, specialties → visible to realtors when dispatching. "Find a Contractor" in realtor portal shows ranked list by trade + rating + proximity. Contractors opt-in to realtor marketplace. `contractor_reputation_scores` materialized view
+- [ ] **"I'm Selling" → Realtor intake (~4h):** Homeowner clicks "I'm Selling" in client portal → pre-sale report generated (property improvements, scan history, equipment age, estimated value) → posted to realtor marketplace (with homeowner consent). Realtors see "seller lead" with full property intelligence. `seller_leads` table with consent tracking
+- [ ] **Cross-platform data sharing (~6h):** VIZ scans, Sketch plans, and property data flow between all three portals with proper RLS. Shared `data_sharing_consents` table (property_id, shared_by, shared_with_role, data_types[], consent_date). No data moves without explicit consent. Privacy-first architecture
+- [ ] All builds pass: all portals + `dart analyze`
+- [ ] Commit: `[INTEG5] Three-sided marketplace wiring — job completion effects (improvements + equipment + value), realtor dispatch with VIZ/SK, post-close onboarding, contractor reputation matching, seller lead pipeline, cross-platform consent`
+
+---
+
+### INTEG6 — Deduplication Fixes (~24h) (S132 Ecosystem Audit)
+**Goal:** Fix 4 systems where S132 research independently spec'd the same feature twice. Must unify before building either version.
+
+- [ ] **RE26/CLIENT3 maintenance engine unification (~8h):** RE26 "Post-Close Home Maintenance Engine" and CLIENT3 "Maintenance Engine" have identical scope (400+ tasks, climate zones, equipment tracking). Unify into ONE `home_maintenance` table set. Shared Edge Functions. RE26 UI = realtor view (portfolio of properties). CLIENT3 UI = homeowner view (my home). Same data, same backend, role-based frontend. Update both sprint specs to reference shared tables
+- [ ] **FLIP2/RE3 comp analysis unification (~8h):** FLIP2 "ARV Engine" and RE3 "Smart CMA Engine" both build comparable sales analysis from scratch. Shared: `comparable_sales` table, `comp_adjustments` table, `market_data_cache` table. FLIP2 adds flip-specific fields (rehab cost, ARV formula). RE3 adds realtor-specific fields (listing price guidance, seller CMA format). Same comp engine, different presentation layers
+- [ ] **Storm/weather data unification (~4h):** RE30 (Storm Alerts), CLIENT5 (Insurance Claims), CLIENT11 (Emergency Prep), RE25 (Insurance Cost), Recon P9 (Storm Assessment) — ALL reference NOAA/NWS data independently. Wire all 5 to shared `storm_events` table from INTEG4. Single weather data pipeline. Each system subscribes to events relevant to its scope
+- [ ] **Update all affected sprint specs (~4h):** Edit RE26, CLIENT3, FLIP2, RE3, RE30, CLIENT5, CLIENT11, RE25 sprint specs in masterfile AND 07_SPRINT_SPECS.md to reference unified tables. Add "See INTEG6" cross-reference. Reduce hour estimates where duplication is eliminated
+- [ ] All builds pass (if any code touched)
+- [ ] Commit: `[INTEG6] Deduplication fixes — RE26/CLIENT3 maintenance unification, FLIP2/RE3 comp analysis unification, storm data single pipeline, sprint spec cross-references`
+
+---
+
+### INTEG7 — Calculator Bridge (~40h) (S132 Ecosystem Audit)
+**Goal:** Wire 1,139 trade calculator files to produce output that flows into business documents. Currently all calculator results display on screen and vanish.
+
+- [ ] **`trade_tool_estimate_bridge` table (~4h):** (id, tool_record_id FK → trade_tool_records, estimate_id FK → estimates, line_item_id FK → estimate_items, calc_type, calc_inputs JSONB, calc_outputs JSONB, created_at, company_id). RLS: company-scoped. Index on estimate_id + tool_record_id
+- [ ] **"Add to Estimate" button on calculator results (~16h):** Every calculator result screen gets "Add to Estimate" button. Tapping opens estimate picker (existing estimates for current job, or "Create New"). Calculator output maps to estimate_items: quantity, unit, unit_cost, description, trade. Mapping config per calculator type in `calc_estimate_mappings` seed table. Batch mode: run multiple calcs → add all to same estimate
+- [ ] **"Save to Sketch Layer" button (~10h):** Calculator results that produce measurements (wire run, pipe length, duct sizing, conduit fill) can be pinned to Sketch Engine trade layer. "Add to Floor Plan" button → opens Sketch viewer → user taps location → measurement annotation created. Uses existing trade layer system from SK
+- [ ] **Calculator → Permit worksheet attachments (~4h):** Calculator printout (PDF summary of inputs/outputs) can be attached to permit applications as supporting documentation. "Attach to Permit" button → permit picker. `permit_attachments` table FK to `trade_tool_records`
+- [ ] **Calculator history persistence (~6h):** All calculator results save to `trade_tool_records` automatically (existing table, currently underused). History screen shows all past calculations grouped by trade/type/date. Filter by job. "Recalculate" button re-opens with saved inputs. Export to PDF
+- [ ] All builds pass: `dart analyze`, `npm run build` for web-portal
+- [ ] Commit: `[INTEG7] Calculator bridge — trade_tool_estimate_bridge table, Add to Estimate on all calcs, Save to Sketch Layer, Permit worksheet attachments, calculator history persistence`
+
+---
+
+### INTEG8 — Free API Enrichment (~40h) (S132 Ecosystem Audit)
+**Goal:** Wire free government/public APIs ($0/month) into existing features to provide real-time data enrichment. All APIs identified in S132 research (250+ APIs cataloged).
+
+- [ ] **BLS/PPI → Price Book auto-update (~16h):** Bureau of Labor Statistics Producer Price Index data feeds into price book. Monthly cron EF fetches PPI for construction materials (lumber, copper, steel, concrete, drywall, insulation, roofing). Price book entries get `ppi_adjusted_cost` column. "National Average" pricing tier auto-populated. Regional adjustment factors from BLS OES (Occupational Employment Statistics). `price_book_ppi_sync` EF (monthly cron). Free: api.bls.gov (no key for public data, key for 500 req/day)
+- [ ] **FEMA → Property enrichment (~8h):** FEMA flood zone lookup by address (NFHL API — free). Disaster declaration history by county (OpenFEMA API — free). Property page shows: flood zone, nearest disaster declarations, risk score. Recon scan auto-checks FEMA data. `property_fema_data` cache table. Wire into Recon, Property Management, Insurance modules
+- [ ] **EPA ECHO → Environmental compliance (~4h):** EPA ECHO API (free) — facility compliance data within radius of property. Environmental hazard flags on property report. Relevant for restoration (mold, asbestos context) and FLIP (environmental risk). `property_epa_data` cache table
+- [ ] **ENERGY STAR → Appliance recommendations (~4h):** ENERGY STAR Product API (free) — certified appliance lookup by category. When contractor installs equipment (HVAC, water heater, windows), suggest ENERGY STAR alternatives. Equipment Passport shows ENERGY STAR certification status. Rebate eligibility flag
+- [ ] **Rewiring America → Rebate/incentive finder (~4h):** Rewiring America API (free) — IRA/state/utility rebates by ZIP code for electrification (heat pumps, solar, EV chargers, induction, insulation). Property page shows "Available Rebates" section. Estimate items tagged as rebate-eligible. Total potential savings calculated. Homeowner sees rebates in client portal
+- [ ] **Census/ACS → Neighborhood context (~4h):** Census Bureau ACS API (free, needs key) — median household income, home values, population density by tract. Smart CMA and FLIP use for neighborhood analysis. Property reports show demographic context. `census_tract_data` cache table (annual refresh)
+- [ ] All builds pass: all portals + `dart analyze`
+- [ ] Commit: `[INTEG8] Free API enrichment — BLS/PPI price book sync, FEMA flood/disaster data, EPA environmental compliance, ENERGY STAR appliance lookup, Rewiring America rebates, Census neighborhood context`
+
+---
+
 ## PHASE FLIP: FLIP-IT ANALYSIS ENGINE (S127 — flagship feature)
 **Purpose:** Comprehensive house-flipping analysis engine for contractors AND realtors. Aggregates deals from every source (foreclosures, auctions, MLS, pre-foreclosures, tax liens, estate sales, FSBO), runs appraisal-grade ARV calculation, builds a full financial model with every cost down to the dollar, and shows a profit degradation timeline so users know exactly when a flip becomes a liability. Connects users to hard money lenders and local investors. Zafto's killer differentiator: contractors can self-bid rehab scope through the estimate engine — no other flip tool has that. Day-one accuracy is non-negotiable — this feature must fire immediately with real data, not stale estimates.
 
@@ -14536,6 +14631,197 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 
 ---
 
+## Phase VIZ — 3D VISUALIZATION & RENOVATION ENGINE (~202h, 14 sprints)
+
+**Spec:** `Expansion/54_3D_VISUALIZATION_SPEC.md`
+**Position in build order:** Phase E feature (requires GPU). Build after E-review. Same RunPod infra as Blueprint Analyzer.
+**Architecture:** Docker-based GPU worker polls Supabase queue. Runs on Damian's 4090 at launch, same image scales to RunPod/dedicated servers. ZERO code changes to switch GPU providers.
+
+### VIZ1 — Foundation: Tables + Processing Queue (~14h)
+- [ ] Create migration: `property_scans` table (scan_tier, scan_type, video_storage_path, lidar_data_path, roomplan_data_path, source_image_urls, status, lat/lng) + RLS (company_id scoped) + audit trigger
+- [ ] Create migration: `scan_processing_jobs` table (status enum with 10 granular states, priority, quality_tier, worker_id, worker_type, progress_pct, progress_message, timing columns, error handling, retry_count) + RLS (company reads, service_role writes)
+- [ ] Create migration: `scene_models` table (model_format, storage_path, storage_provider, gaussian_count, quality metrics PSNR/SSIM, bounds for viewer camera, measurement_data_path, floor_plan_path, versioning for renovation models) + RLS
+- [ ] Create migration: `renovation_configs` table (material_selections JSONB, structural_changes JSONB, cost fields, estimate_id FK, status) + RLS
+- [ ] Create migration: `material_catalog` table (category enum 23 types, subcategory, manufacturer, PBR texture paths, cost_per_unit, labor_cost_per_unit, paint-specific fields) — platform-wide, no company_id. RLS: SELECT all auth, INSERT/UPDATE super_admin only
+- [ ] Create migration: `shared_tours` table (share_token unique, is_public, password_hash, expires_at, waypoints JSONB, view_count) + RLS (company for management, public for token-based SELECT)
+- [ ] Create migration: `scan_analytics` table (event_type enum, metadata JSONB, partitioned by month)
+- [ ] Create RPC: `claim_viz_job(worker_id TEXT)` — atomic job claim using SELECT FOR UPDATE SKIP LOCKED. Returns claimed job or null.
+- [ ] Create RPC: `update_viz_progress(job_id UUID, status TEXT, progress INT, message TEXT)` — status update with Realtime notification
+- [ ] Edge Function: `viz-queue-scan` — receives scan_id, validates ownership, creates processing job, returns job_id + estimated wait
+- [ ] Edge Function: `viz-share-tour` — creates shareable link with optional expiration/password, returns full URL
+- [ ] Commit: `[VIZ1] Foundation — 7 tables, 2 RPCs, 2 Edge Functions, processing queue architecture`
+
+### VIZ2 — Docker Worker: GPU Processing Pipeline (~20h)
+- [ ] Create `viz-worker/` directory at repo root with Dockerfile, worker.py, requirements.txt
+- [ ] Dockerfile: NVIDIA CUDA 12.4 base, Python 3.11, ffmpeg, COLMAP (built with CUDA), gsplat, SPZ compressor
+- [ ] Worker.py: Supabase connection, queue polling loop (5s interval), atomic job claiming via RPC
+- [ ] Pipeline step 1: Download video from Supabase Storage to local temp dir
+- [ ] Pipeline step 2: Extract frames with ffmpeg (2 fps default, configurable)
+- [ ] Pipeline step 3: Run COLMAP SfM (feature extraction → matching → sparse reconstruction) with CUDA acceleration
+- [ ] Pipeline step 4: Train gsplat (7K/30K/50K iterations based on quality_tier: preview/standard/premium)
+- [ ] Pipeline step 5: Compress trained scene to SPZ format (Niantic, MIT license, ~90% reduction)
+- [ ] Pipeline step 6: Upload .spz to Supabase Storage (or Cloudflare R2 if configured)
+- [ ] Pipeline step 7: Create scene_models record with metadata (file_size, gaussian_count, quality metrics, bounds)
+- [ ] Progress reporting: update scan_processing_jobs at each step (percentage + human-readable message)
+- [ ] Error handling: catch at each step, retry up to max_retries, log failure reason
+- [ ] Health heartbeat: worker pings scan_analytics every 60s so ops portal knows workers are alive
+- [ ] Quality tiers: preview (7K iter, ~5 min, ~$0.05), standard (30K iter, ~35 min, ~$0.50), premium (50K iter, ~60 min, ~$1.00)
+- [ ] Docker Compose file for local dev: `docker compose up` starts worker with GPU passthrough
+- [ ] README.md in viz-worker/: one-command setup instructions for Damian's PC
+- [ ] Commit: `[VIZ2] Docker GPU worker — COLMAP + gsplat + SPZ pipeline, queue-based processing`
+
+### VIZ3 — Capture: Flutter Scan Screen (~16h)
+- [ ] New screen: `lib/screens/viz/scan_capture_screen.dart` — scan setup + camera recording
+- [ ] Scan setup UI: scan type (interior/exterior/both), quality tier, link to property/job
+- [ ] Video recording with live camera preview, timer, coverage indicator
+- [ ] LiDAR depth capture via platform channel to ARKit (iOS only, graceful skip on non-LiDAR)
+- [ ] RoomPlan integration via platform channel: room detection, wall/door/window identification (iOS 16+ only)
+- [ ] Chunked resumable upload to Supabase Storage (handles poor cell connections)
+- [ ] Upload progress UI with percentage bar
+- [ ] Auto-queue for processing after upload completes (calls viz-queue-scan EF)
+- [ ] Processing status screen: real-time progress from Supabase Realtime subscription on scan_processing_jobs
+- [ ] Push notification when processing completes (FCM)
+- [ ] "You can close the app" messaging — processing continues server-side
+- [ ] Scan history list: all scans for current property/job with status badges
+- [ ] New model: `lib/models/property_scan.dart` + `lib/models/scene_model.dart`
+- [ ] New repo: `lib/repositories/property_scan_repository.dart`
+- [ ] New provider: `lib/providers/property_scan_provider.dart`
+- [ ] Commit: `[VIZ3] Flutter scan capture — video + LiDAR + RoomPlan, chunked upload, processing status`
+
+### VIZ4 — Web Viewer: Shared React Component (~16h)
+- [ ] Create shared viewer package: `packages/scene-viewer/` (used by all 4 web portals)
+- [ ] Install Spark.js + Three.js dependencies
+- [ ] `<SceneViewer />` React component: loads .spz URL, progressive loading (low-res → high-res)
+- [ ] Navigation: WASD + mouse (desktop), touch drag/pinch/tap-to-teleport (mobile)
+- [ ] Fullscreen mode toggle
+- [ ] Measurement overlay: render LiDAR dimension data as dotted lines with labels (feet/inches)
+- [ ] Loading state: skeleton + progress bar while splat streams in
+- [ ] Error state: graceful fallback if WebGL not supported (show photo gallery instead)
+- [ ] Mobile optimization: limit Gaussian count for low-end devices, reduce resolution on slow connections
+- [ ] Before/after mode: dual renderer with synced cameras, draggable divider
+- [ ] Guided tour mode: navigate through waypoint sequence with labels and notes
+- [ ] Toolbar: measure, renovate, share, fullscreen, before/after toggle, screenshot
+- [ ] Responsive: works in sidebar panel, modal, or full page
+- [ ] Commit: `[VIZ4] Shared SceneViewer React component — Spark.js, progressive loading, measurements, before/after`
+
+### VIZ5 — Flutter Viewer + Portal Integration (~14h)
+- [ ] Flutter: `lib/widgets/scene_viewer_widget.dart` — InAppWebView embedding SceneViewer
+- [ ] Flutter: platform channel bridge for measurement data overlay
+- [ ] Flutter: offline cached viewing — download .spz file for offline replay
+- [ ] Web CRM: `/dashboard/properties/[id]/3d-tour` page — property detail 3D tab
+- [ ] Web CRM: `/dashboard/jobs/[id]/3d-scan` page — job detail 3D tab
+- [ ] Web CRM: `use-property-scans.ts` hook — fetch scans, subscribe to processing status
+- [ ] Team Portal: `/dashboard/jobs/[id]/3d-scan` page — field worker views job scan
+- [ ] Client Portal: `/my-home/3d-tour` page — homeowner views their property
+- [ ] Ops Portal: `/dashboard/scan-analytics` page — platform-wide scan metrics, worker status, queue depth
+- [ ] Sidebar links in all portals for 3D scan pages
+- [ ] Commit: `[VIZ5] Flutter viewer + all 4 portal pages wired — property/job detail 3D tabs`
+
+### VIZ6 — Sharing & Collaboration (~10h)
+- [ ] Public tour viewer page: `web-portal/src/app/tour/[token]/page.tsx` — no auth required
+- [ ] Share modal: generate link, set expiration, optional password, copy to clipboard
+- [ ] QR code generation for share links (for print materials, yard signs)
+- [ ] Embed code generator: `<iframe>` snippet for contractor websites
+- [ ] Guided tour builder: pin viewpoints in 3D, add labels and notes, set navigation order
+- [ ] View analytics: track tour views, time spent, navigation heatmap
+- [ ] Email share: send tour link with custom message via EF
+- [ ] SMS share: send tour link via SignalWire (existing integration)
+- [ ] Commit: `[VIZ6] Tour sharing — public links, QR codes, embeds, guided tours, analytics`
+
+### VIZ7 — Remote Scan: 3D From Photos Only (~14h)
+- [ ] Tier 1 capture flow: user uploads photos OR enters address for public image lookup
+- [ ] Photo import: bulk upload from phone gallery, drag-and-drop on web
+- [ ] Listing photo fetch: if property exists in Recon data, pull existing photos
+- [ ] InstantSplat/AnySplat integration in worker: few-shot 3D from 3-25 photos (no COLMAP needed)
+- [ ] Fallback: if <3 photos, use Apple SHARP for single-image 3D preview (very rough)
+- [ ] Recon data overlay: roof measurements, property features, lot data overlaid on remote model
+- [ ] Sketch Engine data overlay: if floor plan exists, map room dimensions onto model
+- [ ] Quality badge: clearly label remote scans as "Estimated 3D — visit property for full accuracy"
+- [ ] Commit: `[VIZ7] Remote scan — 3D from listing photos, few-shot reconstruction, Recon overlay`
+
+### VIZ8 — Material Catalog + Seed Data (~14h)
+- [ ] Seed migration: 5,000+ PBR textures from ambientCG + FreePBR (CC0 Public Domain)
+- [ ] Organize by category: flooring (800+), wall paint (500+), tile (400+), countertop (200+), roofing (150+), siding (200+), brick/stone (300+), etc.
+- [ ] Seed: Sherwin-Williams top 200 paint colors (name, hex code, finish options)
+- [ ] Seed: Benjamin Moore top 200 paint colors
+- [ ] Seed: Behr top 100 paint colors
+- [ ] Seed: GAF shingle line (colors, textures, product codes)
+- [ ] Seed: James Hardie siding colors and profiles
+- [ ] Catalog browser UI (web component, shared): search, filter by category/manufacturer/color, preview swatches
+- [ ] Material detail: preview image, cost per unit, labor cost, available sizes/styles
+- [ ] Company custom materials: companies can add their preferred materials (links to material_catalog)
+- [ ] Commit: `[VIZ8] Material catalog — 5,000+ PBR textures, paint colors, manufacturer products, catalog UI`
+
+### VIZ9 — Renovation: Surface Swap Engine (~20h)
+- [ ] SAM 3 integration in worker: semantic segmentation of 3D scene (floors, walls, ceiling, counters, cabinets, roof, siding)
+- [ ] Segmentation map stored with scene model (room-by-room surface identification)
+- [ ] Surface picker: tap any surface in 3D viewer to select it for material change
+- [ ] Texture-GS integration: swap PBR texture on selected surface directly in Gaussian Splat
+- [ ] Real-time preview: simple changes (paint color) render client-side in viewer
+- [ ] GPU-processed preview: complex changes (3D texture mapping) queued to worker
+- [ ] Material picker modal: opens when surface tapped, shows relevant materials for surface type
+- [ ] Multi-surface selection: "Apply to all floors" or "Apply to all walls" batch operations
+- [ ] Undo/redo stack for material changes
+- [ ] Save renovation config to `renovation_configs` table
+- [ ] Fallback: if Texture-GS fails for a surface, generate 2D AI render with FLUX + ControlNet (always works)
+- [ ] Commit: `[VIZ9] Renovation engine — SAM 3 segmentation, Texture-GS material swap, surface picker`
+
+### VIZ10 — Renovation: Interior + Exterior + Staging (~18h)
+- [ ] Interior: flooring swap (all 6 types), wall paint/wallpaper swap, cabinet style/color, countertop swap, tile swap, fixture replacement
+- [ ] Exterior: roof material swap using Recon facet masks, siding material swap, window style swap, door/garage door swap, landscaping modification
+- [ ] Defurnishing: SAM 3 segments furniture → GaussianEditor removes → inpainting fills floor/walls
+- [ ] Virtual staging: select design style (56+ options) → AI generates furniture placement → composited into scene
+- [ ] Room-by-room customization: different materials per room, track separately in renovation_configs
+- [ ] Exterior zone editing: front facade, sides, rear, roof as separate editable zones
+- [ ] Material quantity calculation: room dimensions from LiDAR → exact sq ft for each surface → material quantities
+- [ ] Commit: `[VIZ10] Full renovation — interior + exterior + defurnishing + staging, room-by-room customization`
+
+### VIZ11 — Before/After + Cost Integration (~16h)
+- [ ] Dual synced viewer: original scan on left, renovation on right, cameras locked together
+- [ ] Swipe slider: 2D screenshots with draggable before/after divider
+- [ ] Cost overlay panel: running total updates as materials are selected
+- [ ] Per-surface cost breakdown: material cost + labor cost (from material_catalog rates × room dimensions)
+- [ ] "Generate Estimate" button: pushes all renovation selections into D8 Estimate Engine as line items
+- [ ] Auto-populate estimate: material name, quantity (from room measurements), unit cost, labor hours, trade code
+- [ ] Company markup applied automatically from company settings
+- [ ] Tax calculation from company tax settings
+- [ ] PDF export: before/after comparison images + cost breakdown + full estimate
+- [ ] Timeline view: show renovation in stages (as-is → demo → framing → rough-in → finish) — AI-generated concept renders for each stage
+- [ ] Commit: `[VIZ11] Before/after comparison + D8 estimate integration — cost overlay, auto-estimate, PDF export`
+
+### VIZ12 — Drone Integration (~12h)
+- [ ] Drone video upload flow: separate from phone scan, uploads aerial footage
+- [ ] Combined registration: ground video + aerial video → unified COLMAP SfM (aligned coordinate system)
+- [ ] Roof detail: drone footage provides top-down roof views (supplementing ground-level oblique angles)
+- [ ] Aerial panorama fallback: if no drone, use satellite/aerial imagery from Recon for top-down context
+- [ ] Integration with Recon: drone-captured roof data can update roof facet measurements
+- [ ] DJI SDK hooks (optional): auto-detect DJI drone photos with GPS metadata for better registration
+- [ ] Commit: `[VIZ12] Drone integration — aerial + ground fusion, roof detail views, DJI metadata`
+
+### VIZ13 — Ops Dashboard + Scale Prep (~10h)
+- [ ] Ops portal: `/dashboard/scan-processing` page — live queue view, worker status (heartbeat), GPU utilization
+- [ ] Queue management: priority override, cancel/retry jobs, view error logs
+- [ ] Processing analytics: average time per tier, failure rate, cost tracking
+- [ ] Worker health: last heartbeat, current job, total processed, uptime
+- [ ] RunPod serverless configuration: env vars for RunPod API key, auto-scale threshold (queue depth > N → spin up RunPod workers)
+- [ ] Batch processing mode: "Process All Queued" with estimated completion time
+- [ ] Cost dashboard: GPU cost per scan, storage cost, total monthly platform cost
+- [ ] Alert rules: notify if queue > 50 pending, if worker down > 5 min, if failure rate > 10%
+- [ ] Commit: `[VIZ13] Ops dashboard — processing queue management, worker health, RunPod scaling, cost tracking`
+
+### VIZ14 — Polish & UX (~8h)
+- [ ] Onboarding: first-scan tutorial overlay ("Walk slowly", "Get corners", "Overlap rooms")
+- [ ] Error recovery: "Scan failed — try again" with specific guidance based on failure reason
+- [ ] Scan quality check: before uploading, quick client-side check for video stability, frame count, duration
+- [ ] Scan history page: all scans per company, filter by property/job/date/status
+- [ ] Storage management: delete old scans, show storage usage per company
+- [ ] CDN tuning: Cloudflare R2 cache rules for .spz files, edge caching for popular tours
+- [ ] Performance profiling: viewer FPS monitoring, auto-reduce quality on low-end devices
+- [ ] Accessibility: keyboard navigation for viewer, screen reader descriptions for tour waypoints
+- [ ] Commit: `[VIZ14] Polish — onboarding tutorial, error recovery, quality checks, CDN optimization`
+
+---
+
 ## PHASE AUDIT SUMMARY: FULL DEPTH PLAN (S125)
 
 **Purpose:** Complete re-audit of all features across all 5 apps. Gap phases build missing features. DEPTH phases audit and correct shallow/stub implementations. This is the quality gate before Phase G (QA) and Phase JUR (Jurisdiction).
@@ -14551,12 +14837,12 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 | **ZERO** | ZERO1-ZERO9 | ~86h | Zero-defect validation: property testing, state machines, chaos engineering, 50K load test, fuzz testing, mutation testing, edge case gauntlet, triple-scan |
 | **LAUNCH** | LAUNCH1-LAUNCH9 | ~94h | Monitoring, legal, payments, i18n (~40h realistic), accessibility (~30h realistic), testing, App Store + onboarding wizard + Sign in with Apple + AAB, **production deployment runbook + disaster recovery + CDN (~12h, S130)**, **ops portal fortress + incident response + performance monitoring (~10h, S130)** |
 | **RE** | RE1-RE20 | ~444h | **FULL Zafto Realtor Platform (S129, supersedes REALTOR1-3).** Equal depth to Zafto Contractor. 3 flagship engines: Smart CMA (repair-aware comps), Autonomous Transaction Engine (deal lifecycle), Seller Finder Engine (pre-market leads from public data). Brokerage RBAC (8 roles). Commission tracking engine. Cross-platform intelligence sharing. Dispatched contractors/inspectors get same 35+ field tools. 6th portal: realtor.zafto.cloud (~85-100 routes). Lead gen pipeline (30+ free APIs). Marketing factory. Property management access. Full spec: `Expansion/53_REALTOR_PLATFORM_SPEC.md` |
-| **INTEG** | INTEG1 | ~12h | National portal submission API: per-company format templates, one-click export, verification bundles, compliance scoring, chargeback defense |
+| **INTEG** | INTEG1-INTEG8 | ~312h | INTEG1: National portal submission API (~12h). **S132 Ecosystem Audit additions (7 new sprints, ~300h):** INTEG2: Engine-to-engine wiring — VIZ↔SK, VIZ→Estimate, Trade Tools→Estimate, table collisions, material unification (~48h). INTEG3: Client portal activation — estimate approval, invoice payment, VIZ 3D viewer, Recon intel, restoration progress, customer bridge (~56h). INTEG4: Weather engine — NOAA scheduling overlay, dispatch weather layer, field tools context, shared storm processor (~40h). INTEG5: Three-sided marketplace — job completion effects, realtor dispatch with VIZ/SK, post-close onboarding, reputation matching, seller leads (~52h). INTEG6: Dedup fixes — RE26/CLIENT3, FLIP2/RE3, storm data unification (~24h). INTEG7: Calculator bridge — 1,139 calcs → estimate + sketch + permit connections (~40h). INTEG8: Free API enrichment — BLS/PPI, FEMA, EPA, ENERGY STAR, Rewiring America, Census (~40h) |
 | **FLIP** | FLIP1-FLIP6 | ~92h | Flip-It analysis engine: deal aggregation (7 sources), ARV engine (appraisal-grade), full financial model + profit degradation timeline, hard money lender directory (~100+), deal distribution (BP/Craigslist/FB/REIA), **deal packaging (PDF/DOCX/XLSX/PPTX/shareable link)**, AI photo analysis (Claude Opus 4.6 condition assessment, selective scope, customizable pricing, premium deep assessment: recon + 2D sketch + LiDAR 3D), **Reality Engine (true net P&L with full cost waterfall + tax calculator, risk intelligence: 50% rule alert + code cascade predictor + contingency auto-set + over-improvement warning, deal qualification: 3 exit strategies + opportunity cost + market health + tariff adjustment)** |
 | **JUR4** | JUR4 | ~14h | Realtor jurisdiction awareness — 50-state disclosures, agency rules (dual agency legality), attorney states, commission regulations, license reciprocity, document retention. Wires into Transaction Engine, Commission Engine, Brokerage Admin, Lead Gen |
-| **Total** | **~109 sprints** | **~1,832h** | S130 audit additions: +FIELD5 (~10h), REST/NICHE infrastructure beefed up (+24h), LAUNCH8 (~12h), LAUNCH9 (~10h), Sign in with Apple + AAB + hour corrections. Realistic estimate with corrections: **~2,100h** |
+| **Total** | **~116 sprints** | **~2,132h** | S130 audit additions: +FIELD5 (~10h), REST/NICHE infrastructure beefed up (+24h), LAUNCH8 (~12h), LAUNCH9 (~10h), Sign in with Apple + AAB + hour corrections. **S132 ecosystem audit: +7 INTEG sprints (~300h) — engine wiring, client portal activation, weather engine, marketplace wiring, dedup fixes, calculator bridge, free API enrichment.** Realistic estimate with corrections: **~2,400h**. Note: S132 also produced ~42 sprints in masterfile (RE21-30, CUST1-8, CLIENT1-17, ~898h) + MOV1-8 (~200h) not yet in this table — see `memory/s132-xactimate-strategy-master.md` for full specs |
 
-**Execution order (S130 audit-corrected):** SEC1 + SEC6 + SEC7 + SEC8 (critical security — site is live) → **LAUNCH1 (monitoring — need Sentry before building more)** → **LAUNCH9 (ops portal fortress + incident response — lock down command center IMMEDIATELY)** → FIELD1-FIELD5 (incl new BYOC phone) → REST → NICHE → DEPTH1 through DEPTH27 → DEPTH28 (recon mega-expansion) → DEPTH29 (estimate engine overhaul) → DEPTH30 (recon-to-estimate pipeline) → DEPTH31 (crowdsourced material pricing) → DEPTH32 (Material Finder) → DEPTH33 (data privacy/AI consent) → DEPTH34 (property preservation) → DEPTH35 (mold remediation) → DEPTH36 (disposal/dump finder) → DEPTH37 (tablet/mobile responsive) → DEPTH38 (time clock adjustment) → DEPTH39 (signature system + DocuSign replacement) → **DEPTH40 non-AI portion (marketplace aggregator infrastructure — paste-a-link, RSS feeds, affiliate APIs, search/filter UI)** → DEPTH41 (backup fortress) → DEPTH42 (storage tiering) → DEPTH43 (sketch file compatibility) → RE1-RE20 (full Zafto Realtor Platform — 20 sprints, ~444h) → INTEG1 (national portal submission API) → FLIP1-FLIP4 (deal aggregation, ARV engine, financial model, deal packaging) → SEC2-SEC5 (2FA, biometrics, enterprise security, Hellhound) → LAUNCH2-LAUNCH6 (legal, payments, i18n, accessibility, testing) → **LAUNCH8 (production deployment runbook + disaster recovery + CDN — must be ready BEFORE Phase G)** → Phase G (QA) → Phase JUR (incl JUR4 realtor jurisdiction) → Phase E (AI) → **FLIP5 (AI photo analysis — MOVED after Phase E, requires AI infrastructure)** → **DEPTH40 AI portion (marketplace AI recommendations)** → **DEPTH44 (AI-gated features + ticket system)** → SEC9 (security pentest) → SEC10 (legal pentest) → ZERO1-ZERO9 (zero-defect validation) → LAUNCH7 (App Store + onboarding wizard — DEAD LAST) → SHIP
+**Execution order (S132 ecosystem audit-updated):** SEC1 + SEC6 + SEC7 + SEC8 (critical security — site is live) → **LAUNCH1 (monitoring — need Sentry before building more)** → **LAUNCH9 (ops portal fortress + incident response — lock down command center IMMEDIATELY)** → FIELD1-FIELD5 (incl new BYOC phone) → REST → NICHE → DEPTH1 through DEPTH27 → DEPTH28 (recon mega-expansion) → DEPTH29 (estimate engine overhaul) → DEPTH30 (recon-to-estimate pipeline) → DEPTH31 (crowdsourced material pricing) → DEPTH32 (Material Finder) → DEPTH33 (data privacy/AI consent) → DEPTH34 (property preservation) → DEPTH35 (mold remediation) → DEPTH36 (disposal/dump finder) → DEPTH37 (tablet/mobile responsive) → DEPTH38 (time clock adjustment) → DEPTH39 (signature system + DocuSign replacement) → **DEPTH40 non-AI portion (marketplace aggregator infrastructure — paste-a-link, RSS feeds, affiliate APIs, search/filter UI)** → DEPTH41 (backup fortress) → DEPTH42 (storage tiering) → DEPTH43 (sketch file compatibility) → **INTEG6 (dedup fixes — BEFORE RE26/FLIP2 are built)** → **INTEG2 (engine-to-engine wiring — VIZ↔SK, Trade Tools→Estimate)** → **INTEG3 (client portal activation)** → **INTEG4 (weather engine)** → **INTEG7 (calculator bridge)** → **INTEG8 (free API enrichment)** → RE1-RE20 (full Zafto Realtor Platform — 20 sprints, ~444h) → INTEG1 (national portal submission API) → FLIP1-FLIP4 (deal aggregation, ARV engine, financial model, deal packaging) → **INTEG5 (three-sided marketplace wiring — needs RE + FLIP done)** → SEC2-SEC5 (2FA, biometrics, enterprise security, Hellhound) → LAUNCH2-LAUNCH6 (legal, payments, i18n, accessibility, testing) → **LAUNCH8 (production deployment runbook + disaster recovery + CDN — must be ready BEFORE Phase G)** → Phase G (QA) → Phase JUR (incl JUR4 realtor jurisdiction) → Phase E (AI) → **FLIP5 (AI photo analysis — MOVED after Phase E, requires AI infrastructure)** → **DEPTH40 AI portion (marketplace AI recommendations)** → **DEPTH44 (AI-gated features + ticket system)** → SEC9 (security pentest) → SEC10 (legal pentest) → ZERO1-ZERO9 (zero-defect validation) → LAUNCH7 (App Store + onboarding wizard — DEAD LAST) → SHIP
 
 **MANDATORY BUILD RULE — APPLIES TO EVERY SPRINT (S130 Owner Directive):**
 > **ALL features must have FULL DEPTH and USAGE for ALL contractor and realtor use cases. NO empty shell scaffolding. NO bullshit features. EVERYTHING has to be deep. Every type of contractor (electrical, plumbing, HVAC, roofing, solar, painting, flooring, fencing, landscaping, pool, pest control, general contractor, remodeler, restoration, preservation, commercial, welding, auto body, fire protection, concrete, drywall, insulation, gutters, windows, siding, tree service, excavation, demolition, masonry, tile, cabinet, countertop, garage door, locksmith, chimney, foundation repair, waterproofing, septic, well drilling, irrigation, snow removal) and every type of realtor (residential buyer's agent, listing agent, dual agent, commercial, luxury, property manager, REO/foreclosure, short sale, new construction, land/lot, farm/ranch, military relocation, senior specialist, investment, team lead, managing broker, brokerage owner) MUST be covered. No exceptions. If a feature exists, it must work completely end-to-end for every trade and role that would use it. Every screen handles all 4 states (loading, error, empty, data). Every tool saves data, links to jobs, produces useful output. Every calculator is accurate and saves results. If it's not deep enough for a real professional to use on a real job site on day one, it's NOT DONE.**

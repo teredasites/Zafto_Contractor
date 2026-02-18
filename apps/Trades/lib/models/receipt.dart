@@ -100,7 +100,7 @@ class Receipt {
   Map<String, dynamic> toInsertJson() => {
         'company_id': companyId,
         if (jobId != null) 'job_id': jobId,
-        'uploaded_by_user_id': uploadedByUserId,
+        'scanned_by_user_id': uploadedByUserId,
         if (storagePath != null) 'storage_path': storagePath,
         'vendor_name': vendorName,
         'amount': amount,
@@ -117,7 +117,7 @@ class Receipt {
       id: json['id'] as String? ?? '',
       companyId: json['company_id'] as String? ?? '',
       jobId: json['job_id'] as String?,
-      uploadedByUserId: json['uploaded_by_user_id'] as String? ?? '',
+      uploadedByUserId: (json['scanned_by_user_id'] as String?) ?? (json['uploaded_by_user_id'] as String?) ?? '',
       storagePath: json['storage_path'] as String?,
       vendorName: json['vendor_name'] as String? ?? '',
       amount: (json['amount'] as num?)?.toDouble() ?? 0,

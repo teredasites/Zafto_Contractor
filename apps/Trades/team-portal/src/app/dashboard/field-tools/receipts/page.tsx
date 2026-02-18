@@ -33,19 +33,19 @@ export default function ReceiptsPage() {
 
       const { data } = await supabase
         .from('receipts')
-        .select('id, file_name, file_url, ocr_status, vendor_name, total_amount, created_at')
-        .eq('uploaded_by', user.id)
+        .select('id, file_name, storage_path, ocr_status, vendor_name, amount, created_at')
+        .eq('scanned_by_user_id', user.id)
         .is('deleted_at', null)
         .order('created_at', { ascending: false })
         .limit(20);
 
       setReceipts((data || []).map((r: Record<string, unknown>) => ({
         id: r.id as string,
-        fileName: r.file_name as string,
-        url: r.file_url as string,
+        fileName: (r.file_name as string) || 'Receipt',
+        url: r.storage_path as string,
         ocrStatus: (r.ocr_status as string) || 'pending',
         vendorName: r.vendor_name as string | null,
-        totalAmount: r.total_amount as number | null,
+        totalAmount: r.amount as number | null,
         createdAt: r.created_at as string,
       })));
     } catch {
@@ -91,10 +91,9 @@ export default function ReceiptsPage() {
       // Insert receipt record (OCR deferred to Phase E)
       const { error: insertError } = await supabase.from('receipts').insert({
         company_id: companyId,
-        uploaded_by: user.id,
-        file_name: file.name,
-        file_url: urlData.publicUrl,
+        scanned_by_user_id: user.id,
         storage_path: fileName,
+        file_name: file.name,
         file_size: file.size,
         mime_type: file.type,
         ocr_status: 'pending',

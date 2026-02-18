@@ -11,6 +11,7 @@ import 'package:path_provider/path_provider.dart';
 import '../../theme/zafto_colors.dart';
 import '../../theme/theme_provider.dart';
 import '../../services/field_camera_service.dart';
+import '../../models/voice_note.dart';
 import '../../services/voice_note_service.dart';
 
 /// Voice Notes - Audio recording with timestamps and optional transcription
@@ -26,6 +27,7 @@ class VoiceNotesScreen extends ConsumerStatefulWidget {
 class _VoiceNotesScreenState extends ConsumerState<VoiceNotesScreen> {
   final List<_VoiceNote> _notes = [];
   bool _isRecording = false;
+  bool _loadingExisting = true;
   Duration _recordingDuration = Duration.zero;
   Timer? _recordingTimer;
   String? _currentAddress;
@@ -40,6 +42,39 @@ class _VoiceNotesScreenState extends ConsumerState<VoiceNotesScreen> {
     super.initState();
     _recorder = AudioRecorder();
     _fetchLocation();
+    _loadExistingNotes();
+  }
+
+  Future<void> _loadExistingNotes() async {
+    try {
+      final voiceNoteService = ref.read(voiceNoteServiceProvider);
+      final List<VoiceNote> existing;
+      if (widget.jobId != null) {
+        existing = await voiceNoteService.getVoiceNotesByJob(widget.jobId!);
+      } else {
+        existing = await voiceNoteService.getRecentNotes(limit: 50);
+      }
+
+      if (mounted && existing.isNotEmpty) {
+        setState(() {
+          _notes.insertAll(
+            0,
+            existing.map((n) => _VoiceNote(
+              id: n.id,
+              duration: Duration(seconds: n.durationSeconds ?? 0),
+              recordedAt: n.recordedAt,
+              transcription: n.transcription,
+              storagePath: n.storagePath,
+              savedId: n.id,
+            )),
+          );
+        });
+      }
+    } catch (_) {
+      // Non-blocking — screen still works for new recordings
+    } finally {
+      if (mounted) setState(() => _loadingExisting = false);
+    }
   }
 
   @override
@@ -80,9 +115,11 @@ class _VoiceNotesScreenState extends ConsumerState<VoiceNotesScreen> {
 
           // Notes list
           Expanded(
-            child: _notes.isEmpty
-                ? _buildEmptyState(colors)
-                : _buildNotesList(colors),
+            child: _loadingExisting
+                ? const Center(child: CircularProgressIndicator())
+                : _notes.isEmpty
+                    ? _buildEmptyState(colors)
+                    : _buildNotesList(colors),
           ),
 
           // Record button

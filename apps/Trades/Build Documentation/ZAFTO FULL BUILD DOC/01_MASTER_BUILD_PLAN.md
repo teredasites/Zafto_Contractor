@@ -1,12 +1,12 @@
 # ZAFTO MASTER BUILD PLAN — NO DRIFT
 ## Single Source of Truth — Every Feature, Every Phase, Every Decision
-### Last Updated: February 11, 2026 (Session 97)
+### Last Updated: February 18, 2026 (Session 133)
 
 ---
 
 ## WHAT IS ZAFTO
 
-Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stripe-level quality for blue-collar professionals. Multi-trade platform that scales by uploading knowledge, not building screens.
+Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stripe-level quality for blue-collar professionals. Multi-trade platform that scales by uploading knowledge, not building screens. **Three-sided marketplace:** Contractor ↔ Homeowner ↔ Realtor, with a free Adjuster Portal as a Trojan horse into the $35B insurance claims ecosystem.
 
 **Owner:** Damian Tereda — Tereda Software LLC (DBA: ZAFTO)
 
@@ -56,11 +56,12 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | **Usage meter** | Settings shows a clean visual usage bar (no numbers). Fills up with use. Resets monthly with billing cycle. |
 | **Tier thresholds** | Each tier has an internal cost threshold (invisible to user). Solo < Team < Business. Exact thresholds set during Phase G when real token costs are measurable. |
 | **Cutoff behavior** | When threshold exceeded: AI features blocked, everything else works. User sees: "You've reached your AI usage for this month." Then two options: buy more or upgrade. |
-| **Buy more AI usage** | Clean dollar amounts, no units: **$10 \| $25 \| $50 \| $100 \| $500 \| $1,000**. User taps a dollar amount, meter refills proportionally, AI turns back on. No token counts, no "you purchased X credits." Just dollars in, AI back on. Internal system maps dollars to AI capacity based on Sonnet token costs + margin. User never sees that math. |
+| **Buy more AI usage** | Clean dollar amounts, no units: **$10 \| $25 \| $50 \| $100**. User taps a dollar amount, meter refills proportionally, AI turns back on. No token counts, no "you purchased X credits." Just dollars in, AI back on. Internal system maps dollars to AI capacity at ~4x markup over raw token costs. User never sees that math. |
 | **Upgrade option** | Below the dollar buttons: "Or upgrade your plan for higher monthly limits." Links to plan upgrade flow. User is never FORCED to upgrade — buying more usage is always an option. |
 | **Business/Enterprise** | Unlimited AI. No meter shown. Never restricted. |
 | **Internal tracking** | Ops portal tracks AI cost per company, dollar top-up revenue, margin per customer. User never sees this. |
-| **Model choice** | **Opus 4.6** for all AI features (Z Intelligence, Blueprint Analyzer, AI Scanner, trade tools). Sonnet 4.5 only for trivial background tasks (classification, routing). Anything the user sees or that generates revenue documents = Opus. No compromises. |
+| **Model choice** | **Opus 4.6** for all user-facing AI features (Z Intelligence, Blueprint Analyzer, AI Scanner, trade tools). Sonnet 4.5 only for trivial background tasks (classification, routing). Anything the user sees or that generates revenue documents = Opus. No compromises. |
+| **AI budget split** | 10-15% of subscription revenue = passive AI reserve (background Sonnet tasks: classification, auto-tagging, cron jobs). Remaining 85-90% = active AI budget for Opus 4.6 user-facing features. Buy-more at ~4x markup over raw token costs. |
 | **Old system** | The `user_credits`, `credit_purchases`, `scan_logs` tables and `subscription-credits` EF from FM migration are DEPRECATED. Will be replaced during Phase E with tier-based usage tracking + dollar top-ups. RevenueCat IAP credit products (`zafto_credits_*`) are KILLED. |
 
 **This replaces ALL previous credit/scan-count/package pricing models across all docs and code.**
@@ -70,73 +71,88 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 ## ARCHITECTURE
 
 ```
-                        ZAFTO PLATFORM
-    ┌──────────────────────────────────────────────────┐
-    │                  SUPABASE                         │
-    │  PostgreSQL + Auth + Storage + Realtime + Edge Fn │
-    │  RLS on every table. 6-layer security.           │
-    ├──────────────────────────────────────────────────┤
-    │  Stripe    Claude API    Cloudflare    Sentry    │
-    │  SignalWire SendGrid     Plaid         RevenueCat│
-    └────────────┬──────┬──────┬──────┬────────────────┘
-                 │      │      │      │
-         ┌───────┘  ┌───┘  ┌───┘  ┌───┘
-         ▼          ▼      ▼      ▼
-    ┌─────────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐
-    │ Mobile  │ │ Web  │ │Employee│ │Client│ │ Ops  │
-    │ App     │ │ CRM  │ │Field  │ │Portal│ │Portal│
-    │ Flutter │ │Next.js│ │Next.js│ │Next.js│ │Next.js│
-    │ Field   │ │Office│ │Team   │ │Home  │ │Founder│
-    └─────────┘ └──────┘ └──────┘ └──────┘ └──────┘
-         │
-    ┌─────────┐
-    │PowerSync│  Offline-first (SQLite <-> PostgreSQL)
-    └─────────┘
+                          ZAFTO PLATFORM
+    ┌────────────────────────────────────────────────────────┐
+    │                      SUPABASE                           │
+    │  PostgreSQL + Auth + Storage + Realtime + Edge Functions│
+    │  RLS on every table. ~215 tables. 94 Edge Functions.   │
+    ├────────────────────────────────────────────────────────┤
+    │  Stripe   Claude API  Cloudflare  Sentry  RevenueCat  │
+    │  SignalWire  SendGrid  Plaid  LiveKit  250+ Free APIs  │
+    └──┬────┬────┬────┬────┬────┬────┬──────────────────────┘
+       │    │    │    │    │    │    │
+       ▼    ▼    ▼    ▼    ▼    ▼    ▼
+    ┌──────┐┌──────┐┌──────┐┌──────┐┌──────┐┌──────┐┌──────┐
+    │Mobile││ Web  ││Team  ││Client││ Ops  ││Realtor││Adjust│
+    │ App  ││ CRM  ││Portal││Portal││Portal││Portal ││Portal│
+    │Flutter││Next.js││Next.js││Next.js││Next.js││Next.js││(Free)│
+    │Field ││Office││Field ││Home  ││Found.││Agent ││Claims│
+    └──────┘└──────┘└──────┘└──────┘└──────┘└──────┘└──────┘
+       │
+    ┌──────┐
+    │Power │  Offline-first (SQLite <-> PostgreSQL)
+    │Sync  │
+    └──────┘
 ```
 
 **URLs:**
 - `zafto.app` — Marketing landing page
-- `team.zafto.cloud` — Employee Field Portal (techs, apprentices, field crews)
 - `zafto.cloud` — Contractor CRM (owner, admin, office manager)
-- `client.zafto.cloud` — Client/Homeowner Portal
+- `team.zafto.cloud` — Employee Field Portal (techs, apprentices, field crews)
+- `client.zafto.cloud` — Client/Homeowner Portal (free + $49.99/mo premium)
 - `ops.zafto.cloud` — Founder OS (internal, super_admin)
+- `realtor.zafto.cloud` — Realtor Portal (Phase RE, ~85-100 routes)
+- Adjuster Portal — Public share links + free dashboard (Phase ECO, no dedicated subdomain needed)
 
 ---
 
-## CURRENT STATE (February 11, 2026 — Session 97)
+## CURRENT STATE (February 18, 2026 — Session 133)
 
 | What | Built | Wired | End-to-End |
 |------|:-----:|:-----:|:----------:|
 | Mobile App (R1 remake — 33 role screens) | YES | YES | YES (Supabase) |
 | Mobile Field Tools (19 total) | YES | YES (B2+B3) | YES (all 19 wired) |
-| Web CRM (107 routes, 68 hooks) | YES | YES | YES (Supabase) |
-| Client Portal (38 routes, 21 hooks) | YES | YES | YES (Supabase) |
-| Employee Field Portal (36 routes, 22 hooks) | YES | YES | YES (Supabase) |
-| Ops Portal (26 routes) | YES | YES | YES (Supabase) |
-| Database (Supabase) | ~173 tables | RLS + audit on all | 48 migrations |
-| Edge Functions | 53 directories | 32 pre-F + 21 F/FM | Needs ANTHROPIC_API_KEY |
+| Web CRM (~150 routes, 79+ hooks) | YES | YES | YES (Supabase) |
+| Client Portal (45 routes, 21+ hooks) | YES | YES | YES (Supabase) |
+| Employee Field Portal (43 routes, 22+ hooks) | YES | YES | YES (Supabase) |
+| Ops Portal (30 routes) | YES | YES | YES (Supabase) |
+| Database (Supabase) | ~215 tables | RLS + audit on all | 114 migrations |
+| Edge Functions | 94 directories | All wired | Needs ANTHROPIC_API_KEY for AI |
 | RBAC | Enforced | Middleware on all portals | RLS per table |
 | Ledger (QB replacement) | YES | YES (13 hooks, 13 pages, 5 EFs) | YES |
 | Property Management | YES | YES (11 hooks, 14 pages, 10 Flutter screens) | YES (D5, S71-S77, 18 tables) |
 | Insurance/Restoration | YES | YES (7 tables, all 5 apps) | YES |
 | D8 Estimates | YES | YES (D8a-D8j, 10 tables, 5 EFs) | DONE (S85-S89) |
 | Phase F Platform (F1-F10) | YES (code) | YES (hooks+pages) | ALL CODE COMPLETE (S90) |
-| **Phase E AI (PREMATURE)** | **YES (code exists)** | **PAUSED** | **NOT TESTED — AI goes LAST** |
-| **Phase T: Programs** | **COMPLETE** | **YES** | **S104: T1-T10 done. 11 migrations, 58 EFs, ~192 tables, all portals** |
-| **Phase P: Recon** | **COMPLETE** | **YES** | **S105: P1-P10 done. 11 tables, 7 EFs, 5 CRM routes, 1 ops route, Flutter screens** |
-| **Phase SK: Sketch Engine** | **COMPLETE** | **YES** | **S109: SK1-SK14 all done. 6 tables, 62 migrations. Export (PDF/PNG/DXF/FML/SVG), 3D view, site plan mode (exterior trades), trade formulas (8 trades), templates, snap guides, collaboration foundation. Auto-estimate wired to D8.** |
-| **Phase GC: Schedule** | **COMPLETE** | **YES** | **S110: GC1-GC11 all done. 12 tables, 10 EFs (schedule-*), 9 CRM pages, Flutter screens, Mini Gantt widgets, CPM/resource leveling, EVM cost loading, weather integration, portfolio view, field sync, reminders cron.** |
-| **Phase U: Unification** | **COMPLETE** | **YES** | **S111-S114: U1-U23 ALL DONE. Nav redesign, permission engine, ledger completion, dashboard restoration, PDF/email, payment flow, metric verification, ops CRUD, forgot password, i18n, universal trade, GPS walkthrough, dispatch board, data import, subcontractors, calendar sync, phone system config (6-tab settings, 3 hooks, 5 trade presets). ~448 hrs total.** |
-| **Phase W: Warranty** | **COMPLETE** | **YES** | **S113 chain: W1 warranty intelligence, hooks + pages across 4 portals.** |
-| **Phase J: Job Intelligence** | **COMPLETE** | **YES** | **S113 chain: J1-J2 smart pricing + job analytics, hooks + pages.** |
-| **Phase L: Legal/Permits** | **COMPLETE** | **YES** | **S113 chain: L1-L9 permit intelligence, jurisdictions, compliance, liens, CE tracker. 5 migrations.** |
-| **Phase INS: Inspector Deep Buildout** | **COMPLETE** | **YES** | **S121-S124: INS1-INS10 all done (~66h). 19 inspection types + Quick Checklist mode, template-driven checklists (25 templates, 1,147 items, 173 sections), weighted scoring, deficiency tracking w/ photos, PDF reports, GPS capture, reinspection diffs, code reference (61 NEC/IBC/IRC/OSHA/NFPA sections), compliance calendar, permit tracker, CRM hooks+pages, ops metrics, team inspections. INS10: Quick Checklist (check/uncheck), Hive offline safety net (ChecklistCacheService + HiveCacheMixin + OfflineBanner), OFFLINE1-4 sprints planned (~28h).** |
-| **Phase G: QA/Hardening** | **IN PROGRESS** | **PARTIAL** | **S113: G1-G5 automated sprints DONE. G6-G10 manual QA PENDING.** |
-| **Phase JUR: Jurisdiction Awareness** | **PLANNED (S124, expanded S129)** | **NO** | **Pre-AI. JUR1: state_code_adoptions + seed (50 states × 8 code families). JUR2: Weekly adoption scanner. JUR3: Full feature retrofit. JUR4 (S129): Realtor jurisdiction (~14h) — 50-state disclosures, agency rules, attorney states, commission regs, license reciprocity. ~54-64h total.** |
-| **Phase RE: Realtor Platform** | **SPEC'D (S129)** | **NO** | **Full spec `Expansion/53_REALTOR_PLATFORM_SPEC.md`. RE1-RE20, ~444h, 20 sprints. 3 flagship engines (Smart CMA, Transaction, Seller Finder). Brokerage RBAC. Commission tracking. Cross-platform sharing. 6th portal. Supersedes REALTOR1-3.** |
-| **Plan Review** | **SPEC'D (S97)** | **NO** | Phase E feature (BA1-BA8, ~128 hrs) |
+| Phase T: Programs | COMPLETE | YES | S104: T1-T10 done |
+| Phase P: Recon | COMPLETE | YES | S105: P1-P10 done |
+| Phase SK: Sketch Engine | COMPLETE | YES | S109: SK1-SK14 done |
+| Phase GC: Schedule | COMPLETE | YES | S110: GC1-GC11 done |
+| Phase U: Unification | COMPLETE | YES | S111-S114: U1-U23 done |
+| Phase W: Warranty | COMPLETE | YES | S113: W1 done |
+| Phase J: Job Intelligence | COMPLETE | YES | S113: J1-J2 done |
+| Phase L: Legal/Permits | COMPLETE | YES | S113: L1-L9 done |
+| Phase INS: Inspector | COMPLETE | YES | S121-S124: INS1-INS10 done (~66h) |
+| Phase G: QA/Hardening | IN PROGRESS | PARTIAL | G1-G5 automated DONE, G6-G10 manual QA PENDING |
+| SEC: Security Hardening | PARTIAL | YES | SEC1+SEC6-8 DONE (S131). SEC2-5+SEC9-10 PENDING |
+| FIELD: Field Infrastructure | COMPLETE | YES | FIELD1-5 ALL DONE (S131). Messaging, equipment, laser meter, BYOC phone |
+| REST: Restoration Depth | COMPLETE | YES | REST1+REST2 DONE (S131). Fire + mold |
+| NICHE: Niche Trades | COMPLETE | YES | NICHE1+NICHE2 DONE (S131). Pest control + service trades |
+| DEPTH: Feature Depth Audit | IN PROGRESS | PARTIAL | DEPTH1 DONE (S131). DEPTH2-44 PENDING (~38 sprints) |
+| LAUNCH: Launch Prep | PARTIAL | PARTIAL | LAUNCH1+LAUNCH9 DONE. LAUNCH2-8 PENDING |
+| **Phase E AI (PREMATURE)** | **Code exists** | **PAUSED** | **NOT TESTED — AI goes LAST** |
+| **Phase JUR: Jurisdiction** | PLANNED | NO | JUR1-JUR4 (~54-64h). Pre-AI |
+| **Phase RE: Realtor Platform** | SPEC'D (S129) | NO | RE1-RE30, ~744h, 30 sprints. 6th portal |
+| **Phase INTEG: Integration** | SPEC'D (S132) | NO | INTEG1-8, ~312h. Ecosystem wiring |
+| **Phase FLIP: Flip-It Engine** | SPEC'D (S127-S128) | NO | FLIP1-6, ~112h. Investment property |
+| **Phase MOV: Moving Company** | SPEC'D (S131) | NO | MOV1-8, ~80h. Full moving trade |
+| **Phase CLIENT: Homeowner** | SPEC'D (S132) | NO | CLIENT1-17, ~378h. Free + $49.99/mo premium |
+| **Phase CUST: Customization** | SPEC'D (S132) | NO | CUST1-8, ~190h. Enterprise customization |
+| **Phase ECO: Ecosystem** | SPEC'D (S133) | NO | ECO3+ECO4+ECO7+ECO8, ~48h. Adjuster portal + pricing |
+| **Phase VIZ: 3D Visualization** | RESEARCHED (S132) | NO | VIZ1, ~40h. 3D Gaussian Splatting engine |
+| **Plan Review (AI)** | SPEC'D (S97) | NO | Phase E feature (BA1-BA8, ~128 hrs) |
 
-**ALL PHASES A-F + T + P + SK + GC + U + W + J + L + INS COMPLETE. D5-PV DONE (S117). Tech App DONE (S118-S120). Phase INS DONE (S121-S124, INS1-INS10). Phase G automated DONE (G1-G5), manual QA pending (G6-G10). Phase RE SPEC'D (S129, ~444h, 20 sprints). ~201 tables. 68 migrations. 70 Edge Functions. 126 CRM routes. 36 team routes. 39 client routes. 29 ops routes. Next: SEC1+SEC6-8 → LAUNCH1 → FIELD → REST → NICHE → DEPTH → RE1-RE20 → INTEG1 → FLIP1-6 → G → JUR (incl JUR4 realtor) → E (AI LAST) → LAUNCH. F2 + F8 post-launch. ~94 sprints, ~1,576h.**
+**SUMMARY: ALL PHASES A-F + T + P + SK + GC + U + W + J + L + INS COMPLETE.** Phase G automated DONE (G1-G5), manual QA pending (G6-G10). SEC1+SEC6-8 DONE. FIELD1-5 DONE. REST1+REST2 DONE. NICHE1+NICHE2 DONE. DEPTH1 DONE. LAUNCH1+LAUNCH9 DONE. S132: Research + ecosystem audit (INTEG2-8 added). S133: Pricing update + adjuster portal deep research. **~215 tables. 114 migrations. 94 EFs. ~150 CRM routes. 43 team routes. 45 client routes. 30 ops routes. ~160+ sprints total (~3,000h listed, ~3,300h realistic). Next: DEPTH2-39 → DEPTH40-nonAI → DEPTH41-43 → INTEG2-4+INTEG6-8 → RE1-20 → INTEG1 → FLIP1-4 → INTEG5 → SEC2-5 → LAUNCH2-6 → LAUNCH8 → G → JUR → E (AI LAST) → FLIP5+DEPTH40-AI+DEPTH44 → SEC9-10 → ZERO1-9 → LAUNCH7 → SHIP.**
 
 ---
 
@@ -230,16 +246,18 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | F9 | Hiring System | ~18-22 | Multi-channel (Indeed/LinkedIn/ZipRecruiter), applicant pipeline, Checkr background checks, E-Verify (free), onboarding integration. |
 | F10 | ZForge | TBD | PDF-first document suite. Templates for all trade documents. E-signatures (DocuSign). SECOND TO LAST. |
 
-### PHASE G: DEBUG, QA & HARDENING
+### PHASE G: DEBUG, QA & HARDENING — G1-G5 AUTOMATED DONE (S113), G6-G10 MANUAL QA PENDING
 
 | # | Task | Hours | Details |
 |---|------|:-----:|---------|
-| G1 | Full platform debug | ~100-150 | Every screen, every edge case, every role, real data |
-| G2 | Security audit | ~20-30 | Pen testing, RLS verification, credential rotation |
-| G3 | Performance optimization | ~20-30 | Load testing, query optimization, caching |
-| G4 | Security hardening | ~4 | Email migration, Bitwarden changeover, 2FA, YubiKeys |
+| G1-G5 | Automated QA (lint, type check, RLS, migration, build) | ~40 | **DONE** (S113). G10 done (S114-S115). |
+| G6 | Manual cross-feature testing | ~30 | Every screen, every edge case, every role, real data. |
+| G7 | Security audit | ~20 | Pen testing, RLS verification, credential rotation. |
+| G8 | Performance optimization | ~20 | Load testing, query optimization, caching. |
+| G9 | Cross-app integration testing | ~20 | Verify all 5 apps work together seamlessly. |
+| G10 | UI/UX polish pass | ~10 | **DONE** (S114-S115). Fixed 10 migrations, RLS fix, UI overhaul. |
 
-### PHASE T: TPA PROGRAM MANAGEMENT MODULE (NEXT — after F)
+### PHASE T: TPA PROGRAM MANAGEMENT MODULE — COMPLETE (S104)
 
 | # | Task | Hours | Details |
 |---|------|:-----:|---------|
@@ -256,7 +274,7 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 
 *Full spec: `Expansion/39_TPA_MODULE_SPEC.md` | Legal: `memory/tpa-legal-assessment.md`*
 
-### PHASE P: PROPERTY INTELLIGENCE ENGINE (Recon) — after T
+### PHASE P: PROPERTY INTELLIGENCE ENGINE (Recon) — COMPLETE (S105)
 
 | # | Task | Hours | Details |
 |---|------|:-----:|---------|
@@ -273,7 +291,7 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 
 *Full spec: `Expansion/40_PROPERTY_INTELLIGENCE_SPEC.md` | API research: `memory/property-intelligence-research.md`*
 
-### PHASE SK: CAD-GRADE SKETCH ENGINE (after P)
+### PHASE SK: CAD-GRADE SKETCH ENGINE — COMPLETE (S109)
 
 | # | Task | Hours | Details |
 |---|------|:-----:|---------|
@@ -291,7 +309,7 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 
 *Full spec: `Expansion/46_SKETCH_ENGINE_SPEC.md`*
 
-### PHASE U: UNIFICATION & FEATURE COMPLETION (after SK, before G)
+### PHASE U: UNIFICATION & FEATURE COMPLETION — COMPLETE (S111-S114)
 
 | # | Task | Hours | Details |
 |---|------|:-----:|---------|
@@ -305,13 +323,186 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | U8 | Cross-System Metric Verification | ~10 | Verify data flows correctly across all 5 apps. Metric consistency checks. |
 | U9 | Polish + Missing Features | ~12 | Final polish pass. Fill any remaining gaps before QA phase. |
 
-### PHASE E: AI LAYER (REBUILD — after T + P + SK + U + G)
+### PHASE W: WARRANTY INTELLIGENCE (after U) — COMPLETE (S113)
 
 | # | Task | Hours | Details |
 |---|------|:-----:|---------|
-| E-review | Audit all premature E work | ~8 | Deep spec session with owner. AI must know every feature, table, screen — including TPA module + Recon + Sketch Engine + Phase U unification. Rebuild with full platform context. |
-| BA1-BA8 | Plan Review | ~128 | AI blueprint reading + automated takeoff. 6 tables, 3 EFs. Hybrid CV+LLM pipeline (MitUNet segmentation + YOLOv12 detection + Claude intelligence). RunPod Serverless GPU. Trade intelligence, assembly expansion, estimate + material order generation, revision comparison, SK floor plan generation. Spec: `Expansion/47_BLUEPRINT_ANALYZER_SPEC.md` |
-| E1-E4 | Full AI implementation | TBD | Universal AI, Dashboard, Command Center, Growth Advisor. Every feature AI-enhanced. Rebuilt with full platform knowledge including BA. |
+| W1 | Warranty Intelligence Engine | ~12 | Warranty tracking, predictive maintenance, hooks + pages across 4 portals. |
+
+### PHASE J: JOB INTELLIGENCE (after W) — COMPLETE (S113)
+
+| # | Task | Hours | Details |
+|---|------|:-----:|---------|
+| J1 | Smart Pricing Engine | ~10 | AI-powered pricing suggestions based on job history, market data. |
+| J2 | Job Analytics Dashboard | ~8 | Profitability analysis, job completion metrics, trend tracking. |
+
+### PHASE L: LEGAL/PERMITS (after J) — COMPLETE (S113)
+
+| # | Task | Hours | Details |
+|---|------|:-----:|---------|
+| L1-L9 | Permit Intelligence + Compliance | ~40 | Permit tracking, jurisdiction rules, compliance monitoring, lien management, CE tracker. 5 migrations. |
+
+### PHASE INS: INSPECTOR DEEP BUILDOUT — COMPLETE (S121-S124)
+
+| # | Task | Hours | Details |
+|---|------|:-----:|---------|
+| INS1-INS10 | Full Inspector Platform | ~66 | 19 inspection types + Quick Checklist, 25 templates (1,147 items, 173 sections), weighted scoring, deficiency tracking with photos, PDF reports, GPS capture, reinspection diffs, code reference (61 NEC/IBC/IRC/OSHA/NFPA sections), compliance calendar, permit tracker, CRM hooks, ops metrics, Hive offline safety net. |
+
+### PHASE SEC: SECURITY HARDENING (~100h total)
+
+| # | Task | Hours | Details |
+|---|------|:-----:|---------|
+| SEC1 | Storage + Rate Limiter + EF Auth | ~12 | **DONE (S131).** Bucket RLS, persistent rate limiter, EF auth hardening. |
+| SEC2 | Input Validation + XSS | ~12 | Sanitize all user inputs, CSP headers, output encoding. |
+| SEC3 | API Security | ~12 | Rate limiting per endpoint, request signing, CORS lockdown. |
+| SEC4 | Data Encryption | ~10 | Encrypt PII at rest, key rotation, company encryption keys. |
+| SEC5 | Penetration Testing | ~14 | OWASP top 10 audit, SQL injection testing, auth bypass attempts. |
+| SEC6-8 | EF Auth + CORS + Validation | ~12 | **DONE (S131).** Edge Function auth, CORS, request validation. |
+| SEC9 | Audit + Compliance | ~36 | SOC2 prep, audit trail verification, compliance reporting. |
+| SEC10 | Legal Labeling | ~12 | Owner's legal analysis document standards integrated. |
+
+### PHASE FIELD: FIELD INFRASTRUCTURE (~50h total) — ALL COMPLETE (S131)
+
+| # | Task | Hours | Details |
+|---|------|:-----:|---------|
+| FIELD1 | Real-Time Messaging | ~12 | **DONE.** Conversations + messages + members tables, Flutter 3 screens, CRM team-chat, team portal. |
+| FIELD2 | Equipment Checkout | ~10 | **DONE.** Equipment items + checkouts, RLS, 4 Flutter screens, CRM + team portal pages. |
+| FIELD3 | Receipt Scanner Depth | ~8 | **DONE.** Enhanced receipt scanning with OCR. |
+| FIELD4 | Laser Meter Integration | ~10 | **DONE.** Bug reporting, device integration. |
+| FIELD5 | BYOC Phone | ~10 | **DONE.** Company phone numbers, bring-your-own-carrier support. |
+
+### PHASE REST: RESTORATION DEPTH (~28h total) — ALL COMPLETE (S131)
+
+| # | Task | Hours | Details |
+|---|------|:-----:|---------|
+| REST1 | Fire Restoration | ~16 | **DONE.** 6 tables (fire assessments, damage areas, structural, smoke/odor, contents cleaning, line items). All portals. |
+| REST2 | Mold Remediation | ~12 | **DONE.** 4 tables (mold assessments, samples, state regs, labs). IICRC S520 compliance. |
+
+### PHASE NICHE: NICHE TRADES (~20h total) — ALL COMPLETE (S131)
+
+| # | Task | Hours | Details |
+|---|------|:-----:|---------|
+| NICHE1 | Pest Control | ~12 | **DONE.** 3 tables, 1 EF, 4 screens, treatment logs, bait stations, WDI reports. |
+| NICHE2 | Service Trades | ~8 | **DONE.** 3 tables (locksmith, garage door, appliance service logs), diagnostic flows, 36 seed items. |
+
+### PHASE DEPTH: FEATURE DEPTH AUDIT (~800h total, 44 sprints)
+
+| # | Task | Hours | Details |
+|---|------|:-----:|---------|
+| DEPTH1 | Core Business Depth | ~16 | **DONE (S131).** Invoice fields, voice notes, receipt fixes. |
+| DEPTH2-13 | Field Tools Depth | ~180 | Photo system, voice notes, mileage, LOTO, incident, safety, level/plumb, confined space, signatures, receipt scanner, materials tracker, daily log. |
+| DEPTH14 | Punch List / Task Engine | ~28 | Dependencies, due dates, templates, approval workflows, photos per item. |
+| DEPTH15-24 | Business Feature Depth | ~200 | Customers, jobs, calendar, time clock, bids, invoices, accounting, price book, change orders, documents. |
+| DEPTH25 | Commercial Building Module | ~36 | 1,400+ commercial elements, 16 building types, multi-floor. |
+| DEPTH26 | Blueprint/CAD Enhancement | ~20 | Enhanced blueprint reading, layer management. |
+| DEPTH27 | Walkthrough Depth | ~14 | Photo annotation, checklists, templates per trade. |
+| DEPTH28 | Recon Mega Enhancement | ~36 | Roof data display fix, accuracy improvements, new data sources. |
+| DEPTH29 | Estimate Overhaul | ~28 | Labor hours by trade, G/B/B analysis, template library. |
+| DEPTH30 | Recon-to-Estimate Pipeline | ~20 | Auto-populate estimates from recon data, supplement auto-detect. |
+| DEPTH31-32 | Material/Supplier Depth | ~24 | Supplier pricing, material waste factors, order management. |
+| DEPTH33 | Home Warranty Module | ~20 | Warranty dispatch, claim workflow, service agreements. |
+| DEPTH34 | Property Preservation | ~52 | 25+ work order types, winterization, debris estimation, national company profiles, chargeback tracking. |
+| DEPTH35 | Mold Remediation Depth | ~28 | IICRC S520 levels, containment checklists, clearance certificates, state licensing DB. |
+| DEPTH36 | Disposal/Dump Finder | ~8 | Waste type pricing, scrap values, route optimization. |
+| DEPTH37-39 | Tablet Responsive + Time Clock + Signatures | ~40 | Mobile/tablet responsive overhaul, time clock permissions, DocuSign replacement. |
+| DEPTH40 | Marketplace Aggregator | ~20 | Non-AI: data pipeline. AI portion: Phase E dependent. |
+| DEPTH41-43 | Backup + Storage + Sketch Compat | ~72 | Triple redundancy backup, storage tiering, sketch file compatibility. |
+| DEPTH44 | AI-Gated Features | ~16 | Phase E dependent. AI ticket system. |
+
+### PHASE FLIP: FLIP-IT REALITY ENGINE (~112h, S127-S128)
+
+| # | Task | Hours | Details |
+|---|------|:-----:|---------|
+| FLIP1 | Flip Foundation | ~16 | Deal analysis tables, property acquisition workflow. |
+| FLIP2 | Renovation Scope Engine | ~20 | Auto-scope from recon data, cost estimation, timeline generation. |
+| FLIP3 | Financial Modeling | ~16 | Full cost waterfall, exit strategy analysis, financing comparison. |
+| FLIP4 | Deal Packaging | ~20 | Investor presentation PDFs, comps, market data. |
+| FLIP5 | AI Deal Scoring | ~20 | Phase E dependent. AI-powered deal evaluation. |
+| FLIP6 | Reality Engine | ~20 | True net P&L, tax impact calculator, over-improvement warning, market health indicators. |
+
+### PHASE MOV: MOVING COMPANY (~80h, S131)
+
+| # | Task | Hours | Details |
+|---|------|:-----:|---------|
+| MOV1-MOV8 | Full Moving Trade | ~80 | Inventory system, cubic ft estimation, truck load planning, move-day workflow, storage tracking, valuation/claims, crew management, estimate templates. |
+
+### PHASE ZERO: ZERO-DAY TRADE FOUNDATION (~150h)
+
+| # | Task | Hours | Details |
+|---|------|:-----:|---------|
+| ZERO1-ZERO9 | Trade Scaffold System | ~150 | Universal trade registration, calculator framework, certification engine, field tool mapping, estimate template system, scope-of-work generator, material list generator, code reference system, trade onboarding wizard. |
+
+### PHASE LAUNCH: LAUNCH PREPARATION (~180h)
+
+| # | Task | Hours | Details |
+|---|------|:-----:|---------|
+| LAUNCH1 | App Store Prep | ~12 | **DONE.** Screenshots, descriptions, metadata for iOS + Android. |
+| LAUNCH2 | Marketing Website | ~16 | Landing page at zafto.app. Feature showcase, pricing, signup flow. |
+| LAUNCH3 | Onboarding Flow | ~14 | First-run experience, company setup wizard, trade selection. |
+| LAUNCH4 | Payment Integration | ~40 | Stripe subscription flow, plan selection, upgrade/downgrade, billing portal. |
+| LAUNCH5 | Data Migration Tools | ~30 | Import from Jobber, HCP, ServiceTitan. CSV import, field mapping. |
+| LAUNCH6 | Documentation | ~12 | Help center, API docs, video tutorials. |
+| LAUNCH7 | App Store Submission | ~20 | Sign in with Apple, review compliance, certificate setup. |
+| LAUNCH8 | Deployment Runbook | ~12 | Disaster recovery, rollback procedures, incident response playbook. |
+| LAUNCH9 | Ops Portal Fortress | ~10 | **DONE.** IP whitelist, FIDO2 hardware key, Cloudflare Access zero-trust. |
+
+### PHASE INTEG: ECOSYSTEM INTEGRATION (~312h, S127+S132)
+
+| # | Task | Hours | Details |
+|---|------|:-----:|---------|
+| INTEG1 | National Portal Submission | ~12 | PP national company portal API integration. After FLIP. |
+| INTEG2 | Engine Wiring | ~40 | Connect 10 business intelligence engines to real data streams. |
+| INTEG3 | Client Portal Activation | ~36 | Wire CLIENT1-17 homeowner features to live data. |
+| INTEG4 | Weather Engine | ~28 | NWS/NOAA/Open-Meteo auto-attached to jobs, recon, scheduling. |
+| INTEG5 | Three-Sided Marketplace | ~48 | After RE+FLIP. Contractor↔Homeowner↔Realtor cross-referral engine. |
+| INTEG6 | Marketplace Wiring | ~36 | Equipment marketplace, lead marketplace, subcontractor matching. |
+| INTEG7 | Calculator Bridge | ~40 | Wire ~1,194 trade calculators to save-to-job + Supabase. |
+| INTEG8 | Free API Enrichment | ~72 | 250+ free APIs ($0/mo) — BLS, Davis-Bacon, OSHA, NWS, FEMA, EPA, Census, NREL, etc. |
+
+### PHASE RE: REALTOR PLATFORM (~744h, 30 sprints, S129+S132)
+
+| # | Task | Hours | Details |
+|---|------|:-----:|---------|
+| RE1-RE20 | Core Realtor Platform | ~444 | 6th portal (realtor.zafto.cloud). Smart CMA Engine, Autonomous Transaction Engine, Seller Finder Engine. Brokerage RBAC. Commission tracking. Cross-platform sharing. Full spec: `Expansion/53_REALTOR_PLATFORM_SPEC.md` |
+| RE21-RE30 | Realtor Expansion (S132) | ~300 | Negotiation AI, agent departure prediction, rental analysis, HOA health, insurance estimation, power dialer, IDX websites, inspection AI, storm alerts. Spec: `memory/s132-realtor-10-gaps-spec.md` |
+
+### PHASE CLIENT: HOMEOWNER PLATFORM (~378h, 17 sprints, S132)
+
+| # | Task | Hours | Details |
+|---|------|:-----:|---------|
+| CLIENT1-CLIENT17 | Full Homeowner Platform | ~378 | Free tier (equipment passport, maintenance calendar, marketplace, project tracking). Premium $49.99/mo (3D scan, renovation viz, AI troubleshoot, rehab estimates, insurance tools, tax tools). ~75 tables. Three-sided marketplace participant. Spec: `memory/s132-homeowner-platform-research.md` |
+
+### PHASE CUST: ENTERPRISE CUSTOMIZATION (~190h, 8 sprints, S132)
+
+| # | Task | Hours | Details |
+|---|------|:-----:|---------|
+| CUST1-CUST8 | Enterprise Customization | ~190 | 14 realtor types, 7 brokerage models, 50-state regs, cascading JSONB settings, custom fields, automation engine, 100 customization points. Spec: `memory/s132-enterprise-customization-research.md` |
+
+### PHASE ECO: ECOSYSTEM/MARKETPLACE (~48h, 4 sprints, S133)
+
+| # | Task | Hours | Details |
+|---|------|:-----:|---------|
+| ECO3 | Adjuster Portal Foundation | ~16 | Adjuster user type, share tokens, public evidence viewer, email delivery. Trojan horse into insurance ecosystem. |
+| ECO4 | Adjuster Communication | ~12 | Per-item approve/flag, supplement diff view, messaging thread, audit trail. |
+| ECO7 | AI Budget Engine | ~12 | Usage tracking, tier thresholds, visual meter, buy-more flow, passive reserve allocation. |
+| ECO8 | Pricing/Subscription Update | ~8 | Solo $69.99, Team $149.99, Business $249.99, Enterprise custom. Homeowner free + $49.99 premium. Adjuster free. |
+
+### PHASE JUR: JURISDICTION AWARENESS (~54-64h, pre-AI)
+
+| # | Task | Hours | Details |
+|---|------|:-----:|---------|
+| JUR1 | State Code Adoptions | ~14 | state_code_adoptions table + seed (50 states × 8 code families). |
+| JUR2 | Weekly Adoption Scanner | ~12 | Automated code adoption update checking. |
+| JUR3 | Full Feature Retrofit | ~14 | Retrofit jurisdiction awareness into all existing features. |
+| JUR4 | Realtor Jurisdiction | ~14 | 50-state disclosures, agency rules, attorney states, commission regs, license reciprocity. |
+
+### PHASE E: AI LAYER (REBUILD — after ALL non-AI phases + G + JUR complete)
+
+| # | Task | Hours | Details |
+|---|------|:-----:|---------|
+| E-review | Audit all premature E work | ~8 | Deep spec session with owner. AI must know every feature, table, screen — ~215 tables, 94 EFs, 7 portals, every workflow. Rebuild with full platform context. |
+| BA1-BA8 | Plan Review | ~128 | AI blueprint reading + automated takeoff. 6 tables, 3 EFs. Hybrid CV+LLM pipeline (MitUNet segmentation + YOLOv12 detection + Claude Opus). RunPod Serverless GPU. Spec: `Expansion/47_BLUEPRINT_ANALYZER_SPEC.md` |
+| E1-E4 | Full AI implementation | TBD | Universal AI, Dashboard, Command Center, Growth Advisor. Every feature AI-enhanced. All Opus 4.6. |
 
 ### >>> LAUNCH <<<
 
@@ -366,7 +557,7 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | 18 | Job Completion Workflow | **DONE** — Built from scratch | B3 |
 | 19 | Field Tool Hub | **DONE** — All tools accessible | B2 |
 
-### Web CRM (107 routes, 68 hooks) — ALL WIRED TO SUPABASE
+### Web CRM (~150 routes, 79+ hooks) — ALL WIRED TO SUPABASE
 | Group | Routes | Status | Phase |
 |-------|:------:|--------|-------|
 | Operations (Dashboard, Leads, Bids, Jobs, Change Orders, Invoices) | 12 | **DONE** | B4 |
@@ -383,7 +574,7 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | Z Intelligence (AI panels) | 6 | DONE — PAUSED (Phase E) | E1 |
 | Settings + Auth | 2 | **DONE** | B4 |
 
-### Client Portal (38 routes, 21 hooks) — ALL WIRED TO SUPABASE
+### Client Portal (45 routes, 21+ hooks) — ALL WIRED TO SUPABASE
 | Tab | Routes | Status | Phase |
 |-----|:------:|--------|-------|
 | Auth + Home | 2 | **DONE** — Magic link auth | B6 |
@@ -394,7 +585,7 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | F-phase (SMS, Meetings, Booking, Home Portal, Get Quotes, Find a Pro) | 8+ | **DONE** | F1/F3/F7 |
 | Walkthroughs + Estimates | 3+ | **DONE** | E6/D8 |
 
-### Employee Field Portal (team.zafto.cloud) — 36 ROUTES, ALL WIRED
+### Employee Field Portal (team.zafto.cloud) — 43 ROUTES, ALL WIRED
 | Group | Routes | Status | Phase |
 |-------|:------:|--------|-------|
 | Auth + Dashboard (login, home, schedule view) | 3 | **DONE** | B5 |
@@ -407,7 +598,7 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | Bids (field bid creation, estimate builder) | 2 | **DONE** | B5 |
 | Settings (profile, preferences, notification settings) | 1 | **DONE** | B5 |
 
-### Ops Portal (26 routes Phase 1 DONE, 54 routes Phases 2-4 POST-LAUNCH)
+### Ops Portal (30 routes Phase 1 DONE, 54 routes Phases 2-4 POST-LAUNCH)
 | Section | Routes | Status | Phase |
 |---------|:------:|--------|-------|
 | Command Center, Inbox, Accounts, Support, Health, Revenue, Services, AI | 18 | **DONE** | C3 |
@@ -417,36 +608,67 @@ Complete business-in-a-box for trades. One subscription replaces 12+ tools. Stri
 | Marketplace Ops | 8 | POST-LAUNCH | F8 |
 
 ### Expansion Features — EVERY ONE ACCOUNTED FOR
+
+#### COMPLETED PHASES
+| Feature | Hours | Status | Phase |
+|---------|:-----:|--------|-------|
+| Job Type System (3 types) | ~69 | **DONE** (S62) | D1 |
+| Restoration/Insurance Module | ~78 | **DONE** (S63-64,68) | D2 |
+| Insurance Verticals (4) | ~107 | **DONE** (S69) | D3 |
+| Ledger (full accounting) | ~80+ | **DONE** (S70) | D4 |
+| Property Management System | ~80+ | **DONE** (S71-S77, 18 tables) | D5 |
+| Enterprise Foundation | ~20 | **DONE** (S65-66) | D6 |
+| Certification System | ~12 | **DONE** (S67-68) | D7 |
+| Estimates (Two-Mode) | ~100+ | **DONE** (S85-S89, 10 tables, 5 EFs) | D8 |
+| Calls (SignalWire VoIP/SMS/Fax) | ~40-55 | **DONE** (S90) | F1 |
+| Meetings | ~55-70 | **DONE** (S90) | F3 |
+| Mobile Field Toolkit | ~89-107 | **DONE** (S90) | F4 |
+| Integrations (9 systems) | ~180+ | **DONE** (S90) | F5 |
+| Marketplace | ~80-120 | **DONE** (S90) | F6 |
+| Home Portal | ~140-180 | **DONE** (S90) | F7 |
+| Hiring System | ~18-22 | **DONE** (S90) | F9 |
+| ZForge (PDF-first) | TBD | **DONE** (S90) | F10 |
+| Programs Module | ~80 | **DONE** (S104) | T |
+| Recon / Property Intelligence | ~96 | **DONE** (S105) | P |
+| CAD-Grade Sketch Engine | ~240 | **DONE** (S109, SK1-SK14) | SK |
+| Gantt & CPM Scheduling | ~124 | **DONE** (S110, GC1-GC11) | GC |
+| Unification & Feature Completion | ~448 | **DONE** (S111-S114, U1-U23) | U |
+| Warranty Intelligence | ~12 | **DONE** (S113) | W |
+| Job Intelligence | ~18 | **DONE** (S113) | J |
+| Legal/Permits | ~40 | **DONE** (S113, L1-L9) | L |
+| Inspector Deep Buildout | ~66 | **DONE** (S121-S124, INS1-INS10) | INS |
+| Security Hardening (partial) | ~24 | **DONE** (S131, SEC1+SEC6-8) | SEC |
+| Field Infrastructure | ~50 | **DONE** (S131, FIELD1-5) | FIELD |
+| Restoration Depth | ~28 | **DONE** (S131, REST1+REST2) | REST |
+| Niche Trades | ~20 | **DONE** (S131, NICHE1+NICHE2) | NICHE |
+| Feature Depth (partial) | ~16 | **DONE** (S131, DEPTH1) | DEPTH |
+| Launch Prep (partial) | ~22 | **DONE** (LAUNCH1+LAUNCH9) | LAUNCH |
+
+#### PENDING PHASES (Execution Order)
 | Feature | Source | Hours | Status | Phase |
 |---------|--------|:-----:|--------|-------|
-| Job Type System (3 types) | Locked/37 | ~69 | **DONE** (S62) | D1 |
-| Restoration/Insurance Module | Locked/36 | ~78 | **DONE** (S63-64,68) | D2 |
-| Insurance Verticals (4) | Expansion/38 | ~107 | **DONE** (S69) | D3 |
-| Ledger (full accounting) | 07_SPRINT_SPECS D4a-D4p | ~80+ | **DONE** (S70) | D4 |
-| Property Management System | 07_SPRINT_SPECS D5a-D5j | ~80+ | **DONE** (S71-S77, 18 tables) | D5 |
-| Enterprise Foundation | Expansion | ~20 | **DONE** (S65-66) | D6 |
-| Certification System | Expansion | ~12 | **DONE** (S67-68) | D7 |
-| Estimates (Two-Mode) | 07_SPRINT_SPECS D8a-D8j | ~100+ | **DONE** (S85-S89, 10 tables, 5 EFs) | D8 |
-| Universal AI Architecture (6 layers) | Expansion/35 | TBD | PAUSED (Phase E) | E1 |
-| Dashboard + Artifacts | Expansion/41 | TBD | PAUSED (Phase E) | E2 |
-| Dashboard (7 concepts) | Expansion/40_UNIFIED_COMMAND_CENTER | TBD | PAUSED (Phase E) | E3 |
-| Growth Advisor | Expansion/39_GROWTH_ADVISOR | ~88 | PAUSED (Phase E, uncommitted) | E4 |
-| Calls (SignalWire VoIP/SMS/Fax) | Expansion/31 | ~40-55 | **DONE** (S90) | F1 |
-| Website Builder V2 | Expansion/28_WEBSITE_BUILDER_V2 | TBD | POST-LAUNCH (S94 directive) | F2 |
-| Meetings | Expansion/42 | ~55-70 | **DONE** (S90) | F3 |
-| Mobile Field Toolkit (24 tools) | Expansion/43 | ~89-107 | **DONE** (S90) | F4 |
-| Integrations (9 systems) | Expansion/27 | ~180+ | **DONE** (S90) | F5 |
-| Marketplace | Expansion/33 | ~80-120 | **DONE** (S90) | F6 |
-| Home Portal | Expansion/16_ZAFTO_HOME_PLATFORM | ~140-180 | **DONE** (S90) | F7 |
-| Ops Portal Phases 2-4 | Locked/34 | ~111 | POST-LAUNCH | F8 |
-| Multi-Channel Hiring System | Expansion/44_HIRING_SYSTEM | ~18-22 | **DONE** (S90) | F9 |
-| ZForge (PDF-first) | Master Plan | TBD | **DONE** (S90) | F10 |
-| **Programs Module** | **Expansion/39_TPA_MODULE_SPEC** | **~80** | **SPEC'D — NEXT** | **T** |
-| **Recon / Property Intelligence** | **Expansion/40_PROPERTY_INTELLIGENCE_SPEC** | **~96** | **SPEC'D** | **P** |
-| **CAD-Grade Sketch Engine** | **Expansion/46_SKETCH_ENGINE_SPEC** | **~176** | **IN PROGRESS (SK1-SK8 done)** | **SK** |
-| **Gantt & CPM Scheduling Engine** | **Expansion/48_GANTT_CPM_SCHEDULER_SPEC** | **~124** | **SPEC'D (S97)** | **GC** |
-| **Unification & Feature Completion** | **NEEDS SPEC SESSION** | **~120** | **PLANNED** | **U** |
-| **Plan Review (AI Takeoff)** | **Expansion/47_BLUEPRINT_ANALYZER_SPEC** | **~128** | **SPEC'D (S97)** | **E/BA** |
+| Feature Depth Audit (remaining) | 07_SPRINT_SPECS | ~784 | DEPTH2-44 NEXT | DEPTH |
+| Ecosystem Integration | Expansion/52 + 07_SPRINT_SPECS | ~312 | SPEC'D (S127+S132) | INTEG |
+| Realtor Platform | Expansion/53 + memory | ~744 | SPEC'D (S129+S132) | RE |
+| Flip-It Reality Engine | 07_SPRINT_SPECS + memory | ~112 | SPEC'D (S127-S128) | FLIP |
+| Moving Company Trade | 07_SPRINT_SPECS | ~80 | SPEC'D (S131) | MOV |
+| Security Hardening (remaining) | 07_SPRINT_SPECS | ~76 | SEC2-5+SEC9-10 PENDING | SEC |
+| Launch Preparation (remaining) | 07_SPRINT_SPECS | ~158 | LAUNCH2-8 PENDING | LAUNCH |
+| Homeowner Platform | memory/s132-homeowner-platform | ~378 | SPEC'D (S132) | CLIENT |
+| Enterprise Customization | memory/s132-enterprise-custom | ~190 | SPEC'D (S132) | CUST |
+| Ecosystem/Marketplace | memory/ecosystem-pricing-spec | ~48 | SPEC'D (S133) | ECO |
+| 3D Visualization Engine | memory/3d-visualization-research | ~40 | RESEARCHED (S132) | VIZ |
+| Zero-Day Trade Foundation | 07_SPRINT_SPECS | ~150 | SPEC'D | ZERO |
+| Jurisdiction Awareness | 07_SPRINT_SPECS | ~54-64 | PLANNED (S124+S129) | JUR |
+| Phase G Manual QA | 07_SPRINT_SPECS | ~100 | G6-G10 PENDING | G |
+| Plan Review (AI Takeoff) | Expansion/47 | ~128 | SPEC'D (S97) | E/BA |
+| AI Layer (full rebuild) | Expansion/35+39+40+41 | TBD | PAUSED — AI LAST | E |
+
+#### POST-LAUNCH
+| Feature | Hours | Status | Phase |
+|---------|:-----:|--------|-------|
+| Website Builder V2 | ~60-90 | POST-LAUNCH (S94 directive) | F2 |
+| Ops Portal Phases 2-4 | ~111 | POST-LAUNCH | F8 |
 
 ---
 
@@ -536,27 +758,58 @@ Most property management software (AppFolio, Buildium, TenantCloud) is built for
 
 ---
 
-## SUBSCRIPTION TIERS
+## SUBSCRIPTION TIERS (Updated S133)
 
-| Feature | Solo | Team | Business | Enterprise |
-|---------|:----:|:----:|:--------:|:----------:|
-| Dashboard, Jobs, Invoices, Customers | Y | Y | Y | Y |
-| PDF invoices, Price book | Y | Y | Y | Y |
-| Command palette | Y | Y | Y | Y |
-| Ledger (full accounting) | Y | Y | Y | Y |
-| Dashboard (persistent AI) | Y | Y | Y | Y |
-| Team members | 1 | 5 | 15 | Unlimited |
-| AI bid generator | 5/mo | 50/mo | Unlimited | Unlimited |
-| Dispatch board + Live map | — | — | Y | Y |
-| Calls lines | 1 | 5 | 15 | Unlimited |
+### Professional Tiers (Contractor, Realtor, Inspector)
+
+| Feature | Solo ($69.99/mo) | Team ($149.99/mo) | Business ($249.99/mo) | Enterprise (Custom) |
+|---------|:-:|:-:|:-:|:-:|
+| Full platform (dashboard, jobs, invoices, customers, ledger) | Y | Y | Y | Y |
+| Z Intelligence AI + visual usage meter | Y | Y | Y | Y (unlimited) |
+| Sketch Engine (CAD-grade floor plans) | Y | Y | Y | Y |
+| Unlimited Recon (property intelligence) | Y | Y | Y | Y |
+| Estimate engine (own code DB, crowdsource) | Y | Y | Y | Y |
+| 19 field tools (photos, voice notes, signatures, etc.) | Y | Y | Y | Y |
+| Full accounting with bank sync (Plaid) | Y | Y | Y | Y |
+| Business phone line | 1 | 5 | 15 | Unlimited |
 | Fax (send/receive) | Y | Y | Y | Y |
-| Website Builder | — | $19.99/mo | $19.99/mo | Included |
-| Estimates (Regular Bids) | Y | Y | Y | Y |
-| Insurance Claims Module + ESX Export | — | Y | Y | Y |
-| Property Management | — | 10 units | 100 units | Unlimited |
-| Meetings | Y | Y | Y | Y |
-| Custom roles | — | — | — | Y |
-| API access | — | — | — | Y |
+| Video meetings | Y | Y | Y | Y |
+| Client portal | Y | Y | Y | Y |
+| Blueprint scans/mo | 5 | 25 | Unlimited | Unlimited |
+| Customer financing | Y | Y | Y | Y |
+| Team members | 1 | 5 | 15 | Unlimited |
+| Insurance claims module | — | Y | Y | Y |
+| Property Management units | — | 10 | 100 | Unlimited |
+| Employee portal + team chat | — | Y | Y | Y |
+| Dispatch board + live map | — | — | Y | Y |
+| Payroll/direct deposit + HR/hiring/fleet | — | — | Y | Y |
+| Construction accounting (WIP, AIA) | — | — | — | Y |
+| Custom roles/permissions + API access | — | — | — | Y |
+| Multi-branch + SSO/SAML | — | — | — | Y |
+
+### Homeowner Tier
+
+| Feature | Free ($0) | Premium ($49.99/mo) |
+|---------|:-:|:-:|
+| Equipment passport, maintenance calendar | Y | Y |
+| Contractor marketplace access | Y | Y |
+| Project tracking, view contractor progress/photos | Y | Y |
+| Basic property profile | Y | Y |
+| 3D property scan + renovation visualization | — | Y |
+| AI troubleshoot + rehab estimates | — | Y |
+| Premium reports, insurance tools, tax tools | — | Y |
+
+### Adjuster Tier
+
+| Feature | Free ($0) |
+|---------|:-:|
+| Evidence package viewer (3D scans, photos, floor plans, weather data) | Y |
+| Claims dashboard (all Zafto contractor submissions) | Y |
+| Per-item approve/flag, supplement diff | Y |
+| Contractor messaging thread | Y |
+| PDF export, audit trail | Y |
+
+**Adjuster portal is 100% free. No premium tier. No paywall. Pure acquisition funnel — every adjuster on the platform = claims flowing to paying contractors. See ECO3-ECO4 sprint specs.**
 
 ---
 
@@ -564,9 +817,8 @@ Most property management software (AppFolio, Buildium, TenantCloud) is built for
 
 ### Supabase PostgreSQL (2 projects: dev + prod)
 
-**Core tables (deploy first):** companies, users, customers, jobs, invoices, bids, time_entries, employees, vehicles, vendors, purchase_orders
-**Security tables:** audit_log, user_sessions, login_attempts, role_permissions, company_encryption_keys
-**Expansion tables:** Deploy per phase as needed (50+ additional tables across all systems)
+**~215 tables across 114 migrations.** Core (companies, users, customers, jobs, invoices, bids, time_entries, employees) + Revenue (D1-D8: 40+ tables) + Platform (F1-F10: 70+ tables) + Programs (T: 17 tables) + Recon (P: 15 tables) + Sketch (SK: 6 tables) + Schedule (GC: 12 tables) + Field (FIELD: 6 tables) + Restoration (REST: 10 tables) + Niche (NICHE: 6 tables) + Security (audit_log, rate_limits, etc.)
+**RLS + audit triggers on all business tables. company_id scoping. JWT-based RBAC.**
 
 See Circuit Blueprint for complete schema mapping.
 
@@ -602,7 +854,12 @@ See Circuit Blueprint for complete schema mapping.
 12. **Offline-first** — PowerSync (SQLite <-> PostgreSQL)
 13. **Progressive disclosure** — Clean by default, complexity activates per-need
 14. **Nothing ships without human approval** — Every AI artifact needs contractor review
-15. **BUILD ORDER: A → B → C → D → F → T → P → SK → GC → U → G → E (E-review → BA1-BA8 → E1-E4) → LAUNCH** — Platform first. Build all features (T+P+SK+GC). Unify portals + complete features (U). QA/Harden everything at once (G). AI last (E), including Plan Review (BA).
+15. **BUILD ORDER (S133):** A(DONE) → B(DONE) → C(DONE) → D(DONE) → F(DONE) → T(DONE) → P(DONE) → SK(DONE) → GC(DONE) → U(DONE) → W(DONE) → J(DONE) → L(DONE) → INS(DONE) → **DEPTH2-39** → DEPTH40-nonAI → DEPTH41-43 → **INTEG2-4+INTEG6-8** → RE1-20 → INTEG1 → FLIP1-4 → **INTEG5** → SEC2-5 → LAUNCH2-6 → LAUNCH8 → G(G6-G10) → JUR → **E (AI LAST: E-review → BA1-BA8 → E1-E4)** → FLIP5+DEPTH40-AI+DEPTH44 → SEC9-10 → ZERO1-9 → LAUNCH7 → SHIP. Post-launch: F2+F8+RE21-30+CLIENT1-17+CUST1-8+ECO3-8+VIZ1+MOV1-8.
+16. **DEPTH IS NON-NEGOTIABLE** — Every feature must be comprehensive. System defaults must impress on first use. No shallow implementations. Owner directive S122.
+17. **ADJUSTER PORTAL IS FREE** — No premium tier. No paywall. Pure acquisition funnel. Trojan horse into insurance ecosystem. Owner directive S133.
+18. **$0/MONTH API COST AT LAUNCH** — 250+ free APIs cataloged. Paid APIs gated behind feature flags. Post-revenue only.
+19. **NEVER GENERATE .ESX FILES** — Verisk proprietary format. Legal risk. Owner directive S132.
+20. **ONLY OPUS 4.6 WRITES CODE** — Never delegate code writing to inferior models. Owner directive S128.
 
 ---
 
