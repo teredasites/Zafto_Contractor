@@ -18,7 +18,7 @@ jobs:
         working-directory: apps/Trades/web-portal
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: actions/setup-node@v4
         with:
@@ -54,7 +54,7 @@ jobs:
         working-directory: apps/Trades/team-portal
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: actions/setup-node@v4
         with:
@@ -81,7 +81,7 @@ jobs:
         working-directory: apps/Trades/client-portal
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: actions/setup-node@v4
         with:
