@@ -53,11 +53,11 @@ Complete business-in-a-box for trades contractors. "Stripe for blue-collar." One
 ## Current State (Session 138)
 - **293 tables**, 115 migrations, 92 Edge Functions, 103 models, 64 repos, 1,523 screens
 - **Phases A-F ALL COMPLETE**. R1 done. FM code done. Phase E PAUSED.
-- **~145 sprints spec'd**, ~2,754h in execution order (~7,638h total including orphaned sprints)
-- **Build order**: SEC-AUDIT→INFRA→TEST-INFRA→COLLAB-ARCH→DEPTH→INTEG→RE→FLIP→SEC→LAUNCH→G→JUR→E→SHIP
-- **Pricing**: Solo $69.99, Team $149.99, Business $249.99. Adjuster FREE.
+- **~155 sprints spec'd**, ~2,860h in execution order (~7,700h+ total including orphaned sprints)
+- **Build order**: SEC-AUDIT→P-FIX1→A11Y→LEGAL→INFRA→TEST-INFRA→COLLAB-ARCH→DEPTH→INTEG→RE→FLIP→SEC→LAUNCH→G→JUR→E→APP-DEPTH→SHIP
+- **Pricing**: Solo $69.99, Team $149.99, Business $249.99. Adjuster FREE. 30-day free trial (no CC). 100-day money-back guarantee.
 - **Known debt**: 6 Flutter services still on Firebase. 69+ models missing Equatable. S138 audit: 103 findings (20 CRITICAL, 31 HIGH). SEC-AUDIT sprint addresses all critical/high security issues.
-- **Enterprise methodology (S138)**: 15 Critical Rules in CLAUDE.md. Mandatory security checklist per sprint. Webhook idempotency. Feature flags. Observability. Fail-closed auth. CI enforcement of soft delete + migration safety.
+- **Enterprise methodology (S138)**: 21 Critical Rules in CLAUDE.md. Mandatory security checklist per sprint. Webhook idempotency. Feature flags. Observability. Fail-closed auth. CI enforcement of soft delete + migration safety. Depth verification gate. i18n flawlessness. App parity.
 
 ## Critical Rules — NEVER VIOLATE
 
@@ -79,6 +79,9 @@ Complete business-in-a-box for trades contractors. "Stripe for blue-collar." One
 16. **SHARED TYPE SYSTEM** — After EVERY migration change, run `npm run gen-types` in web-portal (uses `supabase gen types typescript`) and copy `database.types.ts` to all 4 portals. All hooks MUST import column types from `database.types.ts`, not manual interface definitions. This is the single source of truth for TypeScript types. CI verifies types are in sync with migrations.
 17. **MOBILE BACKWARD COMPATIBILITY** — New database columns that Flutter writes to MUST be nullable with defaults for at least 2 app update cycles (~4 weeks). Never add `NOT NULL` without `DEFAULT` on Flutter-writable tables. Web portals deploy instantly via Vercel; Flutter goes through app stores. Users on older versions send the old `toJson()` without new columns — causes silent failures or crashes. See `Build Documentation/FLUTTER_WRITABLE_TABLES.md` for the list.
 18. **OPTIMISTIC LOCKING ON SHARED ENTITIES** — All UPDATE operations on shared business entities (customers, jobs, invoices, estimates, schedules, properties) MUST check `updated_at` in the WHERE clause: `WHERE id = $1 AND updated_at = $2`. If 0 rows affected, return conflict error. Last-write-wins is NOT acceptable for multi-user companies. Show conflict dialog in UI: "This record was modified by another user. Reload and re-apply your changes?"
+19. **DEPTH VERIFICATION GATE** — After completing EVERY sprint, stop and ask: "Would a real professional in this trade use this feature on a real job site on day one? Is EVERY sub-feature complete, not just scaffolded? Does it save data, link to jobs, produce useful output?" If the answer to ANY question is NO, the sprint is NOT done. We are building a one-stop shop, not an empty shell. No feature ships at surface level. This applies to ALL entity types equally: contractor, inspector, adjuster, realtor, homeowner, preservation.
+20. **i18n FLAWLESSNESS** — Language switching MUST NOT break ANY feature, cause ANY UI overflow, or produce ANY visual artifacts. Every translation must use the correct professional dialect for each language — not Google Translate, not literal translation, but how a native-speaking tradesperson in that country would actually say it. Trade-specific terminology must be verified (e.g., Spanish "tablero" not "panel", Portuguese-BR construction terms not Portugal-PT). Layout must accommodate longer strings (Spanish ~20% longer, German ~30% longer). Number/date/currency formatting must be locale-correct. RTL-ready logical properties (start/end not left/right). Missing translation = build failure in CI. Every sprint that adds UI strings MUST add translations for all 10 locales before the sprint is complete.
+21. **APP PARITY** — ALL entity type experiences (contractor, inspector, adjuster, realtor, homeowner, preservation, restoration) MUST have equal depth. The contractor app is the gold standard — every other entity type must match its depth of features, seed data, templates, calculators, and workflows. If a contractor gets 1,194 calculators, inspectors get comprehensive inspection tools, adjusters get full claims workflow, realtors get full transaction engine, homeowners get full project tracking. No second-class citizens. APP-DEPTH sprint verifies parity after all entity-specific sprints are complete.
 
 ## Build & Verify Commands
 ```bash
