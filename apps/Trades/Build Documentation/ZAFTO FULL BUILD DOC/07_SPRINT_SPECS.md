@@ -16287,6 +16287,159 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 
 ---
 
+## S136 TEST INFRASTRUCTURE SPRINT (TEST-INFRA: TI-1 through TI-7, ~16h)
+
+*No more code without verification. After this sprint, every future sprint includes tests. Compile + test + verify = done. Full spec: `memory/collab-arch-test-infra-spec-s136.md`*
+
+### TI-1 — Supabase Local Dev (~3h) — S136
+
+- [ ] Create `supabase/config.toml` with project ref, API URL, DB port, Studio port
+- [ ] Create `supabase/seed.sql` — test company, test users (owner, admin, technician, apprentice, cpa), test customer, test job, test estimate, test invoice
+- [ ] Verify `npx supabase start` boots locally with all 115 migrations applied
+- [ ] Verify `npx supabase db reset` wipes and rebuilds cleanly
+- [ ] Document local dev setup in CLAUDE.md
+- [ ] TEST: Run all migrations against fresh local DB — zero errors
+
+### TI-2 — Flutter Test Framework (~3h) — S136
+
+- [ ] Add `mockito`, `build_runner`, `mocktail` to dev_dependencies
+- [ ] Create `test/helpers/test_helpers.dart` — mock SupabaseClient, mock Riverpod container, test company/user fixtures
+- [ ] Create `test/helpers/rls_test_client.dart` — helper that creates Supabase client with specific JWT claims for RLS testing
+- [ ] Write model tests for top 10 most-used models (verify toJson/fromJson roundtrip, copyWith, Equatable)
+- [ ] Write repository test template (mock Supabase, verify CRUD operations)
+- [ ] Write provider test template (override dependencies, verify state changes)
+- [ ] TEST: `flutter test` passes with all new tests — zero failures
+
+### TI-3 — Next.js Test Framework (~3h) — S136
+
+- [ ] Add vitest + @testing-library/react + @testing-library/jest-dom to ALL 4 portals' devDependencies
+- [ ] Create `vitest.config.ts` in each portal with path aliases matching tsconfig
+- [ ] Create `src/__tests__/helpers/supabase-mock.ts` — mock createClient, mock queries, mock auth
+- [ ] Create `src/__tests__/helpers/render-with-providers.tsx` — wraps components with auth context
+- [ ] Write hook test template: test `use-estimates.ts` — mock Supabase responses, verify data/loading/error states
+- [ ] Add `"test": "vitest run"` and `"test:watch": "vitest"` to each portal's package.json scripts
+- [ ] TEST: `npm test` passes in all 4 portals — zero failures
+
+### TI-4 — RLS Test Harness (~2h) — S136
+
+- [ ] Create `supabase/tests/rls/` directory
+- [ ] Write `rls_test_runner.sql` — PL/pgSQL function that sets JWT claims, attempts CRUD on each table, asserts correct rows/denials, logs pass/fail
+- [ ] Write RLS tests for critical tables: companies, users, jobs, estimates, invoices, customers, payments
+- [ ] Test cross-company isolation: User A (company_1) cannot see User B (company_2) data
+- [ ] Test role restrictions: technician cannot delete customers, apprentice cannot see financials
+- [ ] TEST: Run full RLS test suite against local Supabase — all pass
+
+### TI-5 — Edge Function Test Harness (~2h) — S136
+
+- [ ] Create `supabase/tests/ef/` directory
+- [ ] Write `test_ef.sh` — bash script that starts local Supabase, creates test JWTs, curls each EF, asserts status codes + response shapes
+- [ ] Write smoke tests for top 10 EFs: invite-team-member, send-message, export-estimate-pdf, signalwire-sms, stripe-payments, meeting-room, plaid-create-link-token, osha-data-sync, recon-property-lookup, schedule-calculate-cpm
+- [ ] Test auth rejection: unauthenticated requests return 401
+- [ ] Test role rejection: technician calling admin-only EFs returns 403
+- [ ] TEST: Run full EF test suite — all pass
+
+### TI-6 — GitHub Actions CI Pipeline (~2h) — S136
+
+- [ ] Create `.github/workflows/ci.yml` with jobs: flutter-analyze, flutter-test, web-portal-build+test, team-portal-build+test, client-portal-build+test, ops-portal-build+test
+- [ ] Cache node_modules and Flutter SDK for speed
+- [ ] Test workflow runs on push to master and on pull requests
+- [ ] Verify failed tests block the workflow (exit code 1)
+- [ ] TEST: Push a deliberate test failure, verify CI catches it
+
+### TI-7 — Integration Test Template + Test-As-You-Build Mandate (~1h) — S136
+
+- [ ] Create `test/integration/` directory (Flutter)
+- [ ] Write template for critical flow: Create Estimate → Approve → Auto-create Job → Complete Job → Generate Invoice
+- [ ] Document the test-as-you-build mandate: every sprint MUST include test items before being marked complete
+- [ ] Add to CLAUDE.md Critical Rules: "9. **EVERY SPRINT INCLUDES TESTS** — No sprint is complete without verification tests passing"
+- [ ] TEST: Template test runs successfully against local Supabase
+
+---
+
+## S136 MULTI-COMPANY COLLABORATION ARCHITECTURE (COLLAB-ARCH: CA-1 through CA-5, ~28h)
+
+*Enable solo→company collaboration. A plumber keeps his workspace while participating in a GC's project. Data isolation is absolute. Full spec: `memory/collab-arch-test-infra-spec-s136.md`*
+
+### CA-1 — Foundation Tables + Migration (~6h) — S136
+
+- [ ] Create migration: `user_company_memberships` table — user_id, company_id, role, status (pending/active/suspended/revoked), invited_by, accepted_at, permissions jsonb, is_primary boolean, membership_type (employee/collaborator/guest), UNIQUE(user_id, company_id)
+- [ ] Create migration: `job_collaborators` table — job_id, company_id (owner), collaborator_company_id, collaborator_user_id, scope_description, access_level (full_project/assigned_scope/read_only/time_and_materials_only), agreed_amount, status, can_see_financials, can_see_other_subs, can_see_customer_info
+- [ ] Create migration: `collaboration_invitations` table — from_company_id, to_email, to_company_id, to_user_id, invitation_type (join_company/collaborate_on_job/subcontractor_roster), job_id, proposed_role, proposed_permissions, message, status, token, expires_at
+- [ ] Create migration: `context_switch_log` table — user_id, from_company_id, to_company_id, switched_at, ip_address, user_agent
+- [ ] Add `linked_user_id uuid REFERENCES auth.users(id)` column to existing `subcontractors` table
+- [ ] RLS policies on all 4 new tables (user sees own memberships, admin sees company memberships, cross-company job visibility via collaborators)
+- [ ] Indexes: user_id+company_id on memberships, job_id+collaborator_company_id on collaborators, token on invitations
+- [ ] Triggers: update_updated_at on memberships and collaborators, audit_trigger_fn on memberships and collaborators
+- [ ] Backfill script: for every existing user, create ONE `user_company_memberships` record with is_primary=true, role=user's current role, membership_type='employee', status='active'
+- [ ] TEST: Migration runs cleanly on local Supabase
+- [ ] TEST: Backfill creates correct records for all existing users
+- [ ] TEST: RLS — user can only see own memberships + company admin sees company memberships
+- [ ] TEST: Cross-company isolation — company A can't see company B's memberships
+
+### CA-2 — Context Switching EF + Auth Updates (~6h) — S136
+
+- [ ] Create `switch-company-context` Edge Function: validate membership, update JWT app_metadata (company_id, role from membership, primary_company_id preserved), log in context_switch_log, return refreshed session
+- [ ] Update `handle_new_user()` trigger: also create `user_company_memberships` record with is_primary=true
+- [ ] Update `handle_user_role_change()` trigger: also update membership role
+- [ ] Update `invite-team-member` EF: create membership record (membership_type='employee'), handle case where user already exists in auth (multi-company invite instead of error)
+- [ ] TEST: Switch context → JWT claims change to target company's role
+- [ ] TEST: Switch to unauthorized company → 403
+- [ ] TEST: Switch back to primary company → works correctly
+- [ ] TEST: RLS works after switch — only see target company data
+- [ ] TEST: Invite existing Zafto user to second company → creates membership, doesn't error
+
+### CA-3 — Collaboration Invitation Flow (~6h) — S136
+
+- [ ] Create `collaboration-invite` Edge Function: check if email is existing Zafto user, create invitation with token, send email via SendGrid, send in-app notification for existing users
+- [ ] Create `accept-collaboration` Edge Function: validate token/invitation, create user_company_memberships (membership_type='collaborator'), create job_collaborators if job-specific, update invitation status
+- [ ] Handle 3 invitation types: join_company, collaborate_on_job, subcontractor_roster
+- [ ] Auto-expire invitations after 7 days (pg_cron job)
+- [ ] Update `subcontractors` table: when inviting a sub who is a Zafto user, set linked_user_id
+- [ ] New user flow: if invitee doesn't have Zafto account, signup link with embedded token → creates personal company (primary) + collaboration membership
+- [ ] TEST: Invite existing Zafto user → in-app notification appears
+- [ ] TEST: Invite non-Zafto email → email sent with signup+accept link
+- [ ] TEST: Accept job collaboration → membership + job_collaborator created
+- [ ] TEST: Decline invitation → status updated, no membership
+- [ ] TEST: Expired invitation → cannot accept (returns error)
+- [ ] TEST: Collaborator does NOT count toward company's max_users seat limit
+
+### CA-4 — Cross-Company Job RLS (~5h) — S136
+
+- [ ] Add `jobs_select_collaborator` RLS policy: collaborators see jobs via job_collaborators table
+- [ ] Add collaborator SELECT policies to: estimates, invoices, time_entries, photos, signatures, voice_notes, receipts
+- [ ] Respect access_level: assigned_scope (only their items), read_only (SELECT only), time_and_materials_only (time+materials visible, financials hidden), full_project (everything)
+- [ ] Respect permission flags: can_see_financials, can_see_other_subs, can_see_customer_info
+- [ ] Collaborator INSERT allowed: time_entries, photos, voice_notes, notes (on shared jobs only, tagged with their company_id)
+- [ ] Collaborator CANNOT modify job owner's records (INSERT/UPDATE policies still check company_id = requesting_company_id())
+- [ ] Performance: ensure job_collaborators queries use indexes, test with 100+ collaborators across 50+ jobs
+- [ ] TEST: Solo plumber in own context → sees all his jobs, NOT GC's jobs
+- [ ] TEST: Solo plumber switches to GC context → sees ONLY assigned GC jobs
+- [ ] TEST: GC sees plumber's work on their project, NOT plumber's solo work
+- [ ] TEST: Remove plumber from job (status='removed') → plumber loses access immediately
+- [ ] TEST: can_see_financials=false → plumber can't see GC's pricing on the job
+- [ ] TEST: Plumber CAN add time entries + photos to shared job (in GC context)
+- [ ] TEST: Plumber CANNOT modify GC's estimates or invoices
+
+### CA-5 — UI Context Switcher (~5h) — S136
+
+- [ ] Flutter: company selector dropdown in drawer header (company name + logo for each membership)
+- [ ] Flutter: visual indicator bar — "Personal" (green) vs "Working for [Company Name]" (blue)
+- [ ] Flutter: switching calls `switch-company-context` → invalidates all providers → full reload
+- [ ] Flutter: collaboration badge showing active collaboration count
+- [ ] Flutter: pending invitations page with accept/decline
+- [ ] Web-portal: company selector in sidebar header (same pattern as Flutter drawer)
+- [ ] Team-portal: context switcher for employees with multi-company access
+- [ ] Ops-portal: no context switcher needed (super_admin cross-company)
+- [ ] Client-portal: no context switcher needed (aggregated property view)
+- [ ] ALL APPS: if user has only 1 company, context switcher is HIDDEN (no UI change for solo users)
+- [ ] TEST: Solo user with 1 membership → no switcher visible
+- [ ] TEST: User with 2+ memberships → switcher appears, lists all companies
+- [ ] TEST: Switch context → all screens reload with correct company data
+- [ ] TEST: Visual indicator clearly shows which context is active
+- [ ] TEST: Pending invitation UI shows correct details and accept/decline works
+
+---
+
 ## S135 DATA ARCHITECTURE SPRINT (DATA-ARCH1 through DATA-ARCH4, ~48h)
 
 *The infrastructure that makes 395+ free APIs work as ONE coherent system. Without this, API integration is spaghetti. With this, every new API is a 2-4h plug-in. Research: `master-api-registry-s135.md`, `s135-feature-api-cross-reference.md` (187 gaps identified, 89 HIGH impact). Pattern modeled on the existing `pricing-ingest` Edge Function which already does this correctly for BLS/FEMA.*
@@ -16382,9 +16535,11 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 | **JUR4** | JUR4 | ~14h | Realtor jurisdiction awareness — 50-state disclosures, agency rules (dual agency legality), attorney states, commission regulations, license reciprocity, document retention. Wires into Transaction Engine, Commission Engine, Brokerage Admin, Lead Gen |
 | **S135-ENTITY** | ROUTE1, CHEM1, DRAW1, SEL1, TC1, SHOW1, ADJ-CONT, ADJ-AUTH, INS-PHOTO, INS-VOICE, INS-TMPL, INS-BOOK, INS-CRL, INS-PACK, HO-FIX, HO-LAND | ~212h | **S135 Entity Workflow Gaps (16 sprints).** Route optimization (service trades), chemical compliance (EPA/HVAC), draw schedules (GC/solar), client selections (remodelers), TC module (200+ step checklists), showing management (buyer agents), contents inventory (adjusters), authority limits (adjusters), inline photo+annotation (inspectors — DEALBREAKER), voice-to-text (inspectors), template builder (specialty inspectors), agent booking portal (inspector sales channel), repair request list (Spectora killer), multi-inspection packaging (bundled pricing), fix-it concierge (homeowners), landlord portfolio analytics (NOI/cap rate/DSCR). ~30 new tables. |
 | **S135-DATA** | DATA-ARCH1, DATA-ARCH2, DATA-ARCH3, DATA-ARCH4 | ~48h | **S135 Data Architecture (4 sprints).** Data source registry (395+ APIs tracked), ingestion orchestrator (pg_cron batch pipeline), 5 canonical domain tables (addresses, weather, compliance, property intel, market data), normalization layer (multiple APIs → one schema), runtime API gateway (caching + rate limiting + fallback chain: primary→fallback→stale cache→unavailable), ops data intelligence dashboard. ~9 new tables. Makes every future API integration a 2-4h plug-in instead of ad-hoc spaghetti. $0/month. |
-| **Total** | **~136 sprints** | **~2,392h** | S130 audit additions: +FIELD5 (~10h), REST/NICHE infrastructure beefed up (+24h), LAUNCH8 (~12h), LAUNCH9 (~10h), Sign in with Apple + AAB + hour corrections. **S132 ecosystem audit: +7 INTEG sprints (~300h) — engine wiring, client portal activation, weather engine, marketplace wiring, dedup fixes, calculator bridge, free API enrichment.** **S135: +16 entity workflow gap sprints (~212h). +4 DATA-ARCH sprints (~48h).** Realistic estimate with corrections: **~2,650h**. Note: S132 also produced ~42 sprints in masterfile (RE21-30, CUST1-8, CLIENT1-17, ~898h) + MOV1-8 (~200h) not yet in this table — see `memory/s132-xactimate-strategy-master.md` for full specs |
+| **TEST-INFRA** | TI-1 through TI-7 | ~16h | **S136 Test Infrastructure (7 sub-sprints).** Supabase local dev (config.toml + seed.sql), Flutter test framework (mockito, fixtures, RLS test client), Next.js test framework (Vitest in all 4 portals), RLS test harness (PL/pgSQL isolation verification), Edge Function test harness (curl smoke tests + auth tests), GitHub Actions CI pipeline (5 build jobs, test gates), integration test template. After this sprint, no code ships without automated verification. |
+| **COLLAB-ARCH** | CA-1 through CA-5 | ~28h | **S136 Multi-Company Collaboration Architecture (5 sub-sprints).** Foundation: `user_company_memberships` junction table (user→many companies, each with role+permissions), `job_collaborators` (cross-company job access with scope+permissions), `collaboration_invitations` (token-based invite flow), `context_switch_log` (audit trail). EFs: `switch-company-context` (JWT swap), `collaboration-invite`, `accept-collaboration`. RLS: cross-company job visibility policies with permission flags (`can_see_financials`, `can_see_other_subs`, `can_see_customer_info`). UI: context switcher in drawer/sidebar (hidden for single-company users), visual indicator bar, invitation management. Backward compatible — existing users get auto-backfilled membership. Solo users see no difference. Billing: collaborators don't count toward seat limits, employees do. ~4 new tables, ~3 new EFs, RLS policy additions on jobs+estimates+invoices+time_entries+photos. Full spec: `memory/collab-arch-test-infra-spec-s136.md` |
+| **Total** | **~142 sprints** | **~2,694h** | S130 audit additions: +FIELD5 (~10h), REST/NICHE infrastructure beefed up (+24h), LAUNCH8 (~12h), LAUNCH9 (~10h), Sign in with Apple + AAB + hour corrections. **S132 ecosystem audit: +7 INTEG sprints (~300h).** **S135: +16 entity workflow gap sprints (~212h). +4 DATA-ARCH sprints (~48h).** **S136: +TEST-INFRA (~16h) + COLLAB-ARCH (~28h).** Realistic estimate with corrections: **~2,694h**. Note: S132 also produced ~42 sprints in masterfile (RE21-30, CUST1-8, CLIENT1-17, ~898h) + MOV1-8 (~200h) not yet in this table — see `memory/s132-xactimate-strategy-master.md` for full specs |
 
-**Execution order (S132 ecosystem audit-updated):** SEC1 + SEC6 + SEC7 + SEC8 (critical security — site is live) → **LAUNCH1 (monitoring — need Sentry before building more)** → **LAUNCH9 (ops portal fortress + incident response — lock down command center IMMEDIATELY)** → FIELD1-FIELD5 (incl new BYOC phone) → REST → NICHE → DEPTH1 through DEPTH27 → DEPTH28 (recon mega-expansion) → DEPTH29 (estimate engine overhaul) → DEPTH30 (recon-to-estimate pipeline) → DEPTH31 (crowdsourced material pricing) → DEPTH32 (Material Finder) → DEPTH33 (data privacy/AI consent) → DEPTH34 (property preservation) → DEPTH35 (mold remediation) → DEPTH36 (disposal/dump finder) → DEPTH37 (tablet/mobile responsive) → DEPTH38 (time clock adjustment) → DEPTH39 (signature system + DocuSign replacement) → **DEPTH40 non-AI portion (marketplace aggregator infrastructure — paste-a-link, RSS feeds, affiliate APIs, search/filter UI)** → DEPTH41 (backup fortress) → DEPTH42 (storage tiering) → DEPTH43 (sketch file compatibility) → **DATA-ARCH1-4 (data infrastructure — MUST be done before ANY INTEG sprint)** → **INTEG6 (dedup fixes — BEFORE RE26/FLIP2 are built)** → **INTEG2 (engine-to-engine wiring — VIZ↔SK, Trade Tools→Estimate)** → **INTEG3 (client portal activation)** → **INTEG4 (weather engine)** → **INTEG7 (calculator bridge)** → **INTEG8 (free API enrichment)** → RE1-RE20 (full Zafto Realtor Platform — 20 sprints, ~444h) → INTEG1 (national portal submission API) → FLIP1-FLIP4 (deal aggregation, ARV engine, financial model, deal packaging) → **INTEG5 (three-sided marketplace wiring — needs RE + FLIP done)** → SEC2-SEC5 (2FA, biometrics, enterprise security, Hellhound) → LAUNCH2-LAUNCH6 (legal, payments, i18n, accessibility, testing) → **LAUNCH8 (production deployment runbook + disaster recovery + CDN — must be ready BEFORE Phase G)** → Phase G (QA) → Phase JUR (incl JUR4 realtor jurisdiction) → Phase E (AI) → **FLIP5 (AI photo analysis — MOVED after Phase E, requires AI infrastructure)** → **DEPTH40 AI portion (marketplace AI recommendations)** → **DEPTH44 (AI-gated features + ticket system)** → SEC9 (security pentest) → SEC10 (legal pentest) → ZERO1-ZERO9 (zero-defect validation) → LAUNCH7 (App Store + onboarding wizard — DEAD LAST) → SHIP
+**Execution order (S136-updated — TEST-INFRA + COLLAB-ARCH now FIRST):** SEC1 + SEC6 + SEC7 + SEC8 (critical security — site is live, DONE) → **LAUNCH1 (monitoring — DONE)** → **LAUNCH9 (ops portal fortress — DONE)** → FIELD1-FIELD5 (DONE) → REST (DONE) → NICHE (DONE) → DEPTH1 (DONE) → **TEST-INFRA (TI-1→TI-7 — NEXT: test infrastructure before ANY more building)** → **COLLAB-ARCH (CA-1→CA-5 — multi-company architecture, foundational)** → DEPTH2 through DEPTH27 → DEPTH28 (recon mega-expansion) → DEPTH29 (estimate engine overhaul) → DEPTH30 (recon-to-estimate pipeline) → DEPTH31 (crowdsourced material pricing) → DEPTH32 (Material Finder) → DEPTH33 (data privacy/AI consent) → DEPTH34 (property preservation) → DEPTH35 (mold remediation) → DEPTH36 (disposal/dump finder) → DEPTH37 (tablet/mobile responsive) → DEPTH38 (time clock adjustment) → DEPTH39 (signature system + DocuSign replacement) → **DEPTH40 non-AI portion (marketplace aggregator infrastructure — paste-a-link, RSS feeds, affiliate APIs, search/filter UI)** → DEPTH41 (backup fortress) → DEPTH42 (storage tiering) → DEPTH43 (sketch file compatibility) → **DATA-ARCH1-4 (data infrastructure — MUST be done before ANY INTEG sprint)** → **INTEG6 (dedup fixes — BEFORE RE26/FLIP2 are built)** → **INTEG2 (engine-to-engine wiring — VIZ↔SK, Trade Tools→Estimate)** → **INTEG3 (client portal activation)** → **INTEG4 (weather engine)** → **INTEG7 (calculator bridge)** → **INTEG8 (free API enrichment)** → RE1-RE20 (full Zafto Realtor Platform — 20 sprints, ~444h) → INTEG1 (national portal submission API) → FLIP1-FLIP4 (deal aggregation, ARV engine, financial model, deal packaging) → **INTEG5 (three-sided marketplace wiring — needs RE + FLIP done)** → SEC2-SEC5 (2FA, biometrics, enterprise security, Hellhound) → LAUNCH2-LAUNCH6 (legal, payments, i18n, accessibility, testing) → **LAUNCH8 (production deployment runbook + disaster recovery + CDN — must be ready BEFORE Phase G)** → Phase G (QA) → Phase JUR (incl JUR4 realtor jurisdiction) → Phase E (AI) → **FLIP5 (AI photo analysis — MOVED after Phase E, requires AI infrastructure)** → **DEPTH40 AI portion (marketplace AI recommendations)** → **DEPTH44 (AI-gated features + ticket system)** → SEC9 (security pentest) → SEC10 (legal pentest) → ZERO1-ZERO9 (zero-defect validation) → LAUNCH7 (App Store + onboarding wizard — DEAD LAST) → SHIP
 
 **MANDATORY BUILD RULE — APPLIES TO EVERY SPRINT (S130 Owner Directive):**
 > **ALL features must have FULL DEPTH and USAGE for ALL contractor and realtor use cases. NO empty shell scaffolding. NO bullshit features. EVERYTHING has to be deep. Every type of contractor (electrical, plumbing, HVAC, roofing, solar, painting, flooring, fencing, landscaping, pool, pest control, general contractor, remodeler, restoration, preservation, commercial, welding, auto body, fire protection, concrete, drywall, insulation, gutters, windows, siding, tree service, excavation, demolition, masonry, tile, cabinet, countertop, garage door, locksmith, chimney, foundation repair, waterproofing, septic, well drilling, irrigation, snow removal) and every type of realtor (residential buyer's agent, listing agent, dual agent, commercial, luxury, property manager, REO/foreclosure, short sale, new construction, land/lot, farm/ranch, military relocation, senior specialist, investment, team lead, managing broker, brokerage owner) MUST be covered. No exceptions. If a feature exists, it must work completely end-to-end for every trade and role that would use it. Every screen handles all 4 states (loading, error, empty, data). Every tool saves data, links to jobs, produces useful output. Every calculator is accurate and saves results. If it's not deep enough for a real professional to use on a real job site on day one, it's NOT DONE.**
