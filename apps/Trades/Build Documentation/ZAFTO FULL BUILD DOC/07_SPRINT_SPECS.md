@@ -16557,6 +16557,102 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 
 ---
 
+## S138 LEGAL DEFENSE FRAMEWORK (LEGAL-1 through LEGAL-3, ~16h)
+
+*Zafto contains 1,194+ trade calculators, NEC/IBC/IRC/OSHA/NFPA code references, inspection templates with pass/fail scoring, insurance claim estimation tools, property intelligence data, pricing databases, restoration protocols, payroll/tax calculations, and permit/compliance tracking. Every one of these is a liability vector. A contractor who relies on a wrong electrical load calculation, a stale code reference, or an inaccurate roof measurement has a potential cause of action. The defense must be invisible — professional, confident, built into the product DNA — not plastered disclaimers that scream "we might be wrong." Think Bloomberg Terminal, not a sketchy calculator website. The goal: if a top litigation firm audits this product, they find nothing to attack because every output is clearly framed as a professional tool, not a replacement for professional judgment. The user NEVER feels like we're hedging — they feel like we're thorough.*
+
+*Owner directive S138: Defensive wording must be nonchalant — invisible until a lawyer looks for it. The app must feel authoritative, not uncertain. No "this might be wrong" energy. More "here's the data, verified against [source], as of [date]" energy.*
+
+### LEGAL-1 — Legal Foundation Layer (~6h) — S138
+
+*Terms of Service, master disclaimers, and the invisible defense architecture that protects every feature.*
+
+**Terms of Service / EULA:**
+- [ ] Draft `TERMS_OF_SERVICE.md` covering all liability areas. Key clauses: (1) Professional tool, not professional advice — Zafto provides calculation tools, code references, and data aggregation to assist licensed professionals. Not a substitute for professional engineering judgment, licensed inspections, or legal counsel. (2) Data accuracy — code references, material pricing, labor rates sourced from public databases and updated periodically. User responsible for verifying against current local requirements. (3) Calculator outputs — mathematical calculations based on user-provided inputs and published formulas. Results are reference estimates. (4) No warranty on third-party data — property data (Google Solar, USGS, public records), weather data, pricing data sourced from third parties with no guarantee of accuracy or completeness. (5) Insurance/claims — estimation tools provided for contractor use. Not endorsed by any carrier. Not a substitute for adjuster assessment. (6) Jurisdiction variance — building codes, permit requirements, licensing rules, tax rates vary by jurisdiction and change over time. User responsible for compliance with local regulations. (~2h)
+- [ ] Create `legal_disclaimers` seed table with columns: `id, key, category, short_text, long_text, display_context, created_at`. Categories: `calculator`, `code_reference`, `inspection`, `estimation`, `insurance`, `property_data`, `pricing`, `compliance`, `tax`, `payroll`. Each has a short (1-line) and long (paragraph) version. This is the single source of truth for ALL disclaimer text across all apps. (~1h)
+- [ ] Seed ~25 disclaimer entries covering every liability category. Examples:
+  - `calculator_general`: short = "Reference calculation based on inputs provided" / long = "This calculation uses published formulas and industry standards. Results should be verified by a licensed professional before use in design, permitting, or construction decisions."
+  - `nec_code_ref`: short = "NEC 2023 — verify with local AHJ for adopted edition" / long = "Code references are based on the National Electrical Code (NFPA 70) 2023 edition. Local jurisdictions may adopt different editions or amendments. Always verify applicable codes with your Authority Having Jurisdiction (AHJ)."
+  - `roof_measurement`: short = "Satellite-derived measurement — verify on-site" / long = "Roof measurements are derived from satellite imagery and elevation data. Accuracy depends on image quality, roof complexity, and data freshness. On-site verification recommended before material ordering."
+  - `labor_rate`: short = "Regional average — adjust for your market" / long = "Labor rates are based on Bureau of Labor Statistics OEWS data and industry surveys. Actual rates vary by market, experience level, union status, and project complexity."
+  - `inspection_template`: short = "Industry-standard checklist — does not replace licensed inspection" / long = "Inspection checklists are based on published standards (IBC, IRC, NFPA, OSHA). This tool assists qualified inspectors in documenting findings. It does not constitute a licensed inspection and should not be relied upon as such."
+  - `insurance_estimate`: short = "Contractor estimate — not a carrier assessment" / long = "Insurance-related estimates are generated for contractor planning purposes using industry pricing data. These are not carrier-approved assessments and may differ from adjuster determinations."
+  - `property_data`: short = "Public record data — verify for accuracy" / long = "Property information is aggregated from public records, satellite imagery, and third-party data providers. Data freshness and accuracy vary by source. Verify critical details through official county records or on-site assessment."
+  - `pricing_data`: short = "Market pricing as of [date]" / long = "Material and service pricing reflects aggregated market data as of the date shown. Prices fluctuate based on supply, demand, location, and supplier relationships. Obtain current quotes from suppliers before committing to project budgets."
+  - `tax_calculation`: short = "Estimated tax — consult your tax professional" / long = "Tax calculations are estimates based on published rates and general rules. Tax obligations depend on business structure, jurisdiction, exemptions, and current regulations. Consult a qualified tax professional for tax planning and filing."
+  - `payroll_calculation`: short = "Estimated payroll — verify with your payroll provider" / long = "Payroll calculations use published tax tables and standard withholding formulas. Actual withholdings depend on employee elections, benefit deductions, garnishments, and jurisdiction-specific rules. Verify with your payroll provider or CPA." (~2h)
+- [ ] Create Edge Function `get-legal-disclaimers` — returns all disclaimers for a given category or key. Cached aggressively (disclaimers change rarely). (~0.5h)
+- [ ] Create shared utility: Flutter `LegalDisclaimer` widget, Next.js `<Disclaimer />` component. Both accept a `disclaimerKey` prop, render the short text in a subtle footer style (small text, muted color, no box/border — just professional context). Long text available on tap/hover. Styling: 11px Inter, `text-muted-foreground`, no icons, no warning colors. Looks like a data source attribution, not a warning. (~0.5h)
+
+### LEGAL-2 — Contextual Defense Integration (~6h) — S138
+
+*Wire disclaimers into every liability surface. The wording should feel like metadata — "source: NEC 2023" and "as of Feb 2026" — not warnings. A user sees professional rigor. A lawyer sees comprehensive defense.*
+
+**Calculator Defense Layer:**
+- [ ] All 1,194+ trade calculators: add `disclaimerKey: 'calculator_general'` to result output area. Renders as small footer text below results: "Reference calculation based on inputs provided." Not a modal, not a popup, not a banner — just a quiet professional note that's always there. (~1h)
+- [ ] Electrical calculators (load calc, wire sizing, conduit fill, voltage drop, box fill, panel schedule): add `disclaimerKey: 'nec_code_ref'` alongside the general calc disclaimer. Shows NEC edition used. (~0.5h)
+- [ ] HVAC calculators (Manual J, duct sizing, refrigerant charge): add `disclaimerKey: 'code_reference'` with ACCA Manual J reference. (~0.5h)
+- [ ] Plumbing calculators (DFU, pipe sizing, water heater): add IRC/UPC edition reference. (~0.5h)
+
+**Code Reference Defense Layer:**
+- [ ] Code reference search (61 sections: NEC/IBC/IRC/OSHA/NFPA): every code result displays edition year and a subtle "verify with local AHJ for adopted edition" note. Not as a disclaimer banner — as part of the result metadata. Example: result header shows "NEC 2023 Article 210.52(A)" with subtext "Local adoption varies — verify with AHJ". (~1h)
+- [ ] Add `last_verified_date` field to code reference seed data. Display as "Verified current as of [date]" in result metadata. When codes get updated (NEC 2026 cycle), the date makes it obvious which edition we're showing. (~0.5h)
+
+**Inspection Defense Layer:**
+- [ ] Inspection report PDF: add professional footer on every page — "Generated by Zafto Inspection Tools. This report documents findings by [inspector name] using industry-standard checklists. It does not constitute a licensed inspection unless performed by a licensed inspector under applicable state law." Same 9pt font as the rest of the footer. Looks like standard report boilerplate. (~0.5h)
+- [ ] Inspection templates: each template metadata includes the standard it's based on (IBC 2021, NEC 2023, OSHA 29 CFR, etc.) displayed in the template header. Professional — shows we're referencing real standards, AND establishes which edition. (~0.5h)
+
+**Estimation & Pricing Defense Layer:**
+- [ ] Estimate output (PDF + screen): material pricing lines show "Market pricing as of [date]" in a subtle column or footer. Labor hours show "Regional avg — [BLS source]". The data source IS the defense — we're not saying "might be wrong," we're saying "here's exactly where this number comes from." (~1h)
+- [ ] Bid PDFs: professional footer — "Prepared using Zafto estimation tools. Material pricing and labor rates are estimates based on regional market data. Final pricing subject to site conditions, material availability, and scope confirmation." Standard estimate boilerplate that every GC already uses. (~0.5h)
+
+**Property Intelligence Defense Layer:**
+- [ ] Recon scan results: every data point shows its source in metadata. Roof area → "Source: Google Solar API, captured [date]". Structure type → "Source: public records, [county] assessor". Lead score → "Calculated from property age, roof condition, storm history, and area demographics." The source attribution IS the defense. (~0.5h)
+- [ ] Scan confidence score already exists — make sure it's visible. Low confidence scans (< 60%) should show "Limited data available — on-site verification recommended" as a natural part of the confidence display, not as a separate disclaimer. (~0.5h)
+
+**Insurance & Restoration Defense Layer:**
+- [ ] Insurance-related estimates: add `disclaimerKey: 'insurance_estimate'` to any output touching insurance pricing. Subtle but present. (~0.5h)
+- [ ] Restoration protocols (mold, water damage, fire): reference IICRC standards in protocol metadata. "Based on IICRC S500/S520 standards." Professional context that also serves as defense. (~0.5h)
+
+### LEGAL-3 — Ongoing Legal Defense Process (~4h) — S138
+
+*Build legal defense INTO the development process so every future sprint is automatically protected.*
+
+**Sprint-Level Legal Checklist (add to Security Verification Template):**
+- [ ] Add legal defense items to `SPRINT_SECURITY_TEMPLATE.md`:
+  ```
+  ### Legal Defense Verification (MANDATORY for sprints with user-facing outputs)
+  - [ ] All calculators/estimators: result area includes source attribution + disclaimer footer
+  - [ ] All code references: edition year + "verify with local AHJ" in result metadata
+  - [ ] All inspection outputs: standard reference + "does not constitute licensed inspection" in report footer
+  - [ ] All pricing/labor data: source + date shown (BLS, market data, etc.)
+  - [ ] All property data: source attribution per data point (satellite, public records, etc.)
+  - [ ] All PDF exports: professional footer with appropriate disclaimer text
+  - [ ] No feature claims absolute accuracy — frame as "professional tool" not "professional answer"
+  - [ ] Data freshness visible — user can see when data was last updated
+  ```
+  (~1h)
+
+**Data Freshness Infrastructure:**
+- [ ] Add `data_freshness` JSONB column to `system_settings` — tracks when each data source was last updated. Example: `{"nec_codes": "2025-12-01", "bls_labor_rates": "2026-01-15", "material_pricing": "2026-02-01"}`. Displayed in settings page and available to any feature that needs to show "as of [date]". (~1h)
+- [ ] Create `useDataFreshness(source)` hook (Next.js) and `DataFreshness` provider (Flutter) — returns last update date for a given data source. Used by disclaimers to dynamically show "NEC 2023 codes as of Dec 2025" instead of hardcoded dates. (~1h)
+
+**User Acknowledgment (one-time, non-intrusive):**
+- [ ] First-time company setup: after onboarding flow (complexity profile, trade selection), show a single professional acknowledgment screen: "Zafto provides professional-grade tools for [selected trades]. Our calculators, code references, and estimating tools are designed to support your expertise — not replace it. All outputs should be verified against current local requirements." Single "Got it" button. Stored in `company_settings` as `legal_acknowledged: true`. Never shown again. No checkbox wall, no scroll-to-accept — just a clean professional statement. (~1h)
+
+**Verification:**
+- [ ] Audit: pick 10 random calculators across 5 trades → verify disclaimer footer renders correctly
+- [ ] Audit: pick 3 inspection report PDFs → verify professional footer present
+- [ ] Audit: pick 5 estimate PDFs → verify pricing source + date shown
+- [ ] Audit: Recon scan result → verify source attribution on every data point
+- [ ] `dart analyze` — 0 errors
+- [ ] All 4 portals: `npm run build` — 0 errors
+- [ ] Commit: `[LEGAL-1] Legal defense foundation — disclaimers table, TOS draft, shared components`
+- [ ] Commit: `[LEGAL-2] Contextual defense integration — calculators, codes, inspections, estimates, recon, insurance`
+- [ ] Commit: `[LEGAL-3] Legal defense process — sprint template, data freshness, one-time acknowledgment`
+
+---
+
 ## S137 ENTERPRISE INFRASTRUCTURE SPRINT (INFRA-1 through INFRA-5, ~20h)
 
 *Enterprise-grade environment architecture. 4-environment pipeline. UI decoupled from data. Designed to scale to 100K+ users on Supabase Pro + Vercel Pro. Full research: `memory/enterprise-infrastructure-research-s137.md`*
