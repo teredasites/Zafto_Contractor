@@ -59,6 +59,15 @@ serve(async (req) => {
   })
   if (!rateCheck.allowed) return rateLimitResponse(rateCheck.retryAfter!)
 
+  // SEC-AUDIT-1: Extract company_id from JWT for cross-tenant protection
+  const companyId = user.app_metadata?.company_id
+  if (!companyId) {
+    return new Response(JSON.stringify({ error: 'No company associated' }), {
+      status: 403,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
+  }
+
   try {
     const url = new URL(req.url)
     const invoiceId = url.searchParams.get('invoice_id')
@@ -70,11 +79,12 @@ serve(async (req) => {
       })
     }
 
-    // Fetch invoice
+    // SEC-AUDIT-1: Scope invoice fetch to user's company to prevent cross-tenant export
     const { data: invoice, error: invError } = await supabase
       .from('invoices')
       .select('*')
       .eq('id', invoiceId)
+      .eq('company_id', companyId)
       .single()
 
     if (invError || !invoice) {

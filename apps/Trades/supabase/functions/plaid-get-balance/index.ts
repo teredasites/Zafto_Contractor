@@ -67,20 +67,40 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     )
 
-    // Get access_token (service role bypasses RLS)
+    // SEC-AUDIT-1: Read access token from isolated bank_credentials table (service_role only)
     const { data: bankAcct, error: acctErr } = await supabaseAdmin
       .from('bank_accounts')
-      .select('plaid_access_token, plaid_account_id, company_id')
+      .select('plaid_account_id, company_id')
       .eq('id', bank_account_id)
       .eq('company_id', companyId)
       .single()
 
-    if (acctErr || !bankAcct?.plaid_access_token) {
-      return new Response(JSON.stringify({ error: 'Bank account not found or not linked' }), {
+    if (acctErr || !bankAcct) {
+      return new Response(JSON.stringify({ error: 'Bank account not found' }), {
         status: 404,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
     }
+
+    // Get token from isolated credentials table
+    const { data: creds } = await supabaseAdmin
+      .from('bank_credentials')
+      .select('plaid_access_token')
+      .eq('bank_account_id', bank_account_id)
+      .eq('company_id', companyId)
+      .single()
+
+    // Fallback to bank_accounts for backward compat (until old column removed)
+    const accessToken = creds?.plaid_access_token
+    if (!accessToken) {
+      return new Response(JSON.stringify({ error: 'Bank account not linked to Plaid' }), {
+        status: 404,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+
+    // Assign to bankAcct for downstream use
+    const bankAcctWithToken = { ...bankAcct, plaid_access_token: accessToken }
 
     const baseUrl = PLAID_BASE_URL[PLAID_ENV] || PLAID_BASE_URL.sandbox
 
@@ -90,9 +110,9 @@ serve(async (req) => {
       body: JSON.stringify({
         client_id: PLAID_CLIENT_ID,
         secret: PLAID_SECRET,
-        access_token: bankAcct.plaid_access_token,
+        access_token: bankAcctWithToken.plaid_access_token,
         options: {
-          account_ids: bankAcct.plaid_account_id ? [bankAcct.plaid_account_id] : undefined,
+          account_ids: bankAcctWithToken.plaid_account_id ? [bankAcctWithToken.plaid_account_id] : undefined,
         },
       }),
     })

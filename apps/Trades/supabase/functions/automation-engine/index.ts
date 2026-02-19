@@ -42,11 +42,47 @@ serve(async (req) => {
 
   const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? ''
   const SUPABASE_SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+  const AUTOMATION_SERVICE_SECRET = Deno.env.get('AUTOMATION_SERVICE_SECRET') ?? ''
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY)
+
+  // SEC-AUDIT-1: Require authentication — JWT OR shared service secret
+  let companyIdFromAuth: string | null = null
+
+  const authHeader = req.headers.get('Authorization')
+  const serviceSecret = req.headers.get('x-service-secret')
+
+  if (serviceSecret && AUTOMATION_SERVICE_SECRET && serviceSecret === AUTOMATION_SERVICE_SECRET) {
+    // Internal service call (pg_net, pg_cron) — trusted, company_id from body
+    companyIdFromAuth = null // will use body.company_id
+  } else if (authHeader) {
+    const token = authHeader.replace('Bearer ', '')
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token)
+    if (authError || !user) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+    companyIdFromAuth = user.app_metadata?.company_id || null
+    if (!companyIdFromAuth) {
+      return new Response(JSON.stringify({ error: 'No company associated' }), {
+        status: 403,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+  } else {
+    return new Response(JSON.stringify({ error: 'Authentication required' }), {
+      status: 401,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
+  }
 
   try {
     const body: TriggerEvent = await req.json()
-    const { trigger_type, company_id, event_data } = body
+    const { trigger_type, event_data } = body
+
+    // SEC-AUDIT-1: Use JWT company_id if available, otherwise trust body (service calls only)
+    const company_id = companyIdFromAuth || body.company_id
 
     if (!trigger_type || !company_id) {
       return new Response(JSON.stringify({ error: 'trigger_type and company_id required' }), {
@@ -222,7 +258,7 @@ async function executeAction(
       await executeNotifyTeam(supabase, action.config, eventData, companyId)
       break
     case 'update_status':
-      await executeUpdateStatus(supabase, action.config, eventData)
+      await executeUpdateStatus(supabase, action.config, eventData, companyId)
       break
     case 'create_followup':
       await executeCreateFollowup(supabase, action.config, eventData, companyId)
@@ -386,6 +422,7 @@ async function executeUpdateStatus(
   supabase: ReturnType<typeof createClient>,
   config: Record<string, string>,
   eventData: Record<string, unknown>,
+  companyId: string,
 ): Promise<void> {
   const table = config.table
   const newStatus = config.status
@@ -397,8 +434,10 @@ async function executeUpdateStatus(
   const allowedTables = ['jobs', 'invoices', 'bids', 'leads', 'estimates']
   if (!allowedTables.includes(table)) throw new Error(`Cannot update table: ${table}`)
 
-  await supabase.from(table).update({ status: newStatus }).eq('id', recordId)
+  // SEC-AUDIT-1: Scope update to company to prevent cross-company status manipulation
+  await supabase.from(table).update({ status: newStatus }).eq('id', recordId).eq('company_id', companyId)
 }
+
 
 async function executeCreateFollowup(
   supabase: ReturnType<typeof createClient>,

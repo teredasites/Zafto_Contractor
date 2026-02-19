@@ -54,13 +54,21 @@ serve(async (req: Request) => {
     const body: SendEmailRequest = await req.json();
     const { action } = body;
 
-    // Extract company_id from auth token
+    // SEC-AUDIT-1: Extract company_id from auth token
     const authHeader = req.headers.get('Authorization');
     let companyId: string | null = null;
     if (authHeader) {
       const token = authHeader.replace('Bearer ', '');
       const { data: { user } } = await supabase.auth.getUser(token);
       companyId = user?.app_metadata?.company_id || null;
+    }
+
+    // SEC-AUDIT-1: Require authentication for send actions (send, send_template, send_campaign)
+    // Only 'webhook' and 'get_stats' can have different auth patterns
+    if (['send', 'send_template', 'send_campaign'].includes(action) && !companyId) {
+      return new Response(JSON.stringify({ error: 'Authentication required for send actions' }), {
+        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
     switch (action) {
