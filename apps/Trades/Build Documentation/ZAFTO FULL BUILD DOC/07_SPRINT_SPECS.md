@@ -9149,6 +9149,44 @@ Include <content>{markdown}</content> for rendered display.
 
 ---
 
+### SK20 — Progressive Sketch UX + Complexity Scaling (~12h) — S138
+
+*The sketch engine presents 41+ trade symbols, 4 layer types, arc walls, multi-select lasso, DXF export, and IICRC damage classification to EVERY user — whether they're a solo handyman or a 50-person restoration crew. This sprint wires the CUST1 company complexity profile to the sketch editor so the right tools appear for the right user.*
+
+**Complexity-Driven Toolbar System:**
+- [ ] Define sketch tool visibility matrix in `system_settings` seed — 4 tiers of tool visibility:
+  - **Solo**: Draw walls, add rooms, basic dimensions, door/window placement, room labels, export PDF/PNG. ~8 tools visible. No trade layers, no damage zones, no DXF, no collaboration. Target: draw a floor plan in under 5 minutes.
+  - **Small Team**: Everything in Solo + trade symbols (electrical/plumbing basics), photo pins, manual measurements, export DXF, basic templates (5 starter). ~15 tools visible.
+  - **Mid-Tier**: Everything in Small Team + full 41-symbol trade library, all 4 layers, IICRC damage classification, multi-floor, laser meter integration, version history, 20 templates. ~25 tools visible.
+  - **Enterprise**: Everything — full CAD interface, multi-user collaboration, site plan mode, BOMA commercial, GLA reports, all export formats, all templates, custom symbols, advanced snapping. ~35+ tools visible.
+- [ ] Create `resolveSketchTools(companyId)` function — reads company complexity profile from CUST1 cascading settings, returns ordered list of visible toolbar groups. Company can override any tool visibility. (~2h)
+- [ ] Flutter: `SketchToolVisibility` provider — reads complexity profile, controls which toolbar buttons render. Tools not in the visible list are hidden from toolbar but accessible via "All Tools" expandable section (never locked out). (~2h)
+- [ ] Web CRM: `useSketchTools()` hook — same logic. Toolbar groups conditionally render. "All Tools" panel slides out from the side for power users who want everything. (~2h)
+
+**"Quick Sketch" Mode (Solo/Small Team Default):**
+- [ ] One-tap "Quick Sketch" entry point on job detail and estimate screens — skips the full editor, opens simplified flow: (1) choose template OR draw rooms manually, (2) add dimensions, (3) done → generates floor plan ready for estimate. No layers, no symbols, no site plan. Under 3 minutes for a simple residential layout. (~3h)
+- [ ] Quick Sketch templates — 10 common residential layouts: studio apartment, 1BR/1BA, 2BR/1BA, 3BR/2BA ranch, 2-story colonial, L-shaped ranch, split-level, condo/townhouse, basement layout, single room. Pre-drawn walls, user just adjusts dimensions. (~2h)
+- [ ] "Upgrade to Full Editor" button visible at all times in Quick Sketch — one tap opens the full CAD editor with the current sketch data preserved. No data loss on mode switch. (~1h)
+
+**Progressive Onboarding:**
+- [ ] First-time sketch tooltip tour — 5 bubbles max: (1) "Draw walls by tapping two points", (2) "Add doors and windows from the toolbar", (3) "Tap a room to see measurements", (4) "Export your floor plan as PDF", (5) "Need more tools? Tap 'All Tools'". Skip button on every bubble. Never shows again after dismissal. (~1h)
+- [ ] Trade-aware default tools — when a restoration company opens sketch, damage layer is visible by default. When an electrician opens sketch, electrical layer is visible. Read from company's primary trade setting (CUST1). Other layers hidden but available. (~1h)
+
+**Enterprise Power Features (visible at Mid-Tier+):**
+- [ ] Keyboard shortcut overlay (Web only) — press `?` to see all shortcuts. W=wall, D=door, N=window, L=layer toggle, S=snap toggle, Z=undo, Shift+Z=redo, E=export, G=generate estimate. (~1h)
+- [ ] Custom symbol library — enterprise companies can upload custom SVG symbols (company-specific equipment, proprietary fixtures). Stored in `company_sketch_symbols` table with RLS. Appear in trade toolbar alongside system symbols. (~2h)
+- [ ] Saved view presets — enterprise users can save named camera positions + layer visibility combos (e.g., "Electrical Only", "Damage Overview", "Client Presentation"). Quick switch between views. (~1h)
+
+**Tests:**
+- [ ] TEST: Solo company opens sketch editor → sees ~8 tools in toolbar. Switch to enterprise → sees ~35+ tools. Data preserved across switch.
+- [ ] TEST: Quick Sketch flow → draw 3 rooms from template → adjust dimensions → export PDF → total time under 3 minutes.
+- [ ] TEST: "All Tools" toggle works — hidden tools accessible, visible tools return to normal on toggle off.
+- [ ] TEST: First-time tooltip tour shows once, never again after dismissal.
+- [ ] TEST: Restoration company → damage layer visible by default. Electrician → electrical layer visible by default.
+- [ ] Commit: `[SK20] Progressive sketch UX — complexity-driven toolbars, Quick Sketch mode, trade-aware defaults, enterprise power features`
+
+---
+
 ## PHASE GC: GANTT & CPM SCHEDULING ENGINE (after SK, before U)
 *Full Critical Path Method (CPM) scheduling engine with Gantt charts, resource leveling, baseline management, P6/MS Project import/export, and real-time collaboration. 12 new tables, 4+ Edge Functions, ~124 hours across 11 sprints. See `Expansion/48_GANTT_CPM_SCHEDULER_SPEC.md` for full spec.*
 
@@ -16647,7 +16685,7 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 
 ---
 
-## S136 TEST INFRASTRUCTURE SPRINT (TEST-INFRA: TI-1 through TI-7, ~16h)
+## S136 TEST INFRASTRUCTURE SPRINT (TEST-INFRA: TI-1 through TI-7, ~28h)
 
 *No more code without verification. After this sprint, every future sprint includes tests. Compile + test + verify = done. Full spec: `memory/collab-arch-test-infra-spec-s136.md`*
 
@@ -16706,7 +16744,7 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 - [ ] Verify failed tests block the workflow (exit code 1)
 - [ ] TEST: Push a deliberate test failure, verify CI catches it
 
-### TI-7 — Cross-App Integration Tests + Security Checklist Template + Test Mandate (~4h) — S136
+### TI-7 — Cross-App Integration Tests + Security Checklist Template + Sketch Engine Tests (~16h) — S136
 
 *Expanded S138: This is the sprint that makes the ecosystem self-verifying. Not just "does Flutter build?" but "does the whole system work together?" Plus a mandatory security checklist that every future sprint must include.*
 
@@ -16723,6 +16761,19 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 - [ ] Write webhook replay test: Send same Stripe event_id twice → second must be ignored (idempotency)
 - [ ] Write optimistic locking test: Two concurrent updates to same customer record with stale `updated_at` → second update returns conflict error, first update's data preserved (Gap 3 verification)
 - [ ] Write global search test: Insert customer "John Smith" + job "Smith Kitchen Remodel" + invoice #1234 → search for "Smith" → returns results from ALL three entities, ranked by relevance (Gap 4 verification)
+
+**Sketch Engine Automated Test Suite (S138 — ~72 files, ~13K+ lines, zero automated tests currently):**
+- [ ] **Geometry unit tests** (Flutter + TypeScript): Test `SketchGeometry` / `geometry.ts` functions — room area calculation (shoelace formula), perimeter calculation, wall intersection detection, point-on-wall hit testing, snap-to-grid at all grid sizes (1", 6", 12"), perpendicular detection, room auto-detection from walls. Input: known coordinates. Expected: exact numeric results. Minimum 30 test cases covering rectangles, L-shapes, irregular polygons, single-wall, zero-area edge cases. (~2h)
+- [ ] **Model round-trip tests** (Flutter): `FloorPlan`, `FloorPlanRoom`, `FloorPlanLayer`, `FloorPlanDataV2` — `toJson()` → `fromJson()` produces identical object. Test with: empty plan, single room, multi-room, multi-floor, with trade layers, with damage zones, with photo pins, with arc walls. Minimum 15 test cases. (~1h)
+- [ ] **Undo/redo command tests** (Flutter + TypeScript): Test `UndoRedoManager` / `commands.ts` — AddWall → undo → wall removed. AddWall → AddDoor → undo → door removed, wall still there. Undo 100 times → no crash. Redo after undo → state restored exactly. New action after undo → redo stack cleared. Per-user undo in collaboration mode. Minimum 20 test cases. (~1h)
+- [ ] **Export round-trip tests** (TypeScript): Draw a known floor plan (3 rooms, 2 doors, 1 window) → export to DXF → verify DXF contains correct entities (LINE for walls, INSERT for fixtures). Export to SVG → verify SVG elements match. Export to PDF → verify PDF is valid (non-zero byte, parseable). Export to PNG → verify image dimensions match canvas. (~2h)
+- [ ] **Sketch-to-estimate pipeline test**: Create floor plan with 3 rooms (kitchen 12x14, bathroom 8x10, bedroom 12x12) → trigger auto-estimate (SK8 `estimate-generator.ts`) → verify estimate has 3 areas with correct dimensions → verify line items suggested based on room type → verify total SF matches sum of room areas. (~1h)
+- [ ] **Measurement calculator tests** (TypeScript): `measurement-calculator.ts` — verify area calculations for all room types (standard rectangle, L-shape, room with closet alcove). Verify perimeter excludes openings (doors/windows). Verify volume uses ceiling height. Verify material quantity calculations (paint SF, flooring SF, baseboard LF). Minimum 15 test cases. (~1h)
+- [ ] **Render snapshot tests** (TypeScript/Jest): Capture Konva canvas output as image for 5 known floor plans (empty, single room, multi-room, with trade layer, with damage zones). Compare against golden snapshots. Fail if pixel diff > 1%. This catches rendering regressions from CSS/Konva updates. (~2h)
+- [ ] **RLS isolation test for sketch**: Company A creates floor plan → Company B queries floor_plan tables → must NOT see Company A's plans, rooms, layers, snapshots, or photo pins. Test all 6 sketch tables. (~1h)
+- [ ] **Collaboration conflict test**: Two users edit same wall simultaneously via Realtime → verify Yjs CRDT resolves without data loss → verify both users see final state within 2 seconds. (~1h)
+- [ ] **Performance benchmark test**: Create floor plan with 50 rooms, 100 walls, 200 fixtures, 4 trade layers full of symbols → measure render time on Konva canvas → must be < 500ms. Measure `FloorPlanDataV2.toJson()` → must be < 100ms. Add to performance regression gate. (~1h)
+
 - [ ] Document integration test running procedure: requires local Supabase (`npx supabase start`), seed data, and all 4 portals running locally
 
 **Mandatory Security Checklist Template (add to EVERY future sprint):**
