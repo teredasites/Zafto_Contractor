@@ -16287,6 +16287,92 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 
 ---
 
+## S137 ENTERPRISE INFRASTRUCTURE SPRINT (INFRA-1 through INFRA-5, ~8h)
+
+*Enterprise-grade environment architecture. 4-environment pipeline. UI decoupled from data. Designed to scale to 100K+ users on Supabase Pro + Vercel Pro. Full research: `memory/enterprise-infrastructure-research-s137.md`*
+
+*Owner directive S137: UI changes must NEVER break business logic under ANY circumstance. Strict 3-layer architecture enforced.*
+
+### INFRA-1 — Supabase Production Project + Environment Strategy (~2h) — S137
+
+- [ ] Create new Supabase project `zafto-production` (us-east-1 region, same as dev)
+- [ ] Configure production project: disable Spend Cap (unlocks 10K realtime connections, 2,500 msg/sec)
+- [ ] Enable Network Restrictions on production (restrict DB access by IP/CIDR)
+- [ ] Run all 115 migrations against production: `npx supabase db push --linked`
+- [ ] Deploy all 92 Edge Functions to production
+- [ ] Set all Supabase secrets on production (Stripe, SignalWire, LiveKit, Plaid, etc.)
+- [ ] Document in CLAUDE.md: production project ref, API URL, anon key, service role key locations
+- [ ] TEST: Verify production project serves API requests with correct RLS scoping
+
+### INFRA-2 — Supabase Branching + Staging (~1h) — S137
+
+- [ ] Enable GitHub integration on Supabase project (link to TeredaDeveloper/Zafto_Contractor repo)
+- [ ] Enable Supabase Branching on the dev project
+- [ ] Verify `supabase/config.toml` works with branching pipeline (config → migrate → seed → deploy)
+- [ ] Verify `supabase/seed.sql` populates test data correctly on branch creation
+- [ ] Create persistent branch `staging` from dev project (Small compute ~$15/mo)
+- [ ] Open a test PR, verify preview branch auto-creates with isolated DB
+- [ ] TEST: Preview branch has correct schema + seed data + Edge Functions
+
+### INFRA-3 — Vercel Pro Multi-App Setup (~2h) — S137
+
+- [ ] Create Vercel team `zafto` on Pro plan
+- [ ] Create 4 Vercel projects from monorepo, each with correct root directory:
+  - `zafto-web-portal` → `apps/Trades/web-portal` → zafto.cloud
+  - `zafto-team-portal` → `apps/Trades/team-portal` → team.zafto.cloud
+  - `zafto-client-portal` → `apps/Trades/client-portal` → client.zafto.cloud
+  - `zafto-ops-portal` → `apps/Trades/ops-portal` → ops.zafto.cloud
+- [ ] Configure wildcard domain `*.zafto.cloud` on Vercel (or individual subdomains)
+- [ ] Set environment variables per project per environment (Development / Preview / Production)
+  - Production: production Supabase URL + anon key + service role key
+  - Preview: dev Supabase URL (or branched URL via integration)
+  - Development: local Supabase URL
+- [ ] Enable Vercel + Supabase integration (preview deployments auto-match preview branches)
+- [ ] Configure build skip detection (only build portal with changed files)
+- [ ] TEST: Push to main → all 4 portals build and deploy to production domains
+- [ ] TEST: Open PR → preview deployments created for changed portals
+
+### INFRA-4 — Database Performance Foundation (~2h) — S137
+
+- [ ] Create migration: Add `company_id` B-tree indexes on ALL tables missing them (audit across 293 tables)
+- [ ] Create migration: Add BRIN indexes on `audit_log.created_at`, `messages.created_at`, `activity_feed.created_at` (if tables have >10K rows potential)
+- [ ] Create migration: Add partial indexes on hot tables: `jobs (company_id, status) WHERE deleted_at IS NULL`, `invoices (company_id, status, due_date) WHERE deleted_at IS NULL`, `estimates (company_id, created_at DESC) WHERE deleted_at IS NULL`
+- [ ] Create migration: Add GIN indexes on JSONB columns: `companies.settings`, `jobs.metadata` (if exists)
+- [ ] Verify `auth.company_id()` function is marked `STABLE` (enables initPlan caching for RLS)
+- [ ] Verify `auth.user_role()` function is marked `STABLE`
+- [ ] Create materialized view: `mv_company_revenue_summary` (invoice aggregates per company/month)
+- [ ] Create materialized view: `mv_job_pipeline` (job counts/values by status per company)
+- [ ] Create pg_cron job: refresh materialized views every 15 minutes CONCURRENTLY
+- [ ] TEST: `EXPLAIN ANALYZE` on top 5 most common queries — verify index usage, no Seq Scans on large tables
+
+### INFRA-5 — 3-Layer Architecture Enforcement + CI Updates (~1h) — S137
+
+- [ ] Add to CLAUDE.md Critical Rules: "10. **3-LAYER ARCHITECTURE** — UI (screens/components) NEVER imports from data layer (supabase client, repositories, models directly). UI uses ONLY providers (Flutter) or hooks (Next.js). Providers/hooks are the stable contract between UI and data."
+- [ ] Create `.eslintrc` rule (or document in CLAUDE.md) for all 4 portals: `@supabase/supabase-js` imports forbidden in `src/app/` and `src/components/` directories — only allowed in `src/lib/`
+- [ ] Verify existing code follows 3-layer pattern (spot-check 5 screens in web-portal, 5 in Flutter)
+- [ ] Update `.github/workflows/ci.yml` to include: migration safety check (fail if PR contains `DROP COLUMN` / `DROP TABLE` / `ALTER.*TYPE` / `RENAME COLUMN` without expand-contract pattern)
+- [ ] Document expand-contract migration pattern in CLAUDE.md: "11. **EXPAND-CONTRACT MIGRATIONS** — Never destructive in a single migration. Add new → dual-write → backfill → remove old in next sprint."
+- [ ] TEST: CI pipeline runs on push, catches destructive migrations
+
+### *** CRITICAL PRE-LAUNCH BLOCKER — DO NOT SHIP WITHOUT ***
+
+```
+╔══════════════════════════════════════════════════════════════════════╗
+║  PITR (Point-in-Time Recovery) — $100/month — ENABLE BEFORE LAUNCH ║
+║                                                                      ║
+║  Without PITR: lose up to 24 HOURS of customer data on failure       ║
+║  With PITR: lose only 2 MINUTES of customer data on failure          ║
+║                                                                      ║
+║  Owner directive S137: "remind me 100 times before launch"           ║
+║  Enable in Supabase Dashboard → Project → Database → Backups → PITR ║
+║  Requires: Small compute minimum ($15/mo) + PITR add-on ($100/mo)   ║
+║                                                                      ║
+║  THIS IS A LAUNCH BLOCKER. DO NOT SKIP. DO NOT FORGET.              ║
+╚══════════════════════════════════════════════════════════════════════╝
+```
+
+---
+
 ## S136 TEST INFRASTRUCTURE SPRINT (TEST-INFRA: TI-1 through TI-7, ~16h)
 
 *No more code without verification. After this sprint, every future sprint includes tests. Compile + test + verify = done. Full spec: `memory/collab-arch-test-infra-spec-s136.md`*
