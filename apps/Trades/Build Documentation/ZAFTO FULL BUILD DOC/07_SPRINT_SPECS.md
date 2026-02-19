@@ -12606,7 +12606,7 @@ Every DEPTH audit item MUST be evaluated per-app where relevant. Do NOT just che
 
 - [ ] Commit: `[DEPTH4] Financial & legal depth corrections — ZBooks, permits, liens, insurance, contracts`
 
-### DEPTH5 — CRM & Portal Depth Audit + Corrections (~14h)
+### DEPTH5 — CRM & Portal Depth Audit + Corrections + Form Depth Verification (~20h)
 **Goal:** Audit and correct depth for: Web CRM pages, client portal experience, ops portal dashboards. The CRM is the office manager's daily tool — it must be comprehensive.
 - [ ] Audit CRM dashboard — KPIs, charts, actionable insights, customization
 - [ ] Audit CRM job management — pipeline view, status board, bulk actions, job costing
@@ -12615,9 +12615,20 @@ Every DEPTH audit item MUST be evaluated per-app where relevant. Do NOT just che
 - [ ] Audit client portal — project visibility, payment, document access, communication, scheduling
 - [ ] Audit ops portal — company metrics, subscription management, support tools, analytics
 - [ ] Audit homeowner tools — what does the homeowner see? Is it clear, professional, trustworthy?
-- [ ] Identify and list ALL shallow/stub features found
-- [ ] Build + execute corrections for each shallow feature
-- [ ] Commit: `[DEPTH5] CRM & portal depth corrections — dashboards, reporting, client experience`
+
+**Cross-Entity Form Depth Verification (S138 — covers contractors, realtors, adjusters, inspectors, homeowners):**
+- [ ] Audit EVERY create/edit form in the system against its DB model. Count: fields in model vs fields in UI. Target: >= 90% for enterprise complexity, >= 60% for solo complexity. Document gaps per entity per complexity tier.
+- [ ] Verify form depth for EACH entity type at EACH company size:
+  - **Solo contractor** (1 person, residential): estimate, invoice, bid must be completable in < 2 min. No required fields beyond title + customer + line items. Quick-create mode.
+  - **Mid-tier contractor** (5-25 people, mixed residential/commercial): needs team assignment, scheduling, job costing, detailed line items, insurance fields, change orders with approval. Forms should default to showing these.
+  - **Enterprise contractor** (50+ people, multi-branch): needs everything above + custom fields, approval workflows, branch assignment, budget tracking, retainage, progress billing, subcontractor management. All fields visible by default.
+  - **Realtor**: transaction forms (offer, counter, acceptance), CMA input, listing input, commission splits, disclosure checklists, buyer qualification. Verify RE sprint specs cover all.
+  - **Adjuster**: claim forms (carrier, policy, date of loss, RCV/ACV/depreciation per line item, supplement diffs, O&P). Verify DEPTH29-EST covers insurance estimate depth completely.
+  - **Inspector**: inspection execution (checklist with per-item pass/fail + photos + notes + code references), report generation, deficiency tracking. Verify INS sprints cover all 26 inspector types.
+  - **Homeowner**: property profile, maintenance request, document upload, payment. Verify CLIENT sprints cover homeowner forms.
+- [ ] For EVERY form that scores < 60% field coverage at its target complexity tier: create specific correction items and add to this sprint's build list.
+- [ ] Verify "Show all fields" toggle works on every form — no user should ever be locked out of a field they need. The complexity profile is a DEFAULT, not a restriction.
+- [ ] Commit: `[DEPTH5] CRM & portal depth corrections — dashboards, reporting, client experience, form depth verification`
 
 ### DEPTH6 — Calculator & Template Depth Audit + Corrections (~12h)
 **Goal:** Audit all 987 calculators and inspection templates for depth. Are seed data sets exhaustive? Do calculators cover edge cases? Are templates comprehensive for each trade?
@@ -15504,10 +15515,10 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 
 ---
 
-## PHASE CUST: ENTERPRISE CUSTOMIZATION ENGINE (S132) — CUST1-CUST8 (~280h)
+## PHASE CUST: ENTERPRISE CUSTOMIZATION ENGINE (S132) — CUST1-CUST8 (~302h)
 *Source: s132-enterprise-customization-research.md. Dependencies: CUST1 first (foundation), then CUST2+CUST3+CUST5 in parallel, then CUST4, then CUST6+CUST7+CUST8 in parallel. 14 realtor types, 7 brokerage models, 50-state regs.*
 
-### CUST1 — Cascading Settings Foundation (~32h) — S132
+### CUST1 — Cascading Settings Foundation + Company Complexity Profile (~54h) — S132
 *Architecture: Level 0 (System defaults) → Level 1 (Company overrides) → Level 2 (Team overrides) → Level 3 (User overrides). `resolve_setting()` PostgreSQL function. `pg_jsonschema` validation.*
 
 - [ ] Create settings tables (system_settings, company_settings, team_settings, user_settings) with RLS (~4h)
@@ -15519,7 +15530,20 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 - [ ] Web Portal: `useSettings` hook with cascading resolution (~3h)
 - [ ] Team Portal: `useSettings` hook (read-only for most users) (~2h)
 - [ ] Settings management UI (company-level) in Web Portal (~3h)
-- [ ] Commit: `[CUST1] Cascading settings foundation — 4-level JSONB cascade, pg_jsonschema validation, resolve_setting() fn, batch EF, Flutter/Web hooks, company settings UI`
+
+**Company Complexity Profile — Progressive Form Density (S138 recommendation):**
+- [ ] Add `complexity_profile ENUM ('solo', 'small_team', 'mid_tier', 'enterprise')` to `companies` table with default `'solo'`. Set during onboarding based on employee count: 1 = solo, 2-10 = small_team, 11-50 = mid_tier, 51+ = enterprise. Changeable in settings anytime. (~1h)
+- [ ] Define form field visibility matrix in `system_settings` seed: for each entity (estimate, invoice, bid, job, change_order, inspection), define which fields show at each complexity level. Example: solo estimate shows title/customer/line items/tax/total (10 fields). Enterprise estimate shows ALL fields including insurance mode, O&P, retainage, template linkage, revision history, custom fields, approval workflow (40+ fields). Matrix stored as JSONB, company can override any field visibility via company_settings. (~4h)
+- [ ] Create `resolveFormFields(entity, companyId)` — returns ordered list of visible fields for this company's complexity profile + any company-level overrides. Uses same cascade as `resolve_setting()`. (~2h)
+- [ ] Flutter: `FormFieldVisibility` provider that reads complexity profile. All form builders check this before rendering optional fields. Fields not in the visible list are hidden (NOT removed — data still accepted if sent via API). Progressive disclosure: hidden fields accessible via "Show all fields" / "Advanced" toggle so users aren't locked out. (~3h)
+- [ ] Web CRM: `useFormFields(entity)` hook that reads complexity profile. Form components conditionally render based on visibility. Same "Show all fields" toggle. (~2h)
+- [ ] Onboarding flow: after company creation, ask 3 questions: (1) How many employees? (sets complexity), (2) What trades? (sets trade defaults), (3) What's your primary work? (residential/commercial/insurance/government — sets template defaults). These 3 questions configure the entire initial experience. (~3h)
+- [ ] Seed form field visibility matrix for ALL 6 core entities across all 4 complexity tiers. Be opinionated — solo should feel FAST (fewer fields), enterprise should feel POWERFUL (every field). Mid-tier is the sweet spot most companies land on. (~4h)
+- [ ] "Complexity upgrade prompt": when a solo company adds their 3rd employee, show a one-time prompt: "Your team is growing! Want to unlock more advanced features like approval workflows, team assignments, and detailed reporting?" One click upgrades their complexity profile. No paywall — just UX density. (~1h)
+- [ ] TEST: Solo company creates estimate → sees 10 fields. Same company switches to enterprise → sees 40+ fields. Data created at solo level is preserved and visible at enterprise level. (~1h)
+- [ ] TEST: Company overrides field visibility for invoices (hides retainage) → retainage field hidden even at enterprise level. Resets to default when override removed. (~1h)
+
+- [ ] Commit: `[CUST1] Cascading settings foundation + company complexity profile — 4-level cascade, form density scaling, onboarding flow`
 
 ### CUST2 — Custom Fields Engine (~40h) — S132
 *16 field types, 100 per entity max, GIN indexes, field key immutable after creation, soft delete only.*
