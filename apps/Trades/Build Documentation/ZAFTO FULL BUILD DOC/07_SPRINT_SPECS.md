@@ -15224,6 +15224,95 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 - [ ] **Staged rollout plan** — Google Play: release to 10% of users, monitor crash-free rate for 48 hours, if >99.5% expand to 25% -> 50% -> 100%. Apple: no staged rollout on initial release, but enable phased release for all subsequent updates.
 - [ ] Commit: `[LAUNCH7] App Store prep + onboarding wizard — listings, screenshots, wizard, review prep`
 
+### LAUNCH-FLAVORS — Multi-App Store Domination: 6 Purpose-Built Apps from One Codebase (~16h)
+
+*Nobody in the trades industry does this. ServiceTitan = 1 app. Jobber = 1 app. Housecall Pro = 1 app. Xactimate = 1 app. Zafto launches as 6 purpose-built apps, each discoverable by its target profession. An inspector searching "home inspection app" finds Zafto Inspector — not a generic business platform. Same codebase, same subscription, same database. Flutter flavors (Android) + Xcode schemes (iOS) = 6 apps from zero code duplication. Users can switch entity type anytime — the flavor just sets what they see first. This is a marketing kill shot that costs ~16h of configuration work.*
+
+*Prerequisite: LAUNCH7 (App Store prep) must be done first. LAUNCH-FLAVORS extends it to 6 apps.*
+
+**Flutter Flavor Infrastructure (~3h):**
+- [ ] Create `flavors/` directory structure: `flavors/contractor/`, `flavors/inspector/`, `flavors/adjuster/`, `flavors/realtor/`, `flavors/restoration/`, `flavors/trades/`. Each contains: `app_icon.png` (1024x1024), `splash.png`, `flavor_config.dart` (default entity type, app name, feature emphasis). (~0.5h)
+- [ ] Android: Configure `android/app/build.gradle` with 6 product flavors. Each flavor sets: `applicationId` (`app.zafto.contractor`, `.inspector`, `.adjuster`, `.realtor`, `.restoration`, `.trades`), `resValue "string", "app_name"`, `manifestPlaceholders`. Share `main` source set — zero code duplication. (~1h)
+- [ ] iOS: Configure 6 Xcode schemes (`Contractor`, `Inspector`, `Adjuster`, `Realtor`, `Restoration`, `Trades`). Each scheme uses a separate `Info.plist` with: `CFBundleIdentifier`, `CFBundleDisplayName`, `AppIcon` asset catalog. All schemes share same Swift/ObjC code. (~1h)
+- [ ] Create `lib/core/flavor_config.dart`: reads build flavor at runtime → sets `defaultEntityType`, `appDisplayName`, `primaryFeatures` list, `onboardingPresets`. Used by onboarding wizard (LAUNCH7) to skip trade selection step — flavor already chose it. User can change entity type anytime in settings. (~0.5h)
+
+**App Icons — 6 Distinct Designs (~2h):**
+- [ ] Base Zafto logo in 6 accent colors — each instantly recognizable but clearly part of the Zafto family:
+  - **Contractor:** Zafto Blue (primary brand color) — the flagship
+  - **Inspector:** Zafto Green — trustworthy, verification, safety
+  - **Adjuster:** Zafto Orange — insurance, urgency, claims
+  - **Realtor:** Zafto Purple — premium, luxury, real estate
+  - **Restoration:** Zafto Red — emergency, restoration, urgency
+  - **Trades:** Zafto Gray — neutral, catch-all, multi-trade
+- [ ] Generate all required sizes per platform: iOS (1024x1024 + @2x/@3x variants), Android (adaptive icon foreground + background layers, 48dp-512dp). Use `flutter_launcher_icons` package per flavor config. (~1h)
+- [ ] Splash screens per flavor: same Zafto logo, flavor accent color background, app name below logo. (~0.5h)
+
+**App Store Listings — 6 Targeted Listings (~6h):**
+- [ ] **Zafto Contractor** — Apple + Google listings:
+  - Title: "Zafto Contractor — Business Management"
+  - Subtitle/Short: "Estimates, invoices, scheduling, CRM"
+  - Keywords: contractor, electrician, plumber, HVAC, roofing, painting, estimates, invoicing, scheduling, CRM, field service
+  - Screenshots: dashboard, estimate builder, invoice, schedule (Gantt), calculator, sketch engine
+  - Description: emphasize multi-trade support, 1,194 calculators, all-in-one replacement for 12+ tools (~1h)
+
+- [ ] **Zafto Inspector** — Apple + Google listings:
+  - Title: "Zafto Inspector — Inspection Software"
+  - Subtitle/Short: "Checklists, reports, code references"
+  - Keywords: home inspection, building inspection, code compliance, inspection report, checklist, OSHA, NEC, deficiency
+  - Screenshots: inspection checklist, deficiency with photo, report PDF, code reference search, compliance calendar
+  - Description: emphasize 25 templates, 1,147 checklist items, weighted scoring, code references, instant PDF reports (~1h)
+
+- [ ] **Zafto Adjuster** — Apple + Google listings:
+  - Title: "Zafto Adjuster — Claims Management"
+  - Subtitle/Short: "Scoping, contents, drying logs, estimates"
+  - Keywords: insurance adjuster, claims, scope of loss, contents inventory, drying log, moisture, IICRC, water damage
+  - Screenshots: claim dashboard, contents inventory, drying log, scope of loss, estimate with insurance mode
+  - Description: emphasize FREE for adjusters, IICRC S500 compliance, contents inventory, drying documentation, Xactimate-compatible output (~1h)
+
+- [ ] **Zafto Realtor** — Apple + Google listings:
+  - Title: "Zafto Realtor — Real Estate CRM"
+  - Subtitle/Short: "Leads, transactions, CMA, listings"
+  - Keywords: real estate agent, realtor CRM, listing management, buyer leads, transaction coordinator, CMA, commission
+  - Screenshots: lead pipeline, transaction checklist, CMA report, listing manager, commission tracker
+  - Description: emphasize $69.99 vs $1,000+/mo competitor spend, full CRM, transaction management, all 50 states (~1h)
+
+- [ ] **Zafto Restoration** — Apple + Google listings:
+  - Title: "Zafto Restoration — Water Fire Mold"
+  - Subtitle/Short: "Drying logs, moisture, clearance certs"
+  - Keywords: restoration, water damage, fire damage, mold remediation, IICRC, drying log, moisture tracking, mitigation
+  - Screenshots: drying log, moisture map, mold clearance cert, fire assessment, equipment calculator, TPA management
+  - Description: emphasize IICRC S500/S520 compliance, replaces MICA/Mitigate at 1/10th the price, immutable drying logs (~1h)
+
+- [ ] **Zafto Trades** — Apple + Google listings (catch-all):
+  - Title: "Zafto Trades — All-in-One Business App"
+  - Subtitle/Short: "For every trade professional"
+  - Keywords: trades, field service, business management, contractor, small business, invoicing, scheduling, CRM
+  - Screenshots: multi-trade dashboard, job management, invoicing, sketch engine, team management, calculators
+  - Description: for users who don't fit a single category — GCs managing multiple trades, hybrid companies, solo operators doing everything (~1h)
+
+**Codemagic Build Matrix (~2h):**
+- [ ] Configure `codemagic.yaml` with 6 flavor workflows. Each workflow: build Android AAB + iOS IPA for one flavor. Shared environment variables. Flavor-specific signing credentials (6 Android keystores, 6 iOS provisioning profiles). (~1h)
+- [ ] Set up App Store Connect for 5 additional apps (Contractor already exists). Each needs: bundle ID registration, provisioning profile, App Store Connect app record. (~0.5h)
+- [ ] Set up Google Play Console for 5 additional apps. Each needs: app creation, upload key generation, content rating questionnaire, data safety section. (~0.5h)
+- [ ] Test: build all 6 flavors locally → verify each launches with correct app name, icon, and default entity type. (~0.5h bonus item from LAUNCH7)
+
+**Cross-App Deep Linking (~1h):**
+- [ ] If a user has Zafto Contractor but taps a link meant for Zafto Inspector (e.g., shared inspection report), handle gracefully: open in current app if feature available, or prompt to download the specialized app. Universal links / App Links configured per flavor. (~0.5h)
+- [ ] RevenueCat: configure shared app user ID so subscription purchased in ANY Zafto app unlocks ALL Zafto apps. One subscription = full ecosystem access. (~0.5h)
+
+**Anti-Spam Protection (Apple compliance):**
+- [ ] Ensure each flavor has meaningfully different: (1) default dashboard layout, (2) first 3 screenshots, (3) App Store description, (4) onboarding flow emphasis. Document differences in review notes for Apple reviewer. (~0.5h)
+- [ ] Each app's review notes include: "This app is part of the Zafto professional tools suite. Each app is optimized for a specific profession with tailored dashboards, workflows, and feature emphasis. All apps share a common platform but provide distinct user experiences." (~0.5h)
+
+**Verification:**
+- [ ] All 6 flavors build successfully: `flutter build apk --flavor [name]` × 6
+- [ ] All 6 flavors build AAB: `flutter build appbundle --flavor [name]` × 6
+- [ ] Each flavor launches with correct: app name, icon, splash screen, default entity type, onboarding flow
+- [ ] Switching entity type within any flavor works (settings → change profession)
+- [ ] RevenueCat subscription shared across all flavors
+- [ ] `dart analyze` — 0 errors (runs once — shared codebase)
+- [ ] Commit: `[LAUNCH-FLAVORS] 6 purpose-built apps — contractor, inspector, adjuster, realtor, restoration, trades — Flutter flavors, Xcode schemes, 6 App Store listings, Codemagic matrix`
+
 ---
 
 ### LAUNCH8 — Production Deployment Runbook & Disaster Recovery & Data Lifecycle (~20h)
