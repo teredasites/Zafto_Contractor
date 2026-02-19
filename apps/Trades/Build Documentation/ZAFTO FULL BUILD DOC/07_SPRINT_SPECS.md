@@ -16012,6 +16012,281 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 
 ---
 
+## S135 ENTITY WORKFLOW GAP SPRINTS (16 sprints, ~212h)
+
+*Identified by S134 entity workflow research (5 Opus agents, 104 entity sub-types, ~530K tokens). These are adoption-blocking gaps — specific entity types cannot use Zafto as their primary tool without these features. Research files: `trade-workflow-deep-research.md`, `realtor-professional-types-deep-research.md`, `adjuster-workflow-deep-dive-s134.md`, `inspector-complete-workflow-research-s134.md`, `homeowner-types-cross-entity-research-s134.md`, `s134-entity-workflow-master-synthesis.md`.*
+
+### CONTRACTOR OPERATIONS (4 sprints, ~56h)
+
+### ROUTE1 — Route Optimization Engine for Service Trades (~16h) — S135
+*Route-based trades (pest, pool, landscape, septic, cleaning) run 8-25 stops/day on recurring schedules. Without route optimization, they cannot use Zafto for their core daily workflow. Integrates with existing job/calendar system. Reuses Mapbox (already in stack).*
+
+- [ ] Create `route_plans` table (id, company_id, technician_id, date, optimized_order jsonb, total_distance_miles, total_drive_time_minutes, status, notes, created_at, updated_at, deleted_at) with RLS + audit trigger (~2h)
+- [ ] Create `route_stops` table (id, route_plan_id, job_id, customer_id, property_id, stop_order, scheduled_arrival, scheduled_departure, actual_arrival, actual_departure, drive_time_from_prev, distance_from_prev, status, skip_reason, notes) with RLS (~2h)
+- [ ] Route optimization algorithm — nearest-neighbor heuristic with time windows, service duration estimates, priority weighting. PostgreSQL function `optimize_route()`. OSRM fallback for $0/mo distance matrix (~4h)
+- [ ] Flutter: Route Plan screen — Mapbox map view with numbered stops, drag-to-reorder, one-tap navigation to next stop, auto-check-in on GPS proximity, skip/reschedule buttons (~2h)
+- [ ] Recurring route templates — `route_templates` table with weekly/biweekly/monthly recurrence rules, auto-generate route_plans from templates via pg_cron (~2h)
+- [ ] Web Portal: `/dashboard/routes` page — daily/weekly route planning view, assign techs to routes, bulk-add recurring customers, route efficiency metrics (miles/stop, time/stop, on-time %) (~2h)
+- [ ] Team Portal: tech's daily route view — today's stops with one-tap directions, customer notes, service history preview, check-in/check-out buttons (~1h)
+- [ ] Client Portal: "Your tech is on the way" — show estimated arrival window based on route position (no live tracking — privacy) (~1h)
+- [ ] Commit: `[ROUTE1] Route optimization engine — route_plans + route_stops + route_templates tables, optimize_route() fn, Mapbox map view, recurring templates, CRM route planning, team/client portal views`
+
+### CHEM1 — Chemical & Regulatory Compliance Tracking (~12h) — S135
+*Pest control (EPA-regulated pesticides), HVAC (EPA Section 608 refrigerant), restoration (antimicrobials/biocides), insulation (foam chemical safety) — all require chemical usage logging, applicator certification tracking, and regulatory reporting. Fines: $5K-75K per violation.*
+
+- [ ] Create `chemical_applications` table (id, company_id, job_id, property_id, technician_id, chemical_name, epa_registration_number, active_ingredient, application_method, quantity_used, quantity_unit, target_pest_or_purpose, wind_speed, temperature, humidity, application_area_sqft, reentry_interval_hours, signal_word, ppe_required jsonb, mix_ratio, dilution_rate, notes, applied_at, created_at) with RLS + audit trigger (~2h)
+- [ ] Create `chemical_inventory` table (id, company_id, chemical_name, epa_reg_number, manufacturer, quantity_on_hand, quantity_unit, storage_location, sds_url, purchase_date, expiration_date, lot_number, cost_per_unit, reorder_threshold, restricted_use boolean, applicator_cert_required boolean) with RLS (~1h)
+- [ ] Create `technician_certifications` table (id, company_id, team_member_id, certification_type, certification_number, issuing_authority, state, issued_date, expiration_date, renewal_requirements, document_url, verified boolean) — EPA applicator, HVAC Section 608, IICRC, state pest licenses (~1h)
+- [ ] Seed chemical reference data — 50+ common pesticides, refrigerants (R-22/R-410A/R-32/R-454B with GWP values), restoration antimicrobials (Benefect, Concrobium, Sporicidin), insulation foam chemicals. EPA reg numbers, signal words, REI values, PPE requirements (~3h)
+- [ ] HVAC refrigerant tracking — EPA Section 608 requires tracking all purchases, usage, recovery. Fields on chemical_applications: type (charge/recover/reclaim), equipment_id, starting_charge_oz, amount_added_oz, amount_recovered_oz, leak_rate_calculated (~1h)
+- [ ] Flutter: Chemical Application Log screen — scan product barcode (camera), auto-fill from inventory, weather auto-pull from device sensors, GPS location stamp, technician cert validation (warn if expired), photo of application area (~2h)
+- [ ] Web Portal: `/dashboard/compliance/chemicals` — inventory management, usage reports by technician/job/chemical, expiring certifications dashboard with 30/60/90-day alerts, EPA reporting format export CSV (~2h)
+- [ ] PDF chemical usage report — per-job report showing chemicals applied, safety data, reentry intervals, applicator info. Required by many states for pest control customer disclosure (~1h)
+- [ ] Commit: `[CHEM1] Chemical compliance tracking — chemical_applications + chemical_inventory + technician_certifications tables, 50+ chemical seed data, refrigerant Section 608, barcode scan, cert expiry alerts, EPA reporting`
+
+### DRAW1 — Draw Schedule & Milestone Payment Management (~16h) — S135
+*GCs, pool builders, solar installers, remodelers run multi-phase projects with staged payments (draws). A $200K kitchen remodel = 5-7 draws. Lenders require draw inspections before releasing funds. This is how contractors get paid on large projects — without it, they can't manage cash flow on anything over $25K.*
+
+- [ ] Create `draw_schedules` table (id, company_id, job_id, name, total_contract_amount, total_draws, retainage_pct, lender_name, lender_contact, lender_requirements jsonb, status, created_at, updated_at, deleted_at) with RLS + audit trigger (~2h)
+- [ ] Create `draw_items` table (id, draw_schedule_id, draw_number, phase_name, description, amount, percentage_of_total, prerequisite_tasks jsonb, required_inspections jsonb, lien_waiver_required boolean, status, requested_at, approved_at, paid_at, paid_amount, notes, photos uuid[], inspector_name, inspection_date) with RLS (~2h)
+- [ ] Draw request workflow — status machine: draft → requested → under_review → approved → funded → paid. Contractor requests draw → system generates draw request PDF (scope completed, photos, lien waiver) → owner/lender reviews → approves/requests changes → payment recorded (~3h)
+- [ ] Lien waiver generation — auto-generate conditional waiver on draw request, unconditional after payment. State-specific templates (JUR phase populates, placeholder structure now) (~2h)
+- [ ] Flutter: Draw Schedule screen — visual progress bar per phase, request draw button (attach completion photos), payment tracker showing received vs outstanding, retainage balance (~2h)
+- [ ] Web Portal: `/dashboard/draw-schedules` — create from estimate phases, manage requests, track payments, retainage tracking, lender communication log (~2h)
+- [ ] Client Portal: homeowner/lender view — draw progress, approve/decline draw requests, view completion photos, download lien waivers (~2h)
+- [ ] GC Schedule integration — auto-link draw milestones to `schedule_tasks` (existing Phase GC). Draw becomes requestable when linked tasks hit 100% completion (~1h)
+- [ ] Commit: `[DRAW1] Draw schedule + milestone payments — draw_schedules + draw_items tables, request-approve-fund workflow, lien waiver generation, retainage tracking, Flutter/CRM/client portal views, GC schedule integration`
+
+### SEL1 — Client Selections Management Portal (~12h) — S135
+*Remodelers, GCs, interior-adjacent trades need clients to choose finishes (countertops, tile, fixtures, paint, flooring, appliances, hardware). Selections delayed = project delayed. BuilderTrend/CoConstruct charge $99-399/mo for this alone. This is the #1 communication bottleneck on remodeling projects.*
+
+- [ ] Create `selection_categories` table (id, company_id, job_id, category_name, room, sort_order, deadline, allowance_amount, status, assigned_to, notes, created_at, updated_at) with RLS + audit trigger (~1h)
+- [ ] Create `selection_options` table (id, category_id, option_name, supplier, sku, unit_price, description, image_url, specification_url, lead_time_days, in_budget boolean, upgrade_cost, status, selected_at, selected_by) with RLS (~1h)
+- [ ] Selection workflow — contractor creates categories per room → adds 3-5 options with photos/prices → sets deadline and allowance → client portal shows options → client picks → selection locks → auto-updates estimate line item with actual price (~3h)
+- [ ] Allowance tracking — budget allowance per category, client sees remaining vs selected cost, upgrade/downgrade difference displayed. Overage auto-generates change order via existing change_orders table (~2h)
+- [ ] Flutter: Selections overview per job — categories with status badges (pending/selected/ordered/installed), deadline warnings, client comment thread per category (~2h)
+- [ ] Web Portal: `/dashboard/selections` — create selection boards per job, drag-drop images, set allowances, track all jobs' selection status, overdue alerts, supplier contact info (~2h)
+- [ ] Client Portal: visual selection board — side-by-side option comparison with photos/specs/price, one-tap select, running total vs budget, deadline countdown, comment per selection (~2h)
+- [ ] Estimate integration — selected option price auto-replaces allowance line item in estimate. If upgrade exceeds allowance, auto-creates change order with client approval flow (~1h)
+- [ ] Commit: `[SEL1] Client selections portal — selection_categories + selection_options tables, allowance tracking, change order auto-generation, Flutter/CRM/client portal views, estimate integration`
+
+### REALTOR OPERATIONS (2 sprints, ~36h)
+
+### TC1 — Transaction Coordinator Module (~24h) — S135
+*TCs manage 200+ step checklists from contract-to-close, handling 15-30 concurrent transactions. SkySlope ($30/txn), Dotloop ($31.99/mo), Brokermint ($99/mo), ListedKit ($29/mo). Without TC1, the TC role (1 of 22 realtor types, ~100K TCs in the US) cannot use Zafto at all. This is a complete adoption blocker.*
+
+- [ ] Create `transaction_checklists` table (id, company_id, transaction_id, template_id, checklist_name, transaction_type, total_steps, completed_steps, status, assigned_tc, due_date, closing_date, created_at, updated_at, deleted_at) with RLS + audit trigger (~2h)
+- [ ] Create `transaction_steps` table (id, checklist_id, step_number, step_name, description, category, responsible_party, due_date, due_relative_days, due_relative_to, completed boolean, completed_at, completed_by, document_required boolean, document_id, notes, reminder_sent boolean, auto_action jsonb) with RLS (~2h)
+- [ ] Create `transaction_templates` table (id, company_id, name, transaction_type, state, steps jsonb, step_count, is_default boolean, created_by) with RLS (~1h)
+- [ ] Seed 8 transaction templates with full step lists (~6h):
+  - [ ] Buyer-side residential: ~85 steps (accepted offer → inspection → appraisal → title → closing)
+  - [ ] Seller-side residential: ~75 steps (listing agreement → staging → showings → offers → closing)
+  - [ ] Dual agency: ~95 steps (combined buyer+seller with conflict checkpoint gates)
+  - [ ] New construction: ~60 steps (builder milestones, CO tracking, punch list, warranty)
+  - [ ] Commercial: ~45 steps (LOI, due diligence, environmental, zoning, tenant estoppels)
+  - [ ] Short sale: ~50 steps (bank negotiation, BPO, approval letters, extended timelines)
+  - [ ] REO/Foreclosure: ~40 steps (asset manager, addenda, title clearing, as-is disclosure)
+  - [ ] Lease/Rental: ~30 steps (application, screening, lease execution, move-in inspection)
+- [ ] Domino auto-progression — completing step auto-triggers next steps' due dates (relative dating). Configurable dependencies between steps. Critical path highlighting (~3h)
+- [ ] Document management per step — attach required documents (contracts, disclosures, inspection reports, appraisal, title commitment). Link to existing `documents` storage bucket (~2h)
+- [ ] Web Portal: `/dashboard/transactions` — Kanban board (under contract / inspection period / appraisal / title / closing / closed), pipeline view, step completion %, overdue alerts, bulk TC workspace for managing 15-30 concurrent transactions (~4h)
+- [ ] Milestone notifications — auto-notify agents/clients at key milestones (inspection deadline, appraisal ordered, clear to close, closing date). FCM + email + SMS options via existing SignalWire (~2h)
+- [ ] TC performance metrics — avg days-to-close, on-time completion rate, transactions/month, step bottleneck analysis, revenue per transaction (~1h)
+- [ ] Commit: `[TC1] Transaction coordinator module — 3 tables, 8 seeded templates (480+ steps), domino auto-progression, document per step, Kanban pipeline, milestone notifications, TC metrics`
+
+### SHOW1 — Showing Management & Feedback Collection (~12h) — S135
+*Buyer's agents and showing assistants schedule 5-15 showings/day. ShowingTime (Zillow-owned, $400+/mo teams) dominates. Every showing: schedule with listing agent, route optimize, client feedback, auto-follow-up. Without SHOW1, buyer's agents can't manage their core daily workflow.*
+
+- [ ] Create `showings` table (id, company_id, property_id, listing_id, listing_agent_id, buyer_agent_id, buyer_client_id, showing_date, start_time, end_time, status, showing_type, access_instructions, lockbox_code, confirmation_required boolean, confirmed_at, feedback_requested boolean, drive_time_minutes, notes, cancelled_reason, created_at, updated_at) with RLS + audit trigger (~2h)
+- [ ] Create `showing_feedback` table (id, showing_id, submitted_by, overall_rating, price_opinion, condition_rating, location_rating, would_recommend boolean, likelihood_to_offer, pros text[], cons text[], agent_private_notes, client_visible boolean, submitted_at) with RLS (~1h)
+- [ ] Showing request workflow — buyer's agent requests → listing agent notified → confirms/suggests alternative → auto-add to calendar → post-showing feedback request sent to buyer (~2h)
+- [ ] Day-of-showings route — group day's showings, optimize drive order (reuse ROUTE1 logic if built, else nearest-neighbor), generate turn-by-turn schedule with buffer time between stops (~2h)
+- [ ] Flutter: Showing day view — today's route on Mapbox map, property details per stop, one-tap directions, check-in button, quick feedback form after each showing (~2h)
+- [ ] Client feedback collection — after showing, buyer gets push notification to rate property (1-5 stars, pros/cons checkboxes, "would you offer?" toggle). Auto-aggregates across all shown properties for comparison view (~1h)
+- [ ] Web Portal: `/dashboard/showings` — calendar view, request new showing, view/respond to requests, feedback summary per property, analytics (shows-to-offer ratio, avg scores, days on market correlation) (~2h)
+- [ ] Listing agent side — receive/approve showing requests, set showing instructions per listing, view buyer agent feedback (with permission), showing traffic analytics per listing (~1h)
+- [ ] Commit: `[SHOW1] Showing management — showings + showing_feedback tables, request-confirm workflow, route optimization, Flutter day view, client feedback, CRM calendar, listing agent analytics`
+
+### ADJUSTER OPERATIONS (2 sprints, ~24h)
+
+### ADJ-CONT — Contents Inventory Module for Property Claims (~16h) — S135
+*Fire, water, or theft damages personal property → adjuster inventories every item (often 200-2,000+ per claim). Each item: description, age, purchase price, replacement cost, depreciation, condition, photo. Most tedious part of adjusting. Xactimate Contents costs extra. No free alternative exists. This is a daily workflow for every property adjuster.*
+
+- [ ] Create `contents_claims` table (id, company_id, job_id, property_id, claim_number, total_items, total_rcv, total_acv, total_depreciation, status, room_count, inventory_method, created_by, created_at, updated_at, deleted_at) with RLS + audit trigger (~2h)
+- [ ] Create `contents_items` table (id, contents_claim_id, room, item_number, category, item_description, brand, model, age_years, condition_at_loss, purchase_price, replacement_source, replacement_cost_rcv, useful_life_years, depreciation_pct, depreciation_amount, actual_cash_value, quantity, photo_urls text[], is_antique boolean, is_matching_set boolean, set_name, notes, status, salvageable boolean, created_at) with RLS (~2h)
+- [ ] Seed contents depreciation schedules — 500+ common household items with useful life + depreciation rate (~3h):
+  - [ ] Electronics (TV, computer, phone, gaming) — 5-10yr useful life
+  - [ ] Furniture (sofa, bed, table, chair, desk) — 10-15yr
+  - [ ] Appliances (washer, dryer, fridge, dishwasher, microwave, oven) — 8-15yr
+  - [ ] Clothing (casual, formal, outerwear, shoes, accessories) — 3-5yr
+  - [ ] Kitchen (cookware, dishes, utensils, small appliances, cutlery) — 5-10yr
+  - [ ] Bathroom (towels, fixtures, accessories, medicine cabinet contents) — 3-7yr
+  - [ ] Outdoor (grill, patio furniture, tools, lawn equipment, garden) — 5-15yr
+  - [ ] Sporting goods, musical instruments, art/collectibles, children's items, books/media
+- [ ] Room-by-room inventory flow — select room → add items → photo each → auto-calculate depreciation from age + useful life → running totals per room and grand total. Quick-add with barcode scan for electronics/appliances (~3h)
+- [ ] Replacement cost research — manual entry with source URL for "like kind and quality" documentation. Price comparison helper (~1h)
+- [ ] Flutter: Contents Inventory screens — room list, item list per room, add/edit item form with photo capture, running RCV/ACV totals, search/filter/sort by value or room (~3h)
+- [ ] Web Portal: `/dashboard/contents-inventory` — spreadsheet-like view for office data entry, CSV/Excel import for bulk items, bulk depreciation recalculation, category summary charts (~2h)
+- [ ] Contents inventory PDF report — room-by-room listing with photos, RCV/ACV columns, depreciation calculations, grand totals, formatted for carrier submission (~2h)
+- [ ] Commit: `[ADJ-CONT] Contents inventory — contents_claims + contents_items tables, 500+ item depreciation schedule, room-by-room flow, photo-per-item, RCV/ACV auto-calc, CSV import, PDF carrier submission report`
+
+### ADJ-AUTH — Authority Limit & Approval Chain Workflow (~8h) — S135
+*Every carrier sets dollar limits per adjuster level. Field adjuster: approve up to $25K. Senior: $100K. Manager: $500K. Exceeding authority = discipline or termination. This is a daily compliance requirement. No existing tool handles this cleanly — adjusters track limits on sticky notes.*
+
+- [ ] Create `authority_levels` table (id, company_id, role_name, max_claim_amount, max_reserve_amount, max_payment_amount, requires_supervisor boolean, supervisor_role, auto_escalate_at, special_permissions jsonb, created_at, updated_at) with RLS + audit trigger (~1h)
+- [ ] Create `approval_requests` table (id, company_id, claim_id, requested_by, requested_amount, authority_exceeded_by, request_type, justification, supporting_docs uuid[], status, reviewed_by, reviewed_at, reviewer_notes, created_at) with RLS (~1h)
+- [ ] Seed default authority levels — trainee ($10K), field adjuster ($25K), senior adjuster ($100K), examiner ($250K), manager ($500K), director (unlimited). Configurable per company via CUST1 settings cascade (~1h)
+- [ ] Authority validation triggers — PostgreSQL trigger on estimate/payment INSERT/UPDATE checks user's authority level against amount. If exceeded, blocks action and auto-creates approval_request with notification to supervisor (~2h)
+- [ ] Approval workflow — supervisor sees queue of pending approvals with full claim context (photos, estimate, notes). Approve/deny/modify amount/request more info. Full audit trail (~2h)
+- [ ] Web Portal: `/dashboard/authority-levels` (admin) — configure levels per role. `/dashboard/approvals` (supervisor) — approval queue with claim preview, approval history, avg response time metrics (~2h)
+- [ ] Flutter: authority limit indicator on claim screen — shows current user's remaining authority, escalation button for voluntary escalation, approval status badges, push notification on approval/denial (~1h)
+- [ ] Commit: `[ADJ-AUTH] Authority limit workflow — authority_levels + approval_requests tables, PostgreSQL validation triggers, auto-escalation, supervisor approval queue, audit trail, configurable per company`
+
+### INSPECTOR OPERATIONS (6 sprints, ~68h)
+
+### INS-PHOTO — Inline Photo Capture & Annotation Per Checklist Item (~16h) — S135
+*THE #1 missing inspector feature. Every deficiency needs a photo. Every photo needs annotations (arrows, circles, text). Spectora, HomeGauge, HouseMaster all have this. Without INS-PHOTO, no inspector can use Zafto as primary tool — COMPLETE DEALBREAKER.*
+
+- [ ] Modify `inspection_items` table — add `photos jsonb[]` field (each entry: storage_path, caption, annotations jsonb, taken_at, gps_lat, gps_lng, thumbnail_path) + migration (~1h)
+- [ ] Annotation schema — circle (cx, cy, radius, color, stroke_width), arrow (x1, y1, x2, y2, color, stroke_width), text_callout (x, y, text, font_size, color, bg_color), rectangle (x, y, w, h, color, stroke_width), freehand (points[], color, stroke_width) (~1h)
+- [ ] Flutter: Camera integration per checklist item — tap camera icon on item → capture photo → auto-associate with item → photo count badge. Multiple photos per item. Gallery view per item (~3h)
+- [ ] Flutter: Photo annotation editor — draw arrows, circles, rectangles, add text callouts, freehand draw, color picker (red/yellow/blue/white/black), stroke width, undo/redo stack. Annotations saved as JSON overlay on original image (~4h)
+- [ ] Before/after photo pairing — for reinspections, auto-match original deficiency photo alongside current photo by item ID. Side-by-side comparison view (~1h)
+- [ ] Photo gallery per inspection — all photos organized by section/room, swipe through, full-screen pinch-to-zoom, share individual or batch export (~1h)
+- [ ] PDF report integration — annotated photos auto-embed next to their checklist items in generated PDF. Photo captions as figure labels. Max 2 photos per row for readability. Wire into existing INS5 PDF generation (~3h)
+- [ ] Bulk photo operations — multi-select, bulk delete, bulk reassign to different item, bulk add same annotation label (~1h)
+- [ ] Storage optimization — compress to 1200px max dimension before upload (Supabase storage), preserve EXIF (GPS, timestamp), auto-generate 300px thumbnails for list views (~1h)
+- [ ] Commit: `[INS-PHOTO] Inline photo capture + annotation — per-item photos, arrow/circle/text annotation editor, before/after pairing, PDF embed, bulk ops, storage optimization`
+
+### INS-VOICE — Voice-to-Text Field Notes (~8h) — S135
+*Inspectors climb roofs, crawl through attics, stand in crawl spaces — typing is not viable. Voice-to-text with per-item attachment is essential. Uses device-native speech recognition (free, offline-capable). No API cost.*
+
+- [ ] Integrate Flutter `speech_to_text` package — device-native recognition, offline-capable on iOS 17+ and Android 13+. Free, no API key needed (~1h)
+- [ ] Per-item voice note — tap mic icon on checklist item → record → real-time transcription display → text populates item notes field. Edit transcription before saving. Save original audio to Supabase storage (~2h)
+- [ ] Continuous dictation mode — inspector talks while walking. "Next item" voice command or tap advances to next checklist item. Transcribed text auto-fills each item's notes field sequentially (~2h)
+- [ ] Voice-to-deficiency — recognize patterns: "deficiency [description] severity [level]" → auto-create deficiency entry with parsed description and severity level. Common phrase templates (~1h)
+- [ ] Web Portal: voice note playback — play original audio recording alongside transcribed text on inspection detail page. Click-to-edit transcription for office review (~1h)
+- [ ] Multi-language — device-native speech recognition supports all top 10 Zafto languages (EN, ES, PT-BR, PL, ZH, HT, RU, KO, VI, TL) natively (~1h)
+- [ ] Commit: `[INS-VOICE] Voice-to-text field notes — speech_to_text package (free/offline), per-item recording + transcription, continuous dictation mode, voice-to-deficiency, multi-language, web playback`
+
+### INS-TMPL — Inspector Template Builder UI (~16h) — S135
+*Zafto ships 25 templates (1,147 items, 173 sections) but commercial, specialty, and environmental inspectors need custom checklists. State-mandated forms (TX REI 7-6, FL 4-point, NPMA-33) have specific layouts. Without a template builder, Zafto is limited to only pre-built types — blocking adoption by specialty inspectors.*
+
+- [ ] Template builder screen — create from scratch or duplicate existing template. Set name, type, default scoring weights, estimated duration, pricing tier link (~2h)
+- [ ] Section management — add/remove/reorder sections via drag-drop. Each section: name, description, icon, default_expanded boolean, is_required boolean (~2h)
+- [ ] Item management per section — add/remove/reorder items within sections. Each item: name, description, rating_type (pass/fail, 1-5 scale, good/fair/poor/deficient, N/A), scoring_weight, is_required, default_notes, reference_code, photo_required boolean, photo_min_count (~3h)
+- [ ] Conditional logic engine — IF [item] [is/is_not/greater_than/less_than] [value] THEN [show/hide/require] [items/sections]. Visual condition builder with preview (~3h)
+- [ ] State form compliance mode — toggle locks template structure to match state-mandated form (items can't be reordered/removed, only notes editable). Pre-configured: TX REI 7-6, FL 4-point, NPMA-33, FL wind mitigation, NY home inspection (~2h)
+- [ ] Template versioning — editing published template creates new version. In-progress inspections keep their version. Version history with diff view (~1h)
+- [ ] Import/export — JSON export for backup/sharing. CSV import for bulk item creation from spreadsheets. Template validation on import (~1h)
+- [ ] Template sharing (stub) — flag template as "shareable", browseable by other Zafto inspectors by type/rating/downloads. Full marketplace in INTEG5, schema here (~2h)
+- [ ] Commit: `[INS-TMPL] Template builder — create/edit/duplicate, drag-drop sections/items, conditional logic engine, state form compliance mode, versioning, JSON/CSV import/export, sharing stub`
+
+### INS-BOOK — Agent Booking Portal for Inspector Scheduling (~12h) — S135
+*80% of residential inspections come from realtor referrals. Spectora's #1 feature = agent-facing booking. Inspectors who can't receive agent bookings lose 80% of their business. This IS the inspector's primary sales channel.*
+
+- [ ] Create `inspector_booking_profiles` table (id, company_id, inspector_id, public_url_slug, display_name, bio, photo_url, service_area_zip_codes text[], services_offered jsonb, pricing jsonb, availability_rules jsonb, min_notice_hours, max_advance_days, buffer_minutes, auto_confirm boolean, cancellation_policy, license_number, certifications text[], avg_rating, review_count, created_at, updated_at) with RLS (~2h)
+- [ ] Create `booking_requests` table (id, inspector_id, agent_id, agent_name, agent_email, agent_phone, agent_company, property_address, property_type, sqft, year_built, requested_services text[], preferred_dates jsonb, selected_date, selected_time, status, total_price, special_instructions, access_instructions, created_at, updated_at) with RLS + audit trigger (~2h)
+- [ ] Public booking page — shareable URL (zafto.cloud/inspect/[slug]) showing inspector profile, services with pricing, real-time availability calendar, online booking form. No login required for agents (~3h)
+- [ ] Availability engine — inspector sets weekly hours + blocked dates + service area ZIPs. System calculates available slots from existing inspections + drive time buffer. Real-time updates as bookings arrive (~2h)
+- [ ] Agent CRM mini-feature — inspectors track referring agents: name, company, booking count, total revenue generated, last booking date. Top referrer leaderboard. Auto thank-you email after 5th booking (~1h)
+- [ ] Booking notifications — instant push + SMS + email to inspector on new booking. Confirmation to agent with inspection details, access instructions form, what-to-expect guide (~1h)
+- [ ] Team Portal: inspector incoming bookings view — confirm/reschedule/decline, agent history, weekly booking calendar (~1h)
+- [ ] Commit: `[INS-BOOK] Agent booking portal — inspector_booking_profiles + booking_requests tables, public booking URL, real-time availability, agent CRM tracking, notifications, team portal view`
+
+### INS-CRL — Create Request List from Inspection Report (~8h) — S135
+*After inspection, buyer's agent creates "repair request list" from findings. Spectora's most-loved feature. Inspectors who provide this create massive value for referring agents (see INS-BOOK flywheel). The request list becomes the negotiation document between buyer and seller.*
+
+- [ ] Create `repair_request_lists` table (id, company_id, inspection_id, created_by, title, property_address, buyer_name, seller_name, buyer_agent, seller_agent, status, total_items, estimated_total_cost, notes, created_at, updated_at, deleted_at) with RLS + audit trigger (~1h)
+- [ ] Create `repair_request_items` table (id, request_list_id, inspection_item_id, deficiency_id, description, location, severity, estimated_repair_cost, request_type, contractor_recommendation, photo_urls text[], included boolean, buyer_priority, seller_response, seller_notes, resolution, resolved_at) with RLS (~1h)
+- [ ] Auto-generate from inspection — one-click creates request list from all deficiencies with severity >= configurable threshold. Pre-populates description, location, photos from inspection data (~2h)
+- [ ] Selective inclusion — agent toggles which items to include/exclude (not all worth negotiating). Drag-to-reorder by priority. Manual cost estimate per item (or pull from Zafto estimate engine if available) (~1h)
+- [ ] Request types per item — "repair before closing", "credit at closing", "home warranty coverage", "seller responsibility", "informational only" — dropdown per item (~0.5h)
+- [ ] PDF export — professional repair request document: property info header, itemized list with photos and cost estimates, request type per item, grand total, signature lines. Branded with inspector logo (~2h)
+- [ ] Sharing workflow — inspector shares with buyer's agent via email/link. Agent forwards to listing agent. Status tracking: draft → sent → viewed → responded. Seller responds per-item (agree/counter/decline) (~1.5h)
+- [ ] Commit: `[INS-CRL] Create Request List — repair_request_lists + repair_request_items tables, auto-generate from deficiencies, selective inclusion, 5 request types, branded PDF, sharing with per-item seller response`
+
+### INS-PACK — Multi-Inspection Bundled Packaging & Pricing (~8h) — S135
+*"Home inspection + radon + mold + WDI" as one appointment at bundled price = standard practice. Bundling increases avg ticket from $350 to $600+. Every competitor supports packages. Without this, inspectors leave revenue on the table and clients book piecemeal elsewhere.*
+
+- [ ] Create `service_packages` table (id, company_id, package_name, description, included_services jsonb, individual_total, package_price, discount_pct, estimated_duration_minutes, is_active boolean, display_order, booking_count, created_at, updated_at) with RLS + audit trigger (~1h)
+- [ ] Create `service_catalog` table (id, company_id, service_name, service_type, base_price, price_per_sqft, sqft_tiers jsonb, estimated_duration_minutes, requires_certification text[], description, template_id, is_addon boolean, is_active boolean) with RLS (~1h)
+- [ ] Package builder UI — inspector creates packages from service catalog. Auto-calculates bundle discount vs individual. Preview card showing "Save $X" messaging. Min/max services per package (~1h)
+- [ ] Dynamic pricing engine — base price + per-sqft tiers (e.g., $350 base + $0.10/sqft over 2,000sqft). Property age adjustment (pre-1980 +$50 lead/asbestos). Package price auto-recalculates when property details entered on booking form (~2h)
+- [ ] INS-BOOK integration — booking form shows service catalog + packages. Client selects services or package → price auto-calculates → all selected types added to single appointment slot. Bundle savings highlighted prominently (~1h)
+- [ ] Multi-type inspection execution — single appointment generates one checklist per service type (home, radon, mold, WDI). Inspector completes each. Single unified report OR separate reports per service (configurable per company) (~2h)
+- [ ] Revenue analytics — package vs a-la-carte revenue breakdown, avg ticket by service combination, most popular packages, upsell conversion rate, revenue per inspection hour (~1h)
+- [ ] Commit: `[INS-PACK] Multi-inspection packaging — service_packages + service_catalog tables, dynamic sqft pricing, age adjustments, bundle discounts, INS-BOOK integration, multi-checklist execution, revenue analytics`
+
+### HOMEOWNER OPERATIONS (2 sprints, ~28h)
+
+### HO-FIX — "Fix It For Me" Concierge Flow (~12h) — S135
+*Hands-off homeowners, elderly, vacation home owners, disaster survivors need: "Something's broken → someone fixes it → I pay." No searching, no comparing, no scheduling headaches. This is the HomeAdvisor/Thumbtack killer — but in-platform with vetted Zafto contractors, transparent pricing, and complete maintenance history.*
+
+- [ ] Create `fix_requests` table (id, company_id, homeowner_id, property_id, category, subcategory, description, urgency, photos uuid[], preferred_dates jsonb, budget_range, matched_contractor_id, matched_at, status, quoted_price, approved_at, job_id, completed_at, rating, feedback, created_at, updated_at, deleted_at) with RLS + audit trigger (~2h)
+- [ ] Problem description wizard — 3 steps: (1) category picker with icons (plumbing/electrical/HVAC/roofing/appliance/painting/general/other), (2) sub-category (e.g., plumbing → leak/clog/install/water heater/sewer), (3) free-text description + photo upload + urgency (routine/soon/urgent/emergency) (~2h)
+- [ ] Contractor matching algorithm — match to Zafto contractors in service area by: trade match, availability, avg rating, distance, response time history, price competitiveness. Send to top 3 simultaneously. First to accept wins. Fallback: expand radius after 2hr no response (~3h)
+- [ ] Quote-to-approval flow — matched contractor views request details + photos, sends quote (via Zafto estimate engine or quick-quote), homeowner reviews in client portal, approves with one tap → job auto-created + scheduled in contractor's calendar (~2h)
+- [ ] Client Portal: prominent "Fix Something" button on dashboard. Request history with visual status pipeline (submitted → matching → quoted → approved → scheduled → in-progress → completed → rated). Push + SMS notifications at each stage (~2h)
+- [ ] Post-completion rating — homeowner rates contractor (1-5 stars) + text feedback. Rating feeds into contractor's marketplace profile + matching algorithm weight. Negative rating triggers follow-up (~1h)
+- [ ] Emergency mode — "urgent"/"emergency" bypasses normal matching, broadcasts to ALL available contractors in area. Emergency surcharge option configurable by contractor for after-hours work (~1h)
+- [ ] Commit: `[HO-FIX] Fix-it concierge — fix_requests table, 3-step problem wizard, contractor matching algorithm, quote-to-approval flow, client portal pipeline view, rating system, emergency broadcast mode`
+
+### HO-LAND — Landlord Portfolio Analytics Dashboard (~16h) — S135
+*Portfolio landlords (6-50 properties) pay $149-499/mo for management tools. Stessa/Baselane/RentRedi charge $12-40/mo but lack contractor integration. Zafto's advantage: contractor job data flows directly into property financials. This is the highest-value homeowner segment.*
+
+- [ ] Create `portfolio_properties` table (id, company_id, homeowner_id, property_id, acquisition_date, purchase_price, closing_costs, rehab_cost, current_value, value_source, mortgage_balance, mortgage_rate, mortgage_payment, insurance_annual, property_tax_annual, hoa_monthly, management_fee_pct, vacancy_rate_pct, monthly_rent, lease_start, lease_end, tenant_name, tenant_email, tenant_phone, status, unit_count, notes, created_at, updated_at, deleted_at) with RLS + audit trigger (~2h)
+- [ ] Portfolio-level KPIs — auto-calculated, per-property + portfolio totals (~4h):
+  - [ ] NOI (Net Operating Income) = gross rent - operating expenses
+  - [ ] Cap Rate = NOI / current value
+  - [ ] Cash-on-Cash Return = annual pre-tax cash flow / total cash invested
+  - [ ] DSCR (Debt Service Coverage Ratio) = NOI / annual debt service
+  - [ ] GRM (Gross Rent Multiplier) = purchase price / annual gross rent
+  - [ ] Equity position = current value - mortgage balance
+  - [ ] Monthly cash flow = rent - mortgage - insurance - tax - HOA - management - avg maintenance
+  - [ ] Total portfolio value, total equity, total monthly cash flow, weighted avg cap rate
+- [ ] Maintenance cost integration — auto-pull completed Zafto job costs into property expense tracking. Category breakdown (plumbing/electrical/HVAC/roof/general/other) per property per month/year. This is the killer feature no competitor has (~2h)
+- [ ] Vacancy tracking — mark units vacant/occupied, track vacancy days, calculate actual vs projected vacancy rate, lost rent counter, turn cost tracking per vacancy (~1h)
+- [ ] Client Portal: Portfolio dashboard — property cards with key KPIs (color-coded: green/yellow/red), portfolio summary header bar, trend charts (equity growth, cash flow, NOI over 12mo), maintenance spend heatmap by category, upcoming lease expirations, vacancy alerts (~4h)
+- [ ] Tax preparation export — annual income/expense per property. Categories aligned with IRS Schedule E (rental income, mortgage interest, repairs, depreciation, insurance, property tax, management fees, utilities, travel). CSV export for CPA (~2h)
+- [ ] Rent comparison — current rent vs HUD Fair Market Rent + Census ACS median for ZIP. "Below market" / "at market" / "above market" indicator with suggested increase amount and % (~1h)
+- [ ] Commit: `[HO-LAND] Landlord portfolio analytics — portfolio_properties table, 8 KPIs (NOI/cap rate/CoC/DSCR/GRM/equity/cash flow), Zafto maintenance cost integration, vacancy tracking, Schedule E tax export, rent comparison`
+
+---
+
+## S135 MERGE TOTALS
+
+| Sprint Group | Sprint Count | Total Hours |
+|---|---|---|
+| Contractor Operations (ROUTE1, CHEM1, DRAW1, SEL1) | 4 | ~56h |
+| Realtor Operations (TC1, SHOW1) | 2 | ~36h |
+| Adjuster Operations (ADJ-CONT, ADJ-AUTH) | 2 | ~24h |
+| Inspector Operations (INS-PHOTO, INS-VOICE, INS-TMPL, INS-BOOK, INS-CRL, INS-PACK) | 6 | ~68h |
+| Homeowner Operations (HO-FIX, HO-LAND) | 2 | ~28h |
+| **TOTAL S135 MERGE** | **16 sprints** | **~212h** |
+
+**New Tables (estimated):** ~30 across all sprint groups.
+
+**Execution order for S135 sprints:**
+- ROUTE1 (during DEPTH phase, after DEPTH39) — contractor core workflow
+- CHEM1 (during DEPTH phase, near NICHE sprints) — compliance critical
+- DRAW1 (during DEPTH phase, near U-phase wiring) — ties to GC schedule + payments
+- SEL1 (during DEPTH phase, after DRAW1) — ties to estimates + change orders
+- INS-PHOTO (IMMEDIATELY after DEPTH phase — adoption blocker) — inspector dealbreaker
+- INS-VOICE (after INS-PHOTO) — field usability
+- INS-TMPL (after INS-VOICE) — specialty inspector adoption
+- INS-BOOK (after INS-TMPL) — sales channel
+- INS-CRL (after INS-BOOK) — agent value creation
+- INS-PACK (after INS-CRL) — revenue optimization
+- ADJ-CONT (during adjuster onboarding prep) — claims workflow
+- ADJ-AUTH (after ADJ-CONT) — compliance
+- TC1 (after RE1-RE20) — TC role adoption blocker
+- SHOW1 (after TC1) — buyer agent daily workflow
+- HO-FIX (after CLIENT1-17) — concierge flow needs marketplace
+- HO-LAND (after HO-FIX) — portfolio analytics needs property data
+
+---
+
 ## PHASE AUDIT SUMMARY: FULL DEPTH PLAN (S125)
 
 **Purpose:** Complete re-audit of all features across all 5 apps. Gap phases build missing features. DEPTH phases audit and correct shallow/stub implementations. This is the quality gate before Phase G (QA) and Phase JUR (Jurisdiction).
@@ -16030,7 +16305,8 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 | **INTEG** | INTEG1-INTEG8 | ~312h | INTEG1: National portal submission API (~12h). **S132 Ecosystem Audit additions (7 new sprints, ~300h):** INTEG2: Engine-to-engine wiring — VIZ↔SK, VIZ→Estimate, Trade Tools→Estimate, table collisions, material unification (~48h). INTEG3: Client portal activation — estimate approval, invoice payment, VIZ 3D viewer, Recon intel, restoration progress, customer bridge (~56h). INTEG4: Weather engine — NOAA scheduling overlay, dispatch weather layer, field tools context, shared storm processor (~40h). INTEG5: Three-sided marketplace — job completion effects, realtor dispatch with VIZ/SK, post-close onboarding, reputation matching, seller leads (~52h). INTEG6: Dedup fixes — RE26/CLIENT3, FLIP2/RE3, storm data unification (~24h). INTEG7: Calculator bridge — 1,139 calcs → estimate + sketch + permit connections (~40h). INTEG8: Free API enrichment — BLS/PPI, FEMA, EPA, ENERGY STAR, Rewiring America, Census (~40h) |
 | **FLIP** | FLIP1-FLIP6 | ~92h | Flip-It analysis engine: deal aggregation (7 sources), ARV engine (appraisal-grade), full financial model + profit degradation timeline, hard money lender directory (~100+), deal distribution (BP/Craigslist/FB/REIA), **deal packaging (PDF/DOCX/XLSX/PPTX/shareable link)**, AI photo analysis (Claude Opus 4.6 condition assessment, selective scope, customizable pricing, premium deep assessment: recon + 2D sketch + LiDAR 3D), **Reality Engine (true net P&L with full cost waterfall + tax calculator, risk intelligence: 50% rule alert + code cascade predictor + contingency auto-set + over-improvement warning, deal qualification: 3 exit strategies + opportunity cost + market health + tariff adjustment)** |
 | **JUR4** | JUR4 | ~14h | Realtor jurisdiction awareness — 50-state disclosures, agency rules (dual agency legality), attorney states, commission regulations, license reciprocity, document retention. Wires into Transaction Engine, Commission Engine, Brokerage Admin, Lead Gen |
-| **Total** | **~116 sprints** | **~2,132h** | S130 audit additions: +FIELD5 (~10h), REST/NICHE infrastructure beefed up (+24h), LAUNCH8 (~12h), LAUNCH9 (~10h), Sign in with Apple + AAB + hour corrections. **S132 ecosystem audit: +7 INTEG sprints (~300h) — engine wiring, client portal activation, weather engine, marketplace wiring, dedup fixes, calculator bridge, free API enrichment.** Realistic estimate with corrections: **~2,400h**. Note: S132 also produced ~42 sprints in masterfile (RE21-30, CUST1-8, CLIENT1-17, ~898h) + MOV1-8 (~200h) not yet in this table — see `memory/s132-xactimate-strategy-master.md` for full specs |
+| **S135-ENTITY** | ROUTE1, CHEM1, DRAW1, SEL1, TC1, SHOW1, ADJ-CONT, ADJ-AUTH, INS-PHOTO, INS-VOICE, INS-TMPL, INS-BOOK, INS-CRL, INS-PACK, HO-FIX, HO-LAND | ~212h | **S135 Entity Workflow Gaps (16 sprints).** Route optimization (service trades), chemical compliance (EPA/HVAC), draw schedules (GC/solar), client selections (remodelers), TC module (200+ step checklists), showing management (buyer agents), contents inventory (adjusters), authority limits (adjusters), inline photo+annotation (inspectors — DEALBREAKER), voice-to-text (inspectors), template builder (specialty inspectors), agent booking portal (inspector sales channel), repair request list (Spectora killer), multi-inspection packaging (bundled pricing), fix-it concierge (homeowners), landlord portfolio analytics (NOI/cap rate/DSCR). ~30 new tables. |
+| **Total** | **~132 sprints** | **~2,344h** | S130 audit additions: +FIELD5 (~10h), REST/NICHE infrastructure beefed up (+24h), LAUNCH8 (~12h), LAUNCH9 (~10h), Sign in with Apple + AAB + hour corrections. **S132 ecosystem audit: +7 INTEG sprints (~300h) — engine wiring, client portal activation, weather engine, marketplace wiring, dedup fixes, calculator bridge, free API enrichment.** **S135: +16 entity workflow gap sprints (~212h).** Realistic estimate with corrections: **~2,600h**. Note: S132 also produced ~42 sprints in masterfile (RE21-30, CUST1-8, CLIENT1-17, ~898h) + MOV1-8 (~200h) not yet in this table — see `memory/s132-xactimate-strategy-master.md` for full specs |
 
 **Execution order (S132 ecosystem audit-updated):** SEC1 + SEC6 + SEC7 + SEC8 (critical security — site is live) → **LAUNCH1 (monitoring — need Sentry before building more)** → **LAUNCH9 (ops portal fortress + incident response — lock down command center IMMEDIATELY)** → FIELD1-FIELD5 (incl new BYOC phone) → REST → NICHE → DEPTH1 through DEPTH27 → DEPTH28 (recon mega-expansion) → DEPTH29 (estimate engine overhaul) → DEPTH30 (recon-to-estimate pipeline) → DEPTH31 (crowdsourced material pricing) → DEPTH32 (Material Finder) → DEPTH33 (data privacy/AI consent) → DEPTH34 (property preservation) → DEPTH35 (mold remediation) → DEPTH36 (disposal/dump finder) → DEPTH37 (tablet/mobile responsive) → DEPTH38 (time clock adjustment) → DEPTH39 (signature system + DocuSign replacement) → **DEPTH40 non-AI portion (marketplace aggregator infrastructure — paste-a-link, RSS feeds, affiliate APIs, search/filter UI)** → DEPTH41 (backup fortress) → DEPTH42 (storage tiering) → DEPTH43 (sketch file compatibility) → **INTEG6 (dedup fixes — BEFORE RE26/FLIP2 are built)** → **INTEG2 (engine-to-engine wiring — VIZ↔SK, Trade Tools→Estimate)** → **INTEG3 (client portal activation)** → **INTEG4 (weather engine)** → **INTEG7 (calculator bridge)** → **INTEG8 (free API enrichment)** → RE1-RE20 (full Zafto Realtor Platform — 20 sprints, ~444h) → INTEG1 (national portal submission API) → FLIP1-FLIP4 (deal aggregation, ARV engine, financial model, deal packaging) → **INTEG5 (three-sided marketplace wiring — needs RE + FLIP done)** → SEC2-SEC5 (2FA, biometrics, enterprise security, Hellhound) → LAUNCH2-LAUNCH6 (legal, payments, i18n, accessibility, testing) → **LAUNCH8 (production deployment runbook + disaster recovery + CDN — must be ready BEFORE Phase G)** → Phase G (QA) → Phase JUR (incl JUR4 realtor jurisdiction) → Phase E (AI) → **FLIP5 (AI photo analysis — MOVED after Phase E, requires AI infrastructure)** → **DEPTH40 AI portion (marketplace AI recommendations)** → **DEPTH44 (AI-gated features + ticket system)** → SEC9 (security pentest) → SEC10 (legal pentest) → ZERO1-ZERO9 (zero-defect validation) → LAUNCH7 (App Store + onboarding wizard — DEAD LAST) → SHIP
 
