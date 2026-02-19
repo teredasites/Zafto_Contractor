@@ -53,7 +53,7 @@ Complete business-in-a-box for trades contractors. "Stripe for blue-collar." One
 ## Current State (Session 138)
 - **293 tables**, 115 migrations, 92 Edge Functions, 103 models, 64 repos, 1,523 screens
 - **Phases A-F ALL COMPLETE**. R1 done. FM code done. Phase E PAUSED.
-- **~145 sprints spec'd**, ~2,730h in execution order (~7,614h total including orphaned sprints)
+- **~145 sprints spec'd**, ~2,754h in execution order (~7,638h total including orphaned sprints)
 - **Build order**: SEC-AUDIT→INFRA→TEST-INFRA→COLLAB-ARCH→DEPTH→INTEG→RE→FLIP→SEC→LAUNCH→G→JUR→E→SHIP
 - **Pricing**: Solo $69.99, Team $149.99, Business $249.99. Adjuster FREE.
 - **Known debt**: 6 Flutter services still on Firebase. 69+ models missing Equatable. S138 audit: 103 findings (20 CRITICAL, 31 HIGH). SEC-AUDIT sprint addresses all critical/high security issues.
@@ -76,6 +76,9 @@ Complete business-in-a-box for trades contractors. "Stripe for blue-collar." One
 13. **WEBHOOK IDEMPOTENCY** — Every webhook handler MUST check `webhook_events` table for duplicate `event_id` before processing. If already processed, return 200 and skip. Prevents double-processing on retries.
 14. **SOFT DELETE ONLY** — NEVER use `.delete()` on business data. Always `.update({ deleted_at: new Date().toISOString() })`. Always filter lists with `.is('deleted_at', null)`. Enforced by CI lint rules. The ONLY exception is junction tables (e.g., tag assignments) where physical delete is semantically correct.
 15. **FAIL CLOSED ON AUTH** — If an env var for a webhook secret is missing, REJECT all requests (return 500). Never skip auth because a secret isn't configured. If auth check fails for any reason, deny access. Never fail open.
+16. **SHARED TYPE SYSTEM** — After EVERY migration change, run `npm run gen-types` in web-portal (uses `supabase gen types typescript`) and copy `database.types.ts` to all 4 portals. All hooks MUST import column types from `database.types.ts`, not manual interface definitions. This is the single source of truth for TypeScript types. CI verifies types are in sync with migrations.
+17. **MOBILE BACKWARD COMPATIBILITY** — New database columns that Flutter writes to MUST be nullable with defaults for at least 2 app update cycles (~4 weeks). Never add `NOT NULL` without `DEFAULT` on Flutter-writable tables. Web portals deploy instantly via Vercel; Flutter goes through app stores. Users on older versions send the old `toJson()` without new columns — causes silent failures or crashes. See `Build Documentation/FLUTTER_WRITABLE_TABLES.md` for the list.
+18. **OPTIMISTIC LOCKING ON SHARED ENTITIES** — All UPDATE operations on shared business entities (customers, jobs, invoices, estimates, schedules, properties) MUST check `updated_at` in the WHERE clause: `WHERE id = $1 AND updated_at = $2`. If 0 rows affected, return conflict error. Last-write-wins is NOT acceptable for multi-user companies. Show conflict dialog in UI: "This record was modified by another user. Reload and re-apply your changes?"
 
 ## Build & Verify Commands
 ```bash
