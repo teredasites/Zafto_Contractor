@@ -16945,13 +16945,13 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 
 ## S137 ENTERPRISE INFRASTRUCTURE SPRINT (INFRA-1 through INFRA-5, ~20h)
 
-*Enterprise-grade environment architecture. 4-environment pipeline. UI decoupled from data. Designed to scale to 100K+ users on Supabase Pro + Vercel Pro. Full research: `memory/enterprise-infrastructure-research-s137.md`*
+*Enterprise-grade environment architecture. 4-environment pipeline. UI decoupled from data. Designed to scale to 100K+ users. **Supabase Pro + Vercel Pro ALREADY ACTIVE (owner confirmed S138).** No manual upgrade needed — configure Pro features only. Full research: `memory/enterprise-infrastructure-research-s137.md`*
 
 *Owner directive S137: UI changes must NEVER break business logic under ANY circumstance. Strict 3-layer architecture enforced.*
 
 ### INFRA-1 — Supabase Production Project + Environment Strategy (~2h) — S137
 
-- [ ] Create new Supabase project `zafto-production` (us-east-1 region, same as dev)
+- [ ] Verify existing Supabase Pro plan is active on both dev + prod projects (owner confirmed S138 — already Pro)
 - [ ] Configure production project: disable Spend Cap (unlocks 10K realtime connections, 2,500 msg/sec)
 - [ ] Enable Network Restrictions on production (restrict DB access by IP/CIDR)
 - [ ] Run all 115 migrations against production: `npx supabase db push --linked`
