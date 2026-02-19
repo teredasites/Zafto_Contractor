@@ -16287,6 +16287,148 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 
 ---
 
+## S138 SECURITY AUDIT REMEDIATION SPRINT (SEC-AUDIT-1 through SEC-AUDIT-6, ~28h)
+
+*Full project weakness analysis: 5 parallel Opus audit agents scanned database (115 migrations), Flutter (1,523 screens), Next.js (4 portals, 184 hooks), Edge Functions (92), Sprint Specs (16,700 lines). Found 103 issues: 20 CRITICAL, 31 HIGH, 26 MEDIUM, 26 LOW. This sprint fixes all CRITICAL and HIGH security vulnerabilities. Full audit: `memory/s138-master-audit-synthesis.md`*
+
+*Owner directive S138: Software must be flawless. Every security hole closed before building more features.*
+
+### SEC-AUDIT-1 — Emergency Security Fixes (~4h) — S138
+
+*These are active exploitable vulnerabilities. Fix FIRST.*
+
+- [ ] `automation-engine`: Add authentication — require JWT Authorization header OR shared service secret. Extract company_id from JWT. Reject unauthenticated requests with 401.
+- [ ] `automation-engine`: Add `.eq('company_id', companyId)` to `executeUpdateStatus` update query (prevents cross-company status manipulation)
+- [ ] `sendgrid-email`: Make auth REQUIRED for `send`, `send_template`, `send_campaign` actions. Only `webhook` action can skip JWT (but must have signature verification — see SEC-AUDIT-4)
+- [ ] `user_credits`: Remove user-facing UPDATE policy. Create new RPC function `increment_user_credits(user_id, amount)` with SECURITY DEFINER that validates payment/webhook source. Only service_role can modify credits directly.
+- [ ] `bank_accounts`: Create migration — move `plaid_access_token` to new `bank_credentials` table with RLS: service_role only (no user-facing policies). Update `plaid-exchange-token` and `plaid-sync-transactions` EFs to read from new table.
+- [ ] `export-invoice-pdf`: Add `.eq('company_id', companyId)` to invoice query where companyId comes from authenticated user's JWT app_metadata. Audit `export-bid-pdf` and `restoration-export` for same pattern.
+- [ ] `revenuecat-webhook`: Make webhook secret fail-closed — if `REVENUECAT_WEBHOOK_SECRET` not set, return 500 "Webhook secret not configured", reject all requests
+- [ ] `signalwire-webhook`: Make webhook secret fail-closed. Move secret from URL query parameter to `x-signalwire-secret` request header. Update SignalWire dashboard webhook URL to use header.
+- [ ] `companies` table: Replace `WITH CHECK (true)` INSERT policy with `WITH CHECK (false)` — company creation only via `invite-team-member` or `signup` Edge Functions using service_role
+- [ ] `payment_intents`: Add `company_id = requesting_company_id()` to INSERT WITH CHECK clause
+- [ ] TEST: Attempt unauthenticated POST to automation-engine — must return 401
+- [ ] TEST: Attempt unauthenticated POST to sendgrid-email send action — must return 401
+- [ ] TEST: Attempt `supabase.from('user_credits').update({ paid_credits: 99999 })` as regular user — must fail
+- [ ] TEST: Attempt `supabase.from('bank_accounts').select('plaid_access_token')` — must not return token
+- [ ] TEST: Attempt export-invoice-pdf with invoice_id from different company — must return 403
+- [ ] All builds pass: `dart analyze`, `npm run build` for all portals
+
+### SEC-AUDIT-2 — Data Integrity Fixes (~4h) — S138
+
+*25+ hard deletes → soft deletes. Missing filters. Error boundaries.*
+
+- [ ] Convert ALL hard `.delete()` calls to soft delete `.update({ deleted_at: new Date().toISOString() })` in web-portal hooks:
+  - `use-leads.ts:123`
+  - `use-email.ts:311` (email_templates)
+  - `use-zdocs.ts:466` (zdocs_renders)
+  - `use-walkthroughs.ts:391`
+  - `use-estimates.ts:572-573` (estimate_line_items + estimate_areas)
+  - `use-enterprise.ts:325,400,483,603,722` (branches, custom roles, etc.)
+  - `use-schedule-baselines.ts:95,97`
+  - `use-schedule-resources.ts:271`
+  - `use-schedule-dependencies.ts:97`
+  - `use-recurring.ts:223`
+  - `use-job-budgets.ts:139`
+  - `use-insurance.ts:306` (claim supplements)
+  - `use-ring-groups.ts:104`
+  - `use-floor-plan-snapshots.ts:164`
+- [ ] Convert hard delete in `client-portal/use-home-documents.ts:169`
+- [ ] Convert hard delete in Flutter `estimate_repository.dart:75-84` (deleteLine)
+- [ ] Add `.is('deleted_at', null)` filter to `web-portal/use-customers.ts` list query
+- [ ] Add `.is('deleted_at', null)` filter to `web-portal/use-jobs.ts` list query
+- [ ] Add `.is('deleted_at', null)` filter to `web-portal/use-invoices.ts` list query
+- [ ] Create `src/app/error.tsx` (route-level error boundary) in ALL 4 portals
+- [ ] Create `src/app/not-found.tsx` (custom 404) in ALL 4 portals
+- [ ] Create `src/app/dashboard/error.tsx` in ALL 4 portals (dashboard-scoped recovery)
+- [ ] Fix ops-portal middleware matcher: change from `'/dashboard/:path*'` to broad pattern matching other 3 portals
+- [ ] Create `client-portal/src/lib/supabase-server.ts` following web-portal pattern
+- [ ] Add `createClient()` export to `client-portal/src/lib/supabase.ts`
+- [ ] Add error state to `client-portal/use-projects.ts` (try/catch + error return)
+- [ ] Add error state to `client-portal/use-invoices.ts` (try/catch + error return)
+- [ ] TEST: Delete a lead via UI → verify record still exists in DB with deleted_at set
+- [ ] TEST: Customers list shows 0 deleted records
+- [ ] TEST: Navigate to nonexistent route in each portal → see custom 404, not crash
+- [ ] All builds pass: `npm run build` for all 4 portals
+
+### SEC-AUDIT-3 — RLS Hardening (~8h) — S138
+
+*59 tables with overly permissive policies. 27 tables with inconsistent JWT handling. Missing company_id columns.*
+
+- [ ] Create migration: Replace `SELECT company_id FROM users WHERE id = auth.uid()` with `requesting_company_id()` in ALL 27 tables' RLS policies (walkthroughs, walkthrough_rooms, walkthrough_photos, walkthrough_templates, property_floor_plans, payment_intents, payments, phone_config, phone_lines, phone_ring_groups, phone_on_call_schedule, phone_calls, phone_voicemails, phone_messages, phone_message_templates, phone_faxes, meeting_booking_types, meetings, meeting_participants, meeting_captures, async_videos, walkie_talkie_channels, walkie_talkie_messages, team_messages, team_message_reads, inspection_templates, inspection_results)
+- [ ] Create migration: Add `company_id UUID NOT NULL REFERENCES companies(id)` to `walkthrough_rooms` + `walkthrough_photos`. Backfill from parent walkthrough. Add direct RLS policies using `requesting_company_id()`. Add B-tree index on company_id.
+- [ ] Create migration: Add `company_id` to `journal_entry_lines`. Backfill from parent journal_entries. Add RLS + index.
+- [ ] Create migration: Add `company_id` to `support_messages`. Add policy allowing ticket creators to read their own messages.
+- [ ] Create migration: Add RLS policies to `pricing_contributions` (currently locked out — RLS enabled, zero policies)
+- [ ] Create migration: Replace FOR ALL with granular SELECT/INSERT/UPDATE/DELETE on these HIGH-PRIORITY tables (restrict DELETE to owner/admin): `insurance_claims`, `claim_supplements`, `employee_records`, `vehicles`, `fuel_logs`, `email_campaigns`, `pay_periods`, `payroll_tax_configs`, `marketplace_leads`, `marketplace_bids`
+- [ ] `payroll-engine` EF: Add role check — only `owner`, `admin`, `office_manager` can access. Return 403 for other roles.
+- [ ] `lead-aggregator` EF: Override `body.companyId` with JWT-derived `companyId` before passing to all handlers
+- [ ] `code-verify` EF: Use `user.app_metadata?.role` instead of `public.users` table lookup for role check
+- [ ] Verify `auth.company_id()` function is marked `STABLE` (enables initPlan caching)
+- [ ] Verify `auth.user_role()` function is marked `STABLE`
+- [ ] TEST: As technician, attempt payroll-engine call → must return 403
+- [ ] TEST: lead-aggregator with body.companyId set to different company → must use JWT company instead
+- [ ] TEST: pricing_contributions table — INSERT + SELECT via API works for authenticated users
+- [ ] TEST: walkthrough_rooms query scoped by company_id correctly
+- [ ] All builds pass. All migrations apply cleanly: `npx supabase db reset`
+
+### SEC-AUDIT-4 — Webhook Security (~4h) — S138
+
+*Inbound webhooks with no verification. Open to forgery.*
+
+- [ ] `sendgrid-email` webhook action: Implement SendGrid Event Webhook signature verification using their public key. Reject requests with invalid signature.
+- [ ] `signalwire-voice` inbound (`?type=inbound`): Add shared secret header verification. Create `SIGNALWIRE_INBOUND_SECRET` env var. Reject if header missing/wrong.
+- [ ] `signalwire-sms` inbound (`?type=inbound`): Same as voice — add shared secret verification
+- [ ] `stripe-webhook`: Already has proper Stripe signature verification — PASS, no changes needed
+- [ ] `revenuecat-webhook`: Already fixed in SEC-AUDIT-1 (fail-closed). Verify fix works.
+- [ ] `impersonate-company`: Add TTL enforcement — check `impersonation_started_at` timestamp, reject if >30 minutes old. Create pg_cron job to clean stale impersonation sessions.
+- [ ] Restrict CORS `Access-Control-Allow-Origin` in `_shared/cors.ts`: replace `*` with allowed origins from `ALLOWED_ORIGINS` env var. Default to `zafto.cloud,team.zafto.cloud,client.zafto.cloud,ops.zafto.cloud,localhost:3000`
+- [ ] TEST: POST fake SendGrid webhook event without valid signature → must return 401
+- [ ] TEST: POST fake inbound call to signalwire-voice without secret → must return 401
+- [ ] TEST: Impersonation session after 31 minutes → must auto-expire
+- [ ] TEST: CORS preflight from unknown origin → must be rejected
+- [ ] All Edge Functions deploy successfully
+
+### SEC-AUDIT-5 — Database Infrastructure (~4h) — S138
+
+*Missing audit triggers, indexes, soft delete columns, race conditions.*
+
+- [ ] Create migration: Add `audit_trigger_fn` to top 30 highest-priority missing tables: `payment_intents`, `payments`, `credit_purchases`, `user_credits`, `bank_accounts`, `bank_transactions`, `expense_records`, `pay_periods`, `pay_stubs`, `employee_records`, `phone_calls`, `phone_messages`, `phone_faxes`, `email_sends`, `email_campaigns`, `documents`, `document_folders`, `vehicles`, `vehicle_maintenance`, `fuel_logs`, `marketplace_leads`, `marketplace_bids`, `schedule_task_changes`, `performance_reviews`, `training_records`, `onboarding_checklists`, `bank_reconciliations`, `vendor_payments`, `recurring_transactions`, `contractor_profiles`
+- [ ] Create migration: Add `company_id` B-tree indexes on all tables missing them (audit all 293 tables — use query: `SELECT tablename FROM pg_tables WHERE schemaname = 'public'` cross-referenced with existing indexes)
+- [ ] Create migration: Add `deleted_at TIMESTAMPTZ` to business tables missing it: `claim_supplements`, `leads`, `branches`, `custom_roles`, `certifications`, `api_keys`, `bank_accounts`, `bank_transactions`, `pay_periods`, `notification_triggers`, `punch_list_items`, `change_orders`, `daily_logs`
+- [ ] Fix credit race conditions: Create RPC functions `increment_credits(p_user_id UUID, p_amount INT)` and `decrement_credits(p_user_id UUID, p_amount INT)` using atomic `UPDATE ... SET paid_credits = paid_credits + p_amount WHERE user_id = p_user_id AND paid_credits + p_amount >= 0 RETURNING *`. Mark as SECURITY DEFINER.
+- [ ] Update `revenuecat-webhook` to use `increment_credits` RPC instead of read-then-write
+- [ ] Update `subscription-credits` to use `decrement_credits` RPC instead of read-then-write
+- [ ] Mark `fn_get_item_pricing` and `fn_zip_to_msa` as STABLE
+- [ ] Add SECURITY DEFINER to: `update_conversation_last_message()`, `mark_conversation_read()`, `update_inspection_deficiency_count()`
+- [ ] Delete duplicate function `fn_update_timestamp()` — use `update_updated_at()` consistently
+- [ ] TEST: `EXPLAIN ANALYZE` on top 5 queries — verify company_id index usage
+- [ ] TEST: Concurrent credit deduction — verify no overspend possible
+- [ ] TEST: All migrations apply cleanly
+
+### SEC-AUDIT-6 — Sprint Spec Integrity + Doc Fixes (~4h) — S138
+
+*Checklist integrity, missing specs, duplicate definitions.*
+
+- [ ] Check off TI-1, TI-2, TI-4, TI-6 completed items in sprint specs (verified via git commits 78a74a2, 69d8a7b)
+- [ ] Check off DEPTH1 remaining 2 unchecked items (verified via git)
+- [ ] Verify LAUNCH1 + LAUNCH9 actual completion state: read git log for evidence, then either check off items or remove "DONE" claim from execution order
+- [ ] Delete 11 duplicate S132 E-sprint stubs (lines ~10078-10233) — keep only S133 detailed versions (lines ~10646-10809)
+- [ ] Add E1-E4 template structure (placeholder sections for deep spec session)
+- [ ] Add "All builds pass" + TEST items to ALL CUST1-8 sprints (~280h)
+- [ ] Add "All builds pass" + TEST items to ALL CLIENT1-17 sprints (~316h)
+- [ ] Add "All builds pass" + TEST items to ALL LIST1-9 sprints (~162h)
+- [ ] Add explicit RLS policy items to VIZ2-28 (every sprint creating tables must spec RLS)
+- [ ] Add portal specifications to MOV1-8 (which portals: Flutter, web-CRM, team, client, ops)
+- [ ] Place BV1-6 in execution order (after DEPTH or in post-launch block — decide and document)
+- [ ] Document ZERO1 vs TEST-INFRA relationship (ZERO1 builds ON TOP of TEST-INFRA — additive)
+- [ ] Reconcile sprint counts: update Phase Audit Summary to accurate total including orphaned sprints
+- [ ] Update 00_HANDOFF.md: session count 138, SEC-AUDIT sprint added, execution order updated
+- [ ] Update 03_LIVE_STATUS.md: session summary
+- [ ] Update MEMORY.md: active build position
+
+---
+
 ## S137 ENTERPRISE INFRASTRUCTURE SPRINT (INFRA-1 through INFRA-5, ~8h)
 
 *Enterprise-grade environment architecture. 4-environment pipeline. UI decoupled from data. Designed to scale to 100K+ users on Supabase Pro + Vercel Pro. Full research: `memory/enterprise-infrastructure-research-s137.md`*
