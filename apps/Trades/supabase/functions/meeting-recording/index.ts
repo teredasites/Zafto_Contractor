@@ -4,6 +4,7 @@
 
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { jwtVerify } from 'https://esm.sh/jose@5.2.2'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -18,19 +19,37 @@ serve(async (req) => {
   const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? ''
   const SUPABASE_SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
   const LIVEKIT_API_KEY = Deno.env.get('LIVEKIT_API_KEY') ?? ''
+  const LIVEKIT_API_SECRET = Deno.env.get('LIVEKIT_API_SECRET') ?? ''
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY)
 
   try {
+    // Verify LiveKit webhook signature
+    const authHeader = req.headers.get('Authorization')
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return new Response(JSON.stringify({ error: 'Missing authorization' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+
+    const token = authHeader.replace('Bearer ', '')
+    try {
+      const secret = new TextEncoder().encode(LIVEKIT_API_SECRET)
+      const { payload } = await jwtVerify(token, secret)
+      if (payload.iss !== LIVEKIT_API_KEY) {
+        throw new Error('Invalid issuer')
+      }
+    } catch (verifyErr) {
+      console.error('LiveKit webhook verification failed:', verifyErr)
+      return new Response(JSON.stringify({ error: 'Invalid webhook signature' }), {
+        status: 403,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+
     const body = await req.json()
     const { event, egressInfo } = body
-
-    // Verify this is from LiveKit (check API key in header if available)
-    const authHeader = req.headers.get('Authorization')
-    if (authHeader) {
-      const token = authHeader.replace('Bearer ', '')
-      // In production, verify the JWT signature against LIVEKIT_API_SECRET
-    }
 
     if (event === 'egress_ended' && egressInfo) {
       return await handleEgressEnded(supabase, egressInfo)

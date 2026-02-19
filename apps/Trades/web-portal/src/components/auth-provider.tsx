@@ -1,9 +1,6 @@
 'use client';
 
 // ZAFTO Auth Provider — Supabase Auth
-// Sprint B4a | Session 48
-//
-// Replaces Firebase auth listener with Supabase onAuthStateChange.
 // Provides user + company + role from users table.
 
 import { createContext, useContext, useEffect, useState } from 'react';

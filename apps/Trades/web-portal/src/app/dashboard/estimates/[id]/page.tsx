@@ -166,29 +166,6 @@ export default function EstimateEditorPage() {
     await updateEstimate({ [field]: value });
   }, [updateEstimate]);
 
-  // Export ESX via Edge Function (downloads .esx file)
-  const handleExportEsx = useCallback(async () => {
-    const supabase = getSupabase();
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return;
-    const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-    const url = `${baseUrl}/functions/v1/export-esx?estimate_id=${estimateId}`;
-    const res = await fetch(url, {
-      headers: {
-        'Authorization': `Bearer ${session.access_token}`,
-        'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
-      },
-    });
-    if (!res.ok) return;
-    const blob = await res.blob();
-    const blobUrl = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = blobUrl;
-    a.download = `${estimate?.estimateNumber || 'estimate'}.esx`;
-    a.click();
-    URL.revokeObjectURL(blobUrl);
-  }, [estimateId, estimate?.estimateNumber]);
-
   // Download PDF via Edge Function (fetches HTML, opens in new tab for print)
   const handleDownloadPdf = useCallback(async (template: 'standard' | 'detailed' | 'summary' = 'standard') => {
     const supabase = getSupabase();
@@ -315,12 +292,6 @@ export default function EstimateEditorPage() {
                 <Download className="w-3.5 h-3.5" />
                 PDF
               </button>
-              {estimate.estimateType === 'insurance' && (
-                <button onClick={handleExportEsx} className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-zinc-300 bg-zinc-800/50 border border-zinc-700/50 rounded-lg hover:bg-zinc-800">
-                  <FileText className="w-3.5 h-3.5" />
-                  .esx
-                </button>
-              )}
               {estimate.status === 'draft' && (
                 <button onClick={handleSend} className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-white bg-blue-600 rounded-lg hover:bg-blue-500">
                   <Send className="w-3.5 h-3.5" />
