@@ -9119,6 +9119,36 @@ Include <content>{markdown}</content> for rendered display.
 
 ---
 
+### SK15 — ANSI Z765 GLA Report (~8h) — S132 Listing Engine
+- [ ] ANSI Z765 classification engine — auto-classify rooms as above-grade vs below-grade using RoomPlan ceiling height data. Exclude sub-5ft ceiling areas from GLA. Include staircases in floor of descent. Separate below-grade area reporting
+- [ ] GLA Report PDF — printable report with room-by-room breakdown, measurement methodology disclosure, confidence intervals, "Verify with licensed appraiser" disclaimer. CubiCasa charges $15/report — Zafto includes free
+- [ ] Commit: `[SK15] ANSI Z765 GLA — above/below grade classification, report PDF with disclaimers`
+
+### SK16 — MLS-Ready Floor Plan Export (~6h) — S132 Listing Engine
+- [ ] One-tap MLS export — generate JPG at 3000x2000 with north arrow, room labels, dimensions baked in, color-coded rooms (bedroom=blue, bath=green, kitchen=orange). No promotional text or logos
+- [ ] Multi-format export — JPG for MLS (3000x2000), PNG for microsites (transparent bg option), PDF for print (300 DPI), interactive web version (click room → photos + details)
+- [ ] Commit: `[SK16] MLS floor plan export — one-tap JPG, multi-format (JPG/PNG/PDF/interactive)`
+
+### SK17 — Interactive Floor Plan for Listings (~12h) — S132 Listing Engine
+- [ ] Click room → photo gallery + dimensions + features from Recon data. Hover room → highlight with color + show name + sqft. Click fixture → see details (brand, model, year from Equipment Passport)
+- [ ] Multi-floor navigation with animated transitions (slide up/down between floors). Stacked 3D view showing all floors simultaneously. Staircase continuity markers
+- [ ] Room dimension labels auto-placed from LiDAR data (width x length, ceiling height, window dimensions, door width, closet depth). Toggle on/off
+- [ ] Commit: `[SK17] Interactive floor plan — click-to-explore rooms, multi-floor nav, auto-placed dimensions`
+
+### SK18 — BOMA Commercial Measurement Mode (~10h) — S132 Listing Engine
+- [ ] BOMA Z65.1-2024 (Office) and Z65.5-2025 (Retail) measurement modes. Calculate Rentable Area, Usable Area, Load Factor. Non-Allocated Tenant Areas support
+- [ ] Commercial floor plan template (different from residential — show HVAC zones, electrical panels, ADA compliance markers, egress routes, ceiling heights for warehouse/retail)
+- [ ] Commit: `[SK18] BOMA commercial — office/retail measurement modes, commercial floor plan template`
+
+### SK19 — Outdoor Site Plan with Parcel Data (~12h) — S132 Listing Engine
+- [ ] GPS-based lot boundary overlay from Recon Engine parcel data. Show: lot dimensions, setback lines, easements, right-of-way. Auto-detect from aerial imagery where available
+- [ ] Sun path overlay (sunrise/sunset direction by season from SunCalc). Mature tree canopy estimation. Fence/pool/deck/shed annotation. Neighbor proximity indicators. Compass rose
+- [ ] Commit: `[SK19] Site plan — GPS lot boundaries, sun path, tree canopy, neighbor proximity`
+
+**SK Listing Enhancement Totals (S132):** SK15-SK19 = 5 sprints, ~48h. Execution: Tier 1 (SK15-16, before RE) → Tier 2 (SK17, during/after RE) → Tier 3 (SK18-19, blue ocean).
+
+---
+
 ## PHASE GC: GANTT & CPM SCHEDULING ENGINE (after SK, before U)
 *Full Critical Path Method (CPM) scheduling engine with Gantt charts, resource leveling, baseline management, P6/MS Project import/export, and real-time collaboration. 12 new tables, 4+ Edge Functions, ~124 hours across 11 sprints. See `Expansion/48_GANTT_CPM_SCHEDULER_SPEC.md` for full spec.*
 
@@ -10045,6 +10075,166 @@ Status: DONE (Session 110)
 
 ---
 
+### E-REC — AI Receptionist Intelligence Layer (~36h) — S132
+*Prerequisites: F1 (phone system, DONE), U23 (phone config UI, DONE), Phase E-review complete.*
+
+- [ ] Rewrite `signalwire-ai-receptionist` EF — replace Haiku with Sonnet 4.5 default, add conversation state management (JSONB on `phone_calls`), add prompt caching headers (`anthropic-beta: prompt-caching-2024-07-31`), multi-turn conversation memory
+- [ ] Tool use integration — implement 8 tools: `lookup_customer`, `check_schedule`, `get_job_types`, `get_service_areas`, `create_draft_job`, `check_business_hours`, `get_pricing_estimate`, `transfer_to_human`. Each tool = Supabase query. Claude tool_use API format
+- [ ] Confidence scoring + Opus escalation — confidence extraction per turn, threshold logic (<60), seamless model switch mid-call (same conversation context passed to Opus), escalation keywords for emergency/insurance/frustration detection
+- [ ] Autonomy levels — 3-tier behavior modification via system prompt variants. `ai_autonomy_level` column on `phone_config`. Settings UI toggle (Flutter + Web CRM — extend existing U23d AI Receptionist tab)
+- [ ] Emergency detection module — keyword/pattern matching for gas, electrical, water, structural, CO emergencies. Always-Opus routing. Safety response templates. Auto-dispatch trigger
+- [ ] Post-call automation chain — EF or database trigger: AI summary generation, lead/customer creation, draft job confirmation SMS, missed call auto-text, emergency push notification, phone_calls record update
+- [ ] AI Call Summary Dashboard — CRM page: `/dashboard/phone/ai-calls`. Hook: `use-ai-calls.ts`. Today's calls, confidence scores, needs-review filter, transcript viewer, weekly performance stats, cost tracker. Ops portal: platform-wide AI analytics
+- [ ] Voice personality wiring — connect U23d personality config (professional/friendly/casual/bilingual) to system prompt generation. Voice selection (male/female/neutral) to SignalWire TTS voice parameter. Speed setting. Language detection + auto-switch
+- [ ] Integration testing — test with real SignalWire calls: Sonnet handles routine booking (5 scenarios), Opus escalation triggers correctly (3 scenarios), emergency detection fires (3 scenarios), post-call automation chain completes, draft job appears in CRM, SMS sends. Test all 3 autonomy levels. Test prompt caching (verify cost reduction on sequential calls)
+- [ ] DB migrations: add `ai_autonomy_level integer DEFAULT 2` to `phone_config`; add `ai_summary text`, `ai_conversation jsonb`, `ai_model_used text`, `ai_confidence_avg numeric`, `ai_escalated boolean DEFAULT false`, `ai_outcome text` to `phone_calls`
+- [ ] E-REC Innovations (+8h): Photo intake mid-call via SMS (MMS handler → Opus vision → inject into conversation), Recon-powered caller intelligence (pull property data from `property_recon_data` before responding), Competitor price awareness (`get_pricing_estimate` uses BLS/Davis-Bacon + ZIP), Multi-language auto-detection (zero menu, top 10 languages, Google Neural2 switches TTS), Job history context (expand `lookup_customer` to return last 3 jobs + equipment on file), Voicemail intelligence (transcript → Sonnet urgency/intent analysis → prioritized task creation), Smart queue with callback (`callback_queue` table, cron check every 60s, auto-bridge)
+- [ ] Commit: `[E-REC] AI receptionist intelligence layer — Sonnet 4.5/Opus escalation, 8 tools, confidence scoring, emergency detection, post-call automation, AI call dashboard, 7 breakthrough innovations`
+
+### E-REC-RE — Realtor AI Receptionist Variant (~20h) — S132
+*Same architecture as E-REC. Reuses 80% of codebase. Different tools, prompts, conversation flows.*
+
+- [ ] Fork E-REC architecture for realtor portal
+- [ ] Implement 6 realtor-specific tools: `lookup_contact`, `check_showing_availability`, `create_showing_appointment`/`create_lead`, `get_active_listings`, `get_listing_details`, `hot_lead_detect`
+- [ ] Write realtor system prompt (listing-focused, qualification-focused)
+- [ ] Implement buyer qualification extraction (budget, pre-approval, timeline, areas, beds/baths, renting vs. selling → auto-creates A/B/C scored lead)
+- [ ] Implement showing scheduler integration
+- [ ] Implement listing data lookup + SMS link sending mid-call (3D tour link sent via text during call)
+- [ ] Implement agent-to-agent detection + routing
+- [ ] Implement hot lead detection + urgent notification ("I want to make an offer" / "I need to sell fast" / "My listing agreement expired")
+- [ ] Test with 5 simulated buyer calls, 5 seller calls, 3 showing requests
+- [ ] Voice picker integration (shared component with contractor)
+- [ ] Commit: `[E-REC-RE] Realtor AI receptionist variant — 6 realtor tools, buyer qualification, showing scheduler, hot lead detection, agent-to-agent routing`
+
+### E-OUT — AI Outbound Engine (~24h) — S132
+*Warm outbound calls to existing relationships only. Never cold calling.*
+
+- [ ] Outbound call initiation via SignalWire (programmatic dialing)
+- [ ] AI disclosure system (state-specific: 1-party vs 2-party consent) — every call starts with "This is an AI assistant calling on behalf of [Company Name]"
+- [ ] DNC registry scrub integration (free FTC API or bulk download — auto-scrub before every campaign)
+- [ ] Quiet hours enforcement (no calls before 8am or after 9pm, timezone-aware per recipient)
+- [ ] Frequency cap enforcement (1 outbound campaign call per customer per 30 days)
+- [ ] Opt-out handling (press 2 → immediate permanent flag in CRM)
+- [ ] 8 outbound conversation templates: lead follow-up, past-due invoice, maintenance reminder, review request, warranty expiring, seasonal campaign, re-engagement, appointment confirmation
+- [ ] Voice picker UI (gender, age, accent, tone, preview, test call — contractor hears exactly what callers hear)
+- [ ] ElevenLabs integration (premium voice + 30-second custom voice clone option)
+- [ ] Google Neural2 integration (default voice, free 1M chars/month)
+- [ ] Wallet deduction per outbound call ($0.20)
+- [ ] Post-call automation (summary, task creation if action needed, CRM update)
+- [ ] Analytics: calls made, connected rate, booked, collected, reviews received
+- [ ] Commit: `[E-OUT] AI outbound engine — 8 campaign templates, DNC scrub, TCPA compliance, quiet hours, voice picker, ElevenLabs clone, wallet deduction`
+
+### E-CAMP — Campaign Engine (~32h) — S132
+*Full campaign management dashboard. Multi-channel. Trade-specific templates. All delivery via Communications Wallet.*
+
+- [ ] Campaign builder UI (7-step wizard: template → audience → channel → customize → schedule → limits → review+launch)
+- [ ] Audience filter engine (20+ filter criteria including Recon data: last service date, trade type, service area, customer tags, property age, equipment type, outstanding balance, lead score, roof age, home value, storm history)
+- [ ] Template library (8 trades x 3 types = 24 templates + custom builder): HVAC, plumbing, electrical, roofing, restoration, landscaping, GC/remodeler, pest control — each with seasonal, event-triggered, and maintenance variants
+- [ ] Multi-channel sequence engine (SMS day 1 → Email day 3 → AI Call day 7 → Direct mail day 14, non-responder filtering at each step)
+- [ ] Scheduling engine (one-time, recurring, event-triggered)
+- [ ] Event trigger system (storm alerts via NOAA, overdue invoices, job completion, warranty expiry, seasonal date)
+- [ ] Wallet integration (cost preview BEFORE launch showing total per channel, deduction on send)
+- [ ] Frequency cap + DNC + quiet hours enforcement (TCPA compliant, no SMS 9pm-9am)
+- [ ] Campaign analytics dashboard (delivery rate, open rate, click rate, response rate, booking rate, revenue attributed, ROI, cost per booking, cost per lead)
+- [ ] A/B testing framework (different messages, channels, timing)
+- [ ] Campaign status management (draft, scheduled, running, paused, completed)
+- [ ] Non-responder filtering for sequence steps (once they respond → exit sequence)
+- [ ] Commit: `[E-CAMP] Campaign engine — 7-step builder, 24 trade templates, multi-channel sequences, event triggers, wallet integration, TCPA compliance, A/B testing, analytics`
+
+### E-MAIL — Direct Mail Integration (~12h) — S132
+
+- [ ] Print-ready PDF generator (postcard 4x6, 6x9, flyer, door hanger)
+- [ ] QR code generator (links to client portal booking page with UTM tracking)
+- [ ] Click2Mail API integration (address validation, print, mail, delivery tracking) — $0.42/postcard, official USPS partner
+- [ ] PostGrid API integration as backup ($0.47/postcard)
+- [ ] Recon property filter → direct mail audience pipeline (personalized postcards: "Your [address] roof is approximately [age] years old")
+- [ ] USPS EDDM route planning tool (select carrier routes on map, $0.23/piece no addresses needed)
+- [ ] Campaign builder integration (direct mail as channel option alongside SMS/email/AI call)
+- [ ] Wallet deduction per piece ($0.50 contractor pays, $0.42 our cost)
+- [ ] Mail tracking (Click2Mail provides delivery confirmation)
+- [ ] Template designer (drag/drop, trade-specific starting designs)
+- [ ] Commit: `[E-MAIL] Direct mail integration — Click2Mail API, QR generation, Recon audience pipeline, EDDM route planner, template designer, wallet deduction`
+
+### E-CAMP-RE — Realtor Campaign Variant (~16h) — S132
+*Same engine as E-CAMP. Different templates and audience filters.*
+
+- [ ] Fork E-CAMP templates for realtor use cases
+- [ ] 9 realtor campaign templates: Just Listed (neighbors direct mail + digital), Open House (SMS + email), Price Reduced (push + email), Market Update (email monthly), Seller Prospecting (high-equity + long tenure, direct mail), Anniversary (SMS + direct mail), Holiday (email), Expired Listing (direct mail), FSBO (direct mail)
+- [ ] Realtor-specific audience filter engine (12 criteria: listing status, DOM, price range, property type, area/ZIP, buyer qualification score, lead source, last contact date, transaction stage, home equity estimate, years since purchase)
+- [ ] Market update auto-generator (AI pulls local market stats, generates newsletter)
+- [ ] Seller prospecting pipeline (Recon → high equity + long tenure + life events + tax delinquency → direct mail only)
+- [ ] Buyer drip sequence templates (auto-send new listings matching criteria)
+- [ ] CMA request landing page (QR code → client portal → request CMA)
+- [ ] Integration with RE listing engine (pull listing data for campaigns)
+- [ ] Commit: `[E-CAMP-RE] Realtor campaign variant — 9 templates, seller prospecting, buyer drip, market update generator, FSBO/expired targeting`
+
+### E-WALK — Voice + LiDAR Walk-and-Talk → Estimate (~24h) — S132
+*"Contractor walks a house for 15 minutes, walks out with a 90% complete estimate."*
+
+- [ ] Walk-and-Talk mode UI (start/stop button, room indicator, photo capture button)
+- [ ] RoomPlan integration (Apple RoomPlan, continuous room detection + dimensions, timestamps +/-2-5cm)
+- [ ] Concurrent speech recognition stream (on-device iOS Speech Recognition, free, ~95% accuracy English, timestamped)
+- [ ] Photo capture with timestamp + room association (manual tap or auto-detect room change)
+- [ ] Recon data pre-load for target property (age, sqft, flood zone, roof type, storm history, ZIP labor rates)
+- [ ] AI processing pipeline (voice transcript + LiDAR dimensions + photos + Recon → line items). Sonnet 4.5 primary, Opus escalation for ambiguous/multi-trade scope
+- [ ] Price book matching engine (observations → matched line items with quantities from room dimensions)
+- [ ] Draft estimate generation (line items tagged to rooms, photos attached per room, labor rates from BLS/price book)
+- [ ] Review UI (contractor approves/edits/rejects each line item before sending)
+- [ ] Integration with existing estimate screen (D8)
+- [ ] Test with 5 different property types: kitchen remodel, water damage, full renovation, electrical panel, roof
+- [ ] Commit: `[E-WALK] Walk-and-Talk estimate — RoomPlan + speech + photo + Recon → AI draft estimate, Sonnet/Opus pipeline, line item review UI`
+
+### E-MAT — Smart Material Sourcing (~16h) — S132
+*Launch version: price intelligence and optimization. Full AI negotiation deferred to post-scale.*
+
+- [ ] BLS PPI material price index integration (free government API — lumber WPU0811, steel WPU1017, concrete WPU1333, gypsum WPU137, construction composite WPUIP230000)
+- [ ] Price trend visualization (up/down/stable per material category, historical charts)
+- [ ] UPCitemdb substitute finder integration (alternatives when material is out of stock)
+- [ ] Bulk breakpoint calculator (quantity discount thresholds: "Order 50 sheets instead of 47, hit 15% tier, save $X")
+- [ ] Material waste optimizer (standard packaging sizes vs estimate quantities, industry-standard waste % per material: drywall ~10%, lumber ~5%, wire ~3%)
+- [ ] Buying group directory (seeded with 50+ groups by trade/region: "HVAC contractors in your area save 8-12% through XYZ Buying Group")
+- [ ] Integration with estimate line items (suggest optimizations per active estimate)
+- [ ] Material price alerts (optional: notify when tracked material drops 10%+)
+- [ ] Commit: `[E-MAT] Smart material sourcing — BLS PPI price trends, UPCitemdb substitutes, bulk breakpoints, waste optimizer, buying group directory`
+
+### E-PERM — AI Permit Navigator (~16h) — S132 — TBD
+*Approved for launch (S132 decision table). Checklist pending full spec session.*
+
+- [ ] AI answers "What permits do I need for X job in Y jurisdiction?" using free government APIs (eCFR, OSHA, state building department data). Property-context aware
+- [ ] Permit requirement lookup by job type + jurisdiction (database-driven, not hardcoded)
+- [ ] Fee estimation by jurisdiction
+- [ ] Application document checklist per permit type
+- [ ] Timeline estimation (typical processing times by municipality)
+- [ ] Integration with Phase JUR (Jurisdiction Awareness) data
+- [ ] Full spec session required before execution — TBD items to be expanded
+- [ ] Commit: `[E-PERM] AI permit navigator — jurisdiction lookup, fee estimation, document checklist, timeline estimation`
+
+### E-CASH — Predictive Cash Flow (~12h) — S132 — TBD
+*Approved for launch (S132 decision table). Checklist pending full spec session.*
+
+- [ ] Monthly background AI analysis of cash flow health
+- [ ] Warning system for upcoming cash flow gaps (30/60/90 day projection)
+- [ ] Inputs: job pipeline (scheduled revenue), invoice aging (expected collections), seasonal patterns, BLS economic indicators
+- [ ] Dashboard widget showing projected cash position over time
+- [ ] "What if" scenario modeling (what if Invoice X doesn't pay? What if Job Y is delayed?)
+- [ ] Full spec session required before execution — TBD items to be expanded
+- [ ] Commit: `[E-CASH] Predictive cash flow — monthly AI analysis, gap warnings, what-if scenarios, pipeline + invoice + seasonal inputs`
+
+### E-CREW — Crew Knowledge Graph (~16h) — S132 — TBD
+*Approved for launch (S132 decision table). Checklist pending full spec session.*
+
+- [ ] Map which techs have which skills/certifications/tools
+- [ ] Certification expiration tracking + renewal alerts
+- [ ] AI-powered job-to-crew matching (job requirements → best available crew member)
+- [ ] Knowledge transfer tracking (apprentice learning from journeyman)
+- [ ] Skill gap analysis per company (what certifications is the team missing?)
+- [ ] Full spec session required before execution — TBD items to be expanded
+- [ ] Commit: `[E-CREW] Crew knowledge graph — skill mapping, cert tracking, AI crew matching, knowledge transfer, gap analysis`
+
+**AI Sprint Totals (S132):** E-REC (~36h) + E-REC-RE (~20h) + E-OUT (~24h) + E-CAMP (~32h) + E-MAIL (~12h) + E-CAMP-RE (~16h) + E-WALK (~24h) + E-MAT (~16h) + E-PERM (~16h) + E-CASH (~12h) + E-CREW (~16h) = **11 sprints, ~224h**. E-PERM, E-CASH, E-CREW are TBD — require full spec session before execution.
+
+---
+
 ### Sprint BA1: Plan Review — Data Model + File Ingestion (~16 hours)
 *Spec: Expansion/47_BLUEPRINT_ANALYZER_SPEC.md*
 *Goal: Foundation tables, file upload pipeline, scale detection. Blueprint uploads accepted and stored.*
@@ -10453,7 +10643,171 @@ Status: DONE (Session 110)
 
 ---
 
-### Sprint E1-E4: Full AI implementation (rebuilt with complete platform knowledge — including TPA module + Recon + Sketch Engine + Plan Review + all Phase F features)
+### Sprint E-REC: AI Receptionist Intelligence Layer (~36h) — S133
+**Prerequisites:** F1 (phone system, DONE), U23 (phone config UI, DONE), E-review.
+**Architecture:** Sonnet 4.5 default (85-90%), Opus 4.6 escalation (<60 confidence). Prompt caching on company system prompt. Conversation state in JSONB on `phone_calls`. 3 autonomy levels. ~$0.05/call blended cost.
+
+- [ ] Rewrite `signalwire-ai-receptionist` EF — replace Haiku with Sonnet 4.5 default, add conversation state management (JSONB on `phone_calls`), add prompt caching headers, multi-turn conversation memory
+- [ ] Tool use integration — implement 8 tools (lookup_customer, check_schedule, get_job_types, get_service_areas, create_draft_job, check_business_hours, get_pricing_estimate, transfer_to_human). Each tool = Supabase query. Claude tool_use API format
+- [ ] Confidence scoring + Opus escalation — confidence extraction per turn, threshold logic (<60 = escalate), seamless model switch mid-call, escalation keywords for emergency/insurance/frustration detection
+- [ ] Autonomy levels — 3-tier behavior (Conservative/Standard/Full Auto) via system prompt variants. `ai_autonomy_level` column on `phone_config`. Settings UI toggle (Flutter + Web CRM)
+- [ ] Emergency detection module — keyword/pattern matching for gas, electrical, water, structural, CO emergencies. Always-Opus routing. Safety response templates ("If in immediate danger, call 911 first"). Auto-dispatch trigger
+- [ ] Post-call automation chain — AI summary generation, lead/customer creation, draft job confirmation SMS, missed call auto-text, emergency push notification, phone_calls record update with `ai_summary`, `ai_conversation`, `ai_model_used`, `ai_confidence_avg`, `ai_escalated`, `ai_outcome` columns
+- [ ] AI Call Summary Dashboard — CRM page: `/dashboard/phone/ai-calls`. Hook: `use-ai-calls.ts`. Today's calls, confidence scores, needs-review filter, transcript viewer, weekly performance stats, cost tracker. Ops portal: platform-wide AI analytics
+- [ ] Voice personality wiring — connect U23d personality config to system prompt generation. Voice selection to SignalWire TTS voice parameter. Language detection + auto-switch (top 10 languages)
+- [ ] **S133 Innovation: Photo intake mid-call via SMS** — customer texts photo during call, Opus vision analyzes in real-time, AI describes what it sees. MMS handler on SignalWire number
+- [ ] **S133 Innovation: Recon-powered caller intelligence** — known customer calls → pull Recon data (roof age, type, sqft, storm history) BEFORE responding
+- [ ] **S133 Innovation: Competitor price awareness** — customer mentions competitor quote → AI knows BLS/Davis-Bacon rates for that service in that ZIP
+- [ ] **S133 Innovation: Multi-language auto-detection (zero menu)** — detect language in first 2 seconds, switch automatically. Top 10 languages. ~500ms detection latency
+- [ ] **S133 Innovation: Job history context** — returning customer → AI knows last 3 jobs, equipment on file, lifetime spend, preferred technician
+- [ ] **S133 Innovation: Voicemail intelligence** — AI analyzes voicemails: urgency score (1-10), service type, sentiment, auto-creates prioritized task. Cost: ~$0.02/voicemail
+- [ ] **S133 Innovation: Smart queue with callback** — instead of hold music, offer callback. `callback_queue` table. Cron check every 60s
+- [ ] Integration testing — test with real SignalWire calls: 5 Sonnet scenarios, 3 Opus escalation scenarios, 3 emergency scenarios, post-call automation chain, draft job in CRM, SMS sends. Test all 3 autonomy levels. Test prompt caching
+- [ ] Commit: `[E-REC] AI receptionist — Sonnet/Opus tiered, 8 tools, 3 autonomy levels, emergency detection, post-call automation, innovations`
+
+### Sprint E-REC-RE: Realtor AI Receptionist Variant (~20h) — S133
+**Prerequisites:** E-REC complete, RE sprints in progress.
+**Reuses 80% of E-REC codebase. Different tools, prompts, conversation flows.**
+
+- [ ] Fork E-REC architecture for realtor portal — separate system prompt template, realtor-specific tool implementations
+- [ ] Implement 6 realtor-specific tools (lookup_contact, check_showing_availability, create_showing_appointment/create_lead, get_active_listings, get_listing_details, hot_lead_detect)
+- [ ] Write realtor system prompt (listing-focused, qualification-focused)
+- [ ] Implement buyer qualification extraction (budget, pre-approval, timeline, areas, beds/baths, currently renting vs selling → auto-create qualified lead with A/B/C score)
+- [ ] Implement showing scheduler integration
+- [ ] Implement listing data lookup + SMS link sending mid-call
+- [ ] Implement agent-to-agent detection + routing
+- [ ] Implement hot lead detection + urgent notification ("I want to make an offer" / "I need to sell fast" / "My listing agreement expired")
+- [ ] Test with 5 simulated buyer calls, 5 seller calls, 3 showing requests
+- [ ] Voice picker integration (same as contractor — shared component)
+- [ ] Commit: `[E-REC-RE] Realtor AI receptionist — buyer qualification, showing scheduler, listing lookup, hot lead detection`
+
+### Sprint E-OUT: AI Outbound Engine (~24h) — S133
+**Legal compliance built in:** FTC AI Disclosure mandatory, TCPA (existing business relationship only), DNC scrub, Quiet Hours (8am-9pm recipient local time), Frequency Cap (1/30 days), Opt-Out, Call Recording Disclosure (2-party consent states).
+
+- [ ] Outbound call initiation via SignalWire (programmatic dialing)
+- [ ] AI disclosure system (state-specific: 1-party vs 2-party consent recording disclosure)
+- [ ] DNC registry scrub integration (free FTC API or bulk download)
+- [ ] Quiet hours enforcement (timezone-aware per recipient, 8am-9pm local)
+- [ ] Frequency cap enforcement (per customer per 30 days)
+- [ ] Opt-out handling (press 2 → permanent flag in CRM)
+- [ ] 8 outbound conversation templates (lead follow-up 3 days, invoice collection 7/14/30 days, maintenance reminder 12mo, review request 24-48h, warranty expiring 30 days, seasonal campaign, re-engagement 18+mo, appointment confirmation)
+- [ ] Voice picker UI (gender, age, accent, tone, preview, test call)
+- [ ] ElevenLabs integration (premium voice + custom clone) + Google Neural2 integration (default voice)
+- [ ] Wallet deduction per outbound call ($0.20)
+- [ ] Post-call automation (summary, task creation, CRM update)
+- [ ] Analytics: calls made, connected, booked, collected, reviewed
+- [ ] Commit: `[E-OUT] AI outbound engine — 8 templates, DNC/TCPA compliance, voice picker, wallet billing`
+
+### Sprint E-CAMP: Campaign Engine (~32h) — S133
+**Multi-channel automated campaigns with trade-specific templates, event triggers, and A/B testing.**
+
+- [ ] Campaign builder UI (7-step wizard: pick template → define audience → choose channel → customize message → set schedule → set limits → review + launch)
+- [ ] Audience filter engine (20+ filter criteria including Recon data, job history, outstanding invoices, trade type, ZIP, storm exposure)
+- [ ] Template library (8 trades x 3 types = 24 templates + custom) — HVAC/Plumbing/Electrical/Roofing/Restoration/Landscaping/GC/Pest Control seasonal + event-triggered + maintenance templates
+- [ ] Multi-channel sequence engine: Day 0 SMS → Day 3 Email (non-responders) → Day 7 AI Call (non-responders) → Day 14 Direct Mail (non-responders). Contact exits sequence on any response
+- [ ] Scheduling engine (one-time, recurring, event-triggered)
+- [ ] Event trigger system (storm alerts via NOAA, overdue invoices, job completion, warranty expiry)
+- [ ] Wallet integration (cost preview before launch, deduction on send)
+- [ ] Frequency cap + DNC + quiet hours enforcement (shared with E-OUT)
+- [ ] Campaign analytics dashboard (sent, delivered, opened, clicked, converted, revenue attributed)
+- [ ] A/B testing framework (split audience, compare conversion rates)
+- [ ] Campaign status management (draft, scheduled, running, paused, completed)
+- [ ] Non-responder filtering for sequence steps
+- [ ] Commit: `[E-CAMP] Campaign engine — 7-step builder, 24 templates, multi-channel sequences, event triggers, A/B testing`
+
+### Sprint E-MAIL: Direct Mail Integration (~12h) — S133
+**Physical mail via Click2Mail API ($0.42/postcard). Legal for ALL outreach — no DNC/TCPA restrictions on postal mail.**
+
+- [ ] Print-ready PDF generator (postcard 4x6, 6x9, flyer, door hanger) with trade-specific designs
+- [ ] QR code generator (links to client portal booking with UTM tracking)
+- [ ] Click2Mail API integration (address validation, print, mail, tracking). Backup: PostGrid ($0.47)
+- [ ] Recon property filter → direct mail audience pipeline (storm damage in ZIP, new home sales, permits filed, high-value homes no permits in 5+ years)
+- [ ] USPS EDDM route planning tool (select carrier routes on map, $0.35/piece total)
+- [ ] Campaign builder integration (direct mail as channel option in E-CAMP sequences)
+- [ ] Wallet deduction per piece ($0.50)
+- [ ] Mail tracking (Click2Mail provides delivery confirmation)
+- [ ] Template designer (drag/drop, trade-specific starting designs)
+- [ ] Commit: `[E-MAIL] Direct mail — Click2Mail API, QR tracking, EDDM planning, Recon-powered targeting`
+
+### Sprint E-CAMP-RE: Realtor Campaign Variant (~16h) — S133
+**Same engine as E-CAMP, different templates and audience filters. After RE sprints.**
+
+- [ ] Fork E-CAMP templates for realtor use cases
+- [ ] 9 realtor campaign templates (Just Listed, Open House, Price Reduced, Market Update, Seller Prospecting, Anniversary, Holiday, Expired Listing, FSBO)
+- [ ] Realtor-specific audience filter engine (12 filter criteria: listing status, DOM, price range, property type, area/ZIP, buyer qualification score, lead source, last contact date, transaction stage, home equity estimate, years since purchase)
+- [ ] Market update auto-generator (AI pulls local stats, generates newsletter content)
+- [ ] Seller prospecting pipeline (Recon → likely sellers → direct mail)
+- [ ] Buyer drip sequence templates (auto-send new listings matching criteria)
+- [ ] CMA request landing page (QR code → client portal → request CMA)
+- [ ] Integration with RE listing engine (pull listing data for campaigns)
+- [ ] Commit: `[E-CAMP-RE] Realtor campaigns — 9 templates, seller prospecting, buyer drips, market updates`
+
+### Sprint E-WALK: Voice + LiDAR Walk-and-Talk → Estimate (~20-24h) — S133
+**Walk through a property, talk about what you see, LiDAR measures rooms, photos capture evidence → AI generates draft estimate. Cost: ~$0.26-0.30/walkthrough (Sonnet-primary).**
+
+- [ ] Walk-and-Talk mode UI (start/stop recording, room indicators, photo capture button)
+- [ ] RoomPlan integration (room detection, dimensions, timestamps — concurrent with speech)
+- [ ] Concurrent speech recognition stream (on-device, timestamped per room)
+- [ ] Photo capture with timestamp + room association
+- [ ] Recon data pre-load for target property (if available — roof age, type, sqft, storm history)
+- [ ] AI processing pipeline (voice transcription + LiDAR measurements + photos + Recon data → line items with quantities)
+- [ ] Price book matching engine (observations → matched estimate line items with auto-quantities from LiDAR dimensions)
+- [ ] Draft estimate generation (line items tagged to rooms, photos attached per line item)
+- [ ] Review UI (contractor approves/edits/rejects each AI-suggested line item before finalizing)
+- [ ] Integration with existing D8 estimate screen (approved draft → real estimate)
+- [ ] Test with 5 different property types (kitchen remodel, water damage, full renovation, electrical panel, roof)
+- [ ] Commit: `[E-WALK] Walk-and-Talk — voice + LiDAR + photo → AI draft estimate, Recon integration`
+
+### Sprint E-MAT: Smart Material Sourcing (~16h) — S133
+**$0 API costs — BLS PPI + UPCitemdb + buying group directory.**
+
+- [ ] BLS PPI material price index integration (free API — lumber WPU0811, steel WPU1017, concrete WPU1333, gypsum WPU137, composite WPUIP230000)
+- [ ] Price trend visualization (up/down/stable per material category, 12-month chart)
+- [ ] UPCitemdb substitute finder integration (scan UPC → find equivalent products)
+- [ ] Bulk breakpoint calculator (quantity discount thresholds — "buy 50+ sheets = 12% savings")
+- [ ] Material waste optimizer (packaging size awareness — don't buy 97 when 100-pack is cheaper)
+- [ ] Buying group directory (seeded with 50+ groups by trade/region — Blue Hawk, IMARK, AD, etc.)
+- [ ] Integration with estimate line items (suggest optimizations per estimate: "This estimate uses $4,200 in lumber — PPI shows 8% increase last quarter, consider locking price")
+- [ ] Material price alerts (optional: notify when tracked material drops 10%+)
+- [ ] Commit: `[E-MAT] Smart material sourcing — BLS PPI trends, substitute finder, bulk calculator, buying groups`
+
+### Sprint E-PERM: AI Permit Navigator (~16h) — S133
+**$0 APIs — municipal permit portals + IRC/IBC/NEC code reference.**
+
+- [ ] Permit requirement lookup by jurisdiction + scope of work (auto-detect from estimate/job)
+- [ ] Code reference integration (existing 61-section code reference from INS7)
+- [ ] Permit application auto-fill (pre-populate forms from job/estimate data)
+- [ ] Inspection scheduling intelligence (which inspections needed, in what order, typical wait times)
+- [ ] Permit cost estimation by jurisdiction
+- [ ] Required documents checklist per permit type
+- [ ] Commit: `[E-PERM] AI permit navigator — jurisdiction lookup, code reference, auto-fill, inspection scheduling`
+
+### Sprint E-CASH: Predictive Cash Flow (~12h) — S133
+**Uses existing ZBooks ledger data + job pipeline + invoice aging.**
+
+- [ ] Cash flow projection engine (30/60/90 day forecast from: open invoices, scheduled jobs, recurring expenses, payroll, material costs)
+- [ ] "Cash crunch" early warning (alert when projected balance drops below threshold)
+- [ ] Scenario planning ("What if Job X is delayed 2 weeks?" / "What if Customer Y doesn't pay?")
+- [ ] Seasonal pattern detection (identify slow months from historical data)
+- [ ] Cash flow dashboard widget (CRM + Flutter)
+- [ ] Commit: `[E-CASH] Predictive cash flow — 30/60/90 day forecast, crunch alerts, scenario planning`
+
+### Sprint E-CREW: Crew Knowledge Graph (~16h) — S133
+**Tracks what each crew member knows, has done, and can do. Informs dispatch and training.**
+
+- [ ] Skills matrix per team member (trade certifications, equipment proficiency, job type experience, customer ratings per skill)
+- [ ] Auto-populate from job history (crew member worked 47 water damage jobs → high proficiency)
+- [ ] Dispatch intelligence (match job requirements to crew skills — "This job needs mold + IICRC cert → only 2 crew members qualify")
+- [ ] Training gap identification ("No one on the team has commercial plumbing experience")
+- [ ] Knowledge transfer tracking (apprentice worked alongside certified tech on 10 jobs → partial proficiency)
+- [ ] Crew performance analytics (per-trade efficiency, callback rates, customer satisfaction by crew member)
+- [ ] Commit: `[E-CREW] Crew knowledge graph — skills matrix, dispatch intelligence, training gaps, performance analytics`
+
+**Phase E New Sprint Totals (S133):** E-REC (~36h) + E-REC-RE (~20h) + E-OUT (~24h) + E-CAMP (~32h) + E-MAIL (~12h) + E-CAMP-RE (~16h) + E-WALK (~20-24h) + E-MAT (~16h) + E-PERM (~16h) + E-CASH (~12h) + E-CREW (~16h) = **~220-224h across 11 new sprints.** All Phase E — AI goes LAST.
+
+---
+
+### Sprint E1-E4: Full AI implementation (rebuilt with complete platform knowledge — including TPA module + Recon + Sketch Engine + Plan Review + all Phase F features + all new E-REC/E-OUT/E-CAMP/E-WALK/E-MAT sprints)
 
 ---
 
@@ -13653,6 +14007,217 @@ Every DEPTH audit item MUST be evaluated per-app where relevant. Do NOT just che
 
 ---
 
+## PHASE RE EXPANDED: 10 MISSING REALTOR FEATURES (S132) — RE21-RE30 (~236h)
+*Source: s132-realtor-10-gaps-spec.md. Execution: after RE1-RE20 (see Expansion/53_REALTOR_PLATFORM_SPEC.md). These fill the 10 gaps identified in S132 competitive analysis.*
+
+### RE21 — AI Negotiation Intelligence (~28h) — S132
+*New tables: `negotiation_analyses`, `negotiation_outcomes`, `market_snapshots`*
+
+- [ ] DOM analysis scoring (0-20 pts): DOM > 2x area median = 20pts, > 1.5x = 15, > median = 10, < median/2 = 0
+- [ ] Price history analysis scoring (0-20 pts): number of reductions (0=0, 1=8, 2=14, 3+=20), total reduction % (>10%=20), time between reductions
+- [ ] Market position analysis scoring (0-15 pts): months of supply (>6mo=15, 4-6=8, <4=2, <2=0), absorption rate trend
+- [ ] Listing language sentiment analysis scoring (0-10 pts): Claude reads description, detects motivation signals ("motivated seller"=10, "as-is"=7, "firm"=-5)
+- [ ] Property-specific signals scoring (0-15 pts): vacant=8, multiple relisting=10, expired history=12, pre-foreclosure=15, inherited=8
+- [ ] Comparable concession analysis scoring (0-10 pts): avg concessions in ZIP last 6mo (>3%=10, 2-3%=7, 1-2%=4, <1%=1)
+- [ ] Financial distress indicators scoring (0-10 pts): mortgage underwater=10, tax liens=8, mechanic's liens=6, HOA liens=5
+- [ ] Buyer strategy recommendations per PFS range (0-25: offer 97-100%, 26-50: 93-97%, 51-75: 88-93%, 76-100: 80-90%)
+- [ ] Seller strategy recommendations (inverse PFS, listing agent guidance)
+- [ ] Counter-offer scenario modeler (up to 5 scenarios, probability estimates per scenario)
+- [ ] Real-time negotiation coaching (step-by-step logging with live advice during active negotiation)
+- [ ] Seller motivation detection: listing agent change, photo quality decline, seasonal pressure, price/sqft vs comps, listing renewal
+- [ ] Historical concession tracking (every closed deal stores concessions given, aggregate by ZIP/price range)
+- [ ] Concession benchmarking ("Requesting $5K is within normal range. Avg: $4,200 in this ZIP")
+- [ ] FRED API integration (30yr/15yr mortgage rates daily → market_snapshots)
+- [ ] FHFA HPI integration (quarterly appreciation by metro)
+- [ ] Census ACS integration (median income, housing cost burden, homeownership rate by tract)
+- [ ] County assessor data auto-populate market_snapshots monthly
+- [ ] Post-negotiation debrief logging (listing price, offer, final price, concessions, strategy used)
+- [ ] Strategy effectiveness analytics ("Bold offers on PFS>60 properties yield 4.2% better prices")
+- [ ] Flutter screens: Negotiation Analysis, Counter-Offer Modeler, Real-Time Coaching, Concession Benchmarking, Negotiation History
+- [ ] Web portal: Negotiation Intelligence dashboard, Market Snapshot management, Strategy Analytics
+- [ ] All builds pass: `flutter analyze`, `npm run build` for realtor-portal
+- [ ] Commit: `[RE21] AI negotiation intelligence — PFS scoring, real-time coaching, counter-offer modeler, concession benchmarking, outcome tracking`
+
+### RE22 — Predictive Agent Departure Model (~16h) — S132
+*New tables: `agent_risk_scores`, `agent_activity_metrics`*
+
+- [ ] Login frequency decline scoring (0-20 pts): rolling 30-day vs 90-day baseline, >50% decline=20, >30%=15, account for seasonality
+- [ ] Production trend analysis scoring (0-20 pts): current quarter GCI vs same quarter prior year AND trailing 4-quarter average, declining 2+ consecutive quarters=20
+- [ ] Commission trajectory scoring (0-15 pts): % to cap remaining, trajectory, far from cap + declining=15, just passed cap=5
+- [ ] Engagement signals scoring (0-15 pts): CRM usage + marketing tools + training attendance + support tickets + outbound communications, >40% decline=15
+- [ ] Meeting/event attendance scoring (0-10 pts): missed 3+ consecutive=10, missed 2=6, pattern: always attended then stopped = high signal
+- [ ] Profile activity scoring (0-10 pts): LinkedIn updated, Zillow/Realtor.com branding changed, requests for production reports/W2
+- [ ] Competitive intelligence scoring (0-10 pts): manual flags by broker (recruiting event, frustration mention, mentor left)
+- [ ] Weekly risk digest (Monday report: agents at HIGH 60+, MODERATE 40-59, top risk agent detail, recommended action)
+- [ ] Real-time critical alerts (risk score crosses 75: push notification + email immediately)
+- [ ] Escalation rules (40-59: weekly only, 60-74: highlighted + in-app badge, 75+: real-time, 90+: "imminent departure")
+- [ ] Retention action playbook per score range (40-59: check-in, 60-74: 1-on-1, 75-89: urgent meeting + value props, 90+: all stops)
+- [ ] Action tracking + outcome logging (did agent stay? Did risk score decline?)
+- [ ] Retention ROI calculator ("Losing Jane costs $39K-49K. Retention investment: $2K-5K. ROI: 8-24x")
+- [ ] Agent retention heat map dashboard (all agents, color-coded by risk level)
+- [ ] Trend charts (company-wide risk over time, seasonal patterns)
+- [ ] Agent detail drilldown (full signal breakdown, activity timeline, action history)
+- [ ] Anonymized benchmarking vs other Zafto brokerages
+- [ ] Privacy controls: managing broker role required, no external surveillance, disclosure in brokerage terms, agent data transparency
+- [ ] All builds pass, commit: `[RE22] Predictive agent departure model — risk scoring, alert system, retention playbook, ROI calculator, brokerage dashboard`
+
+### RE23 — Rental Investment Analysis (~24h) — S132
+*New tables: `investment_analyses`, `rental_market_data`*
+
+- [ ] HUD Fair Market Rent API integration (annual FMR by metro/county by bedroom count, free)
+- [ ] Census ACS rent data by census tract (median rent by bedroom count, more granular than FMR)
+- [ ] Open-Meteo/climate data for rental market context
+- [ ] 8 return metrics: cap rate, cash-on-cash return, DSCR, monthly cash flow, GRM, ROI, equity multiple, IRR
+- [ ] BRRRR strategy analysis module (Buy, Rehab, Rent, Refinance, Repeat calculator)
+- [ ] Short-term rental analysis (Airbnb occupancy estimate, nightly rate, seasonal variation)
+- [ ] Sensitivity analysis (what-if: vacancy rate changes, interest rate changes, rent growth changes)
+- [ ] Appreciation forecast (FHFA HPI historical + projected)
+- [ ] Tax analysis (depreciation schedule, 1031 exchange eligibility, pass-through deduction)
+- [ ] Financing calculator (conventional, DSCR loan, hard money, seller financing)
+- [ ] Professional investor deal package PDF generator
+- [ ] Share with client via client portal
+- [ ] Flutter screens: Investment Analysis, BRRRR Calculator, STR Analysis, Sensitivity Modeler
+- [ ] Web portal: Investment dashboard, rental market data management
+- [ ] Commit: `[RE23] Rental investment analysis — 8 return metrics, BRRRR, STR, sensitivity analysis, appreciation forecast, tax analysis, investor PDF`
+
+### RE24 — HOA Financial Health Intelligence (~20h) — S132
+*New tables: `hoa_analyses`, `hoa_reserve_studies`, `hoa_financial_records`*
+
+- [ ] HOA document upload (CC&Rs, bylaws, financial statements, reserve study, meeting minutes, budget)
+- [ ] Claude OCR reads HOA documents and extracts: reserve fund balance, reserve adequacy %, special assessment history, pending litigation, deferred maintenance, monthly dues, fee increase history
+- [ ] Reserve adequacy scoring A-F (A: >100% funded, B: 70-100%, C: 40-70%, D: 20-40%, F: <20%)
+- [ ] Special assessment risk score (probability of special assessment in next 3 years based on reserve %, deferred maintenance, age)
+- [ ] HOA fee trend analysis (historical increases, projected future increases)
+- [ ] Litigation history flag (any active lawsuits against HOA = RED flag)
+- [ ] State HOA registry integration where available (FL, CO, NV, WA have public registries)
+- [ ] County records HOA lien check
+- [ ] Comparative HOA analysis (how does this HOA compare to similar communities)
+- [ ] Buyer advisory report ("This HOA has a 34% reserve adequacy — F rating. High special assessment risk.")
+- [ ] Agent presentation mode (clean visual for showing buyers)
+- [ ] Alert integration with RE25 (insurance) — HOA master policy coverage gaps
+- [ ] Flutter screens: HOA Health Report, Reserve Adequacy Details, Special Assessment Risk
+- [ ] Web portal: HOA Analysis dashboard
+- [ ] Commit: `[RE24] HOA financial health intelligence — Claude OCR, reserve adequacy A-F, special assessment risk, litigation flag, state registry, buyer advisory`
+
+### RE25 — Insurance Cost Estimation (~24h) — S132
+*New tables: `property_insurance_estimates`, `insurance_risk_profiles`*
+
+- [ ] FEMA NFHL flood zone lookup (flood insurance required? Estimated premium)
+- [ ] NASA FIRMS wildfire risk (proximity to fire history + WUI classification)
+- [ ] ASCE Hazard Tool integration (wind speed by location for hurricane/tornado pricing)
+- [ ] NOAA Storm Events historical (hail/wind frequency in ZIP over 10 years)
+- [ ] FBI Crime data (property crime rate affects homeowners insurance premium)
+- [ ] Census ACS housing vintage (older homes = higher insurance risk)
+- [ ] Open-Meteo climate data (freeze risk for pipe claims, humidity for mold)
+- [ ] 7-source composite risk score (0-100, higher = higher insurance cost)
+- [ ] Insurance premium estimate by risk tier ("$2,400-3,100/yr for standard coverage in this area")
+- [ ] Coverage recommendation: dwelling (replacement cost), contents, liability, flood, windstorm, earthquake, umbrella
+- [ ] Flood insurance deep dive: NFIP vs private, LOMA eligibility for borderline zones
+- [ ] Wildfire insurance warning (carrier pullout states: CA, CO, OR, WA)
+- [ ] Insurance package for buyer: risk scores, premium estimates, required coverage, recommended riders
+- [ ] Agent can share estimate with buyer via client portal
+- [ ] Commit: `[RE25] Insurance cost estimation — 7-source risk assessment, composite score, premium estimate range, buyer package, flood/wildfire deep dive`
+
+### RE26 — Post-Close Home Maintenance Engine (~28h) — S132
+*New tables: `post_close_maintenance_plans`, `maintenance_tasks`, `maintenance_completions`, `property_systems`*
+
+- [ ] 400+ pre-loaded maintenance tasks organized by system (HVAC, plumbing, electrical, roofing, exterior, interior, appliances, seasonal)
+- [ ] Climate-zone-aware scheduling (IECC climate zones, USDA hardiness zones, Open-Meteo climate normals, NOAA climate data)
+- [ ] Equipment age tracking seeded from transaction data (HVAC installed 2018, WH 2015, roof 2012)
+- [ ] HUD EUL (Estimated Useful Life) integration for replacement forecasting
+- [ ] Predictive replacement alerts ("Your 2012 roof is 14 years old. Average lifespan: 20-25 years. Plan for replacement in 6-11 years: ~$12,000-18,000")
+- [ ] Seasonal maintenance calendar (Spring 12 items, Summer 10, Fall 14, Winter 12, auto-adjusted by climate zone)
+- [ ] Weather-triggered alerts (freeze warning → "Disconnect garden hoses and insulate outdoor spigots tonight")
+- [ ] DIY vs. professional flag per task (difficulty score, tool requirements, safety considerations)
+- [ ] "Connect to contractor" flow → dispatches to Zafto contractor in homeowner's area
+- [ ] 5-year capital planning report (what's failing next, budget recommendation, priority order)
+- [ ] Agent sends maintenance plan to buyer at closing (lifetime homeowner relationship touchpoint)
+- [ ] Homeowner portal integration (RE26 feeds into CLIENT3 Maintenance Engine — coordinate with INTEG6 to deduplicate)
+- [ ] Annual report to homeowner (from agent): "Year 1 maintenance summary. Top priorities for Year 2."
+- [ ] Flutter screens: Maintenance Calendar, Task Detail, Capital Planning, Equipment Health
+- [ ] Web portal: Maintenance Plan builder, client maintenance report
+- [ ] Commit: `[RE26] Post-close maintenance engine — 400+ tasks, climate-zone scheduling, HUD EUL forecasting, 5-year capital plan, weather triggers, homeowner portal integration`
+
+### RE27 — Power Dialer with Voicemail Drop (~24h) — S132
+*New tables: `dialer_sessions`, `dialer_calls`, `voicemail_drop_recordings`. Replaces Mojo Dialer ($149-399/mo).*
+
+- [ ] SignalWire multi-line dialer integration (already in stack — extend existing phone tables)
+- [ ] Call queue management (load contacts, set call order, auto-dial next)
+- [ ] 3-line simultaneous dialing (call 3 contacts at once, first to answer gets agent)
+- [ ] Call outcomes: connected, no answer, voicemail, disconnected, DNC
+- [ ] Voicemail drop (pre-recorded audio drops when voicemail detected, agent moves on immediately — saves 30-60s per voicemail)
+- [ ] Pre-recorded voicemail library (create/store multiple recordings, pick per campaign)
+- [ ] Automatic answering machine detection (AMD) via SignalWire
+- [ ] Call notes (agent types notes during call, auto-saved to contact record)
+- [ ] Call disposition (interested, not interested, callback scheduled, DNC requested, no decision)
+- [ ] Post-call automation: update CRM, schedule callback, add to drip, create task
+- [ ] FTC DNC registry scrub (auto-remove DNC numbers from any call list before session)
+- [ ] Session analytics: calls made, connected %, voicemails left, callbacks scheduled, time per outcome
+- [ ] TCPA compliance: 1-party vs 2-party consent states, quiet hours, frequency caps
+- [ ] "Click-to-call" from contact record (single call, not batch)
+- [ ] Local presence dialing (optional: display local area code when calling)
+- [ ] Commit: `[RE27] Power dialer + voicemail drop — 3-line SignalWire dialer, AMD, voicemail library, DNC scrub, TCPA compliance, session analytics`
+
+### RE28 — IDX Agent Websites (~28h) — S132
+*New tables: `agent_websites`, `website_listings`, `website_leads`. 15+ free API data feeds, no MLS required at launch.*
+
+- [ ] Agent website generator (subdomain: `agentname.zafto.cloud` or custom domain)
+- [ ] Property listing display from Recon Engine data + agent's own listings
+- [ ] Neighborhood data: Walk Score API (free tier), school ratings (GreatSchools basic), crime data (FBI UCR)
+- [ ] Google Maps/Overpass OSM neighborhood map (nearby amenities, transit, restaurants)
+- [ ] Census ACS demographics (population, income, housing composition by census tract)
+- [ ] Market stats widget (auto-updated from market_snapshots table)
+- [ ] Agent bio, team page, testimonials, Google Reviews integration (Places API)
+- [ ] Lead capture forms (home search, CMA request, seller valuation, contact)
+- [ ] Lead routing to Zafto CRM (instant notification + auto-create contact)
+- [ ] IDX property search (Phase 2: connect to MLS after RESO onboarding — for now, Recon + agent listings)
+- [ ] Blog/content section (agent writes, SEO-optimized, schema markup)
+- [ ] Schema.org markup (RealEstateListing, Person, LocalBusiness for Google Rich Snippets)
+- [ ] Mobile-responsive, fast (Core Web Vitals optimized)
+- [ ] Analytics: visitor count, search queries, lead sources, listing views
+- [ ] Commit: `[RE28] IDX agent websites — auto-generated site, Recon data, neighborhood intelligence, market stats, lead capture, CRM integration, schema markup`
+
+### RE29 — AI Disclosure/Inspection Report Analysis (~24h) — S132
+*New tables: `inspection_analyses`, `inspection_items`*
+
+- [ ] Inspection report PDF upload (standard home inspection format, any inspector)
+- [ ] Claude PDF parsing (extract all inspection findings, categorize by system: foundation, roof, HVAC, plumbing, electrical, interior, exterior)
+- [ ] Severity classification per finding (Safety Hazard, Major Defect, Minor Defect, Maintenance Item, Recommended Upgrade)
+- [ ] Repair cost estimation per finding (using Zafto estimate engine price book + BLS labor rates + ZIP)
+- [ ] Priority ranking (safety hazards first, then by repair cost, then by impact on property value)
+- [ ] "Deal-breaker" identification (safety hazards or major defects exceeding configurable threshold)
+- [ ] Repair credit calculation (total estimated repairs → recommended credit request amount)
+- [ ] Counter-offer integration with RE21 (inspection findings feed PFS score update: major defects increase flexibility score)
+- [ ] Contractor dispatch for estimates (from inspection items → "Get Bids" → Zafto contractors)
+- [ ] Disclosure review (seller's disclosure form upload → Claude checks consistency between disclosures and inspection findings)
+- [ ] Share with client via client portal (buyer sees findings + costs in clear visual format)
+- [ ] Agent negotiation brief (2-page summary: deal-breakers, credit recommendations, nice-to-haves to drop)
+- [ ] Flutter screens: Inspection Upload, Finding Detail, Repair Cost Summary, Negotiation Brief
+- [ ] Web portal: Inspection Analysis dashboard, Disclosure Consistency Report
+- [ ] Commit: `[RE29] AI inspection analysis — PDF parsing, severity classification, repair cost estimation, deal-breaker detection, repair credit calc, disclosure consistency`
+
+### RE30 — Storm Alert System for Agents (~20h) — S132
+*New tables: `storm_alerts`, `agent_storm_responses`*
+
+- [ ] NWS Weather API integration (real-time warnings: tornado, hurricane, severe thunderstorm, winter storm, flood)
+- [ ] IEM (Iowa Environmental Mesonet) integration (storm reports with location)
+- [ ] SPC SVRGIS API (Significant Weather Event polygons — hail, wind, tornado confirmations)
+- [ ] NEXRAD SWDI (storm cell data, hail size at specific locations)
+- [ ] NOAA Storm Events historical (historical context for any storm type at location)
+- [ ] Geographic matching (agent's listings and contacts mapped to storm polygon: "The storm hit 23 of your listings and 147 client addresses")
+- [ ] Auto-drafted client check-in (storm hits → system drafts check-in message per affected client)
+- [ ] Agent one-tap send (review draft → send to all affected clients)
+- [ ] Contractor referral trigger (client reports damage → one-tap dispatch to Zafto restoration contractor)
+- [ ] Post-storm follow-up sequence (Day 0: check-in, Day 3: "How are repairs going?", Day 14: "If you're thinking about selling, storm events often create market opportunities")
+- [ ] Storm activity dashboard (active alerts, affected listings/clients, response rates, referrals generated)
+- [ ] Alert severity filter (configure: only ping me for tornado warnings + hurricanes, ignore winter storm watches)
+- [ ] Realtor portfolio protection (storm near vacant listing: auto-notify agent to arrange property check)
+- [ ] Commit: `[RE30] Storm alert system — NWS/SPC/NEXRAD detection, geographic client matching, auto-drafted check-ins, one-tap send, contractor referral trigger, post-storm sequence`
+
+**RE Expanded Totals (S132):** RE21 (~28h) + RE22 (~16h) + RE23 (~24h) + RE24 (~20h) + RE25 (~24h) + RE26 (~28h) + RE27 (~24h) + RE28 (~28h) + RE29 (~24h) + RE30 (~20h) = **10 sprints, ~236h**. ~30 new tables.
+
+---
+
 ## PHASE INTEG: NATIONAL PORTAL INTEGRATION (S127)
 **Purpose:** Build submission API that pushes verified contractor documentation directly into national PP company portals. Contractors stop logging into 5 different portals. They complete work in Zafto → one-click submit to Safeguard/MCS/Cyprexx/NFR/Xome. This is the immediate-value integration play. Direct bank API is a post-launch enterprise effort.
 
@@ -14819,6 +15384,631 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 - [ ] Performance profiling: viewer FPS monitoring, auto-reduce quality on low-end devices
 - [ ] Accessibility: keyboard navigation for viewer, screen reader descriptions for tour waypoints
 - [ ] Commit: `[VIZ14] Polish — onboarding tutorial, error recovery, quality checks, CDN optimization`
+
+---
+
+### VIZ15 — Progressive Loading for 3D Tours (~12h) — S132 Listing Engine
+- [ ] 3-tier progressive loading: instant preview (1-2MB, 0-2 sec), interactive quality (2-10 sec), photorealistic (10-30 sec background load). LapisGS-inspired layered framework
+- [ ] Adaptive quality rendering — detect device capability (iPhone 15 Pro = full quality, older = reduced splat count). Auto-adjust on framerate drop. Target: 15-30 FPS minimum on any device from last 3 years
+- [ ] SPZ compression optimization (90% compression: 250MB PLY → ~25MB SPZ). Bandwidth-aware streaming for rural/slow connections
+- [ ] Commit: `[VIZ15] Progressive loading — 3-tier quality, adaptive rendering, SPZ compression`
+
+### VIZ16 — Virtual Staging Legal Compliance (~4h) — S132 Listing Engine
+- [ ] Auto-watermark "Virtually Staged" on all AI-staged images (CA AB 723 compliance, effective Jan 1, 2026). Configurable position/opacity. Watermark required = cannot be removed by agent
+- [ ] Original image retention system — every staged image stores link to unprocessed original. Toggle in viewer: "Show Original / Show Staged". QR code/URL to originals for print compliance
+- [ ] Commit: `[VIZ16] Staging compliance — AB 723 watermark, original retention, toggle viewer`
+
+### VIZ17 — Dollhouse View (~20h) — S132 Listing Engine
+- [ ] Mesh extraction from Gaussian Splat (AGS-Mesh or GBM approach — SAM2 + GroundingDINO segment rooms, extract mesh for cutaway boundaries, splats provide photorealistic textures)
+- [ ] Dollhouse renderer — cutaway 3D model, zoomable + rotatable, room labels, floor switching. Three view modes: first-person splat walkthrough, top-down floor plan, dollhouse cutaway
+- [ ] Click-to-enter — click any room in dollhouse view → smooth camera transition into first-person splat view of that room. Bidirectional (first-person → dollhouse → first-person)
+- [ ] Commit: `[VIZ17] Dollhouse view — mesh extraction, cutaway renderer, click-to-enter navigation`
+
+### VIZ18 — Point-to-Point Measurement in 3D Viewer (~8h) — S132 Listing Engine
+- [ ] Click two points in 3D viewer → get distance (imperial + metric). Uses Gaussian Splat depth data for accuracy. Persistent measurements (save to scan)
+- [ ] "Will my furniture fit?" mode — enter couch/table dimensions → overlay translucent box in 3D space. Drag to position. Green = fits, red = too large
+- [ ] Commit: `[VIZ18] 3D measurements — point-to-point distance, furniture fit checker`
+
+### VIZ19 — Hotspot/Annotation System (~12h) — S132 Listing Engine
+- [ ] Pin information to 3D locations — title + description + camera viewpoint per hotspot. Click hotspot → smooth camera transition + info panel. Up to 50 annotations per scan
+- [ ] Auto-populate from Recon Engine — if Recon has equipment data for the property, auto-create hotspots ("HVAC: Carrier 24ACC636, installed 2023, warranty until 2033") at approximate locations
+- [ ] Agent/contractor editable — add custom annotations ("New quartz counters, 2024"), reorder, show/hide per audience (buyer sees different annotations than inspector)
+- [ ] Commit: `[VIZ19] Hotspot annotations — 3D pins, Recon auto-populate, audience-specific visibility`
+
+### VIZ20 — Auto-Generate Walkthrough Videos (~16h) — S132 Listing Engine
+- [ ] Camera path definition — define smooth walkthrough path through 3D scan (auto-suggested from room connectivity graph, manually adjustable). Render frames along path at 30fps
+- [ ] 4-format output: 15-sec TikTok/Reel (hero shots, fast cuts, text overlays), 30-sec Instagram Reel (smooth highlight), 60-sec YouTube Short (full walkthrough + AI narration), 3-min YouTube (cinematic, room descriptions, branded intro/outro)
+- [ ] AI narration — auto-describe rooms as camera moves using Recon data ("This sun-drenched living room features hardwood floors and a 2024 fireplace insert"). Auto-captions (69% watch without sound). Royalty-free background music library (5 moods: upbeat, calming, luxury, modern, neutral)
+- [ ] Commit: `[VIZ20] Walkthrough videos — camera paths, 4-format output, AI narration + captions`
+
+### VIZ21 — Time-of-Day Lighting Simulation (~16h) — S132 Listing Engine
+- [ ] Sun position integration — SunCalc API (free) provides sun azimuth/elevation for any location/date/time. Map to relightable Gaussian Splat (GaRe or GS^3 approach: separate reflectance + sunlight + sky radiance)
+- [ ] Time slider UI — buyer drags slider from sunrise to sunset, lighting updates in real-time. "How does this living room look at 7am? At sunset?" Show golden hour effect. Seasonal variation (summer vs winter sun angle)
+- [ ] Shadow simulation — Shadowmap.org approach (global realtime 3D sunlight). Show interior shadows cast by windows at any time of day. Critical for buyers evaluating natural light
+- [ ] Commit: `[VIZ21] Lighting simulation — SunCalc integration, time slider, shadow mapping`
+
+### VIZ22 — Furniture Placement Planner (~20h) — S132 Listing Engine
+- [ ] Furniture catalog — generic furniture library (sofa, dining table, bed, desk, bookshelf, etc.) with standard dimensions. 50+ items across 5 style categories. Drag-drop into 3D scan
+- [ ] Metrically accurate placement — furniture placed using scan's real geometry + measurements. Collision detection (can't place inside walls). Snap to floor plane. Scale indicator
+- [ ] Brand catalog integration (long-term) — IKEA, Wayfair, West Elm product dimensions. Buyer places REAL furniture they're considering buying. Affiliate revenue potential
+- [ ] Commit: `[VIZ22] Furniture planner — 50+ item catalog, collision detection, brand integration`
+
+### VIZ23 — Insta360 + Drone Video Input (~16h) — S132 Listing Engine
+- [ ] Insta360 X4 video input — upload 360 video, GPU processes into Gaussian Splat. Same pipeline as phone capture but faster for large properties (single walkthrough vs room-by-room). Manual exposure settings guide
+- [ ] Drone video input — upload drone footage (DJI Mini 4 Pro, HoverAir X1), process into exterior Gaussian Splat. Useful for large lots, commercial, luxury with high ceilings. Merge exterior drone splat with interior phone splat
+- [ ] Commit: `[VIZ23] Insta360 + drone input — 360 video processing, drone-to-splat, interior/exterior merge`
+
+### VIZ24 — Thermal Imaging Overlay (~16h) — S132 Listing Engine
+- [ ] FLIR ONE integration — phone thermal camera attachment (~$250) captures thermal data alongside visible light. Map thermal image to Gaussian Splat 3D geometry using camera pose alignment
+- [ ] Thermal overlay toggle — switch between photorealistic view and thermal view in 3D viewer. Show insulation gaps, moisture intrusion, air leaks in spatial context. Color scale (blue=cold, red=hot). Contractor gold for showing homeowners where money goes
+- [ ] Commit: `[VIZ24] Thermal overlay — FLIR ONE integration, 3D thermal mapping, toggle viewer`
+
+### VIZ25 — WebXR / VR Headset Support (~10h) — S132 Listing Engine
+- [ ] WebXR integration — "View in VR" button launches immersive mode. Meta Quest 3/3S support via WebXR browser. Apple Vision Pro via Safari WebXR (immersive-vr sessions). Uses existing Spark.js WebXR capability
+- [ ] VR-optimized navigation — teleport locomotion, room-scale interaction, hand tracking (Quest 3), gaze-based hotspot activation. Comfort settings (vignette, snap turning)
+- [ ] Commit: `[VIZ25] WebXR/VR — Meta Quest + Apple Vision Pro, teleport navigation, hand tracking`
+
+### VIZ26 — Construction Progress Timelapse (~12h) — S132 Listing Engine
+- [ ] Multi-scan timeline — repeated VIZ scans at different dates stored with timestamps. Timeline scrubber UI: "Demo Day → Framing → Drywall → Paint → Finished." All navigable in 3D
+- [ ] Before/after split view — side-by-side 3D comparison. Swipe divider between "before" and "after" scans. Realtor shows: "Here's what $85K of renovations produced"
+- [ ] Commit: `[VIZ26] Construction timelapse — multi-scan timeline, before/after 3D split view`
+
+### VIZ27 — Renovation "What If" Visualizer (~20h) — S132 Listing Engine
+- [ ] Wall removal simulation — SAM 3 segments selected wall, removes from splat, renders open-concept view in 3D. Walk through the renovated space. "What if I knocked out this wall?"
+- [ ] Material swap on selection — tap surface → swap material (countertop, flooring, backsplash, cabinet fronts). Uses existing Texture-GS pipeline from VIZ engine. Buyer sees renovation in real 3D, not 2D mockup
+- [ ] Instant cost estimate — each "what if" change links to Estimate Engine. Remove wall = structural + drywall + paint + electrical reroute estimate. Swap countertops = material + labor + demo estimate. Total renovation cost updates in real-time
+- [ ] Commit: `[VIZ27] Renovation visualizer — wall removal, material swap, instant cost estimate`
+
+### VIZ28 — Seasonal Exterior Staging + AR Window Shopping (~16h) — S132 Listing Engine
+- [ ] Seasonal staging — show vibrant summer yard even when listing in January. AI swaps dead grass → green lawn, bare trees → full canopy, snow → landscaping. Uses exterior scan + seasonal texture library
+- [ ] AR window shopping — buyer drives by for-sale home, points phone at it, sees: price, 3D tour preview, floor plan overlay, agent info. GPS + visual recognition. Requires property coordinate database
+- [ ] Commit: `[VIZ28] Seasonal staging + AR — winter-to-summer swap, drive-by AR property info`
+
+**VIZ Listing Enhancement Totals (S132):** VIZ15-VIZ28 = 14 sprints, ~182h. Execution: Tier 1 (VIZ15-17, before RE) → Tier 2 (VIZ18-20, during/after RE) → Tier 3 (VIZ21-28, blue ocean).
+
+**New Tables (~4):** `viz_annotations`, `viz_measurements`, `viz_dollhouse_meshes`, `contractor_showcases`.
+
+---
+
+## PHASE CUST: ENTERPRISE CUSTOMIZATION ENGINE (S132) — CUST1-CUST8 (~280h)
+*Source: s132-enterprise-customization-research.md. Dependencies: CUST1 first (foundation), then CUST2+CUST3+CUST5 in parallel, then CUST4, then CUST6+CUST7+CUST8 in parallel. 14 realtor types, 7 brokerage models, 50-state regs.*
+
+### CUST1 — Cascading Settings Foundation (~32h) — S132
+*Architecture: Level 0 (System defaults) → Level 1 (Company overrides) → Level 2 (Team overrides) → Level 3 (User overrides). `resolve_setting()` PostgreSQL function. `pg_jsonschema` validation.*
+
+- [ ] Create settings tables (system_settings, company_settings, team_settings, user_settings) with RLS (~4h)
+- [ ] Enable pg_jsonschema extension, add CHECK constraints (~2h)
+- [ ] Create `resolve_setting()` PostgreSQL function — cascading resolution (~4h)
+- [ ] Create `resolve-settings` Edge Function with batch resolution (~4h)
+- [ ] Seed system_settings with all default settings (pipeline stages, notification prefs, etc.) (~6h)
+- [ ] Flutter: SettingsProvider with Riverpod + Realtime subscription (~4h)
+- [ ] Web Portal: `useSettings` hook with cascading resolution (~3h)
+- [ ] Team Portal: `useSettings` hook (read-only for most users) (~2h)
+- [ ] Settings management UI (company-level) in Web Portal (~3h)
+- [ ] Commit: `[CUST1] Cascading settings foundation — 4-level JSONB cascade, pg_jsonschema validation, resolve_setting() fn, batch EF, Flutter/Web hooks, company settings UI`
+
+### CUST2 — Custom Fields Engine (~40h) — S132
+*16 field types, 100 per entity max, GIN indexes, field key immutable after creation, soft delete only.*
+
+- [ ] Create `custom_field_definitions` table with RLS (~3h)
+- [ ] Add `custom_fields` JSONB column to `contacts`, `properties`, `transactions`, `jobs`, `invoices` (~2h)
+- [ ] Create `validate-custom-fields` Edge Function (~4h)
+- [ ] Add GIN indexes on `custom_fields` columns (~1h)
+- [ ] Create database triggers for custom field validation on INSERT/UPDATE (~4h)
+- [ ] Flutter: `CustomFieldRenderer` widget (all 16 field types) (~6h)
+- [ ] Flutter: `CustomFieldEditor` (create/edit field definitions) (~4h)
+- [ ] Web Portal: `CustomFieldManager` page (CRUD for field definitions) (~4h)
+- [ ] Web Portal: `CustomFieldRenderer` component (all 16 field types) (~4h)
+- [ ] Custom field search and filtering support (~4h)
+- [ ] Custom field display in list views (configurable columns) (~4h)
+- [ ] Commit: `[CUST2] Custom fields engine — 16 field types on 5 entities, GIN indexes, validation triggers, Flutter/Web renderers, search/filter support`
+
+### CUST3 — Pipeline Builder (~36h) — S132
+
+- [ ] Create `pipeline_definitions`, `pipeline_stages`, `stage_transitions` tables (~4h)
+- [ ] Seed default pipelines (buyer, seller, transaction, job, lead) with default stages (~4h)
+- [ ] Pipeline editor UI in Web Portal (drag-and-drop stage ordering) (~6h)
+- [ ] Stage transition rules editor (which stages can move where) (~4h)
+- [ ] Required fields per stage configuration (~3h)
+- [ ] Flutter: `PipelineBoard` widget (Kanban view with custom stages) (~6h)
+- [ ] Flutter: Stage transition validation (~3h)
+- [ ] Web Portal: `PipelineBoard` component (~4h)
+- [ ] Stage SLA tracking and alerts (~2h)
+- [ ] Commit: `[CUST3] Pipeline builder — custom stages, transition rules, required fields, drag-drop editor, Kanban Flutter/Web, SLA tracking`
+
+### CUST4 — Automation Rules Engine (~48h) — S132
+*11 action types, max depth 3, per-record cooldowns, dependency graph analysis at save time.*
+
+- [ ] Create `automation_rules` and `automation_execution_log` tables (~4h)
+- [ ] Create `execute-automation` Edge Function with all action types (~8h)
+- [ ] Implement circular automation prevention (depth tracking, cooldown, execution limits) (~6h)
+- [ ] Create `automation-scheduler` using pg_cron for time-based triggers (~4h)
+- [ ] Rate limiting implementation (per-company, per-rule) (~3h)
+- [ ] Web Portal: `AutomationBuilder` UI (visual trigger > condition > action builder) (~10h)
+- [ ] Automation testing/preview mode (dry run without executing) (~4h)
+- [ ] Automation execution log viewer with filtering (~3h)
+- [ ] Flutter: Automation trigger integration (record events fire automation) (~4h)
+- [ ] Error handling, retry logic, and alerting (~2h)
+- [ ] Commit: `[CUST4] Automation rules engine — 11 action types, circular prevention, pg_cron scheduler, visual builder, dry-run preview, execution logs, Flutter triggers`
+
+### CUST5 — Template Engine (~28h) — S132
+
+- [ ] Create `templates` table with version tracking (~3h)
+- [ ] Seed system templates (email, SMS, document templates per role/trade) (~6h)
+- [ ] Create `template-renderer` Edge Function (merge field resolution) (~4h)
+- [ ] Web Portal: Template editor with rich text and merge field insertion (~6h)
+- [ ] Template preview with sample data (~3h)
+- [ ] Template cloning (clone system template to company template) (~2h)
+- [ ] State-specific template filtering (~2h)
+- [ ] Flutter: Template selection and preview (~2h)
+- [ ] Commit: `[CUST5] Template engine — versioned templates, merge fields, rich text editor, system templates seed, cloning, state-specific filtering`
+
+### CUST6 — Commission Engine (~36h) — S132
+
+- [ ] Create `commission_plans` and `commission_plan_tiers` tables (~4h)
+- [ ] Create `commission-calculator` Edge Function (~6h)
+- [ ] Support all split types: percentage, flat fee, graduated, capped, tiered (~4h)
+- [ ] Multi-layer split calculation (brokerage > team > agent) (~4h)
+- [ ] Franchise fee deduction support (~2h)
+- [ ] Cap tracking with reset dates (calendar year, anniversary, rolling) (~4h)
+- [ ] Web Portal: `CommissionPlanBuilder` UI (~6h)
+- [ ] Commission statement generation (~4h)
+- [ ] Revenue share / attraction model tracking (~2h)
+- [ ] Commit: `[CUST6] Commission engine — 5 split types, multi-layer calc, franchise fees, cap tracking, commission statements, revenue share model`
+
+### CUST7 — State Compliance Engine (~32h) — S132
+
+- [ ] Create `state_regulations` and `disclosure_requirements` tables (~3h)
+- [ ] Seed all 50 states + DC: attorney requirements, dual agency rules, disclosure forms, retention periods (~8h)
+- [ ] Create `compliance-checker` Edge Function (~4h)
+- [ ] Transaction workflow adapts per state (attorney step, disclosure checklist, retention rules) (~6h)
+- [ ] Fair housing compliance scanner (marketing text analysis) (~4h)
+- [ ] Web Portal: `ComplianceDashboard` showing state requirements (~4h)
+- [ ] Automated compliance alerts (license expiration, CE deadlines, retention warnings) (~3h)
+- [ ] Commit: `[CUST7] State compliance engine — 50 states seeded, attorney/dual-agency/disclosure rules, fair housing scanner, state-adaptive workflow, compliance alerts`
+
+### CUST8 — Enterprise Auth & White-Label (~28h) — S132
+
+- [ ] SSO/SAML integration via Supabase Auth (Okta, Azure AD, Google Workspace) (~6h)
+- [ ] SCIM user provisioning endpoint (~4h)
+- [ ] White-label configuration (logo, colors, fonts, domain) per company (~4h)
+- [ ] White-label email template rendering (company branding) (~3h)
+- [ ] Multi-office hierarchy (corporation > region > office > team > agent) (~4h)
+- [ ] Cross-office reporting roll-ups (~4h)
+- [ ] Audit log viewer with search and export (~3h)
+- [ ] Commit: `[CUST8] Enterprise auth + white-label — SSO/SAML, SCIM provisioning, white-label, multi-office hierarchy, cross-office reporting, audit log`
+
+**CUST Totals (S132):** CUST1 (~32h) + CUST2 (~40h) + CUST3 (~36h) + CUST4 (~48h) + CUST5 (~28h) + CUST6 (~36h) + CUST7 (~32h) + CUST8 (~28h) = **8 sprints, ~280h**. ~20 new tables.
+
+---
+
+## PHASE CLIENT: HOMEOWNER PLATFORM (S132) — CLIENT1-CLIENT17 (~378h)
+*Source: s132-homeowner-platform-research.md (CLIENT1-13) + s132-xactimate-strategy-master.md (CLIENT14-17). 25 pain points addressed, 20+ competitors destroyed, 60+ free APIs, 10 "No One Does This" features. Three-sided marketplace: contractor ↔ homeowner ↔ realtor.*
+
+### CLIENT1 — Property Intelligence Foundation (~32h, P0) — S132
+
+- [ ] Property profile auto-population from address (Census data, building footprint from MS Building Footprints)
+- [ ] Flood zone lookup from FEMA NFHL API
+- [ ] Climate zone determination from IECC data
+- [ ] Radon zone lookup from EPA data
+- [ ] Environmental risk score from EPA Envirofacts
+- [ ] Basic home value estimate display (FHFA HPI trend data)
+- [ ] Property photo management (satellite imagery + user upload)
+- [ ] Year built / square footage / lot size display
+- [ ] School district display
+- [ ] Air quality badge from AirNow API
+- [ ] Property profile completion percentage tracker
+- [ ] Neighborhood demographics from Census ACS
+- [ ] Commit: `[CLIENT1] Property intelligence foundation — auto-population, FEMA flood zone, EPA radon/environmental, FHFA value, Census demographics, AirNow AQI`
+
+### CLIENT2 — Equipment Passport Enhancement (~24h, P0) — S132
+
+- [ ] Barcode scanning for product identification (UPCitemdb API)
+- [ ] ENERGY STAR product data integration by model number
+- [ ] CPSC recall alert system — check equipment against recall database daily
+- [ ] Expected useful life from HUD EUL tables (pre-loaded)
+- [ ] Equipment replacement cost estimation
+- [ ] Equipment health score calculation (age / useful_life)
+- [ ] Warranty expiration tracking with push notification reminders
+- [ ] "Similar equipment" recommendation (ENERGY STAR alternatives)
+- [ ] Manual/spec sheet linking by model number
+- [ ] Equipment photo management (label, unit, installation photos)
+- [ ] Batch equipment import for new homeowners
+- [ ] Equipment timeline: install date → maintenance history → projected replacement
+- [ ] Commit: `[CLIENT2] Equipment passport enhancement — barcode scan, ENERGY STAR, CPSC recall alerts, HUD EUL life tracking, health score, warranty reminders`
+
+### CLIENT3 — Maintenance Engine (~40h, P0) — S132
+
+- [ ] Pre-loaded seasonal maintenance checklists by climate zone + property type
+- [ ] Equipment-specific maintenance schedules from manufacturer data
+- [ ] Push notification reminders via FCM
+- [ ] Maintenance completion logging with photos
+- [ ] Cost tracking per maintenance task
+- [ ] DIY vs contractor flag for each task
+- [ ] "Schedule with contractor" button → routes to Find a Pro
+- [ ] Maintenance history timeline
+- [ ] Predictive maintenance alerts: "Your [equipment] is X years old, service recommended"
+- [ ] Weather-triggered maintenance alerts (freeze warning → pipe insulation check)
+- [ ] Seasonal checklist: Spring (12 items), Summer (10), Fall (14), Winter (12)
+- [ ] Custom maintenance items (user-added)
+- [ ] Filter change tracker (HVAC filters, water filters, etc.)
+- [ ] Maintenance cost summary (annual/lifetime)
+- [ ] Commit: `[CLIENT3] Maintenance engine — climate-zone checklists, equipment schedules, weather triggers, FCM notifications, DIY/pro flags, cost tracking, predictive alerts`
+
+### CLIENT4 — Home Value & Financial Dashboard (~28h, P1) — S132
+
+- [ ] Home value tracking with FHFA/FRED data
+- [ ] Appreciation since purchase calculator
+- [ ] Equity tracker (value - mortgage balance)
+- [ ] Mortgage rate tracker (FRED MORTGAGE30US)
+- [ ] Refinance opportunity detector
+- [ ] Property tax assessment comparison (assessed vs market)
+- [ ] Property tax appeal eligibility calculator
+- [ ] Appeal deadline tracker by state
+- [ ] Comparable sales evidence (FHFA metro data)
+- [ ] Home improvement ROI calculator
+- [ ] Improvement cost basis tracking (tax implications)
+- [ ] Monthly spending summary
+- [ ] 5-year replacement cost projection
+- [ ] Home warranty vs self-insurance calculator
+- [ ] Commit: `[CLIENT4] Home value + financial dashboard — FHFA/FRED tracking, equity, refinance detector, tax appeal toolkit, improvement ROI, self-insurance calc`
+
+### CLIENT5 — Insurance & Claims Center (~32h, P1) — S132
+
+- [ ] Insurance policy OCR upload and data extraction
+- [ ] Coverage gap analysis (dwelling, contents, liability)
+- [ ] Premium tracking and renewal reminders
+- [ ] Claim documentation wizard (step-by-step)
+- [ ] Photo/video evidence collection with metadata (timestamp, GPS, weather)
+- [ ] Storm verification: auto-pull NOAA/SPC data for address + date
+- [ ] Depreciation calculator (HUD EUL + Curley Guide)
+- [ ] "Before" photos from home inventory for comparison
+- [ ] Contractor estimate integration (get repair bids from Zafto contractors)
+- [ ] Claim package export (organized PDF with all evidence)
+- [ ] NAIC insurer complaint ratio lookup
+- [ ] Flood insurance requirement alert (if in flood zone)
+- [ ] Home warranty alternative calculator
+- [ ] Commit: `[CLIENT5] Insurance + claims center — policy OCR, coverage gap analysis, claim wizard, NOAA storm verification, depreciation calc, evidence package, NAIC lookup`
+
+### CLIENT6 — Energy & Sustainability Center (~24h, P1) — S132
+
+- [ ] Utility cost tracking (manual entry + photo OCR of bills)
+- [ ] Energy benchmarking vs similar homes (EIA data)
+- [ ] Utility rate lookup (OpenEI)
+- [ ] Energy savings recommendations by category (insulation, windows, HVAC, etc.)
+- [ ] Solar assessment tool (PVWatts + Google Solar API)
+- [ ] Solar financial analysis (payback period, 25-year savings, NPV)
+- [ ] Rebate & incentive finder (Rewiring America + DSIRE)
+- [ ] Federal ITC calculator (30% through 2032)
+- [ ] State/local rebate lookup
+- [ ] Net metering value estimate
+- [ ] LED savings calculator
+- [ ] Smart thermostat savings estimate
+- [ ] "Connect to installer" → Zafto solar/HVAC contractors
+- [ ] Commit: `[CLIENT6] Energy + sustainability center — PVWatts/Google Solar, Rewiring America IRA rebates, DSIRE incentives, utility benchmarking, LED/thermostat savings`
+
+### CLIENT7 — Documents Vault Enhancement (~16h, P1) — S132
+
+- [ ] Document categories: deed, mortgage, insurance, warranty, permit, inspection, tax, contractor agreement, floor plan, receipt
+- [ ] Auto-tag documents on upload
+- [ ] OCR text extraction for searchability
+- [ ] Warranty auto-expiration tracking (extract expiration date from document)
+- [ ] Permit history pull from city open data (where available)
+- [ ] Document sharing with contractors/realtors (permission-based)
+- [ ] Insurance claim document package generator
+- [ ] Pre-sale document package generator
+- [ ] Bulk upload support
+- [ ] Search across all documents
+- [ ] Commit: `[CLIENT7] Documents vault enhancement — auto-tagging, OCR, warranty expiration tracking, permit history, contractor/realtor sharing, claim package generator`
+
+### CLIENT8 — Home Inventory System (~20h, P2) — S132
+
+- [ ] Room-by-room organization
+- [ ] Item entry: name, category, purchase date, purchase price, current value, serial number
+- [ ] Photo capture per item
+- [ ] Barcode scanning (UPCitemdb)
+- [ ] Auto-estimate current value (depreciation from purchase price)
+- [ ] Total home contents value calculator
+- [ ] Insurance coverage gap alert: "Contents worth $X, covered for $Y"
+- [ ] Export: inventory report for insurance agent
+- [ ] Categories: furniture, electronics, clothing, jewelry, art, tools, sporting goods, kitchen, etc.
+- [ ] Receipt attachment per item
+- [ ] "Most valuable items" summary
+- [ ] Commit: `[CLIENT8] Home inventory system — room-by-room, barcode scan, auto-depreciation, contents value, insurance gap alert, inventory export`
+
+### CLIENT9 — Contractor Marketplace Enhancement (~24h, P1) — S132
+
+- [ ] "My contractors" saved list
+- [ ] Service history with each contractor
+- [ ] Recurring service auto-scheduling (lawn care, HVAC tune-up, etc.)
+- [ ] Contractor comparison tool (side-by-side quotes)
+- [ ] Response time metrics display
+- [ ] Portfolio browsing (before/after photos)
+- [ ] Pricing transparency: average cost ranges by service in your area (BLS-backed)
+- [ ] Enhanced quote request with structured fields + photos
+- [ ] Contractor verification badges (license, insurance, bonding)
+- [ ] Review authenticity indicators (verified Zafto customer, project photos attached)
+- [ ] Commit: `[CLIENT9] Contractor marketplace enhancement — saved contractors, service history, recurring scheduling, comparison tool, BLS pricing transparency, verification badges`
+
+### CLIENT10 — Moving & Transitions (~20h, P2) — S132
+
+- [ ] Move-in checklist (customizable, 50+ items)
+- [ ] Utility setup wizard with local provider lookup
+- [ ] Address change tracker (USPS, DMV, banks, subscriptions — 20+ items)
+- [ ] Equipment registration wizard (scan model numbers → Equipment Passport)
+- [ ] Move-out / pre-sale checklist
+- [ ] ROI-positive improvement recommendations for selling
+- [ ] Home history report generator (for buyer)
+- [ ] Verified mover finder (FMCSA DOT verification)
+- [ ] Moving timeline planner
+- [ ] Packing checklist by room
+- [ ] Commit: `[CLIENT10] Moving + transitions — 50+ item move-in checklist, utility setup, address tracker, equipment registration wizard, FMCSA mover verification`
+
+### CLIENT11 — Emergency Preparedness (~12h, P2) — S132
+
+- [ ] Property-specific risk assessment (flood, quake, hurricane, wildfire, tornado) from FEMA/NASA/USGS
+- [ ] Emergency supply checklist with purchase links
+- [ ] Emergency contact management (utility shutoffs, poison control, emergency contractor)
+- [ ] Home shutoff location documentation (water main, gas, electrical panel) with photos
+- [ ] Evacuation plan with family meeting point
+- [ ] Weather alert integration (NWS API → push notification for severe weather)
+- [ ] Digital copies of critical documents (link to Documents Vault)
+- [ ] First responder info package (allergies, medications, disabilities in household)
+- [ ] Commit: `[CLIENT11] Emergency preparedness — risk assessment, supply checklist, shutoff documentation, evacuation plan, NWS weather alerts, first responder package`
+
+### CLIENT12 — Three-Sided Marketplace Wiring (~28h, P1) — S132
+
+- [ ] "Sell My Home" flow → connect to Zafto realtor
+- [ ] Property history report generation for realtor/buyer
+- [ ] Digital Home Passport: complete property package for transactions (equipment, maintenance, permits, improvements)
+- [ ] Buyer onboarding flow: transfer property data to new owner
+- [ ] Equipment warranty transfer notification
+- [ ] Maintenance schedule handoff
+- [ ] Contractor recommendation transfer
+- [ ] Referral tracking (homeowner → contractor, homeowner → realtor)
+- [ ] Cross-portal notifications (contractor updates → homeowner portal)
+- [ ] Realtor-to-homeowner handoff after closing
+- [ ] Commit: `[CLIENT12] Three-sided marketplace wiring — sell home flow, digital home passport, buyer onboarding, property data transfer, referral tracking, cross-portal notifications`
+
+### CLIENT13 — Neighborhood & Community (~16h, P3) — S132
+
+- [ ] Neighborhood intelligence dashboard (demographics, schools, crime, AQI)
+- [ ] "Who did your roof?" contractor sharing (permission-based)
+- [ ] Neighbor contractor recommendations
+- [ ] Community bulletin board
+- [ ] Block-level service coordination ("splitting cost of tree trimming")
+- [ ] HOA document repository
+- [ ] New construction/permit activity in neighborhood
+- [ ] Commit: `[CLIENT13] Neighborhood + community — neighborhood intelligence, contractor sharing, community board, block coordination, HOA repository, permit activity`
+
+### CLIENT14 — Unified Premium Subscription (~24h) — S132
+*Prerequisites: CLIENT1, CLIENT2, VIZ5 (portal integration). $49.99/mo.*
+
+- [ ] Premium subscription table + Stripe $49.99/month plan (~3h)
+- [ ] Consumer Sketch Engine wrapper (scan → 3D, view-only + annotations) (~4h)
+- [ ] Consumer VIZ wrapper (material catalog browse, surface tap → swap, before/after) (~4h)
+- [ ] Consumer estimate generator (material selection → cost from BLS/PPI/geographic pricing) (~3h)
+- [ ] AI Troubleshoot Edge Function (safety rules, context injection, photo analysis) (~3h)
+- [ ] Share-to-contractor flow (PDF for non-Zafto, interactive 3D for Zafto with account gate) (~2h)
+- [ ] Premium gate (free vs premium feature access control across client portal + Flutter) (~3h)
+- [ ] Pre-purchase analysis flow (upload listing photos → Tier 1 remote scan → rough estimate) (~2h)
+- [ ] Commit: `[CLIENT14] Unified premium subscription — $49.99/mo Stripe plan, consumer Sketch/VIZ wrappers, BLS estimate generator, AI Troubleshoot EF, contractor share flow, premium gate`
+
+### CLIENT15 — Contractor Bid Intelligence (~16h) — S132
+
+- [ ] Bid checker ("Is this bid fair?" — BLS OEWS + Davis-Bacon rates by ZIP vs line items)
+- [ ] Material markup detector (compare material line items to BLS PPI spot prices)
+- [ ] "Missing from bid" detector (compare bid scope to homeowner's rehab plan: what's not included?)
+- [ ] Contractor credential verification (state license APIs: active license, insurance, bonding)
+- [ ] Commit: `[CLIENT15] Contractor bid intelligence — BLS bid checker, markup detector, scope gap finder, credential verification`
+
+### CLIENT16 — Premium Reports Suite (~12h) — S132
+
+- [ ] Property Condition Report (score each major system 1-10 with replacement timeline)
+- [ ] 5-Year Capital Planning Report (what's failing next, budget recommendation, priority order)
+- [ ] Pre-Sale Readiness Report (what to fix, ROI per improvement, visualization)
+- [ ] Renovation vs Move Analysis (cost to renovate vs cost to move to comparable home)
+- [ ] Annual Home Health Report
+- [ ] Shareable 3D tours (password-protected links, QR codes, embed codes)
+- [ ] Guided tour builder (pin viewpoints, add labels/notes, set navigation order)
+- [ ] Commit: `[CLIENT16] Premium reports suite — condition report, 5-year capital plan, pre-sale readiness, reno-vs-move, annual health, shareable 3D tours`
+
+### CLIENT17 — Ecosystem Wiring Sprint (~10h) — S132
+
+- [ ] "I'm Selling" flywheel: pre-sale report + staged 3D tour + realtor marketplace integration + data handoff to RE tools (~3h)
+- [ ] Multi-user household access: roles table (`household_members`), invite flow, shared/private data scoping, RLS policies, property manager + landlord modes (~4h)
+- [ ] Before/after storm scan comparison: baseline vs rescan diff using SAM 3, damage evidence package, NOAA storm notification trigger (~3h)
+- [ ] Commit: `[CLIENT17] Ecosystem wiring — selling flywheel + household sharing (4 roles) + storm scan diff/damage evidence package`
+
+**CLIENT Totals (S132):** CLIENT1-17 = **17 sprints, ~378h**. P0 (~96h): CLIENT1-3. P1 (~140h): CLIENT4-7, CLIENT9, CLIENT12. P2 (~52h): CLIENT8, CLIENT10-11. P3 (~16h): CLIENT13. Premium (~62h): CLIENT14-17. ~25 new tables.
+
+---
+
+## PHASE LIST: LISTING ENGINE CORE (S132) — LIST1-LIST9 (~100h)
+*Source: s132-xactimate-strategy-master.md Sections 29-31. One-Scan Listing Launch: contractor scans → realtor lists. MLS/RESO syndication. 15 competitors destroyed. Fair Housing compliance. Contractor→realtor pipeline.*
+
+### LIST1 — Property Microsite Generator (~24h) — S132
+
+- [ ] Auto-generate property microsite: hero photo gallery (AI-ordered), 3D tour embed, interactive floor plan, video walkthrough, property details, Walk Score API, disclosure section (~10h)
+- [ ] URL structure: `listing.zafto.cloud/{address-slug}` (SEO-friendly). Custom domain support. RealEstateListing Schema.org JSON-LD. Open Graph + Twitter Card tags (~4h)
+- [ ] Lead capture form → Zafto CRM. "Schedule Showing" / "Request Info" / "Save Listing" buttons. Agent contact info (branded only). Mortgage calculator widget (~4h)
+- [ ] Analytics dashboard: total views, unique visitors, time spent, room-by-room heatmap, photo engagement, source tracking (QR/social/email/direct), device breakdown, geographic data (~6h)
+- [ ] Commit: `[LIST1] Property microsite generator — auto-generated listing site, Schema.org markup, lead capture, analytics heatmap, custom domain, Walk Score`
+
+### LIST2 — QR Code Generation (~4h) — S132
+
+- [ ] Dynamic QR codes (trackable, URL-updatable). 3 sizes: yard sign (large), flyer (medium), business card (small). Subtle Zafto branding in QR design (~2h)
+- [ ] Scan tracking (time, approximate location, device type). Link to microsite with auto-detected mobile optimization. Print-ready PDF export with QR + property photo + key details (~2h)
+- [ ] Commit: `[LIST2] QR code generation — dynamic trackable codes, 3 sizes, scan analytics, print-ready PDF`
+
+### LIST3 — AI Description Generator (~16h) — S132
+
+- [ ] Pull from Recon (sqft, rooms, equipment age, condition), Sketch Engine (dimensions, room count, layout), VIZ (staging style), public records (permits, tax, sale history). Generate from ACTUAL data, not generic templates (~6h)
+- [ ] 7-format output: MLS (512-2500 chars, configurable per board), Zillow/portal (SEO, 150-300 words), social media (20-50 words, FOMO), email blast (50-100 words), SMS (under 35 words), print flyer (75-150 words), full description (300+ words) (~6h)
+- [ ] Tone matching by template: luxury (aspirational), starter (warm/practical), investment (numbers-driven), fixer (opportunity). Auto-detect from price point + property type or manual selection (~4h)
+- [ ] Commit: `[LIST3] AI description generator — 7 format outputs, data-driven from Recon/Sketch/VIZ/public records, tone matching per template, MLS-configurable char limits`
+
+### LIST4 — Fair Housing Compliance Scanner (~8h) — S132
+
+- [ ] Pre-publish gate — scan ALL generated text against prohibited word/phrase database. 7 federal protected classes + configurable state/local additions. Auto-flag violations with compliant alternatives. Cannot publish until scan passes (~4h)
+- [ ] Audit trail — log every scan result. "This description was scanned for Fair Housing compliance on [date] — 0 violations found." Exportable PDF compliance certificate per listing (~4h)
+- [ ] Commit: `[LIST4] Fair housing compliance scanner — pre-publish gate, 7 protected classes, state additions, violation alternatives, audit trail, compliance certificates`
+
+### LIST5 — RESO Data Dictionary Formatter (~8h) — S132
+
+- [ ] Map Zafto property data to RESO Data Dictionary fields (PropertyType, StandardStatus, ListPrice, BedroomsTotal, BathroomsTotal, LivingArea, LotSizeArea, YearBuilt, VirtualTourURLBranded, etc.). Generate complete MLS submission package (~4h)
+- [ ] Per-MLS customization — each MLS board has different required/optional fields, character limits, photo rules. Configurable MLS profiles (start with top 20 markets). One-click "Copy to MLS" with all fields pre-formatted (~4h)
+- [ ] Commit: `[LIST5] RESO data dictionary formatter — full field mapping, MLS submission package, per-board profiles (top 20 markets), one-click copy`
+
+### LIST6 — Social Media Auto-Poster (~12h) — S132
+
+- [ ] Postiz integration (self-hosted open source, 19 platforms). Edge Function triggers on listing publish. Auto-generates: Instagram carousel (best 5 photos + description), TikTok (15-sec video), YouTube (full walkthrough), Google Business (project post + photos) (~6h)
+- [ ] Scheduling: agent picks date/time. "Just Listed" campaign: post on listing day + day 3 + day 7 (different content each time). "Price Reduced" and "Open House" auto-triggers. Engagement tracking (likes, comments, shares, clicks) (~6h)
+- [ ] Commit: `[LIST6] Social media auto-poster — Postiz (19 platforms), Just Listed campaign, Price Reduced/Open House triggers, engagement tracking`
+
+### LIST7 — Contractor Showcase Pages (~8h) — S132
+
+- [ ] Auto-generate "Property Improvement Listing" from completed job: before/after 3D scans (side-by-side), photo gallery, materials used, scope of work, permit documentation, completion date, contractor profile. URL: `showcase.zafto.cloud/{contractor}/{project}` (~4h)
+- [ ] Realtor integration — realtor references showcase in listing. Contractor gets portfolio page + lead generation. Cross-post to Google Business Profile + Instagram automatically (~4h)
+- [ ] Commit: `[LIST7] Contractor showcase pages — before/after 3D, job documentation, portfolio page, realtor listing integration, auto-post to GBP + Instagram`
+
+### LIST8 — Photo Intelligence Pipeline (~12h) — S132
+
+- [ ] AI photo analyzer — room identification (kitchen, bathroom, exterior, etc.), quality scoring (blur, lighting, composition), auto-cropping for platform-specific aspect ratios (3:2 MLS, 1:1 Facebook, 9:16 stories) (~6h)
+- [ ] Smart ordering — optimal photo sequence based on conversion data (exterior first unless standout interior). Flag low-quality photos. Auto-enhance (brightness, contrast, horizon straightening). Generate thumbnail variants (~6h)
+- [ ] Commit: `[LIST8] Photo intelligence pipeline — room identification, quality scoring, auto-crop per platform, smart ordering, auto-enhance, thumbnail generation`
+
+### LIST9 — Listing Template System (~8h) — S132
+
+- [ ] 8 listing templates: Luxury ($1M+), Starter Home, Investment/Flip, Fixer-Upper, Condo/Townhouse, New Construction, Land/Lot, Commercial. Each defines: photo order priority, description tone, staging style, highlight features, social media format, target keywords (~4h)
+- [ ] Auto-detect template from price point + property type + location. Manual override. Custom template creation for agents with specific branding. Template preview before publish (~4h)
+- [ ] Commit: `[LIST9] Listing template system — 8 listing templates, auto-detect from price/type, custom branding, preview`
+
+**LIST Totals (S132):** LIST1-9 = **9 sprints, ~100h**. ~6 new tables.
+
+---
+
+## PHASE UX/INFRA: UX IMPROVEMENTS + INFRASTRUCTURE (S132) — UX1, UX2, INFRA1 (~62h)
+*Sprint placement: LAST (after all features built, before or during ZERO sprints). These are polish/infrastructure sprints that benefit from all features being finalized.*
+
+### UX1 — Dashboard Customization (~10h) — S132
+
+- [ ] Trade-optimized default dashboard configs (23 trades x default section visibility — roofer default vs restoration default vs mold default etc.)
+- [ ] `dashboard_config` JSONB column on `user_profiles` table (migration)
+- [ ] Settings → Dashboard Preferences screen (Flutter)
+- [ ] Show/hide toggle per dashboard section (15-20 sections)
+- [ ] "Start Blank" option + section picker
+- [ ] "Reset to Trade Default" button
+- [ ] Persist across sessions + sync across devices
+- [ ] Web CRM dashboard respects same config
+- [ ] Team portal dashboard respects same config (subset of sections)
+- [ ] Commit: `[UX1] Dashboard customization — trade-optimized defaults (23 trades), JSONB config, show/hide toggles, start blank, reset-to-default, cross-portal sync`
+
+### UX2 — Auto-Save Drafts + Document Switching (~28h) — S132
+*New table: `document_drafts`.*
+
+- [ ] `document_drafts` table + migration + RLS policies (company_id + user_id scoped)
+- [ ] `AutoSaveDraft` mixin for Flutter form screens
+- [ ] Auto-save timer (every 30 seconds while form dirty) + navigate-away save + app-background save (`AppLifecycleListener`)
+- [ ] Serialize/deserialize for estimate forms (template for all others)
+- [ ] Serialize/deserialize for invoice forms
+- [ ] Serialize/deserialize for walkthrough forms
+- [ ] Serialize/deserialize for inspection forms
+- [ ] Serialize/deserialize for job/project forms
+- [ ] Serialize/deserialize for sketch/floor plan forms
+- [ ] Serialize/deserialize for remaining form types (change orders, POs, assessments, proposals)
+- [ ] "Open Documents" bottom sheet UI (Flutter) — list of active drafts with type icon, title, customer, last edited, completion %
+- [ ] One-tap switch: save current → load selected → restore scroll + field state
+- [ ] Draft auto-delete on document submit/complete
+- [ ] Crash recovery integration (loads draft instead of just "last screen")
+- [ ] Web CRM: localStorage auto-save + drafts sidebar (~6h)
+- [ ] Team portal: localStorage auto-save + drafts panel (~4h)
+- [ ] Client portal: localStorage auto-save (minimal — only change order approval) (~2h)
+- [ ] Cap at 15 active drafts per user, auto-archive oldest
+- [ ] Cross-device sync via Supabase `document_drafts` table (PowerSync local-first)
+- [ ] Commit: `[UX2] Auto-save drafts + document switching — document_drafts table, 30s auto-save, 11 form type serializers, open-docs bottom sheet, crash recovery, cross-portal`
+
+### INFRA1 — Infrastructure Abstraction Layer (~24h) — S132
+*Four wrapper services: DatabaseService, AuthService, StorageService, RealtimeService. Touches every file but no business logic changes.*
+
+- [ ] Create `DatabaseService` interface + Supabase implementation (code-generated from table definitions, not hand-written)
+- [ ] Create `AuthService` interface + Supabase implementation
+- [ ] Create `StorageService` interface + Supabase implementation
+- [ ] Create `RealtimeService` interface + Supabase implementation
+- [ ] Migrate web-portal hooks (68 files) to service calls (replace all `createClient()` direct calls)
+- [ ] Migrate team-portal hooks (22 files) to service calls
+- [ ] Migrate client-portal hooks (21 files) to service calls
+- [ ] Migrate ops-portal to service calls
+- [ ] Migrate Edge Functions auth/client pattern (53 functions — wrap `supabase.auth.getUser()` + client creation)
+- [ ] Verify Flutter repos (already abstracted — audit for any direct Supabase leaks)
+- [ ] Integration tests: swap to mock service implementation, verify all portals still work
+- [ ] Document: "How to add a new infrastructure provider" (one page — implement 4 interfaces)
+- [ ] Commit: `[INFRA1] Infrastructure abstraction layer — 4 service interfaces, Supabase impls, migrate 68+22+21 web hooks + 53 EFs, mock test suite, migration guide`
+
+**UX/INFRA Totals (S132):** UX1 (~10h) + UX2 (~28h) + INFRA1 (~24h) = **3 sprints, ~62h**. 1 new table (`document_drafts`).
+
+---
+
+## XAC1: XACTIMATE TRADEMARK CLEANUP (~4h) — S132
+*Source: s132-xactimate-cleanup-audit.md. 65 files, 234+ instances. CRITICAL: Remove all Xactimate IP from codebase. New table: `custom_code_mappings`.*
+
+### XAC1 — Xactimate Trademark Cleanup (~4h) — S132
+
+- [ ] IMMEDIATE: Remove password cracking array from `z-file-explorer.tsx:48` (`AUTO_PASSWORDS = ['', 'xactimate', 'Xactimate', 'XM8', ...]`)
+- [ ] IMMEDIATE: Delete or gut `export-esx` Edge Function (entire directory)
+- [ ] HIGH: Rename tables: `xactimate_codes` → `industry_codes`, `xactimate_estimate_lines` → `insurance_estimate_lines`
+- [ ] HIGH: Rename columns: `xact_category` → `industry_category`, `xactimate_claim_id` → `insurance_claim_ref_id`, `xactimate_file_url` → `insurance_file_url`
+- [ ] HIGH: Rename Dart class `XactimateCode` → `IndustryCode`, rename file → `industry_code.dart`
+- [ ] HIGH: Rename TypeScript interface `XactimateCode` → `IndustryCode`
+- [ ] HIGH: Rename edge functions: `xact-code-search` → `industry-code-search` (and any other xact-* EFs)
+- [ ] HIGH: Purge all 77 hardcoded Xactimate line item codes from seed data (t8a migration Xactimate selector codes: WTREXCPT, WTREXHS, WTREXSF, etc.)
+- [ ] Add "Custom Code Mapping" system: new `custom_code_mappings` table (user brings their own reference codes, Zafto never distributes them)
+- [ ] PDF export includes user's mapped external codes next to each line item
+- [ ] MEDIUM: Replace all user-facing UI strings ("Xactimate" → "Industry Estimate" or "Insurance Estimate")
+- [ ] LOW: Clean up Xactimate references in build doc comments
+- [ ] Run `dart analyze` and `npm run build` for all portals — 0 errors
+- [ ] Commit: `[XAC1] Xactimate trademark cleanup — remove password array, delete ESX EF, rename tables/columns/classes/EFs, purge hardcoded codes, add custom code crosswalk`
+
+---
+
+## ESTIMATE GAP FIXES (~16h) — S132 Addons
+*Source: s132-xactimate-strategy-master.md Section 33. Field additions and computed getters on existing models. No rebuilds — addons to existing estimate engine.*
+
+### DEPTH29-EST — Estimate Gap Fixes (~16h) — S132
+
+- [ ] Depreciation calculation — Age (from Recon/ATTOM `year_built`) x useful life (already on `EstimateItem` as `lifeExpectancyYears`) = ACV formula. Computed getter on `EstimateLineItem` (~2h)
+- [ ] O&P breakdown — Standard 10/10. Fields `overheadPct` + `profitPct` already exist on Estimate model. Wire to PDF export (~1h)
+- [ ] Waste factors per material — industry standard % by material type. Add `wasteFactorPct` to `EstimateItem` seed data (~4h)
+- [ ] Tax on materials — state/local sales tax by ZIP lookup. Free tax rate API or static table by state (~2h)
+- [ ] Photo-to-line-item mapping — wire VIZ/walkthrough photos to specific estimate line items. Add `photoIds: uuid[]` array to `EstimateLineItem` (~4h)
+- [ ] Regional pricing evidence — BLS OEWS + PPI data displayed next to each line item (already planned in INTEG8, coordinate) (~2h)
+- [ ] Supplement diff export — new screen showing original scope vs revised with new items highlighted + photo evidence + 3D scan comparison + moisture readings + running total. New PDF edge function (~6h)
+- [ ] Commit: `[DEPTH29-EST] Estimate gap fixes — depreciation ACV, O&P PDF export, waste factors seed, tax by ZIP, photo-to-line mapping, BLS pricing evidence, supplement diff export`
+
+---
+
+## S132 MERGE TOTALS
+
+| Sprint Group | Sprint Count | Total Hours |
+|---|---|---|
+| AI Sprints (E-REC through E-CREW) | 11 | ~224h |
+| RE21-RE30 (Realtor gaps) | 10 | ~236h |
+| CUST1-CUST8 (Enterprise customization) | 8 | ~280h |
+| CLIENT1-CLIENT17 (Homeowner platform) | 17 | ~378h |
+| LIST1-LIST9 (Listing engine core) | 9 | ~100h |
+| VIZ15-VIZ28 (Listing 3D/VIZ enhancements) | 14 | ~182h |
+| SK15-SK19 (Listing sketch enhancements) | 5 | ~48h |
+| UX1, UX2, INFRA1 (UX + Infrastructure) | 3 | ~62h |
+| XAC1 (Trademark cleanup) | 1 | ~4h |
+| DEPTH29-EST (Estimate gap fixes) | 1 | ~16h |
+| **TOTAL S132 MERGE** | **79 sprints** | **~1,530h** |
+
+**New Tables (estimated):** ~90 across all sprint groups.
+
+**Notes:**
+- E-PERM, E-CASH, E-CREW are TBD — approved but checklists require full spec session
+- VIZ15-28 and SK15-19 were already merged into their respective phase sections above
+- Execution order for new sprints: XAC1 (ASAP) → DEPTH29-EST (during DEPTH phase) → RE21-30 (after RE1-20) → CUST1-8 (after RE) → CLIENT1-17 (after CUST) → LIST1-9 (after CLIENT) → UX1+UX2+INFRA1 (LAST before ZERO) → AI sprints (Phase E, LAST)
 
 ---
 
