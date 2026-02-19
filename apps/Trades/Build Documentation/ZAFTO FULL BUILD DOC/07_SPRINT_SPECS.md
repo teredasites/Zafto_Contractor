@@ -15556,7 +15556,7 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 ## PHASE CUST: ENTERPRISE CUSTOMIZATION ENGINE (S132) — CUST1-CUST8 (~302h)
 *Source: s132-enterprise-customization-research.md. Dependencies: CUST1 first (foundation), then CUST2+CUST3+CUST5 in parallel, then CUST4, then CUST6+CUST7+CUST8 in parallel. 14 realtor types, 7 brokerage models, 50-state regs.*
 
-### CUST1 — Cascading Settings Foundation + Company Complexity Profile (~54h) — S132
+### CUST1 — Cascading Settings Foundation + Company Complexity Profile + Recon Tier Scaling (~56h) — S132
 *Architecture: Level 0 (System defaults) → Level 1 (Company overrides) → Level 2 (Team overrides) → Level 3 (User overrides). `resolve_setting()` PostgreSQL function. `pg_jsonschema` validation.*
 
 - [ ] Create settings tables (system_settings, company_settings, team_settings, user_settings) with RLS (~4h)
@@ -15581,7 +15581,12 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 - [ ] TEST: Solo company creates estimate → sees 10 fields. Same company switches to enterprise → sees 40+ fields. Data created at solo level is preserved and visible at enterprise level. (~1h)
 - [ ] TEST: Company overrides field visibility for invoices (hides retainage) → retainage field hidden even at enterprise level. Resets to default when override removed. (~1h)
 
-- [ ] Commit: `[CUST1] Cascading settings foundation + company complexity profile — 4-level cascade, form density scaling, onboarding flow`
+**Recon Complexity Scaling — Property Intelligence Depth by Company Tier (S138 recommendation):**
+- [ ] Define Recon scan depth matrix in `system_settings` seed: solo = basic scan (address → sqft, roof type, structure type, age — 8 fields). Small team = standard scan (+ roof measurements, siding, lot features, lead score — 20 fields). Mid-tier = full scan (+ storm history, permits, code requirements, utility info, competitor density, market trends — 35 fields). Enterprise = complete property intelligence (+ historical scans, trend analysis, fleet API monitoring, batch area scanning, custom scan profiles — 50+ fields). Matrix stored as JSONB. (~1h)
+- [ ] Wire `resolveFormFields('recon_scan', companyId)` into Recon scan result display — solo sees clean summary card, enterprise sees full property intelligence dashboard with tabs. Same data is COLLECTED at all tiers (APIs fire regardless) — only DISPLAY density changes. Enterprise companies never miss data. Solo companies aren't overwhelmed. (~1h)
+- [ ] TEST: Solo company runs scan → sees 8-field summary. Same company switches to enterprise → sees 50+ field full intelligence view. Scan data unchanged — only display density changed. (~0.5h)
+
+- [ ] Commit: `[CUST1] Cascading settings foundation + company complexity profile — 4-level cascade, form density scaling, recon tier scaling, onboarding flow`
 
 ### CUST2 — Custom Fields Engine (~40h) — S132
 *16 field types, 100 per entity max, GIN indexes, field key immutable after creation, soft delete only.*
@@ -16383,6 +16388,33 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 
 ---
 
+## S138 RECON BUG FIXES & HARDENING (P-FIX1, ~6h)
+
+*The Recon / Property Intelligence system (P1-P10) is DONE but has accumulated bugs and dead code since Session 105. Multiple downstream systems depend on Recon data (estimates, inspector, realtor, scheduler). Fix before DEPTH28 mega-expansion to avoid building on a shaky foundation. Full audit: S138 Recon audit.*
+
+### P-FIX1 — Recon Bug Fixes & Hardening (~6h) — S138
+
+**Bug Fixes:**
+- [ ] Fix dual `serve()` in `recon-trade-estimator/index.ts`: line 14 AND line 565 both call `Deno.serve()`. Remove line 14 serve() call (it's a stub that shadows the real handler at line 565). Verify single entry point handles all routes. (~0.5h)
+- [ ] Fix roof data not displaying (known bug from S105): Add error logging to `recon-roof-calculator` response path. Trace data flow from `recon-property-scan` → `recon-roof-calculator` → web hook `use-recon.ts` → Flutter `ReconScanResultScreen`. Identify where roof data drops. Fix and verify roof measurements display correctly. (~2h)
+
+**Dead Code / Wiring:**
+- [ ] Wire `scan_cache` table: `recon-property-scan` should check `scan_cache` before calling external APIs. Key = `address_hash + scan_type`. TTL = 24 hours. If cache hit AND not expired, return cached result (skip API calls). If miss, scan normally and INSERT result into cache. This prevents duplicate API calls for the same address. (~1h)
+- [ ] Wire `api_cost_log` table: After every external API call in Recon EFs (Google Solar, USGS, Overpass, geocoding), INSERT row into `api_cost_log` with: api_name, endpoint, response_status, response_time_ms, estimated_cost (0 for free APIs, tracked for future paid ones), timestamp. This enables the API fleet monitoring dashboard in DEPTH28. (~0.5h)
+- [ ] Wire `api_rate_limits` table: Before external API calls, check `api_rate_limits` for current window count. If at limit, return cached/degraded result instead of hammering the API. Seed with: Google Solar (100/day), USGS 3DEP (no limit), Overpass (10K/day), geocoding varies by provider. (~0.5h)
+
+**Architecture Cleanup:**
+- [ ] Extract lead scoring logic from `recon-area-scan/index.ts` into `_shared/lead-scoring.ts`. Both `recon-area-scan` and web hooks should import from shared module. Single source of truth for score factors + weights. (~0.5h)
+- [ ] Add abstract interface to Dart `ReconRepository` (`lib/repositories/recon_repository.dart`): Create `abstract class ReconRepositoryInterface` with all public method signatures. Concrete class implements it. Follows architecture pattern from `06_ARCHITECTURE_PATTERNS.md`. (~0.5h)
+
+**Verification:**
+- [ ] `dart analyze` — 0 errors
+- [ ] All 4 portals: `npm run build` — 0 errors
+- [ ] Manual test: run property scan → verify roof data displays → verify scan_cache row created → verify api_cost_log rows created
+- [ ] Commit: `[P-FIX1] Recon hardening — fix dual serve, wire scan_cache/api_cost_log/api_rate_limits, extract lead scoring, abstract repo interface`
+
+---
+
 ## S138 SECURITY AUDIT REMEDIATION SPRINT (SEC-AUDIT-1 through SEC-AUDIT-6, ~28h)
 
 *Full project weakness analysis: 5 parallel Opus audit agents scanned database (115 migrations), Flutter (1,523 screens), Next.js (4 portals, 184 hooks), Edge Functions (92), Sprint Specs (16,700 lines). Found 103 issues: 20 CRITICAL, 31 HIGH, 26 MEDIUM, 26 LOW. This sprint fixes all CRITICAL and HIGH security vulnerabilities. Full audit: `memory/s138-master-audit-synthesis.md`*
@@ -16685,7 +16717,7 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 
 ---
 
-## S136 TEST INFRASTRUCTURE SPRINT (TEST-INFRA: TI-1 through TI-7, ~28h)
+## S136 TEST INFRASTRUCTURE SPRINT (TEST-INFRA: TI-1 through TI-7, ~36h)
 
 *No more code without verification. After this sprint, every future sprint includes tests. Compile + test + verify = done. Full spec: `memory/collab-arch-test-infra-spec-s136.md`*
 
@@ -16744,7 +16776,7 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 - [ ] Verify failed tests block the workflow (exit code 1)
 - [ ] TEST: Push a deliberate test failure, verify CI catches it
 
-### TI-7 — Cross-App Integration Tests + Security Checklist Template + Sketch Engine Tests (~16h) — S136
+### TI-7 — Cross-App Integration Tests + Security Checklist Template + Sketch Engine Tests + Recon Tests (~24h) — S136
 
 *Expanded S138: This is the sprint that makes the ecosystem self-verifying. Not just "does Flutter build?" but "does the whole system work together?" Plus a mandatory security checklist that every future sprint must include.*
 
@@ -16773,6 +16805,16 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 - [ ] **RLS isolation test for sketch**: Company A creates floor plan → Company B queries floor_plan tables → must NOT see Company A's plans, rooms, layers, snapshots, or photo pins. Test all 6 sketch tables. (~1h)
 - [ ] **Collaboration conflict test**: Two users edit same wall simultaneously via Realtime → verify Yjs CRDT resolves without data loss → verify both users see final state within 2 seconds. (~1h)
 - [ ] **Performance benchmark test**: Create floor plan with 50 rooms, 100 walls, 200 fixtures, 4 trade layers full of symbols → measure render time on Konva canvas → must be < 500ms. Measure `FloorPlanDataV2.toJson()` → must be < 100ms. Add to performance regression gate. (~1h)
+
+**Recon / Property Intelligence Automated Test Suite (S138 — 7 EFs, 13+ tables, zero automated tests currently):**
+- [ ] **EF unit tests — `recon-property-scan`**: Mock Google Solar, USGS 3DEP, Overpass/OSM API responses → verify parsed output matches expected property features schema. Test with: valid address, invalid address (expect graceful error), address with no satellite coverage, address with partial data (some APIs fail → expect degraded result, not crash). Minimum 10 test cases. (~1.5h)
+- [ ] **EF unit tests — `recon-area-scan`**: Mock geocoding + Overpass → verify scan returns properties within radius. Test: 0 results (rural), 50 results (suburban), 500+ results (urban) → verify pagination/limits. Test lead scoring logic: score ≥ 80 for old roof + storm area + long tenure, score < 30 for new construction. Minimum 8 test cases. (~1h)
+- [ ] **EF unit tests — `recon-trade-estimator`**: Feed known property features (roof_sqft=2000, stories=2, siding_type=vinyl) → verify estimate line items, quantities, unit costs are reasonable. Test for each core trade: roofing, siding, painting, gutters, fencing, concrete. Minimum 12 test cases. (~1.5h)
+- [ ] **EF unit tests — `recon-roof-calculator`**: Feed known Google Solar measurements (pitchDegrees, azmuthDegrees, stats.areaMeters2) → verify calculated squares, ridge LF, valley LF, drip edge LF, waste factor match expected values. Test: simple gable, complex hip, flat roof, multi-section. Minimum 8 test cases. (~1h)
+- [ ] **Pipeline integration test**: POST address to `recon-property-scan` → verify full pipeline fires (geocode → solar → 3DEP → features → confidence score) → verify `property_scans` row created with all expected fields populated → verify scan result is retrievable via web hook. Mock all external APIs. End-to-end test. (~1.5h)
+- [ ] **RLS isolation test for Recon**: Company A runs property scan → Company B queries `property_scans`, `scan_results`, `scan_trade_estimates`, `lead_scores` → must NOT see Company A's data. Test all 13+ Recon tables. (~1h)
+- [ ] **Confidence scoring validation test**: Feed 5 known property profiles (new construction, 20yr residential, commercial, hurricane zone, unknown data) → verify confidence scores fall in expected ranges (new=high, unknown=low). Verify score breakdown includes all contributing factors. (~0.5h)
+- [ ] **Recon-to-estimate handoff test**: Run property scan → verify `recon-trade-estimator` output can be imported into estimate engine (DEPTH30 pipeline) → verify measurements map to correct line item quantities. This is the critical downstream integration test. (~1h)
 
 - [ ] Document integration test running procedure: requires local Supabase (`npx supabase start`), seed data, and all 4 portals running locally
 
