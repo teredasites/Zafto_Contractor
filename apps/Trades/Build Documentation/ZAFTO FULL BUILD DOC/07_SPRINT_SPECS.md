@@ -12923,7 +12923,15 @@ Every DEPTH audit item MUST be evaluated per-app where relevant. Do NOT just che
 - [ ] Audit CE credit tracker — state requirements per trade, credit logging, course tracking, renewal deadlines, certificate storage and sharing
 - [ ] Identify and list ALL shallow/stub features found
 - [ ] Build + execute corrections for each shallow feature
-- [ ] Commit: `[DEPTH21] Warranty, job intelligence & legal depth corrections — claims, pricing, permits, liens`
+
+**Contractor Legal Form Gap Fill (S138 audit — forms that must exist for viability):**
+- [ ] **Warranty Certificate template** — ZDocs system template: company info, job reference, warranty type (labor/materials/extended), coverage terms, start/end dates, exclusions, claim procedure, signature. Seed template per trade (HVAC=parts+labor 1yr, roofing=workmanship 5yr+manufacturer, electrical=1yr labor, plumbing=1yr labor, painting=2yr, general=1yr). (~1h)
+- [ ] **Notice of Commencement template** — ZDocs system template: property address, owner info, contractor info, project description, estimated cost, commencement date, expiration date, lender info. Required in FL, OH, and others before starting work. State-specific variants. (~0.5h)
+- [ ] **Notice of Completion template** — ZDocs system template: property address, owner info, contractor info, completion date, description of work. Starts lien deadline clocks in most states. (~0.5h)
+- [ ] **AIA G702 Payment Application equivalent** — ZDocs template for commercial progress billing: schedule of values, work completed to date, stored materials, retainage, previous payments, current amount due, change order summary. NOT branded as AIA (copyrighted) — Zafto's own professional format covering same information. Disclaimer: "Commercial progress billing format — not an AIA document." (~1h)
+- [ ] **W-9 collection tracking** — Add `w9_on_file BOOLEAN DEFAULT false, w9_received_date DATE, w9_storage_path TEXT` to subcontractors/vendors. Alert when sub exceeds $400 YTD without W-9 on file (well before 1099 threshold). (~0.5h)
+
+- [ ] Commit: `[DEPTH21] Warranty, job intelligence & legal depth corrections + contractor legal forms — warranty certs, notice of commencement/completion, payment application, W-9 tracking`
 
 ### DEPTH22 — F-Phase Feature Module Depth Audit + Corrections (~12h)
 **Goal:** Phase F built many features across multiple sprints (F1-F10). Some were built in a single session as part of a rapid expansion. Marketplace, hiring, fleet, OSHA tools, ZForge, and exam prep all exist but may be stubs that look complete because they have a route and a hook but no real depth. Every F-phase feature gets a pass.
@@ -16229,7 +16237,15 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 - [ ] Flutter: Contents Inventory screens — room list, item list per room, add/edit item form with photo capture, running RCV/ACV totals, search/filter/sort by value or room (~3h)
 - [ ] Web Portal: `/dashboard/contents-inventory` — spreadsheet-like view for office data entry, CSV/Excel import for bulk items, bulk depreciation recalculation, category summary charts (~2h)
 - [ ] Contents inventory PDF report — room-by-room listing with photos, RCV/ACV columns, depreciation calculations, grand totals, formatted for carrier submission (~2h)
-- [ ] Commit: `[ADJ-CONT] Contents inventory — contents_claims + contents_items tables, 500+ item depreciation schedule, room-by-room flow, photo-per-item, RCV/ACV auto-calc, CSV import, PDF carrier submission report`
+
+**Adjuster Legal Forms (S138 gap fill — missing from entire ecosystem):**
+- [ ] **Proof of Loss form template** — ZDocs template: policyholder info, date of loss, cause of loss, description of damage, claimed amount, sworn statement, notarization block. Required by most carriers before claim payment. Seed as system template. (~1h)
+- [ ] **Assignment of Benefits (AOB) form template** — ZDocs template: policyholder assigns insurance benefits to contractor for direct billing. Includes: scope limitation, right to revoke, fee disclosure. State-specific variants needed (FL has strict AOB reform laws). Seed for top 10 states. (~1h)
+- [ ] **Scope of Loss form template** — ZDocs template: structured damage documentation form. Room-by-room damage description, measurements, photos, cause/origin analysis, affected systems (structural, electrical, plumbing, HVAC). Formatted for carrier submission. (~1h)
+- [ ] **Supplemental claim form template** — ZDocs template: additional scope beyond original estimate. Original approved amount, additional items discovered, justification per item, supporting photos, revised total. Carrier submission format. (~0.5h)
+- [ ] **ACORD 25 Certificate of Insurance equivalent** — generate COI-style document from company insurance records. NOT an actual ACORD form (ACORD forms are copyrighted), but a professional equivalent showing: carrier name, policy number, coverage types, limits, effective dates, certificate holder. Disclaimer: "This document is not an ACORD form. Verify coverage with your insurance carrier." (~1h)
+
+- [ ] Commit: `[ADJ-CONT] Contents inventory + adjuster legal forms — contents_claims, depreciation, proof of loss, AOB, scope of loss, supplemental claim, COI equivalent`
 
 ### ADJ-AUTH — Authority Limit & Approval Chain Workflow (~8h) — S135
 *Every carrier sets dollar limits per adjuster level. Field adjuster: approve up to $25K. Senior: $100K. Manager: $500K. Exceeding authority = discipline or termination. This is a daily compliance requirement. No existing tool handles this cleanly — adjusters track limits on sticky notes.*
@@ -16652,13 +16668,13 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 
 ---
 
-## S138 LEGAL DEFENSE FRAMEWORK (LEGAL-1 through LEGAL-3, ~16h)
+## S138 LEGAL DEFENSE FRAMEWORK (LEGAL-1 through LEGAL-4, ~26h)
 
 *Zafto contains 1,194+ trade calculators, NEC/IBC/IRC/OSHA/NFPA code references, inspection templates with pass/fail scoring, insurance claim estimation tools, property intelligence data, pricing databases, restoration protocols, payroll/tax calculations, and permit/compliance tracking. Every one of these is a liability vector. A contractor who relies on a wrong electrical load calculation, a stale code reference, or an inaccurate roof measurement has a potential cause of action. The defense must be invisible — professional, confident, built into the product DNA — not plastered disclaimers that scream "we might be wrong." Think Bloomberg Terminal, not a sketchy calculator website. The goal: if a top litigation firm audits this product, they find nothing to attack because every output is clearly framed as a professional tool, not a replacement for professional judgment. The user NEVER feels like we're hedging — they feel like we're thorough.*
 
 *Owner directive S138: Defensive wording must be nonchalant — invisible until a lawyer looks for it. The app must feel authoritative, not uncertain. No "this might be wrong" energy. More "here's the data, verified against [source], as of [date]" energy.*
 
-### LEGAL-1 — Legal Foundation Layer (~6h) — S138
+### LEGAL-1 — Legal Foundation Layer + Template Infrastructure (~8h) — S138
 
 *Terms of Service, master disclaimers, and the invisible defense architecture that protects every feature.*
 
@@ -16742,9 +16758,50 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 - [ ] Audit: Recon scan result → verify source attribution on every data point
 - [ ] `dart analyze` — 0 errors
 - [ ] All 4 portals: `npm run build` — 0 errors
-- [ ] Commit: `[LEGAL-1] Legal defense foundation — disclaimers table, TOS draft, shared components`
+**Form Template Infrastructure Fixes (S138 audit findings):**
+- [ ] Add `version INTEGER DEFAULT 1`, `last_verified_at TIMESTAMPTZ`, `legal_standard_edition TEXT`, `jurisdiction TEXT` columns to `document_templates` and `form_templates` tables. Migration. When a template is updated, version increments. `last_verified_at` tracks when the legal content was last confirmed current. (~1h)
+- [ ] Move 5 hardcoded ZDocs system templates from `zdocs-render` Edge Function into `document_templates` table as seed data with `is_system = true`. EF reads from DB instead of hardcoded JSON. Companies can clone system templates to customize. Original system templates are read-only. (~1h)
+- [ ] Add `version` display to ZDocs template list — shows "v3, verified Feb 2026" so users know templates are maintained. (~0.5h)
+
+- [ ] Commit: `[LEGAL-1] Legal defense foundation — disclaimers table, TOS draft, shared components, template version tracking, system templates in DB`
 - [ ] Commit: `[LEGAL-2] Contextual defense integration — calculators, codes, inspections, estimates, recon, insurance`
 - [ ] Commit: `[LEGAL-3] Legal defense process — sprint template, data freshness, one-time acknowledgment`
+
+### LEGAL-4 — Form Freshness Tracking System + Ops Portal Compliance Dashboard (~8h) — S138
+
+*Every legal form, code reference, template, and compliance document in the ecosystem has a shelf life. NEC updates every 3 years. States adopt on different schedules. IICRC standards revise. Lien laws change. A form that was correct in 2025 could be wrong in 2027. This system tracks every legal reference in the platform, alerts when something goes stale, and gives the ops portal a single dashboard showing the health of every compliance item across all entity types. One-man-band can't manually track 200+ legal references across 50 states — the system does it.*
+
+*Owner directive S138: Automated freshness tracking with ops portal dashboard. Everything the ecosystem references must be tracked and flagged when stale.*
+
+**Form Freshness Infrastructure:**
+- [ ] Create `legal_reference_registry` table: `id, reference_type ENUM ('code_standard', 'state_law', 'federal_regulation', 'form_template', 'seed_data', 'api_data'), reference_key TEXT (unique identifier, e.g. 'NEC_2023', 'CA_LIEN_LAW', 'IICRC_S500'), display_name, current_edition, adopted_date, next_review_cycle (interval, e.g. '3 years' for NEC), last_verified_at TIMESTAMPTZ, verified_by TEXT, source_url TEXT, affects_entities TEXT[] (e.g. ['contractor','inspector']), affects_sprints TEXT[] (e.g. ['INS7','DEPTH20']), status ENUM ('current', 'review_due', 'outdated', 'superseded'), notes TEXT, created_at, updated_at`. RLS: super_admin only (ops portal). (~1h)
+- [ ] Seed ~60 legal references covering the entire ecosystem:
+  - **Code Standards (~15):** NEC 2023 (3yr cycle), IBC 2021 (3yr), IRC 2021 (3yr), NFPA 70E 2024 (3yr), NFPA 25 (3yr), OSHA 29 CFR 1926 (ongoing), OSHA 29 CFR 1910 (ongoing), IICRC S500 2021 (5yr), IICRC S520 2015 (review pending), EPA RRP 40 CFR 745 (ongoing), IECC 2021 (3yr), ADA Standards (ongoing), NPMA-33 (ongoing), UPC/IPC (3yr), ACCA Manual J (periodic)
+  - **State Laws (~20):** Lien laws (50 states — track as group with per-state last_verified), contractor licensing requirements (per state), realtor disclosure requirements (per state), inspector licensing requirements (per state), adjuster licensing requirements (per state), mechanic's lien deadlines, preliminary notice requirements, home improvement contractor acts (per state)
+  - **Federal Regulations (~10):** FLSA overtime rules, CCPA/CPRA, GDPR (if intl), EPA lead-safe certification, DOT/FMCSA regulations, FTC contractor advertising rules, RESPA, TRID (Dodd-Frank), Fair Housing Act, ADA Title III
+  - **Form Templates (~15):** ZDocs proposal/contract/lien waiver/change order/daily report (5), inspection templates (25 — track as group), lien document templates (16 — track as group), form_templates seed (30 — track as group), WDI/NPMA-33 report, mold clearance cert, fire assessment template
+  (~2h)
+- [ ] Create `legal_reference_check_log` table: `id, reference_id FK, checked_at, checked_by, result ENUM ('still_current', 'update_needed', 'updated', 'no_change_found'), notes, source_checked TEXT`. Audit trail of every verification check. (~0.5h)
+- [ ] Create pg_cron job `check_legal_freshness` — runs weekly. For each reference: if `NOW() - last_verified_at > next_review_cycle`, set status = 'review_due'. If `NOW() - last_verified_at > next_review_cycle * 1.5`, set status = 'outdated'. INSERT alert into `system_alerts` table (ops portal already reads this). (~1h)
+
+**Ops Portal Dashboard — Compliance Health:**
+- [ ] Create `/dashboard/compliance-health` page in ops-portal. Sections:
+  - **Overview cards:** Total references tracked, Current (green), Review Due (yellow), Outdated (red), Last full audit date
+  - **By entity type tabs:** Contractor | Realtor | Adjuster | Inspector | Homeowner | Preservation — each shows references affecting that entity
+  - **By category:** Code Standards | State Laws | Federal Regs | Form Templates — filterable
+  - **Stale items list:** Sorted by staleness (most overdue first). Each row: reference name, current edition, last verified, days overdue, "Mark Verified" button (logs check, resets timer), "Needs Update" button (creates TODO item)
+  - **State coverage map:** Visual grid — 50 states × document types. Green = template exists + current. Yellow = template exists + review due. Red = no template. Gray = N/A for this state. Shows jurisdiction gaps at a glance.
+  - **Verification history:** Log of all checks — who verified what, when, what they found
+  (~2h)
+- [ ] Create `use-compliance-health` hook in ops-portal: fetches `legal_reference_registry` + `legal_reference_check_log`, computes staleness, returns `{ references, staleCount, outdatedCount, coverageByState, loading, error, markVerified, flagForUpdate }` (~0.5h)
+- [ ] Ops portal sidebar: add "Compliance Health" under PLATFORM section with badge showing stale count (yellow) or outdated count (red). Zero = no badge (clean). (~0.5h)
+- [ ] Weekly email digest to super_admin: "Zafto Compliance Health — 3 items need review this week" with links to each item. Uses `sendgrid-email` EF. Only fires if staleCount > 0. (~0.5h)
+
+**Verification:**
+- [ ] Seed all ~60 references with accurate current editions and review cycles
+- [ ] Manually set one reference to stale → verify pg_cron flags it → verify ops portal shows it → verify email fires
+- [ ] `npm run build` ops-portal — 0 errors
+- [ ] Commit: `[LEGAL-4] Form freshness tracking — legal_reference_registry, pg_cron staleness check, ops portal compliance health dashboard`
 
 ---
 
@@ -17353,7 +17410,18 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 - [ ] Wire jurisdiction data into Brokerage Admin: compliance dashboard shows per-state agent license status, CE tracking with state-specific requirements, auto-alerts for license renewal by state rules
 - [ ] Wire jurisdiction data into Lead Gen Pipeline: DNC compliance by state (some states have stricter rules than federal), TCPA state variations, email marketing opt-out rules
 - [ ] Add jurisdiction context to AI prompts: when generating listing descriptions, contracts, or compliance documents, include state-specific rules in context
-- [ ] Commit: `[JUR4] Realtor jurisdiction awareness — state disclosures, agency rules, transaction rules, commission rules, license requirements, document retention across 50 states`
+
+**Realtor Legal Form Templates (S138 gap fill — forms required for viable realtor platform):**
+- [ ] **Listing Agreement template** — ZDocs system template: exclusive right-to-sell (most common), property details, list price, commission rate, marketing authorization, term/expiration, cancellation policy, MLS authorization, lockbox authorization, seller obligations, state-specific addenda placeholder. NOT a state-association form (copyrighted) — Zafto's own professional format. Disclaimer: "This is a Zafto-generated template. Verify compliance with your state real estate commission and local association forms." (~1h)
+- [ ] **Buyer Representation Agreement template** — ZDocs: buyer info, agent info, scope of representation, compensation terms (critical post-NAR settlement Aug 2024), duration, exclusive vs non-exclusive, termination clause, dual agency disclosure if applicable in state. State-specific compensation disclosure required. (~1h)
+- [ ] **Purchase & Sale Agreement template** — ZDocs: buyer/seller info, property description, purchase price, earnest money, financing contingency, inspection contingency, appraisal contingency, closing date, title company, prorations, fixtures included/excluded, possession date, default remedies. State-specific addenda for attorney-review states. (~1.5h)
+- [ ] **Seller Disclosure template** — ZDocs: property condition disclosure (structural, roof, HVAC, plumbing, electrical, water/sewer, environmental hazards, HOA, flood zone, lawsuits, defects known). Comprehensive base template — JUR4 state data determines which sections are mandatory vs optional per state. (~1h)
+- [ ] **Lead-Based Paint Disclosure template** — ZDocs: required by federal law for ALL pre-1978 residential sales. Standard EPA form content: seller disclosure of known lead paint, buyer acknowledgment, 10-day inspection period, signatures. This is a FEDERAL requirement — same in all 50 states. (~0.5h)
+- [ ] **CMA Report PDF template** — Comparative Market Analysis: subject property details, comparable sales (3-6), active listings, expired/withdrawn, price adjustments grid, suggested list price range, market conditions summary, data sources + freshness dates. Professional branded PDF. (~1h)
+- [ ] **Closing Checklist template** — Transaction coordination: 75+ buyer-side steps, 75+ seller-side steps, organized by phase (contract→inspection→appraisal→title→closing→post-closing). Auto-generated from transaction type + state requirements. (~1h)
+- [ ] Seed all realtor templates with professional formatting matching ZDocs styling. Every template includes: data source attribution, edition/version tracking via `legal_reference_registry`, and professional disclaimer footer.
+
+- [ ] Commit: `[JUR4] Realtor jurisdiction awareness + realtor legal forms — state rules, disclosures, listing/buyer/purchase agreements, seller disclosure, lead paint, CMA, closing checklist`
 
 ---
 
