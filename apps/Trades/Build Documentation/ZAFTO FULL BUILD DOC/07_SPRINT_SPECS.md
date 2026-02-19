@@ -16362,6 +16362,7 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 
 ### CA-1 — Foundation Tables + Migration (~6h) — S136
 
+- [ ] Add `company_type text NOT NULL DEFAULT 'contractor' CHECK (company_type IN ('contractor','realtor','inspector','adjuster','preservation','homeowner','hybrid'))` column to existing `companies` table — gates navigation, onboarding, feature visibility, default templates. 'hybrid' for companies that do multiple (e.g., contractor + inspector)
 - [ ] Create migration: `user_company_memberships` table — user_id, company_id, role, status (pending/active/suspended/revoked), invited_by, accepted_at, permissions jsonb, is_primary boolean, membership_type (employee/collaborator/guest), UNIQUE(user_id, company_id)
 - [ ] Create migration: `job_collaborators` table — job_id, company_id (owner), collaborator_company_id, collaborator_user_id, scope_description, access_level (full_project/assigned_scope/read_only/time_and_materials_only), agreed_amount, status, can_see_financials, can_see_other_subs, can_see_customer_info
 - [ ] Create migration: `collaboration_invitations` table — from_company_id, to_email, to_company_id, to_user_id, invitation_type (join_company/collaborate_on_job/subcontractor_roster), job_id, proposed_role, proposed_permissions, message, status, token, expires_at

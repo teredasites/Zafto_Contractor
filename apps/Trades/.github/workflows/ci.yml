@@ -1,0 +1,153 @@
+# ZAFTO CI Pipeline — Runs on every push and PR
+# Tests: Flutter analyze + test, all 4 portal builds + tests
+# If any job fails, the push/PR is blocked
+
+name: ZAFTO CI
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'apps/Trades/**'
+      - '!apps/Trades/Build Documentation/**'
+      - '!apps/Trades/**/*.md'
+  pull_request:
+    branches: [master]
+    paths:
+      - 'apps/Trades/**'
+      - '!apps/Trades/Build Documentation/**'
+      - '!apps/Trades/**/*.md'
+
+defaults:
+  run:
+    working-directory: apps/Trades
+
+jobs:
+  flutter-checks:
+    name: Flutter Analyze + Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze --no-fatal-infos
+
+      - name: Run tests
+        run: flutter test
+
+  web-portal:
+    name: Web Portal Build + Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: apps/Trades/web-portal/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: apps/Trades/web-portal
+
+      - name: Build
+        run: npm run build
+        working-directory: apps/Trades/web-portal
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder-key
+
+      - name: Test
+        run: npm test --if-present
+        working-directory: apps/Trades/web-portal
+
+  team-portal:
+    name: Team Portal Build + Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: apps/Trades/team-portal/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: apps/Trades/team-portal
+
+      - name: Build
+        run: npm run build
+        working-directory: apps/Trades/team-portal
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder-key
+
+      - name: Test
+        run: npm test --if-present
+        working-directory: apps/Trades/team-portal
+
+  client-portal:
+    name: Client Portal Build + Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: apps/Trades/client-portal/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: apps/Trades/client-portal
+
+      - name: Build
+        run: npm run build
+        working-directory: apps/Trades/client-portal
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder-key
+
+      - name: Test
+        run: npm test --if-present
+        working-directory: apps/Trades/client-portal
+
+  ops-portal:
+    name: Ops Portal Build + Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: apps/Trades/ops-portal/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: apps/Trades/ops-portal
+
+      - name: Build
+        run: npm run build
+        working-directory: apps/Trades/ops-portal
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder-key
+
+      - name: Test
+        run: npm test --if-present
+        working-directory: apps/Trades/ops-portal
