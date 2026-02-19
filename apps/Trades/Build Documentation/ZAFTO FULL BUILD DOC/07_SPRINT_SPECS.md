@@ -16557,6 +16557,101 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 
 ---
 
+## S138 ACCESSIBILITY COMPLIANCE (A11Y-1 through A11Y-3, ~20h)
+
+*WCAG 2.2 Level AA compliance across all 5 apps. ADA web accessibility lawsuits exceed 4,000/year in the US — it's one of the easiest attack vectors for plaintiff's firms and most contractor software has zero accessibility. This isn't just legal defense — contractors, realtors, adjusters, and homeowners with disabilities exist and deserve a first-class experience. Target: WCAG 2.2 AA on every screen, every portal, every PDF. Automated testing in CI so compliance can never regress. This will be the most accessible trades platform ever built — competitors don't even try.*
+
+*Current state: 35 aria/semantic attributes across 10 files out of 1,523+ Flutter screens and 240+ Next.js routes. Essentially zero accessibility infrastructure.*
+
+### A11Y-1 — Accessibility Foundation + Automated Testing (~8h) — S138
+
+*Build the infrastructure so accessibility is enforced automatically on every future sprint, then fix the foundational issues across all apps.*
+
+**Automated Testing Pipeline (do this FIRST — catches regressions forever):**
+- [ ] Add `axe-core` + `@axe-core/react` to all 4 Next.js portals as dev dependency. Configure axe to run in development mode — logs WCAG violations to browser console during development. Zero runtime cost in production. (~0.5h)
+- [ ] Add `jest-axe` to all 4 portals' test setup. Create `a11y.test.tsx` template that renders each page component and runs `expect(await axe(container)).toHaveNoViolations()`. Start with 10 critical pages: login, dashboard, customers list, job detail, estimate builder, invoice detail, calendar, settings, inspection checklist, sketch editor. (~2h)
+- [ ] Add Lighthouse CI accessibility audit to GitHub Actions — runs on every PR. Threshold: score >= 90 (AA compliance). Fail the build if accessibility score drops. (~1h)
+- [ ] Flutter: Add `flutter_test` accessibility checks — `meetsGuideline(textContrastGuideline)`, `meetsGuideline(labeledTapTargetGuideline)`, `meetsGuideline(androidTapTargetGuideline)`. Run against 10 critical screens: home, jobs list, estimate entry, walkthrough, inspection checklist, sketch editor, calculator, time clock, messages, settings. (~1h)
+
+**Color & Contrast Foundation:**
+- [ ] Audit all design tokens (Tailwind config in all 4 portals + Flutter theme). Verify every text/background combination meets WCAG AA contrast ratio: 4.5:1 for normal text, 3:1 for large text (18px+ or 14px+ bold). Fix any failures. The existing dark CRM theme is highest risk — dark backgrounds with muted text often fail. (~1.5h)
+- [ ] Verify information is never conveyed by color alone. Status indicators (job status, invoice status, inspection pass/fail, lead score) must have text labels or icons alongside color. Audit all status badges across all portals. (~1h)
+- [ ] Add `prefers-color-scheme` and `prefers-contrast` media query support. High contrast mode: increase all borders to 2px, ensure all interactive elements have visible boundaries. Already have 1 accessibility theme in Flutter — verify it meets WCAG AA. (~1h)
+
+### A11Y-2 — Screen Reader + Keyboard Navigation (~8h) — S138
+
+*Make every feature fully usable without a mouse and fully navigable by screen reader. This is what courts test.*
+
+**Semantic HTML & ARIA (Next.js — all 4 portals):**
+- [ ] Audit all pages for semantic HTML: `<nav>` for navigation, `<main>` for content, `<aside>` for sidebars, `<header>`/`<footer>`, `<section>` with headings, `<button>` for actions (not `<div onClick>`), `<a>` for links. Fix all 4 portal layouts to use landmark regions. (~2h)
+- [ ] Add skip navigation link to all 4 portal layouts: hidden visually, appears on first Tab press — "Skip to main content". Links to `#main-content` id on `<main>`. Standard pattern, required for keyboard users. (~0.5h)
+- [ ] Heading hierarchy audit: every page must have exactly one `<h1>` (page title), logical `<h2>`→`<h6>` nesting. No skipped heading levels. Screen readers use headings as page outline. (~1h)
+- [ ] Form accessibility audit across all portals: every `<input>` has a visible `<label>` with `htmlFor` attribute (or `aria-label` for icon-only inputs). Error messages linked via `aria-describedby`. Required fields marked with `aria-required="true"`. Form validation errors announced via `aria-live="polite"` region. (~2h)
+- [ ] Add `aria-label` to all icon-only buttons (sidebar icons, action buttons, close buttons, menu toggles). Audit every Lucide icon button — if no visible text, must have aria-label. (~1h)
+- [ ] Modal/dialog accessibility: all modals use `role="dialog"`, `aria-modal="true"`, `aria-labelledby` pointing to modal title. Focus trapped inside modal while open. Escape closes modal. Focus returns to trigger element on close. (~0.5h)
+- [ ] Table accessibility: all data tables have `<caption>` or `aria-label`, `<th scope="col/row">` headers, sortable columns announce sort state via `aria-sort`. (~0.5h)
+
+**Flutter Semantics:**
+- [ ] Add `Semantics` widgets to all custom widgets in `lib/widgets/`: buttons, cards, list items, status badges, input fields. Every interactive element needs a semantic label. Every decorative element needs `excludeFromSemantics: true`. (~2h)
+- [ ] Add `FocusTraversalGroup` to all form screens — logical tab order (top-to-bottom, left-to-right). Estimate entry, invoice creation, job creation, inspection checklist, walkthrough, sketch editor — all need explicit focus order. (~1h)
+- [ ] Verify TalkBack (Android) and VoiceOver (iOS) can navigate: home screen → job list → job detail → back. Estimate creation → fill all fields → save. Inspection checklist → check items → complete. Fix any dead ends or unlabeled elements. (~1h)
+
+**Keyboard Navigation (Next.js):**
+- [ ] Every interactive element focusable via Tab. Focus indicator visible (2px outline, high contrast — never `outline: none` without replacement). Custom focus styles that match Zafto design — subtle but visible. (~0.5h)
+- [ ] All dropdown menus, select boxes, and popover panels keyboard-navigable: Arrow keys to move, Enter to select, Escape to close. Verify Radix UI / Headless UI components have this built in — if using custom dropdowns, add keyboard handlers. (~0.5h)
+- [ ] Keyboard shortcuts page: Add `/dashboard/keyboard-shortcuts` that lists all available shortcuts. Accessible via `?` key. (~0.5h)
+
+### A11Y-3 — Content Accessibility + PDF + Ongoing Compliance (~4h) — S138
+
+*PDFs, images, dynamic content, reduced motion, text scaling — the details that complete the compliance picture.*
+
+**PDF Accessibility:**
+- [ ] All generated PDFs (estimates, invoices, bids, inspection reports, proposals, contracts, lien waivers) must be tagged PDFs: heading structure, reading order, alt text on images/logos, table headers marked. Update PDF generation (zdocs-render EF + any client-side PDF libs) to output tagged PDFs. (~1.5h)
+- [ ] Company logo in PDF headers: add alt text "Company logo" (or company name). Signature images: alt text "Signature of [name]". Inspection photos: alt text from photo caption/description field. (~0.5h)
+
+**Dynamic Content & Notifications:**
+- [ ] All toast notifications / snackbars use `role="status"` or `aria-live="polite"` — screen readers announce them without interrupting current focus. Error toasts use `role="alert"` (more urgent). (~0.5h)
+- [ ] Real-time updates (new messages, job status changes, notifications): announce via `aria-live="polite"` region. Don't move focus — just announce. (~0.5h)
+- [ ] Loading states: add `aria-busy="true"` to loading containers. Skeleton screens have `aria-label="Loading content"`. Spinners have `role="status"` with `aria-label="Loading"`. (~0.5h)
+
+**Reduced Motion & Text Scaling:**
+- [ ] Respect `prefers-reduced-motion`: disable all CSS transitions/animations, disable auto-playing animations in sketch editor, disable slide transitions in page navigation. Users with vestibular disorders need this. (~0.5h)
+- [ ] Flutter: test with system font scaling at 1.0x, 1.5x, 2.0x. No text truncation at 1.5x. Layouts adapt (wrap, scroll) at 2.0x. Fix any overflow. (~0.5h)
+- [ ] Next.js: use `rem` units for all typography (already likely via Tailwind). Verify no `px` on font sizes. Test at browser 200% zoom — layouts must not break or overlap. (~0.5h)
+
+**Sprint Template Addition:**
+- [ ] Add accessibility items to `SPRINT_SECURITY_TEMPLATE.md`:
+  ```
+  ### Accessibility Verification (MANDATORY — WCAG 2.2 AA)
+  - [ ] All new pages: semantic HTML (landmarks, headings hierarchy, labels on inputs)
+  - [ ] All new interactive elements: keyboard focusable + visible focus indicator
+  - [ ] All new icon-only buttons: aria-label present
+  - [ ] All new forms: labels linked, errors announced via aria-live, required fields marked
+  - [ ] All new status indicators: not color-only (include text/icon)
+  - [ ] All new images: alt text present (decorative = alt="")
+  - [ ] All new modals: focus trapped, Escape closes, focus returns on close
+  - [ ] Color contrast: all text meets 4.5:1 (normal) or 3:1 (large)
+  - [ ] axe-core: zero violations on new pages
+  - [ ] Flutter: Semantics widgets on all new custom widgets
+  ```
+  (~0.5h)
+
+**Accessibility Statement:**
+- [ ] Create `/accessibility` page on all 4 portals: "Zafto is committed to digital accessibility. We design our products to meet WCAG 2.2 Level AA standards. If you experience any accessibility barriers, contact support@zafto.app." Standard accessibility statement — shows good faith, provides contact for issues, referenced by courts as evidence of commitment. (~0.5h)
+
+**Verification:**
+- [ ] Lighthouse accessibility audit: all 4 portals score >= 90
+- [ ] axe-core: zero critical/serious violations on 10 tested pages
+- [ ] Keyboard-only test: complete full workflow (login → create job → create estimate → generate PDF) without touching mouse
+- [ ] Screen reader test: VoiceOver on iOS or NVDA on Windows — navigate dashboard, read a job, fill a form
+- [ ] `dart analyze` — 0 errors
+- [ ] All 4 portals: `npm run build` — 0 errors
+- [ ] Commit: `[A11Y-1] Accessibility foundation — axe-core, Lighthouse CI, contrast audit, color-independent indicators`
+- [ ] Commit: `[A11Y-2] Screen reader + keyboard navigation — semantic HTML, ARIA, Flutter Semantics, focus management`
+- [ ] Commit: `[A11Y-3] Content accessibility — tagged PDFs, aria-live, reduced motion, text scaling, accessibility statement`
+
+---
+
 ## S138 LEGAL DEFENSE FRAMEWORK (LEGAL-1 through LEGAL-3, ~16h)
 
 *Zafto contains 1,194+ trade calculators, NEC/IBC/IRC/OSHA/NFPA code references, inspection templates with pass/fail scoring, insurance claim estimation tools, property intelligence data, pricing databases, restoration protocols, payroll/tax calculations, and permit/compliance tracking. Every one of these is a liability vector. A contractor who relies on a wrong electrical load calculation, a stale code reference, or an inaccurate roof measurement has a potential cause of action. The defense must be invisible — professional, confident, built into the product DNA — not plastered disclaimers that scream "we might be wrong." Think Bloomberg Terminal, not a sketchy calculator website. The goal: if a top litigation firm audits this product, they find nothing to attack because every output is clearly framed as a professional tool, not a replacement for professional judgment. The user NEVER feels like we're hedging — they feel like we're thorough.*
