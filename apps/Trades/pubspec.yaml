@@ -93,6 +93,7 @@ dev_dependencies:
   riverpod_generator: ^2.4.0
   build_runner: ^2.4.9
   hive_generator: ^2.0.1
+  mocktail: ^1.0.4
 
 flutter:
   generate: true
