@@ -1,8 +1,4 @@
 // ZAFTO Web CRM — Supabase Auth
-// Sprint B4a | Session 48
-//
-// Replaces Firebase Auth. Same API surface (signIn, signOut, onAuthChange)
-// so consumers migrate with minimal changes.
 
 import { getSupabase } from './supabase';
 import type { User, AuthChangeEvent, Session } from '@supabase/supabase-js';

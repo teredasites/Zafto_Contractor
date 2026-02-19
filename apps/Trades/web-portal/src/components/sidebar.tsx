@@ -214,7 +214,6 @@ const navigationGroups: NavGroup[] = [
       { name: 'Purchase Orders', href: '/dashboard/purchase-orders', icon: ShoppingCart },
       { name: 'Fleet', href: '/dashboard/fleet', icon: Truck },
       { name: 'HR', href: '/dashboard/hr', icon: UserCog },
-      { name: 'Training', href: '/dashboard/hr', icon: GraduationCap },
       { name: 'Hiring', href: '/dashboard/hiring', icon: UserCog },
       { name: 'Marketplace', href: '/dashboard/marketplace', icon: Store },
     ],

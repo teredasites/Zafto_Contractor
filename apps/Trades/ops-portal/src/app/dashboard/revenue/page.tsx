@@ -22,12 +22,11 @@ interface RevenueMetrics {
   recentPayments: Array<{ id: string; amount: number; type: string; createdAt: string }>;
 }
 
-// Pricing tiers for MRR estimation
+// Pricing tiers for MRR estimation (S133 owner directive)
 const TIER_PRICING: Record<string, number> = {
-  solo: 49,
-  team: 99,
-  business: 199,
-  enterprise: 399,
+  solo: 69.99,
+  team: 149.99,
+  business: 249.99,
 };
 
 export default function RevenueDashboardPage() {

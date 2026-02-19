@@ -20,6 +20,27 @@ serve(async (req) => {
 
   const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? ''
   const SUPABASE_SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+  const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY') ?? ''
+
+  // Authenticate the request
+  const authHeader = req.headers.get('Authorization')
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return new Response(JSON.stringify({ error: 'Missing authorization' }), {
+      status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
+  }
+
+  const userClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    global: { headers: { Authorization: authHeader } },
+  })
+  const { data: { user }, error: authError } = await userClient.auth.getUser()
+  if (authError || !user) {
+    return new Response(JSON.stringify({ error: 'Invalid token' }), {
+      status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
+  }
+
+  const userRole = user.app_metadata?.role as string | undefined
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY)
 
   try {
@@ -28,6 +49,12 @@ serve(async (req) => {
 
     switch (action) {
       case 'sync_standards':
+        // Write operation — restrict to admin roles
+        if (!['owner', 'admin', 'super_admin'].includes(userRole ?? '')) {
+          return new Response(JSON.stringify({ error: 'Insufficient permissions' }), {
+            status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          })
+        }
         return await handleSyncStandards(supabase)
       case 'get_for_trade':
         return await handleGetForTrade(supabase, body)

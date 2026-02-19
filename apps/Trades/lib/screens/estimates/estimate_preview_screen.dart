@@ -493,24 +493,6 @@ class _EstimatePreviewScreenState extends ConsumerState<EstimatePreviewScreen> {
               ),
           ],
         ),
-        if (estimate.isInsurance) ...[
-          const SizedBox(height: 12),
-          SizedBox(
-            width: double.infinity,
-            height: 48,
-            child: OutlinedButton.icon(
-              onPressed: _isExporting ? null : _exportEsx,
-              icon: _isExporting
-                  ? SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: colors.textSecondary))
-                  : Icon(LucideIcons.fileOutput, size: 18, color: colors.textSecondary),
-              label: Text('Export .esx', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: colors.textSecondary)),
-              style: OutlinedButton.styleFrom(
-                side: BorderSide(color: colors.borderDefault),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-            ),
-          ),
-        ],
       ],
     );
   }
@@ -570,37 +552,4 @@ class _EstimatePreviewScreenState extends ConsumerState<EstimatePreviewScreen> {
     }
   }
 
-  Future<void> _exportEsx() async {
-    setState(() => _isExporting = true);
-    HapticFeedback.lightImpact();
-    try {
-      final supabase = Supabase.instance.client;
-      final response = await supabase.functions.invoke(
-        'export-esx',
-        method: HttpMethod.get,
-        queryParameters: {
-          'estimate_id': widget.estimateId,
-        },
-      );
-      final bytes = response.data;
-      if (bytes is List<int>) {
-        final dir = await getTemporaryDirectory();
-        final estimateNum = _estimate?.estimateNumber ?? 'estimate';
-        final file = File('${dir.path}/$estimateNum.esx');
-        await file.writeAsBytes(bytes);
-        await Share.shareXFiles(
-          [XFile(file.path, mimeType: 'application/octet-stream')],
-          subject: 'Estimate Export',
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('ESX export failed: $e')),
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _isExporting = false);
-    }
-  }
 }

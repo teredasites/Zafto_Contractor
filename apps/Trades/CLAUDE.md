@@ -5,11 +5,11 @@ Complete business-in-a-box for trades contractors. "Stripe for blue-collar." One
 
 ## Stack
 - **Mobile**: Flutter/Dart, Riverpod state management, PowerSync offline-first (planned)
-- **Web CRM**: Next.js 15, React 19, TypeScript, Tailwind CSS — `web-portal/` (107 routes)
-- **Team Portal**: Next.js 15 — `team-portal/` (36 routes) — field employee PWA at team.zafto.cloud
-- **Client Portal**: Next.js 15 — `client-portal/` (38 routes) — homeowner portal at client.zafto.cloud
-- **Ops Portal**: Next.js 15 — `ops-portal/` (26 routes) — founder dashboard at ops.zafto.cloud
-- **Backend**: Supabase (PostgreSQL + Auth + Storage + Realtime + Edge Functions). NO Firebase (fully migrated).
+- **Web CRM**: Next.js 15, React 19, TypeScript, Tailwind CSS — `web-portal/` (120 routes)
+- **Team Portal**: Next.js 15 — `team-portal/` (44 routes) — field employee PWA at team.zafto.cloud
+- **Client Portal**: Next.js 15 — `client-portal/` (45 routes) — homeowner portal at client.zafto.cloud
+- **Ops Portal**: Next.js 15 — `ops-portal/` (31 routes) — founder dashboard at ops.zafto.cloud
+- **Backend**: Supabase (PostgreSQL + Auth + Storage + Realtime + Edge Functions). Flutter app has 6 legacy Firebase services pending migration.
 - **Hosting**: Vercel (all 4 Next.js apps), Cloudflare DNS
 - **CI/CD**: Codemagic (Flutter), GitHub Actions
 - **Icons**: Lucide only. No emojis anywhere.
@@ -20,25 +20,25 @@ Complete business-in-a-box for trades contractors. "Stripe for blue-collar." One
 ```
 ├── lib/                    # Flutter app
 │   ├── core/               # env.dart, supabase_client.dart, errors.dart
-│   ├── models/             # Dart models (35+ Supabase models)
-│   ├── repositories/       # 32 repos (PowerSync/Supabase)
+│   ├── models/             # Dart models (103 Supabase models)
+│   ├── repositories/       # 64 repos (PowerSync/Supabase)
 │   ├── providers/          # Riverpod providers
-│   ├── screens/            # All Flutter screens (R1: 33 role screens)
+│   ├── screens/            # 1,523 Flutter screen files
 │   │   ├── estimates/      # D8 estimate engine (5 screens)
 │   │   ├── properties/     # D5 property mgmt (10 screens)
 │   │   ├── walkthrough/    # E6 walkthrough (12 screens)
 │   │   └── zbooks/         # D4 accounting (3 screens)
 │   └── widgets/            # Shared widgets (LoadingState, EmptyState, ErrorState)
 ├── web-portal/             # CRM (Next.js) — zafto.cloud
-│   └── src/lib/hooks/      # 68 use-*.ts hook files + mappers.ts
+│   └── src/lib/hooks/      # 110 use-*.ts hook files + 2 mappers
 ├── team-portal/            # Employee portal (Next.js) — team.zafto.cloud
-│   └── src/lib/hooks/      # 22 hook files
+│   └── src/lib/hooks/      # 29 hook files + 1 mapper
 ├── client-portal/          # Client portal (Next.js) — client.zafto.cloud
-│   └── src/lib/hooks/      # 21 hook files
+│   └── src/lib/hooks/      # 26 hook files + 2 mappers
 ├── ops-portal/             # Founder ops (Next.js) — ops.zafto.cloud
 ├── supabase/
-│   ├── functions/          # 53 Edge Functions (Deno/TypeScript)
-│   └── migrations/         # 48 migration files
+│   ├── functions/          # 92 Edge Functions (Deno/TypeScript)
+│   └── migrations/         # 115 migration files
 ├── Build Documentation/    # DO NOT DELETE — full build docs
 │   └── ZAFTO FULL BUILD DOC/
 │       ├── 00_HANDOFF.md       # Entry point — read FIRST every session
@@ -50,12 +50,13 @@ Complete business-in-a-box for trades contractors. "Stripe for blue-collar." One
 └── android/, ios/, web/, windows/       # Platform dirs
 ```
 
-## Current State (Session 97)
-- **~173 tables**, 48 migrations, 53 Edge Functions
+## Current State (Session 136)
+- **293 tables**, 115 migrations, 92 Edge Functions, 103 models, 64 repos, 1,523 screens
 - **Phases A-F ALL COMPLETE**. R1 done. FM code done. Phase E PAUSED.
-- **Build order**: T (Programs, NEXT) → P (Recon) → SK (Sketch Engine) → GC (Schedule) → U (Unification) → G (QA) → E (E-review → BA1-BA8 Plan Review → E1-E4, AI LAST) → LAUNCH
-- **Plan Review SPEC'D** (S97): AI blueprint reading + automated takeoff. 6 tables, 3 EFs, 8 sprints (~128 hrs). Research validated.
-- **F2 (Website Builder) + F8 (Ops 2-4) deferred post-launch**
+- **~136 sprints spec'd**, ~2,650h in execution order (~7,614h total including orphaned sprints)
+- **Build order**: SEC→LAUNCH1→LAUNCH9→FIELD→REST→NICHE→DEPTH→INTEG→RE→FLIP→SEC→LAUNCH→G→JUR→E→SHIP
+- **Pricing**: Solo $69.99, Team $149.99, Business $249.99. Adjuster FREE.
+- **Known debt**: 6 Flutter services still on Firebase (firestore_service, ai_conversation_service, location_tracking_service, ui_mode_service, permission_service, company_service). 69/100 models missing Equatable. 296 orphaned sprints not in execution order.
 
 ## Critical Rules — NEVER VIOLATE
 
