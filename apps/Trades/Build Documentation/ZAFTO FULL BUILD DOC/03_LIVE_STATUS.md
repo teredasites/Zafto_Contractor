@@ -34,7 +34,7 @@
 | Account | Status | Email |
 |---------|--------|-------|
 | MS 365 Business Basic | ACTIVE (5 emails on zafto.app) | admin/robert/support/legal/info@zafto.app |
-| Supabase | ACTIVE (2 projects: dev + prod) | admin@zafto.app |
+| Supabase | ACTIVE — **PRO PLAN** (2 projects: dev + prod) | admin@zafto.app |
 | Sentry | ACTIVE (free tier) | admin@zafto.app |
 | Stripe | ACTIVE | needs migration to admin@zafto.app |
 | GitHub | ACTIVE (TeredaDeveloper) | needs migration to admin@zafto.app |
@@ -44,7 +44,7 @@
 | RevenueCat | ACTIVE | admin@zafto.app |
 | Bitwarden | ACTIVE | needs migration to admin@zafto.app |
 | Codemagic | ACTIVE (Android debug PASSING) | admin@zafto.app |
-| Google Play | NOT CREATED (needed for launch — both iOS + Android) | — |
+| Google Play | **ACTIVE** (fully approved, owner confirmed S138) | admin@zafto.app |
 | ProtonMail | NOT CREATED (break-glass recovery — do before launch) | — |
 | YubiKeys | NOT PURCHASED (do before launch) | — |
 
