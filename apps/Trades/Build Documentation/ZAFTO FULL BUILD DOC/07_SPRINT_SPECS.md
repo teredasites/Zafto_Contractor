@@ -14900,6 +14900,8 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 
 ### ZERO1 — Test Infrastructure & Staging Environment (~8h)
 **Goal:** Build the foundation that all other ZERO sprints run on. Dedicated staging environment that mirrors production exactly. Test runner framework. Seed data factories. CI/CD integration so tests run on every commit automatically. Nothing ships without passing.
+
+**RELATIONSHIP TO TEST-INFRA (S136):** TEST-INFRA creates the LOCAL test foundation (local Supabase, unit test frameworks, CI pipeline, integration test templates). ZERO1 builds ON TOP of TEST-INFRA: adds STAGING environment (cloud), scale data factories (SOLO/SMALL/MEDIUM/LARGE), k6 LOAD testing, Playwright E2E, and test result dashboard. TEST-INFRA = "can we test locally?". ZERO1 = "can we test at production scale with production-like data?". Both are needed. No overlap — ZERO1 requires TEST-INFRA to be complete first.
 - [ ] **Supabase staging project** — Create dedicated staging Supabase project (separate from dev and prod). Mirror ALL tables, RLS policies, Edge Functions, storage buckets. This is the target for all automated tests — never test against prod
 - [ ] **Seed data factory** — Create programmable data factory that generates realistic test data at any scale. `createTestCompany(numJobs, numCustomers, numInvoices, numEmployees)`. Generates: company + users (all 7 roles) + customers (residential + commercial mix) + jobs (all types per trade) + estimates + invoices + time entries + photos + inspections + properties + schedules. Realistic names, addresses, amounts, dates — not "Test Job 1"
 - [ ] **Scale seed profiles** — Pre-built profiles: `SOLO` (1 user, 50 jobs, 200 customers — one-truck electrician), `SMALL` (5 users, 500 jobs, 1K customers — small HVAC company), `MEDIUM` (25 users, 5K jobs, 10K customers — multi-crew restoration company), `LARGE` (100 users, 50K jobs, 50K customers, 3 years of data — multi-branch GC). Tests run against ALL profiles
@@ -15172,7 +15174,20 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 - [ ] **Maintenance page** — Create static maintenance page hosted on Cloudflare Pages (separate from Vercel — survives Vercel outage). Automatic redirect when Supabase health check fails. Shows: "Zafto is undergoing maintenance. Expected back: [time]. Your data is safe."
 - [ ] **Production environment checklist** — Verify BEFORE first deploy: all env vars set (Supabase URL, anon key, service key, Stripe keys, SignalWire keys, SendGrid key, Sentry DSN, RevenueCat key), all DNS records correct, SSL certificates valid, Cloudflare WAF active, monitoring active (LAUNCH1), legal pages live (LAUNCH2).
 - [ ] **CDN/caching strategy** — Cloudflare cache rules: static assets 1 year, API responses no-cache, images 30 days. Vercel ISR for marketing pages. Supabase: add `Cache-Control` headers to read-heavy Edge Functions (code references, seed data). Document cache invalidation procedure.
-- [ ] Commit: `[LAUNCH8] Production deployment runbook + disaster recovery + CDN caching`
+**Incident Response Playbook (added S138 — enterprise methodology requirement):**
+- [ ] **Severity classification** — Define 4 levels: SEV1 (data breach, total outage — respond in 5 min), SEV2 (partial outage, data corruption — 15 min), SEV3 (degraded performance, single feature down — 1 hour), SEV4 (cosmetic, non-blocking — next business day). Document escalation path for each.
+- [ ] **Decision trees** — Create documented procedure for each scenario:
+  - "Database is slow" → check `pg_stat_activity` via Supabase SQL editor → identify long-running queries → `pg_terminate_backend(pid)` if needed → check index usage via `EXPLAIN ANALYZE` → scale compute if needed
+  - "Edge Function returning 500s" → check Sentry for error → check EF logs in Supabase dashboard → rollback to previous version via `npx supabase functions deploy <name> --version <prev>` → redeploy fix
+  - "Portal showing blank page" → check Vercel deployment status → instant rollback via Vercel dashboard → check Sentry for JS errors → check Supabase status page
+  - "Data breach suspected" → immediately: revoke all active sessions (`TRUNCATE auth.sessions`), rotate ALL secrets (Supabase service role, Stripe, SignalWire, Plaid, SendGrid), check audit_log for suspicious activity, check `context_switch_log` for unauthorized impersonation, notify affected companies within 72h (GDPR requirement)
+  - "Webhook processing stopped" → check webhook_events table for recent entries → check EF logs → verify external service status (Stripe dashboard, SignalWire dashboard) → redeploy webhook EF → replay missed events from external service dashboard
+- [ ] **Post-incident review template** — After every SEV1/SEV2: what happened, timeline, root cause, what we'll do to prevent it, action items with owners and deadlines
+- [ ] **Communication templates** — Pre-written templates for: maintenance window announcement, incident acknowledgment, incident update, incident resolution, data breach notification (if ever needed, God forbid)
+- [ ] **Monitoring + alerting** — Configure Sentry alerts: error rate > 5% for 5 min → email + SMS notification. EF response time p95 > 5s for 10 min → email. Supabase: configure alerting for connection pool exhaustion, disk usage > 80%, replication lag > 30s (when read replicas exist)
+- [ ] **Secret rotation procedure** — Document how to rotate each secret without downtime: Supabase service role key, anon key (requires all portals redeployed), Stripe keys, SignalWire credentials, Plaid credentials, SendGrid API key, Sentry DSN, ANTHROPIC_API_KEY. Test rotation in staging first.
+
+- [ ] Commit: `[LAUNCH8] Production deployment runbook + disaster recovery + CDN caching + incident response`
 
 ---
 
@@ -16487,14 +16502,48 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 - [ ] Create pg_cron job: refresh materialized views every 15 minutes CONCURRENTLY
 - [ ] TEST: `EXPLAIN ANALYZE` on top 5 most common queries — verify index usage, no Seq Scans on large tables
 
-### INFRA-5 — 3-Layer Architecture Enforcement + CI Updates (~1h) — S137
+### INFRA-5 — Architecture Enforcement + Observability + CI (~4h) — S137
 
+*Expanded S138: adds observability, health checks, webhook idempotency, feature flag wiring, structured logging. The "enforcement layer" that makes the architecture self-policing.*
+
+**3-Layer Architecture Enforcement:**
 - [ ] Add to CLAUDE.md Critical Rules: "10. **3-LAYER ARCHITECTURE** — UI (screens/components) NEVER imports from data layer (supabase client, repositories, models directly). UI uses ONLY providers (Flutter) or hooks (Next.js). Providers/hooks are the stable contract between UI and data."
 - [ ] Create `.eslintrc` rule (or document in CLAUDE.md) for all 4 portals: `@supabase/supabase-js` imports forbidden in `src/app/` and `src/components/` directories — only allowed in `src/lib/`
 - [ ] Verify existing code follows 3-layer pattern (spot-check 5 screens in web-portal, 5 in Flutter)
+
+**CI/CD Safety Gates:**
 - [ ] Update `.github/workflows/ci.yml` to include: migration safety check (fail if PR contains `DROP COLUMN` / `DROP TABLE` / `ALTER.*TYPE` / `RENAME COLUMN` without expand-contract pattern)
+- [ ] Add CI check: hard delete detection — fail if any `.ts` or `.tsx` file contains `.delete().eq(` on a business table (allow only on junction/system tables)
+- [ ] Add CI check: missing deleted_at filter — warn if any `use-*.ts` hook has `.select('*')` without `.is('deleted_at', null)` on business entity queries
 - [ ] Document expand-contract migration pattern in CLAUDE.md: "11. **EXPAND-CONTRACT MIGRATIONS** — Never destructive in a single migration. Add new → dual-write → backfill → remove old in next sprint."
+
+**Observability + Health Checks:**
+- [ ] Create Edge Function `health-check/index.ts`: checks Supabase connection (simple query), returns JSON `{ status: 'ok', db: 'ok', timestamp }`. No auth required. Used by uptime monitors.
+- [ ] Add Sentry Performance Monitoring to all 4 portals: `Sentry.init({ tracesSampleRate: 0.1 })` — captures 10% of transactions, identifies slow pages
+- [ ] Create `supabase/functions/_shared/logger.ts`: structured logging utility that includes `company_id`, `user_id`, `action`, `entity`, `timestamp` in every log line. Replace ad-hoc `console.log` in EFs.
+- [ ] Wire Sentry DSN into all 4 portals' env vars (currently EMPTY — needs real DSN from Sentry dashboard)
+- [ ] Create basic health dashboard route in ops-portal: `/dashboard/system-health` — shows: Supabase status, EF response times (last 24h from Sentry), error rate, active users
+
+**Webhook Idempotency:**
+- [ ] Create migration: `webhook_events` table — `id UUID PRIMARY KEY DEFAULT gen_random_uuid()`, `event_id TEXT NOT NULL UNIQUE`, `source TEXT NOT NULL` (stripe/revenuecat/signalwire/sendgrid), `event_type TEXT`, `processed_at TIMESTAMPTZ DEFAULT NOW()`, `payload JSONB`. No RLS (service_role only).
+- [ ] Create shared utility `_shared/idempotency.ts`: `async function ensureNotProcessed(supabase, eventId, source)` — INSERT into webhook_events, if duplicate key → return false (already processed). All webhook handlers call this first.
+- [ ] Wire idempotency into: `stripe-webhook`, `revenuecat-webhook`, `signalwire-webhook`, `sendgrid-email` webhook action
+- [ ] Add pg_cron job: clean webhook_events older than 30 days
+
+**Feature Flag Foundation:**
+- [ ] Verify `company_feature_flags` table exists and has RLS
+- [ ] Create `_shared/feature-flags.ts`: `async function isFeatureEnabled(supabase, companyId, flagName)` — reads from company_feature_flags, caches for 5 min
+- [ ] Create Next.js utility `src/lib/feature-flags.ts` for all 4 portals: `useFeatureFlag(flagName)` hook that reads from company_feature_flags via existing Supabase client
+- [ ] Document in CLAUDE.md: "12. **FEATURE FLAGS** — New major features MUST be gated behind company_feature_flags. Roll out to 5% → monitor → 25% → 100%. Never deploy to all users at once."
+
+**Rate Limiting Strategy:**
+- [ ] Wire `_shared/rate-limiter.ts` into ALL Edge Functions that call external APIs: plaid-create-link-token, plaid-exchange-token, plaid-sync-transactions, signalwire-voice, signalwire-sms, signalwire-fax, sendgrid-email, recon-property-lookup, recon-area-scan, recon-storm-assess. 10 req/min per company for external APIs.
+- [ ] Document rate limiting tiers in CLAUDE.md: Tier 1 (external API: 10/min), Tier 2 (expensive compute: 30/min), Tier 3 (standard CRUD: 100/min)
+
 - [ ] TEST: CI pipeline runs on push, catches destructive migrations
+- [ ] TEST: Health check endpoint returns 200
+- [ ] TEST: Duplicate webhook event_id → second call returns "already processed"
+- [ ] TEST: Feature flag disabled → feature not visible
 
 ### *** CRITICAL PRE-LAUNCH BLOCKER — DO NOT SHIP WITHOUT ***
 
@@ -16574,13 +16623,52 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 - [ ] Verify failed tests block the workflow (exit code 1)
 - [ ] TEST: Push a deliberate test failure, verify CI catches it
 
-### TI-7 — Integration Test Template + Test-As-You-Build Mandate (~1h) — S136
+### TI-7 — Cross-App Integration Tests + Security Checklist Template + Test Mandate (~4h) — S136
 
+*Expanded S138: This is the sprint that makes the ecosystem self-verifying. Not just "does Flutter build?" but "does the whole system work together?" Plus a mandatory security checklist that every future sprint must include.*
+
+**Cross-App Integration Test Suite:**
 - [ ] Create `test/integration/` directory (Flutter)
-- [ ] Write template for critical flow: Create Estimate → Approve → Auto-create Job → Complete Job → Generate Invoice
-- [ ] Document the test-as-you-build mandate: every sprint MUST include test items before being marked complete
-- [ ] Add to CLAUDE.md Critical Rules: "9. **EVERY SPRINT INCLUDES TESTS** — No sprint is complete without verification tests passing"
-- [ ] TEST: Template test runs successfully against local Supabase
+- [ ] Create `tests/integration/` directory (shared across portals)
+- [ ] Write cross-app flow test: Create Customer (CRM) → verify appears in Flutter → verify appears in client-portal
+- [ ] Write cross-app flow test: Create Estimate (CRM) → Approve → auto-create Job → Complete Job → Generate Invoice → verify invoice appears in client-portal
+- [ ] Write cross-app flow test: Delete Customer (CRM, soft) → verify disappears from Flutter list → verify disappears from client-portal → verify DB record has deleted_at set → verify still in DB (not physical delete)
+- [ ] Write cross-app flow test: Send Message (CRM team-chat) → verify appears in team-portal → verify real-time delivery (within 2s)
+- [ ] Write cross-app flow test: Create Inspection (Flutter) → verify appears in CRM → verify report accessible in client-portal
+- [ ] Write RLS isolation test: Company A creates job → Company B queries jobs → must NOT see Company A's job
+- [ ] Write role escalation test: Technician attempts admin-only operation (delete customer, view payroll, access ops-portal) → must be rejected at every layer (middleware, RLS, EF)
+- [ ] Write webhook replay test: Send same Stripe event_id twice → second must be ignored (idempotency)
+- [ ] Document integration test running procedure: requires local Supabase (`npx supabase start`), seed data, and all 4 portals running locally
+
+**Mandatory Security Checklist Template (add to EVERY future sprint):**
+- [ ] Create file `Build Documentation/SPRINT_SECURITY_TEMPLATE.md` with the following checklist that MUST be appended to every sprint spec:
+
+```
+### Security Verification (MANDATORY — copy into every sprint)
+- [ ] All new tables: RLS enabled + separate SELECT/INSERT/UPDATE/DELETE policies (NOT FOR ALL)
+- [ ] All new tables: company_id UUID column + B-tree index + requesting_company_id() in policies
+- [ ] All new tables: audit_trigger_fn trigger attached
+- [ ] All new tables: deleted_at TIMESTAMPTZ column (soft delete)
+- [ ] All new tables: update_updated_at trigger attached
+- [ ] All new Edge Functions: Authorization header validated, getUser() called, company_id from JWT
+- [ ] All new Edge Functions: CORS headers from _shared/cors.ts, OPTIONS handled
+- [ ] All new Edge Functions: Input validation on request body, try/catch on all async
+- [ ] All new Edge Functions: Rate limiter applied if calling external API
+- [ ] All new Edge Functions: Webhook handlers use idempotency check (_shared/idempotency.ts)
+- [ ] All new hooks (Next.js): soft delete only (never .delete()), .is('deleted_at', null) on list queries
+- [ ] All new hooks: return { data, loading, error } — never swallow errors silently
+- [ ] All new hooks: real-time subscriptions have cleanup in useEffect return
+- [ ] All new screens (Flutter): handle 4 states (loading, error, empty, data)
+- [ ] All new screens: use ConsumerWidget, ref.watch for data, ref.read for actions
+- [ ] All new screens: NEVER import supabase_client directly — go through providers
+- [ ] Role-sensitive operations: verify user role before executing (owner/admin for financial, delete, payroll)
+- [ ] All builds pass: dart analyze (0 errors), npm run build (all 4 portals, 0 errors)
+```
+
+- [ ] Add to CLAUDE.md Critical Rules: "9. **EVERY SPRINT INCLUDES TESTS + SECURITY VERIFICATION** — No sprint is complete without verification tests passing AND the security checklist above fully checked. Copy the Security Verification checklist from `SPRINT_SECURITY_TEMPLATE.md` into every new sprint."
+- [ ] Retroactively add Security Verification section to INFRA-1 through INFRA-5 sprint specs
+- [ ] TEST: Template integration test runs successfully against local Supabase
+- [ ] TEST: RLS isolation test passes — Company A data invisible to Company B
 
 ---
 
