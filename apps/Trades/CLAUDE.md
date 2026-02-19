@@ -50,13 +50,14 @@ Complete business-in-a-box for trades contractors. "Stripe for blue-collar." One
 └── android/, ios/, web/, windows/       # Platform dirs
 ```
 
-## Current State (Session 136)
+## Current State (Session 138)
 - **293 tables**, 115 migrations, 92 Edge Functions, 103 models, 64 repos, 1,523 screens
 - **Phases A-F ALL COMPLETE**. R1 done. FM code done. Phase E PAUSED.
-- **~136 sprints spec'd**, ~2,650h in execution order (~7,614h total including orphaned sprints)
-- **Build order**: SEC→LAUNCH1→LAUNCH9→FIELD→REST→NICHE→DEPTH→INTEG→RE→FLIP→SEC→LAUNCH→G→JUR→E→SHIP
+- **~145 sprints spec'd**, ~2,730h in execution order (~7,614h total including orphaned sprints)
+- **Build order**: SEC-AUDIT→INFRA→TEST-INFRA→COLLAB-ARCH→DEPTH→INTEG→RE→FLIP→SEC→LAUNCH→G→JUR→E→SHIP
 - **Pricing**: Solo $69.99, Team $149.99, Business $249.99. Adjuster FREE.
-- **Known debt**: 6 Flutter services still on Firebase (firestore_service, ai_conversation_service, location_tracking_service, ui_mode_service, permission_service, company_service). 69/100 models missing Equatable. 296 orphaned sprints not in execution order.
+- **Known debt**: 6 Flutter services still on Firebase. 69+ models missing Equatable. S138 audit: 103 findings (20 CRITICAL, 31 HIGH). SEC-AUDIT sprint addresses all critical/high security issues.
+- **Enterprise methodology (S138)**: 15 Critical Rules in CLAUDE.md. Mandatory security checklist per sprint. Webhook idempotency. Feature flags. Observability. Fail-closed auth. CI enforcement of soft delete + migration safety.
 
 ## Critical Rules — NEVER VIOLATE
 
@@ -68,6 +69,13 @@ Complete business-in-a-box for trades contractors. "Stripe for blue-collar." One
 6. **NEVER CREATE PARALLEL DOCS** — One doc set. Update in place.
 7. **HANDOFF IS THE ENTRY POINT** — Start at 00_HANDOFF.md every session.
 8. **NO Co-Authored-By** — Never include `Co-Authored-By: Claude` in commits.
+9. **EVERY SPRINT INCLUDES SECURITY VERIFICATION** — No sprint is complete without the Security Verification checklist fully checked. Copy from `Build Documentation/SPRINT_SECURITY_TEMPLATE.md` into every new sprint. Includes: RLS per-operation policies, company_id + index + audit trigger + deleted_at on all new tables, auth + CORS + input validation + rate limiting on all new EFs, soft delete + error state + deleted_at filter on all new hooks, 4-state screens in Flutter. NO EXCEPTIONS.
+10. **3-LAYER ARCHITECTURE** — UI (screens/components) NEVER imports from data layer (supabase client, repositories, models directly). UI uses ONLY providers (Flutter) or hooks (Next.js). Providers/hooks are the stable contract between UI and data. Enforced by CI lint rules.
+11. **EXPAND-CONTRACT MIGRATIONS** — Never destructive in a single migration. Add new → dual-write → backfill → remove old in next sprint. CI blocks `DROP COLUMN`, `DROP TABLE`, `ALTER.*TYPE`, `RENAME COLUMN` without the pattern.
+12. **FEATURE FLAGS FOR MAJOR FEATURES** — New major features MUST be gated behind `company_feature_flags`. Roll out: 5% → monitor errors → 25% → 100%. Never deploy to all users at once.
+13. **WEBHOOK IDEMPOTENCY** — Every webhook handler MUST check `webhook_events` table for duplicate `event_id` before processing. If already processed, return 200 and skip. Prevents double-processing on retries.
+14. **SOFT DELETE ONLY** — NEVER use `.delete()` on business data. Always `.update({ deleted_at: new Date().toISOString() })`. Always filter lists with `.is('deleted_at', null)`. Enforced by CI lint rules. The ONLY exception is junction tables (e.g., tag assignments) where physical delete is semantically correct.
+15. **FAIL CLOSED ON AUTH** — If an env var for a webhook secret is missing, REJECT all requests (return 500). Never skip auth because a secret isn't configured. If auth check fails for any reason, deny access. Never fail open.
 
 ## Build & Verify Commands
 ```bash
