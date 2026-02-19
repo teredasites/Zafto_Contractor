@@ -113,20 +113,35 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     )
 
-    // Get access_token from bank_accounts (requires service role)
-    const { data: bankAcct, error: acctErr } = await supabaseAdmin
-      .from('bank_accounts')
-      .select('plaid_access_token, company_id')
-      .eq('id', bank_account_id)
+    // SEC-AUDIT-1: Read access token from isolated bank_credentials table (service_role only)
+    const { data: creds, error: credsErr } = await supabaseAdmin
+      .from('bank_credentials')
+      .select('plaid_access_token')
+      .eq('bank_account_id', bank_account_id)
       .eq('company_id', companyId)
       .single()
 
-    if (acctErr || !bankAcct?.plaid_access_token) {
+    // Fallback to bank_accounts for backward compat (until old column removed)
+    let accessToken = creds?.plaid_access_token
+    if (!accessToken) {
+      const { data: bankAcct } = await supabaseAdmin
+        .from('bank_accounts')
+        .select('plaid_access_token')
+        .eq('id', bank_account_id)
+        .eq('company_id', companyId)
+        .single()
+      accessToken = bankAcct?.plaid_access_token
+    }
+
+    if (!accessToken) {
       return new Response(JSON.stringify({ error: 'Bank account not found or not linked' }), {
         status: 404,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
     }
+
+    // Keep bankAcct reference for later use
+    const bankAcct = { plaid_access_token: accessToken, company_id: companyId }
 
     const baseUrl = PLAID_BASE_URL[PLAID_ENV] || PLAID_BASE_URL.sandbox
 

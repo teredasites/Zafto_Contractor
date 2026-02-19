@@ -17,14 +17,17 @@ serve(async (req) => {
   const SW_WEBHOOK_SECRET = Deno.env.get('SIGNALWIRE_WEBHOOK_SECRET') ?? ''
   const swAuth = btoa(`${SW_PROJECT}:${SW_TOKEN}`)
 
-  // Verify webhook secret to prevent forged requests
+  // SEC-AUDIT-1: Fail-closed — reject ALL requests if webhook secret not configured
   const url = new URL(req.url)
-  if (SW_WEBHOOK_SECRET) {
-    const providedSecret = url.searchParams.get('secret')
-    if (providedSecret !== SW_WEBHOOK_SECRET) {
-      console.error('Invalid SignalWire webhook secret')
-      return new Response('Unauthorized', { status: 401 })
-    }
+  if (!SW_WEBHOOK_SECRET) {
+    console.error('SIGNALWIRE_WEBHOOK_SECRET not configured — rejecting all requests')
+    return new Response('Webhook secret not configured', { status: 500 })
+  }
+  // SEC-AUDIT-1: Accept secret from header (preferred) or URL param (legacy, to be removed)
+  const providedSecret = req.headers.get('x-signalwire-secret') || url.searchParams.get('secret')
+  if (providedSecret !== SW_WEBHOOK_SECRET) {
+    console.error('Invalid SignalWire webhook secret')
+    return new Response('Unauthorized', { status: 401 })
   }
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY)

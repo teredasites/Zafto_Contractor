@@ -18,14 +18,16 @@ serve(async (req) => {
     return new Response('Method not allowed', { status: 405 })
   }
 
-  // Verify RevenueCat webhook auth token
+  // SEC-AUDIT-1: Fail-closed — reject ALL requests if webhook secret not configured
   const webhookSecret = Deno.env.get('REVENUECAT_WEBHOOK_SECRET')
-  if (webhookSecret) {
-    const authToken = req.headers.get('x-revenuecat-webhook-auth-token')
-    if (authToken !== webhookSecret) {
-      console.error('Invalid RevenueCat webhook auth token')
-      return new Response('Unauthorized', { status: 401 })
-    }
+  if (!webhookSecret) {
+    console.error('REVENUECAT_WEBHOOK_SECRET not configured — rejecting all requests')
+    return new Response('Webhook secret not configured', { status: 500 })
+  }
+  const authToken = req.headers.get('x-revenuecat-webhook-auth-token')
+  if (authToken !== webhookSecret) {
+    console.error('Invalid RevenueCat webhook auth token')
+    return new Response('Unauthorized', { status: 401 })
   }
 
   const supabase = createClient(
@@ -49,21 +51,15 @@ serve(async (req) => {
         return new Response('OK', { status: 200 })
       }
 
-      // Upsert user credits — create if not exists, increment if exists
+      // SEC-AUDIT-1: Use atomic RPC to prevent race conditions on credit updates
+      // First ensure user_credits row exists
       const { data: existing } = await supabase
         .from('user_credits')
-        .select('id, paid_credits')
+        .select('id')
         .eq('user_id', appUserId)
         .single()
 
-      if (existing) {
-        await supabase
-          .from('user_credits')
-          .update({
-            paid_credits: existing.paid_credits + creditsToAdd,
-          })
-          .eq('user_id', appUserId)
-      } else {
+      if (!existing) {
         // Get company_id for the user
         const { data: userData } = await supabase
           .from('users')
@@ -75,10 +71,16 @@ serve(async (req) => {
           user_id: appUserId,
           company_id: userData?.company_id || null,
           free_credits: 3,
-          paid_credits: creditsToAdd,
+          paid_credits: 0,
           total_scans: 0,
         })
       }
+
+      // Atomic increment via SECURITY DEFINER RPC (no race condition)
+      await supabase.rpc('increment_user_credits', {
+        p_user_id: appUserId,
+        p_amount: creditsToAdd,
+      })
 
       // Log the purchase
       const { data: userData } = await supabase
@@ -108,20 +110,13 @@ serve(async (req) => {
       const creditsToRemove = CREDIT_PRODUCTS[productId]
 
       if (creditsToRemove && appUserId) {
-        const { data: existing } = await supabase
-          .from('user_credits')
-          .select('id, paid_credits')
-          .eq('user_id', appUserId)
-          .single()
-
-        if (existing) {
-          await supabase
-            .from('user_credits')
-            .update({
-              paid_credits: Math.max(0, existing.paid_credits - creditsToRemove),
-            })
-            .eq('user_id', appUserId)
-        }
+        // SEC-AUDIT-1: Atomic decrement via SECURITY DEFINER RPC
+        // decrement_user_credits checks paid_credits + free_credits >= amount
+        // If insufficient, returns empty set (no update) — safe
+        await supabase.rpc('decrement_user_credits', {
+          p_user_id: appUserId,
+          p_amount: creditsToRemove,
+        })
 
         // Mark purchase as refunded
         await supabase

@@ -123,6 +123,7 @@ serve(async (req) => {
         : acct.subtype === 'savings' ? 'savings'
         : 'checking'
 
+      // SEC-AUDIT-1: Write account data to bank_accounts (without access token)
       const { data: row, error: insertErr } = await supabaseAdmin
         .from('bank_accounts')
         .upsert({
@@ -135,7 +136,7 @@ serve(async (req) => {
           mask: acct.mask,
           current_balance: acct.balances?.current ?? 0,
           available_balance: acct.balances?.available ?? null,
-          plaid_access_token: accessToken,
+          plaid_access_token: accessToken, // kept for backward compat, will be removed
           last_synced_at: new Date().toISOString(),
           is_active: true,
         }, { onConflict: 'plaid_account_id' })
@@ -144,6 +145,16 @@ serve(async (req) => {
 
       if (!insertErr && row) {
         inserted.push(row.id)
+
+        // SEC-AUDIT-1: Store access token in isolated bank_credentials table (service_role only)
+        await supabaseAdmin
+          .from('bank_credentials')
+          .upsert({
+            bank_account_id: row.id,
+            company_id: companyId,
+            plaid_access_token: accessToken,
+            plaid_item_id: itemId,
+          }, { onConflict: 'bank_account_id' })
       }
     }
 

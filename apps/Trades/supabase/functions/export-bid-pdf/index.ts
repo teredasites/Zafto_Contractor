@@ -50,6 +50,15 @@ serve(async (req) => {
     })
   }
 
+  // SEC-AUDIT-1: Extract company_id from JWT for cross-tenant protection
+  const companyId = user.app_metadata?.company_id
+  if (!companyId) {
+    return new Response(JSON.stringify({ error: 'No company associated' }), {
+      status: 403,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
+  }
+
   try {
     const url = new URL(req.url)
     const bidId = url.searchParams.get('bid_id')
@@ -61,11 +70,12 @@ serve(async (req) => {
       })
     }
 
-    // Fetch bid
+    // SEC-AUDIT-1: Scope bid fetch to user's company to prevent cross-tenant export
     const { data: bid, error: bidError } = await supabase
       .from('bids')
       .select('*')
       .eq('id', bidId)
+      .eq('company_id', companyId)
       .single()
 
     if (bidError || !bid) {
