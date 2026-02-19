@@ -14898,7 +14898,7 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 
 **MANDATORY: TRIPLE-SCAN RULE FOR NEW FEATURES.** Any feature, screen, hook, table, Edge Function, or code change added between S125 (when these sprints were written) and when ZERO phase executes MUST be: (1) Inventoried — git log diff to find all new code since S125 commit `cc8981a`, (2) Added to the relevant ZERO sprint checklists (property tests, state machines, chaos scenarios, fuzz targets, load test scripts, edge case gauntlet), (3) Scanned THREE FULL PASSES — not one pass, not two, THREE. First pass finds obvious bugs. Second pass finds bugs exposed by fixing the first pass. Third pass is the verification pass that confirms zero regressions from all fixes. If ANY new feature fails any pass, it does not ship. This triple-scan is non-negotiable — features added late are the highest-risk code because they had the least testing time.
 
-### ZERO1 — Test Infrastructure & Staging Environment (~8h)
+### ZERO1 — Test Infrastructure & Staging Environment + Performance Budget (~12h)
 **Goal:** Build the foundation that all other ZERO sprints run on. Dedicated staging environment that mirrors production exactly. Test runner framework. Seed data factories. CI/CD integration so tests run on every commit automatically. Nothing ships without passing.
 
 **RELATIONSHIP TO TEST-INFRA (S136):** TEST-INFRA creates the LOCAL test foundation (local Supabase, unit test frameworks, CI pipeline, integration test templates). ZERO1 builds ON TOP of TEST-INFRA: adds STAGING environment (cloud), scale data factories (SOLO/SMALL/MEDIUM/LARGE), k6 LOAD testing, Playwright E2E, and test result dashboard. TEST-INFRA = "can we test locally?". ZERO1 = "can we test at production scale with production-like data?". Both are needed. No overlap — ZERO1 requires TEST-INFRA to be complete first.
@@ -14910,7 +14910,13 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 - [ ] **Playwright E2E framework** — Install Playwright for all 4 web portals. Create shared helpers: login, navigate, fill forms, verify data. Configure to run headless in CI/CD. Screenshot on failure for debugging
 - [ ] **Test result dashboard** — Create test result aggregator: how many tests ran, passed, failed, flaky. Track over time (is quality improving or regressing?). Store in `tests/results/`. Generate markdown report per run
 - [ ] **CI/CD gate** — GitHub Actions workflow: on every push → run all tests → if ANY fail → block merge. No exceptions. Broken tests = broken build = no deploy
-- [ ] Commit: `[ZERO1] Test infrastructure — staging env, data factory, k6, Playwright, CI/CD gate`
+
+**Performance Budget Enforcement (Gap 6 — S138 ecosystem hardening):**
+- [ ] **k6 performance budget tests** — For each scale profile (SOLO/SMALL/MEDIUM/LARGE), verify: page load < 2s (p95), API response < 500ms (p95), list query with 10K rows < 200ms, search across entities < 300ms, real-time event delivery < 2s, concurrent users (10/50/200/1000) without error rate increase. Document all thresholds in `tests/load/PERFORMANCE_BUDGET.md`.
+- [ ] **Playwright performance tests** — For each portal: measure Largest Contentful Paint (LCP < 2.5s), First Input Delay (FID < 100ms), Cumulative Layout Shift (CLS < 0.1) on dashboard, list pages, and detail pages. These are Core Web Vitals — Google penalizes sites that fail.
+- [ ] **Database scale test** — Load LARGE seed profile (50K jobs, 50K customers, 100 users, 3 years data). Run all 10 INFRA-4 baseline queries. If ANY exceeds 2x the SOLO baseline, flag for index optimization. Run `pg_stat_user_tables` to verify sequential scans aren't happening on large tables.
+- [ ] **Performance regression gate** — Add to CI: k6 smoke test (100 virtual users, 30s) on every PR. If p95 response time > 1s for any API endpoint, fail the build. This catches performance regressions before they reach production.
+- [ ] Commit: `[ZERO1] Test infrastructure — staging env, data factory, k6, Playwright, CI/CD gate + performance budget`
 
 ### ZERO2 — Property-Based Testing: Invariants That Must Always Hold (~12h)
 **Goal:** Instead of writing individual test cases ("create job with name 'Kitchen Remodel' → succeeds"), define PROPERTIES that must hold for ALL possible inputs. The framework generates thousands of random inputs automatically and tests each one. This is how you find edge cases no human would think of. "For ANY string as a job name — including empty, 10,000 chars, Unicode, emoji, SQL injection, null bytes, RTL text — creating a job must either succeed or return a typed validation error. It must NEVER crash, return 500, or corrupt data."
@@ -15163,7 +15169,7 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 
 ---
 
-### LAUNCH8 — Production Deployment Runbook & Disaster Recovery (~12h)
+### LAUNCH8 — Production Deployment Runbook & Disaster Recovery & Data Lifecycle (~20h)
 **Goal:** Create the complete production deployment procedure and disaster recovery plan. When you deploy 5 apps + 70 Edge Functions + run 48 migrations for the first time, there MUST be a tested, documented, step-by-step runbook. When something goes wrong in production, there MUST be a tested rollback procedure. No winging it.
 
 - [ ] **Deployment sequencing document** — Write the exact order: (1) Run Supabase migrations in dependency order (check foreign keys), (2) Deploy Edge Functions (batch deploy script), (3) Deploy web portals to Vercel (CRM first, then team/client/ops), (4) Submit Flutter app to stores. Document expected downtime windows. Create pre-deploy checklist (backup database, verify staging, tag release, notify users).
@@ -15187,7 +15193,20 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 - [ ] **Monitoring + alerting** — Configure Sentry alerts: error rate > 5% for 5 min → email + SMS notification. EF response time p95 > 5s for 10 min → email. Supabase: configure alerting for connection pool exhaustion, disk usage > 80%, replication lag > 30s (when read replicas exist)
 - [ ] **Secret rotation procedure** — Document how to rotate each secret without downtime: Supabase service role key, anon key (requires all portals redeployed), Stripe keys, SignalWire credentials, Plaid credentials, SendGrid API key, Sentry DSN, ANTHROPIC_API_KEY. Test rotation in staging first.
 
-- [ ] Commit: `[LAUNCH8] Production deployment runbook + disaster recovery + CDN caching + incident response`
+**Data Lifecycle & Retention Policy (Gap 5 — S138 ecosystem hardening, LEGAL REQUIREMENT):**
+- [ ] **Data retention policy document** — Create `Build Documentation/DATA_RETENTION_POLICY.md`: define retention periods per data type. Active subscription: all data retained indefinitely. Cancelled subscription: 90-day grace period (data accessible, read-only), then 12-month cold storage (data archived, not accessible via app, restorable on request), then permanent deletion. Soft-deleted records: purge physical rows after 6 months. Audit logs: retain 7 years (legal/tax requirement). Financial records (invoices, payments, payroll): retain 7 years (IRS requirement). Communication records (emails, SMS, faxes): retain 3 years.
+- [ ] **Data export feature** — Create Edge Function `data-export/index.ts`: generates ZIP containing CSVs of ALL company data (customers, jobs, invoices, estimates, time_entries, properties, inspections, documents, photos manifest, team, settings). Auth: owner or admin only. Rate limit: 1 export per 24h per company. File stored in Supabase storage `exports/` bucket with 7-day expiry. Returns download URL. This is the GDPR Article 20 "right to portability" implementation.
+- [ ] **Data deletion procedure** — Create Edge Function `data-deletion/index.ts`: service_role only (triggered by ops-portal or cron). Accepts company_id. Steps: (1) verify subscription cancelled > 90 days, (2) verify no outstanding balance, (3) export all data to archive storage first (safety net), (4) DELETE all company records across all tables (physical delete — this is the ONE case where physical delete is correct), (5) DELETE auth.users for all company members, (6) log deletion in separate `company_deletions` table (retained forever for legal). This is GDPR Article 17 "right to erasure" implementation.
+- [ ] **Soft-delete purge cron** — Create pg_cron job: monthly, purge records where `deleted_at < NOW() - INTERVAL '6 months'` from non-financial tables. Financial tables (invoices, payments, payroll_runs, expenses) NEVER purged until company deletion. Log purge counts to audit_log.
+- [ ] **Cancellation grace period** — Add `cancelled_at TIMESTAMPTZ` and `grace_period_ends_at TIMESTAMPTZ` columns to `companies` table. When subscription cancelled: set `grace_period_ends_at = cancelled_at + 90 days`. During grace period: app is read-only (no creates, no updates, no deletes). After grace period: data archived. Show clear banner in all portals: "Your subscription was cancelled on [date]. Your data will be accessible until [date]. Export your data now."
+- [ ] **Privacy policy technical implementation** — Document exact data collected, stored, and shared. Map every table to a privacy category (PII, financial, operational, metadata). Identify all third-party data sharing (Stripe, Plaid, SignalWire, SendGrid, RevenueCat). This feeds into the legal privacy policy.
+- [ ] **CCPA "Do Not Sell" compliance** — Add `do_not_sell BOOLEAN DEFAULT FALSE` to `users` table. When true, exclude user data from any aggregated analytics or data sharing. Add toggle in user settings.
+- [ ] **Annual data review notification** — Cron job: annually, email all company owners a data summary (how much data stored, what categories, reminder they can export/delete). GDPR best practice.
+- [ ] TEST: Data export generates valid ZIP with all CSVs. CSV row counts match DB row counts for company.
+- [ ] TEST: Data deletion removes ALL company records from ALL tables (verify with direct DB query).
+- [ ] TEST: Grace period enforces read-only (create/update/delete operations return 403).
+
+- [ ] Commit: `[LAUNCH8] Production deployment runbook + disaster recovery + CDN caching + incident response + data lifecycle`
 
 ---
 
@@ -16444,7 +16463,7 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 
 ---
 
-## S137 ENTERPRISE INFRASTRUCTURE SPRINT (INFRA-1 through INFRA-5, ~8h)
+## S137 ENTERPRISE INFRASTRUCTURE SPRINT (INFRA-1 through INFRA-5, ~20h)
 
 *Enterprise-grade environment architecture. 4-environment pipeline. UI decoupled from data. Designed to scale to 100K+ users on Supabase Pro + Vercel Pro. Full research: `memory/enterprise-infrastructure-research-s137.md`*
 
@@ -16471,7 +16490,7 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 - [ ] Open a test PR, verify preview branch auto-creates with isolated DB
 - [ ] TEST: Preview branch has correct schema + seed data + Edge Functions
 
-### INFRA-3 — Vercel Pro Multi-App Setup (~2h) — S137
+### INFRA-3 — Vercel Pro Multi-App Setup + Shared Type System (~4h) — S137
 
 - [ ] Create Vercel team `zafto` on Pro plan
 - [ ] Create 4 Vercel projects from monorepo, each with correct root directory:
@@ -16486,10 +16505,18 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
   - Development: local Supabase URL
 - [ ] Enable Vercel + Supabase integration (preview deployments auto-match preview branches)
 - [ ] Configure build skip detection (only build portal with changed files)
+
+**Shared Type System (Gap 1 — S138 ecosystem hardening):**
+- [ ] Run `npx supabase gen types typescript --local > src/lib/database.types.ts` in web-portal
+- [ ] Copy generated `database.types.ts` to all 4 portals: `web-portal/src/lib/`, `team-portal/src/lib/`, `client-portal/src/lib/`, `ops-portal/src/lib/`
+- [ ] Add npm script to all 4 portals: `"gen-types": "npx supabase gen types typescript --local > src/lib/database.types.ts"`
+- [ ] Refactor top 10 most-used hooks (use-jobs, use-customers, use-invoices, use-estimates, use-properties, use-team, use-schedule, use-leads, use-walkthroughs, use-insurance) to import types from `database.types.ts` instead of manual `interface` definitions
+- [ ] Document in CLAUDE.md: after EVERY migration, run `npm run gen-types` in web-portal and copy to other portals. This is the single source of truth for TypeScript column types.
+- [ ] TEST: Change a column in migration → run gen-types → verify all 4 portals compile with updated types
 - [ ] TEST: Push to main → all 4 portals build and deploy to production domains
 - [ ] TEST: Open PR → preview deployments created for changed portals
 
-### INFRA-4 — Database Performance Foundation (~2h) — S137
+### INFRA-4 — Database Performance Foundation + Full-Text Search + Performance Budget (~6h) — S137
 
 - [ ] Create migration: Add `company_id` B-tree indexes on ALL tables missing them (audit across 293 tables)
 - [ ] Create migration: Add BRIN indexes on `audit_log.created_at`, `messages.created_at`, `activity_feed.created_at` (if tables have >10K rows potential)
@@ -16499,10 +16526,24 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 - [ ] Verify `auth.user_role()` function is marked `STABLE`
 - [ ] Create materialized view: `mv_company_revenue_summary` (invoice aggregates per company/month)
 - [ ] Create materialized view: `mv_job_pipeline` (job counts/values by status per company)
+
+**Full-Text Search Foundation (Gap 4 — S138 ecosystem hardening):**
+- [ ] Create migration: Add `search_vector TSVECTOR` column to core searchable tables: `customers`, `jobs`, `invoices`, `estimates`, `properties`, `leads`, `contacts`. Populate with: `to_tsvector('english', coalesce(name,'') || ' ' || coalesce(address,'') || ' ' || coalesce(phone,'') || ' ' || coalesce(email,'') || ' ' || coalesce(notes,''))` (adjust columns per table)
+- [ ] Create migration: Add GIN indexes on all `search_vector` columns: `CREATE INDEX idx_customers_search ON customers USING GIN (search_vector)`
+- [ ] Create migration: Add trigger `search_vector_update_fn` that auto-updates `search_vector` on INSERT/UPDATE for each table
+- [ ] Create Edge Function `global-search/index.ts`: accepts query string, searches across all entity types using `ts_query`, returns unified ranked results with entity type, title, subtitle, and link. Auth required. Company-scoped. Rate limited (Tier 3: 100/min). Response < 300ms target.
+- [ ] Wire global search into web-portal Cmd+K palette: replace any ILIKE search with the `global-search` Edge Function
+- [ ] TEST: Insert 10K customers + 5K jobs. Search for common name. Verify < 300ms response. Verify GIN index used (EXPLAIN ANALYZE).
+
+**Performance Budget Baselines (Gap 6 — S138 ecosystem hardening):**
+- [ ] Define performance targets in `Build Documentation/PERFORMANCE_BUDGET.md`: page load < 2s (p95), API response < 500ms (p95), list query < 200ms with 10K rows, search < 300ms, real-time event delivery < 2s
+- [ ] Run `EXPLAIN ANALYZE` on top 10 hottest queries (jobs list, customers list, invoices list, estimates list, schedule view, team list, activity feed, notifications, audit log, dashboard aggregates) against SOLO seed data. Verify all use indexes. Document baseline timings.
+- [ ] Run `EXPLAIN ANALYZE` on same 10 queries against MEDIUM seed data (10K customers, 5K jobs). If ANY query > 200ms, add targeted index in this sprint. Document findings.
+- [ ] TEST: All 10 baseline queries execute under target thresholds
 - [ ] Create pg_cron job: refresh materialized views every 15 minutes CONCURRENTLY
 - [ ] TEST: `EXPLAIN ANALYZE` on top 5 most common queries — verify index usage, no Seq Scans on large tables
 
-### INFRA-5 — Architecture Enforcement + Observability + CI (~4h) — S137
+### INFRA-5 — Architecture Enforcement + Observability + CI + Ecosystem Hardening (~8h) — S137
 
 *Expanded S138: adds observability, health checks, webhook idempotency, feature flag wiring, structured logging. The "enforcement layer" that makes the architecture self-policing.*
 
@@ -16540,10 +16581,28 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 - [ ] Wire `_shared/rate-limiter.ts` into ALL Edge Functions that call external APIs: plaid-create-link-token, plaid-exchange-token, plaid-sync-transactions, signalwire-voice, signalwire-sms, signalwire-fax, sendgrid-email, recon-property-lookup, recon-area-scan, recon-storm-assess. 10 req/min per company for external APIs.
 - [ ] Document rate limiting tiers in CLAUDE.md: Tier 1 (external API: 10/min), Tier 2 (expensive compute: 30/min), Tier 3 (standard CRUD: 100/min)
 
+**Shared Type CI Enforcement (Gap 1 — S138 ecosystem hardening):**
+- [ ] Add CI check: on any PR that modifies `supabase/migrations/`, verify `database.types.ts` is also updated in all 4 portals (fail if migration changed but types not regenerated)
+- [ ] Add CI check: no `interface` or `type` definitions in hook files that duplicate columns from `database.types.ts` (warn, not fail — gradual migration)
+
+**Mobile Backward Compatibility (Gap 2 — S138 ecosystem hardening):**
+- [ ] Add CI check: new migrations with `NOT NULL` constraint without `DEFAULT` on columns that Flutter writes to → WARNING. Document which tables Flutter writes to (jobs, customers, estimates, invoices, time_entries, inspections, walkthrough_*, properties, schedules, bids, change_orders)
+- [ ] Document in CLAUDE.md: "New database columns that Flutter writes to MUST be nullable with defaults for at least 2 app update cycles (~4 weeks). Never add NOT NULL without DEFAULT on Flutter-writable tables. Rationale: Web portals deploy instantly via Vercel. Flutter goes through app stores — users on older versions will send the old toJson() without the new column, causing silent failures or crashes."
+- [ ] Create `Build Documentation/FLUTTER_WRITABLE_TABLES.md`: list of all tables + columns that Flutter INSERT/UPDATE operations touch. Reference when writing migrations. Update as new Flutter screens are built.
+
+**Optimistic Locking Pattern (Gap 3 — S138 ecosystem hardening):**
+- [ ] Create shared utility `_shared/optimistic-lock.ts` for Edge Functions: `function checkUpdatedAt(existing: Date, expected: Date): void` — throws `ConflictError` if record was modified since last read
+- [ ] Create Next.js utility `src/lib/optimistic-lock.ts` for all 4 portals: before UPDATE, compare `updated_at` from the form's initial load against the current `updated_at` in DB. If different, show conflict dialog: "This record was modified by [user] at [time]. Reload and re-apply your changes?"
+- [ ] Wire optimistic locking into the 5 most-contended entities: customers, jobs, invoices, estimates, schedules. Pattern: `UPDATE SET ... WHERE id = $1 AND updated_at = $2` — if 0 rows affected, return conflict error.
+- [ ] Document in CLAUDE.md: "All UPDATE operations on shared business entities MUST check updated_at to prevent lost updates. Last-write-wins is NOT acceptable for multi-user companies."
+- [ ] Add to Dart repository pattern: `Future<T> update(T entity)` must include `updated_at` in WHERE clause. If 0 rows affected, throw `ConcurrencyConflictError`.
+
 - [ ] TEST: CI pipeline runs on push, catches destructive migrations
 - [ ] TEST: Health check endpoint returns 200
 - [ ] TEST: Duplicate webhook event_id → second call returns "already processed"
 - [ ] TEST: Feature flag disabled → feature not visible
+- [ ] TEST: Type generation produces valid TypeScript that all 4 portals compile against
+- [ ] TEST: Optimistic lock — two concurrent updates to same record, second one fails with conflict error
 
 ### *** CRITICAL PRE-LAUNCH BLOCKER — DO NOT SHIP WITHOUT ***
 
@@ -16638,6 +16697,8 @@ Maintenance: **~2-3 state tax law changes per year across all 50 states.** When 
 - [ ] Write RLS isolation test: Company A creates job → Company B queries jobs → must NOT see Company A's job
 - [ ] Write role escalation test: Technician attempts admin-only operation (delete customer, view payroll, access ops-portal) → must be rejected at every layer (middleware, RLS, EF)
 - [ ] Write webhook replay test: Send same Stripe event_id twice → second must be ignored (idempotency)
+- [ ] Write optimistic locking test: Two concurrent updates to same customer record with stale `updated_at` → second update returns conflict error, first update's data preserved (Gap 3 verification)
+- [ ] Write global search test: Insert customer "John Smith" + job "Smith Kitchen Remodel" + invoice #1234 → search for "Smith" → returns results from ALL three entities, ranked by relevance (Gap 4 verification)
 - [ ] Document integration test running procedure: requires local Supabase (`npx supabase start`), seed data, and all 4 portals running locally
 
 **Mandatory Security Checklist Template (add to EVERY future sprint):**
