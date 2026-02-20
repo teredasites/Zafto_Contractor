@@ -100,6 +100,8 @@ void main() async {
       // INS10 Quick Checklist offline cache
       await Hive.openBox<String>('checklists');
       await Hive.openBox<String>('checklist_sync_meta');
+      // DEPTH6 Calculator favorites
+      await Hive.openBox('favorite_calculators');
 
       // Initialize exam progress tracker (CRITICAL - must be after Hive init)
       await ProgressTracker().initialize();
