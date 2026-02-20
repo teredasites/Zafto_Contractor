@@ -11205,96 +11205,1111 @@ web-portal/src/features/bim/
 ### W1 — Warranty Intelligence Foundation (~6h)
 
 #### Objective
-Warranty tracking tables, models, RLS. Extend home_equipment with warranty fields.
+Warranty tracking tables, models, RLS. Extend `home_equipment` with warranty fields. Create `warranty_outreach_log`, `warranty_claims`, and `product_recalls` tables. All tables get company_id scoping, RLS, audit triggers, updated_at triggers, and proper indexes.
 
-#### Steps
-- [ ] Migration: ALTER home_equipment — add warranty_start_date, warranty_end_date, warranty_type, warranty_provider, warranty_document_path, serial_number, model_number, manufacturer, installed_by_job_id, installed_by_company_id, recall_status
-- [ ] Migration: CREATE warranty_outreach_log — id, company_id, equipment_id, customer_id, outreach_type, outreach_trigger, message_content, sent_at, response_status, resulting_job_id, created_by + RLS
-- [ ] Migration: CREATE warranty_claims — id, company_id, equipment_id, job_id, claim_date, claim_reason, claim_status, manufacturer_claim_number, resolution_notes, replacement_equipment_id + RLS
-- [ ] Migration: CREATE product_recalls — id, manufacturer, model_pattern, recall_title, recall_description, recall_date, severity, source_url, affected_serial_range + RLS (public read)
-- [ ] Dart model: warranty_outreach_log.dart
-- [ ] Dart model: warranty_claim.dart
-- [ ] Dart model: product_recall.dart
-- [ ] Repository: warranty_intelligence_repository.dart
-- [ ] Verify: `dart analyze` 0 errors, migration applies cleanly
-- [ ] Commit: `[W1] Warranty Intelligence foundation — tables, models, RLS`
+*Source: `Expansion/49_BUSINESS_INTELLIGENCE_ENGINES.md` — ENGINE 1*
+*Depends on: F7 (home_equipment table)*
+*Existing migration: `20260214000084_w1_warranty_intelligence.sql` — ALREADY APPLIED. Review for gaps below.*
+
+#### System Connectivity
+- Extends: `home_equipment` (F7) — adds 11 warranty columns
+- References: `jobs`, `companies`, `customers`, `auth.users`
+- Called by: W2 (Flutter), W3 (CRM), W4 (client portal + outreach), W5 (testing)
+- Wires to: Job completion flow, estimate product logging, client portal
+
+#### Existing Migration Audit
+The migration `20260214000084_w1_warranty_intelligence.sql` already exists with:
+- `home_equipment` ALTER (11 columns added) — DONE
+- `warranty_outreach_log` — DONE (uses `outreach_type` CHECK with values: 'warranty_expiring','maintenance_reminder','recall_notice','upsell_extended','seasonal_check')
+- `warranty_claims` — DONE (includes `amount_claimed`, `amount_approved` not in original expansion spec — good addition)
+- `product_recalls` — DONE (uses severity: 'low','medium','high','critical' instead of expansion spec's 'safety','performance','cosmetic')
+- RLS — DONE (uses JWT pattern `(auth.jwt()->'app_metadata'->>'company_id')::uuid` on new tables, `requesting_company_id()` on home_equipment)
+- Indexes — DONE
+- Triggers — `update_updated_at` on warranty_outreach_log, warranty_claims — DONE. `audit_trigger_fn` on warranty_claims — DONE.
+
+**GAPS to fix in W1:**
+- [ ] Missing: `audit_trigger_fn` on `warranty_outreach_log` — add
+- [ ] Missing: `audit_trigger_fn` on `home_equipment` (if not already present from F7) — verify and add
+- [ ] Missing: `deleted_at TIMESTAMPTZ` on `warranty_outreach_log` — add column (soft delete pattern)
+- [ ] Missing: `deleted_at TIMESTAMPTZ` on `warranty_claims` — add column (soft delete pattern)
+- [ ] Missing: `deleted_at TIMESTAMPTZ` on `product_recalls` — add column (soft delete pattern)
+- [ ] Missing: DELETE RLS policy on `warranty_claims` — add (soft delete via UPDATE, but policy needed)
+- [ ] Missing: DELETE RLS policy on `warranty_outreach_log` — add
+- [ ] Missing: Index on `warranty_claims(job_id)` — add (FK index)
+- [ ] Missing: Index on `warranty_claims(customer_id)` — add (FK index)
+- [ ] Missing: Index on `home_equipment(installed_by_job_id)` — add (FK index)
+- [ ] Missing: Index on `home_equipment(installed_by_company_id)` — add (FK index)
+- [ ] Missing: Index on `product_recalls(recall_date)` — add for chronological queries
+- [ ] Missing: Index on `warranty_outreach_log(sent_at)` — add for timeline queries
+
+**Create gap-fix migration**: `20260220000127_w1_warranty_gaps.sql`
+
+```sql
+-- W1 Gap Fix: Add missing audit triggers, deleted_at columns, indexes, and DELETE policies
+
+-- 1. Add deleted_at columns (soft delete)
+ALTER TABLE warranty_outreach_log ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
+ALTER TABLE warranty_claims ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
+ALTER TABLE product_recalls ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
+
+-- 2. Add missing audit trigger on warranty_outreach_log
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'audit_warranty_outreach_log') THEN
+    CREATE TRIGGER audit_warranty_outreach_log
+      AFTER INSERT OR UPDATE OR DELETE ON warranty_outreach_log
+      FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+  END IF;
+END $$;
+
+-- 3. Add missing updated_at column on product_recalls (CRIT-2)
+ALTER TABLE product_recalls ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT now();
+
+-- 4. Add missing audit + updated_at triggers on product_recalls (CRIT-3)
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'product_recalls_audit') THEN
+    CREATE TRIGGER product_recalls_audit AFTER INSERT OR UPDATE OR DELETE ON product_recalls
+      FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'product_recalls_updated_at') THEN
+    CREATE TRIGGER product_recalls_updated_at BEFORE UPDATE ON product_recalls
+      FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+  END IF;
+END $$;
+
+-- 5. Add product_recalls RLS — GLOBAL reference table, public read only (CRIT-1)
+-- product_recalls has no company_id — it is a global reference table.
+-- No INSERT/UPDATE/DELETE for regular users — super_admin via service_role only.
+CREATE POLICY "product_recalls_select" ON product_recalls FOR SELECT USING (true);
+
+-- 6. Add DELETE RLS policies
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'warranty_outreach_log' AND policyname = 'wol_delete') THEN
+    CREATE POLICY "wol_delete" ON warranty_outreach_log FOR DELETE
+      USING (company_id = (auth.jwt()->'app_metadata'->>'company_id')::uuid);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'warranty_claims' AND policyname = 'wc_delete') THEN
+    CREATE POLICY "wc_delete" ON warranty_claims FOR DELETE
+      USING (company_id = (auth.jwt()->'app_metadata'->>'company_id')::uuid);
+  END IF;
+END $$;
+
+-- 7. Add missing FK indexes (CRIT-7: use full table name prefix to avoid idx_pr_* collision)
+CREATE INDEX IF NOT EXISTS idx_wc_job ON warranty_claims(job_id) WHERE job_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_wc_customer ON warranty_claims(customer_id) WHERE customer_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_he_installed_job ON home_equipment(installed_by_job_id) WHERE installed_by_job_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_he_installed_company ON home_equipment(installed_by_company_id) WHERE installed_by_company_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_product_recalls_recall_date ON product_recalls(recall_date);
+CREATE INDEX IF NOT EXISTS idx_wol_sent ON warranty_outreach_log(sent_at) WHERE sent_at IS NOT NULL;
+```
+
+#### Dart Models
+
+- [ ] Create `lib/models/warranty_outreach_log.dart`:
+  ```dart
+  class WarrantyOutreachLog extends Equatable {
+    final String id;
+    final String companyId;
+    final String equipmentId;
+    final String? customerId;
+    final String outreachType; // warranty_expiring, maintenance_reminder, recall_notice, upsell_extended, seasonal_check
+    final String? outreachTrigger;
+    final String? messageContent;
+    final DateTime? sentAt;
+    final String? responseStatus; // pending, opened, clicked, booked, declined, no_response
+    final String? resultingJobId;
+    final String? createdBy;
+    final DateTime createdAt;
+    final DateTime updatedAt;
+    final DateTime? deletedAt;
+
+    const WarrantyOutreachLog({
+      required this.id, required this.companyId, required this.equipmentId,
+      this.customerId, required this.outreachType, this.outreachTrigger,
+      this.messageContent, this.sentAt, this.responseStatus, this.resultingJobId,
+      this.createdBy, required this.createdAt, required this.updatedAt, this.deletedAt,
+    });
+
+    @override
+    List<Object?> get props => [id, companyId, equipmentId, outreachType, responseStatus, updatedAt];
+
+    factory WarrantyOutreachLog.fromJson(Map<String, dynamic> json) => WarrantyOutreachLog(
+      id: json['id'] as String,
+      companyId: json['company_id'] as String,
+      equipmentId: json['equipment_id'] as String,
+      customerId: json['customer_id'] as String?,
+      outreachType: json['outreach_type'] as String,
+      outreachTrigger: json['outreach_trigger'] as String?,
+      messageContent: json['message_content'] as String?,
+      sentAt: json['sent_at'] != null ? DateTime.parse(json['sent_at'] as String) : null,
+      responseStatus: json['response_status'] as String?,
+      resultingJobId: json['resulting_job_id'] as String?,
+      createdBy: json['created_by'] as String?,
+      createdAt: DateTime.parse(json['created_at'] as String),
+      updatedAt: DateTime.parse(json['updated_at'] as String),
+      deletedAt: json['deleted_at'] != null ? DateTime.parse(json['deleted_at'] as String) : null,
+    );
+
+    Map<String, dynamic> toJson() => {
+      'id': id, 'company_id': companyId, 'equipment_id': equipmentId,
+      'customer_id': customerId, 'outreach_type': outreachType,
+      'outreach_trigger': outreachTrigger, 'message_content': messageContent,
+      'sent_at': sentAt?.toIso8601String(), 'response_status': responseStatus,
+      'resulting_job_id': resultingJobId, 'created_by': createdBy,
+    };
+
+    WarrantyOutreachLog copyWith({/* all fields */}) => WarrantyOutreachLog(/* ... */);
+  }
+  ```
+
+- [ ] Create `lib/models/warranty_claim.dart`:
+  ```dart
+  class WarrantyClaim extends Equatable {
+    final String id;
+    final String companyId;
+    final String equipmentId;
+    final String? jobId;
+    final String? customerId;
+    final DateTime claimDate;
+    final String claimReason;
+    final String claimStatus; // submitted, under_review, approved, denied, resolved, closed
+    final String? manufacturerClaimNumber;
+    final String? resolutionNotes;
+    final String? replacementEquipmentId;
+    final double? amountClaimed;
+    final double? amountApproved;
+    final DateTime createdAt;
+    final DateTime updatedAt;
+    final DateTime? deletedAt;
+
+    // Computed
+    bool get isOpen => ['submitted', 'under_review', 'approved'].contains(claimStatus);
+    bool get isResolved => ['resolved', 'closed'].contains(claimStatus);
+    bool get isDenied => claimStatus == 'denied';
+    double get approvalRate => amountClaimed != null && amountClaimed! > 0 && amountApproved != null
+      ? (amountApproved! / amountClaimed!) * 100 : 0;
+
+    // fromJson, toJson, copyWith, Equatable — same pattern as above
+  }
+  ```
+
+- [ ] Create `lib/models/product_recall.dart`:
+  ```dart
+  class ProductRecall extends Equatable {
+    final String id;
+    final String manufacturer;
+    final String? modelPattern;
+    final String recallTitle;
+    final String? recallDescription;
+    final DateTime recallDate;
+    final String severity; // low, medium, high, critical
+    final String? sourceUrl;
+    final String? affectedSerialRange;
+    final bool isActive;
+    final DateTime createdAt;
+    final DateTime? deletedAt;
+
+    // Computed
+    bool get isCritical => severity == 'critical' || severity == 'high';
+
+    // fromJson, toJson, copyWith, Equatable — same pattern
+  }
+  ```
+
+#### Repository
+
+- [ ] Create `lib/repositories/warranty_intelligence_repository.dart`:
+  ```dart
+  abstract class WarrantyIntelligenceRepository {
+    // Warranty portfolio (equipment with warranty data)
+    Future<List<HomeEquipment>> getWarrantyPortfolio({required String companyId, String? customerId});
+    Future<List<HomeEquipment>> getExpiringWarranties({required String companyId, required int withinDays});
+
+    // Outreach log
+    Future<List<WarrantyOutreachLog>> getOutreachLog({required String companyId, String? equipmentId});
+    Future<WarrantyOutreachLog> createOutreachLog(WarrantyOutreachLog log);
+    Future<WarrantyOutreachLog> updateOutreachLog(WarrantyOutreachLog log);
+
+    // Claims
+    Future<List<WarrantyClaim>> getClaims({required String companyId, String? equipmentId, String? status});
+    Future<WarrantyClaim> createClaim(WarrantyClaim claim);
+    Future<WarrantyClaim> updateClaim(WarrantyClaim claim);
+
+    // Recalls
+    Future<List<ProductRecall>> getActiveRecalls();
+    Future<List<ProductRecall>> getRecallsForEquipment({required String manufacturer, String? modelNumber, String? serialNumber});
+  }
+
+  class SupabaseWarrantyIntelligenceRepository implements WarrantyIntelligenceRepository {
+    final SupabaseClient _client;
+    SupabaseWarrantyIntelligenceRepository(this._client);
+
+    @override
+    Future<List<HomeEquipment>> getWarrantyPortfolio({required String companyId, String? customerId}) async {
+      var query = _client.from('home_equipment')
+        .select()
+        .eq('company_id', companyId)
+        .isFilter('deleted_at', null)
+        .not('warranty_end_date', 'is', null);
+      if (customerId != null) query = query.eq('customer_id', customerId);
+      final response = await query.order('warranty_end_date');
+      return response.map((e) => HomeEquipment.fromJson(e)).toList();
+    }
+    // ... other implementations follow same pattern
+  }
+  ```
+
+- [ ] Verify: `dart analyze` — 0 errors, migration applies cleanly
+- [ ] Commit: `[W1] Warranty Intelligence foundation — gap-fix migration, models, repository`
+
+#### Security Verification
+- [ ] RLS: Company A cannot read Company B's warranty_outreach_log
+- [ ] RLS: Company A cannot read Company B's warranty_claims
+- [ ] RLS: Any authenticated user CAN read product_recalls (public read — global reference table, no company_id)
+- [ ] RLS: Only super_admin via service_role can INSERT/UPDATE/DELETE product_recalls — no user-level write policies
+- [ ] Audit trigger fires on warranty_outreach_log INSERT/UPDATE/DELETE
+- [ ] Audit trigger fires on warranty_claims INSERT/UPDATE/DELETE
+- [ ] All new tables have company_id index
+- [ ] All FK columns have indexes
+- [ ] All tables have deleted_at column
+- [ ] All tables have updated_at trigger
+
+---
 
 ### W2 — Warranty Flutter Screens (~8h)
 
-#### Steps
-- [ ] Screen: warranty_portfolio_screen.dart — list all installed equipment with warranty status (green ≥6mo, yellow 3-6mo, red <3mo)
-- [ ] Screen: warranty_detail_screen.dart — product detail, warranty docs, outreach history, claim history
-- [ ] Provider: warranty_intelligence_provider.dart — AsyncNotifier for portfolio data
-- [ ] Job completion flow: add "Log Installed Equipment" optional step after completing any job
-- [ ] Verify: Flutter analyze clean, screens handle all 4 states
-- [ ] Commit: `[W2] Warranty Intelligence Flutter — portfolio + detail screens`
+#### Objective
+Build warranty portfolio screen, warranty detail screen, and equipment logging flow in Flutter. Provider layer with Riverpod.
+
+*Depends on: W1 (tables, models, repository)*
+
+#### System Connectivity
+- Reads from: `home_equipment`, `warranty_outreach_log`, `warranty_claims`, `product_recalls`
+- Writes to: `home_equipment` (log equipment on job completion), `warranty_claims` (create claims)
+- Wires to: Job completion flow (optional step), customer detail screen (warranty tab)
+
+#### Flutter Screens
+
+- [ ] Create `lib/screens/warranty/warranty_portfolio_screen.dart`:
+  - **What it displays**: List of all installed equipment with warranty status for the company. Each card shows: equipment name, manufacturer, model, customer name, warranty expiry date, status indicator.
+  - **Status colors**: Green (>6 months remaining), Yellow (3-6 months), Red (<3 months), Grey (expired), Blue (no warranty tracked)
+  - **Filters**: By status (expiring soon, active, expired, no warranty), by customer, by equipment type, by trade
+  - **Sort**: By expiry date (soonest first default), by customer, by install date
+  - **Search**: By equipment name, serial number, manufacturer, customer name
+  - **4 states**:
+    - Loading: `CircularProgressIndicator` centered
+    - Error: `ErrorState` widget with retry button — "Failed to load warranty portfolio"
+    - Empty: `EmptyState` — "No equipment tracked yet. Log installed equipment from completed jobs."
+    - Data: Scrollable list with status-colored cards, filter chips, search bar
+  - **Actions**: Tap card -> navigate to detail. FAB -> add equipment manually. Pull-to-refresh.
+
+- [ ] Create `lib/screens/warranty/warranty_detail_screen.dart`:
+  - **What it displays**: Full equipment detail — product info (manufacturer, model, serial), warranty info (type, provider, start/end dates, document), warranty status with countdown, outreach history timeline, claim history list, recall alerts (if any active recalls match this product)
+  - **Tabs**: Overview | Outreach History | Claims | Documents
+  - **Overview tab**: Equipment details card, warranty countdown card (days remaining with circular progress), installed by (job link), customer link, recall status banner (if active)
+  - **Outreach History tab**: Timeline of all outreach attempts — date, type, trigger, response status. Each entry shows: "SMS sent on Jan 15, 2026 — Warranty expiring in 3 months — Customer booked"
+  - **Claims tab**: List of warranty claims. Each shows: date, reason, status badge, amounts. Tap to expand details. "File Claim" button.
+  - **Documents tab**: Warranty document viewer (PDF/image), upload button for new documents
+  - **4 states**: Loading/Error/Empty/Data pattern
+  - **Actions**: Edit equipment details, upload warranty document, file warranty claim, trigger manual outreach
+
+- [ ] Create `lib/screens/warranty/file_warranty_claim_screen.dart`:
+  - Form fields: Claim date (default today), Claim reason (text), Manufacturer claim number (optional), Amount claimed (currency input)
+  - Pre-populated: Equipment info (read-only), Customer info (read-only)
+  - Submit creates `warranty_claims` record with status 'submitted'
+  - Validation: claim_reason required, claim_date not in future
+
+- [ ] Create `lib/screens/warranty/log_equipment_screen.dart`:
+  - Form for logging installed equipment after job completion
+  - Fields: Equipment type (dropdown with categories from equipment_lifecycle_data), Manufacturer, Model, Serial Number, Install Date (default today), Warranty Type (manufacturer/extended/labor/parts_labor/home_warranty), Warranty Provider, Warranty Start Date, Warranty End Date, Notes
+  - Auto-populates: customer_id from job, installed_by_job_id, installed_by_company_id
+  - Saves to `home_equipment` with warranty fields
+
+#### Provider Layer
+
+- [ ] Create `lib/providers/warranty_intelligence_provider.dart`:
+  ```dart
+  // Portfolio list provider (auto-dispose, company-scoped)
+  final warrantyPortfolioProvider = AutoDisposeAsyncNotifierProvider<WarrantyPortfolioNotifier, List<HomeEquipment>>(
+    WarrantyPortfolioNotifier.new,
+  );
+
+  // Expiring warranties (parameterized by days threshold)
+  final expiringWarrantiesProvider = AutoDisposeFutureProvider.family<List<HomeEquipment>, int>(
+    (ref, withinDays) async {
+      final repo = ref.watch(warrantyIntelligenceRepositoryProvider);
+      final companyId = ref.watch(currentCompanyIdProvider);
+      return repo.getExpiringWarranties(companyId: companyId, withinDays: withinDays);
+    },
+  );
+
+  // Equipment detail (by equipment ID)
+  final warrantyDetailProvider = AutoDisposeFutureProvider.family<HomeEquipment?, String>(
+    (ref, equipmentId) async {
+      final repo = ref.watch(warrantyIntelligenceRepositoryProvider);
+      return repo.getEquipmentById(equipmentId: equipmentId);
+    },
+  );
+
+  // Outreach log for equipment
+  final outreachLogProvider = AutoDisposeFutureProvider.family<List<WarrantyOutreachLog>, String>(
+    (ref, equipmentId) async {
+      final repo = ref.watch(warrantyIntelligenceRepositoryProvider);
+      final companyId = ref.watch(currentCompanyIdProvider);
+      return repo.getOutreachLog(companyId: companyId, equipmentId: equipmentId);
+    },
+  );
+
+  // Claims for equipment
+  final warrantyClaimsProvider = AutoDisposeFutureProvider.family<List<WarrantyClaim>, String>(
+    (ref, equipmentId) async {
+      final repo = ref.watch(warrantyIntelligenceRepositoryProvider);
+      final companyId = ref.watch(currentCompanyIdProvider);
+      return repo.getClaims(companyId: companyId, equipmentId: equipmentId);
+    },
+  );
+
+  // Active recalls
+  final activeRecallsProvider = AutoDisposeFutureProvider<List<ProductRecall>>(
+    (ref) async {
+      final repo = ref.watch(warrantyIntelligenceRepositoryProvider);
+      return repo.getActiveRecalls();
+    },
+  );
+  ```
+
+#### Job Completion Integration
+
+- [ ] Modify job completion flow (existing): After job status changes to 'completed', show optional step "Log Installed Equipment"
+  - Modal or bottom sheet: "Did you install any equipment on this job?"
+  - "Yes" -> navigate to `log_equipment_screen.dart` with job pre-loaded
+  - "Skip" -> continue normal flow
+  - This is NON-BLOCKING — contractor can skip and add later
+
+- [ ] Add "Warranties" tab to existing customer detail screen (`lib/screens/customers/customer_detail_screen.dart`):
+  - Shows all equipment installed for this customer with warranty status
+  - Tap any equipment -> warranty_detail_screen
+
+- [ ] Verify: `dart analyze` — 0 errors, all screens handle 4 states
+- [ ] Commit: `[W2] Warranty Intelligence Flutter — portfolio + detail screens + claim filing + equipment logging`
+
+#### Security Verification
+- [ ] All data fetches filter by company_id from auth
+- [ ] Equipment logging links to authenticated user's company
+- [ ] No raw Supabase calls from screens (all through providers -> repository)
+- [ ] File upload (warranty docs) goes to 'documents' storage bucket with company_id path
+
+---
 
 ### W3 — Warranty Web CRM (~8h)
 
-#### Steps
-- [ ] CRM page: web-portal/src/app/warranty-intelligence/page.tsx — dashboard (expiring soon, outreach pipeline, revenue from warranty callbacks)
-- [ ] CRM page: web-portal/src/app/warranty-intelligence/[id]/page.tsx — equipment detail with warranty info
-- [ ] Hook: use-warranty-intelligence.ts — CRUD + real-time
-- [ ] Product recall display: show active recalls matching company's installed equipment
-- [ ] Verify: `npm run build` 0 errors
-- [ ] Commit: `[W3] Warranty Intelligence CRM — dashboard + equipment detail`
+#### Objective
+Build warranty intelligence dashboard and equipment detail pages in the web CRM portal.
+
+*Depends on: W1 (tables, models), W2 parallel OK*
+
+#### System Connectivity
+- Reads from: `home_equipment`, `warranty_outreach_log`, `warranty_claims`, `product_recalls`
+- Writes to: `warranty_claims`, `warranty_outreach_log` (manual outreach), `home_equipment` (edit)
+- Wires to: Job detail page (warranty tab), customer detail page (warranty section)
+
+#### CRM Pages
+
+- [ ] Create `web-portal/src/app/(dashboard)/warranty-intelligence/page.tsx`:
+  - **What it displays**: Warranty Intelligence Dashboard — the command center for warranty-driven revenue
+  - **Sections**:
+    1. **Expiring Soon** (top priority): Cards for equipment expiring within 90 days, sorted by soonest. Each shows: customer name, equipment, days remaining, last outreach status. Color bands: red (<30d), yellow (30-60d), orange (60-90d)
+    2. **Outreach Pipeline**: Funnel visualization — pending outreach count, sent count, opened count, booked count, completed count. Click any stage to filter list below
+    3. **Revenue from Warranty Callbacks**: KPI card — total revenue from jobs where `resulting_job_id IS NOT NULL` on warranty_outreach_log. Monthly trend line chart. "Warranty callbacks generated $X this month"
+    4. **Active Recalls**: Alert banner if any product_recalls match installed equipment. "3 of your customers have equipment affected by CPSC Recall #24-XXX. View affected customers."
+    5. **Warranty Portfolio Summary**: Stats — total tracked equipment, % with warranty data, avg warranty remaining, equipment by category breakdown (pie chart)
+  - **4 states**: Loading skeleton, error with retry, empty ("Start tracking warranties from completed jobs"), data dashboard
+  - **Actions**: "Send Outreach" bulk action on selected expiring items, export portfolio CSV, filter by trade/equipment type/customer
+
+- [ ] Create `web-portal/src/app/(dashboard)/warranty-intelligence/[id]/page.tsx`:
+  - **What it displays**: Individual equipment warranty detail — same data as Flutter detail but desktop-optimized layout
+  - **Layout**: Two-column — left: equipment info card + warranty status card + recall alerts. Right: tabbed content (Outreach Timeline, Claims, Documents)
+  - **Actions**: Edit equipment details, file claim (modal form), trigger manual outreach (SMS/email selector), upload warranty document, link to different job
+  - **4 states**: Loading skeleton, error, 404 (equipment not found), data
+
+- [ ] Create `web-portal/src/app/(dashboard)/warranty-intelligence/recalls/page.tsx`:
+  - **What it displays**: Active product recalls from CPSC with matching against company's installed equipment
+  - **Sections**: Recall alerts (matching equipment highlighted red), all recent recalls browsable, search recalls by manufacturer/product
+  - **Per recall**: Title, date, severity badge, description, affected products, source URL link to CPSC page, count of company's equipment potentially affected
+  - **4 states**: Loading, error, empty ("No active recalls"), data
+
+#### Hook
+
+- [ ] Create `web-portal/src/lib/hooks/use-warranty-intelligence.ts`:
+  ```typescript
+  'use client';
+  import { useState, useEffect } from 'react';
+  import { createClient } from '@/lib/supabase';
+  import type { Database } from '@/types/database.types';
+
+  type HomeEquipment = Database['public']['Tables']['home_equipment']['Row'];
+  type WarrantyOutreachLog = Database['public']['Tables']['warranty_outreach_log']['Row'];
+  type WarrantyClaim = Database['public']['Tables']['warranty_claims']['Row'];
+  type ProductRecall = Database['public']['Tables']['product_recalls']['Row'];
+
+  export function useWarrantyIntelligence() {
+    const supabase = createClient();
+    const [portfolio, setPortfolio] = useState<HomeEquipment[]>([]);
+    const [expiringEquipment, setExpiringEquipment] = useState<HomeEquipment[]>([]);
+    const [outreachLog, setOutreachLog] = useState<WarrantyOutreachLog[]>([]);
+    const [claims, setClaims] = useState<WarrantyClaim[]>([]);
+    const [recalls, setRecalls] = useState<ProductRecall[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    // Fetch portfolio (equipment with warranty data)
+    async function fetchPortfolio() { /* SELECT from home_equipment WHERE warranty_end_date IS NOT NULL AND deleted_at IS NULL */ }
+
+    // Real-time subscription on warranty_claims, warranty_outreach_log
+    useEffect(() => {
+      const channel = supabase.channel('warranty-changes')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'warranty_claims' }, handleClaimsChange)
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'warranty_outreach_log' }, handleOutreachChange)
+        .subscribe();
+      return () => { supabase.removeChannel(channel); };
+    }, []);
+
+    // CRUD mutations
+    async function createClaim(claim: Partial<WarrantyClaim>) { /* INSERT */ }
+    async function updateClaim(id: string, updates: Partial<WarrantyClaim>) { /* UPDATE with optimistic locking */ }
+    async function createOutreachEntry(entry: Partial<WarrantyOutreachLog>) { /* INSERT */ }
+    async function updateEquipmentWarranty(id: string, warranty: Partial<HomeEquipment>) { /* UPDATE with optimistic locking */ }
+
+    // Computed
+    const callbackRevenue = outreachLog
+      .filter(o => o.resulting_job_id != null)
+      .length; // actual revenue would need job amount join
+    const outreachFunnel = {
+      pending: outreachLog.filter(o => o.response_status === 'pending').length,
+      sent: outreachLog.filter(o => o.sent_at != null).length,
+      booked: outreachLog.filter(o => o.response_status === 'booked').length,
+    };
+
+    return {
+      portfolio, expiringEquipment, outreachLog, claims, recalls,
+      loading, error,
+      createClaim, updateClaim, createOutreachEntry, updateEquipmentWarranty,
+      callbackRevenue, outreachFunnel,
+    };
+  }
+  ```
+
+- [ ] Wire warranty data into existing CRM job detail page: Add "Installed Equipment" section on job detail showing equipment logged from that job
+- [ ] Wire warranty data into existing CRM customer detail page: Add "Warranty Portfolio" tab showing all equipment for that customer
+
+- [ ] Verify: `npm run build` — 0 errors
+- [ ] Commit: `[W3] Warranty Intelligence CRM — dashboard, equipment detail, recalls page, hook`
+
+#### Security Verification
+- [ ] Hook uses `createClient()` with user's session — RLS enforced server-side
+- [ ] No direct table access bypassing RLS
+- [ ] Recalls page: public read works for any authenticated user
+- [ ] Equipment detail: cannot access equipment from another company (404 or empty)
+- [ ] All mutations validate required fields client-side before Supabase call
+
+---
 
 ### W4 — Warranty Client Portal + Outreach Engine (~6h)
 
-#### Steps
-- [ ] Client portal page: client-portal/src/app/warranties/page.tsx — homeowner "My Warranties" view
-- [ ] Hook: use-warranty-portfolio.ts (client portal, read-only)
-- [ ] Edge Function: warranty-outreach-scheduler — CRON daily: scan equipment approaching expiry, trigger SMS/email via SignalWire at 6mo/3mo/1mo
-- [ ] Verify: client portal build clean, outreach triggers correctly in test
+#### Objective
+Build "My Warranties" view in client portal and the automated outreach scheduler Edge Function.
+
+*Depends on: W1 (tables), W3 parallel OK*
+
+#### System Connectivity
+- Reads from: `home_equipment`, `warranty_claims`, `product_recalls`
+- Writes to: `warranty_outreach_log` (outreach engine creates entries)
+- Calls: SignalWire (existing F1 phone/SMS integration) for outreach delivery
+- CRON: Daily scan of equipment approaching warranty expiry
+
+#### Client Portal Page
+
+- [ ] Create `client-portal/src/app/(dashboard)/warranties/page.tsx`:
+  - **What it displays**: "My Warranties" — homeowner view of all equipment installed at their property with warranty status
+  - **Per equipment card**: Equipment name + type icon, manufacturer + model, warranty status badge (Active/Expiring Soon/Expired/No Warranty), warranty end date with countdown ("147 days remaining"), warranty type (manufacturer/extended/etc.), installed by company name, install date
+  - **Recall alerts**: Banner at top if any recalls affect their equipment — "Safety Alert: Your [Product] may be affected by a recall. Contact your contractor."
+  - **Warranty documents**: View/download warranty documents uploaded by contractor
+  - **Read-only**: Homeowner cannot edit equipment or warranty data — only view
+  - **4 states**: Loading, error, empty ("No equipment has been tracked for your property yet. Ask your contractor about Zafto warranty tracking."), data
+  - **Actions**: "Contact Contractor" button on each equipment card (opens messaging), "View Recall Details" link on recall banners
+
+- [ ] Create `client-portal/src/lib/hooks/use-warranty-portfolio.ts`:
+  ```typescript
+  'use client';
+  import { useState, useEffect } from 'react';
+  import { createClient } from '@/lib/supabase';
+
+  export function useWarrantyPortfolio() {
+    const supabase = createClient();
+    const [equipment, setEquipment] = useState([]);
+    const [recalls, setRecalls] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    // Fetch equipment for current customer (linked via auth user -> customers table)
+    // Join with product_recalls for recall matching
+    // Real-time subscription for status updates
+
+    return { equipment, recalls, loading, error };
+  }
+  ```
+
+#### Edge Function: Warranty Outreach Scheduler
+
+- [ ] Create `supabase/functions/warranty-outreach-scheduler/index.ts`:
+  - **HTTP Method**: POST (invoked by pg_cron or Supabase CRON)
+  - **Auth**: Service role key (CRON invocation) OR JWT with admin/owner role (manual trigger)
+  - **Schedule**: Daily at 08:00 UTC via pg_cron
+  - **Rate limit**: Max 100 outreach messages per invocation (prevent SMS flood)
+
+  **Request Body** (manual trigger):
+  ```json
+  {
+    "company_id": "uuid (optional — if omitted, processes all companies)",
+    "dry_run": false
+  }
+  ```
+
+  **Processing Logic**:
+  1. Query all `home_equipment` WHERE `warranty_end_date IS NOT NULL` AND `deleted_at IS NULL`
+  2. Calculate days until expiry for each
+  3. For equipment at threshold (180, 90, 30 days before expiry):
+     - Check `warranty_outreach_log` for this equipment + trigger combo — prevent duplicate outreach
+     - If not already triggered: determine outreach method from company settings (SMS preferred, email fallback)
+     - Create `warranty_outreach_log` entry with `outreach_type = 'warranty_expiring'`, `outreach_trigger = 'expiry_6mo'/'expiry_3mo'/'expiry_1mo'`
+     - Send SMS via SignalWire (existing F1 pattern): "Hi {customer_name}, the warranty on your {equipment_type} ({manufacturer} {model}) installed at {address} expires on {expiry_date}. Would you like to schedule a maintenance check or discuss extended warranty options? Reply YES to book. — {company_name}"
+     - Send email via existing email system (F5 email templates)
+  4. For equipment with active recall matches:
+     - Send recall notification: "Important: A safety recall has been issued for your {equipment_type}. Please contact us at {company_phone} to discuss next steps."
+     - Update `home_equipment.recall_status` to 'acknowledged'
+
+  **Response Body**:
+  ```json
+  {
+    "processed_companies": 42,
+    "outreach_sent": { "sms": 15, "email": 23 },
+    "recalls_notified": 3,
+    "skipped_duplicate": 8,
+    "errors": []
+  }
+  ```
+
+  **Error Cases**:
+  - SignalWire API failure: Log error, mark outreach as failed, continue with next
+  - Missing customer phone/email: Skip outreach, log warning
+  - Rate limit hit: Stop processing, resume next day
+  - Invalid company_id: Return 404
+
+- [ ] Set up pg_cron:
+  ```sql
+  SELECT cron.schedule('daily-warranty-outreach', '0 8 * * *',
+    $$SELECT net.http_post(
+      url := current_setting('app.supabase_url') || '/functions/v1/warranty-outreach-scheduler',
+      headers := jsonb_build_object('Authorization', 'Bearer ' || current_setting('app.service_role_key'), 'Content-Type', 'application/json'),
+      body := '{}'::jsonb
+    )$$
+  );
+  ```
+
+- [ ] Verify: Client portal build clean, outreach triggers correctly in test
 - [ ] Commit: `[W4] Warranty outreach scheduler + Client Portal warranty view`
+
+#### Security Verification
+- [ ] Client portal hook only returns equipment linked to authenticated customer
+- [ ] Client portal is read-only — no INSERT/UPDATE/DELETE operations
+- [ ] Edge Function validates service_role or admin JWT
+- [ ] SignalWire calls use existing shared client — no API keys in function code
+- [ ] Outreach deduplication prevents spam
+- [ ] CRON function has rate limiting (max 100 per run)
+
+---
 
 ### W5 — Warranty Testing + Recall Seeding (~4h)
 
-#### Steps
-- [ ] Seed product_recalls with 50+ real recalls from CPSC API (free)
-- [ ] Test: warranty portfolio shows correct status colors
-- [ ] Test: outreach scheduler sends SMS for equipment expiring within each threshold
-- [ ] Test: recall matching finds affected equipment by model_pattern
-- [ ] Test: warranty claim creation + status lifecycle
-- [ ] Verify: all tests pass
+#### Objective
+Seed product recalls from CPSC API (free, US government), comprehensive testing of all warranty intelligence flows.
+
+*Depends on: W1-W4 (all warranty infrastructure)*
+
+#### CPSC Recall Seeding
+
+- [ ] Create seed script or Edge Function for CPSC recall ingestion:
+  - **CPSC Recalls API**: `https://www.saferproducts.gov/RestWebServices/Recall?format=json`
+  - Free, no API key, US government data
+  - Seed 50+ real product recalls relevant to contractor-installed equipment categories:
+    - HVAC equipment (furnaces, AC units, heat pumps, mini-splits)
+    - Water heaters (gas, electric, tankless)
+    - Electrical panels, breakers, arc fault devices
+    - Smoke detectors, CO detectors
+    - Garage door openers
+    - Major appliances (dishwashers, dryers, ranges — fire hazard recalls)
+    - Solar inverters and battery storage
+    - Pool/spa pumps and heaters
+    - Generators (standby and portable)
+  - Each recall entry:
+    ```sql
+    INSERT INTO product_recalls (manufacturer, model_pattern, recall_title, recall_description, recall_date, severity, source_url, affected_serial_range, is_active) VALUES
+    ('Rheem/Ruud', '%XG40%', 'Gas Water Heater Recall — Fire Hazard', 'Certain gas water heaters can ignite flammable vapors near the unit.', '2024-03-15', 'critical', 'https://www.cpsc.gov/Recalls/2024/rheem-gas-water-heaters', 'Serial prefix WH2019-WH2021', true),
+    ('Carrier', '%N9MSB%', 'Gas Furnace Recall — Carbon Monoxide Risk', 'Secondary heat exchangers can crack, allowing CO into living space.', '2024-06-20', 'critical', 'https://www.cpsc.gov/Recalls/2024/carrier-gas-furnaces', NULL, true),
+    ('Kidde', '%i9010%', 'Smoke Alarm Recall — Failure to Alert', 'Certain combination smoke/CO alarms may fail to alert to smoke.', '2024-01-10', 'critical', 'https://www.cpsc.gov/Recalls/2024/kidde-smoke-alarms', NULL, true),
+    ('LG Electronics', '%LRE3061%', 'Electric Range Recall — Fire Hazard', 'Heating element may turn on unexpectedly.', '2023-11-15', 'high', 'https://www.cpsc.gov/Recalls/2023/lg-electric-ranges', NULL, true),
+    -- ... 46+ more entries covering all equipment categories
+    ```
+
+- [ ] Create monthly CPSC refresh function (in warranty-outreach-scheduler or separate):
+  - Query CPSC API for new recalls since last check
+  - Match against equipment categories Zafto tracks
+  - Upsert new recalls
+  - Mark resolved recalls as `is_active = false`
+
+#### Testing
+
+- [ ] Test: Warranty portfolio screen shows correct status colors:
+  - Equipment with warranty_end_date > 6 months from now = Green
+  - Equipment with warranty_end_date 3-6 months from now = Yellow
+  - Equipment with warranty_end_date < 3 months from now = Red
+  - Equipment with warranty_end_date in the past = Grey
+  - Equipment with no warranty_end_date = Blue
+
+- [ ] Test: Outreach scheduler deduplication:
+  - Run scheduler -> creates outreach entries
+  - Run scheduler again -> does NOT create duplicates
+  - Verify by checking warranty_outreach_log count before/after
+
+- [ ] Test: Recall matching accuracy:
+  - Create equipment: manufacturer='Rheem', model_number='XG40T06EC36U0'
+  - Verify matches recall with model_pattern='%XG40%'
+  - Create equipment: manufacturer='Carrier', model_number='58STA045'
+  - Verify does NOT match '%N9MSB%' recall
+
+- [ ] Test: Warranty claim lifecycle:
+  - Create claim (status: submitted) -> verify audit log
+  - Update to under_review -> verify
+  - Update to approved with amount -> verify
+  - Update to resolved -> verify
+  - Verify all transitions logged in audit trail
+
+- [ ] Test: Client portal read-only:
+  - Homeowner CAN view equipment and warranty status
+  - Homeowner CANNOT edit equipment (RLS enforced)
+  - Homeowner CANNOT create claims directly
+
+- [ ] Test: CRM dashboard aggregations:
+  - Callback revenue = correct sum
+  - Outreach funnel counts = correct
+  - Expiring equipment sorted by soonest
+
+- [ ] Verify: All tests pass, `dart analyze` clean, `npm run build` x 4 portals
 - [ ] Commit: `[W5] Warranty Intelligence testing + recall database seeding`
+
+#### Security Verification
+- [ ] CPSC API calls are server-side only (no client-side API calls)
+- [ ] Recall seed data does not contain PII
+- [ ] All test assertions verify RLS enforcement
 
 ---
 
 ### W6 — Predictive Maintenance Foundation (~6h)
 
 #### Objective
-Equipment lifecycle data + prediction engine tables.
+Equipment lifecycle data reference table and prediction engine table. Seed with 50+ equipment lifecycle entries.
 
-#### Steps
-- [ ] Migration: CREATE equipment_lifecycle_data — id, equipment_category, manufacturer, avg_lifespan_years, maintenance_interval_months, common_failure_modes (JSONB), seasonal_maintenance, source + RLS (public read)
-- [ ] Migration: CREATE maintenance_predictions — id, company_id, equipment_id, customer_id, prediction_type, predicted_date, confidence_score, recommended_action, estimated_cost, outreach_status, resulting_job_id + RLS
-- [ ] Dart model: equipment_lifecycle_data.dart
-- [ ] Dart model: maintenance_prediction.dart
-- [ ] Seed: 50+ equipment lifecycle entries (water heaters, AC condensers, furnaces, panels, roofs, etc.)
-- [ ] Verify: migration clean, models parse correctly
-- [ ] Commit: `[W6] Predictive Maintenance foundation — lifecycle data + predictions table`
+*Source: `Expansion/49_BUSINESS_INTELLIGENCE_ENGINES.md` — ENGINE 9*
+*Depends on: W1 (home_equipment extended)*
+*Existing migration: `20260214000085_w6_predictive_maintenance.sql` — ALREADY APPLIED. Review for gaps.*
+
+#### System Connectivity
+- Creates: `equipment_lifecycle_data` (reference — public read), `maintenance_predictions` (company-scoped)
+- References: `home_equipment`, `customers`, `jobs`, `companies`
+- Called by: W7 (prediction engine), W8 (portal views)
+- Wires to: Warranty Intelligence (Engine 1 data feeds predictions)
+
+#### Existing Migration Audit
+The migration `20260214000085_w6_predictive_maintenance.sql` already exists with:
+- `equipment_lifecycle_data` — DONE (50+ seed entries across all categories)
+- `maintenance_predictions` — DONE (includes `deleted_at`, 5 prediction_types, outreach_status)
+- RLS — DONE (lifecycle: public read + service_role manage; predictions: company JWT scoping all 4 ops)
+- Indexes — DONE (company, equipment, customer, date, status on predictions; category, manufacturer on lifecycle)
+- Triggers — DONE (updated_at + audit on maintenance_predictions)
+
+**GAPS to fix in W6:**
+- [ ] Missing: `updated_at` trigger on `equipment_lifecycle_data` — add
+- [ ] Missing: `deleted_at TIMESTAMPTZ` on `equipment_lifecycle_data` — add
+- [ ] Missing: Index on `maintenance_predictions(resulting_job_id)` — add (FK)
+- [ ] Missing: Unique constraint on `(equipment_id, prediction_type, predicted_date)` to prevent duplicate predictions
+
+**Create gap-fix migration**: `20260220000128_w6_predictive_gaps.sql`
+
+```sql
+-- W6 Gap Fix: Missing triggers, columns, indexes, constraints
+
+-- 1. Add deleted_at to lifecycle data
+ALTER TABLE equipment_lifecycle_data ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
+
+-- 2. Add updated_at trigger on lifecycle data
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_lifecycle_data_updated_at') THEN
+    CREATE TRIGGER update_lifecycle_data_updated_at
+      BEFORE UPDATE ON equipment_lifecycle_data
+      FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+  END IF;
+END $$;
+
+-- 3. Add FK index on predictions
+CREATE INDEX IF NOT EXISTS idx_maintenance_predictions_job
+  ON maintenance_predictions(resulting_job_id)
+  WHERE resulting_job_id IS NOT NULL;
+
+-- 4. Prevent duplicate predictions
+CREATE UNIQUE INDEX IF NOT EXISTS idx_maintenance_predictions_unique
+  ON maintenance_predictions(equipment_id, prediction_type, predicted_date)
+  WHERE deleted_at IS NULL;
+```
+
+#### Dart Models
+
+- [ ] Create `lib/models/equipment_lifecycle_data.dart`:
+  ```dart
+  class EquipmentLifecycleData extends Equatable {
+    final String id;
+    final String equipmentCategory;
+    final String? manufacturer;
+    final double avgLifespanYears;
+    final int maintenanceIntervalMonths;
+    final List<Map<String, dynamic>> commonFailureModes; // JSONB
+    final List<String>? seasonalMaintenance;
+    final String? source;
+    final DateTime createdAt;
+    final DateTime updatedAt;
+    final DateTime? deletedAt;
+
+    const EquipmentLifecycleData({
+      required this.id, required this.equipmentCategory, this.manufacturer,
+      required this.avgLifespanYears, required this.maintenanceIntervalMonths,
+      required this.commonFailureModes, this.seasonalMaintenance, this.source,
+      required this.createdAt, required this.updatedAt, this.deletedAt,
+    });
+
+    @override
+    List<Object?> get props => [id, equipmentCategory, manufacturer, avgLifespanYears];
+
+    // Computed
+    int get maintenanceIntervalDays => maintenanceIntervalMonths * 30;
+    bool get hasSeasonalMaintenance => seasonalMaintenance != null && seasonalMaintenance!.isNotEmpty;
+    bool get requiresAnnualMaintenance => maintenanceIntervalMonths > 0 && maintenanceIntervalMonths <= 12;
+
+    factory EquipmentLifecycleData.fromJson(Map<String, dynamic> json) => EquipmentLifecycleData(
+      id: json['id'] as String,
+      equipmentCategory: json['equipment_category'] as String,
+      manufacturer: json['manufacturer'] as String?,
+      avgLifespanYears: (json['avg_lifespan_years'] as num).toDouble(),
+      maintenanceIntervalMonths: json['maintenance_interval_months'] as int,
+      commonFailureModes: (json['common_failure_modes'] as List?)?.map((e) => e as Map<String, dynamic>).toList() ?? [],
+      seasonalMaintenance: (json['seasonal_maintenance'] as List?)?.map((e) => e as String).toList(),
+      source: json['source'] as String?,
+      createdAt: DateTime.parse(json['created_at'] as String),
+      updatedAt: DateTime.parse(json['updated_at'] as String),
+      deletedAt: json['deleted_at'] != null ? DateTime.parse(json['deleted_at'] as String) : null,
+    );
+
+    Map<String, dynamic> toJson() => {
+      'equipment_category': equipmentCategory, 'manufacturer': manufacturer,
+      'avg_lifespan_years': avgLifespanYears, 'maintenance_interval_months': maintenanceIntervalMonths,
+      'common_failure_modes': commonFailureModes, 'seasonal_maintenance': seasonalMaintenance,
+      'source': source,
+    };
+  }
+  ```
+
+- [ ] Create `lib/models/maintenance_prediction.dart`:
+  ```dart
+  class MaintenancePrediction extends Equatable {
+    final String id;
+    final String companyId;
+    final String equipmentId;
+    final String? customerId;
+    final String predictionType; // maintenance_due, end_of_life, seasonal_check, filter_replacement, inspection_recommended
+    final DateTime predictedDate;
+    final double confidenceScore; // 0.0-1.0
+    final String recommendedAction;
+    final double? estimatedCost;
+    final String outreachStatus; // pending, sent, booked, declined, completed
+    final String? resultingJobId;
+    final String? notes;
+    final DateTime createdAt;
+    final DateTime updatedAt;
+    final DateTime? deletedAt;
+
+    const MaintenancePrediction({/* all fields */});
+
+    @override
+    List<Object?> get props => [id, companyId, equipmentId, predictionType, predictedDate, outreachStatus, updatedAt];
+
+    // Computed
+    bool get isPending => outreachStatus == 'pending';
+    bool get isOverdue => predictedDate.isBefore(DateTime.now()) && outreachStatus == 'pending';
+    int get daysUntilDue => predictedDate.difference(DateTime.now()).inDays;
+    String get urgencyLevel {
+      final days = daysUntilDue;
+      if (days < 0) return 'overdue';
+      if (days <= 30) return 'urgent';
+      if (days <= 90) return 'soon';
+      return 'scheduled';
+    }
+
+    // fromJson, toJson, copyWith
+  }
+  ```
+
+- [ ] Verify: `dart analyze` — 0 errors, migration applies cleanly
+- [ ] Commit: `[W6] Predictive Maintenance foundation — gap-fix migration, lifecycle + prediction models`
+
+#### Security Verification
+- [ ] RLS: Any authenticated user can read equipment_lifecycle_data (public reference)
+- [ ] RLS: Only service_role can write to equipment_lifecycle_data
+- [ ] RLS: Company-scoped SELECT/INSERT/UPDATE/DELETE on maintenance_predictions
+- [ ] Unique constraint prevents duplicate predictions per equipment+type+date
+- [ ] Audit trigger fires on predictions INSERT/UPDATE/DELETE
+
+---
 
 ### W7 — Predictive Maintenance Engine + UI (~8h)
 
-#### Steps
-- [ ] Edge Function: predictive-maintenance-engine — CRON monthly: scan all home_equipment, calculate age vs lifecycle curves, generate predictions for equipment approaching maintenance or end-of-life
-- [ ] CRM page: web-portal/src/app/maintenance-pipeline/page.tsx — upcoming maintenance opportunities, revenue forecast
-- [ ] Hook: use-maintenance-predictions.ts
-- [ ] Verify: predictions generate correctly for test data
+#### Objective
+Build the predictive maintenance CRON Edge Function and CRM dashboard for maintenance pipeline.
+
+*Depends on: W6 (tables, models, seed data)*
+
+#### System Connectivity
+- Reads from: `home_equipment`, `equipment_lifecycle_data`, `maintenance_predictions` (existing), `warranty_outreach_log`
+- Writes to: `maintenance_predictions`
+- CRON: Monthly on 1st at 06:00 UTC
+
+#### Edge Function: Predictive Maintenance Engine
+
+- [ ] Create `supabase/functions/predictive-maintenance-engine/index.ts`:
+  - **HTTP Method**: POST
+  - **Auth**: Service role key (CRON) OR JWT with owner/admin role (manual trigger)
+  - **Schedule**: Monthly on 1st via pg_cron
+
+  **Request Body**:
+  ```json
+  {
+    "company_id": "uuid (optional)",
+    "dry_run": false,
+    "recalculate_all": false
+  }
+  ```
+
+  **Processing Logic**:
+  1. For each company, query all `home_equipment` WHERE `deleted_at IS NULL` AND `install_date IS NOT NULL`
+  2. For each equipment:
+     a. Match `equipment_type` to `equipment_lifecycle_data.equipment_category` (fuzzy match with fallback to generic)
+     b. Calculate equipment age: `(current_date - install_date)` in years (decimal)
+     c. Calculate lifecycle position: `age / avg_lifespan_years` (0.0 = new, 1.0 = expected end-of-life)
+     d. **Maintenance Due**: If `maintenance_interval_months > 0`:
+        - Calculate last maintenance date (from most recent job linked to this equipment with maintenance-related job_type, or from install_date if none)
+        - If months since last maintenance >= maintenance_interval_months: generate `maintenance_due` prediction
+        - If within 60 days of next due: generate `maintenance_due` prediction with future date
+     e. **End of Life**: If lifecycle position > 0.75: generate `end_of_life` prediction
+        - confidence = lifecycle_position (e.g., 0.85 = 85% through expected life)
+        - predicted_date = install_date + avg_lifespan_years
+     f. **Seasonal Check**: If `seasonal_maintenance` array contains a check matching current season:
+        - Spring (Mar-May): 'spring_check', 'spring_startup', 'spring_clean', 'spring_test', 'spring_inspection'
+        - Fall (Sep-Nov): 'fall_tune_up', 'fall_check', 'fall_winterize', 'fall_clean', 'fall_pad_replace', 'fall_inspection'
+        - Generate `seasonal_check` prediction with date = next occurrence of season start month
+     g. **Failure Mode Risk**: For each entry in `common_failure_modes`:
+        - If equipment age >= `typical_age_years` from failure mode: generate `inspection_recommended`
+        - confidence = probability from failure mode data
+        - recommended_action = "Inspect for {failure_mode}: {mode description}"
+  3. For each generated prediction:
+     a. Check for existing active prediction (unique constraint handles dedup)
+     b. Estimate cost: lookup table based on equipment_category + prediction_type
+     c. Set `recommended_action` with specific, useful text (not generic)
+     d. INSERT with `outreach_status = 'pending'`
+  4. Return summary
+
+  **Cost Estimation Lookup** (hardcoded in function, not DB):
+  ```typescript
+  const costEstimates: Record<string, Record<string, number>> = {
+    'ac_condenser': { maintenance_due: 150, end_of_life: 4500, seasonal_check: 120 },
+    'furnace_gas': { maintenance_due: 120, end_of_life: 3500, seasonal_check: 100 },
+    'water_heater_tank': { maintenance_due: 100, end_of_life: 1500 },
+    'water_heater_tankless': { maintenance_due: 150, end_of_life: 2500 },
+    'electrical_panel': { maintenance_due: 200, end_of_life: 3000 },
+    'roof_asphalt_shingle': { maintenance_due: 250, end_of_life: 12000, seasonal_check: 200 },
+    // ... all 50+ categories
+  };
+  ```
+
+  **Response Body**:
+  ```json
+  {
+    "processed_companies": 42,
+    "equipment_scanned": 1284,
+    "predictions_generated": 156,
+    "predictions_skipped_duplicate": 34,
+    "prediction_breakdown": {
+      "maintenance_due": 67,
+      "end_of_life": 23,
+      "seasonal_check": 45,
+      "filter_replacement": 12,
+      "inspection_recommended": 9
+    },
+    "errors": []
+  }
+  ```
+
+  **Error Cases**:
+  - No lifecycle data match: Skip equipment, log "No lifecycle data for: {equipment_type}"
+  - Missing install_date: Skip (cannot calculate age)
+  - Database write failure: Log, continue with next
+  - Timeout: Process in batches of 100 companies, use cursor pagination
+
+- [ ] Set up pg_cron:
+  ```sql
+  SELECT cron.schedule('monthly-predictive-maintenance', '0 6 1 * *',
+    $$SELECT net.http_post(
+      url := current_setting('app.supabase_url') || '/functions/v1/predictive-maintenance-engine',
+      headers := jsonb_build_object('Authorization', 'Bearer ' || current_setting('app.service_role_key'), 'Content-Type', 'application/json'),
+      body := '{}'::jsonb
+    )$$
+  );
+  ```
+
+#### CRM Pages
+
+- [ ] Create `web-portal/src/app/(dashboard)/maintenance-pipeline/page.tsx`:
+  - **What it displays**: Upcoming maintenance opportunities — revenue forecast from proactive maintenance
+  - **Sections**:
+    1. **Revenue Forecast**: Monthly bar chart — estimated maintenance revenue (pending predictions x estimated_cost). "Next 90 days: ~$24,500 in maintenance opportunities"
+    2. **Pipeline by Type**: Cards per prediction_type with count + total estimated revenue
+    3. **Priority Actions Table**: All pending predictions sorted by predicted_date:
+       - Columns: Customer | Equipment | Prediction | Due Date | Est. Cost | Confidence | Outreach Status | Actions
+       - Actions: "Send Outreach", "Mark Completed", "Dismiss"
+    4. **Completed Maintenance**: Predictions that resulted in jobs — actual revenue vs estimated
+  - **Filters**: Prediction type, date range, customer, equipment category, outreach status
+  - **4 states**: Loading skeleton, error, empty ("Predictions generate monthly after equipment is tracked"), data
+
+#### Hook
+
+- [ ] Create `web-portal/src/lib/hooks/use-maintenance-predictions.ts`:
+  ```typescript
+  'use client';
+  export function useMaintenancePredictions() {
+    // Query maintenance_predictions with real-time subscription
+    // Computed: revenueForecast, pipelineByType, priorityActions, completedStats
+    // Mutations: sendOutreach, markCompleted, dismissPrediction, createJobFromPrediction
+    return { predictions, loading, error, revenueForecast, pipelineByType, ...mutations };
+  }
+  ```
+
+- [ ] Verify: Predictions generate correctly for test data, `npm run build` — 0 errors
 - [ ] Commit: `[W7] Predictive Maintenance engine + CRM pipeline dashboard`
+
+#### Security Verification
+- [ ] Edge Function requires service_role or admin/owner JWT
+- [ ] CRM pages only show predictions for authenticated user's company
+- [ ] Revenue calculations filter by company_id
+- [ ] "Send Outreach" reuses existing SignalWire integration
+
+---
 
 ### W8 — Predictive Maintenance Portal + Outreach (~6h)
 
-#### Steps
-- [ ] Client portal: extend my-home/maintenance page to show "Recommended Maintenance" from predictions
-- [ ] Outreach: predictive maintenance engine triggers outreach via warranty-outreach-scheduler (reuse existing)
-- [ ] Flutter: add "Maintenance Opportunities" section to customer detail screen
-- [ ] Test: full flow — equipment installed → time passes → prediction generated → outreach sent → customer books → job created
-- [ ] Verify: all portals build clean
-- [ ] Commit: `[W8] Predictive Maintenance portal views + outreach integration`
+#### Objective
+Extend client portal with "Recommended Maintenance". Add maintenance opportunities to Flutter customer detail. Wire predictions to outreach. Full end-to-end testing.
+
+*Depends on: W6-W7 (prediction engine), W4 (outreach scheduler)*
+
+#### System Connectivity
+- Reads from: `maintenance_predictions`, `home_equipment`, `equipment_lifecycle_data`
+- Writes to: `maintenance_predictions` (outreach_status), `warranty_outreach_log` (outreach entries)
+- Wires to: W4 outreach scheduler (reuse), job creation flow
+
+#### Client Portal Extension
+
+- [ ] Extend `client-portal/src/app/(dashboard)/warranties/page.tsx`:
+  - Add "Recommended Maintenance" section below equipment list
+  - Shows predictions with `outreach_status IN ('pending', 'sent')` for this customer
+  - Each card: equipment name, predicted service date, recommended action, estimated cost range, confidence (low/medium/high)
+  - "Request Service" button — notifies contractor
+  - Sort by predicted_date soonest first
+
+- [ ] Extend `client-portal/src/lib/hooks/use-warranty-portfolio.ts`:
+  - Add `maintenancePredictions` to returned data
+  - Add `requestService(predictionId)` mutation
+
+#### Flutter Extension
+
+- [ ] Add "Maintenance Opportunities" section to `lib/screens/customers/customer_detail_screen.dart`:
+  - Shows predictions for this customer's equipment
+  - Each card: equipment name, prediction type icon, due date, estimated cost, confidence bar
+  - "Create Job" action pre-fills job creation with customer + equipment info
+
+- [ ] Create `lib/providers/maintenance_prediction_provider.dart`:
+  ```dart
+  final customerPredictionsProvider = AutoDisposeFutureProvider.family<List<MaintenancePrediction>, String>(
+    (ref, customerId) => ref.read(warrantyIntelligenceRepositoryProvider)
+      .getPredictionsForCustomer(customerId: customerId),
+  );
+
+  final pendingPredictionsProvider = AutoDisposeAsyncNotifierProvider<PendingPredictionsNotifier, List<MaintenancePrediction>>(
+    PendingPredictionsNotifier.new,
+  );
+  ```
+
+#### Outreach Integration
+
+- [ ] Extend `warranty-outreach-scheduler` (W4) to also scan `maintenance_predictions`:
+  - WHERE `outreach_status = 'pending'` AND `predicted_date` within 30 days AND `deleted_at IS NULL`
+  - For each: create `warranty_outreach_log` entry with `outreach_type = 'maintenance_reminder'`
+  - SMS: "Hi {customer}, your {equipment} is due for maintenance ({action}). Regular maintenance extends equipment life and prevents breakdowns. Reply YES or call {phone}. — {company}"
+  - Update `maintenance_predictions.outreach_status` to 'sent'
+
+#### End-to-End Testing
+
+- [ ] Test full lifecycle:
+  1. Create company, customer, property
+  2. Complete job, log equipment (water heater, install_date = 9 years ago)
+  3. Run predictive-maintenance-engine -> verify end_of_life + maintenance_due predictions generated
+  4. Run warranty-outreach-scheduler -> verify outreach sent, status updated
+  5. Simulate booking -> update status to 'booked'
+  6. Create job from prediction -> verify resulting_job_id linked
+  7. Complete job -> verify prediction status = 'completed'
+
+- [ ] Test seasonal predictions:
+  - HVAC equipment + spring month -> spring_check generated
+  - Same equipment + fall month -> fall_winterize generated
+
+- [ ] Test client portal:
+  - Homeowner sees "Recommended Maintenance"
+  - "Request Service" notifies contractor
+  - Completed predictions no longer show
+
+- [ ] Test Flutter:
+  - Customer detail shows maintenance cards
+  - "Create Job" pre-fills correctly
+
+- [ ] Verify: All portals build clean — `dart analyze`, `npm run build` x 4
+- [ ] Commit: `[W8] Predictive Maintenance portal views + outreach integration + full flow testing`
+
+#### Security Verification
+- [ ] Client portal only shows predictions for authenticated customer's equipment
+- [ ] Predictions for other companies' equipment not accessible
+- [ ] Outreach deduplication prevents re-sending
+- [ ] Job creation from prediction validates company ownership
 
 ---
+
+## ══════════════════════════════════════════════════════════
+
+---
+
 
 ## ══════════════════════════════════════════════════════════
 ## PHASE J — JOB INTELLIGENCE (Post-W)
@@ -11304,67 +12319,906 @@ Equipment lifecycle data + prediction engine tables.
 
 ### J1 — Job Cost Autopsy Foundation (~8h)
 
-#### Steps
-- [ ] Migration: CREATE job_cost_autopsies — id, company_id, job_id (UNIQUE), estimated vs actual fields (labor_hours, labor_cost, material_cost, drive_time, callbacks, change_orders), gross_profit, gross_margin_pct, variance_pct, job_type, trade_type, primary_tech_id, completed_at + RLS
-- [ ] Migration: CREATE autopsy_insights — id, company_id, insight_type, insight_key, insight_data (JSONB), sample_size, confidence_score, period_start, period_end + RLS
-- [ ] Migration: CREATE estimate_adjustments — id, company_id, job_type, trade_type, adjustment_type, suggested_multiplier, based_on_jobs, status + RLS
-- [ ] Dart models: job_cost_autopsy.dart, autopsy_insight.dart, estimate_adjustment.dart
-- [ ] Repository: job_intelligence_repository.dart
-- [ ] Verify: migration clean, 0 errors
-- [ ] Commit: `[J1] Job Cost Autopsy foundation — tables, models, RLS`
+#### Objective
+Create tables for job cost autopsy analysis, aggregated insights, and estimate adjustments. Build Dart models and repository.
+
+*Source: `Expansion/49_BUSINESS_INTELLIGENCE_ENGINES.md` — ENGINE 2*
+*Depends on: Phase U complete (jobs, estimates, time_entries, receipts, mileage all exist)*
+
+#### System Connectivity
+- References: `jobs`, `estimates`, `users`, `companies`, `time_entries`, `receipts`, `mileage_entries`, `customers`
+- Called by: J2 (generator engine), J3 (Flutter), J4 (CRM), J5-J6 (Smart Pricing)
+- Wires to: Estimate engine (D8) — feedback loop for future estimates
+
+#### Database Layer
+
+- [ ] Create migration `20260220000129_j1_job_cost_autopsy.sql`:
+
+```sql
+-- ══════════════════════════════════════════════════════════
+-- job_cost_autopsies — one per completed job, auto-generated
+-- ══════════════════════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS job_cost_autopsies (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  job_id UUID NOT NULL REFERENCES jobs(id),
+
+  -- Estimated values (snapshot from estimate at job start)
+  estimated_labor_hours NUMERIC(8,2),
+  estimated_labor_cost NUMERIC(10,2),
+  estimated_material_cost NUMERIC(10,2),
+  estimated_total NUMERIC(10,2),
+
+  -- Actual values (calculated from time entries, receipts, mileage)
+  actual_labor_hours NUMERIC(8,2),
+  actual_labor_cost NUMERIC(10,2),
+  actual_material_cost NUMERIC(10,2),
+  actual_drive_time_hours NUMERIC(6,2),
+  actual_drive_cost NUMERIC(8,2),
+  actual_callback_count INTEGER NOT NULL DEFAULT 0,
+  actual_callback_cost NUMERIC(8,2) NOT NULL DEFAULT 0,
+  actual_change_order_total NUMERIC(10,2) NOT NULL DEFAULT 0,
+  actual_total NUMERIC(10,2),
+
+  -- Calculated profitability
+  gross_profit NUMERIC(10,2),
+  gross_margin_pct NUMERIC(5,2),
+  variance_pct NUMERIC(5,2), -- (actual - estimated) / estimated * 100
+
+  -- Metadata for fast aggregation queries (denormalized from job)
+  job_type TEXT,
+  trade_type TEXT,
+  primary_tech_id UUID REFERENCES users(id),
+  customer_id UUID REFERENCES customers(id),
+  completed_at TIMESTAMPTZ,
+
+  -- System
+  autopsy_generated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  deleted_at TIMESTAMPTZ,
+
+  -- One autopsy per job
+  CONSTRAINT unique_job_autopsy UNIQUE (job_id)
+);
+
+ALTER TABLE job_cost_autopsies ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "jca_select" ON job_cost_autopsies FOR SELECT
+  USING (company_id = (SELECT (auth.jwt()->'app_metadata'->>'company_id')::uuid));
+CREATE POLICY "jca_insert" ON job_cost_autopsies FOR INSERT
+  WITH CHECK (
+    (auth.jwt()->'app_metadata'->>'role') IN ('owner', 'admin') OR current_setting('role') = 'service_role'
+  );
+CREATE POLICY "jca_update" ON job_cost_autopsies FOR UPDATE
+  USING (company_id = (SELECT (auth.jwt()->'app_metadata'->>'company_id')::uuid));
+CREATE POLICY "jca_delete" ON job_cost_autopsies FOR DELETE
+  USING (company_id = (SELECT (auth.jwt()->'app_metadata'->>'company_id')::uuid));
+
+-- Indexes
+CREATE INDEX idx_jca_company ON job_cost_autopsies(company_id);
+CREATE INDEX idx_jca_job ON job_cost_autopsies(job_id);
+CREATE INDEX idx_jca_job_type ON job_cost_autopsies(company_id, job_type);
+CREATE INDEX idx_jca_trade_type ON job_cost_autopsies(company_id, trade_type);
+CREATE INDEX idx_jca_completed ON job_cost_autopsies(completed_at);
+CREATE INDEX idx_jca_tech ON job_cost_autopsies(primary_tech_id) WHERE primary_tech_id IS NOT NULL;
+CREATE INDEX idx_jca_customer ON job_cost_autopsies(customer_id) WHERE customer_id IS NOT NULL;
+CREATE INDEX idx_jca_margin ON job_cost_autopsies(company_id, gross_margin_pct);
+
+-- Triggers
+CREATE TRIGGER jca_updated_at BEFORE UPDATE ON job_cost_autopsies
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER jca_audit AFTER INSERT OR UPDATE OR DELETE ON job_cost_autopsies
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+-- ══════════════════════════════════════════════════════════
+-- autopsy_insights — aggregated patterns across completed jobs
+-- ══════════════════════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS autopsy_insights (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  insight_type TEXT NOT NULL CHECK (insight_type IN (
+    'job_type_avg',        -- average profitability per job type
+    'tech_performance',    -- per-technician margin analysis
+    'seasonal_trend',      -- seasonal profitability patterns
+    'material_variance',   -- material cost overrun patterns
+    'estimate_accuracy',   -- overall estimate accuracy trend
+    'callback_rate',       -- callback frequency by job type
+    'drive_time_impact',   -- how drive time affects profitability
+    'change_order_pattern' -- change order frequency/impact
+  )),
+  insight_key TEXT NOT NULL, -- e.g., "bathroom_rewire", "tech_mike_johnson", "Q4_2026"
+  insight_data JSONB NOT NULL, -- flexible structured payload per insight type
+  sample_size INTEGER NOT NULL,
+  confidence_score NUMERIC(3,2) CHECK (confidence_score BETWEEN 0.00 AND 1.00),
+  period_start DATE,
+  period_end DATE,
+  generated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  deleted_at TIMESTAMPTZ,
+
+  -- Prevent duplicate insights for same type+key+period
+  CONSTRAINT unique_insight UNIQUE (company_id, insight_type, insight_key, period_start)
+);
+
+ALTER TABLE autopsy_insights ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "ai_select" ON autopsy_insights FOR SELECT
+  USING (company_id = (SELECT (auth.jwt()->'app_metadata'->>'company_id')::uuid));
+CREATE POLICY "ai_insert" ON autopsy_insights FOR INSERT
+  WITH CHECK (
+    (auth.jwt()->'app_metadata'->>'role') IN ('owner', 'admin') OR current_setting('role') = 'service_role'
+  );
+CREATE POLICY "ai_update" ON autopsy_insights FOR UPDATE
+  USING (company_id = (SELECT (auth.jwt()->'app_metadata'->>'company_id')::uuid));
+CREATE POLICY "ai_delete" ON autopsy_insights FOR DELETE
+  USING (company_id = (SELECT (auth.jwt()->'app_metadata'->>'company_id')::uuid));
+
+-- Indexes
+CREATE INDEX idx_ai_company ON autopsy_insights(company_id);
+CREATE INDEX idx_ai_type ON autopsy_insights(company_id, insight_type);
+CREATE INDEX idx_ai_key ON autopsy_insights(company_id, insight_key);
+CREATE INDEX idx_ai_period ON autopsy_insights(period_start, period_end);
+
+-- Triggers
+CREATE TRIGGER ai_updated_at BEFORE UPDATE ON autopsy_insights
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER ai_audit AFTER INSERT OR UPDATE OR DELETE ON autopsy_insights
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+-- ══════════════════════════════════════════════════════════
+-- estimate_adjustments — suggested corrections to future estimates
+-- ══════════════════════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS estimate_adjustments (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  job_type TEXT NOT NULL,
+  trade_type TEXT,
+  adjustment_type TEXT NOT NULL CHECK (adjustment_type IN (
+    'labor_hours',     -- labor hour estimates consistently off
+    'material_cost',   -- material cost estimates consistently off
+    'total',           -- overall estimate consistently off
+    'drive_time',      -- drive time not accounted for
+    'callback_buffer'  -- callback cost not accounted for
+  )),
+  suggested_multiplier NUMERIC(4,2) NOT NULL, -- e.g., 1.12 = "increase 12%"
+  based_on_jobs INTEGER NOT NULL, -- jobs informing this suggestion
+  current_avg_variance_pct NUMERIC(5,2),
+  description TEXT, -- "Your bathroom rewire estimates are 15% low on labor hours"
+  status TEXT NOT NULL DEFAULT 'suggested' CHECK (status IN ('suggested', 'accepted', 'dismissed', 'expired')),
+  accepted_by UUID REFERENCES users(id),
+  accepted_at TIMESTAMPTZ,
+  dismissed_by UUID REFERENCES users(id),
+  dismissed_at TIMESTAMPTZ,
+  dismissed_reason TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  deleted_at TIMESTAMPTZ
+);
+
+ALTER TABLE estimate_adjustments ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "ea_select" ON estimate_adjustments FOR SELECT
+  USING (company_id = (SELECT (auth.jwt()->'app_metadata'->>'company_id')::uuid));
+CREATE POLICY "ea_insert" ON estimate_adjustments FOR INSERT
+  WITH CHECK (
+    (auth.jwt()->'app_metadata'->>'role') IN ('owner', 'admin') OR current_setting('role') = 'service_role'
+  );
+CREATE POLICY "ea_update" ON estimate_adjustments FOR UPDATE
+  USING (company_id = (SELECT (auth.jwt()->'app_metadata'->>'company_id')::uuid));
+CREATE POLICY "ea_delete" ON estimate_adjustments FOR DELETE
+  USING (company_id = (SELECT (auth.jwt()->'app_metadata'->>'company_id')::uuid));
+
+-- Indexes
+CREATE INDEX idx_ea_company ON estimate_adjustments(company_id);
+CREATE INDEX idx_ea_job_type ON estimate_adjustments(company_id, job_type);
+CREATE INDEX idx_ea_status ON estimate_adjustments(status) WHERE status = 'suggested';
+CREATE INDEX idx_ea_trade ON estimate_adjustments(company_id, trade_type) WHERE trade_type IS NOT NULL;
+
+-- Triggers
+CREATE TRIGGER ea_updated_at BEFORE UPDATE ON estimate_adjustments
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER ea_audit AFTER INSERT OR UPDATE OR DELETE ON estimate_adjustments
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+```
+
+#### Dart Models
+
+- [ ] Create `lib/models/job_cost_autopsy.dart`:
+  ```dart
+  class JobCostAutopsy extends Equatable {
+    final String id;
+    final String companyId;
+    final String jobId;
+    final double? estimatedLaborHours;
+    final double? estimatedLaborCost;
+    final double? estimatedMaterialCost;
+    final double? estimatedTotal;
+    final double? actualLaborHours;
+    final double? actualLaborCost;
+    final double? actualMaterialCost;
+    final double? actualDriveTimeHours;
+    final double? actualDriveCost;
+    final int actualCallbackCount;
+    final double actualCallbackCost;
+    final double actualChangeOrderTotal;
+    final double? actualTotal;
+    final double? grossProfit;
+    final double? grossMarginPct;
+    final double? variancePct;
+    final String? jobType;
+    final String? tradeType;
+    final String? primaryTechId;
+    final String? customerId;
+    final DateTime? completedAt;
+    final DateTime autopsyGeneratedAt;
+    final DateTime createdAt;
+    final DateTime updatedAt;
+    final DateTime? deletedAt;
+
+    const JobCostAutopsy({/* all fields required/optional as shown */});
+
+    @override
+    List<Object?> get props => [id, companyId, jobId, grossMarginPct, updatedAt];
+
+    // Computed getters
+    bool get isProfitable => (grossProfit ?? 0) > 0;
+    bool get isOverBudget => (variancePct ?? 0) > 0;
+    double get laborVarianceHours => (actualLaborHours ?? 0) - (estimatedLaborHours ?? 0);
+    double get laborVarianceCost => (actualLaborCost ?? 0) - (estimatedLaborCost ?? 0);
+    double get materialVariance => (actualMaterialCost ?? 0) - (estimatedMaterialCost ?? 0);
+    double get hiddenCosts => (actualDriveCost ?? 0) + actualCallbackCost + actualChangeOrderTotal;
+    String get profitabilityGrade {
+      final margin = grossMarginPct ?? 0;
+      if (margin >= 40) return 'A';
+      if (margin >= 30) return 'B';
+      if (margin >= 20) return 'C';
+      if (margin >= 10) return 'D';
+      return 'F';
+    }
+
+    factory JobCostAutopsy.fromJson(Map<String, dynamic> json) => JobCostAutopsy(
+      id: json['id'] as String,
+      companyId: json['company_id'] as String,
+      jobId: json['job_id'] as String,
+      estimatedLaborHours: (json['estimated_labor_hours'] as num?)?.toDouble(),
+      estimatedLaborCost: (json['estimated_labor_cost'] as num?)?.toDouble(),
+      estimatedMaterialCost: (json['estimated_material_cost'] as num?)?.toDouble(),
+      estimatedTotal: (json['estimated_total'] as num?)?.toDouble(),
+      actualLaborHours: (json['actual_labor_hours'] as num?)?.toDouble(),
+      actualLaborCost: (json['actual_labor_cost'] as num?)?.toDouble(),
+      actualMaterialCost: (json['actual_material_cost'] as num?)?.toDouble(),
+      actualDriveTimeHours: (json['actual_drive_time_hours'] as num?)?.toDouble(),
+      actualDriveCost: (json['actual_drive_cost'] as num?)?.toDouble(),
+      actualCallbackCount: json['actual_callback_count'] as int? ?? 0,
+      actualCallbackCost: (json['actual_callback_cost'] as num?)?.toDouble() ?? 0,
+      actualChangeOrderTotal: (json['actual_change_order_total'] as num?)?.toDouble() ?? 0,
+      actualTotal: (json['actual_total'] as num?)?.toDouble(),
+      grossProfit: (json['gross_profit'] as num?)?.toDouble(),
+      grossMarginPct: (json['gross_margin_pct'] as num?)?.toDouble(),
+      variancePct: (json['variance_pct'] as num?)?.toDouble(),
+      jobType: json['job_type'] as String?,
+      tradeType: json['trade_type'] as String?,
+      primaryTechId: json['primary_tech_id'] as String?,
+      customerId: json['customer_id'] as String?,
+      completedAt: json['completed_at'] != null ? DateTime.parse(json['completed_at'] as String) : null,
+      autopsyGeneratedAt: DateTime.parse(json['autopsy_generated_at'] as String),
+      createdAt: DateTime.parse(json['created_at'] as String),
+      updatedAt: DateTime.parse(json['updated_at'] as String),
+      deletedAt: json['deleted_at'] != null ? DateTime.parse(json['deleted_at'] as String) : null,
+    );
+
+    Map<String, dynamic> toJson() => {
+      'company_id': companyId, 'job_id': jobId,
+      'estimated_labor_hours': estimatedLaborHours, 'estimated_labor_cost': estimatedLaborCost,
+      'estimated_material_cost': estimatedMaterialCost, 'estimated_total': estimatedTotal,
+      'actual_labor_hours': actualLaborHours, 'actual_labor_cost': actualLaborCost,
+      'actual_material_cost': actualMaterialCost, 'actual_drive_time_hours': actualDriveTimeHours,
+      'actual_drive_cost': actualDriveCost, 'actual_callback_count': actualCallbackCount,
+      'actual_callback_cost': actualCallbackCost, 'actual_change_order_total': actualChangeOrderTotal,
+      'actual_total': actualTotal, 'gross_profit': grossProfit,
+      'gross_margin_pct': grossMarginPct, 'variance_pct': variancePct,
+      'job_type': jobType, 'trade_type': tradeType,
+      'primary_tech_id': primaryTechId, 'customer_id': customerId,
+      'completed_at': completedAt?.toIso8601String(),
+    };
+  }
+  ```
+
+- [ ] Create `lib/models/autopsy_insight.dart`:
+  ```dart
+  class AutopsyInsight extends Equatable {
+    final String id;
+    final String companyId;
+    final String insightType;
+    final String insightKey;
+    final Map<String, dynamic> insightData;
+    final int sampleSize;
+    final double? confidenceScore;
+    final DateTime? periodStart;
+    final DateTime? periodEnd;
+    final DateTime generatedAt;
+    final DateTime createdAt;
+    final DateTime updatedAt;
+    final DateTime? deletedAt;
+
+    bool get isHighConfidence => (confidenceScore ?? 0) >= 0.75;
+    bool get isLowSampleSize => sampleSize < 5;
+    // fromJson, toJson, copyWith
+  }
+  ```
+
+- [ ] Create `lib/models/estimate_adjustment.dart`:
+  ```dart
+  class EstimateAdjustment extends Equatable {
+    final String id;
+    final String companyId;
+    final String jobType;
+    final String? tradeType;
+    final String adjustmentType;
+    final double suggestedMultiplier;
+    final int basedOnJobs;
+    final double? currentAvgVariancePct;
+    final String? description;
+    final String status;
+    final String? acceptedBy;
+    final DateTime? acceptedAt;
+    final String? dismissedBy;
+    final DateTime? dismissedAt;
+    final String? dismissedReason;
+    final DateTime createdAt;
+    final DateTime updatedAt;
+    final DateTime? deletedAt;
+
+    double get suggestedPctChange => (suggestedMultiplier - 1.0) * 100;
+    bool get isIncrease => suggestedMultiplier > 1.0;
+    bool get isPending => status == 'suggested';
+    // fromJson, toJson, copyWith
+  }
+  ```
+
+#### Repository
+
+- [ ] Create `lib/repositories/job_intelligence_repository.dart`:
+  ```dart
+  abstract class JobIntelligenceRepository {
+    Future<List<JobCostAutopsy>> getAutopsies({required String companyId, String? jobType, String? tradeType, String? techId, DateTime? startDate, DateTime? endDate});
+    Future<JobCostAutopsy?> getAutopsyForJob({required String jobId});
+    Future<JobCostAutopsy> createAutopsy(JobCostAutopsy autopsy);
+    Future<List<AutopsyInsight>> getInsights({required String companyId, String? insightType});
+    Future<List<EstimateAdjustment>> getAdjustments({required String companyId, String? status});
+    Future<EstimateAdjustment> acceptAdjustment({required String adjustmentId, required String userId});
+    Future<EstimateAdjustment> dismissAdjustment({required String adjustmentId, required String userId, String? reason});
+  }
+  ```
+
+- [ ] Verify: `dart analyze` — 0 errors, migration applies cleanly
+- [ ] Commit: `[J1] Job Cost Autopsy foundation — 3 tables, models, RLS, repository`
+
+#### Security Verification
+- [ ] RLS: 4 policies per table (SELECT/INSERT/UPDATE/DELETE), all company_id scoped
+- [ ] Audit triggers on all 3 tables
+- [ ] updated_at triggers on all 3 tables
+- [ ] deleted_at column on all 3 tables
+- [ ] UNIQUE constraint on job_cost_autopsies(job_id) prevents duplicate autopsies
+- [ ] UNIQUE constraint on autopsy_insights(company_id, insight_type, insight_key, period_start)
+- [ ] All FK columns have indexes
+
+---
 
 ### J2 — Autopsy Generator Engine (~8h)
 
-#### Steps
-- [ ] Edge Function: job-cost-autopsy-generator — trigger on job.status = 'completed': pull time_entries, receipts, mileage for job. Calculate actual costs. Compare to estimate snapshot. Generate autopsy record.
-- [ ] DB trigger: after job status change to 'completed', invoke autopsy generator
-- [ ] Monthly CRON: regenerate autopsy_insights — aggregate by job_type, by tech, by season
-- [ ] Monthly CRON: generate estimate_adjustments where variance pattern is consistent (>5 jobs, >10% variance)
-- [ ] Verify: autopsy generates correctly from test job data
-- [ ] Commit: `[J2] Job Cost Autopsy generator + insights aggregation engine`
+#### Objective
+Build the Edge Function that auto-generates job cost autopsies on job completion. Monthly CRON for insights aggregation and adjustment generation.
+
+*Depends on: J1 (tables, models)*
+
+#### System Connectivity
+- Reads from: `jobs`, `estimates`, `estimate_items`, `time_entries`, `receipts`, `mileage_entries`
+- **Prerequisite note:** Requires Phase U time tracking tables. If `receipts`/`mileage_entries` don't exist yet, J1/J2 autopsy queries gracefully skip those data sources (COALESCE with empty arrays).
+- Writes to: `job_cost_autopsies`, `autopsy_insights`, `estimate_adjustments`
+- Triggered by: DB trigger on `jobs.status` -> 'completed'
+- CRON: Monthly insights + adjustments
+
+#### Edge Function: Job Cost Autopsy Generator
+
+- [ ] Create `supabase/functions/job-cost-autopsy-generator/index.ts`:
+  - **HTTP Method**: POST
+  - **Auth**: Service role key (DB trigger/CRON) OR JWT with owner/admin (manual)
+
+  **Request Body**:
+  ```json
+  {
+    "job_id": "uuid",
+    "mode": "single_job | monthly_aggregate | generate_adjustments",
+    "company_id": "uuid (optional for aggregate)",
+    "period_months": 3
+  }
+  ```
+
+  **Mode: single_job** — triggered on job completion:
+  1. Fetch completed job: `SELECT * FROM jobs WHERE id = $1`
+  2. Get estimate snapshot: `SELECT * FROM estimates WHERE job_id = $1 ORDER BY created_at DESC LIMIT 1`
+     - If estimate exists, sum line items for labor/material/total estimates
+     - If no estimate: estimated fields = NULL (ad-hoc job)
+  3. Get actual labor: `SELECT SUM(duration_hours), SUM(duration_hours * COALESCE(hourly_rate, 0)) FROM time_entries WHERE job_id = $1 AND deleted_at IS NULL`
+  4. Get actual materials: `SELECT SUM(amount) FROM receipts WHERE job_id = $1 AND deleted_at IS NULL`
+  5. Get drive data: `SELECT SUM(distance_miles), SUM(duration_minutes / 60.0) FROM mileage_entries WHERE job_id = $1 AND deleted_at IS NULL`
+     - Drive cost = miles * $0.67 (IRS rate, configurable per company)
+  6. Get callbacks: COUNT of related callback jobs (if parent_job_id pattern exists)
+  7. Get change orders: SUM of change_order amounts (if table exists)
+  8. Calculate:
+     - `actual_total = actual_labor_cost + actual_material_cost + actual_drive_cost + actual_callback_cost`
+     - `gross_profit = COALESCE(invoiced_amount, estimated_total) - actual_total`
+     - `gross_margin_pct = gross_profit / NULLIF(COALESCE(invoiced_amount, estimated_total), 0) * 100`
+     - `variance_pct = (actual_total - estimated_total) / NULLIF(estimated_total, 0) * 100`
+  9. INSERT into `job_cost_autopsies` (idempotent — UNIQUE on job_id, use ON CONFLICT DO NOTHING)
+
+  **Mode: monthly_aggregate**:
+  1. For each company, query autopsies from last N months
+  2. Generate `autopsy_insights` by type:
+     - `job_type_avg`: GROUP BY job_type -> avg_margin, avg_variance, total_revenue, job_count
+     - `tech_performance`: GROUP BY primary_tech_id -> per-tech metrics
+     - `seasonal_trend`: GROUP BY EXTRACT(quarter FROM completed_at) -> seasonal patterns
+     - `material_variance`: Filter where material_variance > 10% -> identify problem job types
+     - `estimate_accuracy`: Overall % of jobs where abs(variance_pct) < 10%
+     - `callback_rate`: GROUP BY job_type -> callback_count / total_jobs
+  3. UPSERT into `autopsy_insights` (ON CONFLICT update)
+
+  **Mode: generate_adjustments**:
+  1. Query insights with:
+     - `sample_size >= 5` (minimum statistical relevance)
+     - `abs(current_avg_variance_pct) >= 10` (meaningful variance)
+  2. Generate adjustment only if one doesn't already exist with status='suggested' for same (company, job_type, adjustment_type)
+  3. Determine adjustment_type from largest variance source (labor vs material vs total)
+  4. Set `suggested_multiplier = 1 + (avg_variance_pct / 100)` (e.g., 15% over -> multiplier 1.15)
+  5. Set human-readable `description`
+
+  **Error Cases**:
+  - Job not found: 404
+  - Job not completed: 400
+  - Autopsy already exists: Return existing (idempotent)
+  - Missing time entries: Generate with actual_labor = 0, log warning
+  - No estimate: estimated fields = NULL, variance = NULL
+  - Division by zero: Use NULLIF to avoid, set variance = NULL
+
+- [ ] Create DB trigger for auto-generation on job completion:
+  ```sql
+  CREATE OR REPLACE FUNCTION trigger_autopsy_on_job_complete()
+  RETURNS TRIGGER AS $$
+  BEGIN
+    IF NEW.status = 'completed' AND (OLD.status IS NULL OR OLD.status != 'completed') THEN
+      PERFORM net.http_post(
+        url := current_setting('app.supabase_url') || '/functions/v1/job-cost-autopsy-generator',
+        headers := jsonb_build_object(
+          'Authorization', 'Bearer ' || current_setting('app.service_role_key'),
+          'Content-Type', 'application/json'
+        ),
+        body := jsonb_build_object('job_id', NEW.id, 'mode', 'single_job')
+      );
+    END IF;
+    RETURN NEW;
+  END;
+  $$ LANGUAGE plpgsql SECURITY DEFINER;
+
+  CREATE TRIGGER job_completion_generate_autopsy
+    AFTER UPDATE OF status ON jobs
+    FOR EACH ROW
+    WHEN (NEW.status = 'completed' AND OLD.status IS DISTINCT FROM 'completed')
+    EXECUTE FUNCTION trigger_autopsy_on_job_complete();
+  ```
+
+- [ ] Set up pg_cron jobs:
+  ```sql
+  -- Monthly insights aggregation (1st of month, 07:00 UTC)
+  SELECT cron.schedule('monthly-autopsy-insights', '0 7 1 * *',
+    $$SELECT net.http_post(
+      url := current_setting('app.supabase_url') || '/functions/v1/job-cost-autopsy-generator',
+      headers := jsonb_build_object('Authorization', 'Bearer ' || current_setting('app.service_role_key'), 'Content-Type', 'application/json'),
+      body := '{"mode": "monthly_aggregate", "period_months": 3}'::jsonb
+    )$$
+  );
+
+  -- Monthly estimate adjustments (1st of month, 08:00 UTC — runs after insights)
+  SELECT cron.schedule('monthly-estimate-adjustments', '0 8 1 * *',
+    $$SELECT net.http_post(
+      url := current_setting('app.supabase_url') || '/functions/v1/job-cost-autopsy-generator',
+      headers := jsonb_build_object('Authorization', 'Bearer ' || current_setting('app.service_role_key'), 'Content-Type', 'application/json'),
+      body := '{"mode": "generate_adjustments"}'::jsonb
+    )$$
+  );
+  ```
+
+- [ ] Verify: Autopsy generates correctly from test job data
+- [ ] Commit: `[J2] Job Cost Autopsy generator — Edge Function + DB trigger + monthly CRON`
+
+#### Security Verification
+- [ ] Edge Function validates service_role or admin/owner JWT
+- [ ] DB trigger uses SECURITY DEFINER (runs as service role)
+- [ ] Autopsy generation is company-scoped (only touches the completed job's company data)
+- [ ] Monthly aggregate processes each company independently
+- [ ] CRON uses service_role_key from database settings
+- [ ] Idempotent — UNIQUE constraint prevents duplicates
+
+---
 
 ### J3 — Autopsy Flutter + Smart Pricing Foundation (~8h)
 
-#### Steps
-- [ ] Flutter screen: job_autopsy_screen.dart — per-job breakdown with estimated vs actual bar chart, variance callouts
-- [ ] Flutter screen: autopsy_dashboard_screen.dart — aggregate profitability by job type, by tech, by month
-- [ ] Migration: CREATE pricing_rules — id, company_id, rule_type, rule_config (JSONB), active + RLS
-- [ ] Migration: CREATE pricing_suggestions — id, company_id, estimate_id, job_id, base_price, suggested_price, factors_applied (JSONB), final_price, accepted, job_won + RLS
-- [ ] Dart models: pricing_rule.dart, pricing_suggestion.dart
-- [ ] Verify: Flutter analyze clean
+#### Objective
+Build Flutter screens for job autopsy. Create Smart Pricing tables (pricing_rules, pricing_suggestions).
+
+*Depends on: J1-J2 (autopsy tables, engine)*
+
+#### System Connectivity
+- Reads from: `job_cost_autopsies`, `autopsy_insights`, `estimate_adjustments`
+- Writes to: `pricing_rules`, `pricing_suggestions`
+- Wires to: Job detail screen (autopsy tab), estimate creation (pricing suggestion card)
+
+#### Flutter Screens
+
+- [ ] Create `lib/screens/autopsy/job_autopsy_screen.dart`:
+  - **Displays**: Per-job cost breakdown — estimated vs actual
+  - **Top**: Job info card + profitability grade badge (A/B/C/D/F)
+  - **Chart**: Horizontal bar chart — estimated (blue) vs actual (green if under, red if over) for: labor hours, labor cost, material cost, drive time, callbacks, total
+  - **Profit card**: Gross profit (big number), margin %, variance %
+  - **Breakdown cards**: Labor variance explanation, material variance, hidden costs (drive + callbacks + change orders)
+  - **4 states**: Loading skeleton, error with retry, empty ("No autopsy data. Generated when job completes."), data
+  - **Actions**: Share report, compare to similar jobs
+
+- [ ] Create `lib/screens/autopsy/autopsy_dashboard_screen.dart`:
+  - **Displays**: Aggregate profitability across all jobs
+  - **KPI row**: Total Revenue, Total Profit, Avg Margin %, Estimate Accuracy %
+  - **Charts**: Profitability by Job Type (bar), by Technician (bar), Monthly Trend (line), Worst Performers (list)
+  - **Insights**: Cards from autopsy_insights with actionable recommendations
+  - **Adjustments**: Pending estimate adjustments with Accept/Dismiss buttons
+  - **Filters**: Date range, trade type, job type, technician
+  - **4 states**: Loading, error, empty ("Complete 5+ jobs to see insights"), data
+
+- [ ] Create `lib/providers/job_intelligence_provider.dart`:
+  ```dart
+  final jobAutopsyProvider = AutoDisposeFutureProvider.family<JobCostAutopsy?, String>(
+    (ref, jobId) => ref.read(jobIntelligenceRepositoryProvider).getAutopsyForJob(jobId: jobId),
+  );
+  final autopsyDashboardProvider = AutoDisposeAsyncNotifierProvider<AutopsyDashboardNotifier, AutopsyDashboardState>(
+    AutopsyDashboardNotifier.new,
+  );
+  final autopsyInsightsProvider = AutoDisposeFutureProvider<List<AutopsyInsight>>(
+    (ref) => ref.read(jobIntelligenceRepositoryProvider).getInsights(
+      companyId: ref.watch(currentCompanyIdProvider),
+    ),
+  );
+  final estimateAdjustmentsProvider = AutoDisposeAsyncNotifierProvider<EstimateAdjustmentsNotifier, List<EstimateAdjustment>>(
+    EstimateAdjustmentsNotifier.new,
+  );
+  ```
+
+#### Smart Pricing Tables
+
+- [ ] Create migration `20260220000130_j3_smart_pricing.sql`:
+
+```sql
+-- pricing_rules — configurable pricing multiplier rules per company
+CREATE TABLE IF NOT EXISTS pricing_rules (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  rule_name TEXT NOT NULL,
+  rule_type TEXT NOT NULL CHECK (rule_type IN (
+    'demand_multiplier', 'distance_surcharge', 'seasonal_adjustment',
+    'urgency_tier', 'complexity_factor', 'market_adjustment',
+    'time_of_day', 'minimum_charge'
+  )),
+  rule_config JSONB NOT NULL,
+  trade_types TEXT[],
+  job_types TEXT[],
+  priority INTEGER NOT NULL DEFAULT 0,
+  active BOOLEAN NOT NULL DEFAULT true,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  deleted_at TIMESTAMPTZ
+);
+
+ALTER TABLE pricing_rules ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "pr_select" ON pricing_rules FOR SELECT
+  USING (company_id = (SELECT (auth.jwt()->'app_metadata'->>'company_id')::uuid));
+CREATE POLICY "pr_insert" ON pricing_rules FOR INSERT
+  WITH CHECK (company_id = (SELECT (auth.jwt()->'app_metadata'->>'company_id')::uuid));
+CREATE POLICY "pr_update" ON pricing_rules FOR UPDATE
+  USING (company_id = (SELECT (auth.jwt()->'app_metadata'->>'company_id')::uuid));
+CREATE POLICY "pr_delete" ON pricing_rules FOR DELETE
+  USING (company_id = (SELECT (auth.jwt()->'app_metadata'->>'company_id')::uuid));
+
+CREATE INDEX idx_pricing_rules_company ON pricing_rules(company_id);
+CREATE INDEX idx_pricing_rules_type ON pricing_rules(company_id, rule_type);
+CREATE INDEX idx_pricing_rules_active ON pricing_rules(company_id) WHERE active = true;
+
+CREATE TRIGGER pr_updated_at BEFORE UPDATE ON pricing_rules
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER pr_audit AFTER INSERT OR UPDATE OR DELETE ON pricing_rules
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+-- pricing_suggestions — log of suggested vs actual pricing
+CREATE TABLE IF NOT EXISTS pricing_suggestions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  estimate_id UUID REFERENCES estimates(id),
+  job_id UUID REFERENCES jobs(id),
+  base_price NUMERIC(10,2) NOT NULL,
+  suggested_price NUMERIC(10,2) NOT NULL,
+  factors_applied JSONB NOT NULL,
+  final_price NUMERIC(10,2),
+  accepted BOOLEAN,
+  job_won BOOLEAN,
+  customer_id UUID REFERENCES customers(id),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  deleted_at TIMESTAMPTZ
+);
+
+ALTER TABLE pricing_suggestions ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "ps_select" ON pricing_suggestions FOR SELECT
+  USING (company_id = (SELECT (auth.jwt()->'app_metadata'->>'company_id')::uuid));
+CREATE POLICY "ps_insert" ON pricing_suggestions FOR INSERT
+  WITH CHECK (company_id = (SELECT (auth.jwt()->'app_metadata'->>'company_id')::uuid));
+CREATE POLICY "ps_update" ON pricing_suggestions FOR UPDATE
+  USING (company_id = (SELECT (auth.jwt()->'app_metadata'->>'company_id')::uuid));
+CREATE POLICY "ps_delete" ON pricing_suggestions FOR DELETE
+  USING (company_id = (SELECT (auth.jwt()->'app_metadata'->>'company_id')::uuid));
+
+CREATE INDEX idx_ps_company ON pricing_suggestions(company_id);
+CREATE INDEX idx_ps_estimate ON pricing_suggestions(estimate_id) WHERE estimate_id IS NOT NULL;
+CREATE INDEX idx_ps_job ON pricing_suggestions(job_id) WHERE job_id IS NOT NULL;
+CREATE INDEX idx_ps_accepted ON pricing_suggestions(company_id, accepted);
+CREATE INDEX idx_ps_outcome ON pricing_suggestions(company_id, job_won) WHERE job_won IS NOT NULL;
+CREATE INDEX idx_pricing_suggestions_customer ON pricing_suggestions(customer_id);
+
+CREATE TRIGGER ps_updated_at BEFORE UPDATE ON pricing_suggestions
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER ps_audit AFTER INSERT OR UPDATE OR DELETE ON pricing_suggestions
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+```
+
+- [ ] Create `lib/models/pricing_rule.dart` and `lib/models/pricing_suggestion.dart` (Dart models with fromJson, toJson, copyWith, Equatable)
+
+- [ ] Add "Cost Analysis" tab to existing job detail screen linking to job_autopsy_screen
+
+- [ ] Verify: `dart analyze` — 0 errors
 - [ ] Commit: `[J3] Job Autopsy Flutter screens + Smart Pricing tables`
+
+#### Security Verification
+- [ ] RLS: 4 policies per table, company_id scoped
+- [ ] All new tables: audit trigger, updated_at trigger, deleted_at, company_id index
+
+---
 
 ### J4 — Job Intelligence Web CRM (~8h)
 
-#### Steps
-- [ ] CRM page: web-portal/src/app/job-intelligence/page.tsx — profitability dashboard (trends, top/bottom job types, tech performance)
-- [ ] CRM page: web-portal/src/app/job-intelligence/[jobId]/page.tsx — per-job autopsy detail
-- [ ] CRM page: web-portal/src/app/job-intelligence/adjustments/page.tsx — estimate adjustment suggestions (accept/dismiss)
-- [ ] Hook: use-job-intelligence.ts
-- [ ] Verify: `npm run build` 0 errors
-- [ ] Commit: `[J4] Job Intelligence CRM — dashboard, autopsy detail, adjustments`
+#### Objective
+Build CRM pages for job intelligence dashboard, per-job autopsy detail, and estimate adjustments.
+
+*Depends on: J1-J2 (tables, engine), J3 parallel OK*
+
+#### CRM Pages
+
+- [ ] Create `web-portal/src/app/(dashboard)/job-intelligence/page.tsx`:
+  - **Displays**: Profitability command center
+  - **KPI Row**: Total Revenue, Total Profit, Avg Margin %, Estimate Accuracy, Jobs Analyzed
+  - **Charts**: Profitability by Job Type (bar), by Technician (bar), Monthly Trend (line), Top/Bottom Performers
+  - **Insights Section**: Actionable cards from autopsy_insights
+  - **Adjustments Banner**: Alert if pending adjustments exist
+  - **Filters**: Date range, trade, job type, technician
+  - **4 states**: Loading, error, empty ("Complete 5+ jobs to see intelligence"), data
+
+- [ ] Create `web-portal/src/app/(dashboard)/job-intelligence/[jobId]/page.tsx`:
+  - **Displays**: Single job autopsy detail
+  - **Layout**: Three-column — left (job info), center (estimated vs actual table + chart), right (profitability summary)
+  - **Hidden Cost Breakdown**: Drive time, callbacks, change orders
+  - **Similar Jobs Comparison**: "Compared to N similar jobs, your margin was above/below average"
+  - **4 states**: Loading, error, 404, data
+  - **Actions**: Print/export, link to estimate, link to invoice
+
+- [ ] Create `web-portal/src/app/(dashboard)/job-intelligence/adjustments/page.tsx`:
+  - **Displays**: Estimate adjustment suggestions — accept or dismiss
+  - **Table**: Job Type | Trade | Adjustment Type | Current Variance | Suggested Change | Based On | Status | Actions
+  - **Accept**: Confirmation modal, requires owner/admin role
+  - **Dismiss**: Modal with optional reason
+  - **History**: Previously accepted/dismissed adjustments
+  - **Impact projection**: Estimated accuracy improvement if all accepted
+  - **4 states**: Loading, error, empty, data
+
+#### Hook
+
+- [ ] Create `web-portal/src/lib/hooks/use-job-intelligence.ts`:
+  ```typescript
+  'use client';
+  export function useJobIntelligence() {
+    // Data: autopsies, insights, adjustments (with real-time on job_cost_autopsies)
+    // Single job: getAutopsyForJob(jobId)
+    // Dashboard KPIs: totalRevenue, totalProfit, avgMargin, estimateAccuracy, jobCount
+    // Charts: profitabilityByJobType, profitabilityByTech, monthlyTrend
+    // Mutations: acceptAdjustment(id), dismissAdjustment(id, reason?)
+    // Filters: filterByDateRange, filterByJobType, filterByTradeType, filterByTech
+    return { /* all above */ };
+  }
+  ```
+
+- [ ] Wire "Cost Analysis" link into existing job detail page
+- [ ] Wire adjustment alert into estimate creation flow
+
+- [ ] Verify: `npm run build` — 0 errors
+- [ ] Commit: `[J4] Job Intelligence CRM — dashboard, autopsy detail, adjustments page`
+
+#### Security Verification
+- [ ] Accept/dismiss requires owner/admin role (checked in hook)
+- [ ] Per-job autopsy cannot access another company's data (RLS + 404)
+- [ ] Technician names resolved client-side (IDs in data, not PII)
+
+---
 
 ### J5 — Smart Pricing Engine (~8h)
 
-#### Steps
-- [ ] Pricing calculation module: evaluate rules (demand, distance, seasonal, urgency) against current schedule and job params
-- [ ] Estimate UI integration: "Suggested price" card with factor breakdown, accept/override
-- [ ] Settings page: configure pricing rules per trade, set caps/thresholds
-- [ ] Verify: pricing suggestions calculate correctly for test scenarios
-- [ ] Commit: `[J5] Smart Pricing engine — rule evaluation + estimate integration`
+#### Objective
+Build pricing calculation module, estimate UI integration, and pricing rule settings.
+
+*Depends on: J3 (pricing_rules, pricing_suggestions tables)*
+
+#### Pricing Calculation Module
+
+- [ ] Create `lib/services/pricing_engine_service.dart` (Flutter):
+  ```dart
+  class PricingContext {
+    final double basePrice;
+    final String jobType;
+    final String tradeType;
+    final DateTime scheduledDate;
+    final double? customerLat, customerLng;
+    final double? companyLat, companyLng;
+    final String urgency; // standard, next_day, same_day, emergency
+    final String complexity; // simple, moderate, complex, expert
+    final bool isAfterHours;
+    final bool isWeekend;
+    final bool isHoliday;
+    final double scheduleFullnessPct; // 0-100
+  }
+
+  class PricingResult {
+    final double basePrice;
+    final double suggestedPrice;
+    final List<PricingFactor> factorsApplied;
+    final double totalMarkupPct;
+  }
+
+  class PricingFactor {
+    final String ruleType;
+    final double multiplier;
+    final String reason;
+  }
+
+  class PricingEngineService {
+    Future<PricingResult> calculateSuggestedPrice(PricingContext context, List<PricingRule> rules);
+  }
+  ```
+
+- [ ] Create `web-portal/src/lib/pricing-engine.ts` (Web — same algorithm):
+  ```typescript
+  interface PricingContext { /* same fields */ }
+  interface PricingResult { basePrice: number; suggestedPrice: number; factors: PricingFactor[]; }
+  function calculateSuggestedPrice(context: PricingContext, rules: PricingRule[]): PricingResult;
+  ```
+
+  **Algorithm**:
+  1. Filter active rules matching trade_types/job_types (NULL = matches all)
+  2. Sort by priority descending
+  3. Evaluate each rule type:
+     - `demand_multiplier`: if scheduleFullnessPct >= threshold -> apply multiplier (cap at max)
+     - `distance_surcharge`: Haversine distance, if > base_miles -> add per_mile * excess (cap at max)
+     - `seasonal_adjustment`: if current month in months array -> apply multiplier
+     - `urgency_tier`: lookup urgency level -> apply tier multiplier
+     - `complexity_factor`: lookup complexity level -> apply
+     - `time_of_day`: if afterHours/weekend/holiday -> apply
+     - `minimum_charge`: floor to minimum amount
+  4. Stack factors multiplicatively: suggestedPrice = basePrice * f1 * f2 * ...
+  5. Apply global cap (default 100% max markup)
+  6. Return result with factor breakdown
+
+  **Distance**: Haversine formula — $0, no API, good enough for pricing (+-15% vs driving distance)
+
+- [ ] Integrate into estimate creation (Flutter):
+  - After line items entered, show "Pricing Suggestion" card
+  - "Use Suggested Price" -> auto-fills total, creates pricing_suggestions record with accepted=true
+  - "Use My Price" -> keeps manual price, creates record with accepted=false
+
+- [ ] Integrate into estimate creation (Web CRM):
+  - Same card below line items
+  - Collapsible factor breakdown
+  - One-click accept or manual override
+
+#### Settings Pages
+
+- [ ] Create `lib/screens/settings/pricing_rules_screen.dart` (Flutter):
+  - Per rule type: toggle + config form
+  - Preview example calculation
+  - Restricted to owner/admin
+
+- [ ] Create `web-portal/src/app/(dashboard)/settings/pricing-rules/page.tsx`:
+  - Table of all rules with inline editing
+  - Drag-and-drop priority
+  - Rule templates (pre-configured common scenarios)
+
+- [ ] Verify: Pricing suggestions calculate correctly
+- [ ] Commit: `[J5] Smart Pricing engine — rule evaluation, estimate integration, settings`
+
+#### Security Verification
+- [ ] Pricing rules: owner/admin only for create/modify
+- [ ] Pricing suggestions: company-scoped
+- [ ] Distance: Haversine (local, no data leakage)
+- [ ] Rule config JSONB validated before INSERT
+
+#### Legal Considerations
+- [ ] NOT price fixing — each company sets rules independently
+- [ ] No cross-company pricing data sharing
+- [ ] Disclaimer: "Smart Pricing provides suggestions. You always control the final price."
+
+#### API Connections
+- Distance: Haversine (local) — $0
+- Schedule: Internal jobs query — $0
+- Weather: Open-Meteo (existing) — $0
+- **Total: $0/month**
+
+---
 
 ### J6 — Smart Pricing Analytics + Testing (~6h)
 
-#### Steps
-- [ ] Pricing analytics: close rate at different price points, revenue impact of pricing suggestions
-- [ ] CRM page: web-portal/src/app/pricing-analytics/page.tsx
-- [ ] Test: full autopsy flow — estimate → job → complete → autopsy generated → insights aggregated → adjustment suggested
-- [ ] Test: pricing rules evaluate correctly across all rule types
-- [ ] Test: edge cases (jobs with no estimate, partial time data, jobs with change orders)
-- [ ] Verify: all builds clean
+#### Objective
+Pricing analytics dashboard. End-to-end testing of all Job Intelligence.
+
+*Depends on: J1-J5 (all job intelligence)*
+
+#### CRM Analytics Page
+
+- [ ] Create `web-portal/src/app/(dashboard)/pricing-analytics/page.tsx`:
+  - **KPIs**: Suggestions Generated, Acceptance Rate, Close Rate (suggested vs manual), Revenue Impact
+  - **Charts**: Price vs Close Rate (scatter), Factor Impact (bar), Monthly Revenue Impact (stacked bar), Acceptance Trend (line)
+  - **Insights**: "Accepted suggestions closed at X% vs Y% at manual prices"
+  - **A/B Analysis**: Accepted vs declined outcomes
+  - **Filters**: Date range, rule type, job type, trade
+  - **4 states**: Loading, error, empty ("Need 10+ priced estimates"), data
+
+- [ ] Create `web-portal/src/lib/hooks/use-pricing-analytics.ts`
+
+- [ ] Add pricing analytics link to CRM sidebar (under Intelligence section)
+
+- [ ] Create `lib/screens/autopsy/pricing_analytics_screen.dart` (Flutter — mobile version)
+
+#### End-to-End Testing
+
+- [ ] Test full autopsy flow: estimate -> job -> time entries -> receipts -> complete -> autopsy auto-generated -> monthly insights -> adjustments
+- [ ] Test all pricing rule types evaluate correctly (demand, distance, seasonal, urgency, time_of_day, minimum, stacking)
+- [ ] Test edge cases: no estimate, partial time data, change orders, callbacks, zero division, duplicate triggers
+- [ ] Test pricing suggestion tracking: accept/decline, job_won outcome
+- [ ] Test adjustment lifecycle: suggested -> accepted/dismissed
+- [ ] Test RLS: cross-company isolation verified
+
+- [ ] Verify: `dart analyze`, `npm run build` x 4 — all clean
 - [ ] Commit: `[J6] Smart Pricing analytics + full Job Intelligence testing`
 
+#### Security Verification
+- [ ] All analytics company-scoped
+- [ ] No cross-company data in aggregations
+- [ ] Pricing analytics do not expose individual customer pricing to non-owner roles
+
+#### Legal Considerations
+- [ ] Internal company data only — no market comparisons (antitrust safe)
+- [ ] Clear label: "Based on your company's historical data only"
+
+#### API Connections: $0/month total
+
 ---
+
+## CROSS-PHASE WIRING SUMMARY
+
+---
+
 
 ## ══════════════════════════════════════════════════════════
 ## PHASE L — LEGAL, PERMITS & COMPLIANCE (Post-J)
@@ -11375,105 +13229,1525 @@ Equipment lifecycle data + prediction engine tables.
 
 ### L1 — Permit Intelligence Foundation (~10h)
 
-#### Steps
-- [ ] Migration: CREATE permit_jurisdictions — id, jurisdiction_name, type, state_code, county_fips, city_name, building_dept_phone/url, online_submission_url, avg_turnaround_days, contributed_by, verified + RLS (public read, auth insert)
-- [ ] Migration: CREATE permit_requirements — id, jurisdiction_id FK, work_type, trade_type, permit_required, permit_type, estimated_fee, inspections_required (JSONB), typical_documents, contributed_by, verified + RLS
-- [ ] Migration: CREATE job_permits — id, company_id, job_id, jurisdiction_id, permit_type, permit_number, dates (application, approval, expiration), fee, status + RLS
-- [ ] Migration: CREATE permit_inspections — id, company_id, job_permit_id FK, inspection_type, dates, inspector_name, result, failure_reason, correction_notes, photos + RLS
-- [ ] Dart models: permit_jurisdiction.dart, permit_requirement.dart, job_permit.dart, permit_inspection.dart
-- [ ] Repository: permit_intelligence_repository.dart
+**Goal:** Create the foundational data model for tracking building permits, jurisdiction requirements, and permit inspections. Community-sourced jurisdiction database that gets smarter as more contractors contribute. Seed top 50 US cities.
+
+**Legal Disclaimer:** Permit requirements vary by jurisdiction and change frequently. Zafto provides community-sourced reference data only. Contractors must verify requirements with their local building department before relying on this data. Zafto is not responsible for permit denials or code violations resulting from inaccurate jurisdiction data.
+
+### Database Migration
+
+```sql
+-- ============================================================
+-- TABLE 1: permit_jurisdictions
+-- Community-sourced database of building departments
+-- ============================================================
+CREATE TABLE permit_jurisdictions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  jurisdiction_name TEXT NOT NULL,
+  type TEXT NOT NULL CHECK (type IN (
+    'city', 'county', 'state', 'township', 'borough', 'parish', 'unincorporated'
+  )),
+  state_code CHAR(2) NOT NULL,
+  county_fips CHAR(5),
+  city_name TEXT,
+  building_dept_name TEXT,
+  building_dept_phone TEXT,
+  building_dept_email TEXT,
+  building_dept_url TEXT,
+  online_submission_url TEXT,
+  online_submission_available BOOLEAN DEFAULT false,
+  avg_turnaround_days INTEGER,
+  turnaround_reports INTEGER DEFAULT 0,
+  office_hours TEXT,
+  walk_in_available BOOLEAN DEFAULT true,
+  appointment_required BOOLEAN DEFAULT false,
+  notes TEXT,
+  contributed_by UUID REFERENCES users(id),
+  contributed_company_id UUID REFERENCES companies(id),
+  verified BOOLEAN DEFAULT false,
+  verified_by UUID REFERENCES users(id),
+  verified_at TIMESTAMPTZ,
+  report_count INTEGER DEFAULT 0,
+  boundary_geojson JSONB,
+  center_lat NUMERIC(9,6),
+  center_lng NUMERIC(9,6),
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  deleted_at TIMESTAMPTZ
+);
+
+ALTER TABLE permit_jurisdictions ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "permit_jurisdictions_select" ON permit_jurisdictions
+  FOR SELECT TO authenticated USING (deleted_at IS NULL);
+CREATE POLICY "permit_jurisdictions_insert" ON permit_jurisdictions
+  FOR INSERT TO authenticated WITH CHECK (true);
+CREATE POLICY "permit_jurisdictions_update" ON permit_jurisdictions
+  FOR UPDATE TO authenticated
+  USING (contributed_company_id = auth.company_id()
+    OR (auth.jwt()->'app_metadata'->>'role') = 'super_admin');
+CREATE POLICY "permit_jurisdictions_delete" ON permit_jurisdictions
+  FOR DELETE TO authenticated
+  USING ((auth.jwt()->'app_metadata'->>'role') = 'super_admin');
+
+CREATE INDEX idx_permit_jurisdictions_state ON permit_jurisdictions(state_code) WHERE deleted_at IS NULL;
+CREATE INDEX idx_permit_jurisdictions_county ON permit_jurisdictions(county_fips) WHERE deleted_at IS NULL;
+CREATE INDEX idx_permit_jurisdictions_city ON permit_jurisdictions(city_name) WHERE deleted_at IS NULL;
+CREATE INDEX idx_permit_jurisdictions_location ON permit_jurisdictions(center_lat, center_lng) WHERE deleted_at IS NULL;
+
+CREATE TRIGGER permit_jurisdictions_updated_at BEFORE UPDATE ON permit_jurisdictions
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER permit_jurisdictions_audit AFTER INSERT OR UPDATE OR DELETE ON permit_jurisdictions
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+-- ============================================================
+-- TABLE 2: permit_requirements
+-- What permits are needed for what work in each jurisdiction
+-- ============================================================
+CREATE TABLE permit_requirements (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  jurisdiction_id UUID NOT NULL REFERENCES permit_jurisdictions(id),
+  work_type TEXT NOT NULL,
+  trade_type TEXT NOT NULL,
+  permit_required BOOLEAN NOT NULL DEFAULT true,
+  permit_type TEXT NOT NULL,
+  description TEXT,
+  estimated_fee NUMERIC(8,2),
+  fee_structure TEXT CHECK (fee_structure IN ('flat','percentage_of_job','per_sqft','varies')),
+  fee_notes TEXT,
+  inspections_required JSONB DEFAULT '[]',
+  typical_documents TEXT[],
+  licensed_professional_required BOOLEAN DEFAULT false,
+  licensed_professional_type TEXT,
+  homeowner_pull_allowed BOOLEAN DEFAULT true,
+  expiration_months INTEGER DEFAULT 6,
+  renewal_available BOOLEAN DEFAULT true,
+  renewal_fee NUMERIC(8,2),
+  contributed_by UUID REFERENCES users(id),
+  verified BOOLEAN DEFAULT false,
+  source_url TEXT,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  deleted_at TIMESTAMPTZ
+);
+
+ALTER TABLE permit_requirements ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "permit_requirements_select" ON permit_requirements
+  FOR SELECT TO authenticated USING (deleted_at IS NULL);
+CREATE POLICY "permit_requirements_insert" ON permit_requirements
+  FOR INSERT TO authenticated WITH CHECK (true);
+CREATE POLICY "permit_requirements_update" ON permit_requirements
+  FOR UPDATE TO authenticated
+  USING (
+    (contributed_by = auth.uid() OR (auth.jwt()->'app_metadata'->>'role') = 'super_admin')
+    AND (verified = false OR (auth.jwt()->'app_metadata'->>'role') = 'super_admin')
+  );
+CREATE POLICY "permit_requirements_delete" ON permit_requirements
+  FOR DELETE TO authenticated
+  USING ((auth.jwt()->'app_metadata'->>'role') = 'super_admin');
+
+CREATE INDEX idx_permit_requirements_jurisdiction ON permit_requirements(jurisdiction_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_permit_requirements_trade ON permit_requirements(trade_type) WHERE deleted_at IS NULL;
+CREATE INDEX idx_permit_requirements_work_type ON permit_requirements(work_type) WHERE deleted_at IS NULL;
+
+CREATE TRIGGER permit_requirements_updated_at BEFORE UPDATE ON permit_requirements
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER permit_requirements_audit AFTER INSERT OR UPDATE OR DELETE ON permit_requirements
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+-- ============================================================
+-- TABLE 3: job_permits
+-- Per-job permit tracking (company-scoped)
+-- ============================================================
+CREATE TABLE job_permits (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  job_id UUID NOT NULL REFERENCES jobs(id),
+  jurisdiction_id UUID REFERENCES permit_jurisdictions(id),
+  permit_type TEXT NOT NULL CHECK (permit_type IN (
+    'building','electrical','plumbing','mechanical','demolition',
+    'roofing','fire','grading','fence','sign','pool','solar',
+    'septic','well','driveway','tree_removal','other'
+  )),
+  permit_number TEXT,
+  application_date DATE,
+  approval_date DATE,
+  expiration_date DATE,
+  fee_amount NUMERIC(8,2),
+  fee_paid BOOLEAN DEFAULT false,
+  fee_paid_date DATE,
+  status TEXT NOT NULL DEFAULT 'not_started' CHECK (status IN (
+    'not_started','documents_gathering','application_prepared','submitted',
+    'in_review','revision_requested','approved','denied','expired','closed','cancelled'
+  )),
+  assigned_to UUID REFERENCES users(id),
+  document_paths TEXT[],
+  denial_reason TEXT,
+  revision_notes TEXT,
+  notes TEXT,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  deleted_at TIMESTAMPTZ
+);
+
+ALTER TABLE job_permits ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "job_permits_select" ON job_permits
+  FOR SELECT TO authenticated USING (company_id = auth.company_id() AND deleted_at IS NULL);
+CREATE POLICY "job_permits_insert" ON job_permits
+  FOR INSERT TO authenticated WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "job_permits_update" ON job_permits
+  FOR UPDATE TO authenticated USING (company_id = auth.company_id() AND deleted_at IS NULL);
+CREATE POLICY "job_permits_delete" ON job_permits
+  FOR DELETE TO authenticated USING (company_id = auth.company_id());
+
+CREATE INDEX idx_job_permits_company ON job_permits(company_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_job_permits_job ON job_permits(job_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_job_permits_status ON job_permits(company_id, status) WHERE deleted_at IS NULL;
+CREATE INDEX idx_job_permits_expiration ON job_permits(expiration_date) WHERE deleted_at IS NULL AND status = 'approved';
+
+CREATE TRIGGER job_permits_updated_at BEFORE UPDATE ON job_permits
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER job_permits_audit AFTER INSERT OR UPDATE OR DELETE ON job_permits
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+-- ============================================================
+-- TABLE 4: permit_inspections
+-- Tracking inspections required by permits
+-- ============================================================
+CREATE TABLE permit_inspections (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  job_permit_id UUID NOT NULL REFERENCES job_permits(id),
+  inspection_type TEXT NOT NULL,
+  inspection_order INTEGER DEFAULT 1,
+  scheduled_date DATE,
+  scheduled_time_window TEXT,
+  actual_date DATE,
+  inspector_name TEXT,
+  inspector_phone TEXT,
+  result TEXT CHECK (result IN ('passed','failed','partial','rescheduled','cancelled','no_show')),
+  failure_reason TEXT,
+  correction_notes TEXT,
+  correction_completed BOOLEAN DEFAULT false,
+  correction_completed_date DATE,
+  reinspection_scheduled BOOLEAN DEFAULT false,
+  reinspection_date DATE,
+  reinspection_fee NUMERIC(8,2),
+  photos TEXT[],
+  notes TEXT,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  deleted_at TIMESTAMPTZ
+);
+
+ALTER TABLE permit_inspections ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "permit_inspections_select" ON permit_inspections
+  FOR SELECT TO authenticated USING (company_id = auth.company_id() AND deleted_at IS NULL);
+CREATE POLICY "permit_inspections_insert" ON permit_inspections
+  FOR INSERT TO authenticated WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "permit_inspections_update" ON permit_inspections
+  FOR UPDATE TO authenticated USING (company_id = auth.company_id() AND deleted_at IS NULL);
+CREATE POLICY "permit_inspections_delete" ON permit_inspections
+  FOR DELETE TO authenticated USING (company_id = auth.company_id());
+
+CREATE INDEX idx_permit_inspections_company ON permit_inspections(company_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_permit_inspections_permit ON permit_inspections(job_permit_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_permit_inspections_scheduled ON permit_inspections(scheduled_date) WHERE deleted_at IS NULL AND result IS NULL;
+CREATE INDEX idx_permit_inspections_failed ON permit_inspections(company_id) WHERE deleted_at IS NULL AND result = 'failed' AND correction_completed = false;
+
+CREATE TRIGGER permit_inspections_updated_at BEFORE UPDATE ON permit_inspections
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER permit_inspections_audit AFTER INSERT OR UPDATE OR DELETE ON permit_inspections
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+```
+
+### Dart Models
+
+```
+lib/models/permit_jurisdiction.dart    — PermitJurisdiction (Equatable, fromJson/toJson/copyWith)
+lib/models/permit_requirement.dart     — PermitRequirement (Equatable, fromJson/toJson/copyWith)
+lib/models/job_permit.dart             — JobPermit (Equatable, fromJson/toJson/copyWith, computed: isExpiringSoon, daysUntilExpiration)
+lib/models/permit_inspection.dart      — PermitInspection (Equatable, fromJson/toJson/copyWith, computed: isPassing, needsCorrection)
+```
+
+### Repository
+
+```
+lib/repositories/permit_intelligence_repository.dart
+  Abstract + Concrete (SupabasePermitIntelligenceRepository)
+  Methods: getJurisdictionsByState, getJurisdictionByLocation, getRequirementsForJurisdiction,
+  contributeJurisdiction, contributeRequirement, getJobPermits, createJobPermit, updateJobPermit,
+  softDeleteJobPermit, getPermitInspections, createPermitInspection, updatePermitInspection,
+  getActivePermitsByCompany, getUpcomingInspections, getFailedInspections
+```
+
+### Seed Data: Top 50 US Cities
+
+Seed permit_jurisdictions for 50 largest cities (NYC, LA, Chicago, Houston, Phoenix, Philadelphia, San Antonio, San Diego, Dallas, San Jose, Austin, Jacksonville, Fort Worth, Columbus, Charlotte, Indianapolis, San Francisco, Seattle, Denver, Washington DC, Nashville, OKC, El Paso, Boston, Portland, Las Vegas, Memphis, Louisville, Baltimore, Milwaukee, Albuquerque, Tucson, Fresno, Sacramento, Mesa, Kansas City, Atlanta, Omaha, Colorado Springs, Raleigh, Long Beach, Virginia Beach, Miami, Oakland, Minneapolis, Tampa, Tulsa, Arlington TX, New Orleans, Bakersfield).
+
+Each seed: jurisdiction_name, type, state_code, building_dept_name, phone, URL, online_submission_url, avg_turnaround_days, center_lat, center_lng.
+
+Seed permit_requirements for 15 common work types across all 50 cities: electrical panel upgrade, roof replacement, water heater replacement, HVAC replacement, bathroom remodel, kitchen remodel, deck construction, fence >6ft, pool, solar panels, window replacement (structural), whole-house repipe, siding replacement, foundation repair, room addition.
+
+### Wiring to Existing Systems
+
+| System | Connection |
+|--------|-----------|
+| `jobs` | job_permits.job_id FK |
+| `users` | contributed_by, assigned_to, inspector refs |
+| `companies` | company_id scoping on job_permits, permit_inspections |
+| `schedule_events` (GC) | Inspection dates on calendar |
+| `inspection_templates` (F4) | Permit inspections reference inspection template checklists |
+
+### Security Verification Checklist
+
+- [ ] RLS enabled on all 4 tables
+- [ ] SELECT/INSERT/UPDATE/DELETE policies on all 4 tables
+- [ ] company_id + index on job_permits and permit_inspections
+- [ ] Audit trigger on all 4 tables
+- [ ] updated_at trigger on all 4 tables
+- [ ] deleted_at on all 4 tables (soft delete)
+- [ ] Community data readable by all authenticated; company data scoped
+
+### Steps
+
+- [ ] Migration: CREATE permit_jurisdictions — all columns, constraints, RLS, indexes, triggers
+- [ ] Migration: CREATE permit_requirements — all columns, constraints, RLS, indexes, triggers
+- [ ] Migration: CREATE job_permits — all columns, constraints, RLS, indexes, triggers
+- [ ] Migration: CREATE permit_inspections — all columns, constraints, RLS, indexes, triggers
+- [ ] Dart model: permit_jurisdiction.dart (Equatable, fromJson/toJson/copyWith)
+- [ ] Dart model: permit_requirement.dart (Equatable, fromJson/toJson/copyWith)
+- [ ] Dart model: job_permit.dart (Equatable, fromJson/toJson/copyWith)
+- [ ] Dart model: permit_inspection.dart (Equatable, fromJson/toJson/copyWith)
+- [ ] Repository: permit_intelligence_repository.dart (abstract + concrete)
+- [ ] Riverpod providers: permitJurisdictionsProvider, permitRequirementsProvider, jobPermitsProvider, permitInspectionsProvider
 - [ ] Seed: top 50 US cities jurisdiction data
-- [ ] Verify: migration clean, seeds apply
-- [ ] Commit: `[L1] Permit Intelligence foundation — 4 tables, models, top-50 city seeding`
+- [ ] Seed: common work type requirements for all 50 cities
+- [ ] Verify: `dart analyze` clean, migration applies, seeds insert
+- [ ] Commit: `[L1] Permit Intelligence foundation — 4 tables, models, repository, providers, top-50 city seeding`
+
+---
 
 ### L2 — Permit Engine + Jurisdiction Lookup (~8h)
 
-#### Steps
-- [ ] Edge Function: permit-requirement-lookup — geocode address (Nominatim free), match to jurisdiction, return requirements
-- [ ] PostGIS setup: jurisdiction polygons for accurate matching (start with state boundaries, extend to city/county)
-- [ ] Jurisdiction contribution UI (Web): contractors add/update jurisdiction data for their area
-- [ ] Verify: lookup returns correct jurisdiction for test addresses
-- [ ] Commit: `[L2] Permit Engine — geocode lookup + jurisdiction matching + community contribution`
+**Goal:** Build geocode-to-jurisdiction lookup engine. Contractor enters job address, system auto-identifies jurisdiction and returns permit requirements. Community contribution flow. PostGIS for geographic boundary matching.
+
+### Edge Function: permit-requirement-lookup
+
+```
+Name: permit-requirement-lookup
+Method: POST
+Auth: Bearer token (JWT)
+
+Request Body:
+{
+  "address": "1234 Main St, Austin, TX 78701",
+  "latitude": 30.2672,        // optional
+  "longitude": -97.7431,      // optional
+  "trade_type": "electrical",  // optional filter
+  "work_type": "panel_upgrade" // optional filter
+}
+
+Response (200):
+{
+  "jurisdiction": {
+    "id": "uuid",
+    "jurisdiction_name": "City of Austin Building Services",
+    "type": "city",
+    "state_code": "TX",
+    "building_dept_phone": "(512) 978-4000",
+    "building_dept_url": "https://www.austintexas.gov/department/development-services",
+    "online_submission_url": "https://abc.austintexas.gov/",
+    "online_submission_available": true,
+    "avg_turnaround_days": 14
+  },
+  "requirements": [{
+    "work_type": "electrical_panel_upgrade",
+    "permit_required": true,
+    "permit_type": "electrical",
+    "estimated_fee": 125.00,
+    "inspections_required": ["rough_in","final"],
+    "typical_documents": ["site_plan","load_calculations","contractor_license"]
+  }],
+  "confidence": "high",
+  "match_method": "boundary"
+}
+
+Errors: 400 (missing address+coords), 401 (bad JWT), 404 (no jurisdiction), 422 (geocode fail), 500
+```
+
+### PostGIS Setup
+
+```sql
+CREATE EXTENSION IF NOT EXISTS postgis;
+
+ALTER TABLE permit_jurisdictions ADD COLUMN IF NOT EXISTS
+  boundary_geog GEOGRAPHY(POLYGON, 4326);
+CREATE INDEX idx_permit_jurisdictions_geog ON permit_jurisdictions USING GIST(boundary_geog);
+
+CREATE OR REPLACE FUNCTION find_jurisdiction_by_location(p_lat NUMERIC, p_lng NUMERIC)
+RETURNS SETOF permit_jurisdictions AS $$
+BEGIN
+  RETURN QUERY
+  SELECT pj.* FROM permit_jurisdictions pj
+  WHERE pj.deleted_at IS NULL
+    AND ST_Contains(pj.boundary_geog::geometry, ST_SetSRID(ST_MakePoint(p_lng, p_lat), 4326))
+  ORDER BY pj.type ASC
+  LIMIT 1;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+```
+
+### Geocoding Strategy ($0/month)
+
+1. **Primary:** Nominatim (OSM) — free, no API key, 1 req/sec. User-Agent: "Zafto/1.0 (contact@zafto.cloud)"
+2. **Fallback:** US Census Geocoder — free, no auth, returns FIPS codes
+3. **Match order:** boundary polygon (PostGIS ST_Contains) -> city_name+state -> county_fips -> state fallback
+
+### Flutter Screen: jurisdiction_lookup_screen.dart
+
+- **Displays:** Search bar for address, auto-lookup results showing jurisdiction + requirements
+- **Loading:** Skeleton shimmer during geocoding
+- **Error:** "Could not determine jurisdiction. [Try again] [Add manually]"
+- **Empty:** "No data for this area. Be first to contribute! [Contribute]"
+- **Data:** Jurisdiction card + scrollable requirements list
+
+### Web CRM Pages
+
+**`web-portal/src/app/permits/jurisdictions/page.tsx`** — Browse/search all jurisdictions, filter by state/type/verified
+- Loading: skeleton table. Error: banner+retry. Empty: "No jurisdictions. [Contribute first]". Data: sortable table.
+
+**`web-portal/src/app/permits/jurisdictions/contribute/page.tsx`** — Contribution form
+- Fields: name, type, state, county, city, dept info, turnaround, hours, notes
+- 3+ confirmations from other contractors = auto-verified
+
+**Hook:** `web-portal/src/lib/hooks/use-jurisdiction-lookup.ts`
+- lookupByAddress(address), getJurisdictions(filters), contributeJurisdiction(data), contributeRequirement(data)
+
+### API Connections ($0/month)
+
+| API | Purpose | Cost |
+|-----|---------|------|
+| Nominatim (OSM) | Geocode address to lat/lng | $0, no key |
+| US Census Geocoder | Fallback geocoding + FIPS | $0, no auth |
+| PostGIS | Spatial boundary matching | $0, in Supabase |
+
+### Security Verification Checklist
+
+- [ ] EF validates JWT before processing
+- [ ] Input sanitized: address string, lat/lng range
+- [ ] Rate limit: 30 lookups/min per company
+- [ ] No PII in geocoding requests
+- [ ] CORS for web portal origins only
+
+### Steps
+
+- [ ] PostGIS extension + spatial index + find_jurisdiction_by_location function
+- [ ] Edge Function: permit-requirement-lookup (geocode + match + return)
+- [ ] Nominatim integration with Census Geocoder fallback
+- [ ] Flutter: jurisdiction_lookup_screen.dart (search + results)
+- [ ] Web CRM: jurisdictions browse page
+- [ ] Web CRM: jurisdiction contribution page + form
+- [ ] Contribution verification logic (3+ confirms = auto-verified)
+- [ ] Hook: use-jurisdiction-lookup.ts
+- [ ] Verify: lookup correct for 10 test addresses across states
+- [ ] Commit: `[L2] Permit Engine — geocode lookup + jurisdiction matching + PostGIS + community contribution`
+
+---
 
 ### L3 — Permit UI + Compliance Foundation (~8h)
 
-#### Steps
-- [ ] Flutter: job_permits_screen.dart — per-job permit tracker with status timeline
+**Goal:** Build Flutter screens for per-job permit tracking and inspection logging. Create compliance foundation tables that power company-wide compliance view.
+
+### Flutter Screen Specs
+
+**`lib/screens/permits/job_permits_screen.dart`** — Per-job permit tracker
+- **Loading:** Skeleton cards with shimmer
+- **Error:** ErrorState widget + retry
+- **Empty:** EmptyState with "No permits tracked. [Add Permit] or [Look Up Requirements]"
+- **Data:** Scrollable permit cards: type badge, number, status chip (color-coded), dates, fee, assigned_to. Tap to expand: inspection timeline, docs. FAB: "Add Permit"
+
+**`lib/screens/permits/permit_detail_screen.dart`** — Single permit detail
+- **Loading:** Skeleton. **Error:** ErrorState. **Data:** Header (type, number, status), timeline, inspection list, docs, actions
+
+**`lib/screens/permits/inspection_result_screen.dart`** — Log inspection result
+- **Data:** Form: type, date, inspector_name, result (pass/fail/partial), failure_reason, corrections, photo capture. Correction tracking section.
+
+### Database Migration — Compliance Foundation
+
+```sql
+-- ============================================================
+-- TABLE 5: compliance_requirements
+-- What compliance items are required for what type of work
+-- ============================================================
+CREATE TABLE compliance_requirements (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  trade_type TEXT NOT NULL,
+  job_type_pattern TEXT DEFAULT '*',
+  required_compliance_category TEXT NOT NULL CHECK (required_compliance_category IN (
+    'trade_license','business_license','insurance_policy','bond',
+    'vehicle_registration','osha_cert','epa_cert','ce_credit',
+    'background_check','drug_test','first_aid','other'
+  )),
+  required_certification_type TEXT,
+  description TEXT,
+  regulatory_reference TEXT,
+  penalty_description TEXT,
+  penalty_amount_min NUMERIC(10,2),
+  penalty_amount_max NUMERIC(10,2),
+  state_code CHAR(2),
+  applies_to TEXT DEFAULT 'company' CHECK (applies_to IN ('company','employee','both')),
+  active BOOLEAN DEFAULT true,
+  source_url TEXT,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  deleted_at TIMESTAMPTZ
+);
+
+ALTER TABLE compliance_requirements ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "compliance_requirements_select" ON compliance_requirements
+  FOR SELECT TO authenticated USING (deleted_at IS NULL);
+CREATE POLICY "compliance_requirements_insert" ON compliance_requirements
+  FOR INSERT TO authenticated
+  WITH CHECK (
+    company_id = auth.company_id()
+  );
+CREATE POLICY "compliance_requirements_update" ON compliance_requirements
+  FOR UPDATE TO authenticated
+  USING ((auth.jwt()->'app_metadata'->>'role') = 'super_admin');
+CREATE POLICY "compliance_requirements_delete" ON compliance_requirements
+  FOR DELETE TO authenticated
+  USING (
+    company_id = auth.company_id() AND (auth.jwt()->'app_metadata'->>'role') IN ('owner', 'admin')
+  );
+
+CREATE INDEX idx_compliance_requirements_trade ON compliance_requirements(trade_type) WHERE deleted_at IS NULL;
+CREATE INDEX idx_compliance_requirements_state ON compliance_requirements(state_code) WHERE deleted_at IS NULL;
+CREATE INDEX idx_compliance_requirements_category ON compliance_requirements(required_compliance_category) WHERE deleted_at IS NULL;
+
+CREATE TRIGGER compliance_requirements_updated_at BEFORE UPDATE ON compliance_requirements
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER compliance_requirements_audit AFTER INSERT OR UPDATE OR DELETE ON compliance_requirements
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+-- ============================================================
+-- TABLE 6: compliance_packets
+-- Generated document bundles for GC pre-qualification
+-- ============================================================
+CREATE TABLE compliance_packets (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  packet_name TEXT NOT NULL,
+  requested_by TEXT,
+  requested_by_email TEXT,
+  documents JSONB NOT NULL DEFAULT '[]',
+  packet_document_path TEXT,
+  generated_at TIMESTAMPTZ DEFAULT now(),
+  shared_via TEXT CHECK (shared_via IN ('email','link','download')),
+  shared_at TIMESTAMPTZ,
+  share_link_token TEXT,
+  share_link_expires_at TIMESTAMPTZ,
+  notes TEXT,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  deleted_at TIMESTAMPTZ
+);
+
+ALTER TABLE compliance_packets ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "compliance_packets_select" ON compliance_packets
+  FOR SELECT TO authenticated USING (company_id = auth.company_id() AND deleted_at IS NULL);
+CREATE POLICY "compliance_packets_insert" ON compliance_packets
+  FOR INSERT TO authenticated WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "compliance_packets_update" ON compliance_packets
+  FOR UPDATE TO authenticated USING (company_id = auth.company_id() AND deleted_at IS NULL);
+CREATE POLICY "compliance_packets_delete" ON compliance_packets
+  FOR DELETE TO authenticated USING (company_id = auth.company_id());
+
+CREATE INDEX idx_compliance_packets_company ON compliance_packets(company_id) WHERE deleted_at IS NULL;
+
+CREATE TRIGGER compliance_packets_updated_at BEFORE UPDATE ON compliance_packets
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER compliance_packets_audit AFTER INSERT OR UPDATE OR DELETE ON compliance_packets
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+-- ============================================================
+-- ALTER: certifications table — add compliance columns (expand-contract)
+-- IF EXISTS check: If D7a not yet built, these columns are added when D7a creates the tables instead.
+-- ============================================================
+DO $$ BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'certifications') THEN
+    ALTER TABLE certifications ADD COLUMN IF NOT EXISTS compliance_category TEXT DEFAULT 'trade_license';
+    ALTER TABLE certifications ADD COLUMN IF NOT EXISTS issuing_authority TEXT;
+    ALTER TABLE certifications ADD COLUMN IF NOT EXISTS policy_number TEXT;
+    ALTER TABLE certifications ADD COLUMN IF NOT EXISTS coverage_amount NUMERIC(12,2);
+    ALTER TABLE certifications ADD COLUMN IF NOT EXISTS renewal_cost NUMERIC(8,2);
+    ALTER TABLE certifications ADD COLUMN IF NOT EXISTS auto_renew BOOLEAN DEFAULT false;
+    ALTER TABLE certifications ADD COLUMN IF NOT EXISTS document_path TEXT;
+  END IF;
+END $$;
+```
+
+### Seed: Compliance Requirements
+
+**Federal (state_code NULL):** EPA RRP (40 CFR 745, $44,539/day), OSHA 10-Hour, OSHA 30-Hour (supervisors), EPA Section 608 (refrigerant, HVAC), OSHA Confined Space, DOT Hazmat, Asbestos Worker (40 CFR 61), GL Insurance ($1M min), Workers Comp, Business License.
+
+**State-specific (top 10 states):** CA CSLB, TX TDLR Electrical, FL DBPR, NY DOB Licensed Electrician, IL IDFPR, OH OCILB, GA Division of Professional Licensing, NC Licensing Board, MI LARA, PA Attorney General.
+
+### Wiring to Existing Systems
+
+| System | Connection |
+|--------|-----------|
+| `certifications` (D7a) | Extended with compliance columns |
+| `hr_documents` (F5) | Compliance docs stored alongside HR |
+| `jobs` | Job type matched against compliance_requirements |
+| `users` | Certifications per user for compliance checks |
+
+### Security Verification Checklist
+
+- [ ] RLS on compliance_requirements (public read, super_admin write)
+- [ ] RLS on compliance_packets (company_id scoped)
+- [ ] Share links use crypto random tokens with mandatory expiration
+- [ ] ALTER certifications uses IF NOT EXISTS (safe expand-contract)
+- [ ] New cert columns nullable with defaults (mobile backward compat)
+- [ ] Audit triggers on both new tables
+
+### Steps
+
+- [ ] Flutter: job_permits_screen.dart — per-job permit tracker, status timeline, color cards
+- [ ] Flutter: permit_detail_screen.dart — single permit detail, inspections, docs, actions
 - [ ] Flutter: inspection_result_screen.dart — log pass/fail, photos, corrections
-- [ ] Migration: ALTER certifications — add compliance_category, issuing_authority, policy_number, coverage_amount, renewal_cost, auto_renew, document_path
-- [ ] Migration: CREATE compliance_requirements — id, trade_type, job_type_pattern, required_compliance_category, required_certification_type, regulatory_reference, penalty_description + RLS (public read)
-- [ ] Migration: CREATE compliance_packets — id, company_id, packet_name, requested_by, documents (JSONB), generated_at, shared_via + RLS
-- [ ] Verify: Flutter analyze clean
-- [ ] Commit: `[L3] Permit Flutter UI + Compliance foundation tables`
+- [ ] Riverpod providers wired to repository for all permit screens
+- [ ] Migration: CREATE compliance_requirements — all columns, CHECK constraints, RLS, indexes, triggers
+- [ ] Migration: CREATE compliance_packets — all columns, RLS, indexes, triggers
+- [ ] Migration: ALTER certifications — add 7 compliance columns (all nullable with defaults)
+- [ ] Seed: federal compliance requirements (10+ items)
+- [ ] Seed: state-specific requirements for top 10 states (50+ items)
+- [ ] Dart models: compliance_requirement.dart, compliance_packet.dart
+- [ ] Verify: `dart analyze` clean, migrations apply, seeds insert
+- [ ] Commit: `[L3] Permit Flutter UI + Compliance foundation — compliance_requirements, compliance_packets, certifications extension`
+
+---
 
 ### L4 — Permits Web CRM + Compliance Dashboard (~8h)
 
-#### Steps
-- [ ] CRM: web-portal/src/app/permits/page.tsx — all active permits, sorted by deadline
+**Goal:** Build full CRM pages for permit management and company-wide compliance dashboard. Hooks for all permit and compliance operations.
+
+### Web CRM Page Specs
+
+**`web-portal/src/app/permits/page.tsx`** — All active permits across all jobs
+- **Loading:** Skeleton data table
+- **Error:** Error banner with retry button
+- **Empty:** "No active permits. Permits are auto-tracked when you add them to jobs."
+- **Data:** Filterable/sortable table: Job Name, Permit Type, Number, Status (color badge), Application Date, Approval Date, Expiration Date, Fee, Assigned To. Filters: status, permit_type, date range. Bulk actions: export CSV. Click row -> navigate to per-job detail.
+
+**`web-portal/src/app/permits/[jobId]/page.tsx`** — Per-job permit detail + inspection timeline
+- **Loading:** Skeleton layout
+- **Error:** Error state with retry
+- **Empty:** "No permits for this job. [Add Permit]"
+- **Data:** Job header (name, address, customer), permit cards with status timeline, inspection timeline (visual: dots on a line, green=pass, red=fail, gray=pending), documents list, action buttons (add permit, schedule inspection, upload doc). Inline editing for status changes.
+
+**`web-portal/src/app/permits/jurisdictions/page.tsx`** — Browse/contribute jurisdiction data
+- **Loading:** Skeleton cards
+- **Error:** Error banner
+- **Empty:** "No jurisdictions in database. [Contribute First One]"
+- **Data:** Searchable grid of jurisdiction cards. Each: name, state, type, phone, online portal link, avg turnaround, verified badge. Search by city/state. Filter by type, state, verified. "Contribute New" button.
+
+**`web-portal/src/app/compliance/page.tsx`** — Company compliance dashboard
+- **Loading:** Skeleton dashboard
+- **Error:** Error banner
+- **Empty:** "No compliance items tracked. [Set Up Compliance Tracking]"
+- **Data:** Dashboard layout:
+  - **Header stats:** Total items tracked, Items expiring in 30 days (red count), Items expiring in 90 days (yellow count), Expired items (red alert)
+  - **Section 1: Licenses & Certifications** — table of all company + employee certs, status (active/expiring/expired), expiry date, renewal cost, auto-renew flag
+  - **Section 2: Insurance Policies** — GL, WC, auto, umbrella. Coverage amounts, expiry, carrier
+  - **Section 3: Bonds** — License bonds, performance bonds. Amount, expiry
+  - **Section 4: Vehicle Registrations** — fleet vehicle regs, inspections
+  - **Section 5: OSHA/EPA Certs** — employee-level safety certs
+  - **Section 6: Compliance Requirements** — what's required for your trade in your state, gap analysis (you have/you need)
+  - **Action:** Generate compliance packet button
+
+### Hooks
+
+**`web-portal/src/lib/hooks/use-permits.ts`**
+```typescript
+Returns: {
+  permits: JobPermit[],
+  inspections: PermitInspection[],
+  loading: boolean,
+  error: Error | null,
+  // Mutations
+  createPermit: (data: CreatePermitInput) => Promise<JobPermit>,
+  updatePermit: (id: string, data: UpdatePermitInput) => Promise<JobPermit>,
+  deletePermit: (id: string) => Promise<void>,
+  createInspection: (data: CreateInspectionInput) => Promise<PermitInspection>,
+  updateInspection: (id: string, data: UpdateInspectionInput) => Promise<PermitInspection>,
+  // Filters
+  filterByStatus: (status: string) => void,
+  filterByType: (type: string) => void,
+}
+```
+
+**`web-portal/src/lib/hooks/use-compliance.ts`**
+```typescript
+Returns: {
+  certifications: Certification[],
+  complianceRequirements: ComplianceRequirement[],
+  compliancePackets: CompliancePacket[],
+  gaps: ComplianceGap[],          // requirements not met
+  expiringItems: Certification[], // expiring within 90 days
+  expiredItems: Certification[],
+  loading: boolean,
+  error: Error | null,
+  // Mutations
+  generatePacket: (certIds: string[], name: string) => Promise<CompliancePacket>,
+  sharePacket: (packetId: string, via: 'email'|'link') => Promise<string>,
+}
+```
+
+### Wiring to Existing Systems
+
+| System | Connection |
+|--------|-----------|
+| `jobs` CRM pages | Link from job detail to permits tab |
+| `certifications` | Compliance dashboard reads cert data |
+| `hr_employees` | Employee compliance status per person |
+| `documents` bucket | Compliance docs stored here |
+
+### Security Verification Checklist
+
+- [ ] All hooks use createClient() for Supabase with JWT auth
+- [ ] Hooks filter deleted_at IS NULL
+- [ ] Compliance packet share links validated server-side
+- [ ] No SQL injection in filter parameters
+- [ ] `npm run build` passes with 0 errors
+
+### Steps
+
+- [ ] CRM: web-portal/src/app/permits/page.tsx — all active permits, sortable by deadline
 - [ ] CRM: web-portal/src/app/permits/[jobId]/page.tsx — per-job detail + inspection timeline
 - [ ] CRM: web-portal/src/app/permits/jurisdictions/page.tsx — browse/contribute jurisdiction data
-- [ ] CRM: web-portal/src/app/compliance/page.tsx — all company compliance at a glance (licenses, insurance, bonds, OSHA, EPA, vehicle regs)
-- [ ] Hook: use-permits.ts, use-compliance.ts
-- [ ] Verify: `npm run build` 0 errors
-- [ ] Commit: `[L4] Permits + Compliance CRM pages`
+- [ ] CRM: web-portal/src/app/compliance/page.tsx — full compliance dashboard (licenses, insurance, bonds, OSHA, EPA, vehicles, gap analysis)
+- [ ] Hook: use-permits.ts (CRUD permits + inspections, filters)
+- [ ] Hook: use-compliance.ts (certs, requirements, gaps, packets)
+- [ ] Wire permit tab into existing job detail page
+- [ ] Wire compliance into settings/company navigation
+- [ ] Verify: `npm run build` 0 errors on web-portal
+- [ ] Commit: `[L4] Permits + Compliance CRM pages — permit management, inspection timelines, compliance dashboard, gap analysis`
+
+---
 
 ### L5 — Lien Engine Foundation (~10h)
 
-#### Steps
-- [ ] Migration: CREATE lien_rules_by_state — id, state_code UNIQUE, preliminary_notice_required, deadlines, recipients, notarization, special_rules + RLS (public read)
-- [ ] Migration: CREATE lien_tracking — id, company_id, job_id, customer_id, property_address, state_code FK, dates (first_work, last_work, completion), notice/lien dates and statuses, document_paths + RLS
-- [ ] Migration: CREATE lien_document_templates — id, state_code, document_type, template_content (HTML), placeholders (JSONB) + RLS (public read)
-- [ ] Seed: all 50 states + DC lien rules from publicly available statutes
+**Goal:** Build the mechanic's lien protection engine. 50-state + DC lien rules database, per-job lien tracking, document templates. This is the most legally critical feature in Phase L — missing a lien deadline means a contractor LOSES their legal right to payment. The system must be state-aware, deadline-accurate, and clearly disclaim it is NOT legal advice.
+
+**Legal Disclaimer (MUST appear on every lien-related screen):** "Zafto provides lien deadline tracking and document templates as a convenience tool ONLY. This is NOT legal advice. Lien laws vary by state and change frequently. Deadlines shown are estimates based on publicly available statutes. ALWAYS consult a licensed attorney in your state before filing a mechanic's lien or allowing a deadline to pass. Zafto is not responsible for missed deadlines, incorrect filings, or any legal consequences."
+
+### Database Migration
+
+```sql
+-- ============================================================
+-- TABLE 7: lien_rules_by_state
+-- 50 states + DC mechanic's lien rules from public statutes
+-- ============================================================
+CREATE TABLE lien_rules_by_state (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  state_code CHAR(2) NOT NULL UNIQUE,
+  state_name TEXT NOT NULL,
+  -- Preliminary Notice
+  preliminary_notice_required BOOLEAN NOT NULL,
+  preliminary_notice_deadline_days INTEGER,
+  preliminary_notice_deadline_from TEXT CHECK (preliminary_notice_deadline_from IN (
+    'first_work','first_material_delivery','contract_date','not_applicable'
+  )),
+  preliminary_notice_recipients TEXT[],
+  preliminary_notice_certified_mail BOOLEAN DEFAULT false,
+  preliminary_notice_form_statutory BOOLEAN DEFAULT false,
+  -- Lien Filing
+  lien_filing_deadline_days INTEGER NOT NULL,
+  lien_filing_deadline_from TEXT NOT NULL CHECK (lien_filing_deadline_from IN (
+    'last_work','completion','last_material_delivery','notice_of_completion',
+    'acceptance','abandonment'
+  )),
+  notice_of_completion_shortens_deadline BOOLEAN DEFAULT false,
+  shortened_deadline_days INTEGER,
+  -- Suit/Foreclosure
+  suit_deadline_months INTEGER NOT NULL,
+  suit_deadline_from TEXT DEFAULT 'lien_filing' CHECK (suit_deadline_from IN (
+    'lien_filing','lien_recording','last_work'
+  )),
+  -- Requirements
+  notarization_required BOOLEAN DEFAULT false,
+  license_required_to_lien BOOLEAN DEFAULT true,
+  contract_required BOOLEAN DEFAULT false,
+  written_contract_required BOOLEAN DEFAULT false,
+  -- Bond Claims (public projects)
+  bond_claim_available BOOLEAN DEFAULT false,
+  bond_claim_deadline_days INTEGER,
+  bond_claim_deadline_from TEXT,
+  -- Lien Waiver
+  statutory_lien_waiver_forms BOOLEAN DEFAULT false,
+  lien_waiver_types TEXT[],
+  -- Amounts and Limits
+  lien_amount_limit TEXT,
+  residential_threshold NUMERIC(10,2),
+  -- Sub vs Prime Differences
+  sub_different_rules BOOLEAN DEFAULT false,
+  sub_preliminary_notice_required BOOLEAN,
+  sub_lien_filing_deadline_days INTEGER,
+  -- Special Rules
+  special_rules TEXT,
+  residential_vs_commercial_differences TEXT,
+  source_statute TEXT,
+  source_url TEXT,
+  last_verified DATE,
+  last_verified_by TEXT,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  deleted_at TIMESTAMPTZ
+);
+
+ALTER TABLE lien_rules_by_state ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "lien_rules_select" ON lien_rules_by_state
+  FOR SELECT TO authenticated USING (deleted_at IS NULL);
+CREATE POLICY "lien_rules_update" ON lien_rules_by_state
+  FOR UPDATE TO authenticated
+  USING ((auth.jwt()->'app_metadata'->>'role') = 'super_admin');
+-- INSERT: service_role only (seed data). No user INSERT policy needed.
+-- DELETE: service_role only. No user DELETE policy needed.
+-- Seed data managed by system. Companies cannot add/delete state rules.
+
+CREATE INDEX idx_lien_rules_state ON lien_rules_by_state(state_code) WHERE deleted_at IS NULL;
+
+CREATE TRIGGER lien_rules_updated_at BEFORE UPDATE ON lien_rules_by_state
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER lien_rules_audit AFTER INSERT OR UPDATE OR DELETE ON lien_rules_by_state
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+-- ============================================================
+-- TABLE 8: lien_tracking
+-- Per-job lien protection tracking (company-scoped)
+-- ============================================================
+CREATE TABLE lien_tracking (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  job_id UUID NOT NULL REFERENCES jobs(id),
+  customer_id UUID NOT NULL REFERENCES customers(id),
+  property_address TEXT NOT NULL,
+  state_code CHAR(2) NOT NULL,
+  contract_amount NUMERIC(12,2),
+  amount_owed NUMERIC(12,2),
+  amount_paid NUMERIC(12,2) DEFAULT 0,
+  -- Key Dates
+  first_work_date DATE,
+  last_work_date DATE,
+  completion_date DATE,
+  notice_of_completion_date DATE,
+  -- Preliminary Notice
+  prelim_notice_deadline DATE,
+  prelim_notice_sent_date DATE,
+  prelim_notice_method TEXT CHECK (prelim_notice_method IN ('certified_mail','personal_delivery','registered_mail','email')),
+  prelim_notice_tracking_number TEXT,
+  prelim_notice_document_path TEXT,
+  prelim_notice_status TEXT DEFAULT 'not_required' CHECK (prelim_notice_status IN (
+    'not_required','pending','sent','confirmed_received','expired'
+  )),
+  -- Demand Letter
+  demand_letter_sent_date DATE,
+  demand_letter_document_path TEXT,
+  demand_letter_response TEXT,
+  -- Lien Filing
+  lien_filing_deadline DATE,
+  lien_filed_date DATE,
+  lien_document_path TEXT,
+  lien_recording_number TEXT,
+  lien_recording_county TEXT,
+  lien_amount NUMERIC(12,2),
+  -- Suit
+  suit_filing_deadline DATE,
+  suit_filed_date DATE,
+  suit_case_number TEXT,
+  attorney_name TEXT,
+  attorney_phone TEXT,
+  -- Resolution
+  lien_status TEXT DEFAULT 'monitoring' CHECK (lien_status IN (
+    'monitoring','prelim_sent','demand_sent','lien_filed',
+    'suit_filed','settled','released','expired','cancelled'
+  )),
+  payment_received_date DATE,
+  payment_received_amount NUMERIC(12,2),
+  lien_release_date DATE,
+  lien_release_document_path TEXT,
+  lien_release_recording_number TEXT,
+  -- Lien Waivers (for receiving waivers from subs)
+  lien_waivers JSONB DEFAULT '[]',
+  notes TEXT,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  deleted_at TIMESTAMPTZ
+);
+
+ALTER TABLE lien_tracking ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "lien_tracking_select" ON lien_tracking
+  FOR SELECT TO authenticated USING (company_id = auth.company_id() AND deleted_at IS NULL);
+CREATE POLICY "lien_tracking_insert" ON lien_tracking
+  FOR INSERT TO authenticated WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "lien_tracking_update" ON lien_tracking
+  FOR UPDATE TO authenticated USING (company_id = auth.company_id() AND deleted_at IS NULL);
+CREATE POLICY "lien_tracking_delete" ON lien_tracking
+  FOR DELETE TO authenticated USING (company_id = auth.company_id());
+
+CREATE INDEX idx_lien_tracking_company ON lien_tracking(company_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_lien_tracking_job ON lien_tracking(job_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_lien_tracking_status ON lien_tracking(company_id, lien_status) WHERE deleted_at IS NULL;
+CREATE INDEX idx_lien_tracking_deadlines ON lien_tracking(prelim_notice_deadline, lien_filing_deadline, suit_filing_deadline) WHERE deleted_at IS NULL;
+CREATE INDEX idx_lien_tracking_state ON lien_tracking(state_code) WHERE deleted_at IS NULL;
+
+CREATE TRIGGER lien_tracking_updated_at BEFORE UPDATE ON lien_tracking
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER lien_tracking_audit AFTER INSERT OR UPDATE OR DELETE ON lien_tracking
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+-- ============================================================
+-- TABLE 9: lien_document_templates
+-- State-specific document templates for notices, liens, releases
+-- ============================================================
+CREATE TABLE lien_document_templates (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  state_code CHAR(2) NOT NULL,
+  document_type TEXT NOT NULL CHECK (document_type IN (
+    'preliminary_notice','notice_of_intent','demand_letter',
+    'mechanics_lien','lien_release','lien_waiver_conditional_progress',
+    'lien_waiver_unconditional_progress','lien_waiver_conditional_final',
+    'lien_waiver_unconditional_final','notice_of_completion',
+    'stop_notice','bond_claim'
+  )),
+  template_name TEXT NOT NULL,
+  template_content TEXT NOT NULL,
+  placeholders JSONB NOT NULL,
+  is_statutory_form BOOLEAN DEFAULT false,
+  statutory_reference TEXT,
+  requires_notarization BOOLEAN DEFAULT false,
+  is_custom BOOLEAN DEFAULT false,
+  company_id UUID REFERENCES companies(id),
+  notes TEXT,
+  active BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  deleted_at TIMESTAMPTZ
+);
+
+ALTER TABLE lien_document_templates ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "lien_templates_select" ON lien_document_templates
+  FOR SELECT TO authenticated USING (deleted_at IS NULL);
+CREATE POLICY "lien_templates_update" ON lien_document_templates
+  FOR UPDATE TO authenticated
+  USING ((auth.jwt()->'app_metadata'->>'role') = 'super_admin');
+-- System templates: service_role only for INSERT/DELETE
+-- Company custom templates: add policies
+CREATE POLICY "lien_document_templates_insert" ON lien_document_templates
+  FOR INSERT TO authenticated WITH CHECK (
+    company_id = auth.company_id() AND is_custom = true
+  );
+CREATE POLICY "lien_document_templates_delete" ON lien_document_templates
+  FOR DELETE TO authenticated USING (
+    company_id = auth.company_id() AND is_custom = true AND (auth.jwt()->'app_metadata'->>'role') = 'owner'
+  );
+
+CREATE INDEX idx_lien_templates_state ON lien_document_templates(state_code) WHERE deleted_at IS NULL;
+CREATE INDEX idx_lien_templates_type ON lien_document_templates(document_type) WHERE deleted_at IS NULL;
+
+CREATE TRIGGER lien_templates_updated_at BEFORE UPDATE ON lien_document_templates
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER lien_templates_audit AFTER INSERT OR UPDATE OR DELETE ON lien_document_templates
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+```
+
+### Seed Data: All 50 States + DC Lien Rules
+
+Every state seeded with publicly available statute data. Key variations:
+
+**Preliminary Notice Required States (with deadlines):**
+- AZ: 20 days from first work (A.R.S. 33-992.01)
+- CA: 20 days from first work (Civil Code 8200-8216)
+- FL: 45 days from first work (F.S. 713.06)
+- GA: within 30 days of first work for residential (O.C.G.A. 44-14-361.1)
+- IN: 60 days from first furnishing
+- LA: within 30 days of first work (depends on party type)
+- MA: 60 days from last work (G.L. c.254 s.4)
+- MI: 20 days from first furnishing (MCL 570.1109)
+- MS: 3 days from first furnishing for residential
+- MO: within 5 days of first work for mechanic's lien
+- MT: 20 days from first furnishing
+- NV: 31 days (NRS 108.245)
+- NM: 60 days from first furnishing
+- TX: 2nd month after first furnishing for subs/suppliers (TX Prop Code 53.056)
+- UT: 20 days from first furnishing (Utah Code 38-1a-501)
+- WA: 60 days from first furnishing (RCW 60.04.031)
+- WY: 10 days from first furnishing
+
+**12 States with Statutory Lien Waiver Forms:**
+AZ (A.R.S. 33-1008), CA (Civil Code 8132-8138), FL (F.S. 713.20), GA (O.C.G.A. 44-14-366), MA (G.L. c.254 s.32), MI (MCL 570.1115), MS (Miss. Code 85-7-431), MO (RSMo 431.183), NV (NRS 108.2457), TX (TX Prop Code 53.284), UT (Utah Code 38-1a-802), WY (Wyo. Stat. 29-2-110)
+
+4 waiver types per state: conditional progress, unconditional progress, conditional final, unconditional final.
+
+### Seed Data: Document Templates for Top 10 States
+
+HTML templates with {{placeholders}} for: CA, TX, FL, NY, PA, IL, OH, GA, NC, MI.
+Document types per state: preliminary_notice, demand_letter, mechanics_lien, lien_release.
+12 statutory-form states also get all 4 lien_waiver types.
+
+Placeholders JSONB example:
+```json
+[
+  {"key": "contractor_name", "description": "Your company name", "source": "company.name"},
+  {"key": "contractor_address", "description": "Company address", "source": "company.address"},
+  {"key": "contractor_license", "description": "License number", "source": "company.license_number"},
+  {"key": "property_address", "description": "Job property address", "source": "job.address"},
+  {"key": "owner_name", "description": "Property owner name", "source": "customer.name"},
+  {"key": "amount_owed", "description": "Amount claimed", "source": "lien_tracking.amount_owed"},
+  {"key": "first_work_date", "description": "Date work began", "source": "lien_tracking.first_work_date"},
+  {"key": "last_work_date", "description": "Date of last work", "source": "lien_tracking.last_work_date"},
+  {"key": "work_description", "description": "Description of work", "source": "job.description"},
+  {"key": "filing_date", "description": "Date of filing", "source": "today"},
+  {"key": "county", "description": "County of property", "source": "job.county"}
+]
+```
+
+### Dart Models
+
+```
+lib/models/lien_rule.dart           — LienRule (Equatable, fromJson/toJson/copyWith, computed: getPrelimDeadline(firstWorkDate), getLienDeadline(lastWorkDate), getSuitDeadline(lienFiledDate))
+lib/models/lien_tracking.dart       — LienTracking (Equatable, fromJson/toJson/copyWith, computed: nextDeadline, daysUntilNextDeadline, isAtRisk, urgencyLevel)
+lib/models/lien_document_template.dart — LienDocumentTemplate (Equatable, fromJson/toJson/copyWith)
+```
+
+### Wiring to Existing Systems
+
+| System | Connection |
+|--------|-----------|
+| `jobs` | lien_tracking.job_id FK, auto-create tracking when job starts |
+| `customers` | lien_tracking.customer_id FK, payment history flags risk |
+| `invoices` | Overdue invoice triggers lien countdown display |
+| `estimates` | Contract amount from accepted estimate |
+| `documents` bucket | Generated docs stored here |
+
+### Legal Considerations
+
+- Lien deadlines are LEGALLY BINDING — system must calculate from state-specific rules
+- Auto-calculate deadlines when first_work_date or last_work_date changes
+- NEVER auto-file — only prepare documents. Filing is contractor's decision
+- Clearly distinguish between preliminary notice (protect rights) vs actual lien (legal filing)
+- Some states require the contractor to have a valid license to file a lien
+- Notice of Completion by owner can SHORTEN lien filing deadlines in some states (CA: 90 -> 30 days)
+- Bond claims for public projects have different rules than mechanic's liens
+
+### Security Verification Checklist
+
+- [ ] RLS on all 3 tables
+- [ ] lien_rules: public read, super_admin write
+- [ ] lien_tracking: company_id scoped all operations
+- [ ] lien_templates: public read, super_admin write
+- [ ] Audit trigger on all 3 tables
+- [ ] deleted_at on all 3 tables
+- [ ] Generated documents stored in private bucket with company_id path prefix
+
+### Steps
+
+- [ ] Migration: CREATE lien_rules_by_state — all columns, UNIQUE(state_code), RLS, indexes, triggers
+- [ ] Migration: CREATE lien_tracking — all columns, CHECK constraints, RLS, indexes, triggers
+- [ ] Migration: CREATE lien_document_templates — all columns, RLS, indexes, triggers
+- [ ] Seed: ALL 50 states + DC lien rules from publicly available statutes
 - [ ] Seed: document templates for top 10 states (CA, TX, FL, NY, PA, IL, OH, GA, NC, MI)
-- [ ] Dart models: lien_rule.dart, lien_tracking.dart
-- [ ] Verify: migration clean, all 51 jurisdiction rules seeded
-- [ ] Commit: `[L5] Mechanic's Lien Engine — tables, 50-state rules, templates`
+- [ ] Seed: 48 statutory lien waiver forms for 12 mandatory states (4 types x 12 states)
+- [ ] Dart model: lien_rule.dart with deadline calculation computed getters
+- [ ] Dart model: lien_tracking.dart with nextDeadline, daysUntilNextDeadline, urgencyLevel
+- [ ] Dart model: lien_document_template.dart
+- [ ] Repository: lien_protection_repository.dart (abstract + concrete)
+- [ ] Verify: migration clean, all 51 jurisdiction rules seeded, templates render correctly
+- [ ] Commit: `[L5] Mechanic's Lien Engine — 3 tables, 50-state rules, templates, statutory waiver forms`
 
-### L6 — Lien Document Generation + Monitor (~8h)
+---
 
-#### Steps
-- [ ] Document generator: HTML template → pdf-lib PDF with company branding, job data auto-filled, property info, amounts
-- [ ] Edge Function: lien-deadline-monitor — CRON daily: check all active lien records, alert at 30/14/7/3/1 days before each deadline
-- [ ] Flutter: lien_dashboard_screen.dart — active liens sorted by deadline, status colors
-- [ ] Flutter: lien_detail_screen.dart — timeline, generate documents, track status changes
-- [ ] Verify: document generates correctly with test data, deadlines calculate properly
-- [ ] Commit: `[L6] Lien document generation + deadline monitoring`
+### L6 — Lien Document Generation + Deadline Monitor (~8h)
+
+**Goal:** Build the document generation engine (HTML template to PDF via pdf-lib), deadline monitoring CRON Edge Function that alerts at 30/14/7/3/1 days before each deadline, and Flutter lien management screens.
+
+### Edge Function: lien-deadline-monitor
+
+```
+Name: lien-deadline-monitor
+Method: POST (invoked by CRON daily at 7AM UTC)
+Auth: Service role key (CRON-triggered)
+
+Logic:
+1. Query all lien_tracking records WHERE lien_status IN ('monitoring','prelim_sent','demand_sent','lien_filed') AND deleted_at IS NULL
+2. For each record, calculate days until each relevant deadline:
+   - prelim_notice_deadline (if prelim_notice_status = 'pending')
+   - lien_filing_deadline (if lien_status IN ('monitoring','prelim_sent','demand_sent'))
+   - suit_filing_deadline (if lien_status = 'lien_filed')
+3. At thresholds 30/14/7/3/1 days: create notification record + push notification
+4. At 0 days: CRITICAL alert — "DEADLINE TODAY"
+5. At negative days: EXPIRED alert — "Deadline PASSED X days ago"
+
+Response (200): { "processed": 150, "alerts_created": 12 }
+Errors: 401 (bad service key), 500 (internal)
+```
+
+### Edge Function: lien-document-generate
+
+```
+Name: lien-document-generate
+Method: POST
+Auth: Bearer token (JWT)
+
+Request Body:
+{
+  "lien_tracking_id": "uuid",
+  "document_type": "preliminary_notice",
+  "override_data": {}    // optional: override any auto-populated field
+}
+
+Logic:
+1. Load lien_tracking record (verify company_id)
+2. Load state-specific template from lien_document_templates
+3. Load company, job, customer data for placeholders
+4. Render HTML template with all placeholders filled
+5. Convert HTML to PDF via pdf-lib
+6. Add legal disclaimer footer to every page
+7. Store PDF in documents bucket: documents/{company_id}/liens/{job_id}/{document_type}_{date}.pdf
+8. Update lien_tracking record with document_path
+
+Response (200): { "document_path": "...", "document_url": "signed-url" }
+Errors: 400 (missing fields), 401 (bad JWT), 403 (wrong company), 404 (template not found), 500
+```
+
+### Flutter Screen Specs
+
+**`lib/screens/liens/lien_dashboard_screen.dart`** — All active liens
+- **Loading:** Skeleton list
+- **Error:** ErrorState + retry
+- **Empty:** "No active lien protection records. Lien tracking starts automatically when you create a job over your configured threshold. [Configure Threshold]"
+- **Data:** Three sections:
+  1. **CRITICAL** (red): Deadlines within 7 days or passed
+  2. **WARNING** (yellow): Deadlines within 30 days
+  3. **MONITORING** (green): All others
+  Each card: Job name, customer, property address, amount owed, next deadline (days remaining), status badge. Tap to navigate to detail.
+
+**`lib/screens/liens/lien_detail_screen.dart`** — Per-job lien timeline
+- **Loading:** Skeleton
+- **Error:** ErrorState
+- **Data:** Visual timeline showing: First Work -> Prelim Notice Deadline -> (Prelim Sent) -> Last Work -> Lien Filing Deadline -> (Lien Filed) -> Suit Deadline -> Resolution. Each milestone shows date, status, action button. Document section: generated docs with download/share. State rules reference panel: "In [State], you have [X] days from [trigger] to file." Action buttons: Generate Preliminary Notice, Generate Demand Letter, Generate Lien Document, Generate Lien Release.
+
+**Legal disclaimer banner at top of both screens.**
+
+### Web CRM Hook
+
+**`web-portal/src/lib/hooks/use-lien-protection.ts`**
+```typescript
+Returns: {
+  lienRecords: LienTracking[],
+  criticalDeadlines: LienTracking[],   // within 7 days
+  warningDeadlines: LienTracking[],    // within 30 days
+  totalProtectedAmount: number,
+  loading: boolean, error: Error | null,
+  // Mutations
+  createLienTracking: (data) => Promise<LienTracking>,
+  updateLienTracking: (id, data) => Promise<LienTracking>,
+  generateDocument: (trackingId, docType) => Promise<{path, url}>,
+  getLienRulesForState: (stateCode) => Promise<LienRule>,
+}
+```
+
+### API Connections ($0/month)
+
+| API | Purpose | Cost |
+|-----|---------|------|
+| pdf-lib (MIT) | HTML to PDF document generation | $0, bundled |
+| Supabase CRON | Daily deadline monitor trigger | $0, included |
+| Supabase Storage | Document storage | $0 within limits |
+
+### Wiring to Existing Systems
+
+| System | Connection |
+|--------|-----------|
+| `notifications` | Deadline alerts pushed to notification system |
+| `documents` bucket | Generated PDFs stored here |
+| `jobs` | Auto-create lien tracking when job starts (configurable threshold) |
+| `invoices` | Overdue invoices trigger lien deadline visibility |
+
+### Security Verification Checklist
+
+- [ ] Document generation EF validates company_id owns the lien_tracking record
+- [ ] Generated PDFs stored in company-scoped path
+- [ ] CRON EF uses service role key, not user JWT
+- [ ] Deadline calculations double-checked against state rules
+- [ ] Legal disclaimer on every generated document
+- [ ] No auto-filing — documents are GENERATED, filing is manual
+
+### Steps
+
+- [ ] Edge Function: lien-document-generate (HTML template rendering + PDF generation)
+- [ ] Edge Function: lien-deadline-monitor (CRON daily, check all active records, create alerts at 30/14/7/3/1 days)
+- [ ] CRON job setup: pg_cron or Supabase scheduled function for daily 7AM UTC
+- [ ] Flutter: lien_dashboard_screen.dart — active liens sorted by deadline urgency
+- [ ] Flutter: lien_detail_screen.dart — timeline, document generation, status tracking
+- [ ] Legal disclaimer component (reusable banner for all lien screens)
+- [ ] Riverpod providers for lien data
+- [ ] Verify: document generates correctly with test data
+- [ ] Verify: deadlines calculate correctly for CA, TX, FL test scenarios
+- [ ] Commit: `[L6] Lien document generation + deadline monitoring — PDF engine, CRON alerts, Flutter screens`
+
+---
 
 ### L7 — Lien + Compliance Web CRM (~6h)
 
-#### Steps
-- [ ] CRM: web-portal/src/app/lien-protection/page.tsx — dashboard: at-risk, approaching deadlines, total protected $
-- [ ] CRM: web-portal/src/app/lien-protection/[jobId]/page.tsx — per-job lien detail + doc generation
-- [ ] CRM: web-portal/src/app/lien-protection/rules/page.tsx — browse state rules reference
-- [ ] Hook: use-lien-protection.ts
+**Goal:** Build CRM pages for lien protection management and state rules reference. Connect lien protection into the main CRM navigation.
+
+### Web CRM Page Specs
+
+**`web-portal/src/app/lien-protection/page.tsx`** — Lien dashboard
+- **Loading:** Skeleton dashboard
+- **Error:** Error banner + retry
+- **Empty:** "No active lien protection records. [Learn about lien protection]"
+- **Data:** Dashboard:
+  - Header stats: Total tracked jobs, Total protected amount ($), Critical deadlines (count), At-risk jobs
+  - Color-coded table: Job, Customer, Property, Amount Owed, Next Deadline, Days Left, Status
+  - Rows sorted by urgency: red (critical) -> yellow (warning) -> green (monitoring)
+  - Bulk actions: export report, generate summary PDF
+  - Legal disclaimer banner
+
+**`web-portal/src/app/lien-protection/[jobId]/page.tsx`** — Per-job detail
+- **Loading:** Skeleton
+- **Error:** Error state
+- **Data:** Visual timeline (horizontal), document list with download buttons, generate document buttons (prelim notice, demand letter, lien, release), state rules summary panel, notes section, payment tracking
+
+**`web-portal/src/app/lien-protection/rules/page.tsx`** — State rules reference
+- **Loading:** Skeleton table
+- **Error:** Error banner
+- **Data:** Interactive table: all 50 states + DC. Columns: State, Prelim Notice Required, Prelim Deadline, Lien Filing Deadline, Suit Deadline, Notarization Required, Statutory Waiver Forms. Click state for full detail panel with special rules, source statute link, waiver form download. Search/filter by state. Comparison mode: select 2 states side-by-side.
+
+### Hook
+
+**`web-portal/src/lib/hooks/use-lien-protection.ts`** (same as L6 spec above, wired into CRM pages)
+
+### Wiring to Existing Systems
+
+| System | Connection |
+|--------|-----------|
+| CRM navigation | Lien Protection as top-level nav item under "Legal" section |
+| Job detail page | "Lien Protection" tab on job detail |
+| Invoice page | Overdue invoice banner: "This invoice is [X] days overdue. [Protect with Lien]" |
+
+### Steps
+
+- [ ] CRM: web-portal/src/app/lien-protection/page.tsx — dashboard with stats, urgency-sorted table
+- [ ] CRM: web-portal/src/app/lien-protection/[jobId]/page.tsx — per-job detail, timeline, doc generation
+- [ ] CRM: web-portal/src/app/lien-protection/rules/page.tsx — 50-state rules reference, comparison mode
+- [ ] Hook: use-lien-protection.ts (if not already created in L6)
+- [ ] Wire lien protection into CRM navigation
+- [ ] Wire overdue invoice -> lien protection prompt
+- [ ] Legal disclaimer on all pages
 - [ ] Verify: `npm run build` 0 errors
-- [ ] Commit: `[L7] Lien Protection CRM pages + hook`
+- [ ] Commit: `[L7] Lien Protection CRM pages — dashboard, per-job detail, 50-state rules reference`
+
+---
 
 ### L8 — CE Tracker + Compliance Packets (~8h)
 
-#### Steps
-- [ ] Migration: ALTER certification_types — add ce_credits_required, renewal_period_months, state_code, governing_body, ce_categories (JSONB)
-- [ ] Migration: CREATE ce_credit_log — id, company_id, user_id, certification_id FK, course_name, provider, credit_hours, ce_category, completion_date, certificate_document_path, verified + RLS
-- [ ] Migration: CREATE license_renewals — id, company_id, certification_id FK, user_id, renewal_due_date, ce_credits_required/completed/remaining, status, fees + RLS
-- [ ] Compliance packet generator: select certs/docs → generate combined PDF → share via link/email
-- [ ] Edge Function: compliance-scanner — CRON weekly: check all certs for approaching expiry, check CE credits remaining, check job assignments vs compliance requirements
-- [ ] Verify: CE tracking works, packet generates
-- [ ] Commit: `[L8] CE Tracker + Compliance scanner + packet generator`
+**Goal:** Continuing Education credit tracking, license renewal management, and compliance packet generation. Extends the certifications system (D7a) to track CE hours per employee, renewal deadlines, and auto-generate compliance document packages for GCs.
+
+### Database Migration
+
+```sql
+-- ============================================================
+-- ALTER: certification_types — add CE requirements (expand-contract)
+-- ============================================================
+ALTER TABLE certification_types ADD COLUMN IF NOT EXISTS ce_credits_required INTEGER;
+ALTER TABLE certification_types ADD COLUMN IF NOT EXISTS renewal_period_months INTEGER DEFAULT 24;
+ALTER TABLE certification_types ADD COLUMN IF NOT EXISTS state_code CHAR(2);
+ALTER TABLE certification_types ADD COLUMN IF NOT EXISTS governing_body TEXT;
+ALTER TABLE certification_types ADD COLUMN IF NOT EXISTS ce_categories JSONB;
+
+-- ============================================================
+-- TABLE 10: ce_credit_log
+-- Per-employee CE credit tracking
+-- ============================================================
+CREATE TABLE ce_credit_log (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  user_id UUID NOT NULL REFERENCES users(id),
+  certification_id UUID NOT NULL REFERENCES certifications(id),
+  course_name TEXT NOT NULL,
+  provider TEXT,
+  credit_hours NUMERIC(4,1) NOT NULL,
+  ce_category TEXT,
+  completion_date DATE NOT NULL,
+  certificate_document_path TEXT,
+  verified BOOLEAN DEFAULT false,
+  verified_by UUID REFERENCES users(id),
+  verified_at TIMESTAMPTZ,
+  notes TEXT,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  deleted_at TIMESTAMPTZ
+);
+
+ALTER TABLE ce_credit_log ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "ce_credit_log_select" ON ce_credit_log
+  FOR SELECT TO authenticated USING (company_id = auth.company_id() AND deleted_at IS NULL);
+CREATE POLICY "ce_credit_log_insert" ON ce_credit_log
+  FOR INSERT TO authenticated WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "ce_credit_log_update" ON ce_credit_log
+  FOR UPDATE TO authenticated USING (company_id = auth.company_id() AND deleted_at IS NULL);
+CREATE POLICY "ce_credit_log_delete" ON ce_credit_log
+  FOR DELETE TO authenticated USING (company_id = auth.company_id());
+
+CREATE INDEX idx_ce_credit_log_company ON ce_credit_log(company_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_ce_credit_log_user ON ce_credit_log(user_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_ce_credit_log_cert ON ce_credit_log(certification_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_ce_credit_log_date ON ce_credit_log(completion_date) WHERE deleted_at IS NULL;
+
+CREATE TRIGGER ce_credit_log_updated_at BEFORE UPDATE ON ce_credit_log
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER ce_credit_log_audit AFTER INSERT OR UPDATE OR DELETE ON ce_credit_log
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+-- ============================================================
+-- TABLE 11: license_renewals
+-- Track renewal cycles per certification per employee
+-- ============================================================
+CREATE TABLE license_renewals (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  certification_id UUID NOT NULL REFERENCES certifications(id),
+  user_id UUID NOT NULL REFERENCES users(id),
+  renewal_due_date DATE NOT NULL,
+  ce_credits_required INTEGER NOT NULL DEFAULT 0,
+  ce_credits_completed INTEGER DEFAULT 0,
+  ce_credits_remaining INTEGER GENERATED ALWAYS AS (GREATEST(ce_credits_required - ce_credits_completed, 0)) STORED,
+  renewal_status TEXT DEFAULT 'in_progress' CHECK (renewal_status IN (
+    'in_progress','credits_complete','application_submitted','renewed','lapsed','waived'
+  )),
+  renewal_fee NUMERIC(8,2),
+  renewal_fee_paid BOOLEAN DEFAULT false,
+  application_submitted_date DATE,
+  renewed_date DATE,
+  new_expiry_date DATE,
+  notes TEXT,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  deleted_at TIMESTAMPTZ
+);
+
+ALTER TABLE license_renewals ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "license_renewals_select" ON license_renewals
+  FOR SELECT TO authenticated USING (company_id = auth.company_id() AND deleted_at IS NULL);
+CREATE POLICY "license_renewals_insert" ON license_renewals
+  FOR INSERT TO authenticated WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "license_renewals_update" ON license_renewals
+  FOR UPDATE TO authenticated USING (company_id = auth.company_id() AND deleted_at IS NULL);
+CREATE POLICY "license_renewals_delete" ON license_renewals
+  FOR DELETE TO authenticated USING (company_id = auth.company_id());
+
+CREATE INDEX idx_license_renewals_company ON license_renewals(company_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_license_renewals_user ON license_renewals(user_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_license_renewals_cert ON license_renewals(certification_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_license_renewals_due ON license_renewals(renewal_due_date) WHERE deleted_at IS NULL AND renewal_status IN ('in_progress','credits_complete');
+
+CREATE TRIGGER license_renewals_updated_at BEFORE UPDATE ON license_renewals
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER license_renewals_audit AFTER INSERT OR UPDATE OR DELETE ON license_renewals
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+```
+
+### Edge Function: compliance-scanner
+
+```
+Name: compliance-scanner
+Method: POST (CRON weekly, Sundays 6AM UTC)
+Auth: Service role key
+
+Logic:
+1. Query all certifications WHERE deleted_at IS NULL
+2. For each: check days until expiry. Alert at 90/60/30/14/7 days
+3. Query all license_renewals WHERE renewal_status IN ('in_progress','credits_complete')
+4. For each: check CE credits remaining, alert if behind schedule
+5. Query compliance_requirements for each company's trade_type + state
+6. Cross-reference against company certifications — identify gaps
+7. Create notification records for all alerts
+
+Response (200): { "companies_scanned": 500, "alerts_created": 45, "gaps_identified": 12 }
+```
+
+### Compliance Packet Generator
+
+```
+Name: compliance-packet-generate (Edge Function)
+Method: POST
+Auth: Bearer token (JWT)
+
+Request Body:
+{
+  "packet_name": "Insurance & License Packet for Turner Construction",
+  "certification_ids": ["uuid1", "uuid2", "uuid3"],
+  "requested_by": "Turner Construction",
+  "requested_by_email": "compliance@turner.com"
+}
+
+Logic:
+1. Load each certification document from storage
+2. Combine into single PDF with cover page (company info, date, table of contents)
+3. Each cert on its own page with: type, number, expiry, coverage amount
+4. Store combined PDF in documents bucket
+5. Create compliance_packets record
+6. Optionally email to requested_by_email with download link
+
+Response (200): { "packet_id": "uuid", "document_path": "...", "share_url": "..." }
+```
+
+### Seed: CE Requirements by State (Top 10 States)
+
+Seed certification_types CE data for common trade licenses:
+- CA: CSLB Contractor — 32 CE hours/4 years, mandatory: 5hr workers comp, 5hr building code
+- TX: TDLR Electrician — 4 CE hours/year
+- FL: DBPR General Contractor — 14 CE hours/2 years, mandatory: 1hr workers comp, 1hr business practices, 1hr workplace safety, 1hr building code update
+- NY: DOB Electrician — 8 CE hours/3 years
+- IL: IDFPR Plumber — 4 CE hours/2 years, mandatory: 2hr code update
+- OH: OCILB HVAC — 10 CE hours/3 years
+- GA: Division of Professional Licensing — varies by trade
+- NC: Licensing Board — 8 CE hours/year for unlimited GC
+- MI: LARA Electrician — 6 CE hours/3 years
+- PA: Attorney General Home Improvement Contractor — no CE required
+
+### Wiring to Existing Systems
+
+| System | Connection |
+|--------|-----------|
+| `certifications` (D7a) | Extended with CE fields, feeds into renewal tracking |
+| `hr_employees` (F5) | Employee compliance status |
+| `hr_documents` (F5) | CE certificates stored alongside HR docs |
+| `compliance_requirements` (L3) | Gap analysis: requirements vs actual certs |
+| `documents` bucket | Packet PDFs stored here |
+
+### Security Verification Checklist
+
+- [ ] RLS on ce_credit_log and license_renewals (company_id scoped)
+- [ ] certification_types ALTER uses IF NOT EXISTS
+- [ ] New cert_type columns nullable with defaults
+- [ ] CRON EF uses service role key
+- [ ] Packet share links cryptographically random with expiration
+- [ ] Audit triggers on both new tables
+
+### Steps
+
+- [ ] Migration: ALTER certification_types — add CE columns (all nullable)
+- [ ] Migration: CREATE ce_credit_log — all columns, RLS, indexes, triggers
+- [ ] Migration: CREATE license_renewals — all columns, generated column, RLS, indexes, triggers
+- [ ] Edge Function: compliance-scanner (CRON weekly, expiry alerts, CE tracking, gap analysis)
+- [ ] Edge Function: compliance-packet-generate (combine certs into PDF, store, share)
+- [ ] Seed: CE requirements for top 10 states by trade
+- [ ] Dart models: ce_credit_log.dart, license_renewal.dart
+- [ ] Repository: compliance_repository.dart (CE logging, renewal tracking, packet generation)
+- [ ] Verify: CE tracking accumulates correctly, packet generates properly
+- [ ] Commit: `[L8] CE Tracker + Compliance scanner + packet generator — ce_credit_log, license_renewals, CRON alerts`
+
+---
 
 ### L9 — Compliance UI (Team + Client Portal) + Testing (~6h)
 
-#### Steps
-- [ ] Team Portal: employee sees their compliance status, CE hours remaining, upload CE certificates
-- [ ] Client Portal: customer sees permit status for their project
-- [ ] Compliance check on job assignment: "This job requires EPA lead-safe cert — Tech Mike has it, Tech Dave doesn't"
-- [ ] Test: lien deadlines calculate correctly across multiple states
-- [ ] Test: compliance scanner catches approaching expirations
-- [ ] Test: CE credit tracking accumulates correctly
-- [ ] Test: permit lookup returns correct data for test addresses
-- [ ] Verify: all portal builds clean
-- [ ] Commit: `[L9] Compliance portal views + full Phase L testing`
+**Goal:** Build Team Portal compliance view (employee sees their own certs, CE hours, upload certificates), Client Portal permit status view (customer sees permit progress on their project), job-assignment compliance checking, and full Phase L integration testing.
+
+### Team Portal Screen Specs
+
+**`team-portal/src/app/compliance/page.tsx`** — Employee compliance status
+- **Loading:** Skeleton dashboard
+- **Error:** Error banner
+- **Empty:** "No compliance items tracked for your account."
+- **Data:**
+  - **My Certifications:** List of all certs assigned to this employee. Each: type, number, expiry date (with countdown), status badge (active/expiring/expired), CE progress bar (X/Y hours completed)
+  - **My CE Credits:** Table of logged CE credits: course name, provider, hours, date, category, verified status
+  - **Upload CE Certificate:** Button to upload proof of completion. Camera capture on mobile.
+  - **Upcoming Renewals:** Renewals due in next 90 days with CE credits remaining
+  - **Required Certifications:** Based on employee's trade and assigned job types — what they need vs what they have
+
+**Hook:** `team-portal/src/lib/hooks/use-employee-compliance.ts`
+- getMyCertifications(), getMyCECredits(), getMyRenewals(), uploadCECertificate(file, data)
+
+### Client Portal Screen Spec
+
+**`client-portal/src/app/project/[id]/permits/page.tsx`** — Customer sees permit status
+- **Loading:** Skeleton cards
+- **Error:** Error banner
+- **Empty:** "No permits have been filed for your project yet."
+- **Data:** Read-only view of permits for their project:
+  - Permit type, number, status (with plain-language explanation: "Your electrical permit has been submitted to the city and is being reviewed. Average review time: 10 business days.")
+  - Inspection schedule: "Rough-in inspection scheduled for March 5" with result if completed
+  - No sensitive data: no fees, no internal notes, no lien info
+
+**Hook:** `client-portal/src/lib/hooks/use-project-permits.ts` (read-only)
+
+### Job Assignment Compliance Check
+
+When assigning a technician to a job:
+1. Query compliance_requirements for the job's trade_type + work_type + state
+2. Query the tech's certifications
+3. If any required cert is missing or expired: show warning
+4. "This job requires EPA Lead-Safe certification. Tech Mike has it (expires Dec 2026). Tech Dave does NOT have it."
+5. Warning does NOT block assignment — it's informational. Owner decides.
+
+Implementation: Riverpod provider `complianceCheckProvider(jobId, userId)` that returns `ComplianceCheckResult { List<ComplianceGap> gaps, bool allMet }`
+
+### Testing Requirements
+
+- [ ] **Lien deadline test:** Create lien tracking records for CA, TX, FL, NY, OH with known dates. Verify calculated deadlines match state rules exactly.
+- [ ] **Lien deadline edge cases:** Test notice_of_completion shortening (CA: 90->30 days), sub vs prime different deadlines (TX), no prelim required states.
+- [ ] **Compliance scanner test:** Create expiring certs at 90/60/30/14/7 days out. Run scanner. Verify correct alerts created.
+- [ ] **CE tracking test:** Log CE credits for an employee. Verify license_renewals.ce_credits_completed updates correctly. Verify ce_credits_remaining generated column is accurate.
+- [ ] **Compliance gap test:** Set up trade + state compliance requirements. Create company with partial certs. Verify gap analysis correctly identifies missing items.
+- [ ] **Permit lookup test:** Test geocoding + jurisdiction match for 10 addresses across different jurisdictions.
+- [ ] **Document generation test:** Generate preliminary notice, demand letter, mechanics lien for CA, TX, FL. Verify all placeholders populated, PDF renders, legal disclaimer present.
+- [ ] **Compliance packet test:** Select 3 certs, generate packet. Verify combined PDF with cover page.
+- [ ] **Job assignment compliance check:** Assign tech without required cert. Verify warning displays. Assign tech with cert. Verify no warning.
+
+### Wiring to Existing Systems
+
+| System | Connection |
+|--------|-----------|
+| Team Portal navigation | "My Compliance" menu item |
+| Client Portal project page | "Permits" tab |
+| Job assignment flow | Compliance check warning before assignment |
+| Notifications | All deadline alerts feed into notification system |
+
+### Security Verification Checklist
+
+- [ ] Team Portal: employee sees ONLY their own compliance data
+- [ ] Client Portal: customer sees ONLY permits for their project, no sensitive data
+- [ ] Job assignment compliance check does not leak other employees' cert data
+- [ ] All portal builds clean: `npm run build` on team-portal, client-portal
+- [ ] Flutter: `dart analyze` clean
+
+### Steps
+
+- [ ] Team Portal: team-portal/src/app/compliance/page.tsx — employee compliance view, CE tracking, upload
+- [ ] Team Portal hook: use-employee-compliance.ts
+- [ ] Client Portal: client-portal/src/app/project/[id]/permits/page.tsx — read-only permit status
+- [ ] Client Portal hook: use-project-permits.ts
+- [ ] Job assignment compliance check: provider + UI warning
+- [ ] Test: lien deadlines across 5 states (CA, TX, FL, NY, OH)
+- [ ] Test: lien deadline edge cases (NOC shortening, sub vs prime)
+- [ ] Test: compliance scanner catches expirations
+- [ ] Test: CE credit accumulation + remaining calculation
+- [ ] Test: compliance gap analysis
+- [ ] Test: permit lookup for 10 addresses
+- [ ] Test: document generation for 3 states
+- [ ] Test: compliance packet generation
+- [ ] Test: job assignment compliance warning
+- [ ] Verify: all portal builds clean (`npm run build` x3, `dart analyze`)
+- [ ] Commit: `[L9] Compliance portal views + full Phase L testing — team compliance, client permits, job compliance check`
 
 ---
+
+---
+
 
 ## ══════════════════════════════════════════════════════════
 ## PHASE U EXTENSIONS — BUSINESS COMPLETION + ENGINES
@@ -11484,192 +14758,1704 @@ Equipment lifecycle data + prediction engine tables.
 
 ### U-REP1 — Reputation Autopilot Foundation (~6h)
 
-#### Steps
-- [ ] Migration: CREATE review_requests — id, company_id, job_id, customer_id, sent_via, sent_at, satisfaction_response, routed_to, external_review_confirmed, private_feedback + RLS
-- [ ] Migration: CREATE review_tracking — id, company_id, platform, reviewer_name, rating, review_text, review_date, linked_job_id, linked_tech_id, response_text, source + RLS
-- [ ] Migration: CREATE review_analytics — id, company_id, period_month, total_reviews, avg_rating, platform_breakdown (JSONB), top_tech_id + RLS
-- [ ] Dart models: review_request.dart, review_tracking.dart
-- [ ] Verify: migration clean
-- [ ] Commit: `[U-REP1] Reputation Autopilot foundation — 3 tables`
+**Goal:** Create 4 reputation tables (review_requests, review_tracking, review_analytics, review_settings) with full RLS, indexes, audit triggers. Dart models.
+
+#### Tables
+
+```sql
+-- ============================================================
+-- TABLE: review_requests
+-- ============================================================
+CREATE TABLE review_requests (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+  job_id UUID NOT NULL REFERENCES jobs(id),
+  customer_id UUID NOT NULL REFERENCES customers(id),
+  sent_via TEXT NOT NULL CHECK (sent_via IN ('sms', 'email', 'in_app')),
+  sent_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  delay_hours INTEGER DEFAULT 24,
+  satisfaction_response INTEGER CHECK (satisfaction_response BETWEEN 1 AND 5),
+  satisfaction_responded_at TIMESTAMPTZ,
+  routed_to TEXT CHECK (routed_to IN ('google', 'yelp', 'facebook', 'private_feedback')),
+  external_review_confirmed BOOLEAN DEFAULT false,
+  private_feedback TEXT,
+  follow_up_sent BOOLEAN DEFAULT false,
+  follow_up_sent_at TIMESTAMPTZ,
+  deleted_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+ALTER TABLE review_requests ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "review_requests_select" ON review_requests FOR SELECT USING (company_id = auth.company_id());
+CREATE POLICY "review_requests_insert" ON review_requests FOR INSERT WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "review_requests_update" ON review_requests FOR UPDATE USING (company_id = auth.company_id());
+CREATE POLICY "review_requests_delete" ON review_requests FOR DELETE USING (company_id = auth.company_id());
+CREATE INDEX idx_review_requests_company ON review_requests(company_id);
+CREATE INDEX idx_review_requests_job ON review_requests(job_id);
+CREATE INDEX idx_review_requests_customer ON review_requests(customer_id);
+CREATE INDEX idx_review_requests_sent ON review_requests(company_id, sent_at DESC);
+CREATE TRIGGER review_requests_updated_at BEFORE UPDATE ON review_requests FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER review_requests_audit AFTER INSERT OR UPDATE OR DELETE ON review_requests FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+-- ============================================================
+-- TABLE: review_tracking
+-- ============================================================
+CREATE TABLE review_tracking (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+  platform TEXT NOT NULL CHECK (platform IN ('google', 'yelp', 'facebook', 'bbb', 'angi', 'thumbtack', 'nextdoor', 'other')),
+  reviewer_name TEXT,
+  rating INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),
+  review_text TEXT,
+  review_date DATE,
+  review_url TEXT,
+  linked_job_id UUID REFERENCES jobs(id),
+  linked_tech_id UUID REFERENCES users(id),
+  linked_request_id UUID REFERENCES review_requests(id),
+  response_text TEXT,
+  response_date DATE,
+  response_by UUID REFERENCES users(id),
+  sentiment TEXT CHECK (sentiment IN ('positive', 'neutral', 'negative')),
+  flagged BOOLEAN DEFAULT false,
+  flag_reason TEXT,
+  source TEXT DEFAULT 'manual' CHECK (source IN ('manual', 'api', 'import')),
+  deleted_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+ALTER TABLE review_tracking ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "review_tracking_select" ON review_tracking FOR SELECT USING (company_id = auth.company_id());
+CREATE POLICY "review_tracking_insert" ON review_tracking FOR INSERT WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "review_tracking_update" ON review_tracking FOR UPDATE USING (company_id = auth.company_id());
+CREATE POLICY "review_tracking_delete" ON review_tracking FOR DELETE USING (company_id = auth.company_id());
+CREATE INDEX idx_review_tracking_company ON review_tracking(company_id);
+CREATE INDEX idx_review_tracking_platform ON review_tracking(company_id, platform);
+CREATE INDEX idx_review_tracking_rating ON review_tracking(company_id, rating);
+CREATE INDEX idx_review_tracking_job ON review_tracking(linked_job_id);
+CREATE INDEX idx_review_tracking_tech ON review_tracking(linked_tech_id);
+CREATE INDEX idx_review_tracking_date ON review_tracking(company_id, review_date DESC);
+CREATE TRIGGER review_tracking_updated_at BEFORE UPDATE ON review_tracking FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER review_tracking_audit AFTER INSERT OR UPDATE OR DELETE ON review_tracking FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+-- ============================================================
+-- TABLE: review_analytics
+-- ============================================================
+CREATE TABLE review_analytics (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+  period_month DATE NOT NULL,
+  total_reviews INTEGER DEFAULT 0,
+  avg_rating NUMERIC(2,1),
+  five_star_count INTEGER DEFAULT 0,
+  four_star_count INTEGER DEFAULT 0,
+  three_star_count INTEGER DEFAULT 0,
+  two_star_count INTEGER DEFAULT 0,
+  one_star_count INTEGER DEFAULT 0,
+  review_requests_sent INTEGER DEFAULT 0,
+  review_requests_responded INTEGER DEFAULT 0,
+  review_request_response_rate NUMERIC(5,2),
+  satisfaction_avg NUMERIC(2,1),
+  platform_breakdown JSONB DEFAULT '{}',
+  tech_breakdown JSONB DEFAULT '[]',
+  top_tech_id UUID REFERENCES users(id),
+  top_tech_avg NUMERIC(2,1),
+  negative_review_count INTEGER DEFAULT 0,
+  private_feedback_count INTEGER DEFAULT 0,
+  generated_at TIMESTAMPTZ DEFAULT now(),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE(company_id, period_month)
+);
+ALTER TABLE review_analytics ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "review_analytics_select" ON review_analytics FOR SELECT USING (company_id = auth.company_id());
+CREATE POLICY "review_analytics_insert" ON review_analytics FOR INSERT WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "review_analytics_update" ON review_analytics FOR UPDATE USING (company_id = auth.company_id());
+CREATE POLICY "review_analytics_delete" ON review_analytics FOR DELETE USING (
+  company_id = auth.company_id() AND auth.user_role() IN ('owner', 'admin')
+);
+CREATE INDEX idx_review_analytics_company ON review_analytics(company_id);
+CREATE INDEX idx_review_analytics_period ON review_analytics(company_id, period_month DESC);
+CREATE TRIGGER review_analytics_updated_at BEFORE UPDATE ON review_analytics FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER review_analytics_audit AFTER INSERT OR UPDATE OR DELETE ON review_analytics FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+-- ============================================================
+-- TABLE: review_settings
+-- ============================================================
+CREATE TABLE review_settings (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE UNIQUE,
+  enabled BOOLEAN DEFAULT false,
+  auto_send BOOLEAN DEFAULT true,
+  delay_hours INTEGER DEFAULT 24,
+  satisfaction_threshold INTEGER DEFAULT 4,
+  google_review_url TEXT,
+  yelp_review_url TEXT,
+  facebook_review_url TEXT,
+  yelp_business_id TEXT,
+  google_account_id TEXT,
+  google_location_id TEXT,
+  google_oauth_token_encrypted TEXT,
+  preferred_platform TEXT DEFAULT 'google' CHECK (preferred_platform IN ('google', 'yelp', 'facebook')),
+  send_via TEXT DEFAULT 'sms' CHECK (send_via IN ('sms', 'email', 'both')),
+  sms_template TEXT DEFAULT 'Hi {{customer_name}}, thanks for choosing {{company_name}}! How was your experience? Rate us: {{satisfaction_link}}',
+  email_subject_template TEXT DEFAULT 'How was your experience with {{company_name}}?',
+  email_body_template TEXT,
+  follow_up_enabled BOOLEAN DEFAULT true,
+  follow_up_delay_days INTEGER DEFAULT 3,
+  max_requests_per_customer INTEGER DEFAULT 1,
+  last_google_sync_at TIMESTAMPTZ,
+  last_yelp_sync_at TIMESTAMPTZ,
+  sync_errors JSONB DEFAULT '[]',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+ALTER TABLE review_settings ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "review_settings_select" ON review_settings FOR SELECT USING (company_id = auth.company_id());
+CREATE POLICY "review_settings_insert" ON review_settings FOR INSERT WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "review_settings_update" ON review_settings FOR UPDATE USING (company_id = auth.company_id());
+CREATE POLICY "review_settings_delete" ON review_settings FOR DELETE USING (
+  company_id = auth.company_id() AND auth.user_role() IN ('owner', 'admin')
+);
+CREATE INDEX idx_review_settings_company ON review_settings(company_id);
+CREATE TRIGGER review_settings_updated_at BEFORE UPDATE ON review_settings FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER review_settings_audit AFTER INSERT OR UPDATE OR DELETE ON review_settings FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+```
+
+#### Dart Models: `review_request.dart`, `review_tracking.dart`, `review_analytics.dart`, `review_settings.dart`
+
+#### Checklist
+- [ ] Migration: CREATE review_requests — all columns, 4 RLS policies, 4 indexes, 2 triggers
+- [ ] Migration: CREATE review_tracking — all columns, 4 RLS policies, 6 indexes, 2 triggers
+- [ ] Migration: CREATE review_analytics — all columns + UNIQUE, 3 RLS policies, 2 indexes, 2 triggers
+- [ ] Migration: CREATE review_settings — all columns + UNIQUE on company_id, 3 RLS policies, 1 index, 2 triggers
+- [ ] Dart model: `lib/models/review_request.dart` — fromJson/toJson/copyWith/Equatable
+- [ ] Dart model: `lib/models/review_tracking.dart`
+- [ ] Dart model: `lib/models/review_analytics.dart`
+- [ ] Dart model: `lib/models/review_settings.dart`
+- [ ] Update `lib/models/models.dart` barrel with 4 new exports
+- [ ] Verify: `dart analyze` clean, migration applies
+- [ ] Security: RLS on all 4 tables, company_id scoping, audit+updated_at triggers, deleted_at on requests+tracking
+- [ ] Commit: `[U-REP1] Reputation Autopilot foundation — 4 tables, RLS, Dart models`
+
+---
 
 ### U-REP2 — Review Request Flow (~8h)
 
-#### Steps
-- [ ] Edge Function: review-request-engine — trigger: job completed + invoice paid + configurable delay. Send SMS with satisfaction link.
-- [ ] Satisfaction gate: 1-5 rating → 4-5 routes to Google/Yelp link, 1-3 routes to private feedback form
-- [ ] CRM: review request configuration (delay hours, platforms, auto-enable)
-- [ ] Verify: SMS sends correctly, routing works
-- [ ] Commit: `[U-REP2] Review request flow — trigger, satisfaction gate, platform routing`
+**Goal:** Review request engine: trigger on job complete + paid, satisfaction gate, platform routing. Edge Function for automated sending via existing SignalWire/SendGrid.
+
+#### Edge Function: `review-request-engine`
+- **Path**: `supabase/functions/review-request-engine/index.ts`
+- **Method**: POST (manual trigger) + CRON (scheduled checks)
+- **Auth**: JWT (manual) or service role (CRON)
+- **Trigger**: Job status -> completed AND invoice status -> paid, after delay_hours elapsed
+- **Process**: Check review_settings.enabled -> check delay elapsed -> check max_requests_per_customer -> generate satisfaction link `/rate/{request_id}` -> send SMS via SignalWire or email via SendGrid -> INSERT review_requests
+- **Request**: `{ "job_id": "uuid", "force": boolean }`
+- **Response**: `{ "success": true, "request_id": "uuid", "sent_via": "sms" }`
+- **Satisfaction endpoint**: POST `/rate` with `{ "request_id": "uuid", "rating": 4 }` -> UPDATE review_requests -> if rating >= threshold route to Google/Yelp, else show private feedback form
+- **Follow-up CRON**: daily check for non-responders past follow_up_delay_days, resend once
+- **Errors**: No settings -> skip, no phone/email -> log+skip, SignalWire failure -> retry 3x
+
+#### Flutter Screens
+- `lib/screens/reviews/review_settings_screen.dart` — configure autopilot (enable, delay, threshold, platform URLs, templates). 4 states.
+- `lib/screens/reviews/review_request_manual_screen.dart` — manually trigger for specific job. 4 states.
+
+#### Web CRM Pages
+- `web-portal/src/app/dashboard/reviews/settings/page.tsx` — full settings config + template editor + test send
+- `web-portal/src/app/dashboard/reviews/requests/page.tsx` — sent request list, status tracking, manual send
+
+#### Hooks
+- `web-portal/src/lib/hooks/use-review-settings.ts` — CRUD + test send + realtime
+- `web-portal/src/lib/hooks/use-review-requests.ts` — list + manual trigger + realtime + filter
+
+#### Team Portal
+- `team-portal/src/app/dashboard/reviews/page.tsx` — read-only: review requests sent for tech's jobs
+- `team-portal/src/lib/hooks/use-review-requests.ts` — read-only
+
+#### Wiring: SignalWire (F1) for SMS, SendGrid for email, jobs table status trigger, invoices payment status
+
+#### Checklist
+- [ ] Edge Function: `review-request-engine` — auto-trigger + manual + satisfaction gate + follow-up
+- [ ] DB trigger: on job status -> completed + invoice paid, queue review request
+- [ ] Flutter: `review_settings_screen.dart` with 4 states
+- [ ] Flutter: `review_request_manual_screen.dart` with 4 states
+- [ ] CRM: `reviews/settings/page.tsx` — full settings
+- [ ] CRM: `reviews/requests/page.tsx` — request list + manual send
+- [ ] Hook: `use-review-settings.ts` — CRUD + test send
+- [ ] Hook: `use-review-requests.ts` — list + trigger + realtime
+- [ ] Team Portal: `reviews/page.tsx` — read-only view
+- [ ] Integration: SignalWire SMS + SendGrid email
+- [ ] Satisfaction gate: customer clicks -> rates -> routes correctly
+- [ ] Security: JWT validation, rate limiting on satisfaction endpoint, CORS for client-portal
+- [ ] Commit: `[U-REP2] Review request flow — trigger engine, satisfaction gate, platform routing`
+
+---
 
 ### U-REP3 — Reputation Dashboard (~6h)
 
-#### Steps
-- [ ] CRM: web-portal/src/app/reviews/page.tsx — review velocity chart, star average, per-platform breakdown, per-tech scores
-- [ ] CRM: manual review entry (paste review from Google/Yelp, link to job/tech)
-- [ ] Hook: use-reviews.ts
-- [ ] Team Portal: tech sees their review scores
-- [ ] Monthly analytics aggregation
-- [ ] Verify: dashboard renders correctly
-- [ ] Commit: `[U-REP3] Reputation dashboard + Team Portal review scores`
+**Goal:** CRM dashboard: review velocity, star averages, per-platform breakdown, per-tech scores. Manual review entry. Monthly analytics aggregation.
+
+#### Web CRM Pages
+- `web-portal/src/app/dashboard/reviews/page.tsx` — main dashboard: summary cards (total, avg rating, velocity), star distribution bar chart, platform breakdown, velocity line chart (12 months), recent reviews, negative review alerts. 4 states.
+- `web-portal/src/app/dashboard/reviews/[id]/page.tsx` — review detail + response composer
+- `web-portal/src/app/dashboard/reviews/add/page.tsx` — manual entry: platform, name, rating, text, date, URL, link to job/tech
+
+#### Hooks
+- `web-portal/src/lib/hooks/use-reviews.ts` — CRUD review_tracking + realtime + filtering (platform/rating/tech/date/flagged)
+- `web-portal/src/lib/hooks/use-review-analytics.ts` — analytics data + chart formatting
+
+#### Edge Function: `review-analytics-aggregator`
+- CRON monthly (1st): aggregate review_tracking per company -> UPSERT review_analytics
+
+#### Checklist
+- [ ] CRM: `reviews/page.tsx` — dashboard with charts + cards
+- [ ] CRM: `reviews/[id]/page.tsx` — detail + response
+- [ ] CRM: `reviews/add/page.tsx` — manual entry
+- [ ] Hook: `use-reviews.ts` — CRUD + realtime + filtering
+- [ ] Hook: `use-review-analytics.ts` — analytics + charts
+- [ ] Edge Function: `review-analytics-aggregator` — monthly CRON
+- [ ] Star distribution chart, velocity line chart, platform breakdown cards
+- [ ] Security: RLS filtering, soft delete, input validation
+- [ ] Commit: `[U-REP3] Reputation dashboard — velocity, stars, platform breakdown, manual entry`
+
+---
+
+### U-REP4 — Team Portal Scores + API Sync (~4h)
+
+**Goal:** Tech-facing review scores in Team Portal. Google Business Profile API + Yelp Fusion API integration for automated review import.
+
+#### Team Portal
+- `team-portal/src/app/dashboard/reviews/page.tsx` — "My Review Scores": personal avg, total reviews, comparison to company avg, monthly trend. 4 states.
+- `team-portal/src/lib/hooks/use-tech-reviews.ts` — read-only, filter by linked_tech_id = current user
+
+#### API Sync Edge Functions
+- `supabase/functions/google-reviews-sync/index.ts` — CRON daily: fetch reviews from Google Business Profile API (free). Dedup by reviewer_name + date. INSERT with source='api', platform='google'. Requires Google OAuth token in review_settings.
+- `supabase/functions/yelp-reviews-sync/index.ts` — CRON daily: fetch from Yelp Fusion API (free, 5000/day). Limited to 3 most recent per call. INSERT with source='api', platform='yelp'. Requires yelp_business_id in review_settings.
+
+#### CRM Settings Extension
+- Add Google OAuth connection flow to settings page
+- Add Yelp Business ID field
+- Sync status indicator (last synced, errors)
+- Manual "Sync Now" button
+
+#### API Cost: $0/month (Google Business Profile free tier, Yelp Fusion free tier)
+
+#### Checklist
+- [ ] Team Portal: `reviews/page.tsx` — personal scores with 4 states
+- [ ] Hook: `use-tech-reviews.ts` — read-only personal data
+- [ ] Edge Function: `google-reviews-sync` — daily Google review import
+- [ ] Edge Function: `yelp-reviews-sync` — daily Yelp review import
+- [ ] CRM: extend settings with Google OAuth + Yelp config + sync status
+- [ ] Dedup logic: reviewer_name + review_date + platform
+- [ ] Security: OAuth tokens encrypted, API keys as secrets, tech sees only own reviews
+- [ ] Commit: `[U-REP4] Team Portal tech scores + Google/Yelp API review sync`
+
+---
+
+### U-REP5 — Review Response + Client Portal Rating + Testing (~4h)
+
+**Goal:** Response workflow, Client Portal satisfaction rating page, end-to-end testing.
+
+#### CRM Extension
+- Extend `reviews/[id]/page.tsx` with response templates (positive/negative/neutral), "Copy to Clipboard", mark as "Response Posted"
+
+#### Client Portal
+- `client-portal/src/app/(portal)/rate/[requestId]/page.tsx` — mobile-first: company logo, 5-star tap selector, if 4-5: Google/Yelp buttons, if 1-3: private feedback textarea. Thank you confirmation. 4 states.
+- `client-portal/src/lib/hooks/use-review-rating.ts` — submit rating + feedback
+
+#### Checklist
+- [ ] CRM: response templates + copy to clipboard + mark posted
+- [ ] Client Portal: `rate/[requestId]/page.tsx` — satisfaction rating page with 4 states
+- [ ] Hook: `use-review-rating.ts` — submit rating + feedback
+- [ ] Star selector component (large, mobile-friendly)
+- [ ] Positive route (platform buttons) + negative route (feedback form)
+- [ ] End-to-end test: create job -> complete -> pay -> delay -> request sent -> rate -> route
+- [ ] Test: follow-up sends, max_requests respected, analytics aggregation correct
+- [ ] Verify: all builds pass (`dart analyze`, `npm run build` x 4)
+- [ ] Security: request_id validation, no internal data exposure, rate limiting
+- [ ] Commit: `[U-REP5] Review response workflow + Client Portal rating + e2e testing`
+
+---
 
 ---
 
 ### U-SUB1 — Subcontractor Network Foundation (~8h)
 
-#### Steps
-- [ ] Migration: CREATE subcontractor_profiles — id, company_id, trade_types, service_area (lat/lng + radius), rates, verification status, avg_rating + RLS
-- [ ] Migration: CREATE sub_bid_requests — id, requesting_company_id, job_id, trade_type, scope, budget_range, status + RLS
-- [ ] Migration: CREATE sub_bid_responses — id, bid_request_id FK, sub_company_id, bid_amount, availability, status + RLS
-- [ ] Migration: CREATE sub_ratings — id, rated_company_id, rating_company_id, job_id, quality/timeliness/communication/overall ratings, would_hire_again + RLS
-- [ ] Dart models: sub_profile.dart, sub_bid_request.dart, sub_bid_response.dart, sub_rating.dart
-- [ ] Verify: migration clean
-- [ ] Commit: `[U-SUB1] Subcontractor Network foundation — 4 tables`
+**Goal:** Create 4 sub network tables with PostGIS geographic columns, full RLS, indexes, audit triggers. Sub profile registration flow. Dart models.
+
+#### Tables
+
+```sql
+-- ============================================================
+-- TABLE: subcontractor_profiles
+-- ============================================================
+CREATE TABLE subcontractor_profiles (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+  trade_types TEXT[] NOT NULL DEFAULT '{}',
+  service_area_radius_miles INTEGER DEFAULT 50,
+  service_area_center GEOGRAPHY(POINT, 4326),
+  service_area_center_lat NUMERIC(9,6),
+  service_area_center_lng NUMERIC(9,6),
+  hourly_rate NUMERIC(8,2),
+  day_rate NUMERIC(8,2),
+  minimum_job_amount NUMERIC(10,2),
+  available_for_bids BOOLEAN DEFAULT true,
+  license_verified BOOLEAN DEFAULT false,
+  license_number TEXT,
+  license_state CHAR(2),
+  insurance_verified BOOLEAN DEFAULT false,
+  insurance_expiry DATE,
+  insurance_coverage_amount NUMERIC(12,2),
+  w9_on_file BOOLEAN DEFAULT false,
+  avg_quality_rating NUMERIC(2,1),
+  avg_timeliness_rating NUMERIC(2,1),
+  avg_communication_rating NUMERIC(2,1),
+  avg_overall_rating NUMERIC(2,1),
+  total_jobs_completed INTEGER DEFAULT 0,
+  total_jobs_awarded INTEGER DEFAULT 0,
+  on_time_percentage NUMERIC(5,2),
+  profile_visible BOOLEAN DEFAULT true,
+  bio TEXT,
+  specialties TEXT[],
+  years_in_business INTEGER,
+  crew_size INTEGER,
+  deleted_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+ALTER TABLE subcontractor_profiles ENABLE ROW LEVEL SECURITY;
+-- Owner can CRUD their own. All authenticated users can SELECT visible profiles.
+CREATE POLICY "sub_profiles_select_own" ON subcontractor_profiles FOR SELECT USING (company_id = auth.company_id());
+CREATE POLICY "sub_profiles_select_visible" ON subcontractor_profiles FOR SELECT USING (profile_visible = true AND deleted_at IS NULL);
+CREATE POLICY "sub_profiles_insert" ON subcontractor_profiles FOR INSERT WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "sub_profiles_update" ON subcontractor_profiles FOR UPDATE USING (company_id = auth.company_id());
+CREATE POLICY "sub_profiles_delete" ON subcontractor_profiles FOR DELETE USING (company_id = auth.company_id());
+CREATE INDEX idx_sub_profiles_company ON subcontractor_profiles(company_id);
+CREATE INDEX idx_sub_profiles_trades ON subcontractor_profiles USING GIN(trade_types);
+CREATE INDEX idx_sub_profiles_geo ON subcontractor_profiles USING GIST(service_area_center);
+CREATE INDEX idx_sub_profiles_visible ON subcontractor_profiles(profile_visible) WHERE deleted_at IS NULL;
+CREATE INDEX idx_sub_profiles_rating ON subcontractor_profiles(avg_overall_rating DESC NULLS LAST);
+CREATE TRIGGER sub_profiles_updated_at BEFORE UPDATE ON subcontractor_profiles FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER sub_profiles_audit AFTER INSERT OR UPDATE OR DELETE ON subcontractor_profiles FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+-- ============================================================
+-- TABLE: sub_bid_requests
+-- ============================================================
+CREATE TABLE sub_bid_requests (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+  job_id UUID NOT NULL REFERENCES jobs(id),
+  trade_type TEXT NOT NULL,
+  scope_description TEXT NOT NULL,
+  scope_details JSONB DEFAULT '{}',
+  budget_range_low NUMERIC(10,2),
+  budget_range_high NUMERIC(10,2),
+  needed_by DATE,
+  start_date DATE,
+  estimated_duration_days INTEGER,
+  shared_documents JSONB DEFAULT '[]',
+  location_lat NUMERIC(9,6),
+  location_lng NUMERIC(9,6),
+  location_address TEXT,
+  invited_sub_ids UUID[] DEFAULT '{}',
+  status TEXT DEFAULT 'open' CHECK (status IN ('open', 'reviewing', 'awarded', 'cancelled', 'expired')),
+  awarded_to_company_id UUID REFERENCES companies(id),
+  awarded_at TIMESTAMPTZ,
+  bid_count INTEGER DEFAULT 0,
+  deleted_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  expires_at TIMESTAMPTZ
+);
+ALTER TABLE sub_bid_requests ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "bid_requests_select_own" ON sub_bid_requests FOR SELECT USING (company_id = auth.company_id());
+CREATE POLICY "bid_requests_select_invited" ON sub_bid_requests FOR SELECT USING (
+  status = 'open' AND deleted_at IS NULL AND (
+    auth.company_id() = ANY(invited_sub_ids) OR
+    array_length(invited_sub_ids, 1) IS NULL OR array_length(invited_sub_ids, 1) = 0
+  )
+);
+CREATE POLICY "bid_requests_insert" ON sub_bid_requests FOR INSERT WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "bid_requests_update" ON sub_bid_requests FOR UPDATE USING (company_id = auth.company_id());
+CREATE POLICY "bid_requests_delete" ON sub_bid_requests FOR DELETE USING (company_id = auth.company_id());
+CREATE INDEX idx_bid_requests_company ON sub_bid_requests(company_id);
+CREATE INDEX idx_bid_requests_job ON sub_bid_requests(job_id);
+CREATE INDEX idx_bid_requests_trade ON sub_bid_requests(trade_type);
+CREATE INDEX idx_bid_requests_status ON sub_bid_requests(status) WHERE deleted_at IS NULL;
+CREATE INDEX idx_bid_requests_expires ON sub_bid_requests(expires_at) WHERE status = 'open';
+CREATE TRIGGER bid_requests_updated_at BEFORE UPDATE ON sub_bid_requests FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER bid_requests_audit AFTER INSERT OR UPDATE OR DELETE ON sub_bid_requests FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+-- ============================================================
+-- TABLE: sub_bid_responses
+-- ============================================================
+CREATE TABLE sub_bid_responses (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  bid_request_id UUID NOT NULL REFERENCES sub_bid_requests(id) ON DELETE CASCADE,
+  company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE, -- consistent naming (= sub_company_id)
+  sub_company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+  bid_amount NUMERIC(10,2) NOT NULL,
+  estimated_duration_days INTEGER,
+  estimated_start_date DATE,
+  scope_notes TEXT,
+  inclusions TEXT[],
+  exclusions TEXT[],
+  availability_start DATE,
+  crew_size_proposed INTEGER,
+  attachments JSONB DEFAULT '[]',
+  status TEXT DEFAULT 'submitted' CHECK (status IN ('submitted', 'shortlisted', 'awarded', 'rejected', 'withdrawn')),
+  awarded_at TIMESTAMPTZ,
+  rejection_reason TEXT,
+  deleted_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE(bid_request_id, sub_company_id)
+);
+ALTER TABLE sub_bid_responses ENABLE ROW LEVEL SECURITY;
+-- Sub can CRUD own bids. Requesting company can SELECT bids for their requests.
+CREATE POLICY "bid_responses_select_sub" ON sub_bid_responses FOR SELECT USING (sub_company_id = auth.company_id());
+CREATE POLICY "bid_responses_select_requester" ON sub_bid_responses FOR SELECT USING (
+  bid_request_id IN (SELECT id FROM sub_bid_requests WHERE company_id = auth.company_id())
+);
+CREATE POLICY "bid_responses_insert" ON sub_bid_responses FOR INSERT WITH CHECK (sub_company_id = auth.company_id());
+CREATE POLICY "bid_responses_update" ON sub_bid_responses FOR UPDATE USING (sub_company_id = auth.company_id());
+CREATE POLICY "bid_responses_delete" ON sub_bid_responses FOR DELETE USING (sub_company_id = auth.company_id());
+CREATE INDEX idx_bid_responses_request ON sub_bid_responses(bid_request_id);
+CREATE INDEX idx_bid_responses_sub ON sub_bid_responses(sub_company_id);
+CREATE INDEX idx_bid_responses_status ON sub_bid_responses(status);
+CREATE TRIGGER bid_responses_updated_at BEFORE UPDATE ON sub_bid_responses FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER bid_responses_audit AFTER INSERT OR UPDATE OR DELETE ON sub_bid_responses FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+-- ============================================================
+-- TABLE: sub_ratings
+-- ============================================================
+CREATE TABLE sub_ratings (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  rated_company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+  rating_company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+  job_id UUID NOT NULL REFERENCES jobs(id),
+  bid_response_id UUID REFERENCES sub_bid_responses(id),
+  quality_rating INTEGER NOT NULL CHECK (quality_rating BETWEEN 1 AND 5),
+  timeliness_rating INTEGER NOT NULL CHECK (timeliness_rating BETWEEN 1 AND 5),
+  communication_rating INTEGER NOT NULL CHECK (communication_rating BETWEEN 1 AND 5),
+  overall_rating INTEGER NOT NULL CHECK (overall_rating BETWEEN 1 AND 5),
+  would_hire_again BOOLEAN,
+  notes TEXT,
+  public_comment TEXT,
+  deleted_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE(rating_company_id, job_id, rated_company_id)
+);
+ALTER TABLE sub_ratings ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "sub_ratings_select_rater" ON sub_ratings FOR SELECT USING (rating_company_id = auth.company_id());
+CREATE POLICY "sub_ratings_select_rated" ON sub_ratings FOR SELECT USING (rated_company_id = auth.company_id());
+CREATE POLICY "sub_ratings_insert" ON sub_ratings FOR INSERT WITH CHECK (rating_company_id = auth.company_id());
+CREATE POLICY "sub_ratings_update" ON sub_ratings FOR UPDATE USING (rating_company_id = auth.company_id());
+CREATE POLICY "sub_ratings_delete" ON sub_ratings FOR DELETE USING (rating_company_id = auth.company_id());
+CREATE INDEX idx_sub_ratings_rated ON sub_ratings(rated_company_id);
+CREATE INDEX idx_sub_ratings_rater ON sub_ratings(rating_company_id);
+CREATE INDEX idx_sub_ratings_job ON sub_ratings(job_id);
+CREATE INDEX idx_sub_ratings_overall ON sub_ratings(rated_company_id, overall_rating);
+CREATE TRIGGER sub_ratings_updated_at BEFORE UPDATE ON sub_ratings FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER sub_ratings_audit AFTER INSERT OR UPDATE OR DELETE ON sub_ratings FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+-- Trigger: update subcontractor_profiles avg ratings when sub_ratings change (ROW-level, scoped to affected company)
+CREATE OR REPLACE FUNCTION fn_update_sub_rating_averages()
+RETURNS TRIGGER AS $$
+BEGIN
+  UPDATE subcontractor_profiles SET
+    avg_rating = (SELECT AVG(overall_rating) FROM sub_ratings WHERE rated_company_id = NEW.rated_company_id),
+    total_jobs_completed = (SELECT COUNT(*) FROM sub_ratings WHERE rated_company_id = NEW.rated_company_id)
+  WHERE company_id = NEW.rated_company_id;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_sub_rating_avg AFTER INSERT OR UPDATE ON sub_ratings
+FOR EACH ROW EXECUTE FUNCTION fn_update_sub_rating_averages();
+```
+
+#### Dart Models: `sub_profile.dart`, `sub_bid_request.dart`, `sub_bid_response.dart`, `sub_rating.dart`
+
+#### Checklist
+- [ ] Migration: CREATE subcontractor_profiles — PostGIS geography column, GIN index on trade_types, GIST index on geography, 5 RLS policies, 5 indexes, 2 triggers
+- [ ] Migration: CREATE sub_bid_requests — invited_sub_ids array, 5 RLS policies, 5 indexes, 2 triggers
+- [ ] Migration: CREATE sub_bid_responses — UNIQUE(bid_request_id, sub_company_id), 5 RLS policies, 3 indexes, 2 triggers
+- [ ] Migration: CREATE sub_ratings — UNIQUE constraint, rating avg trigger function, 5 RLS policies, 4 indexes, 3 triggers
+- [ ] Enable PostGIS extension: `CREATE EXTENSION IF NOT EXISTS postgis;`
+- [ ] Dart model: `lib/models/sub_profile.dart`
+- [ ] Dart model: `lib/models/sub_bid_request.dart`
+- [ ] Dart model: `lib/models/sub_bid_response.dart`
+- [ ] Dart model: `lib/models/sub_rating.dart`
+- [ ] Update models barrel
+- [ ] Sub profile registration: Flutter screen for company to create/edit their sub profile
+- [ ] Verify: `dart analyze` clean, migration applies, PostGIS query works
+- [ ] Security: RLS on all 4 tables, company_id scoping, cross-company visibility rules, deleted_at on all
+- [ ] Commit: `[U-SUB1] Subcontractor Network foundation — 4 tables, PostGIS, RLS, Dart models`
+
+---
 
 ### U-SUB2 — Sub Discovery + Bid Request (~8h)
 
-#### Steps
-- [ ] Sub profile registration flow (company creates sub profile with trades, service area, rates)
-- [ ] Sub discovery: search by trade + location (PostGIS radius query)
-- [ ] Bid request creation: from within a job, select trade, describe scope, attach documents (floor plans, etc.)
-- [ ] Bid request notification to matching subs
-- [ ] Verify: search returns subs within radius for correct trade
-- [ ] Commit: `[U-SUB2] Sub discovery + bid request creation`
+**Goal:** Search subs by trade + location (PostGIS radius), create bid requests from jobs, notify matching subs.
 
-### U-SUB3 — Sub Bid Response + Award (~8h)
+#### Edge Function: `sub-bid-notify`
+- **Path**: `supabase/functions/sub-bid-notify/index.ts`
+- **Method**: POST
+- **Trigger**: When bid request created, find matching subs (trade_type match + within service_area_radius) and notify via in-app notification + optional SMS
+- **PostGIS Query**: `ST_DWithin(service_area_center, ST_MakePoint(lng, lat)::geography, radius_miles * 1609.34)`
 
-#### Steps
-- [ ] Sub receives bid request notification, views scope + documents, submits bid
-- [ ] GC views all bid responses side-by-side (scope-adjusted comparison)
-- [ ] Award bid → sub notified → sub assigned to job
-- [ ] Sub agreement auto-generated from template
-- [ ] Verify: full bid cycle works
-- [ ] Commit: `[U-SUB3] Sub bid response + comparison + award`
+#### Flutter Screens
+- `lib/screens/subs/sub_discovery_screen.dart` — search by trade + location, list matching subs with ratings/distance. 4 states.
+- `lib/screens/subs/sub_profile_screen.dart` — view sub profile: trades, ratings, bio, completed jobs. 4 states.
+- `lib/screens/subs/bid_request_create_screen.dart` — create bid request: select trade, describe scope, attach documents, set budget range, invite specific subs or broadcast. 4 states.
 
-### U-SUB4 — Sub Payment + Rating (~6h)
+#### Web CRM Pages
+- `web-portal/src/app/dashboard/subs/page.tsx` — sub network hub: discover subs, active bid requests, awarded subs
+- `web-portal/src/app/dashboard/subs/discover/page.tsx` — search + filter: trade, distance, min rating, availability
+- `web-portal/src/app/dashboard/subs/bid-requests/new/page.tsx` — create bid request with scope, documents, budget
 
-#### Steps
-- [ ] Sub payment tracking tied to main job billing (sub invoices → GC approves → payment scheduled)
-- [ ] Lien waiver collection from subs (integrate with Lien Engine from Phase L)
-- [ ] Rating system: after sub completes work, GC rates quality/timeliness/communication
-- [ ] Sub performance dashboard: average ratings, total jobs, on-time percentage
-- [ ] Verify: payment flow tracks correctly, ratings aggregate
-- [ ] Commit: `[U-SUB4] Sub payment tracking + ratings + performance dashboard`
+#### Hooks
+- `web-portal/src/lib/hooks/use-sub-discovery.ts` — PostGIS search, filter, pagination
+- `web-portal/src/lib/hooks/use-bid-requests.ts` — CRUD bid requests + realtime
+
+#### Checklist
+- [ ] Flutter: `sub_discovery_screen.dart` — PostGIS search with 4 states
+- [ ] Flutter: `sub_profile_screen.dart` — view profile with 4 states
+- [ ] Flutter: `bid_request_create_screen.dart` — create bid request with 4 states
+- [ ] CRM: `subs/page.tsx` — network hub
+- [ ] CRM: `subs/discover/page.tsx` — search + filter
+- [ ] CRM: `subs/bid-requests/new/page.tsx` — create request
+- [ ] Edge Function: `sub-bid-notify` — find matching subs + notify
+- [ ] Hook: `use-sub-discovery.ts` — PostGIS search
+- [ ] Hook: `use-bid-requests.ts` — CRUD + realtime
+- [ ] PostGIS radius query working correctly
+- [ ] Security: bid requests visible only to requesting company + invited/matching subs
+- [ ] Commit: `[U-SUB2] Sub discovery + bid request creation + PostGIS search`
+
+---
+
+### U-SUB3 — Bid Response + Comparison + Award (~8h)
+
+**Goal:** Sub receives bid, submits response. GC compares bids side-by-side. Award bid, notify sub, assign to job. Sub agreement auto-generated.
+
+#### Flutter Screens
+- `lib/screens/subs/bid_response_screen.dart` — sub views bid request scope + documents, submits bid with amount/duration/notes. 4 states.
+- `lib/screens/subs/bid_comparison_screen.dart` — GC views all bids side-by-side: amount, duration, sub rating, crew size. Award button. 4 states.
+
+#### Web CRM Pages
+- `web-portal/src/app/dashboard/subs/bid-requests/[id]/page.tsx` — bid request detail: scope, received bids, comparison table, award action
+- `web-portal/src/app/dashboard/subs/bid-requests/[id]/compare/page.tsx` — side-by-side comparison: columns per bid, highlight best price/fastest/highest rated
+
+#### Team Portal
+- `team-portal/src/app/dashboard/subs/bids/page.tsx` — sub views incoming bid requests for their company
+- `team-portal/src/app/dashboard/subs/bids/[id]/page.tsx` — submit bid response
+
+#### Sub Agreement
+- Auto-generate from ZForge (F10) template system: `zdoc_templates` where template_type = 'sub_agreement'
+- Variables: sub company name, GC company name, job address, scope, bid amount, duration, start date, insurance requirements
+- Digital signature via existing `zdoc_signatures` flow
+
+#### Hooks
+- `web-portal/src/lib/hooks/use-bid-responses.ts` — list responses, shortlist, award, reject
+- `team-portal/src/lib/hooks/use-sub-bids.ts` — view incoming bids, submit response
+
+#### Checklist
+- [ ] Flutter: `bid_response_screen.dart` — submit bid with 4 states
+- [ ] Flutter: `bid_comparison_screen.dart` — side-by-side comparison with 4 states
+- [ ] CRM: `bid-requests/[id]/page.tsx` — detail + received bids
+- [ ] CRM: `bid-requests/[id]/compare/page.tsx` — side-by-side
+- [ ] Team Portal: `subs/bids/page.tsx` — incoming bids list
+- [ ] Team Portal: `subs/bids/[id]/page.tsx` — submit response
+- [ ] Award flow: GC awards -> sub notified -> bid status updated -> sub assigned to job
+- [ ] Sub agreement: auto-generate from ZForge template + digital signature
+- [ ] Hook: `use-bid-responses.ts` — list, shortlist, award, reject
+- [ ] Hook: `use-sub-bids.ts` — view incoming, submit response
+- [ ] Security: sub can only see/edit own responses, GC can only see bids for own requests
+- [ ] Commit: `[U-SUB3] Bid response + comparison + award + sub agreement`
+
+---
+
+### U-SUB4 — Sub Payment Tracking + Lien Waivers (~6h)
+
+**Goal:** Track sub payments tied to main job billing. Lien waiver collection from subs. Sub invoicing flow.
+
+#### Sub Payment Flow
+- Sub completes work -> creates sub invoice (amount matches awarded bid or adjusted)
+- GC reviews + approves sub invoice
+- Payment scheduled (manual tracking — Zafto tracks, contractor pays however they want per S136 directive)
+- Payment status: pending -> approved -> scheduled -> paid
+- Tie to main job: sub cost appears in job cost breakdown
+
+#### Tables (extension)
+```sql
+-- NEW: sub_payments — track payments to subs per job
+CREATE TABLE sub_payments (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+  sub_company_id UUID NOT NULL REFERENCES companies(id),
+  job_id UUID NOT NULL REFERENCES jobs(id),
+  bid_response_id UUID REFERENCES sub_bid_responses(id),
+  invoice_amount NUMERIC(10,2) NOT NULL,
+  approved_amount NUMERIC(10,2),
+  payment_method TEXT CHECK (payment_method IN ('check', 'ach', 'zelle', 'venmo', 'cash', 'wire', 'other')),
+  payment_reference TEXT,
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'scheduled', 'paid', 'disputed', 'voided')),
+  approved_by UUID REFERENCES users(id),
+  approved_at TIMESTAMPTZ,
+  paid_at TIMESTAMPTZ,
+  lien_waiver_required BOOLEAN DEFAULT true,
+  lien_waiver_received BOOLEAN DEFAULT false,
+  lien_waiver_document_path TEXT,
+  notes TEXT,
+  deleted_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+ALTER TABLE sub_payments ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "sub_payments_select_gc" ON sub_payments FOR SELECT USING (company_id = auth.company_id());
+CREATE POLICY "sub_payments_select_sub" ON sub_payments FOR SELECT USING (sub_company_id = auth.company_id());
+CREATE POLICY "sub_payments_insert" ON sub_payments FOR INSERT WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "sub_payments_update" ON sub_payments FOR UPDATE USING (company_id = auth.company_id());
+CREATE POLICY "sub_payments_delete" ON sub_payments FOR DELETE USING (company_id = auth.company_id());
+CREATE INDEX idx_sub_payments_company ON sub_payments(company_id);
+CREATE INDEX idx_sub_payments_sub ON sub_payments(sub_company_id);
+CREATE INDEX idx_sub_payments_job ON sub_payments(job_id);
+CREATE INDEX idx_sub_payments_status ON sub_payments(status) WHERE deleted_at IS NULL;
+CREATE TRIGGER sub_payments_updated_at BEFORE UPDATE ON sub_payments FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER sub_payments_audit AFTER INSERT OR UPDATE OR DELETE ON sub_payments FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+```
+
+#### Lien Waiver Integration
+- When sub payment approved, auto-prompt for lien waiver if lien_waiver_required = true
+- Sub uploads signed lien waiver document (connects to Lien Engine Phase L)
+- GC cannot mark payment as "paid" until lien waiver received (configurable)
+
+#### Checklist
+- [ ] Migration: CREATE sub_payments — all columns, 5 RLS policies, 4 indexes, 2 triggers
+- [ ] Dart model: `lib/models/sub_payment.dart`
+- [ ] Flutter: `lib/screens/subs/sub_payment_screen.dart` — approve/track payments with 4 states
+- [ ] CRM: `web-portal/src/app/dashboard/subs/payments/page.tsx` — all sub payments across jobs
+- [ ] CRM: per-job sub payment tracking in job detail
+- [ ] Hook: `web-portal/src/lib/hooks/use-sub-payments.ts` — CRUD + realtime
+- [ ] Lien waiver gate: block "paid" status without waiver if required
+- [ ] Lien waiver upload flow (connect to document storage)
+- [ ] Job cost integration: sub payments appear in job cost breakdown
+- [ ] Security: GC sees payments they manage, sub sees payments for their work
+- [ ] Commit: `[U-SUB4] Sub payment tracking + lien waiver collection`
+
+---
+
+### U-SUB5 — Rating System + Performance Dashboard + Testing (~6h)
+
+**Goal:** Post-job rating system. Sub performance dashboard. Full end-to-end testing.
+
+#### Rating Flow
+- Job completed with sub work -> GC prompted to rate sub
+- Rate: quality (1-5), timeliness (1-5), communication (1-5), overall (1-5), would hire again (Y/N), notes
+- Triggers fn_update_sub_rating_averages to update profile
+
+#### Flutter Screens
+- `lib/screens/subs/sub_rating_screen.dart` — rate sub after job completion. 4 states.
+- `lib/screens/subs/sub_performance_screen.dart` — sub views their own performance: avg ratings, trends, feedback. 4 states.
+
+#### Web CRM Pages
+- `web-portal/src/app/dashboard/subs/performance/page.tsx` — all subs worked with: ratings, total jobs, on-time %
+- `web-portal/src/app/dashboard/subs/[companyId]/page.tsx` — individual sub detail: all ratings, jobs, payment history
+
+#### Checklist
+- [ ] Flutter: `sub_rating_screen.dart` — rate sub with 4 states
+- [ ] Flutter: `sub_performance_screen.dart` — view own performance with 4 states
+- [ ] CRM: `subs/performance/page.tsx` — all sub performance dashboard
+- [ ] CRM: `subs/[companyId]/page.tsx` — individual sub detail
+- [ ] Hook: `web-portal/src/lib/hooks/use-sub-ratings.ts` — CRUD ratings
+- [ ] Rating trigger: prompt after job with sub is completed
+- [ ] Avg rating aggregation trigger verified working
+- [ ] End-to-end test: create sub profile -> discover -> bid -> award -> work -> pay -> rate
+- [ ] Test: PostGIS radius search accuracy, bid lifecycle, payment flow
+- [ ] Verify: all builds pass
+- [ ] Security: only GC who hired sub can rate, sub can only see own ratings
+- [ ] Commit: `[U-SUB5] Sub rating system + performance dashboard + e2e testing`
+
+---
 
 ---
 
 ### U-FIN1 — Customer Financing Foundation (~6h)
 
-#### Steps
-- [ ] Migration: CREATE financing_offers — id, company_id, estimate_id, invoice_id, customer_id, job_id, provider, amount, term_months, monthly_payment, apr, customer_action, provider_application_id, funded_amount, dealer_fee + RLS
-- [ ] Migration: CREATE financing_settings — id, company_id UNIQUE, enabled, provider merchant IDs, auto_offer_threshold, show_monthly_payment + RLS
-- [ ] Dart models: financing_offer.dart, financing_settings.dart
-- [ ] Verify: migration clean
-- [ ] Commit: `[U-FIN1] Customer Financing foundation — tables + settings`
+**Goal:** Create financing_offers and financing_settings tables. Dart models. Settings UI for provider credentials.
 
-### U-FIN2 — Financing Integration (~12h)
+#### Tables
 
-#### Steps
-- [ ] Settings page: enable financing, configure provider credentials, set auto-offer threshold
-- [ ] Estimate integration: "Monthly payment: $149/mo" displayed on estimates over threshold
-- [ ] Edge Function: financing-offer-proxy — proxy API calls to Wisetack/GreenSky/Hearth with stored merchant creds
-- [ ] Client Portal: financing application form, status tracking
-- [ ] Financing analytics: close rate with/without financing, average ticket impact
-- [ ] Hook: use-financing.ts
-- [ ] Verify: API proxy returns valid pre-qualification, portal build clean
-- [ ] Commit: `[U-FIN2] Financing provider integration + estimate display + Client Portal`
+```sql
+-- ============================================================
+-- TABLE: financing_offers
+-- ============================================================
+CREATE TABLE financing_offers (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+  estimate_id UUID REFERENCES estimates(id),
+  invoice_id UUID REFERENCES invoices(id),
+  customer_id UUID NOT NULL REFERENCES customers(id),
+  job_id UUID REFERENCES jobs(id),
+  provider TEXT NOT NULL CHECK (provider IN ('wisetack', 'greensky', 'hearth', 'other')),
+  amount NUMERIC(10,2) NOT NULL,
+  term_months INTEGER,
+  monthly_payment NUMERIC(8,2),
+  apr NUMERIC(5,2),
+  promo_period_months INTEGER,
+  promo_apr NUMERIC(5,2),
+  offer_presented_at TIMESTAMPTZ DEFAULT now(),
+  customer_action TEXT DEFAULT 'pending' CHECK (customer_action IN (
+    'pending', 'viewed', 'applied', 'prequalified', 'approved', 'funded', 'declined', 'expired'
+  )),
+  provider_application_id TEXT,
+  provider_application_url TEXT,
+  provider_status TEXT,
+  provider_response JSONB DEFAULT '{}',
+  funded_amount NUMERIC(10,2),
+  funded_date DATE,
+  dealer_fee_pct NUMERIC(4,2),
+  dealer_fee_amount NUMERIC(8,2),
+  net_to_contractor NUMERIC(10,2),
+  notes TEXT,
+  deleted_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+ALTER TABLE financing_offers ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "financing_offers_select" ON financing_offers FOR SELECT USING (company_id = auth.company_id());
+CREATE POLICY "financing_offers_insert" ON financing_offers FOR INSERT WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "financing_offers_update" ON financing_offers FOR UPDATE USING (company_id = auth.company_id());
+CREATE POLICY "financing_offers_delete" ON financing_offers FOR DELETE USING (company_id = auth.company_id());
+CREATE INDEX idx_financing_offers_company ON financing_offers(company_id);
+CREATE INDEX idx_financing_offers_customer ON financing_offers(customer_id);
+CREATE INDEX idx_financing_offers_estimate ON financing_offers(estimate_id);
+CREATE INDEX idx_financing_offers_job ON financing_offers(job_id);
+CREATE INDEX idx_financing_offers_status ON financing_offers(company_id, customer_action);
+CREATE TRIGGER financing_offers_updated_at BEFORE UPDATE ON financing_offers FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER financing_offers_audit AFTER INSERT OR UPDATE OR DELETE ON financing_offers FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+-- ============================================================
+-- TABLE: financing_settings
+-- ============================================================
+CREATE TABLE financing_settings (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE UNIQUE,
+  enabled BOOLEAN DEFAULT false,
+  default_provider TEXT CHECK (default_provider IN ('wisetack', 'greensky', 'hearth')),
+  wisetack_merchant_id TEXT,
+  wisetack_api_key_encrypted TEXT,
+  greensky_merchant_id TEXT,
+  greensky_api_key_encrypted TEXT,
+  hearth_merchant_id TEXT,
+  hearth_api_key_encrypted TEXT,
+  auto_offer_threshold NUMERIC(10,2) DEFAULT 3000,
+  show_monthly_payment_on_estimate BOOLEAN DEFAULT true,
+  show_monthly_payment_on_invoice BOOLEAN DEFAULT false,
+  default_term_months INTEGER DEFAULT 60,
+  disclaimer_text TEXT DEFAULT 'Financing provided by third-party lender. Subject to credit approval. Terms and conditions apply.',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+ALTER TABLE financing_settings ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "financing_settings_select" ON financing_settings FOR SELECT USING (company_id = auth.company_id());
+CREATE POLICY "financing_settings_insert" ON financing_settings FOR INSERT WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "financing_settings_update" ON financing_settings FOR UPDATE USING (company_id = auth.company_id());
+CREATE POLICY "financing_settings_delete" ON financing_settings FOR DELETE USING (
+  company_id = auth.company_id() AND auth.user_role() IN ('owner', 'admin')
+);
+CREATE INDEX idx_financing_settings_company ON financing_settings(company_id);
+CREATE TRIGGER financing_settings_updated_at BEFORE UPDATE ON financing_settings FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER financing_settings_audit AFTER INSERT OR UPDATE OR DELETE ON financing_settings FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+```
+
+#### Dart Models: `financing_offer.dart`, `financing_settings.dart`
+
+#### Checklist
+- [ ] Migration: CREATE financing_offers — all columns, 4 RLS policies, 5 indexes, 2 triggers
+- [ ] Migration: CREATE financing_settings — UNIQUE on company_id, 3 RLS policies, 1 index, 2 triggers
+- [ ] Dart model: `lib/models/financing_offer.dart`
+- [ ] Dart model: `lib/models/financing_settings.dart`
+- [ ] Update models barrel
+- [ ] Verify: `dart analyze` clean, migration applies
+- [ ] Security: RLS on both tables, API keys stored encrypted, deleted_at on offers
+- [ ] Commit: `[U-FIN1] Customer Financing foundation — 2 tables, RLS, Dart models`
+
+---
+
+### U-FIN2 — Estimate Integration + Monthly Payment Display (~6h)
+
+**Goal:** "Offer Financing" on estimates over threshold. Monthly payment calculation. Settings page for provider credentials.
+
+#### Edge Function: `financing-offer-proxy`
+- **Path**: `supabase/functions/financing-offer-proxy/index.ts`
+- **Method**: POST
+- **Auth**: JWT
+- **Purpose**: Proxy API calls to Wisetack/GreenSky/Hearth with merchant creds stored server-side. Returns pre-qualified terms.
+- **Request**: `{ "provider": "wisetack", "amount": 15000, "customer_id": "uuid" }`
+- **Response**: `{ "prequalified": true, "terms": [{ "months": 60, "apr": 7.99, "monthly": 297 }], "application_url": "..." }`
+- **Error cases**: Provider unavailable -> fallback calculation, invalid credentials -> 401, amount below minimum -> 400
+
+#### Flutter Screens
+- `lib/screens/financing/financing_settings_screen.dart` — enable, configure provider creds, set threshold. 4 states.
+- Extend estimate detail screen: if estimate.total >= threshold, show "Monthly payment: from $X/mo" banner with "Offer Financing" button
+
+#### Web CRM Pages
+- `web-portal/src/app/dashboard/settings/financing/page.tsx` — provider setup, credentials, threshold, defaults
+- Extend estimate pages: monthly payment display + "Offer Financing" action
+
+#### Hooks
+- `web-portal/src/lib/hooks/use-financing.ts` — CRUD offers + settings + proxy calls
+- `web-portal/src/lib/hooks/use-financing-settings.ts` — settings CRUD
+
+#### Checklist
+- [ ] Edge Function: `financing-offer-proxy` — proxy to Wisetack/GreenSky/Hearth APIs
+- [ ] Flutter: `financing_settings_screen.dart` with 4 states
+- [ ] Flutter: extend estimate detail with monthly payment display
+- [ ] CRM: `settings/financing/page.tsx` — provider config
+- [ ] CRM: extend estimate pages with financing display
+- [ ] Hook: `use-financing.ts` — CRUD + proxy
+- [ ] Hook: `use-financing-settings.ts` — settings
+- [ ] Monthly payment calculation: amount / term with APR adjustment
+- [ ] Security: API keys never sent to client, proxy validates JWT, merchant creds encrypted
+- [ ] Commit: `[U-FIN2] Estimate financing integration + monthly payment display`
+
+---
+
+### U-FIN3 — Client Portal Financing Application (~6h)
+
+**Goal:** Customer applies for financing from Client Portal. Application flow, status tracking, funded confirmation.
+
+#### Client Portal
+- `client-portal/src/app/(portal)/financing/page.tsx` — "My Financing" dashboard: active offers, application status, funded amounts. 4 states.
+- `client-portal/src/app/(portal)/financing/apply/[offerId]/page.tsx` — application flow: review terms -> redirect to provider application -> callback on completion. 4 states.
+
+#### Application Flow
+1. Contractor sends estimate with financing offer
+2. Customer receives estimate in Client Portal with "Finance this project" button
+3. Customer clicks -> sees terms (monthly payment, APR, term)
+4. Customer clicks "Apply" -> redirected to provider's application page (Wisetack/GreenSky/Hearth)
+5. Provider processes application (credit check etc.)
+6. Webhook callback: provider sends approval/denial status
+7. UPDATE financing_offers with provider_status, funded_amount etc.
+8. Both contractor and customer notified of result
+
+#### Edge Function: `financing-webhook`
+- **Path**: `supabase/functions/financing-webhook/index.ts`
+- **Method**: POST
+- **Auth**: Webhook signature verification per provider
+- **Purpose**: Receive status updates from financing providers
+- **Idempotency**: Check webhook_events table per Rule 13
+
+#### Hooks
+- `client-portal/src/lib/hooks/use-financing-offers.ts` — view offers for customer's jobs, track status
+
+#### Checklist
+- [ ] Client Portal: `financing/page.tsx` — dashboard with 4 states
+- [ ] Client Portal: `financing/apply/[offerId]/page.tsx` — application flow with 4 states
+- [ ] Edge Function: `financing-webhook` — receive provider callbacks, idempotent
+- [ ] Hook: `use-financing-offers.ts` — read offers, track status
+- [ ] Extend estimate view in Client Portal with financing button
+- [ ] Provider redirect flow (Wisetack/GreenSky/Hearth application pages)
+- [ ] Status update notifications to contractor + customer
+- [ ] Security: webhook signature verification, idempotency check, customer can only see own offers
+- [ ] Commit: `[U-FIN3] Client Portal financing application + provider webhooks`
+
+---
+
+### U-FIN4 — Financing Analytics + Testing (~6h)
+
+**Goal:** Analytics: close rate with/without financing, ticket size impact, provider comparison. End-to-end testing.
+
+#### Web CRM Pages
+- `web-portal/src/app/dashboard/financing/page.tsx` — analytics dashboard: total financed, close rate comparison (with/without financing), average ticket size impact, provider breakdown, funded vs declined, dealer fee totals. 4 states.
+
+#### Analytics Metrics
+- Close rate WITH financing offered vs WITHOUT
+- Average estimate amount WITH financing vs WITHOUT
+- Approval rate per provider
+- Average funded amount
+- Total dealer fees paid
+- Net revenue after fees
+- Time from offer to funding
+
+#### Checklist
+- [ ] CRM: `financing/page.tsx` — analytics dashboard with 4 states
+- [ ] Hook: `web-portal/src/lib/hooks/use-financing-analytics.ts` — aggregate metrics
+- [ ] Close rate comparison chart
+- [ ] Provider performance comparison
+- [ ] Dealer fee tracking + net revenue calculation
+- [ ] End-to-end test: create estimate -> offer financing -> customer applies -> approved -> funded -> invoice marked
+- [ ] Test: webhook idempotency, provider API error handling, fallback calculations
+- [ ] Verify: all builds pass
+- [ ] Security: analytics scoped by company_id, no cross-company data leakage
+- [ ] Commit: `[U-FIN4] Financing analytics + provider comparison + e2e testing`
+
+---
 
 ---
 
 ### U-MAT1 — Material Procurement Foundation (~6h)
 
-#### Steps
-- [ ] Migration: ALTER purchase_order_items — add estimated_unit_price, actual_unit_price, markup_pct, supplier_name, supplier_sku
-- [ ] Migration: CREATE material_price_history — id, company_id, material_name, category, unit, supplier_name, unit_price, recorded_date, source + RLS
-- [ ] Migration: CREATE job_material_lists — id, company_id, job_id, estimate_id, line_items (JSONB), totals, status + RLS
-- [ ] Dart models: material_price_history.dart, job_material_list.dart
-- [ ] Verify: migration clean
+**Goal:** Extend purchase_order_items, create material_price_history and job_material_lists tables. Dart models.
+
+#### Tables
+
+```sql
+-- ============================================================
+-- ALTER: purchase_order_items (extend existing)
+-- ============================================================
+ALTER TABLE purchase_order_items ADD COLUMN IF NOT EXISTS estimated_unit_price NUMERIC(10,2);
+ALTER TABLE purchase_order_items ADD COLUMN IF NOT EXISTS actual_unit_price NUMERIC(10,2);
+ALTER TABLE purchase_order_items ADD COLUMN IF NOT EXISTS markup_pct NUMERIC(5,2);
+ALTER TABLE purchase_order_items ADD COLUMN IF NOT EXISTS supplier_name TEXT;
+ALTER TABLE purchase_order_items ADD COLUMN IF NOT EXISTS supplier_sku TEXT;
+-- These are nullable with defaults per Rule 17 (Flutter backward compatibility)
+
+-- ============================================================
+-- TABLE: material_price_history
+-- ============================================================
+CREATE TABLE material_price_history (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+  material_name TEXT NOT NULL,
+  material_category TEXT CHECK (material_category IN (
+    'wire', 'cable', 'pipe', 'fittings', 'lumber', 'plywood', 'drywall',
+    'insulation', 'concrete', 'masonry', 'roofing', 'siding', 'fixtures',
+    'fasteners', 'adhesives', 'paint', 'flooring', 'tile', 'cabinets',
+    'countertops', 'hvac_equipment', 'electrical_equipment', 'plumbing_fixtures',
+    'tools', 'safety', 'misc'
+  )),
+  unit TEXT NOT NULL,
+  supplier_name TEXT,
+  supplier_sku TEXT,
+  unit_price NUMERIC(10,2) NOT NULL,
+  quantity_purchased NUMERIC(10,2),
+  recorded_date DATE NOT NULL DEFAULT CURRENT_DATE,
+  source TEXT DEFAULT 'manual' CHECK (source IN ('manual', 'receipt_scan', 'api', 'purchase_order', 'unwrangle')),
+  job_id UUID REFERENCES jobs(id),
+  purchase_order_id UUID REFERENCES purchase_orders(id),
+  notes TEXT,
+  deleted_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+ALTER TABLE material_price_history ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "mat_price_history_select" ON material_price_history FOR SELECT USING (company_id = auth.company_id());
+CREATE POLICY "mat_price_history_insert" ON material_price_history FOR INSERT WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "mat_price_history_update" ON material_price_history FOR UPDATE USING (company_id = auth.company_id());
+CREATE POLICY "mat_price_history_delete" ON material_price_history FOR DELETE USING (company_id = auth.company_id());
+CREATE INDEX idx_mat_price_company ON material_price_history(company_id);
+CREATE INDEX idx_mat_price_material ON material_price_history(company_id, material_name);
+CREATE INDEX idx_mat_price_date ON material_price_history(company_id, recorded_date DESC);
+CREATE INDEX idx_mat_price_category ON material_price_history(company_id, material_category);
+CREATE INDEX idx_mat_price_supplier ON material_price_history(company_id, supplier_name);
+CREATE TRIGGER mat_price_history_updated_at BEFORE UPDATE ON material_price_history FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER mat_price_history_audit AFTER INSERT OR UPDATE OR DELETE ON material_price_history FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+-- ============================================================
+-- TABLE: job_material_lists
+-- ============================================================
+CREATE TABLE job_material_lists (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+  job_id UUID NOT NULL REFERENCES jobs(id),
+  estimate_id UUID REFERENCES estimates(id),
+  list_name TEXT DEFAULT 'Material List',
+  line_items JSONB NOT NULL DEFAULT '[]',
+  -- Each item: {material_name, material_category, quantity, unit, estimated_price, actual_price, supplier_name, purchased, purchase_order_id, notes}
+  total_estimated NUMERIC(10,2),
+  total_actual NUMERIC(10,2),
+  total_markup NUMERIC(10,2),
+  markup_total NUMERIC(10,2),
+  item_count INTEGER DEFAULT 0,
+  purchased_count INTEGER DEFAULT 0,
+  status TEXT DEFAULT 'draft' CHECK (status IN ('draft', 'ordering', 'partial', 'complete')),
+  generated_from TEXT CHECK (generated_from IN ('manual', 'estimate', 'sketch')),
+  deleted_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+ALTER TABLE job_material_lists ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "job_mat_lists_select" ON job_material_lists FOR SELECT USING (company_id = auth.company_id());
+CREATE POLICY "job_mat_lists_insert" ON job_material_lists FOR INSERT WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "job_mat_lists_update" ON job_material_lists FOR UPDATE USING (company_id = auth.company_id());
+CREATE POLICY "job_mat_lists_delete" ON job_material_lists FOR DELETE USING (company_id = auth.company_id());
+CREATE INDEX idx_job_mat_lists_company ON job_material_lists(company_id);
+CREATE INDEX idx_job_mat_lists_job ON job_material_lists(job_id);
+CREATE INDEX idx_job_mat_lists_estimate ON job_material_lists(estimate_id);
+CREATE INDEX idx_job_mat_lists_status ON job_material_lists(status) WHERE deleted_at IS NULL;
+CREATE TRIGGER job_mat_lists_updated_at BEFORE UPDATE ON job_material_lists FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER job_mat_lists_audit AFTER INSERT OR UPDATE OR DELETE ON job_material_lists FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+```
+
+#### Dart Models: `material_price_history.dart`, `job_material_list.dart`
+
+#### Checklist
+- [ ] Migration: ALTER purchase_order_items — 5 new nullable columns (expand-contract safe)
+- [ ] Migration: CREATE material_price_history — all columns, 4 RLS policies, 5 indexes, 2 triggers
+- [ ] Migration: CREATE job_material_lists — all columns, 4 RLS policies, 4 indexes, 2 triggers
+- [ ] Dart model: `lib/models/material_price_history.dart`
+- [ ] Dart model: `lib/models/job_material_list.dart`
+- [ ] Update models barrel
+- [ ] Verify: `dart analyze` clean, migration applies, ALTER is safe (nullable columns)
+- [ ] Security: RLS on new tables, deleted_at columns, company_id scoping
 - [ ] Commit: `[U-MAT1] Material Procurement foundation — tables + PO extension`
 
-### U-MAT2 — Material List + Price Tracking (~10h)
+---
 
-#### Steps
+### U-MAT2 — Material List Generation + Price Tracking (~8h)
+
+**Goal:** Auto-generate material list from estimate line items. Record price history on every purchase. Unwrangle API integration for HD/Lowe's pricing.
+
+#### Edge Function: `material-price-lookup`
+- **Path**: `supabase/functions/material-price-lookup/index.ts`
+- **Method**: POST
+- **Auth**: JWT
+- **Purpose**: Query Unwrangle API for HD/Lowe's pricing. Cache results.
+- **Request**: `{ "query": "14-2 romex 250", "supplier": "home_depot" }`
+- **Response**: `{ "results": [{ "name": "...", "price": 89.99, "sku": "...", "url": "...", "in_stock": true }] }`
+- **API**: Unwrangle (free tier, API key already stored)
+
+#### Material List Auto-Generation
+- From estimate: extract line items with material_name, quantity, unit -> create job_material_list
+- Match materials to price history for estimated costs
+- Allow manual additions/removals
+
+#### Flutter Screens
+- `lib/screens/materials/material_list_screen.dart` — job material list: items, quantities, estimated vs actual prices, PO links. 4 states.
+- `lib/screens/materials/material_price_lookup_screen.dart` — search HD/Lowe's via Unwrangle, see prices. 4 states.
+
+#### Web CRM Pages
+- `web-portal/src/app/dashboard/materials/page.tsx` — material hub: active lists across jobs, price trends
+- `web-portal/src/app/dashboard/materials/[jobId]/page.tsx` — per-job material list
+- `web-portal/src/app/dashboard/materials/prices/page.tsx` — price history + trends + supplier comparison
+
+#### Hooks
+- `web-portal/src/lib/hooks/use-materials-procurement.ts` — CRUD material lists + price history + Unwrangle lookup
+- `web-portal/src/lib/hooks/use-material-prices.ts` — price history queries + trends
+
+#### Checklist
+- [ ] Edge Function: `material-price-lookup` — Unwrangle API proxy for HD/Lowe's
 - [ ] Material list auto-generation from estimate line items
-- [ ] Price history recording on every purchase/receipt
-- [ ] Unwrangle API integration: HD/Lowe's price lookup (API key already stored)
-- [ ] Supplier comparison view: same material from different suppliers
-- [ ] PO generation from material list
-- [ ] CRM: material cost dashboard, price trends
-- [ ] Hook: use-materials-procurement.ts
-- [ ] Verify: material list generates from test estimate, price history records
-- [ ] Commit: `[U-MAT2] Material list generation + price tracking + supplier comparison`
+- [ ] Price history recording on purchase/receipt
+- [ ] Flutter: `material_list_screen.dart` with 4 states
+- [ ] Flutter: `material_price_lookup_screen.dart` with 4 states
+- [ ] CRM: `materials/page.tsx` — hub
+- [ ] CRM: `materials/[jobId]/page.tsx` — per-job list
+- [ ] CRM: `materials/prices/page.tsx` — price trends
+- [ ] Hook: `use-materials-procurement.ts` — CRUD + lookup
+- [ ] Hook: `use-material-prices.ts` — history + trends
+- [ ] Unwrangle API integration verified working
+- [ ] Security: API key server-side only, RLS on all queries
+- [ ] Commit: `[U-MAT2] Material list generation + price tracking + Unwrangle integration`
+
+---
+
+### U-MAT3 — PO Generation + Receipt Matching (~6h)
+
+**Goal:** Generate purchase orders from material lists. Match receipts to POs. Auto-markup calculator.
+
+#### PO Generation Flow
+- From material list: select items to order -> group by supplier -> generate PO per supplier
+- PO uses existing `purchase_orders` table (already in system)
+- Line items populate `purchase_order_items` with new columns (estimated_unit_price, supplier_name, supplier_sku)
+- PO status tracking: draft -> sent -> partial -> received -> complete
+
+#### Receipt Matching
+- When receipt scanned (existing receipt system), match to open POs by supplier + date
+- Update actual_unit_price on matched items
+- Record price in material_price_history with source='receipt_scan'
+
+#### Auto-Markup Calculator
+- Per material category, apply configurable markup percentage
+- Default markups by trade: electrical 25-35%, plumbing 20-30%, HVAC 30-40%, general 20-25%
+- Show: material cost + markup = customer price
+
+#### Flutter Screens
+- `lib/screens/materials/po_generate_screen.dart` — select items from material list, group by supplier, generate POs. 4 states.
+- `lib/screens/materials/receipt_match_screen.dart` — match uploaded receipt to PO, update actual prices. 4 states.
+
+#### Checklist
+- [ ] PO generation from material list items grouped by supplier
+- [ ] Receipt-to-PO matching logic
+- [ ] Auto-markup calculator with per-category configurable rates
+- [ ] Flutter: `po_generate_screen.dart` with 4 states
+- [ ] Flutter: `receipt_match_screen.dart` with 4 states
+- [ ] CRM: extend materials pages with PO generation + receipt matching
+- [ ] Price history auto-recording on receipt match
+- [ ] Markup defaults seeded per trade
+- [ ] Security: PO scoped by company_id, receipt data validated
+- [ ] Commit: `[U-MAT3] PO generation from material lists + receipt matching + auto-markup`
+
+---
+
+### U-MAT4 — Supplier Comparison + Team Portal (~4h)
+
+**Goal:** Same material across different suppliers — price comparison view. Team Portal for field techs to view material lists.
+
+#### Supplier Comparison
+- Select material -> see price history across all suppliers
+- Chart: price over time per supplier
+- Highlight cheapest current option
+- "Best price" recommendation based on recent history
+
+#### Team Portal
+- `team-portal/src/app/dashboard/materials/page.tsx` — view material lists for assigned jobs, check items as purchased. 4 states.
+- `team-portal/src/lib/hooks/use-materials.ts` — read material lists, update purchased status
+
+#### Checklist
+- [ ] CRM: supplier comparison view (same material, multiple suppliers, price chart)
+- [ ] Team Portal: `materials/page.tsx` — view lists for assigned jobs with 4 states
+- [ ] Hook: `use-materials.ts` (team) — read lists, mark purchased
+- [ ] Supplier price comparison chart component
+- [ ] "Best price" recommendation logic
+- [ ] Security: team portal filtered by assigned jobs
+- [ ] Commit: `[U-MAT4] Supplier comparison + Team Portal material lists`
+
+---
+
+### U-MAT5 — Material Dashboard + Testing (~4h)
+
+**Goal:** CRM material cost dashboard, price trends across the company. End-to-end testing.
+
+#### Web CRM Pages
+- `web-portal/src/app/dashboard/materials/dashboard/page.tsx` — total material spend (this month/quarter/year), top materials by spend, price trend alerts (materials up >10% in 30 days), supplier spend breakdown, markup analysis. 4 states.
+
+#### Checklist
+- [ ] CRM: `materials/dashboard/page.tsx` — cost dashboard with 4 states
+- [ ] Material spend aggregation by period
+- [ ] Price trend alert system (>10% increase in 30 days)
+- [ ] Supplier spend breakdown chart
+- [ ] Markup analysis: estimated vs actual markup achieved
+- [ ] End-to-end test: estimate -> material list -> PO -> receipt -> price history -> dashboard
+- [ ] Test: Unwrangle API responses, PO generation, receipt matching accuracy
+- [ ] Verify: all builds pass
+- [ ] Security: all analytics scoped by company_id
+- [ ] Commit: `[U-MAT5] Material cost dashboard + price trends + e2e testing`
+
+---
 
 ---
 
 ### U-LOG1 — Daily Job Log Foundation (~8h)
 
-#### Steps
-- [ ] Migration: CREATE daily_job_logs — id, company_id, job_id, log_date, weather fields, crew (JSONB), work_description, materials_used (JSONB), visitors (JSONB), safety_incidents (JSONB), delays (JSONB), photos, signature, status + RLS
-- [ ] UNIQUE constraint: (company_id, job_id, log_date)
-- [ ] Migration: CREATE daily_log_templates — id, company_id, template_name, trade_type, defaults + RLS
-- [ ] Edge Function: daily-log-auto-populate — on create: fetch weather from Open-Meteo, populate crew from time entries, link photos from that day
-- [ ] Dart model: daily_job_log.dart
-- [ ] Verify: migration clean, auto-populate works
+**Goal:** Create daily_job_logs and daily_log_templates tables. Auto-populate Edge Function (weather from Open-Meteo, crew from time entries, photos from that day). Dart model.
+
+#### Tables
+
+```sql
+-- ============================================================
+-- TABLE: daily_job_logs
+-- ============================================================
+CREATE TABLE daily_job_logs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+  job_id UUID NOT NULL REFERENCES jobs(id),
+  log_date DATE NOT NULL,
+  -- Weather (auto from Open-Meteo or manual)
+  weather_conditions TEXT CHECK (weather_conditions IN (
+    'clear', 'partly_cloudy', 'overcast', 'rain', 'heavy_rain',
+    'snow', 'sleet', 'fog', 'windy', 'thunderstorm', 'extreme_heat', 'extreme_cold'
+  )),
+  weather_temp_high INTEGER,
+  weather_temp_low INTEGER,
+  weather_humidity INTEGER,
+  weather_wind_mph INTEGER,
+  weather_precipitation_in NUMERIC(4,2),
+  weather_source TEXT DEFAULT 'manual' CHECK (weather_source IN ('manual', 'auto_open_meteo')),
+  -- Crew (auto from time entries or manual)
+  crew_members JSONB DEFAULT '[]',
+  -- [{user_id, name, role, clock_in, clock_out, hours_worked, overtime_hours}]
+  total_crew_count INTEGER DEFAULT 0,
+  total_crew_hours NUMERIC(6,1) DEFAULT 0,
+  -- Work performed
+  work_description TEXT NOT NULL,
+  work_areas TEXT[] DEFAULT '{}',
+  tasks_completed TEXT[] DEFAULT '{}',
+  percent_complete INTEGER CHECK (percent_complete BETWEEN 0 AND 100),
+  -- Materials
+  materials_used JSONB DEFAULT '[]',
+  -- [{material_name, quantity, unit, from_po_id}]
+  materials_delivered JSONB DEFAULT '[]',
+  -- [{material_name, quantity, supplier, delivery_time}]
+  -- Equipment
+  equipment_on_site JSONB DEFAULT '[]',
+  -- [{equipment_name, equipment_id, hours_used}]
+  -- Visitors
+  visitors JSONB DEFAULT '[]',
+  -- [{name, company, purpose, time_in, time_out}]
+  -- Safety
+  safety_incidents JSONB DEFAULT '[]',
+  -- [{description, severity, injured_party, reported_to, osha_recordable}]
+  safety_toolbox_talk TEXT,
+  safety_toolbox_talk_attendees TEXT[] DEFAULT '{}',
+  -- Delays
+  delays JSONB DEFAULT '[]',
+  -- [{cause, hours, description, cost_impact}]
+  -- cause: 'weather', 'material', 'owner', 'inspection', 'subcontractor', 'equipment', 'permit', 'other'
+  total_delay_hours NUMERIC(6,1) DEFAULT 0,
+  -- Photos (auto-linked from photos taken that day)
+  photo_ids UUID[] DEFAULT '{}',
+  photo_count INTEGER DEFAULT 0,
+  -- Signature
+  submitted_by UUID REFERENCES users(id),
+  supervisor_name TEXT,
+  supervisor_signature_path TEXT,
+  submitted_at TIMESTAMPTZ,
+  -- Status
+  status TEXT DEFAULT 'draft' CHECK (status IN ('draft', 'submitted', 'approved', 'revision_requested')),
+  approved_by UUID REFERENCES users(id),
+  approved_at TIMESTAMPTZ,
+  revision_notes TEXT,
+  -- Metadata
+  deleted_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE(company_id, job_id, log_date)
+);
+ALTER TABLE daily_job_logs ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "daily_logs_select" ON daily_job_logs FOR SELECT USING (company_id = auth.company_id());
+CREATE POLICY "daily_logs_insert" ON daily_job_logs FOR INSERT WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "daily_logs_update" ON daily_job_logs FOR UPDATE USING (company_id = auth.company_id());
+CREATE POLICY "daily_logs_delete" ON daily_job_logs FOR DELETE USING (company_id = auth.company_id());
+CREATE INDEX idx_daily_logs_company ON daily_job_logs(company_id);
+CREATE INDEX idx_daily_logs_job ON daily_job_logs(job_id);
+CREATE INDEX idx_daily_logs_date ON daily_job_logs(company_id, log_date DESC);
+CREATE INDEX idx_daily_logs_job_date ON daily_job_logs(job_id, log_date DESC);
+CREATE INDEX idx_daily_logs_status ON daily_job_logs(company_id, status) WHERE deleted_at IS NULL;
+CREATE TRIGGER daily_logs_updated_at BEFORE UPDATE ON daily_job_logs FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER daily_logs_audit AFTER INSERT OR UPDATE OR DELETE ON daily_job_logs FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+-- ============================================================
+-- TABLE: daily_log_templates
+-- ============================================================
+CREATE TABLE daily_log_templates (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+  template_name TEXT NOT NULL,
+  trade_type TEXT,
+  default_work_areas TEXT[] DEFAULT '{}',
+  default_safety_talk_topics TEXT[] DEFAULT '{}',
+  default_materials JSONB DEFAULT '[]',
+  default_equipment JSONB DEFAULT '[]',
+  default_tasks TEXT[] DEFAULT '{}',
+  is_default BOOLEAN DEFAULT false,
+  active BOOLEAN DEFAULT true,
+  deleted_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+ALTER TABLE daily_log_templates ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "log_templates_select" ON daily_log_templates FOR SELECT USING (company_id = auth.company_id());
+CREATE POLICY "log_templates_insert" ON daily_log_templates FOR INSERT WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "log_templates_update" ON daily_log_templates FOR UPDATE USING (company_id = auth.company_id());
+CREATE POLICY "log_templates_delete" ON daily_log_templates FOR DELETE USING (company_id = auth.company_id());
+CREATE INDEX idx_log_templates_company ON daily_log_templates(company_id);
+CREATE INDEX idx_log_templates_trade ON daily_log_templates(company_id, trade_type);
+CREATE TRIGGER log_templates_updated_at BEFORE UPDATE ON daily_log_templates FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER log_templates_audit AFTER INSERT OR UPDATE OR DELETE ON daily_log_templates FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+```
+
+#### Edge Function: `daily-log-auto-populate`
+- **Path**: `supabase/functions/daily-log-auto-populate/index.ts`
+- **Method**: POST
+- **Auth**: JWT
+- **Request**: `{ "job_id": "uuid", "log_date": "2026-02-20" }`
+- **Response**: Pre-populated fields: weather (from Open-Meteo), crew (from time_entries for that job+date), photos (from photo uploads for that job+date), previous percent_complete
+- **Open-Meteo call**: `https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lng}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,windspeed_10m_max,weathercode&timezone=auto&start_date={date}&end_date={date}`
+- **Cost**: $0 (Open-Meteo free, no API key)
+
+#### Dart Model: `daily_job_log.dart`, `daily_log_template.dart`
+
+#### Checklist
+- [ ] Migration: CREATE daily_job_logs — all columns + UNIQUE constraint, 4 RLS policies, 5 indexes, 2 triggers
+- [ ] Migration: CREATE daily_log_templates — all columns, 4 RLS policies, 2 indexes, 2 triggers
+- [ ] Edge Function: `daily-log-auto-populate` — Open-Meteo weather + time entries crew + photos
+- [ ] Dart model: `lib/models/daily_job_log.dart`
+- [ ] Dart model: `lib/models/daily_log_template.dart`
+- [ ] Update models barrel
+- [ ] Open-Meteo integration tested (free, no API key required)
+- [ ] Verify: `dart analyze` clean, migration applies, auto-populate returns correct data
+- [ ] Security: RLS on both tables, UNIQUE prevents duplicate logs, deleted_at on both
 - [ ] Commit: `[U-LOG1] Daily Job Log foundation — tables + auto-populate engine`
 
-### U-LOG2 — Daily Log Flutter + Team Portal (~8h)
+---
 
-#### Steps
-- [ ] Flutter: daily_log_screen.dart — pre-populated form, tech adds work description + materials + safety talk
-- [ ] Flutter: daily_log_history_screen.dart — browse past logs per job, timeline view
-- [ ] Team Portal: team-portal/src/app/daily-log/page.tsx — field tech daily log entry
-- [ ] Hook (team): use-daily-log.ts
-- [ ] Verify: Flutter analyze clean, team portal builds
-- [ ] Commit: `[U-LOG2] Daily Job Log Flutter + Team Portal entry`
+### U-LOG2 — Flutter + Team Portal Entry (~8h)
 
-### U-LOG3 — Daily Log CRM + Client Portal (~8h)
+**Goal:** Flutter daily log creation with pre-populated data. Team Portal for field tech daily log entry.
 
-#### Steps
-- [ ] CRM: web-portal/src/app/daily-logs/page.tsx — all logs across jobs
-- [ ] CRM: web-portal/src/app/daily-logs/[jobId]/page.tsx — per-job log timeline
-- [ ] Client Portal: client-portal/src/app/project/[id]/daily-logs/page.tsx — owner views daily progress
-- [ ] Hooks: use-daily-logs.ts (CRM), use-daily-logs-viewer.ts (client)
-- [ ] PDF export: generate daily log report for a date range
+#### Flutter Screens
+- `lib/screens/daily_log/daily_log_screen.dart` — create/edit daily log: pre-populated from auto-populate, tech adds work description, materials, safety talk, delays. Signature capture. 4 states.
+- `lib/screens/daily_log/daily_log_history_screen.dart` — browse past logs per job, calendar view, timeline. 4 states.
+- `lib/screens/daily_log/daily_log_detail_screen.dart` — read-only view of submitted log with all details. 4 states.
+
+#### Team Portal
+- `team-portal/src/app/dashboard/daily-log/page.tsx` — today's log entry for assigned job(s). Pre-populated. 4 states.
+- `team-portal/src/app/dashboard/daily-log/[logId]/page.tsx` — edit existing draft or view submitted. 4 states.
+- `team-portal/src/lib/hooks/use-daily-log.ts` — CRUD for daily logs + auto-populate call
+
+#### Repository
+- `lib/repositories/daily_log_repository.dart` — CRUD daily_job_logs + template management
+
+#### Checklist
+- [ ] Flutter: `daily_log_screen.dart` — create/edit with pre-population, 4 states
+- [ ] Flutter: `daily_log_history_screen.dart` — browse past logs, 4 states
+- [ ] Flutter: `daily_log_detail_screen.dart` — read-only detail, 4 states
+- [ ] Repository: `daily_log_repository.dart` — full CRUD
+- [ ] Provider: daily log Riverpod providers (list, detail, create, update)
+- [ ] Team Portal: `daily-log/page.tsx` — today's entry, 4 states
+- [ ] Team Portal: `daily-log/[logId]/page.tsx` — edit/view, 4 states
+- [ ] Hook: `use-daily-log.ts` (team) — CRUD + auto-populate
+- [ ] Signature capture component reuse
+- [ ] Verify: `dart analyze` clean, team portal builds
+- [ ] Commit: `[U-LOG2] Daily Job Log Flutter screens + Team Portal entry`
+
+---
+
+### U-LOG3 — CRM Pages + Client Portal (~8h)
+
+**Goal:** CRM daily log management across all jobs. Client Portal for owner/GC to view daily progress. PDF export.
+
+#### Web CRM Pages
+- `web-portal/src/app/dashboard/daily-logs/page.tsx` — all daily logs across all jobs, filterable by job/date/status. 4 states.
+- `web-portal/src/app/dashboard/daily-logs/[jobId]/page.tsx` — per-job daily log timeline: chronological entries with weather, crew, work, photos. 4 states.
+- `web-portal/src/app/dashboard/daily-logs/[jobId]/[logId]/page.tsx` — individual log detail with approve/request revision. 4 states.
+
+#### Client Portal
+- `client-portal/src/app/(portal)/projects/[id]/daily-logs/page.tsx` — owner/GC views daily logs (if sharing enabled). Timeline view with photos, progress %. 4 states.
+- `client-portal/src/lib/hooks/use-daily-logs-viewer.ts` — read-only, filtered by customer's jobs
+
+#### Hooks
+- `web-portal/src/lib/hooks/use-daily-logs.ts` — list + filter + approve + realtime
+- `web-portal/src/lib/hooks/use-daily-log-detail.ts` — single log detail + approve/revision
+
+#### PDF Export
+- Generate daily log report for date range: company header, job info, each day's log with weather/crew/work/photos
+- Use existing PDF generation pattern (pdf-lib or @react-pdf/renderer)
+
+#### Checklist
+- [ ] CRM: `daily-logs/page.tsx` — all logs with filtering, 4 states
+- [ ] CRM: `daily-logs/[jobId]/page.tsx` — per-job timeline, 4 states
+- [ ] CRM: `daily-logs/[jobId]/[logId]/page.tsx` — detail + approve/revision, 4 states
+- [ ] Client Portal: `projects/[id]/daily-logs/page.tsx` — read-only view, 4 states
+- [ ] Hook: `use-daily-logs.ts` (CRM) — list + filter + approve
+- [ ] Hook: `use-daily-log-detail.ts` (CRM) — detail + actions
+- [ ] Hook: `use-daily-logs-viewer.ts` (client) — read-only
+- [ ] PDF export: daily log report for date range
+- [ ] Approval flow: submitted -> approved or revision_requested
 - [ ] Verify: all portal builds clean
+- [ ] Security: client portal shows only logs for customer's jobs, sharing must be enabled
 - [ ] Commit: `[U-LOG3] Daily Job Log CRM + Client Portal + PDF export`
 
 ---
 
-### U-CO1 — Change Order Engine Foundation (~6h)
+### U-LOG4 — Templates + Integration + Testing (~8h)
 
-#### Steps
-- [ ] Check existing: verify if change_orders table exists (use-change-orders.ts hooks exist — check what they connect to)
-- [ ] Migration (if needed): CREATE change_orders — id, company_id, job_id, change_order_number, title, description, reason, cost_impact, original/revised contract amounts, schedule_impact_days, photos, status, customer signature + RLS
-- [ ] Migration (if needed): CREATE change_order_items — id, change_order_id FK, description, quantity, unit, unit_price, total, item_type + RLS
-- [ ] Dart models: change_order.dart, change_order_item.dart
-- [ ] Verify: migration clean
-- [ ] Commit: `[U-CO1] Change Order Engine foundation`
+**Goal:** Daily log templates per trade. Integration with existing systems (time clock, photos, weather engine). End-to-end testing.
 
-### U-CO2 — Change Order Flutter + CRM (~8h)
+#### Template System
+- Pre-built templates per trade (electrical, plumbing, HVAC, roofing, general, restoration, preservation)
+- Each template has: default work areas, safety talk topics, common materials, typical equipment
+- Company can customize templates or create new ones
+- Template selection when creating new daily log
 
-#### Steps
-- [ ] Flutter: CO creation screen — add line items, attach photos (before/after), submit for review
-- [ ] CRM: CO management — create, track cumulative impact, document generation
-- [ ] Edge Function: change-order-notify — SMS/email customer when CO submitted for review
-- [ ] CRM dashboard shows: original contract → all COs → current contract total
-- [ ] Verify: CO creation and notification work
-- [ ] Commit: `[U-CO2] Change Order Flutter + CRM + notification`
+#### Seed Data: Default Templates
+- **Electrical**: work areas [panel, conduit_run, junction_box, outlet_rough, fixture_trim], safety [arc_flash, lockout_tagout, ladder_safety], materials [wire, conduit, boxes, breakers]
+- **Plumbing**: work areas [rough_in, drain_line, supply_line, fixture_set, water_heater], safety [confined_space, hot_work, chemical_safety], materials [pipe, fittings, valves, fixtures]
+- **HVAC**: work areas [ductwork, equipment_pad, lineset, thermostat, venting], safety [refrigerant_handling, electrical_safety, fall_protection], materials [duct, refrigerant, fittings, controls]
+- **Roofing**: work areas [tear_off, underlayment, shingle_install, flashing, ridge_vent], safety [fall_protection, heat_illness, ladder_safety], materials [shingles, underlayment, nails, flashing]
+- **General/Remodeling**: work areas [demo, framing, drywall, trim, paint], safety [dust_control, hearing_protection, eye_protection], materials [lumber, drywall, fasteners, adhesives]
+- **Restoration**: work areas [water_extraction, demo, drying, rebuild, final_clean], safety [mold_ppe, electrical_safety, structural_assessment], materials [dehumidifiers, air_movers, antimicrobial, poly]
+- **Preservation**: work areas [securing, winterization, debris, grass, inspection], safety [structural_entry, animal_hazard, mold_ppe], materials [locks, antifreeze, plywood, fasteners]
 
-### U-CO3 — Change Order Client Portal (~4h)
+#### Integration Wiring
+- **Time Clock**: auto-populate crew from `time_entries` WHERE job_id = X AND date = Y
+- **Photos**: auto-link photos from storage WHERE job_id = X AND created_at::date = Y
+- **Weather Engine (GC-WX)**: if weather_alerts exist for this job+date, auto-populate weather from alert data instead of Open-Meteo call
+- **Change Orders (CO)**: delays documented in daily log can feed CO justification
 
-#### Steps
-- [ ] Client Portal: client-portal/src/app/project/[id]/change-orders/page.tsx — view CO details, line items, photos
-- [ ] Digital approval: customer signs CO in portal (reuse signature component)
-- [ ] CO status updates in real-time across all portals
-- [ ] Test: full CO lifecycle — create → notify → customer reviews → approves/rejects → contract updated
-- [ ] Verify: client portal build clean
-- [ ] Commit: `[U-CO3] Change Order Client Portal approval + testing`
+#### Checklist
+- [ ] Template CRUD: create, edit, delete, set default per trade
+- [ ] Flutter: template selection screen when creating new log
+- [ ] CRM: template management page
+- [ ] Seed: 7 default templates (electrical, plumbing, HVAC, roofing, general, restoration, preservation)
+- [ ] Integration: time_entries -> crew auto-populate
+- [ ] Integration: photo storage -> auto-link daily photos
+- [ ] Integration: weather_alerts -> weather data fallback
+- [ ] Integration: daily log delays -> change order justification reference
+- [ ] End-to-end test: create log -> auto-populate -> fill in -> submit -> approve -> PDF export
+- [ ] Test: UNIQUE constraint prevents duplicate logs per job/date
+- [ ] Test: all 4 portal views render correctly
+- [ ] Verify: all builds pass
+- [ ] Security: templates scoped by company_id, no cross-company template access
+- [ ] Commit: `[U-LOG4] Daily log templates + system integrations + e2e testing`
 
 ---
+
+---
+
+### U-CO1 — Change Order Engine Extension (~6h)
+
+**Goal:** Extend existing change_orders table with missing columns for full engine. Create change_order_items as a proper relational table (currently line_items is JSONB). Migrate RLS from `requesting_company_id()` to `auth.company_id()`.
+
+#### Existing State
+- Table: `change_orders` exists with basic columns
+- RLS: uses old `requesting_company_id()` pattern
+- Hooks: all 3 portals have `use-change-orders.ts` with CRUD + approve/reject
+- NO `change_order_items` table (line_items stored as JSONB in change_orders)
+- NO: cost_impact, original_contract_amount, revised_contract_amount, schedule_impact_days, customer_viewed_at, customer_decision, customer_notes, customer_signature_path, deleted_at
+
+#### Tables
+
+```sql
+-- ============================================================
+-- ALTER: change_orders (extend existing — expand-contract pattern)
+-- ============================================================
+ALTER TABLE change_orders ADD COLUMN IF NOT EXISTS cost_impact NUMERIC(10,2);
+ALTER TABLE change_orders ADD COLUMN IF NOT EXISTS original_contract_amount NUMERIC(10,2);
+ALTER TABLE change_orders ADD COLUMN IF NOT EXISTS revised_contract_amount NUMERIC(10,2);
+ALTER TABLE change_orders ADD COLUMN IF NOT EXISTS schedule_impact_days INTEGER DEFAULT 0;
+ALTER TABLE change_orders ADD COLUMN IF NOT EXISTS customer_viewed_at TIMESTAMPTZ;
+ALTER TABLE change_orders ADD COLUMN IF NOT EXISTS customer_decision TEXT CHECK (customer_decision IN ('approved', 'rejected', 'negotiate'));
+ALTER TABLE change_orders ADD COLUMN IF NOT EXISTS customer_notes TEXT;
+ALTER TABLE change_orders ADD COLUMN IF NOT EXISTS customer_signature_path TEXT;
+ALTER TABLE change_orders ADD COLUMN IF NOT EXISTS submitted_at TIMESTAMPTZ;
+ALTER TABLE change_orders ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
+-- All new columns are nullable with defaults per Rule 17
+
+-- Migrate RLS from requesting_company_id() to auth.company_id()
+DROP POLICY IF EXISTS "change_orders_select" ON change_orders;
+DROP POLICY IF EXISTS "change_orders_insert" ON change_orders;
+DROP POLICY IF EXISTS "change_orders_update" ON change_orders;
+DROP POLICY IF EXISTS "change_orders_delete" ON change_orders;
+CREATE POLICY "change_orders_select" ON change_orders FOR SELECT USING (company_id = auth.company_id());
+CREATE POLICY "change_orders_insert" ON change_orders FOR INSERT WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "change_orders_update" ON change_orders FOR UPDATE USING (company_id = auth.company_id());
+CREATE POLICY "change_orders_delete" ON change_orders FOR DELETE USING (company_id = auth.company_id());
+
+-- Add deleted_at filter index
+CREATE INDEX IF NOT EXISTS idx_change_orders_deleted ON change_orders(company_id) WHERE deleted_at IS NULL;
+
+-- ============================================================
+-- TABLE: change_order_items (proper relational table)
+-- ============================================================
+CREATE TABLE change_order_items (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  change_order_id UUID NOT NULL REFERENCES change_orders(id) ON DELETE CASCADE,
+  company_id UUID NOT NULL REFERENCES companies(id),
+  description TEXT NOT NULL,
+  quantity NUMERIC(8,2) DEFAULT 1,
+  unit TEXT DEFAULT 'each',
+  unit_price NUMERIC(10,2) NOT NULL,
+  total NUMERIC(10,2) NOT NULL,
+  item_type TEXT DEFAULT 'addition' CHECK (item_type IN ('addition', 'credit', 'no_change')),
+  sort_order INTEGER DEFAULT 0,
+  notes TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+ALTER TABLE change_order_items ENABLE ROW LEVEL SECURITY;
+-- Direct RLS via company_id (added per HIGH-6 audit fix)
+CREATE POLICY "co_items_select" ON change_order_items FOR SELECT USING (
+  company_id = auth.company_id()
+);
+CREATE POLICY "co_items_insert" ON change_order_items FOR INSERT WITH CHECK (
+  company_id = auth.company_id()
+);
+CREATE POLICY "co_items_update" ON change_order_items FOR UPDATE USING (
+  company_id = auth.company_id()
+);
+CREATE POLICY "co_items_delete" ON change_order_items FOR DELETE USING (
+  company_id = auth.company_id()
+);
+CREATE INDEX idx_co_items_order ON change_order_items(change_order_id);
+CREATE INDEX idx_co_items_type ON change_order_items(change_order_id, item_type);
+CREATE TRIGGER co_items_updated_at BEFORE UPDATE ON change_order_items FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER co_items_audit AFTER INSERT OR UPDATE OR DELETE ON change_order_items FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+-- Trigger: update change_order.cost_impact when items change
+CREATE OR REPLACE FUNCTION fn_update_co_cost_impact()
+RETURNS TRIGGER AS $$
+BEGIN
+  UPDATE change_orders SET
+    cost_impact = COALESCE((
+      SELECT SUM(CASE WHEN item_type = 'credit' THEN -total ELSE total END)
+      FROM change_order_items WHERE change_order_id = COALESCE(NEW.change_order_id, OLD.change_order_id)
+    ), 0)
+  WHERE id = COALESCE(NEW.change_order_id, OLD.change_order_id);
+  RETURN NULL;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE TRIGGER co_items_update_cost
+  AFTER INSERT OR UPDATE OR DELETE ON change_order_items
+  FOR EACH ROW EXECUTE FUNCTION fn_update_co_cost_impact();
+```
+
+#### Dart Models: update existing `change_order.dart` with new fields, create `change_order_item.dart`
+
+#### Checklist
+- [ ] Migration: ALTER change_orders — 9 new nullable columns (expand-contract safe)
+- [ ] Migration: RLS policy migration from `requesting_company_id()` to `auth.company_id()`
+- [ ] Migration: CREATE change_order_items — all columns, 4 RLS policies, 2 indexes, 2 triggers
+- [ ] Migration: cost_impact auto-calculation trigger
+- [ ] Migration: deleted_at index on change_orders
+- [ ] Dart model: update `change_order.dart` with new fields
+- [ ] Dart model: create `lib/models/change_order_item.dart`
+- [ ] Update models barrel
+- [ ] Verify: existing hooks still work with extended table (backward compatible)
+- [ ] Verify: `dart analyze` clean, migration applies
+- [ ] Security: RLS migrated to auth.company_id(), deleted_at added, items scoped via parent
+- [ ] Commit: `[U-CO1] Change Order Engine extension — new columns, items table, RLS migration`
+
+---
+
+### U-CO2 — CO Creation + Line Items + Photos (~8h)
+
+**Goal:** Enhanced CO creation in Flutter and CRM: proper line items (addition/credit), photo attachment (before/after), document generation.
+
+#### Flutter Screens
+- `lib/screens/change_orders/co_create_screen.dart` — create CO: title, description, reason picker, line items (add/remove with unit price calc), photo capture (before/after), schedule impact. 4 states.
+- `lib/screens/change_orders/co_detail_screen.dart` — CO detail: line items, photos, status timeline, cumulative impact on contract. 4 states.
+- `lib/screens/change_orders/co_list_screen.dart` — all COs for a job: sequential numbering, total impact, status badges. 4 states.
+
+#### Web CRM Extension
+- Update existing `web-portal/src/app/dashboard/change-orders/page.tsx`:
+  - Add line items management (addition/credit rows)
+  - Photo upload (before/after per CO)
+  - Cumulative contract tracking: "Original: $X | Change Orders: +$Y | Current: $Z"
+  - CO document generation (PDF) using ZForge template
+  - Reason picker with categories
+- `web-portal/src/app/dashboard/change-orders/[id]/page.tsx` — CO detail with line items, photos, timeline
+
+#### Hooks Update
+- Update `web-portal/src/lib/hooks/use-change-orders.ts` — add line items CRUD, photo management, document generation
+
+#### Edge Function: `change-order-notify`
+- **Path**: `supabase/functions/change-order-notify/index.ts`
+- **Method**: POST
+- **Trigger**: CO status changes to 'pending_approval'
+- **Action**: Send SMS + email to customer with link to Client Portal CO review page
+- **Uses**: existing SignalWire for SMS, SendGrid for email
+
+#### Checklist
+- [ ] Flutter: `co_create_screen.dart` — full creation with line items + photos, 4 states
+- [ ] Flutter: `co_detail_screen.dart` — detail with timeline, 4 states
+- [ ] Flutter: `co_list_screen.dart` — job COs with cumulative impact, 4 states
+- [ ] CRM: update change-orders page with line items, photos, cumulative tracking
+- [ ] CRM: `change-orders/[id]/page.tsx` — CO detail
+- [ ] Hook: update `use-change-orders.ts` with line items CRUD + photos
+- [ ] Edge Function: `change-order-notify` — SMS/email on submission
+- [ ] CO document PDF generation via ZForge template
+- [ ] Cumulative contract tracking: original + all COs = current total
+- [ ] Security: only company can create COs for their jobs
+- [ ] Commit: `[U-CO2] CO creation with line items + photos + notification`
+
+---
+
+### U-CO3 — Client Portal CO Approval (~6h)
+
+**Goal:** Customer reviews CO in Client Portal with full detail, approves/rejects with digital signature.
+
+#### Client Portal
+- `client-portal/src/app/(portal)/projects/[id]/change-orders/page.tsx` — list COs for this project: pending review highlighted, approved/rejected history. 4 states.
+- `client-portal/src/app/(portal)/projects/[id]/change-orders/[coId]/page.tsx` — CO detail: line items, before/after photos, cost impact, schedule impact. Approve (with signature) or Reject (with reason) buttons. Negotiate option (add notes). 4 states.
+
+#### Approval Flow
+1. CO submitted -> status = 'pending_approval'
+2. Customer notified via SMS/email
+3. Customer opens in Client Portal -> status updated: customer_viewed_at = now()
+4. Customer reviews line items, photos, impact
+5. Customer approves (digital signature captured) OR rejects (reason required) OR negotiates (notes)
+6. Status updated -> contractor notified
+7. If approved: revised_contract_amount auto-calculated, job total updated
+
+#### Hook Update
+- Update `client-portal/src/lib/hooks/use-change-orders.ts` — add: view detail, customer_viewed_at tracking, negotiate, digital signature capture
+
+#### Digital Signature
+- Reuse existing signature component from `zdoc_signatures` system
+- Capture signature -> store in storage -> link path to customer_signature_path
+
+#### Checklist
+- [ ] Client Portal: `change-orders/page.tsx` — CO list with pending highlighted, 4 states
+- [ ] Client Portal: `change-orders/[coId]/page.tsx` — detail + approve/reject/negotiate, 4 states
+- [ ] Hook update: `use-change-orders.ts` (client) — detail view, approve with signature, reject with reason, negotiate
+- [ ] customer_viewed_at auto-set on first view
+- [ ] Digital signature capture (reuse zdoc_signatures component)
+- [ ] Approve -> revised_contract_amount calculated -> job total updated
+- [ ] Reject -> contractor notified with reason
+- [ ] Negotiate -> contractor notified with customer notes
+- [ ] Real-time status sync across all portals
+- [ ] Security: customer can only view/act on COs for their jobs, ownership verification
+- [ ] Commit: `[U-CO3] Client Portal CO approval with digital signature`
+
+---
+
+### U-CO4 — CO Document Generation + Team Portal (~4h)
+
+**Goal:** Professional CO document generation via ZForge. Team Portal CO visibility for field techs.
+
+#### CO Document Generation
+- Template: `zdoc_templates` entry for 'change_order' type
+- Variables: company name/logo, customer name, job address, CO number, date, description, reason, line items table, cost impact, schedule impact, original contract, revised contract, contractor signature, customer signature, approval date
+- Generate PDF via existing ZForge pipeline (@react-pdf/renderer for web, pdf/printing for Flutter)
+- Auto-attach generated PDF to CO record
+
+#### Team Portal
+- `team-portal/src/app/dashboard/change-orders/page.tsx` — (update existing) field techs see COs for assigned jobs, create COs from field with photos
+- `team-portal/src/lib/hooks/use-change-orders.ts` — (update existing) add create + photo upload capabilities
+
+#### Checklist
+- [ ] ZForge template: 'change_order' document template with all variables
+- [ ] PDF generation: CO document with professional formatting
+- [ ] Auto-attach PDF to CO record
+- [ ] Team Portal: update to show CO details + allow field creation
+- [ ] Hook update: team portal CO creation with photos
+- [ ] Document storage in documents bucket
+- [ ] Security: generated documents scoped by company
+- [ ] Commit: `[U-CO4] CO document generation + Team Portal field creation`
+
+---
+
+### U-CO5 — CO Analytics + Integration + Testing (~4h)
+
+**Goal:** CO cumulative tracking dashboard. Integration with schedule, invoicing, job cost. End-to-end testing.
+
+#### Web CRM Dashboard Extension
+- Add to job detail: "Change Order Summary" card showing original contract, total COs (count + $), revised contract
+- CO analytics: average COs per job, common reasons, approval rate, average time to approval, impact on schedule
+
+#### Integration Wiring
+- **Schedule (GC)**: CO schedule_impact_days adjusts job scheduled_end
+- **Invoices**: revised_contract_amount flows to invoice generation
+- **Job Cost Autopsy (J)**: CO totals tracked as variance category
+- **Daily Job Log**: delays documented in logs reference CO justification
+- **Estimates**: CO changes reflected in estimate revision history
+
+#### Checklist
+- [ ] CRM: CO summary card on job detail page
+- [ ] CRM: CO analytics (avg per job, common reasons, approval rate, timeline)
+- [ ] Integration: schedule_impact_days -> job scheduled_end adjustment
+- [ ] Integration: revised_contract_amount -> invoice generation
+- [ ] Integration: CO data -> job cost autopsy variance
+- [ ] Integration: daily log delays -> CO justification reference
+- [ ] End-to-end test: create CO -> add items -> attach photos -> submit -> customer notified -> customer reviews -> approves with signature -> contract updated -> document generated
+- [ ] Test: multiple COs per job cumulative tracking
+- [ ] Test: reject flow with reason
+- [ ] Test: negotiate flow with back-and-forth
+- [ ] Verify: all builds pass (`dart analyze`, `npm run build` x 4)
+- [ ] Security: all CO data scoped by company, customer access verified per job
+- [ ] Commit: `[U-CO5] CO analytics + system integrations + e2e testing`
+
+---
+
+---
+
 
 ## ══════════════════════════════════════════════════════════
 ## PHASE GC EXTENSION — WEATHER-AWARE SCHEDULING
@@ -11679,35 +16465,472 @@ Equipment lifecycle data + prediction engine tables.
 
 ### GC-WX1 — Weather Rules + Alert Tables (~6h)
 
-#### Steps
-- [ ] Migration: CREATE weather_rules — id, company_id (NULL=system default), trade_type, job_type_pattern, rule_name, condition_json (JSONB), severity, message_template, active + RLS
-- [ ] Migration: CREATE weather_alerts — id, company_id, job_id, scheduled_date, rule_id FK, weather_data (JSONB), alert_level, alert_message, acknowledged, action_taken + RLS
-- [ ] Seed: default weather rules for 10 trades (roofing: no rain/high wind, concrete: temp min, painting: no rain, etc.)
-- [ ] Dart models: weather_rule.dart, weather_alert.dart
-- [ ] Verify: migration clean, rules seeded
-- [ ] Commit: `[GC-WX1] Weather-Aware Scheduling foundation — rules + alerts tables`
+**Goal:** Create the weather-aware scheduling data model. Trade-specific weather rules (roofers need no rain, concrete needs temp >40F for 48h), company-customizable overrides, and alert records for at-risk scheduled jobs.
+
+### Database Migration
+
+```sql
+-- ============================================================
+-- TABLE 12: weather_rules
+-- Per-trade weather sensitivity rules (system defaults + company overrides)
+-- ============================================================
+CREATE TABLE weather_rules (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID REFERENCES companies(id),
+  trade_type TEXT NOT NULL,
+  job_type_pattern TEXT DEFAULT '*',
+  rule_name TEXT NOT NULL,
+  condition_json JSONB NOT NULL,
+  severity TEXT DEFAULT 'warning' CHECK (severity IN ('info','warning','block')),
+  message_template TEXT,
+  active BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  deleted_at TIMESTAMPTZ
+);
+
+ALTER TABLE weather_rules ENABLE ROW LEVEL SECURITY;
+
+-- System defaults (company_id IS NULL) readable by all. Company rules scoped.
+CREATE POLICY "weather_rules_select" ON weather_rules
+  FOR SELECT TO authenticated
+  USING (deleted_at IS NULL AND (company_id IS NULL OR company_id = auth.company_id()));
+CREATE POLICY "weather_rules_insert" ON weather_rules
+  FOR INSERT TO authenticated
+  WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "weather_rules_update" ON weather_rules
+  FOR UPDATE TO authenticated
+  USING (company_id = auth.company_id() AND deleted_at IS NULL);
+CREATE POLICY "weather_rules_delete" ON weather_rules
+  FOR DELETE TO authenticated
+  USING (company_id = auth.company_id());
+
+CREATE INDEX idx_weather_rules_company ON weather_rules(company_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_weather_rules_trade ON weather_rules(trade_type) WHERE deleted_at IS NULL;
+CREATE INDEX idx_weather_rules_active ON weather_rules(active) WHERE deleted_at IS NULL AND active = true;
+
+CREATE TRIGGER weather_rules_updated_at BEFORE UPDATE ON weather_rules
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER weather_rules_audit AFTER INSERT OR UPDATE OR DELETE ON weather_rules
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+-- ============================================================
+-- TABLE 13: weather_alerts
+-- Alerts generated when weather threatens scheduled jobs
+-- ============================================================
+CREATE TABLE weather_alerts (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  job_id UUID NOT NULL REFERENCES jobs(id),
+  schedule_event_id UUID REFERENCES schedule_events(id),
+  scheduled_date DATE NOT NULL,
+  rule_id UUID REFERENCES weather_rules(id),
+  weather_data JSONB NOT NULL,
+  forecast_source TEXT DEFAULT 'open_meteo' CHECK (forecast_source IN ('open_meteo','nws','manual')),
+  alert_level TEXT NOT NULL CHECK (alert_level IN ('info','warning','block')),
+  alert_message TEXT NOT NULL,
+  acknowledged BOOLEAN DEFAULT false,
+  acknowledged_by UUID REFERENCES users(id),
+  acknowledged_at TIMESTAMPTZ,
+  action_taken TEXT CHECK (action_taken IN ('proceed','reschedule','cancel','pending')),
+  action_taken_by UUID REFERENCES users(id),
+  action_taken_at TIMESTAMPTZ,
+  rescheduled_to DATE,
+  customer_notified BOOLEAN DEFAULT false,
+  customer_notified_at TIMESTAMPTZ,
+  notes TEXT,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  deleted_at TIMESTAMPTZ
+);
+
+ALTER TABLE weather_alerts ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "weather_alerts_select" ON weather_alerts
+  FOR SELECT TO authenticated USING (company_id = auth.company_id() AND deleted_at IS NULL);
+CREATE POLICY "weather_alerts_insert" ON weather_alerts
+  FOR INSERT TO authenticated WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "weather_alerts_update" ON weather_alerts
+  FOR UPDATE TO authenticated USING (company_id = auth.company_id() AND deleted_at IS NULL);
+CREATE POLICY "weather_alerts_delete" ON weather_alerts
+  FOR DELETE TO authenticated USING (company_id = auth.company_id());
+
+CREATE INDEX idx_weather_alerts_company ON weather_alerts(company_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_weather_alerts_job ON weather_alerts(job_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_weather_alerts_date ON weather_alerts(scheduled_date) WHERE deleted_at IS NULL;
+CREATE INDEX idx_weather_alerts_unack ON weather_alerts(company_id) WHERE deleted_at IS NULL AND acknowledged = false;
+CREATE INDEX idx_weather_alerts_level ON weather_alerts(company_id, alert_level) WHERE deleted_at IS NULL AND acknowledged = false;
+
+CREATE TRIGGER weather_alerts_updated_at BEFORE UPDATE ON weather_alerts
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER weather_alerts_audit AFTER INSERT OR UPDATE OR DELETE ON weather_alerts
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+```
+
+### Seed: Default Weather Rules (10 Trades)
+
+```
+System defaults (company_id = NULL):
+
+ROOFING:
+- "Rain Risk" — {precipitation_probability_gt: 40} — severity: block — "Rain forecast ({{probability}}%) — reschedule roofing work"
+- "High Wind" — {wind_speed_mph_gt: 25} — severity: block — "Wind gusts {{wind_speed}} mph — unsafe for roofing (OSHA limit: 25 mph for flat work)"
+- "Ice/Snow" — {snowfall_mm_gt: 0} — severity: block — "Snow/ice forecast — roof surfaces unsafe"
+- "Extreme Heat" — {temperature_max_f_gt: 105} — severity: warning — "Heat index {{heat_index}}°F — heat safety protocols required"
+
+CONCRETE:
+- "Freeze Risk" — {temperature_min_f_lt: 40, duration_hours: 48} — severity: block — "Temp below 40°F for 48h — concrete will not cure properly"
+- "Rain During Pour" — {precipitation_probability_gt: 30} — severity: block — "Rain forecast — do not pour concrete"
+- "Extreme Heat" — {temperature_max_f_gt: 95} — severity: warning — "Hot weather concrete procedures required (ACI 305)"
+- "High Wind" — {wind_speed_mph_gt: 20} — severity: warning — "Wind may cause rapid surface drying — use evaporation retarders"
+
+PAINTING (EXTERIOR):
+- "Rain Risk" — {precipitation_probability_gt: 30} — severity: block — "Rain within 24h — paint will not cure"
+- "Humidity" — {humidity_pct_gt: 85} — severity: warning — "High humidity {{humidity}}% — extended dry time needed"
+- "Cold Temp" — {temperature_min_f_lt: 50} — severity: warning — "Temp below 50°F — most latex paints require 50°F+ (check product specs)"
+- "Dew Point" — {dew_point_close: true} — severity: warning — "Dew point near surface temp — condensation risk"
+
+ELECTRICAL:
+- "Lightning Risk" — {thunderstorm_probability_gt: 40} — severity: block — "Thunderstorm forecast — unsafe for outdoor electrical work"
+- "Heavy Rain (outdoor)" — {precipitation_probability_gt: 60} — severity: warning — "Rain forecast — protect open electrical work"
+
+HVAC:
+- "Extreme Cold (outdoor units)" — {temperature_min_f_lt: 20} — severity: warning — "Cold weather — refrigerant charging may be inaccurate below 20°F"
+- "Heavy Rain (outdoor)" — {precipitation_probability_gt: 70} — severity: warning — "Rain forecast — cover outdoor equipment during install"
+
+PLUMBING:
+- "Freeze Risk" — {temperature_min_f_lt: 32} — severity: warning — "Freeze risk — protect exposed pipes, test after install"
+
+LANDSCAPING:
+- "Rain Risk" — {precipitation_probability_gt: 50} — severity: warning — "Rain forecast — soil work may be muddy/unsafe"
+- "Frozen Ground" — {temperature_min_f_lt: 32, consecutive_days: 3} — severity: block — "Ground likely frozen — excavation work impractical"
+- "Extreme Heat" — {temperature_max_f_gt: 100} — severity: warning — "Heat advisory — crew hydration and break schedule required"
+
+GENERAL:
+- "Severe Weather" — {severe_weather_watch: true} — severity: block — "NWS severe weather watch/warning — evaluate crew safety"
+- "Lightning" — {thunderstorm_probability_gt: 50} — severity: block — "Thunderstorm risk — all outdoor work at risk"
+- "High Wind (general)" — {wind_speed_mph_gt: 35} — severity: block — "Dangerous winds — crane operations prohibited, scaffolding unsafe"
+- "Heat Advisory" — {heat_index_f_gt: 103} — severity: warning — "OSHA heat illness prevention required — water, rest, shade protocol"
+
+EXCAVATION:
+- "Heavy Rain" — {precipitation_mm_gt: 10} — severity: block — "Heavy rain — trench collapse risk (OSHA 29 CFR 1926 Subpart P)"
+- "Saturated Soil" — {precipitation_prev_48h_mm_gt: 25} — severity: warning — "Recent rain — soil may be saturated, inspect trench walls"
+
+WELDING:
+- "Rain" — {precipitation_probability_gt: 20} — severity: block — "Any moisture risk — outdoor welding unsafe (moisture causes porosity)"
+- "High Wind" — {wind_speed_mph_gt: 15} — severity: warning — "Wind affects shielding gas — use windscreens or reschedule"
+```
+
+### Dart Models
+
+```
+lib/models/weather_rule.dart     — WeatherRule (Equatable, fromJson/toJson/copyWith, computed: evaluateCondition(weatherData))
+lib/models/weather_alert.dart    — WeatherAlert (Equatable, fromJson/toJson/copyWith, computed: isActionNeeded, isExpired)
+```
+
+### Wiring to Existing Systems
+
+| System | Connection |
+|--------|-----------|
+| `schedule_events` (GC) | weather_alerts.schedule_event_id FK, weather overlay on calendar |
+| `jobs` | weather_alerts.job_id FK, weather indicator on job detail |
+| `users` | acknowledged_by, action_taken_by references |
+| `notifications` | Weather alerts pushed to notification system |
+
+### Security Verification Checklist
+
+- [ ] RLS on both tables
+- [ ] System default rules (company_id NULL) readable by all authenticated
+- [ ] Company-specific rules scoped to auth.company_id()
+- [ ] weather_alerts fully company_id scoped
+- [ ] Audit triggers on both tables
+- [ ] deleted_at on both tables
+
+### Steps
+
+- [ ] Migration: CREATE weather_rules — all columns, CHECK constraints, RLS, indexes, triggers
+- [ ] Migration: CREATE weather_alerts — all columns, CHECK constraints, RLS, indexes, triggers
+- [ ] Seed: default weather rules for 10 trades (30+ rules total)
+- [ ] Dart model: weather_rule.dart (Equatable, condition evaluator)
+- [ ] Dart model: weather_alert.dart (Equatable, computed getters)
+- [ ] Repository: weather_schedule_repository.dart (abstract + concrete)
+- [ ] Riverpod providers: weatherRulesProvider, weatherAlertsProvider
+- [ ] Verify: migration clean, rules seeded, models compile
+- [ ] Commit: `[GC-WX1] Weather-Aware Scheduling foundation — rules + alerts tables, 30+ default rules for 10 trades`
+
+---
 
 ### GC-WX2 — Weather Scanner Engine (~6h)
 
-#### Steps
-- [ ] Edge Function: weather-schedule-scanner — CRON daily 6AM: fetch 5-day forecast for all scheduled job locations via Open-Meteo (free, no API key). Evaluate rules. Create weather_alerts for at-risk jobs.
-- [ ] Open-Meteo integration: batch forecast requests by location (group nearby jobs)
-- [ ] Rule evaluation engine: match weather data against rule conditions
-- [ ] Verify: scanner creates correct alerts for test data
-- [ ] Commit: `[GC-WX2] Weather scanner engine — Open-Meteo + rule evaluation`
+**Goal:** Build the weather scanner Edge Function that runs daily at 6AM, fetches 5-day forecasts for all scheduled job locations via Open-Meteo (free, no API key), evaluates weather rules, and creates alerts for at-risk jobs. Also integrates NWS Weather API for severe weather watches/warnings.
 
-### GC-WX3 — Weather UI + Reschedule (~8h)
+### Edge Function: weather-schedule-scanner
 
-#### Steps
-- [ ] Schedule view overlay: weather icons on calendar dates (sun, cloud, rain, snow)
-- [ ] Alert management: acknowledge alerts, mark action (proceed/reschedule/cancel)
-- [ ] Reschedule flow: suggest alternative dates with clear weather
-- [ ] Customer notification on weather-related reschedule
-- [ ] Flutter: weather indicator on job detail screen
-- [ ] Verify: weather overlay renders, reschedule flow works
-- [ ] Commit: `[GC-WX3] Weather UI overlay + alert management + reschedule flow`
+```
+Name: weather-schedule-scanner
+Method: POST (CRON daily at 6AM local / 11AM UTC)
+Auth: Service role key
+
+Logic:
+1. Query all schedule_events WHERE scheduled_start BETWEEN today AND today+5 AND deleted_at IS NULL
+2. Join with jobs to get lat/lng coordinates
+3. Group nearby jobs (within 10km) to batch forecast requests
+4. For each location group:
+   a. Fetch 5-day hourly forecast from Open-Meteo API
+   b. Fetch active NWS alerts for the location (api.weather.gov)
+5. For each scheduled job in the group:
+   a. Get trade_type from job
+   b. Load weather_rules for that trade (company-specific first, then system defaults)
+   c. Evaluate each rule against forecast data
+   d. If rule triggers: check if alert already exists for this job+date+rule (dedup)
+   e. If new: INSERT into weather_alerts
+6. Clean up: delete weather_alerts for dates that have passed (older than 2 days) — soft delete
+
+Open-Meteo API Call:
+GET https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lng}&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,precipitation,wind_speed_10m,wind_gusts_10m,snowfall,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,wind_gusts_10m_max,sunrise,sunset&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=auto&forecast_days=5
+
+NWS Alerts API Call:
+GET https://api.weather.gov/alerts/active?point={lat},{lng}
+Headers: User-Agent: "Zafto/1.0 (contact@zafto.cloud)"
+
+Response (200):
+{
+  "locations_scanned": 45,
+  "jobs_evaluated": 120,
+  "alerts_created": 8,
+  "alerts_by_level": {"info": 2, "warning": 4, "block": 2},
+  "nws_severe_alerts": 1
+}
+
+Errors: 401 (bad service key), 500 (internal), 503 (weather API unavailable — graceful skip)
+```
+
+### Rule Evaluation Engine
+
+```typescript
+function evaluateRule(rule: WeatherRule, forecast: HourlyForecast): boolean {
+  const conditions = rule.condition_json;
+
+  // Check each condition type:
+  if (conditions.precipitation_probability_gt != null) {
+    if (forecast.precipitation_probability_max > conditions.precipitation_probability_gt) return true;
+  }
+  if (conditions.wind_speed_mph_gt != null) {
+    if (forecast.wind_gusts_max > conditions.wind_speed_mph_gt) return true;
+  }
+  if (conditions.temperature_min_f_lt != null) {
+    const duration = conditions.duration_hours || 0;
+    if (duration > 0) {
+      // Check if temp stays below threshold for duration hours
+      const consecutiveHoursBelow = countConsecutiveHoursBelow(forecast.hourly_temps, conditions.temperature_min_f_lt);
+      if (consecutiveHoursBelow >= duration) return true;
+    } else {
+      if (forecast.temperature_min < conditions.temperature_min_f_lt) return true;
+    }
+  }
+  if (conditions.temperature_max_f_gt != null) {
+    if (forecast.temperature_max > conditions.temperature_max_f_gt) return true;
+  }
+  if (conditions.humidity_pct_gt != null) {
+    if (forecast.relative_humidity_max > conditions.humidity_pct_gt) return true;
+  }
+  if (conditions.snowfall_mm_gt != null) {
+    if (forecast.snowfall > conditions.snowfall_mm_gt) return true;
+  }
+  if (conditions.severe_weather_watch != null) {
+    if (forecast.nws_alerts && forecast.nws_alerts.length > 0) return true;
+  }
+  if (conditions.thunderstorm_probability_gt != null) {
+    // Weather codes 95-99 are thunderstorm codes in WMO
+    if (forecast.weather_code >= 95) return true;
+  }
+
+  return false;
+}
+```
+
+### Deduplication Logic
+
+Before creating an alert, check: `SELECT 1 FROM weather_alerts WHERE job_id = $1 AND scheduled_date = $2 AND rule_id = $3 AND deleted_at IS NULL`. If exists, skip. Prevents duplicate alerts on consecutive scanner runs.
+
+### API Connections ($0/month)
+
+| API | Purpose | Cost | Rate Limit |
+|-----|---------|------|------------|
+| Open-Meteo | 5-day hourly forecast | $0 (non-commercial free, EUR 15/mo commercial) | 10,000/day |
+| NWS Weather API | Severe weather watches/warnings | $0, no auth | Reasonable use (User-Agent required) |
+| Supabase CRON | Daily trigger | $0, included | N/A |
+
+### Wiring to Existing Systems
+
+| System | Connection |
+|--------|-----------|
+| `schedule_events` | Source of scheduled jobs to evaluate |
+| `jobs` | Lat/lng for weather lookup |
+| `weather_rules` | Rules to evaluate against forecast |
+| `weather_alerts` | Output: alerts created |
+| `notifications` | Alerts pushed to notification system |
+
+### Security Verification Checklist
+
+- [ ] CRON EF uses service role key
+- [ ] Open-Meteo requests contain no PII
+- [ ] NWS requests include User-Agent header
+- [ ] Deduplication prevents alert spam
+- [ ] Graceful degradation if weather API is down (log error, skip, retry next day)
+- [ ] No unbounded loops — limit to 1000 jobs per scan run
+
+### Steps
+
+- [ ] Edge Function: weather-schedule-scanner (CRON daily)
+- [ ] Open-Meteo integration: fetch 5-day forecast, parse response
+- [ ] NWS Weather API integration: fetch active alerts by point
+- [ ] Rule evaluation engine: match conditions against forecast data
+- [ ] Location batching: group nearby jobs to minimize API calls
+- [ ] Deduplication: check existing alerts before creating new ones
+- [ ] CRON job setup: daily at 6AM local (11AM UTC)
+- [ ] Graceful degradation: if API fails, log and continue
+- [ ] Verify: scanner creates correct alerts for test data (mock forecasts)
+- [ ] Commit: `[GC-WX2] Weather scanner engine — Open-Meteo + NWS integration + rule evaluation`
 
 ---
+
+### GC-WX3 — Weather UI + Reschedule Flow (~8h)
+
+**Goal:** Build the weather overlay on schedule views (calendar weather icons), alert management UI (acknowledge, proceed/reschedule/cancel), reschedule suggestion flow with clear-weather alternatives, customer notification on weather reschedule, and Flutter weather indicators.
+
+### Flutter Screen Specs
+
+**`lib/screens/schedule/weather_overlay_widget.dart`** — Calendar weather overlay
+- **What it displays:** Weather icons overlaid on schedule calendar dates. Sun (clear), partial cloud, rain, snow, thunderstorm, wind. Tooltip on tap: "Tuesday: 80% chance rain, winds 15 mph. 2 jobs at risk."
+- **Loading:** Subtle shimmer on date cells while forecast loads
+- **Error:** No overlay shown (silent fail — schedule works without weather)
+- **Empty:** No alerts — clean calendar
+- **Data:** Color-coded date cells: green (clear), yellow (warning-level alert), red (block-level alert). Badge count on dates with multiple alerts.
+
+**`lib/screens/schedule/weather_alerts_screen.dart`** — Alert management
+- **Loading:** Skeleton list
+- **Error:** ErrorState + retry
+- **Empty:** "No weather alerts for upcoming jobs. All clear!"
+- **Data:** Alert cards sorted by date, then severity (block first). Each card:
+  - Date, job name, customer name
+  - Weather details: temp high/low, precip %, wind mph, conditions
+  - Rule that triggered: "Rain forecast (80%) exceeds roofing threshold (40%)"
+  - Action buttons: [Proceed Anyway] [Reschedule] [Cancel]
+  - If acknowledged: shows who acknowledged and action taken
+
+**`lib/screens/schedule/reschedule_suggestion_screen.dart`** — Suggest alternative dates
+- **What it displays:** When user taps "Reschedule", show next 14 days with weather forecast. Highlight clear-weather days. Show customer availability if known.
+- **Data:** Calendar-like view with daily weather summary. Green days = all rules pass. Yellow = some warnings. Tap a day to select as new date. Confirmation dialog: "Reschedule [Job] from [Old Date] to [New Date]? [Notify Customer: Yes/No]"
+
+**`lib/screens/jobs/job_weather_indicator.dart`** — Weather badge on job detail
+- Small weather icon + text on job detail screen header. "Weather: Clear" (green), "Weather: Caution" (yellow), "Weather: At Risk" (red). Tap to see full weather detail for that job's scheduled date.
+
+### Web CRM Page Specs
+
+**`web-portal/src/app/schedule/weather/page.tsx`** — Weather dashboard (embedded in schedule view)
+- Weather icons on calendar (same pattern as Flutter)
+- Alert sidebar: list of unacknowledged alerts with quick actions
+- 5-day forecast summary for company's service area
+
+### Reschedule Flow
+
+1. User taps "Reschedule" on weather alert
+2. System shows next 14 days with weather forecasts
+3. User selects new date
+4. System checks: tech availability on new date, customer availability (if tracked), other schedule conflicts
+5. If conflicts: show warning with options
+6. User confirms
+7. System: updates schedule_event date, updates weather_alert (action_taken = 'reschedule', rescheduled_to = new_date), optionally sends customer notification
+
+### Customer Notification on Weather Reschedule
+
+Template:
+```
+Subject: Schedule Update - Weather Delay for [Job Title]
+
+Hi [Customer First Name],
+
+Due to forecasted weather conditions ([conditions detail]), we need to reschedule your [job type] appointment.
+
+Original date: [old date]
+New date: [new date]
+
+We apologize for the inconvenience. This reschedule is to ensure the quality and safety of the work.
+
+Please reply if the new date doesn't work for you and we'll find an alternative.
+
+Thank you,
+[Company Name]
+[Company Phone]
+```
+
+Sent via: SMS (preferred, highest open rate) + email backup. Uses existing notification system (F1 SignalWire for SMS).
+
+### Web CRM Hooks
+
+**`web-portal/src/lib/hooks/use-weather-alerts.ts`**
+```typescript
+Returns: {
+  alerts: WeatherAlert[],
+  unacknowledged: WeatherAlert[],
+  byDate: Map<string, WeatherAlert[]>,
+  forecastByDate: Map<string, DailyForecast>,
+  loading: boolean, error: Error | null,
+  // Mutations
+  acknowledgeAlert: (id, action) => Promise<void>,
+  rescheduleJob: (alertId, newDate, notifyCustomer) => Promise<void>,
+  refreshForecast: () => Promise<void>,
+}
+```
+
+### API Connections ($0/month)
+
+| API | Purpose | Cost |
+|-----|---------|------|
+| Open-Meteo | Forecast display on calendar | $0 |
+| NWS | Severe weather badges | $0 |
+| SignalWire (existing) | Customer SMS notification | Already provisioned |
+
+### Wiring to Existing Systems
+
+| System | Connection |
+|--------|-----------|
+| `schedule_events` (GC) | Reschedule updates event date |
+| `jobs` | Weather indicator on job detail |
+| `notifications` | Alert delivery via existing system |
+| Phone/SMS (F1) | Customer notification via SignalWire |
+| Client Portal | Customer sees reschedule notice |
+
+### Security Verification Checklist
+
+- [ ] All weather alert actions verify company_id ownership
+- [ ] Customer notifications use existing auth'd SMS system
+- [ ] Reschedule respects optimistic locking on schedule_events (check updated_at)
+- [ ] Weather data cached per location per day (no redundant API calls)
+- [ ] `npm run build` passes on web-portal
+- [ ] `dart analyze` passes
+
+### Steps
+
+- [ ] Flutter: weather_overlay_widget.dart — calendar date cell overlay with weather icons
+- [ ] Flutter: weather_alerts_screen.dart — alert management with proceed/reschedule/cancel
+- [ ] Flutter: reschedule_suggestion_screen.dart — 14-day forecast, clear-day suggestions
+- [ ] Flutter: job_weather_indicator.dart — weather badge on job detail
+- [ ] Web CRM: schedule weather overlay + alert sidebar
+- [ ] Hook: use-weather-alerts.ts
+- [ ] Reschedule flow: update schedule_event + weather_alert + notify customer
+- [ ] Customer notification template (SMS + email)
+- [ ] Weather forecast caching (per location per day, 6-hour TTL)
+- [ ] Verify: weather overlay renders on calendar
+- [ ] Verify: reschedule flow updates all related records
+- [ ] Verify: customer notification sends correctly
+- [ ] Verify: `npm run build` 0 errors, `dart analyze` clean
+- [ ] Commit: `[GC-WX3] Weather UI overlay + alert management + reschedule flow + customer notifications`
+
+---
+
+---
+
 
 ## ══════════════════════════════════════════════════════════
 ## PHASE U-TT — TRADE-SPECIFIC TOOLS (during Phase U)
@@ -11717,83 +16940,1342 @@ Equipment lifecycle data + prediction engine tables.
 
 ### U-TT1 — Trade Tools Infrastructure (~12h)
 
-#### Steps
-- [ ] Migration: CREATE trade_tool_records — id, company_id, job_id, property_id, customer_id, tool_type (discriminator), trade_type, record_data (JSONB), document_path, status, signed_by, signature_path, submitted_to + RLS
-- [ ] PDF generation engine: pdf-lib based, company branding, auto-fill from record_data, digital signature field
-- [ ] Flutter base screen: TradeToolFormScreen — dynamic form renderer based on tool_type schema
-- [ ] Web base component: TradeToolForm — same dynamic form for CRM
-- [ ] Dart model: trade_tool_record.dart (with typed accessors per tool_type)
-- [ ] Repository: trade_tool_repository.dart
-- [ ] Hook: use-trade-tools.ts
+**Goal:** Shared foundation for all 19 trade-specific tools. Single `trade_tool_records` table with JSONB discrimination per tool_type. PDF generation engine. Base form renderer for Flutter + Web.
+
+### Database
+
+```sql
+-- ============================================================
+-- TRADE TOOL RECORDS — shared table for all 19 trade tools
+-- ============================================================
+CREATE TABLE trade_tool_records (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  job_id UUID REFERENCES jobs(id),
+  property_id UUID REFERENCES properties(id),
+  customer_id UUID REFERENCES customers(id),
+  tool_type TEXT NOT NULL CHECK (tool_type IN (
+    'refrigerant_log', 'equipment_match', 'manual_j_worksheet',
+    'backflow_test', 'gas_pressure_test', 'water_heater_sizing',
+    'panel_schedule', 'service_upgrade_worksheet',
+    'ventilation_calc', 'waste_factor_calc',
+    'aia_billing', 'punch_list', 'rfi_log', 'bid_leveling',
+    'air_mover_placement', 'category_class_doc',
+    'surface_area_calc', 'voc_compliance',
+    'irrigation_zone_design'
+  )),
+  trade_type TEXT NOT NULL CHECK (trade_type IN (
+    'hvac', 'plumbing', 'electrical', 'roofing', 'general_contractor',
+    'restoration', 'painting', 'landscaping'
+  )),
+  record_data JSONB NOT NULL DEFAULT '{}',
+  document_path TEXT,
+  status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'completed', 'signed', 'submitted')),
+  signed_by UUID REFERENCES users(id),
+  signature_path TEXT,
+  signed_at TIMESTAMPTZ,
+  submitted_to TEXT CHECK (submitted_to IN ('inspector', 'customer', 'insurance', 'utility', 'water_authority', 'architect', 'owner', 'lender')),
+  notes TEXT,
+  created_by UUID NOT NULL REFERENCES users(id),
+  deleted_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- Indexes
+CREATE INDEX idx_trade_tool_records_company ON trade_tool_records(company_id);
+CREATE INDEX idx_trade_tool_records_job ON trade_tool_records(job_id) WHERE job_id IS NOT NULL;
+CREATE INDEX idx_trade_tool_records_tool_type ON trade_tool_records(company_id, tool_type);
+CREATE INDEX idx_trade_tool_records_trade_type ON trade_tool_records(company_id, trade_type);
+CREATE INDEX idx_trade_tool_records_created ON trade_tool_records(company_id, created_at DESC);
+CREATE INDEX idx_trade_tool_records_status ON trade_tool_records(company_id, status);
+CREATE INDEX idx_trade_tool_records_customer ON trade_tool_records(customer_id) WHERE customer_id IS NOT NULL;
+CREATE INDEX idx_trade_tool_records_property ON trade_tool_records(property_id) WHERE property_id IS NOT NULL;
+CREATE INDEX idx_trade_tool_records_data ON trade_tool_records USING GIN (record_data);
+
+-- Triggers
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON trade_tool_records
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER audit_trade_tool_records AFTER INSERT OR UPDATE OR DELETE ON trade_tool_records
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+```
+
+### RLS Policies
+
+```sql
+ALTER TABLE trade_tool_records ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "trade_tool_records_select" ON trade_tool_records
+  FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
+
+CREATE POLICY "trade_tool_records_insert" ON trade_tool_records
+  FOR INSERT WITH CHECK (company_id = auth.company_id());
+
+CREATE POLICY "trade_tool_records_update" ON trade_tool_records
+  FOR UPDATE USING (company_id = auth.company_id() AND deleted_at IS NULL)
+  WITH CHECK (company_id = auth.company_id());
+
+CREATE POLICY "trade_tool_records_delete" ON trade_tool_records
+  FOR DELETE USING (company_id = auth.company_id() AND auth.user_role() IN ('owner', 'admin'));
+```
+
+### Edge Functions
+
+**`trade-tool-generate-pdf`** — POST
+- **Request:** `{ record_id: uuid }`
+- **Auth:** Bearer JWT, company_id from token
+- **Process:** Load trade_tool_records row, load company branding (logo, name, address, phone), render PDF using pdf-lib based on tool_type template, upload to `documents` bucket at `{company_id}/trade-tools/{tool_type}/{record_id}.pdf`, update document_path on record
+- **Response:** `{ pdf_url: string, document_path: string }`
+- **Errors:** 401 unauthorized, 404 record not found, 422 record_data incomplete for PDF generation, 500 pdf-lib render failure
+
+**`trade-tool-submit`** — POST
+- **Request:** `{ record_id: uuid, submit_to: string, signature_data?: base64 }`
+- **Auth:** Bearer JWT
+- **Process:** Validate record exists and belongs to company, if signature_data provided upload to `signatures` bucket and set signature_path + signed_by + signed_at, generate PDF if not already generated, update status to 'submitted' and submitted_to field
+- **Response:** `{ success: true, pdf_url: string }`
+- **Errors:** 401, 404, 422 missing required fields for submission
+
+### Flutter Screens
+
+**`lib/screens/trade_tools/trade_tool_hub_screen.dart`** — Hub listing all available tools filtered by company trade type. Grid of tool cards with icon, name, description. Tap opens tool-specific form. 4 states: loading (shimmer grid), error (retry button), empty (no tools for this trade — should not happen with proper filtering), data (tool grid).
+
+**`lib/screens/trade_tools/trade_tool_form_screen.dart`** — Dynamic form renderer. Receives tool_type parameter. Renders form fields based on JSONB schema definition per tool_type. Sections: Job selector (optional FK), form fields (dynamic), notes field, signature capture, action buttons (Save Draft / Complete / Submit). 4 states: loading (fetching existing record if editing), error (save failed), empty (new blank form), data (form with data).
+
+**`lib/screens/trade_tools/trade_tool_list_screen.dart`** — List of all records for a specific tool_type. Filter by job, status, date range. Each row shows: date, job name, status badge, tap to view/edit. 4 states: loading, error, empty ("No records yet"), data (scrollable list).
+
+**`lib/screens/trade_tools/trade_tool_pdf_preview_screen.dart`** — PDF preview after generation. Shows PDF inline. Actions: Download, Share, Submit, Print.
+
+### Web CRM Pages
+
+**`/dashboard/trade-tools`** — Hub page. Cards per tool_type available to company. Each card shows: tool name, description, record count, last used date. Click opens list view.
+
+**`/dashboard/trade-tools/[tool_type]`** — List + create page. Table of records with columns: Date, Job, Status, Actions. "New Record" button. Filter by status, job, date range. Hook: `use-trade-tools.ts`.
+
+**`/dashboard/trade-tools/[tool_type]/[id]`** — Detail/edit page. Dynamic form matching Flutter. PDF preview panel. Hook: `use-trade-tool-detail.ts`.
+
+### Hooks
+
+**`web-portal/src/lib/hooks/use-trade-tools.ts`** — CRUD for trade_tool_records filtered by tool_type. Real-time subscription on `postgres_changes`. Returns `{ records, loading, error, createRecord, updateRecord, deleteRecord, generatePdf }`. Filters: `deleted_at IS NULL`.
+
+**`team-portal/src/lib/hooks/use-trade-tools.ts`** — Same hook, read + create only (techs create records in field).
+
+### Dart Models
+
+**`lib/models/trade_tool_record.dart`** — Immutable model with typed accessors. Fields match DB columns. `fromJson()` / `toJson()`. Computed getters: `isComplete`, `isSigned`, `isSubmitted`, `toolTypeLabel`, `tradeTypeLabel`. Generic `recordData` as `Map<String, dynamic>` with typed helper methods per tool_type (e.g., `RefrigerantLogData get refrigerantLog` that parses record_data).
+
+### Repository
+
+**`lib/repositories/trade_tool_repository.dart`** — Abstract + concrete. Methods: `getByCompany(toolType?)`, `getByJob(jobId, toolType?)`, `getById(id)`, `create(record)`, `update(id, data, updatedAt)`, `softDelete(id)`. All queries filter `deleted_at IS NULL`. Optimistic locking on update via `updated_at` WHERE clause.
+
+### PDF Templates
+
+Base layout structure (all tool PDFs share this):
+- **Header:** Company logo (left), company name + address + phone (right), tool title centered
+- **Job info bar:** Job name, address, customer name, date
+- **Content area:** Tool-specific (defined per tool in subsequent sprints)
+- **Signature footer:** Technician name, signature image, date signed
+- **Footer:** "Generated by Zafto" + page number + disclaimer text
+
+### Security Verification Checklist
+- [ ] RLS enabled on trade_tool_records with SELECT/INSERT/UPDATE/DELETE policies
+- [ ] company_id + index + audit trigger + deleted_at on trade_tool_records
+- [ ] Auth + CORS + input validation + rate limiting on trade-tool-generate-pdf EF
+- [ ] Auth + CORS + input validation + rate limiting on trade-tool-submit EF
+- [ ] Soft delete + error state + deleted_at filter on use-trade-tools hook
+- [ ] 4-state screens in Flutter (loading/error/empty/data)
+- [ ] Optimistic locking on UPDATE (updated_at in WHERE)
+- [ ] Signature data stored in signatures bucket (private), not public
+- [ ] PDF stored in documents bucket (private), accessed via signed URL
+
+### Wiring to Existing Systems
+- Jobs: `job_id` FK links records to jobs. Job detail screen shows "Trade Tools" tab with records for that job
+- Customers: `customer_id` FK. Customer detail shows trade tool history
+- Properties: `property_id` FK. Property detail shows tool records for that address
+- Documents: PDFs stored in existing `documents` storage bucket
+- Signatures: Reuse existing signature capture widget from estimates
+- Field Tools Hub: Add trade tools as new category in FieldToolsHubScreen
+
+### Steps
+- [ ] Migration: CREATE trade_tool_records with all columns, constraints, indexes, RLS, triggers
+- [ ] PDF generation engine: pdf-lib based Edge Function with company branding, auto-fill from record_data, digital signature field
+- [ ] Flutter: TradeToolHubScreen — grid of available tools filtered by company trade
+- [ ] Flutter: TradeToolFormScreen — dynamic form renderer based on tool_type schema
+- [ ] Flutter: TradeToolListScreen — list of records per tool_type
+- [ ] Flutter: TradeToolPdfPreviewScreen — inline PDF preview with share/submit actions
+- [ ] Web CRM: /dashboard/trade-tools hub page with tool cards
+- [ ] Web CRM: /dashboard/trade-tools/[tool_type] list + create page
+- [ ] Web CRM: /dashboard/trade-tools/[tool_type]/[id] detail/edit page
+- [ ] Dart model: trade_tool_record.dart with typed accessors per tool_type
+- [ ] Repository: trade_tool_repository.dart (abstract + concrete)
+- [ ] Hook: use-trade-tools.ts (web-portal + team-portal)
+- [ ] Hook: use-trade-tool-detail.ts (web-portal)
 - [ ] PDF templates: base layout with company header, job info, content area, signature footer
-- [ ] Verify: base form renders, PDF generates from test data
-- [ ] Commit: `[U-TT1] Trade Tools infrastructure — shared table, PDF engine, base form`
+- [ ] Edge Function: trade-tool-generate-pdf
+- [ ] Edge Function: trade-tool-submit
+- [ ] Wire into job detail screen: "Trade Tools" tab showing records for that job
+- [ ] Wire into Field Tools Hub: new "Trade-Specific Tools" category
+- [ ] Verify: base form renders for each tool_type, PDF generates from test data
+- [ ] All builds pass: `dart analyze`, `npm run build` x 4
+- [ ] Commit: `[U-TT1] Trade Tools infrastructure — shared table, PDF engine, base forms, hub screens`
 
-### U-TT2 — HVAC Tools (~22h)
+---
 
-#### Steps
-- [ ] Refrigerant Tracking Log form + PDF template (EPA-compliant format)
-- [ ] Auto-fill tech EPA 608 cert number from certifications table
-- [ ] Equipment Matching Tool form + AHRI directory link
-- [ ] Manual J Worksheet form (room-by-room heat gain/loss)
-- [ ] Manual J calculation engine (simplified residential ACCA method)
-- [ ] Manual J PDF output (inspector-expected format)
-- [ ] Disclaimer on Manual J: "For reference — verify with ACCA-approved software for complex designs"
+### U-TT2 — HVAC Trade Tools (~22h)
+
+**Goal:** 3 HVAC-specific tools: Refrigerant Tracking Log (EPA 608 compliance), Equipment Matching Tool (AHRI validation), Manual J Worksheet (load calculation). All use trade_tool_records with JSONB discrimination.
+
+### JSONB Schemas (stored in record_data)
+
+**refrigerant_log:**
+```json
+{
+  "equipment_id": "uuid|null",
+  "equipment_type": "split_system|package_unit|mini_split|chiller|ptac|rtu",
+  "equipment_make": "string",
+  "equipment_model": "string",
+  "equipment_serial": "string",
+  "refrigerant_type": "R-22|R-410A|R-32|R-454B|R-407C|R-134a|R-404A|R-507A",
+  "action": "charge|recover|leak_check|reclaim|evacuate",
+  "amount_lbs": "number",
+  "amount_oz": "number",
+  "reason": "low_charge|new_install|repair|annual_service|leak_repair|decommission",
+  "leak_detected": "boolean",
+  "leak_location": "string|null",
+  "leak_rate_lbs_per_year": "number|null",
+  "cylinder_serial": "string|null",
+  "recovery_cylinder_tare_lbs": "number|null",
+  "recovery_cylinder_gross_lbs": "number|null",
+  "epa_608_cert_number": "string",
+  "epa_608_cert_type": "Type_I|Type_II|Type_III|Universal",
+  "tech_name": "string",
+  "service_date": "date",
+  "ambient_temp_f": "number|null",
+  "superheat_f": "number|null",
+  "subcooling_f": "number|null",
+  "suction_pressure_psig": "number|null",
+  "discharge_pressure_psig": "number|null",
+  "notes": "string"
+}
+```
+
+**equipment_match:**
+```json
+{
+  "condenser_make": "string",
+  "condenser_model": "string",
+  "condenser_serial": "string|null",
+  "condenser_tonnage": "number",
+  "condenser_seer": "number",
+  "condenser_seer2": "number|null",
+  "air_handler_make": "string",
+  "air_handler_model": "string",
+  "air_handler_serial": "string|null",
+  "air_handler_cfm": "number",
+  "coil_make": "string|null",
+  "coil_model": "string|null",
+  "thermostat_make": "string|null",
+  "thermostat_model": "string|null",
+  "thermostat_compatible": "boolean",
+  "lineset_size_liquid": "string|null",
+  "lineset_size_suction": "string|null",
+  "matched": "boolean",
+  "ahri_reference_number": "string|null",
+  "efficiency_rating": {
+    "seer2": "number|null",
+    "eer2": "number|null",
+    "hspf2": "number|null"
+  },
+  "warranty_valid": "boolean|null",
+  "mismatch_warnings": ["string"],
+  "notes": "string"
+}
+```
+
+**manual_j_worksheet:**
+```json
+{
+  "project_type": "new_construction|replacement|addition",
+  "design_conditions": {
+    "outdoor_summer_db": "number",
+    "outdoor_summer_wb": "number|null",
+    "outdoor_winter_db": "number",
+    "indoor_summer": "number",
+    "indoor_winter": "number",
+    "latitude": "number",
+    "altitude_ft": "number|null",
+    "climate_zone": "string|null",
+    "daily_range": "low|medium|high"
+  },
+  "building_envelope": {
+    "wall_insulation": "string",
+    "ceiling_insulation": "string",
+    "floor_insulation": "string|null",
+    "window_type": "string",
+    "infiltration_rate": "tight|average|loose"
+  },
+  "rooms": [
+    {
+      "name": "string",
+      "floor_area_sqft": "number",
+      "ceiling_height_ft": "number",
+      "windows": [
+        {
+          "orientation": "N|NE|E|SE|S|SW|W|NW",
+          "sqft": "number",
+          "type": "single_clear|double_clear|double_low_e|triple_low_e",
+          "shading": "none|interior_blinds|exterior_awning|overhang"
+        }
+      ],
+      "exterior_walls": [
+        {
+          "orientation": "N|NE|E|SE|S|SW|W|NW",
+          "sqft": "number",
+          "insulation": "none|R-11|R-13|R-15|R-19|R-21"
+        }
+      ],
+      "above_unconditioned": "boolean",
+      "below_unconditioned": "boolean",
+      "cooling_btuh": "number",
+      "heating_btuh": "number",
+      "cfm_required": "number|null"
+    }
+  ],
+  "total_cooling_btuh": "number",
+  "total_heating_btuh": "number",
+  "duct_loss_factor": "number",
+  "adjusted_cooling_btuh": "number",
+  "adjusted_heating_btuh": "number",
+  "recommended_tonnage": "number",
+  "recommended_btu_heating": "number",
+  "equipment_recommendations": "string|null"
+}
+```
+
+### Seed Data
+
+**Refrigerant reference data** (seeded into a JSONB config or separate reference):
+- R-22: ODP 0.055, GWP 1810, phaseout (no new production since 2020), replacement R-410A/R-407C
+- R-410A: ODP 0, GWP 2088, current standard residential, replacement R-32/R-454B
+- R-32: ODP 0, GWP 675, A2L flammability, new standard in mini-splits
+- R-454B: ODP 0, GWP 466, A2L flammability, Carrier/Trane next-gen
+- R-407C: ODP 0, GWP 1774, R-22 retrofit replacement
+- R-134a: ODP 0, GWP 1430, automotive/commercial
+- R-404A: ODP 0, GWP 3922, commercial refrigeration (being phased down)
+- R-507A: ODP 0, GWP 3985, commercial refrigeration
+
+**EPA 608 violation fines:** Up to $44,539 per violation per day (2024 adjusted). Seed as reference text displayed on refrigerant log form.
+
+**Manual J design temperature lookup:** Seed from NOAA Climate Normals — 99% winter design temp and 1% summer design temp for top 500 US cities. Stored as JSONB reference table. Auto-populate when contractor enters property zip code.
+
+**Equipment manufacturer list:** Carrier, Lennox, Trane, Goodman/Daikin, Rheem/Ruud, York/JCI, Bryant, Amana, Heil, Payne, Coleman, American Standard, Mitsubishi, Fujitsu, LG, Samsung, Bosch, Napoleon, Navien. Pre-populate make dropdowns.
+
+### Edge Functions
+
+Reuses `trade-tool-generate-pdf` from U-TT1 with tool_type-specific PDF templates.
+
+**`manual-j-calculate`** — POST
+- **Request:** `{ record_id: uuid }` or inline `{ design_conditions, building_envelope, rooms }`
+- **Auth:** Bearer JWT
+- **Process:** Run simplified ACCA Manual J calculations: per-room cooling/heating loads based on wall area x U-value x delta-T, window solar heat gain, infiltration, duct losses. Sum room loads. Apply duct loss factor (10-25%). Recommend tonnage (total cooling / 12,000).
+- **Response:** `{ total_cooling_btuh, total_heating_btuh, adjusted_cooling_btuh, adjusted_heating_btuh, recommended_tonnage, rooms: [...with calculated loads] }`
+- **Errors:** 401, 422 missing required design conditions or rooms
+
+### Flutter Screens
+
+**`lib/screens/trade_tools/hvac/refrigerant_log_screen.dart`** — Form: equipment selector (from home_equipment if property linked, or manual entry), refrigerant type dropdown, action type, amounts (lbs + oz), leak detection toggle with conditional fields, tech EPA cert auto-filled from certifications table, service readings (superheat/subcooling/pressures). 4 states.
+
+**`lib/screens/trade_tools/hvac/equipment_match_screen.dart`** — Form: condenser section (make/model/tonnage/SEER), air handler section (make/model/CFM), optional coil and thermostat. "Check AHRI" button deep-links to ahridirectory.org with pre-filled search. Mismatch warning display. 4 states.
+
+**`lib/screens/trade_tools/hvac/manual_j_screen.dart`** — Multi-step form: Step 1 (design conditions — auto-fill from zip code), Step 2 (building envelope), Step 3 (room-by-room entry with add/remove rooms), Step 4 (results summary + equipment recommendation). "Calculate" button calls manual-j-calculate EF. Disclaimer: "For reference — verify with ACCA-approved software for complex designs." 4 states.
+
+### Web CRM Pages
+
+**`/dashboard/trade-tools/refrigerant-log`** — List + create. Columns: Date, Equipment, Refrigerant, Action, Amount, Tech. Filter by equipment, refrigerant type.
+
+**`/dashboard/trade-tools/equipment-match`** — List + create. Columns: Date, Condenser, Air Handler, Matched (Y/N), AHRI Ref.
+
+**`/dashboard/trade-tools/manual-j`** — List + create. Columns: Date, Project, Cooling BTUH, Heating BTUH, Tonnage. Detail page shows room-by-room breakdown.
+
+### API Connections ($0/month)
+
+- **PsychroLib** (MIT, local library): Psychrometric calculations for HVAC — humidity ratio, dew point, wet bulb, enthalpy. Used in Manual J moisture load calculations. No API calls — embedded calculation library.
+- **CoolProp** (MIT, local library): Refrigerant thermodynamic properties — saturation pressure/temp, enthalpy, entropy. Used to validate superheat/subcooling readings. No API calls.
+- **AHRI Directory** (free web): Link to ahridirectory.org for equipment matching verification. No API — deep link with query parameters.
+- **NOAA Climate Normals** (free, seeded): Design temperatures for Manual J. Seeded from bulk download.
+- **Open-Meteo** (free, 10K/day): Real-time weather for service date ambient conditions on refrigerant log.
+
+### Security Verification Checklist
+- [ ] All records scoped to company_id via RLS
+- [ ] EPA cert number validated (non-empty for refrigerant log)
+- [ ] manual-j-calculate EF: auth + CORS + input validation + rate limiting
+- [ ] No sensitive data exposed in PDF (company_id, user_id hidden)
+- [ ] Soft delete on all operations
+- [ ] 4-state screens on all Flutter screens
+
+### Wiring to Existing Systems
+- home_equipment table: equipment_id FK on refrigerant_log links to existing equipment records
+- certifications table: auto-fill EPA 608 cert from technician's certification record
+- calculators framework: Manual J accessible from calculator hub as "HVAC Load Calculation"
+- Job detail: HVAC tools tab when job trade_type = 'hvac'
+
+### Steps
+- [ ] Refrigerant Tracking Log form (Flutter + Web) with all JSONB fields
+- [ ] Refrigerant Log PDF template: EPA-compliant format with equipment info, refrigerant details, tech cert, signature
+- [ ] Auto-fill tech EPA 608 cert number from technician_certifications table
+- [ ] Seed refrigerant reference data (8 types with ODP, GWP, status, replacements)
+- [ ] Equipment Matching Tool form (Flutter + Web) with condenser/air handler/thermostat sections
+- [ ] Equipment Match: AHRI directory deep-link button
+- [ ] Equipment Match PDF template with match status, efficiency ratings, warranty notes
+- [ ] Manual J Worksheet form: multi-step (design conditions, envelope, rooms, results)
+- [ ] Manual J: design temperature auto-fill from zip code (NOAA Climate Normals seed data)
+- [ ] Seed: top 500 US cities design temperatures from NOAA Climate Normals
+- [ ] Seed: equipment manufacturer list (19+ manufacturers)
+- [ ] Edge Function: manual-j-calculate — simplified ACCA method
+- [ ] Manual J PDF output: room-by-room loads, totals, equipment recommendation, inspector-expected format
+- [ ] Manual J disclaimer on screen + PDF: "For reference — verify with ACCA-approved software for complex designs"
 - [ ] Verify: all 3 HVAC tools generate correct PDFs
-- [ ] Commit: `[U-TT2] HVAC Trade Tools — refrigerant log, equipment match, Manual J`
+- [ ] All builds pass: `dart analyze`, `npm run build` x 4
+- [ ] Commit: `[U-TT2] HVAC Trade Tools — refrigerant log (EPA 608), equipment match (AHRI), Manual J worksheet`
+
+---
 
 ### U-TT3 — Plumbing + Electrical Tools (~28h)
 
-#### Steps
-- [ ] Backflow Prevention Test Tracker form + PDF (water authority format)
-- [ ] Auto-schedule: backflow creates annual recurring reminder per device per property
-- [ ] Gas Pressure Test Log form + PDF (inspector format)
-- [ ] Water Heater Sizing Worksheet form + calculation + PDF
-- [ ] Panel Schedule Generator form (circuit entry UI) + PDF (two-column panel layout)
-- [ ] Panel Schedule PDF: match physical panel layout (odd left, even right)
-- [ ] Service Upgrade Worksheet form + load calculation + utility checklist + PDF
+**Goal:** 5 tools across 2 trades. Plumbing: Backflow Prevention Test Tracker, Gas Pressure Test Log, Water Heater Sizing Worksheet. Electrical: Panel Schedule Generator, Service Upgrade Worksheet. All use trade_tool_records shared table.
+
+### JSONB Schemas
+
+**backflow_test:**
+```json
+{
+  "device_location": "string",
+  "device_type": "RPZ|DCVA|PVB|RPDA|DCDA|SPVB",
+  "device_make": "string",
+  "device_model": "string",
+  "device_serial": "string",
+  "device_size_inches": "number",
+  "installation_date": "date|null",
+  "test_date": "date",
+  "next_test_due": "date",
+  "tester_name": "string",
+  "tester_cert_number": "string",
+  "tester_cert_expiry": "date",
+  "water_authority_name": "string",
+  "test_results": {
+    "check_valve_1": { "closed_tight": "boolean", "psi_reading": "number" },
+    "check_valve_2": { "closed_tight": "boolean", "psi_reading": "number" },
+    "relief_valve": { "opened_at_psi": "number", "did_not_open": "boolean" },
+    "differential_pressure": "number"
+  },
+  "overall_result": "pass|fail|repair_and_retest",
+  "repair_notes": "string|null",
+  "submitted_to_water_authority": "boolean",
+  "submission_date": "date|null",
+  "notes": "string"
+}
+```
+
+**gas_pressure_test:**
+```json
+{
+  "test_type": "new_install|repair|remodel|annual",
+  "pipe_material": "black_iron|csst|copper|pe_plastic",
+  "pipe_size_inches": "number|null",
+  "test_medium": "air|nitrogen|gas_final",
+  "test_pressure_psi": "number",
+  "initial_reading_psi": "number",
+  "final_reading_psi": "number",
+  "test_duration_minutes": "number",
+  "pressure_drop_psi": "number",
+  "result": "pass|fail",
+  "failure_notes": "string|null",
+  "failure_location": "string|null",
+  "gauge_make": "string|null",
+  "gauge_calibration_date": "date|null",
+  "ambient_temp_f": "number|null",
+  "barometric_pressure_inhg": "number|null",
+  "regulator_locked_out": "boolean",
+  "appliances_isolated": "boolean",
+  "notes": "string"
+}
+```
+
+**water_heater_sizing:**
+```json
+{
+  "household_size": "number",
+  "bathrooms": "number",
+  "fixtures": {
+    "shower_heads": "number",
+    "bathtubs": "number",
+    "dishwashers": "number",
+    "clothes_washers": "number",
+    "kitchen_sinks": "number",
+    "bathroom_sinks": "number",
+    "utility_sinks": "number"
+  },
+  "peak_demand_gallons": "number",
+  "first_hour_rating_needed": "number",
+  "fuel_type": "gas|electric|heat_pump|tankless_gas|tankless_electric|solar|propane",
+  "incoming_water_temp_f": "number",
+  "desired_temp_f": "number",
+  "temperature_rise_f": "number",
+  "groundwater_temp_source": "manual|noaa_estimate",
+  "recommended_type": "tank|tankless|heat_pump|hybrid",
+  "recommended_capacity_gallons": "number|null",
+  "recommended_gpm": "number|null",
+  "recommended_btu": "number|null",
+  "recommended_kw": "number|null",
+  "energy_factor": "number|null",
+  "estimated_annual_cost": "number|null",
+  "recommendation_text": "string"
+}
+```
+
+**panel_schedule:**
+```json
+{
+  "panel_location": "string",
+  "panel_make": "string",
+  "panel_model": "string",
+  "main_breaker_amps": "number",
+  "bus_rating_amps": "number",
+  "voltage": "120/240V|120/208V|277/480V",
+  "phase": "1-phase|3-phase",
+  "total_spaces": "number",
+  "fed_from": "string|null",
+  "grounding_electrode": "string|null",
+  "circuits": [
+    {
+      "position": "number",
+      "breaker_amps": "number",
+      "poles": "1|2|3",
+      "description": "string",
+      "wire_size": "string",
+      "wire_type": "NM-B|THWN|THHN|UF-B|MC|AC|SE",
+      "afci_required": "boolean",
+      "gfci_required": "boolean",
+      "load_va": "number|null"
+    }
+  ],
+  "total_load_va": "number",
+  "total_load_amps": "number",
+  "load_percentage": "number",
+  "spare_spaces": "number",
+  "tandem_spaces_available": "number|null",
+  "notes": "string"
+}
+```
+
+**service_upgrade_worksheet:**
+```json
+{
+  "existing_service": {
+    "amps": "number",
+    "phase": "1-phase|3-phase",
+    "voltage": "120/240V|120/208V",
+    "panel_make": "string|null",
+    "panel_age_years": "number|null",
+    "fed_underground_or_overhead": "underground|overhead"
+  },
+  "proposed_service": {
+    "amps": "number",
+    "phase": "1-phase|3-phase",
+    "voltage": "120/240V|120/208V"
+  },
+  "reason": "string",
+  "load_calculation": {
+    "general_lighting_va": "number",
+    "small_appliance_va": "number",
+    "laundry_va": "number",
+    "fixed_appliances": [
+      { "name": "string", "va": "number", "nameplate_amps": "number|null" }
+    ],
+    "demand_factor_applied": "boolean",
+    "total_computed_load_va": "number",
+    "total_amps_at_240v": "number",
+    "service_size_adequate": "boolean"
+  },
+  "utility_requirements": {
+    "utility_name": "string",
+    "utility_contacted": "boolean",
+    "utility_reference": "string|null",
+    "meter_upgrade_needed": "boolean",
+    "transformer_adequate": "boolean|null",
+    "utility_timeline_days": "number|null",
+    "utility_contact_phone": "string|null"
+  },
+  "permit_checklist": {
+    "electrical_permit_filed": "boolean",
+    "permit_number": "string|null",
+    "inspection_scheduled": "boolean",
+    "inspection_date": "date|null"
+  },
+  "materials_needed": ["string"],
+  "estimated_cost_range": { "low": "number|null", "high": "number|null" }
+}
+```
+
+### Seed Data
+
+**Backflow device types reference:**
+- RPZ (Reduced Pressure Zone): Highest protection, required for commercial/irrigation, testable
+- DCVA (Double Check Valve Assembly): Standard commercial, testable
+- PVB (Pressure Vacuum Breaker): Irrigation standard, must be 12" above highest outlet
+- RPDA (Reduced Pressure Detector Assembly): Fire protection systems
+- DCDA (Double Check Detector Assembly): Fire protection, lower hazard
+
+**Water heater sizing reference:**
+- Fixture flow rates: Shower 2.0 GPM, Bath faucet 1.0 GPM, Kitchen faucet 1.5 GPM, Dishwasher 1.0 GPM, Clothes washer 2.0 GPM
+- First hour rating by household: 1-2 people 30-40 gal, 2-3 people 40-50 gal, 3-4 people 50-60 gal, 5+ people 60-80 gal
+- Groundwater temperatures by region (seeded from NOAA data): Northeast 47-52F, Southeast 62-72F, Midwest 45-55F, Southwest 58-68F, Northwest 42-52F
+
+**NEC reference tables (embedded as seed data):**
+- Ampacity Table 310.16: Wire gauge to ampacity mapping (14AWG=15A, 12AWG=20A, 10AWG=30A, 8AWG=40A, 6AWG=55A, 4AWG=70A, 3AWG=85A, 2AWG=95A, 1AWG=110A, 1/0=125A, 2/0=145A, 3/0=165A, 4/0=195A)
+- Standard residential circuits: Kitchen countertop 20A GFCI, Bathroom 20A GFCI, Laundry 20A, Range 40A/50A 2-pole, Dryer 30A 2-pole, HVAC 20A-60A 2-pole, Water heater 30A 2-pole, EV charger 40A-60A 2-pole, General lighting 15A, Bedroom 15A/20A AFCI
+- Service entrance conductor sizing: 100A=#4Cu/2Al, 150A=#1Cu/1/0Al, 200A=#2/0Cu/4/0Al, 400A=2x#2/0Cu
+
+### Flutter Screens
+
+**`lib/screens/trade_tools/plumbing/backflow_test_screen.dart`** — Form with device info, test results per valve, pass/fail determination. Auto-calculates next_test_due (+12 months). Button: "Create Annual Reminder" (creates recurring schedule). 4 states.
+
+**`lib/screens/trade_tools/plumbing/gas_pressure_test_screen.dart`** — Form with built-in timer (start/stop, countdown from test_duration_minutes). Records initial/final PSI. Auto-calculates pressure_drop. Pass/fail auto-determined (>0.5 PSI drop in 15 min = fail for residential). 4 states.
+
+**`lib/screens/trade_tools/plumbing/water_heater_sizing_screen.dart`** — Form with fixture count inputs. Auto-calculates peak demand, FHR needed, recommended capacity. Fuel type comparison showing tank vs tankless vs heat pump with estimated annual operating cost. 4 states.
+
+**`lib/screens/trade_tools/electrical/panel_schedule_screen.dart`** — Two-column panel layout matching physical panel (odd left, even right). Add circuit button. Each circuit: position, amps, poles, description, wire size. Auto-calculates total load amps and load percentage. Color coding: >80% = yellow warning, >100% = red. 4 states.
+
+**`lib/screens/trade_tools/electrical/service_upgrade_screen.dart`** — Multi-step form: Step 1 (existing service), Step 2 (proposed service + reason), Step 3 (load calculation with appliance list), Step 4 (utility requirements), Step 5 (permit checklist + materials list). 4 states.
+
+### Web CRM Pages
+
+**`/dashboard/trade-tools/backflow-test`** — List with columns: Date, Device Location, Type, Result, Next Due. Red badge for overdue tests.
+
+**`/dashboard/trade-tools/gas-pressure-test`** — List with columns: Date, Job, Material, Pressure, Duration, Result.
+
+**`/dashboard/trade-tools/water-heater-sizing`** — List with columns: Date, Customer, Household Size, Recommended, Fuel Type.
+
+**`/dashboard/trade-tools/panel-schedule`** — List with columns: Date, Job, Panel Location, Main Amps, Load %. Detail shows full two-column panel layout.
+
+**`/dashboard/trade-tools/service-upgrade`** — List with columns: Date, Job, Existing Amps, Proposed Amps, Utility Status.
+
+### API Connections ($0/month)
+
+- **NOAA Climate Normals** (free, seeded): Groundwater temperatures by region for water heater sizing
+- **EIA Open Data** (free): Energy prices by fuel type for annual cost estimation on water heater sizing
+- **NFPA Free Access** (reference link): NEC code sections for panel schedule and service upgrade reference
+
+### Security Verification Checklist
+- [ ] All 5 tools scoped to company_id via shared RLS on trade_tool_records
+- [ ] Backflow cert numbers validated as non-empty
+- [ ] Gas pressure test: timer data cannot be manually backdated (created_at audit)
+- [ ] Panel schedule: load calculation validated (total_load_amps <= bus_rating_amps * 1.25 generates warning)
+- [ ] Soft delete, 4-state screens, optimistic locking on all
+
+### Wiring to Existing Systems
+- Backflow: creates recurring reminder via existing `home_maintenance_schedules` table per device per property
+- Gas pressure test: links to jobs for inspection documentation
+- Water heater sizing: recommendation links to equipment catalog (DEPTH32 Material Finder when available)
+- Panel schedule: PDF format matches what inspectors expect — output to job documents
+- Service upgrade: utility_requirements links to property location for utility territory lookup (HIFLD data)
+
+### Steps
+- [ ] Backflow Prevention Test Tracker form (Flutter + Web) with all JSONB fields
+- [ ] Backflow PDF template: water authority format with device info, test readings, tester cert, pass/fail
+- [ ] Backflow: auto-schedule annual recurring reminder per device per property via home_maintenance_schedules
+- [ ] Backflow: seed device type reference data (RPZ, DCVA, PVB, RPDA, DCDA)
+- [ ] Gas Pressure Test Log form (Flutter + Web) with built-in timer
+- [ ] Gas Pressure Test: auto-calculate pressure drop and pass/fail determination
+- [ ] Gas Pressure Test PDF template: inspector format with readings, duration, result, tech signature
+- [ ] Water Heater Sizing Worksheet form (Flutter + Web) with fixture calculator
+- [ ] Water Heater Sizing: auto-calculate peak demand, FHR, recommended capacity
+- [ ] Water Heater Sizing: fuel type comparison with estimated annual operating cost (EIA data)
+- [ ] Water Heater Sizing PDF: recommendation summary with sizing justification
+- [ ] Seed: groundwater temperatures by region (NOAA), fixture flow rates, FHR lookup table
+- [ ] Panel Schedule Generator form (Flutter + Web) with two-column panel layout
+- [ ] Panel Schedule: circuit entry UI with position, amps, poles, description, wire size
+- [ ] Panel Schedule: auto-calculate total load amps and load percentage with warnings
+- [ ] Panel Schedule PDF: standard two-column format matching physical panel (odd left, even right)
+- [ ] Seed: NEC ampacity table 310.16, standard residential circuit types, wire sizing reference
+- [ ] Service Upgrade Worksheet form (Flutter + Web) — multi-step
+- [ ] Service Upgrade: NEC Article 220 load calculation with demand factors
+- [ ] Service Upgrade: utility requirements section with contact tracking
+- [ ] Service Upgrade: permit checklist with inspection scheduling
+- [ ] Service Upgrade: materials list auto-generated from service size
+- [ ] Service Upgrade PDF: complete worksheet with load calc, utility info, permit status, materials
 - [ ] Verify: all 5 tools generate correct PDFs, backflow scheduling works
-- [ ] Commit: `[U-TT3] Plumbing + Electrical Trade Tools — backflow, gas test, water heater, panel schedule, service upgrade`
+- [ ] All builds pass: `dart analyze`, `npm run build` x 4
+- [ ] Commit: `[U-TT3] Plumbing + Electrical Trade Tools — backflow test, gas pressure test, water heater sizing, panel schedule, service upgrade`
+
+---
 
 ### U-TT4 — Roofing + GC Tools (~28h)
 
-#### Steps
-- [ ] Ventilation Calculator form + calculation + PDF
-- [ ] Waste Factor Calculator form + by-roof-type presets + PDF
-- [ ] AIA Billing (G702/G703) form + PDF (standard AIA format with schedule of values)
-- [ ] AIA: auto-calculate current payment due, retainage, balance to finish
-- [ ] Punch List Manager form (room-by-room, photo per item, assignee, status tracking)
-- [ ] Punch List: track completion percentage, generate summary report PDF
-- [ ] RFI Tracker form + log view + PDF
-- [ ] Bid Leveling Sheet form (add bidders, compare, scope-adjust) + PDF
+**Goal:** 6 tools. Roofing: Ventilation Calculator, Waste Factor Calculator. GC: AIA-equivalent Billing (G702/G703 Zafto-branded), Punch List Manager, RFI Tracker, Bid Leveling Sheet. AIA documents are copyrighted -- Zafto creates branded equivalents with same data fields.
+
+### JSONB Schemas
+
+**ventilation_calc:**
+```json
+{
+  "attic_sqft": "number",
+  "ventilation_ratio": "1:150|1:300",
+  "has_vapor_barrier": "boolean",
+  "nfva_required_sqin": "number",
+  "intake_type": "soffit_vents|edge_vents|drip_edge_vents|gable_vents_low",
+  "intake_nfva_sqin": "number",
+  "exhaust_type": "ridge_vent|box_vents|turbine_vents|power_vents|gable_vents_high",
+  "exhaust_nfva_sqin": "number",
+  "balanced": "boolean",
+  "intake_pct": "number",
+  "exhaust_pct": "number",
+  "existing_ventilation": {
+    "type": "string|null",
+    "nfva_sqin": "number"
+  },
+  "additional_needed_sqin": "number",
+  "recommendation": "string",
+  "cathedral_ceiling": "boolean",
+  "cathedral_rafter_bay_count": "number|null",
+  "cathedral_nfva_per_bay": "number|null",
+  "notes": "string"
+}
+```
+
+**waste_factor_calc:**
+```json
+{
+  "roof_type": "gable|hip|cross_gable|cut_up|flat|gambrel|mansard|shed",
+  "material_type": "asphalt_3tab|architectural|designer|metal_standing_seam|metal_corrugated|tile_clay|tile_concrete|wood_shake|slate|tpo|epdm|mod_bit",
+  "total_sqft": "number",
+  "squares": "number",
+  "base_waste_pct": "number",
+  "valleys_count": "number",
+  "valley_waste_pct": "number",
+  "dormers_count": "number",
+  "dormer_waste_pct": "number",
+  "hips_count": "number",
+  "hip_waste_pct": "number",
+  "penetrations_count": "number",
+  "penetration_waste_pct": "number",
+  "total_waste_pct": "number",
+  "total_squares_with_waste": "number",
+  "bundles_needed": "number|null",
+  "panels_needed": "number|null",
+  "tiles_needed": "number|null",
+  "starter_strips_lf": "number",
+  "ridge_cap_lf": "number",
+  "hip_cap_lf": "number",
+  "ice_water_shield_sqft": "number",
+  "underlayment_rolls": "number",
+  "drip_edge_lf": "number",
+  "flashing_lf": "number",
+  "step_flashing_pcs": "number",
+  "nails_lbs": "number|null",
+  "notes": "string"
+}
+```
+
+**aia_billing (Zafto-branded "Progress Billing Application"):**
+```json
+{
+  "project_name": "string",
+  "contract_number": "string",
+  "application_number": "number",
+  "period_from": "date",
+  "period_to": "date",
+  "owner_name": "string",
+  "architect_name": "string|null",
+  "contractor_name": "string",
+  "retainage_pct": "number",
+  "schedule_of_values": [
+    {
+      "item": "number",
+      "description": "string",
+      "scheduled_value": "number",
+      "from_previous_applications": "number",
+      "this_period_work": "number",
+      "this_period_materials_stored": "number",
+      "total_completed_and_stored": "number",
+      "pct_complete": "number",
+      "balance_to_finish": "number",
+      "retainage_on_work": "number",
+      "retainage_on_stored": "number"
+    }
+  ],
+  "change_orders_approved": [
+    { "co_number": "number", "description": "string", "amount": "number", "date": "date" }
+  ],
+  "original_contract_sum": "number",
+  "net_change_by_change_orders": "number",
+  "contract_sum_to_date": "number",
+  "total_completed_to_date": "number",
+  "total_retainage": "number",
+  "total_earned_less_retainage": "number",
+  "less_previous_certificates_for_payment": "number",
+  "current_payment_due": "number",
+  "balance_to_finish_including_retainage": "number"
+}
+```
+
+**punch_list:**
+```json
+{
+  "walkthrough_date": "date",
+  "walkthrough_type": "pre_final|final|warranty",
+  "attendees": ["string"],
+  "items": [
+    {
+      "id": "number",
+      "room": "string",
+      "location_detail": "string|null",
+      "description": "string",
+      "priority": "critical|major|minor|cosmetic",
+      "trade": "string|null",
+      "assigned_to": "string",
+      "assigned_company": "string|null",
+      "due_date": "date|null",
+      "photos_before": ["string"],
+      "photos_after": ["string"],
+      "status": "open|in_progress|completed|disputed|deferred",
+      "completed_date": "date|null",
+      "completion_notes": "string|null",
+      "cost_to_fix": "number|null"
+    }
+  ],
+  "total_items": "number",
+  "completed_items": "number",
+  "remaining_items": "number",
+  "completion_pct": "number",
+  "target_completion_date": "date",
+  "notes": "string"
+}
+```
+
+**rfi_log:**
+```json
+{
+  "rfis": [
+    {
+      "rfi_number": "number",
+      "date_submitted": "date",
+      "submitted_by": "string",
+      "submitted_by_company": "string|null",
+      "question": "string",
+      "reference_drawing": "string|null",
+      "reference_spec_section": "string|null",
+      "priority": "urgent|high|normal|low",
+      "directed_to": "string",
+      "response": "string|null",
+      "response_date": "date|null",
+      "response_by": "string|null",
+      "status": "draft|submitted|in_review|answered|closed|void",
+      "cost_impact": "boolean",
+      "cost_impact_amount": "number|null",
+      "schedule_impact": "boolean",
+      "schedule_impact_days": "number|null",
+      "attachments": ["string"]
+    }
+  ],
+  "total_rfis": "number",
+  "open_rfis": "number",
+  "avg_response_days": "number"
+}
+```
+
+**bid_leveling:**
+```json
+{
+  "trade": "string",
+  "scope_description": "string",
+  "bid_due_date": "date|null",
+  "scope_items": ["string"],
+  "bidders": [
+    {
+      "company": "string",
+      "contact_name": "string|null",
+      "contact_phone": "string|null",
+      "contact_email": "string|null",
+      "bid_amount": "number",
+      "bid_date": "date",
+      "includes_items": { "fixtures": "boolean", "permit": "boolean", "cleanup": "boolean", "warranty": "boolean", "materials": "boolean" },
+      "timeline_days": "number",
+      "warranty_months": "number",
+      "exclusions": ["string"],
+      "clarifications": ["string"],
+      "scope_adjustments": "number",
+      "adjusted_amount": "number",
+      "score": "number|null",
+      "notes": "string"
+    }
+  ],
+  "selected_bidder": "string|null",
+  "selection_reason": "string|null",
+  "lowest_bid": "number",
+  "highest_bid": "number",
+  "average_bid": "number",
+  "spread_pct": "number"
+}
+```
+
+### Seed Data
+
+**Waste factor presets by roof type:**
+- Gable (simple): 10% base, +0.5% per valley, +0.5% per dormer
+- Cross gable: 12% base, +0.5% per valley, +1% per dormer
+- Hip: 15% base, +0.5% per valley, +1% per dormer
+- Cut-up (10+ facets): 18% base, +0.5% per valley, +1% per dormer
+- Gambrel: 12% base
+- Mansard: 15% base
+- Flat/low-slope: 5% base
+- Metal standing seam: 5% base, +2% complexity
+- Tile (clay/concrete): 12% base, +3% complexity
+
+**Ventilation reference:**
+- 1:150 ratio (no vapor barrier): 1 sq ft NFVA per 150 sq ft attic
+- 1:300 ratio (with vapor barrier): 1 sq ft NFVA per 300 sq ft attic
+- Balance: 50% intake, 50% exhaust (ideal)
+- Ridge vent NFVA: 18 sq in per linear foot (typical)
+- Soffit vent NFVA: 40-60 sq in per 8"x16" vent
+- Box vent NFVA: 50-75 sq in each
+- Turbine vent NFVA: 150-350 sq in each
+
+### Flutter Screens
+
+**`lib/screens/trade_tools/roofing/ventilation_calc_screen.dart`** — Form: attic sqft, vapor barrier toggle, intake/exhaust type selectors, existing ventilation input. Auto-calculates NFVA required, balance ratio, additional needed. Visual balance indicator (green=balanced, red=unbalanced). 4 states.
+
+**`lib/screens/trade_tools/roofing/waste_factor_screen.dart`** — Form: roof type selector with preset waste factors, material type, total sqft (auto-fill from Recon if property linked), valley/dormer/hip counts. Auto-calculates total waste %, squares with waste, material quantities. Material order summary at bottom. 4 states.
+
+**`lib/screens/trade_tools/gc/aia_billing_screen.dart`** — Schedule of values table: add/edit line items with all columns. Running totals auto-calculated. Application-over-application tracking (this is billing #N, referencing previous). Retainage auto-calculated per line. Payment due = total earned - retainage - previous payments. 4 states.
+
+**`lib/screens/trade_tools/gc/punch_list_screen.dart`** — Room-by-room deficiency list. Photo capture per item (before + after). Assignee selector (from team members or manual entry). Status tracking per item. Progress bar showing completion %. Filter by room, status, priority, assignee. 4 states.
+
+**`lib/screens/trade_tools/gc/rfi_screen.dart`** — RFI log with sequential numbering. New RFI form: question, drawing reference, priority, directed to. Response tracking with dates. Status badges. Average response time metric. 4 states.
+
+**`lib/screens/trade_tools/gc/bid_leveling_screen.dart`** — Add bidders with bid amounts. Side-by-side comparison table. Scope adjustment columns for missing items. Auto-calculates adjusted amounts, spread, average. Highlight lowest adjusted bid. Selection with reason. 4 states.
+
+### Web CRM Pages
+
+**`/dashboard/trade-tools/ventilation-calc`** — List + create. Columns: Date, Job, Attic Sqft, Required NFVA, Balanced.
+**`/dashboard/trade-tools/waste-factor`** — List + create. Columns: Date, Job, Roof Type, Squares, Waste %, Total w/Waste.
+**`/dashboard/trade-tools/progress-billing`** — List + create. Columns: Date, Project, App #, Period, Payment Due, Status.
+**`/dashboard/trade-tools/punch-list`** — List + create. Columns: Date, Job, Total Items, Completed, Remaining, % Done.
+**`/dashboard/trade-tools/rfi-tracker`** — List + create. Columns: Date, Job, Total RFIs, Open, Avg Response Days.
+**`/dashboard/trade-tools/bid-leveling`** — List + create. Columns: Date, Trade, Bidders, Low Bid, High Bid, Selected.
+
+### API Connections ($0/month)
+- **Recon scan data** (internal): Auto-populate waste factor calculator from property_scans.roof_measurements if property is linked
+- **No external APIs needed** for these tools -- all calculation-based with seeded reference data
+
+### Security Verification Checklist
+- [ ] All 6 tools scoped to company_id via shared RLS
+- [ ] AIA billing: monetary calculations validated server-side (retainage, payment due)
+- [ ] Punch list photos stored in private documents bucket
+- [ ] RFI attachments validated (file type, size limit 10MB)
+- [ ] Bid leveling: bidder contact info not exposed to other bidders
+- [ ] Soft delete, 4-state screens, optimistic locking on all
+
+### Wiring to Existing Systems
+- Waste factor: auto-populate from Recon roof_measurements (total_sqft, complexity_rating, valleys_count)
+- AIA billing: links to jobs and estimates (schedule_of_values can import from estimate line items)
+- Punch list: assignees can be team members (from team_members table) or manual entry for subs
+- RFI: attachments stored in documents bucket, linked to job
+- Bid leveling: bidder companies can link to subcontractor records (if sub management exists)
+- Change orders: AIA billing change_orders_approved references existing change_orders table
+
+### Steps
+- [ ] Ventilation Calculator form (Flutter + Web) with balance visualization
+- [ ] Ventilation Calculator: auto-calculate NFVA, intake/exhaust balance, recommendation text
+- [ ] Ventilation Calculator PDF: calculation summary with recommendation
+- [ ] Seed: ventilation reference data (NFVA per vent type, ratio rules)
+- [ ] Waste Factor Calculator form (Flutter + Web) with preset waste factors by roof type
+- [ ] Waste Factor: auto-populate from Recon roof_measurements when property linked
+- [ ] Waste Factor: auto-calculate material quantities (bundles, starter, ridge cap, underlayment, etc.)
+- [ ] Waste Factor PDF: material order summary with quantities and waste breakdown
+- [ ] Seed: waste factor presets by roof type and material type
+- [ ] Progress Billing Application form (Flutter + Web) — Zafto-branded AIA G702/G703 equivalent
+- [ ] AIA Billing: schedule of values table with add/edit/remove line items
+- [ ] AIA Billing: auto-calculate current payment due, retainage, balance to finish
+- [ ] AIA Billing: application-over-application tracking (billing #N references previous)
+- [ ] AIA Billing: import line items from existing estimate
+- [ ] AIA Billing PDF: standard format with schedule of values continuation sheet
+- [ ] Punch List Manager form (Flutter + Web) — room-by-room with photo per item
+- [ ] Punch List: assignee selector, status tracking per item, completion percentage
+- [ ] Punch List: filter by room/status/priority/assignee
+- [ ] Punch List PDF: summary report with item counts, completion %, photos
+- [ ] RFI Tracker form (Flutter + Web) with sequential numbering
+- [ ] RFI: response tracking with dates, cost/schedule impact flags
+- [ ] RFI PDF: RFI log with all entries, status, response times
+- [ ] Bid Leveling Sheet form (Flutter + Web) — add bidders, compare side-by-side
+- [ ] Bid Leveling: scope adjustment columns, auto-calculate adjusted amounts
+- [ ] Bid Leveling: spread analysis (lowest, highest, average, spread %)
+- [ ] Bid Leveling PDF: comparison table with adjusted amounts and selection
 - [ ] Verify: all 6 tools generate correct PDFs, AIA calculations accurate
-- [ ] Commit: `[U-TT4] Roofing + GC Trade Tools — ventilation, waste factor, AIA billing, punch list, RFI, bid leveling`
+- [ ] All builds pass: `dart analyze`, `npm run build` x 4
+- [ ] Commit: `[U-TT4] Roofing + GC Trade Tools — ventilation calc, waste factor, progress billing, punch list, RFI tracker, bid leveling`
 
-### U-TT5 — Restoration + Painting + Landscaping (~27h)
+---
 
-#### Steps
-- [ ] Air Mover Placement Calculator form + IICRC S500 rules + placement diagram + PDF
-- [ ] Category/Class Documentation form + photo evidence per room + PDF (insurance-ready)
-- [ ] Surface Area Calculator form (room-by-room, deductions) + PDF with totals
-- [ ] VOC Compliance Checker form + jurisdiction rules + PDF
-- [ ] Irrigation Zone Designer form + zone/head/pipe calculations + PDF
+### U-TT5 — Restoration + Painting + Landscaping Tools (~27h)
+
+**Goal:** 5 tools across 3 trades. Restoration: Air Mover Placement Calculator (IICRC S500), Water Damage Category/Class Documentation (insurance-ready). Painting: Surface Area Calculator (professional takeoff), VOC Compliance Checker. Landscaping: Irrigation Zone Designer.
+
+### JSONB Schemas
+
+**air_mover_placement:**
+```json
+{
+  "rooms": [
+    {
+      "name": "string",
+      "length_ft": "number",
+      "width_ft": "number",
+      "ceiling_height_ft": "number",
+      "volume_cuft": "number",
+      "affected_wall_lf": "number",
+      "affected_materials": ["carpet|pad|drywall|baseboard|hardwood|laminate|vinyl|concrete|insulation|ceiling"],
+      "class_of_water": "1|2|3|4",
+      "category_of_water": "1|2|3",
+      "air_movers_required": "number",
+      "dehumidifier_pints_per_day": "number",
+      "air_scrubbers_required": "number",
+      "placement_notes": "string",
+      "monitoring_schedule": "string|null"
+    }
+  ],
+  "total_air_movers": "number",
+  "total_dehumidifiers": "number",
+  "total_air_scrubbers": "number",
+  "estimated_drying_days": "number",
+  "equipment_daily_rate": "number",
+  "total_equipment_charge": "number",
+  "drying_goal": "string",
+  "iicrc_standard_ref": "S500|S520",
+  "notes": "string"
+}
+```
+
+**category_class_doc:**
+```json
+{
+  "date_of_loss": "date",
+  "date_of_inspection": "date",
+  "time_since_loss_hours": "number",
+  "source_of_water": "string",
+  "source_status": "active|contained|resolved",
+  "category": "1|2|3",
+  "category_justification": "string",
+  "category_description": "string",
+  "class": "1|2|3|4",
+  "class_justification": "string",
+  "class_description": "string",
+  "affected_rooms": [
+    {
+      "room": "string",
+      "materials_affected": [
+        {
+          "material": "string",
+          "affected_area_sqft": "number|null",
+          "affected_height_inches": "number|null",
+          "salvageable": "boolean",
+          "removal_required": "boolean"
+        }
+      ],
+      "moisture_readings": [
+        {
+          "material": "string",
+          "location": "string",
+          "reading": "number",
+          "unit": "pct|relative|gpl",
+          "meter_type": "pin|pinless|thermo_hygrometer",
+          "meter_model": "string|null"
+        }
+      ],
+      "relative_humidity_pct": "number|null",
+      "temperature_f": "number|null",
+      "dew_point_f": "number|null",
+      "photos": ["string"]
+    }
+  ],
+  "recommended_protocol": "string",
+  "dry_standard": "string",
+  "insurance_claim_number": "string|null",
+  "adjuster_name": "string|null",
+  "adjuster_phone": "string|null"
+}
+```
+
+**surface_area_calc:**
+```json
+{
+  "project_type": "interior|exterior|both",
+  "rooms": [
+    {
+      "name": "string",
+      "length_ft": "number",
+      "width_ft": "number",
+      "ceiling_height_ft": "number",
+      "perimeter_ft": "number",
+      "wall_sqft": "number",
+      "ceiling_sqft": "number",
+      "deductions": [
+        { "type": "window|door|closet_opening|fireplace|built_in|other", "count": "number", "sqft_each": "number", "total_sqft": "number" }
+      ],
+      "total_deductions_sqft": "number",
+      "net_wall_sqft": "number",
+      "include_ceiling": "boolean",
+      "trim_lf": {
+        "baseboard": "number",
+        "crown": "number",
+        "chair_rail": "number|null",
+        "door_casing": "number",
+        "window_casing": "number"
+      },
+      "total_trim_lf": "number",
+      "doors_count": "number",
+      "closet_doors_count": "number|null",
+      "condition": "good|fair|poor",
+      "prep_needed": "none|light_sand|patch_and_sand|heavy_prep|skim_coat",
+      "coats_needed": "number",
+      "paint_type": "string"
+    }
+  ],
+  "totals": {
+    "total_wall_sqft": "number",
+    "total_ceiling_sqft": "number",
+    "total_net_wall_sqft": "number",
+    "total_trim_lf": "number",
+    "total_doors": "number",
+    "wall_gallons": "number",
+    "ceiling_gallons": "number",
+    "trim_quarts": "number",
+    "primer_gallons": "number",
+    "total_paint_gallons": "number",
+    "coverage_sqft_per_gallon": "number"
+  }
+}
+```
+
+**voc_compliance:**
+```json
+{
+  "jurisdiction": "string",
+  "jurisdiction_rule": "string|null",
+  "effective_date": "date|null",
+  "products": [
+    {
+      "product_name": "string",
+      "manufacturer": "string",
+      "product_type": "interior_flat|interior_eggshell|interior_semigloss|interior_gloss|exterior_flat|exterior_semigloss|exterior_gloss|primer|stain|varnish|lacquer|shellac|adhesive|sealant",
+      "voc_grams_per_liter": "number",
+      "jurisdiction_limit": "number",
+      "compliant": "boolean",
+      "alternative_product": "string|null",
+      "alternative_voc": "number|null",
+      "sds_url": "string|null"
+    }
+  ],
+  "all_compliant": "boolean",
+  "non_compliant_count": "number",
+  "recommendations": ["string"]
+}
+```
+
+**irrigation_zone_design:**
+```json
+{
+  "water_supply": {
+    "source": "city_water|well|reclaimed|cistern",
+    "static_pressure_psi": "number",
+    "dynamic_pressure_psi": "number|null",
+    "available_gpm": "number",
+    "meter_size_inches": "number|null",
+    "service_line_size_inches": "number|null",
+    "backflow_type": "PVB|RPZ|DCA|AVB",
+    "pressure_loss_backflow_psi": "number|null"
+  },
+  "zones": [
+    {
+      "zone_number": "number",
+      "area_name": "string",
+      "area_sqft": "number",
+      "plant_type": "turf_cool|turf_warm|shrubs|flowers|trees|drip_beds|native",
+      "sun_exposure": "full_sun|partial_shade|full_shade",
+      "soil_type": "clay|loam|sand|mixed",
+      "slope": "flat|slight|moderate|steep",
+      "head_type": "rotary|fixed_spray|drip|mp_rotator|bubbler|impact",
+      "head_model": "string|null",
+      "head_count": "number",
+      "gpm_per_head": "number",
+      "total_gpm": "number",
+      "run_time_minutes": "number",
+      "precipitation_rate_in_per_hr": "number",
+      "weekly_water_inches": "number",
+      "pipe_size_main": "number",
+      "pipe_size_lateral": "number",
+      "pipe_type": "SCH40_PVC|CLASS200_PVC|POLY|FUNNY_PIPE",
+      "valve_size_inches": "number",
+      "wire_run_ft": "number|null"
+    }
+  ],
+  "controller": {
+    "model": "string|null",
+    "type": "wifi|bluetooth|hardwired",
+    "zones_capacity": "number",
+    "zones_used": "number",
+    "rain_sensor": "boolean",
+    "flow_sensor": "boolean"
+  },
+  "total_zones": "number",
+  "total_heads": "number",
+  "pipe_total_lf": "number",
+  "wire_total_ft": "number|null",
+  "estimated_monthly_water_gallons": "number",
+  "estimated_monthly_water_cost": "number|null",
+  "notes": "string"
+}
+```
+
+### Seed Data
+
+**IICRC S500 equipment density rules:**
+- Air movers: 1 per 10-16 LF of affected wall (Class 1-2), 1 per 8-10 LF (Class 3-4)
+- Dehumidifiers: 1 per 1,000-1,500 cuft (LGR type), scale by class
+- Air scrubbers: Required for Category 3 water or mold presence, 1 per 500-1,000 sqft
+- Drying time estimates: Class 1=2-3 days, Class 2=3-4 days, Class 3=4-5 days, Class 4=5-7+ days
+
+**IICRC water categories:**
+- Category 1 (Clean): Broken supply lines, rainwater, toilet tank water
+- Category 2 (Gray): Dishwasher discharge, washing machine, toilet overflow with urine, sump pump failure
+- Category 3 (Black): Sewage backup, flooding from rivers/streams, toilet overflow with feces, standing water >72 hours (Category 1 or 2 becomes 3)
+
+**IICRC water classes:**
+- Class 1: Least affected, part of room, minimal absorption
+- Class 2: Significant, entire room, water wicked up walls <24 inches
+- Class 3: Extensive, ceiling, walls, insulation, carpet, pad fully saturated
+- Class 4: Specialty, wet materials with low permeance (hardwood, plaster, concrete, stone)
+
+**VOC limits by jurisdiction (seed top 10):**
+- SCAQMD Rule 1113 (Southern CA): Flat 50, Nonflat 50, Primer 100, Stain 250
+- OTC Phase II (17 NE states): Flat 50, Nonflat 100, Primer 100, Stain 250
+- CARB 2019 SCM (all CA): Flat 50, Nonflat 50, Primer 100
+- Colorado Reg 7 (Denver metro): Same as OTC Phase II
+- EPA National: Flat 250, Nonflat 250 (federal baseline, loosest)
+- Canada: Flat 50, Nonflat 100 (national)
+
+**Irrigation head flow rates:**
+- Rotary (Hunter PGP): 1.5-6.0 GPM depending on nozzle/radius
+- Fixed spray (Rain Bird 1800): 0.5-3.0 GPM depending on nozzle/pattern
+- MP Rotator: 0.4-1.5 GPM (low precipitation rate)
+- Drip: 0.5-2.0 GPH per emitter
+- Impact (Rain Bird 25PJDA): 2.0-6.0 GPM
+
+### Flutter Screens
+
+**`lib/screens/trade_tools/restoration/air_mover_placement_screen.dart`** — Room-by-room entry: dimensions, affected materials checklist, water class/category selectors. Auto-calculates air movers, dehu capacity, air scrubbers per IICRC rules. Visual summary with equipment count + daily rate + total charge. 4 states.
+
+**`lib/screens/trade_tools/restoration/category_class_doc_screen.dart`** — Insurance-ready documentation form: loss date, source, category/class with justification dropdowns, room-by-room moisture readings with photo capture, recommended protocol auto-generated from category+class. Insurance fields: claim number, adjuster name/phone. 4 states.
+
+**`lib/screens/trade_tools/painting/surface_area_calc_screen.dart`** — Room-by-room: dimensions, deductions (windows/doors), trim types and lengths, ceiling toggle, condition assessment. Running totals panel showing wall sqft, ceiling sqft, trim LF, paint gallons needed. 4 states.
+
+**`lib/screens/trade_tools/painting/voc_compliance_screen.dart`** — Jurisdiction selector (auto-detect from property state/county). Add products with VOC g/L values. Red/green compliance indicators per product. Non-compliant products show alternative recommendations. 4 states.
+
+**`lib/screens/trade_tools/landscaping/irrigation_zone_screen.dart`** — Water supply section first (pressure, GPM, meter size). Then zone-by-zone: area, plant type, head type/count, GPM calculations, pipe sizing. Controller section. Summary: total zones, heads, pipe, estimated monthly water usage and cost. 4 states.
+
+### Web CRM Pages
+
+**`/dashboard/trade-tools/air-mover-placement`** — List + create. Columns: Date, Job, Rooms, Air Movers, Dehus, Est. Days, Charge.
+**`/dashboard/trade-tools/category-class-doc`** — List + create. Columns: Date, Job, Category, Class, Rooms Affected, Claim #.
+**`/dashboard/trade-tools/surface-area-calc`** — List + create. Columns: Date, Job, Total Wall Sqft, Total Ceiling Sqft, Paint Gallons.
+**`/dashboard/trade-tools/voc-compliance`** — List + create. Columns: Date, Job, Jurisdiction, Products, All Compliant.
+**`/dashboard/trade-tools/irrigation-zones`** — List + create. Columns: Date, Job, Zones, Heads, Pipe LF, Monthly Water.
+
+### API Connections ($0/month)
+- **PsychroLib** (MIT): Calculate dew point and RH for restoration moisture monitoring
+- **EPA SNAP Substitutes** (seeded): Reference for chemical compliance in restoration antimicrobials
+- **Open-Meteo** (free): Local precipitation data for irrigation scheduling optimization
+
+### Security Verification Checklist
+- [ ] All 5 tools scoped to company_id via shared RLS
+- [ ] Moisture readings: meter readings validated as positive numbers
+- [ ] VOC compliance: jurisdiction data from seed, not user-modifiable (company can add products)
+- [ ] Insurance claim numbers sanitized (no injection)
+- [ ] Photo references validated against documents bucket paths
+- [ ] Soft delete, 4-state screens, optimistic locking
+
+### Wiring to Existing Systems
+- Air mover placement: equipment counts link to equipment tracking (if DEPTH35 mold equipment tracking available)
+- Category/class doc: PDF output formatted for insurance adjuster review, compatible with estimate system
+- Surface area: room dimensions can pre-populate from Sketch Engine (Phase SK) floor plans
+- VOC compliance: jurisdiction auto-detected from job/property state
+- Irrigation: zone layout links to property features (lot_sqft from Recon scan)
+
+### Steps
+- [ ] Air Mover Placement Calculator form (Flutter + Web) — room-by-room with IICRC S500 rules
+- [ ] Air Mover: auto-calculate equipment counts based on class/category/affected area
+- [ ] Air Mover: equipment billing calculation (count x daily rate x estimated days)
+- [ ] Air Mover PDF: placement diagram per room with equipment counts, insurance-ready format
+- [ ] Seed: IICRC S500 equipment density rules, water categories, water classes
+- [ ] Category/Class Documentation form (Flutter + Web) — with photo evidence per room
+- [ ] Category/Class: moisture reading entry with meter type, material, location
+- [ ] Category/Class: auto-generate recommended protocol from category + class combination
+- [ ] Category/Class PDF: insurance-ready report with all readings, photos, protocol, claim info
+- [ ] Surface Area Calculator form (Flutter + Web) — room-by-room with deductions
+- [ ] Surface Area: auto-calculate net wall sqft, ceiling sqft, trim LF, paint gallons (350 sqft/gal standard)
+- [ ] Surface Area: prep time estimation based on condition assessment
+- [ ] Surface Area PDF: professional takeoff with room breakdown and totals
+- [ ] VOC Compliance Checker form (Flutter + Web) — jurisdiction selector + product list
+- [ ] VOC: auto-check compliance against jurisdiction limits
+- [ ] VOC: suggest compliant alternatives for non-compliant products
+- [ ] VOC PDF: compliance report listing all products with pass/fail
+- [ ] Seed: VOC limits for top 10 jurisdictions (SCAQMD, OTC, CARB, Colorado, EPA national)
+- [ ] Irrigation Zone Designer form (Flutter + Web) — water supply + zone-by-zone
+- [ ] Irrigation: auto-calculate GPM per zone, pipe sizing, precipitation rates
+- [ ] Irrigation: monthly water usage and cost estimation
+- [ ] Irrigation PDF: zone design summary with head counts, pipe layout, controller config
+- [ ] Seed: irrigation head flow rates, pipe sizing tables, precipitation rate formulas
 - [ ] Verify: all 5 tools generate correct PDFs, IICRC calculations match S500 standards
-- [ ] Commit: `[U-TT5] Restoration + Painting + Landscaping Trade Tools`
+- [ ] All builds pass: `dart analyze`, `npm run build` x 4
+- [ ] Commit: `[U-TT5] Restoration + Painting + Landscaping Trade Tools — air mover placement, category/class doc, surface area calc, VOC compliance, irrigation zone design`
+
+---
 
 ### U-TT6 — Trade Tools Integration Testing (~8h)
 
-#### Steps
-- [ ] Test: all 19 tools across Flutter + Web CRM
-- [ ] Test: PDFs open correctly in all major PDF viewers
-- [ ] Test: trade_tool_records saves/loads correctly per tool_type
-- [ ] Test: PDF branding uses correct company logo + info
-- [ ] Test: digital signature captures and embeds in PDF
-- [ ] Test: tools accessible from job detail screen (filtered by trade)
-- [ ] Polish: PDF templates match industry-standard formatting
+**Goal:** Cross-tool integration testing. Verify all 19 tools work correctly across Flutter + Web CRM. PDF formatting polish. Digital signature verification. Trade-type filtering validation.
+
+### Steps
+- [ ] Test: all 19 tools render correct form fields in Flutter (per tool_type JSONB schema)
+- [ ] Test: all 19 tools render correct form fields in Web CRM
+- [ ] Test: all 19 PDF templates generate correctly with company branding (logo, name, address)
+- [ ] Test: PDFs open correctly in all major PDF viewers (Chrome, Adobe, Preview, Edge)
+- [ ] Test: trade_tool_records saves/loads correctly per tool_type (JSONB integrity)
+- [ ] Test: PDF branding uses correct company logo + info from company settings
+- [ ] Test: digital signature captures, stores in signatures bucket, embeds in PDF
+- [ ] Test: tools accessible from job detail screen filtered by job trade_type
+- [ ] Test: tool hub filters tools by company's registered trades
+- [ ] Test: backflow test creates recurring annual reminder correctly
+- [ ] Test: Manual J auto-fills design temperatures from zip code
+- [ ] Test: waste factor auto-populates from Recon scan when property linked
+- [ ] Test: AIA billing correctly tracks application-over-application (billing #N)
+- [ ] Test: punch list completion percentage updates correctly on item status change
+- [ ] Test: air mover placement matches IICRC S500 equipment density calculations
+- [ ] Test: VOC compliance correctly flags non-compliant products per jurisdiction
+- [ ] Test: irrigation zone GPM totals do not exceed water supply available GPM (warning)
+- [ ] Test: soft delete works on all records (deleted_at set, record hidden from lists)
+- [ ] Test: optimistic locking prevents concurrent edit conflicts
+- [ ] Test: records appear in team-portal for field technicians (read + create)
+- [ ] Polish: PDF templates match industry-standard formatting per trade
+- [ ] Polish: form validation messages are clear and trade-specific
+- [ ] Polish: loading/error/empty states show appropriate messages per tool
 - [ ] Verify: all builds clean across all 5 apps
-- [ ] Commit: `[U-TT6] Trade Tools integration testing + PDF polish`
+- [ ] All builds pass: `dart analyze`, `npm run build` x 4
+- [ ] Commit: `[U-TT6] Trade Tools integration testing + PDF polish — all 19 tools verified`
 
 ---
+
+---
+
 
 ## ══════════════════════════════════════════════════════════
 ## PHASE P EXTENSION — PROPERTY DIGITAL TWIN
@@ -11801,51 +18283,418 @@ Equipment lifecycle data + prediction engine tables.
 ## ══════════════════════════════════════════════════════════
 ## Added to Phase P: ~28 hours
 
-### P-DT1 — Digital Twin Tables (~8h)
+### P-DT1 — Digital Twin Foundation Tables (~8h)
 
-#### Steps
-- [ ] Migration: ALTER properties — add property_intelligence_score, year_built, square_footage, lot_size_sqft, construction_type, electrical_service_amps, electrical_panel_type, plumbing_type, hvac_system_type, roof_type, roof_age_years, known_issues (JSONB), data_sources
-- [ ] Migration: ALTER home_service_history — add performed_by_company_name, trade_type, work_summary, is_shared
-- [ ] Migration: CREATE property_intelligence_layers — id, property_id FK, trade_type, layer_data (JSONB), source_job_id, source_company_id, contributed_by, verified + RLS
-- [ ] Migration: CREATE property_data_sharing — id, property_id, homeowner_user_id, shared_with_company_id, share_level + RLS
-- [ ] Migration: CREATE property_age_alerts — id, alert_rule_name, condition_json, alert_message, severity, trade_type, recommendation + RLS (public read)
-- [ ] Seed: property age alerts (aluminum wiring pre-1978, polybutylene pipe 1978-1995, cast iron drain pre-1970, etc.)
+**Goal:** Property Digital Twin accumulates intelligence from ALL contractor interactions with a property across all companies. Over time, a property builds a complete profile: electrical system type, plumbing type, HVAC age, roof condition, known issues, past service history. This data helps future contractors give better estimates and avoid surprises.
+
+### Database
+
+```sql
+-- ============================================================
+-- ALTER properties — add intelligence columns
+-- ============================================================
+ALTER TABLE properties
+  ADD COLUMN IF NOT EXISTS property_intelligence_score INTEGER DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS year_built INTEGER,
+  ADD COLUMN IF NOT EXISTS square_footage NUMERIC(10,2),
+  ADD COLUMN IF NOT EXISTS lot_size_sqft NUMERIC(12,2),
+  ADD COLUMN IF NOT EXISTS stories NUMERIC(3,1),
+  ADD COLUMN IF NOT EXISTS construction_type TEXT CHECK (construction_type IN ('wood_frame','masonry','steel','concrete','log','sip','icf','manufactured','mixed','unknown')),
+  ADD COLUMN IF NOT EXISTS foundation_type TEXT CHECK (foundation_type IN ('slab','crawl_space','full_basement','daylight_basement','pier_and_beam','piling','unknown')),
+  ADD COLUMN IF NOT EXISTS electrical_service_amps INTEGER,
+  ADD COLUMN IF NOT EXISTS electrical_panel_type TEXT,
+  ADD COLUMN IF NOT EXISTS electrical_panel_age_years INTEGER,
+  ADD COLUMN IF NOT EXISTS plumbing_type TEXT CHECK (plumbing_type IN ('copper','pex','cpvc','galvanized','polybutylene','cast_iron','mixed','unknown')),
+  ADD COLUMN IF NOT EXISTS hvac_system_type TEXT,
+  ADD COLUMN IF NOT EXISTS hvac_age_years INTEGER,
+  ADD COLUMN IF NOT EXISTS hvac_fuel_type TEXT CHECK (hvac_fuel_type IN ('natural_gas','propane','electric','oil','geothermal','heat_pump','dual_fuel','unknown')),
+  ADD COLUMN IF NOT EXISTS roof_type TEXT,
+  ADD COLUMN IF NOT EXISTS roof_age_years INTEGER,
+  ADD COLUMN IF NOT EXISTS water_heater_type TEXT,
+  ADD COLUMN IF NOT EXISTS water_heater_age_years INTEGER,
+  ADD COLUMN IF NOT EXISTS known_issues JSONB DEFAULT '[]',
+  ADD COLUMN IF NOT EXISTS data_sources JSONB DEFAULT '[]',
+  ADD COLUMN IF NOT EXISTS last_intelligence_update TIMESTAMPTZ;
+
+-- ============================================================
+-- ALTER home_service_history — add sharing columns
+-- ============================================================
+ALTER TABLE home_service_history
+  ADD COLUMN IF NOT EXISTS performed_by_company_name TEXT,
+  ADD COLUMN IF NOT EXISTS trade_type TEXT,
+  ADD COLUMN IF NOT EXISTS work_summary TEXT,
+  ADD COLUMN IF NOT EXISTS is_shared BOOLEAN DEFAULT false,
+  ADD COLUMN IF NOT EXISTS shared_at TIMESTAMPTZ;
+
+-- ============================================================
+-- property_intelligence_layers — per-trade knowledge contributions
+-- ============================================================
+CREATE TABLE property_intelligence_layers (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  property_id UUID NOT NULL REFERENCES properties(id),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  trade_type TEXT NOT NULL CHECK (trade_type IN (
+    'electrical','plumbing','hvac','roofing','general_contractor',
+    'restoration','painting','landscaping','solar','fencing',
+    'concrete','flooring','insulation','windows_doors','siding',
+    'fire_protection','pest_control','pool','septic','well',
+    'inspection','other'
+  )),
+  layer_data JSONB NOT NULL DEFAULT '{}',
+  source_job_id UUID REFERENCES jobs(id),
+  contributed_by UUID NOT NULL REFERENCES users(id),
+  verified BOOLEAN DEFAULT false,
+  verified_by UUID REFERENCES users(id),
+  verified_at TIMESTAMPTZ,
+  confidence_score INTEGER DEFAULT 50 CHECK (confidence_score BETWEEN 0 AND 100),
+  notes TEXT,
+  deleted_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX idx_property_intel_layers_property ON property_intelligence_layers(property_id);
+CREATE INDEX idx_property_intel_layers_company ON property_intelligence_layers(company_id);
+CREATE INDEX idx_property_intel_layers_trade ON property_intelligence_layers(property_id, trade_type);
+CREATE INDEX idx_property_intel_layers_job ON property_intelligence_layers(source_job_id) WHERE source_job_id IS NOT NULL;
+CREATE INDEX idx_property_intelligence_layers_data ON property_intelligence_layers USING GIN (layer_data);
+
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON property_intelligence_layers
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER audit_property_intelligence_layers AFTER INSERT OR UPDATE OR DELETE ON property_intelligence_layers
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+-- ============================================================
+-- property_data_sharing — homeowner controls who sees their data
+-- ============================================================
+CREATE TABLE property_data_sharing (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  property_id UUID NOT NULL REFERENCES properties(id),
+  homeowner_user_id UUID NOT NULL REFERENCES users(id),
+  shared_with_company_id UUID REFERENCES companies(id),
+  share_level TEXT NOT NULL DEFAULT 'basic' CHECK (share_level IN ('none','basic','full','custom')),
+  shared_fields JSONB DEFAULT '[]',
+  share_all_contractors BOOLEAN DEFAULT false,
+  expires_at TIMESTAMPTZ,
+  revoked_at TIMESTAMPTZ,
+  deleted_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX idx_property_sharing_property ON property_data_sharing(property_id);
+CREATE INDEX idx_property_sharing_homeowner ON property_data_sharing(homeowner_user_id);
+CREATE INDEX idx_property_sharing_company ON property_data_sharing(shared_with_company_id) WHERE shared_with_company_id IS NOT NULL;
+CREATE UNIQUE INDEX idx_property_sharing_unique ON property_data_sharing(property_id, shared_with_company_id) WHERE shared_with_company_id IS NOT NULL AND deleted_at IS NULL AND revoked_at IS NULL;
+
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON property_data_sharing
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER audit_property_data_sharing AFTER INSERT OR UPDATE OR DELETE ON property_data_sharing
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+-- ============================================================
+-- property_age_alerts — rules for age-based property warnings
+-- ============================================================
+CREATE TABLE property_age_alerts (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  alert_rule_name TEXT NOT NULL,
+  condition_type TEXT NOT NULL CHECK (condition_type IN ('year_built_before','year_built_between','system_age_over','material_type_match')),
+  condition_json JSONB NOT NULL,
+  alert_message TEXT NOT NULL,
+  detailed_explanation TEXT,
+  severity TEXT NOT NULL DEFAULT 'warning' CHECK (severity IN ('info','warning','critical')),
+  trade_type TEXT NOT NULL,
+  recommendation TEXT NOT NULL,
+  regulatory_reference TEXT,
+  applies_to_states TEXT[] DEFAULT '{}',
+  is_active BOOLEAN DEFAULT true,
+  sort_order INTEGER DEFAULT 100,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX idx_property_age_alerts_trade ON property_age_alerts(trade_type);
+CREATE INDEX idx_property_age_alerts_active ON property_age_alerts(is_active) WHERE is_active = true;
+CREATE INDEX idx_property_age_alerts_condition ON property_age_alerts USING GIN (condition_json);
+CREATE INDEX idx_property_age_alerts_states ON property_age_alerts USING GIN (applies_to_states);
+
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON property_age_alerts
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER property_age_alerts_audit AFTER INSERT OR UPDATE OR DELETE ON property_age_alerts
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+```
+
+### RLS Policies
+
+```sql
+-- property_intelligence_layers
+ALTER TABLE property_intelligence_layers ENABLE ROW LEVEL SECURITY;
+
+-- Companies can see layers they contributed
+CREATE POLICY "intel_layers_select_own" ON property_intelligence_layers
+  FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
+
+-- Companies can see shared layers from other companies (via property_data_sharing)
+CREATE POLICY "intel_layers_select_shared" ON property_intelligence_layers
+  FOR SELECT USING (
+    deleted_at IS NULL AND
+    EXISTS (
+      SELECT 1 FROM property_data_sharing pds
+      WHERE pds.property_id = property_intelligence_layers.property_id
+        AND (pds.shared_with_company_id = auth.company_id() OR pds.share_all_contractors = true)
+        AND pds.share_level IN ('basic', 'full', 'custom')
+        AND pds.revoked_at IS NULL
+        AND pds.deleted_at IS NULL
+        AND (pds.expires_at IS NULL OR pds.expires_at > now())
+    )
+  );
+
+CREATE POLICY "intel_layers_insert" ON property_intelligence_layers
+  FOR INSERT WITH CHECK (company_id = auth.company_id());
+
+CREATE POLICY "intel_layers_update" ON property_intelligence_layers
+  FOR UPDATE USING (company_id = auth.company_id() AND deleted_at IS NULL)
+  WITH CHECK (company_id = auth.company_id());
+
+CREATE POLICY "intel_layers_delete" ON property_intelligence_layers
+  FOR DELETE USING (company_id = auth.company_id() AND auth.user_role() IN ('owner', 'admin'));
+
+-- property_data_sharing
+ALTER TABLE property_data_sharing ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "data_sharing_select" ON property_data_sharing
+  FOR SELECT USING (
+    (homeowner_user_id = auth.uid() AND deleted_at IS NULL)
+    OR
+    (shared_with_company_id = auth.company_id() AND deleted_at IS NULL)
+  );
+
+CREATE POLICY "data_sharing_insert" ON property_data_sharing
+  FOR INSERT WITH CHECK (homeowner_user_id = auth.uid());
+
+CREATE POLICY "data_sharing_update" ON property_data_sharing
+  FOR UPDATE USING (homeowner_user_id = auth.uid() AND deleted_at IS NULL);
+
+CREATE POLICY "data_sharing_delete" ON property_data_sharing
+  FOR DELETE USING (
+    (homeowner_user_id = auth.uid() OR shared_with_company_id = auth.company_id())
+    AND deleted_at IS NULL
+  );
+
+-- property_age_alerts — public read (reference data)
+ALTER TABLE property_age_alerts ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "age_alerts_select" ON property_age_alerts
+  FOR SELECT USING (is_active = true);
+
+-- Only super_admin can modify alerts
+CREATE POLICY "age_alerts_admin" ON property_age_alerts
+  FOR ALL USING (auth.user_role() = 'super_admin');
+```
+
+### Seed Data — Property Age Alerts (exhaustive)
+
+```sql
+INSERT INTO property_age_alerts (alert_rule_name, condition_type, condition_json, alert_message, detailed_explanation, severity, trade_type, recommendation, regulatory_reference, sort_order) VALUES
+-- Electrical
+('Aluminum wiring', 'year_built_between', '{"min": 1965, "max": 1978}', 'This property may have aluminum branch circuit wiring (1965-1978). Fire hazard if not properly remediated.', 'Aluminum wiring expands/contracts more than copper, loosening connections over time. The CPSC estimates 55x higher fire risk per connection than copper. Look for: aluminum wire at panel (silver color), AL stamp on wire sheathing, push-in backstab connections (worst case).', 'critical', 'electrical', 'Inspect all connections. Remediate with COPALUM crimp connectors (permanent fix) or AlumiConn connectors (approved alternative). Complete rewire is most thorough but expensive.', 'CPSC Publication 516', 1),
+('Knob-and-tube wiring', 'year_built_before', '{"year": 1950}', 'This property may have knob-and-tube wiring. Cannot be covered with insulation.', 'K&T wiring is ungrounded, cannot handle modern loads, and must not be covered with insulation (fire hazard). Many insurance companies will not insure homes with active K&T. Legal in place if undamaged, but cannot be extended.', 'critical', 'electrical', 'Full inspection needed. If K&T is active, recommend rewire. If abandoned but present, can remain if not covered. Insurance may require remediation letter.', 'NEC Article 394', 2),
+('Federal Pacific Stab-Lok panels', 'year_built_between', '{"min": 1950, "max": 1990}', 'Check for Federal Pacific Electric (FPE) Stab-Lok panels. Known defect: breakers fail to trip.', 'FPE Stab-Lok breakers have a documented 25-40% failure-to-trip rate per CPSC testing. Never recalled due to company bankruptcy. Identified by: FPE or Federal Pacific Electric nameplate, red or orange breaker handles, Stab-Lok on breaker face.', 'critical', 'electrical', 'Replace entire panel. Do not add circuits or replace individual breakers. This is the #1 recommended panel replacement in residential electrical.', 'CPSC investigation (no recall issued)', 3),
+('Zinsco/GTE-Sylvania panels', 'year_built_between', '{"min": 1960, "max": 1980}', 'Check for Zinsco/GTE-Sylvania panels. Known defect: breakers may melt to bus bar.', 'Zinsco breakers can fuse to the bus bar, preventing tripping during overload. Aluminum bus bars may overheat. Identified by: Zinsco or GTE-Sylvania nameplate, colorful breaker handles (pink, green, blue, tan).', 'critical', 'electrical', 'Replace entire panel. Parts no longer manufactured. Cannot be repaired.', NULL, 4),
+('60A or 100A service', 'year_built_before', '{"year": 1970}', 'Property likely has 60A or 100A service. May be undersized for modern electrical loads.', 'Homes built before 1970 often have 60A service. 100A was standard 1970-1990. Modern homes need minimum 200A for HVAC, EV chargers, electric appliances. Signs of undersized service: frequent breaker trips, dim/flickering lights under load, no room for new circuits.', 'warning', 'electrical', 'Evaluate for 200A service upgrade if adding significant loads (EV charger, hot tub, electric range, HVAC upgrade, addition).', 'NEC 230.79', 5),
+-- Plumbing
+('Polybutylene pipe', 'year_built_between', '{"min": 1978, "max": 1995}', 'This property may have polybutylene (PB) piping. Known to fail and cause flooding.', 'Polybutylene (gray, flexible pipe) degrades from chlorine in water supply. Cox v. Shell Oil class-action settlement. Identified by: gray pipe, PB2110 stamp, copper crimp rings. Failure is sudden and catastrophic — pipes split with no warning.', 'critical', 'plumbing', 'Full repipe with PEX or copper recommended. Insurance companies increasingly refusing to cover homes with PB pipe. Cannot be patched — the material itself is degrading.', 'Shell class-action settlement (Cox v. Shell Oil)', 10),
+('Galvanized steel pipes', 'year_built_before', '{"year": 1960}', 'Property likely has galvanized steel pipes. Corrosion restricts water flow after 40-60 years.', 'Galvanized pipe corrodes from the inside out, reducing water pressure over decades. Lead solder joints may be present. Rust-colored water, low pressure, pinhole leaks are common symptoms. Typical lifespan: 40-60 years.', 'warning', 'plumbing', 'Test water pressure at multiple fixtures. If below 40 PSI or rust-colored, recommend repipe with PEX or copper.', NULL, 11),
+('Cast iron drain pipes', 'year_built_before', '{"year": 1975}', 'Property likely has cast iron drain/waste/vent pipes. May be nearing end of life (50-75 year lifespan).', 'Cast iron drain pipes corrode, develop holes, and collect debris at rough spots. Symptoms: slow drains, sewage odor, foundation cracks near drain lines, pest entry through corroded pipe. Camera inspection recommended.', 'warning', 'plumbing', 'Camera inspection of main drain and branch lines. Spot repairs possible, but full replacement with PVC recommended if widespread corrosion found.', NULL, 12),
+('Lead supply pipes', 'year_built_before', '{"year": 1930}', 'Property may have lead supply pipes from street to house. Health hazard.', 'Lead service lines are still present in an estimated 6-10 million US homes. The 2024 Lead and Copper Rule Improvements (LCRI) requires replacement. Lead pipes are dull gray, soft (scratch with coin), magnetic test fails (non-magnetic).', 'critical', 'plumbing', 'Test water for lead. If lead service line confirmed, report to water utility for replacement under LCRI. Do not disturb without proper protocol — partial replacement can increase lead exposure temporarily.', 'EPA LCRI (40 CFR 141)', 13),
+-- HVAC
+('R-22 refrigerant system', 'year_built_before', '{"year": 2010}', 'HVAC system may use R-22 refrigerant. No longer manufactured — prices extremely high.', 'R-22 production banned Jan 1, 2020. Remaining supply is reclaimed only. Prices: $50-150/lb vs $10-20/lb for R-410A. A typical residential charge is 6-12 lbs. If system has a leak, cost to recharge may exceed replacement value.', 'warning', 'hvac', 'If system needs refrigerant service, evaluate full system replacement with R-410A or R-454B system. Cost to repair+recharge R-22 often exceeds new system cost within 2-3 service calls.', 'EPA Section 608, Clean Air Act', 20),
+('Asbestos-containing materials', 'year_built_before', '{"year": 1980}', 'Property may contain asbestos in HVAC duct insulation, pipe wrap, floor tiles, or siding.', 'Asbestos was used in: duct insulation wrap, pipe insulation (white corrugated), floor tiles (9x9 inch), popcorn ceilings (pre-1978), cement siding/shingles, roof shingles, boiler/furnace insulation. Do NOT disturb without testing.', 'critical', 'hvac', 'Before any demolition, renovation, or HVAC work that disturbs insulation: test suspected materials. Licensed asbestos abatement required if positive. NESHAP notification required for commercial.', 'EPA NESHAP (40 CFR 61 Subpart M)', 21),
+-- Roofing
+('Original roof over 20 years', 'system_age_over', '{"system": "roof", "years": 20}', 'Roof is over 20 years old. Most asphalt shingle roofs last 20-30 years.', 'Typical asphalt shingle lifespan: 3-tab 15-20 years, architectural 25-30 years, designer 30-50 years. Signs of aging: curling, cracking, granule loss, exposed fiberglass mat, algae/moss growth.', 'warning', 'roofing', 'Roof inspection recommended before quoting. Check for: granule loss in gutters, daylight through attic boards, sagging decking, flashing condition, pipe boot condition.', NULL, 30),
+('Lead paint', 'year_built_before', '{"year": 1978}', 'Property built before 1978 is presumed to have lead-based paint. EPA RRP Rule applies.', 'Federal law (EPA RRP Rule) requires certified renovators for any work disturbing more than 6 sqft interior or 20 sqft exterior painted surfaces in pre-1978 homes. Fines up to $37,500/day per violation. Contractor must have EPA RRP firm certification.', 'critical', 'painting', 'Verify EPA RRP firm certification before quoting. Include lead-safe work practices in scope. Provide pre-renovation lead disclosure pamphlet to occupants.', 'EPA RRP Rule (40 CFR 745)', 40),
+-- General
+('Septic system age', 'year_built_before', '{"year": 1990}', 'Property likely has an aging septic system if not on municipal sewer. Inspect before excavation.', 'Septic tanks last 20-40 years. Drain fields last 15-30 years. Failure signs: soggy yard over drain field, sewage odor, slow drains throughout house, lush grass over septic area.', 'warning', 'plumbing', 'Locate and mark septic tank and drain field before any excavation work. Recommend septic inspection if not done in 3+ years.', NULL, 50),
+('Well water system', 'year_built_before', '{"year": 2000}', 'Property may be on well water. Verify water quality and pressure before plumbing work.', 'Well systems require: annual water quality testing, pressure tank maintenance, well cap inspection. Water treatment may be needed (iron, manganese, hardness, bacteria). Low flow (<5 GPM) affects fixture selection.', 'info', 'plumbing', 'Test well flow rate and water quality before quoting plumbing work. Well pump age matters — typical lifespan 10-15 years.', NULL, 51);
+```
+
+### Edge Functions
+
+**`property-intelligence-score`** — POST (called internally after layer contribution)
+- **Request:** `{ property_id: uuid }`
+- **Auth:** Service role (internal trigger)
+- **Process:** Count intelligence layers, count filled property columns, calculate score: base 10 points per layer (max 5 per trade), +5 per filled property column, +10 if year_built known, +10 if electrical/plumbing/HVAC types known. Score 0-100.
+- **Response:** `{ property_id, score, layer_count, field_count }`
+- **Errors:** 404 property not found
+
+### Dart Models
+
+**`lib/models/property_intelligence_layer.dart`** — Immutable. Fields: id, propertyId, companyId, tradeType, layerData (Map), sourceJobId, contributedBy, verified, confidenceScore, notes, createdAt, updatedAt. Computed: `tradeLabel`, `isVerified`.
+
+**`lib/models/property_data_sharing.dart`** — Immutable. Fields: id, propertyId, homeownerUserId, sharedWithCompanyId, shareLevel, shareAllContractors, expiresAt, revokedAt, createdAt.
+
+**`lib/models/property_age_alert.dart`** — Immutable. Fields: id, alertRuleName, conditionType, conditionJson, alertMessage, detailedExplanation, severity, tradeType, recommendation, regulatoryReference, sortOrder.
+
+### Flutter Screens
+
+**None new in DT1** — table creation and model definition only. Screens added in DT2.
+
+### Web CRM Pages
+
+**None new in DT1** — table creation and model definition only. Pages added in DT2.
+
+### Security Verification Checklist
+- [ ] RLS on property_intelligence_layers: own company data + shared data via property_data_sharing
+- [ ] RLS on property_data_sharing: only homeowner can create/modify sharing preferences
+- [ ] RLS on property_age_alerts: public read for active alerts, super_admin for modifications
+- [ ] ALTER properties: existing RLS still applies (company_id scoped)
+- [ ] ALTER home_service_history: existing RLS still applies
+- [ ] All new columns nullable with defaults (mobile backward compatibility)
+- [ ] Audit triggers on all new tables
+
+### Wiring to Existing Systems
+- properties table: new columns extend existing property records
+- home_service_history: new columns enable cross-company service visibility (when shared)
+- property_scans: Digital Twin pulls from Recon scan data (year_built, sqft, roof_type, etc.)
+- jobs: intelligence layers reference source_job_id
+- home_equipment: equipment age data feeds HVAC/plumbing age alerts
+
+### Steps
+- [ ] Migration: ALTER properties — add intelligence columns (score, year_built, sqft, systems, known_issues)
+- [ ] Migration: ALTER home_service_history — add sharing columns (company_name, trade_type, is_shared)
+- [ ] Migration: CREATE property_intelligence_layers with all columns, constraints, indexes, triggers
+- [ ] Migration: CREATE property_data_sharing with all columns, constraints, indexes, triggers
+- [ ] Migration: CREATE property_age_alerts with all columns, constraints, indexes, triggers
+- [ ] RLS: property_intelligence_layers — own company + shared via property_data_sharing
+- [ ] RLS: property_data_sharing — homeowner-only CRUD
+- [ ] RLS: property_age_alerts — public read, super_admin write
+- [ ] Seed: 15+ property age alerts (aluminum wiring, polybutylene, FPE panels, lead paint, R-22, asbestos, etc.)
+- [ ] Edge Function: property-intelligence-score — calculate and update score
 - [ ] Dart models: property_intelligence_layer.dart, property_data_sharing.dart, property_age_alert.dart
-- [ ] Verify: migration clean, age alerts seeded
-- [ ] Commit: `[P-DT1] Property Digital Twin foundation — intelligence layers + age alerts`
-
-### P-DT2 — Intelligence Layer Contribution (~8h)
-
-#### Steps
-- [ ] Edge Function: property-intelligence-score — recalculate score when new data added (count of layers, completeness of fields)
-- [ ] Flutter: job completion → "Add Property Intelligence" optional step (what did you learn about this property?)
-- [ ] Flutter: property detail screen enhancement — show trade layers, age alerts, intelligence score
-- [ ] Web CRM: property detail shows all intelligence layers, contributed by which company, verified status
-- [ ] Verify: intelligence score updates on contribution
-- [ ] Commit: `[P-DT2] Intelligence layer contribution flow + property detail enhancement`
-
-### P-DT3 — Data Sharing + Age Alerts (~8h)
-
-#### Steps
-- [ ] Client Portal: homeowner manages data sharing preferences (who can see their property data)
-- [ ] Client Portal: property intelligence view — all known data about their property, layers, history
-- [ ] Age alert system: when opening a property record, check property facts against alert rules, display warnings
-- [ ] Example: "This property was built in 1975 — may have aluminum wiring. Inspect before quoting electrical work."
-- [ ] Verify: sharing permissions enforced in RLS, age alerts display correctly
-- [ ] Commit: `[P-DT3] Property data sharing + age alert system`
-
-### P-DT4 — Digital Twin Testing (~4h)
-
-#### Steps
-- [ ] Test: multiple companies can contribute layers to same property
-- [ ] Test: sharing permissions work (homeowner controls access)
-- [ ] Test: intelligence score increases with more data
-- [ ] Test: age alerts trigger correctly for test properties
-- [ ] Test: property detail shows combined intelligence from all sources
-- [ ] Verify: all builds clean
-- [ ] Commit: `[P-DT4] Property Digital Twin testing`
+- [ ] Repository: property_intelligence_repository.dart
+- [ ] Verify: migrations clean, age alerts seeded, score calculation works
+- [ ] All builds pass: `dart analyze`, `npm run build` x 4
+- [ ] Commit: `[P-DT1] Property Digital Twin foundation — intelligence layers, data sharing, age alerts (15+ rules), intelligence score`
 
 ---
+
+### P-DT2 — Intelligence Layer Contribution Flow (~8h)
+
+**Goal:** Enable contractors to contribute property intelligence from job completions. Property detail screens show accumulated intelligence. Score updates on new contributions.
+
+### Edge Functions
+
+**`property-intelligence-contribute`** — POST
+- **Request:** `{ property_id: uuid, job_id?: uuid, trade_type: string, layer_data: object, notes?: string }`
+- **Auth:** Bearer JWT, company_id from token
+- **Process:** Validate property exists, create property_intelligence_layers record, update property columns if layer_data contains system info (e.g., plumbing_type, electrical_service_amps), call property-intelligence-score to recalculate, return updated property with new score.
+- **Response:** `{ layer_id: uuid, property_score: number, fields_updated: string[] }`
+- **Errors:** 401, 404 property not found, 422 invalid trade_type or missing layer_data
+
+### Flutter Screens
+
+**`lib/screens/jobs/job_completion_intelligence_screen.dart`** — Optional step shown after marking a job complete. "What did you learn about this property?" Trade-specific prompts:
+- Electrical: panel type/age, service amps, wiring type, issues found
+- Plumbing: pipe material, water heater type/age, water pressure, issues
+- HVAC: system type, refrigerant, age, condition, duct type
+- Roofing: material, age, layers, decking condition, ventilation
+- General: year built, foundation type, construction type, any issues
+4 states: loading, error, empty (no property linked to job — skip), data (contribution form).
+
+**`lib/screens/properties/property_intelligence_screen.dart`** — Enhanced property detail tab showing: intelligence score badge (0-100 with color), trade layers list (grouped by trade, showing contributing company name if shared, date, verified badge), age alerts (matched against property facts, sorted by severity), known issues list, system age timeline. 4 states.
+
+### Web CRM Pages
+
+**`/dashboard/properties/[id]/intelligence`** — Tab on property detail. Shows: intelligence score with progress ring, trade layers table (trade, data summary, contributed by, date, verified), age alerts panel (matched alerts with severity color coding), known issues list, action button "Contribute Intelligence."
+
+### Hooks
+
+**`web-portal/src/lib/hooks/use-property-intelligence.ts`** — Fetch intelligence layers for a property. Returns `{ layers, score, ageAlerts, loading, error, contributeLayer }`. Real-time subscription on property_intelligence_layers changes for this property.
+
+### Steps
+- [ ] Edge Function: property-intelligence-contribute — create layer, update property, recalculate score
+- [ ] Flutter: job completion intelligence screen — optional post-completion contribution
+- [ ] Flutter: property intelligence tab — score, trade layers, age alerts, known issues
+- [ ] Web CRM: property intelligence tab at /dashboard/properties/[id]/intelligence
+- [ ] Hook: use-property-intelligence.ts with real-time subscription
+- [ ] Wire: job completion flow — after status set to 'completed', show intelligence contribution prompt
+- [ ] Wire: property detail screen — add "Intelligence" tab with score badge
+- [ ] Verify: intelligence score updates on contribution, age alerts match property facts
+- [ ] All builds pass: `dart analyze`, `npm run build` x 4
+- [ ] Commit: `[P-DT2] Intelligence layer contribution flow + property detail enhancement`
+
+---
+
+### P-DT3 — Data Sharing + Age Alert System (~8h)
+
+**Goal:** Homeowner controls who can see their property intelligence data. Age alert system matches property facts against alert rules and displays warnings when contractors open property records.
+
+### Flutter Screens
+
+**`lib/screens/client_portal/property_sharing_screen.dart`** (Client Portal) — Homeowner sees: their property with all known intelligence, toggle "Share with all contractors" or manage per-company sharing, share level selector (basic=systems/age only, full=everything including service history, none=private). List of companies that have contributed data with option to revoke access. 4 states.
+
+**`lib/screens/client_portal/property_intelligence_view_screen.dart`** (Client Portal) — Homeowner sees combined property profile: all system types and ages, maintenance reminders based on age alerts, service history from all shared contractors, intelligence score. Plain language: "Your plumbing is copper, installed approximately 2005. No issues reported." 4 states.
+
+### Web CRM Pages (Client Portal)
+
+**`client-portal: /property/intelligence`** — Same as Flutter client portal screen. Shows property profile with all intelligence data. Sharing controls. Hook: `use-property-sharing.ts`.
+
+**`client-portal: /property/sharing`** — Manage sharing preferences. Toggle per-company, set share levels, revoke access.
+
+### Hooks
+
+**`client-portal/src/lib/hooks/use-property-sharing.ts`** — CRUD for property_data_sharing. Returns `{ sharingPrefs, loading, error, updateSharing, revokeSharing }`.
+
+### Edge Functions
+
+**`property-age-alerts-check`** — POST
+- **Request:** `{ property_id: uuid }`
+- **Auth:** Bearer JWT
+- **Process:** Load property record, load all active age alerts, match property facts against alert conditions (year_built vs year ranges, system types vs material_type_match, system ages vs system_age_over). Return matched alerts sorted by severity.
+- **Response:** `{ alerts: [{ id, alert_rule_name, alert_message, severity, recommendation, trade_type }], total_matches: number }`
+- **Errors:** 401, 404
+
+### Steps
+- [ ] Client Portal (Flutter): property sharing preferences screen — toggle sharing, per-company control
+- [ ] Client Portal (Flutter): property intelligence view — all known data in plain language
+- [ ] Client Portal (Web): /property/intelligence — same view
+- [ ] Client Portal (Web): /property/sharing — sharing management
+- [ ] Hook: use-property-sharing.ts (client-portal)
+- [ ] Edge Function: property-age-alerts-check — match property facts against alert rules
+- [ ] Age alert display: when opening property record, check and display warnings with severity colors
+- [ ] Wire: contractor opening property shows age alerts banner (e.g., "Built 1975 — may have aluminum wiring")
+- [ ] Wire: client portal "My Property" shows intelligence overview with maintenance tips
+- [ ] Verify: sharing permissions enforced in RLS (revoked = no access), age alerts display correctly
+- [ ] All builds pass: `dart analyze`, `npm run build` x 4
+- [ ] Commit: `[P-DT3] Property data sharing + age alert system`
+
+---
+
+### P-DT4 — Digital Twin Integration Testing (~4h)
+
+**Goal:** Verify cross-company intelligence accumulation, sharing permissions, score calculation, and age alert matching.
+
+### Steps
+- [ ] Test: company A contributes electrical layer to property X, company B contributes plumbing layer
+- [ ] Test: both layers visible when homeowner shares with both companies
+- [ ] Test: company A cannot see company B's layers if homeowner revokes sharing
+- [ ] Test: share_all_contractors = true makes layers visible to any company with a job at that property
+- [ ] Test: intelligence score increases with more layers and filled fields
+- [ ] Test: age alerts trigger correctly for test property (year_built=1972 triggers aluminum wiring + lead paint + galvanized pipes)
+- [ ] Test: age alerts do NOT trigger for modern property (year_built=2020)
+- [ ] Test: property detail shows combined intelligence from all shared sources
+- [ ] Test: client portal property view shows all data in plain language
+- [ ] Test: revoking sharing immediately hides data from revoked company
+- [ ] Test: expired sharing (expires_at in past) correctly blocks access
+- [ ] Test: soft delete on layers works correctly
+- [ ] Verify: all builds clean across all 5 apps
+- [ ] All builds pass: `dart analyze`, `npm run build` x 4
+- [ ] Commit: `[P-DT4] Property Digital Twin integration testing — cross-company, sharing, alerts`
+
+---
+
+---
+
 
 ## Phase INS: Inspector Deep Buildout (~52 hrs, 8 sprints)
 
@@ -12438,6 +19287,2013 @@ When inspector takes a photo during inspection execution, add search bar to atta
 - [ ] Customer satisfaction by crew
 - [ ] Fuel cost per move
 - [ ] Route optimization suggestions
+
+---
+
+
+## ══════════════════════════════════════════════════════════
+## PHASE ZFORGE-FRESH — DOCUMENT FRESHNESS ENGINE
+## ══════════════════════════════════════════════════════════
+
+### ZFORGE-FRESH1 — Template Version Control + Freshness Schema (~8h)
+
+### Tables
+
+```sql
+-- Template master registry — every document template in the system
+CREATE TABLE zdoc_template_registry (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  -- Ownership: NULL company_id = Zafto system template, non-NULL = company custom
+  company_id UUID REFERENCES companies(id),
+  -- Identity
+  template_code TEXT NOT NULL, -- 'LIEN_WAIVER_CA_CONDITIONAL', 'CONTRACT_RESIDENTIAL_TX', etc.
+  template_name TEXT NOT NULL,
+  template_category TEXT NOT NULL CHECK (template_category IN (
+    'estimate', 'proposal', 'invoice', 'contract', 'change_order',
+    'lien_waiver', 'permit_application', 'inspection_report',
+    'safety_form', 'daily_log', 'punch_list', 'rfi', 'submittal',
+    'pay_application', 'warranty_certificate', 'completion_certificate',
+    'work_authorization', 'subcontractor_agreement', 'scope_of_work',
+    'insurance_coi', 'moisture_doc', 'drying_log', 'contents_inventory',
+    'progress_report', 'photo_report', 'w9_collection', 'form_1099',
+    'listing_agreement', 'buyer_agency', 'purchase_agreement',
+    'disclosure_form', 'cma_report', 'addendum', 'referral_agreement',
+    'inspection_pre_agreement', 'damage_assessment', 'supplement_request',
+    'proof_of_loss', 'assignment_of_benefits', 'maintenance_record',
+    'home_inventory', 'custom'
+  )),
+  -- Applicability
+  entity_types TEXT[] NOT NULL DEFAULT '{contractor}', -- which company types can use this
+  trade_types TEXT[], -- NULL = all trades, or ['hvac', 'plumbing', 'electrical']
+  applicable_states TEXT[], -- NULL = all states, or ['CA', 'TX', 'FL']
+  -- Legal classification
+  is_legally_regulated BOOLEAN DEFAULT false, -- true = state has statutory requirements
+  statutory_reference TEXT, -- e.g., 'CA Civil Code 8132-8138', 'TX Property Code 53.281'
+  requires_notarization BOOLEAN DEFAULT false,
+  requires_witness BOOLEAN DEFAULT false,
+  e_signature_allowed BOOLEAN DEFAULT true, -- some docs can't be e-signed in some states
+  -- Freshness tracking
+  last_verified_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  last_verified_by TEXT, -- 'system', 'legal_review', 'community_report'
+  verification_status TEXT DEFAULT 'verified' CHECK (verification_status IN (
+    'verified', 'review_needed', 'stale', 'superseded', 'deprecated'
+  )),
+  staleness_threshold_days INTEGER DEFAULT 180, -- 6 months default
+  -- Content
+  current_version_id UUID, -- FK to zdoc_template_versions (set after first version created)
+  -- Template structure (JSON schema for the template builder)
+  template_schema JSONB NOT NULL, -- sections, fields, conditional logic, merge tags
+  -- Metadata
+  description TEXT,
+  usage_count INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE zdoc_template_registry ENABLE ROW LEVEL SECURITY;
+CREATE INDEX idx_zdoc_template_registry_company ON zdoc_template_registry (company_id);
+CREATE INDEX idx_zdoc_template_registry_category ON zdoc_template_registry (template_category);
+CREATE INDEX idx_zdoc_template_registry_code ON zdoc_template_registry (template_code);
+CREATE INDEX idx_zdoc_template_registry_states ON zdoc_template_registry USING GIN (applicable_states);
+CREATE INDEX idx_zdoc_template_registry_freshness ON zdoc_template_registry (verification_status, last_verified_at);
+
+CREATE TRIGGER zdoc_template_registry_updated_at BEFORE UPDATE ON zdoc_template_registry FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER zdoc_template_registry_audit AFTER INSERT OR UPDATE OR DELETE ON zdoc_template_registry FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+-- RLS: System templates (company_id IS NULL) readable by all authenticated users
+-- Company templates readable/writable only by that company
+CREATE POLICY "zdoc_template_registry_select" ON zdoc_template_registry FOR SELECT USING (
+  company_id IS NULL OR company_id = auth.company_id()
+);
+CREATE POLICY "zdoc_template_registry_insert" ON zdoc_template_registry FOR INSERT WITH CHECK (
+  company_id = auth.company_id()
+);
+CREATE POLICY "zdoc_template_registry_update" ON zdoc_template_registry FOR UPDATE USING (
+  company_id = auth.company_id() AND auth.user_role() IN ('owner', 'admin')
+);
+CREATE POLICY "zdoc_template_registry_delete" ON zdoc_template_registry FOR DELETE USING (
+  company_id = auth.company_id() AND auth.user_role() = 'owner'
+);
+```
+
+```sql
+-- Template versions — immutable history of every template change
+CREATE TABLE zdoc_template_versions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  template_id UUID NOT NULL REFERENCES zdoc_template_registry(id) ON DELETE CASCADE,
+  version_number INTEGER NOT NULL,
+  -- Content snapshot (immutable once created)
+  template_content JSONB NOT NULL, -- full rendered template: sections, text, merge tags, styles
+  template_html TEXT, -- pre-rendered HTML for PDF generation
+  -- Change tracking
+  change_summary TEXT NOT NULL, -- "Updated cancellation clause per 2026 CA SB-1234"
+  change_type TEXT DEFAULT 'content' CHECK (change_type IN (
+    'content', 'legal_update', 'state_law_change', 'formatting',
+    'new_section', 'removed_section', 'merge_tag_update', 'branding'
+  )),
+  changed_by UUID REFERENCES users(id),
+  -- Legal verification
+  verified_at TIMESTAMPTZ,
+  verified_by TEXT, -- 'legal_team', 'community', 'auto_regulatory_check'
+  regulatory_reference TEXT, -- what law/regulation prompted this change
+  -- Status
+  status TEXT DEFAULT 'active' CHECK (status IN ('draft', 'active', 'superseded', 'archived')),
+  effective_date DATE DEFAULT CURRENT_DATE,
+  superseded_date DATE,
+  superseded_by UUID REFERENCES zdoc_template_versions(id),
+  -- Metadata
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE zdoc_template_versions ENABLE ROW LEVEL SECURITY;
+CREATE INDEX idx_zdoc_template_versions_template ON zdoc_template_versions (template_id, version_number DESC);
+CREATE INDEX idx_zdoc_template_versions_status ON zdoc_template_versions (status);
+CREATE UNIQUE INDEX idx_zdoc_template_versions_unique ON zdoc_template_versions (template_id, version_number);
+
+CREATE TRIGGER zdoc_template_versions_audit AFTER INSERT OR UPDATE OR DELETE ON zdoc_template_versions FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+-- RLS: follows parent template visibility
+CREATE POLICY "zdoc_template_versions_select" ON zdoc_template_versions FOR SELECT USING (
+  EXISTS (
+    SELECT 1 FROM zdoc_template_registry t
+    WHERE t.id = template_id AND (t.company_id IS NULL OR t.company_id = auth.company_id())
+  )
+);
+CREATE POLICY "zdoc_template_versions_insert" ON zdoc_template_versions FOR INSERT WITH CHECK (
+  EXISTS (
+    SELECT 1 FROM zdoc_template_registry t
+    WHERE t.id = template_id AND t.company_id = auth.company_id()
+  )
+);
+```
+
+```sql
+-- Generated document audit trail — every document ever produced from a template
+CREATE TABLE zdoc_generated_audit (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  template_id UUID NOT NULL REFERENCES zdoc_template_registry(id),
+  template_version_id UUID NOT NULL REFERENCES zdoc_template_versions(id),
+  -- What was generated
+  document_type TEXT NOT NULL, -- mirrors template_category
+  generated_for_job_id UUID REFERENCES jobs(id),
+  generated_for_customer_id UUID REFERENCES customers(id),
+  -- Merge data snapshot (what data was filled in — immutable legal record)
+  merge_data_snapshot JSONB NOT NULL,
+  -- Output
+  output_format TEXT DEFAULT 'pdf' CHECK (output_format IN ('pdf', 'html', 'docx')),
+  output_storage_path TEXT NOT NULL, -- Supabase Storage path
+  output_hash TEXT NOT NULL, -- SHA-256 of generated file (tamper detection)
+  -- Signatures
+  signature_status TEXT DEFAULT 'none' CHECK (signature_status IN (
+    'none', 'pending', 'partially_signed', 'fully_signed', 'declined', 'voided'
+  )),
+  -- Freshness at time of generation
+  template_was_verified BOOLEAN NOT NULL, -- was the template verified when this was generated?
+  template_verification_age_days INTEGER, -- how old was the verification?
+  -- Metadata
+  generated_by UUID NOT NULL REFERENCES users(id),
+  generated_at TIMESTAMPTZ DEFAULT now(),
+  voided_at TIMESTAMPTZ,
+  voided_reason TEXT
+);
+
+ALTER TABLE zdoc_generated_audit ENABLE ROW LEVEL SECURITY;
+CREATE INDEX idx_zdoc_generated_audit_company ON zdoc_generated_audit (company_id);
+CREATE INDEX idx_zdoc_generated_audit_template ON zdoc_generated_audit (template_id);
+CREATE INDEX idx_zdoc_generated_audit_job ON zdoc_generated_audit (generated_for_job_id);
+CREATE INDEX idx_zdoc_generated_audit_customer ON zdoc_generated_audit (generated_for_customer_id);
+CREATE INDEX idx_zdoc_generated_audit_generated_at ON zdoc_generated_audit (generated_at DESC);
+
+CREATE TRIGGER zdoc_generated_audit_audit AFTER INSERT OR UPDATE OR DELETE ON zdoc_generated_audit FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+CREATE POLICY "zdoc_generated_audit_select" ON zdoc_generated_audit FOR SELECT USING (company_id = auth.company_id());
+CREATE POLICY "zdoc_generated_audit_insert" ON zdoc_generated_audit FOR INSERT WITH CHECK (company_id = auth.company_id());
+-- No UPDATE or DELETE — generated docs are immutable legal records. Only voiding is allowed via specific Edge Function.
+```
+
+```sql
+-- Regulatory change tracker — monitors law/regulation changes affecting templates
+CREATE TABLE zdoc_regulatory_changes (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  -- What changed
+  jurisdiction TEXT NOT NULL, -- 'US_FEDERAL', 'CA', 'TX', 'FL', etc.
+  regulation_reference TEXT NOT NULL, -- 'CA Civil Code 8132', 'OSHA 29 CFR 1926.502'
+  change_title TEXT NOT NULL,
+  change_description TEXT NOT NULL,
+  change_source_url TEXT, -- link to the actual regulation/bill
+  -- Timing
+  effective_date DATE NOT NULL,
+  discovered_at TIMESTAMPTZ DEFAULT now(),
+  -- Impact
+  affected_template_categories TEXT[], -- which template categories need review
+  affected_template_ids UUID[], -- specific templates flagged
+  severity TEXT DEFAULT 'review' CHECK (severity IN ('critical', 'high', 'review', 'informational')),
+  -- Resolution
+  resolution_status TEXT DEFAULT 'pending' CHECK (resolution_status IN (
+    'pending', 'in_review', 'templates_updated', 'no_action_needed', 'dismissed'
+  )),
+  resolved_at TIMESTAMPTZ,
+  resolved_by TEXT,
+  resolution_notes TEXT,
+  -- Metadata
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE zdoc_regulatory_changes ENABLE ROW LEVEL SECURITY;
+CREATE INDEX idx_zdoc_regulatory_changes_jurisdiction ON zdoc_regulatory_changes (jurisdiction);
+CREATE INDEX idx_zdoc_regulatory_changes_status ON zdoc_regulatory_changes (resolution_status);
+CREATE INDEX idx_zdoc_regulatory_changes_effective ON zdoc_regulatory_changes (effective_date);
+
+CREATE TRIGGER zdoc_regulatory_changes_audit AFTER INSERT OR UPDATE OR DELETE ON zdoc_regulatory_changes FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+-- System-level table — readable by admins, writable by system only
+CREATE POLICY "zdoc_regulatory_changes_select" ON zdoc_regulatory_changes FOR SELECT USING (
+  auth.user_role() IN ('owner', 'admin', 'super_admin')
+);
+```
+
+```sql
+-- Community-reported template issues
+CREATE TABLE zdoc_template_reports (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  template_id UUID NOT NULL REFERENCES zdoc_template_registry(id),
+  reported_by_company_id UUID NOT NULL REFERENCES companies(id),
+  reported_by_user_id UUID NOT NULL REFERENCES users(id),
+  -- Report details
+  report_type TEXT NOT NULL CHECK (report_type IN (
+    'outdated_law', 'incorrect_language', 'missing_clause',
+    'state_specific_error', 'formatting_issue', 'other'
+  )),
+  description TEXT NOT NULL,
+  state_affected TEXT, -- if state-specific
+  supporting_url TEXT, -- link to updated law/regulation
+  -- Resolution
+  status TEXT DEFAULT 'submitted' CHECK (status IN (
+    'submitted', 'under_review', 'confirmed', 'fixed', 'dismissed'
+  )),
+  resolution_notes TEXT,
+  resolved_at TIMESTAMPTZ,
+  -- Metadata
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE zdoc_template_reports ENABLE ROW LEVEL SECURITY;
+CREATE INDEX idx_zdoc_template_reports_template ON zdoc_template_reports (template_id);
+CREATE INDEX idx_zdoc_template_reports_status ON zdoc_template_reports (status);
+
+CREATE TRIGGER zdoc_template_reports_audit AFTER INSERT OR UPDATE OR DELETE ON zdoc_template_reports FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+CREATE POLICY "zdoc_template_reports_select" ON zdoc_template_reports FOR SELECT USING (
+  reported_by_company_id = auth.company_id() OR auth.user_role() = 'super_admin'
+);
+CREATE POLICY "zdoc_template_reports_insert" ON zdoc_template_reports FOR INSERT WITH CHECK (
+  reported_by_company_id = auth.company_id()
+);
+```
+
+### Steps
+- [ ] Migration: CREATE TABLE zdoc_template_registry + RLS + indexes + triggers
+- [ ] Migration: CREATE TABLE zdoc_template_versions + RLS + indexes + triggers
+- [ ] Migration: CREATE TABLE zdoc_generated_audit + RLS + indexes + triggers
+- [ ] Migration: CREATE TABLE zdoc_regulatory_changes + RLS + indexes + triggers
+- [ ] Migration: CREATE TABLE zdoc_template_reports + RLS + indexes + triggers
+- [ ] Verify: all 5 tables have company_id scoping, RLS enabled, audit triggers
+- [ ] Verify: zdoc_generated_audit has NO update/delete policies (immutable)
+
+---
+
+### ZFORGE-FRESH2 — Staleness Detection Edge Function + Alerts (~6h)
+
+### Edge Function: `zdoc-freshness-monitor`
+
+**Trigger:** CRON — runs daily at 2 AM UTC
+
+**Logic:**
+```
+1. SELECT all templates WHERE verification_status = 'verified'
+   AND last_verified_at < now() - (staleness_threshold_days || ' days')::interval
+2. For each stale template:
+   a. UPDATE verification_status = 'stale'
+   b. Find all companies that used this template in last 90 days
+   c. Create notification for each company: "Template [name] is due for review"
+3. SELECT all templates WHERE verification_status = 'review_needed'
+   AND is_legally_regulated = true
+   → Escalate: these are CRITICAL (statutory forms that may have changed)
+4. Log summary to zdoc_regulatory_changes
+```
+
+**Response:** `{ stale_count, review_needed_count, companies_notified }`
+
+### Edge Function: `zdoc-regulatory-monitor`
+
+**Trigger:** CRON — runs weekly on Sunday at 3 AM UTC
+
+**Logic:**
+```
+1. Fetch eCFR API for changes in:
+   - Title 29 (Labor/OSHA) — safety forms
+   - Title 40 (Environmental/EPA) — compliance forms
+   - Title 24 (Housing/HUD) — construction contracts
+2. For each detected change:
+   a. INSERT into zdoc_regulatory_changes
+   b. Match affected_template_categories
+   c. Flag matching templates: verification_status = 'review_needed'
+   d. Notify super_admins
+3. Check state legislature RSS feeds for construction law changes (top 10 states by user count)
+```
+
+**API Cost:** $0 — eCFR API is free (US government), RSS feeds are free
+
+### Ops Portal — Staleness Command Center
+
+`ops-portal/src/app/document-health/page.tsx`
+
+This is the **nerve center** for document freshness across the ENTIRE platform. Super_admins see:
+- **Red alert banner** at top: "X templates are STALE across Y companies. Z are legally regulated."
+- Table: every stale/review_needed template, sorted by severity (legally regulated first)
+- Per-template: how many companies used it, how many docs generated, last verified date
+- One-click: "Mark as reviewed" (resets last_verified_at) or "Initiate update" (creates new version)
+- Filter by: state, category, severity, entity_type
+- Chart: staleness trend over time (are we getting better or worse?)
+- **CRITICAL ROW HIGHLIGHTING**: any template where `is_legally_regulated = true AND verification_status IN ('stale', 'review_needed')` gets RED background — these are lawsuit magnets
+
+Hook: `use-document-health.ts`
+
+### Official Source Links — State Law References
+
+Every legally regulated template MUST carry:
+```sql
+-- Add to zdoc_template_registry
+official_source_url TEXT, -- direct link to state statute (e.g., https://leginfo.legislature.ca.gov/...)
+official_source_name TEXT, -- 'California Legislature', 'Texas Property Code', etc.
+official_source_last_checked TIMESTAMPTZ, -- when we last verified the link still works
+```
+
+Display in UI: "This template is based on [CA Civil Code 8132-8138]. View official source →"
+- Link opens the actual state statute in a new tab
+- User can verify themselves that our template matches current law
+- If link is dead (404), auto-flag template for review
+
+### Link Verification CRON
+Add to `zdoc-freshness-monitor`:
+```
+5. For each template WHERE official_source_url IS NOT NULL:
+   a. HEAD request to official_source_url
+   b. IF 404/500 → flag template: verification_status = 'review_needed'
+   c. Log broken link in zdoc_regulatory_changes
+```
+
+### Steps
+- [ ] Edge Function: `zdoc-freshness-monitor` — CRON daily staleness scan
+- [ ] Edge Function: `zdoc-regulatory-monitor` — CRON weekly regulatory change detection
+- [ ] eCFR API integration: Title 29, 40, 24 change detection
+- [ ] Notification integration: use existing notification system for staleness alerts
+- [ ] Dashboard widget: "X templates need review" on CRM dashboard for owners/admins
+- [ ] **Ops Portal page: `document-health/page.tsx`** — staleness command center with red alerts
+- [ ] **Ops Portal hook: `use-document-health.ts`**
+- [ ] Migration: ADD COLUMNS official_source_url, official_source_name, official_source_last_checked to zdoc_template_registry
+- [ ] Official source link display on every legally regulated template
+- [ ] Link verification in CRON (HEAD request, 404 detection)
+- [ ] Verify: CRON schedule registered in Supabase
+- [ ] Verify: notifications actually deliver (SMS via SignalWire, email via SendGrid)
+- [ ] Verify: Ops Portal red alerts render for stale legally regulated templates
+
+---
+
+### ZFORGE-FRESH3 — Generation-Time Freshness Verification (~4h)
+
+### Logic: Every Document Generation Must Check Freshness
+
+When ANY system generates a document from a template:
+
+```
+1. Look up template → check verification_status
+2. IF 'stale' or 'review_needed':
+   → Show WARNING banner: "This template was last verified [X] days ago.
+     It may not reflect current [STATE] legal requirements.
+     Using outdated legal documents may expose you to liability."
+   → User must acknowledge warning to proceed (checkbox: "I understand this template
+     may be outdated and accept responsibility for verifying its accuracy")
+   → Log acknowledgment in zdoc_generated_audit.merge_data_snapshot
+3. IF 'superseded':
+   → BLOCK generation. Show: "This template has been replaced by [new version].
+     The old version can no longer be used."
+   → Offer link to new version
+4. IF 'verified':
+   → Proceed normally
+   → Still stamp: template_was_verified = true,
+     template_verification_age_days = days since last_verified_at
+5. ALWAYS add disclaimer footer to generated PDF:
+   "Generated by Zafto on [DATE]. Template version [X], last verified [DATE].
+    This document is provided as a convenience tool and does not constitute legal advice.
+    Users are responsible for ensuring compliance with applicable local, state, and
+    federal laws. Consult a licensed attorney for legal guidance."
+```
+
+### Steps
+- [ ] Freshness check utility function: `checkTemplateFreshness(templateId)` — returns status + warnings
+- [ ] Warning modal component (Flutter): `TemplateStaleWarningDialog`
+- [ ] Warning modal component (Web): `TemplateStaleWarning.tsx`
+- [ ] Acknowledgment logging in `zdoc_generated_audit.merge_data_snapshot`
+- [ ] Superseded template blocking (hard block, cannot proceed)
+- [ ] Disclaimer footer injection into PDF generation pipeline
+- [ ] Disclaimer footer injection into HTML preview
+- [ ] Verify: no document can be generated without freshness check
+- [ ] Verify: disclaimer appears on every generated document
+
+---
+
+### ZFORGE-FRESH4 — Community Reporting + Resolution Workflow (~4h)
+
+### Flutter Screen: `lib/screens/documents/report_template_issue_screen.dart`
+- Report type dropdown (outdated law, incorrect language, missing clause, state error, formatting, other)
+- Description text field (required)
+- State affected dropdown (optional)
+- Supporting URL field (optional — link to updated law)
+- Submit button
+- 4 states: loading (submitting), error (retry), success (thank you message), data (form)
+
+### Web CRM Page: `web-portal/src/app/documents/template-reports/page.tsx`
+- For owners/admins: view reports submitted by team
+- For super_admins: view ALL reports across all companies
+- Resolution workflow: under_review → confirmed → fixed (or dismissed)
+- Hook: `use-template-reports.ts`
+
+### Edge Function: `zdoc-process-report`
+- **Method:** POST
+- **Auth:** JWT required
+- **Request:** `{ template_id, report_type, description, state_affected?, supporting_url? }`
+- **Logic:**
+  1. INSERT into zdoc_template_reports
+  2. IF report_type = 'outdated_law' AND is_legally_regulated = true:
+     → Auto-flag template: verification_status = 'review_needed'
+     → Notify super_admins immediately
+  3. IF 3+ reports on same template from different companies:
+     → Auto-escalate to 'critical'
+- **Response:** `{ report_id, status: 'submitted' }`
+
+### Steps
+- [ ] Flutter screen: report template issue form
+- [ ] Web CRM page: template reports management
+- [ ] Hook: `use-template-reports.ts`
+- [ ] Edge Function: `zdoc-process-report`
+- [ ] Auto-escalation logic: 3+ reports = critical
+- [ ] Auto-flag legally regulated templates on outdated_law reports
+- [ ] Notification to super_admins for critical reports
+- [ ] Verify: reports visible only to reporting company + super_admins
+
+---
+
+### ZFORGE-FRESH5 — Impact Analysis + Mass Notification (~4h)
+
+### When a Template Error Is Confirmed:
+
+```
+1. Query zdoc_generated_audit for all documents generated from this template
+   WHERE generated_at > [date error was introduced]
+2. Group by company_id
+3. For each affected company:
+   a. Count documents generated with the flawed template
+   b. List jobs/customers affected
+   c. Send notification: "A template you used ([name]) has been updated due to
+      [reason]. [X] documents generated between [start] and [end] may need review.
+      Updated template is now available."
+4. Offer bulk re-generation: company can re-generate all affected documents
+   with the corrected template (new version, old ones marked superseded)
+5. Log the entire incident in zdoc_regulatory_changes with full resolution trail
+```
+
+### Steps
+- [ ] Impact analysis query: find all generated docs from a specific template version
+- [ ] Affected company/job/customer grouping
+- [ ] Mass notification: "Template updated, your documents may need review"
+- [ ] Bulk re-generation offer (opt-in, never auto-replace signed docs)
+- [ ] Incident logging with full resolution trail
+- [ ] CRM dashboard: "Template Update Alert" card showing affected documents
+- [ ] Verify: signed documents are NEVER auto-replaced (legal record)
+- [ ] Verify: old versions remain accessible for audit purposes
+
+---
+
+### Security Verification Checklist
+- [ ] RLS enabled on ALL 5 tables
+- [ ] company_id scoping on all company-specific data
+- [ ] System templates (company_id IS NULL) readable by all authenticated, writable by none (except super_admin direct DB)
+- [ ] Generated document audit trail is IMMUTABLE (no UPDATE/DELETE policies)
+- [ ] Template versions are IMMUTABLE once status = 'active' (can only be superseded, never edited)
+- [ ] SHA-256 hash on every generated PDF for tamper detection
+- [ ] Disclaimer footer cannot be removed by end users
+- [ ] Report submissions rate-limited (prevent spam)
+- [ ] Super_admin access verified for regulatory change management
+
+### Wiring to Existing Systems
+- **ZForge (F10):** zdoc_templates, zdoc_generated, zdoc_signatures — this spec EXTENDS the existing ZForge tables
+- **Jobs:** generated documents link to jobs via generated_for_job_id
+- **Customers:** generated documents link to customers
+- **Notifications:** staleness alerts via existing notification system (SignalWire SMS, SendGrid email)
+- **Audit Log:** all changes tracked via audit_trigger_fn()
+- **Every document-generating sprint** (U-CO, U-LOG, L sprints, RE sprints, etc.) MUST call checkTemplateFreshness() before generating
+
+### Legal Defensive Creation Philosophy
+
+**Core principle: Zafto assumes every document will end up in court.**
+
+Every design decision optimizes for the scenario where a contractor, realtor, or adjuster is sitting in a courtroom and opposing counsel asks: "How do you know this document was legally valid when you used it?"
+
+Zafto's answer, built into the system:
+1. "The template was verified against [STATE] [STATUTE] on [DATE]. Here's the link to the official source."
+2. "Version [X] was active when this document was generated. Here's the full version history showing every change and why."
+3. "The SHA-256 hash proves this document has not been tampered with since generation."
+4. "The e-signature meets ESIGN Act and [STATE] UETA requirements. Here's the Certificate of Completion with IP address, timestamp, and signer identity verification."
+5. "Our system automatically monitors for regulatory changes and flagged [X] updates in [STATE] during this period. All were applied within [Y] days."
+
+**Additional Legal Safeguards:**
+- Disclaimer on EVERY generated document (owner directive S143)
+- "Not legal advice" — explicitly stated, cannot be removed
+- Version history is a LEGAL ASSET in disputes
+- Generated document immutability = evidence preservation (no UPDATE/DELETE on zdoc_generated_audit)
+- State-specific statutory forms MUST use exact required language (word-for-word where required by statute)
+- E-signature restrictions: some states prohibit e-signing certain construction docs (mechanic's liens in some states)
+- Official source URL on every legally regulated template — user can verify themselves
+- Ops Portal red alerts ensure Zafto team catches staleness before users do
+- Community reporting creates crowdsourced vigilance across entire user base
+- Impact analysis ensures if we DO miss something, every affected user is notified immediately
+
+### API Cost: $0/month
+- eCFR API: free (US government)
+- State legislature RSS feeds: free
+- All processing: local/Edge Functions
+
+### Total Estimate: ~26 hours
+| Sprint | Work | Hours |
+|--------|------|-------|
+| ZFORGE-FRESH1 | 5 tables + migration + RLS + indexes + triggers | 8 |
+| ZFORGE-FRESH2 | Staleness CRON + regulatory monitor EFs | 6 |
+| ZFORGE-FRESH3 | Generation-time freshness checks + disclaimer injection | 4 |
+| ZFORGE-FRESH4 | Community reporting + resolution workflow | 4 |
+| ZFORGE-FRESH5 | Impact analysis + mass notification + bulk re-gen | 4 |
+
+
+---
+
+
+## ══════════════════════════════════════════════════════════
+## PHASE SHARED — Cross-App Packages
+## ══════════════════════════════════════════════════════════
+
+### SHARED-PKG1 — Extract Sketch Core Package (~12h)
+
+**Goal**: Extract the sketch engine from `lib/screens/walkthrough/` and supporting files into `packages/sketch_core/` as a standalone Flutter package that any app configuration can import. The existing Trades app then becomes a consumer of this package.
+
+#### 1.1 Package Setup
+- [ ] Create `packages/sketch_core/` directory with standard Flutter package structure
+- [ ] Create `packages/sketch_core/pubspec.yaml`:
+  ```yaml
+  name: sketch_core
+  description: Zafto CAD-grade sketch engine — floor plan drawing, LiDAR scan, trade layers, export
+  version: 1.0.0
+
+  environment:
+    sdk: '>=3.2.0 <4.0.0'
+    flutter: '>=3.16.0'
+
+  dependencies:
+    flutter:
+      sdk: flutter
+    field_toolkit:
+      path: ../field_toolkit
+    pdf: ^3.10.0
+    printing: ^5.12.0
+    share_plus: ^7.2.0
+    path_provider: ^2.1.0
+    hive: ^2.2.3
+    hive_flutter: ^1.1.0
+    lucide_icons: ^0.257.0
+    uuid: ^4.2.0
+
+  dev_dependencies:
+    flutter_test:
+      sdk: flutter
+    flutter_lints: ^3.0.0
+  ```
+- [ ] Create barrel export `packages/sketch_core/lib/sketch_core.dart`
+
+#### 1.2 Model Extraction
+Move these files from `lib/models/` to `packages/sketch_core/lib/src/models/`:
+- [ ] `floor_plan_elements.dart` — FloorPlanData, Wall, Door, Window, Fixture, Label, Dimension, all enums (DoorType, WindowType, FixtureType, FixtureCategory, SketchTool, MeasurementUnit)
+- [ ] `trade_layer.dart` — TradeLayer, TradeLayerType, TradeLayerData, DamageLayerData, MoistureReading, ContainmentLine
+- [ ] `floor_plan.dart` — FloorPlan model (Supabase row wrapper)
+- [ ] `floor_plan_layer.dart` — FloorPlanLayer model
+- [ ] `floor_plan_room.dart` — FloorPlanRoom model
+- [ ] `floor_plan_snapshot.dart` — FloorPlanSnapshot model
+- [ ] `floor_plan_photo_pin.dart` — FloorPlanPhotoPin model
+- [ ] Original files replaced with re-exports: `export 'package:sketch_core/sketch_core.dart';`
+
+#### 1.3 Painter Extraction
+- [ ] Move `lib/screens/walkthrough/sketch_painter.dart` to `packages/sketch_core/lib/src/painters/sketch_painter.dart`
+- [ ] Move `lib/painters/trade_layer_painter.dart` to `packages/sketch_core/lib/src/painters/trade_layer_painter.dart`
+
+#### 1.4 Service Extraction
+Move from `lib/services/` to `packages/sketch_core/lib/src/services/`:
+- [ ] `sketch_export_service.dart` — PDF/PNG/DXF/FML export
+- [ ] `dxf_writer.dart` — DXF format generator
+- [ ] `fml_writer.dart` — FML format generator
+- [ ] `roomplan_bridge.dart` — LiDAR platform channel
+- [ ] `roomplan_converter.dart` — CapturedRoom to FloorPlanDataV2
+- [ ] `floor_plan_sync_service.dart` — Offline-first sync
+- [ ] `floor_plan_snapshot_service.dart` — Snapshot save/restore
+- [ ] `floor_plan_thumbnail_service.dart` — Thumbnail generation
+
+#### 1.5 Repository Extraction
+- [ ] Move `lib/repositories/floor_plan_repository.dart` to `packages/sketch_core/lib/src/repositories/floor_plan_repository.dart`
+- [ ] Repository takes a Supabase client instance via constructor injection (NOT import from app's `core/supabase_client.dart`)
+- [ ] Interface: `abstract class FloorPlanRepository { ... }` + `class SupabaseFloorPlanRepository implements FloorPlanRepository`
+
+#### 1.6 Widget Extraction
+Move from `lib/widgets/sketch/` to `packages/sketch_core/lib/src/widgets/`:
+- [ ] `trade_toolbar.dart`
+- [ ] `layer_panel.dart`
+- [ ] `lidar_scan_screen.dart`
+- [ ] `manual_room_entry.dart`
+- [ ] Move `lib/widgets/laser_meter_sheet.dart` to package
+
+#### 1.7 Configuration API
+
+```dart
+/// packages/sketch_core/lib/src/config/sketch_config.dart
+
+/// Controls which tools and features are available in the sketch editor.
+/// Each entity type gets a different config.
+class SketchConfig {
+  /// Which drawing tools are enabled
+  final Set<SketchTool> enabledTools;
+
+  /// Which trade layers are available
+  final Set<TradeLayerType> enabledTradeLayers;
+
+  /// Whether LiDAR scanning is offered (if device supports it)
+  final bool enableLidar;
+
+  /// Whether manual room entry is available
+  final bool enableManualEntry;
+
+  /// Which export formats are available
+  final Set<ExportFormat> enabledExports;
+
+  /// Whether auto-estimate pipeline is available
+  final bool enableAutoEstimate;
+
+  /// Whether the user can draw walls (vs annotation-only)
+  final bool enableWallDrawing;
+
+  /// Whether the user can place fixtures
+  final bool enableFixturePlacement;
+
+  /// Whether annotation mode is enabled (text notes, markers)
+  final bool enableAnnotation;
+
+  /// Whether photo overlay is available
+  final bool enablePhotoOverlay;
+
+  /// Whether room labeling auto-calculates sqft
+  final bool enableSqftCalculation;
+
+  /// Whether "Share with Contractor" action is available
+  final bool enableShareWithContractor;
+
+  /// Whether "Request Quote" flow is available
+  final bool enableRequestQuote;
+
+  /// Whether "Attach to Listing" action is available
+  final bool enableAttachToListing;
+
+  /// Whether damage mapping tools are enabled
+  final bool enableDamageMapping;
+
+  /// Custom toolbar label (e.g., "Floor Plan" vs "Annotation" vs "Sketch")
+  final String toolbarTitle;
+
+  /// Maximum number of floors allowed (null = unlimited)
+  final int? maxFloors;
+
+  const SketchConfig({
+    required this.enabledTools,
+    this.enabledTradeLayers = const {},
+    this.enableLidar = true,
+    this.enableManualEntry = true,
+    this.enabledExports = const {ExportFormat.pdf, ExportFormat.png},
+    this.enableAutoEstimate = false,
+    this.enableWallDrawing = true,
+    this.enableFixturePlacement = true,
+    this.enableAnnotation = true,
+    this.enablePhotoOverlay = false,
+    this.enableSqftCalculation = false,
+    this.enableShareWithContractor = false,
+    this.enableRequestQuote = false,
+    this.enableAttachToListing = false,
+    this.enableDamageMapping = false,
+    this.toolbarTitle = 'Sketch',
+    this.maxFloors,
+  });
+
+  /// Contractor: ALL tools, ALL trade layers, ALL exports, auto-estimate
+  factory SketchConfig.contractor() => const SketchConfig(
+    enabledTools: {
+      SketchTool.wall, SketchTool.arcWall, SketchTool.door,
+      SketchTool.window, SketchTool.fixture, SketchTool.dimension,
+      SketchTool.label, SketchTool.select, SketchTool.eraser,
+      SketchTool.pan, SketchTool.measure,
+    },
+    enabledTradeLayers: {
+      TradeLayerType.electrical, TradeLayerType.plumbing,
+      TradeLayerType.hvac, TradeLayerType.damage,
+    },
+    enableLidar: true,
+    enableManualEntry: true,
+    enabledExports: {ExportFormat.pdf, ExportFormat.png, ExportFormat.dxf, ExportFormat.fml},
+    enableAutoEstimate: true,
+    enableWallDrawing: true,
+    enableFixturePlacement: true,
+    enableAnnotation: true,
+    enablePhotoOverlay: true,
+    enableSqftCalculation: true,
+    enableDamageMapping: true,
+    toolbarTitle: 'Sketch Engine',
+    maxFloors: null, // unlimited
+  );
+
+  /// Realtor: Room labeling, sqft, photo overlay, listing export
+  factory SketchConfig.realtor() => const SketchConfig(
+    enabledTools: {
+      SketchTool.wall, SketchTool.door, SketchTool.window,
+      SketchTool.label, SketchTool.dimension, SketchTool.select,
+      SketchTool.pan, SketchTool.measure,
+    },
+    enabledTradeLayers: {}, // No trade layers
+    enableLidar: true,
+    enableManualEntry: true,
+    enabledExports: {ExportFormat.pdf, ExportFormat.png},
+    enableAutoEstimate: false,
+    enableWallDrawing: true,
+    enableFixturePlacement: false, // No fixture placement for realtors
+    enableAnnotation: true,
+    enablePhotoOverlay: true,
+    enableSqftCalculation: true,
+    enableAttachToListing: true,
+    toolbarTitle: 'Floor Plan',
+    maxFloors: 4,
+  );
+
+  /// Homeowner: Simple annotation, view plans, mark areas
+  factory SketchConfig.homeowner() => const SketchConfig(
+    enabledTools: {
+      SketchTool.label, SketchTool.select, SketchTool.pan,
+      SketchTool.measure,
+    },
+    enabledTradeLayers: {},
+    enableLidar: false, // Homeowners don't scan
+    enableManualEntry: false,
+    enabledExports: {ExportFormat.png},
+    enableAutoEstimate: false,
+    enableWallDrawing: false, // View-only + annotation
+    enableFixturePlacement: false,
+    enableAnnotation: true,
+    enablePhotoOverlay: true,
+    enableShareWithContractor: true,
+    enableRequestQuote: true,
+    toolbarTitle: 'Annotate',
+    maxFloors: 3,
+  );
+
+  /// Inspector: Annotation + defect marking + photo overlay
+  factory SketchConfig.inspector() => const SketchConfig(
+    enabledTools: {
+      SketchTool.wall, SketchTool.door, SketchTool.window,
+      SketchTool.label, SketchTool.dimension, SketchTool.select,
+      SketchTool.pan, SketchTool.measure,
+    },
+    enabledTradeLayers: {TradeLayerType.damage},
+    enableLidar: true,
+    enableManualEntry: true,
+    enabledExports: {ExportFormat.pdf, ExportFormat.png},
+    enableAutoEstimate: false,
+    enableWallDrawing: true,
+    enableFixturePlacement: false,
+    enableAnnotation: true,
+    enablePhotoOverlay: true,
+    enableSqftCalculation: true,
+    enableDamageMapping: true,
+    toolbarTitle: 'Inspection Sketch',
+    maxFloors: 4,
+  );
+
+  /// Adjuster: Damage mapping focus, annotation, measurement
+  factory SketchConfig.adjuster() => const SketchConfig(
+    enabledTools: {
+      SketchTool.wall, SketchTool.door, SketchTool.window,
+      SketchTool.label, SketchTool.dimension, SketchTool.select,
+      SketchTool.pan, SketchTool.measure,
+    },
+    enabledTradeLayers: {TradeLayerType.damage},
+    enableLidar: true,
+    enableManualEntry: true,
+    enabledExports: {ExportFormat.pdf, ExportFormat.png, ExportFormat.fml},
+    enableAutoEstimate: false,
+    enableWallDrawing: true,
+    enableFixturePlacement: false,
+    enableAnnotation: true,
+    enablePhotoOverlay: true,
+    enableSqftCalculation: true,
+    enableDamageMapping: true,
+    toolbarTitle: 'Damage Sketch',
+    maxFloors: 4,
+  );
+}
+```
+
+#### 1.8 Refactor SketchEditorScreen to Accept Config
+- [ ] `packages/sketch_core/lib/src/widgets/sketch_editor_screen.dart` — the 3,527-line editor, refactored to:
+  - Accept `SketchConfig config` as required constructor parameter
+  - Accept `FloorPlanRepository repository` via constructor injection
+  - Accept `SupabaseClient supabaseClient` via constructor injection
+  - Conditionally show/hide tools based on `config.enabledTools`
+  - Conditionally show/hide trade layer panel based on `config.enabledTradeLayers`
+  - Conditionally show/hide export options based on `config.enabledExports`
+  - Show "Share with Contractor" button when `config.enableShareWithContractor`
+  - Show "Request Quote" button when `config.enableRequestQuote`
+  - Show "Attach to Listing" button when `config.enableAttachToListing`
+  - When `config.enableWallDrawing == false`, only show annotation tools (label, text, marker)
+  - Remove all direct imports of app-level providers (Riverpod refs passed via constructor)
+
+#### 1.9 Update Trades App to Consume Package
+- [ ] Add `sketch_core` path dependency to Trades `pubspec.yaml`
+- [ ] Replace all imports from `models/floor_plan*.dart`, `models/trade_layer.dart`, `painters/trade_layer_painter.dart`, `services/sketch_*.dart`, `services/roomplan_*.dart`, `services/floor_plan_*.dart`, `services/dxf_writer.dart`, `services/fml_writer.dart`, `repositories/floor_plan_repository.dart`, `widgets/sketch/*.dart` with `package:sketch_core/sketch_core.dart`
+- [ ] Keep original files as re-export shims for backward compatibility during transition
+- [ ] Create Riverpod provider that instantiates `SketchConfig.contractor()` and passes it to SketchEditorScreen
+- [ ] Verify: `flutter analyze` passes with 0 errors
+- [ ] Verify: existing sketch functionality unchanged (draw walls, place fixtures, export, LiDAR)
+
+#### 1.10 Screen States
+Every screen exposed by the package handles 4 states:
+- [ ] **Loading**: Skeleton shimmer while floor plan data loads from Supabase/Hive
+- [ ] **Error**: Error card with retry button, typed error message from `SketchError` hierarchy
+- [ ] **Empty**: "No floor plan yet. Start drawing or scan with LiDAR." with appropriate CTA per config
+- [ ] **Data**: Full editor canvas with tools per config
+
+#### 1.11 Security
+- [ ] Package never stores or reads JWT directly — receives `SupabaseClient` from app shell (already authenticated)
+- [ ] Repository enforces `company_id` on all operations (RLS handles server-side, but client-side filtering for offline cache)
+- [ ] No changes to existing RLS policies (floor plan tables already have company_id scoping)
+- [ ] Audit trigger on `property_floor_plans` already exists
+
+#### 1.12 Offline Behavior
+- [ ] Hive cache location configurable via `SketchConfig` (default: `sketch_cache`)
+- [ ] All edits save to Hive immediately (zero-latency UX)
+- [ ] Background sync when connectivity returns
+- [ ] Conflict resolution: server `sync_version` wins, user prompted to merge or overwrite
+
+---
+
+### SHARED-PKG2 — Extract Recon Core Package (~10h)
+
+**Goal**: Create `packages/recon_core/` that wraps the 7 existing Edge Functions into a Flutter-consumable package. The Edge Functions are unchanged (Deno/TypeScript on Supabase). This package provides Dart models, API callers, result display widgets, and offline caching.
+
+#### 2.1 Package Setup
+- [ ] Create `packages/recon_core/` directory
+- [ ] Create `packages/recon_core/pubspec.yaml`:
+  ```yaml
+  name: recon_core
+  description: Zafto Property Intelligence (Recon) — property scanning, measurements, lead scoring
+  version: 1.0.0
+
+  environment:
+    sdk: '>=3.2.0 <4.0.0'
+    flutter: '>=3.16.0'
+
+  dependencies:
+    flutter:
+      sdk: flutter
+    field_toolkit:
+      path: ../field_toolkit
+    supabase_flutter: ^2.3.0
+    hive: ^2.2.3
+    hive_flutter: ^1.1.0
+    lucide_icons: ^0.257.0
+    intl: ^0.19.0
+    url_launcher: ^6.2.0
+
+  dev_dependencies:
+    flutter_test:
+      sdk: flutter
+    flutter_lints: ^3.0.0
+  ```
+- [ ] Create barrel export `packages/recon_core/lib/recon_core.dart`
+
+#### 2.2 Dart Models
+Create in `packages/recon_core/lib/src/models/`:
+
+- [ ] `property_scan.dart` — maps to `property_scans` table:
+  ```dart
+  class PropertyScan {
+    final String id;
+    final String companyId;
+    final String? jobId;
+    final String addressLine1;
+    final String? addressLine2;
+    final String city;
+    final String state;
+    final String zip;
+    final double? latitude;
+    final double? longitude;
+    final ScanStatus status; // pending, processing, complete, partial, failed
+    final DateTime? scannedAt;
+    final List<String> dataSources;
+    final int scanVersion;
+    final int? yearBuilt;
+    final double? stories;
+    final double? totalSqft;
+    final double? lotSqft;
+    final double? lotAcres;
+    final String? propertyType;
+    final String? constructionType;
+    final String? roofTypeTax;
+    final String? roofTypeDetected;
+    final String? exteriorWallType;
+    final bool poolPresent;
+    final bool fencePresent;
+    final bool solarPanelsPresent;
+    final String? heatingType;
+    final String? heatingFuel;
+    final String? coolingType;
+    final double? assessedValue;
+    final double? lastSalePrice;
+    final DateTime? lastSaleDate;
+    final double? roofConditionScore;
+    final double? treeOverhangPercent;
+    final double? confidenceScore;
+    final String? confidenceGrade; // high, moderate, low
+    final Map<String, dynamic> googleSolarData;
+    final Map<String, dynamic> attomData;
+    final Map<String, dynamic> regridData;
+    final DateTime createdAt;
+    final DateTime updatedAt;
+
+    // fromJson, toJson, copyWith, Equatable
+  }
+  ```
+
+- [ ] `roof_measurement.dart` — maps to `roof_measurements` table:
+  ```dart
+  class RoofMeasurement {
+    final String id;
+    final String propertyScanId;
+    final String companyId;
+    final double totalRoofAreaSqft;
+    final double? totalGroundAreaSqft;
+    final int? totalFacets;
+    final String? predominantPitch; // "6/12", "8/12"
+    final double? predominantPitchDegrees;
+    final double? totalRidgeLf;
+    final double? totalHipLf;
+    final double? totalValleyLf;
+    final double? totalRakeLf;
+    final double? totalEaveLf;
+    final double? totalDripEdgeLf;
+    final double? totalFlashingLf;
+    final double? totalStepFlashingLf;
+    final double? totalGutterLf;
+    final int chimneyCount;
+    final int skylightCount;
+    final int ventCount;
+    final int totalPenetrationCount;
+    final String? complexityRating; // simple, moderate, complex, very_complex
+    final double? recommendedWastePercent;
+    final double? totalSquares;
+    final double? totalSquaresWithWaste;
+    final double? confidenceScore;
+    final double? treeObstructionPercent;
+    final String? measurementSource;
+    // fromJson, toJson, copyWith, Equatable
+  }
+  ```
+
+- [ ] `roof_facet.dart` — maps to `roof_facets` table
+- [ ] `wall_measurement.dart` — maps to `wall_measurements` table
+- [ ] `property_feature.dart` — maps to `property_features` table
+- [ ] `trade_bid_data.dart` — maps to `trade_bid_data` table
+- [ ] `lead_score.dart` — maps to `property_lead_scores` table
+- [ ] `area_scan.dart` — maps to `area_scans` table
+- [ ] `scan_history_entry.dart` — maps to `scan_history` table
+- [ ] `parcel_boundary.dart` — maps to `parcel_boundaries` table
+
+#### 2.3 Recon Service (Edge Function Caller)
+Create `packages/recon_core/lib/src/services/recon_service.dart`:
+
+```dart
+/// Orchestrates calls to Recon Edge Functions.
+/// Takes a SupabaseClient (already authenticated) from the app shell.
+class ReconService {
+  final SupabaseClient _supabase;
+
+  ReconService(this._supabase);
+
+  /// Initiate a property scan by address.
+  /// Calls: recon-property-lookup Edge Function.
+  /// Returns: PropertyScan with populated measurements.
+  Future<PropertyScan> scanProperty({
+    required String addressLine1,
+    String? addressLine2,
+    required String city,
+    required String state,
+    required String zip,
+    String? jobId,
+    bool forceRefresh = false,
+  }) async { ... }
+
+  /// Initiate a property scan by GPS coordinates.
+  /// Reverse geocodes, then calls scanProperty.
+  Future<PropertyScan> scanByLocation({
+    required double latitude,
+    required double longitude,
+    String? jobId,
+  }) async { ... }
+
+  /// Get cached scan for an address (within 30-day window).
+  Future<PropertyScan?> getCachedScan(String addressHash) async { ... }
+
+  /// Fetch full scan details (all child tables).
+  Future<PropertyScanDetail> getScanDetail(String scanId) async { ... }
+
+  /// Calculate trade-specific bid data.
+  /// Calls: recon-trade-estimator Edge Function.
+  Future<List<TradeBidData>> calculateTradeBidData(String scanId, {List<String>? trades}) async { ... }
+
+  /// Calculate roof edge measurements.
+  /// Calls: recon-roof-calculator Edge Function.
+  Future<RoofMeasurement> calculateRoofEdges(String roofMeasurementId) async { ... }
+
+  /// Compute lead score for a property scan.
+  /// Calls: recon-lead-score Edge Function.
+  Future<LeadScore> computeLeadScore(String scanId) async { ... }
+
+  /// Run storm assessment for a location.
+  /// Calls: recon-storm-assess Edge Function.
+  Future<StormAssessment> assessStorm({
+    required double latitude,
+    required double longitude,
+    required String state,
+    String? county,
+    int yearsBack = 5,
+  }) async { ... }
+
+  /// Initiate an area scan (batch polygon scan).
+  /// Calls: recon-area-scan Edge Function.
+  Future<AreaScan> startAreaScan({
+    required String name,
+    required Map<String, dynamic> polygonGeojson,
+    String? stormEventId,
+  }) async { ... }
+
+  /// Generate material order from trade bid data.
+  /// Calls: recon-material-order Edge Function.
+  Future<MaterialOrder> generateMaterialOrder(String tradeBidDataId) async { ... }
+
+  /// Get all scans for the company.
+  Future<List<PropertyScan>> listScans({int limit = 50, int offset = 0}) async { ... }
+
+  /// Delete a scan (soft delete).
+  Future<void> deleteScan(String scanId) async { ... }
+}
+```
+
+#### 2.4 Scan Detail Composite Model
+```dart
+/// Full property intelligence report — all data for one address.
+class PropertyScanDetail {
+  final PropertyScan scan;
+  final RoofMeasurement? roof;
+  final List<RoofFacet> facets;
+  final WallMeasurement? walls;
+  final PropertyFeature? features;
+  final List<TradeBidData> tradeBidData;
+  final LeadScore? leadScore;
+  final ParcelBoundary? parcel;
+  final List<ScanHistoryEntry> history;
+
+  // Computed properties
+  String get fullAddress => '${scan.addressLine1}, ${scan.city}, ${scan.state} ${scan.zip}';
+  bool get isComplete => scan.status == ScanStatus.complete;
+  bool get hasRoof => roof != null;
+  bool get hasWalls => walls != null;
+  bool get hasFeatures => features != null;
+  bool get hasLeadScore => leadScore != null;
+}
+```
+
+#### 2.5 Configuration API
+
+```dart
+/// packages/recon_core/lib/src/config/recon_config.dart
+
+/// Controls which Recon data sections are visible and which actions are available.
+class ReconConfig {
+  /// Which data sections to show
+  final Set<ReconSection> visibleSections;
+
+  /// Whether lead scoring is shown
+  final bool showLeadScore;
+
+  /// Whether material pricing is shown
+  final bool showMaterialPricing;
+
+  /// Whether storm assessment is available
+  final bool showStormAssessment;
+
+  /// Whether area scanning is available
+  final bool enableAreaScan;
+
+  /// Whether "Create Job from Scan" action is available
+  final bool enableCreateJob;
+
+  /// Whether "Create Estimate from Scan" action is available
+  final bool enableCreateEstimate;
+
+  /// Whether "Order Materials" action is available
+  final bool enableOrderMaterials;
+
+  /// Whether rehab cost estimation is shown
+  final bool showRehabCostEstimate;
+
+  /// Whether "Find Contractors" action is available (homeowner)
+  final bool enableFindContractors;
+
+  /// Whether "Share Scan with Contractor" is available (homeowner)
+  final bool enableShareWithContractor;
+
+  /// Whether "Attach to Listing" is available (realtor)
+  final bool enableAttachToListing;
+
+  /// Whether CMA data integration is shown (realtor)
+  final bool showCmaData;
+
+  /// Whether pre-inspection data pull mode is enabled (inspector)
+  final bool enablePreInspectionMode;
+
+  /// Whether damage baseline comparison is enabled (adjuster)
+  final bool enableDamageBaseline;
+
+  /// Custom screen title
+  final String screenTitle;
+
+  /// Legal disclaimer text shown on all estimates
+  final String disclaimer;
+
+  const ReconConfig({
+    required this.visibleSections,
+    this.showLeadScore = false,
+    this.showMaterialPricing = false,
+    this.showStormAssessment = false,
+    this.enableAreaScan = false,
+    this.enableCreateJob = false,
+    this.enableCreateEstimate = false,
+    this.enableOrderMaterials = false,
+    this.showRehabCostEstimate = false,
+    this.enableFindContractors = false,
+    this.enableShareWithContractor = false,
+    this.enableAttachToListing = false,
+    this.showCmaData = false,
+    this.enablePreInspectionMode = false,
+    this.enableDamageBaseline = false,
+    this.screenTitle = 'Property Scan',
+    this.disclaimer = 'These measurements are derived from satellite imagery and public records. '
+      'They are intended as starting points for estimating. Always verify critical '
+      'measurements on site before placing material orders or making financial decisions.',
+  });
+
+  /// Contractor: Full scan + materials + lead scoring + storm + area scan
+  factory ReconConfig.contractor() => const ReconConfig(
+    visibleSections: {
+      ReconSection.overview, ReconSection.roof, ReconSection.walls,
+      ReconSection.lot, ReconSection.solar, ReconSection.tradeData,
+      ReconSection.history,
+    },
+    showLeadScore: true,
+    showMaterialPricing: true,
+    showStormAssessment: true,
+    enableAreaScan: true,
+    enableCreateJob: true,
+    enableCreateEstimate: true,
+    enableOrderMaterials: true,
+    screenTitle: 'Recon',
+  );
+
+  /// Realtor: Property intelligence for CMA, listing prep
+  factory ReconConfig.realtor() => const ReconConfig(
+    visibleSections: {
+      ReconSection.overview, ReconSection.roof, ReconSection.lot,
+      ReconSection.solar,
+    },
+    showCmaData: true,
+    enableAttachToListing: true,
+    screenTitle: 'Property Intelligence',
+    disclaimer: 'Property data derived from satellite imagery and public records. '
+      'Verify all information independently before including in listing materials.',
+  );
+
+  /// Homeowner: One-time scan, rehab cost estimate
+  factory ReconConfig.homeowner() => const ReconConfig(
+    visibleSections: {
+      ReconSection.overview, ReconSection.roof, ReconSection.rehabEstimate,
+    },
+    showRehabCostEstimate: true,
+    enableFindContractors: true,
+    enableShareWithContractor: true,
+    screenTitle: 'Home Health Check',
+    disclaimer: 'Cost estimates are for informational purposes only and do not constitute '
+      'professional engineering advice. Actual costs may vary significantly based on '
+      'local labor rates, material choices, and site conditions. Consult licensed '
+      'contractors for accurate quotes.',
+  );
+
+  /// Inspector: Pre-inspection data pull
+  factory ReconConfig.inspector() => const ReconConfig(
+    visibleSections: {
+      ReconSection.overview, ReconSection.roof, ReconSection.walls,
+      ReconSection.lot,
+    },
+    enablePreInspectionMode: true,
+    screenTitle: 'Pre-Inspection Data',
+    disclaimer: 'Property data is from public records and satellite imagery. '
+      'All observations must be independently verified during physical inspection.',
+  );
+
+  /// Adjuster: Damage assessment baseline
+  factory ReconConfig.adjuster() => const ReconConfig(
+    visibleSections: {
+      ReconSection.overview, ReconSection.roof, ReconSection.walls,
+      ReconSection.lot, ReconSection.history,
+    },
+    showStormAssessment: true,
+    enableDamageBaseline: true,
+    screenTitle: 'Property Baseline',
+    disclaimer: 'Pre-loss property condition data derived from satellite imagery and public records. '
+      'Does not replace physical inspection. All measurements are estimates.',
+  );
+}
+
+/// Sections of the Recon report
+enum ReconSection {
+  overview,       // Address, satellite image, key stats
+  roof,           // Roof area, pitch, facets, edges
+  walls,          // Wall area, siding, windows, doors
+  lot,            // Lot size, perimeter, hardscape/softscape
+  solar,          // Sun hours, shade, panel potential
+  tradeData,      // Pre-calculated bid data per trade
+  history,        // Previous scans, changes over time
+  rehabEstimate,  // System-by-system rehab cost ranges (homeowner)
+}
+```
+
+#### 2.6 Offline Caching
+- [ ] `packages/recon_core/lib/src/services/recon_cache_service.dart`:
+  - Hive box `recon_cache` stores serialized `PropertyScanDetail` per scan ID
+  - Cache duration: 30 days (matches server-side caching)
+  - On scan request: check cache first, return cached if valid
+  - On successful scan: write to cache
+  - Cache size limit: 100 scans (LRU eviction)
+  - Offline mode: return cached data with "Cached [date]" badge
+
+#### 2.7 Shared Widgets
+
+Create in `packages/recon_core/lib/src/widgets/`:
+
+- [ ] `property_scan_screen.dart` — Main scan initiation screen:
+  - Address search bar with autocomplete (Google Places from existing integration)
+  - "Use Current Location" button (uses field_toolkit GPS)
+  - Recent scans list
+  - Configurable by `ReconConfig`
+  - 4 states: loading/error/empty/data
+
+- [ ] `scan_results_screen.dart` — Full scan results display:
+  - Satellite image header
+  - Tab-based navigation per `ReconConfig.visibleSections`
+  - Overview card (key stats)
+  - Roof tab (facet diagram, measurements, material estimates)
+  - Walls tab (per-face measurements, window/door counts)
+  - Lot tab (parcel map, dimensions, hardscape/softscape)
+  - Solar tab (sun hours, panel potential)
+  - Trade Data tab (per-trade bid data, material lists)
+  - Action buttons per config (Create Job, Create Estimate, Order Materials, Share, etc.)
+  - Legal disclaimer footer
+
+- [ ] `scan_result_card.dart` — Compact scan summary for lists
+- [ ] `roof_diagram_widget.dart` — Visual roof facet diagram
+- [ ] `confidence_badge.dart` — High/Moderate/Low confidence indicator
+- [ ] `data_source_badges.dart` — "Google Solar", "ATTOM", "Regrid" badges
+- [ ] `rehab_estimate_widget.dart` — System-by-system cost breakdown (homeowner mode)
+- [ ] `storm_assessment_widget.dart` — Storm history and damage probability
+
+#### 2.8 Screen States
+- [ ] **Loading**: Skeleton shimmer with satellite image placeholder, pulsing stat cards
+- [ ] **Error**: "Scan failed. [Specific error]." + Retry button. Partial results shown if available.
+- [ ] **Empty**: "No property scans yet. Enter an address to get started." with search bar CTA
+- [ ] **Data**: Full report with all visible sections populated
+
+#### 2.9 Security
+- [ ] Package receives `SupabaseClient` from app shell (already authenticated)
+- [ ] All Edge Function calls include Authorization header from client session
+- [ ] Edge Functions already validate JWT and extract `company_id` from `app_metadata`
+- [ ] No new RLS policies needed (existing tables already have company_id scoping)
+- [ ] Homeowner scans are scoped to their `company_id` (homeowner creates a "company" record at signup)
+
+---
+
+### SHARED-PKG3 — Field Toolkit Package (~8h)
+
+**Goal**: Shared utilities that both Sketch and Recon (and any future field feature) need. Pure utility package with no Zafto business logic.
+
+#### 3.1 Package Setup
+- [ ] Create `packages/field_toolkit/` directory
+- [ ] Create `packages/field_toolkit/pubspec.yaml`:
+  ```yaml
+  name: field_toolkit
+  description: Shared field utility services — GPS, camera, LiDAR detection, offline queue, battery
+  version: 1.0.0
+
+  environment:
+    sdk: '>=3.2.0 <4.0.0'
+    flutter: '>=3.16.0'
+
+  dependencies:
+    flutter:
+      sdk: flutter
+    geolocator: ^11.0.0
+    geocoding: ^3.0.0
+    camera: ^0.10.5
+    image_picker: ^1.0.0
+    connectivity_plus: ^5.0.0
+    battery_plus: ^5.0.0
+    permission_handler: ^11.0.0
+    hive: ^2.2.3
+    hive_flutter: ^1.1.0
+
+  dev_dependencies:
+    flutter_test:
+      sdk: flutter
+    flutter_lints: ^3.0.0
+  ```
+
+#### 3.2 GPS Service
+Create `packages/field_toolkit/lib/src/services/gps_service.dart`:
+```dart
+class GpsService {
+  /// Get current device location (lat/lng).
+  /// Returns null if permission denied or location unavailable.
+  Future<GpsPosition?> getCurrentPosition() async { ... }
+
+  /// Check and request location permission.
+  Future<LocationPermissionStatus> checkPermission() async { ... }
+
+  /// Reverse geocode lat/lng to street address.
+  Future<GpsAddress?> reverseGeocode(double latitude, double longitude) async { ... }
+
+  /// Auto-tag a record with current GPS position.
+  /// Returns the position if available, null if not (does NOT block).
+  Future<GpsPosition?> autoTag() async { ... }
+}
+
+class GpsPosition {
+  final double latitude;
+  final double longitude;
+  final double? altitude;
+  final double? accuracy;
+  final DateTime timestamp;
+}
+
+class GpsAddress {
+  final String? street;
+  final String? city;
+  final String? state;
+  final String? zip;
+  final String? country;
+  final String formatted;
+}
+```
+
+#### 3.3 Camera Service
+Create `packages/field_toolkit/lib/src/services/camera_service.dart`:
+```dart
+class CameraService {
+  /// Capture a photo. Returns file path.
+  /// Auto-tags with GPS if available (EXIF).
+  Future<CapturedPhoto?> capturePhoto({
+    CameraSource source = CameraSource.camera,
+    bool includeGps = true,
+    int maxWidth = 2048,
+    int maxHeight = 2048,
+    int quality = 85,
+  }) async { ... }
+
+  /// Pick multiple photos from gallery.
+  Future<List<CapturedPhoto>> pickMultiplePhotos({int maxCount = 20}) async { ... }
+}
+
+class CapturedPhoto {
+  final String filePath;
+  final GpsPosition? gpsPosition;
+  final DateTime capturedAt;
+  final int width;
+  final int height;
+  final int sizeBytes;
+}
+```
+
+#### 3.4 LiDAR Detection Service
+Create `packages/field_toolkit/lib/src/services/lidar_service.dart`:
+```dart
+class LidarDetectionService {
+  /// Check if device has LiDAR scanner (iPhone 12 Pro+, iPad Pro).
+  /// Always returns false on Android.
+  Future<bool> isLidarAvailable() async { ... }
+
+  /// Get device capability level.
+  Future<DeviceCapability> getDeviceCapability() async { ... }
+}
+
+enum DeviceCapability {
+  /// Full LiDAR + ARKit (iPhone 12 Pro+)
+  fullLidar,
+  /// ARCore depth API (some Android devices)
+  arcoreDepth,
+  /// Basic AR (ARKit/ARCore without LiDAR)
+  basicAr,
+  /// No AR capability
+  none,
+}
+```
+
+#### 3.5 Offline Queue Service
+Create `packages/field_toolkit/lib/src/services/offline_queue.dart`:
+```dart
+/// Generic offline operation queue. Persists operations to Hive,
+/// retries when connectivity returns. Used by both Sketch sync
+/// and Recon scan requests.
+class OfflineQueue<T> {
+  final String queueName;
+  final Future<void> Function(T operation) executor;
+  final T Function(Map<String, dynamic>) deserializer;
+  final Map<String, dynamic> Function(T) serializer;
+
+  OfflineQueue({
+    required this.queueName,
+    required this.executor,
+    required this.deserializer,
+    required this.serializer,
+  });
+
+  /// Add operation to queue. Executes immediately if online, queues if offline.
+  Future<void> enqueue(T operation) async { ... }
+
+  /// Process all queued operations (called when connectivity returns).
+  Future<QueueProcessResult> processQueue() async { ... }
+
+  /// Get count of pending operations.
+  Future<int> pendingCount() async { ... }
+
+  /// Listen for connectivity changes and auto-process queue.
+  StreamSubscription<ConnectivityResult> startAutoSync() { ... }
+
+  /// Stop auto-sync.
+  void stopAutoSync() { ... }
+}
+
+class QueueProcessResult {
+  final int processed;
+  final int failed;
+  final List<QueueError> errors;
+}
+```
+
+#### 3.6 Connectivity Service
+Create `packages/field_toolkit/lib/src/services/connectivity_service.dart`:
+```dart
+class ConnectivityService {
+  /// Check if device is currently online.
+  Future<bool> isOnline() async { ... }
+
+  /// Stream of connectivity changes.
+  Stream<bool> get onConnectivityChanged { ... }
+
+  /// Show connectivity indicator widget.
+  static Widget connectivityBanner() { ... }
+}
+```
+
+#### 3.7 Battery Awareness Service
+Create `packages/field_toolkit/lib/src/services/battery_service.dart`:
+```dart
+class BatteryAwarenessService {
+  /// Get current battery level (0-100).
+  Future<int> getBatteryLevel() async { ... }
+
+  /// Check if battery is sufficient for LiDAR-heavy operations (>20%).
+  Future<bool> isBatterySufficientForLidar() async { ... }
+
+  /// Show low battery warning for field operations.
+  /// Returns true if user chooses to proceed anyway.
+  Future<bool> showLowBatteryWarning(BuildContext context, {String operation = 'LiDAR scan'}) async { ... }
+}
+```
+
+#### 3.8 Permission Prompt Widgets
+Create `packages/field_toolkit/lib/src/widgets/`:
+- [ ] `permission_prompt.dart` — Unified permission request UI (camera, location, storage) with explanation text and "Open Settings" fallback
+- [ ] `connectivity_indicator.dart` — Persistent banner showing offline/online status
+- [ ] `battery_warning_dialog.dart` — Low battery warning before LiDAR operations
+
+#### 3.9 Security
+- [ ] No authentication in this package — pure device utility
+- [ ] GPS data never sent to any server by the package itself (caller decides what to do with it)
+- [ ] Camera permissions requested with clear user-facing explanation
+
+---
+
+### RECON-MOBILE1 — Contractor Recon Flutter Screens (~8h)
+
+**Goal**: Create Flutter screens for Recon in the Trades app. Currently Recon is web-only (CRM has `/dashboard/recon/` pages). The contractor needs to scan properties from their phone on-site or from leads.
+
+#### 4.1 New Files
+
+| File Path | Purpose |
+|-----------|---------|
+| `lib/screens/recon/recon_home_screen.dart` | Recon landing — recent scans list + new scan CTA |
+| `lib/screens/recon/property_scan_screen.dart` | Address entry + GPS + scan initiation |
+| `lib/screens/recon/scan_results_screen.dart` | Full scan results with tabs |
+| `lib/screens/recon/scan_detail_tabs/roof_tab.dart` | Roof measurements + facet diagram |
+| `lib/screens/recon/scan_detail_tabs/walls_tab.dart` | Wall measurements + window/door counts |
+| `lib/screens/recon/scan_detail_tabs/lot_tab.dart` | Lot dimensions + parcel map |
+| `lib/screens/recon/scan_detail_tabs/solar_tab.dart` | Solar potential analysis |
+| `lib/screens/recon/scan_detail_tabs/trade_data_tab.dart` | Per-trade bid data + material lists |
+| `lib/screens/recon/scan_detail_tabs/history_tab.dart` | Scan history timeline |
+| `lib/screens/recon/area_scan_screen.dart` | Polygon area scan (map draw) |
+| `lib/screens/recon/storm_assessment_screen.dart` | Storm event overlay |
+| `lib/providers/recon_providers.dart` | Riverpod providers for Recon service + state |
+
+#### 4.2 Recon Home Screen
+`lib/screens/recon/recon_home_screen.dart`:
+- [ ] App bar: "Recon" title, search icon, filter icon
+- [ ] Search bar: address autocomplete (Google Places)
+- [ ] "Scan Current Location" button with GPS icon
+- [ ] Recent scans list (sorted by date, newest first)
+- [ ] Each scan card shows: address, date, confidence badge, key stat (roof squares or total sqft)
+- [ ] Pull-to-refresh
+- [ ] Floating action button: "New Scan"
+- [ ] Bottom navigation integration: Recon tab added to main nav
+- [ ] 4 states: loading skeleton / error card / "No scans yet" empty / scan list
+
+#### 4.3 Property Scan Screen
+`lib/screens/recon/property_scan_screen.dart`:
+- [ ] Address form: street, city, state, zip (with autocomplete)
+- [ ] "Use Current Location" button — reverse geocode to fill address
+- [ ] "Scan" button — calls `ReconService.scanProperty()`
+- [ ] Loading state: animated progress indicator with step labels ("Geocoding address...", "Fetching satellite data...", "Calculating measurements...", "Scoring property...")
+- [ ] Partial results: if some APIs fail, show what succeeded with warnings for what failed
+- [ ] Success: navigate to `ScanResultsScreen`
+- [ ] Error: descriptive error with retry button
+- [ ] Optional: attach to existing job (job picker dropdown)
+- [ ] Optional: force refresh toggle (bypass 30-day cache)
+
+#### 4.4 Scan Results Screen
+`lib/screens/recon/scan_results_screen.dart`:
+- [ ] Header: satellite image (Mapbox tile at property lat/lng), address, confidence badge
+- [ ] Tab bar: Overview | Roof | Walls | Lot | Solar | Trade Data | History
+- [ ] **Overview tab**: Key stats grid (roof area, stories, lot size, year built, property type, assessed value), data source badges, confidence factors
+- [ ] **Roof tab** (`roof_tab.dart`): Total area (squares), pitch, facet count, edge measurements (ridge/hip/valley/eave/rake), penetrations (chimneys/skylights/vents), waste factor, material estimate, complexity rating
+- [ ] **Walls tab** (`walls_tab.dart`): Total wall area, siding area (minus openings), per-face breakdown, window/door counts, soffit/fascia/trim LF, confidence note ("derived from footprint" vs "measured")
+- [ ] **Lot tab** (`lot_tab.dart`): Lot area (sqft/acres), perimeter, frontage/depth, hardscape/softscape breakdown, tree canopy %, elevation, slope, parcel map overlay
+- [ ] **Solar tab** (`solar_tab.dart`): Per-facet sun hours, shade %, optimal facets, estimated kWh, panel count estimate, azimuth visualization
+- [ ] **Trade Data tab** (`trade_data_tab.dart`): Dropdown per trade (roofing, siding, gutters, solar, painting, etc.), pre-calculated measurements, material lists with quantities, waste factors applied
+- [ ] **History tab** (`history_tab.dart`): Timeline of scans for this address, data source changes, measurement deltas
+- [ ] Action buttons (bottom bar):
+  - "Create Job" — creates job with scan attached
+  - "Create Estimate" — opens D8 with measurements pre-populated
+  - "Order Materials" — opens material order flow
+  - "Share Report" — PDF export + share
+  - "Re-scan" — force refresh
+- [ ] Legal disclaimer footer: "These measurements are derived from satellite imagery and public records..."
+
+#### 4.5 Lead Score Display
+- [ ] Lead score badge on scan results: HOT (87/100) in red, WARM (55/100) in amber, COLD (22/100) in blue-gray
+- [ ] Expandable score breakdown: roof age score, property value score, storm proximity score, owner tenure score
+- [ ] "Convert to Lead" action if scan was standalone (not attached to job)
+
+#### 4.6 Storm Assessment Display
+- [ ] Storm events list for property area (hail, wind, tornado) from NOAA
+- [ ] Per-event: date, type, magnitude (hail size, wind speed), distance from property
+- [ ] Damage probability indicator: HIGH/MEDIUM/LOW
+- [ ] "Canvass This Area" action — opens area scan with polygon around storm zone
+
+#### 4.7 On-Site Verification Mode
+- [ ] Checklist of key measurements from Recon
+- [ ] Each item: measurement value + [Confirm] / [Adjust] buttons
+- [ ] Adjusted values update the `property_scans` record
+- [ ] Verification badge stored: "Verified on site by [user] on [date]"
+- [ ] Verification status shown on scan card and report
+
+#### 4.8 Wiring to Existing Features
+- [ ] Job detail screen: add "Recon" card showing scan summary (if scan exists for job address)
+- [ ] Job creation flow: add "Scan Property" button that runs Recon before creating job
+- [ ] Estimate creation: add "Import from Recon" button to pre-populate line items from `trade_bid_data`
+- [ ] Customer detail: property intelligence card if customer has address on file
+- [ ] Main navigation: add Recon tab (Lucide `scan-search` icon)
+
+#### 4.9 Offline Behavior
+- [ ] Scans cached in Hive via `recon_core` package
+- [ ] Offline: show cached scan results with "Cached [date]" indicator
+- [ ] New scan requests queued in `OfflineQueue` when offline
+- [ ] Queue processes when connectivity returns
+- [ ] Manual refresh always attempts fresh server call
+
+#### 4.10 Security
+- [ ] All Edge Function calls use JWT from Supabase auth session
+- [ ] RLS on `property_scans` and all child tables scopes to `company_id`
+- [ ] No new tables (uses existing recon tables)
+- [ ] Audit trigger already on `property_scans`
+
+---
+
+### RECON-MOBILE2 — Realtor Recon Configuration (~6h)
+
+**Goal**: Configure recon_core for realtor use. Property intelligence for listing prep, CMA data enrichment, and "Scan for Listing" workflow.
+
+#### 5.1 New Files
+
+| File Path | Purpose |
+|-----------|---------|
+| `lib/screens/recon/realtor/listing_scan_screen.dart` | "Scan for Listing" flow |
+| `lib/screens/recon/realtor/property_intelligence_screen.dart` | Property report for realtors |
+| `lib/screens/recon/realtor/cma_data_card.dart` | CMA-relevant data extraction |
+| `lib/screens/recon/realtor/listing_export_screen.dart` | Export property data for listing |
+| `lib/providers/realtor_recon_providers.dart` | Riverpod providers with ReconConfig.realtor() |
+
+#### 5.2 Listing Scan Flow
+`lib/screens/recon/realtor/listing_scan_screen.dart`:
+- [ ] Step 1: Enter listing address (or select from existing listings)
+- [ ] Step 2: Scan runs with realtor-focused loading messages ("Analyzing property...", "Calculating square footage...", "Checking solar potential...")
+- [ ] Step 3: Results screen shows realtor-relevant data:
+  - Total living sqft (from ATTOM)
+  - Lot size (sqft and acres)
+  - Roof age estimate and condition
+  - Solar potential (selling point for buyers)
+  - Year built, stories, property type
+  - Satellite image for listing materials
+- [ ] Step 4: "Attach to Listing" action — links scan to listing record
+- [ ] Step 5: "Export Property Sheet" — generates PDF with property data formatted for MLS
+
+#### 5.3 CMA Data Integration
+`lib/screens/recon/realtor/cma_data_card.dart`:
+- [ ] Extract CMA-relevant fields: sqft, lot size, year built, stories, roof type, property type
+- [ ] Assessed value (from ATTOM)
+- [ ] Last sale price and date
+- [ ] "Use in CMA" action — passes data to CMA calculation screen (realtor-specific feature)
+- [ ] Property comparison helpers: side-by-side with other scanned properties
+
+#### 5.4 Photo + Scan Package
+- [ ] Scan results combined with property photos for listing presentation
+- [ ] Satellite image + street-level photo (Google Street View static API) combined
+- [ ] Room count from floor plan (if sketch exists)
+- [ ] "Generate Listing Sheet" — professional PDF combining scan data + photos
+
+#### 5.5 Realtor-Specific Display
+- [ ] No trade-specific bid data (irrelevant for realtors)
+- [ ] No material pricing (irrelevant)
+- [ ] No lead scoring (different sales model)
+- [ ] Solar potential highlighted (buyer selling point)
+- [ ] Property condition indicators (roof age, HVAC age, plumbing age) shown as buyer disclosure helpers
+- [ ] Disclaimer: "Property data derived from satellite imagery and public records. Verify all information independently before including in listing materials."
+
+#### 5.6 Screen States
+- [ ] Loading: "Scanning property for listing preparation..."
+- [ ] Error: "Could not scan property. Check the address and try again." + Retry
+- [ ] Empty: "Scan a listing property to get instant intelligence."
+- [ ] Data: Full property intelligence report with realtor actions
+
+---
+
+### RECON-MOBILE3 — Homeowner One-Time Scan (~8h)
+
+**Goal**: The killer homeowner feature. "What Would It Cost to Fix My Home?" Enter your address, get an instant rehab cost estimate broken down by system (roof, HVAC, plumbing, electrical, windows, insulation). This is the gateway to the Zafto contractor marketplace.
+
+#### 6.1 New Files
+
+| File Path | Purpose |
+|-----------|---------|
+| `lib/screens/recon/homeowner/home_scan_screen.dart` | Main scan flow |
+| `lib/screens/recon/homeowner/rehab_estimate_screen.dart` | System-by-system cost breakdown |
+| `lib/screens/recon/homeowner/system_detail_screen.dart` | Deep dive per system |
+| `lib/screens/recon/homeowner/find_contractors_screen.dart` | Connect to contractor marketplace |
+| `lib/screens/recon/homeowner/share_scan_screen.dart` | Share scan with contractor |
+| `lib/providers/homeowner_recon_providers.dart` | Riverpod providers with ReconConfig.homeowner() |
+| `lib/services/rehab_cost_estimator.dart` | Cost calculation engine |
+
+#### 6.2 Home Scan Screen
+`lib/screens/recon/homeowner/home_scan_screen.dart`:
+- [ ] Hero section: "How Much Would It Cost to Fix My Home?"
+- [ ] Address input: street address with autocomplete, OR "Use Current Location"
+- [ ] One big "Scan My Home" button
+- [ ] Loading animation: house icon building up piece by piece (roof, walls, systems)
+- [ ] Progress steps: "Finding your home...", "Analyzing roof...", "Checking systems...", "Estimating costs..."
+- [ ] On complete: navigate to Rehab Estimate Screen
+- [ ] First-time explanation: "We use satellite imagery and public records to estimate your home's condition and repair costs. This is FREE and takes about 10 seconds."
+
+#### 6.3 Rehab Estimate Screen
+`lib/screens/recon/homeowner/rehab_estimate_screen.dart`:
+- [ ] Header: satellite image of their home, address, year built, sqft
+- [ ] **Total rehab estimate range**: "$45,000 - $72,000 to bring everything to current standards"
+- [ ] System-by-system breakdown cards:
+
+| System | Data Sources | Estimated Life | How Cost is Calculated |
+|--------|-------------|----------------|----------------------|
+| **Roof** | Google Solar (area, pitch), ATTOM (type, year built) | 20-30 years depending on material | Area (squares) x cost per square ($350-$600) based on material type |
+| **HVAC** | ATTOM (year built, heating type, cooling type) | 15-20 years | System size (from sqft) x cost per ton ($3,000-$7,000) |
+| **Plumbing** | ATTOM (year built), property age | 40-70 years depending on material | Fixture count estimate x cost per fixture + repipe estimate based on sqft |
+| **Electrical** | ATTOM (year built), property age | 30-40 years (wiring) | Panel upgrade ($2,000-$4,500) + rewire estimate based on sqft |
+| **Windows** | Wall measurements (estimated count), property age | 20-30 years | Estimated count x cost per window ($300-$1,200) |
+| **Insulation** | ATTOM (year built), climate zone | 20-40 years | Attic sqft x cost per sqft ($1.50-$5.00) based on type |
+| **Exterior (Siding)** | Wall measurements, ATTOM (type) | 20-50 years depending on material | Wall area (sqft) x cost per sqft ($3-$12) based on material |
+| **Exterior (Paint)** | Wall measurements | 7-10 years | Wall area x cost per sqft ($1.50-$4.00) |
+
+- [ ] Each system card shows:
+  - System name and icon (Lucide)
+  - Estimated age: "~22 years old (installed ~2004)"
+  - Estimated remaining life: "2-8 years remaining"
+  - Urgency indicator: GREEN (10+ years), YELLOW (3-10 years), RED (<3 years or past expected life)
+  - Cost range: "$8,500 - $14,000"
+  - "Learn More" expands to show calculation methodology
+  - "Find Contractors" button per system
+
+- [ ] Sort options: by urgency (most urgent first) or by cost (most expensive first)
+- [ ] Summary pie chart: visual breakdown of total cost by system
+
+#### 6.4 Rehab Cost Estimator Service
+`lib/services/rehab_cost_estimator.dart`:
+```dart
+class RehabCostEstimator {
+  /// Calculate rehab costs from a PropertyScanDetail.
+  /// Returns per-system estimates with urgency ratings.
+  RehabEstimate calculate(PropertyScanDetail scan) {
+    return RehabEstimate(
+      systems: [
+        _estimateRoof(scan),
+        _estimateHvac(scan),
+        _estimatePlumbing(scan),
+        _estimateElectrical(scan),
+        _estimateWindows(scan),
+        _estimateInsulation(scan),
+        _estimateSiding(scan),
+        _estimatePaint(scan),
+      ],
+    );
+  }
+
+  SystemEstimate _estimateRoof(PropertyScanDetail scan) {
+    final roofAge = scan.scan.yearBuilt != null
+      ? DateTime.now().year - scan.scan.yearBuilt!
+      : null;
+    final roofSquares = scan.roof?.totalSquares ?? 0;
+    final material = scan.scan.roofTypeTax ?? 'composition_shingle';
+
+    // Material-specific lifespan and cost per square
+    final specs = _roofMaterialSpecs[material] ?? _defaultRoofSpecs;
+    final expectedLife = specs.expectedLifeYears;
+    final costPerSquareLow = specs.costPerSquareLow;
+    final costPerSquareHigh = specs.costPerSquareHigh;
+    final wasteMultiplier = 1.0 + (scan.roof?.recommendedWastePercent ?? 15) / 100;
+
+    final lowEstimate = roofSquares * costPerSquareLow * wasteMultiplier;
+    final highEstimate = roofSquares * costPerSquareHigh * wasteMultiplier;
+    final remainingLife = roofAge != null ? max(0, expectedLife - roofAge) : null;
+
+    return SystemEstimate(
+      system: HomeSystem.roof,
+      estimatedAge: roofAge,
+      expectedLifespan: expectedLife,
+      remainingLife: remainingLife,
+      urgency: _calculateUrgency(remainingLife, expectedLife),
+      costRangeLow: lowEstimate,
+      costRangeHigh: highEstimate,
+      methodology: 'Based on ${roofSquares.toStringAsFixed(1)} squares of $material '
+        'roofing with ${(scan.roof?.recommendedWastePercent ?? 15).toStringAsFixed(0)}% waste factor.',
+      dataQuality: scan.roof != null ? DataQuality.measured : DataQuality.estimated,
+    );
+  }
+
+  // Similar methods for HVAC, plumbing, electrical, windows, insulation, siding, paint
+}
+
+enum Urgency { green, yellow, red }
+enum DataQuality { measured, estimated, unknown }
+
+class SystemEstimate {
+  final HomeSystem system;
+  final int? estimatedAge;
+  final int expectedLifespan;
+  final int? remainingLife;
+  final Urgency urgency;
+  final double costRangeLow;
+  final double costRangeHigh;
+  final String methodology;
+  final DataQuality dataQuality;
+}
+
+class RehabEstimate {
+  final List<SystemEstimate> systems;
+
+  double get totalLow => systems.fold(0, (sum, s) => sum + s.costRangeLow);
+  double get totalHigh => systems.fold(0, (sum, s) => sum + s.costRangeHigh);
+  int get urgentSystemCount => systems.where((s) => s.urgency == Urgency.red).length;
+  int get warningSystemCount => systems.where((s) => s.urgency == Urgency.yellow).length;
+}
+```
+
+#### 6.5 System Detail Screen
+`lib/screens/recon/homeowner/system_detail_screen.dart`:
+- [ ] Full-screen detail for one system (e.g., Roof)
+- [ ] Shows: estimated age, condition indicators, cost breakdown
+- [ ] Calculation methodology explained in plain language
+- [ ] Photos of system type (generic illustrations, not from this specific property)
+- [ ] "What to expect" section: typical project timeline, what the work involves
+- [ ] "Red flags" section: warning signs homeowner should look for
+- [ ] "Find a [Roofing] Contractor" CTA
+
+#### 6.6 Find Contractors Flow
+`lib/screens/recon/homeowner/find_contractors_screen.dart`:
+- [ ] List of Zafto contractors matching the system/trade in homeowner's area
+- [ ] Each contractor card: name, rating, specialties, "Request Quote" button
+- [ ] "Request Quote" sends the scan data to the contractor (with homeowner permission)
+- [ ] Contractor receives: address, system measurements, estimated scope
+- [ ] Contractor can then provide accurate quote without a site visit for many jobs
+- [ ] If no contractors in area: "No contractors found. Share your scan to get quotes." with manual share option
+
+#### 6.7 Share Scan with Contractor
+`lib/screens/recon/homeowner/share_scan_screen.dart`:
+- [ ] Generate shareable link to scan report (read-only, time-limited)
+- [ ] Share via: text message, email, copy link
+- [ ] Shared report shows: property overview, system measurements, rehab estimates
+- [ ] Contractor can claim the lead from the shared link
+- [ ] Privacy: only measurements shared, NOT homeowner personal info (unless they opt in)
+
+#### 6.8 Save to Profile
+- [ ] Scan auto-saved to homeowner's profile
+- [ ] "My Home" section in homeowner app shows latest scan
+- [ ] Historical scans preserved (show property changes over time)
+- [ ] Push notification reminder: "Your roof is now 23 years old. Time to get quotes?" (future)
+
+#### 6.9 Legal Disclaimers (MANDATORY)
+Every screen that shows cost estimates MUST display:
+- [ ] Header disclaimer: "For estimation purposes only"
+- [ ] Footer disclaimer: "Cost estimates are for informational purposes only and do not constitute professional engineering advice. Actual costs may vary significantly based on local labor rates, material choices, site conditions, and contractor availability. Always consult licensed contractors for accurate quotes. Zafto is not responsible for differences between estimates and actual project costs."
+- [ ] Per-system disclaimer: "Based on [data source]. Accuracy: [confidence level]. Verify with a licensed professional."
+- [ ] Urgency disclaimer: "System age and remaining life estimates are based on national averages. Actual condition depends on maintenance, climate, installation quality, and other factors."
+
+#### 6.10 Screen States
+- [ ] Loading: "Scanning your home..." with house building animation
+- [ ] Error: "We couldn't scan this address. [Specific reason]." + "Try a Different Address" button
+- [ ] Empty (first use): "Scan your home to see what repairs might be needed and how much they could cost."
+- [ ] Data: Full rehab estimate with system-by-system breakdown
+
+---
+
+### SKETCH-REALTOR1 — Realtor Sketch Configuration (~6h)
+
+**Goal**: Configure sketch_core for realtor floor plan creation. Realtors need: room labeling, auto sqft calculation, photo overlay, listing-quality export.
+
+#### 7.1 New Files
+
+| File Path | Purpose |
+|-----------|---------|
+| `lib/screens/sketch/realtor/realtor_sketch_screen.dart` | Wrapper with RealtorSketchConfig |
+| `lib/screens/sketch/realtor/room_labeling_sheet.dart` | Quick room label picker |
+| `lib/screens/sketch/realtor/sqft_summary_widget.dart` | Per-room and total sqft display |
+| `lib/screens/sketch/realtor/listing_export_screen.dart` | Clean MLS-ready export |
+| `lib/providers/realtor_sketch_providers.dart` | Riverpod providers with SketchConfig.realtor() |
+
+#### 7.2 Room Labeling Mode
+`lib/screens/sketch/realtor/room_labeling_sheet.dart`:
+- [ ] Bottom sheet with common room names: Living Room, Kitchen, Primary Bedroom, Bedroom 2, Bedroom 3, Bathroom, Primary Bath, Dining Room, Office, Laundry, Garage, Foyer, Hallway, Closet, Pantry, Bonus Room, Sunroom, Basement, Attic
+- [ ] Tap room on plan, then tap room name to label
+- [ ] Custom label input for non-standard rooms
+- [ ] Color coding by room type (subtle, professional)
+- [ ] Room count auto-detected from labeled rooms: "3 Bed / 2 Bath / 1,847 sqft"
+
+#### 7.3 Auto SqFt Calculation
+`lib/screens/sketch/realtor/sqft_summary_widget.dart`:
+- [ ] Persistent bottom bar showing: total sqft, room count, bed count, bath count
+- [ ] Per-room sqft calculated from Shoelace formula on room boundary
+- [ ] Tap to expand: per-room breakdown table (Room Name | SqFt | Dimensions)
+- [ ] Highlight rooms without labels ("Unlabeled Room — tap to name")
+- [ ] GLA (Gross Living Area) calculation: excludes garage, unfinished basement, attic
+- [ ] "Matches tax records?" comparison if ATTOM data available (scan.totalSqft vs calculated)
+
+#### 7.4 Photo Overlay
+- [ ] Take photo of room, overlay sketch on top
+- [ ] Useful for: showing room dimensions on actual photos
+- [ ] Transparency slider for overlay opacity
+- [ ] Export photo+sketch composite as PNG
+
+#### 7.5 Listing Export
+`lib/screens/sketch/realtor/listing_export_screen.dart`:
+- [ ] Clean floor plan PDF: white background, minimal styling, room labels, dimensions
+- [ ] Format suitable for MLS upload
+- [ ] Company branding option (realtor logo, contact info)
+- [ ] Room schedule table included: Room | SqFt | Length x Width
+- [ ] Summary line: "3 Bed / 2 Bath / 1,847 sqft"
+- [ ] Export options: PDF (print-ready), PNG (MLS upload), share via email/text
+- [ ] Legal: "Floor plan is for illustration purposes only. Dimensions are approximate."
+
+#### 7.6 Attach to Listing
+- [ ] After export, "Attach to Listing" action
+- [ ] Picker: select from existing listings (realtor's active listings)
+- [ ] Floor plan linked to listing record in DB
+- [ ] Available in listing presentation materials
+
+#### 7.7 Screen States
+- [ ] Loading: "Loading floor plan..."
+- [ ] Error: "Could not load floor plan. [Error]." + Retry
+- [ ] Empty: "Create a floor plan for your listing. Draw rooms or scan with LiDAR."
+- [ ] Data: Editor canvas with realtor tools
+
+---
+
+### SKETCH-HOMEOWNER1 — Homeowner Sketch Annotation (~4h)
+
+**Goal**: Simple annotation mode for homeowners. They view existing floor plans (from contractor sketches or LiDAR scans) and mark areas for renovation. "I want to change THIS wall." "Add island here." Then share with contractor.
+
+#### 8.1 New Files
+
+| File Path | Purpose |
+|-----------|---------|
+| `lib/screens/sketch/homeowner/homeowner_sketch_screen.dart` | Wrapper with HomeownerSketchConfig |
+| `lib/screens/sketch/homeowner/annotation_toolbar.dart` | Simplified annotation tools |
+| `lib/screens/sketch/homeowner/request_quote_sheet.dart` | "Request Quote" flow from annotated sketch |
+| `lib/providers/homeowner_sketch_providers.dart` | Riverpod providers with SketchConfig.homeowner() |
+
+#### 8.2 View Mode
+- [ ] Homeowner opens existing floor plan (shared by contractor, from LiDAR scan, or from listing)
+- [ ] Plan displayed in read-only mode (cannot move walls, doors, windows)
+- [ ] Pinch-to-zoom, pan navigation
+- [ ] Room labels and dimensions visible
+
+#### 8.3 Annotation Tools
+`lib/screens/sketch/homeowner/annotation_toolbar.dart`:
+- [ ] **Text Note**: Tap anywhere, add text ("Remove this wall", "Add window here", "New bathroom layout")
+- [ ] **Arrow Marker**: Point to specific area with directional arrow + label
+- [ ] **Highlight Region**: Draw rectangle/circle to highlight an area (semi-transparent fill)
+- [ ] **Photo Pin**: Pin a photo to a location on the plan (take photo of problem area)
+- [ ] **Color selection**: 4 colors (red for demolish, green for add, blue for change, yellow for note)
+- [ ] **Undo/Redo**: Standard undo/redo for annotations only
+- [ ] NO wall drawing tools, NO fixture placement, NO trade layers
+
+#### 8.4 Annotation Model
+```dart
+class SketchAnnotation {
+  final String id;
+  final AnnotationType type; // text, arrow, highlight, photoPin
+  final Offset position;
+  final String? text;
+  final double? rotation; // for arrows
+  final Size? size; // for highlights
+  final Color color;
+  final String? photoPath; // for photo pins
+  final DateTime createdAt;
+}
+```
+
+#### 8.5 Share with Contractor
+`lib/screens/sketch/homeowner/request_quote_sheet.dart`:
+- [ ] "Request Quote" bottom sheet
+- [ ] Homeowner adds description: "I want to renovate my kitchen and open up the wall to the living room."
+- [ ] Annotated floor plan screenshot generated automatically
+- [ ] Select trade type: General Contractor, Kitchen Remodel, Bathroom Remodel, etc.
+- [ ] Select contractors from Zafto marketplace (or share link externally)
+- [ ] Contractor receives: annotated floor plan image + text description + property scan data (if available)
+- [ ] Confirmation: "Quote request sent to [Contractor Name]. They'll review your plan and get back to you."
+
+#### 8.6 Receive Floor Plans
+- [ ] Homeowner can receive floor plans shared by their contractor
+- [ ] Floor plans appear in "My Home" > "Plans" section
+- [ ] Each plan shows: who created it, when, which job it's associated with
+- [ ] Homeowner can annotate any shared plan (annotations saved separately, don't modify original)
+
+#### 8.7 Screen States
+- [ ] Loading: "Loading floor plan..."
+- [ ] Error: "Could not load floor plan." + Retry
+- [ ] Empty: "No floor plans for your home yet. Ask your contractor to share a plan, or scan your home first."
+- [ ] Data: Floor plan view with annotation toolbar
+
+---
+
 
 ---
 
@@ -22282,57 +31138,960 @@ When admin disables a module, cascade warning shows dependent modules that will 
 
 ### CONTRACTOR OPERATIONS (4 sprints, ~56h)
 
-### ROUTE1 — Route Optimization Engine for Service Trades (~16h) — S135
-*Route-based trades (pest, pool, landscape, septic, cleaning) run 8-25 stops/day on recurring schedules. Without route optimization, they cannot use Zafto for their core daily workflow. Integrates with existing job/calendar system. Reuses Mapbox (already in stack).*
+### ROUTE1 — Route Optimization Engine for Service Trades (~16h)
 
-- [ ] Create `route_plans` table (id, company_id, technician_id, date, optimized_order jsonb, total_distance_miles, total_drive_time_minutes, status, notes, created_at, updated_at, deleted_at) with RLS + audit trigger (~2h)
-- [ ] Create `route_stops` table (id, route_plan_id, job_id, customer_id, property_id, stop_order, scheduled_arrival, scheduled_departure, actual_arrival, actual_departure, drive_time_from_prev, distance_from_prev, status, skip_reason, notes) with RLS (~2h)
-- [ ] Route optimization algorithm — nearest-neighbor heuristic with time windows, service duration estimates, priority weighting. PostgreSQL function `optimize_route()`. OSRM fallback for $0/mo distance matrix (~4h)
-- [ ] Flutter: Route Plan screen — Mapbox map view with numbered stops, drag-to-reorder, one-tap navigation to next stop, auto-check-in on GPS proximity, skip/reschedule buttons (~2h)
-- [ ] Recurring route templates — `route_templates` table with weekly/biweekly/monthly recurrence rules, auto-generate route_plans from templates via pg_cron (~2h)
-- [ ] Web Portal: `/dashboard/routes` page — daily/weekly route planning view, assign techs to routes, bulk-add recurring customers, route efficiency metrics (miles/stop, time/stop, on-time %) (~2h)
-- [ ] Team Portal: tech's daily route view — today's stops with one-tap directions, customer notes, service history preview, check-in/check-out buttons (~1h)
-- [ ] Client Portal: "Your tech is on the way" — show estimated arrival window based on route position (no live tracking — privacy) (~1h)
-- [ ] Commit: `[ROUTE1] Route optimization engine — route_plans + route_stops + route_templates tables, optimize_route() fn, Mapbox map view, recurring templates, CRM route planning, team/client portal views`
+**Goal:** Route-based trades (pest control, pool service, landscape maintenance, septic, cleaning) run 8-25 stops/day on recurring schedules. Without route optimization they cannot use Zafto for their core daily workflow. Integrates with existing job/calendar system. Uses OSRM (self-hosted, $0/month) for distance matrices.
 
-### CHEM1 — Chemical & Regulatory Compliance Tracking (~12h) — S135
-*Pest control (EPA-regulated pesticides), HVAC (EPA Section 608 refrigerant), restoration (antimicrobials/biocides), insulation (foam chemical safety) — all require chemical usage logging, applicator certification tracking, and regulatory reporting. Fines: $5K-75K per violation.*
+### Database
 
-- [ ] Create `chemical_applications` table (id, company_id, job_id, property_id, technician_id, chemical_name, epa_registration_number, active_ingredient, application_method, quantity_used, quantity_unit, target_pest_or_purpose, wind_speed, temperature, humidity, application_area_sqft, reentry_interval_hours, signal_word, ppe_required jsonb, mix_ratio, dilution_rate, notes, applied_at, created_at) with RLS + audit trigger (~2h)
-- [ ] Create `chemical_inventory` table (id, company_id, chemical_name, epa_reg_number, manufacturer, quantity_on_hand, quantity_unit, storage_location, sds_url, purchase_date, expiration_date, lot_number, cost_per_unit, reorder_threshold, restricted_use boolean, applicator_cert_required boolean) with RLS (~1h)
-- [ ] Create `technician_certifications` table (id, company_id, team_member_id, certification_type, certification_number, issuing_authority, state, issued_date, expiration_date, renewal_requirements, document_url, verified boolean) — EPA applicator, HVAC Section 608, IICRC, state pest licenses (~1h)
-- [ ] Seed chemical reference data — 50+ common pesticides, refrigerants (R-22/R-410A/R-32/R-454B with GWP values), restoration antimicrobials (Benefect, Concrobium, Sporicidin), insulation foam chemicals. EPA reg numbers, signal words, REI values, PPE requirements (~3h)
-- [ ] HVAC refrigerant tracking — EPA Section 608 requires tracking all purchases, usage, recovery. Fields on chemical_applications: type (charge/recover/reclaim), equipment_id, starting_charge_oz, amount_added_oz, amount_recovered_oz, leak_rate_calculated (~1h)
-- [ ] Flutter: Chemical Application Log screen — scan product barcode (camera), auto-fill from inventory, weather auto-pull from device sensors, GPS location stamp, technician cert validation (warn if expired), photo of application area (~2h)
-- [ ] Web Portal: `/dashboard/compliance/chemicals` — inventory management, usage reports by technician/job/chemical, expiring certifications dashboard with 30/60/90-day alerts, EPA reporting format export CSV (~2h)
-- [ ] PDF chemical usage report — per-job report showing chemicals applied, safety data, reentry intervals, applicator info. Required by many states for pest control customer disclosure (~1h)
-- [ ] Commit: `[CHEM1] Chemical compliance tracking — chemical_applications + chemical_inventory + technician_certifications tables, 50+ chemical seed data, refrigerant Section 608, barcode scan, cert expiry alerts, EPA reporting`
+```sql
+-- ============================================================
+-- route_plans — one plan per technician per day
+-- ============================================================
+CREATE TABLE route_plans (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  technician_id UUID NOT NULL REFERENCES team_members(id),
+  route_date DATE NOT NULL,
+  route_template_id UUID REFERENCES route_templates(id),
+  name TEXT,
+  start_address TEXT,
+  start_lat NUMERIC(10,7),
+  start_lng NUMERIC(10,7),
+  end_address TEXT,
+  end_lat NUMERIC(10,7),
+  end_lng NUMERIC(10,7),
+  optimized_order JSONB DEFAULT '[]',
+  total_stops INTEGER DEFAULT 0,
+  total_distance_miles NUMERIC(8,2),
+  total_drive_time_minutes INTEGER,
+  total_service_time_minutes INTEGER,
+  estimated_start_time TIME,
+  estimated_end_time TIME,
+  status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft','optimized','in_progress','completed','cancelled')),
+  optimization_algorithm TEXT DEFAULT 'nearest_neighbor',
+  optimization_score NUMERIC(5,2),
+  notes TEXT,
+  deleted_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
 
-### DRAW1 — Draw Schedule & Milestone Payment Management (~16h) — S135
-*GCs, pool builders, solar installers, remodelers run multi-phase projects with staged payments (draws). A $200K kitchen remodel = 5-7 draws. Lenders require draw inspections before releasing funds. This is how contractors get paid on large projects — without it, they can't manage cash flow on anything over $25K.*
+CREATE INDEX idx_route_plans_company ON route_plans(company_id);
+CREATE INDEX idx_route_plans_tech_date ON route_plans(company_id, technician_id, route_date);
+CREATE INDEX idx_route_plans_date ON route_plans(company_id, route_date);
+CREATE INDEX idx_route_plans_status ON route_plans(company_id, status);
+CREATE INDEX idx_route_plans_template ON route_plans(route_template_id) WHERE route_template_id IS NOT NULL;
 
-- [ ] Create `draw_schedules` table (id, company_id, job_id, name, total_contract_amount, total_draws, retainage_pct, lender_name, lender_contact, lender_requirements jsonb, status, created_at, updated_at, deleted_at) with RLS + audit trigger (~2h)
-- [ ] Create `draw_items` table (id, draw_schedule_id, draw_number, phase_name, description, amount, percentage_of_total, prerequisite_tasks jsonb, required_inspections jsonb, lien_waiver_required boolean, status, requested_at, approved_at, paid_at, paid_amount, notes, photos uuid[], inspector_name, inspection_date) with RLS (~2h)
-- [ ] Draw request workflow — status machine: draft → requested → under_review → approved → funded → paid. Contractor requests draw → system generates draw request PDF (scope completed, photos, lien waiver) → owner/lender reviews → approves/requests changes → payment recorded (~3h)
-- [ ] Lien waiver generation — auto-generate conditional waiver on draw request, unconditional after payment. State-specific templates (JUR phase populates, placeholder structure now) (~2h)
-- [ ] Flutter: Draw Schedule screen — visual progress bar per phase, request draw button (attach completion photos), payment tracker showing received vs outstanding, retainage balance (~2h)
-- [ ] Web Portal: `/dashboard/draw-schedules` — create from estimate phases, manage requests, track payments, retainage tracking, lender communication log (~2h)
-- [ ] Client Portal: homeowner/lender view — draw progress, approve/decline draw requests, view completion photos, download lien waivers (~2h)
-- [ ] GC Schedule integration — auto-link draw milestones to `schedule_tasks` (existing Phase GC). Draw becomes requestable when linked tasks hit 100% completion (~1h)
-- [ ] Commit: `[DRAW1] Draw schedule + milestone payments — draw_schedules + draw_items tables, request-approve-fund workflow, lien waiver generation, retainage tracking, Flutter/CRM/client portal views, GC schedule integration`
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON route_plans
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER audit_route_plans AFTER INSERT OR UPDATE OR DELETE ON route_plans
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
 
-### SEL1 — Client Selections Management Portal (~12h) — S135
-*Remodelers, GCs, interior-adjacent trades need clients to choose finishes (countertops, tile, fixtures, paint, flooring, appliances, hardware). Selections delayed = project delayed. BuilderTrend/CoConstruct charge $99-399/mo for this alone. This is the #1 communication bottleneck on remodeling projects.*
+-- ============================================================
+-- route_stops — individual stops within a route plan
+-- ============================================================
+CREATE TABLE route_stops (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  route_plan_id UUID NOT NULL REFERENCES route_plans(id) ON DELETE CASCADE,
+  company_id UUID NOT NULL REFERENCES companies(id),
+  job_id UUID REFERENCES jobs(id),
+  customer_id UUID REFERENCES customers(id),
+  property_id UUID REFERENCES properties(id),
+  stop_order INTEGER NOT NULL,
+  address TEXT NOT NULL,
+  lat NUMERIC(10,7),
+  lng NUMERIC(10,7),
+  customer_name TEXT,
+  customer_phone TEXT,
+  service_type TEXT,
+  estimated_service_minutes INTEGER DEFAULT 30,
+  scheduled_arrival TIMESTAMPTZ,
+  scheduled_departure TIMESTAMPTZ,
+  actual_arrival TIMESTAMPTZ,
+  actual_departure TIMESTAMPTZ,
+  drive_time_from_prev_minutes INTEGER,
+  distance_from_prev_miles NUMERIC(8,2),
+  status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','en_route','arrived','in_progress','completed','skipped','rescheduled')),
+  skip_reason TEXT,
+  check_in_lat NUMERIC(10,7),
+  check_in_lng NUMERIC(10,7),
+  check_out_lat NUMERIC(10,7),
+  check_out_lng NUMERIC(10,7),
+  notes TEXT,
+  customer_notes TEXT,
+  access_instructions TEXT,
+  priority INTEGER DEFAULT 5 CHECK (priority BETWEEN 1 AND 10),
+  time_window_start TIME,
+  time_window_end TIME,
+  photos JSONB DEFAULT '[]',
+  deleted_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
 
-- [ ] Create `selection_categories` table (id, company_id, job_id, category_name, room, sort_order, deadline, allowance_amount, status, assigned_to, notes, created_at, updated_at) with RLS + audit trigger (~1h)
-- [ ] Create `selection_options` table (id, category_id, option_name, supplier, sku, unit_price, description, image_url, specification_url, lead_time_days, in_budget boolean, upgrade_cost, status, selected_at, selected_by) with RLS (~1h)
-- [ ] Selection workflow — contractor creates categories per room → adds 3-5 options with photos/prices → sets deadline and allowance → client portal shows options → client picks → selection locks → auto-updates estimate line item with actual price (~3h)
-- [ ] Allowance tracking — budget allowance per category, client sees remaining vs selected cost, upgrade/downgrade difference displayed. Overage auto-generates change order via existing change_orders table (~2h)
-- [ ] Flutter: Selections overview per job — categories with status badges (pending/selected/ordered/installed), deadline warnings, client comment thread per category (~2h)
-- [ ] Web Portal: `/dashboard/selections` — create selection boards per job, drag-drop images, set allowances, track all jobs' selection status, overdue alerts, supplier contact info (~2h)
-- [ ] Client Portal: visual selection board — side-by-side option comparison with photos/specs/price, one-tap select, running total vs budget, deadline countdown, comment per selection (~2h)
-- [ ] Estimate integration — selected option price auto-replaces allowance line item in estimate. If upgrade exceeds allowance, auto-creates change order with client approval flow (~1h)
-- [ ] Commit: `[SEL1] Client selections portal — selection_categories + selection_options tables, allowance tracking, change order auto-generation, Flutter/CRM/client portal views, estimate integration`
+CREATE INDEX idx_route_stops_plan ON route_stops(route_plan_id);
+CREATE INDEX idx_route_stops_company ON route_stops(company_id);
+CREATE INDEX idx_route_stops_job ON route_stops(job_id) WHERE job_id IS NOT NULL;
+CREATE INDEX idx_route_stops_customer ON route_stops(customer_id) WHERE customer_id IS NOT NULL;
+CREATE INDEX idx_route_stops_order ON route_stops(route_plan_id, stop_order);
+CREATE INDEX idx_route_stops_status ON route_stops(route_plan_id, status);
+
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON route_stops
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER audit_route_stops AFTER INSERT OR UPDATE OR DELETE ON route_stops
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+-- ============================================================
+-- route_templates — recurring route patterns
+-- ============================================================
+CREATE TABLE route_templates (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  name TEXT NOT NULL,
+  description TEXT,
+  technician_id UUID REFERENCES team_members(id),
+  recurrence_type TEXT NOT NULL CHECK (recurrence_type IN ('daily','weekly','biweekly','monthly','custom')),
+  recurrence_days INTEGER[] DEFAULT '{}',
+  recurrence_week_of_month INTEGER,
+  start_address TEXT,
+  start_lat NUMERIC(10,7),
+  start_lng NUMERIC(10,7),
+  end_address TEXT,
+  end_lat NUMERIC(10,7),
+  end_lng NUMERIC(10,7),
+  template_stops JSONB NOT NULL DEFAULT '[]',
+  total_stops INTEGER DEFAULT 0,
+  estimated_total_minutes INTEGER,
+  is_active BOOLEAN DEFAULT true,
+  last_generated_date DATE,
+  next_generation_date DATE,
+  deleted_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX idx_route_templates_company ON route_templates(company_id);
+CREATE INDEX idx_route_templates_active ON route_templates(company_id, is_active) WHERE is_active = true;
+CREATE INDEX idx_route_templates_tech ON route_templates(technician_id) WHERE technician_id IS NOT NULL;
+CREATE INDEX idx_route_templates_next ON route_templates(next_generation_date) WHERE is_active = true;
+
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON route_templates
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER audit_route_templates AFTER INSERT OR UPDATE OR DELETE ON route_templates
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+```
+
+### RLS Policies
+
+```sql
+-- route_plans
+ALTER TABLE route_plans ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "route_plans_select" ON route_plans FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
+CREATE POLICY "route_plans_insert" ON route_plans FOR INSERT WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "route_plans_update" ON route_plans FOR UPDATE USING (company_id = auth.company_id() AND deleted_at IS NULL) WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "route_plans_delete" ON route_plans FOR DELETE USING (company_id = auth.company_id() AND auth.user_role() IN ('owner','admin','office_manager'));
+
+-- route_stops
+ALTER TABLE route_stops ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "route_stops_select" ON route_stops FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
+CREATE POLICY "route_stops_insert" ON route_stops FOR INSERT WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "route_stops_update" ON route_stops FOR UPDATE USING (company_id = auth.company_id() AND deleted_at IS NULL) WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "route_stops_delete" ON route_stops FOR DELETE USING (company_id = auth.company_id() AND auth.user_role() IN ('owner','admin','office_manager'));
+
+-- route_templates
+ALTER TABLE route_templates ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "route_templates_select" ON route_templates FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
+CREATE POLICY "route_templates_insert" ON route_templates FOR INSERT WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "route_templates_update" ON route_templates FOR UPDATE USING (company_id = auth.company_id() AND deleted_at IS NULL) WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "route_templates_delete" ON route_templates FOR DELETE USING (company_id = auth.company_id() AND auth.user_role() IN ('owner','admin'));
+```
+
+### Edge Functions
+
+**`optimize-route`** — POST
+- **Request:** `{ route_plan_id: uuid }` or `{ stops: [{ address, lat, lng, service_minutes, time_window_start?, time_window_end?, priority? }], start: { lat, lng }, end?: { lat, lng } }`
+- **Auth:** Bearer JWT
+- **Process:** 1) Get all stops with lat/lng. 2) Build distance matrix using OSRM Table API (self-hosted or OpenRouteService free tier as fallback). 3) Run nearest-neighbor heuristic with time window constraints and priority weighting. 4) For < 15 stops, try 2-opt improvement. 5) Calculate total distance and drive time. 6) Update route_stops.stop_order and scheduled_arrival/departure. 7) Update route_plans totals.
+- **Response:** `{ optimized_order: number[], total_distance_miles, total_drive_time_minutes, savings_vs_original: { distance_pct, time_pct } }`
+- **Errors:** 401, 404 plan not found, 422 < 2 stops or missing coordinates, 503 OSRM unavailable (fallback to straight-line distances)
+
+**`generate-routes-from-templates`** — POST (called by pg_cron daily at 6 AM)
+- **Request:** `{}` (processes all active templates due for generation)
+- **Auth:** Service role
+- **Process:** Find templates where next_generation_date <= today and is_active = true. For each: create route_plan with stops from template_stops JSONB, call optimize-route, update last_generated_date and next_generation_date.
+- **Response:** `{ generated: number, errors: number }`
+
+### Flutter Screens
+
+**`lib/screens/routes/route_plan_screen.dart`** — Map view (Mapbox) with numbered stop pins. Stop list below map with drag-to-reorder. Per stop: customer name, address, service type, time window, status badge. Actions: "Optimize Route" button, "Start Route" button, "Navigate to Next" (opens maps app). GPS auto-check-in when within 100m of stop. 4 states.
+
+**`lib/screens/routes/route_list_screen.dart`** — Today's routes for this technician. Calendar view showing routes by date. Each route card: name, stop count, total miles, total time, status. 4 states.
+
+**`lib/screens/routes/route_stop_detail_screen.dart`** — Individual stop detail: customer info, address, service notes, access instructions, previous service history, check-in/check-out buttons, skip/reschedule buttons, photo capture, notes. 4 states.
+
+**`lib/screens/routes/route_template_screen.dart`** — Create/edit recurring route templates. Add stops from customer list, set recurrence pattern, assign technician. 4 states.
+
+### Web CRM Pages
+
+**`/dashboard/routes`** — Daily/weekly route planning view. Calendar layout. Assign technicians to routes. Bulk-add recurring customers. Route efficiency metrics dashboard (miles/stop, time/stop, on-time %, stops completed/day). Map view showing all active routes.
+
+**`/dashboard/routes/[id]`** — Single route detail. Map with stops. Reorder stops. Edit service times. "Optimize" button. Route stats. Live status tracking (which stop tech is currently at).
+
+**`/dashboard/routes/templates`** — Manage recurring templates. Create/edit/deactivate. Preview next generation date. Assign to technicians.
+
+### Team Portal
+
+**`team-portal: /routes/today`** — Technician's daily route view. Today's stops with one-tap directions (deep link to Google Maps/Apple Maps/Waze). Customer notes, service history preview, check-in/check-out buttons, skip with reason, photo capture per stop.
+
+### Client Portal
+
+**`client-portal: /service/upcoming`** — "Your tech is on the way" — show estimated arrival window based on route position. NOT live GPS tracking (privacy). Shows: technician name, estimated arrival window (e.g., "Between 2:00-2:30 PM"), service type. Updates as tech progresses through route.
+
+### Hooks
+
+**`web-portal/src/lib/hooks/use-routes.ts`** — CRUD for route_plans + route_stops. Returns `{ routes, loading, error, createRoute, optimizeRoute, updateStop }`. Real-time subscription. Filter by date, technician, status.
+
+**`web-portal/src/lib/hooks/use-route-templates.ts`** — CRUD for route_templates. Returns `{ templates, loading, error, createTemplate, updateTemplate, deactivateTemplate }`.
+
+**`team-portal/src/lib/hooks/use-my-route.ts`** — Current technician's route for today. Returns `{ route, stops, currentStop, nextStop, loading, error, checkIn, checkOut, skipStop }`.
+
+**`client-portal/src/lib/hooks/use-service-eta.ts`** — Client's upcoming service ETA. Returns `{ techName, estimatedArrival, serviceType, loading }`.
+
+### API Connections ($0/month)
+- **OSRM** (BSD-2, self-hosted): Distance matrix (Table API) for route optimization. Self-host via Docker. Unlimited requests. No API key needed.
+- **OpenRouteService** (free tier fallback): 500 matrix requests/day, 2000 directions/day. Free hosted API key. Backup if OSRM container is down.
+- **Mapbox** (already in stack): Map display for route visualization. 200K tile loads/month free tier already used.
+- **Google OR-Tools** (Apache 2.0, local): VRP solver for advanced optimization (multi-vehicle, capacity constraints). Runs locally, no API calls.
+
+### Security Verification Checklist
+- [ ] RLS on all 3 tables with SELECT/INSERT/UPDATE/DELETE policies
+- [ ] company_id + indexes + audit triggers + deleted_at on all tables
+- [ ] optimize-route EF: auth + CORS + input validation + rate limiting
+- [ ] generate-routes-from-templates EF: service role only, not callable by users
+- [ ] Customer phone/notes not exposed to client portal (only tech name + ETA)
+- [ ] GPS check-in data stored securely, not shared with clients
+- [ ] Soft delete on all operations, 4-state screens
+
+### Wiring to Existing Systems
+- jobs table: route_stops.job_id FK links stops to existing jobs
+- customers table: route_stops.customer_id FK links to customer records
+- properties table: route_stops.property_id FK links to property records
+- calendar: route_plans appear on company calendar as all-day events per technician
+- team_members: route_plans.technician_id FK links to team member assignments
+- pg_cron: generate-routes-from-templates runs daily for recurring route auto-generation
+
+### Steps
+- [ ] Migration: CREATE route_plans with all columns, constraints, indexes, RLS, triggers
+- [ ] Migration: CREATE route_stops with all columns, constraints, indexes, RLS, triggers
+- [ ] Migration: CREATE route_templates with all columns, constraints, indexes, RLS, triggers
+- [ ] Edge Function: optimize-route — OSRM distance matrix + nearest-neighbor + 2-opt improvement
+- [ ] Edge Function: generate-routes-from-templates — pg_cron daily auto-generation
+- [ ] Flutter: RouteListScreen — today's routes with calendar view
+- [ ] Flutter: RoutePlanScreen — map view with numbered stops, drag-to-reorder, optimize button
+- [ ] Flutter: RouteStopDetailScreen — check-in/out, skip, notes, photos
+- [ ] Flutter: RouteTemplateScreen — create/edit recurring templates
+- [ ] Web CRM: /dashboard/routes — daily/weekly planning, tech assignment, efficiency metrics
+- [ ] Web CRM: /dashboard/routes/[id] — single route detail with map and optimization
+- [ ] Web CRM: /dashboard/routes/templates — recurring template management
+- [ ] Team Portal: /routes/today — technician's daily route with one-tap navigation
+- [ ] Client Portal: /service/upcoming — estimated arrival window (no live GPS)
+- [ ] Hooks: use-routes.ts, use-route-templates.ts, use-my-route.ts, use-service-eta.ts
+- [ ] GPS proximity auto-check-in (100m radius)
+- [ ] Skip/reschedule buttons with reason tracking
+- [ ] Route efficiency metrics: miles/stop, time/stop, on-time %, stops/day
+- [ ] Verify: route optimization reduces total distance vs unoptimized order
+- [ ] All builds pass: `dart analyze`, `npm run build` x 4
+- [ ] Commit: `[ROUTE1] Route optimization engine — route_plans + route_stops + route_templates, OSRM optimization, Mapbox map, recurring templates, CRM/team/client portal views`
+
+---
+
+---
+
+### CHEM1 — Chemical & Regulatory Compliance Tracking (~12h)
+
+**Goal:** EPA-regulated chemical usage logging for pest control (pesticides), HVAC (Section 608 refrigerants), restoration (antimicrobials/biocides), insulation (foam chemicals). Applicator certification tracking with expiry alerts. Fines: $5K-75K per violation.
+
+### Database
+
+```sql
+-- ============================================================
+-- chemical_applications — per-job chemical usage log
+-- ============================================================
+CREATE TABLE chemical_applications (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  job_id UUID REFERENCES jobs(id),
+  property_id UUID REFERENCES properties(id),
+  customer_id UUID REFERENCES customers(id),
+  technician_id UUID NOT NULL REFERENCES team_members(id),
+  chemical_name TEXT NOT NULL,
+  epa_registration_number TEXT,
+  active_ingredient TEXT,
+  manufacturer TEXT,
+  application_method TEXT CHECK (application_method IN ('spray','bait','dust','fog','granule','injection','pour','wipe','other')),
+  quantity_used NUMERIC(10,3) NOT NULL,
+  quantity_unit TEXT NOT NULL CHECK (quantity_unit IN ('oz','fl_oz','lbs','gal','ml','liters','kg','grams','each')),
+  target_pest_or_purpose TEXT,
+  application_area_sqft NUMERIC(10,2),
+  application_area_description TEXT,
+  wind_speed_mph NUMERIC(5,1),
+  temperature_f NUMERIC(5,1),
+  humidity_pct NUMERIC(5,1),
+  weather_conditions TEXT,
+  reentry_interval_hours NUMERIC(6,1),
+  signal_word TEXT CHECK (signal_word IN ('DANGER','WARNING','CAUTION','none')),
+  ppe_required JSONB DEFAULT '[]',
+  mix_ratio TEXT,
+  dilution_rate TEXT,
+  restricted_use_product BOOLEAN DEFAULT false,
+  applicator_cert_number TEXT,
+  applicator_cert_state TEXT,
+  notes TEXT,
+  applied_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  photo_paths JSONB DEFAULT '[]',
+  deleted_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX idx_chem_apps_company ON chemical_applications(company_id);
+CREATE INDEX idx_chem_apps_job ON chemical_applications(job_id) WHERE job_id IS NOT NULL;
+CREATE INDEX idx_chem_apps_tech ON chemical_applications(technician_id);
+CREATE INDEX idx_chem_apps_chemical ON chemical_applications(company_id, chemical_name);
+CREATE INDEX idx_chem_apps_date ON chemical_applications(company_id, applied_at DESC);
+CREATE INDEX idx_chem_apps_epa ON chemical_applications(epa_registration_number) WHERE epa_registration_number IS NOT NULL;
+
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON chemical_applications
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER audit_chemical_applications AFTER INSERT OR UPDATE OR DELETE ON chemical_applications
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+-- ============================================================
+-- chemical_inventory — company's chemical stock
+-- ============================================================
+CREATE TABLE chemical_inventory (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  chemical_name TEXT NOT NULL,
+  epa_registration_number TEXT,
+  active_ingredient TEXT,
+  manufacturer TEXT,
+  product_type TEXT CHECK (product_type IN ('pesticide','herbicide','fungicide','rodenticide','insecticide','antimicrobial','refrigerant','foam_chemical','cleaning_agent','other')),
+  quantity_on_hand NUMERIC(10,3) NOT NULL DEFAULT 0,
+  quantity_unit TEXT NOT NULL,
+  storage_location TEXT,
+  sds_document_path TEXT,
+  purchase_date DATE,
+  expiration_date DATE,
+  lot_number TEXT,
+  cost_per_unit NUMERIC(10,2),
+  reorder_threshold NUMERIC(10,3),
+  restricted_use BOOLEAN DEFAULT false,
+  applicator_cert_required BOOLEAN DEFAULT false,
+  signal_word TEXT CHECK (signal_word IN ('DANGER','WARNING','CAUTION','none')),
+  ppe_required JSONB DEFAULT '[]',
+  storage_requirements TEXT,
+  disposal_instructions TEXT,
+  notes TEXT,
+  deleted_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX idx_chem_inv_company ON chemical_inventory(company_id);
+CREATE INDEX idx_chem_inv_name ON chemical_inventory(company_id, chemical_name);
+CREATE INDEX idx_chem_inv_epa ON chemical_inventory(epa_registration_number) WHERE epa_registration_number IS NOT NULL;
+CREATE INDEX idx_chem_inv_expiry ON chemical_inventory(expiration_date) WHERE expiration_date IS NOT NULL;
+CREATE INDEX idx_chem_inv_reorder ON chemical_inventory(company_id, quantity_on_hand, reorder_threshold);
+
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON chemical_inventory
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER audit_chemical_inventory AFTER INSERT OR UPDATE OR DELETE ON chemical_inventory
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+-- ============================================================
+-- technician_certifications — EPA, HVAC 608, state pest licenses, IICRC
+-- ============================================================
+CREATE TABLE technician_certifications (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  team_member_id UUID NOT NULL REFERENCES team_members(id),
+  certification_type TEXT NOT NULL CHECK (certification_type IN (
+    'epa_608_type_i','epa_608_type_ii','epa_608_type_iii','epa_608_universal',
+    'epa_pesticide_applicator','epa_pesticide_commercial','state_pest_license',
+    'iicrc_wrt','iicrc_asd','iicrc_amrt','iicrc_fsrt','iicrc_cct',
+    'osha_10','osha_30','epa_lead_rrp','epa_asbestos',
+    'state_electrical','state_plumbing','state_hvac','state_gc',
+    'backflow_tester','fire_alarm','other'
+  )),
+  certification_number TEXT NOT NULL,
+  issuing_authority TEXT NOT NULL,
+  state TEXT,
+  issued_date DATE NOT NULL,
+  expiration_date DATE,
+  renewal_requirements TEXT,
+  ce_hours_required NUMERIC(5,1),
+  ce_hours_completed NUMERIC(5,1) DEFAULT 0,
+  document_path TEXT,
+  verified BOOLEAN DEFAULT false,
+  verified_by UUID REFERENCES users(id),
+  verified_at TIMESTAMPTZ,
+  notes TEXT,
+  deleted_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX idx_tech_certs_company ON technician_certifications(company_id);
+CREATE INDEX idx_tech_certs_member ON technician_certifications(team_member_id);
+CREATE INDEX idx_tech_certs_type ON technician_certifications(company_id, certification_type);
+CREATE INDEX idx_tech_certs_expiry ON technician_certifications(expiration_date) WHERE expiration_date IS NOT NULL;
+
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON technician_certifications
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER audit_technician_certifications AFTER INSERT OR UPDATE OR DELETE ON technician_certifications
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+```
+
+### RLS Policies
+
+```sql
+ALTER TABLE chemical_applications ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "chem_apps_select" ON chemical_applications FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
+CREATE POLICY "chem_apps_insert" ON chemical_applications FOR INSERT WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "chem_apps_update" ON chemical_applications FOR UPDATE USING (company_id = auth.company_id() AND deleted_at IS NULL) WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "chem_apps_delete" ON chemical_applications FOR DELETE USING (company_id = auth.company_id() AND auth.user_role() IN ('owner','admin'));
+
+ALTER TABLE chemical_inventory ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "chem_inv_select" ON chemical_inventory FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
+CREATE POLICY "chem_inv_insert" ON chemical_inventory FOR INSERT WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "chem_inv_update" ON chemical_inventory FOR UPDATE USING (company_id = auth.company_id() AND deleted_at IS NULL) WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "chem_inv_delete" ON chemical_inventory FOR DELETE USING (company_id = auth.company_id() AND auth.user_role() IN ('owner','admin'));
+
+ALTER TABLE technician_certifications ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "tech_certs_select" ON technician_certifications FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
+CREATE POLICY "tech_certs_insert" ON technician_certifications FOR INSERT WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "tech_certs_update" ON technician_certifications FOR UPDATE USING (company_id = auth.company_id() AND deleted_at IS NULL) WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "tech_certs_delete" ON technician_certifications FOR DELETE USING (company_id = auth.company_id() AND auth.user_role() IN ('owner','admin'));
+```
+
+### Seed Data
+
+**Common pesticides (50+ products):**
+- Termidor SC (fipronil, EPA 7969-210), Phantom (chlorfenapyr, EPA 241-392), Demand CS (lambda-cyhalothrin, EPA 100-1066), Suspend Polyzone (deltamethrin, EPA 432-1514), Talstar P (bifenthrin, EPA 279-3206), Tempo SC (cyfluthrin, EPA 432-1363), Cy-Kick CS (cyfluthrin, EPA 499-304), Alpine WSG (dinotefuran, EPA 499-561), Advion Gel (indoxacarb, EPA 100-1498), Vendetta Plus (abamectin+pyriproxyfen, EPA 100-1511), Gentrol IGR (hydroprene, EPA 2724-469), Precor IGR (methoprene, EPA 2724-469), Drione Dust (pyrethrins+silica gel, EPA 499-410), Delta Dust (deltamethrin, EPA 432-772), Termidor HE (fipronil, EPA 7969-373)
+
+**Common refrigerants (seed from U-TT2):** R-22, R-410A, R-32, R-454B, R-407C, R-134a, R-404A, R-507A with GWP/ODP values
+
+**Restoration antimicrobials:** Benefect (thymol, EPA 84683-3), Concrobium (alkyl dimethyl benzyl ammonium chloride), Sporicidin (phenol/sodium phenate, EPA 8383-3), Microban (quaternary ammonium), Vital Oxide (chlorine dioxide), MMR Pro (sodium hypochlorite), RMR-86 (sodium hypochlorite), Mold Armor (sodium hypochlorite)
+
+**PPE reference by signal word:** DANGER: full-face respirator, chemical-resistant suit, double gloves, eye protection. WARNING: half-face respirator, protective clothing, gloves, eye protection. CAUTION: N95 minimum, long sleeves, gloves. None: standard work clothing.
+
+### Flutter Screens
+
+**`lib/screens/compliance/chemical_application_screen.dart`** — Form: scan product barcode (camera) to auto-fill from inventory, select from inventory dropdown, or manual entry. Weather auto-pull from device sensors (temp, humidity). GPS location stamp. Technician cert validation (warn if expired or wrong cert type for this chemical). Photo of application area. 4 states.
+
+**`lib/screens/compliance/chemical_inventory_screen.dart`** — Inventory list with: name, quantity on hand, expiration date (red if expired/expiring), reorder alert (yellow if below threshold). Add/edit inventory items. SDS document upload. 4 states.
+
+**`lib/screens/compliance/certification_management_screen.dart`** — Technician certification list. Add/edit certs with document upload. Expiry timeline showing 30/60/90 day warnings. CE hours tracking. Per-cert: scan or photo of certificate document. 4 states.
+
+### Web CRM Pages
+
+**`/dashboard/compliance/chemicals`** — Three tabs: Applications (usage log), Inventory (stock management), Certifications (team certs). Applications: filterable table by technician, job, chemical, date range. Inventory: stock levels with reorder alerts, expiration warnings. Certifications: team-wide cert dashboard with 30/60/90 day expiry alerts. EPA reporting export (CSV).
+
+### Hooks
+
+**`web-portal/src/lib/hooks/use-chemical-applications.ts`** — CRUD for chemical_applications. Filter by job, technician, chemical, date range.
+**`web-portal/src/lib/hooks/use-chemical-inventory.ts`** — CRUD for chemical_inventory. Reorder alerts.
+**`web-portal/src/lib/hooks/use-technician-certifications.ts`** — CRUD for technician_certifications. Expiry alerts.
+
+### API Connections ($0/month)
+- **EPA PPLS** (free, no auth): Pesticide product lookup by name or EPA registration number. Verify registration status.
+- **PubChem PUG-REST** (free, NIH): Chemical compound data — GHS hazard classifications, physical properties, toxicity data. 5 req/sec.
+- **eCFR API** (free, no auth): Look up specific CFR sections for compliance reference (40 CFR Part 152-180 for FIFRA, 40 CFR Part 82 for Section 608).
+- **openFDA** (free): Cross-reference chemical products with recall data. 240 req/min without key.
+
+### Security Verification Checklist
+- [ ] RLS on all 3 tables with per-operation policies
+- [ ] company_id + indexes + audit triggers + deleted_at on all tables
+- [ ] Chemical application: technician cert validated before allowing restricted-use product logging
+- [ ] SDS documents stored in private documents bucket
+- [ ] Certification documents stored in private documents bucket
+- [ ] Barcode scan: validated against inventory, not arbitrary code execution
+- [ ] Soft delete, 4-state screens, optimistic locking
+
+### Wiring to Existing Systems
+- jobs: chemical_applications.job_id links to jobs for per-job compliance tracking
+- team_members: technician_id links to team members for cert assignment
+- U-TT2 refrigerant log: HVAC refrigerant tracking cross-references with CHEM1 chemical_applications (Section 608)
+- Documents bucket: SDS files and cert documents stored alongside other job documents
+
+### Steps
+- [ ] Migration: CREATE chemical_applications with all columns, constraints, indexes, RLS, triggers
+- [ ] Migration: CREATE chemical_inventory with all columns, constraints, indexes, RLS, triggers
+- [ ] Migration: CREATE technician_certifications with all columns, constraints, indexes, RLS, triggers
+- [ ] Seed: 50+ common pesticides with EPA reg numbers, signal words, REI values, PPE requirements
+- [ ] Seed: 8 common refrigerants with GWP/ODP values
+- [ ] Seed: 8 restoration antimicrobials
+- [ ] Seed: PPE reference by signal word
+- [ ] Flutter: ChemicalApplicationScreen — barcode scan, weather auto-pull, GPS stamp, cert validation
+- [ ] Flutter: ChemicalInventoryScreen — stock levels, expiry alerts, reorder thresholds
+- [ ] Flutter: CertificationManagementScreen — cert list, expiry timeline, document upload
+- [ ] Web CRM: /dashboard/compliance/chemicals — 3-tab view (applications, inventory, certs)
+- [ ] Hooks: use-chemical-applications.ts, use-chemical-inventory.ts, use-technician-certifications.ts
+- [ ] EPA PPLS integration: lookup chemical by name/EPA reg# to verify registration status
+- [ ] PubChem integration: get GHS hazard data for chemical detail view
+- [ ] PDF: per-job chemical usage report (chemicals applied, safety data, REI, applicator info)
+- [ ] Certification expiry alert system: 30/60/90 day warnings on dashboard
+- [ ] Inventory auto-deduct: when chemical_application logged, reduce inventory quantity_on_hand
+- [ ] EPA reporting CSV export: formatted for state pesticide reporting requirements
+- [ ] Verify: cert validation prevents restricted-use product logging without valid cert
+- [ ] All builds pass: `dart analyze`, `npm run build` x 4
+- [ ] Commit: `[CHEM1] Chemical compliance tracking — applications, inventory, certifications, 50+ pesticide seed, EPA PPLS/PubChem integration, barcode scan, cert expiry alerts`
+
+---
+
+---
+
+### DRAW1 — Draw Schedule & Milestone Payment Management (~16h)
+
+**Goal:** GCs, pool builders, solar installers, remodelers run multi-phase projects with staged payments (draws). A $200K kitchen remodel = 5-7 draws. Lenders require draw inspections before releasing funds. This is how contractors get paid on large projects. Includes Zafto-branded lien waiver generation (AIA docs are copyrighted). 12 states have statutory-required lien waiver forms.
+
+### Database
+
+```sql
+-- ============================================================
+-- draw_schedules — one per job
+-- ============================================================
+CREATE TABLE draw_schedules (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  job_id UUID NOT NULL REFERENCES jobs(id),
+  name TEXT NOT NULL,
+  total_contract_amount NUMERIC(14,2) NOT NULL,
+  total_draws INTEGER NOT NULL,
+  retainage_pct NUMERIC(5,2) DEFAULT 10.00,
+  retainage_release_draw INTEGER,
+  lender_name TEXT,
+  lender_contact_name TEXT,
+  lender_contact_phone TEXT,
+  lender_contact_email TEXT,
+  lender_requirements JSONB DEFAULT '{}',
+  requires_lien_waiver BOOLEAN DEFAULT true,
+  requires_inspection BOOLEAN DEFAULT false,
+  inspection_company TEXT,
+  state TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft','active','paused','completed','cancelled')),
+  total_requested NUMERIC(14,2) DEFAULT 0,
+  total_approved NUMERIC(14,2) DEFAULT 0,
+  total_paid NUMERIC(14,2) DEFAULT 0,
+  total_retainage_held NUMERIC(14,2) DEFAULT 0,
+  notes TEXT,
+  deleted_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX idx_draw_schedules_company ON draw_schedules(company_id);
+CREATE INDEX idx_draw_schedules_job ON draw_schedules(job_id);
+CREATE INDEX idx_draw_schedules_status ON draw_schedules(company_id, status);
+
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON draw_schedules
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER audit_draw_schedules AFTER INSERT OR UPDATE OR DELETE ON draw_schedules
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+-- ============================================================
+-- draw_items — individual draws/milestones
+-- ============================================================
+CREATE TABLE draw_items (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  draw_schedule_id UUID NOT NULL REFERENCES draw_schedules(id) ON DELETE CASCADE,
+  company_id UUID NOT NULL REFERENCES companies(id),
+  draw_number INTEGER NOT NULL,
+  phase_name TEXT NOT NULL,
+  description TEXT,
+  amount NUMERIC(14,2) NOT NULL,
+  percentage_of_total NUMERIC(5,2),
+  prerequisite_tasks JSONB DEFAULT '[]',
+  required_inspections JSONB DEFAULT '[]',
+  linked_schedule_task_ids JSONB DEFAULT '[]',
+  lien_waiver_type TEXT CHECK (lien_waiver_type IN ('conditional_progress','unconditional_progress','conditional_final','unconditional_final')),
+  lien_waiver_document_path TEXT,
+  lien_waiver_signed BOOLEAN DEFAULT false,
+  lien_waiver_signed_at TIMESTAMPTZ,
+  status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','eligible','requested','under_review','approved','funded','paid','rejected','disputed')),
+  requested_at TIMESTAMPTZ,
+  requested_by UUID REFERENCES users(id),
+  approved_at TIMESTAMPTZ,
+  approved_by TEXT,
+  funded_at TIMESTAMPTZ,
+  paid_at TIMESTAMPTZ,
+  paid_amount NUMERIC(14,2),
+  retainage_amount NUMERIC(14,2),
+  completion_photos JSONB DEFAULT '[]',
+  inspector_name TEXT,
+  inspection_date DATE,
+  inspection_result TEXT CHECK (inspection_result IN ('pass','fail','conditional')),
+  inspection_notes TEXT,
+  notes TEXT,
+  sort_order INTEGER NOT NULL,
+  deleted_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX idx_draw_items_schedule ON draw_items(draw_schedule_id);
+CREATE INDEX idx_draw_items_company ON draw_items(company_id);
+CREATE INDEX idx_draw_items_status ON draw_items(draw_schedule_id, status);
+CREATE INDEX idx_draw_items_order ON draw_items(draw_schedule_id, sort_order);
+
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON draw_items
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER audit_draw_items AFTER INSERT OR UPDATE OR DELETE ON draw_items
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+```
+
+### RLS Policies
+
+```sql
+ALTER TABLE draw_schedules ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "draw_schedules_select" ON draw_schedules FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
+CREATE POLICY "draw_schedules_insert" ON draw_schedules FOR INSERT WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "draw_schedules_update" ON draw_schedules FOR UPDATE USING (company_id = auth.company_id() AND deleted_at IS NULL) WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "draw_schedules_delete" ON draw_schedules FOR DELETE USING (company_id = auth.company_id() AND auth.user_role() IN ('owner','admin'));
+
+ALTER TABLE draw_items ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "draw_items_select" ON draw_items FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
+CREATE POLICY "draw_items_insert" ON draw_items FOR INSERT WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "draw_items_update" ON draw_items FOR UPDATE USING (company_id = auth.company_id() AND deleted_at IS NULL) WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "draw_items_delete" ON draw_items FOR DELETE USING (company_id = auth.company_id() AND auth.user_role() IN ('owner','admin'));
+```
+
+### Seed Data — Lien Waiver Templates (50 states)
+
+**12 states with statutory-required forms (must use exact language):**
+- Arizona (ARS 33-1008): 4 forms (conditional/unconditional x progress/final)
+- California (Civil Code 8132-8138): 4 statutory forms, penalties for non-compliance
+- Florida (Fla. Stat. 713.20): Partial/final release forms
+- Georgia (OCGA 44-14-366): Interim/final waiver forms
+- Massachusetts (MGL 254:32): Partial/final release
+- Michigan (MCL 570.1115): Sworn statements + waivers
+- Mississippi (Miss. Code 85-7-405): Progress/final waivers
+- Missouri (RSMo 429.005-429.015): Progress/final
+- Nevada (NRS 108.2457): 4 statutory forms
+- Texas (Tex. Prop. Code 53.284): 4 statutory forms, non-waiver of unearned amounts
+- Utah (Utah Code 38-1a-802): 4 statutory forms
+- Wyoming (Wyo. Stat. 29-2-108): Partial/final release
+
+**38 states without statutory forms:** Use Zafto-branded conditional/unconditional progress/final waiver templates with standard legal language. 4 templates per state = 152 templates.
+
+**Total: ~200 lien waiver templates** stored as HTML templates in Supabase storage, populated with job/company/customer data at generation time.
+
+### Edge Functions
+
+**`draw-request-submit`** — POST
+- **Request:** `{ draw_item_id: uuid, completion_photos: string[], notes?: string }`
+- **Auth:** Bearer JWT
+- **Process:** Validate draw_item belongs to company, validate prerequisite tasks completed (check linked_schedule_task_ids against schedule_tasks), generate draw request PDF (scope completed, photos, lien waiver if conditional), update status to 'requested', update draw_schedule totals.
+- **Response:** `{ success: true, pdf_url: string, lien_waiver_url?: string }`
+- **Errors:** 401, 404, 422 prerequisites not met, 422 no completion photos
+
+**`lien-waiver-generate`** — POST
+- **Request:** `{ draw_item_id: uuid, waiver_type: string }`
+- **Auth:** Bearer JWT
+- **Process:** Look up state from draw_schedule. Load appropriate template (statutory if required state, Zafto-branded otherwise). Auto-fill: contractor name/address, owner name/address, property address, job description, amount, through-date. Generate PDF. Store in documents bucket.
+- **Response:** `{ pdf_url: string, document_path: string, is_statutory_form: boolean }`
+- **Errors:** 401, 404, 422 invalid waiver_type for state
+
+### Flutter Screens
+
+**`lib/screens/draw_schedules/draw_schedule_screen.dart`** — Visual progress bar showing draws. Per draw: phase name, amount, status badge, completion %, photos. "Request Draw" button (attach photos, auto-generate lien waiver). Payment tracker: received vs outstanding vs retainage. 4 states.
+
+**`lib/screens/draw_schedules/draw_schedule_create_screen.dart`** — Create from estimate phases or manual entry. Set: total contract amount, number of draws, retainage %, lender info. Each draw: phase name, amount, prerequisites. 4 states.
+
+**`lib/screens/draw_schedules/lien_waiver_screen.dart`** — View/sign lien waiver. Shows pre-filled waiver with all job/company data. Digital signature capture. Conditional waiver auto-generated on request, unconditional after payment received. 4 states.
+
+### Web CRM Pages
+
+**`/dashboard/draw-schedules`** — List of all draw schedules across jobs. Columns: Job, Total Contract, Draws, Paid, Outstanding, Retainage, Status. Filter by status, job.
+
+**`/dashboard/draw-schedules/[id]`** — Single schedule detail. Draw timeline with status progression. Request/approve/track payments. Lien waiver management. Retainage tracking with release schedule.
+
+### Client Portal
+
+**`client-portal: /projects/[id]/draws`** — Homeowner/lender view of draw progress. See completed phases with photos. Approve/decline draw requests. Download lien waivers. View retainage balance.
+
+### Hooks
+
+**`web-portal/src/lib/hooks/use-draw-schedules.ts`** — CRUD for draw_schedules + draw_items. Returns `{ schedules, loading, error, createSchedule, requestDraw, updateDrawStatus }`.
+
+**`client-portal/src/lib/hooks/use-draw-progress.ts`** — Read-only draw progress for client. Returns `{ schedule, draws, totalPaid, totalOutstanding, retainageHeld }`.
+
+### API Connections ($0/month)
+- **No external APIs** — all template-based with seeded lien waiver forms
+- Lien waiver templates compiled from public statutory forms (free) and Zafto-branded generic templates
+
+### Security Verification Checklist
+- [ ] RLS on draw_schedules and draw_items
+- [ ] company_id + indexes + audit triggers + deleted_at on all tables
+- [ ] draw-request-submit EF: auth + validates prerequisites before allowing request
+- [ ] lien-waiver-generate EF: auth + validates state template exists
+- [ ] Client portal: read-only + approve/decline only, no edit access
+- [ ] Financial calculations validated server-side (retainage, totals)
+- [ ] Lien waiver PDFs stored in private documents bucket
+- [ ] Soft delete, 4-state screens, optimistic locking
+
+### Wiring to Existing Systems
+- jobs: draw_schedules.job_id FK, one schedule per job
+- estimates: create draw schedule from estimate phase breakdown (import line items as draw phases)
+- schedule_tasks: linked_schedule_task_ids connects draws to GC schedule milestones (Phase GC)
+- change_orders: change orders update total_contract_amount on draw_schedule
+- invoices: draw payments can auto-create invoice records for accounting integration
+
+### Steps
+- [ ] Migration: CREATE draw_schedules with all columns, constraints, indexes, RLS, triggers
+- [ ] Migration: CREATE draw_items with all columns, constraints, indexes, RLS, triggers
+- [ ] Seed: 200+ lien waiver templates (12 statutory states x 4 forms + 38 states x 4 generic forms)
+- [ ] Edge Function: draw-request-submit — validate prerequisites, generate PDF, update status
+- [ ] Edge Function: lien-waiver-generate — state-specific template selection, auto-fill, PDF generation
+- [ ] Draw request workflow: draft -> requested -> under_review -> approved -> funded -> paid
+- [ ] Lien waiver auto-generation: conditional on request, unconditional after payment
+- [ ] Flutter: DrawScheduleScreen — visual progress, request draw, payment tracker
+- [ ] Flutter: DrawScheduleCreateScreen — create from estimate or manual, set retainage/lender
+- [ ] Flutter: LienWaiverScreen — view/sign waiver with digital signature
+- [ ] Web CRM: /dashboard/draw-schedules — list all schedules with payment status
+- [ ] Web CRM: /dashboard/draw-schedules/[id] — detail with timeline and management
+- [ ] Client Portal: /projects/[id]/draws — homeowner/lender draw progress and approval
+- [ ] Hooks: use-draw-schedules.ts, use-draw-progress.ts
+- [ ] GC Schedule integration: auto-link draw milestones to schedule_tasks
+- [ ] Retainage tracking: hold percentage per draw, release on final draw or configured milestone
+- [ ] Completion photos required before draw request submission
+- [ ] Verify: lien waiver templates correct for all 12 statutory states
+- [ ] All builds pass: `dart analyze`, `npm run build` x 4
+- [ ] Commit: `[DRAW1] Draw schedules + milestone payments — draw_schedules + draw_items, 200+ lien waiver templates (12 statutory states), request-approve-fund workflow, retainage tracking, Flutter/CRM/client portal views`
+
+---
+
+---
+
+### SEL1 — Client Selections Management Portal (~12h)
+
+**Goal:** Remodelers, GCs, interior-adjacent trades need clients to choose finishes (countertops, tile, fixtures, paint colors, flooring, appliances, hardware). Delayed selections = delayed projects. BuilderTrend/CoConstruct charge $99-399/mo for this alone. This is the #1 communication bottleneck on remodeling projects.
+
+### Database
+
+```sql
+-- ============================================================
+-- selection_categories — grouped by room/category per job
+-- ============================================================
+CREATE TABLE selection_categories (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  job_id UUID NOT NULL REFERENCES jobs(id),
+  category_name TEXT NOT NULL,
+  room TEXT,
+  description TEXT,
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  deadline DATE,
+  deadline_reason TEXT,
+  allowance_amount NUMERIC(10,2),
+  selected_amount NUMERIC(10,2) DEFAULT 0,
+  overage_amount NUMERIC(10,2) DEFAULT 0,
+  change_order_id UUID REFERENCES change_orders(id),
+  status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','options_added','sent_to_client','client_reviewing','selected','ordered','received','installed','cancelled')),
+  assigned_to UUID REFERENCES users(id),
+  client_notified_at TIMESTAMPTZ,
+  client_selected_at TIMESTAMPTZ,
+  notes TEXT,
+  deleted_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX idx_sel_cats_company ON selection_categories(company_id);
+CREATE INDEX idx_sel_cats_job ON selection_categories(job_id);
+CREATE INDEX idx_sel_cats_status ON selection_categories(company_id, status);
+CREATE INDEX idx_sel_cats_deadline ON selection_categories(deadline) WHERE deadline IS NOT NULL;
+CREATE INDEX idx_sel_cats_order ON selection_categories(job_id, sort_order);
+
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON selection_categories
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER audit_selection_categories AFTER INSERT OR UPDATE OR DELETE ON selection_categories
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+-- ============================================================
+-- selection_options — 3-5 choices per category
+-- ============================================================
+CREATE TABLE selection_options (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  category_id UUID NOT NULL REFERENCES selection_categories(id) ON DELETE CASCADE,
+  company_id UUID NOT NULL REFERENCES companies(id),
+  option_name TEXT NOT NULL,
+  supplier TEXT,
+  supplier_url TEXT,
+  sku TEXT,
+  upc TEXT,
+  unit_price NUMERIC(10,2),
+  quantity NUMERIC(10,2) DEFAULT 1,
+  total_price NUMERIC(10,2),
+  description TEXT,
+  specifications JSONB DEFAULT '{}',
+  image_urls JSONB DEFAULT '[]',
+  specification_pdf_path TEXT,
+  lead_time_days INTEGER,
+  in_stock BOOLEAN DEFAULT true,
+  in_budget BOOLEAN DEFAULT true,
+  upgrade_cost NUMERIC(10,2) DEFAULT 0,
+  downgrade_savings NUMERIC(10,2) DEFAULT 0,
+  is_recommended BOOLEAN DEFAULT false,
+  is_selected BOOLEAN DEFAULT false,
+  selected_at TIMESTAMPTZ,
+  selected_by UUID REFERENCES users(id),
+  client_comment TEXT,
+  contractor_notes TEXT,
+  energy_star_certified BOOLEAN DEFAULT false,
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  deleted_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX idx_sel_opts_category ON selection_options(category_id);
+CREATE INDEX idx_sel_opts_company ON selection_options(company_id);
+CREATE INDEX idx_sel_opts_selected ON selection_options(category_id, is_selected) WHERE is_selected = true;
+CREATE INDEX idx_sel_opts_sku ON selection_options(sku) WHERE sku IS NOT NULL;
+
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON selection_options
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER audit_selection_options AFTER INSERT OR UPDATE OR DELETE ON selection_options
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+```
+
+### RLS Policies
+
+```sql
+ALTER TABLE selection_categories ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "sel_cats_select" ON selection_categories FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
+CREATE POLICY "sel_cats_insert" ON selection_categories FOR INSERT WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "sel_cats_update" ON selection_categories FOR UPDATE USING (company_id = auth.company_id() AND deleted_at IS NULL) WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "sel_cats_delete" ON selection_categories FOR DELETE USING (company_id = auth.company_id() AND auth.user_role() IN ('owner','admin','office_manager'));
+
+-- Client portal: clients can view categories for their jobs and select options
+CREATE POLICY "sel_cats_client_select" ON selection_categories FOR SELECT USING (
+  deleted_at IS NULL AND
+  EXISTS (SELECT 1 FROM jobs j WHERE j.id = selection_categories.job_id AND j.customer_id IN (
+    SELECT c.id FROM customers c WHERE c.user_id = auth.uid()
+  ))
+);
+
+ALTER TABLE selection_options ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "sel_opts_select" ON selection_options FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
+CREATE POLICY "sel_opts_insert" ON selection_options FOR INSERT WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "sel_opts_update" ON selection_options FOR UPDATE USING (company_id = auth.company_id() AND deleted_at IS NULL) WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "sel_opts_delete" ON selection_options FOR DELETE USING (company_id = auth.company_id() AND auth.user_role() IN ('owner','admin','office_manager'));
+
+-- Client can select options (update is_selected)
+CREATE POLICY "sel_opts_client_select" ON selection_options FOR SELECT USING (
+  deleted_at IS NULL AND
+  EXISTS (SELECT 1 FROM selection_categories sc
+    JOIN jobs j ON j.id = sc.job_id
+    WHERE sc.id = selection_options.category_id
+    AND j.customer_id IN (SELECT c.id FROM customers c WHERE c.user_id = auth.uid()))
+);
+
+-- REMOVED: sel_opts_client_update — client UPDATE too permissive (SECURITY: WITH CHECK (true) allows any field change)
+-- Client selections routed through Edge Function: client-selection-submit
+-- Edge Function validates and only allows updating: is_selected, selection_notes, selection_photos
+-- This prevents clients from modifying price, allowance, or other contractor-controlled fields
+```
+
+### Edge Functions
+
+**`selection-notify-client`** — POST
+- **Request:** `{ job_id: uuid, category_ids?: uuid[], message?: string }`
+- **Auth:** Bearer JWT
+- **Process:** Send notification (email + push) to client with link to selection portal. Update client_notified_at on categories. Include deadline info.
+- **Response:** `{ notified: true, categories_sent: number }`
+- **Errors:** 401, 404 job not found, 422 no pending categories
+
+**`selection-process-choice`** — POST
+- **Request:** `{ option_id: uuid }`
+- **Auth:** Bearer JWT (client or contractor)
+- **Process:** Mark option as selected, unmark any previously selected option in same category. Calculate overage/savings vs allowance. Update category status to 'selected', selected_amount. If overage exceeds allowance, auto-create change_order draft. Update estimate line item with actual selected price.
+- **Response:** `{ selected: true, overage_amount: number, change_order_created: boolean, change_order_id?: uuid }`
+- **Errors:** 401, 404, 422 category locked (already ordered/installed)
+
+### Flutter Screens
+
+**`lib/screens/selections/selections_overview_screen.dart`** — Per-job selection overview. Categories list with status badges (pending, sent, selected, ordered, installed). Deadline warnings (red if overdue). Client comment thread per category. Progress: "8 of 12 selections made." 4 states.
+
+**`lib/screens/selections/selection_category_screen.dart`** — Single category detail. Options displayed as cards with photos, specs, price. Side-by-side comparison view. In-budget vs upgrade cost clearly shown. "Recommend" star on contractor's preferred option. Client can tap to select. Comment field per option. 4 states.
+
+**`lib/screens/selections/selection_create_screen.dart`** — Create category: name, room, deadline, allowance. Add options: name, supplier, SKU, price, photos (camera or gallery), specs, lead time. "Send to Client" button. 4 states.
+
+### Web CRM Pages
+
+**`/dashboard/selections`** — All jobs' selection status. Table: Job, Total Categories, Pending, Selected, Ordered, Overdue. Click to open job's selections.
+
+**`/dashboard/selections/[job_id]`** — Single job's selection board. Kanban or list view of categories. Drag-drop images into options. Set allowances. Track all categories. Overdue alerts. Supplier contact info panel.
+
+### Client Portal
+
+**`client-portal: /projects/[id]/selections`** — Visual selection board. Side-by-side option comparison with photos/specs/price. One-tap select. Running total vs budget (progress bar: green=under, yellow=near, red=over). Deadline countdown per category. Comment field per option. "I need more options" button (sends request to contractor). 4 states.
+
+### Hooks
+
+**`web-portal/src/lib/hooks/use-selections.ts`** — CRUD for selection_categories + selection_options. Returns `{ categories, loading, error, createCategory, addOption, notifyClient, processChoice }`. Real-time subscription.
+
+**`client-portal/src/lib/hooks/use-client-selections.ts`** — Client view of selections. Returns `{ categories, totalBudget, totalSelected, overageAmount, loading, error, selectOption, addComment }`.
+
+### API Connections ($0/month)
+- **ENERGY STAR Certified Products API** (Socrata, free): 45K+ certified products. Query by category (windows, appliances, HVAC, lighting). Enrich selection options with energy efficiency data.
+- **UPCitemdb** (free, 100/day): Product lookup by barcode for auto-filling option details.
+- **Brocade.io** (open source, free): Additional UPC lookup for barcode scanning.
+
+### Security Verification Checklist
+- [ ] RLS on selection_categories and selection_options
+- [ ] Client portal: RLS restricts to only their job's selections
+- [ ] Client can only UPDATE is_selected (not price, not allowance, not other fields)
+- [ ] Change order auto-creation requires contractor approval before finalizing
+- [ ] Option images stored in private documents bucket (signed URLs for display)
+- [ ] Soft delete, 4-state screens, optimistic locking
+
+### Wiring to Existing Systems
+- jobs: selection_categories.job_id FK, selections scoped to a job
+- estimates: selected option price auto-replaces allowance line item in estimate
+- change_orders: overage auto-generates change order draft (contractor approves before sending to client)
+- customers: client portal access via customer.user_id
+- notifications: selection deadline reminders via existing notification system
+- Material Finder (DEPTH32): "Find Options" button searches supplier products for category
+
+### Steps
+- [ ] Migration: CREATE selection_categories with all columns, constraints, indexes, RLS, triggers
+- [ ] Migration: CREATE selection_options with all columns, constraints, indexes, RLS, triggers
+- [ ] RLS: contractor full CRUD + client read + client select (update is_selected only)
+- [ ] Edge Function: selection-notify-client — email + push notification with portal link
+- [ ] Edge Function: selection-process-choice — select option, calculate overage, auto-change-order
+- [ ] Selection workflow: pending -> options_added -> sent_to_client -> client_reviewing -> selected -> ordered -> received -> installed
+- [ ] Allowance tracking: budget per category, running total, overage/savings calculation
+- [ ] Change order auto-generation: when selected option exceeds allowance by > $0
+- [ ] Flutter: SelectionsOverviewScreen — per-job categories with status badges and deadlines
+- [ ] Flutter: SelectionCategoryScreen — option cards with photos, specs, price comparison
+- [ ] Flutter: SelectionCreateScreen — create category, add options with photos
+- [ ] Web CRM: /dashboard/selections — all jobs selection status dashboard
+- [ ] Web CRM: /dashboard/selections/[job_id] — single job selection board
+- [ ] Client Portal: /projects/[id]/selections — visual board with side-by-side comparison
+- [ ] Hooks: use-selections.ts, use-client-selections.ts
+- [ ] ENERGY STAR API integration: enrich options with efficiency data for appliances/windows
+- [ ] Barcode scan (Flutter): scan product to auto-fill option details via UPCitemdb
+- [ ] Estimate integration: selected price replaces allowance in estimate line items
+- [ ] Deadline reminders: 7-day, 3-day, 1-day warnings for pending selections
+- [ ] "I need more options" client request flow
+- [ ] Verify: overage correctly creates change order, estimate line items update
+- [ ] All builds pass: `dart analyze`, `npm run build` x 4
+- [ ] Commit: `[SEL1] Client selections portal — selection_categories + selection_options, allowance tracking, change order auto-generation, ENERGY STAR API, Flutter/CRM/client portal views, estimate integration`
+
 
 ### REALTOR OPERATIONS (2 sprints, ~36h)
 
