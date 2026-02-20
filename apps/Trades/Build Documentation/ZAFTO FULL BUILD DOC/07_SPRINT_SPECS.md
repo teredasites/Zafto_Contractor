@@ -165,11 +165,11 @@ Deploy the foundation tables that everything else depends on: companies, users, 
 -- ============================================================
 
 -- Helper functions for RLS
-CREATE OR REPLACE FUNCTION auth.company_id() RETURNS uuid AS $$
+CREATE OR REPLACE FUNCTION public.requesting_company_id() RETURNS uuid AS $$
   SELECT (auth.jwt() -> 'app_metadata' ->> 'company_id')::uuid;
 $$ LANGUAGE sql STABLE;
 
-CREATE OR REPLACE FUNCTION auth.user_role() RETURNS text AS $$
+CREATE OR REPLACE FUNCTION public.requesting_user_role() RETURNS text AS $$
   SELECT auth.jwt() -> 'app_metadata' ->> 'role';
 $$ LANGUAGE sql STABLE;
 
@@ -216,10 +216,10 @@ ALTER TABLE companies ENABLE ROW LEVEL SECURITY;
 CREATE TRIGGER companies_updated_at BEFORE UPDATE ON companies FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
 -- RLS: Users can read their own company
-CREATE POLICY "companies_select" ON companies FOR SELECT USING (id = auth.company_id());
+CREATE POLICY "companies_select" ON companies FOR SELECT USING (id = requesting_company_id());
 -- RLS: Only owner/admin can update company
 CREATE POLICY "companies_update" ON companies FOR UPDATE USING (
-  id = auth.company_id() AND auth.user_role() IN ('owner', 'admin')
+  id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin')
 );
 -- RLS: Anyone can insert (onboarding creates company)
 CREATE POLICY "companies_insert" ON companies FOR INSERT WITH CHECK (true);
@@ -248,12 +248,12 @@ ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 CREATE TRIGGER users_updated_at BEFORE UPDATE ON users FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
 -- RLS: Users see their own company members
-CREATE POLICY "users_select" ON users FOR SELECT USING (company_id = auth.company_id());
+CREATE POLICY "users_select" ON users FOR SELECT USING (company_id = requesting_company_id());
 -- RLS: Owner/admin can manage users
 CREATE POLICY "users_update" ON users FOR UPDATE USING (
-  company_id = auth.company_id() AND (auth.user_role() IN ('owner', 'admin') OR id = auth.uid())
+  company_id = requesting_company_id() AND (requesting_user_role() IN ('owner', 'admin') OR id = auth.uid())
 );
-CREATE POLICY "users_insert" ON users FOR INSERT WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "users_insert" ON users FOR INSERT WITH CHECK (company_id = requesting_company_id());
 
 -- ============================================================
 -- AUDIT LOG TABLE
@@ -274,7 +274,7 @@ CREATE INDEX idx_audit_log_company_time ON audit_log (company_id, created_at DES
 CREATE INDEX idx_audit_log_table_record ON audit_log (table_name, record_id);
 
 ALTER TABLE audit_log ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "audit_select" ON audit_log FOR SELECT USING (company_id = auth.company_id());
+CREATE POLICY "audit_select" ON audit_log FOR SELECT USING (company_id = requesting_company_id());
 
 -- Audit trigger function
 CREATE OR REPLACE FUNCTION audit_trigger_fn()
@@ -393,10 +393,10 @@ ALTER TABLE customers ENABLE ROW LEVEL SECURITY;
 CREATE TRIGGER customers_updated_at BEFORE UPDATE ON customers FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER customers_audit AFTER INSERT OR UPDATE OR DELETE ON customers FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
 
-CREATE POLICY "customers_select" ON customers FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
-CREATE POLICY "customers_insert" ON customers FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "customers_update" ON customers FOR UPDATE USING (company_id = auth.company_id());
-CREATE POLICY "customers_delete" ON customers FOR DELETE USING (company_id = auth.company_id() AND auth.user_role() IN ('owner', 'admin'));
+CREATE POLICY "customers_select" ON customers FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+CREATE POLICY "customers_insert" ON customers FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "customers_update" ON customers FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "customers_delete" ON customers FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin'));
 
 -- JOBS
 CREATE TABLE jobs (
@@ -457,10 +457,10 @@ CREATE INDEX idx_jobs_assigned ON jobs (assigned_to_user_id);
 CREATE TRIGGER jobs_updated_at BEFORE UPDATE ON jobs FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER jobs_audit AFTER INSERT OR UPDATE OR DELETE ON jobs FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
 
-CREATE POLICY "jobs_select" ON jobs FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
-CREATE POLICY "jobs_insert" ON jobs FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "jobs_update" ON jobs FOR UPDATE USING (company_id = auth.company_id());
-CREATE POLICY "jobs_delete" ON jobs FOR DELETE USING (company_id = auth.company_id() AND auth.user_role() IN ('owner', 'admin'));
+CREATE POLICY "jobs_select" ON jobs FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+CREATE POLICY "jobs_insert" ON jobs FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "jobs_update" ON jobs FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "jobs_delete" ON jobs FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin'));
 
 -- INVOICES
 CREATE TABLE invoices (
@@ -522,10 +522,10 @@ CREATE INDEX idx_invoices_company_status ON invoices (company_id, status);
 CREATE TRIGGER invoices_updated_at BEFORE UPDATE ON invoices FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER invoices_audit AFTER INSERT OR UPDATE OR DELETE ON invoices FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
 
-CREATE POLICY "invoices_select" ON invoices FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
-CREATE POLICY "invoices_insert" ON invoices FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "invoices_update" ON invoices FOR UPDATE USING (company_id = auth.company_id());
-CREATE POLICY "invoices_delete" ON invoices FOR DELETE USING (company_id = auth.company_id() AND auth.user_role() IN ('owner', 'admin'));
+CREATE POLICY "invoices_select" ON invoices FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+CREATE POLICY "invoices_insert" ON invoices FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "invoices_update" ON invoices FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "invoices_delete" ON invoices FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin'));
 
 -- BIDS
 CREATE TABLE bids (
@@ -573,10 +573,10 @@ ALTER TABLE bids ENABLE ROW LEVEL SECURITY;
 CREATE TRIGGER bids_updated_at BEFORE UPDATE ON bids FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER bids_audit AFTER INSERT OR UPDATE OR DELETE ON bids FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
 
-CREATE POLICY "bids_select" ON bids FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
-CREATE POLICY "bids_insert" ON bids FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "bids_update" ON bids FOR UPDATE USING (company_id = auth.company_id());
-CREATE POLICY "bids_delete" ON bids FOR DELETE USING (company_id = auth.company_id() AND auth.user_role() IN ('owner', 'admin'));
+CREATE POLICY "bids_select" ON bids FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+CREATE POLICY "bids_insert" ON bids FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "bids_update" ON bids FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "bids_delete" ON bids FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin'));
 
 -- TIME ENTRIES
 CREATE TABLE time_entries (
@@ -606,9 +606,9 @@ CREATE INDEX idx_time_entries_job ON time_entries (job_id);
 CREATE TRIGGER time_entries_updated_at BEFORE UPDATE ON time_entries FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER time_entries_audit AFTER INSERT OR UPDATE OR DELETE ON time_entries FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
 
-CREATE POLICY "time_entries_select" ON time_entries FOR SELECT USING (company_id = auth.company_id());
-CREATE POLICY "time_entries_insert" ON time_entries FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "time_entries_update" ON time_entries FOR UPDATE USING (company_id = auth.company_id() AND (auth.user_role() IN ('owner', 'admin') OR user_id = auth.uid()));
+CREATE POLICY "time_entries_select" ON time_entries FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "time_entries_insert" ON time_entries FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "time_entries_update" ON time_entries FOR UPDATE USING (company_id = requesting_company_id() AND (requesting_user_role() IN ('owner', 'admin') OR user_id = auth.uid()));
 ```
 
 ##### Verify
@@ -664,10 +664,10 @@ CREATE INDEX idx_photos_job ON photos (job_id);
 CREATE INDEX idx_photos_company ON photos (company_id, created_at DESC);
 CREATE TRIGGER photos_audit AFTER INSERT OR UPDATE OR DELETE ON photos FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
 
-CREATE POLICY "photos_select" ON photos FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
-CREATE POLICY "photos_insert" ON photos FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "photos_update" ON photos FOR UPDATE USING (company_id = auth.company_id());
-CREATE POLICY "photos_delete" ON photos FOR DELETE USING (company_id = auth.company_id());
+CREATE POLICY "photos_select" ON photos FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+CREATE POLICY "photos_insert" ON photos FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "photos_update" ON photos FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "photos_delete" ON photos FOR DELETE USING (company_id = requesting_company_id());
 
 -- SIGNATURES
 CREATE TABLE signatures (
@@ -688,8 +688,8 @@ CREATE TABLE signatures (
 
 ALTER TABLE signatures ENABLE ROW LEVEL SECURITY;
 CREATE TRIGGER signatures_audit AFTER INSERT OR UPDATE OR DELETE ON signatures FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
-CREATE POLICY "signatures_select" ON signatures FOR SELECT USING (company_id = auth.company_id());
-CREATE POLICY "signatures_insert" ON signatures FOR INSERT WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "signatures_select" ON signatures FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "signatures_insert" ON signatures FOR INSERT WITH CHECK (company_id = requesting_company_id());
 
 -- VOICE NOTES
 CREATE TABLE voice_notes (
@@ -710,8 +710,8 @@ CREATE TABLE voice_notes (
 
 ALTER TABLE voice_notes ENABLE ROW LEVEL SECURITY;
 CREATE TRIGGER voice_notes_audit AFTER INSERT OR UPDATE OR DELETE ON voice_notes FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
-CREATE POLICY "voice_notes_select" ON voice_notes FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
-CREATE POLICY "voice_notes_insert" ON voice_notes FOR INSERT WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "voice_notes_select" ON voice_notes FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+CREATE POLICY "voice_notes_insert" ON voice_notes FOR INSERT WITH CHECK (company_id = requesting_company_id());
 
 -- RECEIPTS
 CREATE TABLE receipts (
@@ -737,9 +737,9 @@ CREATE TABLE receipts (
 ALTER TABLE receipts ENABLE ROW LEVEL SECURITY;
 CREATE TRIGGER receipts_updated_at BEFORE UPDATE ON receipts FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER receipts_audit AFTER INSERT OR UPDATE OR DELETE ON receipts FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
-CREATE POLICY "receipts_select" ON receipts FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
-CREATE POLICY "receipts_insert" ON receipts FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "receipts_update" ON receipts FOR UPDATE USING (company_id = auth.company_id());
+CREATE POLICY "receipts_select" ON receipts FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+CREATE POLICY "receipts_insert" ON receipts FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "receipts_update" ON receipts FOR UPDATE USING (company_id = requesting_company_id());
 
 -- SAFETY / COMPLIANCE RECORDS
 CREATE TABLE compliance_records (
@@ -763,8 +763,8 @@ CREATE TABLE compliance_records (
 ALTER TABLE compliance_records ENABLE ROW LEVEL SECURITY;
 CREATE INDEX idx_compliance_records_company_type ON compliance_records (company_id, record_type);
 CREATE TRIGGER compliance_records_audit AFTER INSERT OR UPDATE OR DELETE ON compliance_records FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
-CREATE POLICY "compliance_select" ON compliance_records FOR SELECT USING (company_id = auth.company_id());
-CREATE POLICY "compliance_insert" ON compliance_records FOR INSERT WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "compliance_select" ON compliance_records FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "compliance_insert" ON compliance_records FOR INSERT WITH CHECK (company_id = requesting_company_id());
 
 -- MILEAGE TRIPS
 CREATE TABLE mileage_trips (
@@ -786,8 +786,8 @@ CREATE TABLE mileage_trips (
 
 ALTER TABLE mileage_trips ENABLE ROW LEVEL SECURITY;
 CREATE TRIGGER mileage_trips_audit AFTER INSERT OR UPDATE OR DELETE ON mileage_trips FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
-CREATE POLICY "mileage_select" ON mileage_trips FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
-CREATE POLICY "mileage_insert" ON mileage_trips FOR INSERT WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "mileage_select" ON mileage_trips FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+CREATE POLICY "mileage_insert" ON mileage_trips FOR INSERT WITH CHECK (company_id = requesting_company_id());
 ```
 
 ##### Verify
@@ -851,7 +851,7 @@ Configure PowerSync for offline-first sync between device SQLite and Supabase Po
 # Tables that sync to device (field tech needs these offline)
 bucket_definitions:
   by_company:
-    parameters: SELECT auth.company_id() as company_id
+    parameters: SELECT requesting_company_id() as company_id
     data:
       - SELECT * FROM jobs WHERE company_id = bucket.company_id
       - SELECT * FROM customers WHERE company_id = bucket.company_id
@@ -921,7 +921,7 @@ lib/screens/auth/                    — Wire login/register to Supabase Auth
 
 **Step 3: JWT Claims Setup**
 - Create Supabase Edge Function or database trigger: when a user registers, set `app_metadata.company_id` and `app_metadata.role` on the JWT
-- This is CRITICAL — all RLS policies depend on `auth.company_id()` which reads from JWT
+- This is CRITICAL — all RLS policies depend on `requesting_company_id()` which reads from JWT
 - Approach: Use a Supabase database function called after user creation:
 ```sql
 CREATE OR REPLACE FUNCTION handle_new_user()
@@ -1647,9 +1647,9 @@ ALTER TABLE job_materials ENABLE ROW LEVEL SECURITY;
 CREATE INDEX idx_job_materials_job ON job_materials (job_id);
 CREATE TRIGGER job_materials_updated_at BEFORE UPDATE ON job_materials FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER job_materials_audit AFTER INSERT OR UPDATE OR DELETE ON job_materials FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
-CREATE POLICY "job_materials_select" ON job_materials FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
-CREATE POLICY "job_materials_insert" ON job_materials FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "job_materials_update" ON job_materials FOR UPDATE USING (company_id = auth.company_id());
+CREATE POLICY "job_materials_select" ON job_materials FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+CREATE POLICY "job_materials_insert" ON job_materials FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "job_materials_update" ON job_materials FOR UPDATE USING (company_id = requesting_company_id());
 
 -- DAILY JOB LOG ENTRIES
 CREATE TABLE daily_logs (
@@ -1678,9 +1678,9 @@ ALTER TABLE daily_logs ENABLE ROW LEVEL SECURITY;
 CREATE INDEX idx_daily_logs_job_date ON daily_logs (job_id, log_date DESC);
 CREATE TRIGGER daily_logs_updated_at BEFORE UPDATE ON daily_logs FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER daily_logs_audit AFTER INSERT OR UPDATE OR DELETE ON daily_logs FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
-CREATE POLICY "daily_logs_select" ON daily_logs FOR SELECT USING (company_id = auth.company_id());
-CREATE POLICY "daily_logs_insert" ON daily_logs FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "daily_logs_update" ON daily_logs FOR UPDATE USING (company_id = auth.company_id());
+CREATE POLICY "daily_logs_select" ON daily_logs FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "daily_logs_insert" ON daily_logs FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "daily_logs_update" ON daily_logs FOR UPDATE USING (company_id = requesting_company_id());
 ```
 
 #### Files to Create
@@ -1759,9 +1759,9 @@ ALTER TABLE punch_list_items ENABLE ROW LEVEL SECURITY;
 CREATE INDEX idx_punch_list_job ON punch_list_items (job_id, sort_order);
 CREATE TRIGGER punch_list_updated_at BEFORE UPDATE ON punch_list_items FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER punch_list_audit AFTER INSERT OR UPDATE OR DELETE ON punch_list_items FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
-CREATE POLICY "punch_list_select" ON punch_list_items FOR SELECT USING (company_id = auth.company_id());
-CREATE POLICY "punch_list_insert" ON punch_list_items FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "punch_list_update" ON punch_list_items FOR UPDATE USING (company_id = auth.company_id());
+CREATE POLICY "punch_list_select" ON punch_list_items FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "punch_list_insert" ON punch_list_items FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "punch_list_update" ON punch_list_items FOR UPDATE USING (company_id = requesting_company_id());
 
 -- CHANGE ORDERS
 CREATE TABLE change_orders (
@@ -1789,9 +1789,9 @@ ALTER TABLE change_orders ENABLE ROW LEVEL SECURITY;
 CREATE INDEX idx_change_orders_job ON change_orders (job_id);
 CREATE TRIGGER change_orders_updated_at BEFORE UPDATE ON change_orders FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER change_orders_audit AFTER INSERT OR UPDATE OR DELETE ON change_orders FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
-CREATE POLICY "change_orders_select" ON change_orders FOR SELECT USING (company_id = auth.company_id());
-CREATE POLICY "change_orders_insert" ON change_orders FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "change_orders_update" ON change_orders FOR UPDATE USING (company_id = auth.company_id());
+CREATE POLICY "change_orders_select" ON change_orders FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "change_orders_insert" ON change_orders FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "change_orders_update" ON change_orders FOR UPDATE USING (company_id = requesting_company_id());
 ```
 
 #### Files to Create
@@ -13283,7 +13283,7 @@ CREATE POLICY "permit_jurisdictions_insert" ON permit_jurisdictions
   FOR INSERT TO authenticated WITH CHECK (true);
 CREATE POLICY "permit_jurisdictions_update" ON permit_jurisdictions
   FOR UPDATE TO authenticated
-  USING (contributed_company_id = auth.company_id()
+  USING (contributed_company_id = requesting_company_id()
     OR (auth.jwt()->'app_metadata'->>'role') = 'super_admin');
 CREATE POLICY "permit_jurisdictions_delete" ON permit_jurisdictions
   FOR DELETE TO authenticated
@@ -13391,13 +13391,13 @@ CREATE TABLE job_permits (
 
 ALTER TABLE job_permits ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "job_permits_select" ON job_permits
-  FOR SELECT TO authenticated USING (company_id = auth.company_id() AND deleted_at IS NULL);
+  FOR SELECT TO authenticated USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "job_permits_insert" ON job_permits
-  FOR INSERT TO authenticated WITH CHECK (company_id = auth.company_id());
+  FOR INSERT TO authenticated WITH CHECK (company_id = requesting_company_id());
 CREATE POLICY "job_permits_update" ON job_permits
-  FOR UPDATE TO authenticated USING (company_id = auth.company_id() AND deleted_at IS NULL);
+  FOR UPDATE TO authenticated USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "job_permits_delete" ON job_permits
-  FOR DELETE TO authenticated USING (company_id = auth.company_id());
+  FOR DELETE TO authenticated USING (company_id = requesting_company_id());
 
 CREATE INDEX idx_job_permits_company ON job_permits(company_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_job_permits_job ON job_permits(job_id) WHERE deleted_at IS NULL;
@@ -13441,13 +13441,13 @@ CREATE TABLE permit_inspections (
 
 ALTER TABLE permit_inspections ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "permit_inspections_select" ON permit_inspections
-  FOR SELECT TO authenticated USING (company_id = auth.company_id() AND deleted_at IS NULL);
+  FOR SELECT TO authenticated USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "permit_inspections_insert" ON permit_inspections
-  FOR INSERT TO authenticated WITH CHECK (company_id = auth.company_id());
+  FOR INSERT TO authenticated WITH CHECK (company_id = requesting_company_id());
 CREATE POLICY "permit_inspections_update" ON permit_inspections
-  FOR UPDATE TO authenticated USING (company_id = auth.company_id() AND deleted_at IS NULL);
+  FOR UPDATE TO authenticated USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "permit_inspections_delete" ON permit_inspections
-  FOR DELETE TO authenticated USING (company_id = auth.company_id());
+  FOR DELETE TO authenticated USING (company_id = requesting_company_id());
 
 CREATE INDEX idx_permit_inspections_company ON permit_inspections(company_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_permit_inspections_permit ON permit_inspections(job_permit_id) WHERE deleted_at IS NULL;
@@ -13709,7 +13709,7 @@ CREATE POLICY "compliance_requirements_select" ON compliance_requirements
 CREATE POLICY "compliance_requirements_insert" ON compliance_requirements
   FOR INSERT TO authenticated
   WITH CHECK (
-    company_id = auth.company_id()
+    company_id = requesting_company_id()
   );
 CREATE POLICY "compliance_requirements_update" ON compliance_requirements
   FOR UPDATE TO authenticated
@@ -13717,7 +13717,7 @@ CREATE POLICY "compliance_requirements_update" ON compliance_requirements
 CREATE POLICY "compliance_requirements_delete" ON compliance_requirements
   FOR DELETE TO authenticated
   USING (
-    company_id = auth.company_id() AND (auth.jwt()->'app_metadata'->>'role') IN ('owner', 'admin')
+    company_id = requesting_company_id() AND (auth.jwt()->'app_metadata'->>'role') IN ('owner', 'admin')
   );
 
 CREATE INDEX idx_compliance_requirements_trade ON compliance_requirements(trade_type) WHERE deleted_at IS NULL;
@@ -13754,13 +13754,13 @@ CREATE TABLE compliance_packets (
 
 ALTER TABLE compliance_packets ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "compliance_packets_select" ON compliance_packets
-  FOR SELECT TO authenticated USING (company_id = auth.company_id() AND deleted_at IS NULL);
+  FOR SELECT TO authenticated USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "compliance_packets_insert" ON compliance_packets
-  FOR INSERT TO authenticated WITH CHECK (company_id = auth.company_id());
+  FOR INSERT TO authenticated WITH CHECK (company_id = requesting_company_id());
 CREATE POLICY "compliance_packets_update" ON compliance_packets
-  FOR UPDATE TO authenticated USING (company_id = auth.company_id() AND deleted_at IS NULL);
+  FOR UPDATE TO authenticated USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "compliance_packets_delete" ON compliance_packets
-  FOR DELETE TO authenticated USING (company_id = auth.company_id());
+  FOR DELETE TO authenticated USING (company_id = requesting_company_id());
 
 CREATE INDEX idx_compliance_packets_company ON compliance_packets(company_id) WHERE deleted_at IS NULL;
 
@@ -14087,13 +14087,13 @@ CREATE TABLE lien_tracking (
 
 ALTER TABLE lien_tracking ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "lien_tracking_select" ON lien_tracking
-  FOR SELECT TO authenticated USING (company_id = auth.company_id() AND deleted_at IS NULL);
+  FOR SELECT TO authenticated USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "lien_tracking_insert" ON lien_tracking
-  FOR INSERT TO authenticated WITH CHECK (company_id = auth.company_id());
+  FOR INSERT TO authenticated WITH CHECK (company_id = requesting_company_id());
 CREATE POLICY "lien_tracking_update" ON lien_tracking
-  FOR UPDATE TO authenticated USING (company_id = auth.company_id() AND deleted_at IS NULL);
+  FOR UPDATE TO authenticated USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "lien_tracking_delete" ON lien_tracking
-  FOR DELETE TO authenticated USING (company_id = auth.company_id());
+  FOR DELETE TO authenticated USING (company_id = requesting_company_id());
 
 CREATE INDEX idx_lien_tracking_company ON lien_tracking(company_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_lien_tracking_job ON lien_tracking(job_id) WHERE deleted_at IS NULL;
@@ -14145,11 +14145,11 @@ CREATE POLICY "lien_templates_update" ON lien_document_templates
 -- Company custom templates: add policies
 CREATE POLICY "lien_document_templates_insert" ON lien_document_templates
   FOR INSERT TO authenticated WITH CHECK (
-    company_id = auth.company_id() AND is_custom = true
+    company_id = requesting_company_id() AND is_custom = true
   );
 CREATE POLICY "lien_document_templates_delete" ON lien_document_templates
   FOR DELETE TO authenticated USING (
-    company_id = auth.company_id() AND is_custom = true AND (auth.jwt()->'app_metadata'->>'role') = 'owner'
+    company_id = requesting_company_id() AND is_custom = true AND (auth.jwt()->'app_metadata'->>'role') = 'owner'
   );
 
 CREATE INDEX idx_lien_templates_state ON lien_document_templates(state_code) WHERE deleted_at IS NULL;
@@ -14493,13 +14493,13 @@ CREATE TABLE ce_credit_log (
 
 ALTER TABLE ce_credit_log ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "ce_credit_log_select" ON ce_credit_log
-  FOR SELECT TO authenticated USING (company_id = auth.company_id() AND deleted_at IS NULL);
+  FOR SELECT TO authenticated USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "ce_credit_log_insert" ON ce_credit_log
-  FOR INSERT TO authenticated WITH CHECK (company_id = auth.company_id());
+  FOR INSERT TO authenticated WITH CHECK (company_id = requesting_company_id());
 CREATE POLICY "ce_credit_log_update" ON ce_credit_log
-  FOR UPDATE TO authenticated USING (company_id = auth.company_id() AND deleted_at IS NULL);
+  FOR UPDATE TO authenticated USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "ce_credit_log_delete" ON ce_credit_log
-  FOR DELETE TO authenticated USING (company_id = auth.company_id());
+  FOR DELETE TO authenticated USING (company_id = requesting_company_id());
 
 CREATE INDEX idx_ce_credit_log_company ON ce_credit_log(company_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_ce_credit_log_user ON ce_credit_log(user_id) WHERE deleted_at IS NULL;
@@ -14540,13 +14540,13 @@ CREATE TABLE license_renewals (
 
 ALTER TABLE license_renewals ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "license_renewals_select" ON license_renewals
-  FOR SELECT TO authenticated USING (company_id = auth.company_id() AND deleted_at IS NULL);
+  FOR SELECT TO authenticated USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "license_renewals_insert" ON license_renewals
-  FOR INSERT TO authenticated WITH CHECK (company_id = auth.company_id());
+  FOR INSERT TO authenticated WITH CHECK (company_id = requesting_company_id());
 CREATE POLICY "license_renewals_update" ON license_renewals
-  FOR UPDATE TO authenticated USING (company_id = auth.company_id() AND deleted_at IS NULL);
+  FOR UPDATE TO authenticated USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "license_renewals_delete" ON license_renewals
-  FOR DELETE TO authenticated USING (company_id = auth.company_id());
+  FOR DELETE TO authenticated USING (company_id = requesting_company_id());
 
 CREATE INDEX idx_license_renewals_company ON license_renewals(company_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_license_renewals_user ON license_renewals(user_id) WHERE deleted_at IS NULL;
@@ -14786,10 +14786,10 @@ CREATE TABLE review_requests (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE review_requests ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "review_requests_select" ON review_requests FOR SELECT USING (company_id = auth.company_id());
-CREATE POLICY "review_requests_insert" ON review_requests FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "review_requests_update" ON review_requests FOR UPDATE USING (company_id = auth.company_id());
-CREATE POLICY "review_requests_delete" ON review_requests FOR DELETE USING (company_id = auth.company_id());
+CREATE POLICY "review_requests_select" ON review_requests FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "review_requests_insert" ON review_requests FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "review_requests_update" ON review_requests FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "review_requests_delete" ON review_requests FOR DELETE USING (company_id = requesting_company_id());
 CREATE INDEX idx_review_requests_company ON review_requests(company_id);
 CREATE INDEX idx_review_requests_job ON review_requests(job_id);
 CREATE INDEX idx_review_requests_customer ON review_requests(customer_id);
@@ -14824,10 +14824,10 @@ CREATE TABLE review_tracking (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE review_tracking ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "review_tracking_select" ON review_tracking FOR SELECT USING (company_id = auth.company_id());
-CREATE POLICY "review_tracking_insert" ON review_tracking FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "review_tracking_update" ON review_tracking FOR UPDATE USING (company_id = auth.company_id());
-CREATE POLICY "review_tracking_delete" ON review_tracking FOR DELETE USING (company_id = auth.company_id());
+CREATE POLICY "review_tracking_select" ON review_tracking FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "review_tracking_insert" ON review_tracking FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "review_tracking_update" ON review_tracking FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "review_tracking_delete" ON review_tracking FOR DELETE USING (company_id = requesting_company_id());
 CREATE INDEX idx_review_tracking_company ON review_tracking(company_id);
 CREATE INDEX idx_review_tracking_platform ON review_tracking(company_id, platform);
 CREATE INDEX idx_review_tracking_rating ON review_tracking(company_id, rating);
@@ -14867,11 +14867,11 @@ CREATE TABLE review_analytics (
   UNIQUE(company_id, period_month)
 );
 ALTER TABLE review_analytics ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "review_analytics_select" ON review_analytics FOR SELECT USING (company_id = auth.company_id());
-CREATE POLICY "review_analytics_insert" ON review_analytics FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "review_analytics_update" ON review_analytics FOR UPDATE USING (company_id = auth.company_id());
+CREATE POLICY "review_analytics_select" ON review_analytics FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "review_analytics_insert" ON review_analytics FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "review_analytics_update" ON review_analytics FOR UPDATE USING (company_id = requesting_company_id());
 CREATE POLICY "review_analytics_delete" ON review_analytics FOR DELETE USING (
-  company_id = auth.company_id() AND auth.user_role() IN ('owner', 'admin')
+  company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin')
 );
 CREATE INDEX idx_review_analytics_company ON review_analytics(company_id);
 CREATE INDEX idx_review_analytics_period ON review_analytics(company_id, period_month DESC);
@@ -14910,11 +14910,11 @@ CREATE TABLE review_settings (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE review_settings ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "review_settings_select" ON review_settings FOR SELECT USING (company_id = auth.company_id());
-CREATE POLICY "review_settings_insert" ON review_settings FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "review_settings_update" ON review_settings FOR UPDATE USING (company_id = auth.company_id());
+CREATE POLICY "review_settings_select" ON review_settings FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "review_settings_insert" ON review_settings FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "review_settings_update" ON review_settings FOR UPDATE USING (company_id = requesting_company_id());
 CREATE POLICY "review_settings_delete" ON review_settings FOR DELETE USING (
-  company_id = auth.company_id() AND auth.user_role() IN ('owner', 'admin')
+  company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin')
 );
 CREATE INDEX idx_review_settings_company ON review_settings(company_id);
 CREATE TRIGGER review_settings_updated_at BEFORE UPDATE ON review_settings FOR EACH ROW EXECUTE FUNCTION update_updated_at();
@@ -15125,11 +15125,11 @@ CREATE TABLE subcontractor_profiles (
 );
 ALTER TABLE subcontractor_profiles ENABLE ROW LEVEL SECURITY;
 -- Owner can CRUD their own. All authenticated users can SELECT visible profiles.
-CREATE POLICY "sub_profiles_select_own" ON subcontractor_profiles FOR SELECT USING (company_id = auth.company_id());
+CREATE POLICY "sub_profiles_select_own" ON subcontractor_profiles FOR SELECT USING (company_id = requesting_company_id());
 CREATE POLICY "sub_profiles_select_visible" ON subcontractor_profiles FOR SELECT USING (profile_visible = true AND deleted_at IS NULL);
-CREATE POLICY "sub_profiles_insert" ON subcontractor_profiles FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "sub_profiles_update" ON subcontractor_profiles FOR UPDATE USING (company_id = auth.company_id());
-CREATE POLICY "sub_profiles_delete" ON subcontractor_profiles FOR DELETE USING (company_id = auth.company_id());
+CREATE POLICY "sub_profiles_insert" ON subcontractor_profiles FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "sub_profiles_update" ON subcontractor_profiles FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "sub_profiles_delete" ON subcontractor_profiles FOR DELETE USING (company_id = requesting_company_id());
 CREATE INDEX idx_sub_profiles_company ON subcontractor_profiles(company_id);
 CREATE INDEX idx_sub_profiles_trades ON subcontractor_profiles USING GIN(trade_types);
 CREATE INDEX idx_sub_profiles_geo ON subcontractor_profiles USING GIST(service_area_center);
@@ -15168,16 +15168,16 @@ CREATE TABLE sub_bid_requests (
   expires_at TIMESTAMPTZ
 );
 ALTER TABLE sub_bid_requests ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "bid_requests_select_own" ON sub_bid_requests FOR SELECT USING (company_id = auth.company_id());
+CREATE POLICY "bid_requests_select_own" ON sub_bid_requests FOR SELECT USING (company_id = requesting_company_id());
 CREATE POLICY "bid_requests_select_invited" ON sub_bid_requests FOR SELECT USING (
   status = 'open' AND deleted_at IS NULL AND (
-    auth.company_id() = ANY(invited_sub_ids) OR
+    requesting_company_id() = ANY(invited_sub_ids) OR
     array_length(invited_sub_ids, 1) IS NULL OR array_length(invited_sub_ids, 1) = 0
   )
 );
-CREATE POLICY "bid_requests_insert" ON sub_bid_requests FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "bid_requests_update" ON sub_bid_requests FOR UPDATE USING (company_id = auth.company_id());
-CREATE POLICY "bid_requests_delete" ON sub_bid_requests FOR DELETE USING (company_id = auth.company_id());
+CREATE POLICY "bid_requests_insert" ON sub_bid_requests FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "bid_requests_update" ON sub_bid_requests FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "bid_requests_delete" ON sub_bid_requests FOR DELETE USING (company_id = requesting_company_id());
 CREATE INDEX idx_bid_requests_company ON sub_bid_requests(company_id);
 CREATE INDEX idx_bid_requests_job ON sub_bid_requests(job_id);
 CREATE INDEX idx_bid_requests_trade ON sub_bid_requests(trade_type);
@@ -15213,13 +15213,13 @@ CREATE TABLE sub_bid_responses (
 );
 ALTER TABLE sub_bid_responses ENABLE ROW LEVEL SECURITY;
 -- Sub can CRUD own bids. Requesting company can SELECT bids for their requests.
-CREATE POLICY "bid_responses_select_sub" ON sub_bid_responses FOR SELECT USING (sub_company_id = auth.company_id());
+CREATE POLICY "bid_responses_select_sub" ON sub_bid_responses FOR SELECT USING (sub_company_id = requesting_company_id());
 CREATE POLICY "bid_responses_select_requester" ON sub_bid_responses FOR SELECT USING (
-  bid_request_id IN (SELECT id FROM sub_bid_requests WHERE company_id = auth.company_id())
+  bid_request_id IN (SELECT id FROM sub_bid_requests WHERE company_id = requesting_company_id())
 );
-CREATE POLICY "bid_responses_insert" ON sub_bid_responses FOR INSERT WITH CHECK (sub_company_id = auth.company_id());
-CREATE POLICY "bid_responses_update" ON sub_bid_responses FOR UPDATE USING (sub_company_id = auth.company_id());
-CREATE POLICY "bid_responses_delete" ON sub_bid_responses FOR DELETE USING (sub_company_id = auth.company_id());
+CREATE POLICY "bid_responses_insert" ON sub_bid_responses FOR INSERT WITH CHECK (sub_company_id = requesting_company_id());
+CREATE POLICY "bid_responses_update" ON sub_bid_responses FOR UPDATE USING (sub_company_id = requesting_company_id());
+CREATE POLICY "bid_responses_delete" ON sub_bid_responses FOR DELETE USING (sub_company_id = requesting_company_id());
 CREATE INDEX idx_bid_responses_request ON sub_bid_responses(bid_request_id);
 CREATE INDEX idx_bid_responses_sub ON sub_bid_responses(sub_company_id);
 CREATE INDEX idx_bid_responses_status ON sub_bid_responses(status);
@@ -15248,11 +15248,11 @@ CREATE TABLE sub_ratings (
   UNIQUE(rating_company_id, job_id, rated_company_id)
 );
 ALTER TABLE sub_ratings ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "sub_ratings_select_rater" ON sub_ratings FOR SELECT USING (rating_company_id = auth.company_id());
-CREATE POLICY "sub_ratings_select_rated" ON sub_ratings FOR SELECT USING (rated_company_id = auth.company_id());
-CREATE POLICY "sub_ratings_insert" ON sub_ratings FOR INSERT WITH CHECK (rating_company_id = auth.company_id());
-CREATE POLICY "sub_ratings_update" ON sub_ratings FOR UPDATE USING (rating_company_id = auth.company_id());
-CREATE POLICY "sub_ratings_delete" ON sub_ratings FOR DELETE USING (rating_company_id = auth.company_id());
+CREATE POLICY "sub_ratings_select_rater" ON sub_ratings FOR SELECT USING (rating_company_id = requesting_company_id());
+CREATE POLICY "sub_ratings_select_rated" ON sub_ratings FOR SELECT USING (rated_company_id = requesting_company_id());
+CREATE POLICY "sub_ratings_insert" ON sub_ratings FOR INSERT WITH CHECK (rating_company_id = requesting_company_id());
+CREATE POLICY "sub_ratings_update" ON sub_ratings FOR UPDATE USING (rating_company_id = requesting_company_id());
+CREATE POLICY "sub_ratings_delete" ON sub_ratings FOR DELETE USING (rating_company_id = requesting_company_id());
 CREATE INDEX idx_sub_ratings_rated ON sub_ratings(rated_company_id);
 CREATE INDEX idx_sub_ratings_rater ON sub_ratings(rating_company_id);
 CREATE INDEX idx_sub_ratings_job ON sub_ratings(job_id);
@@ -15414,11 +15414,11 @@ CREATE TABLE sub_payments (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE sub_payments ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "sub_payments_select_gc" ON sub_payments FOR SELECT USING (company_id = auth.company_id());
-CREATE POLICY "sub_payments_select_sub" ON sub_payments FOR SELECT USING (sub_company_id = auth.company_id());
-CREATE POLICY "sub_payments_insert" ON sub_payments FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "sub_payments_update" ON sub_payments FOR UPDATE USING (company_id = auth.company_id());
-CREATE POLICY "sub_payments_delete" ON sub_payments FOR DELETE USING (company_id = auth.company_id());
+CREATE POLICY "sub_payments_select_gc" ON sub_payments FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "sub_payments_select_sub" ON sub_payments FOR SELECT USING (sub_company_id = requesting_company_id());
+CREATE POLICY "sub_payments_insert" ON sub_payments FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "sub_payments_update" ON sub_payments FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "sub_payments_delete" ON sub_payments FOR DELETE USING (company_id = requesting_company_id());
 CREATE INDEX idx_sub_payments_company ON sub_payments(company_id);
 CREATE INDEX idx_sub_payments_sub ON sub_payments(sub_company_id);
 CREATE INDEX idx_sub_payments_job ON sub_payments(job_id);
@@ -15525,10 +15525,10 @@ CREATE TABLE financing_offers (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE financing_offers ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "financing_offers_select" ON financing_offers FOR SELECT USING (company_id = auth.company_id());
-CREATE POLICY "financing_offers_insert" ON financing_offers FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "financing_offers_update" ON financing_offers FOR UPDATE USING (company_id = auth.company_id());
-CREATE POLICY "financing_offers_delete" ON financing_offers FOR DELETE USING (company_id = auth.company_id());
+CREATE POLICY "financing_offers_select" ON financing_offers FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "financing_offers_insert" ON financing_offers FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "financing_offers_update" ON financing_offers FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "financing_offers_delete" ON financing_offers FOR DELETE USING (company_id = requesting_company_id());
 CREATE INDEX idx_financing_offers_company ON financing_offers(company_id);
 CREATE INDEX idx_financing_offers_customer ON financing_offers(customer_id);
 CREATE INDEX idx_financing_offers_estimate ON financing_offers(estimate_id);
@@ -15560,11 +15560,11 @@ CREATE TABLE financing_settings (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE financing_settings ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "financing_settings_select" ON financing_settings FOR SELECT USING (company_id = auth.company_id());
-CREATE POLICY "financing_settings_insert" ON financing_settings FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "financing_settings_update" ON financing_settings FOR UPDATE USING (company_id = auth.company_id());
+CREATE POLICY "financing_settings_select" ON financing_settings FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "financing_settings_insert" ON financing_settings FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "financing_settings_update" ON financing_settings FOR UPDATE USING (company_id = requesting_company_id());
 CREATE POLICY "financing_settings_delete" ON financing_settings FOR DELETE USING (
-  company_id = auth.company_id() AND auth.user_role() IN ('owner', 'admin')
+  company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin')
 );
 CREATE INDEX idx_financing_settings_company ON financing_settings(company_id);
 CREATE TRIGGER financing_settings_updated_at BEFORE UPDATE ON financing_settings FOR EACH ROW EXECUTE FUNCTION update_updated_at();
@@ -15743,10 +15743,10 @@ CREATE TABLE material_price_history (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE material_price_history ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "mat_price_history_select" ON material_price_history FOR SELECT USING (company_id = auth.company_id());
-CREATE POLICY "mat_price_history_insert" ON material_price_history FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "mat_price_history_update" ON material_price_history FOR UPDATE USING (company_id = auth.company_id());
-CREATE POLICY "mat_price_history_delete" ON material_price_history FOR DELETE USING (company_id = auth.company_id());
+CREATE POLICY "mat_price_history_select" ON material_price_history FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "mat_price_history_insert" ON material_price_history FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "mat_price_history_update" ON material_price_history FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "mat_price_history_delete" ON material_price_history FOR DELETE USING (company_id = requesting_company_id());
 CREATE INDEX idx_mat_price_company ON material_price_history(company_id);
 CREATE INDEX idx_mat_price_material ON material_price_history(company_id, material_name);
 CREATE INDEX idx_mat_price_date ON material_price_history(company_id, recorded_date DESC);
@@ -15779,10 +15779,10 @@ CREATE TABLE job_material_lists (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE job_material_lists ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "job_mat_lists_select" ON job_material_lists FOR SELECT USING (company_id = auth.company_id());
-CREATE POLICY "job_mat_lists_insert" ON job_material_lists FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "job_mat_lists_update" ON job_material_lists FOR UPDATE USING (company_id = auth.company_id());
-CREATE POLICY "job_mat_lists_delete" ON job_material_lists FOR DELETE USING (company_id = auth.company_id());
+CREATE POLICY "job_mat_lists_select" ON job_material_lists FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "job_mat_lists_insert" ON job_material_lists FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "job_mat_lists_update" ON job_material_lists FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "job_mat_lists_delete" ON job_material_lists FOR DELETE USING (company_id = requesting_company_id());
 CREATE INDEX idx_job_mat_lists_company ON job_material_lists(company_id);
 CREATE INDEX idx_job_mat_lists_job ON job_material_lists(job_id);
 CREATE INDEX idx_job_mat_lists_estimate ON job_material_lists(estimate_id);
@@ -16017,10 +16017,10 @@ CREATE TABLE daily_job_logs (
   UNIQUE(company_id, job_id, log_date)
 );
 ALTER TABLE daily_job_logs ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "daily_logs_select" ON daily_job_logs FOR SELECT USING (company_id = auth.company_id());
-CREATE POLICY "daily_logs_insert" ON daily_job_logs FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "daily_logs_update" ON daily_job_logs FOR UPDATE USING (company_id = auth.company_id());
-CREATE POLICY "daily_logs_delete" ON daily_job_logs FOR DELETE USING (company_id = auth.company_id());
+CREATE POLICY "daily_logs_select" ON daily_job_logs FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "daily_logs_insert" ON daily_job_logs FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "daily_logs_update" ON daily_job_logs FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "daily_logs_delete" ON daily_job_logs FOR DELETE USING (company_id = requesting_company_id());
 CREATE INDEX idx_daily_logs_company ON daily_job_logs(company_id);
 CREATE INDEX idx_daily_logs_job ON daily_job_logs(job_id);
 CREATE INDEX idx_daily_logs_date ON daily_job_logs(company_id, log_date DESC);
@@ -16049,10 +16049,10 @@ CREATE TABLE daily_log_templates (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE daily_log_templates ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "log_templates_select" ON daily_log_templates FOR SELECT USING (company_id = auth.company_id());
-CREATE POLICY "log_templates_insert" ON daily_log_templates FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "log_templates_update" ON daily_log_templates FOR UPDATE USING (company_id = auth.company_id());
-CREATE POLICY "log_templates_delete" ON daily_log_templates FOR DELETE USING (company_id = auth.company_id());
+CREATE POLICY "log_templates_select" ON daily_log_templates FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "log_templates_insert" ON daily_log_templates FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "log_templates_update" ON daily_log_templates FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "log_templates_delete" ON daily_log_templates FOR DELETE USING (company_id = requesting_company_id());
 CREATE INDEX idx_log_templates_company ON daily_log_templates(company_id);
 CREATE INDEX idx_log_templates_trade ON daily_log_templates(company_id, trade_type);
 CREATE TRIGGER log_templates_updated_at BEFORE UPDATE ON daily_log_templates FOR EACH ROW EXECUTE FUNCTION update_updated_at();
@@ -16200,7 +16200,7 @@ CREATE TRIGGER log_templates_audit AFTER INSERT OR UPDATE OR DELETE ON daily_log
 
 ### U-CO1 — Change Order Engine Extension (~6h)
 
-**Goal:** Extend existing change_orders table with missing columns for full engine. Create change_order_items as a proper relational table (currently line_items is JSONB). Migrate RLS from `requesting_company_id()` to `auth.company_id()`.
+**Goal:** Extend existing change_orders table with missing columns for full engine. Create change_order_items as a proper relational table (currently line_items is JSONB). Migrate RLS from `requesting_company_id()` to `requesting_company_id()`.
 
 #### Existing State
 - Table: `change_orders` exists with basic columns
@@ -16227,15 +16227,15 @@ ALTER TABLE change_orders ADD COLUMN IF NOT EXISTS submitted_at TIMESTAMPTZ;
 ALTER TABLE change_orders ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
 -- All new columns are nullable with defaults per Rule 17
 
--- Migrate RLS from requesting_company_id() to auth.company_id()
+-- Migrate RLS from requesting_company_id() to requesting_company_id()
 DROP POLICY IF EXISTS "change_orders_select" ON change_orders;
 DROP POLICY IF EXISTS "change_orders_insert" ON change_orders;
 DROP POLICY IF EXISTS "change_orders_update" ON change_orders;
 DROP POLICY IF EXISTS "change_orders_delete" ON change_orders;
-CREATE POLICY "change_orders_select" ON change_orders FOR SELECT USING (company_id = auth.company_id());
-CREATE POLICY "change_orders_insert" ON change_orders FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "change_orders_update" ON change_orders FOR UPDATE USING (company_id = auth.company_id());
-CREATE POLICY "change_orders_delete" ON change_orders FOR DELETE USING (company_id = auth.company_id());
+CREATE POLICY "change_orders_select" ON change_orders FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "change_orders_insert" ON change_orders FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "change_orders_update" ON change_orders FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "change_orders_delete" ON change_orders FOR DELETE USING (company_id = requesting_company_id());
 
 -- Add deleted_at filter index
 CREATE INDEX IF NOT EXISTS idx_change_orders_deleted ON change_orders(company_id) WHERE deleted_at IS NULL;
@@ -16261,16 +16261,16 @@ CREATE TABLE change_order_items (
 ALTER TABLE change_order_items ENABLE ROW LEVEL SECURITY;
 -- Direct RLS via company_id (added per HIGH-6 audit fix)
 CREATE POLICY "co_items_select" ON change_order_items FOR SELECT USING (
-  company_id = auth.company_id()
+  company_id = requesting_company_id()
 );
 CREATE POLICY "co_items_insert" ON change_order_items FOR INSERT WITH CHECK (
-  company_id = auth.company_id()
+  company_id = requesting_company_id()
 );
 CREATE POLICY "co_items_update" ON change_order_items FOR UPDATE USING (
-  company_id = auth.company_id()
+  company_id = requesting_company_id()
 );
 CREATE POLICY "co_items_delete" ON change_order_items FOR DELETE USING (
-  company_id = auth.company_id()
+  company_id = requesting_company_id()
 );
 CREATE INDEX idx_co_items_order ON change_order_items(change_order_id);
 CREATE INDEX idx_co_items_type ON change_order_items(change_order_id, item_type);
@@ -16300,7 +16300,7 @@ CREATE TRIGGER co_items_update_cost
 
 #### Checklist
 - [ ] Migration: ALTER change_orders — 9 new nullable columns (expand-contract safe)
-- [ ] Migration: RLS policy migration from `requesting_company_id()` to `auth.company_id()`
+- [ ] Migration: RLS policy migration from `requesting_company_id()` to `requesting_company_id()`
 - [ ] Migration: CREATE change_order_items — all columns, 4 RLS policies, 2 indexes, 2 triggers
 - [ ] Migration: cost_impact auto-calculation trigger
 - [ ] Migration: deleted_at index on change_orders
@@ -16309,7 +16309,7 @@ CREATE TRIGGER co_items_update_cost
 - [ ] Update models barrel
 - [ ] Verify: existing hooks still work with extended table (backward compatible)
 - [ ] Verify: `dart analyze` clean, migration applies
-- [ ] Security: RLS migrated to auth.company_id(), deleted_at added, items scoped via parent
+- [ ] Security: RLS migrated to requesting_company_id(), deleted_at added, items scoped via parent
 - [ ] Commit: `[U-CO1] Change Order Engine extension — new columns, items table, RLS migration`
 
 ---
@@ -16494,16 +16494,16 @@ ALTER TABLE weather_rules ENABLE ROW LEVEL SECURITY;
 -- System defaults (company_id IS NULL) readable by all. Company rules scoped.
 CREATE POLICY "weather_rules_select" ON weather_rules
   FOR SELECT TO authenticated
-  USING (deleted_at IS NULL AND (company_id IS NULL OR company_id = auth.company_id()));
+  USING (deleted_at IS NULL AND (company_id IS NULL OR company_id = requesting_company_id()));
 CREATE POLICY "weather_rules_insert" ON weather_rules
   FOR INSERT TO authenticated
-  WITH CHECK (company_id = auth.company_id());
+  WITH CHECK (company_id = requesting_company_id());
 CREATE POLICY "weather_rules_update" ON weather_rules
   FOR UPDATE TO authenticated
-  USING (company_id = auth.company_id() AND deleted_at IS NULL);
+  USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "weather_rules_delete" ON weather_rules
   FOR DELETE TO authenticated
-  USING (company_id = auth.company_id());
+  USING (company_id = requesting_company_id());
 
 CREATE INDEX idx_weather_rules_company ON weather_rules(company_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_weather_rules_trade ON weather_rules(trade_type) WHERE deleted_at IS NULL;
@@ -16546,13 +16546,13 @@ CREATE TABLE weather_alerts (
 
 ALTER TABLE weather_alerts ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "weather_alerts_select" ON weather_alerts
-  FOR SELECT TO authenticated USING (company_id = auth.company_id() AND deleted_at IS NULL);
+  FOR SELECT TO authenticated USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "weather_alerts_insert" ON weather_alerts
-  FOR INSERT TO authenticated WITH CHECK (company_id = auth.company_id());
+  FOR INSERT TO authenticated WITH CHECK (company_id = requesting_company_id());
 CREATE POLICY "weather_alerts_update" ON weather_alerts
-  FOR UPDATE TO authenticated USING (company_id = auth.company_id() AND deleted_at IS NULL);
+  FOR UPDATE TO authenticated USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 CREATE POLICY "weather_alerts_delete" ON weather_alerts
-  FOR DELETE TO authenticated USING (company_id = auth.company_id());
+  FOR DELETE TO authenticated USING (company_id = requesting_company_id());
 
 CREATE INDEX idx_weather_alerts_company ON weather_alerts(company_id) WHERE deleted_at IS NULL;
 CREATE INDEX idx_weather_alerts_job ON weather_alerts(job_id) WHERE deleted_at IS NULL;
@@ -16640,7 +16640,7 @@ lib/models/weather_alert.dart    — WeatherAlert (Equatable, fromJson/toJson/co
 
 - [ ] RLS on both tables
 - [ ] System default rules (company_id NULL) readable by all authenticated
-- [ ] Company-specific rules scoped to auth.company_id()
+- [ ] Company-specific rules scoped to requesting_company_id()
 - [ ] weather_alerts fully company_id scoped
 - [ ] Audit triggers on both tables
 - [ ] deleted_at on both tables
@@ -17006,17 +17006,17 @@ CREATE TRIGGER audit_trade_tool_records AFTER INSERT OR UPDATE OR DELETE ON trad
 ALTER TABLE trade_tool_records ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "trade_tool_records_select" ON trade_tool_records
-  FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
+  FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 
 CREATE POLICY "trade_tool_records_insert" ON trade_tool_records
-  FOR INSERT WITH CHECK (company_id = auth.company_id());
+  FOR INSERT WITH CHECK (company_id = requesting_company_id());
 
 CREATE POLICY "trade_tool_records_update" ON trade_tool_records
-  FOR UPDATE USING (company_id = auth.company_id() AND deleted_at IS NULL)
-  WITH CHECK (company_id = auth.company_id());
+  FOR UPDATE USING (company_id = requesting_company_id() AND deleted_at IS NULL)
+  WITH CHECK (company_id = requesting_company_id());
 
 CREATE POLICY "trade_tool_records_delete" ON trade_tool_records
-  FOR DELETE USING (company_id = auth.company_id() AND auth.user_role() IN ('owner', 'admin'));
+  FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin'));
 ```
 
 ### Edge Functions
@@ -18432,7 +18432,7 @@ ALTER TABLE property_intelligence_layers ENABLE ROW LEVEL SECURITY;
 
 -- Companies can see layers they contributed
 CREATE POLICY "intel_layers_select_own" ON property_intelligence_layers
-  FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
+  FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
 
 -- Companies can see shared layers from other companies (via property_data_sharing)
 CREATE POLICY "intel_layers_select_shared" ON property_intelligence_layers
@@ -18441,7 +18441,7 @@ CREATE POLICY "intel_layers_select_shared" ON property_intelligence_layers
     EXISTS (
       SELECT 1 FROM property_data_sharing pds
       WHERE pds.property_id = property_intelligence_layers.property_id
-        AND (pds.shared_with_company_id = auth.company_id() OR pds.share_all_contractors = true)
+        AND (pds.shared_with_company_id = requesting_company_id() OR pds.share_all_contractors = true)
         AND pds.share_level IN ('basic', 'full', 'custom')
         AND pds.revoked_at IS NULL
         AND pds.deleted_at IS NULL
@@ -18450,14 +18450,14 @@ CREATE POLICY "intel_layers_select_shared" ON property_intelligence_layers
   );
 
 CREATE POLICY "intel_layers_insert" ON property_intelligence_layers
-  FOR INSERT WITH CHECK (company_id = auth.company_id());
+  FOR INSERT WITH CHECK (company_id = requesting_company_id());
 
 CREATE POLICY "intel_layers_update" ON property_intelligence_layers
-  FOR UPDATE USING (company_id = auth.company_id() AND deleted_at IS NULL)
-  WITH CHECK (company_id = auth.company_id());
+  FOR UPDATE USING (company_id = requesting_company_id() AND deleted_at IS NULL)
+  WITH CHECK (company_id = requesting_company_id());
 
 CREATE POLICY "intel_layers_delete" ON property_intelligence_layers
-  FOR DELETE USING (company_id = auth.company_id() AND auth.user_role() IN ('owner', 'admin'));
+  FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin'));
 
 -- property_data_sharing
 ALTER TABLE property_data_sharing ENABLE ROW LEVEL SECURITY;
@@ -18466,7 +18466,7 @@ CREATE POLICY "data_sharing_select" ON property_data_sharing
   FOR SELECT USING (
     (homeowner_user_id = auth.uid() AND deleted_at IS NULL)
     OR
-    (shared_with_company_id = auth.company_id() AND deleted_at IS NULL)
+    (shared_with_company_id = requesting_company_id() AND deleted_at IS NULL)
   );
 
 CREATE POLICY "data_sharing_insert" ON property_data_sharing
@@ -18477,7 +18477,7 @@ CREATE POLICY "data_sharing_update" ON property_data_sharing
 
 CREATE POLICY "data_sharing_delete" ON property_data_sharing
   FOR DELETE USING (
-    (homeowner_user_id = auth.uid() OR shared_with_company_id = auth.company_id())
+    (homeowner_user_id = auth.uid() OR shared_with_company_id = requesting_company_id())
     AND deleted_at IS NULL
   );
 
@@ -18489,7 +18489,7 @@ CREATE POLICY "age_alerts_select" ON property_age_alerts
 
 -- Only super_admin can modify alerts
 CREATE POLICY "age_alerts_admin" ON property_age_alerts
-  FOR ALL USING (auth.user_role() = 'super_admin');
+  FOR ALL USING (requesting_user_role() = 'super_admin');
 ```
 
 ### Seed Data — Property Age Alerts (exhaustive)
@@ -19363,16 +19363,16 @@ CREATE TRIGGER zdoc_template_registry_audit AFTER INSERT OR UPDATE OR DELETE ON 
 -- RLS: System templates (company_id IS NULL) readable by all authenticated users
 -- Company templates readable/writable only by that company
 CREATE POLICY "zdoc_template_registry_select" ON zdoc_template_registry FOR SELECT USING (
-  company_id IS NULL OR company_id = auth.company_id()
+  company_id IS NULL OR company_id = requesting_company_id()
 );
 CREATE POLICY "zdoc_template_registry_insert" ON zdoc_template_registry FOR INSERT WITH CHECK (
-  company_id = auth.company_id()
+  company_id = requesting_company_id()
 );
 CREATE POLICY "zdoc_template_registry_update" ON zdoc_template_registry FOR UPDATE USING (
-  company_id = auth.company_id() AND auth.user_role() IN ('owner', 'admin')
+  company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin')
 );
 CREATE POLICY "zdoc_template_registry_delete" ON zdoc_template_registry FOR DELETE USING (
-  company_id = auth.company_id() AND auth.user_role() = 'owner'
+  company_id = requesting_company_id() AND requesting_user_role() = 'owner'
 );
 ```
 
@@ -19416,13 +19416,13 @@ CREATE TRIGGER zdoc_template_versions_audit AFTER INSERT OR UPDATE OR DELETE ON 
 CREATE POLICY "zdoc_template_versions_select" ON zdoc_template_versions FOR SELECT USING (
   EXISTS (
     SELECT 1 FROM zdoc_template_registry t
-    WHERE t.id = template_id AND (t.company_id IS NULL OR t.company_id = auth.company_id())
+    WHERE t.id = template_id AND (t.company_id IS NULL OR t.company_id = requesting_company_id())
   )
 );
 CREATE POLICY "zdoc_template_versions_insert" ON zdoc_template_versions FOR INSERT WITH CHECK (
   EXISTS (
     SELECT 1 FROM zdoc_template_registry t
-    WHERE t.id = template_id AND t.company_id = auth.company_id()
+    WHERE t.id = template_id AND t.company_id = requesting_company_id()
   )
 );
 ```
@@ -19467,8 +19467,8 @@ CREATE INDEX idx_zdoc_generated_audit_generated_at ON zdoc_generated_audit (gene
 
 CREATE TRIGGER zdoc_generated_audit_audit AFTER INSERT OR UPDATE OR DELETE ON zdoc_generated_audit FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
 
-CREATE POLICY "zdoc_generated_audit_select" ON zdoc_generated_audit FOR SELECT USING (company_id = auth.company_id());
-CREATE POLICY "zdoc_generated_audit_insert" ON zdoc_generated_audit FOR INSERT WITH CHECK (company_id = auth.company_id());
+CREATE POLICY "zdoc_generated_audit_select" ON zdoc_generated_audit FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "zdoc_generated_audit_insert" ON zdoc_generated_audit FOR INSERT WITH CHECK (company_id = requesting_company_id());
 -- No UPDATE or DELETE — generated docs are immutable legal records. Only voiding is allowed via specific Edge Function.
 ```
 
@@ -19509,7 +19509,7 @@ CREATE TRIGGER zdoc_regulatory_changes_audit AFTER INSERT OR UPDATE OR DELETE ON
 
 -- System-level table — readable by admins, writable by system only
 CREATE POLICY "zdoc_regulatory_changes_select" ON zdoc_regulatory_changes FOR SELECT USING (
-  auth.user_role() IN ('owner', 'admin', 'super_admin')
+  requesting_user_role() IN ('owner', 'admin', 'super_admin')
 );
 ```
 
@@ -19545,10 +19545,10 @@ CREATE INDEX idx_zdoc_template_reports_status ON zdoc_template_reports (status);
 CREATE TRIGGER zdoc_template_reports_audit AFTER INSERT OR UPDATE OR DELETE ON zdoc_template_reports FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
 
 CREATE POLICY "zdoc_template_reports_select" ON zdoc_template_reports FOR SELECT USING (
-  reported_by_company_id = auth.company_id() OR auth.user_role() = 'super_admin'
+  reported_by_company_id = requesting_company_id() OR requesting_user_role() = 'super_admin'
 );
 CREATE POLICY "zdoc_template_reports_insert" ON zdoc_template_reports FOR INSERT WITH CHECK (
-  reported_by_company_id = auth.company_id()
+  reported_by_company_id = requesting_company_id()
 );
 ```
 
@@ -19833,6 +19833,2413 @@ Zafto's answer, built into the system:
 | ZFORGE-FRESH3 | Generation-time freshness checks + disclaimer injection | 4 |
 | ZFORGE-FRESH4 | Community reporting + resolution workflow | 4 |
 | ZFORGE-FRESH5 | Impact analysis + mass notification + bulk re-gen | 4 |
+
+
+---
+
+
+## ══════════════════════════════════════════════════════════
+## PHASE ZFORGE — Document Generation Engine (~388h)
+## ══════════════════════════════════════════════════════════
+
+> **LEGAL WARNING**: ZForge generates legally binding documents — contracts, lien waivers, change orders, insurance claims, real estate agreements, inspection reports, disclosure forms, and compliance documents across ALL entity types. Every template, clause, and compliance check MUST be verified against current state law. Documents produced by ZForge may be presented in court, used to enforce or defend liens, submitted to insurance carriers, filed with government agencies, and serve as the legal record of all professional relationships. Stale templates = legal liability. Missing mandatory clauses = unenforceable contracts. Wrong statutory forms = voided liens. Non-compliant disclosures = regulatory penalties. THIS ENGINE MUST BE BULLETPROOF.
+>
+> **Scope**: 354 document types (80 general contractor, 104 trade-specific across 9 trades, 68 realtor, 42 inspector, 34 adjuster, 26 homeowner). 50-state legal compliance. 10 languages. E-signatures with full forensic audit trail. Document chain linking. Automated freshness monitoring.
+>
+> **Dependencies**: ZFORGE-1 BLOCKS all other ZFORGE sprints. ZFORGE-FRESH1-5 (already spec'd above) MUST be complete before ZFORGE-6. ZFORGE-2 (PDF engine) BLOCKS ZFORGE-3+. ZFORGE-5 (e-signatures) BLOCKS ZFORGE-6 (state compliance).
+
+---
+
+### ZFORGE-1 — Foundation & Security Remediation (~40h)
+
+**Goal**: Fix all 8 security vulnerabilities in existing ZForge code, add missing infrastructure (deleted_at, audit triggers, per-operation RLS), create state compliance tables, signature forensic audit trail, and document chain linking. Establish Flutter foundation (zero Flutter ZForge code exists today). This sprint produces NO new user-facing features — it makes the existing foundation safe and extensible.
+
+**Existing code audit (S139)**: 3 ZForge tables (zdocs_renders 28 cols, zdocs_template_sections 13 cols, zdocs_signature_requests 18 cols) + 1 shared table (document_templates 13 cols) + 1 Edge Function (zdocs-render, 6 actions) + 1 web hook (use-zdocs.ts) + 1 web page (zdocs/page.tsx) + 0 Flutter code.
+
+**8 Security Issues to Fix**:
+1. CRITICAL: EF uses SUPABASE_SERVICE_ROLE_KEY — bypasses ALL RLS
+2. CRITICAL: Entity lookups without company_id — cross-tenant data leak
+3. CRITICAL: use-zdocs.ts line 466 uses .delete() — hard delete violates Rule #14
+4. CRITICAL: No deleted_at column on zdocs_renders
+5. CRITICAL: No audit trigger on ANY ZForge table
+6. HIGH: Single FOR ALL RLS on all 3 tables — must be per-operation
+7. HIGH: CRM hook inserts raw HTML — XSS vulnerability
+8. HIGH: access_token UUID returned in API response — token exposure
+
+**BLOCKS**: ZFORGE-2, ZFORGE-3, ZFORGE-4, ZFORGE-5, ZFORGE-6, ZFORGE-7, ZFORGE-8, ZFORGE-9, ZFORGE-10
+
+#### 1.1 Migration — Security Remediation on Existing Tables
+
+```sql
+-- ZFORGE-1: Foundation & Security Remediation
+-- Fixes 8 security issues + adds new ZForge infrastructure tables
+
+-- ============================================================
+-- PART A: Fix existing ZForge tables
+-- ============================================================
+
+-- A1: zdocs_renders — add deleted_at, fix RLS, add audit trigger
+ALTER TABLE zdocs_renders ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
+CREATE INDEX idx_zdocs_renders_deleted ON zdocs_renders (deleted_at) WHERE deleted_at IS NULL;
+
+DROP POLICY IF EXISTS zdocs_renders_company ON zdocs_renders;
+CREATE POLICY "zdocs_renders_select" ON zdocs_renders FOR SELECT USING (
+  company_id = requesting_company_id() AND deleted_at IS NULL
+);
+CREATE POLICY "zdocs_renders_insert" ON zdocs_renders FOR INSERT WITH CHECK (
+  company_id = requesting_company_id()
+);
+CREATE POLICY "zdocs_renders_update" ON zdocs_renders FOR UPDATE USING (
+  company_id = requesting_company_id() AND deleted_at IS NULL
+);
+CREATE POLICY "zdocs_renders_delete" ON zdocs_renders FOR DELETE USING (
+  company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin')
+);
+
+CREATE TRIGGER zdocs_renders_audit AFTER INSERT OR UPDATE OR DELETE ON zdocs_renders
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+-- A2: zdocs_template_sections — add company_id for direct RLS, add deleted_at, fix RLS, add audit
+ALTER TABLE zdocs_template_sections ADD COLUMN IF NOT EXISTS company_id UUID REFERENCES companies(id);
+ALTER TABLE zdocs_template_sections ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
+
+-- Backfill company_id from parent document_templates
+UPDATE zdocs_template_sections s
+SET company_id = dt.company_id
+FROM document_templates dt
+WHERE s.template_id = dt.id AND s.company_id IS NULL;
+
+ALTER TABLE zdocs_template_sections ALTER COLUMN company_id SET NOT NULL;
+CREATE INDEX idx_zdocs_sections_company ON zdocs_template_sections (company_id);
+CREATE INDEX idx_zdocs_sections_deleted ON zdocs_template_sections (deleted_at) WHERE deleted_at IS NULL;
+
+DROP POLICY IF EXISTS zdocs_sections_via_template ON zdocs_template_sections;
+CREATE POLICY "zdocs_sections_select" ON zdocs_template_sections FOR SELECT USING (
+  company_id = requesting_company_id() AND deleted_at IS NULL
+);
+CREATE POLICY "zdocs_sections_insert" ON zdocs_template_sections FOR INSERT WITH CHECK (
+  company_id = requesting_company_id()
+);
+CREATE POLICY "zdocs_sections_update" ON zdocs_template_sections FOR UPDATE USING (
+  company_id = requesting_company_id() AND deleted_at IS NULL
+);
+CREATE POLICY "zdocs_sections_delete" ON zdocs_template_sections FOR DELETE USING (
+  company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin')
+);
+
+CREATE TRIGGER zdocs_sections_audit AFTER INSERT OR UPDATE OR DELETE ON zdocs_template_sections
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+-- A3: zdocs_signature_requests — add deleted_at, fix RLS, add audit
+ALTER TABLE zdocs_signature_requests ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
+CREATE INDEX idx_zdocs_sigs_deleted ON zdocs_signature_requests (deleted_at) WHERE deleted_at IS NULL;
+
+DROP POLICY IF EXISTS zdocs_sigs_company ON zdocs_signature_requests;
+CREATE POLICY "zdocs_sigs_select" ON zdocs_signature_requests FOR SELECT USING (
+  company_id = requesting_company_id() AND deleted_at IS NULL
+);
+-- External signers access via Edge Function with service role (bypasses RLS).
+-- No separate public SELECT policy needed — EF validates signing token server-side.
+CREATE POLICY "zdocs_sigs_insert" ON zdocs_signature_requests FOR INSERT WITH CHECK (
+  company_id = requesting_company_id()
+);
+CREATE POLICY "zdocs_sigs_update" ON zdocs_signature_requests FOR UPDATE USING (
+  company_id = requesting_company_id() AND deleted_at IS NULL
+);
+CREATE POLICY "zdocs_sigs_delete" ON zdocs_signature_requests FOR DELETE USING (
+  company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin')
+);
+
+CREATE TRIGGER zdocs_sigs_audit AFTER INSERT OR UPDATE OR DELETE ON zdocs_signature_requests
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+-- A4: document_templates — add deleted_at, fix RLS, add audit
+ALTER TABLE document_templates ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
+CREATE INDEX idx_doc_templates_deleted ON document_templates (deleted_at) WHERE deleted_at IS NULL;
+
+DROP POLICY IF EXISTS doc_templates_company ON document_templates;
+CREATE POLICY "doc_templates_select" ON document_templates FOR SELECT USING (
+  company_id = requesting_company_id() AND deleted_at IS NULL
+);
+CREATE POLICY "doc_templates_insert" ON document_templates FOR INSERT WITH CHECK (
+  company_id = requesting_company_id()
+);
+CREATE POLICY "doc_templates_update" ON document_templates FOR UPDATE USING (
+  company_id = requesting_company_id() AND deleted_at IS NULL
+);
+CREATE POLICY "doc_templates_delete" ON document_templates FOR DELETE USING (
+  company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin')
+);
+
+CREATE TRIGGER doc_templates_audit AFTER INSERT OR UPDATE OR DELETE ON document_templates
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+```
+
+- [ ] Write migration file `20260220000128_zforge1_security_remediation.sql`
+- [ ] Verify all 4 tables have deleted_at, per-operation RLS, audit triggers
+- [ ] Verify company_id backfill on zdocs_template_sections completes with 0 NULLs
+- [ ] Run `npx supabase db push` — confirm 0 errors
+
+#### 1.2 New Table — zdocs_state_requirements (50-State Legal Matrix)
+
+```sql
+-- ============================================================
+-- PART B: New ZForge infrastructure tables
+-- ============================================================
+
+-- B1: 50-state legal requirements matrix
+-- Every state has different requirements for contractor documents, real estate forms,
+-- insurance claims, and inspection reports. This table is the single source of truth.
+CREATE TABLE zdocs_state_requirements (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  state_code CHAR(2) NOT NULL, -- 'CA', 'TX', 'FL', etc.
+  requirement_type TEXT NOT NULL CHECK (requirement_type IN (
+    -- Contractor requirements
+    'written_contract_threshold',    -- $ amount above which written contract required
+    'right_to_cancel',               -- cooling-off period (3-day, 5-day, etc.)
+    'right_to_cancel_senior',        -- extended period for seniors (CA: 5 days if 65+)
+    'home_improvement_contract',     -- specific HIC requirements
+    'lien_waiver_conditional_progress',
+    'lien_waiver_unconditional_progress',
+    'lien_waiver_conditional_final',
+    'lien_waiver_unconditional_final',
+    'preliminary_notice',            -- 20-day prelim notice
+    'notice_of_commencement',        -- NOC filing
+    'mechanics_lien_deadline',       -- days to file lien after completion
+    'stop_notice',                   -- stop payment notice
+    'bond_claim_notice',
+    'notice_to_owner',
+    'contractor_license_display',    -- license # on all docs
+    'prevailing_wage_notice',        -- public works
+    -- Real estate requirements
+    'seller_disclosure',             -- property condition disclosure
+    'buyer_agency_agreement',        -- NAR settlement compliance
+    'commission_disclosure',         -- who pays what
+    'lead_paint_disclosure',         -- pre-1978 homes
+    'flood_zone_disclosure',
+    'radon_disclosure',
+    'mold_disclosure',
+    'asbestos_disclosure',
+    'hoa_disclosure',
+    'energy_disclosure',
+    'property_condition_report',
+    'transfer_disclosure_statement',
+    'natural_hazard_disclosure',
+    -- Insurance / adjuster requirements
+    'aob_restriction',               -- assignment of benefits
+    'claims_supplement_format',
+    'proof_of_loss_deadline',
+    'appraisal_clause',
+    -- General legal
+    'arbitration_clause',            -- format requirements (CA, MD specific)
+    'mediation_clause',
+    'document_retention_years',      -- statute of repose
+    'notarization_required',
+    'witness_required',
+    'e_signature_restriction',       -- docs that can't be e-signed
+    'font_size_minimum',             -- CA requires 10pt minimum on some docs
+    'conspicuous_notice',            -- bold/caps requirements
+    'separate_page_required',        -- some clauses must be on separate page
+    'language_translation_required'  -- some states require non-English versions
+  )),
+  -- Requirement details
+  title TEXT NOT NULL,
+  description TEXT NOT NULL,
+  statutory_reference TEXT NOT NULL, -- 'CA Civil Code §8132-8138'
+  -- Thresholds and values
+  threshold_amount DECIMAL(12,2),     -- e.g., $500 for written contract threshold
+  threshold_days INTEGER,              -- e.g., 3 for right-to-cancel
+  threshold_years INTEGER,             -- e.g., 15 for document retention
+  -- Applicability
+  applies_to_entity_types TEXT[] DEFAULT '{contractor}',
+  applies_to_trades TEXT[],            -- NULL = all trades
+  applies_to_project_types TEXT[],     -- 'residential', 'commercial', 'government'
+  -- Statutory form text (for states that mandate EXACT wording)
+  statutory_form_text TEXT,            -- the EXACT form text (e.g., FL lien waiver July 2025)
+  required_language TEXT,              -- mandatory disclaimer/notice language
+  required_format TEXT,                -- 'bold', 'conspicuous', 'separate_page', '10pt_minimum'
+  -- Dates
+  effective_date DATE NOT NULL,
+  sunset_date DATE,                    -- NULL = no expiration
+  last_verified_at TIMESTAMPTZ DEFAULT now(),
+  verified_by TEXT DEFAULT 'system',
+  -- Audit tracking (no company_id — intentional exception: system-wide seed data)
+  created_by UUID REFERENCES auth.users(id), -- which super_admin inserted/modified
+  -- Metadata
+  notes TEXT,
+  source_url TEXT,                     -- link to statute text
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- NOTE: zdocs_state_requirements has NO company_id — intentional.
+-- This is system-wide seed data (50-state legal requirements), not per-company data.
+-- All authenticated users can read. Only super_admin can write.
+-- created_by tracks which admin made changes for audit purposes.
+
+ALTER TABLE zdocs_state_requirements ENABLE ROW LEVEL SECURITY;
+
+-- State requirements are READ-ONLY for all authenticated users (system seed data)
+-- Only super_admin can modify (via ops portal)
+CREATE POLICY "zdocs_state_reqs_select" ON zdocs_state_requirements FOR SELECT USING (
+  auth.role() = 'authenticated'
+);
+CREATE POLICY "zdocs_state_reqs_insert" ON zdocs_state_requirements FOR INSERT WITH CHECK (
+  requesting_user_role() = 'super_admin'
+);
+CREATE POLICY "zdocs_state_reqs_update" ON zdocs_state_requirements FOR UPDATE USING (
+  requesting_user_role() = 'super_admin'
+);
+CREATE POLICY "zdocs_state_reqs_delete" ON zdocs_state_requirements FOR DELETE USING (
+  requesting_user_role() = 'super_admin'
+);
+
+CREATE INDEX idx_state_reqs_state ON zdocs_state_requirements (state_code);
+CREATE INDEX idx_state_reqs_type ON zdocs_state_requirements (requirement_type);
+CREATE INDEX idx_state_reqs_state_type ON zdocs_state_requirements (state_code, requirement_type);
+CREATE INDEX idx_state_reqs_entity ON zdocs_state_requirements USING GIN (applies_to_entity_types);
+CREATE INDEX idx_state_reqs_effective ON zdocs_state_requirements (effective_date, sunset_date);
+
+CREATE TRIGGER zdocs_state_reqs_updated BEFORE UPDATE ON zdocs_state_requirements
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER zdocs_state_reqs_audit AFTER INSERT OR UPDATE OR DELETE ON zdocs_state_requirements
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+```
+
+- [ ] Write table creation in migration file
+- [ ] Verify all 50 states + DC + territories represented in seed data plan
+- [ ] Verify RLS restricts writes to super_admin only
+- [ ] Verify GIN index on entity types array
+
+#### 1.3 New Table — zdocs_legal_clauses (Reusable Clause Library)
+
+```sql
+-- B2: Reusable legal clause library
+-- System clauses (company_id NULL) + company custom clauses
+-- Every clause is versioned and state-aware
+CREATE TABLE zdocs_legal_clauses (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID REFERENCES companies(id), -- NULL = system clause
+  -- Identity
+  clause_code TEXT NOT NULL, -- 'INDEM_MUTUAL', 'WARRANTY_1YR_RESIDENTIAL', 'CHANGE_ORDER_WRITTEN'
+  clause_name TEXT NOT NULL,
+  clause_category TEXT NOT NULL CHECK (clause_category IN (
+    'indemnification', 'warranty', 'limitation_of_liability',
+    'payment_terms', 'late_payment', 'interest_on_late',
+    'change_order_process', 'dispute_resolution', 'arbitration',
+    'mediation', 'termination_for_cause', 'termination_for_convenience',
+    'force_majeure', 'insurance_requirements', 'license_verification',
+    'lien_waiver', 'right_to_cure', 'right_to_cancel',
+    'scope_of_work', 'permits_responsibility', 'cleanup_responsibility',
+    'subcontractor_approval', 'material_substitution', 'delay_notification',
+    'concealed_conditions', 'owner_obligations', 'access_to_premises',
+    'safety_compliance', 'environmental_compliance', 'prevailing_wage',
+    'bonding', 'retainage', 'substantial_completion', 'final_completion',
+    'punchlist_process', 'assignment', 'severability', 'entire_agreement',
+    'governing_law', 'notice_provisions', 'survival', 'confidentiality',
+    'non_compete', 'non_solicitation', 'attorney_fees', 'waiver_of_jury',
+    'disclosure', 'fair_housing', 'agency_representation',
+    'commission_split', 'referral_fee', 'dual_agency',
+    'property_condition', 'as_is', 'home_warranty',
+    'financing_contingency', 'inspection_contingency', 'appraisal_contingency',
+    'title_contingency', 'moisture_protocol', 'mold_remediation_scope',
+    'asbestos_abatement', 'lead_paint_protocol', 'demolition_scope',
+    'custom'
+  )),
+  -- Content
+  clause_text TEXT NOT NULL,           -- the actual legal language with merge tags
+  plain_language_summary TEXT,         -- non-lawyer explanation
+  -- Applicability
+  applicable_states TEXT[],            -- NULL = all states
+  applicable_entity_types TEXT[] DEFAULT '{contractor}',
+  applicable_trades TEXT[],            -- NULL = all trades
+  applicable_project_types TEXT[],     -- NULL = all project types
+  -- Legal requirements
+  is_mandatory BOOLEAN DEFAULT false,  -- required by law in applicable states
+  mandatory_statutory_ref TEXT,        -- which law requires it
+  -- Customization
+  is_customizable BOOLEAN DEFAULT true,
+  customizable_fields JSONB,           -- [{field, label, type, min, max, default}]
+  -- i18n (translations follow same merge tag structure)
+  translations JSONB DEFAULT '{}'::jsonb, -- {"es": "...", "pt_BR": "...", ...}
+  -- Versioning
+  version INTEGER DEFAULT 1,
+  previous_version_id UUID REFERENCES zdocs_legal_clauses(id),
+  -- Freshness
+  last_verified_at TIMESTAMPTZ DEFAULT now(),
+  verified_by TEXT DEFAULT 'system',
+  -- Metadata
+  usage_count INTEGER DEFAULT 0,
+  notes TEXT,
+  deleted_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE zdocs_legal_clauses ENABLE ROW LEVEL SECURITY;
+
+-- System clauses (company_id NULL) readable by all, writable by super_admin
+-- Company clauses scoped to company_id
+CREATE POLICY "zdocs_clauses_select" ON zdocs_legal_clauses FOR SELECT USING (
+  (company_id IS NULL OR company_id = requesting_company_id()) AND deleted_at IS NULL
+);
+CREATE POLICY "zdocs_clauses_insert" ON zdocs_legal_clauses FOR INSERT WITH CHECK (
+  company_id = requesting_company_id() OR requesting_user_role() = 'super_admin'
+);
+CREATE POLICY "zdocs_clauses_update" ON zdocs_legal_clauses FOR UPDATE USING (
+  ((company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin'))
+   OR requesting_user_role() = 'super_admin')
+  AND deleted_at IS NULL
+);
+CREATE POLICY "zdocs_clauses_delete" ON zdocs_legal_clauses FOR DELETE USING (
+  (company_id = requesting_company_id() AND requesting_user_role() = 'owner')
+  OR requesting_user_role() = 'super_admin'
+);
+
+CREATE INDEX idx_zdocs_clauses_company ON zdocs_legal_clauses (company_id);
+CREATE INDEX idx_zdocs_clauses_code ON zdocs_legal_clauses (clause_code);
+CREATE INDEX idx_zdocs_clauses_category ON zdocs_legal_clauses (clause_category);
+CREATE INDEX idx_zdocs_clauses_states ON zdocs_legal_clauses USING GIN (applicable_states);
+CREATE INDEX idx_zdocs_clauses_entity ON zdocs_legal_clauses USING GIN (applicable_entity_types);
+CREATE INDEX idx_zdocs_clauses_mandatory ON zdocs_legal_clauses (is_mandatory) WHERE is_mandatory = true;
+CREATE INDEX idx_zdocs_clauses_deleted ON zdocs_legal_clauses (deleted_at) WHERE deleted_at IS NULL;
+
+CREATE TRIGGER zdocs_clauses_updated BEFORE UPDATE ON zdocs_legal_clauses
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER zdocs_clauses_audit AFTER INSERT OR UPDATE OR DELETE ON zdocs_legal_clauses
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+```
+
+- [ ] Write table creation in migration file
+- [ ] Verify system vs company clause RLS logic
+- [ ] Verify clause versioning (previous_version_id FK)
+- [ ] Verify translations JSONB structure matches i18n pattern
+
+#### 1.4 New Table — zdocs_signature_events (Forensic Audit Trail)
+
+```sql
+-- B3: Immutable e-signature forensic audit trail
+-- CRITICAL FOR LEGAL COMPLIANCE: Every action on a signature request is logged
+-- with IP, user agent, geolocation, device fingerprint, and document hash.
+-- This data proves WHO signed WHAT, WHEN, WHERE, and on WHAT DEVICE.
+-- Events are NEVER updated or deleted — this is a legal audit trail.
+CREATE TABLE zdocs_signature_events (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  signature_request_id UUID NOT NULL REFERENCES zdocs_signature_requests(id),
+  render_id UUID NOT NULL REFERENCES zdocs_renders(id),
+  -- Event classification
+  event_type TEXT NOT NULL CHECK (event_type IN (
+    'invitation_sent',            -- signing request emailed/SMS'd
+    'reminder_sent',              -- follow-up reminder
+    'link_opened',                -- signer clicked the link
+    'document_viewed',            -- document fully loaded in browser
+    'document_scrolled_complete', -- signer scrolled to end (proves they saw it)
+    'signature_field_focused',    -- signer clicked on signature field
+    'signature_drawn',            -- signer drew/typed their signature
+    'signature_placed',           -- signature placed on document
+    'initials_placed',            -- initials placed (multi-page)
+    'signature_completed',        -- all required fields signed — LEGALLY BINDING MOMENT
+    'signature_declined',         -- signer explicitly declined
+    'signature_expired',          -- request expired without action
+    'document_downloaded',        -- signed copy downloaded
+    'certificate_generated',      -- Certificate of Completion PDF created
+    'document_voided',            -- sender voided the request
+    'ip_mismatch_warning',        -- different IP than previous events
+    'device_mismatch_warning',    -- different device fingerprint
+    'suspicious_activity'         -- system-flagged anomaly
+  )),
+  -- Actor
+  actor_type TEXT NOT NULL CHECK (actor_type IN ('signer', 'sender', 'system', 'witness')),
+  actor_user_id UUID REFERENCES auth.users(id), -- NULL for external signers
+  actor_email TEXT,
+  actor_name TEXT,
+  -- Forensic data (CRITICAL — this proves legal validity)
+  ip_address INET NOT NULL,
+  user_agent TEXT NOT NULL,
+  geolocation JSONB,                -- {lat, lng, city, state, country, accuracy_km}
+  device_fingerprint TEXT,          -- browser/device hash
+  screen_resolution TEXT,           -- '1920x1080'
+  timezone TEXT,                    -- 'America/New_York'
+  -- Document integrity
+  document_hash_sha256 TEXT,        -- SHA-256 of PDF at time of event
+  document_page_count INTEGER,
+  document_size_bytes BIGINT,
+  -- Event-specific data
+  metadata JSONB DEFAULT '{}'::jsonb, -- signature_field_id, decline_reason, etc.
+  -- Timestamp — high precision for legal ordering
+  created_at TIMESTAMPTZ DEFAULT now()
+  -- NO updated_at — events are IMMUTABLE
+  -- NO deleted_at — events are NEVER deleted (legal requirement)
+);
+
+ALTER TABLE zdocs_signature_events ENABLE ROW LEVEL SECURITY;
+
+-- Read-only for company users. No insert/update/delete via client — only EF writes.
+CREATE POLICY "zdocs_sig_events_select" ON zdocs_signature_events FOR SELECT USING (
+  company_id = requesting_company_id()
+);
+-- INSERT only via service role (Edge Function) — no client-side inserts
+-- No UPDATE policy — events are immutable
+-- No DELETE policy — events are never deleted
+
+CREATE INDEX idx_sig_events_company ON zdocs_signature_events (company_id);
+CREATE INDEX idx_sig_events_request ON zdocs_signature_events (signature_request_id);
+CREATE INDEX idx_sig_events_render ON zdocs_signature_events (render_id);
+CREATE INDEX idx_sig_events_type ON zdocs_signature_events (event_type);
+CREATE INDEX idx_sig_events_created ON zdocs_signature_events (created_at DESC);
+CREATE INDEX idx_sig_events_actor ON zdocs_signature_events (actor_email) WHERE actor_email IS NOT NULL;
+CREATE INDEX idx_sig_events_ip ON zdocs_signature_events (ip_address);
+
+-- NO audit trigger — the table IS the audit trail
+-- NO updated_at trigger — events are immutable
+```
+
+- [ ] Write table creation in migration file
+- [ ] Verify NO update/delete RLS policies exist (immutable table)
+- [ ] Verify INSERT is service-role-only (EF writes, not client)
+- [ ] Verify all forensic columns are NOT NULL where legally critical (ip_address, user_agent)
+- [ ] Verify SHA-256 hash column is TEXT (not bytea) for portability
+
+#### 1.5 New Table — zdocs_document_chains (Document Relationship Linking)
+
+```sql
+-- B4: Document chain linking
+-- Connects related documents: estimate → contract → change_order → invoice → lien_waiver
+-- Also: listing_agreement → purchase_contract → addendum → closing_docs
+-- Also: inspection_report → repair_estimate → contractor_bid
+-- Also: claim → supplement → payment → proof_of_loss
+CREATE TABLE zdocs_document_chains (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  -- Chain links
+  parent_render_id UUID NOT NULL REFERENCES zdocs_renders(id),
+  child_render_id UUID NOT NULL REFERENCES zdocs_renders(id),
+  -- Relationship type
+  chain_type TEXT NOT NULL CHECK (chain_type IN (
+    -- Contractor chains
+    'estimate_to_contract',       -- accepted estimate becomes contract
+    'contract_to_change_order',   -- change order modifies contract
+    'contract_to_invoice',        -- invoice references contract scope
+    'invoice_to_lien_waiver',     -- lien waiver tied to invoice payment
+    'contract_to_warranty',       -- warranty cert references contract
+    'estimate_to_scope',          -- detailed scope from estimate
+    'contract_to_subcontract',    -- sub-agreement under prime contract
+    'scope_to_permit',            -- permit app references scope
+    'daily_log_to_progress',      -- daily log feeds progress report
+    -- Real estate chains
+    'listing_to_purchase',        -- listing agreement → purchase contract
+    'purchase_to_addendum',       -- addenda modify purchase contract
+    'purchase_to_disclosure',     -- disclosures attached to purchase
+    'purchase_to_closing',        -- closing docs reference purchase
+    'buyer_agency_to_purchase',   -- BAA → purchase contract
+    'cma_to_listing',             -- CMA supports listing price
+    -- Insurance/adjuster chains
+    'inspection_to_estimate',     -- damage inspection → repair estimate
+    'claim_to_supplement',        -- supplement references original claim
+    'claim_to_proof_of_loss',     -- proof of loss for claim
+    'estimate_to_supplement',     -- supplement modifies estimate
+    -- Inspector chains
+    'inspection_to_repair',       -- inspection findings → repair scope
+    -- General
+    'supersedes',                 -- new version replaces old
+    'amendment',                  -- amendment to existing document
+    'addendum',                   -- addendum to existing document
+    'references',                 -- general reference link
+    'custom'
+  )),
+  -- Context
+  notes TEXT,
+  created_by UUID REFERENCES auth.users(id),
+  deleted_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE zdocs_document_chains ENABLE ROW LEVEL SECURITY;
+
+-- UNIQUE constraint prevents duplicate chain links
+ALTER TABLE zdocs_document_chains
+  ADD CONSTRAINT uq_chain_link UNIQUE (parent_render_id, child_render_id, chain_type);
+
+CREATE POLICY "zdocs_chains_select" ON zdocs_document_chains FOR SELECT USING (
+  company_id = requesting_company_id() AND deleted_at IS NULL
+);
+CREATE POLICY "zdocs_chains_insert" ON zdocs_document_chains FOR INSERT WITH CHECK (
+  company_id = requesting_company_id()
+);
+CREATE POLICY "zdocs_chains_update" ON zdocs_document_chains FOR UPDATE USING (
+  company_id = requesting_company_id() AND deleted_at IS NULL
+);
+-- Soft delete only — no physical delete (Rule #14)
+CREATE POLICY "zdocs_chains_delete" ON zdocs_document_chains FOR DELETE USING (
+  company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin')
+);
+
+CREATE INDEX idx_chains_company ON zdocs_document_chains (company_id);
+CREATE INDEX idx_chains_parent ON zdocs_document_chains (parent_render_id);
+CREATE INDEX idx_chains_child ON zdocs_document_chains (child_render_id);
+CREATE INDEX idx_chains_type ON zdocs_document_chains (chain_type);
+-- Composite for "show me all docs in this chain" (forward + reverse)
+CREATE INDEX idx_chains_parent_type ON zdocs_document_chains (parent_render_id, chain_type);
+CREATE INDEX idx_chains_child_type ON zdocs_document_chains (child_render_id, chain_type);
+CREATE INDEX idx_chains_deleted ON zdocs_document_chains (deleted_at) WHERE deleted_at IS NULL;
+
+CREATE TRIGGER zdocs_chains_audit AFTER INSERT OR UPDATE OR DELETE ON zdocs_document_chains
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+```
+
+- [ ] Write table creation in migration file
+- [ ] Verify both parent_render_id and child_render_id FK to zdocs_renders
+- [ ] Verify chain traversal query performance (recursive CTE for full chain)
+- [ ] Verify UNIQUE constraint on (parent_render_id, child_render_id, chain_type)
+
+#### 1.6 Edge Function — Security Overhaul of zdocs-render
+
+**File**: `supabase/functions/zdocs-render/index.ts`
+
+**CRITICAL FIXES** (rewrite existing EF):
+- [ ] **Remove SUPABASE_SERVICE_ROLE_KEY usage** — create authenticated Supabase client from request Authorization header using `supabase.auth.getUser(token)`. Service role ONLY for: (a) writing signature events, (b) public signing link validation
+- [ ] **Add company_id to ALL entity lookups** — every query that fetches jobs, customers, estimates, invoices, properties MUST include `AND company_id = user.app_metadata.company_id` in WHERE clause
+- [ ] **Remove access_token from API responses** — never return the UUID signing token to the client. Instead, return a short-lived signed URL or one-time-use code
+- [ ] **Add input validation** on all parameters:
+  ```
+  action: must be one of 6 valid actions
+  template_id: must be valid UUID
+  entity_type: must match CHECK constraint
+  entity_id: must be valid UUID
+  signer_email: must be valid email format
+  signer_name: must be non-empty string, max 200 chars
+  ```
+- [ ] **Sanitize all HTML output** — use DOMPurify or equivalent server-side sanitizer before storing rendered_html. No raw user content in HTML.
+- [ ] **Add rate limiting headers** — X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset
+- [ ] **Add CORS origin validation** — only allow requests from zafto.cloud, team.zafto.cloud, client.zafto.cloud, ops.zafto.cloud, localhost:3000-3003
+- [ ] **Log all signature events** to zdocs_signature_events table (using service role for this specific insert only)
+- [ ] **Hash documents** — compute SHA-256 of rendered HTML/PDF content at render time, store in zdocs_renders.data_snapshot
+- [ ] Deploy with `npx supabase functions deploy zdocs-render`
+- [ ] Verify 0 errors in deployment log
+
+#### 1.7 Web Portal — use-zdocs.ts Security Fix
+
+**File**: `web-portal/src/lib/hooks/use-zdocs.ts`
+
+- [ ] **Replace .delete() with soft delete** — line 466 and any other `.delete()` calls must become `.update({ deleted_at: new Date().toISOString() })`
+- [ ] **Add deleted_at IS NULL filter** to ALL select queries (fetching renders, templates, sections, signature requests)
+- [ ] **Sanitize HTML content** — add DOMPurify import, sanitize all `rendered_html` and `content_html` before rendering in DOM
+  ```typescript
+  import DOMPurify from 'dompurify';
+  // Before rendering:
+  const safeHtml = DOMPurify.sanitize(render.rendered_html);
+  ```
+- [ ] **Update TypeScript types** — import from `database.types.ts` after migration, not manual interfaces
+- [ ] **Add error boundaries** — wrap all async operations in try/catch with typed errors
+- [ ] **Add optimistic locking** — include `updated_at` in WHERE clause for all UPDATE operations
+- [ ] **Add real-time subscription** for zdocs_signature_events (so sender sees live signing progress)
+- [ ] Verify `npm run build` passes with 0 errors in web-portal
+
+#### 1.8 Flutter Foundation (Zero → Models + Repos + Providers)
+
+**Models** (in `lib/models/`):
+- [ ] `zdocs_render.dart` — ZDocsRender model with fromJson/toJson/copyWith/Equatable, all 29 fields (28 existing + deleted_at)
+- [ ] `zdocs_template_section.dart` — ZDocsTemplateSection model, 15 fields (13 existing + company_id + deleted_at)
+- [ ] `zdocs_signature_request.dart` — ZDocsSignatureRequest model, 19 fields (18 existing + deleted_at)
+- [ ] `zdocs_state_requirement.dart` — ZDocsStateRequirement model, all fields
+- [ ] `zdocs_legal_clause.dart` — ZDocsLegalClause model, all fields
+- [ ] `zdocs_signature_event.dart` — ZDocsSignatureEvent model, all fields (read-only)
+- [ ] `zdocs_document_chain.dart` — ZDocsDocumentChain model, all fields
+
+**Repository** (in `lib/repositories/`):
+- [ ] `zdocs_repository.dart` — abstract ZDocsRepository interface + concrete ZDocsRepositoryImpl
+  - `getRenders(companyId)` — list renders with deleted_at IS NULL filter
+  - `getRendersByEntity(entityType, entityId)` — renders for a specific job/customer/etc.
+  - `getRenderById(id)` — single render with chain links
+  - `createRender(render)` — insert new render
+  - `updateRender(id, updatedAt, fields)` — optimistic locking update
+  - `softDeleteRender(id)` — set deleted_at
+  - `getTemplates(companyId)` — list document templates
+  - `getStateRequirements(stateCode, entityType)` — requirements for state
+  - `getLegalClauses(category, stateCode, entityType)` — applicable clauses
+  - `getSignatureEvents(requestId)` — audit trail for a signature
+  - `getDocumentChain(renderId)` — recursive chain traversal
+  - All methods return domain models, throw typed errors from `core/errors.dart`
+
+**Providers** (in `lib/providers/`):
+- [ ] `zdocs_providers.dart` — Riverpod providers
+  - `zdocsRepositoryProvider` — Provider for repo singleton
+  - `zdocsRendersProvider` — StreamProvider for company renders
+  - `zdocsRenderProvider(id)` — FutureProvider.family for single render
+  - `zdocsEntityRendersProvider(entityType, entityId)` — renders for entity
+  - `zdocsTemplatesProvider` — StreamProvider for templates
+  - `zdocsStateRequirementsProvider(stateCode)` — FutureProvider.family
+  - `zdocsLegalClausesProvider(category)` — FutureProvider.family
+  - `zdocsSignatureEventsProvider(requestId)` — StreamProvider.family
+  - `zdocsChainProvider(renderId)` — FutureProvider.family
+
+- [ ] Run `flutter analyze` — 0 errors
+- [ ] Verify all models have Equatable, copyWith, fromJson, toJson
+
+#### 1.9 Portal Hooks — Team + Client + Ops
+
+**Team Portal** (`team-portal/src/lib/hooks/use-zdocs.ts`):
+- [ ] Read-only hook for field staff — view renders assigned to their jobs, download PDFs, sign documents
+- [ ] NO create/edit/delete capabilities (field staff don't create templates)
+- [ ] Real-time subscription on renders for their assigned jobs
+- [ ] Soft delete filter on all queries
+
+**Client Portal** (`client-portal/src/lib/hooks/use-zdocs.ts`):
+- [ ] Read-only + sign hook for customers — view documents sent to them, sign via e-signature
+- [ ] Filter by `sent_to_email` matching logged-in client email
+- [ ] NO access to internal documents, templates, or audit trail
+- [ ] Soft delete filter on all queries
+
+**Ops Portal** (`ops-portal/src/lib/hooks/use-zdocs.ts`):
+- [ ] Full admin hook — all renders, all templates, all signatures across ALL companies
+- [ ] State requirements CRUD (super_admin only)
+- [ ] Legal clauses CRUD (super_admin only)
+- [ ] Signature event viewer (forensic audit trail)
+- [ ] Template freshness dashboard data
+- [ ] Soft delete filter on all queries
+
+- [ ] Run `npm run build` on team-portal — 0 errors
+- [ ] Run `npm run build` on client-portal — 0 errors
+- [ ] Run `npm run build` on ops-portal — 0 errors
+
+#### 1.10 Shared Types + Final Verification
+
+- [ ] Run `npm run gen-types` in web-portal
+- [ ] Copy `database.types.ts` to team-portal, client-portal, ops-portal
+- [ ] Verify all 4 portals import ZForge types from `database.types.ts`
+- [ ] Run `npx supabase db push` — 0 errors
+- [ ] Run `flutter analyze` — 0 errors
+- [ ] Run `npm run build` in all 4 portals — 0 errors each
+- [ ] Verify ZForge page still loads with security fixes applied
+- [ ] Test: Create template → generate render → verify audit trigger fires
+- [ ] Test: Attempt cross-tenant access → verify RLS blocks it
+- [ ] Test: Soft delete render → verify it disappears from listings but exists in DB
+
+#### Security Verification Checklist
+- [ ] RLS: per-operation policies on zdocs_renders (SELECT, INSERT, UPDATE, DELETE)
+- [ ] RLS: per-operation policies on zdocs_template_sections (SELECT, INSERT, UPDATE, DELETE)
+- [ ] RLS: per-operation policies on zdocs_signature_requests (SELECT, INSERT, UPDATE, DELETE)
+- [ ] RLS: per-operation policies on document_templates (SELECT, INSERT, UPDATE, DELETE)
+- [ ] RLS: per-operation policies on zdocs_state_requirements (SELECT + super_admin write)
+- [ ] RLS: per-operation policies on zdocs_legal_clauses (SELECT + scoped write)
+- [ ] RLS: SELECT-only on zdocs_signature_events (immutable)
+- [ ] RLS: per-operation policies on zdocs_document_chains
+- [ ] company_id + index on ALL tables (including backfilled zdocs_template_sections)
+- [ ] deleted_at on zdocs_renders, zdocs_template_sections, zdocs_signature_requests, document_templates, zdocs_legal_clauses
+- [ ] Audit trigger on ALL tables EXCEPT zdocs_signature_events (which IS the audit trail)
+- [ ] EF: NO service role key for user-context operations
+- [ ] EF: company_id in ALL entity lookup WHERE clauses
+- [ ] EF: access_token NEVER in API responses
+- [ ] EF: Input validation on ALL parameters
+- [ ] EF: HTML sanitization before storage
+- [ ] EF: CORS origin validation
+- [ ] Web: NO .delete() calls — soft delete only
+- [ ] Web: DOMPurify on all rendered HTML
+- [ ] Web: deleted_at IS NULL filter on all queries
+- [ ] Web: optimistic locking on all updates
+- [ ] Flutter: typed errors, no raw exceptions
+- [ ] Flutter: all models have Equatable
+- [ ] 4-state screens in Flutter (loading, error, empty, data) — N/A for ZFORGE-1 (no screens yet)
+
+#### Ecosystem Connections
+- [ ] **Jobs** — zdocs_renders.entity_type='job' + entity_id links to jobs table. Document chain: estimate → contract → change_order → invoice → lien_waiver
+- [ ] **Customers** — zdocs_renders.entity_type='customer' for customer-level documents (W-9, master service agreements)
+- [ ] **Estimates** — zdocs_renders.entity_type='estimate' for estimate PDFs, linked via document chain to contracts
+- [ ] **Invoices** — zdocs_renders.entity_type='invoice' for invoice PDFs, linked via chain to lien waivers
+- [ ] **Properties** — zdocs_renders.entity_type='property' for property-specific documents (disclosures, inspection reports)
+- [ ] **ZFORGE-FRESH** — zdocs_state_requirements feeds template freshness checks (ZFORGE-FRESH1-5)
+- [ ] **Legal Reference Registry** — zdocs_state_requirements.statutory_reference cross-references legal_references table from LEGAL-4
+
+#### Wiring Notes
+- zdocs_state_requirements is READ by ZFORGE-FRESH2 (staleness CRON) to check template compliance
+- zdocs_legal_clauses is READ by ZFORGE-3 (template builder) to offer clause insertion
+- zdocs_signature_events is WRITTEN by zdocs-render EF and READ by all portals for audit display
+- zdocs_document_chains is WRITTEN by zdocs-render EF on generation and READ by all portals for chain navigation
+- All 4 existing tables (renders, sections, requests, templates) now have audit triggers feeding the existing audit_log table
+
+#### API Cost: $0/month
+- All tables: Supabase (included)
+- All Edge Functions: Supabase (included)
+- DOMPurify: npm package (free)
+- SHA-256: built-in crypto API (free)
+
+---
+
+### ZFORGE-2 — PDF Generation Engine (~32h)
+
+**Goal**: Build the actual PDF rendering pipeline — server-side (Edge Function via pdfmake), web preview (@react-pdf/renderer), and mobile (Flutter pdf + printing packages). Implement merge tag system for variable substitution, multi-page layouts with headers/footers/page numbers, watermarks, table rendering for line items, image/logo embedding, QR codes for document verification, and multi-format output (PDF, HTML email, PNG thumbnail). After this sprint, ZForge can produce real PDFs — not just HTML strings.
+
+**BLOCKED BY**: ZFORGE-1 (security remediation must be complete first)
+**BLOCKS**: ZFORGE-3 (template gallery needs PDF output), ZFORGE-4 (WYSIWYG needs preview), ZFORGE-5 (e-signatures need rendered PDFs)
+
+#### 2.0 Migration — New Columns for PDF Engine
+
+```sql
+-- ZFORGE-2: Columns needed for PDF generation
+ALTER TABLE zdocs_renders ADD COLUMN IF NOT EXISTS thumbnail_storage_path TEXT;
+ALTER TABLE zdocs_renders ADD COLUMN IF NOT EXISTS pdf_hash_sha256 TEXT;
+ALTER TABLE zdocs_renders ADD COLUMN IF NOT EXISTS render_format TEXT DEFAULT 'html' CHECK (render_format IN ('html', 'pdf', 'email'));
+```
+
+- [ ] Write migration file `20260221000129_zforge2_pdf_engine.sql`
+- [ ] Run `npx supabase db push` — 0 errors
+
+#### 2.1 Merge Tag System
+
+- [ ] Define merge tag registry — master list of all available variables per entity type:
+  ```
+  Company: {{company.name}}, {{company.address}}, {{company.phone}}, {{company.email}},
+           {{company.license_number}}, {{company.logo_url}}, {{company.website}}
+  Customer: {{customer.name}}, {{customer.email}}, {{customer.phone}}, {{customer.address}},
+            {{customer.company_name}}
+  Job: {{job.name}}, {{job.address}}, {{job.city}}, {{job.state}}, {{job.zip}},
+       {{job.start_date}}, {{job.end_date}}, {{job.total}}, {{job.status}},
+       {{job.scope_description}}, {{job.contract_number}}
+  Estimate: {{estimate.number}}, {{estimate.total}}, {{estimate.tax}}, {{estimate.subtotal}},
+            {{estimate.line_items}}, {{estimate.valid_until}}, {{estimate.notes}}
+  Invoice: {{invoice.number}}, {{invoice.total}}, {{invoice.due_date}}, {{invoice.balance_due}},
+           {{invoice.line_items}}, {{invoice.payment_terms}}, {{invoice.late_fee_rate}}
+  Property: {{property.address}}, {{property.type}}, {{property.year_built}}, {{property.sqft}},
+            {{property.bedrooms}}, {{property.bathrooms}}, {{property.lot_size}}
+  User/Signer: {{signer.name}}, {{signer.email}}, {{signer.title}}
+  Date/Time: {{current_date}}, {{current_time}}, {{current_date_long}}, {{current_year}}
+  Legal: {{state_code}}, {{right_to_cancel_days}}, {{license_requirement}},
+         {{lien_waiver_statutory_text}}, {{arbitration_clause}}
+  ```
+- [ ] Create `supabase/functions/_shared/merge-tags.ts` — shared merge tag resolver
+  - Input: template string + entity data + company data + state requirements
+  - Output: resolved string with all {{tags}} replaced
+  - Handle missing data gracefully: `{{tag}}` → `[MISSING: tag]` (never blank — legal risk)
+  - Support conditional blocks: `{{#if estimate.line_items}}...{{/if}}`
+  - Support loops: `{{#each estimate.line_items}}...{{/each}}`
+  - Support formatting: `{{estimate.total | currency}}`, `{{job.start_date | date_long}}`
+- [ ] Unit test merge tag resolver with 50+ test cases covering all entity types
+
+#### 2.2 PDF Rendering — Edge Function (Server-Side)
+
+**File**: `supabase/functions/zdocs-render/index.ts` (extend existing)
+
+- [ ] Install pdfmake as Deno-compatible dependency (or use @react-pdf/renderer via Deno)
+- [ ] New action: `generate_pdf` — takes render_id, fetches template + entity data, resolves merge tags, generates PDF binary
+- [ ] PDF layout engine supporting:
+  - [ ] Multi-page documents with automatic page breaks
+  - [ ] Headers: company logo (left) + document title (center) + page number (right)
+  - [ ] Footers: company name + address + license # + "Page X of Y"
+  - [ ] Watermarks: DRAFT (gray diagonal), VOID (red diagonal), COPY (gray), CONFIDENTIAL (red)
+  - [ ] Tables: line items with columns (description, qty, unit, rate, amount), auto-sum footer row
+  - [ ] Signature blocks: signature line + printed name + date + title (multiple signers)
+  - [ ] Image embedding: company logo, property photos, signature images
+  - [ ] QR code: encodes verification URL `https://zafto.cloud/verify/{render_id}` — anyone scanning proves document authenticity
+  - [ ] Legal disclaimer footer: configurable per template type
+- [ ] Store generated PDF to Supabase Storage: `documents/{company_id}/zdocs/{render_id}.pdf`
+- [ ] Update zdocs_renders: set pdf_storage_path, pdf_size_bytes, status='rendered'
+- [ ] Compute SHA-256 hash of PDF binary, store in data_snapshot.pdf_hash
+- [ ] New action: `generate_thumbnail` — renders page 1 as PNG for preview grids
+
+#### 2.3 PDF Rendering — Web Portal (@react-pdf/renderer)
+
+**New file**: `web-portal/src/lib/zdocs/pdf-renderer.tsx`
+
+- [ ] Install `@react-pdf/renderer` in web-portal
+- [ ] Create React PDF components matching server-side layout:
+  - [ ] `ZDocsPdfDocument` — root document component
+  - [ ] `ZDocsPdfHeader` — company logo + title + page number
+  - [ ] `ZDocsPdfFooter` — company info + page X of Y
+  - [ ] `ZDocsPdfTable` — line item table with auto-sum
+  - [ ] `ZDocsPdfSignatureBlock` — signature line + fields
+  - [ ] `ZDocsPdfWatermark` — overlay text (DRAFT/VOID/COPY)
+  - [ ] `ZDocsPdfQrCode` — verification QR code
+  - [ ] `ZDocsPdfLegalDisclaimer` — per-template-type disclaimer
+- [ ] Create `ZDocsPdfPreview` component — live preview in browser using `<PDFViewer>`
+- [ ] Create `ZDocsPdfDownload` component — download button using `<PDFDownloadLink>`
+- [ ] Ensure pixel-perfect match between web preview and server-generated PDF
+
+#### 2.4 PDF Rendering — Flutter (Mobile)
+
+**New files** in `lib/`:
+
+- [ ] Add `pdf: ^3.10.0` and `printing: ^5.12.0` to pubspec.yaml
+- [ ] Create `lib/services/zdocs_pdf_service.dart`:
+  - `generatePdf(render, template, entityData, companyData, stateRequirements)` — returns Uint8List
+  - Same layout engine as server: headers, footers, tables, signatures, watermarks, QR codes
+  - Image embedding from Supabase Storage (company logo, photos)
+  - Merge tag resolution (reuse shared logic from merge_tags.dart)
+- [ ] Create `lib/services/zdocs_merge_tags.dart` — Dart implementation of merge tag resolver
+  - Same tag registry as server-side
+  - Same conditional/loop/formatting support
+  - Same `[MISSING: tag]` fallback
+- [ ] Create `lib/widgets/zdocs_pdf_preview.dart` — in-app PDF viewer widget
+- [ ] Create `lib/widgets/zdocs_pdf_share.dart` — share/print/email PDF via `printing` package
+- [ ] Verify PDF output matches server-side and web versions (visual consistency test)
+
+#### 2.5 HTML Email Rendering
+
+**File**: `supabase/functions/zdocs-render/index.ts` (extend)
+
+- [ ] New action: `render_html_email` — generates responsive HTML email version of document
+  - Inline CSS (email clients strip `<style>` tags)
+  - 600px max width, single column layout
+  - Company branding: logo, colors from company settings
+  - Call-to-action button: "View Full Document" or "Sign This Document"
+  - Plain text fallback for clients that block HTML
+- [ ] Use for: sending documents via email, client portal notifications, signature invitations
+
+#### 2.6 Verification System
+
+- [ ] Create `web-portal/src/app/verify/[renderId]/page.tsx` — public verification page
+  - Input: render_id from QR code scan or URL
+  - Display: document title, creation date, signer(s), signature status, SHA-256 hash
+  - If signed: show Certificate of Completion details
+  - No login required — public verification (but does NOT show document contents, only metadata)
+- [ ] Create verification Edge Function action: `verify_document` — returns public metadata for a render_id
+
+#### Security Verification Checklist
+- [ ] PDF generation does NOT use service role key (uses authenticated user context)
+- [ ] PDF storage path includes company_id for isolation: `documents/{company_id}/zdocs/`
+- [ ] QR verification page does NOT expose document contents — metadata only
+- [ ] Merge tag resolver handles missing data safely (no blank fields in legal documents)
+- [ ] HTML email rendering sanitizes all merge tag outputs (XSS prevention)
+- [ ] SHA-256 hash computed and stored for every generated PDF
+- [ ] PDF watermark cannot be removed by end users (embedded in render, not overlay)
+
+#### Ecosystem Connections
+- [ ] **Estimates** — merge tags pull from estimates table (line_items, totals, valid_until)
+- [ ] **Invoices** — merge tags pull from invoices table (line_items, due_date, payment_terms)
+- [ ] **Jobs** — merge tags pull from jobs table (address, scope, dates, contract_number)
+- [ ] **Customers** — merge tags pull from customers table (name, address, contact info)
+- [ ] **Properties** — merge tags pull from properties table (address, type, details)
+- [ ] **Company Settings** — logo, branding colors, license #, address for headers/footers
+- [ ] **Supabase Storage** — PDFs stored in documents bucket with company_id isolation
+
+#### API Cost: $0/month
+- @react-pdf/renderer: npm (free, MIT)
+- pdfmake: npm (free, MIT)
+- pdf (Flutter): pub.dev (free, BSD)
+- printing (Flutter): pub.dev (free, BSD)
+- QR code generation: qr_flutter (free) + server-side library
+- SHA-256: built-in crypto (free)
+
+---
+
+### ZFORGE-3 — Template Gallery & Section Builder (~40h)
+
+**Goal**: Build the template gallery UI (browse, search, filter 354+ templates by entity type, trade, state, category) and the section-based template builder (drag-and-drop sections to compose documents). Users can start from system templates, customize them, or build from scratch. The section builder uses dnd-kit (web) for drag-and-drop reordering and supports all section types: header, paragraph, table, signature block, line items, terms, scope, images, page break, divider, legal clause insertion, and conditional sections.
+
+**BLOCKED BY**: ZFORGE-2 (needs PDF preview to show template output)
+**BLOCKS**: ZFORGE-4 (WYSIWYG built on top of section builder), ZFORGE-8 (seed templates need the gallery)
+
+#### 3.0 Migration — Template Usage Tracking
+
+```sql
+-- ZFORGE-3: Columns needed for template gallery sorting/filtering
+ALTER TABLE zdoc_template_registry ADD COLUMN IF NOT EXISTS usage_count INTEGER DEFAULT 0;
+ALTER TABLE zdoc_template_registry ADD COLUMN IF NOT EXISTS last_used_at TIMESTAMPTZ;
+ALTER TABLE zdoc_template_registry ADD COLUMN IF NOT EXISTS is_featured BOOLEAN DEFAULT false;
+CREATE INDEX IF NOT EXISTS idx_template_registry_usage ON zdoc_template_registry (usage_count DESC) WHERE deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS idx_template_registry_last_used ON zdoc_template_registry (last_used_at DESC NULLS LAST) WHERE deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS idx_template_registry_featured ON zdoc_template_registry (is_featured) WHERE is_featured = true AND deleted_at IS NULL;
+```
+
+- [ ] Write migration file for ZFORGE-3 template usage columns
+- [ ] Run `npx supabase db push` — 0 errors
+
+#### 3.1 Template Gallery — Web Portal
+
+**New files** in `web-portal/src/app/dashboard/zdocs/`:
+
+- [ ] `templates/page.tsx` — template gallery page
+  - Grid view (card per template with thumbnail, name, category, last used)
+  - List view toggle
+  - Search bar: full-text search on template name + description
+  - Filters: entity type (contractor/realtor/inspector/adjuster/homeowner), trade type, state, category, system vs custom, legally regulated, freshness status
+  - Sort: name, category, last used, creation date, usage count
+  - "Use Template" button → opens generate modal pre-filled with template
+  - "Customize" button → opens section builder with template sections loaded
+  - "Duplicate" button → creates company copy of system template for customization
+  - Badge indicators: "Legally Regulated" (red), "State-Specific" (blue), "Stale" (yellow warning)
+- [ ] `templates/[templateId]/page.tsx` — single template detail page
+  - Template preview (PDF rendered via ZFORGE-2)
+  - Version history (from zdoc_template_versions via ZFORGE-FRESH)
+  - Usage statistics (how many times generated, by whom)
+  - Applicable states list
+  - Required legal clauses list
+  - "Edit Sections" button → section builder
+  - "Generate Document" button → generation flow
+- [ ] `templates/new/page.tsx` — create new template from scratch
+  - Template metadata form: name, description, category, entity types, trades, states
+  - Legal classification: is_legally_regulated, statutory_reference, requires_notarization, requires_witness
+  - Section builder (3.2 below)
+
+#### 3.2 Section Builder — Web Portal (dnd-kit)
+
+**New files** in `web-portal/src/components/zdocs/`:
+
+- [ ] Install `@dnd-kit/core`, `@dnd-kit/sortable`, `@dnd-kit/utilities` in web-portal
+- [ ] `SectionBuilder.tsx` — main builder component
+  - Left panel: section type palette (drag source)
+  - Center panel: document preview with drop zones
+  - Right panel: section property editor (context-sensitive)
+  - Real-time PDF preview (split pane or modal)
+- [ ] `SectionPalette.tsx` — draggable section type cards:
+  - Header (company logo + document title)
+  - Paragraph (rich text block)
+  - Table (configurable columns for line items, scope, pricing)
+  - Signature Block (signature line + printed name + date + title)
+  - Line Items (auto-pulls from estimate/invoice entity)
+  - Terms & Conditions (pulls from zdocs_legal_clauses)
+  - Scope of Work (structured scope description)
+  - Image Block (company logo, property photos, diagrams)
+  - Page Break (force new page)
+  - Divider (horizontal rule)
+  - Legal Clause (insert from clause library — from zdocs_legal_clauses)
+  - Conditional Section (show/hide based on entity data)
+  - Custom HTML (advanced users — sanitized)
+- [ ] `SectionEditor.tsx` — right panel property editor per section type:
+  - Header: title text, show/hide logo, font size
+  - Paragraph: rich text editor (TipTap minimal — bold, italic, underline, lists, links)
+  - Table: column definitions (name, width, alignment), header row, footer sum row
+  - Signature Block: number of signers, fields per signer (name, title, date, email)
+  - Line Items: column mapping to entity fields, tax handling, discount handling
+  - Terms: clause selection from library, custom text override
+  - Conditional: variable name, operator (equals, not_equals, exists, is_empty), value
+- [ ] `SectionPreview.tsx` — live preview rendering of each section type
+- [ ] `DraggableSection.tsx` — wrapper for sortable sections with handle, delete, duplicate controls
+
+#### 3.3 Legal Clause Insertion
+
+- [ ] `ClauseLibrary.tsx` — modal/drawer for browsing and inserting legal clauses
+  - Search: by keyword, category, state
+  - Filter: mandatory vs optional, customizable, by entity type
+  - Preview: clause text with highlighted merge tags
+  - "Insert" button: adds clause as Terms section in builder
+  - "Customize" button: copies system clause to company clause for editing
+  - Mandatory clause indicator: "Required in CA, TX, FL" with statutory reference
+- [ ] Auto-suggest mandatory clauses based on selected template state(s)
+  - When user sets applicable_states, auto-check zdocs_state_requirements
+  - Show warning: "This template is for FL. The following mandatory clauses are missing: [list]"
+  - One-click "Add All Required Clauses" button
+
+#### 3.4 Template Gallery — Flutter
+
+**New files** in `lib/screens/zdocs/`:
+
+- [ ] `zdocs_templates_screen.dart` — template gallery (grid/list view, search, filters)
+  - 4-state: loading, error, empty ("No templates yet"), data
+  - Pull-to-refresh
+  - Filter chips: entity type, trade, category, state
+  - Tap template → detail screen
+- [ ] `zdocs_template_detail_screen.dart` — single template view with PDF preview
+  - Preview tab: PDF rendered via ZFORGE-2 Flutter PDF service
+  - Info tab: metadata, usage stats, applicable states, version history
+  - "Generate Document" FAB → generation flow
+  - "Duplicate" action → create company copy
+- [ ] `zdocs_section_builder_screen.dart` — section builder (Flutter ReorderableListView)
+  - Reorderable list of sections
+  - Add section button → section type picker bottom sheet
+  - Tap section → section editor bottom sheet
+  - Live preview button → shows PDF preview in overlay
+  - Save button → persists to zdocs_template_sections table
+
+#### 3.5 Template Gallery — Team/Client/Ops Portals
+
+- [ ] **Team Portal**: `team-portal/src/app/documents/templates/page.tsx` — read-only gallery for field staff. Can generate from templates assigned to them. Cannot edit or create templates.
+- [ ] **Client Portal**: NO template gallery (clients don't browse templates — they receive generated documents)
+- [ ] **Ops Portal**: `ops-portal/src/app/system/templates/page.tsx` — system template management. CRUD on system templates (company_id NULL). View all company custom templates. Template freshness dashboard.
+
+#### Security Verification Checklist
+- [ ] RLS: template gallery only shows system templates + own company templates
+- [ ] RLS: section builder only allows editing own company template sections
+- [ ] Custom HTML sections sanitized via DOMPurify before save and before render
+- [ ] TipTap rich text output sanitized (no script injection)
+- [ ] Template duplication creates new record with user's company_id (no FK to system template)
+- [ ] Mandatory clause warnings are advisory — never block template save (user may add clauses later)
+- [ ] All gallery queries include deleted_at IS NULL filter
+
+#### Ecosystem Connections
+- [ ] **ZFORGE-FRESH** — template gallery shows freshness status badges from zdoc_template_registry
+- [ ] **ZFORGE-2** — PDF preview in gallery uses PDF generation engine
+- [ ] **zdocs_legal_clauses** — clause insertion in section builder reads from clause library
+- [ ] **zdocs_state_requirements** — mandatory clause auto-suggest reads from state requirements
+
+#### API Cost: $0/month
+- dnd-kit: npm (free, MIT)
+- TipTap: npm (free, MIT for core)
+- All rendering: local/Supabase
+
+---
+
+### ZFORGE-4 — pdfme WYSIWYG Template Designer (~28h)
+
+**Goal**: Integrate pdfme (MIT, open-source WYSIWYG PDF template designer) for pixel-perfect visual template editing. This gives advanced users a Canva-like drag-and-drop experience where they can place text, images, tables, barcodes, and merge tags directly on a page layout with precise positioning. pdfme complements the section builder (ZFORGE-3) — section builder for structured documents, pdfme for pixel-perfect visual documents (letterheads, certificates, marketing materials, branded proposals).
+
+**BLOCKED BY**: ZFORGE-2 (PDF engine), ZFORGE-3 (section builder as fallback)
+**REQUIRES**: `zdoc_template_registry` table (created in ZFORGE-FRESH1)
+
+#### 4.0 Migration — WYSIWYG Designer Columns
+
+```sql
+-- ZFORGE-4: Columns needed for pdfme WYSIWYG designer
+ALTER TABLE zdoc_template_registry ADD COLUMN IF NOT EXISTS design_mode TEXT DEFAULT 'section_builder' CHECK (design_mode IN ('section_builder', 'pdfme_visual'));
+ALTER TABLE zdoc_template_registry ADD COLUMN IF NOT EXISTS pdfme_schema JSONB;
+ALTER TABLE zdocs_template_sections ADD COLUMN IF NOT EXISTS pdfme_element_schema JSONB;
+-- Index for quick filtering by design mode
+CREATE INDEX IF NOT EXISTS idx_template_registry_design_mode ON zdoc_template_registry (design_mode) WHERE deleted_at IS NULL;
+```
+
+- [ ] Write migration file for ZFORGE-4 design mode columns
+- [ ] Run `npx supabase db push` — 0 errors
+- [ ] Verify zdoc_template_registry exists (created in ZFORGE-FRESH1) before running this migration
+
+#### 4.1 pdfme Integration — Web Portal
+
+**New files** in `web-portal/src/components/zdocs/`:
+
+- [ ] Install `@pdfme/ui`, `@pdfme/generator`, `@pdfme/common` in web-portal
+- [ ] `PdfmeDesigner.tsx` — wrapper component for pdfme Designer
+  - Load template schema from zdocs_template_sections or zdoc_template_registry
+  - Save schema back to database on save
+  - Merge tag sidebar: drag merge tags onto canvas ({{company.name}}, {{customer.name}}, etc.)
+  - Page setup: letter/A4/legal, portrait/landscape, margins
+  - Snap-to-grid, ruler guides, alignment helpers
+- [ ] `PdfmePreview.tsx` — wrapper for pdfme Viewer (read-only preview with sample data)
+- [ ] `PdfmeGenerator.tsx` — wrapper for pdfme generate() to produce PDF binary from schema + data
+- [ ] Template type picker: "Section Builder" (structured) vs "Visual Designer" (pdfme WYSIWYG)
+  - Store design_mode in template metadata: 'section_builder' | 'pdfme_visual'
+  - Both modes produce identical PDF output (different authoring experience)
+
+#### 4.2 pdfme Schema ↔ ZForge Mapping
+
+- [ ] Create `web-portal/src/lib/zdocs/pdfme-schema-mapper.ts`:
+  - `templateToSchema(template, sections)` — convert ZForge template + sections to pdfme basePdf + schema
+  - `schemaToTemplate(schema)` — convert pdfme schema back to ZForge template_schema JSONB
+  - Handle merge tags: pdfme text fields with `{{tag}}` placeholders
+  - Handle images: company logo, QR code, signature blocks mapped to pdfme image fields
+  - Handle tables: map to pdfme table plugin
+  - Handle barcodes: map to pdfme barcode plugin (Code128, QR)
+- [ ] Bidirectional sync: changes in pdfme Designer auto-save to zdocs_template_sections
+
+#### 4.3 pdfme Custom Plugins
+
+- [ ] Create ZForge-specific pdfme plugins:
+  - [ ] `SignatureFieldPlugin` — signature block that renders signature line + name + date + title fields, clickable for e-signing
+  - [ ] `MergeTagPlugin` — text field with merge tag picker dropdown, shows resolved preview with sample data
+  - [ ] `LegalClausePlugin` — inserts legal clause text from zdocs_legal_clauses, shows mandatory indicator
+  - [ ] `LineItemTablePlugin` — auto-sized table for estimate/invoice line items with sum row
+  - [ ] `WatermarkPlugin` — diagonal overlay text (DRAFT, VOID, COPY, CONFIDENTIAL)
+  - [ ] `QrCodePlugin` — generates QR code from verification URL
+
+#### 4.4 pdfme on Flutter (Limited)
+
+- [ ] Flutter does NOT get pdfme (JavaScript-only library)
+- [ ] Instead, Flutter gets:
+  - [ ] Read-only schema preview: render pdfme schema to PDF using Flutter pdf package
+  - [ ] Create `lib/services/zdocs_pdfme_renderer.dart` — interprets pdfme JSON schema and renders via Flutter pdf package
+  - [ ] Simple field editing: allow changing merge tag values and text fields (no visual drag-and-drop)
+  - [ ] "Edit on Web" button: deep link to web portal WYSIWYG designer
+
+#### 4.5 Template Import/Export
+
+- [ ] Export template as JSON (pdfme schema + ZForge metadata) for sharing between companies
+- [ ] Import template from JSON file
+- [ ] Export template as blank PDF (for companies that want to print and fill by hand)
+- [ ] NO .docx import/export (too complex, defer to future)
+
+#### Security Verification Checklist
+- [ ] pdfme schemas sanitized before save (no script injection in JSON)
+- [ ] Image uploads in pdfme go through Supabase Storage (not base64 inline — size limit)
+- [ ] Template export strips company-specific data (company_id, usage stats, private notes)
+- [ ] Template import creates new record with importing company's company_id
+- [ ] pdfme designer only loads templates accessible via RLS
+
+#### Ecosystem Connections
+- [ ] **ZFORGE-2** — pdfme generate() produces PDF, falls back to ZFORGE-2 engine for server-side generation
+- [ ] **ZFORGE-3** — section builder and pdfme are alternative editing modes for the same template
+- [ ] **zdocs_legal_clauses** — LegalClausePlugin inserts from clause library
+- [ ] **Company Settings** — logo, colors, branding pulled into pdfme templates
+
+#### API Cost: $0/month
+- pdfme: npm (free, MIT)
+- All rendering: local/Supabase
+
+---
+
+### ZFORGE-5 — E-Signature Integration (~36h)
+
+**Goal**: Build the complete e-signature workflow — send documents for signature via email/SMS, public signing experience (no login required), multi-signer sequential/parallel signing, signature drawing/typing/uploading, Certificate of Completion generation, and full forensic audit trail logging. Legally compliant with ESIGN Act (federal), UETA (47 states + DC), and state-specific e-signature restrictions. Uses DocuSeal ($0/mo open-source) as the signature rendering engine with our own forensic layer on top.
+
+**BLOCKED BY**: ZFORGE-1 (signature events table), ZFORGE-2 (PDF generation)
+**BLOCKS**: ZFORGE-6 (state compliance needs signature workflow)
+**DEPENDS ON**: Email sending EF (`send-email` or similar) — must exist for signature invitation emails. If not yet built, ZFORGE-5 signing flow degrades to link-only (no email delivery). Email EF is NOT part of ZFORGE — it's a shared infrastructure EF used across the platform.
+
+#### 5.0 Migration — E-Signature Forensic Columns
+
+```sql
+-- ZFORGE-5: Columns needed for forensic audit trail on signature events
+ALTER TABLE zdocs_signature_requests ADD COLUMN IF NOT EXISTS signing_order TEXT DEFAULT 'parallel' CHECK (signing_order IN ('sequential', 'parallel'));
+ALTER TABLE zdocs_signature_requests ADD COLUMN IF NOT EXISTS expires_at TIMESTAMPTZ;
+ALTER TABLE zdocs_signature_requests ADD COLUMN IF NOT EXISTS reminder_count INTEGER DEFAULT 0;
+ALTER TABLE zdocs_signature_requests ADD COLUMN IF NOT EXISTS last_reminder_at TIMESTAMPTZ;
+ALTER TABLE zdocs_signature_requests ADD COLUMN IF NOT EXISTS certificate_of_completion_path TEXT;
+ALTER TABLE zdocs_signature_requests ADD COLUMN IF NOT EXISTS document_hash_sha256 TEXT;
+
+-- Forensic data: ip_address, user_agent, device_fingerprint, geolocation JSONB already exist in ZFORGE-1 CREATE TABLE.
+-- These columns add FAST GEO QUERIES (lat/lng separate from JSONB detail) + ESIGN disclosure tracking (new).
+ALTER TABLE zdocs_signature_events ADD COLUMN IF NOT EXISTS geolocation_lat NUMERIC(10,7);
+ALTER TABLE zdocs_signature_events ADD COLUMN IF NOT EXISTS geolocation_lng NUMERIC(10,7);
+ALTER TABLE zdocs_signature_events ADD COLUMN IF NOT EXISTS esign_disclosure_accepted BOOLEAN DEFAULT false;
+-- Backfill lat/lng from existing geolocation JSONB where available:
+UPDATE zdocs_signature_events SET
+  geolocation_lat = (geolocation->>'lat')::NUMERIC(10,7),
+  geolocation_lng = (geolocation->>'lng')::NUMERIC(10,7)
+WHERE geolocation IS NOT NULL AND geolocation_lat IS NULL;
+
+-- Indexes for signature tracking
+CREATE INDEX IF NOT EXISTS idx_sig_requests_expires ON zdocs_signature_requests (expires_at) WHERE status = 'pending' AND deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS idx_sig_requests_reminder ON zdocs_signature_requests (last_reminder_at) WHERE status = 'pending' AND deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS idx_sig_events_ip ON zdocs_signature_events (ip_address);
+```
+
+- [ ] Write migration file for ZFORGE-5 e-signature forensic columns
+- [ ] Run `npx supabase db push` — 0 errors
+
+#### 5.1 DocuSeal Integration
+
+- [ ] Evaluate DocuSeal self-hosted vs API: self-hosted Docker container in Supabase Functions or separate service
+- [ ] If DocuSeal too complex to self-host: build native signature capture using HTML5 Canvas (web) + Flutter CustomPainter (mobile)
+- [ ] **Decision**: Implement native signature capture first (simpler, no external dependency), add DocuSeal as optional upgrade later
+- [ ] Create `supabase/functions/_shared/signature-utils.ts`:
+  - `generateSigningToken(requestId, signerEmail, expiresIn)` — creates short-lived JWT (not UUID) for signing link
+  - `validateSigningToken(token)` — verifies JWT, returns request details
+  - `computeDocumentHash(pdfBytes)` — SHA-256 of PDF for integrity verification
+  - `generateCertificateOfCompletion(renderData, signatureEvents)` — creates the legal CoC PDF
+
+#### 5.2 Signing Flow — Edge Function
+
+**File**: `supabase/functions/zdocs-render/index.ts` (extend)
+
+- [ ] Action: `send_for_signature` (rewrite existing):
+  - Validate render exists and belongs to company
+  - Generate PDF if not already rendered (call ZFORGE-2 PDF engine)
+  - Create zdocs_signature_requests for each signer
+  - Generate signed JWT for each signer (NOT UUID access_token — ZFORGE-1 security fix)
+  - Send invitation email via SendGrid/Resend with signing link
+  - Log `invitation_sent` event to zdocs_signature_events with full forensic data
+  - Support signing order: sequential (signer 1 must complete before signer 2 gets link) or parallel (all signers get link simultaneously)
+  - Set expiration: configurable 7-90 days, default 30 days
+- [ ] Action: `public_sign` — the actual signing endpoint (NO AUTH REQUIRED — public link):
+  - Validate JWT signing token (not expired, not already signed, not voided)
+  - Log `link_opened` event with IP, user agent, geolocation, device fingerprint
+  - Return document PDF for viewing (read-only, watermarked "PENDING SIGNATURE")
+  - Log `document_viewed` event when PDF fully loads
+  - Log `document_scrolled_complete` when signer reaches end of document
+  - Accept signature data: drawn (SVG path data), typed (font + name), or uploaded (image)
+  - Log `signature_placed` event for each signature/initials field
+  - On completion: log `signature_completed`, update signature_request status, update render status
+  - If all signers completed: generate Certificate of Completion, store final signed PDF, log `certificate_generated`
+  - Send confirmation email to all parties with signed PDF + CoC attached
+- [ ] Action: `decline_signature` — signer explicitly declines:
+  - Log `signature_declined` event with decline reason
+  - Notify sender via email + real-time notification
+  - Update request status to 'declined'
+- [ ] Action: `void_signature_request` — sender cancels the request:
+  - Log `document_voided` event
+  - Invalidate all pending signing tokens
+  - Notify all signers that request was voided
+  - Update all request statuses to 'expired'
+- [ ] Action: `send_reminder` — resend signing invitation:
+  - Rate limit: max 1 reminder per signer per 24 hours
+  - Log `reminder_sent` event
+  - Regenerate JWT token (old one still valid until expiration)
+
+#### 5.3 Signature Capture — Web Portal
+
+**New files** in `web-portal/src/components/zdocs/`:
+
+- [ ] `SignatureCapture.tsx` — signature capture component:
+  - Tab 1: Draw — HTML5 Canvas, touch-friendly, undo/redo, clear, pen color (black), pen thickness
+  - Tab 2: Type — font selection (4 signature-style fonts), name input, live preview
+  - Tab 3: Upload — file upload for pre-made signature image (PNG/JPG, max 1MB)
+  - Outputs: SVG path data (draw), rendered text image (type), uploaded image URL (upload)
+  - Accessibility: keyboard-navigable, screen reader labels
+- [ ] `SigningPage.tsx` — public signing experience page (NO login required):
+  - Full-page document viewer with signature fields highlighted
+  - Click signature field → SignatureCapture modal
+  - Initials fields for multi-page documents
+  - "I agree to sign electronically" checkbox (ESIGN Act disclosure)
+  - ESIGN Act disclosure text: "By clicking 'Sign', you agree to sign this document electronically. Electronic signatures have the same legal effect as handwritten signatures under federal ESIGN Act and state UETA laws."
+  - Progress indicator: "Signed 2 of 5 fields"
+  - "Complete Signing" button — only enabled when all required fields filled
+  - Confirmation screen with download link for signed PDF + CoC
+- [ ] `SignatureStatusTracker.tsx` — sender-side view of signing progress:
+  - Per-signer status: pending → sent → viewed → signed / declined
+  - Real-time updates via Supabase real-time subscription on zdocs_signature_events
+  - Timeline view of all signature events with timestamps
+  - "Send Reminder" button per pending signer
+  - "Void Request" button with confirmation dialog
+- [ ] Public route: `web-portal/src/app/sign/[token]/page.tsx` — no auth wrapper, renders SigningPage
+
+#### 5.4 Signature Capture — Flutter
+
+**New files** in `lib/`:
+
+- [ ] `lib/widgets/zdocs_signature_pad.dart` — Flutter CustomPainter signature capture:
+  - Touch drawing with pressure sensitivity (if device supports)
+  - Type signature with font selection
+  - Upload from device gallery
+  - Undo/redo/clear
+  - Outputs SVG path data or PNG bytes
+- [ ] `lib/screens/zdocs/zdocs_signing_screen.dart` — in-app signing experience:
+  - PDF viewer with highlighted signature fields
+  - Tap field → signature pad bottom sheet
+  - ESIGN Act disclosure checkbox
+  - Complete signing flow
+  - 4-state: loading, error, empty (no pending signatures), data
+- [ ] `lib/screens/zdocs/zdocs_signature_tracker_screen.dart` — track signing progress:
+  - Real-time event list per signature request
+  - Send reminder action
+  - Void request action
+  - 4-state: loading, error, empty, data
+
+#### 5.5 Certificate of Completion (CoC)
+
+- [ ] CoC PDF includes (per ESIGN Act best practices):
+  - Document title and render_id
+  - All signers: name, email, IP address, timestamp of signature, signature image
+  - Document integrity: SHA-256 hash of original PDF + SHA-256 hash of signed PDF
+  - Timeline: every event from invitation_sent through certificate_generated
+  - Statement: "This Certificate of Completion confirms that the document was signed electronically in compliance with the Electronic Signatures in Global and National Commerce Act (ESIGN Act, 15 U.S.C. § 7001) and the Uniform Electronic Transactions Act (UETA)."
+  - Verification URL with QR code
+  - Zafto branding (non-intrusive)
+- [ ] Store CoC PDF in Supabase Storage alongside signed document
+- [ ] CoC accessible to all signers and sender without login (via verification URL)
+
+#### 5.6 Signature Notifications
+
+- [ ] Email notifications (via existing email EF or new dedicated EF):
+  - Invitation to sign (with signing link)
+  - Reminder to sign (with signing link)
+  - Document signed (to sender, with signed PDF + CoC attached)
+  - Document declined (to sender, with decline reason)
+  - Document voided (to all signers)
+  - Document expired (to sender)
+- [ ] In-app notifications (via existing notification system):
+  - Real-time toast when a document is signed
+  - Push notification to mobile (Flutter) when signature completed
+- [ ] Client portal notifications:
+  - Client sees pending signatures on dashboard
+  - Client can sign from client portal
+
+#### Security Verification Checklist
+- [ ] Signing tokens are JWTs with expiration (NOT permanent UUID tokens)
+- [ ] Signing tokens are single-use per signature completion (invalidated after signing)
+- [ ] Public signing page does NOT expose company data beyond the document itself
+- [ ] Signature images stored in private Supabase Storage bucket (not public URL)
+- [ ] IP address, user agent, and device fingerprint logged for EVERY signing action
+- [ ] SHA-256 hash of document verified before and after signing (integrity proof)
+- [ ] Certificate of Completion is immutable (stored as PDF, never regenerated)
+- [ ] Rate limiting on reminder sends (max 1/24h per signer)
+- [ ] ESIGN Act disclosure shown and accepted BEFORE any signature
+- [ ] Voided requests immediately invalidate all signing tokens
+- [ ] Sequential signing enforced: signer 2 cannot access document until signer 1 completes
+- [ ] Declined signatures cannot be "un-declined" — must create new request
+
+#### Ecosystem Connections
+- [ ] **Notifications** — signature events trigger existing notification system
+- [ ] **Client Portal** — clients sign from client.zafto.cloud
+- [ ] **Team Portal** — field staff can request signatures from job site
+- [ ] **Email** — invitation/reminder/completion emails via existing email infrastructure
+- [ ] **ZFORGE-1** — zdocs_signature_events table stores all forensic data
+- [ ] **ZFORGE-2** — PDF engine renders signing-ready documents + CoC
+
+#### API Cost: $0/month
+- Signature capture: native Canvas/CustomPainter (free)
+- JWT generation: jose library (free)
+- SHA-256: built-in crypto (free)
+- Email delivery: existing Resend/SendGrid integration (already budgeted)
+
+---
+
+### ZFORGE-6 — State Compliance Engine (~48h)
+
+**Goal**: Build the active state compliance system that ensures every document generated by ZForge meets the legal requirements of its applicable state(s). This engine reads from zdocs_state_requirements (seeded in ZFORGE-1) and enforces: mandatory clauses, statutory form text (must be EXACT wording in some states), font size minimums, conspicuous notice requirements, right-to-cancel periods, contractor license display, notarization/witness requirements, e-signature restrictions, and document retention rules. The engine BLOCKS document generation if mandatory requirements are unmet — fail closed, never fail open.
+
+**BLOCKED BY**: ZFORGE-1 (state requirements table), ZFORGE-5 (e-signature for restriction checking)
+**BLOCKS**: ZFORGE-8 (seed templates must pass compliance)
+
+#### 6.1 Compliance Check Engine — Edge Function
+
+**New file**: `supabase/functions/zdocs-compliance-check/index.ts`
+
+- [ ] **Trigger**: Called by zdocs-render EF BEFORE generating any PDF
+- [ ] **Input**: template_id, entity_type, applicable_states[], company settings
+- [ ] **Process**:
+  1. Fetch all zdocs_state_requirements for the applicable states + entity type
+  2. Fetch template sections from zdocs_template_sections
+  3. Fetch legal clauses attached to template
+  4. Run compliance checks:
+     - [ ] **Mandatory clause check**: For each state's mandatory requirements, verify the corresponding legal clause exists in the template. If missing → FAIL with specific message: "FL requires lien waiver language per F.S. §713.20. Add the 'FL Conditional Lien Waiver' clause."
+     - [ ] **Statutory form text check**: For states with exact statutory form text (FL lien waivers July 2025, CA mechanic's lien forms), verify the template contains the EXACT text. Character-for-character comparison. If different → FAIL with diff showing expected vs actual.
+     - [ ] **Font size check**: If state requires minimum font size (CA 10pt on contracts), verify template section styles meet minimum. If under → WARN (not block, since PDF engine controls final size).
+     - [ ] **Conspicuous notice check**: If state requires bold/caps/separate page for certain clauses (right-to-cancel), verify formatting. If wrong → WARN.
+     - [ ] **License display check**: If state requires contractor license # on documents, verify {{company.license_number}} merge tag is present. If missing → FAIL.
+     - [ ] **Right-to-cancel check**: If document is a home improvement contract and state has right-to-cancel, verify the cancellation notice is included with correct day count. If missing → FAIL.
+     - [ ] **E-signature restriction check**: If document type in state cannot be e-signed (some real property transfers, wills), verify e-signature is NOT enabled. If enabled → FAIL.
+     - [ ] **Notarization/witness check**: If state requires notarization or witness for document type, add warning banner: "This document requires notarization in [STATE]. E-signature alone is not sufficient."
+     - [ ] **Document retention check**: Set retention_years on the render based on state's statute of repose.
+  5. Return compliance result:
+     ```typescript
+     {
+       compliant: boolean,
+       errors: [{ state, requirement_type, message, statutory_ref, fix_suggestion }],
+       warnings: [{ state, requirement_type, message }],
+       retention_years: number,
+       requires_notarization: boolean,
+       requires_witness: boolean,
+       e_signature_allowed: boolean
+     }
+     ```
+- [ ] **Behavior**: If `compliant: false`, zdocs-render EF REFUSES to generate PDF. Returns errors to UI. User must fix template before generating. NEVER skip compliance for convenience.
+- [ ] Deploy with `npx supabase functions deploy zdocs-compliance-check`
+
+#### 6.2 Compliance UI — Web Portal
+
+**New files** in `web-portal/src/components/zdocs/`:
+
+- [ ] `CompliancePanel.tsx` — sidebar panel shown in section builder and template editor:
+  - Real-time compliance check as user edits template
+  - Green checkmark for passed checks
+  - Red X for failed mandatory checks with fix suggestion
+  - Yellow warning for advisory checks
+  - "Fix All" button: auto-inserts missing mandatory clauses
+  - Per-state breakdown: expandable accordion showing requirements by state
+- [ ] `ComplianceReport.tsx` — full compliance report for a template:
+  - All 50 states + DC analysis (or just applicable states)
+  - Export as PDF for legal team review
+  - Last verified date for each state requirement
+  - Staleness warnings from ZFORGE-FRESH
+- [ ] `ComplianceBanner.tsx` — banner on generate/sign screens:
+  - If document has compliance warnings: yellow banner with details
+  - If document requires notarization: red banner "This document requires notarization in [STATE]"
+  - If e-signature not allowed: block signing flow entirely with explanation
+
+#### 6.3 Compliance UI — Flutter
+
+**New files** in `lib/`:
+
+- [ ] `lib/widgets/zdocs_compliance_badge.dart` — compact badge showing compliance status (green/yellow/red)
+- [ ] `lib/screens/zdocs/zdocs_compliance_report_screen.dart` — full compliance report
+  - Per-state requirement list
+  - Pass/fail/warn indicators
+  - Statutory references with links
+  - 4-state: loading, error, empty, data
+
+#### 6.4 Seed Data — 50-State Requirements (Critical)
+
+> **THIS IS THE MOST LEGALLY CRITICAL PART OF ZFORGE. Every entry must cite actual statute text. No hallucination. Every requirement verified against current law.**
+
+- [ ] Seed ALL 50 states + DC for `written_contract_threshold`:
+  ```
+  CA: $0 (all home improvement contracts must be written) — B&P Code §7159
+  TX: $0 (all residential construction) — TX Property Code §53.255
+  FL: $2,500 — FL Statute §489.126
+  NY: $500 — NY General Business Law §771
+  PA: $500 — PA Home Improvement Consumer Protection Act §517.7(a)
+  MA: $500 — MA General Laws Ch. 142A §2
+  MD: $500 — MD Business Regulation §8-601
+  ... [all 50 states]
+  ```
+- [ ] Seed `right_to_cancel` for all applicable states:
+  ```
+  Federal: 3 business days for door-to-door sales >$25 — FTC Cooling-Off Rule 16 CFR 429
+  CA: 3 business days — B&P Code §7159(e); 5 business days if homeowner 65+ — Civil Code §1689.6
+  FL: 3 business days — FL Statute §501.025
+  TX: 3 business days for certain contracts — TX Business & Commerce Code §601.052
+  ... [all applicable states]
+  ```
+- [ ] Seed `lien_waiver_*` for 12 statutory lien waiver states:
+  ```
+  CA: 4 forms (conditional/unconditional × progress/final) — Civil Code §8132-8138
+  TX: 4 forms — TX Property Code §53.281-284
+  FL: 4 forms (MUST BE IDENTICAL to statute, July 2025 update) — F.S. §713.20
+  MI: 4 forms — MCL §570.1115
+  AZ: 4 forms — A.R.S. §33-1008
+  GA: waiver/release forms — O.C.G.A. §44-14-366
+  MS: 2 forms — MS Code §85-7-431
+  WY: 1 form — WY Statute §29-2-110
+  UT: 2 forms — UT Code §38-1a-802
+  MO: lien waiver provisions — MO Revised Statutes §429.013
+  NV: 4 forms — NRS §108.2457
+  MT: 2 forms — MCA §71-3-536
+  ```
+  For statutory form states: seed the EXACT statutory text in `statutory_form_text` column
+- [ ] Seed `notice_of_commencement` for 11 NOC states:
+  ```
+  FL, OH, AL, GA, SC, LA, MS, TN, MN, OK, WI
+  ```
+- [ ] Seed `preliminary_notice` requirements:
+  ```
+  CA: 20-day preliminary notice — Civil Code §8200
+  AZ: 20-day preliminary notice — A.R.S. §33-992.01
+  NV: 31-day preliminary notice — NRS §108.245
+  WA: 60-day pre-claim notice — RCW §60.04.031
+  ... [all applicable states]
+  ```
+- [ ] Seed `aob_restriction` for restriction states:
+  ```
+  FL: AOB banned for property insurance (2023) — F.S. §627.7152
+  TX: AOB unenforceable — TX Insurance Code §542A
+  NC, OH, WV, IN, LA, KS, AR, TN, VA: various AOB restrictions
+  ```
+- [ ] Seed `document_retention_years`:
+  ```
+  Default: 15 years (safe across most states)
+  NY: indefinite for some contracts — CPLR §213
+  VT: indefinite — 12 V.S.A. §511
+  MD: 23 years (20yr repose + 3yr discovery) — CJ §5-108
+  LA: 23 years (20yr peremption + 3yr) — CC Art. 3499
+  Most states: 6-10 year statute of repose
+  ```
+- [ ] Seed real estate disclosure requirements for all 50 states
+- [ ] Seed buyer agency agreement requirements (post-NAR settlement August 2024)
+- [ ] Seed `e_signature_restriction`: documents that CANNOT be e-signed per state law
+- [ ] Total seed entries: ~800-1,200 rows across all states and requirement types
+
+#### 6.5 Seed Data Verification
+
+- [ ] Every seed entry has a valid `statutory_reference` citing actual law
+- [ ] Every seed entry has a valid `effective_date`
+- [ ] Spot-check 10 random entries against actual statute text
+- [ ] FL lien waiver forms verified IDENTICAL to July 2025 statutory text
+- [ ] CA right-to-cancel senior provision (5 days for 65+) correctly differentiated
+- [ ] Post-NAR settlement buyer agency requirements correctly captured
+
+#### Security Verification Checklist
+- [ ] Compliance engine BLOCKS generation when mandatory requirements fail (fail closed)
+- [ ] Compliance errors include specific statutory references (for legal team review)
+- [ ] State requirement seed data is READ-ONLY for non-super_admin (ops portal only)
+- [ ] Statutory form text comparison is case-sensitive and whitespace-normalized
+- [ ] E-signature restriction check prevents signing on restricted document types
+- [ ] Compliance check runs on EVERY generation (no caching that could serve stale results)
+- [ ] All compliance check results logged for audit trail
+
+#### Ecosystem Connections
+- [ ] **ZFORGE-1** — reads from zdocs_state_requirements table
+- [ ] **ZFORGE-FRESH** — staleness checks on state requirements drive re-verification
+- [ ] **ZFORGE-2** — compliance check called BEFORE PDF generation
+- [ ] **ZFORGE-3** — compliance panel in section builder
+- [ ] **ZFORGE-5** — e-signature restriction checking
+- [ ] **LEGAL-1/3/4** — cross-references legal_references table for broader legal context
+
+#### API Cost: $0/month
+- All compliance logic: local/Edge Functions
+- Seed data: manually verified (one-time research cost)
+- State legislature monitoring: RSS feeds (free) — handled by ZFORGE-FRESH
+
+---
+
+### ZFORGE-7 — Document Automation & Triggers (~32h)
+
+**Goal**: Automate document generation based on business events — when an estimate is accepted, auto-generate the contract; when a contract is signed, auto-generate the lien waiver; when a job is completed, auto-generate the warranty certificate. Also: document packages (generate a bundle of related documents at once), automated reminders for unsigned documents, and scheduled document generation (monthly reports, weekly safety logs).
+
+**BLOCKED BY**: ZFORGE-2 (PDF engine), ZFORGE-5 (e-signatures), ZFORGE-6 (compliance)
+
+#### 7.1 Trigger Engine — Edge Function
+
+**New file**: `supabase/functions/zdocs-automation/index.ts`
+
+- [ ] **Event listeners** — Supabase Realtime `postgres_changes` channel subscriptions (NOT PostgreSQL CREATE TRIGGER — these are Edge Function listeners that react to table changes via Supabase Realtime):
+  - [ ] `estimate_accepted` → auto-generate contract from linked template
+    - Trigger: estimates table UPDATE where status changes to 'accepted'
+    - Action: create zdocs_render with template_type='contract', entity_type='estimate', entity_id=estimate.id
+    - Pre-fill merge tags from estimate data (customer, job, line items, total)
+    - Run compliance check (ZFORGE-6) before generation
+    - If company has auto-send enabled: send for signature immediately
+  - [ ] `contract_signed` → auto-generate lien waiver (if applicable state)
+    - Trigger: zdocs_signature_requests UPDATE where status='signed' AND render.template_type='contract'
+    - Check: does job state require lien waivers? (zdocs_state_requirements)
+    - If yes: generate conditional progress lien waiver, attach to same job
+  - [ ] `invoice_paid` → auto-generate unconditional lien waiver
+    - Trigger: invoices table UPDATE where status='paid'
+    - Check: statutory lien waiver state? If yes: generate unconditional waiver
+    - Auto-link to invoice via zdocs_document_chains
+  - [ ] `job_completed` → auto-generate warranty certificate + completion certificate
+    - Trigger: jobs table UPDATE where status='completed'
+    - Generate: warranty certificate (terms from company settings), completion certificate
+    - Send for customer signature if company setting enabled
+  - [ ] `inspection_completed` → auto-generate inspection report
+    - Trigger: inspections table UPDATE where status='completed'
+    - Generate: inspection report from inspection data + photos
+  - [ ] `claim_created` → auto-generate claim documentation package
+    - Trigger: claims table INSERT
+    - Generate: damage assessment form, proof of loss template, photo report
+- [ ] Each trigger is **feature-flag gated** per company: `company_feature_flags.zdocs_auto_[trigger_name]`
+- [ ] Each trigger logs to zdocs_automation_log table (new table below)
+
+#### 7.2 New Table — zdocs_automation_log
+
+```sql
+CREATE TABLE zdocs_automation_log (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  -- Trigger info
+  trigger_type TEXT NOT NULL CHECK (trigger_type IN (
+    'estimate_accepted', 'contract_signed', 'invoice_paid',
+    'job_completed', 'inspection_completed', 'claim_created',
+    'scheduled', 'manual_package', 'bulk_generate',
+    'reminder_auto', 'custom'
+  )),
+  trigger_source_table TEXT NOT NULL,  -- 'estimates', 'jobs', etc.
+  trigger_source_id UUID NOT NULL,     -- the row that triggered automation
+  -- Result
+  render_id UUID REFERENCES zdocs_renders(id),  -- NULL if failed
+  status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN (
+    'pending', 'processing', 'completed', 'failed', 'skipped'
+  )),
+  skipped_reason TEXT,  -- 'not_applicable_state', 'feature_flag_off', 'compliance_failed'
+  error_message TEXT,
+  -- Timing
+  triggered_at TIMESTAMPTZ DEFAULT now(),
+  completed_at TIMESTAMPTZ,
+  processing_time_ms INTEGER,
+  -- Standard columns (Rule #14 soft delete + optimistic locking)
+  deleted_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE zdocs_automation_log ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "zdocs_auto_log_select" ON zdocs_automation_log FOR SELECT USING (
+  company_id = requesting_company_id() AND deleted_at IS NULL
+);
+CREATE POLICY "zdocs_auto_log_insert" ON zdocs_automation_log FOR INSERT WITH CHECK (
+  company_id = requesting_company_id() OR requesting_user_role() = 'super_admin'
+);
+-- UPDATE needed for status transitions: pending → processing → completed/failed/skipped
+CREATE POLICY "zdocs_auto_log_update" ON zdocs_automation_log FOR UPDATE USING (
+  company_id = requesting_company_id() OR requesting_user_role() = 'super_admin'
+);
+-- Soft delete only (Rule #14)
+CREATE POLICY "zdocs_auto_log_delete" ON zdocs_automation_log FOR DELETE USING (
+  company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin')
+);
+
+CREATE INDEX idx_auto_log_company ON zdocs_automation_log (company_id);
+CREATE INDEX idx_auto_log_trigger ON zdocs_automation_log (trigger_type);
+CREATE INDEX idx_auto_log_source ON zdocs_automation_log (trigger_source_table, trigger_source_id);
+CREATE INDEX idx_auto_log_status ON zdocs_automation_log (status);
+CREATE INDEX idx_auto_log_created ON zdocs_automation_log (created_at DESC);
+CREATE INDEX idx_auto_log_deleted ON zdocs_automation_log (deleted_at) WHERE deleted_at IS NULL;
+
+CREATE TRIGGER zdocs_auto_log_updated BEFORE UPDATE ON zdocs_automation_log
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER zdocs_auto_log_audit AFTER INSERT OR UPDATE OR DELETE ON zdocs_automation_log
+  FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+```
+
+- [ ] Write table in migration file
+- [ ] Verify RLS: UPDATE restricted to status/completed_at/processing_time_ms/error_message fields only (immutable: trigger_type, trigger_source_table, trigger_source_id, triggered_at). DELETE is soft-delete only (Rule #14)
+
+#### 7.3 Document Packages
+
+- [ ] Create `web-portal/src/components/zdocs/PackageGenerator.tsx`:
+  - Select a "document package" — a predefined set of related documents
+  - Packages per entity type:
+    - **Contractor Job Start**: Contract + Scope of Work + Payment Schedule + Lien Waiver (conditional) + NOC (if applicable state)
+    - **Contractor Job Complete**: Completion Certificate + Warranty Certificate + Final Invoice + Lien Waiver (unconditional) + Punch List
+    - **Realtor Listing**: Listing Agreement + Seller Disclosure + Lead Paint Disclosure (pre-1978) + CMA Report
+    - **Realtor Purchase**: Purchase Agreement + Buyer Agency Agreement + Buyer Disclosures + Financing Contingency
+    - **Inspector Report**: Inspection Report + Summary Letter + Repair Estimate Template + Invoice
+    - **Adjuster Claim**: Damage Assessment + Photo Report + Scope of Work + Supplement Template
+    - **Homeowner Project**: Contractor Agreement + Payment Schedule + Warranty Info
+  - One-click "Generate Package" → generates all documents in package
+  - Chain all generated documents via zdocs_document_chains
+  - Send all for signature in correct order (if applicable)
+- [ ] Create Flutter equivalent: `lib/screens/zdocs/zdocs_package_screen.dart`
+  - Package selection list
+  - Generate all documents with progress indicator
+  - 4-state: loading, error, empty, data
+
+#### 7.4 Automated Reminders
+
+- [ ] CRON Edge Function: `supabase/functions/zdocs-reminder-cron/index.ts`
+  - **Trigger**: Supabase CRON, runs daily at 09:00 UTC (Supabase CRON is UTC-only — EF converts to company timezone before checking deadlines)
+  - **Logic**:
+    1. Find all pending signature requests where sent_at > 3 days ago AND no reminder sent in last 24h
+    2. For each: send reminder email to signer
+    3. Log `reminder_sent` event to zdocs_signature_events
+    4. After 2 reminders with no action: send "urgent" reminder with different subject line
+    5. At 7 days before expiration: send "expiring soon" reminder
+    6. On expiration: log `signature_expired`, update status, notify sender
+  - Configurable per company: reminder frequency, max reminders, escalation timeline
+- [ ] Deploy CRON function
+
+#### 7.5 Scheduled Generation
+
+- [ ] Support scheduled document generation:
+  - Weekly safety report (auto-generate from daily logs)
+  - Monthly progress report (auto-generate from job data)
+  - Quarterly compliance review (auto-generate from audit data)
+- [ ] Store schedules in company settings JSONB: `zdocs_schedules: [{template_id, frequency, entity_type, entity_id, next_run}]`
+- [ ] CRON function checks for due schedules and generates documents
+
+#### 7.6 Automation Settings UI
+
+- [ ] `web-portal/src/app/dashboard/settings/zdocs-automation/page.tsx`:
+  - Toggle each trigger type on/off per company
+  - Configure: auto-send for signature (yes/no), default template per trigger, reminder frequency
+  - View automation log: table of all triggered automations with status
+- [ ] `ops-portal/src/app/system/zdocs-automation/page.tsx`:
+  - View automation logs across all companies
+  - System-wide trigger health dashboard
+  - Failed automation alerts
+
+#### Security Verification Checklist
+- [ ] All triggers are feature-flag gated (company_feature_flags)
+- [ ] Automation log UPDATE restricted to mutable fields only (status, completed_at, processing_time_ms, error_message, skipped_reason); immutable fields (trigger_type, trigger_source_table, trigger_source_id, triggered_at) are never updated. DELETE is soft-delete only
+- [ ] CRON functions validate company_id on every operation
+- [ ] Reminder rate limiting prevents spam (max 1/24h per signer)
+- [ ] Scheduled generation validates template still exists and is active before generating
+- [ ] Failed automations logged with error details (never silently swallowed)
+- [ ] Package generation respects compliance engine (ZFORGE-6) for every document in package
+
+#### Ecosystem Connections
+- [ ] **Estimates** — estimate_accepted trigger
+- [ ] **Invoices** — invoice_paid trigger
+- [ ] **Jobs** — job_completed trigger
+- [ ] **Inspections** — inspection_completed trigger
+- [ ] **Claims** — claim_created trigger
+- [ ] **ZFORGE-6** — compliance check on every automated generation
+- [ ] **ZFORGE-5** — auto-send for signature
+- [ ] **Notifications** — automation events feed notification system
+- [ ] **Feature Flags** — company_feature_flags gates each trigger
+
+#### API Cost: $0/month
+- All automation: Supabase Edge Functions + CRON (included)
+- Email: existing Resend/SendGrid integration (already budgeted)
+
+---
+
+### ZFORGE-8 — Seed Templates: 354 Document Types (~80h)
+
+**Goal**: Seed the complete template library — 354 document types across all entity types (80 general contractor, 104 trade-specific, 68 realtor, 42 inspector, 34 adjuster, 26 homeowner). Every template must have: professional layout, correct merge tags, mandatory legal clauses for applicable states, proper section structure, and compliance verification passing. This is the DEPTH sprint — every template must be usable on day one by a real professional. No stubs. No "coming soon". No empty templates with just a title.
+
+**BLOCKED BY**: ZFORGE-3 (template builder), ZFORGE-6 (compliance engine for verification)
+**BLOCKS**: ZFORGE-9 (translations need templates to translate)
+
+> **CRITICAL: DEPTH VERIFICATION GATE** — Every single template must pass: "Would a real [contractor/realtor/inspector/adjuster/homeowner] use this on a real [job/transaction/inspection/claim/project] on day one?" If NO, the template is not done.
+
+#### 8.0 Seed Data Strategy
+
+**Seed migration file**: `supabase/migrations/YYYYMMDDHHMMSS_zforge8_seed_354_templates.sql`
+
+**Seed approach**: All 354 templates are INSERT statements into `zdoc_template_registry` (system templates with `company_id = NULL`) + corresponding `zdocs_template_sections` rows for each template's sections. Each template INSERT must include:
+- `template_name`, `template_type`, `entity_type`, `trade_type` (if trade-specific)
+- `category`, `description`, `is_system = true`, `company_id = NULL`
+- `legal_classification` (regulated/advisory/informational)
+- `applicable_states` (JSONB array — NULL = all states)
+- `sections` defined as separate INSERT rows in `zdocs_template_sections`
+
+**File organization** (split for sanity — each file sourced by the main migration):
+```
+supabase/seed/zdocs/
+├── 01_contractor_general.sql     -- 80 templates
+├── 02_contractor_trades.sql      -- 104 trade-specific templates
+├── 03_realtor.sql                -- 68 templates
+├── 04_inspector.sql              -- 42 templates
+├── 05_adjuster.sql               -- 34 templates
+├── 06_homeowner.sql              -- 26 templates
+└── 00_verify_count.sql           -- SELECT count(*) assertion = 354
+```
+
+- [ ] Create seed directory structure `supabase/seed/zdocs/`
+- [ ] Write main migration that `\i` includes all 6 seed files (or use Supabase `seed.sql`)
+- [ ] After seeding: run `SELECT count(*) FROM zdoc_template_registry WHERE is_system = true` — must equal 354
+- [ ] Verify every template has at least 1 section in `zdocs_template_sections`
+
+#### 8.1 General Contractor Templates (80 templates)
+
+**Sales & Pre-Job (22)**:
+- [ ] Residential Construction Contract (state-aware, right-to-cancel, license display)
+- [ ] Commercial Construction Contract (AIA-style but Zafto-native, no AIA copyright)
+- [ ] Home Improvement Contract (CA B&P 7159 compliant, specific HIC requirements)
+- [ ] Subcontractor Agreement (scope, payment terms, insurance requirements, lien waiver)
+- [ ] Design-Build Contract (combined design + construction scope)
+- [ ] Time & Materials Contract (T&M rates, not-to-exceed, daily reporting)
+- [ ] Cost-Plus Contract (cost + markup %, open-book accounting)
+- [ ] Fixed-Price Proposal (detailed scope, pricing, exclusions, validity period)
+- [ ] Estimate / Quote (line items, taxes, validity, terms)
+- [ ] Scope of Work (detailed task breakdown, materials, timeline)
+- [ ] Work Authorization (pre-contract authorization for emergency/small work)
+- [ ] Pre-Construction Agreement (site assessment, design development, budgeting)
+- [ ] Letter of Intent (non-binding, outlines terms for future contract)
+- [ ] Master Service Agreement (ongoing relationship, task orders)
+- [ ] Service Level Agreement (response times, availability, penalties)
+- [ ] Bid Proposal (public/private bid format, bond references)
+- [ ] Bid Bond (surety bond reference document)
+- [ ] Performance Bond (surety bond for completion guarantee)
+- [ ] Payment Bond (surety bond protecting subs and suppliers)
+- [ ] Non-Disclosure Agreement (confidential project information)
+- [ ] Non-Compete Agreement (post-employment, state-specific enforceability)
+- [ ] Job Site Access Agreement (property access terms, liability)
+
+**Active Job (28)**:
+- [ ] Change Order (scope change, price adjustment, time extension, signature required)
+- [ ] Daily Report / Daily Log (weather, crew, work performed, materials, photos)
+- [ ] Weekly Progress Report (% complete, schedule status, issues, upcoming)
+- [ ] Monthly Progress Report (cumulative, cost tracking, schedule, milestones)
+- [ ] Request for Information (RFI) (question, response, impact on schedule/cost)
+- [ ] Submittal (material/product approval request, spec compliance)
+- [ ] Safety Plan (OSHA compliance, site-specific hazards, PPE, emergency contacts)
+- [ ] Toolbox Talk / Safety Meeting Log (topic, attendees, sign-in sheet)
+- [ ] Incident Report (accident/near-miss, witness statements, corrective actions)
+- [ ] Punch List (deficiency list, responsible party, completion deadline)
+- [ ] Field Measure Sheet (room dimensions, material quantities)
+- [ ] Material Delivery Log (date, material, quantity, condition, signed receipt)
+- [ ] Material Approval Request (product specification, alternatives, pricing)
+- [ ] Subcontractor Schedule (task assignments, dates, dependencies)
+- [ ] Photo Documentation Report (date-stamped photos with descriptions)
+- [ ] Time Sheet (crew hours, overtime, per-diem, equipment use)
+- [ ] Equipment Log (equipment on-site, hours, maintenance, fuel)
+- [ ] Permit Application Cover Sheet (project info, contractor info, scope)
+- [ ] Inspection Request (building dept inspection scheduling)
+- [ ] Meeting Minutes (project meetings, decisions, action items)
+- [ ] Site Conditions Report (existing conditions, concealed conditions)
+- [ ] Moisture Documentation (readings, locations, drying log)
+- [ ] Asbestos/Lead Test Report Cover (lab results cover sheet)
+- [ ] Waste Disposal Manifest (hazardous/construction waste tracking)
+- [ ] Temporary Utility Agreement (temp power, water, sanitation)
+- [ ] Neighbor Notification (construction impact notice)
+- [ ] Road/Sidewalk Closure Permit Application
+- [ ] Tree Removal Permit Application
+
+**Financial (18)**:
+- [ ] Invoice (line items, taxes, payment terms, late fee notice)
+- [ ] Progress Invoice / Pay Application (% complete billing, retention)
+- [ ] AIA-Style Pay Application (Zafto-native, NOT actual AIA G702/G703)
+- [ ] Conditional Lien Waiver - Progress (state-specific statutory form)
+- [ ] Unconditional Lien Waiver - Progress (state-specific statutory form)
+- [ ] Conditional Lien Waiver - Final (state-specific statutory form)
+- [ ] Unconditional Lien Waiver - Final (state-specific statutory form)
+- [ ] Notice of Commencement (NOC states: FL, OH, AL, GA, SC, LA, MS, TN, MN, OK, WI)
+- [ ] Preliminary Notice / Pre-Lien Notice (CA 20-day, AZ 20-day, NV 31-day, etc.)
+- [ ] Mechanics Lien Filing (state-specific filing document)
+- [ ] Stop Payment Notice (CA-specific)
+- [ ] Bond Claim Notice
+- [ ] Payment Receipt (acknowledgment of payment received)
+- [ ] Credit Memo (refund/credit for overpayment or returned materials)
+- [ ] W-9 Collection Form (request W-9 from subs/vendors)
+- [ ] 1099 Summary (annual vendor payment summary)
+- [ ] Retainage Release Request
+- [ ] Final Payment Affidavit
+
+**Post-Job (12)**:
+- [ ] Certificate of Completion (substantial completion declaration)
+- [ ] Certificate of Final Completion (all punch items resolved)
+- [ ] Warranty Certificate (1yr/2yr/5yr/10yr/lifetime, scope, exclusions)
+- [ ] Extended Warranty Certificate (manufacturer + contractor combined)
+- [ ] Customer Satisfaction Survey
+- [ ] Testimonial/Review Request Letter
+- [ ] Post-Construction Maintenance Guide (care instructions for work performed)
+- [ ] Closeout Document Transmittal (list of all documents delivered to owner)
+- [ ] As-Built Drawing Transmittal
+- [ ] O&M Manual Transmittal (operations & maintenance)
+- [ ] Final Lien Release (all liens released, project clear)
+- [ ] Referral Request Letter
+
+#### 8.2 Trade-Specific Templates (104 templates)
+
+**HVAC (12)**:
+- [ ] HVAC Proposal (equipment specs, SEER/AFUE ratings, Manual J reference, rebates)
+- [ ] Load Calculation Report Cover (Manual J summary, equipment sizing)
+- [ ] Duct Design Report Cover (Manual D summary, duct sizing)
+- [ ] HVAC Maintenance Agreement (seasonal tune-ups, filter changes, priority service)
+- [ ] Equipment Warranty Registration (manufacturer warranty + installation warranty)
+- [ ] Refrigerant Tracking Log (EPA 608 compliance, type, quantity, recovery)
+- [ ] Indoor Air Quality Report (testing results, recommendations)
+- [ ] Combustion Safety Test Report (CO, draft, spillage)
+- [ ] Ductwork Inspection Report (leakage testing, condition assessment)
+- [ ] Start-Up/Commissioning Report (system test results, airflow measurements)
+- [ ] HVAC Change Order (equipment substitution, duct rerouting)
+- [ ] Thermostat Programming Handoff Sheet
+
+**Plumbing (10)**:
+- [ ] Plumbing Proposal (fixtures, pipe material, water heater specs)
+- [ ] Plumbing Maintenance Agreement
+- [ ] Backflow Prevention Test Report (state/municipal compliance)
+- [ ] Water Heater Warranty Registration
+- [ ] Sewer Camera Inspection Report (pipe condition, location, recommendations)
+- [ ] Water Quality Test Report
+- [ ] Plumbing Fixture Schedule (spec sheet for all installed fixtures)
+- [ ] Gas Line Pressure Test Report (safety certification)
+- [ ] Water Damage Assessment (leak source, affected areas, moisture readings)
+- [ ] Emergency Service Authorization (after-hours work, premium rates)
+
+**Electrical (12)**:
+- [ ] Electrical Proposal (panel upgrade, circuits, fixtures, code compliance)
+- [ ] Electrical Maintenance Agreement
+- [ ] Panel Schedule (circuit directory, load calculations)
+- [ ] Arc Flash Analysis Report Cover
+- [ ] Ground Fault Test Report
+- [ ] Electrical Inspection Certification
+- [ ] Generator Installation Agreement (sizing, transfer switch, maintenance)
+- [ ] Solar Installation Proposal (see solar-specific below)
+- [ ] EV Charger Installation Agreement (Level 2/3, electrical requirements)
+- [ ] Emergency/Standby Power Agreement
+- [ ] Low Voltage Wiring Agreement (data, security, AV, intercom)
+- [ ] Lighting Design Proposal
+
+**Roofing (10)**:
+- [ ] Roofing Proposal (materials, warranty levels, ventilation, ice/water shield)
+- [ ] Roof Inspection Report (condition rating, photos, remaining life estimate)
+- [ ] Roof Warranty Certificate (manufacturer + workmanship, NDL details)
+- [ ] Storm Damage Assessment (hail size, wind speed, damage map)
+- [ ] Insurance Supplement Request (additional scope from hidden damage)
+- [ ] Material Specification Sheet (shingles, underlayment, flashing, ventilation)
+- [ ] Roofing Maintenance Agreement
+- [ ] Roof Coating Agreement (flat roof coating specification)
+- [ ] Gutter Installation Agreement
+- [ ] Skylight Installation Agreement
+
+**Restoration (18)**:
+- [ ] Water Damage Assessment (IICRC S500 categories, moisture mapping)
+- [ ] Fire Damage Assessment (structure, contents, smoke, soot)
+- [ ] Mold Assessment Report (IICRC S520, sampling results, protocol)
+- [ ] Mold Remediation Protocol (scope, containment, PPE, clearance)
+- [ ] Drying Log / Moisture Documentation (daily readings, equipment, psychrometrics)
+- [ ] Contents Inventory (room-by-room, condition, value, disposition)
+- [ ] Pack-Out/Pack-Back Inventory (items removed for cleaning/storage)
+- [ ] Authorization to Perform Emergency Services (immediate stabilization)
+- [ ] Certificate of Mold Remediation (clearance confirmation)
+- [ ] Asbestos Abatement Plan (NESHAP compliance)
+- [ ] Lead Abatement Plan (EPA RRP Rule compliance)
+- [ ] Air Quality Clearance Report (post-remediation)
+- [ ] Demolition Scope of Work (selective demo for restoration)
+- [ ] Structural Drying Equipment Placement Map
+- [ ] Dehumidifier / Air Mover Tracking Log
+- [ ] Biohazard Cleanup Authorization
+- [ ] Odor Treatment Protocol (thermal fogging, ozone, hydroxyl)
+- [ ] Reconstruction Scope of Work (rebuild after mitigation)
+
+**Painting (6)**:
+- [ ] Painting Proposal (prep, coats, paint specs, color schedule)
+- [ ] Color Selection Sheet (room-by-room colors, finish, brand)
+- [ ] Surface Preparation Report (condition, prep method, primers)
+- [ ] Lead Paint Test Report Cover (EPA RRP certified)
+- [ ] Painting Warranty Certificate
+- [ ] Commercial Painting Schedule (phasing, after-hours work)
+
+**Landscaping (8)**:
+- [ ] Landscaping Proposal (design, plant schedule, hardscape, irrigation)
+- [ ] Landscape Maintenance Agreement (mowing, trimming, fertilization schedule)
+- [ ] Irrigation System Design/Install Agreement
+- [ ] Tree Service Agreement (removal, trimming, stump grinding)
+- [ ] Hardscape Agreement (patios, retaining walls, walkways)
+- [ ] Snow Removal Agreement (triggers, response time, salt/sand)
+- [ ] Landscape Lighting Agreement
+- [ ] Plant Warranty Certificate (replacement guarantee period)
+
+**GC/Commercial (14)**:
+- [ ] Commercial Construction Contract (large-scale, multi-phase)
+- [ ] Commercial Lease Build-Out Agreement (TI work)
+- [ ] Developer Agreement (spec/custom home)
+- [ ] Joint Venture Agreement (multi-contractor collaboration)
+- [ ] Construction Management Agreement (CM at-risk, CM agency)
+- [ ] Owner-Architect-Contractor Agreement (tri-party)
+- [ ] Site Logistics Plan
+- [ ] Traffic Control Plan Cover
+- [ ] Crane/Heavy Equipment Use Agreement
+- [ ] Concrete Pour Log
+- [ ] Structural Steel Erection Log
+- [ ] LEED Documentation Tracking Sheet
+- [ ] Stormwater Pollution Prevention Plan (SWPPP) Cover
+- [ ] Environmental Site Assessment Cover (Phase I/II ESA reference)
+
+**Property Preservation (14)**:
+- [ ] Initial Property Inspection Report (HUD/FHA format)
+- [ ] Re-Inspection Report
+- [ ] Winterization Report (plumbing blow-out, antifreeze, heating drain)
+- [ ] De-Winterization Report (system restoration, testing)
+- [ ] Lock Change Report (code assignment, key box)
+- [ ] Grass Cut Report (before/after photos, measurements)
+- [ ] Debris Removal Report (cubic yard estimation, hazard materials)
+- [ ] Board-Up Report (window/door measurements, materials used)
+- [ ] Damage Report (vandalism, weather, structural)
+- [ ] Bid Submission (national company format)
+- [ ] Work Order Completion Report
+- [ ] Conveyance Condition Report
+- [ ] Hazard Assessment (mold, asbestos, lead, structural)
+- [ ] Pool/Spa Maintenance Report (chemical levels, securing)
+
+#### 8.3 Realtor Templates (68 templates)
+
+**Listing Side (24)**:
+- [ ] Exclusive Right to Sell Listing Agreement (state-specific)
+- [ ] Exclusive Agency Listing Agreement
+- [ ] Open Listing Agreement
+- [ ] Net Listing Agreement (where legal — banned in some states)
+- [ ] Seller Disclosure Statement (state-specific — all 50 states)
+- [ ] Lead-Based Paint Disclosure (pre-1978 homes, federal)
+- [ ] Transfer Disclosure Statement (CA TDS)
+- [ ] Natural Hazard Disclosure (CA NHD)
+- [ ] Seller's Property Condition Report
+- [ ] HOA Disclosure Package Cover
+- [ ] Seller Net Sheet (estimated proceeds)
+- [ ] CMA Report (Comparative Market Analysis)
+- [ ] Listing Presentation Template
+- [ ] Price Reduction Agreement
+- [ ] Listing Extension Agreement
+- [ ] Listing Cancellation Agreement
+- [ ] Dual Agency Disclosure (where legal)
+- [ ] Designated Agency Agreement
+- [ ] MLS Input Sheet
+- [ ] Photography/Staging Agreement
+- [ ] Open House Sign-In Sheet
+- [ ] Showing Feedback Request
+- [ ] Seller Communication Log
+- [ ] Pre-Listing Checklist
+
+**Buyer Side — Post-NAR Settlement (20)**:
+- [ ] Buyer Representation Agreement (MANDATORY post-August 2024 NAR settlement)
+- [ ] Buyer Agency Disclosure
+- [ ] Buyer Commission Agreement (who pays, how much, caps)
+- [ ] Buyer Tour Agreement (for showing properties before full BRA)
+- [ ] Offer to Purchase / Purchase Agreement (state-specific)
+- [ ] Counter-Offer
+- [ ] Multiple Counter-Offer
+- [ ] Buyer's Inspection Contingency (timeframe, scope)
+- [ ] Buyer's Financing Contingency
+- [ ] Buyer's Appraisal Contingency
+- [ ] Buyer's Sale Contingency (must sell existing home)
+- [ ] Buyer's Title Contingency
+- [ ] Request for Repairs (from inspection)
+- [ ] Buyer's Final Walk-Through Checklist
+- [ ] Buyer's Estimated Closing Costs Sheet
+- [ ] Buyer Needs Assessment Questionnaire
+- [ ] Buyer Pre-Approval Checklist
+- [ ] New Construction Addendum
+- [ ] Relocation Agreement
+- [ ] Buyer Love Letter Template (where legal — banned in OR, some restrictions in other states)
+
+**Transaction Management (14)**:
+- [ ] Earnest Money Receipt
+- [ ] Amendment/Addendum to Purchase Agreement
+- [ ] Extension of Time Addendum
+- [ ] Repair Addendum
+- [ ] Escalation Clause Addendum
+- [ ] Transaction Timeline Checklist
+- [ ] Closing Statement Review Checklist
+- [ ] Referral Agreement (agent-to-agent referral fee, compliant with NAR changes)
+- [ ] Commission Disbursement Authorization
+- [ ] Wire Fraud Warning Notice (mandatory in many states)
+- [ ] Transaction Coordinator Assignment
+- [ ] Power of Attorney for Real Estate (state-specific)
+- [ ] Notice to Perform (CA-specific, deadlines)
+- [ ] Demand to Close Escrow
+
+**Rental/Property Management (10)**:
+- [ ] Residential Lease Agreement (state-specific)
+- [ ] Month-to-Month Rental Agreement
+- [ ] Lease Renewal Agreement
+- [ ] Notice to Vacate (30/60/90-day, state-specific)
+- [ ] Rent Increase Notice (state-specific, rent control compliance)
+- [ ] Security Deposit Disposition (state-specific deadlines and itemization)
+- [ ] Move-In/Move-Out Condition Report
+- [ ] Maintenance Request Form
+- [ ] Property Management Agreement
+- [ ] Tenant Application / Screening Consent
+
+#### 8.4 Inspector Templates (42 templates)
+
+**Inspection Reports (22)**:
+- [ ] General Home Inspection Report (InterNACHI/ASHI SOP compliant)
+- [ ] Pre-Listing Inspection Report
+- [ ] New Construction Inspection Report (phase inspections)
+- [ ] 11-Month Warranty Inspection Report
+- [ ] Commercial Property Inspection Report
+- [ ] Roof Inspection Report (condition, estimated remaining life)
+- [ ] HVAC Inspection Report (heating, cooling, ductwork)
+- [ ] Plumbing Inspection Report (supply, drain, water heater)
+- [ ] Electrical Inspection Report (panel, circuits, GFCI/AFCI, grounding)
+- [ ] Foundation Inspection Report (structural, settlement, drainage)
+- [ ] Termite/WDI Inspection Report (NPMA-33 form)
+- [ ] Radon Test Report (EPA protocols, mitigation recommendation)
+- [ ] Mold Inspection Report (visual + sampling, IICRC reference)
+- [ ] Lead-Based Paint Inspection Report (EPA RRP certified)
+- [ ] Asbestos Inspection Report (NESHAP, AHERA compliance)
+- [ ] Water Quality Test Report
+- [ ] Septic System Inspection Report
+- [ ] Well Inspection Report
+- [ ] Pool/Spa Inspection Report
+- [ ] Stucco/EIFS Moisture Inspection Report
+- [ ] Energy Audit Report (blower door, thermal imaging)
+- [ ] 4-Point Insurance Inspection (FL, common in wind/hail states)
+
+**Administrative (20)**:
+- [ ] Inspection Pre-Agreement / Contract (scope, limitations, liability cap)
+- [ ] Inspector Liability Waiver (limitation of liability acknowledgment)
+- [ ] Inspection Fee Schedule
+- [ ] Client Communication Letter (findings summary for non-technical audience)
+- [ ] Repair Cost Estimate Summary (ballpark costs for found deficiencies)
+- [ ] Re-Inspection Report (verify repairs completed)
+- [ ] Inspection Addendum (additional findings after main report)
+- [ ] Photo Report (standalone photo documentation)
+- [ ] Thermal Imaging Report (IR camera findings supplement)
+- [ ] Drone Inspection Report (aerial roof/chimney photos)
+- [ ] Equipment Calibration Log (radon monitor, moisture meter)
+- [ ] Inspector Continuing Education Log
+- [ ] Complaint Response Template
+- [ ] Expert Witness Report Template (litigation support)
+- [ ] Referral Request Letter
+- [ ] Annual Business Summary Report
+- [ ] Inspection Standards Compliance Checklist
+- [ ] Sewer Scope Report (camera inspection supplement)
+- [ ] Structural Movement Monitoring Report
+- [ ] Environmental Hazard Summary Report
+
+#### 8.5 Adjuster Templates (34 templates)
+
+**Field Documentation (18)**:
+- [ ] Initial Damage Assessment Report (field notes, photos, scope)
+- [ ] Detailed Damage Estimate (line items — Zafto pricing, NOT Xactimate)
+- [ ] Supplemental Damage Estimate (additional scope found during repair)
+- [ ] Re-Inspection Report (verify repairs, updated scope)
+- [ ] Roof Damage Assessment (hail test squares, wind damage pattern)
+- [ ] Water Damage Assessment (category, class, IICRC protocol)
+- [ ] Fire Damage Assessment (origin, spread, structural impact)
+- [ ] Vehicle Damage Assessment (auto claims)
+- [ ] Contents Inventory Worksheet (room-by-room, ACV/RCV)
+- [ ] Salvage/Subrogation Assessment
+- [ ] Catastrophe Team Field Report (CAT deployment documentation)
+- [ ] Structural Engineering Referral Letter (when beyond adjuster scope)
+- [ ] Expert Consultation Request (specialty assessment needed)
+- [ ] Photo Documentation Report (damage evidence, before/after)
+- [ ] Diagram / Sketch Report (room measurements, damage areas)
+- [ ] Emergency Stabilization Authorization (temp repairs, tarp, board-up)
+- [ ] Depreciation Schedule (ACV calculation, recoverable depreciation)
+- [ ] Code Upgrade Documentation (building code changes affecting repair scope)
+
+**Communication (10)**:
+- [ ] Insured Communication Letter (claim status update)
+- [ ] Contractor Communication Letter (scope clarification, pricing)
+- [ ] Carrier Communication Letter (findings, recommendations, coverage analysis)
+- [ ] Attorney Communication Letter (litigation-related claim correspondence)
+- [ ] Public Adjuster Engagement Letter (PA-policyholder agreement)
+- [ ] Independent Adjuster Assignment Acceptance
+- [ ] Claim Status Report (summary for all parties)
+- [ ] Reservation of Rights Response (to carrier's ROR letter)
+- [ ] Demand Letter (underpayment dispute)
+- [ ] Appraisal Demand / Invocation Letter (formal appraisal process)
+
+**Compliance (6)**:
+- [ ] Proof of Loss (state-specific deadlines and requirements)
+- [ ] Sworn Statement in Proof of Loss (notarization note for applicable states)
+- [ ] Assignment of Benefits (where legal — NOT FL, NOT TX)
+- [ ] Direction to Pay (contractor payment routing)
+- [ ] Anti-Fraud Statement (state-specific, per state insurance fraud statutes)
+- [ ] Claim File Checklist (all required documentation per carrier)
+
+#### 8.6 Homeowner Templates (26 templates)
+
+- [ ] Contractor Hiring Agreement (simplified homeowner-friendly contract)
+- [ ] Project Scope Checklist (what homeowner wants done)
+- [ ] Budget Worksheet (room-by-room estimated costs)
+- [ ] Contractor Evaluation Scorecard (comparing bids)
+- [ ] Payment Schedule Agreement (milestone-based payments)
+- [ ] Change Request Form (homeowner requesting scope changes)
+- [ ] Quality Inspection Checklist (homeowner verifying work quality)
+- [ ] Punch List (homeowner's list of incomplete/deficient items)
+- [ ] Project Completion Sign-Off (homeowner accepting work)
+- [ ] Warranty Tracking Sheet (all warranties for all work/products)
+- [ ] Home Maintenance Schedule (annual/seasonal maintenance reminders)
+- [ ] Home Inventory Document (room-by-room contents for insurance)
+- [ ] Insurance Claim Starter Kit (what to document, who to call, deadlines)
+- [ ] Contractor Reference Check Form
+- [ ] Permit Status Tracker (who pulled permits, inspection dates)
+- [ ] Neighbor Notification Template (construction start notice to neighbors)
+- [ ] HOA Approval Request (architectural review board submission)
+- [ ] Moving Checklist (pre/post move, utilities, address changes)
+- [ ] Home Purchase Document Checklist (all docs homeowner should keep)
+- [ ] Appliance Warranty Registration Tracker
+- [ ] Emergency Contact Sheet (utilities, contractors, insurance, medical)
+- [ ] Seasonal Home Preparation Checklist (winterize, spring, hurricane, etc.)
+- [ ] Energy Efficiency Upgrade Tracker (improvements, costs, savings, rebates)
+- [ ] Renovation Before/After Photo Report
+- [ ] Home Value Improvement Tracker (projects and estimated value add)
+- [ ] Rental Property Expense Tracker (for homeowner-landlords)
+
+#### 8.7 Template Quality Standards (ALL templates)
+
+Every template MUST meet these standards before the sprint is complete:
+- [ ] Professional layout with company branding merge tags
+- [ ] All applicable merge tags populated (no hardcoded company data)
+- [ ] Legal clauses from zdocs_legal_clauses (not inline text)
+- [ ] State compliance check passing (ZFORGE-6) for all applicable states
+- [ ] At least 3 section types used (no single-block templates)
+- [ ] Signature blocks where legally appropriate
+- [ ] PDF renders correctly at letter size (8.5x11) and A4
+- [ ] Template description explains when/why to use it
+- [ ] Template category correctly assigned
+- [ ] Entity types correctly assigned (contractor, realtor, inspector, adjuster, homeowner)
+- [ ] Trade types correctly assigned where applicable
+- [ ] Applicable states correctly assigned (or NULL for universal)
+- [ ] is_legally_regulated flag set correctly with statutory_reference
+- [ ] Template tested with sample data — all merge tags resolve
+
+#### Security Verification Checklist
+- [ ] All system templates have company_id = NULL (not tied to any company)
+- [ ] All templates pass ZFORGE-6 compliance check for their applicable states
+- [ ] No templates contain placeholder/lorem ipsum text
+- [ ] No templates reference specific real companies, people, or addresses
+- [ ] Statutory form templates match EXACT statutory text (character-for-character verified)
+- [ ] All templates are marked as Zafto system templates (is_system = true)
+
+#### API Cost: $0/month
+- All templates: Supabase seed data (free)
+
+---
+
+### ZFORGE-9 — Multi-Language Support (~24h)
+
+**Goal**: Translate all 354 templates, legal clauses, UI strings, and compliance notices into all 10 supported languages (EN, ES, PT-BR, PL, ZH, HT, RU, KO, VI, TL). Every translation must use professional trade-specific terminology — not Google Translate, not literal translation, but how a native-speaking professional in that trade would actually say it. Legal clauses in particular must be legally accurate in the target language.
+
+**BLOCKED BY**: ZFORGE-8 (templates must exist before translation)
+
+#### 9.1 Template Translation Architecture
+
+- [ ] Each template's translatable text stored in `zdocs_legal_clauses.translations` JSONB and `zdoc_template_registry.template_schema` with i18n keys
+- [ ] Merge tag system respects locale: `{{current_date}}` renders as "February 20, 2026" (EN) vs "20 de febrero de 2026" (ES) vs "20 de fevereiro de 2026" (PT-BR)
+- [ ] Number/currency formatting per locale: $1,234.56 (EN) vs $1.234,56 (ES) vs R$ 1.234,56 (PT-BR)
+- [ ] Date formatting per locale: MM/DD/YYYY (EN-US) vs DD/MM/YYYY (most others)
+- [ ] Legal clause translations are SEPARATE versions (not machine-translated from English)
+
+#### 9.2 Template Translation — By Language
+
+**For each of the 9 non-English languages**:
+- [ ] **Spanish (ES)**: Translate all 354 templates using professional contractor/realtor/inspector Spanish dialect. "Tablero" not "panel", "presupuesto" not "estimación". Legal clauses must be valid in Spanish-speaking jurisdictions.
+- [ ] **Portuguese-BR (PT-BR)**: Brazilian construction terminology. "Orçamento" for estimate, "contrato de empreitada" for construction contract.
+- [ ] **Polish (PL)**: Trade-specific Polish. "Kosztorys" for estimate, "umowa o roboty budowlane" for construction contract.
+- [ ] **Chinese Simplified (ZH)**: Professional construction Chinese. Proper use of technical terms.
+- [ ] **Haitian Creole (HT)**: Construction Creole — many Haitian contractors in FL/NY. "Kontra" for contract, "estimasyon" for estimate.
+- [ ] **Russian (RU)**: Construction Russian. "Смета" for estimate, "договор подряда" for construction contract.
+- [ ] **Korean (KO)**: Professional construction Korean. "견적서" for estimate, "공사계약서" for construction contract.
+- [ ] **Vietnamese (VI)**: Construction Vietnamese. "Hợp đồng xây dựng" for construction contract.
+- [ ] **Tagalog (TL)**: Construction Tagalog. "Kontrata" for contract, "estimasyon" for estimate.
+
+#### 9.3 Legal Clause Translations
+
+- [ ] All mandatory legal clauses translated by language with statutory references maintained in English
+- [ ] Right-to-cancel notices translated with correct day counts per state
+- [ ] Lien waiver statutory text: ENGLISH ONLY (statutory forms must be in English per state law) — but add translated plain-language summary above statutory text
+- [ ] E-signature disclosure translated for all 10 languages
+- [ ] Translation verification: each translation reviewed for legal accuracy (not just linguistic accuracy)
+
+#### 9.4 UI String Translations
+
+- [ ] All ZForge UI strings in web portals: template gallery labels, section builder labels, compliance warnings, signature flow text, automation settings
+- [ ] All ZForge UI strings in Flutter: same as above for mobile
+- [ ] Missing translation = build failure (enforced by CI per Rule #20)
+
+#### 9.5 PDF Rendering Multi-Language
+
+- [ ] PDF engine (ZFORGE-2) supports: CJK characters (Chinese, Korean), Cyrillic (Russian, Ukrainian), Latin Extended (Polish, Vietnamese diacritics), RTL-ready (for future Arabic/Hebrew)
+- [ ] Font fallback chain: Inter → Noto Sans (covers all Unicode blocks)
+- [ ] Verify: no text overflow, no character rendering issues, no layout breaks in all 10 languages
+- [ ] Longer strings (Spanish ~20%, German ~30% longer) don't break layouts
+
+#### Security Verification Checklist
+- [ ] Translated templates pass same compliance checks as English originals
+- [ ] Statutory form text NEVER translated (legal requirement to use exact English statutory text)
+- [ ] Translated content sanitized (no XSS in any language)
+- [ ] i18n key missing = build failure (CI enforced)
+
+#### Ecosystem Connections
+- [ ] **i18n System** — uses existing l10n/arb pattern from Flutter, next-intl from web portals
+- [ ] **ZFORGE-8** — translates templates seeded in ZFORGE-8
+- [ ] **ZFORGE-6** — compliance engine validates translated templates
+- [ ] **ZFORGE-2** — PDF engine renders multi-language PDFs
+
+#### API Cost: $0/month
+- All translations: manual/seed data (one-time effort)
+- Noto Sans: Google Fonts (free)
+
+---
+
+### ZFORGE-10 — Advanced Features & Polish (~28h)
+
+**Goal**: Bulk operations, document analytics, version comparison, document search, advanced merge tag expressions, conditional document logic, document expiration, archival system, and ops portal admin tools. This sprint adds the power-user and admin features that make ZForge a complete enterprise document management engine.
+
+**BLOCKED BY**: ZFORGE-1 through ZFORGE-9 (all core features must work first)
+
+#### 10.1 Bulk Operations
+
+- [ ] Bulk generate: select multiple entities (jobs, customers) → generate same template for all
+  - Progress bar showing X of Y generated
+  - Error handling: if 1 fails, continue with rest, report failures at end
+  - Compliance check per entity (different states may have different requirements)
+- [ ] Bulk send for signature: select multiple rendered documents → send all for signature
+- [ ] Bulk download: select multiple renders → download as ZIP
+- [ ] Bulk print: select multiple renders → print queue
+- [ ] Bulk delete (soft): select multiple renders → soft delete all with confirmation
+
+#### 10.2 Document Analytics
+
+- [ ] `web-portal/src/app/dashboard/zdocs/analytics/page.tsx`:
+  - Documents generated per period (daily/weekly/monthly)
+  - Documents by type/category breakdown
+  - Signature completion rate (sent → signed → declined → expired)
+  - Average time to signature (by document type)
+  - Most used templates (top 10)
+  - Documents by entity type (contractor/realtor/inspector/adjuster/homeowner)
+  - Compliance pass/fail rate
+  - Automation trigger success rate
+- [ ] Ops portal analytics: same but across all companies
+  - Total documents generated platform-wide
+  - Template popularity ranking
+  - Compliance failure trends (which states, which requirements)
+
+#### 10.3 Version Comparison
+
+- [ ] Document version diff: compare two versions of the same template side-by-side
+  - Highlight added/removed/changed sections
+  - Legal clause diff: show which clauses were added/removed
+  - Useful for: compliance audits, template update reviews
+- [ ] Render comparison: compare two renders of the same template with different data
+  - Useful for: before/after change orders, estimate revisions
+
+#### 10.4 Document Search
+
+- [ ] Full-text search across all rendered documents:
+  - Search by title, entity name, merge tag values, template name
+  - Filter by: date range, status, entity type, template category
+  - Sort by: relevance, date, entity name
+- [ ] Supabase full-text search using `tsvector` + `tsquery`:
+  ```sql
+  ALTER TABLE zdocs_renders ADD COLUMN search_vector tsvector;
+
+  -- Partial GIN index — excludes soft-deleted rows from search results (prevents data leak)
+  CREATE INDEX idx_zdocs_renders_search ON zdocs_renders USING GIN (search_vector) WHERE deleted_at IS NULL;
+
+  -- Custom trigger function handles NULL columns gracefully (tsvector_update_trigger chokes on NULLs)
+  CREATE OR REPLACE FUNCTION zdocs_renders_search_update_fn() RETURNS trigger AS $$
+  BEGIN
+    -- Only index non-deleted documents (soft-delete aware)
+    IF NEW.deleted_at IS NULL THEN
+      NEW.search_vector := to_tsvector('english', coalesce(NEW.title, '') || ' ' || coalesce(NEW.notes, ''));
+    ELSE
+      NEW.search_vector := NULL; -- Clear vector for soft-deleted docs
+    END IF;
+    RETURN NEW;
+  END;
+  $$ LANGUAGE plpgsql;
+
+  CREATE TRIGGER zdocs_renders_search_update BEFORE INSERT OR UPDATE OF title, notes ON zdocs_renders
+    FOR EACH ROW EXECUTE FUNCTION zdocs_renders_search_update_fn();
+
+  -- Backfill existing non-deleted rows (CRITICAL — without this, existing documents are unsearchable)
+  UPDATE zdocs_renders SET search_vector = to_tsvector('english', coalesce(title, '') || ' ' || coalesce(notes, ''))
+  WHERE deleted_at IS NULL;
+  ```
+- [ ] Write migration for search vector column + partial GIN index + custom trigger + backfill
+- [ ] Verify soft-deleted documents do NOT appear in search results
+
+#### 10.5 Advanced Merge Tags
+
+- [ ] Computed merge tags:
+  - `{{estimate.total | add_tax(state_tax_rate)}}` — compute tax dynamically
+  - `{{job.start_date | add_days(14)}}` — date arithmetic
+  - `{{customer.name | uppercase}}` — string transforms
+  - `{{line_items | sum(amount)}}` — aggregate functions
+  - `{{current_date | add_business_days(3)}}` — business day calculation (for right-to-cancel)
+- [ ] Conditional merge tags:
+  - `{{#if state_requires_lien_waiver}}[lien waiver section]{{/if}}`
+  - `{{#if project_value > 5000}}[full contract]{{else}}[simple agreement]{{/if}}`
+  - `{{#unless is_commercial}}[residential-only clause]{{/unless}}`
+
+#### 10.6 Document Expiration & Archival
+
+**Migration** (add to ZFORGE-10 migration):
+```sql
+-- Legal hold + archival columns on zdocs_renders
+ALTER TABLE zdocs_renders ADD COLUMN IF NOT EXISTS legal_hold BOOLEAN DEFAULT false;
+ALTER TABLE zdocs_renders ADD COLUMN IF NOT EXISTS archived_at TIMESTAMPTZ;
+ALTER TABLE zdocs_renders ADD COLUMN IF NOT EXISTS retention_expires_at TIMESTAMPTZ;
+CREATE INDEX idx_zdocs_renders_legal_hold ON zdocs_renders (legal_hold) WHERE legal_hold = true;
+CREATE INDEX idx_zdocs_renders_archived ON zdocs_renders (archived_at) WHERE archived_at IS NOT NULL;
+CREATE INDEX idx_zdocs_renders_retention ON zdocs_renders (retention_expires_at) WHERE retention_expires_at IS NOT NULL AND archived_at IS NULL;
+```
+
+- [ ] Write ALTER TABLE migration for legal_hold, archived_at, retention_expires_at columns
+- [ ] Auto-expire documents after configurable period (default: per state retention requirement from ZFORGE-6)
+- [ ] Archived documents: flagged with `archived_at` timestamp, remain in Supabase Storage (no cold tier available — document this)
+- [ ] Retention policy display: "This document will be retained until [date] per [state] statute of repose"
+- [ ] Legal hold: `legal_hold = true` prevents archival, expiration, AND soft-deletion during litigation
+- [ ] CRON function: `zdocs-archival-cron` — runs monthly, iterates per company_id (service_role bypasses RLS, so MUST explicitly scope):
+  ```sql
+  -- CORRECT: always scope by company_id even in service_role context
+  UPDATE zdocs_renders SET archived_at = now()
+  WHERE company_id = $1 AND legal_hold = false
+    AND retention_expires_at < now() AND archived_at IS NULL AND deleted_at IS NULL;
+  -- NEVER: unscoped UPDATE across all companies
+  ```
+
+#### 10.7 Ops Portal Admin Tools
+
+- [ ] System template management: CRUD on all system templates
+- [ ] Template approval workflow: new system templates require review before publishing
+- [ ] Company document audit: view any company's document activity (for support/compliance)
+- [ ] State requirement management: add/edit/deprecate state requirements
+- [ ] Legal clause management: add/edit system legal clauses
+- [ ] Compliance failure alerts: dashboard showing recent compliance failures by company/state
+- [ ] Template freshness overview: which templates are stale, need review
+
+#### 10.8 Flutter Screens
+
+- [ ] `lib/screens/zdocs/zdocs_search_screen.dart` — document search with filters
+- [ ] `lib/screens/zdocs/zdocs_analytics_screen.dart` — document analytics dashboard
+- [ ] `lib/screens/zdocs/zdocs_bulk_screen.dart` — bulk operations (generate, send, download)
+- [ ] All screens: 4-state (loading, error, empty, data)
+
+#### Security Verification Checklist
+- [ ] Bulk operations respect per-item RLS (company_id scoping)
+- [ ] Search results filtered by company_id (RLS enforced)
+- [ ] Document archival does NOT delete data — moves to cold storage
+- [ ] Legal hold prevents ALL modifications including archival/expiration
+- [ ] Ops portal admin access restricted to super_admin role
+- [ ] Analytics queries use read replicas if available (don't impact primary DB)
+- [ ] Full-text search sanitizes input (no SQL injection via search query)
+
+#### Ecosystem Connections
+- [ ] **Analytics** — feeds into ops portal command center dashboard
+- [ ] **Search** — integrates with global search if available
+- [ ] **Supabase Storage** — archival uses storage lifecycle management
+- [ ] **ZFORGE-6** — retention policy from state compliance engine
+- [ ] **ZFORGE-7** — bulk operations use same automation log
+
+#### API Cost: $0/month
+- Full-text search: PostgreSQL built-in (free)
+- All features: Supabase (included)
+
+---
+
+### ZFORGE Phase Total Estimate: ~388 hours
+
+| Sprint | Work | Hours |
+|--------|------|-------|
+| ZFORGE-1 | Foundation & Security Remediation — fix 8 security issues, 4 new tables, Flutter foundation, portal hooks | 40 |
+| ZFORGE-2 | PDF Generation Engine — pdfmake/react-pdf/Flutter pdf, merge tags, layouts, QR codes | 32 |
+| ZFORGE-3 | Template Gallery & Section Builder — 354-template gallery, dnd-kit section builder, clause insertion | 40 |
+| ZFORGE-4 | pdfme WYSIWYG Designer — visual template editor, custom plugins, schema mapping | 28 |
+| ZFORGE-5 | E-Signature Integration — signing flow, forensic audit trail, Certificate of Completion, ESIGN/UETA | 36 |
+| ZFORGE-6 | State Compliance Engine — 50-state requirements, mandatory clause enforcement, ~1000 seed rows | 48 |
+| ZFORGE-7 | Document Automation & Triggers — event-driven generation, packages, reminders, scheduling | 32 |
+| ZFORGE-8 | Seed Templates — 354 document types (80 contractor, 104 trade, 68 realtor, 42 inspector, 34 adjuster, 26 homeowner) | 80 |
+| ZFORGE-9 | Multi-Language Support — 10 languages, trade-specific terminology, PDF CJK/Cyrillic rendering | 24 |
+| ZFORGE-10 | Advanced Features — bulk ops, analytics, search, version compare, archival, legal hold | 28 |
+| **TOTAL** | | **388** |
+
+> **Note**: ZFORGE-FRESH1-5 (~26h) is spec'd separately above and handles template freshness/staleness monitoring. Total ZForge investment: **~414 hours** including freshness engine.
 
 
 ---
@@ -26859,7 +29266,7 @@ This completes the Seller Finder engine. RE6 + RE7 together replace SmartZip ($5
 
 #### Database Layer (~16h)
 
-- [ ] Create `buyer_profiles` table: `id uuid PK DEFAULT gen_random_uuid()`, `company_id uuid NOT NULL REFERENCES companies(id)`, `contact_id uuid NOT NULL REFERENCES realtor_contacts(id)`, `buyer_type text NOT NULL DEFAULT 'standard' CHECK (buyer_type IN ('first_time','luxury','investor','relocation','standard'))`, `budget_min numeric(12,2)`, `budget_max numeric(12,2)`, `pre_approval_amount numeric(12,2)`, `pre_approval_date date`, `pre_approval_lender text`, `monthly_payment_max numeric(10,2)`, `loan_type text CHECK (loan_type IN ('conventional','fha','va','usda','jumbo','cash','other'))`, `down_payment_pct numeric(5,2)`, `timeline text CHECK (timeline IN ('immediate','1_3_months','3_6_months','6_12_months','12_plus'))`, `status text NOT NULL DEFAULT 'active' CHECK (status IN ('active','under_contract','paused','closed','lost'))`, `notes text`, `created_at timestamptz DEFAULT now()`, `updated_at timestamptz DEFAULT now()`, `deleted_at timestamptz`, `created_by uuid REFERENCES auth.users(id)`. Indexes: `(company_id)`, `(customer_id)`, `(status)`, `(deleted_at)`. RLS: SELECT/INSERT/UPDATE/DELETE scoped to `company_id = auth.company_id()`. Audit trigger. `update_updated_at` trigger.
+- [ ] Create `buyer_profiles` table: `id uuid PK DEFAULT gen_random_uuid()`, `company_id uuid NOT NULL REFERENCES companies(id)`, `contact_id uuid NOT NULL REFERENCES realtor_contacts(id)`, `buyer_type text NOT NULL DEFAULT 'standard' CHECK (buyer_type IN ('first_time','luxury','investor','relocation','standard'))`, `budget_min numeric(12,2)`, `budget_max numeric(12,2)`, `pre_approval_amount numeric(12,2)`, `pre_approval_date date`, `pre_approval_lender text`, `monthly_payment_max numeric(10,2)`, `loan_type text CHECK (loan_type IN ('conventional','fha','va','usda','jumbo','cash','other'))`, `down_payment_pct numeric(5,2)`, `timeline text CHECK (timeline IN ('immediate','1_3_months','3_6_months','6_12_months','12_plus'))`, `status text NOT NULL DEFAULT 'active' CHECK (status IN ('active','under_contract','paused','closed','lost'))`, `notes text`, `created_at timestamptz DEFAULT now()`, `updated_at timestamptz DEFAULT now()`, `deleted_at timestamptz`, `created_by uuid REFERENCES auth.users(id)`. Indexes: `(company_id)`, `(customer_id)`, `(status)`, `(deleted_at)`. RLS: SELECT/INSERT/UPDATE/DELETE scoped to `company_id = requesting_company_id()`. Audit trigger. `update_updated_at` trigger.
 
 - [ ] Create `buyer_search_criteria` table: `id uuid PK`, `company_id uuid NOT NULL`, `buyer_profile_id uuid NOT NULL REFERENCES buyer_profiles(id)`, `name text NOT NULL DEFAULT 'Default Search'`, `is_primary boolean DEFAULT false`, `locations jsonb` (array of {type: 'zip'|'city'|'county'|'radius', value: text, lat/lng for radius, radius_miles: numeric}), `property_types text[]` (sfh, condo, townhouse, multi_family, land, commercial), `beds_min int`, `beds_max int`, `baths_min numeric(3,1)`, `baths_max numeric(3,1)`, `sqft_min int`, `sqft_max int`, `lot_sqft_min int`, `lot_sqft_max int`, `year_built_min int`, `year_built_max int`, `stories_min int`, `stories_max int`, `garage_min int`, `hoa_max numeric(10,2)`, `must_haves text[]` (pool, basement, garage, fireplace, waterfront, view, corner_lot, gated, elevator, etc), `deal_breakers text[]` (hoa, flood_zone, busy_road, no_garage, stairs, septic, well_water, etc), `school_rating_min int CHECK (1-10)`, `commute_addresses jsonb` (array of {label, address, max_minutes}), `walk_score_min int`, `style_preferences text[]` (ranch, colonial, modern, craftsman, etc), `match_threshold int DEFAULT 70 CHECK (1-100)`, `notification_frequency text DEFAULT 'daily' CHECK (notification_frequency IN ('instant','daily','weekly','off'))`, `notification_channels text[] DEFAULT '{push,email}'`, `weight_overrides jsonb` (optional per-field weight override, e.g., {"price": 35, "location": 20}), `is_active boolean DEFAULT true`, `created_at timestamptz DEFAULT now()`, `updated_at timestamptz DEFAULT now()`, `deleted_at timestamptz`. Indexes: `(company_id)`, `(buyer_profile_id)`, `(is_active)`, `(deleted_at)`. RLS scoped to company_id. Audit trigger.
 
@@ -26997,7 +29404,7 @@ This completes the Seller Finder engine. RE6 + RE7 together replace SmartZip ($5
 
 #### Security Verification (~3h)
 
-- [ ] RLS policies verified: all 17 tables have SELECT/INSERT/UPDATE/DELETE policies scoped to `company_id = auth.company_id()`
+- [ ] RLS policies verified: all 17 tables have SELECT/INSERT/UPDATE/DELETE policies scoped to `company_id = requesting_company_id()`
 - [ ] All tables have: `company_id` column, index on `company_id`, audit trigger, `updated_at` trigger, `deleted_at` column
 - [ ] All EFs: JWT auth via `supabase.auth.getUser()`, CORS headers, input validation (Zod schemas), rate limiting
 - [ ] Compliance hard gate verified: `buyer-compliance-check` EF called before tour scheduling in both Flutter and portal
@@ -28625,213 +31032,1934 @@ This completes the Seller Finder engine. RE6 + RE7 together replace SmartZip ($5
 ---
 
 ## PHASE RE EXPANDED: 10 MISSING REALTOR FEATURES (S132) — RE21-RE30 (~236h)
-*Source: s132-realtor-10-gaps-spec.md. Execution: after RE1-RE20 (see Expansion/53_REALTOR_PLATFORM_SPEC.md). These fill the 10 gaps identified in S132 competitive analysis.*
+*Source: s132-realtor-10-gaps-spec.md. Execution: after RE1-RE20 (see Expansion/53_REALTOR_PLATFORM_SPEC.md). These fill the 10 gaps identified in S132 competitive analysis. Expanded to enterprise-grade S145.*
 
-### RE21 — AI Negotiation Intelligence (~28h) — S132
-*New tables: `negotiation_analyses`, `negotiation_outcomes`, `market_snapshots`*
+### RE21 — AI Negotiation Intelligence (~28h) — S145
+*Source: s132-realtor-10-gaps-spec.md, realtor-platform-deep-research-s129.md*
+*Depends on: RE1 (Realtor CRM), RE2 (CRM Foundation), RE3 (Smart CMA), RE5 (Transaction Engine), CUST9 (Module Registry)*
+*CUST9 Modules: NEGOTIATION_ANALYSIS, NEGOTIATION_COACHING, NEGOTIATION_HISTORY, MARKET_SNAPSHOTS*
 
-- [ ] DOM analysis scoring (0-20 pts): DOM > 2x area median = 20pts, > 1.5x = 15, > median = 10, < median/2 = 0
-- [ ] Price history analysis scoring (0-20 pts): number of reductions (0=0, 1=8, 2=14, 3+=20), total reduction % (>10%=20), time between reductions
-- [ ] Market position analysis scoring (0-15 pts): months of supply (>6mo=15, 4-6=8, <4=2, <2=0), absorption rate trend
-- [ ] Listing language sentiment analysis scoring (0-10 pts): Claude reads description, detects motivation signals ("motivated seller"=10, "as-is"=7, "firm"=-5)
-- [ ] Property-specific signals scoring (0-15 pts): vacant=8, multiple relisting=10, expired history=12, pre-foreclosure=15, inherited=8
-- [ ] Comparable concession analysis scoring (0-10 pts): avg concessions in ZIP last 6mo (>3%=10, 2-3%=7, 1-2%=4, <1%=1)
-- [ ] Financial distress indicators scoring (0-10 pts): mortgage underwater=10, tax liens=8, mechanic's liens=6, HOA liens=5
-- [ ] Buyer strategy recommendations per PFS range (0-25: offer 97-100%, 26-50: 93-97%, 51-75: 88-93%, 76-100: 80-90%)
-- [ ] Seller strategy recommendations (inverse PFS, listing agent guidance)
-- [ ] Counter-offer scenario modeler (up to 5 scenarios, probability estimates per scenario)
-- [ ] Real-time negotiation coaching (step-by-step logging with live advice during active negotiation)
-- [ ] Seller motivation detection: listing agent change, photo quality decline, seasonal pressure, price/sqft vs comps, listing renewal
-- [ ] Historical concession tracking (every closed deal stores concessions given, aggregate by ZIP/price range)
-- [ ] Concession benchmarking ("Requesting $5K is within normal range. Avg: $4,200 in this ZIP")
-- [ ] FRED API integration (30yr/15yr mortgage rates daily → market_snapshots)
-- [ ] FHFA HPI integration (quarterly appreciation by metro)
-- [ ] Census ACS integration (median income, housing cost burden, homeownership rate by tract)
-- [ ] County assessor data auto-populate market_snapshots monthly
-- [ ] Post-negotiation debrief logging (listing price, offer, final price, concessions, strategy used)
-- [ ] Strategy effectiveness analytics ("Bold offers on PFS>60 properties yield 4.2% better prices")
-- [ ] Flutter screens: Negotiation Analysis, Counter-Offer Modeler, Real-Time Coaching, Concession Benchmarking, Negotiation History
-- [ ] Web portal: Negotiation Intelligence dashboard, Market Snapshot management, Strategy Analytics
-- [ ] All builds pass: `flutter analyze`, `npm run build` for realtor-portal
-- [ ] Commit: `[RE21] AI negotiation intelligence — PFS scoring, real-time coaching, counter-offer modeler, concession benchmarking, outcome tracking`
+**What this builds:** Real-time negotiation intelligence — Price Flexibility Score (PFS) engine analyzing 7 signal dimensions (DOM, price history, market position, listing sentiment, property signals, comparable concessions, financial distress), buyer/seller strategy generation, counter-offer modeling, concession benchmarking, and outcome tracking with learning. First product in real estate to provide data-driven negotiation strategy. No competitor has this — category creator.
 
-### RE22 — Predictive Agent Departure Model (~16h) — S132
-*New tables: `agent_risk_scores`, `agent_activity_metrics`*
+**System Connectivity:**
+- Reads from: `companies`, `users`, `realtor_contacts` (RE2), `properties` (D5), `recon_scans` (Phase P), `realtor_transactions` (RE4-RE5), `realtor_listings` (RE10)
+- Writes to: 3 new tables (see below), `realtor_contacts` (negotiation_notes)
+- Wires to: FRED API (mortgage rates → market_snapshots), FHFA HPI API (appreciation → market_snapshots), Census ACS API (demographics/income → market_snapshots), county assessor data (via Recon), Claude API (sentiment analysis), RE3 Smart CMA (market data), RE29 (inspection findings feed PFS update)
 
-- [ ] Login frequency decline scoring (0-20 pts): rolling 30-day vs 90-day baseline, >50% decline=20, >30%=15, account for seasonality
-- [ ] Production trend analysis scoring (0-20 pts): current quarter GCI vs same quarter prior year AND trailing 4-quarter average, declining 2+ consecutive quarters=20
-- [ ] Commission trajectory scoring (0-15 pts): % to cap remaining, trajectory, far from cap + declining=15, just passed cap=5
-- [ ] Engagement signals scoring (0-15 pts): CRM usage + marketing tools + training attendance + support tickets + outbound communications, >40% decline=15
-- [ ] Meeting/event attendance scoring (0-10 pts): missed 3+ consecutive=10, missed 2=6, pattern: always attended then stopped = high signal
-- [ ] Profile activity scoring (0-10 pts): LinkedIn updated, Zillow/Realtor.com branding changed, requests for production reports/W2
-- [ ] Competitive intelligence scoring (0-10 pts): manual flags by broker (recruiting event, frustration mention, mentor left)
-- [ ] Weekly risk digest (Monday report: agents at HIGH 60+, MODERATE 40-59, top risk agent detail, recommended action)
-- [ ] Real-time critical alerts (risk score crosses 75: push notification + email immediately)
-- [ ] Escalation rules (40-59: weekly only, 60-74: highlighted + in-app badge, 75+: real-time, 90+: "imminent departure")
-- [ ] Retention action playbook per score range (40-59: check-in, 60-74: 1-on-1, 75-89: urgent meeting + value props, 90+: all stops)
-- [ ] Action tracking + outcome logging (did agent stay? Did risk score decline?)
-- [ ] Retention ROI calculator ("Losing Jane costs $39K-49K. Retention investment: $2K-5K. ROI: 8-24x")
-- [ ] Agent retention heat map dashboard (all agents, color-coded by risk level)
-- [ ] Trend charts (company-wide risk over time, seasonal patterns)
-- [ ] Agent detail drilldown (full signal breakdown, activity timeline, action history)
-- [ ] Anonymized benchmarking vs other Zafto brokerages
-- [ ] Privacy controls: managing broker role required, no external surveillance, disclosure in brokerage terms, agent data transparency
-- [ ] All builds pass, commit: `[RE22] Predictive agent departure model — risk scoring, alert system, retention playbook, ROI calculator, brokerage dashboard`
+#### 21.0 Migration — `20260221000145_re21_negotiation_intelligence.sql`
 
-### RE23 — Rental Investment Analysis (~24h) — S132
-*New tables: `investment_analyses`, `rental_market_data`*
+```sql
+-- RE21: AI Negotiation Intelligence tables
 
-- [ ] HUD Fair Market Rent API integration (annual FMR by metro/county by bedroom count, free)
-- [ ] Census ACS rent data by census tract (median rent by bedroom count, more granular than FMR)
-- [ ] Open-Meteo/climate data for rental market context
-- [ ] 8 return metrics: cap rate, cash-on-cash return, DSCR, monthly cash flow, GRM, ROI, equity multiple, IRR
-- [ ] BRRRR strategy analysis module (Buy, Rehab, Rent, Refinance, Repeat calculator)
-- [ ] Short-term rental analysis (Airbnb occupancy estimate, nightly rate, seasonal variation)
-- [ ] Sensitivity analysis (what-if: vacancy rate changes, interest rate changes, rent growth changes)
-- [ ] Appreciation forecast (FHFA HPI historical + projected)
-- [ ] Tax analysis (depreciation schedule, 1031 exchange eligibility, pass-through deduction)
-- [ ] Financing calculator (conventional, DSCR loan, hard money, seller financing)
-- [ ] Professional investor deal package PDF generator
-- [ ] Share with client via client portal
-- [ ] Flutter screens: Investment Analysis, BRRRR Calculator, STR Analysis, Sensitivity Modeler
-- [ ] Web portal: Investment dashboard, rental market data management
-- [ ] Commit: `[RE23] Rental investment analysis — 8 return metrics, BRRRR, STR, sensitivity analysis, appreciation forecast, tax analysis, investor PDF`
+CREATE TABLE negotiation_analyses (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  property_id UUID REFERENCES properties(id),
+  listing_id UUID REFERENCES realtor_listings(id),
+  contact_id UUID REFERENCES realtor_contacts(id),
+  analysis_type TEXT NOT NULL CHECK (analysis_type IN ('buyer', 'seller')),
+  property_address TEXT NOT NULL,
+  listing_price NUMERIC(12,2),
+  pfs_score NUMERIC(5,2) CHECK (pfs_score >= 0 AND pfs_score <= 100),
+  pfs_components JSONB NOT NULL DEFAULT '{}',
+  -- {dom_score, price_history_score, market_position_score, sentiment_score, property_signals_score, concession_score, distress_score}
+  market_data JSONB,
+  seller_motivation_signals JSONB,
+  recommended_strategy TEXT,
+  strategy_details JSONB,
+  counter_offer_scenarios JSONB,
+  comparable_concessions JSONB,
+  status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'in_negotiation', 'closed', 'archived')),
+  created_by UUID REFERENCES auth.users(id),
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  deleted_at TIMESTAMPTZ
+);
 
-### RE24 — HOA Financial Health Intelligence (~20h) — S132
-*New tables: `hoa_analyses`, `hoa_reserve_studies`, `hoa_financial_records`*
+ALTER TABLE negotiation_analyses ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "neg_analyses_select" ON negotiation_analyses FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "neg_analyses_insert" ON negotiation_analyses FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "neg_analyses_update" ON negotiation_analyses FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "neg_analyses_delete" ON negotiation_analyses FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin'));
+CREATE INDEX idx_neg_analyses_company ON negotiation_analyses (company_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_neg_analyses_property ON negotiation_analyses (property_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_neg_analyses_contact ON negotiation_analyses (contact_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_neg_analyses_status ON negotiation_analyses (status) WHERE deleted_at IS NULL;
+CREATE INDEX idx_neg_analyses_pfs ON negotiation_analyses (pfs_score DESC) WHERE deleted_at IS NULL;
+CREATE TRIGGER neg_analyses_updated BEFORE UPDATE ON negotiation_analyses FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER neg_analyses_audit AFTER INSERT OR UPDATE OR DELETE ON negotiation_analyses FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
 
-- [ ] HOA document upload (CC&Rs, bylaws, financial statements, reserve study, meeting minutes, budget)
-- [ ] Claude OCR reads HOA documents and extracts: reserve fund balance, reserve adequacy %, special assessment history, pending litigation, deferred maintenance, monthly dues, fee increase history
-- [ ] Reserve adequacy scoring A-F (A: >100% funded, B: 70-100%, C: 40-70%, D: 20-40%, F: <20%)
-- [ ] Special assessment risk score (probability of special assessment in next 3 years based on reserve %, deferred maintenance, age)
-- [ ] HOA fee trend analysis (historical increases, projected future increases)
-- [ ] Litigation history flag (any active lawsuits against HOA = RED flag)
-- [ ] State HOA registry integration where available (FL, CO, NV, WA have public registries)
-- [ ] County records HOA lien check
-- [ ] Comparative HOA analysis (how does this HOA compare to similar communities)
-- [ ] Buyer advisory report ("This HOA has a 34% reserve adequacy — F rating. High special assessment risk.")
-- [ ] Agent presentation mode (clean visual for showing buyers)
-- [ ] Alert integration with RE25 (insurance) — HOA master policy coverage gaps
-- [ ] Flutter screens: HOA Health Report, Reserve Adequacy Details, Special Assessment Risk
-- [ ] Web portal: HOA Analysis dashboard
-- [ ] Commit: `[RE24] HOA financial health intelligence — Claude OCR, reserve adequacy A-F, special assessment risk, litigation flag, state registry, buyer advisory`
+CREATE TABLE negotiation_outcomes (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  negotiation_analysis_id UUID NOT NULL REFERENCES negotiation_analyses(id),
+  listing_price NUMERIC(12,2) NOT NULL,
+  initial_offer NUMERIC(12,2) NOT NULL,
+  final_price NUMERIC(12,2),
+  concessions_won JSONB,
+  total_concessions_amount NUMERIC(10,2),
+  days_to_agreement INT,
+  strategy_used TEXT,
+  pfs_score_at_offer NUMERIC(5,2),
+  pfs_accuracy_delta NUMERIC(5,2),
+  outcome_rating INT CHECK (outcome_rating >= 1 AND outcome_rating <= 5),
+  agent_notes TEXT,
+  lessons_learned TEXT,
+  created_by UUID REFERENCES auth.users(id),
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  deleted_at TIMESTAMPTZ
+);
 
-### RE25 — Insurance Cost Estimation (~24h) — S132
-*New tables: `property_insurance_estimates`, `insurance_risk_profiles`*
+ALTER TABLE negotiation_outcomes ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "neg_outcomes_select" ON negotiation_outcomes FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "neg_outcomes_insert" ON negotiation_outcomes FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "neg_outcomes_update" ON negotiation_outcomes FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "neg_outcomes_delete" ON negotiation_outcomes FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin'));
+CREATE INDEX idx_neg_outcomes_company ON negotiation_outcomes (company_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_neg_outcomes_analysis ON negotiation_outcomes (negotiation_analysis_id) WHERE deleted_at IS NULL;
+CREATE TRIGGER neg_outcomes_updated BEFORE UPDATE ON negotiation_outcomes FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER neg_outcomes_audit AFTER INSERT OR UPDATE OR DELETE ON negotiation_outcomes FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
 
-- [ ] FEMA NFHL flood zone lookup (flood insurance required? Estimated premium)
-- [ ] NASA FIRMS wildfire risk (proximity to fire history + WUI classification)
-- [ ] ASCE Hazard Tool integration (wind speed by location for hurricane/tornado pricing)
-- [ ] NOAA Storm Events historical (hail/wind frequency in ZIP over 10 years)
-- [ ] FBI Crime data (property crime rate affects homeowners insurance premium)
-- [ ] Census ACS housing vintage (older homes = higher insurance risk)
-- [ ] Open-Meteo climate data (freeze risk for pipe claims, humidity for mold)
-- [ ] 7-source composite risk score (0-100, higher = higher insurance cost)
-- [ ] Insurance premium estimate by risk tier ("$2,400-3,100/yr for standard coverage in this area")
-- [ ] Coverage recommendation: dwelling (replacement cost), contents, liability, flood, windstorm, earthquake, umbrella
-- [ ] Flood insurance deep dive: NFIP vs private, LOMA eligibility for borderline zones
-- [ ] Wildfire insurance warning (carrier pullout states: CA, CO, OR, WA)
-- [ ] Insurance package for buyer: risk scores, premium estimates, required coverage, recommended riders
-- [ ] Agent can share estimate with buyer via client portal
-- [ ] Commit: `[RE25] Insurance cost estimation — 7-source risk assessment, composite score, premium estimate range, buyer package, flood/wildfire deep dive`
+CREATE TABLE market_snapshots (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  zip_code TEXT NOT NULL,
+  county_fips TEXT,
+  snapshot_date DATE NOT NULL,
+  median_price NUMERIC(12,2),
+  median_dom INT,
+  active_inventory INT,
+  months_supply NUMERIC(4,1),
+  absorption_rate NUMERIC(5,2),
+  price_per_sqft NUMERIC(8,2),
+  list_to_sale_ratio NUMERIC(5,3),
+  new_listings_30d INT,
+  price_reductions_30d INT,
+  expired_30d INT,
+  pending_30d INT,
+  closed_30d INT,
+  mortgage_rate_30yr NUMERIC(5,3),
+  mortgage_rate_15yr NUMERIC(5,3),
+  yoy_appreciation NUMERIC(5,2),
+  data_sources JSONB NOT NULL DEFAULT '[]',
+  created_at TIMESTAMPTZ DEFAULT now()
+);
 
-### RE26 — Post-Close Home Maintenance Engine (~28h) — S132
-*New tables: `post_close_maintenance_plans`, `maintenance_tasks`, `maintenance_completions`, `property_systems`*
+-- market_snapshots: NO company_id — this is shared reference data populated by CRON
+-- RLS: any authenticated user can read. Only service_role writes.
+ALTER TABLE market_snapshots ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "market_snapshots_select" ON market_snapshots FOR SELECT USING (auth.role() = 'authenticated');
+-- INSERT/UPDATE via service_role only (CRON EF). No client-side writes.
+CREATE UNIQUE INDEX idx_market_snapshots_zip_date ON market_snapshots (zip_code, snapshot_date DESC);
+CREATE INDEX idx_market_snapshots_county ON market_snapshots (county_fips) WHERE county_fips IS NOT NULL;
+CREATE INDEX idx_market_snapshots_date ON market_snapshots (snapshot_date DESC);
+-- No soft delete — reference snapshots are immutable historical records
+-- No audit trigger — populated by automated CRON, not user actions
+```
 
-- [ ] 400+ pre-loaded maintenance tasks organized by system (HVAC, plumbing, electrical, roofing, exterior, interior, appliances, seasonal)
-- [ ] Climate-zone-aware scheduling (IECC climate zones, USDA hardiness zones, Open-Meteo climate normals, NOAA climate data)
-- [ ] Equipment age tracking seeded from transaction data (HVAC installed 2018, WH 2015, roof 2012)
-- [ ] HUD EUL (Estimated Useful Life) integration for replacement forecasting
-- [ ] Predictive replacement alerts ("Your 2012 roof is 14 years old. Average lifespan: 20-25 years. Plan for replacement in 6-11 years: ~$12,000-18,000")
-- [ ] Seasonal maintenance calendar (Spring 12 items, Summer 10, Fall 14, Winter 12, auto-adjusted by climate zone)
-- [ ] Weather-triggered alerts (freeze warning → "Disconnect garden hoses and insulate outdoor spigots tonight")
-- [ ] DIY vs. professional flag per task (difficulty score, tool requirements, safety considerations)
-- [ ] "Connect to contractor" flow → dispatches to Zafto contractor in homeowner's area
-- [ ] 5-year capital planning report (what's failing next, budget recommendation, priority order)
-- [ ] Agent sends maintenance plan to buyer at closing (lifetime homeowner relationship touchpoint)
-- [ ] Homeowner portal integration (RE26 feeds into CLIENT3 Maintenance Engine — coordinate with INTEG6 to deduplicate)
-- [ ] Annual report to homeowner (from agent): "Year 1 maintenance summary. Top priorities for Year 2."
-- [ ] Flutter screens: Maintenance Calendar, Task Detail, Capital Planning, Equipment Health
-- [ ] Web portal: Maintenance Plan builder, client maintenance report
-- [ ] Commit: `[RE26] Post-close maintenance engine — 400+ tasks, climate-zone scheduling, HUD EUL forecasting, 5-year capital plan, weather triggers, homeowner portal integration`
+- [ ] Write migration file `20260221000145_re21_negotiation_intelligence.sql`
+- [ ] Run `npm run gen-types` in web-portal, copy `database.types.ts` to all 4 portals
 
-### RE27 — Power Dialer with Voicemail Drop (~24h) — S132
-*New tables: `dialer_sessions`, `dialer_calls`, `voicemail_drop_recordings`. Replaces Mojo Dialer ($149-399/mo).*
+#### 21.1 PFS Scoring Engine (~6h)
 
-- [ ] SignalWire multi-line dialer integration (already in stack — extend existing phone tables)
-- [ ] Call queue management (load contacts, set call order, auto-dial next)
-- [ ] 3-line simultaneous dialing (call 3 contacts at once, first to answer gets agent)
-- [ ] Call outcomes: connected, no answer, voicemail, disconnected, DNC
-- [ ] Voicemail drop (pre-recorded audio drops when voicemail detected, agent moves on immediately — saves 30-60s per voicemail)
-- [ ] Pre-recorded voicemail library (create/store multiple recordings, pick per campaign)
-- [ ] Automatic answering machine detection (AMD) via SignalWire
-- [ ] Call notes (agent types notes during call, auto-saved to contact record)
-- [ ] Call disposition (interested, not interested, callback scheduled, DNC requested, no decision)
-- [ ] Post-call automation: update CRM, schedule callback, add to drip, create task
-- [ ] FTC DNC registry scrub (auto-remove DNC numbers from any call list before session)
-- [ ] Session analytics: calls made, connected %, voicemails left, callbacks scheduled, time per outcome
-- [ ] TCPA compliance: 1-party vs 2-party consent states, quiet hours, frequency caps
-- [ ] "Click-to-call" from contact record (single call, not batch)
-- [ ] Local presence dialing (optional: display local area code when calling)
-- [ ] Commit: `[RE27] Power dialer + voicemail drop — 3-line SignalWire dialer, AMD, voicemail library, DNC scrub, TCPA compliance, session analytics`
+- [ ] DOM analysis scoring (0-20 pts): DOM > 2x area median = 20pts, > 1.5x = 15, > median = 10, < median/2 = 0. Source: MLS data (Phase 2-3) or manual agent input. Fallback: listing date from public data
+- [ ] Price history analysis scoring (0-20 pts): number of reductions (0=0, 1=8, 2=14, 3+=20), total reduction % (>10%=20, >5%=15, >3%=10), decreasing intervals between reductions = +5 urgency bonus
+- [ ] Market position analysis scoring (0-15 pts): months of supply in ZIP/price range. >6mo (buyer's market) = 15, 4-6 (balanced) = 8, <4 (seller's) = 2, <2 = 0. Factor absorption rate trend and active inventory trend
+- [ ] Listing language sentiment analysis scoring (0-10 pts): Claude reads listing description, detects motivation signals. "motivated seller"=10, "must sell"/"bring all offers"=10, "relocating"=8, "estate sale"/"probate"=8, "as-is"=7, "price reduced"=6, "firm"/"no lowball"=-5
+- [ ] Property-specific signals scoring (0-15 pts): vacant=8, multiple relisting=10, expired history=12, pre-foreclosure=15, inherited=8, owner-occupied with relocation=6, tax delinquency=10
+- [ ] Comparable concession analysis scoring (0-10 pts): avg seller concessions in ZIP last 6mo. >3% avg=10, 2-3%=7, 1-2%=4, <1%=1. Also track most common concession types
+- [ ] Financial distress indicators scoring (0-10 pts): mortgage underwater=10, low equity=7, multiple mortgages/HELOCs=5, tax liens=8, mechanic's liens=6, HOA liens=5
 
-### RE28 — IDX Agent Websites (~28h) — S132
-*New tables: `agent_websites`, `website_listings`, `website_leads`. 15+ free API data feeds, no MLS required at launch.*
+#### 21.2 Strategy Engine (~4h)
 
-- [ ] Agent website generator (subdomain: `agentname.zafto.cloud` or custom domain)
-- [ ] Property listing display from Recon Engine data + agent's own listings
-- [ ] Neighborhood data: Walk Score API (free tier), school ratings (GreatSchools basic), crime data (FBI UCR)
-- [ ] Google Maps/Overpass OSM neighborhood map (nearby amenities, transit, restaurants)
-- [ ] Census ACS demographics (population, income, housing composition by census tract)
-- [ ] Market stats widget (auto-updated from market_snapshots table)
-- [ ] Agent bio, team page, testimonials, Google Reviews integration (Places API)
-- [ ] Lead capture forms (home search, CMA request, seller valuation, contact)
-- [ ] Lead routing to Zafto CRM (instant notification + auto-create contact)
-- [ ] IDX property search (Phase 2: connect to MLS after RESO onboarding — for now, Recon + agent listings)
-- [ ] Blog/content section (agent writes, SEO-optimized, schema markup)
-- [ ] Schema.org markup (RealEstateListing, Person, LocalBusiness for Google Rich Snippets)
-- [ ] Mobile-responsive, fast (Core Web Vitals optimized)
-- [ ] Analytics: visitor count, search queries, lead sources, listing views
-- [ ] Commit: `[RE28] IDX agent websites — auto-generated site, Recon data, neighborhood intelligence, market stats, lead capture, CRM integration, schema markup`
+- [ ] Buyer strategy recommendations per PFS range: 0-25 (offer 97-100%, focus on terms), 26-50 (offer 93-97%, request reasonable concessions), 51-75 (offer 88-93%, significant concessions), 76-100 (offer 80-90%, bold initial offer)
+- [ ] Seller strategy recommendations (inverse PFS): 0-25 (hold firm), 26-50 (strategic flexibility, credits over price drops), 51-75 (price is an issue, proactive reduction), 76-100 (serious concern, evaluate all offers)
+- [ ] Counter-offer scenario modeler: agent inputs listing price + their offer + up to 5 counter scenarios. Per scenario: estimated seller response probability (based on PFS + market), net-to-seller breakdown, comparison to area patterns
+- [ ] Real-time negotiation coaching: during active negotiation (offer → counter → counter-counter), agent logs each step. System provides coaching per step based on PFS, market data, and concession patterns
+- [ ] Seller motivation detection from listing data: listing agent change, photo quality decline, seasonal pressure, price/sqft vs comp avg, listing renewal vs new listing
+
+#### 21.3 Concession Database & Market Snapshots (~4h)
+
+- [ ] Historical concession tracking: every closed Zafto deal stores concessions (closing cost credit, repair credit, home warranty, appliance credit, price reduction, extended closing, leaseback). Aggregate by ZIP/price range
+- [ ] Concession benchmarking: "Requesting $5K is within normal range (avg: $4,200 in this ZIP). Requesting $15K is aggressive (only 8% of deals saw this)."
+- [ ] FRED API integration: pull 30yr/15yr mortgage rates daily via CRON → market_snapshots. Free, 120 requests/min
+- [ ] FHFA HPI integration: quarterly appreciation data by metro → market_snapshots
+- [ ] Census ACS integration: median income, housing cost burden, homeownership rate by tract → market_snapshots
+- [ ] County assessor data: auto-populate market_snapshots monthly for all ZIPs where agents are active
+
+#### 21.4 Outcome Tracking (~2h)
+
+- [ ] Post-negotiation debrief: after every closed deal, agent logs listing price, initial offer, final price, concessions won/given, days to agreement, strategy used, what worked/didn't
+- [ ] PFS accuracy tracking: "Your PFS predictions have been within 5% of actual negotiating room on 78% of deals"
+- [ ] Strategy effectiveness analytics: "Bold offers on PFS>60 properties yield 4.2% better prices in your market"
+
+#### 21.5 Edge Functions (~4h)
+
+- [ ] `negotiation-calculate-pfs` EF: POST — accepts property data (address, listing_price, dom, price_history, listing_description, property_signals). Runs all 7 scoring dimensions. For sentiment analysis, calls Claude API with listing description. Returns {pfs_score, pfs_components, recommended_strategy, strategy_details}. Auth: JWT required, company_id validated. Rate limit: 50/min per company. **REQUIRES**: Claude API key in env vars. Graceful degradation: if Claude API down, sentiment_score defaults to 5/10 with note "sentiment analysis unavailable"
+- [ ] `negotiation-counter-model` EF: POST — accepts negotiation_analysis_id + scenario array [{offer_price, terms}]. For each scenario, calculates probability of acceptance based on PFS + market data + historical outcomes in area. Returns [{scenario, probability_pct, expected_counter_range, net_to_seller}]. Auth: JWT required. Rate limit: 30/min per company
+- [ ] `market-snapshot-cron` EF: CRON (runs daily at 06:00 UTC) — pulls mortgage rates from FRED API (series MORTGAGE30US, MORTGAGE15US), FHFA HPI quarterly, Census ACS annual. Upserts into market_snapshots for all active ZIPs. Uses service_role. Idempotent: checks snapshot_date before insert
+- [ ] `negotiation-coaching-suggest` EF: POST — accepts negotiation_analysis_id + current negotiation step (offer/counter details). Returns coaching text based on PFS, market conditions, and concession benchmarks. Auth: JWT required
+
+#### 21.6 Flutter Screens (~5h)
+
+- [ ] `NegotiationAnalysisScreen` — Build analysis from listing URL or manual input. PFS breakdown with 7-dimension radar chart. Strategy recommendation card. 4-state screen (loading/error/empty/data)
+- [ ] `CounterOfferModelerScreen` — Interactive: input listing price + offer + up to 5 counter scenarios. Per scenario: probability gauge, expected counter range, net-to-seller. Visual comparison
+- [ ] `NegotiationCoachingScreen` — Step-by-step negotiation logging. Each step gets live coaching advice. Timeline view of offer/counter history
+- [ ] `ConcessionBenchmarkingScreen` — ZIP-specific concession data. What to ask for. Historical trends. Comparison to norms
+- [ ] `NegotiationHistoryScreen` — Past negotiations with outcomes. PFS accuracy over time. Strategy effectiveness charts
+
+#### 21.7 Web Portal (~3h)
+
+- [ ] `/realtor/negotiation` — Negotiation Intelligence dashboard: active analyses, PFS leaderboard, recent outcomes
+- [ ] `/realtor/negotiation/[id]` — Full analysis detail: PFS breakdown, strategy, counter-offer modeler, coaching history
+- [ ] `/realtor/market-snapshots` — View/manage auto-populated market data. Override individual fields if agent has better data
+- [ ] `/realtor/negotiation/analytics` — Aggregate performance: strategy effectiveness, PFS accuracy, concession trends
+
+#### Security Verification
+- [ ] RLS: Company A cannot read Company B's negotiation_analyses or outcomes
+- [ ] market_snapshots: no company_id — shared reference data, SELECT only for authenticated users
+- [ ] Claude API key stored as Supabase secret, never exposed to client
+- [ ] PFS score not exposed to opposing party (buyer's agent PFS not visible to seller's agent even if both use Zafto)
+- [ ] Counter-offer scenarios are company-scoped, no cross-company data leakage
+- [ ] Rate limiting on all EFs to prevent abuse
+- [ ] All tables have deleted_at column (except market_snapshots — immutable reference)
+- [ ] All tables have updated_at trigger (except market_snapshots)
+
+#### Ecosystem Connections
+- [ ] **RE3** (Smart CMA) — market data from market_snapshots powers CMA. PFS score shown alongside CMA report
+- [ ] **RE5** (Transaction Engine) — negotiation outcome auto-links to transaction on deal close
+- [ ] **RE29** (Inspection Analysis) — inspection findings feed PFS score update: major defects increase flexibility score
+- [ ] **RE2** (CRM) — negotiation history shown on contact card. Concession data enriches contact intelligence
+- [ ] **Phase P** (Recon) — property intelligence (tax liens, pre-foreclosure, ownership) feeds property_signals_score
+- [ ] **CUST9** — NEGOTIATION_ANALYSIS, NEGOTIATION_COACHING, NEGOTIATION_HISTORY, MARKET_SNAPSHOTS modules gated per company plan
+
+#### i18n Requirements
+- [ ] All PFS dimension labels and strategy text in 10 locales
+- [ ] Currency formatting locale-aware (USD default, but support CAD, MXN for border markets)
+- [ ] Coaching text templates in all 10 locales — must use professional negotiation terminology per language
+- [ ] Market snapshot labels and dashboard text translated
+
+- [ ] All builds pass: `flutter analyze`, `npm run build` for web-portal
+- [ ] Commit: `[RE21] AI negotiation intelligence — PFS scoring (7 dimensions), counter-offer modeler, real-time coaching, concession benchmarking, market snapshots CRON, outcome tracking`
+
+---
+
+### RE22 — Predictive Agent Departure Model (~16h) — S145
+*Source: s132-realtor-10-gaps-spec.md, realtor-professional-types-deep-research.md*
+*Depends on: RE1 (Realtor CRM), RE13 (Brokerage Admin), CUST9 (Module Registry)*
+*CUST9 Modules: AGENT_RETENTION, AGENT_RISK_SCORES, RETENTION_PLAYBOOK*
+
+**What this builds:** Retention intelligence for managing brokers — predicts which agents are at risk of leaving using 7 signal dimensions (login frequency, production trends, commission trajectory, engagement, attendance, profile activity, competitive intel). Weekly risk digests, real-time critical alerts, retention action playbook with ROI calculator. First purpose-built agent retention predictor for real estate. Brokerage-only feature.
+
+**System Connectivity:**
+- Reads from: `companies`, `users`, `company_members` (roles), `realtor_contacts` (for activity counts), `realtor_transactions` (GCI/production), `realtor_listings` (listing activity), analytics events (login, CRM usage, marketing tool usage)
+- Writes to: 2 new tables (see below)
+- Wires to: Internal analytics only (no external APIs). Push notification system (FCM). Email system (SendGrid/Mailgun). RE13 Brokerage Admin dashboard
+
+#### 22.0 Migration — `20260221000146_re22_agent_departure_model.sql`
+
+```sql
+-- RE22: Predictive Agent Departure Model
+
+CREATE TABLE agent_risk_scores (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  agent_user_id UUID NOT NULL REFERENCES auth.users(id),
+  score_date DATE NOT NULL,
+  risk_score NUMERIC(5,2) NOT NULL CHECK (risk_score >= 0 AND risk_score <= 100),
+  risk_level TEXT NOT NULL CHECK (risk_level IN ('low', 'moderate', 'high', 'critical')),
+  signal_breakdown JSONB NOT NULL DEFAULT '{}',
+  -- {login_score, production_score, commission_score, engagement_score, attendance_score, profile_score, competitive_score}
+  recommended_actions JSONB,
+  managing_broker_notified BOOLEAN DEFAULT false,
+  notification_date TIMESTAMPTZ,
+  broker_notes TEXT,
+  action_taken TEXT,
+  action_outcome TEXT,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  deleted_at TIMESTAMPTZ
+);
+
+ALTER TABLE agent_risk_scores ENABLE ROW LEVEL SECURITY;
+-- CRITICAL: Only managing_broker/owner/admin can see risk scores. Agents CANNOT see their own scores.
+CREATE POLICY "risk_scores_select" ON agent_risk_scores FOR SELECT USING (
+  company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin', 'office_manager')
+);
+CREATE POLICY "risk_scores_insert" ON agent_risk_scores FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "risk_scores_update" ON agent_risk_scores FOR UPDATE USING (
+  company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin', 'office_manager')
+);
+CREATE POLICY "risk_scores_delete" ON agent_risk_scores FOR DELETE USING (
+  company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin')
+);
+CREATE INDEX idx_risk_scores_company ON agent_risk_scores (company_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_risk_scores_agent ON agent_risk_scores (agent_user_id, score_date DESC) WHERE deleted_at IS NULL;
+CREATE INDEX idx_risk_scores_level ON agent_risk_scores (risk_level) WHERE deleted_at IS NULL;
+CREATE INDEX idx_risk_scores_date ON agent_risk_scores (score_date DESC) WHERE deleted_at IS NULL;
+CREATE TRIGGER risk_scores_updated BEFORE UPDATE ON agent_risk_scores FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER risk_scores_audit AFTER INSERT OR UPDATE OR DELETE ON agent_risk_scores FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+CREATE TABLE agent_activity_metrics (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  agent_user_id UUID NOT NULL REFERENCES auth.users(id),
+  metric_date DATE NOT NULL,
+  login_count INT DEFAULT 0,
+  last_login_at TIMESTAMPTZ,
+  deals_in_pipeline INT DEFAULT 0,
+  deals_closed_mtd INT DEFAULT 0,
+  gci_mtd NUMERIC(12,2) DEFAULT 0,
+  leads_contacted INT DEFAULT 0,
+  meetings_attended INT DEFAULT 0,
+  training_completed INT DEFAULT 0,
+  commission_earned_mtd NUMERIC(12,2) DEFAULT 0,
+  cap_progress_pct NUMERIC(5,2),
+  listing_appointments INT DEFAULT 0,
+  showings_conducted INT DEFAULT 0,
+  crm_activity_count INT DEFAULT 0,
+  marketing_campaigns_launched INT DEFAULT 0,
+  dispatch_orders_sent INT DEFAULT 0,
+  support_tickets_filed INT DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT now()
+  -- No updated_at — daily metrics are immutable snapshots
+  -- No deleted_at — activity metrics are never deleted (audit trail)
+);
+
+ALTER TABLE agent_activity_metrics ENABLE ROW LEVEL SECURITY;
+-- Same restriction: only managing broker+ can see agent metrics
+CREATE POLICY "activity_metrics_select" ON agent_activity_metrics FOR SELECT USING (
+  company_id = requesting_company_id() AND (
+    requesting_user_role() IN ('owner', 'admin', 'office_manager')
+    OR agent_user_id = auth.uid()  -- agents can see their OWN metrics
+  )
+);
+-- INSERT via service_role only (CRON aggregates daily)
+CREATE UNIQUE INDEX idx_activity_metrics_agent_date ON agent_activity_metrics (company_id, agent_user_id, metric_date);
+CREATE INDEX idx_activity_metrics_company ON agent_activity_metrics (company_id);
+CREATE INDEX idx_activity_metrics_date ON agent_activity_metrics (metric_date DESC);
+-- No audit trigger — automated daily snapshots, not user-editable
+```
+
+- [ ] Write migration file `20260221000146_re22_agent_departure_model.sql`
+- [ ] Run `npm run gen-types` in web-portal, copy `database.types.ts` to all 4 portals
+
+#### 22.1 Risk Signal Analysis (~4h)
+
+- [ ] Login frequency decline (0-20 pts): rolling 30-day vs 90-day baseline. >50% decline=20, >30%=15, >20%=10, stable/increasing=0. Account for seasonality (Q4 holidays = normal dip)
+- [ ] Production trend analysis (0-20 pts): current quarter GCI vs same quarter prior year AND trailing 4-quarter average. Declining 2+ consecutive quarters=20. Below 75% of same quarter last year=15. Also factor deal pipeline (adding leads or just closing existing?)
+- [ ] Commission trajectory (0-15 pts): % to cap remaining + trajectory. Far from cap + declining=15. Just passed cap=5. Approaching cap with momentum=0
+- [ ] Engagement signals (0-15 pts): CRM usage + marketing tools + training attendance + support tickets + outbound comms. >40% decline across metrics=15, >25%=10, >15%=5
+- [ ] Meeting/event attendance (0-10 pts): missed 3+ consecutive=10, missed 2=6. Pattern detection: always attended then stopped = high signal
+- [ ] Profile activity (0-10 pts): manual flags — LinkedIn updated, Zillow/Realtor.com branding changed, requests for production reports/W-2
+- [ ] Competitive intelligence (0-10 pts, manual): broker logs signals — recruiting event, frustration mention, mentor left. Each signal=+5, max 10
+
+#### 22.2 Alert System & Playbook (~4h)
+
+- [ ] Weekly risk digest (Monday at 08:00 company timezone): agents at HIGH (60+), MODERATE (40-59), top risk detail, recommended actions
+- [ ] Real-time critical alerts: risk_score crosses 75 → push notification + email to managing broker immediately
+- [ ] Escalation rules: 40-59 weekly only, 60-74 highlighted + in-app badge, 75+ real-time push+email, 90+ "imminent departure"
+- [ ] Retention action playbook per score range: 40-59 (check-in), 60-74 (1-on-1 + business plan review), 75-89 (urgent meeting + value props), 90+ (emergency retention — commission restructure, marketing budget, lead support)
+- [ ] Action tracking + outcome logging (did agent stay? Did risk score decline after action?)
+- [ ] Retention ROI calculator: "Losing Jane costs $39K-49K. Retention investment: $2K-5K. ROI: 8-24x."
+
+#### 22.3 Edge Functions (~3h)
+
+- [ ] `agent-risk-score-cron` EF: CRON (runs weekly, Sunday at 22:00 UTC) — for each company with brokerage plan, aggregate weekly activity metrics per agent. Run 7-signal scoring algorithm. Upsert agent_risk_scores. If any agent crosses risk_level threshold, queue notification. Uses service_role. Idempotent: checks score_date before insert
+- [ ] `agent-activity-aggregate-cron` EF: CRON (runs daily at 23:00 UTC) — for each company, aggregate daily activity counts per agent from: auth.sessions (logins), realtor_transactions (deals), realtor_contacts (CRM activity), etc. Insert into agent_activity_metrics. Service_role
+- [ ] `agent-risk-digest` EF: CRON (runs Monday 13:00 UTC → ~8AM ET) — for each company with brokerage plan, generate weekly digest email/push with risk summary. Send to users with managing_broker role
+- [ ] `agent-risk-alert` EF: triggered by agent_risk_scores INSERT/UPDATE where risk_score >= 75 — sends immediate push + email to managing broker
+
+#### 22.4 Flutter Screens (~2h)
+
+- [ ] `AgentRetentionHeatMapScreen` — All agents grid, color-coded by risk level (green/yellow/orange/red). Tap for detail. Only visible to managing_broker/owner/admin role
+- [ ] `AgentRiskDetailScreen` — Full signal breakdown radar chart, activity timeline, action history, ROI calculator. Broker can add notes and log actions
+- [ ] `RetentionPlaybookScreen` — Recommended actions by score range. Action templates. One-tap to schedule 1-on-1
+
+#### 22.5 Web Portal (~3h)
+
+- [ ] `/realtor/brokerage/retention` — Retention dashboard: heat map, trend charts, company-wide risk over time, seasonal patterns
+- [ ] `/realtor/brokerage/retention/[agentId]` — Agent detail drilldown: full signal breakdown, activity timeline, action history, ROI calc
+- [ ] `/realtor/brokerage/retention/digest` — View past weekly digests, configure alert preferences
+
+#### Security Verification
+- [ ] RLS: managing broker/owner/admin ONLY can view risk scores. Regular agents CANNOT see their own departure risk score or anyone else's
+- [ ] Agents CAN see their own activity_metrics (for transparency — they know their activity is tracked)
+- [ ] CRON EFs use service_role but iterate per company_id — never cross-company aggregation
+- [ ] Privacy disclosure: brokerage terms must include "Activity data is used for business analytics including retention insights"
+- [ ] Agent data request: agents can request their activity data (transparency principle) — via settings page
+- [ ] All tables have appropriate indexes and triggers (see migration)
+
+#### Ecosystem Connections
+- [ ] **RE13** (Brokerage Admin) — retention dashboard embedded in brokerage admin section
+- [ ] **RE2** (CRM) — CRM activity counts feed into engagement signals
+- [ ] **RE4-RE5** (Transaction Engine) — deal pipeline and GCI feed into production signals
+- [ ] **CUST9** — AGENT_RETENTION, AGENT_RISK_SCORES, RETENTION_PLAYBOOK modules gated to brokerage-tier plans only
+
+#### i18n Requirements
+- [ ] Risk level labels (low/moderate/high/critical) in 10 locales
+- [ ] Playbook recommendation text in 10 locales — professional HR/management terminology per language
+- [ ] Digest email templates in 10 locales
+- [ ] Dashboard labels and chart legends translated
+
+- [ ] All builds pass: `flutter analyze`, `npm run build` for web-portal
+- [ ] Commit: `[RE22] Predictive agent departure model — 7-signal risk scoring, weekly digest, real-time alerts, retention playbook, ROI calculator, brokerage dashboard`
+
+---
+
+### RE23 — Rental Investment Analysis (~24h) — S145
+*Source: s132-realtor-10-gaps-spec.md, realtor-platform-deep-research-s129.md*
+*Depends on: RE1 (Realtor CRM), RE3 (Smart CMA), RE5 (Transaction Engine), F10 (ZForge PDF), CUST9 (Module Registry)*
+*CUST9 Modules: INVESTMENT_ANALYSIS, RENTAL_MARKET_DATA, BRRRR_CALCULATOR, INVESTOR_PDF*
+
+**What this builds:** Comprehensive rental investment analysis — rent estimation (HUD FMR + Census ACS + comps), full financial model (purchase/financing/expenses/cash flow), 8 return metrics (cap rate, CoC, DSCR, GRM, ROI, equity multiple, IRR, break-even), BRRRR strategy module, STR analysis, sensitivity analysis (vacancy/rate/rent/appreciation/expense), tax analysis (depreciation/1031/capital gains), and professional investor deal package PDF. Replaces DealCheck ($14.99/mo), Mashvisor ($59-299/mo), and Excel spreadsheets.
+
+**System Connectivity:**
+- Reads from: `companies`, `users`, `realtor_contacts` (RE2), `properties` (D5), `market_snapshots` (RE21), `recon_scans` (Phase P)
+- Writes to: 2 new tables (see below)
+- Wires to: HUD FMR API (free, annual rent data), Census ACS API (free, rent by tract), FRED API (mortgage rates, rent CPI), FHFA HPI API (appreciation), Open-Meteo API (climate context), RE3 Smart CMA (comp data), RE25 Insurance (insurance estimates), ZForge (investor PDF generation), FLIP2 ARV Engine (for BRRRR), client portal (share analysis)
+
+#### 23.0 Migration — `20260221000147_re23_rental_investment.sql`
+
+```sql
+-- RE23: Rental Investment Analysis
+
+CREATE TABLE investment_analyses (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  property_id UUID REFERENCES properties(id),
+  contact_id UUID REFERENCES realtor_contacts(id),
+  analysis_type TEXT NOT NULL DEFAULT 'buy_and_hold' CHECK (analysis_type IN ('buy_and_hold', 'brrrr', 'short_term_rental', 'house_hack', 'commercial_multi')),
+  property_address TEXT NOT NULL,
+  property_details JSONB NOT NULL DEFAULT '{}',
+  -- {beds, baths, sqft, lot_sqft, year_built, condition, property_type}
+  purchase_assumptions JSONB NOT NULL DEFAULT '{}',
+  -- {purchase_price, down_payment_pct, closing_costs_pct, inspection_cost, appraisal_cost, rehab_budget, points_pct}
+  financing_details JSONB NOT NULL DEFAULT '{}',
+  -- {loan_type, rate, term_years, monthly_pi, pmi_monthly, total_cash_to_close}
+  rental_income JSONB NOT NULL DEFAULT '{}',
+  -- {estimated_monthly_rent, rent_source, comparable_rents[], vacancy_rate_pct, str_estimates}
+  operating_expenses JSONB NOT NULL DEFAULT '{}',
+  -- {property_tax_monthly, insurance_monthly, maintenance_pct, capex_reserve_pct, vacancy_reserve_pct, management_fee_pct, hoa_monthly, utilities_monthly, advertising_annual, legal_reserve_annual}
+  cash_flow_projection JSONB,
+  -- {monthly_gross, monthly_vacancy, monthly_expenses, monthly_debt_service, monthly_net, annual_net}
+  return_metrics JSONB,
+  -- {cap_rate, cash_on_cash, dscr, grm, total_roi, equity_multiple, irr, break_even_occupancy, fifty_pct_rule, one_pct_rule}
+  appreciation_forecast JSONB,
+  -- [{year, property_value, mortgage_balance, equity, annual_cash_flow, cumulative_cash_flow, total_return}]
+  sensitivity_analysis JSONB,
+  -- {vacancy_scenarios[], rate_scenarios[], rent_scenarios[], appreciation_scenarios[], expense_scenarios[]}
+  tax_analysis JSONB,
+  -- {annual_depreciation, tax_savings_at_rate, total_deductions, capital_gains_estimate, exchange_1031_eligible}
+  risk_assessment JSONB,
+  shared_with_client BOOLEAN DEFAULT false,
+  pdf_generated_at TIMESTAMPTZ,
+  pdf_url TEXT,
+  created_by UUID REFERENCES auth.users(id),
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  deleted_at TIMESTAMPTZ
+);
+
+ALTER TABLE investment_analyses ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "invest_analyses_select" ON investment_analyses FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "invest_analyses_insert" ON investment_analyses FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "invest_analyses_update" ON investment_analyses FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "invest_analyses_delete" ON investment_analyses FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin'));
+CREATE INDEX idx_invest_analyses_company ON investment_analyses (company_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_invest_analyses_property ON investment_analyses (property_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_invest_analyses_contact ON investment_analyses (contact_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_invest_analyses_type ON investment_analyses (analysis_type) WHERE deleted_at IS NULL;
+CREATE TRIGGER invest_analyses_updated BEFORE UPDATE ON investment_analyses FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER invest_analyses_audit AFTER INSERT OR UPDATE OR DELETE ON investment_analyses FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+CREATE TABLE rental_market_data (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  zip_code TEXT NOT NULL,
+  county_fips TEXT,
+  data_date DATE NOT NULL,
+  median_rent_studio NUMERIC(8,2),
+  median_rent_1br NUMERIC(8,2),
+  median_rent_2br NUMERIC(8,2),
+  median_rent_3br NUMERIC(8,2),
+  median_rent_4br NUMERIC(8,2),
+  hud_fmr_studio NUMERIC(8,2),
+  hud_fmr_1br NUMERIC(8,2),
+  hud_fmr_2br NUMERIC(8,2),
+  hud_fmr_3br NUMERIC(8,2),
+  hud_fmr_4br NUMERIC(8,2),
+  vacancy_rate NUMERIC(5,2),
+  rent_growth_yoy NUMERIC(5,2),
+  price_to_rent_ratio NUMERIC(6,2),
+  median_home_price NUMERIC(12,2),
+  cap_rate_area_avg NUMERIC(5,2),
+  data_sources JSONB NOT NULL DEFAULT '[]',
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- rental_market_data: NO company_id — shared reference data populated by CRON
+ALTER TABLE rental_market_data ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "rental_market_select" ON rental_market_data FOR SELECT USING (auth.role() = 'authenticated');
+CREATE UNIQUE INDEX idx_rental_market_zip_date ON rental_market_data (zip_code, data_date DESC);
+CREATE INDEX idx_rental_market_county ON rental_market_data (county_fips) WHERE county_fips IS NOT NULL;
+-- No soft delete — immutable reference snapshots
+```
+
+- [ ] Write migration file `20260221000147_re23_rental_investment.sql`
+- [ ] Run `npm run gen-types` in web-portal, copy `database.types.ts` to all 4 portals
+
+#### 23.1 Rent Estimation Engine (~4h)
+
+- [ ] HUD Fair Market Rent (FMR) integration: pull annual FMR data per metro/county by bedroom count. Free from HUD API. Store in rental_market_data
+- [ ] Census ACS rent data: median rent by census tract broken down by bedrooms. More granular than FMR
+- [ ] Comparable rent analysis: agent inputs property details (beds, baths, sqft, condition, amenities). System finds comparable rentals. Adjustment factors: sqft, bedrooms, bathrooms, garage, yard, W/D, pool, renovation quality, pet policy. Output: estimated rent with confidence range
+- [ ] Rent growth forecasting: FRED rent CPI + FHFA HPI + Census population growth. Project 1yr, 3yr, 5yr, 10yr rent growth
+- [ ] Short-term rental estimate: occupancy factor (65-80% urban, 50-65% suburban, 70-90% vacation), ADR by area. STR premium vs LTR comparison
+
+#### 23.2 Financial Model (~4h)
+
+- [ ] Purchase cost calculator: price, down payment (5-25% slider), closing costs (2-5% by state), inspection, appraisal, points, rehab budget. Total cash to close
+- [ ] Financing calculator: conventional (30yr/15yr/ARM), FHA (3.5% down + PMI), VA (0% down), DSCR loan (no income verification, 1.0-1.25x DSCR), hard money (BRRRR), portfolio, seller financing. Rates from FRED API (auto-populated)
+- [ ] Operating expense breakdown: property tax (county assessor), insurance (RE25 estimate or manual), maintenance (1% of value/yr), capex reserve (5-10% of rent), vacancy reserve (Census rate), PM fee (0%/8-12%/20-25%), HOA, utilities, advertising, legal/eviction reserve
+- [ ] Monthly cash flow: gross rent - vacancy - expenses - debt service = net. Monthly AND annual
+
+#### 23.3 Return Metrics (~4h)
+
+- [ ] Cap rate: NOI / Purchase Price. Compare to area avg + 10yr treasury
+- [ ] Cash-on-cash: annual pre-tax cash flow / total cash invested
+- [ ] DSCR: NOI / annual debt service. >1.25 safe, 1.0-1.25 tight, <1.0 negative
+- [ ] Total ROI: (cash flow + equity paydown + appreciation + tax benefits) / total cash invested. Component breakdown
+- [ ] GRM: purchase price / annual gross rent. Lower = better
+- [ ] 50% Rule check: expenses (excl debt) should be ~50% of rent
+- [ ] 1% Rule check: monthly rent / purchase price. >=1% = strong
+- [ ] Break-even occupancy: what occupancy needed to cover all expenses + debt
+- [ ] IRR: internal rate of return calculated over 5yr and 10yr hold periods
+
+#### 23.4 Appreciation, Sensitivity & Tax (~4h)
+
+- [ ] 5yr and 10yr projection table: year-by-year property value, remaining mortgage, equity, annual cash flow, cumulative cash flow, total return
+- [ ] FHFA HPI integration: metro-specific appreciation rates (not national average)
+- [ ] Vacancy stress test: cash flow at 0%, 5%, 8%, 10%, 15%, 20% vacancy
+- [ ] Interest rate sensitivity: impact of rate changes on cash flow (for ARMs or refi)
+- [ ] Rent sensitivity: impact if rent is 5%/10% lower than estimated
+- [ ] Appreciation sensitivity: total ROI at 0%, 2%, 3%, 5% annual appreciation
+- [ ] Expense increase sensitivity: 3%, 5%, 7% annual expense growth impact
+- [ ] Depreciation: 27.5yr straight-line on improvement value (land excluded, typically 80/20 split). Tax savings at marginal rate
+- [ ] 1031 exchange flag: eligible if held >1 year. Defer capital gains by reinvesting within 180 days
+- [ ] Capital gains estimate at sale: short-term (ordinary rate) vs long-term (15-20% + depreciation recapture at 25%)
+
+#### 23.5 BRRRR Module & PDF (~2h)
+
+- [ ] BRRRR workflow: Buy (at discount) → Rehab (Zafto estimate engine) → Rent (rent estimation) → Refinance (cash-out at 70-75% ARV) → Repeat. Calculate total cash left in deal after refi, infinite return scenario
+- [ ] Integration with FLIP2 ARV engine for after-repair value
+- [ ] Investor deal package PDF via ZForge: 4-8 pages, agent-branded. Executive summary, purchase assumptions, financing, expenses, 5yr cash flow, return comparison chart (deal vs S&P 500 vs savings vs bonds), sensitivity summary, tax summary, neighborhood data, agent info, disclaimers
+- [ ] One-click share to client portal: investor sees analysis with interactive scenario toggles
+
+#### 23.6 Edge Functions (~3h)
+
+- [ ] `investment-calculate` EF: POST — accepts property_details, purchase_assumptions, financing_details, rental_income, operating_expenses. Runs full financial model. Returns all return_metrics, cash_flow_projection, appreciation_forecast, sensitivity_analysis, tax_analysis. Auth: JWT required. Rate limit: 50/min per company. **Legal disclaimer**: "For estimation purposes only. Not professional financial or tax advice. Consult a qualified professional."
+- [ ] `rental-market-cron` EF: CRON (runs monthly on 1st at 04:00 UTC) — pulls HUD FMR (annual), Census ACS rent (annual), calculates vacancy rates and rent growth. Upserts rental_market_data for active ZIPs. Service_role
+- [ ] `investment-pdf-generate` EF: POST — accepts investment_analysis_id. Generates professional PDF via @react-pdf/renderer. Uploads to Supabase Storage. Returns URL. Auth: JWT required
+
+#### 23.7 Flutter Screens (~4h)
+
+- [ ] `InvestmentAnalysisScreen` — Full analysis builder: property input, purchase assumptions, financing, rent estimate, expense breakdown. Results: all 8+ return metrics with color-coded indicators. Save to job. 4-state screen
+- [ ] `BRRRRCalculatorScreen` — BRRRR-specific workflow: purchase at discount, rehab budget (link to estimate engine), ARV, refi terms, rent estimate. Shows cash left in deal
+- [ ] `STRAnalysisScreen` — Short-term rental: occupancy slider, nightly rate, seasonal variation, platform fees. STR vs LTR comparison
+- [ ] `SensitivityModelerScreen` — Interactive: sliders for vacancy, rates, rent, appreciation, expenses. Real-time cash flow and ROI updates as sliders move
+- [ ] `InvestmentHistoryScreen` — Past analyses list with key metrics. Compare side-by-side
+
+#### 23.8 Web Portal (~3h)
+
+- [ ] `/realtor/investments` — Investment analysis dashboard: recent analyses, saved properties, market data
+- [ ] `/realtor/investments/new` — Full analysis builder (web version)
+- [ ] `/realtor/investments/[id]` — Analysis detail with interactive charts and PDF download
+- [ ] `/realtor/rental-market` — Rental market data browser: search by ZIP, compare areas
+
+#### Security Verification
+- [ ] RLS: company-scoped on investment_analyses. rental_market_data is shared reference (SELECT only for authenticated)
+- [ ] Calculator results MUST save to a specific job (owner directive S143)
+- [ ] All calculator outputs need legal liability disclaimer: "For estimation purposes only. Not professional financial, tax, or investment advice."
+- [ ] Calculators need "set as favorite" feature for quick access (owner directive S143)
+- [ ] PDF generation: no sensitive data in URL (use signed URLs with expiration)
+- [ ] Client portal share: only shared analyses visible to client. Revocable
+
+#### Ecosystem Connections
+- [ ] **RE3** (Smart CMA) — comp data feeds rent estimation. Insurance cost from RE25 feeds expenses
+- [ ] **RE5** (Transaction Engine) — investment analysis links to transaction on purchase
+- [ ] **RE21** (Negotiation) — investment metrics strengthen negotiation position ("This property at $240K has 8.4% CoC return vs 6.2% at $260K")
+- [ ] **RE25** (Insurance) — insurance estimate auto-populates operating expenses
+- [ ] **FLIP2** (ARV Engine) — shared comp analysis for BRRRR after-repair value
+- [ ] **Phase P** (Recon) — property data auto-populates analysis inputs
+- [ ] **F10/ZForge** — investor PDF generation
+- [ ] **Client Portal** — shared analyses visible to investor clients
+- [ ] **CUST9** — INVESTMENT_ANALYSIS, RENTAL_MARKET_DATA, BRRRR_CALCULATOR, INVESTOR_PDF modules gated
+
+#### i18n Requirements
+- [ ] All metric labels, descriptions, and tooltips in 10 locales
+- [ ] Currency formatting locale-aware
+- [ ] Tax analysis: note that depreciation rules are US-specific. Add locale disclaimer for non-US users
+- [ ] PDF templates: agent branding + locale-specific formatting (date, currency, number separators)
+- [ ] Legal disclaimer translated professionally per locale
+
+- [ ] All builds pass: `flutter analyze`, `npm run build` for web-portal
+- [ ] Commit: `[RE23] Rental investment analysis — rent estimation (HUD FMR/Census/comps), full financial model, 8+ return metrics, BRRRR module, STR analysis, sensitivity/tax analysis, investor PDF`
+
+### RE24 — HOA Financial Health Intelligence (~20h) — S145
+*Source: s132-realtor-10-gaps-spec.md, proptech-flagship-research-s128.md*
+*Depends on: RE1 (Realtor CRM), RE5 (Transaction Engine), F10 (ZForge), CUST9 (Module Registry)*
+*CUST9 Modules: HOA_ANALYSIS, HOA_DOCUMENTS, HOA_RISK_SCORING, HOA_REPORTS*
+
+**What this builds:** HOA risk intelligence — Claude OCR reads HOA budgets, reserve studies, meeting minutes and extracts financial health data. Reserve adequacy scoring (A-F grade using percent-funded method), special assessment risk scoring (0-100), fee trending/benchmarking, 12 auto-detected risk flags, 50-state compliance matrix, and client-facing HOA Health Card. Prevents the #1 unexpected cost in homeownership (special assessments). No competitor does HOA financial analysis.
+
+**System Connectivity:**
+- Reads from: `companies`, `users`, `realtor_contacts` (RE2), `properties` (D5), `realtor_transactions` (RE4-RE5)
+- Writes to: 3 new tables (see below)
+- Wires to: Claude API (document OCR/analysis), Supabase Storage (document uploads), state HOA registries (FL, CA, CO, NV, VA, MD — web scraping where available), county assessor (lien checks via Recon), RE25 Insurance (HOA master policy gaps), RE3 Smart CMA (HOA grade in property reports)
+
+#### 24.0 Migration — `20260221000148_re24_hoa_intelligence.sql`
+
+```sql
+-- RE24: HOA Financial Health Intelligence
+
+CREATE TABLE hoa_profiles (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  hoa_name TEXT NOT NULL,
+  management_company TEXT,
+  address TEXT,
+  city TEXT,
+  state TEXT,
+  zip TEXT,
+  total_units INT,
+  property_type TEXT CHECK (property_type IN ('condo', 'townhome', 'sfh', 'mixed')),
+  year_established INT,
+  state_registration_number TEXT,
+  website_url TEXT,
+  contact_email TEXT,
+  contact_phone TEXT,
+  created_by UUID REFERENCES auth.users(id),
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  deleted_at TIMESTAMPTZ
+);
+
+ALTER TABLE hoa_profiles ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "hoa_profiles_select" ON hoa_profiles FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "hoa_profiles_insert" ON hoa_profiles FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "hoa_profiles_update" ON hoa_profiles FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "hoa_profiles_delete" ON hoa_profiles FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin'));
+CREATE INDEX idx_hoa_profiles_company ON hoa_profiles (company_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_hoa_profiles_state ON hoa_profiles (state) WHERE deleted_at IS NULL;
+CREATE TRIGGER hoa_profiles_updated BEFORE UPDATE ON hoa_profiles FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER hoa_profiles_audit AFTER INSERT OR UPDATE OR DELETE ON hoa_profiles FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+CREATE TABLE hoa_financial_analyses (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  hoa_profile_id UUID NOT NULL REFERENCES hoa_profiles(id),
+  property_id UUID REFERENCES properties(id),
+  analysis_date DATE NOT NULL DEFAULT CURRENT_DATE,
+  monthly_fee NUMERIC(8,2),
+  monthly_fee_trend JSONB,
+  annual_budget NUMERIC(12,2),
+  reserve_fund_balance NUMERIC(12,2),
+  reserve_fund_target NUMERIC(12,2),
+  percent_funded NUMERIC(5,2),
+  reserve_adequacy_grade TEXT CHECK (reserve_adequacy_grade IN ('A', 'B', 'C', 'D', 'F')),
+  special_assessment_history JSONB,
+  special_assessment_risk_score NUMERIC(5,2) CHECK (special_assessment_risk_score >= 0 AND special_assessment_risk_score <= 100),
+  delinquency_rate_pct NUMERIC(5,2),
+  litigation_history JSONB,
+  insurance_status JSONB,
+  major_upcoming_expenses JSONB,
+  fee_increase_history JSONB,
+  fee_composition JSONB,
+  financial_health_score NUMERIC(5,2) CHECK (financial_health_score >= 0 AND financial_health_score <= 100),
+  overall_grade TEXT CHECK (overall_grade IN ('A', 'B', 'C', 'D', 'F')),
+  risk_flags JSONB,
+  ai_analysis_summary TEXT,
+  source_documents JSONB,
+  created_by UUID REFERENCES auth.users(id),
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  deleted_at TIMESTAMPTZ
+);
+
+ALTER TABLE hoa_financial_analyses ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "hoa_fin_select" ON hoa_financial_analyses FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "hoa_fin_insert" ON hoa_financial_analyses FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "hoa_fin_update" ON hoa_financial_analyses FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "hoa_fin_delete" ON hoa_financial_analyses FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin'));
+CREATE INDEX idx_hoa_fin_company ON hoa_financial_analyses (company_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_hoa_fin_profile ON hoa_financial_analyses (hoa_profile_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_hoa_fin_grade ON hoa_financial_analyses (overall_grade) WHERE deleted_at IS NULL;
+CREATE INDEX idx_hoa_fin_risk ON hoa_financial_analyses (special_assessment_risk_score DESC) WHERE deleted_at IS NULL;
+CREATE TRIGGER hoa_fin_updated BEFORE UPDATE ON hoa_financial_analyses FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER hoa_fin_audit AFTER INSERT OR UPDATE OR DELETE ON hoa_financial_analyses FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+CREATE TABLE hoa_documents (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  hoa_financial_analysis_id UUID NOT NULL REFERENCES hoa_financial_analyses(id),
+  document_type TEXT NOT NULL CHECK (document_type IN ('budget', 'reserve_study', 'meeting_minutes', 'financial_statement', 'cc_rs', 'bylaws', 'insurance_dec_page')),
+  file_url TEXT NOT NULL,
+  ocr_text TEXT,
+  ai_extracted_data JSONB,
+  uploaded_by UUID REFERENCES auth.users(id),
+  created_at TIMESTAMPTZ DEFAULT now(),
+  deleted_at TIMESTAMPTZ
+);
+
+ALTER TABLE hoa_documents ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "hoa_docs_select" ON hoa_documents FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "hoa_docs_insert" ON hoa_documents FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "hoa_docs_delete" ON hoa_documents FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin'));
+-- No UPDATE — documents are immutable after upload. Re-upload to replace.
+CREATE INDEX idx_hoa_docs_company ON hoa_documents (company_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_hoa_docs_analysis ON hoa_documents (hoa_financial_analysis_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_hoa_docs_type ON hoa_documents (document_type) WHERE deleted_at IS NULL;
+CREATE TRIGGER hoa_docs_audit AFTER INSERT OR DELETE ON hoa_documents FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+```
+
+- [ ] Write migration file `20260221000148_re24_hoa_intelligence.sql`
+- [ ] Run `npm run gen-types` in web-portal, copy `database.types.ts` to all 4 portals
+
+#### 24.1 Document Analysis Engine (~6h)
+
+- [ ] Document upload: agent uploads HOA budget, reserve study, financial statements, meeting minutes as PDF or photos to Supabase Storage
+- [ ] Claude OCR/AI reads documents and extracts: total annual budget, line-item expenses, reserve fund balance, reserve fund contributions, planned capital expenditures, special assessment history, delinquency rates, insurance coverage details, pending litigation, management fee details
+- [ ] Reserve study analysis: current reserve balance, fully-funded balance, percent funded (actual/ideal × 100). >70% adequate, 30-70% concern, <30% critical
+- [ ] Special assessment risk scoring (0-100): percent funded (<30%=+40, 30-50%=+25, 50-70%=+15, >70%=+5), delinquency (>10%=+15, 5-10%=+10, <5%=+3), building age (>30yr=+10, 20-30=+7, <20=+3), upcoming major expenses (+10 each), recent fee increases >10%/yr (+8), active litigation (+15), no reserve study in 5+ years (+20), FL post-Surfside compliance (+20 if applicable and not met)
+- [ ] Meeting minutes analysis: Claude flags contentious votes, assessment debates, deferred maintenance decisions, complaints about management, fee increase discussions, pending lawsuits
+
+#### 24.2 Fee Intelligence & Risk Flags (~4h)
+
+- [ ] Fee trending: 1yr, 3yr, 5yr fee history. Annual increase %. Compare to national avg (4-6%)
+- [ ] Fee benchmarking: compare to similar HOAs in area (same type, unit count, age)
+- [ ] Fee composition analysis: management (10-20%), insurance (15-25%), maintenance (20-30%), reserves (10-20%), utilities (10-20%), landscaping (5-15%). Flag if reserves <10% of budget
+- [ ] 12 auto-detected risk flags: low reserves (<50%), high delinquency (>10%), no reserve study 5+yr, fee increases >8%/yr, active litigation, self-managed HOA, pending major capex without reserves, insurance gaps, single owner >25% units, developer still controlling board, building >30yr no structural inspection, high mgmt company turnover (3+ in 5yr)
+
+#### 24.3 State Compliance & Grading (~3h)
+
+- [ ] State HOA registry lookup: FL, CA, CO, NV, VA, MD have registration requirements. Check registration status
+- [ ] 50-state disclosure matrix: what HOAs must disclose to buyers per state. FL: financial statements + budget + insurance + reserves + litigation + assessments. CA: CC&Rs + bylaws + financials + litigation
+- [ ] Surfside law compliance (FL): buildings 3+ stories AND 25+ years (within 3mi of coast) or 30+ years → mandatory structural inspection (SIRS). Has inspection been completed?
+- [ ] Overall grade: A (80-100, well-funded >70%, low delinquency), B (60-79, adequate 50-70%), C (40-59, underfunded 30-50%), D (20-39, significantly underfunded), F (0-19, critical — imminent special assessment)
+
+#### 24.4 Edge Functions (~3h)
+
+- [ ] `hoa-analyze-document` EF: POST — accepts hoa_document_id, reads file from Storage, sends to Claude for OCR/extraction. Stores ocr_text and ai_extracted_data. Auth: JWT required, company_id validated. Rate limit: 10/min per company. **REQUIRES**: Claude API key. Graceful degradation: if Claude API down, mark document as pending_analysis
+- [ ] `hoa-calculate-scores` EF: POST — accepts hoa_financial_analysis_id, aggregates all document extractions, runs risk scoring algorithm, calculates overall grade. Updates hoa_financial_analyses row. Auth: JWT required
+- [ ] `hoa-generate-report` EF: POST — generates HOA Health Card PDF via @react-pdf/renderer. One-page summary: grade, reserve adequacy, risk score, flags, comparison, recommendation. Upload to Storage. Auth: JWT required
+
+#### 24.5 Flutter Screens (~2h)
+
+- [ ] `HOAHealthReportScreen` — Overall grade card (A-F color-coded), reserve adequacy chart, special assessment risk gauge, risk flags list, fee trend chart. 4-state screen
+- [ ] `HOADocumentUploadScreen` — Upload/capture documents. Progress indicator for OCR processing. Extracted data preview
+- [ ] `HOAComparisonScreen` — Compare this HOA to similar communities. Fee benchmarking visuals
+- [ ] `HOARiskDetailScreen` — Deep dive: every risk flag with evidence text, mitigation suggestions
+
+#### 24.6 Web Portal (~2h)
+
+- [ ] `/realtor/hoa-analysis` — HOA Analysis dashboard: recent analyses, grade distribution
+- [ ] `/realtor/hoa-analysis/[id]` — Full report: grade, scores, documents, risk flags, compliance, buyer advisory
+- [ ] `/realtor/hoa-analysis/new` — New analysis wizard: create HOA profile, upload documents, run analysis
+
+#### Security Verification
+- [ ] RLS: company-scoped on all 3 tables
+- [ ] Document uploads stored in private Storage bucket with signed URLs (expiring)
+- [ ] Claude API key in Supabase secrets, never exposed to client
+- [ ] OCR text stored server-side only — client sees extracted structured data, not raw OCR
+- [ ] HOA documents may contain PII (names, addresses, unit numbers) — handle with care, no logging of raw OCR
+- [ ] All tables have deleted_at, updated_at triggers, audit triggers (except hoa_documents — no updated_at, immutable)
+
+#### Ecosystem Connections
+- [ ] **RE3** (Smart CMA) — HOA grade shown in CMA property report
+- [ ] **RE5** (Transaction Engine) — HOA doc analysis in closing checklist
+- [ ] **RE25** (Insurance) — HOA master policy coverage gaps feed into insurance risk assessment
+- [ ] **RE21** (Negotiation) — HOA risk strengthens buyer's negotiation position ("HOA is D-rated, factor $15K special assessment risk")
+- [ ] **Client Portal** — buyer sees HOA Health Card at client.zafto.cloud
+- [ ] **CUST9** — modules gated per company plan
+
+#### i18n Requirements
+- [ ] Grade labels (A-F), risk flag descriptions, and advisory text in 10 locales
+- [ ] Fee/financial data formatting locale-aware (currency, number separators)
+- [ ] State compliance info: English only for legal content, but UI labels translated
+- [ ] PDF Health Card: locale-aware formatting
+
+- [ ] All builds pass: `flutter analyze`, `npm run build` for web-portal
+- [ ] Commit: `[RE24] HOA financial health intelligence — Claude OCR, reserve adequacy A-F, special assessment risk 0-100, fee trending/benchmarking, 12 risk flags, 50-state compliance, Surfside law, HOA Health Card`
+
+---
+
+### RE25 — Insurance Cost Estimation (~24h) — S145
+*Source: s132-realtor-10-gaps-spec.md, insurance-api-research-s132.md*
+*Depends on: RE1 (Realtor CRM), RE3 (Smart CMA), Phase P (Recon), CUST9 (Module Registry)*
+*CUST9 Modules: INSURANCE_RISK, INSURANCE_ESTIMATE, INSURANCE_BRIEF, CLAIMS_HISTORY*
+
+**What this builds:** Property insurance cost estimator using 7 free government data sources — FEMA flood zones, NFIP claims history, NASA wildfire risk, ASCE wind zones, NOAA hail/storm history, USGS seismic data, FBI crime rates. Composite risk score (0-100), premium estimate range, coverage recommendations, flood/wildfire deep dives, buyer-facing insurance brief, cost-to-own integration with Smart CMA. Replaces $5-25/lookup flood zone services agents currently pay for. No competitor provides comprehensive insurance cost estimates.
+
+**System Connectivity:**
+- Reads from: `companies`, `users`, `properties` (D5), `recon_scans` (Phase P), `market_snapshots` (RE21)
+- Writes to: 2 new tables (see below)
+- Wires to: FEMA NFHL API (free, flood zones), OpenFEMA NFIP API (free, claims history), NASA FIRMS API (free, wildfire), ASCE Hazard Tool (wind speeds), NOAA Storm Events DB (free, hail/wind), SPC SVRGIS (free, severe weather GIS), USGS Seismic Design API (free, earthquake), FBI Crime Data Explorer (free, crime rates), Census ACS API (free, housing vintage), Open-Meteo API (free, climate data), RE3 Smart CMA (cost-to-own integration), RE24 HOA (master policy gaps), RE23 Investment (operating expenses), RE30 Storm Alerts (risk data sharing)
+
+#### 25.0 Migration — `20260221000149_re25_insurance_estimation.sql`
+
+```sql
+-- RE25: Insurance Cost Estimation
+
+CREATE TABLE property_risk_profiles (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  property_id UUID REFERENCES properties(id),
+  property_address TEXT NOT NULL,
+  lat NUMERIC(10,7),
+  lng NUMERIC(10,7),
+  -- Flood
+  flood_zone TEXT,
+  flood_zone_description TEXT,
+  base_flood_elevation NUMERIC(6,2),
+  flood_insurance_required BOOLEAN,
+  flood_claims_in_zip_10yr INT,
+  nfip_claims_total_amount NUMERIC(12,2),
+  -- Wildfire
+  wildfire_risk_level TEXT CHECK (wildfire_risk_level IN ('minimal', 'low', 'moderate', 'high', 'extreme')),
+  wildfire_proximity_miles NUMERIC(6,2),
+  last_fire_near_property JSONB,
+  -- Wind
+  wind_zone TEXT,
+  design_wind_speed_mph NUMERIC(5,1),
+  -- Hail
+  hail_events_near_property_10yr INT,
+  max_hail_size_inches NUMERIC(4,2),
+  -- Seismic
+  earthquake_zone TEXT,
+  seismic_design_category TEXT,
+  -- Crime
+  crime_index NUMERIC(6,2),
+  crime_data JSONB,
+  -- Property characteristics
+  building_age INT,
+  construction_type TEXT,
+  roof_type TEXT,
+  roof_age_est INT,
+  distance_to_fire_station_mi NUMERIC(5,2),
+  distance_to_coast_mi NUMERIC(6,2),
+  -- Estimates
+  composite_risk_score NUMERIC(5,2) CHECK (composite_risk_score >= 0 AND composite_risk_score <= 100),
+  insurance_estimate_low NUMERIC(10,2),
+  insurance_estimate_high NUMERIC(10,2),
+  insurance_factors JSONB,
+  risk_summary TEXT,
+  created_by UUID REFERENCES auth.users(id),
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  deleted_at TIMESTAMPTZ
+);
+
+ALTER TABLE property_risk_profiles ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "risk_profiles_select" ON property_risk_profiles FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "risk_profiles_insert" ON property_risk_profiles FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "risk_profiles_update" ON property_risk_profiles FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "risk_profiles_delete" ON property_risk_profiles FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin'));
+CREATE INDEX idx_risk_profiles_company ON property_risk_profiles (company_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_risk_profiles_property ON property_risk_profiles (property_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_risk_profiles_risk ON property_risk_profiles (composite_risk_score DESC) WHERE deleted_at IS NULL;
+CREATE TRIGGER risk_profiles_updated BEFORE UPDATE ON property_risk_profiles FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER risk_profiles_audit AFTER INSERT OR UPDATE OR DELETE ON property_risk_profiles FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+CREATE TABLE insurance_rate_factors (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  state TEXT NOT NULL,
+  county TEXT,
+  zip TEXT,
+  avg_homeowners_premium NUMERIC(8,2),
+  avg_flood_premium NUMERIC(8,2),
+  avg_wind_premium NUMERIC(8,2),
+  wildfire_surcharge_pct NUMERIC(5,2),
+  sinkhole_coverage_required BOOLEAN,
+  hurricane_deductible_pct NUMERIC(5,2),
+  nfip_claims_count INT,
+  nfip_claims_total_amount NUMERIC(12,2),
+  data_year INT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- insurance_rate_factors: NO company_id — shared reference data from NAIC reports
+ALTER TABLE insurance_rate_factors ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "ins_rate_select" ON insurance_rate_factors FOR SELECT USING (auth.role() = 'authenticated');
+CREATE UNIQUE INDEX idx_ins_rate_state_county_zip ON insurance_rate_factors (state, county, zip, data_year);
+CREATE INDEX idx_ins_rate_state ON insurance_rate_factors (state);
+-- No soft delete — reference data. Seeded from NAIC annual reports
+```
+
+- [ ] Write migration file `20260221000149_re25_insurance_estimation.sql`
+- [ ] Seed insurance_rate_factors with NAIC state average premium data (50 states + DC)
+- [ ] Run `npm run gen-types` in web-portal, copy `database.types.ts` to all 4 portals
+
+#### 25.1 Risk Assessment Engine (~8h)
+
+- [ ] FEMA NFHL flood zone lookup: query FEMA National Flood Hazard Layer (free ArcGIS REST). Return: zone designation (A, AE, V, VE, X, D), base flood elevation, insurance requirement. A/AE/V/VE = REQUIRED for federally-backed mortgages
+- [ ] NFIP claims history: OpenFEMA NFIP redacted claims (free API) for flood claims in ZIP last 10 years. Count and total payouts
+- [ ] Wildfire risk: NASA FIRMS (free) for active fires and historical perimeters. Distance to nearest historical fire. USFS WUI classification. Risk: minimal/low/moderate/high/extreme
+- [ ] Wind zone: ASCE Hazard Tool data for design wind speed. Coastal FL/TX/LA/SC/NC have separate wind/hurricane deductibles (2-5% of home value)
+- [ ] Hail history: NOAA Storm Events DB (free) + SPC SVRGIS (free) for hail events within 5mi in last 10yr. Max hail size
+- [ ] Seismic risk: USGS Seismic Design Web Service (free). Seismic Design Category. CEA earthquake insurance estimate for CA properties
+- [ ] Crime data: FBI Crime Data Explorer (free) for property crime rate by county/MSA. Compare to national average. Higher crime = higher premiums (+5-15%)
+- [ ] Property characteristics: age (older = higher), construction type (masonry -5-15%), roof type/age (>15yr = +10-30% or denial in FL), distance to fire station (>5mi = rural surcharge), distance to fire hydrant, electrical panel type, plumbing type
+
+#### 25.2 Cost Estimation Algorithm (~4h)
+
+- [ ] Base premium: state/county average from NAIC data (seeded in insurance_rate_factors). National avg ~$2,200/yr. Range: ~$800 (HI) to ~$5,000+ (LA/FL)
+- [ ] Adjustment factors: flood zone (+$700-3,000/yr NFIP), wildfire (+15-50%), coastal wind (+20-40%), high hail (+10-20%), high crime (+5-15%), older home (+5-20%), old roof (+10-30%), distance from fire station (+5-15%), pool (+$50-200/yr), masonry discount (-5-15%), impact-resistant roof (-10-25%), smart home (-5-10%)
+- [ ] Output: low-to-high estimate range. Primary cost driver. Secondary factors. Potential discounts
+- [ ] Composite risk score (0-100): weighted sum of all 7 risk factors normalized
+
+#### 25.3 Buyer-Facing Output (~4h)
+
+- [ ] Insurance Brief PDF (1 page): estimated annual premium range, flood zone map snippet, risk factors, required vs optional coverages, potential discounts, comparison to area average, tips for reducing premium
+- [ ] Negotiation ammunition: "Insurance is $2,000/yr higher than expected. Over 10yr = $20,000. Use to negotiate $5-10K off purchase price."
+- [ ] Cost-to-own integration: add insurance estimate to Smart CMA alongside mortgage, tax, HOA, maintenance. "True monthly cost: Mortgage $1,450 + Tax $350 + Insurance $275 + HOA $200 + Maintenance $150 = $2,425/mo"
+- [ ] Historical claims map: visual map showing flood claims, storm damage, fire history around property. Heatmap overlay
+- [ ] Flood deep dive: NFIP vs private, LOMA eligibility for borderline zones, Preferred Risk Policy
+- [ ] Wildfire warning: carrier pullout states (CA, CO, OR, WA) — agents must warn buyers insurance may be hard to obtain or expensive
+
+#### 25.4 Edge Functions (~4h)
+
+- [ ] `insurance-assess-risk` EF: POST — accepts property address (lat/lng). Calls all 7 APIs in parallel (FEMA, OpenFEMA, NASA FIRMS, ASCE, NOAA, USGS, FBI). Each wrapped in try/catch with graceful degradation (null if API fails). Calculates composite_risk_score and insurance estimates. Returns full property_risk_profile data. Auth: JWT required. Rate limit: 30/min per company. Cache results by address for 30 days
+- [ ] `insurance-generate-brief` EF: POST — accepts property_risk_profile_id. Generates Insurance Brief PDF via @react-pdf/renderer. Upload to Storage. Return URL. Auth: JWT required
+- [ ] `insurance-rate-seed` EF: manual trigger — imports NAIC state premium data into insurance_rate_factors. Run when new annual data published. Service_role only
+
+#### 25.5 Flutter Screens (~2h)
+
+- [ ] `InsuranceRiskProfileScreen` — Risk dashboard: composite score gauge (0-100), 7 risk factor cards, premium estimate range, coverage recommendations. 4-state screen
+- [ ] `FloodZoneDetailScreen` — FEMA flood zone map, claims history, NFIP vs private comparison, LOMA eligibility
+- [ ] `InsuranceBriefScreen` — Buyer-friendly summary: estimated cost, top factors, tips. Share to client portal. Download PDF
+
+#### 25.6 Web Portal (~2h)
+
+- [ ] `/realtor/insurance` — Insurance estimation dashboard: recent assessments, risk profile list
+- [ ] `/realtor/insurance/[id]` — Full risk profile: all 7 sources, claims map, coverage recommendations
+- [ ] `/realtor/insurance/assess` — New assessment: enter address, run 7-source check, view results
+
+#### Security Verification
+- [ ] RLS: company-scoped on property_risk_profiles. insurance_rate_factors is shared reference
+- [ ] All external API calls server-side only (EFs) — no client-side API exposure
+- [ ] Rate limiting on insurance-assess-risk (expensive multi-API call)
+- [ ] Cache risk profiles by address to reduce redundant API calls
+- [ ] PDF generation: signed URLs with expiration for download links
+- [ ] No PII in risk profiles — property data only, not owner data
+
+#### Ecosystem Connections
+- [ ] **RE3** (Smart CMA) — insurance estimate in cost-to-own section
+- [ ] **RE23** (Investment) — insurance estimate auto-populates operating expenses for rental analysis
+- [ ] **RE24** (HOA) — HOA master policy gaps feed into insurance assessment
+- [ ] **RE21** (Negotiation) — insurance cost strengthens buyer negotiation ("Insurance $2K/yr higher than expected")
+- [ ] **RE26** (Maintenance) — insurance cost in annual home budget
+- [ ] **RE30** (Storm Alerts) — shares risk data (flood zones, hail history, wildfire proximity)
+- [ ] **Phase P** (Recon) — property characteristics auto-populated from Recon scans
+- [ ] **Client Portal** — risk profile shared with buyer
+- [ ] **CUST9** — modules gated per company plan
+
+#### i18n Requirements
+- [ ] Risk level labels, coverage types, and recommendation text in 10 locales
+- [ ] Currency formatting locale-aware (all estimates in USD but formatted per locale)
+- [ ] Flood zone designations: keep original FEMA codes (A, AE, V, VE, X) but translate descriptions
+- [ ] PDF brief: locale-aware formatting and labels
+- [ ] Note: insurance regulations are US-specific. Add disclaimer for non-US markets
+
+- [ ] All builds pass: `flutter analyze`, `npm run build` for web-portal
+- [ ] Commit: `[RE25] Insurance cost estimation — 7-source risk assessment (FEMA/NFIP/NASA/ASCE/NOAA/USGS/FBI), composite score, premium estimate, buyer brief, cost-to-own, claims history map`
+
+### RE26 — Post-Close Home Maintenance Engine (~28h) — S145
+*Source: s132-realtor-10-gaps-spec.md, proptech-flagship-research-s128.md*
+*Depends on: RE1 (Realtor CRM), RE5 (Transaction Engine), RE9 (Dispatch Engine), F10 (ZForge), CUST9 (Module Registry)*
+*CUST9 Modules: HOME_PROFILES, HOME_SYSTEMS, MAINTENANCE_SCHEDULES, HOME_VALUE_UPDATES, CAPITAL_PLANNING*
+
+**What this builds:** Lifetime client relationship engine — after every closing, buyer's agent sets up Home Health Dashboard at client.zafto.cloud. Tracks every system, sends climate-zone maintenance reminders, warns about warranty expirations, budgets maintenance costs, dispatches contractors, sends annual value updates with refinance detection. 400+ pre-loaded tasks by climate zone. HUD EUL equipment lifespan forecasting. Replaces Homebot ($25/mo) and HomeKeepr ($40-75/mo) with contractor-grade depth.
+
+**System Connectivity:**
+- Reads from: `companies`, `users`, `realtor_contacts` (RE2), `properties` (D5), `realtor_transactions` (RE4-RE5), `market_snapshots` (RE21), `property_risk_profiles` (RE25)
+- Writes to: 4 new tables (see below)
+- Wires to: Open-Meteo API (free, climate normals), NOAA Climate Normals (free), USDA Plant Hardiness Zone API (free, phzmapi.org), HUD EUL tables (seeded), NWS Weather API (free, freeze/storm alerts), FRED API (mortgage rates for refi detection), FHFA HPI (appreciation estimates), RE9 Dispatch Engine (contractor dispatch), Client Portal (homeowner dashboard), INTEG6 (deduplicate with CLIENT3 Maintenance)
+
+#### 26.0 Migration — `20260221000150_re26_maintenance_engine.sql`
+
+```sql
+-- RE26: Post-Close Home Maintenance Engine
+
+CREATE TABLE home_profiles (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  client_user_id UUID REFERENCES auth.users(id),
+  contact_id UUID REFERENCES realtor_contacts(id),
+  property_id UUID REFERENCES properties(id),
+  address TEXT NOT NULL,
+  year_built INT,
+  sqft NUMERIC(10,2),
+  beds INT,
+  baths NUMERIC(3,1),
+  stories INT,
+  climate_zone TEXT,
+  usda_hardiness_zone TEXT,
+  construction_type TEXT,
+  foundation_type TEXT,
+  roof_type TEXT,
+  siding_type TEXT,
+  heating_system TEXT,
+  cooling_system TEXT,
+  water_heater_type TEXT,
+  electrical_panel_type TEXT,
+  septic_or_sewer TEXT CHECK (septic_or_sewer IN ('septic', 'sewer')),
+  well_or_municipal TEXT CHECK (well_or_municipal IN ('well', 'municipal')),
+  pool BOOLEAN DEFAULT false,
+  sprinkler_system BOOLEAN DEFAULT false,
+  fireplace BOOLEAN DEFAULT false,
+  created_by UUID REFERENCES auth.users(id),
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  deleted_at TIMESTAMPTZ
+);
+
+ALTER TABLE home_profiles ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "home_profiles_select" ON home_profiles FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "home_profiles_insert" ON home_profiles FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "home_profiles_update" ON home_profiles FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "home_profiles_delete" ON home_profiles FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin'));
+CREATE INDEX idx_home_profiles_company ON home_profiles (company_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_home_profiles_contact ON home_profiles (contact_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_home_profiles_climate ON home_profiles (climate_zone) WHERE deleted_at IS NULL;
+CREATE TRIGGER home_profiles_updated BEFORE UPDATE ON home_profiles FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER home_profiles_audit AFTER INSERT OR UPDATE OR DELETE ON home_profiles FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+CREATE TABLE home_systems (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  home_profile_id UUID NOT NULL REFERENCES home_profiles(id),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  system_category TEXT NOT NULL CHECK (system_category IN ('hvac', 'plumbing', 'electrical', 'roofing', 'appliance', 'structural', 'exterior', 'interior', 'landscaping', 'safety')),
+  system_name TEXT NOT NULL,
+  brand TEXT,
+  model TEXT,
+  serial_number TEXT,
+  install_date DATE,
+  estimated_lifespan_years INT,
+  warranty_expiration DATE,
+  last_service_date DATE,
+  next_service_date DATE,
+  condition TEXT CHECK (condition IN ('excellent', 'good', 'fair', 'poor', 'needs_replacement')),
+  replacement_cost_estimate NUMERIC(10,2),
+  annual_maintenance_cost NUMERIC(8,2),
+  notes TEXT,
+  photos JSONB,
+  service_history JSONB,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  deleted_at TIMESTAMPTZ
+);
+
+ALTER TABLE home_systems ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "home_systems_select" ON home_systems FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "home_systems_insert" ON home_systems FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "home_systems_update" ON home_systems FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "home_systems_delete" ON home_systems FOR DELETE USING (company_id = requesting_company_id());
+CREATE INDEX idx_home_systems_company ON home_systems (company_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_home_systems_profile ON home_systems (home_profile_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_home_systems_category ON home_systems (system_category) WHERE deleted_at IS NULL;
+CREATE INDEX idx_home_systems_warranty ON home_systems (warranty_expiration) WHERE warranty_expiration IS NOT NULL AND deleted_at IS NULL;
+CREATE TRIGGER home_systems_updated BEFORE UPDATE ON home_systems FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER home_systems_audit AFTER INSERT OR UPDATE OR DELETE ON home_systems FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+CREATE TABLE maintenance_schedules (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  home_profile_id UUID NOT NULL REFERENCES home_profiles(id),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  task_name TEXT NOT NULL,
+  task_description TEXT,
+  category TEXT NOT NULL,
+  frequency TEXT NOT NULL CHECK (frequency IN ('monthly', 'quarterly', 'semi_annual', 'annual', 'biennial', 'as_needed')),
+  applicable_months INT[],
+  climate_zone_specific BOOLEAN DEFAULT false,
+  estimated_cost NUMERIC(8,2),
+  estimated_duration_minutes INT,
+  diy_difficulty TEXT CHECK (diy_difficulty IN ('easy', 'moderate', 'hard', 'professional_only')),
+  related_system_id UUID REFERENCES home_systems(id),
+  last_completed DATE,
+  next_due DATE,
+  overdue BOOLEAN DEFAULT false,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  deleted_at TIMESTAMPTZ
+);
+
+ALTER TABLE maintenance_schedules ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "maint_sched_select" ON maintenance_schedules FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "maint_sched_insert" ON maintenance_schedules FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "maint_sched_update" ON maintenance_schedules FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "maint_sched_delete" ON maintenance_schedules FOR DELETE USING (company_id = requesting_company_id());
+CREATE INDEX idx_maint_sched_company ON maintenance_schedules (company_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_maint_sched_profile ON maintenance_schedules (home_profile_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_maint_sched_due ON maintenance_schedules (next_due) WHERE deleted_at IS NULL AND overdue = false;
+CREATE INDEX idx_maint_sched_overdue ON maintenance_schedules (overdue) WHERE overdue = true AND deleted_at IS NULL;
+CREATE TRIGGER maint_sched_updated BEFORE UPDATE ON maintenance_schedules FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER maint_sched_audit AFTER INSERT OR UPDATE OR DELETE ON maintenance_schedules FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+CREATE TABLE home_value_updates (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  home_profile_id UUID NOT NULL REFERENCES home_profiles(id),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  update_date DATE NOT NULL,
+  estimated_value NUMERIC(12,2),
+  previous_value NUMERIC(12,2),
+  change_amount NUMERIC(10,2),
+  change_pct NUMERIC(5,2),
+  data_source TEXT,
+  neighborhood_trend TEXT,
+  equity_estimate NUMERIC(12,2),
+  mortgage_balance_estimate NUMERIC(12,2),
+  refinance_opportunity BOOLEAN DEFAULT false,
+  refinance_savings_estimate NUMERIC(8,2),
+  agent_message TEXT,
+  created_at TIMESTAMPTZ DEFAULT now()
+  -- No updated_at — value updates are immutable snapshots
+  -- No deleted_at — historical record, never deleted
+);
+
+ALTER TABLE home_value_updates ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "value_updates_select" ON home_value_updates FOR SELECT USING (company_id = requesting_company_id());
+-- INSERT via service_role (CRON) or agent action. No client-side inserts
+CREATE INDEX idx_value_updates_company ON home_value_updates (company_id);
+CREATE INDEX idx_value_updates_profile ON home_value_updates (home_profile_id, update_date DESC);
+CREATE INDEX idx_value_updates_refi ON home_value_updates (refinance_opportunity) WHERE refinance_opportunity = true;
+```
+
+- [ ] Write migration file `20260221000150_re26_maintenance_engine.sql`
+- [ ] Seed maintenance task library: 400+ tasks organized by season × climate zone (see 26.1)
+- [ ] Seed HUD EUL reference data: equipment lifespan table (water heater 10-12yr, HVAC 15-20yr, roof asphalt 20-25yr, roof metal 40-60yr, appliances 10-15yr)
+- [ ] Run `npm run gen-types` in web-portal, copy `database.types.ts` to all 4 portals
+
+#### 26.1 Home Setup & System Inventory (~4h)
+
+- [ ] Agent initiates home profile post-closing: auto-populate from transaction data (address, beds, baths, sqft, year built)
+- [ ] System inventory wizard: pre-populated checklist by home type. Record per system: type, brand, model (photo OCR of label), install date, warranty end. Systems: HVAC (furnace, AC, heat pump), water heater (tank/tankless), roof (material, age), appliances (fridge, dishwasher, washer, dryer, oven), plumbing (pipe type, sump pump), electrical (panel amperage), exterior (siding, gutters, deck, fence, garage door), safety (smoke/CO detectors, fire extinguisher), landscaping (sprinkler, pool equipment, septic)
+- [ ] Photo documentation: OCR extracts brand/model/serial/manufacture date from appliance label photos (Claude reads labels)
+- [ ] HUD EUL integration: auto-populate estimated_lifespan_years from HUD tables. Show replacement timeline
+
+#### 26.2 Climate-Zone Maintenance Schedules (~6h)
+
+- [ ] Climate zone detection: NOAA Climate Normals + USDA Plant Hardiness Zone from address. Categories: Cold (zones 3-5), Temperate (6-7), Hot-Humid (8-9), Hot-Arid (10+), Coastal, Mountain
+- [ ] Seasonal task library (400+ tasks, pre-seeded per climate zone):
+  - **Spring**: AC tune-up, filter replace, inspect roof, clean gutters, power wash, check foundation, test sprinklers, aerate lawn, test smoke/CO detectors
+  - **Summer**: monthly filter replace, clean outdoor AC unit, trim trees (8-10ft from roof), deck inspection, termite inspection, check attic ventilation (hot-humid)
+  - **Fall**: furnace tune-up, clean gutters (leaf fall), disconnect outdoor hoses, insulate faucets, seal gaps, reverse ceiling fans, clean dryer vent, winterize sprinklers
+  - **Winter**: monitor ice dams (cold), check humidity (35-45%), insulate pipes, GFCI test, chimney inspection, CO detector check
+- [ ] Weather-triggered alerts: freeze warning → "Disconnect hoses, insulate spigots." Hail warning → "Park car in garage." Hurricane → prep checklist
+
+#### 26.3 Notifications & Contractor Dispatch (~4h)
+
+- [ ] Smart reminders: 2 weeks before seasonal task due → push notification to homeowner. "Time to schedule AC tune-up. Last service: March 2025."
+- [ ] Overdue alerts: 30+ days overdue → escalation. "Furnace hasn't been serviced in 14 months. Neglect can void warranty."
+- [ ] Warranty expiration warnings: 90 days before any warranty expires → alert. "Samsung dishwasher warranty expires June 15."
+- [ ] One-tap contractor dispatch via RE9: "Get quotes for this task" → dispatches to trade-matched contractors. Homeowner receives bids in app
+- [ ] Preferred contractor list: agent sets preferred contractors for their clients. Appear first in dispatch results
+
+#### 26.4 Value Updates & Capital Planning (~4h)
+
+- [ ] Monthly/quarterly value estimate: FHFA HPI metro appreciation applied to purchase price → estimated current value + equity
+- [ ] Refinance detection: FRED API rates vs homeowner's rate. When current rate >0.75% below theirs AND >20% equity → opportunity alert
+- [ ] "Ready to sell" nudge: value appreciated >20% AND homeowner >3yr in home → soft touch from agent
+- [ ] Agent-branded messages: all updates come from the AGENT, not "Zafto" — keeps agent top-of-mind
+- [ ] Annual maintenance budget: 1-2% of home value/yr, broken down by category
+- [ ] Capital replacement timeline: 5yr, 10yr, 20yr chart showing when systems need replacement + estimated cost
+
+#### 26.5 Edge Functions (~4h)
+
+- [ ] `maintenance-reminder-cron` EF: CRON (runs daily at 13:00 UTC) — checks all maintenance_schedules where next_due <= now() + 14 days. Sends push/email to homeowner. Updates overdue flag. Service_role, iterates per company_id
+- [ ] `home-value-update-cron` EF: CRON (runs monthly on 15th at 04:00 UTC) — for each active home_profile, calculate estimated value using FHFA HPI appreciation from purchase. Check FRED rates for refi opportunity. Insert home_value_update. Send agent-branded notification to homeowner. Service_role
+- [ ] `maintenance-setup-from-transaction` EF: POST — accepts transaction_id. Creates home_profile from transaction data. Detects climate zone. Generates 400+ maintenance_schedule rows based on climate zone + home characteristics. Auth: JWT required
+- [ ] `maintenance-weather-alert` EF: triggered by NWS alerts (via RE30 storm detection or separate webhook) — checks for freeze/storm warnings near home_profiles. Sends weather-specific maintenance alerts
+
+#### 26.6 Flutter Screens (~3h)
+
+- [ ] `MaintenanceCalendarScreen` — Monthly calendar view with colored task dots. Tap day to see tasks. Filter by category/overdue. 4-state screen
+- [ ] `MaintenanceTaskDetailScreen` — Task description, DIY difficulty, estimated cost/duration, related system info, "Get Quotes" contractor dispatch button
+- [ ] `CapitalPlanningScreen` — Timeline chart: system replacement dates + costs. 5yr/10yr toggle. Budget recommendations
+- [ ] `EquipmentHealthScreen` — All systems with lifespan bars (green/yellow/red), warranty status, service history
+- [ ] `HomeSetupWizardScreen` — Step-by-step system inventory with photo capture and OCR
+
+#### 26.7 Web Portal (~3h)
+
+- [ ] `/realtor/maintenance` — Maintenance dashboard: active home profiles, overdue tasks, upcoming reminders
+- [ ] `/realtor/maintenance/[homeId]` — Home detail: system inventory, maintenance calendar, capital plan, value history
+- [ ] `/realtor/maintenance/setup` — Setup wizard for new home profiles
+- [ ] `/realtor/maintenance/reports` — Generate annual maintenance report for homeowner (agent-branded PDF)
+
+#### Security Verification
+- [ ] RLS: company-scoped on all tables. Homeowners see their own profile via client portal (separate RLS policy for client_user_id match)
+- [ ] Value updates: agent-branded, not Zafto-branded (per owner directive)
+- [ ] Warranty data may contain serial numbers — mark as sensitive, no public exposure
+- [ ] CRON EFs: service_role but iterate per company_id, never cross-company
+- [ ] Photo storage: private bucket with signed URLs
+
+#### Ecosystem Connections
+- [ ] **RE5** (Transaction Engine) — auto-setup home profile at closing
+- [ ] **RE9** (Dispatch Engine) — contractor dispatch for maintenance tasks
+- [ ] **RE25** (Insurance) — insurance cost in annual home budget
+- [ ] **RE30** (Storm Alerts) — weather-triggered maintenance alerts
+- [ ] **CLIENT3** (Homeowner Maintenance) — coordinate via INTEG6 to deduplicate. RE26 is agent-facing, CLIENT3 is homeowner-facing. Same underlying data
+- [ ] **Client Portal** — homeowner dashboard at client.zafto.cloud
+- [ ] **CUST9** — modules gated per company plan
+
+#### i18n Requirements
+- [ ] Task names, descriptions, and seasonal labels in 10 locales
+- [ ] Climate zone terminology localized (climate zones are US-specific; provide equivalent descriptions for other markets)
+- [ ] Notification templates in 10 locales — professional home maintenance terminology per language
+- [ ] Equipment types and categories translated
+- [ ] Currency formatting locale-aware for cost estimates and value updates
+
+- [ ] All builds pass: `flutter analyze`, `npm run build` for web-portal, client-portal
+- [ ] Commit: `[RE26] Post-close maintenance engine — home profiles, 400+ climate-zone tasks, HUD EUL forecasting, warranty tracking, weather alerts, contractor dispatch, value updates, refi detection, capital planning`
+
+---
+
+### RE27 — Power Dialer with Voicemail Drop (~24h) — S145
+*Source: s132-realtor-10-gaps-spec.md, realtor-lead-gen-apis-research.md*
+*Depends on: RE1 (Realtor CRM), RE2 (CRM Foundation), RE14 (Lead Gen), CUST9 (Module Registry)*
+*CUST9 Modules: POWER_DIALER, VOICEMAIL_DROP, CALL_RECORDING, DNC_COMPLIANCE, CALL_SCRIPTS*
+
+**What this builds:** Professional-grade power dialer integrated with Zafto CRM — single-line and multi-line dialing (up to 3 concurrent via SignalWire), pre-recorded voicemail drop with AMD, local presence dialing, DNC compliance (federal + state + NY block + TCPA), call recording with 2-party consent detection, 20+ prospecting scripts with objection handling, disposition auto-routing to CRM stages and drip campaigns. Replaces Mojo Dialer ($149-399/mo). Built on SignalWire (~$0.01/min, already in stack).
+
+**System Connectivity:**
+- Reads from: `companies`, `users`, `realtor_contacts` (RE2), `realtor_contact_activities` (RE2), `company_members` (roles)
+- Writes to: 3 new tables (see below), `realtor_contacts` (status/disposition updates), `realtor_contact_activities` (call logging)
+- Wires to: SignalWire API (voice, AMD, local presence), FTC DNC Registry API (free, up to 5 area codes), state DNC lists, RE2 CRM (contact updates, drip enrollment), RE14 Lead Gen (call lists from Seller Finder), push notifications (FCM)
+
+#### 27.0 Migration — `20260221000151_re27_power_dialer.sql`
+
+```sql
+-- RE27: Power Dialer with Voicemail Drop
+
+CREATE TABLE dialer_sessions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  agent_user_id UUID NOT NULL REFERENCES auth.users(id),
+  session_type TEXT NOT NULL CHECK (session_type IN ('single', 'multi_line')),
+  lines_count INT NOT NULL DEFAULT 1 CHECK (lines_count >= 1 AND lines_count <= 3),
+  calling_list_name TEXT,
+  calling_list_contacts JSONB,
+  started_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  ended_at TIMESTAMPTZ,
+  calls_attempted INT DEFAULT 0,
+  calls_connected INT DEFAULT 0,
+  voicemails_dropped INT DEFAULT 0,
+  total_talk_time_seconds INT DEFAULT 0,
+  dispositions_summary JSONB,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  deleted_at TIMESTAMPTZ
+);
+
+ALTER TABLE dialer_sessions ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "dialer_sessions_select" ON dialer_sessions FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "dialer_sessions_insert" ON dialer_sessions FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "dialer_sessions_update" ON dialer_sessions FOR UPDATE USING (company_id = requesting_company_id() AND agent_user_id = auth.uid());
+CREATE POLICY "dialer_sessions_delete" ON dialer_sessions FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin'));
+CREATE INDEX idx_dialer_sessions_company ON dialer_sessions (company_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_dialer_sessions_agent ON dialer_sessions (agent_user_id, started_at DESC) WHERE deleted_at IS NULL;
+CREATE TRIGGER dialer_sessions_audit AFTER INSERT OR UPDATE OR DELETE ON dialer_sessions FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+CREATE TABLE call_records (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  agent_user_id UUID NOT NULL REFERENCES auth.users(id),
+  contact_id UUID REFERENCES realtor_contacts(id),
+  dialer_session_id UUID REFERENCES dialer_sessions(id),
+  direction TEXT NOT NULL DEFAULT 'outbound' CHECK (direction IN ('outbound', 'inbound')),
+  from_number TEXT NOT NULL,
+  to_number TEXT NOT NULL,
+  call_sid TEXT,
+  started_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  answered_at TIMESTAMPTZ,
+  ended_at TIMESTAMPTZ,
+  duration_seconds INT,
+  talk_time_seconds INT,
+  voicemail_dropped BOOLEAN DEFAULT false,
+  voicemail_recording_id UUID REFERENCES voicemail_recordings(id),
+  recording_url TEXT,
+  recording_consent BOOLEAN,
+  disposition TEXT CHECK (disposition IN (
+    'connected_appointment', 'connected_interested', 'connected_not_interested',
+    'connected_callback', 'voicemail_dropped', 'no_answer_no_vm',
+    'wrong_number', 'disconnected', 'dnc_requested',
+    'already_listed', 'already_under_contract', 'not_owner', 'deceased'
+  )),
+  disposition_notes TEXT,
+  follow_up_date DATE,
+  follow_up_action TEXT,
+  local_presence BOOLEAN DEFAULT false,
+  dnc_checked BOOLEAN DEFAULT false,
+  consent_state TEXT,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  deleted_at TIMESTAMPTZ
+);
+
+ALTER TABLE call_records ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "call_records_select" ON call_records FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "call_records_insert" ON call_records FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "call_records_update" ON call_records FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "call_records_delete" ON call_records FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin'));
+CREATE INDEX idx_call_records_company ON call_records (company_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_call_records_contact ON call_records (contact_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_call_records_session ON call_records (dialer_session_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_call_records_disposition ON call_records (disposition) WHERE deleted_at IS NULL;
+CREATE INDEX idx_call_records_followup ON call_records (follow_up_date) WHERE follow_up_date IS NOT NULL AND deleted_at IS NULL;
+CREATE TRIGGER call_records_audit AFTER INSERT OR UPDATE OR DELETE ON call_records FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+CREATE TABLE voicemail_recordings (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  agent_user_id UUID NOT NULL REFERENCES auth.users(id),
+  recording_name TEXT NOT NULL,
+  recording_url TEXT NOT NULL,
+  duration_seconds INT,
+  is_default BOOLEAN DEFAULT false,
+  use_count INT DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  deleted_at TIMESTAMPTZ
+);
+
+ALTER TABLE voicemail_recordings ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "vm_recordings_select" ON voicemail_recordings FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "vm_recordings_insert" ON voicemail_recordings FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "vm_recordings_update" ON voicemail_recordings FOR UPDATE USING (company_id = requesting_company_id() AND agent_user_id = auth.uid());
+CREATE POLICY "vm_recordings_delete" ON voicemail_recordings FOR DELETE USING (company_id = requesting_company_id() AND (agent_user_id = auth.uid() OR requesting_user_role() IN ('owner', 'admin')));
+CREATE INDEX idx_vm_recordings_company ON voicemail_recordings (company_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_vm_recordings_agent ON voicemail_recordings (agent_user_id) WHERE deleted_at IS NULL;
+CREATE TRIGGER vm_recordings_updated BEFORE UPDATE ON voicemail_recordings FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER vm_recordings_audit AFTER INSERT OR UPDATE OR DELETE ON voicemail_recordings FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+```
+
+- [ ] Write migration file `20260221000151_re27_power_dialer.sql`
+- [ ] Seed 20+ call scripts: expired listing, FSBO approach, sphere check-in, referral ask, open house follow-up, circle prospecting, investor outreach, price reduction callback, Just Sold. Each with opening, qualifying questions, value prop, objection responses, closing
+- [ ] Seed objection handling cards: 9 common objections × 3-4 response options
+- [ ] Run `npm run gen-types` in web-portal, copy `database.types.ts` to all 4 portals
+
+#### 27.1 SignalWire Dialer (~6h)
+
+- [ ] Account provisioning: each company gets SignalWire sub-account. Numbers on-demand (~$1/mo per number, ~$0.01/min)
+- [ ] Local presence numbers: provision numbers matching callee area codes. Local presence increases answer rates 30-40%
+- [ ] Single-line dialer: click-to-call from lead card. Auto-dial through list. Log disposition, set follow-up, next. Pace: 40-60 calls/hr
+- [ ] Multi-line dialer (up to 3): dial 3 simultaneously, first to answer connects. Pace: 80-120 calls/hr. Connect within 2s of answer (TCPA "dead air" compliance)
+- [ ] Call recording: with consent. Two-party consent states (CA, CT, FL, IL, MD, MA, MT, NH, OR, PA, WA) auto-detected by callee area code → play consent prompt
+
+#### 27.2 Voicemail Drop & AMD (~4h)
+
+- [ ] Pre-recorded voicemails: agent records 3-5 messages (30-60s each). Different per: first touch, follow-up, expired listing, FSBO, market update
+- [ ] Answering machine detection (AMD) via SignalWire: when VM detected, auto-play selected recording. Agent moves to next call immediately. Saves ~45s per VM × 30 VMs/session = 22+ min saved
+- [ ] Voicemail analytics: delivery rate, callback rate per recording. A/B test messages
+
+#### 27.3 DNC Compliance (~4h)
+
+- [ ] National DNC Registry scrub: FTC API (free, up to 5 area codes). Remove DNC numbers before session. Show count: "247 loaded, 18 removed (DNC), 229 dialable"
+- [ ] State DNC list scrub: CO, FL, IN, LA, MA, MO, OK, PA, TN, TX, WY — additional removals
+- [ ] Internal DNC: "don't call me" → permanent flag with timestamp + recording reference. Auto-removed from all future lists
+- [ ] New York block: ALL RE cold calling prohibited in NY. Auto-block 212/347/718/646/917/929/516/631/585/607/315/518/845/914 area codes
+- [ ] FSBO exception: calling FSBO to discuss specific buyer not solicitation per NAR. Flag exempt
+- [ ] Time zone awareness: auto-detect recipient time zone from area code. Block calls outside 8am-9pm recipient local time (TCPA)
+- [ ] Frequency caps: max 2 calls per contact per 7-day period
+
+#### 27.4 Disposition & Auto-Routing (~4h)
+
+- [ ] Disposition picker after every call: connected-appointment (hot), connected-interested (warm), connected-not-interested (cold), connected-callback, voicemail-dropped, no-answer, wrong-number, disconnected, dnc-requested, already-listed, under-contract, not-owner, deceased
+- [ ] Auto-routing by disposition: appointment → pipeline "Appointment Set" + calendar event + confirmation text. Interested → warm nurture drip + follow-up in 3 days. Not interested → "Lost" + re-engage 90 days. Callback → task for callback date. DNC → internal DNC + remove from all lists
+- [ ] Call scripts: 20+ pre-loaded, agent can create/edit custom. Track conversion rates per script
+- [ ] Objection handling cards: one-tap during call. 9 objections × 3-4 responses
+
+#### 27.5 Edge Functions (~3h)
+
+- [ ] `dialer-initiate-call` EF: POST — accepts from_number, to_number, agent_user_id. Creates SignalWire call via REST API. Returns call_sid. Auth: JWT required. Rate limit: 10/min per agent (prevents abuse). DNC check before dial
+- [ ] `dialer-voicemail-drop` EF: POST — triggered when AMD detects voicemail. Plays pre-recorded message via SignalWire. Logs call_record with voicemail_dropped=true. Service_role
+- [ ] `dialer-dnc-scrub` EF: POST — accepts phone number array. Checks against FTC DNC Registry + state lists + internal DNC. Returns clean list. Auth: JWT required. Rate limit: 5/min per company
+- [ ] `dialer-session-analytics` EF: GET — accepts dialer_session_id or date range. Returns: calls/hr, connect %, disposition breakdown, talk time avg, best time-of-day, conversion funnel. Auth: JWT required
+
+#### 27.6 Flutter Screens (~4h)
+
+- [ ] `DialerSessionScreen` — Active dialing interface: current contact card, call controls (dial/hang up/hold/mute), disposition picker, notes field, script display, objection cards, next button. Multi-line status indicator
+- [ ] `DialerSetupScreen` — Load contacts (from CRM filter/list), set call order, select voicemail recording, single vs multi-line, local presence toggle
+- [ ] `VoicemailLibraryScreen` — Record/manage voicemail drops. Preview playback. Usage stats. Set default
+- [ ] `DialerAnalyticsScreen` — Session history, calls/hr, connect rate, best times, disposition breakdown, conversion funnel
+- [ ] `CallScriptScreen` — Browse/search scripts. View during call. Create custom scripts
+
+#### 27.7 Web Portal (~3h)
+
+- [ ] `/realtor/dialer` — Dialer dashboard: recent sessions, quick-start, analytics summary
+- [ ] `/realtor/dialer/session` — Web-based dialer (WebRTC via SignalWire) with full controls
+- [ ] `/realtor/dialer/scripts` — Script library management: view, create, edit, share within team
+- [ ] `/realtor/dialer/analytics` — Detailed analytics: best time, best day, ROI per call, conversion funnel
+
+#### Security Verification
+- [ ] RLS: company-scoped on all tables. Agent can only update their own sessions and recordings
+- [ ] SignalWire API credentials in Supabase secrets, never exposed to client
+- [ ] Call recordings stored in private Storage bucket with signed URLs (expiring). Recordings auto-deleted after configurable retention period (default 90 days)
+- [ ] DNC compliance: scrub is MANDATORY before any dial session — EF blocks calls to unscrubbed lists
+- [ ] TCPA compliance: time zone check, frequency caps, consent recording for 2-party states
+- [ ] Phone numbers: never displayed in client-side logs. Masked in analytics (last 4 digits only)
+- [ ] NY cold calling block: HARD BLOCK, not just warning. Cannot be overridden
+
+#### Ecosystem Connections
+- [ ] **RE2** (CRM) — call outcomes update contact record, enroll in drip campaigns, create tasks
+- [ ] **RE14** (Lead Gen) — call lists generated from Seller Finder leads
+- [ ] **RE10** (Listing Mgmt) — expired listing call lists auto-generated
+- [ ] **CUST9** — modules gated per company plan. Multi-line dialing may be premium-tier only
+
+#### i18n Requirements
+- [ ] Disposition labels, script text, and objection responses in 10 locales
+- [ ] DNC compliance: US-specific. Add market-specific telemarketing regulations for non-US (GDPR, CASL, etc.) in future
+- [ ] UI labels and analytics dashboard translated
+- [ ] Voicemail recordings: agent records in their language (no auto-translation needed)
+
+- [ ] All builds pass: `flutter analyze`, `npm run build` for web-portal
+- [ ] Commit: `[RE27] Power dialer + voicemail drop — SignalWire single/multi-line, local presence, AMD, DNC compliance (federal/state/NY/TCPA), call recording, 20+ scripts, disposition auto-routing, analytics`
+
+---
+
+### RE28 — IDX Agent Websites (~28h) — S145
+*Source: s132-realtor-10-gaps-spec.md, realtor-lead-gen-apis-research.md*
+*Depends on: RE1 (Realtor CRM), RE2 (CRM), RE10 (Listing Mgmt), RE12 (Marketing Factory), CUST9 (Module Registry)*
+*CUST9 Modules: AGENT_WEBSITE, SINGLE_PROPERTY_SITE, NEIGHBORHOOD_PAGES, LEAD_CAPTURE*
+
+**What this builds:** Agent website platform replacing $300-500/mo subscriptions — branded agent profiles, single-property sites from listings, data-rich neighborhood pages (Census, crime, schools, Walk Score, POI, flood, climate, permits, market data from 15+ free APIs), lead capture with CRM routing, SEO-optimized (schema.org), custom domains. Phase 1 without MLS search (architecture ready for Phase 2 IDX). Static-generated (Next.js SSG) for sub-second loads. Replaces kvCORE ($499-750/mo), Luxury Presence ($200-500/mo).
+
+**System Connectivity:**
+- Reads from: `companies`, `users`, `realtor_contacts` (RE2), `realtor_listings` (RE10), `properties` (D5), `market_snapshots` (RE21), `recon_scans` (Phase P)
+- Writes to: 3 new tables (see below), `realtor_contacts` (lead creation from forms)
+- Wires to: Census ACS API (free), FBI Crime Data API (free), Walk Score API (free, 5K/day), GreatSchools API (school ratings), Overpass/OSM API (free, POI), FEMA NFHL API (free, flood zones), Open-Meteo API (free, climate), Google Maps (static maps), Socrata (building permits, where available), market_snapshots (RE21), Cloudflare (custom domains/SSL), Vercel (hosting)
+
+#### 28.0 Migration — `20260221000152_re28_agent_websites.sql`
+
+```sql
+-- RE28: IDX Agent Websites
+
+CREATE TABLE agent_websites (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  agent_user_id UUID NOT NULL REFERENCES auth.users(id),
+  subdomain TEXT UNIQUE,
+  custom_domain TEXT UNIQUE,
+  template_id TEXT NOT NULL DEFAULT 'modern_minimal',
+  branding JSONB NOT NULL DEFAULT '{}',
+  -- {primary_color, secondary_color, accent_color, font, logo_url, headshot_url, brokerage_logo_url}
+  seo_settings JSONB NOT NULL DEFAULT '{}',
+  -- {meta_title, meta_description, og_image_url, ga4_id}
+  analytics_tracking JSONB,
+  contact_form_email TEXT,
+  social_links JSONB,
+  about_text TEXT,
+  specialties TEXT[],
+  service_areas TEXT[],
+  testimonials JSONB,
+  certifications TEXT[],
+  published BOOLEAN DEFAULT false,
+  published_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  deleted_at TIMESTAMPTZ
+);
+
+ALTER TABLE agent_websites ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "agent_websites_select" ON agent_websites FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "agent_websites_insert" ON agent_websites FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "agent_websites_update" ON agent_websites FOR UPDATE USING (company_id = requesting_company_id() AND (agent_user_id = auth.uid() OR requesting_user_role() IN ('owner', 'admin')));
+CREATE POLICY "agent_websites_delete" ON agent_websites FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner', 'admin'));
+CREATE INDEX idx_agent_websites_company ON agent_websites (company_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_agent_websites_agent ON agent_websites (agent_user_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_agent_websites_subdomain ON agent_websites (subdomain) WHERE subdomain IS NOT NULL AND deleted_at IS NULL;
+CREATE TRIGGER agent_websites_updated BEFORE UPDATE ON agent_websites FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER agent_websites_audit AFTER INSERT OR UPDATE OR DELETE ON agent_websites FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+CREATE TABLE single_property_sites (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  agent_user_id UUID NOT NULL REFERENCES auth.users(id),
+  listing_id UUID REFERENCES realtor_listings(id),
+  property_id UUID REFERENCES properties(id),
+  listing_address TEXT NOT NULL,
+  listing_price NUMERIC(12,2),
+  listing_description TEXT,
+  property_details JSONB,
+  photos JSONB,
+  virtual_tour_url TEXT,
+  floor_plan_url TEXT,
+  neighborhood_data JSONB,
+  open_house_dates JSONB,
+  subdomain TEXT UNIQUE,
+  custom_domain TEXT UNIQUE,
+  lead_capture_enabled BOOLEAN DEFAULT true,
+  leads_captured INT DEFAULT 0,
+  views INT DEFAULT 0,
+  unique_visitors INT DEFAULT 0,
+  published BOOLEAN DEFAULT false,
+  expires_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  deleted_at TIMESTAMPTZ
+);
+
+ALTER TABLE single_property_sites ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "prop_sites_select" ON single_property_sites FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "prop_sites_insert" ON single_property_sites FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "prop_sites_update" ON single_property_sites FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "prop_sites_delete" ON single_property_sites FOR DELETE USING (company_id = requesting_company_id());
+CREATE INDEX idx_prop_sites_company ON single_property_sites (company_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_prop_sites_listing ON single_property_sites (listing_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_prop_sites_subdomain ON single_property_sites (subdomain) WHERE subdomain IS NOT NULL AND deleted_at IS NULL;
+CREATE TRIGGER prop_sites_updated BEFORE UPDATE ON single_property_sites FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER prop_sites_audit AFTER INSERT OR UPDATE OR DELETE ON single_property_sites FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+CREATE TABLE neighborhood_pages (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  agent_website_id UUID NOT NULL REFERENCES agent_websites(id),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  neighborhood_name TEXT NOT NULL,
+  center_lat NUMERIC(10,7),
+  center_lng NUMERIC(10,7),
+  boundary_polygon JSONB,
+  census_data JSONB,
+  crime_data JSONB,
+  school_data JSONB,
+  walk_score JSONB,
+  transit_score JSONB,
+  bike_score JSONB,
+  permit_activity JSONB,
+  environmental_data JSONB,
+  flood_zone_data JSONB,
+  weather_normals JSONB,
+  market_stats JSONB,
+  agent_narrative TEXT,
+  photos JSONB,
+  poi_data JSONB,
+  last_data_refresh TIMESTAMPTZ,
+  published BOOLEAN DEFAULT false,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  deleted_at TIMESTAMPTZ
+);
+
+ALTER TABLE neighborhood_pages ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "neighborhood_select" ON neighborhood_pages FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "neighborhood_insert" ON neighborhood_pages FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "neighborhood_update" ON neighborhood_pages FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "neighborhood_delete" ON neighborhood_pages FOR DELETE USING (company_id = requesting_company_id());
+CREATE INDEX idx_neighborhood_company ON neighborhood_pages (company_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_neighborhood_website ON neighborhood_pages (agent_website_id) WHERE deleted_at IS NULL;
+CREATE TRIGGER neighborhood_updated BEFORE UPDATE ON neighborhood_pages FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER neighborhood_audit AFTER INSERT OR UPDATE OR DELETE ON neighborhood_pages FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+```
+
+- [ ] Write migration file `20260221000152_re28_agent_websites.sql`
+- [ ] Run `npm run gen-types` in web-portal, copy `database.types.ts` to all 4 portals
+
+#### 28.1 Agent Profile Website (~6h)
+
+- [ ] Template system: 5-7 professionally designed templates (Modern minimal, Luxury dark, Clean professional, Bold colorful, Classic elegant). Mobile-responsive. Next.js SSG for sub-second loads
+- [ ] Branding customization: agent photo, headshot, logo, brokerage logo. Color scheme. Font selection. Social media links. "About Me" rich text
+- [ ] Subdomain hosting: [agentname].zafto.homes (free). Custom domain support with Cloudflare DNS/SSL ($0 additional)
+- [ ] Lead capture: contact form on every page. Click-to-call. Email subscription. "Schedule a showing" form. Exit-intent popup (optional). Leads auto-created in CRM with source tag "website"
+- [ ] SEO: auto-generated meta titles/descriptions. Schema.org RealEstateAgent markup. Open Graph/Twitter Cards. Sitemap.xml. robots.txt. Lighthouse 90+
+- [ ] Analytics: page views, unique visitors, time on site, lead conversion rate, traffic sources. Optional GA4 integration
+
+#### 28.2 Single-Property Sites (~4h)
+
+- [ ] One-click creation from RE10 listing: auto-populate address, price, photos, description, details, floor plan (Sketch Engine), virtual tour link
+- [ ] Full-screen photo gallery. Property details section. Neighborhood section (auto-populated). Open house dates with "Add to Calendar" (.ics). QR code for flyers
+- [ ] Lead capture: "Schedule showing", "Ask a question", "Get pre-approved" CTAs. Leads tagged with property address
+- [ ] Auto-expire when listing status changes to Sold/Expired. Option to convert to "Just Sold" page
+
+#### 28.3 Neighborhood Pages (15+ APIs) (~8h)
+
+- [ ] Census ACS: population, median age, income, education, homeownership rate, household size, commute times. Infographic cards
+- [ ] FBI Crime Data: property/violent crime rates vs national average. Trend
+- [ ] Walk Score API (5K/day free): walk/transit/bike scores
+- [ ] School data: GreatSchools API or reference. Nearby schools with ratings
+- [ ] Overpass/OSM: POI — parks, restaurants, grocery, hospitals, gyms, libraries, coffee shops. Interactive map
+- [ ] FEMA NFHL: flood zone info for the area
+- [ ] EPA environmental: Superfund sites, brownfields, toxic release near neighborhood
+- [ ] Building permits (Socrata, where available): recent permits indicate development activity
+- [ ] Open-Meteo climate normals: avg temperatures, rainfall, sunny days
+- [ ] Market stats from market_snapshots: median price, DOM, list-to-sale, YoY appreciation
+- [ ] Agent narrative: rich text area for personal knowledge. Personal touch > Zillow's generic page
+
+#### 28.4 Edge Functions (~4h)
+
+- [ ] `website-neighborhood-enrich` EF: POST — accepts neighborhood center lat/lng + radius. Calls Census ACS, FBI Crime, Walk Score, GreatSchools, Overpass, FEMA, Open-Meteo, EPA in parallel. Each wrapped in try/catch. Returns unified neighborhood_data JSON. Auth: JWT required. Rate limit: 20/min per company. Cache by lat/lng (rounded to 0.01) for 7 days
+- [ ] `website-lead-capture` EF: POST — accepts form data (name, email, phone, message, source_page). Creates realtor_contact if new (or updates existing). Sends push + email notification to agent. Returns success. Auth: public (no JWT — website visitors aren't authenticated). Rate limit: 5/min per IP (spam prevention). Honeypot field for bot detection
+- [ ] `website-generate-static` EF: POST — triggers static site generation for agent's website. Builds Next.js pages, deploys to Vercel. Returns deployment URL. Auth: JWT required. Rate limit: 5/day per agent (prevent abuse)
+- [ ] `website-analytics-track` EF: POST — lightweight page view tracker. Increments views/unique_visitors on property sites. No PII stored. Auth: public
+
+#### 28.5 Flutter Screens (~3h)
+
+- [ ] `WebsiteBuilderScreen` — Configure website: template picker, branding, about text, specialties, service areas, testimonials. Preview
+- [ ] `SinglePropertySiteScreen` — Create/manage property sites from listings. Preview. QR code generation. Analytics
+- [ ] `NeighborhoodPageScreen` — Create/edit neighborhood pages. View auto-populated data. Add agent narrative
+- [ ] `WebsiteAnalyticsScreen` — Visitor stats, lead conversion, traffic sources, top pages
+
+#### 28.6 Web Portal (~3h)
+
+- [ ] `/realtor/website` — Website management dashboard: publish status, analytics overview
+- [ ] `/realtor/website/builder` — Full website builder with live preview
+- [ ] `/realtor/website/properties` — Manage single-property sites
+- [ ] `/realtor/website/neighborhoods` — Manage neighborhood pages
+- [ ] `/realtor/website/leads` — Leads captured from website with source tracking
+
+#### Security Verification
+- [ ] Lead capture EF is PUBLIC (no JWT) — rate limited, honeypot, IP throttling to prevent spam/abuse
+- [ ] No PII in analytics tracking — only page views, no user fingerprinting
+- [ ] Custom domains: validated ownership via DNS TXT record before activation
+- [ ] Agent website content: XSS sanitized (agent-supplied HTML in about_text/narrative)
+- [ ] Photo URLs: no direct Storage bucket access from public sites (use signed URLs or CDN)
+- [ ] Subdomain collision: UNIQUE constraint prevents squatting
+
+#### Ecosystem Connections
+- [ ] **RE10** (Listing Mgmt) — listings auto-create single-property sites
+- [ ] **RE12** (Marketing Factory) — photos/content integration
+- [ ] **RE2** (CRM) — leads from website auto-create contacts
+- [ ] **RE21** (Negotiation) — market stats on neighborhood pages from market_snapshots
+- [ ] **Phase P** (Recon) — property intelligence for listing pages
+- [ ] **CUST9** — modules gated. SINGLE_PROPERTY_SITE may be unlimited, AGENT_WEBSITE 1 per agent
+
+#### i18n Requirements
+- [ ] Website builder UI labels in 10 locales
+- [ ] Agent-facing content: no auto-translation (agent writes in their language)
+- [ ] Neighborhood data labels translated (but underlying data from US APIs is English)
+- [ ] Lead capture form labels: multi-language option for diverse markets
+- [ ] SEO markup: hreflang tags for multi-language agent sites
+
+- [ ] All builds pass: `flutter analyze`, `npm run build` for web-portal
+- [ ] Commit: `[RE28] IDX agent websites — template system, agent profiles, single-property sites, neighborhood pages (15+ APIs), lead capture, SEO, custom domains, analytics`
 
 ### RE29 — AI Disclosure/Inspection Report Analysis (~24h) — S132
-*New tables: `inspection_analyses`, `inspection_items`*
+**Goal:** AI system reads inspection reports + seller disclosures → severity scoring, repair cost estimation (from Zafto contractor engine), negotiation strategy per finding, auto-generated repair request letters. Turns every buyer's agent into a negotiation genius. Currently agents skim 30-page reports and miss critical items. Zafto reads every word, scores every finding, tells the agent exactly what to ask for.
+**Monopoly attacked:** Verisk/Xactimate (repair estimates from transparent engine, not black box). Kills DisclosureDuo ($29/mo), DiscloseFlow (custom pricing) — both standalone, disconnected from transaction workflow.
+**"No One Does This":** ONLY platform that reads an inspection report AND estimates repair costs. DisclosureDuo flags "roof has damage" but can't say "$8K-12K to fix." Zafto can — contractor estimation engine. Repair request letters include ACTUAL COST ESTIMATES backed by contractor-grade data.
+**CUST9 Module:** `realtor_inspection_analysis` — gated per company plan.
 
-- [ ] Inspection report PDF upload (standard home inspection format, any inspector)
-- [ ] Claude PDF parsing (extract all inspection findings, categorize by system: foundation, roof, HVAC, plumbing, electrical, interior, exterior)
-- [ ] Severity classification per finding (Safety Hazard, Major Defect, Minor Defect, Maintenance Item, Recommended Upgrade)
-- [ ] Repair cost estimation per finding (using Zafto estimate engine price book + BLS labor rates + ZIP)
-- [ ] Priority ranking (safety hazards first, then by repair cost, then by impact on property value)
-- [ ] "Deal-breaker" identification (safety hazards or major defects exceeding configurable threshold)
-- [ ] Repair credit calculation (total estimated repairs → recommended credit request amount)
-- [ ] Counter-offer integration with RE21 (inspection findings feed PFS score update: major defects increase flexibility score)
-- [ ] Contractor dispatch for estimates (from inspection items → "Get Bids" → Zafto contractors)
-- [ ] Disclosure review (seller's disclosure form upload → Claude checks consistency between disclosures and inspection findings)
-- [ ] Share with client via client portal (buyer sees findings + costs in clear visual format)
-- [ ] Agent negotiation brief (2-page summary: deal-breakers, credit recommendations, nice-to-haves to drop)
-- [ ] Flutter screens: Inspection Upload, Finding Detail, Repair Cost Summary, Negotiation Brief
-- [ ] Web portal: Inspection Analysis dashboard, Disclosure Consistency Report
-- [ ] Commit: `[RE29] AI inspection analysis — PDF parsing, severity classification, repair cost estimation, deal-breaker detection, repair credit calc, disclosure consistency`
+**Migration: `20260221000153_re29_inspection_analysis.sql`**
+
+```sql
+-- ============================================================
+-- RE29: AI DISCLOSURE/INSPECTION REPORT ANALYSIS
+-- ============================================================
+
+-- 1. document_analyses — one per uploaded document (inspection report, disclosure, appraisal, etc.)
+CREATE TABLE document_analyses (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  transaction_id UUID REFERENCES realtor_transactions(id),  -- link to RE4/RE5 transaction
+  document_type TEXT NOT NULL CHECK (document_type IN ('inspection_report','seller_disclosure','appraisal','title_report','hoa_docs','other')),
+  document_storage_path TEXT NOT NULL,  -- Supabase Storage path
+  original_filename TEXT NOT NULL,
+  file_size_bytes BIGINT,
+  page_count INT,
+  ocr_text TEXT,  -- full extracted text (Claude output)
+  analysis_status TEXT NOT NULL DEFAULT 'pending' CHECK (analysis_status IN ('pending','processing','complete','error','partial')),
+  error_message TEXT,  -- if analysis_status = 'error'
+  inspector_name TEXT,
+  inspector_license TEXT,
+  inspection_date DATE,
+  property_address TEXT,
+  findings_count INT DEFAULT 0,
+  severity_summary JSONB DEFAULT '{}'::jsonb,  -- {"critical":2,"major":5,"moderate":8,...}
+  repair_cost_total_low NUMERIC(12,2) DEFAULT 0,
+  repair_cost_total_high NUMERIC(12,2) DEFAULT 0,
+  repair_cost_by_system JSONB DEFAULT '{}'::jsonb,  -- {"roofing":{"low":8400,"high":12600},...}
+  negotiation_strategy JSONB DEFAULT '{}'::jsonb,  -- summary recommendations
+  repair_request_generated BOOLEAN DEFAULT false,
+  repair_request_storage_path TEXT,
+  ai_model_used TEXT DEFAULT 'claude-opus-4-6',
+  processing_time_ms INT,
+  created_by UUID REFERENCES auth.users(id),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  deleted_at TIMESTAMPTZ
+);
+
+ALTER TABLE document_analyses ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "document_analyses_select" ON document_analyses FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "document_analyses_insert" ON document_analyses FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "document_analyses_update" ON document_analyses FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "document_analyses_delete" ON document_analyses FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin'));
+CREATE INDEX idx_document_analyses_company ON document_analyses(company_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_document_analyses_transaction ON document_analyses(transaction_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_document_analyses_status ON document_analyses(analysis_status) WHERE deleted_at IS NULL;
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON document_analyses FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER audit_document_analyses AFTER INSERT OR UPDATE OR DELETE ON document_analyses FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+-- 2. document_findings — individual findings extracted from each analysis
+CREATE TABLE document_findings (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  document_analysis_id UUID NOT NULL REFERENCES document_analyses(id),
+  finding_number INT NOT NULL,  -- sequential within analysis
+  category TEXT NOT NULL,  -- 'structural','roofing','exterior','electrical','plumbing','hvac','interior','insulation','fireplace_chimney','garage','site_grounds','appliances','other'
+  subcategory TEXT,
+  description TEXT NOT NULL,
+  severity TEXT NOT NULL CHECK (severity IN ('critical','major','moderate','minor','informational','monitor')),
+  safety_concern BOOLEAN DEFAULT false,
+  code_violation BOOLEAN DEFAULT false,
+  structural_concern BOOLEAN DEFAULT false,
+  system_name TEXT,  -- which building system
+  location_in_property TEXT,  -- "Master bathroom, 2nd floor"
+  page_reference TEXT,  -- "Page 14, Section 3.2"
+  photo_reference TEXT,  -- "Photo #23"
+  repair_cost_low NUMERIC(12,2),
+  repair_cost_high NUMERIC(12,2),
+  repair_description TEXT,  -- "Replace 28 squares architectural shingle, remove old"
+  repair_timeline TEXT,  -- "2-3 days, contractor available within 2 weeks"
+  recommendation TEXT NOT NULL CHECK (recommendation IN ('request_repair','request_credit','request_price_reduction','accept_as_is','further_inspection','specialist_needed')),
+  negotiation_notes TEXT,  -- "Seller likely to push back on this — present radar data"
+  disclosure_consistent BOOLEAN,  -- NULL if no disclosure, true/false after cross-reference
+  disclosure_conflict_notes TEXT,  -- "Seller said 'No' to water damage, but staining found"
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+ALTER TABLE document_findings ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "document_findings_select" ON document_findings FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "document_findings_insert" ON document_findings FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "document_findings_update" ON document_findings FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "document_findings_delete" ON document_findings FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin'));
+CREATE INDEX idx_document_findings_company ON document_findings(company_id);
+CREATE INDEX idx_document_findings_analysis ON document_findings(document_analysis_id);
+CREATE INDEX idx_document_findings_severity ON document_findings(severity);
+CREATE TRIGGER audit_document_findings AFTER INSERT OR UPDATE OR DELETE ON document_findings FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+```
+
+**Edge Functions (4):**
+- [ ] `re29-analyze-document` — Upload PDF to Storage, invoke Claude to read entire document (20-60 pages), extract inspector info, every finding by system. Parse into document_findings rows with severity scoring. Auth + company_id + rate limit (5/min — expensive AI call). Graceful degradation: if Claude fails, set status='error' with message, don't lose the uploaded PDF. Retry up to 2x with exponential backoff
+- [ ] `re29-estimate-repair-costs` — For each CRITICAL/MAJOR/MODERATE finding, call Zafto estimation engine (DEPTH29 labor tasks + DEPTH31/32 material data) to generate repair cost range by ZIP. Low = basic repair, high = premium with contractor markup. Sum by system and severity. Auth + company_id. Returns cost breakdown. **Legal disclaimer on all output: "Cost estimates are for negotiation guidance only. Not a professional engineering assessment. Actual costs may vary. Obtain contractor bids for accurate pricing."**
+- [ ] `re29-generate-repair-request` — One-click generation of formal repair request letter. Input: document_analysis_id + selected findings + tone (firm/professional/collaborative) + template variant (full/priority-only/credit/hybrid). Output: PDF + DOCX + email body. Includes: property address, inspection date, inspector name, per-item description+severity+cost+requested resolution, total amount, response deadline. Auth + company_id. Store generated document in Supabase Storage
+- [ ] `re29-cross-reference-disclosure` — Upload seller disclosure → Claude extracts every "Yes" answer (issues), every "Unknown" (potential undisclosed), handwritten notes. Cross-reference against inspection findings. Flag inconsistencies: "Seller disclosed 'No' for water damage, but inspection found water staining in basement ceiling." Flag missing items: "Active termite damage found but not disclosed — possible material omission." Auth + company_id
+
+**Flutter Screens (5):**
+- [ ] `InspectionUploadScreen` — Upload inspection report PDF (camera capture or file picker). Progress indicator during analysis. Preview extracted inspector info for verification. Auto-link to active transaction if in transaction context
+- [ ] `FindingsListScreen` — All findings grouped by system (roofing, plumbing, etc.), color-coded by severity (red/orange/yellow/green/blue/gray). Filter by severity, system, recommendation. Tap to expand full detail. Batch select for repair request. Count badges per severity level
+- [ ] `FindingDetailScreen` — Full finding: description, location, page reference, severity badge, repair cost range (low-high bar), repair description, timeline, recommendation with explanation. Edit recommendation (agent override). Toggle "include in repair request." If disclosure conflict: red banner with conflict details
+- [ ] `RepairCostSummaryScreen` — Dashboard: total repair cost (low-high range), breakdown by severity tier (pie chart), breakdown by system (bar chart), top 5 most expensive items. "Recommended credit request: $XX,XXX" with explanation. Legal disclaimer prominent. **Save to job** button per S143 directive. **Set as favorite** for template reuse
+- [ ] `NegotiationBriefScreen` — 2-page summary optimized for agent use: deal-breakers (top), credit recommendations (middle), nice-to-haves to drop (bottom). Market context from RE21 PFS if available. Print/share as PDF. Send to client via client portal
+
+**Web Portal Routes (4):**
+- [ ] `/realtor/inspections` — All document analyses for company. Table with: property, type, status, findings count, total repair cost, date. Filter by transaction, status, date range
+- [ ] `/realtor/inspections/[id]` — Full analysis view: inspector info, findings list with inline editing, cost summary charts, disclosure cross-reference results, repair request generator
+- [ ] `/realtor/inspections/[id]/repair-request` — Repair request builder: select findings to include, choose tone, choose template variant, preview, generate. Download PDF/DOCX or send via email
+- [ ] `/realtor/inspections/[id]/disclosure` — Disclosure analysis view: extracted items, red flags highlighted, cross-reference results with inspection, inconsistency alerts
+
+**Security Verification:**
+- [ ] RLS: document_analyses + document_findings — company_id scoping, owner/admin delete restriction
+- [ ] All EFs: auth via `getUser()`, company_id from JWT, rate limiting (5/min for AI calls)
+- [ ] PDF uploads: validate file type (application/pdf only), max 50MB, virus scan via Supabase Storage policies
+- [ ] AI output sanitization: Claude responses sanitized before storing — no prompt injection in findings text
+- [ ] Legal disclaimer on ALL cost estimate outputs (S143 directive)
+- [ ] Optimistic locking on document_analyses (updated_at in WHERE clause)
+
+**Ecosystem Connections:**
+- [ ] RE4/RE5 Transaction Engine: findings auto-link to active transaction, become task items in transaction checklist
+- [ ] RE21 Negotiation Intelligence: inspection findings feed PFS score update (major defects increase buyer flexibility)
+- [ ] RE9 Dispatch Engine: "Get Bids" button on findings → dispatch to Zafto contractors for repair estimates
+- [ ] Client Portal: buyer sees findings + costs in clear visual format via client-portal
+- [ ] DEPTH29 Labor Tasks + DEPTH31/32 Materials: repair cost estimation engine data source
+
+**i18n Requirements:**
+- [ ] All severity labels: 10 locales (critical/major/moderate/minor/informational/monitor)
+- [ ] Repair request letter templates: 10 locale variants (formal business language per culture)
+- [ ] Tone options (firm/professional/collaborative): culturally appropriate per locale
+- [ ] Finding categories and system names: trade-specific terminology per locale
+- [ ] Legal disclaimer: legally appropriate language per locale (not just translated — reviewed for legal accuracy)
+
+- [ ] All builds pass: `flutter analyze`, `npm run build` for web-portal
+- [ ] Commit: `[RE29] AI inspection analysis — Claude PDF reading, 6-level severity scoring, repair cost estimation (contractor engine), negotiation strategy per finding, seller disclosure cross-reference, auto-generated repair request letters (3 tones, 4 variants), transaction integration`
 
 ### RE30 — Storm Alert System for Agents (~20h) — S132
-*New tables: `storm_alerts`, `agent_storm_responses`*
+**Goal:** Real-time storm alert system — notifies agents when severe weather affects clients' neighborhoods, auto-generates check-in outreach, provides storm damage documentation for insurance claims, identifies proactive outreach opportunities. When hailstorm hits a ZIP, every Zafto agent with past clients there gets: "Hail confirmed in 32801. 12 past clients affected. Tap to send check-in." Generates referrals by making agents appear genuinely caring. Past client outreach after storms = #1 untapped referral source.
+**Monopoly attacked:** Angi/HomeAdvisor (#4) — homeowner's roof damaged, usually Googles "roofer near me" → Angi at $200/lead. With storm alerts, the AGENT reaches out first, connects with Zafto contractor. Every storm alert = revenue stolen from Angi.
+**Competitor killed:** No direct competitor in realtor tools. Hail Trace ($99/mo) tracks hail for roofing contractors but doesn't serve agents. This is a Zafto exclusive.
+**"No One Does This":** No CRM connects weather data to past client outreach. Zafto automates detection (weather APIs) + intelligence (which clients affected) + outreach (pre-written messages) + follow-through (dispatch contractors).
+**CUST9 Module:** `realtor_storm_alerts` — gated per company plan.
 
-- [ ] NWS Weather API integration (real-time warnings: tornado, hurricane, severe thunderstorm, winter storm, flood)
-- [ ] IEM (Iowa Environmental Mesonet) integration (storm reports with location)
-- [ ] SPC SVRGIS API (Significant Weather Event polygons — hail, wind, tornado confirmations)
-- [ ] NEXRAD SWDI (storm cell data, hail size at specific locations)
-- [ ] NOAA Storm Events historical (historical context for any storm type at location)
-- [ ] Geographic matching (agent's listings and contacts mapped to storm polygon: "The storm hit 23 of your listings and 147 client addresses")
-- [ ] Auto-drafted client check-in (storm hits → system drafts check-in message per affected client)
-- [ ] Agent one-tap send (review draft → send to all affected clients)
-- [ ] Contractor referral trigger (client reports damage → one-tap dispatch to Zafto restoration contractor)
-- [ ] Post-storm follow-up sequence (Day 0: check-in, Day 3: "How are repairs going?", Day 14: "If you're thinking about selling, storm events often create market opportunities")
-- [ ] Storm activity dashboard (active alerts, affected listings/clients, response rates, referrals generated)
-- [ ] Alert severity filter (configure: only ping me for tornado warnings + hurricanes, ignore winter storm watches)
-- [ ] Realtor portfolio protection (storm near vacant listing: auto-notify agent to arrange property check)
-- [ ] Commit: `[RE30] Storm alert system — NWS/SPC/NEXRAD detection, geographic client matching, auto-drafted check-ins, one-tap send, contractor referral trigger, post-storm sequence`
+**Migration: `20260221000154_re30_storm_alerts.sql`**
 
-**RE Expanded Totals (S132):** RE21 (~28h) + RE22 (~16h) + RE23 (~24h) + RE24 (~20h) + RE25 (~24h) + RE26 (~28h) + RE27 (~24h) + RE28 (~28h) + RE29 (~24h) + RE30 (~20h) = **10 sprints, ~236h**. ~30 new tables.
+```sql
+-- ============================================================
+-- RE30: STORM ALERT SYSTEM FOR AGENTS
+-- ============================================================
+
+-- 1. storm_events — SHARED REFERENCE TABLE (no company_id)
+-- Government weather data, same storm visible to all companies.
+-- Only service_role CRON inserts. Any authenticated user can SELECT.
+CREATE TABLE storm_events (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  event_type TEXT NOT NULL CHECK (event_type IN ('hail','tornado','high_wind','flood','severe_thunderstorm','hurricane','ice_storm','wildfire','winter_storm')),
+  source TEXT NOT NULL CHECK (source IN ('nws','iem','spc','nexrad','noaa_storm_events')),
+  source_event_id TEXT,  -- dedup key from source system
+  event_date TIMESTAMPTZ NOT NULL,
+  event_end_date TIMESTAMPTZ,  -- when event ended (if known)
+  lat NUMERIC(10,7) NOT NULL,
+  lng NUMERIC(10,7) NOT NULL,
+  radius_miles NUMERIC(8,2),
+  affected_zips TEXT[] DEFAULT '{}',
+  affected_counties TEXT[] DEFAULT '{}',
+  affected_nws_zones TEXT[] DEFAULT '{}',
+  severity TEXT,  -- source-specific severity label
+  details JSONB DEFAULT '{}'::jsonb,  -- raw source data
+  hail_size_inches NUMERIC(4,2),  -- NULL if not hail
+  wind_speed_mph INT,  -- NULL if not wind
+  tornado_rating TEXT,  -- EF0-EF5, NULL if not tornado
+  flood_depth_ft NUMERIC(5,2),  -- NULL if not flood
+  property_damage_estimate TEXT,  -- from NOAA official record
+  confirmed BOOLEAN DEFAULT false,  -- true = post-event confirmed (IEM/SPC), false = warning only (NWS)
+  source_report_url TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+ALTER TABLE storm_events ENABLE ROW LEVEL SECURITY;
+-- Shared reference: any authenticated user can read, only service_role inserts
+CREATE POLICY "storm_events_select" ON storm_events FOR SELECT USING (auth.role() = 'authenticated');
+CREATE POLICY "storm_events_insert" ON storm_events FOR INSERT WITH CHECK (auth.role() = 'service_role');
+CREATE INDEX idx_storm_events_date ON storm_events(event_date DESC);
+CREATE INDEX idx_storm_events_type ON storm_events(event_type);
+CREATE INDEX idx_storm_events_zips ON storm_events USING GIN(affected_zips);
+CREATE INDEX idx_storm_events_location ON storm_events(lat, lng);
+CREATE INDEX idx_storm_events_source_dedup ON storm_events(source, source_event_id) WHERE source_event_id IS NOT NULL;
+
+-- 2. storm_alerts — company-scoped alerts generated per agent
+CREATE TABLE storm_alerts (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  agent_user_id UUID NOT NULL REFERENCES auth.users(id),
+  storm_event_id UUID NOT NULL REFERENCES storm_events(id),
+  affected_client_count INT DEFAULT 0,
+  affected_clients JSONB DEFAULT '[]'::jsonb,  -- [{client_id, name, address, zip, phone, email, relationship}]
+  affected_listing_count INT DEFAULT 0,
+  affected_listings JSONB DEFAULT '[]'::jsonb,  -- [{listing_id, address, status}]
+  affected_soi_count INT DEFAULT 0,  -- sphere of influence contacts
+  alert_sent_at TIMESTAMPTZ,
+  alert_read_at TIMESTAMPTZ,
+  alert_dismissed_at TIMESTAMPTZ,
+  outreach_status TEXT DEFAULT 'pending' CHECK (outreach_status IN ('pending','draft_ready','sent','partial','skipped')),
+  outreach_type TEXT CHECK (outreach_type IN ('text','email','call','multi')),
+  outreach_template_used TEXT,
+  outreach_sent_at TIMESTAMPTZ,
+  outreach_message_count INT DEFAULT 0,
+  outreach_delivered_count INT DEFAULT 0,
+  clients_responded INT DEFAULT 0,
+  clients_reported_damage INT DEFAULT 0,
+  follow_up_actions JSONB DEFAULT '[]'::jsonb,
+  dispatch_orders_created INT DEFAULT 0,
+  referrals_generated INT DEFAULT 0,
+  estimated_referral_value NUMERIC(12,2),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  deleted_at TIMESTAMPTZ
+);
+
+ALTER TABLE storm_alerts ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "storm_alerts_select" ON storm_alerts FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "storm_alerts_insert" ON storm_alerts FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "storm_alerts_update" ON storm_alerts FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "storm_alerts_delete" ON storm_alerts FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin'));
+CREATE INDEX idx_storm_alerts_company ON storm_alerts(company_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_storm_alerts_agent ON storm_alerts(agent_user_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_storm_alerts_storm ON storm_alerts(storm_event_id);
+CREATE INDEX idx_storm_alerts_status ON storm_alerts(outreach_status) WHERE deleted_at IS NULL;
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON storm_alerts FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER audit_storm_alerts AFTER INSERT OR UPDATE OR DELETE ON storm_alerts FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+
+-- 3. storm_outreach_messages — individual messages sent to clients
+CREATE TABLE storm_outreach_messages (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  storm_alert_id UUID NOT NULL REFERENCES storm_alerts(id),
+  client_id UUID,  -- NULL if SOI contact
+  contact_name TEXT NOT NULL,
+  contact_phone TEXT,
+  contact_email TEXT,
+  channel TEXT NOT NULL CHECK (channel IN ('sms','email','both')),
+  message_text TEXT NOT NULL,
+  sent_at TIMESTAMPTZ,
+  delivered_at TIMESTAMPTZ,
+  read_at TIMESTAMPTZ,
+  responded_at TIMESTAMPTZ,
+  response_text TEXT,
+  reported_damage BOOLEAN DEFAULT false,
+  damage_description TEXT,
+  contractor_dispatched BOOLEAN DEFAULT false,
+  dispatch_order_id UUID,  -- link to RE9 dispatch
+  follow_up_stage INT DEFAULT 0,  -- 0=initial, 1=day3, 2=day14
+  next_follow_up_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+ALTER TABLE storm_outreach_messages ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "storm_outreach_select" ON storm_outreach_messages FOR SELECT USING (company_id = requesting_company_id());
+CREATE POLICY "storm_outreach_insert" ON storm_outreach_messages FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "storm_outreach_update" ON storm_outreach_messages FOR UPDATE USING (company_id = requesting_company_id());
+CREATE POLICY "storm_outreach_delete" ON storm_outreach_messages FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin'));
+CREATE INDEX idx_storm_outreach_company ON storm_outreach_messages(company_id);
+CREATE INDEX idx_storm_outreach_alert ON storm_outreach_messages(storm_alert_id);
+CREATE INDEX idx_storm_outreach_followup ON storm_outreach_messages(next_follow_up_at) WHERE next_follow_up_at IS NOT NULL AND follow_up_stage < 2;
+CREATE TRIGGER audit_storm_outreach AFTER INSERT OR UPDATE OR DELETE ON storm_outreach_messages FOR EACH ROW EXECUTE FUNCTION audit_trigger_fn();
+```
+
+**Edge Functions (5):**
+- [ ] `re30-poll-weather-events` — CRON every 5 minutes (service_role). Polls: (1) NWS Weather Alerts API (free, no auth) for active warnings (tornado, severe thunderstorm, flash flood, hurricane, winter storm, high wind). (2) IEM Real-Time Storm Reports (free) for confirmed post-event reports (hail size, tornado touchdowns, wind damage). Dedup by source_event_id. Insert new storm_events. Extract affected_zips from NWS zone→ZIP mapping. Graceful degradation: if any API down, log warning and continue with available sources. **Supabase CRON is UTC-only — EF handles timezone conversion internally**
+- [ ] `re30-match-clients-to-storm` — Triggered after new storm_event insert. For each company with agents who have clients in affected ZIPs: query closed transactions (RE5) for buyer addresses, active listings (RE10), SOI contacts (RE2 CRM). Generate storm_alerts per agent with affected_clients JSONB. Push notification to agent's device (FCM). Email summary with client list + contact info + pre-written outreach. Auth: service_role (triggered by CRON, not user request)
+- [ ] `re30-send-outreach` — Agent-triggered. Input: storm_alert_id + selected clients + channel (sms/email/both) + message text (default template or customized). Send via SignalWire (SMS) and/or Resend (email). Create storm_outreach_messages rows. Track delivery status. Schedule follow-ups: Day 3 ("How are repairs going?"), Day 14 ("If you're thinking about selling..."). Auth + company_id + rate limit (50 messages/min)
+- [ ] `re30-process-follow-ups` — CRON daily. Query storm_outreach_messages WHERE next_follow_up_at <= now() AND follow_up_stage < 2. Send appropriate follow-up message. Increment follow_up_stage. Set next_follow_up_at. Skip if client already responded or reported damage (don't nag). **UTC CRON — EF converts internally**
+- [ ] `re30-storm-history-report` — On-demand. Input: property address (lat/lng or ZIP). Query storm_events within configurable radius (default 5 miles) for last 10 years. Return: event list with dates, types, severity, hail size, wind speed, damage estimates. Sources: NOAA Storm Events + SPC SVRGIS. Output: JSON for in-app display + PDF generation for insurance packets. Auth + company_id
+
+**Flutter Screens (5):**
+- [ ] `StormDashboardScreen` — Active storm alerts map (Google Maps with storm polygons/markers), affected client pins (color by outreach status: red=not contacted, yellow=sent, green=responded). Alert feed: newest storms at top with severity badges. Quick stats: active storms, clients affected, outreach sent, responses received, dispatches created. Filter by date range, storm type, severity
+- [ ] `StormAlertDetailScreen` — Single storm: type, severity, time, location, radar data. Affected clients list with: name, address, phone, relationship (past buyer/seller/SOI/listing), outreach status. Batch select + "Send Check-in" button. Affected listings section. Map showing storm area + client locations
+- [ ] `OutreachComposerScreen` — Message template preview (auto-filled: agent name, brokerage, storm type, area). Edit message before sending. Channel selection (SMS/email/both). Preview per-recipient. "Send to All" or select individual clients. Delivery confirmation. Follow-up schedule preview
+- [ ] `StormHistoryScreen` — Property storm history report: all events within radius over 10 years. Timeline view. Severity breakdown (pie chart). Seasonal pattern analysis. "Generate Insurance Documentation Packet" button. PDF export. **Save to job** per S143 directive
+- [ ] `StormAnalyticsScreen` — Territory storm frequency (heat map). Outreach performance: sent vs. responded vs. damage reported vs. dispatched. Referrals generated with estimated GCI value. "This storm alert generated 2 contractor dispatches and 1 referral. Estimated value: $8,400 GCI." Season-over-season comparison
+
+**Web Portal Routes (4):**
+- [ ] `/realtor/storms` — Storm dashboard: active alerts, map overlay, affected client counts. Alert feed with severity badges. Quick-action buttons per alert
+- [ ] `/realtor/storms/[id]` — Alert detail: storm info, affected clients table with contact info + outreach status, batch outreach composer, dispatch quick-action
+- [ ] `/realtor/storms/history` — Storm history search: enter address or ZIP, radius, date range. Results table + map. Generate reports. Export PDF for insurance
+- [ ] `/realtor/storms/analytics` — Outreach analytics: messages sent, response rates, damage reports, dispatches, referrals, GCI. Time range selectors. Export CSV
+
+**Security Verification:**
+- [ ] RLS: storm_events (authenticated SELECT, service_role INSERT), storm_alerts + storm_outreach_messages (company_id scoping, owner/admin delete)
+- [ ] All user-facing EFs: auth via `getUser()`, company_id from JWT
+- [ ] CRON EFs: service_role only, no user auth bypass possible
+- [ ] SMS/email sending: rate limiting (50/min per company), DNC compliance check before sending (federal + state lists), TCPA opt-out handling
+- [ ] Client phone/email data: encrypted at rest, never exposed in logs, never sent to weather APIs
+- [ ] Storm data dedup: source_event_id prevents duplicate storm_events from repeated CRON polls
+- [ ] Optimistic locking on storm_alerts (updated_at in WHERE clause)
+
+**Ecosystem Connections:**
+- [ ] RE2 CRM: SOI contacts with addresses for geo-matching
+- [ ] RE5 Transaction Engine: past closed transactions → buyer addresses for geo-matching
+- [ ] RE9 Dispatch Engine: "Dispatch Contractor" from damage report → creates dispatch order to Zafto contractor
+- [ ] RE10 Listing Management: active listings in storm area → agent notified to arrange property check
+- [ ] RE26 Post-Close Maintenance: storm damage = maintenance needs, auto-create maintenance items
+- [ ] SignalWire: SMS outreach delivery
+- [ ] Resend: email outreach delivery
+- [ ] FCM: push notifications to agent device
+
+**i18n Requirements:**
+- [ ] Storm type labels: 10 locales (hail, tornado, flood, etc. — proper meteorological terms per language)
+- [ ] Outreach templates: 10 locale variants (culturally appropriate check-in language — not just translated)
+- [ ] Severity labels: 10 locales
+- [ ] Insurance documentation: legal language per locale
+- [ ] Date/time formatting: locale-correct (12hr vs 24hr, date order)
+- [ ] Measurement units: hail size (inches/mm), wind speed (mph/km/h), flood depth (ft/m) per locale
+
+- [ ] All builds pass: `flutter analyze`, `npm run build` for web-portal
+- [ ] Commit: `[RE30] Storm alert system — NWS/IEM/SPC/NEXRAD/NOAA detection (5 APIs), client geo-matching (transactions+listings+SOI), push notifications, automated check-in outreach (SMS+email), follow-up sequences (Day 0/3/14), storm damage documentation, insurance claim packets, contractor dispatch, analytics`
+
+**RE Expanded Totals (S145):** RE21 (~28h, 3 tables, 4 EFs) + RE22 (~16h, 2 tables, 4 EFs) + RE23 (~24h, 2 tables, 3 EFs) + RE24 (~20h, 3 tables, 3 EFs) + RE25 (~24h, 2 tables, 3 EFs) + RE26 (~28h, 4 tables, 4 EFs) + RE27 (~24h, 3 tables, 4 EFs) + RE28 (~28h, 3 tables, 4 EFs) + RE29 (~24h, 2 tables, 4 EFs) + RE30 (~20h, 3 tables, 5 EFs) = **10 sprints, ~236h, 27 new tables, 38 Edge Functions**.
 
 ---
 
@@ -31287,24 +35415,24 @@ CREATE TRIGGER audit_route_templates AFTER INSERT OR UPDATE OR DELETE ON route_t
 ```sql
 -- route_plans
 ALTER TABLE route_plans ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "route_plans_select" ON route_plans FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
-CREATE POLICY "route_plans_insert" ON route_plans FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "route_plans_update" ON route_plans FOR UPDATE USING (company_id = auth.company_id() AND deleted_at IS NULL) WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "route_plans_delete" ON route_plans FOR DELETE USING (company_id = auth.company_id() AND auth.user_role() IN ('owner','admin','office_manager'));
+CREATE POLICY "route_plans_select" ON route_plans FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+CREATE POLICY "route_plans_insert" ON route_plans FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "route_plans_update" ON route_plans FOR UPDATE USING (company_id = requesting_company_id() AND deleted_at IS NULL) WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "route_plans_delete" ON route_plans FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin','office_manager'));
 
 -- route_stops
 ALTER TABLE route_stops ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "route_stops_select" ON route_stops FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
-CREATE POLICY "route_stops_insert" ON route_stops FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "route_stops_update" ON route_stops FOR UPDATE USING (company_id = auth.company_id() AND deleted_at IS NULL) WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "route_stops_delete" ON route_stops FOR DELETE USING (company_id = auth.company_id() AND auth.user_role() IN ('owner','admin','office_manager'));
+CREATE POLICY "route_stops_select" ON route_stops FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+CREATE POLICY "route_stops_insert" ON route_stops FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "route_stops_update" ON route_stops FOR UPDATE USING (company_id = requesting_company_id() AND deleted_at IS NULL) WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "route_stops_delete" ON route_stops FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin','office_manager'));
 
 -- route_templates
 ALTER TABLE route_templates ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "route_templates_select" ON route_templates FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
-CREATE POLICY "route_templates_insert" ON route_templates FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "route_templates_update" ON route_templates FOR UPDATE USING (company_id = auth.company_id() AND deleted_at IS NULL) WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "route_templates_delete" ON route_templates FOR DELETE USING (company_id = auth.company_id() AND auth.user_role() IN ('owner','admin'));
+CREATE POLICY "route_templates_select" ON route_templates FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+CREATE POLICY "route_templates_insert" ON route_templates FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "route_templates_update" ON route_templates FOR UPDATE USING (company_id = requesting_company_id() AND deleted_at IS NULL) WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "route_templates_delete" ON route_templates FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin'));
 ```
 
 ### Edge Functions
@@ -31558,22 +35686,22 @@ CREATE TRIGGER audit_technician_certifications AFTER INSERT OR UPDATE OR DELETE 
 
 ```sql
 ALTER TABLE chemical_applications ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "chem_apps_select" ON chemical_applications FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
-CREATE POLICY "chem_apps_insert" ON chemical_applications FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "chem_apps_update" ON chemical_applications FOR UPDATE USING (company_id = auth.company_id() AND deleted_at IS NULL) WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "chem_apps_delete" ON chemical_applications FOR DELETE USING (company_id = auth.company_id() AND auth.user_role() IN ('owner','admin'));
+CREATE POLICY "chem_apps_select" ON chemical_applications FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+CREATE POLICY "chem_apps_insert" ON chemical_applications FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "chem_apps_update" ON chemical_applications FOR UPDATE USING (company_id = requesting_company_id() AND deleted_at IS NULL) WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "chem_apps_delete" ON chemical_applications FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin'));
 
 ALTER TABLE chemical_inventory ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "chem_inv_select" ON chemical_inventory FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
-CREATE POLICY "chem_inv_insert" ON chemical_inventory FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "chem_inv_update" ON chemical_inventory FOR UPDATE USING (company_id = auth.company_id() AND deleted_at IS NULL) WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "chem_inv_delete" ON chemical_inventory FOR DELETE USING (company_id = auth.company_id() AND auth.user_role() IN ('owner','admin'));
+CREATE POLICY "chem_inv_select" ON chemical_inventory FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+CREATE POLICY "chem_inv_insert" ON chemical_inventory FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "chem_inv_update" ON chemical_inventory FOR UPDATE USING (company_id = requesting_company_id() AND deleted_at IS NULL) WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "chem_inv_delete" ON chemical_inventory FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin'));
 
 ALTER TABLE technician_certifications ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "tech_certs_select" ON technician_certifications FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
-CREATE POLICY "tech_certs_insert" ON technician_certifications FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "tech_certs_update" ON technician_certifications FOR UPDATE USING (company_id = auth.company_id() AND deleted_at IS NULL) WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "tech_certs_delete" ON technician_certifications FOR DELETE USING (company_id = auth.company_id() AND auth.user_role() IN ('owner','admin'));
+CREATE POLICY "tech_certs_select" ON technician_certifications FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+CREATE POLICY "tech_certs_insert" ON technician_certifications FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "tech_certs_update" ON technician_certifications FOR UPDATE USING (company_id = requesting_company_id() AND deleted_at IS NULL) WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "tech_certs_delete" ON technician_certifications FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin'));
 ```
 
 ### Seed Data
@@ -31756,16 +35884,16 @@ CREATE TRIGGER audit_draw_items AFTER INSERT OR UPDATE OR DELETE ON draw_items
 
 ```sql
 ALTER TABLE draw_schedules ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "draw_schedules_select" ON draw_schedules FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
-CREATE POLICY "draw_schedules_insert" ON draw_schedules FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "draw_schedules_update" ON draw_schedules FOR UPDATE USING (company_id = auth.company_id() AND deleted_at IS NULL) WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "draw_schedules_delete" ON draw_schedules FOR DELETE USING (company_id = auth.company_id() AND auth.user_role() IN ('owner','admin'));
+CREATE POLICY "draw_schedules_select" ON draw_schedules FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+CREATE POLICY "draw_schedules_insert" ON draw_schedules FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "draw_schedules_update" ON draw_schedules FOR UPDATE USING (company_id = requesting_company_id() AND deleted_at IS NULL) WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "draw_schedules_delete" ON draw_schedules FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin'));
 
 ALTER TABLE draw_items ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "draw_items_select" ON draw_items FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
-CREATE POLICY "draw_items_insert" ON draw_items FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "draw_items_update" ON draw_items FOR UPDATE USING (company_id = auth.company_id() AND deleted_at IS NULL) WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "draw_items_delete" ON draw_items FOR DELETE USING (company_id = auth.company_id() AND auth.user_role() IN ('owner','admin'));
+CREATE POLICY "draw_items_select" ON draw_items FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+CREATE POLICY "draw_items_insert" ON draw_items FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "draw_items_update" ON draw_items FOR UPDATE USING (company_id = requesting_company_id() AND deleted_at IS NULL) WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "draw_items_delete" ON draw_items FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin'));
 ```
 
 ### Seed Data — Lien Waiver Templates (50 states)
@@ -31972,10 +36100,10 @@ CREATE TRIGGER audit_selection_options AFTER INSERT OR UPDATE OR DELETE ON selec
 
 ```sql
 ALTER TABLE selection_categories ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "sel_cats_select" ON selection_categories FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
-CREATE POLICY "sel_cats_insert" ON selection_categories FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "sel_cats_update" ON selection_categories FOR UPDATE USING (company_id = auth.company_id() AND deleted_at IS NULL) WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "sel_cats_delete" ON selection_categories FOR DELETE USING (company_id = auth.company_id() AND auth.user_role() IN ('owner','admin','office_manager'));
+CREATE POLICY "sel_cats_select" ON selection_categories FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+CREATE POLICY "sel_cats_insert" ON selection_categories FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "sel_cats_update" ON selection_categories FOR UPDATE USING (company_id = requesting_company_id() AND deleted_at IS NULL) WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "sel_cats_delete" ON selection_categories FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin','office_manager'));
 
 -- Client portal: clients can view categories for their jobs and select options
 CREATE POLICY "sel_cats_client_select" ON selection_categories FOR SELECT USING (
@@ -31986,10 +36114,10 @@ CREATE POLICY "sel_cats_client_select" ON selection_categories FOR SELECT USING 
 );
 
 ALTER TABLE selection_options ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "sel_opts_select" ON selection_options FOR SELECT USING (company_id = auth.company_id() AND deleted_at IS NULL);
-CREATE POLICY "sel_opts_insert" ON selection_options FOR INSERT WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "sel_opts_update" ON selection_options FOR UPDATE USING (company_id = auth.company_id() AND deleted_at IS NULL) WITH CHECK (company_id = auth.company_id());
-CREATE POLICY "sel_opts_delete" ON selection_options FOR DELETE USING (company_id = auth.company_id() AND auth.user_role() IN ('owner','admin','office_manager'));
+CREATE POLICY "sel_opts_select" ON selection_options FOR SELECT USING (company_id = requesting_company_id() AND deleted_at IS NULL);
+CREATE POLICY "sel_opts_insert" ON selection_options FOR INSERT WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "sel_opts_update" ON selection_options FOR UPDATE USING (company_id = requesting_company_id() AND deleted_at IS NULL) WITH CHECK (company_id = requesting_company_id());
+CREATE POLICY "sel_opts_delete" ON selection_options FOR DELETE USING (company_id = requesting_company_id() AND requesting_user_role() IN ('owner','admin','office_manager'));
 
 -- Client can select options (update is_selected)
 CREATE POLICY "sel_opts_client_select" ON selection_options FOR SELECT USING (
@@ -32522,8 +36650,8 @@ CREATE POLICY "sel_opts_client_select" ON selection_options FOR SELECT USING (
 - [x] `payroll-engine` EF: Add role check — only `owner`, `admin`, `office_manager` can access. Return 403 for other roles. — S139
 - [x] `lead-aggregator` EF: Override `body.companyId` with JWT-derived `companyId` before passing to all handlers — S139
 - [x] `code-verify` EF: Use `user.app_metadata?.role` instead of `public.users` table lookup for role check — S139
-- [x] Verify `auth.company_id()` function is marked `STABLE` (enables initPlan caching) — S139 (actual name: `requesting_company_id()` — already STABLE, re-asserted in migration)
-- [x] Verify `auth.user_role()` function is marked `STABLE` — S139 (actual name: `requesting_user_role()` — already STABLE, re-asserted in migration)
+- [x] Verify `requesting_company_id()` function is marked `STABLE` (enables initPlan caching) — S139 (actual name: `requesting_company_id()` — already STABLE, re-asserted in migration)
+- [x] Verify `requesting_user_role()` function is marked `STABLE` — S139 (actual name: `requesting_user_role()` — already STABLE, re-asserted in migration)
 - [x] TEST: As technician, attempt payroll-engine call → must return 403 — S139 (code verified: PAYROLL_ROLES check added)
 - [x] TEST: lead-aggregator with body.companyId set to different company → must use JWT company instead — S139 (code verified: body.companyId overridden with JWT companyId)
 - [x] TEST: pricing_contributions table — INSERT + SELECT via API works for authenticated users — S139 (policies created for TO authenticated)
@@ -32854,8 +36982,8 @@ CREATE POLICY "sel_opts_client_select" ON selection_options FOR SELECT USING (
 - [x] Create migration: Add BRIN indexes on `audit_log.created_at`, `messages.created_at`, `activity_feed.created_at` (if tables have >10K rows potential) — S143: Migration 123, 8 BRIN indexes on audit/log tables
 - [x] Create migration: Add partial indexes on hot tables: `jobs (company_id, status) WHERE deleted_at IS NULL`, `invoices (company_id, status, due_date) WHERE deleted_at IS NULL`, `estimates (company_id, created_at DESC) WHERE deleted_at IS NULL` — S143: 7 partial indexes on hot tables
 - [x] Create migration: Add GIN indexes on JSONB columns: `companies.settings`, `jobs.metadata` (if exists) — S143: 5 GIN indexes (companies.settings, custom_roles.permissions, automations.config, form_templates.fields, inspection_templates.sections)
-- [x] Verify `auth.company_id()` function is marked `STABLE` (enables initPlan caching for RLS) — S143: requesting_company_id(), requesting_user_id(), requesting_user_role() all marked STABLE
-- [x] Verify `auth.user_role()` function is marked `STABLE` — S143: Done in Migration 123
+- [x] Verify `requesting_company_id()` function is marked `STABLE` (enables initPlan caching for RLS) — S143: requesting_company_id(), requesting_user_id(), requesting_user_role() all marked STABLE
+- [x] Verify `requesting_user_role()` function is marked `STABLE` — S143: Done in Migration 123
 - [x] Create materialized view: `mv_company_revenue_summary` (invoice aggregates per company/month) — S143: Migration 123
 - [x] Create materialized view: `mv_job_pipeline` (job counts/values by status per company) — S143: Migration 123
 
